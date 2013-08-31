@@ -553,7 +553,7 @@ purple_protocol_initiate_media(PurpleAccount *account,
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol) {
 		/* should check that the protocol supports this media type here? */
@@ -573,7 +573,7 @@ purple_protocol_get_media_caps(PurpleAccount *account, const char *who)
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
 		return purple_protocol_iface_get_media_caps(protocol, account, who);

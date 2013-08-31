@@ -212,7 +212,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 	g_return_val_if_fail(gc != NULL, NULL);
 	g_return_val_if_fail(PURPLE_CONNECTION_IS_CONNECTED(gc), NULL);
 
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	if(protocol && protocol->roomlist_get_list)
 		return purple_protocol_iface_roomlist_get_list(protocol, gc);
@@ -232,7 +232,7 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 	g_return_if_fail(gc != NULL);
 
 	if(gc)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if(protocol && protocol->roomlist_cancel)
 		purple_protocol_iface_roomlist_cancel(protocol, list);
@@ -251,7 +251,7 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 	g_return_if_fail(gc != NULL);
 
 	if(gc)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if(protocol && protocol->roomlist_expand_category)
 		purple_protocol_iface_roomlist_expand_category(protocol, list, category);

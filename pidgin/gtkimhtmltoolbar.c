@@ -1593,7 +1593,7 @@ void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 	PurpleConversation *conv)
 {
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
-	PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
+	PurpleProtocol *protocol = purple_connection_get_protocol(gc);
 
 	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
 

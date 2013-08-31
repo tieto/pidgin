@@ -1522,7 +1522,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 			gc = purple_account_get_connection(account);
 
 			if(gc)
-				protocol = purple_connection_get_protocol_info(gc);
+				protocol = purple_connection_get_protocol(gc);
 
 			if(!protocol)
 				continue;

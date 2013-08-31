@@ -742,7 +742,7 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		group = _("Chats");
 
 	gc = purple_account_get_connection(account);
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 	if (protocol->chat_info_defaults != NULL)
 		hash = purple_protocol_iface_chat_info_defaults(protocol, gc, name);
 
@@ -1062,7 +1062,7 @@ static void
 append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 {
 	GList *list;
-	PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
+	PurpleProtocol *protocol = purple_connection_get_protocol(gc);
 
 	if(!protocol || !protocol->blist_node_menu)
 		return;
@@ -1126,7 +1126,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 	purple_request_fields_add_group(fields, group);
 
 	gc = purple_account_get_connection(purple_chat_get_account(chat));
-	parts = purple_connection_get_protocol_info(gc)->chat_info(gc);
+	parts = purple_connection_get_protocol(gc)->chat_info(gc);
 
 	for (iter = parts; iter; iter = iter->next) {
 		pce = iter->data;
@@ -1277,7 +1277,7 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 	PurpleProtocol *protocol;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 	if (protocol && protocol->get_info)
 	{
 		add_custom_action(menu, _("Get Info"),
@@ -2611,7 +2611,7 @@ reconstruct_accounts_menu(void)
 
 		if (!gc || !PURPLE_CONNECTION_IS_CONNECTED(gc))
 			continue;
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(protocol, get_actions)) {
 			item = gnt_menuitem_new(purple_account_get_username(account));
@@ -2816,7 +2816,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 
 	chat = purple_blist_find_chat(account, name);
 	if (chat == NULL) {
-		PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
+		PurpleProtocol *protocol = purple_connection_get_protocol(gc);
 		if (protocol->chat_info_defaults != NULL)
 			hash = purple_protocol_iface_chat_info_defaults(protocol, gc, name);
 	} else {

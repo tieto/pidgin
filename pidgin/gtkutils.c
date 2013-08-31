@@ -916,7 +916,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 		return;
 	}
 
-	protocol = purple_connection_get_protocol_info(conn);
+	protocol = purple_connection_get_protocol(conn);
 	if (protocol != NULL && protocol->get_cb_real_name)
 		who = purple_protocol_iface_get_cb_real_name(protocol, conn, chat, name);
 	if (protocol == NULL || protocol->get_cb_info == NULL) {
@@ -1039,7 +1039,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 					gc = (PurpleConnection *)l->data;
 					account = purple_connection_get_account(gc);
 
-					protocol = purple_connection_get_protocol_info(gc);
+					protocol = purple_connection_get_protocol(gc);
 				}
 
 				protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
@@ -1078,7 +1078,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 						gc = (PurpleConnection *)l->data;
 						account = purple_connection_get_account(gc);
 
-						protocol = purple_connection_get_protocol_info(gc);
+						protocol = purple_connection_get_protocol(gc);
 					}
 
 					protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
@@ -1487,7 +1487,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			data->account = account;
 
 			if (gc)
-				protocol = purple_connection_get_protocol_info(gc);
+				protocol = purple_connection_get_protocol(gc);
 
 			if (protocol && purple_protocol_get_options(protocol) & OPT_PROTO_IM_IMAGE)
 				im = TRUE;

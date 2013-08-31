@@ -316,7 +316,7 @@ purple_connection_get_account(const PurpleConnection *gc)
 }
 
 PurpleProtocol *
-purple_connection_get_protocol_info(const PurpleConnection *gc)
+purple_connection_get_protocol(const PurpleConnection *gc)
 {
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
@@ -649,7 +649,7 @@ purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
 
 	switch (param_id) {
 		case PROP_PROTOCOL:
-			g_value_set_object(value, purple_connection_get_protocol_info(gc));
+			g_value_set_object(value, purple_connection_get_protocol(gc));
 			break;
 		case PROP_FLAGS:
 			g_value_set_flags(value, purple_connection_get_flags(gc));

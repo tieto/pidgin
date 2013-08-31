@@ -46,7 +46,7 @@ serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState sta
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->send_typing)
 			return purple_protocol_iface_send_typing(protocol, gc, name, state);
@@ -126,7 +126,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 
 	g_return_val_if_fail(gc != NULL, val);
 
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	g_return_val_if_fail(protocol != NULL, val);
 
@@ -163,7 +163,7 @@ void serv_get_info(PurpleConnection *gc, const char *name)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->get_info)
 			purple_protocol_iface_get_info(protocol, gc, name);
@@ -176,7 +176,7 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 	PurpleAccount *account;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->set_info) {
 			account = purple_connection_get_account(gc);
@@ -209,7 +209,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 			gc = purple_account_get_connection(account);
 
 			if (gc) {
-				protocol = purple_connection_get_protocol_info(gc);
+				protocol = purple_connection_get_protocol(gc);
 
 				if (protocol->alias_buddy)
 					purple_protocol_iface_alias_buddy(protocol, gc,
@@ -335,7 +335,7 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 	gc = purple_account_get_connection(account);
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->group_buddy)
 			purple_protocol_iface_group_buddy(protocol, gc, purple_buddy_get_name(b),
@@ -349,7 +349,7 @@ void serv_add_permit(PurpleConnection *gc, const char *name)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->add_permit)
 			purple_protocol_iface_add_permit(protocol, gc, name);
@@ -361,7 +361,7 @@ void serv_add_deny(PurpleConnection *gc, const char *name)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->add_deny)
 			purple_protocol_iface_add_deny(protocol, gc, name);
@@ -373,7 +373,7 @@ void serv_rem_permit(PurpleConnection *gc, const char *name)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->rem_permit)
 			purple_protocol_iface_rem_permit(protocol, gc, name);
@@ -385,7 +385,7 @@ void serv_rem_deny(PurpleConnection *gc, const char *name)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->rem_deny)
 			purple_protocol_iface_rem_deny(protocol, gc, name);
@@ -397,7 +397,7 @@ void serv_set_permit_deny(PurpleConnection *gc)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		/*
 		 * this is called when either you import a buddy list, and make lots
@@ -415,7 +415,7 @@ void serv_join_chat(PurpleConnection *gc, GHashTable *data)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->join_chat)
 			purple_protocol_iface_join_chat(protocol, gc, data);
@@ -428,7 +428,7 @@ void serv_reject_chat(PurpleConnection *gc, GHashTable *data)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->reject_chat)
 			purple_protocol_iface_reject_chat(protocol, gc, data);
@@ -447,7 +447,7 @@ void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const c
 		return;
 
 	if(gc)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-inviting-user",
 					 chat, name, &buffy);
@@ -470,7 +470,7 @@ void serv_chat_leave(PurpleConnection *gc, int id)
 {
 	PurpleProtocol *protocol;
 
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	if (protocol->chat_leave)
 		purple_protocol_iface_chat_leave(protocol, gc, id);
@@ -481,7 +481,7 @@ void serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->chat_whisper)
 			purple_protocol_iface_chat_whisper(protocol, gc, id, who, message);
@@ -492,7 +492,7 @@ int serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 {
 	PurpleProtocol *protocol;
 
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	if (protocol->chat_send)
 		return purple_protocol_iface_chat_send(protocol, gc, id, message, flags);
@@ -889,7 +889,7 @@ void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 	PurpleProtocol *protocol;
 
 	if (gc) {
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol->send_file &&
 				(!protocol->can_receive_file

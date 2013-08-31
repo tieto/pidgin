@@ -748,7 +748,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 		PurpleProtocol *protocol;
 
 		gc = purple_account_get_connection(account);
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 		if (protocol)
 			purple_protocol_iface_set_buddy_icon(protocol, gc, img);

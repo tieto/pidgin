@@ -118,7 +118,7 @@ static void fl_add_chat(GntWidget *button, gpointer null)
 	if (gc == NULL || room == NULL)
 		return;
 
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	if(protocol != NULL && protocol->roomlist_room_serialize)
 		name = purple_protocol_iface_roomlist_room_serialize(protocol, room);
@@ -240,7 +240,7 @@ reset_account_list(PurpleAccount *account)
 		PurpleProtocol *protocol = NULL;
 		PurpleConnection *gc = list->data;
 
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
 		        protocol->roomlist_get_list != NULL) {
 			PurpleAccount *account = purple_connection_get_account(gc);

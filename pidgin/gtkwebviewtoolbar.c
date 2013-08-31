@@ -1625,7 +1625,7 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 {
 	GtkWebViewToolbarPriv *priv = GTK_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
-	PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
+	PurpleProtocol *protocol = purple_connection_get_protocol(gc);
 
 	priv->active_conv = conv;
 

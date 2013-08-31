@@ -585,7 +585,7 @@ purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 	gc = purple_account_get_connection(account);
 
 	if(PURPLE_CONNECTION_IS_CONNECTED(gc))
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
 		purple_protocol_iface_set_idle(protocol, gc, (idle ? (current_time - idle_time) : 0));

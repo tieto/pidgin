@@ -260,7 +260,7 @@ online_account_supports_chat(void)
 
 	while(c != NULL) {
 		PurpleConnection *gc = c->data;
-		PurpleProtocol *protocol = purple_connection_get_protocol_info(gc);
+		PurpleProtocol *protocol = purple_connection_get_protocol(gc);
 		if (protocol != NULL && protocol->chat_info != NULL)
 			return TRUE;
 		c = c->next;
@@ -297,7 +297,7 @@ static void
 docklet_signed_on_cb(PurpleConnection *gc)
 {
 	if (!enable_join_chat) {
-		if (purple_connection_get_protocol_info(gc)->chat_info != NULL)
+		if (purple_connection_get_protocol(gc)->chat_info != NULL)
 			enable_join_chat = TRUE;
 	}
 	docklet_update_status();
@@ -307,7 +307,7 @@ static void
 docklet_signed_off_cb(PurpleConnection *gc)
 {
 	if (enable_join_chat) {
-		if (purple_connection_get_protocol_info(gc)->chat_info != NULL)
+		if (purple_connection_get_protocol(gc)->chat_info != NULL)
 			enable_join_chat = online_account_supports_chat();
 	}
 	docklet_update_status();

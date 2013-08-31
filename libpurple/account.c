@@ -622,7 +622,7 @@ purple_account_request_change_password(PurpleAccount *account)
 
 	gc = purple_account_get_connection(account);
 	if (gc != NULL)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	fields = purple_request_fields_new();
 
@@ -1021,7 +1021,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 	g_return_if_fail(purple_account_is_connected(account));
 
 	gc = purple_account_get_connection(account);
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_public_alias))
 		purple_protocol_iface_set_public_alias(protocol, gc, alias, success_cb, failure_cb);
@@ -1059,7 +1059,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 	g_return_if_fail(purple_account_is_connected(account));
 
 	gc = purple_account_get_connection(account);
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_public_alias))
 		purple_protocol_iface_get_public_alias(protocol, gc, success_cb, failure_cb);
@@ -2218,7 +2218,7 @@ purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const char 
 
 	gc = purple_account_get_connection(account);
 	if (gc != NULL)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol != NULL)
 		purple_protocol_iface_add_buddy(protocol, gc, buddy,
@@ -2232,7 +2232,7 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *m
 	PurpleConnection *gc = purple_account_get_connection(account);
 
 	if (gc != NULL)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol) {
 		GList *cur, *groups = NULL;
@@ -2267,7 +2267,7 @@ purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
 	PurpleConnection *gc = purple_account_get_connection(account);
 
 	if (gc != NULL)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
 		purple_protocol_iface_remove_buddy(protocol, gc, buddy, group);
@@ -2280,7 +2280,7 @@ purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *gro
 	PurpleConnection *gc = purple_account_get_connection(account);
 
 	if (gc != NULL)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol) {
 		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, remove_buddies))
@@ -2304,7 +2304,7 @@ purple_account_remove_group(PurpleAccount *account, PurpleGroup *group)
 	PurpleConnection *gc = purple_account_get_connection(account);
 
 	if (gc != NULL)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
 		purple_protocol_iface_remove_group(protocol, gc, group);
@@ -2320,7 +2320,7 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 	purple_account_set_password(account, new_pw, NULL, NULL);
 
 	if (gc != NULL)
-		protocol = purple_connection_get_protocol_info(gc);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
 		purple_protocol_iface_change_passwd(protocol, gc, orig_pw, new_pw);
@@ -2338,7 +2338,7 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 	if (gc == NULL)
 		return FALSE;
 
-	protocol = purple_connection_get_protocol_info(gc);
+	protocol = purple_connection_get_protocol(gc);
 
 	if (!protocol)
 		return FALSE;
