@@ -26,7 +26,6 @@
 
 #define FACEBOOK_ID     "prpl-facebook-xmpp"
 #define FACEBOOK_NAME   "Facebook (XMPP)"
-#define FACEBOOK_DOMAIN (g_quark_from_static_string(FACEBOOK_ID))
 
 #define FACEBOOK_TYPE_PROTOCOL             (facebook_protocol_get_type())
 #define FACEBOOK_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), FACEBOOK_TYPE_PROTOCOL, FacebookProtocol))

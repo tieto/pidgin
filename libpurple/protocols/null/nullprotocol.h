@@ -26,7 +26,6 @@
 
 #define NULL_ID     "prpl-null"
 #define NULL_NAME   "Null - Testing Plugin"
-#define NULL_DOMAIN (g_quark_from_static_string(NULL_ID))
 
 #define NULL_TYPE_PROTOCOL             (null_protocol_get_type())
 #define NULL_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), NULL_TYPE_PROTOCOL, NullProtocol))

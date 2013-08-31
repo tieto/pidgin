@@ -26,7 +26,6 @@
 
 #define ICQ_ID     "prpl-icq"
 #define ICQ_NAME   "ICQ"
-#define ICQ_DOMAIN (g_quark_from_static_string(ICQ_ID))
 
 #define ICQ_TYPE_PROTOCOL             (icq_protocol_get_type())
 #define ICQ_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ICQ_TYPE_PROTOCOL, ICQProtocol))

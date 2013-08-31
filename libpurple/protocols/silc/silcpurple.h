@@ -40,7 +40,6 @@
 
 #define SILCPURPLE_ID     "prpl-silc"
 #define SILCPURPLE_NAME   "SILC"
-#define SILCPURPLE_DOMAIN (g_quark_from_static_string(SILCPURPLE_ID))
 
 #define SILCPURPLE_TYPE_PROTOCOL             (silcpurple_protocol_get_type())
 #define SILCPURPLE_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), SILCPURPLE_TYPE_PROTOCOL, SILCProtocol))

@@ -26,7 +26,6 @@
 
 #define YAHOOJP_ID     "prpl-yahoojp"
 #define YAHOOJP_NAME   "Yahoo JAPAN"
-#define YAHOOJP_DOMAIN (g_quark_from_static_string(YAHOOJP_ID))
 
 #define YAHOOJP_TYPE_PROTOCOL             (yahoojp_protocol_get_type())
 #define YAHOOJP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), YAHOOJP_TYPE_PROTOCOL, YahooJPProtocol))

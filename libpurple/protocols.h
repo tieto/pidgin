@@ -152,7 +152,9 @@ typedef enum
 
 } PurpleProtocolOptions;
 
+#include "media.h"
 #include "protocol.h"
+#include "status.h"
 
 #define PURPLE_TYPE_PROTOCOL_CHAT_ENTRY  (purple_protocol_chat_entry_get_type())
 
@@ -581,7 +583,7 @@ PurpleProtocol *purple_protocols_add(GType protocol_type, GError **error);
  * @param protocol  The protocol to remove.
  * @param error  Return location for a #GError or @c NULL. If provided, this
  *               will be set to the reason if removing fails.
-
+ *
  * @return TRUE if the protocol was removed, else FALSE.
  */
 gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error);

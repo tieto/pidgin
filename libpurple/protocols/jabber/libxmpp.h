@@ -24,8 +24,6 @@
 
 #include "jabber.h"
 
-#define XMPP_DOMAIN (g_quark_from_static_string(JABBER_ID))
-
 #define XMPP_TYPE_PROTOCOL             (xmpp_protocol_get_type())
 #define XMPP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), XMPP_TYPE_PROTOCOL, XMPPProtocol))
 #define XMPP_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), XMPP_TYPE_PROTOCOL, XMPPProtocolClass))

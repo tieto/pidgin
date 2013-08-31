@@ -24,8 +24,6 @@
 
 #include "oscar.h"
 
-#define AIM_DOMAIN (g_quark_from_static_string(AIM_ID))
-
 #define AIM_TYPE_PROTOCOL             (aim_protocol_get_type())
 #define AIM_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), AIM_TYPE_PROTOCOL, AIMProtocol))
 #define AIM_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), AIM_TYPE_PROTOCOL, AIMProtocolClass))

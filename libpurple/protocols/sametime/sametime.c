@@ -79,8 +79,6 @@ static PurpleProtocol *my_protocol = NULL;
 #define PLUGIN_AUTHOR    "Christopher (siege) O'Brien <siege@preoccupied.net>"
 #define PLUGIN_HOMEPAGE  "http://meanwhile.sourceforge.net/"
 
-#define PLUGIN_DOMAIN    (g_quark_from_static_string(PLUGIN_ID))
-
 
 /* plugin preference names */
 #define MW_PROTOCOL_OPT_BASE          "/plugins/prpl/meanwhile"
@@ -5760,12 +5758,9 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-  my_protocol = purple_protocols_add(MW_TYPE_PROTOCOL);
-
-  if (!my_protocol) {
-    g_set_error(error, PLUGIN_DOMAIN, 0, _("Failed to add sametime protocol"));
+  my_protocol = purple_protocols_add(MW_TYPE_PROTOCOL, error);
+  if (!my_protocol)
     return FALSE;
-  }
 
   return TRUE;
 }
@@ -5774,10 +5769,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-  if (!purple_protocols_remove(my_protocol)) {
-    g_set_error(error, PLUGIN_DOMAIN, 0, _("Failed to remove sametime protocol"));
+  if (!purple_protocols_remove(my_protocol, error))
     return FALSE;
-  }
 
   return TRUE;
 }

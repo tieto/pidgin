@@ -26,7 +26,6 @@
 
 #define YAHOO_ID     "prpl-yahoo"
 #define YAHOO_NAME   "Yahoo"
-#define YAHOO_DOMAIN (g_quark_from_static_string(YAHOO_ID))
 
 #define YAHOO_TYPE_PROTOCOL             (yahoo_protocol_get_type())
 #define YAHOO_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), YAHOO_TYPE_PROTOCOL, YahooProtocol))

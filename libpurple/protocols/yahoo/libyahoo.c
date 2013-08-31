@@ -304,11 +304,9 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	my_protocol = purple_protocols_add(YAHOO_TYPE_PROTOCOL);
-	if (!my_protocol) {
-		g_set_error(error, YAHOO_DOMAIN, 0, _("Failed to add yahoo protocol"));
+	my_protocol = purple_protocols_add(YAHOO_TYPE_PROTOCOL, error);
+	if (!my_protocol)
 		return FALSE;
-	}
 
 	yahoo_register_commands();
 
@@ -321,10 +319,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	if (!purple_protocols_remove(my_protocol)) {
-		g_set_error(error, YAHOO_DOMAIN, 0, _("Failed to remove yahoo protocol"));
+	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
-	}
 
 	return TRUE;
 }

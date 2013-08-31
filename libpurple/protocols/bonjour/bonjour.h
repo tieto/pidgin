@@ -38,7 +38,6 @@
 
 #define BONJOUR_ID     "prpl-bonjour"
 #define BONJOUR_NAME   "Bonjour"
-#define BONJOUR_DOMAIN (g_quark_from_static_string(BONJOUR_ID))
 
 #define BONJOUR_STATUS_ID_OFFLINE   "offline"
 #define BONJOUR_STATUS_ID_AVAILABLE "available"

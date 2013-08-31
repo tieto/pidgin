@@ -26,7 +26,6 @@
 
 #define ZEPHYR_ID     "prpl-zephyr"
 #define ZEPHYR_NAME   "Zephyr"
-#define ZEPHYR_DOMAIN (g_quark_from_static_string(ZEPHYR_ID))
 
 #define ZEPHYR_TYPE_PROTOCOL             (zephyr_protocol_get_type())
 #define ZEPHYR_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ZEPHYR_TYPE_PROTOCOL, ZephyrProtocol))

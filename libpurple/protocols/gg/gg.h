@@ -42,7 +42,6 @@
 
 #define GGP_ID     "prpl-gg"
 #define GGP_NAME   "Gadu-Gadu"
-#define GGP_DOMAIN (g_quark_from_static_string(GGP_ID))
 
 #define GGP_TYPE_PROTOCOL             (ggp_protocol_get_type())
 #define GGP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GGP_TYPE_PROTOCOL, GaduGaduProtocol))

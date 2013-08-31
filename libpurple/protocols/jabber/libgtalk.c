@@ -215,11 +215,9 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	my_protocol = purple_protocols_add(GTALK_TYPE_PROTOCOL);
-	if (!my_protocol) {
-		g_set_error(error, GTALK_DOMAIN, 0, _("Failed to add gtalk protocol"));
+	my_protocol = purple_protocols_add(GTALK_TYPE_PROTOCOL, error);
+	if (!my_protocol)
 		return FALSE;
-	}
 
 	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
@@ -232,10 +230,8 @@ static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	jabber_protocol_uninit(my_protocol);
-	if (!purple_protocols_remove(my_protocol)) {
-		g_set_error(error, GTALK_DOMAIN, 0, _("Failed to remove gtalk protocol"));
+	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
-	}
 
 	return TRUE;
 }

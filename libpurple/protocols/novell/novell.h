@@ -26,7 +26,6 @@
 
 #define NOVELL_ID     "prpl-novell"
 #define NOVELL_NAME   "GroupWise"
-#define NOVELL_DOMAIN (g_quark_from_static_string(NOVELL_ID))
 
 #define NOVELL_TYPE_PROTOCOL             (novell_protocol_get_type())
 #define NOVELL_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), NOVELL_TYPE_PROTOCOL, NovellProtocol))

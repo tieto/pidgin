@@ -70,8 +70,6 @@
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
 #define		MXIT_PLUGIN_DESC			"MXit"
 
-#define 	MXIT_PLUGIN_DOMAIN			(g_quark_from_static_string(MXIT_PLUGIN_ID))
-
 #define		MXIT_HTTP_USERAGENT			"libpurple-"DISPLAY_VERSION
 
 

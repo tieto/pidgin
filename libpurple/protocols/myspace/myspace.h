@@ -63,7 +63,6 @@
 
 #define MSIM_ID     "prpl-myspace"
 #define MSIM_NAME   "MySpaceIM"
-#define MSIM_DOMAIN (g_quark_from_static_string(MSIM_ID))
 
 #define MSIM_TYPE_PROTOCOL             (msim_protocol_get_type())
 #define MSIM_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSIM_TYPE_PROTOCOL, MySpaceProtocol))

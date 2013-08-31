@@ -1040,12 +1040,9 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	_irc_protocol = purple_protocols_add(IRC_TYPE_PROTOCOL);
-
-	if (!_irc_protocol) {
-		g_set_error(error, IRC_DOMAIN, 0, _("Failed to add irc protocol"));
+	_irc_protocol = purple_protocols_add(IRC_TYPE_PROTOCOL, error);
+	if (!_irc_protocol)
 		return FALSE;
-	}
 
 	return TRUE;
 }
@@ -1053,10 +1050,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	if (!purple_protocols_remove(_irc_protocol)) {
-		g_set_error(error, IRC_DOMAIN, 0, _("Failed to remove irc protocol"));
+	if (!purple_protocols_remove(_irc_protocol, error))
 		return FALSE;
-	}
 
 	return TRUE;
 }

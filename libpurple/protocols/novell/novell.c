@@ -3560,12 +3560,10 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	my_protocol = purple_protocols_add(NOVELL_TYPE_PROTOCOL);
+	my_protocol = purple_protocols_add(NOVELL_TYPE_PROTOCOL, error);
 
-	if (!my_protocol) {
-		g_set_error(error, NOVELL_DOMAIN, 0, _("Failed to add novell protocol"));
+	if (!my_protocol)
 		return FALSE;
-	}
 
 	return TRUE;
 }
@@ -3573,10 +3571,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	if (!purple_protocols_remove(my_protocol)) {
-		g_set_error(error, NOVELL_DOMAIN, 0, _("Failed to remove novell protocol"));
+	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
-	}
 
 	return TRUE;
 }

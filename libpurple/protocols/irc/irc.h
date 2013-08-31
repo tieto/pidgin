@@ -36,7 +36,6 @@
 
 #define IRC_ID     "prpl-irc"
 #define IRC_NAME   "IRC"
-#define IRC_DOMAIN (g_quark_from_static_string(IRC_ID))
 
 #define IRC_TYPE_PROTOCOL             (irc_protocol_get_type())
 #define IRC_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), IRC_TYPE_PROTOCOL, IRCProtocol))

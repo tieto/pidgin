@@ -26,7 +26,6 @@
 
 #define GTALK_ID     "prpl-gtalk"
 #define GTALK_NAME   "Google Talk (XMPP)"
-#define GTALK_DOMAIN (g_quark_from_static_string(GTALK_ID))
 
 #define GTALK_TYPE_PROTOCOL             (gtalk_protocol_get_type())
 #define GTALK_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GTALK_TYPE_PROTOCOL, GTalkProtocol))

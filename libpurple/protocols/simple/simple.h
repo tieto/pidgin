@@ -48,7 +48,6 @@
 
 #define SIMPLE_ID     "prpl-simple"
 #define SIMPLE_NAME   "SIMPLE"
-#define SIMPLE_DOMAIN (g_quark_from_static_string(SIMPLE_ID))
 
 #define SIMPLE_TYPE_PROTOCOL             (simple_protocol_get_type())
 #define SIMPLE_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), SIMPLE_TYPE_PROTOCOL, SIMPLEProtocol))

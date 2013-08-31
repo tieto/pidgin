@@ -3007,11 +3007,9 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	my_protocol = purple_protocols_add(MSN_TYPE_PROTOCOL);
-	if (!my_protocol) {
-		g_set_error(error, MSN_DOMAIN, 0, _("Failed to add msn protocol"));
+	my_protocol = purple_protocols_add(MSN_TYPE_PROTOCOL, error);
+	if (!my_protocol)
 		return FALSE;
-	}
 
 	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(msn_uri_handler), NULL);
@@ -3022,10 +3020,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	if (!purple_protocols_remove(my_protocol)) {
-		g_set_error(error, MSN_DOMAIN, 0, _("Failed to remove msn protocol"));
+	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
-	}
 
 	return TRUE;
 }
