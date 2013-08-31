@@ -3521,9 +3521,6 @@ get_global_moods(void)
 				PurpleProtocol *protocol = purple_connection_get_protocol(gc);
 				PurpleMood *mood = NULL;
 
-				/* PURPLE_CONNECTION_FLAG_SUPPORT_MOODS would not be set if the protocol doesn't
-				 * have get_moods, so using PURPLE_PROTOCOL_IMPLEMENTS isn't necessary
-				 * here */
 				for (mood = purple_protocol_iface_get_moods(protocol, account) ;
 				    mood->mood != NULL ; mood++) {
 					int mood_count =
