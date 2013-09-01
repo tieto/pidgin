@@ -613,8 +613,8 @@ struct _PurpleProtocolInterface
 			type = purple_plugin_register_type(plugin, BaseType, #TypeName, \
 				                               &info, TypeFlags); \
 			if (type != G_TYPE_INVALID) \
-				purple_plugin_add_interface(plugin, type, PURPLE_TYPE_PROTOCOL_INTERFACE, \
-					                        &iface_info); \
+				g_type_add_interface_static(type, PURPLE_TYPE_PROTOCOL_INTERFACE, \
+				                            &iface_info); \
 		} \
 		return type; \
 	}
