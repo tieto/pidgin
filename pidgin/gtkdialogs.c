@@ -832,9 +832,10 @@ void pidgin_dialogs_plugins_info(void)
 	PurplePlugin *plugin = NULL;
 	PurplePluginInfo *info;
 	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
-	char *pname = NULL, *pauthor = NULL;
+	char *pname = NULL, *authors, *pauthors;
 	const char *pver, *plicense, *pwebsite, *pid;
 	gboolean ploaded, ploadable;
+	const char * const *authorlist;
 	static GtkWidget *plugins_info = NULL;
 
 	str = g_string_sized_new(4096);
@@ -848,10 +849,20 @@ void pidgin_dialogs_plugins_info(void)
 		info = purple_plugin_get_info(plugin);
 
 		pname = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
-		if ((pauthor = (char *)purple_plugin_info_get_author(info)) != NULL)
-			pauthor = g_markup_escape_text(pauthor, -1);
+		authorlist = purple_plugin_info_get_authors(info);
+
+		if (authorlist)
+			authors = g_strjoinv(", ", (gchar **)authorlist);
+		else
+			authors = NULL;
+
+		if (authors)
+			pauthors = g_markup_escape_text(authors, -1);
+		else
+			pauthors = NULL;
+
 		pver = purple_plugin_info_get_version(info);
-		plicense = purple_plugin_info_get_license(info);
+		plicense = purple_plugin_info_get_license_id(info);
 		pwebsite = purple_plugin_info_get_website(info);
 		pid = purple_plugin_info_get_id(info);
 		ploadable = !purple_plugin_info_get_error(info);
@@ -859,7 +870,7 @@ void pidgin_dialogs_plugins_info(void)
 
 		g_string_append_printf(str,
 				"<dt>%s</dt><dd>"
-				"<b>Author:</b> %s<br/>"
+				"<b>%s:</b> %s<br/>"
 				"<b>Version:</b> %s<br/>"
 				"<b>License:</b> %s<br/>"
 				"<b>Website:</b> %s<br/>"
@@ -868,7 +879,8 @@ void pidgin_dialogs_plugins_info(void)
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
 				pname    ? pname    : "",
-				pauthor  ? pauthor  : "",
+				(g_strv_length((gchar **)authorlist) > 1 ? "Authors" : "Author"),
+				pauthors ? pauthors : "",
 				pver     ? pver     : "",
 				plicense ? plicense : "",
 				pwebsite ? pwebsite : "",
@@ -877,7 +889,8 @@ void pidgin_dialogs_plugins_info(void)
 				ploaded   ? "Yes" : "No");
 
 		g_free(pname);
-		g_free(pauthor);
+		g_free(pauthors);
+		g_free(authors);
 	}
 	g_list_free(plugins);
 

@@ -63,7 +63,7 @@ static GtkWidget *plugin_dialog = NULL;
 static GtkLabel *plugin_name = NULL;
 static GtkTextBuffer *plugin_desc = NULL;
 static GtkLabel *plugin_error = NULL;
-static GtkLabel *plugin_author = NULL;
+static GtkLabel *plugin_authors = NULL;
 static GtkLabel *plugin_website = NULL;
 static gchar *plugin_website_uri = NULL;
 static GtkLabel *plugin_filename = NULL;
@@ -501,6 +501,8 @@ static gboolean ensure_plugin_visible(void *data)
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	gchar *buf, *tmp, *name, *version;
+	gchar *authors = NULL;
+	const gchar * const *authorlist;
 	GtkTreeIter  iter;
 	GValue val;
 	PurplePlugin *plug;
@@ -536,7 +538,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	g_free(buf);
 
 	gtk_text_buffer_set_text(plugin_desc, purple_plugin_info_get_description(info), -1);
-	gtk_label_set_text(plugin_author, purple_plugin_info_get_author(info));
+
+	authorlist = purple_plugin_info_get_authors(info);
+	if (authorlist)
+		authors = g_strjoinv(", ", (gchar **)authorlist);
+	gtk_label_set_text(plugin_authors, authors);
+	g_free(authors);
+
 	gtk_label_set_text(plugin_filename, purple_plugin_get_filename(plug));
 
 	g_free(plugin_website_uri);
@@ -688,18 +696,26 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	GtkTreeModel *model = gtk_tree_view_get_model(treeview);
 	PangoLayout *layout;
 	int width, height;
-	char *markup, *name, *desc, *author;
+	const char * const *authorlist;
+	char *markup, *name, *desc;
+	char *authors = NULL, *pauthors = NULL;
 
 	if (!gtk_tree_model_get_iter(model, &iter, path))
 		return FALSE;
 
 	gtk_tree_model_get(model, &iter, 2, &plugin, -1);
 	info = purple_plugin_get_info(plugin);
+	authorlist = purple_plugin_info_get_authors(info);
+
+	if (authorlist)
+		authors = g_strjoinv(", ", (gchar **)authorlist);
+	if (authors)
+		pauthors = g_markup_escape_text(authors, -1);
 
 	markup = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>\n<b>%s:</b> %s\n<b>%s:</b> %s",
 			name = g_markup_escape_text(purple_plugin_info_get_name(info), -1),
 			_("Description"), desc = g_markup_escape_text(purple_plugin_info_get_description(info), -1),
-			_("Author"), author = g_markup_escape_text(purple_plugin_info_get_author(info), -1));
+			(g_strv_length((gchar **)authorlist) > 1 ? _("Authors") : _("Author")), pauthors);
 
 	layout = gtk_widget_create_pango_layout(tipwindow, NULL);
 	pango_layout_set_markup(layout, markup, -1);
@@ -716,7 +732,8 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	g_free(markup);
 	g_free(name);
 	g_free(desc);
-	g_free(author);
+	g_free(pauthors);
+	g_free(authors);
 
 	return TRUE;
 }
@@ -771,12 +788,12 @@ create_details()
 	gtk_label_set_selectable(plugin_error, TRUE);
 	gtk_box_pack_start(vbox, GTK_WIDGET(plugin_error), FALSE, FALSE, 0);
 
-	plugin_author = GTK_LABEL(gtk_label_new(NULL));
-	gtk_label_set_line_wrap(plugin_author, FALSE);
-	gtk_misc_set_alignment(GTK_MISC(plugin_author), 0, 0);
-	gtk_label_set_selectable(plugin_author, TRUE);
+	plugin_authors = GTK_LABEL(gtk_label_new(NULL));
+	gtk_label_set_line_wrap(plugin_authors, FALSE);
+	gtk_misc_set_alignment(GTK_MISC(plugin_authors), 0, 0);
+	gtk_label_set_selectable(plugin_authors, TRUE);
 	pidgin_add_widget_to_vbox(vbox, "", sg,
-		GTK_WIDGET(plugin_author), TRUE, &label);
+		GTK_WIDGET(plugin_authors), TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Written by:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
