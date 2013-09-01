@@ -729,8 +729,8 @@ mxit_protocol_base_init( MXitProtocolClass *klass )
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = MXIT_PLUGIN_ID;
-	proto_class->name      = MXIT_PLUGIN_NAME;
+	proto_class->id        = MXIT_PROTOCOL_ID;
+	proto_class->name      = MXIT_PROTOCOL_NAME;
 	proto_class->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
 	                         OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE |
 	                         OPT_PROTO_INVITE_MESSAGE |

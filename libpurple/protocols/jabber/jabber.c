@@ -4065,8 +4065,8 @@ jabber_protocol_base_init(JabberProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 
-	proto_class->id        = JABBER_ID;
-	proto_class->name      = JABBER_NAME;
+	proto_class->id        = "jabber";
+	proto_class->name      = "XMPP";
 	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	                         OPT_PROTO_MAIL_CHECK |
 #ifdef HAVE_CYRUS_SASL

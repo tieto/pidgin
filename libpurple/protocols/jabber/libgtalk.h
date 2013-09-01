@@ -24,9 +24,6 @@
 
 #include "jabber.h"
 
-#define GTALK_ID     "gtalk"
-#define GTALK_NAME   "Google Talk (XMPP)"
-
 #define GTALK_TYPE_PROTOCOL             (gtalk_protocol_get_type())
 #define GTALK_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GTALK_TYPE_PROTOCOL, GTalkProtocol))
 #define GTALK_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), GTALK_TYPE_PROTOCOL, GTalkProtocolClass))

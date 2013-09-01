@@ -635,8 +635,8 @@ bonjour_protocol_base_init(BonjourProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = BONJOUR_ID;
-	proto_class->name      = BONJOUR_NAME;
+	proto_class->id        = "bonjour";
+	proto_class->name      = "Bonjour";
 	proto_class->options   = OPT_PROTO_NO_PASSWORD;
 	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
 	                                                 0, 0, 96, 96, 65535,
@@ -701,8 +701,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           BONJOUR_ID,
-		"name",         BONJOUR_NAME,
+		"id",           "protocol-bonjour",
+		"name",         "Bonjour Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Bonjour Protocol Plugin"),

@@ -24,9 +24,6 @@
 
 #include "protocol.h"
 
-#define ZEPHYR_ID     "zephyr"
-#define ZEPHYR_NAME   "Zephyr"
-
 #define ZEPHYR_TYPE_PROTOCOL             (zephyr_protocol_get_type())
 #define ZEPHYR_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ZEPHYR_TYPE_PROTOCOL, ZephyrProtocol))
 #define ZEPHYR_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ZEPHYR_TYPE_PROTOCOL, ZephyrProtocolClass))

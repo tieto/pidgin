@@ -112,8 +112,8 @@ gtalk_protocol_base_init(GTalkProtocolClass *klass)
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
-	proto_class->id        = GTALK_ID;
-	proto_class->name      = GTALK_NAME;
+	proto_class->id        = "gtalk";
+	proto_class->name      = "Google Talk (XMPP)";
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), "gmail.com", '@');
@@ -197,15 +197,15 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",            GTALK_ID,
-		"name",          GTALK_NAME,
+		"id",            "protocol-gtalk",
+		"name",          "Google Talk Protocol",
 		"version",       DISPLAY_VERSION,
 		"category",      N_("Protocol"),
 		"summary",       N_("Google Talk Protocol Plugin"),
 		"description",   N_("Google Talk Protocol Plugin"),
 		"website",       PURPLE_WEBSITE,
 		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  JABBER_ID,
+		"dependencies",  "protocol-xmpp",
 		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
 		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL

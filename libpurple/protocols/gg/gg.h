@@ -40,9 +40,6 @@
 
 #define GGP_UIN_LEN_MAX 10
 
-#define GGP_ID     "gg"
-#define GGP_NAME   "Gadu-Gadu"
-
 #define GGP_TYPE_PROTOCOL             (ggp_protocol_get_type())
 #define GGP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GGP_TYPE_PROTOCOL, GaduGaduProtocol))
 #define GGP_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), GGP_TYPE_PROTOCOL, GaduGaduProtocolClass))

@@ -2055,8 +2055,8 @@ simple_protocol_base_init(SIMPLEProtocolClass *klass)
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
-	proto_class->id        = SIMPLE_ID;
-	proto_class->name      = SIMPLE_NAME;
+	proto_class->id        = "simple";
+	proto_class->name      = "SIMPLE";
 
 	split = purple_account_user_split_new(_("Server"), "", '@');
 	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
@@ -2101,8 +2101,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           SIMPLE_ID,
-		"name",         SIMPLE_NAME,
+		"id",           "protocol-simple",
+		"name",         "SIMPLE Protocol",
 		"version",		DISPLAY_VERSION,
 		"category",		N_("Protocol"),
 		"summary",		N_("SIP/SIMPLE Protocol Plugin"),

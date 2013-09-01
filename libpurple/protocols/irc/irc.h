@@ -34,9 +34,6 @@
 #include "roomlist.h"
 #include "sslconn.h"
 
-#define IRC_ID     "irc"
-#define IRC_NAME   "IRC"
-
 #define IRC_TYPE_PROTOCOL             (irc_protocol_get_type())
 #define IRC_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), IRC_TYPE_PROTOCOL, IRCProtocol))
 #define IRC_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), IRC_TYPE_PROTOCOL, IRCProtocolClass))

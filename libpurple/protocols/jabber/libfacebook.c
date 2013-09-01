@@ -112,8 +112,8 @@ facebook_protocol_base_init(FacebookProtocolClass *klass)
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
-	proto_class->id        = FACEBOOK_ID;
-	proto_class->name      = FACEBOOK_NAME;
+	proto_class->id        = "facebook-xmpp";
+	proto_class->name      = "Facebook (XMPP)";
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), "chat.facebook.com", '@');
@@ -204,15 +204,15 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",            FACEBOOK_ID,
-		"name",          FACEBOOK_NAME,
+		"id",            "protocol-facebook-",
+		"name",          "Facebook XMPP Protocol",
 		"version",       DISPLAY_VERSION,
 		"category",      N_("Protocol"),
 		"summary",       N_("Facebook XMPP Protocol Plugin"),
 		"description",   N_("Facebook XMPP Protocol Plugin"),
 		"website",       PURPLE_WEBSITE,
 		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  JABBER_ID,
+		"dependencies",  "protocol-xmpp",
 		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
 		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL

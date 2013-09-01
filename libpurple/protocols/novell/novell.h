@@ -24,9 +24,6 @@
 
 #include "protocol.h"
 
-#define NOVELL_ID     "novell"
-#define NOVELL_NAME   "GroupWise"
-
 #define NOVELL_TYPE_PROTOCOL             (novell_protocol_get_type())
 #define NOVELL_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), NOVELL_TYPE_PROTOCOL, NovellProtocol))
 #define NOVELL_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), NOVELL_TYPE_PROTOCOL, NovellProtocolClass))

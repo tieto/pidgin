@@ -2072,8 +2072,8 @@ silcpurple_protocol_base_init(SILCProtocolClass *klass)
 	PurpleKeyValuePair *kvp;
 	GList *list = NULL;
 
-	proto_class->id        = SILCPURPLE_ID;
-	proto_class->name      = SILCPURPLE_NAME;
+	proto_class->id        = "silc";
+	proto_class->name      = "SILC";
 	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	                         OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |
 	                         OPT_PROTO_SLASH_COMMANDS_NATIVE;
@@ -2081,7 +2081,7 @@ silcpurple_protocol_base_init(SILCProtocolClass *klass)
 	                                                 0, 0, 96, 96, 0,
 	                                                 PURPLE_ICON_SCALE_DISPLAY);
 
-	proto_class->whiteboard_protocol_ops = &silcpurple_wb_ops;
+	proto_class->whiteboard_ops = &silcpurple_wb_ops;
 
 	split = purple_account_user_split_new(_("Network"), "silcnet.org", '@');
 	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
@@ -2195,8 +2195,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           SILCPURPLE_ID,
-		"name",         SILCPURPLE_NAME,
+		"id",           "protocol-silc",
+		"name",         "SILC Protocol",
 		"version",      "1.1",
 		"category",     N_("Protocol"),
 		"summary",      N_("SILC Protocol Plugin"),

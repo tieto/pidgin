@@ -46,9 +46,6 @@
 #define PUBLISH_EXPIRATION 600
 #define SUBSCRIBE_EXPIRATION 1200
 
-#define SIMPLE_ID     "simple"
-#define SIMPLE_NAME   "SIMPLE"
-
 #define SIMPLE_TYPE_PROTOCOL             (simple_protocol_get_type())
 #define SIMPLE_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), SIMPLE_TYPE_PROTOCOL, SIMPLEProtocol))
 #define SIMPLE_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), SIMPLE_TYPE_PROTOCOL, SIMPLEProtocolClass))

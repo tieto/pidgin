@@ -82,9 +82,6 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "https://pidgin.im/"
 
-#define JABBER_ID    "jabber"
-#define JABBER_NAME  "XMPP"
-
 #define JABBER_TYPE_PROTOCOL             (jabber_protocol_get_type())
 #define JABBER_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), JABBER_TYPE_PROTOCOL, JabberProtocol))
 #define JABBER_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), JABBER_TYPE_PROTOCOL, JabberProtocolClass))

@@ -24,9 +24,6 @@
 
 #include "oscar.h"
 
-#define ICQ_ID     "icq"
-#define ICQ_NAME   "ICQ"
-
 #define ICQ_TYPE_PROTOCOL             (icq_protocol_get_type())
 #define ICQ_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ICQ_TYPE_PROTOCOL, ICQProtocol))
 #define ICQ_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ICQ_TYPE_PROTOCOL, ICQProtocolClass))

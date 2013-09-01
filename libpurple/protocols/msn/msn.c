@@ -2880,8 +2880,8 @@ msn_protocol_base_init(MSNProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = MSN_ID;
-	proto_class->name      = MSN_NAME;
+	proto_class->id        = "msn";
+	proto_class->name      = "MSN";
 	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_INVITE_MESSAGE;
 	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif",
 	                                                    0, 0, 96, 96, 0,
@@ -2990,8 +2990,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           MSN_ID,
-		"name",         MSN_NAME,
+		"id",           "protocol-msn",
+		"name",         "MSN Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Windows Live Messenger Protocol Plugin"),

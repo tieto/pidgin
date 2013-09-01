@@ -101,7 +101,7 @@ typedef struct {
  * helpers
  */
 static PurpleConnection *get_null_gc(const char *username) {
-  PurpleAccount *acct = purple_accounts_find(username, NULL_ID);
+  PurpleAccount *acct = purple_accounts_find(username, "null");
   if (acct && purple_account_is_connected(acct))
     return purple_account_get_connection(acct);
   else
@@ -112,7 +112,7 @@ static void call_if_nullprotocol(gpointer data, gpointer userdata) {
   PurpleConnection *gc = (PurpleConnection *)(data);
   GcFuncData *gcfdata = (GcFuncData *)userdata;
 
-  if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), NULL_ID))
+  if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), "null"))
     gcfdata->fn(gcfdata->from, gc, gcfdata->userdata);
 }
 
@@ -412,7 +412,7 @@ static int null_send_im(PurpleConnection *gc, const char *who,
   const char *from_username = purple_account_get_username(purple_connection_get_account(gc));
   PurpleMessageFlags receive_flags = ((flags & ~PURPLE_MESSAGE_SEND)
                                       | PURPLE_MESSAGE_RECV);
-  PurpleAccount *to_acct = purple_accounts_find(who, NULL_ID);
+  PurpleAccount *to_acct = purple_accounts_find(who, "null");
   PurpleConnection *to;
 
   purple_debug_info("nullprotocol", "sending message from %s to %s: %s\n",
@@ -506,7 +506,7 @@ static void null_get_info(PurpleConnection *gc, const char *username) {
     g_free(msg);
   }
 
-  acct = purple_accounts_find(username, NULL_ID);
+  acct = purple_accounts_find(username, "null");
   if (acct)
     body = purple_account_get_user_info(acct);
   else
@@ -720,7 +720,7 @@ static void null_chat_invite(PurpleConnection *gc, int id,
   const char *username = purple_account_get_username(purple_connection_get_account(gc));
   PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
   const char *room = purple_conversation_get_name(PURPLE_CONVERSATION(chat));
-  PurpleAccount *to_acct = purple_accounts_find(who, NULL_ID);
+  PurpleAccount *to_acct = purple_accounts_find(who, "null");
 
   purple_debug_info("nullprotocol", "%s is inviting %s to join chat room %s\n",
                     username, who, room);
@@ -1058,8 +1058,8 @@ null_protocol_base_init(NullProtocolClass *klass)
   PurpleAccountUserSplit *split;
   PurpleAccountOption *option;
 
-  proto_class->id        = NULL_ID;
-  proto_class->name      = NULL_NAME;
+  proto_class->id        = "null";
+  proto_class->name      = "Null - Testing Protocol";
   proto_class->options   = OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC;
   proto_class->icon_spec = purple_buddy_icon_spec_new(
       "png,jpg,gif",                   /* format */
@@ -1169,8 +1169,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
   return purple_plugin_info_new(
-    "id",           NULL_ID,
-    "name",         NULL_NAME,
+    "id",           "protocol-null",
+    "name",         "Null Protocol",
     "version",      DISPLAY_VERSION,
     "category",     N_("Protocol"),
     "summary",      N_("Null Protocol Plugin"),

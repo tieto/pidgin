@@ -193,15 +193,15 @@ yahoo_protocol_base_init(YahooProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = YAHOO_ID;
-	proto_class->name      = YAHOO_NAME;
+	proto_class->id        = "yahoo";
+	proto_class->name      = "Yahoo";
 	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC |
 	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
 	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
 	                                                    96, 96, 96, 96, 0,
 	                                                    PURPLE_ICON_SCALE_SEND);
 
-	proto_class->whiteboard_protocol_ops = &yahoo_whiteboard_ops;
+	proto_class->whiteboard_ops = &yahoo_whiteboard_ops;
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
@@ -287,8 +287,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           YAHOO_ID,
-		"name",         YAHOO_NAME,
+		"id",           "protocol-yahoo",
+		"name",         "Yahoo Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Yahoo! Protocol Plugin"),

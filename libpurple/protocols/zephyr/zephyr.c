@@ -2873,8 +2873,8 @@ zephyr_protocol_base_init(ZephyrProtocolClass *klass)
 	PurpleAccountOption *option;
 	char *tmp = get_exposure_level();
 
-	proto_class->id      = ZEPHYR_ID;
-	proto_class->name    = ZEPHYR_NAME;
+	proto_class->id      = "zephyr";
+	proto_class->name    = "Zephyr";
 	proto_class->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
 
 	option = purple_account_option_bool_new(_("Use tzc"), "use_tzc", FALSE);
@@ -2942,8 +2942,8 @@ static void zephyr_protocol_base_finalize(ZephyrProtocolClass *klass) { }
 static PurplePluginInfo *plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           ZEPHYR_ID,
-		"name",         ZEPHYR_NAME,
+		"id",           "protocol-zephyr",
+		"name",         "Zephyr Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Zephyr Protocol Plugin"),

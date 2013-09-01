@@ -55,8 +55,8 @@ icq_protocol_base_init(ICQProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = ICQ_ID;
-	proto_class->name      = ICQ_NAME;
+	proto_class->id        = "icq";
+	proto_class->name      = "ICQ";
 
 	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(TRUE, TRUE));
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
@@ -80,15 +80,15 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",            ICQ_ID,
-		"name",          ICQ_NAME,
+		"id",            "protocol-icq",
+		"name",          "ICQ Protocol",
 		"version",       DISPLAY_VERSION,
 		"category",      N_("Protocol"),
 		"summary",       N_("ICQ Protocol Plugin"),
 		"description",   N_("ICQ Protocol Plugin"),
 		"website",       PURPLE_WEBSITE,
 		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  AIM_ID,
+		"dependencies",  "protocol-aim",
 		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
 		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL

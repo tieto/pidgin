@@ -1408,8 +1408,8 @@ ggp_protocol_base_init(GaduGaduProtocolClass *klass)
 	PurpleAccountOption *ggp_server_option;
 	GList *encryption_options = NULL;
 
-	proto_class->id        = GGP_ID;
-	proto_class->name      = GGP_NAME;
+	proto_class->id        = "gg";
+	proto_class->name      = "Gadu-Gadu";
 	proto_class->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
 	                         OPT_PROTO_IM_IMAGE;
 	proto_class->icon_spec = purple_buddy_icon_spec_new("png",
@@ -1503,8 +1503,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           GGP_ID,
-		"name",         GGP_NAME,
+		"id",           "protocol-gg",
+		"name",         "Gadu-Gadu Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Gadu-Gadu Protocol Plugin"),

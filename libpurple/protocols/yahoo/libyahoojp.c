@@ -73,8 +73,8 @@ yahoojp_protocol_base_init(YahooJPProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = YAHOOJP_ID;
-	proto_class->name      = YAHOOJP_NAME;
+	proto_class->id        = "yahoojp";
+	proto_class->name      = "Yahoo JAPAN";
 
 	/* delete yahoo's protocol options */
 	while (proto_class->protocol_options) {
@@ -116,15 +116,15 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",            YAHOOJP_ID,
-		"name",          YAHOOJP_NAME,
+		"id",            "protocol-yahoojp",
+		"name",          "Yahoo JAPAN Protocol",
 		"version",       DISPLAY_VERSION,
 		"category",      N_("Protocol"),
 		"summary",       N_("Yahoo! JAPAN Protocol Plugin"),
 		"description",   N_("Yahoo! JAPAN Protocol Plugin"),
 		"website",       PURPLE_WEBSITE,
 		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  YAHOO_ID,
+		"dependencies",  "protocol-yahoo",
 		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
 		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL

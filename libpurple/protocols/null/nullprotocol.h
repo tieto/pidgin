@@ -24,9 +24,6 @@
 
 #include "protocol.h"
 
-#define NULL_ID     "null"
-#define NULL_NAME   "Null - Testing Plugin"
-
 #define NULL_TYPE_PROTOCOL             (null_protocol_get_type())
 #define NULL_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), NULL_TYPE_PROTOCOL, NullProtocol))
 #define NULL_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), NULL_TYPE_PROTOCOL, NullProtocolClass))

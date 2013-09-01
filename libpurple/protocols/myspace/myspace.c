@@ -3387,8 +3387,8 @@ msim_protocol_base_init(MySpaceProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = MSIM_ID;
-	proto_class->name      = MSIM_NAME;
+	proto_class->id        = "myspace";
+	proto_class->name      = "MySpaceIM";
 	proto_class->options   = OPT_PROTO_USE_POINTSIZE /* specify font size in sane point size */
 	                         | OPT_PROTO_MAIL_CHECK;
 	                      /* | OPT_PROTO_IM_IMAGE - TODO: direct images. */
@@ -3465,8 +3465,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           MSIM_ID,
-		"name",         MSIM_NAME,
+		"id",           "protocol-myspace",
+		"name",         "MySpaceIM Protocol",
 		"version",      MSIM_PROTOCOL_VERSION_STRING,
 		"category",     "Protocol",
 		"summary",      "MySpaceIM Protocol Plugin",

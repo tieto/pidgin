@@ -61,9 +61,14 @@
 #include	"profile.h"
 
 
+/* Protocol details */
+#define		MXIT_PROTOCOL_ID			"loubserp-mxit"
+#define		MXIT_PROTOCOL_NAME			"MXit"
+
+
 /* Plugin details */
-#define		MXIT_PLUGIN_ID				"loubserp-mxit"
-#define		MXIT_PLUGIN_NAME			"MXit"
+#define		MXIT_PLUGIN_ID				"protocol-mxit"
+#define		MXIT_PLUGIN_NAME			"MXit Protocol"
 #define		MXIT_PLUGIN_CATEGORY		"Protocol"
 #define		MXIT_PLUGIN_AUTHOR			"Pieter Loubser <libpurple@mxit.com>"
 #define		MXIT_PLUGIN_WWW				"http://www.mxit.com"

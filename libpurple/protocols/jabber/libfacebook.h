@@ -24,9 +24,6 @@
 
 #include "jabber.h"
 
-#define FACEBOOK_ID     "facebook-xmpp"
-#define FACEBOOK_NAME   "Facebook (XMPP)"
-
 #define FACEBOOK_TYPE_PROTOCOL             (facebook_protocol_get_type())
 #define FACEBOOK_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), FACEBOOK_TYPE_PROTOCOL, FacebookProtocol))
 #define FACEBOOK_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), FACEBOOK_TYPE_PROTOCOL, FacebookProtocolClass))

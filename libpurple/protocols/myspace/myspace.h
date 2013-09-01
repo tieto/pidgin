@@ -61,9 +61,6 @@
 #include "markup.h"
 #include "user.h"
 
-#define MSIM_ID     "myspace"
-#define MSIM_NAME   "MySpaceIM"
-
 #define MSIM_TYPE_PROTOCOL             (msim_protocol_get_type())
 #define MSIM_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSIM_TYPE_PROTOCOL, MySpaceProtocol))
 #define MSIM_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MSIM_TYPE_PROTOCOL, MySpaceProtocolClass))

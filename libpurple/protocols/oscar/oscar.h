@@ -56,9 +56,6 @@
 #include "libc_interface.h"
 #endif
 
-#define AIM_ID     "aim"
-#define AIM_NAME   "AIM"
-
 #define OSCAR_TYPE_PROTOCOL             (oscar_protocol_get_type())
 #define OSCAR_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), OSCAR_TYPE_PROTOCOL, OscarProtocol))
 #define OSCAR_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), OSCAR_TYPE_PROTOCOL, OscarProtocolClass))

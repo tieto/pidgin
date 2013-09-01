@@ -67,12 +67,16 @@
 
 static PurpleProtocol *my_protocol = NULL;
 
+#define PROTOCOL_ID        "meanwhile"
+#define PROTOCOL_NAME      "Sametime"
+
+
 /* considering that there's no display of this information for protocols,
    I don't know why I even bother providing these. Oh valiant reader,
    I do it all for you. */
 /* scratch that, I just added it to the protocol options panel */
-#define PLUGIN_ID        "meanwhile"
-#define PLUGIN_NAME      "Sametime"
+#define PLUGIN_ID        "protocol-sametime"
+#define PLUGIN_NAME      "Sametime Protocol"
 #define PLUGIN_CATEGORY  "Protocol"
 #define PLUGIN_SUMMARY   "Sametime Protocol Plugin"
 #define PLUGIN_DESC      "Open implementation of a Lotus Sametime client"
@@ -5624,8 +5628,8 @@ mw_protocol_base_init(SametimeProtocolClass *klass)
   GLogLevelFlags logflags =
     G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION;
 
-  proto_class->id      = PLUGIN_ID;
-  proto_class->name    = PLUGIN_NAME;
+  proto_class->id      = PROTOCOL_ID;
+  proto_class->name    = PROTOCOL_NAME;
   proto_class->options = OPT_PROTO_IM_IMAGE;
 
   /* set up the preferences */
@@ -5739,7 +5743,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
   return purple_plugin_info_new(
-    "id",           "protocol-" PLUGIN_ID,
+    "id",           PLUGIN_ID,
     "name",         PLUGIN_NAME,
     "version",      DISPLAY_VERSION,
     "category",     PLUGIN_CATEGORY,

@@ -930,8 +930,8 @@ irc_protocol_base_init(IRCProtocolClass *klass)
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
-	proto_class->id        = IRC_ID;
-	proto_class->name      = IRC_NAME;
+	proto_class->id        = "irc";
+	proto_class->name      = "IRC";
 	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL
 	                         | OPT_PROTO_SLASH_COMMANDS_NATIVE;
 
@@ -1023,8 +1023,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           IRC_ID,
-		"name",         IRC_NAME,
+		"id",           "protocol-irc",
+		"name",         "IRC Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("IRC Protocol Plugin"),

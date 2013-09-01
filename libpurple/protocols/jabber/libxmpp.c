@@ -181,8 +181,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           JABBER_ID,
-		"name",         JABBER_NAME,
+		"id",           "protocol-xmpp",
+		"name",         "XMPP Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("XMPP Protocol Plugin"),

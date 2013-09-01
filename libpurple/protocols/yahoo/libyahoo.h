@@ -24,9 +24,6 @@
 
 #include "protocol.h"
 
-#define YAHOO_ID     "yahoo"
-#define YAHOO_NAME   "Yahoo"
-
 #define YAHOO_TYPE_PROTOCOL             (yahoo_protocol_get_type())
 #define YAHOO_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), YAHOO_TYPE_PROTOCOL, YahooProtocol))
 #define YAHOO_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), YAHOO_TYPE_PROTOCOL, YahooProtocolClass))

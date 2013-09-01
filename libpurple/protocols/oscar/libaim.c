@@ -39,8 +39,8 @@ aim_protocol_base_init(AIMProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = AIM_ID;
-	proto_class->name      = AIM_NAME;
+	proto_class->id        = "aim";
+	proto_class->name      = "AIM";
 
 	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(FALSE, TRUE));
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
@@ -62,8 +62,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           AIM_ID,
-		"name",         AIM_NAME,
+		"id",           "protocol-aim",
+		"name",         "AIM Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("AIM Protocol Plugin"),

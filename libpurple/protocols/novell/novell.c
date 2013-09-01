@@ -3490,8 +3490,8 @@ novell_protocol_base_init(NovellProtocolClass *klass)
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = NOVELL_ID;
-	proto_class->name      = NOVELL_NAME;
+	proto_class->id        = "novell";
+	proto_class->name      = "GroupWise";
 
 	option = purple_account_option_string_new(_("Server address"), "server", NULL);
 	proto_class->protocol_options =
@@ -3543,8 +3543,8 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           NOVELL_ID,
-		"name",         NOVELL_NAME,
+		"id",           "protocol-novell",
+		"name",         "Novell GroupWise Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
 		"summary",      N_("Novell GroupWise Messenger Protocol Plugin"),
