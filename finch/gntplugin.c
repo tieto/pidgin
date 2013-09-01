@@ -236,13 +236,18 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 {
 	PurplePlugin *plugin = current;
 	PurplePluginInfo *info;
-	char *text;
+	char *text, *authors = NULL;
+	const char * const *authorlist;
 	GList *list = NULL, *iter = NULL;
 
 	if (!plugin)
 		return;
 
 	info = purple_plugin_get_info(plugin);
+	authorlist = purple_plugin_info_get_authors(info);
+
+	if (authorlist)
+		authors = g_strjoinv(", ", (gchar **)authorlist);
 
 	/* If the selected plugin was unseen before, mark it as seen. But save the list
 	 * only when the plugin list is closed. So if the user enables a plugin, and it
@@ -260,18 +265,23 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 
 	/* XXX: Use formatting and stuff */
 	gnt_text_view_clear(GNT_TEXT_VIEW(plugins.aboot));
-	text = g_strdup_printf(_("Name: %s\nVersion: %s\nDescription: %s\nAuthor: %s\nWebsite: %s\nFilename: %s\n"),
+	text = g_strdup_printf((g_strv_length((gchar **)authorlist) > 1 ?
+			_("Name: %s\nVersion: %s\nDescription: %s\nAuthors: %s\nWebsite: %s\nFilename: %s\n") :
+			_("Name: %s\nVersion: %s\nDescription: %s\nAuthor: %s\nWebsite: %s\nFilename: %s\n")),
 			SAFE(_(purple_plugin_info_get_name(info))),
 			SAFE(_(purple_plugin_info_get_version(info))),
 			SAFE(_(purple_plugin_info_get_description(info))),
-			SAFE(_(purple_plugin_info_get_author(info))),
+			SAFE(authors),
 			SAFE(_(purple_plugin_info_get_website(info))),
 			SAFE(purple_plugin_get_filename(plugin)));
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(plugins.aboot),
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
+
 	g_free(text);
+	g_free(authors);
+
 	decide_conf_button(plugin);
 }
 
