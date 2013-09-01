@@ -80,8 +80,9 @@ static PurpleProtocol *my_protocol = NULL;
 #define PLUGIN_CATEGORY  "Protocol"
 #define PLUGIN_SUMMARY   "Sametime Protocol Plugin"
 #define PLUGIN_DESC      "Open implementation of a Lotus Sametime client"
-#define PLUGIN_AUTHOR    "Christopher (siege) O'Brien <siege@preoccupied.net>"
 #define PLUGIN_HOMEPAGE  "http://meanwhile.sourceforge.net/"
+#define PLUGIN_AUTHORS \
+  { "Christopher (siege) O'Brien <siege@preoccupied.net>", NULL }
 
 
 /* plugin preference names */
@@ -5742,6 +5743,8 @@ mw_protocol_interface_init(PurpleProtocolInterface *iface)
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+  const gchar * const authors[] = PLUGIN_AUTHORS;
+
   return purple_plugin_info_new(
     "id",           PLUGIN_ID,
     "name",         PLUGIN_NAME,
@@ -5749,7 +5752,7 @@ plugin_query(GError **error)
     "category",     PLUGIN_CATEGORY,
     "summary",      PLUGIN_SUMMARY,
     "description",  PLUGIN_DESC,
-    "author",       PLUGIN_AUTHOR,
+    "authors",      authors,
     "website",      PLUGIN_HOMEPAGE,
     "abi-version",  PURPLE_ABI_VERSION,
     "flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |

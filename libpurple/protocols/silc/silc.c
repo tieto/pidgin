@@ -2194,6 +2194,11 @@ static void silcpurple_protocol_base_finalize(SILCProtocolClass *klass) { }
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Pekka Riikonen",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",           "protocol-silc",
 		"name",         "SILC Protocol",
@@ -2201,7 +2206,7 @@ plugin_query(GError **error)
 		"category",     N_("Protocol"),
 		"summary",      N_("SILC Protocol Plugin"),
 		"description",  N_("Secure Internet Live Conferencing (SILC) Protocol"),
-		"author",       "Pekka Riikonen",
+		"authors",      authors,
 		"website",      "http://silcnet.org/",
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |

@@ -73,6 +73,11 @@ probe_ssl_plugins(PurplePlugin *my_plugin, GError **error)
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Christian Hammond <chipx86@gnupdate.org>",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",           SSL_PLUGIN_ID,
 		"name",         N_("SSL"),
@@ -80,7 +85,7 @@ plugin_query(GError **error)
 		"category",     N_("SSL"),
 		"summary",      N_("Provides a wrapper around SSL support libraries."),
 		"description",  N_("Provides a wrapper around SSL support libraries."),
-		"author",       "Christian Hammond <chipx86@gnupdate.org>",
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,

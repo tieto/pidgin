@@ -1502,6 +1502,11 @@ ggp_protocol_interface_init(PurpleProtocolInterface *iface)
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"boler@sourceforge.net",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",           "protocol-gg",
 		"name",         "Gadu-Gadu Protocol",
@@ -1509,7 +1514,7 @@ plugin_query(GError **error)
 		"category",     N_("Protocol"),
 		"summary",      N_("Gadu-Gadu Protocol Plugin"),
 		"description",  N_("Polish popular IM"),
-		"author",       "boler@sourceforge.net",
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |

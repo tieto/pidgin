@@ -2100,6 +2100,11 @@ static void simple_protocol_base_finalize(SIMPLEProtocolClass *klass) { }
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Thomas Butter <butter@uni-mannheim.de>",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",           "protocol-simple",
 		"name",         "SIMPLE Protocol",
@@ -2107,7 +2112,7 @@ plugin_query(GError **error)
 		"category",		N_("Protocol"),
 		"summary",		N_("SIP/SIMPLE Protocol Plugin"),
 		"description",	N_("The SIP/SIMPLE Protocol Plugin"),
-		"author",		"Thomas Butter <butter@uni-mannheim.de>",
+		"authors",		authors,
 		"website",		PURPLE_WEBSITE,
 		"abi-version",	PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |

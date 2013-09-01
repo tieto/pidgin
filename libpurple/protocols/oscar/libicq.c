@@ -79,6 +79,11 @@ static void icq_protocol_base_finalize(ICQProtocolClass *klass) { }
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const dependencies[] = {
+		"protocol-aim",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",            "protocol-icq",
 		"name",          "ICQ Protocol",
@@ -88,7 +93,7 @@ plugin_query(GError **error)
 		"description",   N_("ICQ Protocol Plugin"),
 		"website",       PURPLE_WEBSITE,
 		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  "protocol-aim",
+		"dependencies",  dependencies,
 		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
 		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL

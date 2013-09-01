@@ -203,6 +203,11 @@ static void facebook_protocol_base_finalize(FacebookProtocolClass *klass) { }
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const dependencies[] = {
+		"protocol-xmpp",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",            "protocol-facebook-",
 		"name",          "Facebook XMPP Protocol",
@@ -212,7 +217,7 @@ plugin_query(GError **error)
 		"description",   N_("Facebook XMPP Protocol Plugin"),
 		"website",       PURPLE_WEBSITE,
 		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  "protocol-xmpp",
+		"dependencies",  dependencies,
 		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
 		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL

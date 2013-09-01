@@ -568,13 +568,13 @@ purple_plugin_info_get_description(const PurplePluginInfo *info)
 #endif
 }
 
-const gchar *
-purple_plugin_info_get_author(const PurplePluginInfo *info)
+const gchar * const *
+purple_plugin_info_get_authors(const PurplePluginInfo *info)
 {
 #ifdef PURPLE_PLUGINS
 	g_return_val_if_fail(info != NULL, NULL);
 
-	return gplugin_plugin_info_get_author(GPLUGIN_PLUGIN_INFO(info));
+	return gplugin_plugin_info_get_authors(GPLUGIN_PLUGIN_INFO(info));
 
 #else
 	return NULL;
@@ -608,12 +608,12 @@ purple_plugin_info_get_icon(const PurplePluginInfo *info)
 }
 
 const gchar *
-purple_plugin_info_get_license(const PurplePluginInfo *info)
+purple_plugin_info_get_license_id(const PurplePluginInfo *info)
 {
 #ifdef PURPLE_PLUGINS
 	g_return_val_if_fail(info != NULL, NULL);
 
-	return gplugin_plugin_info_get_license(GPLUGIN_PLUGIN_INFO(info));
+	return gplugin_plugin_info_get_license_id(GPLUGIN_PLUGIN_INFO(info));
 
 #else
 	return NULL;
@@ -640,6 +640,19 @@ purple_plugin_info_get_license_url(const PurplePluginInfo *info)
 	g_return_val_if_fail(info != NULL, NULL);
 
 	return gplugin_plugin_info_get_license_url(GPLUGIN_PLUGIN_INFO(info));
+
+#else
+	return NULL;
+#endif
+}
+
+const gchar * const *
+purple_plugin_info_get_dependencies(const PurplePluginInfo *info)
+{
+#ifdef PURPLE_PLUGINS
+	g_return_val_if_fail(info != NULL, NULL);
+
+	return gplugin_plugin_info_get_dependencies(GPLUGIN_PLUGIN_INFO(info));
 
 #else
 	return NULL;

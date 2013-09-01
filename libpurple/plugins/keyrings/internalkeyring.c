@@ -38,7 +38,7 @@
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
 	"storage behaviour for libpurple.")
-#define INTKEYRING_AUTHOR "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
+#define INTKEYRING_AUTHORS { "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)",NULL }
 #define INTKEYRING_ID PURPLE_DEFAULT_KEYRING
 #define INTKEYRING_DOMAIN (g_quark_from_static_string(INTKEYRING_ID))
 
@@ -958,6 +958,8 @@ intkeyring_apply_settings(void *notify_handle,
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = INTKEYRING_AUTHORS;
+
 	return purple_plugin_info_new(
 		"id",           INTKEYRING_ID,
 		"name",         INTKEYRING_NAME,
@@ -965,7 +967,7 @@ plugin_query(GError **error)
 		"category",     N_("Keyring"),
 		"summary",      "Internal Keyring Plugin",
 		"description",  INTKEYRING_DESCRIPTION,
-		"author",       INTKEYRING_AUTHOR,
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,

@@ -380,20 +380,21 @@ GType purple_plugin_info_get_type(void);
  * "category"           (string) Primary category of the plugin.             \n
  * "summary"            (string) Brief summary of the plugin.                \n
  * "description"        (string) Full description of the plugin.             \n
- * "author"             (string) Name and e-mail address of the author.
+ * "authors"            (const gchar * const *) A NULL-terminated list of
+ *                               plugin authors.
  *                               format: First Last <user@domain.com>        \n
  * "website"            (string) Website of the plugin.                      \n
  * "icon"               (string) Path to a plugin's icon.                    \n
- * "license"            (string) Short name of the plugin's license. This
- *                               should either be an identifier of the
- *                               license from http://spdx.org/licenses/ or
- *                               "Other" for custom licenses.                \n
+ * "license-id"         (string) Short name of the plugin's license. This
+ *                        should either be an identifier of the license from
+ *                        http://dep.debian.net/deps/dep5/#license-specification
+ *                        or "Other" for custom licenses.                    \n
  * "license-text"       (string) The text of the plugin's license, if
- *                               unlisted on SPDX.                           \n
+ *                               unlisted on DEP5.                           \n
  * "license-url"        (string) The plugin's license URL, if unlisted on
- *                               SPDX.                                       \n
- * "dependencies"       (string) Comma-seperated list of plugin IDs required
- *                               by the plugin.                              \n
+ *                               DEP5.                                       \n
+ * "dependencies"       (const gchar * const *) A NULL-terminated list of
+ *                               plugin IDs required by the plugin.          \n
  * "abi-version"        (guint32) The ABI version required by the plugin.    \n
  * "get-actions"        (PurplePluginGetActionsCallback) Callback that
  *                               returns a list of actions the plugin can
@@ -474,13 +475,14 @@ const gchar *purple_plugin_info_get_summary(const PurplePluginInfo *info);
 const gchar *purple_plugin_info_get_description(const PurplePluginInfo *info);
 
 /**
- * Returns a plugin's author.
+ * Returns a NULL-terminated list of the plugin's authors.
  *
  * @param info The plugin's info instance.
  *
- * @return The author of the plugin, or @c NULL.
+ * @return The authors of the plugin, or @c NULL.
  */
-const gchar *purple_plugin_info_get_author(const PurplePluginInfo *info);
+const gchar * const *
+purple_plugin_info_get_authors(const PurplePluginInfo *info);
 
 /**
  * Returns a plugin's website.
@@ -507,7 +509,7 @@ const gchar *purple_plugin_info_get_icon(const PurplePluginInfo *info);
  *
  * @return The license name of the plugin, or @c NULL.
  */
-const gchar *purple_plugin_info_get_license(const PurplePluginInfo *info);
+const gchar *purple_plugin_info_get_license_id(const PurplePluginInfo *info);
 
 /**
  * Returns the text of a plugin's license.
@@ -526,6 +528,16 @@ const gchar *purple_plugin_info_get_license_text(const PurplePluginInfo *info);
  * @return The license URL of the plugin, or @c NULL.
  */
 const gchar *purple_plugin_info_get_license_url(const PurplePluginInfo *info);
+
+/**
+ * Returns a NULL-terminated list of IDs of plugins required by a plugin.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The dependencies of the plugin, or @c NULL.
+ */
+const gchar * const *
+purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
 
 /**
  * Returns the required purple ABI version for a plugin.

@@ -115,6 +115,11 @@ static void yahoojp_protocol_base_finalize(YahooJPProtocolClass *klass) { }
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const dependencies[] = {
+		"protocol-yahoo",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",            "protocol-yahoojp",
 		"name",          "Yahoo JAPAN Protocol",
@@ -124,7 +129,7 @@ plugin_query(GError **error)
 		"description",   N_("Yahoo! JAPAN Protocol Plugin"),
 		"website",       PURPLE_WEBSITE,
 		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  "protocol-yahoo",
+		"dependencies",  dependencies,
 		"flags",         GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
 		                 GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
 		NULL

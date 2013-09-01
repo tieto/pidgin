@@ -285,6 +285,11 @@ ss_uninit(void)
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Elliott Sales de Andrade (qulogic[at]pidgin.im)",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",           SECRETSERVICE_ID,
 		"name",         SECRETSERVICE_NAME,
@@ -292,7 +297,7 @@ plugin_query(GError **error)
 		"category",     N_("Keyring"),
 		"summary",      "Secret Service Plugin",
 		"description",  N_("This plugin will store passwords in Secret Service."),
-		"author",       "Elliott Sales de Andrade (qulogic[at]pidgin.im)",
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,

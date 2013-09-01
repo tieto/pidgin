@@ -3464,6 +3464,11 @@ static void msim_protocol_base_finalize(MySpaceProtocolClass *klass) { }
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Jeff Connelly <jeff2@soc.pidgin.im>",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",           "protocol-myspace",
 		"name",         "MySpaceIM Protocol",
@@ -3471,7 +3476,7 @@ plugin_query(GError **error)
 		"category",     "Protocol",
 		"summary",      "MySpaceIM Protocol Plugin",
 		"description",  "MySpaceIM Protocol Plugin",
-		"author",       "Jeff Connelly <jeff2@soc.pidgin.im>",
+		"authors",      authors,
 		"website",      "https://developer.pidgin.im/wiki/MySpaceIM/",
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |

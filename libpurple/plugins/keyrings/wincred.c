@@ -36,7 +36,7 @@
 #define WINCRED_SUMMARY     N_("Store passwords using Windows credentials")
 #define WINCRED_DESCRIPTION N_("This plugin stores passwords using Windows " \
 	"credentials.")
-#define WINCRED_AUTHOR      "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
+#define WINCRED_AUTHORS     {"Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)", NULL}
 #define WINCRED_ID          "keyring-wincred"
 #define WINCRED_DOMAIN      (g_quark_from_static_string(WINCRED_ID))
 
@@ -259,6 +259,8 @@ wincred_save(PurpleAccount *account, const gchar *password,
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = WINCRED_AUTHORS;
+
 	return purple_plugin_info_new(
 		"id",           WINCRED_ID,
 		"name",         WINCRED_NAME,
@@ -266,7 +268,7 @@ plugin_query(GError **error)
 		"category",     N_("Keyring"),
 		"summary",      WINCRED_SUMMARY,
 		"description",  WINCRED_DESCRIPTION,
-		"author",       WINCRED_AUTHOR,
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,

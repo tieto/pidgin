@@ -828,6 +828,8 @@ mxit_protocol_base_finalize( MXitProtocolClass *klass )
 static PurplePluginInfo *
 plugin_query( GError **error )
 {
+	const gchar * const authors[] = MXIT_PLUGIN_AUTHORS;
+
 	return purple_plugin_info_new(
 		"id",			MXIT_PLUGIN_ID,			/* plugin id (must be unique) */
 		"name",			MXIT_PLUGIN_NAME,		/* plugin name (this will be displayed in the UI) */
@@ -835,7 +837,7 @@ plugin_query( GError **error )
 		"category",		MXIT_PLUGIN_CATEGORY,	/* category of the plugin */
 		"summary",		MXIT_PLUGIN_SUMMARY,	/* short summary of the plugin */
 		"description",	MXIT_PLUGIN_DESC,		/* description of the plugin (can be long) */
-		"author",		MXIT_PLUGIN_AUTHOR,		/* plugin author name and email address */
+		"authors",		authors,				/* plugin authors' name and email addresses */
 		"website",		MXIT_PLUGIN_WWW,		/* plugin website (to find new versions and reporting of bugs) */
 		"abi-version",	PURPLE_ABI_VERSION,		/* ABI version required by the plugin */
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |

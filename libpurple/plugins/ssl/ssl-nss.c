@@ -1056,6 +1056,11 @@ static PurpleSslOps ssl_ops =
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Christian Hammond <chipx86@gnupdate.org>",
+		NULL
+	};
+
 	return purple_plugin_info_new(
 		"id",           SSL_NSS_PLUGIN_ID,
 		"name",         N_("NSS"),
@@ -1063,7 +1068,7 @@ plugin_query(GError **error)
 		"category",     N_("SSL"),
 		"summary",      N_("Provides SSL support through Mozilla NSS."),
 		"description",  N_("Provides SSL support through Mozilla NSS."),
-		"author",       "Christian Hammond <chipx86@gnupdate.org>",
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,

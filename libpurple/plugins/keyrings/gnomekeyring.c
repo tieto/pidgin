@@ -37,8 +37,10 @@
 #define GNOMEKEYRING_NAME        N_("GNOME Keyring")
 #define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in " \
 	"GNOME Keyring.")
-#define GNOMEKEYRING_AUTHOR      "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
 #define GNOMEKEYRING_ID          "keyring-gnomekeyring"
+#define GNOMEKEYRING_AUTHORS \
+	{ "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)", NULL }
+
 #define GNOMEKEYRING_DOMAIN      (g_quark_from_static_string(GNOMEKEYRING_ID))
 
 static PurpleKeyring *keyring_handler = NULL;
@@ -381,6 +383,8 @@ gnomekeyring_close(void)
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = GNOMEKEYRING_AUTHORS;
+
 	return purple_plugin_info_new(
 		"id",           GNOMEKEYRING_ID,
 		"name",         GNOMEKEYRING_NAME,
@@ -388,7 +392,7 @@ plugin_query(GError **error)
 		"category",     N_("Keyring"),
 		"summary",      "GNOME Keyring Plugin",
 		"description",  GNOMEKEYRING_DESCRIPTION,
-		"author",       GNOMEKEYRING_AUTHOR,
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,

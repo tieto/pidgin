@@ -38,7 +38,7 @@
 
 #define KWALLET_NAME        N_("KWallet")
 #define KWALLET_DESCRIPTION N_("This plugin will store passwords in KWallet.")
-#define KWALLET_AUTHOR      "QuLogic (qulogic[at]pidgin.im)"
+#define KWALLET_AUTHORS     { "QuLogic (qulogic[at]pidgin.im)", NULL }
 #define KWALLET_ID          "keyring-kwallet"
 #define KWALLET_DOMAIN      (g_quark_from_static_string(KWALLET_ID))
 
@@ -492,6 +492,8 @@ static const char *kwallet_get_ui_name(void)
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const authors[] = KWALLET_AUTHORS;
+
 	return purple_plugin_info_new(
 		"id",           KWALLET_ID,
 		"name",         KWALLET_NAME,
@@ -499,7 +501,7 @@ plugin_query(GError **error)
 		"category",     N_("Keyring"),
 		"summary",      "KWallet Keyring Plugin",
 		"description",  KWALLET_DESCRIPTION,
-		"author",       KWALLET_AUTHOR,
+		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,

@@ -70,7 +70,7 @@
 #define		MXIT_PLUGIN_ID				"protocol-mxit"
 #define		MXIT_PLUGIN_NAME			"MXit Protocol"
 #define		MXIT_PLUGIN_CATEGORY		"Protocol"
-#define		MXIT_PLUGIN_AUTHOR			"Pieter Loubser <libpurple@mxit.com>"
+#define		MXIT_PLUGIN_AUTHORS			{ "Pieter Loubser <libpurple@mxit.com>", NULL }
 #define		MXIT_PLUGIN_WWW				"http://www.mxit.com"
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
 #define		MXIT_PLUGIN_DESC			"MXit"
