@@ -209,7 +209,7 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",            "protocol-facebook-",
+		"id",            "protocol-facebook",
 		"name",          "Facebook XMPP Protocol",
 		"version",       DISPLAY_VERSION,
 		"category",      N_("Protocol"),
