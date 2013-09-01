@@ -72,7 +72,7 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn,
 
 static gboolean yahoo_is_japan(PurpleAccount *account)
 {
-	return purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoojp");
+	return purple_strequal(purple_account_get_protocol_id(account), "yahoojp");
 }
 
 static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFriend *f)

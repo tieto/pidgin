@@ -57,7 +57,7 @@ struct _PurpleBuddyPrivate {
 	char *local_alias;           /**< The user-set alias of the buddy         */
 	char *server_alias;          /**< The server-specified alias of the buddy.
 	                                  (i.e. MSN "Friendly Names")             */
-	void *proto_data;            /**< This allows the prpl to associate
+	void *proto_data;            /**< This allows the protocol to associate
 	                                  whatever data it wants with a buddy
 	                                  TODO Remove this field. Protocols should
 	                                       subclass PurpleBuddy and store
@@ -631,7 +631,7 @@ purple_buddy_dispose(GObject *object)
 	PurpleProtocol *protocol;
 
 	/*
-	 * Tell the owner PRPL that we're about to free the buddy so it
+	 * Tell the owner protocol that we're about to free the buddy so it
 	 * can free proto_data
 	 */
 	protocol = purple_protocols_find(purple_account_get_protocol_id(priv->account));
@@ -1455,7 +1455,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 		/*
 		 * TODO: This seems like a dumb way to do this... why not just
 		 * append all children from the old group to the end of the new
-		 * one?  PRPLs might be expecting to receive an add_buddy() for
+		 * one?  Protocols might be expecting to receive an add_buddy() for
 		 * each moved buddy...
 		 */
 		while (child)
@@ -1510,7 +1510,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 	if (ops && ops->update)
 		ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(source));
 
-	/* Notify all PRPLs */
+	/* Notify all protocols */
 	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
 	if(old_name && !purple_strequal(priv->name, old_name)) {
 		for (accts = purple_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {

@@ -988,7 +988,7 @@ msn_status_text(PurpleBuddy *buddy)
 	status = purple_presence_get_active_status(presence);
 
 	/* Official client says media takes precedence over message */
-	/* I say message take precedence over media! Plus prpl-jabber agrees
+	/* I say message take precedence over media! Plus jabber agrees
 	   too */
 	msg = purple_status_get_attr_string(status, "message");
 	if (msg && *msg)
@@ -1113,7 +1113,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	/* XXX: This is being shown in non-full tooltips because the
 	 * XXX: blocked icon overlay isn't always accurate for MSN.
 	 * XXX: This can die as soon as purple_privacy_check() knows that
-	 * XXX: this prpl always honors both the allow and deny lists. */
+	 * XXX: this protocol always honors both the allow and deny lists. */
 	/* While the above comment may be strictly correct (the privacy API needs
 	 * rewriteing), purple_privacy_check() is going to be more accurate at
 	 * indicating whether a particular buddy is going to be able to message
@@ -2803,19 +2803,19 @@ msn_get_info(PurpleConnection *gc, const char *name)
 			PROFILE_URL, name));
 }
 
-static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
+static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
 {
 	PurpleAccount *acct = NULL;
 
 	/* If we have a specific acct, use it */
 	if (acct_id) {
-		acct = purple_accounts_find(acct_id, prpl);
+		acct = purple_accounts_find(acct_id, protocol);
 		if (acct && !purple_account_is_connected(acct))
 			acct = NULL;
 	} else { /* Otherwise find an active account for the protocol */
 		GList *l = purple_accounts_get_all();
 		while (l) {
-			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+			if (!strcmp(protocol, purple_account_get_protocol_id(l->data))
 					&& purple_account_is_connected(l->data)) {
 				acct = l->data;
 				break;
@@ -2835,7 +2835,7 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 	if (g_ascii_strcasecmp(proto, "msnim"))
 		return FALSE;
 
-	acct = find_acct("prpl-msn", acct_id);
+	acct = find_acct("msn", acct_id);
 
 	if (!acct)
 		return FALSE;
@@ -2923,10 +2923,10 @@ msn_protocol_base_init(MSNProtocolClass *klass)
 
 	purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                 "prpl-msn", msn_cmd_nudge,
+	                 "msn", msn_cmd_nudge,
 	                  _("nudge: nudge a user to get their attention"), NULL);
 
-	purple_prefs_remove("/plugins/prpl/msn");
+	purple_prefs_remove("/protocols/msn");
 
 	msn_notification_init();
 	msn_switchboard_init();

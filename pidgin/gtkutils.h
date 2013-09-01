@@ -52,7 +52,7 @@ typedef enum
 	PIDGIN_PROTOCOL_ICON_SMALL,
 	PIDGIN_PROTOCOL_ICON_MEDIUM,
 	PIDGIN_PROTOCOL_ICON_LARGE
-} PidginPrplIconSize;
+} PidginProtocolIconSize;
 
 #ifndef _WIN32
 typedef enum
@@ -514,7 +514,7 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec,
  *         to allocate the image buffer, or the image file
  *         contained invalid data.
  */
-GdkPixbuf *pidgin_create_protocol_icon(PurpleAccount *account, PidginPrplIconSize size);
+GdkPixbuf *pidgin_create_protocol_icon(PurpleAccount *account, PidginProtocolIconSize size);
 
 /**
  * Creates a status icon for a given primitve
@@ -593,7 +593,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 /**
  * Converts a buddy icon to the required size and format
  *
- * @param protocol  The prpl to convert the icon
+ * @param protocol   The protocol to convert the icon
  * @param path       The path of a file to convert
  * @param len        If not @c NULL, the length of the returned data will be set here.
  *

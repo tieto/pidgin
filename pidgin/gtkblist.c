@@ -2215,11 +2215,11 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 		return FALSE;
 	}
 
-	add_buddies_from_vcard("prpl-aim",    group, aims,    alias);
-	add_buddies_from_vcard("prpl-icq",    group, icqs,    alias);
-	add_buddies_from_vcard("prpl-yahoo",  group, yahoos,  alias);
-	add_buddies_from_vcard("prpl-msn",    group, msns,    alias);
-	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);
+	add_buddies_from_vcard("aim",    group, aims,    alias);
+	add_buddies_from_vcard("icq",    group, icqs,    alias);
+	add_buddies_from_vcard("yahoo",  group, yahoos,  alias);
+	add_buddies_from_vcard("msn",    group, msns,    alias);
+	add_buddies_from_vcard("jabber", group, jabbers, alias);
 
 	g_free(alias);
 
@@ -2923,7 +2923,7 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	td->name_layout = create_pango_layout(node_name, &td->name_width, &td->name_height);
 	td->name_width += SMALL_SPACE + PROTOCOL_SIZE;
 	td->name_height = MAX(td->name_height, PROTOCOL_SIZE + SMALL_SPACE);
-#if 0  /* PRPL Icon as avatar */
+#if 0  /* Protocol Icon as avatar */
 	if(!td->avatar && full) {
 		td->avatar = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_LARGE);
 		td->avatar_is_protocol_icon = TRUE;
@@ -4008,7 +4008,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		if (purple_account_is_connected(purple_buddy_get_account(b)) &&
 				protocol)
 		{
-			/* Additional text from the PRPL */
+			/* Additional text from the protocol */
 			purple_protocol_iface_tooltip_text(protocol, b, user_info, full);
 		}
 

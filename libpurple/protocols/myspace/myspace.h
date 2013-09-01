@@ -61,7 +61,7 @@
 #include "markup.h"
 #include "user.h"
 
-#define MSIM_ID     "prpl-myspace"
+#define MSIM_ID     "myspace"
 #define MSIM_NAME   "MySpaceIM"
 
 #define MSIM_TYPE_PROTOCOL             (msim_protocol_get_type())

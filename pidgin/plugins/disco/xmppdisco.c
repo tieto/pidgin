@@ -128,9 +128,9 @@ xmpp_iq_received(PurpleConnection *pc, const char *type, const char *id,
 
 	g_hash_table_remove(iq_callbacks, id);
 	if (g_hash_table_size(iq_callbacks) == 0) {
-		PurplePlugin *prpl = purple_connection_get_protocol(pc);
+		PurpleProtocol *protocol = purple_connection_get_protocol(pc);
 		iq_listening = FALSE;
-		purple_signal_disconnect(prpl, "jabber-receiving-iq", my_plugin,
+		purple_signal_disconnect(protocol, "jabber-receiving-iq", my_plugin,
 		                         PURPLE_CALLBACK(xmpp_iq_received));
 	}
 
@@ -151,9 +151,9 @@ xmpp_iq_register_callback(PurpleConnection *pc, gchar *id, gpointer data,
 	g_hash_table_insert(iq_callbacks, id, cbdata);
 
 	if (!iq_listening) {
-		PurplePlugin *prpl = purple_plugins_find_with_id(XMPP_PLUGIN_ID);
+		PurpleProtocol *protocol = purple_plugins_find_with_id(XMPP_PROTOCOL_ID);
 		iq_listening = TRUE;
-		purple_signal_connect(prpl, "jabber-receiving-iq", my_plugin,
+		purple_signal_connect(protocol, "jabber-receiving-iq", my_plugin,
 		                      PURPLE_CALLBACK(xmpp_iq_received), NULL);
 	}
 }
@@ -250,10 +250,10 @@ static const struct {
 	const char *from;
 	const char *to;
 } disco_type_mappings[] = {
-	{ "gadu-gadu", "gadu-gadu" }, /* the prpl is prpl-gg, but list_icon returns "gadu-gadu" */
+	{ "gadu-gadu", "gadu-gadu" }, /* the protocol is gg, but list_icon returns "gadu-gadu" */
 	{ "sametime",  "meanwhile" },
 	{ "myspaceim", "myspace" },
-	{ "xmpp",      "jabber" }, /* prpl-jabber (mentioned in case the prpl is renamed so this line will match) */
+	{ "xmpp",      "jabber" }, /* jabber (mentioned in case the protocol is renamed so this line will match) */
 	{ NULL,        NULL }
 };
 
@@ -621,7 +621,7 @@ plugin_load(PurplePlugin *plugin)
 
 	my_plugin = plugin;
 
-	xmpp_protocol = purple_plugins_find_with_id(XMPP_PLUGIN_ID);
+	xmpp_protocol = purple_plugins_find_with_id(XMPP_PROTOCOL_ID);
 	if (NULL == xmpp_protocol)
 		return FALSE;
 

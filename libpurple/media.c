@@ -218,9 +218,9 @@ purple_media_class_init (PurpleMediaClass *klass)
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_PROTOCOL_DATA,
-			g_param_spec_pointer("prpl-data",
+			g_param_spec_pointer("protocol-data",
 			"gpointer",
-			"Data the prpl plugin set on the media session.",
+			"Data the protocol set on the media session.",
 			G_PARAM_READWRITE));
 
 	purple_media_signals[S_ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
@@ -594,7 +594,7 @@ purple_media_get_protocol_data(PurpleMedia *media)
 #ifdef USE_VV
 	gpointer protocol_data;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	g_object_get(G_OBJECT(media), "prpl-data", &protocol_data, NULL);
+	g_object_get(G_OBJECT(media), "protocol-data", &protocol_data, NULL);
 	return protocol_data;
 #else
 	return NULL;
@@ -606,7 +606,7 @@ purple_media_set_protocol_data(PurpleMedia *media, gpointer protocol_data)
 {
 #ifdef USE_VV
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	g_object_set(G_OBJECT(media), "prpl-data", protocol_data, NULL);
+	g_object_set(G_OBJECT(media), "protocol-data", protocol_data, NULL);
 #endif
 }
 

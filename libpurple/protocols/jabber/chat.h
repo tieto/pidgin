@@ -60,14 +60,14 @@ GHashTable *jabber_chat_info_defaults(PurpleConnection *gc, const char *chat_nam
 char *jabber_get_chat_name(GHashTable *data);
 
 /**
- * in-prpl function for joining a chat room. Doesn't require sticking goop
+ * in-protocol function for joining a chat room. Doesn't require sticking goop
  * into a hash table.
  *
  * @param room     The room to join. This MUST be normalized already.
  * @param server   The server the room is on. This MUST be normalized already.
  * @param password The password (if required) to join the room. May be NULL.
  * @param data     The chat hash table.  May be NULL (it will be generated
- *                 for current core<>prpl API interface.)
+ *                 for current core<>protocol API interface.)
  */
 JabberChat *jabber_join_chat(JabberStream *js, const char *room,
                              const char *server, const char *handle,

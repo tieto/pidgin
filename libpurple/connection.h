@@ -273,10 +273,10 @@ GType purple_connection_get_type(void);
 GType purple_connection_error_info_get_type(void);
 
 /**
- * Sets the connection state.  PRPLs should call this and pass in
+ * Sets the connection state.  Protocols should call this and pass in
  * the state #PURPLE_CONNECTION_CONNECTED when the account is completely
  * signed on.  What does it mean to be completely signed on?  If
- * the core can call prpl->set_status, and it successfully changes
+ * the core can call protocol's set_status, and it successfully changes
  * your status, then the account is online.
  *
  * @param gc    The connection.
@@ -458,7 +458,7 @@ purple_connection_error_is_fatal (PurpleConnectionError reason);
 
 /**
  * Indicate that a packet was received on the connection.
- * Set by the prpl to avoid sending unneeded keepalives.
+ * Set by the protocol to avoid sending unneeded keepalives.
  *
  * @param gc   The connection.
  */

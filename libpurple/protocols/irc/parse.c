@@ -221,7 +221,7 @@ static void irc_register_command(struct _irc_user_cmd *c)
 
 	args[i] = '\0';
 
-	purple_cmd_register(c->name, args, PURPLE_CMD_P_PROTOCOL, f, "prpl-irc",
+	purple_cmd_register(c->name, args, PURPLE_CMD_P_PROTOCOL, f, "irc",
 	                  irc_parse_purple_cmd, _(c->help), NULL);
 }
 
@@ -749,7 +749,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 			break;
 		case '*':
 			/* Ditto 'v' above; we're going to salvage this in case
-			 * it leaks past the IRC prpl */
+			 * it leaks past the IRC protocol */
 			args[i] = purple_utf8_salvage(cur);
 			cur = cur + strlen(cur);
 			break;

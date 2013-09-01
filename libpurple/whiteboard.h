@@ -30,9 +30,9 @@
 typedef struct _PurpleWhiteboard PurpleWhiteboard;
 
 /**
- * Whiteboard PRPL Operations
+ * Whiteboard protocol operations
  */
-typedef struct _PurpleWhiteboardPrplOps PurpleWhiteboardPrplOps;
+typedef struct _PurpleWhiteboardOps PurpleWhiteboardOps;
 
 #include "account.h"
 
@@ -60,9 +60,9 @@ typedef struct _PurpleWhiteboardUiOps
 } PurpleWhiteboardUiOps;
 
 /**
- * PurpleWhiteboard PRPL Operations
+ * PurpleWhiteboard Protocol Operations
  */
-struct _PurpleWhiteboardPrplOps
+struct _PurpleWhiteboardOps
 {
 	void (*start)(PurpleWhiteboard *wb);                                   /**< start function */
 	void (*end)(PurpleWhiteboard *wb);                                     /**< end function */
@@ -94,12 +94,12 @@ G_BEGIN_DECLS
 void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops);
 
 /**
- * Sets the prpl operations for a whiteboard
+ * Sets the protocol operations for a whiteboard
  *
- * @param wb  The whiteboard for which to set the prpl operations
- * @param ops The prpl operations to set
+ * @param wb  The whiteboard for which to set the protocol operations
+ * @param ops The protocol operations to set
  */
-void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops);
+void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardOps *ops);
 
 /**
  * Creates a whiteboard

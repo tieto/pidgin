@@ -203,7 +203,7 @@ static void null_input_user_info(PurpleProtocolAction *action)
 }
 
 /*
- * prpl functions
+ * Protocol functions
  */
 static GList *null_get_actions(PurpleConnection *gc)
 {
@@ -1091,7 +1091,7 @@ null_protocol_base_init(NullProtocolClass *klass)
                     "ws",                  /* args: recipient and message */
                     PURPLE_CMD_P_DEFAULT,  /* priority */
                     PURPLE_CMD_FLAG_CHAT,
-                    "prpl-null",
+                    "null",
                     send_whisper,
                     "msg &lt;username&gt; &lt;message&gt;: send a private message, aka a whisper",
                     NULL);                 /* userdata */

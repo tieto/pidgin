@@ -184,7 +184,7 @@ void ggp_image_recv(PurpleConnection *gc,
 	   g_path_get_basename() and purple_escape_filename() on it before
 	   passing it in.  This is easy, but it's not clear if there might be
 	   other implications because this filename is used elsewhere within
-	   this PRPL. */
+	   this protocol. */
 	stored_id = purple_imgstore_new_with_id(
 		g_memdup(image_reply->image, image_reply->size),
 		image_reply->size,

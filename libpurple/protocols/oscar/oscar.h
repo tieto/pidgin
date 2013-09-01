@@ -56,7 +56,7 @@
 #include "libc_interface.h"
 #endif
 
-#define AIM_ID     "prpl-aim"
+#define AIM_ID     "aim"
 #define AIM_NAME   "AIM"
 
 #define OSCAR_TYPE_PROTOCOL             (oscar_protocol_get_type())

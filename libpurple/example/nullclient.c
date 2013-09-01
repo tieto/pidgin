@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 	GList *iter;
 	int i, num;
 	GList *names = NULL;
-	const char *prpl = NULL;
+	const char *protocol = NULL;
 	char name[128];
 	char *password;
 	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
@@ -279,8 +279,8 @@ int main(int argc, char *argv[])
 		abort();
 	}
 	if (sscanf(name, "%d", &num) == 1)
-		prpl = g_list_nth_data(names, num);
-	if (!prpl) {
+		protocol = g_list_nth_data(names, num);
+	if (!protocol) {
 		fprintf(stderr, "Failed to gets protocol.");
 		abort();
 	}
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
 	name[strlen(name) - 1] = 0;  /* strip the \n at the end */
 
 	/* Create the account */
-	account = purple_account_new(name, prpl);
+	account = purple_account_new(name, protocol);
 
 	/* Get the password for the account */
 	password = getpass("Password: ");

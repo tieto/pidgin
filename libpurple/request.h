@@ -337,7 +337,7 @@ PurpleAccount *purple_request_fields_get_account(const PurpleRequestFields *fiel
  *
  * @return The UI data associated with this object.  This is a
  *         convenience field provided to the UIs--it is not
- *         used by the libuprple core.
+ *         used by the libpurple core.
  */
 gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields);
 
@@ -1351,7 +1351,7 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
  * @param handle        The plugin or connection handle.  For some
  *                      things this is <em>extremely</em> important.  The
  *                      handle is used to programmatically close the request
- *                      dialog when it is no longer needed.  For PRPLs this
+ *                      dialog when it is no longer needed.  For protocols this
  *                      is often a pointer to the #PurpleConnection
  *                      instance.  For plugins this should be a similar,
  *                      unique memory location.  This value is important

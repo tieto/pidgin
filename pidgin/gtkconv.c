@@ -378,7 +378,7 @@ debug_command_cb(PurpleConversation *conv,
 				DISPLAY_VERSION, purple_core_get_version());
 	} else if (!g_ascii_strcasecmp(args[0], "plugins")) {
 		/* Show all the loaded plugins, including the protocol plugins and plugin loaders.
-		 * This is intentional, since third party prpls are often sources of bugs, and some
+		 * This is intentional, since third party protocols are often sources of bugs, and some
 		 * plugin loaders (e.g. mono) can also be buggy.
 		 */
 		GString *str = g_string_new("Loaded Plugins: ");
@@ -2458,8 +2458,8 @@ static GList *get_protocol_icon_list(PurpleAccount *account)
 	GList *l = NULL;
 	PurpleProtocol *protocol =
 			purple_protocols_find(purple_account_get_protocol_id(account));
-	const char *prplname = purple_protocol_iface_list_icon(protocol, account, NULL);
-	l = g_hash_table_lookup(protocol_lists, prplname);
+	const char *protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
+	l = g_hash_table_lookup(protocol_lists, protoname);
 	if (l)
 		return l;
 
@@ -2467,7 +2467,7 @@ static GList *get_protocol_icon_list(PurpleAccount *account)
 	l = g_list_prepend(l, pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM));
 	l = g_list_prepend(l, pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL));
 
-	g_hash_table_insert(protocol_lists, g_strdup(prplname), l);
+	g_hash_table_insert(protocol_lists, g_strdup(protoname), l);
 	return l;
 }
 
@@ -7146,7 +7146,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 	 * Handle hiding and showing stuff based on what type of conv this is.
 	 * Stuff that Purple IMs support in general should be shown for IM
 	 * conversations.  Stuff that Purple chats support in general should be
-	 * shown for chat conversations.  It doesn't matter whether the PRPL
+	 * shown for chat conversations.  It doesn't matter whether the protocol
 	 * supports it or not--that only affects if the button or menu item
 	 * is sensitive or not.
 	 */

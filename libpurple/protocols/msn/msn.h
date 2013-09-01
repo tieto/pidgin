@@ -118,7 +118,7 @@ typedef enum
 
 #define MSN_BUF_LEN 8192
 
-#define MSN_ID     "prpl-msn"
+#define MSN_ID     "msn"
 #define MSN_NAME   "MSN"
 #define MSN_DOMAIN (g_quark_from_static_string(MSN_ID))
 

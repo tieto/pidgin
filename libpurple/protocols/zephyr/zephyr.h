@@ -24,7 +24,7 @@
 
 #include "protocol.h"
 
-#define ZEPHYR_ID     "prpl-zephyr"
+#define ZEPHYR_ID     "zephyr"
 #define ZEPHYR_NAME   "Zephyr"
 
 #define ZEPHYR_TYPE_PROTOCOL             (zephyr_protocol_get_type())

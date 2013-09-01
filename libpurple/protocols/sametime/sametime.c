@@ -67,11 +67,11 @@
 
 static PurpleProtocol *my_protocol = NULL;
 
-/* considering that there's no display of this information for prpls,
+/* considering that there's no display of this information for protocols,
    I don't know why I even bother providing these. Oh valiant reader,
    I do it all for you. */
-/* scratch that, I just added it to the prpl options panel */
-#define PLUGIN_ID        "prpl-meanwhile"
+/* scratch that, I just added it to the protocol options panel */
+#define PLUGIN_ID        "meanwhile"
 #define PLUGIN_NAME      "Sametime"
 #define PLUGIN_CATEGORY  "Protocol"
 #define PLUGIN_SUMMARY   "Sametime Protocol Plugin"
@@ -81,7 +81,7 @@ static PurpleProtocol *my_protocol = NULL;
 
 
 /* plugin preference names */
-#define MW_PROTOCOL_OPT_BASE          "/plugins/prpl/meanwhile"
+#define MW_PROTOCOL_OPT_BASE          "/protocols/meanwhile"
 #define MW_PROTOCOL_OPT_BLIST_ACTION  MW_PROTOCOL_OPT_BASE "/blist_action"
 #define MW_PROTOCOL_OPT_PSYCHIC       MW_PROTOCOL_OPT_BASE "/psychic"
 #define MW_PROTOCOL_OPT_FORCE_LOGIN   MW_PROTOCOL_OPT_BASE "/force_login"
@@ -1330,7 +1330,7 @@ static void blist_menu_nab(PurpleBlistNode *node, gpointer data) {
 }
 
 
-/** The normal blist menu prpl function doesn't get called for groups,
+/** The normal blist menu protocol function doesn't get called for groups,
     so we use the blist-node-extended-menu signal to trigger this
     handler */
 static void blist_node_menu_cb(PurpleBlistNode *node,
@@ -2778,7 +2778,7 @@ static void im_recv_mime(struct mwConversation *conv,
          g_path_get_basename() and purple_escape_filename() on it before
          passing it in.  This is easy, but it's not clear if there might be
          other implications because this filename is used elsewhere within
-         this PRPL. */
+         this protocol. */
       img = purple_imgstore_new_with_id(d_dat, d_len, cid);
 
       /* map the cid to the image store identifier */
@@ -5739,7 +5739,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
   return purple_plugin_info_new(
-    "id",           PLUGIN_ID,
+    "id",           "protocol-" PLUGIN_ID,
     "name",         PLUGIN_NAME,
     "version",      DISPLAY_VERSION,
     "category",     PLUGIN_CATEGORY,

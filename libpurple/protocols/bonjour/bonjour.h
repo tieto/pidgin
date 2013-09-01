@@ -36,7 +36,7 @@
 #define BONJOUR_PROTOCOL_NAME "bonjour"
 #define BONJOUR_ICON_NAME "bonjour"
 
-#define BONJOUR_ID     "prpl-bonjour"
+#define BONJOUR_ID     "bonjour"
 #define BONJOUR_NAME   "Bonjour"
 
 #define BONJOUR_STATUS_ID_OFFLINE   "offline"

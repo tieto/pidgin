@@ -53,9 +53,9 @@ unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTy
 void serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
 int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
 
-/** Get information about an account's attention commands, from the prpl.
+/** Get information about an account's attention commands, from the protocol.
  *
- * @return The attention command numbered 'code' from the prpl's attention_types, or NULL.
+ * @return The attention command numbered 'code' from the protocol's attention_types, or NULL.
  */
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
 
@@ -126,7 +126,7 @@ void serv_join_chat(PurpleConnection *, GHashTable *data);
 void serv_reject_chat(PurpleConnection *, GHashTable *data);
 
 /**
- * Called by a prpl when an account is invited into a chat.
+ * Called by a protocol when an account is invited into a chat.
  *
  * @param gc      The connection on which the invite arrived.
  * @param name    The name of the chat you're being invited to.
@@ -141,17 +141,17 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  GHashTable *data);
 
 /**
- * Called by a prpl when an account has joined a chat.
+ * Called by a protocol when an account has joined a chat.
  *
  * @param gc   The connection on which the chat was joined.
- * @param id   The id of the chat, assigned by the prpl.
+ * @param id   The id of the chat, assigned by the protocol.
  * @param name The name of the chat.
  * @return     The resulting conversation
  */
 PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
 /**
- * Called by a prpl when an attempt to join a chat via serv_join_chat()
+ * Called by a protocol when an attempt to join a chat via serv_join_chat()
  * fails.
  *
  * @param gc      The connection on which chat joining failed
@@ -162,18 +162,18 @@ PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
 void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data);
 
 /**
- * Called by a prpl when an account has left a chat.
+ * Called by a protocol when an account has left a chat.
  *
  * @param g  The connection on which the chat was left.
- * @param id The id of the chat, as assigned by the prpl.
+ * @param id The id of the chat, as assigned by the protocol.
  */
 void serv_got_chat_left(PurpleConnection *g, int id);
 
 /**
- * Called by a prpl when a message has been received in a chat.
+ * Called by a protocol when a message has been received in a chat.
  *
  * @param g       The connection on which the message was received.
- * @param id      The id of the chat, as assigned by the prpl.
+ * @param id      The id of the chat, as assigned by the protocol.
  * @param who     The name of the user who sent the message.
  * @param flags   The flags of the message.
  * @param message The message received in the chat.

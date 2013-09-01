@@ -549,7 +549,7 @@ aop_option_menu_replace_menu(GtkWidget *optmenu, AopMenu *new_aop_menu)
 }
 
 static GdkPixbuf *
-pidgin_create_protocol_icon_from_protocol(PurpleProtocol *protocol, PidginPrplIconSize size, PurpleAccount *account)
+pidgin_create_protocol_icon_from_protocol(PurpleProtocol *protocol, PidginProtocolIconSize size, PurpleAccount *account)
 {
 	const char *protoname = NULL;
 	char *tmp;
@@ -1680,7 +1680,7 @@ pidgin_stock_id_from_presence(PurplePresence *presence)
 }
 
 GdkPixbuf *
-pidgin_create_protocol_icon(PurpleAccount *account, PidginPrplIconSize size)
+pidgin_create_protocol_icon(PurpleAccount *account, PidginProtocolIconSize size)
 {
 	PurpleProtocol *protocol;
 
@@ -2280,7 +2280,7 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 	protocol_formats = g_strsplit(spec->format, ",", 0);
 
 	if (str_array_match(pixbuf_formats, protocol_formats) && /* This is an acceptable format AND */
-		 (!(spec->scale_rules & PURPLE_ICON_SCALE_SEND) || /* The prpl doesn't scale before it sends OR */
+		 (!(spec->scale_rules & PURPLE_ICON_SCALE_SEND) || /* The protocol doesn't scale before it sends OR */
 		  (spec->min_width <= orig_width && spec->max_width >= orig_width &&
 		   spec->min_height <= orig_height && spec->max_height >= orig_height))) /* The icon is the correct size */
 	{

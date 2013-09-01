@@ -38,7 +38,7 @@
 #undef SILC_VERSION
 #define SILC_VERSION(a, b, c) (((a) << 24) + ((b) << 16) + ((c) << 8))
 
-#define SILCPURPLE_ID     "prpl-silc"
+#define SILCPURPLE_ID     "silc"
 #define SILCPURPLE_NAME   "SILC"
 
 #define SILCPURPLE_TYPE_PROTOCOL             (silcpurple_protocol_get_type())

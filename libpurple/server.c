@@ -440,7 +440,7 @@ void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const c
 
 /* Ya know, nothing uses this except purple_chat_conversation_dispose(),
  * I think I'll just merge it into that later...
- * Then again, something might want to use this, from outside prpl-land
+ * Then again, something might want to use this, from outside protocol-land
  * to leave a chat without destroying the conversation.
  */
 void serv_chat_leave(PurpleConnection *gc, int id)
@@ -491,7 +491,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	account  = purple_connection_get_account(gc);
 
 	/*
-	 * XXX: Should we be setting this here, or relying on prpls to set it?
+	 * XXX: Should we be setting this here, or relying on protocols to set it?
 	 */
 	flags |= PURPLE_MESSAGE_RECV;
 
@@ -822,7 +822,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 			purple_normalize(purple_conversation_get_account(
 			PURPLE_CONVERSATION(chat)), who))) {
 		flags |= PURPLE_MESSAGE_SEND;
-		flags &= ~PURPLE_MESSAGE_RECV; /* Just in case some prpl sets it! */
+		flags &= ~PURPLE_MESSAGE_RECV; /* Just in case some protocol sets it! */
 	} else {
 		flags |= PURPLE_MESSAGE_RECV;
 	}

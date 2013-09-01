@@ -42,36 +42,36 @@ static void yahoo_register_commands(void)
 	purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoo", yahoopurple_cmd_chat_join,
+	                  "yahoo", yahoopurple_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
 	purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoo", yahoopurple_cmd_chat_list,
+	                  "yahoo", yahoopurple_cmd_chat_list,
 	                  _("list: List rooms on the Yahoo network"), NULL);
 	purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoo", yahoopurple_cmd_buzz,
+	                  "yahoo", yahoopurple_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
 	purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoo", yahoo_doodle_purple_cmd_start,
+	                  "yahoo", yahoo_doodle_purple_cmd_start,
 	                 _("doodle: Request user to start a Doodle session"), NULL);
 }
 
-static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
+static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
 {
 	PurpleAccount *acct = NULL;
 
 	/* If we have a specific acct, use it */
 	if (acct_id) {
-		acct = purple_accounts_find(acct_id, prpl);
+		acct = purple_accounts_find(acct_id, protocol);
 		if (acct && !purple_account_is_connected(acct))
 			acct = NULL;
 	} else { /* Otherwise find an active account for the protocol */
 		GList *l = purple_accounts_get_all();
 		while (l) {
-			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+			if (!strcmp(protocol, purple_account_get_protocol_id(l->data))
 					&& purple_account_is_connected(l->data)) {
 				acct = l->data;
 				break;
@@ -169,7 +169,7 @@ yahoo_get_account_text_table(PurpleAccount *account)
 	return table;
 }
 
-static PurpleWhiteboardPrplOps yahoo_whiteboard_protocol_ops =
+static PurpleWhiteboardOps yahoo_whiteboard_ops =
 {
 	yahoo_doodle_start,
 	yahoo_doodle_end,
@@ -201,7 +201,7 @@ yahoo_protocol_base_init(YahooProtocolClass *klass)
 	                                                    96, 96, 96, 96, 0,
 	                                                    PURPLE_ICON_SCALE_SEND);
 
-	proto_class->whiteboard_protocol_ops = &yahoo_whiteboard_protocol_ops;
+	proto_class->whiteboard_protocol_ops = &yahoo_whiteboard_ops;
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);

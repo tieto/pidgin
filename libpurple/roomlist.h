@@ -177,8 +177,8 @@ gboolean purple_roomlist_get_in_progress(PurpleRoomlist *list);
 void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room);
 
 /**
- * Returns a PurpleRoomlist structure from the prpl, and
- * instructs the prpl to start fetching the list.
+ * Returns a PurpleRoomlist structure from the protocol, and
+ * instructs the protocol to start fetching the list.
  *
  * @param gc The PurpleConnection to have get a list.
  *
@@ -188,8 +188,8 @@ void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room);
 PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc);
 
 /**
- * Tells the prpl to stop fetching the list.
- * If this is possible and done, the prpl will
+ * Tells the protocol to stop fetching the list.
+ * If this is possible and done, the protocol will
  * call set_in_progress with @c FALSE and possibly
  * unref the list if it took a reference.
  *
@@ -198,7 +198,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc);
 void purple_roomlist_cancel_get_list(PurpleRoomlist *list);
 
 /**
- * Tells the prpl that a category was expanded.
+ * Tells the protocol that a category was expanded.
  *
  * On some protocols, the rooms in the category
  * won't be fetched until this is called.

@@ -306,10 +306,10 @@ PurpleProxyConnectData *purple_proxy_connect_socks5_account(void *handle,
 
 /**
  * Cancel an in-progress connection attempt.  This should be called
- * by the PRPL if the user disables an account while it is still
+ * by the protocol if the user disables an account while it is still
  * performing the initial sign on.  Or when establishing a file
  * transfer, if we attempt to connect to a remote user but they
- * are behind a firewall then the PRPL can cancel the connection
+ * are behind a firewall then the protocol can cancel the connection
  * attempt early rather than just letting the OS's TCP/IP stack
  * time-out the connection.
  */

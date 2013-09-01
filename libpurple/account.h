@@ -469,7 +469,7 @@ void purple_account_set_public_alias(PurpleAccount *account,
  *
  * @param account    The account
  * @param success_cb A callback which will be called with the alias
- * @param failure_cb A callback which will be called if the prpl is
+ * @param failure_cb A callback which will be called if the protocol is
  *                   unable to retrieve the server-side alias.
  */
 void purple_account_get_public_alias(PurpleAccount *account,
@@ -586,7 +586,7 @@ void purple_account_set_ui_data(PurpleAccount *account, gpointer ui_data);
  *
  * @return The UI data associated with this account.  This is a
  *         convenience field provided to the UIs--it is not
- *         used by the libuprple core.
+ *         used by the libpurple core.
  */
 gpointer purple_account_get_ui_data(const PurpleAccount *account);
 
@@ -1069,7 +1069,7 @@ void purple_account_destroy_log(PurpleAccount *account);
  *
  * @param account The account.
  * @param buddy The buddy to add.
- * @param message The invite message.  This may be ignored by a prpl.
+ * @param message The invite message.  This may be ignored by a protocol.
  */
 void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const char *message);
 
@@ -1078,7 +1078,7 @@ void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const 
  *
  * @param account The account.
  * @param buddies The list of PurpleBlistNodes representing the buddies to add.
- * @param message The invite message.  This may be ignored by a prpl.
+ * @param message The invite message.  This may be ignored by a protocol.
  */
 void purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *message);
 

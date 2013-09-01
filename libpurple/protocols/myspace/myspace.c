@@ -2244,7 +2244,7 @@ msim_close(PurpleConnection *gc)
 
 	/*
 	 * Free our protocol-specific buddy data.  It almost seems like libpurple
-	 * should call our buddy_free prpl callback so that we don't need to do
+	 * should call our buddy_free protocol callback so that we don't need to do
 	 * this... but it doesn't, so we do.
 	 */
 	buddies = purple_blist_find_buddies(purple_connection_get_account(gc), NULL);
@@ -2921,7 +2921,7 @@ msim_offline_message(const PurpleBuddy *buddy)
  * Send raw data to the server, possibly with embedded NULs.
  *
  * Used in protocol struct, so that plugins can have the most possible
- * control of what is sent over the connection. Inside this prpl,
+ * control of what is sent over the connection. Inside this protocol,
  * msim_send_raw() is used, since it sends NUL-terminated strings (easier).
  *
  * @param gc PurpleConnection

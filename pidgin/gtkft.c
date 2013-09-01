@@ -1170,10 +1170,10 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 				}
 			}
 
-			/* Try the first format given by the PRPL without options */
+			/* Try the first format given by the protocol without options */
 			if (format == NULL) {
 				purple_debug_info("ft",
-				    "creating thumbnail of format %s as demanded by PRPL\n",
+				    "creating thumbnail of format %s as demanded by protocol\n",
 				    formats_split[0]);
 				format = formats_split[0];
 			}

@@ -635,7 +635,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(sn != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
 
-	if (strcmp(purple_account_get_protocol_id(account), "prpl-msn"))
+	if (strcmp(purple_account_get_protocol_id(account), "msn"))
 		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/msn/log_directory");
@@ -1777,7 +1777,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(account != NULL, NULL);
 
 	/* QIP only supports ICQ. */
-	if (strcmp(purple_account_get_protocol_id(account), "prpl-icq"))
+	if (strcmp(purple_account_get_protocol_id(account), "icq"))
 		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/qip/log_directory");
@@ -2236,7 +2236,7 @@ static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 		return NULL;
 
 	/* aMSN only works with MSN/WLM */
-	if (strcmp(purple_account_get_protocol_id(account), "prpl-msn"))
+	if (strcmp(purple_account_get_protocol_id(account), "msn"))
 		return NULL;
 
 	username = g_strdup(purple_normalize(account, purple_account_get_username(account)));

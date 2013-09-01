@@ -719,15 +719,15 @@ oscar_login(PurpleAccount *account)
 	}
 
 	flags = PURPLE_CONNECTION_FLAG_HTML;
-	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
+	if (g_str_equal(purple_account_get_protocol_id(account), "icq")) {
 		od->icq = TRUE;
 	} else {
 		flags |= PURPLE_CONNECTION_FLAG_AUTO_RESP;
 	}
 
 	/* Set this flag based on the protocol_id rather than the username,
-	   because that is what's tied to the get_moods prpl callback. */
-	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
+	   because that is what's tied to the get_moods protocol callback. */
+	if (g_str_equal(purple_account_get_protocol_id(account), "icq"))
 		flags |= PURPLE_CONNECTION_FLAG_SUPPORT_MOODS;
 
 	purple_connection_set_flags(gc, flags);
@@ -746,7 +746,7 @@ oscar_login(PurpleAccount *account)
 
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(purple_connection_get_protocol(gc), "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
-	purple_prefs_connect_callback(purple_connection_get_protocol(gc), "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
+	purple_prefs_connect_callback(purple_connection_get_protocol(gc), "/protocols/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
 	/*
 	 * On 2008-03-05 AOL released some documentation on the OSCAR protocol
@@ -770,7 +770,7 @@ oscar_login(PurpleAccount *account)
 			server = purple_account_get_string(account, "server", oscar_get_login_server(od->icq, TRUE));
 
 			/*
-			 * If the account's server is what the oscar prpl has offered as
+			 * If the account's server is what the oscar protocol has offered as
 			 * the default login server through the vast eons (all two of
 			 * said default options, AFAIK) and the user wants SSL, we'll
 			 * do what we know is best for them and change the setting out
@@ -5442,21 +5442,21 @@ oscar_get_max_message_size(PurpleConversation *conv)
 }
 
 /* TODO: Find somewhere to put this instead of including it in a bunch of places.
- * Maybe just change purple_accounts_find() to return anything for the prpl if there is no acct_id.
+ * Maybe just change purple_accounts_find() to return anything for the protocol if there is no acct_id.
  */
-static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
+static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
 {
 	PurpleAccount *acct = NULL;
 
 	/* If we have a specific acct, use it */
 	if (acct_id) {
-		acct = purple_accounts_find(acct_id, prpl);
+		acct = purple_accounts_find(acct_id, protocol);
 		if (acct && !purple_account_is_connected(acct))
 			acct = NULL;
 	} else { /* Otherwise find an active account for the protocol */
 		GList *l = purple_accounts_get_all();
 		while (l) {
-			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+			if (!strcmp(protocol, purple_account_get_protocol_id(l->data))
 					&& purple_account_is_connected(l->data)) {
 				acct = l->data;
 				break;
@@ -5471,15 +5471,12 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *params)
 {
 	char *acct_id = g_hash_table_lookup(params, "account");
-	char prpl[11];
 	PurpleAccount *acct;
 
 	if (g_ascii_strcasecmp(proto, "aim") && g_ascii_strcasecmp(proto, "icq"))
 		return FALSE;
 
-	g_snprintf(prpl, sizeof(prpl), "prpl-%s", proto);
-
-	acct = find_acct(prpl, acct_id);
+	acct = find_acct(proto, acct_id);
 
 	if (!acct)
 		return FALSE;
@@ -5585,18 +5582,18 @@ oscar_protocol_base_init(OscarProtocolClass *klass)
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
-	if (g_str_equal(proto_class->id, "prpl-aim")) {
+	if (g_str_equal(proto_class->id, "aim")) {
 		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
 		proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 	}
 
 	/* Preferences */
-	purple_prefs_add_none("/plugins/prpl/oscar");
-	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
+	purple_prefs_add_none("/protocols/oscar");
+	purple_prefs_add_bool("/protocols/oscar/recent_buddies", FALSE);
 
-	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
-	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
+	purple_prefs_remove("/protocols/oscar/show_idle");
+	purple_prefs_remove("/protocols/oscar/always_use_rv_proxy");
 }
 
 static void

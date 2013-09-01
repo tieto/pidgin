@@ -119,13 +119,13 @@ update_buddies_from_contact(EContact *contact)
 
 	name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
-	update_ims_from_contact(contact, name, "prpl-aim",    E_CONTACT_IM_AIM);
-	update_ims_from_contact(contact, name, "prpl-jabber", E_CONTACT_IM_JABBER);
-	update_ims_from_contact(contact, name, "prpl-yahoo",  E_CONTACT_IM_YAHOO);
-	update_ims_from_contact(contact, name, "prpl-msn",    E_CONTACT_IM_MSN);
-	update_ims_from_contact(contact, name, "prpl-icq",    E_CONTACT_IM_ICQ);
-	update_ims_from_contact(contact, name, "prpl-novell", E_CONTACT_IM_GROUPWISE);
-	update_ims_from_contact(contact, name, "prpl-gg",     E_CONTACT_IM_GADUGADU);
+	update_ims_from_contact(contact, name, "aim",    E_CONTACT_IM_AIM);
+	update_ims_from_contact(contact, name, "jabber", E_CONTACT_IM_JABBER);
+	update_ims_from_contact(contact, name, "yahoo",  E_CONTACT_IM_YAHOO);
+	update_ims_from_contact(contact, name, "msn",    E_CONTACT_IM_MSN);
+	update_ims_from_contact(contact, name, "icq",    E_CONTACT_IM_ICQ);
+	update_ims_from_contact(contact, name, "novell", E_CONTACT_IM_GROUPWISE);
+	update_ims_from_contact(contact, name, "gg",     E_CONTACT_IM_GADUGADU);
 }
 
 static void

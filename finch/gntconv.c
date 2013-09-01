@@ -1244,7 +1244,7 @@ debug_command_cb(PurpleConversation *conv,
 				DISPLAY_VERSION, purple_core_get_version());
 	} else if (!g_ascii_strcasecmp(args[0], "plugins")) {
 		/* Show all the loaded plugins, including the protocol plugins and plugin loaders.
-		 * This is intentional, since third party prpls are often sources of bugs, and some
+		 * This is intentional, since third party protocols are often sources of bugs, and some
 		 * plugin loaders (e.g. mono) can also be buggy.
 		 */
 		GString *str = g_string_new("Loaded Plugins: ");

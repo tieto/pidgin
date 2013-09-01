@@ -82,7 +82,7 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "https://pidgin.im/"
 
-#define JABBER_ID    "prpl-jabber"
+#define JABBER_ID    "jabber"
 #define JABBER_NAME  "XMPP"
 
 #define JABBER_TYPE_PROTOCOL             (jabber_protocol_get_type())
@@ -404,7 +404,7 @@ gboolean jabber_stream_is_ssl(JabberStream *js);
  */
 void jabber_stream_restart_inactivity_timer(JabberStream *js);
 
-/** PRPL functions */
+/** Protocol functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
 const char* jabber_list_emblem(PurpleBuddy *b);
 char *jabber_status_text(PurpleBuddy *b);

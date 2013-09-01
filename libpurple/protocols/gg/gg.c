@@ -1417,7 +1417,7 @@ ggp_protocol_base_init(GaduGaduProtocolClass *klass)
 	                                                 PURPLE_ICON_SCALE_DISPLAY |
 	                                                 PURPLE_ICON_SCALE_SEND);
 
-	purple_prefs_add_none("/plugins/prpl/gg");
+	purple_prefs_add_none("/protocols/gg");
 
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");

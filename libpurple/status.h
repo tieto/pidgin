@@ -29,13 +29,13 @@
 /*
  * A brief explanation of the status API:
  *
- * PurpleStatusType's are created by each PRPL.  They outline the
+ * PurpleStatusType's are created by each protocol.  They outline the
  * available statuses of the protocol.  AIM, for example, supports
  * an available state with an optional available message, an away
  * state with a mandatory message, and an invisible state (which is
  * technically "independent" of the other two, but we'll get into
  * that later).  PurpleStatusTypes are very permanent.  They are
- * hardcoded in each PRPL and will not change often.  And because
+ * hardcoded in each protocol and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
  *
  * A PurpleStatus can be thought of as an "instance" of a PurpleStatusType.
@@ -45,7 +45,7 @@
  * PurpleBuddy node for this person in your buddy list.  Purple wants
  * to mark this buddy as "away," so it creates a new PurpleStatus.
  * The PurpleStatus has its PurpleStatusType set to the "away" state
- * for the oscar PRPL.  The PurpleStatus also contains the buddy's
+ * for the oscar protocol.  The PurpleStatus also contains the buddy's
  * away message.  PurpleStatuses are sometimes saved, depending on
  * the context.  The current PurpleStatuses associated with each of
  * your accounts are saved so that the next time you start Purple,
@@ -68,13 +68,13 @@
  */
 
 /**
- * PurpleStatusType's are created by each PRPL.  They outline the
+ * PurpleStatusType's are created by each protocol.  They outline the
  * available statuses of the protocol.  AIM, for example, supports
  * an available state with an optional available message, an away
  * state with a mandatory message, and an invisible state (which is
  * technically "independent" of the other two, but we'll get into
  * that later).  PurpleStatusTypes are very permanent.  They are
- * hardcoded in each PRPL and will not change often.  And because
+ * hardcoded in each protocol and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
  */
 #define PURPLE_TYPE_STATUS             (purple_status_get_type())

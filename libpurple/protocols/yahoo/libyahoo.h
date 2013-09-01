@@ -24,7 +24,7 @@
 
 #include "protocol.h"
 
-#define YAHOO_ID     "prpl-yahoo"
+#define YAHOO_ID     "yahoo"
 #define YAHOO_NAME   "Yahoo"
 
 #define YAHOO_TYPE_PROTOCOL             (yahoo_protocol_get_type())

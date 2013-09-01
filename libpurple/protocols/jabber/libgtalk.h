@@ -24,7 +24,7 @@
 
 #include "jabber.h"
 
-#define GTALK_ID     "prpl-gtalk"
+#define GTALK_ID     "gtalk"
 #define GTALK_NAME   "Google Talk (XMPP)"
 
 #define GTALK_TYPE_PROTOCOL             (gtalk_protocol_get_type())

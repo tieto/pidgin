@@ -128,7 +128,7 @@ enum {
 	/**
  	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored.
 	 * In the GtkTreeModel for the dropdown, this is the stock-id (gchararray), and for the
-	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the prpl-icon
+	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the protocol icon
 	 * (GdkPixbuf) of the account.
  	 */
 	EMBLEM_COLUMN,
@@ -963,11 +963,11 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 {
 	GList *iter, *active_accts = purple_accounts_get_all_active();
 	PurpleAccount *acct1 = NULL;
-	const char *prpl1 = NULL;
+	const char *proto1 = NULL;
 
 	if (active_accts) {
 		acct1 = active_accts->data;
-		prpl1 = purple_account_get_protocol_id(acct1);
+		proto1 = purple_account_get_protocol_id(acct1);
 	} else {
 		/* there's no enabled account */
 		return NULL;
@@ -978,7 +978,7 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 		PurpleAccount *acct2 = iter->data;
 		GList *s1, *s2;
 
-		if (!g_str_equal(prpl1, purple_account_get_protocol_id(acct2))) {
+		if (!g_str_equal(proto1, purple_account_get_protocol_id(acct2))) {
 			acct1 = NULL;
 			break;
 		}

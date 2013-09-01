@@ -431,8 +431,8 @@ do_protocol_change_account_status(PurpleAccount *account,
 
 	if (purple_account_is_connecting(account))
 		/*
-		 * We don't need to call the set_status PRPL function because
-		 * the PRPL will take care of setting its status during the
+		 * We don't need to call the set_status protocol function because
+		 * the protocol will take care of setting its status during the
 		 * connection process.
 		 */
 		return;

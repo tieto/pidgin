@@ -34,19 +34,19 @@
 
 static PurpleProtocol *my_protocol = NULL;
 
-static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
+static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
 {
 	PurpleAccount *acct = NULL;
 
 	/* If we have a specific acct, use it */
 	if (acct_id) {
-		acct = purple_accounts_find(acct_id, prpl);
+		acct = purple_accounts_find(acct_id, protocol);
 		if (acct && !purple_account_is_connected(acct))
 			acct = NULL;
 	} else { /* Otherwise find an active account for the protocol */
 		GList *l = purple_accounts_get_all();
 		while (l) {
-			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+			if (!strcmp(protocol, purple_account_get_protocol_id(l->data))
 					&& purple_account_is_connected(l->data)) {
 				acct = l->data;
 				break;
@@ -171,7 +171,7 @@ xmpp_protocol_base_init(XMPPProtocolClass *klass)
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
 		option);
 
-	purple_prefs_remove("/plugins/prpl/jabber");
+	purple_prefs_remove("/protocols/jabber");
 }
 
 static void xmpp_protocol_base_finalize(XMPPProtocolClass *klass) { }

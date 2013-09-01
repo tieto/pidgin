@@ -41,20 +41,20 @@ static void yahoojp_register_commands(void)
 	purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoojp", yahoopurple_cmd_chat_join,
+	                  "yahoojp", yahoopurple_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
 	purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoojp", yahoopurple_cmd_chat_list,
+	                  "yahoojp", yahoopurple_cmd_chat_list,
 	                  _("list: List rooms on the Yahoo network"), NULL);
 	purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoojp", yahoopurple_cmd_buzz,
+	                  "yahoojp", yahoopurple_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
 	purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "prpl-yahoojp", yahoo_doodle_purple_cmd_start,
+	                  "yahoojp", yahoo_doodle_purple_cmd_start,
 	                 _("doodle: Request user to start a Doodle session"), NULL);
 }
 

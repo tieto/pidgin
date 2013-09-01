@@ -90,7 +90,7 @@ typedef enum {
 	PURPLE_CMD_FLAG_IM               = 0x01,
 	/** Command is usable in multi-user chats. */
 	PURPLE_CMD_FLAG_CHAT             = 0x02,
-	/** Command is usable only for a particular prpl. */
+	/** Command is usable only for a particular protocol. */
 	PURPLE_CMD_FLAG_PROTOCOL_ONLY        = 0x04,
 	/** Incorrect arguments to this command should be accepted anyway. */
 	PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS = 0x08
@@ -140,8 +140,8 @@ G_BEGIN_DECLS
  *          #PURPLE_CMD_FLAG_IM or #PURPLE_CMD_FLAG_CHAT (you may pass both) in
  *          order for the command to ever actually be called.
  * @param protocol_id If the #PURPLE_CMD_FLAG_PROTOCOL_ONLY flag is set, this is the id
- *                of the prpl to which the command applies (such as
- *                <tt>"prpl-msn"</tt>). If the flag is not set, this parameter
+ *                of the protocol to which the command applies (such as
+ *                <tt>"msn"</tt>). If the flag is not set, this parameter
  *                is ignored; pass @c NULL (or a humourous string of your
  *                choice!).
  * @param func This is the function to call when someone enters this command.

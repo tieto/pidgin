@@ -34,7 +34,7 @@
 #include "roomlist.h"
 #include "sslconn.h"
 
-#define IRC_ID     "prpl-irc"
+#define IRC_ID     "irc"
 #define IRC_NAME   "IRC"
 
 #define IRC_TYPE_PROTOCOL             (irc_protocol_get_type())

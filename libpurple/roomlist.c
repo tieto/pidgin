@@ -41,7 +41,7 @@ struct _PurpleRoomlist {
 	GList *rooms; /**< The list of rooms. */
 	gboolean in_progress; /**< The listing is in progress. */
 	gpointer ui_data; /**< UI private data. */
-	gpointer proto_data; /** Prpl private data. */
+	gpointer proto_data; /** Protocol private data. */
 	guint ref; /**< The reference count. */
 };
 
@@ -53,7 +53,7 @@ struct _PurpleRoomlistRoom {
 	gchar *name; /**< The name of the room. */
 	GList *fields; /**< Other fields. */
 	PurpleRoomlistRoom *parent; /**< The parent room, or NULL. */
-	gboolean expanded_once; /**< A flag the UI uses to avoid multiple expand prpl cbs. */
+	gboolean expanded_once; /**< A flag the UI uses to avoid multiple expand protocol cbs. */
 };
 
 /**

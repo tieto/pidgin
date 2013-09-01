@@ -974,7 +974,7 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 #endif /* PHOTO_SUPPORT */
 
 	/* Jun 29 05 Bleeter: Y! changed their profile pages. Terminators now seem to be */
-	/* </dd> and not \n. The prpl's need to be audited before it can be moved */
+	/* </dd> and not \n. The protocol's need to be audited before it can be moved */
 	/* in to purple_markup_strip_html*/
 	char *fudged_buffer;
 

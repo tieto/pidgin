@@ -24,7 +24,7 @@
 
 #include "libyahoo.h"
 
-#define YAHOOJP_ID     "prpl-yahoojp"
+#define YAHOOJP_ID     "yahoojp"
 #define YAHOOJP_NAME   "Yahoo JAPAN"
 
 #define YAHOOJP_TYPE_PROTOCOL             (yahoojp_protocol_get_type())

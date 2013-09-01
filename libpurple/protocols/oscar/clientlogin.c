@@ -87,7 +87,7 @@ static const gchar *get_start_oscar_session_url(OscarData *od)
 static const char *get_client_key(OscarData *od)
 {
 	return oscar_get_ui_info_string(
-			od->icq ? "prpl-icq-clientkey" : "prpl-aim-clientkey",
+			od->icq ? "protocol-icq-clientkey" : "protocol-aim-clientkey",
 			DEFAULT_CLIENT_KEY);
 }
 
@@ -379,7 +379,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=%d",
 			purple_url_encode(token),
-			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid" : "prpl-aim-distid", 0x00000611),
+			oscar_get_ui_info_int(od->icq ? "protocol-icq-distid" : "protocol-aim-distid", 0x00000611),
 			get_client_key(od),
 			hosttime,
 			strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0 ? 1 : 0);

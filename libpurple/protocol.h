@@ -93,7 +93,7 @@ struct _PurpleProtocolClass
 
 	PurpleBuddyIconSpec *icon_spec;  /**< The icon spec. */
 
-	PurpleWhiteboardPrplOps *whiteboard_protocol_ops;
+	PurpleWhiteboardOps *whiteboard_ops;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -418,8 +418,6 @@ struct _PurpleProtocolInterface
 	 */
 	gboolean (*offline_message)(const PurpleBuddy *buddy);
 
-	PurpleWhiteboardPrplOps *whiteboard_protocol_ops;
-
 	/** For use in plugins that may understand the underlying protocol */
 	int (*send_raw)(PurpleConnection *gc, const char *buf, int len);
 
@@ -694,7 +692,7 @@ PurpleBuddyIconSpec *purple_protocol_get_icon_spec(const PurpleProtocol *protoco
  *
  * @return The whiteboard ops of the protocol.
  */
-PurpleWhiteboardPrplOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol);
+PurpleWhiteboardOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol);
 
 /*@}*/
 

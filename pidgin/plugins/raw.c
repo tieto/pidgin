@@ -72,7 +72,7 @@ text_sent_cb(GtkEntry *entry)
 
 	purple_debug_misc("raw", "protocol_id = %s\n", protocol_id);
 
-	if (strcmp(protocol_id, "prpl-toc") == 0) {
+	if (strcmp(protocol_id, "toc") == 0) {
 		int *a = (int *)gc->proto_data;
 		unsigned short seqno = htons(a[1]++ & 0xffff);
 		unsigned short len = htons(strlen(txt) + 1);
@@ -82,19 +82,19 @@ text_sent_cb(GtkEntry *entry)
 		write(*a, txt, ntohs(len));
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 
-	} else if (strcmp(protocol_id, "prpl-msn") == 0) {
+	} else if (strcmp(protocol_id, "msn") == 0) {
 		MsnSession *session = gc->proto_data;
 		char buf[strlen(txt) + 3];
 
 		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
 		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
 
-	} else if (strcmp(protocol_id, "prpl-irc") == 0) {
+	} else if (strcmp(protocol_id, "irc") == 0) {
 		write(*(int *)gc->proto_data, txt, strlen(txt));
 		write(*(int *)gc->proto_data, "\r\n", 2);
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 
-	} else if (strcmp(protocol_id, "prpl-jabber") == 0) {
+	} else if (strcmp(protocol_id, "jabber") == 0) {
 		jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
 
 	} else {

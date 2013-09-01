@@ -20,7 +20,7 @@
  *
  */
 
-/* oscarcommon.h contains prototypes for the prpl functions used by libaim.c
+/* oscarcommon.h contains prototypes for the protocol functions used by libaim.c
  * and libicq.c
  */
 

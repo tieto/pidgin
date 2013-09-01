@@ -55,15 +55,13 @@ signed_on_cb(PurpleConnection *conn, void *data)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	PurplePlugin *prpl;
 	PurpleProtocol *protocol;
 	PurpleAccountOption *option;
 	GList *l;
 
 	/* Register protocol preference. */
-	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
-		prpl = (PurplePlugin *)l->data;
-		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	for (l = purple_protocols_get_all(); l != NULL; l = l->next) {
+		protocol = PURPLE_PROTOCOL(l->data);
 		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 			option = purple_account_option_bool_new(_("One Time Password"),
 								PREF_NAME, FALSE);
@@ -81,15 +79,13 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-	PurplePlugin *prpl;
 	PurpleProtocol *protocol;
 	PurpleAccountOption *option;
 	GList *l, *options;
 
 	/* Remove protocol preference. */
-	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
-		prpl = (PurplePlugin *)l->data;
-		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	for (l = purple_protocols_get_all(); l != NULL; l = l->next) {
+		protocol = PURPLE_PROTOCOL(l->data);
 		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 			options = purple_protocol_get_protocol_options(protocol);
 			while (options != NULL) {

@@ -72,7 +72,7 @@ struct _PurpleConnectionPrivate
 
 	/** Wants to Die state.  This is set when the user chooses to log out, or
 	 * when the protocol is disconnected and should not be automatically
-	 * reconnected (incorrect password, etc.).  prpls should rely on
+	 * reconnected (incorrect password, etc.).  Protocols should rely on
 	 * purple_connection_error() to set this for them rather than
 	 * setting it themselves.
 	 * @see purple_connection_error_is_fatal
@@ -81,7 +81,7 @@ struct _PurpleConnectionPrivate
 
 	guint disconnect_timeout;  /**< Timer used for nasty stack tricks         */
 	time_t last_received;      /**< When we last received a packet. Set by the
-	                                prpl to avoid sending unneeded keepalives */
+	                                protocols to avoid sending unneeded keepalives */
 };
 
 /* GObject property enums */
@@ -733,7 +733,7 @@ purple_connection_dispose(GObject *object)
 
 	purple_protocol_iface_close(priv->protocol, gc);
 
-	/* Clear out the proto data that was freed in the prpl close method*/
+	/* Clear out the proto data that was freed in the protocol's close method */
 	buddies = purple_blist_find_buddies(account, NULL);
 	while (buddies != NULL) {
 		PurpleBuddy *buddy = buddies->data;

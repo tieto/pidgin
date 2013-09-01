@@ -95,7 +95,7 @@ purple_protocol_get_icon_spec(const PurpleProtocol *protocol)
 	return klass->icon_spec;
 }
 
-PurpleWhiteboardPrplOps *
+PurpleWhiteboardOps *
 purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol)
 {
 	PurpleProtocolClass *klass;
@@ -103,7 +103,7 @@ purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol)
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
 	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->whiteboard_protocol_ops;
+	return klass->whiteboard_ops;
 }
 
 /**************************************************************************

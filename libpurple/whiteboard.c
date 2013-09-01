@@ -37,7 +37,7 @@ struct _PurpleWhiteboard
 
 	void *ui_data;                   /**< Graphical user-interface data */
 	void *proto_data;                /**< Protocol specific data */
-	PurpleWhiteboardPrplOps *protocol_ops; /**< Protocol-plugin operations */
+	PurpleWhiteboardOps *protocol_ops; /**< Protocol-plugin operations */
 
 	GList *draw_list;                /**< List of drawing elements/deltas to send */
 };
@@ -46,7 +46,7 @@ struct _PurpleWhiteboard
  * Globals
  *****************************************************************************/
 static PurpleWhiteboardUiOps *whiteboard_ui_ops = NULL;
-/* static PurpleWhiteboardPrplOps *whiteboard_protocol_ops = NULL; */
+/* static PurpleWhiteboardOps *whiteboard_protocol_ops = NULL; */
 
 static GList *wbList = NULL;
 
@@ -60,7 +60,7 @@ void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops)
 	whiteboard_ui_ops = ops;
 }
 
-void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops)
+void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardOps *ops)
 {
 	wb->protocol_ops = ops;
 }
@@ -173,7 +173,7 @@ void purple_whiteboard_draw_list_destroy(GList *draw_list)
 
 gboolean purple_whiteboard_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
 {
-	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
+	PurpleWhiteboardOps *protocol_ops = wb->protocol_ops;
 
 	if (protocol_ops && protocol_ops->get_dimensions)
 	{
@@ -192,7 +192,7 @@ void purple_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int heigh
 
 void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list)
 {
-	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
+	PurpleWhiteboardOps *protocol_ops = wb->protocol_ops;
 
 	if (protocol_ops && protocol_ops->send_draw_list)
 		protocol_ops->send_draw_list(wb, list);
@@ -218,7 +218,7 @@ void purple_whiteboard_clear(PurpleWhiteboard *wb)
 
 void purple_whiteboard_send_clear(PurpleWhiteboard *wb)
 {
-	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
+	PurpleWhiteboardOps *protocol_ops = wb->protocol_ops;
 
 	if (protocol_ops && protocol_ops->clear)
 		protocol_ops->clear(wb);
@@ -226,7 +226,7 @@ void purple_whiteboard_send_clear(PurpleWhiteboard *wb)
 
 void purple_whiteboard_send_brush(PurpleWhiteboard *wb, int size, int color)
 {
-	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
+	PurpleWhiteboardOps *protocol_ops = wb->protocol_ops;
 
 	if (protocol_ops && protocol_ops->set_brush)
 		protocol_ops->set_brush(wb, size, color);
@@ -234,7 +234,7 @@ void purple_whiteboard_send_brush(PurpleWhiteboard *wb, int size, int color)
 
 gboolean purple_whiteboard_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
-	PurpleWhiteboardPrplOps *protocol_ops = wb->protocol_ops;
+	PurpleWhiteboardOps *protocol_ops = wb->protocol_ops;
 
 	if (protocol_ops && protocol_ops->get_brush)
 	{

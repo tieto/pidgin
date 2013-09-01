@@ -75,7 +75,7 @@ typedef struct
 	GList *split_entries;
 
 	GList *protocol_entries;
-	GntWidget *prpls;
+	GntWidget *protocols;
 
 	GntWidget *newmail;
 	GntWidget *remember;
@@ -164,21 +164,21 @@ save_account_cb(AccountEditDialog *dialog)
 			purple_account_set_username(account, username->str);
 		} else {
 			const char *old = purple_account_get_protocol_id(account);
-			char *oldprpl;
+			char *oldproto;
 			if (strcmp(old, purple_protocol_get_id(protocol))) {
 				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
 						_("The account's protocol cannot be changed while it is connected to the server."));
 				return;
 			}
 
-			oldprpl = g_strdup(purple_normalize(account, purple_account_get_username(account)));
-			if (g_utf8_collate(oldprpl, purple_normalize(account, username->str))) {
+			oldproto = g_strdup(purple_normalize(account, purple_account_get_username(account)));
+			if (g_utf8_collate(oldproto, purple_normalize(account, username->str))) {
 				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
 						_("The account's username cannot be changed while it is connected to the server."));
-				g_free(oldprpl);
+				g_free(oldproto);
 				return;
 			}
-			g_free(oldprpl);
+			g_free(oldproto);
 			purple_account_set_username(account, username->str);
 		}
 	}
@@ -369,11 +369,11 @@ add_protocol_options(AccountEditDialog *dialog)
 	GntWidget *vbox, *box;
 	PurpleAccount *account;
 
-	if (dialog->prpls)
-		gnt_box_remove_all(GNT_BOX(dialog->prpls));
+	if (dialog->protocols)
+		gnt_box_remove_all(GNT_BOX(dialog->protocols));
 	else
 	{
-		dialog->prpls = vbox = gnt_vbox_new(FALSE);
+		dialog->protocols = vbox = gnt_vbox_new(FALSE);
 		gnt_box_set_pad(GNT_BOX(vbox), 0);
 		gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_LEFT);
 		gnt_box_set_fill(GNT_BOX(vbox), TRUE);
@@ -385,7 +385,7 @@ add_protocol_options(AccountEditDialog *dialog)
 		dialog->protocol_entries = NULL;
 	}
 
-	vbox = dialog->prpls;
+	vbox = dialog->protocols;
 
 	protocol = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->protocol));
 	if (!protocol)
@@ -482,7 +482,7 @@ add_protocol_options(AccountEditDialog *dialog)
 	}
 
 	/* Show the registration checkbox only in a new account dialog,
-	 * and when the selected prpl has the support for it. */
+	 * and when the selected protocol has the support for it. */
 	gnt_widget_set_visible(dialog->regserver, account == NULL &&
 			PURPLE_PROTOCOL_IMPLEMENTS(protocol, register_user));
 }
@@ -633,7 +633,7 @@ edit_account_continue(PurpleAccount *account,
 
 	/* The advanced box */
 	add_protocol_options(dialog);
-	gnt_box_add_widget(GNT_BOX(window), dialog->prpls);
+	gnt_box_add_widget(GNT_BOX(window), dialog->protocols);
 
 	/* TODO: Add proxy options */
 

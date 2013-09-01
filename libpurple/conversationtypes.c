@@ -1443,7 +1443,7 @@ purple_chat_conversation_dispose(GObject *object)
 		 * which leads to two calls here.. We can't just return after
 		 * this, because then it'll return on the next pass. So, since
 		 * serv_got_chat_left(), which is eventually called from the
-		 * prpl that serv_chat_leave() calls, removes this conversation
+		 * protocol that serv_chat_leave() calls, removes this conversation
 		 * from the gc's buddy_chats list, we're going to check to see
 		 * if this exists in the list. If so, we want to return after
 		 * calling this, because it'll be called again. If not, fall
@@ -1463,8 +1463,8 @@ purple_chat_conversation_dispose(GObject *object)
 #endif
 		/*
 		 * Instead of all of that, lets just close the window when
-		 * the user tells us to, and let the prpl deal with the
-		 * internals on it's own time. Don't do this if the prpl already
+		 * the user tells us to, and let the protocol deal with the
+		 * internals on it's own time. Don't do this if the protocol already
 		 * knows it left the chat.
 		 */
 		if (!purple_chat_conversation_has_left(chat))
@@ -1606,7 +1606,7 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 					"removed in libpurple 3.0.0", name);
 		} else {
 			/*
-			 * This hack is necessary because some prpls (MSN) have unnamed chats
+			 * This hack is necessary because some protocols (MSN) have unnamed chats
 			 * that all use the same name.  A PurpleConversation for one of those
 			 * is only ever re-used if the user has left, so calls to
 			 * purple_conversation_new need to fall-through to creating a new

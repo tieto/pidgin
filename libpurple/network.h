@@ -224,7 +224,7 @@ gboolean purple_network_is_available(void);
  *
  * This is what backs the --force-online command line argument in Pidgin,
  * for example.  This is useful for offline testing, especially when
- * combined with nullprpl.
+ * combined with nullprotocol.
  */
 void purple_network_force_online(void);
 

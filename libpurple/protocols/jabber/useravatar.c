@@ -109,7 +109,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 		jabber_pep_publish(js, publish);
 	} else {
 		/*
-		 * TODO: This is pretty gross.  The Jabber PRPL really shouldn't
+		 * TODO: This is pretty gross.  The Jabber protocol really shouldn't
 		 *       do voodoo to try to determine the image type, height
 		 *       and width.
 		 */

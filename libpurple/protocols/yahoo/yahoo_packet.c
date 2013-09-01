@@ -208,7 +208,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 	/*
 	 * Originally this function used g_slist_append().  I changed
 	 * it to use g_slist_prepend() for improved performance.
-	 * Ideally the Yahoo! PRPL code would be indifferent to the
+	 * Ideally the Yahoo! protocol code would be indifferent to the
 	 * order of the key/value pairs, but I don't know if this is
 	 * the case for all incoming messages.  To be on the safe side
 	 * we reverse the list.

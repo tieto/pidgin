@@ -46,7 +46,7 @@
 #define PUBLISH_EXPIRATION 600
 #define SUBSCRIBE_EXPIRATION 1200
 
-#define SIMPLE_ID     "prpl-simple"
+#define SIMPLE_ID     "simple"
 #define SIMPLE_NAME   "SIMPLE"
 
 #define SIMPLE_TYPE_PROTOCOL             (simple_protocol_get_type())

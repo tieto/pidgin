@@ -24,7 +24,7 @@
 
 #include "protocol.h"
 
-#define NOVELL_ID     "prpl-novell"
+#define NOVELL_ID     "novell"
 #define NOVELL_NAME   "GroupWise"
 
 #define NOVELL_TYPE_PROTOCOL             (novell_protocol_get_type())

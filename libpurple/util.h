@@ -33,7 +33,7 @@
 
 /**
  * A generic structure that contains information about an "action."  One
- * place this is is used is by PRPLs to tell the core the list of available
+ * place this is is used is by protocols to tell the core the list of available
  * right-click actions for a buddy list row.
  */
 typedef struct _PurpleMenuAction PurpleMenuAction;
@@ -930,7 +930,7 @@ gboolean purple_strequal(const gchar *left, const gchar *right);
  *
  * @param account  The account the string belongs to, or NULL if you do
  *                 not know the account.  If you use NULL, the string
- *                 will still be normalized, but if the PRPL uses a
+ *                 will still be normalized, but if the protocol uses a
  *                 custom normalization function then the string may
  *                 not be normalized correctly.
  * @param str      The string to normalize.
@@ -942,7 +942,7 @@ const char *purple_normalize(const PurpleAccount *account, const char *str);
 /**
  * Normalizes a string, so that it is suitable for comparison.
  *
- * This is one possible implementation for the PRPL callback
+ * This is one possible implementation for the protocol callback
  * function "normalize."  It returns a lowercase and UTF-8
  * normalized version of the string.
  *
@@ -956,7 +956,7 @@ const char *purple_normalize_nocase(const PurpleAccount *account, const char *st
 /**
  * Checks, if a string is valid.
  *
- * @param prpl     The protocol plugin the string belongs to.
+ * @param protocol The protocol plugin the string belongs to.
  * @param str      The string to validate.
  *
  * @return TRUE, if string is valid, otherwise FALSE.

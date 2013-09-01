@@ -49,7 +49,7 @@ static GHashTable *xfers_data = NULL;
 typedef struct _PurpleXferPrivData {
 	/*
 	 * Used to moderate the file transfer when either the read/write ui_ops are
-	 * set or fd is not set. In those cases, the UI/prpl call the respective
+	 * set or fd is not set. In those cases, the UI/protocol call the respective
 	 * function, which is somewhat akin to a fd watch being triggered.
 	 */
 	enum {
@@ -1275,7 +1275,7 @@ do_transfer(PurpleXfer *xfer)
 		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
 		gboolean read = TRUE;
 
-		/* this is so the prpl can keep the connection open
+		/* this is so the protocol can keep the connection open
 		   if it needs to for some odd reason. */
 		if (s == 0) {
 			if (xfer->watcher) {
@@ -1308,7 +1308,7 @@ do_transfer(PurpleXfer *xfer)
 					xfer->watcher = 0;
 				}
 
-				/* Need to indicate the prpl is still ready... */
+				/* Need to indicate the protocol is still ready... */
 				priv->ready |= PURPLE_XFER_READY_PROTOCOL;
 
 				g_return_if_reached();
@@ -1390,7 +1390,7 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			purple_input_remove(xfer->watcher);
 			xfer->watcher = 0;
 
-			purple_debug_misc("xfer", "prpl is ready on ft %p, waiting for UI\n", xfer);
+			purple_debug_misc("xfer", "Protocol is ready on ft %p, waiting for UI\n", xfer);
 			return;
 		}
 
@@ -1461,11 +1461,11 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 	priv->ready |= PURPLE_XFER_READY_UI;
 
 	if (0 == (priv->ready & PURPLE_XFER_READY_PROTOCOL)) {
-		purple_debug_misc("xfer", "UI is ready on ft %p, waiting for prpl\n", xfer);
+		purple_debug_misc("xfer", "UI is ready on ft %p, waiting for protocol\n", xfer);
 		return;
 	}
 
-	purple_debug_misc("xfer", "UI (and prpl) ready on ft %p, so proceeding\n", xfer);
+	purple_debug_misc("xfer", "UI (and protocol) ready on ft %p, so proceeding\n", xfer);
 
 	type = purple_xfer_get_type(xfer);
 	if (type == PURPLE_XFER_SEND)
@@ -1493,11 +1493,11 @@ purple_xfer_protocol_ready(PurpleXfer *xfer)
 
 	/* I don't think fwrite/fread are ever *not* ready */
 	if (xfer->dest_fp == NULL && 0 == (priv->ready & PURPLE_XFER_READY_UI)) {
-		purple_debug_misc("xfer", "prpl is ready on ft %p, waiting for UI\n", xfer);
+		purple_debug_misc("xfer", "Protocol is ready on ft %p, waiting for UI\n", xfer);
 		return;
 	}
 
-	purple_debug_misc("xfer", "Prpl (and UI) ready on ft %p, so proceeding\n", xfer);
+	purple_debug_misc("xfer", "Protocol (and UI) ready on ft %p, so proceeding\n", xfer);
 
 	priv->ready = PURPLE_XFER_READY_NONE;
 

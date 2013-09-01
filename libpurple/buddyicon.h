@@ -90,7 +90,7 @@ GType purple_buddy_icon_get_type(void);
  * @param username  The username the icon belongs to.
  * @param icon_data The buddy icon data.
  * @param icon_len  The buddy icon length.
- * @param checksum  A protocol checksum from the prpl or @c NULL.
+ * @param checksum  A protocol checksum from the protocol or @c NULL.
  *
  * @return The buddy icon structure, with a reference for the caller.
  */
@@ -130,7 +130,7 @@ void purple_buddy_icon_update(PurpleBuddyIcon *icon);
  * @param data The buddy icon data, which the buddy icon code
  *             takes ownership of and will free.
  * @param len  The length of the data in @a data.
- * @param checksum  A protocol checksum from the prpl or @c NULL.
+ * @param checksum  A protocol checksum from the protocol or @c NULL.
  */
 void
 purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
@@ -157,7 +157,7 @@ const char *purple_buddy_icon_get_username(const PurpleBuddyIcon *icon);
 /**
  * Returns the buddy icon's checksum.
  *
- * This function is really only for prpl use.
+ * This function is really only for protocol use.
  *
  * @param icon The buddy icon.
  *
@@ -217,7 +217,7 @@ char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
  * @param icon_data The buddy icon data, which the buddy icon code
  *                  takes ownership of and will free.
  * @param icon_len  The length of the icon data.
- * @param checksum  A protocol checksum from the prpl or @c NULL.
+ * @param checksum  A protocol checksum from the protocol or @c NULL.
  */
 void
 purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,

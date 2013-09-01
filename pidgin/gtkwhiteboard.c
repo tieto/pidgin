@@ -607,7 +607,7 @@ static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *ev
 			MotionCount = 0;
 		*/
 
-		/* Send draw list to prpl draw_list handler */
+		/* Send draw list to protocol draw_list handler */
 		purple_whiteboard_send_draw_list(gtkwb->wb, draw_list);
 
 		pidgin_whiteboard_set_canvas_as_icon(gtkwb);

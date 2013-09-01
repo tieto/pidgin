@@ -3412,7 +3412,7 @@ purple_normalize(const PurpleAccount *account, const char *str)
 
 /*
  * You probably don't want to call this directly, it is
- * mainly for use as a PRPL callback function.  See the
+ * mainly for use as a protocol callback function.  See the
  * comments in util.h.
  */
 const char *

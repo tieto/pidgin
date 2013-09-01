@@ -24,7 +24,7 @@
 
 #include "protocol.h"
 
-#define NULL_ID     "prpl-null"
+#define NULL_ID     "null"
 #define NULL_NAME   "Null - Testing Plugin"
 
 #define NULL_TYPE_PROTOCOL             (null_protocol_get_type())

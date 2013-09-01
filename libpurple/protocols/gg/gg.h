@@ -40,7 +40,7 @@
 
 #define GGP_UIN_LEN_MAX 10
 
-#define GGP_ID     "prpl-gg"
+#define GGP_ID     "gg"
 #define GGP_NAME   "Gadu-Gadu"
 
 #define GGP_TYPE_PROTOCOL             (ggp_protocol_get_type())

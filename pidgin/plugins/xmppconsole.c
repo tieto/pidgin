@@ -656,7 +656,7 @@ signing_on_cb(PurpleConnection *gc)
 		return;
 
 	account = purple_connection_get_account(gc);
-	if (strcmp(purple_account_get_protocol_id(account), "prpl-jabber"))
+	if (strcmp(purple_account_get_protocol_id(account), "jabber"))
 		return;
 
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(console->dropdown),
@@ -711,7 +711,7 @@ plugin_load(PurplePlugin *plugin)
 {
 	PurplePlugin *jabber;
 
-	jabber = purple_protocols_find("prpl-jabber");
+	jabber = purple_protocols_find("jabber");
 	if (!jabber)
 		return FALSE;
 
@@ -783,7 +783,7 @@ create_console(PurplePluginAction *action)
 	console->dropdown = gtk_combo_box_text_new();
 	for (connections = purple_connections_get_all(); connections; connections = connections->next) {
 		PurpleConnection *gc = connections->data;
-		if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), "prpl-jabber")) {
+		if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), "jabber")) {
 			console->count++;
 			console->accounts = g_list_append(console->accounts, gc);
 			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(console->dropdown),

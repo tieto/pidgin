@@ -255,7 +255,7 @@ const char *purple_buddy_get_name(const PurpleBuddy *buddy);
 /**
  * Returns a buddy's protocol-specific data.
  *
- * This should only be called from the associated prpl.
+ * This should only be called from the associated protocol.
  *
  * @param buddy The buddy.
  * @return      The protocol data.
@@ -267,7 +267,7 @@ gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
 /**
  * Sets a buddy's protocol-specific data.
  *
- * This should only be called from the associated prpl.
+ * This should only be called from the associated protocol.
  *
  * @param buddy The buddy.
  * @param data  The data.
@@ -486,7 +486,7 @@ GType purple_chat_get_type(void);
  *
  * @param account    The account this chat will get added to
  * @param alias      The alias of the new chat
- * @param components The info the prpl needs to join the chat.  The
+ * @param components The info the protocol needs to join the chat.  The
  *                   hash function should be g_str_hash() and the
  *                   equal function should be g_str_equal().
  * @return           A newly allocated chat

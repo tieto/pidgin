@@ -971,8 +971,8 @@ irc_protocol_base_init(IRCProtocolClass *klass)
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 #endif
 
-	purple_prefs_remove("/plugins/prpl/irc/quitmsg");
-	purple_prefs_remove("/plugins/prpl/irc");
+	purple_prefs_remove("/protocols/irc/quitmsg");
+	purple_prefs_remove("/protocols/irc");
 
 	irc_register_commands();
 

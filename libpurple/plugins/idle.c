@@ -51,12 +51,12 @@ unidle_filter(PurpleAccount *acct)
 static gboolean
 idleable_filter(PurpleAccount *account)
 {
-	PurplePlugin *prpl;
+	PurpleProtocol *protocol;
 
-	prpl = purple_protocols_find(purple_account_get_protocol_id(account));
-	g_return_val_if_fail(prpl != NULL, FALSE);
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+	g_return_val_if_fail(protocol != NULL, FALSE);
 
-	return (PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->set_idle != NULL);
+	return PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_idle);
 }
 
 static void

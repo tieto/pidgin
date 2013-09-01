@@ -113,7 +113,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	guint cv;
 
 	/* Useful to identify the account the tooltip refers to.
-	 *  Other prpls show this. */
+	 *  Other protocols show this. */
 	if (user->username) {
 		purple_notify_user_info_add_pair_plaintext(user_info, _("User"), user->username);
 	}

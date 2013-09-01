@@ -594,7 +594,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkWebViewToolbar *toolbar)
 	g_free(filename);
 
 	gtk_webview_insert_image(GTK_WEBVIEW(toolbar->webview), id);
-	/* TODO: do it after passing an image to prpl, not before
+	/* TODO: do it after passing an image to protocol, not before
 	 * purple_imgstore_unref_by_id(id);
 	 */
 }

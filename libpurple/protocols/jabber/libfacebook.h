@@ -24,7 +24,7 @@
 
 #include "jabber.h"
 
-#define FACEBOOK_ID     "prpl-facebook-xmpp"
+#define FACEBOOK_ID     "facebook-xmpp"
 #define FACEBOOK_NAME   "Facebook (XMPP)"
 
 #define FACEBOOK_TYPE_PROTOCOL             (facebook_protocol_get_type())

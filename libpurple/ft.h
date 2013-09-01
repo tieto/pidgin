@@ -80,7 +80,7 @@ typedef struct
 	void (*cancel_remote)(PurpleXfer *xfer);
 
 	/**
-	 * UI op to write data received from the prpl. The UI must deal with the
+	 * UI op to write data received from the protocol. The UI must deal with the
 	 * entire buffer and return size, or it is treated as an error.
 	 *
 	 * @param xfer    The file transfer structure
@@ -93,7 +93,7 @@ typedef struct
 	gssize (*ui_write)(PurpleXfer *xfer, const guchar *buffer, gssize size);
 
 	/**
-	 * UI op to read data to send to the prpl for a file transfer.
+	 * UI op to read data to send to the protocol for a file transfer.
 	 *
 	 * @param xfer    The file transfer structure
 	 * @param buffer  A pointer to a buffer. The UI must allocate this buffer.
@@ -163,7 +163,7 @@ struct _PurpleXfer
 
 	PurpleXferStatusType status;    /**< File Transfer's status.             */
 
-	/** I/O operations, which should be set by the prpl using
+	/** I/O operations, which should be set by the protocol using
 	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
 	 *  mandatory; all others are optional.
 	 */
@@ -183,7 +183,7 @@ struct _PurpleXfer
 	PurpleXferUiOps *ui_ops;            /**< UI-specific operations. */
 	void *ui_data;                    /**< UI-specific data.       */
 
-	void *proto_data;                 /**< prpl-specific data.     */
+	void *proto_data;                 /**< protocol-specific data.     */
 };
 
 G_BEGIN_DECLS
@@ -202,9 +202,9 @@ GType purple_xfer_get_g_type(void);
 
 /**
  * Creates a new file transfer handle.
- * This is called by prpls.
+ * This is called by protocols.
  * The handle starts with a ref count of 1, and this reference
- * is owned by the core. The prpl normally does not need to
+ * is owned by the core. The protocol normally does not need to
  * purple_xfer_ref or unref.
  *
  * @param account The account sending or receiving the file.
@@ -568,7 +568,7 @@ void purple_xfer_set_ack_fnc(PurpleXfer *xfer,
  * Sets the function to be called if the request is denied.
  *
  * @param xfer The file transfer.
- * @param fnc The request denied prpl callback.
+ * @param fnc The request denied protocol callback.
  */
 void purple_xfer_set_request_denied_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
 
@@ -751,8 +751,8 @@ void purple_xfer_conversation_write(PurpleXfer *xfer, const gchar *message, gboo
 void purple_xfer_ui_ready(PurpleXfer *xfer);
 
 /**
- * Allows the prpl to signal it's ready to send/receive data (depending on
- * the direction of the file transfer. Used when the prpl provides read/write
+ * Allows the protocol to signal it's ready to send/receive data (depending on
+ * the direction of the file transfer. Used when the protocol provides read/write
  * ops and cannot/does not provide a raw fd to the core.
  *
  * @param xfer The file transfer which is ready.

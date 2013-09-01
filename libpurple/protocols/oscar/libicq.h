@@ -24,7 +24,7 @@
 
 #include "oscar.h"
 
-#define ICQ_ID     "prpl-icq"
+#define ICQ_ID     "icq"
 #define ICQ_NAME   "ICQ"
 
 #define ICQ_TYPE_PROTOCOL             (icq_protocol_get_type())
