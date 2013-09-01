@@ -975,15 +975,6 @@ irc_protocol_base_init(IRCProtocolClass *klass)
 	purple_prefs_remove("/protocols/irc");
 
 	irc_register_commands();
-
-	purple_signal_register(_irc_protocol, "irc-sending-text",
-			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_CONNECTION,
-			     G_TYPE_POINTER); /* pointer to a string */
-	purple_signal_register(_irc_protocol, "irc-receiving-text",
-			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-			     PURPLE_TYPE_CONNECTION,
-			     G_TYPE_POINTER); /* pointer to a string */
 }
 
 static void
@@ -1043,6 +1034,15 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	_irc_protocol = purple_protocols_add(IRC_TYPE_PROTOCOL, error);
 	if (!_irc_protocol)
 		return FALSE;
+
+	purple_signal_register(_irc_protocol, "irc-sending-text",
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
+	purple_signal_register(_irc_protocol, "irc-receiving-text",
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
 
 	return TRUE;
 }
