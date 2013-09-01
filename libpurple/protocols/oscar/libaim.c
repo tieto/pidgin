@@ -38,9 +38,48 @@ aim_protocol_base_init(AIMProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
+	static const gchar *encryption_keys[] = {
+		N_("Use encryption if available"),
+		N_("Require encryption"),
+		N_("Don't use encryption"),
+		NULL
+	};
+	static const gchar *encryption_values[] = {
+		OSCAR_OPPORTUNISTIC_ENCRYPTION,
+		OSCAR_REQUIRE_ENCRYPTION,
+		OSCAR_NO_ENCRYPTION,
+		NULL
+	};
+	GList *encryption_options = NULL;
+	int i;
 
 	proto_class->id        = "aim";
 	proto_class->name      = "AIM";
+
+	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	for (i = 0; encryption_keys[i]; i++) {
+		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
+		kvp->key = g_strdup(_(encryption_keys[i]));
+		kvp->value = g_strdup(encryption_values[i]);
+		encryption_options = g_list_append(encryption_options, kvp);
+	}
+	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
+			OSCAR_DEFAULT_USE_CLIENTLOGIN);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(
+		_("Always use AIM proxy server for\nfile transfers and direct IM (slower,\nbut does not reveal your IP address)"), "always_use_rv_proxy",
+		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
+											OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
+	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(FALSE, TRUE));
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
