@@ -5582,7 +5582,7 @@ oscar_protocol_base_init(OscarProtocolClass *klass)
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
-	if (g_str_equal(proto_class->id, "aim")) {
+	if (proto_class->id && g_str_equal(proto_class->id, "aim")) {
 		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
 		proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
