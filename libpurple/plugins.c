@@ -24,6 +24,7 @@
 #include "core.h"
 #include "debug.h"
 #include "dbus-maybe.h"
+#include "enums.h"
 #include "plugins.h"
 
 #define PURPLE_PLUGIN_INFO_GET_PRIVATE(obj) \
@@ -38,6 +39,8 @@ typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
 struct _PurplePluginInfoPrivate {
 	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
 	char *error;           /**< Why a plugin is not loadable                 */
+
+	PurplePluginInfoFlags flags; /**< Flags for the plugin */
 
 	/** Callback that returns a list of actions the plugin can perform */
 	PurplePluginGetActionsCallback get_actions;
@@ -56,6 +59,7 @@ enum
 	PROP_UI_REQUIREMENT,
 	PROP_GET_ACTIONS,
 	PROP_PREFERENCES_FRAME,
+	PROP_FLAGS,
 	PROP_LAST
 };
 
@@ -261,17 +265,18 @@ gboolean
 purple_plugin_is_internal(const PurplePlugin *plugin)
 {
 #ifdef PURPLE_PLUGINS
-	GPluginPluginInfo *info;
+	PurplePluginInfo *info;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	info = GPLUGIN_PLUGIN_INFO(purple_plugin_get_info(plugin));
+	info = purple_plugin_get_info(plugin);
+	if (!info)
+		return TRUE;
 
-	g_return_val_if_fail(info != NULL, FALSE);
-
-	return (gplugin_plugin_info_get_flags(info) &
-	        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL);
-
+	return ((purple_plugin_info_get_flags(info) &
+	         PURPLE_PLUGIN_INFO_FLAGS_INTERNAL) ||
+	         (gplugin_plugin_info_get_flags(GPLUGIN_PLUGIN_INFO(info)) &
+	          GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL));
 #else
 	return FALSE;
 #endif
@@ -296,6 +301,7 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
 #define PROP_UI_REQUIREMENT_S     "ui-requirement"
 #define PROP_GET_ACTIONS_S        "get-actions"
 #define PROP_PREFERENCES_FRAME_S  "preferences-frame"
+#define PROP_FLAGS_S              "flags"
 
 /* GObject initialization function */
 static void
@@ -322,6 +328,9 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 		case PROP_PREFERENCES_FRAME:
 			priv->get_pref_frame = g_value_get_pointer(value);
 			break;
+		case PROP_FLAGS:
+			priv->flags = g_value_get_flags(value);
+			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
 			break;
@@ -343,6 +352,9 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_PREFERENCES_FRAME:
 			g_value_set_pointer(value,
 					purple_plugin_info_get_pref_frame_callback(info));
+			break;
+		case PROP_FLAGS:
+			g_value_set_flags(value, purple_plugin_info_get_flags(info));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -427,20 +439,27 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 
 	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
 		g_param_spec_string(PROP_UI_REQUIREMENT_S,
-		                  "UI Requirement",
-		                  "ID of UI that is required by this plugin", NULL,
+		                  _("UI Requirement"),
+		                  _("ID of UI that is required by this plugin"), NULL,
 		                  G_PARAM_WRITABLE));
 
 	g_object_class_install_property(obj_class, PROP_GET_ACTIONS,
 		g_param_spec_pointer(PROP_GET_ACTIONS_S,
-		                  "Plugin actions",
-		                  "Callback that returns list of the plugin's actions",
+		                  _("Plugin actions"),
+		                  _("Callback that returns list of plugin's actions"),
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_PREFERENCES_FRAME,
 		g_param_spec_pointer(PROP_PREFERENCES_FRAME_S,
-		                  "Preferences frame callback",
-		                  "The callback that returns the preferences frame",
+		                  _("Preferences frame callback"),
+		                  _("The callback that returns the preferences frame"),
+		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+	g_object_class_install_property(obj_class, PROP_FLAGS,
+		g_param_spec_flags(PROP_FLAGS_S,
+		                  _("Plugin flags"),
+		                  _("The flags for the plugin"),
+		                  PURPLE_TYPE_PLUGIN_INFO_FLAGS, 0,
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
@@ -692,6 +711,16 @@ purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info)
 	return priv->get_pref_frame;
 }
 
+PurplePluginInfoFlags
+purple_plugin_info_get_flags(const PurplePluginInfo *info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return priv->flags;
+}
+
 const gchar *
 purple_plugin_info_get_error(const PurplePluginInfo *info)
 {
@@ -815,20 +844,20 @@ purple_plugins_refresh(void)
 	plugins = purple_plugins_find_all();
 	for (l = plugins; l != NULL; l = l->next) {
 		PurplePlugin *plugin = PURPLE_PLUGIN(l->data);
-		GPluginPluginInfo *info;
+		PurplePluginInfo *info;
 		PurplePluginInfoPrivate *priv;
 
 		if (purple_plugin_is_loaded(plugin))
 			continue;
 
-		info = GPLUGIN_PLUGIN_INFO(purple_plugin_get_info(plugin));
+		info = purple_plugin_get_info(plugin);
 		if (!info)
 			continue;
 
 		priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
-		if (!priv->unloaded && gplugin_plugin_info_get_flags(info) &
-				GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY) {
+		if (!priv->unloaded && purple_plugin_info_get_flags(info) &
+				PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD) {
 			purple_debug_info("plugins", "Auto-loading plugin %s\n",
 			                  purple_plugin_get_filename(plugin));
 			purple_plugin_load(plugin, NULL);
@@ -890,14 +919,12 @@ purple_plugins_save_loaded(const char *key)
 
 	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
 		PurplePlugin *plugin = PURPLE_PLUGIN(pl->data);
-		GPluginPluginInfo *info =
-				GPLUGIN_PLUGIN_INFO(purple_plugin_get_info(plugin));
-
+		PurplePluginInfo *info = purple_plugin_get_info(plugin);
 		if (!info)
 			continue;
 
-		if (gplugin_plugin_info_get_flags(info) &
-				GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY)
+		if (purple_plugin_info_get_flags(info) &
+				PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD)
 			continue;
 
 		if (!g_list_find(plugins_to_disable, plugin))

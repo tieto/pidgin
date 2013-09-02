@@ -194,6 +194,7 @@ purple_enumheaders = \
 	connection.h \
 	conversation.h \
 	conversationtypes.h \
+	plugins.h \
 	protocols.h \
 	status.h
 

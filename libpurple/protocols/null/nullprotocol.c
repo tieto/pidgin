@@ -1180,8 +1180,8 @@ plugin_query(GError **error)
 
     /* If you're using this as the basis of a protocol plugin that will be
      * distributed separately from libpurple, do not include these flags.*/
-    "flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-                    GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+    "flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+                    PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
     NULL
   );
 }

@@ -88,7 +88,7 @@ plugin_query(GError **error)
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL,
 		NULL
 	);
 }

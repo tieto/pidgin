@@ -3479,8 +3479,8 @@ plugin_query(GError **error)
 		"authors",      authors,
 		"website",      "https://developer.pidgin.im/wiki/MySpaceIM/",
 		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
 		NULL
 	);
 }

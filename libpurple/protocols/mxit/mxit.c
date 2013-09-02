@@ -840,8 +840,8 @@ plugin_query( GError **error )
 		"authors",		authors,				/* plugin authors' name and email addresses */
 		"website",		MXIT_PLUGIN_WWW,		/* plugin website (to find new versions and reporting of bugs) */
 		"abi-version",	PURPLE_ABI_VERSION,		/* ABI version required by the plugin */
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL |
-		                GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
 		NULL
 	);
 }

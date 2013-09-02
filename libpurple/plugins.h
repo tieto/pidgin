@@ -71,9 +71,6 @@ typedef GPluginPluginClass PurplePluginClass;
 #define PURPLE_IS_PLUGIN_CLASS(klass)  G_IS_OBJECT_CLASS(klass)
 #define PURPLE_PLUGIN_GET_CLASS(obj)   G_OBJECT_GET_CLASS(obj)
 
-#define GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY 0
-#define GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL      0
-
 typedef GObject PurplePlugin;
 typedef GObjectClass PurplePluginClass;
 
@@ -101,6 +98,15 @@ typedef struct _PurplePluginAction PurplePluginAction;
 typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
 typedef GList *(*PurplePluginGetActionsCallback)(PurplePlugin *);
 typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCallback)(PurplePlugin *);
+
+/**
+ * Flags that can be used to treat plugins differently.
+ */
+typedef enum /*< flags >*/
+{
+    PURPLE_PLUGIN_INFO_FLAGS_INTERNAL  = 1 << 1, /**< Plugin is not shown in UI lists */
+    PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD = 1 << 2, /**< Auto-load the plugin */
+} PurplePluginInfoFlags;
 
 /**
  * Holds information about a plugin.
@@ -401,12 +407,7 @@ GType purple_plugin_info_get_type(void);
  *                               perform.                                    \n
  * "preferences-frame"  (PurplePluginPrefFrameCallback) Callback that returns
  *                               a preferences frame for the plugin.
- *
- * Additionally, you can provide a "flags" property if the plugin is to be
- * distributed with libpurple, the value for which should be a bitwise
- * combination of:                                                           \n
- * GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL: Internal plugin, not shown in lists.  \n
- * GPLUGIN_PLUGIN_INFO_FLAGS_LOAD_ON_QUERY: Auto-load on query.              \n
+ * "flags"              (PurplePluginInfoFlags) The flags for a plugin.      \n
  *
  * @param first_property  The first property name
  * @param ...  The value of the first property, followed optionally by more
@@ -569,6 +570,16 @@ purple_plugin_info_get_actions_callback(const PurplePluginInfo *info);
  */
 PurplePluginPrefFrameCallback
 purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info);
+
+/**
+ * Returns the plugin's flags.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The flags of the plugin.
+ */
+PurplePluginInfoFlags
+purple_plugin_info_get_flags(const PurplePluginInfo *info);
 
 /**
  * Returns an error in the plugin info that would prevent the plugin from being
