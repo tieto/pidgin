@@ -34,6 +34,7 @@ static gboolean
 probe_ssl_plugins(PurplePlugin *my_plugin, GError **error)
 {
 	PurplePlugin *plugin;
+	PurplePluginInfo *info;
 	GList *plugins, *l;
 
 	ssl_plugin = NULL;
@@ -43,17 +44,18 @@ probe_ssl_plugins(PurplePlugin *my_plugin, GError **error)
 	for (l = plugins; l != NULL; l = l->next)
 	{
 		plugin = PURPLE_PLUGIN(l->data);
-
 		if (plugin == my_plugin)
 			continue;
 
-		if (strncmp(purple_plugin_info_get_id(purple_plugin_get_info(plugin)),
-				"ssl-", 4) == 0)
+		info = purple_plugin_get_info(plugin);
+		if (!info)
+			continue;
+
+		if (strncmp(purple_plugin_info_get_id(info), "ssl-", 4) == 0)
 		{
 			if (purple_plugin_load(plugin, NULL))
 			{
 				ssl_plugin = plugin;
-
 				break;
 			}
 		}
