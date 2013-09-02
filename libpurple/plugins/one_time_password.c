@@ -57,10 +57,12 @@ plugin_load(PurplePlugin *plugin)
 {
 	PurpleProtocol *protocol;
 	PurpleAccountOption *option;
-	GList *l;
+	GList *list, *l;
+
+	list = purple_protocols_get_all();
 
 	/* Register protocol preference. */
-	for (l = purple_protocols_get_all(); l != NULL; l = l->next) {
+	for (l = list; l != NULL; l = l->next) {
 		protocol = PURPLE_PROTOCOL(l->data);
 		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 			option = purple_account_option_bool_new(_("One Time Password"),
@@ -68,6 +70,7 @@ plugin_load(PurplePlugin *plugin)
 			purple_protocol_get_protocol_options(protocol) = g_list_append(purple_protocol_get_protocol_options(protocol), option);
 		}
 	}
+	g_list_free(list);
 
 	/* Register callback. */
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
@@ -81,10 +84,12 @@ plugin_unload(PurplePlugin *plugin)
 {
 	PurpleProtocol *protocol;
 	PurpleAccountOption *option;
-	GList *l, *options;
+	GList *list, *l, *options;
+
+	list = purple_protocols_get_all();
 
 	/* Remove protocol preference. */
-	for (l = purple_protocols_get_all(); l != NULL; l = l->next) {
+	for (l = list; l != NULL; l = l->next) {
 		protocol = PURPLE_PROTOCOL(l->data);
 		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 			options = purple_protocol_get_protocol_options(protocol);
@@ -99,6 +104,7 @@ plugin_unload(PurplePlugin *plugin)
 			}
 		}
 	}
+	g_list_free(list);
 
 	/* Callback will be automagically unregistered */
 

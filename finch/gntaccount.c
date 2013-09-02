@@ -655,6 +655,8 @@ edit_account_continue(PurpleAccount *account,
 	gnt_widget_show(window);
 	gnt_box_readjust(GNT_BOX(window));
 	gnt_widget_draw(window);
+
+	g_list_free(list);
 }
 
 static void

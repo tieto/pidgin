@@ -240,7 +240,7 @@ connect_to_signals_for_demonstration_purposes_only(void)
 
 int main(int argc, char *argv[])
 {
-	GList *iter;
+	GList *list, *iter;
 	int i, num;
 	GList *names = NULL;
 	const char *protocol = NULL;
@@ -264,14 +264,16 @@ int main(int argc, char *argv[])
 
 	printf("libpurple initialized.\n");
 
-	iter = purple_protocols_get_all();
-	for (i = 0; iter; iter = iter->next) {
+	list = purple_protocols_get_all();
+	for (i = 0, iter = list; iter; iter = iter->next) {
 		PurpleProtocol *protocol = iter->data;
 		if (protocol && purple_protocol_get_name(protocol)) {
 			printf("\t%d: %s\n", i++, purple_protocol_get_name(protocol));
 			names = g_list_append(names, (gpointer)purple_protocol_get_id(protocol));
 		}
 	}
+	g_list_free(list);
+
 	printf("Select the protocol [0-%d]: ", i-1);
 	res = fgets(name, sizeof(name), stdin);
 	if (!res) {

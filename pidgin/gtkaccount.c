@@ -1735,8 +1735,10 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 	if (dialog->account == NULL) {
 		/* Select the first protocol in the list*/
 		GList *protocol_list = purple_protocols_get_all();
-		if (protocol_list != NULL)
+		if (protocol_list != NULL) {
 			dialog->protocol_id = g_strdup(purple_protocol_get_id(PURPLE_PROTOCOL(protocol_list->data)));
+			g_list_free(protocol_list);
+		}
 	}
 	else
 	{

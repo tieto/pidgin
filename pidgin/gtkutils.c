@@ -549,7 +549,7 @@ aop_option_menu_replace_menu(GtkWidget *optmenu, AopMenu *new_aop_menu)
 }
 
 static GdkPixbuf *
-pidgin_create_protocol_icon_from_protocol(PurpleProtocol *protocol, PidginProtocolIconSize size, PurpleAccount *account)
+pidgin_create_icon_from_protocol(PurpleProtocol *protocol, PidginProtocolIconSize size, PurpleAccount *account)
 {
 	const char *protoname = NULL;
 	char *tmp;
@@ -628,7 +628,7 @@ create_protocols_menu(const char *default_proto_id)
 	GdkPixbuf *pixbuf = NULL;
 	GtkTreeIter iter;
 	GtkListStore *ls;
-	GList *p;
+	GList *list, *p;
 	int i;
 
 	ls = gtk_list_store_new(AOP_COLUMN_COUNT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
@@ -637,13 +637,15 @@ create_protocols_menu(const char *default_proto_id)
 	aop_menu->default_item = 0;
 	aop_menu->model = GTK_TREE_MODEL(ls);
 
-	for (p = purple_protocols_get_all(), i = 0;
+	list = purple_protocols_get_all();
+
+	for (p = list, i = 0;
 		 p != NULL;
 		 p = p->next, i++) {
 
-		protocol = (PurpleProtocol *)p->data;
+		protocol = PURPLE_PROTOCOL(p->data);
 
-		pixbuf = pidgin_create_protocol_icon_from_protocol(protocol, PIDGIN_PROTOCOL_ICON_SMALL, NULL);
+		pixbuf = pidgin_create_icon_from_protocol(protocol, PIDGIN_PROTOCOL_ICON_SMALL, NULL);
 
 		gtk_list_store_append(ls, &iter);
 		gtk_list_store_set(ls, &iter,
@@ -658,6 +660,7 @@ create_protocols_menu(const char *default_proto_id)
 		if (default_proto_id != NULL && !strcmp(purple_protocol_get_id(protocol), default_proto_id))
 			aop_menu->default_item = i;
 	}
+	g_list_free(list);
 
 	return aop_menu;
 }
@@ -1689,7 +1692,7 @@ pidgin_create_protocol_icon(PurpleAccount *account, PidginProtocolIconSize size)
 	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 	if (protocol == NULL)
 		return NULL;
-	return pidgin_create_protocol_icon_from_protocol(protocol, size, account);
+	return pidgin_create_icon_from_protocol(protocol, size, account);
 }
 
 static void

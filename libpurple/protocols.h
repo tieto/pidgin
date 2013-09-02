@@ -591,7 +591,8 @@ gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error);
 /**
  * Returns a list of all loaded protocols.
  *
- * @constreturn A list of all loaded protocols.
+ * @return A list of all loaded protocols. The list is owned by the caller, and
+ *         must be g_list_free()d to avoid leaking the nodes.
  */
 GList *purple_protocols_get_all(void);
 
