@@ -504,7 +504,7 @@ plugin_query(GError **error)
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL,
 		NULL
 	);
 }
@@ -567,7 +567,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(gnome_keyring, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT(kwallet_keyring, plugin_query, plugin_load, plugin_unload);
 
 } /* extern "C" */
 

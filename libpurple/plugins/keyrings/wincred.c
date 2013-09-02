@@ -309,4 +309,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(gnome_keyring, plugin_query, plugin_load, plugin_unload);
+PURPLE_PLUGIN_INIT(wincred_keyring, plugin_query, plugin_load, plugin_unload);
