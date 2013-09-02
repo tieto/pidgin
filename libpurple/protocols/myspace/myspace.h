@@ -62,11 +62,11 @@
 #include "user.h"
 
 #define MSIM_TYPE_PROTOCOL             (msim_protocol_get_type())
-#define MSIM_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSIM_TYPE_PROTOCOL, MySpaceProtocol))
-#define MSIM_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MSIM_TYPE_PROTOCOL, MySpaceProtocolClass))
+#define MSIM_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSIM_TYPE_PROTOCOL, MsimProtocol))
+#define MSIM_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MSIM_TYPE_PROTOCOL, MsimProtocolClass))
 #define MSIM_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), MSIM_TYPE_PROTOCOL))
 #define MSIM_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), MSIM_TYPE_PROTOCOL))
-#define MSIM_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MSIM_TYPE_PROTOCOL, MySpaceProtocolClass))
+#define MSIM_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MSIM_TYPE_PROTOCOL, MsimProtocolClass))
 
 /* Conditional compilation options */
 /* Send third-party client version? (Recognized by us and Miranda's plugin) */
@@ -196,15 +196,15 @@
 #define MSIM_ERROR_INCORRECT_PASSWORD           260
 #define MSIM_ERROR_LOGGED_IN_ELSEWHERE          6
 
-typedef struct _MySpaceProtocol
+typedef struct _MsimProtocol
 {
 	PurpleProtocol parent;
-} MySpaceProtocol;
+} MsimProtocol;
 
-typedef struct _MySpaceProtocolClass
+typedef struct _MsimProtocolClass
 {
 	PurpleProtocolClass parent_class;
-} MySpaceProtocolClass;
+} MsimProtocolClass;
 
 /* Functions */
 GType msim_protocol_get_type(void);

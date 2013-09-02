@@ -1401,7 +1401,7 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 }
 
 static void
-ggp_protocol_base_init(GaduGaduProtocolClass *klass)
+ggp_protocol_base_init(GGPProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
@@ -1457,7 +1457,7 @@ ggp_protocol_base_init(GaduGaduProtocolClass *klass)
 }
 
 static void
-ggp_protocol_base_finalize(GaduGaduProtocolClass *klass)
+ggp_protocol_base_finalize(GGPProtocolClass *klass)
 {
 	ggp_servconn_cleanup();
 }
@@ -1543,7 +1543,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, GaduGaduProtocol, ggp_protocol);
+PURPLE_PROTOCOL_DEFINE(my_plugin, GGPProtocol, ggp_protocol);
 PURPLE_PLUGIN_INIT_VAL(my_plugin, gg, plugin_query, plugin_load, plugin_unload);
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

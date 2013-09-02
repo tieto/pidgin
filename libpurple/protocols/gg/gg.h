@@ -41,21 +41,21 @@
 #define GGP_UIN_LEN_MAX 10
 
 #define GGP_TYPE_PROTOCOL             (ggp_protocol_get_type())
-#define GGP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GGP_TYPE_PROTOCOL, GaduGaduProtocol))
-#define GGP_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), GGP_TYPE_PROTOCOL, GaduGaduProtocolClass))
+#define GGP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GGP_TYPE_PROTOCOL, GGPProtocol))
+#define GGP_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), GGP_TYPE_PROTOCOL, GGPProtocolClass))
 #define GGP_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), GGP_TYPE_PROTOCOL))
 #define GGP_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), GGP_TYPE_PROTOCOL))
-#define GGP_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), GGP_TYPE_PROTOCOL, GaduGaduProtocolClass))
+#define GGP_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), GGP_TYPE_PROTOCOL, GGPProtocolClass))
 
-typedef struct _GaduGaduProtocol
+typedef struct _GGPProtocol
 {
 	PurpleProtocol parent;
-} GaduGaduProtocol;
+} GGPProtocol;
 
-typedef struct _GaduGaduProtocolClass
+typedef struct _GGPProtocolClass
 {
 	PurpleProtocolClass parent_class;
-} GaduGaduProtocolClass;
+} GGPProtocolClass;
 
 typedef struct
 {
@@ -84,7 +84,7 @@ typedef struct
 } ggp_buddy_data;
 
 /**
- * Returns the GType for the GaduGaduProtocol object.
+ * Returns the GType for the GGPProtocol object.
  */
 GType ggp_protocol_get_type(void);
 

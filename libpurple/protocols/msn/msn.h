@@ -25,11 +25,11 @@
 #define MSN_H
 
 #define MSN_TYPE_PROTOCOL             (msn_protocol_get_type())
-#define MSN_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSN_TYPE_PROTOCOL, MSNProtocol))
-#define MSN_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MSN_TYPE_PROTOCOL, MSNProtocolClass))
+#define MSN_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSN_TYPE_PROTOCOL, MsnProtocol))
+#define MSN_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MSN_TYPE_PROTOCOL, MsnProtocolClass))
 #define MSN_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), MSN_TYPE_PROTOCOL))
 #define MSN_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), MSN_TYPE_PROTOCOL))
-#define MSN_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MSN_TYPE_PROTOCOL, MSNProtocolClass))
+#define MSN_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MSN_TYPE_PROTOCOL, MsnProtocolClass))
 
 typedef enum
 {
@@ -157,15 +157,15 @@ typedef enum
 	((MSN_CLIENT_ID_VERSION    << 24) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
-typedef struct _MSNProtocol
+typedef struct _MsnProtocol
 {
 	PurpleProtocol parent;
-} MSNProtocol;
+} MsnProtocol;
 
-typedef struct _MSNProtocolClass
+typedef struct _MsnProtocolClass
 {
 	PurpleProtocolClass parent_class;
-} MSNProtocolClass;
+} MsnProtocolClass;
 
 GType msn_protocol_get_type(void);
 

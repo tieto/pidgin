@@ -2062,7 +2062,7 @@ static SilcBool silcpurple_debug_cb(char *file, char *function, int line,
 #endif
 
 static void
-silcpurple_protocol_base_init(SILCProtocolClass *klass)
+silcpurple_protocol_base_init(SilcProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
@@ -2189,7 +2189,7 @@ silcpurple_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->new_xfer           = silcpurple_ftp_new_xfer;
 }
 
-static void silcpurple_protocol_base_finalize(SILCProtocolClass *klass) { }
+static void silcpurple_protocol_base_finalize(SilcProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
@@ -2235,6 +2235,6 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, SILCProtocol, silcpurple_protocol);
+PURPLE_PROTOCOL_DEFINE(my_plugin, SilcProtocol, silcpurple_protocol);
 PURPLE_PLUGIN_INIT_VAL(my_plugin, silc, plugin_query, plugin_load,
                        plugin_unload);

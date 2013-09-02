@@ -5619,7 +5619,7 @@ static void mw_log_handler(const gchar *domain, GLogLevelFlags flags,
 
 
 static void
-mw_protocol_base_init(SametimeProtocolClass *klass)
+mw_protocol_base_init(mwProtocolClass *klass)
 {
   PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
   PurpleAccountUserSplit *split;
@@ -5685,7 +5685,7 @@ mw_protocol_base_init(SametimeProtocolClass *klass)
 
 
 static void
-mw_protocol_base_finalize(SametimeProtocolClass *klass)
+mw_protocol_base_finalize(mwProtocolClass *klass)
 {
   g_log_remove_handler(G_LOG_DOMAIN, log_handler[0]);
   g_log_remove_handler("meanwhile", log_handler[1]);
@@ -5783,7 +5783,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, SametimeProtocol, mw_protocol);
+PURPLE_PROTOCOL_DEFINE(my_plugin, mwProtocol, mw_protocol);
 PURPLE_PLUGIN_INIT_VAL(my_plugin, sametime, plugin_query, plugin_load,
                        plugin_unload);
 /* The End. */

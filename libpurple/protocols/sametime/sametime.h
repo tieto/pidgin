@@ -2,11 +2,11 @@
 #define _SAMETIME_H_
 
 #define MW_TYPE_PROTOCOL             (mw_protocol_get_type())
-#define MW_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MW_TYPE_PROTOCOL, SametimeProtocol))
-#define MW_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MW_TYPE_PROTOCOL, SametimeProtocolClass))
+#define MW_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MW_TYPE_PROTOCOL, mwProtocol))
+#define MW_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MW_TYPE_PROTOCOL, mwProtocolClass))
 #define MW_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), MW_TYPE_PROTOCOL))
 #define MW_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), MW_TYPE_PROTOCOL))
-#define MW_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MW_TYPE_PROTOCOL, SametimeProtocolClass))
+#define MW_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MW_TYPE_PROTOCOL, mwProtocolClass))
 
 /* CFLAGS trumps configure values */
 
@@ -34,19 +34,19 @@
 /* ISO-8859-1 */
 
 
-typedef struct _SametimeProtocol
+typedef struct _mwProtocol
 {
 	PurpleProtocol parent;
-} SametimeProtocol;
+} mwProtocol;
 
-typedef struct _SametimeProtocolClass
+typedef struct _mwProtocolClass
 {
 	PurpleProtocolClass parent_class;
-} SametimeProtocolClass;
+} mwProtocolClass;
 
 
 /**
- * Returns the GType for the SametimeProtocol object.
+ * Returns the GType for the mwProtocol object.
  */
 GType mw_protocol_get_type(void);
 

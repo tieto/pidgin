@@ -2875,7 +2875,7 @@ msn_get_max_message_size(PurpleConversation *conv)
 }
 
 static void
-msn_protocol_base_init(MSNProtocolClass *klass)
+msn_protocol_base_init(MsnProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
@@ -2933,7 +2933,7 @@ msn_protocol_base_init(MSNProtocolClass *klass)
 }
 
 static void
-msn_protocol_base_finalize(MSNProtocolClass *klass)
+msn_protocol_base_finalize(MsnProtocolClass *klass)
 {
 	msn_notification_end();
 	msn_switchboard_end();
@@ -3027,6 +3027,6 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, MSNProtocol, msn_protocol);
+PURPLE_PROTOCOL_DEFINE(my_plugin, MsnProtocol, msn_protocol);
 PURPLE_PLUGIN_INIT_VAL(my_plugin, msn, plugin_query, plugin_load,
                        plugin_unload);

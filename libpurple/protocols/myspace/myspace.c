@@ -3382,7 +3382,7 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
  * Protocol attributes and options.
  */
 static void
-msim_protocol_base_init(MySpaceProtocolClass *klass)
+msim_protocol_base_init(MsimProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
@@ -3456,7 +3456,7 @@ msim_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_account_text_table = msim_get_account_text_table;
 }
 
-static void msim_protocol_base_finalize(MySpaceProtocolClass *klass) { }
+static void msim_protocol_base_finalize(MsimProtocolClass *klass) { }
 
 /**
  * Query the plugin
@@ -3520,6 +3520,6 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, MySpaceProtocol, msim_protocol);
+PURPLE_PROTOCOL_DEFINE(my_plugin, MsimProtocol, msim_protocol);
 PURPLE_PLUGIN_INIT_VAL(my_plugin, myspace, plugin_query, plugin_load,
                        plugin_unload);
