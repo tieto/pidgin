@@ -24,11 +24,12 @@
  * which contains all the shared implementation code with libicq
  */
 
+#include "libaim.h"
+
 #include "core.h"
 #include "plugins.h"
 #include "signals.h"
 
-#include "libaim.h"
 #include "oscarcommon.h"
 
 static PurpleProtocol *my_protocol = NULL;

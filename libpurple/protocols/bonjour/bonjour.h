@@ -26,10 +26,10 @@
 #ifndef _BONJOUR_H_
 #define _BONJOUR_H_
 
+#include "internal.h"
 #include "protocol.h"
 
 #include "mdns_common.h"
-#include "internal.h"
 #include "jabber.h"
 
 #define BONJOUR_GROUP_NAME _("Bonjour")

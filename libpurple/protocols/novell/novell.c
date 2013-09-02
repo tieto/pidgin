@@ -18,15 +18,15 @@
  *
  */
 
-#include "novell.h"
-
 #include "internal.h"
+
 #include "accountopt.h"
 #include "debug.h"
 #include "plugins.h"
 #include "server.h"
 #include "nmuser.h"
 #include "notify.h"
+#include "novell.h"
 #include "util.h"
 #include "sslconn.h"
 #include "request.h"

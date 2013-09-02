@@ -32,8 +32,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "plugins.h"
 #include "myspace.h"
+#include "plugins.h"
 
 static PurpleProtocol *my_protocol = NULL;
 
