@@ -3561,7 +3561,6 @@ static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
 	my_protocol = purple_protocols_add(NOVELL_TYPE_PROTOCOL, error);
-
 	if (!my_protocol)
 		return FALSE;
 
