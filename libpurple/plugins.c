@@ -217,8 +217,10 @@ purple_plugin_get_info(const PurplePlugin *plugin)
 	info = gplugin_plugin_get_info(plugin);
 	g_object_unref(info);
 
-	return PURPLE_PLUGIN_INFO(info);
-
+	if (PURPLE_IS_PLUGIN_INFO(info))
+		return PURPLE_PLUGIN_INFO(info);
+	else
+		return NULL;
 #else
 	return NULL;
 #endif
@@ -264,7 +266,6 @@ purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
 gboolean
 purple_plugin_is_internal(const PurplePlugin *plugin)
 {
-#ifdef PURPLE_PLUGINS
 	PurplePluginInfo *info;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
@@ -273,13 +274,8 @@ purple_plugin_is_internal(const PurplePlugin *plugin)
 	if (!info)
 		return TRUE;
 
-	return ((purple_plugin_info_get_flags(info) &
-	         PURPLE_PLUGIN_INFO_FLAGS_INTERNAL) ||
-	         (gplugin_plugin_info_get_flags(GPLUGIN_PLUGIN_INFO(info)) &
-	          GPLUGIN_PLUGIN_INFO_FLAGS_INTERNAL));
-#else
-	return FALSE;
-#endif
+	return (purple_plugin_info_get_flags(info) &
+	        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL);
 }
 
 GSList *
