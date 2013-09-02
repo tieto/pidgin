@@ -734,6 +734,28 @@ purple_protocol_action_get_type(void)
 /**************************************************************************
  * Protocols API
  **************************************************************************/
+/**
+ * Negative if a before b, 0 if equal, positive if a after b.
+ */
+static gint
+compare_protocol(PurpleProtocol *a, PurpleProtocol *b)
+{
+	const gchar *aname = purple_protocol_get_name(a);
+	const gchar *bname = purple_protocol_get_name(b);
+
+	if (aname) {
+		if (bname)
+			return strcmp(aname, bname);
+		else
+			return -1;
+	} else {
+		if (bname)
+			return 1;
+		else
+			return 0;
+	}
+}
+
 PurpleProtocol *
 purple_protocols_find(const char *id)
 {
@@ -830,7 +852,7 @@ purple_protocols_get_all(void)
 
 	g_hash_table_iter_init(&iter, protocols);
 	while (g_hash_table_iter_next(&iter, NULL, (gpointer *)&protocol))
-		ret = g_list_append(ret, protocol);
+		ret = g_list_insert_sorted(ret, protocol, (GCompareFunc)compare_protocol);
 
 	return ret;
 }
