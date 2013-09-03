@@ -46,4 +46,7 @@ typedef struct _YahooJPProtocolClass
  */
 GType yahoojp_protocol_get_type(void);
 
+void yahoojp_register_commands(void);
+void yahoojp_unregister_commands(void);
+
 #endif /* _YAHOOJP_H_ */

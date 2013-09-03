@@ -36,7 +36,7 @@
 
 static GSList *cmds = NULL;
 
-static void yahoojp_register_commands(void)
+void yahoojp_register_commands(void)
 {
 	PurpleCmdId id;
 
@@ -67,7 +67,7 @@ static void yahoojp_register_commands(void)
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 }
 
-static void yahoojp_unregister_commands(void)
+void yahoojp_unregister_commands(void)
 {
 	while (cmds) {
 		PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
@@ -117,13 +117,6 @@ yahoojp_protocol_base_init(YahooJPProtocolClass *klass)
 
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
-
-	yahoojp_register_commands();
-}
-
-static void yahoojp_protocol_base_finalize(YahooJPProtocolClass *klass)
-{
-	yahoojp_unregister_commands();
 }
 
 static void
@@ -134,6 +127,8 @@ yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
 	/* disable yahoo functions not available for yahoojp */
 	iface->can_receive_file         = NULL;
 }
+
+static void yahoojp_protocol_base_finalize(YahooJPProtocolClass *klass) { }
 
 extern PurplePlugin *_yahoo_plugin;
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_yahoo_plugin, YahooJPProtocol,

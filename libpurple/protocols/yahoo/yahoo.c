@@ -249,16 +249,6 @@ yahoo_protocol_base_init(YahooProtocolClass *klass)
 	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 #endif
-
-	yahoo_register_commands();
-	yahoo_init_colorht();
-}
-
-static void
-yahoo_protocol_base_finalize(YahooProtocolClass *klass)
-{
-	yahoo_dest_colorht();
-	yahoo_unregister_commands();
 }
 
 static void
@@ -309,6 +299,8 @@ yahoo_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size     = yahoo_get_max_message_size;
 }
 
+static void yahoo_protocol_base_finalize(YahooProtocolClass *klass) { }
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -338,6 +330,11 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!yahoojp_protocol)
 		return FALSE;
 
+	yahoo_init_colorht();
+
+	yahoo_register_commands();
+	yahoojp_register_commands();
+
 	purple_signal_connect(purple_get_core(), "uri-handler", yahoo_protocol,
 		PURPLE_CALLBACK(yahoo_uri_handler), NULL);
 
@@ -347,6 +344,11 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	yahoojp_unregister_commands();
+	yahoo_unregister_commands();
+
+	yahoo_dest_colorht();
+
 	if (!purple_protocols_remove(yahoojp_protocol, error))
 		return FALSE;
 
