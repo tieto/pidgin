@@ -48,9 +48,16 @@
 #include "version.h"
 #include "visibility.h"
 
+#include "aim.h"
+#include "icq.h"
 #include "oscarcommon.h"
 #include "oscar.h"
 #include "peer.h"
+
+PurplePlugin *_oscar_plugin = NULL;
+
+static PurpleProtocol *aim_protocol = NULL;
+static PurpleProtocol *icq_protocol = NULL;
 
 static guint64 purple_caps =
 	OSCAR_CAPABILITY_CHAT
@@ -5638,7 +5645,57 @@ oscar_protocol_interface_init(PurpleProtocolInterface *iface)
 
 static void oscar_protocol_base_finalize(OscarProtocolClass *klass) { }
 
-PurplePlugin *_oscar_plugin = NULL;
-
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_oscar_plugin, OscarProtocol, oscar_protocol,
                                 PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "protocol-oscar",
+		"name",         "Oscar Protocols",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("Oscar (AIM/ICQ) Protocols Plugin"),
+		"description",  N_("Oscar (AIM/ICQ) Protocols Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	aim_protocol = purple_protocols_add(AIM_TYPE_PROTOCOL, error);
+	if (!aim_protocol)
+		return FALSE;
+
+	icq_protocol = purple_protocols_add(ICQ_TYPE_PROTOCOL, error);
+	if (!icq_protocol)
+		return FALSE;
+
+	purple_signal_connect(purple_get_core(), "uri-handler", aim_protocol,
+		PURPLE_CALLBACK(oscar_uri_handler), NULL);
+	purple_signal_connect(purple_get_core(), "uri-handler", icq_protocol,
+		PURPLE_CALLBACK(oscar_uri_handler), NULL);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	if (!purple_protocols_remove(icq_protocol, error))
+		return FALSE;
+
+	if (!purple_protocols_remove(aim_protocol, error))
+		return FALSE;
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT_VAL(_oscar_plugin, oscar, plugin_query, plugin_load,
+                       plugin_unload);

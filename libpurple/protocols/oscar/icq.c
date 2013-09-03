@@ -20,10 +20,6 @@
  *
  */
 
-/* libicq is the ICQ protocol plugin. It is linked against liboscar,
- * which contains all the shared implementation code with libaim
- */
-
 #include "icq.h"
 
 #include "core.h"
@@ -31,8 +27,6 @@
 #include "signals.h"
 
 #include "oscarcommon.h"
-
-static PurpleProtocol *my_protocol = NULL;
 
 static GHashTable *
 icq_get_account_text_table(PurpleAccount *account)
@@ -79,56 +73,6 @@ icq_protocol_interface_init(PurpleProtocolInterface *iface)
 
 static void icq_protocol_base_finalize(ICQProtocolClass *klass) { }
 
-static PurplePluginInfo *
-plugin_query(GError **error)
-{
-	const gchar * const dependencies[] = {
-		"protocol-aim",
-		NULL
-	};
-
-	return purple_plugin_info_new(
-		"id",            "protocol-icq",
-		"name",          "ICQ Protocol",
-		"version",       DISPLAY_VERSION,
-		"category",      N_("Protocol"),
-		"summary",       N_("ICQ Protocol Plugin"),
-		"description",   N_("ICQ Protocol Plugin"),
-		"website",       PURPLE_WEBSITE,
-		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  dependencies,
-		"flags",         PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
-		                 PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
-		NULL
-	);
-}
-
-static gboolean
-plugin_load(PurplePlugin *plugin, GError **error)
-{
-	my_protocol = purple_protocols_add(ICQ_TYPE_PROTOCOL, error);
-	if (!my_protocol)
-		return FALSE;
-
-	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
-		PURPLE_CALLBACK(oscar_uri_handler), NULL);
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin, GError **error)
-{
-	if (!purple_protocols_remove(my_protocol, error))
-		return FALSE;
-
-	return TRUE;
-}
-
-static PurplePlugin *my_plugin;
-
-PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, ICQProtocol, icq_protocol,
+extern PurplePlugin *_oscar_plugin;
+PURPLE_PROTOCOL_DEFINE_EXTENDED(_oscar_plugin, ICQProtocol, icq_protocol,
                                 OSCAR_TYPE_PROTOCOL, 0);
-
-PURPLE_PLUGIN_INIT_VAL(my_plugin, icq, plugin_query, plugin_load,
-                       plugin_unload);
