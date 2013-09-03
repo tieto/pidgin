@@ -246,7 +246,7 @@ dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 # We should probably make this better
 dbus_signals = $(addprefix $(srcdir)/, $(purple_coresources)) \
 	$(srcdir)/protocols/irc/irc.c \
-	$(srcdir)/protocols/jabber/libxmpp.c
+	$(srcdir)/protocols/jabber/jabber.c
 
 dbus-types.c: dbus-analyze-types.py $(purple_build_coreheaders)
 	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@

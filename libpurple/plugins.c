@@ -102,7 +102,8 @@ purple_plugin_load(PurplePlugin *plugin, GError **error)
 
 	if (!gplugin_plugin_manager_load_plugin(plugin, &err)) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-				purple_plugin_get_filename(plugin), err->message);
+				purple_plugin_get_filename(plugin),
+				(err ? err->message : "Unknown reason"));
 
 		if (error)
 			*error = g_error_copy(err);
@@ -147,7 +148,8 @@ purple_plugin_unload(PurplePlugin *plugin, GError **error)
 
 	if (!gplugin_plugin_manager_unload_plugin(plugin, &err)) {
 		purple_debug_error("plugins", "Failed to unload plugin %s: %s",
-				purple_plugin_get_filename(plugin), err->message);
+				purple_plugin_get_filename(plugin),
+				(err ? err->message : "Unknown reason"));
 
 		if (error)
 			*error = g_error_copy(err);
