@@ -20,83 +20,12 @@
  *
  */
 
-/* libgtalk is the Google Talk XMPP protocol plugin. It is linked against
- * libjabbercommon, which may be used to support other protocols (Bonjour) which
- * may need to share code.
- */
-
 #include "internal.h"
 #include "chat.h"
 #include "core.h"
 #include "plugins.h"
 
 #include "gtalk.h"
-
-static PurpleProtocol *my_protocol = NULL;
-
-static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
-{
-	PurpleAccount *acct = NULL;
-
-	/* If we have a specific acct, use it */
-	if (acct_id) {
-		acct = purple_accounts_find(acct_id, protocol);
-		if (acct && !purple_account_is_connected(acct))
-			acct = NULL;
-	} else { /* Otherwise find an active account for the protocol */
-		GList *l = purple_accounts_get_all();
-		while (l) {
-			if (!strcmp(protocol, purple_account_get_protocol_id(l->data))
-					&& purple_account_is_connected(l->data)) {
-				acct = l->data;
-				break;
-			}
-			l = l->next;
-		}
-	}
-
-	return acct;
-}
-
-static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
-{
-	char *acct_id = params ? g_hash_table_lookup(params, "account") : NULL;
-	PurpleAccount *acct;
-
-	if (g_ascii_strcasecmp(proto, "xmpp"))
-		return FALSE;
-
-	acct = find_acct(purple_protocol_get_id(my_protocol), acct_id);
-
-	if (!acct)
-		return FALSE;
-
-	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
-	/* params is NULL if the URI has no '?' (or anything after it) */
-	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
-		char *body = g_hash_table_lookup(params, "body");
-		if (user && *user) {
-			PurpleIMConversation *im =
-					purple_im_conversation_new(acct, user);
-			purple_conversation_present(PURPLE_CONVERSATION(im));
-			if (body && *body)
-				purple_conversation_send_confirm(PURPLE_CONVERSATION(im), body);
-		}
-	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
-		char *name = g_hash_table_lookup(params, "name");
-		if (user && *user)
-			purple_blist_request_add_buddy(acct, user, NULL, name);
-	} else if (g_hash_table_lookup_extended(params, "join", NULL, NULL)) {
-		PurpleConnection *gc = purple_account_get_connection(acct);
-		if (user && *user) {
-			GHashTable *params = jabber_chat_info_defaults(gc, user);
-			jabber_chat_join(gc, params);
-		}
-		return TRUE;
-	}
-
-	return FALSE;
-}
 
 static const char *
 gtalk_list_icon(PurpleAccount *a, PurpleBuddy *b)
@@ -193,58 +122,6 @@ gtalk_protocol_interface_init(PurpleProtocolInterface *iface)
 
 static void gtalk_protocol_base_finalize(GTalkProtocolClass *klass) { }
 
-static PurplePluginInfo *
-plugin_query(GError **error)
-{
-	const gchar * const dependencies[] = {
-		"protocol-xmpp",
-		NULL
-	};
-
-	return purple_plugin_info_new(
-		"id",            "protocol-gtalk",
-		"name",          "Google Talk Protocol",
-		"version",       DISPLAY_VERSION,
-		"category",      N_("Protocol"),
-		"summary",       N_("Google Talk Protocol Plugin"),
-		"description",   N_("Google Talk Protocol Plugin"),
-		"website",       PURPLE_WEBSITE,
-		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  dependencies,
-		"flags",         PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
-		                 PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
-		NULL
-	);
-}
-
-static gboolean
-plugin_load(PurplePlugin *plugin, GError **error)
-{
-	my_protocol = purple_protocols_add(GTALK_TYPE_PROTOCOL, error);
-	if (!my_protocol)
-		return FALSE;
-
-	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
-		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
-
-	jabber_protocol_init(my_protocol);
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin, GError **error)
-{
-	jabber_protocol_uninit(my_protocol);
-	if (!purple_protocols_remove(my_protocol, error))
-		return FALSE;
-
-	return TRUE;
-}
-
-static PurplePlugin *my_plugin;
-
-PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, GTalkProtocol, gtalk_protocol,
+extern PurplePlugin *_jabber_plugin;
+PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, GTalkProtocol, gtalk_protocol,
                                 JABBER_TYPE_PROTOCOL, 0);
-
-PURPLE_PLUGIN_INIT_VAL(my_plugin, gtalk, plugin_query, plugin_load,
-                       plugin_unload);

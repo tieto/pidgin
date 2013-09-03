@@ -68,6 +68,9 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
+#include "xmpp.h"
+#include "gtalk.h"
+#include "facebook.h"
 
 #include "jingle/jingle.h"
 #include "jingle/rtp.h"
@@ -78,8 +81,14 @@
  */
 #define DEFAULT_INACTIVITY_TIME 120
 
+PurplePlugin *_jabber_plugin = NULL;
+
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
+
+static PurpleProtocol *xmpp_protocol = NULL;
+static PurpleProtocol *gtalk_protocol = NULL;
+static PurpleProtocol *facebook_protocol = NULL;
 
 static GHashTable *jabber_cmds = NULL; /* PurpleProtocol * => GSList of ids */
 
@@ -3785,6 +3794,70 @@ jabber_ipc_add_feature(const gchar *feature)
 }
 #endif
 
+static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
+{
+	PurpleAccount *acct = NULL;
+
+	/* If we have a specific acct, use it */
+	if (acct_id) {
+		acct = purple_accounts_find(acct_id, protocol);
+		if (acct && !purple_account_is_connected(acct))
+			acct = NULL;
+	} else { /* Otherwise find an active account for the protocol */
+		GList *l = purple_accounts_get_all();
+		while (l) {
+			if (!strcmp(protocol, purple_account_get_protocol_id(l->data))
+					&& purple_account_is_connected(l->data)) {
+				acct = l->data;
+				break;
+			}
+			l = l->next;
+		}
+	}
+
+	return acct;
+}
+
+static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
+{
+	char *acct_id = params ? g_hash_table_lookup(params, "account") : NULL;
+	PurpleAccount *acct;
+
+	if (g_ascii_strcasecmp(proto, "xmpp"))
+		return FALSE;
+
+	acct = find_acct(proto, acct_id);
+
+	if (!acct)
+		return FALSE;
+
+	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
+	/* params is NULL if the URI has no '?' (or anything after it) */
+	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
+		char *body = g_hash_table_lookup(params, "body");
+		if (user && *user) {
+			PurpleIMConversation *im =
+					purple_im_conversation_new(acct, user);
+			purple_conversation_present(PURPLE_CONVERSATION(im));
+			if (body && *body)
+				purple_conversation_send_confirm(PURPLE_CONVERSATION(im), body);
+		}
+	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
+		char *name = g_hash_table_lookup(params, "name");
+		if (user && *user)
+			purple_blist_request_add_buddy(acct, user, NULL, name);
+	} else if (g_hash_table_lookup_extended(params, "join", NULL, NULL)) {
+		PurpleConnection *gc = purple_account_get_connection(acct);
+		if (user && *user) {
+			GHashTable *params = jabber_chat_info_defaults(gc, user);
+			jabber_chat_join(gc, params);
+		}
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 jabber_do_init(void)
 {
@@ -4138,7 +4211,74 @@ jabber_protocol_interface_init(PurpleProtocolInterface *iface)
 
 static void jabber_protocol_base_finalize(JabberProtocolClass *klass) { }
 
-PurplePlugin *_jabber_plugin = NULL;
-
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, JabberProtocol, jabber_protocol,
                                 PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "protocol-xmpp",
+		"name",         "XMPP Protocols",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("XMPP, GTalk, and Facebook Protocols Plugin"),
+		"description",  N_("XMPP, GTalk, and Facebook Protocols Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	xmpp_protocol = purple_protocols_add(XMPP_TYPE_PROTOCOL, error);
+	if (!xmpp_protocol)
+		return FALSE;
+
+	gtalk_protocol = purple_protocols_add(GTALK_TYPE_PROTOCOL, error);
+	if (!gtalk_protocol)
+		return FALSE;
+
+	facebook_protocol = purple_protocols_add(FACEBOOK_TYPE_PROTOCOL, error);
+	if (!facebook_protocol)
+		return FALSE;
+
+	purple_signal_connect(purple_get_core(), "uri-handler", xmpp_protocol,
+		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
+	purple_signal_connect(purple_get_core(), "uri-handler", gtalk_protocol,
+		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
+	purple_signal_connect(purple_get_core(), "uri-handler", facebook_protocol,
+		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
+
+	jabber_protocol_init(xmpp_protocol);
+	jabber_protocol_init(gtalk_protocol);
+	jabber_protocol_init(facebook_protocol);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	jabber_protocol_uninit(facebook_protocol);
+	jabber_protocol_uninit(gtalk_protocol);
+	jabber_protocol_uninit(xmpp_protocol);
+
+	if (!purple_protocols_remove(facebook_protocol, error))
+		return FALSE;
+
+	if (!purple_protocols_remove(gtalk_protocol, error))
+		return FALSE;
+
+	if (!purple_protocols_remove(xmpp_protocol, error))
+		return FALSE;
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT_VAL(_jabber_plugin, jabber, plugin_query, plugin_load,
+                       plugin_unload);
