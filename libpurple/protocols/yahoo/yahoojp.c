@@ -26,7 +26,7 @@
 #include <account.h>
 #include <plugins.h>
 
-#include "libyahoojp.h"
+#include "yahoojp.h"
 #include "libymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"

@@ -27,7 +27,7 @@
 #include <core.h>
 #include <plugins.h>
 
-#include "libyahoo.h"
+#include "yahoo.h"
 #include "libymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"

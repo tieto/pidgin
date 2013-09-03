@@ -1,5 +1,5 @@
 /**
- * @file libymsg.h The Yahoo! and Yahoo! JAPAN Protocol Plugins
+ * @file ymsg.h The Yahoo! and Yahoo! JAPAN Protocols
  *
  * purple
  *
@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _LIBYMSG_H_
-#define _LIBYMSG_H_
+#ifndef _YMSG_H_
+#define _YMSG_H_
 
 #include "circularbuffer.h"
 #include "cmds.h"
@@ -398,4 +398,4 @@ gchar* yahoo_get_cookies(PurpleConnection *gc);
 /* send p2p pkt containing our encoded ip, asking peer to connect to us */
 void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13);
 
-#endif /* _LIBYMSG_H_ */
+#endif /* _YMSG_H_ */
