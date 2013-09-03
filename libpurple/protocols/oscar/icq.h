@@ -19,31 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#ifndef _LIBAIM_H_
-#define _LIBAIM_H_
+#ifndef _ICQ_H_
+#define _ICQ_H_
 
 #include "oscar.h"
 
-#define AIM_TYPE_PROTOCOL             (aim_protocol_get_type())
-#define AIM_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), AIM_TYPE_PROTOCOL, AIMProtocol))
-#define AIM_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), AIM_TYPE_PROTOCOL, AIMProtocolClass))
-#define AIM_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), AIM_TYPE_PROTOCOL))
-#define AIM_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), AIM_TYPE_PROTOCOL))
-#define AIM_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), AIM_TYPE_PROTOCOL, AIMProtocolClass))
+#define ICQ_TYPE_PROTOCOL             (icq_protocol_get_type())
+#define ICQ_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ICQ_TYPE_PROTOCOL, ICQProtocol))
+#define ICQ_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ICQ_TYPE_PROTOCOL, ICQProtocolClass))
+#define ICQ_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ICQ_TYPE_PROTOCOL))
+#define ICQ_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ICQ_TYPE_PROTOCOL))
+#define ICQ_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ICQ_TYPE_PROTOCOL, ICQProtocolClass))
 
-typedef struct _AIMProtocol
+typedef struct _ICQProtocol
 {
 	OscarProtocol parent;
-} AIMProtocol;
+} ICQProtocol;
 
-typedef struct _AIMProtocolClass
+typedef struct _ICQProtocolClass
 {
 	OscarProtocolClass parent_class;
-} AIMProtocolClass;
+} ICQProtocolClass;
 
 /**
- * Returns the GType for the AIMProtocol object.
+ * Returns the GType for the ICQProtocol object.
  */
-GType aim_protocol_get_type(void);
+GType icq_protocol_get_type(void);
 
-#endif /* _LIBAIM_H_ */
+#endif /* _ICQ_H_ */

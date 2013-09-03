@@ -20,11 +20,11 @@
  *
  */
 
-/* libicq is the ICQ protocol plugin. It is linked against liboscar,
- * which contains all the shared implementation code with libaim
+/* libaim is the AIM protocol plugin. It is linked against liboscar,
+ * which contains all the shared implementation code with libicq
  */
 
-#include "libicq.h"
+#include "aim.h"
 
 #include "core.h"
 #include "plugins.h"
@@ -34,71 +34,51 @@
 
 static PurpleProtocol *my_protocol = NULL;
 
-static GHashTable *
-icq_get_account_text_table(PurpleAccount *account)
-{
-	GHashTable *table;
-	table = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(table, "login_label", (gpointer)_("ICQ UIN..."));
-	return table;
-}
-
-static gssize
-icq_get_max_message_size(PurpleConversation *conv)
-{
-	/* XXX: got from pidgin-otr - verify and document it */
-	return 2346;
-}
-
 static void
-icq_protocol_base_init(ICQProtocolClass *klass)
+aim_protocol_base_init(AIMProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "icq";
-	proto_class->name      = "ICQ";
+	proto_class->id        = "aim";
+	proto_class->name      = "AIM";
 
 	oscar_init_protocol_options(proto_class);
 
-	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(TRUE, TRUE));
+	option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
+											OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 
-	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(FALSE, TRUE));
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 }
 
 static void
-icq_protocol_interface_init(PurpleProtocolInterface *iface)
+aim_protocol_interface_init(PurpleProtocolInterface *iface)
 {
-	iface->list_icon              = oscar_list_icon_icq;
-	iface->get_account_text_table = icq_get_account_text_table;
-	iface->get_moods              = oscar_get_purple_moods;
-	iface->get_max_message_size   = icq_get_max_message_size;
+	iface->list_icon            = oscar_list_icon_aim;
+	iface->add_permit           = oscar_add_permit;
+	iface->rem_permit           = oscar_rem_permit;
+	iface->set_permit_deny      = oscar_set_aim_permdeny;
+	iface->get_max_message_size = oscar_get_max_message_size;
 }
 
-static void icq_protocol_base_finalize(ICQProtocolClass *klass) { }
+static void aim_protocol_base_finalize(AIMProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
-	const gchar * const dependencies[] = {
-		"protocol-aim",
-		NULL
-	};
-
 	return purple_plugin_info_new(
-		"id",            "protocol-icq",
-		"name",          "ICQ Protocol",
-		"version",       DISPLAY_VERSION,
-		"category",      N_("Protocol"),
-		"summary",       N_("ICQ Protocol Plugin"),
-		"description",   N_("ICQ Protocol Plugin"),
-		"website",       PURPLE_WEBSITE,
-		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  dependencies,
-		"flags",         PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
-		                 PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
+		"id",           "protocol-aim",
+		"name",         "AIM Protocol",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("AIM Protocol Plugin"),
+		"description",  N_("AIM Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
 		NULL
 	);
 }
@@ -106,7 +86,7 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	my_protocol = purple_protocols_add(ICQ_TYPE_PROTOCOL, error);
+	my_protocol = purple_protocols_add(AIM_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
 
@@ -125,10 +105,10 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-static PurplePlugin *my_plugin;
+extern PurplePlugin *_oscar_plugin;
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, ICQProtocol, icq_protocol,
+PURPLE_PROTOCOL_DEFINE_EXTENDED(_oscar_plugin, AIMProtocol, aim_protocol,
                                 OSCAR_TYPE_PROTOCOL, 0);
 
-PURPLE_PLUGIN_INIT_VAL(my_plugin, icq, plugin_query, plugin_load,
+PURPLE_PLUGIN_INIT_VAL(_oscar_plugin, aim, plugin_query, plugin_load,
                        plugin_unload);
