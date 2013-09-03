@@ -135,6 +135,6 @@ yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->can_receive_file         = NULL;
 }
 
-static PurplePlugin *_yahoo_plugin;
+extern PurplePlugin *_yahoo_plugin;
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_yahoo_plugin, YahooJPProtocol,
                                 yahoojp_protocol, YAHOO_TYPE_PROTOCOL, 0);
