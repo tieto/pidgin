@@ -40,7 +40,7 @@
 #include "notify.h"
 #include "util.h"
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_packet.h"
 #include "yahoochat.h"
 #include "ycht.h"

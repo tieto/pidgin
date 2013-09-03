@@ -41,7 +41,7 @@
 #include "version.h"
 #include "xmlnode.h"
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
 #include "yahoo_doodle.h"

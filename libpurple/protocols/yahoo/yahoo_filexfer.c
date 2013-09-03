@@ -33,7 +33,7 @@
 #include "notify.h"
 #include "proxy.h"
 #include "ft.h"
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_packet.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_doodle.h"

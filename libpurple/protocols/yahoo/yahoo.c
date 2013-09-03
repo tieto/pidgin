@@ -27,15 +27,20 @@
 #include <core.h>
 #include <plugins.h>
 
+#include "ymsg.h"
 #include "yahoo.h"
-#include "libymsg.h"
+#include "yahoojp.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
 #include "yahoo_doodle.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
 
-static PurpleProtocol *my_protocol = NULL;
+PurplePlugin *_yahoo_plugin;
+
+static PurpleProtocol *yahoo_protocol = NULL;
+static PurpleProtocol *yahoojp_protocol = NULL;
+
 static GSList *cmds = NULL;
 
 static void yahoo_register_commands(void)
@@ -121,7 +126,7 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 	if (g_ascii_strcasecmp(proto, "ymsgr"))
 		return FALSE;
 
-	acct = find_acct(purple_protocol_get_id(my_protocol), acct_id);
+	acct = find_acct(purple_protocol_get_id(yahoo_protocol), acct_id);
 
 	if (!acct)
 		return FALSE;
@@ -309,11 +314,11 @@ plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
 		"id",           "protocol-yahoo",
-		"name",         "Yahoo Protocol",
+		"name",         "Yahoo Protocols",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
-		"summary",      N_("Yahoo! Protocol Plugin"),
-		"description",  N_("Yahoo! Protocol Plugin"),
+		"summary",      N_("Yahoo! and Yahoo! JAPAN Protocols Plugin"),
+		"description",  N_("Yahoo! and Yahoo! JAPAN Protocols Plugin"),
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
@@ -325,11 +330,15 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	my_protocol = purple_protocols_add(YAHOO_TYPE_PROTOCOL, error);
-	if (!my_protocol)
+	yahoo_protocol = purple_protocols_add(YAHOO_TYPE_PROTOCOL, error);
+	if (!yahoo_protocol)
 		return FALSE;
 
-	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
+	yahoojp_protocol = purple_protocols_add(YAHOOJP_TYPE_PROTOCOL, error);
+	if (!yahoojp_protocol)
+		return FALSE;
+
+	purple_signal_connect(purple_get_core(), "uri-handler", yahoo_protocol,
 		PURPLE_CALLBACK(yahoo_uri_handler), NULL);
 
 	return TRUE;
@@ -338,13 +347,15 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	if (!purple_protocols_remove(my_protocol, error))
+	if (!purple_protocols_remove(yahoojp_protocol, error))
+		return FALSE;
+
+	if (!purple_protocols_remove(yahoo_protocol, error))
 		return FALSE;
 
 	return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, YahooProtocol, yahoo_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, yahoo, plugin_query, plugin_load,
+PURPLE_PROTOCOL_DEFINE(_yahoo_plugin, YahooProtocol, yahoo_protocol);
+PURPLE_PLUGIN_INIT_VAL(_yahoo_plugin, yahoo, plugin_query, plugin_load,
                        plugin_unload);

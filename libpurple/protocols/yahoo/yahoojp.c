@@ -27,14 +27,13 @@
 #include <plugins.h>
 
 #include "yahoojp.h"
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
 #include "yahoo_doodle.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
 
-static PurpleProtocol *my_protocol = NULL;
 static GSList *cmds = NULL;
 
 static void yahoojp_register_commands(void)
@@ -136,53 +135,6 @@ yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->can_receive_file         = NULL;
 }
 
-static PurplePluginInfo *
-plugin_query(GError **error)
-{
-	const gchar * const dependencies[] = {
-		"protocol-yahoo",
-		NULL
-	};
-
-	return purple_plugin_info_new(
-		"id",            "protocol-yahoojp",
-		"name",          "Yahoo JAPAN Protocol",
-		"version",       DISPLAY_VERSION,
-		"category",      N_("Protocol"),
-		"summary",       N_("Yahoo! JAPAN Protocol Plugin"),
-		"description",   N_("Yahoo! JAPAN Protocol Plugin"),
-		"website",       PURPLE_WEBSITE,
-		"abi-version",   PURPLE_ABI_VERSION,
-		"dependencies",  dependencies,
-		"flags",         PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
-		                 PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
-		NULL
-	);
-}
-
-static gboolean
-plugin_load(PurplePlugin *plugin, GError **error)
-{
-	my_protocol = purple_protocols_add(YAHOOJP_TYPE_PROTOCOL, error);
-	if (!my_protocol)
-		return FALSE;
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin, GError **error)
-{
-	if (!purple_protocols_remove(my_protocol, error))
-		return FALSE;
-
-	return TRUE;
-}
-
-static PurplePlugin *my_plugin;
-
-PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, YahooJPProtocol, yahoojp_protocol,
-                                YAHOO_TYPE_PROTOCOL, 0);
-
-PURPLE_PLUGIN_INIT_VAL(my_plugin, yahoojp, plugin_query, plugin_load,
-                       plugin_unload);
+static PurplePlugin *_yahoo_plugin;
+PURPLE_PROTOCOL_DEFINE_EXTENDED(_yahoo_plugin, YahooJPProtocol,
+                                yahoojp_protocol, YAHOO_TYPE_PROTOCOL, 0);

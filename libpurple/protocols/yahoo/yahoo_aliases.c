@@ -32,7 +32,7 @@
 #include "util.h"
 #include "request.h"
 #include "version.h"
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_aliases.h"
 #include "yahoo_friend.h"
 #include "yahoo_packet.h"

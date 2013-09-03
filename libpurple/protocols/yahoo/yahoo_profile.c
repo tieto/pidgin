@@ -32,7 +32,7 @@
 #include "imgstore.h"
 #endif /* PHOTO_SUPPORT */
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_friend.h"
 
 typedef struct {
