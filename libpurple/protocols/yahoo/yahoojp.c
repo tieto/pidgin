@@ -94,14 +94,8 @@ yahoojp_protocol_base_init(YahooJPProtocolClass *klass)
 	proto_class->id        = "yahoojp";
 	proto_class->name      = "Yahoo JAPAN";
 
-	/* delete yahoo's protocol options */
-	while (proto_class->protocol_options) {
-		PurpleAccountOption *option = proto_class->protocol_options->data;
-		purple_account_option_destroy(option);
-		proto_class->protocol_options =
-				g_list_delete_link(proto_class->protocol_options,
-				proto_class->protocol_options);
-	}
+	/* do not use yahoo's protocol options, we will define our own */
+	proto_class->protocol_options = NULL;
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
