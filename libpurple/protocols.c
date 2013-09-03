@@ -823,6 +823,9 @@ purple_protocols_add(GType protocol_type, GError **error)
 
 	g_hash_table_insert(protocols, g_strdup(purple_protocol_get_id(protocol)),
 	                    protocol);
+
+	purple_signal_emit(purple_protocols_get_handle(), "protocol-added",
+	                   protocol);
 	return protocol;
 }
 
@@ -838,6 +841,9 @@ gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error)
 
 		return FALSE;
 	}
+
+	purple_signal_emit(purple_protocols_get_handle(), "protocol-removed",
+	                   protocol);
 
 	g_hash_table_remove(protocols, purple_protocol_get_id(protocol));
 	return TRUE;
@@ -863,8 +869,17 @@ purple_protocols_get_all(void)
 void
 purple_protocols_init(void)
 {
+	void *handle = purple_protocols_get_handle();
+
 	protocols = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 			(GDestroyNotify)g_object_unref);
+
+	purple_signal_register(handle, "protocol-added",
+	                       purple_marshal_VOID__POINTER,
+	                       G_TYPE_NONE, 1, PURPLE_TYPE_PROTOCOL);
+	purple_signal_register(handle, "protocol-removed",
+	                       purple_marshal_VOID__POINTER,
+	                       G_TYPE_NONE, 1, PURPLE_TYPE_PROTOCOL);
 }
 
 void *
