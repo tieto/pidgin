@@ -122,10 +122,7 @@ yahoojp_protocol_base_init(YahooJPProtocolClass *klass)
 static void
 yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
 {
-	iface->get_account_text_table   = yahoojp_get_account_text_table;
-
-	/* disable yahoo functions not available for yahoojp */
-	iface->can_receive_file         = NULL;
+	iface->get_account_text_table = yahoojp_get_account_text_table;
 }
 
 static void yahoojp_protocol_base_finalize(YahooJPProtocolClass *klass) { }
