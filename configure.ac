@@ -1304,38 +1304,16 @@ extern_unload=
 unload_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
-	dnl ... and Ugly special case for multi-protocol oscar and yahoo
-	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
-		extern_load="$extern_load extern gboolean aim_plugin_load();"
-		extern_load="$extern_load extern gboolean icq_plugin_load();"
-		load_proto="$load_proto aim_plugin_load();"
-		load_proto="$load_proto icq_plugin_load();"
-		extern_unload="$extern_unload extern gboolean aim_plugin_unload();"
-		extern_unload="$extern_unload extern gboolean icq_plugin_unload();"
-		unload_proto="$unload_proto aim_plugin_unload();"
-		unload_proto="$unload_proto icq_plugin_unload();"
-	elif test "x$i" = "xyahoo"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
-		extern_load="$extern_load extern gboolean yahoo_plugin_load();"
-		extern_load="$extern_load extern gboolean yahoojp_plugin_load();"
-		load_proto="$load_proto yahoo_plugin_load();"
-		load_proto="$load_proto yahoojp_plugin_load();"
-		extern_unload="$extern_unload extern gboolean yahoo_plugin_unload();"
-		extern_unload="$extern_unload extern gboolean yahoojp_plugin_unload();"
-		unload_proto="$unload_proto yahoo_plugin_unload();"
-		unload_proto="$unload_proto yahoojp_plugin_unload();"
+	if test "x$i" = "xsilc"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
 	else
-		if test "x$i" = "xsilc"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
-		else
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
-		fi
-		extern_load="$extern_load extern gboolean ${i}_plugin_load();"
-		load_proto="$load_proto ${i}_plugin_load();"
-		extern_unload="$extern_unload extern gboolean ${i}_plugin_unload();"
-		unload_proto="$unload_proto ${i}_plugin_unload();"
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 	fi
+	extern_load="$extern_load extern gboolean ${i}_plugin_load();"
+	load_proto="$load_proto ${i}_plugin_load();"
+	extern_unload="$extern_unload extern gboolean ${i}_plugin_unload();"
+	unload_proto="$unload_proto ${i}_plugin_unload();"
+
 	case $i in
 		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
