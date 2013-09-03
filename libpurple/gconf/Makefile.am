@@ -5,7 +5,10 @@ EXTRA_DIST = purple.schemas.in
 if INSTALL_I18N
 schema_in_files = purple.schemas.in
 schema_DATA = $(schema_in_files:.schemas.in=.schemas)
-@INTLTOOL_SCHEMAS_RULE@
+
+# silenced INTLTOOL_SCHEMAS_RULE
+%.schemas: %.schemas.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po)
+	$(AM_V_GEN) LC_ALL=C $(INTLTOOL_MERGE) -s -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@ > /dev/null
 
 if GCONF_SCHEMAS_INSTALL
 install-data-local:

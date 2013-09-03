@@ -94,7 +94,7 @@ pidginsmileypix_DATA = \
         theme
 
 theme: small.theme.in
-	sed -e 's/^_Name=/Name=/' \
+	$(AM_V_GEN) sed -e 's/^_Name=/Name=/' \
 	    -e 's/^_Description=/Description=/' \
 	    -e 's/^_Author=/Author=/' \
 	$< > $@
