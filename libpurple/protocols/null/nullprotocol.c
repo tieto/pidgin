@@ -68,7 +68,18 @@
 #include "util.h"
 #include "version.h"
 
+/*
+ * reference to the protocol instance, used for registering signals, prefs,
+ * etc. it is set when the protocol is added in plugin_load and is required
+ * for removing the protocol in plugin_unload.
+ */
 static PurpleProtocol *my_protocol = NULL;
+
+/*
+ * list of commands registered by the protocol, used to unregister the commands
+ * when the protocol is removed.
+ */
+static GSList *cmds = NULL;
 
 #define NULL_STATUS_ONLINE   "online"
 #define NULL_STATUS_AWAY     "away"
@@ -86,7 +97,8 @@ typedef struct {
 
 /*
  * stores offline messages that haven't been delivered yet. maps username
- * (char *) to GList * of GOfflineMessages. initialized in plugin_load.
+ * (char *) to GList * of GOfflineMessages. initialized in
+ * null_protocol_base_init.
  */
 GHashTable* goffline_messages = NULL;
 
@@ -1057,6 +1069,7 @@ null_protocol_base_init(NullProtocolClass *klass)
   PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
   PurpleAccountUserSplit *split;
   PurpleAccountOption *option;
+  PurpleCmdId id;
 
   proto_class->id        = "null";
   proto_class->name      = "Null - Testing Protocol";
@@ -1068,7 +1081,7 @@ null_protocol_base_init(NullProtocolClass *klass)
       128,                             /* max_width */
       128,                             /* max_height */
       10000,                           /* max_filesize */
-      PURPLE_ICON_SCALE_DISPLAY,       /* scale_rules */
+      PURPLE_ICON_SCALE_DISPLAY        /* scale_rules */
   );
 
   /* see accountopt.h for information about user splits and protocol options */
@@ -1087,7 +1100,7 @@ null_protocol_base_init(NullProtocolClass *klass)
   proto_class->protocol_options = g_list_append(NULL, option);
 
   /* register whisper chat command, /msg */
-  purple_cmd_register("msg",
+  id = purple_cmd_register("msg",
                     "ws",                  /* args: recipient and message */
                     PURPLE_CMD_P_DEFAULT,  /* priority */
                     PURPLE_CMD_FLAG_CHAT,
@@ -1095,6 +1108,9 @@ null_protocol_base_init(NullProtocolClass *klass)
                     send_whisper,
                     "msg &lt;username&gt; &lt;message&gt;: send a private message, aka a whisper",
                     NULL);                 /* userdata */
+
+  /* add /msg command to the commands list */
+  cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 
   /* get ready to store offline messages */
   goffline_messages = g_hash_table_new_full(g_str_hash,  /* hash fn */
@@ -1107,6 +1123,13 @@ static void
 null_protocol_base_finalize(NullProtocolClass *klass)
 {
   purple_debug_info("nullprotocol", "shutting down\n");
+
+  /* unregister the commands */
+  while (cmds) {
+    PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
+    purple_cmd_unregister(id);
+    cmds = g_slist_delete_link(cmds, cmds);
+  }
 }
 
 /*

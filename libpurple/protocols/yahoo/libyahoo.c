@@ -36,27 +36,46 @@
 #include "yahoo_picture.h"
 
 static PurpleProtocol *my_protocol = NULL;
+static GSList *cmds = NULL;
 
 static void yahoo_register_commands(void)
 {
-	purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
+	PurpleCmdId id;
+
+	id = purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoo", yahoopurple_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
-	purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+
+	id = purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoo", yahoopurple_cmd_chat_list,
 	                  _("list: List rooms on the Yahoo network"), NULL);
-	purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+
+	id = purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoo", yahoopurple_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
-	purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+
+	id = purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoo", yahoo_doodle_purple_cmd_start,
 	                 _("doodle: Request user to start a Doodle session"), NULL);
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+}
+
+static void yahoo_unregister_commands(void)
+{
+	while (cmds) {
+		PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
+		purple_cmd_unregister(id);
+		cmds = g_slist_delete_link(cmds, cmds);
+	}
 }
 
 static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
@@ -226,6 +245,7 @@ yahoo_protocol_base_init(YahooProtocolClass *klass)
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 #endif
 
+	yahoo_register_commands();
 	yahoo_init_colorht();
 }
 
@@ -233,6 +253,7 @@ static void
 yahoo_protocol_base_finalize(YahooProtocolClass *klass)
 {
 	yahoo_dest_colorht();
+	yahoo_unregister_commands();
 }
 
 static void
@@ -307,8 +328,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	my_protocol = purple_protocols_add(YAHOO_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
-
-	yahoo_register_commands();
 
 	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(yahoo_uri_handler), NULL);

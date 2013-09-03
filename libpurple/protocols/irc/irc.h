@@ -150,6 +150,7 @@ const char *irc_nick_skip_mode(struct irc_conn *irc, const char *string);
 gboolean irc_ischannel(const char *string);
 
 void irc_register_commands(void);
+void irc_unregister_commands(void);
 void irc_msg_table_build(struct irc_conn *irc);
 void irc_parse_msg(struct irc_conn *irc, char *input);
 char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, const char *msg, int notice);

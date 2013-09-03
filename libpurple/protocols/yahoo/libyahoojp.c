@@ -35,27 +35,46 @@
 #include "yahoo_picture.h"
 
 static PurpleProtocol *my_protocol = NULL;
+static GSList *cmds = NULL;
 
 static void yahoojp_register_commands(void)
 {
-	purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
+	PurpleCmdId id;
+
+	id = purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoojp", yahoopurple_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
-	purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+
+	id = purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoojp", yahoopurple_cmd_chat_list,
 	                  _("list: List rooms on the Yahoo network"), NULL);
-	purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+
+	id = purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoojp", yahoopurple_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
-	purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+
+	id = purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                  "yahoojp", yahoo_doodle_purple_cmd_start,
 	                 _("doodle: Request user to start a Doodle session"), NULL);
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+}
+
+static void yahoojp_unregister_commands(void)
+{
+	while (cmds) {
+		PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
+		purple_cmd_unregister(id);
+		cmds = g_slist_delete_link(cmds, cmds);
+	}
 }
 
 static GHashTable *
@@ -99,6 +118,13 @@ yahoojp_protocol_base_init(YahooJPProtocolClass *klass)
 
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+
+	yahoojp_register_commands();
+}
+
+static void yahoojp_protocol_base_finalize(YahooJPProtocolClass *klass)
+{
+	yahoojp_unregister_commands();
 }
 
 static void
@@ -109,8 +135,6 @@ yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
 	/* disable yahoo functions not available for yahoojp */
 	iface->can_receive_file         = NULL;
 }
-
-static void yahoojp_protocol_base_finalize(YahooJPProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
@@ -142,8 +166,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	my_protocol = purple_protocols_add(YAHOOJP_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
-
-	yahoojp_register_commands();
 
 	return TRUE;
 }

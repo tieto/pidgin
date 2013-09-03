@@ -977,6 +977,11 @@ irc_protocol_base_init(IRCProtocolClass *klass)
 	irc_register_commands();
 }
 
+static void irc_protocol_base_finalize(IRCProtocolClass *klass)
+{
+	irc_unregister_commands();
+}
+
 static void
 irc_protocol_interface_init(PurpleProtocolInterface *iface)
 {
@@ -1007,8 +1012,6 @@ irc_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->send_raw             = irc_send_raw;
 	iface->get_max_message_size = irc_get_max_message_size;
 }
-
-static void irc_protocol_base_finalize(IRCProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)

@@ -97,6 +97,7 @@ typedef struct
 } MsnEmoticon;
 
 static PurpleProtocol *my_protocol = NULL;
+static GSList *cmds = NULL;
 
 static const char *
 msn_normalize(const PurpleAccount *account, const char *str)
@@ -2879,6 +2880,7 @@ msn_protocol_base_init(MsnProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
+	PurpleCmdId id;
 
 	proto_class->id        = "msn";
 	proto_class->name      = "MSN";
@@ -2921,10 +2923,11 @@ msn_protocol_base_init(MsnProtocolClass *klass)
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
 											   option);
 
-	purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
+	id = purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
 	                 "msn", msn_cmd_nudge,
 	                  _("nudge: nudge a user to get their attention"), NULL);
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 
 	purple_prefs_remove("/protocols/msn");
 
@@ -2935,6 +2938,12 @@ msn_protocol_base_init(MsnProtocolClass *klass)
 static void
 msn_protocol_base_finalize(MsnProtocolClass *klass)
 {
+	while (cmds) {
+		PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
+		purple_cmd_unregister(id);
+		cmds = g_slist_delete_link(cmds, cmds);
+	}
+
 	msn_notification_end();
 	msn_switchboard_end();
 }

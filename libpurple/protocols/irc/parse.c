@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+static GSList *cmds = NULL;
+
 static char *irc_send_convert(struct irc_conn *irc, const char *string);
 static char *irc_recv_convert(struct irc_conn *irc, const char *string);
 
@@ -195,6 +197,7 @@ static PurpleCmdRet irc_parse_purple_cmd(PurpleConversation *conv, const gchar *
 
 static void irc_register_command(struct _irc_user_cmd *c)
 {
+	PurpleCmdId id;
 	PurpleCmdFlag f;
 	char args[10];
 	char *format;
@@ -221,8 +224,9 @@ static void irc_register_command(struct _irc_user_cmd *c)
 
 	args[i] = '\0';
 
-	purple_cmd_register(c->name, args, PURPLE_CMD_P_PROTOCOL, f, "irc",
+	id = purple_cmd_register(c->name, args, PURPLE_CMD_P_PROTOCOL, f, "irc",
 	                  irc_parse_purple_cmd, _(c->help), NULL);
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 }
 
 void irc_register_commands(void)
@@ -231,6 +235,15 @@ void irc_register_commands(void)
 
 	for (c = _irc_cmds; c && c->name; c++)
 		irc_register_command(c);
+}
+
+void irc_unregister_commands(void)
+{
+	while (cmds) {
+		PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
+		purple_cmd_unregister(id);
+		cmds = g_slist_delete_link(cmds, cmds);
+	}
 }
 
 static char *irc_send_convert(struct irc_conn *irc, const char *string)
