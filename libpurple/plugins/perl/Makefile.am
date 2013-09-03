@@ -92,15 +92,14 @@ EXTRA_DIST = \
 	$(perl_scripts)
 
 common/Makefile: common/Makefile.PL
-	@echo -e "  GEN\t$@"
-	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
+	$(AM_V_GEN)if test "x${top_srcdir}" != "x${top_builddir}"; then \
 		for f in ${common_sources}; do \
 			srcloc=${srcdir}; \
 			case $$srcloc in /*) ;; *) srcloc=../${srcdir} ;; esac; \
 			${LN_S} -f $$srcloc/$$f $$f; \
 		done; \
 	fi
-	@cd common && $(perlpath) Makefile.PL > /dev/null
+	$(AM_V_at)cd common && $(perlpath) Makefile.PL > /dev/null
 
 common/Makefile.PL: common/Makefile.PL.in $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
