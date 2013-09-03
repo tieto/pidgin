@@ -19,31 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#ifndef _LIBGTALK_H_
-#define _LIBGTALK_H_
+#ifndef _XMPP_H_
+#define _XMPP_H_
 
 #include "jabber.h"
 
-#define GTALK_TYPE_PROTOCOL             (gtalk_protocol_get_type())
-#define GTALK_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GTALK_TYPE_PROTOCOL, GTalkProtocol))
-#define GTALK_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), GTALK_TYPE_PROTOCOL, GTalkProtocolClass))
-#define GTALK_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTALK_TYPE_PROTOCOL))
-#define GTALK_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), GTALK_TYPE_PROTOCOL))
-#define GTALK_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), GTALK_TYPE_PROTOCOL, GTalkProtocolClass))
+#define XMPP_TYPE_PROTOCOL             (xmpp_protocol_get_type())
+#define XMPP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), XMPP_TYPE_PROTOCOL, XMPPProtocol))
+#define XMPP_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), XMPP_TYPE_PROTOCOL, XMPPProtocolClass))
+#define XMPP_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), XMPP_TYPE_PROTOCOL))
+#define XMPP_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), XMPP_TYPE_PROTOCOL))
+#define XMPP_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), XMPP_TYPE_PROTOCOL, XMPPProtocolClass))
 
-typedef struct _GTalkProtocol
+typedef struct _XMPPProtocol
 {
 	JabberProtocol parent;
-} GTalkProtocol;
+} XMPPProtocol;
 
-typedef struct _GTalkProtocolClass
+typedef struct _XMPPProtocolClass
 {
 	JabberProtocolClass parent_class;
-} GTalkProtocolClass;
+} XMPPProtocolClass;
 
 /**
- * Returns the GType for the GTalkProtocol object.
+ * Returns the GType for the XMPPProtocol object.
  */
-GType gtalk_protocol_get_type(void);
+GType xmpp_protocol_get_type(void);
 
-#endif /* _LIBGTALK_H_ */
+#endif /* _XMPP_H_ */

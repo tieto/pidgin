@@ -20,9 +20,9 @@
  *
  */
 
-/* libxmpp is the XMPP protocol plugin. It is linked against libjabbercommon,
- * which may be used to support other protocols (Bonjour) which may need to
- * share code.
+/* libgtalk is the Google Talk XMPP protocol plugin. It is linked against
+ * libjabbercommon, which may be used to support other protocols (Bonjour) which
+ * may need to share code.
  */
 
 #include "internal.h"
@@ -30,7 +30,7 @@
 #include "core.h"
 #include "plugins.h"
 
-#include "libxmpp.h"
+#include "gtalk.h"
 
 static PurpleProtocol *my_protocol = NULL;
 
@@ -98,16 +98,25 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 	return FALSE;
 }
 
+static const char *
+gtalk_list_icon(PurpleAccount *a, PurpleBuddy *b)
+{
+	return "google-talk";
+}
+
 static void
-xmpp_protocol_base_init(XMPPProtocolClass *klass)
+gtalk_protocol_base_init(GTalkProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
+	proto_class->id        = "gtalk";
+	proto_class->name      = "Google Talk (XMPP)";
+
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
-	split = purple_account_user_split_new(_("Domain"), NULL, '@');
+	split = purple_account_user_split_new(_("Domain"), "gmail.com", '@');
 	purple_account_user_split_set_reverse(split, FALSE);
 	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
 
@@ -170,27 +179,40 @@ xmpp_protocol_base_init(XMPPProtocolClass *klass)
 		"custom_smileys", TRUE);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
 		option);
-
-	purple_prefs_remove("/protocols/jabber");
 }
 
-static void xmpp_protocol_base_finalize(XMPPProtocolClass *klass) { }
-static void xmpp_protocol_interface_init(PurpleProtocolInterface *iface) { }
+static void
+gtalk_protocol_interface_init(PurpleProtocolInterface *iface)
+{
+	iface->list_icon        = gtalk_list_icon;
+
+	/* disable xmpp functions not available for gtalk */
+	iface->register_user    = NULL;
+	iface->unregister_user  = NULL;
+}
+
+static void gtalk_protocol_base_finalize(GTalkProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
+	const gchar * const dependencies[] = {
+		"protocol-xmpp",
+		NULL
+	};
+
 	return purple_plugin_info_new(
-		"id",           "protocol-xmpp",
-		"name",         "XMPP Protocol",
-		"version",      DISPLAY_VERSION,
-		"category",     N_("Protocol"),
-		"summary",      N_("XMPP Protocol Plugin"),
-		"description",  N_("XMPP Protocol Plugin"),
-		"website",      PURPLE_WEBSITE,
-		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
-		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
+		"id",            "protocol-gtalk",
+		"name",          "Google Talk Protocol",
+		"version",       DISPLAY_VERSION,
+		"category",      N_("Protocol"),
+		"summary",       N_("Google Talk Protocol Plugin"),
+		"description",   N_("Google Talk Protocol Plugin"),
+		"website",       PURPLE_WEBSITE,
+		"abi-version",   PURPLE_ABI_VERSION,
+		"dependencies",  dependencies,
+		"flags",         PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                 PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
 		NULL
 	);
 }
@@ -198,7 +220,7 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	my_protocol = purple_protocols_add(XMPP_TYPE_PROTOCOL, error);
+	my_protocol = purple_protocols_add(GTALK_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
 
@@ -219,10 +241,10 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-extern PurplePlugin *_jabber_plugin;
+static PurplePlugin *my_plugin;
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, XMPPProtocol, xmpp_protocol,
+PURPLE_PROTOCOL_DEFINE_EXTENDED(my_plugin, GTalkProtocol, gtalk_protocol,
                                 JABBER_TYPE_PROTOCOL, 0);
 
-PURPLE_PLUGIN_INIT_VAL(_jabber_plugin, jabber, plugin_query, plugin_load,
+PURPLE_PLUGIN_INIT_VAL(my_plugin, gtalk, plugin_query, plugin_load,
                        plugin_unload);

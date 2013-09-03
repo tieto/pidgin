@@ -30,7 +30,7 @@
 #include "core.h"
 #include "plugins.h"
 
-#include "libfacebook.h"
+#include "facebook.h"
 
 static PurpleProtocol *my_protocol = NULL;
 

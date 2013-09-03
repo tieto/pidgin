@@ -19,31 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#ifndef _LIBXMPP_H_
-#define _LIBXMPP_H_
+#ifndef _FACEBOOK_H_
+#define _FACEBOOK_H_
 
 #include "jabber.h"
 
-#define XMPP_TYPE_PROTOCOL             (xmpp_protocol_get_type())
-#define XMPP_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), XMPP_TYPE_PROTOCOL, XMPPProtocol))
-#define XMPP_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), XMPP_TYPE_PROTOCOL, XMPPProtocolClass))
-#define XMPP_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), XMPP_TYPE_PROTOCOL))
-#define XMPP_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), XMPP_TYPE_PROTOCOL))
-#define XMPP_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), XMPP_TYPE_PROTOCOL, XMPPProtocolClass))
+#define FACEBOOK_TYPE_PROTOCOL             (facebook_protocol_get_type())
+#define FACEBOOK_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), FACEBOOK_TYPE_PROTOCOL, FacebookProtocol))
+#define FACEBOOK_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), FACEBOOK_TYPE_PROTOCOL, FacebookProtocolClass))
+#define FACEBOOK_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), FACEBOOK_TYPE_PROTOCOL))
+#define FACEBOOK_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), FACEBOOK_TYPE_PROTOCOL))
+#define FACEBOOK_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), FACEBOOK_TYPE_PROTOCOL, FacebookProtocolClass))
 
-typedef struct _XMPPProtocol
+typedef struct _FacebookProtocol
 {
 	JabberProtocol parent;
-} XMPPProtocol;
+} FacebookProtocol;
 
-typedef struct _XMPPProtocolClass
+typedef struct _FacebookProtocolClass
 {
 	JabberProtocolClass parent_class;
-} XMPPProtocolClass;
+} FacebookProtocolClass;
 
 /**
- * Returns the GType for the XMPPProtocol object.
+ * Returns the GType for the FacebookProtocol object.
  */
-GType xmpp_protocol_get_type(void);
+GType facebook_protocol_get_type(void);
 
-#endif /* _LIBXMPP_H_ */
+#endif /* _FACEBOOK_H_ */

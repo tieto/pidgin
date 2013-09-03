@@ -27,6 +27,8 @@ JABBERSOURCES = \
 			  data.h \
 			  disco.c \
 			  disco.h \
+			  facebook.c \
+			  facebook.h \
 			  google/gmail.c \
 			  google/gmail.h \
 			  google/google.c \
@@ -43,6 +45,8 @@ JABBERSOURCES = \
 			  google/jingleinfo.h \
 			  google/relay.c \
 			  google/relay.h \
+			  gtalk.c \
+			  gtalk.h \
 			  ibb.c \
 			  ibb.h \
 			  iq.c \
@@ -91,11 +95,13 @@ JABBERSOURCES = \
 			  usertune.c \
 			  usertune.h \
 			  xdata.c \
-			  xdata.h
+			  xdata.h \
+			  xmpp.c \
+			  xmpp.h
 
 AM_CFLAGS = $(st)
 
-libxmpp_la_LDFLAGS = -module -avoid-version
+libjabber_la_LDFLAGS = -module -avoid-version
 
 if USE_CYRUS_SASL
 JABBERSOURCES += auth_cyrus.c
@@ -105,33 +111,17 @@ if STATIC_JABBER
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES   = libjabber.la
-libjabber_la_SOURCES = $(JABBERSOURCES) \
-	libfacebook.c \
-	libfacebook.h \
-	libgtalk.c \
-	libgtalk.h \
-	libxmpp.c \
-	libxmpp.h
-
+libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
-pkg_LTLIBRARIES      = libjabber.la libfacebook.la libgtalk.la libxmpp.la
+pkg_LTLIBRARIES      = libjabber.la
 libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
 	$(FARSTREAM_LIBS) \
 	$(GSTREAMER_LIBS)
-
-libfacebook_la_SOURCES = libfacebook.c libfacebook.h
-libfacebook_la_LIBADD = libjabber.la
-
-libgtalk_la_SOURCES = libgtalk.c libgtalk.h
-libgtalk_la_LIBADD = libjabber.la
-
-libxmpp_la_SOURCES = libxmpp.c libxmpp.h
-libxmpp_la_LIBADD = libjabber.la
 
 endif
 
