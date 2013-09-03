@@ -883,16 +883,6 @@ static void null_register_user(PurpleAccount *acct) {
                    purple_account_get_username(acct));
 }
 
-static void null_get_cb_info(PurpleConnection *gc, int id, const char *who) {
-  PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
-  purple_debug_info("nullprotocol",
-                    "retrieving %s's info for %s in chat room %s\n", who,
-                    purple_account_get_username(purple_connection_get_account(gc)),
-                    purple_conversation_get_name(PURPLE_CONVERSATION(chat)));
-
-  null_get_info(gc, who);
-}
-
 static void null_alias_buddy(PurpleConnection *gc, const char *who,
                                  const char *alias) {
  purple_debug_info("nullprotocol", "%s sets %s's alias to %s\n",
@@ -1172,7 +1162,6 @@ null_protocol_interface_init(PurpleProtocolInterface *iface)
   iface->chat_whisper             = null_chat_whisper;
   iface->chat_send                = null_chat_send;
   iface->register_user            = null_register_user;
-  iface->get_cb_info              = null_get_cb_info;
   iface->alias_buddy              = null_alias_buddy;
   iface->group_buddy              = null_group_buddy;
   iface->rename_group             = null_rename_group;
