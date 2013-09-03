@@ -97,8 +97,7 @@ typedef struct {
 
 /*
  * stores offline messages that haven't been delivered yet. maps username
- * (char *) to GList * of GOfflineMessages. initialized in
- * null_protocol_base_init.
+ * (char *) to GList * of GOfflineMessages. initialized in plugin_load.
  */
 GHashTable* goffline_messages = NULL;
 
@@ -1088,38 +1087,15 @@ null_protocol_base_init(NullProtocolClass *klass)
 
   proto_class->user_splits = g_list_append(NULL, split);
   proto_class->protocol_options = g_list_append(NULL, option);
-
-  /* register whisper chat command, /msg */
-  id = purple_cmd_register("msg",
-                    "ws",                  /* args: recipient and message */
-                    PURPLE_CMD_P_DEFAULT,  /* priority */
-                    PURPLE_CMD_FLAG_CHAT,
-                    "null",
-                    send_whisper,
-                    "msg &lt;username&gt; &lt;message&gt;: send a private message, aka a whisper",
-                    NULL);                 /* userdata */
-
-  /* add /msg command to the commands list */
-  cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
-
-  /* get ready to store offline messages */
-  goffline_messages = g_hash_table_new_full(g_str_hash,  /* hash fn */
-                                            g_str_equal, /* key comparison fn */
-                                            g_free,      /* key free fn */
-                                            NULL);       /* value free fn */
 }
 
+/*
+ * Finalize the protocol class.
+ */
 static void
 null_protocol_base_finalize(NullProtocolClass *klass)
 {
   purple_debug_info("nullprotocol", "shutting down\n");
-
-  /* unregister the commands */
-  while (cmds) {
-    PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
-    purple_cmd_unregister(id);
-    cmds = g_slist_delete_link(cmds, cmds);
-  }
 }
 
 /*
@@ -1201,9 +1177,29 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+  /* add the protocol to the core */
   my_protocol = purple_protocols_add(NULL_TYPE_PROTOCOL, error);
   if (!my_protocol)
     return FALSE;
+
+  /* get ready to store offline messages */
+  goffline_messages = g_hash_table_new_full(g_str_hash,  /* hash fn */
+                                            g_str_equal, /* key comparison fn */
+                                            g_free,      /* key free fn */
+                                            NULL);       /* value free fn */
+
+  /* register whisper chat command, /msg */
+  id = purple_cmd_register("msg",
+                    "ws",                  /* args: recipient and message */
+                    PURPLE_CMD_P_DEFAULT,  /* priority */
+                    PURPLE_CMD_FLAG_CHAT,
+                    "null",
+                    send_whisper,
+                    "msg &lt;username&gt; &lt;message&gt;: send a private message, aka a whisper",
+                    NULL);                 /* userdata */
+
+  /* add /msg command to the commands list */
+  cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 
   return TRUE;
 }
@@ -1211,6 +1207,14 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+  /* unregister the commands */
+  while (cmds) {
+    PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
+    purple_cmd_unregister(id);
+    cmds = g_slist_delete_link(cmds, cmds);
+  }
+
+  /* remove the protocol from the core */
   if (!purple_protocols_remove(my_protocol, error))
     return FALSE;
 

@@ -2926,14 +2926,6 @@ zephyr_protocol_base_init(ZephyrProtocolClass *klass)
 
 	option = purple_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
-
-	zephyr_register_slash_commands();
-}
-
-
-static void zephyr_protocol_base_finalize(ZephyrProtocolClass *klass)
-{
-	zephyr_unregister_slash_commands();
 }
 
 
@@ -2964,6 +2956,9 @@ zephyr_protocol_interface_init(PurpleProtocolInterface *iface)
 }
 
 
+static void zephyr_protocol_base_finalize(ZephyrProtocolClass *klass) { }
+
+
 static PurplePluginInfo *plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
@@ -2989,6 +2984,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!my_protocol)
 		return FALSE;
 
+	zephyr_register_slash_commands();
+
 	return TRUE;
 }
 
@@ -2996,6 +2993,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	zephyr_unregister_slash_commands();
+
 	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
 

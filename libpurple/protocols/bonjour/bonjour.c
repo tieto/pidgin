@@ -642,8 +642,6 @@ bonjour_protocol_base_init(BonjourProtocolClass *klass)
 	                                                 0, 0, 96, 96, 65535,
 	                                                 PURPLE_ICON_SCALE_DISPLAY);
 
-	initialize_default_account_values();
-
 	/* Creating the options for the protocol */
 	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
@@ -662,16 +660,6 @@ bonjour_protocol_base_init(BonjourProtocolClass *klass)
 
 	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
-}
-
-static void
-bonjour_protocol_base_finalize(BonjourProtocolClass *klass)
-{
-	g_free(default_firstname);
-	default_firstname = NULL;
-
-	g_free(default_lastname);
-	default_lastname = NULL;
 }
 
 static void
@@ -696,6 +684,8 @@ bonjour_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->new_xfer             = bonjour_new_xfer;
 	iface->get_max_message_size = bonjour_get_max_message_size;
 }
+
+static void bonjour_protocol_base_finalize(BonjourProtocolClass *klass) { }
 
 static PurplePluginInfo *
 plugin_query(GError **error)
@@ -722,6 +712,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!my_protocol)
 		return FALSE;
 
+	initialize_default_account_values();
+
 	return TRUE;
 }
 
@@ -730,6 +722,9 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
+
+	g_free(default_firstname);
+	g_free(default_lastname);
 
 	return TRUE;
 }

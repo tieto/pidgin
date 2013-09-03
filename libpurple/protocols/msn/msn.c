@@ -2922,30 +2922,6 @@ msn_protocol_base_init(MsnProtocolClass *klass)
 										  "mpop", TRUE);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
 											   option);
-
-	id = purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
-	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                 "msn", msn_cmd_nudge,
-	                  _("nudge: nudge a user to get their attention"), NULL);
-	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
-
-	purple_prefs_remove("/protocols/msn");
-
-	msn_notification_init();
-	msn_switchboard_init();
-}
-
-static void
-msn_protocol_base_finalize(MsnProtocolClass *klass)
-{
-	while (cmds) {
-		PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
-		purple_cmd_unregister(id);
-		cmds = g_slist_delete_link(cmds, cmds);
-	}
-
-	msn_notification_end();
-	msn_switchboard_end();
 }
 
 static void
@@ -2995,6 +2971,8 @@ msn_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size   = msn_get_max_message_size;
 }
 
+static void msn_protocol_base_finalize(MsnProtocolClass *klass) { }
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -3020,6 +2998,17 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!my_protocol)
 		return FALSE;
 
+	id = purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
+	                 "msn", msn_cmd_nudge,
+	                  _("nudge: nudge a user to get their attention"), NULL);
+	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
+
+	purple_prefs_remove("/protocols/msn");
+
+	msn_notification_init();
+	msn_switchboard_init();
+
 	purple_signal_connect(purple_get_core(), "uri-handler", my_protocol,
 		PURPLE_CALLBACK(msn_uri_handler), NULL);
 
@@ -3029,6 +3018,15 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	msn_notification_end();
+	msn_switchboard_end();
+
+	while (cmds) {
+		PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
+		purple_cmd_unregister(id);
+		cmds = g_slist_delete_link(cmds, cmds);
+	}
+
 	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
 

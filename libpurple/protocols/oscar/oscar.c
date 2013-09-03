@@ -5591,13 +5591,6 @@ oscar_protocol_base_init(OscarProtocolClass *klass)
 	                                                 0, 0, 64, 64, 7168,
 	                                                 PURPLE_ICON_SCALE_SEND |
 	                                                 PURPLE_ICON_SCALE_DISPLAY);
-
-	/* Preferences */
-	purple_prefs_add_none("/protocols/oscar");
-	purple_prefs_add_bool("/protocols/oscar/recent_buddies", FALSE);
-
-	purple_prefs_remove("/protocols/oscar/show_idle");
-	purple_prefs_remove("/protocols/oscar/always_use_rv_proxy");
 }
 
 static void
@@ -5681,6 +5674,13 @@ plugin_load(PurplePlugin *plugin, GError **error)
 		PURPLE_CALLBACK(oscar_uri_handler), NULL);
 	purple_signal_connect(purple_get_core(), "uri-handler", icq_protocol,
 		PURPLE_CALLBACK(oscar_uri_handler), NULL);
+
+	/* Preferences */
+	purple_prefs_add_none("/protocols/oscar");
+	purple_prefs_add_bool("/protocols/oscar/recent_buddies", FALSE);
+
+	purple_prefs_remove("/protocols/oscar/show_idle");
+	purple_prefs_remove("/protocols/oscar/always_use_rv_proxy");
 
 	return TRUE;
 }

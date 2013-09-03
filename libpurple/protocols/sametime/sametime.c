@@ -5671,24 +5671,6 @@ mw_protocol_base_init(mwProtocolClass *klass)
 
   proto_class->protocol_options = l;
   l = NULL;
-
-  /* forward all our g_log messages to purple. Generally all the logging
-     calls are using purple_log directly, but the g_return macros will
-     get caught here */
-  log_handler[0] = g_log_set_handler(G_LOG_DOMAIN, logflags,
-             mw_log_handler, NULL);
-
-  /* redirect meanwhile's logging to purple's */
-  log_handler[1] = g_log_set_handler("meanwhile", logflags,
-             mw_log_handler, NULL);
-}
-
-
-static void
-mw_protocol_base_finalize(mwProtocolClass *klass)
-{
-  g_log_remove_handler(G_LOG_DOMAIN, log_handler[0]);
-  g_log_remove_handler("meanwhile", log_handler[1]);
 }
 
 
@@ -5740,6 +5722,9 @@ mw_protocol_interface_init(PurpleProtocolInterface *iface)
 }
 
 
+static void mw_protocol_base_finalize(mwProtocolClass *klass) { }
+
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -5769,6 +5754,16 @@ plugin_load(PurplePlugin *plugin, GError **error)
   if (!my_protocol)
     return FALSE;
 
+  /* forward all our g_log messages to purple. Generally all the logging
+     calls are using purple_log directly, but the g_return macros will
+     get caught here */
+  log_handler[0] = g_log_set_handler(G_LOG_DOMAIN, logflags,
+             mw_log_handler, NULL);
+
+  /* redirect meanwhile's logging to purple's */
+  log_handler[1] = g_log_set_handler("meanwhile", logflags,
+             mw_log_handler, NULL);
+
   return TRUE;
 }
 
@@ -5776,6 +5771,9 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+  g_log_remove_handler(G_LOG_DOMAIN, log_handler[0]);
+  g_log_remove_handler("meanwhile", log_handler[1]);
+
   if (!purple_protocols_remove(my_protocol, error))
     return FALSE;
 

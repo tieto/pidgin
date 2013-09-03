@@ -55,6 +55,7 @@
 
 /* ---------------------------------------------------------------------- */
 static PurpleProtocol *my_protocol = NULL;
+static PurpleAccountOption *ggp_server_option;
 
 /* ---------------------------------------------------------------------- */
 
@@ -1405,7 +1406,6 @@ ggp_protocol_base_init(GGPProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
-	PurpleAccountOption *ggp_server_option;
 	GList *encryption_options = NULL;
 
 	proto_class->id        = "gg";
@@ -1446,20 +1446,6 @@ ggp_protocol_base_init(GGPProtocolClass *klass)
 		"show_links_from_strangers", 1);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
 		option);
-
-	gg_debug_handler = purple_gg_debug_handler;
-
-	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
-		"libgadu %s...\n", gg_libgadu_version());
-
-	ggp_resolver_purple_setup();
-	ggp_servconn_setup(ggp_server_option);
-}
-
-static void
-ggp_protocol_base_finalize(GGPProtocolClass *klass)
-{
-	ggp_servconn_cleanup();
 }
 
 static void
@@ -1499,6 +1485,8 @@ ggp_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size   = ggp_get_max_message_size;
 }
 
+static void ggp_protocol_base_finalize(GGPProtocolClass *klass) { }
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -1530,12 +1518,22 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!my_protocol)
 		return FALSE;
 
+	gg_debug_handler = purple_gg_debug_handler;
+
+	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
+		"libgadu %s...\n", gg_libgadu_version());
+
+	ggp_resolver_purple_setup();
+	ggp_servconn_setup(ggp_server_option);
+
 	return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	ggp_servconn_cleanup();
+
 	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
 

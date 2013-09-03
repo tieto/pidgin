@@ -970,16 +970,6 @@ irc_protocol_base_init(IRCProtocolClass *klass)
 						"auth_plain_in_clear", FALSE);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
 #endif
-
-	purple_prefs_remove("/protocols/irc/quitmsg");
-	purple_prefs_remove("/protocols/irc");
-
-	irc_register_commands();
-}
-
-static void irc_protocol_base_finalize(IRCProtocolClass *klass)
-{
-	irc_unregister_commands();
 }
 
 static void
@@ -1013,6 +1003,8 @@ irc_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size = irc_get_max_message_size;
 }
 
+static void irc_protocol_base_finalize(IRCProtocolClass *klass) { }
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -1038,6 +1030,11 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!_irc_protocol)
 		return FALSE;
 
+	purple_prefs_remove("/protocols/irc/quitmsg");
+	purple_prefs_remove("/protocols/irc");
+
+	irc_register_commands();
+
 	purple_signal_register(_irc_protocol, "irc-sending-text",
 			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
 			     PURPLE_TYPE_CONNECTION,
@@ -1053,6 +1050,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	irc_unregister_commands();
+
 	if (!purple_protocols_remove(_irc_protocol, error))
 		return FALSE;
 

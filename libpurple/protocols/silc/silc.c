@@ -2209,23 +2209,6 @@ silcpurple_protocol_base_init(SilcProtocolClass *klass)
 	option = purple_account_option_bool_new(_("Digitally sign and verify all messages"),
 						"sign-verify", FALSE);
 	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
-
-	purple_prefs_remove("/protocols/silc");
-
-	silc_log_set_callback(SILC_LOG_ERROR, silcpurple_log_error, NULL);
-	silcpurple_register_commands();
-
-#if 0
-silc_log_debug(TRUE);
-silc_log_set_debug_string("*client*");
-silc_log_quick(TRUE);
-silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
-#endif
-}
-
-static void silcpurple_protocol_base_finalize(SilcProtocolClass *klass)
-{
-	silcpurple_unregister_commands();
 }
 
 static void
@@ -2263,6 +2246,8 @@ silcpurple_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->new_xfer           = silcpurple_ftp_new_xfer;
 }
 
+static void silcpurple_protocol_base_finalize(SilcProtocolClass *klass) { }
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -2294,12 +2279,26 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!my_protocol)
 		return FALSE;
 
+	purple_prefs_remove("/protocols/silc");
+
+	silc_log_set_callback(SILC_LOG_ERROR, silcpurple_log_error, NULL);
+	silcpurple_register_commands();
+
+#if 0
+silc_log_debug(TRUE);
+silc_log_set_debug_string("*client*");
+silc_log_quick(TRUE);
+silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
+#endif
+
 	return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	silcpurple_unregister_commands();
+
 	if (!purple_protocols_remove(my_protocol, error))
 		return FALSE;
 
