@@ -46,7 +46,8 @@ typedef struct _PurpleAttentionType PurpleAttentionType;
 /** @name Basic Protocol Information                                      */
 /**************************************************************************/
 
-typedef enum {
+typedef enum  /*< flags >*/
+{
 	PURPLE_ICON_SCALE_DISPLAY = 0x01,		/**< We scale the icon when we display it */
 	PURPLE_ICON_SCALE_SEND = 0x02			/**< We scale the icon before we send it to the server */
 } PurpleIconScaleRules;
@@ -62,7 +63,7 @@ typedef struct _PurpleProtocolChatEntry PurpleProtocolChatEntry;
  *
  * These should all be stuff that some protocols can do and others can't.
  */
-typedef enum
+typedef enum  /*< flags >*/
 {
 	/**
 	 * User names are unique to a chat and are not shared between rooms.

@@ -63,6 +63,19 @@ typedef struct _PurpleProtocolInterface PurpleProtocolInterface;
 #include "whiteboard.h"
 
 /**
+ * Flags to indicate what base protocol's data a derived protocol wants to
+ * override.
+ *
+ * @see purple_protocol_override()
+ */
+typedef enum /*< flags >*/
+{
+    PURPLE_PROTOCOL_OVERRIDE_USER_SPLITS      = 1 << 1,
+    PURPLE_PROTOCOL_OVERRIDE_PROTOCOL_OPTIONS = 1 << 2,
+    PURPLE_PROTOCOL_OVERRIDE_ICON_SPEC        = 1 << 3,
+} PurpleProtocolOverrideFlags;
+
+/**
  * Represents an instance of a protocol registered with the protocols
  * subsystem. Protocols must initialize the members to appropriate values.
  */
@@ -694,6 +707,18 @@ PurpleBuddyIconSpec *purple_protocol_get_icon_spec(const PurpleProtocol *protoco
  * @return The whiteboard ops of the protocol.
  */
 PurpleWhiteboardOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol);
+
+/**
+ * Lets derived protocol types override the base type's instance data, such as
+ * protocol options, user splits, icon spec, etc.
+ * This function is called in the *_init() function of your derived protocol,
+ * to delete the parent type's data so you can define your own.
+ *
+ * @param protocol The protocol instance.
+ * @param flags    What instance data to delete.
+ */
+void purple_protocol_override(PurpleProtocol *protocol,
+                              PurpleProtocolOverrideFlags flags);
 
 /*@}*/
 

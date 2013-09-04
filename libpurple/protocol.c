@@ -85,6 +85,56 @@ purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol)
 	return protocol->whiteboard_ops;
 }
 
+static void
+user_splits_free(PurpleProtocol *protocol)
+{
+	g_return_if_fail(protocol != NULL);
+
+	while (protocol->user_splits) {
+		PurpleAccountUserSplit *split = protocol->user_splits->data;
+		purple_account_user_split_destroy(split);
+		protocol->user_splits = g_list_delete_link(protocol->user_splits,
+				protocol->user_splits);
+	}
+}
+
+static void
+protocol_options_free(PurpleProtocol *protocol)
+{
+	g_return_if_fail(protocol != NULL);
+
+	while (protocol->protocol_options) {
+		PurpleAccountOption *option = protocol->protocol_options->data;
+		purple_account_option_destroy(option);
+		protocol->protocol_options =
+				g_list_delete_link(protocol->protocol_options,
+				                   protocol->protocol_options);
+	}
+}
+
+static void
+icon_spec_free(PurpleProtocol *protocol)
+{
+	g_return_if_fail(protocol != NULL);
+
+	purple_buddy_icon_spec_free(protocol->icon_spec);
+	protocol->icon_spec = NULL;
+}
+
+void
+purple_protocol_override(PurpleProtocol *protocol,
+                         PurpleProtocolOverrideFlags flags)
+{
+	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
+
+	if (flags & PURPLE_PROTOCOL_OVERRIDE_USER_SPLITS)
+		user_splits_free(protocol);
+	if (flags & PURPLE_PROTOCOL_OVERRIDE_PROTOCOL_OPTIONS)
+		protocol_options_free(protocol);
+	if (flags & PURPLE_PROTOCOL_OVERRIDE_ICON_SPEC)
+		icon_spec_free(protocol);
+}
+
 /**************************************************************************
  * GObject stuff
  **************************************************************************/
@@ -132,22 +182,9 @@ purple_protocol_finalize(GObject *object)
 {
 	PurpleProtocol *protocol = PURPLE_PROTOCOL(object);
 
-	while (protocol->user_splits) {
-		PurpleAccountUserSplit *split = protocol->user_splits->data;
-		purple_account_user_split_destroy(split);
-		protocol->user_splits = g_list_delete_link(protocol->user_splits,
-				protocol->user_splits);
-	}
-
-	while (protocol->protocol_options) {
-		PurpleAccountOption *option = protocol->protocol_options->data;
-		purple_account_option_destroy(option);
-		protocol->protocol_options =
-				g_list_delete_link(protocol->protocol_options,
-				                   protocol->protocol_options);
-	}
-
-	purple_buddy_icon_spec_free(protocol->icon_spec);
+	user_splits_free(protocol);
+	protocol_options_free(protocol);
+	icon_spec_free(protocol);
 
 	parent_class->finalize(object);
 }

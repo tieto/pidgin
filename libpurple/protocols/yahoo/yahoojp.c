@@ -94,7 +94,7 @@ yahoojp_protocol_init(PurpleProtocol *protocol)
 	protocol->name = "Yahoo JAPAN";
 
 	/* delete yahoo's protocol options */
-	purple_protocol_options_free(protocol->protocol_options);
+	purple_protocol_override(protocol, PURPLE_PROTOCOL_OVERRIDE_PROTOCOL_OPTIONS);
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
