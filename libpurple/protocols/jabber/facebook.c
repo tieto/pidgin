@@ -40,8 +40,8 @@ facebook_protocol_init(PurpleProtocol *protocol)
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
-	protocol->id        = "facebook-xmpp";
-	protocol->name      = "Facebook (XMPP)";
+	protocol->id   = "facebook-xmpp";
+	protocol->name = "Facebook (XMPP)";
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), "chat.facebook.com", '@');

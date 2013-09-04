@@ -40,8 +40,8 @@ gtalk_protocol_init(PurpleProtocol *protocol)
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
-	protocol->id        = "gtalk";
-	protocol->name      = "Google Talk (XMPP)";
+	protocol->id   = "gtalk";
+	protocol->name = "Google Talk (XMPP)";
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), "gmail.com", '@');
