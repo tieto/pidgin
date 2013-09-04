@@ -1,5 +1,5 @@
 /**
- * @file protocol.h Protocol class and interface API
+ * @file protocol.h Protocol object and interface API
  * @ingroup core
  */
 
@@ -64,24 +64,12 @@ typedef struct _PurpleProtocolInterface PurpleProtocolInterface;
 
 /**
  * Represents an instance of a protocol registered with the protocols
- * subsystem.
+ * subsystem. Protocols must initialize the members to appropriate values.
  */
 struct _PurpleProtocol
 {
 	/*< private >*/
 	GObject gparent;
-};
-
-/**
- * The base class for all protocols.
- *
- * Protocols must set the members of this class to appropriate values upon
- * class initialization.
- */
-struct _PurpleProtocolClass
-{
-	/*< private >*/
-	GObjectClass parent_class;
 
 	const char *id;                  /**< Protocol ID */
 	const char *name;                /**< Translated name of the protocol */
@@ -99,6 +87,15 @@ struct _PurpleProtocolClass
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
+};
+
+/**
+ * The base class for all protocols.
+ */
+struct _PurpleProtocolClass
+{
+	/*< private >*/
+	GObjectClass parent_class;
 };
 
 /**
@@ -535,8 +532,8 @@ struct _PurpleProtocolInterface
 /**
  * Defines a protocol type in a plugin (given as a PurplePlugin *) by using the
  * CamelCase type name of the protocol and the function prefix for the
- * *_get_type(), *_base_init(), *_base_finalize() and *_interface_init()
- * functions of the protocol.
+ * generated *_get_type(), and the *_init(), *_class_init() and
+ * *_interface_init() functions used by the protocol.
  *
  * The type may be registered statically or dynamically.
  */
@@ -570,9 +567,10 @@ struct _PurpleProtocolInterface
 		static GType type = 0; \
 		if (G_UNLIKELY(type == 0)) { \
 			static const GTypeInfo info = { \
-				.instance_size = sizeof(TypeName), \
 				.class_size = sizeof(TypeName##Class), \
-				.base_init = (GBaseInitFunc)func_prefix##_base_init, \
+				.class_init = (GClassInitFunc)func_prefix##_class_init, \
+				.instance_size = sizeof(TypeName), \
+				.instance_init = (GInstanceInitFunc)func_prefix##_init, \
 			}; \
 			static const GInterfaceInfo iface_info = { \
 				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \
@@ -596,9 +594,10 @@ struct _PurpleProtocolInterface
 		static GType type = 0; \
 		if (G_UNLIKELY(type == 0)) { \
 			static const GTypeInfo info = { \
-				.instance_size = sizeof(TypeName), \
 				.class_size = sizeof(TypeName##Class), \
-				.base_init = (GBaseInitFunc)func_prefix##_base_init, \
+				.class_init = (GClassInitFunc)func_prefix##_class_init, \
+				.instance_size = sizeof(TypeName), \
+				.instance_init = (GInstanceInitFunc)func_prefix##_init, \
 			}; \
 			static const GInterfaceInfo iface_info = { \
 				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \
@@ -620,7 +619,7 @@ struct _PurpleProtocolInterface
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Protocol Class API                                              */
+/** @name Protocol Object API                                             */
 /**************************************************************************/
 /*@{*/
 

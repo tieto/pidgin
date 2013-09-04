@@ -32,78 +32,57 @@ static GObjectClass *parent_class;
 const char *
 purple_protocol_get_id(const PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *klass;
-
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->id;
+	return protocol->id;
 }
 
 const char *
 purple_protocol_get_name(const PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *klass;
-
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->name;
+	return protocol->name;
 }
 
 PurpleProtocolOptions
 purple_protocol_get_options(const PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *klass;
-
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), 0);
 
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->options;
+	return protocol->options;
 }
 
 GList *
 purple_protocol_get_user_splits(const PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *klass;
-
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->user_splits;
+	return protocol->user_splits;
 }
 
 GList *
 purple_protocol_get_protocol_options(const PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *klass;
-
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->protocol_options;
+	return protocol->protocol_options;
 }
 
 PurpleBuddyIconSpec *
 purple_protocol_get_icon_spec(const PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *klass;
-
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->icon_spec;
+	return protocol->icon_spec;
 }
 
 PurpleWhiteboardOps *
 purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *klass;
-
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-	return klass->whiteboard_ops;
+	return protocol->whiteboard_ops;
 }
 
 /**************************************************************************
@@ -120,6 +99,20 @@ static void
 purple_protocol_dispose(GObject *object)
 {
 	PurpleProtocol *protocol = PURPLE_PROTOCOL(object);
+	GList *accounts, *l;
+
+	accounts = purple_accounts_get_all_active();
+	for (l = accounts; l != NULL; l = l->next) {
+		PurpleAccount *account = PURPLE_ACCOUNT(l->data);
+		if (purple_account_is_disconnected(account))
+			continue;
+
+		if (purple_strequal(protocol->id,
+				purple_account_get_protocol_id(account)))
+			purple_account_disconnect(account);
+	}
+
+	g_list_free(accounts);
 
 	purple_request_close_with_handle(protocol);
 	purple_notify_close_with_handle(protocol);
@@ -135,47 +128,39 @@ purple_protocol_dispose(GObject *object)
 }
 
 static void
+purple_protocol_finalize(GObject *object)
+{
+	PurpleProtocol *protocol = PURPLE_PROTOCOL(object);
+
+	while (protocol->user_splits) {
+		PurpleAccountUserSplit *split = protocol->user_splits->data;
+		purple_account_user_split_destroy(split);
+		protocol->user_splits = g_list_delete_link(protocol->user_splits,
+				protocol->user_splits);
+	}
+
+	while (protocol->protocol_options) {
+		PurpleAccountOption *option = protocol->protocol_options->data;
+		purple_account_option_destroy(option);
+		protocol->protocol_options =
+				g_list_delete_link(protocol->protocol_options,
+				                   protocol->protocol_options);
+	}
+
+	purple_buddy_icon_spec_free(protocol->icon_spec);
+
+	parent_class->finalize(object);
+}
+
+static void
 purple_protocol_class_init(PurpleProtocolClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_protocol_dispose;
-}
-
-static void
-purple_protocol_base_finalize(PurpleProtocolClass *klass)
-{
-	GList *accounts, *l;
-
-	accounts = purple_accounts_get_all_active();
-	for (l = accounts; l != NULL; l = l->next) {
-		PurpleAccount *account = PURPLE_ACCOUNT(l->data);
-		if (purple_account_is_disconnected(account))
-			continue;
-
-		if (purple_strequal(klass->id, purple_account_get_protocol_id(account)))
-			purple_account_disconnect(account);
-	}
-
-	g_list_free(accounts);
-
-	while (klass->user_splits) {
-		PurpleAccountUserSplit *split = klass->user_splits->data;
-		purple_account_user_split_destroy(split);
-		klass->user_splits = g_list_delete_link(klass->user_splits,
-				klass->user_splits);
-	}
-
-	while (klass->protocol_options) {
-		PurpleAccountOption *option = klass->protocol_options->data;
-		purple_account_option_destroy(option);
-		klass->protocol_options = g_list_delete_link(klass->protocol_options,
-				klass->protocol_options);
-	}
-
-	purple_buddy_icon_spec_free(klass->icon_spec);
+	obj_class->dispose  = purple_protocol_dispose;
+	obj_class->finalize = purple_protocol_finalize;
 }
 
 GType
@@ -185,11 +170,10 @@ purple_protocol_get_type(void)
 
 	if (G_UNLIKELY(type == 0)) {
 		static const GTypeInfo info = {
-			.instance_size = sizeof(PurpleProtocol),
-			.instance_init = (GInstanceInitFunc)purple_protocol_init,
 			.class_size = sizeof(PurpleProtocolClass),
 			.class_init = (GClassInitFunc)purple_protocol_class_init,
-			.base_finalize = (GBaseFinalizeFunc)purple_protocol_base_finalize,
+			.instance_size = sizeof(PurpleProtocol),
+			.instance_init = (GInstanceInitFunc)purple_protocol_init,
 		};
 
 		type = g_type_register_static(G_TYPE_OBJECT, "PurpleProtocol",
