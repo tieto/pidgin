@@ -102,8 +102,12 @@ struct _PurpleProtocolClass
  * The protocol interface.
  *
  * Every protocol implements this interface. It is the gateway between purple
- * and the protocol's functions. Many of these callbacks can be NULL. If a
- * callback must be implemented, it has a comment indicating so.
+ * and the protocol's functions. Many of these callbacks can be NULL. However,
+ * these callbacks must be implemented:
+ *
+ *  PurpleProtocolInterface::list_icon                                       \n
+ *  PurpleProtocolInterface::login                                           \n
+ *  PurpleProtocolInterface::close
  */
 struct _PurpleProtocolInterface
 {
