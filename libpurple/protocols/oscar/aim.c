@@ -57,8 +57,6 @@ aim_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size = oscar_get_max_message_size;
 }
 
-static void aim_protocol_base_finalize(AIMProtocolClass *klass) { }
-
 extern PurplePlugin *_oscar_plugin;
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_oscar_plugin, AIMProtocol, aim_protocol,
                                 OSCAR_TYPE_PROTOCOL, 0);

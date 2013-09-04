@@ -1083,19 +1083,8 @@ null_protocol_base_init(NullProtocolClass *klass)
     "example",                /* pref name */
     "default");               /* default value */
 
-  purple_debug_info("nullprotocol", "starting up\n");
-
   proto_class->user_splits = g_list_append(NULL, split);
   proto_class->protocol_options = g_list_append(NULL, option);
-}
-
-/*
- * Finalize the protocol class.
- */
-static void
-null_protocol_base_finalize(NullProtocolClass *klass)
-{
-  purple_debug_info("nullprotocol", "shutting down\n");
 }
 
 /*
@@ -1182,6 +1171,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
   if (!my_protocol)
     return FALSE;
 
+  purple_debug_info("nullprotocol", "starting up\n");
+
   /* get ready to store offline messages */
   goffline_messages = g_hash_table_new_full(g_str_hash,  /* hash fn */
                                             g_str_equal, /* key comparison fn */
@@ -1213,6 +1204,8 @@ plugin_unload(PurplePlugin *plugin, GError **error)
     purple_cmd_unregister(id);
     cmds = g_slist_delete_link(cmds, cmds);
   }
+
+  purple_debug_info("nullprotocol", "shutting down\n");
 
   /* remove the protocol from the core */
   if (!purple_protocols_remove(my_protocol, error))

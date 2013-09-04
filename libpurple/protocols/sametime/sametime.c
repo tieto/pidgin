@@ -5722,9 +5722,6 @@ mw_protocol_interface_init(PurpleProtocolInterface *iface)
 }
 
 
-static void mw_protocol_base_finalize(mwProtocolClass *klass) { }
-
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {

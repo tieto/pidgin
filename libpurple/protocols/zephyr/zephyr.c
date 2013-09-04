@@ -2956,9 +2956,6 @@ zephyr_protocol_interface_init(PurpleProtocolInterface *iface)
 }
 
 
-static void zephyr_protocol_base_finalize(ZephyrProtocolClass *klass) { }
-
-
 static PurplePluginInfo *plugin_query(GError **error)
 {
 	return purple_plugin_info_new(

@@ -2095,8 +2095,6 @@ simple_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->send_raw     = simple_send_raw;
 }
 
-static void simple_protocol_base_finalize(SIMPLEProtocolClass *klass) { }
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {

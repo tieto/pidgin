@@ -299,8 +299,6 @@ yahoo_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size     = yahoo_get_max_message_size;
 }
 
-static void yahoo_protocol_base_finalize(YahooProtocolClass *klass) { }
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {

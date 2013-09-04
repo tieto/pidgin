@@ -3456,8 +3456,6 @@ msim_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_account_text_table = msim_get_account_text_table;
 }
 
-static void msim_protocol_base_finalize(MsimProtocolClass *klass) { }
-
 /**
  * Query the plugin
  */

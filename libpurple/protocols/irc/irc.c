@@ -1003,8 +1003,6 @@ irc_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size = irc_get_max_message_size;
 }
 
-static void irc_protocol_base_finalize(IRCProtocolClass *klass) { }
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {

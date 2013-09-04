@@ -2246,8 +2246,6 @@ silcpurple_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->new_xfer           = silcpurple_ftp_new_xfer;
 }
 
-static void silcpurple_protocol_base_finalize(SilcProtocolClass *klass) { }
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {

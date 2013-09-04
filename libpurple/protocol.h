@@ -573,7 +573,6 @@ struct _PurpleProtocolInterface
 				.instance_size = sizeof(TypeName), \
 				.class_size = sizeof(TypeName##Class), \
 				.base_init = (GBaseInitFunc)func_prefix##_base_init, \
-				.base_finalize = (GBaseFinalizeFunc)func_prefix##_base_finalize, \
 			}; \
 			static const GInterfaceInfo iface_info = { \
 				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \
@@ -600,7 +599,6 @@ struct _PurpleProtocolInterface
 				.instance_size = sizeof(TypeName), \
 				.class_size = sizeof(TypeName##Class), \
 				.base_init = (GBaseInitFunc)func_prefix##_base_init, \
-				.base_finalize = (GBaseFinalizeFunc)func_prefix##_base_finalize, \
 			}; \
 			static const GInterfaceInfo iface_info = { \
 				.interface_init = (GInterfaceInitFunc)func_prefix##_interface_init, \

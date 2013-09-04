@@ -1485,8 +1485,6 @@ ggp_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size   = ggp_get_max_message_size;
 }
 
-static void ggp_protocol_base_finalize(GGPProtocolClass *klass) { }
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {

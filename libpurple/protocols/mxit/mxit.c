@@ -810,17 +810,6 @@ mxit_protocol_interface_init( PurpleProtocolInterface *iface )
 
 
 /*------------------------------------------------------------------------
- * Finalizing the MXit class.
- *
- *  @param klass	The MXit class
- */
-static void
-mxit_protocol_base_finalize( MXitProtocolClass *klass )
-{
-}
-
-
-/*------------------------------------------------------------------------
  * Querying the MXit plugin.
  *
  *  @param error	Query error (if any)

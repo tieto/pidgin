@@ -685,8 +685,6 @@ bonjour_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size = bonjour_get_max_message_size;
 }
 
-static void bonjour_protocol_base_finalize(BonjourProtocolClass *klass) { }
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {

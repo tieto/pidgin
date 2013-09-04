@@ -5636,8 +5636,6 @@ oscar_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->offline_message    = oscar_offline_message;
 }
 
-static void oscar_protocol_base_finalize(OscarProtocolClass *klass) { }
-
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_oscar_plugin, OscarProtocol, oscar_protocol,
                                 PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);
 

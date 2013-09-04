@@ -4209,8 +4209,6 @@ jabber_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_moods               = jabber_get_moods;
 }
 
-static void jabber_protocol_base_finalize(JabberProtocolClass *klass) { }
-
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, JabberProtocol, jabber_protocol,
                                 PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);
 

@@ -103,7 +103,6 @@ xmpp_protocol_base_init(XMPPProtocolClass *klass)
 	purple_prefs_remove("/protocols/jabber");
 }
 
-static void xmpp_protocol_base_finalize(XMPPProtocolClass *klass) { }
 static void xmpp_protocol_interface_init(PurpleProtocolInterface *iface) { }
 
 extern PurplePlugin *_jabber_plugin;

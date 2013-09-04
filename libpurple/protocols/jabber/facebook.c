@@ -127,8 +127,6 @@ facebook_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_moods           = NULL;
 }
 
-static void facebook_protocol_base_finalize(FacebookProtocolClass *klass) { }
-
 extern PurplePlugin *_jabber_plugin;
 PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, FacebookProtocol,
                                 facebook_protocol, JABBER_TYPE_PROTOCOL, 0);

@@ -2971,8 +2971,6 @@ msn_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size   = msn_get_max_message_size;
 }
 
-static void msn_protocol_base_finalize(MsnProtocolClass *klass) { }
-
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
