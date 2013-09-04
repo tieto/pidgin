@@ -117,7 +117,7 @@ icon_spec_free(PurpleProtocol *protocol)
 {
 	g_return_if_fail(protocol != NULL);
 
-	purple_buddy_icon_spec_free(protocol->icon_spec);
+	g_free(protocol->icon_spec);
 	protocol->icon_spec = NULL;
 }
 

@@ -443,13 +443,6 @@ PurpleBuddyIconSpec *purple_buddy_icon_spec_new(char *format, int min_width,
 		PurpleIconScaleRules scale_rules);
 
 /**
- * Frees a #PurpleBuddyIconSpec instance.
- *
- * @param icon_spec  The icon spec to destroy.
- */
-void purple_buddy_icon_spec_free(PurpleBuddyIconSpec *icon_spec);
-
-/**
  * Gets display size for a buddy icon
  */
 void purple_buddy_icon_spec_get_scaled_size(PurpleBuddyIconSpec *spec,
