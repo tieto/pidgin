@@ -1058,7 +1058,6 @@ null_protocol_base_init(NullProtocolClass *klass)
   PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
   PurpleAccountUserSplit *split;
   PurpleAccountOption *option;
-  PurpleCmdId id;
 
   proto_class->id        = "null";
   proto_class->name      = "Null - Testing Protocol";
@@ -1166,6 +1165,8 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+  PurpleCmdId id;
+
   /* add the protocol to the core */
   my_protocol = purple_protocols_add(NULL_TYPE_PROTOCOL, error);
   if (!my_protocol)

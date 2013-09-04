@@ -5626,9 +5626,6 @@ mw_protocol_base_init(mwProtocolClass *klass)
   PurpleAccountOption *opt;
   GList *l = NULL;
 
-  GLogLevelFlags logflags =
-    G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION;
-
   proto_class->id      = PROTOCOL_ID;
   proto_class->name    = PROTOCOL_NAME;
   proto_class->options = OPT_PROTO_IM_IMAGE;
@@ -5747,6 +5744,9 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+  GLogLevelFlags logflags =
+    G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION;
+
   my_protocol = purple_protocols_add(MW_TYPE_PROTOCOL, error);
   if (!my_protocol)
     return FALSE;

@@ -2880,7 +2880,6 @@ msn_protocol_base_init(MsnProtocolClass *klass)
 {
 	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
-	PurpleCmdId id;
 
 	proto_class->id        = "msn";
 	proto_class->name      = "MSN";
@@ -2992,6 +2991,8 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	PurpleCmdId id;
+
 	my_protocol = purple_protocols_add(MSN_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
