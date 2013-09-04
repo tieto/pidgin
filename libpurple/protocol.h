@@ -93,7 +93,7 @@ struct _PurpleProtocolClass
 
 	PurpleBuddyIconSpec *icon_spec;  /**< The icon spec. */
 
-	PurpleWhiteboardOps *whiteboard_ops;
+	PurpleWhiteboardOps *whiteboard_ops;  /**< Whiteboard operations */
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
