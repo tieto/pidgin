@@ -1050,19 +1050,18 @@ static gboolean null_offline_message(const PurpleBuddy *buddy) {
 }
 
 /*
- * Initialize the protocol class. see protocol.h for more information.
+ * Initialize the protocol instance. see protocol.h for more information.
  */
 static void
-null_protocol_base_init(NullProtocolClass *klass)
+null_protocol_init(PurpleProtocol *protocol)
 {
-  PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
   PurpleAccountUserSplit *split;
   PurpleAccountOption *option;
 
-  proto_class->id        = "null";
-  proto_class->name      = "Null - Testing Protocol";
-  proto_class->options   = OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC;
-  proto_class->icon_spec = purple_buddy_icon_spec_new(
+  protocol->id        = "null";
+  protocol->name      = "Null - Testing Protocol";
+  protocol->options   = OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC;
+  protocol->icon_spec = purple_buddy_icon_spec_new(
       "png,jpg,gif",                   /* format */
       0,                               /* min_width */
       0,                               /* min_height */
@@ -1082,8 +1081,16 @@ null_protocol_base_init(NullProtocolClass *klass)
     "example",                /* pref name */
     "default");               /* default value */
 
-  proto_class->user_splits = g_list_append(NULL, split);
-  proto_class->protocol_options = g_list_append(NULL, option);
+  protocol->user_splits = g_list_append(NULL, split);
+  protocol->protocol_options = g_list_append(NULL, option);
+}
+
+/*
+ * Initialize the protocol class.
+ */
+static void
+null_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 /*
