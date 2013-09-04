@@ -924,52 +924,56 @@ irc_get_max_message_size(PurpleConversation *conv)
 }
 
 static void
-irc_protocol_base_init(IRCProtocolClass *klass)
+irc_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
-	proto_class->id        = "irc";
-	proto_class->name      = "IRC";
-	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL
-	                         | OPT_PROTO_SLASH_COMMANDS_NATIVE;
+	protocol->id        = "irc";
+	protocol->name      = "IRC";
+	protocol->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL |
+	                      OPT_PROTO_SLASH_COMMANDS_NATIVE;
 
 	split = purple_account_user_split_new(_("Server"), IRC_DEFAULT_SERVER, '@');
-	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
+	protocol->user_splits = g_list_append(protocol->user_splits, split);
 
 	option = purple_account_option_int_new(_("Port"), "port", IRC_DEFAULT_PORT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Encodings"), "encoding", IRC_DEFAULT_CHARSET);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Auto-detect incoming UTF-8"), "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Username"), "username", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Real name"), "realname", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	/*
 	option = purple_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 	*/
 
 	option = purple_account_option_bool_new(_("Use SSL"), "ssl", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 #ifdef HAVE_CYRUS_SASL
 	option = purple_account_option_bool_new(_("Authenticate with SASL"), "sasl", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(
 						_("Allow plaintext SASL auth over unencrypted connection"),
 						"auth_plain_in_clear", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 #endif
+}
+
+static void
+irc_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

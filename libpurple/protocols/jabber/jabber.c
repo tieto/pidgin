@@ -4005,7 +4005,7 @@ jabber_do_uninit(void)
 	jabber_cmds = NULL;
 }
 
-void jabber_protocol_init(PurpleProtocol *protocol)
+static void jabber_init_protocol(PurpleProtocol *protocol)
 {
 	++plugin_ref;
 
@@ -4118,7 +4118,7 @@ void jabber_protocol_init(PurpleProtocol *protocol)
 			PURPLE_TYPE_XMLNODE);
 }
 
-void jabber_protocol_uninit(PurpleProtocol *protocol)
+static void jabber_uninit_protocol(PurpleProtocol *protocol)
 {
 	g_return_if_fail(plugin_ref > 0);
 
@@ -4134,23 +4134,26 @@ void jabber_protocol_uninit(PurpleProtocol *protocol)
 }
 
 static void
-jabber_protocol_base_init(JabberProtocolClass *klass)
+jabber_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
-
-	proto_class->id        = "jabber";
-	proto_class->name      = "XMPP";
-	proto_class->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	                         OPT_PROTO_MAIL_CHECK |
+	protocol->id        = "jabber";
+	protocol->name      = "XMPP";
+	protocol->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
+	                      OPT_PROTO_MAIL_CHECK |
 #ifdef HAVE_CYRUS_SASL
-	                         OPT_PROTO_PASSWORD_OPTIONAL |
+	                      OPT_PROTO_PASSWORD_OPTIONAL |
 #endif
-	                         OPT_PROTO_SLASH_COMMANDS_NATIVE;
+	                      OPT_PROTO_SLASH_COMMANDS_NATIVE;
 
-	proto_class->icon_spec = purple_buddy_icon_spec_new("png",
+	protocol->icon_spec = purple_buddy_icon_spec_new("png",
 	                                                 32, 32, 96, 96, 0,
 	                                                 PURPLE_ICON_SCALE_SEND |
 	                                                 PURPLE_ICON_SCALE_DISPLAY);
+}
+
+static void
+jabber_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void
@@ -4252,9 +4255,9 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	purple_signal_connect(purple_get_core(), "uri-handler", facebook_protocol,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 
-	jabber_protocol_init(xmpp_protocol);
-	jabber_protocol_init(gtalk_protocol);
-	jabber_protocol_init(facebook_protocol);
+	jabber_init_protocol(xmpp_protocol);
+	jabber_init_protocol(gtalk_protocol);
+	jabber_init_protocol(facebook_protocol);
 
 	return TRUE;
 }
@@ -4262,9 +4265,9 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	jabber_protocol_uninit(facebook_protocol);
-	jabber_protocol_uninit(gtalk_protocol);
-	jabber_protocol_uninit(xmpp_protocol);
+	jabber_uninit_protocol(facebook_protocol);
+	jabber_uninit_protocol(gtalk_protocol);
+	jabber_uninit_protocol(xmpp_protocol);
 
 	if (!purple_protocols_remove(facebook_protocol, error))
 		return FALSE;

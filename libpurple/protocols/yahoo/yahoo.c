@@ -212,43 +212,47 @@ static PurpleWhiteboardOps yahoo_whiteboard_ops =
 };
 
 static void
-yahoo_protocol_base_init(YahooProtocolClass *klass)
+yahoo_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "yahoo";
-	proto_class->name      = "Yahoo";
-	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC |
-	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
-	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
+	protocol->id        = "yahoo";
+	protocol->name      = "Yahoo";
+	protocol->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC |
+	                      OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
+	protocol->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
 	                                                    96, 96, 96, 96, 0,
 	                                                    PURPLE_ICON_SCALE_SEND);
 
-	proto_class->whiteboard_ops = &yahoo_whiteboard_ops;
+	protocol->whiteboard_ops = &yahoo_whiteboard_ops;
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 #if 0
 	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 #endif
+}
+
+static void
+yahoo_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

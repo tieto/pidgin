@@ -719,23 +719,22 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 /*========================================================================================================================*/
 
 /*------------------------------------------------------------------------
- * Initializing the MXit class.
+ * Initializing the MXit protocol instance.
  *
- *  @param klass	The MXit class
+ *  @param protocol	The MXit protocol
  */
 static void
-mxit_protocol_base_init( MXitProtocolClass *klass )
+mxit_protocol_init( PurpleProtocol *protocol )
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = MXIT_PROTOCOL_ID;
-	proto_class->name      = MXIT_PROTOCOL_NAME;
-	proto_class->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
-	                         OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE |
-	                         OPT_PROTO_INVITE_MESSAGE |
-	                         OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
-	proto_class->icon_spec = purple_buddy_icon_spec_new(
+	protocol->id        = MXIT_PROTOCOL_ID;
+	protocol->name      = MXIT_PROTOCOL_NAME;
+	protocol->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
+	                      OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE |
+	                      OPT_PROTO_INVITE_MESSAGE |
+	                      OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
+	protocol->icon_spec = purple_buddy_icon_spec_new(
 		"png,jpeg,bmp",										/* supported formats */
 		32, 32,												/* min width & height */
 		800, 800,											/* max width & height */
@@ -747,13 +746,24 @@ mxit_protocol_base_init( MXitProtocolClass *klass )
 
 	/* WAP server (reference: "libpurple/accountopt.h") */
 	option = purple_account_option_string_new( _( "WAP Server" ), MXIT_CONFIG_WAPSERVER, DEFAULT_WAPSITE );
-	proto_class->protocol_options = g_list_append( proto_class->protocol_options, option );
+	protocol->protocol_options = g_list_append( protocol->protocol_options, option );
 
 	option = purple_account_option_bool_new( _( "Connect via HTTP" ), MXIT_CONFIG_USE_HTTP, FALSE );
-	proto_class->protocol_options = g_list_append( proto_class->protocol_options, option );
+	protocol->protocol_options = g_list_append( protocol->protocol_options, option );
 
 	option = purple_account_option_bool_new( _( "Enable splash-screen popup" ), MXIT_CONFIG_SPLASHPOPUP, FALSE );
-	proto_class->protocol_options = g_list_append( proto_class->protocol_options, option );
+	protocol->protocol_options = g_list_append( protocol->protocol_options, option );
+}
+
+
+/*------------------------------------------------------------------------
+ * Initializing the MXit class.
+ *
+ *  @param klass	The MXit class
+ */
+static void
+mxit_protocol_class_init( PurpleProtocolClass *klass )
+{
 }
 
 

@@ -45,21 +45,25 @@ icq_get_max_message_size(PurpleConversation *conv)
 }
 
 static void
-icq_protocol_base_init(ICQProtocolClass *klass)
+icq_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "icq";
-	proto_class->name      = "ICQ";
+	protocol->id   = "icq";
+	protocol->name = "ICQ";
 
-	oscar_init_protocol_options(proto_class);
+	oscar_init_protocol_options(protocol);
 
 	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(TRUE, TRUE));
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+}
+
+static void
+icq_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

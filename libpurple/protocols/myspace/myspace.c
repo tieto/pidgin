@@ -3382,46 +3382,53 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
  * Protocol attributes and options.
  */
 static void
-msim_protocol_base_init(MsimProtocolClass *klass)
+msim_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "myspace";
-	proto_class->name      = "MySpaceIM";
-	proto_class->options   = OPT_PROTO_USE_POINTSIZE /* specify font size in sane point size */
-	                         | OPT_PROTO_MAIL_CHECK;
-	                      /* | OPT_PROTO_IM_IMAGE - TODO: direct images. */
+	protocol->id        = "myspace";
+	protocol->name      = "MySpaceIM";
+	protocol->options   = OPT_PROTO_USE_POINTSIZE /* specify font size in sane point size */
+	                      | OPT_PROTO_MAIL_CHECK;
+	                   /* | OPT_PROTO_IM_IMAGE - TODO: direct images. */
 	/* TODO: eventually should add icon_spec */
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */
 	option = purple_account_option_string_new(_("Connect server"), "server", MSIM_SERVER);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 #ifdef MSIM_USER_WANTS_TO_CONFIGURE_STATUS_TEXT
 	option = purple_account_option_bool_new(_("Show display name in status text"), "show_display_name", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show headline in status text"), "show_headline", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 #endif
 
 #ifdef MSIM_USER_WANTS_TO_DISABLE_EMOTICONS
 	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 #endif
 
 #ifdef MSIM_USER_REALLY_CARES_ABOUT_PRECISE_FONT_SIZES
 	option = purple_account_option_int_new(_("Screen resolution (dots per inch)"), "dpi", MSIM_DEFAULT_DPI);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Base font size (points)"), "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 #endif
+}
+
+/**
+ * Protocol class initialization.
+ */
+static void
+msim_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 /**

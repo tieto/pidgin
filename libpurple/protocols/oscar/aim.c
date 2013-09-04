@@ -29,22 +29,26 @@
 #include "oscarcommon.h"
 
 static void
-aim_protocol_base_init(AIMProtocolClass *klass)
+aim_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "aim";
-	proto_class->name      = "AIM";
+	protocol->id   = "aim";
+	protocol->name = "AIM";
 
-	oscar_init_protocol_options(proto_class);
+	oscar_init_protocol_options(protocol);
 
 	option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 											OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(FALSE, TRUE));
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+}
+
+static void
+aim_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

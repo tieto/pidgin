@@ -2876,51 +2876,55 @@ msn_get_max_message_size(PurpleConversation *conv)
 }
 
 static void
-msn_protocol_base_init(MsnProtocolClass *klass)
+msn_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "msn";
-	proto_class->name      = "MSN";
-	proto_class->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_INVITE_MESSAGE;
-	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif",
+	protocol->id        = "msn";
+	protocol->name      = "MSN";
+	protocol->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_INVITE_MESSAGE;
+	protocol->icon_spec = purple_buddy_icon_spec_new("png,gif",
 	                                                    0, 0, 96, 96, 0,
 	                                                    PURPLE_ICON_SCALE_SEND);
 
 	option = purple_account_option_string_new(_("Server"), "server",
 											MSN_SERVER);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 											   option);
 
 	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Use HTTP Method"),
 										  "http_method", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 											   option);
 
 	option = purple_account_option_string_new(_("HTTP Method Server"),
 										  "http_method_server", MSN_HTTPCONN_SERVER);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Show custom smileys"),
 										  "custom_smileys", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Allow direct connections"),
 										  "direct_connect", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Allow connecting from multiple locations"),
 										  "mpop", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 											   option);
+}
+
+static void
+msn_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

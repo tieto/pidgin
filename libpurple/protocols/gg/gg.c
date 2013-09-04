@@ -1402,26 +1402,23 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 }
 
 static void
-ggp_protocol_base_init(GGPProtocolClass *klass)
+ggp_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 	GList *encryption_options = NULL;
 
-	proto_class->id        = "gg";
-	proto_class->name      = "Gadu-Gadu";
-	proto_class->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
-	                         OPT_PROTO_IM_IMAGE;
-	proto_class->icon_spec = purple_buddy_icon_spec_new("png",
+	protocol->id        = "gg";
+	protocol->name      = "Gadu-Gadu";
+	protocol->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
+	                      OPT_PROTO_IM_IMAGE;
+	protocol->icon_spec = purple_buddy_icon_spec_new("png",
 	                                                 1, 1, 200, 200, 0,
 	                                                 PURPLE_ICON_SCALE_DISPLAY |
 	                                                 PURPLE_ICON_SCALE_SEND);
 
-	purple_prefs_add_none("/protocols/gg");
-
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 			option);
 	ggp_server_option = option;
 
@@ -1439,13 +1436,18 @@ ggp_protocol_base_init(GGPProtocolClass *klass)
 
 	option = purple_account_option_list_new(_("Connection security"),
 		"encryption", encryption_options);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 		option);
 
 	option = purple_account_option_bool_new(_("Show links from strangers"),
 		"show_links_from_strangers", 1);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 		option);
+}
+
+static void
+ggp_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void
@@ -1515,6 +1517,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	my_protocol = purple_protocols_add(GGP_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
+
+	purple_prefs_add_none("/protocols/gg");
 
 	gg_debug_handler = purple_gg_debug_handler;
 

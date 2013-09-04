@@ -2890,42 +2890,47 @@ static GList *zephyr_get_actions(PurpleConnection *gc)
 
 
 static void
-zephyr_protocol_base_init(ZephyrProtocolClass *klass)
+zephyr_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 	char *tmp = get_exposure_level();
 
-	proto_class->id      = "zephyr";
-	proto_class->name    = "Zephyr";
-	proto_class->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
+	protocol->id      = "zephyr";
+	protocol->name    = "Zephyr";
+	protocol->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
 
 	option = purple_account_option_bool_new(_("Use tzc"), "use_tzc", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("tzc command"), "tzc_command", "/usr/bin/tzc -e %s");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Export to .anyone"), "write_anyone", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Export to .zephyr.subs"), "write_zsubs", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Import from .anyone"), "read_anyone", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Import from .zephyr.subs"), "read_zsubs", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Realm"), "realm", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Exposure"), "exposure_level", tmp?tmp: EXPOSE_REALMVIS);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+}
+
+
+static void
+zephyr_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 

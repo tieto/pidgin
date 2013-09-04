@@ -1368,7 +1368,7 @@ struct name_data
 
 void oscar_free_name_data(struct name_data *data);
 
-void oscar_init_protocol_options(PurpleProtocolClass *proto_class);
+void oscar_init_protocol_options(PurpleProtocol *protocol);
 
 #ifdef __cplusplus
 }

@@ -34,24 +34,23 @@ gtalk_list_icon(PurpleAccount *a, PurpleBuddy *b)
 }
 
 static void
-gtalk_protocol_base_init(GTalkProtocolClass *klass)
+gtalk_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
-	proto_class->id        = "gtalk";
-	proto_class->name      = "Google Talk (XMPP)";
+	protocol->id        = "gtalk";
+	protocol->name      = "Google Talk (XMPP)";
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), "gmail.com", '@');
 	purple_account_user_split_set_reverse(split, FALSE);
-	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
+	protocol->user_splits = g_list_append(protocol->user_splits, split);
 
 	split = purple_account_user_split_new(_("Resource"), "", '/');
 	purple_account_user_split_set_reverse(split, FALSE);
-	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
+	protocol->user_splits = g_list_append(protocol->user_splits, split);
 
 #define ADD_VALUE(list, desc, v) { \
 	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
@@ -71,22 +70,22 @@ gtalk_protocol_base_init(GTalkProtocolClass *klass)
 #undef ADD_VALUE
 
 	option = purple_account_option_list_new(_("Connection security"), "connection_security", encryption_values);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 						   option);
 
 	option = purple_account_option_bool_new(
 						_("Allow plaintext auth over unencrypted streams"),
 						"auth_plain_in_clear", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 						   option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 						   option);
 
 	option = purple_account_option_string_new(_("Connect server"),
 						  "connect_server", NULL);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 						  option);
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
@@ -94,20 +93,25 @@ gtalk_protocol_base_init(GTalkProtocolClass *klass)
 						/* TODO: Is this an acceptable default?
 						 * Also, keep this in sync as they add more servers */
 						  JABBER_DEFAULT_FT_PROXIES);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 						  option);
 
 	option = purple_account_option_string_new(_("BOSH URL"),
 						  "bosh_url", NULL);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 						  option);
 
 	/* this should probably be part of global smiley theme settings later on,
 	  shared with MSN */
 	option = purple_account_option_bool_new(_("Show Custom Smileys"),
 		"custom_smileys", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options,
+	protocol->protocol_options = g_list_append(protocol->protocol_options,
 		option);
+}
+
+static void
+gtalk_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

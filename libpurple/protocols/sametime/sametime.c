@@ -5619,16 +5619,15 @@ static void mw_log_handler(const gchar *domain, GLogLevelFlags flags,
 
 
 static void
-mw_protocol_base_init(mwProtocolClass *klass)
+mw_protocol_init(PurpleProtocol *protocol)
 {
-  PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
   PurpleAccountUserSplit *split;
   PurpleAccountOption *opt;
   GList *l = NULL;
 
-  proto_class->id      = PROTOCOL_ID;
-  proto_class->name    = PROTOCOL_NAME;
-  proto_class->options = OPT_PROTO_IM_IMAGE;
+  protocol->id      = PROTOCOL_ID;
+  protocol->name    = PROTOCOL_NAME;
+  protocol->options = OPT_PROTO_IM_IMAGE;
 
   /* set up the preferences */
   purple_prefs_add_none(MW_PROTOCOL_OPT_BASE);
@@ -5637,7 +5636,7 @@ mw_protocol_base_init(mwProtocolClass *klass)
   /* set up account ID as user:server */
   split = purple_account_user_split_new(_("Server"),
                                         MW_PLUGIN_DEFAULT_HOST, ':');
-  proto_class->user_splits = g_list_append(proto_class->user_splits, split);
+  protocol->user_splits = g_list_append(protocol->user_splits, split);
 
   /* remove dead preferences */
   purple_prefs_remove(MW_PROTOCOL_OPT_PSYCHIC);
@@ -5666,8 +5665,14 @@ mw_protocol_base_init(mwProtocolClass *klass)
              MW_KEY_FAKE_IT, FALSE);
   l = g_list_append(l, opt);
 
-  proto_class->protocol_options = l;
+  protocol->protocol_options = l;
   l = NULL;
+}
+
+
+static void
+mw_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 

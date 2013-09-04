@@ -86,31 +86,35 @@ yahoojp_get_account_text_table(PurpleAccount *account)
 }
 
 static void
-yahoojp_protocol_base_init(YahooJPProtocolClass *klass)
+yahoojp_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "yahoojp";
-	proto_class->name      = "Yahoo JAPAN";
+	protocol->id   = "yahoojp";
+	protocol->name = "Yahoo JAPAN";
 
-	/* do not use yahoo's protocol options, we will define our own */
-	proto_class->protocol_options = NULL;
+	/* delete yahoo's protocol options */
+	purple_protocol_options_free(protocol->protocol_options);
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOOJP_XFER_HOST);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOOJP_ROOMLIST_LOCALE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+}
+
+static void
+yahoojp_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

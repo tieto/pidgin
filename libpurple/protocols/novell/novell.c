@@ -3485,21 +3485,25 @@ novell_get_max_message_size(PurpleConversation *conv)
 }
 
 static void
-novell_protocol_base_init(NovellProtocolClass *klass)
+novell_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "novell";
-	proto_class->name      = "GroupWise";
+	protocol->id   = "novell";
+	protocol->name = "GroupWise";
 
 	option = purple_account_option_string_new(_("Server address"), "server", NULL);
-	proto_class->protocol_options =
-		g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options =
+		g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Server port"), "port", DEFAULT_PORT);
-	proto_class->protocol_options =
-		g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options =
+		g_list_append(protocol->protocol_options, option);
+}
+
+static void
+novell_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

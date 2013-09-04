@@ -630,36 +630,40 @@ initialize_default_account_values(void)
 }
 
 static void
-bonjour_protocol_base_init(BonjourProtocolClass *klass)
+bonjour_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountOption *option;
 
-	proto_class->id        = "bonjour";
-	proto_class->name      = "Bonjour";
-	proto_class->options   = OPT_PROTO_NO_PASSWORD;
-	proto_class->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
+	protocol->id        = "bonjour";
+	protocol->name      = "Bonjour";
+	protocol->options   = OPT_PROTO_NO_PASSWORD;
+	protocol->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
 	                                                 0, 0, 96, 96, 65535,
 	                                                 PURPLE_ICON_SCALE_DISPLAY);
 
 	/* Creating the options for the protocol */
 	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("First name"), "first", default_firstname);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Last name"), "last", default_lastname);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("Email"), "email", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+}
+
+static void
+bonjour_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void

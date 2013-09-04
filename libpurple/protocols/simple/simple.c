@@ -2049,34 +2049,38 @@ static void simple_close(PurpleConnection *gc)
 }
 
 static void
-simple_protocol_base_init(SIMPLEProtocolClass *klass)
+simple_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleProtocolClass *proto_class = PURPLE_PROTOCOL_CLASS(klass);
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
-	proto_class->id        = "simple";
-	proto_class->name      = "SIMPLE";
+	protocol->id   = "simple";
+	protocol->name = "SIMPLE";
 
 	split = purple_account_user_split_new(_("Server"), "", '@');
-	proto_class->user_splits = g_list_append(proto_class->user_splits, split);
+	protocol->user_splits = g_list_append(protocol->user_splits, split);
 
 	option = purple_account_option_bool_new(_("Publish status (note: everyone may watch you)"), "dopublish", TRUE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", 0);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Use UDP"), "udp", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 	option = purple_account_option_bool_new(_("Use proxy"), "useproxy", FALSE);
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 	option = purple_account_option_string_new(_("Proxy"), "proxy", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 	option = purple_account_option_string_new(_("Auth User"), "authuser", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 	option = purple_account_option_string_new(_("Auth Domain"), "authdomain", "");
-	proto_class->protocol_options = g_list_append(proto_class->protocol_options, option);
+	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+}
+
+static void
+simple_protocol_class_init(PurpleProtocolClass *klass)
+{
 }
 
 static void
