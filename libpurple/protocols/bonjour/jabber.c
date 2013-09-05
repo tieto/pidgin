@@ -62,7 +62,7 @@
 #include "parser.h"
 #include "bonjour.h"
 #include "buddy.h"
-#include "bonjour_xfer.h"
+#include "bonjour_ft.h"
 
 #ifdef _SIZEOF_ADDR_IFREQ
 #  define HX_SIZE_OF_IFREQ(a) _SIZEOF_ADDR_IFREQ(a)

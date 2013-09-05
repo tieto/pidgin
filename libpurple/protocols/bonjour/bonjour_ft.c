@@ -27,7 +27,7 @@
 #include "xfer.h"
 #include "buddy.h"
 #include "bonjour.h"
-#include "bonjour_xfer.h"
+#include "bonjour_ft.h"
 #include "ciphers/sha1hash.h"
 
 static void
@@ -339,6 +339,19 @@ bonjour_free_xfer(PurpleXfer *xfer)
 	purple_debug_misc("bonjour", "Need close socket.\n");
 }
 
+static PurpleXferIoOps send_ops =
+{
+	bonjour_xfer_init,         /* init */
+	NULL,                      /* request_denied */
+	NULL,                      /* start */
+	bonjour_xfer_end,          /* end */
+	bonjour_xfer_cancel_send,  /* cancel_send */
+	NULL,                      /* cancel_recv */
+	NULL,                      /* read */
+	NULL,                      /* write */
+	NULL,                      /* ack */
+};
+
 PurpleXfer *
 bonjour_new_xfer(PurpleConnection *gc, const char *who)
 {
@@ -367,9 +380,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 	xep_xfer->mode = XEP_BYTESTREAMS;
 	xep_xfer->sid = NULL;
 
-	purple_xfer_set_init_fnc(xfer, bonjour_xfer_init);
-	purple_xfer_set_cancel_send_fnc(xfer, bonjour_xfer_cancel_send);
-	purple_xfer_set_end_fnc(xfer, bonjour_xfer_end);
+	purple_xfer_set_io_ops(xfer, &send_ops);
 
 	bd->xfer_lists = g_slist_append(bd->xfer_lists, xfer);
 
@@ -740,8 +751,21 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
 
 	if (iq_id && xfer != NULL)
-		xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
+		xep_ft_si_reject(bd, iq_id, purple_xfer_get_remote_user(xfer), "404", "cancel");
 }
+
+static PurpleXferIoOps recieve_ops =
+{
+	bonjour_xfer_init,            /* init */
+	bonjour_xfer_request_denied,  /* request_denied */
+	NULL,                         /* start */
+	bonjour_xfer_end,             /* end */
+	NULL,                         /* cancel_send */
+	bonjour_xfer_cancel_recv,     /* cancel_recv */
+	NULL,                         /* read */
+	NULL,                         /* write */
+	NULL,                         /* ack */
+};
 
 static void
 bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
@@ -771,10 +795,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 
 	if(filesize > 0)
 		purple_xfer_set_size(xfer, filesize);
-	purple_xfer_set_init_fnc(xfer, bonjour_xfer_init);
-	purple_xfer_set_request_denied_fnc(xfer, bonjour_xfer_request_denied);
-	purple_xfer_set_cancel_recv_fnc(xfer, bonjour_xfer_cancel_recv);
-	purple_xfer_set_end_fnc(xfer, bonjour_xfer_end);
+	purple_xfer_set_io_ops(xfer, &recieve_ops);
 
 	bd->xfer_lists = g_slist_append(bd->xfer_lists, xfer);
 

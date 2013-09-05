@@ -42,7 +42,7 @@
 #include "mdns_common.h"
 #include "jabber.h"
 #include "buddy.h"
-#include "bonjour_xfer.h"
+#include "bonjour_ft.h"
 
 static char *default_firstname;
 static char *default_lastname;
