@@ -240,7 +240,7 @@ purple_xfer_destroy(PurpleXfer *xfer)
 }
 
 void
-purple_xfer_ref(PurpleXfer *xfer)
+g_object_ref(PurpleXfer *xfer)
 {
 	g_return_if_fail(xfer != NULL);
 
@@ -251,7 +251,7 @@ purple_xfer_ref(PurpleXfer *xfer)
 }
 
 void
-purple_xfer_unref(PurpleXfer *xfer)
+g_object_unref(PurpleXfer *xfer)
 {
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(xfer->ref > 0);
@@ -433,7 +433,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			if (g_access(dir, mode) == 0) {
 				purple_xfer_request_accepted(xfer, filename);
 			} else {
-				purple_xfer_ref(xfer);
+				g_object_ref(xfer);
 				purple_notify_message(
 					NULL, PURPLE_NOTIFY_MSG_ERROR, NULL,
 					_("Directory is not writable."), NULL,
@@ -483,7 +483,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		if (g_access(filename, mode) == 0) {
 			purple_xfer_request_accepted(xfer, filename);
 		} else {
-			purple_xfer_ref(xfer);
+			g_object_ref(xfer);
 			purple_notify_message(
 				NULL, PURPLE_NOTIFY_MSG_ERROR, NULL,
 				_("File is not readable."), NULL,
@@ -494,7 +494,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		purple_xfer_request_accepted(xfer, filename);
 	}
 
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 static void
@@ -507,7 +507,7 @@ purple_xfer_choose_file_cancel_cb(void *user_data, const char *filename)
 		purple_xfer_cancel_local(xfer);
 	else
 		purple_xfer_request_denied(xfer);
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 static int
@@ -528,7 +528,7 @@ cancel_recv_cb(PurpleXfer *xfer)
 {
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_LOCAL);
 	purple_xfer_request_denied(xfer);
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 
 	return 0;
 }
@@ -595,7 +595,7 @@ static int
 ask_accept_cancel(PurpleXfer *xfer)
 {
 	purple_xfer_request_denied(xfer);
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 
 	return 0;
 }
@@ -630,7 +630,7 @@ purple_xfer_request(PurpleXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(xfer->ops.init != NULL);
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 
 	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_RECEIVE)
 	{
@@ -710,14 +710,14 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 			g_free(utf8);
 			g_free(msg);
 
-			purple_xfer_unref(xfer);
+			g_object_unref(xfer);
 			return;
 		}
 
 		if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
 			if (g_stat(filename, &st) == -1) {
 				purple_xfer_show_file_error(xfer, filename);
-				purple_xfer_unref(xfer);
+				g_object_unref(xfer);
 				return;
 			}
 
@@ -764,7 +764,7 @@ purple_xfer_request_denied(PurpleXfer *xfer)
 	if (xfer->ops.request_denied != NULL)
 		xfer->ops.request_denied(xfer);
 
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 int purple_xfer_get_fd(PurpleXfer *xfer)
@@ -1617,7 +1617,7 @@ purple_xfer_end(PurpleXfer *xfer)
 		xfer->dest_fp = NULL;
 	}
 
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 void
@@ -1701,7 +1701,7 @@ purple_xfer_cancel_local(PurpleXfer *xfer)
 
 	xfer->bytes_remaining = 0;
 
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 void
@@ -1766,7 +1766,7 @@ purple_xfer_cancel_remote(PurpleXfer *xfer)
 
 	xfer->bytes_remaining = 0;
 
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 void

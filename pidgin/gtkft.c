@@ -860,7 +860,7 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 
 	data = purple_xfer_get_ui_data(xfer);
 	data->in_list = TRUE;
@@ -936,7 +936,7 @@ pidgin_xfer_dialog_remove_xfer(PidginXferDialog *dialog,
 	ensure_row_selected(dialog);
 
 	update_title_progress(dialog);
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 void

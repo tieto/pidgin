@@ -830,11 +830,11 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 	/* I'm not sure under which conditions this can happen
 	 * (it seems like it shouldn't be possible */
 	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) {
-		purple_xfer_unref(xfer);
+		g_object_unref(xfer);
 		return;
 	}
 
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 
 	iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET, NS_BYTESTREAMS);
 	xmlnode_set_attrib(iq->node, "to", purple_xfer_get_remote_user(xfer));
@@ -956,7 +956,7 @@ jabber_si_xfer_bytestreams_send_init(PurpleXfer *xfer)
 	JabberSIXfer *jsx;
 	PurpleProxyType proxy_type;
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 
 	jsx = purple_xfer_get_protocol_data(xfer);
 

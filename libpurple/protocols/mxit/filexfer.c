@@ -440,11 +440,11 @@ void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const c
 	xfer = find_mxit_xfer( session, fileid );
 	if ( xfer ) {
 		/* this is the transfer we have been looking for */
-		purple_xfer_ref( xfer );
+		g_object_ref( xfer );
 		purple_xfer_start( xfer, -1, NULL, 0 );
 
 		if ( fwrite( data, datalen, 1, xfer->dest_fp ) > 0 ) {
-			purple_xfer_unref( xfer );
+			g_object_unref( xfer );
 			purple_xfer_set_completed( xfer, TRUE );
 			purple_xfer_end( xfer );
 

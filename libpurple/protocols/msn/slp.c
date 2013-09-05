@@ -282,13 +282,13 @@ send_file_cb(MsnSlpCall *slpcall)
 	if (purple_xfer_get_status(xfer) >= PURPLE_XFER_STATUS_STARTED)
 		return;
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 	purple_xfer_start(xfer, -1, NULL, 0);
 	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_STARTED) {
-		purple_xfer_unref(xfer);
+		g_object_unref(xfer);
 		return;
 	}
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 
 	slpmsg = msn_slpmsg_file_new(slpcall, purple_xfer_get_size(xfer));
 
@@ -385,7 +385,7 @@ msn_request_ft(PurpleXfer *xfer)
 	slpcall->end_cb = msn_xfer_end_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
-	purple_xfer_ref(slpcall->xfer);
+	g_object_ref(slpcall->xfer);
 
 	slpcall->pending = TRUE;
 

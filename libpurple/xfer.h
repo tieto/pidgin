@@ -194,7 +194,7 @@ GType purple_xfer_get_type(void);
  * This is called by prpls.
  * The handle starts with a ref count of 1, and this reference
  * is owned by the core. The prpl normally does not need to
- * purple_xfer_ref or unref.
+ * g_object_ref or unref.
  *
  * @param account The account sending or receiving the file.
  * @param type    The type of file transfer.

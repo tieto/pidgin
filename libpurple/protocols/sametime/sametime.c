@@ -2191,8 +2191,8 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
   xfer = purple_xfer_new(acct, PURPLE_XFER_RECEIVE, who);
   if (xfer)
   {
-	purple_xfer_ref(xfer);
-	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) purple_xfer_unref);
+	g_object_ref(xfer);
+	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) g_object_unref);
 	purple_xfer_set_protocol_data(xfer, ft);
 
 	purple_xfer_set_init_fnc(xfer, ft_incoming_init);
@@ -2288,7 +2288,7 @@ static void mw_ft_closed(struct mwFileTransfer *ft, guint32 code) {
       purple_xfer_cancel_remote(xfer);
 
       /* drop the stolen reference */
-      purple_xfer_unref(xfer);
+      g_object_unref(xfer);
       return;
     }
   }
@@ -5050,8 +5050,8 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
 
   ft = mwFileTransfer_new(srvc, &idb, NULL, filename, filesize);
 
-  purple_xfer_ref(xfer);
-  mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) purple_xfer_unref);
+  g_object_ref(xfer);
+  mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) g_object_unref);
   purple_xfer_set_protocol_data(xfer, ft);
 
   mwFileTransfer_offer(ft);

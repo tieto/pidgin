@@ -77,7 +77,7 @@ silcpurple_ftp_monitor(SilcClient client,
 	if (status == SILC_CLIENT_FILE_MONITOR_CLOSED) {
 		/* All started sessions terminate here */
 		purple_xfer_set_protocol_data(xfer->xfer, NULL);
-		purple_xfer_unref(xfer->xfer);
+		g_object_unref(xfer->xfer);
 		silc_free(xfer);
 		return;
 	}
@@ -289,7 +289,7 @@ silcpurple_ftp_request_result(PurpleXfer *x)
 	}
 
 	/* Error */
-	purple_xfer_unref(xfer->xfer);
+	g_object_unref(xfer->xfer);
 	g_free(xfer->hostname);
 	silc_free(xfer);
 	silc_free(local_ip);

@@ -5239,7 +5239,7 @@ oscar_new_xfer(PurpleConnection *gc, const char *who)
 	xfer = purple_xfer_new(account, PURPLE_XFER_SEND, who);
 	if (xfer)
 	{
-		purple_xfer_ref(xfer);
+		g_object_ref(xfer);
 		purple_xfer_set_init_fnc(xfer, peer_oft_sendcb_init);
 		purple_xfer_set_cancel_send_fnc(xfer, peer_oft_cb_generic_cancel);
 		purple_xfer_set_request_denied_fnc(xfer, peer_oft_cb_generic_cancel);

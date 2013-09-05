@@ -224,7 +224,7 @@ peer_connection_destroy_cb(gpointer data)
 			else
 				purple_xfer_cancel_local(conn->xfer);
 		}
-		purple_xfer_unref(conn->xfer);
+		g_object_unref(conn->xfer);
 		conn->xfer = NULL;
 	}
 
@@ -1114,7 +1114,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 		if (conn->xfer)
 		{
 			purple_xfer_set_protocol_data(conn->xfer, conn);
-			purple_xfer_ref(conn->xfer);
+			g_object_ref(conn->xfer);
 			purple_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
 
 			/* Set the file name */

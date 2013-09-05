@@ -297,7 +297,7 @@ finch_xfer_dialog_add_xfer(PurpleXfer *xfer)
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 
 	data = purple_xfer_get_ui_data(xfer);
 	data->in_list = TRUE;
@@ -355,7 +355,7 @@ finch_xfer_dialog_remove_xfer(PurpleXfer *xfer)
 		finch_xfer_dialog_destroy();
 	else
 		update_title_progress();
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 void
