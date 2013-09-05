@@ -22,7 +22,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "http.h"
 #include "util.h"
 

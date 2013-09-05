@@ -27,7 +27,7 @@
 #include "core.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "ft.h"
+#include "xfer.h"
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"

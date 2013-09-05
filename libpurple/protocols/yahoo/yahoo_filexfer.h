@@ -22,7 +22,7 @@
 #ifndef _YAHOO_FILEXFER_H_
 #define _YAHOO_FILEXFER_H_
 
-#include "ft.h"
+#include "xfer.h"
 
 /**
  * Process ymsg events, particular IMViroments like Doodle

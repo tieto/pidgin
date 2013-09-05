@@ -24,7 +24,7 @@
 #include "internal.h"
 #include "irc.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "notify.h"
 #include "network.h"
 

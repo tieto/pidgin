@@ -111,7 +111,7 @@ msn_slpcall_destroy(MsnSlpCall *slpcall)
 		slpcall->end_cb(slpcall, slpcall->slplink->session);
 
 	if (slpcall->xfer != NULL) {
-		if (purple_xfer_get_type(slpcall->xfer) == PURPLE_XFER_RECEIVE)
+		if (purple_xfer_get_xfer_type(slpcall->xfer) == PURPLE_XFER_RECEIVE)
 			g_byte_array_free(slpcall->u.incoming_data, TRUE);
 		purple_xfer_set_protocol_data(slpcall->xfer, NULL);
 		purple_xfer_unref(slpcall->xfer);

@@ -32,7 +32,7 @@
 #include "network.h"
 #include "notify.h"
 #include "proxy.h"
-#include "ft.h"
+#include "xfer.h"
 #include "libymsg.h"
 #include "yahoo_packet.h"
 #include "yahoo_filexfer.h"
@@ -163,7 +163,7 @@ yahoo_xfer_init_15(PurpleXfer *xfer)
 	yd = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
 
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND)	{
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND)	{
 		gchar *filename;
 		filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
 		pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_15,
@@ -314,7 +314,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 
 	xfer_data = purple_xfer_get_protocol_data(xfer_old);
 	if(xfer_data
-	   && purple_xfer_get_type(xfer_old) == PURPLE_XFER_RECEIVE
+	   && purple_xfer_get_xfer_type(xfer_old) == PURPLE_XFER_RECEIVE
 	   && xfer_data->filename_list) {
 		/* removing top of filename & size list completely */
 		g_free( xfer_data->filename_list->data );
@@ -840,7 +840,7 @@ yahoo_process_filetrans_15_watcher(PurpleHttpConnection *hc,
 	PurpleXfer *xfer = _xfer;
 
 	if (reading_state !=
-		(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE))
+		(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_RECEIVE))
 	{
 		return;
 	}
@@ -858,7 +858,7 @@ static void yahoo_xfer_start(PurpleXfer *xfer)
 
 	req = yahoo_ft_new_req(xd);
 	purple_http_request_set_timeout(req, -1);
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_RECEIVE) {
 		purple_http_request_set_max_len(req, -1);
 		purple_http_request_set_response_writer(req,
 			yahoo_process_filetrans_15_writer, xfer);

@@ -36,7 +36,7 @@
 
 #include <buddylist.h>
 #include <conversation.h>
-#include <ft.h>
+#include <xfer.h>
 #include <request.h>
 #include <notify.h>
 #include <util.h>

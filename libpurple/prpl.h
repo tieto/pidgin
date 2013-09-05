@@ -73,7 +73,7 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 
 #include "buddylist.h"
 #include "conversations.h"
-#include "ft.h"
+#include "xfer.h"
 #include "imgstore.h"
 #include "media.h"
 #include "notify.h"

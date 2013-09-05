@@ -1,5 +1,5 @@
 /**
- * @file gntft.h GNT File Transfer UI
+ * @file gntxfer.h GNT File Transfer UI
  * @ingroup finch
  */
 
@@ -26,7 +26,7 @@
 #ifndef _FINCHFT_H_
 #define _FINCHFT_H_
 
-#include "ft.h"
+#include "xfer.h"
 
 
 /**************************************************************************/

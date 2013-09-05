@@ -666,7 +666,7 @@ peer_oft_sendcb_init(PurpleXfer *xfer)
 		tmp = g_strdup_printf(_("File %s is %s, which is larger than "
 				"the maximum size of %s."),
 				purple_xfer_get_local_filename(xfer), size1, size2);
-		purple_xfer_error(purple_xfer_get_type(xfer),
+		purple_xfer_error(purple_xfer_get_xfer_type(xfer),
 				purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer), tmp);
 		g_free(size1);
 		g_free(size2);

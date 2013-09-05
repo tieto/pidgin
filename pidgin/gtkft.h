@@ -1,5 +1,5 @@
 /**
- * @file gtkft.h GTK+ File Transfer UI
+ * @file gtkxfer.h GTK+ File Transfer UI
  * @ingroup pidgin
  */
 
@@ -26,7 +26,7 @@
 #ifndef _PIDGINFT_H_
 #define _PIDGINFT_H_
 
-#include "ft.h"
+#include "xfer.h"
 
 /**
  * A file transfer dialog.

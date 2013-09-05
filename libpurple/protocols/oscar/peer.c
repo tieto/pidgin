@@ -35,7 +35,7 @@
 
 /* From Purple */
 #include "conversation.h"
-#include "ft.h"
+#include "xfer.h"
 #include "network.h"
 #include "notify.h"
 #include "request.h"
@@ -211,7 +211,7 @@ peer_connection_destroy_cb(gpointer data)
 
 	if (conn->xfer != NULL)
 	{
-		PurpleXferStatusType status;
+		PurpleXferStatus status;
 		purple_xfer_set_protocol_data(conn->xfer, NULL);
 		status = purple_xfer_get_status(conn->xfer);
 		if ((status != PURPLE_XFER_STATUS_DONE) &&
@@ -517,7 +517,7 @@ peer_connection_finalize_connection(PeerConnection *conn)
 	}
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 	{
-		if (purple_xfer_get_type(conn->xfer) == PURPLE_XFER_SEND)
+		if (purple_xfer_get_xfer_type(conn->xfer) == PURPLE_XFER_SEND)
 		{
 			peer_oft_send_prompt(conn);
 		}

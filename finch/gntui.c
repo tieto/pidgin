@@ -30,7 +30,7 @@
 #include "gntconn.h"
 #include "gntconv.h"
 #include "gntdebug.h"
-#include "gntft.h"
+#include "gntxfer.h"
 #include "gntlog.h"
 #include "gntmedia.h"
 #include "gntnotify.h"

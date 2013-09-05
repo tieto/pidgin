@@ -36,7 +36,7 @@
 #include "circularbuffer.h"
 #include "conversation.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "imgstore.h"
 #include "mime.h"
 #include "notify.h"
@@ -54,7 +54,7 @@
 #include <mw_session.h>
 #include <mw_srvc_aware.h>
 #include <mw_srvc_conf.h>
-#include <mw_srvc_ft.h>
+#include <mw_srvc_xfer.h>
 #include <mw_srvc_im.h>
 #include <mw_srvc_place.h>
 #include <mw_srvc_resolve.h>
@@ -2253,7 +2253,7 @@ static void mw_ft_opened(struct mwFileTransfer *ft) {
     g_return_if_reached();
   }
 
-  if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
+  if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND) {
     xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
     ft_send(ft, xfer->dest_fp);
   }
@@ -5036,7 +5036,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   if(! fp) {
     char *msg = g_strdup_printf(_("Error reading file %s: \n%s\n"),
 				filename, g_strerror(errno));
-    purple_xfer_error(purple_xfer_get_type(xfer), acct, purple_xfer_get_remote_user(xfer), msg);
+    purple_xfer_error(purple_xfer_get_xfer_type(xfer), acct, purple_xfer_get_remote_user(xfer), msg);
     g_free(msg);
     g_free(remote_user);
     return;

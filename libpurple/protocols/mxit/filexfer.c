@@ -122,12 +122,12 @@ static void mxit_xfer_init( PurpleXfer* xfer )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_init\n" );
 
-	if ( purple_xfer_get_type( xfer ) == PURPLE_XFER_SEND ) {
+	if ( purple_xfer_get_xfer_type( xfer ) == PURPLE_XFER_SEND ) {
 		/* we are trying to send a file to MXit */
 
 		if ( purple_xfer_get_size( xfer ) > CP_MAX_FILESIZE ) {
 			/* the file is too big */
-			purple_xfer_error( purple_xfer_get_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "The file you are trying to send is too large!" ) );
+			purple_xfer_error( purple_xfer_get_xfer_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "The file you are trying to send is too large!" ) );
 			purple_xfer_cancel_local( xfer );
 			return;
 		}
@@ -158,7 +158,7 @@ static void mxit_xfer_start( PurpleXfer* xfer )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_start\n" );
 
-	if ( purple_xfer_get_type( xfer ) == PURPLE_XFER_SEND ) {
+	if ( purple_xfer_get_xfer_type( xfer ) == PURPLE_XFER_SEND ) {
 		/*
 		 * the user wants to send a file to one of his contacts. we need to create
 		 * a buffer and copy the file data into memory and then we can send it to
@@ -175,7 +175,7 @@ static void mxit_xfer_start( PurpleXfer* xfer )
 		}
 		else {
 			/* file read error */
-			purple_xfer_error( purple_xfer_get_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "Unable to access the local file" ) );
+			purple_xfer_error( purple_xfer_get_xfer_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "Unable to access the local file" ) );
 			purple_xfer_cancel_local( xfer );
 		}
 
@@ -232,7 +232,7 @@ static gssize mxit_xfer_write( const guchar* buffer, size_t size, PurpleXfer* xf
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_xfer_write: invalid internal mxit xfer data\n" );
 		return -1;
 	}
-	else if ( purple_xfer_get_type( xfer ) != PURPLE_XFER_SEND ) {
+	else if ( purple_xfer_get_xfer_type( xfer ) != PURPLE_XFER_SEND ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_xfer_write: wrong xfer type received\n" );
 		return -1;
 	}
@@ -308,7 +308,7 @@ PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 	PurpleXfer*			xfer	= NULL;
 	struct mxitxfer*	mx		= NULL;
 
-	/* (reference: "libpurple/ft.h") */
+	/* (reference: "libpurple/xfer.h") */
 	xfer = purple_xfer_new( session->acc, PURPLE_XFER_SEND, who );
 
 	/* create file info and attach it to the file transfer */
@@ -316,7 +316,7 @@ PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 	mx->session = session;
 	purple_xfer_set_protocol_data( xfer, mx );
 
-	/* configure callbacks (reference: "libpurple/ft.h") */
+	/* configure callbacks (reference: "libpurple/xfer.h") */
 	purple_xfer_set_init_fnc( xfer, mxit_xfer_init );
 	purple_xfer_set_start_fnc( xfer, mxit_xfer_start );
 	purple_xfer_set_end_fnc( xfer, mxit_xfer_end );
@@ -453,7 +453,7 @@ void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const c
 		}
 		else {
 			/* file write error */
-			purple_xfer_error( purple_xfer_get_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "Unable to save the file" ) );
+			purple_xfer_error( purple_xfer_get_xfer_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "Unable to save the file" ) );
 			purple_xfer_cancel_local( xfer );
 		}
 	}

@@ -25,7 +25,7 @@
 #ifndef _PEER_H_
 #define _PEER_H_
 
-#include "ft.h"
+#include "xfer.h"
 #include "network.h"
 #include "proxy.h"
 

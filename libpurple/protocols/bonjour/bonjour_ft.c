@@ -24,10 +24,10 @@
 #include "debug.h"
 #include "notify.h"
 #include "proxy.h"
-#include "ft.h"
+#include "xfer.h"
 #include "buddy.h"
 #include "bonjour.h"
-#include "bonjour_ft.h"
+#include "bonjour_xfer.h"
 #include "ciphers/sha1hash.h"
 
 static void
@@ -134,7 +134,7 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 
 	/* We can't allow the server side to close the connection until the client is complete,
 	 * otherwise there is a RST resulting in an error on the client side */
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && purple_xfer_is_completed(xfer)) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND && purple_xfer_is_completed(xfer)) {
 		struct socket_cleanup *sc = g_new0(struct socket_cleanup, 1);
 		sc->fd = purple_xfer_get_fd(xfer);
 		purple_xfer_set_fd(xfer, -1);
@@ -416,7 +416,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	/* Assume it is the first IP. We could do something like keep track of which one is in use or something. */
 	if (bb->ips)
 		xf->buddy_ip = g_strdup(bb->ips->data);
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND) {
 		/* initiate file transfer, send SI offer. */
 		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");
 		xep_ft_si_offer(xfer, purple_xfer_get_remote_user(xfer));
