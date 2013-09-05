@@ -31,7 +31,7 @@
 
 #include "slp.h"
 #include "p2p.h"
-#include "xfer.h"
+#include "ft.h"
 
 /**************************************************************************
  * Main
@@ -445,6 +445,19 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 	return;
 }
 
+static PurpleXferIoOps recieve_ops =
+{
+	msn_xfer_init,    /* init */
+	msn_xfer_cancel,  /* request_denied */
+	NULL,             /* start */
+	NULL,             /* end */
+	NULL,             /* cancel_send */
+	msn_xfer_cancel,  /* cancel_recv */
+	msn_xfer_read,    /* read */
+	msn_xfer_write,   /* write */
+	NULL,             /* ack */
+};
+
 static void
 got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			   const char *euf_guid, const char *context)
@@ -536,11 +549,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			purple_xfer_set_filename(xfer, file_name ? file_name : "");
 			g_free(file_name);
 			purple_xfer_set_size(xfer, file_context->file_size);
-			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
-			purple_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
-			purple_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
-			purple_xfer_set_read_fnc(xfer, msn_xfer_read);
-			purple_xfer_set_write_fnc(xfer, msn_xfer_write);
+			purple_xfer_set_io_ops(xfer, &recieve_ops);
 
 			slpcall->u.incoming_data = g_byte_array_new();
 

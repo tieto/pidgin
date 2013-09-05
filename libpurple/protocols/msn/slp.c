@@ -36,7 +36,7 @@
 #include "sbconn.h"
 #include "directconn.h"
 #include "p2p.h"
-#include "xfer.h"
+#include "ft.h"
 
 /* seconds to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20
@@ -369,11 +369,13 @@ msn_request_ft(PurpleXfer *xfer)
 	char *context;
 	const char *fn;
 	const char *fp;
+	PurpleXferIoOps *io_ops;
 
 	fn = purple_xfer_get_filename(xfer);
 	fp = purple_xfer_get_local_filename(xfer);
 
 	slplink = purple_xfer_get_protocol_data(xfer);
+	io_ops = purple_xfer_get_io_ops(xfer);
 
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(fp != NULL);
@@ -389,9 +391,9 @@ msn_request_ft(PurpleXfer *xfer)
 
 	slpcall->pending = TRUE;
 
-	purple_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);
-	purple_xfer_set_read_fnc(xfer, msn_xfer_read);
-	purple_xfer_set_write_fnc(xfer, msn_xfer_write);
+	io_ops->cancel_send = msn_xfer_cancel;
+	io_ops->read = msn_xfer_read;
+	io_ops->write = msn_xfer_write;
 
 	purple_xfer_set_protocol_data(xfer, slpcall);
 

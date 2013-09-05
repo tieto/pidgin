@@ -1,5 +1,5 @@
 /**
- * @file xfer.h MSN File Transfer functions
+ * @file ft.h MSN File Transfer functions
  *
  * purple
  *
@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef MSN_XFER_H
-#define MSN_XFER_H
+#ifndef MSN_FT_H
+#define MSN_FT_H
 
 #include "slpcall.h"
 
@@ -67,5 +67,5 @@ msn_file_context_to_wire(MsnFileContext *context);
 MsnFileContext *
 msn_file_context_from_wire(const char *buf, gsize len);
 
-#endif /* MSN_XFER_H */
+#endif /* MSN_FT_H */
 

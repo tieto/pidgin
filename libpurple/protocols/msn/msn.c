@@ -875,6 +875,19 @@ t_msn_xfer_cancel_send(PurpleXfer *xfer)
 	msn_slplink_unref(slplink);
 }
 
+static PurpleXferIoOps send_ops =
+{
+	t_msn_xfer_init,         /* init */
+	NULL,                    /* request_denied */
+	NULL,                    /* start */
+	NULL,                    /* end */
+	t_msn_xfer_cancel_send,  /* cancel_send */
+	NULL,                    /* cancel_recv */
+	NULL,                    /* read */
+	NULL,                    /* write */
+	NULL,                    /* ack */
+};
+
 static PurpleXfer*
 msn_new_xfer(PurpleConnection *gc, const char *who)
 {
@@ -888,9 +901,7 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 	g_return_val_if_fail(xfer != NULL, NULL);
 
 	purple_xfer_set_protocol_data(xfer, msn_slplink_ref(msn_session_get_slplink(session, who)));
-
-	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
-	purple_xfer_set_cancel_send_fnc(xfer, t_msn_xfer_cancel_send);
+	purple_xfer_set_io_ops(xfer, &send_ops);
 
 	return xfer;
 }

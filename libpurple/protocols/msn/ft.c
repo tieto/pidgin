@@ -1,5 +1,5 @@
 /**
- * @file xfer.c MSN File Transfer functions
+ * @file ft.c MSN File Transfer functions
  *
  * purple
  *
@@ -27,7 +27,7 @@
 
 #include "msnutils.h"
 #include "sbconn.h"
-#include "xfer.h"
+#include "ft.h"
 
 /**************************************************************************
  * Xfer
