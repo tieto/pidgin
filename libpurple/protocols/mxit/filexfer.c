@@ -282,21 +282,6 @@ static void mxit_xfer_cancel_recv( PurpleXfer* xfer )
  * Callbacks from libPurple
  */
 
-
-static PurpleXferIoOps send_ops =
-{
-	mxit_xfer_init,         /* init */
-	NULL,                   /* request_denied */
-	mxit_xfer_start,        /* start */
-	mxit_xfer_end,          /* end */
-	mxit_xfer_cancel_send,  /* cancel_send */
-	NULL,                   /* cancel_recv */
-	NULL,                   /* read */
-	mxit_xfer_write,        /* write */
-	NULL,                   /* ack */
-};
-
-
 /*------------------------------------------------------------------------
  * Indicate if file transfers are supported to this contact.
  * For MXit file transfers are always supported.
@@ -330,7 +315,13 @@ PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 	mx = g_new0( struct mxitxfer, 1 );
 	mx->session = session;
 	purple_xfer_set_protocol_data( xfer, mx );
-	purple_xfer_set_io_ops( xfer, &send_ops );
+
+	/* configure callbacks (reference: "libpurple/xfer.h") */
+	purple_xfer_set_init_fnc( xfer, mxit_xfer_init );
+	purple_xfer_set_start_fnc( xfer, mxit_xfer_start );
+	purple_xfer_set_end_fnc( xfer, mxit_xfer_end );
+	purple_xfer_set_cancel_send_fnc( xfer, mxit_xfer_cancel_send );
+	purple_xfer_set_write_fnc( xfer, mxit_xfer_write );
 
 	return xfer;
 }
@@ -357,21 +348,6 @@ void mxit_xfer_tx( PurpleConnection* gc, const char* who, const char* filename )
 /*========================================================================================================================
  * Calls from the MXit Protocol layer
  */
-
-
-static PurpleXferIoOps recieve_ops =
-{
-	mxit_xfer_init,            /* init */
-	mxit_xfer_request_denied,  /* request_denied */
-	NULL,                      /* start */
-	mxit_xfer_end,             /* end */
-	NULL,                      /* cancel_send */
-	mxit_xfer_cancel_recv,     /* cancel_recv */
-	NULL,                      /* read */
-	NULL,                      /* write */
-	NULL,                      /* ack */
-};
-
 
 /*------------------------------------------------------------------------
  * A file transfer offer has been received from the MXit server.
@@ -401,7 +377,11 @@ void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, cons
 		if( filesize > 0 )
 			purple_xfer_set_size( xfer, filesize );
 
-		purple_xfer_set_io_ops( xfer, &recieve_ops );
+		/* register file transfer callback functions */
+		purple_xfer_set_init_fnc( xfer, mxit_xfer_init );
+		purple_xfer_set_request_denied_fnc( xfer, mxit_xfer_request_denied );
+		purple_xfer_set_cancel_recv_fnc( xfer, mxit_xfer_cancel_recv );
+		purple_xfer_set_end_fnc( xfer, mxit_xfer_end );
 
 		/* give the request to the user to accept/deny */
 		purple_xfer_request( xfer );

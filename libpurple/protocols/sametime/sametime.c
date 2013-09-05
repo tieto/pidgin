@@ -2152,20 +2152,6 @@ static void ft_incoming_init(PurpleXfer *xfer) {
 }
 
 
-static PurpleXferIoOps recieve_ops =
-{
-	ft_incoming_init,            /* init */
-	ft_incoming_cancel,            /* request_denied */
-	NULL,            /* start */
-	NULL,            /* end */
-	NULL,            /* cancel_send */
-	ft_incoming_cancel,            /* cancel_recv */
-	NULL,            /* read */
-	NULL,            /* write */
-	NULL,            /* ack */
-};
-
-
 static void mw_ft_offered(struct mwFileTransfer *ft) {
   /*
     - create a purple ft object
@@ -2202,7 +2188,9 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
 	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) g_object_unref);
 	purple_xfer_set_protocol_data(xfer, ft);
 
-	purple_xfer_set_io_ops(xfer, &recieve_ops);
+	purple_xfer_set_init_fnc(xfer, ft_incoming_init);
+	purple_xfer_set_cancel_recv_fnc(xfer, ft_incoming_cancel);
+	purple_xfer_set_request_denied_fnc(xfer, ft_incoming_cancel);
 
 	purple_xfer_set_filename(xfer, mwFileTransfer_getFileName(ft));
 	purple_xfer_set_size(xfer, mwFileTransfer_getFileSize(ft));
@@ -5067,20 +5055,6 @@ static void ft_outgoing_cancel(PurpleXfer *xfer) {
 }
 
 
-static PurpleXferIoOps send_ops =
-{
-	ft_outgoing_init,    /* init */
-	NULL,                /* request_denied */
-	NULL,                /* start */
-	NULL,                /* end */
-	ft_outgoing_cancel,  /* cancel_send */
-	NULL,                /* cancel_recv */
-	NULL,                /* read */
-	NULL,                /* write */
-	NULL,                /* ack */
-};
-
-
 static PurpleXfer *mw_prpl_new_xfer(PurpleConnection *gc, const char *who) {
   PurpleAccount *acct;
   PurpleXfer *xfer;
@@ -5089,7 +5063,10 @@ static PurpleXfer *mw_prpl_new_xfer(PurpleConnection *gc, const char *who) {
 
   xfer = purple_xfer_new(acct, PURPLE_XFER_SEND, who);
   if (xfer)
-    purple_xfer_set_io_ops(xfer, &send_ops);
+  {
+    purple_xfer_set_init_fnc(xfer, ft_outgoing_init);
+    purple_xfer_set_cancel_send_fnc(xfer, ft_outgoing_cancel);
+  }
 
   return xfer;
 }

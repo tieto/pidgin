@@ -70,19 +70,6 @@ static void irc_dccsend_recv_init(PurpleXfer *xfer) {
 	xd->ip = NULL;
 }
 
-static PurpleXferIoOps recieve_ops =
-{
-	irc_dccsend_recv_init,     /* init */
-	irc_dccsend_recv_destroy,  /* request_denied */
-	NULL,                      /* start */
-	irc_dccsend_recv_destroy,  /* end */
-	NULL,                      /* cancel_send */
-	irc_dccsend_recv_destroy,  /* cancel_recv */
-	NULL,                      /* read */
-	NULL,                      /* write */
-	irc_dccsend_recv_ack,      /* ack */
-};
-
 /* This function makes the necessary arrangements for receiving files */
 void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 	PurpleXfer *xfer;
@@ -144,7 +131,12 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 			     filename->str, xd->ip);
 		purple_xfer_set_size(xfer, token[i+2] ? atoi(token[i+2]) : 0);
 
-		purple_xfer_set_io_ops(xfer, &recieve_ops);
+		purple_xfer_set_init_fnc(xfer, irc_dccsend_recv_init);
+		purple_xfer_set_ack_fnc(xfer, irc_dccsend_recv_ack);
+
+		purple_xfer_set_end_fnc(xfer, irc_dccsend_recv_destroy);
+		purple_xfer_set_request_denied_fnc(xfer, irc_dccsend_recv_destroy);
+		purple_xfer_set_cancel_recv_fnc(xfer, irc_dccsend_recv_destroy);
 
 		purple_xfer_request(xfer);
 	}
@@ -358,19 +350,6 @@ static void irc_dccsend_send_init(PurpleXfer *xfer) {
 
 }
 
-static PurpleXferIoOps send_ops =
-{
-	irc_dccsend_send_init,     /* init */
-	irc_dccsend_send_destroy,  /* request_denied */
-	NULL,                      /* start */
-	irc_dccsend_send_destroy,  /* end */
-	irc_dccsend_send_destroy,  /* cancel_send */
-	NULL,                      /* cancel_recv */
-	NULL,                      /* read */
-	irc_dccsend_send_write,    /* write */
-	NULL,                      /* ack */
-};
-
 PurpleXfer *irc_dccsend_new_xfer(PurpleConnection *gc, const char *who) {
 	PurpleXfer *xfer;
 	struct irc_xfer_send_data *xd;
@@ -384,7 +363,11 @@ PurpleXfer *irc_dccsend_new_xfer(PurpleConnection *gc, const char *who) {
 		purple_xfer_set_protocol_data(xfer, xd);
 
 		/* Setup our I/O op functions */
-		purple_xfer_set_io_ops(xfer, &send_ops);
+		purple_xfer_set_init_fnc(xfer, irc_dccsend_send_init);
+		purple_xfer_set_write_fnc(xfer, irc_dccsend_send_write);
+		purple_xfer_set_end_fnc(xfer, irc_dccsend_send_destroy);
+		purple_xfer_set_request_denied_fnc(xfer, irc_dccsend_send_destroy);
+		purple_xfer_set_cancel_send_fnc(xfer, irc_dccsend_send_destroy);
 	}
 
 	return xfer;
