@@ -1220,7 +1220,7 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 			purple_xfer_cancel_local(xfer);
 			return FALSE;
 		}
-		wc = fwrite(buffer, 1, size, xfer->dest_fp);
+		wc = fwrite(buffer, size, 1, xfer->dest_fp);
 	}
 
 	if (wc != size) {
@@ -1270,7 +1270,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
 			purple_xfer_cancel_local(xfer);
 			return -1;
 		}
-		got_len = fread(buffer, 1, size, xfer->dest_fp);
+		got_len = fread(buffer, size, 1, xfer->dest_fp);
 		if ((got_len < 0 || (gsize)got_len != size) &&
 			ferror(xfer->dest_fp))
 		{
