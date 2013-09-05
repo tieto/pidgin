@@ -1011,6 +1011,19 @@ peer_connection_got_proposition_no_cb(gpointer data, gint id)
 	peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
 }
 
+static PurpleXferIoOps recieve_ops =
+{
+	peer_oft_recvcb_init,        /* init */
+	peer_oft_cb_generic_cancel,  /* request_denied */
+	NULL,                        /* start */
+	peer_oft_recvcb_end,         /* end */
+	NULL,                        /* cancel_send */
+	peer_oft_cb_generic_cancel,  /* cancel_recv */
+	NULL,                        /* read */
+	NULL,                        /* write */
+	peer_oft_recvcb_ack_recv,    /* ack */
+};
+
 /**
  * Someone else wants to establish a peer connection with us.
  */
@@ -1114,7 +1127,6 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 		if (conn->xfer)
 		{
 			purple_xfer_set_protocol_data(conn->xfer, conn);
-			g_object_ref(conn->xfer);
 			purple_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
 
 			/* Set the file name */
@@ -1151,11 +1163,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 			}
 
 			/* Setup our I/O op functions */
-			purple_xfer_set_init_fnc(conn->xfer, peer_oft_recvcb_init);
-			purple_xfer_set_end_fnc(conn->xfer, peer_oft_recvcb_end);
-			purple_xfer_set_request_denied_fnc(conn->xfer, peer_oft_cb_generic_cancel);
-			purple_xfer_set_cancel_recv_fnc(conn->xfer, peer_oft_cb_generic_cancel);
-			purple_xfer_set_ack_fnc(conn->xfer, peer_oft_recvcb_ack_recv);
+			purple_xfer_set_io_ops(conn->xfer, &recieve_ops);
 
 			/* Now perform the request */
 			purple_xfer_request(conn->xfer);

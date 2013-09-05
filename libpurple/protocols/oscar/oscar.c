@@ -5225,6 +5225,19 @@ oscar_can_receive_file(PurpleConnection *gc, const char *who)
 	return FALSE;
 }
 
+static PurpleXferIoOps send_ops =
+{
+	peer_oft_sendcb_init,        /* init */
+	peer_oft_cb_generic_cancel,  /* request_denied */
+	NULL,                        /* start */
+	NULL,                        /* end */
+	peer_oft_cb_generic_cancel,  /* cancel_send */
+	NULL,                        /* cancel_recv */
+	NULL,                        /* read */
+	NULL,                        /* write */
+	peer_oft_sendcb_ack,         /* ack */
+};
+
 PurpleXfer *
 oscar_new_xfer(PurpleConnection *gc, const char *who)
 {
@@ -5239,11 +5252,7 @@ oscar_new_xfer(PurpleConnection *gc, const char *who)
 	xfer = purple_xfer_new(account, PURPLE_XFER_SEND, who);
 	if (xfer)
 	{
-		g_object_ref(xfer);
-		purple_xfer_set_init_fnc(xfer, peer_oft_sendcb_init);
-		purple_xfer_set_cancel_send_fnc(xfer, peer_oft_cb_generic_cancel);
-		purple_xfer_set_request_denied_fnc(xfer, peer_oft_cb_generic_cancel);
-		purple_xfer_set_ack_fnc(xfer, peer_oft_sendcb_ack);
+		purple_xfer_set_io_ops(xfer, &send_ops);
 
 		conn = peer_connection_new(od, OSCAR_CAPABILITY_SENDFILE, who);
 		conn->flags |= PEER_CONNECTION_FLAG_INITIATED_BY_ME;
