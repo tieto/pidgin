@@ -1,5 +1,5 @@
 /**
- * @file ft.h File Transfer API
+ * @file xfer.h File Transfer API
  * @ingroup core
  * @see @ref xfer-signals
  */
@@ -24,15 +24,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_FT_H_
-#define _PURPLE_FT_H_
+#ifndef _PURPLE_XFER_H_
+#define _PURPLE_XFER_H_
 
-#define PURPLE_TYPE_XFER  (purple_xfer_get_g_type())
+#define PURPLE_TYPE_XFER             (purple_xfer_get_type())
+#define PURPLE_XFER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_XFER, PurpleXfer))
+#define PURPLE_XFER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_XFER, PurpleXferClass))
+#define PURPLE_IS_XFER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_XFER))
+#define PURPLE_IS_XFER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_XFER))
+#define PURPLE_XFER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_XFER, PurpleXferClass))
 
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
+/** @copydoc _PurpleXfer */
 typedef struct _PurpleXfer PurpleXfer;
+/** @copydoc _PurpleXferClass */
+typedef struct _PurpleXferClass PurpleXferClass;
 
 #include <glib.h>
 #include <stdio.h>
@@ -62,7 +70,7 @@ typedef enum
 	PURPLE_XFER_STATUS_DONE,          /**< The xfer completed successfully. */
 	PURPLE_XFER_STATUS_CANCEL_LOCAL,  /**< The xfer was cancelled by us. */
 	PURPLE_XFER_STATUS_CANCEL_REMOTE  /**< The xfer was cancelled by the other end, or we couldn't connect. */
-} PurpleXferStatusType;
+} PurpleXferStatus;
 
 /**
  * File transfer UI operations.
@@ -126,64 +134,47 @@ typedef struct
 	void (*add_thumbnail)(PurpleXfer *xfer, const gchar *formats);
 } PurpleXferUiOps;
 
+/** I/O operations, which should be set by the prpl using
+ *  purple_xfer_set_io_ops() and friends.  Setting #init is
+ *  mandatory; all others are optional. TODO
+ */
+typedef struct
+{
+	void (*init)(PurpleXfer *xfer);
+	void (*request_denied)(PurpleXfer *xfer);
+	void (*start)(PurpleXfer *xfer);
+	void (*end)(PurpleXfer *xfer);
+	void (*cancel_send)(PurpleXfer *xfer);
+	void (*cancel_recv)(PurpleXfer *xfer);
+	gssize (*read)(guchar **buffer, PurpleXfer *xfer);
+	gssize (*write)(const guchar *buffer, size_t size, PurpleXfer *xfer);
+	void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
+} PurpleXferIoOps;
+
 /**
  * A core representation of a file transfer.
  */
 struct _PurpleXfer
 {
-	guint ref;                    /**< The reference count.                */
-	PurpleXferType type;            /**< The type of transfer.               */
+	/*< private >*/
+	GObject gparent;
 
-	PurpleAccount *account;         /**< The account.                        */
-
-	char *who;                    /**< The person on the other end of the
-	                                   transfer.                           */
-
-	char *message;                /**< A message sent with the request     */
-	char *filename;               /**< The name sent over the network.     */
-	char *local_filename;         /**< The name on the local hard drive.   */
-	goffset size;                 /**< The size of the file.               */
-
-	FILE *dest_fp;                /**< The destination file pointer.       */
-
-	char *remote_ip;              /**< The remote IP address.              */
-	int local_port;               /**< The local port.                     */
-	int remote_port;              /**< The remote port.                    */
-
-	int fd;                       /**< The socket file descriptor.         */
-	int watcher;                  /**< Watcher.                            */
-
-	goffset bytes_sent;           /**< The number of bytes sent.           */
-	goffset bytes_remaining;      /**< The number of bytes remaining.      */
-	time_t start_time;            /**< When the transfer of data began.    */
-	time_t end_time;              /**< When the transfer of data ended.    */
-
-	size_t current_buffer_size;   /**< This gradually increases for fast
-	                                   network connections. */
-
-	PurpleXferStatusType status;    /**< File Transfer's status.             */
-
-	/** I/O operations, which should be set by the prpl using
-	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
-	 *  mandatory; all others are optional.
+	/** The UI data associated with this file transfer. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
 	 */
-	struct
-	{
-		void (*init)(PurpleXfer *xfer);
-		void (*request_denied)(PurpleXfer *xfer);
-		void (*start)(PurpleXfer *xfer);
-		void (*end)(PurpleXfer *xfer);
-		void (*cancel_send)(PurpleXfer *xfer);
-		void (*cancel_recv)(PurpleXfer *xfer);
-		gssize (*read)(guchar **buffer, PurpleXfer *xfer);
-		gssize (*write)(const guchar *buffer, size_t size, PurpleXfer *xfer);
-		void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
-	} ops;
+	gpointer ui_data;
+};
 
-	PurpleXferUiOps *ui_ops;            /**< UI-specific operations. */
-	void *ui_data;                    /**< UI-specific data.       */
+/** Base class for all #PurpleXfer's */
+struct _PurpleXferClass
+{
+	/*< private >*/
+	GObjectClass parent_class;
 
-	void *proto_data;                 /**< prpl-specific data.     */
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 G_BEGIN_DECLS
@@ -194,11 +185,9 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Returns the GType for the PurpleXfer boxed structure.
- * TODO Boxing of PurpleXfer is a temporary solution to having a GType for
- *      file transfers. This should rather be a GObject instead of a GBoxed.
+ * Returns the GType for the PurpleXfer object.
  */
-GType purple_xfer_get_g_type(void);
+GType purple_xfer_get_type(void);
 
 /**
  * Creates a new file transfer handle.
@@ -215,32 +204,6 @@ GType purple_xfer_get_g_type(void);
  */
 PurpleXfer *purple_xfer_new(PurpleAccount *account,
 								PurpleXferType type, const char *who);
-
-/**
- * Returns all xfers
- *
- * @return all current xfers with refs
- */
-GList *purple_xfers_get_all(void);
-
-/**
- * Increases the reference count on a PurpleXfer.
- * Please call purple_xfer_unref later.
- *
- * @param xfer A file transfer handle.
- */
-void purple_xfer_ref(PurpleXfer *xfer);
-
-/**
- * Decreases the reference count on a PurpleXfer.
- * If the reference reaches 0, purple_xfer_destroy (an internal function)
- * will destroy the xfer. It calls the ui destroy cb first.
- * Since the core keeps a ref on the xfer, only an erroneous call to
- * this function will destroy the xfer while still in use.
- *
- * @param xfer A file transfer handle.
- */
-void purple_xfer_unref(PurpleXfer *xfer);
 
 /**
  * Requests confirmation for a file transfer from the user. If receiving
@@ -293,7 +256,7 @@ int purple_xfer_get_watcher(PurpleXfer *xfer);
  *
  * @return The type of the file transfer.
  */
-PurpleXferType purple_xfer_get_type(const PurpleXfer *xfer);
+PurpleXferType purple_xfer_get_xfer_type(const PurpleXfer *xfer);
 
 /**
  * Returns the account the file transfer is using.
@@ -320,7 +283,7 @@ const char *purple_xfer_get_remote_user(const PurpleXfer *xfer);
  *
  * @return The status.
  */
-PurpleXferStatusType purple_xfer_get_status(const PurpleXfer *xfer);
+PurpleXferStatus purple_xfer_get_status(const PurpleXfer *xfer);
 
 /**
  * Returns true if the file transfer was cancelled.
@@ -471,7 +434,7 @@ void purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed);
  * @param xfer      The file transfer.
  * @param status    The current status.
  */
-void purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status);
+void purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatus status);
 
 /**
  * Sets the filename for the file transfer.
@@ -537,84 +500,22 @@ void purple_xfer_set_bytes_sent(PurpleXfer *xfer, goffset bytes_sent);
  */
 PurpleXferUiOps *purple_xfer_get_ui_ops(const PurpleXfer *xfer);
 
-/**
- * Sets the read function for the file transfer.
+/** TODO
+ * Sets the IO operations structure to be used for a file transfer.
  *
- * @param xfer The file transfer.
- * @param fnc  The read function.
+ * @param xfer The file transfer
+ * @param ops The IO operations structure.
  */
-void purple_xfer_set_read_fnc(PurpleXfer *xfer,
-		gssize (*fnc)(guchar **, PurpleXfer *));
+void purple_xfer_set_io_ops(PurpleXfer *xfer, PurpleXferIoOps *ops);
 
-/**
- * Sets the write function for the file transfer.
+/** TODO check if this is necessary. if so, implement.
+ * Returns the IO operations structure for a file transfer.
  *
  * @param xfer The file transfer.
- * @param fnc  The write function.
- */
-void purple_xfer_set_write_fnc(PurpleXfer *xfer,
-		gssize (*fnc)(const guchar *, size_t, PurpleXfer *));
-
-/**
- * Sets the acknowledge function for the file transfer.
  *
- * @param xfer The file transfer.
- * @param fnc  The acknowledge function.
+ * @return The IO operations structure.
  */
-void purple_xfer_set_ack_fnc(PurpleXfer *xfer,
-		void (*fnc)(PurpleXfer *, const guchar *, size_t));
-
-/**
- * Sets the function to be called if the request is denied.
- *
- * @param xfer The file transfer.
- * @param fnc The request denied prpl callback.
- */
-void purple_xfer_set_request_denied_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
-
-/**
- * Sets the transfer initialization function for the file transfer.
- *
- * This function is required, and must call purple_xfer_start() with
- * the necessary parameters. This will be called if the file transfer
- * is accepted by the user.
- *
- * @param xfer The file transfer.
- * @param fnc  The transfer initialization function.
- */
-void purple_xfer_set_init_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
-
-/**
- * Sets the start transfer function for the file transfer.
- *
- * @param xfer The file transfer.
- * @param fnc  The start transfer function.
- */
-void purple_xfer_set_start_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
-
-/**
- * Sets the end transfer function for the file transfer.
- *
- * @param xfer The file transfer.
- * @param fnc  The end transfer function.
- */
-void purple_xfer_set_end_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
-
-/**
- * Sets the cancel send function for the file transfer.
- *
- * @param xfer The file transfer.
- * @param fnc  The cancel send function.
- */
-void purple_xfer_set_cancel_send_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
-
-/**
- * Sets the cancel receive function for the file transfer.
- *
- * @param xfer The file transfer.
- * @param fnc  The cancel receive function.
- */
-void purple_xfer_set_cancel_recv_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
+PurpleXferIoOps *purple_xfer_get_io_ops(const PurpleXfer *xfer);
 
 /**
  * Reads in data from a file transfer stream.
@@ -838,9 +739,16 @@ gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer);
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/** @name File Transfer Subsystem API                                     */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns all xfers
+ *
+ * @return all current xfers with refs
+ */
+GList *purple_xfers_get_all(void);
 
 /**
  * Returns the handle to the file transfer subsystem
@@ -877,5 +785,5 @@ PurpleXferUiOps *purple_xfers_get_ui_ops(void);
 
 G_END_DECLS
 
-#endif /* _PURPLE_FT_H_ */
+#endif /* _PURPLE_XFER_H_ */
 

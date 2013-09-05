@@ -1,5 +1,5 @@
 /**
- * @file ft.c File Transfer API
+ * @file xfer.c File Transfer API
  */
 
 /* purple
@@ -25,7 +25,7 @@
  */
 #include "internal.h"
 #include "dbus-maybe.h"
-#include "ft.h"
+#include "xfer.h"
 #include "network.h"
 #include "notify.h"
 #include "prefs.h"
@@ -37,16 +37,61 @@
 #define FT_INITIAL_BUFFER_SIZE 4096
 #define FT_MAX_BUFFER_SIZE     65535
 
+#define PURPLE_XFER_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_XFER, PurpleXferPrivate))
+
+/** @copydoc _PurpleXferPrivate */
+typedef struct _PurpleXferPrivate  PurpleXferPrivate;
+
 static PurpleXferUiOps *xfer_ui_ops = NULL;
 static GList *xfers;
 
-/*
+/* TODO remove.
  * A hack to store more data since we can't extend the size of PurpleXfer
  * easily.
  */
 static GHashTable *xfers_data = NULL;
 
-typedef struct _PurpleXferPrivData {
+/** Private data for a file transfer */
+struct _PurpleXferPrivate {
+	PurpleXferType type;         /**< The type of transfer.               */
+
+	PurpleAccount *account;      /**< The account.                        */
+
+	char *who;                   /**< The person on the other end of the
+	                                  transfer.                           */
+
+	char *message;               /**< A message sent with the request     */
+	char *filename;              /**< The name sent over the network.     */
+	char *local_filename;        /**< The name on the local hard drive.   */
+	goffset size;                /**< The size of the file.               */
+
+	FILE *dest_fp;               /**< The destination file pointer.       */
+
+	char *remote_ip;             /**< The remote IP address.              */
+	int local_port;              /**< The local port.                     */
+	int remote_port;             /**< The remote port.                    */
+
+	int fd;                      /**< The socket file descriptor.         */
+	int watcher;                 /**< Watcher.                            */
+
+	goffset bytes_sent;          /**< The number of bytes sent.           */
+	goffset bytes_remaining;     /**< The number of bytes remaining.      */
+	time_t start_time;           /**< When the transfer of data began.    */
+	time_t end_time;             /**< When the transfer of data ended.    */
+
+	size_t current_buffer_size;  /**< This gradually increases for fast
+	                                   network connections.               */
+
+	PurpleXferStatus status;     /**< File Transfer's status.             */
+
+	PurpleXferIoOps *ops;        /**< I/O operations.                     */
+	PurpleXferUiOps *ui_ops;     /**< UI-specific operations.             */
+
+	void *proto_data;            /**< prpl-specific data.
+	                                  TODO Remove this, and use
+	                                       protocol-specific subclasses   */
+
 	/*
 	 * Used to moderate the file transfer when either the read/write ui_ops are
 	 * set or fd is not set. In those cases, the UI/prpl call the respective
@@ -61,17 +106,17 @@ typedef struct _PurpleXferPrivData {
 	/* TODO: Should really use a PurpleCircBuffer for this. */
 	GByteArray *buffer;
 
-	gpointer thumbnail_data;		/**< thumbnail image */
+	gpointer thumbnail_data;     /**< thumbnail image */
 	gsize thumbnail_size;
 	gchar *thumbnail_mimetype;
-} PurpleXferPrivData;
+};
 
 static int purple_xfer_choose_file(PurpleXfer *xfer);
 
 static void
 purple_xfer_priv_data_destroy(gpointer data)
 {
-	PurpleXferPrivData *priv = data;
+	PurpleXferPrivate *priv = data;
 
 	if (priv->buffer)
 		g_byte_array_free(priv->buffer, TRUE);
@@ -84,10 +129,10 @@ purple_xfer_priv_data_destroy(gpointer data)
 }
 
 static const gchar *
-purple_xfer_status_type_to_string(PurpleXferStatusType type)
+purple_xfer_status_type_to_string(PurpleXferStatus type)
 {
 	static const struct {
-		PurpleXferStatusType type;
+		PurpleXferStatus type;
 		const char *name;
 	} type_names[] = {
 		{ PURPLE_XFER_STATUS_UNKNOWN, "unknown" },
@@ -118,7 +163,7 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 {
 	PurpleXfer *xfer;
 	PurpleXferUiOps *ui_ops;
-	PurpleXferPrivData *priv;
+	PurpleXferPrivate *priv;
 
 	g_return_val_if_fail(type    != PURPLE_XFER_UNKNOWN, NULL);
 	g_return_val_if_fail(account != NULL,              NULL);
@@ -136,7 +181,7 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 	xfer->current_buffer_size = FT_INITIAL_BUFFER_SIZE;
 	xfer->fd = -1;
 
-	priv = g_new0(PurpleXferPrivData, 1);
+	priv = g_new0(PurpleXferPrivate, 1);
 	priv->ready = PURPLE_XFER_READY_NONE;
 
 	if (ui_ops && ui_ops->data_not_sent) {
@@ -221,7 +266,7 @@ purple_xfer_unref(PurpleXfer *xfer)
 }
 
 void
-purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
+purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatus status)
 {
 	g_return_if_fail(xfer != NULL);
 
@@ -759,7 +804,7 @@ purple_xfer_get_remote_user(const PurpleXfer *xfer)
 	return xfer->who;
 }
 
-PurpleXferStatusType
+PurpleXferStatus
 purple_xfer_get_status(const PurpleXfer *xfer)
 {
 	g_return_val_if_fail(xfer != NULL, PURPLE_XFER_STATUS_UNKNOWN);
@@ -1272,7 +1317,7 @@ do_transfer(PurpleXfer *xfer)
 	} else if (xfer->type == PURPLE_XFER_SEND) {
 		gssize result = 0;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
-		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		PurpleXferPrivate *priv = g_hash_table_lookup(xfers_data, xfer);
 		gboolean read = TRUE;
 
 		/* this is so the prpl can keep the connection open
@@ -1383,7 +1428,7 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 
 	if (xfer->dest_fp == NULL) {
 		/* The UI is moderating its side manually */
-		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		PurpleXferPrivate *priv = g_hash_table_lookup(xfers_data, xfer);
 		if (0 == (priv->ready & PURPLE_XFER_READY_UI)) {
 			priv->ready |= PURPLE_XFER_READY_PRPL;
 
@@ -1453,7 +1498,7 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 {
 	PurpleInputCondition cond;
 	PurpleXferType type;
-	PurpleXferPrivData *priv;
+	PurpleXferPrivate *priv;
 
 	g_return_if_fail(xfer != NULL);
 
@@ -1484,7 +1529,7 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 void
 purple_xfer_prpl_ready(PurpleXfer *xfer)
 {
-	PurpleXferPrivData *priv;
+	PurpleXferPrivate *priv;
 
 	g_return_if_fail(xfer != NULL);
 
@@ -1764,7 +1809,7 @@ purple_xfer_update_progress(PurpleXfer *xfer)
 gconstpointer
 purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len)
 {
-	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+	PurpleXferPrivate *priv = g_hash_table_lookup(xfers_data, xfer);
 
 	if (len)
 		*len = priv->thumbnail_size;
@@ -1775,7 +1820,7 @@ purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len)
 const gchar *
 purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer)
 {
-	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+	PurpleXferPrivate *priv = g_hash_table_lookup(xfers_data, xfer);
 
 	return priv->thumbnail_mimetype;
 }
@@ -1784,7 +1829,7 @@ void
 purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 	gsize size, const gchar *mimetype)
 {
-	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+	PurpleXferPrivate *priv = g_hash_table_lookup(xfers_data, xfer);
 
 	g_free(priv->thumbnail_data);
 	g_free(priv->thumbnail_mimetype);

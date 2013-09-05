@@ -152,7 +152,7 @@ Purple::Util::InfoFieldFormatCallback	T_PTR
 
 Purple::Xfer				T_PurpleObj
 Purple::XferType				T_IV
-Purple::XferStatusType			T_IV
+Purple::XferStatus			T_IV
 
 Purple::XMLNode				T_PurpleObj
 XMLNode::Type				T_IV

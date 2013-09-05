@@ -56,7 +56,6 @@ purple_coresources = \
 	debug.c \
 	desktopitem.c \
 	eventloop.c \
-	ft.c \
 	hash.c \
 	http.c \
 	idle.c \
@@ -104,8 +103,9 @@ purple_coresources = \
 	upnp.c \
 	util.c \
 	version.c \
-	xmlnode.c \
-	whiteboard.c
+	whiteboard.c \
+	xfer.c \
+	xmlnode.c
 
 purple_builtsources = \
 	enums.c \
@@ -132,7 +132,6 @@ purple_coreheaders = \
 	debug.h \
 	desktopitem.h \
 	eventloop.h \
-	ft.h \
 	hash.h \
 	http.h \
 	idle.h \
@@ -175,8 +174,9 @@ purple_coreheaders = \
 	theme-manager.h \
 	upnp.h \
 	util.h \
-	xmlnode.h \
-	whiteboard.h
+	whiteboard.h \
+	xfer.h \
+	xmlnode.h
 
 purple_mediaheaders = \
 	backend-iface.h \
@@ -192,7 +192,8 @@ purple_enumheaders = \
 	connection.h \
 	conversation.h \
 	conversationtypes.h \
-	status.h
+	status.h \
+	xfer.h
 
 marshallers.h: marshallers.list
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
@@ -231,7 +232,7 @@ dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-d
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h \
                 blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
-                conversationtypes.h conversations.h core.h ft.h log.h notify.h \
+                conversationtypes.h conversations.h core.h xfer.h log.h notify.h \
                 prefs.h presence.h roomlist.h savedstatuses.h smiley.h status.h \
                 server.h util.h xmlnode.h prpl.h
 

@@ -43,7 +43,7 @@ typedef struct group *Purple__Group;
 #include "debug.h"
 #include "desktopitem.h"
 #include "eventloop.h"
-#include "ft.h"
+#include "xfer.h"
 #ifdef PURPLE_GTKPERL
 #include "gtkaccount.h"
 #include "gtkblist.h"
@@ -142,10 +142,10 @@ typedef PurpleDesktopItemType		Purple__DesktopItemType;
 /* eventloop.h */
 typedef PurpleInputCondition *		Purple__InputCondition;
 
-/* ft.h */
+/* xfer.h */
 typedef PurpleXfer *			Purple__Xfer;
 typedef PurpleXferType			Purple__XferType;
-typedef PurpleXferStatusType		Purple__XferStatusType;
+typedef PurpleXferStatus		Purple__XferStatus;
 
 
 #ifdef PURPLE_GTKPERL

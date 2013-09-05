@@ -104,12 +104,12 @@ size_t
 purple_xfer_get_size(xfer)
 	Purple::Xfer xfer
 
-Purple::XferStatusType
+Purple::XferStatus
 purple_xfer_get_status(xfer)
 	Purple::Xfer xfer
 
 Purple::XferType
-purple_xfer_get_type(xfer)
+purple_xfer_get_xfer_type(xfer)
 	Purple::Xfer xfer
 
 gboolean 
@@ -124,10 +124,6 @@ ssize_t
 purple_xfer_read(xfer, buffer)
 	Purple::Xfer xfer
 	guchar **buffer
-
-void 
-purple_xfer_ref(xfer)
-	Purple::Xfer xfer
 
 void 
 purple_xfer_request(xfer)
@@ -166,10 +162,6 @@ void
 purple_xfer_set_size(xfer, size)
 	Purple::Xfer xfer
 	size_t size
-
-void 
-purple_xfer_unref(xfer)
-	Purple::Xfer xfer
 
 void 
 purple_xfer_update_progress(xfer)
