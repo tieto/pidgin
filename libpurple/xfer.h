@@ -134,23 +134,6 @@ typedef struct
 	void (*add_thumbnail)(PurpleXfer *xfer, const gchar *formats);
 } PurpleXferUiOps;
 
-/** I/O operations, which should be set by the prpl using
- *  purple_xfer_set_io_ops() and friends.  Setting #init is
- *  mandatory; all others are optional. TODO
- */
-typedef struct
-{
-	void (*init)(PurpleXfer *xfer);
-	void (*request_denied)(PurpleXfer *xfer);
-	void (*start)(PurpleXfer *xfer);
-	void (*end)(PurpleXfer *xfer);
-	void (*cancel_send)(PurpleXfer *xfer);
-	void (*cancel_recv)(PurpleXfer *xfer);
-	gssize (*read)(guchar **buffer, PurpleXfer *xfer);
-	gssize (*write)(const guchar *buffer, size_t size, PurpleXfer *xfer);
-	void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
-} PurpleXferIoOps;
-
 /**
  * A core representation of a file transfer.
  */
@@ -508,22 +491,84 @@ void purple_xfer_set_bytes_sent(PurpleXfer *xfer, goffset bytes_sent);
  */
 PurpleXferUiOps *purple_xfer_get_ui_ops(const PurpleXfer *xfer);
 
-/** TODO
- * Sets the IO operations structure to be used for a file transfer.
- *
- * @param xfer The file transfer
- * @param ops The IO operations structure.
- */
-void purple_xfer_set_io_ops(PurpleXfer *xfer, PurpleXferIoOps *ops);
-
-/** TODO check if this is necessary. if so, implement.
- * Returns the IO operations structure for a file transfer.
+/**
+ * Sets the read function for the file transfer.
  *
  * @param xfer The file transfer.
- *
- * @return The IO operations structure.
+ * @param fnc  The read function.
  */
-PurpleXferIoOps *purple_xfer_get_io_ops(const PurpleXfer *xfer);
+void purple_xfer_set_read_fnc(PurpleXfer *xfer,
+		gssize (*fnc)(guchar **, PurpleXfer *));
+
+/**
+ * Sets the write function for the file transfer.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The write function.
+ */
+void purple_xfer_set_write_fnc(PurpleXfer *xfer,
+		gssize (*fnc)(const guchar *, size_t, PurpleXfer *));
+
+/**
+ * Sets the acknowledge function for the file transfer.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The acknowledge function.
+ */
+void purple_xfer_set_ack_fnc(PurpleXfer *xfer,
+		void (*fnc)(PurpleXfer *, const guchar *, size_t));
+
+/**
+ * Sets the function to be called if the request is denied.
+ *
+ * @param xfer The file transfer.
+ * @param fnc The request denied prpl callback.
+ */
+void purple_xfer_set_request_denied_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
+
+/**
+ * Sets the transfer initialization function for the file transfer.
+ *
+ * This function is required, and must call purple_xfer_start() with
+ * the necessary parameters. This will be called if the file transfer
+ * is accepted by the user.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The transfer initialization function.
+ */
+void purple_xfer_set_init_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
+
+/**
+ * Sets the start transfer function for the file transfer.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The start transfer function.
+ */
+void purple_xfer_set_start_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
+
+/**
+ * Sets the end transfer function for the file transfer.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The end transfer function.
+ */
+void purple_xfer_set_end_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
+
+/**
+ * Sets the cancel send function for the file transfer.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The cancel send function.
+ */
+void purple_xfer_set_cancel_send_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
+
+/**
+ * Sets the cancel receive function for the file transfer.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The cancel receive function.
+ */
+void purple_xfer_set_cancel_recv_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer *));
 
 /**
  * Reads in data from a file transfer stream.

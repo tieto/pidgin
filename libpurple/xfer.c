@@ -85,7 +85,23 @@ struct _PurpleXferPrivate {
 
 	PurpleXferStatus status;     /**< File Transfer's status.             */
 
-	PurpleXferIoOps *ops;        /**< I/O operations.                     */
+	/** I/O operations, which should be set by the prpl using
+	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
+	 *  mandatory; all others are optional.
+	 */
+	struct
+	{
+		void (*init)(PurpleXfer *xfer);
+		void (*request_denied)(PurpleXfer *xfer);
+		void (*start)(PurpleXfer *xfer);
+		void (*end)(PurpleXfer *xfer);
+		void (*cancel_send)(PurpleXfer *xfer);
+		void (*cancel_recv)(PurpleXfer *xfer);
+		gssize (*read)(guchar **buffer, PurpleXfer *xfer);
+		gssize (*write)(const guchar *buffer, size_t size, PurpleXfer *xfer);
+		void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
+	} ops;
+
 	PurpleXferUiOps *ui_ops;     /**< UI-specific operations.             */
 
 	void *proto_data;            /**< prpl-specific data.
