@@ -58,10 +58,7 @@ struct _PurpleBuddyPrivate {
 	char *server_alias;          /**< The server-specified alias of the buddy.
 	                                  (i.e. MSN "Friendly Names")             */
 	void *proto_data;            /**< This allows the prpl to associate
-	                                  whatever data it wants with a buddy
-	                                  TODO Remove this field. Protocols should
-	                                       subclass PurpleBuddy and store
-	                                       their data as they see fit.        */
+	                                  whatever data it wants with a buddy.    */
 	PurpleBuddyIcon *icon;       /**< The buddy icon.                         */
 	PurpleAccount *account;      /**< the account this buddy belongs to       */
 	PurplePresence *presence;    /**< Presense information of the buddy       */
