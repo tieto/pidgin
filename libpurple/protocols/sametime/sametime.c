@@ -54,7 +54,7 @@
 #include <mw_session.h>
 #include <mw_srvc_aware.h>
 #include <mw_srvc_conf.h>
-#include <mw_srvc_xfer.h>
+#include <mw_srvc_ft.h>
 #include <mw_srvc_im.h>
 #include <mw_srvc_place.h>
 #include <mw_srvc_resolve.h>
@@ -2144,19 +2144,26 @@ static void ft_incoming_init(PurpleXfer *xfer) {
   */
 
   struct mwFileTransfer *ft;
-  FILE *fp;
 
   ft = purple_xfer_get_protocol_data(xfer);
 
-  fp = g_fopen(purple_xfer_get_local_filename(xfer), "wb");
-  if(! fp) {
-    mwFileTransfer_cancel(ft);
-    return;
-  }
-
-  xfer->dest_fp = fp;
+  purple_xfer_start(xfer, -1, NULL, 0);
   mwFileTransfer_accept(ft);
 }
+
+
+static PurpleXferIoOps recieve_ops =
+{
+	ft_incoming_init,            /* init */
+	ft_incoming_cancel,            /* request_denied */
+	NULL,            /* start */
+	NULL,            /* end */
+	NULL,            /* cancel_send */
+	ft_incoming_cancel,            /* cancel_recv */
+	NULL,            /* read */
+	NULL,            /* write */
+	NULL,            /* ack */
+};
 
 
 static void mw_ft_offered(struct mwFileTransfer *ft) {
@@ -2195,9 +2202,7 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
 	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) g_object_unref);
 	purple_xfer_set_protocol_data(xfer, ft);
 
-	purple_xfer_set_init_fnc(xfer, ft_incoming_init);
-	purple_xfer_set_cancel_recv_fnc(xfer, ft_incoming_cancel);
-	purple_xfer_set_request_denied_fnc(xfer, ft_incoming_cancel);
+	purple_xfer_set_io_ops(xfer, &recieve_ops);
 
 	purple_xfer_set_filename(xfer, mwFileTransfer_getFileName(ft));
 	purple_xfer_set_size(xfer, mwFileTransfer_getFileSize(ft));
@@ -2208,7 +2213,7 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
 }
 
 
-static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
+static void ft_send(struct mwFileTransfer *ft) {
   guchar buf[MW_FT_LEN];
   struct mwOpaque o = { MW_FT_LEN, buf };
   guint32 rem;
@@ -2219,7 +2224,7 @@ static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
   rem = mwFileTransfer_getRemaining(ft);
   if(rem < MW_FT_LEN) o.len = rem;
 
-  if(fread(buf, (size_t) o.len, 1, fp)) {
+  if(purple_xfer_read_file(xfer, buf, (size_t) o.len) > 0) {
 
     /* calculate progress and display it */
     purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + o.len);
@@ -2254,8 +2259,8 @@ static void mw_ft_opened(struct mwFileTransfer *ft) {
   }
 
   if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND) {
-    xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
-    ft_send(ft, xfer->dest_fp);
+    purple_xfer_start(xfer, -1, NULL, 0);
+    ft_send(ft);
   }
 }
 
@@ -2306,18 +2311,12 @@ static void mw_ft_recv(struct mwFileTransfer *ft,
   */
 
   PurpleXfer *xfer;
-  FILE *fp;
-  size_t wc;
 
   xfer = mwFileTransfer_getClientData(ft);
   g_return_if_fail(xfer != NULL);
 
-  fp = xfer->dest_fp;
-  g_return_if_fail(fp != NULL);
-
   /* we must collect and save our precious data */
-  wc = fwrite(data->data, 1, data->len, fp);
-  if (wc != data->len) {
+  if (!purple_xfer_write_file(xfer, data->data, data->len)) {
     DEBUG_ERROR("failed to write data\n");
     purple_xfer_cancel_local(xfer);
     return;
@@ -2344,7 +2343,7 @@ static void mw_ft_ack(struct mwFileTransfer *ft) {
     purple_xfer_end(xfer);
 
   } else if(mwFileTransfer_isOpen(ft)) {
-    ft_send(ft, xfer->dest_fp);
+    ft_send(ft);
   }
 }
 
@@ -5068,6 +5067,20 @@ static void ft_outgoing_cancel(PurpleXfer *xfer) {
 }
 
 
+static PurpleXferIoOps send_ops =
+{
+	ft_outgoing_init,    /* init */
+	NULL,                /* request_denied */
+	NULL,                /* start */
+	NULL,                /* end */
+	ft_outgoing_cancel,  /* cancel_send */
+	NULL,                /* cancel_recv */
+	NULL,                /* read */
+	NULL,                /* write */
+	NULL,                /* ack */
+};
+
+
 static PurpleXfer *mw_prpl_new_xfer(PurpleConnection *gc, const char *who) {
   PurpleAccount *acct;
   PurpleXfer *xfer;
@@ -5076,10 +5089,7 @@ static PurpleXfer *mw_prpl_new_xfer(PurpleConnection *gc, const char *who) {
 
   xfer = purple_xfer_new(acct, PURPLE_XFER_SEND, who);
   if (xfer)
-  {
-    purple_xfer_set_init_fnc(xfer, ft_outgoing_init);
-    purple_xfer_set_cancel_send_fnc(xfer, ft_outgoing_cancel);
-  }
+    purple_xfer_set_io_ops(xfer, &send_ops);
 
   return xfer;
 }
