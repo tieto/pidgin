@@ -168,6 +168,19 @@ static void jabber_oob_xfer_recv_cancelled(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
+static PurpleXferIoOps recieve_ops =
+{
+	jabber_oob_xfer_init,            /* init */
+	jabber_oob_xfer_recv_denied,     /* request_denied */
+	jabber_oob_xfer_start,           /* start */
+	jabber_oob_xfer_end,             /* end */
+	NULL,                            /* cancel_send */
+	jabber_oob_xfer_recv_cancelled,  /* cancel_recv */
+	NULL,                            /* read */
+	NULL,                            /* write */
+	NULL,                            /* ack */
+};
+
 void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	const char *id, xmlnode *querynode) {
 	JabberOOBXfer *jox;
@@ -208,12 +221,7 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	else
 		filename = slash + 1;
 	purple_xfer_set_filename(xfer, filename);
-
-	purple_xfer_set_init_fnc(xfer, jabber_oob_xfer_init);
-	purple_xfer_set_end_fnc(xfer, jabber_oob_xfer_end);
-	purple_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
-	purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_cancelled);
-	purple_xfer_set_start_fnc(xfer, jabber_oob_xfer_start);
+	purple_xfer_set_io_ops(xfer, &recieve_ops);
 
 	js->oob_file_transfers = g_list_append(js->oob_file_transfers, xfer);
 

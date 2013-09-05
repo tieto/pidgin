@@ -267,6 +267,14 @@ PurpleXferType purple_xfer_get_xfer_type(const PurpleXfer *xfer);
  */
 PurpleAccount *purple_xfer_get_account(const PurpleXfer *xfer);
 
+/** TODO g_free(xfer->who); xfer->who = who;
+ * Sets the name of the remote user.
+ *
+ * @param xfer The file transfer.
+ * @param who  The name of the remote user.
+ */
+void purple_xfer_set_remote_user(PurpleXfer *xfer, const char *who);
+
 /**
  * Returns the name of the remote user.
  *

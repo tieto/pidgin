@@ -1072,7 +1072,7 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 				purple_circular_buffer_new(jabber_ibb_session_get_block_size(sess));
 
 			/* set up read function */
-			purple_xfer_set_read_fnc(xfer, jabber_si_xfer_ibb_read);
+			purple_xfer_get_io_ops(xfer)->read = jabber_si_xfer_ibb_read;
 
 			/* start the transfer */
 			purple_xfer_start(xfer, -1, NULL, 0);
@@ -1154,7 +1154,7 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 		jabber_ibb_session_set_error_callback(jsx->ibb_session,
 			jabber_si_xfer_ibb_error_cb);
 
-		purple_xfer_set_write_fnc(xfer, jabber_si_xfer_ibb_write);
+		purple_xfer_get_io_ops(xfer)->write = jabber_si_xfer_ibb_write;
 
 		jsx->ibb_buffer =
 			purple_circular_buffer_new(jabber_ibb_session_get_max_data_size(jsx->ibb_session));
@@ -1459,8 +1459,7 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 
 	who = g_strdup_printf("%s/%s", who_v[0], resource);
 	g_strfreev(who_v);
-	g_free(xfer->who);
-	xfer->who = who;
+	purple_xfer_set_remote_user(xfer, who);
 
 	if (jbr && jabber_resource_know_capabilities(jbr)) {
 		char *msg;
@@ -1617,6 +1616,19 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 	}
 }
 
+static PurpleXferIoOps send_ops =
+{
+	jabber_si_xfer_init,         /* init */
+	NULL,                        /* request_denied */
+	NULL,                        /* start */
+	jabber_si_xfer_end,          /* end */
+	jabber_si_xfer_cancel_send,  /* cancel_send */
+	NULL,                        /* cancel_recv */
+	NULL,                        /* read */
+	NULL,                        /* write */
+	NULL,                        /* ack */
+};
+
 PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js;
@@ -1636,9 +1648,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 		jsx->ibb_session = NULL;
 
-		purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
-		purple_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
-		purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
+		purple_xfer_set_io_ops(xfer, &send_ops);
 
 		js->file_transfers = g_list_append(js->file_transfers, xfer);
 	}
@@ -1674,6 +1684,19 @@ jabber_si_thumbnail_cb(JabberData *data, gchar *alt, gpointer userdata)
 	purple_xfer_request(xfer);
 }
 #endif
+
+static PurpleXferIoOps recieve_ops =
+{
+	jabber_si_xfer_init,            /* init */
+	jabber_si_xfer_request_denied,  /* request_denied */
+	NULL,                           /* start */
+	jabber_si_xfer_end,             /* end */
+	NULL,                           /* cancel_send */
+	jabber_si_xfer_cancel_recv,     /* cancel_recv */
+	NULL,                           /* read */
+	NULL,                           /* write */
+	NULL,                           /* ack */
+};
 
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
                      const char *id, xmlnode *si)
@@ -1761,10 +1784,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	if(filesize > 0)
 		purple_xfer_set_size(xfer, filesize);
 
-	purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
-	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
-	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
-	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
+	purple_xfer_set_io_ops(xfer, &recieve_ops);
 
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
