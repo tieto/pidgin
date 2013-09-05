@@ -186,6 +186,19 @@ silcpurple_ftp_ask_name_ok(PurpleXfer *x)
 	xfer->completion(name, xfer->completion_context);
 }
 
+static PurpleXferIoOps askname_ops =
+{
+	NULL,  /* init */
+	NULL,  /* request_denied */
+	NULL,  /* start */
+	NULL,  /* end */
+	NULL,  /* cancel_send */
+	NULL,  /* cancel_recv */
+	NULL,  /* read */
+	NULL,  /* write */
+	NULL,  /* ack */
+};
+
 static void
 silcpurple_ftp_ask_name(SilcClient client,
 		      SilcClientConnection conn,
@@ -200,8 +213,11 @@ silcpurple_ftp_ask_name(SilcClient client,
 	xfer->completion = completion;
 	xfer->completion_context = completion_context;
 
-	purple_xfer_set_init_fnc(xfer->xfer, silcpurple_ftp_ask_name_ok);
-	purple_xfer_set_request_denied_fnc(xfer->xfer, silcpurple_ftp_ask_name_cancel);
+	askname_ops = *purple_xfer_get_io_ops(xfer->xfer);
+
+	askname_ops.init = silcpurple_ftp_ask_name_ok;
+	askname_ops.request_denied = silcpurple_ftp_ask_name_cancel;
+	purple_xfer_set_io_ops(xfer->xfer, &askname_ops);
 
 	/* Request to save the file */
 	purple_xfer_set_filename(xfer->xfer, remote_filename);
@@ -302,6 +318,19 @@ silcpurple_ftp_request_denied(PurpleXfer *x)
 
 }
 
+static PurpleXferIoOps recieve_ops =
+{
+	silcpurple_ftp_request_result,  /* init */
+	silcpurple_ftp_request_denied,  /* request_denied */
+	NULL,                           /* start */
+	NULL,                           /* end */
+	NULL,                           /* cancel_send */
+	silcpurple_ftp_cancel,          /* cancel_recv */
+	NULL,                           /* read */
+	NULL,                           /* write */
+	NULL,                           /* ack */
+};
+
 void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 			    SilcClientEntry client_entry, SilcUInt32 session_id,
 			    const char *hostname, SilcUInt16 port)
@@ -329,11 +358,8 @@ void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 		silc_free(xfer);
 		return;
 	}
-	purple_xfer_set_init_fnc(xfer->xfer, silcpurple_ftp_request_result);
-	purple_xfer_set_request_denied_fnc(xfer->xfer, silcpurple_ftp_request_denied);
-	purple_xfer_set_cancel_recv_fnc(xfer->xfer, silcpurple_ftp_cancel);
-	xfer->xfer->remote_ip = g_strdup(hostname);
-	xfer->xfer->remote_port = port;
+	purple_xfer_set_io_ops(xfer->xfer, &recieve_ops);
+	purple_xfer_start(xfer->xfer, -1, hostname, port);
 	purple_xfer_set_protocol_data(xfer->xfer, xfer);
 
 	/* File transfer request */
@@ -430,6 +456,19 @@ silcpurple_ftp_send_file_resolved(SilcClient client,
 	g_free(context);
 }
 
+static PurpleXferIoOps send_ops =
+{
+	silcpurple_ftp_send,            /* init */
+	silcpurple_ftp_request_denied,  /* request_denied */
+	NULL,                           /* start */
+	NULL,                           /* end */
+	silcpurple_ftp_send_cancel,     /* cancel_send */
+	NULL,                           /* cancel_recv */
+	NULL,                           /* read */
+	NULL,                           /* write */
+	NULL,                           /* ack */
+};
+
 PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 {
 	SilcPurple sg = purple_connection_get_protocol_data(gc);
@@ -461,9 +500,7 @@ PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 		silc_free(xfer);
 		return NULL;
 	}
-	purple_xfer_set_init_fnc(xfer->xfer, silcpurple_ftp_send);
-	purple_xfer_set_request_denied_fnc(xfer->xfer, silcpurple_ftp_request_denied);
-	purple_xfer_set_cancel_send_fnc(xfer->xfer, silcpurple_ftp_send_cancel);
+	purple_xfer_set_io_ops(xfer->xfer, &send_ops);
 	purple_xfer_set_protocol_data(xfer->xfer, xfer);
 
 	silc_free(clients);
