@@ -1468,6 +1468,7 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 			jsx->stream_method |= STREAM_METHOD_IBB;
 		if (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)) {
 			jabber_si_xfer_send_request(xfer);
+			g_free(who);
 			return;
 		}
 
@@ -1480,6 +1481,8 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 		jabber_disco_info_do(jsx->js, who,
 				jabber_si_xfer_send_disco_cb, xfer);
 	}
+
+	g_free(who);
 }
 
 static void resource_select_ok_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
