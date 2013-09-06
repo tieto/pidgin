@@ -1,7 +1,6 @@
 /**
  * @file whiteboard.h The PurpleWhiteboard core object
  */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -26,8 +25,17 @@
 #ifndef _PURPLE_WHITEBOARD_H_
 #define _PURPLE_WHITEBOARD_H_
 
+#define PURPLE_TYPE_WHITEBOARD             (purple_whiteboard_get_type())
+#define PURPLE_WHITEBOARD(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_WHITEBOARD, PurpleWhiteboard))
+#define PURPLE_WHITEBOARD_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_WHITEBOARD, PurpleWhiteboardClass))
+#define PURPLE_IS_WHITEBOARD(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_WHITEBOARD))
+#define PURPLE_IS_WHITEBOARD_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_WHITEBOARD))
+#define PURPLE_WHITEBOARD_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_WHITEBOARD, PurpleWhiteboardClass))
+
 /** @copydoc _PurpleWhiteboard */
 typedef struct _PurpleWhiteboard PurpleWhiteboard;
+/** @copydoc _PurpleWhiteboardClass */
+typedef struct _PurpleWhiteboardClass PurpleWhiteboardClass;
 
 /**
  * Whiteboard protocol operations
@@ -36,21 +44,20 @@ typedef struct _PurpleWhiteboardOps PurpleWhiteboardOps;
 
 #include "account.h"
 
-
 /**
  * The PurpleWhiteboard UI Operations
  */
 typedef struct _PurpleWhiteboardUiOps
 {
-	void (*create)(PurpleWhiteboard *wb);                                 /**< create function */
+	void (*create)(PurpleWhiteboard *wb);                                /**< create function */
 	void (*destroy)(PurpleWhiteboard *wb);                               /**< destory function */
 	void (*set_dimensions)(PurpleWhiteboard *wb, int width, int height); /**< set_dimensions function */
-	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);		/**< set the size and color of the brush */
+	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);       /**< set the size and color of the brush */
 	void (*draw_point)(PurpleWhiteboard *wb, int x, int y,
-					   int color, int size);                           /**< draw_point function */
+	                   int color, int size);                             /**< draw_point function */
 	void (*draw_line)(PurpleWhiteboard *wb, int x1, int y1,
-					  int x2, int y2,
-					  int color, int size);                            /**< draw_line function */
+	                  int x2, int y2,
+	                  int color, int size);                              /**< draw_line function */
 	void (*clear)(PurpleWhiteboard *wb);                                 /**< clear function */
 
 	void (*_purple_reserved1)(void);
@@ -79,12 +86,42 @@ struct _PurpleWhiteboardOps
 	void (*_purple_reserved4)(void);
 };
 
+/**
+ * A PurpleWhiteboard
+ */
+struct _PurpleWhiteboard
+{
+	/*< private >*/
+	GObject gparent;
+
+	/** The UI data associated with this whiteboard. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
+	 */
+	gpointer ui_data;
+};
+
+/** Base class for all #PurpleWhiteboard's */
+struct _PurpleWhiteboardClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
+
 G_BEGIN_DECLS
 
 /******************************************************************************/
 /** @name PurpleWhiteboard API                                                  */
 /******************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleWhiteboard object.
+ */
+GType purple_whiteboard_get_type(void);
 
 /**
  * Sets the UI operations
@@ -102,7 +139,7 @@ void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops);
 void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardOps *ops);
 
 /**
- * Creates a whiteboard
+ * Creates a new whiteboard
  *
  * @param account The account.
  * @param who     Who you're drawing with.
@@ -110,14 +147,7 @@ void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardOp
  *
  * @return The new whiteboard
  */
-PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state);
-
-/**
- * Destroys a whiteboard
- *
- * @param wb The whiteboard.
- */
-void purple_whiteboard_destroy(PurpleWhiteboard *wb);
+PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state);
 
 /**
  * Returns the whiteboard's account.

@@ -1062,7 +1062,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 						if(wb == NULL)
 						{
 							doodle_session *ds;
-							wb = purple_whiteboard_create(account, im->from,
+							wb = purple_whiteboard_new(account, im->from,
 											DOODLE_STATE_REQUESTED);
 							ds = purple_whiteboard_get_protocol_data(wb);
 							ds->imv_key = g_strdup(pair->value);
