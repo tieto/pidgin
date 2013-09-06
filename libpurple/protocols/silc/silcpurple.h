@@ -27,7 +27,7 @@
 #include "cmds.h"
 #include "conversation.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "notify.h"
 #include "protocol.h"
 #include "request.h"

@@ -25,7 +25,7 @@
 #define MSN_SLP_H
 
 #include "internal.h"
-#include "ft.h"
+#include "xfer.h"
 
 #include "session.h"
 #include "slpcall.h"

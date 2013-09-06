@@ -7,7 +7,6 @@ Cmds.xs
 Connection.xs
 Conversation.xs
 Debug.xs
-FT.xs
 Hash.xs
 ImgStore.xs
 Log.xs
@@ -34,6 +33,7 @@ Sound.xs
 Status.xs
 Stringref.xs
 Util.xs
+Xfer.xs
 XMLNode.xs
 MANIFEST
 typemap

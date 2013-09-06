@@ -53,7 +53,7 @@ typedef struct _PurpleProtocolInterface PurpleProtocolInterface;
 #include "connection.h"
 #include "conversations.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "imgstore.h"
 #include "media.h"
 #include "notify.h"

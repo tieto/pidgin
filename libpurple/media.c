@@ -198,8 +198,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 			G_PARAM_READABLE));
 
 	g_object_class_install_property(gobject_class, PROP_ACCOUNT,
-			g_param_spec_object("account", "PurpleAccount",
-			"The account this media session is on.", PURPLE_TYPE_ACCOUNT,
+			g_param_spec_pointer("account", "PurpleAccount",
+			"The account this media session is on.",
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_CONFERENCE_TYPE,

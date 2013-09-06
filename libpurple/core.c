@@ -32,7 +32,7 @@
 #include "core.h"
 #include "debug.h"
 #include "dnsquery.h"
-#include "ft.h"
+#include "xfer.h"
 #include "glibcompat.h"
 #include "http.h"
 #include "idle.h"

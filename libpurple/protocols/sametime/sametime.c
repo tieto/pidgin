@@ -36,7 +36,7 @@
 #include "circularbuffer.h"
 #include "conversation.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "imgstore.h"
 #include "mime.h"
 #include "notify.h"
@@ -2152,17 +2152,10 @@ static void ft_incoming_init(PurpleXfer *xfer) {
   */
 
   struct mwFileTransfer *ft;
-  FILE *fp;
 
   ft = purple_xfer_get_protocol_data(xfer);
 
-  fp = g_fopen(purple_xfer_get_local_filename(xfer), "wb");
-  if(! fp) {
-    mwFileTransfer_cancel(ft);
-    return;
-  }
-
-  xfer->dest_fp = fp;
+  purple_xfer_start(xfer, -1, NULL, 0);
   mwFileTransfer_accept(ft);
 }
 
@@ -2196,11 +2189,11 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
   DEBUG_INFO(" size: %u\n", mwFileTransfer_getFileSize(ft));
   DEBUG_INFO(" text: %s\n", NSTR(mwFileTransfer_getMessage(ft)));
 
-  xfer = purple_xfer_new(acct, PURPLE_XFER_RECEIVE, who);
+  xfer = purple_xfer_new(acct, PURPLE_XFER_TYPE_RECEIVE, who);
   if (xfer)
   {
-	purple_xfer_ref(xfer);
-	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) purple_xfer_unref);
+	g_object_ref(xfer);
+	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) g_object_unref);
 	purple_xfer_set_protocol_data(xfer, ft);
 
 	purple_xfer_set_init_fnc(xfer, ft_incoming_init);
@@ -2216,7 +2209,7 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
 }
 
 
-static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
+static void ft_send(struct mwFileTransfer *ft) {
   guchar buf[MW_FT_LEN];
   struct mwOpaque o = { MW_FT_LEN, buf };
   guint32 rem;
@@ -2227,7 +2220,7 @@ static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
   rem = mwFileTransfer_getRemaining(ft);
   if(rem < MW_FT_LEN) o.len = rem;
 
-  if(fread(buf, (size_t) o.len, 1, fp)) {
+  if(purple_xfer_read_file(xfer, buf, (size_t) o.len) > 0) {
 
     /* calculate progress and display it */
     purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + o.len);
@@ -2261,9 +2254,9 @@ static void mw_ft_opened(struct mwFileTransfer *ft) {
     g_return_if_reached();
   }
 
-  if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
-    xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
-    ft_send(ft, xfer->dest_fp);
+  if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
+    purple_xfer_start(xfer, -1, NULL, 0);
+    ft_send(ft);
   }
 }
 
@@ -2296,7 +2289,7 @@ static void mw_ft_closed(struct mwFileTransfer *ft, guint32 code) {
       purple_xfer_cancel_remote(xfer);
 
       /* drop the stolen reference */
-      purple_xfer_unref(xfer);
+      g_object_unref(xfer);
       return;
     }
   }
@@ -2314,18 +2307,12 @@ static void mw_ft_recv(struct mwFileTransfer *ft,
   */
 
   PurpleXfer *xfer;
-  FILE *fp;
-  size_t wc;
 
   xfer = mwFileTransfer_getClientData(ft);
   g_return_if_fail(xfer != NULL);
 
-  fp = xfer->dest_fp;
-  g_return_if_fail(fp != NULL);
-
   /* we must collect and save our precious data */
-  wc = fwrite(data->data, 1, data->len, fp);
-  if (wc != data->len) {
+  if (!purple_xfer_write_file(xfer, data->data, data->len)) {
     DEBUG_ERROR("failed to write data\n");
     purple_xfer_cancel_local(xfer);
     return;
@@ -2352,7 +2339,7 @@ static void mw_ft_ack(struct mwFileTransfer *ft) {
     purple_xfer_end(xfer);
 
   } else if(mwFileTransfer_isOpen(ft)) {
-    ft_send(ft, xfer->dest_fp);
+    ft_send(ft);
   }
 }
 
@@ -5044,7 +5031,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   if(! fp) {
     char *msg = g_strdup_printf(_("Error reading file %s: \n%s\n"),
 				filename, g_strerror(errno));
-    purple_xfer_error(purple_xfer_get_type(xfer), acct, purple_xfer_get_remote_user(xfer), msg);
+    purple_xfer_error(purple_xfer_get_xfer_type(xfer), acct, purple_xfer_get_remote_user(xfer), msg);
     g_free(msg);
     g_free(remote_user);
     return;
@@ -5058,8 +5045,8 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
 
   ft = mwFileTransfer_new(srvc, &idb, NULL, filename, filesize);
 
-  purple_xfer_ref(xfer);
-  mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) purple_xfer_unref);
+  g_object_ref(xfer);
+  mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) g_object_unref);
   purple_xfer_set_protocol_data(xfer, ft);
 
   mwFileTransfer_offer(ft);
@@ -5082,7 +5069,7 @@ static PurpleXfer *mw_protocol_new_xfer(PurpleConnection *gc, const char *who) {
 
   acct = purple_connection_get_account(gc);
 
-  xfer = purple_xfer_new(acct, PURPLE_XFER_SEND, who);
+  xfer = purple_xfer_new(acct, PURPLE_XFER_TYPE_SEND, who);
   if (xfer)
   {
     purple_xfer_set_init_fnc(xfer, ft_outgoing_init);

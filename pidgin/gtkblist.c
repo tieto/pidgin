@@ -49,7 +49,7 @@
 #include "gtkconv.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
-#include "gtkft.h"
+#include "gtkxfer.h"
 #include "gtkimhtml.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"

@@ -24,7 +24,7 @@
 #include "internal.h"
 #include "irc.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "notify.h"
 #include "network.h"
 
@@ -111,7 +111,7 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 	}
 	i++;
 
-	xfer = purple_xfer_new(irc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(irc->account, PURPLE_XFER_TYPE_RECEIVE, from);
 	if (xfer)
 	{
 		xd = g_new0(struct irc_xfer_rx_data, 1);
@@ -291,7 +291,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 
 	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL
 			|| purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_REMOTE) {
-		purple_xfer_unref(xfer);
+		g_object_unref(xfer);
 		return;
 	}
 
@@ -299,7 +299,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	gc = purple_account_get_connection(purple_xfer_get_account(xfer));
 	irc = purple_connection_get_protocol_data(gc);
 
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 
 	if (sock < 0) {
 		purple_notify_error(gc, NULL, _("File Transfer Failed"),
@@ -336,13 +336,13 @@ static void irc_dccsend_send_init(PurpleXfer *xfer) {
 
 	purple_xfer_set_filename(xfer, g_path_get_basename(purple_xfer_get_local_filename(xfer)));
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 
 	/* Create a listening socket */
 	xd->listen_data = purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM, TRUE,
 			irc_dccsend_network_listen_cb, xfer);
 	if (xd->listen_data == NULL) {
-		purple_xfer_unref(xfer);
+		g_object_unref(xfer);
 		purple_notify_error(gc, NULL, _("File Transfer Failed"),
 		                    _("Unable to open a listening port."));
 		purple_xfer_cancel_local(xfer);
@@ -355,7 +355,7 @@ PurpleXfer *irc_dccsend_new_xfer(PurpleConnection *gc, const char *who) {
 	struct irc_xfer_send_data *xd;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_TYPE_SEND, who);
 	if (xfer)
 	{
 		xd = g_new0(struct irc_xfer_send_data, 1);

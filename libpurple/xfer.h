@@ -1,5 +1,5 @@
 /**
- * @file ft.h File Transfer API
+ * @file xfer.h File Transfer API
  * @ingroup core
  * @see @ref xfer-signals
  */
@@ -24,15 +24,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_FT_H_
-#define _PURPLE_FT_H_
+#ifndef _PURPLE_XFER_H_
+#define _PURPLE_XFER_H_
 
-#define PURPLE_TYPE_XFER  (purple_xfer_get_g_type())
+#define PURPLE_TYPE_XFER             (purple_xfer_get_type())
+#define PURPLE_XFER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_XFER, PurpleXfer))
+#define PURPLE_XFER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_XFER, PurpleXferClass))
+#define PURPLE_IS_XFER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_XFER))
+#define PURPLE_IS_XFER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_XFER))
+#define PURPLE_XFER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_XFER, PurpleXferClass))
 
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
+/** @copydoc _PurpleXfer */
 typedef struct _PurpleXfer PurpleXfer;
+/** @copydoc _PurpleXferClass */
+typedef struct _PurpleXferClass PurpleXferClass;
 
 #include <glib.h>
 #include <stdio.h>
@@ -44,9 +52,9 @@ typedef struct _PurpleXfer PurpleXfer;
  */
 typedef enum
 {
-	PURPLE_XFER_UNKNOWN = 0,  /**< Unknown file transfer type. */
-	PURPLE_XFER_SEND,         /**< File sending.               */
-	PURPLE_XFER_RECEIVE       /**< File receiving.             */
+	PURPLE_XFER_TYPE_UNKNOWN = 0,  /**< Unknown file transfer type. */
+	PURPLE_XFER_TYPE_SEND,         /**< File sending.               */
+	PURPLE_XFER_TYPE_RECEIVE       /**< File receiving.             */
 
 } PurpleXferType;
 
@@ -62,7 +70,7 @@ typedef enum
 	PURPLE_XFER_STATUS_DONE,          /**< The xfer completed successfully. */
 	PURPLE_XFER_STATUS_CANCEL_LOCAL,  /**< The xfer was cancelled by us. */
 	PURPLE_XFER_STATUS_CANCEL_REMOTE  /**< The xfer was cancelled by the other end, or we couldn't connect. */
-} PurpleXferStatusType;
+} PurpleXferStatus;
 
 /**
  * File transfer UI operations.
@@ -131,59 +139,25 @@ typedef struct
  */
 struct _PurpleXfer
 {
-	guint ref;                    /**< The reference count.                */
-	PurpleXferType type;            /**< The type of transfer.               */
+	/*< private >*/
+	GObject gparent;
 
-	PurpleAccount *account;         /**< The account.                        */
-
-	char *who;                    /**< The person on the other end of the
-	                                   transfer.                           */
-
-	char *message;                /**< A message sent with the request     */
-	char *filename;               /**< The name sent over the network.     */
-	char *local_filename;         /**< The name on the local hard drive.   */
-	goffset size;                 /**< The size of the file.               */
-
-	FILE *dest_fp;                /**< The destination file pointer.       */
-
-	char *remote_ip;              /**< The remote IP address.              */
-	int local_port;               /**< The local port.                     */
-	int remote_port;              /**< The remote port.                    */
-
-	int fd;                       /**< The socket file descriptor.         */
-	int watcher;                  /**< Watcher.                            */
-
-	goffset bytes_sent;           /**< The number of bytes sent.           */
-	goffset bytes_remaining;      /**< The number of bytes remaining.      */
-	time_t start_time;            /**< When the transfer of data began.    */
-	time_t end_time;              /**< When the transfer of data ended.    */
-
-	size_t current_buffer_size;   /**< This gradually increases for fast
-	                                   network connections. */
-
-	PurpleXferStatusType status;    /**< File Transfer's status.             */
-
-	/** I/O operations, which should be set by the protocol using
-	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
-	 *  mandatory; all others are optional.
+	/** The UI data associated with this file transfer. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
 	 */
-	struct
-	{
-		void (*init)(PurpleXfer *xfer);
-		void (*request_denied)(PurpleXfer *xfer);
-		void (*start)(PurpleXfer *xfer);
-		void (*end)(PurpleXfer *xfer);
-		void (*cancel_send)(PurpleXfer *xfer);
-		void (*cancel_recv)(PurpleXfer *xfer);
-		gssize (*read)(guchar **buffer, PurpleXfer *xfer);
-		gssize (*write)(const guchar *buffer, size_t size, PurpleXfer *xfer);
-		void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
-	} ops;
+	gpointer ui_data;
+};
 
-	PurpleXferUiOps *ui_ops;            /**< UI-specific operations. */
-	void *ui_data;                    /**< UI-specific data.       */
+/** Base class for all #PurpleXfer's */
+struct _PurpleXferClass
+{
+	/*< private >*/
+	GObjectClass parent_class;
 
-	void *proto_data;                 /**< protocol-specific data.     */
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 G_BEGIN_DECLS
@@ -194,18 +168,16 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Returns the GType for the PurpleXfer boxed structure.
- * TODO Boxing of PurpleXfer is a temporary solution to having a GType for
- *      file transfers. This should rather be a GObject instead of a GBoxed.
+ * Returns the GType for the PurpleXfer object.
  */
-GType purple_xfer_get_g_type(void);
+GType purple_xfer_get_type(void);
 
 /**
  * Creates a new file transfer handle.
  * This is called by protocols.
  * The handle starts with a ref count of 1, and this reference
  * is owned by the core. The protocol normally does not need to
- * purple_xfer_ref or unref.
+ * g_object_ref or unref.
  *
  * @param account The account sending or receiving the file.
  * @param type    The type of file transfer.
@@ -215,32 +187,6 @@ GType purple_xfer_get_g_type(void);
  */
 PurpleXfer *purple_xfer_new(PurpleAccount *account,
 								PurpleXferType type, const char *who);
-
-/**
- * Returns all xfers
- *
- * @return all current xfers with refs
- */
-GList *purple_xfers_get_all(void);
-
-/**
- * Increases the reference count on a PurpleXfer.
- * Please call purple_xfer_unref later.
- *
- * @param xfer A file transfer handle.
- */
-void purple_xfer_ref(PurpleXfer *xfer);
-
-/**
- * Decreases the reference count on a PurpleXfer.
- * If the reference reaches 0, purple_xfer_destroy (an internal function)
- * will destroy the xfer. It calls the ui destroy cb first.
- * Since the core keeps a ref on the xfer, only an erroneous call to
- * this function will destroy the xfer while still in use.
- *
- * @param xfer A file transfer handle.
- */
-void purple_xfer_unref(PurpleXfer *xfer);
 
 /**
  * Requests confirmation for a file transfer from the user. If receiving
@@ -293,7 +239,7 @@ int purple_xfer_get_watcher(PurpleXfer *xfer);
  *
  * @return The type of the file transfer.
  */
-PurpleXferType purple_xfer_get_type(const PurpleXfer *xfer);
+PurpleXferType purple_xfer_get_xfer_type(const PurpleXfer *xfer);
 
 /**
  * Returns the account the file transfer is using.
@@ -303,6 +249,14 @@ PurpleXferType purple_xfer_get_type(const PurpleXfer *xfer);
  * @return The account.
  */
 PurpleAccount *purple_xfer_get_account(const PurpleXfer *xfer);
+
+/**
+ * Sets the name of the remote user.
+ *
+ * @param xfer The file transfer.
+ * @param who  The name of the remote user.
+ */
+void purple_xfer_set_remote_user(PurpleXfer *xfer, const char *who);
 
 /**
  * Returns the name of the remote user.
@@ -320,7 +274,7 @@ const char *purple_xfer_get_remote_user(const PurpleXfer *xfer);
  *
  * @return The status.
  */
-PurpleXferStatusType purple_xfer_get_status(const PurpleXfer *xfer);
+PurpleXferStatus purple_xfer_get_status(const PurpleXfer *xfer);
 
 /**
  * Returns true if the file transfer was cancelled.
@@ -471,15 +425,24 @@ void purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed);
  * @param xfer      The file transfer.
  * @param status    The current status.
  */
-void purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status);
+void purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatus status);
 
 /**
- * Sets the filename for the file transfer.
+ * Sets the message for the file transfer.
  *
  * @param xfer     The file transfer.
  * @param message The message.
  */
 void purple_xfer_set_message(PurpleXfer *xfer, const char *message);
+
+/**
+ * Returns the message for the file transfer.
+ *
+ * @param xfer     The file transfer.
+ *
+ * @return The message.
+ */
+const char *purple_xfer_get_message(const PurpleXfer *xfer);
 
 /**
  * Sets the filename for the file transfer.
@@ -838,9 +801,16 @@ gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer);
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/** @name File Transfer Subsystem API                                     */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns all xfers
+ *
+ * @return all current xfers with refs
+ */
+GList *purple_xfers_get_all(void);
 
 /**
  * Returns the handle to the file transfer subsystem
@@ -877,5 +847,5 @@ PurpleXferUiOps *purple_xfers_get_ui_ops(void);
 
 G_END_DECLS
 
-#endif /* _PURPLE_FT_H_ */
+#endif /* _PURPLE_XFER_H_ */
 

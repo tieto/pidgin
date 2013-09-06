@@ -26,7 +26,7 @@ typedef struct group *Pidgin__Group;
 #include "gtkconvwin.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
-#include "gtkft.h"
+#include "gtkxfer.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
@@ -59,7 +59,7 @@ typedef PidginUnseenState		Pidgin__UnseenState;
 typedef PidginWindow *			Pidgin__Conversation__Window;
 typedef PidginConvPlacementFunc		Pidgin__Conversation__PlacementFunc;
 
-/* gtkft.h */
+/* gtkxfer.h */
 typedef PidginXferDialog *		Pidgin__Xfer__Dialog;
 
 /* gtkimhtml.h */

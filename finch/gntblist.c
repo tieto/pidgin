@@ -43,7 +43,7 @@
 #include "gntcolors.h"
 #include "gntcombobox.h"
 #include "gntentry.h"
-#include "gntft.h"
+#include "gntxfer.h"
 #include "gntlabel.h"
 #include "gntline.h"
 #include "gntlog.h"

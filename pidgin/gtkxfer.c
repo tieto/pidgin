@@ -1,5 +1,5 @@
 /**
- * @file gtkft.c GTK+ File Transfer UI
+ * @file gtkxfer.c GTK+ File Transfer UI
  * @ingroup pidgin
  */
 
@@ -28,11 +28,11 @@
 
 #include "debug.h"
 #include "notify.h"
-#include "ft.h"
+#include "xfer.h"
 #include "protocol.h"
 #include "util.h"
 
-#include "gtkft.h"
+#include "gtkxfer.h"
 #include "prefs.h"
 #include "pidginstock.h"
 #include "gtkutils.h"
@@ -267,7 +267,7 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 		g_object_unref(pixbuf);
 	}
 
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE) {
 		gtk_label_set_markup(GTK_LABEL(dialog->local_user_desc_label),
 							 _("<b>Receiving As:</b>"));
 		gtk_label_set_markup(GTK_LABEL(dialog->remote_user_desc_label),
@@ -286,7 +286,7 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 	gtk_label_set_text(GTK_LABEL(dialog->protocol_label),
 								 purple_account_get_protocol_name(purple_xfer_get_account(xfer)));
 
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE) {
 		gtk_label_set_text(GTK_LABEL(dialog->filename_label),
 					   purple_xfer_get_filename(xfer));
 	} else {
@@ -343,13 +343,13 @@ update_buttons(PidginXferDialog *dialog, PurpleXfer *xfer)
 
 #ifdef _WIN32
 		/* If using Win32... */
-		if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+		if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE) {
 			gtk_widget_set_sensitive(dialog->open_button, TRUE);
 		} else {
 			gtk_widget_set_sensitive(dialog->open_button, FALSE);
 		}
 #else
-		if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+		if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE) {
 			gtk_widget_set_sensitive(dialog->open_button, TRUE);
 		} else {
 			gtk_widget_set_sensitive (dialog->open_button, FALSE);
@@ -860,7 +860,7 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 
 	data = purple_xfer_get_ui_data(xfer);
 	data->in_list = TRUE;
@@ -869,13 +869,13 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 
 	data->last_updated_time = 0;
 
-	type = purple_xfer_get_type(xfer);
+	type = purple_xfer_get_xfer_type(xfer);
 
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
-									(type == PURPLE_XFER_RECEIVE
+									(type == PURPLE_XFER_TYPE_RECEIVE
 									 ? PIDGIN_STOCK_DOWNLOAD
 									 : PIDGIN_STOCK_UPLOAD),
 									GTK_ICON_SIZE_MENU, NULL);
@@ -888,7 +888,7 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 	gtk_list_store_set(dialog->model, &data->iter,
 					   COLUMN_STATUS, pixbuf,
 					   COLUMN_PROGRESS, 0,
-					   COLUMN_FILENAME, (type == PURPLE_XFER_RECEIVE)
+					   COLUMN_FILENAME, (type == PURPLE_XFER_TYPE_RECEIVE)
 					                     ? purple_xfer_get_filename(xfer)
 							     : lfilename,
 					   COLUMN_SIZE, size_str,
@@ -936,7 +936,7 @@ pidgin_xfer_dialog_remove_xfer(PidginXferDialog *dialog,
 	ensure_row_selected(dialog);
 
 	update_title_progress(dialog);
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 void

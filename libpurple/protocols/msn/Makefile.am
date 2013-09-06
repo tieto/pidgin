@@ -16,6 +16,8 @@ MSNSOURCES = \
 	directconn.h \
 	error.c \
 	error.h \
+	ft.c \
+	ft.h \
 	group.c \
 	group.h \
 	history.c \
@@ -70,8 +72,6 @@ MSNSOURCES = \
 	user.h \
 	userlist.c \
 	userlist.h \
-	xfer.c \
-	xfer.h \
 	msnutils.c \
 	msnutils.h
 

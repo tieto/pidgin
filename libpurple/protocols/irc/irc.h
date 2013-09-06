@@ -30,7 +30,7 @@
 #endif
 
 #include "circularbuffer.h"
-#include "ft.h"
+#include "xfer.h"
 #include "roomlist.h"
 #include "sslconn.h"
 

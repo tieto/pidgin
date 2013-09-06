@@ -304,7 +304,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	offset = msn_p2p_info_get_offset(info);
 	if (offset < real_size)
 	{
-		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_type(slpmsg->slpcall->xfer) == PURPLE_XFER_SEND &&
+		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_xfer_type(slpmsg->slpcall->xfer) == PURPLE_XFER_TYPE_SEND &&
 				purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
 			len = MIN(MSN_SBCONN_MAX_SIZE, slpmsg->slpcall->u.outgoing.len);
@@ -462,15 +462,15 @@ init_first_msg(MsnSlpLink *slplink, MsnP2PInfo *info)
 					slpmsg->ft = TRUE;
 					slpmsg->slpcall->xfer_msg = slpmsg;
 
-					purple_xfer_ref(xfer);
+					g_object_ref(xfer);
 					purple_xfer_start(xfer,	-1, NULL, 0);
 
 					if (purple_xfer_get_protocol_data(xfer) == NULL) {
-						purple_xfer_unref(xfer);
+						g_object_unref(xfer);
 						msn_slpmsg_destroy(slpmsg);
 						g_return_val_if_reached(NULL);
 					} else {
-						purple_xfer_unref(xfer);
+						g_object_unref(xfer);
 					}
 				}
 			}

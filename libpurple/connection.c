@@ -695,6 +695,7 @@ purple_connection_constructed(GObject *object)
 
 	g_object_get(gc, PROP_ACCOUNT_S, &account, NULL);
 	purple_account_set_connection(account, gc);
+	g_object_unref(account);
 
 	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
 }

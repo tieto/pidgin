@@ -24,7 +24,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "proxy.h"
-#include "ft.h"
+#include "xfer.h"
 #include "buddy.h"
 #include "bonjour.h"
 #include "bonjour_ft.h"
@@ -134,7 +134,7 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 
 	/* We can't allow the server side to close the connection until the client is complete,
 	 * otherwise there is a RST resulting in an error on the client side */
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && purple_xfer_is_completed(xfer)) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND && purple_xfer_is_completed(xfer)) {
 		struct socket_cleanup *sc = g_new0(struct socket_cleanup, 1);
 		sc->fd = purple_xfer_get_fd(xfer);
 		purple_xfer_set_fd(xfer, -1);
@@ -355,7 +355,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_TYPE_SEND, who);
 	xep_xfer = g_new0(XepXfer, 1);
 	purple_xfer_set_protocol_data(xfer, xep_xfer);
 	xep_xfer->data = bd;
@@ -416,14 +416,14 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	/* Assume it is the first IP. We could do something like keep track of which one is in use or something. */
 	if (bb->ips)
 		xf->buddy_ip = g_strdup(bb->ips->data);
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
 		/* initiate file transfer, send SI offer. */
-		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");
+		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_TYPE_SEND.\n");
 		xep_ft_si_offer(xfer, purple_xfer_get_remote_user(xfer));
 	} else {
 		/* accept file transfer request, send SI result. */
 		xep_ft_si_result(xfer, purple_xfer_get_remote_user(xfer));
-		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_RECEIVE.\n");
+		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_TYPE_RECEIVE.\n");
 	}
 }
 
@@ -740,7 +740,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
 
 	if (iq_id && xfer != NULL)
-		xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
+		xep_ft_si_reject(bd, iq_id, purple_xfer_get_remote_user(xfer), "404", "cancel");
 }
 
 static void
@@ -761,7 +761,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	purple_debug_info("bonjour", "bonjour-xfer-receive.\n");
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_TYPE_RECEIVE, from);
 	xf = g_new0(XepXfer, 1);
 	purple_xfer_set_protocol_data(xfer, xf);
 	xf->data = bd;

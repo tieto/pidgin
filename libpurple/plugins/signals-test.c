@@ -28,7 +28,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "signals.h"
 #include "version.h"
 #include "status.h"

@@ -1,5 +1,5 @@
 /**
- * @file gntft.c GNT File Transfer UI
+ * @file gntxfer.c GNT File Transfer UI
  * @ingroup finch
  */
 
@@ -35,11 +35,11 @@
 
 #include "debug.h"
 #include "notify.h"
-#include "ft.h"
+#include "xfer.h"
 #include "protocol.h"
 #include "util.h"
 
-#include "gntft.h"
+#include "gntxfer.h"
 #include "prefs.h"
 
 typedef struct
@@ -169,7 +169,7 @@ static void
 stop_button_cb(GntButton *button)
 {
 	PurpleXfer *selected_xfer = gnt_tree_get_selection_data(GNT_TREE(xfer_dialog->tree));
-	PurpleXferStatusType status;
+	PurpleXferStatus status;
 
 	if (!selected_xfer)
 		return;
@@ -297,7 +297,7 @@ finch_xfer_dialog_add_xfer(PurpleXfer *xfer)
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	purple_xfer_ref(xfer);
+	g_object_ref(xfer);
 
 	data = purple_xfer_get_ui_data(xfer);
 	data->in_list = TRUE;
@@ -306,7 +306,7 @@ finch_xfer_dialog_add_xfer(PurpleXfer *xfer)
 
 	data->last_updated_time = 0;
 
-	type = purple_xfer_get_type(xfer);
+	type = purple_xfer_get_xfer_type(xfer);
 
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
@@ -317,7 +317,7 @@ finch_xfer_dialog_add_xfer(PurpleXfer *xfer)
 	lfilename = utf8;
 	gnt_tree_add_row_last(GNT_TREE(xfer_dialog->tree), xfer,
 		gnt_tree_create_row(GNT_TREE(xfer_dialog->tree),
-			"0.0", (type == PURPLE_XFER_RECEIVE) ? purple_xfer_get_filename(xfer) : lfilename,
+			"0.0", (type == PURPLE_XFER_TYPE_RECEIVE) ? purple_xfer_get_filename(xfer) : lfilename,
 			size_str, "0.0", "",_("Waiting for transfer to begin")), NULL);
 	g_free(lfilename);
 
@@ -355,7 +355,7 @@ finch_xfer_dialog_remove_xfer(PurpleXfer *xfer)
 		finch_xfer_dialog_destroy();
 	else
 		update_title_progress();
-	purple_xfer_unref(xfer);
+	g_object_unref(xfer);
 }
 
 void
@@ -427,7 +427,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	}
 	data->last_updated_time = current_time;
 
-	send = (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND);
+	send = (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND);
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 	kbsec = g_strdup_printf(_("%.2f KiB/s"), kbps);
