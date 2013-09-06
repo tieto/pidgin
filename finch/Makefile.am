@@ -22,7 +22,6 @@ finch_SOURCES = \
 	gntconn.c \
 	gntconv.c \
 	gntdebug.c \
-	gntft.c \
 	finch.c \
 	gntidle.c \
 	gntlog.c \
@@ -36,7 +35,8 @@ finch_SOURCES = \
 	gntroomlist.c \
 	gntsound.c \
 	gntstatus.c \
-	gntui.c
+	gntui.c \
+	gntxfer.c
 
 finch_headers = \
 	gntaccount.h \
@@ -45,7 +45,6 @@ finch_headers = \
 	gntconn.h \
 	gntconv.h \
 	gntdebug.h \
-	gntft.h \
 	finch.h \
 	gntidle.h \
 	gntlog.h \
@@ -59,7 +58,8 @@ finch_headers = \
 	gntroomlist.h \
 	gntsound.h \
 	gntstatus.h \
-	gntui.h
+	gntui.h \
+	gntxfer.h
 
 finchincludedir=$(includedir)/finch
 finchinclude_HEADERS = \

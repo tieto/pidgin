@@ -1,5 +1,5 @@
 /**
- * @file gntft.c GNT File Transfer UI
+ * @file gntxfer.c GNT File Transfer UI
  * @ingroup finch
  */
 
