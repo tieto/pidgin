@@ -77,7 +77,6 @@ enum
 	PROP_0,
 	PROP_ACCOUNT,
 	PROP_FIELDS,
-	PROP_ROOMS,
 	PROP_IN_PROGRESS,
 	PROP_LAST
 };
@@ -96,26 +95,9 @@ void purple_roomlist_show_with_account(PurpleAccount *account)
 		ops->show_with_account(account);
 }
 
-PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
-{
-	PurpleRoomlist *list;
-
-	g_return_val_if_fail(account != NULL, NULL);
-
-	list = g_new0(PurpleRoomlist, 1);
-	priv->account = account;
-	priv->rooms = NULL;
-	priv->fields = NULL;
-	priv->ref = 1;
-
-	if (ops && ops->create)
-		ops->create(list);
-
-	return list;
-}
-
 static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r)
 {
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 	GList *l, *j;
 
 	for (l = priv->fields, j = r->fields; l && j; l = l->next, j = j->next) {
@@ -134,28 +116,6 @@ static void purple_roomlist_field_destroy(PurpleRoomlistField *f)
 	g_free(f->label);
 	g_free(f->name);
 	g_free(f);
-}
-
-static void purple_roomlist_destroy(PurpleRoomlist *list)
-{
-	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
-	GList *l;
-
-	purple_debug_misc("roomlist", "destroying list %p\n", list);
-
-	if (ops && ops->destroy)
-		ops->destroy(list);
-
-	for (l = priv->rooms; l; l = l->next) {
-		PurpleRoomlistRoom *r = l->data;
-		purple_roomlist_room_destroy(list, r);
-	}
-	g_list_free(priv->rooms);
-
-	g_list_foreach(priv->fields, (GFunc)purple_roomlist_field_destroy, NULL);
-	g_list_free(priv->fields);
-
-	g_free(list);
 }
 
 PurpleAccount *purple_roomlist_get_account(PurpleRoomlist *list)
@@ -322,13 +282,182 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
 
 /*@}*/
 
-/* TODO */
 /**************************************************************************/
 /** @name Room List GObject code                                          */
 /**************************************************************************/
 /*@{*/
 
+/* GObject Property names */
+#define PROP_ACCOUNT_S      "account"
+#define PROP_FIELDS_S       "fields"
+#define PROP_IN_PROGRESS_S  "in-progress"
 
+/* Set method for GObject properties */
+static void
+purple_roomlist_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleRoomlist *list = PURPLE_ROOMLIST(obj);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
+
+	switch (param_id) {
+		case PROP_ACCOUNT:
+			priv->account = g_value_get_object(value);
+			break;
+		case PROP_FIELDS:
+			purple_roomlist_set_fields(list, g_value_get_pointer(value));
+			break;
+		case PROP_IN_PROGRESS:
+			purple_roomlist_set_in_progress(list, g_value_get_boolean(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+purple_roomlist_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleRoomlist *list = PURPLE_ROOMLIST(obj);
+
+	switch (param_id) {
+		case PROP_ACCOUNT:
+			g_value_set_object(value, purple_roomlist_get_account(list));
+			break;
+		case PROP_FIELDS:
+			g_value_set_pointer(value, purple_roomlist_get_fields(list));
+			break;
+		case PROP_IN_PROGRESS:
+			g_value_set_boolean(value, purple_roomlist_get_in_progress(list));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Called when done constructing */
+static void
+purple_roomlist_constructed(GObject *object)
+{
+	PurpleRoomlist *list = PURPLE_ROOMLIST(object);
+
+	parent_class->constructed(object);
+
+	if (ops && ops->create)
+		ops->create(list);
+}
+
+/* GObject dispose function */
+static void
+purple_roomlist_dispose(GObject *object)
+{
+	PurpleRoomlist *list = PURPLE_ROOMLIST(object);
+
+	purple_debug_misc("roomlist", "destroying list %p\n", list);
+
+	if (ops && ops->destroy)
+		ops->destroy(list);
+
+	parent_class->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_roomlist_finalize(GObject *object)
+{
+	PurpleRoomlist *list = PURPLE_ROOMLIST(object);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
+	GList *l;
+
+	for (l = priv->rooms; l; l = l->next) {
+		PurpleRoomlistRoom *r = l->data;
+		purple_roomlist_room_destroy(list, r);
+	}
+	g_list_free(priv->rooms);
+
+	g_list_foreach(priv->fields, (GFunc)purple_roomlist_field_destroy, NULL);
+	g_list_free(priv->fields);
+
+	parent_class->finalize(object);
+}
+
+/* Class initializer function */
+static void
+purple_roomlist_class_init(PurpleRoomlistClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->dispose = purple_roomlist_dispose;
+	obj_class->finalize = purple_roomlist_finalize;
+	obj_class->constructed = purple_roomlist_constructed;
+
+	/* Setup properties */
+	obj_class->get_property = purple_roomlist_get_property;
+	obj_class->set_property = purple_roomlist_set_property;
+
+	g_object_class_install_property(obj_class, PROP_ACCOUNT,
+			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
+				_("The account for the room list."),
+				PURPLE_TYPE_ACCOUNT,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+			);
+
+	g_object_class_install_property(obj_class, PROP_FIELDS,
+			g_param_spec_pointer(PROP_FIELDS_S, _("Fields"),
+				_("The list of fields for a roomlist."),
+				G_PARAM_READWRITE)
+			);
+
+	g_object_class_install_property(obj_class, PROP_IN_PROGRESS,
+			g_param_spec_boolean(PROP_IN_PROGRESS_S, _("In progress"),
+				_("Whether the room list is being fetched."), FALSE,
+				G_PARAM_READWRITE)
+			);
+
+	g_type_class_add_private(klass, sizeof(PurpleRoomlistPrivate));
+}
+
+GType
+purple_roomlist_get_type(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleRoomlistClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_roomlist_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleRoomlist),
+			0,
+			NULL,
+			NULL,
+		};
+
+		type = g_type_register_static(G_TYPE_OBJECT, "PurpleRoomlist",
+				&info, 0);
+	}
+
+	return type;
+}
+
+PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return g_object_new(PURPLE_TYPE_ROOMLIST,
+		PROP_ACCOUNT_S, account,
+		NULL
+	);
+}
 
 /*@}*/
 
