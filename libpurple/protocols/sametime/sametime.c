@@ -2181,7 +2181,7 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
   DEBUG_INFO(" size: %u\n", mwFileTransfer_getFileSize(ft));
   DEBUG_INFO(" text: %s\n", NSTR(mwFileTransfer_getMessage(ft)));
 
-  xfer = purple_xfer_new(acct, PURPLE_XFER_RECEIVE, who);
+  xfer = purple_xfer_new(acct, PURPLE_XFER_TYPE_RECEIVE, who);
   if (xfer)
   {
 	g_object_ref(xfer);
@@ -2246,7 +2246,7 @@ static void mw_ft_opened(struct mwFileTransfer *ft) {
     g_return_if_reached();
   }
 
-  if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND) {
+  if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
     purple_xfer_start(xfer, -1, NULL, 0);
     ft_send(ft);
   }
@@ -5061,7 +5061,7 @@ static PurpleXfer *mw_prpl_new_xfer(PurpleConnection *gc, const char *who) {
 
   acct = purple_connection_get_account(gc);
 
-  xfer = purple_xfer_new(acct, PURPLE_XFER_SEND, who);
+  xfer = purple_xfer_new(acct, PURPLE_XFER_TYPE_SEND, who);
   if (xfer)
   {
     purple_xfer_set_init_fnc(xfer, ft_outgoing_init);

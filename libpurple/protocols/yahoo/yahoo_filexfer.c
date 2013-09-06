@@ -163,7 +163,7 @@ yahoo_xfer_init_15(PurpleXfer *xfer)
 	yd = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
 
-	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND)	{
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND)	{
 		gchar *filename;
 		filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
 		pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_15,
@@ -314,7 +314,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 
 	xfer_data = purple_xfer_get_protocol_data(xfer_old);
 	if(xfer_data
-	   && purple_xfer_get_xfer_type(xfer_old) == PURPLE_XFER_RECEIVE
+	   && purple_xfer_get_xfer_type(xfer_old) == PURPLE_XFER_TYPE_RECEIVE
 	   && xfer_data->filename_list) {
 		/* removing top of filename & size list completely */
 		g_free( xfer_data->filename_list->data );
@@ -351,7 +351,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 			purple_xfer_set_protocol_data(xfer_old, NULL);
 
 			/* Build the file transfer handle. */
-			xfer = yahoo_ft_new_xfer_struct(gc, PURPLE_XFER_RECEIVE, purple_xfer_get_remote_user(xfer_old));
+			xfer = yahoo_ft_new_xfer_struct(gc, PURPLE_XFER_TYPE_RECEIVE, purple_xfer_get_remote_user(xfer_old));
 
 			g_return_if_fail(xfer != NULL);
 
@@ -446,7 +446,7 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who)
 	xfer_data->gc = gc;
 
 	/* Build the file transfer handle. */
-	xfer = yahoo_ft_new_xfer_struct(gc, PURPLE_XFER_SEND, who);
+	xfer = yahoo_ft_new_xfer_struct(gc, PURPLE_XFER_TYPE_SEND, who);
 	if (xfer == NULL)
 	{
 		g_free(xfer_data);
@@ -731,7 +731,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	xfer_data->size_list = size_list;
 
 	/* Build the file transfer handle. */
-	xfer = yahoo_ft_new_xfer_struct(gc, PURPLE_XFER_RECEIVE, from);
+	xfer = yahoo_ft_new_xfer_struct(gc, PURPLE_XFER_TYPE_RECEIVE, from);
 
 	/* Set the info about the incoming file. */
 	utf8_filename = yahoo_string_decode(gc, filename, TRUE);
@@ -840,7 +840,7 @@ yahoo_process_filetrans_15_watcher(PurpleHttpConnection *hc,
 	PurpleXfer *xfer = _xfer;
 
 	if (reading_state !=
-		(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_RECEIVE))
+		(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE))
 	{
 		return;
 	}
@@ -858,7 +858,7 @@ static void yahoo_xfer_start(PurpleXfer *xfer)
 
 	req = yahoo_ft_new_req(xd);
 	purple_http_request_set_timeout(req, -1);
-	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_RECEIVE) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE) {
 		purple_http_request_set_max_len(req, -1);
 		purple_http_request_set_response_writer(req,
 			yahoo_process_filetrans_15_writer, xfer);

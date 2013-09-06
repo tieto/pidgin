@@ -111,7 +111,7 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 	}
 	i++;
 
-	xfer = purple_xfer_new(irc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(irc->account, PURPLE_XFER_TYPE_RECEIVE, from);
 	if (xfer)
 	{
 		xd = g_new0(struct irc_xfer_rx_data, 1);
@@ -355,7 +355,7 @@ PurpleXfer *irc_dccsend_new_xfer(PurpleConnection *gc, const char *who) {
 	struct irc_xfer_send_data *xd;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_TYPE_SEND, who);
 	if (xfer)
 	{
 		xd = g_new0(struct irc_xfer_send_data, 1);

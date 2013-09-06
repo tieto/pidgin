@@ -122,7 +122,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_init\n" );
 
-	if ( purple_xfer_get_xfer_type( xfer ) == PURPLE_XFER_SEND ) {
+	if ( purple_xfer_get_xfer_type( xfer ) == PURPLE_XFER_TYPE_SEND ) {
 		/* we are trying to send a file to MXit */
 
 		if ( purple_xfer_get_size( xfer ) > CP_MAX_FILESIZE ) {
@@ -158,7 +158,7 @@ static void mxit_xfer_start( PurpleXfer* xfer )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_start\n" );
 
-	if ( purple_xfer_get_xfer_type( xfer ) == PURPLE_XFER_SEND ) {
+	if ( purple_xfer_get_xfer_type( xfer ) == PURPLE_XFER_TYPE_SEND ) {
 		/*
 		 * the user wants to send a file to one of his contacts. we need to create
 		 * a buffer and copy the file data into memory and then we can send it to
@@ -232,7 +232,7 @@ static gssize mxit_xfer_write( const guchar* buffer, size_t size, PurpleXfer* xf
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_xfer_write: invalid internal mxit xfer data\n" );
 		return -1;
 	}
-	else if ( purple_xfer_get_xfer_type( xfer ) != PURPLE_XFER_SEND ) {
+	else if ( purple_xfer_get_xfer_type( xfer ) != PURPLE_XFER_TYPE_SEND ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_xfer_write: wrong xfer type received\n" );
 		return -1;
 	}
@@ -309,7 +309,7 @@ PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 	struct mxitxfer*	mx		= NULL;
 
 	/* (reference: "libpurple/xfer.h") */
-	xfer = purple_xfer_new( session->acc, PURPLE_XFER_SEND, who );
+	xfer = purple_xfer_new( session->acc, PURPLE_XFER_TYPE_SEND, who );
 
 	/* create file info and attach it to the file transfer */
 	mx = g_new0( struct mxitxfer, 1 );
@@ -365,7 +365,7 @@ void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, cons
 
 	purple_debug_info( MXIT_PLUGIN_ID, "File Offer: file=%s, from=%s, size=%i\n", filename, username, filesize );
 
-	xfer = purple_xfer_new( session->acc, PURPLE_XFER_RECEIVE, username );
+	xfer = purple_xfer_new( session->acc, PURPLE_XFER_TYPE_RECEIVE, username );
 	if ( xfer ) {
 		/* create a new mxit xfer struct for internal use */
 		mx = g_new0( struct mxitxfer, 1 );

@@ -190,7 +190,7 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 		return;
 
 	xfer = purple_xfer_new(purple_connection_get_account(js->gc),
-		PURPLE_XFER_RECEIVE, from);
+		PURPLE_XFER_TYPE_RECEIVE, from);
 	if (!xfer) {
 		g_free(url);
 		return;

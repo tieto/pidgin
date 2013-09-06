@@ -52,9 +52,9 @@ typedef struct _PurpleXferClass PurpleXferClass;
  */
 typedef enum
 {
-	PURPLE_XFER_UNKNOWN = 0,  /**< Unknown file transfer type. */
-	PURPLE_XFER_SEND,         /**< File sending.               */
-	PURPLE_XFER_RECEIVE       /**< File receiving.             */
+	PURPLE_XFER_TYPE_UNKNOWN = 0,  /**< Unknown file transfer type. */
+	PURPLE_XFER_TYPE_SEND,         /**< File sending.               */
+	PURPLE_XFER_TYPE_RECEIVE       /**< File receiving.             */
 
 } PurpleXferType;
 

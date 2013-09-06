@@ -321,7 +321,7 @@ void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 	xfer->session_id = session_id;
 	xfer->hostname = g_strdup(hostname);
 	xfer->port = port;
-	xfer->xfer = purple_xfer_new(xfer->sg->account, PURPLE_XFER_RECEIVE,
+	xfer->xfer = purple_xfer_new(xfer->sg->account, PURPLE_XFER_TYPE_RECEIVE,
 				     xfer->client_entry->nickname);
 	if (!xfer->xfer) {
 		silc_client_file_close(xfer->sg->client, xfer->sg->conn, xfer->session_id);
@@ -454,7 +454,7 @@ PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 
 	xfer->sg = sg;
 	xfer->client_entry = silc_dlist_get(clients);
-	xfer->xfer = purple_xfer_new(xfer->sg->account, PURPLE_XFER_SEND,
+	xfer->xfer = purple_xfer_new(xfer->sg->account, PURPLE_XFER_TYPE_SEND,
 				     xfer->client_entry->nickname);
 	if (!xfer->xfer) {
 		silc_free(xfer);

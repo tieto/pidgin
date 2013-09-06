@@ -83,7 +83,7 @@ msn_xfer_cancel(PurpleXfer *xfer)
 			g_free(content);
 			msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 
-			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND)
+			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND)
 				slpcall->wasted = TRUE;
 			else
 				msn_slpcall_destroy(slpcall);
@@ -100,7 +100,7 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 	g_return_val_if_fail(data != NULL, -1);
 	g_return_val_if_fail(len > 0, -1);
 
-	g_return_val_if_fail(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND, -1);
+	g_return_val_if_fail(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND, -1);
 
 	slpcall = purple_xfer_get_protocol_data(xfer);
 	/* Not sure I trust it'll be there */
@@ -124,7 +124,7 @@ msn_xfer_read(guchar **data, PurpleXfer *xfer)
 	g_return_val_if_fail(xfer != NULL, -1);
 	g_return_val_if_fail(data != NULL, -1);
 
-	g_return_val_if_fail(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_RECEIVE, -1);
+	g_return_val_if_fail(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE, -1);
 
 	slpcall = purple_xfer_get_protocol_data(xfer);
 	/* Not sure I trust it'll be there */

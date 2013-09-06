@@ -517,7 +517,7 @@ peer_connection_finalize_connection(PeerConnection *conn)
 	}
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 	{
-		if (purple_xfer_get_xfer_type(conn->xfer) == PURPLE_XFER_SEND)
+		if (purple_xfer_get_xfer_type(conn->xfer) == PURPLE_XFER_TYPE_SEND)
 		{
 			peer_oft_send_prompt(conn);
 		}
@@ -1110,7 +1110,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 	{
 		gchar *filename;
 
-		conn->xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE, bn);
+		conn->xfer = purple_xfer_new(account, PURPLE_XFER_TYPE_RECEIVE, bn);
 		if (conn->xfer)
 		{
 			purple_xfer_set_protocol_data(conn->xfer, conn);

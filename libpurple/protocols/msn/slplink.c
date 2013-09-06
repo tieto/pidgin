@@ -304,7 +304,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	offset = msn_p2p_info_get_offset(info);
 	if (offset < real_size)
 	{
-		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_xfer_type(slpmsg->slpcall->xfer) == PURPLE_XFER_SEND &&
+		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_xfer_type(slpmsg->slpcall->xfer) == PURPLE_XFER_TYPE_SEND &&
 				purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
 			len = MIN(MSN_SBCONN_MAX_SIZE, slpmsg->slpcall->u.outgoing.len);

@@ -883,7 +883,7 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 
 	session = purple_connection_get_protocol_data(gc);
 
-	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_TYPE_SEND, who);
 
 	g_return_val_if_fail(xfer != NULL, NULL);
 

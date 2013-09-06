@@ -5236,7 +5236,7 @@ oscar_new_xfer(PurpleConnection *gc, const char *who)
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
 
-	xfer = purple_xfer_new(account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(account, PURPLE_XFER_TYPE_SEND, who);
 	if (xfer)
 	{
 		purple_xfer_set_init_fnc(xfer, peer_oft_sendcb_init);

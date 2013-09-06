@@ -143,7 +143,7 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 	}
 
 	/* unknown file transfer type is assumed to be RECEIVE */
-	if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND)
+	if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND)
 	{
 		xmlnode *activate;
 		iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET, NS_BYTESTREAMS);
@@ -247,7 +247,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 			/* if we are the sender, open an IBB session, but not if we already
 			  did it, since we could have received the error <iq/> from the
 			  receiver already... */
-			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND
+			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND
 				&& !jsx->ibb_session) {
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 			} else {
@@ -293,7 +293,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		purple_proxy_info_set_port(jsx->gpi, streamhost->port);
 
 		/* unknown file transfer type is assumed to be RECEIVE */
-		if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND)
+		if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND)
 			dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", jsx->stream_id, jsx->js->user->node, jsx->js->user->domain,
 				jsx->js->user->resource, dstjid->node, dstjid->domain, dstjid->resource);
 		else
@@ -311,7 +311,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		g_free(dstaddr);
 
 		/* When selecting a streamhost, timeout after STREAMHOST_CONNECT_TIMEOUT seconds, otherwise it takes forever */
-		if (purple_xfer_get_xfer_type(xfer) != PURPLE_XFER_SEND && jsx->connect_data != NULL)
+		if (purple_xfer_get_xfer_type(xfer) != PURPLE_XFER_TYPE_SEND && jsx->connect_data != NULL)
 			jsx->connect_timeout = purple_timeout_add_seconds(
 				STREAMHOST_CONNECT_TIMEOUT, connect_timeout_cb, xfer);
 
@@ -734,7 +734,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
 			/* if we are the sender and haven't already opened an IBB
 			  session, do so now (we might already have failed to open
 			  the bytestream proxy ourselves when receiving this <iq/> */
-			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND
+			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND
 				&& !jsx->ibb_session) {
 				jabber_si_xfer_ibb_send_init(js, xfer);
 			} else {
@@ -776,7 +776,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
 			if (jsx->stream_method & STREAM_METHOD_IBB) {
 				purple_debug_info("jabber",
 					"jabber_si_connect_proxy_cb: trying to revert to IBB\n");
-				if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND) {
+				if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
 					jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 				} else {
 					jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
@@ -926,7 +926,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		if (jsx->stream_method & STREAM_METHOD_IBB) {
 			purple_debug_info("jabber",
 				"jabber_si_xfer_bytestreams_listen_cb: trying to revert to IBB\n");
-			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND) {
+			if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
 				/* if we are the sender, init the IBB session... */
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 			} else {
@@ -1313,7 +1313,7 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			jabber_iq_remove_callback_by_id(js, jsx->iq_id);
 		if (jsx->local_streamhost_fd >= 0)
 			close(jsx->local_streamhost_fd);
-		if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND && purple_xfer_get_fd(xfer) >= 0) {
+		if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND && purple_xfer_get_fd(xfer) >= 0) {
 			purple_debug_info("jabber", "remove port mapping\n");
 			purple_network_remove_port_mapping(purple_xfer_get_fd(xfer));
 		}
@@ -1500,7 +1500,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = purple_xfer_get_protocol_data(xfer);
 	JabberIq *iq;
-	if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND) {
+	if(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		char *resource;
@@ -1628,7 +1628,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 	js = purple_connection_get_protocol_data(gc);
 
-	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_TYPE_SEND, who);
 	if (xfer)
 	{
 		jsx = g_new0(JabberSIXfer, 1);
@@ -1754,7 +1754,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	jsx->stream_id = g_strdup(stream_id);
 	jsx->iq_id = g_strdup(id);
 
-	xfer = purple_xfer_new(purple_connection_get_account(js->gc), PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(js->gc), PURPLE_XFER_TYPE_RECEIVE, from);
 	g_return_if_fail(xfer != NULL);
 
 	purple_xfer_set_protocol_data(xfer, jsx);

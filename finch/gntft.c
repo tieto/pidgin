@@ -317,7 +317,7 @@ finch_xfer_dialog_add_xfer(PurpleXfer *xfer)
 	lfilename = utf8;
 	gnt_tree_add_row_last(GNT_TREE(xfer_dialog->tree), xfer,
 		gnt_tree_create_row(GNT_TREE(xfer_dialog->tree),
-			"0.0", (type == PURPLE_XFER_RECEIVE) ? purple_xfer_get_filename(xfer) : lfilename,
+			"0.0", (type == PURPLE_XFER_TYPE_RECEIVE) ? purple_xfer_get_filename(xfer) : lfilename,
 			size_str, "0.0", "",_("Waiting for transfer to begin")), NULL);
 	g_free(lfilename);
 
@@ -427,7 +427,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	}
 	data->last_updated_time = current_time;
 
-	send = (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_SEND);
+	send = (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND);
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 	kbsec = g_strdup_printf(_("%.2f KiB/s"), kbps);
