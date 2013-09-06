@@ -48,9 +48,22 @@ struct _PurpleWhiteboardPrivate
 	                                     send                                 */
 };
 
+/* GObject Property enums */
+enum
+{
+	PROP_0,
+	PROP_STATE,
+	PROP_ACCOUNT,
+	PROP_WHO,
+	PROP_DRAW_LIST,
+	PROP_LAST
+};
+
 /******************************************************************************
  * Globals
  *****************************************************************************/
+static GObjectClass *parent_class;
+
 static PurpleWhiteboardUiOps *whiteboard_ui_ops = NULL;
 /* static PurpleWhiteboardPrplOps *whiteboard_prpl_ops = NULL; */
 
@@ -73,57 +86,6 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
 	g_return_if_fail(priv != NULL);
 
 	priv->prpl_ops = ops;
-}
-
-PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state)
-{
-	PurpleWhiteboardPrivate *priv;
-	PurplePluginProtocolInfo *prpl_info;
-	PurpleWhiteboard *wb;
-
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(who     != NULL, NULL);
-
-	wb = g_new0(PurpleWhiteboard, 1);
-	priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
-
-	priv->account = account;
-	priv->state   = state;
-	priv->who     = g_strdup(who);
-
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(
-				purple_account_get_connection(account)));
-	purple_whiteboard_set_prpl_ops(wb, prpl_info->whiteboard_prpl_ops);
-
-	/* Start up protocol specifics */
-	if(priv->prpl_ops && priv->prpl_ops->start)
-		priv->prpl_ops->start(wb);
-
-	wbList = g_list_append(wbList, wb);
-
-	return wb;
-}
-
-void g_object_unref(PurpleWhiteboard *wb)
-{
-	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
-
-	g_return_if_fail(priv != NULL);
-
-	if(wb->ui_data)
-	{
-		/* Destroy frontend */
-		if(whiteboard_ui_ops && whiteboard_ui_ops->destroy)
-			whiteboard_ui_ops->destroy(wb);
-	}
-
-	/* Do protocol specific session ending procedures */
-	if(priv->prpl_ops && priv->prpl_ops->end)
-		priv->prpl_ops->end(wb);
-
-	g_free(priv->who);
-	wbList = g_list_remove(wbList, wb);
-	g_free(wb);
 }
 
 PurpleAccount *purple_whiteboard_get_account(const PurpleWhiteboard *wb)
@@ -353,4 +315,204 @@ gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb)
 	g_return_val_if_fail(wb != NULL, NULL);
 
 	return wb->ui_data;
+}
+
+/******************************************************************************
+ * GObject code
+ *****************************************************************************/
+/* GObject Property names */
+#define PROP_STATE_S      "state"
+#define PROP_ACCOUNT_S    "account"
+#define PROP_WHO_S        "who"
+#define PROP_DRAW_LIST_S  "draw-list"
+
+/* Set method for GObject properties */
+static void
+purple_whiteboard_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleWhiteboard *wb = PURPLE_WHITEBOARD(obj);
+	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
+
+	switch (param_id) {
+		case PROP_STATE:
+			purple_whiteboard_set_state(wb, g_value_get_int(value));
+			break;
+		case PROP_ACCOUNT:
+			priv->account = g_value_get_object(value);
+			break;
+		case PROP_WHO:
+			priv->who = g_strdup(g_value_get_string(value));
+			break;
+		case PROP_DRAW_LIST:
+			purple_whiteboard_set_draw_list(wb, g_value_get_pointer(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+purple_whiteboard_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleWhiteboard *wb = PURPLE_WHITEBOARD(obj);
+
+	switch (param_id) {
+		case PROP_STATE:
+			g_value_set_int(value, purple_whiteboard_get_state(wb));
+			break;
+		case PROP_ACCOUNT:
+			g_value_set_object(value, purple_whiteboard_get_account(wb));
+			break;
+		case PROP_WHO:
+			g_value_set_string(value, purple_whiteboard_get_who(wb));
+			break;
+		case PROP_DRAW_LIST:
+			g_value_set_pointer(value, purple_whiteboard_get_draw_list(wb));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Called when done constructing */
+static void
+purple_whiteboard_constructed(GObject *object)
+{
+	PurpleWhiteboard *wb = PURPLE_WHITEBOARD(object);
+	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
+	PurplePluginProtocolInfo *prpl_info;
+
+	parent_class->constructed(object);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(
+				purple_account_get_connection(priv->account)));
+	purple_whiteboard_set_prpl_ops(wb, prpl_info->whiteboard_prpl_ops);
+
+	/* Start up protocol specifics */
+	if(priv->prpl_ops && priv->prpl_ops->start)
+		priv->prpl_ops->start(wb);
+
+	wbList = g_list_append(wbList, wb);
+}
+
+/* GObject dispose function */
+static void
+purple_whiteboard_dispose(GObject *object)
+{
+	PurpleWhiteboard *wb = PURPLE_WHITEBOARD(object);
+	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
+
+	if(wb->ui_data)
+	{
+		/* Destroy frontend */
+		if(whiteboard_ui_ops && whiteboard_ui_ops->destroy)
+			whiteboard_ui_ops->destroy(wb);
+	}
+
+	/* Do protocol specific session ending procedures */
+	if(priv->prpl_ops && priv->prpl_ops->end)
+		priv->prpl_ops->end(wb);
+
+	wbList = g_list_remove(wbList, wb);
+
+	parent_class->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_whiteboard_finalize(GObject *object)
+{
+	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(object);
+
+	g_free(priv->who);
+
+	parent_class->finalize(object);
+}
+
+/* Class initializer function */
+static void
+purple_whiteboard_class_init(PurpleWhiteboardClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->dispose = purple_whiteboard_dispose;
+	obj_class->finalize = purple_whiteboard_finalize;
+	obj_class->constructed = purple_whiteboard_constructed;
+
+	/* Setup properties */
+	obj_class->get_property = purple_whiteboard_get_property;
+	obj_class->set_property = purple_whiteboard_set_property;
+
+	g_object_class_install_property(obj_class, PROP_STATE,
+			g_param_spec_int(PROP_STATE_S, _("State"),
+				_("State of the whiteboard."),
+				G_MININT, G_MAXINT, 0,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
+
+	g_object_class_install_property(obj_class, PROP_ACCOUNT,
+			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
+				_("The whiteboard's account."), PURPLE_TYPE_ACCOUNT,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+			);
+
+	g_object_class_install_property(obj_class, PROP_WHO,
+			g_param_spec_string(PROP_WHO_S, _("Who"),
+				_("Who you're drawing with."), NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+			);
+
+	g_object_class_install_property(obj_class, PROP_DRAW_LIST,
+			g_param_spec_pointer(PROP_DRAW_LIST_S, _("Draw list"),
+				_("A list of points to draw to the buddy."),
+				G_PARAM_READWRITE)
+			);
+
+	g_type_class_add_private(klass, sizeof(PurpleWhiteboardPrivate));
+}
+
+GType
+purple_whiteboard_get_type(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleWhiteboardClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_whiteboard_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleWhiteboard),
+			0,
+			NULL,
+			NULL,
+		};
+
+		type = g_type_register_static(G_TYPE_OBJECT, "PurpleWhiteboard",
+				&info, 0);
+	}
+
+	return type;
+}
+
+PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(who     != NULL, NULL);
+
+	return g_object_new(PURPLE_TYPE_WHITEBOARD,
+		PROP_ACCOUNT_S, account,
+		PROP_WHO_S,     who,
+		PROP_STATE_S,   state,
+		NULL
+	);
 }

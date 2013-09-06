@@ -1,7 +1,6 @@
 /**
  * @file whiteboard.h The PurpleWhiteboard core object
  */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -50,15 +49,15 @@ typedef struct _PurpleWhiteboardPrplOps PurpleWhiteboardPrplOps;
  */
 typedef struct _PurpleWhiteboardUiOps
 {
-	void (*create)(PurpleWhiteboard *wb);                                 /**< create function */
+	void (*create)(PurpleWhiteboard *wb);                                /**< create function */
 	void (*destroy)(PurpleWhiteboard *wb);                               /**< destory function */
 	void (*set_dimensions)(PurpleWhiteboard *wb, int width, int height); /**< set_dimensions function */
-	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);		/**< set the size and color of the brush */
+	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);       /**< set the size and color of the brush */
 	void (*draw_point)(PurpleWhiteboard *wb, int x, int y,
-					   int color, int size);                           /**< draw_point function */
+	                   int color, int size);                             /**< draw_point function */
 	void (*draw_line)(PurpleWhiteboard *wb, int x1, int y1,
-					  int x2, int y2,
-					  int color, int size);                            /**< draw_line function */
+	                  int x2, int y2,
+	                  int color, int size);                              /**< draw_line function */
 	void (*clear)(PurpleWhiteboard *wb);                                 /**< clear function */
 
 	void (*_purple_reserved1)(void);
