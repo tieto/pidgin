@@ -50,10 +50,6 @@ purple_roomlist_new(account)
 	Purple::Account account
 
 void 
-purple_roomlist_ref(list)
-	Purple::Roomlist list
-
-void 
 purple_roomlist_room_add(list, room)
 	Purple::Roomlist list
 	Purple::Roomlist::Room room
@@ -93,8 +89,4 @@ purple_roomlist_set_in_progress(list, in_progress)
 void 
 purple_roomlist_show_with_account(account)
 	Purple::Account account
-
-void 
-purple_roomlist_unref(list)
-	Purple::Roomlist list
 

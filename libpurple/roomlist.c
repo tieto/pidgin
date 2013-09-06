@@ -2,7 +2,6 @@
  * @file roomlist.c Room List API
  * @ingroup core
  */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -32,17 +31,23 @@
 #include "roomlist.h"
 #include "server.h"
 
+#define PURPLE_ROOMLIST_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ROOMLIST, PurpleRoomlistPrivate))
+
+/** @copydoc _PurpleRoomlistPrivate */
+typedef struct _PurpleRoomlistPrivate  PurpleRoomlistPrivate;
+
 /**
- * Represents a list of rooms for a given connection on a given protocol.
+ * Private data for a room list.
  */
-struct _PurpleRoomlist {
-	PurpleAccount *account; /**< The account this list belongs to. */
-	GList *fields; /**< The fields. */
-	GList *rooms; /**< The list of rooms. */
-	gboolean in_progress; /**< The listing is in progress. */
-	gpointer ui_data; /**< UI private data. */
-	gpointer proto_data; /** Prpl private data. */
-	guint ref; /**< The reference count. */
+struct _PurpleRoomlistPrivate {
+	PurpleAccount *account;  /**< The account this list belongs to. */
+	GList *fields;           /**< The fields.                       */
+	GList *rooms;            /**< The list of rooms.                */
+	gboolean in_progress;    /**< The listing is in progress.       */
+	gpointer proto_data;     /** Protocol private data.
+	                             TODO Remove this, and use
+	                                  protocol-specific subclasses  */
 };
 
 /**
@@ -66,6 +71,18 @@ struct _PurpleRoomlistField {
 	gboolean hidden; /**< Hidden? */
 };
 
+/* Room list property enums */
+enum
+{
+	PROP_0,
+	PROP_ACCOUNT,
+	PROP_FIELDS,
+	PROP_ROOMS,
+	PROP_IN_PROGRESS,
+	PROP_LAST
+};
+
+static GObjectClass *parent_class;
 static PurpleRoomlistUiOps *ops = NULL;
 
 /**************************************************************************/
@@ -86,10 +103,10 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	list = g_new0(PurpleRoomlist, 1);
-	list->account = account;
-	list->rooms = NULL;
-	list->fields = NULL;
-	list->ref = 1;
+	priv->account = account;
+	priv->rooms = NULL;
+	priv->fields = NULL;
+	priv->ref = 1;
 
 	if (ops && ops->create)
 		ops->create(list);
@@ -97,19 +114,11 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 	return list;
 }
 
-void purple_roomlist_ref(PurpleRoomlist *list)
-{
-	g_return_if_fail(list != NULL);
-
-	list->ref++;
-	purple_debug_misc("roomlist", "reffing list, ref count now %d\n", list->ref);
-}
-
 static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r)
 {
 	GList *l, *j;
 
-	for (l = list->fields, j = r->fields; l && j; l = l->next, j = j->next) {
+	for (l = priv->fields, j = r->fields; l && j; l = l->next, j = j->next) {
 		PurpleRoomlistField *f = l->data;
 		if (f->type == PURPLE_ROOMLIST_FIELD_STRING)
 			g_free(j->data);
@@ -129,6 +138,7 @@ static void purple_roomlist_field_destroy(PurpleRoomlistField *f)
 
 static void purple_roomlist_destroy(PurpleRoomlist *list)
 {
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 	GList *l;
 
 	purple_debug_misc("roomlist", "destroying list %p\n", list);
@@ -136,42 +146,34 @@ static void purple_roomlist_destroy(PurpleRoomlist *list)
 	if (ops && ops->destroy)
 		ops->destroy(list);
 
-	for (l = list->rooms; l; l = l->next) {
+	for (l = priv->rooms; l; l = l->next) {
 		PurpleRoomlistRoom *r = l->data;
 		purple_roomlist_room_destroy(list, r);
 	}
-	g_list_free(list->rooms);
+	g_list_free(priv->rooms);
 
-	g_list_foreach(list->fields, (GFunc)purple_roomlist_field_destroy, NULL);
-	g_list_free(list->fields);
+	g_list_foreach(priv->fields, (GFunc)purple_roomlist_field_destroy, NULL);
+	g_list_free(priv->fields);
 
 	g_free(list);
 }
 
-void purple_roomlist_unref(PurpleRoomlist *list)
-{
-	g_return_if_fail(list != NULL);
-	g_return_if_fail(list->ref > 0);
-
-	list->ref--;
-
-	purple_debug_misc("roomlist", "unreffing list, ref count now %d\n", list->ref);
-	if (list->ref == 0)
-		purple_roomlist_destroy(list);
-}
-
 PurpleAccount *purple_roomlist_get_account(PurpleRoomlist *list)
 {
-	g_return_val_if_fail(list != NULL, NULL);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
-	return list->account;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->account;
 }
 
 void purple_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 {
-	g_return_if_fail(list != NULL);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
-	list->fields = fields;
+	g_return_if_fail(priv != NULL);
+
+	priv->fields = fields;
 
 	if (ops && ops->set_fields)
 		ops->set_fields(list, fields);
@@ -179,9 +181,11 @@ void purple_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 
 void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress)
 {
-	g_return_if_fail(list != NULL);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
-	list->in_progress = in_progress;
+	g_return_if_fail(priv != NULL);
+
+	priv->in_progress = in_progress;
 
 	if (ops && ops->in_progress)
 		ops->in_progress(list, in_progress);
@@ -189,17 +193,21 @@ void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress)
 
 gboolean purple_roomlist_get_in_progress(PurpleRoomlist *list)
 {
-	g_return_val_if_fail(list != NULL, FALSE);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
-	return list->in_progress;
+	g_return_val_if_fail(priv != NULL, FALSE);
+
+	return priv->in_progress;
 }
 
 void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 {
-	g_return_if_fail(list != NULL);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
+
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(room != NULL);
 
-	list->rooms = g_list_append(list->rooms, room);
+	priv->rooms = g_list_append(priv->rooms, room);
 
 	if (ops && ops->add_room)
 		ops->add_room(list, room);
@@ -226,13 +234,14 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 
 void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 {
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc;
 
-	g_return_if_fail(list != NULL);
+	g_return_if_fail(priv != NULL);
 
-	gc = purple_account_get_connection(list->account);
+	gc = purple_account_get_connection(priv->account);
 
 	g_return_if_fail(gc != NULL);
 
@@ -248,15 +257,16 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 
 void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc;
 
-	g_return_if_fail(list != NULL);
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(category != NULL);
 	g_return_if_fail(category->type & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY);
 
-	gc = purple_account_get_connection(list->account);
+	gc = purple_account_get_connection(priv->account);
 	g_return_if_fail(gc != NULL);
 
 	if(gc)
@@ -271,21 +281,29 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 
 GList * purple_roomlist_get_fields(PurpleRoomlist *list)
 {
-	return list->fields;
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->fields;
 }
 
 gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list)
 {
-	g_return_val_if_fail(list != NULL, NULL);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
-	return list->proto_data;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->proto_data;
 }
 
 void purple_roomlist_set_proto_data(PurpleRoomlist *list, gpointer proto_data)
 {
-	g_return_if_fail(list != NULL);
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
-	list->proto_data = proto_data;
+	g_return_if_fail(priv != NULL);
+
+	priv->proto_data = proto_data;
 }
 
 gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list)
@@ -301,6 +319,16 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
 
 	list->ui_data = ui_data;
 }
+
+/*@}*/
+
+/* TODO */
+/**************************************************************************/
+/** @name Room List GObject code                                          */
+/**************************************************************************/
+/*@{*/
+
+
 
 /*@}*/
 
@@ -326,11 +354,12 @@ PurpleRoomlistRoom *purple_roomlist_room_new(PurpleRoomlistRoomType type, const 
 
 void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *room, gconstpointer field)
 {
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 	PurpleRoomlistField *f;
 
-	g_return_if_fail(list != NULL);
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(room != NULL);
-	g_return_if_fail(list->fields != NULL);
+	g_return_if_fail(priv->fields != NULL);
 
 	/* If this is the first call for this room, grab the first field in
 	 * the Roomlist's fields.  Otherwise, grab the field that is one
@@ -338,9 +367,9 @@ void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *ro
          * (This works because g_list_nth_data() is zero-indexed and
          * g_list_length() is one-indexed.) */
 	if (!room->fields)
-		f = list->fields->data;
+		f = priv->fields->data;
 	else
-		f = g_list_nth_data(list->fields, g_list_length(room->fields));
+		f = g_list_nth_data(priv->fields, g_list_length(room->fields));
 
 	g_return_if_fail(f != NULL);
 
@@ -357,21 +386,22 @@ void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *ro
 
 void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 {
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 	GHashTable *components;
 	GList *l, *j;
 	PurpleConnection *gc;
 
-	g_return_if_fail(list != NULL);
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(room != NULL);
 
-	gc = purple_account_get_connection(list->account);
+	gc = purple_account_get_connection(priv->account);
 	if (!gc)
 		return;
 
 	components = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_replace(components, "name", room->name);
-	for (l = list->fields, j = room->fields; l && j; l = l->next, j = j->next) {
+	for (l = priv->fields, j = room->fields; l && j; l = l->next, j = j->next) {
 		PurpleRoomlistField *f = l->data;
 
 		g_hash_table_replace(components, f->name, j->data);
@@ -418,6 +448,16 @@ GList *purple_roomlist_room_get_fields(PurpleRoomlistRoom *room)
 
 /*@}*/
 
+/* TODO */
+/**************************************************************************/
+/** @name Room GBoxed code                                                */
+/**************************************************************************/
+/*@{*/
+
+
+
+/*@}*/
+
 /**************************************************************************/
 /** @name Room Field API                                                  */
 /**************************************************************************/
@@ -456,6 +496,16 @@ gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field)
 {
 	return field->hidden;
 }
+
+/*@}*/
+
+/* TODO */
+/**************************************************************************/
+/** @name Room Field GBoxed code                                          */
+/**************************************************************************/
+/*@{*/
+
+
 
 /*@}*/
 

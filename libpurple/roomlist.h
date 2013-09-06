@@ -27,9 +27,26 @@
 #ifndef _PURPLE_ROOMLIST_H_
 #define _PURPLE_ROOMLIST_H_
 
+#define PURPLE_TYPE_ROOMLIST             (purple_roomlist_get_type())
+#define PURPLE_ROOMLIST(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ROOMLIST, PurpleRoomlist))
+#define PURPLE_ROOMLIST_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ROOMLIST, PurpleRoomlistClass))
+#define PURPLE_IS_ROOMLIST(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ROOMLIST))
+#define PURPLE_IS_ROOMLIST_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ROOMLIST))
+#define PURPLE_ROOMLIST_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ROOMLIST, PurpleRoomlistClass))
+
+/** @copydoc _PurpleRoomlist */
 typedef struct _PurpleRoomlist PurpleRoomlist;
+/** @copydoc _PurpleRoomlistClass */
+typedef struct _PurpleRoomlistClass PurpleRoomlistClass;
+
+#define PURPLE_TYPE_ROOMLIST_ROOM        (purple_roomlist_room_get_gtype())
+
 typedef struct _PurpleRoomlistRoom PurpleRoomlistRoom;
+
+#define PURPLE_TYPE_ROOMLIST_FIELD       (purple_roomlist_field_get_gtype())
+
 typedef struct _PurpleRoomlistField PurpleRoomlistField;
+
 /** @copydoc _PurpleRoomlistUiOps */
 typedef struct _PurpleRoomlistUiOps PurpleRoomlistUiOps;
 
@@ -38,7 +55,7 @@ typedef struct _PurpleRoomlistUiOps PurpleRoomlistUiOps;
  *
  * These are ORable flags.
  */
-typedef enum
+typedef enum /*< flags >*/
 {
 	PURPLE_ROOMLIST_ROOMTYPE_CATEGORY = 0x01, /**< It's a category, but not a room you can join. */
 	PURPLE_ROOMLIST_ROOMTYPE_ROOM = 0x02      /**< It's a room, like the kind you can join. */
@@ -80,6 +97,29 @@ struct _PurpleRoomlistUiOps {
 	void (*_purple_reserved4)(void);
 };
 
+/**
+ * Represents a list of rooms for a given connection on a given protocol.
+ */
+struct _PurpleRoomlist {
+	/*< private >*/
+	GObject gparent;
+
+	/** The UI data associated with this room list. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
+	 */
+	gpointer ui_data;
+};
+
+/** Base class for all #PurpleRoomlist's */
+struct _PurpleRoomlistClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
 
 G_BEGIN_DECLS
 
@@ -87,6 +127,11 @@ G_BEGIN_DECLS
 /** @name Room List API                                                   */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the Room List object.
+ */
+GType purple_roomlist_get_type(void);
 
 /**
  * This is used to get the room list on an account, asking the UI
@@ -102,29 +147,10 @@ void purple_roomlist_show_with_account(PurpleAccount *account);
 /**
  * Returns a newly created room list object.
  *
- * It has an initial reference count of 1.
- *
  * @param account The account that's listing rooms.
  * @return The new room list handle.
  */
 PurpleRoomlist *purple_roomlist_new(PurpleAccount *account);
-
-/**
- * Increases the reference count on the room list.
- *
- * @param list The object to ref.
- */
-void purple_roomlist_ref(PurpleRoomlist *list);
-
-/**
- * Decreases the reference count on the room list.
- *
- * The room list will be destroyed when this reaches 0.
- *
- * @param list The room list object to unref and possibly
- *             destroy.
- */
-void purple_roomlist_unref(PurpleRoomlist *list);
 
 /**
  * Retrieve the PurpleAccount that was given when the room list was
@@ -264,6 +290,11 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
 /*@{*/
 
 /**
+ * Returns the GType for the PurpleRoomlistRoom boxed structure.
+ */
+GType purple_roomlist_room_get_gtype(void);
+
+/**
  * Creates a new room, to be added to the list.
  *
  * @param type The type of room.
@@ -344,6 +375,11 @@ GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
 /** @name Room Field API                                                  */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleRoomlistField boxed structure.
+ */
+GType purple_roomlist_field_get_gtype(void);
 
 /**
  * Creates a new field.

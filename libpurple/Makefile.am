@@ -192,6 +192,7 @@ purple_enumheaders = \
 	connection.h \
 	conversation.h \
 	conversationtypes.h \
+	roomlist.h \
 	status.h \
 	xfer.h
 
