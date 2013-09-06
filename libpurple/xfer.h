@@ -428,7 +428,7 @@ void purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed);
 void purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatus status);
 
 /**
- * Sets the filename for the file transfer.
+ * Sets the message for the file transfer.
  *
  * @param xfer     The file transfer.
  * @param message The message.
