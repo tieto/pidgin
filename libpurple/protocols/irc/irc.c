@@ -867,7 +867,7 @@ static PurpleRoomlist *irc_roomlist_get_list(PurpleConnection *gc)
 	irc = purple_connection_get_protocol_data(gc);
 
 	if (irc->roomlist)
-		purple_roomlist_unref(irc->roomlist);
+		g_object_unref(irc->roomlist);
 
 	irc->roomlist = purple_roomlist_new(purple_connection_get_account(gc));
 
@@ -904,7 +904,7 @@ static void irc_roomlist_cancel(PurpleRoomlist *list)
 
 	if (irc->roomlist == list) {
 		irc->roomlist = NULL;
-		purple_roomlist_unref(list);
+		g_object_unref(list);
 	}
 }
 

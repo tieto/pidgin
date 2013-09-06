@@ -1368,7 +1368,7 @@ static void yahoo_roomlist_cleanup(PurpleRoomlist *list, struct yahoo_roomlist *
 		yahoo_roomlist_destroy(yrl);
 	}
 
-	purple_roomlist_unref(list);
+	g_object_unref(list);
 }
 
 static void
@@ -1502,7 +1502,7 @@ void yahoo_roomlist_cancel(PurpleRoomlist *list)
 
 	for (; l; l = l->next) {
 		yahoo_roomlist_destroy(l->data);
-		purple_roomlist_unref(list);
+		g_object_unref(list);
 	}
 	g_list_free(k);
 }
@@ -1553,5 +1553,5 @@ void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *ca
 
 	yahoo_roomlist_make_request(yrl);
 	purple_roomlist_set_in_progress(list, TRUE);
-	purple_roomlist_ref(list);
+	g_object_ref(list);
 }

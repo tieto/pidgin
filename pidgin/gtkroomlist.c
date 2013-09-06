@@ -95,11 +95,11 @@ static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 
 		if (dialog->pg_update_to > 0)
 			/* yes, that's right, unref it twice. */
-			purple_roomlist_unref(dialog->roomlist);
+			g_object_unref(dialog->roomlist);
 
 		if (rl)
 			rl->dialog = NULL;
-		purple_roomlist_unref(dialog->roomlist);
+		g_object_unref(dialog->roomlist);
 	}
 
 	dialog->progress = NULL;
@@ -120,7 +120,7 @@ static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 			gtk_widget_destroy(rl->tree);
 			rl->tree = NULL;
 		}
-		purple_roomlist_unref(dialog->roomlist);
+		g_object_unref(dialog->roomlist);
 		dialog->roomlist = NULL;
 	}
 }
@@ -137,13 +137,13 @@ static void list_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 	if (dialog->roomlist != NULL) {
 		rl = purple_roomlist_get_ui_data(dialog->roomlist);
 		gtk_widget_destroy(rl->tree);
-		purple_roomlist_unref(dialog->roomlist);
+		g_object_unref(dialog->roomlist);
 	}
 
 	dialog->roomlist = purple_roomlist_get_list(gc);
 	if (!dialog->roomlist)
 		return;
-	purple_roomlist_ref(dialog->roomlist);
+	g_object_ref(dialog->roomlist);
 	rl = purple_roomlist_get_ui_data(dialog->roomlist);
 	rl->dialog = dialog;
 
@@ -842,7 +842,7 @@ static gboolean pidgin_progress_bar_pulse(gpointer data)
 	if (!rl || !rl->dialog || !rl->dialog->pg_needs_pulse) {
 		if (rl && rl->dialog)
 			rl->dialog->pg_update_to = 0;
-		purple_roomlist_unref(list);
+		g_object_unref(list);
 		return FALSE;
 	}
 
@@ -867,7 +867,7 @@ static void pidgin_roomlist_add_room(PurpleRoomlist *list, PurpleRoomlistRoom *r
 
 	if (rl->dialog) {
 		if (rl->dialog->pg_update_to == 0) {
-			purple_roomlist_ref(list);
+			g_object_ref(list);
 			rl->dialog->pg_update_to = g_timeout_add(100, pidgin_progress_bar_pulse, list);
 			gtk_progress_bar_pulse(GTK_PROGRESS_BAR(rl->dialog->progress));
 		} else

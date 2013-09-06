@@ -1479,7 +1479,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				purple_notify_error(gc, _("Error"), _("Error retrieving room list"),
 						    silc_get_status_message(error));
 				purple_roomlist_set_in_progress(sg->roomlist, FALSE);
-				purple_roomlist_unref(sg->roomlist);
+				g_object_unref(sg->roomlist);
 				sg->roomlist = NULL;
 				return;
 			}
@@ -1490,7 +1490,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				purple_notify_error(gc, _("Roomlist"), _("Cannot get room list"),
 						    _("Network is empty"));
 				purple_roomlist_set_in_progress(sg->roomlist, FALSE);
-				purple_roomlist_unref(sg->roomlist);
+				g_object_unref(sg->roomlist);
 				sg->roomlist = NULL;
 				return;
 			}
@@ -1508,7 +1508,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (status == SILC_STATUS_LIST_END ||
 			    status == SILC_STATUS_OK) {
 				purple_roomlist_set_in_progress(sg->roomlist, FALSE);
-				purple_roomlist_unref(sg->roomlist);
+				g_object_unref(sg->roomlist);
 				sg->roomlist = NULL;
 			}
 		}

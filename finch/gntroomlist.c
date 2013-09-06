@@ -68,7 +68,7 @@ unset_roomlist(gpointer null)
 {
 	froomlist.window = NULL;
 	if (froomlist.roomlist) {
-		purple_roomlist_unref(froomlist.roomlist);
+		g_object_unref(froomlist.roomlist);
 		froomlist.roomlist = NULL;
 	}
 	froomlist.account = NULL;
@@ -82,10 +82,10 @@ update_roomlist(PurpleRoomlist *list)
 		return;
 
 	if (froomlist.roomlist)
-		purple_roomlist_unref(froomlist.roomlist);
+		g_object_unref(froomlist.roomlist);
 
 	if ((froomlist.roomlist = list) != NULL)
-		purple_roomlist_ref(list);
+		g_object_ref(list);
 }
 
 static void fl_stop(GntWidget *button, gpointer null)

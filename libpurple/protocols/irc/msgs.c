@@ -540,7 +540,7 @@ void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char
 
 	if (!strcmp(name, "323")) {
 		purple_roomlist_set_in_progress(irc->roomlist, FALSE);
-		purple_roomlist_unref(irc->roomlist);
+		g_object_unref(irc->roomlist);
 		irc->roomlist = NULL;
 		return;
 	}
