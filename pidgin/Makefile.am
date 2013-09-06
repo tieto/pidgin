@@ -57,7 +57,6 @@ pidgin_SOURCES = \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
 	gtkeventloop.c \
-	gtkft.c \
 	gtkicon-theme.c \
 	gtkicon-theme-loader.c \
 	gtkidle.c \
@@ -90,6 +89,7 @@ pidgin_SOURCES = \
 	gtkwebview.c \
 	gtkwebviewtoolbar.c \
 	gtkwhiteboard.c \
+	gtkxfer.c \
 	minidialog.c \
 	pidgintooltip.c \
 	smileyparser.c
@@ -111,7 +111,6 @@ pidgin_headers = \
 	gtkdnd-hints.h \
 	gtkdocklet.h \
 	gtkeventloop.h \
-	gtkft.h \
 	gtkicon-theme.h \
 	gtkicon-theme-loader.h \
 	gtkidle.h \
@@ -145,6 +144,7 @@ pidgin_headers = \
 	gtkwebview.h \
 	gtkwebviewtoolbar.h \
 	gtkwhiteboard.h \
+	gtkxfer.h \
 	minidialog.h \
 	pidgintooltip.h \
 	pidgin.h \

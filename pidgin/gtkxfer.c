@@ -1,5 +1,5 @@
 /**
- * @file gtkft.c GTK+ File Transfer UI
+ * @file gtkxfer.c GTK+ File Transfer UI
  * @ingroup pidgin
  */
 
