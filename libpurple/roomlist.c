@@ -84,6 +84,9 @@ enum
 static GObjectClass *parent_class;
 static PurpleRoomlistUiOps *ops = NULL;
 
+static void purple_roomlist_field_free(PurpleRoomlistField *f);
+static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r);
+
 /**************************************************************************/
 /** @name Room List API                                                   */
 /**************************************************************************/
@@ -93,29 +96,6 @@ void purple_roomlist_show_with_account(PurpleAccount *account)
 {
 	if (ops && ops->show_with_account)
 		ops->show_with_account(account);
-}
-
-static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r)
-{
-	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
-	GList *l, *j;
-
-	for (l = priv->fields, j = r->fields; l && j; l = l->next, j = j->next) {
-		PurpleRoomlistField *f = l->data;
-		if (f->type == PURPLE_ROOMLIST_FIELD_STRING)
-			g_free(j->data);
-	}
-
-	g_list_free(r->fields);
-	g_free(r->name);
-	g_free(r);
-}
-
-static void purple_roomlist_field_destroy(PurpleRoomlistField *f)
-{
-	g_free(f->label);
-	g_free(f->name);
-	g_free(f);
 }
 
 PurpleAccount *purple_roomlist_get_account(PurpleRoomlist *list)
@@ -379,7 +359,7 @@ purple_roomlist_finalize(GObject *object)
 	}
 	g_list_free(priv->rooms);
 
-	g_list_foreach(priv->fields, (GFunc)purple_roomlist_field_destroy, NULL);
+	g_list_foreach(priv->fields, (GFunc)purple_roomlist_field_free, NULL);
 	g_list_free(priv->fields);
 
 	parent_class->finalize(object);
@@ -575,15 +555,57 @@ GList *purple_roomlist_room_get_fields(PurpleRoomlistRoom *room)
 	return room->fields;
 }
 
+static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r)
+{
+	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
+	GList *l, *j;
+
+	for (l = priv->fields, j = r->fields; l && j; l = l->next, j = j->next) {
+		PurpleRoomlistField *f = l->data;
+		if (f->type == PURPLE_ROOMLIST_FIELD_STRING)
+			g_free(j->data);
+	}
+
+	g_list_free(r->fields);
+	g_free(r->name);
+	g_free(r);
+}
+
 /*@}*/
 
-/* TODO */
 /**************************************************************************/
 /** @name Room GBoxed code                                                */
 /**************************************************************************/
 /*@{*/
 
+static PurpleRoomlistRoom *purple_roomlist_room_copy(PurpleRoomlistRoom *r)
+{
+	g_return_val_if_fail(r != NULL, NULL);
 
+	return purple_roomlist_room_new(r->type, r->name, r->parent);
+}
+
+static void purple_roomlist_room_free(PurpleRoomlistRoom *r)
+{
+	g_return_if_fail(r != NULL);
+
+	g_list_free(r->fields);
+	g_free(r->name);
+	g_free(r);
+}
+
+GType purple_roomlist_room_get_gtype(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleRoomlistRoom",
+				(GBoxedCopyFunc)purple_roomlist_room_copy,
+				(GBoxedFreeFunc)purple_roomlist_room_free);
+	}
+
+	return type;
+}
 
 /*@}*/
 
@@ -628,13 +650,39 @@ gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field)
 
 /*@}*/
 
-/* TODO */
 /**************************************************************************/
 /** @name Room Field GBoxed code                                          */
 /**************************************************************************/
 /*@{*/
 
+static PurpleRoomlistField *purple_roomlist_field_copy(PurpleRoomlistField *f)
+{
+	g_return_val_if_fail(f != NULL, NULL);
 
+	return purple_roomlist_field_new(f->type, f->label, f->name, f->hidden);
+}
+
+static void purple_roomlist_field_free(PurpleRoomlistField *f)
+{
+	g_return_if_fail(f != NULL);
+
+	g_free(f->label);
+	g_free(f->name);
+	g_free(f);
+}
+
+GType purple_roomlist_field_get_gtype(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleRoomlistField",
+				(GBoxedCopyFunc)purple_roomlist_field_copy,
+				(GBoxedFreeFunc)purple_roomlist_field_free);
+	}
+
+	return type;
+}
 
 /*@}*/
 
