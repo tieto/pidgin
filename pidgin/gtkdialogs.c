@@ -1229,6 +1229,8 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 					   _("Cancel"), NULL,
 					   purple_chat_get_account(chat), NULL, NULL,
 					   chat);
+
+	g_free(alias);
 }
 
 static void

@@ -1024,6 +1024,8 @@ purple_conversation_constructed(GObject *object)
 
 	purple_signal_emit(purple_conversations_get_handle(),
 					 "conversation-created", conv);
+
+	g_object_unref(account);
 }
 
 /* GObject dispose function */

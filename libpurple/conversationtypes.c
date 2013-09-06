@@ -445,6 +445,7 @@ purple_im_conversation_constructed(GObject *object)
 	if (purple_prefs_get_bool("/purple/logging/log_ims"))
 		purple_conversation_set_logging(PURPLE_CONVERSATION(im), TRUE);
 
+	g_object_unref(account);
 	g_free(name);
 }
 
@@ -1424,6 +1425,8 @@ purple_chat_conversation_constructed(GObject *object)
 
 	if (purple_prefs_get_bool("/purple/logging/log_chats"))
 		purple_conversation_set_logging(PURPLE_CONVERSATION(chat), TRUE);
+
+	g_object_unref(account);
 }
 
 /* GObject dispose function */
