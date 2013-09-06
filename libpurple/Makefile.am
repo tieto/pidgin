@@ -197,6 +197,7 @@ purple_enumheaders = \
 	plugins.h \
 	protocol.h \
 	protocols.h \
+	roomlist.h \
 	status.h \
 	xfer.h
 

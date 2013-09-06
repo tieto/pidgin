@@ -811,7 +811,7 @@ static void roomlist_disco_result_cb(JabberStream *js, const char *from,
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
-		purple_roomlist_unref(js->roomlist);
+		g_object_unref(js->roomlist);
 		js->roomlist = NULL;
 		g_free(err);
 		return;
@@ -822,7 +822,7 @@ static void roomlist_disco_result_cb(JabberStream *js, const char *from,
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
-		purple_roomlist_unref(js->roomlist);
+		g_object_unref(js->roomlist);
 		js->roomlist = NULL;
 		g_free(err);
 		return;
@@ -848,14 +848,14 @@ static void roomlist_disco_result_cb(JabberStream *js, const char *from,
 		jabber_id_free(jid);
 	}
 	purple_roomlist_set_in_progress(js->roomlist, FALSE);
-	purple_roomlist_unref(js->roomlist);
+	g_object_unref(js->roomlist);
 	js->roomlist = NULL;
 }
 
 static void roomlist_cancel_cb(JabberStream *js, const char *server) {
 	if(js->roomlist) {
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
-		purple_roomlist_unref(js->roomlist);
+		g_object_unref(js->roomlist);
 		js->roomlist = NULL;
 	}
 }
@@ -897,7 +897,7 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 	PurpleRoomlistField *f;
 
 	if(js->roomlist)
-		purple_roomlist_unref(js->roomlist);
+		g_object_unref(js->roomlist);
 
 	js->roomlist = purple_roomlist_new(purple_connection_get_account(js->gc));
 
@@ -939,7 +939,7 @@ void jabber_roomlist_cancel(PurpleRoomlist *list)
 
 	if (js->roomlist == list) {
 		js->roomlist = NULL;
-		purple_roomlist_unref(list);
+		g_object_unref(list);
 	}
 }
 

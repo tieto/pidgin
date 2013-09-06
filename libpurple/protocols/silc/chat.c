@@ -1394,7 +1394,7 @@ PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc)
 		return NULL;
 
 	if (sg->roomlist)
-		purple_roomlist_unref(sg->roomlist);
+		g_object_unref(sg->roomlist);
 
 	sg->roomlist_cancelled = FALSE;
 
@@ -1429,7 +1429,7 @@ void silcpurple_roomlist_cancel(PurpleRoomlist *list)
 
 	purple_roomlist_set_in_progress(list, FALSE);
 	if (sg->roomlist == list) {
-		purple_roomlist_unref(sg->roomlist);
+		g_object_unref(sg->roomlist);
 		sg->roomlist = NULL;
 		sg->roomlist_cancelled = TRUE;
 	}
