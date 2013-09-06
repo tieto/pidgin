@@ -8,14 +8,10 @@ purple_whiteboard_clear(wb)
 	Purple::Whiteboard wb
 
 Purple::Whiteboard
-purple_whiteboard_create(account, who, state)
+purple_whiteboard_new(account, who, state)
 	Purple::Account account
 	const char* who
 	int state
-
-void
-purple_whiteboard_destroy(wb)
-	Purple::Whiteboard wb
 
 void
 purple_whiteboard_draw_line(wb, x1, y1, x2, y2, color, size)

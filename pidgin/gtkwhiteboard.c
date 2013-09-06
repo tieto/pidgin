@@ -323,7 +323,7 @@ static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWh
 	wb = gtkwb->wb;
 	g_return_val_if_fail(wb != NULL, FALSE);
 
-	purple_whiteboard_destroy(wb);
+	g_object_unref(wb);
 
 	return FALSE;
 }
@@ -360,7 +360,7 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 	/* Insert this 'session' in the list.  At this point, it's only a requested
 	 * session.
 	 */
-	wb = purple_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
+	wb = purple_whiteboard_new(account, to, DOODLE_STATE_REQUESTING);
 }
 #endif
 

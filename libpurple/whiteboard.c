@@ -75,7 +75,7 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
 	priv->prpl_ops = ops;
 }
 
-PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state)
+PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state)
 {
 	PurpleWhiteboardPrivate *priv;
 	PurplePluginProtocolInfo *prpl_info;
@@ -104,7 +104,7 @@ PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *w
 	return wb;
 }
 
-void purple_whiteboard_destroy(PurpleWhiteboard *wb)
+void g_object_unref(PurpleWhiteboard *wb)
 {
 	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
 

@@ -110,7 +110,7 @@ PurpleWhiteboard *silcpurple_wb_init(SilcPurple sg, SilcClientEntry client_entry
 
 	wb = purple_whiteboard_get_session(sg->account, client_entry->nickname);
 	if (!wb)
-		wb = purple_whiteboard_create(sg->account, client_entry->nickname, 0);
+		wb = purple_whiteboard_new(sg->account, client_entry->nickname, 0);
 	if (!wb)
 		return NULL;
 
@@ -141,7 +141,7 @@ PurpleWhiteboard *silcpurple_wb_init_ch(SilcPurple sg, SilcChannelEntry channel)
 
 	wb = purple_whiteboard_get_session(sg->account, channel->channel_name);
 	if (!wb)
-		wb = purple_whiteboard_create(sg->account, channel->channel_name, 0);
+		wb = purple_whiteboard_new(sg->account, channel->channel_name, 0);
 	if (!wb)
 		return NULL;
 

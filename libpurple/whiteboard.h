@@ -148,7 +148,7 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
  *
  * @return The new whiteboard
  */
-PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state);
+PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state);
 
 /**
  * Returns the whiteboard's account.
