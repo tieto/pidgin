@@ -352,11 +352,11 @@ PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
 PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
 
 /**
- * Returns the protocol plugin managing a connection.
+ * Returns the protocol managing a connection.
  *
  * @param gc The connection.
  *
- * @return The protocol plugin.
+ * @return The protocol.
  */
 PurpleProtocol *purple_connection_get_protocol(const PurpleConnection *gc);
 

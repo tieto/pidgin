@@ -878,7 +878,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 	if (protocol == NULL) {
 		gchar *message;
 
-		message = g_strdup_printf(_("Missing protocol plugin for %s"),
+		message = g_strdup_printf(_("Missing protocol for %s"),
 			purple_account_get_username(account));
 		purple_notify_error(NULL, regist ? _("Registration Error") :
 						  _("Connection Error"), message, NULL);
@@ -942,7 +942,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 	if (protocol == NULL) {
 		gchar *message;
 
-		message = g_strdup_printf(_("Missing protocol plugin for %s"),
+		message = g_strdup_printf(_("Missing protocol for %s"),
 								  purple_account_get_username(account));
 		purple_notify_error(NULL, _("Unregistration Error"), message, NULL);
 		g_free(message);

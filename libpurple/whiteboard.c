@@ -37,7 +37,7 @@ struct _PurpleWhiteboard
 
 	void *ui_data;                   /**< Graphical user-interface data */
 	void *proto_data;                /**< Protocol specific data */
-	PurpleWhiteboardOps *protocol_ops; /**< Protocol-plugin operations */
+	PurpleWhiteboardOps *protocol_ops; /**< Protocol operations */
 
 	GList *draw_list;                /**< List of drawing elements/deltas to send */
 };

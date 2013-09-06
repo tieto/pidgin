@@ -210,7 +210,7 @@ init_libpurple(void)
 	}
 
 	/* Set path to search for plugins. The core (libpurple) takes care of loading the
-	 * core-plugins, which includes the protocol-plugins. So it is not essential to add
+	 * core-plugins, which includes the in-tree protocols. So it is not essential to add
 	 * any path here, but it might be desired, especially for ui-specific plugins. */
 	purple_plugins_add_search_path(CUSTOM_PLUGIN_PATH);
 	purple_plugins_refresh();

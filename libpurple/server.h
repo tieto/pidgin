@@ -75,7 +75,7 @@ void serv_alias_buddy(PurpleBuddy *);
 void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
 
 /**
- * A protocol plugin should call this when it retrieves a private alias from
+ * A protocol should call this when it retrieves a private alias from
  * the server.  Private aliases are the aliases the user sets, while public
  * aliases are the aliases or display names that buddies set for themselves.
  *

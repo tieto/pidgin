@@ -327,7 +327,7 @@ purple_account_connect(PurpleAccount *account)
 	if (protocol == NULL) {
 		gchar *message;
 
-		message = g_strdup_printf(_("Missing protocol plugin for %s"), username);
+		message = g_strdup_printf(_("Missing protocol for %s"), username);
 		purple_notify_error(account, _("Connection Error"), message, NULL);
 		g_free(message);
 		return;

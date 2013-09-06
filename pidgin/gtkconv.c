@@ -377,9 +377,9 @@ debug_command_cb(PurpleConversation *conv,
 		tmp = g_strdup_printf("Using Pidgin v%s with libpurple v%s.",
 				DISPLAY_VERSION, purple_core_get_version());
 	} else if (!g_ascii_strcasecmp(args[0], "plugins")) {
-		/* Show all the loaded plugins, including the protocol plugins and plugin loaders.
+		/* Show all the loaded plugins, including plugins marked internal.
 		 * This is intentional, since third party protocols are often sources of bugs, and some
-		 * plugin loaders (e.g. mono) can also be buggy.
+		 * plugin loaders can also be buggy.
 		 */
 		GString *str = g_string_new("Loaded Plugins: ");
 		const GList *plugins = purple_plugins_get_loaded();

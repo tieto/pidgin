@@ -956,7 +956,7 @@ const char *purple_normalize_nocase(const PurpleAccount *account, const char *st
 /**
  * Checks, if a string is valid.
  *
- * @param protocol The protocol plugin the string belongs to.
+ * @param protocol The protocol the string belongs to.
  * @param str      The string to validate.
  *
  * @return TRUE, if string is valid, otherwise FALSE.

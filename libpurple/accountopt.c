@@ -32,7 +32,7 @@
 /**
  * An option for an account.
  *
- * This is set by protocol plugins, and appears in the account settings
+ * This is set by protocols, and appears in the account settings
  * dialogs.
  */
 struct _PurpleAccountOption

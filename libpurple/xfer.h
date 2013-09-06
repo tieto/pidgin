@@ -630,7 +630,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size);
  * @a ip and @a port are ignored.
  *
  * Passing @a fd as '-1' is a special-case and indicates to the
- * protocol plugin to facilitate the file transfer itself.
+ * protocol to facilitate the file transfer itself.
  *
  * @param xfer The file transfer.
  * @param fd   The file descriptor for the socket.
