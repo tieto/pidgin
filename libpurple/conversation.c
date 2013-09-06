@@ -927,10 +927,6 @@ purple_conversation_set_property(GObject *obj, guint param_id, const GValue *val
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
 
 	switch (param_id) {
-		/* account, name and title are assigned directly here as
-		 * purple_im_conversation_new() and purple_chat_conversation_new()
-		 * pass these properties as parameters, and so the conversation hasn't
-		 * finished being set up */
 		case PROP_ACCOUNT:
 			priv->account = g_value_get_object(value);
 			break;
