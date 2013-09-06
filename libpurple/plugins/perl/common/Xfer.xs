@@ -9,7 +9,7 @@ BOOT:
 	HV *status_stash = gv_stashpv("Purple::Xfer::Status", 1);
 
 	static const constiv *civ, type_const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_XFER_##name}
+#define const_iv(name) {#name, (IV)PURPLE_XFER_TYPE_##name}
 		const_iv(UNKNOWN),
 		const_iv(SEND),
 		const_iv(RECEIVE),

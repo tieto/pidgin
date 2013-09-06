@@ -436,6 +436,15 @@ void purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatus status);
 void purple_xfer_set_message(PurpleXfer *xfer, const char *message);
 
 /**
+ * Returns the message for the file transfer.
+ *
+ * @param xfer     The file transfer.
+ *
+ * @return The message.
+ */
+const char *purple_xfer_get_message(const PurpleXfer *xfer);
+
+/**
  * Sets the filename for the file transfer.
  *
  * @param xfer     The file transfer.

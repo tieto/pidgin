@@ -24,6 +24,7 @@
  */
 #include "internal.h"
 #include "dbus-maybe.h"
+#include "enums.h"
 #include "xfer.h"
 #include "network.h"
 #include "notify.h"
@@ -962,6 +963,16 @@ purple_xfer_set_message(PurpleXfer *xfer, const char *message)
 
 	g_free(priv->message);
 	priv->message = g_strdup(message);
+}
+
+const char *
+purple_xfer_get_message(const PurpleXfer *xfer)
+{
+	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->message;
 }
 
 void

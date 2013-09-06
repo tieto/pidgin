@@ -60,7 +60,6 @@
 #include <dnsquery.h>
 #include <dnssrv.h>
 #include <eventloop.h>
-#include <ft.h>
 #include <idle.h>
 #include <imgstore.h>
 #include <log.h>
@@ -98,6 +97,7 @@
 #include <util.h>
 #include <version.h>
 #include <whiteboard.h>
+#include <xfer.h>
 #include <xmlnode.h>
 
 #endif
