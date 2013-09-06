@@ -4263,16 +4263,16 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 		return ;
 	} else {
 		const gchar *got_data = purple_http_response_get_data(response, NULL);
-		xmlnode *validate_data_root = xmlnode_from_str(got_data, -1);
-		xmlnode *validate_data_child = xmlnode_get_child(validate_data_root, "mobile_no");
-		const char *mobile_no = xmlnode_get_attrib(validate_data_child, "msisdn");
+		PurpleXmlNode *validate_data_root = purple_xmlnode_from_str(got_data, -1);
+		PurpleXmlNode *validate_data_child = purple_xmlnode_get_child(validate_data_root, "mobile_no");
+		const char *mobile_no = purple_xmlnode_get_attrib(validate_data_child, "msisdn");
 
-		validate_data_root = xmlnode_copy(validate_data_child);
-		validate_data_child = xmlnode_get_child(validate_data_root, "status");
-		status = xmlnode_get_data(validate_data_child);
+		validate_data_root = purple_xmlnode_copy(validate_data_child);
+		validate_data_child = purple_xmlnode_get_child(validate_data_root, "status");
+		status = purple_xmlnode_get_data(validate_data_child);
 
-		validate_data_child = xmlnode_get_child(validate_data_root, "carrier");
-		carrier = xmlnode_get_data(validate_data_child);
+		validate_data_child = purple_xmlnode_get_child(validate_data_root, "carrier");
+		carrier = purple_xmlnode_get_data(validate_data_child);
 
 		purple_debug_info("yahoo", "SMS validate data: %s\n", got_data);
 
@@ -4289,8 +4289,8 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
 
-		xmlnode_free(validate_data_child);
-		xmlnode_free(validate_data_root);
+		purple_xmlnode_free(validate_data_child);
+		purple_xmlnode_free(validate_data_root);
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
 		g_free(sms_cb_data);
@@ -4306,24 +4306,24 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	PurpleHttpCookieJar *cookiejar;
 	struct yahoo_sms_carrier_cb_data *sms_cb_data;
 	char *validate_request_str = NULL;
-	xmlnode *validate_request_root = NULL;
-	xmlnode *validate_request_child = NULL;
+	PurpleXmlNode *validate_request_root = NULL;
+	PurpleXmlNode *validate_request_child = NULL;
 
 	if(!(sms_cb_data = data))
 		return;
 
-	validate_request_root = xmlnode_new("validate");
-	xmlnode_set_attrib(validate_request_root, "intl", "us");
-	xmlnode_set_attrib(validate_request_root, "version", YAHOO_CLIENT_VERSION);
-	xmlnode_set_attrib(validate_request_root, "qos", "0");
+	validate_request_root = purple_xmlnode_new("validate");
+	purple_xmlnode_set_attrib(validate_request_root, "intl", "us");
+	purple_xmlnode_set_attrib(validate_request_root, "version", YAHOO_CLIENT_VERSION);
+	purple_xmlnode_set_attrib(validate_request_root, "qos", "0");
 
-	validate_request_child = xmlnode_new_child(validate_request_root, "mobile_no");
-	xmlnode_set_attrib(validate_request_child, "msisdn", sms_cb_data->who + 1);
+	validate_request_child = purple_xmlnode_new_child(validate_request_root, "mobile_no");
+	purple_xmlnode_set_attrib(validate_request_child, "msisdn", sms_cb_data->who + 1);
 
-	validate_request_str = xmlnode_to_str(validate_request_root, NULL);
+	validate_request_str = purple_xmlnode_to_str(validate_request_root, NULL);
 
-	xmlnode_free(validate_request_child);
-	xmlnode_free(validate_request_root);
+	purple_xmlnode_free(validate_request_child);
+	purple_xmlnode_free(validate_request_root);
 
 	req = purple_http_request_new(NULL);
 	purple_http_request_set_url_printf(req, "http://validate.msg.yahoo.com"

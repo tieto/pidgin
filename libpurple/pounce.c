@@ -140,15 +140,15 @@ static void
 action_parameter_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 {
 	const char *name, *param_value;
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 
 	name        = (const char *)key;
 	param_value = (const char *)value;
-	node        = (xmlnode *)user_data;
+	node        = (PurpleXmlNode *)user_data;
 
-	child = xmlnode_new_child(node, "param");
-	xmlnode_set_attrib(child, "name", name);
-	xmlnode_insert_data(child, param_value, -1);
+	child = purple_xmlnode_new_child(node, "param");
+	purple_xmlnode_set_attrib(child, "name", name);
+	purple_xmlnode_insert_data(child, param_value, -1);
 }
 
 static void
@@ -156,43 +156,43 @@ action_parameter_list_to_xmlnode(gpointer key, gpointer value, gpointer user_dat
 {
 	const char *action;
 	PurplePounceActionData *action_data;
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 
 	action      = (const char *)key;
 	action_data = (PurplePounceActionData *)value;
-	node        = (xmlnode *)user_data;
+	node        = (PurpleXmlNode *)user_data;
 
 	if (!action_data->enabled)
 		return;
 
-	child = xmlnode_new_child(node, "action");
-	xmlnode_set_attrib(child, "type", action);
+	child = purple_xmlnode_new_child(node, "action");
+	purple_xmlnode_set_attrib(child, "type", action);
 
 	g_hash_table_foreach(action_data->atts, action_parameter_to_xmlnode, child);
 }
 
 static void
-add_event_to_xmlnode(xmlnode *node, const char *type)
+add_event_to_xmlnode(PurpleXmlNode *node, const char *type)
 {
-	xmlnode *child;
+	PurpleXmlNode *child;
 
-	child = xmlnode_new_child(node, "event");
-	xmlnode_set_attrib(child, "type", type);
+	child = purple_xmlnode_new_child(node, "event");
+	purple_xmlnode_set_attrib(child, "type", type);
 }
 
 static void
-add_option_to_xmlnode(xmlnode *node, const char *type)
+add_option_to_xmlnode(PurpleXmlNode *node, const char *type)
 {
-	xmlnode *child;
+	PurpleXmlNode *child;
 
-	child = xmlnode_new_child(node, "option");
-	xmlnode_set_attrib(child, "type", type);
+	child = purple_xmlnode_new_child(node, "option");
+	purple_xmlnode_set_attrib(child, "type", type);
 }
 
-static xmlnode *
+static PurpleXmlNode *
 pounce_to_xmlnode(PurplePounce *pounce)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	PurpleAccount *pouncer;
 	PurplePounceEvent events;
 	PurplePounceOption options;
@@ -201,24 +201,24 @@ pounce_to_xmlnode(PurplePounce *pounce)
 	events  = purple_pounce_get_events(pounce);
 	options = purple_pounce_get_options(pounce);
 
-	node = xmlnode_new("pounce");
-	xmlnode_set_attrib(node, "ui", pounce->ui_type);
+	node = purple_xmlnode_new("pounce");
+	purple_xmlnode_set_attrib(node, "ui", pounce->ui_type);
 
-	child = xmlnode_new_child(node, "account");
-	xmlnode_set_attrib(child, "protocol", purple_account_get_protocol_id(pouncer));
-	xmlnode_insert_data(child,
+	child = purple_xmlnode_new_child(node, "account");
+	purple_xmlnode_set_attrib(child, "protocol", purple_account_get_protocol_id(pouncer));
+	purple_xmlnode_insert_data(child,
 			purple_normalize(pouncer, purple_account_get_username(pouncer)), -1);
 
-	child = xmlnode_new_child(node, "pouncee");
-	xmlnode_insert_data(child, purple_pounce_get_pouncee(pounce), -1);
+	child = purple_xmlnode_new_child(node, "pouncee");
+	purple_xmlnode_insert_data(child, purple_pounce_get_pouncee(pounce), -1);
 
 	/* Write pounce options */
-	child = xmlnode_new_child(node, "options");
+	child = purple_xmlnode_new_child(node, "options");
 	if (options & PURPLE_POUNCE_OPTION_AWAY)
 		add_option_to_xmlnode(child, "on-away");
 
 	/* Write pounce events */
-	child = xmlnode_new_child(node, "events");
+	child = purple_xmlnode_new_child(node, "events");
 	if (events & PURPLE_POUNCE_SIGNON)
 		add_event_to_xmlnode(child, "sign-on");
 	if (events & PURPLE_POUNCE_SIGNOFF)
@@ -241,28 +241,28 @@ pounce_to_xmlnode(PurplePounce *pounce)
 		add_event_to_xmlnode(child, "message-received");
 
 	/* Write pounce actions */
-	child = xmlnode_new_child(node, "actions");
+	child = purple_xmlnode_new_child(node, "actions");
 	g_hash_table_foreach(pounce->actions, action_parameter_list_to_xmlnode, child);
 
 	if (purple_pounce_get_save(pounce))
-		xmlnode_new_child(node, "save");
+		purple_xmlnode_new_child(node, "save");
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 pounces_to_xmlnode(void)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	GList *cur;
 
-	node = xmlnode_new("pounces");
-	xmlnode_set_attrib(node, "version", "1.0");
+	node = purple_xmlnode_new("pounces");
+	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	for (cur = purple_pounces_get_all(); cur != NULL; cur = cur->next)
 	{
 		child = pounce_to_xmlnode(cur->data);
-		xmlnode_insert_child(node, child);
+		purple_xmlnode_insert_child(node, child);
 	}
 
 	return node;
@@ -271,7 +271,7 @@ pounces_to_xmlnode(void)
 static void
 sync_pounces(void)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 	char *data;
 
 	if (!pounces_loaded)
@@ -282,10 +282,10 @@ sync_pounces(void)
 	}
 
 	node = pounces_to_xmlnode();
-	data = xmlnode_to_formatted_str(node, NULL);
+	data = purple_xmlnode_to_formatted_str(node, NULL);
 	purple_util_write_data_to_file("pounces.xml", data, -1);
 	g_free(data);
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 }
 
 static gboolean

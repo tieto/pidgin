@@ -743,7 +743,7 @@ int purple_build_dir(const char *path, int mode);
  * user directory ($HOME/.purple by default).  The data is typically
  * a serialized version of one of Purple's config files, such as
  * prefs.xml, accounts.xml, etc.  And the string is typically
- * obtained using xmlnode_to_formatted_str.  However, this function
+ * obtained using purple_xmlnode_to_formatted_str.  However, this function
  * should work fine for saving binary files as well.
  *
  * @param filename The basename of the file to write in the purple_user_dir.
@@ -778,7 +778,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 
 /**
  * Read the contents of a given file and parse the results into an
- * xmlnode tree structure.  This is intended to be used to read
+ * PurpleXmlNode tree structure.  This is intended to be used to read
  * Purple's configuration xml files (prefs.xml, pounces.xml, etc.)
  *
  * @param filename    The basename of the file to open in the purple_user_dir.
@@ -787,10 +787,10 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
  *                    user when the file can not be opened.  For example,
  *                    "preferences," or "buddy pounces."
  *
- * @return An xmlnode tree of the contents of the given file.  Or NULL, if
+ * @return An PurpleXmlNode tree of the contents of the given file.  Or NULL, if
  *         the file does not exist or there was an error reading the file.
  */
-xmlnode *purple_util_read_xml_from_file(const char *filename,
+PurpleXmlNode *purple_util_read_xml_from_file(const char *filename,
 									  const char *description);
 
 /**

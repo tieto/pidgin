@@ -63,10 +63,10 @@ static void *xmpp_console_handle = NULL;
 "</style></head></html>"
 
 static char *
-xmlnode_to_pretty_str(xmlnode *node, int *len)
+purple_xmlnode_to_pretty_str(PurpleXmlNode *node, int *len)
 {
 	GString *text = g_string_new("");
-	xmlnode *c;
+	PurpleXmlNode *c;
 	char *node_name, *esc, *esc2;
 	gboolean need_end = FALSE, pretty = TRUE;
 
@@ -94,7 +94,7 @@ xmlnode_to_pretty_str(xmlnode *node, int *len)
 	}
 	for (c = node->child; c; c = c->next)
 	{
-		if (c->type == XMLNODE_TYPE_ATTRIB) {
+		if (c->type == PURPLE_XMLNODE_TYPE_ATTRIB) {
 			esc = g_markup_escape_text(c->name, -1);
 			esc2 = g_markup_escape_text(c->data, -1);
 			g_string_append_printf(text,
@@ -103,8 +103,8 @@ xmlnode_to_pretty_str(xmlnode *node, int *len)
 			                       esc, esc2);
 			g_free(esc);
 			g_free(esc2);
-		} else if (c->type == XMLNODE_TYPE_TAG || c->type == XMLNODE_TYPE_DATA) {
-			if (c->type == XMLNODE_TYPE_DATA)
+		} else if (c->type == PURPLE_XMLNODE_TYPE_TAG || c->type == PURPLE_XMLNODE_TYPE_DATA) {
+			if (c->type == PURPLE_XMLNODE_TYPE_DATA)
 				pretty = FALSE;
 			need_end = TRUE;
 		}
@@ -118,16 +118,16 @@ xmlnode_to_pretty_str(xmlnode *node, int *len)
 		need_end = FALSE;
 		for (c = node->child; c; c = c->next)
 		{
-			if (c->type == XMLNODE_TYPE_TAG) {
+			if (c->type == PURPLE_XMLNODE_TYPE_TAG) {
 				int esc_len;
-				esc = xmlnode_to_pretty_str(c, &esc_len);
+				esc = purple_xmlnode_to_pretty_str(c, &esc_len);
 				if (!need_end) {
 					g_string_append(text, "<div class=tab>");
 					need_end = TRUE;
 				}
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
-			} else if (c->type == XMLNODE_TYPE_DATA && c->data_sz > 0) {
+			} else if (c->type == PURPLE_XMLNODE_TYPE_DATA && c->data_sz > 0) {
 				esc = g_markup_escape_text(c->data, c->data_sz);
 				text = g_string_append(text, esc);
 				g_free(esc);
@@ -156,13 +156,13 @@ xmlnode_to_pretty_str(xmlnode *node, int *len)
 }
 
 static void
-xmlnode_received_cb(PurpleConnection *gc, xmlnode **packet, gpointer null)
+purple_xmlnode_received_cb(PurpleConnection *gc, PurpleXmlNode **packet, gpointer null)
 {
 	char *str, *formatted;
 
 	if (!console || console->gc != gc)
 		return;
-	str = xmlnode_to_pretty_str(*packet, NULL);
+	str = purple_xmlnode_to_pretty_str(*packet, NULL);
 	formatted = g_strdup_printf("<div class=incoming>%s</div>", str);
 	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
@@ -170,25 +170,25 @@ xmlnode_received_cb(PurpleConnection *gc, xmlnode **packet, gpointer null)
 }
 
 static void
-xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
+purple_xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 {
 	char *str;
 	char *formatted;
-	xmlnode *node;
+	PurpleXmlNode *node;
 
 	if (!console || console->gc != gc)
 		return;
-	node = xmlnode_from_str(*packet, -1);
+	node = purple_xmlnode_from_str(*packet, -1);
 
 	if (!node)
 		return;
 
-	str = xmlnode_to_pretty_str(node, NULL);
+	str = purple_xmlnode_to_pretty_str(node, NULL);
 	formatted = g_strdup_printf("<div class=outgoing>%s</div>", str);
 	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
 	g_free(str);
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 }
 
 static gboolean
@@ -228,7 +228,7 @@ entry_changed_cb(GtkWidget *webview, void *data)
 	int height;
 	int pad_top, pad_inside, pad_bottom;
 #endif
-	xmlnode *node;
+	PurpleXmlNode *node;
 
 #if 0
 	/* TODO WebKit: Do entry auto-sizing... */
@@ -258,7 +258,7 @@ entry_changed_cb(GtkWidget *webview, void *data)
 	if (!str)
 		return;
 	xmlstr = g_strdup_printf("<xml>%s</xml>", str);
-	node = xmlnode_from_str(xmlstr, -1);
+	node = purple_xmlnode_from_str(xmlstr, -1);
 	if (node) {
 		gtk_webview_clear_formatting(GTK_WEBVIEW(console->entry));
 	} else {
@@ -267,7 +267,7 @@ entry_changed_cb(GtkWidget *webview, void *data)
 	g_free(str);
 	g_free(xmlstr);
 	if (node)
-		xmlnode_free(node);
+		purple_xmlnode_free(node);
 }
 
 static void iq_clicked_cb(GtkWidget *w, gpointer nul)
@@ -717,9 +717,9 @@ plugin_load(PurplePlugin *plugin)
 
 	xmpp_console_handle = plugin;
 	purple_signal_connect(jabber, "jabber-receiving-xmlnode", xmpp_console_handle,
-			    PURPLE_CALLBACK(xmlnode_received_cb), NULL);
+			    PURPLE_CALLBACK(purple_xmlnode_received_cb), NULL);
 	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
-			    PURPLE_CALLBACK(xmlnode_sent_cb), NULL);
+			    PURPLE_CALLBACK(purple_xmlnode_sent_cb), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signing-on",
 			    plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",

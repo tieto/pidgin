@@ -286,8 +286,8 @@ typedef PurpleMenuAction *		Purple__Menu__Action;
 typedef PurpleWhiteboard *		Purple__Whiteboard;
 
 /* xmlnode.h */
-typedef xmlnode *			Purple__XMLNode;
-typedef XMLNodeType			XMLNode__Type;
+typedef PurpleXmlNode *			Purple__XMLNode;
+typedef PurpleXmlNodeType			XMLNode__Type;
 
 /* other */
 typedef void *				Purple__Handle;

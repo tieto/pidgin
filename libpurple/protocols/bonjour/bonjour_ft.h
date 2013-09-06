@@ -50,7 +50,7 @@ struct _XepXfer
 	char *jid;
 	char *proxy_host;
 	int proxy_port;
-	xmlnode *streamhost;
+	PurpleXmlNode *streamhost;
 	PurpleBuddy *pb;
 };
 
@@ -71,7 +71,7 @@ PurpleXfer *bonjour_new_xfer(PurpleConnection *gc, const char *who);
  */
 void bonjour_send_file(PurpleConnection *gc, const char *who, const char *file);
 
-void xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb);
+void xep_si_parse(PurpleConnection *pc, PurpleXmlNode *packet, PurpleBuddy *pb);
 void
-xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb);
+xep_bytestreams_parse(PurpleConnection *pc, PurpleXmlNode *packet, PurpleBuddy *pb);
 #endif

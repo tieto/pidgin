@@ -32,12 +32,12 @@
 #include "jabber.h"
 
 static JabberSaslState
-digest_md5_start(JabberStream *js, xmlnode *packet, xmlnode **response,
+digest_md5_start(JabberStream *js, PurpleXmlNode *packet, PurpleXmlNode **response,
                  char **error)
 {
-	xmlnode *auth = xmlnode_new("auth");
-	xmlnode_set_namespace(auth, NS_XMPP_SASL);
-	xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
+	PurpleXmlNode *auth = purple_xmlnode_new("auth");
+	purple_xmlnode_set_namespace(auth, NS_XMPP_SASL);
+	purple_xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 
 	*response = auth;
 	return JABBER_SASL_STATE_CONTINUE;
@@ -164,11 +164,11 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 }
 
 static JabberSaslState
-digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
-                            xmlnode **response, char **msg)
+digest_md5_handle_challenge(JabberStream *js, PurpleXmlNode *packet,
+                            PurpleXmlNode **response, char **msg)
 {
-	xmlnode *reply = NULL;
-	char *enc_in = xmlnode_get_data(packet);
+	PurpleXmlNode *reply = NULL;
+	char *enc_in = purple_xmlnode_get_data(packet);
 	char *dec_in;
 	char *enc_out;
 	GHashTable *parts;
@@ -192,8 +192,8 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 		char *expected_rspauth = js->auth_mech_data;
 
 		if (rspauth && purple_strequal(rspauth, expected_rspauth)) {
-			reply = xmlnode_new("response");
-			xmlnode_set_namespace(reply, NS_XMPP_SASL);
+			reply = purple_xmlnode_new("response");
+			purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		} else {
 			*msg = g_strdup(_("Invalid challenge from server"));
 			state = JABBER_SASL_STATE_FAIL;
@@ -260,9 +260,9 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 					G_GSIZE_FORMAT "): %s\n",
 					response->len, response->str);
 
-			reply = xmlnode_new("response");
-			xmlnode_set_namespace(reply, NS_XMPP_SASL);
-			xmlnode_insert_data(reply, enc_out, -1);
+			reply = purple_xmlnode_new("response");
+			purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
+			purple_xmlnode_insert_data(reply, enc_out, -1);
 
 			g_free(enc_out);
 

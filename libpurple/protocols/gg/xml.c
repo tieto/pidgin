@@ -31,7 +31,7 @@
 
 #include "debug.h"
 
-gboolean ggp_xml_get_string(const xmlnode *xml, gchar *childName, gchar **var)
+gboolean ggp_xml_get_string(const PurpleXmlNode *xml, gchar *childName, gchar **var)
 {
 	char *str;
 	
@@ -40,12 +40,12 @@ gboolean ggp_xml_get_string(const xmlnode *xml, gchar *childName, gchar **var)
 	
 	if (childName != NULL)
 	{
-		xml = xmlnode_get_child(xml, childName);
+		xml = purple_xmlnode_get_child(xml, childName);
 		if (xml == NULL)
 			return FALSE;
 	}
 	
-	str = xmlnode_get_data(xml);
+	str = purple_xmlnode_get_data(xml);
 	if (str == NULL)
 		return FALSE;
 	
@@ -53,7 +53,7 @@ gboolean ggp_xml_get_string(const xmlnode *xml, gchar *childName, gchar **var)
 	return TRUE;
 }
 
-gboolean ggp_xml_get_bool(const xmlnode *xml, gchar *childName, gboolean *var)
+gboolean ggp_xml_get_bool(const PurpleXmlNode *xml, gchar *childName, gboolean *var)
 {
 	char *str;
 	gboolean succ;
@@ -71,7 +71,7 @@ gboolean ggp_xml_get_bool(const xmlnode *xml, gchar *childName, gboolean *var)
 	return TRUE;
 }
 
-gboolean ggp_xml_get_uint(const xmlnode *xml, gchar *childName, unsigned int *var)
+gboolean ggp_xml_get_uint(const PurpleXmlNode *xml, gchar *childName, unsigned int *var)
 {
 	char *str, *endptr;
 	gboolean succ;
@@ -92,62 +92,62 @@ gboolean ggp_xml_get_uint(const xmlnode *xml, gchar *childName, unsigned int *va
 	return succ;
 }
 
-gboolean ggp_xml_set_string(xmlnode *xml, gchar *childName, const gchar *val)
+gboolean ggp_xml_set_string(PurpleXmlNode *xml, gchar *childName, const gchar *val)
 {
 	g_return_val_if_fail(xml != NULL, FALSE);
 	g_return_val_if_fail(val != NULL, FALSE);
 	
 	if (childName != NULL)
 	{
-		xmlnode *child = xmlnode_get_child(xml, childName);
+		PurpleXmlNode *child = purple_xmlnode_get_child(xml, childName);
 		if (child == NULL)
-			child = xmlnode_new_child(xml, childName);
+			child = purple_xmlnode_new_child(xml, childName);
 		xml = child;
 	}
 	
 	ggp_xmlnode_remove_children(xml);
-	xmlnode_insert_data(xml, val, -1);
+	purple_xmlnode_insert_data(xml, val, -1);
 	
 	return TRUE;
 }
 
-gboolean ggp_xml_set_bool(xmlnode *xml, gchar *childName, gboolean val)
+gboolean ggp_xml_set_bool(PurpleXmlNode *xml, gchar *childName, gboolean val)
 {
 	return ggp_xml_set_string(xml, childName, val ? "true" : "false");
 }
 
-gboolean ggp_xml_set_uint(xmlnode *xml, gchar *childName, unsigned int val)
+gboolean ggp_xml_set_uint(PurpleXmlNode *xml, gchar *childName, unsigned int val)
 {
 	gchar buff[20];
 	g_snprintf(buff, sizeof(buff), "%u", val);
 	return ggp_xml_set_string(xml, childName, buff);
 }
 
-void ggp_xmlnode_remove_children(xmlnode *xml)
+void ggp_xmlnode_remove_children(PurpleXmlNode *xml)
 {
-	xmlnode *child = xml->child;
+	PurpleXmlNode *child = xml->child;
 	while (child)
 	{
-		xmlnode *next = child->next;
-		if (child->type != XMLNODE_TYPE_ATTRIB)
-			xmlnode_free(child);
+		PurpleXmlNode *next = child->next;
+		if (child->type != PURPLE_XMLNODE_TYPE_ATTRIB)
+			purple_xmlnode_free(child);
 		child = next;
 	}
 }
 
-unsigned int ggp_xml_child_count(xmlnode *xml, const gchar *childName)
+unsigned int ggp_xml_child_count(PurpleXmlNode *xml, const gchar *childName)
 {
-	xmlnode *child;
+	PurpleXmlNode *child;
 	unsigned int count = 0;
 	
 	g_return_val_if_fail(xml != NULL, 0);
 	
 	if (childName)
 	{
-		child = xmlnode_get_child(xml, childName);
+		child = purple_xmlnode_get_child(xml, childName);
 		while (child)
 		{
-			child = xmlnode_get_next_twin(child);
+			child = purple_xmlnode_get_next_twin(child);
 			count++;
 		}
 	}

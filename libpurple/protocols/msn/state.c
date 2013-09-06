@@ -55,73 +55,73 @@ static const char *away_text[] =
 static char *
 msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr, guint protocol_ver)
 {
-	xmlnode *dataNode,*psmNode,*mediaNode,*guidNode;
+	PurpleXmlNode *dataNode,*psmNode,*mediaNode,*guidNode;
 	char *result;
 	int length;
 
-	dataNode = xmlnode_new("Data");
+	dataNode = purple_xmlnode_new("Data");
 
-	psmNode = xmlnode_new("PSM");
+	psmNode = purple_xmlnode_new("PSM");
 	if(psmstr != NULL){
-		xmlnode_insert_data(psmNode, psmstr, -1);
+		purple_xmlnode_insert_data(psmNode, psmstr, -1);
 	}
-	xmlnode_insert_child(dataNode, psmNode);
+	purple_xmlnode_insert_child(dataNode, psmNode);
 
-	mediaNode = xmlnode_new("CurrentMedia");
+	mediaNode = purple_xmlnode_new("CurrentMedia");
 	if(mediastr != NULL){
-		xmlnode_insert_data(mediaNode, mediastr, -1);
+		purple_xmlnode_insert_data(mediaNode, mediastr, -1);
 	}
-	xmlnode_insert_child(dataNode, mediaNode);
+	purple_xmlnode_insert_child(dataNode, mediaNode);
 
-	guidNode = xmlnode_new("MachineGuid");
+	guidNode = purple_xmlnode_new("MachineGuid");
 	if(guidstr != NULL){
-		xmlnode_insert_data(guidNode, guidstr, -1);
+		purple_xmlnode_insert_data(guidNode, guidstr, -1);
 	}
-	xmlnode_insert_child(dataNode, guidNode);
+	purple_xmlnode_insert_child(dataNode, guidNode);
 
 	if (protocol_ver >= 16) {
 		/* TODO: What is this for? */
-		xmlnode *ddpNode = xmlnode_new("DDP");
-		xmlnode_insert_child(dataNode, ddpNode);
+		PurpleXmlNode *ddpNode = purple_xmlnode_new("DDP");
+		purple_xmlnode_insert_child(dataNode, ddpNode);
 	}
 
-	result = xmlnode_to_str(dataNode, &length);
-	xmlnode_free(dataNode);
+	result = purple_xmlnode_to_str(dataNode, &length);
+	purple_xmlnode_free(dataNode);
 	return result;
 }
 
 /* get the CurrentMedia info from the XML node */
 char *
-msn_get_currentmedia(xmlnode *payloadNode)
+msn_get_currentmedia(PurpleXmlNode *payloadNode)
 {
-	xmlnode *currentmediaNode;
+	PurpleXmlNode *currentmediaNode;
 	char *currentmedia;
 
 	purple_debug_info("msn", "Get CurrentMedia\n");
-	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
+	currentmediaNode = purple_xmlnode_get_child(payloadNode, "CurrentMedia");
 	if (currentmediaNode == NULL) {
 		purple_debug_info("msn", "No CurrentMedia Node\n");
 		return NULL;
 	}
-	currentmedia = xmlnode_get_data(currentmediaNode);
+	currentmedia = purple_xmlnode_get_data(currentmediaNode);
 
 	return currentmedia;
 }
 
 /* Get the PSM info from the XML node */
 char *
-msn_get_psm(xmlnode *payloadNode)
+msn_get_psm(PurpleXmlNode *payloadNode)
 {
-	xmlnode *psmNode;
+	PurpleXmlNode *psmNode;
 	char *psm;
 
 	purple_debug_info("msn", "msn get PSM\n");
-	psmNode = xmlnode_get_child(payloadNode, "PSM");
+	psmNode = purple_xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL) {
 		purple_debug_info("msn", "No PSM status Node\n");
 		return NULL;
 	}
-	psm = xmlnode_get_data(psmNode);
+	psm = purple_xmlnode_get_data(psmNode);
 
 	return psm;
 }

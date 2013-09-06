@@ -82,7 +82,7 @@ enum sent_stream_start_types {
 };
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleBuddy *pb);
+xep_iq_parse(PurpleXmlNode *packet, PurpleBuddy *pb);
 
 static BonjourJabberConversation *
 bonjour_jabber_conv_new(PurpleBuddy *pb, PurpleAccount *account, const char *ip) {
@@ -122,14 +122,14 @@ _font_size_ichat_to_purple(int size)
 }
 
 static gchar *
-get_xmlnode_contents(xmlnode *node)
+get_xmlnode_contents(PurpleXmlNode *node)
 {
 	gchar *contents;
 
-	contents = xmlnode_to_str(node, NULL);
+	contents = purple_xmlnode_to_str(node, NULL);
 
 	/* we just want the stuff inside <font></font>
-	 * There isn't stuff exposed in xmlnode.c to do this more cleanly. */
+	 * There isn't stuff exposed in PurpleXmlNode.c to do this more cleanly. */
 
 	if (contents) {
 		char *bodystart = strchr(contents, '>');
@@ -144,27 +144,27 @@ get_xmlnode_contents(xmlnode *node)
 }
 
 static void
-_jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
+_jabber_parse_and_write_message_to_ui(PurpleXmlNode *message_node, PurpleBuddy *pb)
 {
-	xmlnode *body_node, *html_node, *events_node;
+	PurpleXmlNode *body_node, *html_node, *events_node;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(pb));
 	gchar *body = NULL;
 
-	body_node = xmlnode_get_child(message_node, "body");
-	html_node = xmlnode_get_child(message_node, "html");
+	body_node = purple_xmlnode_get_child(message_node, "body");
+	html_node = purple_xmlnode_get_child(message_node, "html");
 
 	if (body_node == NULL && html_node == NULL) {
 		purple_debug_error("bonjour", "No body or html node found, discarding message.\n");
 		return;
 	}
 
-	events_node = xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
+	events_node = purple_xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
 	if (events_node != NULL) {
 #if 0
-		if (xmlnode_get_child(events_node, "composing") != NULL)
+		if (purple_xmlnode_get_child(events_node, "composing") != NULL)
 			composing_event = TRUE;
 #endif
-		if (xmlnode_get_child(events_node, "id") != NULL) {
+		if (purple_xmlnode_get_child(events_node, "id") != NULL) {
 			/* The user is just typing */
 			/* TODO: Deal with typing notification */
 			return;
@@ -172,33 +172,33 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 	}
 
 	if (html_node != NULL) {
-		xmlnode *html_body_node;
+		PurpleXmlNode *html_body_node;
 
-		html_body_node = xmlnode_get_child(html_node, "body");
+		html_body_node = purple_xmlnode_get_child(html_node, "body");
 		if (html_body_node != NULL) {
-			xmlnode *html_body_font_node;
+			PurpleXmlNode *html_body_font_node;
 
-			html_body_font_node = xmlnode_get_child(html_body_node, "font");
+			html_body_font_node = purple_xmlnode_get_child(html_body_node, "font");
 			/* Types of messages sent by iChat */
 			if (html_body_font_node != NULL) {
 				gchar *html_body;
 				const char *font_face, *font_size, *font_color,
 					*ichat_balloon_color, *ichat_text_color;
 
-				font_face = xmlnode_get_attrib(html_body_font_node, "face");
+				font_face = purple_xmlnode_get_attrib(html_body_font_node, "face");
 				/* The absolute iChat font sizes should be converted to 1..7 range */
-				font_size = xmlnode_get_attrib(html_body_font_node, "ABSZ");
+				font_size = purple_xmlnode_get_attrib(html_body_font_node, "ABSZ");
 				if (font_size != NULL)
 					font_size = _font_size_ichat_to_purple(atoi(font_size));
-				font_color = xmlnode_get_attrib(html_body_font_node, "color");
-				ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
-				ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
+				font_color = purple_xmlnode_get_attrib(html_body_font_node, "color");
+				ichat_balloon_color = purple_xmlnode_get_attrib(html_body_node, "ichatballooncolor");
+				ichat_text_color = purple_xmlnode_get_attrib(html_body_node, "ichattextcolor");
 
 				html_body = get_xmlnode_contents(html_body_font_node);
 
 				if (html_body == NULL)
 					/* This is the kind of formatted messages that Purple creates */
-					html_body = xmlnode_to_str(html_body_font_node, NULL);
+					html_body = purple_xmlnode_to_str(html_body_font_node, NULL);
 
 				if (html_body != NULL) {
 					GString *str = g_string_new("<font");
@@ -225,7 +225,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 
 	/* Compose the message */
 	if (body == NULL && body_node != NULL)
-		body = xmlnode_get_data(body_node);
+		body = purple_xmlnode_get_data(body_node);
 
 	if (body == NULL) {
 		purple_debug_error("bonjour", "No html body or regular body found.\n");
@@ -370,7 +370,7 @@ _send_data(PurpleBuddy *pb, char *message)
 	return ret;
 }
 
-void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
+void bonjour_jabber_process_packet(PurpleBuddy *pb, PurpleXmlNode *packet) {
 
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
@@ -1070,7 +1070,7 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 int
 bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *body)
 {
-	xmlnode *message_node, *node, *node2;
+	PurpleXmlNode *message_node, *node, *node2;
 	gchar *message, *xhtml;
 	PurpleBuddy *pb;
 	BonjourBuddy *bb;
@@ -1085,32 +1085,32 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 
 	purple_markup_html_to_xhtml(body, &xhtml, &message);
 
-	message_node = xmlnode_new("message");
-	xmlnode_set_attrib(message_node, "to", bb->name);
-	xmlnode_set_attrib(message_node, "from", bonjour_get_jid(jdata->account));
-	xmlnode_set_attrib(message_node, "type", "chat");
+	message_node = purple_xmlnode_new("message");
+	purple_xmlnode_set_attrib(message_node, "to", bb->name);
+	purple_xmlnode_set_attrib(message_node, "from", bonjour_get_jid(jdata->account));
+	purple_xmlnode_set_attrib(message_node, "type", "chat");
 
 	/* Enclose the message from the UI within a "font" node */
-	node = xmlnode_new_child(message_node, "body");
-	xmlnode_insert_data(node, message, strlen(message));
+	node = purple_xmlnode_new_child(message_node, "body");
+	purple_xmlnode_insert_data(node, message, strlen(message));
 	g_free(message);
 
-	node = xmlnode_new_child(message_node, "html");
-	xmlnode_set_namespace(node, "http://www.w3.org/1999/xhtml");
+	node = purple_xmlnode_new_child(message_node, "html");
+	purple_xmlnode_set_namespace(node, "http://www.w3.org/1999/xhtml");
 
-	node = xmlnode_new_child(node, "body");
+	node = purple_xmlnode_new_child(node, "body");
 	message = g_strdup_printf("<font>%s</font>", xhtml);
-	node2 = xmlnode_from_str(message, strlen(message));
+	node2 = purple_xmlnode_from_str(message, strlen(message));
 	g_free(xhtml);
 	g_free(message);
-	xmlnode_insert_child(node, node2);
+	purple_xmlnode_insert_child(node, node2);
 
-	node = xmlnode_new_child(message_node, "x");
-	xmlnode_set_namespace(node, "jabber:x:event");
-	xmlnode_insert_child(node, xmlnode_new("composing"));
+	node = purple_xmlnode_new_child(message_node, "x");
+	purple_xmlnode_set_namespace(node, "jabber:x:event");
+	purple_xmlnode_insert_child(node, purple_xmlnode_new("composing"));
 
-	message = xmlnode_to_str(message_node, NULL);
-	xmlnode_free(message_node);
+	message = purple_xmlnode_to_str(message_node, NULL);
+	purple_xmlnode_free(message_node);
 
 	ret = _send_data(pb, message) >= 0;
 
@@ -1251,34 +1251,34 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 XepIq *
 xep_iq_new(void *data, XepIqType type, const char *to, const char *from, const char *id)
 {
-	xmlnode *iq_node = NULL;
+	PurpleXmlNode *iq_node = NULL;
 	XepIq *iq = NULL;
 
 	g_return_val_if_fail(data != NULL, NULL);
 	g_return_val_if_fail(to != NULL, NULL);
 	g_return_val_if_fail(id != NULL, NULL);
 
-	iq_node = xmlnode_new("iq");
+	iq_node = purple_xmlnode_new("iq");
 
-	xmlnode_set_attrib(iq_node, "to", to);
-	xmlnode_set_attrib(iq_node, "from", from);
-	xmlnode_set_attrib(iq_node, "id", id);
+	purple_xmlnode_set_attrib(iq_node, "to", to);
+	purple_xmlnode_set_attrib(iq_node, "from", from);
+	purple_xmlnode_set_attrib(iq_node, "id", id);
 	switch (type) {
 		case XEP_IQ_SET:
-			xmlnode_set_attrib(iq_node, "type", "set");
+			purple_xmlnode_set_attrib(iq_node, "type", "set");
 			break;
 		case XEP_IQ_GET:
-			xmlnode_set_attrib(iq_node, "type", "get");
+			purple_xmlnode_set_attrib(iq_node, "type", "get");
 			break;
 		case XEP_IQ_RESULT:
-			xmlnode_set_attrib(iq_node, "type", "result");
+			purple_xmlnode_set_attrib(iq_node, "type", "result");
 			break;
 		case XEP_IQ_ERROR:
-			xmlnode_set_attrib(iq_node, "type", "error");
+			purple_xmlnode_set_attrib(iq_node, "type", "error");
 			break;
 		case XEP_IQ_NONE:
 		default:
-			xmlnode_set_attrib(iq_node, "type", "none");
+			purple_xmlnode_set_attrib(iq_node, "type", "none");
 			break;
 	}
 
@@ -1317,7 +1317,7 @@ check_if_blocked(PurpleBuddy *pb)
 }
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
+xep_iq_parse(PurpleXmlNode *packet, PurpleBuddy *pb)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
@@ -1328,7 +1328,7 @@ xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 		account = purple_buddy_get_account(pb);
 		gc = purple_account_get_connection(account);
 
-	if (xmlnode_get_child(packet, "si") != NULL || xmlnode_get_child(packet, "error") != NULL)
+	if (purple_xmlnode_get_child(packet, "si") != NULL || purple_xmlnode_get_child(packet, "error") != NULL)
 		xep_si_parse(gc, packet, pb);
 	else
 		xep_bytestreams_parse(gc, packet, pb);
@@ -1345,12 +1345,12 @@ xep_iq_send_and_free(XepIq *iq)
 	/* Send the message */
 	if (pb != NULL) {
 		/* Convert xml node into stream */
-		gchar *msg = xmlnode_to_str(iq->node, NULL);
+		gchar *msg = purple_xmlnode_to_str(iq->node, NULL);
 		ret = _send_data(pb, msg);
 		g_free(msg);
 	}
 
-	xmlnode_free(iq->node);
+	purple_xmlnode_free(iq->node);
 	iq->node = NULL;
 	g_free(iq);
 

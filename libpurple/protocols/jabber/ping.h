@@ -29,7 +29,7 @@
 #include "xmlnode.h"
 
 void jabber_ping_parse(JabberStream *js, const char *from,
-                       JabberIqType, const char *id, xmlnode *child);
+                       JabberIqType, const char *id, PurpleXmlNode *child);
 gboolean jabber_ping_jid(JabberStream *js, const char *jid);
 void jabber_keepalive_ping(JabberStream *js);
 

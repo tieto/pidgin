@@ -221,7 +221,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	ggp_pubdir_request *request = _request;
 	PurpleConnection *gc = request->gc;
 	gboolean succ = TRUE;
-	xmlnode *xml;
+	PurpleXmlNode *xml;
 	const gchar *xml_raw;
 	unsigned int status, next_offset;
 	int record_count, i;
@@ -234,7 +234,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 			xml_raw);
 	}
 
-	xml = xmlnode_from_str(xml_raw, -1);
+	xml = purple_xmlnode_from_str(xml_raw, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_pubdir_got_data: "
@@ -247,7 +247,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	succ &= ggp_xml_get_uint(xml, "status", &status);
 	if (!ggp_xml_get_uint(xml, "nextOffset", &next_offset))
 		next_offset = 0;
-	xml = xmlnode_get_child(xml, "users");
+	xml = purple_xmlnode_get_child(xml, "users");
 	if (!succ || status != 0 || !xml)
 	{
 		purple_debug_error("gg", "ggp_pubdir_got_data: "
@@ -260,7 +260,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	record_count = ggp_xml_child_count(xml, "user");
 	records = g_new0(ggp_pubdir_record, record_count);
 	
-	xml = xmlnode_get_child(xml, "user");
+	xml = purple_xmlnode_get_child(xml, "user");
 	i = 0;
 	while (xml)
 	{
@@ -271,7 +271,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		
 		g_assert(i <= record_count);
 		
-		record->uin = ggp_str_to_uin(xmlnode_get_attrib(xml, "uin"));
+		record->uin = ggp_str_to_uin(purple_xmlnode_get_attrib(xml, "uin"));
 		if (record->uin == 0)
 			ggp_xml_get_uint(xml, "uin", &record->uin);
 		if (record->uin == 0)
@@ -341,7 +341,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		
 		g_free(city);
 		
-		xml = xmlnode_get_next_twin(xml);
+		xml = purple_xmlnode_get_next_twin(xml);
 	}
 	
 	request->cb(gc, record_count, records, next_offset, request->user_data);

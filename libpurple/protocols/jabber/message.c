@@ -179,20 +179,20 @@ static void handle_headline(JabberMessage *jm)
 		g_string_append(body, jm->body);
 
 	for(etc = jm->etc; etc; etc = etc->next) {
-		xmlnode *x = etc->data;
-		const char *xmlns = xmlnode_get_namespace(x);
+		PurpleXmlNode *x = etc->data;
+		const char *xmlns = purple_xmlnode_get_namespace(x);
 		if(xmlns && !strcmp(xmlns, NS_OOB_X_DATA)) {
-			xmlnode *url, *desc;
+			PurpleXmlNode *url, *desc;
 			char *urltxt, *desctxt;
 
-			url = xmlnode_get_child(x, "url");
-			desc = xmlnode_get_child(x, "desc");
+			url = purple_xmlnode_get_child(x, "url");
+			desc = purple_xmlnode_get_child(x, "desc");
 
 			if(!url || !desc)
 				continue;
 
-			urltxt = xmlnode_get_data(url);
-			desctxt = xmlnode_get_data(desc);
+			urltxt = purple_xmlnode_get_data(url);
+			desctxt = purple_xmlnode_get_data(desc);
 
 			/* I'm all about ugly hacks */
 			if(body->len && jm->body && !strcmp(body->str, jm->body))
@@ -324,14 +324,14 @@ typedef struct {
 
 
 static void
-jabber_message_get_refs_from_xmlnode_internal(const xmlnode *message,
+jabber_message_get_refs_from_xmlnode_internal(const PurpleXmlNode *message,
 	GHashTable *table)
 {
-	xmlnode *child;
+	PurpleXmlNode *child;
 
-	for (child = xmlnode_get_child(message, "img") ; child ;
-		 child = xmlnode_get_next_twin(child)) {
-		const gchar *src = xmlnode_get_attrib(child, "src");
+	for (child = purple_xmlnode_get_child(message, "img") ; child ;
+		 child = purple_xmlnode_get_next_twin(child)) {
+		const gchar *src = purple_xmlnode_get_attrib(child, "src");
 
 		if (g_str_has_prefix(src, "cid:")) {
 			const gchar *cid = src + 4;
@@ -341,7 +341,7 @@ jabber_message_get_refs_from_xmlnode_internal(const xmlnode *message,
 				/* take a copy of the cid and let the SmileyRef own it... */
 				gchar *temp_cid = g_strdup(cid);
 				JabberSmileyRef *ref = g_new0(JabberSmileyRef, 1);
-				const gchar *alt = xmlnode_get_attrib(child, "alt");
+				const gchar *alt = purple_xmlnode_get_attrib(child, "alt");
 				ref->cid = temp_cid;
 				/* if there is no "alt" string, use the cid...
 				 include the entire src, eg. "cid:.." to avoid linkification */
@@ -379,7 +379,7 @@ jabber_message_get_refs_steal(gpointer key, gpointer value, gpointer user_data)
 }
 
 static GList *
-jabber_message_get_refs_from_xmlnode(const xmlnode *message)
+jabber_message_get_refs_from_xmlnode(const PurpleXmlNode *message)
 {
 	GList *refs = NULL;
 	GHashTable *unique_refs = g_hash_table_new(g_str_hash, g_str_equal);
@@ -392,9 +392,9 @@ jabber_message_get_refs_from_xmlnode(const xmlnode *message)
 }
 
 static gchar *
-jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
+jabber_message_xml_to_string_strip_img_smileys(PurpleXmlNode *xhtml)
 {
-	gchar *markup = xmlnode_to_str(xhtml, NULL);
+	gchar *markup = purple_xmlnode_to_str(xhtml, NULL);
 	int len = strlen(markup);
 	int pos = 0;
 	GString *out = g_string_new(NULL);
@@ -404,7 +404,7 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 		  we need to find all <img> tags within the XHTML and replace those
 			tags with the value of their "alt" attributes */
 		if (g_str_has_prefix(&(markup[pos]), "<img")) {
-			xmlnode *img = NULL;
+			PurpleXmlNode *img = NULL;
 			int pos2 = pos;
 			const gchar *src;
 
@@ -420,14 +420,14 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 
 			/* note, if the above loop didn't find the end of the <img> tag,
 			  it the parsed string will be until the end of the input string,
-			  in which case xmlnode_from_str will bail out and return NULL,
+			  in which case purple_xmlnode_from_str will bail out and return NULL,
 			  in this case the "if" statement below doesn't trigger and the
 			  text is copied unchanged */
-			img = xmlnode_from_str(&(markup[pos]), pos2 - pos);
-			src = xmlnode_get_attrib(img, "src");
+			img = purple_xmlnode_from_str(&(markup[pos]), pos2 - pos);
+			src = purple_xmlnode_get_attrib(img, "src");
 
 			if (g_str_has_prefix(src, "cid:")) {
-				const gchar *alt = xmlnode_get_attrib(img, "alt");
+				const gchar *alt = purple_xmlnode_get_attrib(img, "alt");
 				/* if the "alt" attribute is empty, put the cid as smiley string */
 				if (alt && alt[0] != '\0') {
 					/* if the "alt" is the same as the CID, as Jabbim does,
@@ -448,7 +448,7 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 				pos++;
 			}
 
-			xmlnode_free(img);
+			purple_xmlnode_free(img);
 
 		} else {
 			out = g_string_append_c(out, markup[pos]);
@@ -462,13 +462,13 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 
 static void
 jabber_message_add_remote_smileys(JabberStream *js, const gchar *who,
-    const xmlnode *message)
+    const PurpleXmlNode *message)
 {
-	xmlnode *data_tag;
-	for (data_tag = xmlnode_get_child_with_namespace(message, "data", NS_BOB) ;
+	PurpleXmlNode *data_tag;
+	for (data_tag = purple_xmlnode_get_child_with_namespace(message, "data", NS_BOB) ;
 		 data_tag ;
-		 data_tag = xmlnode_get_next_twin(data_tag)) {
-		const gchar *cid = xmlnode_get_attrib(data_tag, "cid");
+		 data_tag = purple_xmlnode_get_next_twin(data_tag)) {
+		const gchar *cid = purple_xmlnode_get_attrib(data_tag, "cid");
 		const JabberData *data = jabber_data_find_remote_by_cid(js, who, cid);
 
 		if (!data && cid != NULL) {
@@ -498,17 +498,17 @@ jabber_message_request_data_cb(JabberData *data, gchar *alt,
 	g_free(alt);
 }
 
-void jabber_message_parse(JabberStream *js, xmlnode *packet)
+void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 {
 	JabberMessage *jm;
 	const char *id, *from, *to, *type;
-	xmlnode *child;
+	PurpleXmlNode *child;
 	gboolean signal_return;
 
-	from = xmlnode_get_attrib(packet, "from");
-	id   = xmlnode_get_attrib(packet, "id");
-	to   = xmlnode_get_attrib(packet, "to");
-	type = xmlnode_get_attrib(packet, "type");
+	from = purple_xmlnode_get_attrib(packet, "from");
+	id   = purple_xmlnode_get_attrib(packet, "id");
+	to   = purple_xmlnode_get_attrib(packet, "to");
+	type = purple_xmlnode_get_attrib(packet, "type");
 
 	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_protocol(js->gc),
 			"jabber-receiving-message", js->gc, type, id, from, to, packet));
@@ -543,19 +543,19 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jm->id   = g_strdup(id);
 
 	for(child = packet->child; child; child = child->next) {
-		const char *xmlns = xmlnode_get_namespace(child);
-		if(child->type != XMLNODE_TYPE_TAG)
+		const char *xmlns = purple_xmlnode_get_namespace(child);
+		if(child->type != PURPLE_XMLNODE_TYPE_TAG)
 			continue;
 
 		if(!strcmp(child->name, "error")) {
-			const char *code = xmlnode_get_attrib(child, "code");
+			const char *code = purple_xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
-			char *text = xmlnode_get_data(child);
+			char *text = purple_xmlnode_get_data(child);
 			if (!text) {
-				xmlnode *enclosed_text_node;
+				PurpleXmlNode *enclosed_text_node;
 
-				if ((enclosed_text_node = xmlnode_get_child(child, "text")))
-					text = xmlnode_get_data(enclosed_text_node);
+				if ((enclosed_text_node = purple_xmlnode_get_child(child, "text")))
+					text = purple_xmlnode_get_data(enclosed_text_node);
 			}
 
 			if(code)
@@ -578,23 +578,23 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			continue;
 		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->subject) {
-				jm->subject = xmlnode_get_data(child);
+				jm->subject = purple_xmlnode_get_data(child);
 				if(!jm->subject)
 					jm->subject = g_strdup("");
 			}
 		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->thread_id)
-				jm->thread_id = xmlnode_get_data(child);
+				jm->thread_id = purple_xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "body") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->body) {
-				char *msg = xmlnode_get_data(child);
+				char *msg = purple_xmlnode_get_data(child);
 				char *escaped = purple_markup_escape_text(msg, -1);
 				jm->body = purple_strdup_withhtml(escaped);
 				g_free(escaped);
 				g_free(msg);
 			}
 		} else if(!strcmp(child->name, "html") && !strcmp(xmlns, NS_XHTML_IM)) {
-			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
+			if(!jm->xhtml && purple_xmlnode_get_child(child, "body")) {
 				char *c;
 
 				const PurpleConnection *gc = js->gc;
@@ -637,7 +637,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					jabber_message_add_remote_smileys(js, to, packet);
 				}
 
-				xmlnode_strip_prefixes(child);
+				purple_xmlnode_strip_prefixes(child);
 
 				/* reformat xhtml so that img tags with a "cid:" src gets
 				  translated to the bare text of the emoticon (the "alt" attrib) */
@@ -703,30 +703,30 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "gone") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_GONE;
 		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
-			xmlnode *items;
+			PurpleXmlNode *items;
 			jm->type = JABBER_MESSAGE_EVENT;
-			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
+			for(items = purple_xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
 		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, NS_ATTENTION)) {
 			jm->hasBuzz = TRUE;
 		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns, NS_DELAYED_DELIVERY)) {
-			const char *timestamp = xmlnode_get_attrib(child, "stamp");
+			const char *timestamp = purple_xmlnode_get_attrib(child, "stamp");
 			jm->delayed = TRUE;
 			if(timestamp)
 				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
 			if(!strcmp(xmlns, NS_DELAYED_DELIVERY_LEGACY)) {
-				const char *timestamp = xmlnode_get_attrib(child, "stamp");
+				const char *timestamp = purple_xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
 					jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 			} else if(!strcmp(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
 					jm->type != JABBER_MESSAGE_ERROR) {
-				const char *jid = xmlnode_get_attrib(child, "jid");
+				const char *jid = purple_xmlnode_get_attrib(child, "jid");
 				if(jid) {
-					const char *reason = xmlnode_get_attrib(child, "reason");
-					const char *password = xmlnode_get_attrib(child, "password");
+					const char *reason = purple_xmlnode_get_attrib(child, "reason");
+					const char *password = purple_xmlnode_get_attrib(child, "password");
 
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
 					g_free(jm->to);
@@ -744,20 +744,20 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				}
 			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user") &&
 					jm->type != JABBER_MESSAGE_ERROR) {
-				xmlnode *invite = xmlnode_get_child(child, "invite");
+				PurpleXmlNode *invite = purple_xmlnode_get_child(child, "invite");
 				if(invite) {
-					xmlnode *reason, *password;
-					const char *jid = xmlnode_get_attrib(invite, "from");
+					PurpleXmlNode *reason, *password;
+					const char *jid = purple_xmlnode_get_attrib(invite, "from");
 					g_free(jm->to);
 					jm->to = jm->from;
 					jm->from = g_strdup(jid);
-					if((reason = xmlnode_get_child(invite, "reason"))) {
+					if((reason = purple_xmlnode_get_child(invite, "reason"))) {
 						g_free(jm->body);
-						jm->body = xmlnode_get_data(reason);
+						jm->body = purple_xmlnode_get_data(reason);
 					}
-					if((password = xmlnode_get_child(child, "password"))) {
+					if((password = purple_xmlnode_get_child(child, "password"))) {
 						g_free(jm->password);
-						jm->password = xmlnode_get_data(password);
+						jm->password = purple_xmlnode_get_data(password);
 					}
 
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
@@ -766,7 +766,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				jm->etc = g_list_append(jm->etc, child);
 			}
 		} else if (g_str_equal(child->name, "query")) {
-			const char *node = xmlnode_get_attrib(child, "node");
+			const char *node = purple_xmlnode_get_attrib(child, "node");
 			if (purple_strequal(xmlns, NS_DISCO_ITEMS)
 					&& purple_strequal(node, "http://jabber.org/protocol/commands")) {
 				jabber_adhoc_got_list(js, jm->from, child);
@@ -869,16 +869,16 @@ jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
 				/* we found the current smiley at this position */
 				const JabberData *data =
 					jabber_data_find_local_by_alt(shortcut);
-				xmlnode *img = jabber_data_get_xhtml_im(data, shortcut);
+				PurpleXmlNode *img = jabber_data_get_xhtml_im(data, shortcut);
 				int len;
-				gchar *img_text = xmlnode_to_str(img, &len);
+				gchar *img_text = purple_xmlnode_to_str(img, &len);
 
 				found_smiley = TRUE;
 				result = g_string_append(result, img_text);
 				g_free(img_text);
 				pos += strlen(escaped);
 				g_free(escaped);
-				xmlnode_free(img);
+				purple_xmlnode_free(img);
 				break;
 			} else {
 				/* cleanup from the before the next round... */
@@ -994,10 +994,10 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 void jabber_message_send(JabberMessage *jm)
 {
-	xmlnode *message, *child;
+	PurpleXmlNode *message, *child;
 	const char *type = NULL;
 
-	message = xmlnode_new("message");
+	message = purple_xmlnode_new("message");
 
 	switch(jm->type) {
 		case JABBER_MESSAGE_NORMAL:
@@ -1023,56 +1023,56 @@ void jabber_message_send(JabberMessage *jm)
 	}
 
 	if(type)
-		xmlnode_set_attrib(message, "type", type);
+		purple_xmlnode_set_attrib(message, "type", type);
 
 	if (jm->id)
-		xmlnode_set_attrib(message, "id", jm->id);
+		purple_xmlnode_set_attrib(message, "id", jm->id);
 
-	xmlnode_set_attrib(message, "to", jm->to);
+	purple_xmlnode_set_attrib(message, "to", jm->to);
 
 	if(jm->thread_id) {
-		child = xmlnode_new_child(message, "thread");
-		xmlnode_insert_data(child, jm->thread_id, -1);
+		child = purple_xmlnode_new_child(message, "thread");
+		purple_xmlnode_insert_data(child, jm->thread_id, -1);
 	}
 
 	child = NULL;
 	switch(jm->chat_state)
 	{
 		case JM_STATE_ACTIVE:
-			child = xmlnode_new_child(message, "active");
+			child = purple_xmlnode_new_child(message, "active");
 			break;
 		case JM_STATE_COMPOSING:
-			child = xmlnode_new_child(message, "composing");
+			child = purple_xmlnode_new_child(message, "composing");
 			break;
 		case JM_STATE_PAUSED:
-			child = xmlnode_new_child(message, "paused");
+			child = purple_xmlnode_new_child(message, "paused");
 			break;
 		case JM_STATE_INACTIVE:
-			child = xmlnode_new_child(message, "inactive");
+			child = purple_xmlnode_new_child(message, "inactive");
 			break;
 		case JM_STATE_GONE:
-			child = xmlnode_new_child(message, "gone");
+			child = purple_xmlnode_new_child(message, "gone");
 			break;
 		case JM_STATE_NONE:
 			/* yep, nothing */
 			break;
 	}
 	if(child)
-		xmlnode_set_namespace(child, "http://jabber.org/protocol/chatstates");
+		purple_xmlnode_set_namespace(child, "http://jabber.org/protocol/chatstates");
 
 	if(jm->subject) {
-		child = xmlnode_new_child(message, "subject");
-		xmlnode_insert_data(child, jm->subject, -1);
+		child = purple_xmlnode_new_child(message, "subject");
+		purple_xmlnode_insert_data(child, jm->subject, -1);
 	}
 
 	if(jm->body) {
-		child = xmlnode_new_child(message, "body");
-		xmlnode_insert_data(child, jm->body, -1);
+		child = purple_xmlnode_new_child(message, "body");
+		purple_xmlnode_insert_data(child, jm->body, -1);
 	}
 
 	if(jm->xhtml) {
-		if ((child = xmlnode_from_str(jm->xhtml, -1))) {
-			xmlnode_insert_child(message, child);
+		if ((child = purple_xmlnode_from_str(jm->xhtml, -1))) {
+			purple_xmlnode_insert_child(message, child);
 		} else {
 			purple_debug_error("jabber",
 					"XHTML translation/validation failed, returning: %s\n",
@@ -1082,7 +1082,7 @@ void jabber_message_send(JabberMessage *jm)
 
 	jabber_send(jm->js, message);
 
-	xmlnode_free(message);
+	purple_xmlnode_free(message);
 }
 
 /*

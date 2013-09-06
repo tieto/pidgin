@@ -25,6 +25,6 @@
 
 void jabber_gmail_init(JabberStream *js);
 void jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
-                       const char *id, xmlnode *new_mail);
+                       const char *id, PurpleXmlNode *new_mail);
 
 #endif /* PURPLE_JABBER_GOOGLE_GMAIL_H_ */

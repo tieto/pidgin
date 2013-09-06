@@ -39,9 +39,9 @@ typedef void (JabberDiscoItemsCallback)(JabberStream *js, const char *jid,
 		const char *node, GSList *items, gpointer data);
 
 void jabber_disco_info_parse(JabberStream *js, const char *from,
-                             JabberIqType type, const char *id, xmlnode *in_query);
+                             JabberIqType type, const char *id, PurpleXmlNode *in_query);
 void jabber_disco_items_parse(JabberStream *js, const char *from,
-                              JabberIqType type, const char *id, xmlnode *query);
+                              JabberIqType type, const char *id, PurpleXmlNode *query);
 
 void jabber_disco_items_server(JabberStream *js);
 

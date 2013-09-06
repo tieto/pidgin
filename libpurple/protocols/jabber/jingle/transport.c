@@ -42,8 +42,8 @@ static void jingle_transport_init (JingleTransport *transport);
 static void jingle_transport_finalize (GObject *object);
 static void jingle_transport_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void jingle_transport_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
-JingleTransport *jingle_transport_parse_internal(xmlnode *transport);
-xmlnode *jingle_transport_to_xml_internal(JingleTransport *transport, xmlnode *content, JingleActionType action);
+JingleTransport *jingle_transport_parse_internal(PurpleXmlNode *transport);
+PurpleXmlNode *jingle_transport_to_xml_internal(JingleTransport *transport, PurpleXmlNode *content, JingleActionType action);
 static void jingle_transport_add_local_candidate_internal(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
 static GList *jingle_transport_get_remote_candidates_internal(JingleTransport *transport);
 
@@ -174,24 +174,24 @@ jingle_transport_get_remote_candidates_internal(JingleTransport *transport)
 }
 
 JingleTransport *
-jingle_transport_parse_internal(xmlnode *transport)
+jingle_transport_parse_internal(PurpleXmlNode *transport)
 {
-	const gchar *type = xmlnode_get_namespace(transport);
+	const gchar *type = purple_xmlnode_get_namespace(transport);
 	return jingle_transport_create(type);
 }
 
-xmlnode *
-jingle_transport_to_xml_internal(JingleTransport *transport, xmlnode *content, JingleActionType action)
+PurpleXmlNode *
+jingle_transport_to_xml_internal(JingleTransport *transport, PurpleXmlNode *content, JingleActionType action)
 {
-	xmlnode *node = xmlnode_new_child(content, "transport");
-	xmlnode_set_namespace(node, jingle_transport_get_transport_type(transport));
+	PurpleXmlNode *node = purple_xmlnode_new_child(content, "transport");
+	purple_xmlnode_set_namespace(node, jingle_transport_get_transport_type(transport));
 	return node;
 }
 
 JingleTransport *
-jingle_transport_parse(xmlnode *transport)
+jingle_transport_parse(PurpleXmlNode *transport)
 {
-	const gchar *type_name = xmlnode_get_namespace(transport);
+	const gchar *type_name = purple_xmlnode_get_namespace(transport);
 	GType type = jingle_get_type(type_name);
 	if (type == G_TYPE_NONE)
 		return NULL;
@@ -199,8 +199,8 @@ jingle_transport_parse(xmlnode *transport)
 	return JINGLE_TRANSPORT_CLASS(g_type_class_ref(type))->parse(transport);
 }
 
-xmlnode *
-jingle_transport_to_xml(JingleTransport *transport, xmlnode *content, JingleActionType action)
+PurpleXmlNode *
+jingle_transport_to_xml(JingleTransport *transport, PurpleXmlNode *content, JingleActionType action)
 {
 	g_return_val_if_fail(transport != NULL, NULL);
 	g_return_val_if_fail(JINGLE_IS_TRANSPORT(transport), NULL);

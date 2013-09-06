@@ -1157,7 +1157,7 @@ void purple_account_clear_current_error(PurpleAccount *account);
  * @param account  The account
  * @return  The XML description of the account.
  */
-xmlnode *purple_account_to_xmlnode(PurpleAccount *account);
+PurpleXmlNode *purple_account_to_xmlnode(PurpleAccount *account);
 
 /*@}*/
 

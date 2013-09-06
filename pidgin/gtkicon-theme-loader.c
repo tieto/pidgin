@@ -33,7 +33,7 @@
 static PurpleTheme *
 pidgin_icon_loader_build(const gchar *theme_dir)
 {
-	xmlnode *root_node = NULL, *sub_node;
+	PurpleXmlNode *root_node = NULL, *sub_node;
 	gchar *dir, *filename_full, *data = NULL;
 	PidginIconTheme *theme = NULL;
 	const gchar *name;
@@ -44,7 +44,7 @@ pidgin_icon_loader_build(const gchar *theme_dir)
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
 	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
-		root_node = xmlnode_from_file(dir, "theme.xml", "icon themes", "icon-theme-loader");
+		root_node = purple_xmlnode_from_file(dir, "theme.xml", "icon themes", "icon-theme-loader");
 
 	g_free(filename_full);
 	if (root_node == NULL) {
@@ -52,34 +52,34 @@ pidgin_icon_loader_build(const gchar *theme_dir)
 		return NULL;
 	}
 
-	name = xmlnode_get_attrib(root_node, "name");
+	name = purple_xmlnode_get_attrib(root_node, "name");
 
 	if (name) {
 		/* Parse the tree */
-		sub_node = xmlnode_get_child(root_node, "description");
-		data = xmlnode_get_data(sub_node);
+		sub_node = purple_xmlnode_get_child(root_node, "description");
+		data = purple_xmlnode_get_data(sub_node);
 
-		if (xmlnode_get_attrib(root_node, "name") != NULL) {
+		if (purple_xmlnode_get_attrib(root_node, "name") != NULL) {
 			theme = g_object_new(PIDGIN_TYPE_STATUS_ICON_THEME,
 					"type", "status-icon",
 					"name", name,
-					"author", xmlnode_get_attrib(root_node, "author"),
-					"image", xmlnode_get_attrib(root_node, "image"),
+					"author", purple_xmlnode_get_attrib(root_node, "author"),
+					"image", purple_xmlnode_get_attrib(root_node, "image"),
 					"directory", dir,
 					"description", data, NULL);
 
-			sub_node = xmlnode_get_child(root_node, "icon");
+			sub_node = purple_xmlnode_get_child(root_node, "icon");
 
 			while (sub_node) {
 				pidgin_icon_theme_set_icon(theme,
-						xmlnode_get_attrib(sub_node, "id"),
-						xmlnode_get_attrib(sub_node, "file"));
-				sub_node = xmlnode_get_next_twin(sub_node);
+						purple_xmlnode_get_attrib(sub_node, "id"),
+						purple_xmlnode_get_attrib(sub_node, "file"));
+				sub_node = purple_xmlnode_get_next_twin(sub_node);
 			}
 		}
 	}
 
-	xmlnode_free(root_node);
+	purple_xmlnode_free(root_node);
 	g_free(data);
 	return PURPLE_THEME(theme);
 }

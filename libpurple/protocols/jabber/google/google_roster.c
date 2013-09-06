@@ -25,35 +25,35 @@
 #include "debug.h"
 #include "xmlnode.h"
 
-void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
+void jabber_google_roster_outgoing(JabberStream *js, PurpleXmlNode *query, PurpleXmlNode *item)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	GSList *list = purple_account_privacy_get_denied(account);
-	const char *jid = xmlnode_get_attrib(item, "jid");
+	const char *jid = purple_xmlnode_get_attrib(item, "jid");
 	char *jid_norm = (char *)jabber_normalize(account, jid);
 
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
-			xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
-			xmlnode_set_attrib(query, "gr:ext", "2");
-			xmlnode_set_attrib(item, "gr:t", "B");
+			purple_xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
+			purple_xmlnode_set_attrib(query, "gr:ext", "2");
+			purple_xmlnode_set_attrib(item, "gr:t", "B");
 			return;
 		}
 		list = list->next;
 	}
 }
 
-gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
+gboolean jabber_google_roster_incoming(JabberStream *js, PurpleXmlNode *item)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	const char *jid = xmlnode_get_attrib(item, "jid");
+	const char *jid = purple_xmlnode_get_attrib(item, "jid");
 	gboolean on_block_list = FALSE;
 
 	char *jid_norm;
 
-	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", NS_GOOGLE_ROSTER);
-	const char *subscription = xmlnode_get_attrib(item, "subscription");
-	const char *ask = xmlnode_get_attrib(item, "ask");
+	const char *grt = purple_xmlnode_get_attrib_with_namespace(item, "t", NS_GOOGLE_ROSTER);
+	const char *subscription = purple_xmlnode_get_attrib(item, "subscription");
+	const char *ask = purple_xmlnode_get_attrib(item, "ask");
 
 	if ((!subscription || !strcmp(subscription, "none")) && !ask) {
 		/* The Google Talk servers will automatically add people from your Gmail address book
@@ -101,9 +101,9 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 	PurpleAccount *account;
 	GSList *buddies;
 	JabberIq *iq;
-	xmlnode *query;
-	xmlnode *item;
-	xmlnode *group;
+	PurpleXmlNode *query;
+	PurpleXmlNode *item;
+	PurpleXmlNode *group;
 	PurpleBuddy *b;
 	JabberBuddy *jb;
 	const char *balias;
@@ -117,8 +117,8 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
 
-	query = xmlnode_get_child(iq->node, "query");
-	item = xmlnode_new_child(query, "item");
+	query = purple_xmlnode_get_child(iq->node, "query");
+	item = purple_xmlnode_new_child(query, "item");
 
 	do {
 		PurpleGroup *g;
@@ -126,18 +126,18 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 		b = buddies->data;
 		g = purple_buddy_get_group(b);
 
-		group = xmlnode_new_child(item, "group");
-		xmlnode_insert_data(group, purple_group_get_name(g), -1);
+		group = purple_xmlnode_new_child(item, "group");
+		purple_xmlnode_insert_data(group, purple_group_get_name(g), -1);
 
 		buddies = g_slist_delete_link(buddies, buddies);
 	} while (buddies);
 
 	balias = purple_buddy_get_local_alias(b);
-	xmlnode_set_attrib(item, "jid", who);
-	xmlnode_set_attrib(item, "name", balias ? balias : "");
-	xmlnode_set_attrib(item, "gr:t", "B");
-	xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
-	xmlnode_set_attrib(query, "gr:ext", "2");
+	purple_xmlnode_set_attrib(item, "jid", who);
+	purple_xmlnode_set_attrib(item, "name", balias ? balias : "");
+	purple_xmlnode_set_attrib(item, "gr:t", "B");
+	purple_xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
+	purple_xmlnode_set_attrib(query, "gr:ext", "2");
 
 	jabber_iq_send(iq);
 
@@ -163,9 +163,9 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 {
 	GSList *buddies;
 	JabberIq *iq;
-	xmlnode *query;
-	xmlnode *item;
-	xmlnode *group;
+	PurpleXmlNode *query;
+	PurpleXmlNode *item;
+	PurpleXmlNode *group;
 	PurpleBuddy *b;
 	const char *balias;
 
@@ -175,8 +175,8 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
 
-	query = xmlnode_get_child(iq->node, "query");
-	item = xmlnode_new_child(query, "item");
+	query = purple_xmlnode_get_child(iq->node, "query");
+	item = purple_xmlnode_new_child(query, "item");
 
 	do {
 		PurpleGroup *g;
@@ -184,17 +184,17 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 		b = buddies->data;
 		g = purple_buddy_get_group(b);
 
-		group = xmlnode_new_child(item, "group");
-		xmlnode_insert_data(group, purple_group_get_name(g), -1);
+		group = purple_xmlnode_new_child(item, "group");
+		purple_xmlnode_insert_data(group, purple_group_get_name(g), -1);
 
 		buddies = g_slist_delete_link(buddies, buddies);
 	} while (buddies);
 
 	balias = purple_buddy_get_local_alias(b);
-	xmlnode_set_attrib(item, "jid", who);
-	xmlnode_set_attrib(item, "name", balias ? balias : "");
-	xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
-	xmlnode_set_attrib(query, "gr:ext", "2");
+	purple_xmlnode_set_attrib(item, "jid", who);
+	purple_xmlnode_set_attrib(item, "name", balias ? balias : "");
+	purple_xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
+	purple_xmlnode_set_attrib(query, "gr:ext", "2");
 
 	jabber_iq_send(iq);
 

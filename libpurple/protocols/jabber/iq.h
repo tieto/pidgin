@@ -58,7 +58,7 @@ typedef struct _JabberIq JabberIq;
  */
 typedef void (JabberIqHandler)(JabberStream *js, const char *from,
                                JabberIqType type, const char *id,
-                               xmlnode *child);
+                               PurpleXmlNode *child);
 
 /**
  * A JabberIqCallback is called to process the results of a GET or SET that
@@ -77,12 +77,12 @@ typedef void (JabberIqHandler)(JabberStream *js, const char *from,
  */
 typedef void (JabberIqCallback)(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
-                                xmlnode *packet, gpointer data);
+                                PurpleXmlNode *packet, gpointer data);
 
 struct _JabberIq {
 	JabberIqType type;
 	char *id;
-	xmlnode *node;
+	PurpleXmlNode *node;
 
 	JabberIqCallback *callback;
 	gpointer callback_data;
@@ -94,7 +94,7 @@ JabberIq *jabber_iq_new(JabberStream *js, JabberIqType type);
 JabberIq *jabber_iq_new_query(JabberStream *js, JabberIqType type,
 		const char *xmlns);
 
-void jabber_iq_parse(JabberStream *js, xmlnode *packet);
+void jabber_iq_parse(JabberStream *js, PurpleXmlNode *packet);
 
 void jabber_iq_remove_callback_by_id(JabberStream *js, const char *id);
 void jabber_iq_set_callback(JabberIq *iq, JabberIqCallback *cb, gpointer data);

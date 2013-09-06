@@ -57,7 +57,7 @@ bonjour_parser_element_start_libxml(void *user_data,
 {
 	BonjourJabberConversation *bconv = user_data;
 
-	xmlnode *node;
+	PurpleXmlNode *node;
 	int i;
 
 	g_return_if_fail(element_name != NULL);
@@ -85,10 +85,10 @@ bonjour_parser_element_start_libxml(void *user_data,
 			bonjour_jabber_conv_match_by_ip(bconv);
 
 		if(bconv->current)
-			node = xmlnode_new_child(bconv->current, (const char*) element_name);
+			node = purple_xmlnode_new_child(bconv->current, (const char*) element_name);
 		else
-			node = xmlnode_new((const char*) element_name);
-		xmlnode_set_namespace(node, (const char*) namespace);
+			node = purple_xmlnode_new((const char*) element_name);
+		purple_xmlnode_set_namespace(node, (const char*) namespace);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
 			const char *name = (const char *)attributes[i];
@@ -104,7 +104,7 @@ bonjour_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = purple_unescape_text(txt);
 			g_free(txt);
-			xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
+			purple_xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
 			g_free(attrib);
 		}
 
@@ -119,7 +119,7 @@ bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 	BonjourJabberConversation *bconv = user_data;
 
 	if(!bconv->current) {
-		/* We don't keep a reference to the start stream xmlnode,
+		/* We don't keep a reference to the start stream PurpleXmlNode,
 		 * so we have to check for it here to close the conversation */
 		if(!xmlStrcmp(element_name, (xmlChar*) "stream"))
 			/* Asynchronously close the conversation to prevent bonjour_parser_setup()
@@ -132,10 +132,10 @@ bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 		if(!xmlStrcmp((xmlChar*) bconv->current->name, element_name))
 			bconv->current = bconv->current->parent;
 	} else {
-		xmlnode *packet = bconv->current;
+		PurpleXmlNode *packet = bconv->current;
 		bconv->current = NULL;
 		bonjour_jabber_process_packet(bconv->pb, packet);
-		xmlnode_free(packet);
+		purple_xmlnode_free(packet);
 	}
 }
 
@@ -150,7 +150,7 @@ bonjour_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 	if(!text || !text_len)
 		return;
 
-	xmlnode_insert_data(bconv->current, (const char*) text, text_len);
+	purple_xmlnode_insert_data(bconv->current, (const char*) text, text_len);
 }
 
 static void

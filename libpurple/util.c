@@ -3105,10 +3105,10 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	return TRUE;
 }
 
-xmlnode *
+PurpleXmlNode *
 purple_util_read_xml_from_file(const char *filename, const char *description)
 {
-	return xmlnode_from_file(purple_user_dir(), filename, description, "util");
+	return purple_xmlnode_from_file(purple_user_dir(), filename, description, "util");
 }
 
 /*

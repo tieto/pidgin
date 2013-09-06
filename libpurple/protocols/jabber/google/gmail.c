@@ -26,10 +26,10 @@
 static void
 jabber_gmail_parse(JabberStream *js, const char *from,
                    JabberIqType type, const char *id,
-                   xmlnode *packet, gpointer nul)
+                   PurpleXmlNode *packet, gpointer nul)
 {
-	xmlnode *child;
-	xmlnode *message;
+	PurpleXmlNode *child;
+	PurpleXmlNode *message;
 	const char *to, *url;
 	const char *in_str;
 	char *to_name;
@@ -42,18 +42,18 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	if (type == JABBER_IQ_ERROR)
 		return;
 
-	child = xmlnode_get_child(packet, "mailbox");
+	child = purple_xmlnode_get_child(packet, "mailbox");
 	if (!child)
 		return;
 
-	in_str = xmlnode_get_attrib(child, "total-matched");
+	in_str = purple_xmlnode_get_attrib(child, "total-matched");
 	if (in_str && *in_str)
 		count = atoi(in_str);
 
 	/* If Gmail doesn't tell us who the mail is to, let's use our JID */
-	to = xmlnode_get_attrib(packet, "to");
+	to = purple_xmlnode_get_attrib(packet, "to");
 
-	message = xmlnode_get_child(child, "mail-thread-info");
+	message = purple_xmlnode_get_child(child, "mail-thread-info");
 
 	if (count == 0 || !message) {
 		if (count > 0) {
@@ -71,51 +71,51 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 
 	/* Loop once to see how many messages were returned so we can allocate arrays
 	 * accordingly */
-	for (returned_count = 0; message; returned_count++, message=xmlnode_get_next_twin(message));
+	for (returned_count = 0; message; returned_count++, message=purple_xmlnode_get_next_twin(message));
 
 	froms    = g_new0(const char* , returned_count + 1);
 	tos      = g_new0(const char* , returned_count + 1);
 	subjects = g_new0(char* , returned_count + 1);
 	urls     = g_new0(const char* , returned_count + 1);
 
-	to = xmlnode_get_attrib(packet, "to");
+	to = purple_xmlnode_get_attrib(packet, "to");
 	to_name = jabber_get_bare_jid(to);
-	url = xmlnode_get_attrib(child, "url");
+	url = purple_xmlnode_get_attrib(child, "url");
 	if (!url || !*url)
 		url = "http://www.gmail.com";
 
-	message= xmlnode_get_child(child, "mail-thread-info");
-	for (i=0; message; message = xmlnode_get_next_twin(message), i++) {
-		xmlnode *sender_node, *subject_node;
+	message= purple_xmlnode_get_child(child, "mail-thread-info");
+	for (i=0; message; message = purple_xmlnode_get_next_twin(message), i++) {
+		PurpleXmlNode *sender_node, *subject_node;
 		const char *from, *tid;
 		char *subject;
 
-		subject_node = xmlnode_get_child(message, "subject");
-		sender_node  = xmlnode_get_child(message, "senders");
-		sender_node  = xmlnode_get_child(sender_node, "sender");
+		subject_node = purple_xmlnode_get_child(message, "subject");
+		sender_node  = purple_xmlnode_get_child(message, "senders");
+		sender_node  = purple_xmlnode_get_child(sender_node, "sender");
 
-		while (sender_node && (!xmlnode_get_attrib(sender_node, "unread") ||
-		       !strcmp(xmlnode_get_attrib(sender_node, "unread"),"0")))
-			sender_node = xmlnode_get_next_twin(sender_node);
+		while (sender_node && (!purple_xmlnode_get_attrib(sender_node, "unread") ||
+		       !strcmp(purple_xmlnode_get_attrib(sender_node, "unread"),"0")))
+			sender_node = purple_xmlnode_get_next_twin(sender_node);
 
 		if (!sender_node) {
 			i--;
 			continue;
 		}
 
-		from = xmlnode_get_attrib(sender_node, "name");
+		from = purple_xmlnode_get_attrib(sender_node, "name");
 		if (!from || !*from)
-			from = xmlnode_get_attrib(sender_node, "address");
-		subject = xmlnode_get_data(subject_node);
+			from = purple_xmlnode_get_attrib(sender_node, "address");
+		subject = purple_xmlnode_get_data(subject_node);
 		/*
-		 * url = xmlnode_get_attrib(message, "url");
+		 * url = purple_xmlnode_get_attrib(message, "url");
 		 */
 		tos[i] = (to_name != NULL ?  to_name : "");
 		froms[i] = (from != NULL ?  from : "");
 		subjects[i] = (subject != NULL ? subject : g_strdup(""));
 		urls[i] = url;
 
-		tid = xmlnode_get_attrib(message, "tid");
+		tid = purple_xmlnode_get_attrib(message, "tid");
 		if (tid &&
 		    (js->gmail_last_tid == NULL || strcmp(tid, js->gmail_last_tid) > 0)) {
 			g_free(js->gmail_last_tid);
@@ -135,7 +135,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	g_free(subjects);
 	g_free(urls);
 
-	in_str = xmlnode_get_attrib(child, "result-time");
+	in_str = purple_xmlnode_get_attrib(child, "result-time");
 	if (in_str && *in_str) {
 		g_free(js->gmail_last_time);
 		js->gmail_last_time = g_strdup(in_str);
@@ -144,9 +144,9 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 
 void
 jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
-                  const char *id, xmlnode *new_mail)
+                  const char *id, PurpleXmlNode *new_mail)
 {
-	xmlnode *query;
+	PurpleXmlNode *query;
 	JabberIq *iq;
 
 	/* bail if the user isn't interested */
@@ -160,8 +160,8 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	/* Acknowledge the notification */
 	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 	if (from)
-		xmlnode_set_attrib(iq->node, "to", from);
-	xmlnode_set_attrib(iq->node, "id", id);
+		purple_xmlnode_set_attrib(iq->node, "to", from);
+	purple_xmlnode_set_attrib(iq->node, "id", id);
 	jabber_iq_send(iq);
 
 	purple_debug_misc("jabber",
@@ -169,12 +169,12 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_MAIL_NOTIFY);
 	jabber_iq_set_callback(iq, jabber_gmail_parse, NULL);
-	query = xmlnode_get_child(iq->node, "query");
+	query = purple_xmlnode_get_child(iq->node, "query");
 
 	if (js->gmail_last_time)
-		xmlnode_set_attrib(query, "newer-than-time", js->gmail_last_time);
+		purple_xmlnode_set_attrib(query, "newer-than-time", js->gmail_last_time);
 	if (js->gmail_last_tid)
-		xmlnode_set_attrib(query, "newer-than-tid", js->gmail_last_tid);
+		purple_xmlnode_set_attrib(query, "newer-than-tid", js->gmail_last_tid);
 
 	jabber_iq_send(iq);
 	return;
@@ -182,7 +182,7 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 
 void jabber_gmail_init(JabberStream *js) {
 	JabberIq *iq;
-	xmlnode *usersetting, *mailnotifications;
+	PurpleXmlNode *usersetting, *mailnotifications;
 
 	if (!purple_account_get_check_mail(purple_connection_get_account(js->gc)))
 		return;
@@ -195,10 +195,10 @@ void jabber_gmail_init(JabberStream *js) {
 	 * email notifications itself.
 	 */
 	iq = jabber_iq_new(js, JABBER_IQ_SET);
-	usersetting = xmlnode_new_child(iq->node, "usersetting");
-	xmlnode_set_namespace(usersetting, "google:setting");
-	mailnotifications = xmlnode_new_child(usersetting, "mailnotifications");
-	xmlnode_set_attrib(mailnotifications, "value", "true");
+	usersetting = purple_xmlnode_new_child(iq->node, "usersetting");
+	purple_xmlnode_set_namespace(usersetting, "google:setting");
+	mailnotifications = purple_xmlnode_new_child(usersetting, "mailnotifications");
+	purple_xmlnode_set_attrib(mailnotifications, "value", "true");
 	jabber_iq_send(iq);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_MAIL_NOTIFY);

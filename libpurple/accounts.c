@@ -44,19 +44,19 @@ void _purple_account_set_current_error(PurpleAccount *account,
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
-static xmlnode *
+static PurpleXmlNode *
 accounts_to_xmlnode(void)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	GList *cur;
 
-	node = xmlnode_new("account");
-	xmlnode_set_attrib(node, "version", "1.0");
+	node = purple_xmlnode_new("account");
+	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 	{
 		child = purple_account_to_xmlnode(cur->data);
-		xmlnode_insert_child(node, child);
+		purple_xmlnode_insert_child(node, child);
 	}
 
 	return node;
@@ -65,7 +65,7 @@ accounts_to_xmlnode(void)
 static void
 sync_accounts(void)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 	char *data;
 
 	if (!accounts_loaded)
@@ -76,10 +76,10 @@ sync_accounts(void)
 	}
 
 	node = accounts_to_xmlnode();
-	data = xmlnode_to_formatted_str(node, NULL);
+	data = purple_xmlnode_to_formatted_str(node, NULL);
 	purple_util_write_data_to_file("accounts.xml", data, -1);
 	g_free(data);
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 }
 
 static gboolean
@@ -170,28 +170,28 @@ migrate_xmpp_encryption(PurpleAccount *account)
 }
 
 static void
-parse_settings(xmlnode *node, PurpleAccount *account)
+parse_settings(PurpleXmlNode *node, PurpleAccount *account)
 {
 	const char *ui;
-	xmlnode *child;
+	PurpleXmlNode *child;
 
 	/* Get the UI string, if these are UI settings */
-	ui = xmlnode_get_attrib(node, "ui");
+	ui = purple_xmlnode_get_attrib(node, "ui");
 
 	/* Read settings, one by one */
-	for (child = xmlnode_get_child(node, "setting"); child != NULL;
-			child = xmlnode_get_next_twin(child))
+	for (child = purple_xmlnode_get_child(node, "setting"); child != NULL;
+			child = purple_xmlnode_get_next_twin(child))
 	{
 		const char *name, *str_type;
 		PurplePrefType type;
 		char *data;
 
-		name = xmlnode_get_attrib(child, "name");
+		name = purple_xmlnode_get_attrib(child, "name");
 		if (name == NULL)
 			/* Ignore this setting */
 			continue;
 
-		str_type = xmlnode_get_attrib(child, "type");
+		str_type = purple_xmlnode_get_attrib(child, "type");
 		if (str_type == NULL)
 			/* Ignore this setting */
 			continue;
@@ -206,7 +206,7 @@ parse_settings(xmlnode *node, PurpleAccount *account)
 			/* Ignore this setting */
 			continue;
 
-		data = xmlnode_get_data(child);
+		data = purple_xmlnode_get_data(child);
 		if (data == NULL)
 			/* Ignore this setting */
 			continue;
@@ -245,17 +245,17 @@ parse_settings(xmlnode *node, PurpleAccount *account)
 }
 
 static GList *
-parse_status_attrs(xmlnode *node, PurpleStatus *status)
+parse_status_attrs(PurpleXmlNode *node, PurpleStatus *status)
 {
 	GList *list = NULL;
-	xmlnode *child;
+	PurpleXmlNode *child;
 	GValue *attr_value;
 
-	for (child = xmlnode_get_child(node, "attribute"); child != NULL;
-			child = xmlnode_get_next_twin(child))
+	for (child = purple_xmlnode_get_child(node, "attribute"); child != NULL;
+			child = purple_xmlnode_get_next_twin(child))
 	{
-		const char *id = xmlnode_get_attrib(child, "id");
-		const char *value = xmlnode_get_attrib(child, "value");
+		const char *id = purple_xmlnode_get_attrib(child, "id");
+		const char *value = purple_xmlnode_get_attrib(child, "value");
 
 		if (!id || !*id || !value || !*value)
 			continue;
@@ -290,16 +290,16 @@ parse_status_attrs(xmlnode *node, PurpleStatus *status)
 }
 
 static void
-parse_status(xmlnode *node, PurpleAccount *account)
+parse_status(PurpleXmlNode *node, PurpleAccount *account)
 {
 	gboolean active = FALSE;
 	const char *data;
 	const char *type;
-	xmlnode *child;
+	PurpleXmlNode *child;
 	GList *attrs = NULL;
 
 	/* Get the active/inactive state */
-	data = xmlnode_get_attrib(node, "active");
+	data = purple_xmlnode_get_attrib(node, "active");
 	if (data == NULL)
 		return;
 	if (g_ascii_strcasecmp(data, "true") == 0)
@@ -310,12 +310,12 @@ parse_status(xmlnode *node, PurpleAccount *account)
 		return;
 
 	/* Get the type of the status */
-	type = xmlnode_get_attrib(node, "type");
+	type = purple_xmlnode_get_attrib(node, "type");
 	if (type == NULL)
 		return;
 
 	/* Read attributes into a GList */
-	child = xmlnode_get_child(node, "attributes");
+	child = purple_xmlnode_get_child(node, "attributes");
 	if (child != NULL)
 	{
 		attrs = parse_status_attrs(child,
@@ -328,22 +328,22 @@ parse_status(xmlnode *node, PurpleAccount *account)
 }
 
 static void
-parse_statuses(xmlnode *node, PurpleAccount *account)
+parse_statuses(PurpleXmlNode *node, PurpleAccount *account)
 {
-	xmlnode *child;
+	PurpleXmlNode *child;
 
-	for (child = xmlnode_get_child(node, "status"); child != NULL;
-			child = xmlnode_get_next_twin(child))
+	for (child = purple_xmlnode_get_child(node, "status"); child != NULL;
+			child = purple_xmlnode_get_next_twin(child))
 	{
 		parse_status(child, account);
 	}
 }
 
 static void
-parse_proxy_info(xmlnode *node, PurpleAccount *account)
+parse_proxy_info(PurpleXmlNode *node, PurpleAccount *account)
 {
 	PurpleProxyInfo *proxy_info;
-	xmlnode *child;
+	PurpleXmlNode *child;
 	char *data;
 
 	proxy_info = purple_proxy_info_new();
@@ -352,8 +352,8 @@ parse_proxy_info(xmlnode *node, PurpleAccount *account)
 	purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_GLOBAL);
 
 	/* Read proxy type */
-	child = xmlnode_get_child(node, "type");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "type");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		if (purple_strequal(data, "global"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_GLOBAL);
@@ -379,32 +379,32 @@ parse_proxy_info(xmlnode *node, PurpleAccount *account)
 	}
 
 	/* Read proxy host */
-	child = xmlnode_get_child(node, "host");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "host");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		purple_proxy_info_set_host(proxy_info, data);
 		g_free(data);
 	}
 
 	/* Read proxy port */
-	child = xmlnode_get_child(node, "port");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "port");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		purple_proxy_info_set_port(proxy_info, atoi(data));
 		g_free(data);
 	}
 
 	/* Read proxy username */
-	child = xmlnode_get_child(node, "username");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "username");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		purple_proxy_info_set_username(proxy_info, data);
 		g_free(data);
 	}
 
 	/* Read proxy password */
-	child = xmlnode_get_child(node, "password");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "password");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		purple_proxy_info_set_password(proxy_info, data);
 		g_free(data);
@@ -425,15 +425,15 @@ parse_proxy_info(xmlnode *node, PurpleAccount *account)
 }
 
 static void
-parse_current_error(xmlnode *node, PurpleAccount *account)
+parse_current_error(PurpleXmlNode *node, PurpleAccount *account)
 {
 	guint type;
 	char *type_str = NULL, *description = NULL;
-	xmlnode *child;
+	PurpleXmlNode *child;
 	PurpleConnectionErrorInfo *current_error = NULL;
 
-	child = xmlnode_get_child(node, "type");
-	if (child == NULL || (type_str = xmlnode_get_data(child)) == NULL)
+	child = purple_xmlnode_get_child(node, "type");
+	if (child == NULL || (type_str = purple_xmlnode_get_data(child)) == NULL)
 		return;
 	type = atoi(type_str);
 	g_free(type_str);
@@ -447,9 +447,9 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 		type = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 	}
 
-	child = xmlnode_get_child(node, "description");
+	child = purple_xmlnode_get_child(node, "description");
 	if (child)
-		description = xmlnode_get_data(child);
+		description = purple_xmlnode_get_data(child);
 	if (description == NULL)
 		description = g_strdup("");
 
@@ -462,27 +462,27 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 }
 
 static PurpleAccount *
-parse_account(xmlnode *node)
+parse_account(PurpleXmlNode *node)
 {
 	PurpleAccount *ret;
-	xmlnode *child;
+	PurpleXmlNode *child;
 	char *protocol_id = NULL;
 	char *name = NULL;
 	char *data;
 
-	child = xmlnode_get_child(node, "protocol");
+	child = purple_xmlnode_get_child(node, "protocol");
 	if (child != NULL)
-		protocol_id = xmlnode_get_data(child);
+		protocol_id = purple_xmlnode_get_data(child);
 
-	child = xmlnode_get_child(node, "name");
+	child = purple_xmlnode_get_child(node, "name");
 	if (child != NULL)
-		name = xmlnode_get_data(child);
+		name = purple_xmlnode_get_data(child);
 	if (name == NULL)
 	{
 		/* Do we really need to do this? */
-		child = xmlnode_get_child(node, "username");
+		child = purple_xmlnode_get_child(node, "username");
 		if (child != NULL)
-			name = xmlnode_get_data(child);
+			name = purple_xmlnode_get_data(child);
 	}
 
 	if ((protocol_id == NULL) || (name == NULL))
@@ -497,8 +497,8 @@ parse_account(xmlnode *node)
 	g_free(protocol_id);
 
 	/* Read the alias */
-	child = xmlnode_get_child(node, "alias");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "alias");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		if (*data != '\0')
 			purple_account_set_private_alias(ret, data);
@@ -506,23 +506,23 @@ parse_account(xmlnode *node)
 	}
 
 	/* Read the statuses */
-	child = xmlnode_get_child(node, "statuses");
+	child = purple_xmlnode_get_child(node, "statuses");
 	if (child != NULL)
 	{
 		parse_statuses(child, ret);
 	}
 
 	/* Read the userinfo */
-	child = xmlnode_get_child(node, "userinfo");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "userinfo");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		purple_account_set_user_info(ret, data);
 		g_free(data);
 	}
 
 	/* Read an old buddyicon */
-	child = xmlnode_get_child(node, "buddyicon");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	child = purple_xmlnode_get_child(node, "buddyicon");
+	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		const char *dirname = purple_buddy_icons_get_cache_dir();
 		char *filename = g_build_filename(dirname, data, NULL);
@@ -539,35 +539,35 @@ parse_account(xmlnode *node)
 	}
 
 	/* Read settings (both core and UI) */
-	for (child = xmlnode_get_child(node, "settings"); child != NULL;
-			child = xmlnode_get_next_twin(child))
+	for (child = purple_xmlnode_get_child(node, "settings"); child != NULL;
+			child = purple_xmlnode_get_next_twin(child))
 	{
 		parse_settings(child, ret);
 	}
 
 	/* Read proxy */
-	child = xmlnode_get_child(node, "proxy");
+	child = purple_xmlnode_get_child(node, "proxy");
 	if (child != NULL)
 	{
 		parse_proxy_info(child, ret);
 	}
 
 	/* Read current error */
-	child = xmlnode_get_child(node, "current_error");
+	child = purple_xmlnode_get_child(node, "current_error");
 	if (child != NULL)
 	{
 		parse_current_error(child, ret);
 	}
 
 	/* Read the password */
-	child = xmlnode_get_child(node, "password");
+	child = purple_xmlnode_get_child(node, "password");
 	if (child != NULL)
 	{
-		const char *keyring_id = xmlnode_get_attrib(child, "keyring_id");
-		const char *mode = xmlnode_get_attrib(child, "mode");
+		const char *keyring_id = purple_xmlnode_get_attrib(child, "keyring_id");
+		const char *mode = purple_xmlnode_get_attrib(child, "mode");
 		gboolean result;
 
-		data = xmlnode_get_data(child);
+		data = purple_xmlnode_get_data(child);
 		result = purple_keyring_import_password(ret, keyring_id, mode, data, NULL);
 
 		if (result == TRUE || purple_keyring_get_inuse() == NULL) {
@@ -584,7 +584,7 @@ parse_account(xmlnode *node)
 static void
 load_accounts(void)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 
 	accounts_loaded = TRUE;
 
@@ -593,15 +593,15 @@ load_accounts(void)
 	if (node == NULL)
 		return;
 
-	for (child = xmlnode_get_child(node, "account"); child != NULL;
-			child = xmlnode_get_next_twin(child))
+	for (child = purple_xmlnode_get_child(node, "account"); child != NULL;
+			child = purple_xmlnode_get_next_twin(child))
 	{
 		PurpleAccount *new_acct;
 		new_acct = parse_account(child);
 		purple_accounts_add(new_acct);
 	}
 
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 
 	_purple_buddy_icons_account_loaded_cb();
 }
