@@ -42,7 +42,7 @@ typedef struct {
 	JabberStream *js;
 	char *remote_jid;
 	char *iq_id;
-	xmlnode *description;		/* store incoming description through
+	PurpleXmlNode *description;		/* store incoming description through
 	 								relay credential fetching */
 	gpointer session_data;
 } GoogleSession;
@@ -51,6 +51,6 @@ gboolean jabber_google_session_initiate(JabberStream *js, const gchar *who,
     PurpleMediaSessionType type);
 
 void jabber_google_session_parse(JabberStream *js, const char *from,
-    JabberIqType type, const char *iq, xmlnode *session);
+    JabberIqType type, const char *iq, PurpleXmlNode *session);
 
 #endif /* PURPLE_JABBER_GOOGLE_SESSION_H_ */

@@ -475,40 +475,40 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
  */
 static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 {
-	xmlnode *xml = NULL;
-	xmlnode *xmlnode_next_event;
+	PurpleXmlNode *xml = NULL;
+	PurpleXmlNode *purple_xmlnode_next_event;
 
-	xml = xmlnode_from_str(data, -1);
+	xml = purple_xmlnode_from_str(data, -1);
 	if (xml == NULL)
 		goto out;
 
-	xmlnode_next_event = xmlnode_get_child(xml, "event");
-	while (xmlnode_next_event != NULL)
+	purple_xmlnode_next_event = purple_xmlnode_get_child(xml, "event");
+	while (purple_xmlnode_next_event != NULL)
 	{
-		xmlnode *xmlnode_current_event = xmlnode_next_event;
+		PurpleXmlNode *purple_xmlnode_current_event = purple_xmlnode_next_event;
 		
-		xmlnode *xmlnode_type;
+		PurpleXmlNode *purple_xmlnode_type;
 		char *event_type_raw;
 		int event_type = 0;
 		
-		xmlnode *xmlnode_sender;
+		PurpleXmlNode *purple_xmlnode_sender;
 		char *event_sender_raw;
 		uin_t event_sender = 0;
 
-		xmlnode_next_event = xmlnode_get_next_twin(xmlnode_next_event);
+		purple_xmlnode_next_event = purple_xmlnode_get_next_twin(purple_xmlnode_next_event);
 		
-		xmlnode_type = xmlnode_get_child(xmlnode_current_event, "type");
-		if (xmlnode_type == NULL)
+		purple_xmlnode_type = purple_xmlnode_get_child(purple_xmlnode_current_event, "type");
+		if (purple_xmlnode_type == NULL)
 			continue;
-		event_type_raw = xmlnode_get_data(xmlnode_type);
+		event_type_raw = purple_xmlnode_get_data(purple_xmlnode_type);
 		if (event_type_raw != NULL)
 			event_type = atoi(event_type_raw);
 		g_free(event_type_raw);
 		
-		xmlnode_sender = xmlnode_get_child(xmlnode_current_event, "sender");
-		if (xmlnode_sender != NULL)
+		purple_xmlnode_sender = purple_xmlnode_get_child(purple_xmlnode_current_event, "sender");
+		if (purple_xmlnode_sender != NULL)
 		{
-			event_sender_raw = xmlnode_get_data(xmlnode_sender);
+			event_sender_raw = purple_xmlnode_get_data(purple_xmlnode_sender);
 			if (event_sender_raw != NULL)
 				event_sender = ggp_str_to_uin(event_sender_raw);
 			g_free(event_sender_raw);
@@ -530,7 +530,7 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 	
 	out:
 		if (xml)
-			xmlnode_free(xml);
+			purple_xmlnode_free(xml);
 }
 
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)

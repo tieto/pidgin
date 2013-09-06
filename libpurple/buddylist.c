@@ -142,31 +142,31 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 {
 	const char *name;
 	GValue *value;
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	char buf[21];
 
 	name    = (const char *)key;
 	value   = (GValue *)hvalue;
-	node    = (xmlnode *)user_data;
+	node    = (PurpleXmlNode *)user_data;
 
 	g_return_if_fail(value != NULL);
 
-	child = xmlnode_new_child(node, "setting");
-	xmlnode_set_attrib(child, "name", name);
+	child = purple_xmlnode_new_child(node, "setting");
+	purple_xmlnode_set_attrib(child, "name", name);
 
 	if (G_VALUE_HOLDS_INT(value)) {
-		xmlnode_set_attrib(child, "type", "int");
+		purple_xmlnode_set_attrib(child, "type", "int");
 		g_snprintf(buf, sizeof(buf), "%d", g_value_get_int(value));
-		xmlnode_insert_data(child, buf, -1);
+		purple_xmlnode_insert_data(child, buf, -1);
 	}
 	else if (G_VALUE_HOLDS_STRING(value)) {
-		xmlnode_set_attrib(child, "type", "string");
-		xmlnode_insert_data(child, g_value_get_string(value), -1);
+		purple_xmlnode_set_attrib(child, "type", "string");
+		purple_xmlnode_insert_data(child, g_value_get_string(value), -1);
 	}
 	else if (G_VALUE_HOLDS_BOOLEAN(value)) {
-		xmlnode_set_attrib(child, "type", "bool");
+		purple_xmlnode_set_attrib(child, "type", "bool");
 		g_snprintf(buf, sizeof(buf), "%d", g_value_get_boolean(value));
-		xmlnode_insert_data(child, buf, -1);
+		purple_xmlnode_insert_data(child, buf, -1);
 	}
 }
 
@@ -175,37 +175,37 @@ chat_component_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 {
 	const char *name;
 	const char *data;
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 
 	name = (const char *)key;
 	data = (const char *)value;
-	node = (xmlnode *)user_data;
+	node = (PurpleXmlNode *)user_data;
 
 	g_return_if_fail(data != NULL);
 
-	child = xmlnode_new_child(node, "component");
-	xmlnode_set_attrib(child, "name", name);
-	xmlnode_insert_data(child, data, -1);
+	child = purple_xmlnode_new_child(node, "component");
+	purple_xmlnode_set_attrib(child, "name", name);
+	purple_xmlnode_insert_data(child, data, -1);
 }
 
-static xmlnode *
+static PurpleXmlNode *
 buddy_to_xmlnode(PurpleBuddy *buddy)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	PurpleAccount *account = purple_buddy_get_account(buddy);
 	const char *alias = purple_buddy_get_local_alias(buddy);
 
-	node = xmlnode_new("buddy");
-	xmlnode_set_attrib(node, "account", purple_account_get_username(account));
-	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
+	node = purple_xmlnode_new("buddy");
+	purple_xmlnode_set_attrib(node, "account", purple_account_get_username(account));
+	purple_xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
 
-	child = xmlnode_new_child(node, "name");
-	xmlnode_insert_data(child, purple_buddy_get_name(buddy), -1);
+	child = purple_xmlnode_new_child(node, "name");
+	purple_xmlnode_insert_data(child, purple_buddy_get_name(buddy), -1);
 
 	if (alias != NULL)
 	{
-		child = xmlnode_new_child(node, "alias");
-		xmlnode_insert_data(child, alias, -1);
+		child = purple_xmlnode_new_child(node, "alias");
+		purple_xmlnode_insert_data(child, alias, -1);
 	}
 
 	/* Write buddy settings */
@@ -215,19 +215,19 @@ buddy_to_xmlnode(PurpleBuddy *buddy)
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 contact_to_xmlnode(PurpleContact *contact)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	PurpleBlistNode *bnode;
 	gchar *alias;
 
-	node = xmlnode_new("contact");
+	node = purple_xmlnode_new("contact");
 	g_object_get(contact, "alias", &alias, NULL);
 
 	if (alias != NULL)
 	{
-		xmlnode_set_attrib(node, "alias", alias);
+		purple_xmlnode_set_attrib(node, "alias", alias);
 	}
 
 	/* Write buddies */
@@ -238,7 +238,7 @@ contact_to_xmlnode(PurpleContact *contact)
 		if (PURPLE_IS_BUDDY(bnode))
 		{
 			child = buddy_to_xmlnode(PURPLE_BUDDY(bnode));
-			xmlnode_insert_child(node, child);
+			purple_xmlnode_insert_child(node, child);
 		}
 	}
 
@@ -250,23 +250,23 @@ contact_to_xmlnode(PurpleContact *contact)
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 chat_to_xmlnode(PurpleChat *chat)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	PurpleAccount *account = purple_chat_get_account(chat);
 	gchar *alias;
 
 	g_object_get(chat, "alias", &alias, NULL);
 
-	node = xmlnode_new("chat");
-	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
-	xmlnode_set_attrib(node, "account", purple_account_get_username(account));
+	node = purple_xmlnode_new("chat");
+	purple_xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
+	purple_xmlnode_set_attrib(node, "account", purple_account_get_username(account));
 
 	if (alias != NULL)
 	{
-		child = xmlnode_new_child(node, "alias");
-		xmlnode_insert_data(child, alias, -1);
+		child = purple_xmlnode_new_child(node, "alias");
+		purple_xmlnode_insert_data(child, alias, -1);
 	}
 
 	/* Write chat components */
@@ -281,14 +281,14 @@ chat_to_xmlnode(PurpleChat *chat)
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 group_to_xmlnode(PurpleGroup *group)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	PurpleBlistNode *cnode;
 
-	node = xmlnode_new("group");
-	xmlnode_set_attrib(node, "name", purple_group_get_name(group));
+	node = purple_xmlnode_new("group");
+	purple_xmlnode_set_attrib(node, "name", purple_group_get_name(group));
 
 	/* Write settings */
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(group)),
@@ -302,58 +302,58 @@ group_to_xmlnode(PurpleGroup *group)
 		if (PURPLE_IS_CONTACT(cnode))
 		{
 			child = contact_to_xmlnode(PURPLE_CONTACT(cnode));
-			xmlnode_insert_child(node, child);
+			purple_xmlnode_insert_child(node, child);
 		}
 		else if (PURPLE_IS_CHAT(cnode))
 		{
 			child = chat_to_xmlnode(PURPLE_CHAT(cnode));
-			xmlnode_insert_child(node, child);
+			purple_xmlnode_insert_child(node, child);
 		}
 	}
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 accountprivacy_to_xmlnode(PurpleAccount *account)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	GSList *cur;
 	char buf[10];
 
-	node = xmlnode_new("account");
-	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
-	xmlnode_set_attrib(node, "name", purple_account_get_username(account));
+	node = purple_xmlnode_new("account");
+	purple_xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
+	purple_xmlnode_set_attrib(node, "name", purple_account_get_username(account));
 	g_snprintf(buf, sizeof(buf), "%d", purple_account_get_privacy_type(account));
-	xmlnode_set_attrib(node, "mode", buf);
+	purple_xmlnode_set_attrib(node, "mode", buf);
 
 	for (cur = purple_account_privacy_get_permitted(account); cur; cur = cur->next)
 	{
-		child = xmlnode_new_child(node, "permit");
-		xmlnode_insert_data(child, cur->data, -1);
+		child = purple_xmlnode_new_child(node, "permit");
+		purple_xmlnode_insert_data(child, cur->data, -1);
 	}
 
 	for (cur = purple_account_privacy_get_denied(account); cur; cur = cur->next)
 	{
-		child = xmlnode_new_child(node, "block");
-		xmlnode_insert_data(child, cur->data, -1);
+		child = purple_xmlnode_new_child(node, "block");
+		purple_xmlnode_insert_data(child, cur->data, -1);
 	}
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 blist_to_xmlnode(void)
 {
-	xmlnode *node, *child, *grandchild;
+	PurpleXmlNode *node, *child, *grandchild;
 	PurpleBlistNode *gnode;
 	GList *cur;
 
-	node = xmlnode_new("purple");
-	xmlnode_set_attrib(node, "version", "1.0");
+	node = purple_xmlnode_new("purple");
+	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	/* Write groups */
-	child = xmlnode_new_child(node, "blist");
+	child = purple_xmlnode_new_child(node, "blist");
 	for (gnode = purplebuddylist->root; gnode != NULL; gnode = gnode->next)
 	{
 		if (purple_blist_node_is_transient(gnode))
@@ -361,16 +361,16 @@ blist_to_xmlnode(void)
 		if (PURPLE_IS_GROUP(gnode))
 		{
 			grandchild = group_to_xmlnode(PURPLE_GROUP(gnode));
-			xmlnode_insert_child(child, grandchild);
+			purple_xmlnode_insert_child(child, grandchild);
 		}
 	}
 
 	/* Write privacy settings */
-	child = xmlnode_new_child(node, "privacy");
+	child = purple_xmlnode_new_child(node, "privacy");
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 	{
 		grandchild = accountprivacy_to_xmlnode(cur->data);
-		xmlnode_insert_child(child, grandchild);
+		purple_xmlnode_insert_child(child, grandchild);
 	}
 
 	return node;
@@ -379,7 +379,7 @@ blist_to_xmlnode(void)
 static void
 purple_blist_sync(void)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 	char *data;
 
 	if (!blist_loaded)
@@ -390,10 +390,10 @@ purple_blist_sync(void)
 	}
 
 	node = blist_to_xmlnode();
-	data = xmlnode_to_formatted_str(node, NULL);
+	data = purple_xmlnode_to_formatted_str(node, NULL);
 	purple_util_write_data_to_file("blist.xml", data, -1);
 	g_free(data);
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 }
 
 static gboolean
@@ -445,11 +445,11 @@ void purple_blist_schedule_save()
  *********************************************************************/
 
 static void
-parse_setting(PurpleBlistNode *node, xmlnode *setting)
+parse_setting(PurpleBlistNode *node, PurpleXmlNode *setting)
 {
-	const char *name = xmlnode_get_attrib(setting, "name");
-	const char *type = xmlnode_get_attrib(setting, "type");
-	char *value = xmlnode_get_data(setting);
+	const char *name = purple_xmlnode_get_attrib(setting, "name");
+	const char *type = purple_xmlnode_get_attrib(setting, "type");
+	char *value = purple_xmlnode_get_data(setting);
 
 	if (!value)
 		return;
@@ -465,16 +465,16 @@ parse_setting(PurpleBlistNode *node, xmlnode *setting)
 }
 
 static void
-parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
+parse_buddy(PurpleGroup *group, PurpleContact *contact, PurpleXmlNode *bnode)
 {
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 	char *name = NULL, *alias = NULL;
 	const char *acct_name, *proto;
-	xmlnode *x;
+	PurpleXmlNode *x;
 
-	acct_name = xmlnode_get_attrib(bnode, "account");
-	proto = xmlnode_get_attrib(bnode, "proto");
+	acct_name = purple_xmlnode_get_attrib(bnode, "account");
+	proto = purple_xmlnode_get_attrib(bnode, "proto");
 
 	if (!acct_name || !proto)
 		return;
@@ -484,20 +484,20 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 	if (!account)
 		return;
 
-	if ((x = xmlnode_get_child(bnode, "name")))
-		name = xmlnode_get_data(x);
+	if ((x = purple_xmlnode_get_child(bnode, "name")))
+		name = purple_xmlnode_get_data(x);
 
 	if (!name)
 		return;
 
-	if ((x = xmlnode_get_child(bnode, "alias")))
-		alias = xmlnode_get_data(x);
+	if ((x = purple_xmlnode_get_child(bnode, "alias")))
+		alias = purple_xmlnode_get_data(x);
 
 	buddy = purple_buddy_new(account, name, alias);
 	purple_blist_add_buddy(buddy, contact, group,
 			_purple_blist_get_last_child((PurpleBlistNode*)contact));
 
-	for (x = xmlnode_get_child(bnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
+	for (x = purple_xmlnode_get_child(bnode, "setting"); x; x = purple_xmlnode_get_next_twin(x)) {
 		parse_setting((PurpleBlistNode*)buddy, x);
 	}
 
@@ -506,21 +506,21 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 }
 
 static void
-parse_contact(PurpleGroup *group, xmlnode *cnode)
+parse_contact(PurpleGroup *group, PurpleXmlNode *cnode)
 {
 	PurpleContact *contact = purple_contact_new();
-	xmlnode *x;
+	PurpleXmlNode *x;
 	const char *alias;
 
 	purple_blist_add_contact(contact, group,
 			_purple_blist_get_last_child((PurpleBlistNode*)group));
 
-	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
+	if ((alias = purple_xmlnode_get_attrib(cnode, "alias"))) {
 		purple_contact_set_alias(contact, alias);
 	}
 
 	for (x = cnode->child; x; x = x->next) {
-		if (x->type != XMLNODE_TYPE_TAG)
+		if (x->type != PURPLE_XMLNODE_TYPE_TAG)
 			continue;
 		if (purple_strequal(x->name, "buddy"))
 			parse_buddy(group, contact, x);
@@ -534,17 +534,17 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 }
 
 static void
-parse_chat(PurpleGroup *group, xmlnode *cnode)
+parse_chat(PurpleGroup *group, PurpleXmlNode *cnode)
 {
 	PurpleChat *chat;
 	PurpleAccount *account;
 	const char *acct_name, *proto;
-	xmlnode *x;
+	PurpleXmlNode *x;
 	char *alias = NULL;
 	GHashTable *components;
 
-	acct_name = xmlnode_get_attrib(cnode, "account");
-	proto = xmlnode_get_attrib(cnode, "proto");
+	acct_name = purple_xmlnode_get_attrib(cnode, "account");
+	proto = purple_xmlnode_get_attrib(cnode, "proto");
 
 	if (!acct_name || !proto)
 		return;
@@ -554,17 +554,17 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 	if (!account)
 		return;
 
-	if ((x = xmlnode_get_child(cnode, "alias")))
-		alias = xmlnode_get_data(x);
+	if ((x = purple_xmlnode_get_child(cnode, "alias")))
+		alias = purple_xmlnode_get_data(x);
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
-	for (x = xmlnode_get_child(cnode, "component"); x; x = xmlnode_get_next_twin(x)) {
+	for (x = purple_xmlnode_get_child(cnode, "component"); x; x = purple_xmlnode_get_next_twin(x)) {
 		const char *name;
 		char *value;
 
-		name = xmlnode_get_attrib(x, "name");
-		value = xmlnode_get_data(x);
+		name = purple_xmlnode_get_attrib(x, "name");
+		value = purple_xmlnode_get_data(x);
 		g_hash_table_replace(components, g_strdup(name), value);
 	}
 
@@ -572,7 +572,7 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 	purple_blist_add_chat(chat, group,
 			_purple_blist_get_last_child((PurpleBlistNode*)group));
 
-	for (x = xmlnode_get_child(cnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
+	for (x = purple_xmlnode_get_child(cnode, "setting"); x; x = purple_xmlnode_get_next_twin(x)) {
 		parse_setting((PurpleBlistNode*)chat, x);
 	}
 
@@ -580,11 +580,11 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 }
 
 static void
-parse_group(xmlnode *groupnode)
+parse_group(PurpleXmlNode *groupnode)
 {
-	const char *name = xmlnode_get_attrib(groupnode, "name");
+	const char *name = purple_xmlnode_get_attrib(groupnode, "name");
 	PurpleGroup *group;
-	xmlnode *cnode;
+	PurpleXmlNode *cnode;
 
 	if (!name)
 		name = _("Buddies");
@@ -594,7 +594,7 @@ parse_group(xmlnode *groupnode)
 			purple_blist_get_last_sibling(purplebuddylist->root));
 
 	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
-		if (cnode->type != XMLNODE_TYPE_TAG)
+		if (cnode->type != PURPLE_XMLNODE_TYPE_TAG)
 			continue;
 		if (purple_strequal(cnode->name, "setting"))
 			parse_setting((PurpleBlistNode*)group, cnode);
@@ -609,7 +609,7 @@ parse_group(xmlnode *groupnode)
 static void
 load_blist(void)
 {
-	xmlnode *purple, *blist, *privacy;
+	PurpleXmlNode *purple, *blist, *privacy;
 
 	blist_loaded = TRUE;
 
@@ -618,27 +618,27 @@ load_blist(void)
 	if (purple == NULL)
 		return;
 
-	blist = xmlnode_get_child(purple, "blist");
+	blist = purple_xmlnode_get_child(purple, "blist");
 	if (blist) {
-		xmlnode *groupnode;
-		for (groupnode = xmlnode_get_child(blist, "group"); groupnode != NULL;
-				groupnode = xmlnode_get_next_twin(groupnode)) {
+		PurpleXmlNode *groupnode;
+		for (groupnode = purple_xmlnode_get_child(blist, "group"); groupnode != NULL;
+				groupnode = purple_xmlnode_get_next_twin(groupnode)) {
 			parse_group(groupnode);
 		}
 	}
 
-	privacy = xmlnode_get_child(purple, "privacy");
+	privacy = purple_xmlnode_get_child(purple, "privacy");
 	if (privacy) {
-		xmlnode *anode;
+		PurpleXmlNode *anode;
 		for (anode = privacy->child; anode; anode = anode->next) {
-			xmlnode *x;
+			PurpleXmlNode *x;
 			PurpleAccount *account;
 			int imode;
 			const char *acct_name, *proto, *mode;
 
-			acct_name = xmlnode_get_attrib(anode, "name");
-			proto = xmlnode_get_attrib(anode, "proto");
-			mode = xmlnode_get_attrib(anode, "mode");
+			acct_name = purple_xmlnode_get_attrib(anode, "name");
+			proto = purple_xmlnode_get_attrib(anode, "proto");
+			mode = purple_xmlnode_get_attrib(anode, "mode");
 
 			if (!acct_name || !proto || !mode)
 				continue;
@@ -653,15 +653,15 @@ load_blist(void)
 
 			for (x = anode->child; x; x = x->next) {
 				char *name;
-				if (x->type != XMLNODE_TYPE_TAG)
+				if (x->type != PURPLE_XMLNODE_TYPE_TAG)
 					continue;
 
 				if (purple_strequal(x->name, "permit")) {
-					name = xmlnode_get_data(x);
+					name = purple_xmlnode_get_data(x);
 					purple_account_privacy_permit_add(account, name, TRUE);
 					g_free(name);
 				} else if (purple_strequal(x->name, "block")) {
-					name = xmlnode_get_data(x);
+					name = purple_xmlnode_get_data(x);
 					purple_account_privacy_deny_add(account, name, TRUE);
 					g_free(name);
 				}
@@ -669,7 +669,7 @@ load_blist(void)
 		}
 	}
 
-	xmlnode_free(purple);
+	purple_xmlnode_free(purple);
 
 	/* This tells the buddy icon code to do its thing. */
 	_purple_buddy_icons_blist_loaded_cb();

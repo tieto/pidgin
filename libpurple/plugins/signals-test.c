@@ -627,7 +627,7 @@ notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint c
  **************************************************************************/
 static gboolean
 jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
-                   const char *from, xmlnode *iq)
+                   const char *from, PurpleXmlNode *iq)
 {
 	purple_debug_misc("signals test", "jabber IQ (type=%s, id=%s, from=%s) %p\n",
 	                  type, id, from ? from : "(null)", iq);
@@ -638,7 +638,7 @@ jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
 
 static gboolean
 jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
-                        const char *from, const char *to, xmlnode *message)
+                        const char *from, const char *to, PurpleXmlNode *message)
 {
 	purple_debug_misc("signals test", "jabber message (type=%s, id=%s, "
 	                  "from=%s to=%s) %p\n",
@@ -651,7 +651,7 @@ jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
 
 static gboolean
 jabber_presence_received(PurpleConnection *pc, const char *type,
-                         const char *from, xmlnode *presence)
+                         const char *from, PurpleXmlNode *presence)
 {
 	purple_debug_misc("signals test", "jabber presence (type=%s, from=%s) %p\n",
 	                  type ? type : "(null)", from ? from : "(null)", presence);
@@ -662,24 +662,24 @@ jabber_presence_received(PurpleConnection *pc, const char *type,
 
 static gboolean
 jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
-                  const char *from, xmlnode *child)
+                  const char *from, PurpleXmlNode *child)
 {
 	purple_debug_misc("signals test", "jabber watched IQ (type=%s, id=%s, from=%s)\n"
 	                  "child %p name=%s, namespace=%s\n",
 	                  type, id, from, child, child->name,
-	                  xmlnode_get_namespace(child));
+	                  purple_xmlnode_get_namespace(child));
 
 	if (g_str_equal(type, "get") || g_str_equal(type, "set")) {
 		/* Send the requisite reply */
-		xmlnode *iq = xmlnode_new("iq");
-		xmlnode_set_attrib(iq, "to", from);
-		xmlnode_set_attrib(iq, "id", id);
-		xmlnode_set_attrib(iq, "type", "result");
+		PurpleXmlNode *iq = purple_xmlnode_new("iq");
+		purple_xmlnode_set_attrib(iq, "to", from);
+		purple_xmlnode_set_attrib(iq, "id", id);
+		purple_xmlnode_set_attrib(iq, "type", "result");
 
 		purple_signal_emit(purple_connection_get_prpl(pc),
 		                   "jabber-sending-xmlnode", pc, &iq);
 		if (iq != NULL)
-			xmlnode_free(iq);
+			purple_xmlnode_free(iq);
 	}
 
 	/* Cookie monster eats IQ stanzas; the prpl shouldn't keep processing */

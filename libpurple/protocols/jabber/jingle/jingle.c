@@ -74,32 +74,32 @@ jingle_get_type(const gchar *type)
 }
 
 static void
-jingle_handle_unknown_type(JingleSession *session, xmlnode *jingle)
+jingle_handle_unknown_type(JingleSession *session, PurpleXmlNode *jingle)
 {
 	/* Send error */
 }
 
 static void
-jingle_handle_content_accept(JingleSession *session, xmlnode *jingle)
+jingle_handle_content_accept(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		jingle_session_accept_content(session, name, creator);
 		/* signal here */
 	}
 }
 
 static void
-jingle_handle_content_add(JingleSession *session, xmlnode *jingle)
+jingle_handle_content_add(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
 		JingleContent *pending_content =
 				jingle_content_parse(content);
 		if (pending_content == NULL) {
@@ -117,18 +117,18 @@ jingle_handle_content_add(JingleSession *session, xmlnode *jingle)
 }
 
 static void
-jingle_handle_content_modify(JingleSession *session, xmlnode *jingle)
+jingle_handle_content_modify(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		JingleContent *local_content = jingle_session_find_content(session, name, creator);
 
 		if (local_content != NULL) {
-			const gchar *senders = xmlnode_get_attrib(content, "senders");
+			const gchar *senders = purple_xmlnode_get_attrib(content, "senders");
 			gchar *local_senders = jingle_content_get_senders(local_content);
 			if (!purple_strequal(senders, local_senders))
 				jingle_content_modify(local_content, senders);
@@ -142,45 +142,45 @@ jingle_handle_content_modify(JingleSession *session, xmlnode *jingle)
 }
 
 static void
-jingle_handle_content_reject(JingleSession *session, xmlnode *jingle)
+jingle_handle_content_reject(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		jingle_session_remove_pending_content(session, name, creator);
 		/* signal here */
 	}
 }
 
 static void
-jingle_handle_content_remove(JingleSession *session, xmlnode *jingle)
+jingle_handle_content_remove(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		jingle_session_remove_content(session, name, creator);
 	}
 }
 
 static void
-jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
+jingle_handle_description_info(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
 	jingle_session_accept_session(session);
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		JingleContent *parsed_content =
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
@@ -195,23 +195,23 @@ jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
 }
 
 static void
-jingle_handle_security_info(JingleSession *session, xmlnode *jingle)
+jingle_handle_security_info(JingleSession *session, PurpleXmlNode *jingle)
 {
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 }
 
 static void
-jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
+jingle_handle_session_accept(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
 	jingle_session_accept_session(session);
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		JingleContent *parsed_content =
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
@@ -226,18 +226,18 @@ jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
 }
 
 static void
-jingle_handle_session_info(JingleSession *session, xmlnode *jingle)
+jingle_handle_session_info(JingleSession *session, PurpleXmlNode *jingle)
 {
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 	/* XXX: call signal */
 }
 
 static void
-jingle_handle_session_initiate(JingleSession *session, xmlnode *jingle)
+jingle_handle_session_initiate(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
 		JingleContent *parsed_content = jingle_content_parse(content);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
@@ -254,7 +254,7 @@ jingle_handle_session_initiate(JingleSession *session, xmlnode *jingle)
 }
 
 static void
-jingle_handle_session_terminate(JingleSession *session, xmlnode *jingle)
+jingle_handle_session_terminate(JingleSession *session, PurpleXmlNode *jingle)
 {
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
@@ -265,30 +265,30 @@ jingle_handle_session_terminate(JingleSession *session, xmlnode *jingle)
 }
 
 static void
-jingle_handle_transport_accept(JingleSession *session, xmlnode *jingle)
+jingle_handle_transport_accept(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		JingleContent *content = jingle_session_find_content(session, name, creator);
 		jingle_content_accept_transport(content);
 	}
 }
 
 static void
-jingle_handle_transport_info(JingleSession *session, xmlnode *jingle)
+jingle_handle_transport_info(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		JingleContent *parsed_content =
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
@@ -303,31 +303,31 @@ jingle_handle_transport_info(JingleSession *session, xmlnode *jingle)
 }
 
 static void
-jingle_handle_transport_reject(JingleSession *session, xmlnode *jingle)
+jingle_handle_transport_reject(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
 		JingleContent *content = jingle_session_find_content(session, name, creator);
 		jingle_content_remove_pending_transport(content);
 	}
 }
 
 static void
-jingle_handle_transport_replace(JingleSession *session, xmlnode *jingle)
+jingle_handle_transport_replace(JingleSession *session, PurpleXmlNode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	PurpleXmlNode *content = purple_xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
-		xmlnode *xmltransport = xmlnode_get_child(content, "transport");
+	for (; content; content = purple_xmlnode_get_next_twin(content)) {
+		const gchar *name = purple_xmlnode_get_attrib(content, "name");
+		const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
+		PurpleXmlNode *xmltransport = purple_xmlnode_get_child(content, "transport");
 		JingleTransport *transport = jingle_transport_parse(xmltransport);
 		JingleContent *content = jingle_session_find_content(session, name, creator);
 
@@ -337,7 +337,7 @@ jingle_handle_transport_replace(JingleSession *session, xmlnode *jingle)
 
 typedef struct {
 	const char *name;
-	void (*handler)(JingleSession*, xmlnode*);
+	void (*handler)(JingleSession*, PurpleXmlNode*);
 } JingleAction;
 
 static const JingleAction jingle_actions[] = {
@@ -381,7 +381,7 @@ jingle_get_action_type(const gchar *action)
 
 void
 jingle_parse(JabberStream *js, const char *from, JabberIqType type,
-             const char *id, xmlnode *jingle)
+             const char *id, PurpleXmlNode *jingle)
 {
 	const gchar *action;
 	const gchar *sid;
@@ -393,7 +393,7 @@ jingle_parse(JabberStream *js, const char *from, JabberIqType type,
 		return;
 	}
 
-	if (!(action = xmlnode_get_attrib(jingle, "action"))) {
+	if (!(action = purple_xmlnode_get_attrib(jingle, "action"))) {
 		/* TODO: send iq error here */
 		return;
 	}
@@ -403,7 +403,7 @@ jingle_parse(JabberStream *js, const char *from, JabberIqType type,
 	purple_debug_info("jabber", "got Jingle package action = %s\n",
 			  action);
 
-	if (!(sid = xmlnode_get_attrib(jingle, "sid"))) {
+	if (!(sid = purple_xmlnode_get_attrib(jingle, "sid"))) {
 		/* send iq error here */
 		return;
 	}

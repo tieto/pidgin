@@ -44,7 +44,7 @@ typedef struct {
 } MsnOimRecvData;
 
 /*Local Function Prototype*/
-static void msn_parse_oim_xml(MsnOim *oim, xmlnode *node);
+static void msn_parse_oim_xml(MsnOim *oim, PurpleXmlNode *node);
 static void msn_oim_free_send_req(MsnOimSendReq *req);
 static void msn_oim_recv_data_free(MsnOimRecvData *data);
 static void msn_oim_post_single_get_msg(MsnOim *oim, MsnOimRecvData *data);
@@ -151,7 +151,7 @@ typedef struct _MsnOimRequestData {
 	const char *action;
 	const char *host;
 	const char *url;
-	xmlnode *body;
+	PurpleXmlNode *body;
 	MsnSoapCallback cb;
 	gpointer cb_data;
 } MsnOimRequestData;
@@ -163,14 +163,14 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	gpointer req_data)
 {
 	MsnOimRequestData *data = (MsnOimRequestData *)req_data;
-	xmlnode *fault = NULL;
-	xmlnode *faultcode = NULL;
+	PurpleXmlNode *fault = NULL;
+	PurpleXmlNode *faultcode = NULL;
 
 	if (response != NULL)
-		fault = xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault");
+		fault = purple_xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault");
 
-	if (fault && (faultcode = xmlnode_get_child(fault, "faultcode"))) {
-		gchar *faultcode_str = xmlnode_get_data(faultcode);
+	if (fault && (faultcode = purple_xmlnode_get_child(fault, "faultcode"))) {
+		gchar *faultcode_str = purple_xmlnode_get_data(faultcode);
 		gboolean need_token_update = FALSE;
 
 		if (faultcode_str) {
@@ -179,7 +179,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 				g_str_equal(faultcode_str, "s:AuthenticationFailed"))
 				need_token_update = TRUE;
 			else if (g_str_equal(faultcode_str, "q0:AuthenticationFailed") &&
-				xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL)
+				purple_xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL)
 				need_token_update = TRUE;
 		}
 
@@ -198,7 +198,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 	if (data->cb)
 		data->cb(request, response, data->cb_data);
-	xmlnode_free(data->body);
+	purple_xmlnode_free(data->body);
 	g_free(data);
 }
 
@@ -209,16 +209,16 @@ msn_oim_request_helper(MsnOimRequestData *data)
 
 	if (data->send) {
 		/* The Sending of OIM's uses a different token for some reason. */
-		xmlnode *ticket;
-		ticket = xmlnode_get_child(data->body, "Header/Ticket");
-		xmlnode_set_attrib(ticket, "passport",
+		PurpleXmlNode *ticket;
+		ticket = purple_xmlnode_get_child(data->body, "Header/Ticket");
+		purple_xmlnode_set_attrib(ticket, "passport",
 			msn_nexus_get_token_str(session->nexus, MSN_AUTH_LIVE_SECURE));
 	}
 	else
 	{
-		xmlnode *passport;
-		xmlnode *xml_t;
-		xmlnode *xml_p;
+		PurpleXmlNode *passport;
+		PurpleXmlNode *xml_t;
+		PurpleXmlNode *xml_p;
 		GHashTable *token;
 		const char *msn_t;
 		const char *msn_p;
@@ -232,20 +232,20 @@ msn_oim_request_helper(MsnOimRequestData *data)
 		g_return_val_if_fail(msn_t != NULL, FALSE);
 		g_return_val_if_fail(msn_p != NULL, FALSE);
 
-		passport = xmlnode_get_child(data->body, "Header/PassportCookie");
-		xml_t = xmlnode_get_child(passport, "t");
-		xml_p = xmlnode_get_child(passport, "p");
+		passport = purple_xmlnode_get_child(data->body, "Header/PassportCookie");
+		xml_t = purple_xmlnode_get_child(passport, "t");
+		xml_p = purple_xmlnode_get_child(passport, "p");
 
 		/* frees old token text, or the 'EMPTY' text if first time */
-		xmlnode_free(xml_t->child);
-		xmlnode_free(xml_p->child);
+		purple_xmlnode_free(xml_t->child);
+		purple_xmlnode_free(xml_p->child);
 
-		xmlnode_insert_data(xml_t, msn_t, -1);
-		xmlnode_insert_data(xml_p, msn_p, -1);
+		purple_xmlnode_insert_data(xml_t, msn_t, -1);
+		purple_xmlnode_insert_data(xml_p, msn_p, -1);
 	}
 
 	msn_soap_service_send_message(session->soap,
-		msn_soap_message_new(data->action, xmlnode_copy(data->body)),
+		msn_soap_message_new(data->action, purple_xmlnode_copy(data->body)),
 		data->host, data->url, FALSE, msn_oim_request_cb, data);
 
 	return FALSE;
@@ -254,7 +254,7 @@ msn_oim_request_helper(MsnOimRequestData *data)
 
 static void
 msn_oim_make_request(MsnOim *oim, gboolean send, const char *action,
-	const char *host, const char *url, xmlnode *body, MsnSoapCallback cb,
+	const char *host, const char *url, PurpleXmlNode *body, MsnSoapCallback cb,
 	gpointer cb_data)
 {
 	MsnOimRequestData *data = g_new0(MsnOimRequestData, 1);
@@ -281,7 +281,7 @@ msn_oim_get_metadata_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 	if (response) {
 		msn_parse_oim_xml(oim,
-			xmlnode_get_child(msn_soap_message_get_xml(response), "Body/GetMetadataResponse/MD"));
+			purple_xmlnode_get_child(msn_soap_message_get_xml(response), "Body/GetMetadataResponse/MD"));
 	}
 }
 
@@ -291,7 +291,7 @@ msn_oim_get_metadata(MsnOim *oim)
 {
 	msn_oim_make_request(oim, FALSE, MSN_OIM_GET_METADATA_ACTION,
 		MSN_OIM_RETRIEVE_HOST, MSN_OIM_RETRIEVE_URL,
-		xmlnode_from_str(MSN_OIM_GET_METADATA_TEMPLATE, -1),
+		purple_xmlnode_from_str(MSN_OIM_GET_METADATA_TEMPLATE, -1),
 		msn_oim_get_metadata_cb, oim);
 }
 
@@ -350,19 +350,19 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	if (response == NULL) {
 		purple_debug_info("msn", "cannot send OIM: %s\n", msg->oim_msg);
 	} else {
-		xmlnode	*faultNode = xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault");
+		PurpleXmlNode	*faultNode = purple_xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault");
 
 		if (faultNode == NULL) {
 			/*Send OK! return*/
 			purple_debug_info("msn", "sent OIM: %s\n", msg->oim_msg);
 		} else {
-			xmlnode *faultcode = xmlnode_get_child(faultNode, "faultcode");
+			PurpleXmlNode *faultcode = purple_xmlnode_get_child(faultNode, "faultcode");
 
 			if (faultcode) {
-				char *faultcode_str = xmlnode_get_data(faultcode);
+				char *faultcode_str = purple_xmlnode_get_data(faultcode);
 
 				if (g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
-					xmlnode *challengeNode = xmlnode_get_child(faultNode,
+					PurpleXmlNode *challengeNode = purple_xmlnode_get_child(faultNode,
 						"detail/LockKeyChallenge");
 
 					if (challengeNode == NULL) {
@@ -383,7 +383,7 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 					} else {
 						char buf[33];
 
-						char *challenge = xmlnode_get_data(challengeNode);
+						char *challenge = purple_xmlnode_get_data(challengeNode);
 						msn_handle_chl(challenge, buf);
 
 						g_free(oim->challenge);
@@ -477,7 +477,7 @@ msn_oim_send_msg(MsnOim *oim)
 					msg_body);
 
 	msn_oim_make_request(oim, TRUE, MSN_OIM_SEND_SOAP_ACTION, MSN_OIM_SEND_HOST,
-		MSN_OIM_SEND_URL, xmlnode_from_str(soap_body, -1), msn_oim_send_read_cb,
+		MSN_OIM_SEND_URL, purple_xmlnode_from_str(soap_body, -1), msn_oim_send_read_cb,
 		oim);
 
 	/*increase the offline Sequence control*/
@@ -498,7 +498,7 @@ msn_oim_delete_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 {
 	MsnOimRecvData *rdata = data;
 
-	if (response && xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault") == NULL)
+	if (response && purple_xmlnode_get_child(msn_soap_message_get_xml(response), "Body/Fault") == NULL)
 		purple_debug_info("msn", "Delete OIM success\n");
 	else
 		purple_debug_info("msn", "Delete OIM failed\n");
@@ -519,7 +519,7 @@ msn_oim_post_delete_msg(MsnOimRecvData *rdata)
 	soap_body = g_strdup_printf(MSN_OIM_DEL_TEMPLATE, msgid);
 
 	msn_oim_make_request(oim, FALSE, MSN_OIM_DEL_SOAP_ACTION, MSN_OIM_RETRIEVE_HOST,
-		MSN_OIM_RETRIEVE_URL, xmlnode_from_str(soap_body, -1), msn_oim_delete_read_cb, rdata);
+		MSN_OIM_RETRIEVE_URL, purple_xmlnode_from_str(soap_body, -1), msn_oim_delete_read_cb, rdata);
 
 	g_free(soap_body);
 }
@@ -760,15 +760,15 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	MsnOimRecvData *rdata = data;
 
 	if (response != NULL) {
-		xmlnode *msg_node = xmlnode_get_child(msn_soap_message_get_xml(response),
+		PurpleXmlNode *msg_node = purple_xmlnode_get_child(msn_soap_message_get_xml(response),
 			"Body/GetMessageResponse/GetMessageResult");
 
 		if (msg_node) {
-			char *msg_str = xmlnode_get_data(msg_node);
+			char *msg_str = purple_xmlnode_get_data(msg_node);
 			msn_oim_report_to_user(rdata, msg_str);
 			g_free(msg_str);
 		} else {
-			char *str = xmlnode_to_str(msn_soap_message_get_xml(response), NULL);
+			char *str = purple_xmlnode_to_str(msn_soap_message_get_xml(response), NULL);
 			purple_debug_info("msn", "Unknown OIM response: %s\n", str);
 			g_free(str);
 			msn_oim_recv_data_free(rdata);
@@ -786,7 +786,7 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 void
 msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 
 	purple_debug_info("msn", "%s\n", xmlmsg);
 
@@ -794,33 +794,33 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		/* Too many OIM's to send via NS, so we need to request them via SOAP. */
 		msn_oim_get_metadata(oim);
 	} else {
-		node = xmlnode_from_str(xmlmsg, -1);
+		node = purple_xmlnode_from_str(xmlmsg, -1);
 		msn_parse_oim_xml(oim, node);
-		xmlnode_free(node);
+		purple_xmlnode_free(node);
 	}
 }
 
 static void
-msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
+msn_parse_oim_xml(MsnOim *oim, PurpleXmlNode *node)
 {
-	xmlnode *mNode;
-	xmlnode *iu_node;
+	PurpleXmlNode *mNode;
+	PurpleXmlNode *iu_node;
 	MsnSession *session = oim->session;
 
 	g_return_if_fail(node != NULL);
 
 	if (strcmp(node->name, "MD") != 0) {
-		char *xmlmsg = xmlnode_to_str(node, NULL);
+		char *xmlmsg = purple_xmlnode_to_str(node, NULL);
 		purple_debug_info("msn", "WTF is this? %s\n", xmlmsg);
 		g_free(xmlmsg);
 		return;
 	}
 
-	iu_node = xmlnode_get_child(node, "E/IU");
+	iu_node = purple_xmlnode_get_child(node, "E/IU");
 
 	if (iu_node != NULL && purple_account_get_check_mail(session->account))
 	{
-		char *unread = xmlnode_get_data(iu_node);
+		char *unread = purple_xmlnode_get_data(iu_node);
 		const char *passports[2] = { msn_user_get_passport(session->user) };
 		const char *urls[2] = { session->passport_info.mail_url };
 		int count = atoi(unread);
@@ -832,23 +832,23 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 		g_free(unread);
 	}
 
-	for(mNode = xmlnode_get_child(node, "M"); mNode;
-					mNode = xmlnode_get_next_twin(mNode)){
+	for(mNode = purple_xmlnode_get_child(node, "M"); mNode;
+					mNode = purple_xmlnode_get_next_twin(mNode)){
 		char *passport, *msgid, *nickname, *rtime = NULL;
-		xmlnode *e_node, *i_node, *n_node, *rt_node;
+		PurpleXmlNode *e_node, *i_node, *n_node, *rt_node;
 
-		e_node = xmlnode_get_child(mNode, "E");
-		passport = xmlnode_get_data(e_node);
+		e_node = purple_xmlnode_get_child(mNode, "E");
+		passport = purple_xmlnode_get_data(e_node);
 
-		i_node = xmlnode_get_child(mNode, "I");
-		msgid = xmlnode_get_data(i_node);
+		i_node = purple_xmlnode_get_child(mNode, "I");
+		msgid = purple_xmlnode_get_data(i_node);
 
-		n_node = xmlnode_get_child(mNode, "N");
-		nickname = xmlnode_get_data(n_node);
+		n_node = purple_xmlnode_get_child(mNode, "N");
+		nickname = purple_xmlnode_get_data(n_node);
 
-		rt_node = xmlnode_get_child(mNode, "RT");
+		rt_node = purple_xmlnode_get_child(mNode, "RT");
 		if (rt_node != NULL) {
-			rtime = xmlnode_get_data(rt_node);
+			rtime = purple_xmlnode_get_data(rt_node);
 		}
 /*		purple_debug_info("msn", "E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
@@ -876,7 +876,7 @@ msn_oim_post_single_get_msg(MsnOim *oim, MsnOimRecvData *data)
 	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE, data->msg_id);
 
 	msn_oim_make_request(oim, FALSE, MSN_OIM_GET_SOAP_ACTION, MSN_OIM_RETRIEVE_HOST,
-		MSN_OIM_RETRIEVE_URL, xmlnode_from_str(soap_body, -1), msn_oim_get_read_cb,
+		MSN_OIM_RETRIEVE_URL, purple_xmlnode_from_str(soap_body, -1), msn_oim_get_read_cb,
 		data);
 
 	g_free(soap_body);

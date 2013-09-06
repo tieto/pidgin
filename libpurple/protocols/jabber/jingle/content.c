@@ -49,8 +49,8 @@ static void jingle_content_init (JingleContent *content);
 static void jingle_content_finalize (GObject *object);
 static void jingle_content_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void jingle_content_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
-static xmlnode *jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleActionType action);
-static JingleContent *jingle_content_parse_internal(xmlnode *content);
+static PurpleXmlNode *jingle_content_to_xml_internal(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action);
+static JingleContent *jingle_content_parse_internal(PurpleXmlNode *content);
 
 static GObjectClass *parent_class = NULL;
 
@@ -378,16 +378,16 @@ jingle_content_modify(JingleContent *content, const gchar *senders)
 }
 
 static JingleContent *
-jingle_content_parse_internal(xmlnode *content)
+jingle_content_parse_internal(PurpleXmlNode *content)
 {
-	xmlnode *description = xmlnode_get_child(content, "description");
-	const gchar *type = xmlnode_get_namespace(description);
-	const gchar *creator = xmlnode_get_attrib(content, "creator");
-	const gchar *disposition = xmlnode_get_attrib(content, "disposition");
-	const gchar *senders = xmlnode_get_attrib(content, "senders");
-	const gchar *name = xmlnode_get_attrib(content, "name");
+	PurpleXmlNode *description = purple_xmlnode_get_child(content, "description");
+	const gchar *type = purple_xmlnode_get_namespace(description);
+	const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
+	const gchar *disposition = purple_xmlnode_get_attrib(content, "disposition");
+	const gchar *senders = purple_xmlnode_get_attrib(content, "senders");
+	const gchar *name = purple_xmlnode_get_attrib(content, "name");
 	JingleTransport *transport =
-			jingle_transport_parse(xmlnode_get_child(content, "transport"));
+			jingle_transport_parse(purple_xmlnode_get_child(content, "transport"));
 	if (transport == NULL)
 		return NULL;
 
@@ -398,9 +398,9 @@ jingle_content_parse_internal(xmlnode *content)
 }
 
 JingleContent *
-jingle_content_parse(xmlnode *content)
+jingle_content_parse(PurpleXmlNode *content)
 {
-	const gchar *type = xmlnode_get_namespace(xmlnode_get_child(content, "description"));
+	const gchar *type = purple_xmlnode_get_namespace(purple_xmlnode_get_child(content, "description"));
 	GType jingle_type = jingle_get_type(type);
 
 	if (jingle_type != G_TYPE_NONE) {
@@ -410,20 +410,20 @@ jingle_content_parse(xmlnode *content)
 	}
 }
 
-static xmlnode *
-jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleActionType action)
+static PurpleXmlNode *
+jingle_content_to_xml_internal(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action)
 {
-	xmlnode *node = xmlnode_new_child(jingle, "content");
+	PurpleXmlNode *node = purple_xmlnode_new_child(jingle, "content");
 	gchar *creator = jingle_content_get_creator(content);
 	gchar *name = jingle_content_get_name(content);
 	gchar *senders = jingle_content_get_senders(content);
 	gchar *disposition = jingle_content_get_disposition(content);
 
-	xmlnode_set_attrib(node, "creator", creator);
-	xmlnode_set_attrib(node, "name", name);
-	xmlnode_set_attrib(node, "senders", senders);
+	purple_xmlnode_set_attrib(node, "creator", creator);
+	purple_xmlnode_set_attrib(node, "name", name);
+	purple_xmlnode_set_attrib(node, "senders", senders);
 	if (strcmp("session", disposition))
-		xmlnode_set_attrib(node, "disposition", disposition);
+		purple_xmlnode_set_attrib(node, "disposition", disposition);
 
 	g_free(disposition);
 	g_free(senders);
@@ -437,9 +437,9 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 				action != JINGLE_TRANSPORT_INFO &&
 				action != JINGLE_TRANSPORT_REJECT &&
 				action != JINGLE_TRANSPORT_REPLACE) {
-			xmlnode *description = xmlnode_new_child(node, "description");
+			PurpleXmlNode *description = purple_xmlnode_new_child(node, "description");
 
-			xmlnode_set_namespace(description,
+			purple_xmlnode_set_namespace(description,
 					jingle_content_get_description_type(content));
 		}
 
@@ -455,8 +455,8 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 	return node;
 }
 
-xmlnode *
-jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType action)
+PurpleXmlNode *
+jingle_content_to_xml(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action)
 {
 	g_return_val_if_fail(content != NULL, NULL);
 	g_return_val_if_fail(JINGLE_IS_CONTENT(content), NULL);
@@ -464,7 +464,7 @@ jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType 
 }
 
 void
-jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
+jingle_content_handle_action(JingleContent *content, PurpleXmlNode *xmlcontent, JingleActionType action)
 {
 	g_return_if_fail(content != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(content));

@@ -32,22 +32,22 @@
  *****************************************************************************/
 
 static GHashTable *
-read_info_plist(xmlnode *plist)
+read_info_plist(PurpleXmlNode *plist)
 {
 	GHashTable *info;
-	xmlnode *key, *value;
+	PurpleXmlNode *key, *value;
 	gboolean fail = FALSE;
 
 	info = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
-	for (key = xmlnode_get_child(plist, "dict/key");
+	for (key = purple_xmlnode_get_child(plist, "dict/key");
 	     key;
-	     key = xmlnode_get_next_twin(key)) {
+	     key = purple_xmlnode_get_next_twin(key)) {
 		char *keyname;
 		GValue *val;
 
 		;
-		for (value = key->next; value && value->type != XMLNODE_TYPE_TAG; value = value->next)
+		for (value = key->next; value && value->type != PURPLE_XMLNODE_TYPE_TAG; value = value->next)
 			;
 		if (!value) {
 			fail = TRUE;
@@ -57,7 +57,7 @@ read_info_plist(xmlnode *plist)
 		val = g_new0(GValue, 1);
 		if (g_str_equal(value->name, "string")) {
 			g_value_init(val, G_TYPE_STRING);
-			g_value_take_string(val, xmlnode_get_data_unescaped(value));
+			g_value_take_string(val, purple_xmlnode_get_data_unescaped(value));
 
 		} else if (g_str_equal(value->name, "true")) {
 			g_value_init(val, G_TYPE_BOOLEAN);
@@ -68,13 +68,13 @@ read_info_plist(xmlnode *plist)
 			g_value_set_boolean(val, FALSE);
 
 		} else if (g_str_equal(value->name, "real")) {
-			char *temp = xmlnode_get_data_unescaped(value);
+			char *temp = purple_xmlnode_get_data_unescaped(value);
 			g_value_init(val, G_TYPE_FLOAT);
 			g_value_set_float(val, atof(temp));
 			g_free(temp);
 
 		} else if (g_str_equal(value->name, "integer")) {
-			char *temp = xmlnode_get_data_unescaped(value);
+			char *temp = purple_xmlnode_get_data_unescaped(value);
 			g_value_init(val, G_TYPE_INT);
 			g_value_set_int(val, atoi(temp));
 			g_free(temp);
@@ -87,7 +87,7 @@ read_info_plist(xmlnode *plist)
 			break;
 		}
 
-		keyname = xmlnode_get_data_unescaped(key);
+		keyname = purple_xmlnode_get_data_unescaped(key);
 		g_hash_table_insert(info, keyname, val);
 	}
 
@@ -117,7 +117,7 @@ pidgin_conv_loader_build(const gchar *dir)
 {
 	PidginConvTheme *theme = NULL;
 	char *contents;
-	xmlnode *plist;
+	PurpleXmlNode *plist;
 	GHashTable *info;
 	GValue *val;
 	int MessageViewVersion;
@@ -130,7 +130,7 @@ pidgin_conv_loader_build(const gchar *dir)
 
 	/* Load Info.plist for theme information */
 	contents = g_build_filename(dir, "Contents", NULL);
-	plist = xmlnode_from_file(contents, "Info.plist", "Info.plist", "gtkconv-theme-loader");
+	plist = purple_xmlnode_from_file(contents, "Info.plist", "Info.plist", "gtkconv-theme-loader");
 	g_free(contents);
 	if (plist == NULL) {
 		purple_debug_error("gtkconv-theme-loader",
@@ -139,7 +139,7 @@ pidgin_conv_loader_build(const gchar *dir)
 	}
 
 	info = read_info_plist(plist);
-	xmlnode_free(plist);
+	purple_xmlnode_free(plist);
 	if (info == NULL) {
 		purple_debug_error("gtkconv-theme-loader",
 		                   "Failed to load Contents/Info.plist in %s\n", dir);

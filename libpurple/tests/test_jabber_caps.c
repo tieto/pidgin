@@ -8,25 +8,25 @@
 
 START_TEST(test_parse_invalid)
 {
-	xmlnode *query;
+	PurpleXmlNode *query;
 
 	fail_unless(NULL == jabber_caps_parse_client_info(NULL));
 
 	/* Something other than a disco#info query */
-	query = xmlnode_new("foo");
+	query = purple_xmlnode_new("foo");
 	fail_unless(NULL == jabber_caps_parse_client_info(query));
-	xmlnode_free(query);
+	purple_xmlnode_free(query);
 
-	query = xmlnode_new("query");
+	query = purple_xmlnode_new("query");
 	fail_unless(NULL == jabber_caps_parse_client_info(query));
-	xmlnode_set_namespace(query, "jabber:iq:last");
+	purple_xmlnode_set_namespace(query, "jabber:iq:last");
 	fail_unless(NULL == jabber_caps_parse_client_info(query));
-	xmlnode_free(query);
+	purple_xmlnode_free(query);
 }
 END_TEST
 
 #define assert_caps_calculate_match(hash_func, hash, str) { \
-	xmlnode *query = xmlnode_from_str((str), -1); \
+	PurpleXmlNode *query = purple_xmlnode_from_str((str), -1); \
 	PurpleHash *hasher = NULL; \
 	JabberCapsClientInfo *info = jabber_caps_parse_client_info(query); \
 	gchar *got_hash; \

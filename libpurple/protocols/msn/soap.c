@@ -32,7 +32,7 @@ typedef struct _MsnSoapRequest MsnSoapRequest;
 
 struct _MsnSoapMessage {
 	gchar *action;
-	xmlnode *xml;
+	PurpleXmlNode *xml;
 };
 
 struct _MsnSoapRequest {
@@ -54,7 +54,7 @@ msn_soap_service_send_message_simple(MsnSoapService *soaps,
 	MsnSoapCallback cb, gpointer cb_data);
 
 MsnSoapMessage *
-msn_soap_message_new(const gchar *action, xmlnode *xml)
+msn_soap_message_new(const gchar *action, PurpleXmlNode *xml)
 {
 	MsnSoapMessage *msg;
 
@@ -75,11 +75,11 @@ msn_soap_message_free(MsnSoapMessage *msg)
 
 	g_free(msg->action);
 	if (msg->xml != NULL)
-		xmlnode_free(msg->xml);
+		purple_xmlnode_free(msg->xml);
 	g_free(msg);
 }
 
-xmlnode *
+PurpleXmlNode *
 msn_soap_message_get_xml(MsnSoapMessage *message)
 {
 	g_return_val_if_fail(message != NULL, NULL);
@@ -127,7 +127,7 @@ msn_soap_service_recv(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer _sreq)
 {
 	MsnSoapRequest *sreq = _sreq;
-	xmlnode *xml_root, *xml_body, *xml_fault;
+	PurpleXmlNode *xml_root, *xml_body, *xml_fault;
 	const gchar *xml_raw;
 	size_t xml_len;
 
@@ -154,7 +154,7 @@ msn_soap_service_recv(PurpleHttpConnection *http_conn,
 	}
 
 	xml_raw = purple_http_response_get_data(response, &xml_len);
-	xml_root = xmlnode_from_str(xml_raw, xml_len);
+	xml_root = purple_xmlnode_from_str(xml_raw, xml_len);
 
 	if (purple_debug_is_verbose()) {
 		if (sreq->secure && !purple_debug_is_unsafe()) {
@@ -174,24 +174,24 @@ msn_soap_service_recv(PurpleHttpConnection *http_conn,
 		return;
 	}
 
-	xml_body = xmlnode_get_child(xml_root, "Body");
-	xml_fault = xmlnode_get_child(xml_root, "Fault");
+	xml_body = purple_xmlnode_get_child(xml_root, "Body");
+	xml_fault = purple_xmlnode_get_child(xml_root, "Fault");
 
 	if (xml_fault != NULL) {
-		xmlnode *xml_faultcode;
+		PurpleXmlNode *xml_faultcode;
 		gchar *faultdata = NULL;
 
-		xml_faultcode = xmlnode_get_child(xml_fault, "faultcode");
+		xml_faultcode = purple_xmlnode_get_child(xml_fault, "faultcode");
 		if (xml_faultcode != NULL)
-			faultdata = xmlnode_get_data(xml_faultcode);
+			faultdata = purple_xmlnode_get_data(xml_faultcode);
 
 		if (g_strcmp0(faultdata, "psf:Redirect") == 0) {
-			xmlnode *xml_url;
+			PurpleXmlNode *xml_url;
 			gchar *url = NULL;
 
-			xml_url = xmlnode_get_child(xml_fault, "redirectUrl");
+			xml_url = purple_xmlnode_get_child(xml_fault, "redirectUrl");
 			if (xml_url != NULL)
-				url = xmlnode_get_data(xml_url);
+				url = purple_xmlnode_get_data(xml_url);
 
 			msn_soap_service_send_message_simple(sreq->soaps,
 				sreq->message, url, sreq->secure, sreq->cb,
@@ -206,9 +206,9 @@ msn_soap_service_recv(PurpleHttpConnection *http_conn,
 			return;
 		}
 		if (g_strcmp0(faultdata, "wsse:FailedAuthentication") == 0) {
-			xmlnode *xml_reason =
-				xmlnode_get_child(xml_fault, "faultstring");
-			gchar *reasondata = xmlnode_get_data(xml_reason);
+			PurpleXmlNode *xml_reason =
+				purple_xmlnode_get_child(xml_fault, "faultstring");
+			gchar *reasondata = purple_xmlnode_get_data(xml_reason);
 
 			msn_session_set_error(sreq->soaps->session, MSN_ERROR_AUTH,
 				reasondata);
@@ -261,7 +261,7 @@ msn_soap_service_send_message_simple(MsnSoapService *soaps,
 		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
 	purple_http_request_header_set(hreq, "Cache-Control", "no-cache");
 
-	body = xmlnode_to_str(message->xml, &body_len);
+	body = purple_xmlnode_to_str(message->xml, &body_len);
 	purple_http_request_set_contents(hreq, body, body_len);
 	g_free(body);
 

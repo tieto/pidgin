@@ -54,11 +54,11 @@ jabber_ibb_session_create(JabberStream *js, const gchar *sid, const gchar *who,
 
 JabberIBBSession *
 jabber_ibb_session_create_from_xmlnode(JabberStream *js, const char *from,
-	const char *id, xmlnode *open, gpointer user_data)
+	const char *id, PurpleXmlNode *open, gpointer user_data)
 {
 	JabberIBBSession *sess = NULL;
-	const gchar *sid = xmlnode_get_attrib(open, "sid");
-	const gchar *block_size = xmlnode_get_attrib(open, "block-size");
+	const gchar *sid = purple_xmlnode_get_attrib(open, "sid");
+	const gchar *block_size = purple_xmlnode_get_attrib(open, "block-size");
 
 	if (!open) {
 		return NULL;
@@ -210,7 +210,7 @@ jabber_ibb_session_set_error_callback(JabberIBBSession *sess,
 static void
 jabber_ibb_session_opened_cb(JabberStream *js, const char *from,
                              JabberIqType type, const char *id,
-                             xmlnode *packet, gpointer data)
+                             PurpleXmlNode *packet, gpointer data)
 {
 	JabberIBBSession *sess = (JabberIBBSession *) data;
 
@@ -233,16 +233,16 @@ jabber_ibb_session_open(JabberIBBSession *sess)
 			"jabber_ibb_session called on an already open stream\n");
 	} else {
 		JabberIq *set = jabber_iq_new(sess->js, JABBER_IQ_SET);
-		xmlnode *open = xmlnode_new("open");
+		PurpleXmlNode *open = purple_xmlnode_new("open");
 		gchar block_size[10];
 
-		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(open, NS_IBB);
-		xmlnode_set_attrib(open, "sid", jabber_ibb_session_get_sid(sess));
+		purple_xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
+		purple_xmlnode_set_namespace(open, NS_IBB);
+		purple_xmlnode_set_attrib(open, "sid", jabber_ibb_session_get_sid(sess));
 		g_snprintf(block_size, sizeof(block_size), "%" G_GSIZE_FORMAT,
 			jabber_ibb_session_get_block_size(sess));
-		xmlnode_set_attrib(open, "block-size", block_size);
-		xmlnode_insert_child(set->node, open);
+		purple_xmlnode_set_attrib(open, "block-size", block_size);
+		purple_xmlnode_insert_child(set->node, open);
 
 		jabber_iq_set_callback(set, jabber_ibb_session_opened_cb, sess);
 
@@ -262,12 +262,12 @@ jabber_ibb_session_close(JabberIBBSession *sess)
 	} else {
 		JabberIq *set = jabber_iq_new(jabber_ibb_session_get_js(sess),
 			JABBER_IQ_SET);
-		xmlnode *close = xmlnode_new("close");
+		PurpleXmlNode *close = purple_xmlnode_new("close");
 
-		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(close, NS_IBB);
-		xmlnode_set_attrib(close, "sid", jabber_ibb_session_get_sid(sess));
-		xmlnode_insert_child(set->node, close);
+		purple_xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
+		purple_xmlnode_set_namespace(close, NS_IBB);
+		purple_xmlnode_set_attrib(close, "sid", jabber_ibb_session_get_sid(sess));
+		purple_xmlnode_insert_child(set->node, close);
 		jabber_iq_send(set);
 		sess->state = JABBER_IBB_SESSION_CLOSED;
 	}
@@ -279,7 +279,7 @@ jabber_ibb_session_accept(JabberIBBSession *sess)
 	JabberIq *result = jabber_iq_new(jabber_ibb_session_get_js(sess),
 		JABBER_IQ_RESULT);
 
-	xmlnode_set_attrib(result->node, "to", jabber_ibb_session_get_who(sess));
+	purple_xmlnode_set_attrib(result->node, "to", jabber_ibb_session_get_who(sess));
 	jabber_iq_set_id(result, sess->id);
 	jabber_iq_send(result);
 	sess->state = JABBER_IBB_SESSION_OPENED;
@@ -288,7 +288,7 @@ jabber_ibb_session_accept(JabberIBBSession *sess)
 static void
 jabber_ibb_session_send_acknowledge_cb(JabberStream *js, const char *from,
                                        JabberIqType type, const char *id,
-                                       xmlnode *packet, gpointer data)
+                                       PurpleXmlNode *packet, gpointer data)
 {
 	JabberIBBSession *sess = (JabberIBBSession *) data;
 
@@ -336,24 +336,24 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
 	} else {
 		JabberIq *set = jabber_iq_new(jabber_ibb_session_get_js(sess),
 			JABBER_IQ_SET);
-		xmlnode *data_element = xmlnode_new("data");
+		PurpleXmlNode *data_element = purple_xmlnode_new("data");
 		char *base64 = purple_base64_encode(data, size);
 		char seq[10];
 		g_snprintf(seq, sizeof(seq), "%u", jabber_ibb_session_get_send_seq(sess));
 
-		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(data_element, NS_IBB);
-		xmlnode_set_attrib(data_element, "sid", jabber_ibb_session_get_sid(sess));
-		xmlnode_set_attrib(data_element, "seq", seq);
-		xmlnode_insert_data(data_element, base64, -1);
+		purple_xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
+		purple_xmlnode_set_namespace(data_element, NS_IBB);
+		purple_xmlnode_set_attrib(data_element, "sid", jabber_ibb_session_get_sid(sess));
+		purple_xmlnode_set_attrib(data_element, "seq", seq);
+		purple_xmlnode_insert_data(data_element, base64, -1);
 
-		xmlnode_insert_child(set->node, data_element);
+		purple_xmlnode_insert_child(set->node, data_element);
 
 		purple_debug_info("jabber",
 			"IBB: setting send <iq/> callback for session %p %s\n", sess,
 			sess->sid);
 		jabber_iq_set_callback(set, jabber_ibb_session_send_acknowledge_cb, sess);
-		sess->last_iq_id = g_strdup(xmlnode_get_attrib(set->node, "id"));
+		sess->last_iq_id = g_strdup(purple_xmlnode_get_attrib(set->node, "id"));
 		purple_debug_info("jabber", "IBB: set sess->last_iq_id: %s\n",
 			sess->last_iq_id);
 		jabber_iq_send(set);
@@ -367,30 +367,30 @@ static void
 jabber_ibb_send_error_response(JabberStream *js, const char *to, const char *id)
 {
 	JabberIq *result = jabber_iq_new(js, JABBER_IQ_ERROR);
-	xmlnode *error = xmlnode_new("error");
-	xmlnode *item_not_found = xmlnode_new("item-not-found");
+	PurpleXmlNode *error = purple_xmlnode_new("error");
+	PurpleXmlNode *item_not_found = purple_xmlnode_new("item-not-found");
 
-	xmlnode_set_namespace(item_not_found, NS_XMPP_STANZAS);
-	xmlnode_set_attrib(error, "code", "440");
-	xmlnode_set_attrib(error, "type", "cancel");
+	purple_xmlnode_set_namespace(item_not_found, NS_XMPP_STANZAS);
+	purple_xmlnode_set_attrib(error, "code", "440");
+	purple_xmlnode_set_attrib(error, "type", "cancel");
 	jabber_iq_set_id(result, id);
-	xmlnode_set_attrib(result->node, "to", to);
-	xmlnode_insert_child(error, item_not_found);
-	xmlnode_insert_child(result->node, error);
+	purple_xmlnode_set_attrib(result->node, "to", to);
+	purple_xmlnode_insert_child(error, item_not_found);
+	purple_xmlnode_insert_child(result->node, error);
 
 	jabber_iq_send(result);
 }
 
 void
 jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
-                 const char *id, xmlnode *child)
+                 const char *id, PurpleXmlNode *child)
 {
 	const char *name = child->name;
 	gboolean data  = g_str_equal(name, "data");
 	gboolean close = g_str_equal(name, "close");
 	gboolean open  = g_str_equal(name, "open");
 	const gchar *sid = (data || close) ?
-		xmlnode_get_attrib(child, "sid") : NULL;
+		purple_xmlnode_get_attrib(child, "sid") : NULL;
 	JabberIBBSession *sess =
 		sid ? g_hash_table_lookup(jabber_ibb_sessions, sid) : NULL;
 
@@ -402,7 +402,7 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 			purple_debug_error("jabber",
 				"Got IBB iq from wrong JID, ignoring\n");
 		} else if (data) {
-			const gchar *seq_attr = xmlnode_get_attrib(child, "seq");
+			const gchar *seq_attr = purple_xmlnode_get_attrib(child, "seq");
 			guint16 seq = (seq_attr ? atoi(seq_attr) : 0);
 
 			/* reject the data, and set the session in error if we get an
@@ -412,10 +412,10 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 				JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
 
 				jabber_iq_set_id(result, id);
-				xmlnode_set_attrib(result->node, "to", who);
+				purple_xmlnode_set_attrib(result->node, "to", who);
 
 				if (sess->data_received_cb) {
-					gchar *base64 = xmlnode_get_data(child);
+					gchar *base64 = purple_xmlnode_get_data(child);
 					gsize size;
 					gpointer rawdata = purple_base64_decode(base64, &size);
 
@@ -484,7 +484,7 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 
 			if (handler(js, who, id, child)) {
 				result = jabber_iq_new(js, JABBER_IQ_RESULT);
-				xmlnode_set_attrib(result->node, "to", who);
+				purple_xmlnode_set_attrib(result->node, "to", who);
 				jabber_iq_set_id(result, id);
 				jabber_iq_send(result);
 				return;

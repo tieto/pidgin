@@ -1851,7 +1851,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			guint16 smstype;
 			guint32 taglen, smslen;
 			char *tagstr = NULL, *smsmsg = NULL;
-			xmlnode *xmlroot = NULL, *xmltmp = NULL;
+			PurpleXmlNode *xmlroot = NULL, *xmltmp = NULL;
 			gchar *uin = NULL, *message = NULL;
 
 			/* From libicq2000-0.3.2/src/ICQ.cpp */
@@ -1885,23 +1885,23 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			/* Check if this is an SMS being sent from server */
 			if ((smstype == 0) && (!strcmp(tagstr, "ICQSMS")) && (smsmsg != NULL))
 			{
-				xmlroot = xmlnode_from_str(smsmsg, -1);
+				xmlroot = purple_xmlnode_from_str(smsmsg, -1);
 				if (xmlroot != NULL)
 				{
-					xmltmp = xmlnode_get_child(xmlroot, "sender");
+					xmltmp = purple_xmlnode_get_child(xmlroot, "sender");
 					if (xmltmp != NULL)
-						uin = xmlnode_get_data(xmltmp);
+						uin = purple_xmlnode_get_data(xmltmp);
 
-					xmltmp = xmlnode_get_child(xmlroot, "text");
+					xmltmp = purple_xmlnode_get_child(xmlroot, "text");
 					if (xmltmp != NULL)
-						message = xmlnode_get_data(xmltmp);
+						message = purple_xmlnode_get_data(xmltmp);
 
 					if ((uin != NULL) && (message != NULL))
 							serv_got_im(gc, uin, message, 0, time(NULL));
 
 					g_free(uin);
 					g_free(message);
-					xmlnode_free(xmlroot);
+					purple_xmlnode_free(xmlroot);
 				}
 			}
 			g_free(tagstr);

@@ -250,21 +250,21 @@ struct _MsnNexusUpdateCallback {
 };
 
 static gboolean
-nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
+nexus_parse_token(MsnNexus *nexus, int id, PurpleXmlNode *node)
 {
 	char *token_str, *expiry_str;
 	const char *id_str;
 	char **elems, **cur, **tokens;
-	xmlnode *token = xmlnode_get_child(node, "RequestedSecurityToken/BinarySecurityToken");
-	xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
-	xmlnode *expires = xmlnode_get_child(node, "LifeTime/Expires");
+	PurpleXmlNode *token = purple_xmlnode_get_child(node, "RequestedSecurityToken/BinarySecurityToken");
+	PurpleXmlNode *secret = purple_xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
+	PurpleXmlNode *expires = purple_xmlnode_get_child(node, "LifeTime/Expires");
 
 	if (!token)
 		return FALSE;
 
 	/* Use the ID that the server sent us */
 	if (id == -1) {
-		id_str = xmlnode_get_attrib(token, "Id");
+		id_str = purple_xmlnode_get_attrib(token, "Id");
 		if (id_str == NULL)
 			return FALSE;
 
@@ -273,7 +273,7 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 			return FALSE;	/* Where did this come from? */
 	}
 
-	token_str = xmlnode_get_data(token);
+	token_str = purple_xmlnode_get_data(token);
 	if (token_str == NULL)
 		return FALSE;
 
@@ -291,12 +291,12 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 	g_free(token_str);
 
 	if (secret)
-		nexus->tokens[id].secret = xmlnode_get_data(secret);
+		nexus->tokens[id].secret = purple_xmlnode_get_data(secret);
 	else
 		nexus->tokens[id].secret = NULL;
 
 	/* Yay for MS using ISO-8601 */
-	expiry_str = xmlnode_get_data(expires);
+	expiry_str = purple_xmlnode_get_data(expires);
 	nexus->tokens[id].expiry = purple_str_to_time(expiry_str,
 		FALSE, NULL, NULL, NULL);
 	g_free(expiry_str);
@@ -308,30 +308,30 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 }
 
 static gboolean
-nexus_parse_collection(MsnNexus *nexus, int id, xmlnode *collection)
+nexus_parse_collection(MsnNexus *nexus, int id, PurpleXmlNode *collection)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 	gboolean result;
 
-	node = xmlnode_get_child(collection, "RequestSecurityTokenResponse");
+	node = purple_xmlnode_get_child(collection, "RequestSecurityTokenResponse");
 
 	if (!node)
 		return FALSE;
 
 	result = TRUE;
 	for (; node && result; node = node->next) {
-		xmlnode *endpoint = xmlnode_get_child(node, "AppliesTo/EndpointReference/Address");
-		char *address = xmlnode_get_data(endpoint);
+		PurpleXmlNode *endpoint = purple_xmlnode_get_child(node, "AppliesTo/EndpointReference/Address");
+		char *address = purple_xmlnode_get_data(endpoint);
 
 		if (g_str_equal(address, "http://Passport.NET/tb")) {
 			/* This node contains the stuff for updating tokens. */
 			char *data;
-			xmlnode *cipher = xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
-			xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
+			PurpleXmlNode *cipher = purple_xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
+			PurpleXmlNode *secret = purple_xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
 
 			g_free(nexus->cipher);
-			nexus->cipher = xmlnode_get_data(cipher);
-			data = xmlnode_get_data(secret);
+			nexus->cipher = purple_xmlnode_get_data(cipher);
+			data = purple_xmlnode_get_data(secret);
 			g_free(nexus->secret);
 			nexus->secret = (char *)purple_base64_decode(data, NULL);
 			g_free(data);
@@ -359,7 +359,7 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 
 	if (!nexus_parse_collection(nexus, -1,
-	                            xmlnode_get_child(msn_soap_message_get_xml(resp),
+	                            purple_xmlnode_get_child(msn_soap_message_get_xml(resp),
 	                                              "Body/RequestSecurityTokenResponseCollection"))) {
 		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Invalid response"));
 		return;
@@ -415,7 +415,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	g_string_free(domains, TRUE);
 
 	msn_soap_service_send_message(session->soap,
-		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		msn_soap_message_new(NULL, purple_xmlnode_from_str(request, -1)),
 		MSN_SSO_SERVER, SSO_POST_URL, TRUE,
 		nexus_got_response_cb, nexus);
 	g_free(request);
@@ -427,7 +427,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	MsnNexusUpdateData *ud = data;
 	MsnNexus *nexus = ud->nexus;
 	char iv[8] = {0,0,0,0,0,0,0,0};
-	xmlnode *enckey;
+	PurpleXmlNode *enckey;
 	char *tmp;
 	char *nonce;
 	gsize len;
@@ -444,18 +444,18 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	purple_debug_info("msn", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
 
-	enckey = xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/Security/DerivedKeyToken");
+	enckey = purple_xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/Security/DerivedKeyToken");
 	while (enckey) {
-		if (g_str_equal(xmlnode_get_attrib(enckey, "Id"), "EncKey"))
+		if (g_str_equal(purple_xmlnode_get_attrib(enckey, "Id"), "EncKey"))
 			break;
-		enckey = xmlnode_get_next_twin(enckey);
+		enckey = purple_xmlnode_get_next_twin(enckey);
 	}
 	if (!enckey) {
 		purple_debug_error("msn", "Invalid response in token update.\n");
 		return;
 	}
 
-	tmp = xmlnode_get_data(xmlnode_get_child(enckey, "Nonce"));
+	tmp = purple_xmlnode_get_data(purple_xmlnode_get_child(enckey, "Nonce"));
 	nonce = (char *)purple_base64_decode(tmp, &len);
 	key = rps_create_key(nexus->secret, 24, nonce, len);
 	g_free(tmp);
@@ -463,7 +463,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 #if 0
 	/* Don't know what this is for yet */
-	tmp = xmlnode_get_data(xmlnode_get_child(resp->xml,
+	tmp = purple_xmlnode_get_data(purple_xmlnode_get_child(resp->xml,
 		"Header/EncryptedPP/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
 		decrypted_pp = des3_cbc(key, iv, tmp, len, TRUE);
@@ -473,11 +473,11 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 #endif
 
-	tmp = xmlnode_get_data(xmlnode_get_child(msn_soap_message_get_xml(resp),
+	tmp = purple_xmlnode_get_data(purple_xmlnode_get_child(msn_soap_message_get_xml(resp),
 		"Body/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
 		char *unescaped;
-		xmlnode *rstresponse;
+		PurpleXmlNode *rstresponse;
 
 		unescaped = (char *)purple_base64_decode(tmp, &len);
 		g_free(tmp);
@@ -486,7 +486,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		g_free(unescaped);
 		purple_debug_info("msn", "Got Response Body EncryptedData: %s\n", decrypted_data);
 
-		rstresponse = xmlnode_from_str(decrypted_data, -1);
+		rstresponse = purple_xmlnode_from_str(decrypted_data, -1);
 		if (g_str_equal(rstresponse->name, "RequestSecurityTokenResponse"))
 			nexus_parse_token(nexus, ud->id, rstresponse);
 		else
@@ -632,7 +632,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 
 	g_free(request);
 	msn_soap_service_send_message(session->soap,
-		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		msn_soap_message_new(NULL, purple_xmlnode_from_str(request, -1)),
 		MSN_SSO_SERVER, SSO_POST_URL, TRUE, nexus_got_update_cb, ud);
 }
 

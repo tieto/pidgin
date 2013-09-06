@@ -386,9 +386,9 @@ static gchar *escape_username(const gchar *in)
 }
 
 static JabberSaslState
-scram_start(JabberStream *js, xmlnode *mechanisms, xmlnode **out, char **error)
+scram_start(JabberStream *js, PurpleXmlNode *mechanisms, PurpleXmlNode **out, char **error)
 {
-	xmlnode *reply;
+	PurpleXmlNode *reply;
 	JabberScramData *data;
 	guint64 cnonce;
 #ifdef CHANNEL_BINDING
@@ -433,16 +433,16 @@ scram_start(JabberStream *js, xmlnode *mechanisms, xmlnode **out, char **error)
 
 	data->step = 1;
 
-	reply = xmlnode_new("auth");
-	xmlnode_set_namespace(reply, NS_XMPP_SASL);
-	xmlnode_set_attrib(reply, "mechanism", js->auth_mech->name);
+	reply = purple_xmlnode_new("auth");
+	purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
+	purple_xmlnode_set_attrib(reply, "mechanism", js->auth_mech->name);
 
 	/* TODO: Channel binding */
 	dec_out = g_strdup_printf("%c,,%s", 'n', data->auth_message->str);
 	enc_out = purple_base64_encode((guchar *)dec_out, strlen(dec_out));
 	purple_debug_misc("jabber", "initial SCRAM message '%s'\n", dec_out);
 
-	xmlnode_insert_data(reply, enc_out, -1);
+	purple_xmlnode_insert_data(reply, enc_out, -1);
 
 	g_free(enc_out);
 	g_free(dec_out);
@@ -452,19 +452,19 @@ scram_start(JabberStream *js, xmlnode *mechanisms, xmlnode **out, char **error)
 }
 
 static JabberSaslState
-scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char **error)
+scram_handle_challenge(JabberStream *js, PurpleXmlNode *challenge, PurpleXmlNode **out, char **error)
 {
 	JabberScramData *data = js->auth_mech_data;
-	xmlnode *reply;
+	PurpleXmlNode *reply;
 	gchar *enc_in, *dec_in = NULL;
 	gchar *enc_out = NULL, *dec_out = NULL;
 	gsize len;
 	JabberSaslState state = JABBER_SASL_STATE_FAIL;
 
-	enc_in = xmlnode_get_data(challenge);
+	enc_in = purple_xmlnode_get_data(challenge);
 	if (!enc_in || *enc_in == '\0') {
-		reply = xmlnode_new("abort");
-		xmlnode_set_namespace(reply, NS_XMPP_SASL);
+		reply = purple_xmlnode_new("abort");
+		purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
 		*error = g_strdup(_("Invalid challenge from server"));
 		goto out;
@@ -473,8 +473,8 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
-		reply = xmlnode_new("abort");
-		xmlnode_set_namespace(reply, NS_XMPP_SASL);
+		reply = purple_xmlnode_new("abort");
+		purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
 		*error = g_strdup(_("Malicious challenge from server"));
 		goto out;
@@ -483,8 +483,8 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 	purple_debug_misc("jabber", "decoded challenge: %s\n", dec_in);
 
 	if (!jabber_scram_feed_parser(data, dec_in, &dec_out)) {
-		reply = xmlnode_new("abort");
-		xmlnode_set_namespace(reply, NS_XMPP_SASL);
+		reply = purple_xmlnode_new("abort");
+		purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
 		*error = g_strdup(_("Invalid challenge from server"));
 		goto out;
@@ -492,13 +492,13 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 
 	data->step += 1;
 
-	reply = xmlnode_new("response");
-	xmlnode_set_namespace(reply, NS_XMPP_SASL);
+	reply = purple_xmlnode_new("response");
+	purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
 
 	purple_debug_misc("jabber", "decoded response: %s\n", dec_out ? dec_out : "(null)");
 	if (dec_out) {
 		enc_out = purple_base64_encode((guchar *)dec_out, strlen(dec_out));
-		xmlnode_insert_data(reply, enc_out, -1);
+		purple_xmlnode_insert_data(reply, enc_out, -1);
 	}
 
 	state = JABBER_SASL_STATE_CONTINUE;
@@ -514,14 +514,14 @@ out:
 }
 
 static JabberSaslState
-scram_handle_success(JabberStream *js, xmlnode *packet, char **error)
+scram_handle_success(JabberStream *js, PurpleXmlNode *packet, char **error)
 {
 	JabberScramData *data = js->auth_mech_data;
 	char *enc_in, *dec_in;
 	char *dec_out = NULL;
 	gsize len;
 
-	enc_in = xmlnode_get_data(packet);
+	enc_in = purple_xmlnode_get_data(packet);
 	if (data->step != 3 && (!enc_in || *enc_in == '\0')) {
 		*error = g_strdup(_("Invalid challenge from server"));
 		g_free(enc_in);

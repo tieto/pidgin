@@ -29,9 +29,9 @@
 #include "jabber.h"
 
 void jabber_bytestreams_parse(JabberStream *js, const char *from,
-                              JabberIqType type, const char *id, xmlnode *query);
+                              JabberIqType type, const char *id, PurpleXmlNode *query);
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
-                     const char *id, xmlnode *si);
+                     const char *id, PurpleXmlNode *si);
 PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who);
 void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file);
 void jabber_si_init(void);

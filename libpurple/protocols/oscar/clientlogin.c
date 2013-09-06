@@ -91,26 +91,26 @@ static const char *get_client_key(OscarData *od)
 			DEFAULT_CLIENT_KEY);
 }
 
-static gchar *generate_error_message(xmlnode *resp, const char *url)
+static gchar *generate_error_message(PurpleXmlNode *resp, const char *url)
 {
-	xmlnode *text;
-	xmlnode *status_code_node;
+	PurpleXmlNode *text;
+	PurpleXmlNode *status_code_node;
 	gchar *status_code;
 	gboolean have_error_code = TRUE;
 	gchar *err = NULL;
 	gchar *details = NULL;
 
-	status_code_node = xmlnode_get_child(resp, "statusCode");
+	status_code_node = purple_xmlnode_get_child(resp, "statusCode");
 	if (status_code_node) {
 		/* We can get 200 OK here if the server omitted something we think it shouldn't have (see #12783).
 		 * No point in showing the "Ok" string to the user.
 		 */
-		if ((status_code = xmlnode_get_data_unescaped(status_code_node)) && strcmp(status_code, "200") == 0) {
+		if ((status_code = purple_xmlnode_get_data_unescaped(status_code_node)) && strcmp(status_code, "200") == 0) {
 			have_error_code = FALSE;
 		}
 	}
-	if (have_error_code && resp && (text = xmlnode_get_child(resp, "statusText"))) {
-		details = xmlnode_get_data(text);
+	if (have_error_code && resp && (text = purple_xmlnode_get_child(resp, "statusText"))) {
+		details = purple_xmlnode_get_data(text);
 	}
 
 	if (details && *details) {
@@ -169,14 +169,14 @@ static gchar *generate_signature(const char *method, const char *url, const char
 static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const gchar *response, gsize response_len, char **host, unsigned short *port, char **cookie, char **tls_certname)
 {
 	OscarData *od = purple_connection_get_protocol_data(gc);
-	xmlnode *response_node, *tmp_node, *data_node;
-	xmlnode *host_node = NULL, *port_node = NULL, *cookie_node = NULL, *tls_node = NULL;
+	PurpleXmlNode *response_node, *tmp_node, *data_node;
+	PurpleXmlNode *host_node = NULL, *port_node = NULL, *cookie_node = NULL, *tls_node = NULL;
 	char *tmp;
 	guint code;
 	const gchar *encryption_type = purple_account_get_string(purple_connection_get_account(gc), "encryption", OSCAR_DEFAULT_ENCRYPTION);
 
 	/* Parse the response as XML */
-	response_node = xmlnode_from_str(response, response_len);
+	response_node = purple_xmlnode_from_str(response, response_len);
 	if (response_node == NULL)
 	{
 		char *msg;
@@ -192,16 +192,16 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	}
 
 	/* Grab the necessary XML nodes */
-	tmp_node = xmlnode_get_child(response_node, "statusCode");
-	data_node = xmlnode_get_child(response_node, "data");
+	tmp_node = purple_xmlnode_get_child(response_node, "statusCode");
+	data_node = purple_xmlnode_get_child(response_node, "data");
 	if (data_node != NULL) {
-		host_node = xmlnode_get_child(data_node, "host");
-		port_node = xmlnode_get_child(data_node, "port");
-		cookie_node = xmlnode_get_child(data_node, "cookie");
+		host_node = purple_xmlnode_get_child(data_node, "host");
+		port_node = purple_xmlnode_get_child(data_node, "port");
+		cookie_node = purple_xmlnode_get_child(data_node, "cookie");
 	}
 
 	/* Make sure we have a status code */
-	if (tmp_node == NULL || (tmp = xmlnode_get_data_unescaped(tmp_node)) == NULL) {
+	if (tmp_node == NULL || (tmp = purple_xmlnode_get_data_unescaped(tmp_node)) == NULL) {
 		char *msg;
 		purple_debug_error("oscar", "startOSCARSession response was "
 				"missing statusCode: %s\n", response);
@@ -210,7 +210,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 
@@ -218,13 +218,13 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	code = atoi(tmp);
 	if (code != 200)
 	{
-		xmlnode *status_detail_node;
+		PurpleXmlNode *status_detail_node;
 		guint status_detail = 0;
 
-		status_detail_node = xmlnode_get_child(response_node,
+		status_detail_node = purple_xmlnode_get_child(response_node,
 		                                       "statusDetailCode");
 		if (status_detail_node) {
-			gchar *data = xmlnode_get_data(status_detail_node);
+			gchar *data = purple_xmlnode_get_data(status_detail_node);
 			if (data) {
 				status_detail = atoi(data);
 				g_free(data);
@@ -251,7 +251,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		}
 
 		g_free(tmp);
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 	g_free(tmp);
@@ -267,14 +267,14 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 
 	if (strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0) {
-		tls_node = xmlnode_get_child(data_node, "tlsCertName");
+		tls_node = purple_xmlnode_get_child(data_node, "tlsCertName");
 		if (tls_node != NULL) {
-			*tls_certname = xmlnode_get_data_unescaped(tls_node);
+			*tls_certname = purple_xmlnode_get_data_unescaped(tls_node);
 		} else {
 			if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
 				purple_debug_warning("oscar", "We haven't received a tlsCertName to use. We will not do SSL to BOS.\n");
@@ -284,16 +284,16 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 					gc,
 					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 					_("You required encryption in your account settings, but one of the servers doesn't support it."));
-				xmlnode_free(response_node);
+				purple_xmlnode_free(response_node);
 				return FALSE;
 			}
 		}
 	}
 
 	/* Extract data from the XML */
-	*host = xmlnode_get_data_unescaped(host_node);
-	tmp = xmlnode_get_data_unescaped(port_node);
-	*cookie = xmlnode_get_data_unescaped(cookie_node);
+	*host = purple_xmlnode_get_data_unescaped(host_node);
+	tmp = purple_xmlnode_get_data_unescaped(port_node);
+	*cookie = purple_xmlnode_get_data_unescaped(cookie_node);
 
 	if (*host == NULL || **host == '\0' || tmp == NULL || *tmp == '\0' || *cookie == NULL || **cookie == '\0')
 	{
@@ -308,7 +308,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		g_free(*host);
 		g_free(tmp);
 		g_free(*cookie);
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 
@@ -422,12 +422,12 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *response, gsize response_len, char **token, char **secret, time_t *hosttime)
 {
 	OscarData *od = purple_connection_get_protocol_data(gc);
-	xmlnode *response_node, *tmp_node, *data_node;
-	xmlnode *secret_node = NULL, *hosttime_node = NULL, *token_node = NULL, *tokena_node = NULL;
+	PurpleXmlNode *response_node, *tmp_node, *data_node;
+	PurpleXmlNode *secret_node = NULL, *hosttime_node = NULL, *token_node = NULL, *tokena_node = NULL;
 	char *tmp;
 
 	/* Parse the response as XML */
-	response_node = xmlnode_from_str(response, response_len);
+	response_node = purple_xmlnode_from_str(response, response_len);
 	if (response_node == NULL)
 	{
 		char *msg;
@@ -442,18 +442,18 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 	}
 
 	/* Grab the necessary XML nodes */
-	tmp_node = xmlnode_get_child(response_node, "statusCode");
-	data_node = xmlnode_get_child(response_node, "data");
+	tmp_node = purple_xmlnode_get_child(response_node, "statusCode");
+	data_node = purple_xmlnode_get_child(response_node, "data");
 	if (data_node != NULL) {
-		secret_node = xmlnode_get_child(data_node, "sessionSecret");
-		hosttime_node = xmlnode_get_child(data_node, "hostTime");
-		token_node = xmlnode_get_child(data_node, "token");
+		secret_node = purple_xmlnode_get_child(data_node, "sessionSecret");
+		hosttime_node = purple_xmlnode_get_child(data_node, "hostTime");
+		token_node = purple_xmlnode_get_child(data_node, "token");
 		if (token_node != NULL)
-			tokena_node = xmlnode_get_child(token_node, "a");
+			tokena_node = purple_xmlnode_get_child(token_node, "a");
 	}
 
 	/* Make sure we have a status code */
-	if (tmp_node == NULL || (tmp = xmlnode_get_data_unescaped(tmp_node)) == NULL) {
+	if (tmp_node == NULL || (tmp = purple_xmlnode_get_data_unescaped(tmp_node)) == NULL) {
 		char *msg;
 		purple_debug_error("oscar", "clientLogin response was "
 				"missing statusCode: %s\n", response);
@@ -462,7 +462,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 
@@ -473,8 +473,8 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 
 		status_code = atoi(tmp);
 		g_free(tmp);
-		tmp_node = xmlnode_get_child(response_node, "statusDetailCode");
-		if (tmp_node != NULL && (tmp = xmlnode_get_data_unescaped(tmp_node)) != NULL) {
+		tmp_node = purple_xmlnode_get_child(response_node, "statusDetailCode");
+		if (tmp_node != NULL && (tmp = purple_xmlnode_get_data_unescaped(tmp_node)) != NULL) {
 			status_detail_code = atoi(tmp);
 			g_free(tmp);
 		}
@@ -507,7 +507,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 			g_free(msg);
 		}
 
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 	g_free(tmp);
@@ -524,14 +524,14 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 
 	/* Extract data from the XML */
-	*token = xmlnode_get_data_unescaped(tokena_node);
-	*secret = xmlnode_get_data_unescaped(secret_node);
-	tmp = xmlnode_get_data_unescaped(hosttime_node);
+	*token = purple_xmlnode_get_data_unescaped(tokena_node);
+	*secret = purple_xmlnode_get_data_unescaped(secret_node);
+	tmp = purple_xmlnode_get_data_unescaped(hosttime_node);
 	if (*token == NULL || **token == '\0' || *secret == NULL || **secret == '\0' || tmp == NULL || *tmp == '\0')
 	{
 		char *msg;
@@ -545,14 +545,14 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		g_free(*token);
 		g_free(*secret);
 		g_free(tmp);
-		xmlnode_free(response_node);
+		purple_xmlnode_free(response_node);
 		return FALSE;
 	}
 
 	*hosttime = strtol(tmp, NULL, 10);
 	g_free(tmp);
 
-	xmlnode_free(response_node);
+	purple_xmlnode_free(response_node);
 
 	return TRUE;
 }

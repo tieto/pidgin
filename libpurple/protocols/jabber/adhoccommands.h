@@ -30,13 +30,13 @@
 
 void jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
                                   JabberIqType type, const char *id,
-                                  xmlnode *packet, gpointer data);
+                                  PurpleXmlNode *packet, gpointer data);
 
 void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd);
 
 void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data);
 
-void jabber_adhoc_got_list(JabberStream *js, const char *from, xmlnode *query);
+void jabber_adhoc_got_list(JabberStream *js, const char *from, PurpleXmlNode *query);
 
 void jabber_adhoc_server_get_list(JabberStream *js);
 

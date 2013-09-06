@@ -872,7 +872,7 @@ static void simple_unsubscribe(char *name, struct simple_buddy *buddy, struct si
 
 static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
 	const gchar *tmp;
-	xmlnode *item, *group, *isc;
+	PurpleXmlNode *item, *group, *isc;
 	const char *name_group;
 	PurpleBuddy *b;
 	PurpleGroup *g = NULL;
@@ -885,11 +885,11 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 
 		purple_debug_info("simple", "simple_add_lcs_contacts->%s-%d\n", msg->body, len);
 		/*Convert the contact from XML to Purple Buddies*/
-		isc = xmlnode_from_str(msg->body, len);
+		isc = purple_xmlnode_from_str(msg->body, len);
 
 		/* ToDo. Find for all groups */
-		if ((group = xmlnode_get_child(isc, "group"))) {
-			name_group = xmlnode_get_attrib(group, "name");
+		if ((group = purple_xmlnode_get_child(isc, "group"))) {
+			name_group = purple_xmlnode_get_attrib(group, "name");
 			purple_debug_info("simple", "name_group->%s\n", name_group);
 			g = purple_blist_find_group(name_group);
 			if(!g)
@@ -902,13 +902,13 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 				g = purple_group_new("Buddies");
 		}
 
-		for(item = xmlnode_get_child(isc, "contact"); item; item = xmlnode_get_next_twin(item))
+		for(item = purple_xmlnode_get_child(isc, "contact"); item; item = purple_xmlnode_get_next_twin(item))
 		{
 			const char *uri;
 			char *buddy_name;
-			uri = xmlnode_get_attrib(item, "uri");
-			/*name = xmlnode_get_attrib(item, "name");
-			groups = xmlnode_get_attrib(item, "groups");*/
+			uri = purple_xmlnode_get_attrib(item, "uri");
+			/*name = purple_xmlnode_get_attrib(item, "name");
+			groups = purple_xmlnode_get_attrib(item, "groups");*/
 			purple_debug_info("simple", "URI->%s\n", uri);
 
 			buddy_name = g_strdup_printf("sip:%s", uri);
@@ -925,7 +925,7 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 			bs->name = g_strdup(purple_buddy_get_name(b));
 			g_hash_table_insert(sip->buddies, bs->name, bs);
 		}
-		xmlnode_free(isc);
+		purple_xmlnode_free(isc);
 	}
 	return 0;
 }
@@ -1056,8 +1056,8 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		found = TRUE;
 	}
 	else if(!strncmp(contenttype, "application/im-iscomposing+xml", 30)) {
-		xmlnode *isc = xmlnode_from_str(msg->body, msg->bodylen);
-		xmlnode *state;
+		PurpleXmlNode *isc = purple_xmlnode_from_str(msg->body, msg->bodylen);
+		PurpleXmlNode *state;
 		gchar *statedata;
 
 		if(!isc) {
@@ -1066,16 +1066,16 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 			return;
 		}
 
-		state = xmlnode_get_child(isc, "state");
+		state = purple_xmlnode_get_child(isc, "state");
 
 		if(!state) {
 			purple_debug_info("simple", "process_incoming_message: no state found\n");
-			xmlnode_free(isc);
+			purple_xmlnode_free(isc);
 			g_free(from);
 			return;
 		}
 
-		statedata = xmlnode_get_data(state);
+		statedata = purple_xmlnode_get_data(state);
 		if(statedata) {
 			if(strstr(statedata, "active"))
 				serv_got_typing(sip->gc, from, 0, PURPLE_IM_TYPING);
@@ -1084,7 +1084,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 			g_free(statedata);
 		}
-		xmlnode_free(isc);
+		purple_xmlnode_free(isc);
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
@@ -1187,8 +1187,8 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	gchar *from;
 	const gchar *fromhdr;
 	gchar *basicstatus_data;
-	xmlnode *pidf;
-	xmlnode *basicstatus = NULL, *tuple, *status;
+	PurpleXmlNode *pidf;
+	PurpleXmlNode *basicstatus = NULL, *tuple, *status;
 	gboolean isonline = FALSE;
 	struct simple_buddy *b = NULL;
 	const gchar *sshdr = NULL;
@@ -1215,7 +1215,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 		return;
 	}
 
-	pidf = xmlnode_from_str(msg->body, msg->bodylen);
+	pidf = purple_xmlnode_from_str(msg->body, msg->bodylen);
 
 	if(!pidf) {
 		purple_debug_info("simple", "process_incoming_notify: no parseable pidf\n");
@@ -1251,22 +1251,22 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 		return;
 	}
 
-	if ((tuple = xmlnode_get_child(pidf, "tuple")))
-		if ((status = xmlnode_get_child(tuple, "status")))
-			basicstatus = xmlnode_get_child(status, "basic");
+	if ((tuple = purple_xmlnode_get_child(pidf, "tuple")))
+		if ((status = purple_xmlnode_get_child(tuple, "status")))
+			basicstatus = purple_xmlnode_get_child(status, "basic");
 
 	if(!basicstatus) {
 		purple_debug_info("simple", "process_incoming_notify: no basic found\n");
-		xmlnode_free(pidf);
+		purple_xmlnode_free(pidf);
 		g_free(from);
 		return;
 	}
 
-	basicstatus_data = xmlnode_get_data(basicstatus);
+	basicstatus_data = purple_xmlnode_get_data(basicstatus);
 
 	if(!basicstatus_data) {
 		purple_debug_info("simple", "process_incoming_notify: no basic data found\n");
-		xmlnode_free(pidf);
+		purple_xmlnode_free(pidf);
 		g_free(from);
 		return;
 	}
@@ -1280,7 +1280,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	else
 		purple_prpl_got_user_status(sip->account, from, "offline", NULL);
 
-	xmlnode_free(pidf);
+	purple_xmlnode_free(pidf);
 	g_free(from);
 	g_free(basicstatus_data);
 

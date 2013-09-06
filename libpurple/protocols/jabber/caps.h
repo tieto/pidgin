@@ -42,7 +42,7 @@ typedef struct _JabberCapsTuple {
 struct _JabberCapsClientInfo {
 	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
-	GList *forms; /* xmlnode * */
+	GList *forms; /* PurpleXmlNode * */
 	JabberCapsNodeExts *exts;
 
 	const JabberCapsTuple tuple;
@@ -125,6 +125,6 @@ void jabber_caps_broadcast_change(void);
  * @param query The 'query' element from an IQ reply stanza.
  * @returns A JabberCapsClientInfo struct, or NULL on error
  */
-JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
+JabberCapsClientInfo *jabber_caps_parse_client_info(PurpleXmlNode *query);
 
 #endif /* PURPLE_JABBER_CAPS_H_ */

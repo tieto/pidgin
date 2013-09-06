@@ -56,7 +56,7 @@ typedef struct _BonjourJabberConversation
 	PurpleProxyConnectData *connect_data;
 	gpointer stream_data;
 	xmlParserCtxt *context;
-	xmlnode *current;
+	PurpleXmlNode *current;
 	PurpleBuddy *pb;
 	PurpleAccount *account;
 
@@ -83,7 +83,7 @@ void async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
 void bonjour_jabber_stream_started(BonjourJabberConversation *bconv);
 
-void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
+void bonjour_jabber_process_packet(PurpleBuddy *pb, PurpleXmlNode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 
@@ -102,7 +102,7 @@ typedef enum {
 typedef struct _XepIq {
 	XepIqType type;
 	char *id;
-	xmlnode *node;
+	PurpleXmlNode *node;
 	char *to;
 	void *data;
 } XepIq;

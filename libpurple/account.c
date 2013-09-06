@@ -2425,11 +2425,11 @@ purple_account_clear_current_error(PurpleAccount *account)
 	_purple_account_set_current_error(account, NULL);
 }
 
-static xmlnode *
+static PurpleXmlNode *
 status_attribute_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 		const PurpleStatusAttribute *attr)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 	const char *id;
 	char *value = NULL;
 	PurpleStatusAttribute *default_attr;
@@ -2487,61 +2487,61 @@ status_attribute_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *
 
 	g_return_val_if_fail(value, NULL);
 
-	node = xmlnode_new("attribute");
+	node = purple_xmlnode_new("attribute");
 
-	xmlnode_set_attrib(node, "id", id);
-	xmlnode_set_attrib(node, "value", value);
+	purple_xmlnode_set_attrib(node, "id", id);
+	purple_xmlnode_set_attrib(node, "value", value);
 
 	g_free(value);
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 status_attrs_to_xmlnode(const PurpleStatus *status)
 {
 	PurpleStatusType *type = purple_status_get_status_type(status);
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	GList *attrs, *attr;
 
-	node = xmlnode_new("attributes");
+	node = purple_xmlnode_new("attributes");
 
 	attrs = purple_status_type_get_attrs(type);
 	for (attr = attrs; attr != NULL; attr = attr->next)
 	{
 		child = status_attribute_to_xmlnode(status, type, (const PurpleStatusAttribute *)attr->data);
 		if (child)
-			xmlnode_insert_child(node, child);
+			purple_xmlnode_insert_child(node, child);
 	}
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 status_to_xmlnode(const PurpleStatus *status)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 
-	node = xmlnode_new("status");
-	xmlnode_set_attrib(node, "type", purple_status_get_id(status));
+	node = purple_xmlnode_new("status");
+	purple_xmlnode_set_attrib(node, "type", purple_status_get_id(status));
 	if (purple_status_get_name(status) != NULL)
-		xmlnode_set_attrib(node, "name", purple_status_get_name(status));
-	xmlnode_set_attrib(node, "active", purple_status_is_active(status) ? "true" : "false");
+		purple_xmlnode_set_attrib(node, "name", purple_status_get_name(status));
+	purple_xmlnode_set_attrib(node, "active", purple_status_is_active(status) ? "true" : "false");
 
 	child = status_attrs_to_xmlnode(status);
-	xmlnode_insert_child(node, child);
+	purple_xmlnode_insert_child(node, child);
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 statuses_to_xmlnode(const PurplePresence *presence)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	GList *statuses;
 	PurpleStatus *status;
 
-	node = xmlnode_new("statuses");
+	node = purple_xmlnode_new("statuses");
 
 	statuses = purple_presence_get_statuses(presence);
 	for (; statuses != NULL; statuses = statuses->next)
@@ -2550,17 +2550,17 @@ statuses_to_xmlnode(const PurplePresence *presence)
 		if (purple_status_type_is_saveable(purple_status_get_status_type(status)))
 		{
 			child = status_to_xmlnode(status);
-			xmlnode_insert_child(node, child);
+			purple_xmlnode_insert_child(node, child);
 		}
 	}
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	PurpleProxyType proxy_type;
 	const char *value;
 	int int_value;
@@ -2568,10 +2568,10 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 
 	proxy_type = purple_proxy_info_get_type(proxy_info);
 
-	node = xmlnode_new("proxy");
+	node = purple_xmlnode_new("proxy");
 
-	child = xmlnode_new_child(node, "type");
-	xmlnode_insert_data(child,
+	child = purple_xmlnode_new_child(node, "type");
+	purple_xmlnode_insert_data(child,
 			(proxy_type == PURPLE_PROXY_USE_GLOBAL ? "global" :
 			 proxy_type == PURPLE_PROXY_NONE       ? "none"   :
 			 proxy_type == PURPLE_PROXY_HTTP       ? "http"   :
@@ -2582,39 +2582,39 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 
 	if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
 	{
-		child = xmlnode_new_child(node, "host");
-		xmlnode_insert_data(child, value, -1);
+		child = purple_xmlnode_new_child(node, "host");
+		purple_xmlnode_insert_data(child, value, -1);
 	}
 
 	if ((int_value = purple_proxy_info_get_port(proxy_info)) != 0)
 	{
 		g_snprintf(buf, sizeof(buf), "%d", int_value);
-		child = xmlnode_new_child(node, "port");
-		xmlnode_insert_data(child, buf, -1);
+		child = purple_xmlnode_new_child(node, "port");
+		purple_xmlnode_insert_data(child, buf, -1);
 	}
 
 	if ((value = purple_proxy_info_get_username(proxy_info)) != NULL)
 	{
-		child = xmlnode_new_child(node, "username");
-		xmlnode_insert_data(child, value, -1);
+		child = purple_xmlnode_new_child(node, "username");
+		purple_xmlnode_insert_data(child, value, -1);
 	}
 
 	if ((value = purple_proxy_info_get_password(proxy_info)) != NULL)
 	{
-		child = xmlnode_new_child(node, "password");
-		xmlnode_insert_data(child, value, -1);
+		child = purple_xmlnode_new_child(node, "password");
+		purple_xmlnode_insert_data(child, value, -1);
 	}
 
 	return node;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	char type_str[3];
 
-	node = xmlnode_new("current_error");
+	node = purple_xmlnode_new("current_error");
 
 	if(err == NULL)
 		return node;
@@ -2625,16 +2625,16 @@ current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
 	if(!purple_connection_error_is_fatal (err->type))
 		return node;
 
-	child = xmlnode_new_child(node, "type");
+	child = purple_xmlnode_new_child(node, "type");
 	g_snprintf(type_str, sizeof(type_str), "%u", err->type);
-	xmlnode_insert_data(child, type_str, -1);
+	purple_xmlnode_insert_data(child, type_str, -1);
 
-	child = xmlnode_new_child(node, "description");
+	child = purple_xmlnode_new_child(node, "description");
 	if(err->description) {
 		char *utf8ized = purple_utf8_try_convert(err->description);
 		if(utf8ized == NULL)
 			utf8ized = purple_utf8_salvage(err->description);
-		xmlnode_insert_data(child, utf8ized, -1);
+		purple_xmlnode_insert_data(child, utf8ized, -1);
 		g_free(utf8ized);
 	}
 
@@ -2646,29 +2646,29 @@ setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 {
 	const char *name;
 	PurpleAccountSetting *setting;
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	char buf[21];
 
 	name    = (const char *)key;
 	setting = (PurpleAccountSetting *)value;
-	node    = (xmlnode *)user_data;
+	node    = (PurpleXmlNode *)user_data;
 
-	child = xmlnode_new_child(node, "setting");
-	xmlnode_set_attrib(child, "name", name);
+	child = purple_xmlnode_new_child(node, "setting");
+	purple_xmlnode_set_attrib(child, "name", name);
 
 	if (G_VALUE_HOLDS_INT(&setting->value)) {
-		xmlnode_set_attrib(child, "type", "int");
+		purple_xmlnode_set_attrib(child, "type", "int");
 		g_snprintf(buf, sizeof(buf), "%d", g_value_get_int(&setting->value));
-		xmlnode_insert_data(child, buf, -1);
+		purple_xmlnode_insert_data(child, buf, -1);
 	}
 	else if (G_VALUE_HOLDS_STRING(&setting->value) && g_value_get_string(&setting->value) != NULL) {
-		xmlnode_set_attrib(child, "type", "string");
-		xmlnode_insert_data(child, g_value_get_string(&setting->value), -1);
+		purple_xmlnode_set_attrib(child, "type", "string");
+		purple_xmlnode_insert_data(child, g_value_get_string(&setting->value), -1);
 	}
 	else if (G_VALUE_HOLDS_BOOLEAN(&setting->value)) {
-		xmlnode_set_attrib(child, "type", "bool");
+		purple_xmlnode_set_attrib(child, "type", "bool");
 		g_snprintf(buf, sizeof(buf), "%d", g_value_get_boolean(&setting->value));
-		xmlnode_insert_data(child, buf, -1);
+		purple_xmlnode_insert_data(child, buf, -1);
 	}
 }
 
@@ -2677,36 +2677,36 @@ ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 {
 	const char *ui;
 	GHashTable *table;
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 
 	ui    = (const char *)key;
 	table = (GHashTable *)value;
-	node  = (xmlnode *)user_data;
+	node  = (PurpleXmlNode *)user_data;
 
 	if (g_hash_table_size(table) > 0)
 	{
-		child = xmlnode_new_child(node, "settings");
-		xmlnode_set_attrib(child, "ui", ui);
+		child = purple_xmlnode_new_child(node, "settings");
+		purple_xmlnode_set_attrib(child, "ui", ui);
 		g_hash_table_foreach(table, setting_to_xmlnode, child);
 	}
 }
 
-xmlnode *
+PurpleXmlNode *
 purple_account_to_xmlnode(PurpleAccount *account)
 {
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 	const char *tmp;
 	PurplePresence *presence;
 	PurpleProxyInfo *proxy_info;
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 
-	node = xmlnode_new("account");
+	node = purple_xmlnode_new("account");
 
-	child = xmlnode_new_child(node, "protocol");
-	xmlnode_insert_data(child, purple_account_get_protocol_id(account), -1);
+	child = purple_xmlnode_new_child(node, "protocol");
+	purple_xmlnode_insert_data(child, purple_account_get_protocol_id(account), -1);
 
-	child = xmlnode_new_child(node, "name");
-	xmlnode_insert_data(child, purple_account_get_username(account), -1);
+	child = purple_xmlnode_new_child(node, "name");
+	purple_xmlnode_insert_data(child, purple_account_get_username(account), -1);
 
 	if (purple_account_get_remember_password(account))
 	{
@@ -2724,13 +2724,13 @@ purple_account_to_xmlnode(PurpleAccount *account)
 				purple_account_get_username(account),
 				error->message);
 		} else if (exported) {
-			child = xmlnode_new_child(node, "password");
+			child = purple_xmlnode_new_child(node, "password");
 			if (keyring_id != NULL)
-				xmlnode_set_attrib(child, "keyring_id", keyring_id);
+				purple_xmlnode_set_attrib(child, "keyring_id", keyring_id);
 			if (mode != NULL)
-				xmlnode_set_attrib(child, "mode", mode);
+				purple_xmlnode_set_attrib(child, "mode", mode);
 			if (data != NULL)
-				xmlnode_insert_data(child, data, -1);
+				purple_xmlnode_insert_data(child, data, -1);
 
 			if (destroy != NULL)
 				destroy(data);
@@ -2739,26 +2739,26 @@ purple_account_to_xmlnode(PurpleAccount *account)
 
 	if ((tmp = purple_account_get_private_alias(account)) != NULL)
 	{
-		child = xmlnode_new_child(node, "alias");
-		xmlnode_insert_data(child, tmp, -1);
+		child = purple_xmlnode_new_child(node, "alias");
+		purple_xmlnode_insert_data(child, tmp, -1);
 	}
 
 	if ((presence = purple_account_get_presence(account)) != NULL)
 	{
 		child = statuses_to_xmlnode(presence);
-		xmlnode_insert_child(node, child);
+		purple_xmlnode_insert_child(node, child);
 	}
 
 	if ((tmp = purple_account_get_user_info(account)) != NULL)
 	{
 		/* TODO: Do we need to call purple_str_strip_char(tmp, '\r') here? */
-		child = xmlnode_new_child(node, "userinfo");
-		xmlnode_insert_data(child, tmp, -1);
+		child = purple_xmlnode_new_child(node, "userinfo");
+		purple_xmlnode_insert_data(child, tmp, -1);
 	}
 
 	if (g_hash_table_size(priv->settings) > 0)
 	{
-		child = xmlnode_new_child(node, "settings");
+		child = purple_xmlnode_new_child(node, "settings");
 		g_hash_table_foreach(priv->settings, setting_to_xmlnode, child);
 	}
 
@@ -2770,11 +2770,11 @@ purple_account_to_xmlnode(PurpleAccount *account)
 	if ((proxy_info = purple_account_get_proxy_info(account)) != NULL)
 	{
 		child = proxy_settings_to_xmlnode(proxy_info);
-		xmlnode_insert_child(node, child);
+		purple_xmlnode_insert_child(node, child);
 	}
 
 	child = current_error_to_xmlnode(priv->current_error);
-	xmlnode_insert_child(node, child);
+	purple_xmlnode_insert_child(node, child);
 
 	return node;
 }

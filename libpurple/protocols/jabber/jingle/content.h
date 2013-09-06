@@ -55,9 +55,9 @@ struct _JingleContentClass
 {
 	GObjectClass parent_class;     /**< The parent class. */
 
-	xmlnode *(*to_xml) (JingleContent *content, xmlnode *jingle, JingleActionType action);
-	JingleContent *(*parse) (xmlnode *content);
-	void (*handle_action) (JingleContent *content, xmlnode *xmlcontent, JingleActionType action);
+	PurpleXmlNode *(*to_xml) (JingleContent *content, PurpleXmlNode *jingle, JingleActionType action);
+	JingleContent *(*parse) (PurpleXmlNode *content);
+	void (*handle_action) (JingleContent *content, PurpleXmlNode *xmlcontent, JingleActionType action);
 	const gchar *description_type;
 };
 
@@ -103,9 +103,9 @@ void jingle_content_modify(JingleContent *content, const gchar *senders);
 #define jingle_content_create_content_remove(session) \
 	jingle_session_to_packet(session, JINGLE_CONTENT_REMOVE)
 
-JingleContent *jingle_content_parse(xmlnode *content);
-xmlnode *jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType action);
-void jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action);
+JingleContent *jingle_content_parse(PurpleXmlNode *content);
+PurpleXmlNode *jingle_content_to_xml(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action);
+void jingle_content_handle_action(JingleContent *content, PurpleXmlNode *xmlcontent, JingleActionType action);
 
 G_END_DECLS
 

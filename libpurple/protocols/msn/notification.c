@@ -434,11 +434,11 @@ typedef struct MsnFqyCbData {
 	gpointer data;
 } MsnFqyCbData;
 
-/* add contact to xmlnode */
+/* add contact to PurpleXmlNode */
 static void
-msn_add_contact_xml(xmlnode *mlNode, const char *passport, MsnListOp list_op, MsnNetwork networkId)
+msn_add_contact_xml(PurpleXmlNode *mlNode, const char *passport, MsnListOp list_op, MsnNetwork networkId)
 {
-	xmlnode *d_node,*c_node;
+	PurpleXmlNode *d_node,*c_node;
 	char **tokens;
 	const char *email,*domain;
 	char fmt_str[3];
@@ -457,9 +457,9 @@ msn_add_contact_xml(xmlnode *mlNode, const char *passport, MsnListOp list_op, Ms
 	}
 
 	/*find a domain Node*/
-	for (d_node = xmlnode_get_child(mlNode, "d"); d_node;
-	     d_node = xmlnode_get_next_twin(d_node)) {
-		const char *attr = xmlnode_get_attrib(d_node,"n");
+	for (d_node = purple_xmlnode_get_child(mlNode, "d"); d_node;
+	     d_node = purple_xmlnode_get_next_twin(d_node)) {
+		const char *attr = purple_xmlnode_get_attrib(d_node,"n");
 		if (attr == NULL)
 			continue;
 		if (!strcmp(attr, domain))
@@ -469,29 +469,29 @@ msn_add_contact_xml(xmlnode *mlNode, const char *passport, MsnListOp list_op, Ms
 	if (d_node == NULL) {
 		/*domain not found, create a new domain Node*/
 		purple_debug_info("msn", "Didn't find existing domain node, adding one.\n");
-		d_node = xmlnode_new("d");
-		xmlnode_set_attrib(d_node, "n", domain);
-		xmlnode_insert_child(mlNode, d_node);
+		d_node = purple_xmlnode_new("d");
+		purple_xmlnode_set_attrib(d_node, "n", domain);
+		purple_xmlnode_insert_child(mlNode, d_node);
 	}
 
 	/*create contact node*/
-	c_node = xmlnode_new("c");
-	xmlnode_set_attrib(c_node, "n", email);
+	c_node = purple_xmlnode_new("c");
+	purple_xmlnode_set_attrib(c_node, "n", email);
 
 	if (list_op != 0) {
 		purple_debug_info("msn", "list_op: %d\n", list_op);
 		g_snprintf(fmt_str, sizeof(fmt_str), "%d", list_op);
-		xmlnode_set_attrib(c_node, "l", fmt_str);
+		purple_xmlnode_set_attrib(c_node, "l", fmt_str);
 	}
 
 	if (networkId != MSN_NETWORK_UNKNOWN) {
 		g_snprintf(fmt_str, sizeof(fmt_str), "%d", networkId);
 		/*mobile*/
 		/*type_str = g_strdup_printf("4");*/
-		xmlnode_set_attrib(c_node, "t", fmt_str);
+		purple_xmlnode_set_attrib(c_node, "t", fmt_str);
 	}
 
-	xmlnode_insert_child(d_node, c_node);
+	purple_xmlnode_insert_child(d_node, c_node);
 
 	g_strfreev(tokens);
 }
@@ -562,20 +562,20 @@ update_contact_network(MsnSession *session, const char *passport, MsnNetwork net
 	/* TODO: Also figure out how to update membership lists */
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user) {
-		xmlnode *adl_node;
+		PurpleXmlNode *adl_node;
 		char *payload;
 		int payload_len;
 
 		msn_user_set_network(user, network);
 
-		adl_node = xmlnode_new("ml");
-		xmlnode_set_attrib(adl_node, "l", "1");
+		adl_node = purple_xmlnode_new("ml");
+		purple_xmlnode_set_attrib(adl_node, "l", "1");
 		msn_add_contact_xml(adl_node, passport,
 		                    user->list_op & MSN_LIST_OP_MASK, network);
-		payload = xmlnode_to_str(adl_node, &payload_len);
+		payload = purple_xmlnode_to_str(adl_node, &payload_len);
 		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
 		g_free(payload);
-		xmlnode_free(adl_node);
+		purple_xmlnode_free(adl_node);
 	} else {
 		purple_debug_error("msn",
 		                   "Got FQY update for unknown user %s on network %d.\n",
@@ -589,8 +589,8 @@ msn_notification_dump_contact(MsnSession *session)
 {
 	MsnUser *user;
 	GList *l;
-	xmlnode *adl_node;
-	xmlnode *fqy_node;
+	PurpleXmlNode *adl_node;
+	PurpleXmlNode *fqy_node;
 	char *payload;
 	int payload_len;
 	int adl_count = 0;
@@ -598,10 +598,10 @@ msn_notification_dump_contact(MsnSession *session)
 	PurpleConnection *pc;
 	const char *display_name;
 
-	adl_node = xmlnode_new("ml");
+	adl_node = purple_xmlnode_new("ml");
 	adl_node->child = NULL;
-	xmlnode_set_attrib(adl_node, "l", "1");
-	fqy_node = xmlnode_new("ml");
+	purple_xmlnode_set_attrib(adl_node, "l", "1");
+	fqy_node = purple_xmlnode_new("ml");
 
 	/*get the userlist*/
 	for (l = session->userlist->users; l != NULL; l = l->next) {
@@ -634,7 +634,7 @@ msn_notification_dump_contact(MsnSession *session)
 
 			/* each ADL command may contain up to 150 contacts */
 			if (++adl_count % 150 == 0) {
-				payload = xmlnode_to_str(adl_node, &payload_len);
+				payload = purple_xmlnode_to_str(adl_node, &payload_len);
 
 				/* ADL's are returned all-together */
 				session->adl_fqy++;
@@ -646,11 +646,11 @@ msn_notification_dump_contact(MsnSession *session)
 					payload, payload_len);
 
 				g_free(payload);
-				xmlnode_free(adl_node);
+				purple_xmlnode_free(adl_node);
 
-				adl_node = xmlnode_new("ml");
+				adl_node = purple_xmlnode_new("ml");
 				adl_node->child = NULL;
-				xmlnode_set_attrib(adl_node, "l", "1");
+				purple_xmlnode_set_attrib(adl_node, "l", "1");
 			}
 		} else {
 			/* FQY's are returned one-at-a-time */
@@ -663,21 +663,21 @@ msn_notification_dump_contact(MsnSession *session)
 
 			/* each FQY command may contain up to 150 contacts, probably */
 			if (++fqy_count % 150 == 0) {
-				payload = xmlnode_to_str(fqy_node, &payload_len);
+				payload = purple_xmlnode_to_str(fqy_node, &payload_len);
 
 				msn_notification_send_fqy(session, payload, payload_len,
 				                          update_contact_network, NULL);
 
 				g_free(payload);
-				xmlnode_free(fqy_node);
-				fqy_node = xmlnode_new("ml");
+				purple_xmlnode_free(fqy_node);
+				fqy_node = purple_xmlnode_new("ml");
 			}
 		}
 	}
 
 	/* Send the rest, or just an empty one to let the server set us online */
 	if (adl_count == 0 || adl_count % 150 != 0) {
-		payload = xmlnode_to_str(adl_node, &payload_len);
+		payload = purple_xmlnode_to_str(adl_node, &payload_len);
 
 		/* ADL's are returned all-together */
 		session->adl_fqy++;
@@ -691,7 +691,7 @@ msn_notification_dump_contact(MsnSession *session)
 	}
 
 	if (fqy_count % 150 != 0) {
-		payload = xmlnode_to_str(fqy_node, &payload_len);
+		payload = purple_xmlnode_to_str(fqy_node, &payload_len);
 
 		msn_notification_send_fqy(session, payload, payload_len,
 		                          update_contact_network, NULL);
@@ -699,8 +699,8 @@ msn_notification_dump_contact(MsnSession *session)
 		g_free(payload);
 	}
 
-	xmlnode_free(adl_node);
-	xmlnode_free(fqy_node);
+	purple_xmlnode_free(adl_node);
+	purple_xmlnode_free(fqy_node);
 
 	msn_session_activate_login_timeout(session);
 
@@ -723,30 +723,30 @@ static void
 adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		                         size_t len)
 {
-	xmlnode *root, *domain_node;
+	PurpleXmlNode *root, *domain_node;
 
 	purple_debug_misc("msn", "Parsing received ADL XML data\n");
 
 	g_return_if_fail(payload != NULL);
 
-	root = xmlnode_from_str(payload, (gssize) len);
+	root = purple_xmlnode_from_str(payload, (gssize) len);
 
 	if (root == NULL) {
 		purple_debug_info("msn", "Invalid XML in ADL!\n");
 		return;
 	}
-	for (domain_node = xmlnode_get_child(root, "d");
+	for (domain_node = purple_xmlnode_get_child(root, "d");
 	     domain_node;
-	     domain_node = xmlnode_get_next_twin(domain_node)) {
-		xmlnode *contact_node = NULL;
+	     domain_node = purple_xmlnode_get_next_twin(domain_node)) {
+		PurpleXmlNode *contact_node = NULL;
 
-		for (contact_node = xmlnode_get_child(domain_node, "c");
+		for (contact_node = purple_xmlnode_get_child(domain_node, "c");
 		     contact_node;
-		     contact_node = xmlnode_get_next_twin(contact_node)) {
+		     contact_node = purple_xmlnode_get_next_twin(contact_node)) {
 			const gchar *list;
 			gint list_op = 0;
 
-			list = xmlnode_get_attrib(contact_node, "l");
+			list = purple_xmlnode_get_attrib(contact_node, "l");
 			if (list != NULL) {
 				list_op = atoi(list);
 			}
@@ -758,7 +758,7 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		}
 	}
 
-	xmlnode_free(root);
+	purple_xmlnode_free(root);
 }
 
 static void
@@ -805,26 +805,26 @@ adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 		   in the local list, but not the server list, and that we should add
 		   those buddies to the addressbook. For now I will just notify the user
 		   about the raw payload, because I am lazy */
-		xmlnode *adl = xmlnode_from_str(payload, len);
+		PurpleXmlNode *adl = purple_xmlnode_from_str(payload, len);
 		GString *emails = g_string_new(NULL);
 
-		xmlnode *domain = xmlnode_get_child(adl, "d");
+		PurpleXmlNode *domain = purple_xmlnode_get_child(adl, "d");
 		while (domain) {
-			const char *domain_str = xmlnode_get_attrib(domain, "n");
-			xmlnode *contact = xmlnode_get_child(domain, "c");
+			const char *domain_str = purple_xmlnode_get_attrib(domain, "n");
+			PurpleXmlNode *contact = purple_xmlnode_get_child(domain, "c");
 			while (contact) {
 				g_string_append_printf(emails, "%s@%s\n",
-					xmlnode_get_attrib(contact, "n"), domain_str);
-				contact = xmlnode_get_next_twin(contact);
+					purple_xmlnode_get_attrib(contact, "n"), domain_str);
+				contact = purple_xmlnode_get_next_twin(contact);
 			}
-			domain = xmlnode_get_next_twin(domain);
+			domain = purple_xmlnode_get_next_twin(domain);
 		}
 
 		purple_notify_error(gc, NULL,
 			_("The following users are missing from your addressbook"),
 			emails->str);
 		g_string_free(emails, TRUE);
-		xmlnode_free(adl);
+		purple_xmlnode_free(adl);
 	}
 	else
 	{
@@ -913,7 +913,7 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
 	MsnSession *session;
-	xmlnode *ml, *d, *c;
+	PurpleXmlNode *ml, *d, *c;
 	const char *domain;
 	const char *local;
 	const char *type;
@@ -924,16 +924,16 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	/* FQY response:
 	    <ml><d n="domain.com"><c n="local-node" t="network" /></d></ml> */
-	ml = xmlnode_from_str(payload, len);
-	for (d = xmlnode_get_child(ml, "d");
+	ml = purple_xmlnode_from_str(payload, len);
+	for (d = purple_xmlnode_get_child(ml, "d");
 	     d != NULL;
-	     d = xmlnode_get_next_twin(d)) {
-		domain = xmlnode_get_attrib(d, "n");
-		for (c = xmlnode_get_child(d, "c");
+	     d = purple_xmlnode_get_next_twin(d)) {
+		domain = purple_xmlnode_get_attrib(d, "n");
+		for (c = purple_xmlnode_get_child(d, "c");
 		     c != NULL;
-		     c = xmlnode_get_next_twin(c)) {
-			local = xmlnode_get_attrib(c, "n");
-			type = xmlnode_get_attrib(c, "t");
+		     c = purple_xmlnode_get_next_twin(c)) {
+			local = purple_xmlnode_get_attrib(c, "n");
+			type = purple_xmlnode_get_attrib(c, "t");
 
 			passport = g_strdup_printf("%s@%s", local, domain);
 
@@ -955,7 +955,7 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		}
 	}
 
-	xmlnode_free(ml);
+	purple_xmlnode_free(ml);
 }
 
 static void
@@ -1130,7 +1130,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	const char *who = NULL;
 	char *text = NULL;
 	const char *id = NULL;
-	xmlnode *payloadNode, *from, *msg, *textNode;
+	PurpleXmlNode *payloadNode, *from, *msg, *textNode;
 
 	purple_debug_misc("msn", "Incoming Page: {%s}\n", payload);
 
@@ -1172,21 +1172,21 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	   </NOTIFICATION>
 	*/
 
-	payloadNode = xmlnode_from_str(payload, len);
+	payloadNode = purple_xmlnode_from_str(payload, len);
 	if (!payloadNode)
 		return;
 
-	if (!(from = xmlnode_get_child(payloadNode, "FROM")) ||
-		!(msg = xmlnode_get_child(payloadNode, "MSG")) ||
-		!(textNode = xmlnode_get_child(msg, "BODY/TEXT"))) {
-		xmlnode_free(payloadNode);
+	if (!(from = purple_xmlnode_get_child(payloadNode, "FROM")) ||
+		!(msg = purple_xmlnode_get_child(payloadNode, "MSG")) ||
+		!(textNode = purple_xmlnode_get_child(msg, "BODY/TEXT"))) {
+		purple_xmlnode_free(payloadNode);
 		return;
 	}
 
-	who = xmlnode_get_attrib(from, "name");
+	who = purple_xmlnode_get_attrib(from, "name");
 	if (!who) return;
 
-	text = xmlnode_get_data(textNode);
+	text = purple_xmlnode_get_data(textNode);
 
 	/* Match number to user's mobile number, FROM is a phone number if the
 	   other side page you using your phone number */
@@ -1198,7 +1198,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 			who = user->passport;
 	}
 
-	id = xmlnode_get_attrib(msg, "id");
+	id = purple_xmlnode_get_attrib(msg, "id");
 
 	if (id && strcmp(id, "1")) {
 		PurpleConversation *conv
@@ -1213,7 +1213,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 			purple_conversation_write(conv, NULL, error,
 			                          PURPLE_MESSAGE_ERROR, time(NULL));
 
-			if ((id = xmlnode_get_attrib(payloadNode, "id")) != NULL) {
+			if ((id = purple_xmlnode_get_attrib(payloadNode, "id")) != NULL) {
 				unsigned int trId = atol(id);
 				MsnTransaction *trans;
 
@@ -1241,7 +1241,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	}
 
 	g_free(text);
-	xmlnode_free(payloadNode);
+	purple_xmlnode_free(payloadNode);
 }
 
 static void
@@ -1509,12 +1509,12 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 /* QuLogic: Disabled until confirmed correct. */
 #if 0
-	xmlnode *root;
-	xmlnode *policy;
+	PurpleXmlNode *root;
+	PurpleXmlNode *policy;
 
 	g_return_if_fail(cmd->payload != NULL);
 
-	if ( (root = xmlnode_from_str(cmd->payload, cmd->payload_len)) == NULL)
+	if ( (root = purple_xmlnode_from_str(cmd->payload, cmd->payload_len)) == NULL)
 	{
 		purple_debug_error("msn", "Unable to parse GCF payload into a XML tree\n");
 		return;
@@ -1525,28 +1525,28 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	cmdproc->session->blocked_text = NULL;
 
 	/* We need a get_child with attrib... */
-	policy = xmlnode_get_child(root, "Policy");
+	policy = purple_xmlnode_get_child(root, "Policy");
 	while (policy) {
-		if (g_str_equal(xmlnode_get_attrib(policy, "type"), "SHIELDS"))
+		if (g_str_equal(purple_xmlnode_get_attrib(policy, "type"), "SHIELDS"))
 			break;
-		policy = xmlnode_get_next_twin(policy);
+		policy = purple_xmlnode_get_next_twin(policy);
 	}
 
 	if (policy) {
 		GString *blocked = g_string_new(NULL);
-		xmlnode *imtext = xmlnode_get_child(policy,
+		PurpleXmlNode *imtext = purple_xmlnode_get_child(policy,
 		                                    "config/block/regexp/imtext");
 		while (imtext) {
-			const char *value = xmlnode_get_attrib(imtext, "value");
+			const char *value = purple_xmlnode_get_attrib(imtext, "value");
 			g_string_append_printf(blocked, "%s<br/>\n",
 			                       purple_base64_decode(value, NULL));
-			imtext = xmlnode_get_next_twin(imtext);
+			imtext = purple_xmlnode_get_next_twin(imtext);
 		}
 
 		cmdproc->session->blocked_text = g_string_free(blocked, FALSE);
 	}
 
-	xmlnode_free(root);
+	purple_xmlnode_free(root);
 #endif
 }
 
@@ -1567,10 +1567,10 @@ sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
-parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
+parse_user_endpoints(MsnUser *user, PurpleXmlNode *payloadNode)
 {
 	MsnSession *session;
-	xmlnode *epNode, *capsNode;
+	PurpleXmlNode *epNode, *capsNode;
 	MsnUserEndpoint data;
 	const char *id;
 	char *caps, *tmp;
@@ -1582,11 +1582,11 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 	is_me = (user == session->user);
 
 	msn_user_clear_endpoints(user);
-	for (epNode = xmlnode_get_child(payloadNode, "EndpointData");
+	for (epNode = purple_xmlnode_get_child(payloadNode, "EndpointData");
 	     epNode;
-	     epNode = xmlnode_get_next_twin(epNode)) {
-		id = xmlnode_get_attrib(epNode, "id");
-		capsNode = xmlnode_get_child(epNode, "Capabilities");
+	     epNode = purple_xmlnode_get_next_twin(epNode)) {
+		id = purple_xmlnode_get_attrib(epNode, "id");
+		capsNode = purple_xmlnode_get_child(epNode, "Capabilities");
 
 		/* Disconnect others, if MPOP is disabled */
 		if (is_me
@@ -1599,7 +1599,7 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 			g_free(tmp);
 		} else {
 			if (capsNode != NULL) {
-				caps = xmlnode_get_data(capsNode);
+				caps = purple_xmlnode_get_data(capsNode);
 
 				data.clientid = strtoul(caps, &tmp, 10);
 				if (tmp && *tmp)
@@ -1618,11 +1618,11 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 	}
 
 	if (is_me && session->enable_mpop) {
-		for (epNode = xmlnode_get_child(payloadNode, "PrivateEndpointData");
+		for (epNode = purple_xmlnode_get_child(payloadNode, "PrivateEndpointData");
 		     epNode;
-		     epNode = xmlnode_get_next_twin(epNode)) {
+		     epNode = purple_xmlnode_get_next_twin(epNode)) {
 			MsnUserEndpoint *ep;
-			xmlnode *nameNode, *clientNode;
+			PurpleXmlNode *nameNode, *clientNode;
 
 			/*	<PrivateEndpointData id='{GUID}'>
 					<EpName>Endpoint Name</EpName>
@@ -1631,19 +1631,19 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 					<State>NLN</State>
 				</PrivateEndpointData>
 			*/
-			id = xmlnode_get_attrib(epNode, "id");
+			id = purple_xmlnode_get_attrib(epNode, "id");
 			ep = msn_user_get_endpoint_data(user, id);
 
 			if (ep != NULL) {
-				nameNode = xmlnode_get_child(epNode, "EpName");
+				nameNode = purple_xmlnode_get_child(epNode, "EpName");
 				if (nameNode != NULL) {
 					g_free(ep->name);
-					ep->name = xmlnode_get_data(nameNode);
+					ep->name = purple_xmlnode_get_data(nameNode);
 				}
 
-				clientNode = xmlnode_get_child(epNode, "ClientType");
+				clientNode = purple_xmlnode_get_child(epNode, "ClientType");
 				if (clientNode != NULL) {
-					tmp = xmlnode_get_data(clientNode);
+					tmp = purple_xmlnode_get_data(clientNode);
 					ep->type = strtoul(tmp, NULL, 10);
 					g_free(tmp);
 				}
@@ -1718,7 +1718,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	MsnUser *user;
 	char *passport;
 	int network;
-	xmlnode *payloadNode;
+	PurpleXmlNode *payloadNode;
 	char *psm_str, *str;
 
 	session = cmdproc->session;
@@ -1749,7 +1749,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	}
 
 	if (len != 0) {
-		payloadNode = xmlnode_from_str(payload, len);
+		payloadNode = purple_xmlnode_from_str(payload, len);
 		if (!payloadNode) {
 			purple_debug_error("msn", "UBX XML parse Error!\n");
 
@@ -1769,7 +1769,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 		parse_user_endpoints(user, payloadNode);
 
-		xmlnode_free(payloadNode);
+		purple_xmlnode_free(payloadNode);
 
 	} else {
 		msn_user_set_statusline(user, NULL);
@@ -1819,48 +1819,48 @@ msn_notification_send_uux(MsnSession *session, const char *payload)
 
 void msn_notification_send_uux_endpointdata(MsnSession *session)
 {
-	xmlnode *epDataNode;
-	xmlnode *capNode;
+	PurpleXmlNode *epDataNode;
+	PurpleXmlNode *capNode;
 	char *caps;
 	char *payload;
 	int length;
 
-	epDataNode = xmlnode_new("EndpointData");
+	epDataNode = purple_xmlnode_new("EndpointData");
 
-	capNode = xmlnode_new_child(epDataNode, "Capabilities");
+	capNode = purple_xmlnode_new_child(epDataNode, "Capabilities");
 	caps = g_strdup_printf("%d:%02d", MSN_CLIENT_ID_CAPABILITIES, MSN_CLIENT_ID_EXT_CAPS);
-	xmlnode_insert_data(capNode, caps, -1);
+	purple_xmlnode_insert_data(capNode, caps, -1);
 	g_free(caps);
 
-	payload = xmlnode_to_str(epDataNode, &length);
+	payload = purple_xmlnode_to_str(epDataNode, &length);
 
 	msn_notification_send_uux(session, payload);
 
-	xmlnode_free(epDataNode);
+	purple_xmlnode_free(epDataNode);
 	g_free(payload);
 }
 
 void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 {
-	xmlnode *private;
+	PurpleXmlNode *private;
 	const char *name;
-	xmlnode *epname;
-	xmlnode *idle;
+	PurpleXmlNode *epname;
+	PurpleXmlNode *idle;
 	GHashTable *ui_info;
 	const gchar *ui_type;
-	xmlnode *client_type;
-	xmlnode *state;
+	PurpleXmlNode *client_type;
+	PurpleXmlNode *state;
 	char *payload;
 	int length;
 
-	private = xmlnode_new("PrivateEndpointData");
+	private = purple_xmlnode_new("PrivateEndpointData");
 
 	name = purple_account_get_string(session->account, "endpoint-name", NULL);
-	epname = xmlnode_new_child(private, "EpName");
-	xmlnode_insert_data(epname, name, -1);
+	epname = purple_xmlnode_new_child(private, "EpName");
+	purple_xmlnode_insert_data(epname, name, -1);
 
-	idle = xmlnode_new_child(private, "Idle");
-	xmlnode_insert_data(idle, "false", -1);
+	idle = purple_xmlnode_new_child(private, "Idle");
+	purple_xmlnode_insert_data(idle, "false", -1);
 
 	/* ClientType info (from amsn guys):
 		0: None
@@ -1871,32 +1871,32 @@ void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 		9: MsnGroup
 		32: Email member, currently Yahoo!
 	*/
-	client_type = xmlnode_new_child(private, "ClientType");
+	client_type = purple_xmlnode_new_child(private, "ClientType");
 	ui_info = purple_core_get_ui_info();
 	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
 	if (ui_type) {
 		if (strcmp(ui_type, "pc") == 0)
-			xmlnode_insert_data(client_type, "1", -1);
+			purple_xmlnode_insert_data(client_type, "1", -1);
 		else if (strcmp(ui_type, "web") == 0)
-			xmlnode_insert_data(client_type, "2", -1);
+			purple_xmlnode_insert_data(client_type, "2", -1);
 		else if (strcmp(ui_type, "phone") == 0)
-			xmlnode_insert_data(client_type, "3", -1);
+			purple_xmlnode_insert_data(client_type, "3", -1);
 		else if (strcmp(ui_type, "handheld") == 0)
-			xmlnode_insert_data(client_type, "3", -1);
+			purple_xmlnode_insert_data(client_type, "3", -1);
 		else
-			xmlnode_insert_data(client_type, "1", -1);
+			purple_xmlnode_insert_data(client_type, "1", -1);
 	}
 	else
-		xmlnode_insert_data(client_type, "1", -1);
+		purple_xmlnode_insert_data(client_type, "1", -1);
 
-	state = xmlnode_new_child(private, "State");
-	xmlnode_insert_data(state, msn_state_get_text(msn_state_from_account(session->account)), -1);
+	state = purple_xmlnode_new_child(private, "State");
+	purple_xmlnode_insert_data(state, msn_state_get_text(msn_state_from_account(session->account)), -1);
 
-	payload = xmlnode_to_str(private, &length);
+	payload = purple_xmlnode_to_str(private, &length);
 
 	msn_notification_send_uux(session, payload);
 
-	xmlnode_free(private);
+	purple_xmlnode_free(private);
 	g_free(payload);
 }
 
@@ -2270,7 +2270,7 @@ modify_unknown_buddy_on_list(MsnSession *session, const char *passport,
 {
 	MsnAddRemoveListData *addrem = data;
 	MsnCmdProc *cmdproc;
-	xmlnode *node;
+	PurpleXmlNode *node;
 	char *payload;
 	int payload_len;
 
@@ -2279,13 +2279,13 @@ modify_unknown_buddy_on_list(MsnSession *session, const char *passport,
 	/* Update user first */
 	msn_user_set_network(addrem->user, network);
 
-	node = xmlnode_new("ml");
+	node = purple_xmlnode_new("ml");
 	node->child = NULL;
 
 	msn_add_contact_xml(node, passport, addrem->list_op, network);
 
-	payload = xmlnode_to_str(node, &payload_len);
-	xmlnode_free(node);
+	payload = purple_xmlnode_to_str(node, &payload_len);
+	purple_xmlnode_free(node);
 
 	if (addrem->add)
 		msn_notification_post_adl(cmdproc, payload, payload_len);
@@ -2303,19 +2303,19 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	MsnAddRemoveListData *addrem;
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
-	xmlnode *adl_node;
+	PurpleXmlNode *adl_node;
 	char *payload;
 	int payload_len;
 
 	cmdproc = notification->servconn->cmdproc;
 
-	adl_node = xmlnode_new("ml");
+	adl_node = purple_xmlnode_new("ml");
 	adl_node->child = NULL;
 
 	msn_add_contact_xml(adl_node, user->passport, list_op, user->networkid);
 
-	payload = xmlnode_to_str(adl_node, &payload_len);
-	xmlnode_free(adl_node);
+	payload = purple_xmlnode_to_str(adl_node, &payload_len);
+	purple_xmlnode_free(adl_node);
 
 	if (user->networkid != MSN_NETWORK_UNKNOWN) {
 		msn_notification_post_adl(cmdproc, payload, payload_len);
@@ -2341,19 +2341,19 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	MsnAddRemoveListData *addrem;
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
-	xmlnode *rml_node;
+	PurpleXmlNode *rml_node;
 	char *payload;
 	int payload_len;
 
 	cmdproc = notification->servconn->cmdproc;
 
-	rml_node = xmlnode_new("ml");
+	rml_node = purple_xmlnode_new("ml");
 	rml_node->child = NULL;
 
 	msn_add_contact_xml(rml_node, user->passport, list_op, user->networkid);
 
-	payload = xmlnode_to_str(rml_node, &payload_len);
-	xmlnode_free(rml_node);
+	payload = purple_xmlnode_to_str(rml_node, &payload_len);
+	purple_xmlnode_free(rml_node);
 
 	if (user->networkid != MSN_NETWORK_UNKNOWN) {
 		msn_notification_post_rml(cmdproc, payload, payload_len);

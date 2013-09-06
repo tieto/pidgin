@@ -69,16 +69,16 @@ void jabber_pep_register_handler(const char *xmlns, JabberPEPHandler handlerfunc
 static void
 do_pep_iq_request_item_callback(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
-                                xmlnode *packet, gpointer data)
+                                PurpleXmlNode *packet, gpointer data)
 {
-	xmlnode *pubsub;
-	xmlnode *items = NULL;
+	PurpleXmlNode *pubsub;
+	PurpleXmlNode *items = NULL;
 	JabberPEPHandler *cb = data;
 
 	if (type == JABBER_IQ_RESULT) {
-		pubsub = xmlnode_get_child_with_namespace(packet, "pubsub", "http://jabber.org/protocol/pubsub");
+		pubsub = purple_xmlnode_get_child_with_namespace(packet, "pubsub", "http://jabber.org/protocol/pubsub");
 		if(pubsub)
-			items = xmlnode_get_child(pubsub, "items");
+			items = purple_xmlnode_get_child(pubsub, "items");
 	}
 
 	cb(js, from, items);
@@ -86,23 +86,23 @@ do_pep_iq_request_item_callback(JabberStream *js, const char *from,
 
 void jabber_pep_request_item(JabberStream *js, const char *to, const char *node, const char *id, JabberPEPHandler cb) {
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
-	xmlnode *pubsub, *items;
+	PurpleXmlNode *pubsub, *items;
 
 	if (to)
-		xmlnode_set_attrib(iq->node, "to", to);
+		purple_xmlnode_set_attrib(iq->node, "to", to);
 
-	pubsub = xmlnode_new_child(iq->node,"pubsub");
-	xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");
+	pubsub = purple_xmlnode_new_child(iq->node,"pubsub");
+	purple_xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");
 
-	items = xmlnode_new_child(pubsub, "items");
-	xmlnode_set_attrib(items,"node",node);
+	items = purple_xmlnode_new_child(pubsub, "items");
+	purple_xmlnode_set_attrib(items,"node",node);
 
 	if (id) {
-		xmlnode *item = xmlnode_new_child(items, "item");
-		xmlnode_set_attrib(item, "id", id);
+		PurpleXmlNode *item = purple_xmlnode_new_child(items, "item");
+		purple_xmlnode_set_attrib(item, "id", id);
 	} else
 		/* Most recent item */
-		xmlnode_set_attrib(items, "max_items", "1");
+		purple_xmlnode_set_attrib(items, "max_items", "1");
 
 	jabber_iq_set_callback(iq,do_pep_iq_request_item_callback,(gpointer)cb);
 
@@ -125,8 +125,8 @@ void jabber_handle_event(JabberMessage *jm) {
 	jid = jabber_get_bare_jid(jm->from);
 
 	for(itemslist = jm->eventitems; itemslist; itemslist = itemslist->next) {
-		xmlnode *items = (xmlnode*)itemslist->data;
-		const char *nodename = xmlnode_get_attrib(items,"node");
+		PurpleXmlNode *items = (PurpleXmlNode*)itemslist->data;
+		const char *nodename = purple_xmlnode_get_attrib(items,"node");
 
 		if(nodename && (jph = g_hash_table_lookup(pep_handlers, nodename)))
 			jph(jm->js, jid, items);
@@ -139,40 +139,40 @@ void jabber_handle_event(JabberMessage *jm) {
 void jabber_pep_delete_node(JabberStream *js, const gchar *node)
 {
 	JabberIq *iq;
-	xmlnode *pubsub, *del;
+	PurpleXmlNode *pubsub, *del;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(js->pep);
 
 	iq = jabber_iq_new(js, JABBER_IQ_SET);
 
-	pubsub = xmlnode_new_child(iq->node, "pubsub");
-	xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub#owner");
+	pubsub = purple_xmlnode_new_child(iq->node, "pubsub");
+	purple_xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub#owner");
 
-	del = xmlnode_new_child(pubsub, "delete");
-	xmlnode_set_attrib(del, "node", node);
+	del = purple_xmlnode_new_child(pubsub, "delete");
+	purple_xmlnode_set_attrib(del, "node", node);
 
 	jabber_iq_send(iq);
 }
 
-void jabber_pep_publish(JabberStream *js, xmlnode *publish) {
+void jabber_pep_publish(JabberStream *js, PurpleXmlNode *publish) {
 	JabberIq *iq;
-	xmlnode *pubsub;
+	PurpleXmlNode *pubsub;
 
 	if(js->pep != TRUE) {
 		/* ignore when there's no PEP support on the server */
-		xmlnode_free(publish);
+		purple_xmlnode_free(publish);
 		return;
 	}
 
 	iq = jabber_iq_new(js, JABBER_IQ_SET);
 
-	pubsub = xmlnode_new("pubsub");
-	xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");
+	pubsub = purple_xmlnode_new("pubsub");
+	purple_xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");
 
-	xmlnode_insert_child(pubsub, publish);
+	purple_xmlnode_insert_child(pubsub, publish);
 
-	xmlnode_insert_child(iq->node, pubsub);
+	purple_xmlnode_insert_child(iq->node, pubsub);
 
 	jabber_iq_send(iq);
 }

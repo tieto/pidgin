@@ -127,26 +127,26 @@ purple_smiley_data_unstore(const char *filename);
  * Writing to disk                                                   *
  *********************************************************************/
 
-static xmlnode *
+static PurpleXmlNode *
 smiley_to_xmlnode(PurpleSmiley *smiley)
 {
 	PurpleSmileyPrivate *priv = NULL;
-	xmlnode *smiley_node = NULL;
+	PurpleXmlNode *smiley_node = NULL;
 
-	smiley_node = xmlnode_new(XML_SMILEY_TAG);
+	smiley_node = purple_xmlnode_new(XML_SMILEY_TAG);
 
 	if (!smiley_node)
 		return NULL;
 
 	priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
 
-	xmlnode_set_attrib(smiley_node, XML_SHORTCUT_ATTRIB_TAG,
+	purple_xmlnode_set_attrib(smiley_node, XML_SHORTCUT_ATTRIB_TAG,
 			priv->shortcut);
 
-	xmlnode_set_attrib(smiley_node, XML_CHECKSUM_ATRIB_TAG,
+	purple_xmlnode_set_attrib(smiley_node, XML_CHECKSUM_ATRIB_TAG,
 			priv->checksum);
 
-	xmlnode_set_attrib(smiley_node, XML_FILENAME_ATRIB_TAG,
+	purple_xmlnode_set_attrib(smiley_node, XML_FILENAME_ATRIB_TAG,
 			purple_imgstore_get_filename(priv->img));
 
 	return smiley_node;
@@ -155,30 +155,30 @@ smiley_to_xmlnode(PurpleSmiley *smiley)
 static void
 add_smiley_to_main_node(gpointer key, gpointer value, gpointer user_data)
 {
-	xmlnode *child_node;
+	PurpleXmlNode *child_node;
 
 	child_node = smiley_to_xmlnode(value);
-	xmlnode_insert_child((xmlnode*)user_data, child_node);
+	purple_xmlnode_insert_child((PurpleXmlNode*)user_data, child_node);
 }
 
-static xmlnode *
+static PurpleXmlNode *
 smileys_to_xmlnode(void)
 {
-	xmlnode *root_node, *profile_node, *smileyset_node;
+	PurpleXmlNode *root_node, *profile_node, *smileyset_node;
 
-	root_node = xmlnode_new(XML_ROOT_TAG);
-	xmlnode_set_attrib(root_node, "version", "1.0");
+	root_node = purple_xmlnode_new(XML_ROOT_TAG);
+	purple_xmlnode_set_attrib(root_node, "version", "1.0");
 
 	/* See the top comments above to understand why initial tag elements
 	 * are not being considered by now. */
-	profile_node = xmlnode_new(XML_PROFILE_TAG);
+	profile_node = purple_xmlnode_new(XML_PROFILE_TAG);
 	if (profile_node) {
-		xmlnode_set_attrib(profile_node, XML_PROFILE_NAME_ATTRIB_TAG, "Default");
-		xmlnode_insert_child(root_node, profile_node);
+		purple_xmlnode_set_attrib(profile_node, XML_PROFILE_NAME_ATTRIB_TAG, "Default");
+		purple_xmlnode_insert_child(root_node, profile_node);
 
-		smileyset_node = xmlnode_new(XML_SMILEY_SET_TAG);
+		smileyset_node = purple_xmlnode_new(XML_SMILEY_SET_TAG);
 		if (smileyset_node) {
-			xmlnode_insert_child(profile_node, smileyset_node);
+			purple_xmlnode_insert_child(profile_node, smileyset_node);
 			g_hash_table_foreach(smiley_shortcut_index, add_smiley_to_main_node, smileyset_node);
 		}
 	}
@@ -189,7 +189,7 @@ smileys_to_xmlnode(void)
 static void
 sync_smileys(void)
 {
-	xmlnode *root_node;
+	PurpleXmlNode *root_node;
 	char *data;
 
 	if (!smileys_loaded) {
@@ -199,11 +199,11 @@ sync_smileys(void)
 	}
 
 	root_node = smileys_to_xmlnode();
-	data = xmlnode_to_formatted_str(root_node, NULL);
+	data = purple_xmlnode_to_formatted_str(root_node, NULL);
 	purple_util_write_data_to_file(XML_FILE_NAME, data, -1);
 
 	g_free(data);
-	xmlnode_free(root_node);
+	purple_xmlnode_free(root_node);
 }
 
 static gboolean
@@ -227,15 +227,15 @@ purple_smileys_save(void)
  *********************************************************************/
 
 static void
-parse_smiley(xmlnode *smiley_node)
+parse_smiley(PurpleXmlNode *smiley_node)
 {
 	const char *shortcut = NULL;
 	const char *checksum = NULL;
 	const char *filename = NULL;
 
-	shortcut = xmlnode_get_attrib(smiley_node, XML_SHORTCUT_ATTRIB_TAG);
-	checksum = xmlnode_get_attrib(smiley_node, XML_CHECKSUM_ATRIB_TAG);
-	filename = xmlnode_get_attrib(smiley_node, XML_FILENAME_ATRIB_TAG);
+	shortcut = purple_xmlnode_get_attrib(smiley_node, XML_SHORTCUT_ATTRIB_TAG);
+	checksum = purple_xmlnode_get_attrib(smiley_node, XML_CHECKSUM_ATRIB_TAG);
+	filename = purple_xmlnode_get_attrib(smiley_node, XML_FILENAME_ATRIB_TAG);
 
 	if ((shortcut == NULL) || (checksum == NULL) || (filename == NULL))
 		return;
@@ -246,9 +246,9 @@ parse_smiley(xmlnode *smiley_node)
 static void
 purple_smileys_load(void)
 {
-	xmlnode *root_node, *profile_node;
-	xmlnode *smileyset_node = NULL;
-	xmlnode *smiley_node;
+	PurpleXmlNode *root_node, *profile_node;
+	PurpleXmlNode *smileyset_node = NULL;
+	PurpleXmlNode *smiley_node;
 
 	smileys_loaded = TRUE;
 
@@ -260,19 +260,19 @@ purple_smileys_load(void)
 
 	/* See the top comments above to understand why initial tag elements
 	 * are not being considered by now. */
-	profile_node = xmlnode_get_child(root_node, XML_PROFILE_TAG);
+	profile_node = purple_xmlnode_get_child(root_node, XML_PROFILE_TAG);
 	if (profile_node)
-		smileyset_node = xmlnode_get_child(profile_node, XML_SMILEY_SET_TAG);
+		smileyset_node = purple_xmlnode_get_child(profile_node, XML_SMILEY_SET_TAG);
 
 	if (smileyset_node) {
-		smiley_node = xmlnode_get_child(smileyset_node, XML_SMILEY_TAG);
+		smiley_node = purple_xmlnode_get_child(smileyset_node, XML_SMILEY_TAG);
 		for (; smiley_node != NULL;
-				smiley_node = xmlnode_get_next_twin(smiley_node)) {
+				smiley_node = purple_xmlnode_get_next_twin(smiley_node)) {
 			parse_smiley(smiley_node);
 		}
 	}
 
-	xmlnode_free(root_node);
+	purple_xmlnode_free(root_node);
 }
 
 /*********************************************************************

@@ -30,52 +30,52 @@
 #include "request.h"
 #include "status.h"
 
-static void jabber_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
+static void jabber_nick_cb(JabberStream *js, const char *from, PurpleXmlNode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
-	xmlnode *item = xmlnode_get_child(items, "item");
+	PurpleXmlNode *item = purple_xmlnode_get_child(items, "item");
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
-	xmlnode *nick;
+	PurpleXmlNode *nick;
 	char *nickname = NULL;
 
 	/* ignore the nick of people not on our buddy list */
 	if (!buddy || !item)
 		return;
 
-	nick = xmlnode_get_child_with_namespace(item, "nick", "http://jabber.org/protocol/nick");
+	nick = purple_xmlnode_get_child_with_namespace(item, "nick", "http://jabber.org/protocol/nick");
 	if (!nick)
 		return;
-	nickname = xmlnode_get_data(nick);
+	nickname = purple_xmlnode_get_data(nick);
 	serv_got_alias(js->gc, from, nickname);
 	g_free(nickname);
 }
 
 static void do_nick_set(JabberStream *js, const char *nick) {
-	xmlnode *publish, *nicknode;
+	PurpleXmlNode *publish, *nicknode;
 
-	publish = xmlnode_new("publish");
-	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/nick");
-	nicknode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "nick");
-	xmlnode_set_namespace(nicknode, "http://jabber.org/protocol/nick");
+	publish = purple_xmlnode_new("publish");
+	purple_xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/nick");
+	nicknode = purple_xmlnode_new_child(purple_xmlnode_new_child(publish, "item"), "nick");
+	purple_xmlnode_set_namespace(nicknode, "http://jabber.org/protocol/nick");
 
 	if(nick && nick[0] != '\0')
-		xmlnode_insert_data(nicknode, nick, -1);
+		purple_xmlnode_insert_data(nicknode, nick, -1);
 
 	jabber_pep_publish(js, publish);
 	/* publish is freed by jabber_pep_publish -> jabber_iq_send -> jabber_iq_free
 		(yay for well-defined memory management rules) */
 }
 
-static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
+static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, PurpleXmlNode *items) {
 	char *oldnickname = NULL;
-	xmlnode *item = NULL;
+	PurpleXmlNode *item = NULL;
 
 	if (items)
-		item = xmlnode_get_child(items,"item");
+		item = purple_xmlnode_get_child(items,"item");
 
 	if(item) {
-		xmlnode *nick = xmlnode_get_child_with_namespace(item,"nick","http://jabber.org/protocol/nick");
+		PurpleXmlNode *nick = purple_xmlnode_get_child_with_namespace(item,"nick","http://jabber.org/protocol/nick");
 		if(nick)
-			oldnickname = xmlnode_get_data(nick);
+			oldnickname = purple_xmlnode_get_data(nick);
 	}
 
 	purple_request_input(js->gc, _("Set User Nickname"), _("Please specify a new nickname for you."),

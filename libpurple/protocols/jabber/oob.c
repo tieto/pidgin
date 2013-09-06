@@ -61,7 +61,7 @@ static void jabber_oob_xfer_end(PurpleXfer *xfer)
 	JabberIq *iq;
 
 	iq = jabber_iq_new(jox->js, JABBER_IQ_RESULT);
-	xmlnode_set_attrib(iq->node, "to", purple_xfer_get_remote_user(xfer));
+	purple_xmlnode_set_attrib(iq->node, "to", purple_xfer_get_remote_user(xfer));
 	jabber_iq_set_id(iq, jox->iq_id);
 
 	jabber_iq_send(iq);
@@ -136,21 +136,21 @@ static void jabber_oob_xfer_start(PurpleXfer *xfer)
 static void jabber_oob_xfer_recv_error(PurpleXfer *xfer, const char *code) {
 	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
 	JabberIq *iq;
-	xmlnode *y, *z;
+	PurpleXmlNode *y, *z;
 
 	iq = jabber_iq_new(jox->js, JABBER_IQ_ERROR);
-	xmlnode_set_attrib(iq->node, "to", purple_xfer_get_remote_user(xfer));
+	purple_xmlnode_set_attrib(iq->node, "to", purple_xfer_get_remote_user(xfer));
 	jabber_iq_set_id(iq, jox->iq_id);
-	y = xmlnode_new_child(iq->node, "error");
-	xmlnode_set_attrib(y, "code", code);
+	y = purple_xmlnode_new_child(iq->node, "error");
+	purple_xmlnode_set_attrib(y, "code", code);
 	if(!strcmp(code, "406")) {
-		z = xmlnode_new_child(y, "not-acceptable");
-		xmlnode_set_attrib(y, "type", "modify");
-		xmlnode_set_namespace(z, NS_XMPP_STANZAS);
+		z = purple_xmlnode_new_child(y, "not-acceptable");
+		purple_xmlnode_set_attrib(y, "type", "modify");
+		purple_xmlnode_set_namespace(z, NS_XMPP_STANZAS);
 	} else if(!strcmp(code, "404")) {
-		z = xmlnode_new_child(y, "not-found");
-		xmlnode_set_attrib(y, "type", "cancel");
-		xmlnode_set_namespace(z, NS_XMPP_STANZAS);
+		z = purple_xmlnode_new_child(y, "not-found");
+		purple_xmlnode_set_attrib(y, "type", "cancel");
+		purple_xmlnode_set_namespace(z, NS_XMPP_STANZAS);
 	}
 	jabber_iq_send(iq);
 
@@ -169,12 +169,12 @@ static void jabber_oob_xfer_recv_cancelled(PurpleXfer *xfer) {
 }
 
 void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
-	const char *id, xmlnode *querynode) {
+	const char *id, PurpleXmlNode *querynode) {
 	JabberOOBXfer *jox;
 	PurpleXfer *xfer;
 	const gchar *filename, *slash;
 	gchar *url;
-	xmlnode *urlnode;
+	PurpleXmlNode *urlnode;
 
 	if(type != JABBER_IQ_SET)
 		return;
@@ -182,10 +182,10 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	if(!from)
 		return;
 
-	if(!(urlnode = xmlnode_get_child(querynode, "url")))
+	if(!(urlnode = purple_xmlnode_get_child(querynode, "url")))
 		return;
 
-	url = xmlnode_get_data(urlnode);
+	url = purple_xmlnode_get_data(urlnode);
 	if (!url)
 		return;
 

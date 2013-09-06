@@ -25,7 +25,7 @@
 
 void jabber_google_handle_jingle_info(JabberStream *js, const char *from,
                                       JabberIqType type, const char *id,
-                                      xmlnode *child);
+                                      PurpleXmlNode *child);
 void jabber_google_send_jingle_info(JabberStream *js);
 
 
