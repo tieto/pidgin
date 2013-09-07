@@ -769,26 +769,25 @@ purple_protocols_add(GType protocol_type, GError **error)
 {
 	PurpleProtocol *protocol;
 
-	g_return_val_if_fail(protocol_type != G_TYPE_INVALID &&
-	                     protocol_type != G_TYPE_NONE, NULL);
+	if (protocol_type == G_TYPE_INVALID) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Protocol type is not registered"));
+		return NULL;
+	}
 
-	protocol = g_object_new(protocol_type, NULL);
-
-	if (!PURPLE_IS_PROTOCOL(protocol)) {
+	if (!g_type_is_a(protocol_type, PURPLE_TYPE_PROTOCOL)) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
 		            _("Protocol type does not inherit PurpleProtocol"));
-
-		g_object_unref(protocol);
 		return NULL;
 	}
 
-	if (!PURPLE_IS_PROTOCOL_INTERFACE(protocol)) {
+	if (!g_type_is_a(protocol_type, PURPLE_TYPE_PROTOCOL_INTERFACE)) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
 		            _("Protocol does not implement PurpleProtocolInterface"));
-
-		g_object_unref(protocol);
 		return NULL;
 	}
+
+	protocol = g_object_new(protocol_type, NULL);
 
 	if (!purple_protocol_get_id(protocol)) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
