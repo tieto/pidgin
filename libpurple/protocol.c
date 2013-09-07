@@ -255,6 +255,38 @@ purple_protocol_iface_get_type(void)
 	else \
 		return defaultreturn;
 
+PurpleConnection *
+purple_protocol_iface_connection_new(PurpleProtocol *protocol,
+                                     PurpleAccount *account,
+                                     const char *password)
+{
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, NULL, connection_new, protocol,
+	                                 account, password);
+}
+
+PurpleRoomlist *
+purple_protocol_iface_roomlist_new(PurpleProtocol *protocol,
+                                   PurpleAccount *account)
+{
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, NULL, roomlist_new, account);
+}
+
+PurpleWhiteboard *
+purple_protocol_iface_whiteboard_new(PurpleProtocol *protocol,
+                                     PurpleAccount *account, const char *who)
+{
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, NULL, whiteboard_new, account,
+	                                 who);
+}
+
+PurpleXfer *
+purple_protocol_iface_xfer_new(PurpleProtocol *protocol, PurpleAccount *account,
+                               PurpleXferType type, const char *who)
+{
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, NULL, xfer_new, account, type,
+	                                 who);
+}
+
 GList *
 purple_protocol_iface_get_actions(PurpleProtocol *protocol,
                                   PurpleConnection *gc)

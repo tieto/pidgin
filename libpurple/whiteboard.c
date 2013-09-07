@@ -34,8 +34,6 @@ typedef struct _PurpleWhiteboardPrivate  PurpleWhiteboardPrivate;
 /** Private data for a whiteboard */
 struct _PurpleWhiteboardPrivate
 {
-	int state;                      /**< State of whiteboard session          */
-
 	PurpleAccount *account;         /**< Account associated with this session */
 	char *who;                      /**< Name of the remote user              */
 
@@ -52,7 +50,6 @@ struct _PurpleWhiteboardPrivate
 enum
 {
 	PROP_0,
-	PROP_STATE,
 	PROP_ACCOUNT,
 	PROP_WHO,
 	PROP_DRAW_LIST,
@@ -104,24 +101,6 @@ const char *purple_whiteboard_get_who(const PurpleWhiteboard *wb)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->who;	
-}
-
-void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state)
-{
-	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->state = state;
-}
-
-int purple_whiteboard_get_state(const PurpleWhiteboard *wb)
-{
-	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
-
-	g_return_val_if_fail(priv != NULL, -1);
-
-	return priv->state;
 }
 
 void purple_whiteboard_start(PurpleWhiteboard *wb)
@@ -321,7 +300,6 @@ gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb)
  * GObject code
  *****************************************************************************/
 /* GObject Property names */
-#define PROP_STATE_S      "state"
 #define PROP_ACCOUNT_S    "account"
 #define PROP_WHO_S        "who"
 #define PROP_DRAW_LIST_S  "draw-list"
@@ -335,9 +313,6 @@ purple_whiteboard_set_property(GObject *obj, guint param_id, const GValue *value
 	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
 
 	switch (param_id) {
-		case PROP_STATE:
-			purple_whiteboard_set_state(wb, g_value_get_int(value));
-			break;
 		case PROP_ACCOUNT:
 			priv->account = g_value_get_object(value);
 			break;
@@ -361,9 +336,6 @@ purple_whiteboard_get_property(GObject *obj, guint param_id, GValue *value,
 	PurpleWhiteboard *wb = PURPLE_WHITEBOARD(obj);
 
 	switch (param_id) {
-		case PROP_STATE:
-			g_value_set_int(value, purple_whiteboard_get_state(wb));
-			break;
 		case PROP_ACCOUNT:
 			g_value_set_object(value, purple_whiteboard_get_account(wb));
 			break;
@@ -451,13 +423,6 @@ purple_whiteboard_class_init(PurpleWhiteboardClass *klass)
 	obj_class->get_property = purple_whiteboard_get_property;
 	obj_class->set_property = purple_whiteboard_set_property;
 
-	g_object_class_install_property(obj_class, PROP_STATE,
-			g_param_spec_int(PROP_STATE_S, _("State"),
-				_("State of the whiteboard."),
-				G_MININT, G_MAXINT, 0,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
-			);
-
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
 			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
 				_("The whiteboard's account."), PURPLE_TYPE_ACCOUNT,
@@ -505,15 +470,28 @@ purple_whiteboard_get_type(void)
 	return type;
 }
 
-PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state)
+PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who)
 {
+	PurpleWhiteboard *wb;
+	PurpleProtocol *protocol;
+
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(who     != NULL, NULL);
 
-	return g_object_new(PURPLE_TYPE_WHITEBOARD,
-		PROP_ACCOUNT_S, account,
-		PROP_WHO_S,     who,
-		PROP_STATE_S,   state,
-		NULL
-	);
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+
+	g_return_val_if_fail(protocol != NULL, NULL);
+
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, whiteboard_new))
+		wb = purple_protocol_iface_whiteboard_new(protocol, account, who);
+	else
+		wb = g_object_new(PURPLE_TYPE_WHITEBOARD,
+			PROP_ACCOUNT_S, account,
+			PROP_WHO_S,     who,
+			NULL
+		);
+
+	g_return_val_if_fail(wb != NULL, NULL);
+
+	return wb;
 }

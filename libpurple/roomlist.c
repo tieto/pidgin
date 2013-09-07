@@ -419,12 +419,26 @@ purple_roomlist_get_type(void)
 
 PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 {
+	PurpleRoomlist *list;
+	PurpleProtocol *protocol;
+
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return g_object_new(PURPLE_TYPE_ROOMLIST,
-		PROP_ACCOUNT_S, account,
-		NULL
-	);
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+
+	g_return_val_if_fail(protocol != NULL, NULL);
+
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, roomlist_new))
+		list = purple_protocol_iface_roomlist_new(protocol, account);
+	else
+		list = g_object_new(PURPLE_TYPE_ROOMLIST,
+			PROP_ACCOUNT_S, account,
+			NULL
+		);
+
+	g_return_val_if_fail(list != NULL, NULL);
+
+	return list;
 }
 
 /*@}*/

@@ -903,11 +903,16 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 		}
 	}
 
-	gc = g_object_new(PURPLE_TYPE_CONNECTION,
-			PROP_PROTOCOL_S,  protocol,
-			PROP_PASSWORD_S,  password,
-			PROP_ACCOUNT_S,   account,
-			NULL);
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, connection_new))
+		gc = purple_protocol_iface_connection_new(protocol, account, password);
+	else
+		gc = g_object_new(PURPLE_TYPE_CONNECTION,
+				PROP_PROTOCOL_S,  protocol,
+				PROP_ACCOUNT_S,   account,
+				PROP_PASSWORD_S,  password,
+				NULL);
+
+	g_return_if_fail(gc != NULL);
 
 	if (regist)
 	{
@@ -963,11 +968,16 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 		return;
 	}
 
-	gc = g_object_new(PURPLE_TYPE_CONNECTION,
-			PROP_PROTOCOL_S,  protocol,
-			PROP_PASSWORD_S,  password,
-			PROP_ACCOUNT_S,   account,
-			NULL);
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, connection_new))
+		gc = purple_protocol_iface_connection_new(protocol, account, password);
+	else
+		gc = g_object_new(PURPLE_TYPE_CONNECTION,
+				PROP_PROTOCOL_S,  protocol,
+				PROP_ACCOUNT_S,   account,
+				PROP_PASSWORD_S,  password,
+				NULL);
+
+	g_return_if_fail(gc != NULL);
 
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
 

@@ -128,6 +128,34 @@ struct _PurpleProtocolInterface
 	GTypeInterface parent_iface;
 
 	/**
+	 * Creates a new protocol-specific connection object that inherits
+	 * PurpleConnection.
+	 */
+	PurpleConnection *(*connection_new)(PurpleProtocol *protocol,
+	                                    PurpleAccount *account,
+	                                    const char *password);
+
+	/**
+	 * Creates a new protocol-specific room list object that inherits
+	 * PurpleRoomlist.
+	 */
+	PurpleRoomlist *(*roomlist_new)(PurpleAccount *account);
+
+	/**
+	 * Creates a new protocol-specific whiteboard object that inherits
+	 * PurpleWhiteboard.
+	 */
+	PurpleWhiteboard *(*whiteboard_new)(PurpleAccount *account,
+	                                    const char *who);
+
+	/**
+	 * Creates a new protocol-specific file transfer object that inherits
+	 * PurpleXfer.
+	 */
+	PurpleXfer *(*xfer_new)(PurpleAccount *account, PurpleXferType type,
+	                        const char *who);
+
+	/**
 	 * Returns the actions the protocol can perform. These will show up in the
 	 * Accounts menu, under a submenu with the name of the account.
 	 */
@@ -731,6 +759,26 @@ void purple_protocol_override(PurpleProtocol *protocol,
  * Returns the GType for the protocol interface.
  */
 GType purple_protocol_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolInterface::connection_new */
+PurpleConnection *purple_protocol_iface_connection_new(PurpleProtocol *protocol,
+                                                       PurpleAccount *account,
+                                                       const char *password);
+
+/** @copydoc  _PurpleProtocolInterface::roomlist_new */
+PurpleRoomlist *purple_protocol_iface_roomlist_new(PurpleProtocol *,
+                                                   PurpleAccount *account);
+
+/** @copydoc  _PurpleProtocolInterface::whiteboard_new */
+PurpleWhiteboard *purple_protocol_iface_whiteboard_new(PurpleProtocol *,
+                                                       PurpleAccount *account,
+                                                       const char *who);
+
+/** @copydoc  _PurpleProtocolInterface::xfer_new */
+PurpleXfer *purple_protocol_iface_xfer_new(PurpleProtocol *,
+                                           PurpleAccount *account,
+                                           PurpleXferType type,
+                                           const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::get_actions */
 GList *purple_protocol_iface_get_actions(PurpleProtocol *, PurpleConnection *);
