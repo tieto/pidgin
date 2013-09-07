@@ -209,6 +209,152 @@ struct _PurplePluginAction {
 	}
 #endif
 
+/**
+ * PURPLE_DEFINE_TYPE:
+ * 
+ * A convenience macro for type implementations, which defines a *_get_type()
+ * function; and a *_register_type() function for use in your plugin's load
+ * function. You must define an instance initialization function *_init()
+ * and a class initialization function *_class_init() for the type.
+ *
+ * The type will be registered statically if used in a static protocol or if
+ * plugins support is disabled.
+ *
+ * @param TN   The name of the new type, in Camel case.
+ * @param t_n  The name of the new type, in lowercase, words separated by '_'.
+ * @param T_P  The #GType of the parent type.
+ */
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#define PURPLE_DEFINE_TYPE(TN, t_n, T_P) PURPLE_DEFINE_STATIC_TYPE(TN, t_n, T_P)
+#else
+#define PURPLE_DEFINE_TYPE(TN, t_n, T_P) PURPLE_DEFINE_DYNAMIC_TYPE(TN, t_n, T_P)
+#endif
+
+/**
+ * PURPLE_DEFINE_TYPE_EXTENDED:
+ *
+ * A more general version of PURPLE_DEFINE_TYPE() which allows you to
+ * specify #GTypeFlags and custom code.
+ *
+ * @param flags  #GTypeFlags to register the type with.
+ * @param CODE   Custom code that gets inserted in *_get_type().
+ */
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#define PURPLE_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE) \
+	PURPLE_DEFINE_STATIC_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE)
+#else
+#define PURPLE_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE) \
+	PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE)
+#endif
+
+/**
+ * PURPLE_IMPLEMENT_INTERFACE_STATIC:
+ *
+ * A convenience macro to ease static interface addition in the CODE section
+ * of PURPLE_DEFINE_TYPE_EXTENDED(). You should use this macro if the
+ * interface is a part of the libpurple core.
+ *
+ * @param TYPE_IFACE  The #GType of the interface to add.
+ * @param iface_init  The interface init function.
+ */
+#define PURPLE_IMPLEMENT_INTERFACE_STATIC(TYPE_IFACE, iface_init) { \
+	const GInterfaceInfo interface_info = { \
+		(GInterfaceInitFunc) iface_init, NULL, NULL \
+	}; \
+	g_type_add_interface_static(type_id, TYPE_IFACE, &interface_info); \
+}
+
+/**
+ * PURPLE_IMPLEMENT_INTERFACE:
+ *
+ * A convenience macro to ease interface addition in the CODE section
+ * of PURPLE_DEFINE_TYPE_EXTENDED(). You should use this macro if the
+ * interface lives in the plugin.
+ *
+ * @param TYPE_IFACE  The #GType of the interface to add.
+ * @param iface_init  The interface init function.
+ */
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#define PURPLE_IMPLEMENT_INTERFACE(TYPE_IFACE, iface_init) \
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(TYPE_IFACE, iface_init)
+#else
+#define PURPLE_IMPLEMENT_INTERFACE(TYPE_IFACE, iface_init) \
+	PURPLE_IMPLEMENT_INTERFACE_DYNAMIC(TYPE_IFACE, iface_init)
+#endif
+
+/** A convenience macro for dynamic type implementations. */
+#define PURPLE_DEFINE_DYNAMIC_TYPE(TN, t_n, T_P) \
+	PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+
+/** A more general version of PURPLE_DEFINE_DYNAMIC_TYPE(). */
+#define PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE) \
+static GType type_name##_type_id = 0; \
+GType type_name##_get_type(void) { \
+	return type_name##_type_id; \
+} \
+void type_name##_register_type(PurplePlugin *); \
+void type_name##_register_type(PurplePlugin *plugin) { \
+	if (type_name##_type_id == 0) { \
+		GType type_id; \
+		const GTypeInfo type_info = { \
+			sizeof (TypeName##Class), \
+			(GBaseInitFunc) NULL, \
+			(GBaseFinalizeFunc) NULL, \
+			(GClassInitFunc) type_name##_class_init, \
+			(GClassFinalizeFunc) NULL, \
+			NULL, \
+			sizeof (TypeName), \
+			0, \
+			(GInstanceInitFunc) type_name##_init, \
+			NULL \
+		}; \
+		type_name##_type_id = purple_plugin_register_type(plugin, TYPE_PARENT, \
+								 #TypeName, &type_info, (GTypeFlags) flags); \
+		type_id = type_name##_type_id; \
+		{ CODE ; } \
+	} \
+}
+
+/** A convenience macro to ease dynamic interface addition. */
+#define PURPLE_IMPLEMENT_INTERFACE_DYNAMIC(TYPE_IFACE, iface_init) { \
+	const GInterfaceInfo interface_info = { \
+		(GInterfaceInitFunc) iface_init, NULL, NULL \
+	}; \
+	purple_plugin_add_interface(plugin, type_id, TYPE_IFACE, &interface_info); \
+}
+
+/** A convenience macro for static type implementations. */
+#define PURPLE_DEFINE_STATIC_TYPE(TN, t_n, T_P) \
+	PURPLE_DEFINE_STATIC_TYPE_EXTENDED (TN, t_n, T_P, 0, {})
+
+/** A more general version of PURPLE_DEFINE_STATIC_TYPE(). */
+#define PURPLE_DEFINE_STATIC_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE) \
+static GType type_name##_type_id = 0; \
+GType type_name##_get_type(void) { \
+	if (G_UNLIKELY(type_name##_type_id == 0)) { \
+		GType type_id; \
+		const GTypeInfo type_info = { \
+			sizeof (TypeName##Class), \
+			(GBaseInitFunc) NULL, \
+			(GBaseFinalizeFunc) NULL, \
+			(GClassInitFunc) type_name##_class_init, \
+			(GClassFinalizeFunc) NULL, \
+			NULL, \
+			sizeof (TypeName), \
+			0, \
+			(GInstanceInitFunc) type_name##_init, \
+			NULL \
+		}; \
+		type_name##_type_id = g_type_register_static(TYPE_PARENT, #TypeName, \
+								 &type_info, (GTypeFlags) flags); \
+		type_id = type_name##_type_id; \
+		{ CODE ; } \
+	} \
+	return type_name##_type_id; \
+} \
+void type_name##_register_type(PurplePlugin *); \
+void type_name##_register_type(PurplePlugin *) { }
+
 G_BEGIN_DECLS
 
 /**************************************************************************/
