@@ -209,38 +209,6 @@ struct _PurplePluginAction {
 	}
 #endif
 
-/**
- * PURPLE_PLUGIN_INIT_VAL:
- *
- * Defines the plugin's entry points and makes a PurplePlugin pointer hold this
- * plugin's reference while the plugin is loaded.
- */
-#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
-#define PURPLE_PLUGIN_INIT_VAL(plugin,pluginname,pluginquery,pluginload,pluginunload) \
-	void pluginname##_plugin_initval(void); \
-	void pluginname##_plugin_initval(void) { \
-		plugin = NULL; \
-	} \
-	PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload)
-#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PROTOCOL */
-#define PURPLE_PLUGIN_INIT_VAL(plugin,pluginname,pluginquery,pluginload,pluginunload) \
-	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e); \
-	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e) { \
-		plugin = NULL; \
-		return GPLUGIN_PLUGIN_INFO(pluginquery(e)); \
-	} \
-	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p, GError **e); \
-	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p, GError **e) { \
-		plugin = PURPLE_PLUGIN(p); \
-		return pluginload(plugin, e); \
-	} \
-	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p, GError **e); \
-	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p, GError **e) { \
-		plugin = NULL; \
-		return pluginunload(PURPLE_PLUGIN(p), e); \
-	}
-#endif
-
 G_BEGIN_DECLS
 
 /**************************************************************************/
