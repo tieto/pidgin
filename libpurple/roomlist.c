@@ -45,9 +45,6 @@ struct _PurpleRoomlistPrivate {
 	GList *fields;           /**< The fields.                       */
 	GList *rooms;            /**< The list of rooms.                */
 	gboolean in_progress;    /**< The listing is in progress.       */
-	gpointer proto_data;     /** Protocol private data.
-	                             TODO Remove this, and use
-	                                  protocol-specific subclasses  */
 };
 
 /**
@@ -214,24 +211,6 @@ GList * purple_roomlist_get_fields(PurpleRoomlist *list)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->fields;
-}
-
-gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list)
-{
-	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->proto_data;
-}
-
-void purple_roomlist_set_proto_data(PurpleRoomlist *list, gpointer proto_data)
-{
-	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->proto_data = proto_data;
 }
 
 gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list)

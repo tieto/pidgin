@@ -309,14 +309,6 @@ void purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 void purple_connection_set_display_name(PurpleConnection *gc, const char *name);
 
 /**
- * Sets the protocol data for a connection.
- *
- * @param connection The PurpleConnection.
- * @param proto_data The protocol data to set for the connection.
- */
-void purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data);
-
-/**
  * Returns the connection state.
  *
  * @param gc The connection.
@@ -386,15 +378,6 @@ GSList *purple_connection_get_active_chats(const PurpleConnection *gc);
  * @return The connection's displayed name.
  */
 const char *purple_connection_get_display_name(const PurpleConnection *gc);
-
-/**
- * Gets the protocol data from a connection.
- *
- * @param connection The PurpleConnection.
- *
- * @return The protocol data for the connection.
- */
-void *purple_connection_get_protocol_data(const PurpleConnection *connection);
 
 /**
  * Updates the connection progress.

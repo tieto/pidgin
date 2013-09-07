@@ -303,23 +303,6 @@ GList *purple_whiteboard_get_draw_list(const PurpleWhiteboard *wb);
 void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list);
 
 /**
- * Sets the protocol data for a whiteboard.
- *
- * @param wb			The whiteboard.
- * @param proto_data	The protocol data to set for the whiteboard.
- */
-void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data);
-
-/**
- * Gets the protocol data for a whiteboard.
- *
- * @param wb			The whiteboard.
- *
- * @return The protocol data for the whiteboard.
- */
-gpointer purple_whiteboard_get_protocol_data(const PurpleWhiteboard *wb);
-
-/**
  * Set the UI data associated with this whiteboard.
  *
  * @param wb			The whiteboard.

@@ -37,9 +37,6 @@ struct _PurpleWhiteboardPrivate
 	PurpleAccount *account;         /**< Account associated with this session */
 	char *who;                      /**< Name of the remote user              */
 
-	void *proto_data;               /**< Protocol specific data
-	                                     TODO Remove this, and use
-	                                          protocol-specific subclasses    */
 	PurpleWhiteboardOps *protocol_ops; /**< Protocol operations */
 
 	GList *draw_list;               /**< List of drawing elements/deltas to
@@ -262,24 +259,6 @@ void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list)
 	g_return_if_fail(priv != NULL);
 
 	priv->draw_list = draw_list;
-}
-
-void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data)
-{
-	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->proto_data = proto_data;
-}
-
-gpointer purple_whiteboard_get_protocol_data(const PurpleWhiteboard *wb)
-{
-	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->proto_data;
 }
 
 void purple_whiteboard_set_ui_data(PurpleWhiteboard *wb, gpointer ui_data)
