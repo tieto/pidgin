@@ -236,15 +236,16 @@ struct _PurplePluginAction {
  * A more general version of PURPLE_DEFINE_TYPE() which allows you to
  * specify #GTypeFlags and custom code.
  *
+ * @param TN     The name of the new type, in Camel case.
+ * @param t_n    The name of the new type, in lowercase, words separated by '_'.
+ * @param T_P    The #GType of the parent type.
  * @param flags  #GTypeFlags to register the type with.
  * @param CODE   Custom code that gets inserted in *_get_type().
  */
 #if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
-#define PURPLE_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE) \
-	PURPLE_DEFINE_STATIC_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE)
+#define PURPLE_DEFINE_TYPE_EXTENDED PURPLE_DEFINE_STATIC_TYPE_EXTENDED
 #else
-#define PURPLE_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE) \
-	PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE)
+#define PURPLE_DEFINE_TYPE_EXTENDED PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED
 #endif
 
 /**
