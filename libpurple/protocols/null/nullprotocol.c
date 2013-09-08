@@ -1148,6 +1148,18 @@ null_protocol_interface_init(PurpleProtocolInterface *iface)
   iface->offline_message          = null_offline_message;
 }
 
+/*
+ * define the null protocol type. this macro defines
+ * null_protocol_register_type(PurplePlugin *) which is called in plugin_load()
+ * to register this type with the type system, and null_protocol_get_type()
+ * which returns the registered GType.
+ */
+PURPLE_DEFINE_TYPE_EXTENDED(
+  NullProtocol, null_protocol, PURPLE_TYPE_PROTOCOL, 0,
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+                                    null_protocol_interface_init)
+);
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -1173,6 +1185,10 @@ static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
   PurpleCmdId id;
+
+  /* register the NULL_TYPE_PROTOCOL type in the type system. this function
+   * is defined by PURPLE_DEFINE_TYPE_EXTENDED. */
+  null_protocol_register_type(plugin);
 
   /* add the protocol to the core */
   my_protocol = purple_protocols_add(NULL_TYPE_PROTOCOL, error);
@@ -1222,7 +1238,5 @@ plugin_unload(PurplePlugin *plugin, GError **error)
   return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, NullProtocol, null_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, null, plugin_query, plugin_load,
-                       plugin_unload);
+/* initialize the plugin */
+PURPLE_PLUGIN_INIT(null, plugin_query, plugin_load, plugin_unload);
