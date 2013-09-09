@@ -1680,8 +1680,6 @@ purple_request_action(void *handle, const char *title, const char *primary,
 	void *ui_handle;
 	va_list args;
 
-	g_return_val_if_fail(action_count > 0, NULL);
-
 	va_start(args, action_count);
 	ui_handle = purple_request_action_varg(handle, title, primary, secondary,
 										 default_action, account, who, conv,
@@ -1702,8 +1700,6 @@ purple_request_action_with_icon(void *handle, const char *title,
 	void *ui_handle;
 	va_list args;
 
-	g_return_val_if_fail(action_count > 0, NULL);
-
 	va_start(args, action_count);
 	ui_handle = purple_request_action_with_icon_varg(handle, title, primary,
 		secondary, default_action, account, who, conv, icon_data, icon_size,
@@ -1722,8 +1718,6 @@ purple_request_action_varg(void *handle, const char *title,
 						  void *user_data, size_t action_count, va_list actions)
 {
 	PurpleRequestUiOps *ops;
-
-	g_return_val_if_fail(action_count > 0, NULL);
 
 	ops = purple_request_get_ui_ops();
 
@@ -1755,8 +1749,6 @@ purple_request_action_with_icon_varg(void *handle, const char *title,
 						 void *user_data, size_t action_count, va_list actions)
 {
 	PurpleRequestUiOps *ops;
-
-	g_return_val_if_fail(action_count > 0, NULL);
 
 	ops = purple_request_get_ui_ops();
 
