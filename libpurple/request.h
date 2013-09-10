@@ -47,6 +47,11 @@ typedef struct _PurpleRequestFields PurpleRequestFields;
  */
 typedef struct _PurpleRequestFieldGroup PurpleRequestFieldGroup;
 
+/**
+ * Common parameters for UI operations.
+ */
+typedef struct _PurpleRequestCommonParameters PurpleRequestCommonParameters;
+
 #include "account.h"
 
 #define PURPLE_DEFAULT_ACTION_NONE	-1
@@ -94,8 +99,8 @@ typedef struct
 	                       gboolean multiline, gboolean masked, gchar *hint,
 	                       const char *ok_text, GCallback ok_cb,
 	                       const char *cancel_text, GCallback cancel_cb,
-	                       PurpleAccount *account, const char *who,
-	                       PurpleConversation *conv, void *user_data);
+	                       PurpleRequestCommonParameters *cpar,
+	                       void *user_data);
 
 	/** @see purple_request_choice_varg(). */
 	void *(*request_choice)(const char *title, const char *primary,
@@ -165,6 +170,99 @@ typedef void (*PurpleRequestFieldsCb)(void *, PurpleRequestFields *fields);
 typedef void (*PurpleRequestFileCb)(void *, const char *filename);
 
 G_BEGIN_DECLS
+
+/**************************************************************************/
+/** @name Common parameters API                                           */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates new parameters set for the request, which may or may not be used by
+ * the UI to display the request.
+ *
+ * @return The new parameters set.
+ */
+PurpleRequestCommonParameters *
+purple_request_cpar_new(void);
+
+/**
+ * Creates new parameters set initially bound with the #PurpleConnection.
+ *
+ * @return The new parameters set.
+ */
+PurpleRequestCommonParameters *
+purple_request_cpar_from_connection(PurpleConnection *gc);
+
+/**
+ * Creates new parameters set initially bound with the #PurpleAccount.
+ *
+ * @return The new parameters set.
+ */
+PurpleRequestCommonParameters *
+purple_request_cpar_from_account(PurpleAccount *account);
+
+/*
+ * Increases the reference count on the parameters set.
+ *
+ * @param cpar The object to ref.
+ */
+void
+purple_request_cpar_ref(PurpleRequestCommonParameters *cpar);
+
+/**
+ * Decreases the reference count on the parameters set.
+ *
+ * The object will be destroyed when this reaches 0.
+ *
+ * @param cpar The parameters set object to unref and possibly destroy.
+ *
+ * @return The NULL, if object was destroyed, cpar otherwise.
+ */
+PurpleRequestCommonParameters *
+purple_request_cpar_unref(PurpleRequestCommonParameters *cpar);
+
+/**
+ * Sets the #PurpleAccount associated with the request, or @c NULL, if none is.
+ *
+ * @param cpar    The parameters set.
+ * @param account The #PurpleAccount to associate.
+ */
+void
+purple_request_cpar_set_account(PurpleRequestCommonParameters *cpar,
+	PurpleAccount *account);
+
+/**
+ * Gets the #PurpleAccount associated with the request.
+ *
+ * @param cpar The parameters set (may be @c NULL).
+ *
+ * @return The associated #PurpleAccount, or NULL if none is.
+ */
+PurpleAccount *
+purple_request_cpar_get_account(PurpleRequestCommonParameters *cpar);
+
+/**
+ * Sets the #PurpleConversation associated with the request, or @c NULL, if
+ * none is.
+ *
+ * @param cpar The parameters set.
+ * @param conv The #PurpleConversation to associate.
+ */
+void
+purple_request_cpar_set_conversation(PurpleRequestCommonParameters *cpar,
+	PurpleConversation *conv);
+
+/**
+ * Gets the #PurpleConversation associated with the request.
+ *
+ * @param cpar The parameters set (may be @c NULL).
+ *
+ * @return The associated #PurpleConversation, or NULL if none is.
+ */
+PurpleConversation *
+purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name Field List API                                                  */
@@ -1381,12 +1479,8 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
  *                      NULL.
  * @param cancel_cb     The callback for the @c Cancel button, which may be
  *                      @c NULL.
- * @param account       The #PurpleAccount associated with this request, or @c
- *                      NULL if none is.
- * @param who           The username of the buddy associated with this request,
- *                      or @c NULL if none is.
- * @param conv          The #PurpleConversation associated with this request, or
- *                      @c NULL if none is.
+ * @param cpar          The #PurpleRequestCommonParameters object, which gets
+ *                      unref'ed after this call.
  * @param user_data     The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1396,7 +1490,7 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
 	gboolean masked, gchar *hint,
 	const char *ok_text, GCallback ok_cb,
 	const char *cancel_text, GCallback cancel_cb,
-	PurpleAccount *account, const char *who, PurpleConversation *conv,
+	PurpleRequestCommonParameters *cpar,
 	void *user_data);
 
 /**

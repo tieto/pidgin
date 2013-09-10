@@ -853,8 +853,7 @@ finch_request_add_group(void)
 	purple_request_input(NULL, _("Add Group"), NULL, _("Enter the name of the group"),
 			NULL, FALSE, FALSE, NULL,
 			_("Add"), G_CALLBACK(add_group_cb), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static PurpleBlistUiOps blist_ui_ops =
@@ -1406,8 +1405,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
 			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL,
-			NULL, NULL, NULL,
-			node);
+			NULL, node);
 
 	g_free(prompt);
 }

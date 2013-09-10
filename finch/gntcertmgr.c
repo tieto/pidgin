@@ -89,8 +89,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 				default_hostname, FALSE, FALSE, NULL,
 				_("OK"), G_CALLBACK(tls_peers_mgmt_import_ok2_cb),
 				_("Cancel"), G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
-				NULL, NULL, NULL,
-				crt);
+				NULL, crt);
 		g_free(default_hostname);
 	} else {
 		gchar * secondary;

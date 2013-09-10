@@ -156,7 +156,7 @@ finch_request_input(const char *title, const char *primary,
 		gboolean multiline, gboolean masked, gchar *hint,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
-		PurpleAccount *account, const char *who, PurpleConversation *conv,
+		PurpleRequestCommonParameters *cpar,
 		void *user_data)
 {
 	GntWidget *window, *box, *entry;

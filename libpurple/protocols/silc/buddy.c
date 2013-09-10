@@ -457,7 +457,7 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 	                     _("Set IM Password"), NULL, FALSE, TRUE, NULL,
 	                     _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
 	                     _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-	                     purple_connection_get_account(gc), NULL, NULL, p);
+	                     purple_request_cpar_from_connection(gc), p);
 
 	silc_client_list_free(sg->client, sg->conn, clients);
 }

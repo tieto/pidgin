@@ -2730,7 +2730,7 @@ authorize_reason_cb(struct auth_request *ar)
 		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
 		                     _("OK"), G_CALLBACK(authorize_and_add_cb),
 		                     _("Cancel"), G_CALLBACK(authorize_noreason_cb),
-		                     ar->account, ar->username, NULL,
+		                     purple_request_cpar_from_account(ar->account),
 		                     aa);
 		/* FIXME: aa is going to leak now. */
 	} else {
@@ -2772,7 +2772,7 @@ deny_reason_cb(struct auth_request *ar)
 		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
 		                     _("OK"), G_CALLBACK(deny_no_add_cb),
 		                     _("Cancel"), G_CALLBACK(deny_noreason_cb),
-		                     ar->account, ar->username, NULL,
+		                     purple_request_cpar_from_account(ar->account),
 		                     aa);
 		/* FIXME: aa is going to leak now. */
 	} else {

@@ -499,7 +499,7 @@ static void mxit_user_search_action( PurplePluginAction* action )
 		NULL, FALSE, FALSE, NULL,
 		_( "_Search" ), G_CALLBACK( mxit_user_search_cb ),
 		_( "_Cancel" ), NULL,
-		purple_connection_get_account( gc ), NULL, NULL,
+		purple_request_cpar_from_connection(gc),
 		gc );
 }
 

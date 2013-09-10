@@ -451,7 +451,7 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL,
-					   account, NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 	g_free(tmp);
 }
@@ -654,7 +654,7 @@ msn_show_set_home_phone(PurplePluginAction *action)
 					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -671,7 +671,7 @@ msn_show_set_work_phone(PurplePluginAction *action)
 					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -688,7 +688,7 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -793,7 +793,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 					   NULL, TRUE, FALSE, NULL,
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
-					   account, name, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   data);
 }
 

@@ -194,7 +194,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 				     G_CALLBACK(tls_peers_mgmt_import_ok2_cb),
 				     _("Cancel"),
 				     G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
-				     NULL, NULL, NULL, /* No account/who/conv*/
+				     NULL,  /* No additional parameters */
 				     crt    /* Pass cert instance to callback*/
 				     );
 

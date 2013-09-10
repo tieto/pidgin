@@ -754,7 +754,7 @@ silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 			   tmp, FALSE, FALSE, NULL,
 			   _("OK"), G_CALLBACK(silcpurple_chat_ulimit_cb),
 			   _("Cancel"), G_CALLBACK(silcpurple_chat_ulimit_cb),
-			   purple_connection_get_account(gc), NULL, NULL, s);
+			   purple_request_cpar_from_connection(gc), s);
 }
 
 static void

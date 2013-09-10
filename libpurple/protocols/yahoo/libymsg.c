@@ -4210,7 +4210,7 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 

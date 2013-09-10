@@ -7561,8 +7561,7 @@ pidgin_blist_request_add_group(void)
 					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL,
-					   NULL, NULL, NULL,
-					   NULL);
+					   NULL, NULL);
 }
 
 void

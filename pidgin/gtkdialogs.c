@@ -1201,7 +1201,7 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 					   secondary, purple_buddy_get_local_buddy_alias(buddy), FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL,
-					   purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
+					   purple_request_cpar_from_account(purple_buddy_get_account(buddy)),
 					   buddy);
 
 	g_free(secondary);
@@ -1223,7 +1223,7 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 					   chat->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
 					   _("Cancel"), NULL,
-					   purple_chat_get_account(chat), NULL, NULL,
+					   purple_request_cpar_from_account(purple_chat_get_account(chat)),
 					   chat);
 }
 

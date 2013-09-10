@@ -156,6 +156,97 @@ struct _PurpleRequestFieldGroup
 	GList *fields;
 };
 
+struct _PurpleRequestCommonParameters
+{
+	int ref_count;
+
+	PurpleAccount *account;
+	PurpleConversation *conv;
+};
+
+PurpleRequestCommonParameters *
+purple_request_cpar_new(void)
+{
+	return g_new0(PurpleRequestCommonParameters, 1);
+}
+
+PurpleRequestCommonParameters *
+purple_request_cpar_from_connection(PurpleConnection *gc)
+{
+	if (gc == NULL)
+		return purple_request_cpar_new();
+	return purple_request_cpar_from_account(
+		purple_connection_get_account(gc));
+}
+
+PurpleRequestCommonParameters *
+purple_request_cpar_from_account(PurpleAccount *account)
+{
+	PurpleRequestCommonParameters *cpar;
+
+	cpar = purple_request_cpar_new();
+	purple_request_cpar_set_account(cpar, account);
+
+	return cpar;
+}
+
+void
+purple_request_cpar_ref(PurpleRequestCommonParameters *cpar)
+{
+	g_return_if_fail(cpar != NULL);
+
+	cpar->ref_count++;
+}
+
+PurpleRequestCommonParameters *
+purple_request_cpar_unref(PurpleRequestCommonParameters *cpar)
+{
+	if (cpar == NULL)
+		return NULL;
+
+	if (--cpar->ref_count > 0)
+		return cpar;
+
+	g_free(cpar);
+	return NULL;
+}
+
+void
+purple_request_cpar_set_account(PurpleRequestCommonParameters *cpar,
+	PurpleAccount *account)
+{
+	g_return_if_fail(cpar != NULL);
+
+	cpar->account = account;
+}
+
+PurpleAccount *
+purple_request_cpar_get_account(PurpleRequestCommonParameters *cpar)
+{
+	if (cpar == NULL)
+		return NULL;
+
+	return cpar->account;
+}
+
+void
+purple_request_cpar_set_conversation(PurpleRequestCommonParameters *cpar,
+	PurpleConversation *conv)
+{
+	g_return_if_fail(cpar != NULL);
+
+	cpar->conv = conv;
+}
+
+PurpleConversation *
+purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar)
+{
+	if (cpar == NULL)
+		return NULL;
+
+	return cpar->conv;
+}
+
 PurpleRequestFields *
 purple_request_fields_new(void)
 {
@@ -1577,13 +1668,15 @@ purple_request_input(void *handle, const char *title, const char *primary,
 				   gboolean multiline, gboolean masked, gchar *hint,
 				   const char *ok_text, GCallback ok_cb,
 				   const char *cancel_text, GCallback cancel_cb,
-				   PurpleAccount *account, const char *who, PurpleConversation *conv,
+				   PurpleRequestCommonParameters *cpar,
 				   void *user_data)
 {
 	PurpleRequestUiOps *ops;
 
-	g_return_val_if_fail(ok_text != NULL, NULL);
-	g_return_val_if_fail(ok_cb   != NULL, NULL);
+	if (G_UNLIKELY(ok_text != NULL || ok_cb != NULL)) {
+		purple_request_cpar_unref(cpar);
+		g_return_val_if_reached(NULL);
+	}
 
 	ops = purple_request_get_ui_ops();
 
@@ -1594,18 +1687,16 @@ purple_request_input(void *handle, const char *title, const char *primary,
 		info->type      = PURPLE_REQUEST_INPUT;
 		info->handle    = handle;
 		info->ui_handle = ops->request_input(title, primary, secondary,
-											 default_value,
-											 multiline, masked, hint,
-											 ok_text, ok_cb,
-											 cancel_text, cancel_cb,
-											 account, who, conv,
-											 user_data);
+			default_value, multiline, masked, hint, ok_text, ok_cb,
+			cancel_text, cancel_cb, cpar, user_data);
 
 		handles = g_list_append(handles, info);
 
+		purple_request_cpar_unref(cpar);
 		return info->ui_handle;
 	}
 
+	purple_request_cpar_unref(cpar);
 	return NULL;
 }
 

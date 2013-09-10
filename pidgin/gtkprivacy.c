@@ -498,7 +498,7 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 			NULL, FALSE, FALSE, NULL,
 			_("_Permit"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
-			account, name, NULL,
+			purple_request_cpar_from_account(account),
 			data);
 	}
 	else {
@@ -539,7 +539,7 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 			NULL, FALSE, FALSE, NULL,
 			_("_Block"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
-			account, name, NULL,
+			purple_request_cpar_from_account(account),
 			data);
 	}
 	else {

@@ -5503,7 +5503,7 @@ static void remote_group_action(PurplePluginAction *act) {
 		     FALSE, FALSE, NULL,
 		     _("Add"), G_CALLBACK(remote_group_action_cb),
 		     _("Cancel"), NULL,
-			 purple_connection_get_account(gc), NULL, NULL,
+		     purple_request_cpar_from_connection(gc),
 		     gc);
 }
 
@@ -5628,7 +5628,7 @@ static void search_action(PurplePluginAction *act) {
 		     FALSE, FALSE, NULL,
 		     _("Search"), G_CALLBACK(search_action_cb),
 		     _("Cancel"), NULL,
-			 purple_connection_get_account(gc), NULL, NULL,
+		     purple_request_cpar_from_connection(gc),
 			 gc);
 }
 

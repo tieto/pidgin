@@ -315,7 +315,7 @@ pidgin_request_input(const char *title, const char *primary,
 					   gboolean multiline, gboolean masked, gchar *hint,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
-					   PurpleAccount *account, const char *who, PurpleConversation *conv,
+					   PurpleRequestCommonParameters *cpar,
 					   void *user_data)
 {
 	PidginRequestData *data;
@@ -375,7 +375,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox, purple_request_cpar_get_account(cpar));
 
 	/* Descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;

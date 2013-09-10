@@ -2284,8 +2284,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			FALSE, FALSE, NULL,
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search),
 			_("Cancel"), NULL,
-			NULL, NULL, NULL,
-			js);
+			NULL, js);
 }
 
 gboolean

@@ -1684,7 +1684,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 					   (purple_connection_get_flags(gc) & PURPLE_CONNECTION_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
-					   account, NULL, NULL,
+					   purple_request_cpar_from_account(account),
 					   account);
 }
 
