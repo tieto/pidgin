@@ -1924,9 +1924,8 @@ purple_request_file(void *handle, const char *title, const char *filename,
 
 void *
 purple_request_folder(void *handle, const char *title, const char *dirname,
-				  GCallback ok_cb, GCallback cancel_cb,
-				  PurpleAccount *account, const char *who, PurpleConversation *conv,
-				  void *user_data)
+	GCallback ok_cb, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	PurpleRequestUiOps *ops;
 
@@ -1938,14 +1937,15 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
 		info            = g_new0(PurpleRequestInfo, 1);
 		info->type      = PURPLE_REQUEST_FOLDER;
 		info->handle    = handle;
-		info->ui_handle = ops->request_folder(title, dirname,
-											ok_cb, cancel_cb,
-											account, who, conv,
-											user_data);
+		info->ui_handle = ops->request_folder(title, dirname, ok_cb,
+			cancel_cb, cpar, user_data);
 		handles = g_list_append(handles, info);
+
+		purple_request_cpar_unref(cpar);
 		return info->ui_handle;
 	}
 
+	purple_request_cpar_unref(cpar);
 	return NULL;
 }
 

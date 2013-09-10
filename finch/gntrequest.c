@@ -788,8 +788,8 @@ finch_request_file(const char *title, const char *filename, gboolean savedialog,
 
 static void *
 finch_request_folder(const char *title, const char *dirname, GCallback ok_cb,
-		GCallback cancel_cb, PurpleAccount *account, const char *who, PurpleConversation *conv,
-		void *user_data)
+	GCallback cancel_cb, PurpleRequestCommonParameters *cpar,
+	void *user_data)
 {
 	FinchFileRequest *data;
 

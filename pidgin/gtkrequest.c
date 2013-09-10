@@ -1694,10 +1694,9 @@ pidgin_request_file(const char *title, const char *filename,
 }
 
 static void *
-pidgin_request_folder(const char *title, const char *dirname,
-					  GCallback ok_cb, GCallback cancel_cb,
-					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+pidgin_request_folder(const char *title, const char *dirname, GCallback ok_cb,
+	GCallback cancel_cb, PurpleRequestCommonParameters *cpar,
+	void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *dirsel;
