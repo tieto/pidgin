@@ -3433,7 +3433,7 @@ static void blist_menu_conf_create(PurpleBuddy *buddy, const char *msg) {
 		      msgA, msg1, fields,
 		      _("Create"), G_CALLBACK(conf_create_prompt_join),
 		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
-			  acct, purple_buddy_get_name(buddy), NULL,
+		      purple_request_cpar_from_account(acct),
 		      buddy);
   g_free(msg1);
 }
@@ -3519,7 +3519,7 @@ static void blist_menu_conf_list(PurpleBuddy *buddy,
 		      msgA, msg, fields,
 		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
 		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
-			  acct, purple_buddy_get_name(buddy), NULL,
+		      purple_request_cpar_from_account(acct),
 		      buddy);
   g_free(msg);
 }
@@ -5413,7 +5413,7 @@ static void remote_group_multi(struct mwResolveResult *result,
 		      msgA, msg, fields,
 		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
 		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
-			  purple_connection_get_account(gc), result->name, NULL,
+		      purple_request_cpar_from_connection(gc),
 		      pd);
 
   g_free(msg);

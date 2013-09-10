@@ -945,8 +945,7 @@ pidgin_dialogs_im(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 void
@@ -1085,8 +1084,7 @@ pidgin_dialogs_info(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_info_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void
@@ -1177,8 +1175,7 @@ pidgin_dialogs_log(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_log_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void

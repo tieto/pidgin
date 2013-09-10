@@ -1458,19 +1458,18 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 				_("Register New XMPP Account"), instructions, fields,
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
-				purple_connection_get_account(js->gc), NULL, NULL,
+				purple_request_cpar_from_connection(js->gc),
 				cbdata);
 	else {
 		char *title;
 		g_return_if_fail(from != NULL);
 		title = registered ? g_strdup_printf(_("Change Account Registration at %s"), from)
 								:g_strdup_printf(_("Register New Account at %s"), from);
-		purple_request_fields(js->gc, title,
-			  title, instructions, fields,
-			  (registered ? _("Change Registration") : _("Register")), G_CALLBACK(jabber_register_cb),
-			  _("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
-			  purple_connection_get_account(js->gc), NULL, NULL,
-			  cbdata);
+		purple_request_fields(js->gc, title, title, instructions,
+			fields, (registered ? _("Change Registration") :
+			_("Register")), G_CALLBACK(jabber_register_cb),
+			_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
+			purple_request_cpar_from_connection(js->gc), cbdata);
 		g_free(title);
 	}
 
@@ -2537,8 +2536,7 @@ static void jabber_password_change(PurplePluginAction *action)
 			_("Change XMPP Password"), _("Please enter your new password"),
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
-			js);
+			purple_request_cpar_from_connection(gc), js);
 }
 
 GList *jabber_actions(PurplePlugin *plugin, gpointer context)
@@ -3402,7 +3400,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 				NULL, fields, _("Initiate Media"),
 				G_CALLBACK(jabber_media_ok_cb), _("Cancel"),
 				G_CALLBACK(jabber_media_cancel_cb),
-				account, who, NULL, request);
+				purple_request_cpar_from_account(account),
+				request);
 
 		g_free(msg);
 		return TRUE;

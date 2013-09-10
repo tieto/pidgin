@@ -720,8 +720,7 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 
 	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please update the necessary fields."),
 			fields, _("Save"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			chat);
+			NULL, chat);
 }
 
 static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
@@ -3688,8 +3687,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	                      NULL, fields,
 	                      _("OK"), G_CALLBACK(edit_mood_cb),
 	                      _("Cancel"), NULL,
-	                      gc ? purple_connection_get_account(gc) : NULL,
-	                      NULL, NULL, gc);
+	                      purple_request_cpar_from_connection(gc), gc);
 
 	g_free(global_moods);
 }

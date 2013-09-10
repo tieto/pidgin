@@ -4199,8 +4199,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 					   fields,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
-					   gc);
+					   purple_request_cpar_from_connection(gc), gc);
 }
 
 static void yahoo_show_chat_goto(PurplePluginAction *action)

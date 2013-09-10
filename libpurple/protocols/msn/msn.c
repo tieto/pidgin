@@ -572,12 +572,9 @@ msn_show_locations(PurplePluginAction *action)
 	data->session = session;
 	data->group = group;
 
-	purple_request_fields(pc, NULL, NULL, NULL,
-	                      fields,
-	                      _("OK"), G_CALLBACK(update_endpoint_cb),
-	                      _("Cancel"), G_CALLBACK(g_free),
-	                      account, NULL, NULL,
-	                      data);
+	purple_request_fields(pc, NULL, NULL, NULL, fields, _("OK"),
+		G_CALLBACK(update_endpoint_cb), _("Cancel"), G_CALLBACK(g_free),
+		purple_request_cpar_from_connection(pc), data);
 }
 
 static void

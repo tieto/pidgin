@@ -402,7 +402,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	handle = purple_request_fields(js->gc, title, title, instructions, fields,
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
 			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb),
-			purple_connection_get_account(js->gc), /* XXX Do we have a who here? */ NULL, NULL,
+			purple_request_cpar_from_connection(js->gc),
 			data);
 
 	g_free(title);

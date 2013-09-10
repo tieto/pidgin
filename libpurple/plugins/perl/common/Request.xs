@@ -193,7 +193,7 @@ CODE:
 	gpr->cancel_fun = purple_perl_sv_from_fun(handle, cancel_cb);
 	g_free(basename);
 
-	RETVAL = purple_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, gpr);
+	RETVAL = purple_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, gpr);
 OUTPUT:
 	RETVAL
 

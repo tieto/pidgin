@@ -532,8 +532,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 
 	ret = purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 	g_signal_connect_swapped(G_OBJECT(ret), "destroy", G_CALLBACK(free_stringlist), stringlist);
 	return ret;
 }

@@ -369,7 +369,12 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_field_group_add_field( group, field );
 
 	/* show the form to the user to complete */
-	purple_request_fields( session->con, _( "Register New MXit Account" ), _( "Register New MXit Account" ), _( "Please fill in the following fields:" ), fields, _( "OK" ), G_CALLBACK( mxit_cb_register_ok ), _( "Cancel" ), G_CALLBACK( mxit_cb_register_cancel ), session->acc, NULL, NULL, session->con );
+	purple_request_fields(session->con, _("Register New MXit Account"),
+		_("Register New MXit Account"),
+		_("Please fill in the following fields:"), fields, _("OK"),
+		G_CALLBACK(mxit_cb_register_ok), _("Cancel"),
+		G_CALLBACK(mxit_cb_register_cancel),
+		purple_request_cpar_from_account(session->acc), session->con);
 }
 
 
@@ -704,7 +709,7 @@ mxit_cb_clientinfo1(PurpleHttpConnection *http_conn,
 
 	/* display the form to the user and wait for his/her input */
 	purple_request_fields( session->con, "MXit", _( "MXit Authorization" ), _( "MXit account validation" ), fields,
-			_( "Continue" ), G_CALLBACK( mxit_cb_captcha_ok ), _( "Cancel" ), G_CALLBACK( mxit_cb_captcha_cancel ), session->acc, NULL, NULL, session->con );
+			_( "Continue" ), G_CALLBACK( mxit_cb_captcha_ok ), _( "Cancel" ), G_CALLBACK( mxit_cb_captcha_cancel ), purple_request_cpar_from_account(session->acc), session->con );
 
 	/* freeup the memory */
 	g_strfreev( parts );

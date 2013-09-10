@@ -164,8 +164,7 @@ idle_action(PurplePluginAction *action)
 			request,
 			_("_Set"), G_CALLBACK(idle_action_ok),
 			_("_Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static void
@@ -198,8 +197,7 @@ unidle_action(PurplePluginAction *action)
 			request,
 			_("_Unset"), G_CALLBACK(unidle_action_ok),
 			_("_Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static void
@@ -224,8 +222,7 @@ idle_all_action(PurplePluginAction *action)
 			request,
 			_("_Set"), G_CALLBACK(idle_all_action_ok),
 			_("_Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static void

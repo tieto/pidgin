@@ -691,7 +691,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 						fields,
 						_("Save"), G_CALLBACK(jabber_format_info),
 						_("Cancel"), NULL,
-						purple_connection_get_account(gc), NULL, NULL,
+						purple_request_cpar_from_connection(gc),
 						gc);
 }
 
@@ -2235,7 +2235,7 @@ static void user_search_fields_result_cb(JabberStream *js, const char *from,
 				_("Search for XMPP users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
-				purple_connection_get_account(js->gc), NULL, NULL,
+				purple_request_cpar_from_connection(js->gc),
 				usi);
 
 		g_free(instructions);

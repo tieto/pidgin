@@ -1197,7 +1197,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r, SilcDList clients)
 			      fields,
 			      _("OK"), G_CALLBACK(silcpurple_add_buddy_select_cb),
 			      _("Cancel"), G_CALLBACK(silcpurple_add_buddy_select_cancel),
-			      purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
+			      purple_request_cpar_from_account(purple_buddy_get_account(r->b)), r);
 }
 
 static void

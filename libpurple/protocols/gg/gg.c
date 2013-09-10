@@ -229,7 +229,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 			fields,
 			_("Add"), G_CALLBACK(ggp_callback_add_to_chat_ok),
 			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
+			purple_request_cpar_from_connection(gc),
 			buddy);
 	g_free(msg);
 }

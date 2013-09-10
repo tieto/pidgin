@@ -1570,7 +1570,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_request_fields(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
 					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					purple_connection_get_account(jsx->js->gc), purple_xfer_get_remote_user(xfer), NULL, xfer);
+					purple_request_cpar_from_connection(jsx->js->gc), xfer);
 
 			g_free(msg);
 		}

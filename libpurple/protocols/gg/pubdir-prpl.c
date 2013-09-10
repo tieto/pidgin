@@ -547,7 +547,7 @@ void ggp_pubdir_search(PurpleConnection *gc,
 		_("Please, enter your search criteria below"), fields,
 		_("OK"), G_CALLBACK(ggp_pubdir_search_request),
 		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL, gc);
+		purple_request_cpar_from_connection(gc), gc);
 }
 
 static void ggp_pubdir_search_request(PurpleConnection *gc,
@@ -874,7 +874,7 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 		NULL, fields,
 		_("OK"), G_CALLBACK(ggp_pubdir_set_info_request),
 		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL, gc);
+		purple_request_cpar_from_connection(gc), gc);
 	
 }
 

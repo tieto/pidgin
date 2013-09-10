@@ -5015,7 +5015,7 @@ oscar_show_icq_privacy_opts(PurplePluginAction *action)
 						NULL, fields,
 						_("OK"), G_CALLBACK(oscar_icq_privacy_opts),
 						_("Cancel"), NULL,
-						purple_connection_get_account(gc), NULL, NULL,
+						purple_request_cpar_from_connection(gc),
 						gc);
 }
 

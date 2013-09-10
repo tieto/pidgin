@@ -359,7 +359,7 @@ void ggp_status_broadcasting_dialog(PurpleConnection *gc)
 		fields,
 		_("OK"), G_CALLBACK(ggp_status_broadcasting_dialog_ok),
 		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL, gc);
+		purple_request_cpar_from_connection(gc), gc);
 }
 
 static void ggp_status_broadcasting_dialog_ok(PurpleConnection *gc,

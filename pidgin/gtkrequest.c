@@ -1212,11 +1212,9 @@ create_certificate_field(PurpleRequestField *field)
 
 static void *
 pidgin_request_fields(const char *title, const char *primary,
-						const char *secondary, PurpleRequestFields *fields,
-						const char *ok_text, GCallback ok_cb,
-						const char *cancel_text, GCallback cancel_cb,
-					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data)
+	const char *secondary, PurpleRequestFields *fields, const char *ok_text,
+	GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *win;
@@ -1281,7 +1279,8 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_set_can_default(button, TRUE);
 	gtk_window_set_default(GTK_WINDOW(win), button);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox,
+		purple_request_cpar_get_account(cpar));
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);

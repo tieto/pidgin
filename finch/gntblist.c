@@ -699,7 +699,7 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 			fields,
 			_("Add"), G_CALLBACK(add_buddy_cb),
 			_("Cancel"), NULL,
-			account, NULL, NULL,
+			purple_request_cpar_from_account(account),
 			NULL);
 }
 
@@ -805,8 +805,7 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 	purple_request_fields(NULL, _("Add Chat"), NULL,
 			_("You can edit more information from the context menu later."),
 			fields, _("Add"), G_CALLBACK(add_chat_cb), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static void
@@ -1167,8 +1166,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 
 	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
 			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			chat);
+			NULL, chat);
 }
 
 static void
@@ -2715,8 +2713,7 @@ block_select(GntMenuItem *item, gpointer n)
 						fields,
 						_("OK"), G_CALLBACK(block_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 /* send_im_select* -- Xerox */
@@ -2766,8 +2763,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 						fields,
 						_("OK"), G_CALLBACK(send_im_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void
@@ -2840,8 +2836,7 @@ join_chat_select(GntMenuItem *item, gpointer n)
 						fields,
 						_("Join"), G_CALLBACK(join_chat_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void
@@ -2902,8 +2897,7 @@ view_log_cb(GntMenuItem *item, gpointer n)
 						fields,
 						_("OK"), G_CALLBACK(view_log_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void

@@ -2252,7 +2252,7 @@ void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
 			fields,
 			_("Invite"), G_CALLBACK(invite_user_to_chat),
 			_("Cancel"), NULL,
-			account, user, conv,
+			purple_request_cpar_from_conversation(conv),
 			conv);
 }
 

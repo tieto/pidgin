@@ -311,7 +311,7 @@ static void mxit_profile_action( PurplePluginAction* action )
 
 	/* (reference: "libpurple/request.h") */
 	purple_request_fields( gc, _( "Profile" ), _( "Update your MXit Profile" ), NULL, fields, _( "Set" ),
-			G_CALLBACK( mxit_profile_cb ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
+			G_CALLBACK( mxit_profile_cb ), _( "Cancel" ), NULL, purple_request_cpar_from_connection(gc), gc );
 }
 
 
@@ -408,7 +408,7 @@ static void mxit_change_pin_action( PurplePluginAction* action )
 
 	/* (reference: "libpurple/request.h") */
 	purple_request_fields( gc, _( "Change PIN" ), _( "Change MXit PIN" ), NULL, fields, _( "Set" ),
-			G_CALLBACK( mxit_change_pin_cb ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
+			G_CALLBACK( mxit_change_pin_cb ), _( "Cancel" ), NULL, purple_request_cpar_from_connection(gc), gc );
 }
 
 

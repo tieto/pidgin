@@ -122,8 +122,8 @@ typedef struct
 	                        const char *secondary, PurpleRequestFields *fields,
 	                        const char *ok_text, GCallback ok_cb,
 	                        const char *cancel_text, GCallback cancel_cb,
-	                        PurpleAccount *account, const char *who,
-	                        PurpleConversation *conv, void *user_data);
+	                        PurpleRequestCommonParameters *cpar,
+	                        void *user_data);
 
 	/** @see purple_request_file(). */
 	void *(*request_file)(const char *title, const char *filename,
@@ -1627,21 +1627,18 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
  *                    NULL.
  * @param cancel_cb   The callback for the @c Cancel button, which may be
  *                    @c NULL.
- * @param account     The #PurpleAccount associated with this request, or @c
- *                    NULL if none is
- * @param who         The username of the buddy associated with this request,
- *                    or @c NULL if none is
- * @param conv        The #PurpleConversation associated with this request, or
- *                    @c NULL if none is
+ * @param cpar        The #PurpleRequestCommonParameters object, which gets
+ *                    unref'ed after this call.
  * @param user_data   The data to pass to the callback.
  *
  * @return A UI-specific handle.
  */
-void *purple_request_fields(void *handle, const char *title, const char *primary,
+void *
+purple_request_fields(void *handle, const char *title, const char *primary,
 	const char *secondary, PurpleRequestFields *fields,
 	const char *ok_text, GCallback ok_cb,
 	const char *cancel_text, GCallback cancel_cb,
-	PurpleAccount *account, const char *who, PurpleConversation *conv,
+	PurpleRequestCommonParameters *cpar,
 	void *user_data);
 
 /**
