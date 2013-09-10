@@ -1831,7 +1831,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 								_("Do you want to add this buddy "
 								  "to your buddy list?"),
 								PURPLE_DEFAULT_ACTION_NONE,
-								purple_connection_get_account(gc), data->name, NULL,
+								purple_request_cpar_from_connection(gc),
 								data, 2,
 								_("_Add"), G_CALLBACK(purple_icq_buddyadd),
 								_("_Decline"), G_CALLBACK(oscar_free_name_data));
@@ -4102,7 +4102,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(gc), bn, NULL,
+						purple_request_cpar_from_connection(gc),
 						data,
 						G_CALLBACK(purple_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
@@ -4785,7 +4785,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
 			0, /* Default action is "connect" */
-			account, data->who, NULL,
+			purple_request_cpar_from_account(account),
 			data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
 			_("_Cancel"), G_CALLBACK(oscar_ask_directim_no_cb));

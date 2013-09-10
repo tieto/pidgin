@@ -819,9 +819,7 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 			_("This username is available. Would you like to set it?"),
 			_("ONCE SET, THIS CANNOT BE CHANGED!"),
 			0,
-			session->account,
-			NULL,
-			NULL,
+			purple_request_cpar_from_account(session->account),
 			session->gc,
 			G_CALLBACK(msim_set_username_confirmed_cb),
 			G_CALLBACK(msim_do_not_set_username_cb));

@@ -1522,7 +1522,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
 							_("Would you like to set it as the buddy icon for this user?"),
 							PURPLE_DEFAULT_ACTION_NONE,
-							account, who, NULL,
+							purple_request_cpar_from_account(account),
 							data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
 			else
 				purple_request_choice(NULL, NULL,

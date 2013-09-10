@@ -1534,7 +1534,7 @@ finch_blist_remove_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	purple_request_action(node, _("Confirm Remove"),
 			primary, sec,
 			1,
-			account, name, NULL,
+			purple_request_cpar_from_account(account),
 			node, 2,
 			_("Remove"), finch_blist_remove_node,
 			_("Cancel"), NULL);

@@ -468,8 +468,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist, const char *who)
 			purple_request_yes_no(userlist->session->account,
 				_("Delete Buddy from Address Book?"),
 				_("Do you want to delete this buddy from your address book as well?"),
-				user->passport, 0, userlist->session->account, user->passport,
-				NULL, ab,
+				user->passport, 0, purple_request_cpar_from_account(userlist->session->account), ab,
 				G_CALLBACK(userlist_ab_delete_cb), G_CALLBACK(userlist_ab_delete_cb));
 		} else
 			msn_delete_contact(userlist->session, user);

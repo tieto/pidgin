@@ -1140,10 +1140,9 @@ pounces_manager_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
 	purple_request_action(pounce, NULL, buf, NULL, 0,
-						account, pouncee, NULL,
-						pounce, 2,
-						_("Delete"), pounces_manager_delete_confirm_cb,
-						_("Cancel"), NULL);
+		purple_request_cpar_from_account(account),
+		pounce, 2, _("Delete"), pounces_manager_delete_confirm_cb,
+		_("Cancel"), NULL);
 	g_free(buf);
 }
 

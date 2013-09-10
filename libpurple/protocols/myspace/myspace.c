@@ -799,9 +799,7 @@ msim_is_username_set(MsimSession *session, MsimMessage *msg)
 			_("You appear to have no MySpace username."),
 			_("Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"),
 			0,
-			session->account,
-			NULL,
-			NULL,
+			purple_request_cpar_from_account(session->account),
 			session->gc,
 			G_CALLBACK(msim_set_username_cb),
 			G_CALLBACK(msim_do_not_set_username_cb));

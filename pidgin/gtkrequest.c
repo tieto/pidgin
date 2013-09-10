@@ -579,12 +579,10 @@ pidgin_request_choice(const char *title, const char *primary,
 }
 
 static void *
-pidgin_request_action_with_icon(const char *title, const char *primary,
-						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who,
-						PurpleConversation *conv, gconstpointer icon_data,
-						gsize icon_size,
-						void *user_data, size_t action_count, va_list actions)
+pidgin_request_action(const char *title, const char *primary,
+	const char *secondary, int default_action,
+	PurpleRequestCommonParameters *cpar, void *user_data,
+	size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -596,6 +594,8 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 	gsize i;
+	gconstpointer icon_data;
+	gsize icon_size;
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_ACTION;
@@ -650,6 +650,7 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	                  hbox);
 
 	/* Dialog icon. */
+	icon_data = purple_request_cpar_get_custom_icon(cpar, &icon_size);
 	if (icon_data) {
 		GdkPixbuf *pixbuf = pidgin_pixbuf_from_data(icon_data, icon_size);
 		if (pixbuf) {
@@ -688,7 +689,8 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox,
+		purple_request_cpar_get_account(cpar));
 
 	/* Descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
@@ -730,17 +732,6 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	gtk_widget_show_all(dialog);
 
 	return data;
-}
-
-static void *
-pidgin_request_action(const char *title, const char *primary,
-						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data, size_t action_count, va_list actions)
-{
-	return pidgin_request_action_with_icon(title, primary, secondary,
-		default_action, account, who, conv, NULL, 0, user_data, action_count,
-		actions);
 }
 
 static void
@@ -1618,7 +1609,7 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
 		purple_request_action(data, NULL, _("That file already exists"),
 							_("Would you like to overwrite it?"), 0,
-							NULL, NULL, NULL,
+							NULL,
 							data, 2,
 							_("Overwrite"), G_CALLBACK(file_yes_no_cb),
 							_("Choose New Name"), G_CALLBACK(file_yes_no_cb));
@@ -1797,7 +1788,7 @@ static PurpleRequestUiOps ops =
 	pidgin_request_file,
 	pidgin_close_request,
 	pidgin_request_folder,
-	pidgin_request_action_with_icon,
+	NULL,
 	NULL,
 	NULL,
 	NULL

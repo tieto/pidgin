@@ -162,6 +162,8 @@ struct _PurpleRequestCommonParameters
 
 	PurpleAccount *account;
 	PurpleConversation *conv;
+	gconstpointer icon_data;
+	gsize icon_size;
 };
 
 PurpleRequestCommonParameters *
@@ -186,6 +188,24 @@ purple_request_cpar_from_account(PurpleAccount *account)
 
 	cpar = purple_request_cpar_new();
 	purple_request_cpar_set_account(cpar, account);
+
+	return cpar;
+}
+
+PurpleRequestCommonParameters *
+purple_request_cpar_from_conversation(PurpleConversation *conv)
+{
+	PurpleRequestCommonParameters *cpar;
+	PurpleAccount *account = NULL;
+
+	if (conv != NULL) {
+		account = purple_connection_get_account(
+			purple_conversation_get_connection(conv));
+	}
+
+	cpar = purple_request_cpar_new();
+	purple_request_cpar_set_account(cpar, account);
+	purple_request_cpar_set_conversation(cpar, conv);
 
 	return cpar;
 }
@@ -245,6 +265,32 @@ purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar)
 		return NULL;
 
 	return cpar->conv;
+}
+
+void
+purple_request_cpar_set_custom_icon(PurpleRequestCommonParameters *cpar,
+	gconstpointer icon_data, gsize icon_size)
+{
+	g_return_if_fail(cpar != NULL);
+	g_return_if_fail((icon_data == NULL) == (icon_size == 0));
+
+	cpar->icon_data = icon_data;
+	cpar->icon_size = icon_size;
+}
+
+gconstpointer
+purple_request_cpar_get_custom_icon(PurpleRequestCommonParameters *cpar,
+	gsize *icon_size)
+{
+	if (cpar == NULL) {
+		if (icon_size != NULL)
+			*icon_size = 0;
+		return NULL;
+	}
+
+	if (icon_size != NULL)
+		*icon_size = cpar->icon_size;
+	return cpar->icon_data;
 }
 
 PurpleRequestFields *
@@ -1766,49 +1812,26 @@ purple_request_choice_varg(void *handle, const char *title,
 
 void *
 purple_request_action(void *handle, const char *title, const char *primary,
-					const char *secondary, int default_action,
-					PurpleAccount *account, const char *who, PurpleConversation *conv,
-					void *user_data, size_t action_count, ...)
+	const char *secondary, int default_action,
+	PurpleRequestCommonParameters *cpar, void *user_data,
+	size_t action_count, ...)
 {
 	void *ui_handle;
 	va_list args;
 
 	va_start(args, action_count);
-	ui_handle = purple_request_action_varg(handle, title, primary, secondary,
-										 default_action, account, who, conv,
-										 user_data, action_count, args);
+	ui_handle = purple_request_action_varg(handle, title, primary,
+		secondary, default_action, cpar, user_data, action_count, args);
 	va_end(args);
 
 	return ui_handle;
 }
 
 void *
-purple_request_action_with_icon(void *handle, const char *title,
-					const char *primary,
-					const char *secondary, int default_action,
-					PurpleAccount *account, const char *who,
-					PurpleConversation *conv, gconstpointer icon_data,
-					gsize icon_size, void *user_data, size_t action_count, ...)
-{
-	void *ui_handle;
-	va_list args;
-
-	va_start(args, action_count);
-	ui_handle = purple_request_action_with_icon_varg(handle, title, primary,
-		secondary, default_action, account, who, conv, icon_data, icon_size,
-		user_data, action_count, args);
-	va_end(args);
-
-	return ui_handle;
-}
-
-
-void *
-purple_request_action_varg(void *handle, const char *title,
-						 const char *primary, const char *secondary,
-						 int default_action,
-						 PurpleAccount *account, const char *who, PurpleConversation *conv,
-						  void *user_data, size_t action_count, va_list actions)
+purple_request_action_varg(void *handle, const char *title, const char *primary,
+	const char *secondary, int default_action,
+	PurpleRequestCommonParameters *cpar, void *user_data,
+	size_t action_count, va_list actions)
 {
 	PurpleRequestUiOps *ops;
 
@@ -1821,8 +1844,7 @@ purple_request_action_varg(void *handle, const char *title,
 		info->type      = PURPLE_REQUEST_ACTION;
 		info->handle    = handle;
 		info->ui_handle = ops->request_action(title, primary, secondary,
-											  default_action, account, who, conv,
-											  user_data, action_count, actions);
+			default_action, cpar, user_data, action_count, actions);
 
 		handles = g_list_append(handles, info);
 
@@ -1831,44 +1853,6 @@ purple_request_action_varg(void *handle, const char *title,
 
 	return NULL;
 }
-
-void *
-purple_request_action_with_icon_varg(void *handle, const char *title,
-						 const char *primary, const char *secondary,
-						 int default_action,
-						 PurpleAccount *account, const char *who,
-						 PurpleConversation *conv, gconstpointer icon_data,
-						 gsize icon_size,
-						 void *user_data, size_t action_count, va_list actions)
-{
-	PurpleRequestUiOps *ops;
-
-	ops = purple_request_get_ui_ops();
-
-	if (ops != NULL && ops->request_action_with_icon != NULL) {
-		PurpleRequestInfo *info;
-
-		info            = g_new0(PurpleRequestInfo, 1);
-		info->type      = PURPLE_REQUEST_ACTION;
-		info->handle    = handle;
-		info->ui_handle = ops->request_action_with_icon(title, primary, secondary,
-											  default_action, account, who, conv,
-											  icon_data, icon_size,
-											  user_data, action_count, actions);
-
-		handles = g_list_append(handles, info);
-
-		return info->ui_handle;
-	} else {
-		/* Fall back on the non-icon request if the UI doesn't support icon
-		 requests */
-		return purple_request_action_varg(handle, title, primary, secondary,
-			default_action, account, who, conv, user_data, action_count, actions);
-	}
-
-	return NULL;
-}
-
 
 void *
 purple_request_fields(void *handle, const char *title, const char *primary,

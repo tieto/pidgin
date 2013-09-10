@@ -113,9 +113,9 @@ typedef struct
 	/** @see purple_request_action_varg(). */
 	void *(*request_action)(const char *title, const char *primary,
 	                        const char *secondary, int default_action,
-	                        PurpleAccount *account, const char *who,
-	                        PurpleConversation *conv, void *user_data,
-	                        size_t action_count, va_list actions);
+	                        PurpleRequestCommonParameters *cpar,
+	                        void *user_data, size_t action_count,
+	                        va_list actions);
 
 	/** @see purple_request_fields(). */
 	void *(*request_fields)(const char *title, const char *primary,
@@ -140,18 +140,10 @@ typedef struct
 	                        PurpleAccount *account, const char *who,
 	                        PurpleConversation *conv, void *user_data);
 
-	/** @see purple_request_action_with_icon_varg(). */
-	void *(*request_action_with_icon)(const char *title, const char *primary,
-	                        const char *secondary, int default_action,
-	                        PurpleAccount *account, const char *who,
-	                        PurpleConversation *conv,
-	                        gconstpointer icon_data, gsize icon_size,
-	                        void *user_data,
-	                        size_t action_count, va_list actions);
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleRequestUiOps;
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
@@ -199,6 +191,14 @@ purple_request_cpar_from_connection(PurpleConnection *gc);
  */
 PurpleRequestCommonParameters *
 purple_request_cpar_from_account(PurpleAccount *account);
+
+/**
+ * Creates new parameters set initially bound with the #PurpleConversation.
+ *
+ * @return The new parameters set.
+ */
+PurpleRequestCommonParameters *
+purple_request_cpar_from_conversation(PurpleConversation *conv);
 
 /*
  * Increases the reference count on the parameters set.
@@ -260,6 +260,30 @@ purple_request_cpar_set_conversation(PurpleRequestCommonParameters *cpar,
  */
 PurpleConversation *
 purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar);
+
+/**
+ * Sets the custom icon associated with the request.
+ *
+ * @param cpar      The parameters set.
+ * @param icon_data The icon image contents (@c NULL to reset).
+ * @param icon_size The icon image size.
+ */
+void
+purple_request_cpar_set_custom_icon(PurpleRequestCommonParameters *cpar,
+	gconstpointer icon_data, gsize icon_size);
+
+/**
+ * Gets the custom icon associated with the request.
+ *
+ * @param cpar      The parameters set (may be @c NULL).
+ * @param icon_size The pointer to variable, where icon size should be stored
+ *                  (may be @c NULL).
+ *
+ * @return The icon image contents.
+ */
+gconstpointer
+purple_request_cpar_get_custom_icon(PurpleRequestCommonParameters *cpar,
+	gsize *icon_size);
 
 /*@}*/
 
@@ -1555,12 +1579,8 @@ void *purple_request_choice_varg(void *handle, const char *title,
  *                       supplied should be the default, supply <tt>2</tt>.
  *                       The should be the action that users are most likely
  *                       to select.
- * @param account        The #PurpleAccount associated with this request, or @c
- *                       NULL if none is.
- * @param who            The username of the buddy associated with this request,
- *                       or @c NULL if none is.
- * @param conv           The #PurpleConversation associated with this request, or
- *                       @c NULL if none is.
+ * @param cpar           The #PurpleRequestCommonParameters object, which gets
+ *                       unref'ed after this call.
  * @param user_data      The data to pass to the callback.
  * @param action_count   The number of actions.
  * @param ...            A list of actions.  These are pairs of
@@ -1573,39 +1593,20 @@ void *purple_request_choice_varg(void *handle, const char *title,
  *
  * @return A UI-specific handle.
  */
-void *purple_request_action(void *handle, const char *title, const char *primary,
-	const char *secondary, int default_action, PurpleAccount *account,
-	const char *who, PurpleConversation *conv, void *user_data,
+void *
+purple_request_action(void *handle, const char *title, const char *primary,
+	const char *secondary, int default_action,
+	PurpleRequestCommonParameters *cpar, void *user_data,
 	size_t action_count, ...);
 
 /**
  * <tt>va_list</tt> version of purple_request_action(); see its documentation.
  */
-void *purple_request_action_varg(void *handle, const char *title,
-	const char *primary, const char *secondary, int default_action,
-	PurpleAccount *account, const char *who, PurpleConversation *conv,
-	void *user_data, size_t action_count, va_list actions);
-
-/**
- * Version of purple_request_action() supplying an image for the UI to
- * optionally display as an icon in the dialog; see its documentation.
- */
-void *purple_request_action_with_icon(void *handle, const char *title,
-	const char *primary, const char *secondary, int default_action,
-	PurpleAccount *account, const char *who, PurpleConversation *conv,
-	gconstpointer icon_data, gsize icon_size, void *user_data,
-	size_t action_count, ...);
-
-/**
- * <tt>va_list</tt> version of purple_request_action_with_icon();
- * see its documentation.
- */
-void *purple_request_action_with_icon_varg(void *handle, const char *title,
-	const char *primary, const char *secondary, int default_action,
-	PurpleAccount *account, const char *who, PurpleConversation *conv,
-	gconstpointer icon_data, gsize icon_size,
-	void *user_data, size_t action_count, va_list actions);
-
+void *
+purple_request_action_varg(void *handle, const char *title, const char *primary,
+	const char *secondary, int default_action,
+	PurpleRequestCommonParameters *cpar, void *user_data,
+	size_t action_count, va_list actions);
 
 /**
  * Displays groups of fields for the user to fill in.
@@ -1665,44 +1666,28 @@ void purple_request_close_with_handle(void *handle);
  * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
  */
 #define purple_request_yes_no(handle, title, primary, secondary, \
-							default_action, account, who, conv, \
-							user_data, yes_cb, no_cb) \
+	default_action, cpar, user_data, yes_cb, no_cb) \
 	purple_request_action((handle), (title), (primary), (secondary), \
-						(default_action), account, who, conv, (user_data), 2, \
-						_("_Yes"), (yes_cb), _("_No"), (no_cb))
+		(default_action), (cpar), (user_data), 2, _("_Yes"), (yes_cb), \
+		_("_No"), (no_cb))
 
 /**
  * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
  */
 #define purple_request_ok_cancel(handle, title, primary, secondary, \
-							default_action, account, who, conv, \
-						    user_data, ok_cb, cancel_cb) \
+	default_action, cpar, user_data, ok_cb, cancel_cb) \
 	purple_request_action((handle), (title), (primary), (secondary), \
-						(default_action), account, who, conv, (user_data), 2, \
-						_("_OK"), (ok_cb), _("_Cancel"), (cancel_cb))
+		(default_action), (cpar), (user_data), 2, _("_OK"), (ok_cb), \
+		_("_Cancel"), (cancel_cb))
 
 /**
  * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
  */
 #define purple_request_accept_cancel(handle, title, primary, secondary, \
-								   default_action, account, who, conv, \
-								   user_data, accept_cb, cancel_cb) \
+	default_action, cpar, user_data, accept_cb, cancel_cb) \
 	purple_request_action((handle), (title), (primary), (secondary), \
-						(default_action), account, who, conv, (user_data), 2, \
-						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
-
-/**
- * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
- * buttons.
- */
-#define purple_request_accept_cancel_with_icon(handle, title, primary, secondary, \
-								   default_action, account, who, conv, \
-								   icon_data, icon_size, \
-								   user_data, accept_cb, cancel_cb) \
-	purple_request_action_with_icon((handle), (title), (primary), (secondary), \
-						(default_action), account, who, conv, icon_data, icon_size, \
-						(user_data), 2, \
-						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
+		(default_action), (cpar), (user_data), 2, _("_Accept"), \
+		(accept_cb), _("_Cancel"), (cancel_cb))
 
 /**
  * Displays a file selector request dialog.  Returns the selected filename to

@@ -257,7 +257,7 @@ request_action_cb(GntWidget *button, GntWidget *window)
 static void*
 finch_request_action(const char *title, const char *primary,
 		const char *secondary, int default_value,
-		PurpleAccount *account, const char *who, PurpleConversation *conv,
+		PurpleRequestCommonParameters *cpar,
 		void *user_data, size_t actioncount,
 		va_list actions)
 {

@@ -1430,10 +1430,10 @@ purple_conv_send_confirm(PurpleConversation *conv, const char *message)
 	data[1] = (gpointer)message;
 
 	purple_request_action(conv, NULL, _("Send Message"), text, 0,
-						  purple_conversation_get_account(conv), NULL, conv,
-						  data, 2,
-						  _("_Send Message"), G_CALLBACK(purple_conv_send_confirm_cb),
-						  _("Cancel"), NULL);
+		purple_request_cpar_from_account(
+			purple_conversation_get_account(conv)),
+		data, 2, _("_Send Message"),
+		G_CALLBACK(purple_conv_send_confirm_cb), _("Cancel"), NULL);
 }
 
 void

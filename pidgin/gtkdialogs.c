@@ -1267,7 +1267,7 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 					purple_buddy_get_name(buddy), purple_contact_get_contact_size(contact, TRUE) - 1);
 
 		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
-				NULL, purple_contact_get_alias(contact), NULL,
+				NULL,
 				contact, 2,
 				_("_Remove Contact"), G_CALLBACK(pidgin_dialogs_remove_contact_cb),
 				_("Cancel"),
@@ -1308,7 +1308,7 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	ggp->new_name = g_strdup(new_name);
 
 	purple_request_action(source, NULL, _("Merge Groups"), text, 0,
-			NULL, NULL, NULL,
+			NULL,
 			ggp, 2,
 			_("_Merge Groups"), G_CALLBACK(pidgin_dialogs_merge_groups_cb),
 			_("Cancel"), G_CALLBACK(free_ggmo));
@@ -1364,7 +1364,7 @@ pidgin_dialogs_remove_group(PurpleGroup *group)
 						   purple_group_get_name(group));
 
 	purple_request_action(group, NULL, _("Remove Group"), text, 0,
-						NULL, NULL, NULL,
+						NULL,
 						group, 2,
 						_("_Remove Group"), G_CALLBACK(pidgin_dialogs_remove_group_cb),
 						_("Cancel"), NULL);
@@ -1403,10 +1403,10 @@ pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 						   purple_buddy_get_name(buddy));
 
 	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0,
-						purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
-						buddy, 2,
-						_("_Remove Buddy"), G_CALLBACK(pidgin_dialogs_remove_buddy_cb),
-						_("Cancel"), NULL);
+		purple_request_cpar_from_account(
+			purple_buddy_get_account(buddy)),
+		buddy, 2, _("_Remove Buddy"),
+		G_CALLBACK(pidgin_dialogs_remove_buddy_cb), _("Cancel"), NULL);
 
 	g_free(text);
 }
@@ -1430,10 +1430,9 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 			name ? name : "");
 
 	purple_request_action(chat, NULL, _("Remove Chat"), text, 0,
-						purple_chat_get_account(chat), NULL, NULL,
-						chat, 2,
-						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),
-						_("Cancel"), NULL);
+		purple_request_cpar_from_account(purple_chat_get_account(chat)),
+		chat, 2, _("_Remove Chat"),
+		G_CALLBACK(pidgin_dialogs_remove_chat_cb), _("Cancel"), NULL);
 
 	g_free(text);
 }

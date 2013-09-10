@@ -634,7 +634,7 @@ msn_show_set_mpop(PurplePluginAction *action)
 						_("Do you want to allow or disallow connecting from "
 						  "multiple locations simultaneously?"),
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(pc), NULL, NULL,
+						purple_request_cpar_from_connection(pc),
 						pc, 3,
 						_("Allow"), G_CALLBACK(enable_mpop_cb),
 						_("Disallow"), G_CALLBACK(disable_mpop_cb),
@@ -704,7 +704,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(gc), NULL, NULL,
+						purple_request_cpar_from_connection(gc),
 						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
 						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),

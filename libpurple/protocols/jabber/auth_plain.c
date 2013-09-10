@@ -97,7 +97,7 @@ jabber_plain_start(JabberStream *js, xmlnode *packet, xmlnode **response, char *
 			_("Plaintext Authentication"),
 			msg,
 			1,
-			account, NULL, NULL,
+			purple_request_cpar_from_account(account),
 			account, allow_plaintext_auth, disallow_plaintext_auth);
 	g_free(msg);
 	return JABBER_SASL_STATE_CONTINUE;

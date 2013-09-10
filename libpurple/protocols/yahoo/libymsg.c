@@ -2126,11 +2126,11 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 				g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 											   "user is on your buddy list.  Clicking \"Yes\" "
 											   "will remove and ignore the buddy."), who);
-				purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
-									  purple_connection_get_account(gc), who, NULL,
-									  b,
-									  G_CALLBACK(ignore_buddy),
-									  G_CALLBACK(keep_buddy));
+				purple_request_yes_no(gc, NULL,
+					_("Ignore buddy?"), buf, 0,
+					purple_request_cpar_from_connection(gc),
+					b, G_CALLBACK(ignore_buddy),
+					G_CALLBACK(keep_buddy));
 				break;
 			}
 		case 2:

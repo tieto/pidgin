@@ -657,11 +657,10 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 	gtkmedia->priv->request_type = PURPLE_MEDIA_NONE;
 	if (!purple_media_accepted(gtkmedia->priv->media, NULL, NULL)) {
 		purple_request_accept_cancel(gtkmedia, _("Incoming Call"),
-				message, NULL, PURPLE_DEFAULT_ACTION_NONE,
-				(void*)account, gtkmedia->priv->screenname,
-				NULL, gtkmedia->priv->media,
-				pidgin_media_accept_cb,
-				pidgin_media_reject_cb);
+			message, NULL, PURPLE_DEFAULT_ACTION_NONE,
+			purple_request_cpar_from_account(account),
+			gtkmedia->priv->media, pidgin_media_accept_cb,
+			pidgin_media_reject_cb);
 	}
 	pidgin_media_emit_message(gtkmedia, message);
 	g_free(message);

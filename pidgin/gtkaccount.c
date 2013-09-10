@@ -2122,11 +2122,9 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 
 		purple_request_close_with_handle(account);
 		purple_request_action(account, NULL, buf, NULL,
-							PURPLE_DEFAULT_ACTION_NONE,
-							account, NULL, NULL,
-							account, 2,
-							_("Delete"), delete_account_cb,
-							_("Cancel"), NULL);
+			PURPLE_DEFAULT_ACTION_NONE,
+			purple_request_cpar_from_account(account), account, 2,
+			_("Delete"), delete_account_cb, _("Cancel"), NULL);
 		g_free(buf);
 	}
 }

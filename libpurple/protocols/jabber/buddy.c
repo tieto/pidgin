@@ -1755,7 +1755,7 @@ jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
 	msg = g_strdup_printf(_("%s will no longer be able to see your status "
 	                        "updates.  Do you want to continue?"), name);
 	purple_request_yes_no(gc, NULL, _("Cancel Presence Notification"),
-	                      msg, 0 /* Yes */, account, name, NULL, buddy,
+	                      msg, 0 /* Yes */, purple_request_cpar_from_account(account), buddy,
 	                      cancel_presence_notification, NULL /* Do nothing */);
 	g_free(msg);
 }
