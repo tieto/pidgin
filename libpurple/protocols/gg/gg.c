@@ -152,9 +152,8 @@ static void ggp_action_buddylist_save(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
 	purple_request_file(action, _("Save buddylist..."), NULL, TRUE,
-			G_CALLBACK(ggp_callback_buddylist_save_ok), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
-			gc);
+		G_CALLBACK(ggp_callback_buddylist_save_ok), NULL,
+		purple_request_cpar_from_connection(gc), gc);
 }
 
 static void ggp_action_buddylist_load(PurplePluginAction *action)
@@ -162,10 +161,8 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
 	purple_request_file(action, _("Load buddylist from file..."), NULL,
-			FALSE,
-			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
-			gc);
+		FALSE, G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
+		purple_request_cpar_from_connection(gc), gc);
 }
 
 /* ----- CONFERENCES ---------------------------------------------------- */

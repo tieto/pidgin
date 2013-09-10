@@ -3351,9 +3351,9 @@ save_file_cb(GtkWidget *item, const char *url)
 		return TRUE;
 	conv = gtkconv->active_conv;
 	purple_request_file(conv, _("Save File"), NULL, TRUE,
-	                    G_CALLBACK(savefile_write_cb), G_CALLBACK(g_free),
-	                    purple_conversation_get_account(conv), NULL, conv,
-	                    (gpointer)g_strdup(url));
+		G_CALLBACK(savefile_write_cb), G_CALLBACK(g_free),
+		purple_request_cpar_from_conversation(conv),
+		(gpointer)g_strdup(url));
 	return TRUE;
 }
 

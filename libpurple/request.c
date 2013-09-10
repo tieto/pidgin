@@ -1897,10 +1897,8 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 
 void *
 purple_request_file(void *handle, const char *title, const char *filename,
-				  gboolean savedialog,
-				  GCallback ok_cb, GCallback cancel_cb,
-				  PurpleAccount *account, const char *who, PurpleConversation *conv,
-				  void *user_data)
+	gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	PurpleRequestUiOps *ops;
 
@@ -1913,12 +1911,14 @@ purple_request_file(void *handle, const char *title, const char *filename,
 		info->type      = PURPLE_REQUEST_FILE;
 		info->handle    = handle;
 		info->ui_handle = ops->request_file(title, filename, savedialog,
-											ok_cb, cancel_cb,
-											account, who, conv, user_data);
+			ok_cb, cancel_cb, cpar, user_data);
 		handles = g_list_append(handles, info);
+
+		purple_request_cpar_unref(cpar);
 		return info->ui_handle;
 	}
 
+	purple_request_cpar_unref(cpar);
 	return NULL;
 }
 

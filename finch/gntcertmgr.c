@@ -111,7 +111,7 @@ add_cert_cb(GntWidget *button, gpointer null)
 			FALSE,
 			G_CALLBACK(tls_peers_mgmt_import_ok_cb),
 			NULL,
-			NULL, NULL, NULL, NULL );
+			NULL, NULL );
 }
 
 /* Save certs in some file */
@@ -159,8 +159,7 @@ save_cert_cb(GntWidget *button, gpointer null)
 			"certificate.pem", TRUE,
 			G_CALLBACK(tls_peers_mgmt_export_ok_cb),
 			G_CALLBACK(purple_certificate_destroy),
-			NULL, NULL, NULL,
-			crt);
+			NULL, crt);
 }
 
 /* Show information about a cert */

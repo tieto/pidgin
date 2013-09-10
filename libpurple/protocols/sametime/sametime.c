@@ -5235,7 +5235,7 @@ static void st_import_action(PurplePluginAction *act) {
 
   purple_request_file(gc, title, NULL, FALSE,
 		    G_CALLBACK(st_import_action_cb), NULL,
-		    account, NULL, NULL,
+		    purple_request_cpar_from_connection(gc),
 		    gc);
 
   g_free(title);
@@ -5275,7 +5275,7 @@ static void st_export_action(PurplePluginAction *act) {
 
   purple_request_file(gc, title, NULL, TRUE,
 		    G_CALLBACK(st_export_action_cb), NULL,
-			account, NULL, NULL,
+		    purple_request_cpar_from_connection(gc),
 		    gc);
 
   g_free(title);

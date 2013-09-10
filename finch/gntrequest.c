@@ -768,11 +768,9 @@ finch_file_request_window(const char *title, const char *path,
 }
 
 static void *
-finch_request_file(const char *title, const char *filename,
-				gboolean savedialog,
-				GCallback ok_cb, GCallback cancel_cb,
-				PurpleAccount *account, const char *who, PurpleConversation *conv,
-				void *user_data)
+finch_request_file(const char *title, const char *filename, gboolean savedialog,
+	GCallback ok_cb, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	FinchFileRequest *data;
 	const char *path;

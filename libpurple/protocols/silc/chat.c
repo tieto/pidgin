@@ -308,7 +308,7 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 		purple_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
 				    G_CALLBACK(silcpurple_chat_chpk_add),
 				    G_CALLBACK(silcpurple_chat_chpk_cancel),
-				    purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+				    purple_request_cpar_from_connection(sg->gc), sgc);
 		return;
 	}
 

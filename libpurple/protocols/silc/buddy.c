@@ -1067,7 +1067,7 @@ silcpurple_add_buddy_ask_pk_cb(SilcPurpleBuddyRes r, gint id)
 	purple_request_file(r->client->application, _("Open..."), NULL, FALSE,
 			    G_CALLBACK(silcpurple_add_buddy_ask_import),
 			    G_CALLBACK(silcpurple_add_buddy_ask_pk_cancel),
-			    purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
+			    purple_request_cpar_from_account(purple_buddy_get_account(r->b)), r);
 
 }
 

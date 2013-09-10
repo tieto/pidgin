@@ -1618,10 +1618,8 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 
 static void *
 pidgin_request_file(const char *title, const char *filename,
-					  gboolean savedialog,
-					  GCallback ok_cb, GCallback cancel_cb,
-					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+	gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *filesel;

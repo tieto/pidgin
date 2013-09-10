@@ -224,7 +224,7 @@ tls_peers_mgmt_import_cb(GtkWidget *button, gpointer data)
 			    FALSE, /* Not a save dialog */
 			    G_CALLBACK(tls_peers_mgmt_import_ok_cb),
 			    NULL,  /* Do nothing if cancelled */
-			    NULL, NULL, NULL, NULL );/* No account,conv,etc. */
+			    NULL, NULL); /* No extra parameters */
 }
 
 static void
@@ -298,7 +298,7 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 			    TRUE, /* Is a save dialog */
 			    G_CALLBACK(tls_peers_mgmt_export_ok_cb),
 			    G_CALLBACK(tls_peers_mgmt_export_cancel_cb),
-			    NULL, NULL, NULL, /* No account,conv,etc. */
+			    NULL, /* No extra parameters */
 			    crt); /* Pass the certificate on to the callback */
 }
 

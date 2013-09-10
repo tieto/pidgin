@@ -95,42 +95,36 @@ typedef struct
 {
 	/** @see purple_request_input(). */
 	void *(*request_input)(const char *title, const char *primary,
-	                       const char *secondary, const char *default_value,
-	                       gboolean multiline, gboolean masked, gchar *hint,
-	                       const char *ok_text, GCallback ok_cb,
-	                       const char *cancel_text, GCallback cancel_cb,
-	                       PurpleRequestCommonParameters *cpar,
-	                       void *user_data);
+		const char *secondary, const char *default_value,
+		gboolean multiline, gboolean masked, gchar *hint,
+		const char *ok_text, GCallback ok_cb,
+		const char *cancel_text, GCallback cancel_cb,
+		PurpleRequestCommonParameters *cpar, void *user_data);
 
 	/** @see purple_request_choice_varg(). */
 	void *(*request_choice)(const char *title, const char *primary,
-	                        const char *secondary, int default_value,
-	                        const char *ok_text, GCallback ok_cb,
-	                        const char *cancel_text, GCallback cancel_cb,
-	                        PurpleRequestCommonParameters *cpar,
-	                        void *user_data, va_list choices);
+		const char *secondary, int default_value, const char *ok_text,
+		GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+		PurpleRequestCommonParameters *cpar, void *user_data,
+		va_list choices);
 
 	/** @see purple_request_action_varg(). */
 	void *(*request_action)(const char *title, const char *primary,
-	                        const char *secondary, int default_action,
-	                        PurpleRequestCommonParameters *cpar,
-	                        void *user_data, size_t action_count,
-	                        va_list actions);
+		const char *secondary, int default_action,
+		PurpleRequestCommonParameters *cpar, void *user_data,
+		size_t action_count, va_list actions);
 
 	/** @see purple_request_fields(). */
 	void *(*request_fields)(const char *title, const char *primary,
-	                        const char *secondary, PurpleRequestFields *fields,
-	                        const char *ok_text, GCallback ok_cb,
-	                        const char *cancel_text, GCallback cancel_cb,
-	                        PurpleRequestCommonParameters *cpar,
-	                        void *user_data);
+		const char *secondary, PurpleRequestFields *fields,
+		const char *ok_text, GCallback ok_cb,
+		const char *cancel_text, GCallback cancel_cb,
+		PurpleRequestCommonParameters *cpar, void *user_data);
 
 	/** @see purple_request_file(). */
 	void *(*request_file)(const char *title, const char *filename,
-	                      gboolean savedialog, GCallback ok_cb,
-	                      GCallback cancel_cb, PurpleAccount *account,
-	                      const char *who, PurpleConversation *conv,
-	                      void *user_data);
+		gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+		PurpleRequestCommonParameters *cpar, void *user_data);
 
 	void (*close_request)(PurpleRequestType type, void *ui_handle);
 
@@ -1700,20 +1694,16 @@ void purple_request_close_with_handle(void *handle);
  *                    False if it is being used to open a file.
  * @param ok_cb       The callback for the @c OK button.
  * @param cancel_cb   The callback for the @c Cancel button, which may be @c NULL.
- * @param account     The #PurpleAccount associated with this request, or @c
- *                    NULL if none is
- * @param who         The username of the buddy associated with this request,
- *                    or @c NULL if none is
- * @param conv        The #PurpleConversation associated with this request, or
- *                    @c NULL if none is
+ * @param cpar        The #PurpleRequestCommonParameters object, which gets
+ *                    unref'ed after this call.
  * @param user_data   The data to pass to the callback.
  *
  * @return A UI-specific handle.
  */
-void *purple_request_file(void *handle, const char *title, const char *filename,
+void *
+purple_request_file(void *handle, const char *title, const char *filename,
 	gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
-	PurpleAccount *account, const char *who, PurpleConversation *conv,
-	void *user_data);
+	PurpleRequestCommonParameters *cpar, void *user_data);
 
 /**
  * Displays a folder select dialog. Returns the selected filename to

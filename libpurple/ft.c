@@ -468,11 +468,11 @@ static int
 purple_xfer_choose_file(PurpleXfer *xfer)
 {
 	purple_request_file(xfer, NULL, purple_xfer_get_filename(xfer),
-					  (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE),
-					  G_CALLBACK(purple_xfer_choose_file_ok_cb),
-					  G_CALLBACK(purple_xfer_choose_file_cancel_cb),
-					  purple_xfer_get_account(xfer), xfer->who, NULL,
-					  xfer);
+		(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE),
+		G_CALLBACK(purple_xfer_choose_file_ok_cb),
+		G_CALLBACK(purple_xfer_choose_file_cancel_cb),
+		purple_request_cpar_from_account(purple_xfer_get_account(xfer)),
+		xfer);
 
 	return 0;
 }

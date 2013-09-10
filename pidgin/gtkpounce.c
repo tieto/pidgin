@@ -158,9 +158,7 @@ filesel(GtkWidget *widget, gpointer data)
 	name = gtk_entry_get_text(GTK_ENTRY(entry));
 
 	purple_request_file(entry, _("Select a file"), name, FALSE,
-					  G_CALLBACK(pounce_update_entry_fields), NULL,
-					  NULL, NULL, NULL,
-					  entry);
+		G_CALLBACK(pounce_update_entry_fields), NULL, NULL, entry);
 	g_signal_connect_swapped(G_OBJECT(entry), "destroy",
 			G_CALLBACK(purple_request_close_with_handle), entry);
 }
