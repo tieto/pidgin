@@ -213,7 +213,7 @@ finch_request_choice(const char *title, const char *primary,
 		const char *secondary, int default_value,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
-		PurpleAccount *account, const char *who, PurpleConversation *conv,
+		PurpleRequestCommonParameters *cpar,
 		void *user_data, va_list choices)
 {
 	GntWidget *window, *combo, *box;

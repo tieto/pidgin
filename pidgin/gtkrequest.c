@@ -471,7 +471,7 @@ pidgin_request_choice(const char *title, const char *primary,
 			const char *secondary, int default_value,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
-			PurpleAccount *account, const char *who, PurpleConversation *conv,
+			PurpleRequestCommonParameters *cpar,
 			void *user_data, va_list args)
 {
 	PidginRequestData *data;
@@ -531,7 +531,7 @@ pidgin_request_choice(const char *title, const char *primary,
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox, purple_request_cpar_get_account(cpar));
 
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);

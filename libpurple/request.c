@@ -1705,20 +1705,22 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 					const char *secondary, int default_value,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
-					PurpleAccount *account, const char *who, PurpleConversation *conv,
+					PurpleRequestCommonParameters *cpar,
 					void *user_data, ...)
 {
 	void *ui_handle;
 	va_list args;
 
-	g_return_val_if_fail(ok_text != NULL,  NULL);
-	g_return_val_if_fail(ok_cb   != NULL,  NULL);
+	if (G_UNLIKELY(ok_text != NULL || ok_cb != NULL)) {
+		purple_request_cpar_unref(cpar);
+		g_return_val_if_reached(NULL);
+	}
 
 	va_start(args, user_data);
 	ui_handle = purple_request_choice_varg(handle, title, primary, secondary,
 					     default_value, ok_text, ok_cb,
 					     cancel_text, cancel_cb,
-					     account, who, conv, user_data, args);
+					     cpar, user_data, args);
 	va_end(args);
 
 	return ui_handle;
@@ -1730,14 +1732,15 @@ purple_request_choice_varg(void *handle, const char *title,
 			 int default_value,
 			 const char *ok_text, GCallback ok_cb,
 			 const char *cancel_text, GCallback cancel_cb,
-			 PurpleAccount *account, const char *who, PurpleConversation *conv,
+			 PurpleRequestCommonParameters *cpar,
 			 void *user_data, va_list choices)
 {
 	PurpleRequestUiOps *ops;
 
-	g_return_val_if_fail(ok_text != NULL,  NULL);
-	g_return_val_if_fail(ok_cb   != NULL,  NULL);
-	g_return_val_if_fail(cancel_text != NULL,  NULL);
+	if (G_UNLIKELY(ok_text != NULL || ok_cb != NULL || cancel_text != NULL)) {
+		purple_request_cpar_unref(cpar);
+		g_return_val_if_reached(NULL);
+	}
 
 	ops = purple_request_get_ui_ops();
 
@@ -1748,17 +1751,16 @@ purple_request_choice_varg(void *handle, const char *title,
 		info->type      = PURPLE_REQUEST_CHOICE;
 		info->handle    = handle;
 		info->ui_handle = ops->request_choice(title, primary, secondary,
-						      default_value,
-						      ok_text, ok_cb,
-						      cancel_text, cancel_cb,
-							  account, who, conv,
-						      user_data, choices);
+			default_value, ok_text, ok_cb, cancel_text, cancel_cb,
+			cpar, user_data, choices);
 
 		handles = g_list_append(handles, info);
 
+		purple_request_cpar_unref(cpar);
 		return info->ui_handle;
 	}
 
+	purple_request_cpar_unref(cpar);
 	return NULL;
 }
 

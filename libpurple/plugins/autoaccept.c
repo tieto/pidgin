@@ -203,12 +203,10 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 						NULL, purple_blist_node_get_int(node, "autoaccept"),
 						_("_Save"), G_CALLBACK(save_cb),
 						_("_Cancel"), NULL,
-						NULL, NULL, NULL,
-						node,
+						NULL, node,
 						_("Ask"), FT_ASK,
 						_("Auto Accept"), FT_ACCEPT,
 						_("Auto Reject"), FT_REJECT,
-						NULL, purple_contact_get_alias((PurpleContact *)node), NULL,
 						NULL);
 	g_free(message);
 }
