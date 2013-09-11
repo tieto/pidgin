@@ -158,7 +158,7 @@ typedef struct
 typedef void (*PurpleRequestInputCb)(void *, const char *);
 
 typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field,
-	gchar **errmsg, void *user_data);
+	gchar **errmsg, gpointer user_data);
 
 /** The type of callbacks passed to purple_request_action().  The first
  *  argument is the @a user_data parameter; the second is the index in the list
