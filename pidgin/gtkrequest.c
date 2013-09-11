@@ -331,6 +331,83 @@ pidgin_request_escape(PurpleRequestCommonParameters *cpar, const gchar *text)
 	return g_markup_escape_text(text, -1);
 }
 
+static GtkWidget *
+pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
+{
+	GtkWidget *img = NULL;
+	PurpleRequestIconType icon_type;
+	gconstpointer icon_data;
+	gsize icon_size;
+	const gchar *icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
+
+	/* Dialog icon. */
+	icon_data = purple_request_cpar_get_custom_icon(cpar, &icon_size);
+	if (icon_data) {
+		GdkPixbuf *pixbuf;
+
+		pixbuf = pidgin_pixbuf_from_data(icon_data, icon_size);
+		if (pixbuf) {
+			/* scale the image if it is too large */
+			int width = gdk_pixbuf_get_width(pixbuf);
+			int height = gdk_pixbuf_get_height(pixbuf);
+			if (width > 128 || height > 128) {
+				int scaled_width = width > height ?
+					128 : (128 * width) / height;
+				int scaled_height = height > width ?
+					128 : (128 * height) / width;
+				GdkPixbuf *scaled;
+
+				purple_debug_info("pidgin", "dialog icon was "
+					"too large, scaling it down");
+
+				scaled = gdk_pixbuf_scale_simple(pixbuf,
+					scaled_width, scaled_height,
+					GDK_INTERP_BILINEAR);
+				if (scaled) {
+					g_object_unref(pixbuf);
+					pixbuf = scaled;
+				}
+			}
+			img = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(pixbuf);
+		} else {
+			purple_debug_info("pidgin",
+				"failed to parse dialog icon");
+		}
+	}
+
+	if (img)
+		return img;
+
+	icon_type = purple_request_cpar_get_icon(cpar);
+	switch (icon_type)
+	{
+		case PURPLE_REQUEST_ICON_REQUEST:
+			icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
+			break;
+		case PURPLE_REQUEST_ICON_DIALOG:
+		case PURPLE_REQUEST_ICON_INFO:
+			icon_stock = PIDGIN_STOCK_DIALOG_INFO;
+			break;
+		case PURPLE_REQUEST_ICON_WARNING:
+			icon_stock = PIDGIN_STOCK_DIALOG_WARNING;
+			break;
+		case PURPLE_REQUEST_ICON_ERROR:
+			icon_stock = PIDGIN_STOCK_DIALOG_ERROR;
+			break;
+		/* intentionally no default value */
+	}
+
+	img = gtk_image_new_from_stock(icon_stock,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+
+	if (img || icon_type == PURPLE_REQUEST_ICON_REQUEST)
+		return img;
+
+	return gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+}
+
 static void *
 pidgin_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
@@ -387,8 +464,7 @@ pidgin_request_input(const char *title, const char *primary,
 	                  hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -548,8 +624,7 @@ pidgin_request_choice(const char *title, const char *primary,
 	                  hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -616,8 +691,6 @@ pidgin_request_action(const char *title, const char *primary,
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 	gsize i;
-	gconstpointer icon_data;
-	gsize icon_size;
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_ACTION;
@@ -671,39 +744,7 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                  hbox);
 
-	/* Dialog icon. */
-	icon_data = purple_request_cpar_get_custom_icon(cpar, &icon_size);
-	if (icon_data) {
-		GdkPixbuf *pixbuf = pidgin_pixbuf_from_data(icon_data, icon_size);
-		if (pixbuf) {
-			/* scale the image if it is too large */
-			int width = gdk_pixbuf_get_width(pixbuf);
-			int height = gdk_pixbuf_get_height(pixbuf);
-			if (width > 128 || height > 128) {
-				int scaled_width = width > height ? 128 : (128 * width) / height;
-				int scaled_height = height > width ? 128 : (128 * height) / width;
-				GdkPixbuf *scaled =
-						gdk_pixbuf_scale_simple(pixbuf, scaled_width, scaled_height,
-						    GDK_INTERP_BILINEAR);
-
-				purple_debug_info("pidgin",
-				    "dialog icon was too large, scaled it down\n");
-				if (scaled) {
-					g_object_unref(pixbuf);
-					pixbuf = scaled;
-				}
-			}
-			img = gtk_image_new_from_pixbuf(pixbuf);
-			g_object_unref(pixbuf);
-		} else {
-			purple_debug_info("pidgin", "failed to parse dialog icon\n");
-		}
-	}
-
-	if (!img) {
-		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
-	}
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -1285,8 +1326,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_show(hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);

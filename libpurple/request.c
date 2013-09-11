@@ -162,6 +162,7 @@ struct _PurpleRequestCommonParameters
 
 	PurpleAccount *account;
 	PurpleConversation *conv;
+	PurpleRequestIconType icon_type;
 	gconstpointer icon_data;
 	gsize icon_size;
 	gboolean html;
@@ -266,6 +267,24 @@ purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar)
 		return NULL;
 
 	return cpar->conv;
+}
+
+void
+purple_request_cpar_set_icon(PurpleRequestCommonParameters *cpar,
+	PurpleRequestIconType icon_type)
+{
+	g_return_if_fail(cpar != NULL);
+
+	cpar->icon_type = icon_type;
+}
+
+PurpleRequestIconType
+purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar)
+{
+	if (cpar == NULL)
+		return PURPLE_REQUEST_ICON_REQUEST;
+
+	return cpar->icon_type;
 }
 
 void

@@ -93,6 +93,15 @@ typedef enum
 	PURPLE_REQUEST_FEATURE_HTML = 0x00000001
 } PurpleRequestFeature;
 
+typedef enum
+{
+	PURPLE_REQUEST_ICON_REQUEST = 0,
+	PURPLE_REQUEST_ICON_DIALOG,
+	PURPLE_REQUEST_ICON_INFO,
+	PURPLE_REQUEST_ICON_WARNING,
+	PURPLE_REQUEST_ICON_ERROR
+} PurpleRequestIconType;
+
 /**
  * Request UI operations.
  */
@@ -260,6 +269,26 @@ purple_request_cpar_set_conversation(PurpleRequestCommonParameters *cpar,
  */
 PurpleConversation *
 purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar);
+
+/**
+ * Sets the icon associated with the request.
+ *
+ * @param cpar      The parameters set.
+ * @param icon_type The icon type.
+ */
+void
+purple_request_cpar_set_icon(PurpleRequestCommonParameters *cpar,
+	PurpleRequestIconType icon_type);
+
+/**
+ * Gets the icon associated with the request.
+ *
+ * @param cpar The parameters set.
+ *
+ * @returns icon_type The icon type.
+ */
+PurpleRequestIconType
+purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar);
 
 /**
  * Sets the custom icon associated with the request.
