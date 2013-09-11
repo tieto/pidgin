@@ -804,6 +804,7 @@ finch_request_folder(const char *title, const char *dirname, GCallback ok_cb,
 
 static PurpleRequestUiOps uiops =
 {
+	0,
 	finch_request_input,
 	finch_request_choice,
 	finch_request_action,

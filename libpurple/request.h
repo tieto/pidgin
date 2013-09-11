@@ -88,11 +88,18 @@ typedef enum
 
 } PurpleRequestFieldType;
 
+typedef enum
+{
+	PURPLE_REQUEST_FEATURE_HTML = 0x00000001
+} PurpleRequestFeature;
+
 /**
  * Request UI operations.
  */
 typedef struct
 {
+	PurpleRequestFeature features;
+
 	/** @see purple_request_input(). */
 	void *(*request_input)(const char *title, const char *primary,
 		const char *secondary, const char *default_value,
@@ -277,6 +284,28 @@ purple_request_cpar_set_custom_icon(PurpleRequestCommonParameters *cpar,
 gconstpointer
 purple_request_cpar_get_custom_icon(PurpleRequestCommonParameters *cpar,
 	gsize *icon_size);
+
+/**
+ * Switches the request text to be HTML or not.
+ *
+ * @param cpar    The parameters set.
+ * @param enabled 1, if the text passed with the request contains HTML,
+ *                0 otherwise. Don't use any other values, as they may be
+ *                redefined in the future.
+ */
+void
+purple_request_cpar_set_html(PurpleRequestCommonParameters *cpar,
+	gboolean enabled);
+
+/**
+ * Checks, if the text passed to the request is HTML.
+ *
+ * @param cpar The parameters set (may be @c NULL).
+ *
+ * @return @c TRUE, if the text is HTML, @c FALSE otherwise.
+ */
+gboolean
+purple_request_cpar_is_html(PurpleRequestCommonParameters *cpar);
 
 /*@}*/
 

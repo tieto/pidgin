@@ -309,6 +309,28 @@ text_to_stock(const char *text)
 	return text;
 }
 
+static gchar *
+pidgin_request_escape(PurpleRequestCommonParameters *cpar, const gchar *text)
+{
+	if (text == NULL)
+		return NULL;
+
+	if (purple_request_cpar_is_html(cpar)) {
+		gboolean valid;
+
+		valid = pango_parse_markup(text, -1, 0, NULL, NULL, NULL, NULL);
+
+		if (valid)
+			return g_strdup(text);
+		else {
+			purple_debug_error("pidgin", "Passed label text is not "
+				"a valid markup. Falling back to plain text.");
+		}
+	}
+
+	return g_markup_escape_text(text, -1);
+}
+
 static void *
 pidgin_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
@@ -378,8 +400,8 @@ pidgin_request_input(const char *title, const char *primary,
 	pidgin_widget_decorate_account(hbox, purple_request_cpar_get_account(cpar));
 
 	/* Descriptive label */
-	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
-	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
+	primary_esc = pidgin_request_escape(cpar, primary);
+	secondary_esc = pidgin_request_escape(cpar, secondary);
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 								 "%s</span>%s%s" : "%s%s%s"),
 								 (primary ? primary_esc : ""),
@@ -538,8 +560,8 @@ pidgin_request_choice(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
-	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
-	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
+	primary_esc = pidgin_request_escape(cpar, primary);
+	secondary_esc = pidgin_request_escape(cpar, secondary);
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 				      "%s</span>%s%s" : "%s%s%s"),
 				     (primary ? primary_esc : ""),
@@ -693,8 +715,8 @@ pidgin_request_action(const char *title, const char *primary,
 		purple_request_cpar_get_account(cpar));
 
 	/* Descriptive label */
-	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
-	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
+	primary_esc = pidgin_request_escape(cpar, primary);
+	secondary_esc = pidgin_request_escape(cpar, secondary);
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 								 "%s</span>%s%s" : "%s%s%s"),
 								 (primary ? primary_esc : ""),
@@ -1290,7 +1312,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if(primary) {
-		primary_esc = g_markup_escape_text(primary, -1);
+		primary_esc = pidgin_request_escape(cpar, primary);
 		label_text = g_strdup_printf(
 				"<span weight=\"bold\" size=\"larger\">%s</span>", primary_esc);
 		g_free(primary_esc);
@@ -1331,7 +1353,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	}
 
 	if (secondary) {
-		secondary_esc = g_markup_escape_text(secondary, -1);
+		secondary_esc = pidgin_request_escape(cpar, secondary);
 		label = gtk_label_new(NULL);
 
 		gtk_label_set_markup(GTK_LABEL(label), secondary_esc);
@@ -1777,6 +1799,7 @@ pidgin_close_request(PurpleRequestType type, void *ui_handle)
 
 static PurpleRequestUiOps ops =
 {
+	PURPLE_REQUEST_FEATURE_HTML,
 	pidgin_request_input,
 	pidgin_request_choice,
 	pidgin_request_action,
