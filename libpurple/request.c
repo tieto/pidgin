@@ -166,6 +166,7 @@ struct _PurpleRequestCommonParameters
 	gconstpointer icon_data;
 	gsize icon_size;
 	gboolean html;
+	gboolean compact;
 };
 
 PurpleRequestCommonParameters *
@@ -329,6 +330,22 @@ purple_request_cpar_is_html(PurpleRequestCommonParameters *cpar)
 		return FALSE;
 
 	return cpar->html;
+}
+
+void
+purple_request_cpar_set_compact(PurpleRequestCommonParameters *cpar,
+	gboolean compact)
+{
+	cpar->compact = compact;
+}
+
+gboolean
+purple_request_cpar_is_compact(PurpleRequestCommonParameters *cpar)
+{
+	if (cpar == NULL)
+		return FALSE;
+
+	return cpar->compact;
 }
 
 PurpleRequestFields *
