@@ -23,7 +23,16 @@
 #define _BONJOUR_FT_H_
 #include "network.h"
 #include "proxy.h"
+
+#define XEP_TYPE_XFER             (xep_xfer_get_type())
+#define XEP_XFER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), XEP_TYPE_XFER, XepXfer))
+#define XEP_XFER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), XEP_TYPE_XFER, XepXferClass))
+#define XEP_IS_XFER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), XEP_TYPE_XFER))
+#define XEP_IS_XFER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), XEP_TYPE_XFER))
+#define XEP_XFER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), XEP_TYPE_XFER, XepXferClass))
 typedef struct _XepXfer XepXfer;
+typedef struct _XepXferClass XepXferClass;
+
 typedef enum {
 	XEP_BYTESTREAMS = 1,
 	XEP_IBB = 2,
@@ -32,6 +41,8 @@ typedef enum {
 
 struct _XepXfer
 {
+	PurpleXfer parent;
+
 	void *data;
 	char *filename;
 	int filesize;
@@ -53,6 +64,26 @@ struct _XepXfer
 	PurpleXmlNode *streamhost;
 	PurpleBuddy *pb;
 };
+
+struct _XepXferClass
+{
+	PurpleXferClass parent_class;
+};
+
+/**
+ * Registers the type for XepXfer in the type system.
+ */
+void xep_xfer_register_type(PurplePlugin *plugin);
+
+/**
+ * Returns the GType for the XepXfer object.
+ */
+GType xep_xfer_get_type(void);
+
+/**
+ * Returns a new XepXfer instance.
+ */
+PurpleXfer *xep_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who);
 
 /**
  * Create a new PurpleXfer

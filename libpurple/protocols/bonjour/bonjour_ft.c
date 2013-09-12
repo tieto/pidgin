@@ -45,6 +45,32 @@ static void bonjour_free_xfer(PurpleXfer *xfer);
 static unsigned int next_id = 0;
 
 static void
+xep_xfer_init(GObject *object)
+{
+}
+
+static void
+xep_xfer_class_init(GObjectClass *klass)
+{
+}
+
+PurpleXfer *
+xep_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
+{
+	g_return_val_if_fail(type    != PURPLE_XFER_TYPE_UNKNOWN, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(who     != NULL, NULL);
+
+	return g_object_new(XEP_TYPE_XFER,
+	                    "account",      account,
+	                    "type",         type,
+	                    "remote-user",  who,
+	                    NULL);
+}
+
+PURPLE_DEFINE_TYPE(XepXfer, xep_xfer, PURPLE_TYPE_XFER);
+
+static void
 xep_ft_si_reject(BonjourConnection *bd, const char *id, const char *to, const char *error_code, const char *error_type)
 {
 	PurpleXmlNode *error_node;
@@ -90,7 +116,7 @@ static void bonjour_xfer_cancel_send(PurpleXfer *xfer)
 
 static void bonjour_xfer_request_denied(PurpleXfer *xfer)
 {
-	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
+	XepXfer *xf = XEP_XFER(xfer);
 
 	purple_debug_info("bonjour", "Bonjour-xfer-request-denied.\n");
 
@@ -162,7 +188,7 @@ bonjour_si_xfer_find(BonjourConnection *bd, const char *sid, const char *from)
 		xfer = xfers->data;
 		if(xfer == NULL)
 			break;
-		xf = purple_xfer_get_protocol_data(xfer);
+		xf = XEP_XFER(xfer);
 		if(xf == NULL)
 			break;
 		if(xf->sid && purple_xfer_get_remote_user(xfer) && !strcmp(xf->sid, sid) &&
@@ -180,7 +206,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 {
 	PurpleXmlNode *si_node, *feature, *field, *file, *x;
 	XepIq *iq;
-	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
+	XepXfer *xf = XEP_XFER(xfer);
 	BonjourConnection *bd = NULL;
 	char buf[32];
 
@@ -249,7 +275,7 @@ xep_ft_si_result(PurpleXfer *xfer, const char *to)
 
 	if(!to || !xfer)
 		return;
-	xf = purple_xfer_get_protocol_data(xfer);
+	xf = XEP_XFER(xfer);
 	if(!xf)
 		return;
 
@@ -311,7 +337,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 
 	purple_debug_misc("bonjour", "bonjour-free-xfer-%p.\n", xfer);
 
-	xf = purple_xfer_get_protocol_data(xfer);
+	xf = XEP_XFER(xfer);
 	if(xf != NULL) {
 		BonjourConnection *bd = (BonjourConnection*)xf->data;
 		if(bd != NULL) {
@@ -331,9 +357,6 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		g_free(xf->sid);
 
 		purple_xmlnode_free_tree(xf->streamhost);
-
-		g_free(xf);
-		purple_xfer_set_protocol_data(xfer, NULL);
 	}
 
 	purple_debug_misc("bonjour", "Need close socket.\n");
@@ -356,8 +379,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 
 	/* Build the file transfer handle */
 	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_TYPE_SEND, who);
-	xep_xfer = g_new0(XepXfer, 1);
-	purple_xfer_set_protocol_data(xfer, xep_xfer);
+	xep_xfer = XEP_XFER(xfer);
 	xep_xfer->data = bd;
 
 	purple_debug_info("bonjour", "Bonjour-new-xfer bd=%p data=%p.\n", bd, xep_xfer->data);
@@ -402,7 +424,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	BonjourBuddy *bb;
 	XepXfer *xf;
 
-	xf = purple_xfer_get_protocol_data(xfer);
+	xf = XEP_XFER(xfer);
 	if(xf == NULL)
 		return;
 
@@ -657,7 +679,7 @@ __xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, PurpleXmlNode *stream
 	char *tmp_iq_id;
 	const char *jid, *host, *port;
 	int portnum;
-	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
+	XepXfer *xf = XEP_XFER(xfer);
 
 	for(; streamhost; streamhost = purple_xmlnode_get_next_twin(streamhost)) {
 		if(!(jid = purple_xmlnode_get_attrib(streamhost, "jid")) ||
@@ -762,8 +784,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 
 	/* Build the file transfer handle */
 	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_TYPE_RECEIVE, from);
-	xf = g_new0(XepXfer, 1);
-	purple_xfer_set_protocol_data(xfer, xf);
+	xf = XEP_XFER(xfer);
 	xf->data = bd;
 	purple_xfer_set_filename(xfer, filename);
 	xf->iq_id = g_strdup(id);
@@ -785,7 +806,7 @@ static void
 bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleXfer *xfer = data;
-	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
+	XepXfer *xf = XEP_XFER(xfer);
 	int acceptfd;
 	int len = 0;
 
@@ -921,7 +942,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	purple_xfer_set_watcher(xfer, purple_input_add(sock, PURPLE_INPUT_READ,
 					 bonjour_sock5_request_cb, xfer));
-	xf = purple_xfer_get_protocol_data(xfer);
+	xf = XEP_XFER(xfer);
 	xf->listen_data = NULL;
 
 	bd = xf->data;
@@ -959,7 +980,7 @@ bonjour_bytestreams_init(PurpleXfer *xfer)
 		return;
 
 	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
-	xf = purple_xfer_get_protocol_data(xfer);
+	xf = XEP_XFER(xfer);
 
 	xf->listen_data = purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM, FALSE,
 						      bonjour_bytestreams_listen, xfer);
@@ -973,7 +994,7 @@ static void
 bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleXfer *xfer = data;
-	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
+	XepXfer *xf = XEP_XFER(xfer);
 	XepIq *iq;
 	PurpleXmlNode *q_node, *tmp_node;
 	BonjourConnection *bd;
@@ -1031,7 +1052,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 
 	purple_debug_info("bonjour", "bonjour-bytestreams-connect.\n");
 
-	xf = purple_xfer_get_protocol_data(xfer);
+	xf = XEP_XFER(xfer);
 	if(!xf)
 		return;
 

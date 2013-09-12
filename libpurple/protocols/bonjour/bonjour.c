@@ -693,6 +693,7 @@ static void
 bonjour_protocol_interface_init(PurpleProtocolInterface *iface)
 {
 	iface->connection_new       = bonjour_connection_new;
+	iface->xfer_new             = xep_xfer_new;
 	iface->list_icon            = bonjour_list_icon;
 	iface->status_text          = bonjour_status_text;
 	iface->tooltip_text         = bonjour_tooltip_text;
@@ -742,6 +743,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 {
 	bonjour_connection_register_type(plugin);
 	bonjour_protocol_register_type(plugin);
+	xep_xfer_register_type(plugin);
 
 	my_protocol = purple_protocols_add(BONJOUR_TYPE_PROTOCOL, error);
 	if (!my_protocol)
