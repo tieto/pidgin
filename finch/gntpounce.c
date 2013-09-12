@@ -675,8 +675,7 @@ pounces_manager_delete_cb(GntButton *button, gpointer user_data)
 	pouncee = purple_pounce_get_pouncee(pounce);
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
 	purple_request_action(pounce, NULL, buf, NULL, 0,
-						account, pouncee, NULL,
-						pounce, 2,
+		purple_request_cpar_from_account(account), pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,
 						_("Cancel"), NULL);
 	g_free(buf);

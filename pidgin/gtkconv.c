@@ -1108,10 +1108,8 @@ menu_save_as_cb(GtkAction *action, gpointer data)
 			*c = ' ';
 	}
 	purple_request_file(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
-					  buf,
-					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
-					  NULL, NULL, conv,
-					  conv);
+		buf, TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
+		purple_request_cpar_from_conversation(conv), conv);
 
 	g_free(buf);
 }
@@ -2890,9 +2888,8 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	buf = g_strdup_printf("%s.%s", purple_normalize(purple_conversation_get_account(conv), purple_conversation_get_name(conv)), ext);
 
 	purple_request_file(gtkconv, _("Save Icon"), buf, TRUE,
-					 G_CALLBACK(saveicon_writefile_cb), NULL,
-					purple_conversation_get_account(conv), NULL, conv,
-					gtkconv);
+		G_CALLBACK(saveicon_writefile_cb), NULL,
+		purple_request_cpar_from_conversation(conv), gtkconv);
 
 	g_free(buf);
 }

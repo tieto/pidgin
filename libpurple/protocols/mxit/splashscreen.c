@@ -205,11 +205,11 @@ void splash_display(struct MXitSession* session)
 
 			if (splash_clickable(session)) {
 				purple_request_fields(session->con, _("MXit Advertising"), NULL, NULL, fields,
-					_("More Information"), G_CALLBACK(splash_click_ok), _("Close"), NULL, session->acc, NULL, NULL, session->con);
+					_("More Information"), G_CALLBACK(splash_click_ok), _("Close"), NULL, purple_request_cpar_from_account(session->acc), session->con);
 			}
 			else {
 				purple_request_fields(session->con, _("MXit Advertising"), NULL, NULL, fields,
-					_("Continue"), G_CALLBACK(splash_click_ok), _("Close"), NULL, session->acc, NULL, NULL, session->con);
+					_("Continue"), G_CALLBACK(splash_click_ok), _("Close"), NULL, purple_request_cpar_from_account(session->acc), session->con);
 			}
 		}
 

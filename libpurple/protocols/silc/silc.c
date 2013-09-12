@@ -1068,7 +1068,7 @@ silcpurple_attrs(PurpleProtocolAction *action)
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
-				purple_connection_get_account(gc), NULL, NULL, gc);
+			    purple_request_cpar_from_connection(gc), gc);
 }
 
 static void
@@ -1276,7 +1276,7 @@ silcpurple_create_keypair(PurpleProtocolAction *action)
 			      _("Create New SILC Key Pair"), NULL, fields,
 			      _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
 			      _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel),
-			      purple_connection_get_account(gc), NULL, NULL, gc);
+			      purple_request_cpar_from_connection(gc), gc);
 
 	g_strfreev(u);
 	silc_free(hostname);

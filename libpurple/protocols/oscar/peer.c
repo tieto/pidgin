@@ -1101,7 +1101,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 						  "revealed, this may be considered a privacy "
 						  "risk."),
 						PURPLE_DEFAULT_ACTION_NONE,
-						account, bn, NULL,
+						purple_request_cpar_from_account(account),
 						conn, 2,
 						_("C_onnect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
 						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));

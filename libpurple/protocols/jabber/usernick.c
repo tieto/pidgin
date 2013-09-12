@@ -81,7 +81,7 @@ static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, PurpleXm
 	purple_request_input(js->gc, _("Set User Nickname"), _("Please specify a new nickname for you."),
 		_("This information is visible to all contacts on your contact list, so choose something appropriate."),
 		oldnickname, FALSE, FALSE, NULL, _("Set"), PURPLE_CALLBACK(do_nick_set), _("Cancel"), NULL,
-		purple_connection_get_account(js->gc), NULL, NULL, js);
+		purple_request_cpar_from_connection(js->gc), js);
 	g_free(oldnickname);
 }
 

@@ -469,7 +469,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 					    fields,
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
-						NULL, NULL, NULL,
+						NULL,
 					    toolbar);
 		g_free(msg);
 		g_free(desc);

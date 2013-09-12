@@ -242,9 +242,9 @@ static void mxit_profile_action( PurpleProtocolAction* action )
 			purple_request_field_string_set_editable( field, FALSE );
 
 		/* gender */
-		field = purple_request_field_choice_new( "male", _( "Gender" ), ( profile->male ) ? 1 : 0 );
-		purple_request_field_choice_add( field, _( "Female" ) );		/* 0 */
-		purple_request_field_choice_add( field, _( "Male" ) );			/* 1 */
+		field = purple_request_field_choice_new( "male", _( "Gender" ), GINT_TO_POINTER(profile->male ? 1 : 0));
+		purple_request_field_choice_add( field, _( "Female" ), GINT_TO_POINTER(0));
+		purple_request_field_choice_add( field, _( "Male" ), GINT_TO_POINTER(1));
 		purple_request_field_group_add_field( public_group, field );
 
 		/* first name */
@@ -311,7 +311,7 @@ static void mxit_profile_action( PurpleProtocolAction* action )
 
 	/* (reference: "libpurple/request.h") */
 	purple_request_fields( gc, _( "Profile" ), _( "Update your MXit Profile" ), NULL, fields, _( "Set" ),
-			G_CALLBACK( mxit_profile_cb ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
+			G_CALLBACK( mxit_profile_cb ), _( "Cancel" ), NULL, purple_request_cpar_from_connection(gc), gc );
 }
 
 
@@ -408,7 +408,7 @@ static void mxit_change_pin_action( PurpleProtocolAction* action )
 
 	/* (reference: "libpurple/request.h") */
 	purple_request_fields( gc, _( "Change PIN" ), _( "Change MXit PIN" ), NULL, fields, _( "Set" ),
-			G_CALLBACK( mxit_change_pin_cb ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
+			G_CALLBACK( mxit_change_pin_cb ), _( "Cancel" ), NULL, purple_request_cpar_from_connection(gc), gc );
 }
 
 
@@ -499,7 +499,7 @@ static void mxit_user_search_action( PurpleProtocolAction* action )
 		NULL, FALSE, FALSE, NULL,
 		_( "_Search" ), G_CALLBACK( mxit_user_search_cb ),
 		_( "_Cancel" ), NULL,
-		purple_connection_get_account( gc ), NULL, NULL,
+		purple_request_cpar_from_connection(gc),
 		gc );
 }
 

@@ -2123,11 +2123,11 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 				g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 											   "user is on your buddy list.  Clicking \"Yes\" "
 											   "will remove and ignore the buddy."), who);
-				purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
-									  purple_connection_get_account(gc), who, NULL,
-									  b,
-									  G_CALLBACK(ignore_buddy),
-									  G_CALLBACK(keep_buddy));
+				purple_request_yes_no(gc, NULL,
+					_("Ignore buddy?"), buf, 0,
+					purple_request_cpar_from_connection(gc),
+					b, G_CALLBACK(ignore_buddy),
+					G_CALLBACK(keep_buddy));
 				break;
 			}
 		case 2:
@@ -4091,7 +4091,7 @@ GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 static void yahoo_act_id(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	const char *name = yd->profiles[purple_request_fields_get_choice(fields, "id")];
+	const char *name = yd->profiles[GPOINTER_TO_INT(purple_request_fields_get_choice(fields, "id"))];
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 3, name);
@@ -4185,17 +4185,16 @@ static void yahoo_show_act_id(PurpleProtocolAction *action)
 	purple_request_field_group_add_field(group, field);
 
 	for (iter = 0; yd->profiles[iter]; iter++) {
-		purple_request_field_choice_add(field, yd->profiles[iter]);
+		purple_request_field_choice_add(field, yd->profiles[iter], GINT_TO_POINTER(iter));
 		if (purple_strequal(yd->profiles[iter], name))
-			purple_request_field_choice_set_default_value(field, iter);
+			purple_request_field_choice_set_default_value(field, GINT_TO_POINTER(iter));
 	}
 
 	purple_request_fields(gc, NULL, _("Select the ID you want to activate"), NULL,
 					   fields,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
-					   gc);
+					   purple_request_cpar_from_connection(gc), gc);
 }
 
 static void yahoo_show_chat_goto(PurpleProtocolAction *action)
@@ -4205,7 +4204,7 @@ static void yahoo_show_chat_goto(PurpleProtocolAction *action)
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 

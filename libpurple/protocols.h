@@ -551,6 +551,18 @@ gboolean purple_protocol_initiate_media(PurpleAccount *account,
  */
 void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
 
+/**
+ * Gets the safe maximum message size in bytes for the protocol.
+ *
+ * @see PurpleProtocol#get_max_message_size
+ *
+ * @param protocol The protocol to query.
+ *
+ * @return Maximum message size, 0 if unspecified, -1 for infinite.
+ */
+gssize
+purple_protocol_get_max_message_size(PurpleProtocol *protocol);
+
 /*@}*/
 
 /**************************************************************************/

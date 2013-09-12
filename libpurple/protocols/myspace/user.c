@@ -819,9 +819,7 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 			_("This username is available. Would you like to set it?"),
 			_("ONCE SET, THIS CANNOT BE CHANGED!"),
 			0,
-			session->account,
-			NULL,
-			NULL,
+			purple_request_cpar_from_account(session->account),
 			session->gc,
 			G_CALLBACK(msim_set_username_confirmed_cb),
 			G_CALLBACK(msim_do_not_set_username_cb));
@@ -834,9 +832,7 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 				"", FALSE, FALSE, NULL,
 				_("OK"), G_CALLBACK(msim_check_username_availability_cb),
 				_("Cancel"), G_CALLBACK(msim_do_not_set_username_cb),
-				session->account,
-				NULL,
-				NULL,
+				purple_request_cpar_from_connection(session->gc),
 				session->gc);
 	}
 }
@@ -895,8 +891,6 @@ void msim_set_username_cb(PurpleConnection *gc)
 			"", FALSE, FALSE, NULL,
 			_("OK"), G_CALLBACK(msim_check_username_availability_cb),
 			_("Cancel"), G_CALLBACK(msim_do_not_set_username_cb),
-			purple_connection_get_account(gc),
-			NULL,
-			NULL,
+			purple_request_cpar_from_connection(gc),
 			gc);
 }

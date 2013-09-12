@@ -420,14 +420,12 @@ purple_xfer_choose_file_cancel_cb(void *user_data, const char *filename)
 static int
 purple_xfer_choose_file(PurpleXfer *xfer)
 {
-	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
-
 	purple_request_file(xfer, NULL, purple_xfer_get_filename(xfer),
-					  (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE),
-					  G_CALLBACK(purple_xfer_choose_file_ok_cb),
-					  G_CALLBACK(purple_xfer_choose_file_cancel_cb),
-					  purple_xfer_get_account(xfer), priv->who, NULL,
-					  xfer);
+		(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE),
+		G_CALLBACK(purple_xfer_choose_file_ok_cb),
+		G_CALLBACK(purple_xfer_choose_file_cancel_cb),
+		purple_request_cpar_from_account(purple_xfer_get_account(xfer)),
+		xfer);
 
 	return 0;
 }
@@ -454,6 +452,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 	/* If we have already accepted the request, ask the destination file
 	   name directly */
 	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_ACCEPTED) {
+		PurpleRequestCommonParameters *cpar;
 		PurpleBuddy *buddy = purple_blist_find_buddy(priv->account, priv->who);
 
 		if (purple_xfer_get_filename(xfer) != NULL)
@@ -475,18 +474,16 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 			serv_got_im(purple_account_get_connection(priv->account),
 								 priv->who, priv->message, 0, time(NULL));
 
+		cpar = purple_request_cpar_from_account(xfer->account);
 		if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
-			purple_request_accept_cancel_with_icon(xfer, NULL, buf, NULL,
-				PURPLE_DEFAULT_ACTION_NONE, priv->account, priv->who, NULL,
-				thumb, thumb_size, xfer,
-				G_CALLBACK(purple_xfer_choose_file),
-				G_CALLBACK(cancel_recv_cb));
-		} else {
-			purple_request_accept_cancel(xfer, NULL, buf, NULL,
-				PURPLE_DEFAULT_ACTION_NONE, priv->account, priv->who, NULL,
-				xfer, G_CALLBACK(purple_xfer_choose_file),
-				G_CALLBACK(cancel_recv_cb));
+			purple_request_cpar_set_custom_icon(cpar, thumb,
+				thumb_size);
 		}
+
+		purple_request_accept_cancel(xfer, NULL, buf, NULL,
+			PURPLE_DEFAULT_ACTION_NONE, cpar, xfer,
+			G_CALLBACK(purple_xfer_choose_file),
+			G_CALLBACK(cancel_recv_cb));
 
 		g_free(buf);
 	} else
@@ -526,11 +523,9 @@ purple_xfer_ask_accept(PurpleXfer *xfer)
 					   purple_xfer_get_remote_ip(xfer),
 					   purple_xfer_get_remote_port(xfer));
 	purple_request_accept_cancel(xfer, NULL, buf, buf2,
-							   PURPLE_DEFAULT_ACTION_NONE,
-							   priv->account, priv->who, NULL,
-							   xfer,
-							   G_CALLBACK(ask_accept_ok),
-							   G_CALLBACK(ask_accept_cancel));
+		PURPLE_DEFAULT_ACTION_NONE,
+		purple_request_cpar_from_account(xfer->account), xfer,
+		G_CALLBACK(ask_accept_ok), G_CALLBACK(ask_accept_cancel));
 	g_free(buf);
 	g_free(buf2);
 }

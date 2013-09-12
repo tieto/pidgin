@@ -736,10 +736,12 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 				   who, purple_account_get_username(account), name);
 
 
-		purple_request_accept_cancel(gc, NULL, _("Accept chat invitation?"), buf2,
-							   PURPLE_DEFAULT_ACTION_NONE, account, who, NULL,
-							   cid, G_CALLBACK(chat_invite_accept),
-							   G_CALLBACK(chat_invite_reject));
+		purple_request_accept_cancel(gc, NULL,
+			_("Accept chat invitation?"), buf2,
+			PURPLE_DEFAULT_ACTION_NONE,
+			purple_request_cpar_from_connection(gc), cid,
+			G_CALLBACK(chat_invite_accept),
+			G_CALLBACK(chat_invite_reject));
 	}
 	else if (plugin_return > 0)
 		chat_invite_accept(cid);

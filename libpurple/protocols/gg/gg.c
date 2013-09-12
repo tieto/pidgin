@@ -156,9 +156,8 @@ static void ggp_action_buddylist_save(PurpleProtocolAction *action)
 	PurpleConnection *gc = action->connection;
 
 	purple_request_file(action, _("Save buddylist..."), NULL, TRUE,
-			G_CALLBACK(ggp_callback_buddylist_save_ok), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
-			gc);
+		G_CALLBACK(ggp_callback_buddylist_save_ok), NULL,
+		purple_request_cpar_from_connection(gc), gc);
 }
 
 static void ggp_action_buddylist_load(PurpleProtocolAction *action)
@@ -166,10 +165,8 @@ static void ggp_action_buddylist_load(PurpleProtocolAction *action)
 	PurpleConnection *gc = action->connection;
 
 	purple_request_file(action, _("Load buddylist from file..."), NULL,
-			FALSE,
-			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
-			gc);
+		FALSE, G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
+		purple_request_cpar_from_connection(gc), gc);
 }
 
 /* ----- CONFERENCES ---------------------------------------------------- */
@@ -233,7 +230,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 			fields,
 			_("Add"), G_CALLBACK(ggp_callback_add_to_chat_ok),
 			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL,
+			purple_request_cpar_from_connection(gc),
 			buddy);
 	g_free(msg);
 }
