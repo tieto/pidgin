@@ -626,6 +626,23 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 #endif
 }
 
+gssize
+purple_prpl_get_max_message_size(PurplePlugin *prpl)
+{
+	PurplePluginProtocolInfo *prpl_info;
+
+	g_return_val_if_fail(prpl != NULL, 0);
+	g_return_val_if_fail(PURPLE_IS_PROTOCOL_PLUGIN(prpl), 0);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	g_return_val_if_fail(prpl_info != NULL, 0);
+
+	if (!PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_max_message_size))
+		return 0;
+
+	return prpl_info->get_max_message_size(NULL);
+}
+
 /**************************************************************************
  * Protocol Plugin Subsystem API
  **************************************************************************/

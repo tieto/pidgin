@@ -194,7 +194,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 				     G_CALLBACK(tls_peers_mgmt_import_ok2_cb),
 				     _("Cancel"),
 				     G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
-				     NULL, NULL, NULL, /* No account/who/conv*/
+				     NULL,  /* No additional parameters */
 				     crt    /* Pass cert instance to callback*/
 				     );
 
@@ -224,7 +224,7 @@ tls_peers_mgmt_import_cb(GtkWidget *button, gpointer data)
 			    FALSE, /* Not a save dialog */
 			    G_CALLBACK(tls_peers_mgmt_import_ok_cb),
 			    NULL,  /* Do nothing if cancelled */
-			    NULL, NULL, NULL, NULL );/* No account,conv,etc. */
+			    NULL, NULL); /* No extra parameters */
 }
 
 static void
@@ -298,7 +298,7 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 			    TRUE, /* Is a save dialog */
 			    G_CALLBACK(tls_peers_mgmt_export_ok_cb),
 			    G_CALLBACK(tls_peers_mgmt_export_cancel_cb),
-			    NULL, NULL, NULL, /* No account,conv,etc. */
+			    NULL, /* No extra parameters */
 			    crt); /* Pass the certificate on to the callback */
 }
 
@@ -382,7 +382,7 @@ tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 		purple_request_yes_no(tpm_dat, _("Confirm certificate delete"),
 				      primary, NULL, /* Can this be NULL? */
 				      0, /* "yes" is the default action */
-				      NULL, NULL, NULL,
+				      NULL,
 				      id, /* id ownership passed to callback */
 				      tls_peers_mgmt_delete_confirm_cb,
 				      tls_peers_mgmt_delete_confirm_cb );

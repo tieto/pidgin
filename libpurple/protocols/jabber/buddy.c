@@ -691,7 +691,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 						fields,
 						_("Save"), G_CALLBACK(jabber_format_info),
 						_("Cancel"), NULL,
-						purple_connection_get_account(gc), NULL, NULL,
+						purple_request_cpar_from_connection(gc),
 						gc);
 }
 
@@ -1755,7 +1755,7 @@ jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
 	msg = g_strdup_printf(_("%s will no longer be able to see your status "
 	                        "updates.  Do you want to continue?"), name);
 	purple_request_yes_no(gc, NULL, _("Cancel Presence Notification"),
-	                      msg, 0 /* Yes */, account, name, NULL, buddy,
+	                      msg, 0 /* Yes */, purple_request_cpar_from_account(account), buddy,
 	                      cancel_presence_notification, NULL /* Do nothing */);
 	g_free(msg);
 }
@@ -2235,7 +2235,7 @@ static void user_search_fields_result_cb(JabberStream *js, const char *from,
 				_("Search for XMPP users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
-				purple_connection_get_account(js->gc), NULL, NULL,
+				purple_request_cpar_from_connection(js->gc),
 				usi);
 
 		g_free(instructions);
@@ -2284,8 +2284,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			FALSE, FALSE, NULL,
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search),
 			_("Cancel"), NULL,
-			NULL, NULL, NULL,
-			js);
+			NULL, js);
 }
 
 gboolean

@@ -277,15 +277,9 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
 	field = purple_request_field_bool_new("remember", _("Save password"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(account,
-                        NULL,
-                        primary,
-                        NULL,
-                        fields,
-                        _("OK"), ok_cb,
-                        _("Cancel"), cancel_cb,
-						account, NULL, NULL,
-                        user_data);
+	purple_request_fields(account, NULL, primary, NULL, fields, _("OK"),
+		ok_cb, _("Cancel"), cancel_cb,
+		purple_request_cpar_from_account(account), user_data);
 	g_free(primary);
 }
 
@@ -662,16 +656,11 @@ purple_account_request_change_password(PurpleAccount *account)
 
 	/* I'm sticking this somewhere in the code: bologna */
 
-	purple_request_fields(purple_account_get_connection(account),
-						NULL,
-						primary,
-						_("Please enter your current password and your "
-						  "new password."),
-						fields,
-						_("OK"), G_CALLBACK(change_password_cb),
-						_("Cancel"), NULL,
-						account, NULL, NULL,
-						account);
+	purple_request_fields(purple_account_get_connection(account), NULL,
+		primary, _("Please enter your current password and your new "
+		"password."), fields, _("OK"), G_CALLBACK(change_password_cb),
+		_("Cancel"), NULL, purple_request_cpar_from_account(account),
+		account);
 }
 
 static void
@@ -705,7 +694,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 					   (purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
-					   account, NULL, NULL,
+					   purple_request_cpar_from_account(account),
 					   account);
 }
 

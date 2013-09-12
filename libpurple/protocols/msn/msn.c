@@ -451,7 +451,7 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL,
-					   account, NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 	g_free(tmp);
 }
@@ -572,12 +572,9 @@ msn_show_locations(PurplePluginAction *action)
 	data->session = session;
 	data->group = group;
 
-	purple_request_fields(pc, NULL, NULL, NULL,
-	                      fields,
-	                      _("OK"), G_CALLBACK(update_endpoint_cb),
-	                      _("Cancel"), G_CALLBACK(g_free),
-	                      account, NULL, NULL,
-	                      data);
+	purple_request_fields(pc, NULL, NULL, NULL, fields, _("OK"),
+		G_CALLBACK(update_endpoint_cb), _("Cancel"), G_CALLBACK(g_free),
+		purple_request_cpar_from_connection(pc), data);
 }
 
 static void
@@ -634,7 +631,7 @@ msn_show_set_mpop(PurplePluginAction *action)
 						_("Do you want to allow or disallow connecting from "
 						  "multiple locations simultaneously?"),
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(pc), NULL, NULL,
+						purple_request_cpar_from_connection(pc),
 						pc, 3,
 						_("Allow"), G_CALLBACK(enable_mpop_cb),
 						_("Disallow"), G_CALLBACK(disable_mpop_cb),
@@ -654,7 +651,7 @@ msn_show_set_home_phone(PurplePluginAction *action)
 					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -671,7 +668,7 @@ msn_show_set_work_phone(PurplePluginAction *action)
 					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -688,7 +685,7 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -704,7 +701,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(gc), NULL, NULL,
+						purple_request_cpar_from_connection(gc),
 						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
 						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
@@ -793,7 +790,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 					   NULL, TRUE, FALSE, NULL,
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
-					   account, name, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   data);
 }
 

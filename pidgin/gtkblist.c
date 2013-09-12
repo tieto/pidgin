@@ -564,7 +564,7 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	{
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
-							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
+							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL,
 				      merges, 2, _("_Yes"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_No"), PURPLE_CALLBACK(g_list_free));
 		g_free(msg);
 	} else
@@ -699,8 +699,7 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 
 	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please update the necessary fields."),
 			fields, _("Save"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			chat);
+			NULL, chat);
 }
 
 static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
@@ -3667,8 +3666,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	                      NULL, fields,
 	                      _("OK"), G_CALLBACK(edit_mood_cb),
 	                      _("Cancel"), NULL,
-	                      gc ? purple_connection_get_account(gc) : NULL,
-	                      NULL, NULL, gc);
+	                      purple_request_cpar_from_connection(gc), gc);
 
 	g_free(global_moods);
 }
@@ -7522,8 +7520,7 @@ pidgin_blist_request_add_group(void)
 					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL,
-					   NULL, NULL, NULL,
-					   NULL);
+					   NULL, NULL);
 }
 
 void

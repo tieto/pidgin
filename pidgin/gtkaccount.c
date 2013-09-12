@@ -2126,11 +2126,9 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 
 		purple_request_close_with_handle(account);
 		purple_request_action(account, NULL, buf, NULL,
-							PURPLE_DEFAULT_ACTION_NONE,
-							account, NULL, NULL,
-							account, 2,
-							_("Delete"), delete_account_cb,
-							_("Cancel"), NULL);
+			PURPLE_DEFAULT_ACTION_NONE,
+			purple_request_cpar_from_account(account), account, 2,
+			_("Delete"), delete_account_cb, _("Cancel"), NULL);
 		g_free(buf);
 	}
 }
@@ -2734,7 +2732,7 @@ authorize_reason_cb(struct auth_request *ar)
 		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
 		                     _("OK"), G_CALLBACK(authorize_and_add_cb),
 		                     _("Cancel"), G_CALLBACK(authorize_noreason_cb),
-		                     ar->account, ar->username, NULL,
+		                     purple_request_cpar_from_account(ar->account),
 		                     aa);
 		/* FIXME: aa is going to leak now. */
 	} else {
@@ -2776,7 +2774,7 @@ deny_reason_cb(struct auth_request *ar)
 		                     NULL, _("No reason given."), TRUE, FALSE, NULL,
 		                     _("OK"), G_CALLBACK(deny_no_add_cb),
 		                     _("Cancel"), G_CALLBACK(deny_noreason_cb),
-		                     ar->account, ar->username, NULL,
+		                     purple_request_cpar_from_account(ar->account),
 		                     aa);
 		/* FIXME: aa is going to leak now. */
 	} else {

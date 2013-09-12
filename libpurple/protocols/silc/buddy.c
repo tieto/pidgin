@@ -314,8 +314,8 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 	a->port = port;
 
 	purple_request_action(client->application, _("Key Agreement Request"), tmp,
-			      hostname ? tmp2 : NULL, 1, purple_connection_get_account(gc), client_entry->nickname,
-			      NULL, a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
+			      hostname ? tmp2 : NULL, 1, purple_request_cpar_from_connection(gc),
+			      a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
 			      _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
 
@@ -457,7 +457,7 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 	                     _("Set IM Password"), NULL, FALSE, TRUE, NULL,
 	                     _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
 	                     _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-	                     purple_connection_get_account(gc), NULL, NULL, p);
+	                     purple_request_cpar_from_connection(gc), p);
 
 	silc_client_list_free(sg->client, sg->conn, clients);
 }
@@ -1067,7 +1067,7 @@ silcpurple_add_buddy_ask_pk_cb(SilcPurpleBuddyRes r, gint id)
 	purple_request_file(r->client->application, _("Open..."), NULL, FALSE,
 			    G_CALLBACK(silcpurple_add_buddy_ask_import),
 			    G_CALLBACK(silcpurple_add_buddy_ask_pk_cancel),
-			    purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
+			    purple_request_cpar_from_account(purple_buddy_get_account(r->b)), r);
 
 }
 
@@ -1080,7 +1080,7 @@ silcpurple_add_buddy_ask_pk(SilcPurpleBuddyRes r)
 	purple_request_action(r->client->application, _("Add Buddy"), tmp,
 			      _("To add the buddy you must import his/her public key. "
 				"Press Import to import a public key."), 0,
-			      purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r, 2,
+				purple_request_cpar_from_account(purple_buddy_get_account(r->b)), r, 2,
 			      _("Cancel"), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb),
 			      _("_Import..."), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb));
 }
@@ -1197,7 +1197,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r, SilcDList clients)
 			      fields,
 			      _("OK"), G_CALLBACK(silcpurple_add_buddy_select_cb),
 			      _("Cancel"), G_CALLBACK(silcpurple_add_buddy_select_cancel),
-			      purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
+			      purple_request_cpar_from_account(purple_buddy_get_account(r->b)), r);
 }
 
 static void

@@ -612,7 +612,7 @@ intkeyring_unlock(const gchar *message)
 		primary_msg, secondary_msg, fields,
 		_("OK"), G_CALLBACK(intkeyring_unlock_ok),
 		_("Cancel"), G_CALLBACK(intkeyring_unlock_cancel),
-		NULL, NULL, NULL, NULL);
+		NULL, NULL);
 }
 
 static void

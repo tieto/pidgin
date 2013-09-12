@@ -262,7 +262,7 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 		_("Please, fill in the following fields"), fields,
 		_("OK"), G_CALLBACK(ggp_account_register_dialog_ok),
 		_("Cancel"), G_CALLBACK(ggp_account_register_dialog_cancel),
-		purple_connection_get_account(gc), NULL, NULL, register_data);
+		purple_request_cpar_from_connection(gc), register_data);
 }
 
 static void ggp_account_register_dialog_cancel(
@@ -520,7 +520,7 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 		fields,
 		_("OK"), G_CALLBACK(ggp_account_chpass_dialog_ok),
 		_("Cancel"), G_CALLBACK(ggp_account_chpass_dialog_cancel),
-		account, NULL, NULL, chpass_data);
+		purple_request_cpar_from_connection(gc), chpass_data);
 	
 	g_free(primary);
 }

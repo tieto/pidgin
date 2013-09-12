@@ -600,7 +600,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 							" you like to configure it, or"
 							" accept the default settings?"),
 						/* Default Action */ 1,
-						purple_connection_get_account(js->gc), NULL, PURPLE_CONVERSATION(chat->conv),
+						purple_request_cpar_from_conversation(chat->conv),
 						chat, 2,
 						_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 						_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));

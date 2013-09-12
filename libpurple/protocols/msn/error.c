@@ -373,7 +373,7 @@ msn_error_sync_issue(MsnSession *session, const char *passport,
 	}
 
 	purple_request_action(gc, NULL, msg, reason, PURPLE_DEFAULT_ACTION_NONE,
-						account, data->who, NULL,
+		purple_request_cpar_from_account(account),
 						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),
 						_("No"), G_CALLBACK(msn_rem_cb));

@@ -919,7 +919,7 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 			FALSE, FALSE, NULL,
 			_("Find Rooms"), PURPLE_CALLBACK(roomlist_ok_cb),
 			_("Cancel"), PURPLE_CALLBACK(roomlist_cancel_cb),
-			purple_connection_get_account(gc), NULL, NULL,
+			purple_request_cpar_from_connection(gc),
 			js);
 
 	return js->roomlist;

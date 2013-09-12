@@ -89,8 +89,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 				default_hostname, FALSE, FALSE, NULL,
 				_("OK"), G_CALLBACK(tls_peers_mgmt_import_ok2_cb),
 				_("Cancel"), G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
-				NULL, NULL, NULL,
-				crt);
+				NULL, crt);
 		g_free(default_hostname);
 	} else {
 		gchar * secondary;
@@ -112,7 +111,7 @@ add_cert_cb(GntWidget *button, gpointer null)
 			FALSE,
 			G_CALLBACK(tls_peers_mgmt_import_ok_cb),
 			NULL,
-			NULL, NULL, NULL, NULL );
+			NULL, NULL );
 }
 
 /* Save certs in some file */
@@ -160,8 +159,7 @@ save_cert_cb(GntWidget *button, gpointer null)
 			"certificate.pem", TRUE,
 			G_CALLBACK(tls_peers_mgmt_export_ok_cb),
 			G_CALLBACK(purple_certificate_destroy),
-			NULL, NULL, NULL,
-			crt);
+			NULL, crt);
 }
 
 /* Show information about a cert */
@@ -236,7 +234,7 @@ delete_cert_cb(GntWidget *button, gpointer null)
 	purple_request_yes_no((void *)key, _("Confirm certificate delete"),
 			primary, NULL,
 			0,
-			NULL, NULL, NULL,
+			NULL,
 			g_strdup(key),
 			tls_peers_mgmt_delete_confirm_cb,
 			g_free);

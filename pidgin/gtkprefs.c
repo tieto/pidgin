@@ -3065,9 +3065,8 @@ select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 		filename = NULL;
 
 	purple_request_file(prefs, _("Sound Selection"), filename, FALSE,
-					  G_CALLBACK(sound_chosen_cb), NULL,
-					  NULL, NULL, NULL,
-					  GINT_TO_POINTER(sound_row_sel));
+		G_CALLBACK(sound_chosen_cb), NULL, NULL,
+		GINT_TO_POINTER(sound_row_sel));
 }
 
 #ifdef USE_GSTREAMER

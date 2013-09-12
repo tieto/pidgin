@@ -244,7 +244,7 @@ static void browse_button_cb(GtkWidget *button, PidginDiscoDialog *dialog)
 			server, FALSE, FALSE, NULL,
 			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
 			_("Cancel"), PURPLE_CALLBACK(discolist_cancel_cb),
-			purple_connection_get_account(pc), NULL, NULL, pdl);
+			purple_request_cpar_from_connection(pc), pdl);
 
 	g_free(server);
 }

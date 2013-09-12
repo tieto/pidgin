@@ -302,12 +302,11 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			cb_data[2] = iter;
 
 			purple_request_action(plugin_dialog, NULL,
-			                    _("Multiple plugins will be unloaded."),
-			                    tmp->str, 0,
-								NULL, NULL, NULL,
-								cb_data, 2,
-			                    _("Unload Plugins"), G_CALLBACK(plugin_unload_confirm_cb),
-			                    _("Cancel"), g_free);
+				_("Multiple plugins will be unloaded."),
+				tmp->str, 0, NULL, cb_data, 2,
+				_("Unload Plugins"),
+				G_CALLBACK(plugin_unload_confirm_cb),
+				_("Cancel"), g_free);
 			g_string_free(tmp, TRUE);
 		}
 		else

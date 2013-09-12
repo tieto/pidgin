@@ -694,7 +694,7 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 			fields,
 			_("Add"), G_CALLBACK(add_buddy_cb),
 			_("Cancel"), NULL,
-			account, NULL, NULL,
+			purple_request_cpar_from_account(account),
 			NULL);
 }
 
@@ -792,8 +792,7 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 	purple_request_fields(NULL, _("Add Chat"), NULL,
 			_("You can edit more information from the context menu later."),
 			fields, _("Add"), G_CALLBACK(add_chat_cb), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static void
@@ -840,8 +839,7 @@ finch_request_add_group(void)
 	purple_request_input(NULL, _("Add Group"), NULL, _("Enter the name of the group"),
 			NULL, FALSE, FALSE, NULL,
 			_("Add"), G_CALLBACK(add_group_cb), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static PurpleBlistUiOps blist_ui_ops =
@@ -1153,8 +1151,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 
 	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
 			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			chat);
+			NULL, chat);
 }
 
 static void
@@ -1391,8 +1388,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
 			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL,
-			NULL, NULL, NULL,
-			node);
+			NULL, node);
 
 	g_free(prompt);
 }
@@ -1521,7 +1517,7 @@ finch_blist_remove_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	purple_request_action(node, _("Confirm Remove"),
 			primary, sec,
 			1,
-			account, name, NULL,
+			purple_request_cpar_from_account(account),
 			node, 2,
 			_("Remove"), finch_blist_remove_node,
 			_("Cancel"), NULL);
@@ -2654,7 +2650,7 @@ block_select_cb(gpointer data, PurpleRequestFields *fields)
 	PurpleAccount *account = purple_request_fields_get_account(fields, "account");
 	const char *name = purple_request_fields_get_string(fields,  "screenname");
 	if (account && name && *name != '\0') {
-		if (purple_request_fields_get_choice(fields, "block") == 1) {
+		if (GPOINTER_TO_INT(purple_request_fields_get_choice(fields, "block")) == 1) {
 			purple_account_privacy_deny(account, name);
 		} else {
 			purple_account_privacy_allow(account, name);
@@ -2687,9 +2683,9 @@ block_select(GntMenuItem *item, gpointer n)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_choice_new("block", _("Block/Unblock"), 1);
-	purple_request_field_choice_add(field, _("Block"));
-	purple_request_field_choice_add(field, _("Unblock"));
+	field = purple_request_field_choice_new("block", _("Block/Unblock"), GINT_TO_POINTER(1));
+	purple_request_field_choice_add(field, _("Block"), GINT_TO_POINTER(1));
+	purple_request_field_choice_add(field, _("Unblock"), GINT_TO_POINTER(2));
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(purple_blist_get_buddy_list(), _("Block/Unblock"),
@@ -2699,8 +2695,7 @@ block_select(GntMenuItem *item, gpointer n)
 						fields,
 						_("OK"), G_CALLBACK(block_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 /* send_im_select* -- Xerox */
@@ -2750,8 +2745,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 						fields,
 						_("OK"), G_CALLBACK(send_im_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void
@@ -2824,8 +2818,7 @@ join_chat_select(GntMenuItem *item, gpointer n)
 						fields,
 						_("Join"), G_CALLBACK(join_chat_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void
@@ -2886,8 +2879,7 @@ view_log_cb(GntMenuItem *item, gpointer n)
 						fields,
 						_("OK"), G_CALLBACK(view_log_select_cb),
 						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						NULL);
+						NULL, NULL);
 }
 
 static void
