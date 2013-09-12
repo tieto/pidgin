@@ -1381,6 +1381,18 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);
 
+	/* Help button */
+	if (purple_request_cpar_get_help_cb(cpar, NULL) != NULL) {
+		PurpleRequestHelpCb help_cb;
+		gpointer help_data;
+
+		help_cb = purple_request_cpar_get_help_cb(cpar, &help_data);
+		g_assert(help_cb != NULL);
+
+		button = gtk_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
+		g_signal_connect(G_OBJECT(button), "clicked", (GCallback)help_cb, help_data);
+	}
+
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
 	gtk_widget_set_can_default(button, TRUE);
