@@ -162,11 +162,17 @@ struct _PurpleRequestCommonParameters
 
 	PurpleAccount *account;
 	PurpleConversation *conv;
+
 	PurpleRequestIconType icon_type;
 	gconstpointer icon_data;
 	gsize icon_size;
+
 	gboolean html;
+
 	gboolean compact;
+
+	PurpleRequestHelpCb help_cb;
+	gpointer help_data;
 };
 
 PurpleRequestCommonParameters *
@@ -336,6 +342,8 @@ void
 purple_request_cpar_set_compact(PurpleRequestCommonParameters *cpar,
 	gboolean compact)
 {
+	g_return_if_fail(cpar != NULL);
+
 	cpar->compact = compact;
 }
 
@@ -346,6 +354,28 @@ purple_request_cpar_is_compact(PurpleRequestCommonParameters *cpar)
 		return FALSE;
 
 	return cpar->compact;
+}
+
+void
+purple_request_cpar_set_help_cb(PurpleRequestCommonParameters *cpar,
+	PurpleRequestHelpCb cb, gpointer user_data)
+{
+	g_return_if_fail(cpar != NULL);
+
+	cpar->help_cb = cb;
+	cpar->help_data = cb ? user_data : NULL;
+}
+
+PurpleRequestHelpCb
+purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
+	gpointer *user_data)
+{
+	if (cpar == NULL)
+		return NULL;
+
+	if (user_data != NULL)
+		*user_data = cpar->help_data;
+	return cpar->help_cb;
 }
 
 PurpleRequestFields *
