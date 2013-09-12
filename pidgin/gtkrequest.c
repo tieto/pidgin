@@ -303,26 +303,34 @@ destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
 
 
 #define STOCK_ITEMIZE(r, l) \
-	if (!strcmp((r), text)) \
+	if (!strcmp((r), text) || !strcmp(_(r), text)) \
 		return (l);
 
 static const char *
 text_to_stock(const char *text)
 {
-	STOCK_ITEMIZE(_("Yes"),     GTK_STOCK_YES);
-	STOCK_ITEMIZE(_("No"),      GTK_STOCK_NO);
-	STOCK_ITEMIZE(_("OK"),      GTK_STOCK_OK);
-	STOCK_ITEMIZE(_("Cancel"),  GTK_STOCK_CANCEL);
-	STOCK_ITEMIZE(_("Apply"),   GTK_STOCK_APPLY);
-	STOCK_ITEMIZE(_("Close"),   GTK_STOCK_CLOSE);
-	STOCK_ITEMIZE(_("Delete"),  GTK_STOCK_DELETE);
-	STOCK_ITEMIZE(_("Add"),     GTK_STOCK_ADD);
-	STOCK_ITEMIZE(_("Remove"),  GTK_STOCK_REMOVE);
-	STOCK_ITEMIZE(_("Save"),    GTK_STOCK_SAVE);
-	STOCK_ITEMIZE(_("Alias"),   PIDGIN_STOCK_ALIAS);
+	STOCK_ITEMIZE(N_("Yes"),     GTK_STOCK_YES);
+	STOCK_ITEMIZE(N_("_Yes"),    GTK_STOCK_YES);
+	STOCK_ITEMIZE(N_("No"),      GTK_STOCK_NO);
+	STOCK_ITEMIZE(N_("_No"),     GTK_STOCK_NO);
+	STOCK_ITEMIZE(N_("OK"),      GTK_STOCK_OK);
+	STOCK_ITEMIZE(N_("_OK"),     GTK_STOCK_OK);
+	STOCK_ITEMIZE(N_("Cancel"),  GTK_STOCK_CANCEL);
+	STOCK_ITEMIZE(N_("_Cancel"), GTK_STOCK_CANCEL);
+	STOCK_ITEMIZE(N_("Apply"),   GTK_STOCK_APPLY);
+	STOCK_ITEMIZE(N_("Close"),   GTK_STOCK_CLOSE);
+	STOCK_ITEMIZE(N_("Delete"),  GTK_STOCK_DELETE);
+	STOCK_ITEMIZE(N_("Add"),     GTK_STOCK_ADD);
+	STOCK_ITEMIZE(N_("Remove"),  GTK_STOCK_REMOVE);
+	STOCK_ITEMIZE(N_("Save"),    GTK_STOCK_SAVE);
+	STOCK_ITEMIZE(N_("Next"),    GTK_STOCK_GO_FORWARD);
+	STOCK_ITEMIZE(N_("Back"),    GTK_STOCK_GO_BACK);
+	STOCK_ITEMIZE(N_("Alias"),   PIDGIN_STOCK_ALIAS);
 
 	return text;
 }
+
+#undef STOCK_ITEMIZE
 
 static gchar *
 pidgin_request_escape(PurpleRequestCommonParameters *cpar, const gchar *text)
