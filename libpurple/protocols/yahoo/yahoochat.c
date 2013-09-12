@@ -1362,9 +1362,9 @@ static void yahoo_roomlist_cleanup(PurpleRoomlist *list, struct yahoo_roomlist *
 	purple_roomlist_set_in_progress(list, FALSE);
 
 	if (yrl) {
-		GList *proto_data = purple_roomlist_get_proto_data(list);
+		GList *proto_data = purple_roomlist_get_protocol_data(list);
 		proto_data = g_list_remove(proto_data, yrl);
-		purple_roomlist_set_proto_data(list, proto_data);
+		purple_roomlist_set_protocol_data(list, proto_data);
 		yahoo_roomlist_destroy(yrl);
 	}
 
@@ -1481,9 +1481,9 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 
 	purple_roomlist_set_fields(rl, fields);
 
-	proto_data = purple_roomlist_get_proto_data(rl);
+	proto_data = purple_roomlist_get_protocol_data(rl);
 	proto_data = g_list_append(proto_data, yrl);
-	purple_roomlist_set_proto_data(rl, proto_data);
+	purple_roomlist_set_protocol_data(rl, proto_data);
 
 	yahoo_roomlist_make_request(yrl);
 	purple_roomlist_set_in_progress(rl, TRUE);
@@ -1495,8 +1495,8 @@ void yahoo_roomlist_cancel(PurpleRoomlist *list)
 {
 	GList *l, *k;
 
-	k = l = purple_roomlist_get_proto_data(list);
-	purple_roomlist_set_proto_data(list, NULL);
+	k = l = purple_roomlist_get_protocol_data(list);
+	purple_roomlist_set_protocol_data(list, NULL);
 
 	purple_roomlist_set_in_progress(list, FALSE);
 
@@ -1542,9 +1542,9 @@ void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *ca
 	yrl->list = list;
 	yrl->cat = category;
 
-	proto_data = purple_roomlist_get_proto_data(list);
+	proto_data = purple_roomlist_get_protocol_data(list);
 	proto_data = g_list_append(proto_data, yrl);
-	purple_roomlist_set_proto_data(list, proto_data);
+	purple_roomlist_set_protocol_data(list, proto_data);
 
 	yrl->url = url;
 

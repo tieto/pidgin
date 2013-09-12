@@ -253,7 +253,7 @@ GList *purple_roomlist_get_fields(PurpleRoomlist *roomlist);
  *         convenience field provided to the protocol plugin--it is not
  *         used the libpurple core.
  */
-gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list);
+gpointer purple_roomlist_get_protocol_data(PurpleRoomlist *list);
 
 /**
  * Set the protocol data associated with this room list.
@@ -261,7 +261,7 @@ gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list);
  * @param list The roomlist, which must not be @c NULL.
  * @param proto_data A pointer to associate with this room list.
  */
-void purple_roomlist_set_proto_data(PurpleRoomlist *list, gpointer proto_data);
+void purple_roomlist_set_protocol_data(PurpleRoomlist *list, gpointer proto_data);
 
 /**
  * Get the UI data associated with this room list.
