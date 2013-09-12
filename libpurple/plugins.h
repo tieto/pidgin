@@ -309,9 +309,9 @@ void type_name##_register_type(PurplePlugin *plugin) { \
 			(GInstanceInitFunc) type_name##_init, \
 			NULL \
 		}; \
-		type_name##_type_id = purple_plugin_register_type(plugin, TYPE_PARENT, \
-								 #TypeName, &type_info, (GTypeFlags) flags); \
-		type_id = type_name##_type_id; \
+		type_id = purple_plugin_register_type(plugin, TYPE_PARENT, #TypeName, \
+		                                      &type_info, (GTypeFlags) flags); \
+		type_name##_type_id = type_id; \
 		{ CODE ; } \
 	} \
 }
@@ -346,9 +346,9 @@ GType type_name##_get_type(void) { \
 			(GInstanceInitFunc) type_name##_init, \
 			NULL \
 		}; \
-		type_name##_type_id = g_type_register_static(TYPE_PARENT, #TypeName, \
-								 &type_info, (GTypeFlags) flags); \
-		type_id = type_name##_type_id; \
+		type_id = g_type_register_static(TYPE_PARENT, #TypeName, &type_info, \
+		                                 (GTypeFlags) flags); \
+		type_name##_type_id = type_id; \
 		{ CODE ; } \
 	} \
 	return type_name##_type_id; \
