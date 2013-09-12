@@ -336,6 +336,26 @@ purple_request_cpar_set_html(PurpleRequestCommonParameters *cpar,
 gboolean
 purple_request_cpar_is_html(PurpleRequestCommonParameters *cpar);
 
+/**
+ * Sets dialog display mode to compact or default.
+ *
+ * @param cpar    The parameters set.
+ * @param compact TRUE for compact, FALSE otherwise.
+ */
+void
+purple_request_cpar_set_compact(PurpleRequestCommonParameters *cpar,
+	gboolean compact);
+
+/**
+ * Gets dialog display mode.
+ *
+ * @param cpar The parameters set (may be @c NULL).
+ *
+ * @return TRUE for compact, FALSE for default.
+ */
+gboolean
+purple_request_cpar_is_compact(PurpleRequestCommonParameters *cpar);
+
 /*@}*/
 
 /**************************************************************************/
@@ -1133,6 +1153,12 @@ purple_request_field_choice_get_value(const PurpleRequestField *field);
 GList *
 purple_request_field_choice_get_elements(const PurpleRequestField *field);
 
+/**
+ * Sets the destructor for field values.
+ *
+ * @param field   The field.
+ * @param destroy The destroy function.
+ */
 void
 purple_request_field_choice_set_data_destructor(PurpleRequestField *field,
 	GDestroyNotify destroy);

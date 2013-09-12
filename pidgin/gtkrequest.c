@@ -1019,7 +1019,8 @@ create_bool_field(PurpleRequestField *field)
 }
 
 static GtkWidget *
-create_choice_field(PurpleRequestField *field)
+create_choice_field(PurpleRequestField *field,
+	PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *widget;
 	GList *elements = purple_request_field_choice_get_elements(field);
@@ -1027,11 +1028,12 @@ create_choice_field(PurpleRequestField *field)
 	GList *l;
 	gpointer *values = g_new(gpointer, num_labels);
 	gpointer default_value;
-	int i, default_index = -1;
+	int i;
 
 	default_value = purple_request_field_choice_get_default_value(field);
-	if (num_labels > 5)
+	if (num_labels > 5 || purple_request_cpar_is_compact(cpar))
 	{
+		int default_index = 0;
 		widget = gtk_combo_box_text_new();
 
 		i = 0;
@@ -1335,6 +1337,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 	int total_fields = 0;
+	const gboolean compact = purple_request_cpar_is_compact(cpar);
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_FIELDS;
@@ -1501,7 +1504,8 @@ pidgin_request_fields(const char *title, const char *primary,
 					rows++;
 
 				rows += 2;
-			}
+			} else if (compact && type != PURPLE_REQUEST_FIELD_BOOLEAN)
+				rows++;
 
 			col_num++;
 
@@ -1509,7 +1513,10 @@ pidgin_request_fields(const char *title, const char *primary,
 				col_num = 0;
 		}
 
-		table = gtk_table_new(rows, 2 * cols, FALSE);
+		if (compact)
+			table = gtk_table_new(rows, cols, FALSE);
+		else
+			table = gtk_table_new(rows, 2 * cols, FALSE);
 		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
@@ -1544,8 +1551,11 @@ pidgin_request_fields(const char *title, const char *primary,
 				{
 					char *text = NULL;
 
-					if (field_label[strlen(field_label) - 1] != ':')
+					if (field_label[strlen(field_label) - 1] != ':' &&
+						field_label[strlen(field_label) - 1] != '?')
+					{
 						text = g_strdup_printf("%s:", field_label);
+					}
 
 					label = gtk_label_new(NULL);
 					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text ? text : field_label);
@@ -1590,7 +1600,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 						widget = create_bool_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_CHOICE)
-						widget = create_choice_field(field);
+						widget = create_choice_field(field, cpar);
 					else if (type == PURPLE_REQUEST_FIELD_LIST)
 						widget = create_list_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_IMAGE)
@@ -1634,8 +1644,15 @@ pidgin_request_fields(const char *title, const char *primary,
 									 GTK_FILL | GTK_EXPAND,
 									 5, 0);
 				}
-				else
-				{
+				else if (compact) {
+					row_num++;
+					gtk_table_attach(GTK_TABLE(table), widget,
+									 0, 2 * cols,
+									 row_num, row_num + 1,
+									 GTK_FILL | GTK_EXPAND,
+									 GTK_FILL | GTK_EXPAND,
+									 5, 0);
+				} else {
 					gtk_table_attach(GTK_TABLE(table), widget,
 							 		 1, 2 * cols,
 									 row_num, row_num + 1,
