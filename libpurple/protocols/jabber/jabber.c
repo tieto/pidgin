@@ -3252,10 +3252,8 @@ jabber_media_ok_cb(JabberMediaRequest *request, PurpleRequestFields *fields)
 {
 	PurpleRequestField *field =
 			purple_request_fields_get_field(fields, "resource");
-	int selected_id = purple_request_field_choice_get_value(field);
-	GList *labels = purple_request_field_choice_get_labels(field);
-	gchar *who = g_strdup_printf("%s/%s", request->who,
-			(gchar*)g_list_nth_data(labels, selected_id));
+	const gchar *selected = purple_request_field_choice_get_value(field);
+	gchar *who = g_strdup_printf("%s/%s", request->who, selected);
 	jabber_initiate_media(request->account, who, request->type);
 
 	g_free(who);
@@ -3340,6 +3338,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		PurpleRequestFieldGroup *group;
 		JabberMediaRequest *request;
 
+		purple_request_field_choice_set_data_destructor(field, g_free);
+
 		for(l = jb->resources; l; l = l->next)
 		{
 			JabberBuddyResource *ljbr = l->data;
@@ -3353,19 +3353,19 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 					(type & PURPLE_MEDIA_VIDEO)) {
 				if (caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
 					jbr = ljbr;
-					purple_request_field_choice_add(
-							field, jbr->name);
+					purple_request_field_choice_add(field,
+						jbr->name, g_strdup(jbr->name));
 				}
 			} else if (type & (PURPLE_MEDIA_AUDIO) &&
 					(caps & PURPLE_MEDIA_CAPS_AUDIO)) {
 				jbr = ljbr;
-				purple_request_field_choice_add(
-						field, jbr->name);
+				purple_request_field_choice_add(field,
+					jbr->name, g_strdup(jbr->name));
 			}else if (type & (PURPLE_MEDIA_VIDEO) &&
 					(caps & PURPLE_MEDIA_CAPS_VIDEO)) {
 				jbr = ljbr;
-				purple_request_field_choice_add(
-						field, jbr->name);
+				purple_request_field_choice_add(field,
+					jbr->name, g_strdup(jbr->name));
 			}
 		}
 
@@ -3375,8 +3375,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 			return FALSE;
 		}
 
-		if (g_list_length(purple_request_field_choice_get_labels(
-				field)) <= 1) {
+		if (g_list_length(purple_request_field_choice_get_elements(
+				field)) <= 2) {
 			gchar *name;
 			gboolean result;
 			purple_request_field_destroy(field);

@@ -4096,7 +4096,7 @@ GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 static void yahoo_act_id(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	const char *name = yd->profiles[purple_request_fields_get_choice(fields, "id")];
+	const char *name = yd->profiles[GPOINTER_TO_INT(purple_request_fields_get_choice(fields, "id"))];
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 3, name);
@@ -4190,9 +4190,9 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 	purple_request_field_group_add_field(group, field);
 
 	for (iter = 0; yd->profiles[iter]; iter++) {
-		purple_request_field_choice_add(field, yd->profiles[iter]);
+		purple_request_field_choice_add(field, yd->profiles[iter], GINT_TO_POINTER(iter));
 		if (purple_strequal(yd->profiles[iter], name))
-			purple_request_field_choice_set_default_value(field, iter);
+			purple_request_field_choice_set_default_value(field, GINT_TO_POINTER(iter));
 	}
 
 	purple_request_fields(gc, NULL, _("Select the ID you want to activate"), NULL,

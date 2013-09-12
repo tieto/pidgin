@@ -83,11 +83,11 @@ struct _PurpleRequestField
 
 		struct
 		{
-			int default_value;
-			int value;
+			gpointer default_value;
+			gpointer value;
 
-			GList *labels;
-
+			GList *elements;
+			GDestroyNotify data_destroy;
 		} choice;
 
 		struct
@@ -552,16 +552,17 @@ purple_request_fields_get_bool(const PurpleRequestFields *fields, const char *id
 	return purple_request_field_bool_get_value(field);
 }
 
-int
-purple_request_fields_get_choice(const PurpleRequestFields *fields, const char *id)
+gpointer
+purple_request_fields_get_choice(const PurpleRequestFields *fields,
+	const char *id)
 {
 	PurpleRequestField *field;
 
-	g_return_val_if_fail(fields != NULL, -1);
-	g_return_val_if_fail(id     != NULL, -1);
+	g_return_val_if_fail(fields != NULL, NULL);
+	g_return_val_if_fail(id != NULL, NULL);
 
 	if ((field = purple_request_fields_get_field(fields, id)) == NULL)
-		return -1;
+		return NULL;
 
 	return purple_request_field_choice_get_value(field);
 }
@@ -712,10 +713,19 @@ purple_request_field_destroy(PurpleRequestField *field)
 	}
 	else if (field->type == PURPLE_REQUEST_FIELD_CHOICE)
 	{
-		if (field->u.choice.labels != NULL)
+		if (field->u.choice.elements != NULL)
 		{
-			g_list_foreach(field->u.choice.labels, (GFunc)g_free, NULL);
-			g_list_free(field->u.choice.labels);
+			GList *it = field->u.choice.elements;
+			while (it != NULL) {
+				g_free(it->data);
+				it = g_list_next(it); /* value */
+				if (it->data && field->u.choice.data_destroy)
+					field->u.choice.data_destroy(it->data);
+				if (it == NULL)
+					break;
+				it = g_list_next(it); /* next label */
+			}
+			g_list_free(field->u.choice.elements);
 		}
 	}
 	else if (field->type == PURPLE_REQUEST_FIELD_LIST)
@@ -1194,7 +1204,7 @@ purple_request_field_bool_get_value(const PurpleRequestField *field)
 
 PurpleRequestField *
 purple_request_field_choice_new(const char *id, const char *text,
-							  int default_value)
+	gpointer default_value)
 {
 	PurpleRequestField *field;
 
@@ -1210,19 +1220,22 @@ purple_request_field_choice_new(const char *id, const char *text,
 }
 
 void
-purple_request_field_choice_add(PurpleRequestField *field, const char *label)
+purple_request_field_choice_add(PurpleRequestField *field, const char *label,
+	gpointer value)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(label != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE);
 
-	field->u.choice.labels = g_list_append(field->u.choice.labels,
-											g_strdup(label));
+	field->u.choice.elements = g_list_append(field->u.choice.elements,
+		g_strdup(label));
+	field->u.choice.elements = g_list_append(field->u.choice.elements,
+		value);
 }
 
 void
 purple_request_field_choice_set_default_value(PurpleRequestField *field,
-											int default_value)
+	gpointer default_value)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE);
@@ -1231,8 +1244,7 @@ purple_request_field_choice_set_default_value(PurpleRequestField *field,
 }
 
 void
-purple_request_field_choice_set_value(PurpleRequestField *field,
-											int value)
+purple_request_field_choice_set_value(PurpleRequestField *field, gpointer value)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE);
@@ -1240,31 +1252,41 @@ purple_request_field_choice_set_value(PurpleRequestField *field,
 	field->u.choice.value = value;
 }
 
-int
+gpointer
 purple_request_field_choice_get_default_value(const PurpleRequestField *field)
 {
-	g_return_val_if_fail(field != NULL, -1);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, -1);
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, NULL);
 
 	return field->u.choice.default_value;
 }
 
-int
+gpointer
 purple_request_field_choice_get_value(const PurpleRequestField *field)
 {
-	g_return_val_if_fail(field != NULL, -1);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, -1);
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, NULL);
 
 	return field->u.choice.value;
 }
 
 GList *
-purple_request_field_choice_get_labels(const PurpleRequestField *field)
+purple_request_field_choice_get_elements(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, NULL);
 
-	return field->u.choice.labels;
+	return field->u.choice.elements;
+}
+
+void
+purple_request_field_choice_set_data_destructor(PurpleRequestField *field,
+	GDestroyNotify destroy)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE);
+
+	field->u.choice.data_destroy = destroy;
 }
 
 PurpleRequestField *
@@ -1823,11 +1845,9 @@ purple_request_input(void *handle, const char *title, const char *primary,
 
 void *
 purple_request_choice(void *handle, const char *title, const char *primary,
-					const char *secondary, int default_value,
-					const char *ok_text, GCallback ok_cb,
-					const char *cancel_text, GCallback cancel_cb,
-					PurpleRequestCommonParameters *cpar,
-					void *user_data, ...)
+	const char *secondary, gpointer default_value, const char *ok_text,
+	GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data, ...)
 {
 	void *ui_handle;
 	va_list args;
@@ -1850,13 +1870,10 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 }
 
 void *
-purple_request_choice_varg(void *handle, const char *title,
-			 const char *primary, const char *secondary,
-			 int default_value,
-			 const char *ok_text, GCallback ok_cb,
-			 const char *cancel_text, GCallback cancel_cb,
-			 PurpleRequestCommonParameters *cpar,
-			 void *user_data, va_list choices)
+purple_request_choice_varg(void *handle, const char *title, const char *primary,
+	const char *secondary, gpointer default_value, const char *ok_text,
+	GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data, va_list choices)
 {
 	PurpleRequestUiOps *ops;
 

@@ -187,7 +187,7 @@ choice_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 	if (id >= 0 && (gsize)id < data->cb_count && data->cbs[id] != NULL)
 		while (group) {
 			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group->data))) {
-				((PurpleRequestChoiceCb)data->cbs[id])(data->user_data, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(group->data), "choice_id")));
+				((PurpleRequestChoiceCb)data->cbs[id])(data->user_data, g_object_get_data(G_OBJECT(group->data), "choice_value"));
 				break;
 			}
 			group = group->next;
@@ -232,17 +232,32 @@ field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 static void
 field_choice_menu_cb(GtkComboBox *menu, PurpleRequestField *field)
 {
-	purple_request_field_choice_set_value(field,
-			gtk_combo_box_get_active(menu));
+	int active = gtk_combo_box_get_active(menu);
+	gpointer *values = g_object_get_data(G_OBJECT(menu), "values");
+
+	g_return_if_fail(values != NULL);
+	g_return_if_fail(active >= 0);
+
+	purple_request_field_choice_set_value(field, values[active]);
 }
 
 static void
 field_choice_option_cb(GtkRadioButton *button, PurpleRequestField *field)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
-		purple_request_field_choice_set_value(field,
-				(g_slist_length(gtk_radio_button_get_group(button)) -
-				 g_slist_index(gtk_radio_button_get_group(button), button)) - 1);
+	int active;
+	gpointer *values = g_object_get_data(G_OBJECT(g_object_get_data(
+		G_OBJECT(button), "box")), "values");
+
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+		return;
+
+	active = (g_slist_length(gtk_radio_button_get_group(button)) -
+		g_slist_index(gtk_radio_button_get_group(button), button)) - 1;
+
+	g_return_if_fail(values != NULL);
+	g_return_if_fail(active >= 0);
+
+	purple_request_field_choice_set_value(field, values[active]);
 }
 
 static void
@@ -566,11 +581,9 @@ pidgin_request_input(const char *title, const char *primary,
 
 static void *
 pidgin_request_choice(const char *title, const char *primary,
-			const char *secondary, int default_value,
-			const char *ok_text, GCallback ok_cb,
-			const char *cancel_text, GCallback cancel_cb,
-			PurpleRequestCommonParameters *cpar,
-			void *user_data, va_list args)
+	const char *secondary, gpointer default_value, const char *ok_text,
+	GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data, va_list args)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -657,10 +670,10 @@ pidgin_request_choice(const char *title, const char *primary,
 	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
 	while ((radio_text = va_arg(args, char*))) {
-		       int resp = va_arg(args, int);
+		       gpointer resp = va_arg(args, gpointer);
 		       radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(radio), radio_text);
 		       gtk_box_pack_start(GTK_BOX(vbox2), radio, FALSE, FALSE, 0);
-		       g_object_set_data(G_OBJECT(radio), "choice_id", GINT_TO_POINTER(resp));
+		       g_object_set_data(G_OBJECT(radio), "choice_value", resp);
 		       if (resp == default_value)
 			       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
 	}
@@ -1009,22 +1022,37 @@ static GtkWidget *
 create_choice_field(PurpleRequestField *field)
 {
 	GtkWidget *widget;
-	GList *labels = purple_request_field_choice_get_labels(field);
-	int num_labels = g_list_length(labels);
+	GList *elements = purple_request_field_choice_get_elements(field);
+	int num_labels = g_list_length(elements) / 2;
 	GList *l;
+	gpointer *values = g_new(gpointer, num_labels);
+	gpointer default_value;
+	int i, default_index = -1;
 
+	default_value = purple_request_field_choice_get_default_value(field);
 	if (num_labels > 5)
 	{
 		widget = gtk_combo_box_text_new();
 
-		for (l = labels; l != NULL; l = l->next)
+		i = 0;
+		l = elements;
+		while (l != NULL)
 		{
-			const char *text = l->data;
+			const char *text;
+			gpointer *value;
+
+			text = l->data;
+			l = g_list_next(l);
+			value = l->data;
+			l = g_list_next(l);
+
 			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(widget), text);
+			if (value == default_value)
+				default_index = i;
+			values[i++] = value;
 		}
 
-		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
-						purple_request_field_choice_get_default_value(field));
+		gtk_combo_box_set_active(GTK_COMBO_BOX(widget), default_index);
 
 		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
 
@@ -1036,7 +1064,6 @@ create_choice_field(PurpleRequestField *field)
 		GtkWidget *box;
 		GtkWidget *first_radio = NULL;
 		GtkWidget *radio;
-		gint i;
 
 		if (num_labels == 2)
 			box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -1047,18 +1074,28 @@ create_choice_field(PurpleRequestField *field)
 
 		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
 
-		for (l = labels, i = 0; l != NULL; l = l->next, i++)
+		i = 0;
+		l = elements;
+		while (l != NULL)
 		{
-			const char *text = l->data;
+			const char *text;
+			gpointer *value;
+
+			text = l->data;
+			l = g_list_next(l);
+			value = l->data;
+			l = g_list_next(l);
 
 			radio = gtk_radio_button_new_with_label_from_widget(
 				GTK_RADIO_BUTTON(first_radio), text);
+			g_object_set_data(G_OBJECT(radio), "box", box);
 
 			if (first_radio == NULL)
 				first_radio = radio;
 
-			if (i == purple_request_field_choice_get_default_value(field))
+			if (value == default_value)
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
+			values[i++] = value;
 
 			gtk_box_pack_start(GTK_BOX(box), radio, TRUE, TRUE, 0);
 			gtk_widget_show(radio);
@@ -1067,6 +1104,8 @@ create_choice_field(PurpleRequestField *field)
 							 G_CALLBACK(field_choice_option_cb), field);
 		}
 	}
+
+	g_object_set_data_full(G_OBJECT(widget), "values", values, g_free);
 
 	return widget;
 }

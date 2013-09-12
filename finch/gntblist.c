@@ -2668,7 +2668,7 @@ block_select_cb(gpointer data, PurpleRequestFields *fields)
 	PurpleAccount *account = purple_request_fields_get_account(fields, "account");
 	const char *name = purple_request_fields_get_string(fields,  "screenname");
 	if (account && name && *name != '\0') {
-		if (purple_request_fields_get_choice(fields, "block") == 1) {
+		if (GPOINTER_TO_INT(purple_request_fields_get_choice(fields, "block")) == 1) {
 			purple_privacy_deny(account, name, FALSE, FALSE);
 		} else {
 			purple_privacy_allow(account, name, FALSE, FALSE);
@@ -2701,9 +2701,9 @@ block_select(GntMenuItem *item, gpointer n)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_choice_new("block", _("Block/Unblock"), 1);
-	purple_request_field_choice_add(field, _("Block"));
-	purple_request_field_choice_add(field, _("Unblock"));
+	field = purple_request_field_choice_new("block", _("Block/Unblock"), GINT_TO_POINTER(1));
+	purple_request_field_choice_add(field, _("Block"), GINT_TO_POINTER(1));
+	purple_request_field_choice_add(field, _("Unblock"), GINT_TO_POINTER(2));
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(purple_get_blist(), _("Block/Unblock"),

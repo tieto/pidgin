@@ -353,9 +353,9 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_field_group_add_field( group, field );
 
 	/* gender */
-	field = purple_request_field_choice_new( "male", _( "Gender" ), ( profile->male ) ? 1 : 0 );
-	purple_request_field_choice_add( field, _( "Female" ) );		/* 0 */
-	purple_request_field_choice_add( field, _( "Male" ) );			/* 1 */
+	field = purple_request_field_choice_new( "male", _( "Gender" ), GINT_TO_POINTER(profile->male ? 1 : 0) );
+	purple_request_field_choice_add( field, _( "Female" ), GINT_TO_POINTER(0) );
+	purple_request_field_choice_add( field, _( "Male" ), GINT_TO_POINTER(1) );
 	purple_request_field_group_add_field( group, field );
 
 	/* pin (required) */

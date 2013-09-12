@@ -1486,10 +1486,7 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 static void resource_select_ok_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
 {
 	PurpleRequestField *field = purple_request_fields_get_field(fields, "resource");
-	int selected_id = purple_request_field_choice_get_value(field);
-	GList *labels = purple_request_field_choice_get_labels(field);
-
-	const char *selected_label = g_list_nth_data(labels, selected_id);
+	const char *selected_label = purple_request_field_choice_get_value(field);
 
 	do_transfer_send(xfer, selected_label);
 }
@@ -1559,9 +1556,11 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 			PurpleRequestField *field = purple_request_field_choice_new("resource", _("Resource"), 0);
 			PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
 
+			purple_request_field_choice_set_data_destructor(field, g_free);
+
 			for(l = resources; l; l = l->next) {
 				jbr = l->data;
-				purple_request_field_choice_add(field, jbr->name);
+				purple_request_field_choice_add(field, jbr->name, g_strdup(jbr->name));
 			}
 
 			purple_request_field_group_add_field(group, field);

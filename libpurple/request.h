@@ -119,10 +119,10 @@ typedef struct
 
 	/** @see purple_request_choice_varg(). */
 	void *(*request_choice)(const char *title, const char *primary,
-		const char *secondary, int default_value, const char *ok_text,
-		GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
-		PurpleRequestCommonParameters *cpar, void *user_data,
-		va_list choices);
+		const char *secondary, gpointer default_value,
+		const char *ok_text, GCallback ok_cb, const char *cancel_text,
+		GCallback cancel_cb, PurpleRequestCommonParameters *cpar,
+		void *user_data, va_list choices);
 
 	/** @see purple_request_action_varg(). */
 	void *(*request_action)(const char *title, const char *primary,
@@ -165,7 +165,7 @@ typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field,
  *  of actions of the one chosen.
  */
 typedef void (*PurpleRequestActionCb)(void *, int);
-typedef void (*PurpleRequestChoiceCb)(void *, int);
+typedef void (*PurpleRequestChoiceCb)(void *, gpointer);
 typedef void (*PurpleRequestFieldsCb)(void *, PurpleRequestFields *fields);
 typedef void (*PurpleRequestFileCb)(void *, const char *filename);
 
@@ -486,10 +486,11 @@ gboolean purple_request_fields_get_bool(const PurpleRequestFields *fields,
  * @param fields The fields list.
  * @param id     The ID of the field.
  *
- * @return The choice index, if found, or -1 otherwise.
+ * @return The choice value, if found, or NULL otherwise.
  */
-int purple_request_fields_get_choice(const PurpleRequestFields *fields,
-								   const char *id);
+gpointer
+purple_request_fields_get_choice(const PurpleRequestFields *fields,
+	const char *id);
 
 /**
  * Returns the account of a field with the specified ID.
@@ -1067,18 +1068,20 @@ gboolean purple_request_field_bool_get_value(const PurpleRequestField *field);
  *
  * @return The new field.
  */
-PurpleRequestField *purple_request_field_choice_new(const char *id,
-												const char *text,
-												int default_value);
+PurpleRequestField *
+purple_request_field_choice_new(const char *id, const char *text,
+	gpointer default_value);
 
 /**
  * Adds a choice to a multiple choice field.
  *
  * @param field The choice field.
  * @param label The choice label.
+ * @param data  The choice value.
  */
-void purple_request_field_choice_add(PurpleRequestField *field,
-								   const char *label);
+void
+purple_request_field_choice_add(PurpleRequestField *field, const char *label,
+	gpointer data);
 
 /**
  * Sets the default value in an choice field.
@@ -1086,8 +1089,9 @@ void purple_request_field_choice_add(PurpleRequestField *field,
  * @param field         The field.
  * @param default_value The default value.
  */
-void purple_request_field_choice_set_default_value(PurpleRequestField *field,
-												 int default_value);
+void
+purple_request_field_choice_set_default_value(PurpleRequestField *field,
+	gpointer default_value);
 
 /**
  * Sets the value in an choice field.
@@ -1095,7 +1099,9 @@ void purple_request_field_choice_set_default_value(PurpleRequestField *field,
  * @param field The field.
  * @param value The value.
  */
-void purple_request_field_choice_set_value(PurpleRequestField *field, int value);
+void
+purple_request_field_choice_set_value(PurpleRequestField *field,
+	gpointer value);
 
 /**
  * Returns the default value in an choice field.
@@ -1104,7 +1110,8 @@ void purple_request_field_choice_set_value(PurpleRequestField *field, int value)
  *
  * @return The default value.
  */
-int purple_request_field_choice_get_default_value(const PurpleRequestField *field);
+gpointer
+purple_request_field_choice_get_default_value(const PurpleRequestField *field);
 
 /**
  * Returns the user-entered value in an choice field.
@@ -1113,16 +1120,22 @@ int purple_request_field_choice_get_default_value(const PurpleRequestField *fiel
  *
  * @return The value.
  */
-int purple_request_field_choice_get_value(const PurpleRequestField *field);
+gpointer
+purple_request_field_choice_get_value(const PurpleRequestField *field);
 
 /**
- * Returns a list of labels in a choice field.
+ * Returns a list of elements in a choice field.
  *
  * @param field The field.
  *
- * @constreturn The list of labels.
+ * @constreturn The list of pairs <label, value>.
  */
-GList *purple_request_field_choice_get_labels(const PurpleRequestField *field);
+GList *
+purple_request_field_choice_get_elements(const PurpleRequestField *field);
+
+void
+purple_request_field_choice_set_data_destructor(PurpleRequestField *field,
+	GDestroyNotify destroy);
 
 /*@}*/
 
@@ -1597,7 +1610,7 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
  * @return A UI-specific handle.
  */
 void *purple_request_choice(void *handle, const char *title, const char *primary,
-	const char *secondary, int default_value,
+	const char *secondary, gpointer default_value,
 	const char *ok_text, GCallback ok_cb,
 	const char *cancel_text, GCallback cancel_cb,
 	PurpleRequestCommonParameters *cpar,
@@ -1607,7 +1620,7 @@ void *purple_request_choice(void *handle, const char *title, const char *primary
  * <tt>va_list</tt> version of purple_request_choice(); see its documentation.
  */
 void *purple_request_choice_varg(void *handle, const char *title,
-	const char *primary, const char *secondary, int default_value,
+	const char *primary, const char *secondary, gpointer default_value,
 	const char *ok_text, GCallback ok_cb,
 	const char *cancel_text, GCallback cancel_cb,
 	PurpleRequestCommonParameters *cpar,
