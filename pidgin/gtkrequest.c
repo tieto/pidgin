@@ -431,6 +431,23 @@ pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
 		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 }
 
+static void
+pidgin_request_add_help(GtkDialog *dialog, PurpleRequestCommonParameters *cpar)
+{
+	GtkWidget *button;
+	PurpleRequestHelpCb help_cb;
+	gpointer help_data;
+
+	help_cb = purple_request_cpar_get_help_cb(cpar, &help_data);
+	if (help_cb == NULL)
+		return;
+
+	button = gtk_dialog_add_button(dialog, GTK_STOCK_HELP,
+		GTK_RESPONSE_HELP);
+	g_signal_connect(G_OBJECT(button), "clicked", (GCallback)help_cb,
+		help_data);
+}
+
 static void *
 pidgin_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
@@ -490,6 +507,8 @@ pidgin_request_input(const char *title, const char *primary,
 	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+
+	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
 
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
@@ -651,6 +670,8 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	pidgin_widget_decorate_account(hbox, purple_request_cpar_get_account(cpar));
 
+	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
+
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
@@ -775,6 +796,8 @@ pidgin_request_action(const char *title, const char *primary,
 
 	pidgin_widget_decorate_account(hbox,
 		purple_request_cpar_get_account(cpar));
+
+	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
 
 	/* Descriptive label */
 	primary_esc = pidgin_request_escape(cpar, primary);
@@ -1381,17 +1404,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);
 
-	/* Help button */
-	if (purple_request_cpar_get_help_cb(cpar, NULL) != NULL) {
-		PurpleRequestHelpCb help_cb;
-		gpointer help_data;
-
-		help_cb = purple_request_cpar_get_help_cb(cpar, &help_data);
-		g_assert(help_cb != NULL);
-
-		button = gtk_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
-		g_signal_connect(G_OBJECT(button), "clicked", (GCallback)help_cb, help_data);
-	}
+	pidgin_request_add_help(GTK_DIALOG(win), cpar);
 
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
@@ -1788,6 +1801,8 @@ pidgin_request_file(const char *title, const char *filename,
 						NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(filesel), GTK_RESPONSE_ACCEPT);
 
+	pidgin_request_add_help(GTK_DIALOG(filesel), cpar);
+
 	if ((filename != NULL) && (*filename != '\0')) {
 		if (savedialog)
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
@@ -1856,6 +1871,8 @@ pidgin_request_folder(const char *title, const char *dirname, GCallback ok_cb,
 						GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
 						NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dirsel), GTK_RESPONSE_ACCEPT);
+
+	pidgin_request_add_help(GTK_DIALOG(dirsel), cpar);
 
 	if ((dirname != NULL) && (*dirname != '\0'))
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dirsel), dirname);
