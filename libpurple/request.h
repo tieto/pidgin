@@ -168,6 +168,7 @@ typedef void (*PurpleRequestActionCb)(void *, int);
 typedef void (*PurpleRequestChoiceCb)(void *, gpointer);
 typedef void (*PurpleRequestFieldsCb)(void *, PurpleRequestFields *fields);
 typedef void (*PurpleRequestFileCb)(void *, const char *filename);
+typedef void (*PurpleRequestHelpCb)(gpointer);
 
 G_BEGIN_DECLS
 
@@ -355,6 +356,28 @@ purple_request_cpar_set_compact(PurpleRequestCommonParameters *cpar,
  */
 gboolean
 purple_request_cpar_is_compact(PurpleRequestCommonParameters *cpar);
+
+/**
+ * Sets the callback for the Help button.
+ *
+ * @param cpar      The parameters set.
+ * @param cb        The callback.
+ * @param user_data The data to be passed to the callback.
+ */
+void
+purple_request_cpar_set_help_cb(PurpleRequestCommonParameters *cpar,
+	PurpleRequestHelpCb cb, gpointer user_data);
+
+/**
+ * Gets the callback for the Help button.
+ *
+ * @param cpar      The parameters set (may be @c NULL).
+ * @param user_data The pointer to the variable, where user data (to be passed
+ *                  to callback function) should be stored.
+ */
+PurpleRequestHelpCb
+purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
+	gpointer *user_data);
 
 /*@}*/
 

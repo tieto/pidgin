@@ -76,6 +76,7 @@ static struct StockIcon
 	{ PIDGIN_STOCK_TYPED,           "pidgin",  "typed.png"                },
 	{ PIDGIN_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
 	{ PIDGIN_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
+	{ PIDGIN_STOCK_NEXT,            NULL,      GTK_STOCK_GO_FORWARD       },
 };
 
 static const GtkStockItem stock_items[] =
@@ -90,7 +91,8 @@ static const GtkStockItem stock_items[] =
 	{ PIDGIN_STOCK_ADD,                 N_("_Add..."),     0, 0, PACKAGE },
 	{ PIDGIN_STOCK_OPEN_MAIL,           N_("_Open Mail"),  0, 0, PACKAGE },
 	{ PIDGIN_STOCK_PAUSE,               N_("_Pause"),      0, 0, PACKAGE },
-	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, PACKAGE }
+	{ PIDGIN_STOCK_EDIT,                N_("_Edit"),       0, 0, PACKAGE },
+	{ PIDGIN_STOCK_NEXT,                N_("_Next"),       0, 0, PACKAGE },
 };
 
 typedef struct {
