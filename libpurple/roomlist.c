@@ -216,7 +216,7 @@ GList * purple_roomlist_get_fields(PurpleRoomlist *list)
 	return priv->fields;
 }
 
-gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list)
+gpointer purple_roomlist_get_protocol_data(PurpleRoomlist *list)
 {
 	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
@@ -225,7 +225,7 @@ gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list)
 	return priv->proto_data;
 }
 
-void purple_roomlist_set_proto_data(PurpleRoomlist *list, gpointer proto_data)
+void purple_roomlist_set_protocol_data(PurpleRoomlist *list, gpointer proto_data)
 {
 	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 
