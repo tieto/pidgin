@@ -795,7 +795,19 @@ purple_protocols_add(GType protocol_type, GError **error)
 		return NULL;
 	}
 
+	if (G_TYPE_IS_ABSTRACT(protocol_type)) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Protocol type is abstract"));
+		return NULL;
+	}
+
 	protocol = g_object_new(protocol_type, NULL);
+
+	if (!protocol) {
+		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
+		            _("Could not create protocol instance"));
+		return NULL;
+	}
 
 	if (!purple_protocol_get_id(protocol)) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
