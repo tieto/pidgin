@@ -143,10 +143,11 @@ void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardOp
  *
  * @param account The account.
  * @param who     Who you're drawing with.
+ * @param state   The state.
  *
  * @return The new whiteboard
  */
-PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who);
+PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state);
 
 /**
  * Returns the whiteboard's account.
@@ -165,6 +166,23 @@ PurpleAccount *purple_whiteboard_get_account(const PurpleWhiteboard *wb);
  * @return Who you're drawing with.
  */
 const char *purple_whiteboard_get_who(const PurpleWhiteboard *wb);
+
+/**
+ * Set the state of the whiteboard.
+ *
+ * @param wb		The whiteboard.
+ * @param state		The state
+ */
+void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state);
+
+/**
+ * Return the state of the whiteboard.
+ *
+ * @param wb		The whiteboard.
+ *
+ * @return The state of the whiteboard.
+ */
+int purple_whiteboard_get_state(const PurpleWhiteboard *wb);
 
 /**
  * Starts a whiteboard
