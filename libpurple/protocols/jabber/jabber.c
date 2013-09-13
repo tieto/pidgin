@@ -4191,7 +4191,7 @@ jabber_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->convo_closed            = jabber_convo_closed;
 	iface->normalize               = jabber_normalize;
 	iface->set_buddy_icon          = jabber_set_buddy_icon;
-	iface->get_cb_real_name        = jabber_chat_user_real_name;
+	iface->get_cuser_real_name     = jabber_chat_user_real_name;
 	iface->set_chat_topic          = jabber_chat_set_topic;
 	iface->find_blist_chat         = jabber_find_blist_chat;
 	iface->roomlist_get_list       = jabber_roomlist_get_list;

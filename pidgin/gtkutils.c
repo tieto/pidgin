@@ -921,7 +921,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 
 	protocol = purple_connection_get_protocol(conn);
 	if (protocol != NULL)
-		who = purple_protocol_iface_get_cb_real_name(protocol, conn, chat, name);
+		who = purple_protocol_iface_get_cuser_real_name(protocol, conn, chat, name);
 
 	pidgin_retrieve_user_info(conn, who ? who : name);
 	g_free(who);

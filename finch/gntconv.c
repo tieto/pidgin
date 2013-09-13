@@ -706,7 +706,8 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 
 	protocol = purple_connection_get_protocol(gc);
 	if (protocol)
-		realname = purple_protocol_iface_get_cb_real_name(protocol, gc, purple_chat_conversation_get_id(
+		realname = purple_protocol_iface_get_cuser_real_name(protocol, gc,
+				purple_chat_conversation_get_id(
 				PURPLE_CHAT_CONVERSATION(fc->active_conv)), name);
 
 	purple_im_conversation_new(account, realname ? realname : name);

@@ -1487,7 +1487,7 @@ chat_do_im(PidginConversation *gtkconv, const char *who)
 	protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
-		real_who = purple_protocol_iface_get_cb_real_name(protocol, gc,
+		real_who = purple_protocol_iface_get_cuser_real_name(protocol, gc,
 				purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)), who);
 
 	if(!who && !real_who)
@@ -1541,7 +1541,7 @@ menu_chat_send_file_cb(GtkWidget *w, PidginConversation *gtkconv)
 	protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
-		real_who = purple_protocol_iface_get_cb_real_name(protocol, gc,
+		real_who = purple_protocol_iface_get_cuser_real_name(protocol, gc,
 				purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)), who);
 
 	serv_send_file(gc, real_who ? real_who : who, NULL);
@@ -1673,7 +1673,7 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 				can_receive_file = FALSE;
 			else {
 				gchar *real_who = NULL;
-				real_who = purple_protocol_iface_get_cb_real_name(protocol, gc,
+				real_who = purple_protocol_iface_get_cuser_real_name(protocol, gc,
 					purple_chat_conversation_get_id(chat), who);
 				if (!(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
 						purple_protocol_iface_can_receive_file(protocol, gc, real_who ? real_who : who)))

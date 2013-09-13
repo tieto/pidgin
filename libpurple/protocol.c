@@ -586,12 +586,12 @@ purple_protocol_iface_remove_group(PurpleProtocol *protocol,
 }
 
 char *
-purple_protocol_iface_get_cb_real_name(PurpleProtocol *protocol,
-                                       PurpleConnection *gc, int id,
-                                       const char *who)
+purple_protocol_iface_get_cuser_real_name(PurpleProtocol *protocol,
+                                          PurpleConnection *gc, int id,
+                                          const char *who)
 {
-	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, NULL, get_cb_real_name, gc, id,
-	                                 who);
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, NULL, get_cuser_real_name, gc,
+	                                 id, who);
 }
 
 void

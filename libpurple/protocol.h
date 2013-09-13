@@ -408,7 +408,7 @@ struct _PurpleProtocolInterface
 	 *  @return    the real name of the participant.  This string must be
 	 *             freed by the caller.
 	 */
-	char *(*get_cb_real_name)(PurpleConnection *gc, int id, const char *who);
+	char *(*get_cuser_real_name)(PurpleConnection *gc, int id, const char *who);
 
 	void (*set_chat_topic)(PurpleConnection *gc, int id, const char *topic);
 
@@ -834,10 +834,10 @@ void purple_protocol_iface_set_buddy_icon(PurpleProtocol *, PurpleConnection *,
 void purple_protocol_iface_remove_group(PurpleProtocol *, PurpleConnection *gc,
                                         PurpleGroup *group);
 
-/** @copydoc  _PurpleProtocolInterface::get_cb_real_name */
-char *purple_protocol_iface_get_cb_real_name(PurpleProtocol *,
-                                             PurpleConnection *gc, int id,
-                                             const char *who);
+/** @copydoc  _PurpleProtocolInterface::get_cuser_real_name */
+char *purple_protocol_iface_get_cuser_real_name(PurpleProtocol *,
+                                                PurpleConnection *gc, int id,
+                                                const char *who);
 
 /** @copydoc  _PurpleProtocolInterface::set_chat_topic */
 void purple_protocol_iface_set_chat_topic(PurpleProtocol *,
