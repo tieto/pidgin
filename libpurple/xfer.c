@@ -98,6 +98,10 @@ struct _PurpleXferPrivate {
 
 	PurpleXferUiOps *ui_ops;     /**< UI-specific operations.             */
 
+	void *proto_data;            /**< prpl-specific data.
+	                                  TODO Remove this, and use
+	                                       protocol-specific subclasses   */
+
 	/*
 	 * Used to moderate the file transfer when either the read/write ui_ops are
 	 * set or fd is not set. In those cases, the UI/protocol call the respective
@@ -1874,6 +1878,26 @@ purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats)
 	if (priv->ui_ops->add_thumbnail) {
 		priv->ui_ops->add_thumbnail(xfer, formats);
 	}
+}
+
+void
+purple_xfer_set_protocol_data(PurpleXfer *xfer, gpointer proto_data)
+{
+	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->proto_data = proto_data;
+}
+
+gpointer
+purple_xfer_get_protocol_data(const PurpleXfer *xfer)
+{
+	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->proto_data;
 }
 
 void purple_xfer_set_ui_data(PurpleXfer *xfer, gpointer ui_data)

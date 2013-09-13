@@ -63,6 +63,9 @@ struct _PurpleConnectionPrivate
 
 	GSList *active_chats;         /**< A list of active chats
 	                                  (#PurpleChatConversation structs). */
+	void *proto_data;             /**< Protocol-specific data.            
+	                                  TODO Remove this, and use
+	                                       protocol-specific subclasses  */
 
 	char *display_name;           /**< How you appear to other people.   */
 	guint keepalive;              /**< Keep-alive.                       */
@@ -272,6 +275,16 @@ purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 	priv->display_name = g_strdup(name);
 }
 
+void
+purple_connection_set_protocol_data(PurpleConnection *gc, void *proto_data)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->proto_data = proto_data;
+}
+
 PurpleConnectionState
 purple_connection_get_state(const PurpleConnection *gc)
 {
@@ -340,6 +353,16 @@ purple_connection_get_display_name(const PurpleConnection *gc)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->display_name;
+}
+
+void *
+purple_connection_get_protocol_data(const PurpleConnection *gc)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->proto_data;
 }
 
 void
