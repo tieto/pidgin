@@ -2250,6 +2250,12 @@ silcpurple_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->new_xfer           = silcpurple_ftp_new_xfer;
 }
 
+PURPLE_DEFINE_TYPE_EXTENDED(
+	SilcProtocol, silcpurple_protocol, PURPLE_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              silcpurple_protocol_interface_init)
+);
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -2277,6 +2283,8 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	silcpurple_protocol_register_type(plugin);
+
 	my_protocol = purple_protocols_add(SILCPURPLE_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
@@ -2307,7 +2315,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, SilcProtocol, silcpurple_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, silc, plugin_query, plugin_load,
-                       plugin_unload);
+PURPLE_PLUGIN_INIT(silc, plugin_query, plugin_load, plugin_unload);

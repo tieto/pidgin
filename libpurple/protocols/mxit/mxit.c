@@ -819,6 +819,13 @@ mxit_protocol_interface_init( PurpleProtocolInterface *iface )
 }
 
 
+PURPLE_DEFINE_TYPE_EXTENDED(
+	MXitProtocol, mxit_protocol, PURPLE_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              mxit_protocol_interface_init )
+);
+
+
 /*------------------------------------------------------------------------
  * Querying the MXit plugin.
  *
@@ -855,6 +862,8 @@ plugin_query( GError **error )
 static gboolean
 plugin_load( PurplePlugin *plugin, GError **error )
 {
+	mxit_protocol_register_type(plugin);
+
 	my_protocol = purple_protocols_add(MXIT_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
@@ -879,9 +888,4 @@ plugin_unload( PurplePlugin *plugin, GError **error )
 }
 
 
-static PurplePlugin *my_plugin;
-
-PURPLE_PROTOCOL_DEFINE( my_plugin, MXitProtocol, mxit_protocol );
-
-PURPLE_PLUGIN_INIT_VAL( my_plugin, mxit, plugin_query, plugin_load,
-                        plugin_unload);
+PURPLE_PLUGIN_INIT( mxit, plugin_query, plugin_load, plugin_unload );

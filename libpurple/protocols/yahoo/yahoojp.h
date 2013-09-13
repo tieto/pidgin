@@ -42,6 +42,11 @@ typedef struct _YahooJPProtocolClass
 } YahooJPProtocolClass;
 
 /**
+ * Registers the YahooJPProtocol type in the type system.
+ */
+void yahoojp_protocol_register_type(PurplePlugin *plugin);
+
+/**
  * Returns the GType for the YahooJPProtocol object.
  */
 GType yahoojp_protocol_get_type(void);

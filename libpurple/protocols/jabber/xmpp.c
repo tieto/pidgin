@@ -107,8 +107,4 @@ xmpp_protocol_class_init(PurpleProtocolClass *klass)
 {
 }
 
-static void xmpp_protocol_interface_init(PurpleProtocolInterface *iface) { }
-
-extern PurplePlugin *_jabber_plugin;
-PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, XMPPProtocol, xmpp_protocol,
-                                JABBER_TYPE_PROTOCOL, 0);
+PURPLE_DEFINE_TYPE(XMPPProtocol, xmpp_protocol, JABBER_TYPE_PROTOCOL);

@@ -124,6 +124,8 @@ gtalk_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->unregister_user  = NULL;
 }
 
-extern PurplePlugin *_jabber_plugin;
-PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, GTalkProtocol, gtalk_protocol,
-                                JABBER_TYPE_PROTOCOL, 0);
+PURPLE_DEFINE_TYPE_EXTENDED(
+	GTalkProtocol, gtalk_protocol, JABBER_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              gtalk_protocol_interface_init)
+);

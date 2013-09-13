@@ -42,6 +42,11 @@ typedef struct _FacebookProtocolClass
 } FacebookProtocolClass;
 
 /**
+ * Registers the FacebookProtocol type in the type system.
+ */
+void facebook_protocol_register_type(PurplePlugin *plugin);
+
+/**
  * Returns the GType for the FacebookProtocol object.
  */
 GType facebook_protocol_get_type(void);

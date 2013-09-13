@@ -54,8 +54,6 @@
 #include "oscar.h"
 #include "peer.h"
 
-PurplePlugin *_oscar_plugin = NULL;
-
 static PurpleProtocol *aim_protocol = NULL;
 static PurpleProtocol *icq_protocol = NULL;
 
@@ -5638,8 +5636,11 @@ oscar_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->offline_message    = oscar_offline_message;
 }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(_oscar_plugin, OscarProtocol, oscar_protocol,
-                                PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);
+PURPLE_DEFINE_TYPE_EXTENDED(
+	OscarProtocol, oscar_protocol, PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              oscar_protocol_interface_init)
+);
 
 static PurplePluginInfo *
 plugin_query(GError **error)
@@ -5662,6 +5663,11 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	oscar_protocol_register_type(plugin);
+
+	aim_protocol_register_type(plugin);
+	icq_protocol_register_type(plugin);
+
 	aim_protocol = purple_protocols_add(AIM_TYPE_PROTOCOL, error);
 	if (!aim_protocol)
 		return FALSE;
@@ -5697,5 +5703,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT_VAL(_oscar_plugin, oscar, plugin_query, plugin_load,
-                       plugin_unload);
+PURPLE_PLUGIN_INIT(oscar, plugin_query, plugin_load, plugin_unload);

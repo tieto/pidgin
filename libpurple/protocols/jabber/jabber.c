@@ -81,8 +81,6 @@
  */
 #define DEFAULT_INACTIVITY_TIME 120
 
-PurplePlugin *_jabber_plugin = NULL;
-
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 
@@ -4211,8 +4209,11 @@ jabber_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_moods               = jabber_get_moods;
 }
 
-PURPLE_PROTOCOL_DEFINE_EXTENDED(_jabber_plugin, JabberProtocol, jabber_protocol,
-                                PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT);
+PURPLE_DEFINE_TYPE_EXTENDED(
+	JabberProtocol, jabber_protocol, PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              jabber_protocol_interface_init)
+);
 
 static PurplePluginInfo *
 plugin_query(GError **error)
@@ -4235,6 +4236,12 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	jabber_protocol_register_type(plugin);
+
+	facebook_protocol_register_type(plugin);
+	gtalk_protocol_register_type(plugin);
+	xmpp_protocol_register_type(plugin);
+
 	xmpp_protocol = purple_protocols_add(XMPP_TYPE_PROTOCOL, error);
 	if (!xmpp_protocol)
 		return FALSE;
@@ -4280,5 +4287,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT_VAL(_jabber_plugin, jabber, plugin_query, plugin_load,
-                       plugin_unload);
+PURPLE_PLUGIN_INIT(jabber, plugin_query, plugin_load, plugin_unload);

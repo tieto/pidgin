@@ -3461,6 +3461,12 @@ msim_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_account_text_table = msim_get_account_text_table;
 }
 
+PURPLE_DEFINE_TYPE_EXTENDED(
+	MsimProtocol, msim_protocol, PURPLE_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              msim_protocol_interface_init)
+);
+
 /**
  * Query the plugin
  */
@@ -3494,6 +3500,8 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	msim_protocol_register_type(plugin);
+
 #ifdef MSIM_SELF_TEST
 	msim_test_all();
 	g_set_error(error, MSIM_DOMAIN, 0, _("Finished MySpaceIM self test"));
@@ -3522,7 +3530,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, MsimProtocol, msim_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, myspace, plugin_query, plugin_load,
-                       plugin_unload);
+PURPLE_PLUGIN_INIT(myspace, plugin_query, plugin_load, plugin_unload);

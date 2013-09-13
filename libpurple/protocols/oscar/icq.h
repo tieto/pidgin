@@ -42,6 +42,11 @@ typedef struct _ICQProtocolClass
 } ICQProtocolClass;
 
 /**
+ * Registers the ICQProtocol type in the type system.
+ */
+void icq_protocol_register_type(PurplePlugin *plugin);
+
+/**
  * Returns the GType for the ICQProtocol object.
  */
 GType icq_protocol_get_type(void);

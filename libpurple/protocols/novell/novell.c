@@ -3541,6 +3541,12 @@ novell_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size = novell_get_max_message_size;
 }
 
+PURPLE_DEFINE_TYPE_EXTENDED(
+	NovellProtocol, novell_protocol, PURPLE_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              novell_protocol_interface_init)
+);
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -3562,6 +3568,8 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	novell_protocol_register_type(plugin);
+
 	my_protocol = purple_protocols_add(NOVELL_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
@@ -3578,7 +3586,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, NovellProtocol, novell_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, novell, plugin_query, plugin_load,
-                       plugin_unload);
+PURPLE_PLUGIN_INIT(novell, plugin_query, plugin_load, plugin_unload);

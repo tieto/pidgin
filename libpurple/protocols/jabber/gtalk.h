@@ -42,6 +42,11 @@ typedef struct _GTalkProtocolClass
 } GTalkProtocolClass;
 
 /**
+ * Registers the GTalkProtocol type in the type system.
+ */
+void gtalk_protocol_register_type(PurplePlugin *plugin);
+
+/**
  * Returns the GType for the GTalkProtocol object.
  */
 GType gtalk_protocol_get_type(void);

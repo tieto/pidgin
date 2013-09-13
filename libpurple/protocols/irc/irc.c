@@ -1007,6 +1007,12 @@ irc_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size = irc_get_max_message_size;
 }
 
+PURPLE_DEFINE_TYPE_EXTENDED(
+	IRCProtocol, irc_protocol, PURPLE_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              irc_protocol_interface_init)
+);
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -1028,6 +1034,8 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	irc_protocol_register_type(plugin);
+
 	_irc_protocol = purple_protocols_add(IRC_TYPE_PROTOCOL, error);
 	if (!_irc_protocol)
 		return FALSE;
@@ -1060,7 +1068,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, IRCProtocol, irc_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, irc, plugin_query, plugin_load,
-                       plugin_unload);
+PURPLE_PLUGIN_INIT(irc, plugin_query, plugin_load, plugin_unload);

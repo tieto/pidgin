@@ -123,6 +123,8 @@ yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_account_text_table = yahoojp_get_account_text_table;
 }
 
-extern PurplePlugin *_yahoo_plugin;
-PURPLE_PROTOCOL_DEFINE_EXTENDED(_yahoo_plugin, YahooJPProtocol,
-                                yahoojp_protocol, YAHOO_TYPE_PROTOCOL, 0);
+PURPLE_DEFINE_TYPE_EXTENDED(
+	YahooJPProtocol, yahoojp_protocol, YAHOO_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              yahoojp_protocol_interface_init)
+);

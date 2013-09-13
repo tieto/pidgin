@@ -2971,6 +2971,12 @@ msn_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->get_max_message_size   = msn_get_max_message_size;
 }
 
+PURPLE_DEFINE_TYPE_EXTENDED(
+	MsnProtocol, msn_protocol, PURPLE_TYPE_PROTOCOL, 0,
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+		                              msn_protocol_interface_init)
+);
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -2993,6 +2999,8 @@ static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleCmdId id;
+
+	msn_protocol_register_type(plugin);
 
 	my_protocol = purple_protocols_add(MSN_TYPE_PROTOCOL, error);
 	if (!my_protocol)
@@ -3033,7 +3041,4 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, MsnProtocol, msn_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, msn, plugin_query, plugin_load,
-                       plugin_unload);
+PURPLE_PLUGIN_INIT(msn, plugin_query, plugin_load, plugin_unload);

@@ -5711,6 +5711,13 @@ mw_protocol_interface_init(PurpleProtocolInterface *iface)
 }
 
 
+PURPLE_DEFINE_TYPE_EXTENDED(
+  mwProtocol, mw_protocol, PURPLE_TYPE_PROTOCOL, 0,
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
+  	                                mw_protocol_interface_init)
+);
+
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -5738,6 +5745,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 {
   GLogLevelFlags logflags =
     G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION;
+
+  mw_protocol_register_type(plugin);
 
   my_protocol = purple_protocols_add(MW_TYPE_PROTOCOL, error);
   if (!my_protocol)
@@ -5769,9 +5778,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
   return TRUE;
 }
 
-static PurplePlugin *my_plugin;
-PURPLE_PROTOCOL_DEFINE(my_plugin, mwProtocol, mw_protocol);
-PURPLE_PLUGIN_INIT_VAL(my_plugin, sametime, plugin_query, plugin_load,
-                       plugin_unload);
+
+PURPLE_PLUGIN_INIT(sametime, plugin_query, plugin_load, plugin_unload);
 /* The End. */
 
