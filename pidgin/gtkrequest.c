@@ -124,6 +124,9 @@ generic_response_start(PidginRequestData *data)
 
 	/* Tell the user we're doing something. */
 	pidgin_set_cursor(GTK_WIDGET(data->dialog), GDK_WATCH);
+
+	g_object_set_data(G_OBJECT(data->dialog),
+		"pidgin-window-is-closing", GINT_TO_POINTER(TRUE));
 }
 
 static void
@@ -434,6 +437,19 @@ pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
 }
 
 static void
+pidgin_request_help_clicked(GtkButton *button, gpointer _unused)
+{
+	PurpleRequestHelpCb cb;
+	gpointer data;
+
+	cb = g_object_get_data(G_OBJECT(button), "pidgin-help-cb");
+	data = g_object_get_data(G_OBJECT(button), "pidgin-help-data");
+
+	g_return_if_fail(cb != NULL);
+	cb(data);
+}
+
+static void
 pidgin_request_add_help(GtkDialog *dialog, PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *button;
@@ -446,8 +462,12 @@ pidgin_request_add_help(GtkDialog *dialog, PurpleRequestCommonParameters *cpar)
 
 	button = gtk_dialog_add_button(dialog, GTK_STOCK_HELP,
 		GTK_RESPONSE_HELP);
-	g_signal_connect(G_OBJECT(button), "clicked", (GCallback)help_cb,
-		help_data);
+
+	g_object_set_data(G_OBJECT(button), "pidgin-help-cb", help_cb);
+	g_object_set_data(G_OBJECT(button), "pidgin-help-data", help_data);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+		G_CALLBACK(pidgin_request_help_clicked), NULL);
 }
 
 static void *
@@ -1061,9 +1081,10 @@ create_choice_field(PurpleRequestField *field,
 	GList *l;
 	gpointer *values = g_new(gpointer, num_labels);
 	gpointer default_value;
+	gboolean default_found = FALSE;
 	int i;
 
-	default_value = purple_request_field_choice_get_default_value(field);
+	default_value = purple_request_field_choice_get_value(field);
 	if (num_labels > 5 || purple_request_cpar_is_compact(cpar))
 	{
 		int default_index = 0;
@@ -1082,8 +1103,10 @@ create_choice_field(PurpleRequestField *field,
 			l = g_list_next(l);
 
 			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(widget), text);
-			if (value == default_value)
+			if (value == default_value) {
 				default_index = i;
+				default_found = TRUE;
+			}
 			values[i++] = value;
 		}
 
@@ -1128,8 +1151,10 @@ create_choice_field(PurpleRequestField *field,
 			if (first_radio == NULL)
 				first_radio = radio;
 
-			if (value == default_value)
+			if (value == default_value) {
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
+				default_found = TRUE;
+			}
 			values[i++] = value;
 
 			gtk_box_pack_start(GTK_BOX(box), radio, TRUE, TRUE, 0);
@@ -1139,6 +1164,9 @@ create_choice_field(PurpleRequestField *field,
 							 G_CALLBACK(field_choice_option_cb), field);
 		}
 	}
+
+	if (!default_found && i > 0)
+		purple_request_field_choice_set_value(field, values[0]);
 
 	g_object_set_data_full(G_OBJECT(widget), "values", values, g_free);
 
@@ -1890,25 +1918,33 @@ pidgin_request_folder(const char *title, const char *dirname, GCallback ok_cb,
 	return (void *)data;
 }
 
-#ifdef _WIN32
-
-/* Not needed (yet) for non-win32, but should work everywhere. */
+/* if request callback issues another request, it should be attached to the
+ * primary request parent */
 static void
-pidgin_window_detach_children(GtkWindow* parent)
+pidgin_window_detach_children(GtkWindow* win)
 {
 	GList *it;
+	GtkWindow *par;
 
-	g_return_if_fail(parent != NULL);
+	g_return_if_fail(win != NULL);
 
+	par = gtk_window_get_transient_for(win);
 	it = gtk_window_list_toplevels();
 	for (it = g_list_first(it); it != NULL; it = g_list_next(it)) {
-		GtkWindow *win = GTK_WINDOW(it->data);
-		if (gtk_window_get_transient_for(win) == parent)
-			gtk_window_set_transient_for(win, NULL);
+		GtkWindow *child = GTK_WINDOW(it->data);
+		if (gtk_window_get_transient_for(child) != win)
+			continue;
+		if (gtk_window_get_destroy_with_parent(child)) {
+#ifdef _WIN32
+			/* XXX test/verify it: Win32 gtk ignores
+			 * gtk_window_set_destroy_with_parent(..., FALSE). */
+			gtk_window_set_transient_for(child, NULL);
+#endif
+			continue;
+		}
+		gtk_window_set_transient_for(child, par);
 	}
 }
-
-#endif
 
 static void
 pidgin_close_request(PurpleRequestType type, void *ui_handle)
@@ -1917,10 +1953,7 @@ pidgin_close_request(PurpleRequestType type, void *ui_handle)
 
 	g_free(data->cbs);
 
-#ifdef _WIN32
-	/* Win32 gtk ignores gtk_window_set_destroy_with_parent(..., FALSE). */
 	pidgin_window_detach_children(GTK_WINDOW(data->dialog));
-#endif
 
 	gtk_widget_destroy(data->dialog);
 
