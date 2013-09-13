@@ -437,6 +437,19 @@ pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
 }
 
 static void
+pidgin_request_help_clicked(GtkButton *button, gpointer _unused)
+{
+	PurpleRequestHelpCb cb;
+	gpointer data;
+
+	cb = g_object_get_data(G_OBJECT(button), "pidgin-help-cb");
+	data = g_object_get_data(G_OBJECT(button), "pidgin-help-data");
+
+	g_return_if_fail(cb != NULL);
+	cb(data);
+}
+
+static void
 pidgin_request_add_help(GtkDialog *dialog, PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *button;
@@ -449,8 +462,12 @@ pidgin_request_add_help(GtkDialog *dialog, PurpleRequestCommonParameters *cpar)
 
 	button = gtk_dialog_add_button(dialog, GTK_STOCK_HELP,
 		GTK_RESPONSE_HELP);
-	g_signal_connect(G_OBJECT(button), "clicked", (GCallback)help_cb,
-		help_data);
+
+	g_object_set_data(G_OBJECT(button), "pidgin-help-cb", help_cb);
+	g_object_set_data(G_OBJECT(button), "pidgin-help-data", help_data);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+		G_CALLBACK(pidgin_request_help_clicked), NULL);
 }
 
 static void *
