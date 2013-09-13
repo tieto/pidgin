@@ -42,13 +42,6 @@
 
 #define BONJOUR_DEFAULT_PORT 5298
 
-#define BONJOUR_TYPE_CONNECTION             (bonjour_connection_get_type())
-#define BONJOUR_CONNECTION(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), BONJOUR_TYPE_CONNECTION, BonjourConnection))
-#define BONJOUR_CONNECTION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), BONJOUR_TYPE_CONNECTION, BonjourConnectionClass))
-#define BONJOUR_IS_CONNECTION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), BONJOUR_TYPE_CONNECTION))
-#define BONJOUR_IS_CONNECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), BONJOUR_TYPE_CONNECTION))
-#define BONJOUR_CONNECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), BONJOUR_TYPE_CONNECTION, BonjourConnectionClass))
-
 #define BONJOUR_TYPE_PROTOCOL             (bonjour_protocol_get_type())
 #define BONJOUR_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), BONJOUR_TYPE_PROTOCOL, BonjourProtocol))
 #define BONJOUR_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), BONJOUR_TYPE_PROTOCOL, BonjourProtocolClass))
@@ -66,30 +59,18 @@ typedef struct _BonjourProtocolClass
 	PurpleProtocolClass parent_class;
 } BonjourProtocolClass;
 
-typedef struct _BonjourConnection
+typedef struct _BonjourData
 {
-	PurpleConnection parent;
-
 	BonjourDnsSd *dns_sd_data;
 	BonjourJabber *jabber_data;
 	GSList *xfer_lists;
 	gchar *jid;
-} BonjourConnection;
-
-typedef struct _BonjourConnectionClass
-{
-	PurpleConnectionClass parent_class;
-} BonjourConnectionClass;
+} BonjourData;
 
 /**
  * Returns the GType for the BonjourProtocol object.
  */
 GType bonjour_protocol_get_type(void);
-
-/**
- * Returns the GType for the BonjourConnection object.
- */
-GType bonjour_connection_get_type(void);
 
 /**
  *  This will always be username@machinename

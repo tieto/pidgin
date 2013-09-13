@@ -54,7 +54,7 @@ const char *
 bonjour_get_jid(PurpleAccount *account)
 {
 	PurpleConnection *conn = purple_account_get_connection(account);
-	BonjourConnection *bd = BONJOUR_CONNECTION(conn);
+	BonjourData *bd = purple_connection_get_protocol_data(conn);
 	return bd->jid;
 }
 
@@ -91,7 +91,7 @@ static void
 bonjour_login(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	BonjourConnection *bd;
+	BonjourData *bd;
 	PurpleStatus *status;
 	PurplePresence *presence;
 
@@ -107,7 +107,8 @@ bonjour_login(PurpleAccount *account)
 #endif /* _WIN32 */
 
 	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML);
-	bd = BONJOUR_CONNECTION(gc);
+	bd = g_new0(BonjourData, 1);
+	purple_connection_set_protocol_data(gc, bd);
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new0(BonjourJabber, 1);
@@ -161,7 +162,7 @@ static void
 bonjour_close(PurpleConnection *connection)
 {
 	PurpleGroup *bonjour_group;
-	BonjourConnection *bd = BONJOUR_CONNECTION(connection);
+	BonjourData *bd = purple_connection_get_protocol_data(connection);
 
 	bonjour_group = purple_blist_find_group(BONJOUR_GROUP_NAME);
 
@@ -195,6 +196,8 @@ bonjour_close(PurpleConnection *connection)
 
 	if (bd != NULL)
 		g_free(bd->jid);
+	g_free(bd);
+	purple_connection_set_protocol_data(connection, NULL);
 }
 
 static const char *
@@ -206,7 +209,7 @@ bonjour_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 static int
 bonjour_send_im(PurpleConnection *connection, const char *to, const char *msg, PurpleMessageFlags flags)
 {
-	BonjourConnection *bd = BONJOUR_CONNECTION(connection);
+	BonjourData *bd = purple_connection_get_protocol_data(connection);
 
 	if(!to || !msg)
 		return 0;
@@ -218,13 +221,13 @@ static void
 bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
-	BonjourConnection *bd;
+	BonjourData *bd;
 	PurplePresence *presence;
 	const char *message, *bonjour_status;
 	gchar *stripped;
 
 	gc = purple_account_get_connection(account);
-	bd = BONJOUR_CONNECTION(gc);
+	bd = purple_connection_get_protocol_data(gc);
 	presence = purple_account_get_presence(account);
 
 	message = purple_status_get_attr_string(status, "message");
@@ -329,7 +332,7 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 static
 void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
 {
-	BonjourConnection *bd = BONJOUR_CONNECTION(conn);
+	BonjourData *bd = purple_connection_get_protocol_data(conn);
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 }
 
@@ -627,32 +630,6 @@ initialize_default_account_values(void)
 }
 
 static void
-bonjour_connection_init(GObject *object)
-{
-}
-
-static void
-bonjour_connection_class_init(GObjectClass *klass)
-{
-}
-
-static PurpleConnection *
-bonjour_connection_new(PurpleProtocol *protocol, PurpleAccount *account, const char *password)
-{
-	g_return_val_if_fail(protocol != NULL, NULL);
-	g_return_val_if_fail(account != NULL, NULL);
-
-	return g_object_new(BONJOUR_TYPE_CONNECTION,
-	                    "protocol",  protocol,
-	                    "account",   account,
-	                    "password",  password,
-	                    NULL);
-}
-
-PURPLE_DEFINE_TYPE(BonjourConnection, bonjour_connection,
-                   PURPLE_TYPE_CONNECTION);
-
-static void
 bonjour_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
@@ -692,7 +669,6 @@ bonjour_protocol_class_init(PurpleProtocolClass *klass)
 static void
 bonjour_protocol_interface_init(PurpleProtocolInterface *iface)
 {
-	iface->connection_new       = bonjour_connection_new;
 	iface->list_icon            = bonjour_list_icon;
 	iface->status_text          = bonjour_status_text;
 	iface->tooltip_text         = bonjour_tooltip_text;
@@ -712,12 +688,6 @@ bonjour_protocol_interface_init(PurpleProtocolInterface *iface)
 	iface->new_xfer             = bonjour_new_xfer;
 	iface->get_max_message_size = bonjour_get_max_message_size;
 }
-
-PURPLE_DEFINE_TYPE_EXTENDED(
-	BonjourProtocol, bonjour_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-	                                  bonjour_protocol_interface_init)
-);
 
 static PurplePluginInfo *
 plugin_query(GError **error)
@@ -740,9 +710,6 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
-	bonjour_connection_register_type(plugin);
-	bonjour_protocol_register_type(plugin);
-
 	my_protocol = purple_protocols_add(BONJOUR_TYPE_PROTOCOL, error);
 	if (!my_protocol)
 		return FALSE;
@@ -764,4 +731,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	return TRUE;
 }
 
-PURPLE_PLUGIN_INIT(bonjour, plugin_query, plugin_load, plugin_unload);
+static PurplePlugin *my_plugin;
+PURPLE_PROTOCOL_DEFINE(my_plugin, BonjourProtocol, bonjour_protocol);
+PURPLE_PLUGIN_INIT_VAL(my_plugin, bonjour, plugin_query, plugin_load,
+                       plugin_unload);

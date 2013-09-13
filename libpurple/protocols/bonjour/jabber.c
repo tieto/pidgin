@@ -932,7 +932,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 			ip = tmp->data;
 			if (ip != NULL && g_ascii_strcasecmp(ip, bconv->ip) == 0) {
 				PurpleConnection *pc = purple_account_get_connection(bconv->account);
-				BonjourConnection *bd = BONJOUR_CONNECTION(pc);
+				BonjourData *bd = purple_connection_get_protocol_data(pc);
 				BonjourJabber *jdata = bd->jabber_data;
 
 				purple_debug_info("bonjour", "Matched buddy %s to incoming conversation \"from\" attrib and IP (%s)\n",
@@ -967,7 +967,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 void
 bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
 	PurpleConnection *pc = purple_account_get_connection(bconv->account);
-	BonjourConnection *bd = BONJOUR_CONNECTION(pc);
+	BonjourData *bd = purple_connection_get_protocol_data(pc);
 	BonjourJabber *jdata = bd->jabber_data;
 	struct _match_buddies_by_address_t *mbba;
 	GSList *buddies;
@@ -1129,7 +1129,7 @@ _async_bonjour_jabber_close_conversation_cb(gpointer data) {
 void
 async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv) {
 	PurpleConnection *pc = purple_account_get_connection(bconv->account);
-	BonjourConnection *bd = BONJOUR_CONNECTION(pc);
+	BonjourData *bd = purple_connection_get_protocol_data(pc);
 	BonjourJabber *jdata = bd->jabber_data;
 
 	jdata->pending_conversations = g_slist_remove(jdata->pending_conversations, bconv);
@@ -1148,11 +1148,11 @@ void
 bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 {
 	if (bconv != NULL) {
-		BonjourConnection *bd = NULL;
+		BonjourData *bd = NULL;
 
 		PurpleConnection *pc = purple_account_get_connection(bconv->account);
 		if (PURPLE_CONNECTION_IS_VALID(pc)) {
-			bd = BONJOUR_CONNECTION(pc);
+			bd = purple_connection_get_protocol_data(pc);
 			bd->jabber_data->pending_conversations = g_slist_remove(bd->jabber_data->pending_conversations, bconv);
 		}
 
@@ -1285,7 +1285,7 @@ xep_iq_new(void *data, XepIqType type, const char *to, const char *from, const c
 	iq = g_new0(XepIq, 1);
 	iq->node = iq_node;
 	iq->type = type;
-	iq->data = ((BonjourConnection*)data)->jabber_data;
+	iq->data = ((BonjourData*)data)->jabber_data;
 	iq->to = (char*)to;
 
 	return iq;
