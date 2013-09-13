@@ -1253,8 +1253,8 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const ch
 			fields,
 			_("Invite"), G_CALLBACK(invite_user_to_chat),
 			_("Cancel"), NULL,
-			purple_request_cpar_from_conversation(conv),
-			conv);
+			purple_request_cpar_from_conversation(PURPLE_CONVERSATION(chat)),
+			chat);
 }
 
 gboolean
