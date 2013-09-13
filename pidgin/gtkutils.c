@@ -2930,7 +2930,7 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 #else
 	/* This finds the currently active window and makes that the parent window. */
 	GList *windows = NULL;
-	GtkWidget *parent = NULL;
+	GtkWindow *parent = NULL;
 	GdkEvent *event = gtk_get_current_event();
 	GdkWindow *menu = NULL;
 
@@ -2950,24 +2950,29 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 
 	windows = gtk_window_list_toplevels();
 	while (windows) {
-		GtkWidget *window = windows->data;
+		GtkWindow *window = GTK_WINDOW(windows->data);
 		windows = g_list_delete_link(windows, windows);
 
-		if (window == widget ||
-				!gtk_widget_get_visible(window)) {
+		if (GTK_WIDGET(window) == widget ||
+				!gtk_widget_get_visible(GTK_WIDGET(window))) {
 			continue;
 		}
 
-		if (gtk_window_has_toplevel_focus(GTK_WINDOW(window)) ||
-				(menu && menu == gtk_widget_get_window(window))) {
+		if (gtk_window_has_toplevel_focus(window) ||
+				(menu && menu == gtk_widget_get_window(GTK_WIDGET(window)))) {
 			parent = window;
 			break;
 		}
 	}
 	if (windows)
 		g_list_free(windows);
+	if (GPOINTER_TO_INT(g_object_get_data(G_OBJECT(parent),
+		"pidgin-window-is-closing")))
+	{
+		parent = gtk_window_get_transient_for(parent);
+	}
 	if (parent) {
-		gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(parent));
+		gtk_window_set_transient_for(GTK_WINDOW(widget), parent);
 		return TRUE;
 	}
 	return FALSE;
