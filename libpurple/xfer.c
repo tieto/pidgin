@@ -425,7 +425,7 @@ static int
 purple_xfer_choose_file(PurpleXfer *xfer)
 {
 	purple_request_file(xfer, NULL, purple_xfer_get_filename(xfer),
-		(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE),
+		(purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE),
 		G_CALLBACK(purple_xfer_choose_file_ok_cb),
 		G_CALLBACK(purple_xfer_choose_file_cancel_cb),
 		purple_request_cpar_from_account(purple_xfer_get_account(xfer)),
@@ -478,7 +478,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 			serv_got_im(purple_account_get_connection(priv->account),
 								 priv->who, priv->message, 0, time(NULL));
 
-		cpar = purple_request_cpar_from_account(xfer->account);
+		cpar = purple_request_cpar_from_account(priv->account);
 		if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
 			purple_request_cpar_set_custom_icon(cpar, thumb,
 				thumb_size);
@@ -528,7 +528,7 @@ purple_xfer_ask_accept(PurpleXfer *xfer)
 					   purple_xfer_get_remote_port(xfer));
 	purple_request_accept_cancel(xfer, NULL, buf, buf2,
 		PURPLE_DEFAULT_ACTION_NONE,
-		purple_request_cpar_from_account(xfer->account), xfer,
+		purple_request_cpar_from_account(priv->account), xfer,
 		G_CALLBACK(ask_accept_ok), G_CALLBACK(ask_accept_cancel));
 	g_free(buf);
 	g_free(buf2);

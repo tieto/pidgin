@@ -691,7 +691,7 @@ purple_conversation_send_confirm(PurpleConversation *conv, const char *message)
 		purple_request_cpar_from_account(
 			purple_conversation_get_account(conv)),
 		data, 2, _("_Send Message"),
-		G_CALLBACK(purple_conv_send_confirm_cb), _("Cancel"), NULL);
+		G_CALLBACK(purple_conversation_send_confirm_cb), _("Cancel"), NULL);
 }
 
 gboolean
