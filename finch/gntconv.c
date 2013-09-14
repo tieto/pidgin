@@ -340,7 +340,7 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 			chat = find_chat_for_conversation(conv);
 			if (chat == NULL) {
 				PurpleProtocol *protocol = purple_connection_get_protocol(gc);
-				comps = purple_protocol_iface_chat_info_defaults(protocol, gc,
+				comps = purple_protocol_chat_iface_info_defaults(protocol, gc,
 						purple_conversation_get_name(conv));
 			} else {
 				comps = purple_chat_get_components(chat);
@@ -651,7 +651,7 @@ gg_create_menu(FinchConv *ggc)
 
 		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file) &&
 				(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
-					purple_protocol_iface_can_receive_file(protocol, gc,
+					purple_protocol_xfer_iface_can_receive(protocol, gc,
 					purple_conversation_get_name(ggc->active_conv)))) {
 			item = gnt_menuitem_new(_("Send File"));
 			gnt_menu_add_item(GNT_MENU(sub), item);
@@ -706,7 +706,7 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 
 	protocol = purple_connection_get_protocol(gc);
 	if (protocol)
-		realname = purple_protocol_iface_get_cuser_real_name(protocol, gc,
+		realname = purple_protocol_chat_iface_get_user_real_name(protocol, gc,
 				purple_chat_conversation_get_id(
 				PURPLE_CHAT_CONVERSATION(fc->active_conv)), name);
 

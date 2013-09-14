@@ -1637,7 +1637,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, find_blist_chat))
-		return purple_protocol_iface_find_blist_chat(protocol, account, name);
+		return purple_protocol_client_iface_find_blist_chat(protocol, account, name);
 
 	normname = g_strdup(purple_normalize(account, name));
 	for (group = purplebuddylist->root; group != NULL; group = group->next) {
@@ -1649,7 +1649,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 				if (account != purple_chat_get_account(chat))
 					continue;
 
-				parts = purple_protocol_iface_chat_info(protocol, 
+				parts = purple_protocol_chat_iface_info(protocol, 
 					purple_account_get_connection(purple_chat_get_account(chat)));
 
 				pce = parts->data;

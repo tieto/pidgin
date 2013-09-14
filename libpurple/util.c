@@ -3393,7 +3393,7 @@ purple_normalize(const PurpleAccount *account, const char *str)
 				purple_protocols_find(purple_account_get_protocol_id(account));
 
 		if (protocol != NULL)
-			ret = purple_protocol_iface_normalize(protocol, account, str);
+			ret = purple_protocol_client_iface_normalize(protocol, account, str);
 	}
 
 	if (ret == NULL)
@@ -3446,7 +3446,7 @@ purple_validate(const PurpleProtocol *protocol, const char *str)
 	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, normalize))
 		return TRUE;
 
-	normalized = purple_protocol_iface_normalize(PURPLE_PROTOCOL(protocol),
+	normalized = purple_protocol_client_iface_normalize(PURPLE_PROTOCOL(protocol),
 			NULL, str);
 
 	return (NULL != normalized);

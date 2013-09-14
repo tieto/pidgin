@@ -898,7 +898,7 @@ purple_conversation_get_max_message_size(PurpleConversation *conv)
 
 	g_return_val_if_fail(protocol != NULL, 0);
 
-	return purple_protocol_iface_get_max_message_size(protocol, conv);
+	return purple_protocol_client_iface_get_max_message_size(protocol, conv);
 }
 
 /**************************************************************************

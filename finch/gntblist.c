@@ -743,7 +743,7 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 
 	gc = purple_account_get_connection(account);
 	protocol = purple_connection_get_protocol(gc);
-	hash = purple_protocol_iface_chat_info_defaults(protocol, gc, name);
+	hash = purple_protocol_chat_iface_info_defaults(protocol, gc, name);
 
 	chat = purple_chat_new(account, name, hash);
 
@@ -1064,7 +1064,7 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 	if(!protocol || !PURPLE_PROTOCOL_IMPLEMENTS(protocol, blist_node_menu))
 		return;
 
-	for(list = purple_protocol_iface_blist_node_menu(protocol, node); list;
+	for(list = purple_protocol_client_iface_blist_node_menu(protocol, node); list;
 			list = g_list_delete_link(list, list))
 	{
 		PurpleMenuAction *act = (PurpleMenuAction *) list->data;
@@ -1123,7 +1123,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 	purple_request_fields_add_group(fields, group);
 
 	gc = purple_account_get_connection(purple_chat_get_account(chat));
-	parts = purple_protocol_iface_chat_info(purple_connection_get_protocol(gc), gc);
+	parts = purple_protocol_chat_iface_info(purple_connection_get_protocol(gc), gc);
 
 	for (iter = parts; iter; iter = iter->next) {
 		pce = iter->data;
@@ -1286,7 +1286,7 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file))
 	{
 		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
-			purple_protocol_iface_can_receive_file(protocol, gc, purple_buddy_get_name(buddy)))
+			purple_protocol_xfer_iface_can_receive(protocol, gc, purple_buddy_get_name(buddy)))
 			add_custom_action(menu, _("Send File"),
 					PURPLE_CALLBACK(finch_blist_menu_send_file_cb), buddy);
 	}
@@ -1412,7 +1412,7 @@ static void showlog_cb(PurpleBlistNode *sel, PurpleBlistNode *node)
 		account = purple_chat_get_account(c);
 		protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 		if (protocol) {
-			name = purple_protocol_iface_get_chat_name(protocol, purple_chat_get_components(c));
+			name = purple_protocol_chat_iface_get_name(protocol, purple_chat_get_components(c));
 		}
 	} else if (PURPLE_IS_CONTACT(node)) {
 		finch_log_show_contact((PurpleContact *)node);
@@ -1734,7 +1734,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 
 	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 	if (protocol) {
-		purple_protocol_iface_tooltip_text(protocol, buddy, user_info, full);
+		purple_protocol_client_iface_tooltip_text(protocol, buddy, user_info, full);
 	}
 
 	if (purple_prefs_get_bool("/finch/blist/idletime")) {
@@ -2489,7 +2489,7 @@ build_protocol_actions(GntMenuItem *item, PurpleProtocol *protocol,
 	GntMenuItem *menuitem;
 
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
-	for (actions = purple_protocol_iface_get_actions(protocol, gc); actions;
+	for (actions = purple_protocol_client_iface_get_actions(protocol, gc); actions;
 			actions = g_list_delete_link(actions, actions)) {
 		if (actions->data) {
 			PurpleProtocolAction *action = actions->data;
@@ -2810,7 +2810,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	chat = purple_blist_find_chat(account, name);
 	if (chat == NULL) {
 		PurpleProtocol *protocol = purple_connection_get_protocol(gc);
-		hash = purple_protocol_iface_chat_info_defaults(protocol, gc, name);
+		hash = purple_protocol_chat_iface_info_defaults(protocol, gc, name);
 	} else {
 		hash = purple_chat_get_components(chat);
 	}

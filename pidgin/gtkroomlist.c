@@ -236,7 +236,7 @@ static void do_add_room_cb(GtkWidget *w, struct _menu_cb_info *info)
 		protocol = purple_connection_get_protocol(gc);
 
 	if(protocol != NULL && PURPLE_PROTOCOL_IMPLEMENTS(protocol, roomlist_room_serialize))
-		name = purple_protocol_iface_roomlist_room_serialize(protocol, info->room);
+		name = purple_protocol_roomlist_iface_room_serialize(protocol, info->room);
 	else
 		name = g_strdup(purple_roomlist_room_get_name(info->room));
 

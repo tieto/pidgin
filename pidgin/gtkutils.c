@@ -559,7 +559,7 @@ pidgin_create_icon_from_protocol(PurpleProtocol *protocol, PidginProtocolIconSiz
 	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, list_icon))
 		return NULL;
 
-	protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
+	protoname = purple_protocol_class_list_icon(protocol, account, NULL);
 	if (protoname == NULL)
 		return NULL;
 
@@ -921,7 +921,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 
 	protocol = purple_connection_get_protocol(conn);
 	if (protocol != NULL)
-		who = purple_protocol_iface_get_cuser_real_name(protocol, conn, chat, name);
+		who = purple_protocol_chat_iface_get_user_real_name(protocol, conn, chat, name);
 
 	pidgin_retrieve_user_info(conn, who ? who : name);
 	g_free(who);
@@ -1039,7 +1039,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 					protocol = purple_connection_get_protocol(gc);
 				}
 
-				protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
+				protoname = purple_protocol_class_list_icon(protocol, account, NULL);
 
 				if (!strcmp(protoname, protocol_id))
 					break;
@@ -1078,7 +1078,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 						protocol = purple_connection_get_protocol(gc);
 					}
 
-					protoname = purple_protocol_iface_list_icon(protocol, account, NULL);
+					protoname = purple_protocol_class_list_icon(protocol, account, NULL);
 
 					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
 						break;
@@ -1490,7 +1490,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				im = TRUE;
 
 			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file))
-				ft = purple_protocol_iface_can_receive_file(protocol, gc, who);
+				ft = purple_protocol_xfer_iface_can_receive(protocol, gc, who);
 			else if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file))
 				ft = TRUE;
 

@@ -395,7 +395,7 @@ static void gtk_blist_join_chat(PurpleChat *chat)
 	components = purple_chat_get_components(chat);
 
 	if (protocol)
-		chat_name = purple_protocol_iface_get_chat_name(protocol, components);
+		chat_name = purple_protocol_chat_iface_get_name(protocol, components);
 
 	if (chat_name)
 		name = chat_name;
@@ -669,7 +669,7 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 	purple_request_fields_add_group(fields, group);
 
 	gc = purple_account_get_connection(purple_chat_get_account(chat));
-	parts = purple_protocol_iface_chat_info(purple_connection_get_protocol(gc), gc);
+	parts = purple_protocol_chat_iface_info(purple_connection_get_protocol(gc), gc);
 
 	for (iter = parts; iter; iter = iter->next) {
 		pce = iter->data;
@@ -750,7 +750,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 		account = purple_chat_get_account(c);
 		protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 		if (protocol) {
-			name = purple_protocol_iface_get_chat_name(protocol, purple_chat_get_components(c));
+			name = purple_protocol_chat_iface_get_name(protocol, purple_chat_get_components(c));
 		}
 	} else if (PURPLE_IS_CONTACT(node)) {
 		pidgin_log_show_contact(PURPLE_CONTACT(node));
@@ -1055,8 +1055,8 @@ rebuild_chat_entries(PidginChatData *data, const char *default_chat_name)
 	g_list_free(data->entries);
 	data->entries = NULL;
 
-	list = purple_protocol_iface_chat_info(protocol, gc);
-	defaults = purple_protocol_iface_chat_info_defaults(protocol, gc, default_chat_name);
+	list = purple_protocol_chat_iface_info(protocol, gc);
+	defaults = purple_protocol_chat_iface_info_defaults(protocol, gc, default_chat_name);
 
 	for (tmp = list; tmp; tmp = tmp->next)
 	{
@@ -1425,7 +1425,7 @@ pidgin_append_blist_node_proto_menu(GtkWidget *menu, PurpleConnection *gc,
 	if(!protocol || !PURPLE_PROTOCOL_IMPLEMENTS(protocol, blist_node_menu))
 		return;
 
-	for(l = ll = purple_protocol_iface_blist_node_menu(protocol, node); l; l = l->next) {
+	for(l = ll = purple_protocol_client_iface_blist_node_menu(protocol, node); l; l = l->next) {
 		PurpleMenuAction *act = (PurpleMenuAction *) l->data;
 		pidgin_append_menu_action(menu, act, node);
 	}
@@ -1528,7 +1528,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 
 	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file)) {
 		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
-			purple_protocol_iface_can_receive_file(protocol,
+			purple_protocol_xfer_iface_can_receive(protocol,
 			purple_account_get_connection(purple_buddy_get_account(buddy)), purple_buddy_get_name(buddy)))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File..."),
@@ -2310,7 +2310,7 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 		}
 
 		protocol =
-			purple_protocol_iface_list_icon(purple_connection_get_protocol(gc),
+			purple_protocol_class_list_icon(purple_connection_get_protocol(gc),
 					purple_buddy_get_account(buddy), buddy);
 
 		str = g_string_new(NULL);
@@ -3520,7 +3520,7 @@ get_global_moods(void)
 				PurpleProtocol *protocol = purple_connection_get_protocol(gc);
 				PurpleMood *mood = NULL;
 
-				for (mood = purple_protocol_iface_get_moods(protocol, account) ;
+				for (mood = purple_protocol_client_iface_get_moods(protocol, account) ;
 				    mood->mood != NULL ; mood++) {
 					int mood_count =
 							GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
@@ -3625,7 +3625,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	/* TODO: rlaager wants this sorted. */
 	/* TODO: darkrain wants it sorted post-translation */
 	if (account && PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_moods))
-		mood = purple_protocol_iface_get_moods(protocol, account);
+		mood = purple_protocol_client_iface_get_moods(protocol, account);
 	else
 		mood = global_moods;
 	for ( ; mood->mood != NULL ; mood++) {
@@ -3824,7 +3824,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		} else {
 			char *chat_name;
 			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_chat_name))
-				chat_name = purple_protocol_iface_get_chat_name(protocol, purple_chat_get_components(chat));
+				chat_name = purple_protocol_chat_iface_get_name(protocol, purple_chat_get_components(chat));
 			else
 				chat_name = g_strdup(purple_chat_get_name(chat));
 
@@ -3846,7 +3846,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		}
 
 		if (protocol)
-			cur = purple_protocol_iface_chat_info(protocol, purple_account_get_connection(purple_chat_get_account(chat)));
+			cur = purple_protocol_chat_iface_info(protocol, purple_account_get_connection(purple_chat_get_account(chat)));
 
 		while (cur != NULL)
 		{
@@ -4007,7 +4007,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 				protocol)
 		{
 			/* Additional text from the protocol */
-			purple_protocol_iface_tooltip_text(protocol, b, user_info, full);
+			purple_protocol_client_iface_tooltip_text(protocol, b, user_info, full);
 		}
 
 		/* These are Easter Eggs.  Patches to remove them will be rejected. */
@@ -4166,7 +4166,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	if (!protocol)
 		return NULL;
 
-	name = purple_protocol_iface_list_emblem(protocol, buddy);
+	name = purple_protocol_client_iface_list_emblem(protocol, buddy);
 
 	if (name == NULL) {
 		PurpleStatus *status;
@@ -4365,7 +4365,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 
 		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, status_text) &&
 				purple_account_get_connection(purple_buddy_get_account(b))) {
-			char *tmp = purple_protocol_iface_status_text(protocol, b);
+			char *tmp = purple_protocol_client_iface_status_text(protocol, b);
 			const char *end;
 
 			if(tmp && !g_utf8_validate(tmp, -1, &end)) {
@@ -8315,7 +8315,7 @@ pidgin_blist_update_accounts_menu(void)
 				PurpleProtocolAction *action = NULL;
 				GList *actions, *l;
 
-				actions = purple_protocol_iface_get_actions(protocol, gc);
+				actions = purple_protocol_client_iface_get_actions(protocol, gc);
 
 				for (l = actions; l != NULL; l = l->next)
 				{

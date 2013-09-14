@@ -443,7 +443,7 @@ do_protocol_change_account_status(PurpleAccount *account,
 		return;
 
 	if (!purple_account_is_disconnected(account))
-		purple_protocol_iface_set_status(protocol, account, new_status);
+		purple_protocol_server_iface_set_status(protocol, account, new_status);
 }
 
 void
@@ -529,7 +529,7 @@ purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type
 	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
 			description, who);
 
-	if (!purple_protocol_iface_send_attention(protocol, gc, who, type_code))
+	if (!purple_protocol_attention_iface_send(protocol, gc, who, type_code))
 		return;
 
 	im = purple_im_conversation_new(purple_connection_get_account(gc), who);
@@ -619,7 +619,7 @@ purple_protocol_initiate_media(PurpleAccount *account,
 
 	if (protocol) {
 		/* should check that the protocol supports this media type here? */
-		return purple_protocol_iface_initiate_media(protocol, account, who, type);
+		return purple_protocol_media_iface_initiate_session(protocol, account, who, type);
 	} else
 #endif
 	return FALSE;
@@ -638,7 +638,7 @@ purple_protocol_get_media_caps(PurpleAccount *account, const char *who)
 		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol)
-		return purple_protocol_iface_get_media_caps(protocol, account, who);
+		return purple_protocol_media_iface_get_caps(protocol, account, who);
 #endif
 	return PURPLE_MEDIA_CAPS_NONE;
 }
@@ -681,7 +681,7 @@ purple_protocol_get_max_message_size(PurpleProtocol *protocol)
 {
 	g_return_val_if_fail(protocol != NULL, 0);
 
-	return purple_protocol_iface_get_max_message_size(protocol, NULL);
+	return purple_protocol_client_iface_get_max_message_size(protocol, NULL);
 }
 
 /**************************************************************************/
