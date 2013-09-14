@@ -556,9 +556,6 @@ pidgin_create_icon_from_protocol(PurpleProtocol *protocol, PidginProtocolIconSiz
 	char *filename = NULL;
 	GdkPixbuf *pixbuf;
 
-	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, list_icon))
-		return NULL;
-
 	protoname = purple_protocol_class_list_icon(protocol, account, NULL);
 	if (protoname == NULL)
 		return NULL;
@@ -1489,9 +1486,9 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			if (protocol && purple_protocol_get_options(protocol) & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
 
-			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file))
+			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive))
 				ft = purple_protocol_xfer_iface_can_receive(protocol, gc, who);
-			else if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file))
+			else if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send))
 				ft = TRUE;
 
 			if (im && ft)

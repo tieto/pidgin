@@ -255,7 +255,7 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 
 	gtk_widget_grab_focus(dialog->protocol_menu);
 
-	if (!dialog->protocol || !PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, register_user)) {
+	if (!dialog->protocol || !PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, SERVER_IFACE, register_user)) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
 			dialog->register_button), FALSE);
 		gtk_widget_hide(dialog->register_button);
@@ -307,7 +307,7 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 	const char *label;
 
 	if (!dialog->protocol || ! PURPLE_PROTOCOL_IMPLEMENTS(
-		dialog->protocol, get_account_text_table)) {
+		dialog->protocol, CLIENT_IFACE, get_account_text_table)) {
 		return FALSE;
 	}
 
@@ -334,7 +334,7 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 	GHashTable *table = NULL;
 	const char *label = NULL;
 
-	if(PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, get_account_text_table)) {
+	if(PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, CLIENT_IFACE, get_account_text_table)) {
 		table = purple_protocol_client_iface_get_account_text_table(dialog->protocol, NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
@@ -626,7 +626,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		username = g_strdup(purple_account_get_username(dialog->account));
 
 	if (!username && dialog->protocol
-			&& PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, get_account_text_table)) {
+			&& PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, CLIENT_IFACE, get_account_text_table)) {
 		GHashTable *table;
 		const char *label;
 		table = purple_protocol_client_iface_get_account_text_table(dialog->protocol, NULL);
@@ -1326,7 +1326,7 @@ static void
 add_voice_options(AccountPrefsDialog *dialog)
 {
 #ifdef USE_VV
-	if (!dialog->protocol || !PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, initiate_media)) {
+	if (!dialog->protocol || !PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, MEDIA_IFACE, initiate_session)) {
 		if (dialog->voice_frame) {
 			gtk_widget_destroy(dialog->voice_frame);
 			dialog->voice_frame = NULL;
@@ -1786,7 +1786,7 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 	if (dialog->account == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
 
-	if (!dialog->protocol || !PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, register_user))
+	if (!dialog->protocol || !PURPLE_PROTOCOL_IMPLEMENTS(dialog->protocol, SERVER_IFACE, register_user))
 		gtk_widget_hide(button);
 
 	/* Setup the page with 'Advanced' (protocol options). */

@@ -1661,7 +1661,7 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 			g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 
 
-		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file))
+		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send))
 		{
 			gboolean can_receive_file = TRUE;
 
@@ -1675,7 +1675,7 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 				gchar *real_who = NULL;
 				real_who = purple_protocol_chat_iface_get_user_real_name(protocol, gc,
 					purple_chat_conversation_get_id(chat), who);
-				if (!(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
+				if (!(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive) ||
 						purple_protocol_xfer_iface_can_receive(protocol, gc, real_who ? real_who : who)))
 					can_receive_file = FALSE;
 				g_free(real_who);
@@ -1701,7 +1701,7 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 			g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_info)) {
+	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, get_info)) {
 		button = pidgin_new_item_from_stock(menu, _("Info"), PIDGIN_STOCK_TOOLBAR_USER_INFO,
 						G_CALLBACK(menu_chat_info_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
@@ -3272,7 +3272,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 			PurpleProtocol *protocol =
 					purple_protocols_find(purple_account_get_protocol_id(account));
 			if (purple_account_get_connection(account) != NULL &&
-					PURPLE_PROTOCOL_IMPLEMENTS(protocol, chat_info_defaults)) {
+					PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, info_defaults)) {
 				components = purple_protocol_chat_iface_info_defaults(protocol, purple_account_get_connection(account),
 						purple_conversation_get_name(conv));
 			} else {
@@ -3408,7 +3408,7 @@ regenerate_attention_items(PidginWindow *win)
 	if (pc != NULL)
 		protocol = purple_connection_get_protocol(pc);
 
-	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_attention_types)) {
+	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, ATTENTION_IFACE, get_types)) {
 		list = purple_protocol_attention_iface_get_types(protocol, purple_connection_get_account(pc));
 
 		/* Multiple attention types */
@@ -4464,7 +4464,7 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 	if(!gc || !(protocol = purple_connection_get_protocol(gc)))
 		return;
 
-	if(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_chat_topic))
+	if(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, set_topic))
 		return;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -4844,7 +4844,7 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 		gtkchat->topic_text = gtk_entry_new();
 		gtk_widget_set_size_request(gtkchat->topic_text, -1, BUDDYICON_SIZE_MIN);
 
-		if(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_chat_topic)) {
+		if(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, set_topic)) {
 			gtk_editable_set_editable(GTK_EDITABLE(gtkchat->topic_text), FALSE);
 		} else {
 			g_signal_connect(G_OBJECT(gtkchat->topic_text), "activate",
@@ -5537,7 +5537,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		 * invite him to the chat.
 		 */
 		if (PURPLE_IS_CHAT_CONVERSATION(conv) &&
-				protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, chat_invite) &&
+				protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, invite) &&
 				strcmp(purple_account_get_protocol_id(convaccount),
 					purple_account_get_protocol_id(buddyaccount)) == 0) {
 		    purple_chat_conversation_invite_user(PURPLE_CHAT_CONVERSATION(conv), buddyname, NULL, TRUE);
@@ -5593,7 +5593,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				 * invite him to the chat.
 				 */
 				if (PURPLE_IS_CHAT_CONVERSATION(conv) &&
-						protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, chat_invite) &&
+						protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, invite) &&
 						strcmp(purple_account_get_protocol_id(convaccount), protocol_id) == 0) {
 					purple_chat_conversation_invite_user(PURPLE_CHAT_CONVERSATION(conv), username, NULL, TRUE);
 				} else {
@@ -7252,28 +7252,28 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Deal with menu items */
 		gtk_action_set_sensitive(win->menu.view_log, TRUE);
 		gtk_action_set_sensitive(win->menu.add_pounce, TRUE);
-		gtk_action_set_sensitive(win->menu.get_info, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_info)));
-		gtk_action_set_sensitive(win->menu.invite, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, chat_invite)));
+		gtk_action_set_sensitive(win->menu.get_info, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, get_info)));
+		gtk_action_set_sensitive(win->menu.invite, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, invite)));
 		gtk_action_set_sensitive(win->menu.insert_link, (features & PURPLE_CONNECTION_FLAG_HTML));
 		gtk_action_set_sensitive(win->menu.insert_image, !(features & PURPLE_CONNECTION_FLAG_NO_IMAGES));
 
 		if (PURPLE_IS_IM_CONVERSATION(conv))
 		{
-			gtk_action_set_sensitive(win->menu.add, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, add_buddy)));
-			gtk_action_set_sensitive(win->menu.remove, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, remove_buddy)));
+			gtk_action_set_sensitive(win->menu.add, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, add_buddy)));
+			gtk_action_set_sensitive(win->menu.remove, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, remove_buddy)));
 			gtk_action_set_sensitive(win->menu.send_file,
-									 (PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file) &&
-									 (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
+									 (PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send) &&
+									 (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive) ||
 									  purple_protocol_xfer_iface_can_receive(protocol, gc, purple_conversation_get_name(conv)))));
-			gtk_action_set_sensitive(win->menu.get_attention, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_attention)));
+			gtk_action_set_sensitive(win->menu.get_attention, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, ATTENTION_IFACE, send)));
 			gtk_action_set_sensitive(win->menu.alias,
 									 (account != NULL) &&
 									 (purple_blist_find_buddy(account, purple_conversation_get_name(conv)) != NULL));
 		}
 		else
 		{
-			gtk_action_set_sensitive(win->menu.add, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, join_chat)));
-			gtk_action_set_sensitive(win->menu.remove, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, join_chat)));
+			gtk_action_set_sensitive(win->menu.add, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, join)));
+			gtk_action_set_sensitive(win->menu.remove, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, join)));
 			gtk_action_set_sensitive(win->menu.alias,
 									 (account != NULL) &&
 									 (purple_blist_find_chat(account, purple_conversation_get_name(conv)) != NULL));
@@ -9741,7 +9741,7 @@ infopane_entry_activate(PidginConversation *gtkconv)
 		gc = purple_conversation_get_connection(conv);
 		if (gc != NULL)
 			protocol = purple_connection_get_protocol(gc);
-		if (protocol && !PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_chat_topic))
+		if (protocol && !PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, set_topic))
 			/* This protocol doesn't support setting the chat room topic */
 			return FALSE;
 
