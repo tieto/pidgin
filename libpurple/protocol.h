@@ -1,5 +1,5 @@
 /**
- * @file protocol.h Protocol object and interface API
+ * @file protocol.h Protocol object and interfaces API
  * @ingroup core
  */
 
@@ -27,42 +27,17 @@
 #ifndef _PURPLE_PROTOCOL_H_
 #define _PURPLE_PROTOCOL_H_
 
-#define PURPLE_TYPE_PROTOCOL                (purple_protocol_get_type())
-#define PURPLE_PROTOCOL(obj)                (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocol))
-#define PURPLE_PROTOCOL_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PROTOCOL, PurpleProtocolClass))
-#define PURPLE_IS_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL))
-#define PURPLE_IS_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_PROTOCOL))
-#define PURPLE_PROTOCOL_GET_CLASS(obj)      (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocolClass))
-
-#define PURPLE_TYPE_PROTOCOL_INTERFACE      (purple_protocol_iface_get_type())
-#define PURPLE_IS_PROTOCOL_INTERFACE(obj)   (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_INTERFACE))
-#define PURPLE_PROTOCOL_GET_INTERFACE(inst) (G_TYPE_INSTANCE_GET_INTERFACE((inst), PURPLE_TYPE_PROTOCOL_INTERFACE, PurpleProtocolInterface))
+#define PURPLE_TYPE_PROTOCOL            (purple_protocol_get_type())
+#define PURPLE_PROTOCOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocol))
+#define PURPLE_PROTOCOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PROTOCOL, PurpleProtocolClass))
+#define PURPLE_IS_PROTOCOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL))
+#define PURPLE_IS_PROTOCOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_PROTOCOL))
+#define PURPLE_PROTOCOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocolClass))
 
 /** @copydoc _PurpleProtocol */
 typedef struct _PurpleProtocol PurpleProtocol;
 /** @copydoc _PurpleProtocolClass */
 typedef struct _PurpleProtocolClass PurpleProtocolClass;
-
-/** @copydoc _PurpleProtocolClientInterface */
-typedef struct _PurpleProtocolClientInterface PurpleProtocolClientInterface;
-/** @copydoc _PurpleProtocolServerInterface */
-typedef struct _PurpleProtocolServerInterface PurpleProtocolServerInterface;
-/** @copydoc _PurpleProtocolIMInterface */
-typedef struct _PurpleProtocolIMInterface PurpleProtocolIMInterface;
-/** @copydoc _PurpleProtocolChatInterface */
-typedef struct _PurpleProtocolChatInterface PurpleProtocolChatInterface;
-/** @copydoc _PurpleProtocolPrivacyInterface */
-typedef struct _PurpleProtocolPrivacyInterface PurpleProtocolPrivacyInterface;
-/** @copydoc _PurpleProtocolXferInterface */
-typedef struct _PurpleProtocolXferInterface PurpleProtocolXferInterface;
-/** @copydoc _PurpleProtocolRoomlistInterface */
-typedef struct _PurpleProtocolRoomlistInterface PurpleProtocolRoomlistInterface;
-/** @copydoc _PurpleProtocolAttentionInterface */
-typedef struct _PurpleProtocolAttentionInterface PurpleProtocolAttentionInterface;
-/** @copydoc _PurpleProtocolMediaInterface */
-typedef struct _PurpleProtocolMediaInterface PurpleProtocolMediaInterface;
-/** @copydoc _PurpleProtocolFactoryInterface */
-typedef struct _PurpleProtocolFactoryInterface PurpleProtocolFactoryInterface;
 
 #include "account.h"
 #include "accountopt.h"
@@ -138,7 +113,7 @@ struct _PurpleProtocolClass
 	/**
 	 * Close connection with the server.
 	 */
-	void (*close)(PurpleConnection *);
+	void (*close_connection)(PurpleConnection *);
 
 	/**
 	 * Returns a list of #PurpleStatusType which exist for this account;
@@ -160,12 +135,20 @@ struct _PurpleProtocolClass
 	void (*_purple_reserved4)(void);
 };
 
+#define PURPLE_TYPE_PROTOCOL_CLIENT_IFACE     (purple_protocol_client_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_CLIENT_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_CLIENT_IFACE))
+#define PURPLE_PROTOCOL_GET_CLIENT_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_CLIENT_IFACE, \
+                                               PurpleProtocolClientIface))
+
+/** @copydoc _PurpleProtocolClientIface */
+typedef struct _PurpleProtocolClientIface PurpleProtocolClientIface;
+
 /**
  * The protocol client interface.
  *
  * This interface provides a gateway between purple and the protocol.
  */
-struct _PurpleProtocolClientInterface
+struct _PurpleProtocolClientIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
@@ -266,12 +249,20 @@ struct _PurpleProtocolClientInterface
 	gssize (*get_max_message_size)(PurpleConversation *conv);
 };
 
+#define PURPLE_TYPE_PROTOCOL_SERVER_IFACE     (purple_protocol_server_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_SERVER_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_SERVER_IFACE))
+#define PURPLE_PROTOCOL_GET_SERVER_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_SERVER_IFACE, \
+                                               PurpleProtocolServerIface))
+
+/** @copydoc _PurpleProtocolServerIface */
+typedef struct _PurpleProtocolServerIface PurpleProtocolServerIface;
+
 /**
  * The protocol server interface.
  *
  * This interface provides a gateway between purple and the protocol's server.
  */
-struct _PurpleProtocolServerInterface
+struct _PurpleProtocolServerIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
@@ -388,12 +379,20 @@ struct _PurpleProtocolServerInterface
 	                         PurpleGetPublicAliasFailureCallback failure_cb);
 };
 
+#define PURPLE_TYPE_PROTOCOL_IM_IFACE     (purple_protocol_im_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_IM_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_IM_IFACE))
+#define PURPLE_PROTOCOL_GET_IM_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_IM_IFACE, \
+                                           PurpleProtocolIMIface))
+
+/** @copydoc _PurpleProtocolIMIface */
+typedef struct _PurpleProtocolIMIface PurpleProtocolIMIface;
+
 /**
  * The protocol IM interface.
  *
  * This interface provides callbacks needed by protocols that implement IMs.
  */
-struct _PurpleProtocolIMInterface
+struct _PurpleProtocolIMIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
@@ -407,7 +406,7 @@ struct _PurpleProtocolIMInterface
 	 * errno values, or just big something.  If the message should
 	 * not be echoed to the conversation window, return 0.
 	 */
-	int  (*send_im)(PurpleConnection *, const char *who,
+	int  (*send)(PurpleConnection *, const char *who,
 					const char *message,
 					PurpleMessageFlags flags);
 
@@ -422,12 +421,20 @@ struct _PurpleProtocolIMInterface
 								PurpleIMTypingState state);
 };
 
+#define PURPLE_TYPE_PROTOCOL_CHAT_IFACE     (purple_protocol_chat_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_CHAT_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_CHAT_IFACE))
+#define PURPLE_PROTOCOL_GET_CHAT_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_CHAT_IFACE, \
+                                             PurpleProtocolChatIface))
+
+/** @copydoc _PurpleProtocolChatIface */
+typedef struct _PurpleProtocolChatIface PurpleProtocolChatIface;
+
 /**
  * The protocol chat interface.
  *
  * This interface provides callbacks needed by protocols that implement chats.
  */
-struct _PurpleProtocolChatInterface
+struct _PurpleProtocolChatIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
@@ -439,7 +446,7 @@ struct _PurpleProtocolChatInterface
 	 *
 	 * @return A list of #PurpleProtocolChatEntry structs
 	 */
-	GList *(*chat_info)(PurpleConnection *);
+	GList *(*info)(PurpleConnection *);
 
 	/**
 	 * Returns a hashtable which maps #PurpleProtocolChatEntry struct
@@ -452,7 +459,7 @@ struct _PurpleProtocolChatInterface
 	 * @param chat_name The chat name to be turned into components
 	 * @return Hashtable containing the information extracted from chat_name
 	 */
-	GHashTable *(*chat_info_defaults)(PurpleConnection *,
+	GHashTable *(*info_defaults)(PurpleConnection *,
 									  const char *chat_name);
 
 	/**
@@ -465,7 +472,7 @@ struct _PurpleProtocolChatInterface
 	 *                   an invitation, in which case this matches the
 	 *                   data parameter passed to #serv_got_chat_invite.
 	 */
-	void (*join_chat)(PurpleConnection *, GHashTable *components);
+	void (*join)(PurpleConnection *, GHashTable *components);
 
 	/**
 	 * Called when the user refuses a chat invitation.
@@ -473,7 +480,7 @@ struct _PurpleProtocolChatInterface
 	 * @param components A hashtable containing information required to
 	 *                   join the chat as passed to #serv_got_chat_invite.
 	 */
-	void (*reject_chat)(PurpleConnection *, GHashTable *components);
+	void (*reject)(PurpleConnection *, GHashTable *components);
 
 	/**
 	 * Returns a chat name based on the information in components. Use
@@ -482,7 +489,7 @@ struct _PurpleProtocolChatInterface
 	 *
 	 * @param components A hashtable containing information about the chat.
 	 */
-	char *(*get_chat_name)(GHashTable *components);
+	char *(*get_name)(GHashTable *components);
 
 	/**
 	 * Invite a user to join a chat.
@@ -492,14 +499,14 @@ struct _PurpleProtocolChatInterface
 	 *                is received.
 	 * @param who     The name of the user to send the invation to.
 	 */
-	void (*chat_invite)(PurpleConnection *, int id,
+	void (*invite)(PurpleConnection *, int id,
 						const char *message, const char *who);
 	/**
 	 * Called when the user requests leaving a chat.
 	 *
 	 * @param id The id of the chat to leave
 	 */
-	void (*chat_leave)(PurpleConnection *, int id);
+	void (*leave)(PurpleConnection *, int id);
 
 	/**
 	 * Send a whisper to a user in a chat.
@@ -508,7 +515,7 @@ struct _PurpleProtocolChatInterface
 	 * @param who     The name of the user to send the whisper to.
 	 * @param message The message of the whisper.
 	 */
-	void (*chat_whisper)(PurpleConnection *, int id,
+	void (*whisper)(PurpleConnection *, int id,
 						 const char *who, const char *message);
 
 	/**
@@ -527,7 +534,7 @@ struct _PurpleProtocolChatInterface
 	 * @return 	  A positive number or 0 in case of success,
 	 *                a negative error number in case of failure.
 	 */
-	int  (*chat_send)(PurpleConnection *, int id, const char *message,
+	int  (*send)(PurpleConnection *, int id, const char *message,
 					  PurpleMessageFlags flags);
 
 	/** Gets the real name of a participant in a chat.  For example, on
@@ -539,17 +546,25 @@ struct _PurpleProtocolChatInterface
 	 *  @return    the real name of the participant.  This string must be
 	 *             freed by the caller.
 	 */
-	char *(*get_cuser_real_name)(PurpleConnection *gc, int id, const char *who);
+	char *(*get_user_real_name)(PurpleConnection *gc, int id, const char *who);
 
-	void (*set_chat_topic)(PurpleConnection *gc, int id, const char *topic);
+	void (*set_topic)(PurpleConnection *gc, int id, const char *topic);
 };
+
+#define PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE     (purple_protocol_privacy_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_PRIVACY_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE))
+#define PURPLE_PROTOCOL_GET_PRIVACY_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE, \
+                                                PurpleProtocolPrivacyIface))
+
+/** @copydoc _PurpleProtocolPrivacyIface */
+typedef struct _PurpleProtocolPrivacyIface PurpleProtocolPrivacyIface;
 
 /**
  * The protocol privacy interface.
  *
  * This interface provides privacy callbacks such as to permit/deny users.
  */
-struct _PurpleProtocolPrivacyInterface
+struct _PurpleProtocolPrivacyIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
@@ -561,39 +576,63 @@ struct _PurpleProtocolPrivacyInterface
 	void (*set_permit_deny)(PurpleConnection *);
 };
 
+#define PURPLE_TYPE_PROTOCOL_XFER_IFACE     (purple_protocol_xfer_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_XFER_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_XFER_IFACE))
+#define PURPLE_PROTOCOL_GET_XFER_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_XFER_IFACE, \
+                                             PurpleProtocolXferIface))
+
+/** @copydoc _PurpleProtocolXferIface */
+typedef struct _PurpleProtocolXferIface PurpleProtocolXferIface;
+
 /**
  * The protocol file transfer interface.
  *
  * This interface provides file transfer callbacks for the protocol.
  */
-struct _PurpleProtocolXferInterface
+struct _PurpleProtocolXferIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
 
-	gboolean (*can_receive_file)(PurpleConnection *, const char *who);
-	void (*send_file)(PurpleConnection *, const char *who,
+	gboolean (*can_receive)(PurpleConnection *, const char *who);
+	void (*send)(PurpleConnection *, const char *who,
 					  const char *filename);
 	PurpleXfer *(*new_xfer)(PurpleConnection *, const char *who);
 };
+
+#define PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE     (purple_protocol_roomlist_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_ROOMLIST_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE))
+#define PURPLE_PROTOCOL_GET_ROOMLIST_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE, \
+                                                 PurpleProtocolRoomlistIface))
+
+/** @copydoc _PurpleProtocolRoomlistIface */
+typedef struct _PurpleProtocolRoomlistIface PurpleProtocolRoomlistIface;
 
 /**
  * The protocol roomlist interface.
  *
  * This interface provides callbacks for room listing.
  */
-struct _PurpleProtocolRoomlistInterface
+struct _PurpleProtocolRoomlistIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
 
-	PurpleRoomlist *(*roomlist_get_list)(PurpleConnection *gc);
-	void (*roomlist_cancel)(PurpleRoomlist *list);
-	void (*roomlist_expand_category)(PurpleRoomlist *list,
+	PurpleRoomlist *(*get_list)(PurpleConnection *gc);
+	void (*cancel)(PurpleRoomlist *list);
+	void (*expand_category)(PurpleRoomlist *list,
 									 PurpleRoomlistRoom *category);
 	/* room list serialize */
-	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
+	char *(*room_serialize)(PurpleRoomlistRoom *room);
 };
+
+#define PURPLE_TYPE_PROTOCOL_ATTENTION_IFACE     (purple_protocol_attention_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_ATTENTION_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_ATTENTION_IFACE))
+#define PURPLE_PROTOCOL_GET_ATTENTION_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_ATTENTION_IFACE, \
+                                                  PurpleProtocolAttentionIface))
+
+/** @copydoc _PurpleProtocolAttentionIface */
+typedef struct _PurpleProtocolAttentionIface PurpleProtocolAttentionIface;
 
 /**
  * The protocol attention interface.
@@ -601,22 +640,30 @@ struct _PurpleProtocolRoomlistInterface
  * This interface provides attention API for sending and receiving
  * zaps/nudges/buzzes etc.
  */
-struct _PurpleProtocolAttentionInterface
+struct _PurpleProtocolAttentionIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
 
-	gboolean (*send_attention)(PurpleConnection *gc, const char *username,
+	gboolean (*send)(PurpleConnection *gc, const char *username,
 							   guint type);
-	GList *(*get_attention_types)(PurpleAccount *acct);
+	GList *(*get_types)(PurpleAccount *acct);
 };
+
+#define PURPLE_TYPE_PROTOCOL_MEDIA_IFACE     (purple_protocol_media_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_MEDIA_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_MEDIA_IFACE))
+#define PURPLE_PROTOCOL_GET_MEDIA_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_MEDIA_IFACE, \
+                                              PurpleProtocolMediaIface))
+
+/** @copydoc _PurpleProtocolMediaIface */
+typedef struct _PurpleProtocolMediaIface PurpleProtocolMediaIface;
 
 /**
  * The protocol media interface.
  *
  * This interface provides callbacks for media sessions on the protocol.
  */
-struct _PurpleProtocolMediaInterface
+struct _PurpleProtocolMediaIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
@@ -630,7 +677,7 @@ struct _PurpleProtocolMediaInterface
 	 * @return TRUE if the call succeeded else FALSE. (Doesn't imply the media
 	 *         session or stream will be successfully created)
 	 */
-	gboolean (*initiate_media)(PurpleAccount *account, const char *who,
+	gboolean (*initiate_session)(PurpleAccount *account, const char *who,
 					PurpleMediaSessionType type);
 
 	/**
@@ -641,17 +688,25 @@ struct _PurpleProtocolMediaInterface
 	 * @param who The remote user to check for media capability with.
 	 * @return The media caps the contact supports.
 	 */
-	PurpleMediaCaps (*get_media_caps)(PurpleAccount *account,
+	PurpleMediaCaps (*get_caps)(PurpleAccount *account,
 					  const char *who);
 };
 
-/** TODO
+#define PURPLE_TYPE_PROTOCOL_FACTORY_IFACE     (purple_protocol_factory_iface_get_type())
+#define PURPLE_PROTOCOL_HAS_FACTORY_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_FACTORY_IFACE))
+#define PURPLE_PROTOCOL_GET_FACTORY_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_PROTOCOL_FACTORY_IFACE, \
+                                                PurpleProtocolFactoryIface))
+
+/** @copydoc _PurpleProtocolFactoryIface */
+typedef struct _PurpleProtocolFactoryIface PurpleProtocolFactoryIface;
+
+/**
  * The protocol factory interface.
  *
  * This interface provides callbacks for construction of protocol-specific
  * subclasses of some purple objects.
  */
-struct _PurpleProtocolFactoryInterface
+struct _PurpleProtocolFactoryIface
 {
 	/*< private >*/
 	GTypeInterface parent_iface;
@@ -675,7 +730,7 @@ struct _PurpleProtocolFactoryInterface
 	 * PurpleWhiteboard.
 	 */
 	PurpleWhiteboard *(*whiteboard_new)(PurpleAccount *account,
-	                                    const char *who);
+	                                    const char *who, int state);
 
 	/**
 	 * Creates a new protocol-specific file transfer object that inherits
@@ -685,11 +740,13 @@ struct _PurpleProtocolFactoryInterface
 	                        const char *who);
 };
 
-/** TODO change
- * Returns TRUE if a protocol implements a function, FALSE otherwise.
+/**
+ * Returns TRUE if a protocol implements a function in an interface,
+ * FALSE otherwise.
  */
-#define PURPLE_PROTOCOL_IMPLEMENTS(protocol,func) \
-	(PURPLE_PROTOCOL_GET_INTERFACE(protocol)->func != NULL)
+#define PURPLE_PROTOCOL_IMPLEMENTS(protocol, IFACENAME, func) \
+	(PURPLE_PROTOCOL_HAS_##IFACENAME##_IFACE(protocol) && \
+	 PURPLE_PROTOCOL_GET_##IFACENAME##_IFACE(protocol)->func != NULL)
 
 G_BEGIN_DECLS
 
@@ -776,305 +833,419 @@ PurpleWhiteboardOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *pr
  * @param flags    What instance data to delete.
  */
 void purple_protocol_override(PurpleProtocol *protocol,
-                              PurpleProtocolOverrideFlags flags);
+		PurpleProtocolOverrideFlags flags);
 
 /*@}*/
 
 /**************************************************************************/
-/** @name Protocol Interface API                                          */
+/** @name Protocol Class API                                              */
 /**************************************************************************/
-/*@{*/ /* TODO update */
+/*@{*/
+
+/** @copydoc  _PurpleProtocolClass::login */
+void purple_protocol_class_login(PurpleProtocol *, PurpleAccount *);
+
+/** @copydoc  _PurpleProtocolClass::close_connection */
+void purple_protocol_class_close_connection(PurpleProtocol *,
+		PurpleConnection *);
+
+/** @copydoc  _PurpleProtocolClass::status_types */
+GList *purple_protocol_class_status_types(PurpleProtocol *,
+		PurpleAccount *account);
+
+/** @copydoc  _PurpleProtocolClass::list_icon */
+const char *purple_protocol_class_list_icon(PurpleProtocol *,
+		PurpleAccount *account, PurpleBuddy *buddy);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Client Interface API                                   */
+/**************************************************************************/
+/*@{*/
 
 /**
- * Returns the GType for the protocol interface.
+ * Returns the GType for the protocol client interface.
  */
-GType purple_protocol_iface_get_type(void);
-
-/** @copydoc  _PurpleProtocolInterface::get_actions */
-GList *purple_protocol_iface_get_actions(PurpleProtocol *, PurpleConnection *);
-
-/** @copydoc  _PurpleProtocolInterface::list_icon */
-const char *purple_protocol_iface_list_icon(PurpleProtocol *,
-                                            PurpleAccount *account,
-                                            PurpleBuddy *buddy);
-
-/** @copydoc  _PurpleProtocolInterface::list_emblem */
-const char *purple_protocol_iface_list_emblem(PurpleProtocol *,
-                                              PurpleBuddy *buddy);
-
-/** @copydoc  _PurpleProtocolInterface::status_text */
-char *purple_protocol_iface_status_text(PurpleProtocol *, PurpleBuddy *buddy);
-
-/** @copydoc  _PurpleProtocolInterface::tooltip_text */
-void purple_protocol_iface_tooltip_text(PurpleProtocol *, PurpleBuddy *buddy,
-                                        PurpleNotifyUserInfo *user_info,
-                                        gboolean full);
-
-/** @copydoc  _PurpleProtocolInterface::status_types */
-GList *purple_protocol_iface_status_types(PurpleProtocol *,
-                                          PurpleAccount *account);
-
-/** @copydoc  _PurpleProtocolInterface::blist_node_menu */
-GList *purple_protocol_iface_blist_node_menu(PurpleProtocol *,
-                                             PurpleBlistNode *node);
-
-/** @copydoc  _PurpleProtocolInterface::chat_info */
-GList *purple_protocol_iface_chat_info(PurpleProtocol *, PurpleConnection *);
-
-/** @copydoc  _PurpleProtocolInterface::chat_info_defaults */
-GHashTable *purple_protocol_iface_chat_info_defaults(PurpleProtocol *,
-                                                     PurpleConnection *,
-                                                     const char *chat_name);
-
-/** @copydoc  _PurpleProtocolInterface::login */
-void purple_protocol_iface_login(PurpleProtocol *, PurpleAccount *);
-
-/** @copydoc  _PurpleProtocolInterface::close */
-void purple_protocol_iface_close(PurpleProtocol *, PurpleConnection *);
-
-/** @copydoc  _PurpleProtocolInterface::send_im */
-int  purple_protocol_iface_send_im(PurpleProtocol *, PurpleConnection *, 
-                                   const char *who, const char *message,
-                                   PurpleMessageFlags flags);
-
-/** @copydoc  _PurpleProtocolInterface::set_info */
-void purple_protocol_iface_set_info(PurpleProtocol *, PurpleConnection *,
-                                    const char *info);
-
-/** @copydoc  _PurpleProtocolInterface::send_typing */
-unsigned int purple_protocol_iface_send_typing(PurpleProtocol *,
-                                               PurpleConnection *,
-                                               const char *name,
-                                               PurpleIMTypingState state);
-
-/** @copydoc  _PurpleProtocolInterface::get_info */
-void purple_protocol_iface_get_info(PurpleProtocol *, PurpleConnection *,
-                                    const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::set_status */
-void purple_protocol_iface_set_status(PurpleProtocol *, PurpleAccount *account,
-                                      PurpleStatus *status);
-
-/** @copydoc  _PurpleProtocolInterface::set_idle */
-void purple_protocol_iface_set_idle(PurpleProtocol *, PurpleConnection *,
-                                    int idletime);
-
-/** @copydoc  _PurpleProtocolInterface::change_passwd */
-void purple_protocol_iface_change_passwd(PurpleProtocol *, PurpleConnection *,
-                                         const char *old_pass,
-                                         const char *new_pass);
-
-/** @copydoc  _PurpleProtocolInterface::add_buddy */
-void purple_protocol_iface_add_buddy(PurpleProtocol *, PurpleConnection *pc,
-                                     PurpleBuddy *buddy, PurpleGroup *group,
-                                     const char *message);
-
-/** @copydoc  _PurpleProtocolInterface::add_buddies */
-void purple_protocol_iface_add_buddies(PurpleProtocol *, PurpleConnection *pc,
-                                       GList *buddies, GList *groups,
-                                       const char *message);
-
-/** @copydoc  _PurpleProtocolInterface::remove_buddy */
-void purple_protocol_iface_remove_buddy(PurpleProtocol *, PurpleConnection *,
-                                        PurpleBuddy *buddy, PurpleGroup *group);
-
-/** @copydoc  _PurpleProtocolInterface::remove_buddies */
-void purple_protocol_iface_remove_buddies(PurpleProtocol *, PurpleConnection *,
-                                          GList *buddies, GList *groups);
-
-/** @copydoc  _PurpleProtocolInterface::add_permit */
-void purple_protocol_iface_add_permit(PurpleProtocol *, PurpleConnection *,
-                                      const char *name);
-
-/** @copydoc  _PurpleProtocolInterface::add_deny */
-void purple_protocol_iface_add_deny(PurpleProtocol *, PurpleConnection *,
-                                    const char *name);
-
-/** @copydoc  _PurpleProtocolInterface::rem_permit */
-void purple_protocol_iface_rem_permit(PurpleProtocol *, PurpleConnection *,
-                                      const char *name);
-
-/** @copydoc  _PurpleProtocolInterface::rem_deny */
-void purple_protocol_iface_rem_deny(PurpleProtocol *, PurpleConnection *,
-                                    const char *name);
-
-/** @copydoc  _PurpleProtocolInterface::set_permit_deny */
-void purple_protocol_iface_set_permit_deny(PurpleProtocol *,
-                                           PurpleConnection *);
-
-/** @copydoc  _PurpleProtocolInterface::join_chat */
-void purple_protocol_iface_join_chat(PurpleProtocol *, PurpleConnection *,
-                                     GHashTable *components);
-
-/** @copydoc  _PurpleProtocolInterface::reject_chat */
-void purple_protocol_iface_reject_chat(PurpleProtocol *, PurpleConnection *,
-                                       GHashTable *components);
-
-/** @copydoc  _PurpleProtocolInterface::get_chat_name */
-char *purple_protocol_iface_get_chat_name(PurpleProtocol *,
-                                          GHashTable *components);
-
-/** @copydoc  _PurpleProtocolInterface::chat_invite */
-void purple_protocol_iface_chat_invite(PurpleProtocol *, PurpleConnection *,
-                                       int id, const char *message,
-                                       const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::chat_leave */
-void purple_protocol_iface_chat_leave(PurpleProtocol *, PurpleConnection *,
-                                      int id);
-
-/** @copydoc  _PurpleProtocolInterface::chat_whisper */
-void purple_protocol_iface_chat_whisper(PurpleProtocol *, PurpleConnection *,
-                                        int id, const char *who,
-                                        const char *message);
-
-/** @copydoc  _PurpleProtocolInterface::chat_send */
-int  purple_protocol_iface_chat_send(PurpleProtocol *, PurpleConnection *,
-                                     int id, const char *message,
-                                     PurpleMessageFlags flags);
-
-/** @copydoc  _PurpleProtocolInterface::keepalive */
-void purple_protocol_iface_keepalive(PurpleProtocol *, PurpleConnection *);
-
-/** @copydoc  _PurpleProtocolInterface::register_user */
-void purple_protocol_iface_register_user(PurpleProtocol *, PurpleAccount *);
-
-/** @copydoc  _PurpleProtocolInterface::unregister_user */
-void purple_protocol_iface_unregister_user(PurpleProtocol *, PurpleAccount *,
-                                           PurpleAccountUnregistrationCb cb,
-                                           void *user_data);
-
-/** @copydoc  _PurpleProtocolInterface::alias_buddy */
-void purple_protocol_iface_alias_buddy(PurpleProtocol *, PurpleConnection *,
-                                       const char *who, const char *alias);
-
-/** @copydoc  _PurpleProtocolInterface::group_buddy */
-void purple_protocol_iface_group_buddy(PurpleProtocol *, PurpleConnection *,
-                                       const char *who, const char *old_group,
-                                       const char *new_group);
-
-/** @copydoc  _PurpleProtocolInterface::rename_group */
-void purple_protocol_iface_rename_group(PurpleProtocol *, PurpleConnection *,
-                                        const char *old_name,
-                                        PurpleGroup *group,
-                                        GList *moved_buddies);
-
-/** @copydoc  _PurpleProtocolInterface::buddy_free */
-void purple_protocol_iface_buddy_free(PurpleProtocol *, PurpleBuddy *);
-
-/** @copydoc  _PurpleProtocolInterface::convo_closed */
-void purple_protocol_iface_convo_closed(PurpleProtocol *, PurpleConnection *,
-                                        const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::normalize */
-const char *purple_protocol_iface_normalize(PurpleProtocol *,
-                                            const PurpleAccount *account,
-                                            const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::set_buddy_icon */
-void purple_protocol_iface_set_buddy_icon(PurpleProtocol *, PurpleConnection *,
-                                          PurpleStoredImage *img);
-
-/** @copydoc  _PurpleProtocolInterface::remove_group */
-void purple_protocol_iface_remove_group(PurpleProtocol *, PurpleConnection *gc,
-                                        PurpleGroup *group);
-
-/** @copydoc  _PurpleProtocolInterface::get_cuser_real_name */
-char *purple_protocol_iface_get_cuser_real_name(PurpleProtocol *,
-                                                PurpleConnection *gc, int id,
-                                                const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::set_chat_topic */
-void purple_protocol_iface_set_chat_topic(PurpleProtocol *,
-                                          PurpleConnection *gc, int id,
-                                          const char *topic);
-
-/** @copydoc  _PurpleProtocolInterface::find_blist_chat */
-PurpleChat *purple_protocol_iface_find_blist_chat(PurpleProtocol *,
-                                                  PurpleAccount *account,
-                                                  const char *name);
-
-/** @copydoc  _PurpleProtocolInterface::roomlist_get_list */
-PurpleRoomlist *purple_protocol_iface_roomlist_get_list(PurpleProtocol *,
-                                                        PurpleConnection *gc);
-
-/** @copydoc  _PurpleProtocolInterface::roomlist_cancel */
-void purple_protocol_iface_roomlist_cancel(PurpleProtocol *,
-                                           PurpleRoomlist *list);
-
-/** @copydoc  _PurpleProtocolInterface::roomlist_expand_category */
-void purple_protocol_iface_roomlist_expand_category(PurpleProtocol *,
-                                                  PurpleRoomlist *list,
-                                                  PurpleRoomlistRoom *category);
-
-/** @copydoc  _PurpleProtocolInterface::can_receive_file */
-gboolean purple_protocol_iface_can_receive_file(PurpleProtocol *,
-                                                PurpleConnection *,
-                                                const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::send_file */
-void purple_protocol_iface_send_file(PurpleProtocol *, PurpleConnection *,
-                                     const char *who, const char *filename);
-
-/** @copydoc  _PurpleProtocolInterface::new_xfer */
-PurpleXfer *purple_protocol_iface_new_xfer(PurpleProtocol *, PurpleConnection *,
-                                           const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::offline_message */
-gboolean purple_protocol_iface_offline_message(PurpleProtocol *,
-                                               const PurpleBuddy *buddy);
-
-/** @copydoc  _PurpleProtocolInterface::send_raw */
-int purple_protocol_iface_send_raw(PurpleProtocol *, PurpleConnection *gc,
-                                   const char *buf, int len);
-
-/** @copydoc  _PurpleProtocolInterface::roomlist_room_serialize */
-char *purple_protocol_iface_roomlist_room_serialize(PurpleProtocol *,
-                                                    PurpleRoomlistRoom *room);
-
-/** @copydoc  _PurpleProtocolInterface::send_attention */
-gboolean purple_protocol_iface_send_attention(PurpleProtocol *,
-                                              PurpleConnection *gc,
-                                              const char *username, guint type);
-
-/** @copydoc  _PurpleProtocolInterface::get_attention_types */
-GList *purple_protocol_iface_get_attention_types(PurpleProtocol *,
-                                                 PurpleAccount *acct);
-
-/** @copydoc  _PurpleProtocolInterface::get_account_text_table */
-GHashTable *purple_protocol_iface_get_account_text_table(PurpleProtocol *,
-                                                        PurpleAccount *account);
-
-/** @copydoc  _PurpleProtocolInterface::initiate_media */
-gboolean purple_protocol_iface_initiate_media(PurpleProtocol *,
-                                              PurpleAccount *account,
-                                              const char *who,
-                                              PurpleMediaSessionType type);
-
-/** @copydoc  _PurpleProtocolInterface::get_media_caps */
-PurpleMediaCaps purple_protocol_iface_get_media_caps(PurpleProtocol *,
-                                                     PurpleAccount *account,
-                                                     const char *who);
-
-/** @copydoc  _PurpleProtocolInterface::get_moods */
-PurpleMood *purple_protocol_iface_get_moods(PurpleProtocol *,
-                                            PurpleAccount *account);
-
-/** @copydoc  _PurpleProtocolInterface::set_public_alias */
-void purple_protocol_iface_set_public_alias(PurpleProtocol *,
-                                PurpleConnection *gc, const char *alias,
-                                PurpleSetPublicAliasSuccessCallback success_cb,
-                                PurpleSetPublicAliasFailureCallback failure_cb);
-
-/** @copydoc  _PurpleProtocolInterface::get_public_alias */
-void purple_protocol_iface_get_public_alias(PurpleProtocol *,
-                                PurpleConnection *gc,
-                                PurpleGetPublicAliasSuccessCallback success_cb,
-                                PurpleGetPublicAliasFailureCallback failure_cb);
-
-/** @copydoc  _PurpleProtocolInterface::get_max_message_size */
-gssize purple_protocol_iface_get_max_message_size(PurpleProtocol *,
-                                                  PurpleConversation *conv);
+GType purple_protocol_client_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolClientInterface::get_actions */
+GList *purple_protocol_client_iface_get_actions(PurpleProtocol *,
+		PurpleConnection *);
+
+/** @copydoc  _PurpleProtocolClientInterface::list_emblem */
+const char *purple_protocol_client_iface_list_emblem(PurpleProtocol *,
+		PurpleBuddy *buddy);
+
+/** @copydoc  _PurpleProtocolClientInterface::status_text */
+char *purple_protocol_client_iface_status_text(PurpleProtocol *,
+		PurpleBuddy *buddy);
+
+/** @copydoc  _PurpleProtocolClientInterface::tooltip_text */
+void purple_protocol_client_iface_tooltip_text(PurpleProtocol *,
+		PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full);
+
+/** @copydoc  _PurpleProtocolClientInterface::blist_node_menu */
+GList *purple_protocol_client_iface_blist_node_menu(PurpleProtocol *,
+		PurpleBlistNode *node);
+
+/** @copydoc  _PurpleProtocolClientInterface::buddy_free */
+void purple_protocol_client_iface_buddy_free(PurpleProtocol *, PurpleBuddy *);
+
+/** @copydoc  _PurpleProtocolClientInterface::convo_closed */
+void purple_protocol_client_iface_convo_closed(PurpleProtocol *,
+		PurpleConnection *, const char *who);
+
+/** @copydoc  _PurpleProtocolClientInterface::normalize */
+const char *purple_protocol_client_iface_normalize(PurpleProtocol *,
+		const PurpleAccount *account, const char *who);
+
+/** @copydoc  _PurpleProtocolClientInterface::find_blist_chat */
+PurpleChat *purple_protocol_client_iface_find_blist_chat(PurpleProtocol *,
+		PurpleAccount *account, const char *name);
+
+/** @copydoc  _PurpleProtocolClientInterface::offline_message */
+gboolean purple_protocol_client_iface_offline_message(PurpleProtocol *,
+		const PurpleBuddy *buddy);
+
+/** @copydoc  _PurpleProtocolClientInterface::get_account_text_table */
+GHashTable *purple_protocol_client_iface_get_account_text_table(PurpleProtocol *,
+		PurpleAccount *account);
+
+/** @copydoc  _PurpleProtocolClientInterface::get_moods */
+PurpleMood *purple_protocol_client_iface_get_moods(PurpleProtocol *,
+		PurpleAccount *account);
+
+/** @copydoc  _PurpleProtocolClientInterface::get_max_message_size */
+gssize purple_protocol_client_iface_get_max_message_size(PurpleProtocol *,
+		PurpleConversation *conv);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Server Interface API                                   */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol server interface.
+ */
+GType purple_protocol_server_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolServerInterface::register_user */
+void purple_protocol_server_iface_register_user(PurpleProtocol *,
+		PurpleAccount *);
+
+/** @copydoc  _PurpleProtocolServerInterface::unregister_user */
+void purple_protocol_server_iface_unregister_user(PurpleProtocol *,
+		PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
+
+/** @copydoc  _PurpleProtocolServerInterface::set_info */
+void purple_protocol_server_iface_set_info(PurpleProtocol *, PurpleConnection *,
+		const char *info);
+
+/** @copydoc  _PurpleProtocolServerInterface::get_info */
+void purple_protocol_server_iface_get_info(PurpleProtocol *, PurpleConnection *,
+		const char *who);
+
+/** @copydoc  _PurpleProtocolServerInterface::set_status */
+void purple_protocol_server_iface_set_status(PurpleProtocol *,
+		PurpleAccount *account, PurpleStatus *status);
+
+/** @copydoc  _PurpleProtocolServerInterface::set_idle */
+void purple_protocol_server_iface_set_idle(PurpleProtocol *, PurpleConnection *,
+		int idletime);
+
+/** @copydoc  _PurpleProtocolServerInterface::change_passwd */
+void purple_protocol_server_iface_change_passwd(PurpleProtocol *,
+		PurpleConnection *, const char *old_pass, const char *new_pass);
+
+/** @copydoc  _PurpleProtocolServerInterface::add_buddy */
+void purple_protocol_server_iface_add_buddy(PurpleProtocol *,
+		PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group,
+		const char *message);
+
+/** @copydoc  _PurpleProtocolServerInterface::add_buddies */
+void purple_protocol_server_iface_add_buddies(PurpleProtocol *,
+		PurpleConnection *pc, GList *buddies, GList *groups,
+		const char *message);
+
+/** @copydoc  _PurpleProtocolServerInterface::remove_buddy */
+void purple_protocol_server_iface_remove_buddy(PurpleProtocol *,
+		PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
+
+/** @copydoc  _PurpleProtocolServerInterface::remove_buddies */
+void purple_protocol_server_iface_remove_buddies(PurpleProtocol *,
+		PurpleConnection *, GList *buddies, GList *groups);
+
+/** @copydoc  _PurpleProtocolServerInterface::keepalive */
+void purple_protocol_server_iface_keepalive(PurpleProtocol *,
+		PurpleConnection *);
+
+/** @copydoc  _PurpleProtocolServerInterface::alias_buddy */
+void purple_protocol_server_iface_alias_buddy(PurpleProtocol *,
+		PurpleConnection *, const char *who, const char *alias);
+
+/** @copydoc  _PurpleProtocolServerInterface::group_buddy */
+void purple_protocol_server_iface_group_buddy(PurpleProtocol *,
+		PurpleConnection *, const char *who, const char *old_group,
+		const char *new_group);
+
+/** @copydoc  _PurpleProtocolServerInterface::rename_group */
+void purple_protocol_server_iface_rename_group(PurpleProtocol *,
+		PurpleConnection *, const char *old_name, PurpleGroup *group,
+		GList *moved_buddies);
+
+/** @copydoc  _PurpleProtocolServerInterface::set_buddy_icon */
+void purple_protocol_server_iface_set_buddy_icon(PurpleProtocol *,
+		PurpleConnection *, PurpleStoredImage *img);
+
+/** @copydoc  _PurpleProtocolServerInterface::remove_group */
+void purple_protocol_server_iface_remove_group(PurpleProtocol *,
+		PurpleConnection *gc, PurpleGroup *group);
+
+/** @copydoc  _PurpleProtocolServerInterface::send_raw */
+int purple_protocol_server_iface_send_raw(PurpleProtocol *,
+		PurpleConnection *gc, const char *buf, int len);
+
+/** @copydoc  _PurpleProtocolServerInterface::set_public_alias */
+void purple_protocol_server_iface_set_public_alias(PurpleProtocol *,
+		PurpleConnection *gc, const char *alias,
+		PurpleSetPublicAliasSuccessCallback success_cb,
+		PurpleSetPublicAliasFailureCallback failure_cb);
+
+/** @copydoc  _PurpleProtocolServerInterface::get_public_alias */
+void purple_protocol_server_iface_get_public_alias(PurpleProtocol *,
+		PurpleConnection *gc, PurpleGetPublicAliasSuccessCallback success_cb,
+		PurpleGetPublicAliasFailureCallback failure_cb);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol IM Interface API                                       */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol IM interface.
+ */
+GType purple_protocol_im_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolIMInterface::send */
+int  purple_protocol_im_iface_send(PurpleProtocol *, PurpleConnection *, 
+		const char *who, const char *message, PurpleMessageFlags flags);
+
+/** @copydoc  _PurpleProtocolIMInterface::send_typing */
+unsigned int purple_protocol_im_iface_send_typing(PurpleProtocol *,
+		PurpleConnection *, const char *name, PurpleIMTypingState state);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Chat Interface API                                     */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol chat interface.
+ */
+GType purple_protocol_chat_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolChatInterface::info */
+GList *purple_protocol_chat_iface_info(PurpleProtocol *,
+		PurpleConnection *);
+
+/** @copydoc  _PurpleProtocolChatInterface::info_defaults */
+GHashTable *purple_protocol_chat_iface_info_defaults(PurpleProtocol *,
+		PurpleConnection *, const char *chat_name);
+
+/** @copydoc  _PurpleProtocolChatInterface::join */
+void purple_protocol_chat_iface_join(PurpleProtocol *, PurpleConnection *,
+		GHashTable *components);
+
+/** @copydoc  _PurpleProtocolChatInterface::reject */
+void purple_protocol_chat_iface_reject(PurpleProtocol *,
+		PurpleConnection *, GHashTable *components);
+
+/** @copydoc  _PurpleProtocolChatInterface::get_name */
+char *purple_protocol_chat_iface_get_name(PurpleProtocol *,
+		GHashTable *components);
+
+/** @copydoc  _PurpleProtocolChatInterface::invite */
+void purple_protocol_chat_iface_invite(PurpleProtocol *,
+		PurpleConnection *, int id, const char *message, const char *who);
+
+/** @copydoc  _PurpleProtocolChatInterface::leave */
+void purple_protocol_chat_iface_leave(PurpleProtocol *, PurpleConnection *,
+		int id);
+
+/** @copydoc  _PurpleProtocolChatInterface::whisper */
+void purple_protocol_chat_iface_whisper(PurpleProtocol *,
+		PurpleConnection *, int id, const char *who, const char *message);
+
+/** @copydoc  _PurpleProtocolChatInterface::send */
+int  purple_protocol_chat_iface_send(PurpleProtocol *, PurpleConnection *,
+		int id, const char *message, PurpleMessageFlags flags);
+
+/** @copydoc  _PurpleProtocolChatInterface::get_user_real_name */
+char *purple_protocol_chat_iface_get_user_real_name(PurpleProtocol *,
+		PurpleConnection *gc, int id, const char *who);
+
+/** @copydoc  _PurpleProtocolChatInterface::set_topic */
+void purple_protocol_chat_iface_set_topic(PurpleProtocol *,
+		PurpleConnection *gc, int id, const char *topic);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Privacy Interface API                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol privacy interface.
+ */
+GType purple_protocol_privacy_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolPrivacyInterface::add_permit */
+void purple_protocol_privacy_iface_add_permit(PurpleProtocol *,
+		PurpleConnection *, const char *name);
+
+/** @copydoc  _PurpleProtocolPrivacyInterface::add_deny */
+void purple_protocol_privacy_iface_add_deny(PurpleProtocol *,
+		PurpleConnection *, const char *name);
+
+/** @copydoc  _PurpleProtocolPrivacyInterface::rem_permit */
+void purple_protocol_privacy_iface_rem_permit(PurpleProtocol *,
+		PurpleConnection *, const char *name);
+
+/** @copydoc  _PurpleProtocolPrivacyInterface::rem_deny */
+void purple_protocol_privacy_iface_rem_deny(PurpleProtocol *,
+		PurpleConnection *, const char *name);
+
+/** @copydoc  _PurpleProtocolPrivacyInterface::set_permit_deny */
+void purple_protocol_privacy_iface_set_permit_deny(PurpleProtocol *,
+		PurpleConnection *);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Xfer Interface API                                     */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol xfer interface.
+ */
+GType purple_protocol_xfer_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolXferInterface::can_receive */
+gboolean purple_protocol_xfer_iface_can_receive(PurpleProtocol *,
+		PurpleConnection *, const char *who);
+
+/** @copydoc  _PurpleProtocolXferInterface::send */
+void purple_protocol_xfer_iface_send(PurpleProtocol *, PurpleConnection *,
+		const char *who, const char *filename);
+
+/** @copydoc  _PurpleProtocolXferInterface::new_xfer */
+PurpleXfer *purple_protocol_xfer_iface_new_xfer(PurpleProtocol *,
+		PurpleConnection *, const char *who);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Roomlist Interface API                                 */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol roomlist interface.
+ */
+GType purple_protocol_roomlist_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolRoomlistInterface::get_list */
+PurpleRoomlist *purple_protocol_roomlist_iface_get_list(PurpleProtocol *,
+		PurpleConnection *gc);
+
+/** @copydoc  _PurpleProtocolRoomlistInterface::cancel */
+void purple_protocol_roomlist_iface_cancel(PurpleProtocol *,
+		PurpleRoomlist *list);
+
+/** @copydoc  _PurpleProtocolRoomlistInterface::expand_category */
+void purple_protocol_roomlist_iface_expand_category(PurpleProtocol *,
+		PurpleRoomlist *list, PurpleRoomlistRoom *category);
+
+/** @copydoc  _PurpleProtocolRoomlistInterface::room_serialize */
+char *purple_protocol_roomlist_iface_room_serialize(PurpleProtocol *,
+		PurpleRoomlistRoom *room);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Attention Interface API                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol attention interface.
+ */
+GType purple_protocol_attention_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolAttentionInterface::send */
+gboolean purple_protocol_attention_iface_send(PurpleProtocol *,
+		PurpleConnection *gc, const char *username, guint type);
+
+/** @copydoc  _PurpleProtocolAttentionInterface::get_types */
+GList *purple_protocol_attention_iface_get_types(PurpleProtocol *,
+		PurpleAccount *acct);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Media Interface API                                    */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol media interface.
+ */
+GType purple_protocol_media_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolMediaInterface::initiate_session */
+gboolean purple_protocol_media_iface_initiate_session(PurpleProtocol *,
+		PurpleAccount *account, const char *who, PurpleMediaSessionType type);
+
+/** @copydoc  _PurpleProtocolMediaInterface::get_caps */
+PurpleMediaCaps purple_protocol_media_iface_get_caps(PurpleProtocol *,
+		PurpleAccount *account, const char *who);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Factory Interface API                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the protocol factory interface.
+ */
+GType purple_protocol_factory_iface_get_type(void);
+
+/** @copydoc  _PurpleProtocolFactoryInterface::connection_new */
+PurpleConnection *purple_protocol_factory_iface_connection_new(PurpleProtocol *,
+		PurpleAccount *account, const char *password);
+
+/** @copydoc  _PurpleProtocolFactoryInterface::roomlist_new */
+PurpleRoomlist *purple_protocol_factory_iface_roomlist_new(PurpleProtocol *,
+		PurpleAccount *account);
+
+/** @copydoc  _PurpleProtocolFactoryInterface::whiteboard_new */
+PurpleWhiteboard *purple_protocol_factory_iface_whiteboard_new(PurpleProtocol *,
+		PurpleAccount *account, const char *who, int state);
+
+/** @copydoc  _PurpleProtocolFactoryInterface::xfer_new */
+PurpleXfer *purple_protocol_factory_iface_xfer_new(PurpleProtocol *,
+		PurpleAccount *account, PurpleXferType type, const char *who);
 
 /*@}*/
 
