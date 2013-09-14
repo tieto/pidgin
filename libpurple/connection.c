@@ -132,7 +132,7 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 
 	g_return_if_fail(priv != NULL);
 
-	if (!PURPLE_PROTOCOL_IMPLEMENTS(priv->protocol, keepalive))
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(priv->protocol, SERVER_IFACE, keepalive))
 		return;
 
 	if (on && !priv->keepalive)
@@ -888,7 +888,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 
 	if (regist)
 	{
-		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, register_user))
+		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, register_user))
 			return;
 	}
 	else

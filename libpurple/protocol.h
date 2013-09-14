@@ -744,9 +744,9 @@ struct _PurpleProtocolFactoryIface
  * Returns TRUE if a protocol implements a function in an interface,
  * FALSE otherwise.
  */
-#define PURPLE_PROTOCOL_IMPLEMENTS(protocol, IFACENAME, func) \
-	(PURPLE_PROTOCOL_HAS_##IFACENAME##_IFACE(protocol) && \
-	 PURPLE_PROTOCOL_GET_##IFACENAME##_IFACE(protocol)->func != NULL)
+#define PURPLE_PROTOCOL_IMPLEMENTS(protocol, IFACE, func) \
+	(PURPLE_PROTOCOL_HAS_##IFACE(protocol) && \
+	 PURPLE_PROTOCOL_GET_##IFACE(protocol)->func != NULL)
 
 G_BEGIN_DECLS
 

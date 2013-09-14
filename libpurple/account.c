@@ -1012,7 +1012,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 	gc = purple_account_get_connection(account);
 	protocol = purple_connection_get_protocol(gc);
 
-	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_public_alias))
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, set_public_alias))
 		purple_protocol_server_iface_set_public_alias(protocol, gc, alias, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
@@ -1050,7 +1050,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 	gc = purple_account_get_connection(account);
 	protocol = purple_connection_get_protocol(gc);
 
-	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_public_alias))
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, get_public_alias))
 		purple_protocol_server_iface_get_public_alias(protocol, gc, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
@@ -2232,9 +2232,9 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *m
 			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
-		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, add_buddies))
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, add_buddies))
 			purple_protocol_server_iface_add_buddies(protocol, gc, buddies, groups, message);
-		else if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, add_buddy)) {
+		else if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, add_buddy)) {
 			GList *curb = buddies, *curg = groups;
 
 			while ((curb != NULL) && (curg != NULL)) {
@@ -2272,7 +2272,7 @@ purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *gro
 		protocol = purple_connection_get_protocol(gc);
 
 	if (protocol) {
-		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, remove_buddies))
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, remove_buddies))
 			purple_protocol_server_iface_remove_buddies(protocol, gc, buddies, groups);
 		else {
 			GList *curb = buddies;
@@ -2878,9 +2878,8 @@ purple_account_constructed(GObject *object)
 		return;
 	}
 
-	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, status_types))
-		purple_account_set_status_types(account,
-				purple_protocol_class_status_types(protocol, account));
+	purple_account_set_status_types(account,
+			purple_protocol_class_status_types(protocol, account));
 
 	priv->presence = PURPLE_PRESENCE(purple_account_presence_new(account));
 
