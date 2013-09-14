@@ -639,7 +639,7 @@ gg_create_menu(FinchConv *ggc)
 		PurpleProtocol *protocol =
 			gc ? purple_connection_get_protocol(gc) : NULL;
 
-		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_info)) {
+		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, get_info)) {
 			item = gnt_menuitem_new(_("Get Info"));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			gnt_menuitem_set_callback(item, get_info_cb, ggc);
@@ -649,8 +649,8 @@ gg_create_menu(FinchConv *ggc)
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		gnt_menuitem_set_callback(item, add_pounce_cb, ggc);
 
-		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_file) &&
-				(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
+		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send) &&
+				(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive) ||
 					purple_protocol_xfer_iface_can_receive(protocol, gc,
 					purple_conversation_get_name(ggc->active_conv)))) {
 			item = gnt_menuitem_new(_("Send File"));
