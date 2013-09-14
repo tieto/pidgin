@@ -507,7 +507,7 @@ purple_protocol_send_attention(PurpleConnection *gc, const char *who, guint type
 	g_return_if_fail(who != NULL);
 
 	protocol = purple_protocols_find(purple_account_get_protocol_id(purple_connection_get_account(gc)));
-	g_return_if_fail(PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_attention));
+	g_return_if_fail(PURPLE_PROTOCOL_IMPLEMENTS(protocol, ATTENTION_IFACE, send));
 
 	mtime = time(NULL);
 
@@ -776,6 +776,7 @@ PurpleProtocol *
 purple_protocols_add(GType protocol_type, GError **error)
 {
 	PurpleProtocol *protocol;
+	PurpleProtocolClass *klass;
 
 	if (protocol_type == G_TYPE_INVALID) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
@@ -789,12 +790,6 @@ purple_protocols_add(GType protocol_type, GError **error)
 		return NULL;
 	}
 
-	if (!g_type_is_a(protocol_type, PURPLE_TYPE_PROTOCOL_INTERFACE)) {
-		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
-		            _("Protocol does not implement PurpleProtocolInterface"));
-		return NULL;
-	}
-
 	if (G_TYPE_IS_ABSTRACT(protocol_type)) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
 		            _("Protocol type is abstract"));
@@ -802,6 +797,7 @@ purple_protocols_add(GType protocol_type, GError **error)
 	}
 
 	protocol = g_object_new(protocol_type, NULL);
+	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
 
 	if (!protocol) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
@@ -827,14 +823,12 @@ purple_protocols_add(GType protocol_type, GError **error)
 	}
 
 	/* Make sure the protocol implements the required functions */
-	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, list_icon) ||
-	    !PURPLE_PROTOCOL_IMPLEMENTS(protocol, login)     ||
-	    !PURPLE_PROTOCOL_IMPLEMENTS(protocol, close))
+	if (!klass->login        || !klass->close_connection ||
+	    !klass->status_types || !klass->list_icon)
 	{
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
-		            _("Protocol %s does not implement all the required "
-		            "functions (list_icon, login and close)"),
-		            purple_protocol_get_id(protocol));
+		            _("Protocol %s does not implement all the functions in "
+		            "PurpleProtocolClass"), purple_protocol_get_id(protocol));
 
 		g_object_unref(protocol);
 		return NULL;

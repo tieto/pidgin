@@ -3443,7 +3443,7 @@ purple_validate(const PurpleProtocol *protocol, const char *str)
 	if (str[0] == '\0')
 		return FALSE;
 
-	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, normalize))
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, CLIENT_IFACE, normalize))
 		return TRUE;
 
 	normalized = purple_protocol_client_iface_normalize(PURPLE_PROTOCOL(protocol),

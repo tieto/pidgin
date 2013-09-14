@@ -32,7 +32,7 @@ excluded = [\
     "purple_account_unregister",
 
     # Similar to the above:
-    "purple_protocol_iface_unregister_user",
+    "purple_protocol_server_iface_unregister_user",
 
     # Similar to the above, again
     "purple_menu_action_new",

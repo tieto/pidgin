@@ -133,7 +133,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 
 	im = purple_conversations_find_im_with_account(name, account);
 
-	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, send_im))
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, IM_IFACE, send))
 		val = purple_protocol_im_iface_send(protocol, gc, name, message, flags);
 
 	/*
@@ -174,7 +174,7 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
 
-		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, set_info)) {
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, set_info)) {
 			account = purple_connection_get_account(gc);
 
 			if (purple_signal_emit_return_1(purple_accounts_get_handle(),
@@ -293,7 +293,7 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
 	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 	/* Lookup the attention type in the protocol's attention_types list, if any. */
-	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, get_attention_types)) {
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, ATTENTION_IFACE, get_types)) {
 		GList *attention_types;
 
 		attention_types = purple_protocol_attention_iface_get_types(protocol, account);
@@ -467,7 +467,7 @@ int serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 
 	protocol = purple_connection_get_protocol(gc);
 
-	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, chat_send))
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, send))
 		return purple_protocol_chat_iface_send(protocol, gc, id, message, flags);
 
 	return -EINVAL;
@@ -866,7 +866,7 @@ void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
 
-		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, can_receive_file) ||
+		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive) ||
 				purple_protocol_xfer_iface_can_receive(protocol, gc, who))
 
 			purple_protocol_xfer_iface_send(protocol, gc, who, file);
