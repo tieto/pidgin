@@ -1036,12 +1036,6 @@ static void null_roomlist_expand_category(PurpleRoomlist *list,
                    purple_roomlist_room_get_name(category));
 }
 
-/* nullprotocol doesn't support file transfer...yet... */
-static gboolean null_can_receive_file(PurpleConnection *gc,
-                                          const char *who) {
-  return FALSE;
-}
-
 static gboolean null_offline_message(const PurpleBuddy *buddy) {
   purple_debug_info("nullprotocol",
                     "reporting that offline messages are supported for %s\n",
@@ -1086,66 +1080,89 @@ null_protocol_init(PurpleProtocol *protocol)
 }
 
 /*
- * Initialize the protocol class.
+ * Initialize the protocol class and interfaces.
+ * see protocol.h for more information.
  */
+
 static void
 null_protocol_class_init(PurpleProtocolClass *klass)
 {
+  klass->login            = null_login;
+  klass->close_connection = null_close;
+  klass->status_types     = null_status_types;
+  klass->list_icon        = null_list_icon;
 }
 
-/*
- * Initialize the protocol interface. see protocol.h for more information.
- */
 static void
-null_protocol_interface_init(PurpleProtocolInterface *iface)
+null_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-  iface->get_actions              = null_get_actions;
-  iface->list_icon                = null_list_icon;
-  iface->status_text              = null_status_text;
-  iface->tooltip_text             = null_tooltip_text;
-  iface->status_types             = null_status_types;
-  iface->blist_node_menu          = null_blist_node_menu;
-  iface->chat_info                = null_chat_info;
-  iface->chat_info_defaults       = null_chat_info_defaults;
-  iface->login                    = null_login;
-  iface->close                    = null_close;
-  iface->send_im                  = null_send_im;
-  iface->set_info                 = null_set_info;
-  iface->send_typing              = null_send_typing;
-  iface->get_info                 = null_get_info;
-  iface->set_status               = null_set_status;
-  iface->set_idle                 = null_set_idle;
-  iface->change_passwd            = null_change_passwd;
-  iface->add_buddy                = null_add_buddy;
-  iface->add_buddies              = null_add_buddies;
-  iface->remove_buddy             = null_remove_buddy;
-  iface->remove_buddies           = null_remove_buddies;
-  iface->add_permit               = null_add_permit;
-  iface->add_deny                 = null_add_deny;
-  iface->rem_permit               = null_rem_permit;
-  iface->rem_deny                 = null_rem_deny;
-  iface->set_permit_deny          = null_set_permit_deny;
-  iface->join_chat                = null_join_chat;
-  iface->reject_chat              = null_reject_chat;
-  iface->get_chat_name            = null_get_chat_name;
-  iface->chat_invite              = null_chat_invite;
-  iface->chat_leave               = null_chat_leave;
-  iface->chat_whisper             = null_chat_whisper;
-  iface->chat_send                = null_chat_send;
-  iface->register_user            = null_register_user;
-  iface->alias_buddy              = null_alias_buddy;
-  iface->group_buddy              = null_group_buddy;
-  iface->rename_group             = null_rename_group;
-  iface->convo_closed             = null_convo_closed;
-  iface->normalize                = null_normalize;
-  iface->set_buddy_icon           = null_set_buddy_icon;
-  iface->remove_group             = null_remove_group;
-  iface->set_chat_topic           = null_set_chat_topic;
-  iface->roomlist_get_list        = null_roomlist_get_list;
-  iface->roomlist_cancel          = null_roomlist_cancel;
-  iface->roomlist_expand_category = null_roomlist_expand_category;
-  iface->can_receive_file         = null_can_receive_file;
-  iface->offline_message          = null_offline_message;
+  client_iface->get_actions     = null_get_actions;
+  client_iface->status_text     = null_status_text;
+  client_iface->tooltip_text    = null_tooltip_text;
+  client_iface->blist_node_menu = null_blist_node_menu;
+  client_iface->convo_closed    = null_convo_closed;
+  client_iface->normalize       = null_normalize;
+  client_iface->offline_message = null_offline_message;
+}
+
+static void
+null_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+  server_iface->register_user  = null_register_user;
+  server_iface->set_info       = null_set_info;
+  server_iface->get_info       = null_get_info;
+  server_iface->set_status     = null_set_status;
+  server_iface->set_idle       = null_set_idle;
+  server_iface->change_passwd  = null_change_passwd;
+  server_iface->add_buddy      = null_add_buddy;
+  server_iface->add_buddies    = null_add_buddies;
+  server_iface->remove_buddy   = null_remove_buddy;
+  server_iface->remove_buddies = null_remove_buddies;
+  server_iface->alias_buddy    = null_alias_buddy;
+  server_iface->group_buddy    = null_group_buddy;
+  server_iface->rename_group   = null_rename_group;
+  server_iface->set_buddy_icon = null_set_buddy_icon;
+  server_iface->remove_group   = null_remove_group;
+}
+
+static void
+null_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
+{
+  im_iface->send        = null_send_im;
+  im_iface->send_typing = null_send_typing;
+}
+
+static void
+null_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
+{
+  chat_iface->info          = null_chat_info;
+  chat_iface->info_defaults = null_chat_info_defaults;
+  chat_iface->join          = null_join_chat;
+  chat_iface->reject        = null_reject_chat;
+  chat_iface->get_name      = null_get_chat_name;
+  chat_iface->invite        = null_chat_invite;
+  chat_iface->leave         = null_chat_leave;
+  chat_iface->whisper       = null_chat_whisper;
+  chat_iface->send          = null_chat_send;
+  chat_iface->set_topic     = null_set_chat_topic;
+}
+
+static void
+null_protocol_privacy_iface_init(PurpleProtocolPrivacyIface *privacy_iface)
+{
+  privacy_iface->add_permit      = null_add_permit;
+  privacy_iface->add_deny        = null_add_deny;
+  privacy_iface->rem_permit      = null_rem_permit;
+  privacy_iface->rem_deny        = null_rem_deny;
+  privacy_iface->set_permit_deny = null_set_permit_deny;
+}
+
+static void
+null_protocol_roomlist_iface_init(PurpleProtocolRoomlistIface *roomlist_iface)
+{
+  roomlist_iface->get_list        = null_roomlist_get_list;
+  roomlist_iface->cancel          = null_roomlist_cancel;
+  roomlist_iface->expand_category = null_roomlist_expand_category;
 }
 
 /*
@@ -1156,8 +1173,24 @@ null_protocol_interface_init(PurpleProtocolInterface *iface)
  */
 PURPLE_DEFINE_TYPE_EXTENDED(
   NullProtocol, null_protocol, PURPLE_TYPE_PROTOCOL, 0,
-  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-                                    null_protocol_interface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+                                    null_protocol_client_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+                                    null_protocol_server_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
+                                    null_protocol_im_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
+                                    null_protocol_chat_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE,
+                                    null_protocol_privacy_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE,
+                                    null_protocol_roomlist_iface_init)
 );
 
 static PurplePluginInfo *
