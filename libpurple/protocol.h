@@ -1032,7 +1032,7 @@ void purple_protocol_server_iface_get_public_alias(PurpleProtocol *,
 GType purple_protocol_im_iface_get_type(void);
 
 /** @copydoc  _PurpleProtocolIMInterface::send */
-int  purple_protocol_im_iface_send(PurpleProtocol *, PurpleConnection *, 
+int purple_protocol_im_iface_send(PurpleProtocol *, PurpleConnection *, 
 		const char *who, const char *message, PurpleMessageFlags flags);
 
 /** @copydoc  _PurpleProtocolIMInterface::send_typing */
