@@ -2327,16 +2327,31 @@ purple_xfer_get_type(void)
 PurpleXfer *
 purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 {
-	g_return_val_if_fail(type    != PURPLE_XFER_TYPE_UNKNOWN, NULL);
-	g_return_val_if_fail(account != NULL,                NULL);
-	g_return_val_if_fail(who     != NULL,                NULL);
+	PurpleXfer *xfer;
+	PurpleProtocol *protocol;
 
-	return g_object_new(PURPLE_TYPE_XFER,
-		PROP_TYPE_S,        type,
-		PROP_ACCOUNT_S,     account,
-		PROP_REMOTE_USER_S, who,
-		NULL
-	);
+	g_return_val_if_fail(type    != PURPLE_XFER_TYPE_UNKNOWN, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(who     != NULL, NULL);
+
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+
+	g_return_val_if_fail(protocol != NULL, NULL);
+
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, FACTORY_IFACE, xfer_new))
+		xfer = purple_protocol_factory_iface_xfer_new(protocol, account, type,
+				who);
+	else
+		xfer = g_object_new(PURPLE_TYPE_XFER,
+			PROP_ACCOUNT_S,     account,
+			PROP_TYPE_S,        type,
+			PROP_REMOTE_USER_S, who,
+			NULL
+		);
+
+	g_return_val_if_fail(xfer != NULL, NULL);
+
+	return xfer;
 }
 
 /**************************************************************************
