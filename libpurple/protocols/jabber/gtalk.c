@@ -112,20 +112,20 @@ gtalk_protocol_init(PurpleProtocol *protocol)
 static void
 gtalk_protocol_class_init(PurpleProtocolClass *klass)
 {
+	klass->list_icon = gtalk_list_icon;
 }
 
 static void
-gtalk_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
+gtalk_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
 {
-	client_iface->list_icon        = gtalk_list_icon;
-
 	/* disable xmpp functions not available for gtalk */
-	client_iface->register_user    = NULL;
-	client_iface->unregister_user  = NULL;
+	server_iface->register_user   = NULL;
+	server_iface->unregister_user = NULL;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	GTalkProtocol, gtalk_protocol, JABBER_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              gtalk_protocol_client_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+	                                  gtalk_protocol_server_iface_init)
 );

@@ -104,35 +104,74 @@ facebook_protocol_init(PurpleProtocol *protocol)
 static void
 facebook_protocol_class_init(PurpleProtocolClass *klass)
 {
+	klass->list_icon = facebook_list_icon;
 }
 
 static void
 facebook_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	client_iface->list_icon           = facebook_list_icon;
+	client_iface->get_moods = NULL;
+}
 
-	/* disable xmpp functions not available for facebook */
-	client_iface->add_buddy           = NULL;
-	client_iface->remove_buddy        = NULL;
-	client_iface->add_deny            = NULL;
-	client_iface->rem_deny            = NULL;
-	client_iface->register_user       = NULL;
-	client_iface->alias_buddy         = NULL;
-	client_iface->group_buddy         = NULL;
-	client_iface->rename_group        = NULL;
-	client_iface->can_receive_file    = NULL;
-	client_iface->send_file           = NULL;
-	client_iface->new_xfer            = NULL;
-	client_iface->unregister_user     = NULL;
-	client_iface->send_attention      = NULL;
-	client_iface->get_attention_types = NULL;
-	client_iface->initiate_media      = NULL;
-	client_iface->get_media_caps      = NULL;
-	client_iface->get_moods           = NULL;
+static void
+facebook_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+	server_iface->register_user   = NULL;
+	server_iface->unregister_user = NULL;
+	server_iface->add_buddy       = NULL;
+	server_iface->remove_buddy    = NULL;
+	server_iface->alias_buddy     = NULL;
+	server_iface->group_buddy     = NULL;
+	server_iface->rename_group    = NULL;
+}
+
+static void
+facebook_protocol_privacy_iface_init(PurpleProtocolPrivacyIface *privacy_iface)
+{
+	privacy_iface->add_deny = NULL;
+	privacy_iface->rem_deny = NULL;
+}
+
+static void
+facebook_protocol_attention_iface_init(PurpleProtocolAttentionIface *attention_iface)
+{
+	attention_iface->send      = NULL;
+	attention_iface->get_types = NULL;
+}
+
+static void
+facebook_protocol_media_iface_init(PurpleProtocolMediaIface *media_iface)
+{
+	media_iface->initiate_session = NULL;
+	media_iface->get_caps         = NULL;
+}
+
+static void
+facebook_protocol_xfer_iface_init(PurpleProtocolXferIface *xfer_iface)
+{
+	xfer_iface->can_receive = NULL;
+	xfer_iface->send        = NULL;
+	xfer_iface->new_xfer    = NULL;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	FacebookProtocol, facebook_protocol, JABBER_TYPE_PROTOCOL, 0,
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              facebook_protocol_client_iface_init)
+	                                  facebook_protocol_client_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+	                                  facebook_protocol_server_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE,
+	                                  facebook_protocol_privacy_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ATTENTION_IFACE,
+	                                  facebook_protocol_attention_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_MEDIA_IFACE,
+	                                  facebook_protocol_media_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+	                                  facebook_protocol_xfer_iface_init)
 );
