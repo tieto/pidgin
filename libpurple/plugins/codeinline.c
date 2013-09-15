@@ -44,8 +44,32 @@ static gboolean outgoing_msg_cb(PurpleAccount *account, const char *who, char **
   return FALSE;
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Sean Egan <seanegan@gmail.com>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",           "codeinline",
+		"name",         "Code Inline",
+		"version",      "1.0",
+		"category",     "Formatting",
+		"summary",      "Formats text as code",
+		"description",  "Changes the formatting of any outgoing text such "
+                        "that anything underlined will be received green and "
+                        "monospace.",
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
      void *handle = purple_conversations_get_handle();
      plugin_handle = plugin;
@@ -57,42 +81,10 @@ plugin_load(PurplePlugin *plugin)
      return TRUE;
 }
 
-
-static PurplePluginInfo info =
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-     PURPLE_PLUGIN_MAGIC,
-     PURPLE_MAJOR_VERSION,
-     PURPLE_MINOR_VERSION,
-     PURPLE_PLUGIN_STANDARD,
-     NULL,
-     0,
-     NULL,
-     PURPLE_PRIORITY_DEFAULT,
-     "codeinline",
-     "Code Inline",
-     "1.0",
-     "Formats text as code",
-     "Changes the formatting of any outgoing text such that "
-     "anything underlined will be received green and monospace.",
-     "Sean Egan <seanegan@gmail.com>",
-     PURPLE_WEBSITE,
-     plugin_load,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-	 /* padding */
-     NULL,
-     NULL,
-     NULL,
-     NULL
-};
+	return TRUE;
+}
 
- static void
- init_plugin(PurplePlugin *plugin)
- {
- }
-
-PURPLE_INIT_PLUGIN(codeinline, init_plugin, info)
+PURPLE_PLUGIN_INIT(codeinline, plugin_query, plugin_load, plugin_unload);
