@@ -1445,10 +1445,10 @@ ggp_protocol_init(PurpleProtocol *protocol)
 static void
 ggp_protocol_class_init(PurpleProtocolClass *klass)
 {
-	klass->login            = ggp_login;
-	klass->close_connection = ggp_close;
-	klass->status_types     = ggp_status_types;
-	klass->list_icon        = ggp_list_icon;
+	klass->login        = ggp_login;
+	klass->close        = ggp_close;
+	klass->status_types = ggp_status_types;
+	klass->list_icon    = ggp_list_icon;
 }
 
 static void

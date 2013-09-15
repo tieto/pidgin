@@ -974,10 +974,10 @@ irc_protocol_init(PurpleProtocol *protocol)
 static void
 irc_protocol_class_init(PurpleProtocolClass *klass)
 {
-	klass->login            = irc_login;
-	klass->close_connection = irc_close;
-	klass->status_types     = irc_status_types;
-	klass->list_icon        = irc_blist_icon;
+	klass->login        = irc_login;
+	klass->close        = irc_close;
+	klass->status_types = irc_status_types;
+	klass->list_icon    = irc_blist_icon;
 }
 
 static void

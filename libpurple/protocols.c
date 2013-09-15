@@ -823,8 +823,8 @@ purple_protocols_add(GType protocol_type, GError **error)
 	}
 
 	/* Make sure the protocol implements the required functions */
-	if (!klass->login        || !klass->close_connection ||
-	    !klass->status_types || !klass->list_icon)
+	if (!klass->login        || !klass->close    ||
+	    !klass->status_types || !klass->list_icon )
 	{
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
 		            _("Protocol %s does not implement all the functions in "

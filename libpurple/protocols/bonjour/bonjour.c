@@ -664,10 +664,10 @@ bonjour_protocol_init(PurpleProtocol *protocol)
 static void
 bonjour_protocol_class_init(PurpleProtocolClass *klass)
 {
-	klass->login            = bonjour_login;
-	klass->close_connection = bonjour_close;
-	klass->status_types     = bonjour_status_types;
-	klass->list_icon        = bonjour_list_icon;
+	klass->login        = bonjour_login;
+	klass->close        = bonjour_close;
+	klass->status_types = bonjour_status_types;
+	klass->list_icon    = bonjour_list_icon;
 }
 
 static void

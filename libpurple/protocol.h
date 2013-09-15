@@ -113,7 +113,7 @@ struct _PurpleProtocolClass
 	/**
 	 * Close connection with the server.
 	 */
-	void (*close_connection)(PurpleConnection *);
+	void (*close)(PurpleConnection *);
 
 	/**
 	 * Returns a list of #PurpleStatusType which exist for this account;
@@ -845,9 +845,8 @@ void purple_protocol_override(PurpleProtocol *protocol,
 /** @copydoc  _PurpleProtocolClass::login */
 void purple_protocol_class_login(PurpleProtocol *, PurpleAccount *);
 
-/** @copydoc  _PurpleProtocolClass::close_connection */
-void purple_protocol_class_close_connection(PurpleProtocol *,
-		PurpleConnection *);
+/** @copydoc  _PurpleProtocolClass::close */
+void purple_protocol_class_close(PurpleProtocol *, PurpleConnection *);
 
 /** @copydoc  _PurpleProtocolClass::status_types */
 GList *purple_protocol_class_status_types(PurpleProtocol *,

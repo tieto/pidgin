@@ -1087,10 +1087,10 @@ null_protocol_init(PurpleProtocol *protocol)
 static void
 null_protocol_class_init(PurpleProtocolClass *klass)
 {
-  klass->login            = null_login;
-  klass->close_connection = null_close;
-  klass->status_types     = null_status_types;
-  klass->list_icon        = null_list_icon;
+  klass->login        = null_login;
+  klass->close        = null_close;
+  klass->status_types = null_status_types;
+  klass->list_icon    = null_list_icon;
 }
 
 static void

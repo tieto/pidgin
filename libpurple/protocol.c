@@ -242,10 +242,9 @@ purple_protocol_class_login(PurpleProtocol *protocol, PurpleAccount *account)
 }
 
 void
-purple_protocol_class_close_connection(PurpleProtocol *protocol,
-		PurpleConnection *gc)
+purple_protocol_class_close(PurpleProtocol *protocol, PurpleConnection *gc)
 {
-	DEFINE_PROTOCOL_FUNC(protocol, close_connection, gc);
+	DEFINE_PROTOCOL_FUNC(protocol, close, gc);
 }
 
 GList *
