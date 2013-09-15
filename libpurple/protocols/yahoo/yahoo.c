@@ -251,60 +251,117 @@ yahoo_protocol_init(PurpleProtocol *protocol)
 static void
 yahoo_protocol_class_init(PurpleProtocolClass *klass)
 {
+	klass->login        = yahoo_login;
+	klass->close        = yahoo_close;
+	klass->status_types = yahoo_status_types;
+	klass->list_icon    = yahoo_list_icon;
 }
 
 static void
 yahoo_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	client_iface->get_actions              = yahoo_get_actions;
-	client_iface->list_icon                = yahoo_list_icon;
-	client_iface->list_emblem              = yahoo_list_emblem;
-	client_iface->status_text              = yahoo_status_text;
-	client_iface->tooltip_text             = yahoo_tooltip_text;
-	client_iface->status_types             = yahoo_status_types;
-	client_iface->blist_node_menu          = yahoo_blist_node_menu;
-	client_iface->chat_info                = yahoo_c_info;
-	client_iface->chat_info_defaults       = yahoo_c_info_defaults;
-	client_iface->login                    = yahoo_login;
-	client_iface->close                    = yahoo_close;
-	client_iface->send_im                  = yahoo_send_im;
-	client_iface->send_typing              = yahoo_send_typing;
-	client_iface->get_info                 = yahoo_get_info;
-	client_iface->set_status               = yahoo_set_status;
-	client_iface->set_idle                 = yahoo_set_idle;
-	client_iface->add_buddy                = yahoo_add_buddy;
-	client_iface->remove_buddy             = yahoo_remove_buddy;
-	client_iface->add_deny                 = yahoo_add_deny;
-	client_iface->rem_deny                 = yahoo_rem_deny;
-	client_iface->set_permit_deny          = yahoo_set_permit_deny;
-	client_iface->join_chat                = yahoo_c_join;
-	client_iface->get_chat_name            = yahoo_get_chat_name;
-	client_iface->chat_invite              = yahoo_c_invite;
-	client_iface->chat_leave               = yahoo_c_leave;
-	client_iface->chat_send                = yahoo_c_send;
-	client_iface->keepalive                = yahoo_keepalive;
-	client_iface->alias_buddy              = yahoo_update_alias;
-	client_iface->group_buddy              = yahoo_change_buddys_group;
-	client_iface->rename_group             = yahoo_rename_group;
-	client_iface->normalize                = purple_normalize_nocase;
-	client_iface->set_buddy_icon           = yahoo_set_buddy_icon;
-	client_iface->roomlist_get_list        = yahoo_roomlist_get_list;
-	client_iface->roomlist_cancel          = yahoo_roomlist_cancel;
-	client_iface->roomlist_expand_category = yahoo_roomlist_expand_category;
-	client_iface->can_receive_file         = yahoo_can_receive_file;
-	client_iface->send_file                = yahoo_send_file;
-	client_iface->new_xfer                 = yahoo_new_xfer;
-	client_iface->offline_message          = yahoo_offline_message;
-	client_iface->send_attention           = yahoo_send_attention;
-	client_iface->get_attention_types      = yahoo_attention_types;
-	client_iface->get_account_text_table   = yahoo_get_account_text_table;
-	client_iface->get_max_message_size     = yahoo_get_max_message_size;
+	client_iface->get_actions            = yahoo_get_actions;
+	client_iface->list_emblem            = yahoo_list_emblem;
+	client_iface->status_text            = yahoo_status_text;
+	client_iface->tooltip_text           = yahoo_tooltip_text;
+	client_iface->blist_node_menu        = yahoo_blist_node_menu;
+	client_iface->normalize              = purple_normalize_nocase;
+	client_iface->offline_message        = yahoo_offline_message;
+	client_iface->get_account_text_table = yahoo_get_account_text_table;
+	client_iface->get_max_message_size   = yahoo_get_max_message_size;
+}
+
+static void
+yahoo_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+	server_iface->get_info       = yahoo_get_info;
+	server_iface->set_status     = yahoo_set_status;
+	server_iface->set_idle       = yahoo_set_idle;
+	server_iface->add_buddy      = yahoo_add_buddy;
+	server_iface->remove_buddy   = yahoo_remove_buddy;
+	server_iface->keepalive      = yahoo_keepalive;
+	server_iface->alias_buddy    = yahoo_update_alias;
+	server_iface->group_buddy    = yahoo_change_buddys_group;
+	server_iface->rename_group   = yahoo_rename_group;
+	server_iface->set_buddy_icon = yahoo_set_buddy_icon;
+}
+
+static void
+yahoo_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
+{
+	im_iface->send        = yahoo_send_im;
+	im_iface->send_typing = yahoo_send_typing;
+}
+
+static void
+yahoo_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
+{
+	chat_iface->info          = yahoo_c_info;
+	chat_iface->info_defaults = yahoo_c_info_defaults;
+	chat_iface->join          = yahoo_c_join;
+	chat_iface->get_name      = yahoo_get_chat_name;
+	chat_iface->invite        = yahoo_c_invite;
+	chat_iface->leave         = yahoo_c_leave;
+	chat_iface->send          = yahoo_c_send;
+}
+
+static void
+yahoo_protocol_privacy_iface_init(PurpleProtocolPrivacyIface *privacy_iface)
+{
+	privacy_iface->add_deny        = yahoo_add_deny;
+	privacy_iface->rem_deny        = yahoo_rem_deny;
+	privacy_iface->set_permit_deny = yahoo_set_permit_deny;
+}
+
+static void
+yahoo_protocol_roomlist_iface_init(PurpleProtocolRoomlistIface *roomlist_iface)
+{
+	roomlist_iface->get_list        = yahoo_roomlist_get_list;
+	roomlist_iface->cancel          = yahoo_roomlist_cancel;
+	roomlist_iface->expand_category = yahoo_roomlist_expand_category;
+}
+
+static void
+yahoo_protocol_attention_iface_init(PurpleProtocolAttentionIface *attention_iface)
+{
+	attention_iface->send      = yahoo_send_attention;
+	attention_iface->get_types = yahoo_attention_types;
+}
+
+static void
+yahoo_protocol_xfer_iface_init(PurpleProtocolXferIface *xfer_iface)
+{
+	xfer_iface->can_receive = yahoo_can_receive_file;
+	xfer_iface->send        = yahoo_send_file;
+	xfer_iface->new_xfer    = yahoo_new_xfer;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	YahooProtocol, yahoo_protocol, PURPLE_TYPE_PROTOCOL, 0,
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              yahoo_protocol_client_iface_init)
+	                                  yahoo_protocol_client_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+	                                  yahoo_protocol_server_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
+	                                  yahoo_protocol_im_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
+	                                  yahoo_protocol_chat_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE,
+	                                  yahoo_protocol_privacy_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE,
+	                                  yahoo_protocol_roomlist_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ATTENTION_IFACE,
+	                                  yahoo_protocol_attention_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+	                                  yahoo_protocol_xfer_iface_init)
 );
 
 static PurplePluginInfo *

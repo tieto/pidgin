@@ -125,6 +125,7 @@ yahoojp_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	YahooJPProtocol, yahoojp_protocol, YAHOO_TYPE_PROTOCOL, 0,
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              yahoojp_protocol_client_iface_init)
+	                                  yahoojp_protocol_client_iface_init)
 );
