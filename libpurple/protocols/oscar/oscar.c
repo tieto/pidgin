@@ -5594,52 +5594,52 @@ oscar_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-oscar_protocol_interface_init(PurpleProtocolInterface *iface)
+oscar_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->get_actions        = oscar_get_actions;
-	iface->list_emblem        = oscar_list_emblem;
-	iface->status_text        = oscar_status_text;
-	iface->tooltip_text       = oscar_tooltip_text;
-	iface->status_types       = oscar_status_types;
-	iface->blist_node_menu    = oscar_blist_node_menu;
-	iface->chat_info          = oscar_chat_info;
-	iface->chat_info_defaults = oscar_chat_info_defaults;
-	iface->login              = oscar_login;
-	iface->close              = oscar_close;
-	iface->send_im            = oscar_send_im;
-	iface->set_info           = oscar_set_info;
-	iface->send_typing        = oscar_send_typing;
-	iface->get_info           = oscar_get_info;
-	iface->set_status         = oscar_set_status;
-	iface->set_idle           = oscar_set_idle;
-	iface->change_passwd      = oscar_change_passwd;
-	iface->add_buddy          = oscar_add_buddy;
-	iface->remove_buddy       = oscar_remove_buddy;
-	iface->add_deny           = oscar_add_deny;
-	iface->rem_deny           = oscar_rem_deny;
-	iface->join_chat          = oscar_join_chat;
-	iface->get_chat_name      = oscar_get_chat_name;
-	iface->chat_invite        = oscar_chat_invite;
-	iface->chat_leave         = oscar_chat_leave;
-	iface->chat_send          = oscar_send_chat;
-	iface->keepalive          = oscar_keepalive;
-	iface->alias_buddy        = oscar_alias_buddy;
-	iface->group_buddy        = oscar_move_buddy;
-	iface->rename_group       = oscar_rename_group;
-	iface->convo_closed       = oscar_convo_closed;
-	iface->normalize          = oscar_normalize;
-	iface->set_buddy_icon     = oscar_set_icon;
-	iface->remove_group       = oscar_remove_group;
-	iface->can_receive_file   = oscar_can_receive_file;
-	iface->send_file          = oscar_send_file;
-	iface->new_xfer           = oscar_new_xfer;
-	iface->offline_message    = oscar_offline_message;
+	client_iface->get_actions        = oscar_get_actions;
+	client_iface->list_emblem        = oscar_list_emblem;
+	client_iface->status_text        = oscar_status_text;
+	client_iface->tooltip_text       = oscar_tooltip_text;
+	client_iface->status_types       = oscar_status_types;
+	client_iface->blist_node_menu    = oscar_blist_node_menu;
+	client_iface->chat_info          = oscar_chat_info;
+	client_iface->chat_info_defaults = oscar_chat_info_defaults;
+	client_iface->login              = oscar_login;
+	client_iface->close              = oscar_close;
+	client_iface->send_im            = oscar_send_im;
+	client_iface->set_info           = oscar_set_info;
+	client_iface->send_typing        = oscar_send_typing;
+	client_iface->get_info           = oscar_get_info;
+	client_iface->set_status         = oscar_set_status;
+	client_iface->set_idle           = oscar_set_idle;
+	client_iface->change_passwd      = oscar_change_passwd;
+	client_iface->add_buddy          = oscar_add_buddy;
+	client_iface->remove_buddy       = oscar_remove_buddy;
+	client_iface->add_deny           = oscar_add_deny;
+	client_iface->rem_deny           = oscar_rem_deny;
+	client_iface->join_chat          = oscar_join_chat;
+	client_iface->get_chat_name      = oscar_get_chat_name;
+	client_iface->chat_invite        = oscar_chat_invite;
+	client_iface->chat_leave         = oscar_chat_leave;
+	client_iface->chat_send          = oscar_send_chat;
+	client_iface->keepalive          = oscar_keepalive;
+	client_iface->alias_buddy        = oscar_alias_buddy;
+	client_iface->group_buddy        = oscar_move_buddy;
+	client_iface->rename_group       = oscar_rename_group;
+	client_iface->convo_closed       = oscar_convo_closed;
+	client_iface->normalize          = oscar_normalize;
+	client_iface->set_buddy_icon     = oscar_set_icon;
+	client_iface->remove_group       = oscar_remove_group;
+	client_iface->can_receive_file   = oscar_can_receive_file;
+	client_iface->send_file          = oscar_send_file;
+	client_iface->new_xfer           = oscar_new_xfer;
+	client_iface->offline_message    = oscar_offline_message;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	OscarProtocol, oscar_protocol, PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              oscar_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              oscar_protocol_client_iface_init)
 );
 
 static PurplePluginInfo *

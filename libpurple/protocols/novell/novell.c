@@ -3507,44 +3507,44 @@ novell_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-novell_protocol_interface_init(PurpleProtocolInterface *iface)
+novell_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->list_icon            = novell_list_icon;
-	iface->status_text          = novell_status_text;
-	iface->tooltip_text         = novell_tooltip_text;
-	iface->status_types         = novell_status_types;
-	iface->blist_node_menu      = novell_blist_node_menu;
-	iface->login                = novell_login;
-	iface->close                = novell_close;
-	iface->send_im              = novell_send_im;
-	iface->send_typing          = novell_send_typing;
-	iface->get_info             = novell_get_info;
-	iface->set_status           = novell_set_status;
-	iface->set_idle             = novell_set_idle;
-	iface->add_buddy            = novell_add_buddy;
-	iface->remove_buddy         = novell_remove_buddy;
-	iface->add_permit           = novell_add_permit;
-	iface->add_deny             = novell_add_deny;
-	iface->rem_permit           = novell_rem_permit;
-	iface->rem_deny             = novell_rem_deny;
-	iface->set_permit_deny      = novell_set_permit_deny;
-	iface->chat_invite          = novell_chat_invite;
-	iface->chat_leave           = novell_chat_leave;
-	iface->chat_send            = novell_chat_send;
-	iface->keepalive            = novell_keepalive;
-	iface->alias_buddy          = novell_alias_buddy;
-	iface->group_buddy          = novell_group_buddy;
-	iface->rename_group         = novell_rename_group;
-	iface->convo_closed         = novell_convo_closed;
-	iface->normalize            = purple_normalize_nocase;
-	iface->remove_group         = novell_remove_group;
-	iface->get_max_message_size = novell_get_max_message_size;
+	client_iface->list_icon            = novell_list_icon;
+	client_iface->status_text          = novell_status_text;
+	client_iface->tooltip_text         = novell_tooltip_text;
+	client_iface->status_types         = novell_status_types;
+	client_iface->blist_node_menu      = novell_blist_node_menu;
+	client_iface->login                = novell_login;
+	client_iface->close                = novell_close;
+	client_iface->send_im              = novell_send_im;
+	client_iface->send_typing          = novell_send_typing;
+	client_iface->get_info             = novell_get_info;
+	client_iface->set_status           = novell_set_status;
+	client_iface->set_idle             = novell_set_idle;
+	client_iface->add_buddy            = novell_add_buddy;
+	client_iface->remove_buddy         = novell_remove_buddy;
+	client_iface->add_permit           = novell_add_permit;
+	client_iface->add_deny             = novell_add_deny;
+	client_iface->rem_permit           = novell_rem_permit;
+	client_iface->rem_deny             = novell_rem_deny;
+	client_iface->set_permit_deny      = novell_set_permit_deny;
+	client_iface->chat_invite          = novell_chat_invite;
+	client_iface->chat_leave           = novell_chat_leave;
+	client_iface->chat_send            = novell_chat_send;
+	client_iface->keepalive            = novell_keepalive;
+	client_iface->alias_buddy          = novell_alias_buddy;
+	client_iface->group_buddy          = novell_group_buddy;
+	client_iface->rename_group         = novell_rename_group;
+	client_iface->convo_closed         = novell_convo_closed;
+	client_iface->normalize            = purple_normalize_nocase;
+	client_iface->remove_group         = novell_remove_group;
+	client_iface->get_max_message_size = novell_get_max_message_size;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	NovellProtocol, novell_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              novell_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              novell_protocol_client_iface_init)
 );
 
 static PurplePluginInfo *

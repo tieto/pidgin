@@ -2084,25 +2084,25 @@ simple_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-simple_protocol_interface_init(PurpleProtocolInterface *iface)
+simple_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->list_icon    = simple_list_icon;
-	iface->status_types = simple_status_types;
-	iface->login        = simple_login;
-	iface->close        = simple_close;
-	iface->send_im      = simple_im_send;
-	iface->send_typing  = simple_typing;
-	iface->set_status   = simple_set_status;
-	iface->add_buddy    = simple_add_buddy;
-	iface->remove_buddy = simple_remove_buddy;
-	iface->keepalive    = simple_keep_alive;
-	iface->send_raw     = simple_send_raw;
+	client_iface->list_icon    = simple_list_icon;
+	client_iface->status_types = simple_status_types;
+	client_iface->login        = simple_login;
+	client_iface->close        = simple_close;
+	client_iface->send_im      = simple_im_send;
+	client_iface->send_typing  = simple_typing;
+	client_iface->set_status   = simple_set_status;
+	client_iface->add_buddy    = simple_add_buddy;
+	client_iface->remove_buddy = simple_remove_buddy;
+	client_iface->keepalive    = simple_keep_alive;
+	client_iface->send_raw     = simple_send_raw;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	SIMPLEProtocol, simple_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              simple_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              simple_protocol_client_iface_init)
 );
 
 static PurplePluginInfo *

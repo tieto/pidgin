@@ -2216,44 +2216,44 @@ silcpurple_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-silcpurple_protocol_interface_init(PurpleProtocolInterface *iface)
+silcpurple_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->get_actions        = silcpurple_get_actions;
-	iface->list_icon          = silcpurple_list_icon;
-	iface->status_text        = silcpurple_status_text;
-	iface->tooltip_text       = silcpurple_tooltip_text;
-	iface->status_types       = silcpurple_away_states;
-	iface->blist_node_menu    = silcpurple_blist_node_menu;
-	iface->chat_info          = silcpurple_chat_info;
-	iface->chat_info_defaults = silcpurple_chat_info_defaults;
-	iface->login              = silcpurple_login;
-	iface->close              = silcpurple_close;
-	iface->send_im            = silcpurple_send_im;
-	iface->set_info           = silcpurple_set_info;
-	iface->get_info           = silcpurple_get_info;
-	iface->set_status         = silcpurple_set_status;
-	iface->set_idle           = silcpurple_idle_set;
-	iface->change_passwd      = silcpurple_change_passwd;
-	iface->add_buddy          = silcpurple_add_buddy;
-	iface->remove_buddy       = silcpurple_remove_buddy;
-	iface->join_chat          = silcpurple_chat_join;
-	iface->get_chat_name      = silcpurple_get_chat_name;
-	iface->chat_invite        = silcpurple_chat_invite;
-	iface->chat_leave         = silcpurple_chat_leave;
-	iface->chat_send          = silcpurple_chat_send;
-	iface->keepalive          = silcpurple_keepalive;
-	iface->set_buddy_icon     = silcpurple_buddy_set_icon;
-	iface->set_chat_topic     = silcpurple_chat_set_topic;
-	iface->roomlist_get_list  = silcpurple_roomlist_get_list;
-	iface->roomlist_cancel    = silcpurple_roomlist_cancel;
-	iface->send_file          = silcpurple_ftp_send_file;
-	iface->new_xfer           = silcpurple_ftp_new_xfer;
+	client_iface->get_actions        = silcpurple_get_actions;
+	client_iface->list_icon          = silcpurple_list_icon;
+	client_iface->status_text        = silcpurple_status_text;
+	client_iface->tooltip_text       = silcpurple_tooltip_text;
+	client_iface->status_types       = silcpurple_away_states;
+	client_iface->blist_node_menu    = silcpurple_blist_node_menu;
+	client_iface->chat_info          = silcpurple_chat_info;
+	client_iface->chat_info_defaults = silcpurple_chat_info_defaults;
+	client_iface->login              = silcpurple_login;
+	client_iface->close              = silcpurple_close;
+	client_iface->send_im            = silcpurple_send_im;
+	client_iface->set_info           = silcpurple_set_info;
+	client_iface->get_info           = silcpurple_get_info;
+	client_iface->set_status         = silcpurple_set_status;
+	client_iface->set_idle           = silcpurple_idle_set;
+	client_iface->change_passwd      = silcpurple_change_passwd;
+	client_iface->add_buddy          = silcpurple_add_buddy;
+	client_iface->remove_buddy       = silcpurple_remove_buddy;
+	client_iface->join_chat          = silcpurple_chat_join;
+	client_iface->get_chat_name      = silcpurple_get_chat_name;
+	client_iface->chat_invite        = silcpurple_chat_invite;
+	client_iface->chat_leave         = silcpurple_chat_leave;
+	client_iface->chat_send          = silcpurple_chat_send;
+	client_iface->keepalive          = silcpurple_keepalive;
+	client_iface->set_buddy_icon     = silcpurple_buddy_set_icon;
+	client_iface->set_chat_topic     = silcpurple_chat_set_topic;
+	client_iface->roomlist_get_list  = silcpurple_roomlist_get_list;
+	client_iface->roomlist_cancel    = silcpurple_roomlist_cancel;
+	client_iface->send_file          = silcpurple_ftp_send_file;
+	client_iface->new_xfer           = silcpurple_ftp_new_xfer;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	SilcProtocol, silcpurple_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              silcpurple_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              silcpurple_protocol_client_iface_init)
 );
 
 static PurplePluginInfo *

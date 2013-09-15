@@ -5664,57 +5664,57 @@ mw_protocol_class_init(PurpleProtocolClass *klass)
 
 
 static void
-mw_protocol_interface_init(PurpleProtocolInterface *iface)
+mw_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-  iface->get_actions        = mw_protocol_get_actions;
-  iface->list_icon          = mw_protocol_list_icon;
-  iface->list_emblem        = mw_protocol_list_emblem;
-  iface->status_text        = mw_protocol_status_text;
-  iface->tooltip_text       = mw_protocol_tooltip_text;
-  iface->status_types       = mw_protocol_status_types;
-  iface->blist_node_menu    = mw_protocol_blist_node_menu;
-  iface->chat_info          = mw_protocol_chat_info;
-  iface->chat_info_defaults = mw_protocol_chat_info_defaults;
-  iface->login              = mw_protocol_login;
-  iface->close              = mw_protocol_close;
-  iface->send_im            = mw_protocol_send_im;
-  iface->send_typing        = mw_protocol_send_typing;
-  iface->get_info           = mw_protocol_get_info;
-  iface->set_status         = mw_protocol_set_status;
-  iface->set_idle           = mw_protocol_set_idle;
-  iface->add_buddy          = mw_protocol_add_buddy;
-  iface->add_buddies        = mw_protocol_add_buddies;
-  iface->remove_buddy       = mw_protocol_remove_buddy;
-  iface->add_permit         = mw_protocol_add_permit;
-  iface->add_deny           = mw_protocol_add_deny;
-  iface->rem_permit         = mw_protocol_rem_permit;
-  iface->rem_deny           = mw_protocol_rem_deny;
-  iface->set_permit_deny    = mw_protocol_set_permit_deny;
-  iface->join_chat          = mw_protocol_join_chat;
-  iface->reject_chat        = mw_protocol_reject_chat;
-  iface->get_chat_name      = mw_protocol_get_chat_name;
-  iface->chat_invite        = mw_protocol_chat_invite;
-  iface->chat_leave         = mw_protocol_chat_leave;
-  iface->chat_whisper       = mw_protocol_chat_whisper;
-  iface->chat_send          = mw_protocol_chat_send;
-  iface->keepalive          = mw_protocol_keepalive;
-  iface->alias_buddy        = mw_protocol_alias_buddy;
-  iface->group_buddy        = mw_protocol_group_buddy;
-  iface->rename_group       = mw_protocol_rename_group;
-  iface->buddy_free         = mw_protocol_buddy_free;
-  iface->convo_closed       = mw_protocol_convo_closed;
-  iface->normalize          = mw_protocol_normalize;
-  iface->remove_group       = mw_protocol_remove_group;
-  iface->can_receive_file   = mw_protocol_can_receive_file;
-  iface->send_file          = mw_protocol_send_file;
-  iface->new_xfer           = mw_protocol_new_xfer;
+  client_iface->get_actions        = mw_protocol_get_actions;
+  client_iface->list_icon          = mw_protocol_list_icon;
+  client_iface->list_emblem        = mw_protocol_list_emblem;
+  client_iface->status_text        = mw_protocol_status_text;
+  client_iface->tooltip_text       = mw_protocol_tooltip_text;
+  client_iface->status_types       = mw_protocol_status_types;
+  client_iface->blist_node_menu    = mw_protocol_blist_node_menu;
+  client_iface->chat_info          = mw_protocol_chat_info;
+  client_iface->chat_info_defaults = mw_protocol_chat_info_defaults;
+  client_iface->login              = mw_protocol_login;
+  client_iface->close              = mw_protocol_close;
+  client_iface->send_im            = mw_protocol_send_im;
+  client_iface->send_typing        = mw_protocol_send_typing;
+  client_iface->get_info           = mw_protocol_get_info;
+  client_iface->set_status         = mw_protocol_set_status;
+  client_iface->set_idle           = mw_protocol_set_idle;
+  client_iface->add_buddy          = mw_protocol_add_buddy;
+  client_iface->add_buddies        = mw_protocol_add_buddies;
+  client_iface->remove_buddy       = mw_protocol_remove_buddy;
+  client_iface->add_permit         = mw_protocol_add_permit;
+  client_iface->add_deny           = mw_protocol_add_deny;
+  client_iface->rem_permit         = mw_protocol_rem_permit;
+  client_iface->rem_deny           = mw_protocol_rem_deny;
+  client_iface->set_permit_deny    = mw_protocol_set_permit_deny;
+  client_iface->join_chat          = mw_protocol_join_chat;
+  client_iface->reject_chat        = mw_protocol_reject_chat;
+  client_iface->get_chat_name      = mw_protocol_get_chat_name;
+  client_iface->chat_invite        = mw_protocol_chat_invite;
+  client_iface->chat_leave         = mw_protocol_chat_leave;
+  client_iface->chat_whisper       = mw_protocol_chat_whisper;
+  client_iface->chat_send          = mw_protocol_chat_send;
+  client_iface->keepalive          = mw_protocol_keepalive;
+  client_iface->alias_buddy        = mw_protocol_alias_buddy;
+  client_iface->group_buddy        = mw_protocol_group_buddy;
+  client_iface->rename_group       = mw_protocol_rename_group;
+  client_iface->buddy_free         = mw_protocol_buddy_free;
+  client_iface->convo_closed       = mw_protocol_convo_closed;
+  client_iface->normalize          = mw_protocol_normalize;
+  client_iface->remove_group       = mw_protocol_remove_group;
+  client_iface->can_receive_file   = mw_protocol_can_receive_file;
+  client_iface->send_file          = mw_protocol_send_file;
+  client_iface->new_xfer           = mw_protocol_new_xfer;
 }
 
 
 PURPLE_DEFINE_TYPE_EXTENDED(
   mwProtocol, mw_protocol, PURPLE_TYPE_PROTOCOL, 0,
-  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-  	                                mw_protocol_interface_init)
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+  	                                mw_protocol_client_iface_init)
 );
 
 

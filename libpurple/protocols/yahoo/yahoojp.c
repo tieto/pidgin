@@ -118,13 +118,13 @@ yahoojp_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-yahoojp_protocol_interface_init(PurpleProtocolInterface *iface)
+yahoojp_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->get_account_text_table = yahoojp_get_account_text_table;
+	client_iface->get_account_text_table = yahoojp_get_account_text_table;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	YahooJPProtocol, yahoojp_protocol, YAHOO_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              yahoojp_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              yahoojp_protocol_client_iface_init)
 );

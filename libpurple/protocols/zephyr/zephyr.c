@@ -2935,36 +2935,36 @@ zephyr_protocol_class_init(PurpleProtocolClass *klass)
 
 
 static void
-zephyr_protocol_interface_init(PurpleProtocolInterface *iface)
+zephyr_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->get_actions         = zephyr_get_actions;
-	iface->list_icon           = zephyr_list_icon;
-	iface->status_types        = zephyr_status_types;
-	iface->chat_info           = zephyr_chat_info;
-	iface->login               = zephyr_login;
-	iface->close               = zephyr_close;
-	iface->send_im             = zephyr_send_im;
-	iface->send_typing         = zephyr_send_typing;
-	iface->get_info            = zephyr_zloc;
-	iface->set_status          = zephyr_set_status;
-	iface->join_chat           = zephyr_join_chat;
-	iface->get_chat_name       = zephyr_get_chat_name;
-	iface->chat_leave          = zephyr_chat_leave;
-	iface->chat_send           = zephyr_chat_send;
-	iface->normalize           = zephyr_normalize;
-	iface->set_chat_topic      = zephyr_chat_set_topic;
-	iface->find_blist_chat     = zephyr_find_blist_chat;
+	client_iface->get_actions         = zephyr_get_actions;
+	client_iface->list_icon           = zephyr_list_icon;
+	client_iface->status_types        = zephyr_status_types;
+	client_iface->chat_info           = zephyr_chat_info;
+	client_iface->login               = zephyr_login;
+	client_iface->close               = zephyr_close;
+	client_iface->send_im             = zephyr_send_im;
+	client_iface->send_typing         = zephyr_send_typing;
+	client_iface->get_info            = zephyr_zloc;
+	client_iface->set_status          = zephyr_set_status;
+	client_iface->join_chat           = zephyr_join_chat;
+	client_iface->get_chat_name       = zephyr_get_chat_name;
+	client_iface->chat_leave          = zephyr_chat_leave;
+	client_iface->chat_send           = zephyr_chat_send;
+	client_iface->normalize           = zephyr_normalize;
+	client_iface->set_chat_topic      = zephyr_chat_set_topic;
+	client_iface->find_blist_chat     = zephyr_find_blist_chat;
 
-	iface->set_info            = NULL; /* XXX Location? */
-	iface->set_buddy_icon      = NULL; /* XXX */
-	iface->get_cuser_real_name = NULL; /* XXX */
+	client_iface->set_info            = NULL; /* XXX Location? */
+	client_iface->set_buddy_icon      = NULL; /* XXX */
+	client_iface->get_cuser_real_name = NULL; /* XXX */
 }
 
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	ZephyrProtocol, zephyr_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              zephyr_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              zephyr_protocol_client_iface_init)
 );
 
 

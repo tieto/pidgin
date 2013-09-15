@@ -67,16 +67,16 @@ icq_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-icq_protocol_interface_init(PurpleProtocolInterface *iface)
+icq_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->list_icon              = oscar_list_icon_icq;
-	iface->get_account_text_table = icq_get_account_text_table;
-	iface->get_moods              = oscar_get_purple_moods;
-	iface->get_max_message_size   = icq_get_max_message_size;
+	client_iface->list_icon              = oscar_list_icon_icq;
+	client_iface->get_account_text_table = icq_get_account_text_table;
+	client_iface->get_moods              = oscar_get_purple_moods;
+	client_iface->get_max_message_size   = icq_get_max_message_size;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	ICQProtocol, icq_protocol, OSCAR_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              icq_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              icq_protocol_client_iface_init)
 );

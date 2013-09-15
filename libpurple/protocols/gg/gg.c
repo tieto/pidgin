@@ -1448,46 +1448,46 @@ ggp_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-ggp_protocol_interface_init(PurpleProtocolInterface *iface)
+ggp_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->get_actions            = ggp_get_actions;
-	iface->list_icon              = ggp_list_icon;
-	iface->list_emblem            = ggp_list_emblem;
-	iface->status_text            = ggp_status_buddy_text;
-	iface->tooltip_text           = ggp_tooltip_text;
-	iface->status_types           = ggp_status_types;
-	iface->blist_node_menu        = ggp_blist_node_menu;
-	iface->chat_info              = ggp_chat_info;
-	iface->login                  = ggp_login;
-	iface->close                  = ggp_close;
-	iface->send_im                = ggp_send_im;
-	iface->send_typing            = ggp_send_typing;
-	iface->get_info               = ggp_pubdir_get_info_protocol;
-	iface->set_status             = ggp_status_set_purplestatus;
-	iface->add_buddy              = ggp_add_buddy;
-	iface->remove_buddy           = ggp_remove_buddy;
-	iface->add_deny               = ggp_add_deny;
-	iface->rem_deny               = ggp_rem_deny;
-	iface->join_chat              = ggp_join_chat;
-	iface->get_chat_name          = ggp_get_chat_name;
-	iface->chat_send              = ggp_chat_send;
-	iface->keepalive              = ggp_keepalive;
-	iface->register_user          = ggp_account_register;
-	iface->alias_buddy            = ggp_roster_alias_buddy;
-	iface->group_buddy            = ggp_roster_group_buddy;
-	iface->rename_group           = ggp_roster_rename_group;
-	iface->buddy_free             = ggp_buddy_free;
-	iface->normalize              = ggp_normalize;
-	iface->set_buddy_icon         = ggp_avatar_own_set;
-	iface->offline_message        = ggp_offline_message;
-	iface->get_account_text_table = ggp_get_account_text_table;
-	iface->get_max_message_size   = ggp_get_max_message_size;
+	client_iface->get_actions            = ggp_get_actions;
+	client_iface->list_icon              = ggp_list_icon;
+	client_iface->list_emblem            = ggp_list_emblem;
+	client_iface->status_text            = ggp_status_buddy_text;
+	client_iface->tooltip_text           = ggp_tooltip_text;
+	client_iface->status_types           = ggp_status_types;
+	client_iface->blist_node_menu        = ggp_blist_node_menu;
+	client_iface->chat_info              = ggp_chat_info;
+	client_iface->login                  = ggp_login;
+	client_iface->close                  = ggp_close;
+	client_iface->send_im                = ggp_send_im;
+	client_iface->send_typing            = ggp_send_typing;
+	client_iface->get_info               = ggp_pubdir_get_info_protocol;
+	client_iface->set_status             = ggp_status_set_purplestatus;
+	client_iface->add_buddy              = ggp_add_buddy;
+	client_iface->remove_buddy           = ggp_remove_buddy;
+	client_iface->add_deny               = ggp_add_deny;
+	client_iface->rem_deny               = ggp_rem_deny;
+	client_iface->join_chat              = ggp_join_chat;
+	client_iface->get_chat_name          = ggp_get_chat_name;
+	client_iface->chat_send              = ggp_chat_send;
+	client_iface->keepalive              = ggp_keepalive;
+	client_iface->register_user          = ggp_account_register;
+	client_iface->alias_buddy            = ggp_roster_alias_buddy;
+	client_iface->group_buddy            = ggp_roster_group_buddy;
+	client_iface->rename_group           = ggp_roster_rename_group;
+	client_iface->buddy_free             = ggp_buddy_free;
+	client_iface->normalize              = ggp_normalize;
+	client_iface->set_buddy_icon         = ggp_avatar_own_set;
+	client_iface->offline_message        = ggp_offline_message;
+	client_iface->get_account_text_table = ggp_get_account_text_table;
+	client_iface->get_max_message_size   = ggp_get_max_message_size;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	GGPProtocol, ggp_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              ggp_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              ggp_protocol_client_iface_init)
 );
 
 static PurplePluginInfo *

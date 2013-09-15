@@ -2925,56 +2925,56 @@ msn_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-msn_protocol_interface_init(PurpleProtocolInterface *iface)
+msn_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->get_actions            = msn_get_actions;
-	iface->list_icon              = msn_list_icon;
-	iface->list_emblem            = msn_list_emblems;
-	iface->status_text            = msn_status_text;
-	iface->tooltip_text           = msn_tooltip_text;
-	iface->status_types           = msn_status_types;
-	iface->blist_node_menu        = msn_blist_node_menu;
-	iface->login                  = msn_login;
-	iface->close                  = msn_close;
-	iface->send_im                = msn_send_im;
-	iface->send_typing            = msn_send_typing;
-	iface->get_info               = msn_get_info;
-	iface->set_status             = msn_set_status;
-	iface->set_idle               = msn_set_idle;
-	iface->add_buddy              = msn_add_buddy;
-	iface->remove_buddy           = msn_rem_buddy;
-	iface->add_permit             = msn_add_permit;
-	iface->add_deny               = msn_add_deny;
-	iface->rem_permit             = msn_rem_permit;
-	iface->rem_deny               = msn_rem_deny;
-	iface->set_permit_deny        = msn_set_permit_deny;
-	iface->chat_invite            = msn_chat_invite;
-	iface->chat_leave             = msn_chat_leave;
-	iface->chat_send              = msn_chat_send;
-	iface->keepalive              = msn_keepalive;
-	iface->alias_buddy            = msn_alias_buddy;
-	iface->group_buddy            = msn_group_buddy;
-	iface->rename_group           = msn_rename_group;
-	iface->convo_closed           = msn_convo_closed;
-	iface->normalize              = msn_normalize;
-	iface->set_buddy_icon         = msn_set_buddy_icon;
-	iface->remove_group           = msn_remove_group;
-	iface->can_receive_file       = msn_can_receive_file;
-	iface->send_file              = msn_send_file;
-	iface->new_xfer               = msn_new_xfer;
-	iface->offline_message        = msn_offline_message;
-	iface->send_attention         = msn_send_attention;
-	iface->get_attention_types    = msn_attention_types;
-	iface->get_account_text_table = msn_get_account_text_table;
-	iface->set_public_alias       = msn_set_public_alias;
-	iface->get_public_alias       = msn_get_public_alias;
-	iface->get_max_message_size   = msn_get_max_message_size;
+	client_iface->get_actions            = msn_get_actions;
+	client_iface->list_icon              = msn_list_icon;
+	client_iface->list_emblem            = msn_list_emblems;
+	client_iface->status_text            = msn_status_text;
+	client_iface->tooltip_text           = msn_tooltip_text;
+	client_iface->status_types           = msn_status_types;
+	client_iface->blist_node_menu        = msn_blist_node_menu;
+	client_iface->login                  = msn_login;
+	client_iface->close                  = msn_close;
+	client_iface->send_im                = msn_send_im;
+	client_iface->send_typing            = msn_send_typing;
+	client_iface->get_info               = msn_get_info;
+	client_iface->set_status             = msn_set_status;
+	client_iface->set_idle               = msn_set_idle;
+	client_iface->add_buddy              = msn_add_buddy;
+	client_iface->remove_buddy           = msn_rem_buddy;
+	client_iface->add_permit             = msn_add_permit;
+	client_iface->add_deny               = msn_add_deny;
+	client_iface->rem_permit             = msn_rem_permit;
+	client_iface->rem_deny               = msn_rem_deny;
+	client_iface->set_permit_deny        = msn_set_permit_deny;
+	client_iface->chat_invite            = msn_chat_invite;
+	client_iface->chat_leave             = msn_chat_leave;
+	client_iface->chat_send              = msn_chat_send;
+	client_iface->keepalive              = msn_keepalive;
+	client_iface->alias_buddy            = msn_alias_buddy;
+	client_iface->group_buddy            = msn_group_buddy;
+	client_iface->rename_group           = msn_rename_group;
+	client_iface->convo_closed           = msn_convo_closed;
+	client_iface->normalize              = msn_normalize;
+	client_iface->set_buddy_icon         = msn_set_buddy_icon;
+	client_iface->remove_group           = msn_remove_group;
+	client_iface->can_receive_file       = msn_can_receive_file;
+	client_iface->send_file              = msn_send_file;
+	client_iface->new_xfer               = msn_new_xfer;
+	client_iface->offline_message        = msn_offline_message;
+	client_iface->send_attention         = msn_send_attention;
+	client_iface->get_attention_types    = msn_attention_types;
+	client_iface->get_account_text_table = msn_get_account_text_table;
+	client_iface->set_public_alias       = msn_set_public_alias;
+	client_iface->get_public_alias       = msn_get_public_alias;
+	client_iface->get_max_message_size   = msn_get_max_message_size;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	MsnProtocol, msn_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              msn_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              msn_protocol_client_iface_init)
 );
 
 static PurplePluginInfo *

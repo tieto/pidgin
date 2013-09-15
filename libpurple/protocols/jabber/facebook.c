@@ -107,32 +107,32 @@ facebook_protocol_class_init(PurpleProtocolClass *klass)
 }
 
 static void
-facebook_protocol_interface_init(PurpleProtocolInterface *iface)
+facebook_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->list_icon           = facebook_list_icon;
+	client_iface->list_icon           = facebook_list_icon;
 
 	/* disable xmpp functions not available for facebook */
-	iface->add_buddy           = NULL;
-	iface->remove_buddy        = NULL;
-	iface->add_deny            = NULL;
-	iface->rem_deny            = NULL;
-	iface->register_user       = NULL;
-	iface->alias_buddy         = NULL;
-	iface->group_buddy         = NULL;
-	iface->rename_group        = NULL;
-	iface->can_receive_file    = NULL;
-	iface->send_file           = NULL;
-	iface->new_xfer            = NULL;
-	iface->unregister_user     = NULL;
-	iface->send_attention      = NULL;
-	iface->get_attention_types = NULL;
-	iface->initiate_media      = NULL;
-	iface->get_media_caps      = NULL;
-	iface->get_moods           = NULL;
+	client_iface->add_buddy           = NULL;
+	client_iface->remove_buddy        = NULL;
+	client_iface->add_deny            = NULL;
+	client_iface->rem_deny            = NULL;
+	client_iface->register_user       = NULL;
+	client_iface->alias_buddy         = NULL;
+	client_iface->group_buddy         = NULL;
+	client_iface->rename_group        = NULL;
+	client_iface->can_receive_file    = NULL;
+	client_iface->send_file           = NULL;
+	client_iface->new_xfer            = NULL;
+	client_iface->unregister_user     = NULL;
+	client_iface->send_attention      = NULL;
+	client_iface->get_attention_types = NULL;
+	client_iface->initiate_media      = NULL;
+	client_iface->get_media_caps      = NULL;
+	client_iface->get_moods           = NULL;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	FacebookProtocol, facebook_protocol, JABBER_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              facebook_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              facebook_protocol_client_iface_init)
 );

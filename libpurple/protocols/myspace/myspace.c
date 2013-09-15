@@ -3433,38 +3433,38 @@ msim_protocol_class_init(PurpleProtocolClass *klass)
  * Callbacks called by Purple, to access this protocol.
  */
 static void
-msim_protocol_interface_init(PurpleProtocolInterface *iface)
+msim_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	iface->get_actions            = msim_get_actions;
-	iface->list_icon              = msim_list_icon;
-	iface->status_text            = msim_status_text;
-	iface->tooltip_text           = msim_tooltip_text;
-	iface->status_types           = msim_status_types;
-	iface->blist_node_menu        = msim_blist_node_menu;
-	iface->login                  = msim_login;
-	iface->close                  = msim_close;
-	iface->send_im                = msim_send_im;
-	iface->send_typing            = msim_send_typing;
-	iface->get_info               = msim_get_info;
-	iface->set_status             = msim_set_status;
-	iface->set_idle               = msim_set_idle;
-	iface->add_buddy              = msim_add_buddy;
-	iface->remove_buddy           = msim_remove_buddy;
-	iface->add_deny               = msim_add_deny;
-	iface->rem_deny               = msim_rem_deny;
-	iface->buddy_free             = msim_buddy_free;
-	iface->normalize              = msim_normalize;
-	iface->offline_message        = msim_offline_message;
-	iface->send_raw               = msim_send_really_raw;
-	iface->send_attention         = msim_send_attention;
-	iface->get_attention_types    = msim_attention_types;
-	iface->get_account_text_table = msim_get_account_text_table;
+	client_iface->get_actions            = msim_get_actions;
+	client_iface->list_icon              = msim_list_icon;
+	client_iface->status_text            = msim_status_text;
+	client_iface->tooltip_text           = msim_tooltip_text;
+	client_iface->status_types           = msim_status_types;
+	client_iface->blist_node_menu        = msim_blist_node_menu;
+	client_iface->login                  = msim_login;
+	client_iface->close                  = msim_close;
+	client_iface->send_im                = msim_send_im;
+	client_iface->send_typing            = msim_send_typing;
+	client_iface->get_info               = msim_get_info;
+	client_iface->set_status             = msim_set_status;
+	client_iface->set_idle               = msim_set_idle;
+	client_iface->add_buddy              = msim_add_buddy;
+	client_iface->remove_buddy           = msim_remove_buddy;
+	client_iface->add_deny               = msim_add_deny;
+	client_iface->rem_deny               = msim_rem_deny;
+	client_iface->buddy_free             = msim_buddy_free;
+	client_iface->normalize              = msim_normalize;
+	client_iface->offline_message        = msim_offline_message;
+	client_iface->send_raw               = msim_send_really_raw;
+	client_iface->send_attention         = msim_send_attention;
+	client_iface->get_attention_types    = msim_attention_types;
+	client_iface->get_account_text_table = msim_get_account_text_table;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	MsimProtocol, msim_protocol, PURPLE_TYPE_PROTOCOL, 0,
-	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_INTERFACE,
-		                              msim_protocol_interface_init)
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+		                              msim_protocol_client_iface_init)
 );
 
 /**
