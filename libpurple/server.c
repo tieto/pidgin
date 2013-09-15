@@ -127,6 +127,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	protocol = purple_connection_get_protocol(gc);
 
 	g_return_val_if_fail(protocol != NULL, val);
+	g_return_val_if_fail(PURPLE_PROTOCOL_HAS_IM_IFACE(protocol), val);
 
 	account  = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
