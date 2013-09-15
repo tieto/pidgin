@@ -5660,61 +5660,107 @@ mw_protocol_init(PurpleProtocol *protocol)
 static void
 mw_protocol_class_init(PurpleProtocolClass *klass)
 {
+  klass->login        = mw_protocol_login;
+  klass->close        = mw_protocol_close;
+  klass->status_types = mw_protocol_status_types;
+  klass->list_icon    = mw_protocol_list_icon;
 }
 
 
 static void
 mw_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-  client_iface->get_actions        = mw_protocol_get_actions;
-  client_iface->list_icon          = mw_protocol_list_icon;
-  client_iface->list_emblem        = mw_protocol_list_emblem;
-  client_iface->status_text        = mw_protocol_status_text;
-  client_iface->tooltip_text       = mw_protocol_tooltip_text;
-  client_iface->status_types       = mw_protocol_status_types;
-  client_iface->blist_node_menu    = mw_protocol_blist_node_menu;
-  client_iface->chat_info          = mw_protocol_chat_info;
-  client_iface->chat_info_defaults = mw_protocol_chat_info_defaults;
-  client_iface->login              = mw_protocol_login;
-  client_iface->close              = mw_protocol_close;
-  client_iface->send_im            = mw_protocol_send_im;
-  client_iface->send_typing        = mw_protocol_send_typing;
-  client_iface->get_info           = mw_protocol_get_info;
-  client_iface->set_status         = mw_protocol_set_status;
-  client_iface->set_idle           = mw_protocol_set_idle;
-  client_iface->add_buddy          = mw_protocol_add_buddy;
-  client_iface->add_buddies        = mw_protocol_add_buddies;
-  client_iface->remove_buddy       = mw_protocol_remove_buddy;
-  client_iface->add_permit         = mw_protocol_add_permit;
-  client_iface->add_deny           = mw_protocol_add_deny;
-  client_iface->rem_permit         = mw_protocol_rem_permit;
-  client_iface->rem_deny           = mw_protocol_rem_deny;
-  client_iface->set_permit_deny    = mw_protocol_set_permit_deny;
-  client_iface->join_chat          = mw_protocol_join_chat;
-  client_iface->reject_chat        = mw_protocol_reject_chat;
-  client_iface->get_chat_name      = mw_protocol_get_chat_name;
-  client_iface->chat_invite        = mw_protocol_chat_invite;
-  client_iface->chat_leave         = mw_protocol_chat_leave;
-  client_iface->chat_whisper       = mw_protocol_chat_whisper;
-  client_iface->chat_send          = mw_protocol_chat_send;
-  client_iface->keepalive          = mw_protocol_keepalive;
-  client_iface->alias_buddy        = mw_protocol_alias_buddy;
-  client_iface->group_buddy        = mw_protocol_group_buddy;
-  client_iface->rename_group       = mw_protocol_rename_group;
-  client_iface->buddy_free         = mw_protocol_buddy_free;
-  client_iface->convo_closed       = mw_protocol_convo_closed;
-  client_iface->normalize          = mw_protocol_normalize;
-  client_iface->remove_group       = mw_protocol_remove_group;
-  client_iface->can_receive_file   = mw_protocol_can_receive_file;
-  client_iface->send_file          = mw_protocol_send_file;
-  client_iface->new_xfer           = mw_protocol_new_xfer;
+  client_iface->get_actions     = mw_protocol_get_actions;
+  client_iface->list_emblem     = mw_protocol_list_emblem;
+  client_iface->status_text     = mw_protocol_status_text;
+  client_iface->tooltip_text    = mw_protocol_tooltip_text;
+  client_iface->blist_node_menu = mw_protocol_blist_node_menu;
+  client_iface->buddy_free      = mw_protocol_buddy_free;
+  client_iface->convo_closed    = mw_protocol_convo_closed;
+  client_iface->normalize       = mw_protocol_normalize;
+}
+
+
+static void
+mw_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+  server_iface->get_info     = mw_protocol_get_info;
+  server_iface->set_status   = mw_protocol_set_status;
+  server_iface->set_idle     = mw_protocol_set_idle;
+  server_iface->add_buddy    = mw_protocol_add_buddy;
+  server_iface->add_buddies  = mw_protocol_add_buddies;
+  server_iface->remove_buddy = mw_protocol_remove_buddy;
+  server_iface->keepalive    = mw_protocol_keepalive;
+  server_iface->alias_buddy  = mw_protocol_alias_buddy;
+  server_iface->group_buddy  = mw_protocol_group_buddy;
+  server_iface->rename_group = mw_protocol_rename_group;
+  server_iface->remove_group = mw_protocol_remove_group;
+}
+
+
+static void
+mw_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
+{
+  im_iface->send        = mw_protocol_send_im;
+  im_iface->send_typing = mw_protocol_send_typing;
+}
+
+
+static void
+mw_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
+{
+  chat_iface->info          = mw_protocol_chat_info;
+  chat_iface->info_defaults = mw_protocol_chat_info_defaults;
+  chat_iface->join          = mw_protocol_join_chat;
+  chat_iface->reject        = mw_protocol_reject_chat;
+  chat_iface->get_name      = mw_protocol_get_chat_name;
+  chat_iface->invite        = mw_protocol_chat_invite;
+  chat_iface->leave         = mw_protocol_chat_leave;
+  chat_iface->whisper       = mw_protocol_chat_whisper;
+  chat_iface->send          = mw_protocol_chat_send;
+}
+
+
+static void
+mw_protocol_privacy_iface_init(PurpleProtocolPrivacyIface *privacy_iface)
+{
+  privacy_iface->add_permit      = mw_protocol_add_permit;
+  privacy_iface->add_deny        = mw_protocol_add_deny;
+  privacy_iface->rem_permit      = mw_protocol_rem_permit;
+  privacy_iface->rem_deny        = mw_protocol_rem_deny;
+  privacy_iface->set_permit_deny = mw_protocol_set_permit_deny;
+}
+
+
+static void
+mw_protocol_xfer_iface_init(PurpleProtocolXferIface *xfer_iface)
+{
+  xfer_iface->can_receive = mw_protocol_can_receive_file;
+  xfer_iface->send        = mw_protocol_send_file;
+  xfer_iface->new_xfer    = mw_protocol_new_xfer;
 }
 
 
 PURPLE_DEFINE_TYPE_EXTENDED(
   mwProtocol, mw_protocol, PURPLE_TYPE_PROTOCOL, 0,
+
   PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-  	                                mw_protocol_client_iface_init)
+                                    mw_protocol_client_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+                                    mw_protocol_server_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
+                                    mw_protocol_im_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
+                                    mw_protocol_chat_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE,
+                                    mw_protocol_privacy_iface_init)
+
+  PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+                                    mw_protocol_xfer_iface_init)
 );
 
 
