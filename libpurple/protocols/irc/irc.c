@@ -974,43 +974,84 @@ irc_protocol_init(PurpleProtocol *protocol)
 static void
 irc_protocol_class_init(PurpleProtocolClass *klass)
 {
+	klass->login            = irc_login;
+	klass->close_connection = irc_close;
+	klass->status_types     = irc_status_types;
+	klass->list_icon        = irc_blist_icon;
 }
 
 static void
 irc_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
 	client_iface->get_actions          = irc_get_actions;
-	client_iface->list_icon            = irc_blist_icon;
-	client_iface->status_types         = irc_status_types;
-	client_iface->chat_info            = irc_chat_join_info;
-	client_iface->chat_info_defaults   = irc_chat_info_defaults;
-	client_iface->login                = irc_login;
-	client_iface->close                = irc_close;
-	client_iface->send_im              = irc_im_send;
-	client_iface->get_info             = irc_get_info;
-	client_iface->set_status           = irc_set_status;
-	client_iface->add_buddy            = irc_add_buddy;
-	client_iface->remove_buddy         = irc_remove_buddy;
-	client_iface->join_chat            = irc_chat_join;
-	client_iface->get_chat_name        = irc_get_chat_name;
-	client_iface->chat_invite          = irc_chat_invite;
-	client_iface->chat_leave           = irc_chat_leave;
-	client_iface->chat_send            = irc_chat_send;
-	client_iface->keepalive            = irc_keepalive;
 	client_iface->normalize            = purple_normalize_nocase;
-	client_iface->set_chat_topic       = irc_chat_set_topic;
-	client_iface->roomlist_get_list    = irc_roomlist_get_list;
-	client_iface->roomlist_cancel      = irc_roomlist_cancel;
-	client_iface->send_file            = irc_dccsend_send_file;
-	client_iface->new_xfer             = irc_dccsend_new_xfer;
-	client_iface->send_raw             = irc_send_raw;
 	client_iface->get_max_message_size = irc_get_max_message_size;
+}
+
+static void
+irc_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+	server_iface->set_status   = irc_set_status;
+	server_iface->get_info     = irc_get_info;
+	server_iface->add_buddy    = irc_add_buddy;
+	server_iface->remove_buddy = irc_remove_buddy;
+	server_iface->keepalive    = irc_keepalive;
+	server_iface->send_raw     = irc_send_raw;
+}
+
+static void
+irc_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
+{
+	im_iface->send = irc_im_send;
+}
+
+static void
+irc_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
+{
+	chat_iface->info          = irc_chat_join_info;
+	chat_iface->info_defaults = irc_chat_info_defaults;
+	chat_iface->join          = irc_chat_join;
+	chat_iface->get_name      = irc_get_chat_name;
+	chat_iface->invite        = irc_chat_invite;
+	chat_iface->leave         = irc_chat_leave;
+	chat_iface->send          = irc_chat_send;
+	chat_iface->set_topic     = irc_chat_set_topic;
+}
+
+static void
+irc_protocol_roomlist_iface_init(PurpleProtocolRoomlistIface *roomlist_iface)
+{
+	roomlist_iface->get_list = irc_roomlist_get_list;
+	roomlist_iface->cancel   = irc_roomlist_cancel;
+}
+
+static void
+irc_protocol_xfer_iface_init(PurpleProtocolXferIface *xfer_iface)
+{
+	xfer_iface->send     = irc_dccsend_send_file;
+	xfer_iface->new_xfer = irc_dccsend_new_xfer;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	IRCProtocol, irc_protocol, PURPLE_TYPE_PROTOCOL, 0,
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
 		                              irc_protocol_client_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+		                              irc_protocol_server_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
+		                              irc_protocol_im_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
+		                              irc_protocol_chat_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE,
+		                              irc_protocol_roomlist_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+		                              irc_protocol_xfer_iface_init)
 );
 
 static PurplePluginInfo *

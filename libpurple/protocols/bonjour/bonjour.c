@@ -664,35 +664,60 @@ bonjour_protocol_init(PurpleProtocol *protocol)
 static void
 bonjour_protocol_class_init(PurpleProtocolClass *klass)
 {
+	klass->login            = bonjour_login;
+	klass->close_connection = bonjour_close;
+	klass->status_types     = bonjour_status_types;
+	klass->list_icon        = bonjour_list_icon;
 }
 
 static void
 bonjour_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-	client_iface->list_icon            = bonjour_list_icon;
 	client_iface->status_text          = bonjour_status_text;
 	client_iface->tooltip_text         = bonjour_tooltip_text;
-	client_iface->status_types         = bonjour_status_types;
-	client_iface->login                = bonjour_login;
-	client_iface->close                = bonjour_close;
-	client_iface->send_im              = bonjour_send_im;
-	client_iface->set_status           = bonjour_set_status;
-	client_iface->add_buddy            = bonjour_fake_add_buddy;
-	client_iface->remove_buddy         = bonjour_remove_buddy;
-	client_iface->group_buddy          = bonjour_group_buddy;
-	client_iface->rename_group         = bonjour_rename_group;
 	client_iface->convo_closed         = bonjour_convo_closed;
-	client_iface->set_buddy_icon       = bonjour_set_buddy_icon;
-	client_iface->can_receive_file     = bonjour_can_receive_file;
-	client_iface->send_file            = bonjour_send_file;
-	client_iface->new_xfer             = bonjour_new_xfer;
 	client_iface->get_max_message_size = bonjour_get_max_message_size;
+}
+
+static void
+bonjour_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+	server_iface->add_buddy      = bonjour_fake_add_buddy;
+	server_iface->remove_buddy   = bonjour_remove_buddy;
+	server_iface->group_buddy    = bonjour_group_buddy;
+	server_iface->rename_group   = bonjour_rename_group;
+	server_iface->set_buddy_icon = bonjour_set_buddy_icon;
+	server_iface->set_status     = bonjour_set_status;
+}
+
+static void
+bonjour_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
+{
+	im_iface->send = bonjour_send_im;
+}
+
+static void
+bonjour_protocol_xfer_iface_init(PurpleProtocolXferIface *xfer_iface)
+{
+	xfer_iface->can_receive = bonjour_can_receive_file;
+	xfer_iface->send        = bonjour_send_file;
+	xfer_iface->new_xfer    = bonjour_new_xfer;
 }
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	BonjourProtocol, bonjour_protocol, PURPLE_TYPE_PROTOCOL, 0,
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
 		                              bonjour_protocol_client_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+		                              bonjour_protocol_server_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
+		                              bonjour_protocol_im_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+		                              bonjour_protocol_xfer_iface_init)
 );
 
 static PurplePluginInfo *
