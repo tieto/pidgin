@@ -1036,22 +1036,22 @@ PURPLE_DEFINE_TYPE_EXTENDED(
 	IRCProtocol, irc_protocol, PURPLE_TYPE_PROTOCOL, 0,
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              irc_protocol_client_iface_init)
+	                                  irc_protocol_client_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
-		                              irc_protocol_server_iface_init)
+	                                  irc_protocol_server_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
-		                              irc_protocol_im_iface_init)
+	                                  irc_protocol_im_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
-		                              irc_protocol_chat_iface_init)
+	                                  irc_protocol_chat_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE,
-		                              irc_protocol_roomlist_iface_init)
+	                                  irc_protocol_roomlist_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
-		                              irc_protocol_xfer_iface_init)
+	                                  irc_protocol_xfer_iface_init)
 );
 
 static PurplePluginInfo *

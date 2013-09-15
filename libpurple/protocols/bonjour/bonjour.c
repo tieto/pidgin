@@ -708,16 +708,16 @@ PURPLE_DEFINE_TYPE_EXTENDED(
 	BonjourProtocol, bonjour_protocol, PURPLE_TYPE_PROTOCOL, 0,
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              bonjour_protocol_client_iface_init)
+	                                  bonjour_protocol_client_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
-		                              bonjour_protocol_server_iface_init)
+	                                  bonjour_protocol_server_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
-		                              bonjour_protocol_im_iface_init)
+	                                  bonjour_protocol_im_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
-		                              bonjour_protocol_xfer_iface_init)
+	                                  bonjour_protocol_xfer_iface_init)
 );
 
 static PurplePluginInfo *

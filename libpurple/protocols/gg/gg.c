@@ -1508,19 +1508,19 @@ PURPLE_DEFINE_TYPE_EXTENDED(
 	GGPProtocol, ggp_protocol, PURPLE_TYPE_PROTOCOL, 0,
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              ggp_protocol_client_iface_init)
+	                                  ggp_protocol_client_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
-		                              ggp_protocol_server_iface_init)
+	                                  ggp_protocol_server_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
-		                              ggp_protocol_im_iface_init)
+	                                  ggp_protocol_im_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
-		                              ggp_protocol_chat_iface_init)
+	                                  ggp_protocol_chat_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE,
-		                              ggp_protocol_privacy_iface_init)
+	                                  ggp_protocol_privacy_iface_init)
 );
 
 static PurplePluginInfo *
