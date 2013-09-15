@@ -757,72 +757,112 @@ mxit_protocol_init( PurpleProtocol *protocol )
 
 
 /*------------------------------------------------------------------------
- * Initializing the MXit class.
- *
- *  @param klass	The MXit class
- */
+ * Initializing the MXit class and interfaces.                          */
+
+
 static void
 mxit_protocol_class_init( PurpleProtocolClass *klass )
 {
+	klass->login        = mxit_login;			/* [login.c] */
+	klass->close        = mxit_close;
+	klass->status_types = mxit_status_types;	/* [roster.c] */
+	klass->list_icon    = mxit_list_icon;
 }
 
 
-/*------------------------------------------------------------------------
- * Initializing the MXit protocol interface.
- *
- *  @param iface	The protocol interface
- */
 static void
 mxit_protocol_client_iface_init( PurpleProtocolClientIface *client_iface )
 {
 	client_iface->get_actions            = mxit_get_actions;	/* [actions.c] */
-	client_iface->list_icon              = mxit_list_icon;
 	client_iface->list_emblem            = mxit_list_emblem;
 	client_iface->status_text            = mxit_status_text;
 	client_iface->tooltip_text           = mxit_tooltip;
-	client_iface->status_types           = mxit_status_types;	/* [roster.c] */
 	client_iface->blist_node_menu        = mxit_blist_menu;
-	client_iface->chat_info              = mxit_chat_info;		/* [multimx.c] */
-	client_iface->chat_info_defaults     = mxit_chat_info_defaults;
-	client_iface->login                  = mxit_login;			/* [login.c] */
-	client_iface->close                  = mxit_close;
-	client_iface->send_im                = mxit_send_im;
-	client_iface->send_typing            = mxit_send_typing;
-	client_iface->get_info               = mxit_get_info;
-	client_iface->set_status             = mxit_set_status;
-	client_iface->add_buddy              = mxit_add_buddy;		/* [roster.c] */
-	client_iface->remove_buddy           = mxit_remove_buddy;	/* [roster.c] */
-	client_iface->join_chat              = mxit_chat_join;		/* [multimx.c] */
-	client_iface->reject_chat            = mxit_chat_reject;	/* [multimx.c] */
-	client_iface->get_chat_name          = mxit_chat_name;		/* [multimx.c] */
-	client_iface->chat_invite            = mxit_chat_invite;	/* [multimx.c] */
-	client_iface->chat_leave             = mxit_chat_leave;	/* [multimx.c] */
-	client_iface->chat_send              = mxit_chat_send;		/* [multimx.c] */
-	client_iface->keepalive              = mxit_keepalive;
-	client_iface->register_user          = mxit_register;
-	client_iface->alias_buddy            = mxit_buddy_alias;	/* [roster.c] */
-	client_iface->group_buddy            = mxit_buddy_group;	/* [roster.c] */
-	client_iface->rename_group           = mxit_rename_group;	/* [roster.c] */
 	client_iface->buddy_free             = mxit_free_buddy;
-	client_iface->set_buddy_icon         = mxit_set_buddy_icon;
-	client_iface->can_receive_file       = mxit_xfer_enabled;	/* [filexfer.c] */
-	client_iface->send_file              = mxit_xfer_tx;		/* [filexfer.c] */
-	client_iface->new_xfer               = mxit_xfer_new;		/* [filexfer.c] */
 	client_iface->offline_message        = mxit_offline_message;
 	client_iface->get_account_text_table = mxit_get_text_table;
-	client_iface->initiate_media         = mxit_media_initiate;
-	client_iface->get_media_caps         = mxit_media_caps;
 	client_iface->get_moods              = mxit_get_moods;
+}
+
+
+static void
+mxit_protocol_server_iface_init( PurpleProtocolServerIface *server_iface )
+{
+	server_iface->register_user  = mxit_register;
+	server_iface->get_info       = mxit_get_info;
+	server_iface->set_status     = mxit_set_status;
+	server_iface->add_buddy      = mxit_add_buddy;		/* [roster.c] */
+	server_iface->remove_buddy   = mxit_remove_buddy;	/* [roster.c] */
+	server_iface->keepalive      = mxit_keepalive;
+	server_iface->alias_buddy    = mxit_buddy_alias;	/* [roster.c] */
+	server_iface->group_buddy    = mxit_buddy_group;	/* [roster.c] */
+	server_iface->rename_group   = mxit_rename_group;	/* [roster.c] */
+	server_iface->set_buddy_icon = mxit_set_buddy_icon;
 
 	/* TODO: Add function to move all contacts out of this group (cmd=30 - remove group)? */
-	client_iface->remove_group       = NULL;
+	server_iface->remove_group       = NULL;
+}
+
+
+static void
+mxit_protocol_im_iface_init( PurpleProtocolIMIface *im_iface )
+{
+	im_iface->send        = mxit_send_im;
+	im_iface->send_typing = mxit_send_typing;
+}
+
+
+static void
+mxit_protocol_chat_iface_init( PurpleProtocolChatIface *chat_iface )
+{
+	chat_iface->info          = mxit_chat_info;		/* [multimx.c] */
+	chat_iface->info_defaults = mxit_chat_info_defaults;
+	chat_iface->join          = mxit_chat_join;		/* [multimx.c] */
+	chat_iface->reject        = mxit_chat_reject;	/* [multimx.c] */
+	chat_iface->get_name      = mxit_chat_name;		/* [multimx.c] */
+	chat_iface->invite        = mxit_chat_invite;	/* [multimx.c] */
+	chat_iface->leave         = mxit_chat_leave;	/* [multimx.c] */
+	chat_iface->send          = mxit_chat_send;		/* [multimx.c] */
+}
+
+
+static void
+mxit_protocol_media_iface_init( PurpleProtocolMediaIface *media_iface )
+{
+	media_iface->initiate_session = mxit_media_initiate;
+	media_iface->get_caps         = mxit_media_caps;
+}
+
+
+static void
+mxit_protocol_xfer_iface_init( PurpleProtocolXferIface *xfer_iface )
+{
+	xfer_iface->can_receive = mxit_xfer_enabled;	/* [filexfer.c] */
+	xfer_iface->send        = mxit_xfer_tx;		/* [filexfer.c] */
+	xfer_iface->new_xfer    = mxit_xfer_new;		/* [filexfer.c] */
 }
 
 
 PURPLE_DEFINE_TYPE_EXTENDED(
 	MXitProtocol, mxit_protocol, PURPLE_TYPE_PROTOCOL, 0,
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
-		                              mxit_protocol_client_iface_init )
+	                                   mxit_protocol_client_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+	                                   mxit_protocol_server_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_IM_IFACE,
+	                                   mxit_protocol_im_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
+	                                   mxit_protocol_chat_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_MEDIA_IFACE,
+	                                   mxit_protocol_media_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+	                                   mxit_protocol_xfer_iface_init )
 );
 
 
