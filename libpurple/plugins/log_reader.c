@@ -66,7 +66,6 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 {
 	GList *list = NULL;
 	const char *logdir;
-	PurplePlugin *plugin;
 	PurpleProtocol *protocol;
 	char *protocol_name;
 	char *temp;
@@ -82,11 +81,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 	if (!logdir || !*logdir)
 		return NULL;
 
-	plugin = purple_protocols_find(purple_account_get_protocol_id(account));
-	if (!plugin)
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+	if (!protocol)
 		return NULL;
-
-	protocol = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	protocol_name = g_ascii_strup(purple_protocol_class_list_icon(protocol, account, NULL), -1);
 
@@ -1203,7 +1200,6 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 {
 	GList *list = NULL;
 	const char *logdir;
-	PurplePlugin *plugin;
 	PurpleProtocol *protocol;
 	char *protocol_name;
 	const char *buddy_name;
@@ -1224,11 +1220,9 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	if (!logdir || !*logdir)
 		return NULL;
 
-	plugin = purple_protocols_find(purple_account_get_protocol_id(account));
-	if (!plugin)
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+	if (!protocol)
 		return NULL;
-
-	protocol = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	protocol_name = g_ascii_strup(purple_protocol_class_list_icon(protocol, account, NULL), -1);
 
@@ -1752,7 +1746,6 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 {
 	GList *list = NULL;
 	const char *logdir;
-	PurplePlugin *plugin;
 	PurpleProtocol *protocol;
 	char *username;
 	char *filename;
@@ -1782,11 +1775,9 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	if (!logdir || !*logdir)
 		return NULL;
 
-	plugin = purple_protocols_find(purple_account_get_protocol_id(account));
-	if (!plugin)
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+	if (!protocol)
 		return NULL;
-
-	protocol = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	username = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 	filename = g_strdup_printf("%s.txt", purple_normalize(account, sn));
@@ -2437,12 +2428,6 @@ static void amsn_logger_finalize(PurpleLog *log)
  * Plugin Code                                                               *
  *****************************************************************************/
 
-static void
-init_plugin(PurplePlugin *plugin)
-{
-
-}
-
 static void log_reader_init_prefs(void) {
 	char *path;
 #ifdef _WIN32
@@ -2703,8 +2688,101 @@ static void log_reader_init_prefs(void) {
 	g_free(path);
 }
 
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
+{
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *ppref;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	frame = purple_plugin_pref_frame_new();
+
+
+	/* Add general preferences. */
+
+	ppref = purple_plugin_pref_new_with_label(_("General Log Reading Configuration"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/fast_sizes", _("Fast size calculations"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/use_name_heuristics", _("Use name heuristics"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+
+	/* Add Log Directory preferences. */
+
+	ppref = purple_plugin_pref_new_with_label(_("Log Directory"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+#if 0
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
+	purple_plugin_pref_frame_add(frame, ppref);
+#endif
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/qip/log_directory", _("QIP"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/trillian/log_directory", _("Trillian"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		"/plugins/core/log_reader/amsn/log_directory", _("aMSN"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	return frame;
+}
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Richard Laager <rlaager@pidgin.im>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",                 "core-log_reader",
+		"name",               N_("Log Reader"),
+		"version",            DISPLAY_VERSION,
+		"category",           N_("Utility"),
+		"summary",            N_("Includes other IM clients' logs in the log "
+		                         "viewer."),
+		"description",        N_("When viewing logs, this plugin will include "
+		                         "logs from other IM clients. Currently, this "
+		                         "includes Adium, MSN Messenger, aMSN, and "
+		                         "Trillian.\n\n"
+		                         "WARNING: This plugin is still alpha code and "
+		                         "may crash frequently.  Use it at your own "
+		                         "risk!"),
+		"authors",            authors,
+		"website",            PURPLE_WEBSITE,
+		"abi-version",        PURPLE_ABI_VERSION,
+		"preferences-frame",  get_plugin_pref_frame,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
@@ -2801,7 +2879,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
@@ -2838,122 +2916,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginPrefFrame *
-get_plugin_pref_frame(PurplePlugin *plugin)
-{
-	PurplePluginPrefFrame *frame;
-	PurplePluginPref *ppref;
-
-	g_return_val_if_fail(plugin != NULL, FALSE);
-
-	frame = purple_plugin_pref_frame_new();
-
-
-	/* Add general preferences. */
-
-	ppref = purple_plugin_pref_new_with_label(_("General Log Reading Configuration"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/fast_sizes", _("Fast size calculations"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/use_name_heuristics", _("Use name heuristics"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-
-	/* Add Log Directory preferences. */
-
-	ppref = purple_plugin_pref_new_with_label(_("Log Directory"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-#if 0
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
-	purple_plugin_pref_frame_add(frame, ppref);
-#endif
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/qip/log_directory", _("QIP"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/trillian/log_directory", _("Trillian"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/amsn/log_directory", _("aMSN"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	return frame;
-}
-
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	0,   /* page_num (reserved) */
-	NULL, /* frame (reserved) */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-	"core-log_reader",                                /**< id             */
-	N_("Log Reader"),                                 /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-
-	/** summary */
-	N_("Includes other IM clients' logs in the "
-	   "log viewer."),
-
-	/** description */
-	N_("When viewing logs, this plugin will include "
-	   "logs from other IM clients. Currently, this "
-	   "includes Adium, MSN Messenger, aMSN, and "
-	   "Trillian.\n\n"
-	   "WARNING: This plugin is still alpha code and "
-	   "may crash frequently.  Use it at your own risk!"),
-
-	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	&prefs_info,                                      /**< prefs_info     */
-	NULL,                                             /**< actions        */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-PURPLE_INIT_PLUGIN(log_reader, init_plugin, info)
+PURPLE_PLUGIN_INIT(log_reader, plugin_query, plugin_load, plugin_unload);
