@@ -51,10 +51,6 @@ struct joinpart_key
 	char *user;
 };
 
-static GHashTable *users;
-static guint id;
-
-
 static guint joinpart_key_hash(const struct joinpart_key *key)
 {
 	g_return_val_if_fail(key != NULL, 0);
@@ -236,6 +232,8 @@ plugin_query(GError **error)
 static gboolean plugin_load(PurplePlugin *plugin, GError **error)
 {
 	void *conv_handle;
+	GHashTable *users;
+	guint id;
 
 	purple_prefs_add_none("/plugins/core/joinpart");
 
@@ -259,6 +257,9 @@ static gboolean plugin_load(PurplePlugin *plugin, GError **error)
 	/* Cleanup every 5 minutes */
 	id = purple_timeout_add_seconds(60 * 5, (GSourceFunc)clean_users_hash, users);
 
+	g_object_set_data(G_OBJECT(plugin), "users", users);
+	g_object_set_data(G_OBJECT(plugin), "id", GUINT_TO_POINTER(id));
+
 	return TRUE;
 }
 
@@ -267,9 +268,9 @@ static gboolean plugin_unload(PurplePlugin *plugin, GError **error)
 	/* Destroy the hash table. The core plugin code will
 	 * disconnect the signals, and since Purple is single-threaded,
 	 * we don't have to worry one will be called after this. */
-	g_hash_table_destroy(users);
+	g_hash_table_destroy((GHashTable *)g_object_get_data(G_OBJECT(plugin), "users"));
 
-	purple_timeout_remove(id);
+	purple_timeout_remove(GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(plugin), "id")));
 
 	return TRUE;
 }
