@@ -287,41 +287,48 @@ Purple::Request::Field
 purple_request_field_choice_new(class, id, text, default_value = 0)
 	const char *id
 	const char *text
-	int default_value
+	gpointer default_value
 	C_ARGS: id, text, default_value
 
 void
-purple_request_field_choice_add(field, label)
+purple_request_field_choice_add(field, label, value)
 	Purple::Request::Field field
 	const char *label
+	gpointer value
 
-int
+gpointer
 purple_request_field_choice_get_default_value(field)
 	Purple::Request::Field field
 
-void
-purple_request_field_choice_get_labels(field)
-	Purple::Request::Field field
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = purple_request_field_choice_get_labels(field); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
-	}
+ # I'm not sure, if this is the correct implementation - if anyone will need it,
+ # he will add this back to API.
+ #void
+ #purple_request_field_choice_get_elements(field)
+ #	Purple::Request::Field field
+ #PREINIT:
+ #	GList *l;
+ #PPCODE:
+ #	for (l = purple_request_field_choice_get_elements(field); l != NULL; l = l->next) {
+ #		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
+ #		l = l->next;
+ #		if (l == NULL)
+ #			break;
+ #		XPUSHs(l->data);
+ #	}
 
-int
+gpointer
 purple_request_field_choice_get_value(field)
 	Purple::Request::Field field
 
 void
 purple_request_field_choice_set_default_value(field, default_value)
 	Purple::Request::Field field
-	int default_value
+	gpointer default_value
 
 void
 purple_request_field_choice_set_value(field, value)
 	Purple::Request::Field field
-	int value
+	gpointer value
 
 MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_request_field_
 PROTOTYPES: ENABLE
@@ -604,7 +611,7 @@ purple_request_fields_get_bool(fields, id)
 	Purple::Request::Fields fields
 	const char *id
 
-int
+gpointer
 purple_request_fields_get_choice(fields, id)
 	Purple::Request::Fields fields
 	const char *id
