@@ -161,6 +161,75 @@
 {
    webkitgtk uninitialized values
    Memcheck:Cond
+   ...
    obj:/usr/lib/libwebkitgtk-*
    ...
+}
+{
+   webkitgtk uninitialized values 2
+   Memcheck:Value4
+   ...
+   obj:/usr/lib/libwebkitgtk-*
+   ...
+}
+{
+   webkitgtk uninitialized values 3
+   Memcheck:Cond
+   ...
+   fun:_ZN3JSC17ConservativeRoots14genericAddSpanINS_13DummyMarkHookEEEvPvS3_RT_
+   ...
+}
+{
+   webkitgtk uninitialized values 4
+   Memcheck:Value4
+   ...
+   fun:_ZN3JSC17ConservativeRoots14genericAddSpanINS_13DummyMarkHookEEEvPvS3_RT_
+   ...
+}
+{
+   webkitgtk uninitialized values 5
+   Memcheck:Value4
+   ...
+   obj:/usr/lib/libjavascriptcoregtk-
+}
+{
+   wcslen_sse2 optimization
+   Memcheck:Addr8
+   fun:__wcslen_sse2
+   ...
+}
+{
+   wcslen_sse2 optimization 2
+   Memcheck:Cond
+   fun:__wcslen_sse2
+   ...
+}
+{
+   idna bug
+   Memcheck:Addr4
+   fun:idna_to_ascii_4z
+   fun:idna_to_ascii_8z
+   ...
+}
+{
+   libcairo uninitialized values
+   Memcheck:Cond
+   obj:*libpixman-1.so.*
+   obj:*libpixman-1.so.*
+   obj:*libpixman-1.so.*
+   obj:*libpixman-1.so.*
+   fun:pixman_image_composite32
+   obj:*libcairo.so.2.*
+   obj:*libcairo.so.2.*
+   obj:*libcairo.so.2.*
+   obj:*libcairo.so.2.*
+   obj:*
+}
+{
+   librsvg uninitialized values
+   Memcheck:Cond
+   obj:*librsvg-2.so.2.*
+   fun:rsvg_handle_get_pixbuf_sub
+   fun:rsvg_handle_get_pixbuf
+   obj:*
 }

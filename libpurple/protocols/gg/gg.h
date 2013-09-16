@@ -24,6 +24,9 @@
 #ifndef _PURPLE_GG_H
 #define _PURPLE_GG_H
 
+#define GGP_UIN_LEN_MAX 10
+#define GGP_ENABLE_GG11 0
+
 #include <libgadu.h>
 #include "internal.h"
 #include "search.h"
@@ -35,40 +38,39 @@
 #include "roster.h"
 #include "multilogon.h"
 #include "status.h"
-
-#define PUBDIR_RESULTS_MAX 20
-
-#define GGP_UIN_LEN_MAX 10
-
-
-typedef struct
-{
-	char *name;
-	GList *participants;
-
-} GGPChat;
+#include "chat.h"
+#include "message-prpl.h"
+#include "edisc.h"
 
 typedef struct {
-
 	struct gg_session *session;
 	guint inpa;
-	GList *chats;
-	int chats_count;
 
-	ggp_image_connection_data image_data;
+	gchar *imtoken;
+	gboolean imtoken_warned;
+
+	ggp_image_session_data *image_data;
 	ggp_avatar_session_data avatar_data;
 	ggp_roster_session_data roster_data;
 	ggp_multilogon_session_data *multilogon_data;
 	ggp_status_session_data *status_data;
+	ggp_chat_session_data *chat_data;
+	ggp_message_session_data *message_data;
+	ggp_edisc_session_data *edisc_data;
 } GGPInfo;
 
 typedef struct
 {
 	gboolean blocked;
+	gboolean not_a_friend;
 } ggp_buddy_data;
 
-void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event_msg *ev, gboolean multilogon);
-
 ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy);
+
+const gchar * ggp_get_imtoken(PurpleConnection *gc);
+
+uin_t ggp_own_uin(PurpleConnection *gc);
+
+void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond);
 
 #endif /* _PURPLE_GG_H */

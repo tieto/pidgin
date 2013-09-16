@@ -262,7 +262,7 @@ jabber_auth_start_cyrus(JabberStream *js, PurpleXmlNode **reply, char **error)
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,
-							1, account, NULL, NULL, account,
+							1, purple_request_cpar_from_account(account), account,
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					g_free(msg);

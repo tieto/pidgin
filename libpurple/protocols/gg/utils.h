@@ -32,6 +32,7 @@
 
 #include <internal.h>
 #include <libgadu.h>
+#include <json-glib/json-glib.h>
 
 /**
  * Converts stringified UIN to uin_t.
@@ -50,6 +51,14 @@ uin_t ggp_str_to_uin(const char *str);
  * @return Stringified UIN.
  */
 const char * ggp_uin_to_str(uin_t uin);
+
+/**
+ * Gets UIN for the account.
+ *
+ * @param gc The connection, in which account is connected.
+ * @return UIN for this account.
+ */
+uin_t ggp_get_my_uin(PurpleConnection *gc);
 
 /**
  * Converts encoding of a given string from UTF-8 to CP1250.
@@ -73,8 +82,6 @@ gchar * ggp_convert_from_cp1250(const gchar *src);
 
 gboolean ggp_password_validate(const gchar *password);
 
-guint64 ggp_microtime(void);
-
 gchar * ggp_utf8_strndup(const gchar *str, gsize n);
 
 GSList * ggp_list_copy_to_slist_deep(GList *list, GCopyFunc func,
@@ -85,8 +92,6 @@ GList * ggp_strsplit_list(const gchar *string, const gchar *delimiter,
 
 gchar * ggp_strjoin_list(const gchar *separator, GList *list);
 
-const gchar * ggp_ipv4_to_str(uint32_t raw_ip);
-
 GList * ggp_list_truncate(GList *list, guint length, GDestroyNotify free_func);
 
 gchar * ggp_free_if_equal(gchar *str, const gchar *pattern);
@@ -94,5 +99,11 @@ gchar * ggp_free_if_equal(gchar *str, const gchar *pattern);
 const gchar * ggp_date_strftime(const gchar *format, time_t date);
 
 time_t ggp_date_from_iso8601(const gchar *str);
+
+uint64_t * ggp_uint64dup(uint64_t val);
+
+gint ggp_int64_compare(gconstpointer a, gconstpointer b);
+
+JsonParser * ggp_json_parse(const gchar *data);
 
 #endif /* _GGP_UTILS_H */

@@ -68,6 +68,7 @@ void ggp_servconn_cleanup(void)
 void ggp_servconn_add_server(const gchar *server)
 {
 	GList *old_entry;
+	gchar *joined;
 	
 	old_entry = g_list_find_custom(global_data.server_history, server,
 		(GCompareFunc)g_strcmp0);
@@ -84,8 +85,9 @@ void ggp_servconn_add_server(const gchar *server)
 		global_data.server_history, GGP_SERVCONN_HISTORY_MAXLEN,
 		g_free);
 
-	purple_prefs_set_string(GGP_SERVCONN_HISTORY_PREF, ggp_strjoin_list(";",
-		global_data.server_history));
+	joined = ggp_strjoin_list(";", global_data.server_history);
+	purple_prefs_set_string(GGP_SERVCONN_HISTORY_PREF, joined);
+	g_free(joined);
 	purple_account_option_string_set_hints(global_data.server_option,
 		ggp_servconn_get_servers());
 }

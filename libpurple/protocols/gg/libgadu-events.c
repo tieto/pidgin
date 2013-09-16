@@ -32,6 +32,7 @@
 #include <debug.h>
 
 #include "avatar.h"
+#include "edisc.h"
 
 void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 {
@@ -81,3 +82,47 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 			ggp_avatar_buddy_remove(gc, uin);
 	}
 }
+
+#if GGP_ENABLE_GG11
+static void ggp_events_new_version(const gchar *data)
+{
+	/* data = {"severity":"download"} */
+	purple_debug_info("gg", "Gadu-Gadu server reports new client version."
+		" %s", data);
+}
+
+void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
+{
+	static const gchar *ignored_events[] = {
+		"edisc/scope_files_changed",
+		"notifications/state",
+		"invitations/list",
+		"notifications/list", /* gifts */
+		NULL
+	};
+	const gchar **it;
+
+	if (g_strcmp0("edisc/send_ticket_changed", ev->type) == 0) {
+		ggp_edisc_xfer_ticket_changed(gc, ev->data);
+		return;
+	}
+
+	if (g_strcmp0("updates/new-version", ev->type) == 0) {
+		ggp_events_new_version(ev->data);
+		return;
+	}
+
+	for (it = ignored_events; *it != NULL; it++) {
+		if (g_strcmp0(*it, ev->type) == 0)
+			return;
+	}
+
+	if (purple_debug_is_unsafe() && purple_debug_is_verbose())
+		purple_debug_warning("gg", "ggp_events_json: "
+			"unhandled event \"%s\": %s\n",
+			ev->type, ev->data);
+	else
+		purple_debug_warning("gg", "ggp_events_json: "
+			"unhandled event \"%s\"\n", ev->type);
+}
+#endif
