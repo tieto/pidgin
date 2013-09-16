@@ -268,8 +268,7 @@ void finch_prefs_show_all()
 	pref_request.showing = TRUE;
 	pref_request.window = purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 }
 
 static void
@@ -307,5 +306,5 @@ void finch_prefs_show_keyring(void)
 		_("Keyring settings"), NULL, NULL, fields,
 		_("Save"), G_CALLBACK(finch_prefs_keyring_save),
 		_("Cancel"), G_CALLBACK(finch_prefs_keyring_cancel),
-		NULL, NULL, NULL, NULL);
+		NULL, NULL);
 }

@@ -1600,7 +1600,7 @@ tree_view_delete_current_selection(PidginStatusBox *status_box, GtkTreePath *pat
 	msg = g_strdup_printf(_("Are you sure you want to delete %s?"), purple_savedstatus_get_title(saved));
 
 	purple_request_action(saved, NULL, msg, NULL, 0,
-		NULL, NULL, NULL,
+		NULL,
 		data, 2,
 		_("Delete"), tree_view_delete_current_selection_cb,
 		_("Cancel"), NULL);

@@ -1933,7 +1933,7 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	gc = purple_account_get_connection(user->client_data);
 	purple_request_action(gc, title, primary, secondary,
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(gc), name, NULL,
+						purple_request_cpar_from_connection(gc),
 						parms, 2,
 						_("Yes"), G_CALLBACK(_join_conference_cb),
 						_("No"), G_CALLBACK(_reject_conference_cb));
@@ -3465,10 +3465,10 @@ novell_keepalive(PurpleConnection *gc)
 	_check_for_disconnect(user, rc);
 }
 
-static gsize
-novell_get_max_message_size(PurpleConnection *gc)
+static gssize
+novell_get_max_message_size(PurpleConversation *conv)
 {
-	/* got from pidgin-otr */
+	/* XXX: got from pidgin-otr - verify and document it */
 	return 1792;
 }
 

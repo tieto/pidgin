@@ -156,7 +156,7 @@ finch_request_input(const char *title, const char *primary,
 		gboolean multiline, gboolean masked, gchar *hint,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
-		PurpleAccount *account, const char *who, PurpleConversation *conv,
+		PurpleRequestCommonParameters *cpar,
 		void *user_data)
 {
 	GntWidget *window, *box, *entry;
@@ -197,7 +197,7 @@ request_choice_cb(GntWidget *button, GntComboBox *combo)
 {
 	PurpleRequestChoiceCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
 	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
-	int choice = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo))) - 1;
+	gpointer choice = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
 
 	if (callback)
 		callback(data, choice);
@@ -210,10 +210,10 @@ request_choice_cb(GntWidget *button, GntComboBox *combo)
 
 static void *
 finch_request_choice(const char *title, const char *primary,
-		const char *secondary, int default_value,
+		const char *secondary, gpointer default_value,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
-		PurpleAccount *account, const char *who, PurpleConversation *conv,
+		PurpleRequestCommonParameters *cpar,
 		void *user_data, va_list choices)
 {
 	GntWidget *window, *combo, *box;
@@ -229,7 +229,7 @@ finch_request_choice(const char *title, const char *primary,
 		val = va_arg(choices, int);
 		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), GINT_TO_POINTER(val + 1), text);
 	}
-	gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), GINT_TO_POINTER(default_value + 1));
+	gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), default_value);
 
 	box = setup_button_box(window, user_data, request_choice_cb, combo,
 			ok_text, ok_cb, cancel_text, cancel_cb, NULL);
@@ -257,7 +257,7 @@ request_action_cb(GntWidget *button, GntWidget *window)
 static void*
 finch_request_action(const char *title, const char *primary,
 		const char *secondary, int default_value,
-		PurpleAccount *account, const char *who, PurpleConversation *conv,
+		PurpleRequestCommonParameters *cpar,
 		void *user_data, size_t actioncount,
 		va_list actions)
 {
@@ -337,9 +337,8 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
 				GntWidget *combo = purple_request_field_get_ui_data(field);
-				int id;
-				id = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
-				purple_request_field_choice_set_value(field, id);
+				gpointer value = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
+				purple_request_field_choice_set_value(field, value);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_LIST)
 			{
@@ -477,18 +476,25 @@ create_integer_field(PurpleRequestField *field)
 static GntWidget*
 create_choice_field(PurpleRequestField *field)
 {
-	int id;
-	GList *list;
+	GList *it;
 	GntWidget *combo = gnt_combo_box_new();
 
-	list = purple_request_field_choice_get_labels(field);
-	for (id = 1; list; list = list->next, id++)
+	it = purple_request_field_choice_get_elements(field);
+	while (it != NULL)
 	{
-		gnt_combo_box_add_data(GNT_COMBO_BOX(combo),
-				GINT_TO_POINTER(id), list->data);
+		const gchar *text;
+		gpointer value;
+
+		text = it->data;
+		it = g_list_next(it);
+		g_assert(it != NULL);
+		value = it->data;
+		it = g_list_next(it);
+
+		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), value, text);
 	}
 	gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
-			GINT_TO_POINTER(purple_request_field_choice_get_default_value(field)));
+		purple_request_field_choice_get_default_value(field));
 	return combo;
 }
 
@@ -593,7 +599,7 @@ finch_request_fields(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *allfields,
 		const char *ok, GCallback ok_cb,
 		const char *cancel, GCallback cancel_cb,
-		PurpleAccount *account, const char *who, PurpleConversation *conv,
+		PurpleRequestCommonParameters *cpar,
 		void *userdata)
 {
 	GntWidget *window, *box;
@@ -768,11 +774,9 @@ finch_file_request_window(const char *title, const char *path,
 }
 
 static void *
-finch_request_file(const char *title, const char *filename,
-				gboolean savedialog,
-				GCallback ok_cb, GCallback cancel_cb,
-				PurpleAccount *account, const char *who, PurpleConversation *conv,
-				void *user_data)
+finch_request_file(const char *title, const char *filename, gboolean savedialog,
+	GCallback ok_cb, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	FinchFileRequest *data;
 	const char *path;
@@ -790,8 +794,8 @@ finch_request_file(const char *title, const char *filename,
 
 static void *
 finch_request_folder(const char *title, const char *dirname, GCallback ok_cb,
-		GCallback cancel_cb, PurpleAccount *account, const char *who, PurpleConversation *conv,
-		void *user_data)
+	GCallback cancel_cb, PurpleRequestCommonParameters *cpar,
+	void *user_data)
 {
 	FinchFileRequest *data;
 
@@ -806,6 +810,7 @@ finch_request_folder(const char *title, const char *dirname, GCallback ok_cb,
 
 static PurpleRequestUiOps uiops =
 {
+	0,
 	finch_request_input,
 	finch_request_choice,
 	finch_request_action,

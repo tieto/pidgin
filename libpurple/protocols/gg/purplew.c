@@ -65,8 +65,8 @@ ggp_purplew_request_processing_handle * ggp_purplew_request_processing(
 	handle->user_data = user_data;
 	handle->request_handle = purple_request_action(gc, _("Please wait..."),
 		(msg ? msg : _("Please wait...")), NULL,
-		PURPLE_DEFAULT_ACTION_NONE, purple_connection_get_account(gc),
-		NULL, NULL, handle, 1,
+		PURPLE_DEFAULT_ACTION_NONE,
+		purple_request_cpar_from_connection(gc), handle, 1,
 		_("Cancel"), G_CALLBACK(ggp_purplew_request_processing_cancel));
 	
 	return handle;

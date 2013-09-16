@@ -313,7 +313,7 @@ static void auth_old_cb(JabberStream *js, const char *from,
 						_("Plaintext Authentication"),
 						msg,
 						1,
-						account, NULL, NULL,
+						purple_request_cpar_from_account(account),
 						account, allow_plaintext_auth,
 						disallow_plaintext_auth);
 				g_free(msg);

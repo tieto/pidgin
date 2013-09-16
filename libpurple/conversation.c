@@ -1430,10 +1430,10 @@ purple_conv_send_confirm(PurpleConversation *conv, const char *message)
 	data[1] = (gpointer)message;
 
 	purple_request_action(conv, NULL, _("Send Message"), text, 0,
-						  purple_conversation_get_account(conv), NULL, conv,
-						  data, 2,
-						  _("_Send Message"), G_CALLBACK(purple_conv_send_confirm_cb),
-						  _("Cancel"), NULL);
+		purple_request_cpar_from_account(
+			purple_conversation_get_account(conv)),
+		data, 2, _("_Send Message"),
+		G_CALLBACK(purple_conv_send_confirm_cb), _("Cancel"), NULL);
 }
 
 void
@@ -2252,7 +2252,7 @@ void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
 			fields,
 			_("Invite"), G_CALLBACK(invite_user_to_chat),
 			_("Cancel"), NULL,
-			account, user, conv,
+			purple_request_cpar_from_conversation(conv),
 			conv);
 }
 
@@ -2511,6 +2511,27 @@ purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 	g_free(mark);
 	g_free(err);
 	return (status == PURPLE_CMD_STATUS_OK);
+}
+
+gssize
+purple_conversation_get_max_message_size(PurpleConversation *conv)
+{
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+
+	g_return_val_if_fail(conv != NULL, 0);
+
+	prpl = purple_connection_get_prpl(
+		purple_conversation_get_connection(conv));
+	g_return_val_if_fail(prpl != NULL, 0);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	g_return_val_if_fail(prpl_info != NULL, 0);
+
+	if (!PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_max_message_size))
+		return 0;
+
+	return prpl_info->get_max_message_size(conv);
 }
 
 void *

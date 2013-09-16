@@ -180,7 +180,7 @@ history_prefs_check(PurplePlugin *plugin)
 				      fields,
 				      _("OK"), G_CALLBACK(finch_request_save_in_prefs),
 				      _("Cancel"), NULL,
-				      NULL, NULL, NULL, plugin);
+				      NULL, plugin);
 	}
 }
 

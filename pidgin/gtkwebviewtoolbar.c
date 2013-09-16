@@ -526,14 +526,10 @@ insert_link_cb(GtkAction *action, GtkWebViewToolbar *toolbar)
 		}
 
 		priv->link_dialog =
-			purple_request_fields(toolbar, _("Insert Link"),
-					    NULL,
-						msg,
-					    fields,
-					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
-					    _("Cancel"), G_CALLBACK(cancel_link_cb),
-						NULL, NULL, NULL,
-					    toolbar);
+			purple_request_fields(toolbar, _("Insert Link"), NULL,
+				msg, fields, _("_Insert"),
+				G_CALLBACK(do_insert_link_cb), _("Cancel"),
+				G_CALLBACK(cancel_link_cb), NULL, toolbar);
 		g_free(msg);
 		g_free(desc);
 	} else {

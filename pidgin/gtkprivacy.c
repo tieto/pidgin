@@ -498,7 +498,7 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 			NULL, FALSE, FALSE, NULL,
 			_("_Permit"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
-			account, name, NULL,
+			purple_request_cpar_from_account(account),
 			data);
 	}
 	else {
@@ -508,12 +508,11 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 							  "%s to contact you?"), name);
 
 
-		purple_request_action(account, _("Permit User"), primary, secondary,
-							0,
-							account, name, NULL,
-							data, 2,
-							_("_Permit"), G_CALLBACK(confirm_permit_block_cb),
-							_("Cancel"), G_CALLBACK(destroy_request_data));
+		purple_request_action(account, _("Permit User"), primary,
+			secondary, 0, purple_request_cpar_from_account(account),
+			data, 2,
+			_("_Permit"), G_CALLBACK(confirm_permit_block_cb),
+			_("Cancel"), G_CALLBACK(destroy_request_data));
 
 		g_free(primary);
 		g_free(secondary);
@@ -539,7 +538,7 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 			NULL, FALSE, FALSE, NULL,
 			_("_Block"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
-			account, name, NULL,
+			purple_request_cpar_from_account(account),
 			data);
 	}
 	else {
@@ -547,12 +546,11 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 		char *secondary =
 			g_strdup_printf(_("Are you sure you want to block %s?"), name);
 
-		purple_request_action(account, _("Block User"), primary, secondary,
-							0,
-							account, name, NULL,
-							data, 2,
-							_("_Block"), G_CALLBACK(confirm_permit_block_cb),
-							_("Cancel"), G_CALLBACK(destroy_request_data));
+		purple_request_action(account, _("Block User"), primary,
+			secondary, 0, purple_request_cpar_from_account(account),
+			data, 2,
+			_("_Block"), G_CALLBACK(confirm_permit_block_cb),
+			_("Cancel"), G_CALLBACK(destroy_request_data));
 
 		g_free(primary);
 		g_free(secondary);

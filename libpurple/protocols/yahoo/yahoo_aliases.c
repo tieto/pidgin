@@ -562,7 +562,7 @@ void yahoo_set_userinfo_for_buddy(PurpleConnection *gc, PurpleBuddy *buddy)
 	purple_request_fields(gc, NULL, _("Set User Info"), NULL, fields,
 			_("OK"), G_CALLBACK(yahoo_set_userinfo_cb),
 			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL, gc);
+			purple_request_cpar_from_connection(gc), gc);
 }
 
 void yahoo_set_userinfo(PurpleConnection *gc)
@@ -575,7 +575,7 @@ void yahoo_set_userinfo(PurpleConnection *gc)
 	purple_request_fields(gc, NULL, _("Set User Info"), NULL, fields,
 			_("OK"), G_CALLBACK(yahoo_set_userinfo_cb),
 			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL, gc);
+			purple_request_cpar_from_connection(gc), gc);
 }
 
 static gboolean

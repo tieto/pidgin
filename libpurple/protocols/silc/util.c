@@ -407,8 +407,8 @@ void silcpurple_show_public_key(SilcPurple sg,
 
 	purple_request_action(sg->gc, _("Public Key Information"),
 			      _("Public Key Information"),
-			      s->str, 0, purple_connection_get_account(sg->gc),
-			      NULL, NULL, context, 1, _("Close"), callback);
+			      s->str, 0, purple_request_cpar_from_connection(sg->gc),
+			      context, 1, _("Close"), callback);
 
 	g_string_free(s, TRUE);
 	silc_free(fingerprint);

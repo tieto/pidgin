@@ -66,7 +66,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 				int handleindex;
 				if(strcmp(id, "libpurple:jabber:xdata:actions"))
 					continue;
-				handleindex = purple_request_field_choice_get_value(field);
+				handleindex = GPOINTER_TO_INT(purple_request_field_choice_get_value(field));
 				actionhandle = g_strdup(g_list_nth_data(data->actions, handleindex));
 				break;
 			}
@@ -379,14 +379,17 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	if(actions != NULL) {
 		PurpleRequestField *actionfield;
 		GList *action;
+		int i;
+
 		data->actiongroup = group = purple_request_field_group_new(_("Actions"));
 		purple_request_fields_add_group(fields, group);
-		actionfield = purple_request_field_choice_new("libpurple:jabber:xdata:actions", _("Select an action"), defaultaction);
+		actionfield = purple_request_field_choice_new("libpurple:jabber:xdata:actions", _("Select an action"), GINT_TO_POINTER(defaultaction));
+		purple_request_field_choice_set_data_destructor(actionfield, g_free);
 
-		for(action = actions; action; action = g_list_next(action)) {
+		for(i = 0, action = actions; action; action = g_list_next(action), i++) {
 			JabberXDataAction *a = action->data;
 
-			purple_request_field_choice_add(actionfield, a->name);
+			purple_request_field_choice_add(actionfield, a->name, GINT_TO_POINTER(i));
 			data->actions = g_list_append(data->actions, g_strdup(a->handle));
 		}
 		purple_request_field_set_required(actionfield,TRUE);
@@ -402,7 +405,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	handle = purple_request_fields(js->gc, title, title, instructions, fields,
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
 			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb),
-			purple_connection_get_account(js->gc), /* XXX Do we have a who here? */ NULL, NULL,
+			purple_request_cpar_from_connection(js->gc),
 			data);
 
 	g_free(title);

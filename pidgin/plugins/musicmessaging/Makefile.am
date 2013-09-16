@@ -23,12 +23,10 @@ CLEANFILES              = music-messaging-bindings.c
 .PHONY: always
 
 $(top_builddir)/libpurple/dbus-types.h: always
-	@echo -e "  GEN\t$@"
-	@cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
+	$(AM_V_GEN)cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
 
 music-messaging-bindings.c: $(top_srcdir)/libpurple/dbus-analyze-functions.py $(musicmessaging_la_SOURCES)
-	@echo -e "  GEN\t$@"
-	@cat $(srcdir)/$(musicmessaging_la_SOURCES) | \
+	$(AM_V_GEN)cat $(srcdir)/$(musicmessaging_la_SOURCES) | \
 	$(PYTHON) $(top_srcdir)/libpurple/dbus-analyze-functions.py --export-only > $@
 
 $(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.c $(top_builddir)/libpurple/dbus-types.h

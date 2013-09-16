@@ -132,6 +132,7 @@ static void ggp_pubdir_set_info_got_response(PurpleHttpConnection *http_conn,
 
 static const gchar *ggp_pubdir_provinces[] =
 {
+	N_("Not specified"),
 	"dolnośląskie",
 	"kujawsko-pomorskie",
 	"lubelskie",
@@ -514,8 +515,7 @@ void ggp_pubdir_search(PurpleConnection *gc,
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	int default_gender;
-	
+
 	purple_debug_info("gg", "ggp_pubdir_search\n");
 	
 	fields = purple_request_fields_new();
@@ -529,43 +529,34 @@ void ggp_pubdir_search(PurpleConnection *gc,
 	field = purple_request_field_string_new("city", _("City"),
 		form ? form->city : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
-	
-	default_gender = 0;
-	if (form && form->gender == GGP_PUBDIR_GENDER_MALE)
-		default_gender = 1;
-	else if (form && form->gender == GGP_PUBDIR_GENDER_FEMALE)
-		default_gender = 2;
-	
+
 	field = purple_request_field_choice_new("gender", _("Gender"),
-		default_gender);
-	purple_request_field_choice_add(field, _("Male or female"));
-	purple_request_field_choice_add(field, _("Male"));
-	purple_request_field_choice_add(field, _("Female"));
+		GINT_TO_POINTER(form->gender));
+	purple_request_field_choice_add(field, _("Male or female"), 0);
+	purple_request_field_choice_add(field, _("Male"),
+		GINT_TO_POINTER(GGP_PUBDIR_GENDER_MALE));
+	purple_request_field_choice_add(field, _("Female"),
+		GINT_TO_POINTER(GGP_PUBDIR_GENDER_FEMALE));
 	purple_request_field_group_add_field(group, field);
 	
 	purple_request_fields(gc, _("Find buddies"), _("Find buddies"),
 		_("Please, enter your search criteria below"), fields,
 		_("OK"), G_CALLBACK(ggp_pubdir_search_request),
 		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL, gc);
+		purple_request_cpar_from_connection(gc), gc);
 }
 
 static void ggp_pubdir_search_request(PurpleConnection *gc,
 	PurpleRequestFields *fields)
 {
 	ggp_pubdir_search_form *form = g_new0(ggp_pubdir_search_form, 1);
-	int gender;
 
 	purple_debug_info("gg", "ggp_pubdir_search_request\n");
 	
 	form->nick = g_strdup(purple_request_fields_get_string(fields, "name"));
 	form->city = g_strdup(purple_request_fields_get_string(fields, "city"));
-	gender = purple_request_fields_get_choice(fields, "gender");
-	if (gender == 1)
-		form->gender = GGP_PUBDIR_GENDER_MALE;
-	else if (gender == 2)
-		form->gender = GGP_PUBDIR_GENDER_FEMALE;
-	
+	form->gender = GPOINTER_TO_INT(purple_request_fields_get_choice(fields,
+		"gender"));
 	form->offset = 0;
 	form->limit = GGP_PUBDIR_SEARCH_PER_PAGE;
 	
@@ -812,7 +803,6 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	int default_gender;
 	gsize i;
 	const ggp_pubdir_record *record;
 	
@@ -832,18 +822,14 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	field = purple_request_field_string_new("last_name", _("Last name"),
 		record ? record->last_name : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
-	
-	default_gender = -1;
-	if (record && record->gender == GGP_PUBDIR_GENDER_MALE)
-		default_gender = 0;
-	else if (record && record->gender == GGP_PUBDIR_GENDER_FEMALE)
-		default_gender = 1;
-	
+
 	field = purple_request_field_choice_new("gender", _("Gender"),
-		default_gender);
+		GINT_TO_POINTER(record->gender));
 	purple_request_field_set_required(field, TRUE);
-	purple_request_field_choice_add(field, _("Male"));
-	purple_request_field_choice_add(field, _("Female"));
+	purple_request_field_choice_add(field, _("Male"),
+		GINT_TO_POINTER(GGP_PUBDIR_GENDER_MALE));
+	purple_request_field_choice_add(field, _("Female"),
+		GINT_TO_POINTER(GGP_PUBDIR_GENDER_FEMALE));
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("birth_date", _("Birth Day"),
@@ -858,15 +844,14 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	
 	field = purple_request_field_choice_new("province", _("Voivodeship"), 0);
 	purple_request_field_group_add_field(group, field);
-	purple_request_field_choice_add(field, _("Not specified"));
 	for (i = 0; i < ggp_pubdir_provinces_count; i++)
 	{
-		purple_request_field_choice_add(field, ggp_pubdir_provinces[i]);
-		if (record && i + 1 == record->province)
+		purple_request_field_choice_add(field, ggp_pubdir_provinces[i],
+			GINT_TO_POINTER(i));
+		if (record && i == record->province)
 		{
-			purple_request_field_choice_set_value(field, i + 1);
-			purple_request_field_choice_set_default_value(field,
-				i + 1); // TODO: libpurple bug?
+			purple_request_field_choice_set_value(field, GINT_TO_POINTER(i));
+			purple_request_field_choice_set_default_value(field, GINT_TO_POINTER(i));
 		}
 	}
 	
@@ -874,7 +859,7 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 		NULL, fields,
 		_("OK"), G_CALLBACK(ggp_pubdir_set_info_request),
 		_("Cancel"), NULL,
-		purple_connection_get_account(gc), NULL, NULL, gc);
+		purple_request_cpar_from_connection(gc), gc);
 	
 }
 
@@ -894,13 +879,12 @@ static void ggp_pubdir_set_info_request(PurpleConnection *gc,
 		"first_name"));
 	record->last_name = g_strdup(purple_request_fields_get_string(fields,
 		"last_name"));
-	if (purple_request_fields_get_choice(fields, "gender") == 0)
-		record->gender = GGP_PUBDIR_GENDER_MALE;
-	else
-		record->gender = GGP_PUBDIR_GENDER_FEMALE;
+	record->gender = GPOINTER_TO_INT(
+		purple_request_fields_get_choice(fields, "gender"));
 	record->city = g_strdup(purple_request_fields_get_string(fields,
 		"city"));
-	record->province = purple_request_fields_get_choice(fields, "province");
+	record->province = GPOINTER_TO_INT(
+		purple_request_fields_get_choice(fields, "province"));
 	
 	birth_s = g_strdup_printf("%sT10:00:00+00:00",
 		purple_request_fields_get_string(fields, "birth_date"));

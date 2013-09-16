@@ -1047,7 +1047,7 @@ purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame
 					   FALSE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_parse_auth_securid_request_yes_cb),
 					   _("_Cancel"), G_CALLBACK(purple_parse_auth_securid_request_no_cb),
-					   account, NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 	g_free(primary);
 
@@ -1831,7 +1831,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 								_("Do you want to add this buddy "
 								  "to your buddy list?"),
 								PURPLE_DEFAULT_ACTION_NONE,
-								purple_connection_get_account(gc), data->name, NULL,
+								purple_request_cpar_from_connection(gc),
 								data, 2,
 								_("_Add"), G_CALLBACK(purple_icq_buddyadd),
 								_("_Decline"), G_CALLBACK(oscar_free_name_data));
@@ -4102,7 +4102,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(gc), bn, NULL,
+						purple_request_cpar_from_connection(gc),
 						data,
 						G_CALLBACK(purple_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
@@ -4732,7 +4732,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 					   comment_utf8, TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
-					   account, data->name, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   data);
 	g_free(title);
 
@@ -4785,7 +4785,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
 			0, /* Default action is "connect" */
-			account, data->who, NULL,
+			purple_request_cpar_from_account(account),
 			data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
 			_("_Cancel"), G_CALLBACK(oscar_ask_directim_no_cb));
@@ -5015,7 +5015,7 @@ oscar_show_icq_privacy_opts(PurplePluginAction *action)
 						NULL, fields,
 						_("OK"), G_CALLBACK(oscar_icq_privacy_opts),
 						_("Cancel"), NULL,
-						purple_connection_get_account(gc), NULL, NULL,
+						purple_request_cpar_from_connection(gc),
 						gc);
 }
 
@@ -5072,7 +5072,7 @@ static void oscar_show_change_email(PurplePluginAction *action)
 					   FALSE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_change_email),
 					   _("_Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -5129,7 +5129,7 @@ static void oscar_show_find_email(PurplePluginAction *action)
 					   NULL, FALSE, FALSE, NULL,
 					   _("_Search"), G_CALLBACK(search_by_email_cb),
 					   _("_Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   purple_request_cpar_from_connection(gc),
 					   gc);
 }
 
@@ -5433,10 +5433,10 @@ oscar_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
-gsize
-oscar_get_max_message_size(PurpleConnection *gc)
+gssize
+oscar_get_max_message_size(PurpleConversation *conv)
 {
-	/* got from pidgin-otr */
+	/* XXX: got from pidgin-otr - verify and document it */
 	return 2343;
 }
 

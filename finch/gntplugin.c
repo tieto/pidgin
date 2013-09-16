@@ -332,7 +332,7 @@ install_plugin_cb(GntWidget *w, gpointer null)
 	purple_request_close_with_handle(&handle);
 	purple_request_file(&handle, _("Select plugin to install"), NULL,
 			FALSE, G_CALLBACK(install_selected_file_cb), NULL,
-			NULL, NULL, NULL, &handle);
+			NULL, &handle);
 	g_signal_connect_swapped(G_OBJECT(w), "destroy", G_CALLBACK(purple_request_close_with_handle), &handle);
 }
 
@@ -532,8 +532,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 
 	ret = purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
-			NULL, NULL, NULL,
-			NULL);
+			NULL, NULL);
 	g_signal_connect_swapped(G_OBJECT(ret), "destroy", G_CALLBACK(free_stringlist), stringlist);
 	return ret;
 }

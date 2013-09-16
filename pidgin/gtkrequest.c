@@ -124,6 +124,9 @@ generic_response_start(PidginRequestData *data)
 
 	/* Tell the user we're doing something. */
 	pidgin_set_cursor(GTK_WIDGET(data->dialog), GDK_WATCH);
+
+	g_object_set_data(G_OBJECT(data->dialog),
+		"pidgin-window-is-closing", GINT_TO_POINTER(TRUE));
 }
 
 static void
@@ -187,7 +190,7 @@ choice_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 	if (id >= 0 && (gsize)id < data->cb_count && data->cbs[id] != NULL)
 		while (group) {
 			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group->data))) {
-				((PurpleRequestChoiceCb)data->cbs[id])(data->user_data, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(group->data), "choice_id")));
+				((PurpleRequestChoiceCb)data->cbs[id])(data->user_data, g_object_get_data(G_OBJECT(group->data), "choice_value"));
 				break;
 			}
 			group = group->next;
@@ -232,17 +235,32 @@ field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 static void
 field_choice_menu_cb(GtkComboBox *menu, PurpleRequestField *field)
 {
-	purple_request_field_choice_set_value(field,
-			gtk_combo_box_get_active(menu));
+	int active = gtk_combo_box_get_active(menu);
+	gpointer *values = g_object_get_data(G_OBJECT(menu), "values");
+
+	g_return_if_fail(values != NULL);
+	g_return_if_fail(active >= 0);
+
+	purple_request_field_choice_set_value(field, values[active]);
 }
 
 static void
 field_choice_option_cb(GtkRadioButton *button, PurpleRequestField *field)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
-		purple_request_field_choice_set_value(field,
-				(g_slist_length(gtk_radio_button_get_group(button)) -
-				 g_slist_index(gtk_radio_button_get_group(button), button)) - 1);
+	int active;
+	gpointer *values = g_object_get_data(G_OBJECT(g_object_get_data(
+		G_OBJECT(button), "box")), "values");
+
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+		return;
+
+	active = (g_slist_length(gtk_radio_button_get_group(button)) -
+		g_slist_index(gtk_radio_button_get_group(button), button)) - 1;
+
+	g_return_if_fail(values != NULL);
+	g_return_if_fail(active >= 0);
+
+	purple_request_field_choice_set_value(field, values[active]);
 }
 
 static void
@@ -288,25 +306,168 @@ destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
 
 
 #define STOCK_ITEMIZE(r, l) \
-	if (!strcmp((r), text)) \
+	if (!strcmp((r), text) || !strcmp(_(r), text)) \
 		return (l);
 
 static const char *
 text_to_stock(const char *text)
 {
-	STOCK_ITEMIZE(_("Yes"),     GTK_STOCK_YES);
-	STOCK_ITEMIZE(_("No"),      GTK_STOCK_NO);
-	STOCK_ITEMIZE(_("OK"),      GTK_STOCK_OK);
-	STOCK_ITEMIZE(_("Cancel"),  GTK_STOCK_CANCEL);
-	STOCK_ITEMIZE(_("Apply"),   GTK_STOCK_APPLY);
-	STOCK_ITEMIZE(_("Close"),   GTK_STOCK_CLOSE);
-	STOCK_ITEMIZE(_("Delete"),  GTK_STOCK_DELETE);
-	STOCK_ITEMIZE(_("Add"),     GTK_STOCK_ADD);
-	STOCK_ITEMIZE(_("Remove"),  GTK_STOCK_REMOVE);
-	STOCK_ITEMIZE(_("Save"),    GTK_STOCK_SAVE);
-	STOCK_ITEMIZE(_("Alias"),   PIDGIN_STOCK_ALIAS);
+	STOCK_ITEMIZE(N_("Yes"),     GTK_STOCK_YES);
+	STOCK_ITEMIZE(N_("_Yes"),    GTK_STOCK_YES);
+	STOCK_ITEMIZE(N_("No"),      GTK_STOCK_NO);
+	STOCK_ITEMIZE(N_("_No"),     GTK_STOCK_NO);
+	STOCK_ITEMIZE(N_("OK"),      GTK_STOCK_OK);
+	STOCK_ITEMIZE(N_("_OK"),     GTK_STOCK_OK);
+	STOCK_ITEMIZE(N_("Cancel"),  GTK_STOCK_CANCEL);
+	STOCK_ITEMIZE(N_("_Cancel"), GTK_STOCK_CANCEL);
+	STOCK_ITEMIZE(N_("Apply"),   GTK_STOCK_APPLY);
+	STOCK_ITEMIZE(N_("Close"),   GTK_STOCK_CLOSE);
+	STOCK_ITEMIZE(N_("Delete"),  GTK_STOCK_DELETE);
+	STOCK_ITEMIZE(N_("Add"),     GTK_STOCK_ADD);
+	STOCK_ITEMIZE(N_("Remove"),  GTK_STOCK_REMOVE);
+	STOCK_ITEMIZE(N_("Save"),    GTK_STOCK_SAVE);
+	STOCK_ITEMIZE(N_("Next"),    PIDGIN_STOCK_NEXT);
+	STOCK_ITEMIZE(N_("_Next"),   PIDGIN_STOCK_NEXT);
+	STOCK_ITEMIZE(N_("Back"),    GTK_STOCK_GO_BACK);
+	STOCK_ITEMIZE(N_("_Back"),   GTK_STOCK_GO_BACK);
+	STOCK_ITEMIZE(N_("Alias"),   PIDGIN_STOCK_ALIAS);
 
 	return text;
+}
+
+#undef STOCK_ITEMIZE
+
+static gchar *
+pidgin_request_escape(PurpleRequestCommonParameters *cpar, const gchar *text)
+{
+	if (text == NULL)
+		return NULL;
+
+	if (purple_request_cpar_is_html(cpar)) {
+		gboolean valid;
+
+		valid = pango_parse_markup(text, -1, 0, NULL, NULL, NULL, NULL);
+
+		if (valid)
+			return g_strdup(text);
+		else {
+			purple_debug_error("pidgin", "Passed label text is not "
+				"a valid markup. Falling back to plain text.");
+		}
+	}
+
+	return g_markup_escape_text(text, -1);
+}
+
+static GtkWidget *
+pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
+{
+	GtkWidget *img = NULL;
+	PurpleRequestIconType icon_type;
+	gconstpointer icon_data;
+	gsize icon_size;
+	const gchar *icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
+
+	/* Dialog icon. */
+	icon_data = purple_request_cpar_get_custom_icon(cpar, &icon_size);
+	if (icon_data) {
+		GdkPixbuf *pixbuf;
+
+		pixbuf = pidgin_pixbuf_from_data(icon_data, icon_size);
+		if (pixbuf) {
+			/* scale the image if it is too large */
+			int width = gdk_pixbuf_get_width(pixbuf);
+			int height = gdk_pixbuf_get_height(pixbuf);
+			if (width > 128 || height > 128) {
+				int scaled_width = width > height ?
+					128 : (128 * width) / height;
+				int scaled_height = height > width ?
+					128 : (128 * height) / width;
+				GdkPixbuf *scaled;
+
+				purple_debug_info("pidgin", "dialog icon was "
+					"too large, scaling it down");
+
+				scaled = gdk_pixbuf_scale_simple(pixbuf,
+					scaled_width, scaled_height,
+					GDK_INTERP_BILINEAR);
+				if (scaled) {
+					g_object_unref(pixbuf);
+					pixbuf = scaled;
+				}
+			}
+			img = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(pixbuf);
+		} else {
+			purple_debug_info("pidgin",
+				"failed to parse dialog icon");
+		}
+	}
+
+	if (img)
+		return img;
+
+	icon_type = purple_request_cpar_get_icon(cpar);
+	switch (icon_type)
+	{
+		case PURPLE_REQUEST_ICON_REQUEST:
+			icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
+			break;
+		case PURPLE_REQUEST_ICON_DIALOG:
+		case PURPLE_REQUEST_ICON_INFO:
+			icon_stock = PIDGIN_STOCK_DIALOG_INFO;
+			break;
+		case PURPLE_REQUEST_ICON_WARNING:
+			icon_stock = PIDGIN_STOCK_DIALOG_WARNING;
+			break;
+		case PURPLE_REQUEST_ICON_ERROR:
+			icon_stock = PIDGIN_STOCK_DIALOG_ERROR;
+			break;
+		/* intentionally no default value */
+	}
+
+	img = gtk_image_new_from_stock(icon_stock,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+
+	if (img || icon_type == PURPLE_REQUEST_ICON_REQUEST)
+		return img;
+
+	return gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+}
+
+static void
+pidgin_request_help_clicked(GtkButton *button, gpointer _unused)
+{
+	PurpleRequestHelpCb cb;
+	gpointer data;
+
+	cb = g_object_get_data(G_OBJECT(button), "pidgin-help-cb");
+	data = g_object_get_data(G_OBJECT(button), "pidgin-help-data");
+
+	g_return_if_fail(cb != NULL);
+	cb(data);
+}
+
+static void
+pidgin_request_add_help(GtkDialog *dialog, PurpleRequestCommonParameters *cpar)
+{
+	GtkWidget *button;
+	PurpleRequestHelpCb help_cb;
+	gpointer help_data;
+
+	help_cb = purple_request_cpar_get_help_cb(cpar, &help_data);
+	if (help_cb == NULL)
+		return;
+
+	button = gtk_dialog_add_button(dialog, GTK_STOCK_HELP,
+		GTK_RESPONSE_HELP);
+
+	g_object_set_data(G_OBJECT(button), "pidgin-help-cb", help_cb);
+	g_object_set_data(G_OBJECT(button), "pidgin-help-data", help_data);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+		G_CALLBACK(pidgin_request_help_clicked), NULL);
 }
 
 static void *
@@ -315,7 +476,7 @@ pidgin_request_input(const char *title, const char *primary,
 					   gboolean multiline, gboolean masked, gchar *hint,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
-					   PurpleAccount *account, const char *who, PurpleConversation *conv,
+					   PurpleRequestCommonParameters *cpar,
 					   void *user_data)
 {
 	PidginRequestData *data;
@@ -365,21 +526,22 @@ pidgin_request_input(const char *title, const char *primary,
 	                  hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+
+	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
 
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox, purple_request_cpar_get_account(cpar));
 
 	/* Descriptive label */
-	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
-	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
+	primary_esc = pidgin_request_escape(cpar, primary);
+	secondary_esc = pidgin_request_escape(cpar, secondary);
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 								 "%s</span>%s%s" : "%s%s%s"),
 								 (primary ? primary_esc : ""),
@@ -468,11 +630,9 @@ pidgin_request_input(const char *title, const char *primary,
 
 static void *
 pidgin_request_choice(const char *title, const char *primary,
-			const char *secondary, int default_value,
-			const char *ok_text, GCallback ok_cb,
-			const char *cancel_text, GCallback cancel_cb,
-			PurpleAccount *account, const char *who, PurpleConversation *conv,
-			void *user_data, va_list args)
+	const char *secondary, gpointer default_value, const char *ok_text,
+	GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data, va_list args)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -526,20 +686,21 @@ pidgin_request_choice(const char *title, const char *primary,
 	                  hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox, purple_request_cpar_get_account(cpar));
+
+	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
 
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
-	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
-	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
+	primary_esc = pidgin_request_escape(cpar, primary);
+	secondary_esc = pidgin_request_escape(cpar, secondary);
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 				      "%s</span>%s%s" : "%s%s%s"),
 				     (primary ? primary_esc : ""),
@@ -560,10 +721,10 @@ pidgin_request_choice(const char *title, const char *primary,
 	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
 	while ((radio_text = va_arg(args, char*))) {
-		       int resp = va_arg(args, int);
+		       gpointer resp = va_arg(args, gpointer);
 		       radio = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(radio), radio_text);
 		       gtk_box_pack_start(GTK_BOX(vbox2), radio, FALSE, FALSE, 0);
-		       g_object_set_data(G_OBJECT(radio), "choice_id", GINT_TO_POINTER(resp));
+		       g_object_set_data(G_OBJECT(radio), "choice_value", resp);
 		       if (resp == default_value)
 			       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
 	}
@@ -579,12 +740,10 @@ pidgin_request_choice(const char *title, const char *primary,
 }
 
 static void *
-pidgin_request_action_with_icon(const char *title, const char *primary,
-						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who,
-						PurpleConversation *conv, gconstpointer icon_data,
-						gsize icon_size,
-						void *user_data, size_t action_count, va_list actions)
+pidgin_request_action(const char *title, const char *primary,
+	const char *secondary, int default_action,
+	PurpleRequestCommonParameters *cpar, void *user_data,
+	size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -649,38 +808,7 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                  hbox);
 
-	/* Dialog icon. */
-	if (icon_data) {
-		GdkPixbuf *pixbuf = pidgin_pixbuf_from_data(icon_data, icon_size);
-		if (pixbuf) {
-			/* scale the image if it is too large */
-			int width = gdk_pixbuf_get_width(pixbuf);
-			int height = gdk_pixbuf_get_height(pixbuf);
-			if (width > 128 || height > 128) {
-				int scaled_width = width > height ? 128 : (128 * width) / height;
-				int scaled_height = height > width ? 128 : (128 * height) / width;
-				GdkPixbuf *scaled =
-						gdk_pixbuf_scale_simple(pixbuf, scaled_width, scaled_height,
-						    GDK_INTERP_BILINEAR);
-
-				purple_debug_info("pidgin",
-				    "dialog icon was too large, scaled it down\n");
-				if (scaled) {
-					g_object_unref(pixbuf);
-					pixbuf = scaled;
-				}
-			}
-			img = gtk_image_new_from_pixbuf(pixbuf);
-			g_object_unref(pixbuf);
-		} else {
-			purple_debug_info("pidgin", "failed to parse dialog icon\n");
-		}
-	}
-
-	if (!img) {
-		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
-	}
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -688,11 +816,14 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox,
+		purple_request_cpar_get_account(cpar));
+
+	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
 
 	/* Descriptive label */
-	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
-	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
+	primary_esc = pidgin_request_escape(cpar, primary);
+	secondary_esc = pidgin_request_escape(cpar, secondary);
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 								 "%s</span>%s%s" : "%s%s%s"),
 								 (primary ? primary_esc : ""),
@@ -730,17 +861,6 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	gtk_widget_show_all(dialog);
 
 	return data;
-}
-
-static void *
-pidgin_request_action(const char *title, const char *primary,
-						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data, size_t action_count, va_list actions)
-{
-	return pidgin_request_action_with_icon(title, primary, secondary,
-		default_action, account, who, conv, NULL, 0, user_data, action_count,
-		actions);
 }
 
 static void
@@ -952,25 +1072,45 @@ create_bool_field(PurpleRequestField *field)
 }
 
 static GtkWidget *
-create_choice_field(PurpleRequestField *field)
+create_choice_field(PurpleRequestField *field,
+	PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *widget;
-	GList *labels = purple_request_field_choice_get_labels(field);
-	int num_labels = g_list_length(labels);
+	GList *elements = purple_request_field_choice_get_elements(field);
+	int num_labels = g_list_length(elements) / 2;
 	GList *l;
+	gpointer *values = g_new(gpointer, num_labels);
+	gpointer default_value;
+	gboolean default_found = FALSE;
+	int i;
 
-	if (num_labels > 5)
+	default_value = purple_request_field_choice_get_value(field);
+	if (num_labels > 5 || purple_request_cpar_is_compact(cpar))
 	{
+		int default_index = 0;
 		widget = gtk_combo_box_text_new();
 
-		for (l = labels; l != NULL; l = l->next)
+		i = 0;
+		l = elements;
+		while (l != NULL)
 		{
-			const char *text = l->data;
+			const char *text;
+			gpointer *value;
+
+			text = l->data;
+			l = g_list_next(l);
+			value = l->data;
+			l = g_list_next(l);
+
 			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(widget), text);
+			if (value == default_value) {
+				default_index = i;
+				default_found = TRUE;
+			}
+			values[i++] = value;
 		}
 
-		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
-						purple_request_field_choice_get_default_value(field));
+		gtk_combo_box_set_active(GTK_COMBO_BOX(widget), default_index);
 
 		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
 
@@ -982,7 +1122,6 @@ create_choice_field(PurpleRequestField *field)
 		GtkWidget *box;
 		GtkWidget *first_radio = NULL;
 		GtkWidget *radio;
-		gint i;
 
 		if (num_labels == 2)
 			box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -993,18 +1132,30 @@ create_choice_field(PurpleRequestField *field)
 
 		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
 
-		for (l = labels, i = 0; l != NULL; l = l->next, i++)
+		i = 0;
+		l = elements;
+		while (l != NULL)
 		{
-			const char *text = l->data;
+			const char *text;
+			gpointer *value;
+
+			text = l->data;
+			l = g_list_next(l);
+			value = l->data;
+			l = g_list_next(l);
 
 			radio = gtk_radio_button_new_with_label_from_widget(
 				GTK_RADIO_BUTTON(first_radio), text);
+			g_object_set_data(G_OBJECT(radio), "box", box);
 
 			if (first_radio == NULL)
 				first_radio = radio;
 
-			if (i == purple_request_field_choice_get_default_value(field))
+			if (value == default_value) {
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
+				default_found = TRUE;
+			}
+			values[i++] = value;
 
 			gtk_box_pack_start(GTK_BOX(box), radio, TRUE, TRUE, 0);
 			gtk_widget_show(radio);
@@ -1013,6 +1164,11 @@ create_choice_field(PurpleRequestField *field)
 							 G_CALLBACK(field_choice_option_cb), field);
 		}
 	}
+
+	if (!default_found && i > 0)
+		purple_request_field_choice_set_value(field, values[0]);
+
+	g_object_set_data_full(G_OBJECT(widget), "values", values, g_free);
 
 	return widget;
 }
@@ -1221,11 +1377,9 @@ create_certificate_field(PurpleRequestField *field)
 
 static void *
 pidgin_request_fields(const char *title, const char *primary,
-						const char *secondary, PurpleRequestFields *fields,
-						const char *ok_text, GCallback ok_cb,
-						const char *cancel_text, GCallback cancel_cb,
-					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data)
+	const char *secondary, PurpleRequestFields *fields, const char *ok_text,
+	GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *win;
@@ -1244,6 +1398,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 	int total_fields = 0;
+	const gboolean compact = purple_request_cpar_is_compact(cpar);
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_FIELDS;
@@ -1274,11 +1429,12 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_show(hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	img = pidgin_request_dialog_icon(cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);
+
+	pidgin_request_add_help(GTK_DIALOG(win), cpar);
 
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
@@ -1290,7 +1446,8 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_set_can_default(button, TRUE);
 	gtk_window_set_default(GTK_WINDOW(win), button);
 
-	pidgin_widget_decorate_account(hbox, account);
+	pidgin_widget_decorate_account(hbox,
+		purple_request_cpar_get_account(cpar));
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
@@ -1300,7 +1457,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if(primary) {
-		primary_esc = g_markup_escape_text(primary, -1);
+		primary_esc = pidgin_request_escape(cpar, primary);
 		label_text = g_strdup_printf(
 				"<span weight=\"bold\" size=\"larger\">%s</span>", primary_esc);
 		g_free(primary_esc);
@@ -1341,7 +1498,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	}
 
 	if (secondary) {
-		secondary_esc = g_markup_escape_text(secondary, -1);
+		secondary_esc = pidgin_request_escape(cpar, secondary);
 		label = gtk_label_new(NULL);
 
 		gtk_label_set_markup(GTK_LABEL(label), secondary_esc);
@@ -1410,7 +1567,8 @@ pidgin_request_fields(const char *title, const char *primary,
 					rows++;
 
 				rows += 2;
-			}
+			} else if (compact && type != PURPLE_REQUEST_FIELD_BOOLEAN)
+				rows++;
 
 			col_num++;
 
@@ -1418,7 +1576,10 @@ pidgin_request_fields(const char *title, const char *primary,
 				col_num = 0;
 		}
 
-		table = gtk_table_new(rows, 2 * cols, FALSE);
+		if (compact)
+			table = gtk_table_new(rows, cols, FALSE);
+		else
+			table = gtk_table_new(rows, 2 * cols, FALSE);
 		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
@@ -1453,8 +1614,11 @@ pidgin_request_fields(const char *title, const char *primary,
 				{
 					char *text = NULL;
 
-					if (field_label[strlen(field_label) - 1] != ':')
+					if (field_label[strlen(field_label) - 1] != ':' &&
+						field_label[strlen(field_label) - 1] != '?')
+					{
 						text = g_strdup_printf("%s:", field_label);
+					}
 
 					label = gtk_label_new(NULL);
 					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text ? text : field_label);
@@ -1499,7 +1663,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 						widget = create_bool_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_CHOICE)
-						widget = create_choice_field(field);
+						widget = create_choice_field(field, cpar);
 					else if (type == PURPLE_REQUEST_FIELD_LIST)
 						widget = create_list_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_IMAGE)
@@ -1543,8 +1707,15 @@ pidgin_request_fields(const char *title, const char *primary,
 									 GTK_FILL | GTK_EXPAND,
 									 5, 0);
 				}
-				else
-				{
+				else if (compact) {
+					row_num++;
+					gtk_table_attach(GTK_TABLE(table), widget,
+									 0, 2 * cols,
+									 row_num, row_num + 1,
+									 GTK_FILL | GTK_EXPAND,
+									 GTK_FILL | GTK_EXPAND,
+									 5, 0);
+				} else {
 					gtk_table_attach(GTK_TABLE(table), widget,
 							 		 1, 2 * cols,
 									 row_num, row_num + 1,
@@ -1618,7 +1789,7 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
 		purple_request_action(data, NULL, _("That file already exists"),
 							_("Would you like to overwrite it?"), 0,
-							NULL, NULL, NULL,
+							NULL,
 							data, 2,
 							_("Overwrite"), G_CALLBACK(file_yes_no_cb),
 							_("Choose New Name"), G_CALLBACK(file_yes_no_cb));
@@ -1628,10 +1799,8 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 
 static void *
 pidgin_request_file(const char *title, const char *filename,
-					  gboolean savedialog,
-					  GCallback ok_cb, GCallback cancel_cb,
-					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+	gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *filesel;
@@ -1661,6 +1830,8 @@ pidgin_request_file(const char *title, const char *filename,
 						GTK_RESPONSE_ACCEPT,
 						NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(filesel), GTK_RESPONSE_ACCEPT);
+
+	pidgin_request_add_help(GTK_DIALOG(filesel), cpar);
 
 	if ((filename != NULL) && (*filename != '\0')) {
 		if (savedialog)
@@ -1706,10 +1877,9 @@ pidgin_request_file(const char *title, const char *filename,
 }
 
 static void *
-pidgin_request_folder(const char *title, const char *dirname,
-					  GCallback ok_cb, GCallback cancel_cb,
-					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+pidgin_request_folder(const char *title, const char *dirname, GCallback ok_cb,
+	GCallback cancel_cb, PurpleRequestCommonParameters *cpar,
+	void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *dirsel;
@@ -1732,6 +1902,8 @@ pidgin_request_folder(const char *title, const char *dirname,
 						NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dirsel), GTK_RESPONSE_ACCEPT);
 
+	pidgin_request_add_help(GTK_DIALOG(dirsel), cpar);
+
 	if ((dirname != NULL) && (*dirname != '\0'))
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dirsel), dirname);
 
@@ -1746,25 +1918,33 @@ pidgin_request_folder(const char *title, const char *dirname,
 	return (void *)data;
 }
 
-#ifdef _WIN32
-
-/* Not needed (yet) for non-win32, but should work everywhere. */
+/* if request callback issues another request, it should be attached to the
+ * primary request parent */
 static void
-pidgin_window_detach_children(GtkWindow* parent)
+pidgin_window_detach_children(GtkWindow* win)
 {
 	GList *it;
+	GtkWindow *par;
 
-	g_return_if_fail(parent != NULL);
+	g_return_if_fail(win != NULL);
 
+	par = gtk_window_get_transient_for(win);
 	it = gtk_window_list_toplevels();
 	for (it = g_list_first(it); it != NULL; it = g_list_next(it)) {
-		GtkWindow *win = GTK_WINDOW(it->data);
-		if (gtk_window_get_transient_for(win) == parent)
-			gtk_window_set_transient_for(win, NULL);
+		GtkWindow *child = GTK_WINDOW(it->data);
+		if (gtk_window_get_transient_for(child) != win)
+			continue;
+		if (gtk_window_get_destroy_with_parent(child)) {
+#ifdef _WIN32
+			/* XXX test/verify it: Win32 gtk ignores
+			 * gtk_window_set_destroy_with_parent(..., FALSE). */
+			gtk_window_set_transient_for(child, NULL);
+#endif
+			continue;
+		}
+		gtk_window_set_transient_for(child, par);
 	}
 }
-
-#endif
 
 static void
 pidgin_close_request(PurpleRequestType type, void *ui_handle)
@@ -1773,10 +1953,7 @@ pidgin_close_request(PurpleRequestType type, void *ui_handle)
 
 	g_free(data->cbs);
 
-#ifdef _WIN32
-	/* Win32 gtk ignores gtk_window_set_destroy_with_parent(..., FALSE). */
 	pidgin_window_detach_children(GTK_WINDOW(data->dialog));
-#endif
 
 	gtk_widget_destroy(data->dialog);
 
@@ -1790,6 +1967,7 @@ pidgin_close_request(PurpleRequestType type, void *ui_handle)
 
 static PurpleRequestUiOps ops =
 {
+	PURPLE_REQUEST_FEATURE_HTML,
 	pidgin_request_input,
 	pidgin_request_choice,
 	pidgin_request_action,
@@ -1797,7 +1975,7 @@ static PurpleRequestUiOps ops =
 	pidgin_request_file,
 	pidgin_close_request,
 	pidgin_request_folder,
-	pidgin_request_action_with_icon,
+	NULL,
 	NULL,
 	NULL,
 	NULL

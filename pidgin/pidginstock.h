@@ -59,6 +59,7 @@
 #define PIDGIN_STOCK_TEXT_NORMAL     "pidgin-text-normal"
 #define PIDGIN_STOCK_TYPED           "pidgin-typed"
 #define PIDGIN_STOCK_UPLOAD          "pidgin-upload"
+#define PIDGIN_STOCK_NEXT            "pidgin-next"
 
 /* Status icons */
 #define PIDGIN_STOCK_STATUS_AVAILABLE  "pidgin-status-available"
