@@ -173,7 +173,7 @@ struct _PurplePluginAction {
  *
  * Defines the plugin's entry points.
  */
-#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
 	PurplePluginInfo * pluginname##_plugin_query(void); \
 	PurplePluginInfo * pluginname##_plugin_query(void) { \
@@ -193,7 +193,7 @@ struct _PurplePluginAction {
 		if (e) g_error_free(e); \
 		return unloaded; \
 	}
-#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PROTOCOL */
+#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PRPL */
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
 	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e); \
 	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e) { \
@@ -224,7 +224,7 @@ struct _PurplePluginAction {
  * @param t_n  The name of the new type, in lowercase, words separated by '_'.
  * @param T_P  The #GType of the parent type.
  */
-#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
 #define PURPLE_DEFINE_TYPE(TN, t_n, T_P) PURPLE_DEFINE_STATIC_TYPE(TN, t_n, T_P)
 #else
 #define PURPLE_DEFINE_TYPE(TN, t_n, T_P) PURPLE_DEFINE_DYNAMIC_TYPE(TN, t_n, T_P)
@@ -242,7 +242,7 @@ struct _PurplePluginAction {
  * @param flags  #GTypeFlags to register the type with.
  * @param CODE   Custom code that gets inserted in *_get_type().
  */
-#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
 #define PURPLE_DEFINE_TYPE_EXTENDED PURPLE_DEFINE_STATIC_TYPE_EXTENDED
 #else
 #define PURPLE_DEFINE_TYPE_EXTENDED PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED
@@ -275,7 +275,7 @@ struct _PurplePluginAction {
  * @param TYPE_IFACE  The #GType of the interface to add.
  * @param iface_init  The interface init function.
  */
-#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PROTOCOL)
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
 #define PURPLE_IMPLEMENT_INTERFACE(TYPE_IFACE, iface_init) \
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(TYPE_IFACE, iface_init)
 #else
@@ -354,7 +354,7 @@ GType type_name##_get_type(void) { \
 	return type_name##_type_id; \
 } \
 void type_name##_register_type(PurplePlugin *); \
-void type_name##_register_type(PurplePlugin *) { }
+void type_name##_register_type(PurplePlugin *plugin) { }
 
 G_BEGIN_DECLS
 
