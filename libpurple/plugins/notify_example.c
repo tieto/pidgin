@@ -91,7 +91,7 @@ notify_uri_cb(PurplePluginAction *action)
 }
 
 static GList *
-plugin_actions(PurplePlugin *plugin, gpointer context)
+plugin_actions(PurplePlugin *plugin)
 {
 	GList *actions = NULL;
 

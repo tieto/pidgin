@@ -67,7 +67,7 @@ plugin_action_test_cb (PurplePluginAction * action)
  * get a list of plugin actions to use for the plugin.  This function gives
  * libpurple that list of actions. */
 static GList *
-plugin_actions (PurplePlugin * plugin, gpointer context)
+plugin_actions (PurplePlugin * plugin)
 {
 	/* some C89 (a.k.a. ANSI C) compilers will warn if any variable declaration
 	 * includes an initilization that calls a function.  To avoid that, we

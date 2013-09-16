@@ -65,8 +65,31 @@ buddynote_extended_menu_cb(PurpleBlistNode *node, GList **m)
 	*m = g_list_append(*m, bna);
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Stu Tomlinson <stu@nosnilmot.com>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",           "core-plugin_pack-buddynote",
+		"name",         N_("Buddy Notes"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Utility"),
+		"summary",      N_("Store notes on particular buddies."),
+		"description",  N_("Adds the option to store notes for buddies on your "
+		                   "buddy list."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 
 	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu",
@@ -75,42 +98,10 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,							/**< major version	*/
-	PURPLE_MINOR_VERSION,							/**< minor version	*/
-	PURPLE_PLUGIN_STANDARD,							/**< type			*/
-	NULL,											/**< ui_requirement	*/
-	0,												/**< flags			*/
-	NULL,											/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
-	"core-plugin_pack-buddynote",					/**< id				*/
-	N_("Buddy Notes"),								/**< name			*/
-	DISPLAY_VERSION,									/**< version		*/
-	N_("Store notes on particular buddies."),		/**< summary		*/
-	N_("Adds the option to store notes for buddies "
-	   "on your buddy list."),						/**< description	*/
-	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
-	PURPLE_WEBSITE,									/**< homepage		*/
-	plugin_load,									/**< load			*/
-	NULL,											/**< unload			*/
-	NULL,											/**< destroy		*/
-	NULL,											/**< ui_info		*/
-	NULL,											/**< extra_info		*/
-	NULL,											/**< prefs_info		*/
-	NULL,											/**< actions		*/
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-
-static void
-init_plugin(PurplePlugin *plugin) {
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(buddynote, init_plugin, info)
+PURPLE_PLUGIN_INIT(buddynote, plugin_query, plugin_load, plugin_unload);

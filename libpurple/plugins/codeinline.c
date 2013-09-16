@@ -59,8 +59,8 @@ plugin_query(GError **error)
 		"category",     "Formatting",
 		"summary",      "Formats text as code",
 		"description",  "Changes the formatting of any outgoing text such "
-                        "that anything underlined will be received green and "
-                        "monospace.",
+		                "that anything underlined will be received green and "
+		                "monospace.",
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
