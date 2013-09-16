@@ -1,7 +1,7 @@
 #V=0
 #CFLAGS = -g -O0
 GADU_EXTRA = -Wall -Wextra -fno-inline
-GADU_EXTRA += -Werror
+#GADU_EXTRA += -Werror
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
