@@ -33,7 +33,7 @@ check_libpurple_CFLAGS=\
 check_libpurple_LDADD=\
 		$(top_builddir)/libpurple/protocols/jabber/libjabber.la \
 		$(top_builddir)/libpurple/protocols/oscar/liboscar.la \
-		$(top_builddir)/libpurple/protocols/yahoo/libymsg.la \
+		$(top_builddir)/libpurple/protocols/yahoo/libyahoo.la \
 		$(top_builddir)/libpurple/libpurple.la \
         @CHECK_LIBS@ \
 		$(GLIB_LIBS) \
