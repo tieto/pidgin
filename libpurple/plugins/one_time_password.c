@@ -52,8 +52,34 @@ signed_on_cb(PurpleConnection *conn, void *data)
 	}
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Daniel Atallah <datallah@pidgin.im>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         N_("One Time Password Support"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Security"),
+		"summary",      N_("Enforce that passwords are used only once."),
+		"description",  N_("Allows you to enforce on a per-account basis that "
+		                   "passwords not being saved are only used in a "
+		                   "single successful connection.\n"
+		                   "Note: The account password must not be saved for "
+		                   "this to work."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleProtocol *protocol;
 	PurpleAccountOption *option;
@@ -67,7 +93,7 @@ plugin_load(PurplePlugin *plugin)
 		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 			option = purple_account_option_bool_new(_("One Time Password"),
 								PREF_NAME, FALSE);
-			purple_protocol_get_protocol_options(protocol) = g_list_append(purple_protocol_get_protocol_options(protocol), option);
+			protocol->protocol_options = g_list_append(protocol->protocol_options, option);
 		}
 	}
 	g_list_free(list);
@@ -80,7 +106,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	PurpleProtocol *protocol;
 	PurpleAccountOption *option;
@@ -96,7 +122,7 @@ plugin_unload(PurplePlugin *plugin)
 			while (options != NULL) {
 				option = (PurpleAccountOption *) options->data;
 				if (strcmp(PREF_NAME, purple_account_option_get_setting(option)) == 0) {
-					purple_protocol_get_protocol_options(protocol) = g_list_delete_link(purple_protocol_get_protocol_options(protocol), options);
+					protocol->protocol_options = g_list_delete_link(protocol->protocol_options, options);
 					purple_account_option_destroy(option);
 					break;
 				}
@@ -111,43 +137,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,				/**< type           */
-	NULL,						/**< ui_requirement */
-	0,						/**< flags          */
-	NULL,						/**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,			/**< priority       */
-	PLUGIN_ID,					/**< id             */
-	N_("One Time Password Support"),		/**< name           */
-	DISPLAY_VERSION,				/**< version        */
-							/**  summary        */
-	N_("Enforce that passwords are used only once."),
-							/**  description    */
-	N_("Allows you to enforce on a per-account basis that passwords not "
-	   "being saved are only used in a single successful connection.\n"
-	   "Note: The account password must not be saved for this to work."),
-	"Daniel Atallah <datallah@pidgin.im>",		/**< author         */
-	PURPLE_WEBSITE,					/**< homepage       */
-	plugin_load,					/**< load           */
-	plugin_unload,					/**< unload         */
-	NULL,						/**< destroy        */
-	NULL,						/**< ui_info        */
-	NULL,						/**< extra_info     */
-	NULL,						/**< prefs_info     */
-	NULL,						/**< actions        */
-	NULL,						/**< reserved 1     */
-	NULL,						/**< reserved 2     */
-	NULL,						/**< reserved 3     */
-	NULL						/**< reserved 4     */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(one_time_password, init_plugin, info)
+PURPLE_PLUGIN_INIT(one_time_password, plugin_query, plugin_load, plugin_unload);
