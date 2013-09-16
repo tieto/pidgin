@@ -220,7 +220,7 @@ plugin_query(GError **error)
 		"id",                 JOINPART_PLUGIN_ID,
 		"name",               N_("Join/Part Hiding"),
 		"version",            DISPLAY_VERSION,
-		"category",           N_("Utility"),
+		"category",           N_("User interface"),
 		"summary",            N_("Hides extraneous join/part messages."),
 		"description",        N_("This plugin hides join/part messages in "
 		                         "large rooms, except for those users actively "

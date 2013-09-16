@@ -65,10 +65,39 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 }
 
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Stu Tomlinson <stu@nosnilmot.com>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",                 "core-plugin_pack-newline",
+		"name",               N_("New Line"),
+		"version",            DISPLAY_VERSION,
+		"category",           N_("User interface"),
+		"summary",            N_("Prepends a newline to displayed message."),
+		"description",        N_("Prepends a newline to messages so that the "
+		                         "rest of the message appears below the "
+		                         "username in the conversation window."),
+		"authors",            authors,
+		"website",            PURPLE_WEBSITE,
+		"abi-version",        PURPLE_ABI_VERSION,
+		"preferences-frame",  get_plugin_pref_frame,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	void *conversation = purple_conversations_get_handle();
+
+	purple_prefs_add_none("/plugins/core/newline");
+	purple_prefs_add_bool("/plugins/core/newline/im", TRUE);
+	purple_prefs_add_bool("/plugins/core/newline/chat", TRUE);
 
 	purple_signal_connect(conversation, "writing-im-msg",
 						plugin, PURPLE_CALLBACK(addnewline_msg_cb), NULL);
@@ -78,59 +107,10 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	0,   /* page_num (Reserved) */
-	NULL, /* frame (Reserved) */
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,							/**< magic			*/
-	PURPLE_MAJOR_VERSION,							/**< major version	*/
-	PURPLE_MINOR_VERSION,							/**< minor version	*/
-	PURPLE_PLUGIN_STANDARD,							/**< type			*/
-	NULL,											/**< ui_requirement	*/
-	0,												/**< flags			*/
-	NULL,											/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
-
-	"core-plugin_pack-newline",						/**< id				*/
-	N_("New Line"),									/**< name			*/
-	DISPLAY_VERSION,								/**< version		*/
-	N_("Prepends a newline to displayed message."),	/**< summary		*/
-	N_("Prepends a newline to messages so that the "
-	   "rest of the message appears below the "
-	   "username in the conversation window."),		/**< description	*/
-	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
-	PURPLE_WEBSITE,									/**< homepage		*/
-
-	plugin_load,									/**< load			*/
-	NULL,											/**< unload			*/
-	NULL,											/**< destroy		*/
-
-	NULL,											/**< ui_info		*/
-	NULL,											/**< extra_info		*/
-	&prefs_info,									/**< prefs_info		*/
-	NULL,											/**< actions		*/
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin) {
-	purple_prefs_add_none("/plugins/core/newline");
-	purple_prefs_add_bool("/plugins/core/newline/im", TRUE);
-	purple_prefs_add_bool("/plugins/core/newline/chat", TRUE);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(newline, init_plugin, info)
+PURPLE_PLUGIN_INIT(newline, plugin_query, plugin_load, plugin_unload);

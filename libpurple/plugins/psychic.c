@@ -17,11 +17,12 @@
 
 #define PLUGIN_ID       "core-psychic"
 #define PLUGIN_NAME     N_("Psychic Mode")
+#define PLUGIN_CATEGORY N_("Utility")
 #define PLUGIN_SUMMARY  N_("Psychic mode for incoming conversation")
 #define PLUGIN_DESC     N_("Causes conversation windows to appear as other" \
 			   " users begin to message you.  This works for" \
 			   " AIM, ICQ, XMPP, Sametime, and Yahoo!")
-#define PLUGIN_AUTHOR   "Christopher O'Brien <siege@preoccupied.net>"
+#define PLUGIN_AUTHORS  { "Christopher O'Brien <siege@preoccupied.net>", NULL }
 
 
 #define PREFS_BASE    "/plugins/core/psychic"
@@ -109,10 +110,37 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 }
 
 
+static PurplePluginInfo *
+plugin_query(GError **error) {
+
+  const gchar * const authors[] = PLUGIN_AUTHORS;
+
+  return purple_plugin_info_new(
+    "id",                 PLUGIN_ID,
+    "name",               PLUGIN_NAME,
+    "version",            DISPLAY_VERSION,
+    "category",           PLUGIN_CATEGORY,
+    "summary",            PLUGIN_SUMMARY,
+    "description",        PLUGIN_DESC,
+    "authors",            authors,
+    "website",            PURPLE_WEBSITE,
+    "abi-version",        PURPLE_ABI_VERSION,
+    "preferences-frame",  get_plugin_pref_frame,
+    NULL
+  );
+}
+
+
 static gboolean
-plugin_load(PurplePlugin *plugin) {
+plugin_load(PurplePlugin *plugin, GError **error) {
 
   void *convs_handle;
+
+  purple_prefs_add_none(PREFS_BASE);
+  purple_prefs_add_bool(PREF_BUDDIES, FALSE);
+  purple_prefs_add_bool(PREF_NOTICE, TRUE);
+  purple_prefs_add_bool(PREF_STATUS, TRUE);
+
   convs_handle = purple_conversations_get_handle();
 
   purple_signal_connect(convs_handle, "buddy-typing", plugin,
@@ -122,61 +150,11 @@ plugin_load(PurplePlugin *plugin) {
 }
 
 
-static PurplePluginUiInfo prefs_info = {
-  get_plugin_pref_frame,
-  0,    /* page_num (Reserved) */
-  NULL, /* frame (Reserved) */
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error) {
 
-  /* padding */
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
-
-
-static PurplePluginInfo info = {
-  PURPLE_PLUGIN_MAGIC,
-  PURPLE_MAJOR_VERSION,
-  PURPLE_MINOR_VERSION,
-  PURPLE_PLUGIN_STANDARD,   /**< type */
-  NULL,                   /**< ui_requirement */
-  0,                      /**< flags */
-  NULL,                   /**< dependencies */
-  PURPLE_PRIORITY_DEFAULT,  /**< priority */
-
-  PLUGIN_ID,              /**< id */
-  PLUGIN_NAME,            /**< name */
-  DISPLAY_VERSION,        /**< version */
-  PLUGIN_SUMMARY,         /**< summary */
-  PLUGIN_DESC,            /**< description */
-  PLUGIN_AUTHOR,          /**< author */
-  PURPLE_WEBSITE,           /**< homepage */
-
-  plugin_load,            /**< load */
-  NULL,                   /**< unload */
-  NULL,                   /**< destroy */
-
-  NULL,                   /**< ui_info */
-  NULL,                   /**< extra_info */
-  &prefs_info,            /**< prefs_info */
-  NULL,                   /**< actions */
-
-  /* padding */
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
-
-
-static void
-init_plugin(PurplePlugin *plugin) {
-  purple_prefs_add_none(PREFS_BASE);
-  purple_prefs_add_bool(PREF_BUDDIES, FALSE);
-  purple_prefs_add_bool(PREF_NOTICE, TRUE);
-  purple_prefs_add_bool(PREF_STATUS, TRUE);
+  return TRUE;
 }
 
 
-PURPLE_INIT_PLUGIN(psychic, init_plugin, info)
+PURPLE_PLUGIN_INIT(psychic, plugin_query, plugin_load, plugin_unload);

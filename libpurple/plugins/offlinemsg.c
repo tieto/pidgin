@@ -21,10 +21,11 @@
 
 #define PLUGIN_ID			"core-plugin_pack-offlinemsg"
 #define PLUGIN_NAME			N_("Offline Message Emulation")
+#define PLUGIN_CATEGORY		N_("Utility")
 #define PLUGIN_STATIC_NAME	offlinemsg
 #define PLUGIN_SUMMARY		N_("Save messages sent to an offline user as pounce.")
 #define PLUGIN_DESCRIPTION	N_("Save messages sent to an offline user as pounce.")
-#define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
+#define PLUGIN_AUTHORS		{"Sadrul H Chowdhury <sadrul@users.sourceforge.net>", NULL}
 
 /* Purple headers */
 #include <version.h>
@@ -172,20 +173,6 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 	}
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	purple_signal_connect_priority(purple_conversations_get_handle(), "sending-im-msg",
-					plugin, PURPLE_CALLBACK(sending_msg_cb), plugin, PURPLE_SIGNAL_PRIORITY_HIGHEST);
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	return TRUE;
-}
-
 static PurplePluginPrefFrame *
 get_plugin_pref_frame(PurplePlugin *plugin)
 {
@@ -204,58 +191,41 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	return frame;
 }
 
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	0,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,			/* Magic				*/
-	PURPLE_MAJOR_VERSION,			/* Purple Major Version	*/
-	PURPLE_MINOR_VERSION,			/* Purple Minor Version	*/
-	PURPLE_PLUGIN_STANDARD,			/* plugin type			*/
-	NULL,					/* ui requirement		*/
-	0,					/* flags				*/
-	NULL,					/* dependencies			*/
-	PURPLE_PRIORITY_DEFAULT,			/* priority				*/
+	const gchar * const authors[] = PLUGIN_AUTHORS;
 
-	PLUGIN_ID,				/* plugin id			*/
-	PLUGIN_NAME,				/* name					*/
-	DISPLAY_VERSION,			/* version				*/
-	PLUGIN_SUMMARY,				/* summary				*/
-	PLUGIN_DESCRIPTION,			/* description			*/
-	PLUGIN_AUTHOR,				/* author				*/
-	PURPLE_WEBSITE,				/* website				*/
+	return purple_plugin_info_new(
+		"id",                 PLUGIN_ID,
+		"name",               PLUGIN_NAME,
+		"version",            DISPLAY_VERSION,
+		"category",           PLUGIN_CATEGORY,
+		"summary",            PLUGIN_SUMMARY,
+		"description",        PLUGIN_DESCRIPTION,
+		"authors",            authors,
+		"website",            PURPLE_WEBSITE,
+		"abi-version",        PURPLE_ABI_VERSION,
+		"preferences-frame",  get_plugin_pref_frame,
+		NULL
+	);
+}
 
-	plugin_load,				/* load					*/
-	plugin_unload,				/* unload				*/
-	NULL,					/* destroy				*/
-
-	NULL,					/* ui_info				*/
-	NULL,					/* extra_info			*/
-	&prefs_info,				/* prefs_info			*/
-	NULL,					/* actions				*/
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	purple_prefs_add_none(PREF_PREFIX);
 	purple_prefs_add_bool(PREF_ALWAYS, FALSE);
+
+	purple_signal_connect_priority(purple_conversations_get_handle(), "sending-im-msg",
+					plugin, PURPLE_CALLBACK(sending_msg_cb), plugin, PURPLE_SIGNAL_PRIORITY_HIGHEST);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(PLUGIN_STATIC_NAME, plugin_query, plugin_load, plugin_unload);
