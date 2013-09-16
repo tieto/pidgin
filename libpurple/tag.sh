@@ -27,6 +27,12 @@ do
 		is_final=1
 		break
 	fi
+	if [ "$tag" == "PERL" ] && [ "${arg%(*}" == "ExtUtils::ParseXS::process_file" ]; then
+		object="${arg#*output => \"}"
+		object="${object%\", *}"
+		is_final=1
+		break
+	fi
 	ext_1=${arg#${arg%??}}
 	if [ "${ext_1}" == ".c" ]; then
 		file_1="$arg"
