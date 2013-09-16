@@ -152,6 +152,7 @@ LIBS =	\
 		-lnss3 \
 		-lnspr4 \
 		-lgnutls \
+		-lz \
 		$(VV_LIBS)
 
 include $(PIDGIN_COMMON_RULES)

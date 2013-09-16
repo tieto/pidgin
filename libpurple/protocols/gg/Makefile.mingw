@@ -32,11 +32,13 @@ INCLUDE_PATHS +=\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GNUTLS_TOP)/include
+			-I$(GNUTLS_TOP)/include \
+			-I$(JSON_GLIB_TOP)/include/json-glib-1.0
 
 LIB_PATHS += \
 			-L$(GTK_TOP)/lib \
 			-L$(GNUTLS_TOP)/lib \
+			-L$(JSON_GLIB_TOP)/lib \
 			-L$(PURPLE_TOP)
 
 ##
@@ -46,9 +48,11 @@ C_SRC =	\
 	account.c \
 	avatar.c \
 	buddylist.c \
-	confer.c \
+	chat.c \
 	deprecated.c \
+	edisc.c \
 	gg.c \
+	html.c \
 	image.c \
 	lib/common.c \
 	lib/dcc.c \
@@ -68,6 +72,7 @@ C_SRC =	\
 	lib/sha1.c \
 	libgadu-events.c \
 	libgaduw.c \
+	message-prpl.c \
 	multilogon.c \
 	oauth/oauth.c \
 	oauth/oauth-parameter.c \
@@ -90,8 +95,10 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ##
 LIBS =	\
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lgnutls \
 			-lintl \
+			-ljson-glib-1.0 \
 			-lpurple \
 			-lws2_32 \
 			-lz
