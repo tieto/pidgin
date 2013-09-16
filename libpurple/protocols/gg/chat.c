@@ -6,6 +6,8 @@
 #include "utils.h"
 #include "message-prpl.h"
 
+#if GGP_ENABLE_GG11
+
 typedef struct _ggp_chat_local_info ggp_chat_local_info;
 
 struct _ggp_chat_session_data
@@ -605,3 +607,13 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 	purple_timeout_add(1, ggp_chat_roomlist_get_list_finish, roomlist);
 	return roomlist;
 }
+
+#else
+void ggp_chat_setup(PurpleConnection *gc)
+{
+}
+
+void ggp_chat_cleanup(PurpleConnection *gc)
+{
+}
+#endif

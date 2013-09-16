@@ -243,12 +243,14 @@ void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 	msg->time = ev->time;
 	msg->user = ev->sender;
 
+#if GGP_ENABLE_GG11
 	if (ev->chat_id != 0)
 	{
 		msg->type = GGP_MESSAGE_GOT_TYPE_CHAT;
 		msg->chat_id = ev->chat_id;
 	}
 	else
+#endif
 	{
 		msg->type = GGP_MESSAGE_GOT_TYPE_IM;
 	}
@@ -270,12 +272,14 @@ void ggp_message_got_multilogon(PurpleConnection *gc,
 	msg->time = ev->time;
 	msg->user = ev->sender; /* not really a sender*/
 
+#if GGP_ENABLE_GG11
 	if (ev->chat_id != 0)
 	{
 		msg->type = GGP_MESSAGE_GOT_TYPE_CHAT;
 		msg->chat_id = ev->chat_id;
 	}
 	else
+#endif
 	{
 		msg->type = GGP_MESSAGE_GOT_TYPE_MULTILOGON;
 	}
@@ -296,11 +300,13 @@ static void ggp_message_got_display(PurpleConnection *gc,
 		serv_got_im(gc, ggp_uin_to_str(msg->user), msg->text,
 			PURPLE_MESSAGE_RECV, msg->time);
 	}
+#if GGP_ENABLE_GG11
 	else if (msg->type == GGP_MESSAGE_GOT_TYPE_CHAT)
 	{
 		ggp_chat_got_message(gc, msg->chat_id, msg->text, msg->time,
 			msg->user);
 	}
+#endif
 	else if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON)
 	{
 		PurpleConversation *conv = ggp_message_get_conv(gc, msg->user);
@@ -782,8 +788,17 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 		return -E2BIG;
 	}
 
+#if GGP_ENABLE_GG11
 	succ = (gg_send_message_html(info->session, GG_CLASS_CHAT,
 		ggp_str_to_uin(who), (unsigned char *)gg_msg) >= 0);
+#else
+	{
+		gchar *plain = purple_markup_strip_html(gg_msg);
+		succ = (gg_send_message(info->session, GG_CLASS_CHAT,
+			ggp_str_to_uin(who), (unsigned char *)plain) >= 0);
+		g_free(plain);
+	}
+#endif
 
 	g_free(gg_msg);
 

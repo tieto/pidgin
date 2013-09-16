@@ -24,6 +24,9 @@
 #ifndef _PURPLE_GG_H
 #define _PURPLE_GG_H
 
+#define GGP_UIN_LEN_MAX 10
+#define GGP_ENABLE_GG11 0
+
 #include <libgadu.h>
 #include "internal.h"
 #include "search.h"
@@ -38,8 +41,6 @@
 #include "chat.h"
 #include "message-prpl.h"
 #include "edisc.h"
-
-#define GGP_UIN_LEN_MAX 10
 
 typedef struct {
 	struct gg_session *session;

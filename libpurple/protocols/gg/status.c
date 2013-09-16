@@ -164,7 +164,9 @@ const gchar * ggp_status_to_purplestatus(int status)
 		case GG_STATUS_NOT_AVAIL:
 		case GG_STATUS_NOT_AVAIL_DESCR:
 		case GG_STATUS_BLOCKED:
+#if GGP_ENABLE_GG11
 		case GG_STATUS_UNKNOWN:
+#endif
 			return purple_primitive_get_id_from_type(
 				PURPLE_STATUS_OFFLINE);
 		case GG_STATUS_FFC:
@@ -420,8 +422,12 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 		return;
 	}
 	ggp_buddy_get_data(buddy)->blocked = (status == GG_STATUS_BLOCKED);
+#if GGP_ENABLE_GG11
 	ggp_buddy_get_data(buddy)->not_a_friend = (status == GG_STATUS_UNKNOWN);
-	
+#else
+	ggp_buddy_get_data(buddy)->not_a_friend = FALSE;
+#endif
+
 	if (descr != NULL)
 	{
 		status_message = g_strdup(descr);

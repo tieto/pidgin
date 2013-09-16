@@ -72,8 +72,11 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 	char *msg;
 
 	if ((level & GG_DEBUG_NET) ||
-		(level & GG_DEBUG_FUNCTION) ||
-		(level & GG_DEBUG_VERBOSE)) {
+		(level & GG_DEBUG_FUNCTION)
+#if GGP_ENABLE_GG11
+		|| (level & GG_DEBUG_VERBOSE)
+#endif
+		) {
 		if (!purple_debug_is_verbose())
 			return;
 	}
@@ -86,11 +89,13 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 
 	msg = g_strdup_vprintf(format, args);
 
+#if GGP_ENABLE_GG11
 	if (level & GG_DEBUG_ERROR)
 		purple_level = PURPLE_DEBUG_ERROR;
 	else if (level & GG_DEBUG_WARNING)
 		purple_level = PURPLE_DEBUG_WARNING;
 	else
+#endif
 		purple_level = PURPLE_DEBUG_MISC;
 
 	purple_debug(purple_level, "gg", "%s", msg);
