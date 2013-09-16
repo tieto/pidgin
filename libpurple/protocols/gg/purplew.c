@@ -32,22 +32,18 @@
 #include <request.h>
 #include <debug.h>
 
+#include "tcpsocket.h"
+
 guint ggp_purplew_http_input_add(struct gg_http *http_req,
 	PurpleInputFunction func, gpointer user_data)
 {
-	PurpleInputCondition cond = 0;
-	int check = http_req->check;
-
-	if (check & GG_CHECK_READ)
-		cond |= PURPLE_INPUT_READ;
-	if (check & GG_CHECK_WRITE)
-		cond |= PURPLE_INPUT_WRITE;
-
 	//TODO: verbose mode
 	//purple_debug_misc("gg", "ggp_purplew_http_input_add: "
 	//	"[req=%x, fd=%d, cond=%d]\n",
 	//	(unsigned int)http_req, http_req->fd, cond);
-	return purple_input_add(http_req->fd, cond, func, user_data);
+	return purple_input_add(http_req->fd,
+		ggp_tcpsocket_inputcond_gg_to_purple(http_req->check),
+		func, user_data);
 }
 
 static void ggp_purplew_request_processing_cancel(

@@ -34,12 +34,9 @@
 #include <libgadu.h>
 
 #define GGP_IMAGE_SIZE_MAX 255000
+#define GGP_IMAGE_ID_FORMAT "%016" G_GINT64_MODIFIER "x"
 
-typedef struct
-{
-	GList *pending_messages;
-	GHashTable *pending_images;
-} ggp_image_connection_data;
+typedef struct _ggp_image_session_data ggp_image_session_data;
 
 typedef enum
 {
@@ -48,19 +45,21 @@ typedef enum
 	GGP_IMAGE_PREPARE_TOO_BIG
 } ggp_image_prepare_result;
 
+typedef void (*ggp_image_request_cb)(PurpleConnection *gc, uint64_t id,
+	int stored_id, gpointer user_data);
+
 void ggp_image_setup(PurpleConnection *gc);
 void ggp_image_cleanup(PurpleConnection *gc);
 
-const char * ggp_image_pending_placeholder(uint32_t id);
-
-void ggp_image_got_im(PurpleConnection *gc, uin_t from, gchar *msg,
-	time_t mtime);
-ggp_image_prepare_result ggp_image_prepare(PurpleConnection *gc, const int id,
-	const char *conv_name, struct gg_msg_richtext_image *image_info);
+ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
+	const int stored_id, uint64_t *id);
 
 void ggp_image_recv(PurpleConnection *gc,
 	const struct gg_event_image_reply *image_reply);
 void ggp_image_send(PurpleConnection *gc,
 	const struct gg_event_image_request *image_request);
+void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
+	ggp_image_request_cb cb, gpointer user_data);
+int ggp_image_get_cached(PurpleConnection *gc, uint64_t id);
 
 #endif /* _GGP_IMAGE_H */
