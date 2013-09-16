@@ -409,11 +409,59 @@ tinyurl_notify_uri(const char *uri)
 	return win;
 }
 
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin) {
+
+  PurplePluginPrefFrame *frame;
+  PurplePluginPref *pref;
+
+  frame = purple_plugin_pref_frame_new();
+
+  pref = purple_plugin_pref_new_with_name(PREF_LENGTH);
+  purple_plugin_pref_set_label(pref, _("Only create TinyURL for URLs"
+				     " of this length or greater"));
+  purple_plugin_pref_frame_add(frame, pref);
+  pref = purple_plugin_pref_new_with_name(PREF_URL);
+  purple_plugin_pref_set_label(pref, _("TinyURL (or other) address prefix"));
+  purple_plugin_pref_frame_add(frame, pref);
+
+  return frame;
+}
+
+static FinchPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Richard Nelson <wabz@whatsbeef.net>",
+		NULL
+	};
+
+	return finch_plugin_info_new(
+		"id",                 "TinyURL",
+		"name",               N_("TinyURL"),
+		"version",            DISPLAY_VERSION,
+		"category",           N_("Utility"),
+		"summary",            N_("TinyURL plugin"),
+		"description",        N_("When receiving a message with URL(s), "
+		                         "use TinyURL for easier copying"),
+		"authors",            authors,
+		"website",            PURPLE_WEBSITE,
+		"abi-version",        PURPLE_ABI_VERSION,
+		"preferences-frame",  get_plugin_pref_frame,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PurpleNotifyUiOps *ops = purple_notify_get_ui_ops();
-	plugin->extra = ops->notify_uri;
+
+	purple_prefs_add_none(PREFS_BASE);
+	purple_prefs_add_int(PREF_LENGTH, 30);
+	purple_prefs_add_string(PREF_URL, "http://tinyurl.com/api-create.php?url=");
+
+	g_object_set_data(G_OBJECT(plugin), "notify-uri", ops->notify_uri);
 	ops->notify_uri = tinyurl_notify_uri;
 
 	purple_signal_connect(purple_conversations_get_handle(),
@@ -436,82 +484,12 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	PurpleNotifyUiOps *ops = purple_notify_get_ui_ops();
 	if (ops->notify_uri == tinyurl_notify_uri)
-		ops->notify_uri = plugin->extra;
+		ops->notify_uri = g_object_get_data(G_OBJECT(plugin), "notify-uri");
 	return TRUE;
 }
 
-static PurplePluginPrefFrame *
-get_plugin_pref_frame(PurplePlugin *plugin) {
-
-  PurplePluginPrefFrame *frame;
-  PurplePluginPref *pref;
-
-  frame = purple_plugin_pref_frame_new();
-
-  pref = purple_plugin_pref_new_with_name(PREF_LENGTH);
-  purple_plugin_pref_set_label(pref, _("Only create TinyURL for URLs"
-				     " of this length or greater"));
-  purple_plugin_pref_frame_add(frame, pref);
-  pref = purple_plugin_pref_new_with_name(PREF_URL);
-  purple_plugin_pref_set_label(pref, _("TinyURL (or other) address prefix"));
-  purple_plugin_pref_frame_add(frame, pref);
-
-  return frame;
-}
-
-static PurplePluginUiInfo prefs_info = {
-  get_plugin_pref_frame,
-  0,    /* page_num (Reserved) */
-  NULL, /* frame (Reserved) */
-
-  /* padding */
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	FINCH_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"TinyURL",
-	N_("TinyURL"),
-	DISPLAY_VERSION,
-	N_("TinyURL plugin"),
-	N_("When receiving a message with URL(s), use TinyURL for easier copying"),
-	"Richard Nelson <wabz@whatsbeef.net>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	NULL,
-	NULL,
-	&prefs_info,            /**< prefs_info */
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin) {
-  purple_prefs_add_none(PREFS_BASE);
-  purple_prefs_add_int(PREF_LENGTH, 30);
-  purple_prefs_add_string(PREF_URL, "http://tinyurl.com/api-create.php?url=");
-}
-
-PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_PLUGIN_INIT(PLUGIN_STATIC_NAME, plugin_query, plugin_load, plugin_unload);
