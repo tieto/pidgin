@@ -173,6 +173,8 @@ struct _PurpleRequestCommonParameters
 
 	PurpleRequestHelpCb help_cb;
 	gpointer help_data;
+
+	GSList *extra_actions;
 };
 
 PurpleRequestCommonParameters *
@@ -236,6 +238,7 @@ purple_request_cpar_unref(PurpleRequestCommonParameters *cpar)
 	if (--cpar->ref_count > 0)
 		return cpar;
 
+	purple_request_cpar_set_extra_actions(cpar, NULL);
 	g_free(cpar);
 	return NULL;
 }
@@ -289,7 +292,7 @@ PurpleRequestIconType
 purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar)
 {
 	if (cpar == NULL)
-		return PURPLE_REQUEST_ICON_REQUEST;
+		return PURPLE_REQUEST_ICON_DEFAULT;
 
 	return cpar->icon_type;
 }
@@ -376,6 +379,49 @@ purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
 	if (user_data != NULL)
 		*user_data = cpar->help_data;
 	return cpar->help_cb;
+}
+
+void
+purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...)
+{
+	va_list args;
+	GSList *extra = NULL, *it;
+
+	it = cpar->extra_actions;
+	while (it != NULL) {
+		gchar *label = it->data;
+
+		g_free(label);
+		it = g_slist_next(it);
+		if (it == NULL)
+			break;
+		it = g_slist_next(it);
+	}
+
+	va_start(args, cpar);
+
+	while (TRUE) {
+		const gchar *label;
+		PurpleRequestFieldsCb cb;
+
+		label = va_arg(args, const gchar*);
+		if (label == NULL)
+			break;
+		cb = va_arg(args, PurpleRequestFieldsCb);
+
+		extra = g_slist_append(extra, g_strdup(label));
+		extra = g_slist_append(extra, cb);
+	}
+
+	va_end(args);
+
+	cpar->extra_actions = extra;
+}
+
+GSList *
+purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar)
+{
+	return cpar->extra_actions;
 }
 
 PurpleRequestFields *
@@ -2011,6 +2057,74 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 }
 
 void *
+purple_request_wait(void *handle, const char *title, const char *primary,
+	const char *secondary, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
+{
+	PurpleRequestUiOps *ops;
+
+	if (title == NULL)
+		title = _("Please wait");
+	if (primary == NULL)
+		primary = _("Please wait...");
+
+	ops = purple_request_get_ui_ops();
+
+	if (ops != NULL && ops->request_wait != NULL) {
+		PurpleRequestInfo *info;
+		gchar **tmp;
+
+		tmp = purple_request_strip_html(cpar, &primary, &secondary);
+
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_WAIT;
+		info->handle    = handle;
+		info->ui_handle = ops->request_wait(title, primary, secondary,
+			cancel_cb, cpar, user_data);
+
+		handles = g_list_append(handles, info);
+
+		g_strfreev(tmp);
+		purple_request_cpar_unref(cpar);
+		return info->ui_handle;
+	}
+
+	if (cpar == NULL)
+		cpar = purple_request_cpar_new();
+	if (purple_request_cpar_get_icon(cpar) == PURPLE_REQUEST_ICON_DEFAULT)
+		purple_request_cpar_set_icon(cpar, PURPLE_REQUEST_ICON_WAIT);
+
+	return purple_request_action(handle, title, primary, secondary,
+		PURPLE_DEFAULT_ACTION_NONE, cpar, user_data,
+		cancel_cb ? 1 : 0, _("Cancel"), cancel_cb);
+}
+
+static void
+purple_request_fields_strip_html(PurpleRequestFields *fields)
+{
+	GList *itg;
+
+	for (itg = fields->groups; itg != NULL; itg = g_list_next(itg)) {
+		PurpleRequestFieldGroup *group = itg->data;
+		GList *itf;
+
+		for (itf = group->fields; itf != NULL; itf = g_list_next(itf)) {
+			PurpleRequestField *field = itf->data;
+			gchar *new_label;
+
+			new_label = purple_request_strip_html_custom(
+				field->label);
+			if (g_strcmp0(new_label, field->label) == 0) {
+				g_free(new_label);
+				continue;
+			}
+			g_free(field->label);
+			field->label = new_label;
+		}
+	}
+}
+
+void *
 purple_request_fields(void *handle, const char *title, const char *primary,
 	const char *secondary, PurpleRequestFields *fields, const char *ok_text,
 	GCallback ok_cb, const char *cancel_text, GCallback cancel_cb,
@@ -2030,6 +2144,12 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 	}
 
 	ops = purple_request_get_ui_ops();
+
+	if (purple_request_cpar_is_html(cpar) &&
+		!((ops->features & PURPLE_REQUEST_FEATURE_HTML)))
+	{
+		purple_request_fields_strip_html(fields);
+	}
 
 	if (ops != NULL && ops->request_fields != NULL) {
 		PurpleRequestInfo *info;
