@@ -127,6 +127,7 @@ generic_response_start(PidginRequestData *data)
 
 	g_object_set_data(G_OBJECT(data->dialog),
 		"pidgin-window-is-closing", GINT_TO_POINTER(TRUE));
+	gtk_widget_set_visible(GTK_WIDGET(data->dialog), FALSE);
 }
 
 static void
