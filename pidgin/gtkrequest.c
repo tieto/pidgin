@@ -296,6 +296,21 @@ multifield_cancel_cb(GtkWidget *button, PidginRequestData *data)
 	purple_request_close(PURPLE_REQUEST_FIELDS, data);
 }
 
+static void
+multifield_extra_cb(GtkWidget *button, PidginRequestData *data)
+{
+	PurpleRequestFieldsCb cb;
+
+	generic_response_start(data);
+
+	cb = g_object_get_data(G_OBJECT(button), "extra-cb");
+
+	if (cb != NULL)
+		cb(data->user_data, data->u.multifield.fields);
+
+	purple_request_close(PURPLE_REQUEST_FIELDS, data);
+}
+
 static gboolean
 destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
 					  PidginRequestData *data)
@@ -410,11 +425,13 @@ pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
 	icon_type = purple_request_cpar_get_icon(cpar);
 	switch (icon_type)
 	{
+		case PURPLE_REQUEST_ICON_DEFAULT:
 		case PURPLE_REQUEST_ICON_REQUEST:
 			icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
 			break;
 		case PURPLE_REQUEST_ICON_DIALOG:
 		case PURPLE_REQUEST_ICON_INFO:
+		case PURPLE_REQUEST_ICON_WAIT: /* TODO: we need another icon */
 			icon_stock = PIDGIN_STOCK_DIALOG_INFO;
 			break;
 		case PURPLE_REQUEST_ICON_WARNING:
@@ -1051,12 +1068,16 @@ create_int_field(PurpleRequestField *field)
 }
 
 static GtkWidget *
-create_bool_field(PurpleRequestField *field)
+create_bool_field(PurpleRequestField *field,
+	PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *widget;
+	gchar *label;
 
-	widget = gtk_check_button_new_with_label(
+	label = pidgin_request_escape(cpar,
 		purple_request_field_get_label(field));
+	widget = gtk_check_button_new_with_label(label);
+	g_free(label);
 
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
 
@@ -1399,6 +1420,8 @@ pidgin_request_fields(const char *title, const char *primary,
 	char *primary_esc, *secondary_esc;
 	int total_fields = 0;
 	const gboolean compact = purple_request_cpar_is_compact(cpar);
+	GSList *extra_actions, *it;
+	size_t extra_actions_count, i;
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_FIELDS;
@@ -1406,6 +1429,9 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->u.multifield.fields = fields;
 
 	purple_request_fields_set_ui_data(fields, data);
+
+	extra_actions = purple_request_cpar_get_extra_actions(cpar);
+	extra_actions_count = g_slist_length(extra_actions) / 2;
 
 	data->cb_count = 2;
 	data->cbs = g_new0(GCallback, 2);
@@ -1435,6 +1461,17 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_show(img);
 
 	pidgin_request_add_help(GTK_DIALOG(win), cpar);
+
+	it = extra_actions;
+	for (i = 0; i < extra_actions_count; i++, it = it->next->next) {
+		const gchar *label = it->data;
+		PurpleRequestFieldsCb *cb = it->next->data;
+
+		button = pidgin_dialog_add_button(GTK_DIALOG(win),
+			text_to_stock(label), G_CALLBACK(multifield_extra_cb),
+			data);
+		g_object_set_data(G_OBJECT(button), "extra-cb", cb);
+	}
 
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
@@ -1597,7 +1634,7 @@ pidgin_request_fields(const char *title, const char *primary,
 				size_t col_offset = col_num * 2;
 				PurpleRequestFieldType type;
 				GtkWidget *widget = NULL;
-				const char *field_label;
+				gchar *field_label;
 
 				label = NULL;
 				field = fl->data;
@@ -1608,14 +1645,16 @@ pidgin_request_fields(const char *title, const char *primary,
 				}
 
 				type = purple_request_field_get_type(field);
-				field_label = purple_request_field_get_label(field);
+				field_label = pidgin_request_escape(cpar,
+					purple_request_field_get_label(field));
 
 				if (type != PURPLE_REQUEST_FIELD_BOOLEAN && field_label)
 				{
 					char *text = NULL;
 
 					if (field_label[strlen(field_label) - 1] != ':' &&
-						field_label[strlen(field_label) - 1] != '?')
+						field_label[strlen(field_label) - 1] != '?' &&
+						type != PURPLE_REQUEST_FIELD_LABEL)
 					{
 						text = g_strdup_printf("%s:", field_label);
 					}
@@ -1651,6 +1690,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					}
 
 					gtk_widget_show(label);
+					g_free(field_label);
 				}
 
 				widget = GTK_WIDGET(purple_request_field_get_ui_data(field));
@@ -1661,7 +1701,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 						widget = create_int_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
-						widget = create_bool_field(field);
+						widget = create_bool_field(field, cpar);
 					else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 						widget = create_choice_field(field, cpar);
 					else if (type == PURPLE_REQUEST_FIELD_LIST)
@@ -1971,10 +2011,11 @@ static PurpleRequestUiOps ops =
 	pidgin_request_input,
 	pidgin_request_choice,
 	pidgin_request_action,
+	NULL,
 	pidgin_request_fields,
 	pidgin_request_file,
-	pidgin_close_request,
 	pidgin_request_folder,
+	pidgin_close_request,
 	NULL,
 	NULL,
 	NULL,

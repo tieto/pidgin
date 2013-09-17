@@ -20,13 +20,15 @@ ggp_tcpsocket_connected(PurpleSocket *ps, const gchar *error, gpointer priv_gg)
 	if (!gg_socket_manager_connected(ps, priv_gg, fd)) {
 		purple_debug_error("gg", "socket not handled");
 		purple_socket_destroy(ps);
-		return;
 	}
 
 	if (info->inpa > 0)
 		purple_input_remove(info->inpa);
-	info->inpa = purple_input_add(fd, ggp_tcpsocket_inputcond_gg_to_purple(
-		info->session->check), ggp_async_login_handler, gc);
+	if (info->session->fd < 0)
+		return;
+	info->inpa = purple_input_add(info->session->fd,
+		ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+		ggp_async_login_handler, gc);
 }
 
 static void*

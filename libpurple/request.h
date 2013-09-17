@@ -64,6 +64,7 @@ typedef enum
 	PURPLE_REQUEST_INPUT = 0,  /**< Text input request.        */
 	PURPLE_REQUEST_CHOICE,     /**< Multiple-choice request.   */
 	PURPLE_REQUEST_ACTION,     /**< Action request.            */
+	PURPLE_REQUEST_WAIT,       /**< Please wait dialog.        */
 	PURPLE_REQUEST_FIELDS,     /**< Multiple fields request.   */
 	PURPLE_REQUEST_FILE,       /**< File open or save request. */
 	PURPLE_REQUEST_FOLDER      /**< Folder selection request.  */
@@ -95,8 +96,10 @@ typedef enum
 
 typedef enum
 {
-	PURPLE_REQUEST_ICON_REQUEST = 0,
+	PURPLE_REQUEST_ICON_DEFAULT = 0,
+	PURPLE_REQUEST_ICON_REQUEST,
 	PURPLE_REQUEST_ICON_DIALOG,
+	PURPLE_REQUEST_ICON_WAIT,
 	PURPLE_REQUEST_ICON_INFO,
 	PURPLE_REQUEST_ICON_WARNING,
 	PURPLE_REQUEST_ICON_ERROR
@@ -130,6 +133,11 @@ typedef struct
 		PurpleRequestCommonParameters *cpar, void *user_data,
 		size_t action_count, va_list actions);
 
+	/** @see purple_request_wait(). */
+	void *(*request_wait)(const char *title, const char *primary,
+		const char *secondary, GCallback cancel_cb,
+		PurpleRequestCommonParameters *cpar, void *user_data);
+
 	/** @see purple_request_fields(). */
 	void *(*request_fields)(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *fields,
@@ -142,12 +150,12 @@ typedef struct
 		gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
 
-	void (*close_request)(PurpleRequestType type, void *ui_handle);
-
 	/** @see purple_request_folder(). */
 	void *(*request_folder)(const char *title, const char *dirname,
 		GCallback ok_cb, GCallback cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
+
+	void (*close_request)(PurpleRequestType type, void *ui_handle);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -374,10 +382,36 @@ purple_request_cpar_set_help_cb(PurpleRequestCommonParameters *cpar,
  * @param cpar      The parameters set (may be @c NULL).
  * @param user_data The pointer to the variable, where user data (to be passed
  *                  to callback function) should be stored.
+ *
+ * @return The callback.
  */
 PurpleRequestHelpCb
 purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
 	gpointer *user_data);
+
+/**
+ * Sets extra actions for the PurpleRequestFields dialog.
+ *
+ * @param cpar The parameters set.
+ * @param ...  A list of actions. These are pairs of arguments. The first of
+ *             each pair is the <tt>char *</tt> label that appears on the
+ *             button. It should have an underscore before the letter you want
+ *             to use as the accelerator key for the button. The second of each
+ *             pair is the #PurpleRequestFieldsCb function to use when the
+ *             button is clicked. Should be terminated with the NULL label.
+ */
+void
+purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...);
+
+/**
+ * Gets extra actions for the PurpleRequestFields dialog.
+ *
+ * @param cpar The parameters set (may be @c NULL).
+ *
+ * @return A list of actions (pairs of arguments, as in setter).
+ */
+GSList *
+purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar);
 
 /*@}*/
 
@@ -1720,6 +1754,30 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 	const char *secondary, int default_action,
 	PurpleRequestCommonParameters *cpar, void *user_data,
 	size_t action_count, va_list actions);
+
+/**
+ * Displays a "please wait" dialog.
+ *
+ * @param handle      The plugin or connection handle.  For some things this
+ *                    is <em>extremely</em> important.  See the comments on
+ *                    purple_request_input().
+ * @param title       The title of the message, or @c NULL if it should have
+ *                    default title.
+ * @param primary     The main point of the message, or @c NULL if you're
+ *                    feeling enigmatic.
+ * @param secondary   Secondary information, or @c NULL if there is none.
+ * @param cancel_cb   The callback for the @c Cancel button, which may be
+ *                    @c NULL.
+ * @param cpar        The #PurpleRequestCommonParameters object, which gets
+ *                    unref'ed after this call.
+ * @param user_data   The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *
+purple_request_wait(void *handle, const char *title, const char *primary,
+	const char *secondary, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data);
 
 /**
  * Displays groups of fields for the user to fill in.
