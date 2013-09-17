@@ -275,6 +275,7 @@ update_plugin_list(void *data)
 				   0, purple_plugin_is_loaded(plug),
 				   1, desc,
 				   2, plug,
+				   3, purple_plugin_info_get_error(info),
 				   -1);
 		g_free(desc);
 	}
@@ -540,7 +541,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 	authorlist = purple_plugin_info_get_authors(info);
 	if (authorlist)
-		authors = g_strjoinv(", ", (gchar **)authorlist);
+		authors = g_strjoinv(",\n", (gchar **)authorlist);
 	gtk_label_set_text(plugin_authors, authors);
 	g_free(authors);
 
@@ -853,7 +854,7 @@ void pidgin_plugin_dialog_show()
 	gtk_widget_set_sensitive(pref_button, FALSE);
 	gtk_window_set_role(GTK_WINDOW(plugin_dialog), "plugins");
 
-	ls = gtk_list_store_new(3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+	ls = gtk_list_store_new(4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
 					     1, GTK_SORT_ASCENDING);
 
