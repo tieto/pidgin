@@ -382,10 +382,36 @@ purple_request_cpar_set_help_cb(PurpleRequestCommonParameters *cpar,
  * @param cpar      The parameters set (may be @c NULL).
  * @param user_data The pointer to the variable, where user data (to be passed
  *                  to callback function) should be stored.
+ *
+ * @return The callback.
  */
 PurpleRequestHelpCb
 purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
 	gpointer *user_data);
+
+/**
+ * Sets extra actions for the PurpleRequestFields dialog.
+ *
+ * @param cpar The parameters set.
+ * @param ...  A list of actions. These are pairs of arguments. The first of
+ *             each pair is the <tt>char *</tt> label that appears on the
+ *             button. It should have an underscore before the letter you want
+ *             to use as the accelerator key for the button. The second of each
+ *             pair is the #PurpleRequestFieldsCb function to use when the
+ *             button is clicked. Should be terminated with the NULL label.
+ */
+void
+purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...);
+
+/**
+ * Gets extra actions for the PurpleRequestFields dialog.
+ *
+ * @param cpar The parameters set (may be @c NULL).
+ *
+ * @return A list of actions (pairs of arguments, as in setter).
+ */
+GSList *
+purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar);
 
 /*@}*/
 

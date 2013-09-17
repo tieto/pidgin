@@ -173,6 +173,8 @@ struct _PurpleRequestCommonParameters
 
 	PurpleRequestHelpCb help_cb;
 	gpointer help_data;
+
+	GSList *extra_actions;
 };
 
 PurpleRequestCommonParameters *
@@ -236,6 +238,7 @@ purple_request_cpar_unref(PurpleRequestCommonParameters *cpar)
 	if (--cpar->ref_count > 0)
 		return cpar;
 
+	purple_request_cpar_set_extra_actions(cpar, NULL);
 	g_free(cpar);
 	return NULL;
 }
@@ -376,6 +379,49 @@ purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
 	if (user_data != NULL)
 		*user_data = cpar->help_data;
 	return cpar->help_cb;
+}
+
+void
+purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...)
+{
+	va_list args;
+	GSList *extra = NULL, *it;
+
+	it = cpar->extra_actions;
+	while (it != NULL) {
+		gchar *label = it->data;
+
+		g_free(label);
+		it = g_slist_next(it);
+		if (it == NULL)
+			break;
+		it = g_slist_next(it);
+	}
+
+	va_start(args, cpar);
+
+	while (TRUE) {
+		const gchar *label;
+		PurpleRequestFieldsCb cb;
+
+		label = va_arg(args, const gchar*);
+		if (label == NULL)
+			break;
+		cb = va_arg(args, PurpleRequestFieldsCb);
+
+		extra = g_slist_append(extra, g_strdup(label));
+		extra = g_slist_append(extra, cb);
+	}
+
+	va_end(args);
+
+	cpar->extra_actions = extra;
+}
+
+GSList *
+purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar)
+{
+	return cpar->extra_actions;
 }
 
 PurpleRequestFields *

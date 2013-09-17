@@ -296,6 +296,21 @@ multifield_cancel_cb(GtkWidget *button, PidginRequestData *data)
 	purple_request_close(PURPLE_REQUEST_FIELDS, data);
 }
 
+static void
+multifield_extra_cb(GtkWidget *button, PidginRequestData *data)
+{
+	PurpleRequestFieldsCb cb;
+
+	generic_response_start(data);
+
+	cb = g_object_get_data(G_OBJECT(button), "extra-cb");
+
+	if (cb != NULL)
+		cb(data->user_data, data->u.multifield.fields);
+
+	purple_request_close(PURPLE_REQUEST_FIELDS, data);
+}
+
 static gboolean
 destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
 					  PidginRequestData *data)
@@ -1401,6 +1416,8 @@ pidgin_request_fields(const char *title, const char *primary,
 	char *primary_esc, *secondary_esc;
 	int total_fields = 0;
 	const gboolean compact = purple_request_cpar_is_compact(cpar);
+	GSList *extra_actions, *it;
+	size_t extra_actions_count, i;
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_FIELDS;
@@ -1408,6 +1425,9 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->u.multifield.fields = fields;
 
 	purple_request_fields_set_ui_data(fields, data);
+
+	extra_actions = purple_request_cpar_get_extra_actions(cpar);
+	extra_actions_count = g_slist_length(extra_actions) / 2;
 
 	data->cb_count = 2;
 	data->cbs = g_new0(GCallback, 2);
@@ -1437,6 +1457,17 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_show(img);
 
 	pidgin_request_add_help(GTK_DIALOG(win), cpar);
+
+	it = extra_actions;
+	for (i = 0; i < extra_actions_count; i++, it = it->next->next) {
+		const gchar *label = it->data;
+		PurpleRequestFieldsCb *cb = it->next->data;
+
+		button = pidgin_dialog_add_button(GTK_DIALOG(win),
+			text_to_stock(label), G_CALLBACK(multifield_extra_cb),
+			data);
+		g_object_set_data(G_OBJECT(button), "extra-cb", cb);
+	}
 
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
