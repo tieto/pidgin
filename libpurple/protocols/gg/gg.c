@@ -414,6 +414,9 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 			info->session->check, info->session->state);
 
 	switch (info->session->state) {
+		case GG_STATE_ERROR:
+			purple_debug_info("gg", "GG_STATE_ERROR\n");
+			break;
 		case GG_STATE_RESOLVING:
 			purple_debug_info("gg", "GG_STATE_RESOLVING\n");
 			break;
@@ -549,6 +552,11 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 						_("Error connecting to master "
 						"server"));
+					break;
+				case GG_FAILURE_INTERNAL:
+					purple_connection_error(gc,
+						PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+						_("Internal error"));
 					break;
 				default:
 					purple_connection_error(gc,
