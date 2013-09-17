@@ -151,7 +151,7 @@ xmpp_iq_register_callback(PurpleConnection *pc, gchar *id, gpointer data,
 	g_hash_table_insert(iq_callbacks, id, cbdata);
 
 	if (!iq_listening) {
-		PurpleProtocol *protocol = purple_plugins_find_with_id(XMPP_PROTOCOL_ID);
+		PurpleProtocol *protocol = purple_protocols_find(XMPP_PROTOCOL_ID);
 		iq_listening = TRUE;
 		purple_signal_connect(protocol, "jabber-receiving-iq", my_plugin,
 		                      PURPLE_CALLBACK(xmpp_iq_received), NULL);
@@ -592,7 +592,7 @@ create_dialog(PurplePluginAction *action)
 }
 
 static GList *
-actions(PurplePlugin *plugin, gpointer context)
+actions(PurplePlugin *plugin)
 {
 	GList *l = NULL;
 	PurplePluginAction *action = NULL;
@@ -614,16 +614,42 @@ signed_off_cb(PurpleConnection *pc, gpointer unused)
 	g_hash_table_foreach_remove(iq_callbacks, remove_iq_callbacks_by_pc, pc);
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	PurplePlugin *xmpp_protocol;
+	const gchar * const authors[] = {
+		"Paul Aurich <paul@darkrain42.org>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         N_("XMPP Service Discovery"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol utility"),
+		"summary",      N_("Allows browsing and registering services."),
+		"description",  N_("This plugin is useful for registering with legacy "
+		                   "transports or other XMPP services."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"get-actions",  actions,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	PurpleProtocol *xmpp_protocol;
 
 	my_plugin = plugin;
 
-	xmpp_protocol = purple_plugins_find_with_id(XMPP_PROTOCOL_ID);
-	if (NULL == xmpp_protocol)
+	xmpp_protocol = purple_protocols_find(XMPP_PROTOCOL_ID);
+	if (NULL == xmpp_protocol) {
+		g_set_error(error, PLUGIN_DOMAIN, 0, _("XMPP protocol is not loaded."));
 		return FALSE;
+	}
 
 	purple_signal_connect(purple_connections_get_handle(), "signing-off",
 	                      plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
@@ -634,7 +660,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	g_hash_table_destroy(iq_callbacks);
 	iq_callbacks = NULL;
@@ -645,42 +671,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"gtk-xmppdisco",
-	N_("XMPP Service Discovery"),
-	DISPLAY_VERSION,
-	N_("Allows browsing and registering services."),
-	N_("This plugin is useful for registering with legacy transports or other "
-	   "XMPP services."),
-	"Paul Aurich <paul@darkrain42.org>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,               /**< destroy    */
-	NULL,               /**< ui_info    */
-	NULL,               /**< extra_info */
-	NULL,               /**< prefs_info */
-	actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(xmppdisco, init_plugin, info)
+PURPLE_PLUGIN_INIT(xmppdisco, plugin_query, plugin_load, plugin_unload);

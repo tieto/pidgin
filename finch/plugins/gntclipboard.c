@@ -24,7 +24,7 @@
 
 #define PLUGIN_ID           "gntclipboard"
 #define PLUGIN_DOMAIN       (g_quark_from_static_string(PLUGIN_ID))
-#define PLUGIN_STATIC_NAME	GntClipboard
+#define PLUGIN_STATIC_NAME  GntClipboard
 
 #ifdef HAVE_X11
 #include <X11/Xlib.h>

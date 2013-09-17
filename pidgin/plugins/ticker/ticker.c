@@ -315,8 +315,30 @@ signoff_cb(PurpleConnection *gc)
  *  EXPORTED FUNCTIONS
  */
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Syd Logan",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           TICKER_PLUGIN_ID,
+		"name",         N_("Buddy Ticker"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("User interface"),
+		"summary",      N_("A horizontal scrolling version of the buddy list."),
+		"description",  N_("A horizontal scrolling version of the buddy list."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	void *blist_handle = purple_blist_get_handle();
 
@@ -336,7 +358,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	TickerData *td;
 
@@ -356,46 +378,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	TICKER_PLUGIN_ID,                                 /**< id             */
-	N_("Buddy Ticker"),                               /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("A horizontal scrolling version of the buddy list."),
-	                                                  /**  description    */
-	N_("A horizontal scrolling version of the buddy list."),
-	"Syd Logan",                                      /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(ticker, init_plugin, info)
+PURPLE_PLUGIN_INIT(ticker, plugin_query, plugin_load, plugin_unload);

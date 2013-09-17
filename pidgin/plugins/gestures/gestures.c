@@ -168,50 +168,6 @@ visual_pref_cb(const char *name, PurplePrefType type, gconstpointer value,
 	gstroke_set_draw_strokes((gboolean) GPOINTER_TO_INT(value) );
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	PurpleConversation *conv;
-	GList *l;
-
-	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
-		conv = (PurpleConversation *)l->data;
-
-		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-			continue;
-
-		attach_signals(conv);
-	}
-
-	purple_signal_connect(purple_conversations_get_handle(),
-						"conversation-created",
-						plugin, PURPLE_CALLBACK(new_conv_cb), NULL);
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	PurpleConversation *conv;
-	PidginConversation *gtkconv;
-	GList *l;
-
-	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
-		conv = (PurpleConversation *)l->data;
-
-		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-			continue;
-
-		gtkconv = PIDGIN_CONVERSATION(conv);
-
-		gstroke_cleanup(gtkconv->webview);
-		gstroke_disable(gtkconv->webview);
-	}
-
-	return TRUE;
-}
-
 static GtkWidget *
 get_config_frame(PurplePlugin *plugin)
 {
@@ -256,64 +212,43 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	get_config_frame,
-	0, /* page_num (Reserved) */
+	const gchar * const authors[] = {
+		"Christian Hammond <chipx86@gnupdate.org>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return pidgin_plugin_info_new(
+		"id",                   GESTURES_PLUGIN_ID,
+		"name",                 N_("Mouse Gestures"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("User interface"),
+		"summary",              N_("Provides support for mouse gestures"),
+		"description",          N_("Allows support for mouse gestures in "
+		                           "conversation windows. Drag the middle "
+		                           "mouse button to perform certain actions:\n"
+		                           " • Drag down and then to the right to "
+		                           "close a conversation.\n"
+		                           " • Drag up and then to the left to switch "
+		                           "to the previous conversation.\n"
+		                           " • Drag up and then to the right to switch "
+		                           "to the next conversation."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  get_config_frame,
+		NULL
+	);
+}
 
-static PurplePluginInfo info =
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PurpleConversation *conv;
+	GList *l;
 
-	GESTURES_PLUGIN_ID,                               /**< id             */
-	N_("Mouse Gestures"),                             /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Provides support for mouse gestures"),
-	                                                  /**  description    */
-	N_("Allows support for mouse gestures in conversation windows. "
-	   "Drag the middle mouse button to perform certain actions:\n"
-	   " • Drag down and then to the right to close a conversation.\n"
-	   " • Drag up and then to the left to switch to the previous "
-	   "conversation.\n"
-	   " • Drag up and then to the right to switch to the next "
-	   "conversation."),
-	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	&ui_info,                                         /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
 	purple_prefs_add_none("/plugins/gtk");
 	purple_prefs_add_none("/plugins/gtk/X11");
 	purple_prefs_add_none("/plugins/gtk/X11/gestures");
@@ -321,6 +256,43 @@ init_plugin(PurplePlugin *plugin)
 
 	purple_prefs_connect_callback(plugin, "/plugins/gtk/X11/gestures/visual",
 								visual_pref_cb, NULL);
+
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
+		conv = (PurpleConversation *)l->data;
+
+		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+			continue;
+
+		attach_signals(conv);
+	}
+
+	purple_signal_connect(purple_conversations_get_handle(),
+						"conversation-created",
+						plugin, PURPLE_CALLBACK(new_conv_cb), NULL);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(gestures, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	PurpleConversation *conv;
+	PidginConversation *gtkconv;
+	GList *l;
+
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
+		conv = (PurpleConversation *)l->data;
+
+		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+			continue;
+
+		gtkconv = PIDGIN_CONVERSATION(conv);
+
+		gstroke_cleanup(gtkconv->webview);
+		gstroke_disable(gtkconv->webview);
+	}
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(gestures, plugin_query, plugin_load, plugin_unload);

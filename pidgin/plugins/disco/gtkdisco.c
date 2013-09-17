@@ -423,7 +423,7 @@ static void close_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 
 static gboolean account_filter_func(PurpleAccount *account)
 {
-	return purple_strequal(purple_account_get_protocol_id(account), XMPP_PLUGIN_ID);
+	return purple_strequal(purple_account_get_protocol_id(account), XMPP_PROTOCOL_ID);
 }
 
 static gboolean
