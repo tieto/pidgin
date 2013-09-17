@@ -2099,6 +2099,31 @@ purple_request_wait(void *handle, const char *title, const char *primary,
 		cancel_cb ? 1 : 0, _("Cancel"), cancel_cb);
 }
 
+static void
+purple_request_fields_strip_html(PurpleRequestFields *fields)
+{
+	GList *itg;
+
+	for (itg = fields->groups; itg != NULL; itg = g_list_next(itg)) {
+		PurpleRequestFieldGroup *group = itg->data;
+		GList *itf;
+
+		for (itf = group->fields; itf != NULL; itf = g_list_next(itf)) {
+			PurpleRequestField *field = itf->data;
+			gchar *new_label;
+
+			new_label = purple_request_strip_html_custom(
+				field->label);
+			if (g_strcmp0(new_label, field->label) == 0) {
+				g_free(new_label);
+				continue;
+			}
+			g_free(field->label);
+			field->label = new_label;
+		}
+	}
+}
+
 void *
 purple_request_fields(void *handle, const char *title, const char *primary,
 	const char *secondary, PurpleRequestFields *fields, const char *ok_text,
@@ -2119,6 +2144,12 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 	}
 
 	ops = purple_request_get_ui_ops();
+
+	if (purple_request_cpar_is_html(cpar) &&
+		!((ops->features & PURPLE_REQUEST_FEATURE_HTML)))
+	{
+		purple_request_fields_strip_html(fields);
+	}
 
 	if (ops != NULL && ops->request_fields != NULL) {
 		PurpleRequestInfo *info;

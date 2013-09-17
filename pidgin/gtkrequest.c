@@ -1068,12 +1068,16 @@ create_int_field(PurpleRequestField *field)
 }
 
 static GtkWidget *
-create_bool_field(PurpleRequestField *field)
+create_bool_field(PurpleRequestField *field,
+	PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *widget;
+	gchar *label;
 
-	widget = gtk_check_button_new_with_label(
+	label = pidgin_request_escape(cpar,
 		purple_request_field_get_label(field));
+	widget = gtk_check_button_new_with_label(label);
+	g_free(label);
 
 	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
 
@@ -1630,7 +1634,7 @@ pidgin_request_fields(const char *title, const char *primary,
 				size_t col_offset = col_num * 2;
 				PurpleRequestFieldType type;
 				GtkWidget *widget = NULL;
-				const char *field_label;
+				gchar *field_label;
 
 				label = NULL;
 				field = fl->data;
@@ -1641,14 +1645,16 @@ pidgin_request_fields(const char *title, const char *primary,
 				}
 
 				type = purple_request_field_get_type(field);
-				field_label = purple_request_field_get_label(field);
+				field_label = pidgin_request_escape(cpar,
+					purple_request_field_get_label(field));
 
 				if (type != PURPLE_REQUEST_FIELD_BOOLEAN && field_label)
 				{
 					char *text = NULL;
 
 					if (field_label[strlen(field_label) - 1] != ':' &&
-						field_label[strlen(field_label) - 1] != '?')
+						field_label[strlen(field_label) - 1] != '?' &&
+						type != PURPLE_REQUEST_FIELD_LABEL)
 					{
 						text = g_strdup_printf("%s:", field_label);
 					}
@@ -1684,6 +1690,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					}
 
 					gtk_widget_show(label);
+					g_free(field_label);
 				}
 
 				widget = GTK_WIDGET(purple_request_field_get_ui_data(field));
@@ -1694,7 +1701,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 						widget = create_int_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
-						widget = create_bool_field(field);
+						widget = create_bool_field(field, cpar);
 					else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 						widget = create_choice_field(field, cpar);
 					else if (type == PURPLE_REQUEST_FIELD_LIST)
