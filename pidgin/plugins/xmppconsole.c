@@ -33,6 +33,9 @@
 
 #include "gtk3compat.h"
 
+#define PLUGIN_ID      "gtk-xmpp"
+#define PLUGIN_DOMAIN  (g_quark_from_static_string(PLUGIN_ID))
+
 typedef struct {
 	PurpleConnection *gc;
 	GtkWidget *window;
@@ -204,7 +207,7 @@ message_send_cb(GtkWidget *widget, GdkEventKey *event, gpointer p)
 	gc = console->gc;
 
 	if (gc)
-		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_protocol(gc));
+		protocol = purple_connection_get_protocol(gc);
 
 	text = gtk_webview_get_body_text(GTK_WEBVIEW(widget));
 
@@ -706,36 +709,6 @@ signed_off_cb(PurpleConnection *gc)
 	}
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	PurplePlugin *jabber;
-
-	jabber = purple_protocols_find("jabber");
-	if (!jabber)
-		return FALSE;
-
-	xmpp_console_handle = plugin;
-	purple_signal_connect(jabber, "jabber-receiving-xmlnode", xmpp_console_handle,
-			    PURPLE_CALLBACK(purple_xmlnode_received_cb), NULL);
-	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
-			    PURPLE_CALLBACK(purple_xmlnode_sent_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signing-on",
-			    plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
-			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	if (console)
-		gtk_widget_destroy(console->window);
-	return TRUE;
-}
-
 static void
 console_destroy(GtkWidget *window, gpointer nul)
 {
@@ -843,7 +816,7 @@ create_console(PurplePluginAction *action)
 }
 
 static GList *
-actions(PurplePlugin *plugin, gpointer context)
+actions(PurplePlugin *plugin)
 {
 	GList *l = NULL;
 	PurplePluginAction *act = NULL;
@@ -854,47 +827,60 @@ actions(PurplePlugin *plugin, gpointer context)
 	return l;
 }
 
-
-static PurplePluginInfo info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                       /**< type           */
-	PIDGIN_PLUGIN_TYPE,                           /**< ui_requirement */
-	0,                                            /**< flags          */
-	NULL,                                         /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                      /**< priority       */
+	const gchar * const authors[] = {
+		"Sean Egan <seanegan@gmail.com>",
+		NULL
+	};
 
-	"gtk-xmpp",                                   /**< id             */
-	N_("XMPP Console"),                           /**< name           */
-	DISPLAY_VERSION,                              /**< version        */
-	                                              /**  summary        */
-	N_("Send and receive raw XMPP stanzas."),
-	                                              /**  description    */
-	N_("This plugin is useful for debugging XMPP servers or clients."),
-	"Sean Egan <seanegan@gmail.com>",             /**< author         */
-	PURPLE_WEBSITE,                               /**< homepage       */
-
-	plugin_load,                                  /**< load           */
-	plugin_unload,                                /**< unload         */
-	NULL,                                         /**< destroy        */
-
-	NULL,                                         /**< ui_info        */
-	NULL,                                         /**< extra_info     */
-	NULL,
-	actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
+	return pidgin_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         N_("XMPP Console"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol utility"),
+		"summary",      N_("Send and receive raw XMPP stanzas."),
+		"description",  N_("This plugin is useful for debugging XMPP servers "
+		                   "or clients."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"get-actions",  actions,
+		NULL
+	);
 }
 
-PURPLE_INIT_PLUGIN(xmppconsole, init_plugin, info)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	PurpleProtocol *jabber;
+
+	jabber = purple_protocols_find("jabber");
+	if (!jabber) {
+		g_set_error(error, PLUGIN_DOMAIN, 0, _("XMPP protocol is not loaded."));
+		return FALSE;
+	}
+
+	xmpp_console_handle = plugin;
+	purple_signal_connect(jabber, "jabber-receiving-xmlnode", xmpp_console_handle,
+			    PURPLE_CALLBACK(purple_xmlnode_received_cb), NULL);
+	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
+			    PURPLE_CALLBACK(purple_xmlnode_sent_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signing-on",
+			    plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	if (console)
+		gtk_widget_destroy(console->window);
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(xmppconsole, plugin_query, plugin_load, plugin_unload);

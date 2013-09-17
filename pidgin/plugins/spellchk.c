@@ -2107,48 +2107,6 @@ static void on_entry_changed(GtkEditable *editable, gpointer data)
 		non_empty(gtk_entry_get_text(GTK_ENTRY(good_entry))));
 }
 
-/*
- *  EXPORTED FUNCTIONS
- */
-
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	void *conv_handle = purple_conversations_get_handle();
-	GList *convs;
-
-	load_conf();
-
-	/* Attach to existing conversations */
-	for (convs = purple_conversations_get_all(); convs != NULL; convs = convs->next)
-	{
-		spellchk_new_attach((PurpleConversation *)convs->data);
-	}
-
-	purple_signal_connect(conv_handle, "conversation-created",
-			    plugin, PURPLE_CALLBACK(spellchk_new_attach), NULL);
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	GList *convs;
-
-	/* Detach from existing conversations */
-	for (convs = purple_conversations_get_all(); convs != NULL; convs = convs->next)
-	{
-		PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)convs->data);
-		spellchk *spell = g_object_get_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);
-
-		g_signal_handlers_disconnect_by_func(gtkconv->entry, message_send_cb, spell);
-		g_object_set_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY, NULL);
-	}
-
-	return TRUE;
-}
-
 static void whole_words_button_toggled(GtkToggleButton *complete_toggle, GtkToggleButton *case_toggle)
 {
 	gboolean enabled = gtk_toggle_button_get_active(complete_toggle);
@@ -2316,59 +2274,76 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info =
+/*
+ *  EXPORTED FUNCTIONS
+ */
+
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	get_config_frame,
-	0, /* page_num (Reserved) */
+	const gchar * const authors[] = {
+		"Eric Warmenhoven <eric@warmenhoven.org>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return pidgin_plugin_info_new(
+		"id",                   SPELLCHECK_PLUGIN_ID,
+		"name",                 N_("Text replacement"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Utility"),
+		"summary",              N_("Replaces text in outgoing messages according to user-defined rules."),
+		"description",          N_("Replaces text in outgoing messages according to user-defined rules."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  get_config_frame,
+		NULL
+	);
+}
 
-static PurplePluginInfo info =
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	SPELLCHECK_PLUGIN_ID,
-	N_("Text replacement"),
-	DISPLAY_VERSION,
-	N_("Replaces text in outgoing messages according to user-defined rules."),
-	N_("Replaces text in outgoing messages according to user-defined rules."),
-	"Eric Warmenhoven <eric@warmenhoven.org>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	&ui_info,
-	NULL,
-	NULL,
-	NULL,
+	void *conv_handle = purple_conversations_get_handle();
+	GList *convs;
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
 #if 0
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/gtk");
 	purple_prefs_add_none("/plugins/gtk/spellchk");
 	purple_prefs_add_bool("/plugins/gtk/spellchk/last_word_replace", TRUE);
 #endif
+
+	load_conf();
+
+	/* Attach to existing conversations */
+	for (convs = purple_conversations_get_all(); convs != NULL; convs = convs->next)
+	{
+		spellchk_new_attach((PurpleConversation *)convs->data);
+	}
+
+	purple_signal_connect(conv_handle, "conversation-created",
+			    plugin, PURPLE_CALLBACK(spellchk_new_attach), NULL);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(spellcheck, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	GList *convs;
+
+	/* Detach from existing conversations */
+	for (convs = purple_conversations_get_all(); convs != NULL; convs = convs->next)
+	{
+		PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)convs->data);
+		spellchk *spell = g_object_get_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);
+
+		g_signal_handlers_disconnect_by_func(gtkconv->entry, message_send_cb, spell);
+		g_object_set_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY, NULL);
+	}
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(spellcheck, plugin_query, plugin_load, plugin_unload);
