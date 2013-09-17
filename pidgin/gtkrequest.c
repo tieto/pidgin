@@ -410,11 +410,13 @@ pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
 	icon_type = purple_request_cpar_get_icon(cpar);
 	switch (icon_type)
 	{
+		case PURPLE_REQUEST_ICON_DEFAULT:
 		case PURPLE_REQUEST_ICON_REQUEST:
 			icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
 			break;
 		case PURPLE_REQUEST_ICON_DIALOG:
 		case PURPLE_REQUEST_ICON_INFO:
+		case PURPLE_REQUEST_ICON_WAIT: /* TODO: we need another icon */
 			icon_stock = PIDGIN_STOCK_DIALOG_INFO;
 			break;
 		case PURPLE_REQUEST_ICON_WARNING:
@@ -1971,10 +1973,11 @@ static PurpleRequestUiOps ops =
 	pidgin_request_input,
 	pidgin_request_choice,
 	pidgin_request_action,
+	NULL,
 	pidgin_request_fields,
 	pidgin_request_file,
-	pidgin_close_request,
 	pidgin_request_folder,
+	pidgin_close_request,
 	NULL,
 	NULL,
 	NULL,

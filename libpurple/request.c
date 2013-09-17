@@ -289,7 +289,7 @@ PurpleRequestIconType
 purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar)
 {
 	if (cpar == NULL)
-		return PURPLE_REQUEST_ICON_REQUEST;
+		return PURPLE_REQUEST_ICON_DEFAULT;
 
 	return cpar->icon_type;
 }
@@ -2008,6 +2008,49 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 
 	purple_request_cpar_unref(cpar);
 	return NULL;
+}
+
+void *
+purple_request_wait(void *handle, const char *title, const char *primary,
+	const char *secondary, GCallback cancel_cb,
+	PurpleRequestCommonParameters *cpar, void *user_data)
+{
+	PurpleRequestUiOps *ops;
+
+	if (title == NULL)
+		title = _("Please wait");
+	if (primary == NULL)
+		primary = _("Please wait...");
+
+	ops = purple_request_get_ui_ops();
+
+	if (ops != NULL && ops->request_wait != NULL) {
+		PurpleRequestInfo *info;
+		gchar **tmp;
+
+		tmp = purple_request_strip_html(cpar, &primary, &secondary);
+
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_WAIT;
+		info->handle    = handle;
+		info->ui_handle = ops->request_wait(title, primary, secondary,
+			cancel_cb, cpar, user_data);
+
+		handles = g_list_append(handles, info);
+
+		g_strfreev(tmp);
+		purple_request_cpar_unref(cpar);
+		return info->ui_handle;
+	}
+
+	if (cpar == NULL)
+		cpar = purple_request_cpar_new();
+	if (purple_request_cpar_get_icon(cpar) == PURPLE_REQUEST_ICON_DEFAULT)
+		purple_request_cpar_set_icon(cpar, PURPLE_REQUEST_ICON_WAIT);
+
+	return purple_request_action(handle, title, primary, secondary,
+		PURPLE_DEFAULT_ACTION_NONE, cpar, user_data,
+		cancel_cb ? 1 : 0, _("Cancel"), cancel_cb);
 }
 
 void *
