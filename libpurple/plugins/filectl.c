@@ -216,8 +216,30 @@ getarg(char *line, int which, int remain)
  *  EXPORTED FUNCTIONS
  */
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Eric Warmenhoven <eric@warmenhoven.org>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",           FILECTL_PLUGIN_ID,
+		"name",         N_("File Control"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Utility"),
+		"summary",      N_("Allows control by entering commands in a file."),
+		"description",  N_("Allows control by entering commands in a file."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	init_file();
 	check = purple_timeout_add_seconds(5, (GSourceFunc)check_file, NULL);
@@ -226,45 +248,11 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	purple_timeout_remove(check);
 
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	FILECTL_PLUGIN_ID,                                /**< id             */
-	N_("File Control"),                               /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Allows control by entering commands in a file."),
-	                                                  /**  description    */
-	N_("Allows control by entering commands in a file."),
-	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	PURPLE_WEBSITE,                                          /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL                                              /**< extra_info     */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(filectl, init_plugin, info)
+PURPLE_PLUGIN_INIT(filectl, plugin_query, plugin_load, plugin_unload);
