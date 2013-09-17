@@ -75,23 +75,6 @@ conv_placement_by_number(PidginConversation *conv)
 	}
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	pidgin_conv_placement_add_fnc("number", _("By conversation count"),
-							   &conv_placement_by_number);
-	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/placement");
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	pidgin_conv_placement_remove_fnc("number");
-	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/placement");
-	return TRUE;
-}
-
 static PurplePluginPrefFrame *
 get_plugin_pref_frame(PurplePlugin *plugin) {
 	PurplePluginPrefFrame *frame;
@@ -121,58 +104,50 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	return frame;
 }
 
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	0,   /* page_num (Reserved) */
-	NULL, /* frame (Reserved) */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,							/**< type			*/
-	PIDGIN_PLUGIN_TYPE,								/**< ui_requirement	*/
-	0,												/**< flags			*/
-	NULL,											/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
-	"gtk-extplacement",								/**< id				*/
-	N_("ExtPlacement"),								/**< name			*/
-	DISPLAY_VERSION,									/**< version		*/
-	N_("Extra conversation placement options."),	/**< summary		*/
-													/**  description	*/
-	N_("Restrict the number of conversations per windows,"
-	   " optionally separating IMs and Chats"),
-	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
-	PURPLE_WEBSITE,									/**< homepage		*/
-	plugin_load,									/**< load			*/
-	plugin_unload,									/**< unload			*/
-	NULL,											/**< destroy		*/
-	NULL,											/**< ui_info		*/
-	NULL,											/**< extra_info		*/
-	&prefs_info,									/**< prefs_info		*/
-	NULL,											/**< actions		*/
+	const gchar * const authors[] = {
+		"Stu Tomlinson <stu@nosnilmot.com>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return pidgin_plugin_info_new(
+		"id",                 "gtk-extplacement",
+		"name",               N_("ExtPlacement"),
+		"version",            DISPLAY_VERSION,
+		"category",           N_("User interface"),
+		"summary",            N_("Extra conversation placement options."),
+		"description",        N_("Restrict the number of conversations per "
+		                         "windows, optionally separating IMs and "
+		                         "Chats"),
+		"authors",            authors,
+		"website",            PURPLE_WEBSITE,
+		"abi-version",        PURPLE_ABI_VERSION,
+		"preferences-frame",  get_plugin_pref_frame,
+		NULL
+	);
+}
 
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	purple_prefs_add_none("/plugins/gtk/extplacement");
 	purple_prefs_add_int("/plugins/gtk/extplacement/placement_number", 4);
 	purple_prefs_add_bool("/plugins/gtk/extplacement/placement_number_separate", FALSE);
+
+	pidgin_conv_placement_add_fnc("number", _("By conversation count"),
+							   &conv_placement_by_number);
+	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/placement");
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(extplacement, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	pidgin_conv_placement_remove_fnc("number");
+	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/placement");
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(extplacement, plugin_query, plugin_load, plugin_unload);

@@ -833,14 +833,61 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Etan Reisner <deryni@eden.rutgers.edu>",
+		"Brian Tarricone <bjt23@cornell.edu>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",                   NOTIFY_PLUGIN_ID,
+		"name",                 N_("Message Notification"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Notification"),
+		"summary",              N_("Provides a variety of ways of notifying "
+		                           "you of unread messages."),
+		"description",          N_("Provides a variety of ways of notifying "
+		                           "you of unread messages."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  get_config_frame,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	GList *convs = purple_conversations_get_all();
 	void *conv_handle = purple_conversations_get_handle();
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
 
 	my_plugin = plugin;
+
+	purple_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/plugins/gtk/X11");
+	purple_prefs_add_none("/plugins/gtk/X11/notify");
+
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_im", TRUE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_chat", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_chat_nick", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_focused", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_string", FALSE);
+	purple_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_urgent", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_count", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_count_xprop", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_raise", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_present", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", TRUE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_click", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_type", TRUE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_send", TRUE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_switch", TRUE);
 
 	purple_signal_connect(gtk_conv_handle, "displayed-im-msg", plugin,
 	                    PURPLE_CALLBACK(message_displayed_cb), NULL);
@@ -874,7 +921,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	GList *convs = purple_conversations_get_all();
 
@@ -890,79 +937,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PidginPluginUiInfo ui_info =
-{
-	get_config_frame,
-	0, /* page_num (Reserved) */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	NOTIFY_PLUGIN_ID,                                 /**< id             */
-	N_("Message Notification"),                       /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Provides a variety of ways of notifying you of unread messages."),
-	                                                  /**  description    */
-	N_("Provides a variety of ways of notifying you of unread messages."),
-	                                                  /**< author         */
-	"Etan Reisner <deryni@eden.rutgers.edu>,\nBrian Tarricone <bjt23@cornell.edu>",
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	&ui_info,                                         /**< ui_info        */
-	NULL,                                              /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	purple_prefs_add_none("/plugins/gtk");
-	purple_prefs_add_none("/plugins/gtk/X11");
-	purple_prefs_add_none("/plugins/gtk/X11/notify");
-
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_im", TRUE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_chat", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_chat_nick", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_focused", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_string", FALSE);
-	purple_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_urgent", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_count", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_count_xprop", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_raise", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_present", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", TRUE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_click", FALSE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_type", TRUE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_send", TRUE);
-	purple_prefs_add_bool("/plugins/gtk/X11/notify/notify_switch", TRUE);
-}
-
-PURPLE_INIT_PLUGIN(notify, init_plugin, info)
+PURPLE_PLUGIN_INIT(notify, plugin_query, plugin_load, plugin_unload);

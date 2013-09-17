@@ -340,27 +340,6 @@ purplerc_set_font(GtkWidget *widget, gpointer data)
 	gtk_window_present(GTK_WINDOW(font_dialog));
 }
 
-static gboolean
-purplerc_plugin_load(PurplePlugin *plugin)
-{
-	purplerc_make_changes();
-
-	pref_callback = purple_prefs_connect_callback(plugin,
-	                                              "/plugins/gtk/purplerc",
-	                                              purplerc_pref_changed_cb,
-	                                              NULL);
-
-	return TRUE;
-}
-
-static gboolean
-purplerc_plugin_unload(PurplePlugin *plugin)
-{
-	purple_prefs_disconnect_callback(pref_callback);
-
-	return TRUE;
-}
-
 static GtkWidget *
 purplerc_make_interface_vbox(void)
 {
@@ -597,52 +576,33 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
-static PidginPluginUiInfo purplerc_ui_info =
+static PidginPluginInfo *
+purplerc_plugin_query(GError **error)
 {
-	purplerc_get_config_frame,
-	0, /* page_num (Reserved) */
+	const gchar * const authors[] = {
+		"Etan Reisner <deryni@pidgin.im>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return pidgin_plugin_info_new(
+		"id",                   "purplerc",
+		"name",                 N_("Pidgin GTK+ Theme Control"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Theming"),
+		"summary",              N_("Provides access to commonly used gtkrc "
+		                           "settings."),
+		"description",          N_("Provides access to commonly used gtkrc "
+		                           "settings."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  purplerc_get_config_frame,
+		NULL
+	);
+}
 
-static PurplePluginInfo purplerc_info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"purplerc",
-	N_("Pidgin GTK+ Theme Control"),
-	DISPLAY_VERSION,
-	N_("Provides access to commonly used gtkrc settings."),
-	N_("Provides access to commonly used gtkrc settings."),
-	"Etan Reisner <deryni@pidgin.im>",
-	PURPLE_WEBSITE,
-	purplerc_plugin_load,
-	purplerc_plugin_unload,
-	NULL,
-	&purplerc_ui_info,
-	NULL,
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-purplerc_init(PurplePlugin *plugin)
+static gboolean
+purplerc_plugin_load(PurplePlugin *plugin, GError **error)
 {
 	gsize i;
 
@@ -695,6 +655,23 @@ purplerc_init(PurplePlugin *plugin)
 	purple_prefs_remove("/plugins/gtk/purplerc/color/GtkWidget::secondary-cursor-color");
 	purple_prefs_remove("/plugins/gtk/purplerc/set/color/GtkWidget::cursor-color");
 	purple_prefs_remove("/plugins/gtk/purplerc/set/color/GtkWidget::secondary-cursor-color");
+
+	purplerc_make_changes();
+
+	pref_callback = purple_prefs_connect_callback(plugin,
+	                                              "/plugins/gtk/purplerc",
+	                                              purplerc_pref_changed_cb,
+	                                              NULL);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(purplerc, purplerc_init, purplerc_info)
+static gboolean
+purplerc_plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_prefs_disconnect_callback(pref_callback);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(purplerc, purplerc_plugin_query, purplerc_plugin_load, purplerc_plugin_unload);
