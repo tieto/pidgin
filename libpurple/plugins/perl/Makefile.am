@@ -5,7 +5,7 @@ perl_dirs = common
 plugin_LTLIBRARIES = perl.la
 
 perl_la_LDFLAGS = -module -avoid-version
-perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS)
+perl_la_LIBADD = $(GLIB_LIBS) $(GPLUGIN_LIBS) $(PERL_LIBS)
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -167,6 +167,7 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
 	$(PERL_CFLAGS) \
 	-Wno-float-equal
