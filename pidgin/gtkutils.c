@@ -2958,6 +2958,13 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		GtkWindow *window = GTK_WINDOW(windows->data);
 		windows = g_list_delete_link(windows, windows);
 
+		if (GPOINTER_TO_INT(g_object_get_data(G_OBJECT(window),
+			"pidgin-window-is-closing")))
+		{
+			parent = gtk_window_get_transient_for(window);
+			break;
+		}
+
 		if (GTK_WIDGET(window) == widget ||
 				!gtk_widget_get_visible(GTK_WIDGET(window))) {
 			continue;
@@ -2971,11 +2978,6 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 	}
 	if (windows)
 		g_list_free(windows);
-	if (GPOINTER_TO_INT(g_object_get_data(G_OBJECT(parent),
-		"pidgin-window-is-closing")))
-	{
-		parent = gtk_window_get_transient_for(parent);
-	}
 	if (parent) {
 		gtk_window_set_transient_for(GTK_WINDOW(widget), parent);
 		return TRUE;
