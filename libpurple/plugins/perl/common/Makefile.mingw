@@ -72,8 +72,8 @@ XS_FILES =		Account.xs \
 				Status.xs \
 				Stringref.xs \
 				Util.xs \
-				Whiteboard.xs \
 				Xfer.xs \
+				Whiteboard.xs \
 				XMLNode.xs
 
 #FALLBACKS =	const-c.inc const-xs.inc
