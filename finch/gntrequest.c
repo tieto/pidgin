@@ -815,6 +815,7 @@ static PurpleRequestUiOps uiops =
 	finch_request_choice,
 	finch_request_action,
 	NULL,
+	NULL,
 	finch_request_fields,
 	finch_request_file,
 	finch_request_folder,
