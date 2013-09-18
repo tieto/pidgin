@@ -63,13 +63,15 @@ C_SRC =	\
 			account.c \
 			accounts.c \
 			accountopt.c \
-			blist.c \
+			blistnode.c \
+			blistnodetypes.c \
+			buddylist.c \
 			buddyicon.c \
 			certificate.c \
 			cipher.c \
 			ciphers/aescipher.c \
-			ciphers/des3cipher.c \
 			ciphers/descipher.c \
+			ciphers/des3cipher.c \
 			ciphers/hmaccipher.c \
 			ciphers/md4hash.c \
 			ciphers/md5hash.c \
@@ -81,13 +83,14 @@ C_SRC =	\
 			cmds.c \
 			connection.c \
 			conversation.c \
+			conversationtypes.c \
 			conversations.c \
 			core.c \
 			debug.c \
 			dnsquery.c \
 			dnssrv.c \
 			eventloop.c \
-			ft.c \
+			hash.c \
 			http.c \
 			idle.c \
 			imgstore.c \
@@ -106,7 +109,7 @@ C_SRC =	\
 			pluginpref.c \
 			pounce.c \
 			prefs.c \
-			privacy.c \
+			presence.c \
 			proxy.c \
 			prpl.c \
 			purple-socket.c \
@@ -130,6 +133,7 @@ C_SRC =	\
 			util.c \
 			version.c \
 			whiteboard.c \
+			xfer.c \
 			xmlnode.c \
 			win32/giowin32.c \
 			win32/libc_interface.c \
