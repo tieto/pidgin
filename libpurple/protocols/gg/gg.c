@@ -954,7 +954,7 @@ static gssize
 ggp_get_max_message_size(PurpleConversation *conv)
 {
 	/* TODO: it may depend on protocol version or other factors */
-	return 1232;
+	return 1200; /* no more than 1232 */
 }
 
 static PurplePluginProtocolInfo prpl_info =

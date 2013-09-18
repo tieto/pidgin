@@ -2058,13 +2058,12 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 
 void *
 purple_request_wait(void *handle, const char *title, const char *primary,
-	const char *secondary, GCallback cancel_cb,
-	PurpleRequestCommonParameters *cpar, void *user_data)
+	const char *secondary, gboolean with_progress,
+	PurpleRequestCancelCb cancel_cb, PurpleRequestCommonParameters *cpar,
+	void *user_data)
 {
 	PurpleRequestUiOps *ops;
 
-	if (title == NULL)
-		title = _("Please wait");
 	if (primary == NULL)
 		primary = _("Please wait...");
 
@@ -2080,7 +2079,7 @@ purple_request_wait(void *handle, const char *title, const char *primary,
 		info->type      = PURPLE_REQUEST_WAIT;
 		info->handle    = handle;
 		info->ui_handle = ops->request_wait(title, primary, secondary,
-			cancel_cb, cpar, user_data);
+			with_progress, cancel_cb, cpar, user_data);
 
 		handles = g_list_append(handles, info);
 
@@ -2097,6 +2096,41 @@ purple_request_wait(void *handle, const char *title, const char *primary,
 	return purple_request_action(handle, title, primary, secondary,
 		PURPLE_DEFAULT_ACTION_NONE, cpar, user_data,
 		cancel_cb ? 1 : 0, _("Cancel"), cancel_cb);
+}
+
+void
+purple_request_wait_pulse(void *ui_handle)
+{
+	PurpleRequestUiOps *ops;
+
+	ops = purple_request_get_ui_ops();
+
+	if (ops == NULL || ops->request_wait_update == NULL)
+		return;
+
+	ops->request_wait_update(ui_handle, TRUE, 0.0);
+}
+
+void
+purple_request_wait_progress(void *ui_handle, gfloat fraction)
+{
+	PurpleRequestUiOps *ops;
+
+	ops = purple_request_get_ui_ops();
+
+	if (ops == NULL || ops->request_wait_update == NULL)
+		return;
+
+	if (fraction < 0.0 || fraction > 1.0) {
+		purple_debug_warning("request", "Fraction parameter out of "
+			"range: %f", fraction);
+		if (fraction < 0.0)
+			fraction = 0.0;
+		else /* if (fraction > 1.0) */
+			fraction = 1.0;
+	}
+
+	ops->request_wait_update(ui_handle, FALSE, fraction);
 }
 
 static void
