@@ -127,6 +127,7 @@ generic_response_start(PidginRequestData *data)
 
 	g_object_set_data(G_OBJECT(data->dialog),
 		"pidgin-window-is-closing", GINT_TO_POINTER(TRUE));
+	gtk_widget_set_visible(GTK_WIDGET(data->dialog), FALSE);
 }
 
 static void
@@ -977,8 +978,10 @@ create_string_field(PurpleRequestField *field)
 {
 	const char *value;
 	GtkWidget *widget;
+	gboolean is_editable;
 
 	value = purple_request_field_string_get_default_value(field);
+	is_editable = purple_request_field_string_is_editable(field);
 
 	if (purple_request_field_string_is_multiline(field))
 	{
@@ -1006,8 +1009,8 @@ create_string_field(PurpleRequestField *field)
 
 		gtk_widget_set_tooltip_text(textview, purple_request_field_get_tooltip(field));
 
-		gtk_text_view_set_editable(GTK_TEXT_VIEW(textview),
-			purple_request_field_string_is_editable(field));
+		gtk_text_view_set_editable(GTK_TEXT_VIEW(textview), is_editable);
+		gtk_widget_set_sensitive(textview, is_editable);
 
 		g_signal_connect(G_OBJECT(textview), "focus-out-event",
 						 G_CALLBACK(field_string_focus_out_cb), field);
@@ -1037,8 +1040,8 @@ create_string_field(PurpleRequestField *field)
 			gtk_entry_set_visibility(GTK_ENTRY(widget), FALSE);
 		}
 
-		gtk_editable_set_editable(GTK_EDITABLE(widget),
-			purple_request_field_string_is_editable(field));
+		gtk_editable_set_editable(GTK_EDITABLE(widget), is_editable);
+		gtk_widget_set_sensitive(widget, is_editable);
 
 		g_signal_connect(G_OBJECT(widget), "focus-out-event",
 						 G_CALLBACK(field_string_focus_out_cb), field);
