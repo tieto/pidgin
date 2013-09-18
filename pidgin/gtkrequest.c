@@ -66,6 +66,11 @@ typedef struct
 	{
 		struct
 		{
+			GtkProgressBar *progress_bar;
+		} wait;
+
+		struct
+		{
 			GtkWidget *entry;
 
 			gboolean multiline;
@@ -376,7 +381,8 @@ pidgin_request_escape(PurpleRequestCommonParameters *cpar, const gchar *text)
 }
 
 static GtkWidget *
-pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
+pidgin_request_dialog_icon(PurpleRequestType dialog_type,
+	PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *img = NULL;
 	PurpleRequestIconType icon_type;
@@ -427,6 +433,8 @@ pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
 	switch (icon_type)
 	{
 		case PURPLE_REQUEST_ICON_DEFAULT:
+			icon_stock = NULL;
+			break;
 		case PURPLE_REQUEST_ICON_REQUEST:
 			icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
 			break;
@@ -442,6 +450,23 @@ pidgin_request_dialog_icon(PurpleRequestCommonParameters *cpar)
 			icon_stock = PIDGIN_STOCK_DIALOG_ERROR;
 			break;
 		/* intentionally no default value */
+	}
+
+	if (icon_stock == NULL) {
+		switch (dialog_type) {
+			case PURPLE_REQUEST_INPUT:
+			case PURPLE_REQUEST_CHOICE:
+			case PURPLE_REQUEST_ACTION:
+			case PURPLE_REQUEST_FIELDS:
+			case PURPLE_REQUEST_FILE:
+			case PURPLE_REQUEST_FOLDER:
+				icon_stock = PIDGIN_STOCK_DIALOG_QUESTION;
+				break;
+			case PURPLE_REQUEST_WAIT:
+				icon_stock = PIDGIN_STOCK_DIALOG_INFO;
+				break;
+			/* intentionally no default value */
+		}
 	}
 
 	img = gtk_image_new_from_stock(icon_stock,
@@ -544,7 +569,7 @@ pidgin_request_input(const char *title, const char *primary,
 	                  hbox);
 
 	/* Dialog icon. */
-	img = pidgin_request_dialog_icon(cpar);
+	img = pidgin_request_dialog_icon(PURPLE_REQUEST_INPUT, cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -704,7 +729,7 @@ pidgin_request_choice(const char *title, const char *primary,
 	                  hbox);
 
 	/* Dialog icon. */
-	img = pidgin_request_dialog_icon(cpar);
+	img = pidgin_request_dialog_icon(PURPLE_REQUEST_CHOICE, cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -826,7 +851,7 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                  hbox);
 
-	img = pidgin_request_dialog_icon(cpar);
+	img = pidgin_request_dialog_icon(PURPLE_REQUEST_ACTION, cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -879,6 +904,138 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_widget_show_all(dialog);
 
 	return data;
+}
+
+static void
+wait_cancel_cb(GtkWidget *button, PidginRequestData *data)
+{
+	generic_response_start(data);
+
+	if (data->cbs[0] != NULL)
+		((PurpleRequestCancelCb)data->cbs[0])(data->user_data);
+
+	purple_request_close(PURPLE_REQUEST_FIELDS, data);
+}
+
+static void *
+pidgin_request_wait(const char *title, const char *primary,
+	const char *secondary, gboolean with_progress,
+	PurpleRequestCancelCb cancel_cb, PurpleRequestCommonParameters *cpar,
+	void *user_data)
+{
+	PidginRequestData *data;
+	GtkWidget *dialog;
+	GtkWidget *hbox, *vbox, *img, *label, *button;
+	gchar *primary_esc, *secondary_esc, *label_text;
+
+	data            = g_new0(PidginRequestData, 1);
+	data->type      = PURPLE_REQUEST_WAIT;
+	data->user_data = user_data;
+
+	data->cb_count = 1;
+	data->cbs = g_new0(GCallback, 1);
+	data->cbs[0] = (GCallback)cancel_cb;
+
+	data->dialog = dialog = gtk_dialog_new();
+
+	gtk_window_set_deletable(GTK_WINDOW(data->dialog), cancel_cb != NULL);
+
+	if (title != NULL)
+		gtk_window_set_title(GTK_WINDOW(dialog), title);
+	else
+		gtk_window_set_title(GTK_WINDOW(dialog), _("Please wait"));
+
+	/* Setup the dialog */
+	gtk_container_set_border_width(GTK_CONTAINER(dialog),
+		PIDGIN_HIG_BORDER / 2);
+	gtk_container_set_border_width(GTK_CONTAINER(
+		gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+		PIDGIN_HIG_BORDER / 2);
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(
+		GTK_DIALOG(dialog))), PIDGIN_HIG_BORDER);
+
+	/* Setup the main horizontal box */
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(
+		GTK_DIALOG(dialog))), hbox);
+
+	img = pidgin_request_dialog_icon(PURPLE_REQUEST_WAIT, cpar);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+
+	/* Cancel button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog),
+		text_to_stock(_("Cancel")), G_CALLBACK(wait_cancel_cb), data);
+	gtk_widget_set_can_default(button, FALSE);
+
+	/* Vertical box */
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+
+	pidgin_widget_decorate_account(hbox,
+		purple_request_cpar_get_account(cpar));
+
+	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
+
+	/* Descriptive label */
+	primary_esc = pidgin_request_escape(cpar, primary);
+	secondary_esc = pidgin_request_escape(cpar, secondary);
+	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" "
+		"size=\"larger\">%s</span>%s%s" : "%s%s%s"),
+		(primary ? primary_esc : ""),
+		((primary && secondary) ? "\n\n" : ""),
+		(secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
+
+	label = gtk_label_new(NULL);
+
+	gtk_label_set_markup(GTK_LABEL(label), label_text);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_selectable(GTK_LABEL(label), FALSE);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+
+	g_free(label_text);
+
+	if (with_progress) {
+		GtkProgressBar *bar;
+
+		bar = data->u.wait.progress_bar =
+			GTK_PROGRESS_BAR(gtk_progress_bar_new());
+		gtk_progress_bar_set_fraction(bar, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(bar),
+			FALSE, FALSE, 0);
+	}
+
+	/* Move focus out of cancel button. */
+	gtk_widget_set_can_default(img, TRUE);
+	gtk_widget_set_can_focus(img, TRUE);
+	gtk_widget_grab_focus(img);
+	gtk_widget_grab_default(img);
+
+	/* Show everything. */
+	pidgin_auto_parent_window(dialog);
+
+	gtk_widget_show_all(dialog);
+
+	return data;
+}
+
+static void
+pidgin_request_wait_update(void *ui_handle, gboolean pulse, gfloat fraction)
+{
+	GtkProgressBar *bar;
+	PidginRequestData *data = ui_handle;
+
+	g_return_if_fail(data->type == PURPLE_REQUEST_WAIT);
+
+	bar = data->u.wait.progress_bar;
+	if (pulse)
+		gtk_progress_bar_pulse(bar);
+	else
+		gtk_progress_bar_set_fraction(bar, fraction);
 }
 
 static void
@@ -1458,7 +1615,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_show(hbox);
 
 	/* Dialog icon. */
-	img = pidgin_request_dialog_icon(cpar);
+	img = pidgin_request_dialog_icon(PURPLE_REQUEST_FIELDS, cpar);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);
@@ -2014,7 +2171,8 @@ static PurpleRequestUiOps ops =
 	pidgin_request_input,
 	pidgin_request_choice,
 	pidgin_request_action,
-	NULL,
+	pidgin_request_wait,
+	pidgin_request_wait_update,
 	pidgin_request_fields,
 	pidgin_request_file,
 	pidgin_request_folder,

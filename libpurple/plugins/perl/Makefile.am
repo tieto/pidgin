@@ -47,7 +47,7 @@ common_sources = \
 	common/Connection.xs \
 	common/Conversation.xs \
 	common/Debug.xs \
-	common/FT.xs \
+	common/Hash.xs \
 	common/Idle.xs \
 	common/ImgStore.xs \
 	common/Log.xs \
@@ -58,7 +58,7 @@ common_sources = \
 	common/PluginPref.xs \
 	common/Pounce.xs \
 	common/Prefs.xs \
-	common/Privacy.xs \
+	common/Presence.xs \
 	common/Proxy.xs \
 	common/Prpl.xs \
 	common/Purple.pm \
@@ -75,6 +75,7 @@ common_sources = \
 	common/Stringref.xs \
 	common/Util.xs \
 	common/Whiteboard.xs \
+	common/Xfer.xs \
 	common/XMLNode.xs \
 	common/module.h \
 	common/typemap

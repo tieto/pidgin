@@ -105,6 +105,8 @@ typedef enum
 	PURPLE_REQUEST_ICON_ERROR
 } PurpleRequestIconType;
 
+typedef void (*PurpleRequestCancelCb)(gpointer);
+
 /**
  * Request UI operations.
  */
@@ -135,8 +137,16 @@ typedef struct
 
 	/** @see purple_request_wait(). */
 	void *(*request_wait)(const char *title, const char *primary,
-		const char *secondary, GCallback cancel_cb,
+		const char *secondary, gboolean with_progress,
+		PurpleRequestCancelCb cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
+
+	/**
+	 * @see purple_request_wait_pulse().
+	 * @see purple_request_wait_progress().
+	 */
+	void (*request_wait_update)(void *ui_handle, gboolean pulse,
+		gfloat fraction);
 
 	/** @see purple_request_fields(). */
 	void *(*request_fields)(const char *title, const char *primary,
@@ -1758,26 +1768,48 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 /**
  * Displays a "please wait" dialog.
  *
- * @param handle      The plugin or connection handle.  For some things this
- *                    is <em>extremely</em> important.  See the comments on
- *                    purple_request_input().
- * @param title       The title of the message, or @c NULL if it should have
- *                    default title.
- * @param primary     The main point of the message, or @c NULL if you're
- *                    feeling enigmatic.
- * @param secondary   Secondary information, or @c NULL if there is none.
- * @param cancel_cb   The callback for the @c Cancel button, which may be
- *                    @c NULL.
- * @param cpar        The #PurpleRequestCommonParameters object, which gets
- *                    unref'ed after this call.
- * @param user_data   The data to pass to the callback.
+ * @param handle        The plugin or connection handle.  For some things this
+ *                      is <em>extremely</em> important.  See the comments on
+ *                      purple_request_input().
+ * @param title         The title of the message, or @c NULL if it should have
+ *                      default title.
+ * @param primary       The main point of the message, or @c NULL if you're
+ *                      feeling enigmatic.
+ * @param secondary     Secondary information, or @c NULL if there is none.
+ * @param with_progress @c TRUE, if we want to display progress bar, @c FALSE
+ *                      otherwise
+ * @param cancel_cb     The callback for the @c Cancel button, which may be
+ *                      @c NULL.
+ * @param cpar          The #PurpleRequestCommonParameters object, which gets
+ *                      unref'ed after this call.
+ * @param user_data     The data to pass to the callback.
  *
  * @return A UI-specific handle.
  */
 void *
 purple_request_wait(void *handle, const char *title, const char *primary,
-	const char *secondary, GCallback cancel_cb,
-	PurpleRequestCommonParameters *cpar, void *user_data);
+	const char *secondary, gboolean with_progress,
+	PurpleRequestCancelCb cancel_cb, PurpleRequestCommonParameters *cpar,
+	void *user_data);
+
+/**
+ * Notifies the "please wait" dialog that some progress has been made, but you
+ * don't know how much.
+ *
+ * @param ui_handle The request UI handle.
+ */
+void
+purple_request_wait_pulse(void *ui_handle);
+
+/**
+ * Notifies the "please wait" dialog about progress has been made.
+ *
+ * @param ui_handle The request UI handle.
+ * @param fraction  The part of task that is done (between 0.0 and 1.0,
+ *                  inclusive).
+ */
+void
+purple_request_wait_progress(void *ui_handle, gfloat fraction);
 
 /**
  * Displays groups of fields for the user to fill in.
