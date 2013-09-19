@@ -103,5 +103,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
 	$(PERL_CFLAGS)

@@ -197,50 +197,47 @@ static void plugin_destroy(PurplePlugin *plugin)
 
 static PurplePluginLoaderInfo loader_info =
 {
-	NULL,
 	probe_mono_plugin,
 	load_mono_plugin,
 	unload_mono_plugin,
 	destroy_mono_plugin,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
 };
 
-static PurplePluginInfo info =
+static GPluginPluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_LOADER,
-	NULL,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	MONO_PLUGIN_ID,
-	N_("Mono Plugin Loader"),
-	DISPLAY_VERSION,
-	N_("Loads .NET plugins with Mono."),
-	N_("Loads .NET plugins with Mono."),
-	"Eoin Coffey <ecoffey@simla.colostate.edu>",
-	PURPLE_WEBSITE,
-	NULL,
-	NULL,
-	plugin_destroy,
-	NULL,
-	&loader_info,
-	NULL,
-	NULL,
+	const gchar * const authors[] = {
+		"Eoin Coffey <ecoffey@simla.colostate.edu>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return gplugin_plugin_info_new(
+		"id",             MONO_PLUGIN_ID,
+		"name",           N_("Mono Plugin Loader"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("Loader"),
+		"summary",        N_("Loads .NET plugins with Mono."),
+		"description",    N_("Loads .NET plugins with Mono."),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"internal",       TRUE,
+		"load-on-query",  TRUE,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
 
 static void init_plugin(PurplePlugin *plugin)
 {
@@ -249,4 +246,4 @@ static void init_plugin(PurplePlugin *plugin)
 	loader_info.exts = g_list_append(loader_info.exts, "dll");
 }
 
-PURPLE_INIT_PLUGIN(mono, init_plugin, info)
+PURPLE_PLUGIN_INIT(mono, plugin_query, plugin_load, plugin_unload);

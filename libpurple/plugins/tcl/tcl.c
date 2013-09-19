@@ -348,7 +348,39 @@ static void tcl_destroy_plugin(PurplePlugin *plugin)
 	return;
 }
 
-static gboolean tcl_load(PurplePlugin *plugin)
+static PurplePluginLoaderInfo tcl_loader_info =
+{
+	tcl_probe_plugin,
+	tcl_load_plugin,
+	tcl_unload_plugin,
+	tcl_destroy_plugin,
+};
+
+static GPluginPluginInfo *
+tcl_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Ethan Blanton <eblanton@cs.purdue.edu>",
+		NULL
+	};
+
+	return gplugin_plugin_info_new(
+		"id",             "core-tcl",
+		"name",           N_("Tcl Plugin Loader"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("Loader"),
+		"summary",        N_("Provides support for loading Tcl plugins"),
+		"description",    N_("Provides support for loading Tcl plugins"),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"internal",       TRUE,
+		"load-on-query",  TRUE,
+		NULL
+	);
+}
+
+static gboolean tcl_load(PurplePlugin *plugin, GError **error)
 {
 	if(!tcl_loaded)
 		return FALSE;
@@ -378,7 +410,7 @@ static gboolean tcl_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static gboolean tcl_unload(PurplePlugin *plugin)
+static gboolean tcl_unload(PurplePlugin *plugin, GError **error)
 {
 	g_hash_table_destroy(tcl_plugins);
 	tcl_plugins = NULL;
@@ -396,53 +428,6 @@ static gboolean tcl_unload(PurplePlugin *plugin)
 
 	return TRUE;
 }
-
-static PurplePluginLoaderInfo tcl_loader_info =
-{
-	NULL,
-	tcl_probe_plugin,
-	tcl_load_plugin,
-	tcl_unload_plugin,
-	tcl_destroy_plugin,
-
-	/* pidgin */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo tcl_info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_LOADER,
-	NULL,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"core-tcl",
-	N_("Tcl Plugin Loader"),
-	DISPLAY_VERSION,
-	N_("Provides support for loading Tcl plugins"),
-	N_("Provides support for loading Tcl plugins"),
-	"Ethan Blanton <eblanton@cs.purdue.edu>",
-	PURPLE_WEBSITE,
-	tcl_load,
-	tcl_unload,
-	NULL,
-	NULL,
-	&tcl_loader_info,
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
 
 #ifdef _WIN32
 typedef Tcl_Interp* (__cdecl* LPFNTCLCREATEINTERP)(void);
@@ -515,4 +500,4 @@ static void tcl_init_plugin(PurplePlugin *plugin)
 	tcl_loader_info.exts = g_list_append(tcl_loader_info.exts, "tcl");
 }
 
-PURPLE_INIT_PLUGIN(tcl, tcl_init_plugin, tcl_info)
+PURPLE_PLUGIN_INIT(tcl, tcl_query, tcl_load, tcl_unload);
