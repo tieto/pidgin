@@ -24,7 +24,7 @@ struct _ggp_chat_local_info
 	int local_id;
 	uint64_t id;
 	
-	PurpleConversation *conv;
+	PurpleChatConversation *conv;
 	PurpleConnection *gc;
 	
 	gboolean left;
@@ -112,7 +112,6 @@ static ggp_chat_local_info * ggp_chat_get(PurpleConnection *gc, uint64_t id)
 
 static void ggp_chat_open_conv(ggp_chat_local_info *chat)
 {
-	PurpleConvChat *pcchat;
 	int i;
 
 	if (chat->conv != NULL)
@@ -122,18 +121,17 @@ static void ggp_chat_open_conv(ggp_chat_local_info *chat)
 		ggp_chat_get_name_from_id(chat->id));
 	if (chat->previously_joined)
 	{
-		purple_conversation_write(chat->conv, NULL,
+		purple_conversation_write(PURPLE_CONVERSATION(chat->conv), NULL,
 			_("You have re-joined the chat"), PURPLE_MESSAGE_SYSTEM,
 			time(NULL));
 	}
 	chat->previously_joined = TRUE;
 
-	pcchat = purple_conversation_get_chat_data(chat->conv);
-	purple_conv_chat_clear_users(pcchat);
+	purple_chat_conversation_clear_users(chat->conv);
 	for (i = 0; i < chat->participants_count; i++)
-		purple_conv_chat_add_user(pcchat,
+		purple_chat_conversation_add_user(chat->conv,
 			ggp_uin_to_str(chat->participants[i]), NULL,
-			PURPLE_CBFLAGS_NONE, FALSE);
+			PURPLE_CHAT_USER_NONE, FALSE);
 }
 
 static ggp_chat_local_info * ggp_chat_get_local(PurpleConnection *gc,
@@ -242,8 +240,8 @@ static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin)
 	
 	if (!chat->conv)
 		return;
-	purple_conv_chat_add_user(purple_conversation_get_chat_data(chat->conv),
-		ggp_uin_to_str(uin), NULL, PURPLE_CBFLAGS_NONE, TRUE);
+	purple_chat_conversation_add_user(chat->conv,
+		ggp_uin_to_str(uin), NULL, PURPLE_CHAT_USER_NONE, TRUE);
 }
 
 static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
@@ -272,15 +270,14 @@ static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 
 	if (me == uin)
 	{
-		purple_conversation_write(chat->conv, NULL,
+		purple_conversation_write(PURPLE_CONVERSATION(chat->conv), NULL,
 			_("You have left the chat"), PURPLE_MESSAGE_SYSTEM,
 			time(NULL));
 		serv_got_chat_left(chat->gc, chat->local_id);
 		chat->conv = NULL;
 		chat->left = TRUE;
 	}
-	purple_conv_chat_remove_user(purple_conversation_get_chat_data(
-		chat->conv), ggp_uin_to_str(uin), NULL);
+	purple_chat_conversation_remove_user(chat->conv, ggp_uin_to_str(uin), NULL);
 }
 
 GList * ggp_chat_info(PurpleConnection *gc)
@@ -476,7 +473,7 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 	PurpleMessageFlags flags)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	PurpleConversation *conv;
+	PurpleChatConversation *conv;
 	ggp_chat_local_info *chat;
 	gboolean succ = TRUE;
 	const gchar *me;
@@ -490,11 +487,11 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 		return -1;
 	}
 	
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
+	conv = purple_conversations_find_chat_with_account(
 		ggp_chat_get_name_from_id(chat->id),
 		purple_connection_get_account(gc));
 
-	gg_msg = ggp_message_format_to_gg(conv, message);
+	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(conv), message);
 
 	if (gg_chat_send_message(info->session, chat->id, gg_msg, TRUE) < 0)
 		succ = FALSE;
@@ -526,8 +523,8 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 	ggp_chat_open_conv(chat);
 	if (who == me)
 	{
-		purple_conversation_write(chat->conv, ggp_uin_to_str(who),
-			message, PURPLE_MESSAGE_SEND, time);
+		purple_conversation_write(PURPLE_CONVERSATION(chat->conv),
+			ggp_uin_to_str(who), message, PURPLE_MESSAGE_SEND, time);
 	}
 	else
 	{
