@@ -49,7 +49,7 @@ static PurplePlugin *my_plugin = NULL;
 static int
 window_closed_cb()
 {
-	purple_plugin_unload(my_plugin);
+	purple_plugin_unload(my_plugin, NULL);
 
 	return FALSE;
 }
@@ -73,7 +73,7 @@ text_sent_cb(GtkEntry *entry)
 	purple_debug_misc("raw", "protocol_id = %s\n", protocol_id);
 
 	if (strcmp(protocol_id, "toc") == 0) {
-		int *a = (int *)gc->proto_data;
+		int *a = (int *)purple_connection_get_protocol_data(gc);
 		unsigned short seqno = htons(a[1]++ & 0xffff);
 		unsigned short len = htons(strlen(txt) + 1);
 		write(*a, "*\002", 2);
@@ -83,19 +83,19 @@ text_sent_cb(GtkEntry *entry)
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 
 	} else if (strcmp(protocol_id, "msn") == 0) {
-		MsnSession *session = gc->proto_data;
+		MsnSession *session = purple_connection_get_protocol_data(gc);
 		char buf[strlen(txt) + 3];
 
 		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
 		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
 
 	} else if (strcmp(protocol_id, "irc") == 0) {
-		write(*(int *)gc->proto_data, txt, strlen(txt));
-		write(*(int *)gc->proto_data, "\r\n", 2);
+		write(*(int *)purple_connection_get_protocol_data(gc), txt, strlen(txt));
+		write(*(int *)purple_connection_get_protocol_data(gc), "\r\n", 2);
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 
 	} else if (strcmp(protocol_id, "jabber") == 0) {
-		jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
+		jabber_send_raw((JabberStream *)purple_connection_get_protocol_data(gc), txt, -1);
 
 	} else {
 		purple_debug_error("raw", "Unknown protocol ID %s\n", protocol_id);
@@ -111,12 +111,38 @@ account_changed_cb(GtkWidget *dropdown, PurpleAccount *new_account,
 	account = new_account;
 }
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Eric Warmenhoven <eric@warmenhoven.org>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           RAW_PLUGIN_ID,
+		"name",         N_("Raw"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol utility"),
+		"summary",      N_("Lets you send raw input to text-based protocols."),
+		"description",  N_("Lets you send raw input to text-based protocols "
+		                   "(XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry "
+		                   "box to send. Watch the debug window."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	GtkWidget *hbox;
 	GtkWidget *entry;
 	GtkWidget *dropdown;
+
+	my_plugin = plugin;
 
 	/* Setup the window. */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -151,47 +177,15 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if (window)
 		gtk_widget_destroy(window);
 
 	window = NULL;
+	my_plugin = NULL;
 
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	RAW_PLUGIN_ID,
-	N_("Raw"),
-	DISPLAY_VERSION,
-	N_("Lets you send raw input to text-based protocols."),
-	N_("Lets you send raw input to text-based protocols (XMPP, MSN, IRC, "
-	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),
-	"Eric Warmenhoven <eric@warmenhoven.org>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	my_plugin = plugin;
-}
-
-PURPLE_INIT_PLUGIN(raw, init_plugin, info)
+PURPLE_PLUGIN_INIT(raw, plugin_query, plugin_load, plugin_unload);
