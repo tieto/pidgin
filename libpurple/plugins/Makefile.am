@@ -136,8 +136,6 @@ EXTRA_DIST = \
 	dbus-buddyicons-example.py \
 	filectl.c \
 	fortuneprofile.pl \
-	ipc-test-client.c \
-	ipc-test-server.c \
 	startup.py
 
 AM_CPPFLAGS = \
