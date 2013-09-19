@@ -333,62 +333,6 @@ load_timeout(gpointer data)
 	return FALSE;
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-#if 0
-	bonobo_activate();
-#endif
-
-	backup_blist_ui_ops = purple_blist_get_ui_ops();
-
-	blist_ui_ops = g_memdup(backup_blist_ui_ops, sizeof(PurpleBlistUiOps));
-	blist_ui_ops->request_add_buddy = request_add_buddy;
-
-	purple_blist_set_ui_ops(blist_ui_ops);
-
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-						plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
-
-	timer = g_timeout_add(1, load_timeout, plugin);
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	purple_blist_set_ui_ops(backup_blist_ui_ops);
-
-	g_free(blist_ui_ops);
-
-	backup_blist_ui_ops = NULL;
-	blist_ui_ops = NULL;
-
-	if (book_view != NULL)
-	{
-		e_book_view_stop(book_view);
-		g_object_unref(book_view);
-		book_view = NULL;
-	}
-
-	if (book != NULL)
-	{
-		g_object_unref(book);
-		book = NULL;
-	}
-
-	return TRUE;
-}
-
-static void
-plugin_destroy(PurplePlugin *plugin)
-{
-#if 0
-	bonobo_debug_shutdown();
-#endif
-}
-
 static void
 autoadd_toggled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 				   gpointer data)
@@ -512,56 +456,31 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	get_config_frame,	/**< get_config_frame */
-	0,			/**< page_num */
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	const gchar * const authors[] = {
+		"Christian Hammond <chipx86@chipx86.com>",
+		NULL
+	};
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	return pidgin_plugin_info_new(
+		"id",                   GEVOLUTION_PLUGIN_ID,
+		"name",                 N_("Evolution Integration"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Integration"),
+		"summary",              N_("Provides integration with Evolution."),
+		"description",          N_("Provides integration with Evolution."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  get_config_frame,
+		NULL
+	);
+}
 
-	GEVOLUTION_PLUGIN_ID,                             /**< id             */
-	N_("Evolution Integration"),                      /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Provides integration with Evolution."),
-	                                                  /**  description    */
-	N_("Provides integration with Evolution."),
-	"Christian Hammond <chipx86@chipx86.com>",        /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	plugin_destroy,                                   /**< destroy        */
-
-	&ui_info,                                         /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	/* TODO: Change to core-remote when possible. */
 	/* info.dependencies = g_list_append(info.dependencies, "gtk-remote"); */
@@ -584,7 +503,8 @@ init_plugin(PurplePlugin *plugin)
 	 * at all, so the above explanation is suspect. This is required even with
 	 * e-d-s >= 2.29.1 where bonobo is no longer in the picture.
 	 */
-	g_module_make_resident(plugin->handle);
+	g_module_make_resident(gplugin_native_plugin_get_module(
+			GPLUGIN_NATIVE_PLUGIN(plugin)));
 
 #if 0
 	if (!bonobo_init_full(NULL, NULL, bonobo_activation_orb_get(),
@@ -593,6 +513,53 @@ init_plugin(PurplePlugin *plugin)
 		purple_debug_error("evolution", "Unable to initialize bonobo.\n");
 	}
 #endif
+#if 0
+	bonobo_activate();
+#endif
+
+	backup_blist_ui_ops = purple_blist_get_ui_ops();
+
+	blist_ui_ops = g_memdup(backup_blist_ui_ops, sizeof(PurpleBlistUiOps));
+	blist_ui_ops->request_add_buddy = request_add_buddy;
+
+	purple_blist_set_ui_ops(blist_ui_ops);
+
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
+
+	timer = g_timeout_add(1, load_timeout, plugin);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(gevolution, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	purple_blist_set_ui_ops(backup_blist_ui_ops);
+
+	g_free(blist_ui_ops);
+
+	backup_blist_ui_ops = NULL;
+	blist_ui_ops = NULL;
+
+	if (book_view != NULL)
+	{
+		e_book_view_stop(book_view);
+		g_object_unref(book_view);
+		book_view = NULL;
+	}
+
+	if (book != NULL)
+	{
+		g_object_unref(book);
+		book = NULL;
+	}
+
+#if 0
+	bonobo_debug_shutdown();
+#endif
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(gevolution, plugin_query, plugin_load, plugin_unload);

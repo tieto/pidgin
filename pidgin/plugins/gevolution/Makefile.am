@@ -15,7 +15,7 @@ gevolution_la_SOURCES = \
 	new_person_dialog.c \
 	eds-utils.c
 
-gevolution_la_LIBADD = $(EVOLUTION_ADDRESSBOOK_LIBS) $(GTK_LIBS)
+gevolution_la_LIBADD = $(EVOLUTION_ADDRESSBOOK_LIBS) $(GPLUGIN_LIBS) $(GTK_LIBS)
 
 endif
 
