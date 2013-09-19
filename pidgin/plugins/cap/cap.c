@@ -33,9 +33,9 @@ static void generate_prediction(CapStatistics *statistics) {
 static double generate_prediction_for(PurpleBuddy *buddy) {
 	double prediction = 1.0f;
 	gboolean generated = FALSE;
-	gchar *buddy_name = buddy->name;
-	const gchar *protocol_id = purple_account_get_protocol_id(buddy->account);
-	const gchar *account_id = purple_account_get_username(buddy->account);
+	const gchar *buddy_name = purple_buddy_get_name(buddy);
+	const gchar *protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(buddy));
+	const gchar *account_id = purple_account_get_username(purple_buddy_get_account(buddy));
 	const gchar *status_id = purple_status_get_id(get_status_for(buddy));
 	time_t t = time(NULL);
 	struct tm *current_time = localtime(&t);
@@ -113,7 +113,7 @@ static CapStatistics * get_stats_for(PurpleBuddy *buddy) {
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	stats = g_hash_table_lookup(_buddy_stats, buddy->name);
+	stats = g_hash_table_lookup(_buddy_stats, purple_buddy_get_name(buddy));
 	if(!stats) {
 		stats = g_malloc0(sizeof(CapStatistics));
 		stats->last_message = -1;
@@ -121,7 +121,7 @@ static CapStatistics * get_stats_for(PurpleBuddy *buddy) {
 		stats->last_seen = -1;
 		stats->last_status_id = "";
 
-		g_hash_table_insert(_buddy_stats, g_strdup(buddy->name), stats);
+		g_hash_table_insert(_buddy_stats, g_strdup(purple_buddy_get_name(buddy)), stats);
 	} else {
 		/* This may actually be a different PurpleBuddy than what is in stats.
 		 * We replace stats->buddy to make sure we're looking at a valid pointer. */
@@ -290,9 +290,9 @@ insert_cap_status_count_failed(const char *buddy_name, const char *account, cons
 }
 
 static void insert_cap_success(CapStatistics *stats) {
-	gchar *buddy_name = stats->buddy->name;
-	const gchar *protocol_id = purple_account_get_protocol_id(stats->buddy->account);
-	const gchar *account_id = purple_account_get_username(stats->buddy->account);
+	gchar *buddy_name = purple_buddy_get_name(stats->buddy);
+	const gchar *protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(stats->buddy));
+	const gchar *account_id = purple_account_get_username(purple_buddy_get_account(stats->buddy));
 	const gchar *status_id = (stats->last_message_status_id) ?
 		stats->last_message_status_id :
 		purple_status_get_id(get_status_for(stats->buddy));
@@ -316,9 +316,9 @@ static void insert_cap_success(CapStatistics *stats) {
 }
 
 static void insert_cap_failure(CapStatistics *stats) {
-	gchar *buddy_name = stats->buddy->name;
-	const gchar *protocol_id = purple_account_get_protocol_id(stats->buddy->account);
-	const gchar *account_id = purple_account_get_username(stats->buddy->account);
+	gchar *buddy_name = purple_buddy_get_name(stats->buddy);
+	const gchar *protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(stats->buddy));
+	const gchar *account_id = purple_account_get_username(purple_buddy_get_account(stats->buddy));
 	const gchar *status_id = (stats->last_message_status_id) ?
 		stats->last_message_status_id :
 		purple_status_get_id(get_status_for(stats->buddy));
@@ -438,7 +438,7 @@ static void buddy_signed_off(PurpleBuddy *buddy) {
 
 /* drawing-tooltip */
 static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full) {
-	if(node->type == PURPLE_BLIST_BUDDY_NODE) {
+	if(PURPLE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy = PURPLE_BUDDY(node);
 		CapStatistics *stats = get_stats_for(buddy);
 		/* get the probability that this buddy will respond and add to the tooltip */
@@ -625,9 +625,9 @@ static void insert_status_change_from_purple_status(CapStatistics *statistics, P
 		return;
 
 	status_id = purple_status_get_id(status);
-	buddy_name = statistics->buddy->name;
-	protocol_id = purple_account_get_protocol_id(statistics->buddy->account);
-	account_id = purple_account_get_username(statistics->buddy->account);
+	buddy_name = purple_buddy_get_name(statistics->buddy);
+	protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(statistics->buddy));
+	account_id = purple_account_get_username(purple_buddy_get_account(statistics->buddy));
 
 	statistics->last_status_id = purple_status_get_id(status);
 
@@ -645,25 +645,6 @@ static void insert_word_count(const char *sender, const char *receiver, guint co
 }
 
 /* Purple plugin specific code */
-
-static gboolean plugin_load(PurplePlugin *plugin) {
-	_plugin_pointer = plugin;
-	_signals_connected = FALSE;
-
-	/* buddy_stats is a hashtable where strings are keys
-	 * and the keys are a buddies account id (PurpleBuddy.name).
-	 * keys/values are automatically deleted */
-	_buddy_stats = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, destroy_stats);
-
-	/* ? - Can't remember at the moment
-	 */
-	_my_offline_times = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-
-	if(create_database_connection()) {
-		add_plugin_functionality(plugin);
-	}
-	return TRUE;
-}
 
 static void add_plugin_functionality(PurplePlugin *plugin) {
 	if(_signals_connected)
@@ -749,21 +730,6 @@ static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_da
 	if(stats->last_message != -1 && stats->buddy != NULL) {
 		insert_cap_failure(stats);
 	}
-}
-
-static gboolean plugin_unload(PurplePlugin *plugin) {
-	purple_debug_info("cap", "CAP plugin unloading\n");
-
-	/* clean up memory allocations */
-	if(_buddy_stats) {
-		g_hash_table_foreach(_buddy_stats, write_stats_on_unload, NULL);
-		g_hash_table_destroy(_buddy_stats);
-	}
-
-	 /* close database connection */
-	 destroy_database_connection();
-
-	return TRUE;
 }
 
 static CapPrefsUI * create_cap_prefs_ui() {
@@ -868,7 +834,7 @@ static CapPrefsUI * create_cap_prefs_ui() {
 	return ui;
 }
 
-static void cap_prefs_ui_destroy_cb(GtkObject *object, gpointer user_data) {
+static void cap_prefs_ui_destroy_cb(GObject *object, gpointer user_data) {
 	CapPrefsUI *ui = user_data;
 	if(_db) {
 		add_plugin_functionality(_plugin_pointer);
@@ -879,39 +845,6 @@ static void cap_prefs_ui_destroy_cb(GtkObject *object, gpointer user_data) {
 static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_data) {
 	purple_prefs_set_int(user_data, gtk_spin_button_get_value_as_int(spinbutton));
 }
-
-static PidginPluginUiInfo ui_info = {
-	get_config_frame,
-	0 /* page_num (reserved) */,
-	NULL,NULL,NULL,NULL
-};
-
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,							/**< type		*/
-	PIDGIN_PLUGIN_TYPE,							/**< ui_requirement */
-	0,												/**< flags		*/
-	NULL,											/**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
-	CAP_PLUGIN_ID,									/**< id			*/
-	N_("Contact Availability Prediction"),				/**< name		*/
-	DISPLAY_VERSION,									/**< version		*/
-	N_("Contact Availability Prediction plugin."),	/**  summary		*/
-	N_("Displays statistical information about your buddies' availability"),
-	/**  description	*/
-	"Geoffrey Foster <geoffrey.foster@gmail.com>",	/**< author		*/
-	PURPLE_WEBSITE,									/**< homepage		*/
-	plugin_load,									/**< load		*/
-	plugin_unload,									/**< unload		*/
-	NULL,											/**< destroy		*/
-	&ui_info,										/**< ui_info		*/
-	NULL,											/**< extra_info	 */
-	NULL,											/**< prefs_info		*/
-	NULL,
-	NULL,NULL,NULL,NULL
-};
 
 static GtkWidget * get_config_frame(PurplePlugin *plugin) {
 	CapPrefsUI *ui = create_cap_prefs_ui();
@@ -924,11 +857,67 @@ static GtkWidget * get_config_frame(PurplePlugin *plugin) {
 	return ui->ret;
 }
 
-static void init_plugin(PurplePlugin *plugin) {
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Geoffrey Foster <geoffrey.foster@gmail.com>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",                   CAP_PLUGIN_ID,
+		"name",                 N_("Contact Availability Prediction"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Utility"),
+		"summary",              N_("Contact Availability Prediction plugin."),
+		"description",          N_("Displays statistical information about "
+		                           "your buddies' availability"),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  get_config_frame,
+		NULL
+	);
+}
+
+static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
 	purple_prefs_add_none("/plugins/gtk/cap");
 	purple_prefs_add_int("/plugins/gtk/cap/max_seen_difference", 1);
 	purple_prefs_add_int("/plugins/gtk/cap/max_msg_difference", 10);
 	purple_prefs_add_int("/plugins/gtk/cap/threshold", 5);
+
+	_plugin_pointer = plugin;
+	_signals_connected = FALSE;
+
+	/* buddy_stats is a hashtable where strings are keys
+	 * and the keys are a buddies account id (PurpleBuddy.name).
+	 * keys/values are automatically deleted */
+	_buddy_stats = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, destroy_stats);
+
+	/* ? - Can't remember at the moment
+	 */
+	_my_offline_times = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	if(create_database_connection()) {
+		add_plugin_functionality(plugin);
+	}
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(cap, init_plugin, info);
+static gboolean plugin_unload(PurplePlugin *plugin, GError **error) {
+	purple_debug_info("cap", "CAP plugin unloading\n");
+
+	/* clean up memory allocations */
+	if(_buddy_stats) {
+		g_hash_table_foreach(_buddy_stats, write_stats_on_unload, NULL);
+		g_hash_table_destroy(_buddy_stats);
+	}
+
+	 /* close database connection */
+	 destroy_database_connection();
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(cap, plugin_query, plugin_load, plugin_unload);
