@@ -487,55 +487,6 @@ static void update_existing_convs() {
 /*
  *  EXPORTED FUNCTIONS
  */
-static gboolean plugin_load(PurplePlugin *plugin) {
-
-	purple_signal_connect(purple_conversations_get_handle(),
-		"conversation-created", plugin,
-		PURPLE_CALLBACK(new_conversation_cb), NULL);
-
-	/* Set callback to remove window from the list, if the window is destroyed */
-	purple_signal_connect(purple_conversations_get_handle(),
-		"deleting-conversation", plugin,
-		PURPLE_CALLBACK(conversation_delete_cb), NULL);
-
-	purple_signal_connect(pidgin_conversations_get_handle(),
-		"conversation-dragging", plugin,
-		PURPLE_CALLBACK(set_conv_window_trans), NULL);
-
-	purple_signal_connect(purple_conversations_get_handle(),
-		"conversation-updated", plugin,
-		PURPLE_CALLBACK(conv_updated_cb), NULL);
-
-	update_existing_convs();
-
-	if (blist)
-		blist_created_cb(NULL, NULL);
-	else
-		purple_signal_connect(pidgin_blist_get_handle(),
-			"gtkblist-created", plugin,
-			PURPLE_CALLBACK(blist_created_cb), NULL);
-
-
-	return TRUE;
-}
-
-static gboolean plugin_unload(PurplePlugin *plugin) {
-	purple_debug_info(WINTRANS_PLUGIN_ID, "Unloading win2ktrans plugin\n");
-
-	remove_convs_wintrans(TRUE);
-
-	if (blist) {
-		if (purple_prefs_get_bool(OPT_WINTRANS_BL_ENABLED))
-			set_wintrans(blist, 0, FALSE, FALSE);
-
-		/* Remove the focus cbs */
-		g_signal_handlers_disconnect_by_func(G_OBJECT(blist),
-			G_CALLBACK(focus_blist_win_cb), blist);
-	}
-
-	return TRUE;
-}
-
 static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	GtkWidget *ret;
 	GtkWidget *imtransbox, *bltransbox;
@@ -656,56 +607,36 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	get_config_frame,
-	0, /* page_num (Reserved) */
+	const gchar * const authors[] = {
+		"Herman Bloggs <hermanator12002@yahoo.com>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return pidgin_plugin_info_new(
+		"id",                   WINTRANS_PLUGIN_ID,
+		"name",                 N_("Transparency"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("User interface"),
+		"summary",              N_("Variable Transparency for the buddy list "
+		                           "and conversations."),
+		"description",          N_("This plugin enables variable alpha "
+		                           "transparency on conversation windows and "
+		                           "the buddy list.\n\n"
+		                           "* Note: This plugin requires Win2000 or "
+		                           "greater."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  get_config_frame,
+		NULL
+	);
+}
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,		/**< type           */
-	PIDGIN_PLUGIN_TYPE,		/**< ui_requirement */
-	0,				/**< flags          */
-	NULL,				/**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,		/**< priority       */
-	WINTRANS_PLUGIN_ID,		/**< id             */
-	N_("Transparency"),		/**< name           */
-	DISPLAY_VERSION,		/**< version        */
-					/**  summary        */
-	N_("Variable Transparency for the buddy list and conversations."),
-					/**  description    */
-	N_("This plugin enables variable alpha transparency on conversation windows and the buddy list.\n\n"
-	"* Note: This plugin requires Win2000 or greater."),
-	"Herman Bloggs <hermanator12002@yahoo.com>",	/**< author         */
-	PURPLE_WEBSITE,			/**< homepage       */
-	plugin_load,			/**< load           */
-	plugin_unload,			/**< unload         */
-	NULL,				/**< destroy        */
-	&ui_info,			/**< ui_info        */
-	NULL,				/**< extra_info     */
-	NULL,				/**< prefs_info     */
-	NULL,				/**< actions        */
+static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
 	purple_prefs_add_none("/plugins/gtk/win32");
 	purple_prefs_add_none("/plugins/gtk/win32/wintrans");
 	purple_prefs_add_bool(OPT_WINTRANS_IM_ENABLED, FALSE);
@@ -717,6 +648,52 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_int(OPT_WINTRANS_BL_ALPHA, 255);
 	purple_prefs_add_bool(OPT_WINTRANS_BL_ONFOCUS, FALSE);
 	purple_prefs_add_bool(OPT_WINTRANS_BL_ONTOP, FALSE);
+
+	purple_signal_connect(purple_conversations_get_handle(),
+		"conversation-created", plugin,
+		PURPLE_CALLBACK(new_conversation_cb), NULL);
+
+	/* Set callback to remove window from the list, if the window is destroyed */
+	purple_signal_connect(purple_conversations_get_handle(),
+		"deleting-conversation", plugin,
+		PURPLE_CALLBACK(conversation_delete_cb), NULL);
+
+	purple_signal_connect(pidgin_conversations_get_handle(),
+		"conversation-dragging", plugin,
+		PURPLE_CALLBACK(set_conv_window_trans), NULL);
+
+	purple_signal_connect(purple_conversations_get_handle(),
+		"conversation-updated", plugin,
+		PURPLE_CALLBACK(conv_updated_cb), NULL);
+
+	update_existing_convs();
+
+	if (blist)
+		blist_created_cb(NULL, NULL);
+	else
+		purple_signal_connect(pidgin_blist_get_handle(),
+			"gtkblist-created", plugin,
+			PURPLE_CALLBACK(blist_created_cb), NULL);
+
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(wintrans, init_plugin, info)
+static gboolean plugin_unload(PurplePlugin *plugin, GError **error) {
+	purple_debug_info(WINTRANS_PLUGIN_ID, "Unloading win2ktrans plugin\n");
+
+	remove_convs_wintrans(TRUE);
+
+	if (blist) {
+		if (purple_prefs_get_bool(OPT_WINTRANS_BL_ENABLED))
+			set_wintrans(blist, 0, FALSE, FALSE);
+
+		/* Remove the focus cbs */
+		g_signal_handlers_disconnect_by_func(G_OBJECT(blist),
+			G_CALLBACK(focus_blist_win_cb), blist);
+	}
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(wintrans, plugin_query, plugin_load, plugin_unload);

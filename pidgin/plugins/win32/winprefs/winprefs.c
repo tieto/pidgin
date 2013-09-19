@@ -229,40 +229,6 @@ winprefs_set_blist_ontop(const char *pref, PurplePrefType type,
  *  EXPORTED FUNCTIONS
  */
 
-static gboolean plugin_load(PurplePlugin *plugin) {
-	handle = plugin;
-
-	/* blist docking init */
-	if(purple_blist_get_buddy_list() && PIDGIN_BLIST(purple_blist_get_buddy_list())
-			&& PIDGIN_BLIST(purple_blist_get_buddy_list())->window) {
-		blist_create_cb(purple_blist_get_buddy_list(), NULL);
-	}
-
-	/* This really shouldn't happen anymore generally, but if for some strange
-	   reason, the blist is recreated, we need to set it up again. */
-	purple_signal_connect(pidgin_blist_get_handle(), "gtkblist-created",
-		plugin, PURPLE_CALLBACK(blist_create_cb), NULL);
-
-	purple_signal_connect((void*)purple_get_core(), "quitting", plugin,
-		PURPLE_CALLBACK(purple_quit_cb), NULL);
-
-	purple_prefs_connect_callback(handle, PREF_BLIST_ON_TOP,
-		winprefs_set_blist_ontop, NULL);
-	purple_prefs_connect_callback(handle, PREF_DBLIST_DOCKABLE,
-		winprefs_set_blist_dockable, NULL);
-
-	return TRUE;
-}
-
-static gboolean plugin_unload(PurplePlugin *plugin) {
-	blist_set_dockable(FALSE);
-	blist_set_ontop(FALSE);
-
-	handle = NULL;
-
-	return TRUE;
-}
-
 static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -314,53 +280,31 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	get_config_frame,
-	0,
+	const gchar * const authors[] = {
+		"Herman Bloggs <hermanator12002@yahoo.com>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return pidgin_plugin_info_new(
+		"id",                   WINPREFS_PLUGIN_ID,
+		"name",                 N_("Windows Pidgin Options"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("User interface"),
+		"summary",              N_("Options specific to Pidgin for Windows."),
+		"description",          N_("Provides options specific to Pidgin for "
+		                           "Windows, such as buddy list docking."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"pidgin-config-frame",  get_config_frame,
+		NULL
+	);
+}
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	WINPREFS_PLUGIN_ID,
-	N_("Windows Pidgin Options"),
-	DISPLAY_VERSION,
-	N_("Options specific to Pidgin for Windows."),
-	N_("Provides options specific to Pidgin for Windows, such as buddy list docking."),
-	"Herman Bloggs <hermanator12002@yahoo.com>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	&ui_info,
-	NULL,
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
+static gboolean plugin_load(PurplePlugin *plugin, GError **error) {
 	purple_prefs_add_none("/plugins/gtk");
 	purple_prefs_add_none("/plugins/gtk/win32");
 	purple_prefs_add_none("/plugins/gtk/win32/winprefs");
@@ -382,7 +326,38 @@ init_plugin(PurplePlugin *plugin)
 	} else
 		purple_prefs_add_int(PREF_BLIST_ON_TOP, BLIST_TOP_NEVER);
 	purple_prefs_remove(PREF_CHAT_BLINK);
+
+	handle = plugin;
+
+	/* blist docking init */
+	if(purple_blist_get_buddy_list() && PIDGIN_BLIST(purple_blist_get_buddy_list())
+			&& PIDGIN_BLIST(purple_blist_get_buddy_list())->window) {
+		blist_create_cb(purple_blist_get_buddy_list(), NULL);
+	}
+
+	/* This really shouldn't happen anymore generally, but if for some strange
+	   reason, the blist is recreated, we need to set it up again. */
+	purple_signal_connect(pidgin_blist_get_handle(), "gtkblist-created",
+		plugin, PURPLE_CALLBACK(blist_create_cb), NULL);
+
+	purple_signal_connect((void*)purple_get_core(), "quitting", plugin,
+		PURPLE_CALLBACK(purple_quit_cb), NULL);
+
+	purple_prefs_connect_callback(handle, PREF_BLIST_ON_TOP,
+		winprefs_set_blist_ontop, NULL);
+	purple_prefs_connect_callback(handle, PREF_DBLIST_DOCKABLE,
+		winprefs_set_blist_dockable, NULL);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(winprefs, init_plugin, info)
+static gboolean plugin_unload(PurplePlugin *plugin, GError **error) {
+	blist_set_dockable(FALSE);
+	blist_set_ontop(FALSE);
 
+	handle = NULL;
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(winprefs, plugin_query, plugin_load, plugin_unload);
