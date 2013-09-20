@@ -154,6 +154,6 @@ struct transaction {
 	TransCallback callback;
 };
 
-GType simple_protocol_get_type(void);
+G_MODULE_EXPORT GType simple_protocol_get_type(void);
 
 #endif /* _PURPLE_SIMPLE_H */

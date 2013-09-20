@@ -207,7 +207,7 @@ typedef struct _MsimProtocolClass
 } MsimProtocolClass;
 
 /* Functions */
-GType msim_protocol_get_type(void);
+G_MODULE_EXPORT GType msim_protocol_get_type(void);
 
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
 

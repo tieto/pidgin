@@ -44,6 +44,6 @@ typedef struct _YahooProtocolClass
 /**
  * Returns the GType for the YahooProtocol object.
  */
-GType yahoo_protocol_get_type(void);
+G_MODULE_EXPORT GType yahoo_protocol_get_type(void);
 
 #endif /* _YAHOO_H_ */

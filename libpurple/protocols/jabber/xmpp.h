@@ -49,6 +49,6 @@ void xmpp_protocol_register_type(PurplePlugin *plugin);
 /**
  * Returns the GType for the XMPPProtocol object.
  */
-GType xmpp_protocol_get_type(void);
+G_MODULE_EXPORT GType xmpp_protocol_get_type(void);
 
 #endif /* _XMPP_H_ */

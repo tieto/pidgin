@@ -44,6 +44,6 @@ typedef struct _NullProtocolClass
 /**
  * Returns the GType for the NullProtocol object.
  */
-GType null_protocol_get_type(void);
+G_MODULE_EXPORT GType null_protocol_get_type(void);
 
 #endif /* _NULL_H_ */

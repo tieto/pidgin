@@ -44,6 +44,6 @@ typedef struct _NovellProtocolClass
 /**
  * Returns the GType for the NovellProtocol object.
  */
-GType novell_protocol_get_type(void);
+G_MODULE_EXPORT GType novell_protocol_get_type(void);
 
 #endif /* _NOVELL_H_ */

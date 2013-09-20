@@ -44,6 +44,6 @@ typedef struct _ZephyrProtocolClass
 /**
  * Returns the GType for the ZephyrProtocol object.
  */
-GType zephyr_protocol_get_type(void);
+G_MODULE_EXPORT GType zephyr_protocol_get_type(void);
 
 #endif /* _ZEPHYR_H_ */

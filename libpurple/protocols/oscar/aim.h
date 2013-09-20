@@ -49,6 +49,6 @@ void aim_protocol_register_type(PurplePlugin *plugin);
 /**
  * Returns the GType for the AIMProtocol object.
  */
-GType aim_protocol_get_type(void);
+G_MODULE_EXPORT GType aim_protocol_get_type(void);
 
 #endif /* _AIM_H_ */

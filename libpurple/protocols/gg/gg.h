@@ -82,7 +82,7 @@ typedef struct
 	gboolean not_a_friend;
 } ggp_buddy_data;
 
-GType ggp_protocol_get_type(void);
+G_MODULE_EXPORT GType ggp_protocol_get_type(void);
 
 ggp_buddy_data * ggp_buddy_get_data(PurpleBuddy *buddy);
 

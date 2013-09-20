@@ -49,6 +49,6 @@ void gtalk_protocol_register_type(PurplePlugin *plugin);
 /**
  * Returns the GType for the GTalkProtocol object.
  */
-GType gtalk_protocol_get_type(void);
+G_MODULE_EXPORT GType gtalk_protocol_get_type(void);
 
 #endif /* _GTALK_H_ */

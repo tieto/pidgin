@@ -48,6 +48,6 @@ typedef struct _mwProtocolClass
 /**
  * Returns the GType for the mwProtocol object.
  */
-GType mw_protocol_get_type(void);
+G_MODULE_EXPORT GType mw_protocol_get_type(void);
 
 #endif /* _SAMETIME_H_ */

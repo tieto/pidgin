@@ -49,7 +49,7 @@ void yahoojp_protocol_register_type(PurplePlugin *plugin);
 /**
  * Returns the GType for the YahooJPProtocol object.
  */
-GType yahoojp_protocol_get_type(void);
+G_MODULE_EXPORT GType yahoojp_protocol_get_type(void);
 
 void yahoojp_register_commands(void);
 void yahoojp_unregister_commands(void);

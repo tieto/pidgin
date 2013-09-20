@@ -132,7 +132,7 @@ struct irc_buddy {
 
 typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 
-GType irc_protocol_get_type(void);
+G_MODULE_EXPORT GType irc_protocol_get_type(void);
 
 int irc_send(struct irc_conn *irc, const char *buf);
 int irc_send_len(struct irc_conn *irc, const char *buf, int len);

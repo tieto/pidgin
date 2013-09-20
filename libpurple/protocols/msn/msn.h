@@ -167,7 +167,7 @@ typedef struct _MsnProtocolClass
 	PurpleProtocolClass parent_class;
 } MsnProtocolClass;
 
-GType msn_protocol_get_type(void);
+G_MODULE_EXPORT GType msn_protocol_get_type(void);
 
 void
 msn_set_public_alias(PurpleConnection *gc, const char *alias,

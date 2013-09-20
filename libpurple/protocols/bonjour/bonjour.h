@@ -70,7 +70,7 @@ typedef struct _BonjourData
 /**
  * Returns the GType for the BonjourProtocol object.
  */
-GType bonjour_protocol_get_type(void);
+G_MODULE_EXPORT GType bonjour_protocol_get_type(void);
 
 /**
  *  This will always be username@machinename

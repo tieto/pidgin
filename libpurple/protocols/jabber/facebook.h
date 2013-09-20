@@ -49,6 +49,6 @@ void facebook_protocol_register_type(PurplePlugin *plugin);
 /**
  * Returns the GType for the FacebookProtocol object.
  */
-GType facebook_protocol_get_type(void);
+G_MODULE_EXPORT GType facebook_protocol_get_type(void);
 
 #endif /* _FACEBOOK_H_ */

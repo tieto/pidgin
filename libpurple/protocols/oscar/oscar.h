@@ -244,7 +244,7 @@ typedef struct _OscarProtocolClass
 /**
  * Returns the GType for the OscarProtocol object.
  */
-GType oscar_protocol_get_type(void);
+G_MODULE_EXPORT GType oscar_protocol_get_type(void);
 
 /*
  * Byte Stream type. Sort of.

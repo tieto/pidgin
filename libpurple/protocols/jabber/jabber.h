@@ -330,7 +330,7 @@ extern GList *jabber_identities;
 /**
  * Returns the GType for the JabberProtocol object.
  */
-GType jabber_protocol_get_type(void);
+G_MODULE_EXPORT GType jabber_protocol_get_type(void);
 
 void jabber_stream_features_parse(JabberStream *js, PurpleXmlNode *packet);
 void jabber_process_packet(JabberStream *js, PurpleXmlNode **packet);

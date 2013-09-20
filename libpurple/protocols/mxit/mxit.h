@@ -214,7 +214,7 @@ struct MXitSession {
 	GHashTable*			iimages;					/* table which maps inline images (including emoticons) to purple's imgstore id's */
 };
 
-GType mxit_protocol_get_type(void);
+G_MODULE_EXPORT GType mxit_protocol_get_type(void);
 
 char* mxit_status_text( PurpleBuddy* buddy );
 void mxit_enable_signals( struct MXitSession* session );

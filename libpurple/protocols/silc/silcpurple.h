@@ -107,7 +107,7 @@ typedef struct SilcPurpleStruct {
 } *SilcPurple;
 
 
-GType silcpurple_protocol_get_type(void);
+G_MODULE_EXPORT GType silcpurple_protocol_get_type(void);
 
 void silc_say(SilcClient client, SilcClientConnection conn,
 	      SilcClientMessageType type, char *msg, ...);
