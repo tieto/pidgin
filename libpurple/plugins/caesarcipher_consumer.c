@@ -94,6 +94,10 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	debug_cipher(cipher, "An0ther input 4 cipher..");
 
+	g_object_unref(cipher);
+	purple_debug_info("caesarcipher_consumer", "Destroyed caesar cipher "
+	                                           "object.\n");
+
 	return TRUE;
 }
 
