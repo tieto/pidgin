@@ -283,6 +283,23 @@ update_plugin_list(void *data)
 	g_list_free(plugins);
 }
 
+static gboolean
+check_if_loaded(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+	PurplePlugin *plugin;
+	gtk_tree_model_get(model, iter, 2, &plugin, -1);
+	gtk_list_store_set(GTK_LIST_STORE(model), iter,
+					           0, purple_plugin_is_loaded(plugin),
+					           -1);
+	return FALSE;
+}
+
+static void
+update_loaded_plugins(GtkTreeModel *model)
+{
+	gtk_tree_model_foreach(model, check_if_loaded, NULL);
+}
+
 static void plugin_loading_common(PurplePlugin *plugin, GtkTreeView *view, gboolean loaded)
 {
 	GtkTreeIter iter;
@@ -475,9 +492,13 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 		g_error_free(error);
 	}
 
-	gtk_list_store_set(GTK_LIST_STORE (model), iter,
-	                   0, purple_plugin_is_loaded(plug),
-	                   -1);
+	if ((unload && purple_plugin_get_dependent_plugins(plug)) ||
+	   (!unload && purple_plugin_info_get_dependencies(info)))
+		update_loaded_plugins(model);
+	else
+		gtk_list_store_set(GTK_LIST_STORE (model), iter,
+			               0, purple_plugin_is_loaded(plug),
+			               -1);
 	g_free(iter);
 
 	pidgin_plugins_save();
