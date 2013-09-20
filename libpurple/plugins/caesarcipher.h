@@ -58,11 +58,11 @@ struct _CaesarCipherClass
 /*
  * Returns the GType for the CaesarCipher object.
  */
-GType caesar_cipher_get_type(void);
+G_MODULE_EXPORT GType caesar_cipher_get_type(void);
 
 /*
  * Creates a new CaesarCipher instance and returns it.
  */
-PurpleCipher *caesar_cipher_new(void);
+G_MODULE_EXPORT PurpleCipher *caesar_cipher_new(void);
 
 #endif /* _CAESAR_CIPHER_H_ */

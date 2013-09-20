@@ -53,6 +53,8 @@ caesar_shift(const guchar input[], size_t in_len, guchar output[], gint8 offset)
 		else if (input[i] >= 'A' && input[i] <= 'Z')
 			output[i] = (((input[i] - 'A') + offset) % 26) + 'A';
 	}
+
+	output[i] = '\0';
 }
 
 static void
@@ -69,7 +71,7 @@ caesar_cipher_encrypt(PurpleCipher *cipher, const guchar input[], size_t in_len,
 {
 	CaesarCipherPrivate *priv = CAESAR_CIPHER_GET_PRIVATE(cipher);
 
-	g_return_val_if_fail(out_size >= in_len, -1);
+	g_return_val_if_fail(out_size > in_len, -1);
 
 	caesar_shift(input, in_len, output, priv->offset);
 
@@ -82,7 +84,7 @@ caesar_cipher_decrypt(PurpleCipher *cipher, const guchar input[], size_t in_len,
 {
 	CaesarCipherPrivate *priv = CAESAR_CIPHER_GET_PRIVATE(cipher);
 
-	g_return_val_if_fail(out_size >= in_len, -1);
+	g_return_val_if_fail(out_size > in_len, -1);
 
 	caesar_shift(input, in_len, output, -priv->offset);
 
@@ -92,7 +94,7 @@ caesar_cipher_decrypt(PurpleCipher *cipher, const guchar input[], size_t in_len,
 static void
 caesar_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 {
-	caesar_cipher_set_offset(cipher, GPOINTER_TO_INT(key));
+	caesar_cipher_set_offset(cipher, len);
 }
 
 static const gchar*
@@ -160,7 +162,7 @@ caesar_cipher_class_init(PurpleCipherClass *klass)
  */
 PURPLE_DEFINE_TYPE(CaesarCipher, caesar_cipher, PURPLE_TYPE_CIPHER);
 
-PurpleCipher *
+G_MODULE_EXPORT PurpleCipher *
 caesar_cipher_new(void)
 {
 	return g_object_new(CAESAR_TYPE_CIPHER, NULL);
