@@ -290,30 +290,28 @@ struct _PurplePluginAction {
 /** A more general version of PURPLE_DEFINE_DYNAMIC_TYPE(). */
 #define PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, CODE) \
 static GType type_name##_type_id = 0; \
-GType type_name##_get_type(void) { \
+G_MODULE_EXPORT GType type_name##_get_type(void) { \
 	return type_name##_type_id; \
 } \
 void type_name##_register_type(PurplePlugin *); \
 void type_name##_register_type(PurplePlugin *plugin) { \
-	if (type_name##_type_id == 0) { \
-		GType type_id; \
-		const GTypeInfo type_info = { \
-			sizeof (TypeName##Class), \
-			(GBaseInitFunc) NULL, \
-			(GBaseFinalizeFunc) NULL, \
-			(GClassInitFunc) type_name##_class_init, \
-			(GClassFinalizeFunc) NULL, \
-			NULL, \
-			sizeof (TypeName), \
-			0, \
-			(GInstanceInitFunc) type_name##_init, \
-			NULL \
-		}; \
-		type_id = purple_plugin_register_type(plugin, TYPE_PARENT, #TypeName, \
-		                                      &type_info, (GTypeFlags) flags); \
-		type_name##_type_id = type_id; \
-		{ CODE ; } \
-	} \
+	GType type_id; \
+	const GTypeInfo type_info = { \
+		sizeof (TypeName##Class), \
+		(GBaseInitFunc) NULL, \
+		(GBaseFinalizeFunc) NULL, \
+		(GClassInitFunc) type_name##_class_init, \
+		(GClassFinalizeFunc) NULL, \
+		NULL, \
+		sizeof (TypeName), \
+		0, \
+		(GInstanceInitFunc) type_name##_init, \
+		NULL \
+	}; \
+	type_id = purple_plugin_register_type(plugin, TYPE_PARENT, #TypeName, \
+	                                      &type_info, (GTypeFlags) flags); \
+	type_name##_type_id = type_id; \
+	{ CODE ; } \
 }
 
 /** A convenience macro to ease dynamic interface addition. */
