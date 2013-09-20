@@ -26,6 +26,26 @@
 #include "internal.h"
 #include "caesarcipher.h"
 
+static void
+debug_cipher(PurpleCipher *cipher, const gchar input[])
+{
+	gchar ciphertext[512], plaintext[512];
+
+	purple_debug_info("caesarcipher_consumer", "Encrypting...");
+
+	purple_debug_info("caesarcipher_consumer", "INPUT:  %s\n", input);
+	purple_cipher_encrypt(cipher, (const guchar *)input, strlen(input),
+			(guchar *)ciphertext, 512);
+	purple_debug_info("caesarcipher_consumer", "OUTPUT: %s\n", ciphertext);
+
+	purple_debug_info("caesarcipher_consumer", "Decrypting...");
+
+	purple_debug_info("caesarcipher_consumer", "INPUT:  %s\n", ciphertext);
+	purple_cipher_decrypt(cipher, (const guchar *)ciphertext,
+			strlen(ciphertext), (guchar *)plaintext, 512);
+	purple_debug_info("caesarcipher_consumer", "OUTPUT: %s\n", plaintext);
+}
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -37,7 +57,7 @@ plugin_query(GError **error)
 	/* we need to ensure the object provider is loaded for its type to be
 	 * registered in the type system. */
 	const gchar * const dependencies[] = {
-		"core-cipher_provider",
+		"core-caesarcipher",
 		NULL
 	};
 
@@ -63,6 +83,17 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	PurpleCipher *cipher = caesar_cipher_new();
+	purple_debug_info("caesarcipher_consumer", "Created caesar cipher "
+	                                           "object.\n");
+
+	debug_cipher(cipher, "Input string for cipher!");
+
+	purple_cipher_set_key(cipher, NULL, 13);
+	purple_debug_info("caesarcipher_consumer", "Offset set to 13.\n");
+
+	debug_cipher(cipher, "An0ther input 4 cipher..");
+
 	return TRUE;
 }
 
