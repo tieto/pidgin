@@ -27,7 +27,7 @@
 #include "caesarcipher.h"
 
 static void
-debug_cipher(PurpleCipher *cipher, const gchar input[])
+debug_cipher(PurpleCipher *cipher, const gchar *input)
 {
 	gchar ciphertext[512], plaintext[512];
 

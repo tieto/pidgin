@@ -49,9 +49,11 @@ caesar_shift(const guchar input[], size_t in_len, guchar output[], gint8 offset)
 
 	for (i = 0; i < in_len; ++i) {
 		if (input[i] >= 'a' && input[i] <= 'z')
-			output[i] = (((input[i] - 'a') + offset) % 26) + 'a';
+			output[i] = (((input[i] - 'a') + offset + 26) % 26) + 'a';
 		else if (input[i] >= 'A' && input[i] <= 'Z')
-			output[i] = (((input[i] - 'A') + offset) % 26) + 'A';
+			output[i] = (((input[i] - 'A') + offset + 26) % 26) + 'A';
+		else
+			output[i] = input[i];
 	}
 
 	output[i] = '\0';
