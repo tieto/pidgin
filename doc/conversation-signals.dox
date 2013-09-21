@@ -296,8 +296,8 @@ void (*buddy_typing_stopped)(PurpleAccount *account, const char *name);
 
  @signaldef chat-user-joining
   @signalproto
-gboolean (*chat_buddy_joining)(PurpleConversation *conv, const char *name,
-                           PurpleConvChatBuddyFlags flags);
+gboolean (*chat_user_joining)(PurpleConversation *conv, const char *name,
+                           PurpleChatUserFlags flags);
   @endsignalproto
   @signaldesc
    Emitted when a buddy is joining a chat, before the list of
@@ -310,8 +310,8 @@ gboolean (*chat_buddy_joining)(PurpleConversation *conv, const char *name,
 
  @signaldef chat-user-joined
   @signalproto
-void (*chat_buddy_joined)(PurpleConversation *conv, const char *name,
-                          PurpleConvChatBuddyFlags flags,
+void (*chat_user_joined)(PurpleConversation *conv, const char *name,
+                          PurpleChatUserFlags flags,
                           gboolean new_arrival);
   @endsignalproto
   @signaldesc
@@ -336,9 +336,9 @@ void (*chat_join_failed)(PurpleConnection *gc, GHashTable *components);
 
  @signaldef chat-user-flags
   @signalproto
-void (*chat_buddy_flags)(PurpleChatUser *chatuser,
-                         PurpleConvChatBuddyFlags oldflags,
-                         PurpleConvChatBuddyFlags newflags);
+void (*chat_user_flags)(PurpleChatUser *chatuser,
+                         PurpleChatUserFlags oldflags,
+                         PurpleChatUserFlags newflags);
   @endsignalproto
   @signaldesc
    Emitted when a user in a chat changes flags.
@@ -349,7 +349,7 @@ void (*chat_buddy_flags)(PurpleChatUser *chatuser,
 
  @signaldef chat-user-leaving
   @signalproto
-gboolean (*chat_buddy_leaving)(PurpleConversation *conv, const char *name,
+gboolean (*chat_user_leaving)(PurpleConversation *conv, const char *name,
                            const char *reason);
   @endsignalproto
   @signaldesc
@@ -363,7 +363,7 @@ gboolean (*chat_buddy_leaving)(PurpleConversation *conv, const char *name,
 
  @signaldef chat-user-left
   @signalproto
-void (*chat_buddy_left)(PurpleConversation *conv, const char *name,
+void (*chat_user_left)(PurpleConversation *conv, const char *name,
                         const char *reason);
   @endsignalproto
   @signaldesc
