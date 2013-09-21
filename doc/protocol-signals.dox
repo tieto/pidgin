@@ -1,0 +1,31 @@
+/** @page protocol-signals Protocol Signals
+
+ @signals
+  @signal protocol-added
+  @signal protocol-removed
+ @endsignals
+
+ @see protocols.h
+
+ <hr>
+
+ @signaldef protocol-added
+  @signalproto
+void (*protocol_added)(PurpleProtocol *protocol);
+  @endsignalproto
+  @signaldesc
+   Emitted when a protocol is added.
+  @param protocol The protocol that was added.
+ @endsignaldef
+
+ @signaldef protocol-removed
+  @signalproto
+void (*protocol_removed)(PurpleProtocol *protocol);
+  @endsignalproto
+  @signaldesc
+   Emitted when a protocol is removed.
+  @param protocol The protocol that was removed.
+ @endsignaldef
+
+ */
+// vim: syntax=c.doxygen tw=75 et

@@ -38,6 +38,7 @@ EXTRA_DIST = \
 	plugin-i18n.dox \
 	plugin-ids.dox \
 	plugin-signals.dox \
+	protocol-signals.dox \
 	savedstatus-signals.dox \
 	sound-signals.dox \
 	the_penguin.txt \
