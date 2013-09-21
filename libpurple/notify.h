@@ -648,6 +648,18 @@ void purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info
 void *purple_notify_uri(void *handle, const char *uri);
 
 /**
+ * Checks, if passed UI handle is valid.
+ *
+ * @param ui_handle The UI handle.
+ * @param type      The pointer to variable, where request type may be stored
+ *                  (may be @c NULL).
+ *
+ * @return TRUE, if handle is valid, FALSE otherwise.
+ */
+gboolean
+purple_notify_is_valid_ui_handle(void *ui_handle, PurpleNotifyType *type);
+
+/**
  * Closes a notification.
  *
  * This should be used only by the UI operation functions and part of the

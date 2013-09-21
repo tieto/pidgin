@@ -722,6 +722,28 @@ purple_notify_uri(void *handle, const char *uri)
 	return NULL;
 }
 
+gboolean
+purple_notify_is_valid_ui_handle(void *ui_handle, PurpleNotifyType *type)
+{
+	GList *it;
+
+	if (ui_handle == NULL)
+		return FALSE;
+
+	for (it = handles; it != NULL; it = g_list_next(it)) {
+		PurpleNotifyInfo *info = it->data;
+
+		if (info->ui_handle != ui_handle)
+			continue;
+
+		if (type != NULL)
+			*type = info->type;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 void
 purple_notify_close(PurpleNotifyType type, void *ui_handle)
 {

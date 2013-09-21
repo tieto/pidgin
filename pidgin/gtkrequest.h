@@ -37,6 +37,16 @@ G_BEGIN_DECLS
  */
 PurpleRequestUiOps *pidgin_request_get_ui_ops(void);
 
+/**
+ * Gets dialog window for specified libpurple request.
+ *
+ * @param ui_handle The UI handle.
+ *
+ * @return The dialog window.
+ */
+GtkWindow *
+pidgin_request_get_dialog_window(void *ui_handle);
+
 G_END_DECLS
 
 #endif /* _PIDGINREQUEST_H_ */
