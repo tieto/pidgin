@@ -1755,23 +1755,21 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		case 0x07: { /* Someone has denied you authorization */
 			if (i >= 1) {
 				gchar *dialog_msg = g_strdup_printf(_("The user %u has denied your request to add them to your buddy list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
-				purple_notify_info(gc, NULL, _("ICQ authorization denied."),
-								 dialog_msg);
+				purple_notify_info(gc, NULL, _("ICQ authorization denied."), dialog_msg, purple_request_cpar_from_connection(gc));
 				g_free(dialog_msg);
 			}
 		} break;
 
 		case 0x08: { /* Someone has granted you authorization */
 			gchar *dialog_msg = g_strdup_printf(_("The user %u has granted your request to add them to your buddy list."), args->uin);
-			purple_notify_info(gc, NULL, "ICQ authorization accepted.",
-							 dialog_msg);
+			purple_notify_info(gc, NULL, "ICQ authorization accepted.", dialog_msg, purple_request_cpar_from_connection(gc));
 			g_free(dialog_msg);
 		} break;
 
 		case 0x09: { /* Message from the Godly ICQ server itself, I think */
 			if (i >= 5) {
 				gchar *dialog_msg = g_strdup_printf(_("You have received a special message\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
-				purple_notify_info(gc, NULL, "ICQ Server Message", dialog_msg);
+				purple_notify_info(gc, NULL, "ICQ Server Message", dialog_msg, purple_request_cpar_from_connection(gc));
 				g_free(dialog_msg);
 			}
 		} break;
@@ -1779,7 +1777,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		case 0x0d: { /* Someone has sent you a pager message from http://www.icq.com/your_uin */
 			if (i >= 6) {
 				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
-				purple_notify_info(gc, NULL, "ICQ Page", dialog_msg);
+				purple_notify_info(gc, NULL, "ICQ Page", dialog_msg, purple_request_cpar_from_connection(gc));
 				g_free(dialog_msg);
 			}
 		} break;
@@ -1787,7 +1785,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		case 0x0e: { /* Someone has emailed you at your_uin@pager.icq.com */
 			if (i >= 6) {
 				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ email from %s [%s]\n\nMessage is:\n%s"), msg2[0], msg2[3], msg2[5]);
-				purple_notify_info(gc, NULL, "ICQ Email", dialog_msg);
+				purple_notify_info(gc, NULL, "ICQ Email", dialog_msg, purple_request_cpar_from_connection(gc));
 				g_free(dialog_msg);
 			}
 		} break;
@@ -2035,8 +2033,10 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 	}
 
-	if (!purple_conv_present_error(userinfo->bn, account, buf))
-		purple_notify_error(od->gc, NULL, buf, NULL);
+	if (!purple_conv_present_error(userinfo->bn, account, buf)) {
+		purple_notify_error(od->gc, NULL, buf, NULL,
+			purple_request_cpar_from_connection(od->gc));
+	}
 	g_free(buf);
 
 	return 1;
@@ -2233,9 +2233,11 @@ static int purple_parse_motd(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 
 	purple_debug_misc("oscar",
 			   "MOTD: %s (%hu)\n", msg ? msg : "Unknown", id);
-	if (id < 4)
+	if (id < 4) {
 		purple_notify_warning(od->gc, NULL,
-							_("Your AIM connection may be lost."), NULL);
+			_("Your AIM connection may be lost."), NULL,
+			purple_request_cpar_from_connection(od->gc));
+	}
 
 	return 1;
 }
@@ -2642,7 +2644,8 @@ static void oscar_format_username(PurpleConnection *gc, const char *new_display_
 	username = purple_account_get_username(purple_connection_get_account(gc));
 	if (oscar_util_name_compare(username, new_display_name)) {
 		purple_notify_error(gc, NULL, _("The new formatting is invalid."),
-						  _("Username formatting can change only capitalization and whitespace."));
+						  _("Username formatting can change only capitalization and whitespace."),
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -2808,9 +2811,9 @@ static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFra
 	if (results == NULL) {
 		purple_debug_error("oscar", "purple_parse_searchreply: "
 						 "Unable to display the search results.\n");
-		purple_notify_error(gc, NULL,
-						  _("Unable to display the search results."),
-						  NULL);
+		purple_notify_error(gc, NULL, _("Unable to display the search "
+			"results."), NULL,
+			purple_request_cpar_from_connection(gc));
 		return 1;
 	}
 
@@ -2847,7 +2850,8 @@ static int purple_parse_searcherror(OscarData *od, FlapConnection *conn, FlapFra
 	va_end(ap);
 
 	buf = g_strdup_printf(_("No results found for email address %s"), email);
-	purple_notify_error(od->gc, NULL, buf, NULL);
+	purple_notify_error(od->gc, NULL, buf, NULL,
+		purple_request_cpar_from_connection(od->gc));
 	g_free(buf);
 
 	return 1;
@@ -2869,7 +2873,8 @@ static int purple_account_confirm(OscarData *od, FlapConnection *conn, FlapFrame
 	if (!status) {
 		g_snprintf(msg, sizeof(msg), _("You should receive an email asking to confirm %s."),
 				purple_account_get_username(purple_connection_get_account(gc)));
-		purple_notify_info(gc, NULL, _("Account Confirmation Requested"), msg);
+		purple_notify_info(gc, NULL, _("Account Confirmation Requested"),
+			msg, purple_request_cpar_from_connection(gc));
 	}
 
 	return 1;
@@ -2915,8 +2920,8 @@ static int purple_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr
 			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because the given address is invalid."), err);
 		else
 			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
-		purple_notify_error(gc, NULL,
-				_("Error Changing Account Info"), dialog_msg);
+		purple_notify_error(gc, NULL, _("Error Changing Account Info"),
+			dialog_msg, purple_request_cpar_from_connection(gc));
 		g_free(dialog_msg);
 		return 1;
 	}
@@ -2924,7 +2929,8 @@ static int purple_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	if (email != NULL) {
 		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"),
 						   purple_account_get_username(purple_connection_get_account(gc)), email);
-		purple_notify_info(gc, NULL, _("Account Info"), dialog_msg);
+		purple_notify_info(gc, NULL, _("Account Info"), dialog_msg,
+			purple_request_cpar_from_connection(gc));
 		g_free(dialog_msg);
 	}
 
@@ -3345,7 +3351,8 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 							_("You have probably requested to set your "
 							  "profile before the login procedure completed.  "
 							  "Your profile remains unset; try setting it "
-							  "again when you are fully connected."));
+							  "again when you are fully connected."),
+			purple_request_cpar_from_connection(gc));
 	}
 	else if (rawinfo != NULL)
 	{
@@ -3361,7 +3368,8 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 									 "The maximum profile length of %d bytes "
 									 "has been exceeded.  It has been truncated for you.",
 									 od->rights.maxsiglen), od->rights.maxsiglen);
-			purple_notify_warning(gc, NULL, _("Profile too long."), errstr);
+			purple_notify_warning(gc, NULL, _("Profile too long."),
+				errstr, purple_request_cpar_from_connection(gc));
 			g_free(errstr);
 		}
 	}
@@ -3395,7 +3403,9 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 										 "The maximum away message length of %d bytes "
 										 "has been exceeded.  It has been truncated for you.",
 										 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
-				purple_notify_warning(gc, NULL, _("Away message too long."), errstr);
+				purple_notify_warning(gc, NULL,
+					_("Away message too long."), errstr,
+					purple_request_cpar_from_connection(gc));
 				g_free(errstr);
 			}
 		}
@@ -3497,7 +3507,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, co
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), bname);
 		if (!purple_conv_present_error(bname, account, buf))
-			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
+			purple_notify_error(gc, NULL, _("Unable to Add"), buf, purple_request_cpar_from_connection(gc));
 		g_free(buf);
 
 		/* Remove from local list */
@@ -3634,7 +3644,8 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 					_("Unable to Retrieve Buddy List"),
 					_("The AIM servers were temporarily unable to send "
 					"your buddy list.  Your buddy list is not lost, and "
-					"will probably become available in a few minutes."));
+					"will probably become available in a few minutes."),
+					purple_request_cpar_from_connection(gc));
 		od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 		return 1;
 	}
@@ -3963,7 +3974,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				gchar *buf;
 				buf = g_strdup_printf(_("Unable to add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf, purple_request_cpar_from_connection(gc));
 				g_free(buf);
 			} break;
 
@@ -3978,7 +3989,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 				buf = g_strdup_printf(_("Unable to add the buddy %s for an unknown reason."),
 						(retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
-					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
+					purple_notify_error(gc, NULL, _("Unable to Add"), buf, purple_request_cpar_from_connection(gc));
 				g_free(buf);
 			} break;
 		}
@@ -4164,11 +4175,13 @@ static int purple_ssi_authreply(OscarData *od, FlapConnection *conn, FlapFrame *
 	if (reply) {
 		/* Granted */
 		dialog_msg = g_strdup_printf(_("The user %s has granted your request to add them to your buddy list."), nombre);
-		purple_notify_info(gc, NULL, _("Authorization Granted"), dialog_msg);
+		purple_notify_info(gc, NULL, _("Authorization Granted"),
+			dialog_msg, purple_request_cpar_from_connection(gc));
 	} else {
 		/* Denied */
 		dialog_msg = g_strdup_printf(_("The user %s has denied your request to add them to your buddy list for the following reason:\n%s"), nombre, msg ? msg : _("No reason given."));
-		purple_notify_info(gc, NULL, _("Authorization Denied"), dialog_msg);
+		purple_notify_info(gc, NULL, _("Authorization Denied"),
+			dialog_msg, purple_request_cpar_from_connection(gc));
 	}
 	g_free(dialog_msg);
 	g_free(nombre);

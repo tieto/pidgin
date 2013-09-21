@@ -822,7 +822,7 @@ adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 		purple_notify_error(gc, NULL,
 			_("The following users are missing from your addressbook"),
-			emails->str);
+			emails->str, purple_request_cpar_from_connection(gc));
 		g_string_free(emails, TRUE);
 		xmlnode_free(adl);
 	}
@@ -833,7 +833,8 @@ adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 			error, adl);
 		g_free(adl);
 
-		purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+		purple_notify_error(gc, NULL, _("Unable to add user"), reason,
+			purple_request_cpar_from_connection(gc));
 		g_free(reason);
 	}
 }
@@ -857,7 +858,8 @@ adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 		cmd->payload_cbdata = GINT_TO_POINTER(error);
 	} else {
 		char *reason = g_strdup_printf(_("Unknown error (%d)"), error);
-		purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+		purple_notify_error(gc, NULL, _("Unable to add user"), reason,
+			purple_request_cpar_from_connection(gc));
 		g_free(reason);
 	}
 }
@@ -880,7 +882,8 @@ rml_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 		error, adl);
 	g_free(adl);
 
-	purple_notify_error(gc, NULL, _("Unable to remove user"), reason);
+	purple_notify_error(gc, NULL, _("Unable to remove user"), reason,
+		purple_request_cpar_from_connection(gc));
 	g_free(reason);
 }
 
@@ -903,7 +906,8 @@ rml_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 		cmd->payload_cbdata = GINT_TO_POINTER(error);
 	} else {
 		char *reason = g_strdup_printf(_("Unknown error (%d)"), error);
-		purple_notify_error(gc, NULL, _("Unable to remove user"), reason);
+		purple_notify_error(gc, NULL, _("Unable to remove user"),
+			reason, purple_request_cpar_from_connection(gc));
 		g_free(reason);
 	}
 }
@@ -2249,7 +2253,10 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			purple_notify_info(purple_account_get_connection(cmdproc->session->account), NULL, buf, NULL);
+			purple_notify_info(purple_account_get_connection(
+				cmdproc->session->account),
+			NULL, buf, NULL, purple_request_cpar_from_account(
+				cmdproc->session->account));
 	}
 
 	g_hash_table_destroy(table);

@@ -519,7 +519,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 
 	if (!g_file_get_contents(filename, &filedata, &size, &error)) {
-		purple_notify_error(NULL, NULL, error->message, NULL);
+		purple_notify_error(NULL, NULL, error->message, NULL, NULL);
 
 		g_error_free(error);
 		g_free(filename);
@@ -533,7 +533,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 
 	if (id == 0) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
-		purple_notify_error(NULL, NULL, buf, NULL);
+		purple_notify_error(NULL, NULL, buf, NULL, NULL);
 
 		g_free(buf);
 		g_free(filename);

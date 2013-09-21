@@ -532,7 +532,7 @@ purple_plugin_load(PurplePlugin *plugin)
 			                      dep_name);
 
 			purple_notify_error(NULL, NULL,
-			                  _("Unable to load the plugin"), tmp);
+			                  _("Unable to load the plugin"), tmp, NULL);
 			g_free(tmp);
 
 			g_list_free(dep_list);
@@ -558,7 +558,7 @@ purple_plugin_load(PurplePlugin *plugin)
 				                      plugin->info->name);
 
 				purple_notify_error(NULL, NULL,
-				                 _("Unable to load your plugin."), tmp);
+				                 _("Unable to load your plugin."), tmp, NULL);
 				g_free(tmp);
 
 				g_list_free(dep_list);

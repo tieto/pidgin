@@ -63,7 +63,9 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 				"Could not join room, error=0x%04hx, chatnav_error=0x%04hx\n",
 				error, chatnav_error);
 		purple_notify_error(od->gc, NULL, _("Could not join chat room"),
-				chatnav_error == 0x0033 ? _("Invalid chat room name") : _("Unknown error"));
+			chatnav_error == 0x0033 ? _("Invalid chat room name") :
+				_("Unknown error"),
+			purple_request_cpar_from_connection(od->gc));
 
 		ret = 1;
 	}

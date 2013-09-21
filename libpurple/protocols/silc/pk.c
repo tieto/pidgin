@@ -138,7 +138,8 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 
 	if (silc_pkcs_get_type(public_key) != SILC_PKCS_SILC) {
 		purple_notify_error(gc, _("Verify Public Key"),
-				    _("Unsupported public key type"), NULL);
+				    _("Unsupported public key type"), NULL,
+				    purple_request_cpar_from_connection(gc));
 		if (completion)
 			completion(FALSE, context);
 		return;

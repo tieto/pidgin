@@ -526,7 +526,8 @@ intkeyring_unlock_ok(gpointer _unused,
 			_("Unlocking internal keyring"),
 			_("Selected encryption method is not supported."),
 			_("Most probably, your passwords were encrypted with "
-			"newer Pidgin/libpurple version, please update."));
+			"newer Pidgin/libpurple version, please update."),
+			NULL);
 		return;
 	}
 
@@ -904,7 +905,7 @@ intkeyring_apply_settings(void *notify_handle,
 	if (g_strcmp0(passphrase, passphrase2) != 0) {
 		purple_notify_error(notify_handle,
 			_("Internal keyring settings"),
-			_("Passphrases do not match"), NULL);
+			_("Passphrases do not match"), NULL, NULL);
 		return FALSE;
 	}
 
@@ -914,7 +915,7 @@ intkeyring_apply_settings(void *notify_handle,
 		purple_notify_error(notify_handle,
 			_("Internal keyring settings"),
 			_("You have to set up a Master password, if you want "
-			"to enable encryption"), NULL);
+			"to enable encryption"), NULL, NULL);
 		return FALSE;
 	}
 
@@ -924,7 +925,7 @@ intkeyring_apply_settings(void *notify_handle,
 		purple_notify_error(notify_handle,
 			_("Internal keyring settings"),
 			_("You don't need any master password, if you won't "
-			"enable passwords encryption"), NULL);
+			"enable passwords encryption"), NULL, NULL);
 		return FALSE;
 	}
 

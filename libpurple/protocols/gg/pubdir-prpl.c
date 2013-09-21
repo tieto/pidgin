@@ -671,7 +671,8 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 		(records_count == 0 && form->offset != 0))
 	{
 		purple_notify_error(gc, GGP_PUBDIR_SEARCH_TITLE,
-			_("Error while searching for buddies"), NULL);
+			_("Error while searching for buddies"), NULL,
+			purple_request_cpar_from_connection(gc));
 		ggp_pubdir_search_form_free(form);
 		return;
 	}
@@ -680,7 +681,8 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 	{
 		purple_notify_info(gc, GGP_PUBDIR_SEARCH_TITLE,
 			_("No matching users found"),
-			_("There are no users matching your search criteria."));
+			_("There are no users matching your search criteria."),
+			purple_request_cpar_from_connection(gc));
 		ggp_pubdir_search_form_free(form);
 		return;
 	}

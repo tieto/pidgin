@@ -67,9 +67,10 @@ struct _PurpleNotifySearchColumn
 };
 
 void *
-purple_notify_message(void *handle, PurpleNotifyMsgType type,
-					const char *title, const char *primary,
-					const char *secondary, PurpleNotifyCloseCallback cb, gpointer user_data)
+purple_notify_message(void *handle, PurpleNotifyMsgType type, const char *title,
+	const char *primary, const char *secondary,
+	PurpleRequestCommonParameters *cpar, PurpleNotifyCloseCallback cb,
+	gpointer user_data)
 {
 	PurpleNotifyUiOps *ops;
 
@@ -79,7 +80,7 @@ purple_notify_message(void *handle, PurpleNotifyMsgType type,
 
 	if (ops != NULL && ops->notify_message != NULL) {
 		void *ui_handle = ops->notify_message(type, title, primary,
-											  secondary);
+			secondary, cpar);
 		if (ui_handle != NULL) {
 
 			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);

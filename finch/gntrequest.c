@@ -391,7 +391,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 			!purple_request_fields_all_valid(fields))) {
 		purple_notify_error(button, _("Error"),
 			_("You must properly fill all the required fields."),
-			_("The required fields are underlined."));
+			_("The required fields are underlined."), NULL);
 		return;
 	}
 

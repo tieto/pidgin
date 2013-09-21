@@ -554,7 +554,8 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			if (g_hash_table_size(chat->members) == 0)
 				serv_got_chat_left(js->gc, chat->id);
 		}
-		purple_notify_error(js->gc, title, title, msg);
+		purple_notify_error(js->gc, title, title, msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(title);
 		g_free(msg);
 

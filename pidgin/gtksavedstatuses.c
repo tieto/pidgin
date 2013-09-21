@@ -726,7 +726,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		((dialog->original_title == NULL) || (strcmp(title, dialog->original_title))))
 	{
 		purple_notify_error(status_window, NULL, _("Title already in use.  You must "
-						  "choose a unique title."), NULL);
+						  "choose a unique title."), NULL, NULL);
 		return;
 	}
 

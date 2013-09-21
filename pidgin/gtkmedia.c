@@ -598,11 +598,13 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 	PurpleConversation *conv = purple_find_conversation_with_account(
 			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
 			purple_media_get_account(gtkmedia->priv->media));
-	if (conv != NULL)
+	if (conv != NULL) {
 		purple_conversation_write(conv, NULL, error,
-				PURPLE_MESSAGE_ERROR, time(NULL));
-	else
-		purple_notify_error(NULL, NULL, _("Media error"), error);
+			PURPLE_MESSAGE_ERROR, time(NULL));
+	} else {
+		purple_notify_error(NULL, NULL, _("Media error"), error,
+			purple_request_cpar_from_conversation(conv));
+	}
 
 	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
 			0, error);

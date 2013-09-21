@@ -102,6 +102,10 @@ purple_notify_message(handle, type, title, primary, secondary, cb, user_data)
 	const char *secondary
 	Purple::NotifyCloseCallback cb
 	gpointer user_data
+CODE:
+	RETVAL = purple_notify_message(handle, type, title, primary, secondary, NULL, cb, user_data);
+OUTPUT:
+	RETVAL
 
 void *
 purple_notify_searchresults(gc, title, primary, secondary, results, cb, user_data)

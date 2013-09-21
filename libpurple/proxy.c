@@ -2347,7 +2347,10 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
 		 purple_proxy_info_get_port(connect_data->gpi) <= 0)) {
 
-		purple_notify_error(NULL, NULL, _("Invalid proxy settings"), _("Either the host name or port number specified for your given proxy type is invalid."));
+		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
+			_("Either the host name or port number specified for "
+			"your given proxy type is invalid."),
+			purple_request_cpar_from_account(account));
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
@@ -2415,7 +2418,10 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
 		 purple_proxy_info_get_port(connect_data->gpi) <= 0)) {
 
-		purple_notify_error(NULL, NULL, _("Invalid proxy settings"), _("Either the host name or port number specified for your given proxy type is invalid."));
+		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
+			_("Either the host name or port number specified for "
+			"your given proxy type is invalid."),
+			purple_request_cpar_from_account(account));
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}

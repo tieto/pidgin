@@ -41,7 +41,9 @@ gboolean ggp_deprecated_setup_proxy(PurpleConnection *gc)
 	{
 		gg_proxy_enabled = 0;
 		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
-			_("Either the host name or port number specified for your given proxy type is invalid."));
+			_("Either the host name or port number specified for "
+			"your given proxy type is invalid."),
+			purple_request_cpar_from_connection(gc));
 		return FALSE;
 	}
 	

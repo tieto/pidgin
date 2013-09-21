@@ -97,7 +97,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 		purple_notify_error(NULL,
 				_("Certificate Import Error"),
 				_("X.509 certificate import failed"),
-				secondary);
+				secondary, NULL);
 		g_free(secondary);
 	}
 }
@@ -127,7 +127,7 @@ tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 		purple_notify_error(NULL,
 				    _("Certificate Export Error"),
 				    _("X.509 certificate export failed"),
-				    secondary);
+				    secondary, NULL);
 		g_free(secondary);
 	}
 
@@ -193,7 +193,7 @@ info_cert_cb(GntWidget *button, gpointer null)
 	secondary = g_strdup_printf(_("Common name: %s\n\nSHA1 fingerprint:\n%s"), subject, fpr_sha1_asc);
 
 	purple_notify_info(NULL,
-			   _("SSL Host Certificate"), primary, secondary);
+			   _("SSL Host Certificate"), primary, secondary, NULL);
 
 	g_free(primary);
 	g_free(secondary);

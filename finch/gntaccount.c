@@ -126,8 +126,10 @@ save_account_cb(AccountEditDialog *dialog)
 	if (value == NULL || *value == '\0')
 	{
 		purple_notify_error(NULL, _("Error"),
-				dialog->account ? _("Account was not modified") : _("Account was not added"),
-				_("Username of an account must be non-empty."));
+			dialog->account ? _("Account was not modified") :
+				_("Account was not added"),
+			_("Username of an account must be non-empty."),
+			purple_request_cpar_from_account(dialog->account));
 		return;
 	}
 
@@ -168,15 +170,25 @@ save_account_cb(AccountEditDialog *dialog)
 			const char *old = purple_account_get_protocol_id(account);
 			char *oldprpl;
 			if (strcmp(old, purple_plugin_get_id(plugin))) {
-				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
-						_("The account's protocol cannot be changed while it is connected to the server."));
+				purple_notify_error(NULL, _("Error"),
+					_("Account was not modified"),
+					_("The account's protocol cannot be "
+					"changed while it is connected to the "
+					"server."),
+					purple_request_cpar_from_account(
+						account));
 				return;
 			}
 
 			oldprpl = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 			if (g_utf8_collate(oldprpl, purple_normalize(account, username->str))) {
-				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
-						_("The account's username cannot be changed while it is connected to the server."));
+				purple_notify_error(NULL, _("Error"),
+					_("Account was not modified"),
+					_("The account's username cannot be "
+					"changed while it is connected to the "
+					"server."),
+					purple_request_cpar_from_account(
+						account));
 				g_free(oldprpl);
 				return;
 			}
@@ -557,8 +569,9 @@ edit_account_continue(PurpleAccount *account,
 	list = purple_plugins_get_protocols();
 	if (list == NULL) {
 		purple_notify_error(NULL, _("Error"),
-				_("There are no protocol plugins installed."),
-				_("(You probably forgot to 'make install'.)"));
+			_("There are no protocol plugins installed."),
+			_("(You probably forgot to 'make install'.)"),
+			purple_request_cpar_from_account(account));
 		return;
 	}
 
@@ -966,7 +979,8 @@ notify_added(PurpleAccount *account, const char *remote_user,
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
 
-	purple_notify_info(NULL, NULL, buffer, NULL);
+	purple_notify_info(NULL, NULL, buffer, NULL,
+		purple_request_cpar_from_connection(gc));
 
 	g_free(buffer);
 }

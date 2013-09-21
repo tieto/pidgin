@@ -183,7 +183,8 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		else
 			buf = g_strdup_printf(_("Unable to send message to %s: %s"),
 			                      bn ? bn : "(unknown)", reason_str);
-		purple_notify_error(od->gc, NULL, buf, reason_str);
+		purple_notify_error(od->gc, NULL, buf, reason_str,
+			purple_request_cpar_from_connection(od->gc));
 	}
 	g_free(buf);
 

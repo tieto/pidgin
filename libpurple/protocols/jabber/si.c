@@ -1433,7 +1433,8 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 	} else {
 		char *msg = g_strdup_printf(_("Unable to send file to %s, user does not support file transfers"), who);
 		purple_notify_error(js->gc, _("File Send Failed"),
-				_("File Send Failed"), msg);
+			_("File Send Failed"), msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(msg);
 		purple_xfer_cancel_local(xfer);
 	}
@@ -1474,7 +1475,8 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 
 		msg = g_strdup_printf(_("Unable to send file to %s, user does not support file transfers"), who);
 		purple_notify_error(jsx->js->gc, _("File Send Failed"),
-				_("File Send Failed"), msg);
+			_("File Send Failed"), msg,
+			purple_request_cpar_from_connection(jsx->js->gc));
 		g_free(msg);
 		purple_xfer_cancel_local(xfer);
 	} else {
@@ -1541,7 +1543,9 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 				msg = g_strdup_printf(_("Unable to send file to %s, not subscribed to user presence"), purple_xfer_get_remote_user(xfer));
 			}
 
-			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
+			purple_notify_error(jsx->js->gc, _("File Send Failed"),
+				_("File Send Failed"), msg,
+				purple_request_cpar_from_connection(jsx->js->gc));
 			g_free(msg);
 		} else if (g_list_length(resources) == 1) {
 			/* only 1 resource online (probably our most common case)

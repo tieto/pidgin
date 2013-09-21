@@ -263,8 +263,8 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 
 	if (*name == '\0')
 	{
-		purple_notify_error(NULL, NULL,
-						  _("Please enter a buddy to pounce."), NULL);
+		purple_notify_error(NULL, NULL, _("Please enter a buddy to "
+			"pounce."), NULL, NULL);
 		return;
 	}
 
@@ -461,7 +461,7 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			{
 				purple_notify_error(NULL, NULL,
 					_("You are not currently signed on with an account that "
-					  "can add that buddy."), NULL);
+					  "can add that buddy."), NULL, NULL);
 			}
 			else
 			{

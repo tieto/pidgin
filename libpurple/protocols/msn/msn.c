@@ -258,9 +258,9 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 				closure->failure_cb = failure_cb;
 				purple_timeout_add(0, set_public_alias_length_error, closure);
 			} else {
-				purple_notify_error(pc, NULL,
-				                    _("Your new MSN friendly name is too long."),
-				                    NULL);
+				purple_notify_error(pc, NULL, _("Your new MSN "
+					"friendly name is too long."), NULL,
+					purple_request_cpar_from_connection(pc));
 			}
 			return;
 		}
@@ -744,8 +744,9 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 	session = purple_connection_get_protocol_data(gc);
 
 	if (!session->passport_info.email_enabled) {
-		purple_notify_error(gc, NULL,
-						  _("This account does not have email enabled."), NULL);
+		purple_notify_error(gc, NULL, _("This account does not have "
+			"email enabled."), NULL,
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -1782,8 +1783,10 @@ msn_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, cons
 	if (!msn_email_is_valid(bname)) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), bname);
-		if (!purple_conv_present_error(bname, account, buf))
-			purple_notify_error(pc, NULL, _("Unable to Add"), buf);
+		if (!purple_conv_present_error(bname, account, buf)) {
+			purple_notify_error(pc, NULL, _("Unable to Add"), buf,
+				purple_request_cpar_from_connection(pc));
+		}
 		g_free(buf);
 
 		/* Remove from local list */

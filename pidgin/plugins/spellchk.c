@@ -1974,7 +1974,7 @@ static void list_add_new(void)
 
 				purple_notify_error(NULL, _("Duplicate Correction"),
 					_("The specified word already exists in the correction list."),
-					gtk_entry_get_text(GTK_ENTRY(bad_entry)));
+					gtk_entry_get_text(GTK_ENTRY(bad_entry)), NULL);
 				return;
 			}
 

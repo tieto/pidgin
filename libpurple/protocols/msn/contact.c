@@ -1069,8 +1069,11 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		} else if (errorcode && !strcmp(errorcode, "InvalidPassportUser")) {
 			PurpleBuddy *buddy = purple_find_buddy(session->account, state->who);
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), state->who);
-			purple_notify_error(state->session, _("Buddy Add error"), str,
-			                    _("The username specified does not exist."));
+			purple_notify_error(state->session,
+				_("Buddy Add error"), str,
+				_("The username specified does not exist."),
+				purple_request_cpar_from_account(
+					session->account));
 			g_free(str);
 			msn_userlist_rem_buddy(userlist, state->who);
 			if (buddy != NULL)
@@ -1166,7 +1169,9 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 			PurpleBuddy *buddy = purple_find_buddy(session->account, state->who);
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), state->who);
 			purple_notify_error(session, _("Buddy Add error"), str,
-			                    _("The username specified does not exist."));
+				_("The username specified does not exist."),
+				purple_request_cpar_from_account(
+					session->account));
 			g_free(str);
 			msn_userlist_rem_buddy(userlist, state->who);
 			if (buddy != NULL)

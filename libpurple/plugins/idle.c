@@ -176,7 +176,7 @@ unidle_action(PurplePluginAction *action)
 
 	if (idled_accts == NULL)
 	{
-		purple_notify_info(NULL, NULL, _("None of your accounts are idle."), NULL);
+		purple_notify_info(NULL, NULL, _("None of your accounts are idle."), NULL, NULL);
 		return;
 	}
 

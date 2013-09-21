@@ -74,7 +74,7 @@ gint64 mxit_now_milli( void )
 void mxit_popup( int type, const char* heading, const char* message )
 {
 	/* (reference: "libpurple/notify.h") */
-	purple_notify_message( NULL, type, _( MXIT_POPUP_WIN_NAME ), heading, message, NULL, NULL );
+	purple_notify_message( NULL, type, _( MXIT_POPUP_WIN_NAME ), heading, message, NULL, NULL, NULL );
 }
 
 

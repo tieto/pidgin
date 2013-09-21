@@ -509,7 +509,8 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, PidginNotifySearchResultsBu
 
 static void *
 pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
-						const char *primary, const char *secondary)
+	const char *primary, const char *secondary,
+	PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *dialog;
 	GtkWidget *hbox;
@@ -1225,7 +1226,7 @@ uri_command(const char *command, gboolean sync)
 	{
 		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
 							  command ? command : "(none)");
-		purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+		purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp, NULL);
 		g_free(tmp);
 
 	}
@@ -1237,7 +1238,7 @@ uri_command(const char *command, gboolean sync)
 		{
 			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
-			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp, NULL);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -1250,7 +1251,7 @@ uri_command(const char *command, gboolean sync)
 		{
 			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
-			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp, NULL);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -1409,8 +1410,8 @@ pidgin_notify_uri(const char *uri)
 		if (web_command == NULL || *web_command == '\0')
 		{
 			purple_notify_error(NULL, NULL, _("Unable to open URL"),
-							  _("The 'Manual' browser command has been "
-								"chosen, but no command has been set."));
+				_("The 'Manual' browser command has been "
+				"chosen, but no command has been set."), NULL);
 			return NULL;
 		}
 

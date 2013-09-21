@@ -289,7 +289,7 @@ static FinchLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *l
 			g_free(ht);
 		}
 
-		purple_notify_info(NULL, title, _("No logs were found"), log_preferences);
+		purple_notify_info(NULL, title, _("No logs were found"), log_preferences, NULL);
 		return NULL;
 	}
 
