@@ -886,7 +886,7 @@ purple_xmlnode_from_file(const char *dir,const char *filename, const char *descr
 		msg = g_strdup_printf(_("An error was encountered reading your "
 					"%s.  The file has not been loaded, and the old file "
 					"has been renamed to %s~."), description, filename_full);
-		purple_notify_error(NULL, NULL, title, msg);
+		purple_notify_error(NULL, NULL, title, msg, NULL);
 		g_free(title);
 		g_free(msg);
 	}

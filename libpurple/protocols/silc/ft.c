@@ -83,9 +83,9 @@ silcpurple_ftp_monitor(SilcClient client,
 	}
 
 	if (status == SILC_CLIENT_FILE_MONITOR_DISCONNECT) {
-		purple_notify_error(gc, _("Secure File Transfer"),
-				    _("Error during file transfer"),
-				    _("Remote disconnected"));
+		purple_notify_error(gc, _("Secure File Transfer"), _("Error "
+			"during file transfer"), _("Remote disconnected"),
+			purple_request_cpar_from_connection(gc));
 		purple_xfer_set_status(xfer->xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
 		purple_xfer_update_progress(xfer->xfer);
 		silc_client_file_close(client, conn, session_id);
@@ -100,27 +100,33 @@ silcpurple_ftp_monitor(SilcClient client,
 			g_snprintf(tmp, sizeof(tmp), "No such file %s",
 				   filepath ? filepath : "[N/A]");
 			purple_notify_error(gc, _("Secure File Transfer"),
-					  _("Error during file transfer"), tmp);
+				_("Error during file transfer"), tmp,
+				purple_request_cpar_from_connection(gc));
 		} else if (error == SILC_CLIENT_FILE_PERMISSION_DENIED) {
 			purple_notify_error(gc, _("Secure File Transfer"),
-					  _("Error during file transfer"),
-					  _("Permission denied"));
+				_("Error during file transfer"),
+				_("Permission denied"),
+				purple_request_cpar_from_connection(gc));
 		} else if (error == SILC_CLIENT_FILE_KEY_AGREEMENT_FAILED) {
 			purple_notify_error(gc, _("Secure File Transfer"),
-					  _("Error during file transfer"),
-					  _("Key agreement failed"));
+				_("Error during file transfer"),
+				_("Key agreement failed"),
+				purple_request_cpar_from_connection(gc));
 		} else if (error == SILC_CLIENT_FILE_TIMEOUT) {
 			purple_notify_error(gc, _("Secure File Transfer"),
-					  _("Error during file transfer"),
-					  _("Connection timed out"));
+				_("Error during file transfer"),
+				_("Connection timed out"),
+				purple_request_cpar_from_connection(gc));
 		} else if (error == SILC_CLIENT_FILE_CONNECT_FAILED) {
 			purple_notify_error(gc, _("Secure File Transfer"),
-					  _("Error during file transfer"),
-					  _("Creating connection failed"));
+				_("Error during file transfer"),
+				_("Creating connection failed"),
+				purple_request_cpar_from_connection(gc));
 		} else if (error == SILC_CLIENT_FILE_UNKNOWN_SESSION) {
 			purple_notify_error(gc, _("Secure File Transfer"),
-					  _("Error during file transfer"),
-					  _("File transfer session does not exist"));
+				_("Error during file transfer"),
+				_("File transfer session does not exist"),
+				purple_request_cpar_from_connection(gc));
 		}
 		purple_xfer_set_status(xfer->xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
 		purple_xfer_update_progress(xfer->xfer);
@@ -268,23 +274,26 @@ silcpurple_ftp_request_result(PurpleXfer *x)
 
 	case SILC_CLIENT_FILE_UNKNOWN_SESSION:
 		purple_notify_error(gc, _("Secure File Transfer"),
-				  _("No file transfer session active"), NULL);
+			_("No file transfer session active"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	case SILC_CLIENT_FILE_ALREADY_STARTED:
 		purple_notify_error(gc, _("Secure File Transfer"),
-				  _("File transfer already started"), NULL);
+			_("File transfer already started"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	case SILC_CLIENT_FILE_KEY_AGREEMENT_FAILED:
 		purple_notify_error(gc, _("Secure File Transfer"),
-				  _("Could not perform key agreement for file transfer"),
-				  NULL);
+			_("Could not perform key agreement for file transfer"),
+			NULL, purple_request_cpar_from_connection(gc));
 		break;
 
 	default:
 		purple_notify_error(gc, _("Secure File Transfer"),
-				  _("Could not start the file transfer"), NULL);
+			_("Could not start the file transfer"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 	}
 
@@ -420,7 +429,8 @@ silcpurple_ftp_send_file_resolved(SilcClient client,
 			   _("User %s is not present in the network"),
 			   (const char *)context);
 		purple_notify_error(gc, _("Secure File Transfer"),
-				  _("Cannot send file"), tmp);
+			_("Cannot send file"), tmp,
+			purple_request_cpar_from_connection(gc));
 		g_free(context);
 		return;
 	}

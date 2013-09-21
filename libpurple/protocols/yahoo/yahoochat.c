@@ -477,17 +477,26 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 		gchar const *failed_to_join = _("Failed to join chat");
 		switch (atoi(pair->value)) {
 			case 0xFFFFFFFA: /* -6 */
-				purple_notify_error(gc, NULL, failed_to_join, _("Unknown room"));
+				purple_notify_error(gc, NULL, failed_to_join,
+					_("Unknown room"),
+					purple_request_cpar_from_connection(gc));
 				break;
 			case 0xFFFFFFF1: /* -15 */
-				purple_notify_error(gc, NULL, failed_to_join, _("Maybe the room is full"));
+				purple_notify_error(gc, NULL, failed_to_join,
+					_("Maybe the room is full"),
+					purple_request_cpar_from_connection(gc));
 				break;
 			case 0xFFFFFFDD: /* -35 */
-				purple_notify_error(gc, NULL, failed_to_join, _("Not available"));
+				purple_notify_error(gc, NULL, failed_to_join,
+					_("Not available"),
+					purple_request_cpar_from_connection(gc));
 				break;
 			default:
 				purple_notify_error(gc, NULL, failed_to_join,
-						_("Unknown error. You may need to logout and wait five minutes before being able to rejoin a chatroom"));
+					_("Unknown error. You may need to "
+					"logout and wait five minutes before "
+					"being able to rejoin a chatroom"),
+					purple_request_cpar_from_connection(gc));
 		}
 		return;
 	}
@@ -751,9 +760,11 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 
 void yahoo_process_chat_goto(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	if (pkt->status == -1)
+	if (pkt->status == -1) {
 		purple_notify_error(gc, NULL, _("Failed to join buddy in chat"),
-						_("Maybe they're not in a chat?"));
+			_("Maybe they're not in a chat?"),
+			purple_request_cpar_from_connection(gc));
+	}
 }
 
 /*
@@ -1386,7 +1397,8 @@ yahoo_roomlist_got(PurpleHttpConnection *http_conn,
 
 	if (!purple_http_response_is_successful(response)) {
 		purple_notify_error(gc, NULL, _("Unable to connect"),
-			_("Fetching the room list failed."));
+			_("Fetching the room list failed."),
+			purple_request_cpar_from_connection(gc));
 		yahoo_roomlist_cleanup(yrl->list, yrl);
 		return;
 	}

@@ -245,7 +245,7 @@ static void delete_log_cb(gpointer *data)
 	if (!purple_log_delete((PurpleLog *)data[2]))
 	{
 		purple_notify_error(NULL, NULL, _("Log Deletion Failed"),
-		                  _("Check permissions and try again."));
+		                  _("Check permissions and try again."), NULL);
 	}
 	else
 	{
@@ -567,7 +567,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 		if(icon != NULL)
 			gtk_widget_destroy(icon);
 
-		purple_notify_info(NULL, title, _("No logs were found"), log_preferences);
+		purple_notify_info(NULL, title, _("No logs were found"), log_preferences, NULL);
 		return NULL;
 	}
 

@@ -952,7 +952,7 @@ theme_install_theme(char *path, struct theme_info *info)
 
 		/* Fire! */
 		if (system(command)) {
-			purple_notify_error(NULL, NULL, _("Theme failed to unpack."), NULL);
+			purple_notify_error(NULL, NULL, _("Theme failed to unpack."), NULL, NULL);
 			g_free(command);
 			g_free(destdir);
 			free_theme_info(info);
@@ -960,7 +960,7 @@ theme_install_theme(char *path, struct theme_info *info)
 		}
 #else
 		if (!winpidgin_gz_untar(path, destdir)) {
-			purple_notify_error(NULL, NULL, _("Theme failed to unpack."), NULL);
+			purple_notify_error(NULL, NULL, _("Theme failed to unpack."), NULL, NULL);
 			g_free(destdir);
 			free_theme_info(info);
 			return;
@@ -1005,7 +1005,7 @@ theme_install_theme(char *path, struct theme_info *info)
 		} else {
 			/* something was wrong with the theme archive */
 			g_unlink(destdir);
-			purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL);
+			purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL, NULL);
 		}
 
 	} else { /* just a single file so copy it to a new temp directory and attempt to load it*/
@@ -1053,10 +1053,10 @@ theme_install_theme(char *path, struct theme_info *info)
 					purple_debug_error("gtkprefs", "Error removing %s: %s\n",
 							temp_path, g_strerror(errno));
 				}
-				purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL);
+				purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL, NULL);
 			}
 		} else {
-			purple_notify_error(NULL, NULL, _("Theme failed to copy."), NULL);
+			purple_notify_error(NULL, NULL, _("Theme failed to copy."), NULL, NULL);
 		}
 
 		g_free(temp_file);
@@ -2077,7 +2077,7 @@ proxy_button_clicked_cb(GtkWidget *button, gchar *program)
 	if (g_spawn_command_line_async(program, &err))
 		return;
 
-	purple_notify_error(NULL, NULL, _("Cannot start proxy configuration program."), err->message);
+	purple_notify_error(NULL, NULL, _("Cannot start proxy configuration program."), err->message, NULL);
 	g_error_free(err);
 }
 
@@ -2090,7 +2090,7 @@ browser_button_clicked_cb(GtkWidget *button, gchar *path)
 	if (g_spawn_command_line_async(path, &err))
 		return;
 
-	purple_notify_error(NULL, NULL, _("Cannot start browser configuration program."), err->message);
+	purple_notify_error(NULL, NULL, _("Cannot start browser configuration program."), err->message, NULL);
 	g_error_free(err);
 }
 #endif
@@ -2819,7 +2819,7 @@ keyring_page_pref_set_inuse(GError *error, gpointer _keyring_page_instance)
 	if (error != NULL) {
 		pidgin_prefs_dropdown_revert_active(keyring_combo);
 		purple_notify_error(NULL, _("Keyring"),
-			_("Failed to set new keyring"), error->message);
+			_("Failed to set new keyring"), error->message, NULL);
 		return;
 	}
 
@@ -2845,7 +2845,7 @@ keyring_page_pref_changed(GtkComboBox *combo_box, PidginPrefValue value)
 	if (keyring == NULL) {
 		pidgin_prefs_dropdown_revert_active(keyring_combo);
 		purple_notify_error(NULL, _("Keyring"),
-			_("Selected keyring is disabled"), NULL);
+			_("Selected keyring is disabled"), NULL, NULL);
 		return;
 	}
 

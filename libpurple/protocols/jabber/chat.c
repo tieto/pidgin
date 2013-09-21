@@ -377,21 +377,23 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 	if(!jabber_nodeprep_validate(room)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
 		purple_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
-				buf);
+			buf, purple_request_cpar_from_connection(gc));
 		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	} else if(!jabber_domain_validate(server)) {
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
 		purple_notify_error(gc, _("Invalid Server Name"),
-				_("Invalid Server Name"), buf);
+			_("Invalid Server Name"), buf,
+			purple_request_cpar_from_connection(gc));
 		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	} else if(!jabber_resourceprep_validate(handle)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
-				_("Invalid Room Handle"), buf);
+			_("Invalid Room Handle"), buf,
+			purple_request_cpar_from_connection(gc));
 		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
@@ -534,7 +536,9 @@ static void jabber_chat_room_configure_cb(JabberStream *js, const char *from,
 	} else if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
-		purple_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
+		purple_notify_error(js->gc, _("Configuration error"),
+			_("Configuration error"), msg,
+			purple_request_cpar_from_connection(js->gc));
 
 		if(msg)
 			g_free(msg);
@@ -543,7 +547,9 @@ static void jabber_chat_room_configure_cb(JabberStream *js, const char *from,
 
 	msg = g_strdup_printf("Unable to configure room %s", from);
 
-	purple_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
+	purple_notify_info(js->gc, _("Unable to configure"),
+		_("Unable to configure"), msg,
+		purple_request_cpar_from_connection(js->gc));
 	g_free(msg);
 
 }
@@ -558,8 +564,10 @@ void jabber_chat_request_room_configure(JabberChat *chat) {
 	chat->config_dialog_handle = NULL;
 
 	if(!chat->muc) {
-		purple_notify_error(chat->js->gc, _("Room Configuration Error"), _("Room Configuration Error"),
-				_("This room is not capable of being configured"));
+		purple_notify_error(chat->js->gc, _("Room Configuration Error"),
+			_("Room Configuration Error"),
+			_("This room is not capable of being configured"),
+			purple_request_cpar_from_connection(chat->js->gc));
 		return;
 	}
 
@@ -609,7 +617,9 @@ jabber_chat_register_x_data_result_cb(JabberStream *js, const char *from,
 	if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
-		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
+		purple_notify_error(js->gc, _("Registration error"),
+			_("Registration error"), msg,
+			purple_request_cpar_from_connection(js->gc));
 
 		if(msg)
 			g_free(msg);
@@ -678,7 +688,9 @@ static void jabber_chat_register_cb(JabberStream *js, const char *from,
 	} else if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
-		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
+		purple_notify_error(js->gc, _("Registration error"),
+			_("Registration error"), msg,
+			purple_request_cpar_from_connection(js->gc));
 
 		if(msg)
 			g_free(msg);
@@ -687,7 +699,8 @@ static void jabber_chat_register_cb(JabberStream *js, const char *from,
 
 	msg = g_strdup_printf("Unable to configure room %s", from);
 
-	purple_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
+	purple_notify_info(js->gc, _("Unable to configure"), _("Unable to "
+		"configure"), msg, purple_request_cpar_from_connection(js->gc));
 	g_free(msg);
 
 }
@@ -809,7 +822,8 @@ static void roomlist_disco_result_cb(JabberStream *js, const char *from,
 	if (type == JABBER_IQ_ERROR) {
 		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
-				_("Error retrieving room list"), err);
+			_("Error retrieving room list"), err,
+			purple_request_cpar_from_connection(js->gc));
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
 		g_object_unref(js->roomlist);
 		js->roomlist = NULL;
@@ -820,7 +834,8 @@ static void roomlist_disco_result_cb(JabberStream *js, const char *from,
 	if(!(query = purple_xmlnode_get_child(packet, "query"))) {
 		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
-				_("Error retrieving room list"), err);
+			_("Error retrieving room list"), err,
+			purple_request_cpar_from_connection(js->gc));
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
 		g_object_unref(js->roomlist);
 		js->roomlist = NULL;
@@ -868,7 +883,9 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 		return;
 
 	if(!server || !*server) {
-		purple_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
+		purple_notify_error(js->gc, _("Invalid Server"),
+			_("Invalid Server"), NULL,
+			purple_request_cpar_from_connection(js->gc));
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
 		return;
 	}

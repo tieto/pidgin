@@ -40,6 +40,7 @@ typedef struct _PurpleNotifyUserInfo		PurpleNotifyUserInfo;
 typedef struct _PurpleNotifySearchColumn	PurpleNotifySearchColumn;
 
 #include "connection.h"
+#include "request.h"
 
 
 /**
@@ -142,7 +143,8 @@ typedef struct
 typedef struct
 {
 	void *(*notify_message)(PurpleNotifyMsgType type, const char *title,
-	                        const char *primary, const char *secondary);
+		const char *primary, const char *secondary,
+		PurpleRequestCommonParameters *cpar);
 
 	void *(*notify_email)(PurpleConnection *gc,
 	                      const char *subject, const char *from,
@@ -330,6 +332,8 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
  * @param title     The title of the message.
  * @param primary   The main point of the message.
  * @param secondary The secondary information.
+ * @param cpar      The #PurpleRequestCommonParameters associated with this
+ *                  request, or @c NULL if none is.
  * @param cb        The callback to call when the user closes
  *                  the notification.
  * @param user_data The data to pass to the callback.
@@ -337,9 +341,9 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
  * @return A UI-specific handle.
  */
 void *purple_notify_message(void *handle, PurpleNotifyMsgType type,
-						  const char *title, const char *primary,
-						  const char *secondary, PurpleNotifyCloseCallback cb,
-						  gpointer user_data);
+	const char *title, const char *primary, const char *secondary,
+	PurpleRequestCommonParameters *cpar, PurpleNotifyCloseCallback cb,
+	gpointer user_data);
 
 /**
  * Displays a single email notification to the user.
@@ -672,23 +676,23 @@ void purple_notify_close_with_handle(void *handle);
 /**
  * A wrapper for purple_notify_message that displays an information message.
  */
-#define purple_notify_info(handle, title, primary, secondary) \
+#define purple_notify_info(handle, title, primary, secondary, cpar) \
 	purple_notify_message((handle), PURPLE_NOTIFY_MSG_INFO, (title), \
-						(primary), (secondary), NULL, NULL)
+		(primary), (secondary), (cpar), NULL, NULL)
 
 /**
  * A wrapper for purple_notify_message that displays a warning message.
  */
-#define purple_notify_warning(handle, title, primary, secondary) \
+#define purple_notify_warning(handle, title, primary, secondary, cpar) \
 	purple_notify_message((handle), PURPLE_NOTIFY_MSG_WARNING, (title), \
-						(primary), (secondary), NULL, NULL)
+		(primary), (secondary), (cpar), NULL, NULL)
 
 /**
  * A wrapper for purple_notify_message that displays an error message.
  */
-#define purple_notify_error(handle, title, primary, secondary) \
+#define purple_notify_error(handle, title, primary, secondary, cpar) \
 	purple_notify_message((handle), PURPLE_NOTIFY_MSG_ERROR, (title), \
-						(primary), (secondary), NULL, NULL)
+		(primary), (secondary), (cpar), NULL, NULL)
 
 /*@}*/
 

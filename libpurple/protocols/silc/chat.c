@@ -80,7 +80,8 @@ silcpurple_chat_getinfo_res(SilcClient client,
 		g_snprintf(tmp, sizeof(tmp),
 			   _("Channel %s does not exist in the network"), chname);
 		purple_notify_error(gc, _("Channel Information"),
-				  _("Cannot get channel information"), tmp);
+			_("Cannot get channel information"), tmp,
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -238,7 +239,7 @@ silcpurple_chat_chpk_add(void *user_data, const char *name)
 		silc_free(sgc);
 		purple_notify_error(client->application,
 				    _("Add Channel Public Key"),
-				    _("Could not load public key"), NULL);
+				    _("Could not load public key"), NULL, NULL);
 		return;
 	}
 
@@ -1053,7 +1054,8 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 				   _("You have to join the %s channel before you are "
 				     "able to join the private group"), parentch);
 			purple_notify_error(gc, _("Join Private Group"),
-					  _("Cannot join private group"), tmp);
+				_("Cannot join private group"), tmp,
+				purple_request_cpar_from_connection(gc));
 			return;
 		}
 
@@ -1248,9 +1250,11 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 		}
 		flags |= SILC_MESSAGE_FLAG_ACTION;
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
-		if (!silc_client_command_call(client, conn, msg + 1))
-			purple_notify_error(gc, _("Call Command"), _("Cannot call command"),
-					    _("Unknown command"));
+		if (!silc_client_command_call(client, conn, msg + 1)) {
+			purple_notify_error(gc, _("Call Command"),
+				_("Cannot call command"), _("Unknown command"),
+				purple_request_cpar_from_connection(gc));
+		}
 		g_free(tmp);
 		return 0;
 	}

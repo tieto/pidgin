@@ -348,6 +348,8 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 				purple_notify_message(
 					NULL, PURPLE_NOTIFY_MSG_ERROR, NULL,
 					_("Directory is not writable."), NULL,
+					purple_request_cpar_from_account(
+						purple_xfer_get_account(xfer)),
 					(PurpleNotifyCloseCallback)purple_xfer_choose_file, xfer);
 			}
 
@@ -361,7 +363,9 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 	else if ((type == PURPLE_XFER_TYPE_SEND) && (st.st_size == 0)) {
 
 		purple_notify_error(NULL, NULL,
-						  _("Cannot send a file of 0 bytes."), NULL);
+			_("Cannot send a file of 0 bytes."), NULL,
+			purple_request_cpar_from_account(
+				purple_xfer_get_account(xfer)));
 
 		purple_xfer_cancel_local(xfer);
 	}
@@ -369,8 +373,9 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		/*
 		 * XXX - Sending a directory should be valid for some protocols.
 		 */
-		purple_notify_error(NULL, NULL,
-						  _("Cannot send a directory."), NULL);
+		purple_notify_error(NULL, NULL, _("Cannot send a directory."),
+			NULL, purple_request_cpar_from_account(
+				purple_xfer_get_account(xfer)));
 
 		purple_xfer_cancel_local(xfer);
 	}
@@ -380,7 +385,9 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		msg = g_strdup_printf(
 					_("%s is not a regular file. Cowardly refusing to overwrite it.\n"), utf8);
 		g_free(utf8);
-		purple_notify_error(NULL, NULL, msg, NULL);
+		purple_notify_error(NULL, NULL, msg, NULL,
+			purple_request_cpar_from_account(
+				purple_xfer_get_account(xfer)));
 		g_free(msg);
 		purple_xfer_request_denied(xfer);
 	}
@@ -398,6 +405,8 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			purple_notify_message(
 				NULL, PURPLE_NOTIFY_MSG_ERROR, NULL,
 				_("File is not readable."), NULL,
+				purple_request_cpar_from_account(
+					purple_xfer_get_account(xfer)),
 				(PurpleNotifyCloseCallback)purple_xfer_choose_file, xfer);
 		}
 	}
@@ -1806,7 +1815,8 @@ purple_xfer_error(PurpleXferType type, PurpleAccount *account, const char *who, 
 	else
 		title = g_strdup_printf(_("File transfer from %s failed."), who);
 
-	purple_notify_error(NULL, NULL, title, msg);
+	purple_notify_error(NULL, NULL, title, msg,
+		purple_request_cpar_from_account(account));
 
 	g_free(title);
 }

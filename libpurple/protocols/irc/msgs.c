@@ -260,7 +260,8 @@ void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, c
 	if (!args || !args[1] || !gc)
 		return;
 
-	purple_notify_error(gc, NULL, _("Bad mode"), args[1]);
+	purple_notify_error(gc, NULL, _("Bad mode"), args[1],
+		purple_request_cpar_from_connection(gc));
 }
 
 void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -316,7 +317,8 @@ void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, ch
 		return;
 
 	buf = g_strdup_printf(_("You are banned from %s."), args[1]);
-	purple_notify_error(gc, _("Banned"), _("Banned"), buf);
+	purple_notify_error(gc, _("Banned"), _("Banned"), buf,
+		purple_request_cpar_from_connection(gc));
 	g_free(buf);
 }
 
@@ -668,7 +670,9 @@ void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, c
 		return;
 
 	buf = g_strdup_printf(_("Unknown message '%s'"), args[1]);
-	purple_notify_error(gc, _("Unknown message"), buf, _("The IRC server received a message it did not understand."));
+	purple_notify_error(gc, _("Unknown message"), buf, _("The IRC server "
+		"received a message it did not understand."),
+		purple_request_cpar_from_connection(gc));
 	g_free(buf);
 }
 
@@ -800,8 +804,8 @@ void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 
 	purple_notify_message(gc, PURPLE_NOTIFY_MSG_INFO, _("Time Response"),
-			    _("The IRC server's local time is:"),
-			    args[2], NULL, NULL);
+		_("The IRC server's local time is:"), args[2], NULL, NULL,
+		purple_request_cpar_from_connection(gc));
 }
 
 void irc_msg_nochan(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -811,7 +815,8 @@ void irc_msg_nochan(struct irc_conn *irc, const char *name, const char *from, ch
 	if (gc == NULL || args == NULL || args[1] == NULL)
 		return;
 
-	purple_notify_error(gc, NULL, _("No such channel"), args[1]);
+	purple_notify_error(gc, NULL, _("No such channel"), args[1],
+		purple_request_cpar_from_connection(gc));
 }
 
 void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -828,7 +833,8 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	} else {
 		if ((gc = purple_account_get_connection(irc->account)) == NULL)
 			return;
-		purple_notify_error(gc, NULL, _("No such nick or channel"), args[1]);
+		purple_notify_error(gc, NULL, _("No such nick or channel"),
+			args[1], purple_request_cpar_from_connection(gc));
 	}
 
 	if (irc->whois.nick && !purple_utf8_strcasecmp(irc->whois.nick, args[1])) {
@@ -849,7 +855,8 @@ void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, ch
 	} else {
 		if ((gc = purple_account_get_connection(irc->account)) == NULL)
 			return;
-		purple_notify_error(gc, NULL, _("Could not send"), args[2]);
+		purple_notify_error(gc, NULL, _("Could not send"), args[2],
+			purple_request_cpar_from_connection(gc));
 	}
 }
 
@@ -907,7 +914,8 @@ void irc_msg_inviteonly(struct irc_conn *irc, const char *name, const char *from
 		return;
 
 	buf = g_strdup_printf(_("Joining %s requires an invitation."), args[1]);
-	purple_notify_error(gc, _("Invitation only"), _("Invitation only"), buf);
+	purple_notify_error(gc, _("Invitation only"), _("Invitation only"), buf,
+		purple_request_cpar_from_connection(gc));
 	g_free(buf);
 }
 
@@ -1156,9 +1164,10 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	if (purple_connection_get_state(gc) == PURPLE_CONNECTION_CONNECTED) {
-		purple_notify_error(gc, _("Invalid nickname"),
-				  _("Invalid nickname"),
-				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));
+		purple_notify_error(gc, _("Invalid nickname"), _("Invalid "
+			"nickname"), _("Your selected nickname was rejected by "
+			"the server.  It probably contains invalid characters."),
+			purple_request_cpar_from_connection(gc));
 
 	} else {
 		purple_connection_error (gc,
@@ -1181,8 +1190,8 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 		   notify the user that their /nick command didn't go. */
 		buf = g_strdup_printf(_("The nickname \"%s\" is already being used."),
 				      irc->reqnick);
-		purple_notify_error(gc, _("Nickname in use"),
-				    _("Nickname in use"), buf);
+		purple_notify_error(gc, _("Nickname in use"), _("Nickname in "
+			"use"), buf, purple_request_cpar_from_connection(gc));
 		g_free(buf);
 		g_free(irc->reqnick);
 		irc->reqnick = NULL;
@@ -1226,7 +1235,9 @@ void irc_msg_nochangenick(struct irc_conn *irc, const char *name, const char *fr
 	if (!args || !args[2] || !gc)
 		return;
 
-	purple_notify_error(gc, _("Cannot change nick"), _("Could not change nick"), args[2]);
+	purple_notify_error(gc, _("Cannot change nick"),
+		_("Could not change nick"), args[2],
+		purple_request_cpar_from_connection(gc));
 }
 
 void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -1310,7 +1321,8 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 			g_free(msg);
 			return;
 		}
-		purple_notify_info(gc, NULL, "PONG", msg);
+		purple_notify_info(gc, NULL, "PONG", msg,
+			purple_request_cpar_from_connection(gc));
 	}
 	g_free(msg);
 }
@@ -1384,7 +1396,8 @@ void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, c
 	}
 
 	msg = g_strdup_printf(_("Cannot join %s: Registration is required."), args[1]);
-	purple_notify_error(gc, _("Cannot join channel"), msg, args[2]);
+	purple_notify_error(gc, _("Cannot join channel"), msg, args[2],
+		purple_request_cpar_from_connection(gc));
 	g_free(msg);
 }
 
@@ -1419,7 +1432,9 @@ void irc_msg_unavailable(struct irc_conn *irc, const char *name, const char *fro
 	if (!args || !args[1])
 		return;
 
-	purple_notify_error(gc, NULL, _("Nick or channel is temporarily unavailable."), args[1]);
+	purple_notify_error(gc, NULL, _("Nick or channel is temporarily "
+		"unavailable."), args[1],
+		purple_request_cpar_from_connection(gc));
 }
 
 void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -1433,7 +1448,8 @@ void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, c
 	nick = irc_mask_nick(from);
 	msg = g_strdup_printf (_("Wallops from %s"), nick);
 	g_free(nick);
-	purple_notify_info(gc, NULL, msg, args[0]);
+	purple_notify_info(gc, NULL, msg, args[0],
+		purple_request_cpar_from_connection(gc));
 	g_free(msg);
 }
 

@@ -516,7 +516,7 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 			tmp = g_strdup_printf(_("Error launching %s: %s"),
 							purple_xfer_get_local_filename(dialog->selected_xfer),
 							error->message);
-			purple_notify_error(dialog, NULL, _("Unable to open file."), tmp);
+			purple_notify_error(dialog, NULL, _("Unable to open file."), tmp, NULL);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -525,7 +525,7 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 			char *primary = g_strdup_printf(_("Error running %s"), command);
 			char *secondary = g_strdup_printf(_("Process returned error code %d"),
 									exit_status);
-			purple_notify_error(dialog, NULL, primary, secondary);
+			purple_notify_error(dialog, NULL, primary, secondary, NULL);
 			g_free(tmp);
 		}
 	}

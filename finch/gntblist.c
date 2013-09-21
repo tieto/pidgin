@@ -641,7 +641,8 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 	if (error)
 	{
 		finch_request_add_buddy(account, username, group, alias);
-		purple_notify_error(NULL, _("Error"), _("Error adding buddy"), error);
+		purple_notify_error(NULL, _("Error"), _("Error adding buddy"),
+			error, purple_request_cpar_from_account(account));
 		return;
 	}
 
@@ -802,7 +803,7 @@ add_group_cb(gpointer null, const char *group)
 
 	if (!group || !*group) {
 		purple_notify_error(NULL, _("Error"), _("Error adding group"),
-				_("You must give a name for the group to add."));
+				_("You must give a name for the group to add."), NULL);
 		return;
 	}
 

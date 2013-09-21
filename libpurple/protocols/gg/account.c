@@ -125,7 +125,8 @@ static void ggp_account_token_response(struct gg_http *h, gboolean success,
 		purple_notify_error(
 			purple_connection_get_account(reqdata->gc),
 			_("Token Error"),
-			_("Unable to fetch the token."), NULL);
+			_("Unable to fetch the token."), NULL,
+			purple_request_cpar_from_connection(reqdata->gc));
 	}
 	
 	reqdata->callback(reqdata->gc, token, reqdata->user_data);
@@ -347,7 +348,8 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 		purple_notify_error(NULL,
 			GGP_ACCOUNT_REGISTER_TITLE,
 			_("Unable to register new account. "
-			"An unknown error occurred."), NULL);
+			"An unknown error occurred."), NULL,
+			purple_request_cpar_from_account(account));
 		ggp_account_register_completed(register_data, FALSE);
 		return;
 	}
@@ -364,7 +366,8 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 	
 	tmp = g_strdup_printf(_("Your new GG number: %u."), uin);
 	purple_notify_info(account, GGP_ACCOUNT_REGISTER_TITLE,
-		_("Registration completed successfully!"), tmp);
+		_("Registration completed successfully!"), tmp,
+		purple_request_cpar_from_account(account));
 	g_free(tmp);
 	
 	ggp_account_register_completed(register_data, TRUE);
@@ -595,7 +598,8 @@ static void ggp_account_chpass_dialog_invalid(
 	ggp_account_chpass_dialog(chpass_data->gc, chpass_data->token,
 		chpass_data);
 	purple_notify_error(purple_connection_get_account(chpass_data->gc),
-		GGP_ACCOUNT_CHPASS_TITLE, message, NULL);
+		GGP_ACCOUNT_CHPASS_TITLE, message, NULL,
+		purple_request_cpar_from_connection(chpass_data->gc));
 }
 
 static void ggp_account_chpass_dialog_cancel(
@@ -629,7 +633,8 @@ static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
 		purple_notify_error(NULL,
 			GGP_ACCOUNT_CHPASS_TITLE,
 			_("Unable to change password. "
-			"An unknown error occurred."), NULL);
+			"An unknown error occurred."), NULL,
+			purple_request_cpar_from_connection(chpass_data->gc));
 		ggp_account_chpass_data_free(chpass_data);
 		return;
 	}
@@ -641,7 +646,8 @@ static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
 		NULL, NULL);
 
 	purple_notify_info(account, GGP_ACCOUNT_CHPASS_TITLE,
-		_("Your password has been changed."), NULL);
+		_("Your password has been changed."), NULL,
+		purple_request_cpar_from_connection(chpass_data->gc));
 	
 	ggp_account_chpass_data_free(chpass_data);
 	

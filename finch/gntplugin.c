@@ -197,8 +197,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 	if (gnt_tree_get_choice(GNT_TREE(tree), plugin))
 	{
 		if (!purple_plugin_load(plugin, &error)) {
-			purple_notify_error(NULL, _("ERROR"), _("loading plugin failed"),
-					error->message);
+			purple_notify_error(NULL, _("ERROR"), _("loading plugin failed"), error->message, NULL);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, FALSE);
 			g_error_free(error);
 		}
@@ -208,8 +207,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 		GntWidget *win;
 
 		if (!purple_plugin_unload(plugin, &error)) {
-			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"),
-					error->message);
+			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"), error->message, NULL);
 			purple_plugin_disable(plugin);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, TRUE);
 			g_error_free(error);
@@ -335,7 +333,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	if (!purple_plugin_is_loaded(plugin))
 	{
 		purple_notify_error(plugin, _("Error"),
-			_("Plugin need to be loaded before you can configure it."), NULL);
+			_("Plugin need to be loaded before you can configure it."), NULL, NULL);
 		return;
 	}
 
@@ -386,7 +384,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	else
 	{
 		purple_notify_info(plugin, _("Error"),
-			_("No configuration options for this plugin."), NULL);
+			_("No configuration options for this plugin."), NULL, NULL);
 	}
 }
 
@@ -409,7 +407,7 @@ install_selected_file_cb(gpointer handle, const char *filename)
 	if (!plugin) {
 		purple_notify_error(handle, _("Error loading plugin"),
 				_("The selected file is not a valid plugin."),
-				_("Please open the debug window and try again to see the exact error message."));
+				_("Please open the debug window and try again to see the exact error message."), NULL);
 		return;
 	}
 	if (g_list_find(gnt_tree_get_rows(GNT_TREE(plugins.tree)), plugin)) {

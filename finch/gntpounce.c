@@ -192,7 +192,7 @@ save_pounce_cb(GntWidget *w, PurpleGntPounceDialog *dialog)
 	if (*name == '\0')
 	{
 		purple_notify_error(NULL, NULL,
-						  _("Please enter a buddy to pounce."), NULL);
+						  _("Please enter a buddy to pounce."), NULL, NULL);
 		return;
 	}
 
@@ -631,7 +631,7 @@ pounces_manager_add_cb(GntButton *button, gpointer user_data)
 	if (purple_accounts_get_all() == NULL) {
 		purple_notify_error(NULL, _("Cannot create pounce"),
 				_("You do not have any accounts."),
-				_("You must create an account first before you can create a pounce."));
+				_("You must create an account first before you can create a pounce."), NULL);
 		return;
 	}
 	finch_pounce_editor_show(NULL, NULL, NULL);
@@ -853,12 +853,12 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 
 		if (reason == NULL)
 		{
-			purple_notify_info(NULL, name_shown, tmp, purple_date_format_full(NULL));
+			purple_notify_info(NULL, name_shown, tmp, purple_date_format_full(NULL), NULL);
 		}
 		else
 		{
 			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, purple_date_format_full(NULL));
-			purple_notify_info(NULL, name_shown, tmp, tmp2);
+			purple_notify_info(NULL, name_shown, tmp, tmp2, NULL);
 			g_free(tmp2);
 		}
 		g_free(tmp);

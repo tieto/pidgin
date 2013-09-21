@@ -869,7 +869,7 @@ purple_keyring_set_password_save_cb(PurpleAccount *account, GError *error,
 	if (error != NULL) {
 		purple_notify_error(NULL, _("Keyrings"),
 			_("Failed to save a password in keyring."),
-			error->message);
+			error->message, NULL);
 	}
 
 	if (set_data->cb != NULL)
@@ -1205,7 +1205,7 @@ static void purple_keyring_core_initialized_cb(void)
 		purple_notify_error(NULL, _("Keyrings"),
 			_("Failed to load selected keyring."),
 			_("Check your system configuration or select another "
-			"one in Preferences dialog."));
+			"one in Preferences dialog."), NULL);
 	}
 }
 

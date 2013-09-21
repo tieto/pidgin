@@ -52,7 +52,8 @@ silcpurple_buddy_keyagr_resolved(SilcClient client,
 		g_snprintf(tmp, sizeof(tmp),
 			   _("User %s is not present in the network"), r->nick);
 		purple_notify_error(gc, _("Key Agreement"),
-				  _("Cannot perform the key agreement"), tmp);
+			_("Cannot perform the key agreement"), tmp,
+			purple_request_cpar_from_connection(gc));
 		g_free(r->nick);
 		silc_free(r);
 		return;
@@ -109,32 +110,38 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 
 	case SILC_KEY_AGREEMENT_ERROR:
 		purple_notify_error(gc, _("Key Agreement"),
-				    _("Error occurred during key agreement"), NULL);
+			_("Error occurred during key agreement"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	case SILC_KEY_AGREEMENT_FAILURE:
-		purple_notify_error(gc, _("Key Agreement"), _("Key Agreement failed"), NULL);
+		purple_notify_error(gc, _("Key Agreement"),
+			_("Key Agreement failed"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	case SILC_KEY_AGREEMENT_TIMEOUT:
 		purple_notify_error(gc, _("Key Agreement"),
-				    _("Timeout during key agreement"), NULL);
+			_("Timeout during key agreement"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	case SILC_KEY_AGREEMENT_ABORTED:
 		purple_notify_error(gc, _("Key Agreement"),
-				    _("Key agreement was aborted"), NULL);
+			_("Key agreement was aborted"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	case SILC_KEY_AGREEMENT_ALREADY_STARTED:
-		purple_notify_error(gc, _("Key Agreement"),
-				    _("Key agreement is already started"), NULL);
+		purple_notify_error(gc, _("Key Agreement"), _("Key agreement is"
+			" already started"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	case SILC_KEY_AGREEMENT_SELF_DENIED:
-		purple_notify_error(gc, _("Key Agreement"),
-				    _("Key agreement cannot be started with yourself"),
-				    NULL);
+		purple_notify_error(gc, _("Key Agreement"), _("Key agreement "
+			"cannot be started with yourself"), NULL,
+			purple_request_cpar_from_connection(gc));
 		break;
 
 	default:
@@ -254,7 +261,7 @@ silcpurple_buddy_keyagr_request_cb(SilcPurpleKeyAgrAsk a, gint id)
 	if (!client_entry) {
 		purple_notify_error(a->client->application, _("Key Agreement"),
 				    _("The remote user is not present in the network any more"),
-				    NULL);
+				    NULL, NULL);
 		goto out;
 	}
 
@@ -385,7 +392,7 @@ silcpurple_buddy_privkey_cb(SilcPurplePrivkey p, const char *passphrase)
 	if (!client_entry) {
 		purple_notify_error(p->client->application, _("IM With Password"),
 				    _("The remote user is not present in the network any more"),
-				    NULL);
+				    NULL, NULL);
 		silc_free(p);
 		return;
 	}
@@ -414,7 +421,7 @@ silcpurple_buddy_privkey_resolved(SilcClient client,
 			   _("User %s is not present in the network"),
 			   (const char *)context);
 		purple_notify_error(client->application, _("IM With Password"),
-				  _("Cannot set IM key"), tmp);
+				  _("Cannot set IM key"), tmp, NULL);
 		g_free(context);
 		return;
 	}
@@ -499,7 +506,7 @@ silcpurple_buddy_getkey_cb(SilcClient client, SilcClientConnection conn,
 	if (status != SILC_STATUS_OK) {
 		purple_notify_error(g->client->application, _("Get Public Key"),
 				  _("The remote user is not present in the network any more"),
-				  NULL);
+				  NULL, NULL);
 		silc_free(g);
 		return FALSE;
 	}
@@ -510,7 +517,7 @@ silcpurple_buddy_getkey_cb(SilcClient client, SilcClientConnection conn,
 	if (!client_entry) {
 		purple_notify_error(g->client->application, _("Get Public Key"),
 				  _("The remote user is not present in the network any more"),
-				  NULL);
+				  NULL, NULL);
 		silc_free(g);
 		return FALSE;
 	}
@@ -542,7 +549,7 @@ silcpurple_buddy_getkey_resolved(SilcClient client,
 			   _("User %s is not present in the network"),
 			   (const char *)context);
 		purple_notify_error(client->application, _("Get Public Key"),
-				    _("Cannot fetch the public key"), tmp);
+				    _("Cannot fetch the public key"), tmp, NULL);
 		g_free(context);
 		return;
 	}
@@ -622,9 +629,9 @@ silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 
 	pkfile = purple_blist_node_get_string(node, "public-key");
 	if (!silc_pkcs_load_public_key(pkfile, &public_key)) {
-		purple_notify_error(gc,
-				  _("Show Public Key"),
-				  _("Could not load public key"), NULL);
+		purple_notify_error(gc, _("Show Public Key"),
+			_("Could not load public key"), NULL,
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -704,7 +711,8 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 			g_snprintf(tmp, sizeof(tmp),
 				   _("User %s is not present in the network"), purple_buddy_get_name(b));
 			purple_notify_error(gc, _("User Information"),
-					  _("Cannot get user information"), tmp);
+				_("Cannot get user information"), tmp,
+				purple_request_cpar_from_connection(gc));
 			return;
 		}
 
@@ -730,7 +738,8 @@ silcpurple_add_buddy_pk_no(SilcPurpleBuddyRes r)
 	purple_notify_error(r->client->application, _("Add Buddy"), tmp,
 			    _("You cannot receive buddy notifications until you "
 			      "import his/her public key.  You can use the Get Public Key "
-			      "command to get the public key."));
+			      "command to get the public key."),
+		purple_request_cpar_from_account(purple_buddy_get_account(r->b)));
 	purple_protocol_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 }
 
@@ -1031,8 +1040,10 @@ silcpurple_add_buddy_ask_import(void *user_data, const char *name)
 	/* Load the public key */
 	if (!silc_pkcs_load_public_key(name, &r->public_key)) {
 		silcpurple_add_buddy_ask_pk_cb(r, 0);
-		purple_notify_error(r->client->application,
-				  _("Add Buddy"), _("Could not load public key"), NULL);
+		purple_notify_error(r->client->application, _("Add Buddy"),
+			_("Could not load public key"), NULL,
+			purple_request_cpar_from_account(
+				purple_buddy_get_account(r->b)));
 		return;
 	}
 

@@ -134,7 +134,9 @@ msim_postprocess_outgoing_cb(MsimSession *session, const MsimMessage *userinfo,
 
 		msg = g_strdup_printf(_("No such user: %s"), username);
 		if (!purple_conversation_present_error(username, session->account, msg)) {
-			purple_notify_error(NULL, NULL, _("User lookup"), msg);
+			purple_notify_error(NULL, NULL, _("User lookup"), msg,
+				purple_request_cpar_from_connection(
+					session->gc));
 		}
 
 		g_free(msg);
@@ -1136,7 +1138,10 @@ msim_got_contact_list(MsimSession *session, const MsimMessage *reply, gpointer u
 						       "%d buddies were added or updated from the server (including buddies already on the server-side list)",
 						       buddy_count),
 					      buddy_count);
-			purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
+			purple_notify_info(session->account,
+				_("Add contacts from server"), msg, NULL,
+				purple_request_cpar_from_connection(
+					session->gc));
 			g_free(msg);
 			break;
 
@@ -1860,7 +1865,9 @@ msim_error(MsimSession *session, MsimMessage *msg)
 		}
 		purple_connection_error(session->gc, reason, full_errmsg);
 	} else {
-		purple_notify_error(session->account, _("MySpaceIM Error"), full_errmsg, NULL);
+		purple_notify_error(session->account, _("MySpaceIM Error"),
+			full_errmsg, NULL,
+			purple_request_cpar_from_connection(session->gc));
 	}
 
 	g_free(full_errmsg);
@@ -2648,7 +2655,9 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, con
 			NULL);
 
 	if (!msim_postprocess_outgoing(session, msg, name, "newprofileid", "reason")) {
-		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("'addbuddy' command failed."));
+		purple_notify_error(NULL, NULL, _("Failed to add buddy"),
+			_("'addbuddy' command failed."),
+			purple_request_cpar_from_connection(session->gc));
 		msim_msg_free(msg);
 		return;
 	}
@@ -2682,7 +2691,9 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, con
 
 	if (!msim_postprocess_outgoing(session, msg_persist, name, "body", NULL))
 	{
-		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
+		purple_notify_error(NULL, NULL, _("Failed to add buddy"),
+			_("persist command failed"),
+			purple_request_cpar_from_connection(session->gc));
 		msim_msg_free(msg_persist);
 		return;
 	}
@@ -2713,7 +2724,9 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 				NULL);
 
 	if (!msim_postprocess_outgoing(session, delbuddy_msg, name, "delprofileid", NULL)) {
-		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("'delbuddy' command failed"));
+		purple_notify_error(NULL, NULL, _("Failed to remove buddy"),
+			_("'delbuddy' command failed"),
+			purple_request_cpar_from_connection(session->gc));
 		msim_msg_free(delbuddy_msg);
 		return;
 	}
@@ -2732,7 +2745,9 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 			NULL);
 
 	if (!msim_postprocess_outgoing(session, persist_msg, name, "body", NULL)) {
-		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("persist command failed"));
+		purple_notify_error(NULL, NULL, _("Failed to remove buddy"),
+			_("persist command failed"),
+			purple_request_cpar_from_connection(session->gc));
 		msim_msg_free(persist_msg);
 		return;
 	}
@@ -2744,8 +2759,9 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	 * does it)
 	 */
 	if (!msim_update_blocklist_for_buddy(session, name, FALSE, FALSE)) {
-		purple_notify_error(NULL, NULL,
-				_("Failed to remove buddy"), _("blocklist command failed"));
+		purple_notify_error(NULL, NULL, _("Failed to remove buddy"),
+			_("blocklist command failed"),
+			purple_request_cpar_from_connection(session->gc));
 		return;
 	}
 	msim_buddy_free(buddy);
@@ -3020,7 +3036,8 @@ msim_import_friends_cb(MsimSession *session, const MsimMessage *reply, gpointer 
 		purple_debug_info("msim_import_friends_cb",
 				"failed to import friends: %s", completed);
 		purple_notify_error(session->account, _("Add friends from MySpace.com"),
-				_("Importing friends failed"), NULL);
+				_("Importing friends failed"), NULL,
+				purple_request_cpar_from_connection(session->gc));
 		g_free(completed);
 		return;
 	}
@@ -3344,7 +3361,7 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 	if (!account) {
 		purple_notify_error(NULL, _("myim URL handler"),
 				_("No suitable MySpaceIM account could be found to open this myim URL."),
-				_("Enable the proper MySpaceIM account and try again."));
+				_("Enable the proper MySpaceIM account and try again."), NULL);
 		g_free(cid_str);
 		return FALSE;
 	}

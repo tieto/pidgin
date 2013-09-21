@@ -161,7 +161,8 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 			msg = g_strdup(_("Unknown Error"));
 
 		purple_notify_error(NULL, _("Ad-Hoc Command Failed"),
-							_("Ad-Hoc Command Failed"), msg);
+			_("Ad-Hoc Command Failed"), msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(msg);
 		return;
 	}
@@ -175,7 +176,8 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 
 		if(note) {
 			char *data = purple_xmlnode_get_data(note);
-			purple_notify_info(NULL, from, data, NULL);
+			purple_notify_info(NULL, from, data, NULL,
+				purple_request_cpar_from_connection(js->gc));
 			g_free(data);
 		}
 

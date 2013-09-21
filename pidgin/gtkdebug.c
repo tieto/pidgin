@@ -108,7 +108,7 @@ save_writefile_cb(void *user_data, const char *filename)
 	char *tmp;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
-		purple_notify_error(win, NULL, _("Unable to open file."), NULL);
+		purple_notify_error(win, NULL, _("Unable to open file."), NULL, NULL);
 		return;
 	}
 

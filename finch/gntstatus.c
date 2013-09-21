@@ -300,7 +300,7 @@ save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 	if (!title || !*title)
 	{
 		purple_notify_error(edit, _("Error"), _("Invalid title"),
-				_("Please enter a non-empty title for the status."));
+				_("Please enter a non-empty title for the status."), NULL);
 		gnt_box_give_focus_to_child(GNT_BOX(edit->window), edit->title);
 		return;
 	}
@@ -309,7 +309,7 @@ save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 	if (find && find != edit->saved)
 	{
 		purple_notify_error(edit, _("Error"), _("Duplicate title"),
-				_("Please enter a different title for the status."));
+				_("Please enter a different title for the status."), NULL);
 		gnt_box_give_focus_to_child(GNT_BOX(edit->window), edit->title);
 		return;
 	}

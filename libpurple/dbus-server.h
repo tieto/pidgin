@@ -84,7 +84,7 @@ struct _PurpleDBusType {
 				purple_plugin_info_get_name(purple_plugin_get_info(plugin))); \
 		purple_notify_error(NULL, title, \
 				_("Purple's D-BUS server is not running for the reason listed below"), \
-				_(purple_dbus_get_init_error())); \
+				_(purple_dbus_get_init_error()), NULL); \
 		g_free(title); \
 		return FALSE; \
 	}

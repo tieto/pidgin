@@ -78,7 +78,9 @@ auto_accept_complete_cb(PurpleXfer *xfer, PurpleXfer *my)
 	{
 		char *message = g_strdup_printf(_("Autoaccepted file transfer of \"%s\" from \"%s\" completed."),
 					purple_xfer_get_filename(xfer), purple_xfer_get_remote_user(xfer));
-		purple_notify_info(NULL, _("Autoaccept complete"), message, NULL);
+		purple_notify_info(NULL, _("Autoaccept complete"), message,
+			NULL, purple_request_cpar_from_account(
+				purple_xfer_get_account(xfer)));
 		g_free(message);
 	}
 }

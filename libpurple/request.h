@@ -31,6 +31,7 @@
 #include <glib.h>
 
 #include "certificate.h"
+#include "conversation.h"
 
 /**
  * A request field.

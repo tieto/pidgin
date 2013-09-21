@@ -366,7 +366,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 16: /* Custom error message */
 			{
 				char *tmp = yahoo_string_decode(gc, pair->value, TRUE);
-				purple_notify_error(gc, NULL, tmp, NULL);
+				purple_notify_error(gc, NULL, tmp, NULL,
+					purple_request_cpar_from_connection(gc));
 				g_free(tmp);
 			}
 			break;
@@ -938,8 +939,11 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 				im = purple_im_conversation_new(account, sms->from);
 			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, server_msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
-		else
-			purple_notify_error(gc, NULL, _("Your SMS was not delivered"), NULL);
+		else {
+			purple_notify_error(gc, NULL,
+				_("Your SMS was not delivered"), NULL,
+				purple_request_cpar_from_connection(gc));
+		}
 
 		g_free(sms->from);
 		g_free(sms);
@@ -1080,7 +1084,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		}
 	} else if (pkt->status == 2) {
 		purple_notify_error(gc, NULL,
-		                  _("Your Yahoo! message did not get sent."), NULL);
+			_("Your Yahoo! message did not get sent."), NULL,
+			purple_request_cpar_from_connection(gc));
 	}
 
 	for (l = list; l; l = l->next) {
@@ -1186,7 +1191,8 @@ static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *
 
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
 	                       me?me:purple_connection_get_display_name(gc));
-	purple_notify_info(NULL, NULL, prim, msg);
+	purple_notify_info(NULL, NULL, prim, msg,
+		purple_request_cpar_from_connection(gc));
 	g_free(prim);
 }
 
@@ -1291,7 +1297,8 @@ static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, co
 	} else
 		notify_msg = g_strdup_printf(_("%s has (retroactively) denied your request to add them to your list."), who);
 
-	purple_notify_info(gc, NULL, _("Add buddy rejected"), notify_msg);
+	purple_notify_info(gc, NULL, _("Add buddy rejected"), notify_msg,
+		purple_request_cpar_from_connection(gc));
 	g_free(notify_msg);
 
 	g_hash_table_remove(yd->friends, who);
@@ -2042,8 +2049,9 @@ static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 							"authentication method.  You will probably not be able "
 							"to successfully sign on to Yahoo.  Check %s for updates."),
 							((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
-				purple_notify_error(gc, "", _("Failed Yahoo! Authentication"),
-							buf);
+				purple_notify_error(gc, "",
+					_("Failed Yahoo! Authentication"), buf,
+					purple_request_cpar_from_connection(gc));
 				g_free(buf);
 				yahoo_auth16_stage1(gc, seed); /* Can't hurt to try it anyway. */
 				break;
@@ -2326,7 +2334,8 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	buf = g_strdup_printf(_("Unable to add buddy %s to group %s to the server list on account %s."),
 				who, decoded_group, purple_connection_get_display_name(gc));
 	if (!purple_conversation_present_error(who, purple_connection_get_account(gc), buf))
-		purple_notify_error(gc, NULL, _("Unable to add buddy to server list"), buf);
+		purple_notify_error(gc, NULL, _("Unable to add buddy to server list"), buf,
+			purple_request_cpar_from_connection(gc));
 	g_free(buf);
 	g_free(decoded_group);
 	g_free(who);

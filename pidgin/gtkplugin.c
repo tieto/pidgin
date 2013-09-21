@@ -452,7 +452,7 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 			const char *reload = _("The plugin could not be unloaded now, but will be disabled at the next startup.");
 
 			char *tmp = g_strdup_printf("%s\n\n%s", reload, error->message);
-			purple_notify_warning(NULL, NULL, primary, tmp);
+			purple_notify_warning(NULL, NULL, primary, tmp, NULL);
 			g_free(tmp);
 
 			purple_plugin_disable(plug);

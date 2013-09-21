@@ -54,7 +54,8 @@ notify_msg_window_destroy_cb(GntWidget *window, PurpleNotifyMsgType type)
 
 static void *
 finch_notify_message(PurpleNotifyMsgType type, const char *title,
-		const char *primary, const char *secondary)
+	const char *primary, const char *secondary,
+	PurpleRequestCommonParameters *cpar)
 {
 	GntWidget *window, *button;
 	GntTextFormatFlags pf = 0, sf = 0;
@@ -156,7 +157,7 @@ static void *finch_notify_formatted(const char *title, const char *primary,
 	void *ret;
 
 	purple_markup_html_to_xhtml(t, &xhtml, NULL);
-	ret = finch_notify_message(PURPLE_NOTIFY_FORMATTED, title, primary, xhtml);
+	ret = finch_notify_message(PURPLE_NOTIFY_FORMATTED, title, primary, xhtml, NULL);
 
 	g_free(t);
 	g_free(xhtml);
@@ -249,7 +250,7 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		return NULL;
 	}
 
-	ret = finch_notify_message(PURPLE_NOTIFY_EMAIL, _("New Mail"), _("You have mail!"), message->str);
+	ret = finch_notify_message(PURPLE_NOTIFY_EMAIL, _("New Mail"), _("You have mail!"), message->str, NULL);
 	g_string_free(message, TRUE);
 	return ret;
 }
@@ -503,7 +504,7 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 static void *
 finch_notify_uri(const char *url)
 {
-	return finch_notify_message(PURPLE_NOTIFY_URI, _("URI"), url, NULL);
+	return finch_notify_message(PURPLE_NOTIFY_URI, _("URI"), url, NULL, NULL);
 }
 
 static PurpleNotifyUiOps ops =

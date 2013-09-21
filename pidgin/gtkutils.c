@@ -1357,8 +1357,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			str = g_strdup_printf(_("The following error has occurred loading %s: %s"),
 						data->filename, g_strerror(errno));
 			purple_notify_error(NULL, NULL,
-					  _("Failed to load image"),
-					  str);
+				_("Failed to load image"), str, NULL);
 			g_free(str);
 
 			break;
@@ -1385,8 +1384,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			str = g_strdup_printf(_("The following error has occurred loading %s: %s"), data->filename, err->message);
 			purple_notify_error(NULL, NULL,
-					  _("Failed to load image"),
-					  str);
+				_("Failed to load image"), str, NULL);
 
 			g_error_free(err);
 			g_free(str);
@@ -1462,8 +1460,8 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			str = g_strdup_printf(_("Cannot send folder %s."), basename);
 			str2 = g_strdup_printf(_("%s cannot transfer a folder. You will need to send the files within individually."), PIDGIN_NAME);
 
-			purple_notify_error(NULL, NULL,
-					  str, str2);
+			purple_notify_error(NULL, NULL, str, str2,
+				purple_request_cpar_from_connection(gc));
 
 			g_free(str);
 			g_free(str2);
@@ -1575,7 +1573,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				                    _("You dragged a desktop launcher. Most "
 				                      "likely you wanted to send the target "
 				                      "of this launcher instead of this "
-				                      "launcher itself."));
+				                      "launcher itself."), NULL);
 				break;
 			}
 			purple_desktop_item_unref(item);
@@ -2414,7 +2412,7 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 
 	tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
 			path, purple_protocol_get_name(protocol));
-	purple_notify_error(NULL, _("Icon Error"), _("Could not set icon"), tmp);
+	purple_notify_error(NULL, _("Icon Error"), _("Could not set icon"), tmp, NULL);
 	g_free(tmp);
 
 	return NULL;
@@ -2597,8 +2595,8 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 
 	if (g_ascii_strcasecmp(key, "Global Thermonuclear War") == 0)
 	{
-		purple_notify_info(NULL, "WOPR",
-				"Wouldn't you prefer a nice game of chess?", NULL);
+		purple_notify_info(NULL, "WOPR", "Wouldn't you prefer a nice "
+			"game of chess?", NULL, NULL);
 		return FALSE;
 	}
 
@@ -3242,7 +3240,7 @@ file_open_uri(GtkWebView *webview, const char *uri)
 		{
 			tmp = g_strdup_printf(_("Error launching %s: %s"),
 							uri, error->message);
-			purple_notify_error(webview, NULL, _("Unable to open file."), tmp);
+			purple_notify_error(webview, NULL, _("Unable to open file."), tmp, NULL);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -3251,7 +3249,7 @@ file_open_uri(GtkWebView *webview, const char *uri)
 			char *primary = g_strdup_printf(_("Error running %s"), command);
 			char *secondary = g_strdup_printf(_("Process returned error code %d"),
 									exit_status);
-			purple_notify_error(webview, NULL, primary, secondary);
+			purple_notify_error(webview, NULL, primary, secondary, NULL);
 			g_free(tmp);
 		}
 	}

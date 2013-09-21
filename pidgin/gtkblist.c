@@ -2538,7 +2538,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			{
 				purple_notify_error(NULL, NULL,
 					_("You are not currently signed on with an account that "
-					  "can add that buddy."), NULL);
+					  "can add that buddy."), NULL, NULL);
 			}
 			else
 			{
@@ -7413,7 +7413,9 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 		protocol = purple_connection_get_protocol(gc);
 
 		if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, join)) {
-			purple_notify_error(gc, NULL, _("This protocol does not support chat rooms."), NULL);
+			purple_notify_error(gc, NULL, _("This protocol does not"
+				" support chat rooms."), NULL,
+				purple_request_cpar_from_account(account));
 			return;
 		}
 	} else {
@@ -7431,7 +7433,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 		if (account == NULL) {
 			purple_notify_error(NULL, NULL,
 							  _("You are not currently signed on with any "
-								"protocols that have the ability to chat."), NULL);
+								"protocols that have the ability to chat."), NULL, NULL);
 			return;
 		}
 	}

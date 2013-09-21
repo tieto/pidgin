@@ -298,7 +298,7 @@ void finch_prefs_show_keyring(void)
 	if (fields == NULL) {
 		purple_notify_info(NULL, _("Keyring settings"),
 			_("Selected keyring doesn't allow any configuration"),
-			NULL);
+			NULL, NULL);
 		return;
 	}
 

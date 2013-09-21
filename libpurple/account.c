@@ -230,7 +230,9 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 
 	if (!entry || !*entry)
 	{
-		purple_notify_error(account, NULL, _("Password is required to sign on."), NULL);
+		purple_notify_error(account, NULL,
+			_("Password is required to sign on."), NULL,
+			purple_request_cpar_from_account(account));
 		return;
 	}
 
@@ -322,7 +324,8 @@ purple_account_connect(PurpleAccount *account)
 		gchar *message;
 
 		message = g_strdup_printf(_("Missing protocol for %s"), username);
-		purple_notify_error(account, _("Connection Error"), message, NULL);
+		purple_notify_error(account, _("Connection Error"), message,
+			NULL, purple_request_cpar_from_account(account));
 		g_free(message);
 		return;
 	}
@@ -581,7 +584,8 @@ change_password_cb(PurpleAccount *account, PurpleRequestFields *fields)
 	if (g_utf8_collate(new_pass_1, new_pass_2))
 	{
 		purple_notify_error(account, NULL,
-						  _("New passwords do not match."), NULL);
+			_("New passwords do not match."), NULL,
+			purple_request_cpar_from_account(account));
 
 		return;
 	}
@@ -594,7 +598,8 @@ change_password_cb(PurpleAccount *account, PurpleRequestFields *fields)
 			(new_pass_2 == NULL || *new_pass_2 == '\0')))
 	{
 		purple_notify_error(account, NULL,
-						  _("Fill out all fields completely."), NULL);
+			_("Fill out all fields completely."), NULL,
+			purple_request_cpar_from_account(account));
 		return;
 	}
 

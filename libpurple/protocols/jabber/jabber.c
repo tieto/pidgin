@@ -1157,7 +1157,8 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 				to);
 		}
 		purple_notify_info(NULL, _("Registration Successful"),
-				_("Registration Successful"), buf);
+			_("Registration Successful"), buf,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(buf);
 	} else {
 		char *msg = jabber_parse_error(js, packet, NULL);
@@ -1166,7 +1167,8 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 			msg = g_strdup(_("Unknown Error"));
 
 		purple_notify_error(NULL, _("Registration Failed"),
-				_("Registration Failed"), msg);
+			_("Registration Failed"), msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(msg);
 		purple_account_register_completed(account, FALSE);
 	}
@@ -1191,7 +1193,8 @@ jabber_unregistration_result_cb(JabberStream *js, const char *from,
 		buf = g_strdup_printf(_("Registration from %s successfully removed"),
 							  to);
 		purple_notify_info(NULL, _("Unregistration Successful"),
-						   _("Unregistration Successful"), buf);
+			_("Unregistration Successful"), buf,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(buf);
 	} else {
 		char *msg = jabber_parse_error(js, packet, NULL);
@@ -1200,7 +1203,8 @@ jabber_unregistration_result_cb(JabberStream *js, const char *from,
 			msg = g_strdup(_("Unknown Error"));
 
 		purple_notify_error(NULL, _("Unregistration Failed"),
-							_("Unregistration Failed"), msg);
+			_("Unregistration Failed"), msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(msg);
 	}
 	g_free(to);
@@ -1360,7 +1364,8 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 
 		if(js->registration) {
 			purple_notify_error(NULL, _("Already Registered"),
-								_("Already Registered"), NULL);
+				_("Already Registered"), NULL,
+				purple_request_cpar_from_connection(js->gc));
 			purple_account_register_completed(account, FALSE);
 			jabber_connection_schedule_close(js);
 			return;
@@ -1525,13 +1530,15 @@ jabber_unregister_account_iq_cb(JabberStream *js, const char *from,
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Error unregistering account"),
-							_("Error unregistering account"), msg);
+			_("Error unregistering account"), msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(msg);
 		if(js->unregistration_cb)
 			js->unregistration_cb(account, FALSE, js->unregistration_user_data);
 	} else {
-		purple_notify_info(js->gc, _("Account successfully unregistered"),
-						   _("Account successfully unregistered"), NULL);
+		purple_notify_info(js->gc, _("Account successfully "
+			"unregistered"), _("Account successfully unregistered"),
+			NULL, purple_request_cpar_from_connection(js->gc));
 		if(js->unregistration_cb)
 			js->unregistration_cb(account, TRUE, js->unregistration_user_data);
 	}
@@ -1914,7 +1921,8 @@ void jabber_add_deny(PurpleConnection *gc, const char *who)
 	if (!(js->server_caps & JABBER_CAP_BLOCKING))
 	{
 		purple_notify_error(NULL, _("Server doesn't support blocking"),
-							_("Server doesn't support blocking"), NULL);
+			_("Server doesn't support blocking"), NULL,
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -2473,15 +2481,17 @@ jabber_password_change_result_cb(JabberStream *js, const char *from,
                                  PurpleXmlNode *packet, gpointer data)
 {
 	if (type == JABBER_IQ_RESULT) {
-		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
-				_("Your password has been changed."));
+		purple_notify_info(js->gc, _("Password Changed"), _("Password "
+			"Changed"), _("Your password has been changed."),
+			purple_request_cpar_from_connection(js->gc));
 
 		purple_account_set_password(purple_connection_get_account(js->gc), (const char *)data, NULL, NULL);
 	} else {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Error changing password"),
-				_("Error changing password"), msg);
+			_("Error changing password"), msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(msg);
 	}
 
@@ -2499,7 +2509,9 @@ static void jabber_password_change_cb(JabberStream *js,
 	p2 = purple_request_fields_get_string(fields, "password2");
 
 	if(strcmp(p1, p2)) {
-		purple_notify_error(js->gc, NULL, _("New passwords do not match."), NULL);
+		purple_notify_error(js->gc, NULL,
+			_("New passwords do not match."), NULL,
+			purple_request_cpar_from_connection(js->gc));
 		return;
 	}
 
@@ -3311,7 +3323,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		}
 
 		purple_notify_error(account, _("Media Initiation Failed"),
-				_("Media Initiation Failed"), msg);
+			_("Media Initiation Failed"), msg,
+			purple_request_cpar_from_connection(gc));
 		g_free(msg);
 		g_free(resource);
 		return FALSE;

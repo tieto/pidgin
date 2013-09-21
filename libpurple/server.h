@@ -28,7 +28,7 @@
 
 #include "accounts.h"
 #include "conversations.h"
-#include "protocol.h"
+#include "protocols.h"
 
 G_BEGIN_DECLS
 

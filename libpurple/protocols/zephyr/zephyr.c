@@ -756,10 +756,13 @@ static void message_failed(PurpleConnection *gc, ZNotice_t notice, struct sockad
 {
 	if (g_ascii_strcasecmp(notice.z_class, "message")) {
 		gchar* chat_failed = g_strdup_printf(_("Unable to send to chat %s,%s,%s"),notice.z_class,notice.z_class_inst,notice.z_recipient);
-		purple_notify_error(gc,"",chat_failed,NULL);
+		purple_notify_error(gc,"",chat_failed,NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(chat_failed);
 	} else {
-		purple_notify_error(gc, notice.z_recipient, _("User is offline"), NULL);
+		purple_notify_error(gc, notice.z_recipient,
+			_("User is offline"), NULL,
+			purple_request_cpar_from_connection(gc));
 	}
 }
 
@@ -1852,7 +1855,8 @@ static void zephyr_login(PurpleAccount * account)
 		/* XXX don't translate this yet. It could be written better */
 		/* XXX error messages could be handled with more detail */
 		purple_notify_error(purple_account_get_connection(account), NULL,
-				  "Unable to subscribe to messages", "Unable to subscribe to initial messages");
+			"Unable to subscribe to messages", "Unable to subscribe to initial messages",
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -2397,7 +2401,7 @@ static GList *zephyr_chat_info(PurpleConnection * gc)
 static void zephyr_subscribe_failed(PurpleConnection *gc,char * z_class, char *z_instance, char * z_recipient, char* z_galaxy)
 {
 	gchar* subscribe_failed = g_strdup_printf(_("Attempt to subscribe to %s,%s,%s failed"), z_class, z_instance,z_recipient);
-	purple_notify_error(gc,"", subscribe_failed, NULL);
+	purple_notify_error(gc,"", subscribe_failed, NULL, purple_request_cpar_from_connection(gc));
 	g_free(subscribe_failed);
 }
 
@@ -2869,7 +2873,8 @@ static void zephyr_action_get_subs_from_server(PurpleProtocolAction *action)
 		g_string_free(subout, TRUE);
 	} else {
 		/* XXX fix */
-		purple_notify_error(gc,"","tzc doesn't support this action",NULL);
+		purple_notify_error(gc, "", "tzc doesn't support this action",
+			NULL, purple_request_cpar_from_connection(gc));
 	}
 }
 

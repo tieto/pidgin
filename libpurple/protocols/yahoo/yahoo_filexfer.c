@@ -896,7 +896,8 @@ yahoo_process_filetrans_info_15_got(PurpleHttpConnection *hc,
 
 	if (!purple_http_response_is_successful(response)) {
 		purple_notify_error(yd->gc, NULL, _("File Transfer Failed"),
-			_("Unable to get file header."));
+			_("Unable to get file header."),
+			purple_request_cpar_from_connection(yd->gc));
 		purple_xfer_cancel_remote(xfer);
 		return;
 	}
@@ -974,7 +975,8 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 		if (!xfer_data->is_relay) {
 			purple_debug_error("yahoo", "Non-relay FT aren't tested yet.\n");
 			purple_notify_error(gc, NULL, _("File Transfer Failed"),
-				_("Unsupported method"));
+				_("Unsupported method"),
+				purple_request_cpar_from_connection(gc));
 			purple_xfer_cancel_remote(xfer);
 		}
 

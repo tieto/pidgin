@@ -273,7 +273,7 @@ file_save(GntFileSel *fs, const char *path, const char *file, GntTextView *tv)
 	FILE *fp;
 
 	if ((fp = g_fopen(path, "w+")) == NULL) {
-		purple_notify_error(NULL, NULL, _("Unable to open file."), NULL);
+		purple_notify_error(NULL, NULL, _("Unable to open file."), NULL, NULL);
 		return;
 	}
 

@@ -858,9 +858,10 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 		if (strcmp(convprotocol, purple_account_get_protocol_id(purple_buddy_get_account(buddy))))
 		{
-			purple_notify_error(PIDGIN_CONVERSATION(PURPLE_CONVERSATION(info->chat)), NULL,
-							  _("That buddy is not on the same protocol as this "
-								"chat."), NULL);
+			purple_notify_error(PIDGIN_CONVERSATION(PURPLE_CONVERSATION(info->chat)),
+				NULL, _("That buddy is not on the same protocol"
+				" as this chat."), NULL,
+				purple_request_cpar_from_conversation(PURPLE_CONVERSATION(info->chat)));
 			success = FALSE;
 		}
 		else
@@ -882,13 +883,16 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			{
 				purple_notify_error(PIDGIN_CONVERSATION(PURPLE_CONVERSATION(info->chat)), NULL,
 					_("You are not currently signed on with an account that "
-					  "can invite that buddy."), NULL);
+					  "can invite that buddy."), NULL, NULL);
 			}
 			else if (strcmp(convprotocol, purple_account_get_protocol_id(account)))
 			{
-				purple_notify_error(PIDGIN_CONVERSATION(PURPLE_CONVERSATION(info->chat)), NULL,
-								  _("That buddy is not on the same protocol as this "
-									"chat."), NULL);
+				purple_notify_error(
+					PIDGIN_CONVERSATION(PURPLE_CONVERSATION(info->chat)), NULL,
+					_("That buddy is not on the same "
+					"protocol as this chat."), NULL,
+					purple_request_cpar_from_account(
+						account));
 				success = FALSE;
 			}
 			else
@@ -1054,7 +1058,9 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	gchar *text;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
-		purple_notify_error(PIDGIN_CONVERSATION(conv), NULL, _("Unable to open file."), NULL);
+		purple_notify_error(PIDGIN_CONVERSATION(conv), NULL,
+			_("Unable to open file."), NULL,
+			purple_request_cpar_from_conversation(conv));
 		return;
 	}
 
@@ -2792,7 +2798,7 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	data = purple_buddy_icon_get_data(icon, &len);
 
 	if ((len <= 0) || (data == NULL) || !purple_util_write_data_to_file_absolute(filename, data, len)) {
-		purple_notify_error(gtkconv, NULL, _("Unable to save icon file to disk."), NULL);
+		purple_notify_error(gtkconv, NULL, _("Unable to save icon file to disk."), NULL, NULL);
 	}
 }
 
@@ -5586,7 +5592,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			{
 				purple_notify_error(win, NULL,
 					_("You are not currently signed on with an account that "
-					  "can add that buddy."), NULL);
+					  "can add that buddy."), NULL, NULL);
 			} else {
 				/*
 				 * If a buddy is dragged to a chat window of the same protocol,

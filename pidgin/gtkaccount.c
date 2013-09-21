@@ -1461,7 +1461,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 				dialog->protocol_id, username);
 
 			purple_notify_error(NULL, NULL, _("Unable to save new account"),
-				_("An account already exists with the specified criteria."));
+				_("An account already exists with the specified criteria."), NULL);
 
 			g_free(username);
 			return;

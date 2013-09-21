@@ -175,7 +175,7 @@ static void discolist_ok_cb(PidginDiscoList *pdl, const char *server)
 
 	if (!server || !*server) {
 		purple_notify_error(my_plugin, _("Invalid Server"), _("Invalid Server"),
-		                    NULL);
+			NULL, purple_request_cpar_from_connection(pdl->pc));
 
 		pidgin_disco_list_set_in_progress(pdl, FALSE);
 		pidgin_disco_list_unref(pdl);

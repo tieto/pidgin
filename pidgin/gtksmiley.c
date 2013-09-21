@@ -240,7 +240,7 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 		msg = g_strdup_printf(_("A custom smiley for '%s' already exists.  "
 				"Please use a different shortcut."), entry);
 		purple_notify_error(s->parent, _("Custom Smiley"),
-				_("Duplicate Shortcut"), msg);
+				_("Duplicate Shortcut"), msg, NULL);
 		g_free(msg);
 		return;
 	}

@@ -1400,7 +1400,7 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 		purple_notify_error(NULL, /* TODO: Probably wrong. */
 					_("SSL Certificate Error"),
 					_("Unable to validate certificate"),
-					secondary);
+					secondary, NULL);
 		g_free(secondary);
 
 		purple_certificate_verify_complete(vrq, flags);
