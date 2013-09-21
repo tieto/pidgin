@@ -616,6 +616,8 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
+	g_object_set_data(G_OBJECT(dialog), "pidgin-parent-from",
+		purple_request_cpar_get_parent_from(cpar));
 	pidgin_auto_parent_window(dialog);
 
 	gtk_widget_show_all(dialog);

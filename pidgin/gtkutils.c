@@ -61,6 +61,7 @@
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "pidginstock.h"
+#include "gtkrequest.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
@@ -2920,6 +2921,24 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 	GtkWindow *parent = NULL;
 	GdkEvent *event = gtk_get_current_event();
 	GdkWindow *menu = NULL;
+	gpointer parent_from;
+	PurpleNotifyType notify_type;
+
+	parent_from = g_object_get_data(G_OBJECT(widget), "pidgin-parent-from");
+	if (purple_request_is_valid_ui_handle(parent_from, NULL)) {
+		
+		gtk_window_set_transient_for(GTK_WINDOW(widget),
+			gtk_window_get_transient_for(
+				pidgin_request_get_dialog_window(parent_from)));
+		return TRUE;
+	}
+	if (purple_notify_is_valid_ui_handle(parent_from, &notify_type) &&
+		notify_type == PURPLE_NOTIFY_MESSAGE)
+	{
+		gtk_window_set_transient_for(GTK_WINDOW(widget),
+			gtk_window_get_transient_for(GTK_WINDOW(parent_from)));
+		return TRUE;
+	}
 
 	if (event == NULL)
 		/* The window was not triggered by a user action. */

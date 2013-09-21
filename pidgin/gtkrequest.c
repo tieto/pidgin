@@ -2165,6 +2165,17 @@ pidgin_close_request(PurpleRequestType type, void *ui_handle)
 	g_free(data);
 }
 
+GtkWindow *
+pidgin_request_get_dialog_window(void *ui_handle)
+{
+	PidginRequestData *data = ui_handle;
+
+	g_return_val_if_fail(
+		purple_request_is_valid_ui_handle(data, NULL), NULL);
+
+	return GTK_WINDOW(data->dialog);
+}
+
 static PurpleRequestUiOps ops =
 {
 	PURPLE_REQUEST_FEATURE_HTML,

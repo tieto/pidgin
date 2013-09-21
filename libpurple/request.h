@@ -424,6 +424,27 @@ purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...);
 GSList *
 purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar);
 
+/**
+ * Sets the same parent window for this dialog, as the parent of specified
+ * Notify API or Request API dialog UI handle.
+ *
+ * @param cpar      The parameters set.
+ * @param ui_handle The UI handle.
+ */
+void
+purple_request_cpar_set_parent_from(PurpleRequestCommonParameters *cpar,
+	gpointer ui_handle);
+
+/**
+ * Gets the parent "donor" for this dialog.
+ *
+ * @param cpar The parameters set (may be @c NULL).
+ *
+ * @return The donors UI handle.
+ */
+gpointer
+purple_request_cpar_get_parent_from(PurpleRequestCommonParameters *cpar);
+
 /*@}*/
 
 /**************************************************************************/
@@ -1844,6 +1865,18 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 	const char *cancel_text, GCallback cancel_cb,
 	PurpleRequestCommonParameters *cpar,
 	void *user_data);
+
+/**
+ * Checks, if passed UI handle is valid.
+ *
+ * @param ui_handle The UI handle.
+ * @param type      The pointer to variable, where request type may be stored
+ *                  (may be @c NULL).
+ *
+ * @return TRUE, if handle is valid, FALSE otherwise.
+ */
+gboolean
+purple_request_is_valid_ui_handle(void *ui_handle, PurpleRequestType *type);
 
 /**
  * Closes a request.
