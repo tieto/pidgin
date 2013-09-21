@@ -565,7 +565,9 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 			/* TODO: Should this read in the timestamp as a double? */
 			if (sscanf(cur, "PING %lu", &timestamp) == 1) {
 				buf = g_strdup_printf(_("Reply time from %s: %lu seconds"), from, time(NULL) - timestamp);
-				purple_notify_info(gc, _("PONG"), _("CTCP PING reply"), buf);
+				purple_notify_info(gc, _("PONG"),
+					_("CTCP PING reply"), buf,
+					purple_request_cpar_from_connection(gc));
 				g_free(buf);
 			} else
 				purple_debug(PURPLE_DEBUG_ERROR, "irc", "Unable to parse PING timestamp");

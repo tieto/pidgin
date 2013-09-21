@@ -83,7 +83,7 @@ struct _PurpleDBusType {
 		title = g_strdup_printf("Unable to Load %s Plugin", plugin->info->name); \
 		purple_notify_error(NULL, title, \
 				_("Purple's D-BUS server is not running for the reason listed below"), \
-				_(purple_dbus_get_init_error())); \
+				_(purple_dbus_get_init_error()), NULL); \
 		g_free(title); \
 		return FALSE; \
 	}

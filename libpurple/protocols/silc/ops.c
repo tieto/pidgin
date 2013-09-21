@@ -74,7 +74,7 @@ void silc_say(SilcClient client, SilcClientConnection conn,
 	if (gc != NULL)
 		purple_connection_error(gc, reason, tmp);
 	else
-		purple_notify_error(NULL, _("Error"), _("Error occurred"), tmp);
+		purple_notify_error(NULL, _("Error"), _("Error occurred"), tmp, NULL);
 }
 
 /* Processes incoming MIME message.  Can be private message or channel
@@ -831,7 +831,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			SilcStatus error = va_arg(va, int);
 			purple_notify_error(gc, "Error Notify",
 					    silc_get_status_message(error),
-					    NULL);
+					    NULL, purple_request_cpar_from_connection(gc));
 		}
 		break;
 
@@ -1104,7 +1104,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Join Chat"), _("Cannot join channel"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				return;
 			}
 
@@ -1180,7 +1181,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("User Information"),
 						_("Cannot get user information"),
-						silc_get_status_message(error));
+						silc_get_status_message(error),
+						purple_request_cpar_from_connection(gc));
 				break;
 			}
 
@@ -1328,7 +1330,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("User Information"),
 						  _("Cannot get user information"),
-						  silc_get_status_message(error));
+						  silc_get_status_message(error),
+						  purple_request_cpar_from_connection(gc));
 				break;
 			}
 
@@ -1387,7 +1390,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			if (status != SILC_STATUS_OK) {
 			  purple_notify_error(gc, _("Detach From Server"), _("Cannot detach"),
-					      silc_get_status_message(error));
+					      silc_get_status_message(error),
+					      purple_request_cpar_from_connection(gc));
 			  return;
 			}
 
@@ -1407,7 +1411,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Topic"), _("Cannot set topic"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				return;
 			}
 
@@ -1436,7 +1441,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Nick"), _("Failed to change nickname"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				return;
 			}
 
@@ -1477,7 +1483,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			if (error != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Error"), _("Error retrieving room list"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				purple_roomlist_set_in_progress(sg->roomlist, FALSE);
 				g_object_unref(sg->roomlist);
 				sg->roomlist = NULL;
@@ -1488,7 +1495,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			name = va_arg(ap, char *);
 			if (!name) {
 				purple_notify_error(gc, _("Roomlist"), _("Cannot get room list"),
-						    _("Network is empty"));
+						    _("Network is empty"),
+						    purple_request_cpar_from_connection(gc));
 				purple_roomlist_set_in_progress(sg->roomlist, FALSE);
 				g_object_unref(sg->roomlist);
 				sg->roomlist = NULL;
@@ -1521,7 +1529,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Get Public Key"),
 						    _("Cannot fetch the public key"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				return;
 			}
 
@@ -1532,7 +1541,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (!public_key)
 				purple_notify_error(gc, _("Get Public Key"),
 						    _("Cannot fetch the public key"),
-						    _("No public key was received"));
+						    _("No public key was received"),
+						    purple_request_cpar_from_connection(gc));
 		}
 		break;
 
@@ -1546,7 +1556,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Server Information"),
 						    _("Cannot get server information"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				return;
 			}
 
@@ -1557,7 +1568,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (server_name && server_info) {
 				g_snprintf(tmp, sizeof(tmp), "Server: %s\n%s",
 					   server_name, server_info);
-				purple_notify_info(gc, NULL, _("Server Information"), tmp);
+				purple_notify_info(gc, NULL, _("Server Information"), tmp,
+					purple_request_cpar_from_connection(gc));
 			}
 		}
 		break;
@@ -1570,7 +1582,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Server Statistics"),
 						    _("Cannot get server statistics"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				return;
 			}
 
@@ -1608,7 +1621,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 					      (int)stats->router_ops);
 
 			purple_notify_info(gc, NULL,
-					   _("Network Statistics"), msg);
+					   _("Network Statistics"), msg,
+					   purple_request_cpar_from_connection(gc));
 			g_free(msg);
 		}
 		break;
@@ -1617,12 +1631,13 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 		{
 			if (status != SILC_STATUS_OK) {
 				purple_notify_error(gc, _("Ping"), _("Ping failed"),
-						    silc_get_status_message(error));
+						    silc_get_status_message(error),
+						    purple_request_cpar_from_connection(gc));
 				return;
 			}
 
 			purple_notify_info(gc, _("Ping"), _("Ping reply received from server"),
-					   NULL);
+					   NULL, purple_request_cpar_from_connection(gc));
 		}
 		break;
 
@@ -1630,7 +1645,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 		if (status != SILC_STATUS_OK) {
 			purple_notify_error(gc, _("Kill User"),
 					    _("Could not kill user"),
-					    silc_get_status_message(error));
+					    silc_get_status_message(error),
+					    purple_request_cpar_from_connection(gc));
 			return;
 		}
 		break;
@@ -1669,7 +1685,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 	case SILC_COMMAND_WATCH:
 		if (status != SILC_STATUS_OK) {
 			purple_notify_error(gc, _("WATCH"), _("Cannot watch user"),
-					    silc_get_status_message(error));
+				silc_get_status_message(error),
+				purple_request_cpar_from_connection(gc));
 			return;
 		}
 		break;

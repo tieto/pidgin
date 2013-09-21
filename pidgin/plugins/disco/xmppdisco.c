@@ -513,12 +513,12 @@ server_info_cb(PurpleConnection *pc, const char *type, const char *id,
 		 || purple_xmlnode_get_child(error, "jid-malformed")) {
 			purple_notify_error(my_plugin, _("Error"),
 			                    _("Server does not exist"),
- 			                    NULL);
+ 			                    NULL, NULL);
 		}
 		else {
 			purple_notify_error(my_plugin, _("Error"),
 			                    _("Server does not support service discovery"),
-			                    NULL);
+			                    NULL, NULL);
 		}
 		pidgin_disco_list_set_in_progress(list, FALSE);
 		g_free(cb_data);

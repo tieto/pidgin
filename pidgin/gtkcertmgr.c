@@ -209,7 +209,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 		purple_notify_error(NULL,
 				    _("Certificate Import Error"),
 				    _("X.509 certificate import failed"),
-				    secondary);
+				    secondary, NULL);
 		g_free(secondary);
 	}
 }
@@ -244,7 +244,7 @@ tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 		purple_notify_error(NULL,
 				    _("Certificate Export Error"),
 				    _("X.509 certificate export failed"),
-				    secondary);
+				    secondary, NULL);
 		g_free(secondary);
 	}
 

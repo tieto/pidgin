@@ -180,7 +180,7 @@ history_prefs_check(PurplePlugin *plugin)
 		purple_notify_warning(plugin, NULL, _("History Plugin Requires Logging"),
 							_("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
 							  "Enabling logs for instant messages and/or chats will activate "
-							  "history for the same conversation type(s)."));
+							  "history for the same conversation type(s)."), NULL);
 	}
 }
 

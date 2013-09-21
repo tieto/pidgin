@@ -506,9 +506,39 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, PidginNotifySearchResultsBu
 	g_list_free(row);
 }
 
+/* copy-paste from gtkrequest.c */
+static void
+pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
+{
+	GtkWidget *image;
+	GdkPixbuf *pixbuf;
+
+	if (!account)
+		return;
+
+	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	image = gtk_image_new_from_pixbuf(pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
+
+	gtk_widget_set_tooltip_text(image,
+		purple_account_get_username(account));
+
+	if (GTK_IS_DIALOG(cont)) {
+		gtk_box_pack_start(GTK_BOX(gtk_dialog_get_action_area(
+			GTK_DIALOG(cont))), image, FALSE, TRUE, 0);
+		gtk_box_reorder_child(GTK_BOX(gtk_dialog_get_action_area(
+			GTK_DIALOG(cont))), image, 0);
+	} else if (GTK_IS_HBOX(cont)) {
+		gtk_misc_set_alignment(GTK_MISC(image), 0, 0);
+		gtk_box_pack_end(GTK_BOX(cont), image, FALSE, TRUE, 0);
+	}
+	gtk_widget_show(image);
+}
+
 static void *
 pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
-						const char *primary, const char *secondary)
+	const char *primary, const char *secondary,
+	PurpleRequestCommonParameters *cpar)
 {
 	GtkWidget *dialog;
 	GtkWidget *hbox;
@@ -565,6 +595,9 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 
 	if (img != NULL)
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+
+	pidgin_widget_decorate_account(hbox,
+		purple_request_cpar_get_account(cpar));
 
 	primary_esc = g_markup_escape_text(primary, -1);
 	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
@@ -1224,7 +1257,7 @@ uri_command(const char *command, gboolean sync)
 	{
 		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
 							  command ? command : "(none)");
-		purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+		purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp, NULL);
 		g_free(tmp);
 
 	}
@@ -1236,7 +1269,7 @@ uri_command(const char *command, gboolean sync)
 		{
 			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
-			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp, NULL);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -1249,7 +1282,7 @@ uri_command(const char *command, gboolean sync)
 		{
 			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
-			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp, NULL);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -1408,8 +1441,8 @@ pidgin_notify_uri(const char *uri)
 		if (web_command == NULL || *web_command == '\0')
 		{
 			purple_notify_error(NULL, NULL, _("Unable to open URL"),
-							  _("The 'Manual' browser command has been "
-								"chosen, but no command has been set."));
+				_("The 'Manual' browser command has been "
+				"chosen, but no command has been set."), NULL);
 			return NULL;
 		}
 

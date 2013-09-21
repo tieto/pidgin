@@ -145,7 +145,7 @@ void music_messaging_change_failed(const int session, const char *id, const char
 	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
 
 	purple_notify_message(plugin_pointer, PURPLE_NOTIFY_MSG_INFO, command,
-                        parameters, NULL, NULL, NULL);
+                        parameters, NULL, NULL, NULL, NULL);
 
 	if (mmconv->started)
 	{
@@ -167,7 +167,7 @@ void music_messaging_done_session(const int session)
 	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
 
 	purple_notify_message(plugin_pointer, PURPLE_NOTIFY_MSG_INFO, "Session",
-						"Session Complete", NULL, NULL, NULL);
+						"Session Complete", NULL, NULL, NULL, NULL);
 
 	session_end(mmconv);
 }
@@ -431,7 +431,7 @@ intercept_received(PurpleAccount *account, char **sender, char **message, Purple
 				{
 					purple_notify_message(plugin_pointer, PURPLE_NOTIFY_MSG_ERROR,
 							    _("Music Messaging"),
-							    _("There was a conflict in running the command:"), command, NULL, NULL);
+							    _("There was a conflict in running the command:"), command, NULL, NULL, NULL);
 				}
 			}
 		}
@@ -540,7 +540,7 @@ static void run_editor (MMConversation *mmconv)
 	if (!(g_spawn_async (".", args, NULL, 4, NULL, NULL, &(mmconv->pid), &spawn_error)))
 	{
 		purple_notify_error(plugin_pointer, _("Error Running Editor"),
-				  _("The following error has occurred:"), spawn_error->message);
+				  _("The following error has occurred:"), spawn_error->message, NULL);
 		mmconv->started = FALSE;
 	}
 	else

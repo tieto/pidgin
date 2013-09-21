@@ -1718,7 +1718,8 @@ static void mw_session_admin(struct mwSession *session,
 
   purple_notify_message(gc, PURPLE_NOTIFY_MSG_INFO,
 		      _("Sametime Administrator Announcement"),
-		      prim, text, NULL, NULL);
+		      prim, text, NULL, NULL,
+		      purple_request_cpar_from_connection(gc));
 
   g_free(prim);
 }
@@ -2023,7 +2024,8 @@ static void mw_conf_closed(struct mwConference *conf, guint32 reason) {
 
   serv_got_chat_left(gc, CONF_TO_ID(conf));
 
-  purple_notify_error(gc, _("Conference Closed"), NULL, msg);
+  purple_notify_error(gc, _("Conference Closed"), NULL, msg,
+	purple_request_cpar_from_connection(gc));
   g_free(msg);
 }
 
@@ -2448,6 +2450,7 @@ static void convo_queue(struct mwConversation *conv,
 /* Does what it takes to get an error displayed for a conversation */
 static void convo_error(struct mwConversation *conv, guint32 err) {
   PurpleIMConversation *im;
+  PurpleConnection *pc;
   char *tmp, *text;
   struct mwIdBlock *idb;
 
@@ -2463,9 +2466,9 @@ static void convo_error(struct mwConversation *conv, guint32 err) {
     g_free(text);
     text = g_strdup_printf(_("Unable to send message to %s:"),
 			   (idb->user)? idb->user: "(unknown)");
-    purple_notify_error(purple_account_get_connection(
-    		purple_conversation_get_account(PURPLE_CONVERSATION(im))),
-		      NULL, text, tmp);
+	pc = purple_account_get_connection(purple_conversation_get_account(
+			   PURPLE_CONVERSATION(im)));
+	purple_notify_error(pc, NULL, text, tmp, purple_request_cpar_from_connection(pc));
   }
 
   g_free(tmp);
@@ -3021,7 +3024,8 @@ static void mw_place_closed(struct mwPlace *place, guint32 code) {
 
   serv_got_chat_left(gc, PLACE_TO_ID(place));
 
-  purple_notify_error(gc, _("Place Closed"), NULL, msg);
+  purple_notify_error(gc, _("Place Closed"), NULL, msg,
+	purple_request_cpar_from_connection(gc));
   g_free(msg);
 }
 
@@ -5326,7 +5330,8 @@ static void remote_group_done(struct mwPurplePluginData *pd,
     msgB = _("A group named '%s' already exists in your buddy list.");
     msg = g_strdup_printf(msgB, name);
 
-    purple_notify_error(gc, _("Unable to add group"), msgA, msg);
+    purple_notify_error(gc, _("Unable to add group"), msgA, msg,
+	purple_request_cpar_from_connection(gc));
 
     g_free(msg);
     return;
@@ -5456,7 +5461,8 @@ static void remote_group_resolved(struct mwServiceResolve *srvc,
 	    " groups in your Sametime community.");
     msg = g_strdup_printf(msgB, res->name);
 
-    purple_notify_error(gc, _("Unable to add group"), msgA, msg);
+    purple_notify_error(gc, _("Unable to add group"), msgA, msg,
+	purple_request_cpar_from_connection(gc));
 
     g_free(msg);
   }
@@ -5581,7 +5587,8 @@ static void search_resolved(struct mwServiceResolve *srvc,
 	     " Sametime community.");
     msg = g_strdup_printf(msgB, (res && res->name) ? NSTR(res->name) : "");
 
-    purple_notify_error(gc, _("No Matches"), msgA, msg);
+    purple_notify_error(gc, _("No Matches"), msgA, msg,
+	purple_request_cpar_from_connection(gc));
 
     g_free(msg);
   }

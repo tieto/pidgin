@@ -457,7 +457,9 @@ void ycht_connection_close(YchtConn *ycht)
 static void ycht_connection_error(YchtConn *ycht, const gchar *error)
 {
 
-	purple_notify_info(ycht->gc, NULL, _("Connection problem with the YCHT server"), error);
+	purple_notify_info(ycht->gc, NULL,
+		_("Connection problem with the YCHT server"), error,
+		purple_request_cpar_from_connection(ycht->gc));
 	ycht_connection_close(ycht);
 }
 

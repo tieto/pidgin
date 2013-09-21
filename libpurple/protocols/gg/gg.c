@@ -95,7 +95,8 @@ const gchar * ggp_get_imtoken(PurpleConnection *gc)
 	purple_notify_error(gc, _("Authentication failed"),
 		_("IMToken value has not been received."),
 		_("Some features will be disabled. "
-		"You may try again after a while."));
+		"You may try again after a while."),
+		purple_request_cpar_from_connection(gc));
 	return NULL;
 }
 
@@ -118,21 +119,22 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *fil
 	purple_debug_info("gg", "file = %s\n", filename);
 
 	if (buddylist == NULL) {
-		purple_notify_info(account, _("Save Buddylist..."),
-			 _("Your buddylist is empty, nothing was written to the file."),
-			 NULL);
+		purple_notify_info(account, _("Save Buddylist..."), _("Your "
+			"buddylist is empty, nothing was written to the file."),
+			NULL, purple_request_cpar_from_connection(gc));
 		return;
 	}
 
 	if(purple_util_write_data_to_file_absolute(filename, buddylist, -1)) {
 		purple_notify_info(account, _("Save Buddylist..."),
-			 _("Buddylist saved successfully!"), NULL);
+			_("Buddylist saved successfully!"), NULL,
+			purple_request_cpar_from_connection(gc));
 	} else {
 		gchar *primary = g_strdup_printf(
 			_("Couldn't write buddy list for %s to %s"),
 			purple_account_get_username(account), filename);
 		purple_notify_error(account, _("Save Buddylist..."),
-			primary, NULL);
+			primary, NULL, purple_request_cpar_from_connection(gc));
 		g_free(primary);
 	}
 
@@ -149,10 +151,9 @@ static void ggp_callback_buddylist_load_ok(PurpleConnection *gc, gchar *file)
 	purple_debug_info("gg", "file_name = %s\n", file);
 
 	if (!g_file_get_contents(file, &buddylist, &length, &error)) {
-		purple_notify_error(account,
-				_("Couldn't load buddylist"),
-				_("Couldn't load buddylist"),
-				error->message);
+		purple_notify_error(account, _("Couldn't load buddylist"),
+			_("Couldn't load buddylist"), error->message,
+			purple_request_cpar_from_connection(gc));
 
 		purple_debug_error("gg",
 			"Couldn't load buddylist. file = %s; error = %s\n",
@@ -166,9 +167,9 @@ static void ggp_callback_buddylist_load_ok(PurpleConnection *gc, gchar *file)
 	ggp_buddylist_load(gc, buddylist);
 	g_free(buddylist);
 
-	purple_notify_info(account,
-			 _("Load Buddylist..."),
-			 _("Buddylist loaded successfully!"), NULL);
+	purple_notify_info(account, _("Load Buddylist..."),
+		_("Buddylist loaded successfully!"), NULL,
+		purple_request_cpar_from_connection(gc));
 }
 /* }}} */
 

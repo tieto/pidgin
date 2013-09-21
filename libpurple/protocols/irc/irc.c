@@ -74,8 +74,10 @@ static void irc_view_motd(PurplePluginAction *action)
 	}
 	irc = purple_connection_get_protocol_data(gc);
 	if (irc->motd == NULL) {
-		purple_notify_error(gc, _("Error displaying MOTD"), _("No MOTD available"),
-				  _("There is no MOTD associated with this connection."));
+		purple_notify_error(gc, _("Error displaying MOTD"),
+			_("No MOTD available"),
+			_("There is no MOTD associated with this connection."),
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 	title = g_strdup_printf(_("MOTD for %s"), irc->server);

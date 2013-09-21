@@ -168,7 +168,9 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 			if (!purple_conversation_present_error(who, account, msg)) {
 				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
-				purple_notify_error(gc, NULL, msg2, _("The message is too large."));
+				purple_notify_error(gc, NULL, msg2,
+					_("The message is too large."),
+					purple_request_cpar_from_connection(gc));
 				g_free(msg2);
 			}
 		}
@@ -181,7 +183,8 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 			if (!purple_conversation_present_error(who, account, msg)) {
 				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
-				purple_notify_error(gc, NULL, msg2, NULL);
+				purple_notify_error(gc, NULL, msg2, NULL,
+					purple_request_cpar_from_connection(gc));
 				g_free(msg2);
 			}
 		}

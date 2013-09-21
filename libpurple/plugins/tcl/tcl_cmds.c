@@ -999,7 +999,7 @@ int tcl_cmd_notify(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		msg2 = Tcl_GetString(objv[4]);
 	}
 
-	purple_notify_message(_tcl_plugin, optind[type], title, msg1, msg2, NULL, NULL);
+	purple_notify_message(_tcl_plugin, optind[type], title, msg1, msg2, NULL, NULL, NULL);
 
 	return TCL_OK;
 }

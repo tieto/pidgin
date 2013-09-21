@@ -471,7 +471,9 @@ static void silcpurple_got_password_cb(PurpleConnection *gc, PurpleRequestFields
 
 	if (!password || !*password)
 	{
-		purple_notify_error(gc, NULL, _("Password is required to sign on."), NULL);
+		purple_notify_error(gc, NULL,
+			_("Password is required to sign on."), NULL,
+			purple_request_cpar_from_connection(gc));
 		purple_connection_set_protocol_data(gc, NULL);
 		silc_free(sg);
 		return;
@@ -1098,9 +1100,10 @@ silcpurple_view_motd(PurplePluginAction *action)
 		return;
 
 	if (!sg->motd) {
-		purple_notify_error(
-		     gc, _("Message of the Day"), _("No Message of the Day available"),
-		     _("There is no Message of the Day associated with this connection"));
+		purple_notify_error(gc, _("Message of the Day"), _("No Message "
+			"of the Day available"), _("There is no Message of the "
+			"Day associated with this connection"),
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -1150,8 +1153,9 @@ silcpurple_create_keypair_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 		pass2 = "";
 
 	if (strcmp(pass1, pass2)) {
-		purple_notify_error(
-		     gc, _("Create New SILC Key Pair"), _("Passphrases do not match"), NULL);
+		purple_notify_error(gc, _("Create New SILC Key Pair"),
+			_("Passphrases do not match"), NULL,
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -1196,8 +1200,9 @@ silcpurple_create_keypair_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	if (!silc_create_key_pair(SILCPURPLE_DEF_PKCS, keylen, pkfile, prfile,
 				  identifier, pass1, &public_key, NULL,
 				  FALSE)) {
-		purple_notify_error(
-		     gc, _("Create New SILC Key Pair"), _("Key Pair Generation failed"), NULL);
+		purple_notify_error(gc, _("Create New SILC Key Pair"),
+			_("Key Pair Generation failed"), NULL,
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
@@ -1464,7 +1469,8 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 		if (!silc_client_command_call(client, conn, msg + 1))
 			purple_notify_error(gc, _("Call Command"),
 					    _("Cannot call command"),
-					    _("Unknown command"));
+					    _("Unknown command"),
+					    purple_request_cpar_from_connection(gc));
 		g_free(tmp);
 		return 0;
 	}

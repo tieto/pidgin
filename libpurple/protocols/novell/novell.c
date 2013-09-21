@@ -254,7 +254,8 @@ _get_details_resp_send_msg(NMUser * user, NMERR_T ret_code,
 										  " Could not get details for user (%s)."),
 						    nm_error_to_string (ret_code));
 
-			purple_notify_error(gc, NULL, err, NULL);
+			purple_notify_error(gc, NULL, err, NULL,
+				purple_request_cpar_from_connection(gc));
 			g_free(err);
 		}
 
@@ -401,7 +402,8 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 		err =
 			g_strdup_printf(_("Unable to add %s to your buddy list (%s)."),
 					name, nm_error_to_string (ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 	}
@@ -427,7 +429,8 @@ _send_message_resp_cb(NMUser * user, NMERR_T ret_code,
 		/* TODO: Improve this! message to who or for what conference? */
 		err = g_strdup_printf(_("Unable to send message (%s)."),
 				      nm_error_to_string (ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 	}
 }
@@ -497,7 +500,8 @@ _sendinvite_resp_cb(NMUser *user, NMERR_T ret_code,
 	if (ret_code != NM_OK) {
 		gc = purple_account_get_connection(user->client_data);
 		err = g_strdup_printf(_("Unable to invite user (%s)."), nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 		purple_debug(PURPLE_DEBUG_INFO, "novell",
@@ -544,7 +548,8 @@ _createconf_resp_send_msg(NMUser * user, NMERR_T ret_code,
 										" Could not create the conference (%s)."),
 						      nm_error_to_string (ret_code));
 
-			purple_notify_error(gc, NULL, err, NULL);
+			purple_notify_error(gc, NULL, err, NULL,
+				purple_request_cpar_from_connection(gc));
 			g_free(err);
 		}
 
@@ -594,7 +599,8 @@ _create_folder_resp_move_contact(NMUser * user, NMERR_T ret_code,
 					    folder_name,
 					    nm_error_to_string (ret_code));
 
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 	}
 
@@ -639,7 +645,8 @@ _create_folder_resp_add_contact(NMUser * user, NMERR_T ret_code,
 					  " Error creating folder in server side list (%s)."),
 					name, nm_error_to_string (ret_code));
 
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 
 		nm_release_contact(contact);
 		g_free(err);
@@ -710,7 +717,8 @@ _get_details_resp_show_info(NMUser * user, NMERR_T ret_code,
 		err =
 			g_strdup_printf(_("Could not get details for user %s (%s)."),
 					name, nm_error_to_string (ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 	}
 
@@ -758,7 +766,8 @@ _get_details_resp_add_privacy_item(NMUser *user, NMERR_T ret_code,
 
 		err = g_strdup_printf(_("Unable to add user to privacy list (%s)."),
 							  nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 	}
@@ -807,7 +816,8 @@ _create_privacy_item_deny_resp_cb(NMUser *user, NMERR_T ret_code,
 
 		err = g_strdup_printf(_("Unable to add %s to deny list (%s)."),
 							  who, nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 	}
@@ -862,7 +872,8 @@ _create_privacy_item_permit_resp_cb(NMUser *user, NMERR_T ret_code,
 
 		err = g_strdup_printf(_("Unable to add %s to permit list (%s)."), who,
 							  nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 	}
@@ -908,7 +919,8 @@ _get_details_send_privacy_create(NMUser *user, NMERR_T ret_code,
 
 		err = g_strdup_printf(_("Unable to add user to privacy list (%s)."),
 							  nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 	}
@@ -930,7 +942,8 @@ _remove_privacy_item_resp_cb(NMUser *user, NMERR_T ret_code,
 		gc = purple_account_get_connection(user->client_data);
 		err = g_strdup_printf(_("Unable to remove %s from privacy list (%s)."), who,
 							  nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 	}
 
@@ -953,7 +966,8 @@ _set_privacy_default_resp_cb(NMUser *user, NMERR_T ret_code,
 		gc = purple_account_get_connection(user->client_data);
 		err = g_strdup_printf(_("Unable to change server side privacy settings (%s)."),
 							  nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 	}
@@ -995,7 +1009,8 @@ _get_details_resp_send_invite(NMUser *user, NMERR_T ret_code,
 	} else {
 
 		err = g_strdup_printf(_("Unable to invite user (%s)."), nm_error_to_string(ret_code));
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 
 	}
@@ -1023,7 +1038,8 @@ _createconf_resp_send_invite(NMUser * user, NMERR_T ret_code,
 	} else {
 		err = g_strdup_printf(_("Unable to create conference (%s)."), nm_error_to_string(ret_code));
 		gc = purple_account_get_connection(user->client_data);
-		purple_notify_error(gc, NULL, err, NULL);
+		purple_notify_error(gc, NULL, err, NULL,
+			purple_request_cpar_from_connection(gc));
 		g_free(err);
 	}
 }
@@ -1671,7 +1687,8 @@ _show_privacy_locked_error(PurpleConnection *gc, NMUser *user)
 
 	err = g_strdup_printf(_("Unable to change server side privacy settings (%s)."),
 						  nm_error_to_string(NMERR_ADMIN_LOCKED));
-	purple_notify_error(gc, NULL, err, NULL);
+	purple_notify_error(gc, NULL, err, NULL,
+		purple_request_cpar_from_connection(gc));
 	g_free(err);
 }
 

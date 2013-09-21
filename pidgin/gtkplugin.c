@@ -327,12 +327,12 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 
 			if (!plug->error)
 			{
-				purple_notify_warning(NULL, NULL, primary, reload);
+				purple_notify_warning(NULL, NULL, primary, reload, NULL);
 			}
 			else
 			{
 				char *tmp = g_strdup_printf("%s\n\n%s", reload, plug->error);
-				purple_notify_warning(NULL, NULL, primary, tmp);
+				purple_notify_warning(NULL, NULL, primary, tmp, NULL);
 				g_free(tmp);
 			}
 

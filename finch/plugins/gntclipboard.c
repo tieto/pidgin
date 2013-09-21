@@ -113,20 +113,20 @@ plugin_load(PurplePlugin *plugin)
 	if (!XOpenDisplay(NULL)) {
 		purple_debug_warning("gntclipboard", "Couldn't find X display\n");
 		purple_notify_error(NULL, _("Error"), _("Error loading the plugin."),
-				_("Couldn't find X display"));
+				_("Couldn't find X display"), NULL);
 		return FALSE;
 	}
 	if (!getenv("WINDOWID")) {
 		purple_debug_warning("gntclipboard", "Couldn't find window\n");
 		purple_notify_error(NULL, _("Error"), _("Error loading the plugin."),
-				_("Couldn't find window"));
+				_("Couldn't find window"), NULL);
 		return FALSE;
 	}
 	sig_handle = g_signal_connect(G_OBJECT(gnt_get_clipboard()), "clipboard_changed", G_CALLBACK(clipboard_changed), NULL);
 	return TRUE;
 #else
 	purple_notify_error(NULL, _("Error"), _("Error loading the plugin."),
-			_("This plugin cannot be loaded because it was not built with X11 support."));
+			_("This plugin cannot be loaded because it was not built with X11 support."), NULL);
 	return FALSE;
 #endif
 }

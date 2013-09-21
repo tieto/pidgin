@@ -2161,7 +2161,8 @@ static void user_search_fields_result_cb(JabberStream *js, const char *from,
 			msg = g_strdup(_("Unknown error"));
 
 		purple_notify_error(js->gc, _("Directory Query Failed"),
-				  _("Could not query the directory server."), msg);
+			_("Could not query the directory server."), msg,
+			purple_request_cpar_from_connection(js->gc));
 		g_free(msg);
 
 		return;
@@ -2248,7 +2249,9 @@ void jabber_user_search(JabberStream *js, const char *directory)
 
 	/* XXX: should probably better validate the directory we're given */
 	if(!directory || !*directory) {
-		purple_notify_error(js->gc, _("Invalid Directory"), _("Invalid Directory"), NULL);
+		purple_notify_error(js->gc, _("Invalid Directory"),
+			_("Invalid Directory"), NULL,
+			purple_request_cpar_from_connection(js->gc));
 		return;
 	}
 
