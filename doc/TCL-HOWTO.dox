@@ -124,7 +124,7 @@ purple::account username account
   (default) returns all accounts, while the @c -online option returns
   only those accounts which are online.
 
-  The @c protocol subcommand returns the protocol ID (e.g. "prpl-msn")
+  The @c protocol subcommand returns the protocol ID (e.g. "msn")
   for the given account.
 
   The @c username subcommand returns the username for the account

@@ -116,7 +116,7 @@ void (sending_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
   @endsignalproto
   @signaldesc
    Emit this signal (@c purple_signal_emit) to send a stanza. It is preferred
-   to use this instead of prpl_info->send_raw.
+   to use this instead of purple_protocol_server_iface_send_raw.
    @param gc      The connection on which to send the stanza.
    @param stanza  The stanza to send. If stanza is not NULL after being sent,
                   the emitter should free it.

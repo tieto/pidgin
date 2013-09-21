@@ -18,7 +18,7 @@
     - core      - A core libpurple plugin, capable of being loaded in any
                   program using libpurple. Core plugins may not contain any
                   UI-specific code.
-    - prpl      - A protocol plugin. This is a special type of core plugin,
+    - protocol  - A protocol plugin. This is a special type of core plugin,
                   which provides libpurple the ability to connect to
                   another IM or chat network.
     - lopl      - A loader plugin, which loads scripts as plugins. Perl and
