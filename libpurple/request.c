@@ -175,6 +175,8 @@ struct _PurpleRequestCommonParameters
 	gpointer help_data;
 
 	GSList *extra_actions;
+
+	gpointer parent_from;
 };
 
 PurpleRequestCommonParameters *
@@ -422,6 +424,24 @@ GSList *
 purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar)
 {
 	return cpar->extra_actions;
+}
+
+void
+purple_request_cpar_set_parent_from(PurpleRequestCommonParameters *cpar,
+	gpointer ui_handle)
+{
+	g_return_if_fail(cpar != NULL);
+
+	cpar->parent_from = ui_handle;
+}
+
+gpointer
+purple_request_cpar_get_parent_from(PurpleRequestCommonParameters *cpar)
+{
+	if (cpar == NULL)
+		return NULL;
+
+	return cpar->parent_from;
 }
 
 PurpleRequestFields *
@@ -2284,6 +2304,28 @@ purple_request_certificate(void *handle, const char *title,
 	return purple_request_fields(handle, title, primary, secondary, fields,
 	                             ok_text, ok_cb, cancel_text, cancel_cb,
 	                             NULL, user_data);
+}
+
+gboolean
+purple_request_is_valid_ui_handle(void *ui_handle, PurpleRequestType *type)
+{
+	GList *it;
+
+	if (ui_handle == NULL)
+		return FALSE;
+
+	for (it = handles; it != NULL; it = g_list_next(it)) {
+		PurpleRequestInfo *info = it->data;
+
+		if (info->ui_handle != ui_handle)
+			continue;
+
+		if (type != NULL)
+			*type = info->type;
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 static void
