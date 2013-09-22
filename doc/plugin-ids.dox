@@ -1,10 +1,9 @@
 /** @page plugin-ids Plugin IDs
 
  @section Introduction
-  Every plugin contains a unique identifier to prevent duplicate plugin
-  loading and conflicts. Third-party plugins (that is, plugins written by
-  anyone who is not a libpurple, Pidgin, or Finch developer) are expected
-  to use a plugin ID that follows a specific format. This format
+  Every plugin contains a unique identifier. Third-party plugins (that is,
+  plugins written by anyone who is not a libpurple, Pidgin, or Finch developer)
+  are expected to use a plugin ID that follows a specific format. This format
   categorizes plugins and makes duplicate IDs highly unlikely.
 
  @section Format
@@ -18,15 +17,13 @@
     - core      - A core libpurple plugin, capable of being loaded in any
                   program using libpurple. Core plugins may not contain any
                   UI-specific code.
-    - protocol  - A protocol plugin. This is a special type of core plugin,
-                  which provides libpurple the ability to connect to
-                  another IM or chat network.
-    - lopl      - A loader plugin, which loads scripts as plugins. Perl and
-                  Tcl plugins are made possible by loader plugins.
-    - gtk       - A GTK+ 2.x (a.k.a. Pidgin) plugin. These plugins may use
+    - protocol  - A protocol plugin. This is a core plugin which provides
+                  libpurple the ability to connect to another IM or chat
+                  network.
+    - gtk       - A GTK+ (a.k.a. Pidgin) plugin. These plugins may use
                   GTK+ code, but may not use window toolkit code, such as
                   X11, Win32, Cocoa, or Carbon.
-    - gtk-x11   - A GTK+ 2.x plugin that uses X11 code. These plugins may
+    - gtk-x11   - A GTK+ plugin that uses X11 code. These plugins may
                   use both GTK+ code and X11 code, allowing to hook into
                   features specific to X11.
     - gtk-win32 - A GTK+ plugin that uses Win32 code. These plugins may use
@@ -43,14 +40,14 @@
 
   The @em pluginname is the name of your plugin. It is usually all
   lowercase letters and matches the static plugin ID (the first argument to
-  the PURPLE_INIT_PLUGIN() macro call), although it can be anything you
+  the PURPLE_PLUGIN_INIT() macro call), although it can be anything you
   like. Do @em not include version information in the plugin ID--the
-  #PurplePluginInfo structure already has a field for this.
+  #PurplePluginInfo object already has a property for this.
 
  @section nospaces One Last Rule for Plugin IDs
 
-  The last rule of plugin IDs is the most important of all. Plugin IDs may
-  @em NOT contain spaces. If you need a space, use another hyphen (-).
+  Plugin IDs may @em NOT contain spaces. If you need a space, use another
+  hyphen (-).
 
  @section exceptions Exceptions to the Rule
 

@@ -73,9 +73,9 @@ AM_GLIB_GNU_GETTEXT
      convert them before libpurple attempts to.
    - To do this, we're going to change the entries for name, summary, and
      description to NULL.
-   - Next, locate your 'init_plugin' function.  Your name for this function
-     may vary, but it's the second parameter to 'PURPLE_INIT_PLUGIN'.
-   - Now add the following within your 'init_plugin' function:
+   - Next, locate your 'plugin_load' function.  Your name for this function
+     may vary, but it's the third parameter to 'PURPLE_PLUGIN_INIT'.
+   - Now add the following within your 'plugin_load' function:
      @code
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
