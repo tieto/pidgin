@@ -27,10 +27,33 @@
 
 #include "notify.h"
 #include "plugins.h"
-#include "version.h"
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Author Name <e@mail>",
+		NULL
+	};
+
+	/* For specific notes on the meanings of each of these members, consult the
+	   C Plugin Howto on the website. */
+	return purple_plugin_info_new (
+		"name",         "Hello World!",
+		"version",      VERSION,
+		"category",     "Example",
+		"summary",      "Hello World Plugin",
+		"description",  "Hello World Plugin",
+		"authors",      authors,
+		"website",      "http://helloworld.tld",
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
 
 static gboolean
-plugin_load(PurplePlugin *plugin) {
+plugin_load(PurplePlugin *plugin, GError **error)
+{
 	purple_notify_message(plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
 						"This is the Hello World! plugin :)",
 						NULL, NULL, NULL, NULL);
@@ -38,45 +61,13 @@ plugin_load(PurplePlugin *plugin) {
 	return TRUE;
 }
 
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	NULL,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-
-	"core-hello_world",
-	"Hello World!",
-	VERSION,
-
-	"Hello World Plugin",
-	"Hello World Plugin",
-	NULL,
-	"http://helloworld.tld",
-
-	plugin_load,
-	NULL,
-	NULL,
-
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
+PURPLE_PLUGIN_INIT(hello_world, plugin_query, plugin_load, plugin_unload);
 
   @endcode
 
@@ -85,189 +76,30 @@ PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
   glib wrappers of the standard C types.
 
   Next, we include plugins.h which has all the plugin specific stuff that we
-  need.  For example: @c PurplePlugin, @c PurplePluginInfo,
-  @c PURPLE_PLUGIN_MAGIC, and @c PURPLE_INIT_PLUGIN().
+  need.  For example: @c #PurplePlugin, @c #PurplePluginInfo,
+  and @c PURPLE_PLUGIN_INIT().
 
-  Our last include is version.h which defines @c PURPLE_MAJOR_VERSION, and
-  @c PURPLE_MINOR_VERSION.  There is not much you need to know about these,
-  except that they are required and will stop your plugin from crashing Pidgin
-  when something has changed that your plugin does not know about yet.
+  @c plugin_query, @c plugin_load and @c plugin_unload must be implemented in
+  every plugin.  Each of these functions can return an error on failure by using
+  @c g_set_error on the @c error argument.
 
-  @c plugin_load is not required.  It is called when the plugin is loaded so
-  that you can initialize any variables and so on.  In this plugin we'll just
-  use it to display a message.
+  @c plugin_query is called when the plugin is probed by the plugin system, and
+  returns various information about the plugin in form of a newly created
+  PurplePluginInfo instance.  See plugins.h for a list of available properties
+  you can use in @c purple_plugin_info_new .
 
-  Next we have the @c PurplePluginInfo structure.  Every plugin MUST have one of
-  these.  Below is a code snipet of the same struct used in @c hello_world with
-  comments describing what each is.
+  @c plugin_load is called when the plugin is loaded so that you can initialize
+  any variables, register dynamic types, and so on.  Plugins may also want to
+  add their preferences to the pref tree--more about that later. In this plugin
+  we'll just use it to display a message.
 
-  @code
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,    /* Plugin magic, this must always be
-                                   PURPLE_PLUGIN_MAGIC.
-                                 */
-	PURPLE_MAJOR_VERSION,   /* This is also defined in libpurple.  It helps
-                                   libpurple's plugin system determine which
-                                   version of libpurple this plugin was
-                                   compiled for, and whether loading it will
-                                   cause problems.
-                                 */
-	PURPLE_MINOR_VERSION,   /* See previous */
-	PURPLE_PLUGIN_STANDARD, /* PurplePluginType: There are 4 different
-                                   values for this field.  The first is
-                                   PURPLE_PLUGIN_UNKNOWN, which should not be
-                                   used.  The second is PURPLE_PLUGIN_STANDARD;
-                                   this is the value most plugins will use.
-                                   Next, we have PURPLE_PLUGIN_LOADER; this is
-                                   the type you want to load if your plugin
-                                   is going to make it possible to load non-
-                                   native plugins.  For example, the Perl and
-                                   Tcl loader plugins are of this type.
-                                   Last, we have PURPLE_PLUGIN_PROTOCOL.  If
-                                   your plugin is going to allow the user to
-                                   connect to another network, this is the
-                                   type you'd want to use.
-                                 */
-	NULL,                   /* This field is the UI requirement.  If you're
-                                   writing a core plugin, this must be NULL
-                                   and the plugin must not contain any UI
-                                   code.  If you're writing a Pidgin plugin,
-                                   you need to use PIDGIN_PLUGIN_TYPE.  If you
-                                   are writing a Finch plugin, you would use
-                                   FINCH_PLUGIN_TYPE.
-                                 */
-	0,                      /* This field is for plugin flags.  Currently,
-                                   the only flag available to plugins is
-                                   invisible (PURPLE_PLUGIN_FLAG_INVISIBLE).
-                                   It causes the plugin to NOT appear in the
-                                   list of plugins.
-                                 */
-	NULL,                   /* This is a GList of plugin dependencies.  In
-                                   other words, a GList of plugin id's that
-                                   your plugin depends on.  Set this value to
-                                   NULL no matter what.  If your plugin has
-                                   dependencies, set them at run-time in the
-                                   plugin_init function.
-                                 */
-	PURPLE_PRIORITY_DEFAULT,/* This is the priority libpurple with give your
-                                   plugin.  There are three possible values
-                                   for this field, PURPLE_PRIORITY_DEFAULT,
-                                   PURPLE_PRIORITY_HIGHEST, and
-                                   PURPLE_PRIORITY_LOWEST
-                                 */
+  @c plugin_unload is called when the plugin is unloaded, and we can use it to
+  wrap up everything, and free our variables.
 
-	"core-hello_world",     /* This is your plugin's id.  There is a whole
-                                   page dedicated to this in the Related Pages
-                                   section of the API docs.
-                                 */
-	"Hello World!",         /* This is your plugin's name.  This is what
-                                   will be displayed for your plugin in the UI.
-                                 */
-	1.1,                    /* This is the version of your plugin. */
-
-	"Hello World Plugin",   /* This is the summary of your plugin.  It
-                                   should be a short little blurb.  The UI
-                                   determines where, if at all, to display
-                                   this.
-                                 */
-	"Hello World Plugin",   /* This is the description of your plugin. It
-                                   can be as long and as descriptive as you
-                                   like.  And like the summary, it's up to the
-                                   UI where, if at all, to display this (and
-                                   how much to display).
-                                 */
-	NULL,                   /* This is where you can put your name and
-                                   email address.
-                                 */
-	"http://helloworld.tld",/* This is the website for the plugin.  This
-                                   tells users where to find new versions,
-                                   report bugs, etc.
-                                 */
-
-	plugin_load,            /* This is a pointer to a function for
-                                   libpurple to call when it is loading the
-                                   plugin.  It should be of the type:
-
-                                   gboolean plugin_load(PurplePlugin *plugin)
-
-                                   Returning FALSE will stop the loading of the
-                                   plugin.  Anything else would evaluate as
-                                   TRUE and the plugin will continue to load.
-                                 */
-	NULL,                   /* Same as above except it is called when
-                                   libpurple tries to unload your plugin.  It
-                                   should be of the type:
-
-                                   gboolean plugin_unload(PurplePlugin *plugin)
-
-                                   Returning TRUE will tell libpurple to
-                                   continue unloading while FALSE will stop
-                                   the unloading of your plugin.
-                                 */
-	NULL,                   /* Similar to the two above members, except
-                                   this is called when libpurple tries to
-                                   destory the plugin.  This is generally only
-                                   called when for some reason or another the
-                                   plugin fails to probe correctly.  It should
-                                   be of the type:
-
-                                   void plugin_destroy(PurplePlugin *plugin)
-                                 */
-
-	NULL,                   /* This is a pointer to a UI-specific struct.
-                                   For a Pidgin plugin it will be a pointer to a
-                                   PidginPluginUiInfo struct, for example.
-                                 */
-	NULL,                   /* This is a pointer to either a 
-                                   PurplePluginLoaderInfo struct or a
-                                   PurplePluginProtocolInfo struct, and is
-                                   beyond the scope of this document.
-                                 */
-	NULL,                   /* This is a pointer to a PurplePluginUiInfo
-                                   struct.  It is a core/ui split way for
-                                   core plugins to have a UI configuration
-                                   frame.  You can find an example of this
-                                   code in:
-                                     libpurple/plugins/pluginpref_example.c
-                                 */
-	NULL,                   /* This is a function pointer where you can define
-                                   "plugin actions".  The UI controls how
-                                   they're displayed.  It should be of the
-                                   type:
-
-                                   GList *function_name(PurplePlugin *plugin, 
-                                                        gpointer context)
-
-                                    It must return a GList of
-                                    PurplePluginActions.
-                                 */
-	NULL,                   /* This is a pointer reserved for future use.
-	                               We set it to NULL to indicate we don't
-								   need it.
-								 */
-	NULL,                   /* This is a pointer reserved for future use.
-	                               We set it to NULL to indicate we don't
-								   need it.
-								 */
-	NULL,                   /* This is a pointer reserved for future use.
-	                               We set it to NULL to indicate we don't
-								   need it.
-								 */
-	NULL                    /* This is a pointer reserved for future use.
-	                               We set it to NULL to indicate we don't
-								   need it.
-								 */
-};
-  @endcode
-
-  Finally we have @c init_plugin and @c PURPLE_INIT_PLUGIN.  @c init_plugin is
-  a function that gets called when libpurple probes the plugin.  Most plugins
-  will add their preferences to the pref tree here--more about that later.
-  @c PURPLE_INIT_PLUGIN is a macro that EVERY plugin MUST have.
-  @c PURPLE_INIT_PLUGIN tells libpurple some very basic things about your
-  plugin, like what name to use if the plugin is compiled staticly, the
-  @c init_plugin function, and the name of the PurplePluginInfo structure.  As
-  you may have guessed, this also gets read when libpurple is probing your
-  plugin.  If this is missing, the plugin will not load.
+  Finally we have @c PURPLE_PLUGIN_INIT().  @c PURPLE_PLUGIN_INIT is a macro
+  that every plugin MUST have.  @c PURPLE_PLUGIN_INIT tells libpurple some
+  basic things about your plugin, like what name to use if the plugin is
+  compiled statically, and the @c plugin_query, @c plugin_load, and
+  @c plugin_unload functions.
  */
 // vim: syntax=c.doxygen
