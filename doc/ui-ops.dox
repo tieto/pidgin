@@ -13,10 +13,10 @@
    - #PurpleEventLoopUiOps (without this, nothing will work and you will cry)
    - #PurpleIdleUiOps
    - #PurpleNotifyUiOps
-   - #PurplePrivacyUiOps
    - #PurpleRequestUiOps
    - #PurpleRoomlistUiOps
    - #PurpleSoundUiOps
+   - #PurpleSrvTxtQueryUiOps
    - #PurpleWhiteboardUiOps
    - #PurpleXferUiOps
 
