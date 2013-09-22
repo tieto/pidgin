@@ -15,13 +15,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "internal.h"
 #include "account.h"
 #include "config.h"
 #include "core.h"
 #include "conversation.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "internal.h"
 #include "util.h"
 #include "version.h"
 

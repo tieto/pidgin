@@ -79,10 +79,9 @@ plugin_query(GError **error)
 	);
 }
 
-/* As we've covered before, libpurple calls this function, if present, when it
- * loads the plugin.  Here we're using it to show off the capabilities of the
- * debug API and just blindly returning TRUE to tell libpurple it's safe to
- * continue loading. */
+/* As we've covered before, this function is called when the plugin is loaded.
+ * Here we're using it to show off the capabilities of the debug API and just
+ * blindly returning TRUE to tell libpurple it's safe to continue loading. */
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
@@ -123,4 +122,3 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 PURPLE_PLUGIN_INIT(debugexample, plugin_query, plugin_load, plugin_unload);
-
