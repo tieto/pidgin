@@ -90,7 +90,8 @@ plugin_query(GError **error)
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
-		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
 		NULL
 	);
 }
