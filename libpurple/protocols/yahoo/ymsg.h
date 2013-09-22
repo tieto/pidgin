@@ -356,7 +356,7 @@ YahooFederation yahoo_get_federation_from_name(const char *who);
 /* yahoo_profile.c */
 void yahoo_get_info(PurpleConnection *gc, const char *name);
 
-/* libymsg.h  - these functions were formerly static but need not to be for the
+/* ymsg.h  - these functions were formerly static but need not to be for the
  * new two-protocol model. */
 const char *yahoo_list_icon(PurpleAccount *a, PurpleBuddy *b);
 const char *yahoo_list_emblem(PurpleBuddy *b);
