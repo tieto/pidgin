@@ -8,8 +8,6 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = liboscar
-AIM_TARGET = libaim
-ICQ_TARGET = libicq
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -41,6 +39,7 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 C_SRC = \
+	aim.c			\
 	authorization.c		\
 	bstream.c		\
 	clientlogin.c		\
@@ -62,6 +61,7 @@ C_SRC = \
 	family_stats.c		\
 	family_userlookup.c	\
 	flap_connection.c	\
+	icq.c			\
 	misc.c			\
 	msgcookie.c		\
 	odc.c			\
@@ -79,12 +79,6 @@ C_SRC = \
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
-AIM_C_SRC = libaim.c
-AIM_OBJECTS = $(AIM_C_SRC:%.c=%.o)
-
-ICQ_C_SRC = libicq.c
-ICQ_OBJECTS = $(ICQ_C_SRC:%.c=%.o)
-
 ##
 ## LIBRARIES
 ##
@@ -101,29 +95,20 @@ include $(PIDGIN_COMMON_RULES)
 ##
 .PHONY: all install clean
 
-all: $(TARGET).dll $(AIM_TARGET).dll $(ICQ_TARGET).dll
+all: $(TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
-	cp $(AIM_TARGET).dll $(ICQ_TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
+	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll.a $(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
-
-$(AIM_TARGET).dll: $(TARGET).dll.a $(AIM_OBJECTS)
-	$(CC) -shared $(AIM_OBJECTS) $(LIB_PATHS) $(LIBS) -loscar $(DLL_LD_FLAGS) -o $(AIM_TARGET).dll
-
-$(ICQ_TARGET).dll: $(TARGET).dll.a $(ICQ_OBJECTS)
-	$(CC) -shared $(ICQ_OBJECTS) $(LIB_PATHS) $(LIBS) -loscar $(DLL_LD_FLAGS) -o $(ICQ_TARGET).dll
+$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
-	rm -f $(AIM_OBJECTS) $(AIM_TARGET).dll
-	rm -f $(ICQ_OBJECTS) $(ICQ_TARGET).dll
+	rm -f $(OBJECTS) $(TARGET).dll
 
 include $(PIDGIN_COMMON_TARGETS)

@@ -41,6 +41,7 @@ C_SRC =			actions.c \
 			aes.c \
 			chunk.c \
 			cipher.c \
+			client.c \
 			filexfer.c \
 			formcmds.c \
 			login.c \
@@ -48,7 +49,6 @@ C_SRC =			actions.c \
 			multimx.c \
 			mxit.c \
 			profile.c \
-			protocol.c \
 			roster.c \
 			splashscreen.c \
 			voicevideo.c
