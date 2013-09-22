@@ -32,7 +32,8 @@
 static gboolean
 plugin_load(PurplePlugin *plugin) {
 	purple_notify_message(plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
-						"This is the Hello World! plugin :)", NULL, NULL, NULL);
+						"This is the Hello World! plugin :)",
+						NULL, NULL, NULL, NULL);
 
 	return TRUE;
 }
