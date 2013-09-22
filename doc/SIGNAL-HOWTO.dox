@@ -25,9 +25,9 @@
 	purple_signal_register( purple_plugins_get_handle(), /* Instance */
 				"plugin-load",               /* Signal name */
 				purple_marshal_VOID__POINTER,/* Marshal function */
-				NULL,                        /* Callback return value type */
+				G_TYPE_NONE,                 /* Callback return type */
 				1,                           /* Number of callback arguments (not including void *data) */
-				purple_value_new(PURPLE_TYPE_SUBTYPE,PURPLE_SUBTYPE_PLUGIN) /* Type of first callback argument */
+				PURPLE_TYPE_PLUGIN           /* Type of first callback argument */
 				);
   @endcode
 
@@ -62,8 +62,8 @@
   The @c void @c *data argument at the end of each callback function
   provides the data argument given to purple_signal_connect() .
 
-  @subsubsection cb_ret_type Callback return value type
-  In our case, this is NULL, meaning "returns void".
+  @subsubsection cb_ret_type Callback return type
+  In our case, this is G_TYPE_NONE, meaning "returns void".
   @todo This could be described better.
 
   @subsubsection num_args Number of arguments
@@ -71,10 +71,10 @@
   will take.
 
   @subsubsection type_arg Type of argument
-  @c purple_value_new(PURPLE_TYPE_SUBTYPE,PURPLE_SUBTYPE_PLUGIN) specifies that
-  the first argument given to the callback will be a @c PurplePlugin* . You
-  will need as many "type of argument" arguments to purple_signal_register() as
-  you specified in "Number of arguments" above.
+  @c PURPLE_TYPE_PLUGIN specifies that the first argument given to the callback
+  will be a @c PurplePlugin* . You will need as many "type of argument"
+  arguments to purple_signal_register() as you specified in
+  "Number of arguments" above.
 
   @todo Describe this more.
 
