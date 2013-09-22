@@ -16,7 +16,7 @@
  @signaldef jabber-receiving-iq
   @signalproto
 gboolean (*iq_received)(PurpleConnection *gc, const char *type, const char *id,
-                     const char *from, xmlnode *iq);
+                     const char *from, PurpleXmlNode *iq);
   @endsignalproto
   @signaldesc
    Emitted when an XMPP IQ stanza is received. Allows a plugin to process IQ
@@ -35,7 +35,7 @@ gboolean (*iq_received)(PurpleConnection *gc, const char *type, const char *id,
   @signalproto
 gboolean (*message_received)(PurpleConnection *gc, const char *type,
                               const char *id, const char *from, const char *to,
-                              xmlnode *message);
+                              PurpleXmlNode *message);
   @endsignalproto
   @signaldesc
    Emitted when an XMPP message stanza is received. Allows a plugin to
@@ -55,7 +55,7 @@ gboolean (*message_received)(PurpleConnection *gc, const char *type,
  @signaldef jabber-receiving-presence
   @signalproto
 gboolean (*presence_received)(PurpleConnection *gc, const char *type,
-                               const char *from, xmlnode *presence);
+                               const char *from, PurpleXmlNode *presence);
   @endsignalproto
   @signaldesc
    Emitted when an XMPP presence stanza is received. Allows a plugin to process
@@ -73,7 +73,7 @@ gboolean (*presence_received)(PurpleConnection *gc, const char *type,
  @signaldef jabber-watched-iq
   @signalproto
 gboolean (*watched_iq)(PurpleConnection *gc, const char *type, const char *id,
-                       const char *from, xmlnode *child);
+                       const char *from, PurpleXmlNode *child);
   @endsignalproto
   @signaldesc
    Emitted when an IQ with a watched (child, namespace) pair is received.  See
@@ -112,7 +112,7 @@ void (unregister_namespace_watcher)(const char *node, const char *namespace);
 
  @signaldef jabber-sending-xmlnode
   @signalproto
-void (sending_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
+void (sending_xmlnode)(PurpleConnection *gc, PurpleXmlNode **stanza);
   @endsignalproto
   @signaldesc
    Emit this signal (@c purple_signal_emit) to send a stanza. It is preferred
@@ -124,7 +124,7 @@ void (sending_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
 
  @signaldef jabber-receiving-xmlnode
   @signalproto
-void (receiving_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
+void (receiving_xmlnode)(PurpleConnection *gc, PurpleXmlNode **stanza);
   @endsignalproto
   @signaldesc
    Emitted when an XMPP stanza is received. Allows a plugin to process any
