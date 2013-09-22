@@ -1,6 +1,6 @@
 #include "module.h"
 
-MODULE = Purple::Prpl  PACKAGE = Purple::Find  PREFIX = purple_find_
+MODULE = Purple::Prpl  PACKAGE = Purple::Find  PREFIX = purple_protocols_
 PROTOTYPES: ENABLE
 
 Purple::Plugin

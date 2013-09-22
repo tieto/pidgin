@@ -70,8 +70,8 @@ Examples of commands:
     getstatusmessage
     quit
 
-    PurpleAccountsFindConnected?name=&protocol=prpl-jabber
-    PurpleAccountsFindConnected(,prpl-jabber)
+    PurpleAccountsFindConnected?name=&protocol=jabber
+    PurpleAccountsFindConnected(,jabber)
 """ % sys.argv[0]
     if (requested):
         sys.exit(0)
@@ -112,8 +112,6 @@ def execute(uri):
     protocol = match.group(2)
     if protocol == "xmpp":
         protocol = "jabber"
-    if protocol is not None:
-        protocol = "prpl-" + protocol
     command = match.group(5)
     paramstring = match.group(7)
     params = {}

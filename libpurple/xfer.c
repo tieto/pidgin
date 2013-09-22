@@ -79,7 +79,7 @@ struct _PurpleXferPrivate {
 
 	PurpleXferStatus status;     /**< File Transfer's status.             */
 
-	/** I/O operations, which should be set by the prpl using
+	/** I/O operations, which should be set by the protocol using
 	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
 	 *  mandatory; all others are optional.
 	 */
@@ -98,7 +98,7 @@ struct _PurpleXferPrivate {
 
 	PurpleXferUiOps *ui_ops;     /**< UI-specific operations.             */
 
-	void *proto_data;            /**< prpl-specific data.
+	void *proto_data;            /**< Protocol-specific data.
 	                                  TODO Remove this, and use
 	                                       protocol-specific subclasses   */
 

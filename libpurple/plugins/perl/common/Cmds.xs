@@ -33,7 +33,7 @@ BOOT:
 		const_iv(VERY_LOW),
 		const_iv(LOW),
 		const_iv(DEFAULT),
-		const_iv(PRPL),
+		const_iv(PROTOCOL),
 		const_iv(PLUGIN),
 		const_iv(ALIAS),
 		const_iv(HIGH),
