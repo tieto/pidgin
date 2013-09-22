@@ -45,7 +45,6 @@
 
 #include <notify.h>
 #include <plugins.h>
-#include <version.h>
 
 /* This function is the callback for the plugin action we added. All we're
  * doing here is displaying a message. When the user selects the plugin
