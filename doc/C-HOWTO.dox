@@ -9,8 +9,8 @@
   To develop a plugin you need to have the libpurple and (for UI plugins) the
   Pidgin/Finch source code or development headers.  It is generally a good idea
   to compile against the same version of Pidgin that you are running.  You may
-  also want to develop against the code in our Monotone repository if you need
-  to use a new feature.  Please do not abuse our Monotone repository, however.
+  also want to develop against the code in our Mercurial repository if you need
+  to use a new feature.  Please do not abuse our Mercurial repository, however.
 
   All plugins must have @c PURPLE_PLUGINS defined and the definition must be
   before including any libpurple, Pidgin, or Finch header files.  Failure to do
