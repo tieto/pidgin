@@ -20,36 +20,8 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-/* We're including glib.h again for the gboolean type. */
-#include <glib.h>
-
-/* This will prevent compiler errors in some instances and is better explained in the
- * how-to documents on the wiki */
-#ifndef G_GNUC_NULL_TERMINATED
-# if __GNUC__ >= 4
-#  define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
-# else
-#  define G_GNUC_NULL_TERMINATED
-# endif
-#endif
-
-/* This is the required definition of PURPLE_PLUGINS as required for a plugin,
- * but we protect it with an #ifndef because config.h may define it for us
- * already and this would cause an unneeded compiler warning. */
-#ifndef PURPLE_PLUGINS
-# define PURPLE_PLUGINS
-#endif
-
-/* Here we're including the necessary libpurple headers for this plugin.  Note
- * that we're including them in alphabetical order.  This isn't necessary but
- * we do this throughout our source for consistency. */
-#include "debug.h"
-#include "plugin.h"
-#include "version.h"
+/* This file defines PURPLE_PLUGINS and includes all the libpurple headers */
+#include <purple.h>
 
 /* It's more convenient to type PLUGIN_ID all the time than it is to type
  * "core-debugexample", so define this convenience macro. */
