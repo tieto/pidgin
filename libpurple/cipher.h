@@ -116,9 +116,6 @@ struct _PurpleCipherClass {
 	/** The get block size function */
 	size_t (*get_block_size)(PurpleCipher *cipher);
 
-	/** The get cipher name function */
-	const gchar* (*get_name)(PurpleCipher *cipher);
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -136,15 +133,6 @@ G_BEGIN_DECLS
  * Returns the GType for the Cipher object.
  */
 GType purple_cipher_get_type(void);
-
-/**
- * Gets a cipher's name
- *
- * @param cipher The cipher
- *
- * @return The cipher's name
- */
-const gchar *purple_cipher_get_name(PurpleCipher *cipher);
 
 /**
  * Resets a cipher to it's default value

@@ -123,12 +123,6 @@ purple_rc4_cipher_encrypt(PurpleCipher *cipher, const guchar input[], size_t in_
 	return in_len;
 }
 
-static const gchar*
-purple_rc4_cipher_get_name(PurpleCipher *cipher)
-{
-	return "rc4";
-}
-
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -186,7 +180,6 @@ purple_rc4_cipher_class_init(PurpleRC4CipherClass *klass) {
 	cipher_class->reset = purple_rc4_cipher_reset;
 	cipher_class->encrypt = purple_rc4_cipher_encrypt;
 	cipher_class->set_key = purple_rc4_cipher_set_key;
-	cipher_class->get_name = purple_rc4_cipher_get_name;
 
 	pspec = g_param_spec_int("key_len", "key_len", "key_len",
 							 G_MININT, G_MAXINT, 0,

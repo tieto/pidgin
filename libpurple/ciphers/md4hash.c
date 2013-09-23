@@ -256,12 +256,6 @@ purple_md4_hash_get_block_size(PurpleHash *hash)
 	return 64;
 }
 
-static const gchar*
-purple_md4_hash_get_name(PurpleHash *hash)
-{
-	return "md4";
-}
-
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -279,7 +273,6 @@ purple_md4_hash_class_init(PurpleMD4HashClass *klass) {
 	hash_class->digest = purple_md4_hash_digest;
 	hash_class->get_digest_size = purple_md4_hash_get_digest_size;
 	hash_class->get_block_size = purple_md4_hash_get_block_size;
-	hash_class->get_name = purple_md4_hash_get_name;
 }
 
 /******************************************************************************

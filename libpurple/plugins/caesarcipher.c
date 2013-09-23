@@ -98,12 +98,6 @@ caesar_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 	caesar_cipher_set_offset(cipher, len);
 }
 
-static const gchar*
-caesar_cipher_get_name(PurpleCipher *cipher)
-{
-	return "caesar";
-}
-
 /******************************************************************************
  * Object stuff
  *****************************************************************************/
@@ -147,7 +141,6 @@ caesar_cipher_class_init(PurpleCipherClass *klass)
 	klass->encrypt  = caesar_cipher_encrypt;
 	klass->decrypt  = caesar_cipher_decrypt;
 	klass->set_key  = caesar_cipher_set_key;
-	klass->get_name = caesar_cipher_get_name;
 
 	g_object_class_install_property(obj_class, PROP_OFFSET,
 		g_param_spec_char("offset", "offset",
