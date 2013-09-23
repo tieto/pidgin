@@ -54,8 +54,21 @@ version 3.0.0 (??/??/????):
 	* Invalid user moods can no longer be sent to the server.
 
 	Plugins:
+	* A new plugin API has been introduced. Plugins are no longer required
+	  to be of a predefined type (such as protocol, standard, loader etc),
+	  and can perform multiple roles.
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
+	* Two example plugins, caesarcipher and caesarcipher_consumer, have
+	  been added that demonstrate registering of a dynamic cipher type in
+	  one plugin and using it in another.
+	* IPC test plugins have been removed, since the new plugin API does not
+	  provide a seperate IPC API.
+
+	Protocols:
+	* A single oscar plugin provides both AIM and ICQ protocols.
+	* A single jabber plugin provides XMPP, GTalk and Facebook protocols.
+	* A single yahoo plugin provides both Yahoo and Yahoo JAPAN protocols.
 
 	General:
 	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
