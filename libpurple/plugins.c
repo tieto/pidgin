@@ -245,6 +245,8 @@ purple_plugin_register_type(PurplePlugin *plugin, GType parent,
                             GTypeFlags flags)
 {
 #ifdef PURPLE_PLUGINS
+	g_return_val_if_fail(GPLUGIN_IS_NATIVE_PLUGIN(plugin), G_TYPE_INVALID);
+
 	return gplugin_native_plugin_register_type(GPLUGIN_NATIVE_PLUGIN(plugin),
 	                                           parent, name, info, flags);
 
@@ -259,6 +261,8 @@ purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
                             const GInterfaceInfo *interface_info)
 {
 #ifdef PURPLE_PLUGINS
+	g_return_if_fail(GPLUGIN_IS_NATIVE_PLUGIN(plugin));
+
 	gplugin_native_plugin_add_interface(GPLUGIN_NATIVE_PLUGIN(plugin),
 	                                    instance_type, interface_type,
 	                                    interface_info);
