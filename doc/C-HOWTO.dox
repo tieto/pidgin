@@ -14,19 +14,15 @@
 
   All plugins must have @c PURPLE_PLUGINS defined and the definition must be
   before including any libpurple, Pidgin, or Finch header files.  Failure to do
-  so can lead to strange errors that are hard to diagnose.  Just don't forget!
+  so can lead to strange errors that are hard to diagnose.  Including purple.h
+  will define this for you.
 
  @section hello_world Hello World!
   I know every tutorial has a hello world, so why should libpurple be any
   different?
 
   @code
-#define PURPLE_PLUGINS
-
-#include <glib.h>
-
-#include "notify.h"
-#include "plugins.h"
+#include <purple.h>
 
 static PurplePluginInfo *
 plugin_query(GError **error)
@@ -71,13 +67,9 @@ PURPLE_PLUGIN_INIT(hello_world, plugin_query, plugin_load, plugin_unload);
 
   @endcode
 
-  Okay, so what does all this mean?  We start off by defining @c PURPLE_PLUGINS
-  like described before.  Next we include glib.h, mainly for gboolean and the
-  glib wrappers of the standard C types.
-
-  Next, we include plugins.h which has all the plugin specific stuff that we
-  need.  For example: @c #PurplePlugin, @c #PurplePluginInfo,
-  and @c PURPLE_PLUGIN_INIT().
+  Okay, so what does all this mean?  We start off by including purple.h.  This
+  file defines @c PURPLE_PLUGINS as described before so that we don't have to
+  manually define it.  It also includes all the libpurple header files.
 
   @c plugin_query, @c plugin_load and @c plugin_unload must be implemented in
   every plugin.  Each of these functions can return an error on failure by using
