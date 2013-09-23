@@ -48,8 +48,6 @@ probe_ssl_plugins(PurplePlugin *my_plugin, GError **error)
 			continue;
 
 		info = purple_plugin_get_info(plugin);
-		if (!info)
-			continue;
 
 		if (strncmp(purple_plugin_info_get_id(info), "ssl-", 4) == 0)
 		{

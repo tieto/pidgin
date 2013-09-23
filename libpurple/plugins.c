@@ -799,8 +799,12 @@ purple_plugins_find_all(void)
 
 	for (l = ids; l; l = l->next) {
 		plugins = gplugin_plugin_manager_find_plugins(l->data);
-		for (ll = plugins; ll; ll = ll->next)
-			ret = g_list_append(ret, ll->data);
+
+		for (ll = plugins; ll; ll = ll->next) {
+			PurplePlugin *plugin = PURPLE_PLUGIN(ll->data);
+			if (purple_plugin_get_info(plugin))
+				ret = g_list_append(ret, plugin);
+		}
 
 		gplugin_plugin_manager_free_plugin_list(plugins);
 	}
@@ -849,9 +853,6 @@ purple_plugins_refresh(void)
 			continue;
 
 		info = purple_plugin_get_info(plugin);
-		if (!info)
-			continue;
-
 		priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 		if (!priv->unloaded && purple_plugin_info_get_flags(info) &

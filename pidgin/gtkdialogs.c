@@ -847,8 +847,6 @@ void pidgin_dialogs_plugins_info(void)
 	for(l = plugins; l; l = l->next) {
 		plugin = PURPLE_PLUGIN(l->data);
 		info = purple_plugin_get_info(plugin);
-		if (!info)
-			continue;
 
 		pname = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
 		authorlist = purple_plugin_info_get_authors(info);

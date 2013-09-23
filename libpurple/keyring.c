@@ -1289,9 +1289,6 @@ purple_keyring_init(void)
 		PurplePlugin *plugin = PURPLE_PLUGIN(it->data);
 		PurplePluginInfo *info = purple_plugin_get_info(plugin);
 
-		if (info == NULL)
-			continue;
-
 		if (strncmp(purple_plugin_info_get_id(info), "keyring-", 8) != 0)
 			continue;
 
