@@ -4,18 +4,35 @@ version 3.0.0 (??/??/????):
 	libpurple:
 		Added:
 		* displaying-emails-clear signal (notification signal)
-		* pidgin_create_webview
 		* purple_account_is_disconnecting
 		* purple_account_get_ui_data
 		* purple_account_set_ui_data
+		* purple_account_privacy_get_denied
+		* purple_account_privacy_get_permitted
+		* PurpleAccountPresence and PurpleBuddyPresence inherit PurplePresence
+		* purple_account_presence_new
+		* purple_buddy_presence_new
 		* purple_account_register_completed
+		* PurpleAESCipher, PurpleDESCipher, PurpleDES3Cipher, PurpleHMACCipher,
+		  PurplePBKDF2Cipher PurpleRC4Cipher inherit PurpleCipher
+		* purple_aes_cipher_new
+		* purple_des3_cipher_new
+		* purple_des_cipher_new
+		* purple_hmac_cipher_new
+		* purple_pbkdf2_cipher_new
+		* purple_rc4_cipher_new
+		* purple_blist_node_is_transient
+		* purple_blist_node_set_transient
 		* purple_certificate_get_der_data
 		* purple_certificate_get_display_string
-		* purple_conv_chat_cb_get_alias
-		* purple_conv_chat_cb_get_flags
-		* purple_conv_chat_cb_is_buddy
-		* purple_conv_chat_cb_get_ui_data
-		* purple_conv_chat_cb_set_ui_data
+		* purple_chat_user_get_alias
+		* purple_chat_user_get_chat
+		* purple_chat_user_get_flags
+		* purple_chat_user_is_buddy
+		* purple_chat_user_get_ui_data
+		* purple_chat_user_set_ui_data
+		* purple_chat_user_set_chat
+		* purple_connection_get_active_chats
 		* purple_connection_get_flags
 		* purple_connection_set_flags
 		* purple_connection_update_last_received
@@ -23,12 +40,25 @@ version 3.0.0 (??/??/????):
 		* purple_conversation_set_ui_data
 		* purple_conversation_message_get_alias
 		* purple_conversation_message_get_conv
-		* purple_contact_get_contact_size
+		* PurpleCountingNode, inherits PurpleBlistNode
+		* purple_counting_node_get_*
+		* purple_counting_node_change_*
+		* purple_counting_node_set_*
+		* PurpleHash and purple_hash_* API
+		* PurpleMD4Hash, PurpleMD5Hash, PurpleSHA1Hash and PurpleSHA265Hash
+		  inherit PurpleHash
+		* purple_md4_hash_new
+		* purple_md5_hash_new
+		* purple_sha1_hash_new
+		* purple_sha256_hash_new
+		* PurpleIMConversation and PurpleChatConversation inherit
+		  PurpleConversation
 		* purple_notify_emails_pending
 		* purple_notify_emails_present
 		* purple_notify_searchresult_column_get_title
 		* purple_notify_searchresult_column_is_visible
 		* purple_notify_searchresult_column_set_visible
+		* purple_notify_user_info_entry_destroy
 		* purple_notify_user_info_prepend_pair_plaintext
 		* purple_menu_action_get_callback
 		* purple_menu_action_get_children
@@ -63,31 +93,100 @@ version 3.0.0 (??/??/????):
 		* purple_whiteboard_set_ui_data
 		* purple_whiteboard_get_who
 		* purple_xfer_get_fd
+		* purple_xfer_get_message
 		* purple_xfer_get_protocol_data
 		* purple_xfer_get_ui_data
 		* purple_xfer_get_watcher
 		* purple_xfer_set_fd
 		* purple_xfer_set_local_port
 		* purple_xfer_set_protocol_data
+		* purple_xfer_set_remote_user
 		* purple_xfer_set_status
 		* purple_xfer_set_ui_data
 		* purple_xfer_set_watcher
-		* Various WebKit-related functions in gtkwebview.h
-		* xmlnode_get_default_namespace
-		* xmlnode_strip_prefixes
-		* PidginDockletFlag
+		* purple_xmlnode_get_default_namespace
+		* purple_xmlnode_strip_prefixes
 
 		Changed:
-		* account-authorization-requested signal merged with account-authorization-requested-with-message signal
+		* account.h has been split into account.h (PurpleAccount GObject) and
+		  accounts.h (Accounts subsystem)
+		* blist.h has been split into buddylist.h (PurpleBuddyList and
+		  subsystem), blistnode.h (PurpleBlistNode and PurpleCountingNode
+		  GObjects), blistnodetypes (Buddy, Chat, Contact, Group GObjects)
+		* circbuffer.h renamed to circularbuffer.h
+		* conversation.h has been split into conversation.h
+		  (PurpleConversation), conversationtypes.h (PurpleIMConversation and
+		  PurpleChatConversation) and conversations.h (Conversations subsystem)
+		* Files in libpurple/ciphers have been renamed. To use a particular
+		  cipher, include its header.
+		* Renamed ft.h file to xfer.h
+		* status.h has been split into status.h (Status API) and presence.h
+		  (Presence API)
+		* account-authorization-requested signal merged with
+		  account-authorization-requested-with-message signal
 		* purple_account_add_buddy now takes an invite message as the last
 		  parameter
 		* purple_account_add_buddies now takes an invite message as the last
 		  parameter
-		* purple_buddy_icon_unref no longer has a return value
+		* PurpleAccount is now a GObject. Please see the documentation for
+		  details.
+		* purple_account_get_alias renamed to purple_account_get_private_alias
+		* purple_account_set_alias renamed to purple_account_set_private_alias
+		* PurplePrivacyType renamed to PurpleAccountPrivacyType
+		* purple_privacy_* functions are now purple_account_privacy_*
+		* Removed arguments local and restore from purple_account_privacy_allow
+		  and purple_account_privacy_deny
+		* PurpleBlistNode is now a GObject. Please see the documentation for
+		  details.
+		* purple_blist_alias_buddy renamed to purple_buddy_set_local_alias
+		* purple_blist_alias_chat renamed to purple_chat_set_alias
+		* purple_blist_alias_contact renamed to purple_contact_set_alias
+		* purple_blist_merge_contact renamed to purple_contact_merge
+		* purple_blist_rename_buddy renamed to purple_buddy_set_name
+		* purple_blist_rename_group renamed to purple_group_set_name
+		* purple_blist_server_alias_buddy renamed to
+		* purple_blist_update_buddy_status renamed to purple_buddy_update_status
+		  purple_buddy_set_server_alias
+		* purple_buddy_get_local_buddy_alias renamed to
+		  purple_buddy_get_local_alias
+		* PurpleContact and PurpleGroup inherit PurpleCountingNode
+		* PurpleBuddyList is now a GObject. Please see the documentation for
+		  details.
+		* purple_find_buddies renamed to purple_blist_find_buddies
+		* purple_find_buddy_in_group renamed to purple_blist_find_buddy_in_group
+		* purple_find_buddy renamed to purple_blist_find_buddy
+		* purple_find_group renamed to purple_blist_find_group
+		* purple_get_blist renamed to purple_blist_get_buddy_list
 		* purple_certificate_check_signature_chain now returns a list of failing
 		  PurpleCertificate*s as the second parameter
+		* PurpleConversation is now an abstract type, and is a GObject. Please
+		  see the documentation for details.
+		* purple_conv_* functions are now purple_conversation_*
+		* purple_conv_im_* functions are now purple_im_conversation_*
+		* purple_conv_chat_* functions are now purple_chat_conversation_*
+		* purple_chat_conversation_find_user renamed to
+		  purple_chat_conversation_has_user
+		* PurpleTypingState renamed to PurpleIMTypingState
+		* PurpleConvChatBuddy changed to PurpleChatUser, is now a GObject.
+		  Please see the documentation for details.
+		* purple_conv_chat_cb_* functions are now purple_chat_user_*
+		* Replaced 'chat-buddy' with 'chat-user' in conversation signals
+		* Replaced chatname, buddyname arguments of 'chat-user-flags' (formerly
+		  'chat-buddy-flags') signal with PurpleChatUser *
+		* PurpleCipher split into PurpleCipher and PurpleHash, both are
+		  GObjects. Please see the documentation for details.
+		* purple_cipher_context_* functions are now purple_cipher_*
+		* PurpleCircBuffer changed to PurpleCircularBuffer, is now a GObject.
+		  Please see the documentation for details.
+		* purple_circ_buffer_* functions are now purple_circular_buffer_*
 		* purple_connection_error now takes a PurpleConnectionError
 		  as the second parameter
+		* PurpleConnection is now a GObject. Please see the documentation for
+		  details.
+		* PURPLE_CONNECTION_* prefix of PurpleConnectionFlag enum names changed
+		  to PURPLE_CONNECTION_FLAG_*
+		* PURPLE_* prefix of PurpleConnectionState enum names changed to
+		  PURPLE_CONNECTION_*
 		* purple_conversation_get_gc renamed to
 		  purple_conversation_get_connection
 		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
@@ -107,9 +206,17 @@ version 3.0.0 (??/??/????):
 		  a GList
 		* purple_notify_user_info_prepend_pair renamed to
 		  purple_notify_user_info_prepend_pair_html
-		* pidgin_setup_screenname_autocomplete now takes a filter function and
-		  its data as final two arguments
+		* PurpleRoomlist is now a GObject. Please see the documentation for
+		  details.
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
+		* PurpleStatus is now a GObject. Please see the documentation for
+		  details.
+		* purple_status_attr_* functions are now purple_status_attribute_*
+		* PurpleStatusAttr renamed to PurpleStatusAttribute
+		* PurplePresence is now an abstract type, and is a GObject. Please see
+		  the documentation for details.
+		* update_idle method has been added to PurplePresenceClass to update the
+		  idle state of a presence
 		* purple_str_size_to_units now takes a goffset as the size parameter
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
 		* purple_util_fetch_url_request now takes a PurpleAccount as
@@ -117,10 +224,18 @@ version 3.0.0 (??/??/????):
 		* purple_util_fetch_url_request now takes a length as the eighth
 		  parameter
 		* purple_util_fetch_url_len now takes a length as the fifth parameter
+		* PurpleWhiteboard is now a GObject. Please see the documentation for
+		  details.
+		* purple_whiteboard_create renamed to purple_whiteboard_new
 		* purple_xfer_get_bytes_remaining now returns a goffset
 		* purple_xfer_get_bytes_sent now returns a goffset
 		* purple_xfer_get_size now returns a goffset
 		* purple_xfer_is_canceled renamed to purple_xfer_is_cancelled
+		* PurpleXfer is now a GObject. Please see the documentation for details.
+		* purple_xfer_get_type renamed to purple_xfer_get_xfer_type
+		* PurpleXferStatusType renamed to PurpleXferStatus
+		* PURPLE_XFER_* prefix of PurpleXferType enums changed to
+		  PURPLE_XFER_TYPE_*
 		* purple_xfer_set_bytes_sent now takes a goffset as the bytes_sent
 		  parameter
 		* purple_xfer_set_size now takes a goffset as the size parameter
@@ -136,17 +251,16 @@ version 3.0.0 (??/??/????):
 		  time_t to represent times
 		* purple_certificate_get_times now uses gint64 instead of
 		  time_t to represent times
+		* Signal registration now uses GTypes instead of PurpleValues.  See
+		  SIGNAL-HOWTO for more information.
+		* xmlnode renamed to PurpleXmlNode
+		* XMLNodeType renamed to PurpleXmlNodeType
+		* xmlnode_* functions are now purple_xmlnode_*
 
 		Removed:
-		* _GntFileType
-		* _GntKeyPressMode
-		* _GntMouseEvent
-		* _GntParamFlags
-		* _GntProgressBarOrientation
-		* _GntTreeColumnFlag
-		* _GntWidgetFlags
+		* privacy.h file
+		* value.h file
 		* _PurpleCipherBatchMode
-		* _PurpleCipherCaps
 		* _PurpleCmdFlag
 		* _PurpleCmdPriority
 		* _PurpleCmdRet
@@ -156,26 +270,9 @@ version 3.0.0 (??/??/????):
 		* _PurpleSoundEventID
 		* _XMLNodeType
 		* account-authorization-requested-with-message signal
-		* GtkIMHtml.clipboard_html_string
-		* GtkIMHtml.clipboard_text_string
-		* GtkIMHtmlFontDetail
-		* gtk_imhtml_animation_free
-		* gtk_imhtml_animation_new
-		* gtk_imhtml_image_add_to
-		* gtk_imhtml_image_free
-		* gtk_imhtml_image_new
-		* gtk_imhtml_image_scale
-		* pidgin_blist_update_account_error_state
-		* pidgin_check_if_dir
-		* PIDGIN_DIALOG
-		* pidgin_dialogs_alias_contact
-		* pidgin_mini_dialog_links_supported
-		* pidgin_set_custom_buddy_icon
-		* pidgin_setup_screenname_autocomplete_with_filter
-		* PidginBuddyList.connection_errors
-		* PidginConversation.sg
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite
+		* purple_account_set_current_error
 		* purple_blist_load
 		* purple_blist_new
 		* purple_set_blist
@@ -188,12 +285,26 @@ version 3.0.0 (??/??/????):
 		  purple_certificate_check_signature_chain, instead
 		* purple_certificate_display_x509. Use purple_request_certificate,
 		  instead
+		* PurpleCipherContext
+		* purple_cipher_context_destroy
+		* purple_cipher_context_get_data
+		* purple_cipher_context_get_option
+		* purple_cipher_context_new
+		* purple_cipher_context_new_by_name
+		* purple_cipher_context_set_data
+		* purple_cipher_context_set_option
+		* purple_cipher_get_capabilities
+		* purple_cipher_get_name
+		* PurpleCipherOps
+		* purple_ciphers_*
+		* PurpleCipher's init and uninit operations
 		* purple_connection_error_reason
 		* purple_connection_new
 		* purple_connection_new_unregister
 		* purple_connection_destroy
 		* purple_contact_set_alias
 		* purple_conv_chat_set_users
+		* PurpleConversationType
 		* purple_core_migrate
 		* purple_dnsquery_a_account
 		* purple_network_listen_family. Use purple_network_listen, instead.
@@ -214,6 +325,10 @@ version 3.0.0 (??/??/????):
 		* purple_pounces_load
 		* purple_presence_add_status
 		* purple_presence_add_list
+		* PurplePresenceContext
+		* purple_presence_new
+		* purple_presence_new_for_account
+		* purple_presence_new_for_buddy
 		* purple_proxy_connect_socks5
 		* purple_request_field_list_add
 		* purple_srv_cancel
@@ -231,6 +346,7 @@ version 3.0.0 (??/??/????):
 		* purple_strlcpy
 		* purple_txt_cancel
 		* purple_txt_resolve_account
+		* PurpleType, use GType instead.
 		* purple_util_fetch_url_len. Use purple_util_fetch_url, instead.
 		* purple_util_fetch_url_request_len. Use
 		* purple_util_fetch_url_request, instead.
@@ -243,17 +359,11 @@ version 3.0.0 (??/??/????):
 		* PurplePluginProtocolInfo.add_buddy_with_invite
 		* PurplePluginProtocolInfo.add_buddies_with_invite
 		* PurplePluginProtocolInfo.get_cb_away
+		* PurpleValue, use GValue instead.
 		* serv_got_attention
 		* serv_send_attention
-		* struct _GtkIMHtmlAnimation
-		* struct _GtkIMHtmlFontDetail
-		* struct _GtkIMHtmlHr
-		* struct _GtkIMHtmlImage
-		* struct _GtkIMHtmlScalable
-		* struct _GtkSmileyTree
-		* struct _PidginChatPane
-		* struct _PidginImPane
 		* struct _PurpleAttentionType
+		* struct _PurpleCipherCaps
 		* struct _PurpleConversation
 		* struct _PurpleConvChat
 		* struct _PurpleConvChatBuddy
@@ -273,6 +383,59 @@ version 3.0.0 (??/??/????):
 		* wpurple_g_access
 		* xmlnode_set_attrib_with_namespace
 		* xmlnode_set_attrib_with_prefix
+
+	Pidgin:
+		Added:
+		* pidgin_create_webview
+		* PidginDockletFlag
+		* Various WebKit-related functions in gtkwebview.h
+
+		Changed:
+		* gtkft.h file renamed to gtkxfer.h
+		* pidgin_setup_screenname_autocomplete now takes a filter function and
+		  its data as final two arguments
+
+		Removed:
+		* GtkIMHtml.clipboard_html_string
+		* GtkIMHtml.clipboard_text_string
+		* GtkIMHtmlFontDetail
+		* gtk_imhtml_animation_free
+		* gtk_imhtml_animation_new
+		* gtk_imhtml_image_add_to
+		* gtk_imhtml_image_free
+		* gtk_imhtml_image_new
+		* gtk_imhtml_image_scale
+		* pidgin_blist_update_account_error_state
+		* PidginBuddyList.connection_errors
+		* pidgin_check_if_dir
+		* PidginConversation.sg
+		* PIDGIN_DIALOG
+		* pidgin_dialogs_alias_contact
+		* pidgin_mini_dialog_links_supported
+		* pidgin_set_custom_buddy_icon
+		* pidgin_setup_screenname_autocomplete_with_filter
+		* struct _GtkIMHtmlAnimation
+		* struct _GtkIMHtmlFontDetail
+		* struct _GtkIMHtmlHr
+		* struct _GtkIMHtmlImage
+		* struct _GtkIMHtmlScalable
+		* struct _GtkSmileyTree
+		* struct _PidginChatPane
+		* struct _PidginImPane
+
+	Finch:
+		Changed:
+		* gntft.h file renamed to gntxfer.h
+
+	libgnt:
+		Removed:
+		* _GntFileType
+		* _GntKeyPressMode
+		* _GntMouseEvent
+		* _GntParamFlags
+		* _GntProgressBarOrientation
+		* _GntTreeColumnFlag
+		* _GntWidgetFlags
 
 version 2.10.7:
 	* No changes
