@@ -48,7 +48,7 @@ struct _PurplePluginInfoPrivate {
 	/** Callback that returns a preferences frame for a plugin */
 	PurplePluginPrefFrameCallback get_pref_frame;
 
-	/** TRUE if a plugin has been unloaded at least once. Load-on-query
+	/** TRUE if a plugin has been unloaded at least once. Auto-load
 	 *  plugins that have been unloaded once will not be auto-loaded again. */
 	gboolean unloaded;
 };

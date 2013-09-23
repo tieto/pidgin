@@ -764,7 +764,7 @@ void purple_plugins_add_search_path(const gchar *path);
 
 /**
  * Forces a refresh of all plugins found in the search paths, and loads plugins
- * that are to be loaded on query.
+ * that are to be auto-loaded.
  *
  * @see purple_plugins_add_search_path()
  */
@@ -790,7 +790,7 @@ PurplePlugin *purple_plugins_find_by_filename(const char *filename);
 
 /**
  * Saves the list of loaded plugins to the specified preference key.
- * Plugins that are set to load on query are not saved.
+ * Plugins that are set to auto-load are not saved.
  *
  * @param key The preference key to save the list of plugins to.
  */
