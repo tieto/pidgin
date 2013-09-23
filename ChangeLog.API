@@ -96,7 +96,41 @@ version 3.0.0 (??/??/????):
 		* PURPLE_IMPLEMENT_INTERFACE_DYNAMIC
 		* PURPLE_DEFINE_STATIC_TYPE
 		* PURPLE_DEFINE_STATIC_TYPE_EXTENDED
+		* PurpleProtocol, inherits GObject. Please see the documentation for
+		  details.
 		* PurpleProtocolAction
+		* PurpleProtocolOverrideFlags
+		* PurpleProtocolClientIface
+		* PurpleProtocolServerIface
+		* PurpleProtocolIMIface
+		* PurpleProtocolChatIface
+		* PurpleProtocolPrivacyIface
+		* PurpleProtocolXferIface
+		* PurpleProtocolRoomlistIface
+		* PurpleProtocolAttentionIface
+		* PurpleProtocolMediaIface
+		* PurpleProtocolFactoryIface
+		* purple_protocol_get_* for PurpleProtocol members
+		* purple_protocol_class_* for class methods
+		* purple_protocol_client_iface_* for client interface methods
+		* purple_protocol_server_iface_* for server interface methods
+		* purple_protocol_im_iface_* for IM interface methods
+		* purple_protocol_chat_iface_* for chat interface methods
+		* purple_protocol_privacy_iface_* for privacy interface methods
+		* purple_protocol_xfer_iface_* for xfer interface methods
+		* purple_protocol_roomlist_iface_* for roomlist interface methods
+		* purple_protocol_attention_iface_* for attention interface methods
+		* purple_protocol_media_iface_* for media interface methods
+		* purple_protocol_factory_iface_* for factory interface methods
+		* purple_protocol_action_new
+		* purple_protocol_action_free
+		* purple_protocols_add
+		* purple_protocols_remove
+		* purple_protocols_find
+		* purple_protocols_get_all
+		* purple_protocols_get_handle
+		* purple_protocols_init
+		* purple_protocols_uninit
 		* purple_request_certificate
 		* purple_request_field_certificate_new
 		* purple_request_field_certificate_get_value
@@ -151,6 +185,8 @@ version 3.0.0 (??/??/????):
 		  cipher, include its header.
 		* Renamed ft.h file to xfer.h
 		* Renamed plugin.h file to plugins.h
+		* prpl.h has been split into protocol.h (PurpleProtocol GObject and
+		  protocol interfaces) and protocols.h (protocols subsystem)
 		* status.h has been split into status.h (Status API) and presence.h
 		  (Presence API)
 		* account-authorization-requested signal merged with
@@ -188,6 +224,7 @@ version 3.0.0 (??/??/????):
 		* purple_find_buddy renamed to purple_blist_find_buddy
 		* purple_find_group renamed to purple_blist_find_group
 		* purple_get_blist renamed to purple_blist_get_buddy_list
+		* PurpleBuddyIconSpec has been moved to buddyicon.h
 		* purple_certificate_check_signature_chain now returns a list of failing
 		  PurpleCertificate*s as the second parameter
 		* PurpleConversation is now an abstract type, and is a GObject. Please
@@ -258,6 +295,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_find_with_id renamed to purple_plugins_find_plugin
 		* purple_plugins_find_with_filename renamed to
 		  purple_plugins_find_by_filename
+		* proto_chat_entry has been renamed to PurpleProtocolChatEntry
 		* PurpleRoomlist is now a GObject. Please see the documentation for
 		  details.
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
@@ -399,6 +437,7 @@ version 3.0.0 (??/??/????):
 		* purple_presence_new
 		* purple_presence_new_for_account
 		* purple_presence_new_for_buddy
+		* PurplePluginProtocolInfo
 		* purple_proxy_connect_socks5
 		* purple_request_field_list_add
 		* purple_srv_cancel
@@ -458,6 +497,7 @@ version 3.0.0 (??/??/????):
 		Added:
 		* pidgin_create_webview
 		* PidginDockletFlag
+		* PidginPluginInfo, inherits PurplePluginInfo
 		* Various WebKit-related functions in gtkwebview.h
 
 		Changed:
@@ -494,6 +534,9 @@ version 3.0.0 (??/??/????):
 		* struct _PidginImPane
 
 	Finch:
+		Added:
+		* FinchPluginInfo, inherits PurplePluginInfo
+
 		Changed:
 		* gntft.h file renamed to gntxfer.h
 
