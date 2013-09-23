@@ -50,35 +50,33 @@
 #include <plugin.h>
 #include <version.h>
 
-static PurplePlugin *notify_example = NULL;
-
 /* The next four functions and the calls within them should cause dialog boxes to appear
  * when you select the plugin action from the Tools->Notify Example menu */
 static void
 notify_error_cb(PurplePluginAction *action)
 {
-	purple_notify_error(notify_example, "Test Notification", "Test Notification",
+	purple_notify_error(action->plugin, "Test Notification", "Test Notification",
 		"This is a test error notification", NULL);
 }
 
 static void
 notify_info_cb(PurplePluginAction *action)
 {
-	purple_notify_info(notify_example, "Test Notification", "Test Notification",
+	purple_notify_info(action->plugin, "Test Notification", "Test Notification",
 		"This is a test informative notification", NULL);
 }
 
 static void
 notify_warn_cb(PurplePluginAction *action)
 {
-	purple_notify_warning(notify_example, "Test Notification", "Test Notification",
+	purple_notify_warning(action->plugin, "Test Notification", "Test Notification",
 		"This is a test warning notification", NULL);
 }
 
 static void
 notify_format_cb(PurplePluginAction *action)
 {
-	purple_notify_formatted(notify_example, "Test Notification", "Test Notification",
+	purple_notify_formatted(action->plugin, "Test Notification", "Test Notification",
 		"Test Notification",
 		"<I>This is a test notification with formatted text.</I>", NULL, NULL);
 }
@@ -87,7 +85,7 @@ static void
 notify_uri_cb(PurplePluginAction *action)
 {
 	/* This one should open your web browser of choice. */
-	purple_notify_uri(notify_example, "https://www.pidgin.im/");
+	purple_notify_uri(action->plugin, "https://www.pidgin.im/");
 }
 
 static GList *
@@ -117,9 +115,6 @@ plugin_actions(PurplePlugin *plugin, gpointer context)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	/* we need a handle for all the notify calls */
-	notify_example = plugin;
-
 	return TRUE;
 }
 

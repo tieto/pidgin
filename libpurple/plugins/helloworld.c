@@ -47,18 +47,13 @@
 #include <plugin.h>
 #include <version.h>
 
-/* we're adding this here and assigning it in plugin_load because we need
- * a valid plugin handle for our call to purple_notify_message() in the
- * plugin_action_test_cb() callback function */
-PurplePlugin *helloworld_plugin = NULL;
-
 /* This function is the callback for the plugin action we added. All we're
  * doing here is displaying a message. When the user selects the plugin
  * action, this function is called. */
 static void
 plugin_action_test_cb (PurplePluginAction * action)
 {
-	purple_notify_message (helloworld_plugin, PURPLE_NOTIFY_MSG_INFO,
+	purple_notify_message (action->plugin, PURPLE_NOTIFY_MSG_INFO,
 		"Plugin Actions Test", "This is a plugin actions test :)", NULL, NULL,
 		NULL, NULL);
 }
@@ -94,8 +89,6 @@ plugin_load (PurplePlugin * plugin)
 	purple_notify_message (plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
 		"This is the Hello World! plugin :)", NULL, NULL,
 		NULL, NULL);
-
-	helloworld_plugin = plugin; /* assign this here so we have a valid handle later */
 
 	return TRUE;
 }
