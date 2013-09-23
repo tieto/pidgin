@@ -109,12 +109,6 @@ purple_md5_hash_get_digest_size(PurpleHash *hash)
 	return g_checksum_type_get_length(G_CHECKSUM_MD5);
 }
 
-static const gchar*
-purple_md5_hash_get_name(PurpleHash *hash)
-{
-	return "md5";
-}
-
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -146,7 +140,6 @@ purple_md5_hash_class_init(PurpleMD5HashClass *klass) {
 	hash_class->digest = purple_md5_hash_digest;
 	hash_class->get_digest_size = purple_md5_hash_get_digest_size;
 	hash_class->get_block_size = purple_md5_hash_get_block_size;
-	hash_class->get_name = purple_md5_hash_get_name;
 
 	g_type_class_add_private(klass, sizeof(PurpleMD5HashPrivate));
 }

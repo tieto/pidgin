@@ -18,10 +18,6 @@ BOOT:
 		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
 }
 
-const gchar *
-purple_cipher_get_name(cipher)
-	Purple::Cipher cipher
-
 gchar_own*
 purple_http_digest_calculate_response(algorithm, method, digest_uri, qop, entity, nonce, nonce_count, client_nonce, session_key)
 	const gchar* algorithm
