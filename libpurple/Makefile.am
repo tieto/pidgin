@@ -439,14 +439,12 @@ introspection_sources = \
 	$(addprefix media/, $(purple_mediaheaders)) \
 	$(purple_builtheaders)
 
-Purple.gir: libpurple.la
-Purple_gir_INCLUDES = GObject-2.0
-Purple_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
-Purple_gir_LIBS = libpurple.la
-Purple_gir_FILES = $(introspection_sources)
-Purple_gir_NAMESPACE = Purple
-Purple_gir_VERSION = $(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
-INTROSPECTION_GIRS += Purple.gir
+Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: libpurple.la
+Purple_3_0_gir_INCLUDES = GObject-2.0
+Purple_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
+Purple_3_0_gir_LIBS = libpurple.la
+Purple_3_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
