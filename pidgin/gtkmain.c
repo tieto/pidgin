@@ -478,7 +478,7 @@ int main(int argc, char *argv[])
 		{"display",         required_argument, NULL, 'D'},
 		{"sync",            no_argument,       NULL, 'S'},
 #ifdef ENABLE_INTROSPECTION
-        {"introspect-dump", required_argument, NULL, 'i'},
+		{"introspect-dump", required_argument, NULL, 'i'},
 #endif
 		{0, 0, 0, 0}
 	};

@@ -278,7 +278,7 @@ init_libpurple(int argc, char **argv)
 		{"nologin",         no_argument,       NULL, 'n'},
 		{"version",         no_argument,       NULL, 'v'},
 #ifdef ENABLE_INTROSPECTION
-        {"introspect-dump", required_argument, NULL, 'i'},
+		{"introspect-dump", required_argument, NULL, 'i'},
 #endif
 		{0, 0, 0, 0}
 	};
