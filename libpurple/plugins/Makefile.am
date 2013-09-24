@@ -1,26 +1,11 @@
-DIST_SUBDIRS = mono perl ssl tcl keyrings
-
-if USE_PERL
-PERL_DIR = perl
-endif
-
-if USE_TCL
-TCL_DIR = tcl
-endif
+DIST_SUBDIRS = ssl keyrings
 
 if ENABLE_DBUS
 DBUS_LTLIB = dbus-example.la
 endif
 
-if USE_MONO
-MONO_DIR = mono
-endif
-
 SUBDIRS = \
-	$(MONO_DIR) \
-	$(PERL_DIR) \
 	ssl \
-	$(TCL_DIR) \
 	keyrings
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
