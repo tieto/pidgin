@@ -60,6 +60,7 @@ version 3.0.0 (??/??/????):
 	General:
 	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
 	* Various core components of libpurple are now GObjects.
+	* Ciphers are now built from the libpurple directory.
 
 	Windows-Specific Changes:
 	* Updates to dependencies:
