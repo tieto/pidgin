@@ -177,7 +177,7 @@ class Binding:
                 return self.inputhash(type, name)
                 
             # known object types are transformed to integer handles
-            elif type[0].startswith("Purple") or type[0] == "xmlnode":
+            elif type[0].startswith("Purple"):
                 return self.inputpurplestructure(type, name)
 
             # special case for *_get_data functions, be careful here...
