@@ -1693,8 +1693,8 @@ AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
 dnl #######################################################################
 dnl # Check for GPlugin 0.0.9
 dnl #######################################################################
+GOBJECT_INTROSPECTION_CHECK([1.30.0])
 if test "x$enable_plugins" = "xyes" ; then
-	GOBJECT_INTROSPECTION_CHECK([1.30.0])
 	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.9 gmodule-2.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
