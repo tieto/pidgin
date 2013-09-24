@@ -433,7 +433,11 @@ INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
 if HAVE_INTROSPECTION
-introspection_sources = $(purple_coreheaders) $(purple_builtheaders)
+introspection_sources = \
+	$(purple_coreheaders) \
+	$(addprefix ciphers/, $(purple_cipherheaders)) \
+	$(addprefix media/, $(purple_mediaheaders)) \
+	$(purple_builtheaders)
 
 Purple.gir: libpurple.la
 Purple_gir_INCLUDES = GObject-2.0
