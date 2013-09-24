@@ -74,10 +74,9 @@ fi
 
 AC_CANONICAL_HOST
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4macros])
 AM_INIT_AUTOMAKE([1.11 -Wno-portability dist-bzip2])
 AM_SILENT_RULES([yes])
-
-AC_CONFIG_MACRO_DIR([m4macros])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -467,7 +466,9 @@ running configure.
 	AC_SUBST(GTK_LIBS)
 
 	GTK_PC_MODULE="gtk+-${with_gtk}.0"
+	GTK_VERSION=${with_gtk}
 	AC_SUBST(GTK_PC_MODULE)
+	AC_SUBST(GTK_VERSION)
 
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
@@ -1709,6 +1710,10 @@ fi
 
 dnl # Check for gobject introspection
 GOBJECT_INTROSPECTION_CHECK([1.30.0])
+
+if test "x$enable_introspection" = "xyes" ; then
+	AC_DEFINE(ENABLE_INTROSPECTION, 1, [Define if GObject introspection is enabled.])
+fi
 
 dnl #######################################################################
 dnl # Check for Python

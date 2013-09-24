@@ -50,6 +50,10 @@
 #include "config.h"
 #include "package_revision.h"
 
+#ifdef ENABLE_INTROSPECTION
+# include <girepository.h>
+#endif
+
 static void
 debug_init(void)
 {
@@ -268,11 +272,14 @@ init_libpurple(int argc, char **argv)
 	GStatBuf st;
 
 	struct option long_options[] = {
-		{"config",   required_argument, NULL, 'c'},
-		{"debug",    no_argument,       NULL, 'd'},
-		{"help",     no_argument,       NULL, 'h'},
-		{"nologin",  no_argument,       NULL, 'n'},
-		{"version",  no_argument,       NULL, 'v'},
+		{"config",          required_argument, NULL, 'c'},
+		{"debug",           no_argument,       NULL, 'd'},
+		{"help",            no_argument,       NULL, 'h'},
+		{"nologin",         no_argument,       NULL, 'n'},
+		{"version",         no_argument,       NULL, 'v'},
+#ifdef ENABLE_INTROSPECTION
+        {"introspect-dump", required_argument, NULL, 'i'},
+#endif
 		{0, 0, 0, 0}
 	};
 
@@ -288,12 +295,7 @@ init_libpurple(int argc, char **argv)
 
 	/* scan command-line options */
 	opterr = 1;
-	while ((opt = getopt_long(argc, argv,
-#ifndef _WIN32
-				  "c:dhn::v",
-#else
-				  "c:dhn::v",
-#endif
+	while ((opt = getopt_long(argc, argv, "c:dhn::vi:",
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'c':	/* config dir */
@@ -312,6 +314,12 @@ init_libpurple(int argc, char **argv)
 		case 'v':	/* version */
 			opt_version = TRUE;
 			break;
+#ifdef ENABLE_INTROSPECTION
+		case 'i':	/* introspection */
+			g_irepository_dump(optarg, NULL);
+			return 0;
+			break;
+#endif
 		case '?':	/* show terse help */
 		default:
 			show_usage(argv[0], TRUE);

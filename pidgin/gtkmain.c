@@ -74,6 +74,10 @@
 # include <signal.h>
 #endif
 
+#ifdef ENABLE_INTROSPECTION
+# include <girepository.h>
+#endif
+
 #include <getopt.h>
 
 
@@ -462,17 +466,20 @@ int main(int argc, char *argv[])
 	GStatBuf st;
 
 	struct option long_options[] = {
-		{"config",       required_argument, NULL, 'c'},
-		{"debug",        optional_argument, NULL, 'd'},
-		{"force-online", no_argument,       NULL, 'f'},
-		{"help",         no_argument,       NULL, 'h'},
-		{"login",        optional_argument, NULL, 'l'},
-		{"multiple",     no_argument,       NULL, 'm'},
-		{"nologin",      no_argument,       NULL, 'n'},
-		{"session",      required_argument, NULL, 's'},
-		{"version",      no_argument,       NULL, 'v'},
-		{"display",      required_argument, NULL, 'D'},
-		{"sync",         no_argument,       NULL, 'S'},
+		{"config",          required_argument, NULL, 'c'},
+		{"debug",           optional_argument, NULL, 'd'},
+		{"force-online",    no_argument,       NULL, 'f'},
+		{"help",            no_argument,       NULL, 'h'},
+		{"login",           optional_argument, NULL, 'l'},
+		{"multiple",        no_argument,       NULL, 'm'},
+		{"nologin",         no_argument,       NULL, 'n'},
+		{"session",         required_argument, NULL, 's'},
+		{"version",         no_argument,       NULL, 'v'},
+		{"display",         required_argument, NULL, 'D'},
+		{"sync",            no_argument,       NULL, 'S'},
+#ifdef ENABLE_INTROSPECTION
+        {"introspect-dump", required_argument, NULL, 'i'},
+#endif
 		{0, 0, 0, 0}
 	};
 
@@ -612,9 +619,9 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dfhmnl::s:v",
+				  "c:dfhmnl::s:vi:",
 #else
-				  "c:dfhmnl::v",
+				  "c:dfhmnl::vi:",
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -656,6 +663,12 @@ int main(int argc, char *argv[])
 		case 'S':   /* --sync */
 			/* handled by gtk_init_check below */
 			break;
+#ifdef ENABLE_INTROSPECTION
+		case 'i':	/* introspection */
+			g_irepository_dump(optarg, NULL);
+			return 0;
+			break;
+#endif
 		case '?':	/* show terse help */
 		default:
 			show_usage(argv[0], TRUE);

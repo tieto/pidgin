@@ -182,6 +182,7 @@ pidgin_LDADD = \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(X11_LIBS) \
+	$(INTROSPECTION_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
 if USE_INTERNAL_LIBGADU
@@ -210,6 +211,31 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
-	$(INTGG_CFLAGS)
-endif  # ENABLE_GTK
+	$(INTGG_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
 
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(builddir) --add-include-path=$(top_builddir)/libpurple
+INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple
+
+if HAVE_INTROSPECTION
+introspection_sources = $(pidgininclude_HEADERS)
+
+Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/pidgin
+Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-$(GTK_VERSION).0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
+Pidgin_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
+Pidgin_3_0_gir_PROGRAM = $(builddir)/pidgin
+Pidgin_3_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES = $(gir_DATA) $(typelib_DATA)
+endif
+
+endif  # ENABLE_GTK

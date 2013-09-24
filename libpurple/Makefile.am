@@ -398,6 +398,7 @@ libpurple_la_LIBADD = \
 	$(JSON_LIBS) \
 	$(GNUTLS_LIBS) \
 	$(NSS_LIBS) \
+	$(INTROSPECTION_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
@@ -418,7 +419,8 @@ AM_CPPFLAGS = \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
 	$(GNUTLS_CFLAGS) \
-	$(NSS_CFLAGS)
+	$(NSS_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
 
 # INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.
 # We want to use SSL_CERTIFICATES_DIR when it's not empty.
@@ -428,8 +430,8 @@ endif
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
-INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(builddir)
+INTROSPECTION_COMPILER_ARGS =
 
 if HAVE_INTROSPECTION
 introspection_sources = \
@@ -438,10 +440,10 @@ introspection_sources = \
 	$(addprefix media/, $(purple_mediaheaders)) \
 	$(purple_builtheaders)
 
-Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: libpurple.la
+Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
 Purple_3_0_gir_INCLUDES = GObject-2.0
 Purple_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
-Purple_3_0_gir_LIBS = libpurple.la
+Purple_3_0_gir_LIBS = $(builddir)/libpurple.la
 Purple_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
 

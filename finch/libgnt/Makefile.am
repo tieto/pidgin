@@ -89,11 +89,37 @@ libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(GNT_LIBS) \
 	$(LIBXML_LIBS) \
-	$(PY_LIBS)
+	$(PY_LIBS) \
+	$(INTROSPECTION_LIBS)
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GNT_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(PY_CFLAGS)
+	$(PY_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
+
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(builddir)
+INTROSPECTION_COMPILER_ARGS =
+
+if HAVE_INTROSPECTION
+introspection_sources = $(libgnt_lainclude_HEADERS)
+
+Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION).gir: $(builddir)/libgnt.la
+Gnt_2_8_gir_INCLUDES = GObject-2.0
+Gnt_2_8_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
+Gnt_2_8_gir_LIBS = $(builddir)/libgnt.la
+Gnt_2_8_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION).gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
