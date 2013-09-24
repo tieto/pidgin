@@ -77,6 +77,8 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.11 -Wno-portability dist-bzip2])
 AM_SILENT_RULES([yes])
 
+AC_CONFIG_MACRO_DIR([m4macros])
+
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
 PURPLE_MICRO_VERSION=purple_micro_version
@@ -1692,6 +1694,7 @@ dnl #######################################################################
 dnl # Check for GPlugin 0.0.9
 dnl #######################################################################
 if test "x$enable_plugins" = "xyes" ; then
+	GOBJECT_INTROSPECTION_CHECK([1.30.0])
 	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.9 gmodule-2.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([

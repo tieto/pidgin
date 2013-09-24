@@ -387,3 +387,27 @@ AM_CPPFLAGS = \
 if ! INSTALL_SSL_CERTIFICATES
 AM_CPPFLAGS += -DSSL_CERTIFICATES_DIR=\"$(SSL_CERTIFICATES_DIR)\"
 endif
+
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS = libpurple.gir
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+if HAVE_INTROSPECTION
+introspection_sources = $(libpurple_la_SOURCES)
+
+libpurple.gir: libpurple.la
+libpurple_gir_INCLUDES = GObject-2.0
+libpurple_gir_CFLAGS = $(INCLUDES)
+libpurple_gir_LIBS = libpurple.la
+libpurple_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += libpurple.gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif

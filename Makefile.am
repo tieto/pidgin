@@ -14,6 +14,7 @@ EXTRA_DIST = \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
+		m4macros/introspection.m4 \
 		package_revision.h \
 		pidgin.apspec.in \
 		pidgin.spec.in \
@@ -120,6 +121,10 @@ package_revision.h: package_revision_raw.txt
 # and 'distcheck' gets cranky if we don't.  So basically what this
 # line does is tell 'distcheck' to shut up and ignore those two files.
 distcleancheck_listfiles = find . -type f -a ! -name package_revision.h
+
+if PLUGINS
+DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
+endif
 
 SUBDIRS = . libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
 
