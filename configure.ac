@@ -2877,7 +2877,6 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
 		   pidgin/themes/Makefile
-		   libpurple/ciphers/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple-3.pc

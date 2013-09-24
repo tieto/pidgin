@@ -34,7 +34,16 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple-3.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols ciphers . tests example
+SUBDIRS = $(GCONF_DIR) plugins protocols . tests example
+
+if USE_NSS
+AES_SOURCE = ciphers/aescipher.c
+AES_HEADER = aescipher.h
+endif
+if USE_GNUTLS
+AES_SOURCE = ciphers/aescipher.c
+AES_HEADER = aescipher.h
+endif
 
 purple_coresources = \
 	account.c \
@@ -45,6 +54,16 @@ purple_coresources = \
 	buddylist.c \
 	buddyicon.c \
 	certificate.c \
+	$(AES_SOURCE) \
+	ciphers/descipher.c \
+	ciphers/des3cipher.c \
+	ciphers/hmaccipher.c \
+	ciphers/md4hash.c \
+	ciphers/md5hash.c \
+	ciphers/pbkdf2cipher.c \
+	ciphers/rc4cipher.c \
+	ciphers/sha1hash.c \
+	ciphers/sha256hash.c \
 	cipher.c \
 	circularbuffer.c \
 	cmds.c \
@@ -186,6 +205,18 @@ purple_mediaheaders = \
 	codec.h \
 	enum-types.h
 
+purple_cipherheaders = \
+	$(AES_HEADER) \
+	descipher.h \
+	des3cipher.h \
+	hmaccipher.h \
+	md4hash.h \
+	md5hash.h \
+	pbkdf2cipher.h \
+	rc4cipher.h \
+	sha1hash.h \
+	sha256hash.h
+
 purple_builtheaders = purple.h version.h enums.h marshallers.h
 
 purple_enumheaders = \
@@ -245,6 +276,7 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h
                 server.h util.h xmlnode.h protocol.h protocols.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
+		$(addprefix $(srcdir)/ciphers/, $(purple_cipherheaders)) \
 		$(addprefix $(srcdir)/media/, $(purple_mediaheaders)) \
 		$(purple_builtheaders)
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
@@ -280,7 +312,7 @@ libpurple_client_la_LIBADD = $(DBUS_LIBS)
 purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	$(AM_V_GEN)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
-purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
+purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix ciphers/, $(purple_cipherheaders)) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
 	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
 	$(AM_V_at)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
 
@@ -338,13 +370,16 @@ libpurpleinclude_HEADERS = \
 	$(purple_builtheaders) \
 	$(dbus_headers)
 
+cipherincludedir=$(includedir)/libpurple/ciphers
+cipherinclude_HEADERS = \
+	$(addprefix $(srcdir)/ciphers/, $(purple_cipherheaders))
+
 mediaincludedir=$(includedir)/libpurple/media
 mediainclude_HEADERS = \
 	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
 
 libpurple_la_DEPENDENCIES = \
-	$(STATIC_LINK_LIBS) \
-	ciphers/libpurple-ciphers.la
+	$(STATIC_LINK_LIBS)
 
 libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_la_LIBADD = \
@@ -363,7 +398,6 @@ libpurple_la_LIBADD = \
 	$(JSON_LIBS) \
 	$(GNUTLS_LIBS) \
 	$(NSS_LIBS) \
-	ciphers/libpurple-ciphers.la \
 	-lm
 
 AM_CPPFLAGS = \
@@ -382,7 +416,9 @@ AM_CPPFLAGS = \
 	$(GSTINTERFACES_CFLAGS) \
 	$(IDN_CFLAGS) \
 	$(NETWORKMANAGER_CFLAGS) \
-	$(JSON_CFLAGS)
+	$(JSON_CFLAGS) \
+	$(GNUTLS_CFLAGS) \
+	$(NSS_CFLAGS)
 
 # INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.
 # We want to use SSL_CERTIFICATES_DIR when it's not empty.
