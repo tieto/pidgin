@@ -974,7 +974,7 @@ purple_xmlnode_get_type(void)
 	static GType type = 0;
 
 	if (type == 0) {
-		type = g_boxed_type_register_static("xmlnode",
+		type = g_boxed_type_register_static("PurpleXmlNode",
 				(GBoxedCopyFunc)purple_xmlnode_copy,
 				(GBoxedFreeFunc)purple_xmlnode_free);
 	}

@@ -34,8 +34,6 @@ GData **				T_PTR
 const unsigned char *			T_PV
 struct tm *				T_PTR
 const struct tm *			T_PTR
-xmlnode *				T_PTR
-const xmlnode *				T_PTR
 gssize					T_IV
 const void *				T_PTR
 GValue *				T_PTR
