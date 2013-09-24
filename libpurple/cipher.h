@@ -51,8 +51,8 @@ typedef struct _PurpleCipherClass  PurpleCipherClass;
  * Modes for batch encrypters
  */
 typedef enum  {
-	PURPLE_CIPHER_BATCH_MODE_ECB, /*< nick=ECB Batch Mode >*/
-	PURPLE_CIPHER_BATCH_MODE_CBC /*< nick=CBC Batch Mode >*/
+	PURPLE_CIPHER_BATCH_MODE_ECB,
+	PURPLE_CIPHER_BATCH_MODE_CBC
 } PurpleCipherBatchMode;
 
 /**
