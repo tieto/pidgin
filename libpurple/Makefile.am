@@ -214,19 +214,21 @@ enums.h: enums.h.template $(purple_enumheaders)
 enums.c: enums.c.template $(purple_enumheaders)
 	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.c.template $(purple_enumheaders) > $@
 
+CLEANFILES = \
+	enums.c \
+	enums.h \
+	marshallers.c \
+	marshallers.h
+
 if ENABLE_DBUS
 
-CLEANFILES = \
+CLEANFILES += \
 	dbus-bindings.c \
 	dbus-client-binding.c \
 	dbus-client-binding.h \
 	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
-	enums.c \
-	enums.h \
-	marshallers.c \
-	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h \
 	purple.service
