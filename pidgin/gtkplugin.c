@@ -460,6 +460,10 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 
 		pidgin_clear_cursor(plugin_dialog);
 	}
+	else if (!unload && error)
+	{
+		purple_notify_warning(NULL, NULL, _("Could not load plugin"), error->message, NULL);
+	}
 
 	gtk_widget_set_sensitive(pref_button,
 		purple_plugin_is_loaded(plug) && pidgin_plugin_has_config_frame(plug));
