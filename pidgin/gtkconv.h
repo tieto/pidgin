@@ -136,18 +136,14 @@ struct _PidginConversation
 
 	/* Used when attaching a PidginConversation to a PurpleConversation
 	 * with message history */
-	struct {
-		int timer;
-		GList *current;
-	} attach;
+	int attach_timer;
+	GList *attach_current;
 
 	/**
 	 * Quick Find.
 	 */
-	struct {
-		GtkWidget *entry;
-		GtkWidget *container;
-	} quickfind;
+	GtkWidget *quickfind_entry;
+	GtkWidget *quickfind_container;
 };
 
 /*@}*/
