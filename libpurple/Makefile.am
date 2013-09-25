@@ -437,8 +437,7 @@ if HAVE_INTROSPECTION
 introspection_sources = \
 	$(libpurpleinclude_HEADERS) \
 	$(addprefix ciphers/, $(purple_cipherheaders)) \
-	$(addprefix media/, $(purple_mediaheaders)) \
-	$(libpurple_la_SOURCES)
+	$(addprefix media/, $(purple_mediaheaders))
 
 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
 Purple_3_0_gir_INCLUDES = GObject-2.0
