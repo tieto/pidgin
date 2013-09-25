@@ -442,6 +442,9 @@ introspection_sources = \
 
 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
 Purple_3_0_gir_INCLUDES = GObject-2.0
+if PLUGINS
+Purple_3_0_gir_INCLUDES += GPlugin-0.0
+endif
 if ENABLE_DBUS
 Purple_3_0_gir_INCLUDES += DBus-1.0 DBusGLib-1.0
 endif
