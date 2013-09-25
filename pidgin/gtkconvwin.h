@@ -26,6 +26,7 @@
 #ifndef _PIDGIN_CONVERSATION_WINDOW_H_
 #define _PIDGIN_CONVERSATION_WINDOW_H_
 
+typedef struct _PidginWindowMenu   PidginWindowMenu;
 typedef struct _PidginWindow       PidginWindow;
 
 
@@ -33,6 +34,43 @@ typedef struct _PidginWindow       PidginWindow;
  * @name Structures
  **************************************************************************/
 /*@{*/
+
+struct _PidginWindowMenu
+{
+	GtkUIManager *ui;
+	GtkWidget *menubar;
+
+	GtkAction *view_log;
+
+	GtkAction *audio_call;
+	GtkAction *video_call;
+	GtkAction *audio_video_call;
+
+	GtkAction *send_file;
+	GtkAction *get_attention;
+	GtkAction *add_pounce;
+	GtkAction *get_info;
+	GtkAction *invite;
+
+	GtkAction *alias;
+	GtkAction *block;
+	GtkAction *unblock;
+	GtkAction *add;
+	GtkAction *remove;
+
+	GtkAction *insert_link;
+	GtkAction *insert_image;
+
+	GtkAction *logging;
+	GtkAction *sounds;
+	GtkAction *show_formatting_toolbar;
+
+	GtkWidget *send_to;
+
+	GtkWidget *tray;
+
+	GtkWidget *typing_icon;
+};
 
 /**
  * A GTK+ representation of a graphical window containing one or more
@@ -46,43 +84,7 @@ struct _PidginWindow
 	PidginConversation *clicked_tab; /**< The menu currently clicked.      */
 	GList *gtkconvs;
 
-	struct
-	{
-		GtkUIManager *ui;
-		GtkWidget *menubar;
-
-		GtkAction *view_log;
-
-		GtkAction *audio_call;
-		GtkAction *video_call;
-		GtkAction *audio_video_call;
-
-		GtkAction *send_file;
-		GtkAction *get_attention;
-		GtkAction *add_pounce;
-		GtkAction *get_info;
-		GtkAction *invite;
-
-		GtkAction *alias;
-		GtkAction *block;
-		GtkAction *unblock;
-		GtkAction *add;
-		GtkAction *remove;
-
-		GtkAction *insert_link;
-		GtkAction *insert_image;
-
-		GtkAction *logging;
-		GtkAction *sounds;
-		GtkAction *show_formatting_toolbar;
-
-		GtkWidget *send_to;
-
-		GtkWidget *tray;
-
-		GtkWidget *typing_icon;
-
-	} menu;
+	PidginWindowMenu *menu;
 
 	/* Tab dragging stuff. */
 	gboolean in_drag;
