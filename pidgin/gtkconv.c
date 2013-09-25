@@ -9961,6 +9961,7 @@ pidgin_conv_window_new()
 	GdkModifierType state;
 
 	win = g_malloc0(sizeof(PidginWindow));
+	win->menu = g_malloc0(sizeof(PidginWindowMenu));
 
 	window_list = g_list_append(window_list, win);
 
@@ -10116,6 +10117,7 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	purple_notify_close_with_handle(win);
 	purple_signals_disconnect_by_handle(win);
 
+	g_free(win->menu);
 	g_free(win);
 }
 
