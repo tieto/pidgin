@@ -105,7 +105,9 @@ INTROSPECTION_SCANNER_ARGS = --add-include-path=$(builddir) --add-include-path=$
 INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple
 
 if HAVE_INTROSPECTION
-introspection_sources = $(finchinclude_HEADERS)
+introspection_sources = \
+	$(finchinclude_HEADERS) \
+	$(finch_SOURCES)
 
 Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/finch
 Finch_3_0_gir_INCLUDES = GObject-2.0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)

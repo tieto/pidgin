@@ -220,7 +220,9 @@ INTROSPECTION_SCANNER_ARGS = --add-include-path=$(builddir) --add-include-path=$
 INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple
 
 if HAVE_INTROSPECTION
-introspection_sources = $(pidgininclude_HEADERS)
+introspection_sources = \
+	$(pidgininclude_HEADERS) \
+	$(pidgin_SOURCES)
 
 Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/pidgin
 Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-$(GTK_VERSION).0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)

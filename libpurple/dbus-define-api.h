@@ -1,3 +1,4 @@
+#ifndef __GI_SCANNER__ /* hide this file from g-ir-scanner */
 #error "This is file is not a valid C code"
 
 /* This file contains some of the macros from other header files as
@@ -12,3 +13,4 @@ gboolean PURPLE_BUDDY_IS_ONLINE(PurpleBuddy *buddy);
 gboolean PURPLE_CONNECTION_IS_CONNECTED(PurpleConnection *connection);
 gboolean PURPLE_CONNECTION_IS_VALID(PurpleConnection *connection);
 
+#endif /* __GI_SCANNER__ */

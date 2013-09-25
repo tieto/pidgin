@@ -267,7 +267,7 @@ CLEANFILES += \
 # purple dbus server
 
 dbus_sources  = dbus-server.c dbus-useful.c
-dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
+dbus_headers  = dbus-server.h dbus-bindings.h dbus-purple.h dbus-useful.h dbus-define-api.h dbus-types.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h \
                 blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
@@ -435,13 +435,17 @@ INTROSPECTION_COMPILER_ARGS =
 
 if HAVE_INTROSPECTION
 introspection_sources = \
-	$(purple_coreheaders) \
+	$(libpurpleinclude_HEADERS) \
 	$(addprefix ciphers/, $(purple_cipherheaders)) \
 	$(addprefix media/, $(purple_mediaheaders)) \
-	$(purple_builtheaders)
+	$(libpurple_la_SOURCES)
 
 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
 Purple_3_0_gir_INCLUDES = GObject-2.0
+if ENABLE_DBUS
+Purple_3_0_gir_INCLUDES += DBus-1.0 DBusGLib-1.0
+endif
+
 Purple_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
 Purple_3_0_gir_LIBS = $(builddir)/libpurple.la
 Purple_3_0_gir_FILES = $(introspection_sources)
