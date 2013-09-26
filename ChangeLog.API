@@ -14,7 +14,7 @@ version 3.0.0 (??/??/????):
 		* purple_buddy_presence_new
 		* purple_account_register_completed
 		* PurpleAESCipher, PurpleDESCipher, PurpleDES3Cipher, PurpleHMACCipher,
-		  PurplePBKDF2Cipher PurpleRC4Cipher inherit PurpleCipher
+		  PurplePBKDF2Cipher and PurpleRC4Cipher inherit PurpleCipher
 		* purple_aes_cipher_new
 		* purple_des3_cipher_new
 		* purple_des_cipher_new
