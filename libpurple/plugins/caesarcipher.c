@@ -23,6 +23,7 @@
  * 02111-1301, USA.
  */
 
+#include <purple.h>
 #include "caesarcipher.h"
 
 #define CAESAR_CIPHER_GET_PRIVATE(obj) \

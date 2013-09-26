@@ -23,24 +23,7 @@
 #ifndef _CAESAR_CIPHER_H_
 #define _CAESAR_CIPHER_H_
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#ifndef G_GNUC_NULL_TERMINATED
-# if __GNUC__ >= 4
-#  define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
-# else
-#  define G_GNUC_NULL_TERMINATED
-# endif
-#endif
-
-#ifndef PURPLE_PLUGINS
-# define PURPLE_PLUGINS
-#endif
-
 #include "cipher.h"
-#include "plugins.h"
 
 #define CAESAR_TYPE_CIPHER             (caesar_cipher_get_type())
 #define CAESAR_CIPHER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), CAESAR_TYPE_CIPHER, CaesarCipher))

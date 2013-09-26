@@ -23,6 +23,7 @@
  * 02111-1301, USA.
  */
 
+#include <purple.h>
 #include "caesarcipher.h"
 
 static void
