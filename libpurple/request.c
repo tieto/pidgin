@@ -423,6 +423,9 @@ purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...)
 GSList *
 purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar)
 {
+	if (cpar == NULL)
+		return NULL;
+
 	return cpar->extra_actions;
 }
 
