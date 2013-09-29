@@ -517,7 +517,7 @@ static void null_get_info(PurpleConnection *gc, const char *username) {
   if (!get_null_gc(username)) {
     char *msg = g_strdup_printf(_("%s is not logged in."), username);
     purple_notify_error(gc, _("User Info"), _("User info not available. "), msg,
-	                    purple_request_cpar_from_account(acct));
+                        purple_request_cpar_from_account(acct));
     g_free(msg);
   }
 
@@ -697,7 +697,7 @@ static void null_join_chat(PurpleConnection *gc, GHashTable *components) {
     purple_debug_info("nullprotocol", "%s is already in chat room %s\n", username,
                       room);
     purple_notify_info(gc, _("Join chat"), _("Join chat"), tmp,
-	                   purple_request_cpar_from_connection(gc));
+                       purple_request_cpar_from_connection(gc));
     g_free(tmp);
   }
 }
@@ -721,7 +721,7 @@ static void null_reject_chat(PurpleConnection *gc, GHashTable *components) {
                      _("Chat invitation rejected"),
                      _("Chat invitation rejected"),
                      message,
-					 purple_request_cpar_from_connection(gc));
+                     purple_request_cpar_from_connection(gc));
   g_free(message);
 }
 
@@ -750,7 +750,7 @@ static void null_chat_invite(PurpleConnection *gc, int id,
                         "ignoring invitation from %s\n",
                         who, room, username);
       purple_notify_info(gc, _("Chat invitation"), _("Chat invitation"), tmp,
-	                     purple_request_cpar_from_conversation(PURPLE_CONVERSATION(to_conv)));
+                         purple_request_cpar_from_conversation(PURPLE_CONVERSATION(to_conv)));
       g_free(tmp);
     } else {
       GHashTable *components;
