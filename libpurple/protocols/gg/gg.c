@@ -554,11 +554,13 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 						_("Error connecting to master "
 						"server"));
 					break;
+#if GGP_ENABLE_GG11
 				case GG_FAILURE_INTERNAL:
 					purple_connection_error(gc,
 						PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 						_("Internal error"));
 					break;
+#endif
 				default:
 					purple_connection_error(gc,
 						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
