@@ -122,6 +122,7 @@ INTLTOOL_MERGE ?= $(INTLTOOL_TOP)/bin/intltool-merge
 MONO_SIGNCODE ?= signcode
 GPG_SIGN ?= gpg
 GLIB_GENMARSHAL ?= $(GTK_BIN)/glib-genmarshal
+GLIB_MKENUMS ?= $(GTK_BIN)/glib-mkenums
 
 PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
 PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak

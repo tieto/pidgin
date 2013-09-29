@@ -53,13 +53,15 @@ ifeq "$(USE_VV)" "1"
 VV_SRC = \
 	media/backend-fs2.c \
 	media/backend-iface.c \
-	media/codec.c \
-	marshallers.c
+	media/codec.c
 else
 VV_SRC =
 endif
 
+BUILT_SRC = marshallers.c enums.c
+
 C_SRC =	\
+			$(BUILT_SRC) \
 			account.c \
 			accounts.c \
 			accountopt.c \
@@ -143,6 +145,16 @@ C_SRC =	\
 
 RC_SRC = win32/libpurplerc.rc
 
+ENUM_HEADERS = \
+	account.h \
+	cipher.h \
+	connection.h \
+	conversation.h \
+	conversationtypes.h \
+	roomlist.h \
+	status.h \
+	xfer.h
+
 OBJECTS = $(C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 
 ##
@@ -203,9 +215,13 @@ marshallers.c: marshallers.list marshallers.h
 	@echo "#include \"marshallers.h\"" > marshallers.c
 	@$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --body >> marshallers.c
 
-ifeq "$(USE_VV)" "1"
-mediamanager.c media/backend-iface.c: marshallers.h
-endif
+enums.h: enums.h.template $(ENUM_HEADERS)
+	@echo -e "  GEN\t$@"
+	@$(GLIB_MKENUMS) --template enums.h.template $(ENUM_HEADERS) > enums.h
+
+enums.c: enums.c.template enums.h $(ENUM_HEADERS)
+	@echo -e "  GEN\t$@"
+	@$(GLIB_MKENUMS) --template enums.c.template $(ENUM_HEADERS) > enums.c
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
@@ -214,7 +230,7 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.h marshallers.c
+	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.h marshallers.c enums.h enums.c
 	rm -f $(TARGET).dll $(TARGET).dll.a $(TARGET).def
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean

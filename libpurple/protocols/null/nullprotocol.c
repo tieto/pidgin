@@ -325,7 +325,8 @@ static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
   purple_notify_info(NULL,  /* plugin handle or PurpleConnection */
                      _("Primary title"),
                      _("Secondary title"),
-                     _("This is the callback for the nullprotocol menu item."));
+                     _("This is the callback for the nullprotocol menu item."),
+                     NULL);
 }
 
 static GList *null_blist_node_menu(PurpleBlistNode *node) {
@@ -511,13 +512,15 @@ static void null_get_info(PurpleConnection *gc, const char *username) {
   purple_debug_info("nullprotocol", "Fetching %s's user info for %s\n", username,
                     purple_account_get_username(purple_connection_get_account(gc)));
 
+  acct = purple_accounts_find(username, NULLPRPL_ID);
+
   if (!get_null_gc(username)) {
     char *msg = g_strdup_printf(_("%s is not logged in."), username);
-    purple_notify_error(gc, _("User Info"), _("User info not available. "), msg);
+    purple_notify_error(gc, _("User Info"), _("User info not available. "), msg,
+	                    purple_request_cpar_from_account(acct));
     g_free(msg);
   }
 
-  acct = purple_accounts_find(username, "null");
   if (acct)
     body = purple_account_get_user_info(acct);
   else
@@ -693,7 +696,8 @@ static void null_join_chat(PurpleConnection *gc, GHashTable *components) {
                                 room);
     purple_debug_info("nullprotocol", "%s is already in chat room %s\n", username,
                       room);
-    purple_notify_info(gc, _("Join chat"), _("Join chat"), tmp);
+    purple_notify_info(gc, _("Join chat"), _("Join chat"), tmp,
+	                   purple_request_cpar_from_connection(gc));
     g_free(tmp);
   }
 }
@@ -716,7 +720,8 @@ static void null_reject_chat(PurpleConnection *gc, GHashTable *components) {
   purple_notify_info(invited_by_gc,
                      _("Chat invitation rejected"),
                      _("Chat invitation rejected"),
-                     message);
+                     message,
+					 purple_request_cpar_from_connection(gc));
   g_free(message);
 }
 
@@ -744,7 +749,8 @@ static void null_chat_invite(PurpleConnection *gc, int id,
                         "%s is already in chat room %s; "
                         "ignoring invitation from %s\n",
                         who, room, username);
-      purple_notify_info(gc, _("Chat invitation"), _("Chat invitation"), tmp);
+      purple_notify_info(gc, _("Chat invitation"), _("Chat invitation"), tmp,
+	                     purple_request_cpar_from_conversation(PURPLE_CONVERSATION(to_conv)));
       g_free(tmp);
     } else {
       GHashTable *components;

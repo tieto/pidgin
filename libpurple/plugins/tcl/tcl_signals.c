@@ -332,8 +332,8 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			{
 				/* What?  I guess just pass the word ... */
 				/* treat this as a pointer, but complain first */
-				purple_debug(PURPLE_DEBUG_ERROR, "tcl", "unknown GType %lu\n",
-					   handler->argtypes[i]);
+				purple_debug(PURPLE_DEBUG_ERROR, "tcl", "unknown type %s\n",
+					   g_type_name(handler->argtypes[i]));
 			}
 		}
 		Tcl_ListObjAppendElement(handler->interp, cmd, arg);

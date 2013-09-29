@@ -3217,12 +3217,13 @@ file_open_uri(GtkWebView *webview, const char *uri)
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
 		purple_notify_error(webview, NULL,
-				_("There is no application configured to open this type of file."), NULL);
+				_("There is no application configured to open this type of file."),
+				NULL, NULL);
 	}
 	else if (code < 32)
 	{
 		purple_notify_error(webview, NULL,
-				_("An error occurred while opening the file."), NULL);
+				_("An error occurred while opening the file."), NULL, NULL);
 		purple_debug_warning("gtkutils", "filename: %s; code: %d\n", uri, code);
 	}
 #else
