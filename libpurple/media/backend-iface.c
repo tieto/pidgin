@@ -55,12 +55,17 @@ purple_media_backend_base_init(gpointer iface)
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 	g_object_interface_install_property(iface,
-			g_param_spec_object("media",
-			"Purple Media",
+#ifdef USE_VV
+			g_param_spec_object(
+#else
+			g_param_spec_pointer(
+#endif
+			"media", "Purple Media",
 			"The media object that this backend is bound to.",
+#ifdef USE_VV
 			PURPLE_TYPE_MEDIA,
+#endif
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-
 	purple_media_backend_signals[S_ERROR] =
 			g_signal_new("error", G_TYPE_FROM_CLASS(iface),
 			G_SIGNAL_RUN_LAST, 0, NULL, NULL,
