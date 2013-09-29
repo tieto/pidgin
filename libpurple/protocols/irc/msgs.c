@@ -1558,7 +1558,7 @@ irc_auth_start_cyrus(struct irc_conn *irc)
 			return;
 		}
 
-		sasl_setprop(irc->sasl_conn, SASL_AUTH_EXTERNAL, irc->account->username);
+		sasl_setprop(irc->sasl_conn, SASL_AUTH_EXTERNAL, purple_account_get_username(irc->account));
 		sasl_setprop(irc->sasl_conn, SASL_SEC_PROPS, &secprops);
 
 		ret = sasl_client_start(irc->sasl_conn, irc->sasl_mechs->str, NULL, NULL, NULL, &irc->current_mech);
