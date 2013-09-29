@@ -49,6 +49,7 @@ OBJECTS_GNUTLS = $(C_SRC_GNUTLS:%.c=%.o)
 ##
 LIBS =	\
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lpurple \

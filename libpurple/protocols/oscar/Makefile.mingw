@@ -90,6 +90,7 @@ ICQ_OBJECTS = $(ICQ_C_SRC:%.c=%.o)
 ##
 LIBS =	\
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lintl \
 			-lws2_32 \
 			-lpurple

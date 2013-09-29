@@ -43,6 +43,7 @@ OBJECTS_WINCRED = $(C_SRC_WINCRED:%.c=%.o)
 ##
 LIBS =	\
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lpurple
