@@ -87,7 +87,7 @@ purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol)
 static void
 user_splits_free(PurpleProtocol *protocol)
 {
-	g_return_if_fail(protocol != NULL);
+	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
 
 	while (protocol->user_splits) {
 		PurpleAccountUserSplit *split = protocol->user_splits->data;
@@ -100,7 +100,7 @@ user_splits_free(PurpleProtocol *protocol)
 static void
 protocol_options_free(PurpleProtocol *protocol)
 {
-	g_return_if_fail(protocol != NULL);
+	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
 
 	while (protocol->protocol_options) {
 		PurpleAccountOption *option = protocol->protocol_options->data;
@@ -114,7 +114,7 @@ protocol_options_free(PurpleProtocol *protocol)
 static void
 icon_spec_free(PurpleProtocol *protocol)
 {
-	g_return_if_fail(protocol != NULL);
+	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
 
 	g_free(protocol->icon_spec);
 	protocol->icon_spec = NULL;

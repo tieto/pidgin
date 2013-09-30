@@ -899,7 +899,7 @@ purple_conversation_get_max_message_size(PurpleConversation *conv)
 	protocol = purple_connection_get_protocol(
 		purple_conversation_get_connection(conv));
 
-	g_return_val_if_fail(protocol != NULL, 0);
+	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), 0);
 
 	return purple_protocol_client_iface_get_max_message_size(protocol, conv);
 }

@@ -848,7 +848,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	protocol = purple_connection_get_protocol(gc);
-	g_return_if_fail(protocol != NULL);
+	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
 
 	ul = users;
 	fl = flags;
@@ -955,7 +955,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	protocol = purple_connection_get_protocol(gc);
-	g_return_if_fail(protocol != NULL);
+	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
 
 	if (purple_strequal(priv->nick, purple_normalize(account, old_user))) {
 		const char *alias;
@@ -1078,7 +1078,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 	gc = purple_conversation_get_connection(conv);
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	protocol = purple_connection_get_protocol(gc);
-	g_return_if_fail(protocol != NULL);
+	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
 
 	ops  = purple_conversation_get_ui_ops(conv);
 

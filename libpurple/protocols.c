@@ -679,7 +679,7 @@ purple_protocol_got_media_caps(PurpleAccount *account, const char *name)
 gssize
 purple_protocol_get_max_message_size(PurpleProtocol *protocol)
 {
-	g_return_val_if_fail(protocol != NULL, 0);
+	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), 0);
 
 	return purple_protocol_client_iface_get_max_message_size(protocol, NULL);
 }
@@ -844,7 +844,7 @@ purple_protocols_add(GType protocol_type, GError **error)
 
 gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error)
 {
-	g_return_val_if_fail(protocol != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), FALSE);
 	g_return_val_if_fail(purple_protocol_get_id(protocol) != NULL, FALSE);
 
 	if (purple_protocols_find(purple_protocol_get_id(protocol)) == NULL) {

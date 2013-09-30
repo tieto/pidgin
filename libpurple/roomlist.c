@@ -426,7 +426,7 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 
 	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
-	g_return_val_if_fail(protocol != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
 	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, FACTORY_IFACE, roomlist_new))
 		list = purple_protocol_factory_iface_roomlist_new(protocol, account);
