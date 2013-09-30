@@ -3825,11 +3825,13 @@ update_typing_message(PidginConversation *gtkconv, const char *message)
 static void
 update_typing_icon(PidginConversation *gtkconv)
 {
-	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
+	PurpleIMConversation *im;
 	char *message = NULL;
 
-	if (im == NULL)
+	if (!PURPLE_IS_IM_CONVERSATION(gtkconv->active_conv))
 		return;
+
+	im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
 
 	if (purple_im_conversation_get_typing_state(im) == PURPLE_IM_NOT_TYPING) {
 #ifdef RESERVE_LINE
