@@ -51,11 +51,6 @@ purple_connection_set_state(gc, state)
 	Purple::ConnectionState state
 
 void
-purple_connection_set_account(gc, account)
-	Purple::Connection gc
-	Purple::Account account
-
-void
 purple_connection_set_display_name(gc, name)
 	Purple::Connection gc
 	const char *name

@@ -259,17 +259,6 @@ purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
 }
 
 void
-purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
-{
-	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
-
-	priv->account = account;
-}
-
-void
 purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 {
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
@@ -630,7 +619,7 @@ purple_connection_set_property(GObject *obj, guint param_id, const GValue *value
 			purple_connection_set_state(gc, g_value_get_enum(value));
 			break;
 		case PROP_ACCOUNT:
-			purple_connection_set_account(gc, g_value_get_object(value));
+			priv->account = g_value_get_object(value);
 			break;
 		case PROP_PASSWORD:
 			g_free(priv->password);
@@ -825,7 +814,7 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
 			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
 				_("The account using the connection."), PURPLE_TYPE_ACCOUNT,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PASSWORD,

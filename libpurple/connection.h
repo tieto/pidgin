@@ -293,14 +293,6 @@ void purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState sta
 void purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags);
 
 /**
- * Sets the connection's account.
- *
- * @param gc      The connection.
- * @param account The account.
- */
-void purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account);
-
-/**
  * Sets the connection's displayed name.
  *
  * @param gc   The connection.
