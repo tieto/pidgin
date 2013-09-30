@@ -109,12 +109,12 @@ purple_presence_set_status_active(PurplePresence *presence, const char *status_i
 {
 	PurpleStatus *status;
 
-	g_return_if_fail(presence  != NULL);
+	g_return_if_fail(PURPLE_IS_PRESENCE(presence));
 	g_return_if_fail(status_id != NULL);
 
 	status = purple_presence_get_status(presence, status_id);
 
-	g_return_if_fail(status != NULL);
+	g_return_if_fail(PURPLE_IS_STATUS(status));
 	/* TODO: Should we do the following? */
 	/* g_return_if_fail(active == status->active); */
 
@@ -230,7 +230,7 @@ purple_presence_is_available(const PurplePresence *presence)
 {
 	PurpleStatus *status;
 
-	g_return_val_if_fail(presence != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_PRESENCE(presence), FALSE);
 
 	status = purple_presence_get_active_status(presence);
 
@@ -243,7 +243,7 @@ purple_presence_is_online(const PurplePresence *presence)
 {
 	PurpleStatus *status;
 
-	g_return_val_if_fail(presence != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_PRESENCE(presence), FALSE);
 
 	if ((status = purple_presence_get_active_status(presence)) == NULL)
 		return FALSE;
@@ -257,7 +257,7 @@ purple_presence_is_status_active(const PurplePresence *presence,
 {
 	PurpleStatus *status;
 
-	g_return_val_if_fail(presence  != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_PRESENCE(presence), FALSE);
 	g_return_val_if_fail(status_id != NULL, FALSE);
 
 	status = purple_presence_get_status(presence, status_id);
@@ -271,7 +271,7 @@ purple_presence_is_status_primitive_active(const PurplePresence *presence,
 {
 	GList *l;
 
-	g_return_val_if_fail(presence  != NULL,              FALSE);
+	g_return_val_if_fail(PURPLE_IS_PRESENCE(presence), FALSE);
 	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, FALSE);
 
 	for (l = purple_presence_get_statuses(presence);
@@ -791,7 +791,7 @@ purple_account_presence_get_type(void)
 PurpleAccountPresence *
 purple_account_presence_new(PurpleAccount *account)
 {
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
 	return g_object_new(PURPLE_TYPE_ACCOUNT_PRESENCE,
 			ACPRES_PROP_ACCOUNT_S, account,
@@ -988,7 +988,7 @@ purple_buddy_presence_get_type(void)
 PurpleBuddyPresence *
 purple_buddy_presence_new(PurpleBuddy *buddy)
 {
-	g_return_val_if_fail(buddy != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY(buddy), NULL);
 
 	return g_object_new(PURPLE_TYPE_BUDDY_PRESENCE,
 			BUDPRES_PROP_BUDDY_S, buddy,

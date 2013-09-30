@@ -102,10 +102,10 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 		return;
 
 	account = purple_conversation_get_account(conv);
-	g_return_if_fail(account != NULL);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
 	gc = purple_account_get_connection(account);
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	/* Always linkfy the text for display, unless we're
 	 * explicitly asked to do otheriwse*/
@@ -265,7 +265,7 @@ void
 purple_conversation_present(PurpleConversation *conv) {
 	PurpleConversationUiOps *ops;
 
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
 
 	ops = purple_conversation_get_ui_ops(conv);
 	if(ops && ops->present)
@@ -351,7 +351,7 @@ purple_conversation_get_connection(const PurpleConversation *conv)
 {
 	PurpleAccount *account;
 
-	g_return_val_if_fail(conv != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CONVERSATION(conv), NULL);
 
 	account = purple_conversation_get_account(conv);
 
@@ -393,7 +393,7 @@ purple_conversation_autoset_title(PurpleConversation *conv)
 	PurpleChat *chat;
 	const char *text = NULL, *name;
 
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
 
 	account = purple_conversation_get_account(conv);
 	name = purple_conversation_get_name(conv);
@@ -605,7 +605,7 @@ void
 purple_conversation_send_with_flags(PurpleConversation *conv, const char *message,
 		PurpleMessageFlags flags)
 {
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
 	g_return_if_fail(message != NULL);
 
 	common_send(conv, message, flags);
@@ -617,7 +617,7 @@ purple_conversation_has_focus(PurpleConversation *conv)
 	gboolean ret = FALSE;
 	PurpleConversationUiOps *ops;
 
-	g_return_val_if_fail(conv != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CONVERSATION(conv), FALSE);
 
 	ops = purple_conversation_get_ui_ops(conv);
 
@@ -636,7 +636,7 @@ purple_conversation_has_focus(PurpleConversation *conv)
 void
 purple_conversation_update(PurpleConversation *conv, PurpleConversationUpdateType type)
 {
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
 
 	purple_signal_emit(purple_conversations_get_handle(),
 					 "conversation-updated", conv, type);
@@ -647,7 +647,7 @@ gboolean purple_conversation_present_error(const char *who, PurpleAccount *accou
 	PurpleConversation *conv;
 
 	g_return_val_if_fail(who != NULL, FALSE);
-	g_return_val_if_fail(account !=NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), FALSE);
 	g_return_val_if_fail(what != NULL, FALSE);
 
 	conv = purple_conversations_find_with_account(who, account);
@@ -755,7 +755,7 @@ purple_conversation_get_extended_menu(PurpleConversation *conv)
 {
 	GList *menu = NULL;
 
-	g_return_val_if_fail(conv != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CONVERSATION(conv), NULL);
 
 	purple_signal_emit(purple_conversations_get_handle(),
 			"conversation-extended-menu", conv, &menu);
@@ -866,14 +866,14 @@ purple_conversation_message_get_type(void)
 
 void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
 {
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
 
 	conv->ui_data = ui_data;
 }
 
 gpointer purple_conversation_get_ui_data(const PurpleConversation *conv)
 {
-	g_return_val_if_fail(conv != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CONVERSATION(conv), NULL);
 
 	return conv->ui_data;
 }
@@ -895,7 +895,7 @@ purple_conversation_get_max_message_size(PurpleConversation *conv)
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
-	g_return_val_if_fail(conv != NULL, 0);
+	g_return_val_if_fail(PURPLE_IS_CONVERSATION(conv), 0);
 
 	prpl = purple_connection_get_prpl(
 		purple_conversation_get_connection(conv));
@@ -1033,7 +1033,7 @@ purple_conversation_dispose(GObject *object)
 {
 	PurpleConversation *conv = PURPLE_CONVERSATION(object);
 
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
 
 	purple_request_close_with_handle(conv);
 

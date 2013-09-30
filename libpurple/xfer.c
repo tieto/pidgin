@@ -763,7 +763,7 @@ purple_xfer_get_status(const PurpleXfer *xfer)
 gboolean
 purple_xfer_is_cancelled(const PurpleXfer *xfer)
 {
-	g_return_val_if_fail(xfer != NULL, TRUE);
+	g_return_val_if_fail(PURPLE_IS_XFER(xfer), TRUE);
 
 	if ((purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) ||
 	    (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_REMOTE))
@@ -775,7 +775,7 @@ purple_xfer_is_cancelled(const PurpleXfer *xfer)
 gboolean
 purple_xfer_is_completed(const PurpleXfer *xfer)
 {
-	g_return_val_if_fail(xfer != NULL, TRUE);
+	g_return_val_if_fail(PURPLE_IS_XFER(xfer), TRUE);
 
 	return (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_DONE);
 }
@@ -833,7 +833,7 @@ purple_xfer_get_size(const PurpleXfer *xfer)
 double
 purple_xfer_get_progress(const PurpleXfer *xfer)
 {
-	g_return_val_if_fail(xfer != NULL, 0.0);
+	g_return_val_if_fail(PURPLE_IS_XFER(xfer), 0.0);
 
 	if (purple_xfer_get_size(xfer) == 0)
 		return 0.0;
@@ -1523,7 +1523,7 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 	PurpleInputCondition cond;
 	PurpleXferType type;
 
-	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(priv != NULL);
 
 	priv->ready |= PURPLE_XFER_READY_UI;
 
@@ -1649,7 +1649,7 @@ purple_xfer_add(PurpleXfer *xfer)
 {
 	PurpleXferUiOps *ui_ops;
 
-	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(PURPLE_IS_XFER(xfer));
 
 	ui_ops = purple_xfer_get_ui_ops(xfer);
 
@@ -1826,7 +1826,7 @@ purple_xfer_update_progress(PurpleXfer *xfer)
 {
 	PurpleXferUiOps *ui_ops;
 
-	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(PURPLE_IS_XFER(xfer));
 
 	ui_ops = purple_xfer_get_ui_ops(xfer);
 	if (ui_ops != NULL && ui_ops->update_progress != NULL)
@@ -1912,14 +1912,14 @@ purple_xfer_get_protocol_data(const PurpleXfer *xfer)
 
 void purple_xfer_set_ui_data(PurpleXfer *xfer, gpointer ui_data)
 {
-	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(PURPLE_IS_XFER(xfer));
 
 	xfer->ui_data = ui_data;
 }
 
 gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer)
 {
-	g_return_val_if_fail(xfer != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_XFER(xfer), NULL);
 
 	return xfer->ui_data;
 }
@@ -2337,9 +2337,9 @@ purple_xfer_get_type(void)
 PurpleXfer *
 purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 {
-	g_return_val_if_fail(type    != PURPLE_XFER_TYPE_UNKNOWN, NULL);
-	g_return_val_if_fail(account != NULL,                NULL);
-	g_return_val_if_fail(who     != NULL,                NULL);
+	g_return_val_if_fail(type != PURPLE_XFER_TYPE_UNKNOWN, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
+	g_return_val_if_fail(who != NULL, NULL);
 
 	return g_object_new(PURPLE_TYPE_XFER,
 		PROP_TYPE_S,        type,

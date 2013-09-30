@@ -147,7 +147,7 @@ reset_typing_cb(gpointer data)
 static gboolean
 send_typed_cb(gpointer data)
 {
-	PurpleIMConversation *im = (PurpleIMConversation *)data;
+	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(data);
 	PurpleConnection *gc;
 	const char *name;
 
@@ -342,7 +342,7 @@ purple_im_conversation_get_send_typed_timeout(const PurpleIMConversation *im)
 void
 purple_im_conversation_update_typing(PurpleIMConversation *im)
 {
-	g_return_if_fail(im != NULL);
+	g_return_if_fail(PURPLE_IS_IM_CONVERSATION(im));
 
 	purple_conversation_update(PURPLE_CONVERSATION(im),
 							 PURPLE_CONVERSATION_UPDATE_TYPING);
@@ -353,20 +353,19 @@ im_conversation_write_message(PurpleConversation *conv, const char *who, const c
 			  PurpleMessageFlags flags, time_t mtime)
 {
 	PurpleConversationUiOps *ops;
+	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(conv);
 
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(im != NULL);
 	g_return_if_fail(message != NULL);
 
 	ops = purple_conversation_get_ui_ops(conv);
 
-	if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
-		purple_im_conversation_set_typing_state(PURPLE_IM_CONVERSATION(conv),
-				PURPLE_IM_NOT_TYPING);
-	}
+	if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV)
+		purple_im_conversation_set_typing_state(im, PURPLE_IM_NOT_TYPING);
 
 	/* Pass this on to either the ops structure or the default write func. */
 	if (ops != NULL && ops->write_im != NULL)
-		ops->write_im(PURPLE_IM_CONVERSATION(conv), who, message, flags, mtime);
+		ops->write_im(im, who, message, flags, mtime);
 	else
 		purple_conversation_write(conv, who, message, flags, mtime);
 }
@@ -556,15 +555,15 @@ purple_im_conversation_new(PurpleAccount *account, const char *name)
 	PurpleIMConversation *im;
 	PurpleConnection *gc;
 
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(name    != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
+	g_return_val_if_fail(name != NULL, NULL);
 
 	/* Check if this conversation already exists. */
 	if ((im = purple_conversations_find_im_with_account(name, account)) != NULL)
 		return im;
 
 	gc = purple_account_get_connection(account);
-	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CONNECTION(gc), NULL);
 
 	im = g_object_new(PURPLE_TYPE_IM_CONVERSATION,
 			"account", account,
@@ -672,7 +671,7 @@ purple_chat_conversation_get_ignored_user(const PurpleChatConversation *chat, co
 {
 	GList *ignored;
 
-	g_return_val_if_fail(chat != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CHAT_CONVERSATION(chat), NULL);
 	g_return_val_if_fail(user != NULL, NULL);
 
 	for (ignored = purple_chat_conversation_get_ignored(chat);
@@ -700,7 +699,7 @@ purple_chat_conversation_get_ignored_user(const PurpleChatConversation *chat, co
 gboolean
 purple_chat_conversation_is_ignored_user(const PurpleChatConversation *chat, const char *user)
 {
-	g_return_val_if_fail(chat != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CHAT_CONVERSATION(chat), FALSE);
 	g_return_val_if_fail(user != NULL, FALSE);
 
 	return (purple_chat_conversation_get_ignored_user(chat, user) != NULL);
@@ -848,7 +847,7 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 
 	account = purple_conversation_get_account(conv);
 	gc = purple_conversation_get_connection(conv);
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
 
@@ -955,7 +954,7 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 	account = purple_conversation_get_account(conv);
 
 	gc = purple_conversation_get_connection(conv);
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
 
@@ -1078,7 +1077,7 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 	conv = PURPLE_CONVERSATION(chat);
 
 	gc = purple_conversation_get_connection(conv);
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
 
@@ -1222,7 +1221,7 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const ch
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 
-	g_return_if_fail(chat != NULL);
+	g_return_if_fail(PURPLE_IS_CHAT_CONVERSATION(chat));
 
 	if (!user || !*user || !message || !*message)
 		confirm = TRUE;
@@ -1260,7 +1259,7 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const ch
 gboolean
 purple_chat_conversation_has_user(PurpleChatConversation *chat, const char *user)
 {
-	g_return_val_if_fail(chat != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CHAT_CONVERSATION(chat), FALSE);
 	g_return_val_if_fail(user != NULL, FALSE);
 
 	return (purple_chat_conversation_find_user(chat, user) != NULL);
@@ -1598,8 +1597,8 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 	PurpleChatConversation *chat;
 	PurpleConnection *gc;
 
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(name    != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
+	g_return_val_if_fail(name != NULL, NULL);
 
 	/* Check if this conversation already exists. */
 	if ((chat = purple_conversations_find_chat_with_account(name, account)) != NULL)
@@ -1624,7 +1623,7 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 	}
 
 	gc = purple_account_get_connection(account);
-	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CONNECTION(gc), NULL);
 
 	chat = g_object_new(PURPLE_TYPE_CHAT_CONVERSATION,
 			"account", account,
@@ -1742,7 +1741,7 @@ purple_chat_user_get_flags(const PurpleChatUser *cb)
 void
 purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data)
 {
-	g_return_if_fail(cb != NULL);
+	g_return_if_fail(PURPLE_IS_CHAT_USER(cb));
 
 	cb->ui_data = ui_data;
 }
@@ -1750,7 +1749,7 @@ purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data)
 gpointer
 purple_chat_user_get_ui_data(const PurpleChatUser *cb)
 {
-	g_return_val_if_fail(cb != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CHAT_USER(cb), NULL);
 
 	return cb->ui_data;
 }
@@ -1988,7 +1987,7 @@ purple_chat_user_new(PurpleChatConversation *chat, const char *name,
 {
 	PurpleChatUser *cb;
 
-	g_return_val_if_fail(chat != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CHAT_CONVERSATION(chat), NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
 	cb = g_object_new(PURPLE_TYPE_CHAT_USER,

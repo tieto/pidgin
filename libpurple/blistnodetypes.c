@@ -303,7 +303,7 @@ purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 	char *new_alias = NULL;
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 
-	g_return_if_fail(buddy != NULL);
+	g_return_if_fail(priv != NULL);
 
 	if ((alias != NULL) && (*alias != '\0'))
 		new_alias = purple_utf8_strip_unprintables(alias);
@@ -406,7 +406,7 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
 
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
 {
-	g_return_val_if_fail(buddy != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY(buddy), NULL);
 
 	return PURPLE_CONTACT(PURPLE_BLIST_NODE(buddy)->parent);
 }
@@ -506,7 +506,7 @@ void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps)
 
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 {
-	g_return_val_if_fail(buddy != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY(buddy), NULL);
 
 	if (PURPLE_BLIST_NODE(buddy)->parent == NULL)
 		return NULL;
@@ -752,7 +752,7 @@ purple_buddy_get_type(void)
 PurpleBuddy *
 purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
 {
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
 	return g_object_new(PURPLE_TYPE_BUDDY,
@@ -815,7 +815,7 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 PurpleGroup *
 purple_contact_get_group(const PurpleContact *contact)
 {
-	g_return_val_if_fail(contact, NULL);
+	g_return_val_if_fail(PURPLE_IS_CONTACT(contact), NULL);
 
 	return PURPLE_GROUP(PURPLE_BLIST_NODE(contact)->parent);
 }
@@ -887,8 +887,8 @@ gboolean purple_contact_on_account(PurpleContact *c, PurpleAccount *account)
 {
 	PurpleBlistNode *bnode, *cnode = (PurpleBlistNode *) c;
 
-	g_return_val_if_fail(c != NULL, FALSE);
-	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CONTACT(c), FALSE);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), FALSE);
 
 	for (bnode = cnode->child; bnode; bnode = bnode->next) {
 		PurpleBuddy *buddy;
@@ -930,8 +930,8 @@ void purple_contact_merge(PurpleContact *source, PurpleBlistNode *node)
 	PurpleBlistNode *prev, *cur, *next;
 	PurpleContact *target;
 
-	g_return_if_fail(source != NULL);
-	g_return_if_fail(node != NULL);
+	g_return_if_fail(PURPLE_IS_CONTACT(source));
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(node));
 
 	if (PURPLE_IS_CONTACT(node)) {
 		target = (PurpleContact *)node;
@@ -1179,7 +1179,7 @@ purple_chat_set_alias(PurpleChat *chat, const char *alias)
 PurpleGroup *
 purple_chat_get_group(PurpleChat *chat)
 {
-	g_return_val_if_fail(chat != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CHAT(chat), NULL);
 
 	return PURPLE_GROUP(PURPLE_BLIST_NODE(chat)->parent);
 }
@@ -1368,7 +1368,7 @@ purple_chat_get_type(void)
 PurpleChat *
 purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
 {
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 	g_return_val_if_fail(components != NULL, NULL);
 
 	return g_object_new(PURPLE_TYPE_CHAT,

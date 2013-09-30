@@ -145,7 +145,7 @@ purple_cipher_digest_to_str(PurpleCipher *cipher, gchar digest_s[], size_t len)
 	guchar digest[BUF_LEN * 4];
 	size_t digest_size, n;
 
-	g_return_val_if_fail(cipher, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CIPHER(cipher), FALSE);
 	g_return_val_if_fail(digest_s, FALSE);
 
 	digest_size = purple_cipher_get_digest_size(cipher);

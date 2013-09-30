@@ -158,7 +158,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_CONNECTION(gc), NULL);
 	g_return_val_if_fail(PURPLE_CONNECTION_IS_CONNECTED(gc), NULL);
 
 	prpl = purple_connection_get_prpl(gc);
@@ -183,7 +183,7 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 
 	gc = purple_account_get_connection(priv->account);
 
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	if(gc)
 		prpl = purple_connection_get_prpl(gc);
@@ -207,7 +207,7 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 	g_return_if_fail(category->type & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY);
 
 	gc = purple_account_get_connection(priv->account);
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	if(gc)
 		prpl = purple_connection_get_prpl(gc);
@@ -248,14 +248,14 @@ void purple_roomlist_set_protocol_data(PurpleRoomlist *list, gpointer proto_data
 
 gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list)
 {
-	g_return_val_if_fail(list != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ROOMLIST(list), NULL);
 
 	return list->ui_data;
 }
 
 void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
 {
-	g_return_if_fail(list != NULL);
+	g_return_if_fail(PURPLE_IS_ROOMLIST(list));
 
 	list->ui_data = ui_data;
 }
@@ -431,7 +431,7 @@ purple_roomlist_get_type(void)
 
 PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 {
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
 	return g_object_new(PURPLE_TYPE_ROOMLIST,
 		PROP_ACCOUNT_S, account,

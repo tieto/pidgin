@@ -126,14 +126,14 @@ PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node)
 void *
 purple_blist_node_get_ui_data(const PurpleBlistNode *node)
 {
-	g_return_val_if_fail(node, NULL);
+	g_return_val_if_fail(PURPLE_IS_BLIST_NODE(node), NULL);
 
 	return node->ui_data;
 }
 
 void
 purple_blist_node_set_ui_data(PurpleBlistNode *node, void *ui_data) {
-	g_return_if_fail(node);
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(node));
 
 	node->ui_data = ui_data;
 }

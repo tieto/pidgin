@@ -264,7 +264,7 @@ purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
 	g_return_if_fail(priv != NULL);
-	g_return_if_fail(account != NULL);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
 	priv->account = account;
 }
@@ -406,7 +406,7 @@ purple_connection_update_progress(PurpleConnection *gc, const char *text,
 {
 	PurpleConnectionUiOps *ops;
 
-	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(text != NULL);
 	g_return_if_fail(step < count);
 	g_return_if_fail(count > 1);
@@ -422,7 +422,7 @@ purple_connection_notice(PurpleConnection *gc, const char *text)
 {
 	PurpleConnectionUiOps *ops;
 
-	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(text != NULL);
 
 	ops = purple_connections_get_ui_ops();
@@ -876,7 +876,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
-	g_return_if_fail(account != NULL);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
 	if (!purple_account_is_disconnected(account))
 		return;
@@ -947,7 +947,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
-	g_return_if_fail(account != NULL);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 

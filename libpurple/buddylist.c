@@ -776,7 +776,7 @@ void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name)
 	gchar *name;
 	PurpleBuddyListPrivate *priv = PURPLE_BUDDY_LIST_GET_PRIVATE(purplebuddylist);
 
-	g_return_if_fail(buddy != NULL);
+	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
 
 	account = purple_buddy_get_account(buddy);
 	name = (gchar *)purple_buddy_get_name(buddy);
@@ -817,7 +817,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleCountingNode *group_counter;
 
-	g_return_if_fail(chat != NULL);
+	g_return_if_fail(PURPLE_IS_CHAT(chat));
 
 	if (node == NULL) {
 		if (group == NULL)
@@ -912,8 +912,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	GHashTable *account_buddies;
 	PurpleBuddyListPrivate *priv = PURPLE_BUDDY_LIST_GET_PRIVATE(purplebuddylist);
 
-	g_return_if_fail(buddy != NULL);
-	g_return_if_fail(PURPLE_IS_BUDDY((PurpleBlistNode*)buddy));
+	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
 
 	bnode = PURPLE_BLIST_NODE(buddy);
 	account = purple_buddy_get_account(buddy);
@@ -1069,7 +1068,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 	PurpleCountingNode *contact_counter, *group_counter;
 	PurpleBuddyListPrivate *priv = PURPLE_BUDDY_LIST_GET_PRIVATE(purplebuddylist);
 
-	g_return_if_fail(contact != NULL);
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
 
 	if (PURPLE_BLIST_NODE(contact) == node)
 		return;
@@ -1222,8 +1221,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 	PurpleBlistNode *gnode = (PurpleBlistNode*)group;
 	gchar* key;
 
-	g_return_if_fail(group != NULL);
-	g_return_if_fail(PURPLE_IS_GROUP((PurpleBlistNode *)group));
+	g_return_if_fail(PURPLE_IS_GROUP(group));
 
 	ops = purple_blist_get_ui_ops();
 
@@ -1288,7 +1286,7 @@ void purple_blist_remove_contact(PurpleContact *contact)
 	PurpleBlistNode *node, *gnode;
 	PurpleGroup *group;
 
-	g_return_if_fail(contact != NULL);
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
 
 	node = (PurpleBlistNode *)contact;
 	gnode = node->parent;
@@ -1345,7 +1343,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	GHashTable *account_buddies;
 	PurpleAccount *account;
 
-	g_return_if_fail(buddy != NULL);
+	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
 
 	account = purple_buddy_get_account(buddy);
 	node = PURPLE_BLIST_NODE(buddy);
@@ -1427,7 +1425,7 @@ void purple_blist_remove_chat(PurpleChat *chat)
 	PurpleGroup *group;
 	PurpleCountingNode *group_counter;
 
-	g_return_if_fail(chat != NULL);
+	g_return_if_fail(PURPLE_IS_CHAT(chat));
 
 	node = (PurpleBlistNode *)chat;
 	gnode = node->parent;
@@ -1473,7 +1471,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	GList *l;
 	gchar* key;
 
-	g_return_if_fail(group != NULL);
+	g_return_if_fail(PURPLE_IS_GROUP(group));
 
 	node = (PurpleBlistNode *)group;
 
@@ -1522,8 +1520,8 @@ PurpleBuddy *purple_blist_find_buddy(PurpleAccount *account, const char *name)
 	struct _purple_hbuddy hb;
 	PurpleBlistNode *group;
 
-	g_return_val_if_fail(purplebuddylist != NULL, NULL);
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist), NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	hb.account = account;
@@ -1548,8 +1546,8 @@ PurpleBuddy *purple_blist_find_buddy_in_group(PurpleAccount *account, const char
 {
 	struct _purple_hbuddy hb;
 
-	g_return_val_if_fail(purplebuddylist != NULL, NULL);
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist), NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	hb.name = (gchar *)purple_normalize(account, name);
@@ -1574,8 +1572,8 @@ GSList *purple_blist_find_buddies(PurpleAccount *account, const char *name)
 	PurpleBlistNode *node;
 	GSList *ret = NULL;
 
-	g_return_val_if_fail(purplebuddylist != NULL, NULL);
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist), NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
 	if ((name != NULL) && (*name != '\0')) {
 		struct _purple_hbuddy hb;
@@ -1607,7 +1605,7 @@ PurpleGroup *purple_blist_find_group(const char *name)
 	gchar* key;
 	PurpleGroup *group;
 
-	g_return_val_if_fail(purplebuddylist != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist), NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	key = g_utf8_collate_key(name, -1);
@@ -1629,7 +1627,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	GList *parts;
 	char *normname;
 
-	g_return_val_if_fail(purplebuddylist != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist), NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	if (!purple_account_is_connected(account))
@@ -1679,7 +1677,7 @@ void purple_blist_add_account(PurpleAccount *account)
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleCountingNode *contact_counter, *group_counter;
 
-	g_return_if_fail(purplebuddylist != NULL);
+	g_return_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist));
 
 	if (!ops || !ops->update)
 		return;
@@ -1730,7 +1728,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 	PurpleGroup *group;
 	GList *list = NULL, *iter = NULL;
 
-	g_return_if_fail(purplebuddylist != NULL);
+	g_return_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist));
 
 	for (gnode = purplebuddylist->root; gnode; gnode = gnode->next) {
 		if (!PURPLE_IS_GROUP(gnode))

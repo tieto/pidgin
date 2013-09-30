@@ -305,14 +305,14 @@ gpointer purple_whiteboard_get_protocol_data(const PurpleWhiteboard *wb)
 
 void purple_whiteboard_set_ui_data(PurpleWhiteboard *wb, gpointer ui_data)
 {
-	g_return_if_fail(wb != NULL);
+	g_return_if_fail(PURPLE_IS_WHITEBOARD(wb));
 
 	wb->ui_data = ui_data;
 }
 
 gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb)
 {
-	g_return_val_if_fail(wb != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_WHITEBOARD(wb), NULL);
 
 	return wb->ui_data;
 }
@@ -506,8 +506,8 @@ purple_whiteboard_get_type(void)
 
 PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state)
 {
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(who     != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
+	g_return_val_if_fail(who != NULL, NULL);
 
 	return g_object_new(PURPLE_TYPE_WHITEBOARD,
 		PROP_ACCOUNT_S, account,
