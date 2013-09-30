@@ -3,10 +3,6 @@
 MODULE = Purple::Hash  PACKAGE = Purple::Hash  PREFIX = purple_hash_
 PROTOTYPES: ENABLE
 
-const gchar *
-purple_hash_get_name(hash)
-	Purple::Hash hash
-
 gchar_own*
 purple_http_digest_calculate_response(algorithm, method, digest_uri, qop, entity, nonce, nonce_count, client_nonce, session_key)
 	const gchar* algorithm
