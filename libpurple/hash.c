@@ -23,35 +23,8 @@
 #include "debug.h"
 
 /******************************************************************************
- * Object Stuff
- *****************************************************************************/
-static void
-purple_hash_class_init(PurpleHashClass *klass) {
-	klass->reset = NULL;
-	klass->reset_state = NULL;
-	klass->append = NULL;
-	klass->digest = NULL;
-	klass->get_digest_size = NULL;
-	klass->get_block_size = NULL;
-	klass->get_name = NULL;
-}
-
-/******************************************************************************
  * PurpleHash API
  *****************************************************************************/
-const gchar *
-purple_hash_get_name(PurpleHash *hash) {
-	PurpleHashClass *klass = NULL;
-
-	g_return_val_if_fail(hash, NULL);
-	g_return_val_if_fail(PURPLE_IS_HASH(hash), NULL);
-
-	klass = PURPLE_HASH_GET_CLASS(hash);
-	g_return_val_if_fail(klass->get_name, NULL);
-
-	return klass->get_name(hash);
-}
-
 GType
 purple_hash_get_type(void) {
 	static GType type = 0;
@@ -61,7 +34,7 @@ purple_hash_get_type(void) {
 			sizeof(PurpleHashClass),
 			NULL,
 			NULL,
-			(GClassInitFunc)purple_hash_class_init,
+			NULL,
 			NULL,
 			NULL,
 			sizeof(PurpleHash),
@@ -99,7 +72,7 @@ purple_hash_reset(PurpleHash *hash) {
 	else
 		purple_debug_warning("hash", "the %s hash does not implement the "
 						"reset method\n",
-						klass->get_name ? klass->get_name(hash) : "");
+						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 }
 
 /**
@@ -122,7 +95,7 @@ purple_hash_reset_state(PurpleHash *hash) {
 	else
 		purple_debug_warning("hash", "the %s hash does not implement the "
 						"reset_state method\n",
-						klass->get_name ? klass->get_name(hash) : "");
+						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 }
 
 /**
@@ -148,7 +121,7 @@ purple_hash_append(PurpleHash *hash, const guchar *data,
 	else
 		purple_debug_warning("hash", "the %s hash does not implement the "
 						"append method\n",
-						klass->get_name ? klass->get_name(hash) : "");
+						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 }
 
 /**
@@ -176,7 +149,7 @@ purple_hash_digest(PurpleHash *hash, guchar digest[], size_t len)
 	else
 		purple_debug_warning("hash", "the %s hash does not implement the "
 						"digest method\n",
-						klass->get_name ? klass->get_name(hash) : "");
+						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 
 	return FALSE;
 }
@@ -200,7 +173,7 @@ purple_hash_digest_to_str(PurpleHash *hash, gchar digest_s[], size_t len)
 	gint n = 0;
 	size_t digest_size;
 
-	g_return_val_if_fail(hash, FALSE);
+	g_return_val_if_fail(PURPLE_IS_HASH(hash), FALSE);
 	g_return_val_if_fail(digest_s, FALSE);
 
 	digest_size = purple_hash_get_digest_size(hash);
@@ -235,7 +208,7 @@ purple_hash_get_digest_size(PurpleHash *hash)
 	else
 		purple_debug_warning("hash", "the %s hash does not implement the "
 						"get_digest_size method\n",
-						klass->get_name ? klass->get_name(hash) : "");
+						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 
 	return FALSE;
 }
@@ -262,7 +235,7 @@ purple_hash_get_block_size(PurpleHash *hash)
 	else
 		purple_debug_warning("hash", "the %s hash does not implement the "
 						"get_block_size method\n",
-						klass->get_name ? klass->get_name(hash) : "");
+						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 
 	return -1;
 }

@@ -80,9 +80,6 @@ struct _PurpleHashClass {
 	/** The get block size function */
 	size_t (*get_block_size)(PurpleHash *hash);
 
-	/** The get hash name function */
-	const gchar* (*get_name)(PurpleHash *hash);
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -100,15 +97,6 @@ G_BEGIN_DECLS
  * Returns the GType for the Hash object.
  */
 GType purple_hash_get_type(void);
-
-/**
- * Gets a hash's name
- *
- * @param hash The hash
- *
- * @return The hash's name
- */
-const gchar *purple_hash_get_name(PurpleHash *hash);
 
 /**
  * Resets a hash to it's default value

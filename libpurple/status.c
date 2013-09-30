@@ -606,8 +606,8 @@ status_set_attr_boolean(PurpleStatus *status, const char *id,
 {
 	GValue *attr_value;
 
-	g_return_if_fail(status != NULL);
-	g_return_if_fail(id     != NULL);
+	g_return_if_fail(PURPLE_IS_STATUS(status));
+	g_return_if_fail(id != NULL);
 
 	/* Make sure this attribute exists and is the correct type. */
 	attr_value = purple_status_get_attr_value(status, id);
@@ -622,8 +622,8 @@ status_set_attr_int(PurpleStatus *status, const char *id, int value)
 {
 	GValue *attr_value;
 
-	g_return_if_fail(status != NULL);
-	g_return_if_fail(id     != NULL);
+	g_return_if_fail(PURPLE_IS_STATUS(status));
+	g_return_if_fail(id != NULL);
 
 	/* Make sure this attribute exists and is the correct type. */
 	attr_value = purple_status_get_attr_value(status, id);
@@ -639,8 +639,8 @@ status_set_attr_string(PurpleStatus *status, const char *id,
 {
 	GValue *attr_value;
 
-	g_return_if_fail(status != NULL);
-	g_return_if_fail(id     != NULL);
+	g_return_if_fail(PURPLE_IS_STATUS(status));
+	g_return_if_fail(id != NULL);
 
 	/* Make sure this attribute exists and is the correct type. */
 	attr_value = purple_status_get_attr_value(status, id);
@@ -843,7 +843,7 @@ purple_status_get_presence(const PurpleStatus *status)
 const char *
 purple_status_get_id(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), NULL);
 
 	return purple_status_type_get_id(purple_status_get_status_type(status));
 }
@@ -851,7 +851,7 @@ purple_status_get_id(const PurpleStatus *status)
 const char *
 purple_status_get_name(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), NULL);
 
 	return purple_status_type_get_name(purple_status_get_status_type(status));
 }
@@ -859,7 +859,7 @@ purple_status_get_name(const PurpleStatus *status)
 gboolean
 purple_status_is_independent(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), FALSE);
 
 	return purple_status_type_is_independent(purple_status_get_status_type(status));
 }
@@ -867,7 +867,7 @@ purple_status_is_independent(const PurpleStatus *status)
 gboolean
 purple_status_is_exclusive(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), FALSE);
 
 	return purple_status_type_is_exclusive(purple_status_get_status_type(status));
 }
@@ -875,7 +875,7 @@ purple_status_is_exclusive(const PurpleStatus *status)
 gboolean
 purple_status_is_available(const PurpleStatus *status)
 {
-	g_return_val_if_fail(status != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), FALSE);
 
 	return purple_status_type_is_available(purple_status_get_status_type(status));
 }
@@ -895,7 +895,7 @@ purple_status_is_online(const PurpleStatus *status)
 {
 	PurpleStatusPrimitive primitive;
 
-	g_return_val_if_fail( status != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), FALSE);
 
 	primitive = purple_status_type_get_primitive(purple_status_get_status_type(status));
 
@@ -919,8 +919,8 @@ purple_status_get_attr_boolean(const PurpleStatus *status, const char *id)
 {
 	const GValue *value;
 
-	g_return_val_if_fail(status != NULL, FALSE);
-	g_return_val_if_fail(id     != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), FALSE);
+	g_return_val_if_fail(id != NULL, FALSE);
 
 	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return FALSE;
@@ -935,8 +935,8 @@ purple_status_get_attr_int(const PurpleStatus *status, const char *id)
 {
 	const GValue *value;
 
-	g_return_val_if_fail(status != NULL, 0);
-	g_return_val_if_fail(id     != NULL, 0);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), 0);
+	g_return_val_if_fail(id != NULL, 0);
 
 	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return 0;
@@ -951,8 +951,8 @@ purple_status_get_attr_string(const PurpleStatus *status, const char *id)
 {
 	const GValue *value;
 
-	g_return_val_if_fail(status != NULL, NULL);
-	g_return_val_if_fail(id     != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_STATUS(status), NULL);
+	g_return_val_if_fail(id != NULL, NULL);
 
 	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return NULL;
@@ -1287,7 +1287,7 @@ PurpleStatus *
 purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 {
 	g_return_val_if_fail(status_type != NULL, NULL);
-	g_return_val_if_fail(presence    != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_PRESENCE(presence), NULL);
 
 	return g_object_new(PURPLE_TYPE_STATUS,
 			PROP_STATUS_TYPE_S,  status_type,
