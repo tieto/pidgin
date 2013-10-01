@@ -401,15 +401,6 @@ purple_plugin_info_constructed(GObject *object)
 	}
 }
 
-/* GObject dispose function */
-static void
-purple_plugin_info_dispose(GObject *object)
-{
-	PURPLE_DBUS_UNREGISTER_POINTER(object);
-
-	parent_class->dispose(object);
-}
-
 /* GObject finalize function */
 static void
 purple_plugin_info_finalize(GObject *object)
@@ -418,6 +409,8 @@ purple_plugin_info_finalize(GObject *object)
 
 	g_free(priv->ui_requirement);
 	g_free(priv->error);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	parent_class->finalize(object);
 }
@@ -432,7 +425,6 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 	g_type_class_add_private(klass, sizeof(PurplePluginInfoPrivate));
 
 	obj_class->constructed = purple_plugin_info_constructed;
-	obj_class->dispose     = purple_plugin_info_dispose;
 	obj_class->finalize    = purple_plugin_info_finalize;
 
 	/* Setup properties */

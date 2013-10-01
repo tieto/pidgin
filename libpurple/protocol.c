@@ -144,7 +144,7 @@ purple_protocol_init(GTypeInstance *instance, gpointer klass)
 }
 
 static void
-purple_protocol_dispose(GObject *object)
+purple_protocol_finalize(GObject *object)
 {
 	PurpleProtocol *protocol = PURPLE_PROTOCOL(object);
 	GList *accounts, *l;
@@ -170,19 +170,11 @@ purple_protocol_dispose(GObject *object)
 
 	purple_prefs_disconnect_by_handle(protocol);
 
-	PURPLE_DBUS_UNREGISTER_POINTER(protocol);
-
-	parent_class->dispose(object);
-}
-
-static void
-purple_protocol_finalize(GObject *object)
-{
-	PurpleProtocol *protocol = PURPLE_PROTOCOL(object);
-
 	user_splits_free(protocol);
 	protocol_options_free(protocol);
 	icon_spec_free(protocol);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(protocol);
 
 	parent_class->finalize(object);
 }
@@ -194,7 +186,6 @@ purple_protocol_class_init(PurpleProtocolClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose  = purple_protocol_dispose;
 	obj_class->finalize = purple_protocol_finalize;
 }
 
