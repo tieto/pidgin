@@ -2046,20 +2046,13 @@ purple_buddy_list_init(GTypeInstance *instance, gpointer klass)
 					 (GDestroyNotify)_purple_blist_hbuddy_free_key, NULL);
 }
 
-/* GObject dispose function */
-static void
-purple_buddy_list_dispose(GObject *object)
-{
-	PURPLE_DBUS_UNREGISTER_POINTER(object);
-
-	G_OBJECT_CLASS(parent_class)->dispose(object);
-}
-
 /* GObject finalize function */
 static void
 purple_buddy_list_finalize(GObject *object)
 {
 	g_hash_table_destroy(PURPLE_BUDDY_LIST_GET_PRIVATE(object)->buddies);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
@@ -2071,7 +2064,6 @@ static void purple_buddy_list_class_init(PurpleBuddyListClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_buddy_list_dispose;
 	obj_class->finalize = purple_buddy_list_finalize;
 
 	g_type_class_add_private(klass, sizeof(PurpleBuddyListPrivate));

@@ -976,13 +976,6 @@ purple_conversation_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
-/* GObject initialization function */
-static void
-purple_conversation_init(GTypeInstance *instance, gpointer klass)
-{
-	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CONVERSATION(instance), PurpleConversation);
-}
-
 /* Called when done constructing */
 static void
 purple_conversation_constructed(GObject *object)
@@ -1021,13 +1014,13 @@ purple_conversation_constructed(GObject *object)
 	g_object_unref(account);
 }
 
-/* GObject dispose function */
+/* GObject finalize function */
 static void
-purple_conversation_dispose(GObject *object)
+purple_conversation_finalize(GObject *object)
 {
 	PurpleConversation *conv = PURPLE_CONVERSATION(object);
-
-	g_return_if_fail(PURPLE_IS_CONVERSATION(conv));
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	PurpleConversationUiOps *ops  = purple_conversation_get_ui_ops(conv);
 
 	purple_request_close_with_handle(conv);
 
@@ -1040,27 +1033,14 @@ purple_conversation_dispose(GObject *object)
 	purple_conversation_close_logs(conv);
 	purple_conversation_clear_message_history(conv);
 
-	PURPLE_DBUS_UNREGISTER_POINTER(conv);
-
-	parent_class->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_conversation_finalize(GObject *object)
-{
-	PurpleConversation *conv = PURPLE_CONVERSATION(object);
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-	PurpleConversationUiOps *ops  = purple_conversation_get_ui_ops(conv);
+	if (ops != NULL && ops->destroy_conversation != NULL)
+		ops->destroy_conversation(conv);
 
 	g_free(priv->name);
 	g_free(priv->title);
 
 	priv->name = NULL;
 	priv->title = NULL;
-
-	if (ops != NULL && ops->destroy_conversation != NULL)
-		ops->destroy_conversation(conv);
 
 	parent_class->finalize(object);
 }
@@ -1073,7 +1053,6 @@ purple_conversation_class_init(PurpleConversationClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_conversation_dispose;
 	obj_class->finalize = purple_conversation_finalize;
 	obj_class->constructed = purple_conversation_constructed;
 
@@ -1130,7 +1109,7 @@ purple_conversation_get_type(void)
 			NULL,
 			sizeof(PurpleConversation),
 			0,
-			(GInstanceInitFunc)purple_conversation_init,
+			NULL,
 			NULL,
 		};
 

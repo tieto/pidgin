@@ -689,9 +689,9 @@ purple_connection_constructed(GObject *object)
 	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
 }
 
-/* GObject dispose function */
+/* GObject finalize function */
 static void
-purple_connection_dispose(GObject *object)
+purple_connection_finalize(GObject *object)
 {
 	PurpleConnection *gc = PURPLE_CONNECTION(object);
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
@@ -751,19 +751,10 @@ purple_connection_dispose(GObject *object)
 	if (priv->disconnect_timeout > 0)
 		purple_timeout_remove(priv->disconnect_timeout);
 
-	PURPLE_DBUS_UNREGISTER_POINTER(gc);
-
-	G_OBJECT_CLASS(parent_class)->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_connection_finalize(GObject *object)
-{
-	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(object);
-
 	purple_str_wipe(priv->password);
 	g_free(priv->display_name);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(gc);
 
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
@@ -775,7 +766,6 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_connection_dispose;
 	obj_class->finalize = purple_connection_finalize;
 	obj_class->constructed = purple_connection_constructed;
 

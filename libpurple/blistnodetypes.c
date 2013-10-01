@@ -623,6 +623,25 @@ purple_buddy_constructed(GObject *object)
 static void
 purple_buddy_dispose(GObject *object)
 {
+	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(object);
+
+	if (priv->icon) {
+		purple_buddy_icon_unref(priv->icon);
+		priv->icon = NULL;
+	}
+
+	if (priv->presence) {
+		g_object_unref(priv->presence);
+		priv->presence = NULL;
+	}
+
+	G_OBJECT_CLASS(blistnode_parent_class)->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_buddy_finalize(GObject *object)
+{
 	PurpleBuddy *buddy = PURPLE_BUDDY(object);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 	PurpleProtocol *protocol;
@@ -635,24 +654,11 @@ purple_buddy_dispose(GObject *object)
 	if (protocol)
 		purple_protocol_client_iface_buddy_free(protocol, buddy);
 
-	/* Delete the node */
-	purple_buddy_icon_unref(priv->icon);
-	g_object_unref(priv->presence);
-
-	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
-
-	G_OBJECT_CLASS(blistnode_parent_class)->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_buddy_finalize(GObject *object)
-{
-	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(object);
-
 	g_free(priv->name);
 	g_free(priv->local_alias);
 	g_free(priv->server_alias);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
 
 	G_OBJECT_CLASS(blistnode_parent_class)->finalize(object);
 }
@@ -1013,20 +1019,13 @@ purple_contact_init(GTypeInstance *instance, gpointer klass)
 	PURPLE_DBUS_REGISTER_POINTER(contact, PurpleContact);
 }
 
-/* GObject dispose function */
-static void
-purple_contact_dispose(GObject *object)
-{
-	PURPLE_DBUS_UNREGISTER_POINTER(object);
-
-	G_OBJECT_CLASS(counting_parent_class)->dispose(object);
-}
-
 /* GObject finalize function */
 static void
 purple_contact_finalize(GObject *object)
 {
 	g_free(PURPLE_CONTACT_GET_PRIVATE(object)->alias);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	G_OBJECT_CLASS(counting_parent_class)->finalize(object);
 }
@@ -1038,7 +1037,6 @@ static void purple_contact_class_init(PurpleContactClass *klass)
 
 	counting_parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_contact_dispose;
 	obj_class->finalize = purple_contact_finalize;
 
 	/* Setup properties */
@@ -1275,15 +1273,6 @@ purple_chat_constructed(GObject *object)
 		ops->new_node(PURPLE_BLIST_NODE(chat));
 }
 
-/* GObject dispose function */
-static void
-purple_chat_dispose(GObject *object)
-{
-	PURPLE_DBUS_UNREGISTER_POINTER(object);
-
-	G_OBJECT_CLASS(blistnode_parent_class)->dispose(object);
-}
-
 /* GObject finalize function */
 static void
 purple_chat_finalize(GObject *object)
@@ -1292,6 +1281,8 @@ purple_chat_finalize(GObject *object)
 
 	g_free(priv->alias);
 	g_hash_table_destroy(priv->components);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	G_OBJECT_CLASS(blistnode_parent_class)->finalize(object);
 }
@@ -1303,7 +1294,6 @@ static void purple_chat_class_init(PurpleChatClass *klass)
 
 	blistnode_parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_chat_dispose;
 	obj_class->finalize = purple_chat_finalize;
 
 	/* Setup properties */
@@ -1624,20 +1614,13 @@ purple_group_constructed(GObject *object)
 		ops->new_node(PURPLE_BLIST_NODE(group));
 }
 
-/* GObject dispose function */
-static void
-purple_group_dispose(GObject *object)
-{
-	PURPLE_DBUS_UNREGISTER_POINTER(object);
-
-	G_OBJECT_CLASS(counting_parent_class)->dispose(object);
-}
-
 /* GObject finalize function */
 static void
 purple_group_finalize(GObject *object)
 {
 	g_free(PURPLE_GROUP_GET_PRIVATE(object)->name);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	G_OBJECT_CLASS(counting_parent_class)->finalize(object);
 }
@@ -1649,7 +1632,6 @@ static void purple_group_class_init(PurpleGroupClass *klass)
 
 	counting_parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_group_dispose;
 	obj_class->finalize = purple_group_finalize;
 	obj_class->constructed = purple_group_constructed;
 

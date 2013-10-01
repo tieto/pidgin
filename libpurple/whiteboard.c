@@ -401,9 +401,9 @@ purple_whiteboard_constructed(GObject *object)
 	wbList = g_list_append(wbList, wb);
 }
 
-/* GObject dispose function */
+/* GObject finalize function */
 static void
-purple_whiteboard_dispose(GObject *object)
+purple_whiteboard_finalize(GObject *object)
 {
 	PurpleWhiteboard *wb = PURPLE_WHITEBOARD(object);
 	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(wb);
@@ -421,15 +421,6 @@ purple_whiteboard_dispose(GObject *object)
 
 	wbList = g_list_remove(wbList, wb);
 
-	parent_class->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_whiteboard_finalize(GObject *object)
-{
-	PurpleWhiteboardPrivate *priv = PURPLE_WHITEBOARD_GET_PRIVATE(object);
-
 	g_free(priv->who);
 
 	parent_class->finalize(object);
@@ -443,7 +434,6 @@ purple_whiteboard_class_init(PurpleWhiteboardClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_whiteboard_dispose;
 	obj_class->finalize = purple_whiteboard_finalize;
 	obj_class->constructed = purple_whiteboard_constructed;
 

@@ -418,6 +418,13 @@ purple_im_conversation_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
+/* GObject initialization function */
+static void purple_im_conversation_init(GTypeInstance *instance, gpointer klass)
+{
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_IM_CONVERSATION(instance),
+			PurpleIMConversation);
+}
+
 /* Called when done constructing */
 static void
 purple_im_conversation_constructed(GObject *object)
@@ -452,6 +459,20 @@ purple_im_conversation_constructed(GObject *object)
 static void
 purple_im_conversation_dispose(GObject *object)
 {
+	PurpleIMConversationPrivate *priv = PURPLE_IM_CONVERSATION_GET_PRIVATE(object);
+
+	if (priv->icon) {
+		purple_buddy_icon_unref(priv->icon);
+		priv->icon = NULL;
+	}
+
+	G_OBJECT_CLASS(parent_class)->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_im_conversation_finalize(GObject *object)
+{
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(object);
 	PurpleConnection *gc = purple_conversation_get_connection(PURPLE_CONVERSATION(im));
 	PurpleProtocol *protocol = NULL;
@@ -471,18 +492,7 @@ purple_im_conversation_dispose(GObject *object)
 	purple_im_conversation_stop_typing_timeout(im);
 	purple_im_conversation_stop_send_typed_timeout(im);
 
-	G_OBJECT_CLASS(parent_class)->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_im_conversation_finalize(GObject *object)
-{
-	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(object);
-	PurpleIMConversationPrivate *priv = PURPLE_IM_CONVERSATION_GET_PRIVATE(im);
-
-	purple_buddy_icon_unref(priv->icon);
-	priv->icon = NULL;
+	PURPLE_DBUS_UNREGISTER_POINTER(im);
 
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
@@ -536,7 +546,7 @@ purple_im_conversation_get_type(void)
 			NULL,
 			sizeof(PurpleIMConversation),
 			0,
-			NULL,
+			(GInstanceInitFunc)purple_im_conversation_init,
 			NULL,
 		};
 
@@ -1399,6 +1409,9 @@ static void purple_chat_conversation_init(GTypeInstance *instance, gpointer klas
 {
 	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(instance);
 
+	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CHAT_CONVERSATION(instance),
+			PurpleChatConversation);
+
 	priv->users = g_hash_table_new_full(_purple_conversation_user_hash,
 			_purple_conversation_user_equal, g_free, NULL);
 }
@@ -1431,8 +1444,25 @@ purple_chat_conversation_constructed(GObject *object)
 static void
 purple_chat_conversation_dispose(GObject *object)
 {
+	PurpleChatConversationPrivate *priv =
+			PURPLE_CHAT_CONVERSATION_GET_PRIVATE(object);
+
+	if (priv->in_room) {
+		g_list_foreach(priv->in_room, (GFunc)g_object_unref, NULL);
+		g_list_free(priv->in_room);
+		priv->in_room = NULL;
+	}
+
+	G_OBJECT_CLASS(parent_class)->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_chat_conversation_finalize(GObject *object)
+{
 	PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(object);
 	PurpleConnection *gc = purple_conversation_get_connection(PURPLE_CONVERSATION(chat));
+	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(chat);
 
 	if (gc != NULL)
 	{
@@ -1480,22 +1510,8 @@ purple_chat_conversation_dispose(GObject *object)
 			serv_got_chat_left(gc, chat_id);
 	}
 
-	G_OBJECT_CLASS(parent_class)->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_chat_conversation_finalize(GObject *object)
-{
-	PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(object);
-	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(chat);
-
 	g_hash_table_destroy(priv->users);
 	priv->users = NULL;
-
-	g_list_foreach(priv->in_room, (GFunc)g_object_unref, NULL);
-	g_list_free(priv->in_room);
-	priv->in_room = NULL;
 
 	g_list_foreach(priv->ignored, (GFunc)g_free, NULL);
 	g_list_free(priv->ignored);
@@ -1508,6 +1524,8 @@ purple_chat_conversation_finalize(GObject *object)
 	priv->who = NULL;
 	priv->topic = NULL;
 	priv->nick = NULL;
+
+	PURPLE_DBUS_UNREGISTER_POINTER(chat);
 
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
@@ -1878,29 +1896,21 @@ purple_chat_user_init(GTypeInstance *instance, gpointer klass)
 	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CHAT_USER(instance), PurpleChatUser);
 }
 
-/* GObject dispose function */
-static void
-purple_chat_user_dispose(GObject *object)
-{
-	PurpleChatUser *cb = PURPLE_CHAT_USER(object);
-
-	purple_signal_emit(purple_conversations_get_handle(),
-			"deleting-chat-user", cb);
-	PURPLE_DBUS_UNREGISTER_POINTER(cb);
-
-	cb_parent_class->dispose(object);
-}
-
 /* GObject finalize function */
 static void
 purple_chat_user_finalize(GObject *object)
 {
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(object);
+	PurpleChatUser *cb = PURPLE_CHAT_USER(object);
+	PurpleChatUserPrivate *priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"deleting-chat-user", cb);
 
 	g_free(priv->alias);
 	g_free(priv->alias_key);
 	g_free(priv->name);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(cb);
 
 	cb_parent_class->finalize(object);
 }
@@ -1912,7 +1922,6 @@ static void purple_chat_user_class_init(PurpleChatUserClass *klass)
 
 	cb_parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_chat_user_dispose;
 	obj_class->finalize = purple_chat_user_finalize;
 
 	/* Setup properties */
