@@ -975,7 +975,9 @@ static void null_set_chat_topic(PurpleConnection *gc, int id,
 }
 
 static gboolean null_finish_get_roomlist(gpointer roomlist) {
-  purple_roomlist_set_in_progress((PurpleRoomlist *)roomlist, FALSE);
+  purple_roomlist_set_in_progress(PURPLE_ROOMLIST(roomlist), FALSE);
+  g_object_unref(roomlist);
+
   return FALSE;
 }
 
@@ -1024,7 +1026,7 @@ static PurpleRoomlist *null_roomlist_get_list(PurpleConnection *gc) {
   }
 
   g_list_free(seen_ids);
-  purple_timeout_add(1 /* ms */, null_finish_get_roomlist, roomlist);
+  purple_timeout_add(1 /* ms */, null_finish_get_roomlist, g_object_ref(roomlist));
   return roomlist;
 }
 

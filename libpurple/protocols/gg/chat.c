@@ -535,7 +535,9 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 
 static gboolean ggp_chat_roomlist_get_list_finish(gpointer roomlist)
 {
-	purple_roomlist_set_in_progress((PurpleRoomlist*)roomlist, FALSE);
+	purple_roomlist_set_in_progress(PURPLE_ROOMLIST(roomlist), FALSE);
+	g_object_unref(roomlist);
+
 	return FALSE;
 }
 
@@ -601,6 +603,7 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 
 	//TODO
 	//purple_roomlist_set_in_progress(roomlist, FALSE);
+	g_object_ref(roomlist);
 	purple_timeout_add(1, ggp_chat_roomlist_get_list_finish, roomlist);
 	return roomlist;
 }
