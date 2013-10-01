@@ -188,17 +188,34 @@ purple_account_unregister_got_password_cb(PurpleAccount *account,
 	g_free(cbb);
 }
 
-void
-purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
+static gboolean
+purple_account_register_completed_cb(gpointer *data)
 {
+	PurpleAccount *account = PURPLE_ACCOUNT(data[0]);
+	gboolean succeeded = (data[1] != NULL);
 	PurpleAccountPrivate *priv;
 
-	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
+	g_free(data);
+
+	g_return_val_if_fail(account != NULL, FALSE);
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 
 	if (priv->registration_cb)
 		(priv->registration_cb)(account, succeeded, priv->registration_cb_user_data);
+
+	return FALSE;
+}
+
+void
+purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
+{
+	gpointer *data = g_new0(gpointer, 2);
+	data[0] = account;
+	data[1] = succeeded ? GINT_TO_POINTER(1) : NULL;
+
+	purple_timeout_add(0, (GSourceFunc)purple_account_register_completed_cb,
+			(gpointer)data);
 }
 
 void
