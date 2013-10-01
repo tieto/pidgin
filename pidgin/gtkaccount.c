@@ -483,7 +483,7 @@ icon_filesel_choose_cb(const char *filename, gpointer data)
 
 	if (filename != NULL)
 	{
-		size_t len;
+		size_t len = 0;
 		gpointer data = pidgin_convert_buddy_icon(dialog->plugin, filename, &len);
 		set_dialog_icon(dialog, data, len, g_strdup(filename));
 	}
@@ -519,7 +519,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			GError *converr = NULL;
 			gchar *tmp, *rtmp;
 			gpointer data;
-			size_t len;
+			size_t len = 0;
 
 			/* It looks like we're dealing with a local file. */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
@@ -1523,7 +1523,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		}
 		else if ((filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon")) && icon_change)
 		{
-			size_t len;
+			size_t len = 0;
 			gpointer data = pidgin_convert_buddy_icon(dialog->plugin, filename, &len);
 			purple_account_set_buddy_icon_path(account, filename);
 			purple_buddy_icons_set_account_icon(account, data, len);
