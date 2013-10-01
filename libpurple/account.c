@@ -204,6 +204,8 @@ purple_account_register_completed_cb(gpointer *data)
 	if (priv->registration_cb)
 		(priv->registration_cb)(account, succeeded, priv->registration_cb_user_data);
 
+	g_object_unref(account);
+
 	return FALSE;
 }
 
@@ -211,7 +213,7 @@ void
 purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
 {
 	gpointer *data = g_new0(gpointer, 2);
-	data[0] = account;
+	data[0] = g_object_ref(account);
 	data[1] = succeeded ? GINT_TO_POINTER(1) : NULL;
 
 	purple_timeout_add(0, (GSourceFunc)purple_account_register_completed_cb,
@@ -1020,6 +1022,8 @@ set_public_alias_unsupported(gpointer data)
 
 	failure_cb(closure->account,
 	           _("This protocol does not support setting a public alias."));
+
+	g_object_unref(closure->account);
 	g_free(closure);
 
 	return FALSE;
@@ -1046,7 +1050,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
-		closure->account = account;
+		closure->account = g_object_ref(account);
 		closure->failure_cb = failure_cb;
 		purple_timeout_add(0, set_public_alias_unsupported, closure);
 	}
@@ -1060,6 +1064,8 @@ get_public_alias_unsupported(gpointer data)
 
 	failure_cb(closure->account,
 	           _("This protocol does not support fetching the public alias."));
+
+	g_object_unref(account);
 	g_free(closure);
 
 	return FALSE;
@@ -1086,7 +1092,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
-		closure->account = account;
+		closure->account = g_object_ref(account);
 		closure->failure_cb = failure_cb;
 		purple_timeout_add(0, get_public_alias_unsupported, closure);
 	}

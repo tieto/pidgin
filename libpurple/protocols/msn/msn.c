@@ -182,6 +182,8 @@ set_public_alias_length_error(gpointer data)
 	PurpleSetPublicAliasFailureCallback failure_cb = closure->failure_cb;
 
 	failure_cb(closure->account, _("Your new MSN friendly name is too long."));
+
+	g_object_unref(closure->account);
 	g_free(closure);
 
 	return FALSE;
@@ -254,7 +256,7 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 			if (failure_cb) {
 				struct public_alias_closure *closure =
 					g_new0(struct public_alias_closure, 1);
-				closure->account = account;
+				closure->account = g_object_ref(account);
 				closure->failure_cb = failure_cb;
 				purple_timeout_add(0, set_public_alias_length_error, closure);
 			} else {
@@ -296,6 +298,8 @@ get_public_alias_cb(gpointer data)
 	alias = purple_account_get_string(closure->account, "display-name",
 	                                  purple_account_get_username(closure->account));
 	success_cb(closure->account, alias);
+
+	g_object_unref(account);
 	g_free(closure);
 
 	return FALSE;
@@ -309,7 +313,7 @@ msn_get_public_alias(PurpleConnection *pc,
 	struct public_alias_closure *closure = g_new0(struct public_alias_closure, 1);
 	PurpleAccount *account = purple_connection_get_account(pc);
 
-	closure->account = account;
+	closure->account = g_object_ref(account);
 	closure->success_cb = success_cb;
 	purple_timeout_add(0, get_public_alias_cb, closure);
 }
@@ -1402,8 +1406,11 @@ msn_send_me_im(gpointer data)
 {
 	MsnIMData *imdata = data;
 	serv_got_im(imdata->gc, imdata->who, imdata->msg, imdata->flags, imdata->when);
+
+	g_object_unref(imdata->gc);
 	g_free(imdata->msg);
 	g_free(imdata);
+
 	return FALSE;
 }
 
@@ -1624,7 +1631,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(post);
 
 		serv_got_typing_stopped(gc, who);
-		imdata->gc = gc;
+		imdata->gc = g_object_ref(gc);
 		imdata->who = who;
 		imdata->msg = body_str;
 		imdata->flags = flags & ~PURPLE_MESSAGE_SEND;
