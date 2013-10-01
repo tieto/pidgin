@@ -127,7 +127,7 @@ static gboolean ggp_avatar_timer_cb(gpointer _gc)
 	PurpleConnection *gc = _gc;
 	ggp_avatar_session_data *avdata;
 	
-	g_return_val_if_fail(PURPLE_CONNECTION_IS_VALID(gc), FALSE);
+	g_return_val_if_fail(PURPLE_IS_CONNECTION(gc), FALSE);
 	
 	avdata = ggp_avatar_get_avdata(gc);
 	if (avdata->current_update != NULL)
@@ -271,7 +271,7 @@ static void ggp_avatar_buddy_update_received(PurpleHttpConnection *http_conn,
 	const gchar *got_data;
 	size_t got_len;
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
+	if (!PURPLE_IS_CONNECTION(gc))
 	{
 		g_free(pending_update);
 		return;
@@ -330,7 +330,7 @@ void ggp_avatar_own_set(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	ggp_avatar_own_data *own_data;
 	
-	if (!PURPLE_CONNECTION_IS_VALID(gc) || !PURPLE_CONNECTION_IS_CONNECTED(gc))
+	if (!PURPLE_IS_CONNECTION(gc) || !PURPLE_CONNECTION_IS_CONNECTED(gc))
 		return;
 	
 	purple_debug_info("gg", "ggp_avatar_own_set(%p, %p)", gc, img);
@@ -396,7 +396,7 @@ static void ggp_avatar_own_sent(PurpleHttpConnection *http_conn,
 	PurpleConnection *gc =
 		purple_http_conn_get_purple_connection(http_conn);
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
+	if (!PURPLE_IS_CONNECTION(gc))
 		return;
 
 	if (!purple_http_response_is_successful(response)) {

@@ -303,6 +303,7 @@ version 3.0.0 (??/??/????):
 		* purple_connection_new_unregister
 		* purple_connection_destroy
 		* purple_connection_set_account
+		* PURPLE_CONNECTION_IS_VALID
 		* purple_contact_set_alias
 		* purple_conv_chat_set_users
 		* PurpleConversationType

@@ -1151,7 +1151,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 		BonjourData *bd = NULL;
 
 		PurpleConnection *pc = purple_account_get_connection(bconv->account);
-		if (PURPLE_CONNECTION_IS_VALID(pc)) {
+		if (PURPLE_IS_CONNECTION(pc)) {
 			bd = purple_connection_get_protocol_data(pc);
 			bd->jabber_data->pending_conversations = g_slist_remove(bd->jabber_data->pending_conversations, bconv);
 		}
