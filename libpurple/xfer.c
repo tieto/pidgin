@@ -2111,11 +2111,12 @@ purple_xfer_constructed(GObject *object)
 	xfers = g_list_prepend(xfers, xfer);
 }
 
-/* GObject dispose function */
+/* GObject finalize function */
 static void
-purple_xfer_dispose(GObject *object)
+purple_xfer_finalize(GObject *object)
 {
 	PurpleXfer *xfer = PURPLE_XFER(object);
+	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
 	PurpleXferUiOps *ui_ops;
 
 	/* Close the file browser, if it's open */
@@ -2131,17 +2132,6 @@ purple_xfer_dispose(GObject *object)
 
 	xfers = g_list_remove(xfers, xfer);
 
-	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
-
-	parent_class->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_xfer_finalize(GObject *object)
-{
-	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(object);
-
 	g_free(priv->who);
 	g_free(priv->filename);
 	g_free(priv->remote_ip);
@@ -2152,6 +2142,8 @@ purple_xfer_finalize(GObject *object)
 
 	g_free(priv->thumbnail_data);
 	g_free(priv->thumbnail_mimetype);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
 
 	parent_class->finalize(object);
 }
@@ -2164,7 +2156,6 @@ purple_xfer_class_init(PurpleXferClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_xfer_dispose;
 	obj_class->finalize = purple_xfer_finalize;
 	obj_class->constructed = purple_xfer_constructed;
 

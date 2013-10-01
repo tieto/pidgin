@@ -331,20 +331,6 @@ purple_roomlist_constructed(GObject *object)
 		ops->create(list);
 }
 
-/* GObject dispose function */
-static void
-purple_roomlist_dispose(GObject *object)
-{
-	PurpleRoomlist *list = PURPLE_ROOMLIST(object);
-
-	purple_debug_misc("roomlist", "destroying list %p\n", list);
-
-	if (ops && ops->destroy)
-		ops->destroy(list);
-
-	parent_class->dispose(object);
-}
-
 /* GObject finalize function */
 static void
 purple_roomlist_finalize(GObject *object)
@@ -352,6 +338,11 @@ purple_roomlist_finalize(GObject *object)
 	PurpleRoomlist *list = PURPLE_ROOMLIST(object);
 	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
 	GList *l;
+
+	purple_debug_misc("roomlist", "destroying list %p\n", list);
+
+	if (ops && ops->destroy)
+		ops->destroy(list);
 
 	for (l = priv->rooms; l; l = l->next) {
 		PurpleRoomlistRoom *r = l->data;
@@ -373,7 +364,6 @@ purple_roomlist_class_init(PurpleRoomlistClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_roomlist_dispose;
 	obj_class->finalize = purple_roomlist_finalize;
 	obj_class->constructed = purple_roomlist_constructed;
 

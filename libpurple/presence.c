@@ -423,10 +423,13 @@ purple_presence_init(GTypeInstance *instance, gpointer klass)
 static void
 purple_presence_dispose(GObject *object)
 {
-	PURPLE_DBUS_UNREGISTER_POINTER(object);
+	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(object);
 
-	g_list_foreach(PURPLE_PRESENCE_GET_PRIVATE(object)->statuses,
-			(GFunc)g_object_unref, NULL);
+	if (priv->statuses) {
+		g_list_foreach(priv->statuses, (GFunc)g_object_unref, NULL);
+		g_list_free(priv->statuses);
+		priv->statuses = NULL;
+	}
 
 	parent_class->dispose(object);
 }
@@ -437,8 +440,9 @@ purple_presence_finalize(GObject *object)
 {
 	PurplePresencePrivate *priv = PURPLE_PRESENCE_GET_PRIVATE(object);
 
-	g_list_free(priv->statuses);
 	g_hash_table_destroy(priv->status_table);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	parent_class->finalize(object);
 }

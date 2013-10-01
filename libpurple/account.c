@@ -2947,6 +2947,24 @@ purple_account_constructed(GObject *object)
 static void
 purple_account_dispose(GObject *object)
 {
+	PurpleAccount *account = PURPLE_ACCOUNT(object);
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
+	if (!purple_account_is_disconnected(account))
+		purple_account_disconnect(account);
+
+	if (priv->presence) {
+		g_object_unref(priv->presence);
+		priv->presence = NULL;
+	}
+
+	parent_class->dispose(object);
+}
+
+/* GObject finalize function */
+static void
+purple_account_finalize(GObject *object)
+{
 	GList *l;
 	PurpleAccount *account = PURPLE_ACCOUNT(object);
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
@@ -2968,29 +2986,14 @@ purple_account_dispose(GObject *object)
 	if (priv->proxy_info)
 		purple_proxy_info_destroy(priv->proxy_info);
 
-	if (priv->presence)
-		g_object_unref(priv->presence);
-
 	if(priv->system_log)
 		purple_log_free(priv->system_log);
 
+	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
 	if (priv->current_error) {
 		g_free(priv->current_error->description);
 		g_free(priv->current_error);
 	}
-
-	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
-	PURPLE_DBUS_UNREGISTER_POINTER(account);
-
-	parent_class->dispose(object);
-}
-
-/* GObject finalize function */
-static void
-purple_account_finalize(GObject *object)
-{
-	PurpleAccount *account = PURPLE_ACCOUNT(object);
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 
 	g_free(priv->username);
 	g_free(priv->alias);
@@ -3011,6 +3014,8 @@ purple_account_finalize(GObject *object)
 		g_free(priv->permit->data);
 		priv->permit = g_slist_delete_link(priv->permit, priv->permit);
 	}
+
+	PURPLE_DBUS_UNREGISTER_POINTER(account);
 
 	parent_class->finalize(object);
 }

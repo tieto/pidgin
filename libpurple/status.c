@@ -1198,23 +1198,16 @@ purple_status_constructed(GObject *object)
 }
 
 /*
- * GObject dispose function
+ * GObject finalize function
  * TODO: If the PurpleStatus is in a PurplePresence, then
  *       remove it from the PurplePresence?
  */
 static void
-purple_status_dispose(GObject *object)
-{
-	PURPLE_DBUS_UNREGISTER_POINTER(object);
-
-	parent_class->dispose(object);
-}
-
-/* GObject finalize function */
-static void
 purple_status_finalize(GObject *object)
 {
 	g_hash_table_destroy(PURPLE_STATUS_GET_PRIVATE(object)->attr_values);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 
 	parent_class->finalize(object);
 }
@@ -1227,7 +1220,6 @@ purple_status_class_init(PurpleStatusClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->dispose = purple_status_dispose;
 	obj_class->finalize = purple_status_finalize;
 	obj_class->constructed = purple_status_constructed;
 
