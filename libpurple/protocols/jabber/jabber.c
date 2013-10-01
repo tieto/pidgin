@@ -91,6 +91,7 @@ static PurpleProtocol *facebook_protocol = NULL;
 static GHashTable *jabber_cmds = NULL; /* PurpleProtocol * => GSList of ids */
 
 static gint plugin_ref = 0;
+static guint conn_close_timeout = 0;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 static void try_srv_connect(JabberStream *js);
@@ -602,7 +603,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, PurpleXmlNode **packet,
 	if (NULL == packet)
 		return;
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(pc));
+	g_return_if_fail(PURPLE_IS_CONNECTION(pc));
 
 	js = purple_connection_get_protocol_data(pc);
 
@@ -657,7 +658,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	static char buf[4096];
 
 	/* TODO: It should be possible to make this check unnecessary */
-	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
+	if(!PURPLE_IS_CONNECTION(gc)) {
 		purple_ssl_close(gsc);
 		g_return_if_reached();
 	}
@@ -694,7 +695,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 	int len;
 	static char buf[4096];
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
 		purple_connection_update_last_received(gc);
@@ -752,7 +753,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	JabberStream *js;
 
 	/* TODO: It should be possible to make this check unnecessary */
-	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
+	if(!PURPLE_IS_CONNECTION(gc)) {
 		purple_ssl_close(gsc);
 		g_return_if_reached();
 	}
@@ -848,7 +849,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	JabberStream *js;
 
 	/* If the connection is already disconnected, we don't need to do anything else */
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	js = purple_connection_get_protocol_data(gc);
 	js->gsc = NULL;
@@ -1134,7 +1135,7 @@ conn_close_cb(gpointer data)
 static void
 jabber_connection_schedule_close(JabberStream *js)
 {
-	purple_timeout_add(0, conn_close_cb, js);
+	conn_close_timeout = purple_timeout_add(0, conn_close_cb, js);
 }
 
 static void
@@ -1702,6 +1703,8 @@ void jabber_close(PurpleConnection *gc)
 		purple_timeout_remove(js->keepalive_timeout);
 	if (js->inactivity_timer != 0)
 		purple_timeout_remove(js->inactivity_timer);
+	if (conn_close_timeout != 0)
+		purple_timeout_remove(conn_close_timeout);
 
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;

@@ -188,17 +188,34 @@ purple_account_unregister_got_password_cb(PurpleAccount *account,
 	g_free(cbb);
 }
 
-void
-purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
+static gboolean
+purple_account_register_completed_cb(gpointer *data)
 {
+	PurpleAccount *account = PURPLE_ACCOUNT(data[0]);
+	gboolean succeeded = (data[1] != NULL);
 	PurpleAccountPrivate *priv;
 
-	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
+	g_free(data);
+
+	g_return_val_if_fail(account != NULL, FALSE);
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 
 	if (priv->registration_cb)
 		(priv->registration_cb)(account, succeeded, priv->registration_cb_user_data);
+
+	return FALSE;
+}
+
+void
+purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
+{
+	gpointer *data = g_new0(gpointer, 2);
+	data[0] = account;
+	data[1] = succeeded ? GINT_TO_POINTER(1) : NULL;
+
+	purple_timeout_add(0, (GSourceFunc)purple_account_register_completed_cb,
+			(gpointer)data);
 }
 
 void
@@ -860,10 +877,10 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 {
 	PurpleConnection *gc;
 	PurpleAccountPrivate *priv;
-	gboolean was_enabled = FALSE;
+	gboolean was_enabled = FALSE, wants_to_die = FALSE;
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
-	g_return_if_fail(ui      != NULL);
+	g_return_if_fail(ui != NULL);
 
 	was_enabled = purple_account_get_enabled(account, ui);
 
@@ -876,11 +893,11 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 		purple_signal_emit(purple_accounts_get_handle(), "account-enabled", account);
 
 	if ((gc != NULL) && (_purple_connection_wants_to_die(gc)))
-		return;
+		wants_to_die = TRUE;
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 
-	if (value && purple_presence_is_online(priv->presence))
+	if (!wants_to_die && value && purple_presence_is_online(priv->presence))
 		purple_account_connect(account);
 	else if (!value && !purple_account_is_disconnected(account))
 		purple_account_disconnect(account);
@@ -2907,11 +2924,7 @@ purple_account_constructed(GObject *object)
 static void
 purple_account_dispose(GObject *object)
 {
-	PurpleAccount *account = PURPLE_ACCOUNT(object);
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-
-	if (!purple_account_is_disconnected(account))
-		purple_account_disconnect(account);
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(object);
 
 	if (priv->presence) {
 		g_object_unref(priv->presence);

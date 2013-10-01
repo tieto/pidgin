@@ -189,7 +189,7 @@ static gboolean ggp_roster_timer_cb(gpointer _gc)
 {
 	PurpleConnection *gc = _gc;
 	
-	g_return_val_if_fail(PURPLE_CONNECTION_IS_VALID(gc), FALSE);
+	g_return_val_if_fail(PURPLE_IS_CONNECTION(gc), FALSE);
 	
 	ggp_roster_send_update(gc);
 	

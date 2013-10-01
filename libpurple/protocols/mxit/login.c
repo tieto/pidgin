@@ -238,7 +238,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_register_ok\n" );
 
-	if ( !PURPLE_CONNECTION_IS_VALID( gc ) ) {
+	if ( !PURPLE_IS_CONNECTION( gc ) ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Unable to register; account offline.\n" );
 		return;
 	}

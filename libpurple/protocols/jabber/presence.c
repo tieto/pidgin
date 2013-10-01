@@ -387,7 +387,7 @@ struct _jabber_add_permit {
 static void authorize_add_cb(const char *message, gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
+	if(PURPLE_IS_CONNECTION(jap->gc))
 		jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
 			jap->who, "subscribed");
 	g_free(jap->who);
@@ -397,7 +397,7 @@ static void authorize_add_cb(const char *message, gpointer data)
 static void deny_add_cb(const char *message, gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
+	if(PURPLE_IS_CONNECTION(jap->gc))
 		jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
 			jap->who, "unsubscribed");
 	g_free(jap->who);

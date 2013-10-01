@@ -411,7 +411,7 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 	GGPInfo *info;
 	struct gg_event *ev;
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	info = purple_connection_get_protocol_data(gc);
 
