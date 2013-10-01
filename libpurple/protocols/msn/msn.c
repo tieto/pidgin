@@ -299,7 +299,7 @@ get_public_alias_cb(gpointer data)
 	                                  purple_account_get_username(closure->account));
 	success_cb(closure->account, alias);
 
-	g_object_unref(account);
+	g_object_unref(closure->account);
 	g_free(closure);
 
 	return FALSE;
