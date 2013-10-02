@@ -837,6 +837,9 @@ purple_protocols_add(GType protocol_type, GError **error)
 	g_hash_table_insert(protocols, g_strdup(purple_protocol_get_id(protocol)),
 	                    protocol);
 
+	purple_debug_info("protocols", "Added protocol %s\n",
+	                  purple_protocol_get_id(protocol));
+
 	purple_signal_emit(purple_protocols_get_handle(), "protocol-added",
 	                   protocol);
 	return protocol;
@@ -854,6 +857,9 @@ gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error)
 
 		return FALSE;
 	}
+
+	purple_debug_info("protocols", "Removing protocol %s\n",
+	                  purple_protocol_get_id(protocol));
 
 	purple_signal_emit(purple_protocols_get_handle(), "protocol-removed",
 	                   protocol);
