@@ -31,14 +31,9 @@
 #include "theme.h"
 #include "sound.h"
 
-/**
- * extends PurpleTheme (theme.h)
- * A purple sound theme.
- * This is an object for Purple to represent a sound theme.
- *
- * PurpleSoundTheme is a PurpleTheme Object.
- */
+/** @copydoc _PurpleSoundTheme */
 typedef struct _PurpleSoundTheme        PurpleSoundTheme;
+/** @copydoc _PurpleSoundThemeClass */
 typedef struct _PurpleSoundThemeClass   PurpleSoundThemeClass;
 
 #define PURPLE_TYPE_SOUND_THEME             (purple_sound_theme_get_type())
@@ -48,6 +43,10 @@ typedef struct _PurpleSoundThemeClass   PurpleSoundThemeClass;
 #define PURPLE_IS_SOUND_THEME_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_SOUND_THEME))
 #define PURPLE_SOUND_THEME_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SOUND_THEME, PurpleSoundThemeClass))
 
+/**
+ * A purple sound theme.
+ * This is an object for Purple to represent a sound theme.
+ */
 struct _PurpleSoundTheme
 {
 	/*< private >*/
