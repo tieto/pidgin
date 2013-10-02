@@ -724,12 +724,12 @@ purple_connection_finalize(GObject *object)
 
 	update_keepalive(gc, FALSE);
 
-	purple_http_conn_cancel_all(gc);
-	purple_proxy_connect_cancel_with_handle(gc);
-
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(priv->prpl);
 	if (prpl_info->close)
 		(prpl_info->close)(gc);
+
+	purple_http_conn_cancel_all(gc);
+	purple_proxy_connect_cancel_with_handle(gc);
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_blist_find_buddies(account, NULL);
