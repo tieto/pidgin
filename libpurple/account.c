@@ -376,6 +376,7 @@ purple_account_disconnect(PurpleAccount *account)
 	const char *username;
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
+	g_return_if_fail(!purple_account_is_disconnecting(account));
 	g_return_if_fail(!purple_account_is_disconnected(account));
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
