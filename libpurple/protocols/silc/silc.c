@@ -463,7 +463,7 @@ static void silcpurple_got_password_cb(PurpleConnection *gc, PurpleRequestFields
 	gboolean remember;
 
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_IS_CONNECTION(gc))
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
 	password = purple_request_fields_get_string(fields, "password");
@@ -504,7 +504,7 @@ static void silcpurple_no_password_cb(PurpleConnection *gc, PurpleRequestFields 
 {
 	SilcPurple sg;
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_IS_CONNECTION(gc))
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 	sg = purple_connection_get_protocol_data(gc);
 	purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,

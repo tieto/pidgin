@@ -52,7 +52,7 @@ msn_accept_add_cb(const char *message, gpointer data)
 
 	purple_debug_misc("msn", "Accepted the new buddy: %s\n", pa->who);
 
-	if (PURPLE_IS_CONNECTION(pa->gc))
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
 	{
 		MsnSession *session = purple_connection_get_protocol_data(pa->gc);
 		MsnUserList *userlist = session->userlist;
@@ -77,7 +77,7 @@ msn_cancel_add_cb(const char *message, gpointer data)
 
 	purple_debug_misc("msn", "Denied the new buddy: %s\n", pa->who);
 
-	if (PURPLE_IS_CONNECTION(pa->gc))
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
 	{
 		MsnSession *session = purple_connection_get_protocol_data(pa->gc);
 		MsnUserList *userlist = session->userlist;
