@@ -94,7 +94,7 @@ auth_old_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	gboolean remember;
 
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_IS_CONNECTION(gc))
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
 	account = purple_connection_get_account(gc);
@@ -123,7 +123,7 @@ static void
 auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_IS_CONNECTION(gc))
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
 	/* Disable the account as the user has cancelled connecting */
