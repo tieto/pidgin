@@ -30,13 +30,9 @@
 #include <glib-object.h>
 #include "imgstore.h"
 
-/**
- * A purple theme.
- * This is an abstract class for Purple to use with the Purple theme manager.
- *
- * PurpleTheme is a GObject.
- */
+/** @copydoc _PurpleTheme */
 typedef struct _PurpleTheme        PurpleTheme;
+/** @copydoc _PurpleThemeClass */
 typedef struct _PurpleThemeClass   PurpleThemeClass;
 
 #define PURPLE_TYPE_THEME            (purple_theme_get_type ())
@@ -46,6 +42,10 @@ typedef struct _PurpleThemeClass   PurpleThemeClass;
 #define PURPLE_IS_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_TYPE_THEME))
 #define PURPLE_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_THEME, PurpleThemeClass))
 
+/**
+ * A purple theme.
+ * This is an abstract class for Purple to use with the Purple theme manager.
+ */
 struct _PurpleTheme
 {
 	/*< private >*/

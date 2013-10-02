@@ -41,7 +41,7 @@
 #define PURPLE_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA))
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
 
-/** A structure representing a media call. */
+/** @copydoc _PurpleMedia */
 typedef struct _PurpleMedia PurpleMedia;
 
 #include "signals.h"
@@ -51,7 +51,6 @@ typedef struct _PurpleMedia PurpleMedia;
 
 /** @copydoc _PurpleMediaClass */
 typedef struct _PurpleMediaClass    PurpleMediaClass;
-/** @copydoc _PurpleMediaPrivate */
 typedef struct _PurpleMediaPrivate  PurpleMediaPrivate;
 
 /** The media instance */
