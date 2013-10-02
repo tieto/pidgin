@@ -187,7 +187,7 @@ purple_signals_unregister_by_instance(void *instance)
 	 * Makes things easier (more annoying?) for developers who don't have
 	 * things registering and unregistering in the right order :)
 	 */
-	g_return_if_fail(found);
+	/* g_return_if_fail(found); */
 }
 
 void
