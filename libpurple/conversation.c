@@ -144,6 +144,8 @@ struct _PurpleConversation
 
 	PurpleConnectionFlags features; /**< The supported features */
 	GList *message_history;         /**< Message history, as a GList of PurpleConvMessage's */
+
+	PurpleE2eeState *e2ee_state;
 };
 
 /**
@@ -926,6 +928,64 @@ purple_conversation_get_name(const PurpleConversation *conv)
 	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->name;
+}
+
+void
+purple_conversation_set_e2ee_state(PurpleConversation *conv,
+	PurpleE2eeState *state)
+{
+	g_return_if_fail(conv != NULL);
+
+	if (state != NULL && purple_e2ee_state_get_provider(state) !=
+		purple_e2ee_provider_get_main())
+	{
+		purple_debug_error("conversation",
+			"This is not the main e2ee provider");
+
+		return;
+	}
+
+	/* don't emit a signal if it doesn't differ */
+	if (conv->e2ee_state == state)
+		return;
+
+	purple_e2ee_state_ref(state);
+	purple_e2ee_state_unref(conv->e2ee_state);
+	conv->e2ee_state = state;
+
+	purple_signal_emit(purple_conversations_get_handle(),
+		"conversation-e2ee-state-changed", conv);
+}
+
+PurpleE2eeState *
+purple_conversation_get_e2ee_state(PurpleConversation *conv)
+{
+	PurpleE2eeProvider *provider;
+	PurpleE2eeFeatures features;
+
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	provider = purple_e2ee_provider_get_main();
+	if (provider == NULL)
+		return NULL;
+
+	features = purple_e2ee_provider_get_features(provider);
+	if (conv->type == PURPLE_CONV_TYPE_IM) {
+		if (!(features & PURPLE_E2EE_FEATURE_IM))
+			return NULL;
+	} else if (conv->type == PURPLE_CONV_TYPE_CHAT) {
+		if (!(features & PURPLE_E2EE_FEATURE_CHAT))
+			return NULL;
+	} else
+		return NULL;
+
+	if (purple_e2ee_state_get_provider(conv->e2ee_state) != provider) {
+		purple_debug_warning("conversation",
+			"e2ee state has invalid provider set");
+		return NULL;
+	}
+
+	return conv->e2ee_state;
 }
 
 void
@@ -2866,6 +2926,11 @@ purple_conversations_init(void)
 			     purple_value_new(PURPLE_TYPE_SUBTYPE,
 					    PURPLE_SUBTYPE_CONVERSATION),
 			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
+
+	purple_signal_register(handle, "conversation-e2ee-state-changed",
+		purple_marshal_VOID__POINTER, NULL, 1,
+		purple_value_new(PURPLE_TYPE_SUBTYPE,
+			PURPLE_SUBTYPE_CONVERSATION));
 }
 
 void

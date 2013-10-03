@@ -88,6 +88,12 @@ DIALOGS_SCALABLE = \
 		dialogs/scalable/question.svg \
 		dialogs/scalable/warning.svg
 
+E2EE_STATES_16 = \
+		e2ee-states/16/finished.png \
+		e2ee-states/16/not-private.png \
+		e2ee-states/16/private.png \
+		e2ee-states/16/unverified.png
+
 EMBLEMS_16 = \
 		emblems/16/aol-client.png \
 		emblems/16/birthday.png \
@@ -561,6 +567,7 @@ nobase_dist_pidginpixmap_DATA = \
 		$(DIALOGS_16) \
 		$(DIALOGS_64) \
 		$(DIALOGS_SCALABLE)	\
+		$(E2EE_STATES_16) \
 		$(EMBLEMS_16) \
 		$(EMBLEMS_SCALABLE)	\
 		$(PROTOCOLS_16) \

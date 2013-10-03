@@ -146,6 +146,7 @@ typedef enum
 
 #include "account.h"
 #include "buddyicon.h"
+#include "e2ee.h"
 #include "log.h"
 #include "server.h"
 
@@ -403,6 +404,13 @@ void purple_conversation_set_name(PurpleConversation *conv, const char *name);
  *         then it's the name of the PurpleBuddy.
  */
 const char *purple_conversation_get_name(const PurpleConversation *conv);
+
+void
+purple_conversation_set_e2ee_state(PurpleConversation *conv,
+	PurpleE2eeState *state);
+
+PurpleE2eeState *
+purple_conversation_get_e2ee_state(PurpleConversation *conv);
 
 /**
  * Get an attribute of a chat buddy
