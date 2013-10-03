@@ -728,16 +728,16 @@ purple_connection_finalize(GObject *object)
 	if (prpl_info->close)
 		(prpl_info->close)(gc);
 
-	purple_http_conn_cancel_all(gc);
-	purple_proxy_connect_cancel_with_handle(gc);
-
-	/* Clear out the proto data that was freed in the prpl close method*/
+	/* Clear out the proto data that was freed in the prpl close method */
 	buddies = purple_blist_find_buddies(account, NULL);
 	while (buddies != NULL) {
 		PurpleBuddy *buddy = buddies->data;
 		purple_buddy_set_protocol_data(buddy, NULL);
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
+
+	purple_http_conn_cancel_all(gc);
+	purple_proxy_connect_cancel_with_handle(gc);
 
 	connections = g_list_remove(connections, gc);
 
