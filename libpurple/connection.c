@@ -720,9 +720,6 @@ purple_connection_finalize(GObject *object)
 
 	purple_protocol_class_close(priv->protocol, gc);
 
-	purple_http_conn_cancel_all(gc);
-	purple_proxy_connect_cancel_with_handle(gc);
-
 	/* Clear out the proto data that was freed in the protocol's close method */
 	buddies = purple_blist_find_buddies(account, NULL);
 	while (buddies != NULL) {
@@ -730,6 +727,9 @@ purple_connection_finalize(GObject *object)
 		purple_buddy_set_protocol_data(buddy, NULL);
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
+
+	purple_http_conn_cancel_all(gc);
+	purple_proxy_connect_cancel_with_handle(gc);
 
 	connections = g_list_remove(connections, gc);
 
