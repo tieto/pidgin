@@ -1493,6 +1493,9 @@ AC_PATH_PROG(pidginpath, pidgin)
 if test "${CC: -6}" = "/clang" -o "$CC" = "clang"; then
 	AC_DEFINE([HAVE_CLANG], [1], [Define to 1 if you compile with clang.])
 	GLIB_LIBS=`echo $GLIB_LIBS | $sedpath 's/-pthread/-lpthread/'`
+
+	dnl Enable address sanitizer.
+	CFLAGS="$CFLAGS -faddress-sanitizer -g -fno-omit-frame-pointer -fno-inline -fno-optimize-sibling-calls"
 fi
 
 dnl #######################################################################
