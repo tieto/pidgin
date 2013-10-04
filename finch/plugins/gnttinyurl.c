@@ -384,7 +384,7 @@ tinyurl_notify_uri(const char *uri)
 	/* XXX: The following expects that finch_notify_message gets called. This
 	 * may not always happen, e.g. when another plugin sets its own
 	 * notify_message. So tread carefully. */
-	win = purple_notify_message(NULL, PURPLE_NOTIFY_URI, _("URI"), uri,
+	win = purple_notify_message(NULL, PURPLE_NOTIFY_MSG_INFO, _("URI"), uri,
 			_("Please wait while TinyURL fetches a shorter URL ..."), NULL, NULL, NULL);
 	if (!GNT_IS_WINDOW(win) || !g_object_get_data(G_OBJECT(win), "info-widget"))
 		return win;
