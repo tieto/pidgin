@@ -1490,7 +1490,13 @@ AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(pidginpath, pidgin)
 
-if test "${CC: -6}" = "/clang" -o "$CC" = "clang"; then
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+	#if !defined(__clang__)
+	#error
+	#endif
+])], have_clang=yes, have_clang=no)
+
+if test "x$have_clang" = "xyes"; then
 	AC_DEFINE([HAVE_CLANG], [1], [Define to 1 if you compile with clang.])
 	GLIB_LIBS=`echo $GLIB_LIBS | $sedpath 's/-pthread/-lpthread/'`
 
