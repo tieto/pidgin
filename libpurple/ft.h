@@ -145,8 +145,8 @@ struct _PurpleXfer
 	FILE *dest_fp;                /**< The destination file pointer.       */
 
 	char *remote_ip;              /**< The remote IP address.              */
-	int local_port;               /**< The local port.                     */
-	int remote_port;              /**< The remote port.                    */
+	guint16 local_port;           /**< The local port.                     */
+	guint16 remote_port;          /**< The remote port.                    */
 
 	int fd;                       /**< The socket file descriptor.         */
 	int watcher;                  /**< Watcher.                            */
@@ -394,7 +394,7 @@ double purple_xfer_get_progress(const PurpleXfer *xfer);
  *
  * @return The port number on this end.
  */
-unsigned int purple_xfer_get_local_port(const PurpleXfer *xfer);
+guint16 purple_xfer_get_local_port(const PurpleXfer *xfer);
 
 /**
  * Returns the remote IP address in the file transfer.
@@ -412,7 +412,7 @@ const char *purple_xfer_get_remote_ip(const PurpleXfer *xfer);
  *
  * @return The port number on the other end.
  */
-unsigned int purple_xfer_get_remote_port(const PurpleXfer *xfer);
+guint16 purple_xfer_get_remote_port(const PurpleXfer *xfer);
 
 /**
  * Returns the time the transfer of a file started.
@@ -502,7 +502,7 @@ void purple_xfer_set_size(PurpleXfer *xfer, goffset size);
  * @param xfer          The file transfer.
  * @param local_port    The local port.
  */
-void purple_xfer_set_local_port(PurpleXfer *xfer, unsigned int local_port);
+void purple_xfer_set_local_port(PurpleXfer *xfer, guint16 local_port);
 
 /**
  * Sets the current working position in the active file transfer.  This
@@ -668,8 +668,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size);
  * @param ip   The IP address to connect to.
  * @param port The port to connect to.
  */
-void purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip,
-					 unsigned int port);
+void purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip, guint16 port);
 
 /**
  * Ends a file transfer.

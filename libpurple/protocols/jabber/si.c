@@ -58,7 +58,7 @@ typedef struct _JabberSIXfer {
 		STREAM_METHOD_UNKNOWN     = 0,
 		STREAM_METHOD_BYTESTREAMS = 2 << 1,
 		STREAM_METHOD_IBB         = 2 << 2,
-		STREAM_METHOD_UNSUPPORTED = 2 << 31
+		STREAM_METHOD_UNSUPPORTED = 2 << 30
 	} stream_method;
 
 	GList *streamhosts;
@@ -616,11 +616,11 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		return;
 	}
 
-	purple_debug_info("jabber", "going to test %hu different methods\n", jsx->rxqueue[1]);
+	purple_debug_info("jabber", "going to test %u different methods\n", (guint)jsx->rxqueue[1]);
 
 	for(i=0; i<jsx->rxqueue[1]; i++) {
 
-		purple_debug_info("jabber", "testing %hu\n", jsx->rxqueue[i+2]);
+		purple_debug_info("jabber", "testing %u\n", (guint)jsx->rxqueue[i+2]);
 		if(jsx->rxqueue[i+2] == 0x00) {
 			g_free(jsx->rxqueue);
 			jsx->rxlen = 0;
