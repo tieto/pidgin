@@ -1986,6 +1986,30 @@ Use --disable-perl if you do not need Perl scripting support.
 ])
 fi
 
+if test "$enable_perl" = yes ; then
+	AC_CACHE_CHECK(for new SvUPGRADE in perl API, ac_cv_perl_have_new_svupgrade, [
+		orig_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $PERL_CFLAGS"
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+			#include <EXTERN.h>
+			#include <perl.h>
+		]], [[
+			PerlInterpreter *my_perl;
+			SV *sv;
+			if (!SvUPGRADE(sv, SVt_PV)) {
+				/* SvUPGRADE is an expression, so it doesn't
+				 * terminate in case of failure */
+			}
+		]])],
+			[ac_cv_perl_have_new_svupgrade=no],
+			[ac_cv_perl_have_new_svupgrade=yes])
+		CFLAGS="$orig_CFLAGS"
+		])
+	if test $ac_cv_perl_have_new_svupgrade = yes; then
+		AC_DEFINE(HAVE_NEW_SVUPGRADE, 1, [Define if you have SvUPGRADE terminating in case of failure.])
+	fi
+fi
+
 dnl #######################################################################
 dnl # SSL support
 dnl #
