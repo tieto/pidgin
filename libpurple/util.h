@@ -153,6 +153,12 @@ void purple_menu_action_set_data(PurpleMenuAction *act, gpointer data);
  */
 void purple_menu_action_set_children(PurpleMenuAction *act, GList *children);
 
+void purple_menu_action_set_stock_icon(PurpleMenuAction *act,
+	const gchar *stock);
+
+const gchar *
+purple_menu_action_get_stock_icon(PurpleMenuAction *act);
+
 /**
  * Set the appropriate presence values for the currently playing song.
  *

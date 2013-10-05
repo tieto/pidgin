@@ -40,6 +40,7 @@ struct _PurpleMenuAction
 	PurpleCallback callback;
 	gpointer data;
 	GList *children;
+	gchar *stock_icon;
 };
 
 static char *custom_user_dir = NULL;
@@ -65,6 +66,7 @@ purple_menu_action_free(PurpleMenuAction *act)
 {
 	g_return_if_fail(act != NULL);
 
+	g_free(act->stock_icon);
 	g_free(act->label);
 	g_free(act);
 }
@@ -123,6 +125,21 @@ void purple_menu_action_set_children(PurpleMenuAction *act, GList *children)
 	g_return_if_fail(act != NULL);
 
 	act->children = children;
+}
+
+void purple_menu_action_set_stock_icon(PurpleMenuAction *act,
+	const gchar *stock)
+{
+	g_return_if_fail(act != NULL);
+
+	g_free(act->stock_icon);
+	act->stock_icon = g_strdup(stock);
+}
+
+const gchar *
+purple_menu_action_get_stock_icon(PurpleMenuAction *act)
+{
+	return act->stock_icon;
 }
 
 void

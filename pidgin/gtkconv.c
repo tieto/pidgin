@@ -4199,6 +4199,7 @@ generate_e2ee_controls(PidginWindow *win)
 		gtk_widget_show_all(
 			pidgin_append_menu_action(menu, action, conv));
 	}
+	g_list_free(menu_actions);
 
 	gtk_widget_show(win->menu.e2ee);
 	gtk_widget_show(menu);
