@@ -38,6 +38,9 @@ typedef enum
 } PurpleE2eeFeatures;
 
 #include <glib.h>
+#include "conversation.h"
+
+typedef GList * (*PurpleE2eeConvMenuCallback)(PurpleConversation *conv);
 
 G_BEGIN_DECLS
 
@@ -109,6 +112,13 @@ purple_e2ee_provider_set_default_state(PurpleE2eeProvider *provider,
 
 PurpleE2eeState *
 purple_e2ee_provider_get_default_state(PurpleE2eeProvider *provider);
+
+void
+purple_e2ee_provider_set_conv_menu_cb(PurpleE2eeProvider *provider,
+	PurpleE2eeConvMenuCallback conv_menu_cb);
+
+PurpleE2eeConvMenuCallback
+purple_e2ee_provider_get_conv_menu_cb(PurpleE2eeProvider *provider);
 
 /*@}*/
 

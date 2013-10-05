@@ -43,6 +43,7 @@ struct _PurpleE2eeProvider
 	gchar *name;
 	PurpleE2eeFeatures features;
 	PurpleE2eeState *default_state;
+	PurpleE2eeConvMenuCallback conv_menu_cb;
 };
 
 static PurpleE2eeProvider *main_provider = NULL;
@@ -233,4 +234,21 @@ purple_e2ee_provider_get_default_state(PurpleE2eeProvider *provider)
 	g_return_val_if_fail(provider != NULL, NULL);
 
 	return provider->default_state;
+}
+
+void
+purple_e2ee_provider_set_conv_menu_cb(PurpleE2eeProvider *provider,
+	PurpleE2eeConvMenuCallback conv_menu_cb)
+{
+	g_return_if_fail(provider != NULL);
+
+	provider->conv_menu_cb = conv_menu_cb;
+}
+
+PurpleE2eeConvMenuCallback
+purple_e2ee_provider_get_conv_menu_cb(PurpleE2eeProvider *provider)
+{
+	g_return_val_if_fail(provider != NULL, NULL);
+
+	return provider->conv_menu_cb;
 }
