@@ -35,6 +35,12 @@
 #define PURPLE_PERL_BOOT(x) \
 	purple_perl_callXS(boot_Purple__##x, cv, mark)
 
+#ifdef HAVE_NEW_SVUPGRADE
+#	define SvUPGRADE_common(a, b) SvUPGRADE(a, b)
+#else
+#	define SvUPGRADE_common(a, b) if (!SvUPGRADE(a, b)) { croak("Cannot upgrade variable"); }
+#endif
+
 typedef struct _PurplePerlInfoStrings PurplePerlInfoStrings;
 
 typedef struct

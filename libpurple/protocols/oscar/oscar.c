@@ -1665,7 +1665,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 	purple_debug_info("oscar",
 					"Received a channel 4 message of type 0x%02hx.\n",
-					args->type);
+					(guint16)args->type);
 
 	/*
 	 * Split up the message at the delimeter character, then convert each
@@ -1910,7 +1910,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		default: {
 			purple_debug_info("oscar",
 					   "Received a channel 4 message of unknown type "
-					   "(type 0x%02hx).\n", args->type & 0xFF);
+					   "(type 0x%02x).\n", args->type & 0xFF);
 		} break;
 	}
 
@@ -2260,7 +2260,7 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 
-			g_string_append_printf(msg, "chat info: Max Concurrent Rooms: %hd, Exchange List (%d total): ", maxrooms, exchangecount);
+			g_string_append_printf(msg, "chat info: Max Concurrent Rooms: %d, Exchange List (%d total): ", (int)maxrooms, exchangecount);
 			for (i = 0; i < exchangecount; i++) {
 				g_string_append_printf(msg, "%hu", exchanges[i].number);
 				if (exchanges[i].name) {
@@ -2301,9 +2301,9 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 			ck = va_arg(ap, char *);
 
 			purple_debug_misc("oscar",
-					"created room: %s %hu %hu %hu %u %hu %hu %hu %hu %s %s\n",
+					"created room: %s %hu %hu %hu %u %hu %hu %u %hu %s %s\n",
 					fqcn ? fqcn : "(null)", exchange, instance, flags, createtime,
-					maxmsglen, maxoccupancy, createperms, unknown,
+					maxmsglen, maxoccupancy, (guint)createperms, unknown,
 					name ? name : "(null)", ck);
 			aim_chat_join(od, exchange, ck, instance);
 			}
@@ -3900,7 +3900,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					if (perm_deny != 0 && perm_deny != purple_account_get_privacy_type(account))
 					{
 						purple_debug_info("oscar",
-								   "ssi: changing permdeny from %d to %hu\n", purple_account_get_privacy_type(account), perm_deny);
+								   "ssi: changing permdeny from %d to %u\n", purple_account_get_privacy_type(account), (guint)perm_deny);
 						purple_account_set_privacy_type(account, perm_deny);
 					}
 				}
@@ -4164,7 +4164,7 @@ static int purple_ssi_authreply(OscarData *od, FlapConnection *conn, FlapFrame *
 	va_end(ap);
 
 	purple_debug_info("oscar",
-			   "ssi: received authorization reply from %s.  Reply is 0x%04hx\n", bn, reply);
+			   "ssi: received authorization reply from %s.  Reply is 0x%02hx\n", bn, (guint16)reply);
 
 	buddy = purple_find_buddy(purple_connection_get_account(gc), bn);
 	if (buddy && (purple_buddy_get_alias_only(buddy)))

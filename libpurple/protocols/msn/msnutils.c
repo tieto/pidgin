@@ -124,7 +124,7 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 			}
 
 			g_snprintf(tag, sizeof(tag),
-				"<FONT COLOR=\"#%02hx%02hx%02hx\">",
+				"<FONT COLOR=\"#%02x%02x%02x\">",
 				colors[0] & 0xFF, colors[1] & 0xFF,
 				colors[2] & 0xFF);
 

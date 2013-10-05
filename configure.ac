@@ -1490,6 +1490,19 @@ AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(pidginpath, pidgin)
 
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+	#if !defined(__clang__)
+	#error
+	#endif
+])], have_clang=yes, have_clang=no)
+
+if test "x$have_clang" = "xyes"; then
+	GLIB_LIBS=`echo $GLIB_LIBS | $sedpath 's/-pthread/-lpthread/'`
+
+	dnl Enable address sanitizer.
+	CFLAGS="$CFLAGS -faddress-sanitizer -g -fno-omit-frame-pointer -fno-inline -fno-optimize-sibling-calls"
+fi
+
 dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################
@@ -1984,6 +1997,30 @@ if test "x$looked_for_perl" = "xyes" -a "x$enable_perl" = "xno" -a "x$force_deps
 Perl development headers not found.
 Use --disable-perl if you do not need Perl scripting support.
 ])
+fi
+
+if test "$enable_perl" = yes ; then
+	AC_CACHE_CHECK(for new SvUPGRADE in perl API, ac_cv_perl_have_new_svupgrade, [
+		orig_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $PERL_CFLAGS"
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+			#include <EXTERN.h>
+			#include <perl.h>
+		]], [[
+			PerlInterpreter *my_perl;
+			SV *sv;
+			if (!SvUPGRADE(sv, SVt_PV)) {
+				/* SvUPGRADE is an expression, so it doesn't
+				 * terminate in case of failure */
+			}
+		]])],
+			[ac_cv_perl_have_new_svupgrade=no],
+			[ac_cv_perl_have_new_svupgrade=yes])
+		CFLAGS="$orig_CFLAGS"
+		])
+	if test $ac_cv_perl_have_new_svupgrade = yes; then
+		AC_DEFINE(HAVE_NEW_SVUPGRADE, 1, [Define if you have SvUPGRADE terminating in case of failure.])
+	fi
 fi
 
 dnl #######################################################################

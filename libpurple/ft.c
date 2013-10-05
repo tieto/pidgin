@@ -844,7 +844,7 @@ purple_xfer_get_progress(const PurpleXfer *xfer)
 			(double)purple_xfer_get_size(xfer));
 }
 
-unsigned int
+guint16
 purple_xfer_get_local_port(const PurpleXfer *xfer)
 {
 	g_return_val_if_fail(xfer != NULL, -1);
@@ -860,7 +860,7 @@ purple_xfer_get_remote_ip(const PurpleXfer *xfer)
 	return xfer->remote_ip;
 }
 
-unsigned int
+guint16
 purple_xfer_get_remote_port(const PurpleXfer *xfer)
 {
 	g_return_val_if_fail(xfer != NULL, -1);
@@ -981,7 +981,7 @@ purple_xfer_set_size(PurpleXfer *xfer, goffset size)
 }
 
 void
-purple_xfer_set_local_port(PurpleXfer *xfer, unsigned int local_port)
+purple_xfer_set_local_port(PurpleXfer *xfer, guint16 local_port)
 {
 	g_return_if_fail(xfer != NULL);
 
@@ -1509,8 +1509,7 @@ purple_xfer_prpl_ready(PurpleXfer *xfer)
 }
 
 void
-purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip,
-				unsigned int port)
+purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip, guint16 port)
 {
 	PurpleInputCondition cond;
 	PurpleXferType type;
