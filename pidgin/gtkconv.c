@@ -8424,8 +8424,9 @@ update_buddy_sign(PurpleBuddy *buddy, const char *which)
 static void
 update_conversation_switched(PurpleConversation *conv)
 {
-	pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON | PIDGIN_CONV_SET_TITLE |
-					PIDGIN_CONV_MENU | PIDGIN_CONV_BUDDY_ICON);
+	pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON |
+		PIDGIN_CONV_SET_TITLE | PIDGIN_CONV_MENU |
+		PIDGIN_CONV_BUDDY_ICON | PIDGIN_CONV_E2EE );
 }
 
 static void
