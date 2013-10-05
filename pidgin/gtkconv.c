@@ -119,7 +119,8 @@ typedef enum
 	PIDGIN_CONV_TAB_ICON			= 1 << 3,
 	PIDGIN_CONV_TOPIC			= 1 << 4,
 	PIDGIN_CONV_SMILEY_THEME		= 1 << 5,
-	PIDGIN_CONV_COLORIZE_TITLE		= 1 << 6
+	PIDGIN_CONV_COLORIZE_TITLE		= 1 << 6,
+	PIDGIN_CONV_E2EE			= 1 << 7
 }PidginConvFields;
 
 enum {
@@ -187,6 +188,7 @@ static GList *busy_list = NULL;
 static GList *xa_list = NULL;
 static GList *offline_list = NULL;
 static GHashTable *prpl_lists = NULL;
+static GHashTable *e2ee_stock = NULL;
 
 static PurpleTheme *default_conv_theme = NULL;
 
@@ -4124,6 +4126,71 @@ generate_send_to_items(PidginWindow *win)
 	update_send_to_selection(win);
 }
 
+static GdkPixbuf *
+e2ee_stock_icon_get(const gchar *stock_name)
+{
+	gchar filename[100], *path;
+	GdkPixbuf *pixbuf;
+
+	if (g_hash_table_lookup_extended(e2ee_stock, stock_name, NULL, (gpointer*)&pixbuf))
+		return pixbuf;
+
+	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
+	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "e2ee", "16",
+		filename, NULL);
+	pixbuf = pidgin_pixbuf_new_from_file(path);
+	g_free(path);
+
+	g_hash_table_insert(e2ee_stock, g_strdup(stock_name), pixbuf);
+	return pixbuf;
+}
+
+static void
+generate_e2ee_controls(PidginWindow *win)
+{
+	PidginConversation *gtkconv;
+	PurpleConversation *conv;
+	PurpleE2eeState *state;
+	PurpleE2eeProvider *provider;
+	GtkWidget *menu;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	g_return_if_fail(gtkconv != NULL);
+
+	conv = gtkconv->active_conv;
+	g_return_if_fail(conv != NULL);
+
+	if (win->menu.e2ee != NULL) {
+		gtk_widget_destroy(win->menu.e2ee);
+		win->menu.e2ee = NULL;
+	}
+
+	provider = purple_e2ee_provider_get_main();
+	state = purple_conversation_get_e2ee_state(conv);
+	if (state == NULL || provider == NULL)
+		return;
+	if (purple_e2ee_state_get_provider(state) != provider)
+		return;
+
+	win->menu.e2ee = gtk_image_menu_item_new_with_label(
+		purple_e2ee_provider_get_name(provider));
+
+	menu = gtk_menu_new();
+	gtk_menu_shell_insert(GTK_MENU_SHELL(win->menu.menubar),
+		win->menu.e2ee, 3);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.e2ee), menu);
+
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(win->menu.e2ee),
+		gtk_image_new_from_pixbuf(e2ee_stock_icon_get(
+			purple_e2ee_state_get_stock_icon(state))));
+
+	gtk_widget_set_tooltip_text(win->menu.e2ee,
+		purple_e2ee_state_get_name(state));
+
+	gtk_widget_show(win->menu.e2ee);
+	gtk_widget_show(menu);
+}
+
 static const char *
 get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvChatBuddyFlags flags)
 {
@@ -7402,6 +7469,9 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		regenerate_plugins_items(win);
 	}
 
+	if (fields & PIDGIN_CONV_E2EE)
+		generate_e2ee_controls(win);
+
 	if (fields & PIDGIN_CONV_TAB_ICON)
 	{
 		update_tab_icon(conv);
@@ -7598,6 +7668,10 @@ pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type)
 	else if (type == PURPLE_CONV_UPDATE_FEATURES)
 	{
 		flags = PIDGIN_CONV_MENU;
+	}
+	else if (type == PURPLE_CONV_UPDATE_E2EE)
+	{
+		flags = PIDGIN_CONV_E2EE;
 	}
 
 	pidgin_conv_update_fields(conv, flags);
@@ -8554,6 +8628,8 @@ pidgin_conversations_init(void)
 	void *blist_handle = purple_blist_get_handle();
 	char *theme_dir;
 
+	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
+
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/themes");
@@ -8889,6 +8965,8 @@ pidgin_conversations_init(void)
 void
 pidgin_conversations_uninit(void)
 {
+	g_hash_table_destroy(e2ee_stock);
+	e2ee_stock = NULL;
 	purple_prefs_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_unregister_by_instance(pidgin_conversations_get_handle());
@@ -9890,6 +9968,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	                             purple_conversation_is_logging(conv));
 
 	generate_send_to_items(win);
+	generate_e2ee_controls(win);
 	regenerate_options_items(win);
 	regenerate_plugins_items(win);
 

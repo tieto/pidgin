@@ -73,6 +73,8 @@ typedef enum
 	PURPLE_CONV_UPDATE_LOGGING, /**< Logging for this conversation was
 	                               enabled or disabled. */
 	PURPLE_CONV_UPDATE_TOPIC,   /**< The topic for a chat was updated. */
+	PURPLE_CONV_UPDATE_E2EE,    /**< The End-to-end encryption state was
+	                               updated. */
 	/*
 	 * XXX These need to go when we implement a more generic core/UI event
 	 * system.

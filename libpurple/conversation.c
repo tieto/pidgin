@@ -953,8 +953,7 @@ purple_conversation_set_e2ee_state(PurpleConversation *conv,
 	purple_e2ee_state_unref(conv->e2ee_state);
 	conv->e2ee_state = state;
 
-	purple_signal_emit(purple_conversations_get_handle(),
-		"conversation-e2ee-state-changed", conv);
+	purple_conversation_update(conv, PURPLE_CONV_UPDATE_E2EE);
 }
 
 PurpleE2eeState *
@@ -978,6 +977,9 @@ purple_conversation_get_e2ee_state(PurpleConversation *conv)
 			return NULL;
 	} else
 		return NULL;
+
+	if (conv->e2ee_state == NULL)
+		return purple_e2ee_provider_get_default_state(provider);
 
 	if (purple_e2ee_state_get_provider(conv->e2ee_state) != provider) {
 		purple_debug_warning("conversation",
@@ -2926,11 +2928,6 @@ purple_conversations_init(void)
 			     purple_value_new(PURPLE_TYPE_SUBTYPE,
 					    PURPLE_SUBTYPE_CONVERSATION),
 			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
-
-	purple_signal_register(handle, "conversation-e2ee-state-changed",
-		purple_marshal_VOID__POINTER, NULL, 1,
-		purple_value_new(PURPLE_TYPE_SUBTYPE,
-			PURPLE_SUBTYPE_CONVERSATION));
 }
 
 void

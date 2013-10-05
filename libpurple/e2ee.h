@@ -98,6 +98,12 @@ PurpleE2eeFeatures
 purple_e2ee_provider_get_features(PurpleE2eeProvider *provider);
 
 void
+purple_e2ee_provider_set_name(PurpleE2eeProvider *provider, const gchar *name);
+
+const gchar *
+purple_e2ee_provider_get_name(PurpleE2eeProvider *provider);
+
+void
 purple_e2ee_provider_set_default_state(PurpleE2eeProvider *provider,
 	PurpleE2eeState *state);
 

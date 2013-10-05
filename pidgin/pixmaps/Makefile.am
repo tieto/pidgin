@@ -89,10 +89,10 @@ DIALOGS_SCALABLE = \
 		dialogs/scalable/warning.svg
 
 E2EE_STATES_16 = \
-		e2ee-states/16/finished.png \
-		e2ee-states/16/not-private.png \
-		e2ee-states/16/private.png \
-		e2ee-states/16/unverified.png
+		e2ee/16/finished.png \
+		e2ee/16/not-private.png \
+		e2ee/16/private.png \
+		e2ee/16/unverified.png
 
 EMBLEMS_16 = \
 		emblems/16/aol-client.png \

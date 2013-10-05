@@ -40,6 +40,7 @@ struct _PurpleE2eeState
 
 struct _PurpleE2eeProvider
 {
+	gchar *name;
 	PurpleE2eeFeatures features;
 	PurpleE2eeState *default_state;
 };
@@ -108,7 +109,7 @@ purple_e2ee_state_set_name(PurpleE2eeState *state, const gchar *name)
 const gchar *
 purple_e2ee_state_get_name(PurpleE2eeState *state)
 {
-	g_return_val_if_fail(state, NULL);
+	g_return_val_if_fail(state != NULL, NULL);
 
 	return state->name;
 }
@@ -155,6 +156,7 @@ purple_e2ee_provider_free(PurpleE2eeProvider *provider)
 		return;
 	}
 
+	g_free(provider->name);
 	g_free(provider);
 }
 
@@ -195,6 +197,24 @@ purple_e2ee_provider_get_features(PurpleE2eeProvider *provider)
 	g_return_val_if_fail(provider != NULL, 0);
 
 	return provider->features;
+}
+
+void
+purple_e2ee_provider_set_name(PurpleE2eeProvider *provider, const gchar *name)
+{
+	g_return_if_fail(provider != NULL);
+	g_return_if_fail(name != NULL);
+
+	g_free(provider->name);
+	provider->name = g_strdup(name);
+}
+
+const gchar *
+purple_e2ee_provider_get_name(PurpleE2eeProvider *provider)
+{
+	g_return_val_if_fail(provider != NULL, NULL);
+
+	return provider->name;
 }
 
 void
