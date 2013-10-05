@@ -41,8 +41,6 @@ struct _PurpleE2eeState
 struct _PurpleE2eeProvider
 {
 	gchar *name;
-	PurpleE2eeFeatures features;
-	PurpleE2eeState *default_state;
 	PurpleE2eeConvMenuCallback conv_menu_cb;
 };
 
@@ -137,12 +135,11 @@ purple_e2ee_state_get_stock_icon(PurpleE2eeState *state)
 /*** Encryption providers API. ************************************************/
 
 PurpleE2eeProvider *
-purple_e2ee_provider_new(PurpleE2eeFeatures features)
+purple_e2ee_provider_new(void)
 {
 	PurpleE2eeProvider *provider;
 
 	provider = g_new0(PurpleE2eeProvider, 1);
-	provider->features = features;
 
 	return provider;
 }
@@ -192,14 +189,6 @@ purple_e2ee_provider_get_main(void)
 	return main_provider;
 }
 
-PurpleE2eeFeatures
-purple_e2ee_provider_get_features(PurpleE2eeProvider *provider)
-{
-	g_return_val_if_fail(provider != NULL, 0);
-
-	return provider->features;
-}
-
 void
 purple_e2ee_provider_set_name(PurpleE2eeProvider *provider, const gchar *name)
 {
@@ -216,24 +205,6 @@ purple_e2ee_provider_get_name(PurpleE2eeProvider *provider)
 	g_return_val_if_fail(provider != NULL, NULL);
 
 	return provider->name;
-}
-
-void
-purple_e2ee_provider_set_default_state(PurpleE2eeProvider *provider,
-	PurpleE2eeState *state)
-{
-	g_return_if_fail(provider != NULL);
-	g_return_if_fail(state != NULL);
-
-	provider->default_state = state;
-}
-
-PurpleE2eeState *
-purple_e2ee_provider_get_default_state(PurpleE2eeProvider *provider)
-{
-	g_return_val_if_fail(provider != NULL, NULL);
-
-	return provider->default_state;
 }
 
 void

@@ -602,6 +602,9 @@ purple_conversation_destroy(PurpleConversation *conv)
 	gc   = purple_conversation_get_connection(conv);
 	name = purple_conversation_get_name(conv);
 
+	purple_e2ee_state_unref(conv->e2ee_state);
+	conv->e2ee_state = NULL;
+
 	if (gc != NULL)
 	{
 		/* Still connected */
@@ -949,7 +952,8 @@ purple_conversation_set_e2ee_state(PurpleConversation *conv,
 	if (conv->e2ee_state == state)
 		return;
 
-	purple_e2ee_state_ref(state);
+	if (state)
+		purple_e2ee_state_ref(state);
 	purple_e2ee_state_unref(conv->e2ee_state);
 	conv->e2ee_state = state;
 
@@ -960,26 +964,15 @@ PurpleE2eeState *
 purple_conversation_get_e2ee_state(PurpleConversation *conv)
 {
 	PurpleE2eeProvider *provider;
-	PurpleE2eeFeatures features;
 
 	g_return_val_if_fail(conv != NULL, NULL);
+
+	if (conv->e2ee_state == NULL)
+		return NULL;
 
 	provider = purple_e2ee_provider_get_main();
 	if (provider == NULL)
 		return NULL;
-
-	features = purple_e2ee_provider_get_features(provider);
-	if (conv->type == PURPLE_CONV_TYPE_IM) {
-		if (!(features & PURPLE_E2EE_FEATURE_IM))
-			return NULL;
-	} else if (conv->type == PURPLE_CONV_TYPE_CHAT) {
-		if (!(features & PURPLE_E2EE_FEATURE_CHAT))
-			return NULL;
-	} else
-		return NULL;
-
-	if (conv->e2ee_state == NULL)
-		return purple_e2ee_provider_get_default_state(provider);
 
 	if (purple_e2ee_state_get_provider(conv->e2ee_state) != provider) {
 		purple_debug_warning("conversation",

@@ -31,12 +31,6 @@ typedef struct _PurpleE2eeState PurpleE2eeState;
 
 typedef struct _PurpleE2eeProvider PurpleE2eeProvider;
 
-typedef enum
-{
-	PURPLE_E2EE_FEATURE_IM = 0x0001,
-	PURPLE_E2EE_FEATURE_CHAT = 0x0002
-} PurpleE2eeFeatures;
-
 #include <glib.h>
 #include "conversation.h"
 
@@ -83,7 +77,7 @@ purple_e2ee_state_get_stock_icon(PurpleE2eeState *state);
 /*@{*/
 
 PurpleE2eeProvider *
-purple_e2ee_provider_new(PurpleE2eeFeatures features);
+purple_e2ee_provider_new(void);
 
 void
 purple_e2ee_provider_free(PurpleE2eeProvider *provider);
@@ -97,21 +91,11 @@ purple_e2ee_provider_unregister(PurpleE2eeProvider *provider);
 PurpleE2eeProvider *
 purple_e2ee_provider_get_main(void);
 
-PurpleE2eeFeatures
-purple_e2ee_provider_get_features(PurpleE2eeProvider *provider);
-
 void
 purple_e2ee_provider_set_name(PurpleE2eeProvider *provider, const gchar *name);
 
 const gchar *
 purple_e2ee_provider_get_name(PurpleE2eeProvider *provider);
-
-void
-purple_e2ee_provider_set_default_state(PurpleE2eeProvider *provider,
-	PurpleE2eeState *state);
-
-PurpleE2eeState *
-purple_e2ee_provider_get_default_state(PurpleE2eeProvider *provider);
 
 void
 purple_e2ee_provider_set_conv_menu_cb(PurpleE2eeProvider *provider,
