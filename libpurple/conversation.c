@@ -948,10 +948,6 @@ purple_conversation_set_e2ee_state(PurpleConversation *conv,
 		return;
 	}
 
-	/* don't emit a signal if it doesn't differ */
-	if (conv->e2ee_state == state)
-		return;
-
 	if (state)
 		purple_e2ee_state_ref(state);
 	purple_e2ee_state_unref(conv->e2ee_state);
