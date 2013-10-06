@@ -60,7 +60,7 @@ purple_cipher_digest(cipher, digest)
 		size_t digest_size;
 	CODE:
 		digest_size = purple_cipher_get_digest_size(cipher);
-		SvUPGRADE(digest, SVt_PV);
+		SvUPGRADE_common(digest, SVt_PV);
 		buff = (guchar *)SvGROW(digest, digest_size);
 		if (purple_cipher_digest(cipher, buff, digest_size)) {
 			SvCUR_set(digest, digest_size);
@@ -83,7 +83,7 @@ purple_cipher_digest_to_str(cipher, digest_s)
 	CODE:
 		digest_size = purple_cipher_get_digest_size(cipher);
 		str_len = 2 * digest_size;
-		SvUPGRADE(digest_s, SVt_PV);
+		SvUPGRADE_common(digest_s, SVt_PV);
 		buff = SvGROW(digest_s, str_len + 1);
 		if (purple_cipher_digest_to_str(cipher, buff, str_len + 1)) {
 			SvCUR_set(digest_s, str_len);
@@ -109,7 +109,7 @@ purple_cipher_encrypt(cipher, input, output)
 	CODE:
 		data = (guchar *)SvPV(input, input_len);
 		output_len = input_len + purple_cipher_get_block_size(cipher);
-		SvUPGRADE(output, SVt_PV);
+		SvUPGRADE_common(output, SVt_PV);
 		buff = (guchar *)SvGROW(output, output_len);
 		ret = purple_cipher_encrypt(cipher, data, input_len, buff, output_len);
 		if (ret >= 0) {
@@ -136,7 +136,7 @@ purple_cipher_decrypt(cipher, input, output)
 	CODE:
 		data = (guchar *)SvPV(input, input_len);
 		output_len = input_len + purple_cipher_get_block_size(cipher);
-		SvUPGRADE(output, SVt_PV);
+		SvUPGRADE_common(output, SVt_PV);
 		buff = (guchar *)SvGROW(output, output_len);
 		ret = purple_cipher_decrypt(cipher, data, input_len, buff, output_len);
 		if (ret >= 0) {
