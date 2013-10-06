@@ -408,9 +408,9 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 	if (!purple_protocol_initiate_media(account,
 			purple_conversation_get_name(conv),
 			PURPLE_MEDIA_AUDIO))
-		return PURPLE_CMD_STATUS_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static GstElement *

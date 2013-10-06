@@ -110,7 +110,7 @@ gnomekeyring_read_cb(GnomeKeyringResult result, const char *password,
 			_("Access denied."));
 		gnomekeyring_cancel_queue();
 	} else if (result == GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON ||
-		GNOME_KEYRING_RESULT_IO_ERROR) {
+		result == GNOME_KEYRING_RESULT_IO_ERROR) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			_("Communication with GNOME Keyring failed."));
@@ -183,7 +183,7 @@ gnomekeyring_save_cb(GnomeKeyringResult result, gpointer _req)
 			_("Access denied."));
 		gnomekeyring_cancel_queue();
 	} else if (result == GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON ||
-		GNOME_KEYRING_RESULT_IO_ERROR) {
+		result == GNOME_KEYRING_RESULT_IO_ERROR) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			_("Communication with GNOME Keyring failed."));

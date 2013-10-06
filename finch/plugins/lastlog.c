@@ -88,7 +88,7 @@ lastlog_cb(PurpleConversation *conv, const char *cmd, char **args, char **error,
 
 	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(window_kpress_cb), tv);
 	g_strfreev(strings);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static FinchPluginInfo *

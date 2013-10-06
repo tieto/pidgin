@@ -335,11 +335,11 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		char tmp2[40];
-		sprintf(tmp2, "%hhu.%hhu.%hhu.%hhu",
-				(bi->ipaddr & 0xff000000) >> 24,
-				(bi->ipaddr & 0x00ff0000) >> 16,
-				(bi->ipaddr & 0x0000ff00) >> 8,
-				(bi->ipaddr & 0x000000ff));
+		sprintf(tmp2, "%u.%u.%u.%u",
+			0xFF & ((bi->ipaddr & 0xff000000) >> 24),
+			0xFF & ((bi->ipaddr & 0x00ff0000) >> 16),
+			0xFF & ((bi->ipaddr & 0x0000ff00) >> 8),
+			0xFF & (bi->ipaddr & 0x000000ff));
 		purple_notify_user_info_add_pair_plaintext(user_info, _("IP Address"), tmp2);
 	}
 
@@ -399,11 +399,11 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	oscar_user_info_convert_and_add(account, od, user_info, _("Nick"), info->nick);
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		char tstr[40];
-		sprintf(tstr, "%hhu.%hhu.%hhu.%hhu",
-				(bi->ipaddr & 0xff000000) >> 24,
-				(bi->ipaddr & 0x00ff0000) >> 16,
-				(bi->ipaddr & 0x0000ff00) >> 8,
-				(bi->ipaddr & 0x000000ff));
+		sprintf(tstr, "%u.%u.%u.%u",
+			0xFF & ((bi->ipaddr & 0xff000000) >> 24),
+			0xFF & ((bi->ipaddr & 0x00ff0000) >> 16),
+			0xFF & ((bi->ipaddr & 0x0000ff00) >> 8),
+			0xFF & ((bi->ipaddr & 0x000000ff)));
 		purple_notify_user_info_add_pair_plaintext(user_info, _("IP Address"), tstr);
 	}
 	oscar_user_info_convert_and_add(account, od, user_info, _("First Name"), info->first);

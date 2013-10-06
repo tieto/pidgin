@@ -309,7 +309,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 				gnutls_x509_crt_import (cert, &cert_list[i],
 						GNUTLS_X509_FMT_DER);
 
-				gnutls_x509_crt_get_fingerprint(cert, GNUTLS_MAC_SHA,
+				gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_SHA,
 						fpr_bin, &fpr_bin_sz);
 
 				fpr_asc =
@@ -977,7 +977,7 @@ x509_sha1sum(PurpleCertificate *crt)
 
 	/* Extract the fingerprint */
 	g_return_val_if_fail(
-		0 == gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_MAC_SHA,
+		0 == gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_DIG_SHA,
 						     hashbuf, &tmpsz),
 		NULL);
 

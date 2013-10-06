@@ -513,8 +513,7 @@ msim_status_types(PurpleAccount *acct)
 		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
 		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
 		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
-		(*((buf)+3) = (unsigned char)(data)&0xff), \
-		4)
+		(*((buf)+3) = (unsigned char)(data)&0xff))
 
 /**
  * Compute the base64'd login challenge response based on username, password, nonce, and IPs.

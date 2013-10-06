@@ -63,8 +63,8 @@ struct _PurpleXferPrivate {
 	FILE *dest_fp;               /**< The destination file pointer.       */
 
 	char *remote_ip;             /**< The remote IP address.              */
-	int local_port;              /**< The local port.                     */
-	int remote_port;             /**< The remote port.                    */
+	guint16 local_port;          /**< The local port.                     */
+	guint16 remote_port;         /**< The remote port.                    */
 
 	int fd;                      /**< The socket file descriptor.         */
 	int watcher;                 /**< Watcher.                            */
@@ -842,7 +842,7 @@ purple_xfer_get_progress(const PurpleXfer *xfer)
 			(double)purple_xfer_get_size(xfer));
 }
 
-unsigned int
+guint16
 purple_xfer_get_local_port(const PurpleXfer *xfer)
 {
 	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
@@ -862,7 +862,7 @@ purple_xfer_get_remote_ip(const PurpleXfer *xfer)
 	return priv->remote_ip;
 }
 
-unsigned int
+guint16
 purple_xfer_get_remote_port(const PurpleXfer *xfer)
 {
 	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
@@ -1013,7 +1013,7 @@ purple_xfer_set_size(PurpleXfer *xfer, goffset size)
 }
 
 void
-purple_xfer_set_local_port(PurpleXfer *xfer, unsigned int local_port)
+purple_xfer_set_local_port(PurpleXfer *xfer, guint16 local_port)
 {
 	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
 
@@ -1571,8 +1571,7 @@ purple_xfer_protocol_ready(PurpleXfer *xfer)
 }
 
 void
-purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip,
-				unsigned int port)
+purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip, guint16 port)
 {
 	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
 	PurpleInputCondition cond;

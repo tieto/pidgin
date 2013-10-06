@@ -1485,6 +1485,19 @@ AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(pidginpath, pidgin)
 
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+	#if !defined(__clang__)
+	#error
+	#endif
+])], have_clang=yes, have_clang=no)
+
+if test "x$have_clang" = "xyes"; then
+	GLIB_LIBS=`echo $GLIB_LIBS | $sedpath 's/-pthread/-lpthread/'`
+
+	dnl Enable address sanitizer.
+	CFLAGS="$CFLAGS -faddress-sanitizer -g -fno-omit-frame-pointer -fno-inline -fno-optimize-sibling-calls"
+fi
+
 dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################

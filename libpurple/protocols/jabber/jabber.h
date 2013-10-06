@@ -316,7 +316,7 @@ typedef struct _JabberIdentity
 typedef struct _JabberBytestreamsStreamhost {
 	char *jid;
 	char *host;
-	int port;
+	guint16 port;
 	char *zeroconf;
 } JabberBytestreamsStreamhost;
 

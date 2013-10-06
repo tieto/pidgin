@@ -181,6 +181,66 @@ static void
 purple_media_backend_fs2_init(PurpleMediaBackendFs2 *self)
 {}
 
+static FsCandidateType
+purple_media_candidate_type_to_fs(PurpleMediaCandidateType type)
+{
+	switch (type) {
+		case PURPLE_MEDIA_CANDIDATE_TYPE_HOST:
+			return FS_CANDIDATE_TYPE_HOST;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX:
+			return FS_CANDIDATE_TYPE_SRFLX;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX:
+			return FS_CANDIDATE_TYPE_PRFLX;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_RELAY:
+			return FS_CANDIDATE_TYPE_RELAY;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_MULTICAST:
+			return FS_CANDIDATE_TYPE_MULTICAST;
+	}
+	g_return_val_if_reached(FS_CANDIDATE_TYPE_HOST);
+}
+
+static PurpleMediaCandidateType
+purple_media_candidate_type_from_fs(FsCandidateType type)
+{
+	switch (type) {
+		case FS_CANDIDATE_TYPE_HOST:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
+		case FS_CANDIDATE_TYPE_SRFLX:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX;
+		case FS_CANDIDATE_TYPE_PRFLX:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX;
+		case FS_CANDIDATE_TYPE_RELAY:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_RELAY;
+		case FS_CANDIDATE_TYPE_MULTICAST:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_MULTICAST;
+	}
+	g_return_val_if_reached(PURPLE_MEDIA_CANDIDATE_TYPE_HOST);
+}
+
+static FsNetworkProtocol
+purple_media_network_protocol_to_fs(PurpleMediaNetworkProtocol protocol)
+{
+	switch (protocol) {
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_UDP:
+			return FS_NETWORK_PROTOCOL_UDP;
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP:
+			return FS_NETWORK_PROTOCOL_TCP;
+	}
+	g_return_val_if_reached(FS_NETWORK_PROTOCOL_TCP);
+}
+
+static PurpleMediaNetworkProtocol
+purple_media_network_protocol_from_fs(FsNetworkProtocol protocol)
+{
+	switch (protocol) {
+		case FS_NETWORK_PROTOCOL_UDP:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_UDP;
+		case FS_NETWORK_PROTOCOL_TCP:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP;
+	}
+	g_return_val_if_reached(PURPLE_MEDIA_NETWORK_PROTOCOL_TCP);
+}
+
 #if GST_CHECK_VERSION(1,0,0)
 static GstPadProbeReturn
 event_probe_cb(GstPad *srcpad, GstPadProbeInfo *info, gpointer unused)
@@ -554,8 +614,8 @@ candidate_to_fs(PurpleMediaCandidate *candidate)
 			NULL);
 
 	fscandidate = fs_candidate_new(foundation,
-			component_id, type,
-			proto, ip, port);
+			component_id, purple_media_candidate_type_to_fs(type),
+			purple_media_network_protocol_to_fs(proto), ip, port);
 
 	fscandidate->base_ip = base_ip;
 	fscandidate->base_port = base_port;
@@ -592,8 +652,10 @@ candidate_from_fs(FsCandidate *fscandidate)
 		return NULL;
 
 	candidate = purple_media_candidate_new(fscandidate->foundation,
-		fscandidate->component_id, fscandidate->type,
-		fscandidate->proto, fscandidate->ip, fscandidate->port);
+		fscandidate->component_id,
+		purple_media_candidate_type_from_fs(fscandidate->type),
+		purple_media_network_protocol_from_fs(fscandidate->proto),
+		fscandidate->ip, fscandidate->port);
 	g_object_set(candidate,
 			"base-ip", fscandidate->base_ip,
 			"base-port", fscandidate->base_port,
