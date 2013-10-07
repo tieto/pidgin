@@ -2,9 +2,9 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2013, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2013, Björn Voigt <bjoernv@arcor.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
-# Copyright (C) 2013, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2013, Björn Voigt <bjoernv@arcor.de>,
 #
 # This file is distributed under the same license as the Pidgin package.
 #
