@@ -218,6 +218,7 @@ static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static void hide_conv(PidginConversation *gtkconv, gboolean closetimer);
+static GdkPixbuf * e2ee_stock_icon_get(const gchar *stock_name);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
@@ -3949,11 +3950,14 @@ send_to_item_leave_notify_cb(GtkWidget *menuitem, GdkEventCrossing *event, GtkWi
 }
 
 static void
-create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBuddy *buddy, PurpleAccount *account, const char *name)
+create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group,
+	PurpleBuddy *buddy, PurpleAccount *account, const char *name,
+	gboolean e2ee_enabled)
 {
 	GtkWidget *box;
 	GtkWidget *label;
 	GtkWidget *image;
+	GtkWidget *e2ee_image = NULL;
 	GtkWidget *menuitem;
 	GdkPixbuf *pixbuf;
 	gchar *text;
@@ -3968,6 +3972,22 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	{
 		image = gtk_image_new_from_pixbuf(pixbuf);
 		g_object_unref(G_OBJECT(pixbuf));
+	}
+
+	if (e2ee_enabled) {
+		PurpleConversation *conv;
+		PurpleE2eeState *state = NULL;
+
+		conv = purple_find_conversation_with_account(
+			PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+		if (conv)
+			state = purple_conversation_get_e2ee_state(conv);
+		if (state) {
+			e2ee_image = gtk_image_new_from_pixbuf(
+				e2ee_stock_icon_get(
+				purple_e2ee_state_get_stock_icon(state)));
+		} else
+			e2ee_image = gtk_image_new();
 	}
 
 	gtk_size_group_add_widget(sg, image);
@@ -3986,7 +4006,10 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_container_remove(GTK_CONTAINER(menuitem), label);
 
 	gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+
 	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+	if (e2ee_image)
+		gtk_box_pack_start(GTK_BOX(box), e2ee_image, FALSE, FALSE, 0);
 
 	if (buddy != NULL &&
 	    !purple_presence_is_online(purple_buddy_get_presence(buddy)))
@@ -4009,6 +4032,8 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 
 	gtk_widget_show(label);
 	gtk_widget_show(image);
+	if (e2ee_image)
+		gtk_widget_show(e2ee_image);
 	gtk_widget_show(box);
 
 	/* Set our data and callbacks. */
@@ -4074,6 +4099,7 @@ generate_send_to_items(PidginWindow *win)
 		}
 		else
 		{
+			gboolean e2ee_enabled = FALSE;
 			GList *list = NULL, *iter;
 			for (l = buds; l != NULL; l = l->next)
 			{
@@ -4085,9 +4111,14 @@ generate_send_to_items(PidginWindow *win)
 				{
 					PurpleBuddy *buddy = (PurpleBuddy *)node;
 					PurpleAccount *account;
+					PurpleConversation *conv;
 
 					if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
 						continue;
+
+					conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+					if (conv && purple_conversation_get_e2ee_state(conv) != NULL)
+						e2ee_enabled = TRUE;
 
 					account = purple_buddy_get_account(buddy);
 					/* TODO WEBKIT: (I'm not actually sure if this is webkit-related --Mark Doliner) */
@@ -4109,7 +4140,7 @@ generate_send_to_items(PidginWindow *win)
 					PurplePresence *pre = iter->data;
 					PurpleBuddy *buddy = purple_presence_get_buddy(pre);
 					create_sendto_item(menu, sg, &group, buddy,
-							purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
+							purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), e2ee_enabled);
 				}
 			}
 			g_list_free(list);
@@ -7685,7 +7716,7 @@ pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type)
 	}
 	else if (type == PURPLE_CONV_UPDATE_E2EE)
 	{
-		flags = PIDGIN_CONV_E2EE;
+		flags = PIDGIN_CONV_E2EE | PIDGIN_CONV_MENU;
 	}
 
 	pidgin_conv_update_fields(conv, flags);
