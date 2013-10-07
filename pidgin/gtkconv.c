@@ -3952,9 +3952,14 @@ send_to_item_leave_notify_cb(GtkWidget *menuitem, GdkEventCrossing *event, GtkWi
 static GtkWidget *
 e2ee_state_to_gtkimage(PurpleE2eeState *state)
 {
-	return gtk_image_new_from_pixbuf(pidgin_pixbuf_from_imgstore(
-		_pidgin_e2ee_stock_icon_get(
-			purple_e2ee_state_get_stock_icon(state))));
+	PurpleStoredImage *img;
+
+	img = _pidgin_e2ee_stock_icon_get(
+		purple_e2ee_state_get_stock_icon(state));
+	if (!img)
+		return NULL;
+
+	return gtk_image_new_from_pixbuf(pidgin_pixbuf_from_imgstore(img));
 }
 
 static void
@@ -4169,6 +4174,10 @@ _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 	gchar filename[100], *path;
 	PurpleStoredImage *image;
 
+	/* core is quitting */
+	if (e2ee_stock == NULL)
+		return NULL;
+
 	if (g_hash_table_lookup_extended(e2ee_stock, stock_name, NULL, (gpointer*)&image))
 		return image;
 
@@ -4192,6 +4201,7 @@ generate_e2ee_controls(PidginWindow *win)
 	GtkWidget *menu;
 	PurpleE2eeConvMenuCallback menu_cb;
 	GList *menu_actions = NULL, *it;
+	GtkWidget *e2ee_image;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	g_return_if_fail(gtkconv != NULL);
@@ -4219,8 +4229,11 @@ generate_e2ee_controls(PidginWindow *win)
 		win->menu.e2ee, 3);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.e2ee), menu);
 
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(win->menu.e2ee),
-		e2ee_state_to_gtkimage(state));
+	e2ee_image = e2ee_state_to_gtkimage(state);
+	if (e2ee_image) {
+		gtk_image_menu_item_set_image(
+			GTK_IMAGE_MENU_ITEM(win->menu.e2ee), e2ee_image);
+	}
 
 	gtk_widget_set_tooltip_text(win->menu.e2ee,
 		purple_e2ee_state_get_name(state));
@@ -8672,6 +8685,17 @@ pidgin_conversations_get_handle(void)
 	return &handle;
 }
 
+static void
+e2ee_stock_delete_value(gpointer value)
+{
+	PurpleStoredImage *img = value;
+
+	purple_imgstore_unref(img);
+}
+
+static void
+pidgin_conversations_pre_uninit(void);
+
 void
 pidgin_conversations_init(void)
 {
@@ -8679,7 +8703,8 @@ pidgin_conversations_init(void)
 	void *blist_handle = purple_blist_get_handle();
 	char *theme_dir;
 
-	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)purple_imgstore_unref);
+	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+		e2ee_stock_delete_value);
 
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
@@ -8770,8 +8795,6 @@ pidgin_conversations_init(void)
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
 								hide_new_pref_cb, NULL);
-
-
 
 	/**********************************************************************
 	 * Register signals
@@ -8928,6 +8951,9 @@ pidgin_conversations_init(void)
 	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed",
 						handle, PURPLE_CALLBACK(account_status_changed_cb), NULL);
 
+	purple_signal_connect_priority(purple_get_core(), "quitting", handle,
+		PURPLE_CALLBACK(pidgin_conversations_pre_uninit), NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
+
 	/* Callbacks to update a conversation */
 	purple_signal_connect(blist_handle, "blist-node-added", handle,
 						G_CALLBACK(buddy_update_cb), NULL);
@@ -9013,11 +9039,16 @@ pidgin_conversations_init(void)
 #endif
 }
 
-void
-pidgin_conversations_uninit(void)
+static void
+pidgin_conversations_pre_uninit(void)
 {
 	g_hash_table_destroy(e2ee_stock);
 	e2ee_stock = NULL;
+}
+
+void
+pidgin_conversations_uninit(void)
+{
 	purple_prefs_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_unregister_by_instance(pidgin_conversations_get_handle());
