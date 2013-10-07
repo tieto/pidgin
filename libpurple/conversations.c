@@ -287,12 +287,12 @@ purple_conversations_init(void)
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
 						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
 						 G_TYPE_POINTER, /* pointer to a string */
-						 PURPLE_TYPE_CONVERSATION, G_TYPE_UINT);
+						 PURPLE_TYPE_IM_CONVERSATION, G_TYPE_UINT);
 
 	purple_signal_register(handle, "wrote-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
 						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_STRING, PURPLE_TYPE_CONVERSATION, G_TYPE_UINT);
+						 G_TYPE_STRING, PURPLE_TYPE_IM_CONVERSATION, G_TYPE_UINT);
 
 	purple_signal_register(handle, "sent-attention",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
@@ -319,13 +319,13 @@ purple_conversations_init(void)
 						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT,
 						 G_TYPE_POINTER, /* pointer to a string */
 						 G_TYPE_POINTER, /* pointer to a string */
-						 PURPLE_TYPE_CONVERSATION,
+						 PURPLE_TYPE_IM_CONVERSATION,
 						 G_TYPE_POINTER); /* pointer to a string */
 
 	purple_signal_register(handle, "received-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
 						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_STRING, PURPLE_TYPE_CONVERSATION, G_TYPE_UINT);
+						 G_TYPE_STRING, PURPLE_TYPE_IM_CONVERSATION, G_TYPE_UINT);
 
 	purple_signal_register(handle, "blocked-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT,
@@ -336,12 +336,12 @@ purple_conversations_init(void)
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
 						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
 						 G_TYPE_POINTER, /* pointer to a string */
-						 PURPLE_TYPE_CONVERSATION, G_TYPE_UINT);
+						 PURPLE_TYPE_CHAT_CONVERSATION, G_TYPE_UINT);
 
 	purple_signal_register(handle, "wrote-chat-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
 						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_STRING, PURPLE_TYPE_CONVERSATION, G_TYPE_UINT);
+						 G_TYPE_STRING, PURPLE_TYPE_CHAT_CONVERSATION, G_TYPE_UINT);
 
 	purple_signal_register(handle, "sending-chat-msg",
 						 purple_marshal_VOID__POINTER_POINTER_UINT, G_TYPE_NONE,
@@ -358,13 +358,13 @@ purple_conversations_init(void)
 						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT,
 						 G_TYPE_POINTER, /* pointer to a string */
 						 G_TYPE_POINTER, /* pointer to a string */
-						 PURPLE_TYPE_CONVERSATION,
+						 PURPLE_TYPE_CHAT_CONVERSATION,
 						 G_TYPE_POINTER); /* pointer to an unsigned int */
 
 	purple_signal_register(handle, "received-chat-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
 						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_STRING, PURPLE_TYPE_CONVERSATION, G_TYPE_UINT);
+						 G_TYPE_STRING, PURPLE_TYPE_CHAT_CONVERSATION, G_TYPE_UINT);
 
 	purple_signal_register(handle, "conversation-created",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
@@ -392,12 +392,12 @@ purple_conversations_init(void)
 
 	purple_signal_register(handle, "chat-user-joining",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_UINT,
-						 G_TYPE_BOOLEAN, 3, PURPLE_TYPE_CONVERSATION,
+						 G_TYPE_BOOLEAN, 3, PURPLE_TYPE_CHAT_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_UINT);
 
 	purple_signal_register(handle, "chat-user-joined",
 						 purple_marshal_VOID__POINTER_POINTER_UINT_UINT,
-						 G_TYPE_NONE, 4, PURPLE_TYPE_CONVERSATION,
+						 G_TYPE_NONE, 4, PURPLE_TYPE_CHAT_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_UINT, G_TYPE_BOOLEAN);
 
 	purple_signal_register(handle, "chat-user-flags",
@@ -406,12 +406,12 @@ purple_conversations_init(void)
 
 	purple_signal_register(handle, "chat-user-leaving",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
-						 G_TYPE_BOOLEAN, 3, PURPLE_TYPE_CONVERSATION,
+						 G_TYPE_BOOLEAN, 3, PURPLE_TYPE_CHAT_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "chat-user-left",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
-						 G_TYPE_NONE, 3, PURPLE_TYPE_CONVERSATION,
+						 G_TYPE_NONE, 3, PURPLE_TYPE_CHAT_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "deleting-chat-user",
@@ -420,13 +420,13 @@ purple_conversations_init(void)
 
 	purple_signal_register(handle, "chat-inviting-user",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
-						 G_TYPE_NONE, 3, PURPLE_TYPE_CONVERSATION, 
+						 G_TYPE_NONE, 3, PURPLE_TYPE_CHAT_CONVERSATION, 
 						 G_TYPE_STRING,
 						 G_TYPE_POINTER); /* pointer to a string */
 
 	purple_signal_register(handle, "chat-invited-user",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
-						 G_TYPE_NONE, 3, PURPLE_TYPE_CONVERSATION,
+						 G_TYPE_NONE, 3, PURPLE_TYPE_CHAT_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "chat-invited",
@@ -442,7 +442,7 @@ purple_conversations_init(void)
 
 	purple_signal_register(handle, "chat-joined",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_CONVERSATION);
+						 PURPLE_TYPE_CHAT_CONVERSATION);
 
 	purple_signal_register(handle, "chat-join-failed",
 						   purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
@@ -450,11 +450,11 @@ purple_conversations_init(void)
 
 	purple_signal_register(handle, "chat-left",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_CONVERSATION);
+						 PURPLE_TYPE_CHAT_CONVERSATION);
 
 	purple_signal_register(handle, "chat-topic-changed",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
-						 G_TYPE_NONE, 3, PURPLE_TYPE_CONVERSATION,
+						 G_TYPE_NONE, 3, PURPLE_TYPE_CHAT_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "cleared-message-history",
