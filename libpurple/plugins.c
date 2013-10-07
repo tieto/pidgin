@@ -76,41 +76,45 @@ static GList *plugins_to_disable = NULL;
 /**************************************************************************
  * Plugin API
  **************************************************************************/
-gboolean
-purple_plugin_load(PurplePlugin *plugin, GError **error)
-{
 #ifdef PURPLE_PLUGINS
-	GError *err = NULL;
+static gboolean
+plugin_loading_cb(GObject *manager, PurplePlugin *plugin, GError **error,
+                  gpointer data)
+{
+	PurplePluginInfo *info;
 	PurplePluginInfoPrivate *priv;
 
-	g_return_val_if_fail(plugin != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_PLUGIN(plugin), FALSE);
 
-	if (purple_plugin_is_loaded(plugin))
-		return TRUE;
+	info = purple_plugin_get_info(plugin);
+	if (!info)
+		return TRUE; /* a GPlugin internal plugin */
 
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	if (priv->error) {
 		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-		                   purple_plugin_get_filename(plugin), priv->error);
+				           purple_plugin_get_filename(plugin), priv->error);
 
 		g_set_error(error, PURPLE_PLUGINS_DOMAIN, 0,
-		            "Plugin is not loadable: %s", priv->error);
+				    "Plugin is not loadable: %s", priv->error);
 
 		return FALSE;
 	}
 
-	if (!gplugin_plugin_manager_load_plugin(plugin, &err)) {
-		purple_debug_error("plugins", "Failed to load plugin %s: %s",
-				purple_plugin_get_filename(plugin),
-				(err ? err->message : "Unknown reason"));
+	return TRUE;
+}
 
-		if (error)
-			*error = g_error_copy(err);
-		g_error_free(err);
+static void
+plugin_loaded_cb(GObject *manager, PurplePlugin *plugin)
+{
+	PurplePluginInfo *info;
 
-		return FALSE;
-	}
+	g_return_if_fail(PURPLE_IS_PLUGIN(plugin));
+
+	info = purple_plugin_get_info(plugin);
+	if (!info)
+		return; /* a GPlugin internal plugin */
 
 	loaded_plugins = g_list_append(loaded_plugins, plugin);
 
@@ -118,45 +122,38 @@ purple_plugin_load(PurplePlugin *plugin, GError **error)
 	                  purple_plugin_get_filename(plugin));
 
 	purple_signal_emit(purple_plugins_get_handle(), "plugin-load", plugin);
-
-	return TRUE;
-
-#else
-	g_set_error(error, PURPLE_PLUGINS_DOMAIN, 0, "Plugin support is disabled.");
-	return FALSE;
-#endif /* PURPLE_PLUGINS */
 }
 
-gboolean
-purple_plugin_unload(PurplePlugin *plugin, GError **error)
+static gboolean
+plugin_unloading_cb(GObject *manager, PurplePlugin *plugin, GError **error,
+                    gpointer data)
 {
-#ifdef PURPLE_PLUGINS
-	GError *err = NULL;
+	PurplePluginInfo *info;
+
+	g_return_val_if_fail(PURPLE_IS_PLUGIN(plugin), FALSE);
+
+	info = purple_plugin_get_info(plugin);
+	if (info) {
+		purple_debug_info("plugins", "Unloading plugin %s\n",
+		                  purple_plugin_get_filename(plugin));
+	}
+
+	return TRUE;
+}
+
+static void
+plugin_unloaded_cb(GObject *manager, PurplePlugin *plugin)
+{
+	PurplePluginInfo *info;
 	PurplePluginInfoPrivate *priv;
 
-	g_return_val_if_fail(plugin != NULL, FALSE);
+	g_return_if_fail(PURPLE_IS_PLUGIN(plugin));
 
-	if (!purple_plugin_is_loaded(plugin))
-		return TRUE;
+	info = purple_plugin_get_info(plugin);
+	if (!info)
+		return; /* a GPlugin internal plugin */
 
-	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(purple_plugin_get_info(plugin));
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	purple_debug_info("plugins", "Unloading plugin %s\n",
-			purple_plugin_get_filename(plugin));
-
-	if (!gplugin_plugin_manager_unload_plugin(plugin, &err)) {
-		purple_debug_error("plugins", "Failed to unload plugin %s: %s",
-				purple_plugin_get_filename(plugin),
-				(err ? err->message : "Unknown reason"));
-
-		if (error)
-			*error = g_error_copy(err);
-		g_error_free(err);
-
-		return FALSE;
-	}
+	priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	/* cancel any pending dialogs the plugin has */
 	purple_request_close_with_handle(plugin);
@@ -173,6 +170,62 @@ purple_plugin_unload(PurplePlugin *plugin, GError **error)
 	purple_signal_emit(purple_plugins_get_handle(), "plugin-unload", plugin);
 
 	purple_prefs_disconnect_by_handle(plugin);
+}
+#endif /* PURPLE_PLUGINS */
+
+gboolean
+purple_plugin_load(PurplePlugin *plugin, GError **error)
+{
+#ifdef PURPLE_PLUGINS
+	GError *err = NULL;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	if (purple_plugin_is_loaded(plugin))
+		return TRUE;
+
+	if (!gplugin_plugin_manager_load_plugin(plugin, &err)) {
+		purple_debug_error("plugins", "Failed to load plugin %s: %s",
+				purple_plugin_get_filename(plugin),
+				(err ? err->message : "Unknown reason"));
+
+		if (error)
+			*error = g_error_copy(err);
+		g_error_free(err);
+
+		return FALSE;
+	}
+
+	return TRUE;
+
+#else
+	g_set_error(error, PURPLE_PLUGINS_DOMAIN, 0, "Plugin support is disabled.");
+	return FALSE;
+#endif /* PURPLE_PLUGINS */
+}
+
+gboolean
+purple_plugin_unload(PurplePlugin *plugin, GError **error)
+{
+#ifdef PURPLE_PLUGINS
+	GError *err = NULL;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	if (!purple_plugin_is_loaded(plugin))
+		return TRUE;
+
+	if (!gplugin_plugin_manager_unload_plugin(plugin, &err)) {
+		purple_debug_error("plugins", "Failed to unload plugin %s: %s",
+				purple_plugin_get_filename(plugin),
+				(err ? err->message : "Unknown reason"));
+
+		if (error)
+			*error = g_error_copy(err);
+		g_error_free(err);
+
+		return FALSE;
+	}
 
 	return TRUE;
 
@@ -982,6 +1035,8 @@ purple_plugins_init(void)
 {
 	void *handle = purple_plugins_get_handle();
 
+	/* TODO These should be removed, as GPlugin provides these signals as
+	 *      GObject signals already. */
 	purple_signal_register(handle, "plugin-load",
 	                       purple_marshal_VOID__POINTER,
 	                       G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
@@ -992,6 +1047,16 @@ purple_plugins_init(void)
 #ifdef PURPLE_PLUGINS
 	gplugin_init();
 	purple_plugins_add_search_path(LIBDIR);
+
+	g_signal_connect(gplugin_plugin_manager_get_instance(), "loading-plugin",
+	                 G_CALLBACK(plugin_loading_cb), NULL);
+	g_signal_connect(gplugin_plugin_manager_get_instance(), "loaded-plugin",
+	                 G_CALLBACK(plugin_loaded_cb), NULL);
+	g_signal_connect(gplugin_plugin_manager_get_instance(), "unloading-plugin",
+	                 G_CALLBACK(plugin_unloading_cb), NULL);
+	g_signal_connect(gplugin_plugin_manager_get_instance(), "unloaded-plugin",
+	                 G_CALLBACK(plugin_unloaded_cb), NULL);
+
 	purple_plugins_refresh();
 #endif
 }
