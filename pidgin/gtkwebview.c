@@ -846,6 +846,15 @@ webview_inspector_inspect_element(GtkWidget *item, GtkWebViewInspectData *data)
 	webkit_web_inspector_inspect_node(data->inspector, data->node);
 }
 
+static void
+webview_inspector_destroy(GtkWindow *window, GtkWebViewPriv *priv)
+{
+	g_return_if_fail(priv->inspector_win == window);
+
+	priv->inspector_win = NULL;
+	priv->inspector_view = NULL;
+}
+
 static WebKitWebView *
 webview_inspector_create(WebKitWebInspector *inspector,
 	WebKitWebView *webview, gpointer _unused)
@@ -862,6 +871,9 @@ webview_inspector_create(WebKitWebInspector *inspector,
 	priv->inspector_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
 	gtk_container_add(GTK_CONTAINER(priv->inspector_win),
 		GTK_WIDGET(priv->inspector_view));
+
+	g_signal_connect(priv->inspector_win, "destroy",
+		G_CALLBACK(webview_inspector_destroy), priv);
 
 	return priv->inspector_view;
 }
