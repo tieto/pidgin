@@ -1499,10 +1499,23 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
 	#endif
 ])], have_clang=yes, have_clang=no)
 
+AC_ARG_ENABLE(clang-address-sanitizer,
+	[AS_HELP_STRING([--enable-clang-address-sanitizer],
+		[compile with the Clang's address sanitizer enabled])],
+	enable_clang_address_sanitizer="$enableval", enable_clang_address_sanitizer="no")
+
+if test "x$enable_clang_address_sanitizer" = "xyes" -a "x$have_clang" = "xno"; then
+		AC_MSG_ERROR([
+Clang address sanitizer requested, but we don't compile with Clang.
+Disable the sanitizer or run configure script with CC and CCX set to clang binaries.
+])
+fi
+
 if test "x$have_clang" = "xyes"; then
 	GLIB_LIBS=`echo $GLIB_LIBS | $sedpath 's/-pthread/-lpthread/'`
+fi
 
-	dnl Enable address sanitizer.
+if test "x$enable_clang_address_sanitizer" = "xyes"; then
 	CFLAGS="$CFLAGS -faddress-sanitizer -g -fno-omit-frame-pointer -fno-inline -fno-optimize-sibling-calls"
 fi
 
