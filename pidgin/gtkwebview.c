@@ -34,6 +34,7 @@
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
 
+#include "gtkinternal.h"
 #include "gtk3compat.h"
 
 #define MAX_FONT_SIZE 7
@@ -687,12 +688,12 @@ webview_resource_loading(WebKitWebView *webview,
                          gpointer user_data)
 {
 	const gchar *uri;
+	PurpleStoredImage *img = NULL;
+	const char *filename;
 
 	uri = webkit_network_request_get_uri(request);
 	if (purple_str_has_prefix(uri, PURPLE_STORED_IMAGE_PROTOCOL)) {
 		int id;
-		PurpleStoredImage *img;
-		const char *filename;
 
 		uri += sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1;
 		id = strtoul(uri, NULL, 10);
@@ -700,17 +701,52 @@ webview_resource_loading(WebKitWebView *webview,
 		img = purple_imgstore_find_by_id(id);
 		if (!img)
 			return;
+	} else if (purple_str_has_prefix(uri, PURPLE_STOCK_IMAGE_PROTOCOL)) {
+		gchar *p_uri, *found;
+		const gchar *domain, *stock_name;
 
+		uri += sizeof(PURPLE_STOCK_IMAGE_PROTOCOL) - 1;
+
+		p_uri = g_strdup(uri);
+		found = strchr(p_uri, '/');
+		if (!found) {
+			purple_debug_warning("webview", "Invalid purple stock "
+				"image uri: %s", uri);
+			return;
+		}
+
+		found[0] = '\0';
+		domain = p_uri;
+		stock_name = found + 1;
+
+		if (g_strcmp0(domain, "e2ee") == 0) {
+			img = _pidgin_e2ee_stock_icon_get(stock_name);
+			if (!img)
+				return;
+		} else {
+			purple_debug_warning("webview", "Invalid purple stock "
+				"image domain: %s", domain);
+			return;
+		}
+	} else
+		return;
+
+	if (img != NULL) {
 		filename = purple_imgstore_get_filename(img);
 		if (filename && g_path_is_absolute(filename)) {
-			char *tmp = g_strdup_printf("file://%s", filename);
+			gchar *tmp = g_strdup_printf("file://%s", filename);
 			webkit_network_request_set_uri(request, tmp);
 			g_free(tmp);
 		} else {
-			char *b64 = purple_base64_encode(purple_imgstore_get_data(img),
-			                                 purple_imgstore_get_size(img));
-			const char *type = purple_imgstore_get_extension(img);
-			char *tmp = g_strdup_printf("data:image/%s;base64,%s", type, b64);
+			gchar *b64, *tmp;
+			const gchar *type;
+
+			b64 = purple_base64_encode(
+				purple_imgstore_get_data(img),
+				purple_imgstore_get_size(img));
+			type = purple_imgstore_get_extension(img);
+			tmp = g_strdup_printf("data:image/%s;base64,%s",
+				type, b64);
 			webkit_network_request_set_uri(request, tmp);
 			g_free(b64);
 			g_free(tmp);

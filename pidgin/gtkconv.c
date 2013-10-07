@@ -50,6 +50,7 @@
 #include "util.h"
 #include "version.h"
 
+#include "gtkinternal.h"
 #include "gtkdnd-hints.h"
 #include "gtkblist.h"
 #include "gtkconv.h"
@@ -218,7 +219,6 @@ static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static void hide_conv(PidginConversation *gtkconv, gboolean closetimer);
-static GdkPixbuf * e2ee_stock_icon_get(const gchar *stock_name);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
@@ -3949,6 +3949,14 @@ send_to_item_leave_notify_cb(GtkWidget *menuitem, GdkEventCrossing *event, GtkWi
 	return FALSE;
 }
 
+static GtkWidget *
+e2ee_state_to_gtkimage(PurpleE2eeState *state)
+{
+	return gtk_image_new_from_pixbuf(pidgin_pixbuf_from_imgstore(
+		_pidgin_e2ee_stock_icon_get(
+			purple_e2ee_state_get_stock_icon(state))));
+}
+
 static void
 create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group,
 	PurpleBuddy *buddy, PurpleAccount *account, const char *name,
@@ -3982,11 +3990,9 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group,
 			PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
 		if (conv)
 			state = purple_conversation_get_e2ee_state(conv);
-		if (state) {
-			e2ee_image = gtk_image_new_from_pixbuf(
-				e2ee_stock_icon_get(
-				purple_e2ee_state_get_stock_icon(state)));
-		} else
+		if (state)
+			e2ee_image = e2ee_state_to_gtkimage(state);
+		else
 			e2ee_image = gtk_image_new();
 	}
 
@@ -4157,23 +4163,23 @@ generate_send_to_items(PidginWindow *win)
 	update_send_to_selection(win);
 }
 
-static GdkPixbuf *
-e2ee_stock_icon_get(const gchar *stock_name)
+PurpleStoredImage *
+_pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 {
 	gchar filename[100], *path;
-	GdkPixbuf *pixbuf;
+	PurpleStoredImage *image;
 
-	if (g_hash_table_lookup_extended(e2ee_stock, stock_name, NULL, (gpointer*)&pixbuf))
-		return pixbuf;
+	if (g_hash_table_lookup_extended(e2ee_stock, stock_name, NULL, (gpointer*)&image))
+		return image;
 
 	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "e2ee", "16",
 		filename, NULL);
-	pixbuf = pidgin_pixbuf_new_from_file(path);
+	image = purple_imgstore_new_from_file(path);
 	g_free(path);
 
-	g_hash_table_insert(e2ee_stock, g_strdup(stock_name), pixbuf);
-	return pixbuf;
+	g_hash_table_insert(e2ee_stock, g_strdup(stock_name), image);
+	return image;
 }
 
 static void
@@ -4214,8 +4220,7 @@ generate_e2ee_controls(PidginWindow *win)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.e2ee), menu);
 
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(win->menu.e2ee),
-		gtk_image_new_from_pixbuf(e2ee_stock_icon_get(
-			purple_e2ee_state_get_stock_icon(state))));
+		e2ee_state_to_gtkimage(state));
 
 	gtk_widget_set_tooltip_text(win->menu.e2ee,
 		purple_e2ee_state_get_name(state));
@@ -8674,7 +8679,7 @@ pidgin_conversations_init(void)
 	void *blist_handle = purple_blist_get_handle();
 	char *theme_dir;
 
-	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
+	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)purple_imgstore_unref);
 
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");

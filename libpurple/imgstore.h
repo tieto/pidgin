@@ -31,6 +31,7 @@
 #include <glib.h>
 
 #define PURPLE_STORED_IMAGE_PROTOCOL "purple-image:"
+#define PURPLE_STOCK_IMAGE_PROTOCOL "purple-stock-image:"
 
 /** A reference-counted immutable wrapper around an image's data and its
  *  filename.
