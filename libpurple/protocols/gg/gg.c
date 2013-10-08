@@ -325,6 +325,18 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		return;
 	}
 
+#if GGP_ENABLE_GG11
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("gg", "ggp_callback_recv: got event %s",
+			gg_debug_event(ev->type));
+	}
+#endif
+
+	purple_input_remove(info->inpa);
+	info->inpa = purple_input_add(info->session->fd,
+		ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+		ggp_callback_recv, gc);
+
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
@@ -337,10 +349,11 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_MSG:
 			ggp_message_got(gc, &ev->event.msg);
 			break;
+		case GG_EVENT_ACK:
 #if GGP_ENABLE_GG11
 		case GG_EVENT_ACK110:
-			break;
 #endif
+			break;
 		case GG_EVENT_IMAGE_REPLY:
 			ggp_image_recv(gc, &ev->event.image_reply);
 			break;
@@ -743,6 +756,7 @@ static void ggp_login(PurpleAccount *account)
 		glp->protocol_version = GG_PROTOCOL_VERSION_100;
 	else if (g_strcmp0(protocol_version, "gg11") == 0)
 		glp->protocol_version = GG_PROTOCOL_VERSION_110;
+	glp->compatibility = GG_COMPAT_1_12_0;
 #else
 	glp->protocol_version = 0x2e;
 #endif
