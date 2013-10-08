@@ -208,7 +208,7 @@ purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data
 	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = purple_g_value_new(G_TYPE_BOOLEAN);
+	value = purple_value_new(G_TYPE_BOOLEAN);
 	g_value_set_boolean(value, data);
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
@@ -249,7 +249,7 @@ purple_blist_node_set_int(PurpleBlistNode* node, const char *key, int data)
 	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = purple_g_value_new(G_TYPE_INT);
+	value = purple_value_new(G_TYPE_INT);
 	g_value_set_int(value, data);
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
@@ -290,7 +290,7 @@ purple_blist_node_set_string(PurpleBlistNode* node, const char *key, const char 
 	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = purple_g_value_new(G_TYPE_STRING);
+	value = purple_value_new(G_TYPE_STRING);
 	g_value_set_string(value, data);
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
@@ -380,7 +380,7 @@ purple_blist_node_init(GTypeInstance *instance, gpointer klass)
 	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(instance);
 
 	priv->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-			(GDestroyNotify)purple_g_value_free);
+			(GDestroyNotify)purple_value_free);
 }
 
 /* GObject finalize function */

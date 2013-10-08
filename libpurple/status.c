@@ -463,7 +463,7 @@ purple_status_attribute_destroy(PurpleStatusAttribute *attr)
 	g_free(attr->id);
 	g_free(attr->name);
 
-	purple_g_value_free(attr->value_type);
+	purple_value_free(attr->value_type);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(attr);
 	g_free(attr);
@@ -1048,7 +1048,7 @@ purple_status_attribute_copy(PurpleStatusAttribute *status_attr)
 
 	return purple_status_attribute_new(status_attr->id,
 	                              status_attr->name,
-	                              purple_g_value_dup(status_attr->value_type));
+	                              purple_value_dup(status_attr->value_type));
 }
 
 GType
@@ -1173,7 +1173,7 @@ purple_status_init(GTypeInstance *instance, gpointer klass)
 
 	PURPLE_STATUS_GET_PRIVATE(status)->attr_values =
 		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
-		(GDestroyNotify)purple_g_value_free);
+		(GDestroyNotify)purple_value_free);
 }
 
 /* Called when done constructing */
@@ -1189,7 +1189,7 @@ purple_status_constructed(GObject *object)
 	{
 		PurpleStatusAttribute *attr = (PurpleStatusAttribute *)l->data;
 		GValue *value = purple_status_attribute_get_value(attr);
-		GValue *new_value = purple_g_value_dup(value);
+		GValue *new_value = purple_value_dup(value);
 
 		g_hash_table_insert(priv->attr_values,
 							(char *)purple_status_attribute_get_id(attr),
