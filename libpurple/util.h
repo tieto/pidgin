@@ -1438,7 +1438,7 @@ gchar *purple_uuid_random(void);
  *
  * @return  The created GValue
  */
-GValue *purple_g_value_new(GType type);
+GValue *purple_value_new(GType type);
 
 /**
  * Duplicates a GValue.
@@ -1447,14 +1447,14 @@ GValue *purple_g_value_new(GType type);
  *
  * @return  The duplicated GValue
  */
-GValue *purple_g_value_dup(GValue *value);
+GValue *purple_value_dup(GValue *value);
 
 /**
  * Frees a GValue.
  *
  * @param value  The GValue to free.
  */
-void purple_g_value_free(GValue *value);
+void purple_value_free(GValue *value);
 
 /**
  * Calculates a session key for HTTP Digest authentation

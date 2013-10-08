@@ -4573,16 +4573,16 @@ oscar_status_types(PurpleAccount *account)
 										   OSCAR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_g_value_new(G_TYPE_STRING),
+										   purple_value_new(G_TYPE_STRING),
 										   "itmsurl", _("iTunes Music Store Link"),
-										   purple_g_value_new(G_TYPE_STRING), NULL);
+										   purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 									 OSCAR_STATUS_ID_FREE4CHAT,
 									 _("Free For Chat"), TRUE, is_icq, FALSE,
 									 "message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 
 	status_types = g_list_prepend(status_types, type);
 
@@ -4590,7 +4590,7 @@ oscar_status_types(PurpleAccount *account)
 									 OSCAR_STATUS_ID_EVIL,
 									 _("Evil"), TRUE, is_icq, FALSE,
 				 "message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 
@@ -4598,7 +4598,7 @@ oscar_status_types(PurpleAccount *account)
 									 OSCAR_STATUS_ID_DEPRESSION,
 									 _("Depression"), TRUE, is_icq, FALSE,
 				 "message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 
@@ -4606,7 +4606,7 @@ oscar_status_types(PurpleAccount *account)
 									 OSCAR_STATUS_ID_ATHOME,
 									 _("At home"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 
@@ -4614,7 +4614,7 @@ oscar_status_types(PurpleAccount *account)
 									 OSCAR_STATUS_ID_ATWORK,
 									 _("At work"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 
 	status_types = g_list_prepend(status_types, type);
 
@@ -4623,7 +4623,7 @@ oscar_status_types(PurpleAccount *account)
 									 OSCAR_STATUS_ID_LUNCH,
 									 _("Lunch"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 
 	status_types = g_list_prepend(status_types, type);
 
@@ -4631,14 +4631,14 @@ oscar_status_types(PurpleAccount *account)
 										   OSCAR_STATUS_ID_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_g_value_new(G_TYPE_STRING), NULL);
+										   purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_INVISIBLE,
 									 OSCAR_STATUS_ID_INVISIBLE,
 									 NULL, TRUE, TRUE, FALSE,
 									 "message", _("Message"),
-									  purple_g_value_new(G_TYPE_STRING), NULL);
+									  purple_value_new(G_TYPE_STRING), NULL);
 
 	status_types = g_list_prepend(status_types, type);
 
@@ -4650,21 +4650,21 @@ oscar_status_types(PurpleAccount *account)
 				OSCAR_STATUS_ID_OCCUPIED,
 				_("Occupied"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
 				OSCAR_STATUS_ID_DND,
 				_("Do Not Disturb"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_EXTENDED_AWAY,
 				OSCAR_STATUS_ID_NA,
 				_("Not Available"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_g_value_new(G_TYPE_STRING), NULL);
+				purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
@@ -4674,8 +4674,8 @@ oscar_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_MOOD,
 			"mood", NULL, TRUE, is_icq, TRUE,
-			PURPLE_MOOD_NAME, _("Mood Name"), purple_g_value_new(G_TYPE_STRING),
-			PURPLE_MOOD_COMMENT, _("Mood Comment"), purple_g_value_new(G_TYPE_STRING),
+			PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new(G_TYPE_STRING),
+			PURPLE_MOOD_COMMENT, _("Mood Comment"), purple_value_new(G_TYPE_STRING),
 			NULL);
 	status_types = g_list_prepend(status_types, type);
 

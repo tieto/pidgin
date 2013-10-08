@@ -226,6 +226,11 @@ version 3.0.0 (??/??/????):
 		* purple_util_fetch_url_len now takes a length as the fifth parameter
 		* PurpleWhiteboard is now a GObject. Please see the documentation for
 		  details.
+		* purple_value_destroy is now purple_value_free
+		* purple_value_new, purple_value_dup and purple_value_free now operate
+		  on GValue instead of PurpleValue
+		* Signal registration now uses GTypes instead of PurpleValues.  See
+		  SIGNAL-HOWTO for more information.
 		* purple_whiteboard_create renamed to purple_whiteboard_new
 		* purple_xfer_get_bytes_remaining now returns a goffset
 		* purple_xfer_get_bytes_sent now returns a goffset
@@ -251,8 +256,6 @@ version 3.0.0 (??/??/????):
 		  time_t to represent times
 		* purple_certificate_get_times now uses gint64 instead of
 		  time_t to represent times
-		* Signal registration now uses GTypes instead of PurpleValues.  See
-		  SIGNAL-HOWTO for more information.
 		* xmlnode renamed to PurpleXmlNode
 		* XMLNodeType renamed to PurpleXmlNodeType
 		* xmlnode_* functions are now purple_xmlnode_*

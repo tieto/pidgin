@@ -4750,7 +4750,7 @@ purple_uuid_random(void)
 }
 
 GValue *
-purple_g_value_new(GType type)
+purple_value_new(GType type)
 {
 	GValue *ret;
 
@@ -4763,7 +4763,7 @@ purple_g_value_new(GType type)
 }
 
 GValue *
-purple_g_value_dup(GValue *value)
+purple_value_dup(GValue *value)
 {
 	GValue *ret;
 
@@ -4777,7 +4777,7 @@ purple_g_value_dup(GValue *value)
 }
 
 void
-purple_g_value_free(GValue *value)
+purple_value_free(GValue *value)
 {
 	g_return_if_fail(value != NULL);
 

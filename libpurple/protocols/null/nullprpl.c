@@ -292,19 +292,19 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
 
   type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
       NULL_STATUS_ONLINE, NULL, TRUE, TRUE, FALSE,
-      "message", _("Message"), purple_g_value_new(G_TYPE_STRING),
+      "message", _("Message"), purple_value_new(G_TYPE_STRING),
       NULL);
   types = g_list_prepend(types, type);
 
   type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
       NULL_STATUS_AWAY, NULL, TRUE, TRUE, FALSE,
-      "message", _("Message"), purple_g_value_new(G_TYPE_STRING),
+      "message", _("Message"), purple_value_new(G_TYPE_STRING),
       NULL);
   types = g_list_prepend(types, type);
 
   type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
       NULL_STATUS_OFFLINE, NULL, TRUE, TRUE, FALSE,
-      "message", _("Message"), purple_g_value_new(G_TYPE_STRING),
+      "message", _("Message"), purple_value_new(G_TYPE_STRING),
       NULL);
   types = g_list_prepend(types, type);
 
