@@ -365,7 +365,7 @@ void ggp_chat_join(PurpleConnection *gc, GHashTable *components)
 		char *buff = g_strdup_printf(
 			_("%s is not a valid room identifier"), id_cs);
 		purple_notify_error(gc, _("Invalid Room Identifier"),
-			_("Invalid Room Identifier"), buff);
+			_("Invalid Room Identifier"), buff, NULL);
 		g_free(buff);
 		purple_serv_got_join_chat_failed(gc, components);
 		return;
@@ -400,7 +400,7 @@ static void ggp_chat_join_id(PurpleConnection *gc, uint64_t id)
 			_("%s is not a valid room identifier"), id_s);
 		g_free(id_s);
 		purple_notify_error(gc, _("Invalid Room Identifier"),
-			_("Invalid Room Identifier"), buff);
+			_("Invalid Room Identifier"), buff, NULL);
 		g_free(buff);
 	}
 	else /* if (chat->left) */
@@ -408,7 +408,7 @@ static void ggp_chat_join_id(PurpleConnection *gc, uint64_t id)
 		purple_notify_error(gc, _("Could not join chat room"),
 			_("Could not join chat room"),
 			_("You have to ask for invitation from another chat "
-			"participant"));
+			"participant"), NULL);
 	}
 
 	components = ggp_chat_info_defaults(gc, ggp_chat_get_name_from_id(id));
