@@ -45,7 +45,7 @@ struct _PurpleBlistNodePrivate {
 enum
 {
 	BLNODE_PROP_0,
-	BLNODE_PROP_DONT_SAVE,
+	BLNODE_PROP_TRANSIENT,
 	BLNODE_PROP_LAST
 };
 
@@ -162,6 +162,8 @@ purple_blist_node_set_transient(PurpleBlistNode *node, gboolean transient)
 	g_return_if_fail(priv != NULL);
 
 	priv->transient = transient;
+
+	g_object_notify(G_OBJECT(node), "transient");
 }
 
 gboolean
@@ -336,9 +338,6 @@ purple_blist_node_get_extended_menu(PurpleBlistNode *n)
  * GObject code for PurpleBlistNode
  **************************************************************************/
 
-/* GObject Property names */
-#define BLNODE_PROP_DONT_SAVE_S  "dont-save"
-
 /* Set method for GObject properties */
 static void
 purple_blist_node_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -347,7 +346,7 @@ purple_blist_node_set_property(GObject *obj, guint param_id, const GValue *value
 	PurpleBlistNode *node = PURPLE_BLIST_NODE(obj);
 
 	switch (param_id) {
-		case BLNODE_PROP_DONT_SAVE:
+		case BLNODE_PROP_TRANSIENT:
 			purple_blist_node_set_transient(node, g_value_get_boolean(value));
 			break;
 		default:
@@ -364,7 +363,7 @@ purple_blist_node_get_property(GObject *obj, guint param_id, GValue *value,
 	PurpleBlistNode *node = PURPLE_BLIST_NODE(obj);
 
 	switch (param_id) {
-		case BLNODE_PROP_DONT_SAVE:
+		case BLNODE_PROP_TRANSIENT:
 			g_value_set_boolean(value, purple_blist_node_is_transient(node));
 			break;
 		default:
@@ -408,8 +407,8 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 	obj_class->get_property = purple_blist_node_get_property;
 	obj_class->set_property = purple_blist_node_set_property;
 
-	g_object_class_install_property(obj_class, BLNODE_PROP_DONT_SAVE,
-			g_param_spec_boolean(BLNODE_PROP_DONT_SAVE_S, _("Do not save"),
+	g_object_class_install_property(obj_class, BLNODE_PROP_TRANSIENT,
+			g_param_spec_boolean("transient", _("Transient"),
 				_("Whether node should not be saved with the buddy list."),
 				FALSE, G_PARAM_READWRITE)
 			);
@@ -484,7 +483,7 @@ purple_counting_node_change_total_size(PurpleCountingNode *counter, int delta)
 
 	g_return_if_fail(priv != NULL);
 
-	priv->totalsize += delta;
+	purple_counting_node_set_total_size(counter, priv->totalsize + delta);
 }
 
 void
@@ -494,7 +493,7 @@ purple_counting_node_change_current_size(PurpleCountingNode *counter, int delta)
 
 	g_return_if_fail(priv != NULL);
 
-	priv->currentsize += delta;
+	purple_counting_node_set_current_size(counter, priv->currentsize + delta);
 }
 
 void
@@ -504,7 +503,7 @@ purple_counting_node_change_online_count(PurpleCountingNode *counter, int delta)
 
 	g_return_if_fail(priv != NULL);
 
-	priv->onlinecount += delta;
+	purple_counting_node_set_online_count(counter, priv->onlinecount + delta);
 }
 
 void
@@ -515,6 +514,8 @@ purple_counting_node_set_total_size(PurpleCountingNode *counter, int totalsize)
 	g_return_if_fail(priv != NULL);
 
 	priv->totalsize = totalsize;
+
+	g_object_notify(G_OBJECT(counter), "total-size");
 }
 
 void
@@ -525,6 +526,8 @@ purple_counting_node_set_current_size(PurpleCountingNode *counter, int currentsi
 	g_return_if_fail(priv != NULL);
 
 	priv->currentsize = currentsize;
+
+	g_object_notify(G_OBJECT(counter), "current-size");
 }
 
 void
@@ -535,17 +538,14 @@ purple_counting_node_set_online_count(PurpleCountingNode *counter, int onlinecou
 	g_return_if_fail(priv != NULL);
 
 	priv->onlinecount = onlinecount;
+
+	g_object_notify(G_OBJECT(counter), "online-count");
 }
 
 /**************************************************************************
  * GObject code for PurpleCountingNode
  **************************************************************************/
  
-/* GObject Property names */
-#define CNODE_PROP_TOTAL_SIZE_S    "total-size"
-#define CNODE_PROP_CURRENT_SIZE_S  "current-size"
-#define CNODE_PROP_ONLINE_COUNT_S  "online-count"
-
 /* Set method for GObject properties */
 static void
 purple_counting_node_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -592,17 +592,6 @@ purple_counting_node_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
-/* GObject initialization function */
-static void
-purple_counting_node_init(GTypeInstance *instance, gpointer klass)
-{
-	PurpleCountingNodePrivate *priv = PURPLE_COUNTING_NODE_GET_PRIVATE(instance);
-
-	priv->totalsize   = 0;
-	priv->currentsize = 0;
-	priv->onlinecount = 0;
-}
-
 /* Class initializer function */
 static void
 purple_counting_node_class_init(PurpleCountingNodeClass *klass)
@@ -614,19 +603,19 @@ purple_counting_node_class_init(PurpleCountingNodeClass *klass)
 	obj_class->set_property = purple_counting_node_set_property;
 
 	g_object_class_install_property(obj_class, CNODE_PROP_TOTAL_SIZE,
-			g_param_spec_int(CNODE_PROP_TOTAL_SIZE_S, _("Total size"),
+			g_param_spec_int("total-size", _("Total size"),
 				_("The number of children under this node."),
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, CNODE_PROP_CURRENT_SIZE,
-			g_param_spec_int(CNODE_PROP_CURRENT_SIZE_S, _("Current size"),
+			g_param_spec_int("current-size", _("Current size"),
 				_("The number of children with online accounts."),
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, CNODE_PROP_ONLINE_COUNT,
-			g_param_spec_int(CNODE_PROP_ONLINE_COUNT_S, _("Online count"),
+			g_param_spec_int("online-count", _("Online count"),
 				_("The number of children that are online."),
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE)
 			);
@@ -649,7 +638,7 @@ purple_counting_node_get_type(void)
 			NULL,
 			sizeof(PurpleCountingNode),
 			0,
-			(GInstanceInitFunc)purple_counting_node_init,
+			NULL,
 			NULL,
 		};
 
