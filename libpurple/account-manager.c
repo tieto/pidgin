@@ -63,6 +63,25 @@ enum
 /* Account Manager signal enums */
 enum
 {
+	SIG_ACC_CONNECTING,
+	SIG_ACC_DISABLED,
+	SIG_ACC_ENABLED,
+	SIG_ACC_SETTING_INFO,
+	SIG_ACC_SET_INFO,
+	SIG_ACC_CREATED,
+	SIG_ACC_DESTROYING,
+	SIG_ACC_ADDED,
+	SIG_ACC_REMOVED,
+	SIG_ACC_STATUS_CHANGED,
+	SIG_ACC_ACTIONS_CHANGED,
+	SIG_ACC_ALIAS_CHANGED,
+	SIG_ACC_AUTH_REQUESTED,
+	SIG_ACC_AUTH_DENIED,
+	SIG_ACC_AUTH_GRANTED,
+	SIG_ACC_ERROR_CHANGED,
+	SIG_ACC_SIGNED_ON,
+	SIG_ACC_SIGNED_OFF,
+	SIG_ACC_CONNECTION_ERROR,
 	SIG_LAST
 };
 static guint signals[SIG_LAST] = { 0 };
@@ -656,7 +675,7 @@ purple_accounts_add(PurpleAccount *account)
 
 	purple_accounts_schedule_save();
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-added", account);
+	g_signal_emit(account_manager, signals[SIG_ACC_ADDED], 0, account);
 }
 
 void
@@ -674,7 +693,7 @@ purple_accounts_remove(PurpleAccount *account)
 	 * valid.
 	 */
 	purple_account_clear_current_error(account);
-	purple_signal_emit(purple_accounts_get_handle(), "account-removed", account);
+	g_signal_emit(account_manager, signals[SIG_ACC_REMOVED], 0, account);
 }
 
 static void
@@ -877,6 +896,8 @@ purple_accounts_set_ui_ops(PurpleAccountUiOps *ops)
 	g_return_if_fail(priv != NULL);
 
 	priv->account_ui_ops = ops;
+
+	g_object_notify(G_OBJECT(account_manager), "ui-ops");
 }
 
 PurpleAccountUiOps *
@@ -891,21 +912,27 @@ static void
 signed_on_cb(PurpleConnection *gc,
              gpointer unused)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleAccount *account;
+
+	g_return_if_fail(account_manager != NULL);
+
+	account = purple_connection_get_account(gc);
 	purple_account_clear_current_error(account);
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-signed-on",
-	                   account);
+	g_signal_emit(account_manager, signals[SIG_ACC_SIGNED_ON], 0, account);
 }
 
 static void
 signed_off_cb(PurpleConnection *gc,
               gpointer unused)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleAccount *account;
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-signed-off",
-	                   account);
+	g_return_if_fail(account_manager != NULL);
+
+	account = purple_connection_get_account(gc);
+
+	g_signal_emit(account_manager, signals[SIG_ACC_SIGNED_OFF], 0, account);
 }
 
 static void
@@ -916,6 +943,8 @@ connection_error_cb(PurpleConnection *gc,
 {
 	PurpleAccount *account;
 	PurpleConnectionErrorInfo *err;
+
+	g_return_if_fail(account_manager != NULL);
 
 	account = purple_connection_get_account(gc);
 
@@ -929,7 +958,7 @@ connection_error_cb(PurpleConnection *gc,
 
 	_purple_account_set_current_error(account, err);
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-connection-error",
+	g_signal_emit(account_manager, signals[SIG_ACC_CONNECTION_ERROR], 0,
 	                   account, type, description);
 }
 
@@ -952,8 +981,6 @@ purple_account_manager_get_instance(void)
 /**************************************************************************
  * GObject code
  **************************************************************************/
-/* GObject Property names */
-#define PROP_UI_OPS  "ui-ops"
 
 /* Set method for GObject properties */
 static void
@@ -1002,11 +1029,25 @@ purple_account_manager_dispose(GObject *object)
 	G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
+static gboolean
+purple_account_request_response_accumulator(GSignalInvocationHint *ihint,
+		GValue *return_accu, const GValue *handler_return, gpointer data)
+{
+	PurpleAccountRequestResponse response;
+
+	response = g_value_get_enum(handler_return);
+	g_value_set_enum(return_accu, response);
+
+	if (response == PURPLE_ACCOUNT_RESPONSE_PASS)
+		return TRUE;
+
+	return FALSE;
+}
+
 /* Class initializer function */
 static void purple_account_manager_class_init(PurpleAccountManagerClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-	void *handle = purple_accounts_get_handle();
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -1017,91 +1058,130 @@ static void purple_account_manager_class_init(PurpleAccountManagerClass *klass)
 	obj_class->set_property = purple_account_manager_set_property;
 
 	g_object_class_install_property(obj_class, PROP_UI_OPS,
-			g_param_spec_pointer(PROP_UI_OPS_S, _("UI Ops"),
+			g_param_spec_pointer("ui-ops", _("UI Ops"),
 				_("UI Operations structure for accounts."),
 				G_PARAM_READWRITE)
 			);
 
-	purple_signal_register(handle, "account-connecting",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_CONNECTING] =
+		g_signal_new("account-connecting", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-disabled",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_DISABLED] =
+		g_signal_new("account-disabled", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-enabled",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_ENABLED]
+		g_signal_new("account-enabled", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-setting-info",
-						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-						 PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
+	signals[SIG_ACC_SETTING_INFO]
+		g_signal_new("account-setting-info", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_STRING, G_TYPE_NONE, 2,
+		             PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
 
-	purple_signal_register(handle, "account-set-info",
-						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-						 PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
+	signals[SIG_ACC_SET_INFO]
+		g_signal_new("account-set-info", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_STRING, G_TYPE_NONE, 2,
+		             PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
 
-	purple_signal_register(handle, "account-created",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_CREATED]
+		g_signal_new("account-created", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-destroying",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_DESTROYING]
+		g_signal_new("account-destroying", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-added",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_ADDED]
+		g_signal_new("account-added", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-removed",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_REMOVED]
+		g_signal_new("account-removed", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-status-changed",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER,
-						 G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
-						 PURPLE_TYPE_STATUS, PURPLE_TYPE_STATUS);
+	signals[SIG_ACC_STATUS_CHANGED]
+		g_signal_new("account-status-changed", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_OBJECT_OBJECT, G_TYPE_NONE, 3,
+		             PURPLE_TYPE_ACCOUNT, PURPLE_TYPE_STATUS,
+		             PURPLE_TYPE_STATUS);
 
-	purple_signal_register(handle, "account-actions-changed",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_ACTIONS_CHANGED]
+		g_signal_new("account-actions-changed", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-alias-changed",
-						 purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
-						 PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
+	signals[SIG_ACC_ALIAS_CHANGED]
+		g_signal_new("account-alias-changed", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_STRING, G_TYPE_NONE, 2,
+		             PURPLE_TYPE_ACCOUNT, G_TYPE_STRING);
 
-	purple_signal_register(handle, "account-authorization-requested",
-						purple_marshal_INT__POINTER_POINTER_POINTER,
-						G_TYPE_INT, 4, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						G_TYPE_STRING, G_TYPE_STRING);
+	signals[SIG_ACC_AUTH_REQUESTED]
+		g_signal_new("account-authorization-requested",
+		             G_OBJECT_CLASS_TYPE(klass), G_SIGNAL_ACTION, 0,
+		             purple_account_request_response_accumulator, NULL,
+		             purple_smarshal_ENUM__OBJECT_STRING_STRING_STRING,
+		             PURPLE_TYPE_ACCOUNT_REQUEST_RESPONSE, 4,
+		             PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING,
+		             G_TYPE_STRING);
 
-	purple_signal_register(handle, "account-authorization-denied",
-						purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 3,
-						PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
+	signals[SIG_ACC_AUTH_DENIED]
+		g_signal_new("account-authorization-denied", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_STRING_STRING, G_TYPE_NONE, 3,
+		             PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
 
-	purple_signal_register(handle, "account-authorization-granted",
-						purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 3,
-						PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
+	signals[SIG_ACC_AUTH_GRANTED]
+		g_signal_new("account-authorization-granted", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_STRING_STRING, G_TYPE_NONE, 3,
+		             PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
 
-	purple_signal_register(handle, "account-error-changed",
-	                       purple_marshal_VOID__POINTER_POINTER_POINTER,
-	                       G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
-	                       PURPLE_TYPE_CONNECTION_ERROR_INFO,
-	                       PURPLE_TYPE_CONNECTION_ERROR_INFO);
+	signals[SIG_ACC_ERROR_CHANGED]
+		g_signal_new("account-error-changed", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_ENUM_ENUM, G_TYPE_NONE, 3,
+		             PURPLE_TYPE_ACCOUNT, PURPLE_TYPE_CONNECTION_ERROR_INFO,
+		             PURPLE_TYPE_CONNECTION_ERROR_INFO);
 
-	purple_signal_register(handle, "account-signed-on",
-	                       purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-	                       PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_SIGNED_ON]
+		g_signal_new("account-signed-on", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-signed-off",
-	                       purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-	                       PURPLE_TYPE_ACCOUNT);
+	signals[SIG_ACC_SIGNED_OFF]
+		g_signal_new("account-signed-off", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT, G_TYPE_NONE, 1,
+		             PURPLE_TYPE_ACCOUNT);
 
-	purple_signal_register(handle, "account-connection-error",
-	                       purple_marshal_VOID__POINTER_INT_POINTER,
-	                       G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
-	                       PURPLE_TYPE_CONNECTION_ERROR, G_TYPE_STRING);
+	signals[SIG_ACC_CONNECTION_ERROR]
+		g_signal_new("account-connection-error", G_OBJECT_CLASS_TYPE(klass),
+		             G_SIGNAL_ACTION, 0, NULL, NULL,
+		             purple_smarshal_VOID__OBJECT_ENUM_STRING, G_TYPE_NONE, 3,
+		             PURPLE_TYPE_ACCOUNT, PURPLE_TYPE_CONNECTION_ERROR,
+		             G_TYPE_STRING);
 
 	g_type_class_add_private(klass, sizeof(PurpleAccountManagerPrivate));
 }

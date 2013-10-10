@@ -1,7 +1,6 @@
 /**
  * @file account-manager.h Account Manager API
  * @ingroup core
- * @see @ref account-signals
  */
 
 /* purple
