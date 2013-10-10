@@ -352,12 +352,6 @@ purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
 /**************************************************************************
  * GObject code for PurplePluginInfo
  **************************************************************************/
-/* GObject Property names */
-#define PROP_UI_REQUIREMENT_S     "ui-requirement"
-#define PROP_GET_ACTIONS_S        "get-actions"
-#define PROP_PREFERENCES_FRAME_S  "preferences-frame"
-#define PROP_FLAGS_S              "flags"
-
 /* GObject initialization function */
 static void
 purple_plugin_info_init(GTypeInstance *instance, gpointer klass)
@@ -485,25 +479,25 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 	obj_class->set_property = purple_plugin_info_set_property;
 
 	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
-		g_param_spec_string(PROP_UI_REQUIREMENT_S,
+		g_param_spec_string("ui-requirement",
 		                  _("UI Requirement"),
 		                  _("ID of UI that is required by this plugin"), NULL,
 		                  G_PARAM_WRITABLE));
 
 	g_object_class_install_property(obj_class, PROP_GET_ACTIONS,
-		g_param_spec_pointer(PROP_GET_ACTIONS_S,
+		g_param_spec_pointer("get-actions",
 		                  _("Plugin actions"),
 		                  _("Callback that returns list of plugin's actions"),
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_PREFERENCES_FRAME,
-		g_param_spec_pointer(PROP_PREFERENCES_FRAME_S,
+		g_param_spec_pointer("preferences-frame",
 		                  _("Preferences frame callback"),
 		                  _("The callback that returns the preferences frame"),
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_FLAGS,
-		g_param_spec_flags(PROP_FLAGS_S,
+		g_param_spec_flags("flags",
 		                  _("Plugin flags"),
 		                  _("The flags for the plugin"),
 		                  PURPLE_TYPE_PLUGIN_INFO_FLAGS, 0,
