@@ -32,11 +32,40 @@
 #include "network.h"
 #include "pounce.h"
 
-static PurpleAccountUiOps *account_ui_ops = NULL;
+#define PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerPrivate))
 
-static GList   *accounts = NULL;
-static guint    save_timer = 0;
-static gboolean accounts_loaded = FALSE;
+/** @copydoc _PurpleAccountManagerPrivate */
+typedef struct _PurpleAccountManagerPrivate  PurpleAccountManagerPrivate;
+
+/** Private data of an account manager */
+struct _PurpleAccountManagerPrivate {
+	PurpleAccountUiOps *account_ui_ops;
+
+	GList   *accounts;
+	guint    save_timer;
+	gboolean accounts_loaded;
+};
+
+static PurpleAccountManager        *account_manager = NULL;
+static PurpleAccountManagerPrivate *priv            = NULL;
+
+static GObjectClass *parent_class = NULL;
+
+/* Account Manager property enums */
+enum
+{
+	PROP_0,
+	PROP_UI_OPS,
+	PROP_LAST
+};
+
+/* Account Manager signal enums */
+enum
+{
+	SIG_LAST
+};
+static guint signals[SIG_LAST] = { 0 };
 
 void _purple_account_set_current_error(PurpleAccount *account,
 		PurpleConnectionErrorInfo *new_err);
@@ -68,7 +97,9 @@ sync_accounts(void)
 	PurpleXmlNode *node;
 	char *data;
 
-	if (!accounts_loaded)
+	g_return_if_fail(priv != NULL);
+
+	if (!priv->accounts_loaded)
 	{
 		purple_debug_error("account", "Attempted to save accounts before "
 						 "they were read!\n");
@@ -85,16 +116,20 @@ sync_accounts(void)
 static gboolean
 save_cb(gpointer data)
 {
+	g_return_val_if_fail(priv != NULL, FALSE);
+
 	sync_accounts();
-	save_timer = 0;
+	priv->save_timer = 0;
 	return FALSE;
 }
 
 void
 purple_accounts_schedule_save(void)
 {
-	if (save_timer == 0)
-		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
+	g_return_if_fail(priv != NULL);
+
+	if (priv->save_timer == 0)
+		priv->save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 /*********************************************************************
@@ -586,7 +621,9 @@ load_accounts(void)
 {
 	PurpleXmlNode *node, *child;
 
-	accounts_loaded = TRUE;
+	g_return_if_fail(priv != NULL);
+
+	priv->accounts_loaded = TRUE;
 
 	node = purple_util_read_xml_from_file("accounts.xml", _("accounts"));
 
@@ -609,12 +646,13 @@ load_accounts(void)
 void
 purple_accounts_add(PurpleAccount *account)
 {
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(account != NULL);
 
-	if (g_list_find(accounts, account) != NULL)
+	if (g_list_find(priv->accounts, account) != NULL)
 		return;
 
-	accounts = g_list_append(accounts, account);
+	priv->accounts = g_list_append(priv->accounts, account);
 
 	purple_accounts_schedule_save();
 
@@ -624,9 +662,10 @@ purple_accounts_add(PurpleAccount *account)
 void
 purple_accounts_remove(PurpleAccount *account)
 {
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(account != NULL);
 
-	accounts = g_list_remove(accounts, account);
+	priv->accounts = g_list_remove(priv->accounts, account);
 
 	purple_accounts_schedule_save();
 
@@ -727,10 +766,11 @@ purple_accounts_reorder(PurpleAccount *account, guint new_index)
 	gint index;
 	GList *l;
 
+	g_return_if_fail(priv != NULL);
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(new_index <= g_list_length(accounts));
+	g_return_if_fail(new_index <= g_list_length(priv->accounts));
 
-	index = g_list_index(accounts, account);
+	index = g_list_index(priv->accounts, account);
 
 	if (index < 0) {
 		purple_debug_error("account",
@@ -739,16 +779,16 @@ purple_accounts_reorder(PurpleAccount *account, guint new_index)
 		return;
 	}
 
-	l = g_list_nth(accounts, index);
+	l = g_list_nth(priv->accounts, index);
 
 	if (new_index > (guint)index)
 		new_index--;
 
 	/* Remove the old one. */
-	accounts = g_list_delete_link(accounts, l);
+	priv->accounts = g_list_delete_link(priv->accounts, l);
 
 	/* Insert it where it should go. */
-	accounts = g_list_insert(accounts, account, new_index);
+	priv->accounts = g_list_insert(priv->accounts, account, new_index);
 
 	purple_accounts_schedule_save();
 }
@@ -756,7 +796,9 @@ purple_accounts_reorder(PurpleAccount *account, guint new_index)
 GList *
 purple_accounts_get_all(void)
 {
-	return accounts;
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->accounts;
 }
 
 GList *
@@ -832,21 +874,17 @@ purple_accounts_restore_current_statuses()
 void
 purple_accounts_set_ui_ops(PurpleAccountUiOps *ops)
 {
-	account_ui_ops = ops;
+	g_return_if_fail(priv != NULL);
+
+	priv->account_ui_ops = ops;
 }
 
 PurpleAccountUiOps *
 purple_accounts_get_ui_ops(void)
 {
-	return account_ui_ops;
-}
+	g_return_val_if_fail(priv != NULL, FALSE);
 
-void *
-purple_accounts_get_handle(void)
-{
-	static int handle;
-
-	return &handle;
+	return priv->account_ui_ops;
 }
 
 static void
@@ -903,11 +941,86 @@ password_migration_cb(PurpleAccount *account)
 	purple_accounts_schedule_save();
 }
 
-void
-purple_accounts_init(void)
+PurpleAccountManager *
+purple_account_manager_get_instance(void)
 {
+	g_return_val_if_fail(account_manager != NULL, NULL);
+
+	return account_manager;
+}
+
+/**************************************************************************
+ * GObject code
+ **************************************************************************/
+/* GObject Property names */
+#define PROP_UI_OPS  "ui-ops"
+
+/* Set method for GObject properties */
+static void
+purple_account_manager_set_property(GObject *obj, guint param_id,
+		const GValue *value, GParamSpec *pspec)
+{
+	switch (param_id) {
+		case PROP_UI_OPS:
+			purple_accounts_set_ui_ops(g_value_get_pointer(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+purple_account_manager_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	switch (param_id) {
+		case PROP_UI_OPS:
+			g_value_set_pointer(value, purple_accounts_get_ui_ops());
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* GObject dispose function */
+static void
+purple_account_manager_dispose(GObject *object)
+{
+	if (priv->save_timer != 0)
+	{
+		purple_timeout_remove(priv->save_timer);
+		priv->save_timer = 0;
+		sync_accounts();
+	}
+
+	for (; priv->accounts; priv->accounts = g_list_delete_link(priv->accounts, priv->accounts))
+		g_object_unref(G_OBJECT(priv->accounts->data));
+
+	G_OBJECT_CLASS(parent_class)->dispose(object);
+}
+
+/* Class initializer function */
+static void purple_account_manager_class_init(PurpleAccountManagerClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	void *handle = purple_accounts_get_handle();
-	void *conn_handle = purple_connections_get_handle();
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->dispose = purple_account_manager_dispose;
+
+	/* Setup properties */
+	obj_class->get_property = purple_account_manager_get_property;
+	obj_class->set_property = purple_account_manager_set_property;
+
+	g_object_class_install_property(obj_class, PROP_UI_OPS,
+			g_param_spec_pointer(PROP_UI_OPS_S, _("UI Ops"),
+				_("UI Operations structure for accounts."),
+				G_PARAM_READWRITE)
+			);
 
 	purple_signal_register(handle, "account-connecting",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
@@ -990,33 +1103,68 @@ purple_accounts_init(void)
 	                       G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
 	                       PURPLE_TYPE_CONNECTION_ERROR, G_TYPE_STRING);
 
-	purple_signal_connect(conn_handle, "signed-on", handle,
-	                      PURPLE_CALLBACK(signed_on_cb), NULL);
-	purple_signal_connect(conn_handle, "signed-off", handle,
-	                      PURPLE_CALLBACK(signed_off_cb), NULL);
-	purple_signal_connect(conn_handle, "connection-error", handle,
-	                      PURPLE_CALLBACK(connection_error_cb), NULL);
-	purple_signal_connect(purple_keyring_get_handle(), "password-migration", handle,
-	                      PURPLE_CALLBACK(password_migration_cb), NULL);
-
-	load_accounts();
-
+	g_type_class_add_private(klass, sizeof(PurpleAccountManagerPrivate));
 }
 
-void
-purple_accounts_uninit(void)
+GType
+purple_account_manager_get_type(void)
 {
-	gpointer handle = purple_accounts_get_handle();
-	if (save_timer != 0)
-	{
-		purple_timeout_remove(save_timer);
-		save_timer = 0;
-		sync_accounts();
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleAccountManagerClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_account_manager_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleAccountManager),
+			0,
+			NULL,
+			NULL,
+		};
+
+		type = g_type_register_static(G_TYPE_OBJECT,
+				"PurpleAccountManager",
+				&info, 0);
 	}
 
-	for (; accounts; accounts = g_list_delete_link(accounts, accounts))
-		g_object_unref(G_OBJECT(accounts->data));
+	return type;
+}
 
-	purple_signals_disconnect_by_handle(handle);
-	purple_signals_unregister_by_instance(handle);
+static void
+manager_destroyed_cb(gpointer data, GObject *obj_was)
+{
+	priv            = NULL;
+	account_manager = NULL;
+}
+
+void purple_accounts_init(void)
+{
+	if (!account_manager) {
+		void *conn_handle = purple_connections_get_handle();
+
+		account_manager = g_object_new(PURPLE_TYPE_ACCOUNT_MANAGER, NULL);
+
+		g_return_if_fail(account_manager != NULL);
+
+		g_object_weak_ref(G_OBJECT(account_manager), manager_destroyed_cb, NULL);
+
+		purple_signal_connect(conn_handle, "signed-on", handle,
+			                  PURPLE_CALLBACK(signed_on_cb), NULL);
+		purple_signal_connect(conn_handle, "signed-off", handle,
+			                  PURPLE_CALLBACK(signed_off_cb), NULL);
+		purple_signal_connect(conn_handle, "connection-error", handle,
+			                  PURPLE_CALLBACK(connection_error_cb), NULL);
+		purple_signal_connect(purple_keyring_get_handle(), "password-migration", handle,
+			                  PURPLE_CALLBACK(password_migration_cb), NULL);
+
+		load_accounts();
+	}
+}
+
+void purple_accounts_uninit(void)
+{
+	g_object_unref(account_manager);
 }

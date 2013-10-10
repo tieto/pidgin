@@ -27,11 +27,47 @@
 #ifndef _PURPLE_ACCOUNT_MANAGER_H_
 #define _PURPLE_ACCOUNT_MANAGER_H_
 
-#include "account.h"
-#include "status.h"
+#define PURPLE_TYPE_ACCOUNT_MANAGER             (purple_account_manager_get_type())
+#define PURPLE_ACCOUNT_MANAGER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManager))
+#define PURPLE_ACCOUNT_MANAGER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerClass))
+#define PURPLE_IS_ACCOUNT_MANAGER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT_MANAGER))
+#define PURPLE_IS_ACCOUNT_MANAGER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT_MANAGER))
+#define PURPLE_ACCOUNT_MANAGER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerClass))
+
+/** @copydoc _PurpleAccountManager */
+typedef struct _PurpleAccountManager       PurpleAccountManager;
+/** @copydoc _PurpleAccountManagerClass */
+typedef struct _PurpleAccountManagerClass  PurpleAccountManagerClass;
+
+#define PURPLE_TYPE_ACCOUNT_UI_OPS  (purple_account_ui_ops_get_type())
 
 /** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps  PurpleAccountUiOps;
+
+#include "account.h"
+#include "status.h"
+
+/**
+ * Structure representing an account manager.
+ */
+struct _PurpleAccountManager
+{
+	/*< private >*/
+	GObject gparent;
+};
+
+/**
+ * The base class for all #PurpleAccountManager's.
+ */
+struct _PurpleAccountManagerClass {
+	/*< private >*/
+	GObjectClass parent_class;
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
 
 /**  Account UI operations, used to notify the user of status changes and when
  *   buddies add this account to their buddy lists.
@@ -167,6 +203,11 @@ PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
  */
 void purple_accounts_restore_current_statuses(void);
 
+/**
+ * Schedules saving of accounts
+ */
+void purple_accounts_schedule_save(void);
+
 /*@}*/
 
 
@@ -174,6 +215,12 @@ void purple_accounts_restore_current_statuses(void);
 /** @name UI Registration Functions                                       */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleAccountUiOps boxed structure.
+ */
+GType purple_account_ui_ops_get_type(void);
+
 /**
  * Sets the UI operations structure to be used for accounts.
  *
@@ -192,16 +239,29 @@ PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 
 
 /**************************************************************************/
-/** @name Accounts Subsystem                                              */
+/** @name Account Manager API                                             */
 /**************************************************************************/
 /*@{*/
 
 /**
- * Returns the accounts subsystem handle.
- *
- * @return The accounts subsystem handle.
+ * Returns the GType for the AccountManager object.
  */
-void *purple_accounts_get_handle(void);
+GType purple_account_manager_get_type(void);
+
+/**
+ * Returns the account manager instance
+ *
+ * @return The account manager instance if initialized, else @c NULL.
+ */
+PurpleAccountManager *purple_account_manager_get_instance(void);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Accounts Subsystem                                              */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Initializes the accounts subsystem.
@@ -212,11 +272,6 @@ void purple_accounts_init(void);
  * Uninitializes the accounts subsystem.
  */
 void purple_accounts_uninit(void);
-
-/**
- * Schedules saving of accounts
- */
-void purple_accounts_schedule_save(void);
 
 /*@}*/
 
