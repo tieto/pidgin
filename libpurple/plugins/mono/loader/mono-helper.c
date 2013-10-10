@@ -158,20 +158,15 @@ gboolean ml_is_api_dll(MonoImage *image)
 	return FALSE;
 }
 
-MonoObject* ml_object_from_purple_type(PurpleType type, gpointer data)
-{
-	return NULL;
-}
-
-MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data)
+MonoObject* ml_object_from_purple_type(GType type, gpointer data)
 {
 	MonoObject *obj = NULL;
 
 	switch (type) {
-		case PURPLE_SUBTYPE_BLIST_BUDDY:
+		case PURPLE_TYPE_BUDDY:
 			obj = purple_blist_build_buddy_object(data);
 		break;
-		case PURPLE_SUBTYPE_STATUS:
+		case PURPLE_TYPE_STATUS:
 			obj = purple_status_build_status_object(data);
 		break;
 		default:

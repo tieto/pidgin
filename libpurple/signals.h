@@ -70,7 +70,7 @@ G_BEGIN_DECLS
  * @param marshal    The marshal function.
  * @param ret_type   The return type, or G_TYPE_NONE for no return type.
  * @param num_values The number of values to be passed to the callbacks.
- * @param ...        The values to pass to the callbacks.
+ * @param ...        The types of the parameters for the callbacks.
  *
  * @return The signal ID local to that instance, or 0 if the signal
  *         couldn't be registered.
@@ -100,12 +100,12 @@ void purple_signals_unregister_by_instance(void *instance);
  * @param instance    The instance the signal is registered to.
  * @param signal      The signal.
  * @param ret_type    The return type.
- * @param num_values  The returned number of values.
- * @param value_types The returned list of values.
+ * @param num_values  The returned number of parameters.
+ * @param param_types The returned list of parameter types.
  */
 void purple_signal_get_types(void *instance, const char *signal,
 							GType *ret_type, int *num_values,
-							GType **value_types);
+							GType **param_types);
 
 /**
  * Connects a signal handler to a signal for a particular object.

@@ -673,7 +673,7 @@ purple_dbus_convert_signal_name(const char *purple_name)
 #define my_arg(type) (ptr != NULL ? * ((type *)ptr) : va_arg(data, type))
 
 static gboolean
-purple_dbus_message_append_purple_values(DBusMessageIter *iter,
+purple_dbus_message_append_values(DBusMessageIter *iter,
 		int number, GType *types, va_list data)
 {
 	int i;
@@ -788,7 +788,7 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 	signal = dbus_message_new_signal(DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, newname);
 	dbus_message_iter_init_append(signal, &iter);
 
-	if (purple_dbus_message_append_purple_values(&iter, num_values, types, vargs))
+	if (purple_dbus_message_append_values(&iter, num_values, types, vargs))
 		if (purple_debug_is_verbose())
 			purple_debug_warning("dbus",
 				"The signal \"%s\" caused some dbus error."
