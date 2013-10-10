@@ -44,7 +44,7 @@
 
 @PLUGINS_DEFINE@
 
-#include <account-manager.h>
+#include <accounts.h>
 #include <accountopt.h>
 #include <buddylist.h>
 #include <buddyicon.h>

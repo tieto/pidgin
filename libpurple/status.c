@@ -671,7 +671,7 @@ purple_status_set_active(PurpleStatus *status, gboolean active)
 /*
  * This used to parse the va_list directly, but now it creates a GList
  * and passes it to purple_status_set_active_with_attrs_list().  That
- * function was created because account.c needs to pass a GList of
+ * function was created because accounts.c needs to pass a GList of
  * attributes to the status API.
  */
 void

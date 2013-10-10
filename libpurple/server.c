@@ -178,12 +178,13 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, set_info)) {
 			account = purple_connection_get_account(gc);
 
-			g_signal_emit_by_name(purple_account_manager_get_instance(),
-					"account-setting-info", account, info);
+			if (purple_signal_emit_return_1(purple_accounts_get_handle(),
+					"account-setting-info", account, info))
+				return;
 
 			purple_protocol_server_iface_set_info(protocol, gc, info);
 
-			g_signal_emit_by_name(purple_account_manager_get_instance(),
+			purple_signal_emit(purple_accounts_get_handle(),
 					"account-set-info", account, info);
 		}
 	}

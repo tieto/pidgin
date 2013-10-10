@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
-#include "account-manager.h"
+#include "accounts.h"
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
@@ -510,7 +510,7 @@ request_auth_cb(const char *message, void *data)
 	if (info->auth_cb != NULL)
 		info->auth_cb(message, info->userdata);
 
-	g_signal_emit_by_name(purple_account_manager_get_instance(),
+	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-granted", info->account, info->user, message);
 
 	purple_account_request_info_unref(info);
@@ -526,7 +526,7 @@ request_deny_cb(const char *message, void *data)
 	if (info->deny_cb != NULL)
 		info->deny_cb(message, info->userdata);
 
-	g_signal_emit_by_name(purple_account_manager_get_instance(),
+	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-denied", info->account, info->user, message);
 
 	purple_account_request_info_unref(info);
@@ -539,7 +539,7 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 {
 	PurpleAccountUiOps *ui_ops;
 	PurpleAccountRequestInfo *info;
-	PurpleAccountRequestResponse response;
+	int plugin_return;
 	char *response = NULL;
 
 	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
@@ -547,11 +547,14 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 
 	ui_ops = purple_accounts_get_ui_ops();
 
-	g_signal_emit_by_name(purple_account_manager_get_instance(),
-				"account-authorization-requested", account, remote_user,
-				message, &response, &response);
+	plugin_return = GPOINTER_TO_INT(
+			purple_signal_emit_return_1(
+				purple_accounts_get_handle(),
+				"account-authorization-requested",
+				account, remote_user, message, &response
+			));
 
-	switch (response)
+	switch (plugin_return)
 	{
 		case PURPLE_ACCOUNT_RESPONSE_IGNORE:
 			g_free(response);
@@ -734,8 +737,6 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 	g_free(priv->username);
 	priv->username = g_strdup(username);
 
-	g_object_notify(G_OBJECT(account), "username");
-
 	purple_accounts_schedule_save();
 
 	/* if the name changes, we should re-write the buddy list
@@ -794,7 +795,7 @@ purple_account_set_private_alias(PurpleAccount *account, const char *alias)
 		char *old = priv->alias;
 
 		priv->alias = g_strdup(alias);
-		g_signal_emit_by_name(purple_account_manager_get_instance(), "account-alias-changed",
+		purple_signal_emit(purple_accounts_get_handle(), "account-alias-changed",
 						 account, old);
 		g_free(old);
 
@@ -814,8 +815,6 @@ purple_account_set_user_info(PurpleAccount *account, const char *user_info)
 	g_free(priv->user_info);
 	priv->user_info = g_strdup(user_info);
 
-	g_object_notify(G_OBJECT(account), "userinfo");
-
 	purple_accounts_schedule_save();
 }
 
@@ -829,8 +828,6 @@ void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path
 
 	g_free(priv->buddy_icon_path);
 	priv->buddy_icon_path = g_strdup(path);
-
-	g_object_notify(G_OBJECT(account), "buddy-icon-path");
 
 	purple_accounts_schedule_save();
 }
@@ -872,8 +869,6 @@ purple_account_set_remember_password(PurpleAccount *account, gboolean value)
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 	priv->remember_pass = value;
 
-	g_object_notify(G_OBJECT(account), "remember-password");
-
 	purple_accounts_schedule_save();
 }
 
@@ -883,8 +878,6 @@ purple_account_set_check_mail(PurpleAccount *account, gboolean value)
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
 	purple_account_set_bool(account, "check-mail", value);
-
-	g_object_notify(G_OBJECT(account), "check-mail");
 }
 
 void
@@ -904,9 +897,9 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 	gc = purple_account_get_connection(account);
 
 	if(was_enabled && !value)
-		g_signal_emit_by_name(purple_account_manager_get_instance(), "account-disabled", account);
+		purple_signal_emit(purple_accounts_get_handle(), "account-disabled", account);
 	else if(!was_enabled && value)
-		g_signal_emit_by_name(purple_account_manager_get_instance(), "account-enabled", account);
+		purple_signal_emit(purple_accounts_get_handle(), "account-enabled", account);
 
 	if ((gc != NULL) && (_purple_connection_wants_to_die(gc)))
 		wants_to_die = TRUE;
@@ -2393,7 +2386,7 @@ _purple_account_set_current_error(PurpleAccount *account,
 
 	priv->current_error = new_err;
 
-	g_signal_emit_by_name(purple_account_manager_get_instance(),
+	purple_signal_emit(purple_accounts_get_handle(),
 	                   "account-error-changed",
 	                   account, old_err, new_err);
 	purple_accounts_schedule_save();
@@ -2777,6 +2770,17 @@ purple_account_to_xmlnode(PurpleAccount *account)
  * GObject Code *
  ****************/
 
+/* GObject Property names */
+#define PROP_USERNAME_S           "username"
+#define PROP_PRIVATE_ALIAS_S      "private-alias"
+#define PROP_ENABLED_S            "enabled"
+#define PROP_CONNECTION_S         "connection"
+#define PROP_PROTOCOL_ID_S        "protocol-id"
+#define PROP_USER_INFO_S          "userinfo"
+#define PROP_BUDDY_ICON_PATH_S    "buddy-icon-path"
+#define PROP_REMEMBER_PASSWORD_S  "remember-password"
+#define PROP_CHECK_MAIL_S         "check-mail"
+
 /* Set method for GObject properties */
 static void
 purple_account_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -2895,11 +2899,11 @@ purple_account_constructed(GObject *object)
 	parent_class->constructed(object);
 
 	g_object_get(object,
-			"username",    &username,
-			"protocol-id", &protocol_id,
+			PROP_USERNAME_S,    &username,
+			PROP_PROTOCOL_ID_S, &protocol_id,
 			NULL);
 
-	g_signal_emit_by_name(purple_account_manager_get_instance(), "account-created",
+	purple_signal_emit(purple_accounts_get_handle(), "account-created",
 			account);
 
 	protocol = purple_protocols_find(protocol_id);
@@ -2952,7 +2956,7 @@ purple_account_finalize(GObject *object)
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 
 	purple_debug_info("account", "Destroying account %p\n", account);
-	g_signal_emit_by_name(purple_account_manager_get_instance(), "account-destroying",
+	purple_signal_emit(purple_accounts_get_handle(), "account-destroying",
 						account);
 
 	for (l = purple_conversations_get_all(); l != NULL; l = l->next)
@@ -3019,55 +3023,55 @@ purple_account_class_init(PurpleAccountClass *klass)
 	obj_class->set_property = purple_account_set_property;
 
 	g_object_class_install_property(obj_class, PROP_USERNAME,
-			g_param_spec_string("username", _("Username"),
+			g_param_spec_string(PROP_USERNAME_S, _("Username"),
 				_("The username for the account."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PRIVATE_ALIAS,
-			g_param_spec_string("private-alias", _("Private Alias"),
+			g_param_spec_string(PROP_PRIVATE_ALIAS_S, _("Private Alias"),
 				_("The private alias for the account."), NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_USER_INFO,
-			g_param_spec_string("userinfo", _("User information"),
+			g_param_spec_string(PROP_USER_INFO_S, _("User information"),
 				_("Detailed user information for the account."), NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_BUDDY_ICON_PATH,
-			g_param_spec_string("buddy-icon-path", _("Buddy icon path"),
+			g_param_spec_string(PROP_BUDDY_ICON_PATH_S, _("Buddy icon path"),
 				_("Path to the buddyicon for the account."), NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ENABLED,
-			g_param_spec_boolean("enabled", _("Enabled"),
+			g_param_spec_boolean(PROP_ENABLED_S, _("Enabled"),
 				_("Whether the account is enabled or not."), FALSE,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_REMEMBER_PASSWORD,
-			g_param_spec_boolean("remember-password", _("Remember password"),
+			g_param_spec_boolean(PROP_REMEMBER_PASSWORD_S, _("Remember password"),
 				_("Whether to remember and store the password for this account."), FALSE,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_CHECK_MAIL,
-			g_param_spec_boolean("check-mail", _("Check mail"),
+			g_param_spec_boolean(PROP_CHECK_MAIL_S, _("Check mail"),
 				_("Whether to check mails for this account."), FALSE,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_CONNECTION,
-			g_param_spec_object("connection", _("Connection"),
+			g_param_spec_object(PROP_CONNECTION_S, _("Connection"),
 				_("The connection for the account."), PURPLE_TYPE_CONNECTION,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PROTOCOL_ID,
-			g_param_spec_string("protocol-id", _("Protocol ID"),
+			g_param_spec_string(PROP_PROTOCOL_ID_S, _("Protocol ID"),
 				_("ID of the protocol that is responsible for the account."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
@@ -3116,8 +3120,8 @@ purple_account_new(const char *username, const char *protocol_id)
 		return account;
 
 	account = g_object_new(PURPLE_TYPE_ACCOUNT,
-					"username",    username,
-					"protocol-id", protocol_id,
+					PROP_USERNAME_S,    username,
+					PROP_PROTOCOL_ID_S, protocol_id,
 					NULL);
 
 	return account;

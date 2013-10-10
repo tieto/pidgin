@@ -47,7 +47,7 @@ endif
 
 purple_coresources = \
 	account.c \
-	account-manager.c \
+	accounts.c \
 	accountopt.c \
 	blistnode.c \
 	blistnodetypes.c \
@@ -133,7 +133,7 @@ purple_builtsources = \
 
 purple_coreheaders = \
 	account.h \
-	account-manager.h \
+	accounts.h \
 	accountopt.h \
 	blistnode.h \
 	blistnodetypes.h \
@@ -269,7 +269,7 @@ CLEANFILES += \
 dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-server.h dbus-bindings.h dbus-purple.h dbus-useful.h dbus-define-api.h dbus-types.h
 
-dbus_exported = dbus-useful.h dbus-define-api.h account.h account-manager.h blistnode.h \
+dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h \
                 blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
                 conversationtypes.h conversations.h core.h xfer.h log.h notify.h \
                 prefs.h presence.h roomlist.h savedstatuses.h smiley.h status.h \

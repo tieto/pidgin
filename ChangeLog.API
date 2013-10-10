@@ -173,7 +173,7 @@ version 3.0.0 (??/??/????):
 
 		Changed:
 		* account.h has been split into account.h (PurpleAccount GObject) and
-		  account-manager.h (PurpleAccountManager GObject)
+		  accounts.h (Accounts subsystem)
 		* blist.h has been split into buddylist.h (PurpleBuddyList and
 		  subsystem), blistnode.h (PurpleBlistNode and PurpleCountingNode
 		  GObjects), blistnodetypes (Buddy, Chat, Contact, Group GObjects)

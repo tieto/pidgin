@@ -908,9 +908,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 	{
 		purple_debug_info("connection", "Connecting. gc = %p\n", gc);
 
-		g_signal_emit_by_name(purple_account_manager_get_instance(),
-				"account-connecting", account);
-
+		purple_signal_emit(purple_accounts_get_handle(), "account-connecting", account);
 		purple_protocol_class_login(protocol, account);
 	}
 }

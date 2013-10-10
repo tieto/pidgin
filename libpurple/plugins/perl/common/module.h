@@ -19,7 +19,7 @@ typedef struct group *Purple__Group;
 
 #include "../perl-common.h"
 
-#include "account-manager.h"
+#include "accounts.h"
 #include "accountopt.h"
 #include "buddylist.h"
 #include "buddyicon.h"
