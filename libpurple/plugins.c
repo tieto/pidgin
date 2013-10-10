@@ -1035,8 +1035,6 @@ purple_plugins_init(void)
 {
 	void *handle = purple_plugins_get_handle();
 
-	/* TODO These should be removed, as GPlugin provides these signals as
-	 *      GObject signals already. */
 	purple_signal_register(handle, "plugin-load",
 	                       purple_marshal_VOID__POINTER,
 	                       G_TYPE_NONE, 1, PURPLE_TYPE_PLUGIN);
