@@ -26,7 +26,7 @@
 #ifndef _PURPLE_SERVER_H_
 #define _PURPLE_SERVER_H_
 
-#include "accounts.h"
+#include "account-manager.h"
 #include "conversations.h"
 #include "protocols.h"
 

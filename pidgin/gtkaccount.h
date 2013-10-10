@@ -27,7 +27,7 @@
 #ifndef _PIDGINACCOUNT_H_
 #define _PIDGINACCOUNT_H_
 
-#include "accounts.h"
+#include "account-manager.h"
 
 typedef enum
 {

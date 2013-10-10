@@ -63,7 +63,7 @@ BUILT_SRC = marshallers.c enums.c
 C_SRC =	\
 			$(BUILT_SRC) \
 			account.c \
-			accounts.c \
+			account-manager.c \
 			accountopt.c \
 			blistnode.c \
 			blistnodetypes.c \

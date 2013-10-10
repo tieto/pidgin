@@ -154,7 +154,7 @@
 
 /* INTERNAL FUNCTIONS */
 
-#include "accounts.h"
+#include "account-manager.h"
 #include "connection.h"
 
 /* This is for the accounts code to notify the buddy icon code that

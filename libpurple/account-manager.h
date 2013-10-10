@@ -1,5 +1,5 @@
 /**
- * @file accounts.h Accounts API
+ * @file account-manager.h Account Manager API
  * @ingroup core
  * @see @ref account-signals
  */
@@ -24,8 +24,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_ACCOUNTS_H_
-#define _PURPLE_ACCOUNTS_H_
+#ifndef _PURPLE_ACCOUNT_MANAGER_H_
+#define _PURPLE_ACCOUNT_MANAGER_H_
 
 #include "account.h"
 #include "status.h"
@@ -222,4 +222,4 @@ void purple_accounts_schedule_save(void);
 
 G_END_DECLS
 
-#endif /* _PURPLE_ACCOUNTS_H_ */
+#endif /* _PURPLE_ACCOUNT_MANAGER_H_ */

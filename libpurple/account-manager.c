@@ -1,5 +1,5 @@
 /**
- * @file accounts.c Accounts API
+ * @file account-manager.c Account Manager API
  * @ingroup core
  */
 
@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
-#include "accounts.h"
+#include "account-manager.h"
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
