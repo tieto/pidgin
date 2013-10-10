@@ -190,9 +190,8 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 		if (prpl_info->set_info) {
 			account = purple_connection_get_account(gc);
 
-			if (purple_signal_emit_return_1(purple_accounts_get_handle(),
-					"account-setting-info", account, info))
-				return;
+			purple_signal_emit(purple_accounts_get_handle(),
+					"account-setting-info", account, info);
 
 			prpl_info->set_info(gc, info);
 
