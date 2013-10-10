@@ -264,8 +264,8 @@ purple_protocol_got_account_actions(PurpleAccount *account)
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(purple_account_is_connected(account));
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-actions-changed",
-	                   account);
+	g_signal_emit_by_name(purple_account_manager_get_instance(),
+	                      "account-actions-changed", account);
 }
 
 void
@@ -456,8 +456,8 @@ purple_protocol_change_account_status(PurpleAccount *account,
 
 	do_protocol_change_account_status(account, old_status, new_status);
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-status-changed",
-					account, old_status, new_status);
+	g_signal_emit_by_name(purple_account_manager_get_instance(),
+					"account-status-changed", account, old_status, new_status);
 }
 
 GList *
