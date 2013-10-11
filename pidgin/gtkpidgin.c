@@ -74,10 +74,6 @@
 # include <signal.h>
 #endif
 
-#ifdef ENABLE_INTROSPECTION
-# include <girepository.h>
-#endif
-
 #include <getopt.h>
 
 
@@ -459,20 +455,17 @@ int pidgin_start(int argc, char *argv[])
 	GStatBuf st;
 
 	struct option long_options[] = {
-		{"config",          required_argument, NULL, 'c'},
-		{"debug",           optional_argument, NULL, 'd'},
-		{"force-online",    no_argument,       NULL, 'f'},
-		{"help",            no_argument,       NULL, 'h'},
-		{"login",           optional_argument, NULL, 'l'},
-		{"multiple",        no_argument,       NULL, 'm'},
-		{"nologin",         no_argument,       NULL, 'n'},
-		{"session",         required_argument, NULL, 's'},
-		{"version",         no_argument,       NULL, 'v'},
-		{"display",         required_argument, NULL, 'D'},
-		{"sync",            no_argument,       NULL, 'S'},
-#ifdef ENABLE_INTROSPECTION
-		{"introspect-dump", required_argument, NULL, 'i'},
-#endif
+		{"config",       required_argument, NULL, 'c'},
+		{"debug",        optional_argument, NULL, 'd'},
+		{"force-online", no_argument,       NULL, 'f'},
+		{"help",         no_argument,       NULL, 'h'},
+		{"login",        optional_argument, NULL, 'l'},
+		{"multiple",     no_argument,       NULL, 'm'},
+		{"nologin",      no_argument,       NULL, 'n'},
+		{"session",      required_argument, NULL, 's'},
+		{"version",      no_argument,       NULL, 'v'},
+		{"display",      required_argument, NULL, 'D'},
+		{"sync",         no_argument,       NULL, 'S'},
 		{0, 0, 0, 0}
 	};
 
@@ -602,9 +595,9 @@ int pidgin_start(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dfhmnl::s:vi:",
+				  "c:dfhmnl::s:v",
 #else
-				  "c:dfhmnl::vi:",
+				  "c:dfhmnl::v",
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -646,12 +639,6 @@ int pidgin_start(int argc, char *argv[])
 		case 'S':   /* --sync */
 			/* handled by gtk_init_check below */
 			break;
-#ifdef ENABLE_INTROSPECTION
-		case 'i':	/* introspection */
-			g_irepository_dump(optarg, NULL);
-			return 0;
-			break;
-#endif
 		case '?':	/* show terse help */
 		default:
 			show_usage(argv[0], TRUE);
