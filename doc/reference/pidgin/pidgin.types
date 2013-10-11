@@ -1,0 +1,39 @@
+#include "gtkblist-theme.h"
+#include "gtkblist-theme-loader.h"
+#include "gtkcellrendererexpander.h"
+#include "gtkconv-theme.h"
+#include "gtkconv-theme-loader.h"
+#include "gtkicon-theme.h"
+#include "gtkicon-theme-loader.h"
+#include "gtkimhtml.h"
+#include "gtkimhtmltoolbar.h"
+#include "gtkmenutray.h"
+#include "gtkplugin.h"
+#include "gtkscrollbook.h"
+#include "gtksourceundomanager.h"
+#include "gtkstatusbox.h"
+#include "gtkstatus-icon-theme.h"
+#include "gtkwebview.h"
+#include "gtkwebviewtoolbar.h"
+#include "minidialog.h"
+#include "pidginstock.h"
+
+gtk_imhtml_get_type
+gtk_imhtmltoolbar_get_type
+gtk_source_undo_manager_get_type
+gtk_webview_get_type
+gtk_webviewtoolbar_get_type
+pidgin_blist_theme_get_type
+pidgin_blist_theme_loader_get_type
+pidgin_cell_renderer_expander_get_type
+pidgin_conversation_theme_get_type
+pidgin_conversation_theme_loader_get_type
+pidgin_icon_theme_get_type
+pidgin_icon_theme_loader_get_type
+pidgin_menu_tray_get_gtype
+pidgin_mini_dialog_get_type
+pidgin_plugin_info_get_type
+pidgin_scroll_book_get_type
+pidgin_status_box_get_type
+pidgin_status_icon_theme_get_type
+pidgin_stock_icon_theme_get_type

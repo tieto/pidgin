@@ -1,0 +1,3 @@
+#include "gntplugin.h"
+
+finch_plugin_info_get_type
