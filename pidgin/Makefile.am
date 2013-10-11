@@ -38,9 +38,10 @@ pkgconfig_DATA = pidgin-3.pc
 
 SUBDIRS = pixmaps plugins themes
 
+noinst_LTLIBRARIES = libpidgin.la
 bin_PROGRAMS = pidgin
 
-pidgin_SOURCES = \
+libpidgin_la_SOURCES = \
 	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
@@ -63,7 +64,7 @@ pidgin_SOURCES = \
 	gtkimhtml.c \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
-	gtkmain.c \
+	gtkpidgin.c \
 	gtkmedia.c \
 	gtkmenutray.c \
 	gtknotify.c \
@@ -94,7 +95,7 @@ pidgin_SOURCES = \
 	pidgintooltip.c \
 	smileyparser.c
 
-pidgin_headers = \
+libpidgin_la_headers = \
 	gtkaccount.h \
 	gtkblist.h \
 	gtkblist-theme.h \
@@ -150,22 +151,25 @@ pidgin_headers = \
 	pidgin.h \
 	smileyparser.h
 
-pidginincludedir=$(includedir)/pidgin
-pidgininclude_HEADERS = \
-	$(pidgin_headers)
+pidgin_SOURCES = \
+	pidgin.c
 
-pidgin_builtheaders = gtkdebug.html.h
+libpidginincludedir=$(includedir)/pidgin
+libpidgininclude_HEADERS = \
+	$(libpidgin_la_headers)
 
-BUILT_SOURCES = $(pidgin_builtheaders)
+libpidgin_la_builtheaders = gtkdebug.html.h
+
+BUILT_SOURCES = $(libpidgin_la_builtheaders)
 
 %.html.h: %.html
 	$(AM_V_GEN)echo "static const char $*_html[] = {" > $@
 	$(AM_V_at)$(sedpath) -e 's/^[ 	]\+//g' -e 's/[ 	]\+/ /g' $< | $(xxdpath) -i | sed -e 's/\(0x[0-9a-f][0-9a-f]\)$$/\1, 0x00/' >> $@
 	$(AM_V_at)echo "};" >> $@
 
-pidgin_DEPENDENCIES = @LIBOBJS@
-pidgin_LDFLAGS = -export-dynamic
-pidgin_LDADD = \
+libpidgin_la_DEPENDENCIES = @LIBOBJS@
+libpidgin_la_LDFLAGS = -export-dynamic
+libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
 	$(GLIB_LIBS) \
 	$(GPLUGIN_LIBS) \
@@ -188,6 +192,10 @@ pidgin_LDADD = \
 if USE_INTERNAL_LIBGADU
 INTGG_CFLAGS = -DUSE_INTERNAL_LIBGADU
 endif
+
+pidgin_DEPENDENCIES = $(builddir)/libpidgin.la
+pidgin_LDFLAGS = -export-dynamic
+pidgin_LDADD = $(builddir)/libpidgin.la $(libpidgin_la_LIBADD)
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
@@ -220,12 +228,12 @@ INTROSPECTION_SCANNER_ARGS = --add-include-path=$(builddir) --add-include-path=$
 INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple
 
 if HAVE_INTROSPECTION
-introspection_sources = $(pidgininclude_HEADERS)
+introspection_sources = $(libpidgininclude_HEADERS)
 
-Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/pidgin
+Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpidgin.la
 Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-$(GTK_VERSION).0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
 Pidgin_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
-Pidgin_3_0_gir_PROGRAM = $(builddir)/pidgin
+Pidgin_3_0_gir_LIBS = $(builddir)/libpidgin.la
 Pidgin_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
 

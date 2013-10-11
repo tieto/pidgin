@@ -1,9 +1,5 @@
-/**
- * @file pidgin.h UI definitions and includes
- * @ingroup pidgin
- */
-
-/* pidgin
+/*
+ * pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -22,47 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
  */
-/* #warning ***pidgin*** */
-#ifndef _PIDGIN_H_
-#define _PIDGIN_H_
 
-#include <gtk/gtk.h>
+#include "internal.h"
+#include "pidgin.h"
 
 #ifdef _WIN32
-# include "gtkwin32dep.h"
-#endif
-
-/**
- * Our UI's identifier.
- */
-#define PIDGIN_UI "gtk-pidgin"
-
-/* change this only when we have a sane upgrade path for old prefs */
-#define PIDGIN_PREFS_ROOT "/pidgin"
-
-/* Translators may want to transliterate the name.
- It is not to be translated. */
-#define PIDGIN_NAME _("Pidgin")
-
-#ifndef _WIN32
-# define PIDGIN_ALERT_TITLE ""
+/* suppress gcc "no previous prototype" warning */
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[]);
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[])
 #else
-# define PIDGIN_ALERT_TITLE PIDGIN_NAME
+int main(int argc, char *argv[])
+#endif
+{
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+	/* GLib threading system is automaticaly initialized since 2.32.
+	 * For earlier versions, it have to be initialized before calling any
+	 * Glib or GTK+ functions.
+	 */
+	g_thread_init(NULL);
 #endif
 
-/*
- * Spacings between components, as defined by the
- * GNOME Human Interface Guidelines.
- */
-#define PIDGIN_HIG_CAT_SPACE     18
-#define PIDGIN_HIG_BORDER        12
-#define PIDGIN_HIG_BOX_SPACE      6
+	g_set_prgname("Pidgin");
+	g_set_application_name(PIDGIN_NAME);
 
-/**
- * Start pidgin with the given command line arguments.
- */
-int pidgin_start(int argc, char *argv[]);
-
-#endif /* _PIDGIN_H_ */
-
+	return pidgin_start(argc, argv);
+}

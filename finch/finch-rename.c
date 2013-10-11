@@ -1,8 +1,5 @@
 /**
- * @defgroup finch Finch (GNT User Interface)
- */
-
-/* finch
+ * finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -22,21 +19,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _FINCH_H_
-#define _FINCH_H_
 
-#include <glib.h>
+#include "internal.h"
+#include "core.h"
 
-#define FINCH_UI "gnt-purple"
+#include "finch.h"
+#include "gnt.h"
 
-#define FINCH_PREFS_ROOT "/finch"
+int main(int argc, char *argv[])
+{
+	signal(SIGPIPE, SIG_IGN);
 
-#define FINCH_GET_DATA(obj)        (obj)->ui_data
-#define FINCH_SET_DATA(obj, data)  (obj)->ui_data = data
-
-/**
- * Start finch with the given command line arguments.
- */
-gboolean gnt_start(int *argc, char ***argv);
-
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+	/* GLib threading system is automaticaly initialized since 2.32.
+	 * For earlier versions, it have to be initialized before calling any
+	 * Glib or GTK+ functions.
+	 */
+	g_thread_init(NULL);
 #endif
+
+	g_set_prgname("Finch");
+	g_set_application_name(_("Finch"));
+
+	if (gnt_start(&argc, &argv)) {
+		gnt_main();
+
+#ifdef STANDALONE
+		purple_core_quit();
+#endif
+	}
+
+	return 0;
+}

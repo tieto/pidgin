@@ -11,18 +11,19 @@ SUBDIRS = libgnt plugins
 
 if ENABLE_GNT
 
+noinst_LTLIBRARIES = libfinch.la
 bin_PROGRAMS = finch
 
 endif
 
-finch_SOURCES = \
+libfinch_la_SOURCES = \
 	gntaccount.c \
 	gntblist.c \
 	gntcertmgr.c \
 	gntconn.c \
 	gntconv.c \
 	gntdebug.c \
-	finch.c \
+	gntfinch.c \
 	gntidle.c \
 	gntlog.c \
 	gntmedia.c \
@@ -38,7 +39,7 @@ finch_SOURCES = \
 	gntui.c \
 	gntxfer.c
 
-finch_headers = \
+libfinch_la_headers = \
 	gntaccount.h \
 	gntblist.h \
 	gntcertmgr.h \
@@ -61,13 +62,16 @@ finch_headers = \
 	gntui.h \
 	gntxfer.h
 
-finchincludedir=$(includedir)/finch
-finchinclude_HEADERS = \
-	$(finch_headers)
+finch_SOURCES = \
+	finch-rename.c
 
-finch_DEPENDENCIES = @LIBOBJS@
-finch_LDFLAGS = -export-dynamic
-finch_LDADD = \
+libfinchincludedir=$(includedir)/finch
+libfinchinclude_HEADERS = \
+	$(libfinch_la_headers)
+
+libfinch_la_DEPENDENCIES = @LIBOBJS@
+libfinch_la_LDFLAGS = -export-dynamic
+libfinch_la_LIBADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
 	$(INTLLIBS) \
@@ -79,6 +83,10 @@ finch_LDADD = \
 	$(INTROSPECTION_LIBS) \
 	./libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la
+
+finch_DEPENDENCIES = $(builddir)/libfinch.la
+finch_LDFLAGS = -export-dynamic
+finch_LDADD = $(builddir)/libfinch.la $(libfinch_la_LIBADD)
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
@@ -105,12 +113,12 @@ INTROSPECTION_SCANNER_ARGS = --add-include-path=$(builddir) --add-include-path=$
 INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple
 
 if HAVE_INTROSPECTION
-introspection_sources = $(finchinclude_HEADERS)
+introspection_sources = $(libfinchinclude_HEADERS)
 
-Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/finch
+Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libfinch.la
 Finch_3_0_gir_INCLUDES = GObject-2.0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
 Finch_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
-Finch_3_0_gir_PROGRAM = $(builddir)/finch
+Finch_3_0_gir_LIBS = $(builddir)/libfinch.la
 Finch_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
 

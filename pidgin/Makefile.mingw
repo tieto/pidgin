@@ -77,7 +77,7 @@ PIDGIN_C_SRC =	\
 			gtkimhtml.c \
 			gtkimhtmltoolbar.c \
 			gtklog.c \
-			gtkmain.c \
+			gtkpidgin.c \
 			gtkmedia.c \
 			gtkmenutray.c \
 			gtknotify.c \
@@ -103,6 +103,7 @@ PIDGIN_C_SRC =	\
 			gtkwhiteboard.c \
 			gtkxfer.c \
 			minidialog.c \
+			pidgin.c \
 			pidginstock.c \
 			pidgintooltip.c \
 			smileyparser.c \
