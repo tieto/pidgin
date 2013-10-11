@@ -63,7 +63,7 @@ libfinch_la_headers = \
 	gntxfer.h
 
 finch_SOURCES = \
-	finch-rename.c
+	finch.c
 
 libfinchincludedir=$(includedir)/finch
 libfinchinclude_HEADERS = \
