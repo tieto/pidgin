@@ -285,9 +285,6 @@ enum
 	PROP_IMGSTORE
 };
 
-#define PROP_SHORTCUT_S "shortcut"
-#define PROP_IMGSTORE_S "image"
-
 enum
 {
 	SIG_DESTROY,
@@ -355,8 +352,6 @@ purple_smiley_set_property(GObject *object, guint param_id, const GValue *value,
 				} else {
 					priv->checksum = NULL;
 				}
-
-				g_object_notify(object, PROP_IMGSTORE_S);
 			}
 			break;
 		default:
@@ -410,14 +405,14 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 	gobj_class->dispose = purple_smiley_dispose;
 
 	/* Shortcut */
-	pspec = g_param_spec_string(PROP_SHORTCUT_S, _("Shortcut"),
+	pspec = g_param_spec_string("shortcut", _("Shortcut"),
 			_("The text-shortcut for the smiley"),
 			NULL,
 			G_PARAM_READWRITE);
 	g_object_class_install_property(gobj_class, PROP_SHORTCUT, pspec);
 
 	/* Stored Image */
-	pspec = g_param_spec_pointer(PROP_IMGSTORE_S, _("Stored Image"),
+	pspec = g_param_spec_pointer("image", _("Stored Image"),
 			_("Stored Image. (that'll have to do for now)"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(gobj_class, PROP_IMGSTORE, pspec);
@@ -640,7 +635,7 @@ purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 
 	new_img = purple_smiley_data_new(smiley_data, smiley_data_len);
 
-	g_object_set(G_OBJECT(smiley), PROP_IMGSTORE_S, new_img, NULL);
+	g_object_set(G_OBJECT(smiley), "image", new_img, NULL);
 
 	/* If the old and new image files have different names we need
 	 * to unstore old image file. */
@@ -665,7 +660,7 @@ purple_smiley_create(const char *shortcut)
 {
 	PurpleSmiley *smiley;
 
-	smiley = PURPLE_SMILEY(g_object_new(PURPLE_TYPE_SMILEY, PROP_SHORTCUT_S, shortcut, NULL));
+	smiley = PURPLE_SMILEY(g_object_new(PURPLE_TYPE_SMILEY, "shortcut", shortcut, NULL));
 
 	return smiley;
 }
@@ -686,7 +681,7 @@ purple_smiley_new(PurpleStoredImage *img, const char *shortcut)
 	if (!smiley)
 		return NULL;
 
-	g_object_set(G_OBJECT(smiley), PROP_IMGSTORE_S, img, NULL);
+	g_object_set(G_OBJECT(smiley), "image", img, NULL);
 
 	return smiley;
 }
@@ -769,7 +764,7 @@ purple_smiley_set_shortcut(PurpleSmiley *smiley, const char *shortcut)
 	g_free(priv->shortcut);
 	priv->shortcut = g_strdup(shortcut);
 
-	g_object_notify(G_OBJECT(smiley), PROP_SHORTCUT_S);
+	g_object_notify(G_OBJECT(smiley), "shortcut");
 
 	purple_smileys_save();
 

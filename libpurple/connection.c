@@ -241,6 +241,8 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 		if (ops != NULL && ops->disconnected != NULL)
 			ops->disconnected(gc);
 	}
+
+	g_object_notify(G_OBJECT(gc), "state");
 }
 
 void
@@ -251,6 +253,8 @@ purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
 	g_return_if_fail(priv != NULL);
 
 	priv->flags = flags;
+
+	g_object_notify(G_OBJECT(gc), "flags");
 }
 
 void
@@ -262,6 +266,8 @@ purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 
 	g_free(priv->display_name);
 	priv->display_name = g_strdup(name);
+
+	g_object_notify(G_OBJECT(gc), "display-name");
 }
 
 void
@@ -587,13 +593,6 @@ purple_connection_error_info_get_type(void)
 /**************************************************************************
  * GObject code
  **************************************************************************/
-/* GObject Property names */
-#define PROP_PROTOCOL_S      "protocol"
-#define PROP_FLAGS_S         "flags"
-#define PROP_STATE_S         "state"
-#define PROP_ACCOUNT_S       "account"
-#define PROP_PASSWORD_S      "password"
-#define PROP_DISPLAY_NAME_S  "display-name"
 
 /* Set method for GObject properties */
 static void
@@ -682,7 +681,7 @@ purple_connection_constructed(GObject *object)
 
 	G_OBJECT_CLASS(parent_class)->constructed(object);
 
-	g_object_get(gc, PROP_ACCOUNT_S, &account, NULL);
+	g_object_get(gc, "account", &account, NULL);
 	purple_account_set_connection(account, gc);
 	g_object_unref(account);
 
@@ -774,40 +773,40 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->set_property = purple_connection_set_property;
 
 	g_object_class_install_property(obj_class, PROP_PROTOCOL,
-			g_param_spec_object(PROP_PROTOCOL_S, _("Protocol"),
+			g_param_spec_object("protocol", _("Protocol"),
 				_("The protocol that the connection is using."),
 				PURPLE_TYPE_PROTOCOL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FLAGS,
-			g_param_spec_flags(PROP_FLAGS_S, _("Connection flags"),
+			g_param_spec_flags("flags", _("Connection flags"),
 				_("The flags of the connection."),
 				PURPLE_TYPE_CONNECTION_FLAGS, 0,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_STATE,
-			g_param_spec_enum(PROP_STATE_S, _("Connection state"),
+			g_param_spec_enum("state", _("Connection state"),
 				_("The current state of the connection."),
 				PURPLE_TYPE_CONNECTION_STATE, PURPLE_CONNECTION_DISCONNECTED,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
+			g_param_spec_object("account", _("Account"),
 				_("The account using the connection."), PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PASSWORD,
-			g_param_spec_string(PROP_PASSWORD_S, _("Password"),
+			g_param_spec_string("password", _("Password"),
 				_("The password used for connection."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_DISPLAY_NAME,
-			g_param_spec_string(PROP_DISPLAY_NAME_S, _("Display name"),
+			g_param_spec_string("display-name", _("Display name"),
 				_("Your name that appears to other people."), NULL,
 				G_PARAM_READWRITE)
 			);
@@ -888,9 +887,9 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 				password);
 	else
 		gc = g_object_new(PURPLE_TYPE_CONNECTION,
-				PROP_PROTOCOL_S,  protocol,
-				PROP_ACCOUNT_S,   account,
-				PROP_PASSWORD_S,  password,
+				"protocol",  protocol,
+				"account",   account,
+				"password",  password,
 				NULL);
 
 	g_return_if_fail(gc != NULL);
@@ -955,9 +954,9 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 				password);
 	else
 		gc = g_object_new(PURPLE_TYPE_CONNECTION,
-				PROP_PROTOCOL_S,  protocol,
-				PROP_ACCOUNT_S,   account,
-				PROP_PASSWORD_S,  password,
+				"protocol",  protocol,
+				"account",   account,
+				"password",  password,
 				NULL);
 
 	g_return_if_fail(gc != NULL);

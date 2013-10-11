@@ -119,7 +119,6 @@ enum {
 	CU_PROP_CHAT,
 	CU_PROP_NAME,
 	CU_PROP_ALIAS,
-	CU_PROP_BUDDY,
 	CU_PROP_FLAGS,
 	CU_PROP_LAST
 };
@@ -374,10 +373,6 @@ im_conversation_write_message(PurpleConversation *conv, const char *who, const c
  * GObject code for IMs
  **************************************************************************/
 
-/* GObject Property names */
-#define IM_PROP_TYPING_STATE_S  "typing-state"
-#define IM_PROP_ICON_S          "icon"
-
 /* Set method for GObject properties */
 static void
 purple_im_conversation_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -516,14 +511,14 @@ static void purple_im_conversation_class_init(PurpleIMConversationClass *klass)
 	conv_class->write_message = im_conversation_write_message;
 
 	g_object_class_install_property(obj_class, IM_PROP_TYPING_STATE,
-			g_param_spec_enum(IM_PROP_TYPING_STATE_S, _("Typing state"),
+			g_param_spec_enum("typing-state", _("Typing state"),
 				_("Status of the user's typing of a message."),
 				PURPLE_TYPE_IM_TYPING_STATE, PURPLE_IM_NOT_TYPING,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, IM_PROP_ICON,
-			g_param_spec_pointer(IM_PROP_ICON_S, _("Buddy icon"),
+			g_param_spec_pointer("icon", _("Buddy icon"),
 				_("The buddy icon for the IM."),
 				G_PARAM_READWRITE)
 			);
@@ -762,6 +757,8 @@ purple_chat_conversation_set_id(PurpleChatConversation *chat, int id)
 	g_return_if_fail(priv != NULL);
 
 	priv->id = id;
+
+	g_object_notify(G_OBJECT(chat), "chat-id");
 }
 
 int
@@ -892,7 +889,6 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 				purple_chat_conversation_is_ignored_user(chat, user);
 
 		chatuser = purple_chat_user_new(chat, user, alias, flag);
-		purple_chat_user_set_buddy(chatuser, purple_blist_find_buddy(account, user) != NULL);
 
 		priv->in_room = g_list_prepend(priv->in_room, chatuser);
 		g_hash_table_replace(priv->users,
@@ -992,7 +988,6 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 
 	flags = purple_chat_user_get_flags(purple_chat_conversation_find_user(chat, old_user));
 	cb = purple_chat_user_new(chat, new_user, new_alias, flags);
-	purple_chat_user_set_buddy(cb, purple_blist_find_buddy(account, new_user) != NULL);
 
 	priv->in_room = g_list_prepend(priv->in_room, cb);
 	g_hash_table_replace(priv->users,
@@ -1197,6 +1192,8 @@ void purple_chat_conversation_set_nick(PurpleChatConversation *chat, const char 
 	g_free(priv->nick);
 	priv->nick = g_strdup(purple_normalize(
 			purple_conversation_get_account(PURPLE_CONVERSATION(chat)), nick));
+
+	g_object_notify(G_OBJECT(chat), "nick");
 }
 
 const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat) {
@@ -1340,13 +1337,6 @@ purple_chat_conversation_find_user(PurpleChatConversation *chat, const char *nam
 /**************************************************************************
  * GObject code for chats
  **************************************************************************/
-
-/* GObject Property names */
-#define CHAT_PROP_TOPIC_WHO_S  "topic-who"
-#define CHAT_PROP_TOPIC_S      "topic"
-#define CHAT_PROP_ID_S         "chat-id"
-#define CHAT_PROP_NICK_S       "nick"
-#define CHAT_PROP_LEFT_S       "left"
 
 /* Set method for GObject properties */
 static void
@@ -1549,31 +1539,31 @@ static void purple_chat_conversation_class_init(PurpleChatConversationClass *kla
 	conv_class->write_message = chat_conversation_write_message;
 
 	g_object_class_install_property(obj_class, CHAT_PROP_TOPIC_WHO,
-			g_param_spec_string(CHAT_PROP_TOPIC_WHO_S, _("Who set topic"),
+			g_param_spec_string("topic-who", _("Who set topic"),
 				_("Who set the chat topic."), NULL,
 				G_PARAM_READABLE)
 			);
 
 	g_object_class_install_property(obj_class, CHAT_PROP_TOPIC,
-			g_param_spec_string(CHAT_PROP_TOPIC_S, _("Topic"),
+			g_param_spec_string("topic", _("Topic"),
 				_("Topic of the chat."), NULL,
 				G_PARAM_READABLE)
 			);
 
 	g_object_class_install_property(obj_class, CHAT_PROP_ID,
-			g_param_spec_int(CHAT_PROP_ID_S, _("Chat ID"),
+			g_param_spec_int("chat-id", _("Chat ID"),
 				_("The ID of the chat."), G_MININT, G_MAXINT, 0,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, CHAT_PROP_NICK,
-			g_param_spec_string(CHAT_PROP_NICK_S, _("Nickname"),
+			g_param_spec_string("nick", _("Nickname"),
 				_("The nickname of the user in a chat."), NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, CHAT_PROP_LEFT,
-			g_param_spec_boolean(CHAT_PROP_LEFT_S, _("Left the chat"),
+			g_param_spec_boolean("left", _("Left the chat"),
 				_("Whether the user has left the chat."), FALSE,
 				G_PARAM_READWRITE)
 			);
@@ -1794,18 +1784,6 @@ purple_chat_user_get_chat(const PurpleChatUser *cb)
 	return priv->chat;
 }
 
-void
-purple_chat_user_set_buddy(const PurpleChatUser *cb,
-		gboolean buddy)
-{
-	PurpleChatUserPrivate *priv;
-	priv = PURPLE_CHAT_USER_GET_PRIVATE(cb);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->buddy = buddy;
-}
-
 gboolean
 purple_chat_user_is_buddy(const PurpleChatUser *cb)
 {
@@ -1820,13 +1798,6 @@ purple_chat_user_is_buddy(const PurpleChatUser *cb)
 /**************************************************************************
  * GObject code for chat user
  **************************************************************************/
-
-/* GObject Property names */
-#define CU_PROP_CHAT_S   "chat"
-#define CU_PROP_NAME_S   "name"
-#define CU_PROP_ALIAS_S  "alias"
-#define CU_PROP_BUDDY_S  "buddy"
-#define CU_PROP_FLAGS_S  "flags"
 
 /* Set method for GObject properties */
 static void
@@ -1847,9 +1818,6 @@ purple_chat_user_set_property(GObject *obj, guint param_id, const GValue *value,
 		case CU_PROP_ALIAS:
 			g_free(priv->alias);
 			priv->alias = g_strdup(g_value_get_string(value));
-			break;
-		case CU_PROP_BUDDY:
-			priv->buddy = g_value_get_boolean(value);
 			break;
 		case CU_PROP_FLAGS:
 			priv->flags = g_value_get_flags(value);
@@ -1877,9 +1845,6 @@ purple_chat_user_get_property(GObject *obj, guint param_id, GValue *value,
 		case CU_PROP_ALIAS:
 			g_value_set_string(value, purple_chat_user_get_alias(cb));
 			break;
-		case CU_PROP_BUDDY:
-			g_value_set_boolean(value, purple_chat_user_is_buddy(cb));
-			break;
 		case CU_PROP_FLAGS:
 			g_value_set_flags(value, purple_chat_user_get_flags(cb));
 			break;
@@ -1894,6 +1859,21 @@ static void
 purple_chat_user_init(GTypeInstance *instance, gpointer klass)
 {
 	PURPLE_DBUS_REGISTER_POINTER(PURPLE_CHAT_USER(instance), PurpleChatUser);
+}
+
+/* Called when done constructing */
+static void
+purple_chat_user_constructed(GObject *object)
+{
+	PurpleChatUserPrivate *priv = PURPLE_CHAT_USER_GET_PRIVATE(object);
+	PurpleAccount *account;
+
+	cb_parent_class->constructed(object);
+
+	account = purple_conversation_get_account(PURPLE_CONVERSATION(priv->chat));
+
+	if (purple_blist_find_buddy(account, priv->name) != NULL)
+		priv->buddy = TRUE;
 }
 
 /* GObject finalize function */
@@ -1922,6 +1902,7 @@ static void purple_chat_user_class_init(PurpleChatUserClass *klass)
 
 	cb_parent_class = g_type_class_peek_parent(klass);
 
+	obj_class->constructed = purple_chat_user_constructed;
 	obj_class->finalize = purple_chat_user_finalize;
 
 	/* Setup properties */
@@ -1929,31 +1910,25 @@ static void purple_chat_user_class_init(PurpleChatUserClass *klass)
 	obj_class->set_property = purple_chat_user_set_property;
 
 	g_object_class_install_property(obj_class, CU_PROP_CHAT,
-			g_param_spec_object(CU_PROP_CHAT_S, _("Chat"),
+			g_param_spec_object("chat", _("Chat"),
 				_("The chat the buddy belongs to."), PURPLE_TYPE_CHAT_CONVERSATION,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, CU_PROP_NAME,
-			g_param_spec_string(CU_PROP_NAME_S, _("Name"),
+			g_param_spec_string("name", _("Name"),
 				_("Name of the chat user."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, CU_PROP_ALIAS,
-			g_param_spec_string(CU_PROP_ALIAS_S, _("Alias"),
+			g_param_spec_string("alias", _("Alias"),
 				_("Alias of the chat user."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
-	g_object_class_install_property(obj_class, CU_PROP_BUDDY,
-			g_param_spec_boolean(CU_PROP_BUDDY_S, _("Is buddy"),
-				_("Whether the chat user is in the buddy list."), FALSE,
-				G_PARAM_READWRITE)
-			);
-
 	g_object_class_install_property(obj_class, CU_PROP_FLAGS,
-			g_param_spec_flags(CU_PROP_FLAGS_S, _("Buddy flags"),
+			g_param_spec_flags("flags", _("Buddy flags"),
 				_("The flags for the chat user."),
 				PURPLE_TYPE_CHAT_USER_FLAGS, PURPLE_CHAT_USER_NONE,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
@@ -1999,10 +1974,10 @@ purple_chat_user_new(PurpleChatConversation *chat, const char *name,
 	g_return_val_if_fail(name != NULL, NULL);
 
 	cb = g_object_new(PURPLE_TYPE_CHAT_USER,
-			CU_PROP_CHAT_S,  chat,
-			CU_PROP_NAME_S,  name,
-			CU_PROP_ALIAS_S, alias,
-			CU_PROP_FLAGS_S, flags,
+			"chat",  chat,
+			"name",  name,
+			"alias", alias,
+			"flags", flags,
 			NULL);
 
 	return cb;

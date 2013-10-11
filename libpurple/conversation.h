@@ -72,6 +72,7 @@ typedef enum
 	PURPLE_CONVERSATION_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
 	PURPLE_CONVERSATION_UPDATE_AWAY,     /**< The other user went away.                */
 	PURPLE_CONVERSATION_UPDATE_ICON,     /**< The other user's buddy icon changed.     */
+	PURPLE_CONVERSATION_UPDATE_NAME,
 	PURPLE_CONVERSATION_UPDATE_TITLE,
 	PURPLE_CONVERSATION_UPDATE_CHATLEFT,
 

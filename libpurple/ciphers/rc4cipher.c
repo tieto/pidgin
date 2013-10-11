@@ -88,8 +88,6 @@ purple_rc4_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 		state[y] = temp_swap;
 		x = (x + 1) % len;
 	}
-
-	g_object_notify(G_OBJECT(rc4_cipher), "key");
 }
 
 static ssize_t
@@ -242,8 +240,6 @@ purple_rc4_cipher_set_key_len(PurpleRC4Cipher *rc4_cipher,
 
 	priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
 	priv->key_len = key_len;
-
-	g_object_notify(G_OBJECT(rc4_cipher), "key_len");
 }
 
 gint

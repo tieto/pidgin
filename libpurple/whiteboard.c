@@ -113,6 +113,8 @@ void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state)
 	g_return_if_fail(priv != NULL);
 
 	priv->state = state;
+
+	g_object_notify(G_OBJECT(wb), "state");
 }
 
 int purple_whiteboard_get_state(const PurpleWhiteboard *wb)
@@ -283,6 +285,8 @@ void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list)
 	g_return_if_fail(priv != NULL);
 
 	priv->draw_list = draw_list;
+
+	g_object_notify(G_OBJECT(wb), "draw-list");
 }
 
 void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data)
@@ -320,12 +324,6 @@ gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb)
 /******************************************************************************
  * GObject code
  *****************************************************************************/
-/* GObject Property names */
-#define PROP_STATE_S      "state"
-#define PROP_ACCOUNT_S    "account"
-#define PROP_WHO_S        "who"
-#define PROP_DRAW_LIST_S  "draw-list"
-
 /* Set method for GObject properties */
 static void
 purple_whiteboard_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -442,26 +440,26 @@ purple_whiteboard_class_init(PurpleWhiteboardClass *klass)
 	obj_class->set_property = purple_whiteboard_set_property;
 
 	g_object_class_install_property(obj_class, PROP_STATE,
-			g_param_spec_int(PROP_STATE_S, _("State"),
+			g_param_spec_int("state", _("State"),
 				_("State of the whiteboard."),
 				G_MININT, G_MAXINT, 0,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
+			g_param_spec_object("account", _("Account"),
 				_("The whiteboard's account."), PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_WHO,
-			g_param_spec_string(PROP_WHO_S, _("Who"),
+			g_param_spec_string("who", _("Who"),
 				_("Who you're drawing with."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_DRAW_LIST,
-			g_param_spec_pointer(PROP_DRAW_LIST_S, _("Draw list"),
+			g_param_spec_pointer("draw-list", _("Draw list"),
 				_("A list of points to draw to the buddy."),
 				G_PARAM_READWRITE)
 			);
@@ -512,9 +510,9 @@ PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who,
 				who, state);
 	else
 		wb = g_object_new(PURPLE_TYPE_WHITEBOARD,
-			PROP_ACCOUNT_S, account,
-			PROP_WHO_S,     who,
-			PROP_STATE_S,   state,
+			"account", account,
+			"who",     who,
+			"state",   state,
 			NULL
 		);
 

@@ -738,6 +738,8 @@ purple_xfer_set_remote_user(PurpleXfer *xfer, const char *who)
 
 	g_free(priv->who);
 	priv->who = g_strdup(who);
+
+	g_object_notify(G_OBJECT(xfer), "remote-user");
 }
 
 const char *
@@ -899,6 +901,8 @@ void purple_xfer_set_fd(PurpleXfer *xfer, int fd)
 	g_return_if_fail(priv != NULL);
 
 	priv->fd = fd;
+
+	g_object_notify(G_OBJECT(xfer), "fd");
 }
 
 void purple_xfer_set_watcher(PurpleXfer *xfer, int watcher)
@@ -908,6 +912,8 @@ void purple_xfer_set_watcher(PurpleXfer *xfer, int watcher)
 	g_return_if_fail(priv != NULL);
 
 	priv->watcher = watcher;
+
+	g_object_notify(G_OBJECT(xfer), "watcher");
 }
 
 void
@@ -967,6 +973,8 @@ purple_xfer_set_message(PurpleXfer *xfer, const char *message)
 
 	g_free(priv->message);
 	priv->message = g_strdup(message);
+
+	g_object_notify(G_OBJECT(xfer), "message");
 }
 
 const char *
@@ -988,6 +996,8 @@ purple_xfer_set_filename(PurpleXfer *xfer, const char *filename)
 
 	g_free(priv->filename);
 	priv->filename = g_strdup(filename);
+
+	g_object_notify(G_OBJECT(xfer), "filename");
 }
 
 void
@@ -999,6 +1009,8 @@ purple_xfer_set_local_filename(PurpleXfer *xfer, const char *filename)
 
 	g_free(priv->local_filename);
 	priv->local_filename = g_strdup(filename);
+
+	g_object_notify(G_OBJECT(xfer), "local-filename");
 }
 
 void
@@ -1010,6 +1022,8 @@ purple_xfer_set_size(PurpleXfer *xfer, goffset size)
 
 	priv->size = size;
 	priv->bytes_remaining = priv->size - purple_xfer_get_bytes_sent(xfer);
+
+	g_object_notify(G_OBJECT(xfer), "file-size");
 }
 
 void
@@ -1020,6 +1034,8 @@ purple_xfer_set_local_port(PurpleXfer *xfer, guint16 local_port)
 	g_return_if_fail(priv != NULL);
 
 	priv->local_port = local_port;
+
+	g_object_notify(G_OBJECT(xfer), "local-port");
 }
 
 void
@@ -1031,6 +1047,8 @@ purple_xfer_set_bytes_sent(PurpleXfer *xfer, goffset bytes_sent)
 
 	priv->bytes_sent = bytes_sent;
 	priv->bytes_remaining = purple_xfer_get_size(xfer) - bytes_sent;
+
+	g_object_notify(G_OBJECT(xfer), "bytes-sent");
 }
 
 PurpleXferUiOps *
@@ -1926,24 +1944,6 @@ gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer)
 /**************************************************************************
  * GObject code
  **************************************************************************/
-/* GObject Property names */
-#define PROP_TYPE_S            "type"
-#define PROP_ACCOUNT_S         "account"
-#define PROP_REMOTE_USER_S     "remote-user"
-#define PROP_MESSAGE_S         "message"
-#define PROP_FILENAME_S        "filename"
-#define PROP_LOCAL_FILENAME_S  "local-filename"
-#define PROP_FILE_SIZE_S       "file-size"
-#define PROP_REMOTE_IP_S       "remote-ip"
-#define PROP_LOCAL_PORT_S      "local-port"
-#define PROP_REMOTE_PORT_S     "remote-port"
-#define PROP_FD_S              "fd"
-#define PROP_WATCHER_S         "watcher"
-#define PROP_BYTES_SENT_S      "bytes-sent"
-#define PROP_START_TIME_S      "start-time"
-#define PROP_END_TIME_S        "end-time"
-#define PROP_STATUS_S          "status"
-
 /* Set method for GObject properties */
 static void
 purple_xfer_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -2163,86 +2163,86 @@ purple_xfer_class_init(PurpleXferClass *klass)
 	obj_class->set_property = purple_xfer_set_property;
 
 	g_object_class_install_property(obj_class, PROP_TYPE,
-			g_param_spec_enum(PROP_TYPE_S, _("Transfer type"),
+			g_param_spec_enum("type", _("Transfer type"),
 				_("The type of file transfer."), PURPLE_TYPE_XFER_TYPE,
 				PURPLE_XFER_TYPE_UNKNOWN,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
+			g_param_spec_object("account", _("Account"),
 				_("The account sending or receiving the file."),
 				PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_REMOTE_USER,
-			g_param_spec_string(PROP_REMOTE_USER_S, _("Remote user"),
+			g_param_spec_string("remote-user", _("Remote user"),
 				_("The name of the remote user."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_MESSAGE,
-			g_param_spec_string(PROP_MESSAGE_S, _("Message"),
+			g_param_spec_string("message", _("Message"),
 				_("The message for the file transfer."), NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FILENAME,
-			g_param_spec_string(PROP_FILENAME_S, _("Filename"),
+			g_param_spec_string("filename", _("Filename"),
 				_("The filename for the file transfer."), NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_LOCAL_FILENAME,
-			g_param_spec_string(PROP_LOCAL_FILENAME_S, _("Local filename"),
+			g_param_spec_string("local-filename", _("Local filename"),
 				_("The local filename for the file transfer."), NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FILE_SIZE,
-			g_param_spec_int64(PROP_FILE_SIZE_S, _("File size"),
+			g_param_spec_int64("file-size", _("File size"),
 				_("Size of the file in a file transfer."),
 				G_MININT64, G_MAXINT64, 0,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_REMOTE_IP,
-			g_param_spec_string(PROP_REMOTE_IP_S, _("Remote IP"),
+			g_param_spec_string("remote-ip", _("Remote IP"),
 				_("The remote IP address in the file transfer."), NULL,
 				G_PARAM_READABLE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_LOCAL_PORT,
-			g_param_spec_int(PROP_LOCAL_PORT_S, _("Local port"),
+			g_param_spec_int("local-port", _("Local port"),
 				_("The local port number in the file transfer."),
 				G_MININT, G_MAXINT, 0,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_REMOTE_PORT,
-			g_param_spec_int(PROP_REMOTE_PORT_S, _("Remote port"),
+			g_param_spec_int("remote-port", _("Remote port"),
 				_("The remote port number in the file transfer."),
 				G_MININT, G_MAXINT, 0,
 				G_PARAM_READABLE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FD,
-			g_param_spec_int(PROP_FD_S, _("Socket FD"),
+			g_param_spec_int("fd", _("Socket FD"),
 				_("The socket file descriptor."),
 				G_MININT, G_MAXINT, 0,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_WATCHER,
-			g_param_spec_int(PROP_WATCHER_S, _("Watcher"),
+			g_param_spec_int("watcher", _("Watcher"),
 				_("The watcher for the file transfer."),
 				G_MININT, G_MAXINT, 0,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_BYTES_SENT,
-			g_param_spec_int64(PROP_BYTES_SENT_S, _("Bytes sent"),
+			g_param_spec_int64("bytes-sent", _("Bytes sent"),
 				_("The number of bytes sent (or received) so far."),
 				G_MININT64, G_MAXINT64, 0,
 				G_PARAM_READWRITE)
@@ -2256,7 +2256,7 @@ purple_xfer_class_init(PurpleXferClass *klass)
 #else
 #error Unknown size of time_t
 #endif
-				(PROP_START_TIME_S, _("Start time"),
+				("start-time", _("Start time"),
 				_("The time the transfer of a file started."),
 #if SIZEOF_TIME_T == 4
 				G_MININT, G_MAXINT, 0,
@@ -2276,7 +2276,7 @@ purple_xfer_class_init(PurpleXferClass *klass)
 #else
 #error Unknown size of time_t
 #endif
-				(PROP_END_TIME_S, _("End time"),
+				("end-time", _("End time"),
 				_("The time the transfer of a file ended."),
 #if SIZEOF_TIME_T == 4
 				G_MININT, G_MAXINT, 0,
@@ -2289,7 +2289,7 @@ purple_xfer_class_init(PurpleXferClass *klass)
 			);
 
 	g_object_class_install_property(obj_class, PROP_STATUS,
-			g_param_spec_enum(PROP_STATUS_S, _("Status"),
+			g_param_spec_enum("status", _("Status"),
 				_("The current status for the file transfer."),
 				PURPLE_TYPE_XFER_STATUS, PURPLE_XFER_STATUS_UNKNOWN,
 				G_PARAM_READWRITE)
@@ -2343,9 +2343,9 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 				who);
 	else
 		xfer = g_object_new(PURPLE_TYPE_XFER,
-			PROP_ACCOUNT_S,     account,
-			PROP_TYPE_S,        type,
-			PROP_REMOTE_USER_S, who,
+			"account",     account,
+			"type",        type,
+			"remote-user", who,
 			NULL
 		);
 

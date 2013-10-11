@@ -117,6 +117,8 @@ void purple_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 
 	if (ops && ops->set_fields)
 		ops->set_fields(list, fields);
+
+	g_object_notify(G_OBJECT(list), "fields");
 }
 
 void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress)
@@ -129,6 +131,8 @@ void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress)
 
 	if (ops && ops->in_progress)
 		ops->in_progress(list, in_progress);
+
+	g_object_notify(G_OBJECT(list), "in-progress");
 }
 
 gboolean purple_roomlist_get_in_progress(PurpleRoomlist *list)
@@ -255,11 +259,6 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
 /**************************************************************************/
 /*@{*/
 
-/* GObject Property names */
-#define PROP_ACCOUNT_S      "account"
-#define PROP_FIELDS_S       "fields"
-#define PROP_IN_PROGRESS_S  "in-progress"
-
 /* Set method for GObject properties */
 static void
 purple_roomlist_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -360,20 +359,20 @@ purple_roomlist_class_init(PurpleRoomlistClass *klass)
 	obj_class->set_property = purple_roomlist_set_property;
 
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
+			g_param_spec_object("account", _("Account"),
 				_("The account for the room list."),
 				PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FIELDS,
-			g_param_spec_pointer(PROP_FIELDS_S, _("Fields"),
+			g_param_spec_pointer("fields", _("Fields"),
 				_("The list of fields for a roomlist."),
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_IN_PROGRESS,
-			g_param_spec_boolean(PROP_IN_PROGRESS_S, _("In progress"),
+			g_param_spec_boolean("in-progress", _("In progress"),
 				_("Whether the room list is being fetched."), FALSE,
 				G_PARAM_READWRITE)
 			);
@@ -422,7 +421,7 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 		list = purple_protocol_factory_iface_roomlist_new(protocol, account);
 	else
 		list = g_object_new(PURPLE_TYPE_ROOMLIST,
-			PROP_ACCOUNT_S, account,
+			"account", account,
 			NULL
 		);
 
