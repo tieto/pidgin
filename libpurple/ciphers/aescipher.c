@@ -105,8 +105,6 @@ purple_aes_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 		memset(priv->iv, 0, sizeof(priv->iv));
 	else
 		memcpy(priv->iv, iv, len);
-
-	g_object_notify(G_OBJECT(cipher), "iv");
 }
 
 static void
@@ -125,8 +123,6 @@ purple_aes_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 	memset(priv->key, 0, sizeof(priv->key));
 	if (len > 0)
 		memcpy(priv->key, key, len);
-
-	g_object_notify(G_OBJECT(cipher), "key");
 }
 
 static guchar *
@@ -507,10 +503,8 @@ purple_aes_cipher_set_batch_mode(PurpleCipher *cipher,
 {
 	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
-	if (mode == PURPLE_CIPHER_BATCH_MODE_CBC) {
-		g_object_notify(G_OBJECT(cipher), "batch_mode");
+	if (mode == PURPLE_CIPHER_BATCH_MODE_CBC)
 		return;
-	}
 
 	purple_debug_error("cipher-aes", "unsupported batch mode\n");
 	priv->failure = TRUE;

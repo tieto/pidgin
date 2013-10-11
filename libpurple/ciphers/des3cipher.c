@@ -100,8 +100,6 @@ purple_des3_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 					purple_cipher_get_key_size(PURPLE_CIPHER(priv->key2)));
 	purple_cipher_set_key(PURPLE_CIPHER(priv->key3), key + 16,
 					purple_cipher_get_key_size(PURPLE_CIPHER(priv->key3)));
-
-	g_object_notify(G_OBJECT(des3_cipher), "key");
 }
 
 static ssize_t
@@ -353,8 +351,6 @@ purple_des3_cipher_set_batch_mode(PurpleCipher *cipher, PurpleCipherBatchMode mo
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
 	priv->mode = mode;
-
-	g_object_notify(G_OBJECT(des3_cipher), "batch_mode");
 }
 
 static PurpleCipherBatchMode
@@ -375,8 +371,6 @@ purple_des3_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 	g_return_if_fail(len == 8);
 
 	memcpy(priv->iv, iv, len);
-
-	g_object_notify(G_OBJECT(des3_cipher), "iv");
 }
 
 /******************************************************************************

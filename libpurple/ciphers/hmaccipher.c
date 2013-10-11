@@ -59,7 +59,6 @@ purple_hmac_cipher_set_hash(PurpleCipher *cipher,
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
 	priv->hash = g_object_ref(G_OBJECT(hash));
-	g_object_notify(G_OBJECT(cipher), "hash");
 }
 
 /*******************************************************************************
