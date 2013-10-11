@@ -425,6 +425,8 @@ purple_conversation_set_name(PurpleConversation *conv, const char *name)
 	priv->name = g_strdup(name);
 
 	purple_conversation_autoset_title(conv);
+
+	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_NAME);
 }
 
 const char *
@@ -914,13 +916,6 @@ purple_conversation_get_max_message_size(PurpleConversation *conv)
  * GObject code
  **************************************************************************/
 
-/* GObject Property names */
-#define PROP_ACCOUNT_S   "account"
-#define PROP_NAME_S      "name"
-#define PROP_TITLE_S     "title"
-#define PROP_LOGGING_S   "logging"
-#define PROP_FEATURES_S  "features"
-
 /* Set method for GObject properties */
 static void
 purple_conversation_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -993,7 +988,7 @@ purple_conversation_constructed(GObject *object)
 
 	parent_class->constructed(object);
 
-	g_object_get(object, PROP_ACCOUNT_S, &account, NULL);
+	g_object_get(object, "account", &account, NULL);
 	gc = purple_account_get_connection(account);
 
 	/* copy features from the connection. */
@@ -1067,31 +1062,31 @@ purple_conversation_class_init(PurpleConversationClass *klass)
 	obj_class->set_property = purple_conversation_set_property;
 
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object(PROP_ACCOUNT_S, _("Account"),
+			g_param_spec_object("account", _("Account"),
 				_("The account for the conversation."), PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_NAME,
-			g_param_spec_string(PROP_NAME_S, _("Name"),
+			g_param_spec_string("name", _("Name"),
 				_("The name of the conversation."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_TITLE,
-			g_param_spec_string(PROP_TITLE_S, _("Title"),
+			g_param_spec_string("title", _("Title"),
 				_("The title of the conversation."), NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_LOGGING,
-			g_param_spec_boolean(PROP_LOGGING_S, _("Logging status"),
+			g_param_spec_boolean("logging", _("Logging status"),
 				_("Whether logging is enabled or not."), FALSE,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FEATURES,
-			g_param_spec_flags(PROP_FEATURES_S, _("Connection features"),
+			g_param_spec_flags("features", _("Connection features"),
 				_("The connection features of the conversation."),
 				PURPLE_TYPE_CONNECTION_FLAGS, 0,
 				G_PARAM_READWRITE)

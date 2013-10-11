@@ -684,14 +684,6 @@ void purple_chat_user_set_flags(PurpleChatUser *cb, PurpleChatUserFlags flags);
 PurpleChatUserFlags purple_chat_user_get_flags(const PurpleChatUser *cb);
 
 /**
- * Sets if this chat user is on the buddy list.
- *
- * @param cb	The chat user.
- * @param buddy TRUE if the chat user is on the buddy list.
- */
-void purple_chat_user_set_buddy(const PurpleChatUser *cb, gboolean buddy);
-
-/**
  * Indicates if this chat user is on the buddy list.
  *
  * @param cb	The chat user.
