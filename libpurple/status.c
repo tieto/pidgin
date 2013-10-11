@@ -593,6 +593,9 @@ status_has_changed(PurpleStatus *status)
 		if (old_status != NULL && (old_status != status))
 			PURPLE_STATUS_GET_PRIVATE(old_status)->active = FALSE;
 		g_object_set(presence, "active-status", status, NULL);
+
+		g_object_notify(G_OBJECT(old_status), "active");
+		g_object_notify(G_OBJECT(status), "active");
 	}
 	else
 		old_status = NULL;
@@ -1111,11 +1114,6 @@ purple_mood_get_type(void)
 * GObject code
 **************************************************************************/
 
-/* GObject Property names */
-#define PROP_STATUS_TYPE_S  "status-type"
-#define PROP_PRESENCE_S     "presence"
-#define PROP_ACTIVE_S       "active"
-
 /* Set method for GObject properties */
 static void
 purple_status_set_property(GObject *obj, guint param_id, const GValue *value,
@@ -1228,19 +1226,19 @@ purple_status_class_init(PurpleStatusClass *klass)
 	obj_class->set_property = purple_status_set_property;
 
 	g_object_class_install_property(obj_class, PROP_STATUS_TYPE,
-			g_param_spec_pointer(PROP_STATUS_TYPE_S, _("Status type"),
+			g_param_spec_pointer("status-type", _("Status type"),
 				_("The PurpleStatusType of the status."),
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PRESENCE,
-			g_param_spec_object(PROP_PRESENCE_S, _("Presence"),
+			g_param_spec_object("presence", _("Presence"),
 				_("The presence that the status belongs to."), PURPLE_TYPE_PRESENCE,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ACTIVE,
-			g_param_spec_boolean(PROP_ACTIVE_S, _("Active"),
+			g_param_spec_boolean("active", _("Active"),
 				_("Whether the status is active or not."), FALSE,
 				G_PARAM_READWRITE)
 			);
@@ -1282,8 +1280,8 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 	g_return_val_if_fail(PURPLE_IS_PRESENCE(presence), NULL);
 
 	return g_object_new(PURPLE_TYPE_STATUS,
-			PROP_STATUS_TYPE_S,  status_type,
-			PROP_PRESENCE_S,     presence,
+			"status-type",  status_type,
+			"presence",     presence,
 			NULL);
 }
 
