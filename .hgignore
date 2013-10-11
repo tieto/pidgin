@@ -52,9 +52,11 @@ depcomp
 doc/finch.1$
 doc/html
 doc/pidgin.1$
+doc/reference/.*/version.xml
 finch/finch$
 finch/libgnt/gntmarshal.c
 finch/libgnt/gntmarshal.h
+gtk-doc.make
 install-sh
 intltool-.*
 libpurple/dbus-bindings.c
@@ -85,6 +87,7 @@ libpurple/win32/libpurplerc.rc$
 libtool
 local.mak
 ltmain.sh
+m4macros/gtk-doc.m4
 m4macros/intltool.m4
 m4macros/ltoptions.m4
 m4macros/ltsugar.m4

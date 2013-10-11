@@ -1,3 +1,7 @@
+if ENABLE_GTK_DOC
+SUBDIRS = reference
+endif
+
 man_MANS =
 
 if ENABLE_GTK

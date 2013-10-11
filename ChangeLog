@@ -76,6 +76,9 @@ version 3.0.0 (??/??/????):
 	* Ciphers are now built from the libpurple directory.
 	* Added dependency GPlugin, which is now required to build libpurple with
 	  plugins support.
+	* Added dependency gobject-introspection, which is now required to enable
+	  non-native plugin support.
+	* Doxygen has been replaced by gtk-doc for generating documentation.
 
 	Windows-Specific Changes:
 	* Updates to dependencies:

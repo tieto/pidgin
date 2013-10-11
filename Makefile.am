@@ -120,11 +120,12 @@ package_revision.h: package_revision_raw.txt
 # line does is tell 'distcheck' to shut up and ignore those two files.
 distcleancheck_listfiles = find . -type f -a ! -name package_revision.h
 
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 if PLUGINS
-DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
+DISTCHECK_CONFIGURE_FLAGS += --enable-introspection
 endif
 
-SUBDIRS = . libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
+SUBDIRS = . m4macros libpurple $(GNT_DIR) $(GTK_DIR) $(PO_DIR) share/ca-certs share/sounds doc
 
 # perl's MakeMaker uninstall foo doesn't work well with DESTDIR set, which
 # breaks "make distcheck" unless we ignore perl things
