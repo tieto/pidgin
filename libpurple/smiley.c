@@ -352,8 +352,6 @@ purple_smiley_set_property(GObject *object, guint param_id, const GValue *value,
 				} else {
 					priv->checksum = NULL;
 				}
-
-				g_object_notify(object, "image");
 			}
 			break;
 		default:
