@@ -64,7 +64,6 @@ libpidgin_la_SOURCES = \
 	gtkimhtml.c \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
-	gtkpidgin.c \
 	gtkmedia.c \
 	gtkmenutray.c \
 	gtknotify.c \
@@ -91,6 +90,7 @@ libpidgin_la_SOURCES = \
 	gtkwebviewtoolbar.c \
 	gtkwhiteboard.c \
 	gtkxfer.c \
+	libpidgin.c \
 	minidialog.c \
 	pidgintooltip.c \
 	smileyparser.c

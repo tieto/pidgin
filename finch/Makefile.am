@@ -23,7 +23,6 @@ libfinch_la_SOURCES = \
 	gntconn.c \
 	gntconv.c \
 	gntdebug.c \
-	gntfinch.c \
 	gntidle.c \
 	gntlog.c \
 	gntmedia.c \
@@ -37,7 +36,8 @@ libfinch_la_SOURCES = \
 	gntsound.c \
 	gntstatus.c \
 	gntui.c \
-	gntxfer.c
+	gntxfer.c \
+	libfinch.c
 
 libfinch_la_headers = \
 	gntaccount.h \
