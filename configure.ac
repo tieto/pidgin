@@ -2520,63 +2520,6 @@ AC_ARG_ENABLE(trayicon-compat, AS_HELP_STRING([--enable-trayicon-compat], [insta
 
 AM_CONDITIONAL(ENABLE_TRAYCOMPAT, test "x$enable_traycompat" = "xyes")
 
-dnl #######################################################################
-dnl # Check for Doxygen and dot (part of GraphViz)
-dnl #######################################################################
-AC_ARG_ENABLE(doxygen,
-	[AS_HELP_STRING([--disable-doxygen],
-		[disable documentation with doxygen])],
-	enable_doxygen="$enableval", enable_doxygen="yes")
-AC_ARG_ENABLE(dot,
-	[AS_HELP_STRING([--disable-dot],
-		[disable graphs in doxygen via 'dot'])],
-	enable_dot="$enableval", enable_dot="yes")
-AC_ARG_ENABLE(devhelp,
-	[AS_HELP_STRING([--disable-devhelp],
-		[disable building index for devhelp documentation browser])],
-	enable_devhelp="$enableval", enable_devhelp="yes")
-
-if test "x$enable_doxygen" = xyes; then
-	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
-	if test $DOXYGEN = false; then
-		AC_MSG_WARN([*** Doxygen not found, docs will not be available])
-		enable_doxygen="no"
-	else
-		AC_DEFINE_UNQUOTED(HAVE_DOXYGEN, 1, [whether or not we have doxygen])
-
-		if test "x$enable_dot" = "xyes"; then
-			AC_CHECK_PROG(DOT, dot, true, false)
-
-			if test $DOT = false; then
-				enable_dot="no";
-				AC_MSG_WARN([*** GraphViz dot not found, docs will not have graphs])
-			else
-				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
-			fi
-		fi
-
-		if test "x$enable_devhelp" = "xyes"; then
-			AC_CHECK_PROG(XSLTPROC, xsltproc, true, false)
-
-			if test $XSLTPROC = false; then
-				enable_devhelp="no";
-				AC_MSG_WARN([*** xsltproc not found; devhelp index will not be created])
-			else
-				AC_DEFINE_UNQUOTED(HAVE_XSLTPROC, 1, [whether or not we have xsltproc for devhelp index])
-			fi
-		fi
-	fi
-else
-	enable_dot="no"
-	enable_devhelp="no"
-fi
-
-AC_SUBST(enable_doxygen)
-AC_SUBST(enable_dot)
-AC_SUBST(enable_devhelp)
-AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
-AM_CONDITIONAL(HAVE_XSLTPROC, test "x$enable_devhelp" = "xyes")
-
 AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
 
@@ -2587,7 +2530,6 @@ fi
 AM_CONDITIONAL(PURPLE_AVAILABLE, true)
 
 AC_CONFIG_FILES([Makefile
-		   Doxyfile
 		   doc/Makefile
 		   doc/pidgin.1
 		   doc/finch.1
