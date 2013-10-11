@@ -61,6 +61,7 @@
 #include <dnssrv.h>
 #include <enums.h>
 #include <eventloop.h>
+#include <hash.h>
 #include <idle.h>
 #include <imgstore.h>
 #include <log.h>
