@@ -80,7 +80,21 @@ expand_content_files=
 GTKDOC_CFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
-	-I$(top_srcdir)/pidgin
+	-I$(top_srcdir)/pidgin \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(GCR_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GSTVIDEO_CFLAGS) \
+	$(GSTINTERFACES_CFLAGS) \
+	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(X11_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(GTKSPELL_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(WEBKIT_CFLAGS) \
+	$(INTGG_CFLAGS)
 
 GTKDOC_LIBS = \
 	$(top_builddir)/pidgin/libpidgin.la

@@ -1,4 +1,5 @@
 #include "purple.h"
+#include "media-gst.h"
 
 purple_account_get_type
 purple_account_presence_get_type

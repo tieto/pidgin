@@ -81,7 +81,14 @@ GTKDOC_CFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir)/finch \
-	-I$(top_srcdir)/finch/libgnt
+	-I$(top_srcdir)/finch/libgnt \
+	$(DEBUG_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GNT_CFLAGS)
 
 GTKDOC_LIBS = \
 	$(top_builddir)/finch/libfinch.la

@@ -79,7 +79,22 @@ expand_content_files=
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
 GTKDOC_CFLAGS = \
 	-I$(top_srcdir) \
-	-I$(top_srcdir)/libpurple
+	-I$(top_srcdir)/libpurple \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(DEBUG_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(FARSTREAM_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GSTVIDEO_CFLAGS) \
+	$(GSTINTERFACES_CFLAGS) \
+	$(IDN_CFLAGS) \
+	$(NETWORKMANAGER_CFLAGS) \
+	$(JSON_CFLAGS) \
+	$(GNUTLS_CFLAGS) \
+	$(NSS_CFLAGS) \
+	$(ZLIB_CFLAGS)
 
 GTKDOC_LIBS = \
 	$(top_builddir)/libpurple/libpurple.la
