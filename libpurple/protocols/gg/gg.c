@@ -62,6 +62,19 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg);
 
 /* ----- HELPERS -------------------------------------------------------- */
 
+static PurpleInputCondition
+ggp_tcpsocket_inputcond_gg_to_purple(enum gg_check_t check)
+{
+	PurpleInputCondition cond = 0;
+
+	if (check & GG_CHECK_READ)
+		cond |= PURPLE_INPUT_READ;
+	if (check & GG_CHECK_WRITE)
+		cond |= PURPLE_INPUT_WRITE;
+
+	return cond;
+}
+
 /**
  * Set up libgadu's proxy.
  *
@@ -123,10 +136,8 @@ static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	if (token->req->state != GG_STATE_DONE) {
 		purple_input_remove(token->inpa);
 		token->inpa = purple_input_add(token->req->fd,
-						   (token->req->check == 1)
-						   	? PURPLE_INPUT_WRITE
-							: PURPLE_INPUT_READ,
-						   ggp_async_token_handler, gc);
+			ggp_tcpsocket_inputcond_gg_to_purple(token->req->check),
+			ggp_async_token_handler, gc);
 		return;
 	}
 
@@ -1679,6 +1690,11 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		return;
 	}
 
+	purple_input_remove(gc->inpa);
+	gc->inpa = purple_input_add(info->session->fd,
+		ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+		ggp_callback_recv, gc);
+
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
@@ -1837,8 +1853,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	/** XXX I think that this shouldn't be done if ev->type is GG_EVENT_CONN_FAILED or GG_EVENT_CONN_SUCCESS -datallah */
 	if (info->session->fd >= 0)
 		gc->inpa = purple_input_add(info->session->fd,
-			(info->session->check == 1) ? PURPLE_INPUT_WRITE :
-				PURPLE_INPUT_READ,
+			ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
 			ggp_async_login_handler, gc);
 
 	switch (ev->type) {
@@ -1851,8 +1866,8 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
 				purple_input_remove(gc->inpa);
 				gc->inpa = purple_input_add(info->session->fd,
-							  PURPLE_INPUT_READ,
-							  ggp_callback_recv, gc);
+					ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+					ggp_callback_recv, gc);
 
 				ggp_buddylist_send(gc);
 				purple_connection_update_progress(gc, _("Connected"), 1, 2);
@@ -2122,8 +2137,9 @@ static void ggp_login(PurpleAccount *account)
 		g_free(glp);
 		return;
 	}
-	gc->inpa = purple_input_add(info->session->fd, PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+	gc->inpa = purple_input_add(info->session->fd,
+		ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+		ggp_async_login_handler, gc);
 }
 
 static void ggp_close(PurpleConnection *gc)
