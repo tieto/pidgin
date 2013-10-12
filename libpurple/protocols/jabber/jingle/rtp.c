@@ -72,28 +72,7 @@ enum {
 	PROP_SSRC,
 };
 
-GType
-jingle_rtp_get_type()
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		static const GTypeInfo info = {
-			sizeof(JingleRtpClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) jingle_rtp_class_init,
-			NULL,
-			NULL,
-			sizeof(JingleRtp),
-			0,
-			(GInstanceInitFunc) jingle_rtp_init,
-			NULL
-		};
-		type = g_type_register_static(JINGLE_TYPE_CONTENT, "JingleRtp", &info, 0);
-	}
-	return type;
-}
+PURPLE_DEFINE_TYPE(JingleRtp, jingle_rtp, JINGLE_TYPE_CONTENT);
 
 static void
 jingle_rtp_class_init (JingleRtpClass *klass)

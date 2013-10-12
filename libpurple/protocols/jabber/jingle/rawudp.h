@@ -84,7 +84,12 @@ GType jingle_rawudp_candidate_get_type(void);
  *
  * @return The rawudp class's GType.
  */
-GType jingle_rawudp_get_type(void);
+G_MODULE_EXPORT GType jingle_rawudp_get_type(void);
+
+/**
+ * Registers the JingleRawUdp type in the type system.
+ */
+void jingle_rawudp_register_type(PurplePlugin *plugin);
 
 JingleRawUdpCandidate *jingle_rawudp_candidate_new(const gchar *id,
 		guint generation, guint component, const gchar *ip, guint port);

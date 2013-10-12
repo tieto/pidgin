@@ -52,6 +52,7 @@
 #include "data.h"
 #include "disco.h"
 #include "google/google.h"
+#include "google/google_p2p.h"
 #include "google/google_roster.h"
 #include "google/google_session.h"
 #include "ibb.h"
@@ -73,6 +74,8 @@
 #include "facebook.h"
 
 #include "jingle/jingle.h"
+#include "jingle/iceudp.h"
+#include "jingle/rawudp.h"
 #include "jingle/rtp.h"
 
 #define PING_TIMEOUT 60
@@ -4317,6 +4320,16 @@ plugin_query(GError **error)
 static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
+	jingle_session_register_type(plugin);
+
+	jingle_transport_register_type(plugin);
+	jingle_iceudp_register_type(plugin);
+	jingle_rawudp_register_type(plugin);
+	jingle_google_p2p_register_type(plugin);
+
+	jingle_content_register_type(plugin);
+	jingle_rtp_register_type(plugin);
+
 	jabber_protocol_register_type(plugin);
 
 	facebook_protocol_register_type(plugin);

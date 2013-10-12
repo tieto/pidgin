@@ -71,7 +71,12 @@ struct _JingleTransport
  *
  * @return The transport class's GType.
  */
-GType jingle_transport_get_type(void);
+G_MODULE_EXPORT GType jingle_transport_get_type(void);
+
+/**
+ * Registers the JingleTransport type in the type system.
+ */
+void jingle_transport_register_type(PurplePlugin *plugin);
 
 JingleTransport *jingle_transport_create(const gchar *type);
 const gchar *jingle_transport_get_transport_type(JingleTransport *transport);

@@ -65,28 +65,7 @@ enum {
 	PROP_PENDING_TRANSPORT,
 };
 
-GType
-jingle_content_get_type()
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		static const GTypeInfo info = {
-			sizeof(JingleContentClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) jingle_content_class_init,
-			NULL,
-			NULL,
-			sizeof(JingleContent),
-			0,
-			(GInstanceInitFunc) jingle_content_init,
-			NULL
-		};
-		type = g_type_register_static(G_TYPE_OBJECT, "JingleContent", &info, 0);
-	}
-	return type;
-}
+PURPLE_DEFINE_TYPE(JingleContent, jingle_content, G_TYPE_OBJECT);
 
 static void
 jingle_content_class_init (JingleContentClass *klass)

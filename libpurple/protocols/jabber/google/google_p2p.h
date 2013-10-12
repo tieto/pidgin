@@ -89,7 +89,12 @@ GType jingle_google_p2p_candidate_get_type(void);
  *
  * @return The Google P2P class's GType.
  */
-GType jingle_google_p2p_get_type(void);
+G_MODULE_EXPORT GType jingle_google_p2p_get_type(void);
+
+/**
+ * Registers the JingleGoogleP2P type in the type system.
+ */
+void jingle_google_p2p_register_type(PurplePlugin *plugin);
 
 JingleGoogleP2PCandidate *jingle_google_p2p_candidate_new(const gchar *id,
 		guint generation, const gchar *address, guint port, guint preference,
