@@ -150,20 +150,22 @@ struct _PurplePluginAction {
 };
 
 /** Returns an ABI version to set in plugins using major and minor versions */
-#define PURPLE_PLUGIN_ABI_VERSION(major,minor) (0x01000000 | \
-                                               ((major) << 16) | (minor))
+#define PURPLE_PLUGIN_ABI_VERSION(major,minor) \
+	(0x01000000 | ((major) << 16) | (minor))
 
 /** Returns the major version from an ABI version */
-#define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi)   ((abi >> 16) & 0xff)
+#define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi) \
+	((abi >> 16) & 0xff)
+
 /** Returns the minor version from an ABI version */
-#define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi)   (abi & 0xffff)
+#define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi) \
+	(abi & 0xffff)
 
 /**
   * A convenience‎ macro that returns an ABI version using PURPLE_MAJOR_VERSION
   * and PURPLE_MINOR_VERSION
   */
-#define PURPLE_ABI_VERSION PURPLE_PLUGIN_ABI_VERSION(PURPLE_MAJOR_VERSION, \
-                                                     PURPLE_MINOR_VERSION)
+#define PURPLE_ABI_VERSION PURPLE_PLUGIN_ABI_VERSION(PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION)
 
 /**
  * PURPLE_PLUGIN_INIT:
@@ -190,7 +192,7 @@ struct _PurplePluginAction {
 		if (e) g_error_free(e); \
 		return unloaded; \
 	}
-#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PRPL */
+#else /* PURPLE_PLUGINS && !PURPLE_STATIC_PRPL */
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
 	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e); \
 	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e) { \
@@ -222,9 +224,11 @@ struct _PurplePluginAction {
  * @param T_P  The #GType of the parent type.
  */
 #if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
-#define PURPLE_DEFINE_TYPE(TN, t_n, T_P) PURPLE_DEFINE_STATIC_TYPE(TN, t_n, T_P)
+#define PURPLE_DEFINE_TYPE(TN, t_n, T_P) \
+	PURPLE_DEFINE_STATIC_TYPE(TN, t_n, T_P)
 #else
-#define PURPLE_DEFINE_TYPE(TN, t_n, T_P) PURPLE_DEFINE_DYNAMIC_TYPE(TN, t_n, T_P)
+#define PURPLE_DEFINE_TYPE(TN, t_n, T_P) \
+	PURPLE_DEFINE_DYNAMIC_TYPE(TN, t_n, T_P)
 #endif
 
 /**
@@ -240,9 +244,11 @@ struct _PurplePluginAction {
  * @param CODE   Custom code that gets inserted in *_get_type().
  */
 #if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
-#define PURPLE_DEFINE_TYPE_EXTENDED PURPLE_DEFINE_STATIC_TYPE_EXTENDED
+#define PURPLE_DEFINE_TYPE_EXTENDED \
+	PURPLE_DEFINE_STATIC_TYPE_EXTENDED
 #else
-#define PURPLE_DEFINE_TYPE_EXTENDED PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED
+#define PURPLE_DEFINE_TYPE_EXTENDED \
+	PURPLE_DEFINE_DYNAMIC_TYPE_EXTENDED
 #endif
 
 /**
