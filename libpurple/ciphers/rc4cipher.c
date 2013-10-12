@@ -200,7 +200,7 @@ purple_rc4_cipher_init(PurpleCipher *cipher) {
  * API
  *****************************************************************************/
 GType
-purple_rc4_cipher_get_gtype(void) {
+purple_rc4_cipher_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {

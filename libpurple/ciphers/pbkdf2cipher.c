@@ -361,7 +361,7 @@ purple_pbkdf2_cipher_init(PurpleCipher *cipher)
  * API
  *****************************************************************************/
 GType
-purple_pbkdf2_cipher_get_gtype(void) {
+purple_pbkdf2_cipher_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {

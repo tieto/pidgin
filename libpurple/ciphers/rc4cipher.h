@@ -28,7 +28,7 @@
 
 #include "cipher.h"
 
-#define PURPLE_TYPE_RC4_CIPHER				(purple_rc4_cipher_get_gtype())
+#define PURPLE_TYPE_RC4_CIPHER				(purple_rc4_cipher_get_type())
 #define PURPLE_RC4_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_RC4_CIPHER, PurpleRC4Cipher))
 #define PURPLE_RC4_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_RC4_CIPHER, PurpleRC4CipherClass))
 #define PURPLE_IS_RC4_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_RC4_CIPHER))
@@ -55,7 +55,7 @@ struct _PurpleRC4CipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_rc4_cipher_get_gtype(void);
+GType purple_rc4_cipher_get_type(void);
 
 PurpleCipher *purple_rc4_cipher_new(void);
 

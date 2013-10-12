@@ -28,7 +28,7 @@
 
 #include "cipher.h"
 
-#define PURPLE_TYPE_DES3_CIPHER				(purple_des3_cipher_get_gtype())
+#define PURPLE_TYPE_DES3_CIPHER				(purple_des3_cipher_get_type())
 #define PURPLE_DES3_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_DES3_CIPHER, PurpleDES3Cipher))
 #define PURPLE_DES3_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_DES3_CIPHER, PurpleDES3CipherClass))
 #define PURPLE_IS_DES3_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_DES3_CIPHER))
@@ -55,7 +55,7 @@ struct _PurpleDES3CipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_des3_cipher_get_gtype(void);
+GType purple_des3_cipher_get_type(void);
 
 PurpleCipher *purple_des3_cipher_new(void);
 

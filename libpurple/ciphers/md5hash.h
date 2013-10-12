@@ -28,7 +28,7 @@
 
 #include "hash.h"
 
-#define PURPLE_TYPE_MD5_HASH				(purple_md5_hash_get_gtype())
+#define PURPLE_TYPE_MD5_HASH				(purple_md5_hash_get_type())
 #define PURPLE_MD5_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MD5_HASH, PurpleMD5Hash))
 #define PURPLE_MD5_HASH_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MD5_HASH, PurpleMD5HashClass))
 #define PURPLE_IS_MD5_HASH(obj)				(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MD5_HASH))
@@ -55,7 +55,7 @@ struct _PurpleMD5HashClass {
 
 G_BEGIN_DECLS
 
-GType purple_md5_hash_get_gtype(void);
+GType purple_md5_hash_get_type(void);
 
 PurpleHash *purple_md5_hash_new(void);
 

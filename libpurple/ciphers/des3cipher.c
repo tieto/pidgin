@@ -485,7 +485,7 @@ purple_des3_cipher_init(PurpleCipher *cipher) {
  * API
  *****************************************************************************/
 GType
-purple_des3_cipher_get_gtype(void) {
+purple_des3_cipher_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {
