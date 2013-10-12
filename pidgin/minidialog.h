@@ -84,6 +84,7 @@ typedef struct {
 	 */
 	GtkBox *contents;
 
+	/*< private >*/
 	gpointer priv;
 } PidginMiniDialog;
 
@@ -91,6 +92,7 @@ typedef struct {
 typedef struct {
 	GtkBoxClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1) (void);
 	void (*_purple_reserved2) (void);
 	void (*_purple_reserved3) (void);

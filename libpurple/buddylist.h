@@ -53,23 +53,22 @@ typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
  * The Buddy List
  */
 struct _PurpleBuddyList {
-	/*< private >*/
 	GObject gparent;
+
+	/** The first node in the buddy list */
+	PurpleBlistNode *root;
 
 	/** The UI data associated with this buddy list. This is a convenience
 	 *  field provided to the UIs -- it is not used by the libpurple core.
 	 */
 	gpointer ui_data;
-
-	/** The first node in the buddy list */
-	PurpleBlistNode *root;
 };
 
 /** The base class for all #PurpleBuddyList's. */
 struct _PurpleBuddyListClass {
-	/*< private >*/
 	GObjectClass gparent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -138,7 +137,11 @@ struct _PurpleBlistUiOps
 	 */
 	void (*save_account)(PurpleAccount *account);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 G_BEGIN_DECLS

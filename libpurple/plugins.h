@@ -113,10 +113,8 @@ typedef enum /*< flags >*/
  */
 struct _PurplePluginInfo {
 #ifdef PURPLE_PLUGINS
-	/*< private >*/
 	GPluginPluginInfo parent;
 #else
-	/*< private >*/
 	GObject parent;
 #endif
 };
@@ -128,13 +126,12 @@ struct _PurplePluginInfo {
  */
 struct _PurplePluginInfoClass {
 #ifdef PURPLE_PLUGINS
-	/*< private >*/
 	GPluginPluginInfoClass parent_class;
 #else
-	/*< private >*/
 	GObjectClass parent_class;
 #endif
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

@@ -38,14 +38,13 @@ typedef struct _PurpleMD4Hash				PurpleMD4Hash;
 typedef struct _PurpleMD4HashClass			PurpleMD4HashClass;
 
 struct _PurpleMD4Hash {
-	/*< private >*/
 	PurpleHash parent;
 };
 
 struct _PurpleMD4HashClass {
-	/*< private >*/
 	PurpleHashClass parent;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

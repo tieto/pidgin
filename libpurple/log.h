@@ -113,6 +113,7 @@ struct _PurpleLogLogger {
 	/* Tests whether a log is deletable */
 	gboolean (*is_deletable)(PurpleLog *log);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

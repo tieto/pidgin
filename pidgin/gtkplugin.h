@@ -47,7 +47,6 @@ typedef GtkWidget *(*PidginPluginConfigFrame)(PurplePlugin *);
  * Extends #PurplePluginInfo to hold UI information for pidgin.
  */
 struct _PidginPluginInfo {
-	/*< private >*/
 	PurplePluginInfo parent;
 };
 
@@ -57,9 +56,9 @@ struct _PidginPluginInfo {
  * The base class for all #PidginPluginInfo's.
  */
 struct _PidginPluginInfoClass {
-	/*< private >*/
 	PurplePluginInfoClass parent_class;
 
+	/*< private >*/
 	void (*_pidgin_reserved1)(void);
 	void (*_pidgin_reserved2)(void);
 	void (*_pidgin_reserved3)(void);

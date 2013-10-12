@@ -70,6 +70,7 @@ typedef struct
 	 */
 	void (*destroy)(PurpleSrvTxtQueryData *query_data);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

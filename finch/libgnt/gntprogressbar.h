@@ -30,7 +30,7 @@
 #include "gnt.h"
 #include "gntwidget.h"
 
-#define GNT_TYPE_PROGRESS_BAR          (gnt_progress_bar_get_type ())
+#define GNT_TYPE_PROGRESS_BAR          (gnt_progress_bar_get_gtype ())
 #define GNT_PROGRESS_BAR(o)            (G_TYPE_CHECK_INSTANCE_CAST ((o), GNT_TYPE_PROGRESS_BAR, GntProgressBar))
 #define GNT_PROGRESS_BAR_CLASS(k)      (G_TYPE_CHECK_CLASS_CAST ((k), GNT_TYPE_PROGRESS_BAR, GntProgressBarClass))
 #define GNT_IS_PROGRESS_BAR(o)         (G_TYPE_CHECK_INSTANCE_TYPE ((o), GNT_TYPE_PROGRESS_BAR))
@@ -64,7 +64,7 @@ G_BEGIN_DECLS
  * @return The GType for GntProrgressBar
  **/
 GType
-gnt_progress_bar_get_type (void);
+gnt_progress_bar_get_gtype (void);
 
 /**
  * Create a new GntProgressBar

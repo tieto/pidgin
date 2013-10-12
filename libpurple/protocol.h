@@ -74,7 +74,6 @@ typedef enum /*< flags >*/
  */
 struct _PurpleProtocol
 {
-	/*< private >*/
 	GObject gparent;
 
 	const char *id;                  /**< Protocol ID */
@@ -89,6 +88,7 @@ struct _PurpleProtocol
 
 	PurpleWhiteboardOps *whiteboard_ops;  /**< Whiteboard operations */
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -102,7 +102,6 @@ struct _PurpleProtocol
  */
 struct _PurpleProtocolClass
 {
-	/*< private >*/
 	GObjectClass parent_class;
 
 	/**
@@ -129,6 +128,7 @@ struct _PurpleProtocolClass
 	 */
 	const char *(*list_icon)(PurpleAccount *account, PurpleBuddy *buddy);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

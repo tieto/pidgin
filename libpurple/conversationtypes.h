@@ -100,15 +100,14 @@ typedef enum /*< flags >*/
 /** Structure representing an IM conversation instance. */
 struct _PurpleIMConversation
 {
-	/*< private >*/
 	PurpleConversation parent_object;
 };
 
 /** Base class for all #PurpleIMConversation's */
 struct _PurpleIMConversationClass {
-	/*< private >*/
 	PurpleConversationClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -121,15 +120,14 @@ struct _PurpleIMConversationClass {
 /** Structure representing a chat conversation instance. */
 struct _PurpleChatConversation
 {
-	/*< private >*/
 	PurpleConversation parent_object;
 };
 
 /** Base class for all #PurpleChatConversation's */
 struct _PurpleChatConversationClass {
-	/*< private >*/
 	PurpleConversationClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -142,7 +140,6 @@ struct _PurpleChatConversationClass {
 /** Structure representing a chat user instance. */
 struct _PurpleChatUser
 {
-	/*< private >*/
 	GObject gparent;
 
 	/** The UI data associated with this chat user. This is a convenience
@@ -153,9 +150,9 @@ struct _PurpleChatUser
 
 /** Base class for all #PurpleChatUser's */
 struct _PurpleChatUserClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

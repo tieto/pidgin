@@ -39,14 +39,13 @@ typedef struct _PurpleDES3Cipher			PurpleDES3Cipher;
 typedef struct _PurpleDES3CipherClass		PurpleDES3CipherClass;
 
 struct _PurpleDES3Cipher {
-	/*< private >*/
 	PurpleCipher gparent;
 };
 
 struct _PurpleDES3CipherClass {
-	/*< private >*/
 	PurpleCipherClass gparent;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

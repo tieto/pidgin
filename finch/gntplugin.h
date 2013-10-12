@@ -53,7 +53,6 @@ typedef GntWidget* (*FinchPluginFrame) (void);
  * Extends #PurplePluginInfo to hold UI information for finch.
  */
 struct _FinchPluginInfo {
-	/*< private >*/
 	PurplePluginInfo parent;
 };
 
@@ -63,9 +62,9 @@ struct _FinchPluginInfo {
  * The base class for all #FinchPluginInfo's.
  */
 struct _FinchPluginInfoClass {
-	/*< private >*/
 	PurplePluginInfoClass parent_class;
 
+	/*< private >*/
 	void (*_gnt_reserved1)(void);
 	void (*_gnt_reserved2)(void);
 	void (*_gnt_reserved3)(void);

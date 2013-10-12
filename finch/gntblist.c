@@ -858,7 +858,7 @@ static PurpleBlistUiOps blist_ui_ops =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL, NULL, NULL, NULL
 };
 
 static gpointer

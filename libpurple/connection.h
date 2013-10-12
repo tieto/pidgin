@@ -229,6 +229,7 @@ typedef struct
 	                          PurpleConnectionError reason,
 	                          const char *text);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -240,15 +241,14 @@ typedef struct
  */
 struct _PurpleConnection
 {
-	/*< private >*/
 	GObject gparent;
 };
 
 /** Base class for all #PurpleConnection's */
 struct _PurpleConnectionClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

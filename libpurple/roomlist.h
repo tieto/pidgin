@@ -91,6 +91,7 @@ struct _PurpleRoomlistUiOps {
 	void (*in_progress)(PurpleRoomlist *list, gboolean flag); /**< Are we fetching stuff still? */
 	void (*destroy)(PurpleRoomlist *list); /**< We're destroying list. */
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -101,7 +102,6 @@ struct _PurpleRoomlistUiOps {
  * Represents a list of rooms for a given connection on a given protocol.
  */
 struct _PurpleRoomlist {
-	/*< private >*/
 	GObject gparent;
 
 	/** The UI data associated with this room list. This is a convenience
@@ -112,9 +112,9 @@ struct _PurpleRoomlist {
 
 /** Base class for all #PurpleRoomlist's */
 struct _PurpleRoomlistClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

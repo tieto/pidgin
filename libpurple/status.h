@@ -148,15 +148,14 @@ typedef enum
  */
 struct _PurpleStatus
 {
-	/*< private >*/
 	GObject gparent;
 };
 
 /** Base class for all #PurpleStatus's */
 struct _PurpleStatusClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

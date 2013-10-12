@@ -60,6 +60,7 @@ typedef struct _PurpleWhiteboardUiOps
 	                  int color, int size);                              /**< draw_line function */
 	void (*clear)(PurpleWhiteboard *wb);                                 /**< clear function */
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -80,6 +81,7 @@ struct _PurpleWhiteboardOps
 	void (*send_draw_list)(PurpleWhiteboard *wb, GList *draw_list);        /**< send_draw_list function */
 	void (*clear)(PurpleWhiteboard *wb);                                   /**< clear function */
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -91,7 +93,6 @@ struct _PurpleWhiteboardOps
  */
 struct _PurpleWhiteboard
 {
-	/*< private >*/
 	GObject gparent;
 
 	/** The UI data associated with this whiteboard. This is a convenience
@@ -102,9 +103,9 @@ struct _PurpleWhiteboard
 
 /** Base class for all #PurpleWhiteboard's */
 struct _PurpleWhiteboardClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

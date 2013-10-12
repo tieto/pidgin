@@ -39,14 +39,13 @@ typedef struct _PurpleMD5Hash				PurpleMD5Hash;
 typedef struct _PurpleMD5HashClass			PurpleMD5HashClass;
 
 struct _PurpleMD5Hash {
-	/*< private >*/
 	PurpleHash gparent;
 };
 
 struct _PurpleMD5HashClass {
-	/*< private >*/
 	PurpleHashClass gparent;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

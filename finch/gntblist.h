@@ -47,6 +47,8 @@ typedef struct
 	gboolean (*can_add_node)(PurpleBlistNode *node);   /**< Whether a node should be added to the view. */
 	gpointer (*find_parent)(PurpleBlistNode *node);    /**< Find the parent row for a node. */
 	gboolean (*create_tooltip)(gpointer selected_row, GString **body, char **title);  /**< Create tooltip for a selected row. */
+
+	/*< private >*/
 	gpointer reserved[4];
 } FinchBlistManager;
 

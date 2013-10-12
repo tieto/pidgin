@@ -128,7 +128,6 @@ typedef enum /*< flags >*/
  */
 struct _PurpleConversation
 {
-	/*< private >*/
 	GObject gparent;
 
 	/** The UI data associated with this conversation. This is a convenience
@@ -139,7 +138,6 @@ struct _PurpleConversation
 
 /** Base class for all #PurpleConversation's */
 struct _PurpleConversationClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
 	/** Writes a message to a chat or IM conversation.
@@ -148,6 +146,7 @@ struct _PurpleConversationClass {
 	void (*write_message)(PurpleConversation *conv, const char *who,
 			const char *message, PurpleMessageFlags flags, time_t mtime);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -257,6 +256,7 @@ struct _PurpleConversationUiOps
 	 */
 	void (*send_confirm)(PurpleConversation *conv, const char *message);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

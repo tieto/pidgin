@@ -61,25 +61,24 @@ typedef struct _PurpleCountingNodeClass PurpleCountingNodeClass;
  * This is a base class for PurpleBuddy, PurpleContact, PurpleGroup, and for
  * anything else that wants to put itself in the buddy list. */
 struct _PurpleBlistNode {
-	/*< private >*/
 	GObject gparent;
-
-	/** The UI data associated with this node. This is a convenience
-	 *  field provided to the UIs -- it is not used by the libpurple core.
-	 */
-	gpointer ui_data;
 
 	PurpleBlistNode *prev;    /**< The sibling before this buddy. */
 	PurpleBlistNode *next;    /**< The sibling after this buddy.  */
 	PurpleBlistNode *parent;  /**< The parent of this node        */
 	PurpleBlistNode *child;   /**< The child of this node         */
+
+	/** The UI data associated with this node. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
+	 */
+	gpointer ui_data;
 };
 
 /** The base class for all #PurpleBlistNode's. */
 struct _PurpleBlistNodeClass {
-	/*< private >*/
 	GObjectClass gparent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -105,9 +104,9 @@ struct _PurpleCountingNode {
 
 /** The base class for all #PurpleCountingNode's. */
 struct _PurpleCountingNodeClass {
-	/*< private >*/
 	PurpleBlistNodeClass node_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

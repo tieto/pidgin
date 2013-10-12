@@ -48,15 +48,14 @@ typedef struct _PurpleSoundThemeLoaderClass   PurpleSoundThemeLoaderClass;
 
 struct _PurpleSoundThemeLoader
 {
-	/*< private >*/
 	PurpleThemeLoader parent;
 };
 
 struct _PurpleSoundThemeLoaderClass
 {
-	/*< private >*/
 	PurpleThemeLoaderClass parent_class;
 
+	/*< private >*/
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
 	void (*purple_reserved3)(void);

@@ -128,6 +128,7 @@ static PurpleCoreUiOps core_ops =
 	/* padding */
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 
@@ -222,6 +223,7 @@ static PurpleEventLoopUiOps eventloop_ops =
 	g_timeout_add_seconds,
 
 	/* padding */
+	NULL,
 	NULL,
 	NULL,
 	NULL
