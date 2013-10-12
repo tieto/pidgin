@@ -59,6 +59,7 @@ doc/reference/.*/.*\.prerequisites
 doc/reference/.*/.*\.signals
 doc/reference/.*/.*\.stamp
 doc/reference/.*/.*\.txt
+doc/reference/.*/.*\.types
 doc/reference/.*/html/.*
 doc/reference/.*/xml/.*
 doc/reference/.*/version.xml
