@@ -287,7 +287,7 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
  * PurpleHMACCipher API
  *****************************************************************************/
 GType
-purple_hmac_cipher_get_gtype(void) {
+purple_hmac_cipher_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {

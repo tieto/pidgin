@@ -159,7 +159,7 @@ purple_sha1_hash_init(PurpleHash *hash)
  * API
  *****************************************************************************/
 GType
-purple_sha1_hash_get_gtype(void) {
+purple_sha1_hash_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {

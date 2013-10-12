@@ -28,7 +28,7 @@
 
 #include "cipher.h"
 
-#define PURPLE_TYPE_AES_CIPHER				(purple_aes_cipher_get_gtype())
+#define PURPLE_TYPE_AES_CIPHER				(purple_aes_cipher_get_type())
 #define PURPLE_AES_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_AES_CIPHER, PurpleAESCipher))
 #define PURPLE_AES_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_AES_CIPHER, PurpleAESCipherClass))
 #define PURPLE_IS_AES_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_AES_CIPHER))
@@ -55,7 +55,7 @@ struct _PurpleAESCipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_aes_cipher_get_gtype(void);
+GType purple_aes_cipher_get_type(void);
 
 PurpleCipher *purple_aes_cipher_new(void);
 

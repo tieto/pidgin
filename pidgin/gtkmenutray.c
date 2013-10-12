@@ -176,7 +176,7 @@ pidgin_menu_tray_init(PidginMenuTray *menu_tray) {
  * API
  *****************************************************************************/
 GType
-pidgin_menu_tray_get_gtype(void) {
+pidgin_menu_tray_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {

@@ -203,7 +203,7 @@ selection_changed_cb(GtkTreeSelection *selection, PidginRoomlist *grl) {
 		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 		room = g_value_get_pointer(&val);
-		if (!room || !(purple_roomlist_room_get_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM)) {
+		if (!room || !(purple_roomlist_room_get_room_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM)) {
 			gtk_widget_set_sensitive(dialog->join_button, FALSE);
 			gtk_widget_set_sensitive(dialog->add_button, FALSE);
 			return;
@@ -283,7 +283,7 @@ static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColu
 	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 	room = g_value_get_pointer(&val);
-	if (!room || !(purple_roomlist_room_get_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
+	if (!room || !(purple_roomlist_room_get_room_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
 		return;
 
 	info.list = list;
@@ -314,7 +314,7 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, PurpleRoomli
 	gtk_tree_model_get_value (GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 	room = g_value_get_pointer(&val);
 
-	if (!room || !(purple_roomlist_room_get_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
+	if (!room || !(purple_roomlist_room_get_room_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
 		return FALSE;
 
 	info.list = list;
@@ -453,7 +453,7 @@ static gboolean pidgin_roomlist_create_tip(PurpleRoomlist *list, GtkTreePath *pa
 	gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 	room = g_value_get_pointer(&val);
 
-	if (!room || !(purple_roomlist_room_get_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
+	if (!room || !(purple_roomlist_room_get_room_type(room) & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
 		return FALSE;
 
 	tooltip_text = g_string_new("");
@@ -469,7 +469,7 @@ static gboolean pidgin_roomlist_create_tip(PurpleRoomlist *list, GtkTreePath *pa
 		if (purple_roomlist_field_get_hidden(f))
 			continue;
 		label = g_markup_escape_text(purple_roomlist_field_get_label(f), -1);
-		switch (purple_roomlist_field_get_type(f)) {
+		switch (purple_roomlist_field_get_field_type(f)) {
 			case PURPLE_ROOMLIST_FIELD_BOOL:
 				g_string_append_printf(tooltip_text, "%s<b>%s:</b> %s", first ? "" : "\n", label, l->data ? "True" : "False");
 				break;
@@ -754,7 +754,7 @@ static void pidgin_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 	for (j = NUM_OF_COLUMNS, l = fields; l; l = l->next, j++) {
 		PurpleRoomlistField *f = l->data;
 
-		switch (purple_roomlist_field_get_type(f)) {
+		switch (purple_roomlist_field_get_field_type(f)) {
 		case PURPLE_ROOMLIST_FIELD_BOOL:
 			types[j] = G_TYPE_BOOLEAN;
 			break;
@@ -808,7 +808,7 @@ static void pidgin_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 		gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 		gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(column), j);
 		gtk_tree_view_column_set_reorderable(GTK_TREE_VIEW_COLUMN(column), TRUE);
-		if (purple_roomlist_field_get_type(f) == PURPLE_ROOMLIST_FIELD_INT) {
+		if (purple_roomlist_field_get_field_type(f) == PURPLE_ROOMLIST_FIELD_INT) {
 			gtk_tree_view_column_set_cell_data_func(column, renderer, int_cell_data_func,
 			                                        GINT_TO_POINTER(j), NULL);
 			gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(model), j, int_sort_func,
@@ -862,7 +862,7 @@ static void pidgin_roomlist_add_room(PurpleRoomlist *list, PurpleRoomlistRoom *r
 	gboolean append = TRUE;
 
 	rl->total_rooms++;
-	if (purple_roomlist_room_get_type(room) == PURPLE_ROOMLIST_ROOMTYPE_ROOM)
+	if (purple_roomlist_room_get_room_type(room) == PURPLE_ROOMLIST_ROOMTYPE_ROOM)
 		rl->num_rooms++;
 
 	if (rl->dialog) {
@@ -896,12 +896,12 @@ static void pidgin_roomlist_add_room(PurpleRoomlist *list, PurpleRoomlistRoom *r
 	else
 		iter = child;
 
-	if (purple_roomlist_room_get_type(room) & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
+	if (purple_roomlist_room_get_room_type(room) & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
 		gtk_tree_store_append(rl->model, &child, &iter);
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(rl->model), &iter);
 
-	if (purple_roomlist_room_get_type(room) & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY) {
+	if (purple_roomlist_room_get_room_type(room) & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY) {
 		rr = gtk_tree_row_reference_new(GTK_TREE_MODEL(rl->model), path);
 		g_hash_table_insert(rl->cats, room, rr);
 	}

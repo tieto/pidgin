@@ -298,6 +298,10 @@ version 3.0.0 (??/??/????):
 		* proto_chat_entry has been renamed to PurpleProtocolChatEntry
 		* PurpleRoomlist is now a GObject. Please see the documentation for
 		  details.
+		* purple_roomlist_room_get_type is now
+		  purple_roomlist_room_get_room_type
+		* purple_roomlist_field_get_type is now
+		  purple_roomlist_field_get_field_type
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* PurpleStatus is now a GObject. Please see the documentation for
 		  details.

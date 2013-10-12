@@ -512,7 +512,7 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 	g_hash_table_destroy(components);
 }
 
-PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room)
+PurpleRoomlistRoomType purple_roomlist_room_get_room_type(PurpleRoomlistRoom *room)
 {
 	return room->type;
 }
@@ -585,7 +585,7 @@ static void purple_roomlist_room_free(PurpleRoomlistRoom *r)
 	g_free(r);
 }
 
-GType purple_roomlist_room_get_gtype(void)
+GType purple_roomlist_room_get_type(void)
 {
 	static GType type = 0;
 
@@ -624,7 +624,7 @@ PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
 	return f;
 }
 
-PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *field)
+PurpleRoomlistFieldType purple_roomlist_field_get_field_type(PurpleRoomlistField *field)
 {
 	return field->type;
 }
@@ -662,7 +662,7 @@ static void purple_roomlist_field_free(PurpleRoomlistField *f)
 	g_free(f);
 }
 
-GType purple_roomlist_field_get_gtype(void)
+GType purple_roomlist_field_get_type(void)
 {
 	static GType type = 0;
 

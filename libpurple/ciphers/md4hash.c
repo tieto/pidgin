@@ -279,7 +279,7 @@ purple_md4_hash_class_init(PurpleMD4HashClass *klass) {
  * API
  *****************************************************************************/
 GType
-purple_md4_hash_get_gtype(void) {
+purple_md4_hash_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {

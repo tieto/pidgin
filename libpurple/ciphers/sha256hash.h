@@ -28,7 +28,7 @@
 
 #include "hash.h"
 
-#define PURPLE_TYPE_SHA256_HASH				(purple_sha256_hash_get_gtype())
+#define PURPLE_TYPE_SHA256_HASH				(purple_sha256_hash_get_type())
 #define PURPLE_SHA256_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SHA256_HASH, PurpleSHA256Hash))
 #define PURPLE_SHA256_HASH_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SHA256_HASH, PurpleSHA256HashClass))
 #define PURPLE_IS_SHA256_HASH(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SHA256_HASH))
@@ -55,7 +55,7 @@ struct _PurpleSHA256HashClass {
 
 G_BEGIN_DECLS
 
-GType purple_sha256_hash_get_gtype(void);
+GType purple_sha256_hash_get_type(void);
 
 PurpleHash *purple_sha256_hash_new(void);
 

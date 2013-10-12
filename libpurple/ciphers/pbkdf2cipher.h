@@ -29,7 +29,7 @@
 #include "cipher.h"
 #include "hash.h"
 
-#define PURPLE_TYPE_PBKDF2_CIPHER				(purple_pbkdf2_cipher_get_gtype())
+#define PURPLE_TYPE_PBKDF2_CIPHER				(purple_pbkdf2_cipher_get_type())
 #define PURPLE_PBKDF2_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2Cipher))
 #define PURPLE_PBKDF2_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2CipherClass))
 #define PURPLE_IS_PBKDF2_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PBKDF2_CIPHER))
@@ -56,7 +56,7 @@ struct _PurplePBKDF2CipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_pbkdf2_cipher_get_gtype(void);
+GType purple_pbkdf2_cipher_get_type(void);
 
 PurpleCipher *purple_pbkdf2_cipher_new(PurpleHash *hash);
 
