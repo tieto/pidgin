@@ -28,7 +28,9 @@ SCANGOBJ_OPTIONS=
 
 # Extra options to supply to gtkdoc-scan.
 # e.g. SCAN_OPTIONS=--deprecated-guards="GTK_DISABLE_DEPRECATED"
-SCAN_OPTIONS=--deprecated-guards="PURPLE_DISABLE_DEPRECATED|GNT_DISABLE_DEPRECATED|FINCH_DISABLE_DEPRECATED"
+SCAN_OPTIONS=\
+	--deprecated-guards="PURPLE_DISABLE_DEPRECATED|GNT_DISABLE_DEPRECATED|FINCH_DISABLE_DEPRECATED" \
+	--rebuild-sections
 
 # Extra options to supply to gtkdoc-mkdb.
 # e.g. MKDB_OPTIONS=--sgml-mode --output-format=xml
@@ -103,7 +105,7 @@ EXTRA_DIST += version.xml.in
 # Files not to distribute
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
-#DISTCLEANFILES +=
+DISTCLEANFILES = $(DOC_MODULE)-sections.txt
 
 # Comment this out if you want your docs-status tested during 'make check'
 if ENABLE_GTK_DOC
