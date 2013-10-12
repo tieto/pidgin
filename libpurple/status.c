@@ -590,11 +590,12 @@ status_has_changed(PurpleStatus *status)
 	if (purple_status_is_exclusive(status))
 	{
 		old_status = purple_presence_get_active_status(presence);
-		if (old_status != NULL && (old_status != status))
+		if (old_status != NULL && (old_status != status)) {
 			PURPLE_STATUS_GET_PRIVATE(old_status)->active = FALSE;
-		g_object_set(presence, "active-status", status, NULL);
+			g_object_notify(G_OBJECT(old_status), "active");
+		}
 
-		g_object_notify(G_OBJECT(old_status), "active");
+		g_object_set(presence, "active-status", status, NULL);
 		g_object_notify(G_OBJECT(status), "active");
 	}
 	else
