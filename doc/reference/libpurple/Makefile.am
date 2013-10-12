@@ -65,7 +65,11 @@ IGNORE_HFILES=\
 	plugins \
 	protocols \
 	tests \
-	win32
+	win32 \
+	dbus-types.h \
+	purple-client.h \
+	purple-client-bindings.h \
+	dbus-define-api.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

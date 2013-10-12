@@ -38,7 +38,6 @@
       <xi:include href="xml/conversation.xml" />
       <xi:include href="xml/core.xml" />
       <xi:include href="xml/dbus-bindings.xml" />
-      <xi:include href="xml/dbus-define-api.xml" />
       <xi:include href="xml/dbus-maybe.xml" />
       <xi:include href="xml/dbus-purple.xml" />
       <xi:include href="xml/dbus-server.xml" />
@@ -81,8 +80,6 @@
       <xi:include href="xml/protocols.xml" />
       <xi:include href="xml/protocol.xml" />
       <xi:include href="xml/proxy.xml" />
-      <xi:include href="xml/purple-client-bindings.xml" />
-      <xi:include href="xml/purple-client.xml" />
       <xi:include href="xml/purple-socket.xml" />
       <xi:include href="xml/purple.xml" />
       <xi:include href="xml/rc4cipher.xml" />
