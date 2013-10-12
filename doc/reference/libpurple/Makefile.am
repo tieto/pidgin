@@ -30,6 +30,7 @@ SCANGOBJ_OPTIONS=
 # e.g. SCAN_OPTIONS=--deprecated-guards="GTK_DISABLE_DEPRECATED"
 SCAN_OPTIONS=\
 	--deprecated-guards="PURPLE_DISABLE_DEPRECATED" \
+	--rebuild-types \
 	--rebuild-sections
 
 # Extra options to supply to gtkdoc-mkdb.
@@ -121,7 +122,7 @@ EXTRA_DIST += version.xml.in
 # Files not to distribute
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
-DISTCLEANFILES = $(DOC_MODULE)-sections.txt
+DISTCLEANFILES = $(DOC_MODULE).types $(DOC_MODULE)-sections.txt
 
 # Comment this out if you want 'make check' to test you doc status
 # and run some sanity checks
