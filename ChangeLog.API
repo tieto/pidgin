@@ -208,6 +208,10 @@ version 3.0.0 (??/??/????):
 		  purple_notify_user_info_prepend_pair_html
 		* PurpleRoomlist is now a GObject. Please see the documentation for
 		  details.
+		* purple_roomlist_room_get_type is now
+		  purple_roomlist_room_get_room_type
+		* purple_roomlist_field_get_type is now
+		  purple_roomlist_field_get_field_type
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* PurpleStatus is now a GObject. Please see the documentation for
 		  details.

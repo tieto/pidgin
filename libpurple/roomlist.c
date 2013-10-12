@@ -510,7 +510,7 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 	g_hash_table_destroy(components);
 }
 
-PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room)
+PurpleRoomlistRoomType purple_roomlist_room_get_room_type(PurpleRoomlistRoom *room)
 {
 	return room->type;
 }
@@ -622,7 +622,7 @@ PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
 	return f;
 }
 
-PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *field)
+PurpleRoomlistFieldType purple_roomlist_field_get_field_type(PurpleRoomlistField *field)
 {
 	return field->type;
 }

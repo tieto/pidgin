@@ -1528,7 +1528,7 @@ void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *ca
 	const char *rll;
 	GList *proto_data;
 
-	if (purple_roomlist_room_get_type(category) != PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
+	if (purple_roomlist_room_get_room_type(category) != PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
 		return;
 
 	if (!(id = g_list_nth_data(purple_roomlist_room_get_fields(category), 1))) {

@@ -328,7 +328,7 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room);
  * @param room  The room, which must not be @c NULL.
  * @return The type of the room.
  */
-PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room);
+PurpleRoomlistRoomType purple_roomlist_room_get_room_type(PurpleRoomlistRoom *room);
 
 /**
  * Get the name of a room.
@@ -403,7 +403,7 @@ PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
  *
  * @return  The type of the field.
  */
-PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *field);
+PurpleRoomlistFieldType purple_roomlist_field_get_field_type(PurpleRoomlistField *field);
 
 /**
  * Get the label of a field.
