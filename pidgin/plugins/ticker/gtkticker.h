@@ -28,6 +28,7 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
+#include "plugins.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,7 +73,10 @@ struct _GtkTickerChild
 };
 
 
+G_MODULE_EXPORT
 GType      gtk_ticker_get_type          (void);
+void       gtk_ticker_register_type     (PurplePlugin *plugin);
+
 GtkWidget* gtk_ticker_new               (void);
 void       gtk_ticker_add               (GtkTicker       *ticker,
                                         GtkWidget      *widget);

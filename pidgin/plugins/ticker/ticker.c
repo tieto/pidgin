@@ -342,6 +342,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 {
 	void *blist_handle = purple_blist_get_handle();
 
+	gtk_ticker_register_type(plugin);
+
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 						plugin, PURPLE_CALLBACK(signoff_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-signed-on",
