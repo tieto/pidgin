@@ -2522,7 +2522,7 @@ AM_CONDITIONAL(ENABLE_TRAYCOMPAT, test "x$enable_traycompat" = "xyes")
 
 # check for gtk-doc
 m4_ifdef([GTK_DOC_CHECK], [
-GTK_DOC_CHECK([1.14],[--flavour no-tmpl])
+GTK_DOC_CHECK([1.16],[--flavour no-tmpl])
 ],[
 AM_CONDITIONAL([ENABLE_GTK_DOC], false)
 ])
