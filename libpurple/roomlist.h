@@ -39,11 +39,11 @@ typedef struct _PurpleRoomlist PurpleRoomlist;
 /** @copydoc _PurpleRoomlistClass */
 typedef struct _PurpleRoomlistClass PurpleRoomlistClass;
 
-#define PURPLE_TYPE_ROOMLIST_ROOM        (purple_roomlist_room_get_gtype())
+#define PURPLE_TYPE_ROOMLIST_ROOM        (purple_roomlist_room_get_type())
 
 typedef struct _PurpleRoomlistRoom PurpleRoomlistRoom;
 
-#define PURPLE_TYPE_ROOMLIST_FIELD       (purple_roomlist_field_get_gtype())
+#define PURPLE_TYPE_ROOMLIST_FIELD       (purple_roomlist_field_get_type())
 
 typedef struct _PurpleRoomlistField PurpleRoomlistField;
 
@@ -292,7 +292,7 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
 /**
  * Returns the GType for the PurpleRoomlistRoom boxed structure.
  */
-GType purple_roomlist_room_get_gtype(void);
+GType purple_roomlist_room_get_type(void);
 
 /**
  * Creates a new room, to be added to the list.
@@ -379,7 +379,7 @@ GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
 /**
  * Returns the GType for the PurpleRoomlistField boxed structure.
  */
-GType purple_roomlist_field_get_gtype(void);
+GType purple_roomlist_field_get_type(void);
 
 /**
  * Creates a new field.

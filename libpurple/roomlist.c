@@ -583,7 +583,7 @@ static void purple_roomlist_room_free(PurpleRoomlistRoom *r)
 	g_free(r);
 }
 
-GType purple_roomlist_room_get_gtype(void)
+GType purple_roomlist_room_get_type(void)
 {
 	static GType type = 0;
 
@@ -660,7 +660,7 @@ static void purple_roomlist_field_free(PurpleRoomlistField *f)
 	g_free(f);
 }
 
-GType purple_roomlist_field_get_gtype(void)
+GType purple_roomlist_field_get_type(void)
 {
 	static GType type = 0;
 
