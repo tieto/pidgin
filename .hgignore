@@ -52,6 +52,13 @@ depcomp
 doc/finch.1$
 doc/html
 doc/pidgin.1$
+doc/reference/.*/.*\.args
+doc/reference/.*/.*\.hierarchy
+doc/reference/.*/.*\.interfaces
+doc/reference/.*/.*\.prerequisites
+doc/reference/.*/.*\.signals
+doc/reference/.*/.*\.stamp
+doc/reference/.*/.*\.txt
 doc/reference/.*/html/.*
 doc/reference/.*/xml/.*
 doc/reference/.*/version.xml
