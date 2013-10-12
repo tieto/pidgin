@@ -84,6 +84,7 @@ struct _PurpleAccountUiOps
 	void (*deny_added)(PurpleAccount *account, const char *name);
 	void (*deny_removed)(PurpleAccount *account, const char *name);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

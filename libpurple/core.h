@@ -73,9 +73,11 @@ typedef struct
 	 */
 	GHashTable* (*get_ui_info)(void);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleCoreUiOps;
 
 G_BEGIN_DECLS

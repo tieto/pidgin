@@ -51,6 +51,8 @@ typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
 struct _PurpleMediaManager
 {
 	GObject parent;                  /**< The parent of this manager. */
+
+	/*< private >*/
 	PurpleMediaManagerPrivate *priv; /**< Private data for the manager. */
 };
 
@@ -59,6 +61,7 @@ struct _PurpleMediaManagerClass
 {
 	GObjectClass parent_class;       /**< The parent class. */
 
+	/*< private >*/
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
 	void (*purple_reserved3)(void);

@@ -82,13 +82,11 @@ typedef struct _PurpleBuddyPresenceClass  PurpleBuddyPresenceClass;
  */
 struct _PurplePresence
 {
-	/*< private >*/
 	GObject gparent;
 };
 
 /** Base class for all #PurplePresence's */
 struct _PurplePresenceClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
 	/**
@@ -97,6 +95,7 @@ struct _PurplePresenceClass {
 	 */
 	void (*update_idle)(PurplePresence *presence, gboolean old_idle);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -108,15 +107,14 @@ struct _PurplePresenceClass {
  */
 struct _PurpleAccountPresence
 {
-	/*< private >*/
 	PurplePresence parent;
 };
 
 /** Base class for all #PurpleAccountPresence's */
 struct _PurpleAccountPresenceClass {
-	/*< private >*/
 	PurplePresenceClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -128,15 +126,14 @@ struct _PurpleAccountPresenceClass {
  */
 struct _PurpleBuddyPresence
 {
-	/*< private >*/
 	PurplePresence parent;
 };
 
 /** Base class for all #PurpleBuddyPresence's */
 struct _PurpleBuddyPresenceClass {
-	/*< private >*/
 	PurplePresenceClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

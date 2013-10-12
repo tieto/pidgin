@@ -40,7 +40,7 @@ struct _PidginPluginUiInfo
 
 	int page_num;                                         /**< Reserved */
 
-	/* padding */
+	/*< private >*/
 	void (*_pidgin_reserved1)(void);
 	void (*_pidgin_reserved2)(void);
 	void (*_pidgin_reserved3)(void);

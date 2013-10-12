@@ -39,14 +39,13 @@ typedef struct _PurpleAESCipher			PurpleAESCipher;
 typedef struct _PurpleAESCipherClass		PurpleAESCipherClass;
 
 struct _PurpleAESCipher {
-	/*< private >*/
 	PurpleCipher gparent;
 };
 
 struct _PurpleAESCipherClass {
-	/*< private >*/
 	PurpleCipherClass gparent;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

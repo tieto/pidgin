@@ -167,6 +167,7 @@ struct _PurpleCertificatePool
 	/** Returns a list of IDs stored in the pool */
 	GList * (* get_idlist)(void);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -315,6 +316,7 @@ struct _PurpleCertificateScheme
 	 */
 	gchar * (* get_display_string)(PurpleCertificate *crt);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 };
 
@@ -361,6 +363,7 @@ struct _PurpleCertificateVerifier
 	 */
 	void (* destroy_request)(PurpleCertificateVerificationRequest *vrq);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

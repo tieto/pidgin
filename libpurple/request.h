@@ -167,6 +167,7 @@ typedef struct
 
 	void (*close_request)(PurpleRequestType type, void *ui_handle);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

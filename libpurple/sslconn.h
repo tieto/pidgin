@@ -135,6 +135,8 @@ typedef struct
 	 */
 	GList * (* get_peer_certificates)(PurpleSslConnection * gsc);
 
+	/*< private >*/
+	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);

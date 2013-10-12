@@ -139,7 +139,6 @@ typedef struct
  */
 struct _PurpleXfer
 {
-	/*< private >*/
 	GObject gparent;
 
 	/** The UI data associated with this file transfer. This is a convenience
@@ -151,9 +150,9 @@ struct _PurpleXfer
 /** Base class for all #PurpleXfer's */
 struct _PurpleXferClass
 {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

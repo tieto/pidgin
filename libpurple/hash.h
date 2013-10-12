@@ -49,7 +49,6 @@ typedef struct _PurpleHashClass  		PurpleHashClass;
  * Purple Hash is an opaque data structure and should not be used directly.
  */
 struct _PurpleHash {
-	/*< private >*/
 	GObject gparent;
 };
 
@@ -59,7 +58,6 @@ struct _PurpleHash {
  * The base class for all #PurpleHash's.
  */
 struct _PurpleHashClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
 	/** The reset function */
@@ -80,6 +78,7 @@ struct _PurpleHashClass {
 	/** The get block size function */
 	size_t (*get_block_size)(PurpleHash *hash);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

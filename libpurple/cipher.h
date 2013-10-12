@@ -61,7 +61,6 @@ typedef enum  {
  * Purple Cipher is an opaque data structure and should not be used directly.
  */
 struct _PurpleCipher {
-	/*< private >*/
 	GObject gparent;
 };
 
@@ -71,7 +70,6 @@ struct _PurpleCipher {
  * The base class for all #PurpleCipher's.
  */
 struct _PurpleCipherClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
 	/** The reset function */
@@ -116,6 +114,7 @@ struct _PurpleCipherClass {
 	/** The get block size function */
 	size_t (*get_block_size)(PurpleCipher *cipher);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

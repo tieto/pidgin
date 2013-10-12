@@ -103,9 +103,9 @@ struct _PurpleBuddy {
 
 /** The base class for all #PurpleBuddy's. */
 struct _PurpleBuddyClass {
-	/*< private >*/
 	PurpleBlistNodeClass node_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -125,9 +125,9 @@ struct _PurpleContact {
 
 /** The base class for all #PurpleContact's. */
 struct _PurpleContactClass {
-	/*< private >*/
 	PurpleCountingNodeClass counting_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -147,9 +147,9 @@ struct _PurpleGroup {
 
 /** The base class for all #PurpleGroup's. */
 struct _PurpleGroupClass {
-	/*< private >*/
 	PurpleCountingNodeClass counting_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -166,9 +166,9 @@ struct _PurpleChat {
 
 /** The base class for all #PurpleChat's. */
 struct _PurpleChatClass {
-	/*< private >*/
 	PurpleBlistNodeClass node_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

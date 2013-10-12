@@ -365,6 +365,7 @@ static PurpleCoreUiOps core_ops =
 	pidgin_ui_get_info,
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 

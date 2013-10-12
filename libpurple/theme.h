@@ -48,15 +48,14 @@ typedef struct _PurpleThemeClass   PurpleThemeClass;
  */
 struct _PurpleTheme
 {
-	/*< private >*/
 	GObject parent;
 };
 
 struct _PurpleThemeClass
 {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
 	void (*purple_reserved3)(void);

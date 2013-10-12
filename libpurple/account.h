@@ -94,7 +94,6 @@ typedef enum
  */
 struct _PurpleAccount
 {
-	/*< private >*/
 	GObject gparent;
 
 	/** The UI data associated with this account. This is a convenience
@@ -109,9 +108,9 @@ struct _PurpleAccount
  * The base class for all #PurpleAccount's.
  */
 struct _PurpleAccountClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
