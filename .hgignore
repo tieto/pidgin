@@ -34,7 +34,6 @@ syntax: regexp
 .*\.so$
 .*\.typelib$
 .*\.moc$
-Doxyfile(\.mingw)?$
 VERSION$
 aclocal.m4
 autogen.args

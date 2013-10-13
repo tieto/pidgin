@@ -68,7 +68,7 @@ stringlists = [
 ]
 
 # This is a list of functions that return a GList* or GSList* that should
-# not be freed.  Ideally, this information should be obtained from the Doxygen
+# not be freed.  Ideally, this information should be obtained from the gtk-doc
 # documentation at some point.
 constlists = [
     "purple_account_get_status_types",
