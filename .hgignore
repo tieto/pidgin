@@ -120,4 +120,5 @@ po/notexist
 po/pidgin.pot
 po/stamp-it
 stamp-h1
+test-driver
 win32-install-dir(\.release)?
