@@ -27,7 +27,6 @@
 #define PURPLE_HMAC_CIPHER_H
 
 #include "cipher.h"
-#include "hash.h"
 
 #define PURPLE_TYPE_HMAC_CIPHER				(purple_hmac_cipher_get_type())
 #define PURPLE_HMAC_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipher))

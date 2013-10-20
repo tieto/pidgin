@@ -38,6 +38,10 @@
       <xi:include href="xml/hmaccipher.xml" />
       <xi:include href="xml/pbkdf2cipher.xml" />
       <xi:include href="xml/rc4cipher.xml" />
+      <xi:include href="xml/md4hash.xml" />
+      <xi:include href="xml/md5hash.xml" />
+      <xi:include href="xml/sha1hash.xml" />
+      <xi:include href="xml/sha256hash.xml" />
       <xi:include href="xml/circularbuffer.xml" />
       <xi:include href="xml/cmds.xml" />
       <xi:include href="xml/connection.xml" />
@@ -52,11 +56,6 @@
       <xi:include href="xml/enums.xml" />
       <xi:include href="xml/eventloop.xml" />
       <xi:include href="xml/glibcompat.xml" />
-      <xi:include href="xml/hash.xml" />
-      <xi:include href="xml/md4hash.xml" />
-      <xi:include href="xml/md5hash.xml" />
-      <xi:include href="xml/sha1hash.xml" />
-      <xi:include href="xml/sha256hash.xml" />
       <xi:include href="xml/http.xml" />
       <xi:include href="xml/idle.xml" />
       <xi:include href="xml/imgstore.xml" />

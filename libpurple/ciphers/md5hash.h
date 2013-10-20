@@ -26,7 +26,7 @@
 #ifndef PURPLE_MD5_HASH_H
 #define PURPLE_MD5_HASH_H
 
-#include "hash.h"
+#include "cipher.h"
 
 #define PURPLE_TYPE_MD5_HASH				(purple_md5_hash_get_type())
 #define PURPLE_MD5_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MD5_HASH, PurpleMD5Hash))

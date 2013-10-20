@@ -26,7 +26,7 @@
 #ifndef PURPLE_SHA1_HASH_H
 #define PURPLE_SHA1_HASH_H
 
-#include "hash.h"
+#include "cipher.h"
 
 #define PURPLE_TYPE_SHA1_HASH				(purple_sha1_hash_get_type())
 #define PURPLE_SHA1_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SHA1_HASH, PurpleSHA1Hash))

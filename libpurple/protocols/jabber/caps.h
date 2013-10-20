@@ -27,7 +27,7 @@
 typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 #include "jabber.h"
-#include "hash.h"
+#include "cipher.h"
 
 /* Implementation of XEP-0115 - Entity Capabilities */
 

@@ -7,7 +7,6 @@ Cmds.xs
 Connection.xs
 Conversation.xs
 Debug.xs
-Hash.xs
 ImgStore.xs
 Log.xs
 Makefile.PL

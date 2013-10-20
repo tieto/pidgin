@@ -47,7 +47,6 @@ XS_FILES =		Account.xs \
 				Conversation.xs \
 				Core.xs \
 				Debug.xs \
-				Hash.xs \
 				Idle.xs \
 				Purple.xs \
 				ImgStore.xs \
