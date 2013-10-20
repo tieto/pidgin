@@ -31,7 +31,6 @@ typedef struct group *Purple__Group;
 #include "ciphers/hmaccipher.h"
 #include "ciphers/pbkdf2cipher.h"
 #include "ciphers/rc4cipher.h"
-#include "hash.h"
 #include "ciphers/md4hash.h"
 #include "ciphers/md5hash.h"
 #include "ciphers/sha1hash.h"
@@ -105,6 +104,7 @@ typedef PurpleCertificateVerificationStatus	Purple__Certificate__VerificationSta
 
 /* cipher.h */
 typedef PurpleCipher *			Purple__Cipher;
+typedef PurpleHash *			Purple__Hash;
 typedef PurpleCipherBatchMode		Purple__Cipher__BatchMode;
 
 /* cmds.h */
@@ -173,9 +173,6 @@ typedef GtkTextView *			Purple__GTK__TextView;
 
 /* gtkconn.h */
 #endif
-
-/* hash.h */
-typedef PurpleHash *			Purple__Hash;
 
 /* imgstore.h */
 typedef PurpleStoredImage *		Purple__StoredImage;

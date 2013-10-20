@@ -21,7 +21,7 @@
  *
  * Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>
  */
-
+#include "internal.h"
 #include "pbkdf2cipher.h"
 #include "hmaccipher.h"
 #include "debug.h"

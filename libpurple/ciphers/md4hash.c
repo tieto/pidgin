@@ -13,6 +13,7 @@
  * Copyright (c) 2002 David S. Miller (davem@redhat.com)
  * Copyright (c) 2002 James Morris <jmorris@intercode.com.au>
  */
+#include "internal.h"
 #include "md4hash.h"
 
 #include <string.h>

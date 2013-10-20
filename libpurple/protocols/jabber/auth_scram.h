@@ -29,7 +29,7 @@
  * DO NOT USE ANYTHING HERE OR YOU WILL BE SENT TO THE PIT OF DESPAIR.
  */
 
-#include "hash.h"
+#include "cipher.h"
 
 /* Per-connection state stored between messages.
  * This is stored in js->auth_data_mech.

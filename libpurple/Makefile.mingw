@@ -70,7 +70,6 @@ C_SRC =	\
 			buddylist.c \
 			buddyicon.c \
 			certificate.c \
-			cipher.c \
 			ciphers/aescipher.c \
 			ciphers/descipher.c \
 			ciphers/des3cipher.c \
@@ -81,6 +80,7 @@ C_SRC =	\
 			ciphers/rc4cipher.c \
 			ciphers/sha1hash.c \
 			ciphers/sha256hash.c \
+			cipher.c \
 			circularbuffer.c \
 			cmds.c \
 			connection.c \
@@ -92,7 +92,6 @@ C_SRC =	\
 			dnsquery.c \
 			dnssrv.c \
 			eventloop.c \
-			hash.c \
 			http.c \
 			idle.c \
 			imgstore.c \

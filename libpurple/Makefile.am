@@ -75,7 +75,6 @@ purple_coresources = \
 	debug.c \
 	desktopitem.c \
 	eventloop.c \
-	hash.c \
 	http.c \
 	idle.c \
 	imgstore.c \
@@ -151,7 +150,6 @@ purple_coreheaders = \
 	debug.h \
 	desktopitem.h \
 	eventloop.h \
-	hash.h \
 	http.h \
 	idle.h \
 	imgstore.h \

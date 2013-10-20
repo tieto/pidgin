@@ -47,7 +47,6 @@ common_sources = \
 	common/Connection.xs \
 	common/Conversation.xs \
 	common/Debug.xs \
-	common/Hash.xs \
 	common/Idle.xs \
 	common/ImgStore.xs \
 	common/Log.xs \

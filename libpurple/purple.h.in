@@ -34,6 +34,10 @@
 
 #include <glib.h>
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #ifndef G_GNUC_NULL_TERMINATED
 #	if     __GNUC__ >= 4
 #		define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
@@ -61,7 +65,6 @@
 #include <dnssrv.h>
 #include <enums.h>
 #include <eventloop.h>
-#include <hash.h>
 #include <idle.h>
 #include <imgstore.h>
 #include <log.h>

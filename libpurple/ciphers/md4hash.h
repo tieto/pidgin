@@ -25,7 +25,7 @@
 #ifndef PURPLE_MD4_HASH_H
 #define PURPLE_MD4_HASH_H
 
-#include "hash.h"
+#include "cipher.h"
 
 #define PURPLE_TYPE_MD4_HASH				(purple_md4_hash_get_type())
 #define PURPLE_MD4_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MD4_HASH, PurpleMD4Hash))

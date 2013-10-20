@@ -27,7 +27,6 @@
 #define PURPLE_PBKDF2_CIPHER_H
 
 #include "cipher.h"
-#include "hash.h"
 
 #define PURPLE_TYPE_PBKDF2_CIPHER				(purple_pbkdf2_cipher_get_type())
 #define PURPLE_PBKDF2_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2Cipher))

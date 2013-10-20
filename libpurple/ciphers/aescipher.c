@@ -22,6 +22,8 @@
  * Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>
  */
 
+#include "internal.h"
+
 #include "aescipher.h"
 #include "debug.h"
 #include "enums.h"
@@ -299,7 +301,7 @@ purple_aes_cipher_nss_crypt(const guchar *input, guchar *output, size_t len,
 	CK_MECHANISM_TYPE cipher_mech = CKM_AES_CBC;
 	SECItem key_item, iv_item;
 	SECStatus ret;
-	int outlen = 0;
+	size_t outlen = 0;
 	unsigned int outlen_tmp = 0;
 
 	memset(&context, 0, sizeof(PurpleAESCipherNSSContext));
