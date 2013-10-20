@@ -301,7 +301,7 @@ purple_aes_cipher_nss_crypt(const guchar *input, guchar *output, size_t len,
 	CK_MECHANISM_TYPE cipher_mech = CKM_AES_CBC;
 	SECItem key_item, iv_item;
 	SECStatus ret;
-	size_t outlen = 0;
+	int outlen = 0;
 	unsigned int outlen_tmp = 0;
 
 	memset(&context, 0, sizeof(PurpleAESCipherNSSContext));

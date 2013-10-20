@@ -20,7 +20,7 @@
  *
  */
 
-#include "internal.h"
+#include <internal.h>
 
 /* This file defines PURPLE_PLUGINS and includes all the libpurple headers */
 #include <purple.h>
