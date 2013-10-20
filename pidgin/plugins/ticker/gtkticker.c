@@ -334,7 +334,7 @@ static void gtk_ticker_realize (GtkWidget *widget)
 #if GTK_CHECK_VERSION(3,0,0)
 	context = gtk_widget_get_style_context(widget);
 	gtk_style_context_add_class(context, GTK_STYLE_CLASS_BACKGROUND);
-	gtk_style_context_set_state(context, GTK_STATE_NORMAL);
+	gtk_style_context_set_state(context, GTK_STATE_FLAG_NORMAL);
 	gtk_style_context_set_background(context, window);
 #else
 	style = gtk_style_attach (gtk_widget_get_style (widget), window);

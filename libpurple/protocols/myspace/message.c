@@ -819,7 +819,7 @@ msim_msg_pack_element_dict(gpointer data, gpointer user_data)
 
 		default:
 			g_free(data_string);
-			g_return_if_fail(FALSE);
+			g_return_if_reached();
 			break;
 	}
 
