@@ -1529,7 +1529,7 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	gtk_action_set_sensitive(priv->attention, FALSE);
 
 	gtk_action_set_sensitive(priv->smiley,
-		(gboolean)pidgin_themes_get_proto_smileys(NULL));
+		pidgin_themes_get_proto_smileys(NULL) != NULL);
 
 	purple_prefs_connect_callback(toolbar,
 	                              PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
@@ -1632,7 +1632,7 @@ gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 
 	gtk_action_set_sensitive(priv->smiley,
-		(gboolean)pidgin_themes_get_proto_smileys(priv->sml));
+		pidgin_themes_get_proto_smileys(priv->sml) != NULL);
 }
 
 void

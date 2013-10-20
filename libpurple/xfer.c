@@ -1173,7 +1173,7 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 	if (purple_xfer_get_size(xfer) == 0)
 		s = priv->current_buffer_size;
 	else
-		s = MIN(purple_xfer_get_bytes_remaining(xfer), priv->current_buffer_size);
+		s = MIN((gssize)purple_xfer_get_bytes_remaining(xfer), (gssize)priv->current_buffer_size);
 
 	if (priv->ops.read != NULL)	{
 		r = (priv->ops.read)(buffer, xfer);
@@ -1211,7 +1211,7 @@ purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
 	g_return_val_if_fail(buffer != NULL, 0);
 	g_return_val_if_fail(size   != 0,    0);
 
-	s = MIN(purple_xfer_get_bytes_remaining(xfer), size);
+	s = MIN((gssize)purple_xfer_get_bytes_remaining(xfer), (gssize)size);
 
 	if (priv->ops.write != NULL) {
 		r = (priv->ops.write)(buffer, s, xfer);
@@ -1242,7 +1242,7 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 	ui_ops = purple_xfer_get_ui_ops(xfer);
 	fs_known = (purple_xfer_get_size(xfer) > 0);
 
-	if (fs_known && size > purple_xfer_get_bytes_remaining(xfer)) {
+	if (fs_known && (goffset)size > purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_warning("filetransfer",
 			"Got too much data (truncating at %" G_GOFFSET_FORMAT
 			").\n", purple_xfer_get_size(xfer));
@@ -1356,7 +1356,7 @@ do_transfer(PurpleXfer *xfer)
 		}
 	} else if (priv->type == PURPLE_XFER_TYPE_SEND) {
 		gssize result = 0;
-		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), priv->current_buffer_size);
+		gsize s = MIN((gsize)purple_xfer_get_bytes_remaining(xfer), (gsize)priv->current_buffer_size);
 		gboolean read = TRUE;
 
 		/* this is so the prpl can keep the connection open

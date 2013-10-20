@@ -528,7 +528,7 @@ static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
 
 	if (edisc_xfer->already_read != offset) {
 		purple_debug_error("gg", "ggp_edisc_xfer_send_reader: "
-			"Invalid offset (%d != %" G_GSIZE_FORMAT ")\n",
+			"Invalid offset (%" G_GSIZE_FORMAT " != %" G_GSIZE_FORMAT ")\n",
 			edisc_xfer->already_read, offset);
 		ggp_edisc_xfer_error(xfer, _("Error while reading a file"));
 		return;
@@ -541,7 +541,7 @@ static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
 	else {
 		success = TRUE;
 		edisc_xfer->already_read += stored;
-		eof = (edisc_xfer->already_read >= purple_xfer_get_size(xfer));
+		eof = ((goffset)edisc_xfer->already_read >= purple_xfer_get_size(xfer));
 	}
 
 	cb(hc, success, eof, stored);
@@ -974,7 +974,7 @@ static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	g_return_val_if_fail(edisc_xfer != NULL, FALSE);
 
 	stored = purple_xfer_write_file(xfer, (guchar *)buffer, length) ?
-			length : -1;
+			(gssize)length : -1;
 
 	if (stored < 0 || (gsize)stored != length) {
 		purple_debug_error("gg", "ggp_edisc_xfer_recv_writer: "
@@ -984,8 +984,8 @@ static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 
 	if (stored > purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_error("gg", "ggp_edisc_xfer_recv_writer: "
-			"saved too much (%d > %d)\n",
-			stored, (int)purple_xfer_get_bytes_remaining(xfer));
+			"saved too much (%" G_GSSIZE_FORMAT " > %" G_GOFFSET_FORMAT ")\n",
+			stored, purple_xfer_get_bytes_remaining(xfer));
 		return FALSE;
 	}
 

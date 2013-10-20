@@ -108,6 +108,7 @@ static PurpleEventLoopUiOps glib_eventloops =
 	/* padding */
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 /*** End of the eventloop functions. ***/
@@ -171,6 +172,7 @@ static PurpleCoreUiOps null_core_uiops =
 	NULL,
 
 	/* padding */
+	NULL,
 	NULL,
 	NULL,
 	NULL,

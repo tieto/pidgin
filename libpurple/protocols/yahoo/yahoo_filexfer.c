@@ -812,7 +812,7 @@ yahoo_process_filetrans_15_reader(PurpleHttpConnection *hc,
 	PurpleXfer *xfer = _xfer;
 	gssize stored;
 
-	if (offset != purple_xfer_get_bytes_sent(xfer)) {
+	if ((goffset)offset != purple_xfer_get_bytes_sent(xfer)) {
 		purple_debug_warning("yahoo",
 			"offset != purple_xfer_get_bytes_sent(xfer)\n");
 	}
