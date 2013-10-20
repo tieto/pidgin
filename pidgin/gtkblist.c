@@ -576,7 +576,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	GtkTreePath *path;
 	PurpleBlistNode *node;
 	PurpleGroup *dest;
-	gchar *alias;
+	gchar *alias = NULL;
 
 	editing_blist = FALSE;
 	path = gtk_tree_path_new_from_string (arg1);

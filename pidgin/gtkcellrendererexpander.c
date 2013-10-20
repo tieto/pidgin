@@ -304,7 +304,7 @@ pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	context = gtk_widget_get_style_context(widget);
 	gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
 	gtk_style_context_add_class(context, GTK_STYLE_CLASS_EXPANDER);
-	gtk_style_context_set_state(context, state);
+	gtk_style_context_set_state(context, (GtkStateFlags)state);
 	gtk_render_expander(context, cr,
 	                    cell_area->x + xpad, cell_area->y + ypad,
 	                    width, height);
