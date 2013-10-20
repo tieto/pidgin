@@ -1008,7 +1008,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
 	JabberSIXfer *jsx = purple_xfer_get_protocol_data(xfer);
 
-	if (size <= purple_xfer_get_bytes_remaining(xfer)) {
+	if ((goffset)size <= purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_info("jabber", "about to write %" G_GSIZE_FORMAT " bytes from IBB stream\n",
 			size);
 		purple_circular_buffer_append(jsx->ibb_buffer, data, size);

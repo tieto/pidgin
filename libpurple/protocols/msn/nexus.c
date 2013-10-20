@@ -403,7 +403,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	domains = g_string_new(NULL);
 	for (i = 0; i < nexus->token_len; i++) {
 		g_string_append_printf(domains, MSN_SSO_RST_TEMPLATE,
-		                       i+1,
+		                       (int)i+1,
 		                       ticket_domains[i][SSO_VALID_TICKET_DOMAIN],
 		                       ticket_domains[i][SSO_VALID_TICKET_POLICY] != NULL ?
 		                           ticket_domains[i][SSO_VALID_TICKET_POLICY] :

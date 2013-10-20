@@ -216,7 +216,7 @@ static void irc_dccsend_send_read(gpointer data, int source, PurpleInputConditio
 			xd->rxqueue = NULL;
 		}
 
-		if (acked >= purple_xfer_get_size(xfer)) {
+		if ((goffset)acked >= purple_xfer_get_size(xfer)) {
 			purple_input_remove(xd->inpa);
 			xd->inpa = 0;
 			purple_xfer_set_completed(xfer, TRUE);
@@ -231,7 +231,7 @@ static gssize irc_dccsend_send_write(const guchar *buffer, size_t size, PurpleXf
 	gssize s;
 	gssize ret;
 
-	s = MIN(purple_xfer_get_bytes_remaining(xfer), size);
+	s = MIN((gssize)purple_xfer_get_bytes_remaining(xfer), (gssize)size);
 	if (!s)
 		return 0;
 

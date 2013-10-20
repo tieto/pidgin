@@ -372,7 +372,7 @@ purple_aes_cipher_nss_crypt(const guchar *input, guchar *output, size_t len,
 	purple_aes_cipher_nss_cleanup(&context);
 
 	outlen += outlen_tmp;
-	if (outlen != len) {
+	if (outlen != (int)len) {
 		purple_debug_error("cipher-aes",
 			"resulting length doesn't match: %d (expected: %lu)\n",
 			outlen, len);
