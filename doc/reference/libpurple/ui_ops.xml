@@ -1,4 +1,11 @@
-/** @page ui-ops UiOps structures
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-ui-ops">
+  <title>UiOps Structures</title>
+
+  <programlisting>
 
   When implementing a UI for libpurple, you need to fill in various UiOps
   structures:
@@ -20,5 +27,5 @@
    - #PurpleWhiteboardUiOps
    - #PurpleXferUiOps
 
- */
-// vim: ft=c.doxygen
+  </programlisting>
+</chapter>

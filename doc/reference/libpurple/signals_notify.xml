@@ -1,5 +1,11 @@
-/** @page notify-signals Notification Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-notify">
+  <title>Notify signals</title>
 
+  <programlisting>
  @signals
   @signal displaying-userinfo
   @signal displaying-email-notification
@@ -54,5 +60,5 @@ void (*displaying_emails_notification)(const char **subjects,
   @param count      Number of emails being notified of.
  @endsignaldef
 
-*/
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

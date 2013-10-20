@@ -13,7 +13,7 @@
     </releaseinfo>
   </bookinfo>
 
-  <reference>
+  <reference label="I">
     <title>API Reference</title>
 
       <xi:include href="xml/getopt.xml" />
@@ -72,6 +72,16 @@
       <xi:include href="xml/pidgintooltip.xml" />
       <xi:include href="xml/pidgin.xml" />
       <xi:include href="xml/smileyparser.xml" />
+  </reference>
+
+  <reference label="II">
+    <title>Signals Reference</title>
+
+      <xi:include href="signals_gtkaccount.xml" />
+      <xi:include href="signals_gtkblist.xml" />
+      <xi:include href="signals_gtkconv.xml" />
+      <xi:include href="signals_gtkimhtml.xml" />
+      <xi:include href="signals_gtklog.xml" />
   </reference>
 
   <index id="api-index-full">

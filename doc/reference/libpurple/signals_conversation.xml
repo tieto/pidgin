@@ -1,5 +1,11 @@
-/** @page conversation-signals Conversation Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-conversation">
+  <title>Conversation signals</title>
 
+  <programlisting>
  @signals
   @signal writing-im-msg
   @signal wrote-im-msg
@@ -511,5 +517,6 @@ void (*got_attention)(PurpleAccount *account, const char *who,
   @param conv     The conversation
   @param type     The attention type (an index starting at 0)
  @endsignaldef
-*/
-// vim: syntax=c.doxygen tw=75 et
+
+  </programlisting>
+</chapter>

@@ -1,5 +1,11 @@
-/** @page jabber-signals Jabber Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-jabber">
+  <title>Jabber signals</title>
 
+  <programlisting>
  @signals
   @signal jabber-receiving-iq
   @signal jabber-receiving-message
@@ -10,8 +16,6 @@
   @signal jabber-sending-xmlnode
   @signal jabber-receiving-xmlnode
  @endsignals
-
- <hr>
 
  @signaldef jabber-receiving-iq
   @signalproto
@@ -134,5 +138,5 @@ void (receiving_xmlnode)(PurpleConnection *gc, PurpleXmlNode **stanza);
                  stop processing the stanza.
  @endsignaldef
 
-*/
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

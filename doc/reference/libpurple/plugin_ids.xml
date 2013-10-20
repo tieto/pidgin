@@ -1,5 +1,11 @@
-/** @page plugin-ids Plugin IDs
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-plugin-ids">
+  <title>Plugin IDs</title>
 
+  <programlisting>
  @section Introduction
   Every plugin contains a unique identifier. Third-party plugins (that is,
   plugins written by anyone who is not a libpurple, Pidgin, or Finch developer)
@@ -92,6 +98,5 @@
   Plugins will be accessed by your plugin ID, which is one reason why it
   must be unique. 
 
- */
-
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

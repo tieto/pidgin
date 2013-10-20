@@ -1,5 +1,11 @@
-/** @page xfer-signals File Transfer Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-xfer">
+  <title>File Transfer signals</title>
 
+  <programlisting>
  @signals
   @signal file-recv-accept
   @signal file-recv-start
@@ -13,8 +19,6 @@
  @endsignals
 
  @see ft.h
-
- <hr>
 
  @signaldef file-recv-accept
   @signalproto
@@ -110,5 +114,5 @@ void (*file_send_complete)(PurpleXfer *xfer, gpointer data);
   @param data User data
  @endsignaldef
 
- */
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

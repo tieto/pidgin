@@ -1,5 +1,11 @@
-/** @page gtkblist-signals GtkBlist Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-gtkblist">
+  <title>Buddy List signals</title>
 
+  <programlisting>
  @signals
   @signal gtkblist-hiding
   @signal gtkblist-unhiding
@@ -9,8 +15,6 @@
  @endsignals
 
  @see gtkblist.h
-
- <hr>
 
  @signaldef gtkblist-hiding
   @signalproto
@@ -66,5 +70,6 @@ char *(*drawing-buddy)(PurpleBuddy *buddy);
    @return The text to display (must be allocated), or @c NULL if no
            changes to the default behavior are desired.
  @endsignaldef
-*/
-// vim: syntax=c.doxygen tw=75 et
+
+  </programlisting>
+</chapter>

@@ -78,7 +78,29 @@ HTML_IMAGES=
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 # e.g. content_files=running.sgml building.sgml changes-2.0.sgml
-content_files=version.xml
+content_files = version.xml \
+	plugin_i18n.xml \
+	plugin_ids.xml \
+	signals_account.xml \
+	signals_blist.xml \
+	signals_certificate.xml \
+	signals_cmd.xml \
+	signals_connection.xml \
+	signals_conversation.xml \
+	signals_core.xml \
+	signals_dbus_server.xml \
+	signals_imgstore.xml \
+	signals_jabber.xml \
+	signals_log.xml \
+	signals_notify.xml \
+	signals_plugin.xml \
+	signals_protocol.xml \
+	signals_savedstatus.xml \
+	signals_sound.xml \
+	signals_xfer.xml \
+	tut_c_plugins.xml \
+	tut_signals.xml \
+	ui_ops.xml
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded
 # These files must be listed here *and* in content_files

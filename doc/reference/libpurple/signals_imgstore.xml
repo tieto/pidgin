@@ -1,12 +1,16 @@
-/** @page imgstore-signals Image Store Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-imgstore">
+  <title>Stored Image signals</title>
 
+  <programlisting>
  @signals
   @signal image-deleting
  @endsignals
 
  @see imgstore.h
-
- <hr>
 
  @signaldef image-deleting
   @signalproto
@@ -22,5 +26,5 @@ char *(*image_deleting)(const PurpleStoredImage *img);
   @note It's not possible to purple_imgstore_ref() img to save it.
  @endsignaldef
 
-*/
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

@@ -1,5 +1,11 @@
-/** @page account-signals Account Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-account">
+  <title>Account signals</title>
 
+  <programlisting>
  @signals
   @signal account-created
   @signal account-destroying
@@ -23,8 +29,6 @@
  @endsignals
 
  @see account.h
-
- <hr>
 
  @signaldef account-created
   @signalproto
@@ -227,5 +231,6 @@ void (*connection_error)(PurpleAccount *gc, PurpleConnectionError err, const gch
    @param err     The error that occurred
    @param desc    A description of the error, giving more information.
  @endsignaldef
- */
-// vim: syntax=c.doxygen tw=75 et
+
+  </programlisting>
+</chapter>

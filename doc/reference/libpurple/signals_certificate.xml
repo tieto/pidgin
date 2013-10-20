@@ -1,13 +1,17 @@
-/** @page certificate-signals Certificate Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-certificate">
+  <title>Certificate signals</title>
 
+  <programlisting>
  @signals
   @signal certificate-stored
   @signal certificate-deleted
  @endsignals
 
  @see certificate.h
-
- <hr>
 
  @signaldef certificate-stored
   @signalproto
@@ -29,5 +33,5 @@ void (*certificate_deleted)(PurpleCertificatePool *pool, const gchar *id, gpoint
   @param id      Key that was deleted
  @endsignaldef
 
- */
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

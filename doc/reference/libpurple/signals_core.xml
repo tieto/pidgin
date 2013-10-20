@@ -1,13 +1,17 @@
-/** @page core-signals Core Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-core">
+  <title>Core signals</title>
 
+  <programlisting>
  @signals
   @signal quitting
   @signal uri-handler
  @endsignals
 
  @see core.h
-
- <hr>
 
  @signaldef quitting
   @signalproto
@@ -28,5 +32,5 @@ gboolean (*uri_handler)(const gchar *proto, const gchar *cmd, GHashTable *params
   @param params Any key/value parameters from the URI.
  @endsignaldef
 
- */
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

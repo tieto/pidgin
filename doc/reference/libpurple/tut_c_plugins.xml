@@ -1,5 +1,11 @@
-/** @page c-howto C Plugin HOWTO
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-tut-c-plugins">
+  <title>C Plugins tutorial</title>
 
+  <programlisting>
  @section Introduction
   C plugins are native plugins.  They have complete access to all of the API,
   and can do basically whatever they want.  All of the protocol plugins, as
@@ -93,5 +99,6 @@ PURPLE_PLUGIN_INIT(hello_world, plugin_query, plugin_load, plugin_unload);
   basic things about your plugin, like what name to use if the plugin is
   compiled statically, and the @c plugin_query, @c plugin_load, and
   @c plugin_unload functions.
- */
-// vim: syntax=c.doxygen
+
+  </programlisting>
+</chapter>

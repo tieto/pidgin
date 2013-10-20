@@ -1,5 +1,11 @@
-/** @page connection-signals Connection Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-connection">
+  <title>Connection signals</title>
 
+  <programlisting>
  @signals
   @signal signing-on
   @signal signed-on
@@ -10,8 +16,6 @@
  @endsignals
 
  @see connection.h
-
- <hr>
 
  @signaldef signing-on
   @signalproto
@@ -75,5 +79,5 @@ void (*connection_error)(PurpleConnection *gc, PurpleConnectionError err, const 
    @param desc   A description of the error, giving more information.
  @endsignaldef
 
- */
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

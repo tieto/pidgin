@@ -1,5 +1,11 @@
-/** @page signal-howto Signals HOWTO
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-tut-signals">
+  <title>Signals tutorial</title>
 
+  <programlisting>
  @section Introduction
   The libpurple signals interface is used for general event notification, such
   as plugins being loaded or unloaded, allowing the GUI frontend to respond
@@ -131,5 +137,6 @@ static void plugin_load_cb(PurplePlugin *plugin, gpointer data)
 	plugin_load_cb(plugin, event_view);
   @endcode
   and does whatever it does.
-  
- */
+
+  </programlisting>
+</chapter>

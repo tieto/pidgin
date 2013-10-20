@@ -1,13 +1,17 @@
-/** @page plugin-signals Plugin Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-plugin">
+  <title>Plugin signals</title>
 
+  <programlisting>
  @signals
   @signal plugin-load
   @signal plugin-unload
  @endsignals
 
  @see plugins.h
-
- <hr>
 
  @signaldef plugin-load
   @signalproto
@@ -27,5 +31,5 @@ void (*plugin_unload)(PurplePlugin *plugin);
   @param plugin The plugin that was unloaded.
  @endsignaldef
 
- */
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

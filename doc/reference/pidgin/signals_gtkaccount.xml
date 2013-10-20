@@ -1,12 +1,16 @@
-/** @page gtkaccount-signals GtkAccount Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-account">
+  <title>Account signals</title>
 
+  <programlisting>
  @signals
   @signal account-modified
  @endsignals
 
  @see gtkaccount.h
-
- <hr>
 
  @signaldef account-modified
   @signalproto
@@ -16,5 +20,6 @@ void (*account-modified)(PurpleAccount *account);
    Emitted when the settings for an account have been changed and saved.
   @param account The account that has been modified.
  @endsignaldef
-*/
-// vim: syntax=c.doxygen tw=75 et
+
+  </programlisting>
+</chapter>

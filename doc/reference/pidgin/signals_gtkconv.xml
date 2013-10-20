@@ -1,5 +1,11 @@
-/** @page gtkconv-signals GtkConv Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-gtkconv">
+  <title>Conversation signals</title>
 
+  <programlisting>
  @signals
   @signal conversation-dragging
   @signal conversation-timestamp
@@ -13,8 +19,6 @@
  @endsignals
 
  @see gtkconv.h
-
- <hr>
 
  @signaldef conversation-dragging
   @signalproto
@@ -140,5 +144,5 @@ void (*conversation_displayed)(PidginConversation *gtkconv);
   @param gtkconv  The PidginConversation
  @endsignaldef
 
-*/
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>

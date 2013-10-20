@@ -13,47 +13,50 @@
     </releaseinfo>
   </bookinfo>
 
-  <reference>
+  <reference label="I">
+    <title>Tutorials</title>
+
+      <xi:include href="tut_c_plugins.xml" />
+      <xi:include href="tut_signals.xml" />
+  </reference>
+
+  <reference label="II">
     <title>API Reference</title>
 
+      <xi:include href="xml/account.xml" />
       <xi:include href="xml/accountopt.xml" />
       <xi:include href="xml/accounts.xml" />
-      <xi:include href="xml/account.xml" />
-      <xi:include href="xml/aescipher.xml" />
-      <xi:include href="xml/backend-fs2.xml" />
-      <xi:include href="xml/backend-iface.xml" />
       <xi:include href="xml/blistnodetypes.xml" />
       <xi:include href="xml/blistnode.xml" />
       <xi:include href="xml/buddyicon.xml" />
       <xi:include href="xml/buddylist.xml" />
-      <xi:include href="xml/candidate.xml" />
       <xi:include href="xml/certificate.xml" />
       <xi:include href="xml/cipher.xml" />
+      <xi:include href="xml/aescipher.xml" />
+      <xi:include href="xml/des3cipher.xml" />
+      <xi:include href="xml/descipher.xml" />
+      <xi:include href="xml/hmaccipher.xml" />
+      <xi:include href="xml/pbkdf2cipher.xml" />
+      <xi:include href="xml/rc4cipher.xml" />
       <xi:include href="xml/circularbuffer.xml" />
       <xi:include href="xml/cmds.xml" />
-      <xi:include href="xml/codec.xml" />
       <xi:include href="xml/connection.xml" />
       <xi:include href="xml/conversations.xml" />
       <xi:include href="xml/conversationtypes.xml" />
       <xi:include href="xml/conversation.xml" />
       <xi:include href="xml/core.xml" />
-      <xi:include href="xml/dbus-bindings.xml" />
-      <xi:include href="xml/dbus-maybe.xml" />
-      <xi:include href="xml/dbus-purple.xml" />
-      <xi:include href="xml/dbus-server.xml" />
-      <xi:include href="xml/dbus-useful.xml" />
       <xi:include href="xml/debug.xml" />
-      <xi:include href="xml/des3cipher.xml" />
-      <xi:include href="xml/descipher.xml" />
       <xi:include href="xml/desktopitem.xml" />
       <xi:include href="xml/dnsquery.xml" />
       <xi:include href="xml/dnssrv.xml" />
       <xi:include href="xml/enums.xml" />
-      <xi:include href="xml/enum-types.xml" />
       <xi:include href="xml/eventloop.xml" />
       <xi:include href="xml/glibcompat.xml" />
       <xi:include href="xml/hash.xml" />
-      <xi:include href="xml/hmaccipher.xml" />
+      <xi:include href="xml/md4hash.xml" />
+      <xi:include href="xml/md5hash.xml" />
+      <xi:include href="xml/sha1hash.xml" />
+      <xi:include href="xml/sha256hash.xml" />
       <xi:include href="xml/http.xml" />
       <xi:include href="xml/idle.xml" />
       <xi:include href="xml/imgstore.xml" />
@@ -61,17 +64,19 @@
       <xi:include href="xml/keyring.xml" />
       <xi:include href="xml/log.xml" />
       <xi:include href="xml/marshallers.xml" />
-      <xi:include href="xml/md4hash.xml" />
-      <xi:include href="xml/md5hash.xml" />
       <xi:include href="xml/media-gst.xml" />
       <xi:include href="xml/mediamanager.xml" />
       <xi:include href="xml/media.xml" />
+      <xi:include href="xml/backend-fs2.xml" />
+      <xi:include href="xml/backend-iface.xml" />
+      <xi:include href="xml/candidate.xml" />
+      <xi:include href="xml/codec.xml" />
+      <xi:include href="xml/enum-types.xml" />
       <xi:include href="xml/mime.xml" />
       <xi:include href="xml/nat-pmp.xml" />
       <xi:include href="xml/network.xml" />
       <xi:include href="xml/notify.xml" />
       <xi:include href="xml/ntlm.xml" />
-      <xi:include href="xml/pbkdf2cipher.xml" />
       <xi:include href="xml/pluginpref.xml" />
       <xi:include href="xml/plugins.xml" />
       <xi:include href="xml/pounce.xml" />
@@ -82,13 +87,10 @@
       <xi:include href="xml/proxy.xml" />
       <xi:include href="xml/purple-socket.xml" />
       <xi:include href="xml/purple.xml" />
-      <xi:include href="xml/rc4cipher.xml" />
       <xi:include href="xml/request.xml" />
       <xi:include href="xml/roomlist.xml" />
       <xi:include href="xml/savedstatuses.xml" />
       <xi:include href="xml/server.xml" />
-      <xi:include href="xml/sha1hash.xml" />
-      <xi:include href="xml/sha256hash.xml" />
       <xi:include href="xml/signals.xml" />
       <xi:include href="xml/smiley.xml" />
       <xi:include href="xml/sound-theme-loader.xml" />
@@ -108,7 +110,38 @@
       <xi:include href="xml/whiteboard.xml" />
       <xi:include href="xml/xfer.xml" />
       <xi:include href="xml/xmlnode.xml" />
+      <xi:include href="xml/dbus-bindings.xml" />
+      <xi:include href="xml/dbus-maybe.xml" />
+      <xi:include href="xml/dbus-purple.xml" />
+      <xi:include href="xml/dbus-server.xml" />
+      <xi:include href="xml/dbus-useful.xml" />
   </reference>
+
+  <reference label="III">
+    <title>Signals Reference</title>
+
+      <xi:include href="signals_account.xml" />
+      <xi:include href="signals_blist.xml" />
+      <xi:include href="signals_certificate.xml" />
+      <xi:include href="signals_cmd.xml" />
+      <xi:include href="signals_connection.xml" />
+      <xi:include href="signals_conversation.xml" />
+      <xi:include href="signals_core.xml" />
+      <xi:include href="signals_dbus_server.xml" />
+      <xi:include href="signals_imgstore.xml" />
+      <xi:include href="signals_jabber.xml" />
+      <xi:include href="signals_log.xml" />
+      <xi:include href="signals_notify.xml" />
+      <xi:include href="signals_plugin.xml" />
+      <xi:include href="signals_protocol.xml" />
+      <xi:include href="signals_savedstatus.xml" />
+      <xi:include href="signals_sound.xml" />
+      <xi:include href="signals_xfer.xml" />
+  </reference>
+
+  <xi:include href="ui_ops.xml" />
+  <xi:include href="plugin_i18n.xml" />
+  <xi:include href="plugin_ids.xml" />
 
   <index id="api-index-full">
     <title>Index</title>

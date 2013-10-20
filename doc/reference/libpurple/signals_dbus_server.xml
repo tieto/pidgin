@@ -1,13 +1,17 @@
-/** @page dbus-server-signals DBus Server Signals
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-dbus-server">
+  <title>D-Bus Server signals</title>
 
+  <programlisting>
  @signals
   @signal dbus-method-called
   @signal dbus-introspect
  @endsignals
 
  @see dbus-server.h
-
- <hr>
 
  @signaldef dbus-method-called
   @signalproto
@@ -30,5 +34,5 @@ void (*dbus_introspect)(GList **bidings_list);
   @param bindings_list ???
  @endsignaldef
 
- */
-// vim: syntax=c.doxygen tw=75 et
+  </programlisting>
+</chapter>
