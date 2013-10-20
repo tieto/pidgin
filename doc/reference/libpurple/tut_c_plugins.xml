@@ -28,13 +28,13 @@
   different?
 
   @code
-#include <purple.h>
+#include &lt;purple.h&gt;
 
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	const gchar * const authors[] = {
-		"Author Name <e@mail>",
+		"Author Name &lt;e@mail&gt;",
 		NULL
 	};
 

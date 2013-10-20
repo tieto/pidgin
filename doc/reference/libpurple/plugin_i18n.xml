@@ -21,9 +21,9 @@
 
    - In your autogen.sh, add the following after your other utility checks:
      @code
-(intltoolize --version) < /dev/null > /dev/null 2>&1 || {
+(intltoolize --version) &lt; /dev/null &gt; /dev/null 2&gt;&amp;1 || {
     echo;
-    echo "You must have intltool installed to compile <YOUR PLUGIN NAME>";
+    echo "You must have intltool installed to compile &lt;YOUR PLUGIN NAME&gt;";
     echo;
     exit;
 }
@@ -36,7 +36,7 @@ intltoolize --force --copy
      @code
 AC_PROG_INTLTOOL
 
-GETTEXT_PACKAGE=<YOUR PLUGIN NAME>
+GETTEXT_PACKAGE=&lt;YOUR PLUGIN NAME&gt;
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, ["$GETTEXT_PACKAGE"], [Define the gettext package to be used])
 
@@ -68,7 +68,7 @@ AM_GLIB_GNU_GETTEXT
      'config.h' file for you plugin.  Note that 'config.h' could be whatever
 	 you told autohead to use with AM_CONFIG_HEADER.  Also add the following:
 	 @code
-#include <glib/gi18n-lib.h>
+#include &lt;glib/gi18n-lib.h&gt;
      @endcode
 	 Make sure that this include is after you include of your 'config.h',
 	 otherwise you will break your build.  Also note that if you wish to
@@ -88,9 +88,9 @@ AM_GLIB_GNU_GETTEXT
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 #endif /* ENABLE_NLS */
 
-	info.name        = _("<YOUR PLUGIN NAME>");
-	info.summary     = _("<YOUR PLUGIN SUMMARY>");
-	info.description = _("<YOUR PLUGIN DESCRIPTION>");
+	info.name        = _("&lt;YOUR PLUGIN NAME&gt;");
+	info.summary     = _("&lt;YOUR PLUGIN SUMMARY&gt;");
+	info.description = _("&lt;YOUR PLUGIN DESCRIPTION&gt;");
      @endcode
      Note that the _() is intentional, and that it is telling intltool that
 	 this string should be translated.  There is also N_() which says that a
