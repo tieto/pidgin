@@ -1054,8 +1054,6 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	}
 
 	/* Signal that the buddy has been added */
-	purple_signal_emit(purple_blist_get_handle(), "buddy-added", buddy);
-
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
 			PURPLE_BLIST_NODE(buddy));
 }
@@ -1406,8 +1404,6 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	purple_pounce_destroy_all_by_buddy(buddy);
 
 	/* Signal that the buddy has been removed before freeing the memory for it */
-	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);
-
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
 			PURPLE_BLIST_NODE(buddy));
 
@@ -1921,14 +1917,6 @@ purple_blist_init(void)
 	purple_signal_register(handle, "blist-node-removed",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
 						 PURPLE_TYPE_BLIST_NODE);
-
-	purple_signal_register(handle, "buddy-added",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_BUDDY);
-
-	purple_signal_register(handle, "buddy-removed",
-						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
-						 PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "buddy-icon-changed",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,

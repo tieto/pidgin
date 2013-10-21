@@ -355,6 +355,7 @@ version 3.0.0 (??/??/????):
 		* xmlnode_* functions are now purple_xmlnode_*
 
 		Removed:
+		* buddy-added and buddy-removed blist signals
 		* privacy.h file
 		* value.h file
 		* _PurpleCipherBatchMode
