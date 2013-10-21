@@ -128,7 +128,6 @@
       <xi:include href="signals_core.xml" />
       <xi:include href="signals_dbus_server.xml" />
       <xi:include href="signals_imgstore.xml" />
-      <xi:include href="signals_jabber.xml" />
       <xi:include href="signals_log.xml" />
       <xi:include href="signals_notify.xml" />
       <xi:include href="signals_plugin.xml" />
@@ -136,6 +135,7 @@
       <xi:include href="signals_savedstatus.xml" />
       <xi:include href="signals_sound.xml" />
       <xi:include href="signals_xfer.xml" />
+      <xi:include href="signals_jabber.xml" />
   </reference>
 
   <xi:include href="ui_ops.xml" />
