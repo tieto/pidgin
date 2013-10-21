@@ -75,7 +75,7 @@
   </reference>
 
   <reference label="II">
-    <title>Signals Reference</title>
+    <title>Purple-signals Reference</title>
 
       <xi:include href="signals_gtkaccount.xml" />
       <xi:include href="signals_gtkblist.xml" />

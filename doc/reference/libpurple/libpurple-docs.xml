@@ -117,7 +117,7 @@
   </reference>
 
   <reference label="III">
-    <title>Signals Reference</title>
+    <title>Purple-signals Reference</title>
 
       <xi:include href="signals_account.xml" />
       <xi:include href="signals_blist.xml" />

@@ -3,33 +3,55 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-signals-plugin">
-  <title>Plugin signals</title>
+<title>Plugin signals</title>
 
+<refsect1 id="plugins.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="plugins-plugin-load">plugin-load</link>&quot;
+  &quot;<link linkend="plugins-plugin-unload">plugin-unload</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="plugins.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="plugins-plugin-load" role="signal">
+ <title>The <literal>&quot;plugin-load&quot;</literal> signal</title>
+  <para>
+Emitted when a plugin is loaded.
+  </para>
   <programlisting>
- @signals
-  @signal plugin-load
-  @signal plugin-unload
- @endsignals
+void                user_function                      (PurplePlugin *plugin,
+                                                        gpointer user_data)</programlisting>
+  <varlistentry>
+    <term><parameter>plugin</parameter>&#160;:</term>
+    <listitem><simpara>The plugin that was loaded.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+</refsect2>
 
- @see plugins.h
+<refsect2 id="plugins-plugin-unload" role="signal">
+ <title>The <literal>&quot;plugin-unload&quot;</literal> signal</title>
+  <para>
+Emitted when a plugin is unloaded.
+  </para>
+  <programlisting>
+void                user_function                      (PurplePlugin *plugin,
+                                                        gpointer user_data)</programlisting>
+  <varlistentry>
+    <term><parameter>plugin</parameter>&#160;:</term>
+    <listitem><simpara>The plugin that was unloaded.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+</refsect2>
 
- @signaldef plugin-load
-  @signalproto
-void (*plugin_load)(PurplePlugin *plugin);
-  @endsignalproto
-  @signaldesc
-   Emitted when a plugin is loaded.
-  @param plugin The plugin that was loaded.
- @endsignaldef
+</refsect1>
 
- @signaldef plugin-unload
-  @signalproto
-void (*plugin_unload)(PurplePlugin *plugin);
-  @endsignalproto
-  @signaldesc
-   Emitted when a plugin is unloaded.
-  @param plugin The plugin that was unloaded.
- @endsignaldef
-
-  </programlisting>
 </chapter>
