@@ -3,34 +3,64 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-signals-core">
-  <title>Core signals</title>
+<title>Core signals</title>
 
+<refsect1 id="core.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="core-quitting">quitting</link>&quot;
+  &quot;<link linkend="core-uri-handler">uri-handler</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="core.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="core-quitting" role="signal">
+ <title>The <literal>&quot;quitting&quot;</literal> signal</title>
   <programlisting>
- @signals
-  @signal quitting
-  @signal uri-handler
- @endsignals
+void                user_function                      (gpointer user_data)</programlisting>
+  <para>
+Emitted when libpurple is quitting.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @see core.h
+<refsect2 id="core-uri-handler" role="signal">
+ <title>The <literal>&quot;uri-handler&quot;</literal> signal</title>
+  <programlisting>
+gboolean            user_function                      (const gchar *proto,
+                                                        const gchar *cmd,
+                                                        GHashTable *params,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when handling a registered URI.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>proto</parameter>&#160;:</term>
+    <listitem><simpara>The protocol of the URI.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>cmd</parameter>&#160;:</term>
+    <listitem><simpara>The 'command' of the URI.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>params</parameter>&#160;:</term>
+    <listitem><simpara>Any key/value parameters from the URI.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef quitting
-  @signalproto
-void (*quitting)();
-  @endsignalproto
-  @signaldesc
-   Emitted when libpurple is quitting.
- @endsignaldef
+</refsect1>
 
- @signaldef uri-handler
-  @signalproto
-gboolean (*uri_handler)(const gchar *proto, const gchar *cmd, GHashTable *params);
-  @endsignalproto
-  @signaldesc
-   Emitted when handling a registered URI.
-  @param proto The protocol of the URI.
-  @param cmd The 'command' of the URI.
-  @param params Any key/value parameters from the URI.
- @endsignaldef
-
-  </programlisting>
 </chapter>

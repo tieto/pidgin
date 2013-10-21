@@ -3,29 +3,55 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-signals-log">
-  <title>Log signals</title>
+<title>Log signals</title>
 
+<refsect1 id="logs.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="logs-log-timestamp">log-timestamp</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="logs.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="logs-log-timestamp" role="signal">
+ <title>The <literal>&quot;log-timestamp&quot;</literal> signal</title>
   <programlisting>
- @signals
-  @signal log-timestamp
- @endsignals
+char *              user_function                      (PurpleLog *log,
+                                                        time_t when,
+                                                        gboolean show_date,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted to allow plugins to customize the timestamp on a message being logged.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Plugins must be careful of logs with a type of PURPLE_LOG_SYSTEM.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>log</parameter>&#160;:</term>
+    <listitem><simpara>The log the message belongs to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>when</parameter>&#160;:</term>
+    <listitem><simpara>The time to be converted to a string.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>show_date</parameter>&#160;:</term>
+    <listitem><simpara>Whether the date should be displayed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>A textual representation of the time, or <literal>NULL</literal> to use a default format.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @see log.h
+</refsect1>
 
- @signaldef log-timestamp
-  @signalproto
-char *(*log_timestamp)(PurpleLog *log, time_t when, gboolean show_date);
-  @endsignalproto
-  @signaldesc
-   Emitted to allow plugins to customize the timestamp on a message
-   being logged.
-  @param log       The log the message belongs to.
-  @param when      The time to be converted to a string.
-  @param show_date Whether the date should be displayed.
-  @return A textual representation of the time, or @c NULL to use a
-          default format.
-  @note Plugins must be careful of logs with a type of PURPLE_LOG_SYSTEM.
- @endsignaldef
-
-  </programlisting>
 </chapter>

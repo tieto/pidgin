@@ -3,23 +3,38 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-signals-account">
-  <title>Account signals</title>
+<title>Account signals</title>
 
+<refsect1 id="gtkaccounts.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="gtkaccounts-account-modified">account-modified</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="gtkaccounts.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="gtkaccounts-account-modified" role="signal">
+ <title>The <literal>&quot;account-modified&quot;</literal> signal</title>
   <programlisting>
- @signals
-  @signal account-modified
- @endsignals
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when the settings for an account have been changed and saved.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that has been modified.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @see gtkaccount.h
+</refsect1>
 
- @signaldef account-modified
-  @signalproto
-void (*account-modified)(PurpleAccount *account);
-  @endsignalproto
-  @signaldesc
-   Emitted when the settings for an account have been changed and saved.
-  @param account The account that has been modified.
- @endsignaldef
-
-  </programlisting>
 </chapter>

@@ -3,78 +3,163 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-signals-gtkimhtml">
-  <title>IMHtml signals</title>
+<title>IMHtml signals</title>
 
+<refsect1 id="gtkimhtml.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="gtkimhtml-url_clicked">url_clicked</link>&quot;
+  &quot;<link linkend="gtkimhtml-format_buttons_update">format_buttons_update</link>&quot;
+  &quot;<link linkend="gtkimhtml-format_function_clear">format_function_clear</link>&quot;
+  &quot;<link linkend="gtkimhtml-format_function_toggle">format_function_toggle</link>&quot;
+  &quot;<link linkend="gtkimhtml-format_function_update">format_function_update</link>&quot;
+  &quot;<link linkend="gtkimhtml-paste">paste</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="gtkimhtml.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="gtkimhtml-url_clicked" role="signal">
+ <title>The <literal>&quot;url_clicked&quot;</literal> signal</title>
   <programlisting>
- @signals
-  @signal url_clicked
-  @signal format_buttons_update
-  @signal format_function_clear
-  @signal format_function_toggle
-  @signal format_function_update
-  @signal paste
- @endsignals
+void                user_function                      (GtkIMHtml *imhtml,
+                                                        char *uri,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a link is clicked.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>imhtml</parameter>&#160;:</term>
+    <listitem><simpara>The GtkIMHtml emitting the signal.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>url</parameter>&#160;:</term>
+    <listitem><simpara>The uri.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @see gtkimhtml.h
+<refsect2 id="gtkimhtml-format_buttons_update" role="signal">
+ <title>The <literal>&quot;format_buttons_update&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (GtkIMHtml *imhtml,
+                                                        GtkIMHtmlButtons buttons,
+                                                        gpointer data)</programlisting>
+  <para>
+Emitted when allowed formatting has changed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>imhtml</parameter>&#160;:</term>
+    <listitem><simpara>The GtkIMHtml emitting the signal.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>buttons</parameter>&#160;:</term>
+    <listitem><simpara>GtkIMHtmlButtons for the GtkIMHtml.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User defined data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef url_clicked
-  @signalproto
-void (*url_clicked)(GtkIMHtml *imhtml, char *uri);
-  @endsignalproto
-  @signaldesc Emitted when a link is clicked
-  @param imhtml The GtkIMHtml emitting the signal.
-  @param url The uri.
- @endsignaldef
+<refsect2 id="gtkimhtml-format_function_clear" role="signal">
+ <title>The <literal>&quot;format_function_clear&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (GtkIMHtml *imhtml,
+                                                        gpointer data)</programlisting>
+  <para>
+Emitted when clearing the formatting for the GtkIMHtml.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>imhtml</parameter>&#160;:</term>
+    <listitem><simpara>The GtkIMHtml emitting the signal.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User defined data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef format_buttons_update
-  @signalproto
-void (*format_buttons_update)(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, gpointer data);
-  @endsignalproto
-  @signaldesc Emitted when allowed formatting has changed.
-  @param imhtml  The GtkIMHtml emitting the signal.
-  @param buttons GtkIMHtmlButtons for the GtkIMHtml.
-  @param data    User defined data.
- @endsignaldef
+<refsect2 id="gtkimhtml-format_function_toggle" role="signal">
+ <title>The <literal>&quot;format_function_toggle&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (GtkIMHtml *imhtml,
+                                                        GtkIMHtmlButtons buttons,
+                                                        gpointer data)</programlisting>
+  <para>
+Emitted when a format has been toggled.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>imhtml</parameter>&#160;:</term>
+    <listitem><simpara>The GtkIMHtml emitting the signal.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>buttons</parameter>&#160;:</term>
+    <listitem><simpara>GtkIMHtmlButtons for the GtkIMHtml.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User defined data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef format_function_clear
-  @signalproto
-void (*format_function_clear)(GtkIMHtml *imhtml, gpointer data);
-  @endsignalproto
-  @signaldesc Emitted when clearing the formatting for the GtkIMHtml.
-  @param imhtml The GtkIMHtml emitting the signal.
-  @param data   User defined data.
- @endsignaldef
+<refsect2 id="gtkimhtml-format_function_update" role="signal">
+ <title>The <literal>&quot;format_function_update&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (GtkIMHtml *imhtml,
+                                                        gpointer data)</programlisting>
+  <para>
+Emitted when the cursor has moved and formatting has changed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>imhtml</parameter>&#160;:</term>
+    <listitem><simpara>The GtkIMHtml emitting the signal.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User defined data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef format_function_toggle
-  @signalproto
-void (*format_function_toggle)(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, gpointer data);
-  @endsignalproto
-  @signaldesc Emitted when a format has been toggled.
-  @param imhtml  The GtkIMHtml emitting the signal.
-  @param buttons GtkIMHtmlButtons for the GtkIMHtml.
-  @param data    User defined data.
- @endsignaldef
+<refsect2 id="gtkimhtml-paste" role="signal">
+ <title>The <literal>&quot;paste&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (GtkIMHtml *imhtml,
+                                                        char *format,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when paste from the clipboard is requested.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>imhtml</parameter>&#160;:</term>
+    <listitem><simpara>The GtkIMHtml emitting the signal.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>format</parameter>&#160;:</term>
+    <listitem><simpara>If 'text', then the formatting of the clipboard content will be removed before pasting. If empty or 'html', then the formatting will not be removed. Any other value for this parameter is ignored and nothing is pasted.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef format_function_update
-  @signalproto
-void (*format_function_update)(GtkIMHtml *imhtml, gpointer data);
-  @endsignalproto
-  @signaldesc Emitted when the cursor has moved and formatting has changed
-  @param imhtml The GtkIMHtml emitting the signal.
-  @param data   User defined data.
- @endsignaldef
+</refsect1>
 
- @signaldef paste
- 	@signalproto
-void (*paste) (GtkIMHtml *imhtml, char *format)
-	@endsignalproto
-	@signaldesc Emitted when paste from the clipboard is requested.
-	@param imhtml  The GtkIMHtml emitting the signal.
-	@param format  If 'text', then the formatting of the clipboard content
-	               will be removed before pasting. If empty or 'html', then
-		       the formatting will not be removed. Any other value for
-		       this parameter is ignored and nothing is pasted.
- @endsignaldef
-
-  </programlisting>
 </chapter>

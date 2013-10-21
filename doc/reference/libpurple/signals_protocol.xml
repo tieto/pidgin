@@ -3,33 +3,59 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-signals-protocol">
-  <title>Protocol signals</title>
+<title>Protocol signals</title>
 
+<refsect1 id="protocols.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="protocols-protocol-added">protocol-added</link>&quot;
+  &quot;<link linkend="protocols-protocol-removed">protocol-removed</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="protocols.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="protocols-protocol-added" role="signal">
+ <title>The <literal>&quot;protocol-added&quot;</literal> signal</title>
   <programlisting>
- @signals
-  @signal protocol-added
-  @signal protocol-removed
- @endsignals
+void                user_function                      (PurpleProtocol *protocol,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a protocol is added.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>protocol</parameter>&#160;:</term>
+    <listitem><simpara>The protocol that was added.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @see protocols.h
+<refsect2 id="protocols-protocol-removed" role="signal">
+ <title>The <literal>&quot;protocol-removed&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleProtocol *protocol,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a protocol is removed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>protocol</parameter>&#160;:</term>
+    <listitem><simpara>The protocol that was removed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef protocol-added
-  @signalproto
-void (*protocol_added)(PurpleProtocol *protocol);
-  @endsignalproto
-  @signaldesc
-   Emitted when a protocol is added.
-  @param protocol The protocol that was added.
- @endsignaldef
+</refsect1>
 
- @signaldef protocol-removed
-  @signalproto
-void (*protocol_removed)(PurpleProtocol *protocol);
-  @endsignalproto
-  @signaldesc
-   Emitted when a protocol is removed.
-  @param protocol The protocol that was removed.
- @endsignaldef
-
-  </programlisting>
 </chapter>

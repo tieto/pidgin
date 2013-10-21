@@ -3,520 +3,1195 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-signals-conversation">
-  <title>Conversation signals</title>
+<title>Conversation signals</title>
 
+<refsect1 id="conversations.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="conversations-writing-im-msg">writing-im-msg</link>&quot;
+  &quot;<link linkend="conversations-wrote-im-msg">wrote-im-msg</link>&quot;
+  &quot;<link linkend="conversations-sending-im-msg">sending-im-msg</link>&quot;
+  &quot;<link linkend="conversations-sent-im-msg">sent-im-msg</link>&quot;
+  &quot;<link linkend="conversations-receiving-im-msg">receiving-im-msg</link>&quot;
+  &quot;<link linkend="conversations-received-im-msg">received-im-msg</link>&quot;
+  &quot;<link linkend="conversations-blocked-im-msg">blocked-im-msg</link>&quot;
+  &quot;<link linkend="conversations-writing-chat-msg">writing-chat-msg</link>&quot;
+  &quot;<link linkend="conversations-wrote-chat-msg">wrote-chat-msg</link>&quot;
+  &quot;<link linkend="conversations-sending-chat-msg">sending-chat-msg</link>&quot;
+  &quot;<link linkend="conversations-sent-chat-msg">sent-chat-msg</link>&quot;
+  &quot;<link linkend="conversations-receiving-chat-msg">receiving-chat-msg</link>&quot;
+  &quot;<link linkend="conversations-received-chat-msg">received-chat-msg</link>&quot;
+  &quot;<link linkend="conversations-conversation-created">conversation-created</link>&quot;
+  &quot;<link linkend="conversations-conversation-updated">conversation-updated</link>&quot;
+  &quot;<link linkend="conversations-deleting-conversation">deleting-conversation</link>&quot;
+  &quot;<link linkend="conversations-buddy-typing">buddy-typing</link>&quot;
+  &quot;<link linkend="conversations-buddy-typing-stopped">buddy-typing-stopped</link>&quot;
+  &quot;<link linkend="conversations-chat-user-joining">chat-user-joining</link>&quot;
+  &quot;<link linkend="conversations-chat-user-joined">chat-user-joined</link>&quot;
+  &quot;<link linkend="conversations-chat-user-flags">chat-user-flags</link>&quot;
+  &quot;<link linkend="conversations-chat-user-leaving">chat-user-leaving</link>&quot;
+  &quot;<link linkend="conversations-chat-user-left">chat-user-left</link>&quot;
+  &quot;<link linkend="conversations-chat-inviting-user">chat-inviting-user</link>&quot;
+  &quot;<link linkend="conversations-chat-invited-user">chat-invited-user</link>&quot;
+  &quot;<link linkend="conversations-chat-invited">chat-invited</link>&quot;
+  &quot;<link linkend="conversations-chat-invite-blocked">chat-invite-blocked</link>&quot;
+  &quot;<link linkend="conversations-chat-joined">chat-joined</link>&quot;
+  &quot;<link linkend="conversations-chat-join-failed">chat-join-failed</link>&quot;
+  &quot;<link linkend="conversations-chat-left">chat-left</link>&quot;
+  &quot;<link linkend="conversations-chat-topic-changed">chat-topic-changed</link>&quot;
+  &quot;<link linkend="conversations-cleared-message-history">cleared-message-history</link>&quot;
+  &quot;<link linkend="conversations-conversation-extended-menu">conversation-extended-menu</link>&quot;
+  &quot;<link linkend="conversations-sent-attention">sent-attention</link>&quot;
+  &quot;<link linkend="conversations-got-attention">got-attention</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="conversations.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="conversations-writing-im-msg" role="signal">
+ <title>The <literal>&quot;writing-im-msg&quot;</literal> signal</title>
   <programlisting>
- @signals
-  @signal writing-im-msg
-  @signal wrote-im-msg
-  @signal sending-im-msg
-  @signal sent-im-msg
-  @signal receiving-im-msg
-  @signal received-im-msg
-  @signal blocked-im-msg
-  @signal writing-chat-msg
-  @signal wrote-chat-msg
-  @signal sending-chat-msg
-  @signal sent-chat-msg
-  @signal receiving-chat-msg
-  @signal received-chat-msg
-  @signal conversation-created
-  @signal conversation-updated
-  @signal deleting-conversation
-  @signal buddy-typing
-  @signal buddy-typing-stopped
-  @signal chat-user-joining
-  @signal chat-user-joined
-  @signal chat-user-flags
-  @signal chat-user-leaving
-  @signal chat-user-left
-  @signal chat-inviting-user
-  @signal chat-invited-user
-  @signal chat-invited
-  @signal chat-invite-blocked
-  @signal chat-joined
-  @signal chat-join-failed
-  @signal chat-left
-  @signal chat-topic-changed
-  @signal cleared-message-history
-  @signal conversation-extended-menu
-  @signal sent-attention
-  @signal got-attention
- @endsignals
+gboolean            user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char **message,
+                                                        PurpleIMConversation *im,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted before a message is written in an IM conversation. If the message is changed, then the changed message is displayed and logged instead of the original message.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Make sure to free <literal>*message</literal> before you replace it!
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>im</parameter>&#160;:</term>
+    <listitem><simpara>The IM conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the message should be canceled, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @see conversation.h
+<refsect2 id="conversations-wrote-im-msg" role="signal">
+ <title>The <literal>&quot;wrote-im-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char *message,
+                                                        PurpleIMConversation *im,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted after a message is written and possibly displayed in a conversation.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>im</parameter>&#160;:</term>
+    <listitem><simpara>The IM conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef writing-im-msg
-  @signalproto
-gboolean (*writing_im_msg)(PurpleAccount *account, const char *who,
-                           char **message, PurpleIMConversation *im,
-                           PurpleMessageFlags flags);
-  @endsignalproto
-  @signaldesc
-   Emitted before a message is written in an IM conversation. If the
-   message is changed, then the changed message is displayed and logged
-   instead of the original message.
-  @note
-   Make sure to free @a *message before you replace it!
-  @param account The account.
-  @param who     The name of the user.
-  @param message A pointer to the message.
-  @param im      The IM conversation.
-  @param flags   Flags for this message.
-  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
- @endsignaldef
+<refsect2 id="conversations-sending-im-msg" role="signal">
+ <title>The <literal>&quot;sending-im-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *receiver,
+                                                        char **message,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted before sending an IM to a user. <literal>message</literal> is a pointer to the message string, so the plugin can replace the message before being sent.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Make sure to free <literal>*message</literal> before you replace it!
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message is being sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>receiver</parameter>&#160;:</term>
+    <listitem><simpara>The username of the receiver.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the outgoing message. This can be modified.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef wrote-im-msg
-  @signalproto
-void (*wrote_im_msg)(PurpleAccount *account, const char *who,
-                     char *message, PurpleIMConversation *im,
-                     PurpleMessageFlags flags);
-  @endsignalproto
-  @signaldesc
-   Emitted after a message is written and possibly displayed in a conversation.
-  @param account The account.
-  @param who     The name of the user.
-  @param message The message.
-  @param im      The IM conversation.
-  @param flags   Flags for this message.
- @endsignaldef
+<refsect2 id="conversations-sent-im-msg" role="signal">
+ <title>The <literal>&quot;sent-im-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *receiver,
+                                                        const char *message,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted after sending an IM to a user.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message was sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>receiver</parameter>&#160;:</term>
+    <listitem><simpara>The username of the receiver.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message that was sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef sending-im-msg
-  @signalproto
-void (*sending_im_msg)(PurpleAccount *account, const char *receiver,
-                       char **message);
-  @endsignalproto
-  @signaldesc
-   Emitted before sending an IM to a user. @a message is a pointer to the
-   message string, so the plugin can replace the message before being sent.
-  @note
-   Make sure to free @a *message before you replace it!
-  @param account  The account the message is being sent on.
-  @param receiver The username of the receiver.
-  @param message  A pointer to the outgoing message. This can be modified.
- @endsignaldef
+<refsect2 id="conversations-receiving-im-msg" role="signal">
+ <title>The <literal>&quot;receiving-im-msg&quot;</literal> signal</title>
+  <programlisting>
+gboolean            user_function                      (PurpleAccount *account,
+                                                        char **sender,
+                                                        char **message,
+                                                        PurpleIMConversation *im,
+                                                        PurpleMessageFlags *flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when an IM is received. The callback can replace the name of the sender, the message, or the flags by modifying the pointer to the strings and integer. This can also be used to cancel a message by returning <literal>TRUE</literal>.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Make sure to free <literal>*sender</literal> and <literal>*message</literal> before you replace them!
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message was received on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>sender</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the username of the sender.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message that was sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>im</parameter>&#160;:</term>
+    <listitem><simpara>The IM conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the IM message flags.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the message should be canceled, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef sent-im-msg
-  @signalproto
-void (*sent_im_msg)(PurpleAccount *account, const char *receiver,
-                    const char *message);
-  @endsignalproto
-  @signaldesc
-   Emitted after sending an IM to a user.
-  @param account  The account the message was sent on.
-  @param receiver The username of the receiver.
-  @param message  The message that was sent.
- @endsignaldef
+<refsect2 id="conversations-received-im-msg" role="signal">
+ <title>The <literal>&quot;received-im-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        char *sender,
+                                                        char *message,
+                                                        PurpleIMConversation *im,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted after an IM is received.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message was received on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>sender</parameter>&#160;:</term>
+    <listitem><simpara>The username of the sender.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message that was sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>im</parameter>&#160;:</term>
+    <listitem><simpara>The IM conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>The IM message flags.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef receiving-im-msg
-  @signalproto
-gboolean (*receiving_im_msg)(PurpleAccount *account, char **sender,
-                             char **message, PurpleIMConversation *im,
-                             PurpleMessageFlags *flags);
-  @endsignalproto
-  @signaldesc
-   Emitted when an IM is received. The callback can replace the name of the
-   sender, the message, or the flags by modifying the pointer to the
-   strings and integer. This can also be used to cancel a message by
-   returning @c TRUE.
-  @note
-   Make sure to free @a *sender and @a *message before you replace them!
-  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
-  @param account The account the message was received on.
-  @param sender  A pointer to the username of the sender.
-  @param message A pointer to the message that was sent.
-  @param im      The IM conversation.
-  @param flags   A pointer to the IM message flags.
- @endsignaldef
+<refsect2 id="conversations-blocked-im-msg" role="signal">
+ <title>The <literal>&quot;blocked-im-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *sender,
+                                                        const char *message,
+                                                        PurpleMessageFlags flags,
+                                                        time_t when,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted after an IM is blocked due to privacy settings.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message was received on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>sender</parameter>&#160;:</term>
+    <listitem><simpara>The username of the sender.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message that was blocked.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>The IM message flags.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>when</parameter>&#160;:</term>
+    <listitem><simpara>The time the message was sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef received-im-msg
-  @signalproto
-void (*received_im_msg)(PurpleAccount *account, char *sender, char *message,
-                        PurpleIMConversation *im, PurpleMessageFlags flags);
-  @endsignalproto
-  @signaldesc
-   Emitted after an IM is received.
-  @param account The account the message was received on.
-  @param sender  The username of the sender.
-  @param message The message that was sent.
-  @param im      The IM conversation.
-  @param flags   The IM message flags.
- @endsignaldef
+<refsect2 id="conversations-writing-chat-msg" role="signal">
+ <title>The <literal>&quot;writing-chat-msg&quot;</literal> signal</title>
+  <programlisting>
+gboolean            user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char **message,
+                                                        PurpleChatConversation *chat,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted before a message is written in a chat conversation. If the message is changed, then the changed message is displayed and logged instead of the original message.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Make sure to free <literal>*message</literal> before you replace it!
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the message should be canceled, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef blocked-im-msg
-  @signalproto
-void (*blocked_im_msg)(PurpleAccount *account, const char *sender,
-        const char *message, PurpleMessageFlags flags, time_t when);
-  @endsignalproto
-  @signaldesc
-   Emitted after an IM is blocked due to privacy settings.
-  @param account The account the message was received on.
-  @param sender  The username of the sender.
-  @param message The message that was blocked.
-  @param flags   The IM message flags.
-  @param when    The time the message was sent.
- @endsignaldef
+<refsect2 id="conversations-wrote-chat-msg" role="signal">
+ <title>The <literal>&quot;wrote-chat-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char *message,
+                                                        PurpleChatConversation *chat,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted after a message is written and possibly displayed in a chat.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef writing-chat-msg
-  @signalproto
-gboolean (*writing_chat_msg)(PurpleAccount *account, const char *who,
-                             char **message, PurpleChatConversation *chat,
-                             PurpleMessageFlags flags);
-  @endsignalproto
-  @signaldesc
-   Emitted before a message is written in a chat conversation. If the
-   message is changed, then the changed message is displayed and logged
-   instead of the original message.
-  @note
-   Make sure to free @a *message before you replace it!
-  @param account The account.
-  @param who     The name of the user.
-  @param message A pointer to the message.
-  @param chat    The chat conversation.
-  @param flags   Flags for this message.
-  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
- @endsignaldef
+<refsect2 id="conversations-sending-chat-msg" role="signal">
+ <title>The <literal>&quot;sending-chat-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        char **message,
+                                                        int id,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted before sending a message to a chat. <literal>message</literal> is a pointer to the message string, so the plugin can replace the message before being sent.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Make sure to free <literal>*message</literal> before you replace it!
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message is being sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message that will be sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>id</parameter>&#160;:</term>
+    <listitem><simpara>The ID of the chat.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef wrote-chat-msg
-  @signalproto
-void (*wrote_chat_msg)(PurpleAccount *account, const char *who,
-                       char *message, PurpleChatConversation *chat,
-                       PurpleMessageFlags flags);
-  @endsignalproto
-  @signaldesc
-   Emitted after a message is written and possibly displayed in a chat.
-  @param account The account.
-  @param who     The name of the user.
-  @param message The message.
-  @param chat    The chat conversation.
-  @param flags   Flags for this message.
- @endsignaldef
+<refsect2 id="conversations-sent-chat-msg" role="signal">
+ <title>The <literal>&quot;sent-chat-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *message,
+                                                        int id,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted after sending a message to a chat.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message was sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message that was sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>id</parameter>&#160;:</term>
+    <listitem><simpara>The ID of the chat.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef sending-chat-msg
-  @signalproto
-void (*sending_chat_msg)(PurpleAccount *account, char **message, int id);
-  @endsignalproto
-  @signaldesc
-   Emitted before sending a message to a chat. @a message is a pointer to the
-   message string, so the plugin can replace the message before being sent.
-  @note
-   Make sure to free @a *message before you replace it!
-  @param account The account the message is being sent on.
-  @param message A pointer to the message that will be sent.
-  @param id      The ID of the chat.
- @endsignaldef
+<refsect2 id="conversations-receiving-chat-msg" role="signal">
+ <title>The <literal>&quot;receiving-chat-msg&quot;</literal> signal</title>
+  <programlisting>
+gboolean            user_function                      (PurpleAccount *account,
+                                                        char **sender,
+                                                        char **message,
+                                                        PurpleChatConversation *chat,
+                                                        int *flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a chat message is received. The callback can replace the name of the sender, the message, or the flags by modifying the pointer to the strings. This can also be used to cancel displaying a message by returning <literal>TRUE</literal>.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Make sure to free <literal>*sender</literal> and <literal>*message</literal> before you replace them!
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message was received on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>sender</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the username of the sender.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message that was sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the chat message flags.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the message should be canceled, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef sent-chat-msg
-  @signalproto
-void (*sent_chat_msg)(PurpleAccount *account, const char *message, int id);
-  @endsignalproto
-  @signaldesc
-   Emitted after sending a message to a chat.
-  @param account The account the message was sent on.
-  @param message The message that was sent.
-  @param id      The ID of the chat.
- @endsignaldef
+<refsect2 id="conversations-received-chat-msg" role="signal">
+ <title>The <literal>&quot;received-chat-msg&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        char *sender,
+                                                        char *message,
+                                                        PurpleChatConversation *chat,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted after a chat message is received.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message was received on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>sender</parameter>&#160;:</term>
+    <listitem><simpara>The username of the sender.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message that was sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>The chat message flags.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef receiving-chat-msg
-  @signalproto
-gboolean (*receiving_chat_msg)(PurpleAccount *account, char **sender,
-                      char **message, PurpleChatConversation *chat, int *flags);
-  @endsignalproto
-  @signaldesc
-   Emitted when a chat message is received. The callback can replace the
-   name of the sender, the message, or the flags by modifying the pointer to the
-   strings. This can also be used to cancel displaying a message by
-   returning @c TRUE.
-  @note
-   Make sure to free @a *sender and @a *message before you replace them!
-  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
-  @param account The account the message was received on.
-  @param sender  A pointer to the username of the sender.
-  @param message A pointer to the message that was sent.
-  @param chat    The chat conversation.
-  @param flags   A pointer to the chat message flags
- @endsignaldef
+<refsect2 id="conversations-conversation-created" role="signal">
+ <title>The <literal>&quot;conversation-created&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleConversation *conv,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a new conversation is created.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The new conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef received-chat-msg
-  @signalproto
-void (*received_chat_msg)(PurpleAccount *account, char *sender, char *message,
-                        PurpleChatConversation *chat, PurpleMessageFlags flags);
-  @endsignalproto
-  @signaldesc
-   Emitted after a chat message is received.
-  @param account The account the message was received on.
-  @param sender  The username of the sender.
-  @param message The message that was sent.
-  @param chat    The chat conversation.
-  @param flags   The chat message flags.
- @endsignaldef
+<refsect2 id="conversations-conversation-updated" role="signal">
+ <title>The <literal>&quot;conversation-updated&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleConversation *conv,
+                                                        PurpleConvUpdateType type,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a conversation is updated.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation that was updated.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>type</parameter>&#160;:</term>
+    <listitem><simpara>The type of update that was made.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef conversation-created
-  @signalproto
-void (*conversation_created)(PurpleConversation *conv);
-  @endsignalproto
-  @signaldesc
-   Emitted when a new conversation is created.
-  @param conv The new conversation.
- @endsignaldef
+<refsect2 id="conversations-deleting-conversation" role="signal">
+ <title>The <literal>&quot;deleting-conversation&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleConversation *conv,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted just before a conversation is to be destroyed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation that's about to be destroyed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef conversation-updated
-  @signalproto
-void (*conversation_updated)(PurpleConversation *conv, 
-                             PurpleConvUpdateType type);
-  @endsignalproto
-  @signaldesc
-   Emitted when a conversation is updated.
-  @param conv The conversation that was updated.
-  @param type The type of update that was made.
- @endsignaldef
+<refsect2 id="conversations-buddy-typing" role="signal">
+ <title>The <literal>&quot;buddy-typing&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *name,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a buddy starts typing in a conversation window.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account of the user which is typing.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user which is typing.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef deleting-conversation
-  @signalproto
-void (*deleting_conversation)(PurpleConversation *conv);
-  @endsignalproto
-  @signaldesc
-   Emitted just before a conversation is to be destroyed.
-  @param conv The conversation that's about to be destroyed.
- @endsignaldef
+<refsect2 id="conversations-buddy-typing-stopped" role="signal">
+ <title>The <literal>&quot;buddy-typing-stopped&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *name,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a buddy stops typing in a conversation window.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account of the user which stopped typing.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user which stopped typing.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef buddy-typing
-  @signalproto
-void (*buddy_typing)(PurpleAccount *account, const char *name);
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy starts typing in a conversation window.
-  @param account The account of the user which is typing.
-  @param name    The name of the user which is typing.
- @endsignaldef
+<refsect2 id="conversations-chat-user-joining" role="signal">
+ <title>The <literal>&quot;chat-user-joining&quot;</literal> signal</title>
+  <programlisting>
+gboolean            user_function                      (PurpleChatConversation *chat,
+                                                        const char *name,
+                                                        PurpleChatUserFlags flags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a buddy is joining a chat, before the list of users in the chat updates to include the new user.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user that is joining the conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>The flags of the user that is joining the conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the join should be hidden, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef buddy-typing-stopped
-  @signalproto
-void (*buddy_typing_stopped)(PurpleAccount *account, const char *name);
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy stops typing in a conversation window.
-  @param account The account of the user which stopped typing.
-  @param name    The name of the user which stopped typing.
- @endsignaldef
+<refsect2 id="conversations-chat-user-joined" role="signal">
+ <title>The <literal>&quot;chat-user-joined&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatConversation *chat,
+                                                        const char *name,
+                                                        PurpleChatUserFlags flags,
+                                                        gboolean new_arrival,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a buddy joined a chat, after the users list is updated.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user that has joined the conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>The flags of the user that has joined the conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>new_arrival</parameter>&#160;:</term>
+    <listitem><simpara>If the buddy is a new arrival.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-user-joining
-  @signalproto
-gboolean (*chat_user_joining)(PurpleChatConversation *chat, const char *name,
-                           PurpleChatUserFlags flags);
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy is joining a chat, before the list of
-   users in the chat updates to include the new user.
-  @return @c TRUE if the join should be hidden, or @c FALSE otherwise.
-  @param chat The chat conversation.
-  @param name The name of the user that is joining the conversation.
-  @param flags The flags of the user that is joining the conversation.
- @endsignaldef
+<refsect2 id="conversations-chat-join-failed" role="signal">
+ <title>The <literal>&quot;chat-join-failed&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        GHashTable *components,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when an account fails to join a chat room.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The PurpleConnection of the account which failed to join the chat.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>The components passed to serv_join_chat() originally. The hash function should be g_str_hash() and the equal function should be g_str_equal().</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-user-joined
-  @signalproto
-void (*chat_user_joined)(PurpleChatConversation *chat, const char *name,
-                          PurpleChatUserFlags flags,
-                          gboolean new_arrival);
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy joined a chat, after the users list is updated.
-  @param chat The chat conversation.
-  @param name The name of the user that has joined the conversation.
-  @param flags The flags of the user that has joined the conversation.
-  @param new_arrival If the buddy is a new arrival.
- @endsignaldef
+<refsect2 id="conversations-chat-user-flags" role="signal">
+ <title>The <literal>&quot;chat-user-flags&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatUser *chatuser,
+                                                        PurpleChatUserFlags oldflags,
+                                                        PurpleChatUserFlags newflags,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a user in a chat changes flags.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chatuser</parameter>&#160;:</term>
+    <listitem><simpara>The chat user whose flags changed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>oldflags</parameter>&#160;:</term>
+    <listitem><simpara>The old flags.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>newflags</parameter>&#160;:</term>
+    <listitem><simpara>The new flags.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-join-failed
-  @signalproto
-void (*chat_join_failed)(PurpleConnection *gc, GHashTable *components);
-  @endsignalproto
-  @signaldesc
-   Emitted when an account fails to join a chat room
-  @param gc The PurpleConnection of the account which failed to join the chat.
-  @param data    The components passed to serv_join_chat() originally.
-                 The hash function should be g_str_hash() and the equal
-                 function should be g_str_equal().
- @endsignaldef
+<refsect2 id="conversations-chat-user-leaving" role="signal">
+ <title>The <literal>&quot;chat-user-leaving&quot;</literal> signal</title>
+  <programlisting>
+gboolean            user_function                      (PurpleChatConversation *chat,
+                                                        const char *name,
+                                                        const char *reason,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a user is leaving a chat, before the user list is updated. This may include an optional reason why the user is leaving.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user that is leaving the chat.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>reason</parameter>&#160;:</term>
+    <listitem><simpara>The optional reason why the user is leaving.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the leave should be hidden, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-user-flags
-  @signalproto
-void (*chat_user_flags)(PurpleChatUser *chatuser,
-                         PurpleChatUserFlags oldflags,
-                         PurpleChatUserFlags newflags);
-  @endsignalproto
-  @signaldesc
-   Emitted when a user in a chat changes flags.
-  @param chatuser The chat user whose flags changed.
-  @param oldflags The old flags.
-  @param newflags The new flags.
- @endsignaldef
+<refsect2 id="conversations-chat-user-left" role="signal">
+ <title>The <literal>&quot;chat-user-left&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatConversation *chat,
+                                                        const char *name,
+                                                        const char *reason,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a user leaves a chat, after the user list is updated. This may include an optional reason why the user is leaving.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user that left the chat.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>reason</parameter>&#160;:</term>
+    <listitem><simpara>The optional reason why the user left the chat.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-user-leaving
-  @signalproto
-gboolean (*chat_user_leaving)(PurpleChatConversation *chat, const char *name,
-                           const char *reason);
-  @endsignalproto
-  @signaldesc
-   Emitted when a user is leaving a chat, before the user list is updated.
-   This may include an optional reason why the user is leaving.
-  @return @c TRUE if the leave should be hidden, or @c FALSE otherwise.
-  @param chat   The chat conversation.
-  @param name   The name of the user that is leaving the chat.
-  @param reason The optional reason why the user is leaving.
- @endsignaldef
+<refsect2 id="conversations-chat-inviting-user" role="signal">
+ <title>The <literal>&quot;chat-inviting-user&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatConversation *chat,
+                                                        const char *name,
+                                                        char **invite_message,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a user is being invited to the chat. The callback can replace the invite message to the invitee by modifying the pointer to the invite message.
+  </para>
+  <para><emphasis>Note</emphasis>&#160;:
+Make sure to free <literal>*invite_message</literal> before you replace it!
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user being invited.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>invite_message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the reason why a user is being invited.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-user-left
-  @signalproto
-void (*chat_user_left)(PurpleChatConversation *chat, const char *name,
-                        const char *reason);
-  @endsignalproto
-  @signaldesc
-   Emitted when a user leaves a chat, after the user list is updated.
-   This may include an optional reason why the user is leaving.
-  @param chat   The chat conversation.
-  @param name   The name of the user that left the chat.
-  @param reason The optional reason why the user left the chat.
- @endsignaldef
+<refsect2 id="conversations-chat-invited-user" role="signal">
+ <title>The <literal>&quot;chat-invited-user&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatConversation *conv,
+                                                        const char *name,
+                                                        const char *invite_message,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when a user invited another user to a chat.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user that was invited.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>invite_message</parameter>&#160;:</term>
+    <listitem><simpara>The message to be sent to the user when invited.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-inviting-user
-  @signalproto
-void (*chat_inviting_user)(PurpleChatConversation *chat, const char *name,
-                           char **invite_message);
-  @endsignalproto
-  @signaldesc
-   Emitted when a user is being invited to the chat. The callback can
-   replace the invite message to the invitee by modifying the pointer to
-   the invite message.
-  @note
-   Make sure to free @a *invite_message before you replace it!
-  @param chat           The chat conversation.
-  @param name           The name of the user being invited.
-  @param invite_message A pointer to the reason why a user is being
-                        invited.
- @endsignaldef
+<refsect2 id="conversations-chat-invited" role="signal">
+ <title>The <literal>&quot;chat-invited&quot;</literal> signal</title>
+  <programlisting>
+gint                user_function                      (PurpleAccount *account,
+                                                        const char *inviter,
+                                                        const char *chat,
+                                                        const char *invite_messageconst GHashTable *components,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when an account was invited to a chat.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account being invited.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>inviter</parameter>&#160;:</term>
+    <listitem><simpara>The username of the person inviting the account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The name of the chat you're being invited to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>invite_message</parameter>&#160;:</term>
+    <listitem><simpara>The optional invite message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>components</parameter>&#160;:</term>
+    <listitem><simpara>The components necessary if you want to call  serv_join_chat().</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>Less than zero if the invitation should be rejected, greater than zero if the invitation should be accepted. If zero is returned, the default behavior will be maintained: the user will be prompted.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-invited-user
-  @signalproto
-void (*chat_invited_user)(PurpleChatConversation *conv, const char *name,
-                          const char *invite_message);
-  @endsignalproto
-  @signaldesc
-   Emitted when a user invited another user to a chat.
-  @param chat           The chat conversation.
-  @param name           The name of the user that was invited.
-  @param invite_message The message to be sent to the user when invited.
- @endsignaldef
+<refsect2 id="conversations-chat-invite-blocked" role="signal">
+ <title>The <literal>&quot;chat-invite-blocked&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *inviter,
+                                                        const char *name,
+                                                        const char *message,
+                                                        GHashTable *data)</programlisting>
+  <para>
+Emitted when an invitation to join a chat is blocked.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the invitation was sent to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>inviter</parameter>&#160;:</term>
+    <listitem><simpara>The name of the person sending the invitation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>name</parameter>&#160;:</term>
+    <listitem><simpara>The name of the chat invited to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The invitation message sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>Hashtable containing data about the invited chat.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-invited
-  @signalproto
-gint (*chat_invited)(PurpleAccount *account, const char *inviter,
-                     const char *chat, const char *invite_message
-                     const GHashTable *components);
-  @endsignalproto
-  @signaldesc
-   Emitted when an account was invited to a chat.
-  @param account        The account being invited.
-  @param inviter        The username of the person inviting the account.
-  @param chat           The name of the chat you're being invited to.
-  @param invite_message The optional invite message.
-  @param components     The components necessary if you want to call 
-                        serv_join_chat()
-  @return Less than zero if the invitation should be rejected, greater than
-          zero if the invitation should be accepted. If zero is returned, the
-          default behavior will be maintained: the user will be prompted.
- @endsignaldef
+<refsect2 id="conversations-chat-joined" role="signal">
+ <title>The <literal>&quot;chat-joined&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatConversation *chat,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when an account joins a chat room.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The conversation that joined the chat room.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-invite-blocked
-  @signalproto
-void (*chat_invite_blocked)(PurpleAccount *account, const char *inviter,
-                   const char *name, const char *message, GHashTable *data);
-  @endsignalproto
-  @signaldesc
-   Emitted when an invitation to join a chat is blocked.
-  @param account  The account the invitation was sent to.
-  @param inviter  The name of the person sending the invitation.
-  @param name     The name of the chat invited to.
-  @param message  The invitation message sent.
-  @param data     Hashtable containing data about the invited chat.
- @endsignaldef
+<refsect2 id="conversations-chat-left" role="signal">
+ <title>The <literal>&quot;chat-left&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatConversation *chat,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when an account leaves a chat room.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The conversation that left the chat room.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-joined
-  @signalproto
-void (*chat_joined)(PurpleChatConversation *chat);
-  @endsignalproto
-  @signaldesc
-   Emitted when an account joins a chat room.
-  @param chat The conversation that joined the chat room.
- @endsignaldef
+<refsect2 id="conversations-chat-topic-changed" role="signal">
+ <title>The <literal>&quot;chat-topic-changed&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleChatConversation *chat,
+                                                        const char *who,
+                                                        const char *topic,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when the topic is changed in a chat.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>chat</parameter>&#160;:</term>
+    <listitem><simpara>The chat conversation whose topic changed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the person that changed the topic.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>topic</parameter>&#160;:</term>
+    <listitem><simpara>The new topic.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-left
-  @signalproto
-void (*chat_left)(PurpleChatConversation *chat);
-  @endsignalproto
-  @signaldesc
-   Emitted when an account leaves a chat room.
-  @param chat The conversation that left the chat room.
- @endsignaldef
+<refsect2 id="conversations-conversation-extended-menu" role="signal">
+ <title>The <literal>&quot;conversation-extended-menu&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleConversation *conv,
+                                                        GList **list,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when the UI requests a list of plugin actions for a conversation.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>list</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the list of actions.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef chat-topic-changed
-  @signalproto
-void (*chat_topic_changed)(PurpleChatConversation *chat, const char *who,
-                           const char *topic);
-  @endsignalproto
-  @signaldesc
-   Emitted when the topic is changed in a chat.
-  @param chat  The chat conversation whose topic changed.
-  @param who   The name of the person that changed the topic.
-  @param topic The new topic.
- @endsignaldef
+<refsect2 id="conversations-cleared-message-history" role="signal">
+ <title>The <literal>&quot;cleared-message-history&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleConversation *conv,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when the conversation history is cleared.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef conversation-extended-menu
-  @signalproto
-void (*conversation_extended_menu)(PurpleConversation *conv, GList **list);
-  @endsignalproto
-  @signaldesc
-   Emitted when the UI requests a list of plugin actions for a
-   conversation.
-  @param conv   The conversation.
-  @param list   A pointer to the list of actions.
- @endsignaldef
+<refsect2 id="conversations-sent-attention" role="signal">
+ <title>The <literal>&quot;sent-attention&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        PurpleConversation *conv,
+                                                        guint type,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when receiving an attention message (buzz, nudge, etc.).
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the person receiving the attention.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>type</parameter>&#160;:</term>
+    <listitem><simpara>The attention type (an index starting at 0).</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef cleared-message-history
-  @signalproto
-void (*cleared_message_history)(PurpleConversation *conv);
-  @endsignalproto
-  @signaldesc
-    Emitted when the conversation history is cleared.
-  @param conv   The conversation.
- @endsignaldef
+<refsect2 id="conversations-got-attention" role="signal">
+ <title>The <literal>&quot;got-attention&quot;</literal> signal</title>
+  <programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        PurpleConversation *conv,
+                                                        guint type,
+                                                        gpointer user_data)</programlisting>
+  <para>
+Emitted when receiving an attention message (buzz, nudge, etc.).
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the person sending the attention.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>type</parameter>&#160;:</term>
+    <listitem><simpara>The attention type (an index starting at 0).</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
 
- @signaldef sent-attention
-  @signalproto
-void (*got_attention)(PurpleAccount *account, const char *who, 
-	PurpleConversation *conv, guint type)
-  @endsignalproto
-  @signaldesc
-    Emitted when receiving an attention message (buzz, nudge, etc.).
-  @param account  The account
-  @param who      The name of the person receiving the attention
-  @param conv     The conversation
-  @param type     The attention type (an index starting at 0)
- @endsignaldef
+</refsect1>
 
- @signaldef got-attention
-  @signalproto
-void (*got_attention)(PurpleAccount *account, const char *who, 
-	PurpleConversation *conv, guint type)
-  @endsignalproto
-  @signaldesc
-    Emitted when receiving an attention message (buzz, nudge, etc.).
-  @param account  The account
-  @param who      The name of the person sending the attention
-  @param conv     The conversation
-  @param type     The attention type (an index starting at 0)
- @endsignaldef
-
-  </programlisting>
 </chapter>
