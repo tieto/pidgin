@@ -105,8 +105,8 @@ PURPLE_PLUGIN_INIT(hello_world, plugin_query, plugin_load, plugin_unload);
   <literal>plugin_query</literal> is called when the plugin is probed by the
   plugin system, and returns various information about the plugin in form of a
   newly created <literal>PurplePluginInfo</literal> instance.  For a list of all
-  available properties, see <link linkend="purple-plugin-info-new"><function>
-  purple_plugin_info_new</function></link>.
+  available properties, see
+  <link linkend="purple-plugin-info-new"><function>purple_plugin_info_new</function></link>.
   </para>
 
   <para>
