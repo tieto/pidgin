@@ -3,29 +3,30 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-ui-ops">
-  <title>UiOps Structures</title>
+  <title>List of UiOps Structures</title>
 
-  <programlisting>
-
+  <para>
   When implementing a UI for libpurple, you need to fill in various UiOps
   structures:
 
-   - #PurpleAccountUiOps
-   - #PurpleBlistUiOps
-   - #PurpleConnectionUiOps
-   - #PurpleConversationUiOps
-   - #PurpleCoreUiOps
-   - #PurpleDebugUiOps
-   - #PurpleDnsQueryUiOps
-   - #PurpleEventLoopUiOps (without this, nothing will work and you will cry)
-   - #PurpleIdleUiOps
-   - #PurpleNotifyUiOps
-   - #PurpleRequestUiOps
-   - #PurpleRoomlistUiOps
-   - #PurpleSoundUiOps
-   - #PurpleSrvTxtQueryUiOps
-   - #PurpleWhiteboardUiOps
-   - #PurpleXferUiOps
+  <itemizedlist>
+<listitem><para><literal>PurpleAccountUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleBlistUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleConnectionUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleConversationUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleCoreUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleDebugUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleDnsQueryUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleEventLoopUiOps</literal> (without this, nothing will work and you will cry)</para></listitem>
+<listitem><para><literal>PurpleIdleUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleNotifyUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleRequestUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleRoomlistUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleSoundUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleSrvTxtQueryUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleWhiteboardUiOps</literal></para></listitem>
+<listitem><para><literal>PurpleXferUiOps</literal></para></listitem>
+  </itemizedlist>
+ </para>
 
-  </programlisting>
 </chapter>
