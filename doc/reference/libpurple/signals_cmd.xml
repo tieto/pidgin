@@ -18,11 +18,12 @@
 
 <refsect2 id="cmds-cmd-added" role="signal">
  <title>The <literal>&quot;cmd-added&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (const char *command,
                                                         PurpleCmdPriority priority,
                                                         PurpleCmdFlag flag,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a new command is added.
   </para>
@@ -48,9 +49,10 @@ Emitted when a new command is added.
 
 <refsect2 id="cmds-cmd-removed" role="signal">
  <title>The <literal>&quot;cmd-removed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (const char *command,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a command is removed.
   </para>

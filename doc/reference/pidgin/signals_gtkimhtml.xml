@@ -22,10 +22,11 @@
 
 <refsect2 id="gtkimhtml-url_clicked" role="signal">
  <title>The <literal>&quot;url_clicked&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (GtkIMHtml *imhtml,
                                                         char *uri,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a link is clicked.
   </para>
@@ -47,10 +48,11 @@ Emitted when a link is clicked.
 
 <refsect2 id="gtkimhtml-format_buttons_update" role="signal">
  <title>The <literal>&quot;format_buttons_update&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (GtkIMHtml *imhtml,
                                                         GtkIMHtmlButtons buttons,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when allowed formatting has changed.
   </para>
@@ -72,9 +74,10 @@ Emitted when allowed formatting has changed.
 
 <refsect2 id="gtkimhtml-format_function_clear" role="signal">
  <title>The <literal>&quot;format_function_clear&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (GtkIMHtml *imhtml,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when clearing the formatting for the GtkIMHtml.
   </para>
@@ -92,10 +95,11 @@ Emitted when clearing the formatting for the GtkIMHtml.
 
 <refsect2 id="gtkimhtml-format_function_toggle" role="signal">
  <title>The <literal>&quot;format_function_toggle&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (GtkIMHtml *imhtml,
                                                         GtkIMHtmlButtons buttons,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when a format has been toggled.
   </para>
@@ -117,9 +121,10 @@ Emitted when a format has been toggled.
 
 <refsect2 id="gtkimhtml-format_function_update" role="signal">
  <title>The <literal>&quot;format_function_update&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (GtkIMHtml *imhtml,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when the cursor has moved and formatting has changed.
   </para>
@@ -137,10 +142,11 @@ Emitted when the cursor has moved and formatting has changed.
 
 <refsect2 id="gtkimhtml-paste" role="signal">
  <title>The <literal>&quot;paste&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (GtkIMHtml *imhtml,
                                                         char *format,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when paste from the clipboard is requested.
   </para>

@@ -18,10 +18,11 @@
 
 <refsect2 id="certificates-certificate-stored" role="signal">
  <title>The <literal>&quot;certificate-stored&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleCertificatePool *pool,
                                                         const gchar *id,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when a pool stores a certificate. Connect to the pool instance.
   </para>
@@ -39,10 +40,11 @@ Emitted when a pool stores a certificate. Connect to the pool instance.
 
 <refsect2 id="certificates-certificate-deleted" role="signal">
  <title>The <literal>&quot;certificate-deleted&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleCertificatePool *pool,
                                                         const gchar *id,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when a pool deletes a certificate. Connect to the pool instance.
   </para>

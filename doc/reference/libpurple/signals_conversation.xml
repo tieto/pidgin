@@ -51,19 +51,20 @@
 
 <refsect2 id="conversations-writing-im-msg" role="signal">
  <title>The <literal>&quot;writing-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char **message,
                                                         PurpleIMConversation *im,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted before a message is written in an IM conversation. If the message is changed, then the changed message is displayed and logged instead of the original message.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*message</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -98,13 +99,14 @@ Make sure to free <literal>*message</literal> before you replace it!
 
 <refsect2 id="conversations-wrote-im-msg" role="signal">
  <title>The <literal>&quot;wrote-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char *message,
                                                         PurpleIMConversation *im,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after a message is written and possibly displayed in a conversation.
   </para>
@@ -138,17 +140,18 @@ Emitted after a message is written and possibly displayed in a conversation.
 
 <refsect2 id="conversations-sending-im-msg" role="signal">
  <title>The <literal>&quot;sending-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *receiver,
                                                         char **message,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted before sending an IM to a user. <literal>message</literal> is a pointer to the message string, so the plugin can replace the message before being sent.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*message</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -171,11 +174,12 @@ Make sure to free <literal>*message</literal> before you replace it!
 
 <refsect2 id="conversations-sent-im-msg" role="signal">
  <title>The <literal>&quot;sent-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *receiver,
                                                         const char *message,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after sending an IM to a user.
   </para>
@@ -201,19 +205,20 @@ Emitted after sending an IM to a user.
 
 <refsect2 id="conversations-receiving-im-msg" role="signal">
  <title>The <literal>&quot;receiving-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleAccount *account,
                                                         char **sender,
                                                         char **message,
                                                         PurpleIMConversation *im,
                                                         PurpleMessageFlags *flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an IM is received. The callback can replace the name of the sender, the message, or the flags by modifying the pointer to the strings and integer. This can also be used to cancel a message by returning <literal>TRUE</literal>.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*sender</literal> and <literal>*message</literal> before you replace them!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -248,13 +253,14 @@ Make sure to free <literal>*sender</literal> and <literal>*message</literal> bef
 
 <refsect2 id="conversations-received-im-msg" role="signal">
  <title>The <literal>&quot;received-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         char *sender,
                                                         char *message,
                                                         PurpleIMConversation *im,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after an IM is received.
   </para>
@@ -288,13 +294,14 @@ Emitted after an IM is received.
 
 <refsect2 id="conversations-blocked-im-msg" role="signal">
  <title>The <literal>&quot;blocked-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *sender,
                                                         const char *message,
                                                         PurpleMessageFlags flags,
                                                         time_t when,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after an IM is blocked due to privacy settings.
   </para>
@@ -328,19 +335,20 @@ Emitted after an IM is blocked due to privacy settings.
 
 <refsect2 id="conversations-writing-chat-msg" role="signal">
  <title>The <literal>&quot;writing-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char **message,
                                                         PurpleChatConversation *chat,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted before a message is written in a chat conversation. If the message is changed, then the changed message is displayed and logged instead of the original message.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*message</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -375,13 +383,14 @@ Make sure to free <literal>*message</literal> before you replace it!
 
 <refsect2 id="conversations-wrote-chat-msg" role="signal">
  <title>The <literal>&quot;wrote-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char *message,
                                                         PurpleChatConversation *chat,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after a message is written and possibly displayed in a chat.
   </para>
@@ -415,17 +424,18 @@ Emitted after a message is written and possibly displayed in a chat.
 
 <refsect2 id="conversations-sending-chat-msg" role="signal">
  <title>The <literal>&quot;sending-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         char **message,
                                                         int id,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted before sending a message to a chat. <literal>message</literal> is a pointer to the message string, so the plugin can replace the message before being sent.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*message</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -448,11 +458,12 @@ Make sure to free <literal>*message</literal> before you replace it!
 
 <refsect2 id="conversations-sent-chat-msg" role="signal">
  <title>The <literal>&quot;sent-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *message,
                                                         int id,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after sending a message to a chat.
   </para>
@@ -478,19 +489,20 @@ Emitted after sending a message to a chat.
 
 <refsect2 id="conversations-receiving-chat-msg" role="signal">
  <title>The <literal>&quot;receiving-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleAccount *account,
                                                         char **sender,
                                                         char **message,
                                                         PurpleChatConversation *chat,
                                                         int *flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a chat message is received. The callback can replace the name of the sender, the message, or the flags by modifying the pointer to the strings. This can also be used to cancel displaying a message by returning <literal>TRUE</literal>.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*sender</literal> and <literal>*message</literal> before you replace them!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -525,13 +537,14 @@ Make sure to free <literal>*sender</literal> and <literal>*message</literal> bef
 
 <refsect2 id="conversations-received-chat-msg" role="signal">
  <title>The <literal>&quot;received-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         char *sender,
                                                         char *message,
                                                         PurpleChatConversation *chat,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after a chat message is received.
   </para>
@@ -565,9 +578,10 @@ Emitted after a chat message is received.
 
 <refsect2 id="conversations-conversation-created" role="signal">
  <title>The <literal>&quot;conversation-created&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConversation *conv,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a new conversation is created.
   </para>
@@ -585,10 +599,11 @@ Emitted when a new conversation is created.
 
 <refsect2 id="conversations-conversation-updated" role="signal">
  <title>The <literal>&quot;conversation-updated&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConversation *conv,
                                                         PurpleConvUpdateType type,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a conversation is updated.
   </para>
@@ -610,9 +625,10 @@ Emitted when a conversation is updated.
 
 <refsect2 id="conversations-deleting-conversation" role="signal">
  <title>The <literal>&quot;deleting-conversation&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConversation *conv,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted just before a conversation is to be destroyed.
   </para>
@@ -630,10 +646,11 @@ Emitted just before a conversation is to be destroyed.
 
 <refsect2 id="conversations-buddy-typing" role="signal">
  <title>The <literal>&quot;buddy-typing&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *name,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a buddy starts typing in a conversation window.
   </para>
@@ -655,10 +672,11 @@ Emitted when a buddy starts typing in a conversation window.
 
 <refsect2 id="conversations-buddy-typing-stopped" role="signal">
  <title>The <literal>&quot;buddy-typing-stopped&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *name,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a buddy stops typing in a conversation window.
   </para>
@@ -680,11 +698,12 @@ Emitted when a buddy stops typing in a conversation window.
 
 <refsect2 id="conversations-chat-user-joining" role="signal">
  <title>The <literal>&quot;chat-user-joining&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleChatConversation *chat,
                                                         const char *name,
                                                         PurpleChatUserFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a buddy is joining a chat, before the list of users in the chat updates to include the new user.
   </para>
@@ -714,12 +733,13 @@ Emitted when a buddy is joining a chat, before the list of users in the chat upd
 
 <refsect2 id="conversations-chat-user-joined" role="signal">
  <title>The <literal>&quot;chat-user-joined&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatConversation *chat,
                                                         const char *name,
                                                         PurpleChatUserFlags flags,
                                                         gboolean new_arrival,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a buddy joined a chat, after the users list is updated.
   </para>
@@ -749,10 +769,11 @@ Emitted when a buddy joined a chat, after the users list is updated.
 
 <refsect2 id="conversations-chat-join-failed" role="signal">
  <title>The <literal>&quot;chat-join-failed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConnection *gc,
                                                         GHashTable *components,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account fails to join a chat room.
   </para>
@@ -774,11 +795,12 @@ Emitted when an account fails to join a chat room.
 
 <refsect2 id="conversations-chat-user-flags" role="signal">
  <title>The <literal>&quot;chat-user-flags&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatUser *chatuser,
                                                         PurpleChatUserFlags oldflags,
                                                         PurpleChatUserFlags newflags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user in a chat changes flags.
   </para>
@@ -804,11 +826,12 @@ Emitted when a user in a chat changes flags.
 
 <refsect2 id="conversations-chat-user-leaving" role="signal">
  <title>The <literal>&quot;chat-user-leaving&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleChatConversation *chat,
                                                         const char *name,
                                                         const char *reason,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user is leaving a chat, before the user list is updated. This may include an optional reason why the user is leaving.
   </para>
@@ -838,11 +861,12 @@ Emitted when a user is leaving a chat, before the user list is updated. This may
 
 <refsect2 id="conversations-chat-user-left" role="signal">
  <title>The <literal>&quot;chat-user-left&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatConversation *chat,
                                                         const char *name,
                                                         const char *reason,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user leaves a chat, after the user list is updated. This may include an optional reason why the user is leaving.
   </para>
@@ -868,17 +892,18 @@ Emitted when a user leaves a chat, after the user list is updated. This may incl
 
 <refsect2 id="conversations-chat-inviting-user" role="signal">
  <title>The <literal>&quot;chat-inviting-user&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatConversation *chat,
                                                         const char *name,
                                                         char **invite_message,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user is being invited to the chat. The callback can replace the invite message to the invitee by modifying the pointer to the invite message.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*invite_message</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>chat</parameter>&#160;:</term>
@@ -901,11 +926,12 @@ Make sure to free <literal>*invite_message</literal> before you replace it!
 
 <refsect2 id="conversations-chat-invited-user" role="signal">
  <title>The <literal>&quot;chat-invited-user&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatConversation *conv,
                                                         const char *name,
                                                         const char *invite_message,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user invited another user to a chat.
   </para>
@@ -931,12 +957,13 @@ Emitted when a user invited another user to a chat.
 
 <refsect2 id="conversations-chat-invited" role="signal">
  <title>The <literal>&quot;chat-invited&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gint                user_function                      (PurpleAccount *account,
                                                         const char *inviter,
                                                         const char *chat,
                                                         const char *invite_messageconst GHashTable *components,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account was invited to a chat.
   </para>
@@ -974,12 +1001,13 @@ Emitted when an account was invited to a chat.
 
 <refsect2 id="conversations-chat-invite-blocked" role="signal">
  <title>The <literal>&quot;chat-invite-blocked&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *inviter,
                                                         const char *name,
                                                         const char *message,
-                                                        GHashTable *data)</programlisting>
+                                                        GHashTable *data)
+</programlisting>
   <para>
 Emitted when an invitation to join a chat is blocked.
   </para>
@@ -1009,9 +1037,10 @@ Emitted when an invitation to join a chat is blocked.
 
 <refsect2 id="conversations-chat-joined" role="signal">
  <title>The <literal>&quot;chat-joined&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatConversation *chat,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account joins a chat room.
   </para>
@@ -1029,9 +1058,10 @@ Emitted when an account joins a chat room.
 
 <refsect2 id="conversations-chat-left" role="signal">
  <title>The <literal>&quot;chat-left&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatConversation *chat,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account leaves a chat room.
   </para>
@@ -1049,11 +1079,12 @@ Emitted when an account leaves a chat room.
 
 <refsect2 id="conversations-chat-topic-changed" role="signal">
  <title>The <literal>&quot;chat-topic-changed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleChatConversation *chat,
                                                         const char *who,
                                                         const char *topic,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the topic is changed in a chat.
   </para>
@@ -1079,10 +1110,11 @@ Emitted when the topic is changed in a chat.
 
 <refsect2 id="conversations-conversation-extended-menu" role="signal">
  <title>The <literal>&quot;conversation-extended-menu&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConversation *conv,
                                                         GList **list,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the UI requests a list of plugin actions for a conversation.
   </para>
@@ -1104,9 +1136,10 @@ Emitted when the UI requests a list of plugin actions for a conversation.
 
 <refsect2 id="conversations-cleared-message-history" role="signal">
  <title>The <literal>&quot;cleared-message-history&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConversation *conv,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the conversation history is cleared.
   </para>
@@ -1124,12 +1157,13 @@ Emitted when the conversation history is cleared.
 
 <refsect2 id="conversations-sent-attention" role="signal">
  <title>The <literal>&quot;sent-attention&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         PurpleConversation *conv,
                                                         guint type,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when receiving an attention message (buzz, nudge, etc.).
   </para>
@@ -1159,12 +1193,13 @@ Emitted when receiving an attention message (buzz, nudge, etc.).
 
 <refsect2 id="conversations-got-attention" role="signal">
  <title>The <literal>&quot;got-attention&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         PurpleConversation *conv,
                                                         guint type,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when receiving an attention message (buzz, nudge, etc.).
   </para>

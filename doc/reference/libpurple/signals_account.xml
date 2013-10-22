@@ -35,9 +35,10 @@
 
 <refsect2 id="accounts-account-created" role="signal">
  <title>The <literal>&quot;account-created&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account is created by calling purple_account_new.
   </para>
@@ -55,9 +56,10 @@ Emitted when an account is created by calling purple_account_new.
 
 <refsect2 id="accounts-account-destroying" role="signal">
  <title>The <literal>&quot;account-destroying&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account is about to be destroyed.
   </para>
@@ -75,9 +77,10 @@ Emitted when an account is about to be destroyed.
 
 <refsect2 id="accounts-account-added" role="signal">
  <title>The <literal>&quot;account-added&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account is added.
   </para>
@@ -95,9 +98,10 @@ Emitted when an account is added.
 
 <refsect2 id="accounts-account-connecting" role="signal">
  <title>The <literal>&quot;account-connecting&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 This is called when an account is in the process of connecting.
   </para>
@@ -115,9 +119,10 @@ This is called when an account is in the process of connecting.
 
 <refsect2 id="accounts-account-removed" role="signal">
  <title>The <literal>&quot;account-removed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account is removed.
   </para>
@@ -135,9 +140,10 @@ Emitted when an account is removed.
 
 <refsect2 id="accounts-account-disabled" role="signal">
  <title>The <literal>&quot;account-disabled&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account is disabled.
   </para>
@@ -155,9 +161,10 @@ Emitted when an account is disabled.
 
 <refsect2 id="accounts-account-enabled" role="signal">
  <title>The <literal>&quot;account-enabled&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account is enabled.
   </para>
@@ -175,10 +182,11 @@ Emitted when an account is enabled.
 
 <refsect2 id="accounts-account-setting-info" role="signal">
  <title>The <literal>&quot;account-setting-info&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *new_info,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user is about to send his new user info, or profile, to the server.
   </para>
@@ -200,10 +208,11 @@ Emitted when a user is about to send his new user info, or profile, to the serve
 
 <refsect2 id="accounts-account-set-info" role="signal">
  <title>The <literal>&quot;account-set-info&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *new_info,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user sent his new user info, or profile, to the server.
   </para>
@@ -225,11 +234,12 @@ Emitted when a user sent his new user info, or profile, to the server.
 
 <refsect2 id="accounts-account-status-changed" role="signal">
  <title>The <literal>&quot;account-status-changed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         PurpleStatus *old,
                                                         PurpleStatus *new,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the status of an account changes (after the change).
   </para>
@@ -255,9 +265,10 @@ Emitted when the status of an account changes (after the change).
 
 <refsect2 id="accounts-account-actions-changed" role="signal">
  <title>The <literal>&quot;account-actions-changed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the account actions are changed after initial connection.
   </para>
@@ -275,10 +286,11 @@ Emitted when the account actions are changed after initial connection.
 
 <refsect2 id="accounts-account-alias-changed" role="signal">
  <title>The <literal>&quot;account-alias-changed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *old,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the alias of an account changes (after the change).
   </para>
@@ -300,12 +312,13 @@ Emitted when the alias of an account changes (after the change).
 
 <refsect2 id="accounts-account-authorization-requested" role="signal">
  <title>The <literal>&quot;account-authorization-requested&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 int                 user_function                      (PurpleAccount *account,
                                                         const char *user,
                                                         const char *message,
                                                         char **response,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a user requests authorization.
   </para>
@@ -339,11 +352,12 @@ Emitted when a user requests authorization.
 
 <refsect2 id="accounts-account-authorization-denied" role="signal">
  <title>The <literal>&quot;account-authorization-denied&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *user,
                                                         const char *message,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the authorization request for a buddy is denied.
   </para>
@@ -369,11 +383,12 @@ Emitted when the authorization request for a buddy is denied.
 
 <refsect2 id="accounts-account-authorization-granted" role="signal">
  <title>The <literal>&quot;account-authorization-granted&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *user,
                                                         const char *message,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the authorization request for a buddy is granted.
   </para>
@@ -399,11 +414,12 @@ Emitted when the authorization request for a buddy is granted.
 
 <refsect2 id="accounts-account-error-changed" role="signal">
  <title>The <literal>&quot;account-error-changed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const PurpleConnectionErrorInfo *old_error,
                                                         const PurpleConnectionErrorInfo *current_error,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when <literal>account</literal>'s error changes.  You should not call purple_account_clear_current_error() while this signal is being emitted.
   </para>
@@ -429,9 +445,10 @@ Emitted when <literal>account</literal>'s error changes.  You should not call pu
 
 <refsect2 id="accounts-account-signed-on" role="signal">
  <title>The <literal>&quot;account-signed-on&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account has signed on.
   </para>
@@ -449,9 +466,10 @@ Emitted when an account has signed on.
 
 <refsect2 id="accounts-account-signed-off" role="signal">
  <title>The <literal>&quot;account-signed-off&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an account has signed off.
   </para>
@@ -469,11 +487,12 @@ Emitted when an account has signed off.
 
 <refsect2 id="accounts-account-connection-error" role="signal">
  <title>The <literal>&quot;account-connection-error&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *gc,
                                                         PurpleConnectionError err,
                                                         const gchar *desc,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a connection error occurs, before <literal>"signed"</literal>-off.
   </para>

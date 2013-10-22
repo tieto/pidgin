@@ -21,9 +21,10 @@
 
 <refsect2 id="gtkblist-gtkblist-hiding" role="signal">
  <title>The <literal>&quot;gtkblist-hiding&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleBuddyList *blist,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the buddy list is about to be hidden.
   </para>
@@ -41,9 +42,10 @@ Emitted when the buddy list is about to be hidden.
 
 <refsect2 id="gtkblist-gtkblist-unhiding" role="signal">
  <title>The <literal>&quot;gtkblist-unhiding&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleBuddyList *blist,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the buddy list is about to be unhidden.
   </para>
@@ -61,9 +63,10 @@ Emitted when the buddy list is about to be unhidden.
 
 <refsect2 id="gtkblist-gtkblist-created" role="signal">
  <title>The <literal>&quot;gtkblist-created&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleBuddyList *blist,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the buddy list is created.
   </para>
@@ -81,17 +84,18 @@ Emitted when the buddy list is created.
 
 <refsect2 id="gtkblist-drawing-tooltip" role="signal">
  <title>The <literal>&quot;drawing-tooltip&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleBlistNode *node,
                                                         GString *text,
                                                         gboolean full,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted just before a tooltip is displayed. <literal>text</literal> is a standard GString, so the plugin can modify the text that will be displayed.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*text</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>node</parameter>&#160;:</term>
@@ -114,9 +118,10 @@ Make sure to free <literal>*text</literal> before you replace it!
 
 <refsect2 id="gtkblist-drawing-buddy" role="signal">
  <title>The <literal>&quot;drawing-buddy&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 char *              user_function                      (PurpleBuddy *buddy,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted to allow plugins to handle markup within a buddy's name or to override the default of no formatting for names shown in the buddy list.
   </para>

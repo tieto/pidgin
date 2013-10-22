@@ -17,9 +17,10 @@
 
 <refsect2 id="gtkaccounts-account-modified" role="signal">
  <title>The <literal>&quot;account-modified&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when the settings for an account have been changed and saved.
   </para>

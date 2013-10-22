@@ -25,9 +25,10 @@
 
 <refsect2 id="xfers-file-recv-accept" role="signal">
  <title>The <literal>&quot;file-recv-accept&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an incoming file transfer has been accepted.
   </para>
@@ -45,9 +46,10 @@ Emitted when an incoming file transfer has been accepted.
 
 <refsect2 id="xfers-file-recv-start" role="signal">
  <title>The <literal>&quot;file-recv-start&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an incoming file transfer has been started.
   </para>
@@ -65,9 +67,10 @@ Emitted when an incoming file transfer has been started.
 
 <refsect2 id="xfers-file-recv-cancel" role="signal">
  <title>The <literal>&quot;file-recv-cancel&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an incoming file transfer has been canceled.
   </para>
@@ -85,9 +88,10 @@ Emitted when an incoming file transfer has been canceled.
 
 <refsect2 id="xfers-file-recv-complete" role="signal">
  <title>The <literal>&quot;file-recv-complete&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an incoming file transfer has been completed.
   </para>
@@ -105,9 +109,10 @@ Emitted when an incoming file transfer has been completed.
 
 <refsect2 id="xfers-file-recv-request" role="signal">
  <title>The <literal>&quot;file-recv-request&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted before the user is prompted for an incoming file-transfer. Plugins can intercept the signal to auto-accept/auto-reject the requests. To auto-accept the file transfer, use purple_xfer_request_accepted(). To auto-reject, set the status of the xfer to PURPLE_XFER_STATUS_CANCEL_LOCAL.
   </para>
@@ -125,9 +130,10 @@ Emitted before the user is prompted for an incoming file-transfer. Plugins can i
 
 <refsect2 id="xfers-file-send-accept" role="signal">
  <title>The <literal>&quot;file-send-accept&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an outgoing file transfer has been accepted.
   </para>
@@ -145,9 +151,10 @@ Emitted when an outgoing file transfer has been accepted.
 
 <refsect2 id="xfers-file-send-start" role="signal">
  <title>The <literal>&quot;file-send-start&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an outgoing file transfer has started.
   </para>
@@ -165,9 +172,10 @@ Emitted when an outgoing file transfer has started.
 
 <refsect2 id="xfers-file-send-cancel" role="signal">
  <title>The <literal>&quot;file-send-cancel&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an outgoing file transfer has been canceled.
   </para>
@@ -185,9 +193,10 @@ Emitted when an outgoing file transfer has been canceled.
 
 <refsect2 id="xfers-file-send-complete" role="signal">
  <title>The <literal>&quot;file-send-complete&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleXfer *xfer,
-                                                        gpointer data)</programlisting>
+                                                        gpointer data)
+</programlisting>
   <para>
 Emitted when an outgoing file transfer has been completed.
   </para>

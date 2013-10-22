@@ -24,13 +24,14 @@
 
 <refsect2 id="jabber-jabber-receiving-iq" role="signal">
  <title>The <literal>&quot;jabber-receiving-iq&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleConnection *gc,
                                                         const char *type,
                                                         const char *id,
                                                         const char *from,
                                                         PurpleXmlNode *iq,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an XMPP IQ stanza is received. Allows a plugin to process IQ stanzas.
   </para>
@@ -68,14 +69,15 @@ Emitted when an XMPP IQ stanza is received. Allows a plugin to process IQ stanza
 
 <refsect2 id="jabber-jabber-receiving-message" role="signal">
  <title>The <literal>&quot;jabber-receiving-message&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleConnection *gc,
                                                         const char *type,
                                                         const char *id,
                                                         const char *from,
                                                         const char *to,
                                                         PurpleXmlNode *message,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an XMPP message stanza is received. Allows a plugin to process message stanzas.
   </para>
@@ -117,12 +119,13 @@ Emitted when an XMPP message stanza is received. Allows a plugin to process mess
 
 <refsect2 id="jabber-jabber-receiving-presence" role="signal">
  <title>The <literal>&quot;jabber-receiving-presence&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleConnection *gc,
                                                         const char *type,
                                                         const char *from,
                                                         PurpleXmlNode *presence,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an XMPP presence stanza is received. Allows a plugin to process presence stanzas.
   </para>
@@ -156,13 +159,14 @@ Emitted when an XMPP presence stanza is received. Allows a plugin to process pre
 
 <refsect2 id="jabber-jabber-watched-iq" role="signal">
  <title>The <literal>&quot;jabber-watched-iq&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleConnection *gc,
                                                         const char *type,
                                                         const char *id,
                                                         const char *from,
                                                         PurpleXmlNode *child,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an IQ with a watched (child, namespace) pair is received.  See jabber-register-namespace-watcher and jabber-unregister-namespace-watcher.
   </para>
@@ -200,10 +204,11 @@ Emitted when an IQ with a watched (child, namespace) pair is received.  See jabb
 
 <refsect2 id="jabber-jabber-register-namespace-watcher" role="signal">
  <title>The <literal>&quot;jabber-register-namespace-watcher&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (const char *node,
                                                         const char *namespace,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emit this signal to register your desire to have specific IQ stanzas to be emitted via the jabber-watched-iq signal when received.
   </para>
@@ -225,10 +230,11 @@ Emit this signal to register your desire to have specific IQ stanzas to be emitt
 
 <refsect2 id="jabber-jabber-unregister-namespace-watcher" role="signal">
  <title>The <literal>&quot;jabber-unregister-namespace-watcher&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (const char *node,
                                                         const char *namespace,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emit this signal to unregister your desire to have specific IQ stanzas to be emitted via the jabber-watched-iq signal when received.
   </para>
@@ -250,10 +256,11 @@ Emit this signal to unregister your desire to have specific IQ stanzas to be emi
 
 <refsect2 id="jabber-jabber-sending-xmlnode" role="signal">
  <title>The <literal>&quot;jabber-sending-xmlnode&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConnection *gc,
                                                         PurpleXmlNode **stanza,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emit this signal (<literal>purple_signal_emit</literal>) to send a stanza. It is preferred to use this instead of purple_protocol_server_iface_send_raw.
   </para>
@@ -275,10 +282,11 @@ Emit this signal (<literal>purple_signal_emit</literal>) to send a stanza. It is
 
 <refsect2 id="jabber-jabber-receiving-xmlnode" role="signal">
  <title>The <literal>&quot;jabber-receiving-xmlnode&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConnection *gc,
                                                         PurpleXmlNode **stanza,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when an XMPP stanza is received. Allows a plugin to process any stanza.
   </para>

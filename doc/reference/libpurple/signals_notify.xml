@@ -19,17 +19,18 @@
 
 <refsect2 id="notify-displaying-userinfo" role="signal">
  <title>The <literal>&quot;displaying-userinfo&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         PurpleNotifyUserInfo *user_info,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted before userinfo is handed to the UI to display. <literal>user_info</literal> can be manipulated via the PurpleNotifyUserInfo API in notify.c.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 If adding a PurpleNotifyUserInfoEntry, be sure not to free it -- PurpleNotifyUserInfo assumes responsibility for its objects.
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -52,12 +53,13 @@ If adding a PurpleNotifyUserInfoEntry, be sure not to free it -- PurpleNotifyUse
 
 <refsect2 id="notify-displaying-email-notification" role="signal">
  <title>The <literal>&quot;displaying-email-notification&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (const char *subject,
                                                         const char *from,
                                                         const char *to,
                                                         const char *url,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted before notification of a single email is handed to the UI to display.
   </para>
@@ -87,13 +89,14 @@ Emitted before notification of a single email is handed to the UI to display.
 
 <refsect2 id="notify-displaying-emails-notification" role="signal">
  <title>The <literal>&quot;displaying-emails-notification&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (const char **subjects,
                                                         const char **froms,
                                                         const char **tos,
                                                         const char **urls,
                                                         guint count,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted before notification of multiple emails is handed to the UI to display.
   </para>

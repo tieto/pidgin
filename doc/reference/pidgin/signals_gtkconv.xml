@@ -25,10 +25,11 @@
 
 <refsect2 id="gtkconvs-conversation-dragging" role="signal">
  <title>The <literal>&quot;conversation-dragging&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PidginWindow *source,
                                                         PidginWindow *destination,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a conversation is being drag and dropped between windows.
   </para>
@@ -50,11 +51,12 @@ Emitted when a conversation is being drag and dropped between windows.
 
 <refsect2 id="gtkconvs-conversation-timestamp" role="signal">
  <title>The <literal>&quot;conversation-timestamp&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 char *              user_function                      (PurpleConversation *conv,
                                                         time_t when,
                                                         gboolean show_date,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted to allow plugins to customize the timestamp on a message.
   </para>
@@ -84,19 +86,20 @@ Emitted to allow plugins to customize the timestamp on a message.
 
 <refsect2 id="gtkconvs-displaying-im-msg" role="signal">
  <title>The <literal>&quot;displaying-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char **message,
                                                         PurpleConversation *conv,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted just before a message is displayed in an IM conversation. <literal>message</literal> is a pointer to a string, so the plugin can replace the message that will be displayed. This can also be used to cancel displaying a message by returning <literal>TRUE</literal>.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*message</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -131,13 +134,14 @@ Make sure to free <literal>*message</literal> before you replace it!
 
 <refsect2 id="gtkconvs-displayed-im-msg" role="signal">
  <title>The <literal>&quot;displayed-im-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char *message,
                                                         PurpleConversation *conv,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after a message is displayed in an IM conversation.
   </para>
@@ -171,19 +175,20 @@ Emitted after a message is displayed in an IM conversation.
 
 <refsect2 id="gtkconvs-displaying-chat-msg" role="signal">
  <title>The <literal>&quot;displaying-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 gboolean            user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char **message,
                                                         PurpleConversation *conv,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted just before a message is displayed in a chat. <literal>message</literal> is a pointer to a string, so the plugin can replace the message that will be displayed. This can also be used to cancel displaying a message by returning <literal>TRUE</literal>.
   </para>
-  <para><emphasis>Note</emphasis>&#160;:
+  <note><para>
 Make sure to free <literal>*message</literal> before you replace it!
-  </para>
+  </para></note>
   <variablelist role="params">
   <varlistentry>
     <term><parameter>account</parameter>&#160;:</term>
@@ -218,13 +223,14 @@ Make sure to free <literal>*message</literal> before you replace it!
 
 <refsect2 id="gtkconvs-displayed-chat-msg" role="signal">
  <title>The <literal>&quot;displayed-chat-msg&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleAccount *account,
                                                         const char *who,
                                                         char *message,
                                                         PurpleConversation *conv,
                                                         PurpleMessageFlags flags,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted after a message is displayed in a chat conversation.
   </para>
@@ -258,9 +264,10 @@ Emitted after a message is displayed in a chat conversation.
 
 <refsect2 id="gtkconvs-conversation-switched" role="signal">
  <title>The <literal>&quot;conversation-switched&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PurpleConversation *conv,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted when a window switched from one conversation to another.
   </para>
@@ -278,9 +285,10 @@ Emitted when a window switched from one conversation to another.
 
 <refsect2 id="gtkconvs-conversation-hiding" role="signal">
  <title>The <literal>&quot;conversation-hiding&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PidginConversation *gtkconv,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted immediately before an existing conversation is hidden.
   </para>
@@ -298,9 +306,10 @@ Emitted immediately before an existing conversation is hidden.
 
 <refsect2 id="gtkconvs-conversation-displayed" role="signal">
  <title>The <literal>&quot;conversation-displayed&quot;</literal> signal</title>
-  <programlisting>
+<programlisting>
 void                user_function                      (PidginConversation *gtkconv,
-                                                        gpointer user_data)</programlisting>
+                                                        gpointer user_data)
+</programlisting>
   <para>
 Emitted right after the Pidgin UI is attached to a new or a hidden conversation.
   </para>
