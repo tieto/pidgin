@@ -5,29 +5,42 @@
 <chapter id="chapter-tut-c-plugins">
   <title>C Plugins tutorial</title>
 
-  <programlisting>
- @section Introduction
+  <sect2 id="tut-c-plugins-introduction">
+  <title>Introduction</title>
+  <para>
   C plugins are native plugins.  They have complete access to all of the API,
-  and can do basically whatever they want.  All of the protocol plugins, as
-  well as the Mono, Perl, and Tcl loader plugins are written in C.
+  and can do basically whatever they want.  All of the protocol plugins are
+  also written in C.
+  </para>
+  </sect2>
 
- @section getting_started Getting Started
+  <sect2 id="tut-c-plugins-getting-started">
+  <title>Getting Started</title>
+  <para>
   To develop a plugin you need to have the libpurple and (for UI plugins) the
   Pidgin/Finch source code or development headers.  It is generally a good idea
   to compile against the same version of Pidgin that you are running.  You may
   also want to develop against the code in our Mercurial repository if you need
   to use a new feature.  Please do not abuse our Mercurial repository, however.
+  </para>
 
-  All plugins must have @c PURPLE_PLUGINS defined and the definition must be
-  before including any libpurple, Pidgin, or Finch header files.  Failure to do
-  so can lead to strange errors that are hard to diagnose.  Including purple.h
-  will define this for you.
+  <para>
+  All plugins must have <literal>PURPLE_PLUGINS</literal> defined and the
+  definition must be before including any libpurple, Pidgin, or Finch header
+  files.  Failure to do so can lead to strange errors that are hard to diagnose.
+  Including <literal>purple.h</literal> will define this for you.
+  </para>
+  </sect2>
 
- @section hello_world Hello World!
+  <sect2 id="tut-c-plugins-hello-world">
+  <title>An Example</title>
+  <para>
   I know every tutorial has a hello world, so why should libpurple be any
   different?
 
-  @code
+<example>
+<title>Hello World!</title>
+<programlisting>
 #include &lt;purple.h&gt;
 
 static PurplePluginInfo *
@@ -70,35 +83,51 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 PURPLE_PLUGIN_INIT(hello_world, plugin_query, plugin_load, plugin_unload);
+</programlisting>
+</example>
+  </para>
 
-  @endcode
-
+  <para>
   Okay, so what does all this mean?  We start off by including purple.h.  This
-  file defines @c PURPLE_PLUGINS as described before so that we don't have to
-  manually define it.  It also includes all the libpurple header files.
+  file defines <literal>PURPLE_PLUGINS</literal> as described before so that we
+  don't have to manually define it.  It also includes all the libpurple header
+  files.
+  </para>
 
-  @c plugin_query, @c plugin_load and @c plugin_unload must be implemented in
-  every plugin.  Each of these functions can return an error on failure by using
-  @c g_set_error on the @c error argument.
+  <para>
+  <literal>plugin_query</literal>, <literal>plugin_load</literal> and
+  <literal>plugin_unload</literal> must be implemented in every plugin.  Each of
+  these functions can return an error on failure by using
+  <function>g_set_error()</function> on the <literal>error</literal> argument.
+  </para>
 
-  @c plugin_query is called when the plugin is probed by the plugin system, and
-  returns various information about the plugin in form of a newly created
-  PurplePluginInfo instance.  See plugins.h for a list of available properties
-  you can use in @c purple_plugin_info_new .
+  <para>
+  <literal>plugin_query</literal> is called when the plugin is probed by the
+  plugin system, and returns various information about the plugin in form of a
+  newly created <literal>PurplePluginInfo</literal> instance.  For a list of all
+  available properties, see <link linkend="purple-plugin-info-new"><function>
+  purple_plugin_info_new</function></link>.
+  </para>
 
-  @c plugin_load is called when the plugin is loaded so that you can initialize
-  any variables, register dynamic types, and so on.  Plugins may also want to
-  add their preferences to the pref tree--more about that later. In this plugin
-  we'll just use it to display a message.
+  <para>
+  <literal>plugin_load</literal> is called when the plugin is loaded so that you
+  can initialize any variables, register dynamic types, and so on.  Plugins may
+  also want to add their preferences to the pref tree--more about that later.
+  In this plugin we'll just use it to display a message.
+  </para>
 
-  @c plugin_unload is called when the plugin is unloaded, and we can use it to
-  wrap up everything, and free our variables.
+  <para>
+  <literal>plugin_unload</literal> is called when the plugin is unloaded, and we
+  can use it to wrap up everything, and free our variables.
+  </para>
 
-  Finally we have @c PURPLE_PLUGIN_INIT().  @c PURPLE_PLUGIN_INIT is a macro
-  that every plugin MUST have.  @c PURPLE_PLUGIN_INIT tells libpurple some
-  basic things about your plugin, like what name to use if the plugin is
-  compiled statically, and the @c plugin_query, @c plugin_load, and
-  @c plugin_unload functions.
-
-  </programlisting>
+  <para>
+  Finally we have <literal>PURPLE_PLUGIN_INIT()</literal>.
+  <literal>PURPLE_PLUGIN_INIT</literal> is a macro that every plugin MUST have.
+  <literal>PURPLE_PLUGIN_INIT</literal> tells libpurple some basic things about
+  your plugin, like what name to use if the plugin is compiled statically, and
+  the <literal>plugin_query</literal>, <literal>plugin_load</literal>, and
+  <literal>plugin_unload</literal> functions.
+  </para>
+ </sect2>
 </chapter>
