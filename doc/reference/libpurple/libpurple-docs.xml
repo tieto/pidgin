@@ -138,9 +138,9 @@
       <xi:include href="signals_jabber.xml" />
   </reference>
 
-  <xi:include href="ui_ops.xml" />
-  <xi:include href="plugin_i18n.xml" />
   <xi:include href="plugin_ids.xml" />
+  <xi:include href="plugin_i18n.xml" />
+  <xi:include href="ui_ops.xml" />
 
   <index id="api-index-full">
     <title>Index</title>
