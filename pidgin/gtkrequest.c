@@ -1087,10 +1087,14 @@ req_field_changed_cb(GtkWidget *widget, PurpleRequestField *field)
 	for (; it != NULL; it = g_list_next(it)) {
 		PurpleRequestField *field = it->data;
 		GtkWidget *widget = purple_request_field_get_ui_data(field);
+		gboolean sensitive;
 
-		gtk_widget_set_sensitive(widget,
-			purple_request_field_is_sensitive(field));
-		/* TODO: string fields and set_editable */
+		sensitive = purple_request_field_is_sensitive(field);
+		gtk_widget_set_sensitive(widget, sensitive);
+
+		/* XXX: and what about multiline? */
+		if (GTK_IS_EDITABLE(widget))
+			gtk_editable_set_editable(GTK_EDITABLE(widget), sensitive);
 	}
 }
 
@@ -1149,7 +1153,7 @@ create_string_field(PurpleRequestField *field)
 	gboolean is_editable;
 
 	value = purple_request_field_string_get_default_value(field);
-	is_editable = purple_request_field_string_is_editable(field);
+	is_editable = purple_request_field_is_sensitive(field);
 
 	if (purple_request_field_string_is_multiline(field))
 	{
@@ -1178,7 +1182,6 @@ create_string_field(PurpleRequestField *field)
 		gtk_widget_set_tooltip_text(textview, purple_request_field_get_tooltip(field));
 
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(textview), is_editable);
-		gtk_widget_set_sensitive(textview, is_editable);
 
 		g_signal_connect(G_OBJECT(textview), "focus-out-event",
 						 G_CALLBACK(field_string_focus_out_cb), field);
@@ -1209,7 +1212,6 @@ create_string_field(PurpleRequestField *field)
 		}
 
 		gtk_editable_set_editable(GTK_EDITABLE(widget), is_editable);
-		gtk_widget_set_sensitive(widget, is_editable);
 
 		g_signal_connect(G_OBJECT(widget), "focus-out-event",
 						 G_CALLBACK(field_string_focus_out_cb), field);

@@ -62,7 +62,6 @@ struct _PurpleRequestField
 		{
 			gboolean multiline;
 			gboolean masked;
-			gboolean editable;
 			char *default_value;
 			char *value;
 
@@ -1168,7 +1167,6 @@ purple_request_field_string_new(const char *id, const char *text,
 	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_STRING);
 
 	field->u.string.multiline = multiline;
-	field->u.string.editable  = TRUE;
 
 	purple_request_field_string_set_default_value(field, default_value);
 	purple_request_field_string_set_value(field, default_value);
@@ -1208,16 +1206,6 @@ purple_request_field_string_set_masked(PurpleRequestField *field, gboolean maske
 	field->u.string.masked = masked;
 }
 
-void
-purple_request_field_string_set_editable(PurpleRequestField *field,
-									   gboolean editable)
-{
-	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING);
-
-	field->u.string.editable = editable;
-}
-
 const char *
 purple_request_field_string_get_default_value(const PurpleRequestField *field)
 {
@@ -1252,15 +1240,6 @@ purple_request_field_string_is_masked(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, FALSE);
 
 	return field->u.string.masked;
-}
-
-gboolean
-purple_request_field_string_is_editable(const PurpleRequestField *field)
-{
-	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, FALSE);
-
-	return field->u.string.editable;
 }
 
 PurpleRequestField *

@@ -968,15 +968,6 @@ void purple_request_field_string_set_masked(PurpleRequestField *field,
 										  gboolean masked);
 
 /**
- * Sets whether or not a string field is editable.
- *
- * @param field    The field.
- * @param editable The editable value.
- */
-void purple_request_field_string_set_editable(PurpleRequestField *field,
-											gboolean editable);
-
-/**
  * Returns the default value in a string field.
  *
  * @param field The field.
@@ -1012,15 +1003,6 @@ gboolean purple_request_field_string_is_multiline(const PurpleRequestField *fiel
  * @return @c TRUE if the field is masked, or @c FALSE otherwise.
  */
 gboolean purple_request_field_string_is_masked(const PurpleRequestField *field);
-
-/**
- * Returns whether or not a string field is editable.
- *
- * @param field The field.
- *
- * @return @c TRUE if the field is editable, or @c FALSE otherwise.
- */
-gboolean purple_request_field_string_is_editable(const PurpleRequestField *field);
 
 /*@}*/
 

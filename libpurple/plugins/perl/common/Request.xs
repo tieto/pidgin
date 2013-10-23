@@ -487,10 +487,6 @@ purple_request_field_string_get_value(field)
 	Purple::Request::Field field
 
 gboolean
-purple_request_field_string_is_editable(field)
-	Purple::Request::Field field
-
-gboolean
 purple_request_field_string_is_masked(field)
 	Purple::Request::Field field
 
@@ -502,11 +498,6 @@ void
 purple_request_field_string_set_default_value(field, default_value)
 	Purple::Request::Field field
 	const char *default_value
-
-void
-purple_request_field_string_set_editable(field, editable)
-	Purple::Request::Field field
-	gboolean editable
 
 void
 purple_request_field_string_set_masked(field, masked)
