@@ -178,6 +178,8 @@ typedef void (*PurpleRequestInputCb)(void *, const char *);
 typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field,
 	gchar **errmsg, gpointer user_data);
 
+typedef gboolean (*PurpleRequestFieldSensitivityCb)(PurpleRequestField *field);
+
 /** The type of callbacks passed to purple_request_action().  The first
  *  argument is the @a user_data parameter; the second is the index in the list
  *  of actions of the one chosen.
@@ -513,6 +515,9 @@ const GList *purple_request_fields_get_required(
  */
 const GList *purple_request_fields_get_validatable(
 	const PurpleRequestFields *fields);
+
+const GList *
+purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
 
 /**
  * Returns whether or not a field with the specified ID is required.
@@ -883,6 +888,14 @@ gboolean purple_request_field_is_validatable(PurpleRequestField *field);
  * @return TRUE, if the field is valid, FALSE otherwise.
  */
 gboolean purple_request_field_is_valid(PurpleRequestField *field, gchar **errmsg);
+
+void purple_request_field_set_sensitive(PurpleRequestField *field,
+	gboolean sensitive);
+
+gboolean purple_request_field_is_sensitive(PurpleRequestField *field);
+
+void purple_request_field_set_sensitivity_cb(PurpleRequestField *field,
+	PurpleRequestFieldSensitivityCb cb);
 
 /**
  * Returns the ui_data for a field.

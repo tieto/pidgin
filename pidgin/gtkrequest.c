@@ -1073,6 +1073,7 @@ req_field_changed_cb(GtkWidget *widget, PurpleRequestField *field)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestFields *fields;
 	PidginRequestData *req_data;
+	const GList *it;
 
 	group = purple_request_field_get_group(field);
 	fields = purple_request_field_group_get_fields_list(group);
@@ -1081,6 +1082,16 @@ req_field_changed_cb(GtkWidget *widget, PurpleRequestField *field)
 	gtk_widget_set_sensitive(req_data->ok_button,
 		purple_request_fields_all_required_filled(fields) &&
 		purple_request_fields_all_valid(fields));
+
+	it = purple_request_fields_get_autosensitive(fields);
+	for (; it != NULL; it = g_list_next(it)) {
+		PurpleRequestField *field = it->data;
+		GtkWidget *widget = purple_request_field_get_ui_data(field);
+
+		gtk_widget_set_sensitive(widget,
+			purple_request_field_is_sensitive(field));
+		/* TODO: string fields and set_editable */
+	}
 }
 
 static void
@@ -1875,6 +1886,9 @@ pidgin_request_fields(const char *title, const char *primary,
 					else
 						continue;
 				}
+
+				gtk_widget_set_sensitive(widget,
+					purple_request_field_is_sensitive(field));
 
 				if (label)
 					gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
