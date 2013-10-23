@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_ENUM_H
-#define PURPLE_ENUM_H
+#ifndef PURPLE_ENUMS_H
+#define PURPLE_ENUMS_H
 
 #include <glib-object.h>
 
@@ -39,7 +39,7 @@ GType @enum_name@_get_type(void) G_GNUC_CONST;
 /*** BEGIN file-tail ***/
 G_END_DECLS
 
-#endif /* PURPLE_ENUM_H */
+#endif /* PURPLE_ENUMS_H */
 
 /*** END file-tail ***/
 
