@@ -600,7 +600,6 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 static PidginPluginUiInfo purplerc_ui_info =
 {
 	purplerc_get_config_frame,
-	0, /* page_num (Reserved) */
 
 	/* padding */
 	NULL,
