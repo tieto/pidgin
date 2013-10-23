@@ -117,6 +117,11 @@ struct _PurplePluginInfo {
 #else
 	GObject parent;
 #endif
+
+	/** The UI data associated with the plugin. This is a convenience
+	 *  field provided to the UIs -- it is not used by the libpurple core.
+	 */
+	gpointer ui_data;
 };
 
 /**
@@ -706,6 +711,25 @@ purple_plugin_info_get_flags(const PurplePluginInfo *info);
  * @return The plugin info error, or @c NULL.
  */
 const gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
+
+/**
+ * Set the UI data associated with a plugin.
+ *
+ * @param info The plugin's info instance.
+ * @param ui_data A pointer to associate with this object.
+ */
+void purple_plugin_info_set_ui_data(PurplePluginInfo *info, gpointer ui_data);
+
+/**
+ * Returns the UI data associated with a plugin.
+ *
+ * @param info The plugin's info instance.
+ *
+ * @return The UI data associated with this plugin.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libpurple core.
+ */
+gpointer purple_plugin_info_get_ui_data(const PurplePluginInfo *info);
 
 /*@}*/
 

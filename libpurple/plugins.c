@@ -772,6 +772,22 @@ purple_plugin_info_get_error(const PurplePluginInfo *info)
 	return priv->error;
 }
 
+void
+purple_plugin_info_set_ui_data(PurplePluginInfo *info, gpointer ui_data)
+{
+	g_return_if_fail(PURPLE_IS_PLUGIN_INFO(info));
+
+	info->ui_data = ui_data;
+}
+
+gpointer
+purple_plugin_info_get_ui_data(const PurplePluginInfo *info)
+{
+	g_return_val_if_fail(PURPLE_IS_PLUGIN_INFO(info), NULL);
+
+	return info->ui_data;
+}
+
 /**************************************************************************
  * PluginAction API
  **************************************************************************/

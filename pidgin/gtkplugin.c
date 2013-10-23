@@ -197,6 +197,8 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 		frame = get_pref_frame(plugin);
 
 		config = pidgin_plugin_pref_create_frame(frame);
+
+		purple_plugin_info_set_ui_data(info, frame);
 	}
 
 	return config;
@@ -349,6 +351,8 @@ static void plugin_unload_cb(PurplePlugin *plugin, gpointer data)
 
 static void pref_dialog_response_cb(GtkWidget *d, int response, PurplePlugin *plug)
 {
+	PurplePluginInfo *info = purple_plugin_get_info(plug);
+
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
@@ -358,6 +362,11 @@ static void pref_dialog_response_cb(GtkWidget *d, int response, PurplePlugin *pl
 			plugin_pref_dialogs = NULL;
 		}
 		gtk_widget_destroy(d);
+
+		if (purple_plugin_info_get_pref_frame_callback(info) && info->ui_data) {
+			purple_plugin_pref_frame_destroy(info->ui_data);
+			purple_plugin_info_set_ui_data(info, NULL);
+		}
 
 		break;
 	}

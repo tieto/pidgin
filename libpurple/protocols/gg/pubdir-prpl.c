@@ -531,8 +531,8 @@ void ggp_pubdir_search(PurpleConnection *gc,
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_choice_new("gender", _("Gender"),
-		GINT_TO_POINTER(form->gender));
-	purple_request_field_choice_add(field, _("Male or female"), 0);
+		form ? GINT_TO_POINTER(form->gender) : NULL);
+	purple_request_field_choice_add(field, _("Male or female"), NULL);
 	purple_request_field_choice_add(field, _("Male"),
 		GINT_TO_POINTER(GGP_PUBDIR_GENDER_MALE));
 	purple_request_field_choice_add(field, _("Female"),
