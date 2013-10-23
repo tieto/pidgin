@@ -516,6 +516,13 @@ const GList *purple_request_fields_get_required(
 const GList *purple_request_fields_get_validatable(
 	const PurpleRequestFields *fields);
 
+/**
+ * Returns a list of all fields with sensitivity callback added.
+ *
+ * @param fields The fields list.
+ *
+ * @constreturn The list of fields with automatic sensitivity callback.
+ */
 const GList *
 purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
 
@@ -889,11 +896,30 @@ gboolean purple_request_field_is_validatable(PurpleRequestField *field);
  */
 gboolean purple_request_field_is_valid(PurpleRequestField *field, gchar **errmsg);
 
+/**
+ * Sets field editable.
+ *
+ * @param field     The field.
+ * @param sensitive TRUE if the field should be sensitive for user input.
+ */
 void purple_request_field_set_sensitive(PurpleRequestField *field,
 	gboolean sensitive);
 
+/**
+ * Checks, if field is editable.
+ *
+ * @param field The field.
+ *
+ * @return TRUE, if the field is sensitive for user input.
+ */
 gboolean purple_request_field_is_sensitive(PurpleRequestField *field);
 
+/**
+ * Sets the callback, used to determine if the field should be editable.
+ *
+ * @param field The field.
+ * @param cb    The callback.
+ */
 void purple_request_field_set_sensitivity_cb(PurpleRequestField *field,
 	PurpleRequestFieldSensitivityCb cb);
 
