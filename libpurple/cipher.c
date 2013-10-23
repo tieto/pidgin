@@ -365,14 +365,6 @@ purple_hash_get_type(void) {
 	return type;
 }
 
-/**
- * purple_hash_reset:
- * @hash: The hash to reset
- *
- * Resets a hash to it's default value
- *
- * @note If you have set an IV you will have to set it after resetting
- */
 void
 purple_hash_reset(PurpleHash *hash) {
 	PurpleHashClass *klass = NULL;
@@ -389,13 +381,6 @@ purple_hash_reset(PurpleHash *hash) {
 						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 }
 
-/**
- * Resets a hash state to it's default value, but doesn't touch stateless
- * configuration.
- *
- * That means, IV and digest context will be wiped out, but keys, ops or salt
- * will remain untouched.
- */
 void
 purple_hash_reset_state(PurpleHash *hash) {
 	PurpleHashClass *klass = NULL;
@@ -412,14 +397,6 @@ purple_hash_reset_state(PurpleHash *hash) {
 						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 }
 
-/**
- * purple_hash_append:
- * @hash: The hash to append data to
- * @data: The data to append
- * @len: The length of the data
- *
- * Appends data to the hash
- */
 void
 purple_hash_append(PurpleHash *hash, const guchar *data,
 								size_t len)
@@ -438,17 +415,6 @@ purple_hash_append(PurpleHash *hash, const guchar *data,
 						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
 }
 
-/**
- * purple_hash_digest:
- * @hash: The hash to digest
- * @in_len: The length of the buffer
- * @digest: The return buffer for the digest
- * @out_len: The length of the returned value
- *
- * Digests a hash
- *
- * Return Value: TRUE if the digest was successful, FALSE otherwise.
- */
 gboolean
 purple_hash_digest(PurpleHash *hash, guchar digest[], size_t len)
 {
@@ -468,17 +434,6 @@ purple_hash_digest(PurpleHash *hash, guchar digest[], size_t len)
 	return FALSE;
 }
 
-/**
- * purple_hash_digest_to_str:
- * @hash: The hash to get a digest from
- * @in_len: The length of the buffer
- * @digest_s: The return buffer for the string digest
- * @out_len: The length of the returned value
- *
- * Converts a guchar digest into a hex string
- *
- * Return Value: TRUE if the digest was successful, FALSE otherwise.
- */
 gboolean
 purple_hash_digest_to_str(PurpleHash *hash, gchar digest_s[], size_t len)
 {
@@ -526,14 +481,6 @@ purple_hash_get_digest_size(PurpleHash *hash)
 	return FALSE;
 }
 
-/**
- * purple_hash_get_block_size:
- * @hash: The hash whose block size to get
- *
- * Gets the block size of a hash
- *
- * Return Value: The block size of the hash
- */
 size_t
 purple_hash_get_block_size(PurpleHash *hash)
 {
