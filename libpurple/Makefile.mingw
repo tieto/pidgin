@@ -213,13 +213,13 @@ marshallers.c: marshallers.list marshallers.h
 	@echo "#include \"marshallers.h\"" > marshallers.c
 	@$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --body >> marshallers.c
 
-enums.h: enums.h.template $(ENUM_HEADERS)
+enums.h: enums.h.in $(ENUM_HEADERS)
 	@echo -e "  GEN\t$@"
-	@$(GLIB_MKENUMS) --template enums.h.template $(ENUM_HEADERS) > enums.h
+	@$(GLIB_MKENUMS) --template enums.h.in $(ENUM_HEADERS) > enums.h
 
-enums.c: enums.c.template enums.h $(ENUM_HEADERS)
+enums.c: enums.c.in enums.h $(ENUM_HEADERS)
 	@echo -e "  GEN\t$@"
-	@$(GLIB_MKENUMS) --template enums.c.template $(ENUM_HEADERS) > enums.c
+	@$(GLIB_MKENUMS) --template enums.c.in $(ENUM_HEADERS) > enums.c
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
