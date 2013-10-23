@@ -237,11 +237,11 @@ marshallers.c: marshallers.list marshallers.h
 	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
 	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
-enums.h: enums.h.template $(purple_enumheaders)
-	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.h.template $(purple_enumheaders) > $@
+enums.h: enums.h.in $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.h.in $(purple_enumheaders) > $@
 
-enums.c: enums.c.template $(purple_enumheaders)
-	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.c.template $(purple_enumheaders) > $@
+enums.c: enums.c.in $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.c.in $(purple_enumheaders) > $@
 
 CLEANFILES = \
 	enums.c \
