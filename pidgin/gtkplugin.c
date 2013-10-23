@@ -91,7 +91,7 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 
 		config = pidgin_plugin_pref_create_frame(frame);
 
-		plugin->info->prefs_info->frame = frame;
+		plugin->ui_data = frame;
 	}
 
 	return config;
@@ -227,9 +227,9 @@ static void pref_dialog_response_cb(GtkWidget *d, int response, PurplePlugin *pl
 		}
 		gtk_widget_destroy(d);
 
-		if (plug->info->prefs_info && plug->info->prefs_info->frame) {
-			purple_plugin_pref_frame_destroy(plug->info->prefs_info->frame);
-			plug->info->prefs_info->frame = NULL;
+		if (plug->info->prefs_info && plug->ui_data) {
+			purple_plugin_pref_frame_destroy(plug->ui_data);
+			plug->ui_data = NULL;
 		}
 
 		break;
