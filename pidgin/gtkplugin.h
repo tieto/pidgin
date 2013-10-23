@@ -38,8 +38,6 @@ struct _PidginPluginUiInfo
 {
 	GtkWidget *(*get_config_frame)(PurplePlugin *plugin);
 
-	int page_num;                                         /**< Reserved */
-
 	/*< private >*/
 	void (*_pidgin_reserved1)(void);
 	void (*_pidgin_reserved2)(void);

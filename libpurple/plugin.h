@@ -162,6 +162,7 @@ struct _PurplePlugin
 	void *extra;                           /**< Plugin-specific data.     */
 	gboolean unloadable;                   /**< Unloadable                */
 	GList *dependent_plugins;              /**< Plugins depending on this */
+	gpointer ui_data;                      /**< The UI data. */
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -174,9 +175,6 @@ struct _PurplePlugin
 
 struct _PurplePluginUiInfo {
 	PurplePluginPrefFrame *(*get_plugin_pref_frame)(PurplePlugin *plugin);
-
-	int page_num;                                         /**< Reserved */
-	PurplePluginPrefFrame *frame;                           /**< Reserved */
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
