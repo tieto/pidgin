@@ -257,6 +257,7 @@ struct _JabberStream
 	guint keepalive_timeout;
 	guint max_inactivity;
 	guint inactivity_timer;
+	guint conn_close_timeout;
 
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
