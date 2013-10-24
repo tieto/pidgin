@@ -2909,6 +2909,7 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 
 static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
+	NULL,
 
 	/* padding */
 	NULL,

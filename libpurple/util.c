@@ -4749,6 +4749,15 @@ purple_uuid_random(void)
 			(tmp >> 16) & 0xFFFF, g_random_int());
 }
 
+void purple_callback_set_zero(gpointer data)
+{
+	gpointer *ptr = data;
+
+	g_return_if_fail(ptr != NULL);
+
+	*ptr = NULL;
+}
+
 GValue *
 purple_value_new(GType type)
 {
