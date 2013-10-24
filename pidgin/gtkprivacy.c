@@ -31,6 +31,7 @@
 #include "request.h"
 #include "util.h"
 
+#include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
@@ -89,9 +90,6 @@ static struct
 static const size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
 
 static PidginPrivacyDialog *privacy_dialog = NULL;
-
-void pidgin_permit_added_removed(PurpleAccount *account, const char *name);
-void pidgin_deny_added_removed(PurpleAccount *account, const char *name);
 
 static void
 rebuild_allow_list(PidginPrivacyDialog *dialog)
@@ -559,14 +557,14 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 	}
 }
 
-void
+static void
 pidgin_permit_added_removed(PurpleAccount *account, const char *name)
 {
 	if (privacy_dialog != NULL)
 		rebuild_allow_list(privacy_dialog);
 }
 
-void
+static void
 pidgin_deny_added_removed(PurpleAccount *account, const char *name)
 {
 	if (privacy_dialog != NULL)
@@ -576,4 +574,8 @@ pidgin_deny_added_removed(PurpleAccount *account, const char *name)
 void
 pidgin_privacy_init(void)
 {
+	PurpleAccountUiOps *ops = pidgin_accounts_get_ui_ops();
+
+	ops->permit_added = ops->permit_removed = pidgin_permit_added_removed;
+	ops->deny_added = ops->deny_removed = pidgin_deny_added_removed;
 }
