@@ -179,6 +179,8 @@ typedef void (*PurpleRequestInputCb)(void *, const char *);
 typedef gboolean (*PurpleRequestFieldValidator)(PurpleRequestField *field,
 	gchar **errmsg, gpointer user_data);
 
+typedef gboolean (*PurpleRequestFieldSensitivityCb)(PurpleRequestField *field);
+
 /** The type of callbacks passed to purple_request_action().  The first
  *  argument is the @a user_data parameter; the second is the index in the list
  *  of actions of the one chosen.
@@ -514,6 +516,16 @@ const GList *purple_request_fields_get_required(
  */
 const GList *purple_request_fields_get_validatable(
 	const PurpleRequestFields *fields);
+
+/**
+ * Returns a list of all fields with sensitivity callback added.
+ *
+ * @param fields The fields list.
+ *
+ * @constreturn The list of fields with automatic sensitivity callback.
+ */
+const GList *
+purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
 
 /**
  * Returns whether or not a field with the specified ID is required.
@@ -886,6 +898,33 @@ gboolean purple_request_field_is_validatable(PurpleRequestField *field);
 gboolean purple_request_field_is_valid(PurpleRequestField *field, gchar **errmsg);
 
 /**
+ * Sets field editable.
+ *
+ * @param field     The field.
+ * @param sensitive TRUE if the field should be sensitive for user input.
+ */
+void purple_request_field_set_sensitive(PurpleRequestField *field,
+	gboolean sensitive);
+
+/**
+ * Checks, if field is editable.
+ *
+ * @param field The field.
+ *
+ * @return TRUE, if the field is sensitive for user input.
+ */
+gboolean purple_request_field_is_sensitive(PurpleRequestField *field);
+
+/**
+ * Sets the callback, used to determine if the field should be editable.
+ *
+ * @param field The field.
+ * @param cb    The callback.
+ */
+void purple_request_field_set_sensitivity_cb(PurpleRequestField *field,
+	PurpleRequestFieldSensitivityCb cb);
+
+/**
  * Returns the ui_data for a field.
  *
  * @param field The field.
@@ -956,15 +995,6 @@ void purple_request_field_string_set_masked(PurpleRequestField *field,
 										  gboolean masked);
 
 /**
- * Sets whether or not a string field is editable.
- *
- * @param field    The field.
- * @param editable The editable value.
- */
-void purple_request_field_string_set_editable(PurpleRequestField *field,
-											gboolean editable);
-
-/**
  * Returns the default value in a string field.
  *
  * @param field The field.
@@ -1000,15 +1030,6 @@ gboolean purple_request_field_string_is_multiline(const PurpleRequestField *fiel
  * @return @c TRUE if the field is masked, or @c FALSE otherwise.
  */
 gboolean purple_request_field_string_is_masked(const PurpleRequestField *field);
-
-/**
- * Returns whether or not a string field is editable.
- *
- * @param field The field.
- *
- * @return @c TRUE if the field is editable, or @c FALSE otherwise.
- */
-gboolean purple_request_field_string_is_editable(const PurpleRequestField *field);
 
 /*@}*/
 

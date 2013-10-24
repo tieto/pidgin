@@ -239,7 +239,7 @@ static void mxit_profile_action( PurplePluginAction* action )
 		field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
 		purple_request_field_group_add_field( public_group, field );
 		if ( profile->flags & CP_PROF_DOBLOCKED )
-			purple_request_field_string_set_editable( field, FALSE );
+			purple_request_field_set_sensitive( field, FALSE );
 
 		/* gender */
 		field = purple_request_field_choice_new( "male", _( "Gender" ), GINT_TO_POINTER(profile->male ? 1 : 0));
