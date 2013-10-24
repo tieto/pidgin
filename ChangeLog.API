@@ -33,6 +33,7 @@ version 3.0.0 (??/??/????):
 		* purple_chat_user_set_ui_data
 		* purple_chat_user_set_chat
 		* purple_connection_get_active_chats
+		* purple_connection_get_error_info
 		* purple_connection_get_flags
 		* purple_connection_set_flags
 		* purple_connection_update_last_received

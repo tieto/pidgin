@@ -79,6 +79,9 @@ struct _PurpleConnectionPrivate
 	 */
 	gboolean wants_to_die;
 
+	/** The connection error and its description if an error occured */
+	PurpleConnectionErrorInfo *error_info;
+
 	guint disconnect_timeout;  /**< Timer used for nasty stack tricks         */
 	time_t last_received;      /**< When we last received a packet. Set by the
 	                                prpl to avoid sending unneeded keepalives */
@@ -104,6 +107,10 @@ static GList *connections_connecting = NULL;
 static PurpleConnectionUiOps *connection_ui_ops = NULL;
 
 static int connections_handle;
+
+static PurpleConnectionErrorInfo *
+purple_connection_error_info_new(PurpleConnectionError type,
+                                 const gchar *description);
 
 /**************************************************************************
  * Connection API
@@ -446,8 +453,8 @@ purple_connection_disconnect_cb(gpointer data)
 
 void
 purple_connection_error (PurpleConnection *gc,
-                                PurpleConnectionError reason,
-                                const char *description)
+                         PurpleConnectionError reason,
+                         const char *description)
 {
 	PurpleConnectionUiOps *ops;
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
@@ -471,7 +478,7 @@ purple_connection_error (PurpleConnection *gc,
 	}
 
 	/* If we've already got one error, we don't need any more */
-	if (priv->disconnect_timeout > 0)
+	if (purple_connection_get_error_info(gc))
 		return;
 
 	priv->wants_to_die = purple_connection_error_is_fatal (reason);
@@ -484,11 +491,23 @@ purple_connection_error (PurpleConnection *gc,
 	if (ops && ops->report_disconnect)
 		ops->report_disconnect(gc, reason, description);
 
+	priv->error_info = purple_connection_error_info_new(reason, description);
+
 	purple_signal_emit(purple_connections_get_handle(), "connection-error",
 		gc, reason, description);
 
 	priv->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
 			purple_connection_get_account(gc));
+}
+
+PurpleConnectionErrorInfo *
+purple_connection_get_error_info(const PurpleConnection *gc)
+{
+	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
+
+	g_return_val_if_fail(priv != NULL, TRUE);
+
+	return priv->error_info;
 }
 
 void
@@ -555,21 +574,31 @@ void purple_connection_update_last_received(PurpleConnection *gc)
 	priv->last_received = time(NULL);
 }
 
+static PurpleConnectionErrorInfo *
+purple_connection_error_info_new(PurpleConnectionError type,
+                                 const gchar *description)
+{
+	PurpleConnectionErrorInfo *err;
+
+	g_return_val_if_fail(description != NULL, NULL);
+
+	err = g_new(PurpleConnectionErrorInfo, 1);
+
+	err->type        = type;
+	err->description = g_strdup(description);
+
+	return err;
+}
+
 /**************************************************************************
  * GBoxed code
  **************************************************************************/
 static PurpleConnectionErrorInfo *
 purple_connection_error_info_copy(PurpleConnectionErrorInfo *err)
 {
-	PurpleConnectionErrorInfo *newerr;
-
 	g_return_val_if_fail(err != NULL, NULL);
 
-	newerr = g_new(PurpleConnectionErrorInfo, 1);
-	newerr->type        = err->type;
-	newerr->description = g_strdup(err->description);
-
-	return newerr;
+	return purple_connection_error_info_new(err->type, err->description);
 }
 
 static void
@@ -754,6 +783,9 @@ purple_connection_finalize(GObject *object)
 	purple_debug_info("connection", "Destroying connection %p\n", gc);
 
 	purple_account_set_connection(account, NULL);
+
+	if (priv->error_info)
+		purple_connection_error_info_free(priv->error_info);
 
 	if (priv->disconnect_timeout > 0)
 		purple_timeout_remove(priv->disconnect_timeout);
