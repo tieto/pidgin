@@ -74,6 +74,7 @@ purple_coresources = \
 	core.c \
 	debug.c \
 	desktopitem.c \
+	e2ee.c \
 	eventloop.c \
 	http.c \
 	idle.c \
@@ -150,6 +151,7 @@ purple_coreheaders = \
 	dbus-maybe.h \
 	debug.h \
 	desktopitem.h \
+	e2ee.h \
 	eventloop.h \
 	http.h \
 	idle.h \

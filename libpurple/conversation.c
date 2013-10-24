@@ -57,6 +57,8 @@ struct _PurpleConversationPrivate
 	PurpleConnectionFlags features;   /**< The supported features            */
 	GList *message_history;           /**< Message history, as a GList of
 	                                       PurpleConversationMessage's       */
+
+	PurpleE2eeState *e2ee_state;      /**< End-to-end encryption state.      */
 };
 
 /**
@@ -437,6 +439,55 @@ purple_conversation_get_name(const PurpleConversation *conv)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->name;
+}
+
+void
+purple_conversation_set_e2ee_state(PurpleConversation *conv,
+	PurpleE2eeState *state)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+
+	g_return_if_fail(priv != NULL);
+
+	if (state != NULL && purple_e2ee_state_get_provider(state) !=
+		purple_e2ee_provider_get_main())
+	{
+		purple_debug_error("conversation",
+			"This is not the main e2ee provider");
+
+		return;
+	}
+
+	if (state)
+		purple_e2ee_state_ref(state);
+	purple_e2ee_state_unref(priv->e2ee_state);
+	priv->e2ee_state = state;
+
+	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_E2EE);
+}
+
+PurpleE2eeState *
+purple_conversation_get_e2ee_state(PurpleConversation *conv)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	PurpleE2eeProvider *provider;
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	if (priv->e2ee_state == NULL)
+		return NULL;
+
+	provider = purple_e2ee_provider_get_main();
+	if (provider == NULL)
+		return NULL;
+
+	if (purple_e2ee_state_get_provider(priv->e2ee_state) != provider) {
+		purple_debug_warning("conversation",
+			"e2ee state has invalid provider set");
+		return NULL;
+	}
+
+	return priv->e2ee_state;
 }
 
 void
@@ -1018,6 +1069,9 @@ purple_conversation_finalize(GObject *object)
 	PurpleConversationUiOps *ops  = purple_conversation_get_ui_ops(conv);
 
 	purple_request_close_with_handle(conv);
+
+	purple_e2ee_state_unref(priv->e2ee_state);
+	priv->e2ee_state = NULL;
 
 	/* remove from conversations and im/chats lists prior to emit */
 	purple_conversations_remove(conv);

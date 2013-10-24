@@ -1710,13 +1710,31 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 {
 	GtkWidget *menuitem;
 	GList *list;
+	const gchar *stock_id;
+	GtkWidget *icon_image = NULL;
 
 	if (act == NULL) {
 		return pidgin_separator(menu);
 	}
 
+	stock_id = purple_menu_action_get_stock_icon(act);
+	if (stock_id) {
+		icon_image = gtk_image_new_from_stock(stock_id,
+			gtk_icon_size_from_name(
+				PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	}
+
+	if (icon_image) {
+		menuitem = gtk_image_menu_item_new_with_mnemonic(
+			purple_menu_action_get_label(act));
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem),
+			icon_image);
+	} else {
+		menuitem = gtk_menu_item_new_with_mnemonic(
+			purple_menu_action_get_label(act));
+	}
+
 	list = purple_menu_action_get_children(act);
-	menuitem = gtk_menu_item_new_with_mnemonic(purple_menu_action_get_label(act));
 
 	if (list == NULL) {
 		PurpleCallback callback;

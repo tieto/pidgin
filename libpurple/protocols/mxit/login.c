@@ -338,7 +338,7 @@ static void mxit_register_view( struct MXitSession* session )
 
 	/* mxit login name */
 	field = purple_request_field_string_new( "loginname", _( "MXit ID" ), purple_account_get_username( session->acc ), FALSE );
-	purple_request_field_string_set_editable( field, FALSE );
+	purple_request_field_set_sensitive( field, FALSE );
 	purple_request_field_group_add_field( group, field );
 
 	/* nick name (required) */
