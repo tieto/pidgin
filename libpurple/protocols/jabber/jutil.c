@@ -32,9 +32,9 @@
 #include "presence.h"
 #include "jutil.h"
 
-#include "ciphers/md4hash.h"
-#include "ciphers/md5hash.h"
 #include "ciphers/sha1hash.h"
+#include "ciphers/sha256hash.h"
+#include "ciphers/md5hash.h"
 
 #ifdef USE_IDN
 #include <idna.h>
@@ -742,13 +742,13 @@ jabber_calculate_data_hash(gconstpointer data, size_t len,
 	PurpleHash *hash = NULL;
 	static gchar digest[129]; /* 512 bits hex + \0 */
 
-	/* FIXME: Check the source of this change and what we need here... */
 	if (g_str_equal(hash_algo, "sha1"))
 		hash = purple_sha1_hash_new();
-	else if (g_str_equal(hash_algo, "md4"))
-		hash = purple_md4_hash_new();
+	else if (g_str_equal(hash_algo, "sha256"))
+		hash = purple_sha256_hash_new();
 	else if (g_str_equal(hash_algo, "md5"))
 		hash = purple_md5_hash_new();
+
 	if (hash == NULL)
 	{
 		purple_debug_error("jabber", "Could not find %s cipher\n", hash_algo);
