@@ -65,7 +65,20 @@ static struct
 	GntWidget *conf;
 } plugins;
 
-static GHashTable *confwins;
+typedef struct
+{
+	enum
+	{
+		FINCH_PLUGIN_UI_DATA_TYPE_WINDOW,
+		FINCH_PLUGIN_UI_DATA_TYPE_REQUEST
+	} type;
+
+	union
+	{
+		GntWidget *window;
+		gpointer request_handle;
+	} u;
+} FinchPluginUiData;
 
 static GntWidget *process_pref_frame(PurplePluginPrefFrame *frame);
 
@@ -167,26 +180,66 @@ free_stringlist(GList *list)
 	g_list_free(list);
 }
 
+static gboolean
+has_prefs(PurplePlugin *plugin)
+{
+	PurplePluginInfo *info = purple_plugin_get_info(plugin);
+	FinchPluginInfoPrivate *priv = NULL;
+	gboolean ret;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	if (!purple_plugin_is_loaded(plugin))
+		return FALSE;
+
+	if (FINCH_IS_PLUGIN_INFO(info))
+		priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
+
+	ret = ((priv && priv->get_pref_frame) ||
+			purple_plugin_info_get_pref_frame_callback(info) ||
+			purple_plugin_info_get_pref_request_callback(info));
+
+	return ret;
+}
+
 static void
 decide_conf_button(PurplePlugin *plugin)
 {
-	gboolean visible = FALSE;
-	PurplePluginInfo *info = purple_plugin_get_info(plugin);
+	if (has_prefs(plugin))
+		gnt_widget_set_visible(plugins.conf, TRUE);
+	else
+		gnt_widget_set_visible(plugins.conf, FALSE);
 
-	if (purple_plugin_is_loaded(plugin)) {
-		FinchPluginInfoPrivate *priv = NULL;
-		if (FINCH_IS_PLUGIN_INFO(info))
-			priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
-
-		if ((priv && priv->get_pref_frame) ||
-			(purple_plugin_info_get_pref_frame_callback(info))) {
-			visible = TRUE;
-		}
-	}
-
-	gnt_widget_set_visible(plugins.conf, visible);
 	gnt_box_readjust(GNT_BOX(plugins.window));
 	gnt_widget_draw(plugins.window);
+}
+
+static void
+finch_plugin_pref_close(PurplePlugin *plugin)
+{
+	PurplePluginInfo *info;
+	FinchPluginUiData *ui_data;
+
+	g_return_if_fail(plugin != NULL);
+
+	info = purple_plugin_get_info(plugin);
+	ui_data = purple_plugin_info_get_ui_data(info);
+
+	if (!ui_data)
+		return;
+
+	if (ui_data->type == FINCH_PLUGIN_UI_DATA_TYPE_REQUEST) {
+		purple_request_close(PURPLE_REQUEST_FIELDS,
+			ui_data->u.request_handle);
+		return;
+	}
+
+	g_return_if_fail(ui_data->type == FINCH_PLUGIN_UI_DATA_TYPE_WINDOW);
+
+	gnt_widget_destroy(ui_data->u.window);
+
+	g_free(ui_data);
+	purple_plugin_info_set_ui_data(info, NULL);
 }
 
 static void
@@ -204,8 +257,6 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 	}
 	else
 	{
-		GntWidget *win;
-
 		if (!purple_plugin_unload(plugin, &error)) {
 			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"), error->message, NULL);
 			purple_plugin_disable(plugin);
@@ -213,10 +264,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 			g_error_free(error);
 		}
 
-		if (confwins && (win = g_hash_table_lookup(confwins, plugin)) != NULL)
-		{
-			gnt_widget_destroy(win);
-		}
+		finch_plugin_pref_close(plugin);
 	}
 	decide_conf_button(plugin);
 	finch_plugins_save_loaded();
@@ -309,15 +357,13 @@ plugin_compare(PurplePlugin *p1, PurplePlugin *p2)
 }
 
 static void
-confwin_init(void)
+remove_confwin(GntWidget *window, gpointer _plugin)
 {
-	confwins = g_hash_table_new(g_direct_hash, g_direct_equal);
-}
+	PurplePlugin *plugin = _plugin;
+	PurplePluginInfo *info = purple_plugin_get_info(plugin);
 
-static void
-remove_confwin(GntWidget *window, gpointer plugin)
-{
-	g_hash_table_remove(confwins, plugin);
+	g_free(info->ui_data);
+	purple_plugin_info_set_ui_data(info, NULL);
 }
 
 static void
@@ -326,6 +372,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	PurplePlugin *plugin;
 	PurplePluginInfo *info;
 	FinchPluginInfoPrivate *priv = NULL;
+	FinchPluginUiData *ui_data;
 
 	g_return_if_fail(plugins.tree != NULL);
 
@@ -337,10 +384,13 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 		return;
 	}
 
-	if (confwins && g_hash_table_lookup(confwins, plugin))
-		return;
-
 	info = purple_plugin_get_info(plugin);
+
+	if (purple_plugin_info_get_ui_data(info))
+		return;
+	ui_data = g_new0(FinchPluginUiData, 1);
+	purple_plugin_info_set_ui_data(info, ui_data);
+
 	if (FINCH_IS_PLUGIN_INFO(info))
 		priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
 
@@ -368,23 +418,35 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 
 		gnt_widget_show(window);
 
-		if (confwins == NULL)
-			confwin_init();
-		g_hash_table_insert(confwins, plugin, window);
+		ui_data->type = FINCH_PLUGIN_UI_DATA_TYPE_WINDOW;
+		ui_data->u.window = window;
+	}
+	else if (purple_plugin_info_get_pref_request_callback(info))
+	{
+		PurplePluginPrefRequestCallback get_pref_request = purple_plugin_info_get_pref_request_callback(info);
+		gpointer handle;
+
+		ui_data->type = FINCH_PLUGIN_UI_DATA_TYPE_REQUEST;
+		ui_data->u.request_handle = handle = get_pref_request(plugin);
+		purple_request_add_close_notify(handle,
+			purple_callback_set_zero, &info->ui_data);
+		purple_request_add_close_notify(handle, g_free, ui_data);
 	}
 	else if (purple_plugin_info_get_pref_frame_callback(info))
 	{
 		PurplePluginPrefFrameCallback get_pref_frame = purple_plugin_info_get_pref_frame_callback(info);
 		GntWidget *win = process_pref_frame(get_pref_frame(plugin));
-		if (confwins == NULL)
-			confwin_init();
 		g_signal_connect(G_OBJECT(win), "destroy", G_CALLBACK(remove_confwin), plugin);
-		g_hash_table_insert(confwins, plugin, win);
+
+		ui_data->type = FINCH_PLUGIN_UI_DATA_TYPE_WINDOW;
+		ui_data->u.window = win;
 	}
 	else
 	{
-		purple_notify_info(plugin, _("Error"),
-			_("No configuration options for this plugin."), NULL, NULL);
+		purple_notify_info(plugin, _("Error"), _("No configuration "
+			"options for this plugin."), NULL, NULL);
+		g_free(ui_data);
+		purple_plugin_info_set_ui_data(info, NULL);
 	}
 }
 

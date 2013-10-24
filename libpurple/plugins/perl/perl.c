@@ -117,6 +117,8 @@ struct _PurplePerlInfoStrings
 static PurplePluginUiInfo ui_info =
 {
 	purple_perl_get_plugin_frame,
+	NULL,
+
 	/* Padding */
 	NULL,
 	NULL,

@@ -86,6 +86,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugin_info_get_license_text
 		* purple_plugin_info_get_license_url
 		* purple_plugin_info_get_pref_frame_callback
+		* purple_plugin_info_get_pref_request_callback
 		* purple_plugin_info_get_ui_data
 		* purple_plugin_info_set_ui_data
 		* purple_plugin_register_type

@@ -48,6 +48,9 @@ struct _PurplePluginInfoPrivate {
 	/** Callback that returns a preferences frame for a plugin */
 	PurplePluginPrefFrameCallback get_pref_frame;
 
+	/** Callback that returns a preferences request handle for a plugin */
+	PurplePluginPrefRequestCallback get_pref_request;
+
 	/** TRUE if a plugin has been unloaded at least once. Auto-load
 	 *  plugins that have been unloaded once will not be auto-loaded again. */
 	gboolean unloaded;
@@ -59,6 +62,7 @@ enum
 	PROP_UI_REQUIREMENT,
 	PROP_GET_ACTIONS,
 	PROP_PREFERENCES_FRAME,
+	PROP_PREFERENCES_REQUEST,
 	PROP_FLAGS,
 	PROP_LAST
 };
@@ -377,6 +381,9 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 		case PROP_PREFERENCES_FRAME:
 			priv->get_pref_frame = g_value_get_pointer(value);
 			break;
+		case PROP_PREFERENCES_REQUEST:
+			priv->get_pref_request = g_value_get_pointer(value);
+			break;
 		case PROP_FLAGS:
 			priv->flags = g_value_get_flags(value);
 			break;
@@ -401,6 +408,10 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_PREFERENCES_FRAME:
 			g_value_set_pointer(value,
 					purple_plugin_info_get_pref_frame_callback(info));
+			break;
+		case PROP_PREFERENCES_REQUEST:
+			g_value_set_pointer(value,
+					purple_plugin_info_get_pref_request_callback(info));
 			break;
 		case PROP_FLAGS:
 			g_value_set_flags(value, purple_plugin_info_get_flags(info));
@@ -494,6 +505,12 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 		g_param_spec_pointer("preferences-frame",
 		                  _("Preferences frame callback"),
 		                  _("The callback that returns the preferences frame"),
+		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+	g_object_class_install_property(obj_class, PROP_PREFERENCES_REQUEST,
+		g_param_spec_pointer("preferences-request",
+		                  _("Preferences request callback"),
+		                  _("Callback that returns preferences request handle"),
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_FLAGS,
@@ -750,6 +767,16 @@ purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->get_pref_frame;
+}
+
+PurplePluginPrefRequestCallback
+purple_plugin_info_get_pref_request_callback(const PurplePluginInfo *info)
+{
+	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->get_pref_request;
 }
 
 PurplePluginInfoFlags

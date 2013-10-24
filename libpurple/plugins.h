@@ -98,6 +98,7 @@ typedef struct _PurplePluginAction PurplePluginAction;
 typedef void (*PurplePluginActionCallback)(PurplePluginAction *);
 typedef GList *(*PurplePluginGetActionsCallback)(PurplePlugin *);
 typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCallback)(PurplePlugin *);
+typedef gpointer (*PurplePluginPrefRequestCallback)(PurplePlugin *);
 
 /**
  * Flags that can be used to treat plugins differently.
@@ -500,35 +501,37 @@ GType purple_plugin_info_get_type(void);
  *
  * All properties except "id" and "purple-abi" are optional.
  *
- * Valid property names are:                                                 \n
- * "id"                 (string) The ID of the plugin.                       \n
- * "name"               (string) The translated name of the plugin.          \n
- * "version"            (string) Version of the plugin.                      \n
- * "category"           (string) Primary category of the plugin.             \n
- * "summary"            (string) Brief summary of the plugin.                \n
- * "description"        (string) Full description of the plugin.             \n
- * "authors"            (const gchar * const *) A NULL-terminated list of
- *                               plugin authors.
- *                               format: First Last <user@domain.com>        \n
- * "website"            (string) Website of the plugin.                      \n
- * "icon"               (string) Path to a plugin's icon.                    \n
- * "license-id"         (string) Short name of the plugin's license. This
+ * Valid property names are:                                                  \n
+ * "id"                  (string) The ID of the plugin.                       \n
+ * "name"                (string) The translated name of the plugin.          \n
+ * "version"             (string) Version of the plugin.                      \n
+ * "category"            (string) Primary category of the plugin.             \n
+ * "summary"             (string) Brief summary of the plugin.                \n
+ * "description"         (string) Full description of the plugin.             \n
+ * "authors"             (const gchar * const *) A NULL-terminated list of
+ *                                plugin authors.
+ *                                format: First Last <user@domain.com>        \n
+ * "website"             (string) Website of the plugin.                      \n
+ * "icon"                (string) Path to a plugin's icon.                    \n
+ * "license-id"          (string) Short name of the plugin's license. This
  *                        should either be an identifier of the license from
  *                        http://dep.debian.net/deps/dep5/#license-specification
- *                        or "Other" for custom licenses.                    \n
- * "license-text"       (string) The text of the plugin's license, if
- *                               unlisted on DEP5.                           \n
- * "license-url"        (string) The plugin's license URL, if unlisted on
- *                               DEP5.                                       \n
- * "dependencies"       (const gchar * const *) A NULL-terminated list of
- *                               plugin IDs required by the plugin.          \n
- * "abi-version"        (guint32) The ABI version required by the plugin.    \n
- * "get-actions"        (PurplePluginGetActionsCallback) Callback that
- *                               returns a list of actions the plugin can
- *                               perform.                                    \n
- * "preferences-frame"  (PurplePluginPrefFrameCallback) Callback that returns
- *                               a preferences frame for the plugin.
- * "flags"              (PurplePluginInfoFlags) The flags for a plugin.      \n
+ *                        or "Other" for custom licenses.                     \n
+ * "license-text"        (string) The text of the plugin's license, if
+ *                                unlisted on DEP5.                           \n
+ * "license-url"         (string) The plugin's license URL, if unlisted on
+ *                                DEP5.                                       \n
+ * "dependencies"        (const gchar * const *) A NULL-terminated list of
+ *                                plugin IDs required by the plugin.          \n
+ * "abi-version"         (guint32) The ABI version required by the plugin.    \n
+ * "get-actions"         (PurplePluginGetActionsCallback) Callback that
+ *                                returns a list of actions the plugin can
+ *                                perform.                                    \n
+ * "preferences-frame"   (PurplePluginPrefFrameCallback) Callback that returns
+ *                                a preferences frame for the plugin.
+ * "preferences-request" (PurplePluginPrefRequestCallback) Callback that returns
+ *                                a preferences request handle for the plugin.
+ * "flags"               (PurplePluginInfoFlags) The flags for a plugin.      \n
  *
  * @param first_property  The first property name
  * @param ...  The value of the first property, followed optionally by more
@@ -691,6 +694,17 @@ purple_plugin_info_get_actions_callback(const PurplePluginInfo *info);
  */
 PurplePluginPrefFrameCallback
 purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info);
+
+/**
+ * Returns the callback that retrieves the preferences request handle for a
+ * plugin.
+ *
+ * @param info The plugin info to get the callback from.
+ *
+ * @return The callback that returns the preferences request handle.
+ */
+PurplePluginPrefRequestCallback
+purple_plugin_info_get_pref_request_callback(const PurplePluginInfo *info);
 
 /**
  * Returns the plugin's flags.
