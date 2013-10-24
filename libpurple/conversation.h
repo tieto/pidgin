@@ -407,10 +407,23 @@ void purple_conversation_set_name(PurpleConversation *conv, const char *name);
  */
 const char *purple_conversation_get_name(const PurpleConversation *conv);
 
+/**
+ * Sets current E2EE state for the conversation.
+ *
+ * @param conv  The conversation.
+ * @param state The E2EE state.
+ */
 void
 purple_conversation_set_e2ee_state(PurpleConversation *conv,
 	PurpleE2eeState *state);
 
+/**
+ * Gets current conversation's E2EE state.
+ *
+ * @param conv The conversation.
+ *
+ * @return Current E2EE state for conversation.
+ */
 PurpleE2eeState *
 purple_conversation_get_e2ee_state(PurpleConversation *conv);
 
