@@ -21,8 +21,8 @@
  */
 
 
-#ifndef _PURPLE_GG_BUDDYLIST_H
-#define _PURPLE_GG_BUDDYLIST_H
+#ifndef _PURPLE_GG_BLIST_H
+#define _PURPLE_GG_BLIST_H
 
 #include "connection.h"
 #include "account.h"
@@ -61,7 +61,7 @@ ggp_buddylist_dump(PurpleAccount *account);
  */
 const char * ggp_buddylist_get_buddy_name(PurpleConnection *gc, const uin_t uin);
 
-#endif /* _PURPLE_GG_BUDDYLIST_H */
+#endif /* _PURPLE_GG_BLIST_H */
 
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

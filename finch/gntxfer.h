@@ -23,8 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _FINCHFT_H_
-#define _FINCHFT_H_
+#ifndef _GNT_XFER_H_
+#define _GNT_XFER_H_
 
 #include "xfer.h"
 
@@ -111,4 +111,4 @@ PurpleXferUiOps *finch_xfers_get_ui_ops(void);
 
 /*@}*/
 
-#endif /* _FINCHFT_H_ */
+#endif /* _GNT_XFER_H_ */

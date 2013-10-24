@@ -94,7 +94,6 @@ static PurpleProtocol *facebook_protocol = NULL;
 static GHashTable *jabber_cmds = NULL; /* PurpleProtocol * => GSList of ids */
 
 static gint plugin_ref = 0;
-static guint conn_close_timeout = 0;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 static void try_srv_connect(JabberStream *js);
@@ -1132,13 +1131,15 @@ conn_close_cb(gpointer data)
 
 	purple_account_disconnect(account);
 
+	js->conn_close_timeout = 0;
+
 	return FALSE;
 }
 
 static void
 jabber_connection_schedule_close(JabberStream *js)
 {
-	conn_close_timeout = purple_timeout_add(0, conn_close_cb, js);
+	js->conn_close_timeout = purple_timeout_add(0, conn_close_cb, js);
 }
 
 static void
@@ -1706,8 +1707,8 @@ void jabber_close(PurpleConnection *gc)
 		purple_timeout_remove(js->keepalive_timeout);
 	if (js->inactivity_timer != 0)
 		purple_timeout_remove(js->inactivity_timer);
-	if (conn_close_timeout != 0)
-		purple_timeout_remove(conn_close_timeout);
+	if (js->conn_close_timeout != 0)
+		purple_timeout_remove(js->conn_close_timeout);
 
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;

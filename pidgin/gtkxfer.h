@@ -23,8 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PIDGINFT_H_
-#define _PIDGINFT_H_
+#ifndef _PIDGINXFER_H_
+#define _PIDGINXFER_H_
 
 #include "xfer.h"
 
@@ -149,4 +149,4 @@ PurpleXferUiOps *pidgin_xfers_get_ui_ops(void);
 
 G_END_DECLS
 
-#endif /* _PIDGINFT_H_ */
+#endif /* _PIDGINXFER_H_ */

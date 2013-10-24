@@ -36,11 +36,7 @@
  */
 
 #include "internal.h"
-
-#include "buddylist.h"
-#include "notify.h"
-#include "plugins.h"
-#include "version.h"
+#include "purple.h"
 
 #include <stdio.h>
 #include <stdlib.h>

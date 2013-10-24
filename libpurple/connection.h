@@ -386,7 +386,7 @@ const char *purple_connection_get_display_name(const PurpleConnection *gc);
  *
  * @return The protocol data for the connection.
  */
-void *purple_connection_get_protocol_data(const PurpleConnection *connection);
+void *purple_connection_get_protocol_data(const PurpleConnection *gc);
 
 /**
  * Updates the connection progress.
@@ -413,12 +413,24 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  *
  * @param gc          the connection which is closing.
  * @param reason      why the connection is closing.
- * @param description a non-@c NULL localized description of the error.
+ * @param description a localized description of the error (not @c NULL ).
  */
 void
 purple_connection_error(PurpleConnection *gc,
                         PurpleConnectionError reason,
                         const char *description);
+
+/**
+ * Returns the #PurpleConnectionErrorInfo instance of a connection if an
+ * error exists.
+ *
+ * @param gc The connection.
+ *
+ * @return The #PurpleConnectionErrorInfo instance of the connection if an
+ *         error exists, @c NULL otherwise.
+ */
+PurpleConnectionErrorInfo *
+purple_connection_get_error_info(const PurpleConnection *gc);
 
 /**
  * Closes a connection due to an SSL error; this is basically a shortcut to
