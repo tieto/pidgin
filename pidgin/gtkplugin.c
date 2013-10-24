@@ -190,8 +190,12 @@ pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
 		return;
 
 	pinfo = plugin->info->prefs_info;
-	has_purple_frame = (pinfo->get_plugin_pref_frame != NULL);
-	has_purple_request = (pinfo->get_plugin_pref_request != NULL);
+	if (pinfo == NULL)
+		has_purple_frame = has_purple_request = FALSE;
+	else {
+		has_purple_frame = (pinfo->get_plugin_pref_frame != NULL);
+		has_purple_request = (pinfo->get_plugin_pref_request != NULL);
+	}
 	has_pidgin_frame = (PIDGIN_IS_PIDGIN_PLUGIN(plugin) &&
 		plugin->info->ui_info &&
 		PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame);
