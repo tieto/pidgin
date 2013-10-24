@@ -505,7 +505,7 @@ purple_connection_get_error_info(const PurpleConnection *gc)
 {
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_return_val_if_fail(priv != NULL, TRUE);
+	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->error_info;
 }
