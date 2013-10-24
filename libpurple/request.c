@@ -36,10 +36,16 @@ static GList *handles = NULL;
 
 typedef struct
 {
+	GDestroyNotify cb;
+	gpointer data;
+} PurpleRequestCloseNotified;
+
+typedef struct
+{
 	PurpleRequestType type;
 	void *handle;
 	void *ui_handle;
-
+	GSList *notify_on_close;
 } PurpleRequestInfo;
 
 struct _PurpleRequestField
@@ -451,6 +457,23 @@ purple_request_cpar_get_parent_from(PurpleRequestCommonParameters *cpar)
 		return NULL;
 
 	return cpar->parent_from;
+}
+
+static PurpleRequestInfo *
+purple_request_info_from_ui_handle(void *ui_handle)
+{
+	GList *it;
+
+	g_return_val_if_fail(ui_handle != NULL, NULL);
+
+	for (it = handles; it != NULL; it = g_list_next(it)) {
+		PurpleRequestInfo *info = it->data;
+
+		if (info->ui_handle == ui_handle)
+			return info;
+	}
+
+	return NULL;
 }
 
 PurpleRequestFields *
@@ -2400,29 +2423,47 @@ purple_request_certificate(void *handle, const char *title,
 gboolean
 purple_request_is_valid_ui_handle(void *ui_handle, PurpleRequestType *type)
 {
-	GList *it;
+	PurpleRequestInfo *info;
 
 	if (ui_handle == NULL)
 		return FALSE;
 
-	for (it = handles; it != NULL; it = g_list_next(it)) {
-		PurpleRequestInfo *info = it->data;
+	info = purple_request_info_from_ui_handle(ui_handle);
 
-		if (info->ui_handle != ui_handle)
-			continue;
+	if (info == NULL)
+		return FALSE;
 
-		if (type != NULL)
-			*type = info->type;
-		return TRUE;
-	}
+	if (type != NULL)
+		*type = info->type;
 
-	return FALSE;
+	return TRUE;
+}
+
+void
+purple_request_add_close_notify(void *ui_handle, GDestroyNotify notify,
+	gpointer notify_data)
+{
+	PurpleRequestInfo *info;
+	PurpleRequestCloseNotified *notified;
+
+	g_return_if_fail(ui_handle != NULL);
+	g_return_if_fail(notify != NULL);
+
+	info = purple_request_info_from_ui_handle(ui_handle);
+	g_return_if_fail(info != NULL);
+
+	notified = g_new0(PurpleRequestCloseNotified, 1);
+	notified->cb = notify;
+	notified->data = notify_data;
+
+	info->notify_on_close = g_slist_append(info->notify_on_close, notified);
 }
 
 static void
 purple_request_close_info(PurpleRequestInfo *info)
 {
 	PurpleRequestUiOps *ops;
+	GSList *it;
 
 	ops = purple_request_get_ui_ops();
 
@@ -2432,6 +2473,13 @@ purple_request_close_info(PurpleRequestInfo *info)
 	if (ops != NULL && ops->close_request != NULL)
 		ops->close_request(info->type, info->ui_handle);
 
+	for (it = info->notify_on_close; it; it = g_slist_next(it)) {
+		PurpleRequestCloseNotified *notify = it->data;
+
+		notify->cb(notify->data);
+	}
+
+	g_slist_free_full(info->notify_on_close, g_free);
 	g_free(info);
 }
 

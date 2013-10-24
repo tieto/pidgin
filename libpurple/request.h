@@ -1899,6 +1899,17 @@ gboolean
 purple_request_is_valid_ui_handle(void *ui_handle, PurpleRequestType *type);
 
 /**
+ * Adds a function called when notification dialog is closed.
+ *
+ * @param ui_handle   The UI handle.
+ * @param notify      The function to be called.
+ * @param notify_data The data to be passed to the callback function.
+ */
+void
+purple_request_add_close_notify(void *ui_handle, GDestroyNotify notify,
+	gpointer notify_data);
+
+/**
  * Closes a request.
  *
  * @param type     The request type.

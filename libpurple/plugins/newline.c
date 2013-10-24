@@ -80,6 +80,8 @@ plugin_load(PurplePlugin *plugin)
 
 static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
+	NULL,
+
 	/* Padding */
 	NULL,
 	NULL,

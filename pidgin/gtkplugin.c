@@ -39,6 +39,26 @@
 
 #define PIDGIN_RESPONSE_CONFIGURE 98121
 
+typedef struct
+{
+	enum
+	{
+		PIDGIN_PLUGIN_UI_DATA_TYPE_FRAME,
+		PIDGIN_PLUGIN_UI_DATA_TYPE_REQUEST
+	} type;
+
+	union
+	{
+		struct
+		{
+			GtkWidget *dialog;
+			PurplePluginPrefFrame *pref_frame;
+		} frame;
+
+		gpointer request_handle;
+	} u;
+} PidginPluginUiData;
+
 static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
                                   GtkTreeIter *iter, gboolean unload);
 
@@ -54,10 +74,34 @@ static gchar *plugin_website_uri = NULL;
 static GtkLabel *plugin_filename = NULL;
 
 static GtkWidget *pref_button = NULL;
-static GHashTable *plugin_pref_dialogs = NULL;
 
-GtkWidget *
-pidgin_plugin_get_config_frame(PurplePlugin *plugin)
+static gboolean
+pidgin_plugin_has_prefs(PurplePlugin *plugin)
+{
+	PurplePluginUiInfo *pinfo;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	if (!purple_plugin_is_loaded(plugin))
+		return FALSE;
+
+	if (PIDGIN_IS_PIDGIN_PLUGIN(plugin) && plugin->info->ui_info &&
+		PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame)
+	{
+		return TRUE;
+	}
+
+	pinfo = plugin->info->prefs_info;
+
+	if (!pinfo)
+		return FALSE;
+
+	return (pinfo->get_plugin_pref_frame || pinfo->get_plugin_pref_request);
+}
+
+static GtkWidget *
+pidgin_plugin_get_config_frame(PurplePlugin *plugin,
+	PurplePluginPrefFrame **purple_pref_frame)
 {
 	GtkWidget *config = NULL;
 
@@ -71,15 +115,6 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 		ui_info = PIDGIN_PLUGIN_UI_INFO(plugin);
 
 		config = ui_info->get_config_frame(plugin);
-
-		if (plugin->info->prefs_info
-			&& plugin->info->prefs_info->get_plugin_pref_frame)
-		{
-			purple_debug_warning("gtkplugin",
-				"Plugin %s contains both, ui_info and "
-				"prefs_info preferences; prefs_info will be "
-				"ignored.", plugin->info->name);
-		}
 	}
 
 	if (config == NULL && plugin->info->prefs_info
@@ -91,10 +126,133 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 
 		config = pidgin_plugin_pref_create_frame(frame);
 
-		plugin->ui_data = frame;
+		*purple_pref_frame = frame;
 	}
 
 	return config;
+}
+
+static void
+pref_dialog_close(PurplePlugin *plugin)
+{
+	PidginPluginUiData *ui_data;
+
+	g_return_if_fail(plugin != NULL);
+
+	ui_data = plugin->ui_data;
+	if (ui_data == NULL)
+		return;
+
+	if (ui_data->type == PIDGIN_PLUGIN_UI_DATA_TYPE_REQUEST) {
+		purple_request_close(PURPLE_REQUEST_FIELDS,
+			ui_data->u.request_handle);
+		return;
+	}
+
+	g_return_if_fail(ui_data->type == PIDGIN_PLUGIN_UI_DATA_TYPE_FRAME);
+
+	gtk_widget_destroy(ui_data->u.frame.dialog);
+
+	if (ui_data->u.frame.pref_frame)
+		purple_plugin_pref_frame_destroy(ui_data->u.frame.pref_frame);
+
+	g_free(ui_data);
+	plugin->ui_data = NULL;
+}
+
+
+static void
+pref_dialog_response_cb(GtkWidget *dialog, int response, PurplePlugin *plugin)
+{
+	if (response == GTK_RESPONSE_CLOSE ||
+		response == GTK_RESPONSE_DELETE_EVENT)
+	{
+		pref_dialog_close(plugin);
+	}
+}
+
+static void
+pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
+{
+	PurplePluginUiInfo *pinfo;
+	PidginPluginUiData *ui_data;
+	gboolean has_purple_frame, has_purple_request, has_pidgin_frame;
+	gint prefs_count;
+
+	g_return_if_fail(plugin != NULL);
+
+	if (!pidgin_plugin_has_prefs(plugin)) {
+		purple_debug_warning("gtkplugin", "Plugin has no prefs");
+		return;
+	}
+
+	if (plugin->ui_data != NULL)
+		return;
+
+	pinfo = plugin->info->prefs_info;
+	has_purple_frame = (pinfo->get_plugin_pref_frame != NULL);
+	has_purple_request = (pinfo->get_plugin_pref_request != NULL);
+	has_pidgin_frame = (PIDGIN_IS_PIDGIN_PLUGIN(plugin) &&
+		plugin->info->ui_info &&
+		PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame);
+
+	prefs_count = 0;
+	if (has_purple_frame)
+		prefs_count++;
+	if (has_purple_request)
+		prefs_count++;
+	if (has_pidgin_frame)
+		prefs_count++;
+
+	if (prefs_count > 1) {
+		purple_debug_warning("gtkplugin", "Plugin %s contains more than"
+			" one prefs callback, some will be ignored.",
+			plugin->info->name);
+	}
+	g_return_if_fail(prefs_count > 0);
+
+	plugin->ui_data = ui_data = g_new0(PidginPluginUiData, 1);
+
+	/* Priority: pidgin frame > purple request > purple frame
+	 * Purple frame could be replaced with purple request some day.
+	 */
+	if (has_purple_request && !has_pidgin_frame) {
+		ui_data->type = PIDGIN_PLUGIN_UI_DATA_TYPE_REQUEST;
+		ui_data->u.request_handle =
+			pinfo->get_plugin_pref_request(plugin);
+		purple_request_add_close_notify(ui_data->u.request_handle,
+			purple_callback_set_zero, &plugin->ui_data);
+		purple_request_add_close_notify(ui_data->u.request_handle,
+			g_free, ui_data);
+	} else {
+		GtkWidget *box, *dialog;
+
+		ui_data->type = PIDGIN_PLUGIN_UI_DATA_TYPE_FRAME;
+
+		box = pidgin_plugin_get_config_frame(plugin,
+			&ui_data->u.frame.pref_frame);
+		if (box == NULL) {
+			purple_debug_error("gtkplugin",
+				"Failed to display prefs frame");
+			g_free(ui_data);
+			plugin->ui_data = NULL;
+			return;
+		}
+
+		ui_data->u.frame.dialog = dialog = gtk_dialog_new_with_buttons(
+			PIDGIN_ALERT_TITLE, parent,
+			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE,
+			GTK_RESPONSE_CLOSE, NULL);
+
+		g_signal_connect(G_OBJECT(dialog), "response",
+			G_CALLBACK(pref_dialog_response_cb), plugin);
+		gtk_container_add(GTK_CONTAINER(
+			gtk_dialog_get_content_area(GTK_DIALOG(dialog))), box);
+		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
+		gtk_window_set_title(GTK_WINDOW(dialog),
+			_(purple_plugin_get_name(plugin)));
+		gtk_widget_show_all(dialog);
+	}
 }
 
 void
@@ -190,11 +348,7 @@ static void plugin_loading_common(PurplePlugin *plugin, GtkTreeView *view, gbool
 				if (plug == plugin)
 				{
 					gtk_widget_set_sensitive(pref_button,
-						loaded
-						&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
-							&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
-						 || (plug->info->prefs_info
-							&& plug->info->prefs_info->get_plugin_pref_frame)));
+						pidgin_plugin_has_prefs(plug));
 				}
 			}
 
@@ -215,27 +369,6 @@ static void plugin_unload_cb(PurplePlugin *plugin, gpointer data)
 	plugin_loading_common(plugin, view, FALSE);
 }
 
-static void pref_dialog_response_cb(GtkWidget *d, int response, PurplePlugin *plug)
-{
-	switch (response) {
-	case GTK_RESPONSE_CLOSE:
-	case GTK_RESPONSE_DELETE_EVENT:
-		g_hash_table_remove(plugin_pref_dialogs, plug);
-		if (g_hash_table_size(plugin_pref_dialogs) == 0) {
-			g_hash_table_destroy(plugin_pref_dialogs);
-			plugin_pref_dialogs = NULL;
-		}
-		gtk_widget_destroy(d);
-
-		if (plug->info->prefs_info && plug->ui_data) {
-			purple_plugin_pref_frame_destroy(plug->ui_data);
-			plug->ui_data = NULL;
-		}
-
-		break;
-	}
-}
-
 static void plugin_unload_confirm_cb(gpointer *data)
 {
 	PurplePlugin *plugin = (PurplePlugin *)data[0];
@@ -253,7 +386,6 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	GtkTreeIter *iter = g_new(GtkTreeIter, 1);
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	PurplePlugin *plug;
-	GtkWidget *dialog = NULL;
 
 	gtk_tree_model_get_iter(model, iter, path);
 	gtk_tree_path_free(path);
@@ -277,9 +409,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	}
 	else
 	{
-		if (plugin_pref_dialogs != NULL &&
-			(dialog = g_hash_table_lookup(plugin_pref_dialogs, plug)))
-			pref_dialog_response_cb(dialog, GTK_RESPONSE_DELETE_EVENT, plug);
+		pref_dialog_close(plug);
 
 		if (plug->dependent_plugins != NULL)
 		{
@@ -342,12 +472,7 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 		pidgin_clear_cursor(plugin_dialog);
 	}
 
-	gtk_widget_set_sensitive(pref_button,
-		purple_plugin_is_loaded(plug)
-		&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
-			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
-		 || (plug->info->prefs_info
-			&& plug->info->prefs_info->get_plugin_pref_frame)));
+	gtk_widget_set_sensitive(pref_button, pidgin_plugin_has_prefs(plug));
 
 	if (plug->error != NULL)
 	{
@@ -470,12 +595,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		g_free(tmp);
 	}
 
-	gtk_widget_set_sensitive(pref_button,
-		purple_plugin_is_loaded(plug)
-		&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
-			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
-		 || (plug->info->prefs_info
-			&& plug->info->prefs_info->get_plugin_pref_frame)));
+	gtk_widget_set_sensitive(pref_button, pidgin_plugin_has_prefs(plug));
 
 	/* Make sure the selected plugin is still visible */
 	g_idle_add(ensure_plugin_visible, sel);
@@ -485,22 +605,20 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelection *sel)
 {
-	PurplePlugin *plug;
-	GtkWidget *dialog, *box;
+	PurplePlugin *plugin;
 	GtkTreeModel *model;
 	GValue val;
 	GtkTreeIter iter;
+	GList *it;
 
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
 		purple_request_close_with_handle(plugin_dialog);
 		purple_signals_disconnect_by_handle(plugin_dialog);
+		for (it = purple_plugins_get_all(); it; it = g_list_next(it))
+			pref_dialog_close(it->data);
 		gtk_widget_destroy(d);
-		if (plugin_pref_dialogs != NULL) {
-			g_hash_table_destroy(plugin_pref_dialogs);
-			plugin_pref_dialogs = NULL;
-		}
 		plugin_dialog = NULL;
 		break;
 	case PIDGIN_RESPONSE_CONFIGURE:
@@ -508,31 +626,13 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 			return;
 		val.g_type = 0;
 		gtk_tree_model_get_value(model, &iter, 2, &val);
-		plug = g_value_get_pointer(&val);
-		if (plug == NULL)
-			break;
-		if (plugin_pref_dialogs != NULL &&
-			g_hash_table_lookup(plugin_pref_dialogs, plug))
-			break;
-		box = pidgin_plugin_get_config_frame(plug);
-		if (box == NULL)
-			break;
-
-		dialog = gtk_dialog_new_with_buttons(PIDGIN_ALERT_TITLE, GTK_WINDOW(d),
-						     GTK_DIALOG_DESTROY_WITH_PARENT,
-						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
-						     NULL);
-		if (plugin_pref_dialogs == NULL)
-			plugin_pref_dialogs = g_hash_table_new(NULL, NULL);
-
-		g_hash_table_insert(plugin_pref_dialogs, plug, dialog);
-
-		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), plug);
-		gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), box);
-		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
-		gtk_window_set_title(GTK_WINDOW(dialog), _(purple_plugin_get_name(plug)));
-		gtk_widget_show_all(dialog);
+		plugin = g_value_get_pointer(&val);
 		g_value_unset(&val);
+		if (plugin == NULL)
+			break;
+
+		pidgin_plugin_open_config(plugin, GTK_WINDOW(d));
+
 		break;
 	}
 }
