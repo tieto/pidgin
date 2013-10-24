@@ -1431,6 +1431,15 @@ const gchar *purple_get_host_name(void);
  */
 gchar *purple_uuid_random(void);
 
+/**
+ * Sets given pointer to NULL.
+ *
+ * Function designed to be used as a GDestroyNotify callback.
+ *
+ * @param data A pointer to variable, which should be set to NULL.
+ */
+void purple_callback_set_zero(gpointer data);
+
 G_END_DECLS
 
 #endif /* _PURPLE_UTIL_H_ */

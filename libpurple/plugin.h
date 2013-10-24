@@ -173,6 +173,7 @@ struct _PurplePlugin
 
 struct _PurplePluginUiInfo {
 	PurplePluginPrefFrame *(*get_plugin_pref_frame)(PurplePlugin *plugin);
+	gpointer (*get_plugin_pref_request)(PurplePlugin *plugin);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);

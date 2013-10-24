@@ -57,17 +57,6 @@ struct _PidginPluginUiInfo
 G_BEGIN_DECLS
 
 /**
- * Returns the configuration frame widget for a GTK+ plugin, if one
- * exists.
- *
- * @param plugin The plugin.
- *
- * @return The frame, if the plugin is a GTK+ plugin and provides a
- *         configuration frame.
- */
-GtkWidget *pidgin_plugin_get_config_frame(PurplePlugin *plugin);
-
-/**
  * Saves all loaded plugins.
  */
 void pidgin_plugins_save(void);
