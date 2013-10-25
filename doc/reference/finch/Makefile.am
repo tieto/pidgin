@@ -56,7 +56,7 @@ CFILE_GLOB=$(top_srcdir)/$(DOC_MODULE)/*.c
 
 # Extra header to include when scanning, which are not under DOC_SOURCE_DIR
 # e.g. EXTRA_HFILES=$(top_srcdir}/contrib/extra.h
-EXTRA_HFILES=$(top_srcdir)/config.h
+EXTRA_HFILES=
 
 # Header files or dirs to ignore when scanning. Use base file/dir names
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h private_code
