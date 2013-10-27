@@ -128,8 +128,8 @@ static void finch_plugin_info_class_init(FinchPluginInfoClass *klass)
 	obj_class->set_property = finch_plugin_info_set_property;
 
 	g_object_class_install_property(obj_class, PROP_FINCH_PREF_FRAME_CB,
-		g_param_spec_pointer("finch-pref-frame-cb",
-		                     "Finch preferences frame callback",
+		g_param_spec_pointer("gnt-pref-frame-cb",
+		                     "GNT preferences frame callback",
 		                     "Callback that returns a GNT preferences frame",
 		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }

@@ -616,21 +616,21 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                      WINTRANS_PLUGIN_ID,
-		"name",                    N_("Transparency"),
-		"version",                 DISPLAY_VERSION,
-		"category",                N_("User interface"),
-		"summary",                 N_("Variable Transparency for the buddy "
-		                              "list and conversations."),
-		"description",             N_("This plugin enables variable alpha "
-		                              "transparency on conversation windows "
-		                              "and the buddy list.\n\n"
-		                              "* Note: This plugin requires Win2000 or "
-		                              "greater."),
-		"authors",                 authors,
-		"website",                 PURPLE_WEBSITE,
-		"abi-version",             PURPLE_ABI_VERSION,
-		"pidgin-config-frame-cb",  get_config_frame,
+		"id",                   WINTRANS_PLUGIN_ID,
+		"name",                 N_("Transparency"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("User interface"),
+		"summary",              N_("Variable Transparency for the buddy "
+		                           "list and conversations."),
+		"description",          N_("This plugin enables variable alpha "
+		                           "transparency on conversation windows "
+		                           "and the buddy list.\n\n"
+		                           "* Note: This plugin requires Win2000 or "
+		                           "greater."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"gtk-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }

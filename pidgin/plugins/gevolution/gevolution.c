@@ -465,16 +465,16 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                      GEVOLUTION_PLUGIN_ID,
-		"name",                    N_("Evolution Integration"),
-		"version",                 DISPLAY_VERSION,
-		"category",                N_("Integration"),
-		"summary",                 N_("Provides integration with Evolution."),
-		"description",             N_("Provides integration with Evolution."),
-		"authors",                 authors,
-		"website",                 PURPLE_WEBSITE,
-		"abi-version",             PURPLE_ABI_VERSION,
-		"pidgin-config-frame-cb",  get_config_frame,
+		"id",                   GEVOLUTION_PLUGIN_ID,
+		"name",                 N_("Evolution Integration"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Integration"),
+		"summary",              N_("Provides integration with Evolution."),
+		"description",          N_("Provides integration with Evolution."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"gtk-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }

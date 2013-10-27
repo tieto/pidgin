@@ -78,7 +78,7 @@ GType pidgin_plugin_info_get_type(void);
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.
- * Additionally, you can provide the property "pidgin-config-frame-cb",
+ * Additionally, you can provide the property "gtk-config-frame-cb",
  * which should be a callback that returns a GtkWidget for the plugin's
  * configuration (see PidginPluginConfigFrameCb).
  *

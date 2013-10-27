@@ -136,8 +136,8 @@ static void pidgin_plugin_info_class_init(PidginPluginInfoClass *klass)
 	obj_class->set_property = pidgin_plugin_info_set_property;
 
 	g_object_class_install_property(obj_class, PROP_PIDGIN_CONFIG_FRAME_CB,
-		g_param_spec_pointer("pidgin-config-frame-cb",
-		                     "Pidgin configuration frame callback",
+		g_param_spec_pointer("gtk-config-frame-cb",
+		                     "GTK configuration frame callback",
 		                     "Callback that returns a GTK configuration frame",
 		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }

@@ -866,17 +866,17 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                      CAP_PLUGIN_ID,
-		"name",                    N_("Contact Availability Prediction"),
-		"version",                 DISPLAY_VERSION,
-		"category",                N_("Utility"),
-		"summary",                 N_("Contact Availability Prediction plugin."),
-		"description",             N_("Displays statistical information about "
-		                              "your buddies' availability"),
-		"authors",                 authors,
-		"website",                 PURPLE_WEBSITE,
-		"abi-version",             PURPLE_ABI_VERSION,
-		"pidgin-config-frame-cb",  get_config_frame,
+		"id",                   CAP_PLUGIN_ID,
+		"name",                 N_("Contact Availability Prediction"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Utility"),
+		"summary",              N_("Contact Availability Prediction plugin."),
+		"description",          N_("Displays statistical information about "
+		                           "your buddies' availability"),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"gtk-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }
