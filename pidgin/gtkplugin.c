@@ -50,7 +50,7 @@ typedef struct
 enum
 {
 	PROP_0,
-	PROP_PIDGIN_CONFIG_FRAME_CB,
+	PROP_GTK_CONFIG_FRAME_CB,
 	PROP_LAST
 };
 
@@ -98,7 +98,7 @@ pidgin_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 	PidginPluginInfoPrivate *priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj);
 
 	switch (param_id) {
-		case PROP_PIDGIN_CONFIG_FRAME_CB:
+		case PROP_GTK_CONFIG_FRAME_CB:
 			priv->config_frame_cb = g_value_get_pointer(value);
 			break;
 		default:
@@ -115,7 +115,7 @@ pidgin_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	PidginPluginInfoPrivate *priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj);
 
 	switch (param_id) {
-		case PROP_PIDGIN_CONFIG_FRAME_CB:
+		case PROP_GTK_CONFIG_FRAME_CB:
 			g_value_set_pointer(value, priv->config_frame_cb);
 			break;
 		default:
@@ -135,7 +135,7 @@ static void pidgin_plugin_info_class_init(PidginPluginInfoClass *klass)
 	obj_class->get_property = pidgin_plugin_info_get_property;
 	obj_class->set_property = pidgin_plugin_info_set_property;
 
-	g_object_class_install_property(obj_class, PROP_PIDGIN_CONFIG_FRAME_CB,
+	g_object_class_install_property(obj_class, PROP_GTK_CONFIG_FRAME_CB,
 		g_param_spec_pointer("gtk-config-frame-cb",
 		                     "GTK configuration frame callback",
 		                     "Callback that returns a GTK configuration frame",

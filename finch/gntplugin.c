@@ -53,7 +53,7 @@ typedef struct
 enum
 {
 	PROP_0,
-	PROP_FINCH_PREF_FRAME_CB,
+	PROP_GNT_PREF_FRAME_CB,
 	PROP_LAST
 };
 
@@ -90,7 +90,7 @@ finch_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value
 	FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(obj);
 
 	switch (param_id) {
-		case PROP_FINCH_PREF_FRAME_CB:
+		case PROP_GNT_PREF_FRAME_CB:
 			priv->pref_frame_cb = g_value_get_pointer(value);
 			break;
 		default:
@@ -107,7 +107,7 @@ finch_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(obj);
 
 	switch (param_id) {
-		case PROP_FINCH_PREF_FRAME_CB:
+		case PROP_GNT_PREF_FRAME_CB:
 			g_value_set_pointer(value, priv->pref_frame_cb);
 			break;
 		default:
@@ -127,7 +127,7 @@ static void finch_plugin_info_class_init(FinchPluginInfoClass *klass)
 	obj_class->get_property = finch_plugin_info_get_property;
 	obj_class->set_property = finch_plugin_info_set_property;
 
-	g_object_class_install_property(obj_class, PROP_FINCH_PREF_FRAME_CB,
+	g_object_class_install_property(obj_class, PROP_GNT_PREF_FRAME_CB,
 		g_param_spec_pointer("gnt-pref-frame-cb",
 		                     "GNT preferences frame callback",
 		                     "Callback that returns a GNT preferences frame",
