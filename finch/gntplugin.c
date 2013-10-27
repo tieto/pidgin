@@ -47,13 +47,13 @@
 
 typedef struct
 {
-	FinchPluginFrame get_pref_frame;
+	FinchPluginPrefFrameCb pref_frame_cb;
 } FinchPluginInfoPrivate;
 
 enum
 {
 	PROP_0,
-	PROP_FINCH_PREFERENCES_FRAME,
+	PROP_FINCH_PREF_FRAME_CB,
 	PROP_LAST
 };
 
@@ -90,8 +90,8 @@ finch_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value
 	FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(obj);
 
 	switch (param_id) {
-		case PROP_FINCH_PREFERENCES_FRAME:
-			priv->get_pref_frame = g_value_get_pointer(value);
+		case PROP_FINCH_PREF_FRAME_CB:
+			priv->pref_frame_cb = g_value_get_pointer(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -107,8 +107,8 @@ finch_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	FinchPluginInfoPrivate *priv = FINCH_PLUGIN_INFO_GET_PRIVATE(obj);
 
 	switch (param_id) {
-		case PROP_FINCH_PREFERENCES_FRAME:
-			g_value_set_pointer(value, priv->get_pref_frame);
+		case PROP_FINCH_PREF_FRAME_CB:
+			g_value_set_pointer(value, priv->pref_frame_cb);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -127,8 +127,8 @@ static void finch_plugin_info_class_init(FinchPluginInfoClass *klass)
 	obj_class->get_property = finch_plugin_info_get_property;
 	obj_class->set_property = finch_plugin_info_set_property;
 
-	g_object_class_install_property(obj_class, PROP_FINCH_PREFERENCES_FRAME,
-		g_param_spec_pointer("finch-preferences-frame",
+	g_object_class_install_property(obj_class, PROP_FINCH_PREF_FRAME_CB,
+		g_param_spec_pointer("finch-pref-frame-cb",
 		                     "Finch preferences frame callback",
 		                     "Callback that returns a GNT preferences frame",
 		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
@@ -195,9 +195,9 @@ has_prefs(PurplePlugin *plugin)
 	if (FINCH_IS_PLUGIN_INFO(info))
 		priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
 
-	ret = ((priv && priv->get_pref_frame) ||
-			purple_plugin_info_get_pref_frame_callback(info) ||
-			purple_plugin_info_get_pref_request_callback(info));
+	ret = ((priv && priv->pref_frame_cb) ||
+			purple_plugin_info_get_pref_frame_cb(info) ||
+			purple_plugin_info_get_pref_request_cb(info));
 
 	return ret;
 }
@@ -394,7 +394,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	if (FINCH_IS_PLUGIN_INFO(info))
 		priv = FINCH_PLUGIN_INFO_GET_PRIVATE(info);
 
-	if (priv && priv->get_pref_frame != NULL)
+	if (priv && priv->pref_frame_cb != NULL)
 	{
 		GntWidget *window = gnt_vbox_new(FALSE);
 		GntWidget *box, *button;
@@ -404,7 +404,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 				purple_plugin_info_get_name(info));
 		gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
-		box = priv->get_pref_frame();
+		box = priv->pref_frame_cb();
 		gnt_box_add_widget(GNT_BOX(window), box);
 
 		box = gnt_hbox_new(FALSE);
@@ -421,21 +421,21 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 		ui_data->type = FINCH_PLUGIN_UI_DATA_TYPE_WINDOW;
 		ui_data->u.window = window;
 	}
-	else if (purple_plugin_info_get_pref_request_callback(info))
+	else if (purple_plugin_info_get_pref_request_cb(info))
 	{
-		PurplePluginPrefRequestCallback get_pref_request = purple_plugin_info_get_pref_request_callback(info);
+		PurplePluginPrefRequestCb pref_request_cb = purple_plugin_info_get_pref_request_cb(info);
 		gpointer handle;
 
 		ui_data->type = FINCH_PLUGIN_UI_DATA_TYPE_REQUEST;
-		ui_data->u.request_handle = handle = get_pref_request(plugin);
+		ui_data->u.request_handle = handle = pref_request_cb(plugin);
 		purple_request_add_close_notify(handle,
 			purple_callback_set_zero, &info->ui_data);
 		purple_request_add_close_notify(handle, g_free, ui_data);
 	}
-	else if (purple_plugin_info_get_pref_frame_callback(info))
+	else if (purple_plugin_info_get_pref_frame_cb(info))
 	{
-		PurplePluginPrefFrameCallback get_pref_frame = purple_plugin_info_get_pref_frame_callback(info);
-		GntWidget *win = process_pref_frame(get_pref_frame(plugin));
+		PurplePluginPrefFrameCb pref_frame_cb = purple_plugin_info_get_pref_frame_cb(info);
+		GntWidget *win = process_pref_frame(pref_frame_cb(plugin));
 		g_signal_connect(G_OBJECT(win), "destroy", G_CALLBACK(remove_confwin), plugin);
 
 		ui_data->type = FINCH_PLUGIN_UI_DATA_TYPE_WINDOW;

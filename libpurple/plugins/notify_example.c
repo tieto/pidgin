@@ -105,7 +105,7 @@ plugin_query(GError **error)
 		"authors",      authors,
 		"website",      "https://pidgin.im",
 		"abi-version",  PURPLE_ABI_VERSION,
-		"get-actions",  plugin_actions,
+		"actions-cb",   plugin_actions,
 		NULL
 	);
 }

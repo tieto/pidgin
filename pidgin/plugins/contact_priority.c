@@ -171,16 +171,16 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                   CONTACT_PRIORITY_PLUGIN_ID,
-		"name",                 N_("Contact Priority"),
-		"version",              DISPLAY_VERSION,
-		"category",             N_("Utility"),
-		"summary",              N_("Allows for controlling the values associated with different buddy states."),
-		"description",          N_("Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."),
-		"authors",              authors,
-		"website",              PURPLE_WEBSITE,
-		"abi-version",          PURPLE_ABI_VERSION,
-		"pidgin-config-frame",  get_config_frame,
+		"id",                      CONTACT_PRIORITY_PLUGIN_ID,
+		"name",                    N_("Contact Priority"),
+		"version",                 DISPLAY_VERSION,
+		"category",                N_("Utility"),
+		"summary",                 N_("Allows for controlling the values associated with different buddy states."),
+		"description",             N_("Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."),
+		"authors",                 authors,
+		"website",                 PURPLE_WEBSITE,
+		"abi-version",             PURPLE_ABI_VERSION,
+		"pidgin-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }

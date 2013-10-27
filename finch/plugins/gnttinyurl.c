@@ -437,17 +437,17 @@ plugin_query(GError **error)
 	};
 
 	return finch_plugin_info_new(
-		"id",                 "TinyURL",
-		"name",               N_("TinyURL"),
-		"version",            DISPLAY_VERSION,
-		"category",           N_("Utility"),
-		"summary",            N_("TinyURL plugin"),
-		"description",        N_("When receiving a message with URL(s), "
-		                         "use TinyURL for easier copying"),
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             "TinyURL",
+		"name",           N_("TinyURL"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("Utility"),
+		"summary",        N_("TinyURL plugin"),
+		"description",    N_("When receiving a message with URL(s), "
+		                     "use TinyURL for easier copying"),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

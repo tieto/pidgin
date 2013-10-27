@@ -585,18 +585,18 @@ purplerc_plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                   "purplerc",
-		"name",                 N_("Pidgin GTK+ Theme Control"),
-		"version",              DISPLAY_VERSION,
-		"category",             N_("Theming"),
-		"summary",              N_("Provides access to commonly used gtkrc "
-		                           "settings."),
-		"description",          N_("Provides access to commonly used gtkrc "
-		                           "settings."),
-		"authors",              authors,
-		"website",              PURPLE_WEBSITE,
-		"abi-version",          PURPLE_ABI_VERSION,
-		"pidgin-config-frame",  purplerc_get_config_frame,
+		"id",                      "purplerc",
+		"name",                    N_("Pidgin GTK+ Theme Control"),
+		"version",                 DISPLAY_VERSION,
+		"category",                N_("Theming"),
+		"summary",                 N_("Provides access to commonly used gtkrc "
+		                              "settings."),
+		"description",             N_("Provides access to commonly used gtkrc "
+		                              "settings."),
+		"authors",                 authors,
+		"website",                 PURPLE_WEBSITE,
+		"abi-version",             PURPLE_ABI_VERSION,
+		"pidgin-config-frame-cb",  purplerc_get_config_frame,
 		NULL
 	);
 }

@@ -289,17 +289,17 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                   WINPREFS_PLUGIN_ID,
-		"name",                 N_("Windows Pidgin Options"),
-		"version",              DISPLAY_VERSION,
-		"category",             N_("User interface"),
-		"summary",              N_("Options specific to Pidgin for Windows."),
-		"description",          N_("Provides options specific to Pidgin for "
-		                           "Windows, such as buddy list docking."),
-		"authors",              authors,
-		"website",              PURPLE_WEBSITE,
-		"abi-version",          PURPLE_ABI_VERSION,
-		"pidgin-config-frame",  get_config_frame,
+		"id",                      WINPREFS_PLUGIN_ID,
+		"name",                    N_("Windows Pidgin Options"),
+		"version",                 DISPLAY_VERSION,
+		"category",                N_("User interface"),
+		"summary",                 N_("Options specific to Pidgin for Windows."),
+		"description",             N_("Provides options specific to Pidgin for "
+		                              "Windows, such as buddy list docking."),
+		"authors",                 authors,
+		"website",                 PURPLE_WEBSITE,
+		"abi-version",             PURPLE_ABI_VERSION,
+		"pidgin-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }

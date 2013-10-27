@@ -113,18 +113,18 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                 "gtk-extplacement",
-		"name",               N_("ExtPlacement"),
-		"version",            DISPLAY_VERSION,
-		"category",           N_("User interface"),
-		"summary",            N_("Extra conversation placement options."),
-		"description",        N_("Restrict the number of conversations per "
-		                         "windows, optionally separating IMs and "
-		                         "Chats"),
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             "gtk-extplacement",
+		"name",           N_("ExtPlacement"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("User interface"),
+		"summary",        N_("Extra conversation placement options."),
+		"description",    N_("Restrict the number of conversations per "
+		                     "windows, optionally separating IMs and "
+		                     "Chats"),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

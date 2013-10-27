@@ -74,18 +74,18 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",                 "core-plugin_pack-newline",
-		"name",               N_("New Line"),
-		"version",            DISPLAY_VERSION,
-		"category",           N_("User interface"),
-		"summary",            N_("Prepends a newline to displayed message."),
-		"description",        N_("Prepends a newline to messages so that the "
-		                         "rest of the message appears below the "
-		                         "username in the conversation window."),
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             "core-plugin_pack-newline",
+		"name",           N_("New Line"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("User interface"),
+		"summary",        N_("Prepends a newline to displayed message."),
+		"description",    N_("Prepends a newline to messages so that the "
+		                     "rest of the message appears below the "
+		                     "username in the conversation window."),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

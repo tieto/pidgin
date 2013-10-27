@@ -634,13 +634,13 @@ static void
 build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin)
 {
 	GtkWidget *menuitem;
-	PurplePluginGetActionsCallback get_actions;
+	PurplePluginActionsCb actions_cb;
 	PurplePluginAction *action = NULL;
 	GList *actions, *l;
 
-	get_actions =
-		purple_plugin_info_get_actions_callback(purple_plugin_get_info(plugin));
-	actions = get_actions(plugin);
+	actions_cb =
+		purple_plugin_info_get_actions_cb(purple_plugin_get_info(plugin));
+	actions = actions_cb(plugin);
 
 	for (l = actions; l != NULL; l = l->next)
 	{
@@ -683,7 +683,7 @@ docklet_plugin_actions(GtkWidget *menu)
 		plugin = PURPLE_PLUGIN(l->data);
 		info = purple_plugin_get_info(plugin);
 
-		if (!purple_plugin_info_get_actions_callback(info))
+		if (!purple_plugin_info_get_actions_cb(info))
 			continue;
 
 		menuitem =

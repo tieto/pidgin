@@ -221,24 +221,25 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                   GESTURES_PLUGIN_ID,
-		"name",                 N_("Mouse Gestures"),
-		"version",              DISPLAY_VERSION,
-		"category",             N_("User interface"),
-		"summary",              N_("Provides support for mouse gestures"),
-		"description",          N_("Allows support for mouse gestures in "
-		                           "conversation windows. Drag the middle "
-		                           "mouse button to perform certain actions:\n"
-		                           " • Drag down and then to the right to "
-		                           "close a conversation.\n"
-		                           " • Drag up and then to the left to switch "
-		                           "to the previous conversation.\n"
-		                           " • Drag up and then to the right to switch "
-		                           "to the next conversation."),
-		"authors",              authors,
-		"website",              PURPLE_WEBSITE,
-		"abi-version",          PURPLE_ABI_VERSION,
-		"pidgin-config-frame",  get_config_frame,
+		"id",                      GESTURES_PLUGIN_ID,
+		"name",                    N_("Mouse Gestures"),
+		"version",                 DISPLAY_VERSION,
+		"category",                N_("User interface"),
+		"summary",                 N_("Provides support for mouse gestures"),
+		"description",             N_("Allows support for mouse gestures in "
+		                              "conversation windows. Drag the middle "
+		                              "mouse button to perform certain "
+		                              "actions:\n"
+		                              " • Drag down and then to the right to "
+		                              "close a conversation.\n"
+		                              " • Drag up and then to the left to "
+		                              "switch to the previous conversation.\n"
+		                              " • Drag up and then to the right to "
+		                              "switch to the next conversation."),
+		"authors",                 authors,
+		"website",                 PURPLE_WEBSITE,
+		"abi-version",             PURPLE_ABI_VERSION,
+		"pidgin-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }

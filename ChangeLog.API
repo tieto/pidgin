@@ -76,7 +76,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugin_info_new
 		* purple_plugin_get_info
 		* purple_plugin_info_get_abi_version
-		* purple_plugin_info_get_actions_callback
+		* purple_plugin_info_get_actions_cb
 		* purple_plugin_info_get_category
 		* purple_plugin_info_get_dependencies
 		* purple_plugin_info_get_error
@@ -85,8 +85,8 @@ version 3.0.0 (??/??/????):
 		* purple_plugin_info_get_license_id
 		* purple_plugin_info_get_license_text
 		* purple_plugin_info_get_license_url
-		* purple_plugin_info_get_pref_frame_callback
-		* purple_plugin_info_get_pref_request_callback
+		* purple_plugin_info_get_pref_frame_cb
+		* purple_plugin_info_get_pref_request_cb
 		* purple_plugin_info_get_ui_data
 		* purple_plugin_info_set_ui_data
 		* purple_plugin_register_type

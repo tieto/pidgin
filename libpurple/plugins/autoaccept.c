@@ -272,16 +272,16 @@ plugin_query(GError **error)
 	const gchar * const authors[] = PLUGIN_AUTHORS;
 
 	return purple_plugin_info_new(
-		"id",                 PLUGIN_ID,
-		"name",               PLUGIN_NAME,
-		"version",            DISPLAY_VERSION,
-		"category",           PLUGIN_CATEGORY,
-		"summary",            PLUGIN_SUMMARY,
-		"description",        PLUGIN_DESCRIPTION,
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             PLUGIN_ID,
+		"name",           PLUGIN_NAME,
+		"version",        DISPLAY_VERSION,
+		"category",       PLUGIN_CATEGORY,
+		"summary",        PLUGIN_SUMMARY,
+		"description",    PLUGIN_DESCRIPTION,
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

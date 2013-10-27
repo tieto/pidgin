@@ -345,16 +345,16 @@ plugin_query(GError **error)
 	};
 
 	return finch_plugin_info_new(
-		"id",                      "gntgf",
-		"name",                    N_("GntGf"),
-		"version",                 DISPLAY_VERSION,
-		"category",                N_("Notification"),
-		"summary",                 N_("Toaster plugin"),
-		"description",             N_("Toaster plugin"),
-		"authors",                 authors,
-		"website",                 PURPLE_WEBSITE,
-		"abi-version",             PURPLE_ABI_VERSION,
-		"finch-preferences-frame", config_frame,
+		"id",                   "gntgf",
+		"name",                 N_("GntGf"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Notification"),
+		"summary",              N_("Toaster plugin"),
+		"description",          N_("Toaster plugin"),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"finch-pref-frame-cb",  config_frame,
 		NULL
 	);
 }

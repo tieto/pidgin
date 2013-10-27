@@ -116,16 +116,16 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",                 "core-pluginpref_example",
-		"name",               "Pluginpref Example",
-		"version",            DISPLAY_VERSION,
-		"category",           "Example",
-		"summary",            "An example of how to use pluginprefs",
-		"description",        "An example of how to use pluginprefs",
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             "core-pluginpref_example",
+		"name",           "Pluginpref Example",
+		"version",        DISPLAY_VERSION,
+		"category",       "Example",
+		"summary",        "An example of how to use pluginprefs",
+		"description",    "An example of how to use pluginprefs",
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

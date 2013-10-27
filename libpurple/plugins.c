@@ -43,13 +43,13 @@ struct _PurplePluginInfoPrivate {
 	PurplePluginInfoFlags flags; /**< Flags for the plugin */
 
 	/** Callback that returns a list of actions the plugin can perform */
-	PurplePluginGetActionsCallback get_actions;
+	PurplePluginActionsCb actions_cb;
 
 	/** Callback that returns a preferences frame for a plugin */
-	PurplePluginPrefFrameCallback get_pref_frame;
+	PurplePluginPrefFrameCb pref_frame_cb;
 
 	/** Callback that returns a preferences request handle for a plugin */
-	PurplePluginPrefRequestCallback get_pref_request;
+	PurplePluginPrefRequestCb pref_request_cb;
 
 	/** TRUE if a plugin has been unloaded at least once. Auto-load
 	 *  plugins that have been unloaded once will not be auto-loaded again. */
@@ -60,9 +60,9 @@ enum
 {
 	PROP_0,
 	PROP_UI_REQUIREMENT,
-	PROP_GET_ACTIONS,
-	PROP_PREFERENCES_FRAME,
-	PROP_PREFERENCES_REQUEST,
+	PROP_ACTIONS_CB,
+	PROP_PREF_FRAME_CB,
+	PROP_PREF_REQUEST_CB,
 	PROP_FLAGS,
 	PROP_LAST
 };
@@ -375,14 +375,14 @@ purple_plugin_info_set_property(GObject *obj, guint param_id, const GValue *valu
 		case PROP_UI_REQUIREMENT:
 			priv->ui_requirement = g_strdup(g_value_get_string(value));
 			break;
-		case PROP_GET_ACTIONS:
-			priv->get_actions = g_value_get_pointer(value);
+		case PROP_ACTIONS_CB:
+			priv->actions_cb = g_value_get_pointer(value);
 			break;
-		case PROP_PREFERENCES_FRAME:
-			priv->get_pref_frame = g_value_get_pointer(value);
+		case PROP_PREF_FRAME_CB:
+			priv->pref_frame_cb = g_value_get_pointer(value);
 			break;
-		case PROP_PREFERENCES_REQUEST:
-			priv->get_pref_request = g_value_get_pointer(value);
+		case PROP_PREF_REQUEST_CB:
+			priv->pref_request_cb = g_value_get_pointer(value);
 			break;
 		case PROP_FLAGS:
 			priv->flags = g_value_get_flags(value);
@@ -401,17 +401,17 @@ purple_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
 	PurplePluginInfo *info = PURPLE_PLUGIN_INFO(obj);
 
 	switch (param_id) {
-		case PROP_GET_ACTIONS:
+		case PROP_ACTIONS_CB:
 			g_value_set_pointer(value,
-					purple_plugin_info_get_actions_callback(info));
+					purple_plugin_info_get_actions_cb(info));
 			break;
-		case PROP_PREFERENCES_FRAME:
+		case PROP_PREF_FRAME_CB:
 			g_value_set_pointer(value,
-					purple_plugin_info_get_pref_frame_callback(info));
+					purple_plugin_info_get_pref_frame_cb(info));
 			break;
-		case PROP_PREFERENCES_REQUEST:
+		case PROP_PREF_REQUEST_CB:
 			g_value_set_pointer(value,
-					purple_plugin_info_get_pref_request_callback(info));
+					purple_plugin_info_get_pref_request_cb(info));
 			break;
 		case PROP_FLAGS:
 			g_value_set_flags(value, purple_plugin_info_get_flags(info));
@@ -495,20 +495,20 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 		                  _("ID of UI that is required by this plugin"), NULL,
 		                  G_PARAM_WRITABLE));
 
-	g_object_class_install_property(obj_class, PROP_GET_ACTIONS,
-		g_param_spec_pointer("get-actions",
+	g_object_class_install_property(obj_class, PROP_ACTIONS_CB,
+		g_param_spec_pointer("actions-cb",
 		                  _("Plugin actions"),
 		                  _("Callback that returns list of plugin's actions"),
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-	g_object_class_install_property(obj_class, PROP_PREFERENCES_FRAME,
-		g_param_spec_pointer("preferences-frame",
+	g_object_class_install_property(obj_class, PROP_PREF_FRAME_CB,
+		g_param_spec_pointer("pref-frame-cb",
 		                  _("Preferences frame callback"),
 		                  _("The callback that returns the preferences frame"),
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-	g_object_class_install_property(obj_class, PROP_PREFERENCES_REQUEST,
-		g_param_spec_pointer("preferences-request",
+	g_object_class_install_property(obj_class, PROP_PREF_REQUEST_CB,
+		g_param_spec_pointer("pref-request-cb",
 		                  _("Preferences request callback"),
 		                  _("Callback that returns preferences request handle"),
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
@@ -749,34 +749,34 @@ purple_plugin_info_get_abi_version(const PurplePluginInfo *info)
 #endif
 }
 
-PurplePluginGetActionsCallback
-purple_plugin_info_get_actions_callback(const PurplePluginInfo *info)
+PurplePluginActionsCb
+purple_plugin_info_get_actions_cb(const PurplePluginInfo *info)
 {
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->get_actions;
+	return priv->actions_cb;
 }
 
-PurplePluginPrefFrameCallback
-purple_plugin_info_get_pref_frame_callback(const PurplePluginInfo *info)
+PurplePluginPrefFrameCb
+purple_plugin_info_get_pref_frame_cb(const PurplePluginInfo *info)
 {
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->get_pref_frame;
+	return priv->pref_frame_cb;
 }
 
-PurplePluginPrefRequestCallback
-purple_plugin_info_get_pref_request_callback(const PurplePluginInfo *info)
+PurplePluginPrefRequestCb
+purple_plugin_info_get_pref_request_cb(const PurplePluginInfo *info)
 {
 	PurplePluginInfoPrivate *priv = PURPLE_PLUGIN_INFO_GET_PRIVATE(info);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->get_pref_request;
+	return priv->pref_request_cb;
 }
 
 PurplePluginInfoFlags
@@ -819,7 +819,7 @@ purple_plugin_info_get_ui_data(const PurplePluginInfo *info)
  * PluginAction API
  **************************************************************************/
 PurplePluginAction *
-purple_plugin_action_new(const char* label, PurplePluginActionCallback callback)
+purple_plugin_action_new(const char* label, PurplePluginActionCb callback)
 {
 	PurplePluginAction *action;
 

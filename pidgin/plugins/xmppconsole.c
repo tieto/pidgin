@@ -846,7 +846,7 @@ plugin_query(GError **error)
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
-		"get-actions",  actions,
+		"actions-cb",   actions,
 		NULL
 	);
 }

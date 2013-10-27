@@ -2287,16 +2287,16 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                   SPELLCHECK_PLUGIN_ID,
-		"name",                 N_("Text replacement"),
-		"version",              DISPLAY_VERSION,
-		"category",             N_("Utility"),
-		"summary",              N_("Replaces text in outgoing messages according to user-defined rules."),
-		"description",          N_("Replaces text in outgoing messages according to user-defined rules."),
-		"authors",              authors,
-		"website",              PURPLE_WEBSITE,
-		"abi-version",          PURPLE_ABI_VERSION,
-		"pidgin-config-frame",  get_config_frame,
+		"id",                      SPELLCHECK_PLUGIN_ID,
+		"name",                    N_("Text replacement"),
+		"version",                 DISPLAY_VERSION,
+		"category",                N_("Utility"),
+		"summary",                 N_("Replaces text in outgoing messages according to user-defined rules."),
+		"description",             N_("Replaces text in outgoing messages according to user-defined rules."),
+		"authors",                 authors,
+		"website",                 PURPLE_WEBSITE,
+		"abi-version",             PURPLE_ABI_VERSION,
+		"pidgin-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }

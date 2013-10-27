@@ -213,18 +213,18 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",                 JOINPART_PLUGIN_ID,
-		"name",               N_("Join/Part Hiding"),
-		"version",            DISPLAY_VERSION,
-		"category",           N_("User interface"),
-		"summary",            N_("Hides extraneous join/part messages."),
-		"description",        N_("This plugin hides join/part messages in "
-		                         "large rooms, except for those users actively "
-		                         "taking part in a conversation."),
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             JOINPART_PLUGIN_ID,
+		"name",           N_("Join/Part Hiding"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("User interface"),
+		"summary",        N_("Hides extraneous join/part messages."),
+		"description",    N_("This plugin hides join/part messages in "
+		                     "large rooms, except for those users actively "
+		                     "taking part in a conversation."),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

@@ -47,7 +47,7 @@ typedef struct _FinchPluginInfo FinchPluginInfo;
 /** @copydoc _FinchPluginInfoClass */
 typedef struct _FinchPluginInfoClass FinchPluginInfoClass;
 
-typedef GntWidget* (*FinchPluginFrame) (void);
+typedef GntWidget* (*FinchPluginPrefFrameCb) (void);
 
 /**
  * Extends #PurplePluginInfo to hold UI information for finch.
@@ -87,9 +87,9 @@ GType finch_plugin_info_get_type(void);
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.
- * Additionally, you can provide the property "finch-preferences-frame",
+ * Additionally, you can provide the property "finch-pref-frame-cb",
  * which should be a callback that returns a GntWidget for the plugin's
- * preferences (see FinchPluginFrame).
+ * preferences (see FinchPluginPrefFrameCb).
  *
  * @param first_property  The first property name
  * @param ...  The value of the first property, followed optionally by more

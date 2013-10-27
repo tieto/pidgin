@@ -41,7 +41,7 @@ typedef struct _PidginPluginInfo PidginPluginInfo;
 /** @copydoc _PidginPluginInfoClass */
 typedef struct _PidginPluginInfoClass PidginPluginInfoClass;
 
-typedef GtkWidget *(*PidginPluginConfigFrame)(PurplePlugin *);
+typedef GtkWidget *(*PidginPluginConfigFrameCb)(PurplePlugin *);
 
 /**
  * Extends #PurplePluginInfo to hold UI information for pidgin.
@@ -78,9 +78,9 @@ GType pidgin_plugin_info_get_type(void);
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.
- * Additionally, you can provide the property "pidgin-config-frame",
+ * Additionally, you can provide the property "pidgin-config-frame-cb",
  * which should be a callback that returns a GtkWidget for the plugin's
- * configuration (see PidginPluginConfigFrame).
+ * configuration (see PidginPluginConfigFrameCb).
  *
  * @param first_property  The first property name
  * @param ...  The value of the first property, followed optionally by more

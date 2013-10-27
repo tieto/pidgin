@@ -620,20 +620,20 @@ plugin_query(GError **error) {
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                   MUSICMESSAGING_PLUGIN_ID,
-		"name",                 N_("Music Messaging"),
-		"version",              DISPLAY_VERSION,
-		"category",             N_("Music"),
-		"summary",              N_("Music Messaging Plugin for collaborative "
-		                           "composition."),
-		"description",          N_("The Music Messaging Plugin allows a number "
-		                           "of users to simultaneously work on a piece "
-		                           "of music by editing a common score in "
-		                           "real-time."),
-		"authors",              authors,
-		"website",              PURPLE_WEBSITE,
-		"abi-version",          PURPLE_ABI_VERSION,
-		"pidgin-config-frame",  get_config_frame,
+		"id",                      MUSICMESSAGING_PLUGIN_ID,
+		"name",                    N_("Music Messaging"),
+		"version",                 DISPLAY_VERSION,
+		"category",                N_("Music"),
+		"summary",                 N_("Music Messaging Plugin for "
+		                              "collaborative composition."),
+		"description",             N_("The Music Messaging Plugin allows a "
+		                              "number of users to simultaneously work "
+		                              "on a piece of music by editing a common "
+		                              "score in real-time."),
+		"authors",                 authors,
+		"website",                 PURPLE_WEBSITE,
+		"abi-version",             PURPLE_ABI_VERSION,
+		"pidgin-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }

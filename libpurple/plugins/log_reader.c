@@ -2760,23 +2760,23 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",                 "core-log_reader",
-		"name",               N_("Log Reader"),
-		"version",            DISPLAY_VERSION,
-		"category",           N_("Utility"),
-		"summary",            N_("Includes other IM clients' logs in the log "
-		                         "viewer."),
-		"description",        N_("When viewing logs, this plugin will include "
-		                         "logs from other IM clients. Currently, this "
-		                         "includes Adium, MSN Messenger, aMSN, and "
-		                         "Trillian.\n\n"
-		                         "WARNING: This plugin is still alpha code and "
-		                         "may crash frequently.  Use it at your own "
-		                         "risk!"),
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             "core-log_reader",
+		"name",           N_("Log Reader"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("Utility"),
+		"summary",        N_("Includes other IM clients' logs in the log "
+		                     "viewer."),
+		"description",    N_("When viewing logs, this plugin will include "
+		                     "logs from other IM clients. Currently, this "
+		                     "includes Adium, MSN Messenger, aMSN, and "
+		                     "Trillian.\n\n"
+		                     "WARNING: This plugin is still alpha code and "
+		                     "may crash frequently.  Use it at your own "
+		                     "risk!"),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

@@ -83,7 +83,7 @@ plugin_query (GError ** error)
 		"authors",      authors,
 		"website",      "http://helloworld.tld",
 		"abi-version",  PURPLE_ABI_VERSION,
-		"get-actions",  plugin_actions, /* this tells libpurple the address of the function to call to get the list
+		"actions-cb",   plugin_actions, /* this tells libpurple the address of the function to call to get the list
 		                                   of plugin actions. */
 		NULL
 	);

@@ -125,18 +125,18 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",                 STATENOTIFY_PLUGIN_ID,
-		"name",               N_("Buddy State Notification"),
-		"version",            DISPLAY_VERSION,
-		"category",           N_("Notification"),
-		"summary",            N_("Notifies in a conversation window when a "
-		                         "buddy goes or returns from away or idle."),
-		"description",        N_("Notifies in a conversation window when a "
-		                         "buddy goes or returns from away or idle."),
-		"authors",            authors,
-		"website",            PURPLE_WEBSITE,
-		"abi-version",        PURPLE_ABI_VERSION,
-		"preferences-frame",  get_plugin_pref_frame,
+		"id",             STATENOTIFY_PLUGIN_ID,
+		"name",           N_("Buddy State Notification"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("Notification"),
+		"summary",        N_("Notifies in a conversation window when a "
+		                     "buddy goes or returns from away or idle."),
+		"description",    N_("Notifies in a conversation window when a "
+		                     "buddy goes or returns from away or idle."),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
 		NULL
 	);
 }

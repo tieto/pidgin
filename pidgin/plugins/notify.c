@@ -843,18 +843,18 @@ plugin_query(GError **error)
 	};
 
 	return pidgin_plugin_info_new(
-		"id",                   NOTIFY_PLUGIN_ID,
-		"name",                 N_("Message Notification"),
-		"version",              DISPLAY_VERSION,
-		"category",             N_("Notification"),
-		"summary",              N_("Provides a variety of ways of notifying "
-		                           "you of unread messages."),
-		"description",          N_("Provides a variety of ways of notifying "
-		                           "you of unread messages."),
-		"authors",              authors,
-		"website",              PURPLE_WEBSITE,
-		"abi-version",          PURPLE_ABI_VERSION,
-		"pidgin-config-frame",  get_config_frame,
+		"id",                      NOTIFY_PLUGIN_ID,
+		"name",                    N_("Message Notification"),
+		"version",                 DISPLAY_VERSION,
+		"category",                N_("Notification"),
+		"summary",                 N_("Provides a variety of ways of notifying "
+		                              "you of unread messages."),
+		"description",             N_("Provides a variety of ways of notifying "
+		                              "you of unread messages."),
+		"authors",                 authors,
+		"website",                 PURPLE_WEBSITE,
+		"abi-version",             PURPLE_ABI_VERSION,
+		"pidgin-config-frame-cb",  get_config_frame,
 		NULL
 	);
 }
