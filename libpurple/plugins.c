@@ -1081,6 +1081,8 @@ purple_plugins_init(void)
 
 #ifdef PURPLE_PLUGINS
 	gplugin_init();
+	gplugin_manager_add_default_paths();
+
 	purple_plugins_add_search_path(LIBDIR);
 
 	g_signal_connect(gplugin_manager_get_instance(), "loading-plugin",
