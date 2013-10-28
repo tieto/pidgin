@@ -488,6 +488,27 @@ void purple_request_fields_add_group(PurpleRequestFields *fields,
 GList *purple_request_fields_get_groups(const PurpleRequestFields *fields);
 
 /**
+ * Set tab names for a field list.
+ *
+ * @param fields    The fields list.
+ * @param tab_names NULL-terminated array of localized tab labels,
+ *                  may be @c NULL.
+ */
+void purple_request_fields_set_tab_names(PurpleRequestFields *fields,
+	const gchar **tab_names);
+
+/**
+ * Returns tab names of a field list.
+ *
+ * @param fields The fields list.
+ *
+ * @return NULL-terminated array of localized tab labels, or NULL if tabs
+ *         are disabled.
+ */
+const gchar **
+purple_request_fields_get_tab_names(const PurpleRequestFields *fields);
+
+/**
  * Returns whether or not the field with the specified ID exists.
  *
  * @param fields The fields list.
@@ -659,6 +680,28 @@ void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_
  * @return A new fields group
  */
 PurpleRequestFieldGroup *purple_request_field_group_new(const char *title);
+
+/**
+ * Sets tab number for a group.
+ *
+ * @param group  The group.
+ * @param tab_no The tab number.
+ *
+ * @see purple_request_fields_set_tab_names
+ */
+void purple_request_field_group_set_tab(PurpleRequestFieldGroup *group,
+	guint tab_no);
+
+/**
+ * Returns tab number of a group.
+ *
+ * @param group The group.
+ *
+ * @return Tab number.
+ *
+ * @see purple_request_fields_get_tab_names
+ */
+guint purple_request_field_group_get_tab(const PurpleRequestFieldGroup *group);
 
 /**
  * Destroys a fields group.

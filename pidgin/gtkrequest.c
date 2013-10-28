@@ -1577,9 +1577,9 @@ pidgin_request_fields(const char *title, const char *primary,
 {
 	PidginRequestData *data;
 	GtkWidget *win;
-	GtkWidget *vbox;
-	GtkWidget *vbox2;
-	GtkWidget *hbox;
+	GtkNotebook *notebook;
+	GtkWidget **pages;
+	GtkWidget *hbox, *vbox;
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *table;
@@ -1591,10 +1591,11 @@ pidgin_request_fields(const char *title, const char *primary,
 	PurpleRequestField *field;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
-	int total_fields = 0;
 	const gboolean compact = purple_request_cpar_is_compact(cpar);
 	GSList *extra_actions, *it;
 	size_t extra_actions_count, i;
+	const gchar **tab_names;
+	guint tab_count;
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_FIELDS;
@@ -1681,30 +1682,72 @@ pidgin_request_fields(const char *title, const char *primary,
 		g_free(label_text);
 	}
 
-	for (gl = purple_request_fields_get_groups(fields); gl != NULL;
-			gl = gl->next)
-		total_fields += g_list_length(purple_request_field_group_get_fields(gl->data));
+	/* Setup tabs */
+	tab_names = purple_request_fields_get_tab_names(fields);
+	if (tab_names == NULL) {
+		notebook = NULL;
+		tab_count = 1;
 
-	if(total_fields > 9) {
-		GtkWidget *hbox_for_spacing, *vbox_for_spacing;
-
-		hbox_for_spacing = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-		gtk_box_pack_start(GTK_BOX(vbox), 
-			pidgin_make_scrollable(hbox_for_spacing, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, 200), 
-			TRUE, TRUE, 0);
-		gtk_widget_show(hbox_for_spacing);
-
-		vbox_for_spacing = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-		gtk_box_pack_start(GTK_BOX(hbox_for_spacing),
-				vbox_for_spacing, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
-		gtk_widget_show(vbox_for_spacing);
-
-		vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-		gtk_box_pack_start(GTK_BOX(vbox_for_spacing),
-				vbox2, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
-		gtk_widget_show(vbox2);
+		pages = g_new0(GtkWidget*, 1);
+		pages[0] = vbox;
 	} else {
-		vbox2 = vbox;
+		tab_count = g_strv_length((gchar **)tab_names);
+		notebook = GTK_NOTEBOOK(gtk_notebook_new());
+
+		pages = g_new0(GtkWidget*, tab_count);
+
+		for (i = 0; i < tab_count; i++) {
+			pages[i] = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+			gtk_container_set_border_width(GTK_CONTAINER(pages[i]), PIDGIN_HIG_BORDER);
+			gtk_notebook_append_page(notebook, pages[i], NULL);
+			gtk_notebook_set_tab_label_text(notebook, pages[i], tab_names[i]);
+			gtk_widget_show(pages[i]);
+		}
+	}
+
+	for (i = 0; i < tab_count; i++) {
+		guint total_fields = 0;
+		GList *it;
+
+		it = purple_request_fields_get_groups(fields);
+		for (; it != NULL; it = g_list_next(it)) {
+			group = it->data;
+			if (purple_request_field_group_get_tab(group) != i)
+				continue;
+			total_fields += g_list_length(
+				purple_request_field_group_get_fields(group));
+		}
+
+		if(total_fields > 9) {
+			GtkWidget *hbox_for_spacing, *vbox_for_spacing;
+
+			gtk_container_set_border_width(
+				GTK_CONTAINER(pages[i]), 0);
+
+			hbox_for_spacing =
+				gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+			gtk_box_pack_start(GTK_BOX(pages[i]),
+				pidgin_make_scrollable(hbox_for_spacing,
+					GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC,
+					GTK_SHADOW_NONE, -1, 200),
+				TRUE, TRUE, 0);
+			gtk_widget_show(hbox_for_spacing);
+
+			vbox_for_spacing =
+				gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+			gtk_box_pack_start(GTK_BOX(hbox_for_spacing),
+				vbox_for_spacing, TRUE, TRUE,
+				PIDGIN_HIG_BOX_SPACE);
+			gtk_widget_show(vbox_for_spacing);
+
+			pages[i] = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+			gtk_box_pack_start(GTK_BOX(vbox_for_spacing),
+				pages[i], TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
+			gtk_widget_show(pages[i]);
+		}
+
+		if (notebook == NULL)
+			vbox = pages[0];
 	}
 
 	if (secondary) {
@@ -1715,8 +1758,14 @@ pidgin_request_fields(const char *title, const char *primary,
 		g_free(secondary_esc);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_box_pack_start(GTK_BOX(vbox2), label, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), label, (notebook == NULL),
+			(notebook == NULL), 0);
 		gtk_widget_show(label);
+	}
+
+	if (notebook != NULL) {
+		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(notebook), TRUE, TRUE, 0);
+		gtk_widget_show(GTK_WIDGET(notebook));
 	}
 
 	for (gl = purple_request_fields_get_groups(fields);
@@ -1729,17 +1778,24 @@ pidgin_request_fields(const char *title, const char *primary,
 		size_t rows;
 		size_t col_num;
 		size_t row_num = 0;
+		guint tab_no;
 
 		group      = gl->data;
 		field_list = purple_request_field_group_get_fields(group);
+		tab_no = purple_request_field_group_get_tab(group);
+		if (tab_no >= tab_count) {
+			purple_debug_warning("gtkrequest",
+				"Invalid tab number: %d", tab_no);
+			tab_no = 0;
+		}
 
 		if (purple_request_field_group_get_title(group) != NULL)
 		{
-			frame = pidgin_make_frame(vbox2,
+			frame = pidgin_make_frame(pages[tab_no],
 				purple_request_field_group_get_title(group));
 		}
 		else
-			frame = vbox2;
+			frame = pages[tab_no];
 
 		field_count = g_list_length(field_list);
 /*
@@ -1793,7 +1849,8 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
-		gtk_container_add(GTK_CONTAINER(frame), table);
+		gtk_box_pack_start(GTK_BOX(frame), table,
+			(notebook == NULL), (notebook == NULL), 0);
 		gtk_widget_show(table);
 
 		for (row_num = 0, fl = field_list;
@@ -1954,6 +2011,8 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	if (!purple_request_fields_all_valid(fields))
 		gtk_widget_set_sensitive(data->ok_button, FALSE);
+
+	g_free(pages);
 
 	pidgin_auto_parent_window(win);
 
