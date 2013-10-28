@@ -147,6 +147,8 @@ struct _PurpleRequestFields
 
 	GHashTable *fields;
 
+	gchar **tab_names;
+
 	GList *required_fields;
 
 	GList *validated_fields;
@@ -161,6 +163,7 @@ struct _PurpleRequestFieldGroup
 	PurpleRequestFields *fields_list;
 
 	char *title;
+	gint tab_no;
 
 	GList *fields;
 };
@@ -494,6 +497,7 @@ purple_request_fields_destroy(PurpleRequestFields *fields)
 {
 	g_return_if_fail(fields != NULL);
 
+	g_strfreev(fields->tab_names);
 	g_list_foreach(fields->groups, (GFunc)purple_request_field_group_destroy, NULL);
 	g_list_free(fields->groups);
 	g_list_free(fields->required_fields);
@@ -549,6 +553,32 @@ purple_request_fields_get_groups(const PurpleRequestFields *fields)
 	g_return_val_if_fail(fields != NULL, NULL);
 
 	return fields->groups;
+}
+
+void
+purple_request_fields_set_tab_names(PurpleRequestFields *fields,
+	const gchar **tab_names)
+{
+	guint i, tab_count;
+	gchar **new_names;
+
+	g_return_if_fail(fields != NULL);
+
+	tab_count = (tab_names != NULL) ? g_strv_length((gchar **)tab_names) : 0;
+	new_names = (tab_count > 0) ? g_new0(gchar*, tab_count + 1) : NULL;
+	for (i = 0; i < tab_count; i++)
+		new_names[i] = g_strdup(tab_names[i]);
+
+	g_strfreev(fields->tab_names);
+	fields->tab_names = new_names;
+}
+
+const gchar **
+purple_request_fields_get_tab_names(const PurpleRequestFields *fields)
+{
+	g_return_val_if_fail(fields != NULL, NULL);
+
+	return (const gchar **)fields->tab_names;
 }
 
 gboolean
@@ -795,6 +825,20 @@ purple_request_field_group_new(const char *title)
 	group->title = g_strdup(title);
 
 	return group;
+}
+
+void
+purple_request_field_group_set_tab(PurpleRequestFieldGroup *group, guint tab_no)
+{
+	g_return_if_fail(group != NULL);
+
+	group->tab_no = tab_no;
+}
+
+guint
+purple_request_field_group_get_tab(const PurpleRequestFieldGroup *group)
+{
+	return group->tab_no;
 }
 
 void
