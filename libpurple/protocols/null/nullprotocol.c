@@ -512,7 +512,7 @@ static void null_get_info(PurpleConnection *gc, const char *username) {
   purple_debug_info("nullprotocol", "Fetching %s's user info for %s\n", username,
                     purple_account_get_username(purple_connection_get_account(gc)));
 
-  acct = purple_accounts_find(username, NULLPRPL_ID);
+  acct = purple_accounts_find(username, "null");
 
   if (!get_null_gc(username)) {
     char *msg = g_strdup_printf(_("%s is not logged in."), username);
@@ -1104,73 +1104,73 @@ null_protocol_class_init(PurpleProtocolClass *klass)
 static void
 null_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 {
-  client_client_iface->get_actions     = null_get_actions;
-  client_client_iface->status_text     = null_status_text;
-  client_client_iface->tooltip_text    = null_tooltip_text;
-  client_client_iface->blist_node_menu = null_blist_node_menu;
-  client_client_iface->convo_closed    = null_convo_closed;
-  client_client_iface->normalize       = null_normalize;
-  client_client_iface->offline_message = null_offline_message;
+  client_iface->get_actions     = null_get_actions;
+  client_iface->status_text     = null_status_text;
+  client_iface->tooltip_text    = null_tooltip_text;
+  client_iface->blist_node_menu = null_blist_node_menu;
+  client_iface->convo_closed    = null_convo_closed;
+  client_iface->normalize       = null_normalize;
+  client_iface->offline_message = null_offline_message;
 }
 
 static void
 null_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
 {
-  server_client_iface->register_user  = null_register_user;
-  server_client_iface->set_info       = null_set_info;
-  server_client_iface->get_info       = null_get_info;
-  server_client_iface->set_status     = null_set_status;
-  server_client_iface->set_idle       = null_set_idle;
-  server_client_iface->change_passwd  = null_change_passwd;
-  server_client_iface->add_buddy      = null_add_buddy;
-  server_client_iface->add_buddies    = null_add_buddies;
-  server_client_iface->remove_buddy   = null_remove_buddy;
-  server_client_iface->remove_buddies = null_remove_buddies;
-  server_client_iface->alias_buddy    = null_alias_buddy;
-  server_client_iface->group_buddy    = null_group_buddy;
-  server_client_iface->rename_group   = null_rename_group;
-  server_client_iface->set_buddy_icon = null_set_buddy_icon;
-  server_client_iface->remove_group   = null_remove_group;
+  server_iface->register_user  = null_register_user;
+  server_iface->set_info       = null_set_info;
+  server_iface->get_info       = null_get_info;
+  server_iface->set_status     = null_set_status;
+  server_iface->set_idle       = null_set_idle;
+  server_iface->change_passwd  = null_change_passwd;
+  server_iface->add_buddy      = null_add_buddy;
+  server_iface->add_buddies    = null_add_buddies;
+  server_iface->remove_buddy   = null_remove_buddy;
+  server_iface->remove_buddies = null_remove_buddies;
+  server_iface->alias_buddy    = null_alias_buddy;
+  server_iface->group_buddy    = null_group_buddy;
+  server_iface->rename_group   = null_rename_group;
+  server_iface->set_buddy_icon = null_set_buddy_icon;
+  server_iface->remove_group   = null_remove_group;
 }
 
 static void
 null_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
 {
-  im_client_iface->send        = null_send_im;
-  im_client_iface->send_typing = null_send_typing;
+  im_iface->send        = null_send_im;
+  im_iface->send_typing = null_send_typing;
 }
 
 static void
 null_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
 {
-  chat_client_iface->info          = null_chat_info;
-  chat_client_iface->info_defaults = null_chat_info_defaults;
-  chat_client_iface->join          = null_join_chat;
-  chat_client_iface->reject        = null_reject_chat;
-  chat_client_iface->get_name      = null_get_chat_name;
-  chat_client_iface->invite        = null_chat_invite;
-  chat_client_iface->leave         = null_chat_leave;
-  chat_client_iface->whisper       = null_chat_whisper;
-  chat_client_iface->send          = null_chat_send;
-  chat_client_iface->set_topic     = null_set_chat_topic;
+  chat_iface->info          = null_chat_info;
+  chat_iface->info_defaults = null_chat_info_defaults;
+  chat_iface->join          = null_join_chat;
+  chat_iface->reject        = null_reject_chat;
+  chat_iface->get_name      = null_get_chat_name;
+  chat_iface->invite        = null_chat_invite;
+  chat_iface->leave         = null_chat_leave;
+  chat_iface->whisper       = null_chat_whisper;
+  chat_iface->send          = null_chat_send;
+  chat_iface->set_topic     = null_set_chat_topic;
 }
 
 static void
 null_protocol_privacy_iface_init(PurpleProtocolPrivacyIface *privacy_iface)
 {
-  privacy_client_iface->add_permit      = null_add_permit;
-  privacy_client_iface->add_deny        = null_add_deny;
-  privacy_client_iface->rem_permit      = null_rem_permit;
-  privacy_client_iface->rem_deny        = null_rem_deny;
-  privacy_client_iface->set_permit_deny = null_set_permit_deny;
+  privacy_iface->add_permit      = null_add_permit;
+  privacy_iface->add_deny        = null_add_deny;
+  privacy_iface->rem_permit      = null_rem_permit;
+  privacy_iface->rem_deny        = null_rem_deny;
+  privacy_iface->set_permit_deny = null_set_permit_deny;
 }
 
 static void
 null_protocol_roomlist_iface_init(PurpleProtocolRoomlistIface *roomlist_iface)
 {
-  roomlist_client_iface->get_list        = null_roomlist_get_list;
-  roomlist_client_iface->cancel          = null_roomlist_cancel;
-  roomlist_client_iface->expand_category = null_roomlist_expand_category;
+  roomlist_iface->get_list        = null_roomlist_get_list;
+  roomlist_iface->cancel          = null_roomlist_cancel;
+  roomlist_iface->expand_category = null_roomlist_expand_category;
 }
 
 /*
