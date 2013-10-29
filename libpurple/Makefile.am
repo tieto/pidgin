@@ -79,6 +79,7 @@ purple_coresources = \
 	prpl.c \
 	purple-socket.c \
 	request.c \
+	request-datasheet.c \
 	roomlist.c \
 	savedstatuses.c \
 	server.c \
@@ -146,6 +147,7 @@ purple_coreheaders = \
 	prpl.h \
 	purple-socket.h \
 	request.h \
+	request-datasheet.h \
 	roomlist.h \
 	savedstatuses.h \
 	server.h \

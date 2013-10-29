@@ -276,6 +276,7 @@ pidgin_ui_init(void)
 
 	pidgin_account_init();
 	pidgin_connection_init();
+	pidgin_request_init();
 	pidgin_blist_init();
 	pidgin_status_init();
 	pidgin_conversations_init();
@@ -309,6 +310,7 @@ pidgin_quit(void)
 	pidgin_status_uninit();
 	pidgin_docklet_uninit();
 	pidgin_blist_uninit();
+	pidgin_request_uninit();
 	pidgin_connection_uninit();
 	pidgin_account_uninit();
 	pidgin_xfers_uninit();
