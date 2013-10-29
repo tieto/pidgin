@@ -35,6 +35,7 @@
 #include "gtkutils.h"
 #include "pidginstock.h"
 #include "gtkblist.h"
+#include "gtkinternal.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -47,8 +48,6 @@
 #endif
 
 #include "gtk3compat.h"
-
-static GtkWidget * create_account_field(PurpleRequestField *field);
 
 typedef struct
 {
@@ -94,6 +93,10 @@ typedef struct
 	} u;
 
 } PidginRequestData;
+
+static GHashTable *datasheet_stock = NULL;
+
+static GtkWidget * create_account_field(PurpleRequestField *field);
 
 static void
 pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
@@ -1569,6 +1572,266 @@ create_certificate_field(PurpleRequestField *field)
 #endif
 }
 
+static GdkPixbuf*
+_pidgin_datasheet_stock_icon_get(const gchar *stock_name)
+{
+	GdkPixbuf *image = NULL;
+	gchar *domain, *id;
+
+	if (stock_name == NULL)
+		return NULL;
+
+	/* core is quitting */
+	if (datasheet_stock == NULL)
+		return NULL;
+
+	if (g_hash_table_lookup_extended(datasheet_stock, stock_name,
+		NULL, (gpointer*)&image))
+	{
+		return image;
+	}
+
+	domain = g_strdup(stock_name);
+	id = strchr(domain, '/');
+	if (!id) {
+		g_free(domain);
+		return NULL;
+	}
+	id[0] = '\0';
+	id++;
+
+	if (g_strcmp0(domain, "prpl") == 0) {
+		PurpleAccount *account;
+		gchar *prpl, *accountname;
+
+		prpl = id;
+		accountname = strchr(id, ':');
+
+		if (!accountname) {
+			g_free(domain);
+			return NULL;
+		}
+
+		accountname[0] = '\0';
+		accountname++;
+
+		account = purple_accounts_find(accountname, prpl);
+		if (account) {
+			image = pidgin_create_prpl_icon(account,
+				PIDGIN_PRPL_ICON_SMALL);
+		}
+	} else if (g_strcmp0(domain, "e2ee") == 0) {
+		image = pidgin_pixbuf_from_imgstore(
+			_pidgin_e2ee_stock_icon_get(id));
+	} else {
+		purple_debug_error("gtkrequest", "Unknown domain: %s", domain);
+		g_free(domain);
+		return NULL;
+	}
+
+	g_hash_table_insert(datasheet_stock, g_strdup(stock_name), image);
+	return image;
+}
+
+static void
+datasheet_update_rec(PurpleRequestDatasheetRecord *rec, GtkListStore *model,
+	GtkTreeIter *iter)
+{
+	guint i, col_count;
+	PurpleRequestDatasheet *sheet;
+
+	g_return_if_fail(rec != NULL);
+	g_return_if_fail(model != NULL);
+	g_return_if_fail(iter != NULL);
+
+	sheet = purple_request_datasheet_record_get_datasheet(rec);
+
+	g_return_if_fail(sheet != NULL);
+
+	col_count = purple_request_datasheet_get_column_count(sheet);
+
+	for (i = 0; i < col_count; i++) {
+		PurpleRequestDatasheetColumnType type;
+
+		type = purple_request_datasheet_get_column_type(
+			sheet, i);
+		if (type == PURPLE_REQUEST_DATASHEET_COLUMN_STRING) {
+			GValue val;
+
+			val.g_type = 0;
+			g_value_init(&val, G_TYPE_STRING);
+			g_value_set_string(&val,
+				purple_request_datasheet_record_get_string_data(
+					rec, i));
+			gtk_list_store_set_value(model, iter,
+				i + 1, &val);
+		} else if (type ==
+			PURPLE_REQUEST_DATASHEET_COLUMN_IMAGE)
+		{
+			GdkPixbuf *pixbuf;
+
+			pixbuf = _pidgin_datasheet_stock_icon_get(
+				purple_request_datasheet_record_get_image_data(
+					rec, i));
+			gtk_list_store_set(model, iter, i + 1,
+				pixbuf, -1);
+		} else
+			g_warn_if_reached();
+	}
+}
+
+static void
+datasheet_fill(PurpleRequestDatasheet *sheet, GtkListStore *model)
+{
+	const GList *it;
+
+	gtk_list_store_clear(model);
+
+	it = purple_request_datasheet_get_records(sheet);
+	for (; it != NULL; it = g_list_next(it)) {
+		PurpleRequestDatasheetRecord *rec = it->data;
+		GtkTreeIter iter;
+
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter, 0,
+			purple_request_datasheet_record_get_key(rec), -1);
+
+		datasheet_update_rec(rec, model, &iter);
+	}
+}
+
+static void
+datasheet_update(PurpleRequestDatasheet *sheet, gpointer key,
+	GtkListStore *model)
+{
+	PurpleRequestDatasheetRecord *rec;
+	GtkTreeIter iter;
+	GtkTreeModel *tmodel = GTK_TREE_MODEL(model);
+	gboolean found = FALSE;
+
+	g_return_if_fail(tmodel != NULL);
+
+	if (key == NULL) {
+		datasheet_fill(sheet, model);
+		return;
+	}
+
+	rec = purple_request_datasheet_record_find(sheet, key);
+
+	if (gtk_tree_model_get_iter_first(tmodel, &iter)) {
+		do {
+			gpointer ikey;
+
+			gtk_tree_model_get(tmodel, &iter, 0, &ikey, -1);
+
+			if (key == ikey) {
+				found = TRUE;
+				break;
+			}
+		} while (gtk_tree_model_iter_next(tmodel, &iter));
+	}
+
+	if (rec == NULL && !found) {
+		return;
+	}
+
+	if (rec == NULL) {
+		gtk_list_store_remove(model, &iter);
+		return;
+	}
+
+	if (!found) {
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter, 0, key, -1);
+	}
+
+	datasheet_update_rec(rec, model, &iter);
+}
+
+static GtkWidget *
+create_datasheet_field(PurpleRequestField *field)
+{
+	PurpleRequestDatasheet *sheet;
+	guint i, col_count;
+	GType *col_types;
+	GtkListStore *model;
+	GtkTreeView *view;
+	GtkWidget *scrollable;
+	GtkCellRenderer *renderer_image = NULL, *renderer_text = NULL;
+	GtkTreeViewColumn *id_column;
+
+	sheet = purple_request_field_datasheet_get_sheet(field);
+
+	col_count = purple_request_datasheet_get_column_count(sheet);
+
+	col_types = g_new0(GType, col_count + 1);
+	col_types[0] = G_TYPE_POINTER;
+	for (i = 0; i < col_count; i++) {
+		PurpleRequestDatasheetColumnType type;
+		type = purple_request_datasheet_get_column_type(sheet, i);
+		if (type == PURPLE_REQUEST_DATASHEET_COLUMN_STRING)
+			col_types[i + 1] = G_TYPE_STRING;
+		else if (type == PURPLE_REQUEST_DATASHEET_COLUMN_IMAGE)
+			col_types[i + 1] = GDK_TYPE_PIXBUF;
+		else
+			g_warn_if_reached();
+	}
+	model = gtk_list_store_newv(col_count + 1, col_types);
+	g_free(col_types);
+
+	view = GTK_TREE_VIEW(gtk_tree_view_new_with_model(
+		GTK_TREE_MODEL(model)));
+	g_object_unref(G_OBJECT(model));
+
+	id_column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_visible(id_column, FALSE);
+	gtk_tree_view_append_column(view, id_column);
+
+	for (i = 0; i < col_count; i++) {
+		PurpleRequestDatasheetColumnType type;
+		const gchar *title;
+		GtkCellRenderer *renderer;
+		const gchar *type_str = "";
+
+		type = purple_request_datasheet_get_column_type(sheet, i);
+		title = purple_request_datasheet_get_column_title(sheet, i);
+
+		if (type == PURPLE_REQUEST_DATASHEET_COLUMN_STRING) {
+			type_str = "text";
+			if (!renderer_text)
+				renderer_text = gtk_cell_renderer_text_new();
+			renderer = renderer_text;
+		}
+		else if (type == PURPLE_REQUEST_DATASHEET_COLUMN_IMAGE) {
+			type_str = "pixbuf";
+			if (!renderer_image)
+				renderer_image = gtk_cell_renderer_pixbuf_new();
+			renderer = renderer_image;
+		} else
+			g_warn_if_reached();
+
+		if (title == NULL)
+			title = "";
+		gtk_tree_view_insert_column_with_attributes(
+			view, -1, title, renderer, type_str,
+			i + 1, NULL);
+	}
+
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
+
+	datasheet_fill(sheet, model);
+	purple_signal_connect(sheet, "record-changed",
+		pidgin_request_get_handle(),
+		PURPLE_CALLBACK(datasheet_update), model);
+
+	gtk_widget_set_size_request(GTK_WIDGET(view), 400, 250);
+
+	scrollable = pidgin_make_scrollable(GTK_WIDGET(view),
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1);
+	gtk_widget_show(GTK_WIDGET(view));
+	return scrollable;
+}
+
 static void *
 pidgin_request_fields(const char *title, const char *primary,
 	const char *secondary, PurpleRequestFields *fields, const char *ok_text,
@@ -1779,6 +2042,7 @@ pidgin_request_fields(const char *title, const char *primary,
 		size_t col_num;
 		size_t row_num = 0;
 		guint tab_no;
+		gboolean contains_resizable = FALSE, frame_fill;
 
 		group      = gl->data;
 		field_list = purple_request_field_group_get_fields(group);
@@ -1818,6 +2082,9 @@ pidgin_request_fields(const char *title, const char *primary,
 
 			type = purple_request_field_get_type(field);
 
+			if (type == PURPLE_REQUEST_FIELD_DATASHEET)
+				contains_resizable = TRUE;
+
 			if (type == PURPLE_REQUEST_FIELD_LABEL)
 			{
 				if (col_num > 0)
@@ -1849,8 +2116,8 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
-		gtk_box_pack_start(GTK_BOX(frame), table,
-			(notebook == NULL), (notebook == NULL), 0);
+		frame_fill = (notebook == NULL || contains_resizable);
+		gtk_box_pack_start(GTK_BOX(frame), table, frame_fill, frame_fill, 0);
 		gtk_widget_show(table);
 
 		for (row_num = 0, fl = field_list;
@@ -1942,6 +2209,8 @@ pidgin_request_fields(const char *title, const char *primary,
 						widget = create_account_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_CERTIFICATE)
 						widget = create_certificate_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_DATASHEET)
+						widget = create_datasheet_field(field);
 					else
 						continue;
 				}
@@ -2273,4 +2542,27 @@ PurpleRequestUiOps *
 pidgin_request_get_ui_ops(void)
 {
 	return &ops;
+}
+
+void *
+pidgin_request_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
+void
+pidgin_request_init(void)
+{
+	datasheet_stock = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, g_object_unref);
+}
+
+void
+pidgin_request_uninit(void)
+{
+	purple_signals_disconnect_by_handle(pidgin_request_get_handle());
+	g_hash_table_destroy(datasheet_stock);
+	datasheet_stock = NULL;
 }

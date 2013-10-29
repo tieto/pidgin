@@ -132,6 +132,10 @@ struct _PurpleRequestField
 			PurpleCertificate *cert;
 		} certificate;
 
+		struct
+		{
+			PurpleRequestDatasheet *sheet;
+		} datasheet;
 	} u;
 
 	void *ui_data;
@@ -984,6 +988,10 @@ purple_request_field_destroy(PurpleRequestField *field)
 
 		g_hash_table_destroy(field->u.list.item_data);
 		g_hash_table_destroy(field->u.list.selected_table);
+	}
+	else if (field->type == PURPLE_REQUEST_FIELD_DATASHEET)
+	{
+		purple_request_datasheet_free(field->u.datasheet.sheet);
 	}
 
 	g_free(field);
@@ -1970,6 +1978,31 @@ purple_request_field_certificate_get_value(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CERTIFICATE, NULL);
 
 	return field->u.certificate.cert;
+}
+
+PurpleRequestField *
+purple_request_field_datasheet_new(const char *id,
+	const gchar *text, PurpleRequestDatasheet *sheet)
+{
+	PurpleRequestField *field;
+
+	g_return_val_if_fail(id != NULL, NULL);
+	g_return_val_if_fail(sheet != NULL, NULL);
+
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_DATASHEET);
+
+	field->u.datasheet.sheet = sheet;
+
+	return field;
+}
+
+PurpleRequestDatasheet *
+purple_request_field_datasheet_get_sheet(PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_DATASHEET, NULL);
+
+	return field->u.datasheet.sheet;
 }
 
 /* -- */

@@ -32,6 +32,7 @@
 
 #include "certificate.h"
 #include "conversation.h"
+#include "request-datasheet.h"
 
 /**
  * A request field.
@@ -86,7 +87,8 @@ typedef enum
 	PURPLE_REQUEST_FIELD_LABEL,
 	PURPLE_REQUEST_FIELD_IMAGE,
 	PURPLE_REQUEST_FIELD_ACCOUNT,
-	PURPLE_REQUEST_FIELD_CERTIFICATE
+	PURPLE_REQUEST_FIELD_CERTIFICATE,
+	PURPLE_REQUEST_FIELD_DATASHEET
 
 } PurpleRequestFieldType;
 
@@ -1667,6 +1669,35 @@ PurpleRequestField *purple_request_field_certificate_new(const char *id,
  */
 PurpleCertificate *purple_request_field_certificate_get_value(
 		const PurpleRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Datasheet Field API                                             */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a datasheet item field.
+ *
+ * @param id    The field ID.
+ * @param text  The label of the field, may be @c NULL.
+ * @param sheet The datasheet.
+ *
+ * @return The new field.
+ */
+PurpleRequestField *purple_request_field_datasheet_new(const char *id,
+	const gchar *text, PurpleRequestDatasheet *sheet);
+
+/**
+ * Returns a datasheet for a field.
+ *
+ * @param field The field.
+ *
+ * @constreturn The datasheet object.
+ */
+PurpleRequestDatasheet *purple_request_field_datasheet_get_sheet(
+	PurpleRequestField *field);
 
 /*@}*/
 
