@@ -1600,11 +1600,11 @@ _pidgin_datasheet_stock_icon_get(const gchar *stock_name)
 	id[0] = '\0';
 	id++;
 
-	if (g_strcmp0(domain, "prpl") == 0) {
+	if (g_strcmp0(domain, "protocol") == 0) {
 		PurpleAccount *account;
-		gchar *prpl, *accountname;
+		gchar *protocol_id, *accountname;
 
-		prpl = id;
+		protocol_id = id;
 		accountname = strchr(id, ':');
 
 		if (!accountname) {
@@ -1615,10 +1615,10 @@ _pidgin_datasheet_stock_icon_get(const gchar *stock_name)
 		accountname[0] = '\0';
 		accountname++;
 
-		account = purple_accounts_find(accountname, prpl);
+		account = purple_accounts_find(accountname, protocol_id);
 		if (account) {
-			image = pidgin_create_prpl_icon(account,
-				PIDGIN_PRPL_ICON_SMALL);
+			image = pidgin_create_protocol_icon(account,
+				PIDGIN_PROTOCOL_ICON_SMALL);
 		}
 	} else if (g_strcmp0(domain, "e2ee") == 0) {
 		image = pidgin_pixbuf_from_imgstore(
