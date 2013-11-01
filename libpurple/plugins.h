@@ -200,16 +200,16 @@ struct _PurplePluginAction {
 	}
 #else /* PURPLE_PLUGINS && !PURPLE_STATIC_PRPL */
 #define PURPLE_PLUGIN_INIT(pluginname,pluginquery,pluginload,pluginunload) \
-	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e); \
-	G_MODULE_EXPORT GPluginPluginInfo *gplugin_plugin_query(GError **e) { \
+	G_MODULE_EXPORT GPluginPluginInfo *gplugin_query(GError **e); \
+	G_MODULE_EXPORT GPluginPluginInfo *gplugin_query(GError **e) { \
 		return GPLUGIN_PLUGIN_INFO(pluginquery(e)); \
 	} \
-	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p, GError **e); \
-	G_MODULE_EXPORT gboolean gplugin_plugin_load(GPluginNativePlugin *p, GError **e) { \
+	G_MODULE_EXPORT gboolean gplugin_load(GPluginNativePlugin *p, GError **e); \
+	G_MODULE_EXPORT gboolean gplugin_load(GPluginNativePlugin *p, GError **e) { \
 		return pluginload(PURPLE_PLUGIN(p), e); \
 	} \
-	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p, GError **e); \
-	G_MODULE_EXPORT gboolean gplugin_plugin_unload(GPluginNativePlugin *p, GError **e) { \
+	G_MODULE_EXPORT gboolean gplugin_unload(GPluginNativePlugin *p, GError **e); \
+	G_MODULE_EXPORT gboolean gplugin_unload(GPluginNativePlugin *p, GError **e) { \
 		return pluginunload(PURPLE_PLUGIN(p), e); \
 	}
 #endif
