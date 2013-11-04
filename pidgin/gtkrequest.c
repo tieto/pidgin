@@ -1633,6 +1633,72 @@ _pidgin_datasheet_stock_icon_get(const gchar *stock_name)
 	return image;
 }
 
+static PurpleRequestDatasheetRecord*
+datasheet_get_selected_row(GtkWidget *sheet_widget)
+{
+	PurpleRequestDatasheet *sheet;
+	GtkTreeView *view;
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GList *sel_list;
+	gpointer key;
+
+	g_return_val_if_fail(sheet_widget != NULL, NULL);
+
+	view = GTK_TREE_VIEW(g_object_get_data(G_OBJECT(sheet_widget), "view"));
+	sheet = g_object_get_data(G_OBJECT(sheet_widget), "sheet");
+
+	g_return_val_if_fail(view != NULL, NULL);
+	g_return_val_if_fail(sheet != NULL, NULL);
+
+	selection = gtk_tree_view_get_selection(view);
+	if (gtk_tree_selection_count_selected_rows(selection) != 1)
+		return NULL;
+
+	sel_list = gtk_tree_selection_get_selected_rows(selection, &model);
+	gtk_tree_model_get_iter(model, &iter, sel_list->data);
+	g_list_foreach(sel_list, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(sel_list);
+
+	gtk_tree_model_get(model, &iter, 0, &key, -1);
+
+	return purple_request_datasheet_record_find(sheet, key);
+}
+
+static void
+datasheet_button_check_sens(GtkWidget *button, gpointer _sheet_widget)
+{
+	PurpleRequestDatasheetAction *act;
+	GtkWidget *sheet_widget = GTK_WIDGET(_sheet_widget);
+
+	g_return_if_fail(sheet_widget != NULL);
+
+	act = g_object_get_data(G_OBJECT(button), "action");
+
+	g_return_if_fail(act != NULL);
+
+	gtk_widget_set_sensitive(button,
+		purple_request_datasheet_action_is_sensitive(act,
+			datasheet_get_selected_row(sheet_widget)));
+}
+
+static void
+datasheet_selection_changed(GtkWidget *sheet_widget)
+{
+	PurpleRequestDatasheetRecord *rec;
+	GtkVBox *buttons_box;
+
+	g_return_if_fail(sheet_widget != NULL);
+
+	rec = datasheet_get_selected_row(sheet_widget);
+
+	buttons_box = GTK_VBOX(g_object_get_data(G_OBJECT(sheet_widget),
+		"buttons"));
+	gtk_container_foreach(GTK_CONTAINER(buttons_box),
+		datasheet_button_check_sens, sheet_widget);
+}
+
 static void
 datasheet_update_rec(PurpleRequestDatasheetRecord *rec, GtkListStore *model,
 	GtkTreeIter *iter)
@@ -1698,6 +1764,9 @@ datasheet_fill(PurpleRequestDatasheet *sheet, GtkListStore *model)
 
 		datasheet_update_rec(rec, model, &iter);
 	}
+
+	datasheet_selection_changed(GTK_WIDGET(g_object_get_data(
+		G_OBJECT(model), "sheet-widget")));
 }
 
 static void
@@ -1731,9 +1800,8 @@ datasheet_update(PurpleRequestDatasheet *sheet, gpointer key,
 		} while (gtk_tree_model_iter_next(tmodel, &iter));
 	}
 
-	if (rec == NULL && !found) {
+	if (rec == NULL && !found)
 		return;
-	}
 
 	if (rec == NULL) {
 		gtk_list_store_remove(model, &iter);
@@ -1746,6 +1814,29 @@ datasheet_update(PurpleRequestDatasheet *sheet, gpointer key,
 	}
 
 	datasheet_update_rec(rec, model, &iter);
+
+	datasheet_selection_changed(GTK_WIDGET(g_object_get_data(
+		G_OBJECT(model), "sheet-widget")));
+}
+
+
+static void
+datasheet_selection_changed_cb(GtkTreeSelection *sel, gpointer sheet_widget)
+{
+	datasheet_selection_changed(GTK_WIDGET(sheet_widget));
+}
+
+static void
+datasheet_action_clicked(GtkButton *btn, PurpleRequestDatasheetAction *act)
+{
+	GtkWidget *sheet_widget;
+
+	sheet_widget = g_object_get_data(G_OBJECT(btn), "sheet-widget");
+
+	g_return_if_fail(sheet_widget != NULL);
+
+	purple_request_datasheet_action_call(act, datasheet_get_selected_row(
+		sheet_widget));
 }
 
 static GtkWidget *
@@ -1756,11 +1847,16 @@ create_datasheet_field(PurpleRequestField *field)
 	GType *col_types;
 	GtkListStore *model;
 	GtkTreeView *view;
+	GtkTreeSelection *sel;
 	GtkWidget *scrollable;
 	GtkCellRenderer *renderer_image = NULL, *renderer_text = NULL;
 	GtkTreeViewColumn *id_column;
+	GtkHBox *main_box;
+	GtkVBox *buttons_box;
+	const GList *it;
 
 	sheet = purple_request_field_datasheet_get_sheet(field);
+	main_box = GTK_HBOX(gtk_hbox_new(FALSE, 0));
 
 	col_count = purple_request_datasheet_get_column_count(sheet);
 
@@ -1781,6 +1877,7 @@ create_datasheet_field(PurpleRequestField *field)
 
 	view = GTK_TREE_VIEW(gtk_tree_view_new_with_model(
 		GTK_TREE_MODEL(model)));
+	g_object_set_data(G_OBJECT(model), "sheet-widget", main_box);
 	g_object_unref(G_OBJECT(model));
 
 	id_column = gtk_tree_view_column_new();
@@ -1819,17 +1916,54 @@ create_datasheet_field(PurpleRequestField *field)
 
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
 
-	datasheet_fill(sheet, model);
-	purple_signal_connect(sheet, "record-changed",
-		pidgin_request_get_handle(),
-		PURPLE_CALLBACK(datasheet_update), model);
-
 	gtk_widget_set_size_request(GTK_WIDGET(view), 400, 250);
 
 	scrollable = pidgin_make_scrollable(GTK_WIDGET(view),
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1);
 	gtk_widget_show(GTK_WIDGET(view));
-	return scrollable;
+
+	buttons_box = GTK_VBOX(gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER));
+
+	gtk_box_pack_start(GTK_BOX(main_box), scrollable, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(main_box), GTK_WIDGET(buttons_box),
+		FALSE, FALSE, 0);
+	gtk_widget_show(scrollable);
+	gtk_widget_show(GTK_WIDGET(buttons_box));
+
+	it = purple_request_datasheet_get_actions(sheet);
+	for (; it != NULL; it = g_list_next(it)) {
+		PurpleRequestDatasheetAction *act = it->data;
+		GtkButton *btn;
+		const gchar *label;
+
+		label = purple_request_datasheet_action_get_label(act);
+
+		btn = GTK_BUTTON(gtk_button_new_with_label(label ? label : ""));
+
+		g_object_set_data(G_OBJECT(btn), "action", act);
+		g_object_set_data(G_OBJECT(btn), "sheet-widget", main_box);
+		g_signal_connect(G_OBJECT(btn), "clicked",
+			G_CALLBACK(datasheet_action_clicked), act);
+
+		gtk_box_pack_start(GTK_BOX(buttons_box), GTK_WIDGET(btn),
+			FALSE, FALSE, 0);
+		gtk_widget_show(GTK_WIDGET(btn));
+	}
+
+	g_object_set_data(G_OBJECT(main_box), "view", view);
+	g_object_set_data(G_OBJECT(main_box), "buttons", buttons_box);
+	g_object_set_data(G_OBJECT(main_box), "sheet", sheet);
+
+	datasheet_fill(sheet, model);
+	purple_signal_connect(sheet, "record-changed",
+		pidgin_request_get_handle(),
+		PURPLE_CALLBACK(datasheet_update), model);
+
+	sel = gtk_tree_view_get_selection(view);
+	g_signal_connect(G_OBJECT(sel), "changed",
+		G_CALLBACK(datasheet_selection_changed_cb), main_box);
+
+	return GTK_WIDGET(main_box);
 }
 
 static void *
@@ -2552,11 +2686,19 @@ pidgin_request_get_handle(void)
 	return &handle;
 }
 
+static void
+pidgin_request_datasheet_stock_remove(gpointer obj)
+{
+	if (obj == NULL)
+		return;
+	g_object_unref(obj);
+}
+
 void
 pidgin_request_init(void)
 {
 	datasheet_stock = g_hash_table_new_full(g_str_hash, g_str_equal,
-		g_free, g_object_unref);
+		g_free, pidgin_request_datasheet_stock_remove);
 }
 
 void
