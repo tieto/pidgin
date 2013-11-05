@@ -26,16 +26,22 @@
 #ifndef _PURPLE_REQUEST_DATA_H_
 #define _PURPLE_REQUEST_DATA_H_
 
+#include <glib.h>
+
 typedef struct _PurpleRequestDatasheet PurpleRequestDatasheet;
 typedef struct _PurpleRequestDatasheetRecord PurpleRequestDatasheetRecord;
+typedef struct _PurpleRequestDatasheetAction PurpleRequestDatasheetAction;
+
+typedef void (*PurpleRequestDatasheetActionCb)(
+	PurpleRequestDatasheetRecord *rec, gpointer user_data);
+typedef gboolean (*PurpleRequestDatasheetActionCheckCb)(
+	PurpleRequestDatasheetRecord *rec, gpointer user_data);
 
 typedef enum
 {
 	PURPLE_REQUEST_DATASHEET_COLUMN_STRING,
 	PURPLE_REQUEST_DATASHEET_COLUMN_IMAGE
 } PurpleRequestDatasheetColumnType;
-
-#include <glib.h>
 
 G_BEGIN_DECLS
 
@@ -118,6 +124,120 @@ purple_request_datasheet_get_column_title(PurpleRequestDatasheet *sheet,
  */
 const GList *
 purple_request_datasheet_get_records(PurpleRequestDatasheet *sheet);
+
+/**
+ * Adds an action to the datasheet.
+ *
+ * Action object is owned by the datasheet since this call.
+ *
+ * @param sheet  The datasheet.
+ * @param action The action.
+ */
+void
+purple_request_datasheet_add_action(PurpleRequestDatasheet *sheet,
+	PurpleRequestDatasheetAction *action);
+
+/**
+ * Returns the list of actions in a datasheet.
+ *
+ * @param sheet The datasheet.
+ *
+ * @constreturn The list of actions.
+ */
+const GList *
+purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Datasheet actions API                                           */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates new datasheet action.
+ *
+ * @return The new action.
+ */
+PurpleRequestDatasheetAction *
+purple_request_datasheet_action_new(void);
+
+/**
+ * Destroys the datasheet action.
+ *
+ * @param act The action.
+ */
+void
+purple_request_datasheet_action_free(PurpleRequestDatasheetAction *act);
+
+/**
+ * Sets the localized label for the action.
+ *
+ * @param act   The action.
+ * @param label The label.
+ */
+void
+purple_request_datasheet_action_set_label(PurpleRequestDatasheetAction *act,
+	const gchar *label);
+
+/**
+ * Gets the label of action.
+ *
+ * @param act The action.
+ *
+ * @return The localized label text.
+ */
+const gchar*
+purple_request_datasheet_action_get_label(PurpleRequestDatasheetAction *act);
+
+/**
+ * Sets the callback for the action.
+ *
+ * @param act       The action.
+ * @param cb        The callback function.
+ * @param user_data The data to be passed to the callback function.
+ */
+void
+purple_request_datasheet_action_set_cb(PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetActionCb cb, gpointer user_data);
+
+/**
+ * Calls the callback of the action.
+ *
+ * @param act The action.
+ * @param rec The user selected record.
+ */
+void
+purple_request_datasheet_action_call(PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetRecord *rec);
+
+/**
+ * Sets the sensitivity checker for the action.
+ *
+ * If there is no callback set, default is used: the action is enabled, if any
+ * record is active.
+ *
+ * @param act       The action.
+ * @param cb        The callback function, may be @c NULL.
+ * @param user_data The data to be passed to the callback function.
+ */
+void
+purple_request_datasheet_action_set_sens_cb(
+	PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetActionCheckCb cb, gpointer user_data);
+
+/**
+ * Checks, if the action is enabled for the active record.
+ *
+ * @param act The action.
+ * @param rec The record.
+ *
+ * @return @c TRUE, if the action is enabled, @c FALSE otherwise.
+ */
+gboolean
+purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetRecord *rec);
 
 /*@}*/
 

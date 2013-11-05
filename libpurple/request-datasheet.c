@@ -34,6 +34,7 @@ struct _PurpleRequestDatasheet
 	guint col_count;
 	GArray *col_types;
 	GArray *col_titles;
+	GList *actions;
 
 	GList *record_list;
 	GHashTable *record_li_by_key;
@@ -44,6 +45,17 @@ struct _PurpleRequestDatasheetRecord
 	PurpleRequestDatasheet *sheet;
 	gpointer key;
 	gchar **data; /* at this point, there is only string data possible */
+};
+
+struct _PurpleRequestDatasheetAction
+{
+	gchar *label;
+
+	PurpleRequestDatasheetActionCb cb;
+	gpointer cb_data;
+
+	PurpleRequestDatasheetActionCheckCb sens_cb;
+	gpointer sens_data;
 };
 
 static void
@@ -92,6 +104,9 @@ purple_request_datasheet_free(PurpleRequestDatasheet *sheet)
 
 	g_array_free(sheet->col_titles, TRUE);
 	g_array_free(sheet->col_types, TRUE);
+
+	g_list_free_full(sheet->actions,
+		(GDestroyNotify)purple_request_datasheet_action_free);
 
 	g_hash_table_destroy(sheet->record_li_by_key);
 	g_list_free_full(sheet->record_list,
@@ -154,6 +169,104 @@ purple_request_datasheet_get_records(PurpleRequestDatasheet *sheet)
 	g_return_val_if_fail(sheet != NULL, NULL);
 
 	return sheet->record_list;
+}
+
+void
+purple_request_datasheet_add_action(PurpleRequestDatasheet *sheet,
+	PurpleRequestDatasheetAction *action)
+{
+	g_return_if_fail(sheet != NULL);
+	g_return_if_fail(action != NULL);
+
+	sheet->actions = g_list_append(sheet->actions, action);
+}
+
+const GList *
+purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet)
+{
+	g_return_val_if_fail(sheet != NULL, NULL);
+
+	return sheet->actions;
+}
+
+/***** Datasheet actions API **************************************************/
+
+PurpleRequestDatasheetAction *
+purple_request_datasheet_action_new(void)
+{
+	return g_new0(PurpleRequestDatasheetAction, 1);
+}
+
+void
+purple_request_datasheet_action_free(PurpleRequestDatasheetAction *act)
+{
+	g_return_if_fail(act != NULL);
+	g_free(act->label);
+	g_free(act);
+}
+
+void
+purple_request_datasheet_action_set_label(PurpleRequestDatasheetAction *act,
+	const gchar *label)
+{
+	gchar *new_label;
+
+	g_return_if_fail(act != NULL);
+
+	new_label = g_strdup(label);
+	g_free(act->label);
+	act->label = new_label;
+}
+
+const gchar*
+purple_request_datasheet_action_get_label(PurpleRequestDatasheetAction *act)
+{
+	g_return_val_if_fail(act != NULL, NULL);
+
+	return act->label;
+}
+
+void
+purple_request_datasheet_action_set_cb(PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetActionCb cb, gpointer user_data)
+{
+	g_return_if_fail(act != NULL);
+
+	act->cb = cb;
+	act->cb_data = user_data;
+}
+
+void
+purple_request_datasheet_action_call(PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetRecord *rec)
+{
+	g_return_if_fail(act != NULL);
+
+	if (act->cb)
+		act->cb(rec, act->cb_data);
+}
+
+void
+purple_request_datasheet_action_set_sens_cb(
+	PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetActionCheckCb cb, gpointer user_data)
+{
+	g_return_if_fail(act != NULL);
+
+	act->sens_cb = cb;
+	act->sens_data = user_data;
+}
+
+gboolean
+purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
+	PurpleRequestDatasheetRecord *rec)
+{
+	g_return_val_if_fail(act != NULL, FALSE);
+
+	if (!act->sens_cb)
+		return (rec != NULL);
+
+	return act->sens_cb(rec, act->cb_data);
 }
 
 /***** Datasheet record API ***************************************************/
