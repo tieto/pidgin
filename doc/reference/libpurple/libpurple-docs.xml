@@ -87,6 +87,7 @@
       <xi:include href="xml/purple-socket.xml" />
       <xi:include href="xml/purple.xml" />
       <xi:include href="xml/request.xml" />
+      <xi:include href="xml/request-datasheet.xml" />
       <xi:include href="xml/roomlist.xml" />
       <xi:include href="xml/savedstatuses.xml" />
       <xi:include href="xml/server.xml" />
