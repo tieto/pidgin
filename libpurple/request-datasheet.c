@@ -247,7 +247,7 @@ purple_request_datasheet_action_call(PurpleRequestDatasheetAction *act,
 	if (!act->cb)
 		return;
 
-	if (!purple_request_datasheet_action_is_sensitive(act, rec) {
+	if (!purple_request_datasheet_action_is_sensitive(act, rec)) {
 		purple_debug_warning("request-datasheet",
 			"Action is disabled for this record");
 		return;
