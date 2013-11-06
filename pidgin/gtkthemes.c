@@ -222,7 +222,7 @@ pidgin_smiley_themes_remove_non_existing(void)
 
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 {
-	FILE *f = g_fopen(file, "r");
+	FILE *f = g_fopen(file, "rb");
 	char buf[256];
 	char *i;
 	gsize line_nbr = 0;
