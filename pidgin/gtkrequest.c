@@ -1840,7 +1840,7 @@ datasheet_action_clicked(GtkButton *btn, PurpleRequestDatasheetAction *act)
 }
 
 static GtkWidget *
-create_datasheet_field(PurpleRequestField *field)
+create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 {
 	PurpleRequestDatasheet *sheet;
 	guint i, col_count;
@@ -1923,6 +1923,7 @@ create_datasheet_field(PurpleRequestField *field)
 	gtk_widget_show(GTK_WIDGET(view));
 
 	buttons_box = GTK_VBOX(gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER));
+	gtk_size_group_add_widget(buttons_sg, GTK_WIDGET(buttons_box));
 
 	gtk_box_pack_start(GTK_BOX(main_box), scrollable, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(main_box), GTK_WIDGET(buttons_box),
@@ -1982,7 +1983,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	GtkWidget *table;
 	GtkWidget *button;
 	GtkWidget *img;
-	GtkSizeGroup *sg;
+	GtkSizeGroup *sg, *datasheet_buttons_sg;
 	GList *gl, *fl;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
@@ -2063,6 +2064,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_show(vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	datasheet_buttons_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if(primary) {
 		primary_esc = pidgin_request_escape(cpar, primary);
@@ -2344,7 +2346,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					else if (type == PURPLE_REQUEST_FIELD_CERTIFICATE)
 						widget = create_certificate_field(field);
 					else if (type == PURPLE_REQUEST_FIELD_DATASHEET)
-						widget = create_datasheet_field(field);
+						widget = create_datasheet_field(field, datasheet_buttons_sg);
 					else
 						continue;
 				}
@@ -2408,6 +2410,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	}
 
 	g_object_unref(sg);
+	g_object_unref(datasheet_buttons_sg);
 
 	if (!purple_request_fields_all_required_filled(fields))
 		gtk_widget_set_sensitive(data->ok_button, FALSE);

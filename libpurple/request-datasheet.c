@@ -242,8 +242,16 @@ purple_request_datasheet_action_call(PurpleRequestDatasheetAction *act,
 {
 	g_return_if_fail(act != NULL);
 
-	if (act->cb)
-		act->cb(rec, act->cb_data);
+	if (!act->cb)
+		return;
+
+	if (!purple_request_datasheet_action_is_sensitive(act, rec)) {
+		purple_debug_warning("request-datasheet",
+			"Action is disabled for this record");
+		return;
+	}
+
+	act->cb(rec, act->cb_data);
 }
 
 void
@@ -266,7 +274,7 @@ purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
 	if (!act->sens_cb)
 		return (rec != NULL);
 
-	return act->sens_cb(rec, act->cb_data);
+	return act->sens_cb(rec, act->sens_data);
 }
 
 /***** Datasheet record API ***************************************************/
