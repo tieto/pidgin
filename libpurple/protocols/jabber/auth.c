@@ -105,8 +105,9 @@ auth_old_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 
 	if (!entry || !*entry)
 	{
-		purple_notify_error(account, NULL, _("Password is required to sign on."), NULL,
-				purple_request_cpar_from_account(account));
+		purple_notify_error(account, NULL,
+			_("Password is required to sign on."), NULL,
+			purple_request_cpar_from_connection(gc));
 		return;
 	}
 
