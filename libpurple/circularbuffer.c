@@ -371,7 +371,7 @@ purple_circular_buffer_mark_read(PurpleCircularBuffer *buffer, gsize len) {
 
 	g_return_val_if_fail(PURPLE_IS_CIRCULAR_BUFFER(buffer), FALSE);
 
-	klass = PURPLE_CIRCULAR_BUFFER_CLASS(buffer);
+	klass = PURPLE_CIRCULAR_BUFFER_GET_CLASS(buffer);
 	if(klass && klass->mark_read)
 		return klass->mark_read(buffer, len);
 
