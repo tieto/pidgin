@@ -1009,7 +1009,6 @@ gnt_tree_set_property(GObject *obj, guint prop_id, const GValue *value,
 			if (tree->priv->expander_level == g_value_get_int(value))
 				break;
 			tree->priv->expander_level = g_value_get_int(value);
-			g_object_notify(obj, "expander-level");
 		default:
 			break;
 	}
@@ -1054,7 +1053,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 			g_param_spec_int("columns", "Columns",
 				"Number of columns in the tree.",
 				1, G_MAXINT, 1,
-				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+				G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS
 			)
 		);
 	g_object_class_install_property(gclass,
@@ -1062,7 +1061,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 			g_param_spec_int("expander-level", "Expander level",
 				"Number of levels to show expander in the tree.",
 				0, G_MAXINT, 1,
-				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+				G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS
 			)
 		);
 
