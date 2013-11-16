@@ -1204,14 +1204,16 @@ purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
 			"ID",
 			"The unique identifier of the element.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_NAME,
 			g_param_spec_string("name",
 			"Name",
 			"The friendly/display name of this element.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_TYPE,
 			g_param_spec_flags("type",
@@ -1219,13 +1221,15 @@ purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
 			"The type of element this is.",
 			PURPLE_TYPE_MEDIA_ELEMENT_TYPE,
 			PURPLE_MEDIA_ELEMENT_NONE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_CREATE_CB,
 			g_param_spec_pointer("create-cb",
 			"Create Callback",
 			"The function called to create this element.",
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_type_class_add_private(klass, sizeof(PurpleMediaElementInfoPrivate));
 }

@@ -337,15 +337,18 @@ purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 	cipher_class->set_key = purple_pbkdf2_cipher_set_key;
 
 	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_HASH,
-								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+								G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_HASH, pspec);
 
-	pspec = g_param_spec_uint("iter_count", "iter_count", "iter_count", 0,
-								G_MAXUINT, 0, G_PARAM_READWRITE);
+	pspec = g_param_spec_uint("iter-count", "iter-count", "iter-count", 0,
+								G_MAXUINT, 0, G_PARAM_READWRITE |
+								G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_ITER_COUNT, pspec);
 
-	pspec = g_param_spec_uint("out_len", "out_len", "out_len", 0,
-								G_MAXUINT, 0, G_PARAM_READWRITE);
+	pspec = g_param_spec_uint("out-len", "out-len", "out-len", 0,
+								G_MAXUINT, 0, G_PARAM_READWRITE |
+								G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_OUT_LEN, pspec);
 
 	g_type_class_add_private(klass, sizeof(PurplePBKDF2CipherPrivate));

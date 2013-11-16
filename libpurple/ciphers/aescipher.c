@@ -505,11 +505,12 @@ purple_aes_cipher_set_batch_mode(PurpleCipher *cipher,
 {
 	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
-	if (mode == PURPLE_CIPHER_BATCH_MODE_CBC)
-		return;
+	if (mode != PURPLE_CIPHER_BATCH_MODE_CBC) {
+		purple_debug_error("cipher-aes", "unsupported batch mode\n");
+		priv->failure = TRUE;
+	}
 
-	purple_debug_error("cipher-aes", "unsupported batch mode\n");
-	priv->failure = TRUE;
+	g_object_notify(G_OBJECT(cipher), "batch-mode");
 }
 
 static PurpleCipherBatchMode
@@ -590,17 +591,17 @@ purple_aes_cipher_class_init(PurpleAESCipherClass *klass) {
 	cipher_class->get_batch_mode = purple_aes_cipher_get_batch_mode;
 	cipher_class->get_block_size = purple_aes_cipher_get_block_size;
 
-	pspec = g_param_spec_enum("batch_mode", "batch_mode", "batch_mode",
+	pspec = g_param_spec_enum("batch-mode", "batch-mode", "batch-mode",
 							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
-							  G_PARAM_READWRITE);
+							  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_BATCH_MODE, pspec);
 
 	pspec = g_param_spec_string("iv", "iv", "iv", NULL,
-								G_PARAM_WRITABLE);
+								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_IV, pspec);
 
 	pspec = g_param_spec_string("key", "key", "key", NULL,
-								G_PARAM_WRITABLE);
+								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_KEY, pspec);
 
 	g_type_class_add_private(klass, sizeof(PurpleAESCipherPrivate));

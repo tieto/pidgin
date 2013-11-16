@@ -237,42 +237,42 @@ purple_media_candidate_class_init(PurpleMediaCandidateClass *klass)
 			"Foundation",
 			"The foundation of the candidate.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_COMPONENT_ID,
 			g_param_spec_uint("component-id",
 			"Component ID",
 			"The component id of the candidate.",
 			0, G_MAXUINT, 0,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_IP,
 			g_param_spec_string("ip",
 			"IP Address",
 			"The IP address of the candidate.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_PORT,
 			g_param_spec_uint("port",
 			"Port",
 			"The port of the candidate.",
 			0, G_MAXUINT16, 0,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_BASE_IP,
 			g_param_spec_string("base-ip",
 			"Base IP",
 			"The internal IP address of the candidate.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_BASE_PORT,
 			g_param_spec_uint("base-port",
 			"Base Port",
 			"The internal port of the candidate.",
 			0, G_MAXUINT16, 0,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_PROTOCOL,
 			g_param_spec_enum("protocol",
@@ -280,14 +280,14 @@ purple_media_candidate_class_init(PurpleMediaCandidateClass *klass)
 			"The protocol of the candidate.",
 			PURPLE_TYPE_MEDIA_NETWORK_PROTOCOL,
 			PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_PRIORITY,
 			g_param_spec_uint("priority",
 			"Priority",
 			"The priority of the candidate.",
 			0, G_MAXUINT32, 0,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_TYPE,
 			g_param_spec_enum("type",
@@ -295,28 +295,28 @@ purple_media_candidate_class_init(PurpleMediaCandidateClass *klass)
 			"The type of the candidate.",
 			PURPLE_TYPE_MEDIA_CANDIDATE_TYPE,
 			PURPLE_MEDIA_CANDIDATE_TYPE_HOST,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_USERNAME,
 			g_param_spec_string("username",
 			"Username",
 			"The username used to connect to the candidate.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_PASSWORD,
 			g_param_spec_string("password",
 			"Password",
 			"The password use to connect to the candidate.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_TTL,
 			g_param_spec_uint("ttl",
 			"TTL",
 			"The TTL of the candidate.",
 			0, G_MAXUINT, 0,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_type_class_add_private(klass, sizeof(PurpleMediaCandidatePrivate));
 }
