@@ -322,6 +322,8 @@ mini_dialog_set_title(PidginMiniDialog *self,
 
 	g_free(title_esc);
 	g_free(title_markup);
+
+	g_object_notify(G_OBJECT(self), "title");
 }
 
 static void
@@ -352,6 +354,8 @@ mini_dialog_set_description(PidginMiniDialog *self,
 	 	 */
 		g_object_set(G_OBJECT(priv->desc), "no-show-all", TRUE, NULL);
 	}
+
+	g_object_notify(G_OBJECT(self), "description");
 }
 
 static void
@@ -414,34 +418,29 @@ pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 
 	param_spec = g_param_spec_string("title", "title",
 		"String specifying the mini-dialog's title", NULL,
-		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-		G_PARAM_READWRITE);
+		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TITLE, param_spec);
 
 	param_spec = g_param_spec_string("description", "description",
 		"Description text for the mini-dialog, if desired", NULL,
-		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-		G_PARAM_READWRITE);
+		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, param_spec);
 
 	param_spec = g_param_spec_string("icon-name", "icon-name",
 		"String specifying the Gtk stock name of the dialog's icon",
 		NULL,
-		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-		G_PARAM_READWRITE);
+		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ICON_NAME, param_spec);
 
 	param_spec = g_param_spec_object("custom-icon", "custom-icon",
 		"Pixbuf to use as the dialog's icon",
 		GDK_TYPE_PIXBUF,
-		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-		G_PARAM_READWRITE);
+		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CUSTOM_ICON, param_spec);
 
 	param_spec = g_param_spec_boolean("enable-description-markup", "enable-description-markup",
 		"Use GMarkup in the description text", FALSE,
-		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-		G_PARAM_READWRITE);
+		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ENABLE_DESCRIPTION_MARKUP, param_spec);
 }
 

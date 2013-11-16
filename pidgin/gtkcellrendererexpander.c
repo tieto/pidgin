@@ -147,7 +147,7 @@ static void pidgin_cell_renderer_expander_class_init (PidginCellRendererExpander
 							      "Is Expander",
 							      "True if the renderer should draw an expander",
 							      FALSE,
-							      G_PARAM_READWRITE));
+							      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void pidgin_cell_renderer_expander_finalize (GObject *object)

@@ -218,7 +218,7 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 			"offline", offline,
 			"idle", idle,
 			"message", message,
-			"message_nick_said", message_nick_said,
+			"message-nick-said", message_nick_said,
 			"status", status, NULL);
 
 	for (i = 0; lookups[i].tag; i++) {

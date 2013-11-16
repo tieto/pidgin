@@ -236,7 +236,7 @@ pidgin_blist_theme_edit(PurplePluginAction *unused)
 					"offline",
 					"idle",
 					"message",
-					"message_nick_said",
+					"message-nick-said",
 					"status",
 					NULL
 				}
