@@ -184,7 +184,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Purple Media Manager",
 			"The media manager that contains this media session.",
 			PURPLE_TYPE_MEDIA_MANAGER,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	/*
 	 * This one should be PURPLE_TYPE_MEDIA_BACKEND, but it doesn't
@@ -195,12 +196,13 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Purple Media Backend",
 			"The backend object this media object uses.",
 			G_TYPE_OBJECT,
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_ACCOUNT,
 			g_param_spec_pointer("account", "PurpleAccount",
 			"The account this media session is on.",
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_CONFERENCE_TYPE,
 			g_param_spec_string("conference-type",
@@ -208,20 +210,22 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"The type of conference that this media object "
 			"has been created to provide.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_INITIATOR,
 			g_param_spec_boolean("initiator",
 			"initiator",
 			"If the local user initiated the conference.",
 			FALSE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_PRPL_DATA,
 			g_param_spec_pointer("prpl-data",
 			"gpointer",
 			"Data the prpl plugin set on the media session.",
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	purple_media_signals[S_ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
