@@ -593,7 +593,7 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	                                g_param_spec_pointer("account",
 	                                                     "Account",
 	                                                     "The account, or NULL for all accounts",
-	                                                      G_PARAM_READWRITE
+	                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
 	                                                     )
 	                               );
 	g_object_class_install_property(object_class,
@@ -602,7 +602,7 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	                                                     "Icon Selector",
 	                                                     "Whether the icon selector should be displayed or not.",
 														 FALSE,
-	                                                      G_PARAM_READWRITE
+	                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
 	                                                     )
 	                               );
 }

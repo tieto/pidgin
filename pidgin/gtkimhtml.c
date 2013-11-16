@@ -1660,39 +1660,39 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        "Hyperlink color",
 	                                        "Color to draw hyperlinks.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-visited-color",
 	                                        "Hyperlink visited color",
 	                                        "Color to draw hyperlink after it has been visited (or activated).",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
 	                                        "Hyperlink prelight color",
 	                                        "Color to draw hyperlinks when mouse is over them.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("send-name-color",
 	                                        "Sent Message Name Color",
 	                                        "Color to draw the name of a message you sent.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("receive-name-color",
 	                                        "Received Message Name Color",
 	                                        "Color to draw the name of a message you received.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("highlight-name-color",
 	                                        "\"Attention\" Name Color",
 	                                        "Color to draw the name of a message you received containing your name.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("action-name-color",
 	                                        "Action Message Name Color",
 	                                        "Color to draw the name of an action message.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-action-name-color",
 	                                        "Action Message Name Color for Whispered Message",
 	                                        "Color to draw the name of a whispered action message.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-name-color",
 	                                        "Whisper Message Name Color",
 	                                        "Color to draw the name of a whispered message.",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	/* Customizable typing notification ... sort of. Example:
 	 *   GtkIMHtml::typing-notification-font = "monospace italic light 8.0"
@@ -1702,15 +1702,15 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
 	                                        "Typing notification color",
 	                                        "The color to use for the typing notification",
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
 	                                        "Typing notification font",
 	                                        "The font to use for the typing notification",
-	                                        "light 8.0", G_PARAM_READABLE));
+	                                        "light 8.0", G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boolean("typing-notification-enable",
 	                                        "Enable typing notification",
 	                                        "Enable typing notification",
-	                                        TRUE, G_PARAM_READABLE));
+	                                        TRUE, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 #if 0
 	GtkBindingSet *binding_set;

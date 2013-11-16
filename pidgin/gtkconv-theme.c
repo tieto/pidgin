@@ -414,6 +414,8 @@ _set_variant(PidginConvTheme *theme, const char *variant)
 	                           g_value_get_string(val));
 	purple_prefs_set_string(prefname, variant);
 	g_free(prefname);
+
+	g_object_notify(G_OBJECT(theme), "variant");
 }
 
 /******************************************************************************
@@ -531,7 +533,7 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 	pspec = g_param_spec_boxed("info", "Info",
 			"The information about this theme",
 			G_TYPE_HASH_TABLE,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_INFO, pspec);
 #if GLIB_CHECK_VERSION(2,26,0)
 	properties[PROP_INFO] = pspec;
@@ -540,7 +542,7 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 	/* VARIANT */
 	pspec = g_param_spec_string("variant", "Variant",
 			"The current variant for this theme",
-			NULL, G_PARAM_READWRITE);
+			NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
 #if GLIB_CHECK_VERSION(2,26,0)
 	properties[PROP_VARIANT] = pspec;
@@ -598,6 +600,8 @@ pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 		g_hash_table_destroy(priv->info);
 
 	priv->info = info;
+
+	g_object_notify(G_OBJECT(theme), "info");
 }
 
 const GValue *
