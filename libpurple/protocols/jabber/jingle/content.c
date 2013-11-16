@@ -84,49 +84,49 @@ jingle_content_class_init (JingleContentClass *klass)
 			"Jingle Session",
 			"The jingle session parent of this content.",
 			JINGLE_TYPE_SESSION,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_CREATOR,
 			g_param_spec_string("creator",
 			"Creator",
 			"The participant that created this content.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_DISPOSITION,
 			g_param_spec_string("disposition",
 			"Disposition",
 			"The disposition of the content.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_NAME,
 			g_param_spec_string("name",
 			"Name",
 			"The name of this content.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_SENDERS,
 			g_param_spec_string("senders",
 			"Senders",
 			"The sender of this content.",
 			NULL,
-			G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_TRANSPORT,
 			g_param_spec_object("transport",
 			"transport",
 			"The transport of this content.",
 			JINGLE_TYPE_TRANSPORT,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_PENDING_TRANSPORT,
 			g_param_spec_object("pending-transport",
 			"Pending transport",
 			"The pending transport contained within this content",
 			JINGLE_TYPE_TRANSPORT,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_type_class_add_private(klass, sizeof(JingleContentPrivate));
 }
@@ -322,7 +322,7 @@ JingleTransport *
 jingle_content_get_pending_transport(JingleContent *content)
 {
 	JingleTransport *pending_transport;
-	g_object_get(content, "pending_transport", &pending_transport, NULL);
+	g_object_get(content, "pending-transport", &pending_transport, NULL);
 	return pending_transport;
 }
 
@@ -337,8 +337,12 @@ jingle_content_accept_transport(JingleContent *content)
 {
 	if (content->priv->transport)
 		g_object_unref(content->priv->transport);
+
 	content->priv->transport = content->priv->pending_transport;
 	content->priv->pending_transport = NULL;
+
+	g_object_notify(G_OBJECT(content), "transport");
+	g_object_notify(G_OBJECT(content), "pending-transport");
 }
 
 void
@@ -348,6 +352,8 @@ jingle_content_remove_pending_transport(JingleContent *content)
 		g_object_unref(content->priv->pending_transport);
 		content->priv->pending_transport = NULL;
 	}
+
+	g_object_notify(G_OBJECT(content), "pending-transport");
 }
 
 void

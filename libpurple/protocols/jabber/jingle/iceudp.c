@@ -154,13 +154,13 @@ jingle_iceudp_class_init (JingleIceUdpClass *klass)
 			g_param_spec_pointer("local-candidates",
 			"Local candidates",
 			"The local candidates for this transport.",
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_REMOTE_CANDIDATES,
 			g_param_spec_pointer("remote-candidates",
 			"Remote candidates",
 			"The remote candidates for this transport.",
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	g_type_class_add_private(klass, sizeof(JingleIceUdpPrivate));
 }
