@@ -114,13 +114,13 @@ jingle_rtp_class_init (JingleRtpClass *klass)
 			"Media Type",
 			"The media type (\"audio\" or \"video\") for this rtp session.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property(gobject_class, PROP_SSRC,
 			g_param_spec_string("ssrc",
 			"ssrc",
 			"The ssrc for this rtp session.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_type_class_add_private(klass, sizeof(JingleRtpPrivate));
 }
@@ -882,6 +882,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_session_add_content(session, content);
 		JINGLE_RTP(content)->priv->media_type = g_strdup("audio");
 		jingle_rtp_init_media(content);
+		g_object_notify(G_OBJECT(content), "media-type");
 	}
 	if (type & PURPLE_MEDIA_VIDEO) {
 		transport = jingle_transport_create(transport_type);
@@ -890,6 +891,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_session_add_content(session, content);
 		JINGLE_RTP(content)->priv->media_type = g_strdup("video");
 		jingle_rtp_init_media(content);
+		g_object_notify(G_OBJECT(content), "media-type");
 	}
 
 	g_free(me);
