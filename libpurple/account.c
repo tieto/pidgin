@@ -3022,56 +3022,56 @@ purple_account_class_init(PurpleAccountClass *klass)
 	obj_class->set_property = purple_account_set_property;
 
 	g_object_class_install_property(obj_class, PROP_USERNAME,
-			g_param_spec_string("username", _("Username"),
-				_("The username for the account."), NULL,
+			g_param_spec_string("username", "Username",
+				"The username for the account.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PRIVATE_ALIAS,
-			g_param_spec_string("private-alias", _("Private Alias"),
-				_("The private alias for the account."), NULL,
+			g_param_spec_string("private-alias", "Private Alias",
+				"The private alias for the account.", NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_USER_INFO,
-			g_param_spec_string("user-info", _("User information"),
-				_("Detailed user information for the account."), NULL,
+			g_param_spec_string("user-info", "User information",
+				"Detailed user information for the account.", NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_BUDDY_ICON_PATH,
-			g_param_spec_string("buddy-icon-path", _("Buddy icon path"),
-				_("Path to the buddyicon for the account."), NULL,
+			g_param_spec_string("buddy-icon-path", "Buddy icon path",
+				"Path to the buddyicon for the account.", NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ENABLED,
-			g_param_spec_boolean("enabled", _("Enabled"),
-				_("Whether the account is enabled or not."), FALSE,
+			g_param_spec_boolean("enabled", "Enabled",
+				"Whether the account is enabled or not.", FALSE,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_REMEMBER_PASSWORD,
-			g_param_spec_boolean("remember-password", _("Remember password"),
-				_("Whether to remember and store the password for this account."), FALSE,
+			g_param_spec_boolean("remember-password", "Remember password",
+				"Whether to remember and store the password for this account.", FALSE,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_CHECK_MAIL,
-			g_param_spec_boolean("check-mail", _("Check mail"),
-				_("Whether to check mails for this account."), FALSE,
+			g_param_spec_boolean("check-mail", "Check mail",
+				"Whether to check mails for this account.", FALSE,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_CONNECTION,
-			g_param_spec_object("connection", _("Connection"),
-				_("The connection for the account."), PURPLE_TYPE_CONNECTION,
+			g_param_spec_object("connection", "Connection",
+				"The connection for the account.", PURPLE_TYPE_CONNECTION,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PROTOCOL_ID,
-			g_param_spec_string("protocol-id", _("Protocol ID"),
-				_("ID of the protocol that is responsible for the account."), NULL,
+			g_param_spec_string("protocol-id", "Protocol ID",
+				"ID of the protocol that is responsible for the account.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 

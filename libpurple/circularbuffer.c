@@ -34,12 +34,26 @@
  * Structs
  *****************************************************************************/
 typedef struct {
+	/** A pointer to the starting address of our chunk of memory. */
 	gchar *buffer;
+
+	/** The incremental amount to increase this buffer by when
+	 *  the buffer is not big enough to hold incoming data, in bytes. */
 	gsize growsize;
+
+	/** The length of this buffer, in bytes. */
 	gsize buflen;
+
+	/** The number of bytes of this buffer that contain unread data. */
 	gsize bufused;
+
+	/** A pointer to the next byte where new incoming data is
+	 *  buffered to. */
 	gchar *input;
-	gchar *output;
+
+	/** A pointer to the next byte of buffered data that should be
+	 *  read by the consumer. */
+	gchar *output;	
 } PurpleCircularBufferPrivate;
 
 /******************************************************************************
@@ -371,7 +385,7 @@ purple_circular_buffer_mark_read(PurpleCircularBuffer *buffer, gsize len) {
 
 	g_return_val_if_fail(PURPLE_IS_CIRCULAR_BUFFER(buffer), FALSE);
 
-	klass = PURPLE_CIRCULAR_BUFFER_CLASS(buffer);
+	klass = PURPLE_CIRCULAR_BUFFER_GET_CLASS(buffer);
 	if(klass && klass->mark_read)
 		return klass->mark_read(buffer, len);
 

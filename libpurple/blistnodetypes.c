@@ -676,44 +676,44 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 	obj_class->constructed = purple_buddy_constructed;
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_NAME,
-			g_param_spec_string("name", _("Name"),
-				_("The name of the buddy."), NULL,
+			g_param_spec_string("name", "Name",
+				"The name of the buddy.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_LOCAL_ALIAS,
-			g_param_spec_string("local-alias", _("Local alias"),
-				_("Local alias of thee buddy."), NULL,
+			g_param_spec_string("local-alias", "Local alias",
+				"Local alias of thee buddy.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_SERVER_ALIAS,
-			g_param_spec_string("server-alias", _("Server alias"),
-				_("Server-side alias of the buddy."), NULL,
+			g_param_spec_string("server-alias", "Server alias",
+				"Server-side alias of the buddy.", NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_ICON,
-			g_param_spec_pointer("icon", _("Buddy icon"),
-				_("The icon for the buddy."),
+			g_param_spec_pointer("icon", "Buddy icon",
+				"The icon for the buddy.",
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_ACCOUNT,
-			g_param_spec_object("account", _("Account"),
-				_("The account for the buddy."), PURPLE_TYPE_ACCOUNT,
+			g_param_spec_object("account", "Account",
+				"The account for the buddy.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_PRESENCE,
-			g_param_spec_object("presence", _("Presence"),
-				_("The status information for the buddy."), PURPLE_TYPE_PRESENCE,
+			g_param_spec_object("presence", "Presence",
+				"The status information for the buddy.", PURPLE_TYPE_PRESENCE,
 				G_PARAM_READABLE)
 			);
 
 	g_object_class_install_property(obj_class, BUDDY_PROP_MEDIA_CAPS,
-			g_param_spec_enum("media-caps", _("Media capabilities"),
-				_("The media capabilities of the buddy."),
+			g_param_spec_enum("media-caps", "Media capabilities",
+				"The media capabilities of the buddy.",
 				PURPLE_MEDIA_TYPE_CAPS, PURPLE_MEDIA_CAPS_NONE,
 				G_PARAM_READWRITE)
 			);
@@ -1037,14 +1037,14 @@ static void purple_contact_class_init(PurpleContactClass *klass)
 	obj_class->set_property = purple_contact_set_property;
 
 	g_object_class_install_property(obj_class, CONTACT_PROP_ALIAS,
-			g_param_spec_string("alias", _("Alias"),
-				_("The alias for the contact."), NULL,
+			g_param_spec_string("alias", "Alias",
+				"The alias for the contact.", NULL,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, CONTACT_PROP_PRIORITY_BUDDY,
 			g_param_spec_object("priority-buddy",
-				_("Priority buddy"), _("The priority buddy of the contact."),
+				"Priority buddy", "The priority buddy of the contact.",
 				PURPLE_TYPE_BUDDY, G_PARAM_READABLE)
 			);
 
@@ -1291,20 +1291,20 @@ static void purple_chat_class_init(PurpleChatClass *klass)
 	obj_class->constructed = purple_chat_constructed;
 
 	g_object_class_install_property(obj_class, CHAT_PROP_ALIAS,
-			g_param_spec_string("alias", _("Alias"),
-				_("The alias for the chat."), NULL,
+			g_param_spec_string("alias", "Alias",
+				"The alias for the chat.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
 	g_object_class_install_property(obj_class, CHAT_PROP_ACCOUNT,
-			g_param_spec_object("account", _("Account"),
-				_("The account that the chat belongs to."), PURPLE_TYPE_ACCOUNT,
+			g_param_spec_object("account", "Account",
+				"The account that the chat belongs to.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, CHAT_PROP_COMPONENTS,
-			g_param_spec_pointer("components", _("Components"),
-				_("The protocol components of the chat."),
+			g_param_spec_pointer("components", "Components",
+				"The protocol components of the chat.",
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
@@ -1629,8 +1629,8 @@ static void purple_group_class_init(PurpleGroupClass *klass)
 	obj_class->set_property = purple_group_set_property;
 
 	g_object_class_install_property(obj_class, GROUP_PROP_NAME,
-			g_param_spec_string("name", _("Name"),
-				_("Name of the group."), NULL,
+			g_param_spec_string("name", "Name",
+				"Name of the group.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 

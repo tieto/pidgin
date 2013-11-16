@@ -805,41 +805,41 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->set_property = purple_connection_set_property;
 
 	g_object_class_install_property(obj_class, PROP_PROTOCOL,
-			g_param_spec_object("protocol", _("Protocol"),
-				_("The protocol that the connection is using."),
+			g_param_spec_object("protocol", "Protocol",
+				"The protocol that the connection is using.",
 				PURPLE_TYPE_PROTOCOL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FLAGS,
-			g_param_spec_flags("flags", _("Connection flags"),
-				_("The flags of the connection."),
+			g_param_spec_flags("flags", "Connection flags",
+				"The flags of the connection.",
 				PURPLE_TYPE_CONNECTION_FLAGS, 0,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_STATE,
-			g_param_spec_enum("state", _("Connection state"),
-				_("The current state of the connection."),
+			g_param_spec_enum("state", "Connection state",
+				"The current state of the connection.",
 				PURPLE_TYPE_CONNECTION_STATE, PURPLE_CONNECTION_DISCONNECTED,
 				G_PARAM_READWRITE)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object("account", _("Account"),
-				_("The account using the connection."), PURPLE_TYPE_ACCOUNT,
+			g_param_spec_object("account", "Account",
+				"The account using the connection.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PASSWORD,
-			g_param_spec_string("password", _("Password"),
-				_("The password used for connection."), NULL,
+			g_param_spec_string("password", "Password",
+				"The password used for connection.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
 	g_object_class_install_property(obj_class, PROP_DISPLAY_NAME,
-			g_param_spec_string("display-name", _("Display name"),
-				_("Your name that appears to other people."), NULL,
+			g_param_spec_string("display-name", "Display name",
+				"Your name that appears to other people.", NULL,
 				G_PARAM_READWRITE)
 			);
 

@@ -69,8 +69,7 @@ GType purple_circular_buffer_get_type(void);
  *                 is appended and every time more space is needed.  Pass in
  *                 "0" to use the default of 256 bytes.
  *
- * @return The new PurpleCircBuffer. This should be freed with
- *         purple_circ_buffer_destroy when you are done with it
+ * @return The new PurpleCircBuffer.
  */
 PurpleCircularBuffer *purple_circular_buffer_new(gsize growsize);
 
@@ -88,8 +87,8 @@ void purple_circular_buffer_append(PurpleCircularBuffer *buf, gconstpointer src,
  * Determine the maximum number of contiguous bytes that can be read from the
  * PurpleCircBuffer.
  * Note: This may not be the total number of bytes that are buffered - a
- * subsequent call after calling purple_circ_buffer_mark_read() may indicate more
- * data is available to read.
+ * subsequent call after calling purple_circular_buffer_mark_read() may indicate
+ * more data is available to read.
  *
  * @param buf the PurpleCircBuffer for which to determine the maximum contiguous
  *            bytes that can be read.

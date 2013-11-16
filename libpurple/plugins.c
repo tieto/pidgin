@@ -491,32 +491,32 @@ static void purple_plugin_info_class_init(PurplePluginInfoClass *klass)
 
 	g_object_class_install_property(obj_class, PROP_UI_REQUIREMENT,
 		g_param_spec_string("ui-requirement",
-		                  _("UI Requirement"),
-		                  _("ID of UI that is required by this plugin"), NULL,
+		                  "UI Requirement",
+		                  "ID of UI that is required by this plugin", NULL,
 		                  G_PARAM_WRITABLE));
 
 	g_object_class_install_property(obj_class, PROP_ACTIONS_CB,
 		g_param_spec_pointer("actions-cb",
-		                  _("Plugin actions"),
-		                  _("Callback that returns list of plugin's actions"),
+		                  "Plugin actions",
+		                  "Callback that returns list of plugin's actions",
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_PREF_FRAME_CB,
 		g_param_spec_pointer("pref-frame-cb",
-		                  _("Preferences frame callback"),
-		                  _("The callback that returns the preferences frame"),
+		                  "Preferences frame callback",
+		                  "The callback that returns the preferences frame",
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_PREF_REQUEST_CB,
 		g_param_spec_pointer("pref-request-cb",
-		                  _("Preferences request callback"),
-		                  _("Callback that returns preferences request handle"),
+		                  "Preferences request callback",
+		                  "Callback that returns preferences request handle",
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(obj_class, PROP_FLAGS,
 		g_param_spec_flags("flags",
-		                  _("Plugin flags"),
-		                  _("The flags for the plugin"),
+		                  "Plugin flags",
+		                  "The flags for the plugin",
 		                  PURPLE_TYPE_PLUGIN_INFO_FLAGS, 0,
 		                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
