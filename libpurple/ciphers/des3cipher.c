@@ -352,6 +352,8 @@ purple_des3_cipher_set_batch_mode(PurpleCipher *cipher, PurpleCipherBatchMode mo
 	PurpleDES3CipherPrivate *priv = PURPLE_DES3_CIPHER_GET_PRIVATE(des3_cipher);
 
 	priv->mode = mode;
+
+	g_object_notify(G_OBJECT(cipher), "batch-mode");
 }
 
 static PurpleCipherBatchMode
@@ -456,17 +458,17 @@ purple_des3_cipher_class_init(PurpleDES3CipherClass *klass) {
 	cipher_class->get_batch_mode = purple_des3_cipher_get_batch_mode;
 	cipher_class->get_key_size = purple_des3_cipher_get_key_size;
 
-	pspec = g_param_spec_enum("batch_mode", "batch_mode", "batch_mode",
+	pspec = g_param_spec_enum("batch-mode", "batch-mode", "batch-mode",
 							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
-							  G_PARAM_READWRITE);
+							  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_BATCH_MODE, pspec);
 
 	pspec = g_param_spec_string("iv", "iv", "iv", NULL,
-								G_PARAM_WRITABLE);
+								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_IV, pspec);
 
 	pspec = g_param_spec_string("key", "key", "key", NULL,
-								G_PARAM_WRITABLE);
+								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_KEY, pspec);
 
 	g_type_class_add_private(klass, sizeof(PurpleDES3CipherPrivate));

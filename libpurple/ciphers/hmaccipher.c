@@ -280,7 +280,8 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 	cipher_class->get_block_size = purple_hmac_cipher_get_block_size;
 
 	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_HASH,
-								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+								G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_HASH, pspec);
 }
 

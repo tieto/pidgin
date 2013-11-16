@@ -534,7 +534,7 @@ purple_des_cipher_class_init(PurpleDESCipherClass *klass)
 	cipher_class->get_key_size = purple_des_cipher_get_key_size;
 
 	pspec = g_param_spec_string("key", "key", "key", NULL,
-								G_PARAM_WRITABLE);
+								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_KEY, pspec);
 
 	g_type_class_add_private(klass, sizeof(PurpleDESCipherPrivate));

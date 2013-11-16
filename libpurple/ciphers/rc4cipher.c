@@ -180,13 +180,13 @@ purple_rc4_cipher_class_init(PurpleRC4CipherClass *klass) {
 	cipher_class->encrypt = purple_rc4_cipher_encrypt;
 	cipher_class->set_key = purple_rc4_cipher_set_key;
 
-	pspec = g_param_spec_int("key_len", "key_len", "key_len",
+	pspec = g_param_spec_int("key-len", "key-len", "key-len",
 							 G_MININT, G_MAXINT, 0,
-							 G_PARAM_READWRITE);
+							 G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_KEY_LEN, pspec);
 
 	pspec = g_param_spec_string("key", "key", "key", NULL,
-								G_PARAM_WRITABLE);
+								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_KEY, pspec);
 
 	g_type_class_add_private(klass, sizeof(PurpleRC4CipherPrivate));
@@ -241,6 +241,8 @@ purple_rc4_cipher_set_key_len(PurpleRC4Cipher *rc4_cipher,
 
 	priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
 	priv->key_len = key_len;
+
+	g_object_notify(G_OBJECT(rc4_cipher), "key-len");
 }
 
 gint
