@@ -457,8 +457,8 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 	obj_class->set_property = purple_presence_set_property;
 
 	g_object_class_install_property(obj_class, PRES_PROP_IDLE,
-			g_param_spec_boolean("idle", _("Idle"),
-				_("Whether the presence is in idle state."), FALSE,
+			g_param_spec_boolean("idle", "Idle",
+				"Whether the presence is in idle state.", FALSE,
 				G_PARAM_READWRITE)
 			);
 
@@ -471,8 +471,8 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 #else
 #error Unknown size of time_t
 #endif
-				("idle-time", _("Idle time"),
-				_("The idle time of the presence"),
+				("idle-time", "Idle time",
+				"The idle time of the presence",
 #if SIZEOF_TIME_T == 4
 				G_MININT, G_MAXINT, 0,
 #elif SIZEOF_TIME_T == 8
@@ -491,8 +491,8 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 #else
 #error Unknown size of time_t
 #endif
-				("login-time", _("Login time"),
-				_("The login time of the presence."),
+				("login-time", "Login time",
+				"The login time of the presence.",
 #if SIZEOF_TIME_T == 4
 				G_MININT, G_MAXINT, 0,
 #elif SIZEOF_TIME_T == 8
@@ -504,14 +504,14 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 			);
 
 	g_object_class_install_property(obj_class, PRES_PROP_STATUSES,
-			g_param_spec_pointer("statuses", _("Statuses"),
-				_("The list of statuses in the presence."),
+			g_param_spec_pointer("statuses", "Statuses",
+				"The list of statuses in the presence.",
 				G_PARAM_READABLE)
 			);
 
 	g_object_class_install_property(obj_class, PRES_PROP_ACTIVE_STATUS,
-			g_param_spec_object("active-status", _("Active status"),
-				_("The active status for the presence."), PURPLE_TYPE_STATUS,
+			g_param_spec_object("active-status", "Active status",
+				"The active status for the presence.", PURPLE_TYPE_STATUS,
 				G_PARAM_READWRITE)
 			);
 
@@ -749,8 +749,8 @@ static void purple_account_presence_class_init(PurpleAccountPresenceClass *klass
 	obj_class->set_property = purple_account_presence_set_property;
 
 	g_object_class_install_property(obj_class, ACPRES_PROP_ACCOUNT,
-			g_param_spec_object("account", _("Account"),
-				_("The account that this presence is of."), PURPLE_TYPE_ACCOUNT,
+			g_param_spec_object("account", "Account",
+				"The account that this presence is of.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 
@@ -943,8 +943,8 @@ static void purple_buddy_presence_class_init(PurpleBuddyPresenceClass *klass)
 	obj_class->set_property = purple_buddy_presence_set_property;
 
 	g_object_class_install_property(obj_class, BUDPRES_PROP_BUDDY,
-			g_param_spec_object("buddy", _("Buddy"),
-				_("The buddy that this presence is of."), PURPLE_TYPE_BUDDY,
+			g_param_spec_object("buddy", "Buddy",
+				"The buddy that this presence is of.", PURPLE_TYPE_BUDDY,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
 

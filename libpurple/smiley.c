@@ -405,15 +405,15 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 	gobj_class->dispose = purple_smiley_dispose;
 
 	/* Shortcut */
-	pspec = g_param_spec_string("shortcut", _("Shortcut"),
-			_("The text-shortcut for the smiley"),
+	pspec = g_param_spec_string("shortcut", "Shortcut",
+			"The text-shortcut for the smiley",
 			NULL,
 			G_PARAM_READWRITE);
 	g_object_class_install_property(gobj_class, PROP_SHORTCUT, pspec);
 
 	/* Stored Image */
-	pspec = g_param_spec_pointer("image", _("Stored Image"),
-			_("Stored Image. (that'll have to do for now)"),
+	pspec = g_param_spec_pointer("image", "Stored Image",
+			"Stored Image. (that'll have to do for now)",
 			G_PARAM_READWRITE);
 	g_object_class_install_property(gobj_class, PROP_IMGSTORE, pspec);
 
