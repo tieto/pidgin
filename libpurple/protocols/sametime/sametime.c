@@ -1279,7 +1279,7 @@ static void conversation_created_cb(PurpleConversation *g_conv,
   if(pd->gc != gc)
     return; /* not ours */
 
-  if(PURPLE_IS_CHAT_CONVERSATION(g_conv))
+  if(!PURPLE_IS_IM_CONVERSATION(g_conv))
     return; /* wrong type */
 
   who.user = (char *) purple_conversation_get_name(g_conv);
