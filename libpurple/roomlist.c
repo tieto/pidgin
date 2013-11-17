@@ -362,19 +362,20 @@ purple_roomlist_class_init(PurpleRoomlistClass *klass)
 			g_param_spec_object("account", "Account",
 				"The account for the room list.",
 				PURPLE_TYPE_ACCOUNT,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+				G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FIELDS,
 			g_param_spec_pointer("fields", "Fields",
 				"The list of fields for a roomlist.",
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_IN_PROGRESS,
 			g_param_spec_boolean("in-progress", "In progress",
 				"Whether the room list is being fetched.", FALSE,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_type_class_add_private(klass, sizeof(PurpleRoomlistPrivate));
@@ -482,6 +483,8 @@ void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *ro
 			room->fields = g_list_append(room->fields, GINT_TO_POINTER(field));
 			break;
 	}
+
+	g_object_notify(G_OBJECT(list), "fields");
 }
 
 void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)

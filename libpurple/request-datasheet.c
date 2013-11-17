@@ -426,7 +426,7 @@ purple_request_datasheet_record_set_image_data(
 	purple_request_datasheet_record_set_common_data(rec, col_no, stock_id);
 }
 
-const gchar *
+static const gchar *
 purple_request_datasheet_record_get_common_data(
 	const PurpleRequestDatasheetRecord *rec, guint col_no)
 {

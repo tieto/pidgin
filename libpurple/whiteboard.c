@@ -443,25 +443,27 @@ purple_whiteboard_class_init(PurpleWhiteboardClass *klass)
 			g_param_spec_int("state", "State",
 				"State of the whiteboard.",
 				G_MININT, G_MAXINT, 0,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
 			g_param_spec_object("account", "Account",
 				"The whiteboard's account.", PURPLE_TYPE_ACCOUNT,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+				G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_WHO,
 			g_param_spec_string("who", "Who",
 				"Who you're drawing with.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+				G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_DRAW_LIST,
 			g_param_spec_pointer("draw-list", "Draw list",
 				"A list of points to draw to the buddy.",
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_type_class_add_private(klass, sizeof(PurpleWhiteboardPrivate));
