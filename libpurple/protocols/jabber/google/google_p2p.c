@@ -283,12 +283,17 @@ jingle_google_p2p_add_local_candidate(JingleTransport *transport, const gchar *i
 
 			google_p2p->priv->local_candidates = g_list_append(
 					google_p2p->priv->local_candidates, candidate);
+
+			g_object_notify(G_OBJECT(google_p2p), "local-candidates");
+
 			return;
 		}
 	}
 
 	google_p2p->priv->local_candidates = g_list_append(
 			google_p2p->priv->local_candidates, google_p2p_candidate);
+
+	g_object_notify(G_OBJECT(google_p2p), "local-candidates");
 }
 
 static GList *
@@ -351,6 +356,8 @@ jingle_google_p2p_add_remote_candidate(JingleGoogleP2P *google_p2p, JingleGoogle
 		g_boxed_free(JINGLE_TYPE_GOOGLE_P2P_CANDIDATE, google_p2p_candidate);
 	}
 	priv->remote_candidates = g_list_append(priv->remote_candidates, candidate);
+
+	g_object_notify(G_OBJECT(google_p2p), "remote-candidates");
 }
 
 static JingleTransport *

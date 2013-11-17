@@ -249,12 +249,17 @@ jingle_rawudp_add_local_candidate(JingleTransport *transport, const gchar *id, g
 
 			rawudp->priv->local_candidates = g_list_append(
 					rawudp->priv->local_candidates, rawudp_candidate);
+
+			g_object_notify(G_OBJECT(rawudp), "local-candidates");
+
 			return;
 		}
 	}
 
 	rawudp->priv->local_candidates = g_list_append(
 			rawudp->priv->local_candidates, rawudp_candidate);
+
+	g_object_notify(G_OBJECT(rawudp), "local-candidates");
 }
 
 static GList *
@@ -301,6 +306,8 @@ jingle_rawudp_add_remote_candidate(JingleRawUdp *rawudp, JingleRawUdpCandidate *
 		g_boxed_free(JINGLE_TYPE_RAWUDP_CANDIDATE, rawudp_candidate);
 	}
 	priv->remote_candidates = g_list_append(priv->remote_candidates, candidate);
+
+	g_object_notify(G_OBJECT(rawudp), "remote-candidates");
 }
 
 static JingleTransport *

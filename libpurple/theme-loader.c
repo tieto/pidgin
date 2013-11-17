@@ -130,7 +130,8 @@ purple_theme_loader_class_init(PurpleThemeLoaderClass *klass)
 	pspec = g_param_spec_string("type", "Type",
 				    "The string representing the type of the theme",
 				    NULL,
-				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+				    G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_TYPE, pspec);
 }
 
@@ -184,6 +185,8 @@ purple_theme_loader_set_type_string(PurpleThemeLoader *loader, const gchar *type
 
 	g_free(priv->type);
 	priv->type = g_strdup(type);
+
+	g_object_notify(G_OBJECT(loader), "type");
 }
 
 PurpleTheme *
