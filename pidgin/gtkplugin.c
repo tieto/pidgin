@@ -139,7 +139,8 @@ static void pidgin_plugin_info_class_init(PidginPluginInfoClass *klass)
 		g_param_spec_pointer("gtk-config-frame-cb",
 		                     "GTK configuration frame callback",
 		                     "Callback that returns a GTK configuration frame",
-		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+		                     G_PARAM_STATIC_STRINGS));
 }
 
 GType

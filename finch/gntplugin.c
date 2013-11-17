@@ -131,7 +131,8 @@ static void finch_plugin_info_class_init(FinchPluginInfoClass *klass)
 		g_param_spec_pointer("gnt-pref-frame-cb",
 		                     "GNT preferences frame callback",
 		                     "Callback that returns a GNT preferences frame",
-		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+		                     G_PARAM_STATIC_STRINGS));
 }
 
 GType
