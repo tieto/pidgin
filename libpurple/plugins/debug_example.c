@@ -20,7 +20,10 @@
  *
  */
 
-#include <internal.h>
+/* When writing a third-party plugin, do not include libpurple's internal.h
+ * included below. This file is for internal libpurple use only. We're including
+ * it here for our own convenience. */
+#include "internal.h"
 
 /* This file defines PURPLE_PLUGINS and includes all the libpurple headers */
 #include <purple.h>

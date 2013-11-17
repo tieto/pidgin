@@ -230,6 +230,17 @@ purple_circular_buffer_set_grow_size(PurpleCircularBuffer *buffer,
 	g_object_notify(G_OBJECT(buffer), "grow-size");
 }
 
+static const gchar *
+purple_circular_buffer_get_input(const PurpleCircularBuffer *buffer) {
+	PurpleCircularBufferPrivate *priv = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_CIRCULAR_BUFFER(buffer), NULL);
+
+	priv = PURPLE_CIRCULAR_BUFFER_GET_PRIVATE(buffer);
+
+	return priv->input;
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -435,17 +446,6 @@ purple_circular_buffer_get_used(const PurpleCircularBuffer *buffer) {
 	priv = PURPLE_CIRCULAR_BUFFER_GET_PRIVATE(buffer);
 
 	return priv->bufused;
-}
-
-const gchar *
-purple_circular_buffer_get_input(const PurpleCircularBuffer *buffer) {
-	PurpleCircularBufferPrivate *priv = NULL;
-
-	g_return_val_if_fail(PURPLE_IS_CIRCULAR_BUFFER(buffer), NULL);
-
-	priv = PURPLE_CIRCULAR_BUFFER_GET_PRIVATE(buffer);
-
-	return priv->input;
 }
 
 const gchar *
