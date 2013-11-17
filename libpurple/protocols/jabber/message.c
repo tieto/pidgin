@@ -910,7 +910,7 @@ jabber_conv_support_custom_smileys(JabberStream *js,
 		} else {
 			return FALSE;
 		}
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 		if (chat) {
 			/* do not attempt to send custom smileys in a MUC with more than
@@ -921,6 +921,8 @@ jabber_conv_support_custom_smileys(JabberStream *js,
 		} else {
 			return FALSE;
 		}
+	} else {
+		return FALSE;
 	}
 }
 

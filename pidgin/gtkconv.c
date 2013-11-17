@@ -254,7 +254,7 @@ get_conversation_blist_node(PurpleConversation *conv)
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
 		node = PURPLE_BLIST_NODE(purple_blist_find_buddy(account, purple_conversation_get_name(conv)));
 		node = node ? node->parent : NULL;
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		node = PURPLE_BLIST_NODE(purple_blist_find_chat(account, purple_conversation_get_name(conv)));
 	}
 
@@ -292,7 +292,7 @@ close_conv_cb(GtkButton *button, PidginConversation *gtkconv)
 			close_this_sucker(gtkconv);
 		else
 			hide_conv(gtkconv, TRUE);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		PurpleChat *chat = purple_blist_find_chat(account, name);
 		if (!chat ||
 				!purple_blist_node_get_bool(&chat->node, "gtk-persistent"))
@@ -704,7 +704,7 @@ add_remove_cb(GtkWidget *widget, PidginConversation *gtkconv)
 			pidgin_dialogs_remove_buddy(b);
 		else if (account != NULL && purple_account_is_connected(account))
 			purple_blist_request_add_buddy(account, (char *)name, NULL, NULL);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		PurpleChat *c;
 
 		c = purple_blist_find_chat(account, name);
@@ -737,7 +737,7 @@ info_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		pidgin_retrieve_user_info(purple_conversation_get_connection(conv),
 					  purple_conversation_get_name(conv));
 		gtk_widget_grab_focus(gtkconv->entry);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		/* Get info of the person currently selected in the GtkTreeView */
 		PidginChatPane *gtkchat;
 		GtkTreeIter iter;
@@ -1136,7 +1136,13 @@ menu_view_log_cb(GtkAction *action, gpointer data)
 	GSList *cur;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
-	type = PURPLE_IS_IM_CONVERSATION(conv) ? PURPLE_LOG_IM : PURPLE_LOG_CHAT;
+
+	if (PURPLE_IS_IM_CONVERSATION(conv))
+		type = PURPLE_LOG_IM;
+	else if (PURPLE_IS_CHAT_CONVERSATION(conv))
+		type = PURPLE_LOG_CHAT;
+	else
+		return;
 
 	gtkblist = pidgin_blist_get_default_gtk_blist();
 
@@ -1288,7 +1294,7 @@ menu_alias_cb(GtkAction *action, gpointer data)
 		b = purple_blist_find_buddy(account, name);
 		if (b != NULL)
 			pidgin_dialogs_alias_buddy(b);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		PurpleChat *c;
 
 		c = purple_blist_find_chat(account, name);
@@ -1441,7 +1447,7 @@ menu_logging_cb(GtkAction *action, gpointer data)
 			purple_blist_node_remove_setting(node, "enable-logging");
 		else
 			purple_blist_node_set_bool(node, "enable-logging", logging);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		if (logging == purple_prefs_get_bool("/purple/logging/log_chats"))
 			purple_blist_node_remove_setting(node, "enable-logging");
 		else
@@ -2648,7 +2654,7 @@ update_tab_icon(PurpleConversation *conv)
 	gtk_widget_queue_draw(gtkconv->infopane);
 
 	if (pidgin_conv_window_is_active_conversation(conv) &&
-		(PURPLE_IS_CHAT_CONVERSATION(conv) || gtkconv->u.im->anim == NULL))
+		(!PURPLE_IS_IM_CONVERSATION(conv) || gtkconv->u.im->anim == NULL))
 	{
 		l = pidgin_conv_get_tab_icons(conv);
 
@@ -5802,7 +5808,7 @@ buddy_update_cb(PurpleBlistNode *bnode, gpointer null)
 		PidginWindow *win = list->data;
 		PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 
-		if (PURPLE_IS_CHAT_CONVERSATION(conv))
+		if (!PURPLE_IS_IM_CONVERSATION(conv))
 			continue;
 
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
@@ -5867,13 +5873,12 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	PidginConversation *gtkconv;
 	const char *theme_name;
 	PurpleTheme *theme = NULL;
-	gboolean is_chat = PURPLE_IS_CHAT_CONVERSATION(conv);
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
 	GtkTargetList *targets;
 
-	if (!is_chat && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
+	if (PURPLE_IS_IM_CONVERSATION(conv) && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		purple_conversation_set_ui_data(conv, gtkconv);
 		if (!g_list_find(gtkconv->convs, conv))
 			gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
@@ -5898,18 +5903,17 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->theme = PIDGIN_CONV_THEME(g_object_ref(theme));
 	gtkconv->last_flags = 0;
 
-
-	if (!is_chat) {
+	if (PURPLE_IS_IM_CONVERSATION(conv)) {
 		gtkconv->u.im = g_malloc0(sizeof(PidginImPane));
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		gtkconv->u.chat = g_malloc0(sizeof(PidginChatPane));
 	}
 	pane = setup_common_pane(gtkconv);
 
 	if (pane == NULL) {
-		if (is_chat)
+		if (PURPLE_IS_CHAT_CONVERSATION(conv))
 			g_free(gtkconv->u.chat);
-		else
+		else if (PURPLE_IS_IM_CONVERSATION(conv))
 			g_free(gtkconv->u.im);
 
 		g_free(gtkconv);
@@ -6101,7 +6105,7 @@ pidgin_conv_destroy(PurpleConversation *conv)
 			g_source_remove(gtkconv->u.im->typing_timer);
 
 		g_free(gtkconv->u.im);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		purple_signals_disconnect_by_handle(gtkconv->u.chat);
 		g_free(gtkconv->u.chat);
 	}
@@ -7314,7 +7318,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 
 		gtk_action_set_visible(win->menu->insert_link, TRUE);
 		gtk_action_set_visible(win->menu->insert_image, TRUE);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
 
 		/* Deal with menu items */
@@ -7347,7 +7351,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 	 * and what features that account supports.
 	 */
 	if ((gc != NULL) &&
-		(PURPLE_IS_IM_CONVERSATION(conv) ||
+		(!PURPLE_IS_CHAT_CONVERSATION(conv) ||
 		 !purple_chat_conversation_has_left(PURPLE_CHAT_CONVERSATION(conv)) ))
 	{
 		PurpleConnectionFlags features = purple_conversation_get_features(conv);
@@ -7408,7 +7412,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 									 (account != NULL) &&
 									 (purple_blist_find_buddy(account, purple_conversation_get_name(conv)) != NULL));
 		}
-		else
+		else if (PURPLE_IS_CHAT_CONVERSATION(conv))
 		{
 			gtk_action_set_sensitive(win->menu->add, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, join)));
 			gtk_action_set_sensitive(win->menu->remove, (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, join)));
@@ -8607,7 +8611,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 			list = g_list_sort(list, message_compare);
 			gtkconv->attach_current = list;
 			list = g_list_last(list);
-		} else {
+		} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 			gtkconv->attach_current = g_list_last(list);
 		}
 	
@@ -9646,7 +9650,7 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	g_return_if_fail(conv != NULL);
 
-	if (PURPLE_IS_CHAT_CONVERSATION(conv))
+	if (!PURPLE_IS_IM_CONVERSATION(conv))
 		return;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -9871,7 +9875,7 @@ alias_cb(GtkEntry *entry, gpointer user_data)
 			purple_buddy_set_local_alias(buddy, gtk_entry_get_text(entry));
 		}
 		serv_alias_buddy(buddy);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		gtk_entry_set_text(GTK_ENTRY(gtkconv->u.chat->topic_text), gtk_entry_get_text(entry));
 		topic_callback(NULL, gtkconv);
 	}
@@ -9902,7 +9906,7 @@ infopane_entry_activate(PidginConversation *gtkconv)
 			return FALSE;
 
 		text = purple_buddy_get_contact_alias(buddy);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		PurpleConnection *gc;
 		PurpleProtocol *protocol = NULL;
 
@@ -10842,7 +10846,7 @@ conv_placement_last_created_win_type_configured_cb(GtkWidget *w,
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/y", y);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/height", event->height);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv->active_conv)) {
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/x", x);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/y", y);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/width",  event->width);
@@ -10919,7 +10923,7 @@ conv_get_group(PidginConversation *conv)
 		if (buddy != NULL)
 			group = purple_buddy_get_group(buddy);
 
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv->active_conv)) {
 		PurpleChat *chat;
 
 		chat = purple_blist_find_chat(purple_conversation_get_account(conv->active_conv),

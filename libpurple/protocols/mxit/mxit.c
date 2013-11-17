@@ -182,7 +182,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		/* not our conversation */
 		return;
 	}
-	else if ( PURPLE_IS_CHAT_CONVERSATION( conv ) ) {
+	else if ( !PURPLE_IS_IM_CONVERSATION( conv ) ) {
 		/* wrong type of conversation */
 		return;
 	}

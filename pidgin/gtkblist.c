@@ -4849,7 +4849,7 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 			purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 					ui, PURPLE_CALLBACK(displayed_msg_update_ui_cb), buddy);
 		}
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		PurpleChat *chat = purple_blist_find_chat(account, purple_conversation_get_name(conv));
 		struct _pidgin_blist_node *ui;
 		if (!chat)

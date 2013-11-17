@@ -298,7 +298,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	{
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 		if (swboard->conv == NULL ||
-			PURPLE_IS_IM_CONVERSATION(swboard->conv))
+			!PURPLE_IS_CHAT_CONVERSATION(swboard->conv))
 		{
 			GList *l;
 
