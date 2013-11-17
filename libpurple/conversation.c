@@ -282,6 +282,9 @@ purple_conversation_set_features(PurpleConversation *conv, PurpleConnectionFlags
 	g_return_if_fail(priv != NULL);
 
 	priv->features = features;
+
+	g_object_notify(G_OBJECT(conv), "features");
+
 	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_FEATURES);
 }
 
@@ -335,6 +338,8 @@ purple_conversation_set_account(PurpleConversation *conv, PurpleAccount *account
 	purple_conversations_update_cache(conv, NULL, account);
 	priv->account = account;
 
+	g_object_notify(G_OBJECT(conv), "account");
+
 	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ACCOUNT);
 }
 
@@ -373,6 +378,8 @@ purple_conversation_set_title(PurpleConversation *conv, const char *title)
 
 	g_free(priv->title);
 	priv->title = g_strdup(title);
+
+	g_object_notify(G_OBJECT(conv), "title");
 
 	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_TITLE);
 }
@@ -426,8 +433,9 @@ purple_conversation_set_name(PurpleConversation *conv, const char *name)
 	g_free(priv->name);
 	priv->name = g_strdup(name);
 
-	purple_conversation_autoset_title(conv);
+	g_object_notify(G_OBJECT(conv), "name");
 
+	purple_conversation_autoset_title(conv);
 	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_NAME);
 }
 
@@ -502,6 +510,8 @@ purple_conversation_set_logging(PurpleConversation *conv, gboolean log)
 		priv->logging = log;
 		if (log && priv->logs == NULL)
 			open_log(conv);
+
+		g_object_notify(G_OBJECT(conv), "logging");
 
 		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_LOGGING);
 	}
@@ -1118,32 +1128,32 @@ purple_conversation_class_init(PurpleConversationClass *klass)
 	g_object_class_install_property(obj_class, PROP_ACCOUNT,
 			g_param_spec_object("account", "Account",
 				"The account for the conversation.", PURPLE_TYPE_ACCOUNT,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_NAME,
 			g_param_spec_string("name", "Name",
 				"The name of the conversation.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_TITLE,
 			g_param_spec_string("title", "Title",
 				"The title of the conversation.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_LOGGING,
 			g_param_spec_boolean("logging", "Logging status",
 				"Whether logging is enabled or not.", FALSE,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_FEATURES,
 			g_param_spec_flags("features", "Connection features",
 				"The connection features of the conversation.",
 				PURPLE_TYPE_CONNECTION_FLAGS, 0,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_type_class_add_private(klass, sizeof(PurpleConversationPrivate));

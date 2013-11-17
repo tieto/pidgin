@@ -356,14 +356,19 @@ jingle_content_set_pending_transport(JingleContent *content, JingleTransport *tr
 void
 jingle_content_accept_transport(JingleContent *content)
 {
+	GObject *obj;
+
 	if (content->priv->transport)
 		g_object_unref(content->priv->transport);
 
 	content->priv->transport = content->priv->pending_transport;
 	content->priv->pending_transport = NULL;
 
-	g_object_notify(G_OBJECT(content), "transport");
-	g_object_notify(G_OBJECT(content), "pending-transport");
+	obj = G_OBJECT(content);
+	g_object_freeze_notify(obj);
+	g_object_notify(obj, "transport");
+	g_object_notify(obj, "pending-transport");
+	g_object_thaw_notify(obj);
 }
 
 void

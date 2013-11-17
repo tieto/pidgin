@@ -594,12 +594,12 @@ status_has_changed(PurpleStatus *status)
 			PURPLE_STATUS_GET_PRIVATE(old_status)->active = FALSE;
 			g_object_notify(G_OBJECT(old_status), "active");
 		}
-
-		g_object_set(presence, "active-status", status, NULL);
-		g_object_notify(G_OBJECT(status), "active");
 	}
 	else
 		old_status = NULL;
+
+	g_object_set(presence, "active-status", status, NULL);
+	g_object_notify(G_OBJECT(status), "active");
 
 	notify_status_update(presence, old_status, status);
 }
@@ -1229,19 +1229,21 @@ purple_status_class_init(PurpleStatusClass *klass)
 	g_object_class_install_property(obj_class, PROP_STATUS_TYPE,
 			g_param_spec_pointer("status-type", "Status type",
 				"The PurpleStatusType of the status.",
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+				G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_PRESENCE,
 			g_param_spec_object("presence", "Presence",
 				"The presence that the status belongs to.", PURPLE_TYPE_PRESENCE,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+				G_PARAM_STATIC_STRINGS)
 			);
 
 	g_object_class_install_property(obj_class, PROP_ACTIVE,
 			g_param_spec_boolean("active", "Active",
 				"Whether the status is active or not.", FALSE,
-				G_PARAM_READWRITE)
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
 			);
 
 	g_type_class_add_private(klass, sizeof(PurpleStatusPrivate));
