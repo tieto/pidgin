@@ -162,42 +162,43 @@ purple_theme_class_init(PurpleThemeClass *klass)
 	pspec = g_param_spec_string("name", "Name",
 			"The name of the theme",
 			NULL,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_NAME, pspec);
 
 	/* DESCRIPTION */
 	pspec = g_param_spec_string("description", "Description",
 			"The description of the theme",
 			NULL,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_DESCRIPTION, pspec);
 
 	/* AUTHOR */
 	pspec = g_param_spec_string("author", "Author",
 			"The author of the theme",
 			NULL,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_AUTHOR, pspec);
 
 	/* TYPE STRING (read only) */
 	pspec = g_param_spec_string("type", "Type",
 			"The string representing the type of the theme",
 			NULL,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+			G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_TYPE, pspec);
 
 	/* DIRECTORY */
 	pspec = g_param_spec_string("directory", "Directory",
 			"The directory that contains the theme and all its files",
 			NULL,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_DIR, pspec);
 
 	/* PREVIEW IMAGE */
 	pspec = g_param_spec_string("image", "Image",
 			"A preview image of the theme",
 			NULL,
-			G_PARAM_READWRITE);
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property(obj_class, PROP_IMAGE, pspec);
 }
 
@@ -267,6 +268,8 @@ purple_theme_set_name(PurpleTheme *theme, const gchar *name)
 
 	g_free(priv->name);
 	priv->name = theme_clean_text(name);
+
+	g_object_notify(G_OBJECT(theme), "name");
 }
 
 const gchar *
@@ -291,6 +294,8 @@ purple_theme_set_description(PurpleTheme *theme, const gchar *description)
 
 	g_free(priv->description);
 	priv->description = theme_clean_text(description);
+
+	g_object_notify(G_OBJECT(theme), "description");
 }
 
 const gchar *
@@ -315,6 +320,8 @@ purple_theme_set_author(PurpleTheme *theme, const gchar *author)
 
 	g_free(priv->author);
 	priv->author = theme_clean_text(author);
+
+	g_object_notify(G_OBJECT(theme), "author");
 }
 
 const gchar *
@@ -340,6 +347,8 @@ purple_theme_set_type_string(PurpleTheme *theme, const gchar *type)
 
 	g_free(priv->type);
 	priv->type = g_strdup(type);
+
+	g_object_notify(G_OBJECT(theme), "type");
 }
 
 const gchar *
@@ -364,6 +373,8 @@ purple_theme_set_dir(PurpleTheme *theme, const gchar *dir)
 
 	g_free(priv->dir);
 	priv->dir = g_strdup(dir);
+
+	g_object_notify(G_OBJECT(theme), "directory");
 }
 
 const gchar *
@@ -400,4 +411,6 @@ purple_theme_set_image(PurpleTheme *theme, const gchar *img)
 
 	g_free(priv->img);
 	priv->img = g_strdup(img);
+
+	g_object_notify(G_OBJECT(theme), "image");
 }

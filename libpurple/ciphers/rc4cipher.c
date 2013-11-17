@@ -89,6 +89,8 @@ purple_rc4_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 		state[y] = temp_swap;
 		x = (x + 1) % len;
 	}
+
+	g_object_notify(G_OBJECT(cipher), "key");
 }
 
 static ssize_t

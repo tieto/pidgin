@@ -394,30 +394,6 @@ get_outgoing_next_context_html(PidginConvThemePrivate *priv, const char *dir)
 	return priv->outgoing_next_context_html;
 }
 
-static void
-_set_variant(PidginConvTheme *theme, const char *variant)
-{
-	PidginConvThemePrivate *priv;
-	const GValue *val;
-	char *prefname;
-
-	g_return_if_fail(theme != NULL);
-	g_return_if_fail(variant != NULL);
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	g_free(priv->variant);
-	priv->variant = g_strdup(variant);
-
-	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
-	                           g_value_get_string(val));
-	purple_prefs_set_string(prefname, variant);
-	g_free(prefname);
-
-	g_object_notify(G_OBJECT(theme), "variant");
-}
-
 /******************************************************************************
  * GObject Stuff
  *****************************************************************************/
@@ -455,7 +431,7 @@ pidgin_conv_theme_set_property(GObject *obj, guint param_id, const GValue *value
 			break;
 
 		case PROP_VARIANT:
-			_set_variant(theme, g_value_get_string(value));
+			pidgin_conversation_theme_set_variant(theme, g_value_get_string(value));
 			break;
 
 		default:
@@ -712,7 +688,24 @@ pidgin_conversation_theme_get_variant(PidginConvTheme *theme)
 void
 pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant)
 {
-	_set_variant(theme, variant);
+	PidginConvThemePrivate *priv;
+	const GValue *val;
+	char *prefname;
+
+	g_return_if_fail(theme != NULL);
+	g_return_if_fail(variant != NULL);
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	g_free(priv->variant);
+	priv->variant = g_strdup(variant);
+
+	val = get_key(priv, "CFBundleIdentifier", FALSE);
+	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
+	                           g_value_get_string(val));
+	purple_prefs_set_string(prefname, variant);
+	g_free(prefname);
+
 #if GLIB_CHECK_VERSION(2,26,0)
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_VARIANT]);
 #else
