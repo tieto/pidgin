@@ -58,7 +58,7 @@ conv_placement_by_number(PidginConversation *conv)
 				win = l->data;
 
 				if (purple_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate") &&
-					PURPLE_IS_IM_CONVERSATION(pidgin_conv_window_get_active_conversation(win)) != PURPLE_IS_IM_CONVERSATION(conv->active_conv))
+					G_TYPE_FROM_INSTANCE(pidgin_conv_window_get_active_conversation(win)) != G_TYPE_FROM_INSTANCE(conv->active_conv))
 					continue;
 
 				count = pidgin_conv_window_get_gtkconv_count(win);
