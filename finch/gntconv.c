@@ -97,7 +97,7 @@ get_conversation_blist_node(PurpleConversation *conv)
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
 		node = (PurpleBlistNode*)find_buddy_for_conversation(conv);
 		node = node ? purple_blist_node_get_parent(node) : NULL;
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		node = (PurpleBlistNode*)find_chat_for_conversation(conv);
 	}
 
@@ -523,8 +523,10 @@ view_log_cb(GntMenuItem *n, gpointer ggc)
 
 	if (PURPLE_IS_IM_CONVERSATION(conv))
 		type = PURPLE_LOG_IM;
-	else
+	else if (PURPLE_IS_CHAT_CONVERSATION(conv))
 		type = PURPLE_LOG_CHAT;
+	else
+		return;
 
 	name = purple_conversation_get_name(conv);
 	account = purple_conversation_get_account(conv);
@@ -658,7 +660,7 @@ gg_create_menu(FinchConv *ggc)
 		}
 
 		generate_send_to_menu(ggc);
-	} else {
+	} else if (PURPLE_IS_CHAT_CONVERSATION(ggc->active_conv)) {
 		item = gnt_menuitem_new(_("Invite..."));
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		gnt_menuitem_set_callback(item, invite_cb, ggc);
@@ -810,8 +812,12 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
 
-	gnt_widget_set_name(ggc->window,
-			PURPLE_IS_IM_CONVERSATION(conv) ? "conversation-window-im" : "conversation-window-chat");
+	if (PURPLE_IS_IM_CONVERSATION(conv))
+		gnt_widget_set_name(ggc->window, "conversation-window-im");
+	else if (PURPLE_IS_CHAT_CONVERSATION(conv))
+		gnt_widget_set_name(ggc->window, "conversation-window-chat");
+	else
+		gnt_widget_set_name(ggc->window, "conversation-window-other");
 
 	ggc->tv = gnt_text_view_new();
 	gnt_widget_set_name(ggc->tv, "conversation-window-textview");
