@@ -21,6 +21,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "gtkconv-theme.h"
 
@@ -87,9 +88,7 @@ enum {
  *****************************************************************************/
 
 static GObjectClass *parent_class = NULL;
-#if GLIB_CHECK_VERSION(2,26,0)
 static GParamSpec *properties[PROP_LAST];
-#endif
 
 /******************************************************************************
  * Helper Functions
@@ -495,7 +494,6 @@ static void
 pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -506,23 +504,17 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 	obj_class->finalize = pidgin_conv_theme_finalize;
 
 	/* INFO */
-	pspec = g_param_spec_boxed("info", "Info",
+	properties[PROP_INFO] = g_param_spec_boxed("info", "Info",
 			"The information about this theme",
 			G_TYPE_HASH_TABLE,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_INFO, pspec);
-#if GLIB_CHECK_VERSION(2,26,0)
-	properties[PROP_INFO] = pspec;
-#endif
+	g_object_class_install_property(obj_class, PROP_INFO, properties[PROP_INFO]);
 
 	/* VARIANT */
-	pspec = g_param_spec_string("variant", "Variant",
+	properties[PROP_VARIANT] = g_param_spec_string("variant", "Variant",
 			"The current variant for this theme",
 			NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
-#if GLIB_CHECK_VERSION(2,26,0)
-	properties[PROP_VARIANT] = pspec;
-#endif
+	g_object_class_install_property(obj_class, PROP_VARIANT, properties[PROP_VARIANT]);
 }
 
 GType
@@ -577,7 +569,7 @@ pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 
 	priv->info = info;
 
-	g_object_notify(G_OBJECT(theme), "info");
+	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_INFO]);
 }
 
 const GValue *
@@ -706,11 +698,7 @@ pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *varian
 	purple_prefs_set_string(prefname, variant);
 	g_free(prefname);
 
-#if GLIB_CHECK_VERSION(2,26,0)
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_VARIANT]);
-#else
-	g_object_notify(G_OBJECT(theme), "variant");
-#endif
 }
 
 const GList *
