@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
+#include "glibcompat.h"
+
 #include "rc4cipher.h"
 
 /*******************************************************************************
@@ -49,6 +51,7 @@ enum {
  * Globals
  *****************************************************************************/
 static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 /******************************************************************************
  * Cipher Stuff
@@ -90,7 +93,7 @@ purple_rc4_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 		x = (x + 1) % len;
 	}
 
-	g_object_notify(G_OBJECT(cipher), "key");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_KEY]);
 }
 
 static ssize_t
@@ -171,7 +174,6 @@ static void
 purple_rc4_cipher_class_init(PurpleRC4CipherClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
-	GParamSpec *pspec = NULL;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -182,14 +184,15 @@ purple_rc4_cipher_class_init(PurpleRC4CipherClass *klass) {
 	cipher_class->encrypt = purple_rc4_cipher_encrypt;
 	cipher_class->set_key = purple_rc4_cipher_set_key;
 
-	pspec = g_param_spec_int("key-len", "key-len", "key-len",
+	properties[PROP_KEY_LEN] = g_param_spec_int("key-len", "key-len", "key-len",
 							 G_MININT, G_MAXINT, 0,
 							 G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_KEY_LEN, pspec);
+	g_object_class_install_property(obj_class, PROP_KEY_LEN,
+							 properties[PROP_KEY_LEN]);
 
-	pspec = g_param_spec_string("key", "key", "key", NULL,
+	properties[PROP_KEY] = g_param_spec_string("key", "key", "key", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_KEY, pspec);
+	g_object_class_install_property(obj_class, PROP_KEY, properties[PROP_KEY]);
 
 	g_type_class_add_private(klass, sizeof(PurpleRC4CipherPrivate));
 }
@@ -244,7 +247,7 @@ purple_rc4_cipher_set_key_len(PurpleRC4Cipher *rc4_cipher,
 	priv = PURPLE_RC4_CIPHER_GET_PRIVATE(rc4_cipher);
 	priv->key_len = key_len;
 
-	g_object_notify(G_OBJECT(rc4_cipher), "key-len");
+	g_object_notify_by_pspec(G_OBJECT(rc4_cipher), properties[PROP_KEY_LEN]);
 }
 
 gint

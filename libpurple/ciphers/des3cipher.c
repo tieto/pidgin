@@ -30,6 +30,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
+#include "glibcompat.h"
+
 #include "des3cipher.h"
 #include "descipher.h"
 #include "enums.h"
@@ -71,6 +73,7 @@ enum {
  * Globals
  *****************************************************************************/
 static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 /******************************************************************************
  * Cipher Stuff
@@ -102,7 +105,7 @@ purple_des3_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 	purple_cipher_set_key(PURPLE_CIPHER(priv->key3), key + 16,
 					purple_cipher_get_key_size(PURPLE_CIPHER(priv->key3)));
 
-	g_object_notify(G_OBJECT(cipher), "key");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_KEY]);
 }
 
 static ssize_t
@@ -355,7 +358,7 @@ purple_des3_cipher_set_batch_mode(PurpleCipher *cipher, PurpleCipherBatchMode mo
 
 	priv->mode = mode;
 
-	g_object_notify(G_OBJECT(cipher), "batch-mode");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_BATCH_MODE]);
 }
 
 static PurpleCipherBatchMode
@@ -377,7 +380,7 @@ purple_des3_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 
 	memcpy(priv->iv, iv, len);
 
-	g_object_notify(G_OBJECT(cipher), "iv");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_IV]);
 }
 
 /******************************************************************************
@@ -446,7 +449,6 @@ static void
 purple_des3_cipher_class_init(PurpleDES3CipherClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
-	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -462,18 +464,19 @@ purple_des3_cipher_class_init(PurpleDES3CipherClass *klass) {
 	cipher_class->get_batch_mode = purple_des3_cipher_get_batch_mode;
 	cipher_class->get_key_size = purple_des3_cipher_get_key_size;
 
-	pspec = g_param_spec_enum("batch-mode", "batch-mode", "batch-mode",
-							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
+	properties[PROP_BATCH_MODE] = g_param_spec_enum("batch-mode", "batch-mode",
+							  "batch-mode", PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
 							  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_BATCH_MODE, pspec);
+	g_object_class_install_property(obj_class, PROP_BATCH_MODE,
+							  properties[PROP_BATCH_MODE]);
 
-	pspec = g_param_spec_string("iv", "iv", "iv", NULL,
+	properties[PROP_IV] = g_param_spec_string("iv", "iv", "iv", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_IV, pspec);
+	g_object_class_install_property(obj_class, PROP_IV, properties[PROP_IV]);
 
-	pspec = g_param_spec_string("key", "key", "key", NULL,
+	properties[PROP_KEY] = g_param_spec_string("key", "key", "key", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_KEY, pspec);
+	g_object_class_install_property(obj_class, PROP_KEY, properties[PROP_KEY]);
 
 	g_type_class_add_private(klass, sizeof(PurpleDES3CipherPrivate));
 }

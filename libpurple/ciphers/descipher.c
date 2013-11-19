@@ -30,6 +30,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
+#include "glibcompat.h"
+
 #include "descipher.h"
 #include "enums.h"
 
@@ -59,6 +61,7 @@ enum {
  * Globals
  *****************************************************************************/
 static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 /*  
  *  The s-box values are permuted according to the 'primitive function P'
@@ -384,7 +387,7 @@ purple_des_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 		priv->decrypt_subkeys[i + 1] = priv->encrypt_subkeys[31 - i];
 	}
 
-	g_object_notify(G_OBJECT(cipher), "key");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_KEY]);
 }
 
 static size_t
@@ -524,7 +527,6 @@ purple_des_cipher_class_init(PurpleDESCipherClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
-	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -535,9 +537,9 @@ purple_des_cipher_class_init(PurpleDESCipherClass *klass)
 	cipher_class->set_key = purple_des_cipher_set_key;
 	cipher_class->get_key_size = purple_des_cipher_get_key_size;
 
-	pspec = g_param_spec_string("key", "key", "key", NULL,
+	properties[PROP_KEY] = g_param_spec_string("key", "key", "key", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_KEY, pspec);
+	g_object_class_install_property(obj_class, PROP_KEY, properties[PROP_KEY]);
 
 	g_type_class_add_private(klass, sizeof(PurpleDESCipherPrivate));
 }

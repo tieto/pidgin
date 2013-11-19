@@ -25,6 +25,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include <gtk/gtk.h>
 
@@ -80,6 +81,8 @@ enum
 
 	LAST_PROPERTY
 } HazeConnectionProperties;
+
+static GParamSpec *properties[LAST_PROPERTY];
 
 typedef struct _PidginMiniDialogPrivate
 {
@@ -323,7 +326,7 @@ mini_dialog_set_title(PidginMiniDialog *self,
 	g_free(title_esc);
 	g_free(title_markup);
 
-	g_object_notify(G_OBJECT(self), "title");
+	g_object_notify_by_pspec(G_OBJECT(self), properties[PROP_TITLE]);
 }
 
 static void
@@ -355,7 +358,7 @@ mini_dialog_set_description(PidginMiniDialog *self,
 		g_object_set(G_OBJECT(priv->desc), "no-show-all", TRUE, NULL);
 	}
 
-	g_object_notify(G_OBJECT(self), "description");
+	g_object_notify_by_pspec(G_OBJECT(self), properties[PROP_DESCRIPTION]);
 }
 
 static void
@@ -410,38 +413,48 @@ static void
 pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
-	GParamSpec *param_spec;
 
 	object_class->get_property = pidgin_mini_dialog_get_property;
 	object_class->set_property = pidgin_mini_dialog_set_property;
 	object_class->finalize = pidgin_mini_dialog_finalize;
 
-	param_spec = g_param_spec_string("title", "title",
+	properties[PROP_TITLE] = g_param_spec_string("title",
+		"title",
 		"String specifying the mini-dialog's title", NULL,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_TITLE, param_spec);
+	g_object_class_install_property (object_class, PROP_TITLE,
+		properties[PROP_TITLE]);
 
-	param_spec = g_param_spec_string("description", "description",
+	properties[PROP_DESCRIPTION] = g_param_spec_string("description",
+	"description",
 		"Description text for the mini-dialog, if desired", NULL,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_DESCRIPTION, param_spec);
+	g_object_class_install_property (object_class, PROP_DESCRIPTION,
+		properties[PROP_DESCRIPTION]);
 
-	param_spec = g_param_spec_string("icon-name", "icon-name",
+	properties[PROP_ICON_NAME] = g_param_spec_string("icon-name",
+	"icon-name",
 		"String specifying the Gtk stock name of the dialog's icon",
 		NULL,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_ICON_NAME, param_spec);
+	g_object_class_install_property (object_class, PROP_ICON_NAME,
+		properties[PROP_ICON_NAME]);
 
-	param_spec = g_param_spec_object("custom-icon", "custom-icon",
+	properties[PROP_CUSTOM_ICON] = g_param_spec_object("custom-icon",
+	"custom-icon",
 		"Pixbuf to use as the dialog's icon",
 		GDK_TYPE_PIXBUF,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_CUSTOM_ICON, param_spec);
+	g_object_class_install_property (object_class, PROP_CUSTOM_ICON,
+		properties[PROP_CUSTOM_ICON]);
 
-	param_spec = g_param_spec_boolean("enable-description-markup", "enable-description-markup",
+	properties[PROP_ENABLE_DESCRIPTION_MARKUP] =
+		g_param_spec_boolean("enable-description-markup",
+		"enable-description-markup",
 		"Use GMarkup in the description text", FALSE,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_ENABLE_DESCRIPTION_MARKUP, param_spec);
+	g_object_class_install_property (object_class, PROP_ENABLE_DESCRIPTION_MARKUP,
+		properties[PROP_ENABLE_DESCRIPTION_MARKUP]);
 }
 
 #if !GTK_CHECK_VERSION(3,0,0)

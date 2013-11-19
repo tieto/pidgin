@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "iceudp.h"
 #include "jingle.h"
@@ -48,13 +49,15 @@ static PurpleXmlNode *jingle_iceudp_to_xml_internal(JingleTransport *transport, 
 static void jingle_iceudp_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
 static GList *jingle_iceudp_get_remote_candidates(JingleTransport *transport);
 
-static JingleTransportClass *parent_class = NULL;
-
 enum {
 	PROP_0,
 	PROP_LOCAL_CANDIDATES,
 	PROP_REMOTE_CANDIDATES,
+	PROP_LAST
 };
+
+static JingleTransportClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 static JingleIceUdpCandidate *
 jingle_iceudp_candidate_copy(JingleIceUdpCandidate *candidate)
@@ -150,17 +153,19 @@ jingle_iceudp_class_init (JingleIceUdpClass *klass)
 	klass->parent_class.add_local_candidate = jingle_iceudp_add_local_candidate;
 	klass->parent_class.get_remote_candidates = jingle_iceudp_get_remote_candidates;
 
-	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
-			g_param_spec_pointer("local-candidates",
+	properties[PROP_LOCAL_CANDIDATES] = g_param_spec_pointer("local-candidates",
 			"Local candidates",
 			"The local candidates for this transport.",
-			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
+			properties[PROP_LOCAL_CANDIDATES]);
 
-	g_object_class_install_property(gobject_class, PROP_REMOTE_CANDIDATES,
-			g_param_spec_pointer("remote-candidates",
+	properties[PROP_REMOTE_CANDIDATES] = g_param_spec_pointer("remote-candidates",
 			"Remote candidates",
 			"The remote candidates for this transport.",
-			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_REMOTE_CANDIDATES,
+			properties[PROP_REMOTE_CANDIDATES]);
 
 	g_type_class_add_private(klass, sizeof(JingleIceUdpPrivate));
 }
@@ -278,7 +283,7 @@ jingle_iceudp_add_local_candidate(JingleTransport *transport, const gchar *id, g
 			iceudp->priv->local_candidates = g_list_append(
 					iceudp->priv->local_candidates, iceudp_candidate);
 
-			g_object_notify(G_OBJECT(iceudp), "local-candidates");
+			g_object_notify_by_pspec(G_OBJECT(iceudp), properties[PROP_LOCAL_CANDIDATES]);
 
 			return;
 		}
@@ -287,7 +292,7 @@ jingle_iceudp_add_local_candidate(JingleTransport *transport, const gchar *id, g
 	iceudp->priv->local_candidates = g_list_append(
 			iceudp->priv->local_candidates, iceudp_candidate);
 
-	g_object_notify(G_OBJECT(iceudp), "local-candidates");
+	g_object_notify_by_pspec(G_OBJECT(iceudp), properties[PROP_LOCAL_CANDIDATES]);
 }
 
 static GList *
@@ -352,7 +357,7 @@ jingle_iceudp_add_remote_candidate(JingleIceUdp *iceudp, JingleIceUdpCandidate *
 	}
 	priv->remote_candidates = g_list_append(priv->remote_candidates, candidate);
 
-	g_object_notify(G_OBJECT(iceudp), "remote-candidates");
+	g_object_notify_by_pspec(G_OBJECT(iceudp), properties[PROP_REMOTE_CANDIDATES]);
 }
 
 static JingleTransport *

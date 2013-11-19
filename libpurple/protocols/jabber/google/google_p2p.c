@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "google_p2p.h"
 #include "jingle/jingle.h"
@@ -48,13 +49,15 @@ static PurpleXmlNode *jingle_google_p2p_to_xml_internal(JingleTransport *transpo
 static void jingle_google_p2p_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
 static GList *jingle_google_p2p_get_remote_candidates(JingleTransport *transport);
 
-static JingleTransportClass *parent_class = NULL;
-
 enum {
 	PROP_0,
 	PROP_LOCAL_CANDIDATES,
 	PROP_REMOTE_CANDIDATES,
+	PROP_LAST
 };
+
+static JingleTransportClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 static JingleGoogleP2PCandidate *
 jingle_google_p2p_candidate_copy(JingleGoogleP2PCandidate *candidate)
@@ -137,17 +140,19 @@ jingle_google_p2p_class_init(JingleGoogleP2PClass *klass)
 	klass->parent_class.add_local_candidate = jingle_google_p2p_add_local_candidate;
 	klass->parent_class.get_remote_candidates = jingle_google_p2p_get_remote_candidates;
 
-	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
-			g_param_spec_pointer("local-candidates",
+	properties[PROP_LOCAL_CANDIDATES] = g_param_spec_pointer("local-candidates",
 			"Local candidates",
 			"The local candidates for this transport.",
-			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
+			properties[PROP_LOCAL_CANDIDATES]);
 
-	g_object_class_install_property(gobject_class, PROP_REMOTE_CANDIDATES,
-			g_param_spec_pointer("remote-candidates",
+	properties[PROP_REMOTE_CANDIDATES] = g_param_spec_pointer("remote-candidates",
 			"Remote candidates",
 			"The remote candidates for this transport.",
-			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_REMOTE_CANDIDATES,
+			properties[PROP_REMOTE_CANDIDATES]);
 
 	g_type_class_add_private(klass, sizeof(JingleGoogleP2PPrivate));
 }
@@ -263,7 +268,7 @@ jingle_google_p2p_add_local_candidate(JingleTransport *transport, const gchar *i
 			google_p2p->priv->local_candidates = g_list_append(
 					google_p2p->priv->local_candidates, candidate);
 
-			g_object_notify(G_OBJECT(google_p2p), "local-candidates");
+			g_object_notify_by_pspec(G_OBJECT(google_p2p), properties[PROP_LOCAL_CANDIDATES]);
 
 			return;
 		}
@@ -272,7 +277,7 @@ jingle_google_p2p_add_local_candidate(JingleTransport *transport, const gchar *i
 	google_p2p->priv->local_candidates = g_list_append(
 			google_p2p->priv->local_candidates, google_p2p_candidate);
 
-	g_object_notify(G_OBJECT(google_p2p), "local-candidates");
+	g_object_notify_by_pspec(G_OBJECT(google_p2p), properties[PROP_LOCAL_CANDIDATES]);
 }
 
 static GList *
@@ -336,7 +341,7 @@ jingle_google_p2p_add_remote_candidate(JingleGoogleP2P *google_p2p, JingleGoogle
 	}
 	priv->remote_candidates = g_list_append(priv->remote_candidates, candidate);
 
-	g_object_notify(G_OBJECT(google_p2p), "remote-candidates");
+	g_object_notify_by_pspec(G_OBJECT(google_p2p), properties[PROP_REMOTE_CANDIDATES]);
 }
 
 static JingleTransport *
