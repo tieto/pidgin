@@ -22,6 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "circularbuffer.h"
 
@@ -72,6 +73,7 @@ enum {
  * Globals
  *****************************************************************************/
 static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 /******************************************************************************
  * Circular Buffer Implementation
@@ -124,8 +126,8 @@ purple_circular_buffer_real_grow(PurpleCircularBuffer *buffer, gsize len) {
 
 	obj = G_OBJECT(buffer);
 	g_object_freeze_notify(obj);
-	g_object_notify(obj, "input");
-	g_object_notify(obj, "output");
+	g_object_notify_by_pspec(obj, properties[PROP_INPUT]);
+	g_object_notify_by_pspec(obj, properties[PROP_OUTPUT]);
 	g_object_thaw_notify(obj);
 }
 
@@ -166,8 +168,8 @@ purple_circular_buffer_real_append(PurpleCircularBuffer *buffer,
 
 	obj = G_OBJECT(buffer);
 	g_object_freeze_notify(obj);
-	g_object_notify(obj, "buffer-used");
-	g_object_notify(obj, "input");
+	g_object_notify_by_pspec(obj, properties[PROP_BUFFER_USED]);
+	g_object_notify_by_pspec(obj, properties[PROP_INPUT]);
 	g_object_thaw_notify(obj);
 }
 
@@ -208,8 +210,8 @@ purple_circular_buffer_real_mark_read(PurpleCircularBuffer *buffer,
 
 	obj = G_OBJECT(buffer);
 	g_object_freeze_notify(obj);
-	g_object_notify(obj, "buffer-used");
-	g_object_notify(obj, "output");
+	g_object_notify_by_pspec(obj, properties[PROP_BUFFER_USED]);
+	g_object_notify_by_pspec(obj, properties[PROP_OUTPUT]);
 	g_object_thaw_notify(obj);
 
 	return TRUE;
@@ -227,7 +229,7 @@ purple_circular_buffer_set_grow_size(PurpleCircularBuffer *buffer,
 
 	priv->growsize = (grow_size != 0) ? grow_size : DEFAULT_BUF_SIZE;
 
-	g_object_notify(G_OBJECT(buffer), "grow-size");
+	g_object_notify_by_pspec(G_OBJECT(buffer), properties[PROP_GROW_SIZE]);
 }
 
 static const gchar *
@@ -321,28 +323,33 @@ purple_circular_buffer_class_init(PurpleCircularBufferClass *klass) {
 	/* using a ulong for the gsize properties since there is no
 	 * g_param_spec_size, and the ulong should always work. --gk 3/21/11
 	 */
-	g_object_class_install_property(obj_class, PROP_GROW_SIZE,
-		g_param_spec_ulong("grow-size", "grow-size",
+	properties[PROP_GROW_SIZE] = g_param_spec_ulong("grow-size", "grow-size",
 		                   "The grow size of the buffer",
 		                   0, G_MAXSIZE, 0,
 		                   G_PARAM_READWRITE | G_PARAM_CONSTRUCT |
-		                   G_PARAM_STATIC_STRINGS));
+		                   G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_GROW_SIZE,
+		                   properties[PROP_GROW_SIZE]);
 
-	g_object_class_install_property(obj_class, PROP_BUFFER_USED,
-		g_param_spec_ulong("buffer-used", "buffer-used",
+	properties[PROP_BUFFER_USED] = g_param_spec_ulong("buffer-used",
+		                   "buffer-used",
 		                   "The amount of the buffer used",
 		                   0, G_MAXSIZE, 0,
-		                   G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+		                   G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_BUFFER_USED,
+		                   properties[PROP_BUFFER_USED]);
 
-	g_object_class_install_property(obj_class, PROP_INPUT,
-		g_param_spec_pointer("input", "input",
+	properties[PROP_INPUT] = g_param_spec_pointer("input", "input",
 		                     "The input pointer of the buffer",
-		                     G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+		                     G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_INPUT,
+		                     properties[PROP_INPUT]);
 
-	g_object_class_install_property(obj_class, PROP_OUTPUT,
-		g_param_spec_pointer("output", "output",
+	properties[PROP_OUTPUT] = g_param_spec_pointer("output", "output",
 		                     "The output pointer of the buffer",
-		                     G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+		                     G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_OUTPUT,
+		                     properties[PROP_OUTPUT]);
 }
 
 /******************************************************************************
@@ -473,8 +480,8 @@ purple_circular_buffer_reset(PurpleCircularBuffer *buffer) {
 
 	obj = G_OBJECT(buffer);
 	g_object_freeze_notify(obj);
-	g_object_notify(obj, "input");
-	g_object_notify(obj, "output");
+	g_object_notify_by_pspec(obj, properties[PROP_INPUT]);
+	g_object_notify_by_pspec(obj, properties[PROP_OUTPUT]);
 	g_object_thaw_notify(obj);
 }
 
