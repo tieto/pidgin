@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "content.h"
 #include "debug.h"
@@ -51,8 +52,6 @@ static void jingle_session_finalize (GObject *object);
 static void jingle_session_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void jingle_session_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static GObjectClass *parent_class = NULL;
-
 enum {
 	PROP_0,
 	PROP_SID,
@@ -63,7 +62,11 @@ enum {
 	PROP_STATE,
 	PROP_CONTENTS,
 	PROP_PENDING_CONTENTS,
+	PROP_LAST
 };
+
+static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 GType
 jingle_session_get_type()
@@ -98,58 +101,66 @@ jingle_session_class_init (JingleSessionClass *klass)
 	gobject_class->set_property = jingle_session_set_property;
 	gobject_class->get_property = jingle_session_get_property;
 
-	g_object_class_install_property(gobject_class, PROP_SID,
-			g_param_spec_string("sid",
+	properties[PROP_SID] = g_param_spec_string("sid",
 			"Session ID",
 			"The unique session ID of the Jingle Session.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_SID,
+			properties[PROP_SID]);
 
-	g_object_class_install_property(gobject_class, PROP_JS,
-			g_param_spec_pointer("js",
+	properties[PROP_JS] = g_param_spec_pointer("js",
 			"JabberStream",
 			"The Jabber stream associated with this session.",
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_JS,
+			properties[PROP_JS]);
 
-	g_object_class_install_property(gobject_class, PROP_REMOTE_JID,
-			g_param_spec_string("remote-jid",
+	properties[PROP_REMOTE_JID] = g_param_spec_string("remote-jid",
 			"Remote JID",
 			"The JID of the remote participant.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_REMOTE_JID,
+			properties[PROP_REMOTE_JID]);
 
-	g_object_class_install_property(gobject_class, PROP_LOCAL_JID,
-			g_param_spec_string("local-jid",
+	properties[PROP_LOCAL_JID] = g_param_spec_string("local-jid",
 			"Local JID",
 			"The JID of the local participant.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_LOCAL_JID,
+			properties[PROP_LOCAL_JID]);
 
-	g_object_class_install_property(gobject_class, PROP_IS_INITIATOR,
-			g_param_spec_boolean("is-initiator",
+	properties[PROP_IS_INITIATOR] = g_param_spec_boolean("is-initiator",
 			"Is Initiator",
 			"Whether or not the local JID is the initiator of the session.",
 			FALSE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_IS_INITIATOR,
+			properties[PROP_IS_INITIATOR]);
 
-	g_object_class_install_property(gobject_class, PROP_STATE,
-			g_param_spec_boolean("state",
+	properties[PROP_STATE] = g_param_spec_boolean("state",
 			"State",
 			"The state of the session (PENDING=FALSE, ACTIVE=TRUE).",
 			FALSE,
-			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_STATE,
+			properties[PROP_STATE]);
 
-	g_object_class_install_property(gobject_class, PROP_CONTENTS,
-			g_param_spec_pointer("contents",
+	properties[PROP_CONTENTS] = g_param_spec_pointer("contents",
 			"Contents",
 			"The active contents contained within this session",
-			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_CONTENTS,
+			properties[PROP_CONTENTS]);
 
-	g_object_class_install_property(gobject_class, PROP_PENDING_CONTENTS,
-			g_param_spec_pointer("pending-contents",
+	properties[PROP_PENDING_CONTENTS] = g_param_spec_pointer("pending-contents",
 			"Pending contents",
 			"The pending contents contained within this session",
-			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(gobject_class, PROP_PENDING_CONTENTS,
+			properties[PROP_PENDING_CONTENTS]);
 
 	g_type_class_add_private(klass, sizeof(JingleSessionPrivate));
 }
@@ -564,7 +575,7 @@ jingle_session_add_content(JingleSession *session, JingleContent* content)
 			g_list_append(session->priv->contents, content);
 	jingle_content_set_session(content, session);
 
-	g_object_notify(G_OBJECT(session), "contents");
+	g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_CONTENTS]);
 }
 
 void
@@ -578,7 +589,7 @@ jingle_session_remove_content(JingleSession *session, const gchar *name, const g
 				g_list_remove(session->priv->contents, content);
 		g_object_unref(content);
 
-		g_object_notify(G_OBJECT(session), "contents");
+		g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_CONTENTS]);
 	}
 }
 
@@ -589,7 +600,7 @@ jingle_session_add_pending_content(JingleSession *session, JingleContent* conten
 			g_list_append(session->priv->pending_contents, content);
 	jingle_content_set_session(content, session);
 
-	g_object_notify(G_OBJECT(session), "pending-contents");
+	g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_PENDING_CONTENTS]);
 }
 
 void
@@ -602,7 +613,7 @@ jingle_session_remove_pending_content(JingleSession *session, const gchar *name,
 				g_list_remove(session->priv->pending_contents, content);
 		g_object_unref(content);
 
-		g_object_notify(G_OBJECT(session), "pending-contents");
+		g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_PENDING_CONTENTS]);
 	}
 }
 
@@ -623,7 +634,7 @@ jingle_session_accept_session(JingleSession *session)
 {
 	session->priv->state = TRUE;
 
-	g_object_notify(G_OBJECT(session), "state");
+	g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_STATE]);
 }
 
 JabberIq *
