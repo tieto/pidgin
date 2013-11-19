@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "aescipher.h"
 #include "debug.h"
@@ -70,6 +71,11 @@ enum {
 	PROP_LAST,
 };
 
+/*******************************************************************************
+ * Globals
+ ******************************************************************************/
+static GParamSpec *properties[PROP_LAST];
+
 /******************************************************************************
  * Cipher Stuff
  *****************************************************************************/
@@ -108,7 +114,7 @@ purple_aes_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 	else
 		memcpy(priv->iv, iv, len);
 
-	g_object_notify(G_OBJECT(cipher), "iv");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_IV]);
 }
 
 static void
@@ -128,7 +134,7 @@ purple_aes_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len)
 	if (len > 0)
 		memcpy(priv->key, key, len);
 
-	g_object_notify(G_OBJECT(cipher), "key");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_KEY]);
 }
 
 static guchar *
@@ -514,7 +520,7 @@ purple_aes_cipher_set_batch_mode(PurpleCipher *cipher,
 		priv->failure = TRUE;
 	}
 
-	g_object_notify(G_OBJECT(cipher), "batch-mode");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_BATCH_MODE]);
 }
 
 static PurpleCipherBatchMode
@@ -580,7 +586,6 @@ static void
 purple_aes_cipher_class_init(PurpleAESCipherClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
-	GParamSpec *pspec;
 
 	obj_class->get_property = purple_aes_cipher_get_property;
 	obj_class->set_property = purple_aes_cipher_set_property;
@@ -595,18 +600,19 @@ purple_aes_cipher_class_init(PurpleAESCipherClass *klass) {
 	cipher_class->get_batch_mode = purple_aes_cipher_get_batch_mode;
 	cipher_class->get_block_size = purple_aes_cipher_get_block_size;
 
-	pspec = g_param_spec_enum("batch-mode", "batch-mode", "batch-mode",
-							  PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
+	properties[PROP_BATCH_MODE] = g_param_spec_enum("batch-mode", "batch-mode",
+							  "batch-mode", PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
 							  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_BATCH_MODE, pspec);
+	g_object_class_install_property(obj_class, PROP_BATCH_MODE,
+							  properties[PROP_BATCH_MODE]);
 
-	pspec = g_param_spec_string("iv", "iv", "iv", NULL,
+	properties[PROP_IV] = g_param_spec_string("iv", "iv", "iv", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_IV, pspec);
+	g_object_class_install_property(obj_class, PROP_IV, properties[PROP_IV]);
 
-	pspec = g_param_spec_string("key", "key", "key", NULL,
+	properties[PROP_KEY] = g_param_spec_string("key", "key", "key", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_KEY, pspec);
+	g_object_class_install_property(obj_class, PROP_KEY, properties[PROP_KEY]);
 
 	g_type_class_add_private(klass, sizeof(PurpleAESCipherPrivate));
 }

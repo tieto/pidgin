@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
+#include "glibcompat.h"
+
 #include "hmaccipher.h"
 
 #include <string.h>
@@ -49,6 +51,7 @@ enum {
  * Globals
  ******************************************************************************/
 static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 /*******************************************************************************
  * Helpers
@@ -61,7 +64,7 @@ purple_hmac_cipher_set_hash(PurpleCipher *cipher,
 
 	priv->hash = g_object_ref(G_OBJECT(hash));
 
-	g_object_notify(G_OBJECT(cipher), "hash");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_HASH]);
 }
 
 /*******************************************************************************
@@ -263,7 +266,6 @@ static void
 purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
-	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -281,10 +283,12 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 	cipher_class->set_key = purple_hmac_cipher_set_key;
 	cipher_class->get_block_size = purple_hmac_cipher_get_block_size;
 
-	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_HASH,
+	properties[PROP_HASH] = g_param_spec_object("hash", "hash", "hash",
+								PURPLE_TYPE_HASH,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_HASH, pspec);
+	g_object_class_install_property(obj_class, PROP_HASH,
+								properties[PROP_HASH]);
 }
 
 /******************************************************************************

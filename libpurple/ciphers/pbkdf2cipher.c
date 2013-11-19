@@ -22,6 +22,8 @@
  * Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>
  */
 #include "internal.h"
+#include "glibcompat.h"
+
 #include "pbkdf2cipher.h"
 #include "hmaccipher.h"
 #include "debug.h"
@@ -61,6 +63,7 @@ enum {
  * Globals
  ******************************************************************************/
 static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 /*******************************************************************************
  * Helpers
@@ -73,7 +76,7 @@ purple_pbkdf2_cipher_set_hash(PurpleCipher *cipher,
 
 	priv->hash = g_object_ref(G_OBJECT(hash));
 
-	g_object_notify(G_OBJECT(cipher), "hash");
+	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_HASH]);
 }
 
 /******************************************************************************
@@ -323,7 +326,6 @@ static void
 purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
-	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -338,20 +340,26 @@ purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 	cipher_class->set_salt = purple_pbkdf2_cipher_set_salt;
 	cipher_class->set_key = purple_pbkdf2_cipher_set_key;
 
-	pspec = g_param_spec_object("hash", "hash", "hash", PURPLE_TYPE_HASH,
+	properties[PROP_HASH] = g_param_spec_object("hash", "hash", "hash",
+								PURPLE_TYPE_HASH,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_HASH, pspec);
+	g_object_class_install_property(obj_class, PROP_HASH,
+								properties[PROP_HASH]);
 
-	pspec = g_param_spec_uint("iter-count", "iter-count", "iter-count", 0,
+	properties[PROP_ITER_COUNT] = g_param_spec_uint("iter-count", "iter-count",
+								"iter-count", 0,
 								G_MAXUINT, 0, G_PARAM_READWRITE |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_ITER_COUNT, pspec);
+	g_object_class_install_property(obj_class, PROP_ITER_COUNT,
+								properties[PROP_ITER_COUNT]);
 
-	pspec = g_param_spec_uint("out-len", "out-len", "out-len", 0,
+	properties[PROP_OUT_LEN] = g_param_spec_uint("out-len", "out-len",
+								"out-len", 0,
 								G_MAXUINT, 0, G_PARAM_READWRITE |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_OUT_LEN, pspec);
+	g_object_class_install_property(obj_class, PROP_OUT_LEN,
+								properties[PROP_OUT_LEN]);
 
 	g_type_class_add_private(klass, sizeof(PurplePBKDF2CipherPrivate));
 }
