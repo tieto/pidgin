@@ -97,7 +97,7 @@ static const struct developer developers[] = {
 	{"Will 'resiak' Thompson",             NULL,                  NULL},
 	{"Stu 'nosnilmot' Tomlinson",          NULL,                  NULL},
 	{"Jorge 'Masca' Villaseñor",           NULL,                  NULL},
-	{"Tomasz Wasilczyk",                   NULL,                  NULL},
+	{"Tomasz Wasilczyk",                   NULL,                  "https://www.wasilczyk.pl"},
 	{NULL, NULL, NULL}
 };
 
@@ -348,8 +348,12 @@ add_developers(GString *str, const struct developer *list)
 {
 	for (; list->name != NULL; list++) {
 		if (list->email != NULL) {
+			const gchar *proto = "mailto:";
+			if (strchr(list->email, ':') != NULL)
+				proto = "";
 			g_string_append_printf(str,
-			                       "<li><a href=\"mailto:%s\" title=\"%s\">%s</a>%s%s%s</li>",
+			                       "<li><a href=\"%s%s\" title=\"%s\">%s</a>%s%s%s</li>",
+			                       proto,
 			                       list->email, list->email, _(list->name),
 			                       list->role ? " (" : "",
 			                       list->role ? _(list->role) : "",
