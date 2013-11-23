@@ -422,39 +422,31 @@ pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 		"title",
 		"String specifying the mini-dialog's title", NULL,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_TITLE,
-		properties[PROP_TITLE]);
 
 	properties[PROP_DESCRIPTION] = g_param_spec_string("description",
-	"description",
+		"description",
 		"Description text for the mini-dialog, if desired", NULL,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_DESCRIPTION,
-		properties[PROP_DESCRIPTION]);
 
 	properties[PROP_ICON_NAME] = g_param_spec_string("icon-name",
-	"icon-name",
+		"icon-name",
 		"String specifying the Gtk stock name of the dialog's icon",
 		NULL,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_ICON_NAME,
-		properties[PROP_ICON_NAME]);
 
 	properties[PROP_CUSTOM_ICON] = g_param_spec_object("custom-icon",
-	"custom-icon",
+		"custom-icon",
 		"Pixbuf to use as the dialog's icon",
 		GDK_TYPE_PIXBUF,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_CUSTOM_ICON,
-		properties[PROP_CUSTOM_ICON]);
 
 	properties[PROP_ENABLE_DESCRIPTION_MARKUP] =
 		g_param_spec_boolean("enable-description-markup",
 		"enable-description-markup",
 		"Use GMarkup in the description text", FALSE,
 		G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_ENABLE_DESCRIPTION_MARKUP,
-		properties[PROP_ENABLE_DESCRIPTION_MARKUP]);
+
+	g_object_class_install_properties(object_class, LAST_PROPERTY, properties);
 }
 
 #if !GTK_CHECK_VERSION(3,0,0)

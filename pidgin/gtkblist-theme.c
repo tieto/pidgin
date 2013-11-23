@@ -373,114 +373,83 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 			"Background Color",
 			"The background color for the buddy list",
 			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_BACKGROUND_COLOR,
-			properties[PROP_BACKGROUND_COLOR]);
 
 	properties[PROP_OPACITY] = g_param_spec_double("opacity", "Opacity",
 			"The opacity of the buddy list",
 			0.0, 1.0, 1.0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_OPACITY,
-			properties[PROP_OPACITY]);
 
 	properties[PROP_LAYOUT] = g_param_spec_pointer("layout", "Layout",
 			"The layout of icons, name, and status of the buddy list",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-	g_object_class_install_property(obj_class, PROP_LAYOUT,
-			properties[PROP_LAYOUT]);
 
 	/* Group */
 	properties[PROP_EXPANDED_COLOR] = g_param_spec_boxed("expanded-color",
 			"Expanded Background Color",
 			"The background color of an expanded group",
 			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_EXPANDED_COLOR,
-			properties[PROP_EXPANDED_COLOR]);
 
 	properties[PROP_EXPANDED_TEXT] = g_param_spec_pointer("expanded-text",
 			"Expanded Text",
 			"The text information for when a group is expanded",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_EXPANDED_TEXT,
-			properties[PROP_EXPANDED_TEXT]);
 
 	properties[PROP_COLLAPSED_COLOR] = g_param_spec_boxed("collapsed-color",
 			"Collapsed Background Color",
 			"The background color of a collapsed group",
 			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_COLLAPSED_COLOR,
-			properties[PROP_COLLAPSED_COLOR]);
 
 	properties[PROP_COLLAPSED_TEXT] = g_param_spec_pointer("collapsed-text",
 			"Collapsed Text",
 			"The text information for when a group is collapsed",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_COLLAPSED_TEXT,
-			properties[PROP_COLLAPSED_TEXT]);
 
 	/* Buddy */
 	properties[PROP_CONTACT_COLOR] = g_param_spec_boxed("contact-color",
 			"Contact/Chat Background Color",
 			"The background color of a contact or chat",
 			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_CONTACT_COLOR,
-			properties[PROP_CONTACT_COLOR]);
 
 	properties[PROP_CONTACT] = g_param_spec_pointer("contact",
 			"Contact Text",
 			"The text information for when a contact is expanded",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_CONTACT,
-			properties[PROP_CONTACT]);
 
 	properties[PROP_ONLINE] = g_param_spec_pointer("online",
 			"Online Text",
 			"The text information for when a buddy is online",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_ONLINE,
-			properties[PROP_ONLINE]);
 
 	properties[PROP_AWAY] = g_param_spec_pointer("away",
 			"Away Text",
 			"The text information for when a buddy is away",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_AWAY,
-			properties[PROP_AWAY]);
 
 	properties[PROP_OFFLINE] = g_param_spec_pointer("offline",
 			"Offline Text",
 			"The text information for when a buddy is offline",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_OFFLINE,
-			properties[PROP_OFFLINE]);
 
 	properties[PROP_IDLE] = g_param_spec_pointer("idle",
 			"Idle Text",
 			"The text information for when a buddy is idle",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_IDLE,
-			properties[PROP_IDLE]);
 
 	properties[PROP_MESSAGE] = g_param_spec_pointer("message",
 			"Message Text",
 			"The text information for when a buddy has an unread message",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_MESSAGE,
-			properties[PROP_MESSAGE]);
 
 	properties[PROP_MESSAGE_NICK_SAID] = g_param_spec_pointer("message-nick-said",
 			"Message (Nick Said) Text",
 			"The text information for when a chat has an unread message that mentions your nickname",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_MESSAGE_NICK_SAID,
-			properties[PROP_MESSAGE_NICK_SAID]);
 
 	properties[PROP_STATUS] = g_param_spec_pointer("status",
 			"Status Text",
 			"The text information for a buddy's status",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_STATUS,
-			properties[PROP_STATUS]);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType
