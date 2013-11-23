@@ -508,13 +508,13 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 			"The information about this theme",
 			G_TYPE_HASH_TABLE,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_INFO, properties[PROP_INFO]);
 
 	/* VARIANT */
 	properties[PROP_VARIANT] = g_param_spec_string("variant", "Variant",
 			"The current variant for this theme",
 			NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_VARIANT, properties[PROP_VARIANT]);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType

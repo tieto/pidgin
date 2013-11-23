@@ -124,21 +124,19 @@ jingle_rawudp_class_init (JingleRawUdpClass *klass)
 	klass->parent_class.add_local_candidate = jingle_rawudp_add_local_candidate;
 	klass->parent_class.get_remote_candidates = jingle_rawudp_get_remote_candidates;
 
+	g_type_class_add_private(klass, sizeof(JingleRawUdpPrivate));
+
 	properties[PROP_LOCAL_CANDIDATES] = g_param_spec_pointer("local-candidates",
 			"Local candidates",
 			"The local candidates for this transport.",
 			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
-			properties[PROP_LOCAL_CANDIDATES]);
 
 	properties[PROP_REMOTE_CANDIDATES] = g_param_spec_pointer("remote-candidates",
 			"Remote candidates",
 			"The remote candidates for this transport.",
 			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_REMOTE_CANDIDATES,
-			properties[PROP_REMOTE_CANDIDATES]);
 
-	g_type_class_add_private(klass, sizeof(JingleRawUdpPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void

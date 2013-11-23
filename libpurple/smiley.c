@@ -25,6 +25,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "imgstore.h"
@@ -282,7 +283,8 @@ enum
 {
 	PROP_0,
 	PROP_SHORTCUT,
-	PROP_IMGSTORE
+	PROP_IMGSTORE,
+	PROP_LAST
 };
 
 enum
@@ -293,6 +295,7 @@ enum
 
 static guint signals[SIG_LAST];
 static GObjectClass *parent_class;
+static GParamSpec *properties[PROP_LAST];
 
 static void
 purple_smiley_init(GTypeInstance *instance, gpointer klass)
@@ -393,7 +396,6 @@ static void
 purple_smiley_class_init(PurpleSmileyClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
-	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -405,17 +407,17 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 	gobj_class->dispose = purple_smiley_dispose;
 
 	/* Shortcut */
-	pspec = g_param_spec_string("shortcut", "Shortcut",
+	properties[PROP_SHORTCUT] = g_param_spec_string("shortcut", "Shortcut",
 			"The text-shortcut for the smiley",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobj_class, PROP_SHORTCUT, pspec);
 
 	/* Stored Image */
-	pspec = g_param_spec_pointer("image", "Stored Image",
+	properties[PROP_IMGSTORE] = g_param_spec_pointer("image", "Stored Image",
 			"Stored Image. (that'll have to do for now)",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobj_class, PROP_IMGSTORE, pspec);
+
+	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 
 	signals[SIG_DESTROY] = g_signal_new("destroy",
 			G_OBJECT_CLASS_TYPE(klass),
@@ -764,7 +766,7 @@ purple_smiley_set_shortcut(PurpleSmiley *smiley, const char *shortcut)
 	g_free(priv->shortcut);
 	priv->shortcut = g_strdup(shortcut);
 
-	g_object_notify(G_OBJECT(smiley), "shortcut");
+	g_object_notify_by_pspec(G_OBJECT(smiley), properties[PROP_SHORTCUT]);
 
 	purple_smileys_save();
 

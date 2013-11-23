@@ -21,6 +21,7 @@
  *
  */
 #include "internal.h"
+#include "glibcompat.h"
 #include "dbus-maybe.h"
 #include "debug.h"
 
@@ -129,6 +130,11 @@ enum
 static PurpleBlistNode     *blistnode_parent_class;
 static PurpleCountingNode  *counting_parent_class;
 
+static GParamSpec *bd_properties[BUDDY_PROP_LAST];
+static GParamSpec *co_properties[CONTACT_PROP_LAST];
+static GParamSpec *gr_properties[GROUP_PROP_LAST];
+static GParamSpec *ch_properties[CHAT_PROP_LAST];
+
 static gboolean
 purple_strings_are_different(const char *one, const char *two)
 {
@@ -155,7 +161,8 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 		purple_buddy_icon_unref(priv->icon);
 		priv->icon = (icon != NULL ? purple_buddy_icon_ref(icon) : NULL);
 
-		g_object_notify(G_OBJECT(buddy), "icon");
+		g_object_notify_by_pspec(G_OBJECT(buddy),
+				bd_properties[BUDDY_PROP_ICON]);
 	}
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
@@ -197,7 +204,7 @@ purple_buddy_set_name(PurpleBuddy *buddy, const char *name)
 	g_free(priv->name);
 	priv->name = purple_utf8_strip_unprintables(name);
 
-	g_object_notify(G_OBJECT(buddy), "name");
+	g_object_notify_by_pspec(G_OBJECT(buddy), bd_properties[BUDDY_PROP_NAME]);
 
 	if (ops) {
 		if (ops->save_node)
@@ -326,7 +333,8 @@ purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 		g_free(new_alias); /* could be "\0" */
 	}
 
-	g_object_notify(G_OBJECT(buddy), "local-alias");
+	g_object_notify_by_pspec(G_OBJECT(buddy),
+			bd_properties[BUDDY_PROP_LOCAL_ALIAS]);
 
 	if (ops && ops->save_node)
 		ops->save_node(PURPLE_BLIST_NODE(buddy));
@@ -381,7 +389,8 @@ purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *alias)
 		g_free(new_alias); /* could be "\0"; */
 	}
 
-	g_object_notify(G_OBJECT(buddy), "server-alias");
+	g_object_notify_by_pspec(G_OBJECT(buddy),
+			bd_properties[BUDDY_PROP_SERVER_ALIAS]);
 
 	if (ops) {
 		if (ops->save_node)
@@ -511,7 +520,8 @@ void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps)
 
 	priv->media_caps = media_caps;
 
-	g_object_notify(G_OBJECT(buddy), "media-caps");
+	g_object_notify_by_pspec(G_OBJECT(buddy),
+			bd_properties[BUDDY_PROP_MEDIA_CAPS]);
 }
 
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
@@ -681,51 +691,45 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 	obj_class->set_property = purple_buddy_set_property;
 	obj_class->constructed = purple_buddy_constructed;
 
-	g_object_class_install_property(obj_class, BUDDY_PROP_NAME,
-			g_param_spec_string("name", "Name",
+	g_type_class_add_private(klass, sizeof(PurpleBuddyPrivate));
+
+	bd_properties[BUDDY_PROP_NAME] = g_param_spec_string("name", "Name",
 				"The name of the buddy.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, BUDDY_PROP_LOCAL_ALIAS,
-			g_param_spec_string("local-alias", "Local alias",
+	bd_properties[BUDDY_PROP_LOCAL_ALIAS] = g_param_spec_string("local-alias",
+				"Local alias",
 				"Local alias of thee buddy.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, BUDDY_PROP_SERVER_ALIAS,
-			g_param_spec_string("server-alias", "Server alias",
+	bd_properties[BUDDY_PROP_SERVER_ALIAS] = g_param_spec_string("server-alias",
+				"Server alias",
 				"Server-side alias of the buddy.", NULL,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, BUDDY_PROP_ICON,
-			g_param_spec_pointer("icon", "Buddy icon",
+	bd_properties[BUDDY_PROP_ICON] = g_param_spec_pointer("icon", "Buddy icon",
 				"The icon for the buddy.",
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, BUDDY_PROP_ACCOUNT,
-			g_param_spec_object("account", "Account",
+	bd_properties[BUDDY_PROP_ACCOUNT] = g_param_spec_object("account",
+				"Account",
 				"The account for the buddy.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, BUDDY_PROP_PRESENCE,
-			g_param_spec_object("presence", "Presence",
+	bd_properties[BUDDY_PROP_PRESENCE] = g_param_spec_object("presence",
+				"Presence",
 				"The status information for the buddy.", PURPLE_TYPE_PRESENCE,
-				G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, BUDDY_PROP_MEDIA_CAPS,
-			g_param_spec_enum("media-caps", "Media capabilities",
+	bd_properties[BUDDY_PROP_MEDIA_CAPS] = g_param_spec_enum("media-caps",
+				"Media capabilities",
 				"The media capabilities of the buddy.",
 				PURPLE_MEDIA_TYPE_CAPS, PURPLE_MEDIA_CAPS_NONE,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(PurpleBuddyPrivate));
+	g_object_class_install_properties(obj_class, BUDDY_PROP_LAST,
+				bd_properties);
 }
 
 GType
@@ -817,7 +821,8 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 	priv->priority_buddy = new_priority;
 	priv->priority_valid = TRUE;
 
-	g_object_notify(G_OBJECT(contact), "priority-buddy");
+	g_object_notify_by_pspec(G_OBJECT(contact),
+			co_properties[CONTACT_PROP_PRIORITY_BUDDY]);
 }
 
 PurpleGroup *
@@ -857,7 +862,8 @@ purple_contact_set_alias(PurpleContact *contact, const char *alias)
 		g_free(new_alias); /* could be "\0" */
 	}
 
-	g_object_notify(G_OBJECT(contact), "alias");
+	g_object_notify_by_pspec(G_OBJECT(contact),
+			co_properties[CONTACT_PROP_ALIAS]);
 
 	if (ops) {
 		if (ops->save_node)
@@ -1047,19 +1053,19 @@ static void purple_contact_class_init(PurpleContactClass *klass)
 	obj_class->get_property = purple_contact_get_property;
 	obj_class->set_property = purple_contact_set_property;
 
-	g_object_class_install_property(obj_class, CONTACT_PROP_ALIAS,
-			g_param_spec_string("alias", "Alias",
-				"The alias for the contact.", NULL,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
-
-	g_object_class_install_property(obj_class, CONTACT_PROP_PRIORITY_BUDDY,
-			g_param_spec_object("priority-buddy",
-				"Priority buddy", "The priority buddy of the contact.",
-				PURPLE_TYPE_BUDDY, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)
-			);
-
 	g_type_class_add_private(klass, sizeof(PurpleContactPrivate));
+
+	co_properties[CONTACT_PROP_ALIAS] = g_param_spec_string("alias", "Alias",
+				"The alias for the contact.", NULL,
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+	co_properties[CONTACT_PROP_PRIORITY_BUDDY] = g_param_spec_object(
+				"priority-buddy",
+				"Priority buddy", "The priority buddy of the contact.",
+				PURPLE_TYPE_BUDDY, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+
+	g_object_class_install_properties(obj_class, CONTACT_PROP_LAST,
+				co_properties);
 }
 
 GType
@@ -1160,7 +1166,7 @@ purple_chat_set_alias(PurpleChat *chat, const char *alias)
 		g_free(new_alias); /* could be "\0" */
 	}
 
-	g_object_notify(G_OBJECT(chat), "alias");
+	g_object_notify_by_pspec(G_OBJECT(chat), ch_properties[CHAT_PROP_ALIAS]);
 
 	if (ops) {
 		if (ops->save_node)
@@ -1303,27 +1309,24 @@ static void purple_chat_class_init(PurpleChatClass *klass)
 	obj_class->set_property = purple_chat_set_property;
 	obj_class->constructed = purple_chat_constructed;
 
-	g_object_class_install_property(obj_class, CHAT_PROP_ALIAS,
-			g_param_spec_string("alias", "Alias",
-				"The alias for the chat.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
-			);
+	g_type_class_add_private(klass, sizeof(PurpleChatPrivate));
 
-	g_object_class_install_property(obj_class, CHAT_PROP_ACCOUNT,
-			g_param_spec_object("account", "Account",
+	ch_properties[CHAT_PROP_ALIAS] = g_param_spec_string("alias", "Alias",
+				"The alias for the chat.", NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+	ch_properties[CHAT_PROP_ACCOUNT] = g_param_spec_object("account", "Account",
 				"The account that the chat belongs to.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, CHAT_PROP_COMPONENTS,
-			g_param_spec_pointer("components", "Components",
+	ch_properties[CHAT_PROP_COMPONENTS] = g_param_spec_pointer("components",
+				"Components",
 				"The protocol components of the chat.",
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(PurpleChatPrivate));
+	g_object_class_install_properties(obj_class, CHAT_PROP_LAST, ch_properties);
 }
 
 GType
@@ -1492,7 +1495,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 		old_name = priv->name;
 		priv->name = new_name;
 
-		g_object_notify(G_OBJECT(source), "name");
+		g_object_notify_by_pspec(G_OBJECT(source), gr_properties[GROUP_PROP_NAME]);
 	}
 
 	/* Save our changes */
@@ -1549,7 +1552,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 	g_list_free(moved_buddies);
 	g_free(old_name);
 
-	g_object_notify(G_OBJECT(source), "name");
+	g_object_notify_by_pspec(G_OBJECT(source), gr_properties[GROUP_PROP_NAME]);
 }
 
 const char *purple_group_get_name(PurpleGroup *group)
@@ -1645,13 +1648,14 @@ static void purple_group_class_init(PurpleGroupClass *klass)
 	obj_class->get_property = purple_group_get_property;
 	obj_class->set_property = purple_group_set_property;
 
-	g_object_class_install_property(obj_class, GROUP_PROP_NAME,
-			g_param_spec_string("name", "Name",
-				"Name of the group.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
-			);
-
 	g_type_class_add_private(klass, sizeof(PurpleGroupPrivate));
+
+	gr_properties[GROUP_PROP_NAME] = g_param_spec_string("name", "Name",
+				"Name of the group.", NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+	g_object_class_install_properties(obj_class, GROUP_PROP_LAST,
+				gr_properties);
 }
 
 GType

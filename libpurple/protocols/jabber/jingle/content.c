@@ -82,63 +82,51 @@ jingle_content_class_init (JingleContentClass *klass)
 	klass->to_xml = jingle_content_to_xml_internal;
 	klass->parse = jingle_content_parse_internal;
 
+	g_type_class_add_private(klass, sizeof(JingleContentPrivate));
+
 	properties[PROP_SESSION] = g_param_spec_object("session",
 			"Jingle Session",
 			"The jingle session parent of this content.",
 			JINGLE_TYPE_SESSION,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_SESSION,
-			properties[PROP_SESSION]);
 
 	properties[PROP_CREATOR] = g_param_spec_string("creator",
 			"Creator",
 			"The participant that created this content.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_CREATOR,
-			properties[PROP_CREATOR]);
 
 	properties[PROP_DISPOSITION] = g_param_spec_string("disposition",
 			"Disposition",
 			"The disposition of the content.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_DISPOSITION,
-			properties[PROP_DISPOSITION]);
 
 	properties[PROP_NAME] = g_param_spec_string("name",
 			"Name",
 			"The name of this content.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_NAME,
-			properties[PROP_NAME]);
 
 	properties[PROP_SENDERS] = g_param_spec_string("senders",
 			"Senders",
 			"The sender of this content.",
 			NULL,
 			G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_SENDERS,
-			properties[PROP_SENDERS]);
 
 	properties[PROP_TRANSPORT] = g_param_spec_object("transport",
 			"transport",
 			"The transport of this content.",
 			JINGLE_TYPE_TRANSPORT,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_TRANSPORT,
-			properties[PROP_TRANSPORT]);
 
 	properties[PROP_PENDING_TRANSPORT] = g_param_spec_object("pending-transport",
 			"Pending transport",
 			"The pending transport contained within this content",
 			JINGLE_TYPE_TRANSPORT,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_PENDING_TRANSPORT,
-			properties[PROP_PENDING_TRANSPORT]);
 
-	g_type_class_add_private(klass, sizeof(JingleContentPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void

@@ -92,23 +92,21 @@ jingle_rtp_class_init (JingleRtpClass *klass)
 	klass->parent_class.description_type = JINGLE_APP_RTP;
 	klass->parent_class.handle_action = jingle_rtp_handle_action_internal;
 
+	g_type_class_add_private(klass, sizeof(JingleRtpPrivate));
+
 	properties[PROP_MEDIA_TYPE] = g_param_spec_string("media-type",
 			"Media Type",
 			"The media type (\"audio\" or \"video\") for this rtp session.",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_MEDIA_TYPE,
-			properties[PROP_MEDIA_TYPE]);
 
 	properties[PROP_SSRC] = g_param_spec_string("ssrc",
 			"ssrc",
 			"The ssrc for this rtp session.",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_SSRC,
-			properties[PROP_SSRC]);
 
-	g_type_class_add_private(klass, sizeof(JingleRtpPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void

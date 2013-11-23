@@ -20,8 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#include "blistnodetypes.h"
 #include "internal.h"
+#include "glibcompat.h"
+#include "blistnodetypes.h"
 
 #define PURPLE_BLIST_NODE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BLIST_NODE, PurpleBlistNodePrivate))
@@ -69,6 +70,9 @@ enum
 };
 
 static GObjectClass *parent_class;
+
+static GParamSpec *bn_properties[BLNODE_PROP_LAST];
+static GParamSpec *cn_properties[CNODE_PROP_LAST];
 
 /**************************************************************************/
 /* Buddy list node API                                                    */
@@ -163,7 +167,8 @@ purple_blist_node_set_transient(PurpleBlistNode *node, gboolean transient)
 
 	priv->transient = transient;
 
-	g_object_notify(G_OBJECT(node), "transient");
+	g_object_notify_by_pspec(G_OBJECT(node),
+			bn_properties[BLNODE_PROP_TRANSIENT]);
 }
 
 gboolean
@@ -407,13 +412,15 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 	obj_class->get_property = purple_blist_node_get_property;
 	obj_class->set_property = purple_blist_node_set_property;
 
-	g_object_class_install_property(obj_class, BLNODE_PROP_TRANSIENT,
-			g_param_spec_boolean("transient", "Transient",
-				"Whether node should not be saved with the buddy list.",
-				FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
-
 	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
+
+	bn_properties[BLNODE_PROP_TRANSIENT] = g_param_spec_boolean("transient",
+				"Transient",
+				"Whether node should not be saved with the buddy list.",
+				FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+	g_object_class_install_properties(obj_class, BLNODE_PROP_LAST,
+				bn_properties);
 }
 
 GType
@@ -515,7 +522,8 @@ purple_counting_node_set_total_size(PurpleCountingNode *counter, int totalsize)
 
 	priv->totalsize = totalsize;
 
-	g_object_notify(G_OBJECT(counter), "total-size");
+	g_object_notify_by_pspec(G_OBJECT(counter),
+			cn_properties[CNODE_PROP_TOTAL_SIZE]);
 }
 
 void
@@ -527,7 +535,8 @@ purple_counting_node_set_current_size(PurpleCountingNode *counter, int currentsi
 
 	priv->currentsize = currentsize;
 
-	g_object_notify(G_OBJECT(counter), "current-size");
+	g_object_notify_by_pspec(G_OBJECT(counter),
+			cn_properties[CNODE_PROP_CURRENT_SIZE]);
 }
 
 void
@@ -539,7 +548,8 @@ purple_counting_node_set_online_count(PurpleCountingNode *counter, int onlinecou
 
 	priv->onlinecount = onlinecount;
 
-	g_object_notify(G_OBJECT(counter), "online-count");
+	g_object_notify_by_pspec(G_OBJECT(counter),
+			cn_properties[CNODE_PROP_ONLINE_COUNT]);
 }
 
 /**************************************************************************
@@ -602,28 +612,28 @@ purple_counting_node_class_init(PurpleCountingNodeClass *klass)
 	obj_class->get_property = purple_counting_node_get_property;
 	obj_class->set_property = purple_counting_node_set_property;
 
-	g_object_class_install_property(obj_class, CNODE_PROP_TOTAL_SIZE,
-			g_param_spec_int("total-size", "Total size",
+	g_type_class_add_private(klass, sizeof(PurpleCountingNodePrivate));
+
+	cn_properties[CNODE_PROP_TOTAL_SIZE] = g_param_spec_int("total-size",
+				"Total size",
 				"The number of children under this node.",
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, CNODE_PROP_CURRENT_SIZE,
-			g_param_spec_int("current-size", "Current size",
+	cn_properties[CNODE_PROP_CURRENT_SIZE] = g_param_spec_int("current-size",
+				"Current size",
 				"The number of children with online accounts.",
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, CNODE_PROP_ONLINE_COUNT,
-			g_param_spec_int("online-count", "Online count",
+	cn_properties[CNODE_PROP_ONLINE_COUNT] = g_param_spec_int("online-count",
+				"Online count",
 				"The number of children that are online.",
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(PurpleCountingNodePrivate));
+	g_object_class_install_properties(obj_class, CNODE_PROP_LAST,
+				cn_properties);
 }
 
 GType

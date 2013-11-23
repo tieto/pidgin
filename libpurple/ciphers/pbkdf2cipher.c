@@ -340,28 +340,24 @@ purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 	cipher_class->set_salt = purple_pbkdf2_cipher_set_salt;
 	cipher_class->set_key = purple_pbkdf2_cipher_set_key;
 
+	g_type_class_add_private(klass, sizeof(PurplePBKDF2CipherPrivate));
+
 	properties[PROP_HASH] = g_param_spec_object("hash", "hash", "hash",
 								PURPLE_TYPE_HASH,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_HASH,
-								properties[PROP_HASH]);
 
 	properties[PROP_ITER_COUNT] = g_param_spec_uint("iter-count", "iter-count",
 								"iter-count", 0,
 								G_MAXUINT, 0, G_PARAM_READWRITE |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_ITER_COUNT,
-								properties[PROP_ITER_COUNT]);
 
 	properties[PROP_OUT_LEN] = g_param_spec_uint("out-len", "out-len",
 								"out-len", 0,
 								G_MAXUINT, 0, G_PARAM_READWRITE |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_OUT_LEN,
-								properties[PROP_OUT_LEN]);
 
-	g_type_class_add_private(klass, sizeof(PurplePBKDF2CipherPrivate));
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 static void

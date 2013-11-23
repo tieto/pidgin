@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
+#include "glibcompat.h"
+
 #include "buddylist.h"
 #include "core.h"
 #include "dbus-maybe.h"
@@ -96,6 +98,7 @@ typedef struct
 } PurpleStatusBuddyKey;
 
 static GObjectClass *parent_class;
+static GParamSpec *properties[PROP_LAST];
 
 static int primitive_scores[] =
 {
@@ -592,14 +595,15 @@ status_has_changed(PurpleStatus *status)
 		old_status = purple_presence_get_active_status(presence);
 		if (old_status != NULL && (old_status != status)) {
 			PURPLE_STATUS_GET_PRIVATE(old_status)->active = FALSE;
-			g_object_notify(G_OBJECT(old_status), "active");
+			g_object_notify_by_pspec(G_OBJECT(old_status),
+					properties[PROP_ACTIVE]);
 		}
 	}
 	else
 		old_status = NULL;
 
 	g_object_set(presence, "active-status", status, NULL);
-	g_object_notify(G_OBJECT(status), "active");
+	g_object_notify_by_pspec(G_OBJECT(status), properties[PROP_ACTIVE]);
 
 	notify_status_update(presence, old_status, status);
 }
@@ -1226,27 +1230,25 @@ purple_status_class_init(PurpleStatusClass *klass)
 	obj_class->get_property = purple_status_get_property;
 	obj_class->set_property = purple_status_set_property;
 
-	g_object_class_install_property(obj_class, PROP_STATUS_TYPE,
-			g_param_spec_pointer("status-type", "Status type",
+	g_type_class_add_private(klass, sizeof(PurpleStatusPrivate));
+
+	properties[PROP_STATUS_TYPE] = g_param_spec_pointer("status-type",
+				"Status type",
 				"The PurpleStatusType of the status.",
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, PROP_PRESENCE,
-			g_param_spec_object("presence", "Presence",
-				"The presence that the status belongs to.", PURPLE_TYPE_PRESENCE,
+	properties[PROP_PRESENCE] = g_param_spec_object("presence", "Presence",
+				"The presence that the status belongs to.",
+				PURPLE_TYPE_PRESENCE,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, PROP_ACTIVE,
-			g_param_spec_boolean("active", "Active",
+	properties[PROP_ACTIVE] = g_param_spec_boolean("active", "Active",
 				"Whether the status is active or not.", FALSE,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(PurpleStatusPrivate));
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType

@@ -26,6 +26,8 @@
 #define _PURPLE_CONNECTION_C_
 
 #include "internal.h"
+#include "glibcompat.h"
+
 #include "account.h"
 #include "buddylist.h"
 #include "connection.h"
@@ -101,6 +103,7 @@ enum
 };
 
 static GObjectClass *parent_class;
+static GParamSpec *properties[PROP_LAST];
 
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
@@ -249,7 +252,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 			ops->disconnected(gc);
 	}
 
-	g_object_notify(G_OBJECT(gc), "state");
+	g_object_notify_by_pspec(G_OBJECT(gc), properties[PROP_STATE]);
 }
 
 void
@@ -261,7 +264,7 @@ purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
 
 	priv->flags = flags;
 
-	g_object_notify(G_OBJECT(gc), "flags");
+	g_object_notify_by_pspec(G_OBJECT(gc), properties[PROP_FLAGS]);
 }
 
 void
@@ -274,7 +277,7 @@ purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 	g_free(priv->display_name);
 	priv->display_name = g_strdup(name);
 
-	g_object_notify(G_OBJECT(gc), "display-name");
+	g_object_notify_by_pspec(G_OBJECT(gc), properties[PROP_DISPLAY_NAME]);
 }
 
 void
@@ -804,49 +807,40 @@ static void purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->get_property = purple_connection_get_property;
 	obj_class->set_property = purple_connection_set_property;
 
-	g_object_class_install_property(obj_class, PROP_PROTOCOL,
-			g_param_spec_object("protocol", "Protocol",
+	g_type_class_add_private(klass, sizeof(PurpleConnectionPrivate));
+
+	properties[PROP_PROTOCOL] = g_param_spec_object("protocol", "Protocol",
 				"The protocol that the connection is using.",
 				PURPLE_TYPE_PROTOCOL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, PROP_FLAGS,
-			g_param_spec_flags("flags", "Connection flags",
+	properties[PROP_FLAGS] = g_param_spec_flags("flags", "Connection flags",
 				"The flags of the connection.",
 				PURPLE_TYPE_CONNECTION_FLAGS, 0,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, PROP_STATE,
-			g_param_spec_enum("state", "Connection state",
+	properties[PROP_STATE] = g_param_spec_enum("state", "Connection state",
 				"The current state of the connection.",
 				PURPLE_TYPE_CONNECTION_STATE, PURPLE_CONNECTION_DISCONNECTED,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object("account", "Account",
+	properties[PROP_ACCOUNT] = g_param_spec_object("account", "Account",
 				"The account using the connection.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, PROP_PASSWORD,
-			g_param_spec_string("password", "Password",
+	properties[PROP_PASSWORD] = g_param_spec_string("password", "Password",
 				"The password used for connection.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(obj_class, PROP_DISPLAY_NAME,
-			g_param_spec_string("display-name", "Display name",
+	properties[PROP_DISPLAY_NAME] = g_param_spec_string("display-name",
+				"Display name",
 				"Your name that appears to other people.", NULL,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(PurpleConnectionPrivate));
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType

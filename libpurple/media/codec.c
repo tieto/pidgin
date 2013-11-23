@@ -24,6 +24,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "internal.h"
+#include "glibcompat.h"
 #include "codec.h"
 
 /** @copydoc _PurpleMediaCodecClass */
@@ -65,7 +67,10 @@ enum {
 	PROP_CLOCK_RATE,
 	PROP_CHANNELS,
 	PROP_OPTIONAL_PARAMS,
+	PROP_LAST
 };
+
+static GParamSpec *properties[PROP_LAST];
 
 static void
 purple_media_codec_init(PurpleMediaCodec *info)
@@ -171,51 +176,48 @@ purple_media_codec_class_init(PurpleMediaCodecClass *klass)
 	gobject_class->set_property = purple_media_codec_set_property;
 	gobject_class->get_property = purple_media_codec_get_property;
 
-	g_object_class_install_property(gobject_class, PROP_ID,
-			g_param_spec_uint("id",
+	g_type_class_add_private(klass, sizeof(PurpleMediaCodecPrivate));
+
+	properties[PROP_ID] = g_param_spec_uint("id",
 			"ID",
 			"The numeric identifier of the codec.",
 			0, G_MAXUINT, 0,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
-			G_PARAM_STATIC_STRINGS));
+			G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_ENCODING_NAME,
-			g_param_spec_string("encoding-name",
+	properties[PROP_ENCODING_NAME] = g_param_spec_string("encoding-name",
 			"Encoding Name",
 			"The name of the codec.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
-			G_PARAM_STATIC_STRINGS));
+			G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_MEDIA_TYPE,
-			g_param_spec_flags("media-type",
+	properties[PROP_MEDIA_TYPE] = g_param_spec_flags("media-type",
 			"Media Type",
 			"Whether this is an audio of video codec.",
 			PURPLE_TYPE_MEDIA_SESSION_TYPE,
 			PURPLE_MEDIA_NONE,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
-			G_PARAM_STATIC_STRINGS));
+			G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_CLOCK_RATE,
-			g_param_spec_uint("clock-rate",
+	properties[PROP_CLOCK_RATE] = g_param_spec_uint("clock-rate",
 			"Create Callback",
 			"The function called to create this element.",
 			0, G_MAXUINT, 0,
-			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_CHANNELS,
-			g_param_spec_uint("channels",
+	properties[PROP_CHANNELS] = g_param_spec_uint("channels",
 			"Channels",
 			"The number of channels in this codec.",
 			0, G_MAXUINT, 0,
-			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-	g_object_class_install_property(gobject_class, PROP_OPTIONAL_PARAMS,
-			g_param_spec_pointer("optional-params",
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+	properties[PROP_OPTIONAL_PARAMS] = g_param_spec_pointer("optional-params",
 			"Optional Params",
 			"A list of optional parameters for the codec.",
-			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(PurpleMediaCodecPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 PurpleMediaCodec *
@@ -294,7 +296,7 @@ purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
 	priv->optional_params = g_list_append(
 			priv->optional_params, new_param);
 
-	g_object_notify(G_OBJECT(codec), "optional-params");
+	g_object_notify_by_pspec(G_OBJECT(codec), properties[PROP_OPTIONAL_PARAMS]);
 }
 
 void
@@ -314,7 +316,7 @@ purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
 			g_list_remove(priv->optional_params, param);
 	g_free(param);
 
-	g_object_notify(G_OBJECT(codec), "optional-params");
+	g_object_notify_by_pspec(G_OBJECT(codec), properties[PROP_OPTIONAL_PARAMS]);
 }
 
 PurpleKeyValuePair *
