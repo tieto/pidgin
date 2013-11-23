@@ -101,68 +101,54 @@ jingle_session_class_init (JingleSessionClass *klass)
 	gobject_class->set_property = jingle_session_set_property;
 	gobject_class->get_property = jingle_session_get_property;
 
+	g_type_class_add_private(klass, sizeof(JingleSessionPrivate));
+
 	properties[PROP_SID] = g_param_spec_string("sid",
 			"Session ID",
 			"The unique session ID of the Jingle Session.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_SID,
-			properties[PROP_SID]);
 
 	properties[PROP_JS] = g_param_spec_pointer("js",
 			"JabberStream",
 			"The Jabber stream associated with this session.",
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_JS,
-			properties[PROP_JS]);
 
 	properties[PROP_REMOTE_JID] = g_param_spec_string("remote-jid",
 			"Remote JID",
 			"The JID of the remote participant.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_REMOTE_JID,
-			properties[PROP_REMOTE_JID]);
 
 	properties[PROP_LOCAL_JID] = g_param_spec_string("local-jid",
 			"Local JID",
 			"The JID of the local participant.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_LOCAL_JID,
-			properties[PROP_LOCAL_JID]);
 
 	properties[PROP_IS_INITIATOR] = g_param_spec_boolean("is-initiator",
 			"Is Initiator",
 			"Whether or not the local JID is the initiator of the session.",
 			FALSE,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_IS_INITIATOR,
-			properties[PROP_IS_INITIATOR]);
 
 	properties[PROP_STATE] = g_param_spec_boolean("state",
 			"State",
 			"The state of the session (PENDING=FALSE, ACTIVE=TRUE).",
 			FALSE,
 			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_STATE,
-			properties[PROP_STATE]);
 
 	properties[PROP_CONTENTS] = g_param_spec_pointer("contents",
 			"Contents",
 			"The active contents contained within this session",
 			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_CONTENTS,
-			properties[PROP_CONTENTS]);
 
 	properties[PROP_PENDING_CONTENTS] = g_param_spec_pointer("pending-contents",
 			"Pending contents",
 			"The pending contents contained within this session",
 			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_PENDING_CONTENTS,
-			properties[PROP_PENDING_CONTENTS]);
 
-	g_type_class_add_private(klass, sizeof(JingleSessionPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void
