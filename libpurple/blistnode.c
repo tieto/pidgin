@@ -412,14 +412,15 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 	obj_class->get_property = purple_blist_node_get_property;
 	obj_class->set_property = purple_blist_node_set_property;
 
+	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
+
 	bn_properties[BLNODE_PROP_TRANSIENT] = g_param_spec_boolean("transient",
 				"Transient",
 				"Whether node should not be saved with the buddy list.",
 				FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, BLNODE_PROP_TRANSIENT,
-				bn_properties[BLNODE_PROP_TRANSIENT]);
 
-	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
+	g_object_class_install_properties(obj_class, BLNODE_PROP_LAST,
+				bn_properties);
 }
 
 GType
@@ -611,31 +612,28 @@ purple_counting_node_class_init(PurpleCountingNodeClass *klass)
 	obj_class->get_property = purple_counting_node_get_property;
 	obj_class->set_property = purple_counting_node_set_property;
 
+	g_type_class_add_private(klass, sizeof(PurpleCountingNodePrivate));
+
 	cn_properties[CNODE_PROP_TOTAL_SIZE] = g_param_spec_int("total-size",
 				"Total size",
 				"The number of children under this node.",
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE |
 				G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, CNODE_PROP_TOTAL_SIZE,
-				cn_properties[CNODE_PROP_TOTAL_SIZE]);
 
 	cn_properties[CNODE_PROP_CURRENT_SIZE] = g_param_spec_int("current-size",
 				"Current size",
 				"The number of children with online accounts.",
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE |
 				G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, CNODE_PROP_CURRENT_SIZE,
-				cn_properties[CNODE_PROP_CURRENT_SIZE]);
 
 	cn_properties[CNODE_PROP_ONLINE_COUNT] = g_param_spec_int("online-count",
 				"Online count",
 				"The number of children that are online.",
 				G_MININT, G_MAXINT, 0, G_PARAM_READWRITE |
 				G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, CNODE_PROP_ONLINE_COUNT,
-				cn_properties[CNODE_PROP_ONLINE_COUNT]);
 
-	g_type_class_add_private(klass, sizeof(PurpleCountingNodePrivate));
+	g_object_class_install_properties(obj_class, CNODE_PROP_LAST,
+				cn_properties);
 }
 
 GType

@@ -328,28 +328,22 @@ purple_circular_buffer_class_init(PurpleCircularBufferClass *klass) {
 		                   0, G_MAXSIZE, 0,
 		                   G_PARAM_READWRITE | G_PARAM_CONSTRUCT |
 		                   G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_GROW_SIZE,
-		                   properties[PROP_GROW_SIZE]);
 
 	properties[PROP_BUFFER_USED] = g_param_spec_ulong("buffer-used",
 		                   "buffer-used",
 		                   "The amount of the buffer used",
 		                   0, G_MAXSIZE, 0,
 		                   G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_BUFFER_USED,
-		                   properties[PROP_BUFFER_USED]);
 
 	properties[PROP_INPUT] = g_param_spec_pointer("input", "input",
 		                     "The input pointer of the buffer",
 		                     G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_INPUT,
-		                     properties[PROP_INPUT]);
 
 	properties[PROP_OUTPUT] = g_param_spec_pointer("output", "output",
 		                     "The output pointer of the buffer",
 		                     G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_OUTPUT,
-		                     properties[PROP_OUTPUT]);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 /******************************************************************************

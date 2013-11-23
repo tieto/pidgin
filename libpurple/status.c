@@ -1230,29 +1230,25 @@ purple_status_class_init(PurpleStatusClass *klass)
 	obj_class->get_property = purple_status_get_property;
 	obj_class->set_property = purple_status_set_property;
 
+	g_type_class_add_private(klass, sizeof(PurpleStatusPrivate));
+
 	properties[PROP_STATUS_TYPE] = g_param_spec_pointer("status-type",
 				"Status type",
 				"The PurpleStatusType of the status.",
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 				G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_STATUS_TYPE,
-				properties[PROP_STATUS_TYPE]);
 
 	properties[PROP_PRESENCE] = g_param_spec_object("presence", "Presence",
 				"The presence that the status belongs to.",
 				PURPLE_TYPE_PRESENCE,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 				G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_PRESENCE,
-				properties[PROP_PRESENCE]);
 
 	properties[PROP_ACTIVE] = g_param_spec_boolean("active", "Active",
 				"Whether the status is active or not.", FALSE,
 				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_ACTIVE,
-				properties[PROP_ACTIVE]);
 
-	g_type_class_add_private(klass, sizeof(PurpleStatusPrivate));
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType

@@ -176,14 +176,14 @@ purple_media_codec_class_init(PurpleMediaCodecClass *klass)
 	gobject_class->set_property = purple_media_codec_set_property;
 	gobject_class->get_property = purple_media_codec_get_property;
 
+	g_type_class_add_private(klass, sizeof(PurpleMediaCodecPrivate));
+
 	properties[PROP_ID] = g_param_spec_uint("id",
 			"ID",
 			"The numeric identifier of the codec.",
 			0, G_MAXUINT, 0,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
 			G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_ID,
-			properties[PROP_ID]);
 
 	properties[PROP_ENCODING_NAME] = g_param_spec_string("encoding-name",
 			"Encoding Name",
@@ -191,8 +191,6 @@ purple_media_codec_class_init(PurpleMediaCodecClass *klass)
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
 			G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_ENCODING_NAME,
-			properties[PROP_ENCODING_NAME]);
 
 	properties[PROP_MEDIA_TYPE] = g_param_spec_flags("media-type",
 			"Media Type",
@@ -201,33 +199,25 @@ purple_media_codec_class_init(PurpleMediaCodecClass *klass)
 			PURPLE_MEDIA_NONE,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
 			G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_MEDIA_TYPE,
-			properties[PROP_MEDIA_TYPE]);
 
 	properties[PROP_CLOCK_RATE] = g_param_spec_uint("clock-rate",
 			"Create Callback",
 			"The function called to create this element.",
 			0, G_MAXUINT, 0,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_CLOCK_RATE,
-			properties[PROP_CLOCK_RATE]);
 
 	properties[PROP_CHANNELS] = g_param_spec_uint("channels",
 			"Channels",
 			"The number of channels in this codec.",
 			0, G_MAXUINT, 0,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_CHANNELS,
-			properties[PROP_CHANNELS]);
 
 	properties[PROP_OPTIONAL_PARAMS] = g_param_spec_pointer("optional-params",
 			"Optional Params",
 			"A list of optional parameters for the codec.",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobject_class, PROP_OPTIONAL_PARAMS,
-			properties[PROP_OPTIONAL_PARAMS]);
 
-	g_type_class_add_private(klass, sizeof(PurpleMediaCodecPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 PurpleMediaCodec *

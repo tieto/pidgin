@@ -134,8 +134,8 @@ purple_theme_loader_class_init(PurpleThemeLoaderClass *klass)
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 				    G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_TYPE,
-				    properties[PROP_TYPE]);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType

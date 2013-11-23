@@ -165,8 +165,6 @@ purple_theme_class_init(PurpleThemeClass *klass)
 			"The name of the theme",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_NAME,
-			properties[PROP_NAME]);
 
 	/* DESCRIPTION */
 	properties[PROP_DESCRIPTION] = g_param_spec_string("description",
@@ -174,16 +172,12 @@ purple_theme_class_init(PurpleThemeClass *klass)
 			"The description of the theme",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_DESCRIPTION,
-			properties[PROP_DESCRIPTION]);
 
 	/* AUTHOR */
 	properties[PROP_AUTHOR] = g_param_spec_string("author", "Author",
 			"The author of the theme",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_AUTHOR,
-			properties[PROP_AUTHOR]);
 
 	/* TYPE STRING (read only) */
 	properties[PROP_TYPE] = g_param_spec_string("type", "Type",
@@ -191,23 +185,20 @@ purple_theme_class_init(PurpleThemeClass *klass)
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 			G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_TYPE,
-			properties[PROP_TYPE]);
 
 	/* DIRECTORY */
 	properties[PROP_DIR] = g_param_spec_string("directory", "Directory",
 			"The directory that contains the theme and all its files",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_DIR, properties[PROP_DIR]);
 
 	/* PREVIEW IMAGE */
 	properties[PROP_IMAGE] = g_param_spec_string("image", "Image",
 			"A preview image of the theme",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_IMAGE,
-			properties[PROP_IMAGE]);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 

@@ -411,15 +411,13 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 			"The text-shortcut for the smiley",
 			NULL,
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobj_class, PROP_SHORTCUT,
-			properties[PROP_SHORTCUT]);
 
 	/* Stored Image */
 	properties[PROP_IMGSTORE] = g_param_spec_pointer("image", "Stored Image",
 			"Stored Image. (that'll have to do for now)",
 			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(gobj_class, PROP_IMGSTORE,
-			properties[PROP_IMGSTORE]);
+
+	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 
 	signals[SIG_DESTROY] = g_signal_new("destroy",
 			G_OBJECT_CLASS_TYPE(klass),

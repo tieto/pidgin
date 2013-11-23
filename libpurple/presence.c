@@ -469,11 +469,11 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 	obj_class->get_property = purple_presence_get_property;
 	obj_class->set_property = purple_presence_set_property;
 
+	g_type_class_add_private(klass, sizeof(PurplePresencePrivate));
+
 	properties[PRES_PROP_IDLE] = g_param_spec_boolean("idle", "Idle",
 				"Whether the presence is in idle state.", FALSE,
 				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PRES_PROP_IDLE,
-				properties[PRES_PROP_IDLE]);
 
 	properties[PRES_PROP_IDLE_TIME] =
 #if SIZEOF_TIME_T == 4
@@ -493,8 +493,6 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 #error Unknown size of time_t
 #endif
 				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PRES_PROP_IDLE_TIME,
-				properties[PRES_PROP_IDLE_TIME]);
 
 	properties[PRES_PROP_LOGIN_TIME] =
 #if SIZEOF_TIME_T == 4
@@ -514,24 +512,18 @@ static void purple_presence_class_init(PurplePresenceClass *klass)
 #error Unknown size of time_t
 #endif
 				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PRES_PROP_LOGIN_TIME,
-				properties[PRES_PROP_LOGIN_TIME]);
 
 	properties[PRES_PROP_STATUSES] = g_param_spec_pointer("statuses",
 				"Statuses",
 				"The list of statuses in the presence.",
 				G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PRES_PROP_STATUSES,
-				properties[PRES_PROP_STATUSES]);
 
 	properties[PRES_PROP_ACTIVE_STATUS] = g_param_spec_object("active-status",
 				"Active status",
 				"The active status for the presence.", PURPLE_TYPE_STATUS,
 				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PRES_PROP_ACTIVE_STATUS,
-				properties[PRES_PROP_ACTIVE_STATUS]);
 
-	g_type_class_add_private(klass, sizeof(PurplePresencePrivate));
+	g_object_class_install_properties(obj_class, PRES_PROP_LAST, properties);
 }
 
 GType
@@ -764,15 +756,16 @@ static void purple_account_presence_class_init(PurpleAccountPresenceClass *klass
 	obj_class->get_property = purple_account_presence_get_property;
 	obj_class->set_property = purple_account_presence_set_property;
 
+	g_type_class_add_private(klass, sizeof(PurpleAccountPresencePrivate));
+
 	ap_properties[ACPRES_PROP_ACCOUNT] = g_param_spec_object("account",
 				"Account",
 				"The account that this presence is of.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 				G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, ACPRES_PROP_ACCOUNT,
-				ap_properties[ACPRES_PROP_ACCOUNT]);
 
-	g_type_class_add_private(klass, sizeof(PurpleAccountPresencePrivate));
+	g_object_class_install_properties(obj_class, ACPRES_PROP_LAST,
+				ap_properties);
 }
 
 GType
@@ -960,14 +953,15 @@ static void purple_buddy_presence_class_init(PurpleBuddyPresenceClass *klass)
 	obj_class->get_property = purple_buddy_presence_get_property;
 	obj_class->set_property = purple_buddy_presence_set_property;
 
+	g_type_class_add_private(klass, sizeof(PurpleBuddyPresencePrivate));
+
 	bp_properties[BUDPRES_PROP_BUDDY] = g_param_spec_object("buddy", "Buddy",
 				"The buddy that this presence is of.", PURPLE_TYPE_BUDDY,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 				G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, BUDPRES_PROP_BUDDY,
-				bp_properties[BUDPRES_PROP_BUDDY]);
 
-	g_type_class_add_private(klass, sizeof(PurpleBuddyPresencePrivate));
+	g_object_class_install_properties(obj_class, BUDPRES_PROP_LAST,
+				bp_properties);
 }
 
 GType

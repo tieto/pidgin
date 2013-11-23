@@ -1127,39 +1127,31 @@ purple_conversation_class_init(PurpleConversationClass *klass)
 	obj_class->get_property = purple_conversation_get_property;
 	obj_class->set_property = purple_conversation_set_property;
 
+	g_type_class_add_private(klass, sizeof(PurpleConversationPrivate));
+
 	properties[PROP_ACCOUNT] = g_param_spec_object("account", "Account",
 				"The account for the conversation.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-				properties[PROP_ACCOUNT]);
 
 	properties[PROP_NAME] = g_param_spec_string("name", "Name",
 				"The name of the conversation.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_NAME,
-				properties[PROP_NAME]);
 
 	properties[PROP_TITLE] = g_param_spec_string("title", "Title",
 				"The title of the conversation.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_TITLE,
-				properties[PROP_TITLE]);
 
 	properties[PROP_LOGGING] = g_param_spec_boolean("logging", "Logging status",
 				"Whether logging is enabled or not.", FALSE,
 				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_LOGGING,
-				properties[PROP_LOGGING]);
 
 	properties[PROP_FEATURES] = g_param_spec_flags("features",
 				"Connection features",
 				"The connection features of the conversation.",
 				PURPLE_TYPE_CONNECTION_FLAGS, 0,
 				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_FEATURES,
-				properties[PROP_FEATURES]);
 
-	g_type_class_add_private(klass, sizeof(PurpleConversationPrivate));
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType
