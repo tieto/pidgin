@@ -81,6 +81,7 @@ C_SRC =	\
 			debug.c \
 			dnsquery.c \
 			dnssrv.c \
+			e2ee.c \
 			eventloop.c \
 			ft.c \
 			http.c \
@@ -106,6 +107,7 @@ C_SRC =	\
 			prpl.c \
 			purple-socket.c \
 			request.c \
+			request-datasheet.c \
 			roomlist.c \
 			savedstatuses.c \
 			server.c \
