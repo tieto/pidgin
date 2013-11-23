@@ -600,21 +600,19 @@ purple_aes_cipher_class_init(PurpleAESCipherClass *klass) {
 	cipher_class->get_batch_mode = purple_aes_cipher_get_batch_mode;
 	cipher_class->get_block_size = purple_aes_cipher_get_block_size;
 
+	g_type_class_add_private(klass, sizeof(PurpleAESCipherPrivate));
+
 	properties[PROP_BATCH_MODE] = g_param_spec_enum("batch-mode", "batch-mode",
 							  "batch-mode", PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
 							  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_BATCH_MODE,
-							  properties[PROP_BATCH_MODE]);
 
 	properties[PROP_IV] = g_param_spec_string("iv", "iv", "iv", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_IV, properties[PROP_IV]);
 
 	properties[PROP_KEY] = g_param_spec_string("key", "key", "key", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_KEY, properties[PROP_KEY]);
 
-	g_type_class_add_private(klass, sizeof(PurpleAESCipherPrivate));
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 static void

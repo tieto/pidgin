@@ -287,8 +287,8 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 								PURPLE_TYPE_HASH,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 								G_PARAM_STATIC_STRINGS);
-	g_object_class_install_property(obj_class, PROP_HASH,
-								properties[PROP_HASH]);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 /******************************************************************************
