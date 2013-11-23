@@ -207,9 +207,10 @@ pidgin_smiley_themes_remove_non_existing(void)
 
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 {
-	FILE *f = g_fopen(file, "r");
+	FILE *f = g_fopen(file, "rb");
 	char buf[256];
 	char *i;
+	gsize line_nbr = 0;
 	struct smiley_theme *theme=NULL;
 	struct smiley_list *list = NULL;
 	GSList *lst = smiley_themes;
@@ -245,6 +246,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		if (!fgets(buf, sizeof(buf), f)) {
 			break;
 		}
+		line_nbr++;
 
 		if (buf[0] == '#' || buf[0] == '\0')
 			continue;
@@ -254,6 +256,11 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				buf[--len] = '\0';
 			if (len == 0)
 				continue;
+		}
+
+		if (! g_utf8_validate(buf, -1, NULL)) {
+			purple_debug_error("gtkthemes", "%s:%d is invalid UTF-8\n", file, line_nbr);
+			continue;
 		}
 
 		i = buf;
@@ -296,10 +303,16 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			while  (*i) {
 				char l[64];
 				gsize li = 0;
+				char *next;
 				while (*i && !isspace(*i) && li < sizeof(l) - 1) {
 					if (*i == '\\' && *(i+1) != '\0')
 						i++;
-					l[li++] = *(i++);
+					next = g_utf8_next_char(i);
+					if ((next - i) > (sizeof(l) - li -1)) {
+						break;
+					}
+					while (i != next)
+						l[li++] = *(i++);
 				}
 				l[li] = 0;
 				if (!sfile) {
