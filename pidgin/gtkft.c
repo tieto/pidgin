@@ -471,12 +471,13 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
 		purple_notify_error(dialog, NULL,
-				_("There is no application configured to open this type of file."), NULL);
+				_("There is no application configured to open this type of file."), NULL,
+				NULL);
 	}
 	else if (code < 32)
 	{
 		purple_notify_error(dialog, NULL,
-				_("An error occurred while opening the file."), NULL);
+				_("An error occurred while opening the file."), NULL, NULL);
 		purple_debug_warning("ft", "filename: %s; code: %d\n",
 				purple_xfer_get_local_filename(dialog->selected_xfer), code);
 	}
