@@ -24,6 +24,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "account.h"
 #include "connection.h"
@@ -82,6 +83,7 @@ enum
 };
 
 static GObjectClass *parent_class;
+static GParamSpec *properties[PROP_LAST];
 static PurpleRoomlistUiOps *ops = NULL;
 
 static void purple_roomlist_field_free(PurpleRoomlistField *f);
@@ -118,7 +120,7 @@ void purple_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 	if (ops && ops->set_fields)
 		ops->set_fields(list, fields);
 
-	g_object_notify(G_OBJECT(list), "fields");
+	g_object_notify_by_pspec(G_OBJECT(list), properties[PROP_FIELDS]);
 }
 
 void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress)
@@ -132,7 +134,7 @@ void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress)
 	if (ops && ops->in_progress)
 		ops->in_progress(list, in_progress);
 
-	g_object_notify(G_OBJECT(list), "in-progress");
+	g_object_notify_by_pspec(G_OBJECT(list), properties[PROP_IN_PROGRESS]);
 }
 
 gboolean purple_roomlist_get_in_progress(PurpleRoomlist *list)
@@ -370,25 +372,26 @@ purple_roomlist_class_init(PurpleRoomlistClass *klass)
 	obj_class->get_property = purple_roomlist_get_property;
 	obj_class->set_property = purple_roomlist_set_property;
 
-	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object("account", "Account",
+	properties[PROP_ACCOUNT] = g_param_spec_object("account", "Account",
 				"The account for the room list.",
 				PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_ACCOUNT,
+				properties[PROP_ACCOUNT]);
 
-	g_object_class_install_property(obj_class, PROP_FIELDS,
-			g_param_spec_pointer("fields", "Fields",
+	properties[PROP_FIELDS] = g_param_spec_pointer("fields", "Fields",
 				"The list of fields for a roomlist.",
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_FIELDS,
+				properties[PROP_FIELDS]);
 
-	g_object_class_install_property(obj_class, PROP_IN_PROGRESS,
-			g_param_spec_boolean("in-progress", "In progress",
+	properties[PROP_IN_PROGRESS] = g_param_spec_boolean("in-progress",
+				"In progress",
 				"Whether the room list is being fetched.", FALSE,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_IN_PROGRESS,
+				properties[PROP_IN_PROGRESS]);
 
 	g_type_class_add_private(klass, sizeof(PurpleRoomlistPrivate));
 }
@@ -482,7 +485,7 @@ void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *ro
 			break;
 	}
 
-	g_object_notify(G_OBJECT(list), "fields");
+	g_object_notify_by_pspec(G_OBJECT(list), properties[PROP_FIELDS]);
 }
 
 void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)

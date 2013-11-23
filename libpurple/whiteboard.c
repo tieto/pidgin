@@ -22,6 +22,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 #include "whiteboard.h"
 #include "prpl.h"
 
@@ -63,6 +64,7 @@ enum
  * Globals
  *****************************************************************************/
 static GObjectClass *parent_class;
+static GParamSpec *properties[PROP_LAST];
 
 static PurpleWhiteboardUiOps *whiteboard_ui_ops = NULL;
 /* static PurpleWhiteboardPrplOps *whiteboard_prpl_ops = NULL; */
@@ -114,7 +116,7 @@ void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state)
 
 	priv->state = state;
 
-	g_object_notify(G_OBJECT(wb), "state");
+	g_object_notify_by_pspec(G_OBJECT(wb), properties[PROP_STATE]);
 }
 
 int purple_whiteboard_get_state(const PurpleWhiteboard *wb)
@@ -286,7 +288,7 @@ void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list)
 
 	priv->draw_list = draw_list;
 
-	g_object_notify(G_OBJECT(wb), "draw-list");
+	g_object_notify_by_pspec(G_OBJECT(wb), properties[PROP_DRAW_LIST]);
 }
 
 void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data)
@@ -438,32 +440,32 @@ purple_whiteboard_class_init(PurpleWhiteboardClass *klass)
 	obj_class->get_property = purple_whiteboard_get_property;
 	obj_class->set_property = purple_whiteboard_set_property;
 
-	g_object_class_install_property(obj_class, PROP_STATE,
-			g_param_spec_int("state", "State",
+	properties[PROP_STATE] = g_param_spec_int("state", "State",
 				"State of the whiteboard.",
 				G_MININT, G_MAXINT, 0,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_STATE,
+				properties[PROP_STATE]);
 
-	g_object_class_install_property(obj_class, PROP_ACCOUNT,
-			g_param_spec_object("account", "Account",
+	properties[PROP_ACCOUNT] = g_param_spec_object("account", "Account",
 				"The whiteboard's account.", PURPLE_TYPE_ACCOUNT,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_ACCOUNT,
+				properties[PROP_ACCOUNT]);
 
-	g_object_class_install_property(obj_class, PROP_WHO,
-			g_param_spec_string("who", "Who",
+	properties[PROP_WHO] = g_param_spec_string("who", "Who",
 				"Who you're drawing with.", NULL,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_WHO,
+				properties[PROP_WHO]);
 
-	g_object_class_install_property(obj_class, PROP_DRAW_LIST,
-			g_param_spec_pointer("draw-list", "Draw list",
+	properties[PROP_DRAW_LIST] = g_param_spec_pointer("draw-list", "Draw list",
 				"A list of points to draw to the buddy.",
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
-			);
+				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property(obj_class, PROP_DRAW_LIST,
+				properties[PROP_DRAW_LIST]);
 
 	g_type_class_add_private(klass, sizeof(PurpleWhiteboardPrivate));
 }
