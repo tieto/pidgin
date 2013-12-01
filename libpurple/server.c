@@ -779,11 +779,15 @@ void serv_got_chat_left(PurpleConnection *g, int id)
 	PurpleChatConversation *chat = NULL;
 
 	for (bcs = purple_connection_get_active_chats(g); bcs != NULL; bcs = bcs->next) {
-		chat = PURPLE_CHAT_CONVERSATION(bcs->data);
-
-		if (purple_chat_conversation_get_id(chat) == id)
+		if (purple_chat_conversation_get_id(
+				PURPLE_CHAT_CONVERSATION(bcs->data)) == id) {
+			chat = (PurpleChatConversation *)bcs->data;
 			break;
+		}
 	}
+
+	if (!chat)
+		return;
 
 	purple_debug(PURPLE_DEBUG_INFO, "server", "Leaving room: %s\n",
 			   purple_conversation_get_name(PURPLE_CONVERSATION(chat)));
@@ -813,11 +817,15 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	g_return_if_fail(message != NULL);
 
 	for (bcs = purple_connection_get_active_chats(g); bcs != NULL; bcs = bcs->next) {
-		chat = PURPLE_CHAT_CONVERSATION(bcs->data);
-
-		if (purple_chat_conversation_get_id(chat) == id)
+		if (purple_chat_conversation_get_id(
+				PURPLE_CHAT_CONVERSATION(bcs->data)) == id) {
+			chat = (PurpleChatConversation *)bcs->data;
 			break;
+		}
 	}
+
+	if (!chat)
+		return;
 
 	/* Did I send the message? */
 	if (purple_strequal(purple_chat_conversation_get_nick(chat),

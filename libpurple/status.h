@@ -26,57 +26,6 @@
 #ifndef _PURPLE_STATUS_H_
 #define _PURPLE_STATUS_H_
 
-/*
- * A brief explanation of the status API:
- *
- * PurpleStatusType's are created by each protocol.  They outline the
- * available statuses of the protocol.  AIM, for example, supports
- * an available state with an optional available message, an away
- * state with a mandatory message, and an invisible state (which is
- * technically "independent" of the other two, but we'll get into
- * that later).  PurpleStatusTypes are very permanent.  They are
- * hardcoded in each protocol and will not change often.  And because
- * they are hardcoded, they do not need to be saved to any XML file.
- *
- * A PurpleStatus can be thought of as an "instance" of a PurpleStatusType.
- * If you're familiar with object-oriented programming languages
- * then this should be immediately clear.  Say, for example, that
- * one of your AIM buddies has set himself as "away."  You have a
- * PurpleBuddy node for this person in your buddy list.  Purple wants
- * to mark this buddy as "away," so it creates a new PurpleStatus.
- * The PurpleStatus has its PurpleStatusType set to the "away" state
- * for the oscar protocol.  The PurpleStatus also contains the buddy's
- * away message.  PurpleStatuses are sometimes saved, depending on
- * the context.  The current PurpleStatuses associated with each of
- * your accounts are saved so that the next time you start Purple,
- * your accounts will be set to their last known statuses.  There
- * is also a list of saved statuses that are written to the
- * status.xml file.  Also, each PurpleStatus has a "saveable" boolean.
- * If "saveable" is set to FALSE then the status is NEVER saved.
- * All PurpleStatuses should be inside a PurplePresence.
- *
- * A PurpleStatus is either "independent" or "exclusive."
- * Independent statuses can be active or inactive and they don't
- * affect anything else.  However, you can only have one exclusive
- * status per PurplePresence.  If you activate one exclusive status,
- * then the previous exclusive status is automatically deactivated.
- *
- * A PurplePresence is like a collection of PurpleStatuses (plus some
- * other random info).
- *
- * @see presence.h
- */
-
-/**
- * PurpleStatusType's are created by each protocol.  They outline the
- * available statuses of the protocol.  AIM, for example, supports
- * an available state with an optional available message, an away
- * state with a mandatory message, and an invisible state (which is
- * technically "independent" of the other two, but we'll get into
- * that later).  PurpleStatusTypes are very permanent.  They are
- * hardcoded in each protocol and will not change often.  And because
- * they are hardcoded, they do not need to be saved to any XML file.
- */
 #define PURPLE_TYPE_STATUS             (purple_status_get_type())
 #define PURPLE_STATUS(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_STATUS, PurpleStatus))
 #define PURPLE_STATUS_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_STATUS, PurpleStatusClass))
@@ -91,6 +40,16 @@ typedef struct _PurpleStatusClass      PurpleStatusClass;
 
 #define PURPLE_TYPE_STATUS_TYPE        (purple_status_type_get_type())
 
+/**
+ * PurpleStatusType's are created by each protocol.  They outline the
+ * available statuses of the protocol.  AIM, for example, supports
+ * an available state with an optional available message, an away
+ * state with a mandatory message, and an invisible state (which is
+ * technically "independent" of the other two, but we'll get into
+ * that later).  PurpleStatusTypes are very permanent.  They are
+ * hardcoded in each protocol and will not change often.  And because
+ * they are hardcoded, they do not need to be saved to any XML file.
+ */
 typedef struct _PurpleStatusType       PurpleStatusType;
 
 #define PURPLE_TYPE_STATUS_ATTRIBUTE   (purple_status_attribute_get_type())
@@ -144,7 +103,33 @@ typedef enum
 #define PURPLE_MOOD_COMMENT	"moodtext"
 
 /**
- * Represents an active status.
+ * A PurpleStatus can be thought of as an "instance" of a PurpleStatusType.
+ * If you're familiar with object-oriented programming languages
+ * then this should be immediately clear.  Say, for example, that
+ * one of your AIM buddies has set himself as "away."  You have a
+ * PurpleBuddy node for this person in your buddy list.  Purple wants
+ * to mark this buddy as "away," so it creates a new PurpleStatus.
+ * The PurpleStatus has its PurpleStatusType set to the "away" state
+ * for the oscar protocol.  The PurpleStatus also contains the buddy's
+ * away message.  PurpleStatuses are sometimes saved, depending on
+ * the context.  The current PurpleStatuses associated with each of
+ * your accounts are saved so that the next time you start Purple,
+ * your accounts will be set to their last known statuses.  There
+ * is also a list of saved statuses that are written to the
+ * status.xml file.  Also, each PurpleStatus has a "saveable" boolean.
+ * If "saveable" is set to FALSE then the status is NEVER saved.
+ * All PurpleStatuses should be inside a PurplePresence.
+ *
+ * A PurpleStatus is either "independent" or "exclusive."
+ * Independent statuses can be active or inactive and they don't
+ * affect anything else.  However, you can only have one exclusive
+ * status per PurplePresence.  If you activate one exclusive status,
+ * then the previous exclusive status is automatically deactivated.
+ *
+ * A PurplePresence is like a collection of PurpleStatuses (plus some
+ * other random info).
+ *
+ * @see presence.h
  */
 struct _PurpleStatus
 {
