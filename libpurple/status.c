@@ -121,8 +121,6 @@ static int primitive_scores[] =
 #define SCORE_IDLE_TIME 10
 #define SCORE_OFFLINE_MESSAGE 11
 
-int *_purple_get_primitive_scores(void);
-
 /**************************************************************************
  * PurpleStatusPrimitive API
  **************************************************************************/
@@ -147,7 +145,7 @@ static struct PurpleStatusPrimitiveMap
 };
 
 int *
-_purple_get_primitive_scores(void)
+_purple_statuses_get_primitive_scores(void)
 {
 	return primitive_scores;
 }

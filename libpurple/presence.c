@@ -102,8 +102,6 @@ static GParamSpec *properties[PRES_PROP_LAST];
 static GParamSpec *ap_properties[ACPRES_PROP_LAST];
 static GParamSpec *bp_properties[BUDPRES_PROP_LAST];
 
-int *_purple_get_primitive_scores(void);
-
 /**************************************************************************
 * PurplePresence API
 **************************************************************************/
@@ -615,7 +613,7 @@ purple_buddy_presence_compute_score(const PurpleBuddyPresence *buddy_presence)
 	int score = 0;
 	PurplePresence *presence = PURPLE_PRESENCE(buddy_presence);
 	PurpleBuddy *b = purple_buddy_presence_get_buddy(buddy_presence);
-	int *primitive_scores = _purple_get_primitive_scores();
+	int *primitive_scores = _purple_statuses_get_primitive_scores();
 	int offline_score = purple_prefs_get_int("/purple/status/scores/offline_msg");
 	int idle_score = purple_prefs_get_int("/purple/status/scores/idle");
 

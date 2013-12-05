@@ -64,8 +64,6 @@ static GHashTable *groups_cache = NULL;
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
 
-PurpleBlistNode *_purple_blist_get_last_child(PurpleBlistNode *node);
-
 /*********************************************************************
  * Private utility functions                                         *
  *********************************************************************/

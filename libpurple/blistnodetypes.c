@@ -64,6 +64,9 @@ struct _PurpleBuddyPrivate {
 	PurpleAccount *account;      /**< the account this buddy belongs to       */
 	PurplePresence *presence;    /**< Presense information of the buddy       */
 	PurpleMediaCaps media_caps;  /**< The media capabilities of the buddy.    */
+
+	gboolean is_constructed;     /**< Indicates if the buddy has finished
+	                                  being constructed.                      */
 };
 
 /* Buddy property enums */
@@ -98,7 +101,9 @@ enum
 
 /** Private data for a group */
 struct _PurpleGroupPrivate {
-	char *name;  /**< The name of this group. */
+	char *name;               /**< The name of this group.                    */
+	gboolean is_constructed;  /**< Indicates if the group has finished being
+	                               constructed.                               */
 };
 
 /* Group property enums */
@@ -111,10 +116,13 @@ enum
 
 /** Private data for a chat node */
 struct _PurpleChatPrivate {
-	char *alias;             /**< The display name of this chat.              */
-	PurpleAccount *account;  /**< The account this chat is attached to        */
-	GHashTable *components;  /**< the stuff the protocol needs to know to join
-	                              the chat                                    */
+	char *alias;              /**< The display name of this chat.             */
+	PurpleAccount *account;   /**< The account this chat is attached to       */
+	GHashTable *components;   /**< the stuff the protocol needs to know to
+	                               join the chat                              */
+
+	gboolean is_constructed;  /**< Indicates if the chat has finished being
+	                               constructed.                               */
 };
 
 /* Chat property enums */
@@ -141,8 +149,6 @@ purple_strings_are_different(const char *one, const char *two)
 	return !((one && two && g_utf8_collate(one, two) == 0) ||
 			((one == NULL || *one == '\0') && (two == NULL || *two == '\0')));
 }
-
-PurpleBlistNode *_purple_blist_get_last_child(PurpleBlistNode *node);
 
 /**************************************************************************/
 /* Buddy API                                                              */
@@ -548,12 +554,18 @@ purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
 
 	switch (param_id) {
 		case BUDDY_PROP_NAME:
-			g_free(priv->name);
-			priv->name = purple_utf8_strip_unprintables(g_value_get_string(value));
+			if (priv->is_constructed)
+				purple_buddy_set_name(buddy, g_value_get_string(value));
+			else
+				priv->name =
+					purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		case BUDDY_PROP_LOCAL_ALIAS:
-			g_free(priv->local_alias);
-			priv->local_alias = purple_utf8_strip_unprintables(g_value_get_string(value));
+			if (priv->is_constructed)
+				purple_buddy_set_local_alias(buddy, g_value_get_string(value));
+			else
+				priv->local_alias =
+					purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		case BUDDY_PROP_SERVER_ALIAS:
 			purple_buddy_set_server_alias(buddy, g_value_get_string(value));
@@ -630,6 +642,8 @@ purple_buddy_constructed(GObject *object)
 
 	if (ops && ops->new_node)
 		ops->new_node((PurpleBlistNode *)buddy);
+
+	priv->is_constructed = TRUE;
 }
 
 /* GObject dispose function */
@@ -1222,8 +1236,11 @@ purple_chat_set_property(GObject *obj, guint param_id, const GValue *value,
 
 	switch (param_id) {
 		case CHAT_PROP_ALIAS:
-			g_free(priv->alias);
-			priv->alias = purple_utf8_strip_unprintables(g_value_get_string(value));
+			if (priv->is_constructed)
+				purple_chat_set_alias(chat, g_value_get_string(value));
+			else
+				priv->alias =
+					purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		case CHAT_PROP_ACCOUNT:
 			priv->account = g_value_get_object(value);
@@ -1273,12 +1290,15 @@ static void
 purple_chat_constructed(GObject *object)
 {
 	PurpleChat *chat = PURPLE_CHAT(object);
+	PurpleChatPrivate *priv = PURPLE_CHAT_GET_PRIVATE(chat);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
 	G_OBJECT_CLASS(blistnode_parent_class)->constructed(object);
 
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node(PURPLE_BLIST_NODE(chat));
+
+	priv->is_constructed = TRUE;
 }
 
 /* GObject finalize function */
@@ -1573,12 +1593,16 @@ static void
 purple_group_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
-	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(obj);
+	PurpleGroup *group = PURPLE_GROUP(obj);
+	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(group);
 
 	switch (param_id) {
 		case GROUP_PROP_NAME:
-			g_free(priv->name);
-			priv->name = purple_utf8_strip_unprintables(g_value_get_string(value));
+			if (priv->is_constructed)
+				purple_group_set_name(group, g_value_get_string(value));
+			else
+				priv->name =
+					purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -1615,12 +1639,15 @@ static void
 purple_group_constructed(GObject *object)
 {
 	PurpleGroup *group = PURPLE_GROUP(object);
+	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(group);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
 	G_OBJECT_CLASS(counting_parent_class)->constructed(object);
 
 	if (ops && ops->new_node)
 		ops->new_node(PURPLE_BLIST_NODE(group));
+
+	priv->is_constructed = TRUE;
 }
 
 /* GObject finalize function */
