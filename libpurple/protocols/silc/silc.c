@@ -26,7 +26,6 @@
 #include "core.h"
 
 extern SilcClientOperations ops;
-static PurplePlugin *silc_plugin = NULL;
 
 /* Error log message callback */
 
@@ -260,7 +259,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 		sg->conn = conn;
 
 		/* Connection created successfully */
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 
 		/* Send the server our buddy list */
 		silcpurple_send_buddylist(gc);
@@ -1367,13 +1366,13 @@ silcpurple_send_im_resolved(SilcClient client,
 	PurpleConnection *gc = client->application;
 	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcPurpleIM im = context;
-	PurpleConversation *convo;
+	PurpleIMConversation *convo;
 	char tmp[256];
 	SilcClientEntry client_entry;
 	SilcDList list;
 	gboolean free_list = FALSE;
 
-	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->nick,
+	convo = purple_conversations_find_im_with_account(im->nick,
 						      sg->account);
 	if (!convo)
 		return;
@@ -1410,7 +1409,7 @@ silcpurple_send_im_resolved(SilcClient client,
 								 buf->data,
 								 silc_buffer_len(buf));
 			silc_mime_partial_free(list);
-			purple_conv_im_write(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
+			purple_conversation_write_message(PURPLE_CONVERSATION(convo), conn->local_entry->nickname,
 					     im->message, 0, time(NULL));
 			goto out;
 		}
@@ -1419,14 +1418,14 @@ silcpurple_send_im_resolved(SilcClient client,
 	/* Send the message */
 	silc_client_send_private_message(client, conn, client_entry, im->flags,
 					 sg->sha1hash, (unsigned char *)im->message, im->message_len);
-	purple_conv_im_write(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
+	purple_conversation_write_message(PURPLE_CONVERSATION(convo), conn->local_entry->nickname,
 			     im->message, 0, time(NULL));
 	goto out;
 
  err:
 	g_snprintf(tmp, sizeof(tmp),
 		   _("User <I>%s</I> is not present in the network"), im->nick);
-	purple_conversation_write(convo, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write(PURPLE_CONVERSATION(convo), NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 
  out:
 	if (free_list) {
@@ -1539,9 +1538,9 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 static GList *silcpurple_blist_node_menu(PurpleBlistNode *node) {
 	/* split this single menu building function back into the two
 	   original: one for buddies and one for chats */
-	if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	if(PURPLE_IS_CHAT(node)) {
 		return silcpurple_chat_menu((PurpleChat *) node);
-	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	} else if(PURPLE_IS_BUDDY(node)) {
 		return silcpurple_buddy_menu((PurpleBuddy *) node);
 	} else {
 		g_return_val_if_reached(NULL);
@@ -1554,7 +1553,7 @@ static PurpleCmdRet silcpurple_cmd_chat_part(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	PurpleConnection *gc;
-	PurpleConversation *convo = conv;
+	PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(conv);
 	int id = 0;
 
 	gc = purple_conversation_get_connection(conv);
@@ -1563,11 +1562,11 @@ static PurpleCmdRet silcpurple_cmd_chat_part(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if(args && args[0])
-		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[0],
+		chat = purple_conversations_find_chat_with_account(args[0],
 									purple_connection_get_account(gc));
 
-	if (convo != NULL)
-		id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo));
+	if (chat != NULL)
+		id = purple_chat_conversation_get_id(chat);
 
 	if (id == 0)
 		return PURPLE_CMD_RET_FAILED;
@@ -1587,13 +1586,13 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 	const char *topic;
 
 	gc = purple_conversation_get_connection(conv);
-	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
+	id = purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (gc == NULL || id == 0)
 		return PURPLE_CMD_RET_FAILED;
 
 	if (!args || !args[0]) {
-		topic = purple_conv_chat_get_topic (PURPLE_CONV_CHAT(conv));
+		topic = purple_chat_conversation_get_topic(PURPLE_CHAT_CONVERSATION(conv));
 		if (topic) {
 			tmp = g_markup_escape_text(topic, -1);
 			tmp2 = purple_markup_linkify(tmp);
@@ -1602,7 +1601,7 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), purple_account_get_username(purple_connection_get_account(gc)), buf,
+		purple_conversation_write_message(conv, purple_account_get_username(purple_connection_get_account(gc)), buf,
 							 PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 
@@ -1685,7 +1684,7 @@ static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	int ret = 1;
-	PurpleConversation *convo;
+	PurpleIMConversation *im;
 	PurpleConnection *gc;
 	PurpleAccount *account;
 
@@ -1701,11 +1700,11 @@ static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 
 	account = purple_connection_get_account(gc);
 
-	convo = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, args[0]);
+	im = purple_im_conversation_new(account, args[0]);
 
 	if (args[1]) {
 		ret = silcpurple_send_im(gc, args[0], args[1], PURPLE_MESSAGE_SEND);
-		purple_conv_im_write(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
+		purple_conversation_write_message(PURPLE_CONVERSATION(im), purple_connection_get_display_name(gc),
 				args[1], PURPLE_MESSAGE_SEND, time(NULL));
 	}
 
@@ -1801,7 +1800,7 @@ static PurpleCmdRet silcpurple_cmd_cmode(PurpleConversation *conv,
 		} else {
 			msg = g_strdup_printf(_("no channel modes are set on %s"), chname);
 		}
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "",
+		purple_conversation_write_message(conv, "",
 							 msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(msg);
 		return PURPLE_CMD_RET_OK;
@@ -2190,8 +2189,6 @@ init_plugin(PurplePlugin *plugin)
 	int i;
 	PurpleKeyValuePair *kvp;
 	GList *list = NULL;
-
-	silc_plugin = plugin;
 
 	split = purple_account_user_split_new(_("Network"), "silcnet.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);

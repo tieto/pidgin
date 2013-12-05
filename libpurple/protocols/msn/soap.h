@@ -36,9 +36,9 @@ typedef void (*MsnSoapCallback)(MsnSoapMessage *request,
 #include "session.h"
 
 MsnSoapMessage *
-msn_soap_message_new(const gchar *action, xmlnode *xml);
+msn_soap_message_new(const gchar *action, PurpleXmlNode *xml);
 
-xmlnode *
+PurpleXmlNode *
 msn_soap_message_get_xml(MsnSoapMessage *message);
 
 MsnSoapService *

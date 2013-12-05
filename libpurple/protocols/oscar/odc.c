@@ -60,11 +60,12 @@ peer_odc_close(PeerConnection *conn)
 	if (tmp != NULL)
 	{
 		PurpleAccount *account;
-		PurpleConversation *conv;
+		PurpleIMConversation *im;
 
 		account = purple_connection_get_account(conn->od->gc);
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		im = purple_im_conversation_new(account, conn->bn);
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
 	}
 
@@ -149,16 +150,16 @@ peer_odc_send_cookie(PeerConnection *conn)
  * Send client-to-client typing notification over an established direct connection.
  */
 void
-peer_odc_send_typing(PeerConnection *conn, PurpleTypingState typing)
+peer_odc_send_typing(PeerConnection *conn, PurpleIMTypingState typing)
 {
 	OdcFrame frame;
 
 	memset(&frame, 0, sizeof(OdcFrame));
 	frame.type = 0x0001;
 	frame.subtype = 0x0006;
-	if (typing == PURPLE_TYPING)
+	if (typing == PURPLE_IM_TYPING)
 		frame.flags = 0x0002 | 0x0008;
-	else if (typing == PURPLE_TYPED)
+	else if (typing == PURPLE_IM_TYPED)
 		frame.flags = 0x0002 | 0x0004;
 	else
 		frame.flags = 0x0002;
@@ -524,7 +525,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		 */
 
 		PurpleAccount *account;
-		PurpleConversation *conv;
+		PurpleIMConversation *im;
 
 		if (conn->flags & PEER_CONNECTION_FLAG_IS_INCOMING)
 		{
@@ -565,8 +566,8 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 
 		/* Tell the local user that we are connected */
 		account = purple_connection_get_account(gc);
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
-		purple_conversation_write(conv, NULL, _("Direct IM established"),
+		im = purple_im_conversation_new(account, conn->bn);
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Direct IM established"),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 
@@ -584,11 +585,11 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		purple_debug_info("oscar", "ohmigod! %s has started typing "
 			"(DirectIM). He's going to send you a message! "
 			"*squeal*\n", conn->bn);
-		serv_got_typing(gc, conn->bn, 0, PURPLE_TYPING);
+		serv_got_typing(gc, conn->bn, 0, PURPLE_IM_TYPING);
 	}
 	else if (frame->flags & 0x0004)
 	{
-		serv_got_typing(gc, conn->bn, 0, PURPLE_TYPED);
+		serv_got_typing(gc, conn->bn, 0, PURPLE_IM_TYPED);
 	}
 	else
 	{
@@ -601,7 +602,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		{
 			gchar *tmp, *size1, *size2;
 			PurpleAccount *account;
-			PurpleConversation *conv;
+			PurpleIMConversation *im;
 
 			size1 = purple_str_size_to_units(frame->payload.len);
 			size2 = purple_str_size_to_units(DIRECTIM_MAX_FILESIZE);
@@ -610,8 +611,8 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 			g_free(size2);
 
 			account = purple_connection_get_account(conn->od->gc);
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			im = purple_im_conversation_new(account, conn->bn);
+			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 
 			peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);

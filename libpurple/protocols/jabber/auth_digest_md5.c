@@ -23,7 +23,7 @@
 #include "internal.h"
 
 #include "debug.h"
-#include "cipher.h"
+#include "ciphers/md5hash.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -32,12 +32,12 @@
 #include "jabber.h"
 
 static JabberSaslState
-digest_md5_start(JabberStream *js, xmlnode *packet, xmlnode **response,
+digest_md5_start(JabberStream *js, PurpleXmlNode *packet, PurpleXmlNode **response,
                  char **error)
 {
-	xmlnode *auth = xmlnode_new("auth");
-	xmlnode_set_namespace(auth, NS_XMPP_SASL);
-	xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
+	PurpleXmlNode *auth = purple_xmlnode_new("auth");
+	purple_xmlnode_set_namespace(auth, NS_XMPP_SASL);
+	purple_xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 
 	*response = auth;
 	return JABBER_SASL_STATE_CONTINUE;
@@ -106,8 +106,7 @@ static char *
 generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
+	PurpleHash *hash;
 	guchar result[16];
 	size_t a1len;
 
@@ -122,35 +121,34 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
+	hash = purple_md5_hash_new();
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	purple_cipher_context_append(context, (const guchar *)x, strlen(x));
-	purple_cipher_context_digest(context, result, sizeof(result));
+	purple_hash_append(hash, (const guchar *)x, strlen(x));
+	purple_hash_digest(hash, result, sizeof(result));
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a1, a1len);
-	purple_cipher_context_digest(context, result, sizeof(result));
+	purple_hash_reset(hash);
+	purple_hash_append(hash, (const guchar *)a1, a1len);
+	purple_hash_digest(hash, result, sizeof(result));
 
 	ha1 = purple_base16_encode(result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a2, strlen(a2));
-	purple_cipher_context_digest(context, result, sizeof(result));
+	purple_hash_reset(hash);
+	purple_hash_append(hash, (const guchar *)a2, strlen(a2));
+	purple_hash_digest(hash, result, sizeof(result));
 
 	ha2 = purple_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)kd, strlen(kd));
-	purple_cipher_context_digest(context, result, sizeof(result));
-	purple_cipher_context_destroy(context);
+	purple_hash_reset(hash);
+	purple_hash_append(hash, (const guchar *)kd, strlen(kd));
+	purple_hash_digest(hash, result, sizeof(result));
+	g_object_unref(hash);
 
 	z = purple_base16_encode(result, 16);
 
@@ -166,11 +164,11 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 }
 
 static JabberSaslState
-digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
-                            xmlnode **response, char **msg)
+digest_md5_handle_challenge(JabberStream *js, PurpleXmlNode *packet,
+                            PurpleXmlNode **response, char **msg)
 {
-	xmlnode *reply = NULL;
-	char *enc_in = xmlnode_get_data(packet);
+	PurpleXmlNode *reply = NULL;
+	char *enc_in = purple_xmlnode_get_data(packet);
 	char *dec_in;
 	char *enc_out;
 	GHashTable *parts;
@@ -194,8 +192,8 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 		char *expected_rspauth = js->auth_mech_data;
 
 		if (rspauth && purple_strequal(rspauth, expected_rspauth)) {
-			reply = xmlnode_new("response");
-			xmlnode_set_namespace(reply, NS_XMPP_SASL);
+			reply = purple_xmlnode_new("response");
+			purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		} else {
 			*msg = g_strdup(_("Invalid challenge from server"));
 			state = JABBER_SASL_STATE_FAIL;
@@ -262,9 +260,9 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 					G_GSIZE_FORMAT "): %s\n",
 					response->len, response->str);
 
-			reply = xmlnode_new("response");
-			xmlnode_set_namespace(reply, NS_XMPP_SASL);
-			xmlnode_insert_data(reply, enc_out, -1);
+			reply = purple_xmlnode_new("response");
+			purple_xmlnode_set_namespace(reply, NS_XMPP_SASL);
+			purple_xmlnode_insert_data(reply, enc_out, -1);
 
 			g_free(enc_out);
 

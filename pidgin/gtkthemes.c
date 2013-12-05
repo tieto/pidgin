@@ -259,7 +259,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		}
 
 		if (! g_utf8_validate(buf, -1, NULL)) {
-			purple_debug_error("gtkthemes", "%s:%d is invalid UTF-8\n", file, line_nbr);
+			purple_debug_error("gtkthemes", "%s:%" G_GSIZE_FORMAT " is invalid UTF-8\n", file, line_nbr);
 			continue;
 		}
 
@@ -308,7 +308,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 					if (*i == '\\' && *(i+1) != '\0')
 						i++;
 					next = g_utf8_next_char(i);
-					if ((next - i) > (sizeof(l) - li -1)) {
+					if ((gsize)(next - i) > (sizeof(l) - li -1)) {
 						break;
 					}
 					while (i != next)
@@ -354,7 +354,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			pidgin_themes_destroy_smiley_theme_smileys(current_smiley_theme);
 		current_smiley_theme = theme;
 
-		for (cnv = purple_get_conversations(); cnv != NULL; cnv = cnv->next) {
+		for (cnv = purple_conversations_get_all(); cnv != NULL; cnv = cnv->next) {
 			PurpleConversation *conv = cnv->data;
 
 			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {

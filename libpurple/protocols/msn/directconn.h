@@ -28,7 +28,7 @@ typedef struct _MsnDirectConn MsnDirectConn;
 
 #include "network.h"
 #include "proxy.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 
 #include "slp.h"
 #include "slplink.h"

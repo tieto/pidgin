@@ -174,21 +174,20 @@ msn_session_find_swboard(MsnSession *session, const char *username)
 	return NULL;
 }
 
-static PurpleConversation *
-msn_session_get_conv(MsnSession *session,const char *passport)
+static PurpleIMConversation *
+msn_session_get_im(MsnSession *session,const char *passport)
 {
 	PurpleAccount *account;
-	PurpleConversation * conv;
+	PurpleIMConversation * im;
 
 	g_return_val_if_fail(session != NULL, NULL);
 	account = session->account;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-									passport, account);
-	if(conv == NULL){
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, passport);
+	im = purple_conversations_find_im_with_account(passport, account);
+	if(im == NULL){
+		im = purple_im_conversation_new(account, passport);
 	}
-	return conv;
+	return im;
 }
 
 /* put Message to User Conversation
@@ -198,10 +197,10 @@ msn_session_get_conv(MsnSession *session,const char *passport)
 void
 msn_session_report_user(MsnSession *session,const char *passport,const char *msg,PurpleMessageFlags flags)
 {
-	PurpleConversation * conv;
+	PurpleIMConversation * im;
 
-	if ((conv = msn_session_get_conv(session,passport)) != NULL){
-		purple_conversation_write(conv, NULL, msg, flags, time(NULL));
+	if ((im = msn_session_get_im(session,passport)) != NULL){
+		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, msg, flags, time(NULL));
 	}
 }
 
@@ -309,7 +308,7 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues.
 	 */
-	for (buddies = purple_find_buddies(session->account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(session->account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *buddy = buddies->data;
 		const gchar *buddy_name = purple_buddy_get_name(buddy);
@@ -483,7 +482,7 @@ msn_session_finish_login(MsnSession *session)
 			purple_imgstore_unref(img);
 
 		session->logged_in = TRUE;
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 
 		/* Sync users */
 		msn_session_sync_users(session);

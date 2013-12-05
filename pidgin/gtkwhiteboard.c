@@ -22,7 +22,7 @@
  */
 
 #include "internal.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "debug.h"
 
 #include "gtkwhiteboard.h"
@@ -156,7 +156,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	/* Try and set window title as the name of the buddy, else just use their
 	 * username
 	 */
-	buddy = purple_find_buddy(purple_whiteboard_get_account(wb), purple_whiteboard_get_who(wb));
+	buddy = purple_blist_find_buddy(purple_whiteboard_get_account(wb), purple_whiteboard_get_who(wb));
 
 	window = pidgin_create_window(buddy != NULL ? purple_buddy_get_contact_alias(buddy) : purple_whiteboard_get_who(wb), 0, NULL, FALSE);
 	gtkwb->window = window;
@@ -323,7 +323,7 @@ static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWh
 	wb = gtkwb->wb;
 	g_return_val_if_fail(wb != NULL, FALSE);
 
-	purple_whiteboard_destroy(wb);
+	g_object_unref(wb);
 
 	return FALSE;
 }
@@ -351,7 +351,7 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 	/* XXXX because otherwise gettext will see this string, even though it's
 	 * in an #if 0 block. Remove the XXXX if you want to use this code.
 	 * But, it really shouldn't be a Yahoo-specific string. ;) */
-	purple_conv_im_write(PURPLE_CONV_IM(conv), "", XXXX_("Sent Doodle request."),
+	purple_im_conversation_write_message(PURPLE_CONV_IM(conv), "", XXXX_("Sent Doodle request."),
 					   PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_RECV, time(NULL));
 
 	yahoo_doodle_command_send_request(gc, to);
@@ -360,7 +360,7 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 	/* Insert this 'session' in the list.  At this point, it's only a requested
 	 * session.
 	 */
-	wb = purple_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
+	wb = purple_whiteboard_new(account, to, DOODLE_STATE_REQUESTING);
 }
 #endif
 

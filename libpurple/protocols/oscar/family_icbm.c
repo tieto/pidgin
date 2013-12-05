@@ -174,7 +174,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	else
 		buf = g_strdup_printf(_("Unable to send message: %s"), reason_str);
 
-	if (!purple_conv_present_error(bn, purple_connection_get_account(gc), buf)) {
+	if (!purple_conversation_present_error(bn, purple_connection_get_account(gc), buf)) {
 		g_free(buf);
 		if (errcode != 0 && errcode < errcodereasonlen)
 			buf = g_strdup_printf(_("Unable to send message to %s: %s (%s)"),
@@ -1724,7 +1724,7 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 					if (*unescaped_xstatus) {
 						purple_debug_misc("oscar", "X-Status reply: %s\n", unescaped_xstatus);
 						account = purple_connection_get_account(od->gc);
-						buddy = purple_find_buddy(account, bn);
+						buddy = purple_blist_find_buddy(account, bn);
 						presence = purple_buddy_get_presence(buddy);
 						status = purple_presence_get_status(presence, "mood");
 						if (status) {

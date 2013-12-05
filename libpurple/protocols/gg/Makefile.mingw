@@ -47,7 +47,7 @@ LIB_PATHS += \
 C_SRC =	\
 	account.c \
 	avatar.c \
-	buddylist.c \
+	blist.c \
 	chat.c \
 	deprecated.c \
 	edisc.c \

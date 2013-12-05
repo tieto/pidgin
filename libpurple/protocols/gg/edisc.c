@@ -212,7 +212,7 @@ static void ggp_edisc_xfer_error(PurpleXfer *xfer, const gchar *msg)
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_REMOTE);
 	purple_xfer_conversation_write(xfer, msg, TRUE);
 	purple_xfer_error(
-		purple_xfer_get_type(xfer),
+		purple_xfer_get_xfer_type(xfer),
 		purple_xfer_get_account(xfer),
 		purple_xfer_get_remote_user(xfer),
 		msg);
@@ -265,7 +265,7 @@ void ggp_edisc_xfer_ticket_changed(PurpleConnection *gc, const char *data)
 
 	g_object_unref(parser);
 
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE) {
 		if (is_completed)
 			ggp_edisc_xfer_recv_ticket_completed(xfer);
 	} else {
@@ -300,7 +300,7 @@ static void ggp_edisc_xfer_progress_watcher(PurpleHttpConnection *hc,
 	gboolean eof;
 	int total_real;
 
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_RECEIVE) {
 		if (!reading_state)
 			return;
 	} else {
@@ -358,7 +358,7 @@ gboolean ggp_edisc_xfer_can_receive_file(PurpleConnection *gc,
 	g_return_val_if_fail(gc != NULL, FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
 
-	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
+	buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 	if (buddy == NULL)
 		return FALSE;
 
@@ -528,23 +528,20 @@ static void ggp_edisc_xfer_send_reader(PurpleHttpConnection *hc,
 
 	if (edisc_xfer->already_read != offset) {
 		purple_debug_error("gg", "ggp_edisc_xfer_send_reader: "
-			"Invalid offset (%d != %" G_GSIZE_FORMAT ")\n",
+			"Invalid offset (%" G_GSIZE_FORMAT " != %" G_GSIZE_FORMAT ")\n",
 			edisc_xfer->already_read, offset);
 		ggp_edisc_xfer_error(xfer, _("Error while reading a file"));
 		return;
 	}
 
-	if (xfer->dest_fp == NULL)
-		stored = -1;
-	else
-		stored = fread(buffer, 1, length, xfer->dest_fp);
+	stored = purple_xfer_read_file(xfer, (guchar *)buffer, length);
 
 	if (stored < 0)
 		success = FALSE;
 	else {
 		success = TRUE;
 		edisc_xfer->already_read += stored;
-		eof = (edisc_xfer->already_read >= purple_xfer_get_size(xfer));
+		eof = ((goffset)edisc_xfer->already_read >= purple_xfer_get_size(xfer));
 	}
 
 	cb(hc, success, eof, stored);
@@ -638,7 +635,7 @@ PurpleXfer * ggp_edisc_xfer_send_new(PurpleConnection *gc, const char *who)
 	g_return_val_if_fail(who != NULL, NULL);
 
 	xfer = purple_xfer_new(purple_connection_get_account(gc),
-		PURPLE_XFER_SEND, who);
+		PURPLE_XFER_TYPE_SEND, who);
 	edisc_xfer = g_new0(ggp_edisc_xfer, 1);
 	purple_xfer_set_protocol_data(xfer, edisc_xfer);
 
@@ -842,7 +839,7 @@ static PurpleXfer * ggp_edisc_xfer_recv_new(PurpleConnection *gc,
 	g_return_val_if_fail(who != NULL, NULL);
 
 	xfer = purple_xfer_new(purple_connection_get_account(gc),
-		PURPLE_XFER_RECEIVE, who);
+		PURPLE_XFER_TYPE_RECEIVE, who);
 	edisc_xfer = g_new0(ggp_edisc_xfer, 1);
 	purple_xfer_set_protocol_data(xfer, edisc_xfer);
 
@@ -976,10 +973,8 @@ static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 	edisc_xfer = purple_xfer_get_protocol_data(xfer);
 	g_return_val_if_fail(edisc_xfer != NULL, FALSE);
 
-	if (xfer->dest_fp == NULL)
-		stored = -1;
-	else
-		stored = fwrite(buffer, 1, length, xfer->dest_fp);
+	stored = purple_xfer_write_file(xfer, (guchar *)buffer, length) ?
+			(gssize)length : -1;
 
 	if (stored < 0 || (gsize)stored != length) {
 		purple_debug_error("gg", "ggp_edisc_xfer_recv_writer: "
@@ -989,8 +984,8 @@ static gboolean ggp_edisc_xfer_recv_writer(PurpleHttpConnection *http_conn,
 
 	if (stored > purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_error("gg", "ggp_edisc_xfer_recv_writer: "
-			"saved too much (%d > %d)\n",
-			stored, (int)purple_xfer_get_bytes_remaining(xfer));
+			"saved too much (%" G_GSSIZE_FORMAT " > %" G_GOFFSET_FORMAT ")\n",
+			stored, purple_xfer_get_bytes_remaining(xfer));
 		return FALSE;
 	}
 

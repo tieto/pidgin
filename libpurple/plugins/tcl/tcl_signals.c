@@ -29,7 +29,6 @@
 #include "conversation.h"
 #include "signals.h"
 #include "debug.h"
-#include "value.h"
 #include "core.h"
 
 static GList *tcl_callbacks;
@@ -74,7 +73,7 @@ gboolean tcl_signal_connect(struct tcl_signal_handler *handler)
 {
 	GString *proc;
 
-	purple_signal_get_values(handler->instance,
+	purple_signal_get_types(handler->instance,
 			       Tcl_GetString(handler->signal),
 			       &handler->returntype, &handler->nargs,
 			       &handler->argtypes);
@@ -136,24 +135,22 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 		tcl_callbacks = g_list_remove_all(tcl_callbacks, NULL);
 }
 
-static PurpleStringref *ref_type(PurpleSubType type)
+static PurpleStringref *ref_purple_type(GType type)
 {
-	switch (type) {
-	case PURPLE_SUBTYPE_ACCOUNT:
+	if (type == PURPLE_TYPE_ACCOUNT)
 		return PurpleTclRefAccount;
-	case PURPLE_SUBTYPE_CONNECTION:
+	else if (type == PURPLE_TYPE_CONNECTION)
 		return PurpleTclRefConnection;
-	case PURPLE_SUBTYPE_CONVERSATION:
+	else if (type == PURPLE_TYPE_CONVERSATION)
 		return PurpleTclRefConversation;
-	case PURPLE_SUBTYPE_PLUGIN:
+	else if (type == PURPLE_TYPE_PLUGIN)
 		return PurpleTclRefPlugin;
-	case PURPLE_SUBTYPE_STATUS:
+	else if (type == PURPLE_TYPE_STATUS)
 		return PurpleTclRefStatus;
-	case PURPLE_SUBTYPE_XFER:
+	else if (type == PURPLE_TYPE_XFER)
 		return PurpleTclRefXfer;
-	default:
+	else
 		return NULL;
-	}
 }
 
 static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handler)
@@ -179,58 +176,57 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	Tcl_ListObjAppendElement(handler->interp, cmd, arg);
 
 	for (i = 0; i < handler->nargs; i++) {
+#if 0
 		if (purple_value_is_outgoing(handler->argtypes[i]))
 			g_string_printf(name, "%s::arg%d",
 					Tcl_GetString(handler->namespace), i);
-
-		switch(purple_value_get_type(handler->argtypes[i])) {
-		case PURPLE_TYPE_UNKNOWN:	/* What?  I guess just pass the word ... */
-			/* treat this as a pointer, but complain first */
-			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "unknown PurpleValue type %d\n",
-				   purple_value_get_type(handler->argtypes[i]));
-		case PURPLE_TYPE_POINTER:
-		case PURPLE_TYPE_OBJECT:
-		case PURPLE_TYPE_BOXED:
+#endif
+		switch(handler->argtypes[i]) {
+		case G_TYPE_POINTER:
+#if 0
+		case G_TYPE_OBJECT:
+		case G_TYPE_BOXED:
 			/* These are all "pointer" types to us */
 			if (purple_value_is_outgoing(handler->argtypes[i]))
 				purple_debug_error("tcl", "pointer types do not currently support outgoing arguments\n");
+#endif
 			arg = purple_tcl_ref_new(PurpleTclRefPointer, va_arg(args, void *));
 			break;
-		case PURPLE_TYPE_BOOLEAN:
+		case G_TYPE_BOOLEAN:
+#if 0
 			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				vals[i] = va_arg(args, gboolean *);
 				Tcl_LinkVar(handler->interp, name->str,
 					    (char *)&vals[i], TCL_LINK_BOOLEAN);
 				arg = Tcl_NewStringObj(name->str, -1);
-			} else {
-				arg = Tcl_NewBooleanObj(va_arg(args, gboolean));
-			}
+			} else
+#endif
+			arg = Tcl_NewBooleanObj(va_arg(args, gboolean));
 			break;
-		case PURPLE_TYPE_CHAR:
-		case PURPLE_TYPE_UCHAR:
-		case PURPLE_TYPE_SHORT:
-		case PURPLE_TYPE_USHORT:
-		case PURPLE_TYPE_INT:
-		case PURPLE_TYPE_UINT:
-		case PURPLE_TYPE_LONG:
-		case PURPLE_TYPE_ULONG:
-		case PURPLE_TYPE_ENUM:
+		case G_TYPE_CHAR:
+		case G_TYPE_UCHAR:
+		case G_TYPE_INT:
+		case G_TYPE_UINT:
+		case G_TYPE_LONG:
+		case G_TYPE_ULONG:
 			/* I should really cast these individually to
 			 * preserve as much information as possible ...
 			 * but heh */
+#if 0
 			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				vals[i] = va_arg(args, int *);
 				Tcl_LinkVar(handler->interp, name->str,
 					    vals[i], TCL_LINK_INT);
 				arg = Tcl_NewStringObj(name->str, -1);
-			} else {
-				arg = Tcl_NewIntObj(va_arg(args, int));
-			}
+			} else
+#endif
+			arg = Tcl_NewIntObj(va_arg(args, int));
 			break;
-		case PURPLE_TYPE_INT64:
-		case PURPLE_TYPE_UINT64:
+		case G_TYPE_INT64:
+		case G_TYPE_UINT64:
 			/* Tcl < 8.4 doesn't have wide ints, so we have ugly
 			 * ifdefs in here */
+#if 0
 			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				vals[i] = (void *)va_arg(args, gint64 *);
 				#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 4)
@@ -245,14 +241,15 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				#endif /* Tcl >= 8.4 */
 				arg = Tcl_NewStringObj(name->str, -1);
 			} else {
-				#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 4)
-				arg = Tcl_NewWideIntObj(va_arg(args, gint64));
-				#else
-				arg = Tcl_NewIntObj((int)va_arg(args, int));
-				#endif /* Tcl >= 8.4 */
-			}
+#endif
+			#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 4)
+			arg = Tcl_NewWideIntObj(va_arg(args, gint64));
+			#else
+			arg = Tcl_NewIntObj((int)va_arg(args, int));
+			#endif /* Tcl >= 8.4 */
 			break;
-		case PURPLE_TYPE_STRING:
+		case G_TYPE_STRING:
+#if 0
 			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				strs[i] = va_arg(args, char **);
 				if (strs[i] == NULL || *strs[i] == NULL) {
@@ -266,70 +263,77 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				Tcl_LinkVar(handler->interp, name->str,
 					    (char *)&vals[i], TCL_LINK_STRING);
 				arg = Tcl_NewStringObj(name->str, -1);
-			} else {
-				arg = Tcl_NewStringObj(va_arg(args, char *), -1);
-			}
+			} else
+#endif
+			arg = Tcl_NewStringObj(va_arg(args, char *), -1);
 			break;
-		case PURPLE_TYPE_SUBTYPE:
-			switch (purple_value_get_subtype(handler->argtypes[i])) {
-			case PURPLE_SUBTYPE_UNKNOWN:
-				purple_debug(PURPLE_DEBUG_ERROR, "tcl", "subtype unknown\n");
-			case PURPLE_SUBTYPE_ACCOUNT:
-			case PURPLE_SUBTYPE_CONNECTION:
-			case PURPLE_SUBTYPE_CONVERSATION:
-			case PURPLE_SUBTYPE_STATUS:
-			case PURPLE_SUBTYPE_PLUGIN:
-			case PURPLE_SUBTYPE_XFER:
+		default:
+			if (handler->argtypes[i] == PURPLE_TYPE_ACCOUNT      ||
+			    handler->argtypes[i] == PURPLE_TYPE_CONNECTION   ||
+			    handler->argtypes[i] == PURPLE_TYPE_CONVERSATION ||
+			    handler->argtypes[i] == PURPLE_TYPE_STATUS       ||
+			    handler->argtypes[i] == PURPLE_TYPE_PLUGIN       ||
+			    handler->argtypes[i] == PURPLE_TYPE_XFER          )
+			{
+#if 0
 				if (purple_value_is_outgoing(handler->argtypes[i]))
 					purple_debug_error("tcl", "pointer subtypes do not currently support outgoing arguments\n");
-				arg = purple_tcl_ref_new(ref_type(purple_value_get_subtype(handler->argtypes[i])), va_arg(args, void *));
-				break;
-			case PURPLE_SUBTYPE_BLIST:
-			case PURPLE_SUBTYPE_BLIST_BUDDY:
-			case PURPLE_SUBTYPE_BLIST_GROUP:
-			case PURPLE_SUBTYPE_BLIST_CHAT:
+#endif
+				arg = purple_tcl_ref_new(ref_purple_type(handler->argtypes[i]), va_arg(args, void *));
+			}
+			else
+			if (handler->argtypes[i] == PURPLE_TYPE_CONTACT ||
+			    handler->argtypes[i] == PURPLE_TYPE_BUDDY   ||
+			    handler->argtypes[i] == PURPLE_TYPE_GROUP   ||
+			    handler->argtypes[i] == PURPLE_TYPE_CHAT     )
+			{
 				/* We're going to switch again for code-deduping */
+#if 0
 				if (purple_value_is_outgoing(handler->argtypes[i]))
 					node = *va_arg(args, PurpleBlistNode **);
 				else
-					node = va_arg(args, PurpleBlistNode *);
-				switch (purple_blist_node_get_type(node)) {
-				case PURPLE_BLIST_GROUP_NODE:
+#endif
+				node = va_arg(args, PurpleBlistNode *);
+
+				if (PURPLE_IS_GROUP(node)) {
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("group", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(purple_group_get_name((PurpleGroup *)node), -1));
-					break;
-				case PURPLE_BLIST_CONTACT_NODE:
+								 Tcl_NewStringObj(purple_group_get_name(PURPLE_GROUP(node)), -1));
+				} else if (PURPLE_IS_CONTACT(node)) {
 					/* g_string_printf(val, "contact {%s}", Contact Name? ); */
 					arg = Tcl_NewStringObj("contact", -1);
-					break;
-				case PURPLE_BLIST_BUDDY_NODE:
+				} else if (PURPLE_IS_BUDDY(node)) {
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("buddy", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(purple_buddy_get_name((PurpleBuddy *)node), -1));
+								 Tcl_NewStringObj(purple_buddy_get_name(PURPLE_BUDDY(node)), -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 purple_tcl_ref_new(PurpleTclRefAccount,
-										    purple_buddy_get_account((PurpleBuddy *)node)));
-					break;
-				case PURPLE_BLIST_CHAT_NODE:
+										    purple_buddy_get_account(PURPLE_BUDDY(node))));
+				} else if (PURPLE_IS_CHAT(node)) {
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("chat", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(purple_chat_get_name((PurpleChat *)node), -1));
+								 Tcl_NewStringObj(purple_chat_get_name(PURPLE_CHAT(node)), -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 purple_tcl_ref_new(PurpleTclRefAccount,
-										  purple_chat_get_account((PurpleChat *)node)));
-					break;
-				case PURPLE_BLIST_OTHER_NODE:
-					arg = Tcl_NewStringObj("other", -1);
-					break;
+										  purple_chat_get_account(PURPLE_CHAT(node))));
 				}
-				break;
+			}
+			else if (G_TYPE_IS_ENUM(handler->argtypes[i]))
+			{
+				arg = Tcl_NewIntObj(va_arg(args, int));
+			}
+			else
+			{
+				/* What?  I guess just pass the word ... */
+				/* treat this as a pointer, but complain first */
+				purple_debug(PURPLE_DEBUG_ERROR, "tcl", "unknown type %s\n",
+					   g_type_name(handler->argtypes[i]));
 			}
 		}
 		Tcl_ListObjAppendElement(handler->interp, cmd, arg);
@@ -343,7 +347,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 		result = Tcl_GetObjResult(handler->interp);
 		/* handle return values -- strings and words only */
 		if (handler->returntype) {
-			if (purple_value_get_type(handler->returntype) == PURPLE_TYPE_STRING) {
+			if (handler->returntype == G_TYPE_STRING) {
 				retval = (void *)g_strdup(Tcl_GetString(result));
 			} else {
 				if (Tcl_GetIntFromObj(handler->interp, result, (int *)&retval) != TCL_OK) {
@@ -359,14 +363,14 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	for (i = 0; i < handler->nargs; i++) {
 		g_string_printf(name, "%s::arg%d",
 				Tcl_GetString(handler->namespace), i);
+#if 0
 		if (purple_value_is_outgoing(handler->argtypes[i])
-		    && purple_value_get_type(handler->argtypes[i]) != PURPLE_TYPE_SUBTYPE)
+		    && purple_value_get_type(handler->argtypes[i]) != G_TYPE_SUBTYPE)
 			Tcl_UnlinkVar(handler->interp, name->str);
-
 		/* We basically only have to deal with strings on the
 		 * way out */
-		switch (purple_value_get_type(handler->argtypes[i])) {
-		case PURPLE_TYPE_STRING:
+		switch (handler->argtypes[i]) {
+		case G_TYPE_STRING:
 			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				if (vals[i] != NULL && *(char **)vals[i] != NULL) {
 					g_free(*strs[i]);
@@ -379,6 +383,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			/* nothing */
 			;
 		}
+#endif
 	}
 
 	g_string_free(name, TRUE);

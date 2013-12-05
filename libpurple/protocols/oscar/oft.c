@@ -360,7 +360,7 @@ start_transfer_when_done_sending_data(gpointer data)
 
 	conn = data;
 
-	if (purple_circ_buffer_get_max_read(conn->buffer_outgoing) == 0)
+	if (purple_circular_buffer_get_max_read(conn->buffer_outgoing) == 0)
 	{
 		int fd = conn->fd;
 		conn->sending_data_timer = 0;
@@ -385,7 +385,7 @@ destroy_connection_when_done_sending_data(gpointer data)
 
 	conn = data;
 
-	if (purple_circ_buffer_get_max_read(conn->buffer_outgoing) == 0)
+	if (purple_circular_buffer_get_max_read(conn->buffer_outgoing) == 0)
 	{
 		conn->sending_data_timer = 0;
 		peer_connection_destroy(conn, conn->disconnect_reason, NULL);
@@ -666,7 +666,7 @@ peer_oft_sendcb_init(PurpleXfer *xfer)
 		tmp = g_strdup_printf(_("File %s is %s, which is larger than "
 				"the maximum size of %s."),
 				purple_xfer_get_local_filename(xfer), size1, size2);
-		purple_xfer_error(purple_xfer_get_type(xfer),
+		purple_xfer_error(purple_xfer_get_xfer_type(xfer),
 				purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer), tmp);
 		g_free(size1);
 		g_free(size2);

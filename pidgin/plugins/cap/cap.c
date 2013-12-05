@@ -349,7 +349,7 @@ static void sent_im_msg(PurpleAccount *account, const char *receiver, const char
 	guint interval, words;
 	CapStatistics *stats = NULL;
 
-	buddy = purple_find_buddy(account, receiver);
+	buddy = purple_blist_find_buddy(account, receiver);
 
 	if (buddy == NULL)
 		return;
@@ -378,7 +378,7 @@ received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConve
 	if (flags & PURPLE_MESSAGE_AUTO_RESP)
 		return;
 
-	buddy = purple_find_buddy(account, sender);
+	buddy = purple_blist_find_buddy(account, sender);
 
 	if (buddy == NULL)
 		return;
@@ -439,7 +439,7 @@ static void buddy_signed_off(PurpleBuddy *buddy) {
 /* drawing-tooltip */
 static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full) {
 	if(node->type == PURPLE_BLIST_BUDDY_NODE) {
-		PurpleBuddy *buddy = (PurpleBuddy *)node;
+		PurpleBuddy *buddy = PURPLE_BUDDY(node);
 		CapStatistics *stats = get_stats_for(buddy);
 		/* get the probability that this buddy will respond and add to the tooltip */
 		if(stats->prediction->probability >= 0.0) {

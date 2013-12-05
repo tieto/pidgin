@@ -38,18 +38,18 @@ typedef enum {
 struct _JabberSaslMech {
 	gint8 priority; /* Higher priority will be tried before lower priority */
 	const gchar *name;
-	JabberSaslState (*start)(JabberStream *js, xmlnode *mechanisms, xmlnode **reply, char **msg);
-	JabberSaslState (*handle_challenge)(JabberStream *js, xmlnode *packet, xmlnode **reply, char **msg);
-	JabberSaslState (*handle_success)(JabberStream *js, xmlnode *packet, char **msg);
-	JabberSaslState (*handle_failure)(JabberStream *js, xmlnode *packet, xmlnode **reply, char **msg);
+	JabberSaslState (*start)(JabberStream *js, PurpleXmlNode *mechanisms, PurpleXmlNode **reply, char **msg);
+	JabberSaslState (*handle_challenge)(JabberStream *js, PurpleXmlNode *packet, PurpleXmlNode **reply, char **msg);
+	JabberSaslState (*handle_success)(JabberStream *js, PurpleXmlNode *packet, char **msg);
+	JabberSaslState (*handle_failure)(JabberStream *js, PurpleXmlNode *packet, PurpleXmlNode **reply, char **msg);
 	void (*dispose)(JabberStream *js);
 };
 
-void jabber_auth_start(JabberStream *js, xmlnode *packet);
+void jabber_auth_start(JabberStream *js, PurpleXmlNode *packet);
 void jabber_auth_start_old(JabberStream *js);
-void jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet);
-void jabber_auth_handle_success(JabberStream *js, xmlnode *packet);
-void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet);
+void jabber_auth_handle_challenge(JabberStream *js, PurpleXmlNode *packet);
+void jabber_auth_handle_success(JabberStream *js, PurpleXmlNode *packet);
+void jabber_auth_handle_failure(JabberStream *js, PurpleXmlNode *packet);
 
 JabberSaslMech *jabber_auth_get_plain_mech(void);
 JabberSaslMech *jabber_auth_get_digest_md5_mech(void);

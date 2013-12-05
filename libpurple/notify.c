@@ -454,7 +454,7 @@ purple_notify_user_info_entry_new(const char *label, const char *value)
 	return user_info_entry;
 }
 
-static void
+void
 purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_if_fail(user_info_entry != NULL);
@@ -693,6 +693,42 @@ purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo *user_info)
 		purple_notify_user_info_entry_destroy(entry);
 }
 
+static PurpleNotifyUserInfo *
+purple_notify_user_info_copy(PurpleNotifyUserInfo *user_info)
+{
+	PurpleNotifyUserInfo *user_info_copy;
+	GList *l;
+
+	g_return_val_if_fail(user_info != NULL, NULL);
+
+	user_info_copy = purple_notify_user_info_new();
+
+	for (l = user_info->entries.head; l != NULL; l = l->next) {
+		PurpleNotifyUserInfoEntry *new_entry, *user_info_entry = l->data;
+
+		new_entry = purple_notify_user_info_entry_new(user_info_entry->label,
+				user_info_entry->value);
+		new_entry->type = user_info_entry->type;
+		g_queue_push_tail(&user_info_copy->entries, new_entry);
+	}
+
+	return user_info_copy;
+}
+
+GType
+purple_notify_user_info_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleNotifyUserInfo",
+				(GBoxedCopyFunc)purple_notify_user_info_copy,
+				(GBoxedFreeFunc)purple_notify_user_info_destroy);
+	}
+
+	return type;
+}
+
 void *
 purple_notify_uri(void *handle, const char *uri)
 {
@@ -827,30 +863,22 @@ purple_notify_init(void)
 	gpointer handle = purple_notify_get_handle();
 
 	purple_signal_register(handle, "displaying-email-notification",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER, NULL, 4,
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_STRING));
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER,
+						 G_TYPE_NONE, 4, G_TYPE_STRING, G_TYPE_STRING,
+						 G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_signal_register(handle, "displaying-emails-notification",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT, NULL, 5,
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_POINTER),
-						 purple_value_new(PURPLE_TYPE_UINT));
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
+						 G_TYPE_NONE, 5, G_TYPE_POINTER, G_TYPE_POINTER,
+						 G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_UINT);
 
 	purple_signal_register(handle, "displaying-emails-clear",
-						 purple_marshal_VOID, NULL, 0);
+						 purple_marshal_VOID, G_TYPE_NONE, 0);
 
 	purple_signal_register(handle, "displaying-userinfo",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING),
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_USERINFO));
+						 purple_marshal_VOID__POINTER_POINTER_POINTER,
+						 G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
+						 PURPLE_TYPE_NOTIFY_USER_INFO);
 }
 
 void

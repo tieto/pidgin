@@ -85,19 +85,19 @@ unmute_login_sounds_cb(gpointer data)
 }
 
 static gboolean
-chat_nick_matches_name(PurpleConversation *conv, const char *aname)
+chat_nick_matches_name(PurpleChatConversation *chat, const char *aname)
 {
-	PurpleConvChat *chat = NULL;
 	char *nick = NULL;
 	char *name = NULL;
 	gboolean ret = FALSE;
-	chat = purple_conversation_get_chat_data(conv);
 
 	if (chat==NULL)
 		return ret;
 
-	nick = g_strdup(purple_normalize(purple_conversation_get_account(conv), purple_conv_chat_get_nick(chat)));
-	name = g_strdup(purple_normalize(purple_conversation_get_account(conv), aname));
+	nick = g_strdup(purple_normalize(purple_conversation_get_account(
+			PURPLE_CONVERSATION(chat)), purple_chat_conversation_get_nick(chat)));
+	name = g_strdup(purple_normalize(purple_conversation_get_account(
+			PURPLE_CONVERSATION(chat)), aname));
 
 	if (g_utf8_collate(nick, name) == 0)
 		ret = TRUE;
@@ -158,26 +158,26 @@ static void
 im_msg_sent_cb(PurpleAccount *account, const char *receiver,
 			   const char *message, PurpleSoundEventID event)
 {
-	PurpleConversation *conv = purple_find_conversation_with_account(
-		PURPLE_CONV_TYPE_IM, receiver, account);
+	PurpleConversation *conv = PURPLE_CONVERSATION(
+			purple_conversations_find_im_with_account(receiver, account));
 	play_conv_event(conv, event);
 }
 
 static void
-chat_buddy_join_cb(PurpleConversation *conv, const char *name,
-				   PurpleConvChatBuddyFlags flags, gboolean new_arrival,
+chat_user_join_cb(PurpleChatConversation *chat, const char *name,
+				   PurpleChatUserFlags flags, gboolean new_arrival,
 				   PurpleSoundEventID event)
 {
-	if (new_arrival && !chat_nick_matches_name(conv, name))
-		play_conv_event(conv, event);
+	if (new_arrival && !chat_nick_matches_name(chat, name))
+		play_conv_event(PURPLE_CONVERSATION(chat), event);
 }
 
 static void
-chat_buddy_left_cb(PurpleConversation *conv, const char *name,
+chat_user_left_cb(PurpleChatConversation *chat, const char *name,
 				   const char *reason, PurpleSoundEventID event)
 {
-	if (!chat_nick_matches_name(conv, name))
-		play_conv_event(conv, event);
+	if (!chat_nick_matches_name(chat, name))
+		play_conv_event(PURPLE_CONVERSATION(chat), event);
 }
 
 static void
@@ -188,31 +188,29 @@ chat_msg_sent_cb(PurpleAccount *account, const char *message,
 	PurpleConversation *conv = NULL;
 
 	if (conn!=NULL)
-		conv = purple_find_chat(conn,id);
+		conv = PURPLE_CONVERSATION(purple_conversations_find_chat(conn,id));
 
 	play_conv_event(conv, event);
 }
 
 static void
 chat_msg_received_cb(PurpleAccount *account, char *sender,
-					 char *message, PurpleConversation *conv,
+					 char *message, PurpleChatConversation *chat,
 					 PurpleMessageFlags flags, PurpleSoundEventID event)
 {
-	PurpleConvChat *chat;
-
+	PurpleConversation *conv = PURPLE_CONVERSATION(chat);
 	if (flags & PURPLE_MESSAGE_DELAYED || flags & PURPLE_MESSAGE_NOTIFY)
 		return;
 
-	chat = purple_conversation_get_chat_data(conv);
-	g_return_if_fail(chat != NULL);
+	g_return_if_fail(conv != NULL);
 
-	if (purple_conv_chat_is_user_ignored(chat, sender))
+	if (purple_chat_conversation_is_ignored_user(chat, sender))
 		return;
 
-	if (chat_nick_matches_name(conv, sender))
+	if (chat_nick_matches_name(chat, sender))
 		return;
 
-	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, purple_conv_chat_get_nick(chat)))
+	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, purple_chat_conversation_get_nick(chat)))
 		/* This isn't quite right; if you have the PURPLE_SOUND_CHAT_NICK event disabled
 		 * and the PURPLE_SOUND_CHAT_SAY event enabled, you won't get a sound at all */
 		play_conv_event(conv, PURPLE_SOUND_CHAT_NICK);
@@ -343,11 +341,11 @@ pidgin_sound_init(void)
 	purple_signal_connect(conv_handle, "sent-im-msg",
 						gtk_sound_handle, PURPLE_CALLBACK(im_msg_sent_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_SEND));
-	purple_signal_connect(conv_handle, "chat-buddy-joined",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_join_cb),
+	purple_signal_connect(conv_handle, "chat-user-joined",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_user_join_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_JOIN));
-	purple_signal_connect(conv_handle, "chat-buddy-left",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_left_cb),
+	purple_signal_connect(conv_handle, "chat-user-left",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_user_left_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_LEAVE));
 	purple_signal_connect(conv_handle, "sent-chat-msg",
 						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_sent_cb),

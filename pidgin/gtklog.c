@@ -282,7 +282,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 
 	if (log->type == PURPLE_LOG_IM)
 	{
-		PurpleBuddy *buddy = purple_find_buddy(log->account, log->name);
+		PurpleBuddy *buddy = purple_blist_find_buddy(log->account, log->name);
 		if (buddy != NULL)
 			name = purple_buddy_get_contact_alias(buddy);
 		else
@@ -720,7 +720,7 @@ void pidgin_log_show(PurpleLogType type, const char *buddyname, PurpleAccount *a
 	} else {
 		PurpleBuddy *buddy;
 
-		buddy = purple_find_buddy(account, buddyname);
+		buddy = purple_blist_find_buddy(account, buddyname);
 		if (buddy != NULL)
 			name = purple_buddy_get_contact_alias(buddy);
 
@@ -769,7 +769,7 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		const char *buddy_name;
 		PurpleAccount *account;
 
-		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
+		if (!PURPLE_IS_BUDDY(child))
 			continue;
 
 		buddy_name = purple_buddy_get_name((PurpleBuddy *)child);
@@ -790,17 +790,16 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		image = NULL;
 	}
 
-	if (contact->alias != NULL)
-		name = contact->alias;
-	else if (contact->priority != NULL)
-		name = purple_buddy_get_contact_alias(contact->priority);
+	name = purple_contact_get_alias(contact);
 
 	/* This will happen if the contact doesn't have an alias,
 	 * and none of the contact's buddies are online.
 	 * There is probably a better way to deal with this. */
 	if (name == NULL) {
-		if (contact->node.child != NULL && PURPLE_BLIST_NODE_IS_BUDDY(contact->node.child))
-			name = purple_buddy_get_contact_alias((PurpleBuddy *) contact->node.child);
+		if (PURPLE_BLIST_NODE(contact)->child != NULL &&
+				PURPLE_IS_BUDDY(PURPLE_BLIST_NODE(contact)->child))
+			name = purple_buddy_get_contact_alias(PURPLE_BUDDY(
+					PURPLE_BLIST_NODE(contact)->child));
 		if (name == NULL)
 			name = "";
 	}
@@ -851,11 +850,9 @@ void pidgin_log_init(void)
 
 	purple_signal_register(handle, "log-displaying",
 	                     purple_marshal_VOID__POINTER_POINTER,
-	                     NULL, 2,
-	                     purple_value_new(PURPLE_TYPE_BOXED,
-	                                    "PidginLogViewer *"),
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_LOG));
+	                     G_TYPE_NONE, 2,
+	                     G_TYPE_POINTER, /* (PidginLogViewer *) */
+	                     PURPLE_TYPE_LOG);
 }
 
 void

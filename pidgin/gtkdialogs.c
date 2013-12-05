@@ -943,7 +943,7 @@ pidgin_dialogs_im(void)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("New Instant Message"),
+	purple_request_fields(purple_blist_get_buddy_list(), _("New Instant Message"),
 						NULL,
 						_("Please enter the username or alias of the person "
 						  "you would like to IM."),
@@ -956,18 +956,18 @@ pidgin_dialogs_im(void)
 void
 pidgin_dialogs_im_with_user(PurpleAccount *account, const char *username)
 {
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(username != NULL);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, account);
+	im = purple_conversations_find_im_with_account(username, account);
 
-	if (conv == NULL)
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
+	if (im == NULL)
+		im = purple_im_conversation_new(account, username);
 
-	pidgin_conv_attach_to_conversation(conv);
-	purple_conversation_present(conv);
+	pidgin_conv_attach_to_conversation(PURPLE_CONVERSATION(im));
+	purple_conversation_present(PURPLE_CONVERSATION(im));
 }
 
 static gboolean
@@ -1082,7 +1082,7 @@ pidgin_dialogs_info(void)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("Get User Info"),
+	purple_request_fields(purple_blist_get_buddy_list(), _("Get User Info"),
 						NULL,
 						_("Please enter the username or alias of the person "
 						  "whose info you would like to view."),
@@ -1111,7 +1111,7 @@ pidgin_dialogs_log_cb(gpointer data, PurpleRequestFields *fields)
 
 		pidgin_set_cursor(gtkblist->window, GDK_WATCH);
 
-		buddies = purple_find_buddies(account, username);
+		buddies = purple_blist_find_buddies(account, username);
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
 			PurpleBlistNode *node = cur->data;
@@ -1173,7 +1173,7 @@ pidgin_dialogs_log(void)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("View User Log"),
+	purple_request_fields(purple_blist_get_buddy_list(), _("View User Log"),
 						NULL,
 						_("Please enter the username or alias of the person "
 						  "whose log you would like to view."),
@@ -1186,7 +1186,7 @@ pidgin_dialogs_log(void)
 static void
 pidgin_dialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
-	purple_blist_alias_buddy(buddy, new_alias);
+	purple_buddy_set_local_alias(buddy, new_alias);
 	serv_alias_buddy(buddy);
 }
 
@@ -1200,7 +1200,7 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 	secondary = g_strdup_printf(_("Enter an alias for %s."), purple_buddy_get_name(buddy));
 
 	purple_request_input(NULL, _("Alias Buddy"), NULL,
-					   secondary, purple_buddy_get_local_buddy_alias(buddy), FALSE, FALSE, NULL,
+					   secondary, purple_buddy_get_local_alias(buddy), FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL,
 					   purple_request_cpar_from_account(purple_buddy_get_account(buddy)),
@@ -1212,21 +1212,27 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 static void
 pidgin_dialogs_alias_chat_cb(PurpleChat *chat, const char *new_alias)
 {
-	purple_blist_alias_chat(chat, new_alias);
+	purple_chat_set_alias(chat, new_alias);
 }
 
 void
 pidgin_dialogs_alias_chat(PurpleChat *chat)
 {
+	gchar *alias;
+
 	g_return_if_fail(chat != NULL);
+
+	g_object_get(chat, "alias", &alias, NULL);
 
 	purple_request_input(NULL, _("Alias Chat"), NULL,
 					   _("Enter an alias for this chat."),
-					   chat->alias, FALSE, FALSE, NULL,
+					   alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
 					   _("Cancel"), NULL,
 					   purple_request_cpar_from_account(purple_chat_get_account(chat)),
 					   chat);
+
+	g_free(alias);
 }
 
 static void
@@ -1258,6 +1264,7 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 		pidgin_dialogs_remove_buddy(buddy);
 	} else {
 		gchar *text;
+		int contact_size = purple_counting_node_get_total_size(PURPLE_COUNTING_NODE(contact));
 		text = g_strdup_printf(
 					ngettext(
 						"You are about to remove the contact containing %s "
@@ -1265,8 +1272,8 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"want to continue?",
 						"You are about to remove the contact containing %s "
 						"and %d other buddies from your buddy list.  Do you "
-						"want to continue?", purple_contact_get_contact_size(contact, TRUE) - 1),
-					purple_buddy_get_name(buddy), purple_contact_get_contact_size(contact, TRUE) - 1);
+						"want to continue?", contact_size - 1),
+					purple_buddy_get_name(buddy), contact_size - 1);
 
 		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
 				NULL,
@@ -1288,7 +1295,7 @@ static void free_ggmo(struct _PidginGroupMergeObject *ggp)
 static void
 pidgin_dialogs_merge_groups_cb(struct _PidginGroupMergeObject *GGP)
 {
-	purple_blist_rename_group(GGP->parent, GGP->new_name);
+	purple_group_set_name(GGP->parent, GGP->new_name);
 	free_ggmo(GGP);
 }
 
@@ -1326,12 +1333,12 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 	cnode = ((PurpleBlistNode*)group)->child;
 
 	while (cnode) {
-		if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+		if (PURPLE_IS_CONTACT(cnode)) {
 			bnode = cnode->child;
 			cnode = cnode->next;
 			while (bnode) {
 				PurpleBuddy *buddy;
-				if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
+				if (PURPLE_IS_BUDDY(bnode)) {
 					buddy = (PurpleBuddy*)bnode;
 					bnode = bnode->next;
 					if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
@@ -1342,7 +1349,7 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 					bnode = bnode->next;
 				}
 			}
-		} else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
+		} else if (PURPLE_IS_CHAT(cnode)) {
 			PurpleChat *chat = (PurpleChat *)cnode;
 			cnode = cnode->next;
 			if (purple_account_is_connected(purple_chat_get_account(chat)))

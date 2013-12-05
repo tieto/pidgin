@@ -1221,7 +1221,7 @@ purple_network_init(void)
 #endif
 
 	purple_signal_register(purple_network_get_handle(), "network-configuration-changed",
-						   purple_marshal_VOID, NULL, 0);
+						   purple_marshal_VOID, G_TYPE_NONE, 0);
 
 	purple_pmp_init();
 	purple_upnp_init();

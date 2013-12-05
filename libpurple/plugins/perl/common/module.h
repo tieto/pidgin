@@ -19,20 +19,30 @@ typedef struct group *Purple__Group;
 
 #include "../perl-common.h"
 
-#include "account.h"
+#include "accounts.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "buddyicon.h"
 #include "certificate.h"
 #include "cipher.h"
+#include "ciphers/aescipher.h"
+#include "ciphers/des3cipher.h"
+#include "ciphers/descipher.h"
+#include "ciphers/hmaccipher.h"
+#include "ciphers/pbkdf2cipher.h"
+#include "ciphers/rc4cipher.h"
+#include "ciphers/md4hash.h"
+#include "ciphers/md5hash.h"
+#include "ciphers/sha1hash.h"
+#include "ciphers/sha256hash.h"
 #include "cmds.h"
 #include "connection.h"
-#include "conversation.h"
+#include "conversations.h"
 #include "core.h"
 #include "debug.h"
 #include "desktopitem.h"
 #include "eventloop.h"
-#include "ft.h"
+#include "xfer.h"
 #ifdef PURPLE_GTKPERL
 #include "gtkaccount.h"
 #include "gtkblist.h"
@@ -48,7 +58,7 @@ typedef struct group *Purple__Group;
 #include "pluginpref.h"
 #include "pounce.h"
 #include "prefs.h"
-#include "privacy.h"
+#include "presence.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
@@ -63,7 +73,6 @@ typedef struct group *Purple__Group;
 #include "stringref.h"
 /* Ewww. perl has it's own util.h which is in the include path :( */
 #include "libpurple/util.h"
-#include "value.h"
 #include "whiteboard.h"
 #include "xmlnode.h"
 
@@ -71,11 +80,11 @@ typedef struct group *Purple__Group;
 typedef PurpleAccount *			Purple__Account;
 typedef PurpleAccountOption *		Purple__Account__Option;
 typedef PurpleAccountUserSplit *		Purple__Account__UserSplit;
+typedef PurpleAccountPrivacyType		Purple__Account__PrivacyType;
 
-/* blist.h */
+/* buddylist.h */
 typedef PurpleBlistNode *			Purple__BuddyList__Node;
-typedef PurpleBlistNodeFlags		Purple__BuddyList__NodeFlags;
-typedef PurpleBlistNodeType		Purple__BuddyList__NodeType;
+typedef PurpleCountingNode *			Purple__BuddyList__CountingNode;
 typedef PurpleBuddyList *			Purple__BuddyList;
 typedef PurpleBuddy *			Purple__BuddyList__Buddy;
 typedef PurpleChat *			Purple__BuddyList__Chat;
@@ -95,9 +104,7 @@ typedef PurpleCertificateVerificationStatus	Purple__Certificate__VerificationSta
 
 /* cipher.h */
 typedef PurpleCipher *			Purple__Cipher;
-typedef PurpleCipherCaps			Purple__CipherCaps;
-typedef PurpleCipherContext *		Purple__Cipher__Context;
-typedef PurpleCipherOps *			Purple__Cipher__Ops;
+typedef PurpleHash *			Purple__Hash;
 typedef PurpleCipherBatchMode		Purple__Cipher__BatchMode;
 
 /* cmds.h */
@@ -111,16 +118,15 @@ typedef PurpleConnection *		Purple__Connection;
 typedef PurpleConnectionFlags		Purple__ConnectionFlags;
 typedef PurpleConnectionState		Purple__ConnectionState;
 
-/* conversation.h */
-typedef PurpleConversationType		Purple__ConversationType;
-typedef PurpleConvUpdateType		Purple__ConvUpdateType;
-typedef PurpleTypingState			Purple__TypingState;
-typedef PurpleMessageFlags		Purple__MessageFlags;
-typedef PurpleConvChatBuddyFlags		Purple__ConvChatBuddyFlags;
+/* conversations.h */
+typedef PurpleMessageFlags			Purple__MessageFlags;
 typedef PurpleConversation *		Purple__Conversation;
-typedef PurpleConvIm *			Purple__Conversation__IM;
-typedef PurpleConvChat *			Purple__Conversation__Chat;
-typedef PurpleConvChatBuddy *		Purple__Conversation__ChatBuddy;
+typedef PurpleConversationUpdateType		Purple__Conversation__UpdateType;
+typedef PurpleIMConversation *			Purple__IMConversation;
+typedef PurpleIMTypingState		Purple__IMTypingState;
+typedef PurpleChatConversation *		Purple__ChatConversation;
+typedef PurpleChatUser *	Purple__ChatUser;
+typedef PurpleChatUserFlags	Purple__ChatUser__Flags;
 
 /* core.h */
 
@@ -136,10 +142,10 @@ typedef PurpleDesktopItemType		Purple__DesktopItemType;
 /* eventloop.h */
 typedef PurpleInputCondition *		Purple__InputCondition;
 
-/* ft.h */
+/* xfer.h */
 typedef PurpleXfer *			Purple__Xfer;
 typedef PurpleXferType			Purple__XferType;
-typedef PurpleXferStatusType		Purple__XferStatusType;
+typedef PurpleXferStatus		Purple__XferStatus;
 
 
 #ifdef PURPLE_GTKPERL
@@ -215,8 +221,10 @@ typedef PurplePounceEvent			Purple__PounceEvent;
 /* prefs.h */
 typedef PurplePrefType			Purple__PrefType;
 
-/* privacy.h */
-typedef PurplePrivacyType			Purple__PrivacyType;
+/* presence.h */
+typedef PurplePresence *		Purple__Presence;
+typedef PurpleAccountPresence *		Purple__AccountPresence;
+typedef PurpleBuddyPresence *		Purple__BuddyPresence;
 
 /* proxy.h */
 typedef PurpleProxyInfo *			Purple__ProxyInfo;
@@ -259,10 +267,8 @@ typedef PurpleSslErrorType		Purple__SslErrorType;
 typedef PurpleSslOps *			Purple__Ssl__Ops;
 
 /* status.h */
-typedef PurplePresence *			Purple__Presence;
-typedef PurplePresenceContext		Purple__PresenceContext;
 typedef PurpleStatus *			Purple__Status;
-typedef PurpleStatusAttr *		Purple__StatusAttr;
+typedef PurpleStatusAttribute *		Purple__StatusAttr;
 typedef PurpleStatusPrimitive		Purple__StatusPrimitive;
 typedef PurpleStatusType *		Purple__StatusType;
 
@@ -273,15 +279,12 @@ typedef PurpleStringref *			Purple__Stringref;
 typedef PurpleInfoFieldFormatCallback	Purple__Util__InfoFieldFormatCallback;
 typedef PurpleMenuAction *		Purple__Menu__Action;
 
-/* value.h */
-typedef PurpleValue *			Purple__Value;
-
 /* whiteboard.h */
 typedef PurpleWhiteboard *		Purple__Whiteboard;
 
 /* xmlnode.h */
-typedef xmlnode *			Purple__XMLNode;
-typedef XMLNodeType			XMLNode__Type;
+typedef PurpleXmlNode *			Purple__XMLNode;
+typedef PurpleXmlNodeType			XMLNode__Type;
 
 /* other */
 typedef void *				Purple__Handle;

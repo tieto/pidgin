@@ -32,7 +32,7 @@
 #include "core.h"
 #include "debug.h"
 #include "dnsquery.h"
-#include "ft.h"
+#include "xfer.h"
 #include "glibcompat.h"
 #include "http.h"
 #include "idle.h"
@@ -43,7 +43,6 @@
 #include "plugin.h"
 #include "pounce.h"
 #include "prefs.h"
-#include "privacy.h"
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
@@ -135,13 +134,15 @@ purple_core_init(const char *ui)
 
 	purple_signal_register(core, "uri-handler",
 		purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
-		purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
-		purple_value_new(PURPLE_TYPE_STRING), /* Protocol */
-		purple_value_new(PURPLE_TYPE_STRING), /* Command */
-		purple_value_new(PURPLE_TYPE_BOXED, "GHashTable *")); /* Parameters */
+		G_TYPE_BOOLEAN, 3,
+		G_TYPE_STRING, /* Protocol */
+		G_TYPE_STRING, /* Command */
+		G_TYPE_POINTER); /* Parameters (GHashTable *) */
 
-	purple_signal_register(core, "quitting", purple_marshal_VOID, NULL, 0);
-	purple_signal_register(core, "core-initialized", purple_marshal_VOID, NULL, 0);
+	purple_signal_register(core, "quitting", purple_marshal_VOID, G_TYPE_NONE,
+		0);
+	purple_signal_register(core, "core-initialized", purple_marshal_VOID,
+		G_TYPE_NONE, 0);
 
 	purple_core_print_version();
 
@@ -164,7 +165,6 @@ purple_core_init(const char *ui)
 	purple_dbus_init();
 #endif
 
-	purple_ciphers_init();
 	purple_cmds_init();
 
 	/* Since plugins get probed so early we should probably initialize their
@@ -186,7 +186,7 @@ purple_core_init(const char *ui)
 	/* Accounts use status, buddy icons and connection signals, so
 	 * initialize these before accounts
 	 */
-	purple_status_init();
+	purple_statuses_init();
 	purple_buddy_icons_init();
 	purple_connections_init();
 
@@ -198,7 +198,6 @@ purple_core_init(const char *ui)
 	purple_blist_init();
 	purple_log_init();
 	purple_network_init();
-	purple_privacy_init();
 	purple_pounces_init();
 	purple_proxy_init();
 	purple_dnsquery_init();
@@ -265,13 +264,12 @@ purple_core_quit(void)
 	purple_idle_uninit();
 	purple_pounces_uninit();
 	purple_blist_uninit();
-	purple_ciphers_uninit();
 	purple_notify_uninit();
 	purple_conversations_uninit();
 	purple_connections_uninit();
 	purple_buddy_icons_uninit();
 	purple_savedstatuses_uninit();
-	purple_status_uninit();
+	purple_statuses_uninit();
 	purple_accounts_uninit();
 	purple_keyring_uninit(); /* after accounts */
 	purple_sound_uninit();

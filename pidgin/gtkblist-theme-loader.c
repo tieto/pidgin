@@ -43,15 +43,15 @@
  *****************************************************************************/
 
 static PidginThemeFont *
-pidgin_theme_font_parse(xmlnode *node)
+pidgin_theme_font_parse(PurpleXmlNode *node)
 {
 	const char *font;
 	const char *colordesc;
 	GdkColor color;
 
-	font = xmlnode_get_attrib(node, "font");
+	font = purple_xmlnode_get_attrib(node, "font");
 
-	if ((colordesc = xmlnode_get_attrib(node, "color")) == NULL ||
+	if ((colordesc = purple_xmlnode_get_attrib(node, "color")) == NULL ||
 			!gdk_color_parse(colordesc, &color))
 		gdk_color_parse(DEFAULT_TEXT_COLOR, &color);
 
@@ -59,9 +59,9 @@ pidgin_theme_font_parse(xmlnode *node)
 }
 
 static GdkColor *
-parse_color(xmlnode *node, const char *tag)
+parse_color(PurpleXmlNode *node, const char *tag)
 {
-	const char *temp = xmlnode_get_attrib(node, tag);
+	const char *temp = purple_xmlnode_get_attrib(node, tag);
 	GdkColor color;
 
 	if (temp && gdk_color_parse(temp, &color)) {
@@ -77,7 +77,7 @@ parse_color(xmlnode *node, const char *tag)
 static PurpleTheme *
 pidgin_blist_loader_build(const gchar *theme_dir)
 {
-	xmlnode *root_node = NULL, *sub_node, *sub_sub_node;
+	PurpleXmlNode *root_node = NULL, *sub_node, *sub_sub_node;
 	gchar *dir, *filename_full, *data = NULL;
 	const gchar *temp, *name;
 	gboolean success = TRUE;
@@ -119,7 +119,7 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 	filename_full = g_build_filename(dir, "theme.xml", NULL);
 
 	if (g_file_test(filename_full, G_FILE_TEST_IS_REGULAR))
-		root_node = xmlnode_from_file(dir, "theme.xml", "buddy list themes", "blist-loader");
+		root_node = purple_xmlnode_from_file(dir, "theme.xml", "buddy list themes", "blist-loader");
 
 	g_free(filename_full);
 	if (root_node == NULL) {
@@ -127,19 +127,19 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 		return NULL;
 	}
 
-	sub_node = xmlnode_get_child(root_node, "description");
-	data = xmlnode_get_data(sub_node);
+	sub_node = purple_xmlnode_get_child(root_node, "description");
+	data = purple_xmlnode_get_data(sub_node);
 
-	name = xmlnode_get_attrib(root_node, "name");
+	name = purple_xmlnode_get_attrib(root_node, "name");
 
 	/* <blist> */
-	success = name && purple_strequal(xmlnode_get_attrib(root_node, "type"), "pidgin buddy list");
+	success = name && purple_strequal(purple_xmlnode_get_attrib(root_node, "type"), "pidgin buddy list");
 
 	if (!success)
 		purple_debug_warning("gtkblist-theme-loader", "Missing attribute or problem with the root element\n");
 
 	if (success) {
-		if ((success = (sub_node = xmlnode_get_child(root_node, "blist")) != NULL))
+		if ((success = (sub_node = purple_xmlnode_get_child(root_node, "blist")) != NULL))
 			bgcolor = parse_color(sub_node, "color");
 		else
 			purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <blist>.\n");
@@ -147,8 +147,8 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 
 	/* <groups> */
 	if (success) {
-		if ((success = (sub_node = xmlnode_get_child(root_node, "groups")) != NULL
-			     && (sub_sub_node = xmlnode_get_child(sub_node, "expanded")) != NULL)) {
+		if ((success = (sub_node = purple_xmlnode_get_child(root_node, "groups")) != NULL
+			     && (sub_sub_node = purple_xmlnode_get_child(sub_node, "expanded")) != NULL)) {
 			expanded = pidgin_theme_font_parse(sub_sub_node);
 			expanded_bgcolor = parse_color(sub_sub_node, "background");
 		} else
@@ -156,7 +156,7 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 	}
 
 	if (success) {
-		if ((success = sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "collapsed")) != NULL)) {
+		if ((success = sub_node != NULL && (sub_sub_node = purple_xmlnode_get_child(sub_node, "collapsed")) != NULL)) {
 			collapsed = pidgin_theme_font_parse(sub_sub_node);
 			collapsed_bgcolor = parse_color(sub_sub_node, "background");
 		} else
@@ -165,21 +165,21 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 
 	/* <buddys> */
 	if (success) {
-		if ((success = (sub_node = xmlnode_get_child(root_node, "buddys")) != NULL &&
-			     (sub_sub_node = xmlnode_get_child(sub_node, "placement")) != NULL)) {
+		if ((success = (sub_node = purple_xmlnode_get_child(root_node, "buddys")) != NULL &&
+			     (sub_sub_node = purple_xmlnode_get_child(sub_node, "placement")) != NULL)) {
 
-			layout.status_icon = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) : 0;
-			layout.text = (temp = xmlnode_get_attrib(sub_sub_node, "name")) != NULL ? atoi(temp) : 1;
-			layout.emblem = (temp = xmlnode_get_attrib(sub_sub_node, "emblem")) != NULL ? atoi(temp) : 2;
-			layout.protocol_icon = (temp = xmlnode_get_attrib(sub_sub_node, "protocol_icon")) != NULL ? atoi(temp) : 3;
-			layout.buddy_icon = (temp = xmlnode_get_attrib(sub_sub_node, "buddy_icon")) != NULL ? atoi(temp) : 4;
-			layout.show_status = (temp = xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) != 0 : 1;
+			layout.status_icon = (temp = purple_xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) : 0;
+			layout.text = (temp = purple_xmlnode_get_attrib(sub_sub_node, "name")) != NULL ? atoi(temp) : 1;
+			layout.emblem = (temp = purple_xmlnode_get_attrib(sub_sub_node, "emblem")) != NULL ? atoi(temp) : 2;
+			layout.protocol_icon = (temp = purple_xmlnode_get_attrib(sub_sub_node, "protocol_icon")) != NULL ? atoi(temp) : 3;
+			layout.buddy_icon = (temp = purple_xmlnode_get_attrib(sub_sub_node, "buddy_icon")) != NULL ? atoi(temp) : 4;
+			layout.show_status = (temp = purple_xmlnode_get_attrib(sub_sub_node, "status_icon")) != NULL ? atoi(temp) != 0 : 1;
 
 		} else purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <buddys> <placement>.\n");
 	}
 
 	if (success) {
-		if ((success = (sub_node != NULL && (sub_sub_node = xmlnode_get_child(sub_node, "background")) != NULL)))
+		if ((success = (sub_node != NULL && (sub_sub_node = purple_xmlnode_get_child(sub_node, "background")) != NULL)))
 			contact_color = parse_color(sub_sub_node, "color");
 		else
 			purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <buddys> <background>.\n");
@@ -187,7 +187,7 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 
 	for (i = 0; success && lookups[i].tag; i++) {
 		if ((success = (sub_node != NULL &&
-						(sub_sub_node = xmlnode_get_child(sub_node, lookups[i].tag)) != NULL))) {
+						(sub_sub_node = purple_xmlnode_get_child(sub_node, lookups[i].tag)) != NULL))) {
 			*(lookups[i].font) = pidgin_theme_font_parse(sub_sub_node);
 		} else {
 			*(lookups[i].font) = NULL;
@@ -195,14 +195,14 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 	}
 
 	/* name is required for theme manager */
-	success = (success && xmlnode_get_attrib(root_node, "name") != NULL);
+	success = (success && purple_xmlnode_get_attrib(root_node, "name") != NULL);
 
 	/* the new theme */
 	theme = g_object_new(PIDGIN_TYPE_BLIST_THEME,
 			"type", "blist",
 			"name", name,
-			"author", xmlnode_get_attrib(root_node, "author"),
-			"image", xmlnode_get_attrib(root_node, "image"),
+			"author", purple_xmlnode_get_attrib(root_node, "author"),
+			"image", purple_xmlnode_get_attrib(root_node, "image"),
 			"directory", dir,
 			"description", data,
 			"background-color", bgcolor,
@@ -218,7 +218,7 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 			"offline", offline,
 			"idle", idle,
 			"message", message,
-			"message_nick_said", message_nick_said,
+			"message-nick-said", message_nick_said,
 			"status", status, NULL);
 
 	for (i = 0; lookups[i].tag; i++) {
@@ -230,7 +230,7 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 	pidgin_theme_font_free(expanded);
 	pidgin_theme_font_free(collapsed);
 
-	xmlnode_free(root_node);
+	purple_xmlnode_free(root_node);
 	g_free(data);
 	g_free(dir);
 

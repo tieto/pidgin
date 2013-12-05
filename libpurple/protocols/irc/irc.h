@@ -29,8 +29,8 @@
 #include <sasl/sasl.h>
 #endif
 
-#include "circbuffer.h"
-#include "ft.h"
+#include "circularbuffer.h"
+#include "xfer.h"
 #include "roomlist.h"
 #include "sslconn.h"
 
@@ -89,7 +89,7 @@ struct irc_conn {
 
 	gboolean quitting;
 
-	PurpleCircBuffer *outbuf;
+	PurpleCircularBuffer *outbuf;
 	guint writeh;
 
 	time_t recv_time;

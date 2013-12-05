@@ -1,5 +1,5 @@
 /**
- * @file xmlnode.c XML DOM functions
+ * @file PurpleXmlNode.c XML DOM functions
  */
 
 /* purple
@@ -46,42 +46,42 @@
 # define NEWLINE_S "\n"
 #endif
 
-static xmlnode*
-new_node(const char *name, XMLNodeType type)
+static PurpleXmlNode*
+new_node(const char *name, PurpleXmlNodeType type)
 {
-	xmlnode *node = g_new0(xmlnode, 1);
+	PurpleXmlNode *node = g_new0(PurpleXmlNode, 1);
 
 	node->name = g_strdup(name);
 	node->type = type;
 
-	PURPLE_DBUS_REGISTER_POINTER(node, xmlnode);
+	PURPLE_DBUS_REGISTER_POINTER(node, PurpleXmlNode);
 
 	return node;
 }
 
-xmlnode*
-xmlnode_new(const char *name)
+PurpleXmlNode*
+purple_xmlnode_new(const char *name)
 {
 	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
-	return new_node(name, XMLNODE_TYPE_TAG);
+	return new_node(name, PURPLE_XMLNODE_TYPE_TAG);
 }
 
-xmlnode *
-xmlnode_new_child(xmlnode *parent, const char *name)
+PurpleXmlNode *
+purple_xmlnode_new_child(PurpleXmlNode *parent, const char *name)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 
 	g_return_val_if_fail(parent != NULL, NULL);
 	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
-	node = new_node(name, XMLNODE_TYPE_TAG);
+	node = new_node(name, PURPLE_XMLNODE_TYPE_TAG);
 
-	xmlnode_insert_child(parent, node);
+	purple_xmlnode_insert_child(parent, node);
 #if 0
-	/* This would give xmlnodes more appropriate namespacing
+	/* This would give PurpleXmlNodes more appropriate namespacing
 	 * when creating them.  Otherwise, unless an explicit namespace
-	 * is set, xmlnode_get_namespace() will return NULL, when
+	 * is set, purple_xmlnode_get_namespace() will return NULL, when
 	 * there may be a default namespace.
 	 *
 	 * I'm unconvinced that it's useful, and concerned it may break things.
@@ -89,14 +89,14 @@ xmlnode_new_child(xmlnode *parent, const char *name)
 	 * _insert_child would need the same thing, probably (assuming
 	 * xmlns->node == NULL)
 	 */
-	xmlnode_set_namespace(node, xmlnode_get_default_namespace(node))
+	purple_xmlnode_set_namespace(node, purple_xmlnode_get_default_namespace(node))
 #endif
 
 	return node;
 }
 
 void
-xmlnode_insert_child(xmlnode *parent, xmlnode *child)
+purple_xmlnode_insert_child(PurpleXmlNode *parent, PurpleXmlNode *child)
 {
 	g_return_if_fail(parent != NULL);
 	g_return_if_fail(child != NULL);
@@ -113,9 +113,9 @@ xmlnode_insert_child(xmlnode *parent, xmlnode *child)
 }
 
 void
-xmlnode_insert_data(xmlnode *node, const char *data, gssize size)
+purple_xmlnode_insert_data(PurpleXmlNode *node, const char *data, gssize size)
 {
-	xmlnode *child;
+	PurpleXmlNode *child;
 	gsize real_size;
 
 	g_return_if_fail(node != NULL);
@@ -124,25 +124,25 @@ xmlnode_insert_data(xmlnode *node, const char *data, gssize size)
 
 	real_size = size == -1 ? strlen(data) : (gsize)size;
 
-	child = new_node(NULL, XMLNODE_TYPE_DATA);
+	child = new_node(NULL, PURPLE_XMLNODE_TYPE_DATA);
 
 	child->data = g_memdup(data, real_size);
 	child->data_sz = real_size;
 
-	xmlnode_insert_child(node, child);
+	purple_xmlnode_insert_child(node, child);
 }
 
 void
-xmlnode_remove_attrib(xmlnode *node, const char *attr)
+purple_xmlnode_remove_attrib(PurpleXmlNode *node, const char *attr)
 {
-	xmlnode *attr_node, *sibling = NULL;
+	PurpleXmlNode *attr_node, *sibling = NULL;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(attr != NULL);
 
 	attr_node = node->child;
 	while (attr_node) {
-		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
+		if(attr_node->type == PURPLE_XMLNODE_TYPE_ATTRIB &&
 				purple_strequal(attr_node->name, attr))
 		{
 			if (node->lastchild == attr_node) {
@@ -150,12 +150,12 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 			}
 			if (sibling == NULL) {
 				node->child = attr_node->next;
-				xmlnode_free(attr_node);
+				purple_xmlnode_free(attr_node);
 				attr_node = node->child;
 			} else {
 				sibling->next = attr_node->next;
 				sibling = attr_node->next;
-				xmlnode_free(attr_node);
+				purple_xmlnode_free(attr_node);
 				attr_node = sibling;
 			}
 		}
@@ -168,16 +168,16 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 }
 
 void
-xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns)
+purple_xmlnode_remove_attrib_with_namespace(PurpleXmlNode *node, const char *attr, const char *xmlns)
 {
-	xmlnode *attr_node, *sibling = NULL;
+	PurpleXmlNode *attr_node, *sibling = NULL;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(attr != NULL);
 
 	for(attr_node = node->child; attr_node; attr_node = attr_node->next)
 	{
-		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
+		if(attr_node->type == PURPLE_XMLNODE_TYPE_ATTRIB &&
 		   purple_strequal(attr,  attr_node->name) &&
 		   purple_strequal(xmlns, attr_node->xmlns))
 		{
@@ -189,7 +189,7 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 			if (node->lastchild == attr_node) {
 				node->lastchild = sibling;
 			}
-			xmlnode_free(attr_node);
+			purple_xmlnode_free(attr_node);
 			return;
 		}
 		sibling = attr_node;
@@ -197,42 +197,42 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 }
 
 void
-xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
+purple_xmlnode_set_attrib(PurpleXmlNode *node, const char *attr, const char *value)
 {
-	xmlnode_remove_attrib(node, attr);
-	xmlnode_set_attrib_full(node, attr, NULL, NULL, value);
+	purple_xmlnode_remove_attrib(node, attr);
+	purple_xmlnode_set_attrib_full(node, attr, NULL, NULL, value);
 }
 
 void
-xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns, const char *prefix, const char *value)
+purple_xmlnode_set_attrib_full(PurpleXmlNode *node, const char *attr, const char *xmlns, const char *prefix, const char *value)
 {
-	xmlnode *attrib_node;
+	PurpleXmlNode *attrib_node;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(attr != NULL);
 	g_return_if_fail(value != NULL);
 
-	xmlnode_remove_attrib_with_namespace(node, attr, xmlns);
-	attrib_node = new_node(attr, XMLNODE_TYPE_ATTRIB);
+	purple_xmlnode_remove_attrib_with_namespace(node, attr, xmlns);
+	attrib_node = new_node(attr, PURPLE_XMLNODE_TYPE_ATTRIB);
 
 	attrib_node->data = g_strdup(value);
 	attrib_node->xmlns = g_strdup(xmlns);
 	attrib_node->prefix = g_strdup(prefix);
 
-	xmlnode_insert_child(node, attrib_node);
+	purple_xmlnode_insert_child(node, attrib_node);
 }
 
 
 const char *
-xmlnode_get_attrib(const xmlnode *node, const char *attr)
+purple_xmlnode_get_attrib(const PurpleXmlNode *node, const char *attr)
 {
-	xmlnode *x;
+	PurpleXmlNode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(attr != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
-		if(x->type == XMLNODE_TYPE_ATTRIB && purple_strequal(attr, x->name)) {
+		if(x->type == PURPLE_XMLNODE_TYPE_ATTRIB && purple_strequal(attr, x->name)) {
 			return x->data;
 		}
 	}
@@ -241,15 +241,15 @@ xmlnode_get_attrib(const xmlnode *node, const char *attr)
 }
 
 const char *
-xmlnode_get_attrib_with_namespace(const xmlnode *node, const char *attr, const char *xmlns)
+purple_xmlnode_get_attrib_with_namespace(const PurpleXmlNode *node, const char *attr, const char *xmlns)
 {
-	const xmlnode *x;
+	const PurpleXmlNode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(attr != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
-		if(x->type == XMLNODE_TYPE_ATTRIB &&
+		if(x->type == PURPLE_XMLNODE_TYPE_ATTRIB &&
 		   purple_strequal(attr,  x->name) &&
 		   purple_strequal(xmlns, x->xmlns)) {
 			return x->data;
@@ -260,7 +260,7 @@ xmlnode_get_attrib_with_namespace(const xmlnode *node, const char *attr, const c
 }
 
 
-void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
+void purple_xmlnode_set_namespace(PurpleXmlNode *node, const char *xmlns)
 {
 	char *tmp;
 	g_return_if_fail(node != NULL);
@@ -276,16 +276,16 @@ void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
 	g_free(tmp);
 }
 
-const char *xmlnode_get_namespace(const xmlnode *node)
+const char *purple_xmlnode_get_namespace(const PurpleXmlNode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 
 	return node->xmlns;
 }
 
-const char *xmlnode_get_default_namespace(const xmlnode *node)
+const char *purple_xmlnode_get_default_namespace(const PurpleXmlNode *node)
 {
-	const xmlnode *current_node;
+	const PurpleXmlNode *current_node;
 	const char *ns = NULL;
 
 	g_return_val_if_fail(node != NULL, NULL);
@@ -309,7 +309,7 @@ const char *xmlnode_get_default_namespace(const xmlnode *node)
 	return ns;
 }
 
-void xmlnode_set_prefix(xmlnode *node, const char *prefix)
+void purple_xmlnode_set_prefix(PurpleXmlNode *node, const char *prefix)
 {
 	g_return_if_fail(node != NULL);
 
@@ -317,18 +317,18 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix)
 	node->prefix = g_strdup(prefix);
 }
 
-const char *xmlnode_get_prefix(const xmlnode *node)
+const char *purple_xmlnode_get_prefix(const PurpleXmlNode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 	return node->prefix;
 }
 
-const char *xmlnode_get_prefix_namespace(const xmlnode *node, const char *prefix)
+const char *purple_xmlnode_get_prefix_namespace(const PurpleXmlNode *node, const char *prefix)
 {
-	const xmlnode *current_node;
+	const PurpleXmlNode *current_node;
 
 	g_return_val_if_fail(node != NULL, NULL);
-	g_return_val_if_fail(prefix != NULL, xmlnode_get_default_namespace(node));
+	g_return_val_if_fail(prefix != NULL, purple_xmlnode_get_default_namespace(node));
 
 	current_node = node;
 	while (current_node) {
@@ -348,38 +348,38 @@ const char *xmlnode_get_prefix_namespace(const xmlnode *node, const char *prefix
 	return NULL;
 }
 
-void xmlnode_strip_prefixes(xmlnode *node)
+void purple_xmlnode_strip_prefixes(PurpleXmlNode *node)
 {
-	xmlnode *child;
+	PurpleXmlNode *child;
 	const char *prefix;
 
 	g_return_if_fail(node != NULL);
 
 	for (child = node->child; child; child = child->next) {
-		if (child->type == XMLNODE_TYPE_TAG)
-			xmlnode_strip_prefixes(child);
+		if (child->type == PURPLE_XMLNODE_TYPE_TAG)
+			purple_xmlnode_strip_prefixes(child);
 	}
 
-	prefix = xmlnode_get_prefix(node);
+	prefix = purple_xmlnode_get_prefix(node);
 	if (prefix) {
-		const char *ns = xmlnode_get_prefix_namespace(node, prefix);
-		xmlnode_set_namespace(node, ns);
-		xmlnode_set_prefix(node, NULL);
+		const char *ns = purple_xmlnode_get_prefix_namespace(node, prefix);
+		purple_xmlnode_set_namespace(node, ns);
+		purple_xmlnode_set_prefix(node, NULL);
 	} else {
-		xmlnode_set_namespace(node, xmlnode_get_default_namespace(node));
+		purple_xmlnode_set_namespace(node, purple_xmlnode_get_default_namespace(node));
 	}
 }
 
-xmlnode *xmlnode_get_parent(const xmlnode *child)
+PurpleXmlNode *purple_xmlnode_get_parent(const PurpleXmlNode *child)
 {
 	g_return_val_if_fail(child != NULL, NULL);
 	return child->parent;
 }
 
 void
-xmlnode_free(xmlnode *node)
+purple_xmlnode_free(PurpleXmlNode *node)
 {
-	xmlnode *x, *y;
+	PurpleXmlNode *x, *y;
 
 	g_return_if_fail(node != NULL);
 
@@ -390,7 +390,7 @@ xmlnode_free(xmlnode *node)
 			if (node->parent->lastchild == node)
 				node->parent->lastchild = node->next;
 		} else {
-			xmlnode *prev = node->parent->child;
+			PurpleXmlNode *prev = node->parent->child;
 			while(prev && prev->next != node) {
 				prev = prev->next;
 			}
@@ -406,7 +406,7 @@ xmlnode_free(xmlnode *node)
 	x = node->child;
 	while(x) {
 		y = x->next;
-		xmlnode_free(x);
+		purple_xmlnode_free(x);
 		x = y;
 	}
 
@@ -423,16 +423,16 @@ xmlnode_free(xmlnode *node)
 	g_free(node);
 }
 
-xmlnode*
-xmlnode_get_child(const xmlnode *parent, const char *name)
+PurpleXmlNode*
+purple_xmlnode_get_child(const PurpleXmlNode *parent, const char *name)
 {
-	return xmlnode_get_child_with_namespace(parent, name, NULL);
+	return purple_xmlnode_get_child_with_namespace(parent, name, NULL);
 }
 
-xmlnode *
-xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const char *ns)
+PurpleXmlNode *
+purple_xmlnode_get_child_with_namespace(const PurpleXmlNode *parent, const char *name, const char *ns)
 {
-	xmlnode *x, *ret = NULL;
+	PurpleXmlNode *x, *ret = NULL;
 	char **names;
 	char *parent_name, *child_name;
 
@@ -447,9 +447,9 @@ xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const 
 		/* XXX: Is it correct to ignore the namespace for the match if none was specified? */
 		const char *xmlns = NULL;
 		if(ns)
-			xmlns = xmlnode_get_namespace(x);
+			xmlns = purple_xmlnode_get_namespace(x);
 
-		if(x->type == XMLNODE_TYPE_TAG && purple_strequal(parent_name, x->name)
+		if(x->type == PURPLE_XMLNODE_TYPE_TAG && purple_strequal(parent_name, x->name)
 				&& purple_strequal(ns, xmlns)) {
 			ret = x;
 			break;
@@ -457,22 +457,22 @@ xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const 
 	}
 
 	if(child_name && ret)
-		ret = xmlnode_get_child(ret, child_name);
+		ret = purple_xmlnode_get_child(ret, child_name);
 
 	g_strfreev(names);
 	return ret;
 }
 
 char *
-xmlnode_get_data(const xmlnode *node)
+purple_xmlnode_get_data(const PurpleXmlNode *node)
 {
 	GString *str = NULL;
-	xmlnode *c;
+	PurpleXmlNode *c;
 
 	g_return_val_if_fail(node != NULL, NULL);
 
 	for(c = node->child; c; c = c->next) {
-		if(c->type == XMLNODE_TYPE_DATA) {
+		if(c->type == PURPLE_XMLNODE_TYPE_DATA) {
 			if(!str)
 				str = g_string_new_len(c->data, c->data_sz);
 			else
@@ -487,9 +487,9 @@ xmlnode_get_data(const xmlnode *node)
 }
 
 char *
-xmlnode_get_data_unescaped(const xmlnode *node)
+purple_xmlnode_get_data_unescaped(const PurpleXmlNode *node)
 {
-	char *escaped = xmlnode_get_data(node);
+	char *escaped = purple_xmlnode_get_data(node);
 
 	char *unescaped = escaped ? purple_unescape_html(escaped) : NULL;
 
@@ -499,7 +499,7 @@ xmlnode_get_data_unescaped(const xmlnode *node)
 }
 
 static void
-xmlnode_to_str_foreach_append_ns(const char *key, const char *value,
+purple_xmlnode_to_str_foreach_append_ns(const char *key, const char *value,
 	GString *buf)
 {
 	if (*key) {
@@ -510,11 +510,11 @@ xmlnode_to_str_foreach_append_ns(const char *key, const char *value,
 }
 
 static char *
-xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int depth)
+purple_xmlnode_to_str_helper(const PurpleXmlNode *node, int *len, gboolean formatting, int depth)
 {
 	GString *text = g_string_new("");
 	const char *prefix;
-	const xmlnode *c;
+	const PurpleXmlNode *c;
 	char *node_name, *esc, *esc2, *tab = NULL;
 	gboolean need_end = FALSE, pretty = formatting;
 
@@ -526,7 +526,7 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 	}
 
 	node_name = g_markup_escape_text(node->name, -1);
-	prefix = xmlnode_get_prefix(node);
+	prefix = purple_xmlnode_get_prefix(node);
 
 	if (prefix) {
 		g_string_append_printf(text, "<%s:%s", prefix, node_name);
@@ -536,7 +536,7 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 
 	if (node->namespace_map) {
 		g_hash_table_foreach(node->namespace_map,
-			(GHFunc)xmlnode_to_str_foreach_append_ns, text);
+			(GHFunc)purple_xmlnode_to_str_foreach_append_ns, text);
 	} else {
 		/* Figure out if this node has a different default namespace from parent */
 		const char *xmlns = NULL;
@@ -545,9 +545,9 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 			xmlns = node->xmlns;
 
 		if (!xmlns)
-			xmlns = xmlnode_get_default_namespace(node);
+			xmlns = purple_xmlnode_get_default_namespace(node);
 		if (node->parent)
-			parent_xmlns = xmlnode_get_default_namespace(node->parent);
+			parent_xmlns = purple_xmlnode_get_default_namespace(node->parent);
 		if (!purple_strequal(xmlns, parent_xmlns))
 		{
 			char *escaped_xmlns = g_markup_escape_text(xmlns, -1);
@@ -557,8 +557,8 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 	}
 	for(c = node->child; c; c = c->next)
 	{
-		if(c->type == XMLNODE_TYPE_ATTRIB) {
-			const char *aprefix = xmlnode_get_prefix(c);
+		if(c->type == PURPLE_XMLNODE_TYPE_ATTRIB) {
+			const char *aprefix = purple_xmlnode_get_prefix(c);
 			esc = g_markup_escape_text(c->name, -1);
 			esc2 = g_markup_escape_text(c->data, -1);
 			if (aprefix) {
@@ -568,8 +568,8 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 			}
 			g_free(esc);
 			g_free(esc2);
-		} else if(c->type == XMLNODE_TYPE_TAG || c->type == XMLNODE_TYPE_DATA) {
-			if(c->type == XMLNODE_TYPE_DATA)
+		} else if(c->type == PURPLE_XMLNODE_TYPE_TAG || c->type == PURPLE_XMLNODE_TYPE_DATA) {
+			if(c->type == PURPLE_XMLNODE_TYPE_DATA)
 				pretty = FALSE;
 			need_end = TRUE;
 		}
@@ -580,12 +580,12 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 
 		for(c = node->child; c; c = c->next)
 		{
-			if(c->type == XMLNODE_TYPE_TAG) {
+			if(c->type == PURPLE_XMLNODE_TYPE_TAG) {
 				int esc_len;
-				esc = xmlnode_to_str_helper(c, &esc_len, pretty, depth+1);
+				esc = purple_xmlnode_to_str_helper(c, &esc_len, pretty, depth+1);
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
-			} else if(c->type == XMLNODE_TYPE_DATA && c->data_sz > 0) {
+			} else if(c->type == PURPLE_XMLNODE_TYPE_DATA && c->data_sz > 0) {
 				esc = g_markup_escape_text(c->data, c->data_sz);
 				text = g_string_append(text, esc);
 				g_free(esc);
@@ -614,19 +614,19 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 }
 
 char *
-xmlnode_to_str(const xmlnode *node, int *len)
+purple_xmlnode_to_str(const PurpleXmlNode *node, int *len)
 {
-	return xmlnode_to_str_helper(node, len, FALSE, 0);
+	return purple_xmlnode_to_str_helper(node, len, FALSE, 0);
 }
 
 char *
-xmlnode_to_formatted_str(const xmlnode *node, int *len)
+purple_xmlnode_to_formatted_str(const PurpleXmlNode *node, int *len)
 {
 	char *xml, *xml_with_declaration;
 
 	g_return_val_if_fail(node != NULL, NULL);
 
-	xml = xmlnode_to_str_helper(node, len, TRUE, 0);
+	xml = purple_xmlnode_to_str_helper(node, len, TRUE, 0);
 	xml_with_declaration =
 		g_strdup_printf("<?xml version='1.0' encoding='UTF-8' ?>" NEWLINE_S NEWLINE_S "%s", xml);
 	g_free(xml);
@@ -638,30 +638,30 @@ xmlnode_to_formatted_str(const xmlnode *node, int *len)
 }
 
 struct _xmlnode_parser_data {
-	xmlnode *current;
+	PurpleXmlNode *current;
 	gboolean error;
 };
 
 static void
-xmlnode_parser_element_start_libxml(void *user_data,
+purple_xmlnode_parser_element_start_libxml(void *user_data,
 				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *xmlns,
 				   int nb_namespaces, const xmlChar **namespaces,
 				   int nb_attributes, int nb_defaulted, const xmlChar **attributes)
 {
 	struct _xmlnode_parser_data *xpd = user_data;
-	xmlnode *node;
+	PurpleXmlNode *node;
 	int i, j;
 
 	if(!element_name || xpd->error) {
 		return;
 	} else {
 		if(xpd->current)
-			node = xmlnode_new_child(xpd->current, (const char*) element_name);
+			node = purple_xmlnode_new_child(xpd->current, (const char*) element_name);
 		else
-			node = xmlnode_new((const char *) element_name);
+			node = purple_xmlnode_new((const char *) element_name);
 
-		xmlnode_set_namespace(node, (const char *) xmlns);
-		xmlnode_set_prefix(node, (const char *)prefix);
+		purple_xmlnode_set_namespace(node, (const char *) xmlns);
+		purple_xmlnode_set_prefix(node, (const char *)prefix);
 
 		if (nb_namespaces != 0) {
 			node->namespace_map = g_hash_table_new_full(
@@ -684,7 +684,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = purple_unescape_text(txt);
 			g_free(txt);
-			xmlnode_set_attrib_full(node, name, NULL, prefix, attrib);
+			purple_xmlnode_set_attrib_full(node, name, NULL, prefix, attrib);
 			g_free(attrib);
 		}
 
@@ -693,7 +693,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 }
 
 static void
-xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
+purple_xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 				 const xmlChar *prefix, const xmlChar *xmlns)
 {
 	struct _xmlnode_parser_data *xpd = user_data;
@@ -708,7 +708,7 @@ xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 }
 
 static void
-xmlnode_parser_element_text_libxml(void *user_data, const xmlChar *text, int text_len)
+purple_xmlnode_parser_element_text_libxml(void *user_data, const xmlChar *text, int text_len)
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 
@@ -718,11 +718,11 @@ xmlnode_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 	if(!text || !text_len)
 		return;
 
-	xmlnode_insert_data(xpd->current, (const char*) text, text_len);
+	purple_xmlnode_insert_data(xpd->current, (const char*) text, text_len);
 }
 
 static void
-xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
+purple_xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 	char errmsg[2048];
@@ -738,28 +738,28 @@ xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
 }
 
 static void
-xmlnode_parser_structural_error_libxml(void *user_data, xmlErrorPtr error)
+purple_xmlnode_parser_structural_error_libxml(void *user_data, xmlErrorPtr error)
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 
 	if (error && (error->level == XML_ERR_ERROR ||
 	              error->level == XML_ERR_FATAL)) {
 		xpd->error = TRUE;
-		purple_debug_error("xmlnode", "XML parser error for xmlnode %p: "
+		purple_debug_error("xmlnode", "XML parser error for PurpleXmlNode %p: "
 		                   "Domain %i, code %i, level %i: %s",
 		                   user_data, error->domain, error->code, error->level,
 		                   error->message ? error->message : "(null)\n");
 	} else if (error)
-		purple_debug_warning("xmlnode", "XML parser error for xmlnode %p: "
+		purple_debug_warning("xmlnode", "XML parser error for PurpleXmlNode %p: "
 		                     "Domain %i, code %i, level %i: %s",
 		                     user_data, error->domain, error->code, error->level,
 		                     error->message ? error->message : "(null)\n");
 	else
-		purple_debug_warning("xmlnode", "XML parser error for xmlnode %p\n",
+		purple_debug_warning("xmlnode", "XML parser error for PurpleXmlNode %p\n",
 		                     user_data);
 }
 
-static xmlSAXHandler xmlnode_parser_libxml = {
+static xmlSAXHandler purple_xmlnode_parser_libxml = {
 	NULL, /* internalSubset */
 	NULL, /* isStandalone */
 	NULL, /* hasInternalSubset */
@@ -777,28 +777,28 @@ static xmlSAXHandler xmlnode_parser_libxml = {
 	NULL, /* startElement */
 	NULL, /* endElement */
 	NULL, /* reference */
-	xmlnode_parser_element_text_libxml, /* characters */
+	purple_xmlnode_parser_element_text_libxml, /* characters */
 	NULL, /* ignorableWhitespace */
 	NULL, /* processingInstruction */
 	NULL, /* comment */
 	NULL, /* warning */
-	xmlnode_parser_error_libxml, /* error */
+	purple_xmlnode_parser_error_libxml, /* error */
 	NULL, /* fatalError */
 	NULL, /* getParameterEntity */
 	NULL, /* cdataBlock */
 	NULL, /* externalSubset */
 	XML_SAX2_MAGIC, /* initialized */
 	NULL, /* _private */
-	xmlnode_parser_element_start_libxml, /* startElementNs */
-	xmlnode_parser_element_end_libxml,   /* endElementNs   */
-	xmlnode_parser_structural_error_libxml, /* serror */
+	purple_xmlnode_parser_element_start_libxml, /* startElementNs */
+	purple_xmlnode_parser_element_end_libxml,   /* endElementNs   */
+	purple_xmlnode_parser_structural_error_libxml, /* serror */
 };
 
-xmlnode *
-xmlnode_from_str(const char *str, gssize size)
+PurpleXmlNode *
+purple_xmlnode_from_str(const char *str, gssize size)
 {
 	struct _xmlnode_parser_data *xpd;
-	xmlnode *ret;
+	PurpleXmlNode *ret;
 	gsize real_size;
 
 	g_return_val_if_fail(str != NULL, NULL);
@@ -806,32 +806,32 @@ xmlnode_from_str(const char *str, gssize size)
 	real_size = size < 0 ? strlen(str) : (gsize)size;
 	xpd = g_new0(struct _xmlnode_parser_data, 1);
 
-	if (xmlSAXUserParseMemory(&xmlnode_parser_libxml, xpd, str, real_size) < 0) {
+	if (xmlSAXUserParseMemory(&purple_xmlnode_parser_libxml, xpd, str, real_size) < 0) {
 		while(xpd->current && xpd->current->parent)
 			xpd->current = xpd->current->parent;
 		if(xpd->current)
-			xmlnode_free(xpd->current);
+			purple_xmlnode_free(xpd->current);
 		xpd->current = NULL;
 	}
 	ret = xpd->current;
 	if (xpd->error) {
 		ret = NULL;
 		if (xpd->current)
-			xmlnode_free(xpd->current);
+			purple_xmlnode_free(xpd->current);
 	}
 
 	g_free(xpd);
 	return ret;
 }
 
-xmlnode *
-xmlnode_from_file(const char *dir,const char *filename, const char *description, const char *process)
+PurpleXmlNode *
+purple_xmlnode_from_file(const char *dir,const char *filename, const char *description, const char *process)
 {
 	gchar *filename_full;
 	GError *error = NULL;
 	gchar *contents = NULL;
 	gsize length;
-	xmlnode *node = NULL;
+	PurpleXmlNode *node = NULL;
 
 	g_return_val_if_fail(dir != NULL, NULL);
 
@@ -857,7 +857,7 @@ xmlnode_from_file(const char *dir,const char *filename, const char *description,
 
 	if ((contents != NULL) && (length > 0))
 	{
-		node = xmlnode_from_str(contents, length);
+		node = purple_xmlnode_from_str(contents, length);
 
 		/* If we were unable to parse the file then save its contents to a backup file */
 		if (node == NULL)
@@ -897,18 +897,18 @@ xmlnode_from_file(const char *dir,const char *filename, const char *description,
 }
 
 static void
-xmlnode_copy_foreach_ns(gpointer key, gpointer value, gpointer user_data)
+purple_xmlnode_copy_foreach_ns(gpointer key, gpointer value, gpointer user_data)
 {
 	GHashTable *ret = (GHashTable *)user_data;
 	g_hash_table_insert(ret, g_strdup(key), g_strdup(value));
 }
 
-xmlnode *
-xmlnode_copy(const xmlnode *src)
+PurpleXmlNode *
+purple_xmlnode_copy(const PurpleXmlNode *src)
 {
-	xmlnode *ret;
-	xmlnode *child;
-	xmlnode *sibling = NULL;
+	PurpleXmlNode *ret;
+	PurpleXmlNode *child;
+	PurpleXmlNode *sibling = NULL;
 
 	g_return_val_if_fail(src != NULL, NULL);
 
@@ -926,15 +926,15 @@ xmlnode_copy(const xmlnode *src)
 	if (src->namespace_map) {
 		ret->namespace_map = g_hash_table_new_full(g_str_hash, g_str_equal,
 		                                           g_free, g_free);
-		g_hash_table_foreach(src->namespace_map, xmlnode_copy_foreach_ns, ret->namespace_map);
+		g_hash_table_foreach(src->namespace_map, purple_xmlnode_copy_foreach_ns, ret->namespace_map);
 	}
 
 	for (child = src->child; child; child = child->next) {
 		if (sibling) {
-			sibling->next = xmlnode_copy(child);
+			sibling->next = purple_xmlnode_copy(child);
 			sibling = sibling->next;
 		} else {
-			ret->child = xmlnode_copy(child);
+			ret->child = purple_xmlnode_copy(child);
 			sibling = ret->child;
 		}
 		sibling->parent = ret;
@@ -945,25 +945,39 @@ xmlnode_copy(const xmlnode *src)
 	return ret;
 }
 
-xmlnode *
-xmlnode_get_next_twin(xmlnode *node)
+PurpleXmlNode *
+purple_xmlnode_get_next_twin(PurpleXmlNode *node)
 {
-	xmlnode *sibling;
-	const char *ns = xmlnode_get_namespace(node);
+	PurpleXmlNode *sibling;
+	const char *ns = purple_xmlnode_get_namespace(node);
 
 	g_return_val_if_fail(node != NULL, NULL);
-	g_return_val_if_fail(node->type == XMLNODE_TYPE_TAG, NULL);
+	g_return_val_if_fail(node->type == PURPLE_XMLNODE_TYPE_TAG, NULL);
 
 	for(sibling = node->next; sibling; sibling = sibling->next) {
 		/* XXX: Is it correct to ignore the namespace for the match if none was specified? */
 		const char *xmlns = NULL;
 		if(ns)
-			xmlns = xmlnode_get_namespace(sibling);
+			xmlns = purple_xmlnode_get_namespace(sibling);
 
-		if(sibling->type == XMLNODE_TYPE_TAG && purple_strequal(node->name, sibling->name) &&
+		if(sibling->type == PURPLE_XMLNODE_TYPE_TAG && purple_strequal(node->name, sibling->name) &&
 				purple_strequal(ns, xmlns))
 			return sibling;
 	}
 
 	return NULL;
+}
+
+GType
+purple_xmlnode_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleXmlNode",
+				(GBoxedCopyFunc)purple_xmlnode_copy,
+				(GBoxedFreeFunc)purple_xmlnode_free);
+	}
+
+	return type;
 }

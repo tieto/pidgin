@@ -32,7 +32,10 @@
 #include <glib.h>
 
 typedef struct _PurpleNotifyUserInfoEntry	PurpleNotifyUserInfoEntry;
+
+#define  PURPLE_TYPE_NOTIFY_USER_INFO  (purple_notify_user_info_get_type())
 typedef struct _PurpleNotifyUserInfo		PurpleNotifyUserInfo;
+
 /** @copydoc _PurpleNotifySearchColumn */
 typedef struct _PurpleNotifySearchColumn	PurpleNotifySearchColumn;
 
@@ -170,6 +173,7 @@ typedef struct
 
 	void (*close_notify)(PurpleNotifyType type, void *ui_handle);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -426,6 +430,11 @@ void *purple_notify_userinfo(PurpleConnection *gc, const char *who,
 						   gpointer user_data);
 
 /**
+ * Returns the GType for the PurpleNotifyUserInfo boxed structure.
+ */
+GType purple_notify_user_info_get_type(void);
+
+/**
  * Create a new PurpleNotifyUserInfo which is suitable for passing to
  * purple_notify_userinfo()
  *
@@ -505,21 +514,14 @@ void purple_notify_user_info_prepend_pair_html(PurpleNotifyUserInfo *user_info, 
  */
 void purple_notify_user_info_prepend_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
 /**
  * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object
  * without freeing the entry.
  *
  * @param user_info        The PurpleNotifyUserInfo
  * @param user_info_entry  The PurpleNotifyUserInfoEntry
- *
- * @deprecated Nothing is using this function and it should be removed
- *             in 3.0.0.  Or, if we decide we want to keep it in 3.0.0
- *             then we should make purple_notify_user_info_entry_destroy
- *             public so that entries can be free'd after they're removed.
  */
 void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, PurpleNotifyUserInfoEntry *user_info_entry);
-#endif
 
 /**
  * Create a new PurpleNotifyUserInfoEntry
@@ -543,6 +545,13 @@ void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, Purpl
  * @result A new PurpleNotifyUserInfoEntry
  */
 PurpleNotifyUserInfoEntry *purple_notify_user_info_entry_new(const char *label, const char *value);
+
+/**
+ * Destroy a PurpleNotifyUserInfoEntry
+ *
+ * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ */
+void purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Add a section break.  A UI might display this as a horizontal line.

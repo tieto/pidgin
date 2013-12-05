@@ -180,7 +180,7 @@ use_icon_theme(GtkWidget *w, GtkWidget *window)
 	PidginStatusIconTheme *theme = create_icon_theme(window);
 	pidgin_stock_load_status_icon_theme(PIDGIN_STATUS_ICON_THEME(theme));
 	pidgin_stock_load_stock_icon_theme((PidginStockIconTheme *)theme);
-	pidgin_blist_refresh(purple_get_blist());
+	pidgin_blist_refresh(purple_blist_get_buddy_list());
 	g_object_unref(theme);
 }
 

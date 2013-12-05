@@ -54,8 +54,8 @@ struct _JingleGoogleP2PClass
 {
 	JingleTransportClass parent_class;  /**< The parent class. */
 
-	xmlnode *(*to_xml) (JingleTransport *transport, xmlnode *content, JingleActionType action);
-	JingleTransport *(*parse) (xmlnode *transport);
+	PurpleXmlNode *(*to_xml) (JingleTransport *transport, PurpleXmlNode *content, JingleActionType action);
+	JingleTransport *(*parse) (PurpleXmlNode *transport);
 };
 
 /** The Google P2P class's private data */

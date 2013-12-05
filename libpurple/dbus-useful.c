@@ -2,6 +2,7 @@
 #include <glib.h>
 
 #include "dbus-useful.h"
+#include "accounts.h"
 #include "conversation.h"
 #include "util.h"
 

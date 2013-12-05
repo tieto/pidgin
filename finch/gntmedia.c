@@ -140,7 +140,7 @@ finch_media_class_init (FinchMediaClass *klass)
 			"PurpleMedia",
 			"The PurpleMedia associated with this media.",
 			PURPLE_TYPE_MEDIA,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	finch_media_signals[MESSAGE] = g_signal_new("message", G_TYPE_FROM_CLASS(klass),
 					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
@@ -262,7 +262,7 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *message = NULL;
 
 		account = purple_media_get_account(gntmedia->priv->media);
-		buddy = purple_find_buddy(account, name);
+		buddy = purple_blist_find_buddy(account, name);
 		alias = buddy ? purple_buddy_get_contact_alias(buddy) :	name;
 
 		if (type & PURPLE_MEDIA_AUDIO) {
@@ -378,8 +378,8 @@ finch_media_new(PurpleMedia *media)
 static void
 gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *conv)
 {
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	if (PURPLE_IS_IM_CONVERSATION(conv)) {
+		purple_conversation_write_message(conv, NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 
@@ -390,7 +390,7 @@ finch_new_media(PurpleMediaManager *manager, PurpleMedia *media,
 	GntWidget *gntmedia;
 	PurpleConversation *conv;
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+	conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, name));
 
 	gntmedia = finch_media_new(media);
 	g_signal_connect(G_OBJECT(gntmedia), "message", G_CALLBACK(gntmedia_message_cb), conv);

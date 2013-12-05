@@ -33,16 +33,16 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy_name, account);
+	conv = purple_conversations_find_im_with_account(buddy_name, account);
 
-	group = purple_find_group(group_name);
+	group = purple_blist_find_group(group_name);
 	if (group == NULL)
 	{
 		group = purple_group_new(group_name);
 		purple_blist_add_group(group, NULL);
 	}
 
-	buddy = purple_find_buddy_in_group(account, buddy_name, group);
+	buddy = purple_blist_find_buddy_in_group(account, buddy_name, group);
 	if (buddy == NULL)
 	{
 		buddy = purple_buddy_new(account, buddy_name, alias);
@@ -53,8 +53,8 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 
 	if (conv != NULL)
 	{
-		purple_buddy_icon_update(purple_conv_im_get_icon(PURPLE_CONV_IM(conv)));
-		purple_conversation_update(conv, PURPLE_CONV_UPDATE_ADD);
+		purple_buddy_icon_update(purple_im_conversation_get_icon(PURPLE_CONV_IM(conv)));
+		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ADD);
 	}
 }
 
@@ -68,19 +68,19 @@ gevo_get_groups(void)
 	g_list_free(list);
 	list = NULL;
 
-	if (purple_get_blist()->root == NULL)
+	if (purple_blist_get_buddy_list()->root == NULL)
 	{
 		list  = g_list_append(list, (gpointer)_("Buddies"));
 	}
 	else
 	{
-		for (gnode = purple_get_blist()->root;
+		for (gnode = purple_blist_get_buddy_list()->root;
 			 gnode != NULL;
 			 gnode = gnode->next)
 		{
-			if (PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			if (PURPLE_IS_GROUP(gnode))
 			{
-				g = (PurpleGroup *)gnode;
+				g = PURPLE_GROUP(gnode);
 				list = g_list_append(list, g->name);
 			}
 		}

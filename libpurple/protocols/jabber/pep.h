@@ -39,7 +39,7 @@ void jabber_pep_init_actions(GList **m);
  * @parameter js	The JabberStream this item was received on
  * @parameter items	The &lt;items/>-tag with the &lt;item/>-children
  */
-typedef void (JabberPEPHandler)(JabberStream *js, const char *from, xmlnode *items);
+typedef void (JabberPEPHandler)(JabberStream *js, const char *from, PurpleXmlNode *items);
 
 /*
  * Registers a callback for PEP events. Also automatically announces this receiving capability via disco#info.
@@ -86,6 +86,6 @@ void jabber_pep_delete_node(JabberStream *js, const gchar *node);
  * @parameter js	The JabberStream associated with the connection this event should be published
  * @parameter publish	The publish node. This could be for example &lt;publish node='http://jabber.org/protocol/tune'/> with an &lt;item/> as subnode
  */
-void jabber_pep_publish(JabberStream *js, xmlnode *publish);
+void jabber_pep_publish(JabberStream *js, PurpleXmlNode *publish);
 
 #endif /* PURPLE_JABBER_PEP_H_ */

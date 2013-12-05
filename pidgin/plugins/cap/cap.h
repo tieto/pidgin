@@ -32,7 +32,7 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#include "blist.h"
+#include "buddylist.h"
 #include "notify.h"
 #include "version.h"
 #include "debug.h"

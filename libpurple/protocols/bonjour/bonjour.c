@@ -68,11 +68,11 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 	/* Go through and remove all buddies that belong to this account */
 	for (cnode = purple_blist_node_get_first_child((PurpleBlistNode *) bonjour_group); cnode; cnode = cnodenext) {
 		cnodenext = purple_blist_node_get_sibling_next(cnode);
-		if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+		if (!PURPLE_IS_CONTACT(cnode))
 			continue;
 		for (bnode = purple_blist_node_get_first_child(cnode); bnode; bnode = bnodenext) {
 			bnodenext = purple_blist_node_get_sibling_next(bnode);
-			if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+			if (!PURPLE_IS_BUDDY(bnode))
 				continue;
 			buddy = (PurpleBuddy *) bnode;
 			if (purple_buddy_get_account(buddy) != account)
@@ -103,7 +103,7 @@ bonjour_login(PurpleAccount *account)
 	}
 #endif /* _WIN32 */
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML);
 	bd = g_new0(BonjourData, 1);
 	purple_connection_set_protocol_data(gc, bd);
 
@@ -152,7 +152,7 @@ bonjour_login(PurpleAccount *account)
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 
 	/* Show the buddy list by telling Purple we have already connected */
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 }
 
 static void
@@ -161,7 +161,7 @@ bonjour_close(PurpleConnection *connection)
 	PurpleGroup *bonjour_group;
 	BonjourData *bd = purple_connection_get_protocol_data(connection);
 
-	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
+	bonjour_group = purple_blist_find_group(BONJOUR_GROUP_NAME);
 
 	/* Remove all the bonjour buddies */
 	bonjour_removeallfromlocal(connection, bonjour_group);
@@ -289,14 +289,14 @@ bonjour_status_types(PurpleAccount *account)
 										   BONJOUR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_value_new(PURPLE_TYPE_STRING), NULL);
+										   purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 										   BONJOUR_STATUS_ID_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_value_new(PURPLE_TYPE_STRING), NULL);
+										   purple_value_new(G_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
@@ -310,7 +310,7 @@ bonjour_status_types(PurpleAccount *account)
 static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(connection), who);
 	BonjourBuddy *bb;
 
 	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
@@ -421,26 +421,24 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 }
 
 static void
-bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group) {
-	PurpleBlistNodeFlags oldflags;
-
+bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group)
+{
 	if (buddy == NULL)
 		return;
 
-	oldflags = purple_blist_node_get_flags((PurpleBlistNode *)buddy);
-
 	/* If we're moving them out of the bonjour group, make them persistent */
 	if (purple_strequal(new_group, BONJOUR_GROUP_NAME))
-		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags | PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+		purple_blist_node_set_transient(PURPLE_BLIST_NODE(buddy), TRUE);
 	else
-		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags ^ PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+		purple_blist_node_set_transient(PURPLE_BLIST_NODE(buddy),
+				!purple_blist_node_is_transient(PURPLE_BLIST_NODE(buddy)));
 
 }
 
 static void
 bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
 {
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(connection), who);
 
 	bonjour_do_group_change(buddy, new_group);
 
@@ -465,7 +463,7 @@ bonjour_rename_group(PurpleConnection *connection, const char *old_name, PurpleG
 static gboolean
 bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(connection), who);
 
 	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }

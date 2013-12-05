@@ -222,7 +222,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	ggp_pubdir_request *request = _request;
 	PurpleConnection *gc = request->gc;
 	gboolean succ = TRUE;
-	xmlnode *xml;
+	PurpleXmlNode *xml;
 	const gchar *xml_raw;
 	unsigned int status, next_offset;
 	int record_count, i;
@@ -235,7 +235,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 			xml_raw);
 	}
 
-	xml = xmlnode_from_str(xml_raw, -1);
+	xml = purple_xmlnode_from_str(xml_raw, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_pubdir_got_data: "
@@ -248,7 +248,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	succ &= ggp_xml_get_uint(xml, "status", &status);
 	if (!ggp_xml_get_uint(xml, "nextOffset", &next_offset))
 		next_offset = 0;
-	xml = xmlnode_get_child(xml, "users");
+	xml = purple_xmlnode_get_child(xml, "users");
 	if (!succ || status != 0 || !xml)
 	{
 		purple_debug_error("gg", "ggp_pubdir_got_data: "
@@ -261,7 +261,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 	record_count = ggp_xml_child_count(xml, "user");
 	records = g_new0(ggp_pubdir_record, record_count);
 	
-	xml = xmlnode_get_child(xml, "user");
+	xml = purple_xmlnode_get_child(xml, "user");
 	i = 0;
 	while (xml)
 	{
@@ -272,7 +272,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		
 		g_assert(i <= record_count);
 		
-		record->uin = ggp_str_to_uin(xmlnode_get_attrib(xml, "uin"));
+		record->uin = ggp_str_to_uin(purple_xmlnode_get_attrib(xml, "uin"));
 		if (record->uin == 0)
 			ggp_xml_get_uint(xml, "uin", &record->uin);
 		if (record->uin == 0)
@@ -342,7 +342,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		
 		g_free(city);
 		
-		xml = xmlnode_get_next_twin(xml);
+		xml = purple_xmlnode_get_next_twin(xml);
 	}
 	
 	request->cb(gc, record_count, records, next_offset, request->user_data);
@@ -390,7 +390,7 @@ static void ggp_pubdir_get_info_prpl_got(PurpleConnection *gc,
 	g_assert(uin == record->uin);
 	g_assert(records_count == 1);
 	
-	buddy = purple_find_buddy(purple_connection_get_account(gc),
+	buddy = purple_blist_find_buddy(purple_connection_get_account(gc),
 		ggp_uin_to_str(uin));
 	if (buddy)
 	{
@@ -771,8 +771,8 @@ static void ggp_pubdir_search_results_add(PurpleConnection *gc, GList *row,
 static void ggp_pubdir_search_results_im(PurpleConnection *gc, GList *row,
 	gpointer _form)
 {
-	purple_conversation_present(purple_conversation_new(PURPLE_CONV_TYPE_IM,
-		purple_connection_get_account(gc), g_list_nth_data(row, 0)));
+	purple_conversation_present(PURPLE_CONVERSATION(purple_im_conversation_new(
+		purple_connection_get_account(gc), g_list_nth_data(row, 0))));
 }
 
 static void ggp_pubdir_search_results_info(PurpleConnection *gc, GList *row,

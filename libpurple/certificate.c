@@ -511,6 +511,20 @@ purple_certificate_get_display_string(PurpleCertificate *crt)
 	return str;
 }
 
+GType
+purple_certificate_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleCertificate",
+				(GBoxedCopyFunc)purple_certificate_copy,
+				(GBoxedFreeFunc)purple_certificate_destroy);
+	}
+
+	return type;
+}
+
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
@@ -648,6 +662,33 @@ purple_certificate_pool_destroy_idlist(GList *idlist)
 	}
 
 	g_list_free(idlist);
+}
+
+static PurpleCertificatePool *
+purple_certificate_pool_copy(PurpleCertificatePool *certificate_pool)
+{
+	PurpleCertificatePool *certificate_pool_copy;
+
+	g_return_val_if_fail(certificate_pool != NULL, NULL);
+
+	certificate_pool_copy = g_new(PurpleCertificatePool, 1);
+	*certificate_pool_copy = *certificate_pool;
+
+	return certificate_pool_copy;
+}
+
+GType
+purple_certificate_pool_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleCertificatePool",
+				(GBoxedCopyFunc)purple_certificate_pool_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
 }
 
 
@@ -2034,20 +2075,16 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 	purple_signal_register(pool, /* Signals emitted from pool */
 			       "certificate-stored",
 			       purple_marshal_VOID__POINTER_POINTER,
-			       NULL, /* No callback return value */
+			       G_TYPE_NONE, /* No callback return value */
 			       2,    /* Two non-data arguments */
-			       purple_value_new(PURPLE_TYPE_SUBTYPE,
-						PURPLE_SUBTYPE_CERTIFICATEPOOL),
-			       purple_value_new(PURPLE_TYPE_STRING));
+			       PURPLE_TYPE_CERTIFICATE_POOL, G_TYPE_STRING);
 
 	purple_signal_register(pool, /* Signals emitted from pool */
 			       "certificate-deleted",
 			       purple_marshal_VOID__POINTER_POINTER,
-			       NULL, /* No callback return value */
+			       G_TYPE_NONE, /* No callback return value */
 			       2,    /* Two non-data arguments */
-			       purple_value_new(PURPLE_TYPE_SUBTYPE,
-						PURPLE_SUBTYPE_CERTIFICATEPOOL),
-			       purple_value_new(PURPLE_TYPE_STRING));
+			       PURPLE_TYPE_CERTIFICATE_POOL, G_TYPE_STRING);
 
 	purple_debug_info("certificate",
 		  "CertificatePool %s registered\n",

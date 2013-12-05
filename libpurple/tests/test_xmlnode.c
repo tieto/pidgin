@@ -16,40 +16,40 @@ START_TEST(test_xmlnode_billion_laughs_attack)
 	   the parser for the above XML document */
 	/* purple_debug_set_enabled(TRUE); */
 
-	fail_if(xmlnode_from_str(malicious_xml_doc, -1),
-			"xmlnode_from_str() returned an XML tree, but we didn't want it to");
+	fail_if(purple_xmlnode_from_str(malicious_xml_doc, -1),
+			"purple_xmlnode_from_str() returned an XML tree, but we didn't want it to");
 }
 END_TEST
 
 #define check_doc_structure(x) { \
-	xmlnode *ping, *child1, *child2; \
+	PurpleXmlNode *ping, *child1, *child2; \
 	fail_if(x == NULL, "Failed to parse document"); \
-	ping = xmlnode_get_child(x, "ping"); \
+	ping = purple_xmlnode_get_child(x, "ping"); \
 	fail_if(ping == NULL, "Failed to find 'ping' child"); \
-	child1 = xmlnode_get_child(ping, "child1"); \
+	child1 = purple_xmlnode_get_child(ping, "child1"); \
 	fail_if(child1 == NULL, "Failed to find 'child1'"); \
-	child2 = xmlnode_get_child(child1, "child2"); \
+	child2 = purple_xmlnode_get_child(child1, "child2"); \
 	fail_if(child2 == NULL, "Failed to find 'child2'"); \
-	xmlnode_new_child(child2, "a"); \
+	purple_xmlnode_new_child(child2, "a"); \
 	\
-	assert_string_equal("jabber:client", xmlnode_get_namespace(x)); \
-	/* NOTE: xmlnode_get_namespace() returns the namespace of the element, not the
+	assert_string_equal("jabber:client", purple_xmlnode_get_namespace(x)); \
+	/* NOTE: purple_xmlnode_get_namespace() returns the namespace of the element, not the
 	 * current default namespace.  See http://www.w3.org/TR/xml-names/#defaulting and
 	 * http://www.w3.org/TR/xml-names/#dt-defaultNS.
 	 */ \
-	assert_string_equal("urn:xmpp:ping", xmlnode_get_namespace(ping)); \
-	assert_string_equal("jabber:client", xmlnode_get_namespace(child1)); \
-	assert_string_equal("urn:xmpp:ping", xmlnode_get_namespace(child2)); \
+	assert_string_equal("urn:xmpp:ping", purple_xmlnode_get_namespace(ping)); \
+	assert_string_equal("jabber:client", purple_xmlnode_get_namespace(child1)); \
+	assert_string_equal("urn:xmpp:ping", purple_xmlnode_get_namespace(child2)); \
 	/*
 	 * This fails (well, actually crashes [the ns is NULL]) unless
-	 * xmlnode_new_child() actually sets the element namespace.
-	assert_string_equal("jabber:client", xmlnode_get_namespace(xmlnode_get_child(child2, "a")));
+	 * purple_xmlnode_new_child() actually sets the element namespace.
+	assert_string_equal("jabber:client", purple_xmlnode_get_namespace(purple_xmlnode_get_child(child2, "a")));
 	 */ \
 	\
-	assert_string_equal("jabber:client", xmlnode_get_default_namespace(x)); \
-	assert_string_equal("jabber:client", xmlnode_get_default_namespace(ping)); \
-	assert_string_equal("jabber:client", xmlnode_get_default_namespace(child1)); \
-	assert_string_equal("jabber:client", xmlnode_get_default_namespace(child2)); \
+	assert_string_equal("jabber:client", purple_xmlnode_get_default_namespace(x)); \
+	assert_string_equal("jabber:client", purple_xmlnode_get_default_namespace(ping)); \
+	assert_string_equal("jabber:client", purple_xmlnode_get_default_namespace(child1)); \
+	assert_string_equal("jabber:client", purple_xmlnode_get_default_namespace(child2)); \
 }
 
 START_TEST(test_xmlnode_prefixes)
@@ -63,21 +63,21 @@ START_TEST(test_xmlnode_prefixes)
 			"</ping:ping>"
 		"</iq>";
 	char *str;
-	xmlnode *xml, *reparsed;
+	PurpleXmlNode *xml, *reparsed;
 
-	xml = xmlnode_from_str(xml_doc, -1);
+	xml = purple_xmlnode_from_str(xml_doc, -1);
 	check_doc_structure(xml);
 
-	/* Check that xmlnode_from_str(xmlnode_to_str(xml, NULL), -1) is idempotent. */
-	str = xmlnode_to_str(xml, NULL);
+	/* Check that purple_xmlnode_from_str(purple_xmlnode_to_str(xml, NULL), -1) is idempotent. */
+	str = purple_xmlnode_to_str(xml, NULL);
 	fail_if(str == NULL, "Failed to serialize XMLnode");
-	reparsed = xmlnode_from_str(str, -1);
+	reparsed = purple_xmlnode_from_str(str, -1);
 	fail_if(reparsed == NULL, "Failed to reparse xml document");
 	check_doc_structure(reparsed);
 
 	g_free(str);
-	xmlnode_free(xml);
-	xmlnode_free(reparsed);
+	purple_xmlnode_free(xml);
+	purple_xmlnode_free(reparsed);
 }
 END_TEST
 
@@ -103,21 +103,21 @@ START_TEST(test_strip_prefixes)
 		"</html>"
 	"</message>";
 	char *str;
-	xmlnode *xml;
+	PurpleXmlNode *xml;
 
-	xml = xmlnode_from_str(xml_doc, -1);
+	xml = purple_xmlnode_from_str(xml_doc, -1);
 	fail_if(xml == NULL, "Failed to parse XML");
 
-	xmlnode_strip_prefixes(xml);
-	str = xmlnode_to_str(xml, NULL);
+	purple_xmlnode_strip_prefixes(xml);
+	str = purple_xmlnode_to_str(xml, NULL);
 	assert_string_equal_free(out, str);
 
-	xmlnode_free(xml);
+	purple_xmlnode_free(xml);
 }
 END_TEST
 
 Suite *
-xmlnode_suite(void)
+purple_xmlnode_suite(void)
 {
 	Suite *s = suite_create("Utility Functions");
 

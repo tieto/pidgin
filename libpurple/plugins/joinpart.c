@@ -79,22 +79,22 @@ static void joinpart_key_destroy(struct joinpart_key *key)
 static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
                                    GHashTable *users)
 {
-	PurpleConvChat *chat;
+	PurpleChatConversation *chat;
 	guint threshold;
 	struct joinpart_key key;
 	time_t *last_said;
 
 	g_return_val_if_fail(conv != NULL, FALSE);
-	g_return_val_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CHAT_CONVERSATION(conv), FALSE);
 
 	/* If the room is small, don't bother. */
-	chat = PURPLE_CONV_CHAT(conv);
+	chat = PURPLE_CHAT_CONVERSATION(conv);
 	threshold = purple_prefs_get_int(THRESHOLD_PREF);
-	if (g_list_length(purple_conv_chat_get_users(chat)) < threshold)
+	if (g_list_length(purple_chat_conversation_get_users(chat)) < threshold)
 		return FALSE;
 
 	if (!purple_prefs_get_bool(HIDE_BUDDIES_PREF) &&
-	    purple_find_buddy(purple_conversation_get_account(conv), name))
+	    purple_blist_find_buddy(purple_conversation_get_account(conv), name))
 		return FALSE;
 
 	/* Only show the notice if the user has spoken recently. */
@@ -111,14 +111,14 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 	return TRUE;
 }
 
-static gboolean chat_buddy_leaving_cb(PurpleConversation *conv, const char *name,
+static gboolean chat_user_leaving_cb(PurpleConversation *conv, const char *name,
                                const char *reason, GHashTable *users)
 {
 	return should_hide_notice(conv, name, users);
 }
 
-static gboolean chat_buddy_joining_cb(PurpleConversation *conv, const char *name,
-                                      PurpleConvChatBuddyFlags flags,
+static gboolean chat_user_joining_cb(PurpleConversation *conv, const char *name,
+                                      PurpleChatUserFlags flags,
                                       GHashTable *users)
 {
 	return should_hide_notice(conv, name, users);
@@ -186,10 +186,10 @@ static gboolean plugin_load(PurplePlugin *plugin)
 	                              g_free);
 
 	conv_handle = purple_conversations_get_handle();
-	purple_signal_connect(conv_handle, "chat-buddy-joining", plugin,
-	                    PURPLE_CALLBACK(chat_buddy_joining_cb), users);
-	purple_signal_connect(conv_handle, "chat-buddy-leaving", plugin,
-	                    PURPLE_CALLBACK(chat_buddy_leaving_cb), users);
+	purple_signal_connect(conv_handle, "chat-user-joining", plugin,
+	                    PURPLE_CALLBACK(chat_user_joining_cb), users);
+	purple_signal_connect(conv_handle, "chat-user-leaving", plugin,
+	                    PURPLE_CALLBACK(chat_user_leaving_cb), users);
 	purple_signal_connect(conv_handle, "received-chat-msg", plugin,
 	                    PURPLE_CALLBACK(received_chat_msg_cb), users);
 

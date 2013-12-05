@@ -189,7 +189,7 @@ oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_i
 		return;
 
 	if (b == NULL)
-		b = purple_find_buddy(purple_connection_get_account(gc), userinfo->bn);
+		b = purple_blist_find_buddy(purple_connection_get_account(gc), userinfo->bn);
 	else
 		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
@@ -322,7 +322,7 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
 	if (b == NULL)
-		b = purple_find_buddy(account, userinfo->bn);
+		b = purple_blist_find_buddy(account, userinfo->bn);
 
 	if (b != NULL) {
 		bname = purple_buddy_get_name(b);
@@ -369,7 +369,7 @@ oscar_user_info_display_error(OscarData *od, guint16 error_reason, gchar *buddy)
 	purple_notify_user_info_add_pair_plaintext(user_info, NULL, buf);
 	purple_notify_userinfo(od->gc, buddy, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
-	purple_conv_present_error(buddy, purple_connection_get_account(od->gc), buf);
+	purple_conversation_present_error(buddy, purple_connection_get_account(od->gc), buf);
 	g_free(buf);
 }
 
@@ -389,7 +389,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	user_info = purple_notify_user_info_new();
 
 	g_snprintf(who, sizeof(who), "%u", info->uin);
-	buddy = purple_find_buddy(account, who);
+	buddy = purple_blist_find_buddy(account, who);
 	if (buddy != NULL)
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, purple_buddy_get_name(buddy)));
 	else

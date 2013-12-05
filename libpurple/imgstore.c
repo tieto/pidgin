@@ -214,10 +214,8 @@ purple_imgstore_init()
 	void *handle = purple_imgstore_get_handle();
 
 	purple_signal_register(handle, "image-deleting",
-	                       purple_marshal_VOID__POINTER, NULL,
-	                       1,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_STORED_IMAGE));
+	                       purple_marshal_VOID__POINTER, G_TYPE_NONE,
+	                       1, PURPLE_TYPE_STORED_IMAGE);
 
 	imgstore = g_hash_table_new(g_int_hash, g_int_equal);
 }
@@ -228,4 +226,31 @@ purple_imgstore_uninit()
 	g_hash_table_destroy(imgstore);
 
 	purple_signals_unregister_by_instance(purple_imgstore_get_handle());
+}
+
+static PurpleStoredImage *
+purple_imgstore_copy(PurpleStoredImage *img)
+{
+	PurpleStoredImage *img_copy;
+
+	g_return_val_if_fail(img != NULL, NULL);
+
+	img_copy = g_new(PurpleStoredImage, 1);
+	*img_copy = *img;
+
+	return img_copy;
+}
+
+GType
+purple_imgstore_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleStoredImage",
+				(GBoxedCopyFunc)purple_imgstore_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
 }

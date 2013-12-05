@@ -113,7 +113,7 @@ buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING &&
 	    userinfo.capabilities & OSCAR_CAPABILITY_XTRAZ) {
 		PurpleAccount *account = purple_connection_get_account(od->gc);
-		PurpleBuddy *buddy = purple_find_buddy(account, userinfo.bn);
+		PurpleBuddy *buddy = purple_blist_find_buddy(account, userinfo.bn);
 
 		if (buddy) {
 			PurplePresence *presence = purple_buddy_get_presence(buddy);

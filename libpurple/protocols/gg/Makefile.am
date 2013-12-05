@@ -59,8 +59,8 @@ GGSOURCES = \
 	account.h \
 	avatar.c \
 	avatar.h \
-	buddylist.c \
-	buddylist.h \
+	blist.c \
+	blist.h \
 	chat.c \
 	chat.h \
 	deprecated.c \

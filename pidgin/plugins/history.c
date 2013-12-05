@@ -34,7 +34,6 @@ static void historize(PurpleConversation *c)
 {
 	PurpleAccount *account = purple_conversation_get_account(c);
 	const char *name = purple_conversation_get_name(c);
-	PurpleConversationType convtype;
 	GList *logs = NULL;
 	const char *alias = name;
 	guint flags;
@@ -52,13 +51,12 @@ static void historize(PurpleConversation *c)
 	char *escaped_alias;
 	const char *header_date;
 
-	convtype = purple_conversation_get_type(c);
 	gtkconv = PIDGIN_CONVERSATION(c);
 	g_return_if_fail(gtkconv != NULL);
 
 	/* An IM which is the first active conversation. */
 	g_return_if_fail(gtkconv->convs != NULL);
-	if (convtype == PURPLE_CONV_TYPE_IM && !gtkconv->convs->next)
+	if (PURPLE_IS_IM_CONVERSATION(c) && !gtkconv->convs->next)
 	{
 		GSList *buddies;
 		GSList *cur;
@@ -69,11 +67,11 @@ static void historize(PurpleConversation *c)
 			return;
 
 		/* Find buddies for this conversation. */
-		buddies = purple_find_buddies(account, name);
+		buddies = purple_blist_find_buddies(account, name);
 
 		/* If we found at least one buddy, save the first buddy's alias. */
 		if (buddies != NULL)
-			alias = purple_buddy_get_contact_alias((PurpleBuddy *)buddies->data);
+			alias = purple_buddy_get_contact_alias(PURPLE_BUDDY(buddies->data));
 
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
@@ -86,7 +84,7 @@ static void historize(PurpleConversation *c)
 				PurpleBlistNode *parent = purple_blist_node_get_parent(node);
 				PurpleBlistNode *child = purple_blist_node_get_first_child(parent);
 
-				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
+				alias = purple_buddy_get_contact_alias(PURPLE_BUDDY(node));
 
 				/* We've found a buddy that matches this conversation.  It's part of a
 				 * PurpleContact with more than one PurpleBuddy.  Loop through the PurpleBuddies
@@ -94,8 +92,8 @@ static void historize(PurpleConversation *c)
 				for (node2 = child ; node2 != NULL ; node2 = purple_blist_node_get_sibling_next(node2))
 				{
 					logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM,
-							purple_buddy_get_name((PurpleBuddy *)node2),
-							purple_buddy_get_account((PurpleBuddy *)node2)),
+							purple_buddy_get_name(PURPLE_BUDDY(node2)),
+							purple_buddy_get_account(PURPLE_BUDDY(node2))),
 							logs);
 				}
 				break;
@@ -108,7 +106,7 @@ static void historize(PurpleConversation *c)
 		else
 			logs = g_list_sort(logs, purple_log_compare);
 	}
-	else if (convtype == PURPLE_CONV_TYPE_CHAT)
+	else if (PURPLE_IS_CHAT_CONVERSATION(c))
 	{
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */

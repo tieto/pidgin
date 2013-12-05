@@ -27,33 +27,43 @@
 #ifndef _PURPLE_CONNECTION_H_
 #define _PURPLE_CONNECTION_H_
 
+#define PURPLE_TYPE_CONNECTION             (purple_connection_get_type())
+#define PURPLE_CONNECTION(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CONNECTION, PurpleConnection))
+#define PURPLE_CONNECTION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CONNECTION, PurpleConnectionClass))
+#define PURPLE_IS_CONNECTION(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CONNECTION))
+#define PURPLE_IS_CONNECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CONNECTION))
+#define PURPLE_CONNECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CONNECTION, PurpleConnectionClass))
+
+#define PURPLE_TYPE_CONNECTION_ERROR_INFO  (purple_connection_error_info_get_type())
+
 /** @copydoc _PurpleConnection */
 typedef struct _PurpleConnection PurpleConnection;
+/** @copydoc _PurpleConnectionClass */
+typedef struct _PurpleConnectionClass PurpleConnectionClass;
 
 /**
  * Flags to change behavior of the client for a given connection.
  */
-typedef enum
+typedef enum /*< flags >*/
 {
-	PURPLE_CONNECTION_HTML       = 0x0001, /**< Connection sends/receives in 'HTML'. */
-	PURPLE_CONNECTION_NO_BGCOLOR = 0x0002, /**< Connection does not send/receive
-					           background colors.                  */
-	PURPLE_CONNECTION_AUTO_RESP  = 0x0004,  /**< Send auto responses when away.       */
-	PURPLE_CONNECTION_FORMATTING_WBFO = 0x0008, /**< The text buffer must be formatted as a whole */
-	PURPLE_CONNECTION_NO_NEWLINES = 0x0010, /**< No new lines are allowed in outgoing messages */
-	PURPLE_CONNECTION_NO_FONTSIZE = 0x0020, /**< Connection does not send/receive font sizes */
-	PURPLE_CONNECTION_NO_URLDESC = 0x0040,  /**< Connection does not support descriptions with links */
-	PURPLE_CONNECTION_NO_IMAGES = 0x0080,  /**< Connection does not support sending of images */
-	PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY = 0x0100, /**< Connection supports sending and receiving custom smileys */
-	PURPLE_CONNECTION_SUPPORT_MOODS = 0x0200, /**< Connection supports setting moods */
-	PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES = 0x0400 /**< Connection supports setting a message on moods */
+	PURPLE_CONNECTION_FLAG_HTML       = 0x0001, /**< Connection sends/receives in 'HTML' */
+	PURPLE_CONNECTION_FLAG_NO_BGCOLOR = 0x0002, /**< Connection does not send/receive background colors */
+	PURPLE_CONNECTION_FLAG_AUTO_RESP  = 0x0004, /**< Send auto responses when away */
+	PURPLE_CONNECTION_FLAG_FORMATTING_WBFO = 0x0008, /**< The text buffer must be formatted as a whole */
+	PURPLE_CONNECTION_FLAG_NO_NEWLINES = 0x0010, /**< No new lines are allowed in outgoing messages */
+	PURPLE_CONNECTION_FLAG_NO_FONTSIZE = 0x0020, /**< Connection does not send/receive font sizes */
+	PURPLE_CONNECTION_FLAG_NO_URLDESC = 0x0040, /**< Connection does not support descriptions with links */
+	PURPLE_CONNECTION_FLAG_NO_IMAGES = 0x0080, /**< Connection does not support sending of images */
+	PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY = 0x0100, /**< Connection supports sending and receiving custom smileys */
+	PURPLE_CONNECTION_FLAG_SUPPORT_MOODS = 0x0200, /**< Connection supports setting moods */
+	PURPLE_CONNECTION_FLAG_SUPPORT_MOOD_MESSAGES = 0x0400 /**< Connection supports setting a message on moods */
 } PurpleConnectionFlags;
 
 typedef enum
 {
-	PURPLE_DISCONNECTED = 0, /**< Disconnected. */
-	PURPLE_CONNECTED,        /**< Connected.    */
-	PURPLE_CONNECTING        /**< Connecting.   */
+	PURPLE_CONNECTION_DISCONNECTED = 0, /**< Disconnected. */
+	PURPLE_CONNECTION_CONNECTED,        /**< Connected.    */
+	PURPLE_CONNECTION_CONNECTING        /**< Connecting.   */
 
 } PurpleConnectionState;
 
@@ -219,43 +229,30 @@ typedef struct
 	                          PurpleConnectionError reason,
 	                          const char *text);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleConnectionUiOps;
 
-
-/* Represents an active connection on an account. */
+/**
+ * Represents an active connection on an account.
+ */
 struct _PurpleConnection
 {
-	PurplePlugin *prpl;            /**< The protocol plugin.               */
-	PurpleConnectionFlags flags;   /**< Connection flags.                  */
+	GObject gparent;
+};
 
-	PurpleConnectionState state;   /**< The connection state.              */
+/** Base class for all #PurpleConnection's */
+struct _PurpleConnectionClass {
+	GObjectClass parent_class;
 
-	PurpleAccount *account;        /**< The account being connected to.    */
-	char *password;              /**< The password used.                 */
-
-	GSList *buddy_chats;         /**< A list of active chats
-	                                  (#PurpleConversation structs of type
-	                                  #PURPLE_CONV_TYPE_CHAT).           */
-	void *proto_data;            /**< Protocol-specific data.            */
-
-	char *display_name;          /**< How you appear to other people.    */
-	guint keepalive;             /**< Keep-alive.                        */
-
-	/** Wants to Die state.  This is set when the user chooses to log out, or
-	 * when the protocol is disconnected and should not be automatically
-	 * reconnected (incorrect password, etc.).  prpls should rely on
-	 * purple_connection_error() to set this for them rather than
-	 * setting it themselves.
-	 * @see purple_connection_error_is_fatal
-	 */
-	gboolean wants_to_die;
-
-	guint disconnect_timeout;    /**< Timer used for nasty stack tricks  */
-	time_t last_received;        /**< When we last received a packet. Set by the
-					  prpl to avoid sending unneeded keepalives */
+	/*< private >*/
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 G_BEGIN_DECLS
@@ -266,8 +263,18 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * Returns the GType for the Connection object.
+ */
+GType purple_connection_get_type(void);
+
+/**
+ * Returns the GType for the PurpleConnectionErrorInfo boxed structure.
+ */
+GType purple_connection_error_info_get_type(void);
+
+/**
  * Sets the connection state.  PRPLs should call this and pass in
- * the state #PURPLE_CONNECTED when the account is completely
+ * the state #PURPLE_CONNECTION_CONNECTED when the account is completely
  * signed on.  What does it mean to be completely signed on?  If
  * the core can call prpl->set_status, and it successfully changes
  * your status, then the account is online.
@@ -284,14 +291,6 @@ void purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState sta
  * @param flags The flags.
  */
 void purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags);
-
-/**
- * Sets the connection's account.
- *
- * @param gc      The connection.
- * @param account The account.
- */
-void purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account);
 
 /**
  * Sets the connection's displayed name.
@@ -333,7 +332,7 @@ PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
  * @return TRUE if the account is connected, otherwise returns FALSE.
  */
 #define PURPLE_CONNECTION_IS_CONNECTED(gc) \
-	(purple_connection_get_state(gc) == PURPLE_CONNECTED)
+	(purple_connection_get_state(gc) == PURPLE_CONNECTION_CONNECTED)
 
 /**
  * Returns the connection's account.
@@ -363,6 +362,15 @@ PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 const char *purple_connection_get_password(const PurpleConnection *gc);
 
 /**
+ * Returns a list of active chat conversations on a connection.
+ *
+ * @param gc The connection.
+ *
+ * @return The active chats on the connection.
+ */
+GSList *purple_connection_get_active_chats(const PurpleConnection *gc);
+
+/**
  * Returns the connection's displayed name.
  *
  * @param gc The connection.
@@ -378,7 +386,7 @@ const char *purple_connection_get_display_name(const PurpleConnection *gc);
  *
  * @return The protocol data for the connection.
  */
-void *purple_connection_get_protocol_data(const PurpleConnection *connection);
+void *purple_connection_get_protocol_data(const PurpleConnection *gc);
 
 /**
  * Updates the connection progress.
@@ -401,18 +409,28 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
 
 /**
  * Closes a connection with an error and a human-readable description of the
- * error.  It also sets @c gc->wants_to_die to the value of
- * #purple_connection_error_is_fatal(@a reason), mainly for
- * backwards-compatibility.
+ * error.
  *
  * @param gc          the connection which is closing.
  * @param reason      why the connection is closing.
- * @param description a non-@c NULL localized description of the error.
+ * @param description a localized description of the error (not @c NULL ).
  */
 void
 purple_connection_error(PurpleConnection *gc,
                         PurpleConnectionError reason,
                         const char *description);
+
+/**
+ * Returns the #PurpleConnectionErrorInfo instance of a connection if an
+ * error exists.
+ *
+ * @param gc The connection.
+ *
+ * @return The #PurpleConnectionErrorInfo instance of the connection if an
+ *         error exists, @c NULL otherwise.
+ */
+PurpleConnectionErrorInfo *
+purple_connection_get_error_info(const PurpleConnection *gc);
 
 /**
  * Closes a connection due to an SSL error; this is basically a shortcut to
@@ -435,8 +453,6 @@ purple_connection_ssl_error (PurpleConnection *gc,
  * misconfiguration of the account which needs the user to go fix it up, so
  * <tt> purple_connection_error_is_fatal
  * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is @c TRUE.
- *
- * (This function is meant to replace checking PurpleConnection.wants_to_die.)
  *
  * @return @c TRUE if the account should not be automatically reconnected, and
  *         @c FALSE otherwise.

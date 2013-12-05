@@ -762,7 +762,7 @@ int purple_build_dir(const char *path, int mode);
  * user directory ($HOME/.purple by default).  The data is typically
  * a serialized version of one of Purple's config files, such as
  * prefs.xml, accounts.xml, etc.  And the string is typically
- * obtained using xmlnode_to_formatted_str.  However, this function
+ * obtained using purple_xmlnode_to_formatted_str.  However, this function
  * should work fine for saving binary files as well.
  *
  * @param filename The basename of the file to write in the purple_user_dir.
@@ -797,7 +797,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 
 /**
  * Read the contents of a given file and parse the results into an
- * xmlnode tree structure.  This is intended to be used to read
+ * PurpleXmlNode tree structure.  This is intended to be used to read
  * Purple's configuration xml files (prefs.xml, pounces.xml, etc.)
  *
  * @param filename    The basename of the file to open in the purple_user_dir.
@@ -806,10 +806,10 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
  *                    user when the file can not be opened.  For example,
  *                    "preferences," or "buddy pounces."
  *
- * @return An xmlnode tree of the contents of the given file.  Or NULL, if
+ * @return An PurpleXmlNode tree of the contents of the given file.  Or NULL, if
  *         the file does not exist or there was an error reading the file.
  */
-xmlnode *purple_util_read_xml_from_file(const char *filename,
+PurpleXmlNode *purple_util_read_xml_from_file(const char *filename,
 									  const char *description);
 
 /**
@@ -1458,6 +1458,73 @@ gchar *purple_uuid_random(void);
  * @param data A pointer to variable, which should be set to NULL.
  */
 void purple_callback_set_zero(gpointer data);
+
+/**
+ * Creates a new GValue of the specified type.
+ *
+ * @param type  The type of data to be held by the GValue
+ *
+ * @return  The created GValue
+ */
+GValue *purple_value_new(GType type);
+
+/**
+ * Duplicates a GValue.
+ *
+ * @param value  The GValue to duplicate
+ *
+ * @return  The duplicated GValue
+ */
+GValue *purple_value_dup(GValue *value);
+
+/**
+ * Frees a GValue.
+ *
+ * @param value  The GValue to free.
+ */
+void purple_value_free(GValue *value);
+
+/**
+ * Calculates a session key for HTTP Digest authentation
+ *
+ * See RFC 2617 for more information.
+ *
+ * @param algorithm    The hash algorithm to use
+ * @param username     The username provided by the user
+ * @param realm        The authentication realm provided by the server
+ * @param password     The password provided by the user
+ * @param nonce        The nonce provided by the server
+ * @param client_nonce The nonce provided by the client
+ *
+ * @return The session key, or @c NULL if an error occurred.
+ */
+gchar *purple_http_digest_calculate_session_key(
+		const gchar *algorithm, const gchar *username,
+		const gchar *realm, const gchar *password,
+		const gchar *nonce, const gchar *client_nonce);
+
+/** Calculate a response for HTTP Digest authentication
+ *
+ * See RFC 2617 for more information.
+ *
+ * @param algorithm         The hash algorithm to use
+ * @param method            The HTTP method in use
+ * @param digest_uri        The URI from the initial request
+ * @param qop               The "quality of protection"
+ * @param entity            The entity body
+ * @param nonce             The nonce provided by the server
+ * @param nonce_count       The nonce count
+ * @param client_nonce      The nonce provided by the client
+ * @param session_key       The session key from purple_cipher_http_digest_calculate_session_key()
+ *
+ * @return The hashed response, or @c NULL if an error occurred.
+ */
+gchar *purple_http_digest_calculate_response(
+		const gchar *algorithm, const gchar *method,
+		const gchar *digest_uri, const gchar *qop,
+		const gchar *entity, const gchar *nonce,
+		const gchar *nonce_count, const gchar *client_nonce,
+		const gchar *session_key);
 
 G_END_DECLS
 

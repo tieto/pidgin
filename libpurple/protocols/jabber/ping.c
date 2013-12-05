@@ -32,7 +32,7 @@
 
 static void jabber_keepalive_pong_cb(JabberStream *js, const char *from,
                                      JabberIqType type, const char *id,
-                                     xmlnode *packet, gpointer data)
+                                     PurpleXmlNode *packet, gpointer data)
 {
 	if (js->keepalive_timeout != 0) {
 		purple_timeout_remove(js->keepalive_timeout);
@@ -42,14 +42,14 @@ static void jabber_keepalive_pong_cb(JabberStream *js, const char *from,
 
 void
 jabber_ping_parse(JabberStream *js, const char *from,
-                  JabberIqType type, const char *id, xmlnode *ping)
+                  JabberIqType type, const char *id, PurpleXmlNode *ping)
 {
 	if (type == JABBER_IQ_GET) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 
 		if (from)
-			xmlnode_set_attrib(iq->node, "to", from);
-		xmlnode_set_attrib(iq->node, "id", id);
+			purple_xmlnode_set_attrib(iq->node, "to", from);
+		purple_xmlnode_set_attrib(iq->node, "id", id);
 
 		jabber_iq_send(iq);
 	} else if (type == JABBER_IQ_SET) {
@@ -59,7 +59,7 @@ jabber_ping_parse(JabberStream *js, const char *from,
 
 static void jabber_ping_result_cb(JabberStream *js, const char *from,
                                   JabberIqType type, const char *id,
-                                  xmlnode *packet, gpointer data)
+                                  PurpleXmlNode *packet, gpointer data)
 {
 	if (type == JABBER_IQ_RESULT)
 		purple_debug_info("jabber", "PONG!\n");
@@ -70,11 +70,11 @@ static void jabber_ping_result_cb(JabberStream *js, const char *from,
 void jabber_keepalive_ping(JabberStream *js)
 {
 	JabberIq *iq;
-	xmlnode *ping;
+	PurpleXmlNode *ping;
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
-	ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, NS_PING);
+	ping = purple_xmlnode_new_child(iq->node, "ping");
+	purple_xmlnode_set_namespace(ping, NS_PING);
 
 	jabber_iq_set_callback(iq, jabber_keepalive_pong_cb, NULL);
 	jabber_iq_send(iq);
@@ -83,14 +83,14 @@ void jabber_keepalive_ping(JabberStream *js)
 gboolean jabber_ping_jid(JabberStream *js, const char *jid)
 {
 	JabberIq *iq;
-	xmlnode *ping;
+	PurpleXmlNode *ping;
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
 	if (jid)
-		xmlnode_set_attrib(iq->node, "to", jid);
+		purple_xmlnode_set_attrib(iq->node, "to", jid);
 
-	ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, NS_PING);
+	ping = purple_xmlnode_new_child(iq->node, "ping");
+	purple_xmlnode_set_namespace(ping, NS_PING);
 
 	jabber_iq_set_callback(iq, jabber_ping_result_cb, NULL);
 	jabber_iq_send(iq);

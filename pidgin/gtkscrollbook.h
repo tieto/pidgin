@@ -52,7 +52,7 @@ struct _PidginScrollBook
 	GtkWidget *right_arrow;
 	GList *children;
 
-	/* Padding for future expansion */
+	/*< private >*/
 	void (*_gtk_reserved1) (void);
 	void (*_gtk_reserved2) (void);
 	void (*_gtk_reserved3) (void);
@@ -64,7 +64,7 @@ struct _PidginScrollBookClass
 {
 	GtkContainerClass parent_class;
 
-	/* Padding for future expansion */
+	/*< private >*/
 	void (*_gtk_reserved0) (void);
 	void (*_gtk_reserved1) (void);
 	void (*_gtk_reserved2) (void);

@@ -28,6 +28,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "plugin.h"
+#include "presence.h"
 #include "request.h"
 #include "server.h"
 #include "status.h"

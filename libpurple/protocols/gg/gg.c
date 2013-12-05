@@ -31,7 +31,7 @@
 #include "plugin.h"
 #include "version.h"
 #include "notify.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "accountopt.h"
 #include "debug.h"
 #include "util.h"
@@ -41,7 +41,7 @@
 #include "gg.h"
 #include "chat.h"
 #include "search.h"
-#include "buddylist.h"
+#include "blist.h"
 #include "utils.h"
 #include "resolver-purple.h"
 #include "account.h"
@@ -227,7 +227,7 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
 
 	from = g_strdup_printf("%u", uin);
 	if (length)
-		serv_got_typing(gc, from, 0, PURPLE_TYPING);
+		serv_got_typing(gc, from, 0, PURPLE_IM_TYPING);
 	else
 		serv_got_typing_stopped(gc, from);
 	g_free(from);
@@ -244,10 +244,10 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
  */
 static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 {
-	xmlnode *xml = NULL;
-	xmlnode *xmlnode_next_event;
+	PurpleXmlNode *xml = NULL;
+	PurpleXmlNode *xmlnode_next_event;
 
-	xml = xmlnode_from_str(data, -1);
+	xml = purple_xmlnode_from_str(data, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_xml_event_handler: "
@@ -255,33 +255,33 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 		goto out;
 	}
 
-	xmlnode_next_event = xmlnode_get_child(xml, "event");
+	xmlnode_next_event = purple_xmlnode_get_child(xml, "event");
 	while (xmlnode_next_event != NULL)
 	{
-		xmlnode *xmlnode_current_event = xmlnode_next_event;
+		PurpleXmlNode *xmlnode_current_event = xmlnode_next_event;
 		
-		xmlnode *xmlnode_type;
+		PurpleXmlNode *xmlnode_type;
 		char *event_type_raw;
 		int event_type = 0;
 		
-		xmlnode *xmlnode_sender;
+		PurpleXmlNode *xmlnode_sender;
 		char *event_sender_raw;
 		uin_t event_sender = 0;
 
-		xmlnode_next_event = xmlnode_get_next_twin(xmlnode_next_event);
+		xmlnode_next_event = purple_xmlnode_get_next_twin(xmlnode_next_event);
 		
-		xmlnode_type = xmlnode_get_child(xmlnode_current_event, "type");
+		xmlnode_type = purple_xmlnode_get_child(xmlnode_current_event, "type");
 		if (xmlnode_type == NULL)
 			continue;
-		event_type_raw = xmlnode_get_data(xmlnode_type);
+		event_type_raw = purple_xmlnode_get_data(xmlnode_type);
 		if (event_type_raw != NULL)
 			event_type = atoi(event_type_raw);
 		g_free(event_type_raw);
 		
-		xmlnode_sender = xmlnode_get_child(xmlnode_current_event, "sender");
+		xmlnode_sender = purple_xmlnode_get_child(xmlnode_current_event, "sender");
 		if (xmlnode_sender != NULL)
 		{
-			event_sender_raw = xmlnode_get_data(xmlnode_sender);
+			event_sender_raw = purple_xmlnode_get_data(xmlnode_sender);
 			if (event_sender_raw != NULL)
 				event_sender = ggp_str_to_uin(event_sender_raw);
 			g_free(event_sender_raw);
@@ -303,7 +303,7 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 	
 	out:
 		if (xml)
-			xmlnode_free(xml);
+			purple_xmlnode_free(xml);
 }
 
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
@@ -510,7 +510,7 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 							  ggp_callback_recv, gc);
 
 				purple_connection_update_progress(gc, _("Connected"), 1, 2);
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
+				purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
 				
 				ggp_buddylist_send(gc);
 				ggp_roster_request_update(gc);
@@ -674,7 +674,8 @@ static void ggp_login(PurpleAccount *account)
 	if (!ggp_deprecated_setup_proxy(gc))
 		return;
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML |
+			PURPLE_CONNECTION_FLAG_NO_URLDESC);
 
 	glp = g_new0(struct gg_login_params, 1);
 #if GGP_ENABLE_GG11
@@ -825,15 +826,15 @@ static void ggp_close(PurpleConnection *gc)
 	purple_debug_info("gg", "Connection closed.\n");
 }
 
-static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
+static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	int dummy_length; // we don't send real length of typed message
 	
-	if (state == PURPLE_TYPED) // not supported
+	if (state == PURPLE_IM_TYPED) // not supported
 		return 1;
 	
-	if (state == PURPLE_TYPING)
+	if (state == PURPLE_IM_TYPING)
 		dummy_length = (int)g_random_int();
 	else // PURPLE_NOT_TYPING
 		dummy_length = 0;

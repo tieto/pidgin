@@ -8,7 +8,7 @@ BOOT:
 	HV *stash = gv_stashpv("Purple::Connection::State", 1);
 
 	static const constiv *civ, const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_##name}
+#define const_iv(name) {#name, (IV)PURPLE_CONNECTION_##name}
 		const_iv(DISCONNECTED),
 		const_iv(CONNECTED),
 		const_iv(CONNECTING),
@@ -26,6 +26,16 @@ const char *
 purple_connection_get_password(gc)
 	Purple::Connection gc
 
+void
+purple_connection_get_active_chats(gc)
+	Purple::Connection gc
+PREINIT:
+	GSList *l;
+PPCODE:
+	for (l = purple_connection_get_active_chats(gc); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ChatConversation")));
+	}
+
 const char *
 purple_connection_get_display_name(gc)
 	Purple::Connection gc
@@ -39,11 +49,6 @@ void
 purple_connection_set_state(gc, state)
 	Purple::Connection gc
 	Purple::ConnectionState state
-
-void
-purple_connection_set_account(gc, account)
-	Purple::Connection gc
-	Purple::Account account
 
 void
 purple_connection_set_display_name(gc, name)

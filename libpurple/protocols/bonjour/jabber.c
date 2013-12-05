@@ -52,7 +52,7 @@
 #include "network.h"
 #include "eventloop.h"
 #include "connection.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "xmlnode.h"
 #include "debug.h"
 #include "notify.h"
@@ -82,14 +82,14 @@ enum sent_stream_start_types {
 };
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleBuddy *pb);
+xep_iq_parse(PurpleXmlNode *packet, PurpleBuddy *pb);
 
 static BonjourJabberConversation *
 bonjour_jabber_conv_new(PurpleBuddy *pb, PurpleAccount *account, const char *ip) {
 
 	BonjourJabberConversation *bconv = g_new0(BonjourJabberConversation, 1);
 	bconv->socket = -1;
-	bconv->tx_buf = purple_circ_buffer_new(512);
+	bconv->tx_buf = purple_circular_buffer_new(512);
 	bconv->tx_handler = 0;
 	bconv->rx_handler = 0;
 	bconv->pb = pb;
@@ -122,14 +122,14 @@ _font_size_ichat_to_purple(int size)
 }
 
 static gchar *
-get_xmlnode_contents(xmlnode *node)
+get_xmlnode_contents(PurpleXmlNode *node)
 {
 	gchar *contents;
 
-	contents = xmlnode_to_str(node, NULL);
+	contents = purple_xmlnode_to_str(node, NULL);
 
 	/* we just want the stuff inside <font></font>
-	 * There isn't stuff exposed in xmlnode.c to do this more cleanly. */
+	 * There isn't stuff exposed in PurpleXmlNode.c to do this more cleanly. */
 
 	if (contents) {
 		char *bodystart = strchr(contents, '>');
@@ -144,27 +144,27 @@ get_xmlnode_contents(xmlnode *node)
 }
 
 static void
-_jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
+_jabber_parse_and_write_message_to_ui(PurpleXmlNode *message_node, PurpleBuddy *pb)
 {
-	xmlnode *body_node, *html_node, *events_node;
+	PurpleXmlNode *body_node, *html_node, *events_node;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(pb));
 	gchar *body = NULL;
 
-	body_node = xmlnode_get_child(message_node, "body");
-	html_node = xmlnode_get_child(message_node, "html");
+	body_node = purple_xmlnode_get_child(message_node, "body");
+	html_node = purple_xmlnode_get_child(message_node, "html");
 
 	if (body_node == NULL && html_node == NULL) {
 		purple_debug_error("bonjour", "No body or html node found, discarding message.\n");
 		return;
 	}
 
-	events_node = xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
+	events_node = purple_xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
 	if (events_node != NULL) {
 #if 0
-		if (xmlnode_get_child(events_node, "composing") != NULL)
+		if (purple_xmlnode_get_child(events_node, "composing") != NULL)
 			composing_event = TRUE;
 #endif
-		if (xmlnode_get_child(events_node, "id") != NULL) {
+		if (purple_xmlnode_get_child(events_node, "id") != NULL) {
 			/* The user is just typing */
 			/* TODO: Deal with typing notification */
 			return;
@@ -172,33 +172,33 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 	}
 
 	if (html_node != NULL) {
-		xmlnode *html_body_node;
+		PurpleXmlNode *html_body_node;
 
-		html_body_node = xmlnode_get_child(html_node, "body");
+		html_body_node = purple_xmlnode_get_child(html_node, "body");
 		if (html_body_node != NULL) {
-			xmlnode *html_body_font_node;
+			PurpleXmlNode *html_body_font_node;
 
-			html_body_font_node = xmlnode_get_child(html_body_node, "font");
+			html_body_font_node = purple_xmlnode_get_child(html_body_node, "font");
 			/* Types of messages sent by iChat */
 			if (html_body_font_node != NULL) {
 				gchar *html_body;
 				const char *font_face, *font_size, *font_color,
 					*ichat_balloon_color, *ichat_text_color;
 
-				font_face = xmlnode_get_attrib(html_body_font_node, "face");
+				font_face = purple_xmlnode_get_attrib(html_body_font_node, "face");
 				/* The absolute iChat font sizes should be converted to 1..7 range */
-				font_size = xmlnode_get_attrib(html_body_font_node, "ABSZ");
+				font_size = purple_xmlnode_get_attrib(html_body_font_node, "ABSZ");
 				if (font_size != NULL)
 					font_size = _font_size_ichat_to_purple(atoi(font_size));
-				font_color = xmlnode_get_attrib(html_body_font_node, "color");
-				ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
-				ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
+				font_color = purple_xmlnode_get_attrib(html_body_font_node, "color");
+				ichat_balloon_color = purple_xmlnode_get_attrib(html_body_node, "ichatballooncolor");
+				ichat_text_color = purple_xmlnode_get_attrib(html_body_node, "ichattextcolor");
 
 				html_body = get_xmlnode_contents(html_body_font_node);
 
 				if (html_body == NULL)
 					/* This is the kind of formatted messages that Purple creates */
-					html_body = xmlnode_to_str(html_body_font_node, NULL);
+					html_body = purple_xmlnode_to_str(html_body_font_node, NULL);
 
 				if (html_body != NULL) {
 					GString *str = g_string_new("<font");
@@ -225,7 +225,7 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 
 	/* Compose the message */
 	if (body == NULL && body_node != NULL)
-		body = xmlnode_get_data(body_node);
+		body = purple_xmlnode_get_data(body_node);
 
 	if (body == NULL) {
 		purple_debug_error("bonjour", "No html body or regular body found.\n");
@@ -280,7 +280,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	BonjourJabberConversation *bconv = bb->conversation;
 	int ret, writelen;
 
-	writelen = purple_circ_buffer_get_max_read(bconv->tx_buf);
+	writelen = purple_circular_buffer_get_max_read(bconv->tx_buf);
 
 	if (writelen == 0) {
 		purple_input_remove(bconv->tx_handler);
@@ -288,7 +288,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	ret = send(bconv->socket, bconv->tx_buf->outptr, writelen, 0);
+	ret = send(bconv->socket, purple_circular_buffer_get_output(bconv->tx_buf), writelen, 0);
 
 	if (ret < 0 && errno == EAGAIN)
 		return;
@@ -302,7 +302,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		account = purple_buddy_get_account(pb);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send message."),
@@ -313,7 +313,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	purple_circ_buffer_mark_read(bconv->tx_buf, ret);
+	purple_circular_buffer_mark_read(bconv->tx_buf, ret);
 }
 
 static gint
@@ -329,7 +329,7 @@ _send_data(PurpleBuddy *pb, char *message)
 			|| bconv->connect_data != NULL
 			|| bconv->sent_stream_start != FULLY_SENT
 			|| !bconv->recv_stream_start
-			|| purple_circ_buffer_get_max_read(bconv->tx_buf) > 0) {
+			|| purple_circular_buffer_get_max_read(bconv->tx_buf) > 0) {
 		ret = -1;
 		errno = EAGAIN;
 	} else {
@@ -348,7 +348,7 @@ _send_data(PurpleBuddy *pb, char *message)
 
 		account = purple_buddy_get_account(pb);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send message."),
@@ -364,13 +364,13 @@ _send_data(PurpleBuddy *pb, char *message)
 		if (bconv->sent_stream_start == FULLY_SENT && bconv->recv_stream_start && bconv->tx_handler == 0)
 			bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
 				_send_data_write_cb, pb);
-		purple_circ_buffer_append(bconv->tx_buf, message + ret, len - ret);
+		purple_circular_buffer_append(bconv->tx_buf, message + ret, len - ret);
 	}
 
 	return ret;
 }
 
-void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
+void bonjour_jabber_process_packet(PurpleBuddy *pb, PurpleXmlNode *packet) {
 
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
@@ -396,7 +396,7 @@ static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 #if 0
 	if(bconv->pb != NULL) {
 		PurpleConversation *conv;
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bconv->pb->name, bconv->pb->account);
+		conv = purple_conversations_find_im_with_account(bconv->pb->name, bconv->pb->account);
 		if (conv != NULL) {
 			char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
 			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -485,7 +485,7 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s error: %s\n",
 				   bname ? bname : "(unknown)", bconv->ip, err ? err : "(null)");
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
+		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bname, bconv->account));
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),
@@ -550,7 +550,7 @@ static gboolean bonjour_jabber_send_stream_init(BonjourJabberConversation *bconv
 
 		if (bconv->pb) {
 			PurpleConversation *conv;
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
+			conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bname, bconv->account));
 			if (conv != NULL)
 				purple_conversation_write(conv, NULL,
 					  _("Unable to send the message, the conversation couldn't be started."),
@@ -595,7 +595,7 @@ void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 
 		if (bconv->pb) {
 			PurpleConversation *conv;
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bname, bconv->account);
+			conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bname, bconv->account));
 			if (conv != NULL)
 				purple_conversation_write(conv, NULL,
 					  _("Unable to send the message, the conversation couldn't be started."),
@@ -616,7 +616,7 @@ void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 	/* If the stream has been completely started and we know who we're talking to, we can start doing stuff. */
 	/* I don't think the circ_buffer can actually contain anything without a buddy being associated, but lets be explicit. */
 	if (bconv->sent_stream_start == FULLY_SENT && bconv->recv_stream_start
-			&& bconv->pb && purple_circ_buffer_get_max_read(bconv->tx_buf) > 0) {
+			&& bconv->pb && purple_circular_buffer_get_max_read(bconv->tx_buf) > 0) {
 		/* Watch for when we can write the buffered messages */
 		bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
 			_send_data_write_cb, bconv->pb);
@@ -680,7 +680,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = address_text;
 
-	buddies = purple_find_buddies(jdata->account, NULL);
+	buddies = purple_blist_find_buddies(jdata->account, NULL);
 	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
 	g_slist_free(buddies);
 
@@ -872,7 +872,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 
 		purple_debug_error("bonjour", "No more addresses for buddy %s. Aborting", purple_buddy_get_name(pb));
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),
@@ -893,7 +893,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 
 		account = purple_buddy_get_account(pb);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
+		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
 			purple_conversation_write(conv, NULL,
 				  _("Unable to send the message, the conversation couldn't be started."),
@@ -919,7 +919,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 	g_return_if_fail(bconv->ip != NULL);
 	g_return_if_fail(bconv->pb == NULL);
 
-	pb = purple_find_buddy(bconv->account, bconv->buddy_name);
+	pb = purple_blist_find_buddy(bconv->account, bconv->buddy_name);
 	if (pb && (bb = purple_buddy_get_protocol_data(pb))) {
 		const char *ip;
 		GSList *tmp = bb->ips;
@@ -975,7 +975,7 @@ bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = bconv->ip;
 
-	buddies = purple_find_buddies(jdata->account, NULL);
+	buddies = purple_blist_find_buddies(jdata->account, NULL);
 	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
 	g_slist_free(buddies);
 
@@ -1024,7 +1024,7 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 	g_return_val_if_fail(jdata != NULL, NULL);
 	g_return_val_if_fail(to != NULL, NULL);
 
-	pb = purple_find_buddy(jdata->account, to);
+	pb = purple_blist_find_buddy(jdata->account, to);
 	if (pb == NULL || (bb = purple_buddy_get_protocol_data(pb)) == NULL)
 		/* You can not send a message to an offline buddy */
 		return NULL;
@@ -1070,7 +1070,7 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 int
 bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *body)
 {
-	xmlnode *message_node, *node, *node2;
+	PurpleXmlNode *message_node, *node, *node2;
 	gchar *message, *xhtml;
 	PurpleBuddy *pb;
 	BonjourBuddy *bb;
@@ -1085,32 +1085,32 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 
 	purple_markup_html_to_xhtml(body, &xhtml, &message);
 
-	message_node = xmlnode_new("message");
-	xmlnode_set_attrib(message_node, "to", bb->name);
-	xmlnode_set_attrib(message_node, "from", bonjour_get_jid(jdata->account));
-	xmlnode_set_attrib(message_node, "type", "chat");
+	message_node = purple_xmlnode_new("message");
+	purple_xmlnode_set_attrib(message_node, "to", bb->name);
+	purple_xmlnode_set_attrib(message_node, "from", bonjour_get_jid(jdata->account));
+	purple_xmlnode_set_attrib(message_node, "type", "chat");
 
 	/* Enclose the message from the UI within a "font" node */
-	node = xmlnode_new_child(message_node, "body");
-	xmlnode_insert_data(node, message, strlen(message));
+	node = purple_xmlnode_new_child(message_node, "body");
+	purple_xmlnode_insert_data(node, message, strlen(message));
 	g_free(message);
 
-	node = xmlnode_new_child(message_node, "html");
-	xmlnode_set_namespace(node, "http://www.w3.org/1999/xhtml");
+	node = purple_xmlnode_new_child(message_node, "html");
+	purple_xmlnode_set_namespace(node, "http://www.w3.org/1999/xhtml");
 
-	node = xmlnode_new_child(node, "body");
+	node = purple_xmlnode_new_child(node, "body");
 	message = g_strdup_printf("<font>%s</font>", xhtml);
-	node2 = xmlnode_from_str(message, strlen(message));
+	node2 = purple_xmlnode_from_str(message, strlen(message));
 	g_free(xhtml);
 	g_free(message);
-	xmlnode_insert_child(node, node2);
+	purple_xmlnode_insert_child(node, node2);
 
-	node = xmlnode_new_child(message_node, "x");
-	xmlnode_set_namespace(node, "jabber:x:event");
-	xmlnode_insert_child(node, xmlnode_new("composing"));
+	node = purple_xmlnode_new_child(message_node, "x");
+	purple_xmlnode_set_namespace(node, "jabber:x:event");
+	purple_xmlnode_insert_child(node, purple_xmlnode_new("composing"));
 
-	message = xmlnode_to_str(message_node, NULL);
-	xmlnode_free(message_node);
+	message = purple_xmlnode_to_str(message_node, NULL);
+	purple_xmlnode_free(message_node);
 
 	ret = _send_data(pb, message) >= 0;
 
@@ -1189,7 +1189,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 			purple_input_remove(bconv->tx_handler);
 
 		/* Free all the data related to the conversation */
-		purple_circ_buffer_destroy(bconv->tx_buf);
+		g_object_unref(G_OBJECT(bconv->tx_buf));
 		if (bconv->connect_data != NULL)
 			purple_proxy_connect_cancel(bconv->connect_data);
 		if (bconv->stream_data != NULL) {
@@ -1227,12 +1227,12 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 	if (!purple_account_is_disconnected(jdata->account)) {
 		GSList *buddies, *l;
 
-		buddies = purple_find_buddies(jdata->account, NULL);
+		buddies = purple_blist_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
 			if (bb && bb->conversation) {
 				/* Any ongoing connection attempt is cancelled
-				 * by _purple_connection_destroy */
+				 * when a connection is destroyed */
 				bb->conversation->connect_data = NULL;
 				bonjour_jabber_close_conversation(bb->conversation);
 				bb->conversation = NULL;
@@ -1251,34 +1251,34 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 XepIq *
 xep_iq_new(void *data, XepIqType type, const char *to, const char *from, const char *id)
 {
-	xmlnode *iq_node = NULL;
+	PurpleXmlNode *iq_node = NULL;
 	XepIq *iq = NULL;
 
 	g_return_val_if_fail(data != NULL, NULL);
 	g_return_val_if_fail(to != NULL, NULL);
 	g_return_val_if_fail(id != NULL, NULL);
 
-	iq_node = xmlnode_new("iq");
+	iq_node = purple_xmlnode_new("iq");
 
-	xmlnode_set_attrib(iq_node, "to", to);
-	xmlnode_set_attrib(iq_node, "from", from);
-	xmlnode_set_attrib(iq_node, "id", id);
+	purple_xmlnode_set_attrib(iq_node, "to", to);
+	purple_xmlnode_set_attrib(iq_node, "from", from);
+	purple_xmlnode_set_attrib(iq_node, "id", id);
 	switch (type) {
 		case XEP_IQ_SET:
-			xmlnode_set_attrib(iq_node, "type", "set");
+			purple_xmlnode_set_attrib(iq_node, "type", "set");
 			break;
 		case XEP_IQ_GET:
-			xmlnode_set_attrib(iq_node, "type", "get");
+			purple_xmlnode_set_attrib(iq_node, "type", "get");
 			break;
 		case XEP_IQ_RESULT:
-			xmlnode_set_attrib(iq_node, "type", "result");
+			purple_xmlnode_set_attrib(iq_node, "type", "result");
 			break;
 		case XEP_IQ_ERROR:
-			xmlnode_set_attrib(iq_node, "type", "error");
+			purple_xmlnode_set_attrib(iq_node, "type", "error");
 			break;
 		case XEP_IQ_NONE:
 		default:
-			xmlnode_set_attrib(iq_node, "type", "none");
+			purple_xmlnode_set_attrib(iq_node, "type", "none");
 			break;
 	}
 
@@ -1303,7 +1303,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	acc = purple_buddy_get_account(pb);
 
-	for(l = acc->deny; l != NULL; l = l->next) {
+	for(l = purple_account_privacy_get_denied(acc); l != NULL; l = l->next) {
 		const gchar *name = purple_buddy_get_name(pb);
 		const gchar *username = bonjour_get_jid(acc);
 
@@ -1317,7 +1317,7 @@ check_if_blocked(PurpleBuddy *pb)
 }
 
 static void
-xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
+xep_iq_parse(PurpleXmlNode *packet, PurpleBuddy *pb)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
@@ -1328,7 +1328,7 @@ xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 		account = purple_buddy_get_account(pb);
 		gc = purple_account_get_connection(account);
 
-	if (xmlnode_get_child(packet, "si") != NULL || xmlnode_get_child(packet, "error") != NULL)
+	if (purple_xmlnode_get_child(packet, "si") != NULL || purple_xmlnode_get_child(packet, "error") != NULL)
 		xep_si_parse(gc, packet, pb);
 	else
 		xep_bytestreams_parse(gc, packet, pb);
@@ -1345,12 +1345,12 @@ xep_iq_send_and_free(XepIq *iq)
 	/* Send the message */
 	if (pb != NULL) {
 		/* Convert xml node into stream */
-		gchar *msg = xmlnode_to_str(iq->node, NULL);
+		gchar *msg = purple_xmlnode_to_str(iq->node, NULL);
 		ret = _send_data(pb, msg);
 		g_free(msg);
 	}
 
-	xmlnode_free(iq->node);
+	purple_xmlnode_free(iq->node);
 	iq->node = NULL;
 	g_free(iq);
 

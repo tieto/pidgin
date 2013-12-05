@@ -37,7 +37,7 @@ oscar_auth_sendrequest(PurpleConnection *gc, const char *bname, const char *msg)
 
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
-	buddy = purple_find_buddy(account, bname);
+	buddy = purple_blist_find_buddy(account, bname);
 	if (buddy != NULL)
 		group = purple_buddy_get_group(buddy);
 	else
@@ -96,7 +96,7 @@ oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -115,6 +115,6 @@ oscar_auth_recvrequest(PurpleConnection *gc, gchar *name, gchar *nick, gchar *re
 	data->nick = nick;
 
 	purple_account_request_authorization(account, data->name, NULL, data->nick,
-		reason, purple_find_buddy(account, data->name) != NULL,
+		reason, purple_blist_find_buddy(account, data->name) != NULL,
 		oscar_auth_grant, oscar_auth_dontgrant, data);
 }

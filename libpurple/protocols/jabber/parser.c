@@ -38,7 +38,7 @@ jabber_parser_element_start_libxml(void *user_data,
 				   int nb_attributes, int nb_defaulted, const xmlChar **attributes)
 {
 	JabberStream *js = user_data;
-	xmlnode *node;
+	PurpleXmlNode *node;
 	int i, j;
 
 	if(!element_name) {
@@ -115,11 +115,11 @@ jabber_parser_element_start_libxml(void *user_data,
 	} else {
 
 		if(js->current)
-			node = xmlnode_new_child(js->current, (const char*) element_name);
+			node = purple_xmlnode_new_child(js->current, (const char*) element_name);
 		else
-			node = xmlnode_new((const char*) element_name);
-		xmlnode_set_namespace(node, (const char*) namespace);
-		xmlnode_set_prefix(node, (const char *)prefix);
+			node = purple_xmlnode_new((const char*) element_name);
+		purple_xmlnode_set_namespace(node, (const char*) namespace);
+		purple_xmlnode_set_prefix(node, (const char *)prefix);
 
 		if (nb_namespaces != 0) {
 			node->namespace_map = g_hash_table_new_full(
@@ -143,7 +143,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = purple_unescape_text(txt);
 			g_free(txt);
-			xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
+			purple_xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
 			g_free(attrib);
 		}
 
@@ -164,11 +164,11 @@ jabber_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 		if(!xmlStrcmp((xmlChar*) js->current->name, element_name))
 			js->current = js->current->parent;
 	} else {
-		xmlnode *packet = js->current;
+		PurpleXmlNode *packet = js->current;
 		js->current = NULL;
 		jabber_process_packet(js, &packet);
 		if (packet != NULL)
-			xmlnode_free(packet);
+			purple_xmlnode_free(packet);
 	}
 }
 
@@ -183,7 +183,7 @@ jabber_parser_element_text_libxml(void *user_data, const xmlChar *text, int text
 	if(!text || !text_len)
 		return;
 
-	xmlnode_insert_data(js->current, (const char*) text, text_len);
+	purple_xmlnode_insert_data(js->current, (const char*) text, text_len);
 }
 
 static void
@@ -308,7 +308,7 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 	}
 
 	if (js->protocol_version.major == 0 && js->protocol_version.minor == 9 &&
-			!js->gc->disconnect_timeout &&
+			!purple_connection_get_error_info(js->gc) &&
 			(js->state == JABBER_STREAM_INITIALIZING ||
 			 js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)) {
 		/*

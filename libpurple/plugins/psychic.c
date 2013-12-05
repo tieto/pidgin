@@ -3,13 +3,12 @@
 #include "internal.h"
 
 #include "account.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "conversation.h"
 #include "debug.h"
 #include "signals.h"
 #include "status.h"
 #include "version.h"
-#include "privacy.h"
 
 #include "plugin.h"
 #include "pluginpref.h"
@@ -34,7 +33,7 @@
 
 static void
 buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
-  PurpleConversation *gconv;
+  PurpleIMConversation *im;
 
   if(purple_prefs_get_bool(PREF_STATUS) &&
      ! purple_status_is_available(purple_account_get_active_status(acct))) {
@@ -43,23 +42,23 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
   }
 
   if(purple_prefs_get_bool(PREF_BUDDIES) &&
-     ! purple_find_buddy(acct, name)) {
+     ! purple_blist_find_buddy(acct, name)) {
     purple_debug_info("psychic", "not in blist, doing nothing\n");
     return;
   }
 
-  if(FALSE == purple_privacy_check(acct, name)) {
+  if(FALSE == purple_account_privacy_check(acct, name)) {
     purple_debug_info("psychic", "user %s is blocked\n", name);
     return;
   }
 
-  gconv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, acct);
-  if(! gconv) {
+  im = purple_conversations_find_im_with_account(name, acct);
+  if(! im) {
     purple_debug_info("psychic", "no previous conversation exists\n");
-    gconv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, name);
+    im = purple_im_conversation_new(acct, name);
 
     if(purple_prefs_get_bool(PREF_RAISE)) {
-      purple_conversation_present(gconv);
+      purple_conversation_present(PURPLE_CONVERSATION(im));
     }
 
     if(purple_prefs_get_bool(PREF_NOTICE)) {
@@ -68,14 +67,14 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
 	 translate it literally.  If you can't find a fitting cultural
 	 reference in your language, consider translating something
 	 like this instead: "You feel a new message coming." */
-      purple_conversation_write(gconv, NULL,
+      purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
 			      _("You feel a disturbance in the force..."),
 			      PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_ACTIVE_ONLY,
 			      time(NULL));
     }
 
     /* Necessary because we may be creating a new conversation window. */
-    purple_conv_im_set_typing_state(PURPLE_CONV_IM(gconv), PURPLE_TYPING);
+    purple_im_conversation_set_typing_state(im, PURPLE_IM_TYPING);
   }
 }
 

@@ -135,25 +135,25 @@ find_mood_by_name(const gchar *name)
 	return NULL;
 }
 
-static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
+static void jabber_mood_cb(JabberStream *js, const char *from, PurpleXmlNode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
-	xmlnode *item = xmlnode_get_child(items, "item");
+	PurpleXmlNode *item = purple_xmlnode_get_child(items, "item");
 	const char *newmood = NULL;
 	char *moodtext = NULL;
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
-	xmlnode *moodinfo, *mood;
+	PurpleXmlNode *moodinfo, *mood;
 	/* ignore the mood of people not on our buddy list */
 	if (!buddy || !item)
 		return;
 
-	mood = xmlnode_get_child_with_namespace(item, "mood", "http://jabber.org/protocol/mood");
+	mood = purple_xmlnode_get_child_with_namespace(item, "mood", "http://jabber.org/protocol/mood");
 	if (!mood)
 		return;
 	for (moodinfo = mood->child; moodinfo; moodinfo = moodinfo->next) {
-		if (moodinfo->type == XMLNODE_TYPE_TAG) {
+		if (moodinfo->type == PURPLE_XMLNODE_TYPE_TAG) {
 			if (!strcmp(moodinfo->name, "text")) {
 				if (!moodtext) /* only pick the first one */
-					moodtext = xmlnode_get_data(moodinfo);
+					moodtext = purple_xmlnode_get_data(moodinfo);
 			} else {
 				const PurpleMood *target_mood;
 
@@ -186,7 +186,7 @@ gboolean
 jabber_mood_set(JabberStream *js, const char *mood, const char *text)
 {
 	const PurpleMood *target_mood = NULL;
-	xmlnode *publish, *moodnode;
+	PurpleXmlNode *publish, *moodnode;
 
 	if (mood && *mood) {
 		target_mood = find_mood_by_name(mood);
@@ -197,21 +197,21 @@ jabber_mood_set(JabberStream *js, const char *mood, const char *text)
 			return FALSE;
 	}
 
-	publish = xmlnode_new("publish");
-	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/mood");
-	moodnode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "mood");
-	xmlnode_set_namespace(moodnode, "http://jabber.org/protocol/mood");
+	publish = purple_xmlnode_new("publish");
+	purple_xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/mood");
+	moodnode = purple_xmlnode_new_child(purple_xmlnode_new_child(publish, "item"), "mood");
+	purple_xmlnode_set_namespace(moodnode, "http://jabber.org/protocol/mood");
 
 	if (target_mood) {
 		/* If target_mood is not NULL, then
 		 * target_mood->mood == mood, and is a valid element name.
 		 */
-	    xmlnode_new_child(moodnode, mood);
+	    purple_xmlnode_new_child(moodnode, mood);
 
 		/* Only set text when setting a mood */
 		if (text && *text) {
-			xmlnode *textnode = xmlnode_new_child(moodnode, "text");
-			xmlnode_insert_data(textnode, text, -1);
+			PurpleXmlNode *textnode = purple_xmlnode_new_child(moodnode, "text");
+			purple_xmlnode_insert_data(textnode, text, -1);
 		}
 	}
 

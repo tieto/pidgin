@@ -32,10 +32,10 @@ typedef struct _JabberXDataAction {
 	char *handle;
 } JabberXDataAction;
 
-typedef void (*jabber_x_data_cb)(JabberStream *js, xmlnode *result, gpointer user_data);
-typedef void (*jabber_x_data_action_cb)(JabberStream *js, xmlnode *result, const char *actionhandle, gpointer user_data);
-void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data);
-void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data);
+typedef void (*jabber_x_data_cb)(JabberStream *js, PurpleXmlNode *result, gpointer user_data);
+typedef void (*jabber_x_data_action_cb)(JabberStream *js, PurpleXmlNode *result, const char *actionhandle, gpointer user_data);
+void *jabber_x_data_request(JabberStream *js, PurpleXmlNode *packet, jabber_x_data_cb cb, gpointer user_data);
+void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data);
 
 /*
  * Return the form type (the CDATA of the value child of the FORM_TYPE
@@ -47,9 +47,9 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
  *  </field>
  * </x>
  *
- * @param form The xmlnode for the form (the 'x' element)
+ * @param form The PurpleXmlNode for the form (the 'x' element)
  * @returns The FORM_TYPE.  Must be freed by caller.
  */
-gchar *jabber_x_data_get_formtype(const xmlnode *form);
+gchar *jabber_x_data_get_formtype(const PurpleXmlNode *form);
 
 #endif /* PURPLE_JABBER_XDATA_H_ */

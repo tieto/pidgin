@@ -152,7 +152,7 @@ void google_buddy_node_chat(PurpleBlistNode *node, gpointer data)
 	gchar *room;
 	gchar *uuid = purple_uuid_random();
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = PURPLE_BUDDY(node);
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));

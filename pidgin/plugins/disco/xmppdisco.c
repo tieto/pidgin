@@ -56,7 +56,7 @@ static GHashTable *iq_callbacks = NULL;
 static gboolean iq_listening = FALSE;
 
 typedef void (*XmppIqCallback)(PurpleConnection *pc, const char *type,
-                               const char *id, const char *from, xmlnode *iq,
+                               const char *id, const char *from, PurpleXmlNode *iq,
                                gpointer data);
 
 struct item_data {
@@ -116,7 +116,7 @@ remove_iq_callbacks_by_pc(gpointer key, gpointer value, gpointer user_data)
 
 static gboolean
 xmpp_iq_received(PurpleConnection *pc, const char *type, const char *id,
-                 const char *from, xmlnode *iq)
+                 const char *from, PurpleXmlNode *iq)
 {
 	struct xmpp_iq_cb_data *cb_data;
 
@@ -162,18 +162,18 @@ static void
 xmpp_disco_info_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
                    const char *node, XmppIqCallback cb)
 {
-	xmlnode *iq, *query;
+	PurpleXmlNode *iq, *query;
 	char *id = generate_next_id();
 
-	iq = xmlnode_new("iq");
-	xmlnode_set_attrib(iq, "type", "get");
-	xmlnode_set_attrib(iq, "to", jid);
-	xmlnode_set_attrib(iq, "id", id);
+	iq = purple_xmlnode_new("iq");
+	purple_xmlnode_set_attrib(iq, "type", "get");
+	purple_xmlnode_set_attrib(iq, "to", jid);
+	purple_xmlnode_set_attrib(iq, "id", id);
 
-	query = xmlnode_new_child(iq, "query");
-	xmlnode_set_namespace(query, NS_DISCO_INFO);
+	query = purple_xmlnode_new_child(iq, "query");
+	purple_xmlnode_set_namespace(query, NS_DISCO_INFO);
 	if (node)
-		xmlnode_set_attrib(query, "node", node);
+		purple_xmlnode_set_attrib(query, "node", node);
 
 	/* Steals id */
 	xmpp_iq_register_callback(pc, id, cbdata, cb);
@@ -181,25 +181,25 @@ xmpp_disco_info_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	purple_signal_emit(purple_connection_get_prpl(pc), "jabber-sending-xmlnode",
 	                   pc, &iq);
 	if (iq != NULL)
-		xmlnode_free(iq);
+		purple_xmlnode_free(iq);
 }
 
 static void
 xmpp_disco_items_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
                     const char *node, XmppIqCallback cb)
 {
-	xmlnode *iq, *query;
+	PurpleXmlNode *iq, *query;
 	char *id = generate_next_id();
 
-	iq = xmlnode_new("iq");
-	xmlnode_set_attrib(iq, "type", "get");
-	xmlnode_set_attrib(iq, "to", jid);
-	xmlnode_set_attrib(iq, "id", id);
+	iq = purple_xmlnode_new("iq");
+	purple_xmlnode_set_attrib(iq, "type", "get");
+	purple_xmlnode_set_attrib(iq, "to", jid);
+	purple_xmlnode_set_attrib(iq, "id", id);
 
-	query = xmlnode_new_child(iq, "query");
-	xmlnode_set_namespace(query, NS_DISCO_ITEMS);
+	query = purple_xmlnode_new_child(iq, "query");
+	purple_xmlnode_set_namespace(query, NS_DISCO_ITEMS);
 	if (node)
-		xmlnode_set_attrib(query, "node", node);
+		purple_xmlnode_set_attrib(query, "node", node);
 
 	/* Steals id */
 	xmpp_iq_register_callback(pc, id, cbdata, cb);
@@ -207,19 +207,19 @@ xmpp_disco_items_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	purple_signal_emit(purple_connection_get_prpl(pc), "jabber-sending-xmlnode",
 	                   pc, &iq);
 	if (iq != NULL)
-		xmlnode_free(iq);
+		purple_xmlnode_free(iq);
 }
 
 static XmppDiscoServiceType
-disco_service_type_from_identity(xmlnode *identity)
+disco_service_type_from_identity(PurpleXmlNode *identity)
 {
 	const char *category, *type;
 
 	if (!identity)
 		return XMPP_DISCO_SERVICE_TYPE_OTHER;
 
-	category = xmlnode_get_attrib(identity, "category");
-	type = xmlnode_get_attrib(identity, "type");
+	category = purple_xmlnode_get_attrib(identity, "category");
+	type = purple_xmlnode_get_attrib(identity, "type");
 
 	if (!category)
 		return XMPP_DISCO_SERVICE_TYPE_OTHER;
@@ -275,11 +275,11 @@ disco_type_from_string(const gchar *str)
 
 static void
 got_info_cb(PurpleConnection *pc, const char *type, const char *id,
-            const char *from, xmlnode *iq, gpointer data)
+            const char *from, PurpleXmlNode *iq, gpointer data)
 {
 	struct item_data *item_data = data;
 	PidginDiscoList *list = item_data->list;
-	xmlnode *query;
+	PurpleXmlNode *query;
 
 	--list->fetch_count;
 
@@ -287,10 +287,10 @@ got_info_cb(PurpleConnection *pc, const char *type, const char *id,
 		goto out;
 
 	if (g_str_equal(type, "result") &&
-			(query = xmlnode_get_child(iq, "query"))) {
-		xmlnode *identity = xmlnode_get_child(query, "identity");
+			(query = purple_xmlnode_get_child(iq, "query"))) {
+		PurpleXmlNode *identity = purple_xmlnode_get_child(query, "identity");
 		XmppDiscoService *service;
-		xmlnode *feature;
+		PurpleXmlNode *feature;
 
 		service = g_new0(XmppDiscoService, 1);
 		service->list = item_data->list;
@@ -322,15 +322,15 @@ got_info_cb(PurpleConnection *pc, const char *type, const char *id,
 			service->description = item_data->name;
 			item_data->name = NULL;
 		} else if (identity)
-			service->description = g_strdup(xmlnode_get_attrib(identity, "name"));
+			service->description = g_strdup(purple_xmlnode_get_attrib(identity, "name"));
 
 		/* TODO: Overlap with service->name a bit */
 		service->jid = g_strdup(from);
 
-		for (feature = xmlnode_get_child(query, "feature"); feature;
-				feature = xmlnode_get_next_twin(feature)) {
+		for (feature = purple_xmlnode_get_child(query, "feature"); feature;
+				feature = purple_xmlnode_get_next_twin(feature)) {
 			const char *var;
-			if (!(var = xmlnode_get_attrib(feature, "var")))
+			if (!(var = purple_xmlnode_get_attrib(feature, "var")))
 				continue;
 
 			if (g_str_equal(var, NS_REGISTER))
@@ -345,7 +345,7 @@ got_info_cb(PurpleConnection *pc, const char *type, const char *id,
 
 		if (service->type == XMPP_DISCO_SERVICE_TYPE_GATEWAY)
 			service->gateway_type = g_strdup(disco_type_from_string(
-					xmlnode_get_attrib(identity, "type")));
+					purple_xmlnode_get_attrib(identity, "type")));
 
 		pidgin_disco_add_service(list, service, service->parent);
 	}
@@ -362,11 +362,11 @@ out:
 
 static void
 got_items_cb(PurpleConnection *pc, const char *type, const char *id,
-             const char *from, xmlnode *iq, gpointer data)
+             const char *from, PurpleXmlNode *iq, gpointer data)
 {
 	struct item_data *item_data = data;
 	PidginDiscoList *list = item_data->list;
-	xmlnode *query;
+	PurpleXmlNode *query;
 	gboolean has_items = FALSE;
 
 	--list->fetch_count;
@@ -375,14 +375,14 @@ got_items_cb(PurpleConnection *pc, const char *type, const char *id,
 		goto out;
 
 	if (g_str_equal(type, "result") &&
-			(query = xmlnode_get_child(iq, "query"))) {
-		xmlnode *item;
+			(query = purple_xmlnode_get_child(iq, "query"))) {
+		PurpleXmlNode *item;
 
-		for (item = xmlnode_get_child(query, "item"); item;
-				item = xmlnode_get_next_twin(item)) {
-			const char *jid = xmlnode_get_attrib(item, "jid");
-			const char *name = xmlnode_get_attrib(item, "name");
-			const char *node = xmlnode_get_attrib(item, "node");
+		for (item = purple_xmlnode_get_child(query, "item"); item;
+				item = purple_xmlnode_get_next_twin(item)) {
+			const char *jid = purple_xmlnode_get_attrib(item, "jid");
+			const char *name = purple_xmlnode_get_attrib(item, "name");
+			const char *node = purple_xmlnode_get_attrib(item, "node");
 
 			has_items = TRUE;
 
@@ -432,24 +432,24 @@ out:
 
 static void
 server_items_cb(PurpleConnection *pc, const char *type, const char *id,
-                const char *from, xmlnode *iq, gpointer data)
+                const char *from, PurpleXmlNode *iq, gpointer data)
 {
 	struct item_data *cb_data = data;
 	PidginDiscoList *list = cb_data->list;
-	xmlnode *query;
+	PurpleXmlNode *query;
 
 	g_free(cb_data);
 	--list->fetch_count;
 
 	if (g_str_equal(type, "result") &&
-			(query = xmlnode_get_child(iq, "query"))) {
-		xmlnode *item;
+			(query = purple_xmlnode_get_child(iq, "query"))) {
+		PurpleXmlNode *item;
 
-		for (item = xmlnode_get_child(query, "item"); item;
-				item = xmlnode_get_next_twin(item)) {
-			const char *jid = xmlnode_get_attrib(item, "jid");
-			const char *name = xmlnode_get_attrib(item, "name");
-			const char *node = xmlnode_get_attrib(item, "node");
+		for (item = purple_xmlnode_get_child(query, "item"); item;
+				item = purple_xmlnode_get_next_twin(item)) {
+			const char *jid = purple_xmlnode_get_attrib(item, "jid");
+			const char *name = purple_xmlnode_get_attrib(item, "name");
+			const char *node = purple_xmlnode_get_attrib(item, "node");
 			struct item_data *item_data;
 
 			if (!jid)
@@ -474,23 +474,23 @@ server_items_cb(PurpleConnection *pc, const char *type, const char *id,
 
 static void
 server_info_cb(PurpleConnection *pc, const char *type, const char *id,
-               const char *from, xmlnode *iq, gpointer data)
+               const char *from, PurpleXmlNode *iq, gpointer data)
 {
 	struct item_data *cb_data = data;
 	PidginDiscoList *list = cb_data->list;
-	xmlnode *query;
-	xmlnode *error;
+	PurpleXmlNode *query;
+	PurpleXmlNode *error;
 	gboolean items = FALSE;
 
 	--list->fetch_count;
 
 	if (g_str_equal(type, "result") &&
-			(query = xmlnode_get_child(iq, "query"))) {
-		xmlnode *feature;
+			(query = purple_xmlnode_get_child(iq, "query"))) {
+		PurpleXmlNode *feature;
 
-		for (feature = xmlnode_get_child(query, "feature"); feature;
-				feature = xmlnode_get_next_twin(feature)) {
-			const char *var = xmlnode_get_attrib(feature, "var");
+		for (feature = purple_xmlnode_get_child(query, "feature"); feature;
+				feature = purple_xmlnode_get_next_twin(feature)) {
+			const char *var = purple_xmlnode_get_attrib(feature, "var");
 			if (purple_strequal(var, NS_DISCO_ITEMS)) {
 				items = TRUE;
 				break;
@@ -508,9 +508,9 @@ server_info_cb(PurpleConnection *pc, const char *type, const char *id,
 		}
 	}
 	else {
-		error = xmlnode_get_child(iq, "error");
-		if (xmlnode_get_child(error, "remote-server-not-found")
-		 || xmlnode_get_child(error, "jid-malformed")) {
+		error = purple_xmlnode_get_child(iq, "error");
+		if (purple_xmlnode_get_child(error, "remote-server-not-found")
+		 || purple_xmlnode_get_child(error, "jid-malformed")) {
 			purple_notify_error(my_plugin, _("Error"),
 			                    _("Server does not exist"),
  			                    NULL, NULL);
@@ -567,21 +567,21 @@ void xmpp_disco_service_expand(XmppDiscoService *service)
 
 void xmpp_disco_service_register(XmppDiscoService *service)
 {
-	xmlnode *iq, *query;
+	PurpleXmlNode *iq, *query;
 	char *id = generate_next_id();
 
-	iq = xmlnode_new("iq");
-	xmlnode_set_attrib(iq, "type", "get");
-	xmlnode_set_attrib(iq, "to", service->jid);
-	xmlnode_set_attrib(iq, "id", id);
+	iq = purple_xmlnode_new("iq");
+	purple_xmlnode_set_attrib(iq, "type", "get");
+	purple_xmlnode_set_attrib(iq, "to", service->jid);
+	purple_xmlnode_set_attrib(iq, "id", id);
 
-	query = xmlnode_new_child(iq, "query");
-	xmlnode_set_namespace(query, NS_REGISTER);
+	query = purple_xmlnode_new_child(iq, "query");
+	purple_xmlnode_set_namespace(query, NS_REGISTER);
 
 	purple_signal_emit(purple_connection_get_prpl(service->list->pc),
 			"jabber-sending-xmlnode", service->list->pc, &iq);
 	if (iq != NULL)
-		xmlnode_free(iq);
+		purple_xmlnode_free(iq);
 	g_free(id);
 }
 

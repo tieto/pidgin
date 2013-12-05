@@ -37,6 +37,8 @@
 #ifndef _PURPLE_CORE_H_
 #define _PURPLE_CORE_H_
 
+#include <glib.h>
+
 typedef struct PurpleCore PurpleCore;
 
 /** Callbacks that fire at different points of the initialization and teardown
@@ -71,9 +73,11 @@ typedef struct
 	 */
 	GHashTable* (*get_ui_info)(void);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleCoreUiOps;
 
 G_BEGIN_DECLS

@@ -23,13 +23,16 @@
  */
 
 #include "internal.h"
-#include "cipher.h"
 #include "debug.h"
 
 #include "msnutils.h"
 #include "soap.h"
 #include "nexus.h"
 #include "notification.h"
+
+#include "ciphers/des3cipher.h"
+#include "ciphers/hmaccipher.h"
+#include "ciphers/sha1hash.h"
 
 /**************************************************************************
  * Valid Ticket Tokens
@@ -99,35 +102,37 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 	const guchar magic[] = "WS-SecureConversation";
 	const int magic_len = sizeof(magic) - 1;
 
-	PurpleCipherContext *hmac;
+	PurpleCipher *hmac;
+	PurpleHash *hash;
 	guchar hash1[20], hash2[20], hash3[20], hash4[20];
 	char *result;
 
-	hmac = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key(hmac, (guchar *)key, key_len);
+	hash = purple_sha1_hash_new();
+	hmac = purple_hmac_cipher_new(hash);
+	purple_cipher_set_key(hmac, (guchar *)key, key_len);
 
-	purple_cipher_context_append(hmac, magic, magic_len);
-	purple_cipher_context_append(hmac, (guchar *)data, data_len);
-	purple_cipher_context_digest(hmac, hash1, sizeof(hash1));
+	purple_cipher_append(hmac, magic, magic_len);
+	purple_cipher_append(hmac, (guchar *)data, data_len);
+	purple_cipher_digest(hmac, hash1, sizeof(hash1));
 
-	purple_cipher_context_reset_state(hmac, NULL);
-	purple_cipher_context_append(hmac, hash1, 20);
-	purple_cipher_context_append(hmac, magic, magic_len);
-	purple_cipher_context_append(hmac, (guchar *)data, data_len);
-	purple_cipher_context_digest(hmac, hash2, sizeof(hash2));
+	purple_cipher_reset_state(hmac);
+	purple_cipher_append(hmac, hash1, 20);
+	purple_cipher_append(hmac, magic, magic_len);
+	purple_cipher_append(hmac, (guchar *)data, data_len);
+	purple_cipher_digest(hmac, hash2, sizeof(hash2));
 
-	purple_cipher_context_reset_state(hmac, NULL);
-	purple_cipher_context_append(hmac, hash1, 20);
-	purple_cipher_context_digest(hmac, hash3, sizeof(hash3));
+	purple_cipher_reset_state(hmac);
+	purple_cipher_append(hmac, hash1, 20);
+	purple_cipher_digest(hmac, hash3, sizeof(hash3));
 
-	purple_cipher_context_reset_state(hmac, NULL);
-	purple_cipher_context_append(hmac, hash3, sizeof(hash3));
-	purple_cipher_context_append(hmac, magic, magic_len);
-	purple_cipher_context_append(hmac, (guchar *)data, data_len);
-	purple_cipher_context_digest(hmac, hash4, sizeof(hash4));
+	purple_cipher_reset_state(hmac);
+	purple_cipher_append(hmac, hash3, sizeof(hash3));
+	purple_cipher_append(hmac, magic, magic_len);
+	purple_cipher_append(hmac, (guchar *)data, data_len);
+	purple_cipher_digest(hmac, hash4, sizeof(hash4));
 
-	purple_cipher_context_destroy(hmac);
+	g_object_unref(hmac);
+	g_object_unref(hash);
 
 	result = g_malloc(24);
 	memcpy(result, hash2, sizeof(hash2));
@@ -139,21 +144,21 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 static char *
 des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean decrypt)
 {
-	PurpleCipherContext *des3;
+	PurpleCipher *des3;
 	char *out;
 
-	des3 = purple_cipher_context_new_by_name("des3", NULL);
-	purple_cipher_context_set_key(des3, (guchar *)key, 24);
-	purple_cipher_context_set_batch_mode(des3, PURPLE_CIPHER_BATCH_MODE_CBC);
-	purple_cipher_context_set_iv(des3, (guchar *)iv, 8);
+	des3 = purple_des3_cipher_new();
+	purple_cipher_set_key(des3, (guchar *)key, 24);
+	purple_cipher_set_batch_mode(des3, PURPLE_CIPHER_BATCH_MODE_CBC);
+	purple_cipher_set_iv(des3, (guchar *)iv, 8);
 
 	out = g_malloc(len);
 	if (decrypt)
-		purple_cipher_context_decrypt(des3, (guchar *)data, len, (guchar *)out, len);
+		purple_cipher_decrypt(des3, (guchar *)data, len, (guchar *)out, len);
 	else
-		purple_cipher_context_encrypt(des3, (guchar *)data, len, (guchar *)out, len);
+		purple_cipher_encrypt(des3, (guchar *)data, len, (guchar *)out, len);
 
-	purple_cipher_context_destroy(des3);
+	g_object_unref(des3);
 
 	return out;
 }
@@ -168,7 +173,8 @@ msn_rps_encrypt(MsnNexus *nexus)
 	char usr_key_base[MSN_USER_KEY_SIZE], *usr_key;
 	const char magic1[] = "SESSION KEY HASH";
 	const char magic2[] = "SESSION KEY ENCRYPTION";
-	PurpleCipherContext *hmac;
+	PurpleCipher *hmac;
+	PurpleHash *hasher;
 	size_t len;
 	guchar *hash;
 	char *key1, *key2, *key3;
@@ -199,12 +205,13 @@ msn_rps_encrypt(MsnNexus *nexus)
 	key3 = rps_create_key(key1, key1_len, magic2, sizeof(magic2) - 1);
 
 	len = strlen(nexus->nonce);
-	hmac = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key(hmac, (guchar *)key2, 24);
-	purple_cipher_context_append(hmac, (guchar *)nexus->nonce, len);
-	purple_cipher_context_digest(hmac, hash, 20);
-	purple_cipher_context_destroy(hmac);
+	hasher = purple_sha1_hash_new();
+	hmac = purple_hmac_cipher_new(hasher);
+	purple_cipher_set_key(hmac, (guchar *)key2, 24);
+	purple_cipher_append(hmac, (guchar *)nexus->nonce, len);
+	purple_cipher_digest(hmac, hash, 20);
+	g_object_unref(hmac);
+	g_object_unref(hasher);
 
 	/* We need to pad this to 72 bytes, apparently */
 	nonce_fixed = g_malloc(len + 8);
@@ -243,21 +250,21 @@ struct _MsnNexusUpdateCallback {
 };
 
 static gboolean
-nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
+nexus_parse_token(MsnNexus *nexus, int id, PurpleXmlNode *node)
 {
 	char *token_str, *expiry_str;
 	const char *id_str;
 	char **elems, **cur, **tokens;
-	xmlnode *token = xmlnode_get_child(node, "RequestedSecurityToken/BinarySecurityToken");
-	xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
-	xmlnode *expires = xmlnode_get_child(node, "LifeTime/Expires");
+	PurpleXmlNode *token = purple_xmlnode_get_child(node, "RequestedSecurityToken/BinarySecurityToken");
+	PurpleXmlNode *secret = purple_xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
+	PurpleXmlNode *expires = purple_xmlnode_get_child(node, "LifeTime/Expires");
 
 	if (!token)
 		return FALSE;
 
 	/* Use the ID that the server sent us */
 	if (id == -1) {
-		id_str = xmlnode_get_attrib(token, "Id");
+		id_str = purple_xmlnode_get_attrib(token, "Id");
 		if (id_str == NULL)
 			return FALSE;
 
@@ -266,7 +273,7 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 			return FALSE;	/* Where did this come from? */
 	}
 
-	token_str = xmlnode_get_data(token);
+	token_str = purple_xmlnode_get_data(token);
 	if (token_str == NULL)
 		return FALSE;
 
@@ -284,12 +291,12 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 	g_free(token_str);
 
 	if (secret)
-		nexus->tokens[id].secret = xmlnode_get_data(secret);
+		nexus->tokens[id].secret = purple_xmlnode_get_data(secret);
 	else
 		nexus->tokens[id].secret = NULL;
 
 	/* Yay for MS using ISO-8601 */
-	expiry_str = xmlnode_get_data(expires);
+	expiry_str = purple_xmlnode_get_data(expires);
 	nexus->tokens[id].expiry = purple_str_to_time(expiry_str,
 		FALSE, NULL, NULL, NULL);
 	g_free(expiry_str);
@@ -301,30 +308,30 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 }
 
 static gboolean
-nexus_parse_collection(MsnNexus *nexus, int id, xmlnode *collection)
+nexus_parse_collection(MsnNexus *nexus, int id, PurpleXmlNode *collection)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 	gboolean result;
 
-	node = xmlnode_get_child(collection, "RequestSecurityTokenResponse");
+	node = purple_xmlnode_get_child(collection, "RequestSecurityTokenResponse");
 
 	if (!node)
 		return FALSE;
 
 	result = TRUE;
 	for (; node && result; node = node->next) {
-		xmlnode *endpoint = xmlnode_get_child(node, "AppliesTo/EndpointReference/Address");
-		char *address = xmlnode_get_data(endpoint);
+		PurpleXmlNode *endpoint = purple_xmlnode_get_child(node, "AppliesTo/EndpointReference/Address");
+		char *address = purple_xmlnode_get_data(endpoint);
 
 		if (g_str_equal(address, "http://Passport.NET/tb")) {
 			/* This node contains the stuff for updating tokens. */
 			char *data;
-			xmlnode *cipher = xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
-			xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
+			PurpleXmlNode *cipher = purple_xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
+			PurpleXmlNode *secret = purple_xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
 
 			g_free(nexus->cipher);
-			nexus->cipher = xmlnode_get_data(cipher);
-			data = xmlnode_get_data(secret);
+			nexus->cipher = purple_xmlnode_get_data(cipher);
+			data = purple_xmlnode_get_data(secret);
 			g_free(nexus->secret);
 			nexus->secret = (char *)purple_base64_decode(data, NULL);
 			g_free(data);
@@ -352,7 +359,7 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 
 	if (!nexus_parse_collection(nexus, -1,
-	                            xmlnode_get_child(msn_soap_message_get_xml(resp),
+	                            purple_xmlnode_get_child(msn_soap_message_get_xml(resp),
 	                                              "Body/RequestSecurityTokenResponseCollection"))) {
 		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Invalid response"));
 		return;
@@ -396,7 +403,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	domains = g_string_new(NULL);
 	for (i = 0; i < nexus->token_len; i++) {
 		g_string_append_printf(domains, MSN_SSO_RST_TEMPLATE,
-		                       i+1,
+		                       (int)i+1,
 		                       ticket_domains[i][SSO_VALID_TICKET_DOMAIN],
 		                       ticket_domains[i][SSO_VALID_TICKET_POLICY] != NULL ?
 		                           ticket_domains[i][SSO_VALID_TICKET_POLICY] :
@@ -408,7 +415,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	g_string_free(domains, TRUE);
 
 	msn_soap_service_send_message(session->soap,
-		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		msn_soap_message_new(NULL, purple_xmlnode_from_str(request, -1)),
 		MSN_SSO_SERVER, SSO_POST_URL, TRUE,
 		nexus_got_response_cb, nexus);
 	g_free(request);
@@ -420,7 +427,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	MsnNexusUpdateData *ud = data;
 	MsnNexus *nexus = ud->nexus;
 	char iv[8] = {0,0,0,0,0,0,0,0};
-	xmlnode *enckey;
+	PurpleXmlNode *enckey;
 	char *tmp;
 	char *nonce;
 	gsize len;
@@ -437,18 +444,18 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	purple_debug_info("msn", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
 
-	enckey = xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/Security/DerivedKeyToken");
+	enckey = purple_xmlnode_get_child(msn_soap_message_get_xml(resp), "Header/Security/DerivedKeyToken");
 	while (enckey) {
-		if (g_str_equal(xmlnode_get_attrib(enckey, "Id"), "EncKey"))
+		if (g_str_equal(purple_xmlnode_get_attrib(enckey, "Id"), "EncKey"))
 			break;
-		enckey = xmlnode_get_next_twin(enckey);
+		enckey = purple_xmlnode_get_next_twin(enckey);
 	}
 	if (!enckey) {
 		purple_debug_error("msn", "Invalid response in token update.\n");
 		return;
 	}
 
-	tmp = xmlnode_get_data(xmlnode_get_child(enckey, "Nonce"));
+	tmp = purple_xmlnode_get_data(purple_xmlnode_get_child(enckey, "Nonce"));
 	nonce = (char *)purple_base64_decode(tmp, &len);
 	key = rps_create_key(nexus->secret, 24, nonce, len);
 	g_free(tmp);
@@ -456,7 +463,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 #if 0
 	/* Don't know what this is for yet */
-	tmp = xmlnode_get_data(xmlnode_get_child(resp->xml,
+	tmp = purple_xmlnode_get_data(purple_xmlnode_get_child(resp->xml,
 		"Header/EncryptedPP/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
 		decrypted_pp = des3_cbc(key, iv, tmp, len, TRUE);
@@ -466,11 +473,11 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 #endif
 
-	tmp = xmlnode_get_data(xmlnode_get_child(msn_soap_message_get_xml(resp),
+	tmp = purple_xmlnode_get_data(purple_xmlnode_get_child(msn_soap_message_get_xml(resp),
 		"Body/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
 		char *unescaped;
-		xmlnode *rstresponse;
+		PurpleXmlNode *rstresponse;
 
 		unescaped = (char *)purple_base64_decode(tmp, &len);
 		g_free(tmp);
@@ -479,7 +486,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		g_free(unescaped);
 		purple_debug_info("msn", "Got Response Body EncryptedData: %s\n", decrypted_data);
 
-		rstresponse = xmlnode_from_str(decrypted_data, -1);
+		rstresponse = purple_xmlnode_from_str(decrypted_data, -1);
 		if (g_str_equal(rstresponse->name, "RequestSecurityTokenResponse"))
 			nexus_parse_token(nexus, ud->id, rstresponse);
 		else
@@ -507,8 +514,8 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	MsnSession *session = nexus->session;
 	MsnNexusUpdateData *ud;
 	MsnNexusUpdateCallback *update;
-	PurpleCipherContext *sha1;
-	PurpleCipherContext *hmac;
+	PurpleHash *sha1;
+	PurpleCipher *hmac;
 
 	char *key;
 
@@ -558,7 +565,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	ud->nexus = nexus;
 	ud->id = id;
 
-	sha1 = purple_cipher_context_new_by_name("sha1", NULL);
+	sha1 = purple_sha1_hash_new();
 
 	domain = g_strdup_printf(MSN_SSO_RST_TEMPLATE,
 	                         id,
@@ -566,8 +573,8 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	                         ticket_domains[id][SSO_VALID_TICKET_POLICY] != NULL ?
 	                             ticket_domains[id][SSO_VALID_TICKET_POLICY] :
 	                             nexus->policy);
-	purple_cipher_context_append(sha1, (guchar *)domain, strlen(domain));
-	purple_cipher_context_digest(sha1, digest, 20);
+	purple_hash_append(sha1, (guchar *)domain, strlen(domain));
+	purple_hash_digest(sha1, digest, 20);
 	domain_b64 = purple_base64_encode(digest, 20);
 
 	now = time(NULL);
@@ -578,13 +585,13 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	timestamp = g_strdup_printf(MSN_SSO_TIMESTAMP_TEMPLATE,
 	                            now_str,
 	                            purple_utf8_strftime("%Y-%m-%dT%H:%M:%SZ", tm));
-	purple_cipher_context_reset(sha1, NULL);
-	purple_cipher_context_append(sha1, (guchar *)timestamp, strlen(timestamp));
-	purple_cipher_context_digest(sha1, digest, 20);
+	purple_hash_reset(sha1);
+	purple_hash_append(sha1, (guchar *)timestamp, strlen(timestamp));
+	purple_hash_digest(sha1, digest, 20);
 	timestamp_b64 = purple_base64_encode(digest, 20);
 	g_free(now_str);
 
-	purple_cipher_context_destroy(sha1);
+	purple_hash_reset(sha1);
 
 	signedinfo = g_strdup_printf(MSN_SSO_SIGNEDINFO_TEMPLATE,
 	                             id,
@@ -596,12 +603,14 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	nonce_b64 = purple_base64_encode((guchar *)&nonce, sizeof(nonce));
 
 	key = rps_create_key(nexus->secret, 24, (char *)nonce, sizeof(nonce));
-	hmac = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key(hmac, (guchar *)key, 24);
-	purple_cipher_context_append(hmac, (guchar *)signedinfo, strlen(signedinfo));
-	purple_cipher_context_digest(hmac, signature, 20);
-	purple_cipher_context_destroy(hmac);
+	hmac = purple_hmac_cipher_new(sha1);
+	purple_cipher_set_key(hmac, (guchar *)key, 24);
+	purple_cipher_append(hmac, (guchar *)signedinfo, strlen(signedinfo));
+	purple_cipher_digest(hmac, signature, 20);
+
+	g_object_unref(hmac);
+	g_object_unref(sha1);
+
 	signature_b64 = purple_base64_encode(signature, 20);
 
 	request = g_strdup_printf(MSN_SSO_TOKEN_UPDATE_TEMPLATE,
@@ -623,7 +632,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 
 	g_free(request);
 	msn_soap_service_send_message(session->soap,
-		msn_soap_message_new(NULL, xmlnode_from_str(request, -1)),
+		msn_soap_message_new(NULL, purple_xmlnode_from_str(request, -1)),
 		MSN_SSO_SERVER, SSO_POST_URL, TRUE, nexus_got_update_cb, ud);
 }
 

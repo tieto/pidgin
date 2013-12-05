@@ -7,7 +7,6 @@ Cmds.xs
 Connection.xs
 Conversation.xs
 Debug.xs
-FT.xs
 ImgStore.xs
 Log.xs
 Makefile.PL
@@ -17,7 +16,7 @@ Plugin.xs
 PluginPref.xs
 Pounce.xs
 Prefs.xs
-Privacy.xs
+Presence.xs
 Proxy.xs
 Prpl.xs
 Purple.pm
@@ -33,6 +32,7 @@ Sound.xs
 Status.xs
 Stringref.xs
 Util.xs
+Xfer.xs
 XMLNode.xs
 MANIFEST
 typemap

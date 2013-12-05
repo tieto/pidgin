@@ -19,7 +19,7 @@
 
 #include "myspace.h"
 
-typedef int (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
+typedef int (*MSIM_XMLNODE_CONVERT)(MsimSession *, PurpleXmlNode *, gchar **, gchar **);
 
 /* Globals */
 
@@ -192,15 +192,15 @@ msim_point_to_height(MsimSession *session, guint point)
  * Convert the msim markup <f> (font) tag into HTML.
  */
 static void
-msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+msim_markup_f_to_html(MsimSession *session, PurpleXmlNode *root, gchar **begin, gchar **end)
 {
 	const gchar *face, *height_str, *decor_str;
 	GString *gs_end, *gs_begin;
 	guint decor, height;
 
-	face = xmlnode_get_attrib(root, "f");
-	height_str = xmlnode_get_attrib(root, "h");
-	decor_str = xmlnode_get_attrib(root, "s");
+	face = purple_xmlnode_get_attrib(root, "f");
+	height_str = purple_xmlnode_get_attrib(root, "h");
+	decor_str = purple_xmlnode_get_attrib(root, "s");
 
 	/* Validate the font face, to avoid constructing invalid HTML later */
 	if (face != NULL && strchr(face, '\'') != NULL)
@@ -283,11 +283,11 @@ msim_color_to_purple(const char *msim)
  * Convert the msim markup <a> (anchor) tag into HTML.
  */
 static void
-msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+msim_markup_a_to_html(MsimSession *session, PurpleXmlNode *root, gchar **begin, gchar **end)
 {
 	const gchar *href;
 
-	href = xmlnode_get_attrib(root, "h");
+	href = purple_xmlnode_get_attrib(root, "h");
 	if (!href) {
 		href = "";
 	}
@@ -300,7 +300,7 @@ msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
  * Convert the msim markup <p> (paragraph) tag into HTML.
  */
 static void
-msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+msim_markup_p_to_html(MsimSession *session, PurpleXmlNode *root, gchar **begin, gchar **end)
 {
 	/* Just pass through unchanged.
 	 *
@@ -313,12 +313,12 @@ msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
  * Convert the msim markup <c> tag (text color) into HTML.
  */
 static void
-msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+msim_markup_c_to_html(MsimSession *session, PurpleXmlNode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
 	gchar *purple_color;
 
-	color = xmlnode_get_attrib(root, "v");
+	color = purple_xmlnode_get_attrib(root, "v");
 	if (!color) {
 		purple_debug_info("msim", "msim_markup_c_to_html: <c> tag w/o v attr\n");
 		*begin = g_strdup("");
@@ -344,12 +344,12 @@ msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
  * Convert the msim markup <b> tag (background color) into HTML.
  */
 static void
-msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+msim_markup_b_to_html(MsimSession *session, PurpleXmlNode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
 	gchar *purple_color;
 
-	color = xmlnode_get_attrib(root, "v");
+	color = purple_xmlnode_get_attrib(root, "v");
 	if (!color) {
 		*begin = g_strdup("");
 		*end = g_strdup("");
@@ -375,13 +375,13 @@ msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
  * Convert the msim markup <i> tag (emoticon image) into HTML.
  */
 static void
-msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+msim_markup_i_to_html(MsimSession *session, PurpleXmlNode *root, gchar **begin, gchar **end)
 {
 	const gchar *name;
 	guint i;
 	struct MSIM_EMOTICON *emote;
 
-	name = xmlnode_get_attrib(root, "n");
+	name = purple_xmlnode_get_attrib(root, "n");
 	if (!name) {
 		purple_debug_info("msim", "msim_markup_i_to_html: <i> w/o n\n");
 		*begin = g_strdup("");
@@ -408,7 +408,7 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
  * Convert an individual msim markup tag to HTML.
  */
 static int
-msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
+msim_markup_tag_to_html(MsimSession *session, PurpleXmlNode *root, gchar **begin,
 		gchar **end)
 {
 	g_return_val_if_fail(root != NULL, 0);
@@ -439,7 +439,7 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
  * Convert an individual HTML tag to msim markup.
  */
 static int
-html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
+html_tag_to_msim_markup(MsimSession *session, PurpleXmlNode *root, gchar **begin,
 		gchar **end)
 {
 	int ret = 0;
@@ -453,13 +453,13 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 	 * within another one, and only the inner-most formatting will be
 	 * applied to the text. */
 	} else if (!purple_utf8_strcasecmp(root->name, "b")) {
-		if (root->child->type == XMLNODE_TYPE_DATA) {
+		if (root->child->type == PURPLE_XMLNODE_TYPE_DATA) {
 			*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
 			*end = g_strdup("</f>");
 		} else {
 			if (!purple_utf8_strcasecmp(root->child->name,"i")) {
 				ret++;
-				if (root->child->child->type == XMLNODE_TYPE_DATA) {
+				if (root->child->child->type == PURPLE_XMLNODE_TYPE_DATA) {
 					*begin = g_strdup_printf("<f s='%d'>", (MSIM_TEXT_BOLD + MSIM_TEXT_ITALIC));
 					*end = g_strdup("</f>");
 				} else {
@@ -476,7 +476,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 			}
 		}
 	} else if (!purple_utf8_strcasecmp(root->name, "i")) {
-		if (root->child->type == XMLNODE_TYPE_DATA) {
+		if (root->child->type == PURPLE_XMLNODE_TYPE_DATA) {
 			*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_ITALIC);
 			*end = g_strdup("</f>");
 		} else {
@@ -493,13 +493,13 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		const gchar *href;
 		gchar *link_text;
 
-		href = xmlnode_get_attrib(root, "href");
+		href = purple_xmlnode_get_attrib(root, "href");
 
 		if (!href) {
-			href = xmlnode_get_attrib(root, "HREF");
+			href = purple_xmlnode_get_attrib(root, "HREF");
 		}
 
-		link_text = xmlnode_get_data(root);
+		link_text = purple_xmlnode_get_data(root);
 
 		if (href) {
 			if (g_str_equal(link_text, href)) {
@@ -522,7 +522,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		}
 
 		/* Sorry, kid. MySpace doesn't support you within <a> tags. */
-		xmlnode_free(root->child);
+		purple_xmlnode_free(root->child);
 		g_free(link_text);
 		root->child = NULL;
 
@@ -533,9 +533,9 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		const gchar *face;
 		const gchar *color;
 
-		size = xmlnode_get_attrib(root, "size");
-		face = xmlnode_get_attrib(root, "face");
-		color = xmlnode_get_attrib(root, "color");
+		size = purple_xmlnode_get_attrib(root, "size");
+		face = purple_xmlnode_get_attrib(root, "face");
+		color = purple_xmlnode_get_attrib(root, "color");
 
 		tmpbegin = g_string_new("<f");
 		tmpend = g_string_new("</f>");
@@ -562,7 +562,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 	} else if (!purple_utf8_strcasecmp(root->name, "body")) {
 		const gchar *bgcolor;
 
-		bgcolor = xmlnode_get_attrib(root, "bgcolor");
+		bgcolor = purple_xmlnode_get_attrib(root, "bgcolor");
 
 		if (bgcolor != NULL) {
 			*begin = g_strdup_printf("<b v='%s'>", bgcolor);
@@ -590,16 +590,16 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 }
 
 /**
- * Convert an xmlnode of msim markup or HTML to an HTML string or msim markup.
+ * Convert an PurpleXmlNode of msim markup or HTML to an HTML string or msim markup.
  *
  * @param f Function to convert tags.
  *
  * @return An HTML string. Caller frees.
  */
 static void
-msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
+msim_convert_xmlnode(MsimSession *session, GString *out, PurpleXmlNode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
 {
-	xmlnode *node;
+	PurpleXmlNode *node;
 	gchar *begin, *end, *tmp;
 	int descended = nodes_processed;
 
@@ -620,11 +620,11 @@ msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XML
 	/* Loop over all child nodes. */
 	for (node = root->child; node != NULL; node = node->next) {
 		switch (node->type) {
-			case XMLNODE_TYPE_ATTRIB:
+			case PURPLE_XMLNODE_TYPE_ATTRIB:
 				/* Attributes handled above. */
 				break;
 
-			case XMLNODE_TYPE_TAG:
+			case PURPLE_XMLNODE_TYPE_TAG:
 				/* A tag or tag with attributes. Recursively descend. */
 				msim_convert_xmlnode(session, out, node, f, descended);
 
@@ -632,7 +632,7 @@ msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XML
 						node->name ? node->name : "(NULL)");
 				break;
 
-			case XMLNODE_TYPE_DATA:
+			case PURPLE_XMLNODE_TYPE_DATA:
 				/* Literal text. */
 				/*
 				 * TODO: Why is it necessary to escape here?  I thought
@@ -663,7 +663,7 @@ msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XML
 static gchar *
 msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 {
-	xmlnode *root;
+	PurpleXmlNode *root;
 	GString *str;
 	gchar *enclosed_raw;
 
@@ -672,7 +672,7 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 	/* Enclose text in one root tag, to try to make it valid XML for parsing. */
 	enclosed_raw = g_strconcat("<root>", raw, "</root>", NULL);
 
-	root = xmlnode_from_str(enclosed_raw, -1);
+	root = purple_xmlnode_from_str(enclosed_raw, -1);
 
 	if (!root) {
 		purple_debug_warning("msim", "msim_markup_to_html: couldn't parse "
@@ -686,7 +686,7 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 
 	str = g_string_new(NULL);
 	msim_convert_xmlnode(session, str, root, f, 0);
-	xmlnode_free(root);
+	purple_xmlnode_free(root);
 
 	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str->str);
 

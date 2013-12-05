@@ -25,10 +25,9 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "debug.h"
 #include "http.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "util.h"
@@ -114,7 +113,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (!who)
 		return;
 
-	if (!purple_privacy_check(purple_connection_get_account(gc), who)) {
+	if (!purple_account_privacy_check(purple_connection_get_account(gc), who)) {
 		purple_debug_info("yahoo", "Picture packet from %s dropped.\n", who);
 		return;
 	}
@@ -160,7 +159,7 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 	}
 
 	if (who) {
-		PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), who);
+		PurpleBuddy *b = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 		const char *locksum = NULL;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */

@@ -47,7 +47,6 @@ XS_FILES =		Account.xs \
 				Conversation.xs \
 				Core.xs \
 				Debug.xs \
-				FT.xs \
 				Idle.xs \
 				Purple.xs \
 				ImgStore.xs \
@@ -58,7 +57,7 @@ XS_FILES =		Account.xs \
 				PluginPref.xs \
 				Pounce.xs \
 				Prefs.xs \
-				Privacy.xs \
+				Presence.xs \
 				Proxy.xs \
 				Prpl.xs \
 				Request.xs \
@@ -72,6 +71,7 @@ XS_FILES =		Account.xs \
 				Status.xs \
 				Stringref.xs \
 				Util.xs \
+				Xfer.xs \
 				Whiteboard.xs \
 				XMLNode.xs
 
@@ -85,7 +85,8 @@ OBJECTS = $(C_FILES:%.c=%.o)
 LIBS =			-lperl510 \
 			-lperl \
 			-lpurple \
-			-lglib-2.0
+			-lglib-2.0 \
+			-lgobject-2.0
 
 include $(PIDGIN_COMMON_RULES)
 

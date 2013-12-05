@@ -21,36 +21,13 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+/* When writing a third-party plugin, do not include libpurple's internal.h
+ * included below. This file is for internal libpurple use only. We're including
+ * it here for our own convenience. */
+#include "internal.h"
 
-/* config.h may define PURPLE_PLUGINS; protect the definition here so that we
- * don't get complaints about redefinition when it's not necessary. */
-#ifndef PURPLE_PLUGINS
-# define PURPLE_PLUGINS
-#endif
-
-#include <glib.h>
-
-/* This will prevent compiler errors in some instances and is better explained in the
- * how-to documents on the wiki */
-#ifndef G_GNUC_NULL_TERMINATED
-# if __GNUC__ >= 4
-#  define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
-# else
-#  define G_GNUC_NULL_TERMINATED
-# endif
-#endif
-
-#include <notify.h>
-#include <plugin.h>
-#include <version.h>
-
-/* we're adding this here and assigning it in plugin_load because we need
- * a valid plugin handle for our call to purple_notify_message() in the
- * plugin_action_test_cb() callback function */
-PurplePlugin *helloworld_plugin = NULL;
+/* This file defines PURPLE_PLUGINS and includes all the libpurple headers */
+#include <purple.h>
 
 /* This function is the callback for the plugin action we added. All we're
  * doing here is displaying a message. When the user selects the plugin
@@ -58,7 +35,7 @@ PurplePlugin *helloworld_plugin = NULL;
 static void
 plugin_action_test_cb (PurplePluginAction * action)
 {
-	purple_notify_message (helloworld_plugin, PURPLE_NOTIFY_MSG_INFO,
+	purple_notify_message (action->plugin, PURPLE_NOTIFY_MSG_INFO,
 		"Plugin Actions Test", "This is a plugin actions test :)", NULL, NULL,
 		NULL, NULL);
 }
@@ -94,8 +71,6 @@ plugin_load (PurplePlugin * plugin)
 	purple_notify_message (plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
 		"This is the Hello World! plugin :)", NULL, NULL,
 		NULL, NULL);
-
-	helloworld_plugin = plugin; /* assign this here so we have a valid handle later */
 
 	return TRUE;
 }

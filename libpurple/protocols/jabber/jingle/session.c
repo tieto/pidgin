@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "content.h"
 #include "debug.h"
@@ -51,8 +52,6 @@ static void jingle_session_finalize (GObject *object);
 static void jingle_session_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void jingle_session_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static GObjectClass *parent_class = NULL;
-
 enum {
 	PROP_0,
 	PROP_SID,
@@ -63,7 +62,11 @@ enum {
 	PROP_STATE,
 	PROP_CONTENTS,
 	PROP_PENDING_CONTENTS,
+	PROP_LAST
 };
+
+static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 GType
 jingle_session_get_type()
@@ -98,60 +101,54 @@ jingle_session_class_init (JingleSessionClass *klass)
 	gobject_class->set_property = jingle_session_set_property;
 	gobject_class->get_property = jingle_session_get_property;
 
-	g_object_class_install_property(gobject_class, PROP_SID,
-			g_param_spec_string("sid",
+	g_type_class_add_private(klass, sizeof(JingleSessionPrivate));
+
+	properties[PROP_SID] = g_param_spec_string("sid",
 			"Session ID",
 			"The unique session ID of the Jingle Session.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_JS,
-			g_param_spec_pointer("js",
+	properties[PROP_JS] = g_param_spec_pointer("js",
 			"JabberStream",
 			"The Jabber stream associated with this session.",
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_REMOTE_JID,
-			g_param_spec_string("remote-jid",
+	properties[PROP_REMOTE_JID] = g_param_spec_string("remote-jid",
 			"Remote JID",
 			"The JID of the remote participant.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_LOCAL_JID,
-			g_param_spec_string("local-jid",
+	properties[PROP_LOCAL_JID] = g_param_spec_string("local-jid",
 			"Local JID",
 			"The JID of the local participant.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_IS_INITIATOR,
-			g_param_spec_boolean("is-initiator",
+	properties[PROP_IS_INITIATOR] = g_param_spec_boolean("is-initiator",
 			"Is Initiator",
 			"Whether or not the local JID is the initiator of the session.",
 			FALSE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_STATE,
-			g_param_spec_boolean("state",
+	properties[PROP_STATE] = g_param_spec_boolean("state",
 			"State",
 			"The state of the session (PENDING=FALSE, ACTIVE=TRUE).",
 			FALSE,
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_CONTENTS,
-			g_param_spec_pointer("contents",
+	properties[PROP_CONTENTS] = g_param_spec_pointer("contents",
 			"Contents",
 			"The active contents contained within this session",
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_PENDING_CONTENTS,
-			g_param_spec_pointer("pending-contents",
+	properties[PROP_PENDING_CONTENTS] = g_param_spec_pointer("pending-contents",
 			"Pending contents",
 			"The pending contents contained within this session",
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(JingleSessionPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void
@@ -402,29 +399,29 @@ jingle_session_find_by_jid(JabberStream *js, const gchar *jid)
 			find_by_jid_ghr, (gpointer)jid) : NULL;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 jingle_add_jingle_packet(JingleSession *session,
 			 JabberIq *iq, JingleActionType action)
 {
-	xmlnode *jingle = iq ?
-			xmlnode_new_child(iq->node, "jingle") :
-			xmlnode_new("jingle");
+	PurpleXmlNode *jingle = iq ?
+			purple_xmlnode_new_child(iq->node, "jingle") :
+			purple_xmlnode_new("jingle");
 	gchar *local_jid = jingle_session_get_local_jid(session);
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
 	gchar *sid = jingle_session_get_sid(session);
 
-	xmlnode_set_namespace(jingle, JINGLE);
-	xmlnode_set_attrib(jingle, "action", jingle_get_action_name(action));
+	purple_xmlnode_set_namespace(jingle, JINGLE);
+	purple_xmlnode_set_attrib(jingle, "action", jingle_get_action_name(action));
 
 	if (jingle_session_is_initiator(session)) {
-		xmlnode_set_attrib(jingle, "initiator", local_jid);
-		xmlnode_set_attrib(jingle, "responder", remote_jid);
+		purple_xmlnode_set_attrib(jingle, "initiator", local_jid);
+		purple_xmlnode_set_attrib(jingle, "responder", remote_jid);
 	} else {
-		xmlnode_set_attrib(jingle, "initiator", remote_jid);
-		xmlnode_set_attrib(jingle, "responder", local_jid);
+		purple_xmlnode_set_attrib(jingle, "initiator", remote_jid);
+		purple_xmlnode_set_attrib(jingle, "responder", local_jid);
 	}
 
-	xmlnode_set_attrib(jingle, "sid", sid);
+	purple_xmlnode_set_attrib(jingle, "sid", sid);
 
 	g_free(local_jid);
 	g_free(remote_jid);
@@ -434,15 +431,15 @@ jingle_add_jingle_packet(JingleSession *session,
 }
 
 JabberIq *
-jingle_session_create_ack(JingleSession *session, const xmlnode *jingle)
+jingle_session_create_ack(JingleSession *session, const PurpleXmlNode *jingle)
 {
 	JabberIq *result = jabber_iq_new(
 			jingle_session_get_js(session),
 			JABBER_IQ_RESULT);
-	xmlnode *packet = xmlnode_get_parent(jingle);
-	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
-	xmlnode_set_attrib(result->node, "from", xmlnode_get_attrib(packet, "to"));
-	xmlnode_set_attrib(result->node, "to", xmlnode_get_attrib(packet, "from"));
+	PurpleXmlNode *packet = purple_xmlnode_get_parent(jingle);
+	jabber_iq_set_id(result, purple_xmlnode_get_attrib(packet, "id"));
+	purple_xmlnode_set_attrib(result->node, "from", purple_xmlnode_get_attrib(packet, "to"));
+	purple_xmlnode_set_attrib(result->node, "to", purple_xmlnode_get_attrib(packet, "from"));
 	return result;
 }
 
@@ -454,16 +451,16 @@ jingle_create_iq(JingleSession *session)
 	gchar *from = jingle_session_get_local_jid(session);
 	gchar *to = jingle_session_get_remote_jid(session);
 
-	xmlnode_set_attrib(result->node, "from", from);
-	xmlnode_set_attrib(result->node, "to", to);
+	purple_xmlnode_set_attrib(result->node, "from", from);
+	purple_xmlnode_set_attrib(result->node, "to", to);
 
 	g_free(from);
 	g_free(to);
 	return result;
 }
 
-xmlnode *
-jingle_session_to_xml(JingleSession *session, xmlnode *jingle, JingleActionType action)
+PurpleXmlNode *
+jingle_session_to_xml(JingleSession *session, PurpleXmlNode *jingle, JingleActionType action)
 {
 	if (action != JINGLE_SESSION_INFO && action != JINGLE_SESSION_TERMINATE) {
 		GList *iter;
@@ -485,12 +482,12 @@ JabberIq *
 jingle_session_to_packet(JingleSession *session, JingleActionType action)
 {
 	JabberIq *iq = jingle_create_iq(session);
-	xmlnode *jingle = jingle_add_jingle_packet(session, iq, action);
+	PurpleXmlNode *jingle = jingle_add_jingle_packet(session, iq, action);
 	jingle_session_to_xml(session, jingle, action);
 	return iq;
 }
 
-void jingle_session_handle_action(JingleSession *session, xmlnode *jingle, JingleActionType action)
+void jingle_session_handle_action(JingleSession *session, PurpleXmlNode *jingle, JingleActionType action)
 {
 	GList *iter;
 	if (action == JINGLE_CONTENT_ADD || action == JINGLE_CONTENT_REMOVE)
@@ -563,6 +560,8 @@ jingle_session_add_content(JingleSession *session, JingleContent* content)
 	session->priv->contents =
 			g_list_append(session->priv->contents, content);
 	jingle_content_set_session(content, session);
+
+	g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_CONTENTS]);
 }
 
 void
@@ -575,6 +574,8 @@ jingle_session_remove_content(JingleSession *session, const gchar *name, const g
 		session->priv->contents =
 				g_list_remove(session->priv->contents, content);
 		g_object_unref(content);
+
+		g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_CONTENTS]);
 	}
 }
 
@@ -584,6 +585,8 @@ jingle_session_add_pending_content(JingleSession *session, JingleContent* conten
 	session->priv->pending_contents =
 			g_list_append(session->priv->pending_contents, content);
 	jingle_content_set_session(content, session);
+
+	g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_PENDING_CONTENTS]);
 }
 
 void
@@ -595,6 +598,8 @@ jingle_session_remove_pending_content(JingleSession *session, const gchar *name,
 		session->priv->pending_contents =
 				g_list_remove(session->priv->pending_contents, content);
 		g_object_unref(content);
+
+		g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_PENDING_CONTENTS]);
 	}
 }
 
@@ -614,6 +619,8 @@ void
 jingle_session_accept_session(JingleSession *session)
 {
 	session->priv->state = TRUE;
+
+	g_object_notify_by_pspec(G_OBJECT(session), properties[PROP_STATE]);
 }
 
 JabberIq *
@@ -621,12 +628,12 @@ jingle_session_terminate_packet(JingleSession *session, const gchar *reason)
 {
 	JabberIq *iq = jingle_session_to_packet(session,
 			JINGLE_SESSION_TERMINATE);
-	xmlnode *jingle = xmlnode_get_child(iq->node, "jingle");
+	PurpleXmlNode *jingle = purple_xmlnode_get_child(iq->node, "jingle");
 
 	if (reason != NULL) {
-		xmlnode *reason_node;
-		reason_node = xmlnode_new_child(jingle, "reason");
-		xmlnode_new_child(reason_node, reason);
+		PurpleXmlNode *reason_node;
+		reason_node = purple_xmlnode_new_child(jingle, "reason");
+		purple_xmlnode_new_child(reason_node, reason);
 	}
 	return iq;
 }
@@ -636,17 +643,17 @@ jingle_session_redirect_packet(JingleSession *session, const gchar *sid)
 {
 	JabberIq *iq = jingle_session_terminate_packet(session,
 			"alternative-session");
-	xmlnode *alt_session;
+	PurpleXmlNode *alt_session;
 
 	if (sid == NULL)
 		return iq;
 
-	alt_session = xmlnode_get_child(iq->node,
+	alt_session = purple_xmlnode_get_child(iq->node,
 			"jingle/reason/alternative-session");
 
 	if (alt_session != NULL) {
-		xmlnode *sid_node = xmlnode_new_child(alt_session, "sid");
-		xmlnode_insert_data(sid_node, sid, -1);
+		PurpleXmlNode *sid_node = purple_xmlnode_new_child(alt_session, "sid");
+		purple_xmlnode_insert_data(sid_node, sid, -1);
 	}
 	return iq;
 }

@@ -60,7 +60,7 @@ void yahoo_roomlist_cancel(PurpleRoomlist *list);
 void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category);
 
 /* util */
-void yahoo_chat_add_users(PurpleConvChat *chat, GList *newusers);
-void yahoo_chat_add_user(PurpleConvChat *chat, const char *user, const char *reason);
+void yahoo_chat_add_users(PurpleChatConversation *chat, GList *newusers);
+void yahoo_chat_add_user(PurpleChatConversation *chat, const char *user, const char *reason);
 
 #endif /* _YAHOO_CHAT_H_ */

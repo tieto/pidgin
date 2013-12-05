@@ -70,7 +70,7 @@ JingleActionType jingle_get_action_type(const gchar *action);
 GType jingle_get_type(const gchar *type);
 
 void jingle_parse(JabberStream *js, const char *from, JabberIqType type,
-                  const char *id, xmlnode *child);
+                  const char *id, PurpleXmlNode *child);
 
 void jingle_terminate_sessions(JabberStream *js);
 

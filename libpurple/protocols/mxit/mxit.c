@@ -180,7 +180,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		/* not our conversation */
 		return;
 	}
-	else if ( purple_conversation_get_type( conv ) != PURPLE_CONV_TYPE_IM ) {
+	else if ( !PURPLE_IS_IM_CONVERSATION( conv ) ) {
 		/* wrong type of conversation */
 		return;
 	}
@@ -193,7 +193,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 	purple_debug_info( MXIT_PLUGIN_ID, "Conversation started with '%s'\n", who );
 
 	/* find the buddy object */
-	buddy = purple_find_buddy( session->acc, who );
+	buddy = purple_blist_find_buddy( session->acc, who );
 	if ( !buddy )
 		return;
 
@@ -426,7 +426,7 @@ static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 	char*					statusmsg2;
 
 	/* Handle mood changes */
-	if ( purple_status_type_get_primitive( purple_status_get_type( status ) ) == PURPLE_STATUS_MOOD ) {
+	if ( purple_status_type_get_primitive( purple_status_get_status_type( status ) ) == PURPLE_STATUS_MOOD ) {
 		const char* moodid = purple_status_get_attr_string( status, PURPLE_MOOD_NAME );
 		int mood;
 
@@ -564,8 +564,8 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
-	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
-	buddy = purple_find_buddy( session->acc, who );
+	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
+	buddy = purple_blist_find_buddy( session->acc, who );
 	if ( buddy ) {
 		/* user is in our contact-list, so it's not an invite */
 		contact = purple_buddy_get_protocol_data( buddy );
@@ -633,7 +633,7 @@ static GList* mxit_blist_menu( PurpleBlistNode *node )
 	GList*				m = NULL;
 	PurpleMenuAction*	act;
 
-	if ( !PURPLE_BLIST_NODE_IS_BUDDY( node ) )
+	if ( !PURPLE_IS_BUDDY( node ) )
 		return NULL;
 
 	buddy = (PurpleBuddy *) node;
@@ -669,7 +669,7 @@ static GHashTable *mxit_chat_info_defaults( PurpleConnection *gc, const char *ch
  *  @param name		The username of the contact
  *  @param state	The typing state to be reported.
  */
-static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, PurpleTypingState state )
+static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, PurpleIMTypingState state )
 {
 	PurpleAccount*		account		= purple_connection_get_account( gc );
 	struct MXitSession*	session		= purple_connection_get_protocol_data( gc );
@@ -677,8 +677,8 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 	struct contact*		contact;
 	gchar*				messageId	= NULL;
 
-	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
-	buddy = purple_find_buddy( account, name );
+	/* find the buddy information for this contact (reference: "libpurple/buddylist.h") */
+	buddy = purple_blist_find_buddy( account, name );
 	if ( !buddy ) {
 		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_send_typing: unable to find the buddy '%s'\n", name );
 		return 0;
@@ -695,12 +695,12 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 	messageId = purple_uuid_random();		/* generate a unique message id */
 
 	switch ( state ) {
-		case PURPLE_TYPING :		/* currently typing */
+		case PURPLE_IM_TYPING :		/* currently typing */
 			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_TYPING );
 			break;
 
-		case PURPLE_TYPED :			/* stopped typing */
-		case PURPLE_NOT_TYPING :	/* not typing / erased all text */
+		case PURPLE_IM_TYPED :			/* stopped typing */
+		case PURPLE_IM_NOT_TYPING :	/* not typing / erased all text */
 			mxit_send_msgevent( session, name, messageId, CP_MSGEVENT_STOPPED );
 			break;
 

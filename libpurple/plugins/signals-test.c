@@ -24,12 +24,11 @@
 
 #include <stdio.h>
 
-#include "cipher.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
-#include "ft.h"
+#include "xfer.h"
 #include "signals.h"
 #include "version.h"
 #include "status.h"
@@ -74,7 +73,7 @@ account_alias_changed(PurpleAccount *account, const char *old, gpointer data)
 {
 	purple_debug_misc("signals test", "account-alias-changed (%s, %s, %s)\n",
 					purple_account_get_username(account),
-					old, purple_account_get_alias(account));
+					old, purple_account_get_private_alias(account));
 }
 
 static int
@@ -149,12 +148,12 @@ static void
 blist_node_added_cb(PurpleBlistNode *bnode, void *data)
 {
 	const char *name;
-	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+	if (PURPLE_IS_GROUP(bnode))
 		name = purple_group_get_name(PURPLE_GROUP(bnode));
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+	else if (PURPLE_IS_CONTACT(bnode))
 		/* Close enough */
 		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+	else if (PURPLE_IS_BUDDY(bnode))
 		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
 	else
 		name = "(unknown)";
@@ -167,12 +166,12 @@ static void
 blist_node_removed_cb(PurpleBlistNode *bnode, void *data)
 {
 	const char *name;
-	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
+	if (PURPLE_IS_GROUP(bnode))
 		name = purple_group_get_name(PURPLE_GROUP(bnode));
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
+	else if (PURPLE_IS_CONTACT(bnode))
 		/* Close enough */
 		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+	else if (PURPLE_IS_BUDDY(bnode))
 		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
 	else
 		name = "(unknown)";
@@ -184,62 +183,54 @@ blist_node_removed_cb(PurpleBlistNode *bnode, void *data)
 static void
 blist_node_aliased(PurpleBlistNode *node, const char *old_alias)
 {
-	PurpleContact *p = (PurpleContact *)node;
-	PurpleBuddy *b = (PurpleBuddy *)node;
-	PurpleChat *c = (PurpleChat *)node;
-	PurpleGroup *g = (PurpleGroup *)node;
+	PurpleContact *p = PURPLE_CONTACT(node);
+	PurpleBuddy *b = PURPLE_BUDDY(node);
+	PurpleChat *c = PURPLE_CHAT(node);
+	PurpleGroup *g = PURPLE_GROUP(node);
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Contact: %s, %s)\n",
 		                  purple_contact_get_alias(p), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	} else if (PURPLE_IS_BUDDY(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Buddy: %s, %s)\n",
 		                  purple_buddy_get_name(b), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	} else if (PURPLE_IS_CHAT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Chat: %s, %s)\n",
 		                  purple_chat_get_name(c), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+	} else if (PURPLE_IS_GROUP(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-aliased (Group: %s, %s)\n",
 		                  purple_group_get_name(g), old_alias);
-	} else {
-		purple_debug_misc("signals test",
-		                  "blist-node-aliased (UNKNOWN: %d, %s)\n",
-		                  purple_blist_node_get_type(node), old_alias);
 	}
 }
 
 static void
 blist_node_extended_menu_cb(PurpleBlistNode *node, void *data)
 {
-	PurpleContact *p = (PurpleContact *)node;
-	PurpleBuddy *b = (PurpleBuddy *)node;
-	PurpleChat *c = (PurpleChat *)node;
-	PurpleGroup *g = (PurpleGroup *)node;
+	PurpleContact *p = PURPLE_CONTACT(node);
+	PurpleBuddy *b = PURPLE_BUDDY(node);
+	PurpleChat *c = PURPLE_CHAT(node);
+	PurpleGroup *g = PURPLE_GROUP(node);
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Contact: %s)\n",
 		                  purple_contact_get_alias(p));
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	} else if (PURPLE_IS_BUDDY(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Buddy: %s)\n",
 		                  purple_buddy_get_name(b));
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	} else if (PURPLE_IS_CHAT(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Chat: %s)\n",
 		                  purple_chat_get_name(c));
-	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+	} else if (PURPLE_IS_GROUP(node)) {
 		purple_debug_misc("signals test",
 		                  "blist-node-extended-menu (Group: %s)\n",
 		                  purple_group_get_name(g));
-	} else {
-		purple_debug_misc("signals test",
-		                  "blist-node-extended-menu (UNKNOWN: %d)\n",
-		                  purple_blist_node_get_type(node));
 	}
 }
 
@@ -429,46 +420,48 @@ buddy_typing_stopped_cb(PurpleAccount *account, const char *name, void *data)
 }
 
 static gboolean
-chat_buddy_joining_cb(PurpleConversation *conv, const char *user,
-					  PurpleConvChatBuddyFlags flags, void *data)
+chat_user_joining_cb(PurpleConversation *conv, const char *user,
+					  PurpleChatUserFlags flags, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-joining (%s, %s, %d)\n",
+	purple_debug_misc("signals test", "chat-user-joining (%s, %s, %d)\n",
 					purple_conversation_get_name(conv), user, flags);
 
 	return FALSE;
 }
 
 static void
-chat_buddy_joined_cb(PurpleConversation *conv, const char *user,
-					 PurpleConvChatBuddyFlags flags, gboolean new_arrival, void *data)
+chat_user_joined_cb(PurpleConversation *conv, const char *user,
+					 PurpleChatUserFlags flags, gboolean new_arrival, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-joined (%s, %s, %d, %d)\n",
+	purple_debug_misc("signals test", "chat-user-joined (%s, %s, %d, %d)\n",
 					purple_conversation_get_name(conv), user, flags, new_arrival);
 }
 
 static void
-chat_buddy_flags_cb(PurpleConversation *conv, const char *user,
-					PurpleConvChatBuddyFlags oldflags, PurpleConvChatBuddyFlags newflags, void *data)
+chat_user_flags_cb(PurpleChatUser *cb, PurpleChatUserFlags oldflags,
+					 PurpleChatUserFlags newflags, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-flags (%s, %s, %d, %d)\n",
-					purple_conversation_get_name(conv), user, oldflags, newflags);
+	purple_debug_misc("signals test", "chat-user-flags (%s, %s, %d, %d)\n",
+					purple_conversation_get_name(PURPLE_CONVERSATION(
+					purple_chat_user_get_chat(cb))),
+					purple_chat_user_get_name(cb), oldflags, newflags);
 }
 
 static gboolean
-chat_buddy_leaving_cb(PurpleConversation *conv, const char *user,
+chat_user_leaving_cb(PurpleConversation *conv, const char *user,
 					  const char *reason, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-leaving (%s, %s, %s)\n",
+	purple_debug_misc("signals test", "chat-user-leaving (%s, %s, %s)\n",
 					purple_conversation_get_name(conv), user, reason);
 
 	return FALSE;
 }
 
 static void
-chat_buddy_left_cb(PurpleConversation *conv, const char *user,
+chat_user_left_cb(PurpleConversation *conv, const char *user,
 				   const char *reason, void *data)
 {
-	purple_debug_misc("signals test", "chat-buddy-left (%s, %s, %s)\n",
+	purple_debug_misc("signals test", "chat-user-left (%s, %s, %s)\n",
 					purple_conversation_get_name(conv), user, reason);
 }
 
@@ -523,21 +516,6 @@ chat_topic_changed_cb(PurpleConversation *conv, const char *who,
 					purple_conversation_get_name(conv), topic,
 					(who) ? who : "unknown");
 }
-/**************************************************************************
- * Ciphers signal callbacks
- **************************************************************************/
-static void
-cipher_added_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s added\n",
-					purple_cipher_get_name(cipher));
-}
-
-static void
-cipher_removed_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s removed\n",
-					purple_cipher_get_name(cipher));
-}
-
 /**************************************************************************
  * Core signal callbacks
  **************************************************************************/
@@ -649,7 +627,7 @@ notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint c
  **************************************************************************/
 static gboolean
 jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
-                   const char *from, xmlnode *iq)
+                   const char *from, PurpleXmlNode *iq)
 {
 	purple_debug_misc("signals test", "jabber IQ (type=%s, id=%s, from=%s) %p\n",
 	                  type, id, from ? from : "(null)", iq);
@@ -660,7 +638,7 @@ jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
 
 static gboolean
 jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
-                        const char *from, const char *to, xmlnode *message)
+                        const char *from, const char *to, PurpleXmlNode *message)
 {
 	purple_debug_misc("signals test", "jabber message (type=%s, id=%s, "
 	                  "from=%s to=%s) %p\n",
@@ -673,7 +651,7 @@ jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
 
 static gboolean
 jabber_presence_received(PurpleConnection *pc, const char *type,
-                         const char *from, xmlnode *presence)
+                         const char *from, PurpleXmlNode *presence)
 {
 	purple_debug_misc("signals test", "jabber presence (type=%s, from=%s) %p\n",
 	                  type ? type : "(null)", from ? from : "(null)", presence);
@@ -684,24 +662,24 @@ jabber_presence_received(PurpleConnection *pc, const char *type,
 
 static gboolean
 jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
-                  const char *from, xmlnode *child)
+                  const char *from, PurpleXmlNode *child)
 {
 	purple_debug_misc("signals test", "jabber watched IQ (type=%s, id=%s, from=%s)\n"
 	                  "child %p name=%s, namespace=%s\n",
 	                  type, id, from, child, child->name,
-	                  xmlnode_get_namespace(child));
+	                  purple_xmlnode_get_namespace(child));
 
 	if (g_str_equal(type, "get") || g_str_equal(type, "set")) {
 		/* Send the requisite reply */
-		xmlnode *iq = xmlnode_new("iq");
-		xmlnode_set_attrib(iq, "to", from);
-		xmlnode_set_attrib(iq, "id", id);
-		xmlnode_set_attrib(iq, "type", "result");
+		PurpleXmlNode *iq = purple_xmlnode_new("iq");
+		purple_xmlnode_set_attrib(iq, "to", from);
+		purple_xmlnode_set_attrib(iq, "id", id);
+		purple_xmlnode_set_attrib(iq, "type", "result");
 
 		purple_signal_emit(purple_connection_get_prpl(pc),
 		                   "jabber-sending-xmlnode", pc, &iq);
 		if (iq != NULL)
-			xmlnode_free(iq);
+			purple_xmlnode_free(iq);
 	}
 
 	/* Cookie monster eats IQ stanzas; the prpl shouldn't keep processing */
@@ -719,7 +697,6 @@ plugin_load(PurplePlugin *plugin)
 	void *conn_handle     = purple_connections_get_handle();
 	void *conv_handle     = purple_conversations_get_handle();
 	void *accounts_handle = purple_accounts_get_handle();
-	void *ciphers_handle  = purple_ciphers_get_handle();
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
@@ -808,16 +785,16 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(buddy_typing_cb), NULL);
 	purple_signal_connect(conv_handle, "buddy-typing-stopped",
 						plugin, PURPLE_CALLBACK(buddy_typing_stopped_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-joining",
-						plugin, PURPLE_CALLBACK(chat_buddy_joining_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-joined",
-						plugin, PURPLE_CALLBACK(chat_buddy_joined_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-flags",
-						plugin, PURPLE_CALLBACK(chat_buddy_flags_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-leaving",
-						plugin, PURPLE_CALLBACK(chat_buddy_leaving_cb), NULL);
-	purple_signal_connect(conv_handle, "chat-buddy-left",
-						plugin, PURPLE_CALLBACK(chat_buddy_left_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-joining",
+						plugin, PURPLE_CALLBACK(chat_user_joining_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-joined",
+						plugin, PURPLE_CALLBACK(chat_user_joined_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-flags",
+						plugin, PURPLE_CALLBACK(chat_user_flags_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-leaving",
+						plugin, PURPLE_CALLBACK(chat_user_leaving_cb), NULL);
+	purple_signal_connect(conv_handle, "chat-user-left",
+						plugin, PURPLE_CALLBACK(chat_user_left_cb), NULL);
 	purple_signal_connect(conv_handle, "chat-inviting-user",
 						plugin, PURPLE_CALLBACK(chat_inviting_user_cb), NULL);
 	purple_signal_connect(conv_handle, "chat-invited-user",
@@ -830,12 +807,6 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(chat_left_cb), NULL);
 	purple_signal_connect(conv_handle, "chat-topic-changed",
 						plugin, PURPLE_CALLBACK(chat_topic_changed_cb), NULL);
-
-	/* Ciphers signals */
-	purple_signal_connect(ciphers_handle, "cipher-added",
-						plugin, PURPLE_CALLBACK(cipher_added_cb), NULL);
-	purple_signal_connect(ciphers_handle, "cipher-removed",
-						plugin, PURPLE_CALLBACK(cipher_removed_cb), NULL);
 
 	/* Core signals */
 	purple_signal_connect(core_handle, "quitting",

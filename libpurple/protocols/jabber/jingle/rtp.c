@@ -22,7 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "config.h"
+#include "internal.h"
+#include "glibcompat.h"
 
 #ifdef USE_VV
 
@@ -52,13 +53,12 @@ static void jingle_rtp_init (JingleRtp *rtp);
 static void jingle_rtp_finalize (GObject *object);
 static void jingle_rtp_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void jingle_rtp_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
-static JingleContent *jingle_rtp_parse_internal(xmlnode *rtp);
-static xmlnode *jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionType action);
-static void jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *jingle, JingleActionType action);
+static JingleContent *jingle_rtp_parse_internal(PurpleXmlNode *rtp);
+static PurpleXmlNode *jingle_rtp_to_xml_internal(JingleContent *rtp, PurpleXmlNode *content, JingleActionType action);
+static void jingle_rtp_handle_action_internal(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action);
 
 static PurpleMedia *jingle_rtp_get_media(JingleSession *session);
 
-static JingleContentClass *parent_class = NULL;
 #if 0
 enum {
 	LAST_SIGNAL
@@ -70,7 +70,11 @@ enum {
 	PROP_0,
 	PROP_MEDIA_TYPE,
 	PROP_SSRC,
+	PROP_LAST
 };
+
+static JingleContentClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 GType
 jingle_rtp_get_type()
@@ -109,20 +113,21 @@ jingle_rtp_class_init (JingleRtpClass *klass)
 	klass->parent_class.description_type = JINGLE_APP_RTP;
 	klass->parent_class.handle_action = jingle_rtp_handle_action_internal;
 
-	g_object_class_install_property(gobject_class, PROP_MEDIA_TYPE,
-			g_param_spec_string("media-type",
+	g_type_class_add_private(klass, sizeof(JingleRtpPrivate));
+
+	properties[PROP_MEDIA_TYPE] = g_param_spec_string("media-type",
 			"Media Type",
 			"The media type (\"audio\" or \"video\") for this rtp session.",
 			NULL,
-			G_PARAM_READWRITE));
-	g_object_class_install_property(gobject_class, PROP_SSRC,
-			g_param_spec_string("ssrc",
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+	properties[PROP_SSRC] = g_param_spec_string("ssrc",
 			"ssrc",
 			"The ssrc for this rtp session.",
 			NULL,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(JingleRtpPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void
@@ -320,11 +325,11 @@ jingle_rtp_new_candidate_cb(PurpleMedia *media, gchar *sid, gchar *name, PurpleM
 static void
 jingle_rtp_initiate_ack_cb(JabberStream *js, const char *from,
                            JabberIqType type, const char *id,
-                           xmlnode *packet, gpointer data)
+                           PurpleXmlNode *packet, gpointer data)
 {
 	JingleSession *session = data;
 
-	if (type == JABBER_IQ_ERROR || xmlnode_get_child(packet, "error")) {
+	if (type == JABBER_IQ_ERROR || purple_xmlnode_get_child(packet, "error")) {
 		purple_media_end(jingle_rtp_get_media(session), NULL, NULL);
 		g_object_unref(session);
 		return;
@@ -546,13 +551,13 @@ jingle_rtp_init_media(JingleContent *content)
 }
 
 static GList *
-jingle_rtp_parse_codecs(xmlnode *description)
+jingle_rtp_parse_codecs(PurpleXmlNode *description)
 {
 	GList *codecs = NULL;
-	xmlnode *codec_element = NULL;
+	PurpleXmlNode *codec_element = NULL;
 	const char *encoding_name,*id, *clock_rate;
 	PurpleMediaCodec *codec;
-	const gchar *media = xmlnode_get_attrib(description, "media");
+	const gchar *media = purple_xmlnode_get_attrib(description, "media");
 	PurpleMediaSessionType type;
 
 	if (media == NULL) {
@@ -570,25 +575,25 @@ jingle_rtp_parse_codecs(xmlnode *description)
 		return NULL;
 	}
 
-	for (codec_element = xmlnode_get_child(description, "payload-type") ;
+	for (codec_element = purple_xmlnode_get_child(description, "payload-type") ;
 		 codec_element ;
-		 codec_element = xmlnode_get_next_twin(codec_element)) {
-		xmlnode *param;
+		 codec_element = purple_xmlnode_get_next_twin(codec_element)) {
+		PurpleXmlNode *param;
 		gchar *codec_str;
-		encoding_name = xmlnode_get_attrib(codec_element, "name");
+		encoding_name = purple_xmlnode_get_attrib(codec_element, "name");
 
-		id = xmlnode_get_attrib(codec_element, "id");
-		clock_rate = xmlnode_get_attrib(codec_element, "clockrate");
+		id = purple_xmlnode_get_attrib(codec_element, "id");
+		clock_rate = purple_xmlnode_get_attrib(codec_element, "clockrate");
 
 		codec = purple_media_codec_new(atoi(id), encoding_name,
 				     type,
 				     clock_rate ? atoi(clock_rate) : 0);
 
-		for (param = xmlnode_get_child(codec_element, "parameter");
-				param; param = xmlnode_get_next_twin(param)) {
+		for (param = purple_xmlnode_get_child(codec_element, "parameter");
+				param; param = purple_xmlnode_get_next_twin(param)) {
 			purple_media_codec_add_optional_parameter(codec,
-					xmlnode_get_attrib(param, "name"),
-					xmlnode_get_attrib(param, "value"));
+					purple_xmlnode_get_attrib(param, "name"),
+					purple_xmlnode_get_attrib(param, "value"));
 		}
 
 		codec_str = purple_media_codec_to_string(codec);
@@ -601,12 +606,12 @@ jingle_rtp_parse_codecs(xmlnode *description)
 }
 
 static JingleContent *
-jingle_rtp_parse_internal(xmlnode *rtp)
+jingle_rtp_parse_internal(PurpleXmlNode *rtp)
 {
 	JingleContent *content = parent_class->parse(rtp);
-	xmlnode *description = xmlnode_get_child(rtp, "description");
-	const gchar *media_type = xmlnode_get_attrib(description, "media");
-	const gchar *ssrc = xmlnode_get_attrib(description, "ssrc");
+	PurpleXmlNode *description = purple_xmlnode_get_child(rtp, "description");
+	const gchar *media_type = purple_xmlnode_get_attrib(description, "media");
+	const gchar *ssrc = purple_xmlnode_get_attrib(description, "ssrc");
 	purple_debug_info("jingle-rtp", "rtp parse\n");
 	g_object_set(content, "media-type", media_type, NULL);
 	if (ssrc != NULL)
@@ -615,14 +620,14 @@ jingle_rtp_parse_internal(xmlnode *rtp)
 }
 
 static void
-jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
+jingle_rtp_add_payloads(PurpleXmlNode *description, GList *codecs)
 {
 	for (; codecs ; codecs = codecs->next) {
 		PurpleMediaCodec *codec = (PurpleMediaCodec*)codecs->data;
 		GList *iter = purple_media_codec_get_optional_parameters(codec);
 		gchar *id, *name, *clockrate, *channels;
 		gchar *codec_str;
-		xmlnode *payload = xmlnode_new_child(description, "payload-type");
+		PurpleXmlNode *payload = purple_xmlnode_new_child(description, "payload-type");
 
 		id = g_strdup_printf("%d",
 				purple_media_codec_get_id(codec));
@@ -632,10 +637,10 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 		channels = g_strdup_printf("%d",
 				purple_media_codec_get_channels(codec));
 
-		xmlnode_set_attrib(payload, "name", name);
-		xmlnode_set_attrib(payload, "id", id);
-		xmlnode_set_attrib(payload, "clockrate", clockrate);
-		xmlnode_set_attrib(payload, "channels", channels);
+		purple_xmlnode_set_attrib(payload, "name", name);
+		purple_xmlnode_set_attrib(payload, "id", id);
+		purple_xmlnode_set_attrib(payload, "clockrate", clockrate);
+		purple_xmlnode_set_attrib(payload, "channels", channels);
 
 		g_free(channels);
 		g_free(clockrate);
@@ -644,9 +649,9 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 
 		for (; iter; iter = g_list_next(iter)) {
 			PurpleKeyValuePair *mparam = iter->data;
-			xmlnode *param = xmlnode_new_child(payload, "parameter");
-			xmlnode_set_attrib(param, "name", mparam->key);
-			xmlnode_set_attrib(param, "value", mparam->value);
+			PurpleXmlNode *param = purple_xmlnode_new_child(payload, "parameter");
+			purple_xmlnode_set_attrib(param, "name", mparam->key);
+			purple_xmlnode_set_attrib(param, "value", mparam->value);
 		}
 
 		codec_str = purple_media_codec_to_string(codec);
@@ -655,11 +660,11 @@ jingle_rtp_add_payloads(xmlnode *description, GList *codecs)
 	}
 }
 
-static xmlnode *
-jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionType action)
+static PurpleXmlNode *
+jingle_rtp_to_xml_internal(JingleContent *rtp, PurpleXmlNode *content, JingleActionType action)
 {
-	xmlnode *node = parent_class->to_xml(rtp, content, action);
-	xmlnode *description = xmlnode_get_child(node, "description");
+	PurpleXmlNode *node = parent_class->to_xml(rtp, content, action);
+	PurpleXmlNode *description = purple_xmlnode_get_child(node, "description");
 	if (description != NULL) {
 		JingleSession *session = jingle_content_get_session(rtp);
 		PurpleMedia *media = jingle_rtp_get_media(session);
@@ -668,10 +673,10 @@ jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionTyp
 		gchar *name = jingle_content_get_name(rtp);
 		GList *codecs = purple_media_get_codecs(media, name);
 
-		xmlnode_set_attrib(description, "media", media_type);
+		purple_xmlnode_set_attrib(description, "media", media_type);
 
 		if (ssrc != NULL)
-			xmlnode_set_attrib(description, "ssrc", ssrc);
+			purple_xmlnode_set_attrib(description, "ssrc", ssrc);
 
 		g_free(media_type);
 		g_free(name);
@@ -684,14 +689,14 @@ jingle_rtp_to_xml_internal(JingleContent *rtp, xmlnode *content, JingleActionTyp
 }
 
 static void
-jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
+jingle_rtp_handle_action_internal(JingleContent *content, PurpleXmlNode *xmlcontent, JingleActionType action)
 {
 	switch (action) {
 		case JINGLE_SESSION_ACCEPT:
 		case JINGLE_SESSION_INITIATE: {
 			JingleSession *session;
 			JingleTransport *transport;
-			xmlnode *description;
+			PurpleXmlNode *description;
 			GList *candidates;
 			GList *codecs;
 			gchar *name;
@@ -710,8 +715,8 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			}
 
 			transport = jingle_transport_parse(
-					xmlnode_get_child(xmlcontent, "transport"));
-			description = xmlnode_get_child(xmlcontent, "description");
+					purple_xmlnode_get_child(xmlcontent, "transport"));
+			description = purple_xmlnode_get_child(xmlcontent, "description");
 			candidates = jingle_transport_get_remote_candidates(transport);
 			codecs = jingle_rtp_parse_codecs(description);
 			name = jingle_content_get_name(content);
@@ -747,7 +752,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 		case JINGLE_TRANSPORT_INFO: {
 			JingleSession *session = jingle_content_get_session(content);
 			JingleTransport *transport = jingle_transport_parse(
-					xmlnode_get_child(xmlcontent, "transport"));
+					purple_xmlnode_get_child(xmlcontent, "transport"));
 			GList *candidates = jingle_transport_get_remote_candidates(transport);
 			gchar *name = jingle_content_get_name(content);
 			gchar *remote_jid =
@@ -765,7 +770,7 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 		case JINGLE_DESCRIPTION_INFO: {
 			JingleSession *session =
 					jingle_content_get_session(content);
-			xmlnode *description = xmlnode_get_child(
+			PurpleXmlNode *description = purple_xmlnode_get_child(
 					xmlcontent, "description");
 			GList *codecs, *iter, *iter2, *remote_codecs =
 					jingle_rtp_parse_codecs(description);
@@ -882,6 +887,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_session_add_content(session, content);
 		JINGLE_RTP(content)->priv->media_type = g_strdup("audio");
 		jingle_rtp_init_media(content);
+		g_object_notify_by_pspec(G_OBJECT(content), properties[PROP_MEDIA_TYPE]);
 	}
 	if (type & PURPLE_MEDIA_VIDEO) {
 		transport = jingle_transport_create(transport_type);
@@ -890,6 +896,7 @@ jingle_rtp_initiate_media(JabberStream *js, const gchar *who,
 		jingle_session_add_content(session, content);
 		JINGLE_RTP(content)->priv->media_type = g_strdup("video");
 		jingle_rtp_init_media(content);
+		g_object_notify_by_pspec(G_OBJECT(content), properties[PROP_MEDIA_TYPE]);
 	}
 
 	g_free(me);

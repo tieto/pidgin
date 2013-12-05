@@ -71,9 +71,9 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 #include <unistd.h>
 #endif
 
-#include "blist.h"
-#include "conversation.h"
-#include "ft.h"
+#include "buddylist.h"
+#include "conversations.h"
+#include "xfer.h"
 #include "imgstore.h"
 #include "media.h"
 #include "notify.h"
@@ -332,13 +332,13 @@ struct _PurplePluginProtocolInfo
 	void (*set_info)(PurpleConnection *, const char *info);
 
 	/**
-	 * @return If this protocol requires the PURPLE_TYPING message to
+	 * @return If this protocol requires the PURPLE_IM_TYPING message to
 	 *         be sent repeatedly to signify that the user is still
 	 *         typing, then the PRPL should return the number of
 	 *         seconds to wait before sending a subsequent notification.
 	 *         Otherwise the PRPL should return 0.
 	 */
-	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleTypingState state);
+	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleIMTypingState state);
 
 	/**
 	 * Should arrange for purple_notify_userinfo() to be called with

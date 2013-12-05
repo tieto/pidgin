@@ -38,7 +38,7 @@ typedef void (JabberIBBErrorCallback)(JabberIBBSession *);
 typedef void (JabberIBBSentCallback)(JabberIBBSession *);
 
 typedef gboolean (JabberIBBOpenHandler)(JabberStream *js, const char *from,
-                                        const char *id, xmlnode *open);
+                                        const char *id, PurpleXmlNode *open);
 
 typedef enum {
 	JABBER_IBB_SESSION_NOT_OPENED,
@@ -77,7 +77,7 @@ struct _JabberIBBSession {
 JabberIBBSession *jabber_ibb_session_create(JabberStream *js, const gchar *sid,
 	const gchar *who, gpointer user_data);
 JabberIBBSession *jabber_ibb_session_create_from_xmlnode(JabberStream *js,
-	const gchar *from, const gchar *id, xmlnode *open, gpointer user_data);
+	const gchar *from, const gchar *id, PurpleXmlNode *open, gpointer user_data);
 
 void jabber_ibb_session_destroy(JabberIBBSession *sess);
 
@@ -118,7 +118,7 @@ gpointer jabber_ibb_session_get_user_data(JabberIBBSession *sess);
 
 /* handle incoming packet */
 void jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
-                      const char *id, xmlnode *child);
+                      const char *id, PurpleXmlNode *child);
 
 /* add a handler for open session */
 void jabber_ibb_register_open_handler(JabberIBBOpenHandler *cb);

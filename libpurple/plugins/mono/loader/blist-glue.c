@@ -1,5 +1,5 @@
 #include <string.h>
-#include "blist.h"
+#include "buddylist.h"
 #include "mono-helper.h"
 #include "mono-glue.h"
 
@@ -14,7 +14,7 @@ MonoObject* purple_blist_build_buddy_object(void* data)
 {
 	MonoObject *obj = NULL;
 
-	PurpleBuddy *buddy = (PurpleBuddy*)data;
+	PurpleBuddy *buddy = PURPLE_BUDDY(data);
 
 	obj = ml_create_api_object("Buddy");
 	g_return_val_if_fail(obj != NULL, NULL);

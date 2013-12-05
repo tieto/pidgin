@@ -24,7 +24,7 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "core.h"
 #include "cmds.h"
 #include "connection.h"
@@ -36,7 +36,6 @@
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
-#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "request.h"
@@ -113,7 +112,7 @@ static void jabber_stream_init(JabberStream *js)
 static void
 jabber_session_initialized_cb(JabberStream *js, const char *from,
                               JabberIqType type, const char *id,
-                              xmlnode *packet, gpointer data)
+                              PurpleXmlNode *packet, gpointer data)
 {
 	if (type == JABBER_IQ_RESULT) {
 		jabber_disco_items_server(js);
@@ -129,27 +128,27 @@ jabber_session_initialized_cb(JabberStream *js, const char *from,
 static void jabber_session_init(JabberStream *js)
 {
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
-	xmlnode *session;
+	PurpleXmlNode *session;
 
 	jabber_iq_set_callback(iq, jabber_session_initialized_cb, NULL);
 
-	session = xmlnode_new_child(iq->node, "session");
-	xmlnode_set_namespace(session, NS_XMPP_SESSION);
+	session = purple_xmlnode_new_child(iq->node, "session");
+	purple_xmlnode_set_namespace(session, NS_XMPP_SESSION);
 
 	jabber_iq_send(iq);
 }
 
 static void jabber_bind_result_cb(JabberStream *js, const char *from,
                                   JabberIqType type, const char *id,
-                                  xmlnode *packet, gpointer data)
+                                  PurpleXmlNode *packet, gpointer data)
 {
-	xmlnode *bind;
+	PurpleXmlNode *bind;
 
 	if (type == JABBER_IQ_RESULT &&
-			(bind = xmlnode_get_child_with_namespace(packet, "bind", NS_XMPP_BIND))) {
-		xmlnode *jid;
+			(bind = purple_xmlnode_get_child_with_namespace(packet, "bind", NS_XMPP_BIND))) {
+		PurpleXmlNode *jid;
 		char *full_jid;
-		if((jid = xmlnode_get_child(bind, "jid")) && (full_jid = xmlnode_get_data(jid))) {
+		if((jid = purple_xmlnode_get_child(bind, "jid")) && (full_jid = purple_xmlnode_get_data(jid))) {
 			jabber_id_free(js->user);
 
 			js->user = jabber_id_new(full_jid);
@@ -214,10 +213,10 @@ static char *jabber_prep_resource(char *input) {
 }
 
 static gboolean
-jabber_process_starttls(JabberStream *js, xmlnode *packet)
+jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 {
 	PurpleAccount *account;
-	xmlnode *starttls;
+	PurpleXmlNode *starttls;
 
 	account = purple_connection_get_account(js->gc);
 
@@ -246,8 +245,8 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 	}
 #endif
 
-	starttls = xmlnode_get_child(packet, "starttls");
-	if(xmlnode_get_child(starttls, "required")) {
+	starttls = purple_xmlnode_get_child(packet, "starttls");
+	if(purple_xmlnode_get_child(starttls, "required")) {
 		purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
@@ -264,13 +263,13 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 	return FALSE;
 }
 
-void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
+void jabber_stream_features_parse(JabberStream *js, PurpleXmlNode *packet)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *connection_security =
 		purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
 
-	if (xmlnode_get_child(packet, "starttls")) {
+	if (purple_xmlnode_get_child(packet, "starttls")) {
 		if (jabber_process_starttls(js, packet)) {
 			jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 			return;
@@ -284,29 +283,29 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 
 	if(js->registration) {
 		jabber_register_start(js);
-	} else if(xmlnode_get_child(packet, "mechanisms")) {
+	} else if(purple_xmlnode_get_child(packet, "mechanisms")) {
 		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 		jabber_auth_start(js, packet);
-	} else if(xmlnode_get_child(packet, "bind")) {
-		xmlnode *bind, *resource;
+	} else if(purple_xmlnode_get_child(packet, "bind")) {
+		PurpleXmlNode *bind, *resource;
 		char *requested_resource;
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
-		bind = xmlnode_new_child(iq->node, "bind");
-		xmlnode_set_namespace(bind, NS_XMPP_BIND);
+		bind = purple_xmlnode_new_child(iq->node, "bind");
+		purple_xmlnode_set_namespace(bind, NS_XMPP_BIND);
 		requested_resource = jabber_prep_resource(js->user->resource);
 
 		if (requested_resource != NULL) {
-			resource = xmlnode_new_child(bind, "resource");
-			xmlnode_insert_data(resource, requested_resource, -1);
+			resource = purple_xmlnode_new_child(bind, "resource");
+			purple_xmlnode_insert_data(resource, requested_resource, -1);
 			g_free(requested_resource);
 		}
 
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
 
 		jabber_iq_send(iq);
-	} else if (xmlnode_get_child_with_namespace(packet, "ver", NS_ROSTER_VERSIONING)) {
+	} else if (purple_xmlnode_get_child_with_namespace(packet, "ver", NS_ROSTER_VERSIONING)) {
 		js->server_caps |= JABBER_CAP_ROSTER_VERSIONING;
-	} else /* if(xmlnode_get_child_with_namespace(packet, "auth")) */ {
+	} else /* if(purple_xmlnode_get_child_with_namespace(packet, "auth")) */ {
 		/* If we get an empty stream:features packet, or we explicitly get
 		 * an auth feature with namespace http://jabber.org/features/iq-auth
 		 * we should revert back to iq:auth authentication, even though we're
@@ -316,7 +315,7 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 	}
 }
 
-static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
+static void jabber_stream_handle_error(JabberStream *js, PurpleXmlNode *packet)
 {
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 	char *msg = jabber_parse_error(js, packet, &reason);
@@ -328,7 +327,7 @@ static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 
 static void tls_init(JabberStream *js);
 
-void jabber_process_packet(JabberStream *js, xmlnode **packet)
+void jabber_process_packet(JabberStream *js, PurpleXmlNode **packet)
 {
 	const char *name;
 	const char *xmlns;
@@ -340,7 +339,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 		return;
 
 	name = (*packet)->name;
-	xmlns = xmlnode_get_namespace(*packet);
+	xmlns = purple_xmlnode_get_namespace(*packet);
 
 	if(!strcmp((*packet)->name, "iq")) {
 		jabber_iq_parse(js, *packet);
@@ -392,8 +391,11 @@ static int jabber_do_send(JabberStream *js, const char *data, int len)
 static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	JabberStream *js = data;
+	const gchar *output = NULL;
 	int ret, writelen;
-	writelen = purple_circ_buffer_get_max_read(js->write_buffer);
+
+	writelen = purple_circular_buffer_get_max_read(js->write_buffer);
+	output = purple_circular_buffer_get_output(js->write_buffer);
 
 	if (writelen == 0) {
 		purple_input_remove(js->writeh);
@@ -401,7 +403,7 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 		return;
 	}
 
-	ret = jabber_do_send(js, js->write_buffer->outptr, writelen);
+	ret = jabber_do_send(js, output, writelen);
 
 	if (ret < 0 && errno == EAGAIN)
 		return;
@@ -414,7 +416,7 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 		return;
 	}
 
-	purple_circ_buffer_mark_read(js->write_buffer, ret);
+	purple_circular_buffer_mark_read(js->write_buffer, ret);
 }
 
 static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
@@ -457,7 +459,7 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 			js->writeh = purple_input_add(
 				js->gsc ? js->gsc->fd : js->fd,
 				PURPLE_INPUT_WRITE, jabber_send_cb, js);
-		purple_circ_buffer_append(js->write_buffer,
+		purple_circular_buffer_append(js->write_buffer,
 			data + ret, len - ret);
 	}
 
@@ -583,7 +585,7 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 	return (len < 0 ? (int)strlen(buf) : len);
 }
 
-void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
+void jabber_send_signal_cb(PurpleConnection *pc, PurpleXmlNode **packet,
                            gpointer unused)
 {
 	JabberStream *js;
@@ -604,13 +606,13 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 		if (g_str_equal((*packet)->name, "message") ||
 				g_str_equal((*packet)->name, "iq") ||
 				g_str_equal((*packet)->name, "presence"))
-			xmlnode_set_namespace(*packet, NS_XMPP_CLIENT);
-	txt = xmlnode_to_str(*packet, &len);
+			purple_xmlnode_set_namespace(*packet, NS_XMPP_CLIENT);
+	txt = purple_xmlnode_to_str(*packet, &len);
 	jabber_send_raw(js, txt, len);
 	g_free(txt);
 }
 
-void jabber_send(JabberStream *js, xmlnode *packet)
+void jabber_send(JabberStream *js, PurpleXmlNode *packet)
 {
 	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-xmlnode", js->gc, &packet);
 }
@@ -993,7 +995,7 @@ jabber_stream_new(PurpleAccount *account)
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_chat_free);
 	js->next_id = g_random_int();
-	js->write_buffer = purple_circ_buffer_new(512);
+	js->write_buffer = purple_circular_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = 0;
 	js->max_inactivity = DEFAULT_INACTIVITY_TIME;
@@ -1083,7 +1085,7 @@ jabber_login(PurpleAccount *account)
 	JabberStream *js;
 	PurpleStoredImage *image;
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY);
 	js = jabber_stream_new(account);
 	if (js == NULL)
 		return;
@@ -1119,19 +1121,21 @@ conn_close_cb(gpointer data)
 
 	purple_account_disconnect(account);
 
+	js->conn_close_timeout = 0;
+
 	return FALSE;
 }
 
 static void
 jabber_connection_schedule_close(JabberStream *js)
 {
-	purple_timeout_add(0, conn_close_cb, js);
+	js->conn_close_timeout = purple_timeout_add(0, conn_close_cb, js);
 }
 
 static void
 jabber_registration_result_cb(JabberStream *js, const char *from,
                               JabberIqType type, const char *id,
-                              xmlnode *packet, gpointer data)
+                              PurpleXmlNode *packet, gpointer data)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	char *buf;
@@ -1171,7 +1175,7 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 static void
 jabber_unregistration_result_cb(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
-                                xmlnode *packet, gpointer data)
+                                PurpleXmlNode *packet, gpointer data)
 {
 	char *buf;
 	char *to = data;
@@ -1210,14 +1214,14 @@ static void
 jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 {
 	GList *groups, *flds;
-	xmlnode *query, *y;
+	PurpleXmlNode *query, *y;
 	JabberIq *iq;
 	char *username;
 
 	iq = jabber_iq_new_query(cbdata->js, JABBER_IQ_SET, "jabber:iq:register");
-	query = xmlnode_get_child(iq->node, "query");
+	query = purple_xmlnode_get_child(iq->node, "query");
 	if (cbdata->who)
-		xmlnode_set_attrib(iq->node, "to", cbdata->who);
+		purple_xmlnode_set_attrib(iq->node, "to", cbdata->who);
 
 	for(groups = purple_request_fields_get_groups(fields); groups;
 			groups = groups->next) {
@@ -1229,13 +1233,13 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 				gboolean value = purple_request_field_bool_get_value(field);
 				if(value) {
 					/* unregister from service. this doesn't include any of the fields, so remove them from the stanza by recreating it
-					   (there's no "remove child" function for xmlnode) */
+					   (there's no "remove child" function for PurpleXmlNode) */
 					jabber_iq_free(iq);
 					iq = jabber_iq_new_query(cbdata->js, JABBER_IQ_SET, "jabber:iq:register");
-					query = xmlnode_get_child(iq->node, "query");
+					query = purple_xmlnode_get_child(iq->node, "query");
 					if (cbdata->who)
-						xmlnode_set_attrib(iq->node,"to",cbdata->who);
-					xmlnode_new_child(query, "remove");
+						purple_xmlnode_set_attrib(iq->node,"to",cbdata->who);
+					purple_xmlnode_new_child(query, "remove");
 
 					jabber_iq_set_callback(iq, jabber_unregistration_result_cb, cbdata->who);
 
@@ -1256,8 +1260,8 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 
 				if (!ids[i])
 					continue;
-				y = xmlnode_new_child(query, ids[i]);
-				xmlnode_insert_data(y, value, -1);
+				y = purple_xmlnode_new_child(query, ids[i]);
+				purple_xmlnode_insert_data(y, value, -1);
 				if(cbdata->js->registration && !strcmp(id, "username")) {
 					g_free(cbdata->js->user->node);
 					cbdata->js->user->node = g_strdup(value);
@@ -1294,18 +1298,18 @@ jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fie
 	g_free(cbdata);
 }
 
-static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointer data)
+static void jabber_register_x_data_cb(JabberStream *js, PurpleXmlNode *result, gpointer data)
 {
-	xmlnode *query;
+	PurpleXmlNode *query;
 	JabberIq *iq;
 	char *to = data;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
-	query = xmlnode_get_child(iq->node, "query");
+	query = purple_xmlnode_get_child(iq->node, "query");
 	if (to)
-		xmlnode_set_attrib(iq->node,"to",to);
+		purple_xmlnode_set_attrib(iq->node,"to",to);
 
-	xmlnode_insert_child(query, result);
+	purple_xmlnode_insert_child(query, result);
 
 	jabber_iq_set_callback(iq, jabber_registration_result_cb, to);
 	jabber_iq_send(iq);
@@ -1330,13 +1334,13 @@ static const struct {
 };
 
 void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type,
-                           const char *id, xmlnode *query)
+                           const char *id, PurpleXmlNode *query)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	xmlnode *x, *y, *node;
+	PurpleXmlNode *x, *y, *node;
 	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
@@ -1347,10 +1351,10 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 
 	if(js->registration) {
 		/* get rid of the login thingy */
-		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
+		purple_connection_set_state(js->gc, PURPLE_CONNECTION_CONNECTED);
 	}
 
-	if(xmlnode_get_child(query, "registered")) {
+	if(purple_xmlnode_get_child(query, "registered")) {
 		registered = TRUE;
 
 		if(js->registration) {
@@ -1363,23 +1367,24 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 		}
 	}
 
-	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
+	if((x = purple_xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
 		jabber_x_data_request(js, x, jabber_register_x_data_cb, g_strdup(from));
 		return;
 
-	} else if((x = xmlnode_get_child_with_namespace(query, "x", NS_OOB_X_DATA))) {
-		xmlnode *url;
+	} else if((x = purple_xmlnode_get_child_with_namespace(query, "x", NS_OOB_X_DATA))) {
+		PurpleXmlNode *url;
 
-		if((url = xmlnode_get_child(x, "url"))) {
+		if((url = purple_xmlnode_get_child(x, "url"))) {
 			char *href;
-			if((href = xmlnode_get_data(url))) {
+			if((href = purple_xmlnode_get_data(url))) {
 				purple_notify_uri(NULL, href);
 				g_free(href);
 
 				if(js->registration) {
-					js->gc->wants_to_die = TRUE;
 					/* succeeded, but we have no login info */
 					purple_account_register_completed(account, TRUE);
+					purple_connection_error(js->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+							_("Registration completed successfully. Please reconnect to continue."));
 					jabber_connection_schedule_close(js);
 				}
 				return;
@@ -1393,8 +1398,8 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	if((node = xmlnode_get_child(query, "username"))) {
-		char *data = xmlnode_get_data(node);
+	if((node = purple_xmlnode_get_child(query, "username"))) {
+		char *data = purple_xmlnode_get_data(node);
 		if(js->registration)
 			field = purple_request_field_string_new("username", _("Username"), data ? data : js->user->node, FALSE);
 		else
@@ -1403,12 +1408,12 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 		purple_request_field_group_add_field(group, field);
 		g_free(data);
 	}
-	if((node = xmlnode_get_child(query, "password"))) {
+	if((node = purple_xmlnode_get_child(query, "password"))) {
 		if(js->registration)
 			field = purple_request_field_string_new("password", _("Password"),
 										purple_connection_get_password(js->gc), FALSE);
 		else {
-			char *data = xmlnode_get_data(node);
+			char *data = purple_xmlnode_get_data(node);
 			field = purple_request_field_string_new("password", _("Password"), data, FALSE);
 			g_free(data);
 		}
@@ -1417,12 +1422,12 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 		purple_request_field_group_add_field(group, field);
 	}
 
-	if((node = xmlnode_get_child(query, "name"))) {
+	if((node = purple_xmlnode_get_child(query, "name"))) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
-													purple_account_get_alias(purple_connection_get_account(js->gc)), FALSE);
+													purple_account_get_private_alias(purple_connection_get_account(js->gc)), FALSE);
 		else {
-			char *data = xmlnode_get_data(node);
+			char *data = purple_xmlnode_get_data(node);
 			field = purple_request_field_string_new("name", _("Name"), data, FALSE);
 			g_free(data);
 		}
@@ -1430,8 +1435,8 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 	}
 
 	for (i = 0; registration_fields[i].name != NULL; ++i) {
-		if ((node = xmlnode_get_child(query, registration_fields[i].name))) {
-			char *data = xmlnode_get_data(node);
+		if ((node = purple_xmlnode_get_child(query, registration_fields[i].name))) {
+			char *data = purple_xmlnode_get_data(node);
 			field = purple_request_field_string_new(registration_fields[i].name,
 			                                        _(registration_fields[i].label),
 			                                        data, FALSE);
@@ -1445,8 +1450,8 @@ void jabber_register_parse(JabberStream *js, const char *from, JabberIqType type
 		purple_request_field_group_add_field(group, field);
 	}
 
-	if((y = xmlnode_get_child(query, "instructions")))
-		instructions = xmlnode_get_data(y);
+	if((y = purple_xmlnode_get_child(query, "instructions")))
+		instructions = purple_xmlnode_get_data(y);
 	else if(registered)
 		instructions = g_strdup(_("Please fill out the information below "
 					"to change your account registration."));
@@ -1493,7 +1498,7 @@ void jabber_register_gateway(JabberStream *js, const char *gateway) {
 	JabberIq *iq;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:register");
-	xmlnode_set_attrib(iq->node, "to", gateway);
+	purple_xmlnode_set_attrib(iq->node, "to", gateway);
 	jabber_iq_send(iq);
 }
 
@@ -1512,7 +1517,7 @@ void jabber_register_account(PurpleAccount *account)
 static void
 jabber_unregister_account_iq_cb(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
-                                xmlnode *packet, gpointer data)
+                                PurpleXmlNode *packet, gpointer data)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 
@@ -1536,16 +1541,16 @@ jabber_unregister_account_iq_cb(JabberStream *js, const char *from,
 
 static void jabber_unregister_account_cb(JabberStream *js) {
 	JabberIq *iq;
-	xmlnode *query;
+	PurpleXmlNode *query;
 
 	g_return_if_fail(js->unregistration);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
 
-	query = xmlnode_get_child_with_namespace(iq->node, "query", "jabber:iq:register");
+	query = purple_xmlnode_get_child_with_namespace(iq->node, "query", "jabber:iq:register");
 
-	xmlnode_new_child(query, "remove");
-	xmlnode_set_attrib(iq->node, "to", js->user->domain);
+	purple_xmlnode_new_child(query, "remove");
+	purple_xmlnode_set_attrib(iq->node, "to", js->user->domain);
 
 	jabber_iq_set_callback(iq, jabber_unregister_account_iq_cb, NULL);
 	jabber_iq_send(iq);
@@ -1555,8 +1560,8 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
 
-	if (purple_connection_get_state(gc) != PURPLE_CONNECTED) {
-		if (purple_connection_get_state(gc) != PURPLE_CONNECTING)
+	if (purple_connection_get_state(gc) != PURPLE_CONNECTION_CONNECTED) {
+		if (purple_connection_get_state(gc) != PURPLE_CONNECTION_CONNECTING)
 			jabber_login(account);
 		js = purple_connection_get_protocol_data(gc);
 		js->unregistration = TRUE;
@@ -1650,7 +1655,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->caps_hash);
 
 	if (js->write_buffer)
-		purple_circ_buffer_destroy(js->write_buffer);
+		g_object_unref(G_OBJECT(js->write_buffer));
 	if(js->writeh)
 		purple_input_remove(js->writeh);
 	if (js->auth_mech && js->auth_mech->dispose)
@@ -1692,6 +1697,8 @@ void jabber_close(PurpleConnection *gc)
 		purple_timeout_remove(js->keepalive_timeout);
 	if (js->inactivity_timer != 0)
 		purple_timeout_remove(js->inactivity_timer);
+	if (js->conn_close_timeout != 0)
+		purple_timeout_remove(js->conn_close_timeout);
 
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
@@ -1750,7 +1757,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			/* Start up the inactivity timer */
 			jabber_stream_restart_inactivity_timer(js);
 
-			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
+			purple_connection_set_state(js->gc, PURPLE_CONNECTION_CONNECTED);
 			break;
 	}
 
@@ -1776,24 +1783,25 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 
 void jabber_blocklist_parse_push(JabberStream *js, const char *from,
                                  JabberIqType type, const char *id,
-                                 xmlnode *child)
+                                 PurpleXmlNode *child)
 {
 	JabberIq *result;
-	xmlnode *item;
+	PurpleXmlNode *item;
 	PurpleAccount *account;
 	gboolean is_block;
+	GSList *deny;
 
 	if (!jabber_is_own_account(js, from)) {
-		xmlnode *error, *x;
+		PurpleXmlNode *error, *x;
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
-		xmlnode_set_attrib(result->node, "id", id);
+		purple_xmlnode_set_attrib(result->node, "id", id);
 		if (from)
-			xmlnode_set_attrib(result->node, "to", from);
+			purple_xmlnode_set_attrib(result->node, "to", from);
 
-		error = xmlnode_new_child(result->node, "error");
-		xmlnode_set_attrib(error, "type", "cancel");
-		x = xmlnode_new_child(error, "not-allowed");
-		xmlnode_set_namespace(x, NS_XMPP_STANZAS);
+		error = purple_xmlnode_new_child(result->node, "error");
+		purple_xmlnode_set_attrib(error, "type", "cancel");
+		x = purple_xmlnode_new_child(error, "not-allowed");
+		purple_xmlnode_set_namespace(x, NS_XMPP_STANZAS);
 
 		jabber_iq_send(result);
 		return;
@@ -1802,53 +1810,54 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 	account = purple_connection_get_account(js->gc);
 	is_block = g_str_equal(child->name, "block");
 
-	item = xmlnode_get_child(child, "item");
+	item = purple_xmlnode_get_child(child, "item");
 	if (!is_block && item == NULL) {
 		/* Unblock everyone */
 		purple_debug_info("jabber", "Received unblock push. Unblocking everyone.\n");
 
-		while (account->deny != NULL) {
-			purple_privacy_deny_remove(account, account->deny->data, TRUE);
+		while ((deny = purple_account_privacy_get_denied(account)) != NULL) {
+			purple_account_privacy_deny_remove(account, deny->data, TRUE);
 		}
 	} else if (item == NULL) {
 		/* An empty <block/> is bogus */
-		xmlnode *error, *x;
+		PurpleXmlNode *error, *x;
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
-		xmlnode_set_attrib(result->node, "id", id);
+		purple_xmlnode_set_attrib(result->node, "id", id);
 
-		error = xmlnode_new_child(result->node, "error");
-		xmlnode_set_attrib(error, "type", "modify");
-		x = xmlnode_new_child(error, "bad-request");
-		xmlnode_set_namespace(x, NS_XMPP_STANZAS);
+		error = purple_xmlnode_new_child(result->node, "error");
+		purple_xmlnode_set_attrib(error, "type", "modify");
+		x = purple_xmlnode_new_child(error, "bad-request");
+		purple_xmlnode_set_namespace(x, NS_XMPP_STANZAS);
 
 		jabber_iq_send(result);
 		return;
 	} else {
-		for ( ; item; item = xmlnode_get_next_twin(item)) {
-			const char *jid = xmlnode_get_attrib(item, "jid");
+		for ( ; item; item = purple_xmlnode_get_next_twin(item)) {
+			const char *jid = purple_xmlnode_get_attrib(item, "jid");
 			if (jid == NULL || *jid == '\0')
 				continue;
 
 			if (is_block)
-				purple_privacy_deny_add(account, jid, TRUE);
+				purple_account_privacy_deny_add(account, jid, TRUE);
 			else
-				purple_privacy_deny_remove(account, jid, TRUE);
+				purple_account_privacy_deny_remove(account, jid, TRUE);
 		}
 	}
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	xmlnode_set_attrib(result->node, "id", id);
+	purple_xmlnode_set_attrib(result->node, "id", id);
 	jabber_iq_send(result);
 }
 
 static void jabber_blocklist_parse(JabberStream *js, const char *from,
                                    JabberIqType type, const char *id,
-                                   xmlnode *packet, gpointer data)
+                                   PurpleXmlNode *packet, gpointer data)
 {
-	xmlnode *blocklist, *item;
+	PurpleXmlNode *blocklist, *item;
 	PurpleAccount *account;
+	GSList *deny;
 
-	blocklist = xmlnode_get_child_with_namespace(packet,
+	blocklist = purple_xmlnode_get_child_with_namespace(packet,
 			"blocklist", NS_SIMPLE_BLOCKING);
 	account = purple_connection_get_account(js->gc);
 
@@ -1856,32 +1865,32 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 		return;
 
 	/* This is the only privacy method supported by XEP-0191 */
-	purple_account_set_privacy_type(account, PURPLE_PRIVACY_DENY_USERS);
+	purple_account_set_privacy_type(account, PURPLE_ACCOUNT_PRIVACY_DENY_USERS);
 
 	/*
 	 * TODO: When account->deny is something more than a hash table, this can
 	 * be re-written to find the set intersection and difference.
 	 */
-	while (account->deny)
-		purple_privacy_deny_remove(account, account->deny->data, TRUE);
+	while ((deny = purple_account_privacy_get_denied(account)))
+		purple_account_privacy_deny_remove(account, deny->data, TRUE);
 
-	item = xmlnode_get_child(blocklist, "item");
+	item = purple_xmlnode_get_child(blocklist, "item");
 	while (item != NULL) {
-		const char *jid = xmlnode_get_attrib(item, "jid");
-		purple_privacy_deny_add(account, jid, TRUE);
-		item = xmlnode_get_next_twin(item);
+		const char *jid = purple_xmlnode_get_attrib(item, "jid");
+		purple_account_privacy_deny_add(account, jid, TRUE);
+		item = purple_xmlnode_get_next_twin(item);
 	}
 }
 
 void jabber_request_block_list(JabberStream *js)
 {
 	JabberIq *iq;
-	xmlnode *blocklist;
+	PurpleXmlNode *blocklist;
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
 
-	blocklist = xmlnode_new_child(iq->node, "blocklist");
-	xmlnode_set_namespace(blocklist, NS_SIMPLE_BLOCKING);
+	blocklist = purple_xmlnode_new_child(iq->node, "blocklist");
+	purple_xmlnode_set_namespace(blocklist, NS_SIMPLE_BLOCKING);
 
 	jabber_iq_set_callback(iq, jabber_blocklist_parse, NULL);
 
@@ -1892,7 +1901,7 @@ void jabber_add_deny(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js;
 	JabberIq *iq;
-	xmlnode *block, *item;
+	PurpleXmlNode *block, *item;
 
 	g_return_if_fail(who != NULL && *who != '\0');
 
@@ -1916,11 +1925,11 @@ void jabber_add_deny(PurpleConnection *gc, const char *who)
 
 	iq = jabber_iq_new(js, JABBER_IQ_SET);
 
-	block = xmlnode_new_child(iq->node, "block");
-	xmlnode_set_namespace(block, NS_SIMPLE_BLOCKING);
+	block = purple_xmlnode_new_child(iq->node, "block");
+	purple_xmlnode_set_namespace(block, NS_SIMPLE_BLOCKING);
 
-	item = xmlnode_new_child(block, "item");
-	xmlnode_set_attrib(item, "jid", who);
+	item = purple_xmlnode_new_child(block, "item");
+	purple_xmlnode_set_attrib(item, "jid", who);
 
 	jabber_iq_send(iq);
 }
@@ -1929,7 +1938,7 @@ void jabber_rem_deny(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js;
 	JabberIq *iq;
-	xmlnode *unblock, *item;
+	PurpleXmlNode *unblock, *item;
 
 	g_return_if_fail(who != NULL && *who != '\0');
 
@@ -1948,11 +1957,11 @@ void jabber_rem_deny(PurpleConnection *gc, const char *who)
 
 	iq = jabber_iq_new(js, JABBER_IQ_SET);
 
-	unblock = xmlnode_new_child(iq->node, "unblock");
-	xmlnode_set_namespace(unblock, NS_SIMPLE_BLOCKING);
+	unblock = purple_xmlnode_new_child(iq->node, "unblock");
+	purple_xmlnode_set_namespace(unblock, NS_SIMPLE_BLOCKING);
 
-	item = xmlnode_new_child(unblock, "item");
-	xmlnode_set_attrib(item, "jid", who);
+	item = purple_xmlnode_new_child(unblock, "item");
+	purple_xmlnode_set_attrib(item, "jid", who);
 
 	jabber_iq_send(iq);
 }
@@ -2346,21 +2355,21 @@ GList *jabber_status_types(PurpleAccount *account)
 {
 	PurpleStatusType *type;
 	GList *types = NULL;
-	PurpleValue *priority_value;
-	PurpleValue *buzz_enabled;
+	GValue *priority_value;
+	GValue *buzz_enabled;
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 1);
-	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
-	purple_value_set_boolean(buzz_enabled, TRUE);
+	priority_value = purple_value_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 1);
+	buzz_enabled = purple_value_new(G_TYPE_BOOLEAN);
+	g_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_ONLINE),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_value_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_value_new(G_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_prepend(types, type);
@@ -2368,69 +2377,69 @@ GList *jabber_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_MOOD,
 	    "mood", NULL, TRUE, TRUE, TRUE,
-			PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_MOOD_COMMENT, _("Mood Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new(G_TYPE_STRING),
+			PURPLE_MOOD_COMMENT, _("Mood Comment"), purple_value_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_prepend(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 1);
-	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
-	purple_value_set_boolean(buzz_enabled, TRUE);
+	priority_value = purple_value_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 1);
+	buzz_enabled = purple_value_new(G_TYPE_BOOLEAN);
+	g_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_CHAT),
 			_("Chatty"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_value_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_value_new(G_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_prepend(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 0);
-	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
-	purple_value_set_boolean(buzz_enabled, TRUE);
+	priority_value = purple_value_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 0);
+	buzz_enabled = purple_value_new(G_TYPE_BOOLEAN);
+	g_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_AWAY),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_value_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_value_new(G_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_prepend(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 0);
-	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);
-	purple_value_set_boolean(buzz_enabled, TRUE);
+	priority_value = purple_value_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 0);
+	buzz_enabled = purple_value_new(G_TYPE_BOOLEAN);
+	g_value_set_boolean(buzz_enabled, TRUE);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_EXTENDED_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_XA),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_value_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_value_new(G_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
 	types = g_list_prepend(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 0);
+	priority_value = purple_value_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 0);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_DND),
 			_("Do Not Disturb"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_value_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_value_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_prepend(types, type);
 
@@ -2442,21 +2451,21 @@ GList *jabber_status_types(PurpleAccount *account)
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
 			NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_value_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_prepend(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
 			"tune", NULL, FALSE, TRUE, TRUE,
-			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(G_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(G_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(G_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(G_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(G_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(G_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(G_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(G_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_prepend(types, type);
 
@@ -2466,7 +2475,7 @@ GList *jabber_status_types(PurpleAccount *account)
 static void
 jabber_password_change_result_cb(JabberStream *js, const char *from,
                                  JabberIqType type, const char *id,
-                                 xmlnode *packet, gpointer data)
+                                 PurpleXmlNode *packet, gpointer data)
 {
 	if (type == JABBER_IQ_RESULT) {
 		purple_notify_info(js->gc, _("Password Changed"), _("Password "
@@ -2491,7 +2500,7 @@ static void jabber_password_change_cb(JabberStream *js,
 {
 	const char *p1, *p2;
 	JabberIq *iq;
-	xmlnode *query, *y;
+	PurpleXmlNode *query, *y;
 
 	p1 = purple_request_fields_get_string(fields, "password1");
 	p2 = purple_request_fields_get_string(fields, "password2");
@@ -2505,14 +2514,14 @@ static void jabber_password_change_cb(JabberStream *js,
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
 
-	xmlnode_set_attrib(iq->node, "to", js->user->domain);
+	purple_xmlnode_set_attrib(iq->node, "to", js->user->domain);
 
-	query = xmlnode_get_child(iq->node, "query");
+	query = purple_xmlnode_get_child(iq->node, "query");
 
-	y = xmlnode_new_child(query, "username");
-	xmlnode_insert_data(y, js->user->node, -1);
-	y = xmlnode_new_child(query, "password");
-	xmlnode_insert_data(y, p1, -1);
+	y = purple_xmlnode_new_child(query, "username");
+	purple_xmlnode_insert_data(y, js->user->node, -1);
+	y = purple_xmlnode_new_child(query, "password");
+	purple_xmlnode_insert_data(y, p1, -1);
 
 	jabber_iq_set_callback(iq, jabber_password_change_result_cb, g_strdup(p1));
 
@@ -2599,7 +2608,7 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 			PurpleChat *chat = (PurpleChat*)cnode;
 			const char *room, *server;
 			GHashTable *components;
-			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
+			if(!PURPLE_IS_CHAT(cnode))
 				continue;
 
 			if (purple_chat_get_account(chat) != account)
@@ -2646,94 +2655,94 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 
 
 char *jabber_parse_error(JabberStream *js,
-                         xmlnode *packet,
+                         PurpleXmlNode *packet,
                          PurpleConnectionError *reason)
 {
-	xmlnode *error;
+	PurpleXmlNode *error;
 	const char *code = NULL, *text = NULL;
-	const char *xmlns = xmlnode_get_namespace(packet);
+	const char *xmlns = purple_xmlnode_get_namespace(packet);
 	char *cdata = NULL;
 
 #define SET_REASON(x) \
 	if(reason != NULL) { *reason = x; }
 
-	if((error = xmlnode_get_child(packet, "error"))) {
-		xmlnode *t = xmlnode_get_child_with_namespace(error, "text", NS_XMPP_STANZAS);
+	if((error = purple_xmlnode_get_child(packet, "error"))) {
+		PurpleXmlNode *t = purple_xmlnode_get_child_with_namespace(error, "text", NS_XMPP_STANZAS);
 		if (t)
-			cdata = xmlnode_get_data(t);
+			cdata = purple_xmlnode_get_data(t);
 #if 0
-		cdata = xmlnode_get_data(error);
+		cdata = purple_xmlnode_get_data(error);
 #endif
-		code = xmlnode_get_attrib(error, "code");
+		code = purple_xmlnode_get_attrib(error, "code");
 
 		/* Stanza errors */
-		if(xmlnode_get_child(error, "bad-request")) {
+		if(purple_xmlnode_get_child(error, "bad-request")) {
 			text = _("Bad Request");
-		} else if(xmlnode_get_child(error, "conflict")) {
+		} else if(purple_xmlnode_get_child(error, "conflict")) {
 			SET_REASON(PURPLE_CONNECTION_ERROR_NAME_IN_USE);
 			text = _("Conflict");
-		} else if(xmlnode_get_child(error, "feature-not-implemented")) {
+		} else if(purple_xmlnode_get_child(error, "feature-not-implemented")) {
 			text = _("Feature Not Implemented");
-		} else if(xmlnode_get_child(error, "forbidden")) {
+		} else if(purple_xmlnode_get_child(error, "forbidden")) {
 			text = _("Forbidden");
-		} else if(xmlnode_get_child(error, "gone")) {
+		} else if(purple_xmlnode_get_child(error, "gone")) {
 			text = _("Gone");
-		} else if(xmlnode_get_child(error, "internal-server-error")) {
+		} else if(purple_xmlnode_get_child(error, "internal-server-error")) {
 			text = _("Internal Server Error");
-		} else if(xmlnode_get_child(error, "item-not-found")) {
+		} else if(purple_xmlnode_get_child(error, "item-not-found")) {
 			text = _("Item Not Found");
-		} else if(xmlnode_get_child(error, "jid-malformed")) {
+		} else if(purple_xmlnode_get_child(error, "jid-malformed")) {
 			text = _("Malformed XMPP ID");
-		} else if(xmlnode_get_child(error, "not-acceptable")) {
+		} else if(purple_xmlnode_get_child(error, "not-acceptable")) {
 			text = _("Not Acceptable");
-		} else if(xmlnode_get_child(error, "not-allowed")) {
+		} else if(purple_xmlnode_get_child(error, "not-allowed")) {
 			text = _("Not Allowed");
-		} else if(xmlnode_get_child(error, "not-authorized")) {
+		} else if(purple_xmlnode_get_child(error, "not-authorized")) {
 			text = _("Not Authorized");
-		} else if(xmlnode_get_child(error, "payment-required")) {
+		} else if(purple_xmlnode_get_child(error, "payment-required")) {
 			text = _("Payment Required");
-		} else if(xmlnode_get_child(error, "recipient-unavailable")) {
+		} else if(purple_xmlnode_get_child(error, "recipient-unavailable")) {
 			text = _("Recipient Unavailable");
-		} else if(xmlnode_get_child(error, "redirect")) {
+		} else if(purple_xmlnode_get_child(error, "redirect")) {
 			/* XXX */
-		} else if(xmlnode_get_child(error, "registration-required")) {
+		} else if(purple_xmlnode_get_child(error, "registration-required")) {
 			text = _("Registration Required");
-		} else if(xmlnode_get_child(error, "remote-server-not-found")) {
+		} else if(purple_xmlnode_get_child(error, "remote-server-not-found")) {
 			text = _("Remote Server Not Found");
-		} else if(xmlnode_get_child(error, "remote-server-timeout")) {
+		} else if(purple_xmlnode_get_child(error, "remote-server-timeout")) {
 			text = _("Remote Server Timeout");
-		} else if(xmlnode_get_child(error, "resource-constraint")) {
+		} else if(purple_xmlnode_get_child(error, "resource-constraint")) {
 			text = _("Server Overloaded");
-		} else if(xmlnode_get_child(error, "service-unavailable")) {
+		} else if(purple_xmlnode_get_child(error, "service-unavailable")) {
 			text = _("Service Unavailable");
-		} else if(xmlnode_get_child(error, "subscription-required")) {
+		} else if(purple_xmlnode_get_child(error, "subscription-required")) {
 			text = _("Subscription Required");
-		} else if(xmlnode_get_child(error, "unexpected-request")) {
+		} else if(purple_xmlnode_get_child(error, "unexpected-request")) {
 			text = _("Unexpected Request");
-		} else if(xmlnode_get_child(error, "undefined-condition")) {
+		} else if(purple_xmlnode_get_child(error, "undefined-condition")) {
 			text = _("Unknown Error");
 		}
 	} else if(xmlns && !strcmp(xmlns, NS_XMPP_SASL)) {
 		/* Most common reason can be the default */
 		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
-		if(xmlnode_get_child(packet, "aborted")) {
+		if(purple_xmlnode_get_child(packet, "aborted")) {
 			text = _("Authorization Aborted");
-		} else if(xmlnode_get_child(packet, "incorrect-encoding")) {
+		} else if(purple_xmlnode_get_child(packet, "incorrect-encoding")) {
 			text = _("Incorrect encoding in authorization");
-		} else if(xmlnode_get_child(packet, "invalid-authzid")) {
+		} else if(purple_xmlnode_get_child(packet, "invalid-authzid")) {
 			text = _("Invalid authzid");
-		} else if(xmlnode_get_child(packet, "invalid-mechanism")) {
+		} else if(purple_xmlnode_get_child(packet, "invalid-mechanism")) {
 			text = _("Invalid Authorization Mechanism");
-		} else if(xmlnode_get_child(packet, "mechanism-too-weak")) {
+		} else if(purple_xmlnode_get_child(packet, "mechanism-too-weak")) {
 			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE);
 			text = _("Authorization mechanism too weak");
-		} else if(xmlnode_get_child(packet, "not-authorized")) {
+		} else if(purple_xmlnode_get_child(packet, "not-authorized")) {
 			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(purple_connection_get_account(js->gc)))
 				purple_account_set_password(purple_connection_get_account(js->gc), NULL, NULL, NULL);
 			text = _("Not Authorized");
-		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
+		} else if(purple_xmlnode_get_child(packet, "temporary-auth-failure")) {
 			text = _("Temporary Authentication Failure");
 		} else {
 			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
@@ -2744,54 +2753,54 @@ char *jabber_parse_error(JabberStream *js,
 				!strcmp(xmlns, NS_XMPP_STREAMS))) {
 		/* Most common reason as default: */
 		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
-		if(xmlnode_get_child(packet, "bad-format")) {
+		if(purple_xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");
-		} else if(xmlnode_get_child(packet, "bad-namespace-prefix")) {
+		} else if(purple_xmlnode_get_child(packet, "bad-namespace-prefix")) {
 			text = _("Bad Namespace Prefix");
-		} else if(xmlnode_get_child(packet, "conflict")) {
+		} else if(purple_xmlnode_get_child(packet, "conflict")) {
 			SET_REASON(PURPLE_CONNECTION_ERROR_NAME_IN_USE);
 			text = _("Resource Conflict");
-		} else if(xmlnode_get_child(packet, "connection-timeout")) {
+		} else if(purple_xmlnode_get_child(packet, "connection-timeout")) {
 			text = _("Connection Timeout");
-		} else if(xmlnode_get_child(packet, "host-gone")) {
+		} else if(purple_xmlnode_get_child(packet, "host-gone")) {
 			text = _("Host Gone");
-		} else if(xmlnode_get_child(packet, "host-unknown")) {
+		} else if(purple_xmlnode_get_child(packet, "host-unknown")) {
 			text = _("Host Unknown");
-		} else if(xmlnode_get_child(packet, "improper-addressing")) {
+		} else if(purple_xmlnode_get_child(packet, "improper-addressing")) {
 			text = _("Improper Addressing");
-		} else if(xmlnode_get_child(packet, "internal-server-error")) {
+		} else if(purple_xmlnode_get_child(packet, "internal-server-error")) {
 			text = _("Internal Server Error");
-		} else if(xmlnode_get_child(packet, "invalid-id")) {
+		} else if(purple_xmlnode_get_child(packet, "invalid-id")) {
 			text = _("Invalid ID");
-		} else if(xmlnode_get_child(packet, "invalid-namespace")) {
+		} else if(purple_xmlnode_get_child(packet, "invalid-namespace")) {
 			text = _("Invalid Namespace");
-		} else if(xmlnode_get_child(packet, "invalid-xml")) {
+		} else if(purple_xmlnode_get_child(packet, "invalid-xml")) {
 			text = _("Invalid XML");
-		} else if(xmlnode_get_child(packet, "nonmatching-hosts")) {
+		} else if(purple_xmlnode_get_child(packet, "nonmatching-hosts")) {
 			text = _("Non-matching Hosts");
-		} else if(xmlnode_get_child(packet, "not-authorized")) {
+		} else if(purple_xmlnode_get_child(packet, "not-authorized")) {
 			text = _("Not Authorized");
-		} else if(xmlnode_get_child(packet, "policy-violation")) {
+		} else if(purple_xmlnode_get_child(packet, "policy-violation")) {
 			text = _("Policy Violation");
-		} else if(xmlnode_get_child(packet, "remote-connection-failed")) {
+		} else if(purple_xmlnode_get_child(packet, "remote-connection-failed")) {
 			text = _("Remote Connection Failed");
-		} else if(xmlnode_get_child(packet, "resource-constraint")) {
+		} else if(purple_xmlnode_get_child(packet, "resource-constraint")) {
 			text = _("Resource Constraint");
-		} else if(xmlnode_get_child(packet, "restricted-xml")) {
+		} else if(purple_xmlnode_get_child(packet, "restricted-xml")) {
 			text = _("Restricted XML");
-		} else if(xmlnode_get_child(packet, "see-other-host")) {
+		} else if(purple_xmlnode_get_child(packet, "see-other-host")) {
 			text = _("See Other Host");
-		} else if(xmlnode_get_child(packet, "system-shutdown")) {
+		} else if(purple_xmlnode_get_child(packet, "system-shutdown")) {
 			text = _("System Shutdown");
-		} else if(xmlnode_get_child(packet, "undefined-condition")) {
+		} else if(purple_xmlnode_get_child(packet, "undefined-condition")) {
 			text = _("Undefined Condition");
-		} else if(xmlnode_get_child(packet, "unsupported-encoding")) {
+		} else if(purple_xmlnode_get_child(packet, "unsupported-encoding")) {
 			text = _("Unsupported Encoding");
-		} else if(xmlnode_get_child(packet, "unsupported-stanza-type")) {
+		} else if(purple_xmlnode_get_child(packet, "unsupported-stanza-type")) {
 			text = _("Unsupported Stanza Type");
-		} else if(xmlnode_get_child(packet, "unsupported-version")) {
+		} else if(purple_xmlnode_get_child(packet, "unsupported-version")) {
 			text = _("Unsupported Version");
-		} else if(xmlnode_get_child(packet, "xml-not-well-formed")) {
+		} else if(purple_xmlnode_get_child(packet, "xml-not-well-formed")) {
 			text = _("XML Not Well Formed");
 		} else {
 			text = _("Stream Error");
@@ -2813,7 +2822,7 @@ char *jabber_parse_error(JabberStream *js,
 static PurpleCmdRet jabber_cmd_chat_config(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2825,7 +2834,7 @@ static PurpleCmdRet jabber_cmd_chat_config(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_register(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2837,7 +2846,7 @@ static PurpleCmdRet jabber_cmd_chat_register(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2845,7 +2854,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 	if (args && args[0] && *args[0])
 		jabber_chat_change_topic(chat, args[0]);
 	else {
-		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+		const char *cur = purple_chat_conversation_get_topic(PURPLE_CHAT_CONVERSATION(conv));
 		char *buf, *tmp, *tmp2;
 
 		if (cur) {
@@ -2856,7 +2865,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "", buf,
+		purple_conversation_write_message(conv, "", buf,
 				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 	}
@@ -2867,7 +2876,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -2886,7 +2895,7 @@ static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat)
 		return PURPLE_CMD_RET_FAILED;
@@ -2898,7 +2907,7 @@ static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_ban(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -2914,7 +2923,7 @@ static PurpleCmdRet jabber_cmd_chat_ban(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -2950,7 +2959,7 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -2989,7 +2998,7 @@ static PurpleCmdRet jabber_cmd_chat_invite(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	jabber_chat_invite(purple_conversation_get_connection(conv),
-			purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), args[1] ? args[1] : "",
+			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)), args[1] ? args[1] : "",
 			args[0]);
 
 	return PURPLE_CMD_RET_OK;
@@ -2998,7 +3007,7 @@ static PurpleCmdRet jabber_cmd_chat_invite(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 	GHashTable *components;
 	JabberID *jid = NULL;
 	const char *room = NULL, *server = NULL, *handle = NULL;
@@ -3045,7 +3054,7 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_kick(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
@@ -3061,7 +3070,7 @@ static PurpleCmdRet jabber_cmd_chat_kick(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	JabberChat *chat = jabber_chat_find_by_conv(PURPLE_CHAT_CONVERSATION(conv));
 	char *who;
 
 	if (!chat)
@@ -3101,7 +3110,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 	JabberBuddyResource *jbr;
 	PurpleConnection *gc = js->gc;
 	PurpleBuddy *buddy =
-		purple_find_buddy(purple_connection_get_account(gc), username);
+		purple_blist_find_buddy(purple_connection_get_account(gc), username);
 	const gchar *alias =
 		buddy ? purple_buddy_get_contact_alias(buddy) : username;
 
@@ -3123,21 +3132,21 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 	}
 
 	if (jabber_resource_has_capability(jbr, NS_ATTENTION)) {
-		xmlnode *buzz, *msg = xmlnode_new("message");
+		PurpleXmlNode *buzz, *msg = purple_xmlnode_new("message");
 		gchar *to;
 
 		to = g_strdup_printf("%s/%s", username, jbr->name);
-		xmlnode_set_attrib(msg, "to", to);
+		purple_xmlnode_set_attrib(msg, "to", to);
 		g_free(to);
 
 		/* avoid offline storage */
-		xmlnode_set_attrib(msg, "type", "headline");
+		purple_xmlnode_set_attrib(msg, "type", "headline");
 
-		buzz = xmlnode_new_child(msg, "attention");
-		xmlnode_set_namespace(buzz, NS_ATTENTION);
+		buzz = purple_xmlnode_new_child(msg, "attention");
+		purple_xmlnode_set_namespace(buzz, NS_ATTENTION);
 
 		jabber_send(js, msg);
-		xmlnode_free(msg);
+		purple_xmlnode_free(msg);
 
 		return TRUE;
 	} else {
@@ -3161,7 +3170,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 
 	if (!args || !args[0]) {
 		/* use the buddy from conversation, if it's a one-to-one conversation */
-		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		if (PURPLE_IS_IM_CONVERSATION(conv)) {
 			who = purple_conversation_get_name(conv);
 		} else {
 			return PURPLE_CMD_RET_FAILED;
@@ -3170,7 +3179,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		who = args[0];
 	}
 
-	buddy = purple_find_buddy(account, who);
+	buddy = purple_blist_find_buddy(account, who);
 	if (buddy != NULL)
 		alias = purple_buddy_get_contact_alias(buddy);
 	else
@@ -3204,7 +3213,7 @@ gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint
 	if (!_jabber_send_buzz(js, username, &error)) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv =
-			purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, username, account);
+			purple_conversations_find_with_account(username, account);
 		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
 
 		if (conv) {
@@ -3950,41 +3959,38 @@ void jabber_plugin_init(PurplePlugin *plugin)
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
 							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
-							 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
-							 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT),
-							 purple_value_new(PURPLE_TYPE_STRING),
-							 purple_value_new(PURPLE_TYPE_STRING));
+							 G_TYPE_BOOLEAN, 3,
+							 PURPLE_TYPE_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
 
 	purple_plugin_ipc_register(plugin, "add_feature", PURPLE_CALLBACK(jabber_ipc_add_feature),
 							 purple_marshal_VOID__POINTER,
-							 NULL, 1,
-							 purple_value_new(PURPLE_TYPE_STRING));
+							 G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	purple_plugin_ipc_register(plugin, "register_namespace_watcher",
 	                           PURPLE_CALLBACK(jabber_iq_signal_register),
 	                           purple_marshal_VOID__POINTER_POINTER,
-	                           NULL, 2,
-	                           purple_value_new(PURPLE_TYPE_STRING),  /* node */
-	                           purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+	                           G_TYPE_NONE, 2,
+	                           G_TYPE_STRING,  /* node */
+	                           G_TYPE_STRING); /* namespace */
 
 	purple_plugin_ipc_register(plugin, "unregister_namespace_watcher",
 	                           PURPLE_CALLBACK(jabber_iq_signal_unregister),
 	                           purple_marshal_VOID__POINTER_POINTER,
-	                           NULL, 2,
-	                           purple_value_new(PURPLE_TYPE_STRING),  /* node */
-	                           purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+	                           G_TYPE_NONE, 2,
+	                           G_TYPE_STRING,  /* node */
+	                           G_TYPE_STRING); /* namespace */
 
 	purple_signal_register(plugin, "jabber-register-namespace-watcher",
 			purple_marshal_VOID__POINTER_POINTER,
-			NULL, 2,
-			purple_value_new(PURPLE_TYPE_STRING),  /* node */
-			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+			G_TYPE_NONE, 2,
+			G_TYPE_STRING,  /* node */
+			G_TYPE_STRING); /* namespace */
 
 	purple_signal_register(plugin, "jabber-unregister-namespace-watcher",
 			purple_marshal_VOID__POINTER_POINTER,
-			NULL, 2,
-			purple_value_new(PURPLE_TYPE_STRING),  /* node */
-			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
+			G_TYPE_NONE, 2,
+			G_TYPE_STRING,  /* node */
+			G_TYPE_STRING); /* namespace */
 
 	purple_signal_connect(plugin, "jabber-register-namespace-watcher",
 			plugin, PURPLE_CALLBACK(jabber_iq_signal_register), NULL);
@@ -3993,14 +3999,14 @@ void jabber_plugin_init(PurplePlugin *plugin)
 
 
 	purple_signal_register(plugin, "jabber-receiving-xmlnode",
-			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_POINTER); /* modifiable PurpleXmlNode */
 
 	purple_signal_register(plugin, "jabber-sending-xmlnode",
-			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_POINTER); /* modifiable PurpleXmlNode */
 
 	/*
 	 * Do not remove this or the plugin will fail. Completely. You have been
@@ -4011,45 +4017,45 @@ void jabber_plugin_init(PurplePlugin *plugin)
 			NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
 
 	purple_signal_register(plugin, "jabber-sending-text",
-			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
+			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+			     PURPLE_TYPE_CONNECTION,
+			     G_TYPE_POINTER); /* pointer to a string */
 
 	purple_signal_register(plugin, "jabber-receiving-message",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 6,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* id */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_STRING), /* to */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+			G_TYPE_BOOLEAN, 6,
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_STRING, /* type */
+			G_TYPE_STRING, /* id */
+			G_TYPE_STRING, /* from */
+			G_TYPE_STRING, /* to */
+			PURPLE_TYPE_XMLNODE);
 
 	purple_signal_register(plugin, "jabber-receiving-iq",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* id */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+			G_TYPE_BOOLEAN, 5,
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_STRING, /* type */
+			G_TYPE_STRING, /* id */
+			G_TYPE_STRING, /* from */
+			PURPLE_TYPE_XMLNODE);
 
 	purple_signal_register(plugin, "jabber-watched-iq",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* id */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE)); /* child */
+			G_TYPE_BOOLEAN, 5,
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_STRING, /* type */
+			G_TYPE_STRING, /* id */
+			G_TYPE_STRING, /* from */
+			PURPLE_TYPE_XMLNODE); /* child */
 
 	purple_signal_register(plugin, "jabber-receiving-presence",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 4,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+			G_TYPE_BOOLEAN, 4,
+			PURPLE_TYPE_CONNECTION,
+			G_TYPE_STRING, /* type */
+			G_TYPE_STRING, /* from */
+			PURPLE_TYPE_XMLNODE);
 }
 
 void jabber_plugin_uninit(PurplePlugin *plugin)

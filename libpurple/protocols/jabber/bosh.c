@@ -174,11 +174,11 @@ jabber_bosh_connection_is_ssl(const PurpleJabberBOSHConnection *conn)
 	return conn->is_ssl;
 }
 
-static xmlnode *
+static PurpleXmlNode *
 jabber_bosh_connection_parse(PurpleJabberBOSHConnection *conn,
 	PurpleHttpResponse *response)
 {
-	xmlnode *root;
+	PurpleXmlNode *root;
 	const gchar *data;
 	size_t data_len;
 	const gchar *type;
@@ -200,14 +200,14 @@ jabber_bosh_connection_parse(PurpleJabberBOSHConnection *conn,
 	}
 
 	data = purple_http_response_get_data(response, &data_len);
-	root = xmlnode_from_str(data, data_len);
+	root = purple_xmlnode_from_str(data, data_len);
 
-	type = xmlnode_get_attrib(root, "type");
+	type = purple_xmlnode_get_attrib(root, "type");
 	if (g_strcmp0(type, "terminate") == 0) {
 		purple_connection_error(conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("The BOSH "
 			"connection manager terminated your session."));
-		xmlnode_free(root);
+		purple_xmlnode_free(root);
 		return NULL;
 	}
 
@@ -219,7 +219,7 @@ jabber_bosh_connection_recv(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer _bosh_conn)
 {
 	PurpleJabberBOSHConnection *bosh_conn = _bosh_conn;
-	xmlnode *node, *child;
+	PurpleXmlNode *node, *child;
 
 	if (purple_debug_is_verbose() && purple_debug_is_unsafe()) {
 		purple_debug_misc("jabber-bosh", "received: %s\n",
@@ -233,10 +233,10 @@ jabber_bosh_connection_recv(PurpleHttpConnection *http_conn,
 	child = node->child;
 	while (child != NULL) {
 		/* jabber_process_packet might free child */
-		xmlnode *next = child->next;
+		PurpleXmlNode *next = child->next;
 		const gchar *xmlns;
 
-		if (child->type != XMLNODE_TYPE_TAG) {
+		if (child->type != PURPLE_XMLNODE_TYPE_TAG) {
 			child = next;
 			continue;
 		}
@@ -244,13 +244,13 @@ jabber_bosh_connection_recv(PurpleHttpConnection *http_conn,
 		/* Workaround for non-compliant servers that don't stamp
 		 * the right xmlns on these packets. See #11315.
 		 */
-		xmlns = xmlnode_get_namespace(child);
+		xmlns = purple_xmlnode_get_namespace(child);
 		if ((xmlns == NULL || g_strcmp0(xmlns, NS_BOSH) == 0) &&
 			(g_strcmp0(child->name, "iq") == 0 ||
 			g_strcmp0(child->name, "message") == 0 ||
 			g_strcmp0(child->name, "presence") == 0))
 		{
-			xmlnode_set_namespace(child, NS_XMPP_CLIENT);
+			purple_xmlnode_set_namespace(child, NS_XMPP_CLIENT);
 		}
 
 		jabber_process_packet(bosh_conn->js, &child);
@@ -380,7 +380,7 @@ jabber_bosh_connection_session_created(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer _bosh_conn)
 {
 	PurpleJabberBOSHConnection *bosh_conn = _bosh_conn;
-	xmlnode *node, *features;
+	PurpleXmlNode *node, *features;
 	const gchar *sid, *ver, *inactivity_str;
 	int inactivity = 0;
 
@@ -396,16 +396,16 @@ jabber_bosh_connection_session_created(PurpleHttpConnection *http_conn,
 	if (node == NULL)
 		return;
 
-	sid = xmlnode_get_attrib(node, "sid");
-	ver = xmlnode_get_attrib(node, "ver");
-	inactivity_str = xmlnode_get_attrib(node, "inactivity");
-	/* requests = xmlnode_get_attrib(node, "requests"); */
+	sid = purple_xmlnode_get_attrib(node, "sid");
+	ver = purple_xmlnode_get_attrib(node, "ver");
+	inactivity_str = purple_xmlnode_get_attrib(node, "inactivity");
+	/* requests = purple_xmlnode_get_attrib(node, "requests"); */
 
 	if (!sid) {
 		purple_connection_error(bosh_conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("No BOSH session ID given"));
-		xmlnode_free(node);
+		purple_xmlnode_free(node);
 		return;
 	}
 
@@ -417,7 +417,7 @@ jabber_bosh_connection_session_created(PurpleHttpConnection *http_conn,
 		purple_connection_error(bosh_conn->js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unsupported version of BOSH protocol"));
-		xmlnode_free(node);
+		purple_xmlnode_free(node);
 		return;
 	}
 
@@ -448,10 +448,10 @@ jabber_bosh_connection_session_created(PurpleHttpConnection *http_conn,
 	jabber_stream_set_state(bosh_conn->js, JABBER_STREAM_AUTHENTICATING);
 
 	/* FIXME: Depending on receiving features might break with some hosts */
-	features = xmlnode_get_child(node, "features");
+	features = purple_xmlnode_get_child(node, "features");
 	jabber_stream_features_parse(bosh_conn->js, features);
 
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 
 	jabber_bosh_connection_send(bosh_conn, NULL);
 }

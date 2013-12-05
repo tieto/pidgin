@@ -25,7 +25,7 @@
 
 #include "oscar.h"
 
-#include "cipher.h"
+#include "ciphers/md5hash.h"
 
 /*
  * Each time we make a FLAP connection to an oscar server the server gives

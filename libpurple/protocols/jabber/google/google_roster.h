@@ -23,12 +23,12 @@
 
 #include "jabber.h"
 
-void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item);
+void jabber_google_roster_outgoing(JabberStream *js, PurpleXmlNode *query, PurpleXmlNode *item);
 
 /* Returns FALSE if this should short-circuit processing of this roster item, or TRUE
  * if this roster item should continue to be processed
  */
-gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
+gboolean jabber_google_roster_incoming(JabberStream *js, PurpleXmlNode *item);
 
 void jabber_google_roster_add_deny(JabberStream *js, const char *who);
 void jabber_google_roster_rem_deny(JabberStream *js, const char *who);

@@ -106,7 +106,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_normalize,				/* normalize */
 	jabber_set_buddy_icon,			/* set_buddy_icon */
 	NULL,							/* remove_group */
-	jabber_chat_buddy_real_name,	/* get_cb_real_name */
+	jabber_chat_user_real_name,	/* get_cb_real_name */
 	jabber_chat_set_topic,			/* set_chat_topic */
 	jabber_find_blist_chat,			/* find_blist_chat */
 	jabber_roomlist_get_list,		/* roomlist_get_list */
@@ -224,11 +224,11 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
 		char *body = g_hash_table_lookup(params, "body");
 		if (user && *user) {
-			PurpleConversation *conv =
-					purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, user);
-			purple_conversation_present(conv);
+			PurpleIMConversation *im =
+					purple_im_conversation_new(acct, user);
+			purple_conversation_present(PURPLE_CONVERSATION(im));
 			if (body && *body)
-				purple_conv_send_confirm(conv, body);
+				purple_conversation_send_confirm(PURPLE_CONVERSATION(im), body);
 		}
 	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
 		char *name = g_hash_table_lookup(params, "name");

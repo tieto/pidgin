@@ -24,11 +24,11 @@
 #include "debug.h"
 #include "notify.h"
 #include "proxy.h"
-#include "ft.h"
+#include "xfer.h"
 #include "buddy.h"
 #include "bonjour.h"
 #include "bonjour_ft.h"
-#include "cipher.h"
+#include "ciphers/sha1hash.h"
 
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer);
@@ -47,7 +47,7 @@ static unsigned int next_id = 0;
 static void
 xep_ft_si_reject(BonjourData *bd, const char *id, const char *to, const char *error_code, const char *error_type)
 {
-	xmlnode *error_node;
+	PurpleXmlNode *error_node;
 	XepIq *iq;
 
 	g_return_if_fail(error_code != NULL);
@@ -62,21 +62,21 @@ xep_ft_si_reject(BonjourData *bd, const char *id, const char *to, const char *er
 	if(iq == NULL)
 		return;
 
-	error_node = xmlnode_new_child(iq->node, "error");
-	xmlnode_set_attrib(error_node, "code", error_code);
-	xmlnode_set_attrib(error_node, "type", error_type);
+	error_node = purple_xmlnode_new_child(iq->node, "error");
+	purple_xmlnode_set_attrib(error_node, "code", error_code);
+	purple_xmlnode_set_attrib(error_node, "type", error_type);
 
 	/* TODO: Make this better */
 	if (!strcmp(error_code, "403")) {
-		xmlnode *tmp_node = xmlnode_new_child(error_node, "forbidden");
-		xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		PurpleXmlNode *tmp_node = purple_xmlnode_new_child(error_node, "forbidden");
+		purple_xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
 
-		tmp_node = xmlnode_new_child(error_node, "text");
-		xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
-		xmlnode_insert_data(tmp_node, "Offer Declined", -1);
+		tmp_node = purple_xmlnode_new_child(error_node, "text");
+		purple_xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		purple_xmlnode_insert_data(tmp_node, "Offer Declined", -1);
 	} else if (!strcmp(error_code, "404")) {
-		xmlnode *tmp_node = xmlnode_new_child(error_node, "item-not-found");
-		xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		PurpleXmlNode *tmp_node = purple_xmlnode_new_child(error_node, "item-not-found");
+		purple_xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
 	}
 
 	xep_iq_send_and_free(iq);
@@ -134,7 +134,7 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 
 	/* We can't allow the server side to close the connection until the client is complete,
 	 * otherwise there is a RST resulting in an error on the client side */
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && purple_xfer_is_completed(xfer)) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND && purple_xfer_is_completed(xfer)) {
 		struct socket_cleanup *sc = g_new0(struct socket_cleanup, 1);
 		sc->fd = purple_xfer_get_fd(xfer);
 		purple_xfer_set_fd(xfer, -1);
@@ -178,7 +178,7 @@ bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 static void
 xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 {
-	xmlnode *si_node, *feature, *field, *file, *x;
+	PurpleXmlNode *si_node, *feature, *field, *file, *x;
 	XepIq *iq;
 	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	BonjourData *bd = NULL;
@@ -201,39 +201,39 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 		return;
 
 	/*Construct Stream initialization offer message.*/
-	si_node = xmlnode_new_child(iq->node, "si");
-	xmlnode_set_namespace(si_node, "http://jabber.org/protocol/si");
-	xmlnode_set_attrib(si_node, "profile", "http://jabber.org/protocol/si/profile/file-transfer");
+	si_node = purple_xmlnode_new_child(iq->node, "si");
+	purple_xmlnode_set_namespace(si_node, "http://jabber.org/protocol/si");
+	purple_xmlnode_set_attrib(si_node, "profile", "http://jabber.org/protocol/si/profile/file-transfer");
 	g_free(xf->sid);
 	xf->sid = g_strdup(xf->iq_id);
-	xmlnode_set_attrib(si_node, "id", xf->sid);
+	purple_xmlnode_set_attrib(si_node, "id", xf->sid);
 
-	file = xmlnode_new_child(si_node, "file");
-	xmlnode_set_namespace(file, "http://jabber.org/protocol/si/profile/file-transfer");
-	xmlnode_set_attrib(file, "name", purple_xfer_get_filename(xfer));
+	file = purple_xmlnode_new_child(si_node, "file");
+	purple_xmlnode_set_namespace(file, "http://jabber.org/protocol/si/profile/file-transfer");
+	purple_xmlnode_set_attrib(file, "name", purple_xfer_get_filename(xfer));
 	g_snprintf(buf, sizeof(buf), "%" G_GOFFSET_FORMAT, purple_xfer_get_size(xfer));
-	xmlnode_set_attrib(file, "size", buf);
+	purple_xmlnode_set_attrib(file, "size", buf);
 
-	feature = xmlnode_new_child(si_node, "feature");
-	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
+	feature = purple_xmlnode_new_child(si_node, "feature");
+	purple_xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 
-	x = xmlnode_new_child(feature, "x");
-	xmlnode_set_namespace(x, "jabber:x:data");
-	xmlnode_set_attrib(x, "type", "form");
+	x = purple_xmlnode_new_child(feature, "x");
+	purple_xmlnode_set_namespace(x, "jabber:x:data");
+	purple_xmlnode_set_attrib(x, "type", "form");
 
-	field = xmlnode_new_child(x, "field");
-	xmlnode_set_attrib(field, "var", "stream-method");
-	xmlnode_set_attrib(field, "type", "list-single");
+	field = purple_xmlnode_new_child(x, "field");
+	purple_xmlnode_set_attrib(field, "var", "stream-method");
+	purple_xmlnode_set_attrib(field, "type", "list-single");
 
 	if (xf->mode & XEP_BYTESTREAMS) {
-		xmlnode *option = xmlnode_new_child(field, "option");
-		xmlnode *value = xmlnode_new_child(option, "value");
-		xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
+		PurpleXmlNode *option = purple_xmlnode_new_child(field, "option");
+		PurpleXmlNode *value = purple_xmlnode_new_child(option, "value");
+		purple_xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
 	}
 	if (xf->mode & XEP_IBB) {
-		xmlnode *option = xmlnode_new_child(field, "option");
-		xmlnode *value = xmlnode_new_child(option, "value");
-		xmlnode_insert_data(value, "http://jabber.org/protocol/ibb", -1);
+		PurpleXmlNode *option = purple_xmlnode_new_child(field, "option");
+		PurpleXmlNode *value = purple_xmlnode_new_child(option, "value");
+		purple_xmlnode_insert_data(value, "http://jabber.org/protocol/ibb", -1);
 	}
 
 	xep_iq_send_and_free(iq);
@@ -242,7 +242,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 static void
 xep_ft_si_result(PurpleXfer *xfer, const char *to)
 {
-	xmlnode *si_node, *feature, *field, *value, *x;
+	PurpleXmlNode *si_node, *feature, *field, *value, *x;
 	XepIq *iq;
 	XepXfer *xf;
 	BonjourData *bd;
@@ -260,22 +260,22 @@ xep_ft_si_result(PurpleXfer *xfer, const char *to)
 	if(iq == NULL)
 		return;
 
-	si_node = xmlnode_new_child(iq->node, "si");
-	xmlnode_set_namespace(si_node, "http://jabber.org/protocol/si");
-	/*xmlnode_set_attrib(si_node, "profile", "http://jabber.org/protocol/si/profile/file-transfer");*/
+	si_node = purple_xmlnode_new_child(iq->node, "si");
+	purple_xmlnode_set_namespace(si_node, "http://jabber.org/protocol/si");
+	/*purple_xmlnode_set_attrib(si_node, "profile", "http://jabber.org/protocol/si/profile/file-transfer");*/
 
-	feature = xmlnode_new_child(si_node, "feature");
-	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
+	feature = purple_xmlnode_new_child(si_node, "feature");
+	purple_xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 
-	x = xmlnode_new_child(feature, "x");
-	xmlnode_set_namespace(x, "jabber:x:data");
-	xmlnode_set_attrib(x, "type", "submit");
+	x = purple_xmlnode_new_child(feature, "x");
+	purple_xmlnode_set_namespace(x, "jabber:x:data");
+	purple_xmlnode_set_attrib(x, "type", "submit");
 
-	field = xmlnode_new_child(x, "field");
-	xmlnode_set_attrib(field, "var", "stream-method");
+	field = purple_xmlnode_new_child(x, "field");
+	purple_xmlnode_set_attrib(field, "var", "stream-method");
 
-	value = xmlnode_new_child(field, "value");
-	xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
+	value = purple_xmlnode_new_child(field, "value");
+	purple_xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
 
 	xep_iq_send_and_free(iq);
 }
@@ -289,14 +289,14 @@ xep_ft_si_result(PurpleXfer *xfer, const char *to)
  * @param node	The node to free the tree from
  */
 static void
-xmlnode_free_tree(xmlnode *node)
+purple_xmlnode_free_tree(PurpleXmlNode *node)
 {
 	g_return_if_fail(node != NULL);
 
-	while(xmlnode_get_parent(node))
-		node = xmlnode_get_parent(node);
+	while(purple_xmlnode_get_parent(node))
+		node = purple_xmlnode_get_parent(node);
 
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 }
 
 static void
@@ -330,7 +330,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		g_free(xf->buddy_ip);
 		g_free(xf->sid);
 
-		xmlnode_free_tree(xf->streamhost);
+		purple_xmlnode_free_tree(xf->streamhost);
 
 		g_free(xf);
 		purple_xfer_set_protocol_data(xfer, NULL);
@@ -355,7 +355,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_TYPE_SEND, who);
 	xep_xfer = g_new0(XepXfer, 1);
 	purple_xfer_set_protocol_data(xfer, xep_xfer);
 	xep_xfer->data = bd;
@@ -408,7 +408,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 
 	purple_debug_info("bonjour", "Bonjour-xfer-init.\n");
 
-	buddy = purple_find_buddy(purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer));
+	buddy = purple_blist_find_buddy(purple_xfer_get_account(xfer), purple_xfer_get_remote_user(xfer));
 	/* this buddy is offline. */
 	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
 		return;
@@ -416,19 +416,19 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	/* Assume it is the first IP. We could do something like keep track of which one is in use or something. */
 	if (bb->ips)
 		xf->buddy_ip = g_strdup(bb->ips->data);
-	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
+	if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
 		/* initiate file transfer, send SI offer. */
-		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");
+		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_TYPE_SEND.\n");
 		xep_ft_si_offer(xfer, purple_xfer_get_remote_user(xfer));
 	} else {
 		/* accept file transfer request, send SI result. */
 		xep_ft_si_result(xfer, purple_xfer_get_remote_user(xfer));
-		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_RECEIVE.\n");
+		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_TYPE_RECEIVE.\n");
 	}
 }
 
 void
-xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
+xep_si_parse(PurpleConnection *pc, PurpleXmlNode *packet, PurpleBuddy *pb)
 {
 	const char *type, *id;
 	BonjourData *bd;
@@ -447,30 +447,30 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 	name = purple_buddy_get_name(pb);
 
-	type = xmlnode_get_attrib(packet, "type");
-	id = xmlnode_get_attrib(packet, "id");
+	type = purple_xmlnode_get_attrib(packet, "type");
+	id = purple_xmlnode_get_attrib(packet, "id");
 	if(!type)
 		return;
 
 	if(!strcmp(type, "set")) {
 		const char *profile;
-		xmlnode *si;
+		PurpleXmlNode *si;
 		gboolean parsed_receive = FALSE;
 
-		si = xmlnode_get_child(packet, "si");
+		si = purple_xmlnode_get_child(packet, "si");
 
 		purple_debug_info("bonjour", "si offer Message type - SET.\n");
-		if (si && (profile = xmlnode_get_attrib(si, "profile"))
+		if (si && (profile = purple_xmlnode_get_attrib(si, "profile"))
 				&& !strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
 			const char *filename = NULL, *filesize_str = NULL;
 			goffset filesize = 0;
-			xmlnode *file;
+			PurpleXmlNode *file;
 
-			const char *sid = xmlnode_get_attrib(si, "id");
+			const char *sid = purple_xmlnode_get_attrib(si, "id");
 
-			if ((file = xmlnode_get_child(si, "file"))) {
-				filename = xmlnode_get_attrib(file, "name");
-				if((filesize_str = xmlnode_get_attrib(file, "size")))
+			if ((file = purple_xmlnode_get_child(si, "file"))) {
+				filename = purple_xmlnode_get_attrib(file, "name");
+				if((filesize_str = purple_xmlnode_get_attrib(file, "size")))
 					filesize = g_ascii_strtoll(filesize_str, NULL, 10);
 			}
 
@@ -585,13 +585,13 @@ xep_addr_differ(const char *buddy_ip, const char *host)
  * @return	A pointer to the new, cloned twin if successful
  *		or NULL otherwise.
  */
-static xmlnode *
-xmlnode_insert_twin_copy(xmlnode *node) {
-	xmlnode *copy;
+static PurpleXmlNode *
+purple_xmlnode_insert_twin_copy(PurpleXmlNode *node) {
+	PurpleXmlNode *copy;
 
 	g_return_val_if_fail(node != NULL, NULL);
 
-	copy = xmlnode_copy(node);
+	copy = purple_xmlnode_copy(node);
 	g_return_val_if_fail(copy != NULL, NULL);
 
 	copy->next = node->next;
@@ -620,9 +620,9 @@ xmlnode_insert_twin_copy(xmlnode *node) {
  *		Otherwise returns FALSE.
  */
 static gboolean
-add_ipv6_link_local_ifaces(xmlnode *cur_streamhost, const char *host,
+add_ipv6_link_local_ifaces(PurpleXmlNode *cur_streamhost, const char *host,
 			   const PurpleBuddy *pb) {
-	xmlnode *new_streamhost = NULL;
+	PurpleXmlNode *new_streamhost = NULL;
 	struct in6_addr in6_addr;
 	BonjourBuddy *bb;
 	GSList *ip_elem;
@@ -637,10 +637,10 @@ add_ipv6_link_local_ifaces(xmlnode *cur_streamhost, const char *host,
 	for (ip_elem = bb->ips;
 	     (ip_elem = g_slist_find_custom(ip_elem, host, (GCompareFunc)&xep_addr_differ));
 	     ip_elem = ip_elem->next) {
-		purple_debug_info("bonjour", "Inserting an xmlnode twin copy for %s with new host address %s\n",
+		purple_debug_info("bonjour", "Inserting an PurpleXmlNode twin copy for %s with new host address %s\n",
 				  host, (char*)ip_elem->data);
-		new_streamhost = xmlnode_insert_twin_copy(cur_streamhost);
-		xmlnode_set_attrib(new_streamhost, "host", ip_elem->data);
+		new_streamhost = purple_xmlnode_insert_twin_copy(cur_streamhost);
+		purple_xmlnode_set_attrib(new_streamhost, "host", ip_elem->data);
 	}
 
 	if (!new_streamhost)
@@ -651,7 +651,7 @@ add_ipv6_link_local_ifaces(xmlnode *cur_streamhost, const char *host,
 }
 
 static gboolean
-__xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *streamhost,
+__xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, PurpleXmlNode *streamhost,
 			const char *iq_id)
 {
 	char *tmp_iq_id;
@@ -659,10 +659,10 @@ __xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *streamhost,
 	int portnum;
 	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 
-	for(; streamhost; streamhost = xmlnode_get_next_twin(streamhost)) {
-		if(!(jid = xmlnode_get_attrib(streamhost, "jid")) ||
-		   !(host = xmlnode_get_attrib(streamhost, "host")) ||
-		   !(port = xmlnode_get_attrib(streamhost, "port")) ||
+	for(; streamhost; streamhost = purple_xmlnode_get_next_twin(streamhost)) {
+		if(!(jid = purple_xmlnode_get_attrib(streamhost, "jid")) ||
+		   !(host = purple_xmlnode_get_attrib(streamhost, "host")) ||
+		   !(port = purple_xmlnode_get_attrib(streamhost, "port")) ||
 		   !(portnum = atoi(port))) {
 			purple_debug_info("bonjour", "bytestream offer Message parse error.\n");
 			continue;
@@ -694,10 +694,10 @@ __xep_bytestreams_parse(PurpleBuddy *pb, PurpleXfer *xfer, xmlnode *streamhost,
 }
 
 void
-xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
+xep_bytestreams_parse(PurpleConnection *pc, PurpleXmlNode *packet, PurpleBuddy *pb)
 {
 	const char *type, *from, *iq_id, *sid;
-	xmlnode *query, *streamhost;
+	PurpleXmlNode *query, *streamhost;
 	BonjourData *bd;
 	PurpleXfer *xfer;
 
@@ -711,13 +711,13 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 	purple_debug_info("bonjour", "xep-bytestreams-parse.\n");
 
-	type = xmlnode_get_attrib(packet, "type");
+	type = purple_xmlnode_get_attrib(packet, "type");
 	from = purple_buddy_get_name(pb);
-	query = xmlnode_get_child(packet,"query");
+	query = purple_xmlnode_get_child(packet,"query");
 	if(!type)
 		return;
 
-	query = xmlnode_copy(query);
+	query = purple_xmlnode_copy(query);
 	if (!query)
 		return;
 
@@ -728,11 +728,11 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 	purple_debug_info("bonjour", "bytestream offer Message type - SET.\n");
 
-	iq_id = xmlnode_get_attrib(packet, "id");
+	iq_id = purple_xmlnode_get_attrib(packet, "id");
 
-	sid = xmlnode_get_attrib(query, "sid");
+	sid = purple_xmlnode_get_attrib(query, "sid");
 	xfer = bonjour_si_xfer_find(bd, sid, from);
-	streamhost = xmlnode_get_child(query, "streamhost");
+	streamhost = purple_xmlnode_get_child(query, "streamhost");
 
 	if(xfer && streamhost && __xep_bytestreams_parse(pb, xfer, streamhost, iq_id))
 		return; /* success */
@@ -740,7 +740,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
 
 	if (iq_id && xfer != NULL)
-		xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
+		xep_ft_si_reject(bd, iq_id, purple_xfer_get_remote_user(xfer), "404", "cancel");
 }
 
 static void
@@ -761,7 +761,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	purple_debug_info("bonjour", "bonjour-xfer-receive.\n");
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_TYPE_RECEIVE, from);
 	xf = g_new0(XepXfer, 1);
 	purple_xfer_set_protocol_data(xfer, xf);
 	xf->data = bd;
@@ -908,7 +908,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 	PurpleXfer *xfer = data;
 	XepXfer *xf;
 	XepIq *iq;
-	xmlnode *query, *streamhost;
+	PurpleXmlNode *query, *streamhost;
 	gchar *port;
 	GSList *local_ips;
 	BonjourData *bd;
@@ -928,10 +928,10 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	iq = xep_iq_new(bd, XEP_IQ_SET, purple_xfer_get_remote_user(xfer), bonjour_get_jid(bd->jabber_data->account), xf->sid);
 
-	query = xmlnode_new_child(iq->node, "query");
-	xmlnode_set_namespace(query, "http://jabber.org/protocol/bytestreams");
-	xmlnode_set_attrib(query, "sid", xf->sid);
-	xmlnode_set_attrib(query, "mode", "tcp");
+	query = purple_xmlnode_new_child(iq->node, "query");
+	purple_xmlnode_set_namespace(query, "http://jabber.org/protocol/bytestreams");
+	purple_xmlnode_set_attrib(query, "sid", xf->sid);
+	purple_xmlnode_set_attrib(query, "mode", "tcp");
 
 	purple_xfer_set_local_port(xfer, purple_network_get_port_from_fd(sock));
 
@@ -939,10 +939,10 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	port = g_strdup_printf("%hu", purple_xfer_get_local_port(xfer));
 	while(local_ips) {
-		streamhost = xmlnode_new_child(query, "streamhost");
-		xmlnode_set_attrib(streamhost, "jid", xf->sid);
-		xmlnode_set_attrib(streamhost, "host", local_ips->data);
-		xmlnode_set_attrib(streamhost, "port", port);
+		streamhost = purple_xmlnode_new_child(query, "streamhost");
+		purple_xmlnode_set_attrib(streamhost, "jid", xf->sid);
+		purple_xmlnode_set_attrib(streamhost, "host", local_ips->data);
+		purple_xmlnode_set_attrib(streamhost, "port", port);
 		g_free(local_ips->data);
 		local_ips = g_slist_delete_link(local_ips, local_ips);
 	}
@@ -975,7 +975,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	PurpleXfer *xfer = data;
 	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	XepIq *iq;
-	xmlnode *q_node, *tmp_node;
+	PurpleXmlNode *q_node, *tmp_node;
 	BonjourData *bd;
 	gboolean ret = FALSE;
 
@@ -985,7 +985,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 		purple_debug_error("bonjour", "Error connecting via SOCKS5 to %s - %s\n",
 			xf->proxy_host, error_message ? error_message : "(null)");
 
-		tmp_node = xmlnode_get_next_twin(xf->streamhost);
+		tmp_node = purple_xmlnode_get_next_twin(xf->streamhost);
 		ret = __xep_bytestreams_parse(xf->pb, xfer, tmp_node, xf->iq_id);
 
 		if (!ret) {
@@ -1004,10 +1004,10 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 
 	/* Notify Initiator of Connection */
 	iq = xep_iq_new(bd, XEP_IQ_RESULT, purple_xfer_get_remote_user(xfer), bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
-	q_node = xmlnode_new_child(iq->node, "query");
-	xmlnode_set_namespace(q_node, "http://jabber.org/protocol/bytestreams");
-	tmp_node = xmlnode_new_child(q_node, "streamhost-used");
-	xmlnode_set_attrib(tmp_node, "jid", xf->jid);
+	q_node = purple_xmlnode_new_child(iq->node, "query");
+	purple_xmlnode_set_namespace(q_node, "http://jabber.org/protocol/bytestreams");
+	tmp_node = purple_xmlnode_new_child(q_node, "streamhost-used");
+	purple_xmlnode_set_attrib(tmp_node, "jid", xf->jid);
 	xep_iq_send_and_free(iq);
 
 	purple_xfer_start(xfer, source, NULL, -1);
@@ -1018,6 +1018,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 {
 	PurpleBuddy *pb;
 	PurpleAccount *account = NULL;
+	PurpleHash *hash;
 	XepXfer *xf;
 	char dstaddr[41];
 	const gchar *name = NULL;
@@ -1039,8 +1040,12 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 	account = purple_buddy_get_account(pb);
 
 	p = g_strdup_printf("%s%s%s", xf->sid, name, bonjour_get_jid(account));
-	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p), hashval,
-		sizeof(hashval));
+
+	hash = purple_sha1_hash_new();
+	purple_hash_append(hash, (guchar *)p, strlen(p));
+	purple_hash_digest(hash, hashval, sizeof(hashval));
+	g_object_unref(G_OBJECT(hash));
+
 	g_free(p);
 
 	memset(dstaddr, 0, 41);

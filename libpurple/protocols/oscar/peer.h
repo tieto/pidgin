@@ -25,7 +25,7 @@
 #ifndef _PEER_H_
 #define _PEER_H_
 
-#include "ft.h"
+#include "xfer.h"
 #include "network.h"
 #include "proxy.h"
 
@@ -184,7 +184,7 @@ struct _PeerConnection
 	guint8 proxy_header[12];
 	gssize proxy_header_received;
 	ByteStream buffer_incoming;
-	PurpleCircBuffer *buffer_outgoing;
+	PurpleCircularBuffer *buffer_outgoing;
 	guint watcher_incoming;
 	guint watcher_outgoing;
 
@@ -251,7 +251,7 @@ void peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar
 void peer_odc_close(PeerConnection *conn);
 void peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs);
 void peer_odc_send_cookie(PeerConnection *conn);
-void peer_odc_send_typing(PeerConnection *conn, PurpleTypingState typing);
+void peer_odc_send_typing(PeerConnection *conn, PurpleIMTypingState typing);
 void peer_odc_send_im(PeerConnection *conn, const char *msg, int len, int encoding, gboolean autoreply);
 
 /*

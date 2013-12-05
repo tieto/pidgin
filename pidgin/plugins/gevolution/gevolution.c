@@ -99,7 +99,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 		me = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 		for (l2 = ims; l2 != NULL; l2 = l2->next)
 		{
-			if (purple_find_buddy(account, l2->data) != NULL ||
+			if (purple_blist_find_buddy(account, l2->data) != NULL ||
 				!strcmp(me, purple_normalize(account, l2->data)))
 				continue;
 
@@ -220,14 +220,14 @@ signed_on_cb(PurpleConnection *gc)
 static void
 menu_item_activate_cb(PurpleBlistNode *node, gpointer user_data)
 {
-	PurpleBuddy *buddy = (PurpleBuddy *)node;
+	PurpleBuddy *buddy = PURPLE_BUDDY(node);
 	gevo_associate_buddy_dialog_new(buddy);
 }
 
 static void
 menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 {
-	PurpleBuddy *buddy = (PurpleBuddy *)node;
+	PurpleBuddy *buddy = PURPLE_BUDDY(node);
 	char *mail = NULL;
 
 	mail = gevo_get_email_for_buddy(buddy);
@@ -268,10 +268,10 @@ blist_node_extended_menu_cb(PurpleBlistNode *node, GList **menu)
 	EContact *contact;
 	char *mail;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_IS_BUDDY(node))
 		return;
 
-	buddy = (PurpleBuddy *)node;
+	buddy = PURPLE_BUDDY(node);
 	account = purple_buddy_get_account(buddy);
 
 	if (!gevo_prpl_is_supported(account, buddy))

@@ -58,7 +58,7 @@ static ggp_font * ggp_font_new(void);
 static ggp_font * ggp_font_clone(ggp_font *font);
 static void ggp_font_free(gpointer font);
 
-static PurpleConversation * ggp_message_get_conv(PurpleConnection *gc,
+static PurpleIMConversation * ggp_message_get_conv(PurpleConnection *gc,
 	uin_t uin);
 static void ggp_message_got_data_free(ggp_message_got_data *msg);
 static gboolean ggp_message_request_images(PurpleConnection *gc,
@@ -141,19 +141,18 @@ static void ggp_font_free(gpointer _font)
 
 /**/
 
-static PurpleConversation * ggp_message_get_conv(PurpleConnection *gc,
+static PurpleIMConversation * ggp_message_get_conv(PurpleConnection *gc,
 	uin_t uin)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	const gchar *who = ggp_uin_to_str(uin);
 
-	conv = purple_find_conversation_with_account(
-		PURPLE_CONV_TYPE_IM, who, account);
-	if (conv)
-		return conv;
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
-	return conv;
+	im = purple_conversations_find_im_with_account(who, account);
+	if (im)
+		return im;
+	im = purple_im_conversation_new(account, who);
+	return im;
 }
 
 static void ggp_message_got_data_free(ggp_message_got_data *msg)
@@ -309,11 +308,11 @@ static void ggp_message_got_display(PurpleConnection *gc,
 #endif
 	else if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON)
 	{
-		PurpleConversation *conv = ggp_message_get_conv(gc, msg->user);
+		PurpleIMConversation *im = ggp_message_get_conv(gc, msg->user);
 		const gchar *me = purple_account_get_username(
 			purple_connection_get_account(gc));
 
-		purple_conversation_write(conv, me, msg->text,
+		purple_conversation_write(PURPLE_CONVERSATION(im), me, msg->text,
 			PURPLE_MESSAGE_SEND, msg->time);
 	}
 	else
@@ -760,7 +759,7 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	const char *message, PurpleMessageFlags flags)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	ggp_buddy_data *buddy_data;
 	gchar *gg_msg;
 	gboolean succ;
@@ -770,16 +769,16 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	if (message == NULL || message[0] == '\0')
 		return 0;
 
-	buddy_data = ggp_buddy_get_data(purple_find_buddy(
+	buddy_data = ggp_buddy_get_data(purple_blist_find_buddy(
 		purple_connection_get_account(gc), who));
 
 	if (buddy_data->blocked)
 		return -1;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+	im = purple_conversations_find_im_with_account(
 		who, purple_connection_get_account(gc));
 
-	gg_msg = ggp_message_format_to_gg(conv, message);
+	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(im), message);
 
 	/* TODO: splitting messages */
 	if (strlen(gg_msg) > GG_MSG_MAXSIZE)

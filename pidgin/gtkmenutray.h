@@ -26,7 +26,7 @@
 
 #include <gtk/gtk.h>
 
-#define PIDGIN_TYPE_MENU_TRAY            (pidgin_menu_tray_get_gtype())
+#define PIDGIN_TYPE_MENU_TRAY            (pidgin_menu_tray_get_type())
 #define PIDGIN_MENU_TRAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTray))
 #define PIDGIN_MENU_TRAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_MENU_TRAY, PidginMenuTrayClass))
 #define PIDGIN_IS_MENU_TRAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PIDGIN_TYPE_MENU_TRAY))
@@ -55,7 +55,7 @@ G_BEGIN_DECLS
  *
  * @return The PidginMenuTray type ID
  */
-GType pidgin_menu_tray_get_gtype(void);
+GType pidgin_menu_tray_get_type(void);
 
 /**
  * Creates a new PidginMenuTray

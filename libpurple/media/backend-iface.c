@@ -53,13 +53,15 @@ purple_media_backend_base_init(gpointer iface)
 			"The type of conference that this backend "
 			"has been created to provide.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 	g_object_interface_install_property(iface,
 			g_param_spec_object("media",
 			"Purple Media",
 			"The media object that this backend is bound to.",
 			PURPLE_TYPE_MEDIA,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	purple_media_backend_signals[S_ERROR] =
 			g_signal_new("error", G_TYPE_FROM_CLASS(iface),

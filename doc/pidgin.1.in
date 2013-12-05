@@ -569,7 +569,7 @@ have been solved.
 .SH PATCHES
 If you fix a bug in Pidgin (or otherwise enhance it), please submit a
 patch (using \fBmtn diff > my.diff\fR against the latest version from the
-Monotone repository) at \fIhttps://developer.pidgin.im/simpleticket\fR
+Mercurial repository) at \fIhttps://developer.pidgin.im/newticket\fR
 
 You are also encouraged to drop by at \fB#pidgin\fR on \fIirc.freenode.net\fR
 to discuss development.

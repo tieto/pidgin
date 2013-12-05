@@ -88,7 +88,7 @@ static void blist_set_ontop(gboolean val) {
 	if(!blist)
 		return;
 
-	gtk_window_set_keep_above(GTK_WINDOW(PIDGIN_BLIST(purple_get_blist())->window), val);
+	gtk_window_set_keep_above(GTK_WINDOW(PIDGIN_BLIST(purple_blist_get_buddy_list())->window), val);
 }
 
 static void blist_dock_cb(gboolean val) {
@@ -233,9 +233,9 @@ static gboolean plugin_load(PurplePlugin *plugin) {
 	handle = plugin;
 
 	/* blist docking init */
-	if(purple_get_blist() && PIDGIN_BLIST(purple_get_blist())
-			&& PIDGIN_BLIST(purple_get_blist())->window) {
-		blist_create_cb(purple_get_blist(), NULL);
+	if(purple_blist_get_buddy_list() && PIDGIN_BLIST(purple_blist_get_buddy_list())
+			&& PIDGIN_BLIST(purple_blist_get_buddy_list())->window) {
+		blist_create_cb(purple_blist_get_buddy_list(), NULL);
 	}
 
 	/* This really shouldn't happen anymore generally, but if for some strange

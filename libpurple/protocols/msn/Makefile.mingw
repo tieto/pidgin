@@ -42,6 +42,7 @@ C_SRC =			cmdproc.c \
 			contact.c\
 			directconn.c \
 			error.c \
+			ft.c \
 			group.c \
 			history.c \
 			httpconn.c \
@@ -69,7 +70,6 @@ C_SRC =			cmdproc.c \
 			transaction.c \
 			user.c \
 			userlist.c \
-			xfer.c \
 			msnutils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -79,6 +79,7 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ##
 LIBS =	\
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lintl \
 			-lws2_32 \
 			-lpurple

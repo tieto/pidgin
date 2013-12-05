@@ -1,6 +1,57 @@
 #include "module.h"
 #include "../perl-handlers.h"
 
+MODULE = Purple::Account  PACKAGE = Purple::Accounts  PREFIX = purple_accounts_
+PROTOTYPES: ENABLE
+
+void
+purple_accounts_add(account)
+    Purple::Account account
+
+void
+purple_accounts_remove(account)
+    Purple::Account account
+
+void
+purple_accounts_delete(account)
+    Purple::Account account
+
+void
+purple_accounts_reorder(account, new_index)
+    Purple::Account account
+    size_t new_index
+
+void
+purple_accounts_get_all()
+PREINIT:
+    GList *l;
+PPCODE:
+    for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
+        XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Account")));
+    }
+
+void
+purple_accounts_get_all_active()
+PREINIT:
+    GList *list, *iter;
+PPCODE:
+    list = purple_accounts_get_all_active();
+    for (iter = list; iter != NULL; iter = iter->next) {
+        XPUSHs(sv_2mortal(purple_perl_bless_object(iter->data, "Purple::Account")));
+    }
+    g_list_free(list);
+
+void
+purple_accounts_restore_current_statuses()
+
+Purple::Account
+purple_accounts_find(name, protocol)
+    const char * name
+    const char * protocol
+
+Purple::Handle
+purple_accounts_get_handle()
+
 MODULE = Purple::Account  PACKAGE = Purple::Account  PREFIX = purple_account_
 PROTOTYPES: ENABLE
 
@@ -14,10 +65,6 @@ purple_account_new(class, username, protocol_id)
     const char * protocol_id
     C_ARGS:
     username, protocol_id
-
-void
-purple_account_destroy(account)
-    Purple::Account account
 
 void
 purple_account_connect(account)
@@ -54,7 +101,7 @@ CODE:
     purple_perl_account_set_password(account, password, func, data);
 
 void
-purple_account_set_alias(account, alias)
+purple_account_set_private_alias(account, alias)
     Purple::Account account
     const char * alias
 
@@ -144,7 +191,7 @@ CODE:
     purple_perl_account_get_password(account, func, data);
 
 const char *
-purple_account_get_alias(account)
+purple_account_get_private_alias(account)
     Purple::Account account
 
 const char *
@@ -273,53 +320,34 @@ purple_account_remove_group(account, group)
     Purple::Account account
     Purple::BuddyList::Group group
 
-MODULE = Purple::Account  PACKAGE = Purple::Accounts  PREFIX = purple_accounts_
+MODULE = Purple::Account  PACKAGE = Purple::Account::Privacy  PREFIX = purple_account_privacy_
 PROTOTYPES: ENABLE
 
-void
-purple_accounts_add(account)
-    Purple::Account account
+gboolean
+purple_account_privacy_permit_add(account, name, local_only)
+	Purple::Account account
+	const char * name
+	gboolean local_only
 
-void
-purple_accounts_remove(account)
-    Purple::Account account
+gboolean
+purple_account_privacy_permit_remove(account, name, local_only)
+	Purple::Account account
+	const char * name
+	gboolean local_only
 
-void
-purple_accounts_delete(account)
-    Purple::Account account
+gboolean
+purple_account_privacy_deny_add(account, name, local_only)
+	Purple::Account account
+	const char * name
+	gboolean local_only
 
-void
-purple_accounts_reorder(account, new_index)
-    Purple::Account account
-    size_t new_index
+gboolean
+purple_account_privacy_deny_remove(account, name, local_only)
+	Purple::Account account
+	const char * name
+	gboolean local_only
 
-void
-purple_accounts_get_all()
-PREINIT:
-    GList *l;
-PPCODE:
-    for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
-        XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Account")));
-    }
-
-void
-purple_accounts_get_all_active()
-PREINIT:
-    GList *list, *iter;
-PPCODE:
-    list = purple_accounts_get_all_active();
-    for (iter = list; iter != NULL; iter = iter->next) {
-        XPUSHs(sv_2mortal(purple_perl_bless_object(iter->data, "Purple::Account")));
-    }
-    g_list_free(list);
-
-void
-purple_accounts_restore_current_statuses()
-
-Purple::Account
-purple_accounts_find(name, protocol)
-    const char * name
-    const char * protocol
-
-Purple::Handle
-purple_accounts_get_handle()
+gboolean
+purple_account_privacy_check(account, who)
+	Purple::Account account
+	const char * who

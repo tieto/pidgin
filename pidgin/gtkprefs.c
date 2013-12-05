@@ -1395,7 +1395,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		g_free(name);
 
 		pidgin_stock_load_status_icon_theme(theme);
-		pidgin_blist_refresh(purple_get_blist());
+		pidgin_blist_refresh(purple_blist_get_buddy_list());
 	}
 }
 
@@ -1957,8 +1957,8 @@ conv_page(void)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	gtk_webview_setup_entry(GTK_WEBVIEW(webview),
-	                        PURPLE_CONNECTION_HTML |
-	                        PURPLE_CONNECTION_FORMATTING_WBFO);
+	                        PURPLE_CONNECTION_FLAG_HTML |
+	                        PURPLE_CONNECTION_FLAG_FORMATTING_WBFO);
 
 	g_signal_connect_after(G_OBJECT(webview), "format-toggled",
 	                       G_CALLBACK(formatting_toggle_cb), NULL);

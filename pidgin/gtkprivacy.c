@@ -28,10 +28,10 @@
 
 #include "connection.h"
 #include "debug.h"
-#include "privacy.h"
 #include "request.h"
 #include "util.h"
 
+#include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
@@ -76,15 +76,15 @@ typedef struct
 static struct
 {
 	const char *text;
-	PurplePrivacyType type;
+	PurpleAccountPrivacyType type;
 
 } const menu_entries[] =
 {
-	{ N_("Allow all users to contact me"),         PURPLE_PRIVACY_ALLOW_ALL },
-	{ N_("Allow only the users on my buddy list"), PURPLE_PRIVACY_ALLOW_BUDDYLIST },
-	{ N_("Allow only the users below"),            PURPLE_PRIVACY_ALLOW_USERS },
-	{ N_("Block all users"),                       PURPLE_PRIVACY_DENY_ALL },
-	{ N_("Block only the users below"),            PURPLE_PRIVACY_DENY_USERS }
+	{ N_("Allow all users to contact me"),         PURPLE_ACCOUNT_PRIVACY_ALLOW_ALL },
+	{ N_("Allow only the users on my buddy list"), PURPLE_ACCOUNT_PRIVACY_ALLOW_BUDDYLIST },
+	{ N_("Allow only the users below"),            PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS },
+	{ N_("Block all users"),                       PURPLE_ACCOUNT_PRIVACY_DENY_ALL },
+	{ N_("Block only the users below"),            PURPLE_ACCOUNT_PRIVACY_DENY_USERS }
 };
 
 static const size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
@@ -99,7 +99,7 @@ rebuild_allow_list(PidginPrivacyDialog *dialog)
 
 	gtk_list_store_clear(dialog->allow_store);
 
-	for (l = dialog->account->permit; l != NULL; l = l->next) {
+	for (l = purple_account_privacy_get_permitted(dialog->account); l != NULL; l = l->next) {
 		gtk_list_store_append(dialog->allow_store, &iter);
 		gtk_list_store_set(dialog->allow_store, &iter, 0, l->data, -1);
 	}
@@ -113,7 +113,7 @@ rebuild_block_list(PidginPrivacyDialog *dialog)
 
 	gtk_list_store_clear(dialog->block_store);
 
-	for (l = dialog->account->deny; l != NULL; l = l->next) {
+	for (l = purple_account_privacy_get_denied(dialog->account); l != NULL; l = l->next) {
 		gtk_list_store_append(dialog->block_store, &iter);
 		gtk_list_store_set(dialog->block_store, &iter, 0, l->data, -1);
 	}
@@ -230,7 +230,7 @@ select_account_cb(GtkWidget *dropdown, PurpleAccount *account,
 static void
 type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
 {
-	PurplePrivacyType new_type =
+	PurpleAccountPrivacyType new_type =
 		menu_entries[gtk_combo_box_get_active(combo)].type;
 
 	purple_account_set_privacy_type(dialog->account, new_type);
@@ -240,12 +240,12 @@ type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
 	gtk_widget_hide(dialog->block_widget);
 	gtk_widget_hide(dialog->button_box);
 
-	if (new_type == PURPLE_PRIVACY_ALLOW_USERS) {
+	if (new_type == PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show_all(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
-	else if (new_type == PURPLE_PRIVACY_DENY_USERS) {
+	else if (new_type == PURPLE_ACCOUNT_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
 		gtk_widget_show_all(dialog->button_box);
 		dialog->in_allow_list = FALSE;
@@ -255,7 +255,7 @@ type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
 	gtk_widget_show(dialog->button_box);
 
 	purple_blist_schedule_save();
-	pidgin_blist_refresh(purple_get_blist());
+	pidgin_blist_refresh(purple_blist_get_buddy_list());
 }
 
 static void
@@ -296,9 +296,9 @@ remove_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 		return;
 
 	if (dialog->in_allow_list)
-		purple_privacy_permit_remove(dialog->account, name, FALSE);
+		purple_account_privacy_permit_remove(dialog->account, name, FALSE);
 	else
-		purple_privacy_deny_remove(dialog->account, name, FALSE);
+		purple_account_privacy_deny_remove(dialog->account, name, FALSE);
 
 	g_free(name);
 }
@@ -308,17 +308,17 @@ removeall_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	GSList *l;
 	if (dialog->in_allow_list)
-		l = dialog->account->permit;
+		l = purple_account_privacy_get_permitted(dialog->account);
 	else
-		l = dialog->account->deny;
+		l = purple_account_privacy_get_denied(dialog->account);
 	while (l) {
 		char *user;
 		user = l->data;
 		l = l->next;
 		if (dialog->in_allow_list)
-			purple_privacy_permit_remove(dialog->account, user, FALSE);
+			purple_account_privacy_permit_remove(dialog->account, user, FALSE);
 		else
-			purple_privacy_deny_remove(dialog->account, user, FALSE);
+			purple_account_privacy_deny_remove(dialog->account, user, FALSE);
 	}
 }
 
@@ -414,12 +414,12 @@ privacy_dialog_new(void)
 
 	type_changed_cb(GTK_COMBO_BOX(dialog->type_menu), dialog);
 #if 0
-	if (purple_account_get_privacy_type(dialog->account) == PURPLE_PRIVACY_ALLOW_USERS) {
+	if (purple_account_get_privacy_type(dialog->account) == PURPLE_ACCOUNT_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
-	else if (purple_account_get_privacy_type(dialog->account) == PURPLE_PRIVACY_DENY_USERS) {
+	else if (purple_account_get_privacy_type(dialog->account) == PURPLE_ACCOUNT_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
@@ -463,9 +463,9 @@ static void
 confirm_permit_block_cb(PidginPrivacyRequestData *data, int option)
 {
 	if (data->block)
-		purple_privacy_deny(data->account, data->name, FALSE, FALSE);
+		purple_account_privacy_deny(data->account, data->name);
 	else
-		purple_privacy_allow(data->account, data->name, FALSE, FALSE);
+		purple_account_privacy_allow(data->account, data->name);
 
 	destroy_request_data(data);
 }
@@ -571,25 +571,11 @@ pidgin_deny_added_removed(PurpleAccount *account, const char *name)
 		rebuild_block_list(privacy_dialog);
 }
 
-static PurplePrivacyUiOps privacy_ops =
-{
-	pidgin_permit_added_removed,
-	pidgin_permit_added_removed,
-	pidgin_deny_added_removed,
-	pidgin_deny_added_removed,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-PurplePrivacyUiOps *
-pidgin_privacy_get_ui_ops(void)
-{
-	return &privacy_ops;
-}
-
 void
 pidgin_privacy_init(void)
 {
+	PurpleAccountUiOps *ops = pidgin_accounts_get_ui_ops();
+
+	ops->permit_added = ops->permit_removed = pidgin_permit_added_removed;
+	ops->deny_added = ops->deny_removed = pidgin_deny_added_removed;
 }

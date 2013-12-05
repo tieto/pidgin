@@ -5,23 +5,14 @@ PROTOTYPES: ENABLE
 
 BOOT:
 {
-	HV *type_stash = gv_stashpv("Purple::Conversation::Type", 1);
-	HV *update_stash = gv_stashpv("Purple::Conversation::Update::Type", 1);
-	HV *typing_stash = gv_stashpv("Purple::Conversation::TypingState", 1);
-	HV *flags_stash = gv_stashpv("Purple::Conversation::Flags", 1);
-	HV *cbflags_stash = gv_stashpv("Purple::Conversation::ChatBuddy::Flags", 1);
+	HV *update_stash = gv_stashpv("Purple::Conversation::UpdateType", 1);
+	HV *typing_stash = gv_stashpv("Purple::IMTypingState", 1);
+	HV *flags_stash = gv_stashpv("Purple::MessageFlags", 1);
+	HV *cbflags_stash = gv_stashpv("Purple::ChatUser::Flags", 1);
 
-	static const constiv *civ, type_const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_CONV_TYPE_##name}
-		const_iv(UNKNOWN),
-		const_iv(IM),
-		const_iv(CHAT),
-		const_iv(MISC),
-		const_iv(ANY),
-	};
-	static const constiv update_const_iv[] = {
+	static const constiv *civ, update_const_iv[] = {
 #undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_CONV_UPDATE_##name}
+#define const_iv(name) {#name, (IV)PURPLE_CONVERSATION_UPDATE_##name}
 		const_iv(ADD),
 		const_iv(REMOVE),
 		const_iv(ACCOUNT),
@@ -41,7 +32,7 @@ BOOT:
 	};
 	static const constiv typing_const_iv[] = {
 #undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_##name}
+#define const_iv(name) {#name, (IV)PURPLE_IM_##name}
 		const_iv(NOT_TYPING),
 		const_iv(TYPING),
 		const_iv(TYPED),
@@ -66,7 +57,7 @@ BOOT:
 	};
 	static const constiv cbflags_const_iv[] = {
 #undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_CBFLAGS_##name}
+#define const_iv(name) {#name, (IV)PURPLE_CHAT_USER_##name}
 		const_iv(NONE),
 		const_iv(VOICE),
 		const_iv(HALFOP),
@@ -74,9 +65,6 @@ BOOT:
 		const_iv(FOUNDER),
 		const_iv(TYPING),
 	};
-
-	for (civ = type_const_iv + sizeof(type_const_iv) / sizeof(type_const_iv[0]); civ-- > type_const_iv; )
-		newCONSTSUB(type_stash, (char *)civ->name, newSViv(civ->iv));
 
 	for (civ = update_const_iv + sizeof(update_const_iv) / sizeof(update_const_iv[0]); civ-- > update_const_iv; )
 		newCONSTSUB(update_stash, (char *)civ->name, newSViv(civ->iv));
@@ -91,55 +79,75 @@ BOOT:
 		newCONSTSUB(cbflags_stash, (char *)civ->name, newSViv(civ->iv));
 }
 
-void
-purple_get_ims()
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = purple_get_ims(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
-	}
-
-void
-purple_get_conversations()
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = purple_get_conversations(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
-	}
-
-void
-purple_get_chats()
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = purple_get_chats(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
-	}
-
-Purple::Conversation
-purple_find_conversation_with_account(type, name, account)
-	Purple::ConversationType type
-	const char *name
-	Purple::Account account
-
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversations  PREFIX = purple_conversations_
 PROTOTYPES: ENABLE
+
+void
+purple_conversations_add(conv)
+    Purple::Conversation conv
+
+void
+purple_conversations_remove(conv)
+    Purple::Conversation conv
+
+void
+purple_conversations_update_cache(conv, name, account)
+	Purple::Conversation conv
+	const char * name
+	Purple::Account account
 
 Purple::Handle
 purple_conversations_get_handle()
 
-MODULE = Purple::Conversation  PACKAGE = Purple::Conversation  PREFIX = purple_conversation_
-PROTOTYPES: ENABLE
+Purple::ChatConversation
+purple_conversations_find_chat(gc, id)
+	Purple::Connection gc
+	int id
 
 void
-purple_conversation_destroy(conv)
-	Purple::Conversation conv
+purple_conversations_get_ims()
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = purple_conversations_get_ims(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::IMConversation")));
+	}
 
-Purple::ConversationType
-purple_conversation_get_type(conv)
-	Purple::Conversation conv
+void
+purple_conversations_get_all()
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
+	}
+
+void
+purple_conversations_get_chats()
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = purple_conversations_get_chats(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ChatConversation")));
+	}
+
+Purple::Conversation
+purple_conversations_find_with_account(name, account)
+	const char *name
+	Purple::Account account
+
+Purple::ChatConversation
+purple_conversations_find_chat_with_account(name, account)
+	const char *name
+	Purple::Account account
+
+Purple::IMConversation
+purple_conversations_find_im_with_account(name, account)
+	const char *name
+	Purple::Account account
+
+MODULE = Purple::Conversation  PACKAGE = Purple::Conversation  PREFIX = purple_conversation_
+PROTOTYPES: ENABLE
 
 Purple::Account
 purple_conversation_get_account(conv)
@@ -180,19 +188,6 @@ gboolean
 purple_conversation_is_logging(conv)
 	Purple::Conversation conv
 
-Purple::Conversation::IM
-purple_conversation_get_im_data(conv)
-	Purple::Conversation conv
-
-Purple::Conversation::Chat
-purple_conversation_get_chat_data(conv)
-	Purple::Conversation conv
-
-gpointer
-purple_conversation_get_data(conv, key)
-	Purple::Conversation conv
-	const char * key
-
 Purple::ConnectionFlags
 purple_conversation_get_features(conv)
 	Purple::Conversation conv
@@ -204,15 +199,7 @@ purple_conversation_has_focus(conv)
 void
 purple_conversation_update(conv, type)
 	Purple::Conversation conv
-	Purple::ConvUpdateType type
-
-Purple::Conversation
-purple_conversation_new(class, type, account, name)
-	Purple::ConversationType type
-	Purple::Account account
-	const char *name
-    C_ARGS:
-	type, account, name
+	Purple::Conversation::UpdateType type
 
 void
 purple_conversation_set_account(conv, account);
@@ -227,6 +214,25 @@ purple_conversation_write(conv, who, message, flags, mtime)
 	Purple::MessageFlags flags
 	time_t mtime
 
+void
+purple_conversation_write_message(conv, who, message, flags, mtime)
+	Purple::Conversation conv
+	const char *who
+	const char *message
+	Purple::MessageFlags flags
+	time_t mtime
+
+void
+purple_conversation_send(conv, message)
+	Purple::Conversation conv
+	const char *message
+
+void
+purple_conversation_send_with_flags(conv, message, flags)
+	Purple::Conversation conv
+	const char *message
+	Purple::MessageFlags flags
+
 gboolean
 purple_conversation_do_command(conv, cmdline, markup, error)
 	Purple::Conversation conv
@@ -234,132 +240,122 @@ purple_conversation_do_command(conv, cmdline, markup, error)
 	const char *markup
 	char **error
 
-MODULE = Purple::Conversation  PACKAGE = Purple::Conversation::IM  PREFIX = purple_conv_im_
+MODULE = Purple::Conversation  PACKAGE = Purple::IMConversation  PREFIX = purple_im_conversation_
 PROTOTYPES: ENABLE
 
-Purple::Conversation
-purple_conv_im_get_conversation(im)
-	Purple::Conversation::IM im
+Purple::IMConversation
+purple_im_conversation_new(class, account, name)
+	Purple::Account account
+	const char *name
+    C_ARGS:
+	account, name
 
 void
-purple_conv_im_set_icon(im, icon)
-	Purple::Conversation::IM im
+purple_im_conversation_set_icon(im, icon)
+	Purple::IMConversation im
 	Purple::Buddy::Icon icon
 
 Purple::Buddy::Icon
-purple_conv_im_get_icon(im)
-	Purple::Conversation::IM im
+purple_im_conversation_get_icon(im)
+	Purple::IMConversation im
 
 void
-purple_conv_im_set_typing_state(im, state)
-	Purple::Conversation::IM im
-	Purple::TypingState state
+purple_im_conversation_set_typing_state(im, state)
+	Purple::IMConversation im
+	Purple::IMTypingState state
 
-Purple::TypingState
-purple_conv_im_get_typing_state(im)
-	Purple::Conversation::IM im
+Purple::IMTypingState
+purple_im_conversation_get_typing_state(im)
+	Purple::IMConversation im
 
 void
-purple_conv_im_start_typing_timeout(im, timeout)
-	Purple::Conversation::IM im
+purple_im_conversation_start_typing_timeout(im, timeout)
+	Purple::IMConversation im
 	int timeout
 
 void
-purple_conv_im_stop_typing_timeout(im)
-	Purple::Conversation::IM im
+purple_im_conversation_stop_typing_timeout(im)
+	Purple::IMConversation im
 
 guint
-purple_conv_im_get_typing_timeout(im)
-	Purple::Conversation::IM im
+purple_im_conversation_get_typing_timeout(im)
+	Purple::IMConversation im
 
 void
-purple_conv_im_set_type_again(im, val)
-	Purple::Conversation::IM im
+purple_im_conversation_set_type_again(im, val)
+	Purple::IMConversation im
 	time_t val
 
 time_t
-purple_conv_im_get_type_again(im)
-	Purple::Conversation::IM im
+purple_im_conversation_get_type_again(im)
+	Purple::IMConversation im
 
 void
-purple_conv_im_start_send_typed_timeout(im)
-	Purple::Conversation::IM im
+purple_im_conversation_start_send_typed_timeout(im)
+	Purple::IMConversation im
 
 void
-purple_conv_im_stop_send_typed_timeout(im)
-	Purple::Conversation::IM im
+purple_im_conversation_stop_send_typed_timeout(im)
+	Purple::IMConversation im
 
 guint
-purple_conv_im_get_send_typed_timeout(im)
-	Purple::Conversation::IM im
+purple_im_conversation_get_send_typed_timeout(im)
+	Purple::IMConversation im
 
 void
-purple_conv_im_update_typing(im)
-	Purple::Conversation::IM im
+purple_im_conversation_update_typing(im)
+	Purple::IMConversation im
 
-void
-purple_conv_im_send(im, message)
-	Purple::Conversation::IM im
-	const char *message
-
-void
-purple_conv_im_send_with_flags(im, message, flags)
-	Purple::Conversation::IM im
-	const char *message
-	Purple::MessageFlags flags
-
-void
-purple_conv_im_write(im, who, message, flags, mtime)
-	Purple::Conversation::IM im
-	const char *who
-	const char *message
-	Purple::MessageFlags flags
-	time_t mtime
-
-MODULE = Purple::Conversation  PACKAGE = Purple::Conversation  PREFIX = purple_conv_
+MODULE = Purple::Conversation  PACKAGE = Purple::Conversation::Helper  PREFIX = purple_conversation_helper_
 PROTOTYPES: ENABLE
 
 gboolean
-purple_conv_present_error(who, account, what)
+purple_conversation_present_error(who, account, what)
 	const char *who
 	Purple::Account account
 	const char *what
 
+MODULE = Purple::Conversation  PACKAGE = Purple::Conversation  PREFIX = purple_conversation_
+PROTOTYPES: ENABLE
+
 void
-purple_conv_custom_smiley_close(conv, smile)
+purple_conversation_custom_smiley_close(conv, smile)
 	Purple::Conversation conv
 	const char *smile
 
-MODULE = Purple::Conversation  PACKAGE = Purple::Conversation::Chat  PREFIX = purple_conv_chat_
+MODULE = Purple::Conversation  PACKAGE = Purple::ChatConversation  PREFIX = purple_chat_conversation_
 PROTOTYPES: ENABLE
 
-Purple::Conversation
-purple_conv_chat_get_conversation(chat)
-	Purple::Conversation::Chat chat
+Purple::ChatConversation
+purple_chat_conversation_new(class, account, name)
+	Purple::Account account
+	const char *name
+    C_ARGS:
+	account, name
 
 void
-purple_conv_chat_get_users(chat)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_get_users(chat)
+	Purple::ChatConversation chat
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = purple_conv_chat_get_users(chat); l != NULL; l = l->next) {
+	for (l = purple_chat_conversation_get_users(chat); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
 	}
 
 void
-purple_conv_chat_ignore(chat, name)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_ignore(chat, name)
+	Purple::ChatConversation chat
 	const char *name
 
 void
-purple_conv_chat_unignore(chat, name)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_unignore(chat, name)
+	Purple::ChatConversation chat
 	const char *name
 
 void
-purple_conv_chat_set_ignored(chat, ignored)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_set_ignored(chat, ignored)
+	Purple::ChatConversation chat
 	SV * ignored
 PREINIT:
 	GList *l, *t_GL;
@@ -371,55 +367,36 @@ PPCODE:
 	for (i = 0; i <= t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(ignored), i, 0)));
 
-	for (l = purple_conv_chat_set_ignored(chat, t_GL); l != NULL; l = l->next) {
+	for (l = purple_chat_conversation_set_ignored(chat, t_GL); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
 	}
 
 void
-purple_conv_chat_get_ignored(chat)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_get_ignored(chat)
+	Purple::ChatConversation chat
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = purple_conv_chat_get_ignored(chat); l != NULL; l = l->next) {
+	for (l = purple_chat_conversation_get_ignored(chat); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
 	}
 
 const char *
-purple_conv_chat_get_topic(chat)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_get_topic(chat)
+	Purple::ChatConversation chat
 
 void
-purple_conv_chat_set_id(chat, id)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_set_id(chat, id)
+	Purple::ChatConversation chat
 	int id
 
 int
-purple_conv_chat_get_id(chat)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_get_id(chat)
+	Purple::ChatConversation chat
 
 void
-purple_conv_chat_send(chat, message)
-	Purple::Conversation::Chat chat
-	const char * message
-
-void
-purple_conv_chat_send_with_flags(chat, message, flags)
-	Purple::Conversation::Chat chat
-	const char * message
-	Purple::MessageFlags flags
-
-void
-purple_conv_chat_write(chat, who, message, flags, mtime)
-	Purple::Conversation::Chat chat
-	const char *who
-	const char *message
-	Purple::MessageFlags flags
-	time_t mtime
-
-void
-purple_conv_chat_add_users(chat, users, extra_msgs, flags, new_arrivals)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_add_users(chat, users, extra_msgs, flags, new_arrivals)
+	Purple::ChatConversation chat
 	SV * users
 	SV * extra_msgs
 	SV * flags
@@ -446,48 +423,39 @@ PPCODE:
 	for (i = 0; i <= t_len; i++)
 		t_GL_extra_msgs = g_list_append(t_GL_extra_msgs, SvPVutf8_nolen(*av_fetch((AV *)SvRV(extra_msgs), i, 0)));
 
-	purple_conv_chat_add_users(chat, t_GL_users, t_GL_extra_msgs, t_GL_flags, new_arrivals);
+	purple_chat_conversation_add_users(chat, t_GL_users, t_GL_extra_msgs, t_GL_flags, new_arrivals);
 
 	g_list_free(t_GL_users);
 	g_list_free(t_GL_extra_msgs);
 	g_list_free(t_GL_flags);
 
 gboolean
-purple_conv_chat_find_user(chat, user)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_has_user(chat, user)
+	Purple::ChatConversation chat
 	const char * user
 
-void purple_conv_chat_clear_users(chat)
-	Purple::Conversation::Chat chat
+void purple_chat_conversation_clear_users(chat)
+	Purple::ChatConversation chat
 
-void purple_conv_chat_set_nick(chat, nick)
-	Purple::Conversation::Chat chat
+void purple_chat_conversation_set_nick(chat, nick)
+	Purple::ChatConversation chat
 	const char * nick
 
 const char *
-purple_conv_chat_get_nick(chat)
-	Purple::Conversation::Chat chat
+purple_chat_conversation_get_nick(chat)
+	Purple::ChatConversation chat
 
-Purple::Conversation
-purple_find_chat(gc, id)
-	Purple::Connection gc
-	int id
+void purple_chat_conversation_leave(chat)
+	Purple::ChatConversation chat
 
-void purple_conv_chat_left(chat)
-	Purple::Conversation::Chat chat
+gboolean purple_chat_conversation_has_left(chat)
+	Purple::ChatConversation chat
 
-gboolean purple_conv_chat_has_left(chat)
-	Purple::Conversation::Chat chat
-
-Purple::Conversation::ChatBuddy
-purple_conv_chat_cb_find(chat, name)
-	Purple::Conversation::Chat chat
+Purple::ChatUser
+purple_chat_conversation_find_user(chat, name)
+	Purple::ChatConversation chat
 	const char *name
 
 const char *
-purple_conv_chat_cb_get_name(cb)
-	Purple::Conversation::ChatBuddy cb
-
-void
-purple_conv_chat_cb_destroy(cb);
-	Purple::Conversation::ChatBuddy cb
+purple_chat_user_get_name(cb)
+	Purple::ChatUser cb

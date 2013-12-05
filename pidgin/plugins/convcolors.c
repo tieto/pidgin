@@ -113,10 +113,8 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	g_snprintf(tmp, sizeof(tmp), "%s/enabled", formats[i].prefix);
 
 	if (!purple_prefs_get_bool(tmp) ||
-			(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
-			!purple_prefs_get_bool(PREF_IMS)) ||
-			(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
-			!purple_prefs_get_bool(PREF_CHATS)))
+			(PURPLE_IS_IM_CONVERSATION(conv) && !purple_prefs_get_bool(PREF_IMS)) ||
+			(PURPLE_IS_CHAT_CONVERSATION(conv) && !purple_prefs_get_bool(PREF_CHATS)))
 		return FALSE;
 
 	g_snprintf(tmp, sizeof(tmp), "%s/color", formats[i].prefix);

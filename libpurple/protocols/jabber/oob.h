@@ -27,6 +27,6 @@
 #include "jabber.h"
 
 void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
-                      const char *id, xmlnode *querynode);
+                      const char *id, PurpleXmlNode *querynode);
 
 #endif /* PURPLE_JABBER_OOB_H_ */

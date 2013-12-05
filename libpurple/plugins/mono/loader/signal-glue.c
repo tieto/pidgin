@@ -1,15 +1,14 @@
 #include "mono-glue.h"
 #include "mono-helper.h"
 #include "debug.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "signals.h"
-#include "value.h"
 
 typedef struct {
 	MonoObject *func;
 	char *signal;
-	PurpleValue **values;
-	PurpleValue *ret_value;
+	GType *types;
+	GType ret_type;
 	int num_vals;
 } SignalData;
 
@@ -30,15 +29,9 @@ static gpointer dispatch_callback(SignalData *sig_data, int num_vals, ...)
 	array = mono_array_new(ml_get_domain(), mono_get_object_class(), num_vals);
 
 	for (i = 0; i < num_vals; i++) {
-		if (purple_value_get_type(sig_data->values[i]) == PURPLE_TYPE_SUBTYPE) {
-			purple_obj = va_arg(args, gpointer);
-			obj = ml_object_from_purple_subtype(purple_value_get_subtype(sig_data->values[i]), purple_obj);
-			mono_array_set(array, MonoObject*, i, obj);
-		} else {
-			purple_obj = va_arg(args, gpointer);
-			obj = ml_object_from_purple_type(purple_value_get_type(sig_data->values[i]), purple_obj);
-			mono_array_set(array, MonoObject*, i, obj);
-		}
+		purple_obj = va_arg(args, gpointer);
+		obj = ml_object_from_purple_type(sig_data->types[i], purple_obj);
+		mono_array_set(array, MonoObject*, i, obj);
 	}
 
 	va_end(args);
@@ -77,7 +70,7 @@ int purple_signal_connect_glue(MonoObject* h, MonoObject *plugin, MonoString *si
 	sig_data->func = func;
 	sig_data->signal = sig;
 
-	purple_signal_get_values(*instance, sig, &sig_data->ret_value, &sig_data->num_vals, &sig_data->values);
+	purple_signal_get_types(*instance, sig, &sig_data->ret_type, &sig_data->num_vals, &sig_data->types);
 
 	klass = mono_object_get_class(plugin);
 
@@ -88,17 +81,16 @@ int purple_signal_connect_glue(MonoObject* h, MonoObject *plugin, MonoString *si
 	return purple_signal_connect(*instance, sig, (gpointer)klass, get_callback(sig_data), (gpointer)sig_data);
 }
 
-static int determine_index(PurpleType type)
+static int determine_index(GType type)
 {
 	switch (type) {
-		case PURPLE_TYPE_SUBTYPE:
-		case PURPLE_TYPE_STRING:
-		case PURPLE_TYPE_OBJECT:
-		case PURPLE_TYPE_POINTER:
-		case PURPLE_TYPE_BOXED:
+		case G_TYPE_STRING:
+		case G_TYPE_POINTER:
 			return 1;
 		break;
 		default:
+			if (G_TYPE_IS_OBJECT(type) || G_TYPE_IS_BOXED(type))
+				return 1;
 			return type;
 		break;
 	}
@@ -118,13 +110,13 @@ static PurpleCallback get_callback(SignalData *sig_data)
 {
 	int i, index = 0;
 
-	if (sig_data->ret_value == NULL)
+	if (sig_data->ret_type == NULL)
 		index = 0;
 	else
-		index = determine_index(purple_value_get_type(sig_data->ret_value));
+		index = determine_index(sig_data->ret_type);
 
 	for (i = 0; i < sig_data->num_vals; i++) {
-		index += determine_index(purple_value_get_type(sig_data->values[i]));
+		index += determine_index(sig_data->types[i]);
 	}
 
 	purple_debug(PURPLE_DEBUG_INFO, "mono", "get_callback index = %d\n", index);

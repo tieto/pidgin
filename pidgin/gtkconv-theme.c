@@ -21,6 +21,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "gtkconv-theme.h"
 
@@ -87,9 +88,7 @@ enum {
  *****************************************************************************/
 
 static GObjectClass *parent_class = NULL;
-#if GLIB_CHECK_VERSION(2,26,0)
 static GParamSpec *properties[PROP_LAST];
-#endif
 
 /******************************************************************************
  * Helper Functions
@@ -394,28 +393,6 @@ get_outgoing_next_context_html(PidginConvThemePrivate *priv, const char *dir)
 	return priv->outgoing_next_context_html;
 }
 
-static void
-_set_variant(PidginConvTheme *theme, const char *variant)
-{
-	PidginConvThemePrivate *priv;
-	const GValue *val;
-	char *prefname;
-
-	g_return_if_fail(theme != NULL);
-	g_return_if_fail(variant != NULL);
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	g_free(priv->variant);
-	priv->variant = g_strdup(variant);
-
-	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
-	                           g_value_get_string(val));
-	purple_prefs_set_string(prefname, variant);
-	g_free(prefname);
-}
-
 /******************************************************************************
  * GObject Stuff
  *****************************************************************************/
@@ -453,7 +430,7 @@ pidgin_conv_theme_set_property(GObject *obj, guint param_id, const GValue *value
 			break;
 
 		case PROP_VARIANT:
-			_set_variant(theme, g_value_get_string(value));
+			pidgin_conversation_theme_set_variant(theme, g_value_get_string(value));
 			break;
 
 		default:
@@ -517,7 +494,6 @@ static void
 pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -528,23 +504,17 @@ pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 	obj_class->finalize = pidgin_conv_theme_finalize;
 
 	/* INFO */
-	pspec = g_param_spec_boxed("info", "Info",
+	properties[PROP_INFO] = g_param_spec_boxed("info", "Info",
 			"The information about this theme",
 			G_TYPE_HASH_TABLE,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
-	g_object_class_install_property(obj_class, PROP_INFO, pspec);
-#if GLIB_CHECK_VERSION(2,26,0)
-	properties[PROP_INFO] = pspec;
-#endif
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
 
 	/* VARIANT */
-	pspec = g_param_spec_string("variant", "Variant",
+	properties[PROP_VARIANT] = g_param_spec_string("variant", "Variant",
 			"The current variant for this theme",
-			NULL, G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
-#if GLIB_CHECK_VERSION(2,26,0)
-	properties[PROP_VARIANT] = pspec;
-#endif
+			NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType
@@ -598,6 +568,8 @@ pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 		g_hash_table_destroy(priv->info);
 
 	priv->info = info;
+
+	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_INFO]);
 }
 
 const GValue *
@@ -708,12 +680,25 @@ pidgin_conversation_theme_get_variant(PidginConvTheme *theme)
 void
 pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant)
 {
-	_set_variant(theme, variant);
-#if GLIB_CHECK_VERSION(2,26,0)
+	PidginConvThemePrivate *priv;
+	const GValue *val;
+	char *prefname;
+
+	g_return_if_fail(theme != NULL);
+	g_return_if_fail(variant != NULL);
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	g_free(priv->variant);
+	priv->variant = g_strdup(variant);
+
+	val = get_key(priv, "CFBundleIdentifier", FALSE);
+	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
+	                           g_value_get_string(val));
+	purple_prefs_set_string(prefname, variant);
+	g_free(prefname);
+
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_VARIANT]);
-#else
-	g_object_notify(G_OBJECT(theme), "variant");
-#endif
 }
 
 const GList *

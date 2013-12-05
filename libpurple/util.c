@@ -23,7 +23,7 @@
  */
 #include "internal.h"
 
-#include "cipher.h"
+#include "ciphers/md5hash.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
@@ -3099,7 +3099,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 	/* Use stat to be absolutely sure. */
-	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size))
+	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != (off_t)real_size))
 	{
 		purple_debug_error("util", "Error writing data to file %s: "
 				   "Incomplete file written; is your disk "
@@ -3122,10 +3122,10 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	return TRUE;
 }
 
-xmlnode *
+PurpleXmlNode *
 purple_util_read_xml_from_file(const char *filename, const char *description)
 {
-	return xmlnode_from_file(purple_user_dir(), filename, description, "util");
+	return purple_xmlnode_from_file(purple_user_dir(), filename, description, "util");
 }
 
 /*
@@ -4773,4 +4773,198 @@ void purple_callback_set_zero(gpointer data)
 	g_return_if_fail(ptr != NULL);
 
 	*ptr = NULL;
+}
+
+GValue *
+purple_value_new(GType type)
+{
+	GValue *ret;
+
+	g_return_val_if_fail(type != G_TYPE_NONE, NULL);
+
+	ret = g_new0(GValue, 1);
+	g_value_init(ret, type);
+
+	return ret;
+}
+
+GValue *
+purple_value_dup(GValue *value)
+{
+	GValue *ret;
+
+	g_return_val_if_fail(value != NULL, NULL);
+
+	ret = g_new0(GValue, 1);
+	g_value_init(ret, G_VALUE_TYPE(value));
+	g_value_copy(value, ret);
+
+	return ret;
+}
+
+void
+purple_value_free(GValue *value)
+{
+	g_return_if_fail(value != NULL);
+
+	g_value_unset(value);
+	g_free(value);
+}
+
+gchar *purple_http_digest_calculate_session_key(
+		const gchar *algorithm,
+		const gchar *username,
+		const gchar *realm,
+		const gchar *password,
+		const gchar *nonce,
+		const gchar *client_nonce)
+{
+	PurpleHash *hasher;
+	gchar hash[33]; /* We only support MD5. */
+
+	g_return_val_if_fail(username != NULL, NULL);
+	g_return_val_if_fail(realm    != NULL, NULL);
+	g_return_val_if_fail(password != NULL, NULL);
+	g_return_val_if_fail(nonce    != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	hasher = purple_md5_hash_new();
+	g_return_val_if_fail(hash != NULL, NULL);
+
+	purple_hash_append(hasher, (guchar *)username, strlen(username));
+	purple_hash_append(hasher, (guchar *)":", 1);
+	purple_hash_append(hasher, (guchar *)realm, strlen(realm));
+	purple_hash_append(hasher, (guchar *)":", 1);
+	purple_hash_append(hasher, (guchar *)password, strlen(password));
+
+	if (algorithm != NULL && !g_ascii_strcasecmp(algorithm, "MD5-sess"))
+	{
+		guchar digest[16];
+
+		if (client_nonce == NULL)
+		{
+			g_object_unref(hasher);
+			purple_debug_error("hash", "Required client_nonce missing for MD5-sess digest calculation.\n");
+			return NULL;
+		}
+
+		purple_hash_digest(hasher, digest, sizeof(digest));
+
+		purple_hash_reset(hasher);
+		purple_hash_append(hasher, digest, sizeof(digest));
+		purple_hash_append(hasher, (guchar *)":", 1);
+		purple_hash_append(hasher, (guchar *)nonce, strlen(nonce));
+		purple_hash_append(hasher, (guchar *)":", 1);
+		purple_hash_append(hasher, (guchar *)client_nonce, strlen(client_nonce));
+	}
+
+	purple_hash_digest_to_str(hasher, hash, sizeof(hash));
+	g_object_unref(hasher);
+
+	return g_strdup(hash);
+}
+
+gchar *purple_http_digest_calculate_response(
+		const gchar *algorithm,
+		const gchar *method,
+		const gchar *digest_uri,
+		const gchar *qop,
+		const gchar *entity,
+		const gchar *nonce,
+		const gchar *nonce_count,
+		const gchar *client_nonce,
+		const gchar *session_key)
+{
+	PurpleHash *hash;
+	static gchar hash2[33]; /* We only support MD5. */
+
+	g_return_val_if_fail(method      != NULL, NULL);
+	g_return_val_if_fail(digest_uri  != NULL, NULL);
+	g_return_val_if_fail(nonce       != NULL, NULL);
+	g_return_val_if_fail(session_key != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	/* Check for a supported "quality of protection". */
+	g_return_val_if_fail(qop == NULL ||
+						 *qop == '\0' ||
+						 g_ascii_strcasecmp(qop, "auth") ||
+						 g_ascii_strcasecmp(qop, "auth-int"), NULL);
+
+	hash = purple_md5_hash_new();
+	g_return_val_if_fail(hash != NULL, NULL);
+
+	purple_hash_append(hash, (guchar *)method, strlen(method));
+	purple_hash_append(hash, (guchar *)":", 1);
+	purple_hash_append(hash, (guchar *)digest_uri, strlen(digest_uri));
+
+	if (qop != NULL && !g_ascii_strcasecmp(qop, "auth-int"))
+	{
+		PurpleHash *hash2;
+		gchar entity_hash[33];
+
+		if (entity == NULL)
+		{
+			g_object_unref(hash);
+			purple_debug_error("hash", "Required entity missing for auth-int digest calculation.\n");
+			return NULL;
+		}
+
+		hash2 = purple_md5_hash_new();
+		purple_hash_append(hash2, (guchar *)entity, strlen(entity));
+		purple_hash_digest_to_str(hash2, entity_hash, sizeof(entity_hash));
+		g_object_unref(hash2);
+
+		purple_hash_append(hash, (guchar *)":", 1);
+		purple_hash_append(hash, (guchar *)entity_hash, strlen(entity_hash));
+	}
+
+	purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
+	purple_hash_reset(hash);
+
+	purple_hash_append(hash, (guchar *)session_key, strlen(session_key));
+	purple_hash_append(hash, (guchar *)":", 1);
+	purple_hash_append(hash, (guchar *)nonce, strlen(nonce));
+	purple_hash_append(hash, (guchar *)":", 1);
+
+	if (qop != NULL && *qop != '\0')
+	{
+		if (nonce_count == NULL)
+		{
+			g_object_unref(hash);
+			purple_debug_error("hash", "Required nonce_count missing for digest calculation.\n");
+			return NULL;
+		}
+
+		if (client_nonce == NULL)
+		{
+			g_object_unref(hash);
+			purple_debug_error("hash", "Required client_nonce missing for digest calculation.\n");
+			return NULL;
+		}
+
+		purple_hash_append(hash, (guchar *)nonce_count, strlen(nonce_count));
+		purple_hash_append(hash, (guchar *)":", 1);
+		purple_hash_append(hash, (guchar *)client_nonce, strlen(client_nonce));
+		purple_hash_append(hash, (guchar *)":", 1);
+
+		purple_hash_append(hash, (guchar *)qop, strlen(qop));
+
+		purple_hash_append(hash, (guchar *)":", 1);
+	}
+
+	purple_hash_append(hash, (guchar *)hash2, strlen(hash2));
+	purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
+	g_object_unref(hash);
+
+	return g_strdup(hash2);
 }

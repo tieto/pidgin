@@ -26,7 +26,8 @@
 #include "oauth.h"
 
 #include "oauth-parameter.h"
-#include <cipher.h>
+#include "ciphers/hmaccipher.h"
+#include "ciphers/sha1hash.h"
 
 char *gg_oauth_static_nonce;		/* dla unit testów */
 char *gg_oauth_static_timestamp;	/* dla unit testów */
@@ -48,15 +49,19 @@ static void gg_oauth_generate_nonce(char *buf, int len)
 
 static gchar *gg_hmac_sha1(const char *key, const char *message)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleHash *hash;
 	guchar digest[20];
-	
-	context = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(context, "hash", "sha1");
-	purple_cipher_context_set_key(context, (guchar *)key, strlen(key));
-	purple_cipher_context_append(context, (guchar *)message, strlen(message));
-	purple_cipher_context_digest(context, digest, sizeof(digest));
-	purple_cipher_context_destroy(context);
+
+	hash = purple_sha1_hash_new();
+	cipher = purple_hmac_cipher_new(hash);
+
+	purple_cipher_set_key(cipher, (guchar *)key, strlen(key));
+	purple_cipher_append(cipher, (guchar *)message, strlen(message));
+	purple_cipher_digest(cipher, digest, sizeof(digest));
+
+	g_object_unref(cipher);
+	g_object_unref(hash);
 	
 	return purple_base64_encode(digest, sizeof(digest));
 }
@@ -87,7 +92,7 @@ static char *gg_oauth_generate_signature(const char *method, const char *url, co
 	return res;
 }
 
-char *gg_oauth_generate_header(const char *method, const char *url, const const char *consumer_key, const char *consumer_secret, const char *token, const char *token_secret)
+char *gg_oauth_generate_header(const char *method, const char *url, const char *consumer_key, const char *consumer_secret, const char *token, const char *token_secret)
 {
 	char *request, *signature, *res;
 	char nonce[80], timestamp[16];

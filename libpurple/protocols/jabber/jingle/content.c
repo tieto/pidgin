@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "debug.h"
 #include "content.h"
@@ -49,10 +50,8 @@ static void jingle_content_init (JingleContent *content);
 static void jingle_content_finalize (GObject *object);
 static void jingle_content_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void jingle_content_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
-static xmlnode *jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleActionType action);
-static JingleContent *jingle_content_parse_internal(xmlnode *content);
-
-static GObjectClass *parent_class = NULL;
+static PurpleXmlNode *jingle_content_to_xml_internal(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action);
+static JingleContent *jingle_content_parse_internal(PurpleXmlNode *content);
 
 enum {
 	PROP_0,
@@ -63,7 +62,11 @@ enum {
 	PROP_SENDERS,
 	PROP_TRANSPORT,
 	PROP_PENDING_TRANSPORT,
+	PROP_LAST
 };
+
+static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 GType
 jingle_content_get_type()
@@ -100,56 +103,51 @@ jingle_content_class_init (JingleContentClass *klass)
 	klass->to_xml = jingle_content_to_xml_internal;
 	klass->parse = jingle_content_parse_internal;
 
-	g_object_class_install_property(gobject_class, PROP_SESSION,
-			g_param_spec_object("session",
+	g_type_class_add_private(klass, sizeof(JingleContentPrivate));
+
+	properties[PROP_SESSION] = g_param_spec_object("session",
 			"Jingle Session",
 			"The jingle session parent of this content.",
 			JINGLE_TYPE_SESSION,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_CREATOR,
-			g_param_spec_string("creator",
+	properties[PROP_CREATOR] = g_param_spec_string("creator",
 			"Creator",
 			"The participant that created this content.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_DISPOSITION,
-			g_param_spec_string("disposition",
+	properties[PROP_DISPOSITION] = g_param_spec_string("disposition",
 			"Disposition",
 			"The disposition of the content.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_NAME,
-			g_param_spec_string("name",
+	properties[PROP_NAME] = g_param_spec_string("name",
 			"Name",
 			"The name of this content.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_SENDERS,
-			g_param_spec_string("senders",
+	properties[PROP_SENDERS] = g_param_spec_string("senders",
 			"Senders",
 			"The sender of this content.",
 			NULL,
-			G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_TRANSPORT,
-			g_param_spec_object("transport",
+	properties[PROP_TRANSPORT] = g_param_spec_object("transport",
 			"transport",
 			"The transport of this content.",
 			JINGLE_TYPE_TRANSPORT,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_PENDING_TRANSPORT,
-			g_param_spec_object("pending-transport",
+	properties[PROP_PENDING_TRANSPORT] = g_param_spec_object("pending-transport",
 			"Pending transport",
 			"The pending transport contained within this content",
 			JINGLE_TYPE_TRANSPORT,
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(JingleContentPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void
@@ -343,7 +341,7 @@ JingleTransport *
 jingle_content_get_pending_transport(JingleContent *content)
 {
 	JingleTransport *pending_transport;
-	g_object_get(content, "pending_transport", &pending_transport, NULL);
+	g_object_get(content, "pending-transport", &pending_transport, NULL);
 	return pending_transport;
 }
 
@@ -356,10 +354,19 @@ jingle_content_set_pending_transport(JingleContent *content, JingleTransport *tr
 void
 jingle_content_accept_transport(JingleContent *content)
 {
+	GObject *obj;
+
 	if (content->priv->transport)
 		g_object_unref(content->priv->transport);
+
 	content->priv->transport = content->priv->pending_transport;
 	content->priv->pending_transport = NULL;
+
+	obj = G_OBJECT(content);
+	g_object_freeze_notify(obj);
+	g_object_notify_by_pspec(obj, properties[PROP_TRANSPORT]);
+	g_object_notify_by_pspec(obj, properties[PROP_PENDING_TRANSPORT]);
+	g_object_thaw_notify(obj);
 }
 
 void
@@ -369,6 +376,8 @@ jingle_content_remove_pending_transport(JingleContent *content)
 		g_object_unref(content->priv->pending_transport);
 		content->priv->pending_transport = NULL;
 	}
+
+	g_object_notify_by_pspec(G_OBJECT(content), properties[PROP_PENDING_TRANSPORT]);
 }
 
 void
@@ -378,16 +387,16 @@ jingle_content_modify(JingleContent *content, const gchar *senders)
 }
 
 static JingleContent *
-jingle_content_parse_internal(xmlnode *content)
+jingle_content_parse_internal(PurpleXmlNode *content)
 {
-	xmlnode *description = xmlnode_get_child(content, "description");
-	const gchar *type = xmlnode_get_namespace(description);
-	const gchar *creator = xmlnode_get_attrib(content, "creator");
-	const gchar *disposition = xmlnode_get_attrib(content, "disposition");
-	const gchar *senders = xmlnode_get_attrib(content, "senders");
-	const gchar *name = xmlnode_get_attrib(content, "name");
+	PurpleXmlNode *description = purple_xmlnode_get_child(content, "description");
+	const gchar *type = purple_xmlnode_get_namespace(description);
+	const gchar *creator = purple_xmlnode_get_attrib(content, "creator");
+	const gchar *disposition = purple_xmlnode_get_attrib(content, "disposition");
+	const gchar *senders = purple_xmlnode_get_attrib(content, "senders");
+	const gchar *name = purple_xmlnode_get_attrib(content, "name");
 	JingleTransport *transport =
-			jingle_transport_parse(xmlnode_get_child(content, "transport"));
+			jingle_transport_parse(purple_xmlnode_get_child(content, "transport"));
 	if (transport == NULL)
 		return NULL;
 
@@ -398,9 +407,9 @@ jingle_content_parse_internal(xmlnode *content)
 }
 
 JingleContent *
-jingle_content_parse(xmlnode *content)
+jingle_content_parse(PurpleXmlNode *content)
 {
-	const gchar *type = xmlnode_get_namespace(xmlnode_get_child(content, "description"));
+	const gchar *type = purple_xmlnode_get_namespace(purple_xmlnode_get_child(content, "description"));
 	GType jingle_type = jingle_get_type(type);
 
 	if (jingle_type != G_TYPE_NONE) {
@@ -410,20 +419,20 @@ jingle_content_parse(xmlnode *content)
 	}
 }
 
-static xmlnode *
-jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleActionType action)
+static PurpleXmlNode *
+jingle_content_to_xml_internal(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action)
 {
-	xmlnode *node = xmlnode_new_child(jingle, "content");
+	PurpleXmlNode *node = purple_xmlnode_new_child(jingle, "content");
 	gchar *creator = jingle_content_get_creator(content);
 	gchar *name = jingle_content_get_name(content);
 	gchar *senders = jingle_content_get_senders(content);
 	gchar *disposition = jingle_content_get_disposition(content);
 
-	xmlnode_set_attrib(node, "creator", creator);
-	xmlnode_set_attrib(node, "name", name);
-	xmlnode_set_attrib(node, "senders", senders);
+	purple_xmlnode_set_attrib(node, "creator", creator);
+	purple_xmlnode_set_attrib(node, "name", name);
+	purple_xmlnode_set_attrib(node, "senders", senders);
 	if (strcmp("session", disposition))
-		xmlnode_set_attrib(node, "disposition", disposition);
+		purple_xmlnode_set_attrib(node, "disposition", disposition);
 
 	g_free(disposition);
 	g_free(senders);
@@ -437,9 +446,9 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 				action != JINGLE_TRANSPORT_INFO &&
 				action != JINGLE_TRANSPORT_REJECT &&
 				action != JINGLE_TRANSPORT_REPLACE) {
-			xmlnode *description = xmlnode_new_child(node, "description");
+			PurpleXmlNode *description = purple_xmlnode_new_child(node, "description");
 
-			xmlnode_set_namespace(description,
+			purple_xmlnode_set_namespace(description,
 					jingle_content_get_description_type(content));
 		}
 
@@ -455,8 +464,8 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 	return node;
 }
 
-xmlnode *
-jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType action)
+PurpleXmlNode *
+jingle_content_to_xml(JingleContent *content, PurpleXmlNode *jingle, JingleActionType action)
 {
 	g_return_val_if_fail(content != NULL, NULL);
 	g_return_val_if_fail(JINGLE_IS_CONTENT(content), NULL);
@@ -464,7 +473,7 @@ jingle_content_to_xml(JingleContent *content, xmlnode *jingle, JingleActionType 
 }
 
 void
-jingle_content_handle_action(JingleContent *content, xmlnode *xmlcontent, JingleActionType action)
+jingle_content_handle_action(JingleContent *content, PurpleXmlNode *xmlcontent, JingleActionType action)
 {
 	g_return_if_fail(content != NULL);
 	g_return_if_fail(JINGLE_IS_CONTENT(content));

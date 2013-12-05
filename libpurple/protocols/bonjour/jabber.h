@@ -31,7 +31,7 @@
 #include "xmlnode.h"
 
 #include "account.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 
 typedef struct _BonjourJabber
 {
@@ -50,13 +50,13 @@ typedef struct _BonjourJabberConversation
 	guint rx_handler;
 	guint tx_handler;
 	guint close_timeout;
-	PurpleCircBuffer *tx_buf;
+	PurpleCircularBuffer *tx_buf;
 	int sent_stream_start; /* 0 = Unsent, 1 = Partial, 2 = Complete */
 	gboolean recv_stream_start;
 	PurpleProxyConnectData *connect_data;
 	gpointer stream_data;
 	xmlParserCtxt *context;
-	xmlnode *current;
+	PurpleXmlNode *current;
 	PurpleBuddy *pb;
 	PurpleAccount *account;
 
@@ -83,7 +83,7 @@ void async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
 void bonjour_jabber_stream_started(BonjourJabberConversation *bconv);
 
-void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
+void bonjour_jabber_process_packet(PurpleBuddy *pb, PurpleXmlNode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 
@@ -102,7 +102,7 @@ typedef enum {
 typedef struct _XepIq {
 	XepIqType type;
 	char *id;
-	xmlnode *node;
+	PurpleXmlNode *node;
 	char *to;
 	void *data;
 } XepIq;

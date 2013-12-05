@@ -27,7 +27,7 @@
 #include "core.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "ft.h"
+#include "xfer.h"
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"
@@ -128,6 +128,7 @@ static PurpleCoreUiOps core_ops =
 	/* padding */
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 
@@ -222,6 +223,7 @@ static PurpleEventLoopUiOps eventloop_ops =
 	g_timeout_add_seconds,
 
 	/* padding */
+	NULL,
 	NULL,
 	NULL,
 	NULL

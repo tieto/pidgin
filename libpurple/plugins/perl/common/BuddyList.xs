@@ -10,57 +10,6 @@ chat_components_foreach(gpointer key, gpointer value, gpointer user_data)
 		purple_debug_error("perl", "hv_store failed\n");
 }
 
-MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_
-PROTOTYPES: ENABLE
-
-BOOT:
-{
-	HV *stash = gv_stashpv("Purple::BuddyList::Node", 1);
-
-	static const constiv *civ, const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_BLIST_##name##_NODE}
-		const_iv(GROUP),
-		const_iv(CONTACT),
-		const_iv(BUDDY),
-		const_iv(CHAT),
-		const_iv(OTHER),
-#undef const_iv
-#define const_iv(name) {#name, (IV)PURPLE_BLIST_NODE_FLAG_##name}
-		const_iv(NO_SAVE),
-	};
-
-	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
-		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
-}
-
-Purple::BuddyList
-purple_get_blist()
-
-MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_find_
-PROTOTYPES: ENABLE
-
-Purple::BuddyList::Buddy
-purple_find_buddy(account, name)
-	Purple::Account account
-	const char * name
-
-void
-purple_find_buddies(account, name)
-	Purple::Account account
-	const char * name
-PREINIT:
-	GSList *l, *ll;
-PPCODE:
-	ll = purple_find_buddies(account, name);
-	for (l = ll; l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
-	}
-	g_slist_free(ll);
-
-Purple::BuddyList::Group
-purple_find_group(name)
-	const char *name
-
 MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_
 PROTOTYPES: ENABLE
 
@@ -92,6 +41,11 @@ void
 purple_contact_invalidate_priority_buddy(contact)
 	Purple::BuddyList::Contact contact
 
+void
+purple_contact_merge(source, node)
+	Purple::BuddyList::Contact source
+	Purple::BuddyList::Node node
+
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Group  PREFIX = purple_group_
 PROTOTYPES: ENABLE
 
@@ -116,6 +70,11 @@ purple_group_on_account(group, account)
 	Purple::BuddyList::Group  group
 	Purple::Account account
 
+void
+purple_group_set_name(group, name)
+	Purple::BuddyList::Group  group
+	const char * name
+
 const char *
 purple_group_get_name(group)
 	Purple::BuddyList::Group group
@@ -123,15 +82,35 @@ purple_group_get_name(group)
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList  PREFIX = purple_blist_
 PROTOTYPES: ENABLE
 
+Purple::BuddyList
+purple_blist_get_buddy_list()
+
+Purple::BuddyList::Buddy
+purple_blist_find_buddy(account, name)
+	Purple::Account account
+	const char * name
+
+void
+purple_blist_find_buddies(account, name)
+	Purple::Account account
+	const char * name
+PREINIT:
+	GSList *l, *ll;
+PPCODE:
+	ll = purple_blist_find_buddies(account, name);
+	for (l = ll; l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
+	}
+	g_slist_free(ll);
+
+Purple::BuddyList::Group
+purple_blist_find_group(name)
+	const char *name
+
 void
 purple_blist_add_contact(contact, group, node)
 	Purple::BuddyList::Contact contact
 	Purple::BuddyList::Group  group
-	Purple::BuddyList::Node node
-
-void
-purple_blist_merge_contact(source, node)
-	Purple::BuddyList::Contact source
 	Purple::BuddyList::Node node
 
 void
@@ -177,41 +156,8 @@ void
 purple_blist_show()
 
 void
-purple_blist_destroy();
-
-void
 purple_blist_set_visible(show)
 	gboolean show
-
-void
-purple_blist_update_buddy_status(buddy, old_status)
-	Purple::BuddyList::Buddy buddy
-	Purple::Status old_status
-
-void
-purple_blist_rename_buddy(buddy, name)
-	Purple::BuddyList::Buddy buddy
-	const char * name
-
-void
-purple_blist_alias_buddy(buddy, alias)
-	Purple::BuddyList::Buddy buddy
-	const char * alias
-
-void
-purple_blist_server_alias_buddy(buddy, alias)
-	Purple::BuddyList::Buddy buddy
-	const char * alias
-
-void
-purple_blist_alias_chat(chat, alias)
-	Purple::BuddyList::Chat chat
-	const char * alias
-
-void
-purple_blist_rename_group(group, name)
-	Purple::BuddyList::Group  group
-	const char * name
 
 void
 purple_blist_add_account(account)
@@ -220,15 +166,6 @@ purple_blist_add_account(account)
 void
 purple_blist_remove_account(account)
 	Purple::Account account
-
-int
-purple_blist_get_group_size(group, offline)
-	Purple::BuddyList::Group  group
-	gboolean offline
-
-int
-purple_blist_get_group_online_count(group)
-	Purple::BuddyList::Group  group
 
 void
 purple_blist_schedule_save()
@@ -287,27 +224,63 @@ purple_blist_node_get_string(node, key)
 	const char * key
 
 void
+purple_blist_node_set_transient(node, transient)
+	Purple::BuddyList::Node node
+	gboolean transient
+
+gboolean
+purple_blist_node_is_transient(node);
+	Purple::BuddyList::Node node
+
+void
 purple_blist_node_remove_setting(node, key)
 	Purple::BuddyList::Node node
 	const char * key
 
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::CountingNode  PREFIX = purple_counting_node_
+PROTOTYPES: ENABLE
+
+int
+purple_counting_node_get_total_size(counter);
+	Purple::BuddyList::CountingNode counter
+
+int
+purple_counting_node_get_current_size(counter);
+	Purple::BuddyList::CountingNode counter
+
+int
+purple_counting_node_get_online_count(counter);
+	Purple::BuddyList::CountingNode counter
+
 void
-purple_blist_node_set_flags(node, flags)
-	Purple::BuddyList::Node node
-	Purple::BuddyList::NodeFlags flags
+purple_counting_node_change_total_size(counter, delta);
+	Purple::BuddyList::CountingNode counter
+	int delta
 
-Purple::BuddyList::NodeFlags
-purple_blist_node_get_flags(node)
-	Purple::BuddyList::Node node
+void
+purple_counting_node_change_current_size(counter, delta);
+	Purple::BuddyList::CountingNode counter
+	int delta
 
-Purple::BuddyList::NodeType
-purple_blist_node_get_type(node)
-	Purple::BuddyList::Node node
+void
+purple_counting_node_change_online_count(counter, delta);
+	Purple::BuddyList::CountingNode counter
+	int delta
 
-Purple::BuddyList::Node
-purple_blist_node_next(node, offline)
-	Purple::BuddyList::Node node
-	gboolean offline
+void
+purple_counting_node_set_total_size(counter, totalsize);
+	Purple::BuddyList::CountingNode counter
+	int totalsize
+
+void
+purple_counting_node_set_current_size(counter, currentsize);
+	Purple::BuddyList::CountingNode counter
+	int currentsize
+
+void
+purple_counting_node_set_online_count(counter, onlinecount);
+	Purple::BuddyList::CountingNode counter
+	int onlinecount
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Chat  PREFIX = purple_chat_
 PROTOTYPES: ENABLE
@@ -316,8 +289,17 @@ Purple::BuddyList::Group
 purple_chat_get_group(chat)
 	Purple::BuddyList::Chat chat
 
+void
+purple_chat_set_alias(chat, alias)
+	Purple::BuddyList::Chat chat
+	const char * alias
+
 const char *
 purple_chat_get_name(chat)
+	Purple::BuddyList::Chat chat
+
+const char *
+purple_chat_get_name_only(chat)
 	Purple::BuddyList::Chat chat
 
 HV *
@@ -369,6 +351,26 @@ purple_buddy_new(account, name, alias)
 	Purple::Account account
 	const char *name
 	const char *alias
+
+void
+purple_buddy_update_status(buddy, old_status)
+	Purple::BuddyList::Buddy buddy
+	Purple::Status old_status
+
+void
+purple_buddy_set_name(buddy, name)
+	Purple::BuddyList::Buddy buddy
+	const char * name
+
+void
+purple_buddy_set_local_alias(buddy, alias)
+	Purple::BuddyList::Buddy buddy
+	const char * alias
+
+void
+purple_buddy_set_server_alias(buddy, alias)
+	Purple::BuddyList::Buddy buddy
+	const char * alias
 
 const char *
 purple_buddy_get_server_alias(buddy)

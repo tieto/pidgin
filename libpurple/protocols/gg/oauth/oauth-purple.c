@@ -110,7 +110,7 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 	ggp_oauth_data *data = user_data;
 	PurpleAccount *account;
 	PurpleHttpRequest *req;
-	xmlnode *xml;
+	PurpleXmlNode *xml;
 	gchar *request_data;
 	gboolean succ = TRUE;
 	const gchar *xml_raw;
@@ -134,7 +134,7 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 		"got request token, doing authorization...\n");
 
 	xml_raw = purple_http_response_get_data(response, NULL);
-	xml = xmlnode_from_str(xml_raw, -1);
+	xml = purple_xmlnode_from_str(xml_raw, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
@@ -146,7 +146,7 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 	succ &= ggp_xml_get_string(xml, "oauth_token", &data->token);
 	succ &= ggp_xml_get_string(xml, "oauth_token_secret",
 		&data->token_secret);
-	xmlnode_free(xml);
+	purple_xmlnode_free(xml);
 	if (!succ)
 	{
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
@@ -224,12 +224,12 @@ static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
 {
 	ggp_oauth_data *data = user_data;
 	gchar *token, *token_secret;
-	xmlnode *xml;
+	PurpleXmlNode *xml;
 	const gchar *xml_raw;
 	gboolean succ = TRUE;
 
 	xml_raw = purple_http_response_get_data(response, NULL);
-	xml = xmlnode_from_str(xml_raw, -1);
+	xml = purple_xmlnode_from_str(xml_raw, -1);
 	if (xml == NULL)
 	{
 		purple_debug_error("gg", "ggp_oauth_access_token_got: "
@@ -241,7 +241,7 @@ static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
 	succ &= ggp_xml_get_string(xml, "oauth_token", &token);
 	succ &= ggp_xml_get_string(xml, "oauth_token_secret",
 		&token_secret);
-	xmlnode_free(xml);
+	purple_xmlnode_free(xml);
 	if (!succ || strlen(token) < 10)
 	{
 		purple_debug_error("gg", "ggp_oauth_access_token_got: "

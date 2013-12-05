@@ -81,7 +81,7 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 	switch (status) {
 	case SILC_KEY_AGREEMENT_OK:
 		{
-			PurpleConversation *convo;
+			PurpleIMConversation *im;
 			char tmp[128];
 
 			/* Set the private key for this client */
@@ -92,19 +92,19 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 
 
 			/* Open IM window */
-			convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+			im = purple_conversations_find_im_with_account(
 								      client_entry->nickname, sg->account);
-			if (convo) {
+			if (im) {
 				/* we don't have windows in the core anymore...but we may want to
 				 * provide some method for asking the UI to show the window
-				purple_conv_window_show(purple_conversation_get_window(convo));
+				purple_conversation_window_show(purple_conversation_get_window(im));
 				 */
 			} else {
-				convo = purple_conversation_new(PURPLE_CONV_TYPE_IM, sg->account,
+				im = purple_im_conversation_new(sg->account,
 								client_entry->nickname);
 			}
 			g_snprintf(tmp, sizeof(tmp), "%s [private key]", client_entry->nickname);
-			purple_conversation_set_title(convo, tmp);
+			purple_conversation_set_title(PURPLE_CONVERSATION(im), tmp);
 		}
 		break;
 
@@ -349,7 +349,7 @@ silcpurple_buddy_resetkey(PurpleBlistNode *node, gpointer data)
         SilcPurple sg;
 	SilcDList clients;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
@@ -475,7 +475,7 @@ silcpurple_buddy_privkey_menu(PurpleBlistNode *node, gpointer data)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -604,7 +604,7 @@ silcpurple_buddy_getkey_menu(PurpleBlistNode *node, gpointer data)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -621,7 +621,7 @@ silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 	SilcPublicKey public_key;
 	const char *pkfile;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
@@ -693,7 +693,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 	if (strlen(who) > 2 && who[0] == '*' && who[1] == '@')
 		nick = who + 2;
 
-	b = purple_find_buddy(purple_connection_get_account(gc), nick);
+	b = purple_blist_find_buddy(purple_connection_get_account(gc), nick);
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
@@ -1424,7 +1424,7 @@ void silcpurple_send_buddylist(PurpleConnection *gc)
 
 	account = purple_connection_get_account(gc);
 
-	for (buddies = purple_find_buddies(account, NULL); buddies;
+	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies))
 	{
 		PurpleBuddy *buddy = buddies->data;
@@ -1632,7 +1632,7 @@ silcpurple_buddy_kill(PurpleBlistNode *node, gpointer data)
 	PurpleConnection *gc;
 	SilcPurple sg;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));

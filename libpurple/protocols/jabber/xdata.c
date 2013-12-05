@@ -47,7 +47,7 @@ struct jabber_x_data_data {
 };
 
 static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {
-	xmlnode *result = xmlnode_new("x");
+	PurpleXmlNode *result = purple_xmlnode_new("x");
 	jabber_x_data_action_cb cb = data->cb;
 	gpointer user_data = data->user_data;
 	JabberStream *js = data->js;
@@ -55,8 +55,8 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 	char *actionhandle = NULL;
 	gboolean hasActions = (data->actions != NULL);
 
-	xmlnode_set_namespace(result, "jabber:x:data");
-	xmlnode_set_attrib(result, "type", "submit");
+	purple_xmlnode_set_namespace(result, "jabber:x:data");
+	purple_xmlnode_set_attrib(result, "type", "submit");
 
 	for(groups = purple_request_fields_get_groups(fields); groups; groups = groups->next) {
 		if(groups->data == data->actiongroup) {
@@ -73,7 +73,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 			continue;
 		}
 		for(flds = purple_request_field_group_get_fields(groups->data); flds; flds = flds->next) {
-			xmlnode *fieldnode, *valuenode;
+			PurpleXmlNode *fieldnode, *valuenode;
 			PurpleRequestField *field = flds->data;
 			const char *id = purple_request_field_get_id(field);
 			jabber_x_data_field_type type = GPOINTER_TO_INT(g_hash_table_lookup(data->fields, id));
@@ -85,11 +85,11 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 					const char *value = purple_request_field_string_get_value(field);
 					if (value == NULL)
 						break;
-					fieldnode = xmlnode_new_child(result, "field");
-					xmlnode_set_attrib(fieldnode, "var", id);
-					valuenode = xmlnode_new_child(fieldnode, "value");
+					fieldnode = purple_xmlnode_new_child(result, "field");
+					purple_xmlnode_set_attrib(fieldnode, "var", id);
+					valuenode = purple_xmlnode_new_child(fieldnode, "value");
 					if(value)
-						xmlnode_insert_data(valuenode, value, -1);
+						purple_xmlnode_insert_data(valuenode, value, -1);
 					break;
 					}
 				case JABBER_X_DATA_TEXT_MULTI:
@@ -98,13 +98,13 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 					const char *value = purple_request_field_string_get_value(field);
 					if (value == NULL)
 						break;
-					fieldnode = xmlnode_new_child(result, "field");
-					xmlnode_set_attrib(fieldnode, "var", id);
+					fieldnode = purple_xmlnode_new_child(result, "field");
+					purple_xmlnode_set_attrib(fieldnode, "var", id);
 
 					pieces = g_strsplit(value, "\n", -1);
 					for(p = pieces; *p != NULL; p++) {
-						valuenode = xmlnode_new_child(fieldnode, "value");
-						xmlnode_insert_data(valuenode, *p, -1);
+						valuenode = purple_xmlnode_new_child(fieldnode, "value");
+						purple_xmlnode_insert_data(valuenode, *p, -1);
 					}
 					g_strfreev(pieces);
 					}
@@ -114,26 +114,26 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 					{
 					GList *selected = purple_request_field_list_get_selected(field);
 					char *value;
-					fieldnode = xmlnode_new_child(result, "field");
-					xmlnode_set_attrib(fieldnode, "var", id);
+					fieldnode = purple_xmlnode_new_child(result, "field");
+					purple_xmlnode_set_attrib(fieldnode, "var", id);
 
 					while(selected) {
 						value = purple_request_field_list_get_data(field, selected->data);
-						valuenode = xmlnode_new_child(fieldnode, "value");
+						valuenode = purple_xmlnode_new_child(fieldnode, "value");
 						if(value)
-							xmlnode_insert_data(valuenode, value, -1);
+							purple_xmlnode_insert_data(valuenode, value, -1);
 						selected = selected->next;
 					}
 					}
 					break;
 				case JABBER_X_DATA_BOOLEAN:
-					fieldnode = xmlnode_new_child(result, "field");
-					xmlnode_set_attrib(fieldnode, "var", id);
-					valuenode = xmlnode_new_child(fieldnode, "value");
+					fieldnode = purple_xmlnode_new_child(result, "field");
+					purple_xmlnode_set_attrib(fieldnode, "var", id);
+					valuenode = purple_xmlnode_new_child(fieldnode, "value");
 					if(purple_request_field_bool_get_value(field))
-						xmlnode_insert_data(valuenode, "1", -1);
+						purple_xmlnode_insert_data(valuenode, "1", -1);
 					else
-						xmlnode_insert_data(valuenode, "0", -1);
+						purple_xmlnode_insert_data(valuenode, "0", -1);
 					break;
 				case JABBER_X_DATA_IGNORE:
 					break;
@@ -164,7 +164,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 }
 
 static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {
-	xmlnode *result = xmlnode_new("x");
+	PurpleXmlNode *result = purple_xmlnode_new("x");
 	jabber_x_data_action_cb cb = data->cb;
 	gpointer user_data = data->user_data;
 	JabberStream *js = data->js;
@@ -184,8 +184,8 @@ static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleReque
 	}
 	g_free(data);
 
-	xmlnode_set_namespace(result, "jabber:x:data");
-	xmlnode_set_attrib(result, "type", "cancel");
+	purple_xmlnode_set_namespace(result, "jabber:x:data");
+	purple_xmlnode_set_attrib(result, "type", "cancel");
 
 	if (hasActions)
 		cb(js, result, NULL, user_data);
@@ -193,15 +193,15 @@ static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleReque
 		((jabber_x_data_cb)cb)(js, result, user_data);
 }
 
-void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data)
+void *jabber_x_data_request(JabberStream *js, PurpleXmlNode *packet, jabber_x_data_cb cb, gpointer user_data)
 {
 	return jabber_x_data_request_with_actions(js, packet, NULL, 0, (jabber_x_data_action_cb)cb, user_data);
 }
 
-void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data)
+void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data)
 {
 	void *handle;
-	xmlnode *fn, *x;
+	PurpleXmlNode *fn, *x;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field = NULL;
@@ -220,11 +220,11 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	for(fn = xmlnode_get_child(packet, "field"); fn; fn = xmlnode_get_next_twin(fn)) {
-		xmlnode *valuenode;
-		const char *type = xmlnode_get_attrib(fn, "type");
-		const char *label = xmlnode_get_attrib(fn, "label");
-		const char *var = xmlnode_get_attrib(fn, "var");
+	for(fn = purple_xmlnode_get_child(packet, "field"); fn; fn = purple_xmlnode_get_next_twin(fn)) {
+		PurpleXmlNode *valuenode;
+		const char *type = purple_xmlnode_get_attrib(fn, "type");
+		const char *label = purple_xmlnode_get_attrib(fn, "label");
+		const char *var = purple_xmlnode_get_attrib(fn, "var");
 		char *value = NULL;
 
 		if(!type)
@@ -236,8 +236,8 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 			label = var;
 
 		if(!strcmp(type, "text-private")) {
-			if((valuenode = xmlnode_get_child(fn, "value")))
-				value = xmlnode_get_data(valuenode);
+			if((valuenode = purple_xmlnode_get_child(fn, "value")))
+				value = purple_xmlnode_get_data(valuenode);
 
 			field = purple_request_field_string_new(var, label,
 					value ? value : "", FALSE);
@@ -250,10 +250,10 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 		} else if(!strcmp(type, "text-multi") || !strcmp(type, "jid-multi")) {
 			GString *str = g_string_new("");
 
-			for(valuenode = xmlnode_get_child(fn, "value"); valuenode;
-					valuenode = xmlnode_get_next_twin(valuenode)) {
+			for(valuenode = purple_xmlnode_get_child(fn, "value"); valuenode;
+					valuenode = purple_xmlnode_get_next_twin(valuenode)) {
 
-				if(!(value = xmlnode_get_data(valuenode)))
+				if(!(value = purple_xmlnode_get_data(valuenode)))
 					continue;
 
 				g_string_append_printf(str, "%s\n", value);
@@ -268,7 +268,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 			g_string_free(str, TRUE);
 		} else if(!strcmp(type, "list-single") || !strcmp(type, "list-multi")) {
-			xmlnode *optnode;
+			PurpleXmlNode *optnode;
 			GList *selected = NULL;
 
 			field = purple_request_field_list_new(var, label);
@@ -282,25 +282,25 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 						GINT_TO_POINTER(JABBER_X_DATA_LIST_SINGLE));
 			}
 
-			for(valuenode = xmlnode_get_child(fn, "value"); valuenode;
-					valuenode = xmlnode_get_next_twin(valuenode)) {
-				char *data = xmlnode_get_data(valuenode);
+			for(valuenode = purple_xmlnode_get_child(fn, "value"); valuenode;
+					valuenode = purple_xmlnode_get_next_twin(valuenode)) {
+				char *data = purple_xmlnode_get_data(valuenode);
 				if (data != NULL) {
 					selected = g_list_prepend(selected, data);
 				}
 			}
 
-			for(optnode = xmlnode_get_child(fn, "option"); optnode;
-					optnode = xmlnode_get_next_twin(optnode)) {
+			for(optnode = purple_xmlnode_get_child(fn, "option"); optnode;
+					optnode = purple_xmlnode_get_next_twin(optnode)) {
 				const char *lbl;
 
-				if(!(valuenode = xmlnode_get_child(optnode, "value")))
+				if(!(valuenode = purple_xmlnode_get_child(optnode, "value")))
 					continue;
 
-				if(!(value = xmlnode_get_data(valuenode)))
+				if(!(value = purple_xmlnode_get_data(valuenode)))
 					continue;
 
-				if(!(lbl = xmlnode_get_attrib(optnode, "label")))
+				if(!(lbl = purple_xmlnode_get_attrib(optnode, "label")))
 					lbl = value;
 
 				data->values = g_slist_prepend(data->values, value);
@@ -319,8 +319,8 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 		} else if(!strcmp(type, "boolean")) {
 			gboolean def = FALSE;
 
-			if((valuenode = xmlnode_get_child(fn, "value")))
-				value = xmlnode_get_data(valuenode);
+			if((valuenode = purple_xmlnode_get_child(fn, "value")))
+				value = purple_xmlnode_get_data(valuenode);
 
 			if(value && (!g_ascii_strcasecmp(value, "yes") ||
 						!g_ascii_strcasecmp(value, "true") || !g_ascii_strcasecmp(value, "1")))
@@ -333,8 +333,8 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 			g_free(value);
 		} else if(!strcmp(type, "fixed")) {
-			if((valuenode = xmlnode_get_child(fn, "value")))
-				value = xmlnode_get_data(valuenode);
+			if((valuenode = purple_xmlnode_get_child(fn, "value")))
+				value = purple_xmlnode_get_data(valuenode);
 
 			if(value != NULL) {
 				field = purple_request_field_label_new("", value);
@@ -343,8 +343,8 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 				g_free(value);
 			}
 		} else if(!strcmp(type, "hidden")) {
-			if((valuenode = xmlnode_get_child(fn, "value")))
-				value = xmlnode_get_data(valuenode);
+			if((valuenode = purple_xmlnode_get_child(fn, "value")))
+				value = purple_xmlnode_get_data(valuenode);
 
 			field = purple_request_field_string_new(var, "", value ? value : "",
 					FALSE);
@@ -355,8 +355,8 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 			g_free(value);
 		} else { /* text-single, jid-single, and the default */
-			if((valuenode = xmlnode_get_child(fn, "value")))
-				value = xmlnode_get_data(valuenode);
+			if((valuenode = purple_xmlnode_get_child(fn, "value")))
+				value = purple_xmlnode_get_data(valuenode);
 
 			field = purple_request_field_string_new(var, label,
 					value ? value : "", FALSE);
@@ -372,7 +372,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 			g_free(value);
 		}
 
-		if(field && xmlnode_get_child(fn, "required"))
+		if(field && purple_xmlnode_get_child(fn, "required"))
 			purple_request_field_set_required(field,TRUE);
 	}
 
@@ -396,11 +396,11 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 		purple_request_field_group_add_field(group, actionfield);
 	}
 
-	if((x = xmlnode_get_child(packet, "title")))
-		title = xmlnode_get_data(x);
+	if((x = purple_xmlnode_get_child(packet, "title")))
+		title = purple_xmlnode_get_data(x);
 
-	if((x = xmlnode_get_child(packet, "instructions")))
-		instructions = xmlnode_get_data(x);
+	if((x = purple_xmlnode_get_child(packet, "instructions")))
+		instructions = purple_xmlnode_get_data(x);
 
 	handle = purple_request_fields(js->gc, title, title, instructions, fields,
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
@@ -415,19 +415,19 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 }
 
 gchar *
-jabber_x_data_get_formtype(const xmlnode *form)
+jabber_x_data_get_formtype(const PurpleXmlNode *form)
 {
-	xmlnode *field;
+	PurpleXmlNode *field;
 
 	g_return_val_if_fail(form != NULL, NULL);
 
-	for (field = xmlnode_get_child((xmlnode *)form, "field"); field;
-			field = xmlnode_get_next_twin(field)) {
-		const char *var = xmlnode_get_attrib(field, "var");
+	for (field = purple_xmlnode_get_child((PurpleXmlNode *)form, "field"); field;
+			field = purple_xmlnode_get_next_twin(field)) {
+		const char *var = purple_xmlnode_get_attrib(field, "var");
 		if (purple_strequal(var, "FORM_TYPE")) {
-			xmlnode *value = xmlnode_get_child(field, "value");
+			PurpleXmlNode *value = purple_xmlnode_get_child(field, "value");
 			if (value)
-				return xmlnode_get_data(value);
+				return purple_xmlnode_get_data(value);
 			else
 				/* An interesting corner case... Looking for a second
 				 * FORM_TYPE would be more considerate, but I'm in favor

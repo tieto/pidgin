@@ -214,7 +214,7 @@ purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
 	g_return_if_fail(name    != NULL);
 	g_return_if_fail(purple_account_is_connected(account) || purple_account_is_connecting(account));
 
-	if ((list = purple_find_buddies(account, name)) == NULL)
+	if ((list = purple_blist_find_buddies(account, name)) == NULL)
 		return;
 
 	while (list) {
@@ -234,7 +234,7 @@ purple_prpl_got_user_login_time(PurpleAccount *account, const char *name,
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 
-	if ((list = purple_find_buddies(account, name)) == NULL)
+	if ((list = purple_blist_find_buddies(account, name)) == NULL)
 		return;
 
 	if (login_time == 0)
@@ -270,7 +270,7 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 	g_return_if_fail(status_id != NULL);
 	g_return_if_fail(purple_account_is_connected(account) || purple_account_is_connecting(account));
 
-	if((list = purple_find_buddies(account, name)) == NULL)
+	if((list = purple_blist_find_buddies(account, name)) == NULL)
 		return;
 
 	for(l = list; l != NULL; l = l->next) {
@@ -292,7 +292,7 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 		purple_status_set_active_with_attrs(status, TRUE, args);
 		va_end(args);
 
-		purple_blist_update_buddy_status(buddy, old_status);
+		purple_buddy_update_status(buddy, old_status);
 	}
 
 	g_slist_free(list);
@@ -318,7 +318,7 @@ void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *na
 	g_return_if_fail(status_id != NULL);
 	g_return_if_fail(purple_account_is_connected(account) || purple_account_is_connecting(account));
 
-	if((list = purple_find_buddies(account, name)) == NULL)
+	if((list = purple_blist_find_buddies(account, name)) == NULL)
 		return;
 
 	for(l = list; l != NULL; l = l->next) {
@@ -332,7 +332,7 @@ void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *na
 
 		if (purple_status_is_active(status)) {
 			purple_status_set_active(status, FALSE);
-			purple_blist_update_buddy_status(buddy, status);
+			purple_buddy_update_status(buddy, status);
 		}
 	}
 
@@ -437,7 +437,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	PurpleAttentionType *attn;
 	PurpleMessageFlags flags;
 	PurplePlugin *prpl;
-	PurpleConversation *conv;
+	PurpleIMConversation *im;
 	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
 	PurpleBuddy *buddy;
 	const char *alias;
@@ -455,7 +455,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 
 	attn = purple_get_attention_type_from_code(purple_connection_get_account(gc), type_code);
 
-	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
+	if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who)) != NULL)
 		alias = purple_buddy_get_contact_alias(buddy);
 	else
 		alias = who;
@@ -474,9 +474,9 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	if (!send_attention(gc, who, type_code))
 		return;
 
-	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, purple_connection_get_account(gc), who);
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, mtime);
-	purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
+	im = purple_im_conversation_new(purple_connection_get_account(gc), who);
+	purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, description, flags, mtime);
+	purple_prpl_attention(PURPLE_CONVERSATION(im), who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
 
 	g_free(description);
 }
@@ -501,7 +501,7 @@ got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
 	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
 	 * it next to the attention command. And if it is null, display a generic icon. */
 
-	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
+	if ((buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who)) != NULL)
 		alias = purple_buddy_get_contact_alias(buddy);
 	else
 		alias = who;
@@ -533,7 +533,7 @@ purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code
 
 	got_attention(gc, -1, who, type_code);
 	conv =
-		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, account);
+		purple_conversations_find_with_account(who, account);
 	if (conv)
 		purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_RECV,
 			time(NULL));
@@ -602,7 +602,7 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 
-	if ((list = purple_find_buddies(account, name)) == NULL)
+	if ((list = purple_blist_find_buddies(account, name)) == NULL)
 		return;
 
 	while (list) {

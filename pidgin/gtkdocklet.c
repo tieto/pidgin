@@ -132,15 +132,13 @@ get_pending_list(guint max)
 {
 	GList *l_im, *l_chat;
 
-	l_im = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
-						       PIDGIN_UNSEEN_TEXT,
-						       FALSE, max);
+	l_im = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, max);
 
 	/* Short circuit if we have our information already */
 	if (max == 1 && l_im != NULL)
 		return l_im;
 
-	l_chat = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+	l_chat = pidgin_conversations_get_unseen_chats(
 	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/notification_chat"),
 							 FALSE, max);
 
@@ -202,8 +200,8 @@ docklet_update_status(void)
 			} else {
 				g_string_append_printf(tooltip_text,
 					ngettext("%d unread message from %s\n", "%d unread messages from %s\n",
-					GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"))),
-					GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")),
+					GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "unseen-count"))),
+					GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "unseen-count")),
 					purple_conversation_get_title(conv));
 			}
 		}
@@ -289,9 +287,9 @@ docklet_update_status_cb(void *data)
 }
 
 static void
-docklet_conv_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type)
+docklet_conv_updated_cb(PurpleConversation *conv, PurpleConversationUpdateType type)
 {
-	if (type == PURPLE_CONV_UPDATE_UNSEEN)
+	if (type == PURPLE_CONVERSATION_UPDATE_UNSEEN)
 		docklet_update_status();
 }
 

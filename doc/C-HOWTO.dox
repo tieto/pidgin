@@ -9,30 +9,26 @@
   To develop a plugin you need to have the libpurple and (for UI plugins) the
   Pidgin/Finch source code or development headers.  It is generally a good idea
   to compile against the same version of Pidgin that you are running.  You may
-  also want to develop against the code in our Monotone repository if you need
-  to use a new feature.  Please do not abuse our Monotone repository, however.
+  also want to develop against the code in our Mercurial repository if you need
+  to use a new feature.  Please do not abuse our Mercurial repository, however.
 
   All plugins must have @c PURPLE_PLUGINS defined and the definition must be
   before including any libpurple, Pidgin, or Finch header files.  Failure to do
-  so can lead to strange errors that are hard to diagnose.  Just don't forget!
+  so can lead to strange errors that are hard to diagnose.  Including purple.h
+  will define this for you.
 
  @section hello_world Hello World!
   I know every tutorial has a hello world, so why should libpurple be any
   different?
 
   @code
-#define PURPLE_PLUGINS
-
-#include <glib.h>
-
-#include "notify.h"
-#include "plugin.h"
-#include "version.h"
+#include <purple.h>
 
 static gboolean
 plugin_load(PurplePlugin *plugin) {
 	purple_notify_message(plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
-						"This is the Hello World! plugin :)", NULL, NULL, NULL);
+						"This is the Hello World! plugin :)",
+						NULL, NULL, NULL, NULL);
 
 	return TRUE;
 }
@@ -79,18 +75,9 @@ PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
 
   @endcode
 
-  Okay, so what does all this mean?  We start off by defining @c PURPLE_PLUGINS
-  like described before.  Next we include glib.h, mainly for gboolean and the
-  glib wrappers of the standard C types.
-
-  Next, we include plugin.h which has all the plugin specific stuff that we
-  need.  For example: @c PurplePlugin, @c PurplePluginInfo,
-  @c PURPLE_PLUGIN_MAGIC, and @c PURPLE_INIT_PLUGIN().
-
-  Our last include is version.h which defines @c PURPLE_MAJOR_VERSION, and
-  @c PURPLE_MINOR_VERSION.  There is not much you need to know about these,
-  except that they are required and will stop your plugin from crashing Pidgin
-  when something has changed that your plugin does not know about yet.
+  Okay, so what does all this mean?  We start off by including purple.h.  This
+  file defines @c PURPLE_PLUGINS as described before so that we don't have to
+  manually define it.  It also includes all the libpurple header files.
 
   @c plugin_load is not required.  It is called when the plugin is loaded so
   that you can initialize any variables and so on.  In this plugin we'll just

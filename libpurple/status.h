@@ -1,3 +1,7 @@
+/**
+ * @file status.h Status API
+ * @ingroup core
+ */
 /*
  * purple
  *
@@ -22,55 +26,19 @@
 #ifndef _PURPLE_STATUS_H_
 #define _PURPLE_STATUS_H_
 
-/**
- * @file status.h Status API
- * @ingroup core
- *
- * A brief explanation of the status API:
- *
- * PurpleStatusType's are created by each PRPL.  They outline the
- * available statuses of the protocol.  AIM, for example, supports
- * an available state with an optional available message, an away
- * state with a mandatory message, and an invisible state (which is
- * technically "independent" of the other two, but we'll get into
- * that later).  PurpleStatusTypes are very permanent.  They are
- * hardcoded in each PRPL and will not change often.  And because
- * they are hardcoded, they do not need to be saved to any XML file.
- *
- * A PurpleStatus can be thought of as an "instance" of a PurpleStatusType.
- * If you're familiar with object-oriented programming languages
- * then this should be immediately clear.  Say, for example, that
- * one of your AIM buddies has set himself as "away."  You have a
- * PurpleBuddy node for this person in your buddy list.  Purple wants
- * to mark this buddy as "away," so it creates a new PurpleStatus.
- * The PurpleStatus has its PurpleStatusType set to the "away" state
- * for the oscar PRPL.  The PurpleStatus also contains the buddy's
- * away message.  PurpleStatuses are sometimes saved, depending on
- * the context.  The current PurpleStatuses associated with each of
- * your accounts are saved so that the next time you start Purple,
- * your accounts will be set to their last known statuses.  There
- * is also a list of saved statuses that are written to the
- * status.xml file.  Also, each PurpleStatus has a "saveable" boolean.
- * If "saveable" is set to FALSE then the status is NEVER saved.
- * All PurpleStatuses should be inside a PurplePresence.
- *
- *
- * A PurpleStatus is either "independent" or "exclusive."
- * Independent statuses can be active or inactive and they don't
- * affect anything else.  However, you can only have one exclusive
- * status per PurplePresence.  If you activate one exclusive status,
- * then the previous exclusive status is automatically deactivated.
- *
- * A PurplePresence is like a collection of PurpleStatuses (plus some
- * other random info).  For any buddy, or for any one of your accounts,
- * or for any person with which you're chatting, you may know various
- * amounts of information.  This information is all contained in
- * one PurplePresence.  If one of your buddies is away and idle,
- * then the presence contains the PurpleStatus for their awayness,
- * and it contains their current idle time.  PurplePresences are
- * never saved to disk.  The information they contain is only relevant
- * for the current PurpleSession.
- */
+#define PURPLE_TYPE_STATUS             (purple_status_get_type())
+#define PURPLE_STATUS(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_STATUS, PurpleStatus))
+#define PURPLE_STATUS_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_STATUS, PurpleStatusClass))
+#define PURPLE_IS_STATUS(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_STATUS))
+#define PURPLE_IS_STATUS_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_STATUS))
+#define PURPLE_STATUS_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_STATUS, PurpleStatusClass))
+
+/** @copydoc _PurpleStatus */
+typedef struct _PurpleStatus           PurpleStatus;
+/** @copydoc _PurpleStatusClass */
+typedef struct _PurpleStatusClass      PurpleStatusClass;
+
+#define PURPLE_TYPE_STATUS_TYPE        (purple_status_type_get_type())
 
 /**
  * PurpleStatusType's are created by each PRPL.  They outline the
@@ -82,30 +50,19 @@
  * hardcoded in each PRPL and will not change often.  And because
  * they are hardcoded, they do not need to be saved to any XML file.
  */
-typedef struct _PurpleStatusType      PurpleStatusType;
-typedef struct _PurpleStatusAttr      PurpleStatusAttr;
-typedef struct _PurplePresence        PurplePresence;
-typedef struct _PurpleStatus          PurpleStatus;
+typedef struct _PurpleStatusType       PurpleStatusType;
+
+#define PURPLE_TYPE_STATUS_ATTRIBUTE   (purple_status_attribute_get_type())
+
+typedef struct _PurpleStatusAttribute  PurpleStatusAttribute;
+
+#define PURPLE_TYPE_MOOD               (purple_mood_get_type())
 
 typedef struct _PurpleMood {
 	const char *mood;
 	const char *description;
 	gpointer *padding;
 } PurpleMood;
-
-/**
- * A context for a presence.
- *
- * The context indicates to what the presence applies.
- */
-typedef enum
-{
-	PURPLE_PRESENCE_CONTEXT_UNSET   = 0,
-	PURPLE_PRESENCE_CONTEXT_ACCOUNT,
-	PURPLE_PRESENCE_CONTEXT_CONV,
-	PURPLE_PRESENCE_CONTEXT_BUDDY
-
-} PurplePresenceContext;
 
 /**
  * A primitive defining the basic structure of a status type.
@@ -129,10 +86,7 @@ typedef enum
 	PURPLE_STATUS_NUM_PRIMITIVES
 } PurpleStatusPrimitive;
 
-#include "account.h"
-#include "blist.h"
-#include "conversation.h"
-#include "value.h"
+#include "presence.h"
 
 #define PURPLE_TUNE_ARTIST	"tune_artist"
 #define PURPLE_TUNE_TITLE	"tune_title"
@@ -147,6 +101,51 @@ typedef enum
 
 #define PURPLE_MOOD_NAME	"mood"
 #define PURPLE_MOOD_COMMENT	"moodtext"
+
+/**
+ * A PurpleStatus can be thought of as an "instance" of a PurpleStatusType.
+ * If you're familiar with object-oriented programming languages
+ * then this should be immediately clear.  Say, for example, that
+ * one of your AIM buddies has set himself as "away."  You have a
+ * PurpleBuddy node for this person in your buddy list.  Purple wants
+ * to mark this buddy as "away," so it creates a new PurpleStatus.
+ * The PurpleStatus has its PurpleStatusType set to the "away" state
+ * for the oscar PRPL.  The PurpleStatus also contains the buddy's
+ * away message.  PurpleStatuses are sometimes saved, depending on
+ * the context.  The current PurpleStatuses associated with each of
+ * your accounts are saved so that the next time you start Purple,
+ * your accounts will be set to their last known statuses.  There
+ * is also a list of saved statuses that are written to the
+ * status.xml file.  Also, each PurpleStatus has a "saveable" boolean.
+ * If "saveable" is set to FALSE then the status is NEVER saved.
+ * All PurpleStatuses should be inside a PurplePresence.
+ *
+ * A PurpleStatus is either "independent" or "exclusive."
+ * Independent statuses can be active or inactive and they don't
+ * affect anything else.  However, you can only have one exclusive
+ * status per PurplePresence.  If you activate one exclusive status,
+ * then the previous exclusive status is automatically deactivated.
+ *
+ * A PurplePresence is like a collection of PurpleStatuses (plus some
+ * other random info).
+ *
+ * @see presence.h
+ */
+struct _PurpleStatus
+{
+	GObject gparent;
+};
+
+/** Base class for all #PurpleStatus's */
+struct _PurpleStatusClass {
+	GObjectClass parent_class;
+
+	/*< private >*/
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
 
 G_BEGIN_DECLS
 
@@ -192,6 +191,11 @@ PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 /** @name PurpleStatusType API                                            */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleStatusType boxed structure.
+ */
+GType purple_status_type_get_type(void);
 
 /**
  * Creates a new status type.
@@ -247,7 +251,7 @@ PurpleStatusType *purple_status_type_new(PurpleStatusPrimitive primitive,
  *                      status type.
  * @param attr_id       The ID of the first attribute.
  * @param attr_name     The name of the first attribute.
- * @param attr_value    The value type of the first attribute attribute.
+ * @param attr_value    The value type of the first attribute.
  * @param ...           Additional attribute information.
  *
  * @return A new status type.
@@ -260,7 +264,7 @@ PurpleStatusType *purple_status_type_new_with_attrs(PurpleStatusPrimitive primit
 												gboolean independent,
 												const char *attr_id,
 												const char *attr_name,
-												PurpleValue *attr_value, ...) G_GNUC_NULL_TERMINATED;
+												GValue *attr_value, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Destroys a status type.
@@ -358,7 +362,7 @@ gboolean purple_status_type_is_available(const PurpleStatusType *status_type);
  *
  * @return The attribute, if found. NULL otherwise.
  */
-PurpleStatusAttr *purple_status_type_get_attr(const PurpleStatusType *status_type,
+PurpleStatusAttribute *purple_status_type_get_attr(const PurpleStatusType *status_type,
 										  const char *id);
 
 /**
@@ -385,9 +389,14 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusAttr API                                              */
+/** @name PurpleStatusAttribute API                                       */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleStatusAttribute boxed structure.
+ */
+GType purple_status_attribute_get_type(void);
 
 /**
  * Creates a new status attribute.
@@ -398,15 +407,15 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
  *
  * @return A new status attribute.
  */
-PurpleStatusAttr *purple_status_attr_new(const char *id, const char *name,
-									 PurpleValue *value_type);
+PurpleStatusAttribute *purple_status_attribute_new(const char *id, const char *name,
+									 GValue *value_type);
 
 /**
  * Destroys a status attribute.
  *
  * @param attr The status attribute to destroy.
  */
-void purple_status_attr_destroy(PurpleStatusAttr *attr);
+void purple_status_attribute_destroy(PurpleStatusAttribute *attr);
 
 /**
  * Returns the ID of a status attribute.
@@ -415,7 +424,7 @@ void purple_status_attr_destroy(PurpleStatusAttr *attr);
  *
  * @return The status attribute's ID.
  */
-const char *purple_status_attr_get_id(const PurpleStatusAttr *attr);
+const char *purple_status_attribute_get_id(const PurpleStatusAttribute *attr);
 
 /**
  * Returns the name of a status attribute.
@@ -424,7 +433,7 @@ const char *purple_status_attr_get_id(const PurpleStatusAttr *attr);
  *
  * @return The status attribute's name.
  */
-const char *purple_status_attr_get_name(const PurpleStatusAttr *attr);
+const char *purple_status_attribute_get_name(const PurpleStatusAttribute *attr);
 
 /**
  * Returns the value of a status attribute.
@@ -433,14 +442,31 @@ const char *purple_status_attr_get_name(const PurpleStatusAttr *attr);
  *
  * @return The status attribute's value.
  */
-PurpleValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
+GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
 
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatus API                                                  */
+/** @name PurpleMood API                                                  */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleMood boxed structure.
+ */
+GType purple_mood_get_type(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name PurpleStatus API                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the GType for the Status object.
+ */
+GType purple_status_get_type(void);
 
 /**
  * Creates a new status.
@@ -452,13 +478,6 @@ PurpleValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
  */
 PurpleStatus *purple_status_new(PurpleStatusType *status_type,
 							PurplePresence *presence);
-
-/**
- * Destroys a status.
- *
- * @param status The status to destroy.
- */
-void purple_status_destroy(PurpleStatus *status);
 
 /**
  * Sets whether or not a status is active.
@@ -507,7 +526,7 @@ void purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean act
  *
  * @return The status's type.
  */
-PurpleStatusType *purple_status_get_type(const PurpleStatus *status);
+PurpleStatusType *purple_status_get_status_type(const PurpleStatus *status);
 
 /**
  * Returns the status's presence.
@@ -606,7 +625,7 @@ gboolean purple_status_is_online(const PurpleStatus *status);
  *
  * @return The value of the attribute.
  */
-PurpleValue *purple_status_get_attr_value(const PurpleStatus *status,
+GValue *purple_status_get_attr_value(const PurpleStatus *status,
 									  const char *id);
 
 /**
@@ -656,271 +675,7 @@ gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *stat
 /*@}*/
 
 /**************************************************************************/
-/** @name PurplePresence API                                                */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Creates a new presence.
- *
- * @param context The presence context.
- *
- * @return A new presence.
- */
-PurplePresence *purple_presence_new(PurplePresenceContext context);
-
-/**
- * Creates a presence for an account.
- *
- * @param account The account.
- *
- * @return The new presence.
- */
-PurplePresence *purple_presence_new_for_account(PurpleAccount *account);
-
-/**
- * Creates a presence for a conversation.
- *
- * @param conv The conversation.
- *
- * @return The new presence.
- */
-PurplePresence *purple_presence_new_for_conv(PurpleConversation *conv);
-
-/**
- * Creates a presence for a buddy.
- *
- * @param buddy The buddy.
- *
- * @return The new presence.
- */
-PurplePresence *purple_presence_new_for_buddy(PurpleBuddy *buddy);
-
-/**
- * Destroys a presence.
- *
- * All statuses added to this list will be destroyed along with
- * the presence.
- *
- * @param presence The presence to destroy.
- */
-void purple_presence_destroy(PurplePresence *presence);
-
-/**
- * Sets the active state of a status in a presence.
- *
- * Only independent statuses can be set unactive. Normal statuses can only
- * be set active, so if you wish to disable a status, set another
- * non-independent status to active, or use purple_presence_switch_status().
- *
- * @param presence  The presence.
- * @param status_id The ID of the status.
- * @param active    The active state.
- */
-void purple_presence_set_status_active(PurplePresence *presence,
-									 const char *status_id, gboolean active);
-
-/**
- * Switches the active status in a presence.
- *
- * This is similar to purple_presence_set_status_active(), except it won't
- * activate independent statuses.
- *
- * @param presence The presence.
- * @param status_id The status ID to switch to.
- */
-void purple_presence_switch_status(PurplePresence *presence,
-								 const char *status_id);
-
-/**
- * Sets the idle state and time on a presence.
- *
- * @param presence  The presence.
- * @param idle      The idle state.
- * @param idle_time The idle time, if @a idle is TRUE.  This
- *                  is the time at which the user became idle,
- *                  in seconds since the epoch.  If this value is
- *                  unknown then 0 should be used.
- */
-void purple_presence_set_idle(PurplePresence *presence, gboolean idle,
-							time_t idle_time);
-
-/**
- * Sets the login time on a presence.
- *
- * @param presence   The presence.
- * @param login_time The login time.
- */
-void purple_presence_set_login_time(PurplePresence *presence, time_t login_time);
-
-
-/**
- * Returns the presence's context.
- *
- * @param presence The presence.
- *
- * @return The presence's context.
- */
-PurplePresenceContext purple_presence_get_context(const PurplePresence *presence);
-
-/**
- * Returns a presence's account.
- *
- * @param presence The presence.
- *
- * @return The presence's account.
- */
-PurpleAccount *purple_presence_get_account(const PurplePresence *presence);
-
-/**
- * Returns a presence's conversation.
- *
- * @param presence The presence.
- *
- * @return The presence's conversation.
- */
-PurpleConversation *purple_presence_get_conversation(const PurplePresence *presence);
-
-/**
- * Returns a presence's chat user.
- *
- * @param presence The presence.
- *
- * @return The chat's user.
- */
-const char *purple_presence_get_chat_user(const PurplePresence *presence);
-
-/**
- * Returns the presence's buddy.
- *
- * @param presence The presence.
- *
- * @return The presence's buddy.
- */
-PurpleBuddy *purple_presence_get_buddy(const PurplePresence *presence);
-
-/**
- * Returns all the statuses in a presence.
- *
- * @param presence The presence.
- *
- * @constreturn The statuses.
- */
-GList *purple_presence_get_statuses(const PurplePresence *presence);
-
-/**
- * Returns the status with the specified ID from a presence.
- *
- * @param presence  The presence.
- * @param status_id The ID of the status.
- *
- * @return The status if found, or NULL.
- */
-PurpleStatus *purple_presence_get_status(const PurplePresence *presence,
-									 const char *status_id);
-
-/**
- * Returns the active exclusive status from a presence.
- *
- * @param presence The presence.
- *
- * @return The active exclusive status.
- */
-PurpleStatus *purple_presence_get_active_status(const PurplePresence *presence);
-
-/**
- * Returns whether or not a presence is available.
- *
- * Available presences are online and possibly invisible, but not away or idle.
- *
- * @param presence The presence.
- *
- * @return TRUE if the presence is available, or FALSE otherwise.
- */
-gboolean purple_presence_is_available(const PurplePresence *presence);
-
-/**
- * Returns whether or not a presence is online.
- *
- * @param presence The presence.
- *
- * @return TRUE if the presence is online, or FALSE otherwise.
- */
-gboolean purple_presence_is_online(const PurplePresence *presence);
-
-/**
- * Returns whether or not a status in a presence is active.
- *
- * A status is active if itself or any of its sub-statuses are active.
- *
- * @param presence  The presence.
- * @param status_id The ID of the status.
- *
- * @return TRUE if the status is active, or FALSE.
- */
-gboolean purple_presence_is_status_active(const PurplePresence *presence,
-										const char *status_id);
-
-/**
- * Returns whether or not a status with the specified primitive type
- * in a presence is active.
- *
- * A status is active if itself or any of its sub-statuses are active.
- *
- * @param presence  The presence.
- * @param primitive The status primitive.
- *
- * @return TRUE if the status is active, or FALSE.
- */
-gboolean purple_presence_is_status_primitive_active(
-	const PurplePresence *presence, PurpleStatusPrimitive primitive);
-
-/**
- * Returns whether or not a presence is idle.
- *
- * @param presence The presence.
- *
- * @return TRUE if the presence is idle, or FALSE otherwise.
- *         If the presence is offline (purple_presence_is_online()
- *         returns FALSE) then FALSE is returned.
- */
-gboolean purple_presence_is_idle(const PurplePresence *presence);
-
-/**
- * Returns the presence's idle time.
- *
- * @param presence The presence.
- *
- * @return The presence's idle time.
- */
-time_t purple_presence_get_idle_time(const PurplePresence *presence);
-
-/**
- * Returns the presence's login time.
- *
- * @param presence The presence.
- *
- * @return The presence's login time.
- */
-time_t purple_presence_get_login_time(const PurplePresence *presence);
-
-/**
- * Compares two presences for availability.
- *
- * @param presence1 The first presence.
- * @param presence2 The second presence.
- *
- * @return -1 if @a presence1 is more available than @a presence2.
- *          0 if @a presence1 is equal to @a presence2.
- *          1 if @a presence1 is less available than @a presence2.
- */
-gint purple_presence_compare(const PurplePresence *presence1,
-						   const PurplePresence *presence2);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name Status subsystem                                                */
+/** @name Statuses subsystem                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -929,17 +684,17 @@ gint purple_presence_compare(const PurplePresence *presence1,
  *
  * @return the handle to the status subsystem
  */
-void *purple_status_get_handle(void);
+void *purple_statuses_get_handle(void);
 
 /**
  * Initializes the status subsystem.
  */
-void purple_status_init(void);
+void purple_statuses_init(void);
 
 /**
  * Uninitializes the status subsystem.
  */
-void purple_status_uninit(void);
+void purple_statuses_uninit(void);
 
 /*@}*/
 

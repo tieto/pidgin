@@ -71,7 +71,6 @@ PIDGIN_C_SRC =	\
 			gtkdnd-hints.c \
 			gtkdocklet.c \
 			gtkeventloop.c \
-			gtkft.c \
 			gtkicon-theme-loader.c \
 			gtkicon-theme.c \
 			gtkidle.c \
@@ -102,6 +101,7 @@ PIDGIN_C_SRC =	\
 			gtkwebview.c \
 			gtkwebviewtoolbar.c \
 			gtkwhiteboard.c \
+			gtkxfer.c \
 			minidialog.c \
 			pidginstock.c \
 			pidgintooltip.c \

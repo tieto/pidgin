@@ -19,20 +19,13 @@
  * 02111-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#ifndef PURPLE_PLUGINS
-# define PURPLE_PLUGINS
-#endif
-
+/* When writing a third-party plugin, do not include libpurple's internal.h
+ * included below. This file is for internal libpurple use only. We're including
+ * it here for our own convenience. */
 #include "internal.h"
 
-#include "plugin.h"
-#include "pluginpref.h"
-#include "prefs.h"
-#include "version.h"
+/* This file defines PURPLE_PLUGINS and includes all the libpurple headers */
+#include <purple.h>
 
 static PurplePluginPrefFrame *
 get_plugin_pref_frame(PurplePlugin *plugin) {

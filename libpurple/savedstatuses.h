@@ -54,6 +54,7 @@
  *       something we should look into once the status box gets fleshed
  *       out more.
  */
+#define PURPLE_TYPE_SAVEDSTATUS  (purple_savedstatus_get_g_type())
 
 typedef struct _PurpleSavedStatus     PurpleSavedStatus;
 typedef struct _PurpleSavedStatusSub  PurpleSavedStatusSub;
@@ -66,6 +67,13 @@ G_BEGIN_DECLS
 /** @name Saved status subsystem                                          */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleSavedStatus boxed structure.
+ * TODO Boxing of PurpleSavedStatus is a temporary solution to having a GType
+ *      for saved statuses. This should rather be a GObject instead of a GBoxed.
+ */
+GType purple_savedstatus_get_g_type(void);
 
 /**
  * Create a new saved status.  This will add the saved status to the

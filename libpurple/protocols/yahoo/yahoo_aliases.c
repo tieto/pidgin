@@ -26,7 +26,7 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "debug.h"
 #include "http.h"
 #include "util.h"
@@ -89,14 +89,14 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 		const char *hp, *wp, *mo;
 		YahooFriend *f;
 		PurpleBuddy *b;
-		xmlnode *item, *contacts;
+		PurpleXmlNode *item, *contacts;
 		PurpleAccount *account;
 		size_t len;
 
 		account = purple_connection_get_account(gc);
-		/* Put our web response into a xmlnode for easy management */
+		/* Put our web response into a PurpleXmlNode for easy management */
 		xml_raw = purple_http_response_get_data(response, &len);
-		contacts = xmlnode_from_str(xml_raw, -1);
+		contacts = purple_xmlnode_from_str(xml_raw, -1);
 
 		if (purple_debug_is_verbose()) {
 			purple_debug_misc("yahoo",
@@ -111,20 +111,20 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 				" bytes of alias data\n", len);
 
 		/* Loop around and around and around until we have gone through all the received aliases  */
-		for(item = xmlnode_get_child(contacts, "ct"); item; item = xmlnode_get_next_twin(item)) {
+		for(item = purple_xmlnode_get_child(contacts, "ct"); item; item = purple_xmlnode_get_next_twin(item)) {
 			/* Yahoo replies with two types of contact (ct) record, we are only interested in the alias ones */
-			if ((yid = xmlnode_get_attrib(item, "yi"))) {
+			if ((yid = purple_xmlnode_get_attrib(item, "yi"))) {
 				YahooPersonalDetails *ypd = NULL;
 				/* Grab all the bits of information we can */
-				fn = xmlnode_get_attrib(item, "fn");
-				ln = xmlnode_get_attrib(item, "ln");
-				nn = xmlnode_get_attrib(item, "nn");
-				mn = xmlnode_get_attrib(item, "mn");
-				id = xmlnode_get_attrib(item, "id");
+				fn = purple_xmlnode_get_attrib(item, "fn");
+				ln = purple_xmlnode_get_attrib(item, "ln");
+				nn = purple_xmlnode_get_attrib(item, "nn");
+				mn = purple_xmlnode_get_attrib(item, "mn");
+				id = purple_xmlnode_get_attrib(item, "id");
 
-				hp = xmlnode_get_attrib(item, "hp");
-				wp = xmlnode_get_attrib(item, "wp");
-				mo = xmlnode_get_attrib(item, "mo");
+				hp = purple_xmlnode_get_attrib(item, "hp");
+				wp = purple_xmlnode_get_attrib(item, "wp");
+				mo = purple_xmlnode_get_attrib(item, "mo");
 
 				full_name = nick_name = NULL;
 				alias = NULL;
@@ -143,7 +143,7 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 
 				/*  Find the local buddy that matches */
 				f = yahoo_friend_find(gc, yid);
-				b = purple_find_buddy(account, yid);
+				b = purple_blist_find_buddy(account, yid);
 
 				/*  If we don't find a matching buddy, ignore the alias !!  */
 				if (f != NULL && b != NULL) {
@@ -188,7 +188,7 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 				g_free(nick_name);
 			}
 		}
-		xmlnode_free(contacts);
+		purple_xmlnode_free(contacts);
 	}
 }
 
@@ -220,7 +220,7 @@ static void
 yahoo_update_alias_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer _cb)
 {
-	xmlnode *node, *result;
+	PurpleXmlNode *node, *result;
 	struct callback_data *cb = _cb;
 
 	if (!purple_http_response_is_successful(response)) {
@@ -232,7 +232,7 @@ yahoo_update_alias_cb(PurpleHttpConnection *http_conn,
 		return;
 	}
 
-	result = xmlnode_from_str(
+	result = purple_xmlnode_from_str(
 		purple_http_response_get_data(response, NULL), -1);
 
 	if (result == NULL) {
@@ -244,9 +244,9 @@ yahoo_update_alias_cb(PurpleHttpConnection *http_conn,
 		return;
 	}
 
-	if ((node = xmlnode_get_child(result, "ct"))) {
+	if ((node = purple_xmlnode_get_child(result, "ct"))) {
 		if (cb->id == NULL) {
-			const char *new_id = xmlnode_get_attrib(node, "id");
+			const char *new_id = purple_xmlnode_get_attrib(node, "id");
 			if (new_id != NULL) {
 				/* We now have an addressbook id for the friend; we should save it */
 				YahooFriend *f = yahoo_friend_find(cb->gc, cb->who);
@@ -261,7 +261,7 @@ yahoo_update_alias_cb(PurpleHttpConnection *http_conn,
 				purple_debug_error("yahoo", "Missing new addressbook id in add response for %s (weird).\n",
 						   cb->who);
 		} else {
-			if (g_ascii_strncasecmp(xmlnode_get_attrib(node, "id"), cb->id, strlen(cb->id))==0)
+			if (g_ascii_strncasecmp(purple_xmlnode_get_attrib(node, "id"), cb->id, strlen(cb->id))==0)
 				purple_debug_info("yahoo", "Alias update for %s succeeded\n", cb->who);
 			else
 				purple_debug_error("yahoo", "Alias update for %s failed (Contact record return mismatch)\n",
@@ -273,7 +273,7 @@ yahoo_update_alias_cb(PurpleHttpConnection *http_conn,
 	g_free(cb->who);
 	g_free(cb->id);
 	g_free(cb);
-	xmlnode_free(result);
+	purple_xmlnode_free(result);
 }
 
 void
@@ -430,29 +430,29 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	PurpleHttpRequest *req;
 	PurpleHttpCookieJar *cookiejar;
 
-	xmlnode *node = xmlnode_new("ab");
-	xmlnode *ct = xmlnode_new_child(node, "ct");
+	PurpleXmlNode *node = purple_xmlnode_new("ab");
+	PurpleXmlNode *ct = purple_xmlnode_new_child(node, "ct");
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *content;
 	int len;
 	int i;
 	char * yfields[] = { "fn", "ln", "nn", "mn", "hp", "wp", "mo", NULL };
 
-	xmlnode_set_attrib(node, "k", purple_connection_get_display_name(gc));
-	xmlnode_set_attrib(node, "cc", "1");		/* XXX: ? */
+	purple_xmlnode_set_attrib(node, "k", purple_connection_get_display_name(gc));
+	purple_xmlnode_set_attrib(node, "cc", "1");		/* XXX: ? */
 
-	xmlnode_set_attrib(ct, "e", "1");
-	xmlnode_set_attrib(ct, "yi", purple_request_fields_get_string(fields, "yname"));
-	xmlnode_set_attrib(ct, "id", purple_request_fields_get_string(fields, "yid"));
-	xmlnode_set_attrib(ct, "pr", "0");
+	purple_xmlnode_set_attrib(ct, "e", "1");
+	purple_xmlnode_set_attrib(ct, "yi", purple_request_fields_get_string(fields, "yname"));
+	purple_xmlnode_set_attrib(ct, "id", purple_request_fields_get_string(fields, "yid"));
+	purple_xmlnode_set_attrib(ct, "pr", "0");
 
 	for (i = 0; yfields[i]; i++) {
 		const char *v = purple_request_fields_get_string(fields, yfields[i]);
-		xmlnode_set_attrib(ct, yfields[i], v ? v : "");
+		purple_xmlnode_set_attrib(ct, yfields[i], v ? v : "");
 	}
 
-	content = xmlnode_to_formatted_str(node, &len);
-	xmlnode_free(node);
+	content = purple_xmlnode_to_formatted_str(node, &len);
+	purple_xmlnode_free(node);
 
 #if 0
 	{
@@ -462,19 +462,19 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 		 * the receiver's end, which is stupid, and thus not really
 		 * surprising. */
 		struct yahoo_userinfo *ui = g_new(struct yahoo_userinfo, 1);
-		node = xmlnode_new("contact");
+		node = purple_xmlnode_new("contact");
 
 		for (i = 0; yfields[i]; i++) {
 			const char *v = purple_request_fields_get_string(fields, yfields[i]);
 			if (v) {
-				xmlnode *nd = xmlnode_new_child(node, yfields[i]);
-				xmlnode_insert_data(nd, v, -1);
+				PurpleXmlNode *nd = purple_xmlnode_new_child(node, yfields[i]);
+				purple_xmlnode_insert_data(nd, v, -1);
 			}
 		}
 
 		ui->yd = yd;
-		ui->xml = xmlnode_to_str(node, NULL);
-		xmlnode_free(node);
+		ui->xml = purple_xmlnode_to_str(node, NULL);
+		purple_xmlnode_free(node);
 	}
 #endif
 
@@ -581,20 +581,20 @@ void yahoo_set_userinfo(PurpleConnection *gc)
 static gboolean
 parse_contact_details(YahooData *yd, const char *who, const char *xml)
 {
-	xmlnode *node, *nd;
+	PurpleXmlNode *node, *nd;
 	YahooFriend *f;
 	char *yid;
 
-	node = xmlnode_from_str(xml, -1);
+	node = purple_xmlnode_from_str(xml, -1);
 	if (!node) {
 		purple_debug_info("yahoo", "Received malformed XML for contact details from '%s':\n%s\n",
 				who, xml);
 		return FALSE;
 	}
 
-	nd = xmlnode_get_child(node, "yi");
-	if (!nd || !(yid = xmlnode_get_data(nd))) {
-		xmlnode_free(node);
+	nd = purple_xmlnode_get_child(node, "yi");
+	if (!nd || !(yid = purple_xmlnode_get_data(nd))) {
+		purple_xmlnode_free(node);
 		return FALSE;
 	}
 
@@ -608,14 +608,14 @@ parse_contact_details(YahooData *yd, const char *who, const char *xml)
 		purple_debug_info("yahoo", "Ignoring contact details sent by %s about %s\n",
 				who, yid);
 		g_free(yid);
-		xmlnode_free(node);
+		purple_xmlnode_free(node);
 		return FALSE;
 	}
 
 	f = yahoo_friend_find(yd->gc, yid);
 	if (!f) {
 		g_free(yid);
-		xmlnode_free(node);
+		purple_xmlnode_free(node);
 		return FALSE;
 	} else {
 		int i;
@@ -638,8 +638,8 @@ parse_contact_details(YahooData *yd, const char *who, const char *xml)
 		yahoo_personal_details_reset(ypd, FALSE);
 
 		for (i = 0; details[i].id; i++) {
-			nd = xmlnode_get_child(node, details[i].id);
-			*details[i].field = nd ? xmlnode_get_data(nd) : NULL;
+			nd = purple_xmlnode_get_child(node, details[i].id);
+			*details[i].field = nd ? purple_xmlnode_get_data(nd) : NULL;
 		}
 
 		if (ypd->names.nick)
@@ -657,7 +657,7 @@ parse_contact_details(YahooData *yd, const char *who, const char *xml)
 		}
 	}
 
-	xmlnode_free(node);
+	purple_xmlnode_free(node);
 	g_free(yid);
 	return TRUE;
 }

@@ -148,7 +148,7 @@ struct _PidginStatusBoxClass
 	/* signals */
 	void     (* changed)          (GtkComboBox *combo_box);
 
-	/* Padding for future expansion */
+	/*< private >*/
 	void (*_gtk_reserved0) (void);
 	void (*_gtk_reserved1) (void);
 	void (*_gtk_reserved2) (void);

@@ -1658,41 +1658,41 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	widget_class->style_set = gtk_imhtml_style_set;
 
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
-	                                        _("Hyperlink color"),
-	                                        _("Color to draw hyperlinks."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Hyperlink color",
+	                                        "Color to draw hyperlinks.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-visited-color",
-	                                        _("Hyperlink visited color"),
-	                                        _("Color to draw hyperlink after it has been visited (or activated)."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Hyperlink visited color",
+	                                        "Color to draw hyperlink after it has been visited (or activated).",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
-	                                        _("Hyperlink prelight color"),
-	                                        _("Color to draw hyperlinks when mouse is over them."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Hyperlink prelight color",
+	                                        "Color to draw hyperlinks when mouse is over them.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("send-name-color",
-	                                        _("Sent Message Name Color"),
-	                                        _("Color to draw the name of a message you sent."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Sent Message Name Color",
+	                                        "Color to draw the name of a message you sent.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("receive-name-color",
-	                                        _("Received Message Name Color"),
-	                                        _("Color to draw the name of a message you received."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Received Message Name Color",
+	                                        "Color to draw the name of a message you received.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("highlight-name-color",
-	                                        _("\"Attention\" Name Color"),
-	                                        _("Color to draw the name of a message you received containing your name."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "\"Attention\" Name Color",
+	                                        "Color to draw the name of a message you received containing your name.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("action-name-color",
-	                                        _("Action Message Name Color"),
-	                                        _("Color to draw the name of an action message."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Action Message Name Color",
+	                                        "Color to draw the name of an action message.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-action-name-color",
-	                                        _("Action Message Name Color for Whispered Message"),
-	                                        _("Color to draw the name of a whispered action message."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Action Message Name Color for Whispered Message",
+	                                        "Color to draw the name of a whispered action message.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-name-color",
-	                                        _("Whisper Message Name Color"),
-	                                        _("Color to draw the name of a whispered message."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Whisper Message Name Color",
+	                                        "Color to draw the name of a whispered message.",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	/* Customizable typing notification ... sort of. Example:
 	 *   GtkIMHtml::typing-notification-font = "monospace italic light 8.0"
@@ -1700,17 +1700,17 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	 *   GtkIMHtml::typing-notification-enable = 1
 	 */
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
-	                                        _("Typing notification color"),
-	                                        _("The color to use for the typing notification"),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	                                        "Typing notification color",
+	                                        "The color to use for the typing notification",
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
-	                                        _("Typing notification font"),
-	                                        _("The font to use for the typing notification"),
-	                                        "light 8.0", G_PARAM_READABLE));
+	                                        "Typing notification font",
+	                                        "The font to use for the typing notification",
+	                                        "light 8.0", G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boolean("typing-notification-enable",
-	                                        _("Enable typing notification"),
-	                                        _("Enable typing notification"),
-	                                        TRUE, G_PARAM_READABLE));
+	                                        "Enable typing notification",
+	                                        "Enable typing notification",
+	                                        TRUE, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 #if 0
 	GtkBindingSet *binding_set;
@@ -5713,20 +5713,20 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 {
 	GtkIMHtmlButtons buttons;
 
-	if (flags & PURPLE_CONNECTION_HTML) {
+	if (flags & PURPLE_CONNECTION_FLAG_HTML) {
 		char color[8];
 		GdkColor fg_color, bg_color;
 
 		buttons = GTK_IMHTML_ALL;
 
-		if (flags & PURPLE_CONNECTION_NO_BGCOLOR)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_BGCOLOR)
 			buttons &= ~GTK_IMHTML_BACKCOLOR;
-		if (flags & PURPLE_CONNECTION_NO_FONTSIZE)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_FONTSIZE)
 		{
 			buttons &= ~GTK_IMHTML_GROW;
 			buttons &= ~GTK_IMHTML_SHRINK;
 		}
-		if (flags & PURPLE_CONNECTION_NO_URLDESC)
+		if (flags & PURPLE_CONNECTION_FLAG_NO_URLDESC)
 			buttons &= ~GTK_IMHTML_LINKDESC;
 
 		gtk_imhtml_set_format_functions(imhtml, GTK_IMHTML_ALL);
@@ -5742,7 +5742,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 		gtk_imhtml_toggle_fontface(imhtml,
 			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
 
-		if (!(flags & PURPLE_CONNECTION_NO_FONTSIZE))
+		if (!(flags & PURPLE_CONNECTION_FLAG_NO_FONTSIZE))
 		{
 			int size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size");
 
@@ -5764,7 +5764,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 
 		gtk_imhtml_toggle_forecolor(imhtml, color);
 
-		if(!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
+		if(!(flags & PURPLE_CONNECTION_FLAG_NO_BGCOLOR) &&
 		   strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
 		{
 			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
@@ -5778,7 +5778,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 
 		gtk_imhtml_toggle_background(imhtml, color);
 
-		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
+		if (flags & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO)
 			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, TRUE);
 		else
 			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, FALSE);
@@ -5787,10 +5787,10 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 		imhtml_clear_formatting(imhtml);
 	}
 
-	if (flags & PURPLE_CONNECTION_NO_IMAGES)
+	if (flags & PURPLE_CONNECTION_FLAG_NO_IMAGES)
 		buttons &= ~GTK_IMHTML_IMAGE;
 
-	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+	if (flags & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
 		buttons |= GTK_IMHTML_CUSTOM_SMILEY;
 	else
 		buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;

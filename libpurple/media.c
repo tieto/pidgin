@@ -44,23 +44,6 @@
 typedef struct _PurpleMediaSession PurpleMediaSession;
 /** @copydoc _PurpleMediaStream */
 typedef struct _PurpleMediaStream PurpleMediaStream;
-/** @copydoc _PurpleMediaClass */
-typedef struct _PurpleMediaClass PurpleMediaClass;
-/** @copydoc _PurpleMediaPrivate */
-typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
-
-/** The media class */
-struct _PurpleMediaClass
-{
-	GObjectClass parent_class;     /**< The parent class. */
-};
-
-/** The media class's private data */
-struct _PurpleMedia
-{
-	GObject parent;                /**< The parent of this object. */
-	PurpleMediaPrivate *priv;      /**< The private data of this object. */
-};
 
 struct _PurpleMediaSession
 {
@@ -201,7 +184,8 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Purple Media Manager",
 			"The media manager that contains this media session.",
 			PURPLE_TYPE_MEDIA_MANAGER,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	/*
 	 * This one should be PURPLE_TYPE_MEDIA_BACKEND, but it doesn't
@@ -212,13 +196,13 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Purple Media Backend",
 			"The backend object this media object uses.",
 			G_TYPE_OBJECT,
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_ACCOUNT,
-			g_param_spec_pointer("account",
-			"PurpleAccount",
+			g_param_spec_pointer("account", "PurpleAccount",
 			"The account this media session is on.",
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_CONFERENCE_TYPE,
 			g_param_spec_string("conference-type",
@@ -226,20 +210,22 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"The type of conference that this media object "
 			"has been created to provide.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_INITIATOR,
 			g_param_spec_boolean("initiator",
 			"initiator",
 			"If the local user initiated the conference.",
 			FALSE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE |
+			G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property(gobject_class, PROP_PRPL_DATA,
 			g_param_spec_pointer("prpl-data",
 			"gpointer",
 			"Data the prpl plugin set on the media session.",
-			G_PARAM_READWRITE));
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	purple_media_signals[S_ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
@@ -377,7 +363,7 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			media->priv->manager = g_value_dup_object(value);
 			break;
 		case PROP_ACCOUNT:
-			media->priv->account = g_value_get_pointer(value);
+			media->priv->account = g_value_get_object(value);
 			break;
 		case PROP_CONFERENCE_TYPE:
 			media->priv->conference_type =
@@ -438,7 +424,7 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			g_value_set_object(value, media->priv->backend);
 			break;
 		case PROP_ACCOUNT:
-			g_value_set_pointer(value, media->priv->account);
+			g_value_set_object(value, media->priv->account);
 			break;
 		case PROP_CONFERENCE_TYPE:
 			g_value_set_string(value,

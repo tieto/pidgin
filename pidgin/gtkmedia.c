@@ -181,13 +181,13 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			"PurpleMedia",
 			"The PurpleMedia associated with this media.",
 			PURPLE_TYPE_MEDIA,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property(gobject_class, PROP_SCREENNAME,
 			g_param_spec_string("screenname",
 			"Screenname",
 			"The screenname of the user this session is with.",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_type_class_add_private(klass, sizeof(PidginMediaPrivate));
 }
@@ -522,8 +522,8 @@ pidgin_media_finalize(GObject *media)
 static void
 pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 {
-	PurpleConversation *conv = purple_find_conversation_with_account(
-			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
+	PurpleConversation *conv = purple_conversations_find_with_account(
+			gtkmedia->priv->screenname,
 			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, msg,
@@ -595,8 +595,8 @@ realize_cb(GtkWidget *widget, PidginMediaRealizeData *data)
 static void
 pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmedia)
 {
-	PurpleConversation *conv = purple_find_conversation_with_account(
-			PURPLE_CONV_TYPE_ANY, gtkmedia->priv->screenname,
+	PurpleConversation *conv = purple_conversations_find_with_account(
+			gtkmedia->priv->screenname,
 			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL) {
 		purple_conversation_write(conv, NULL, error,
@@ -639,7 +639,7 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 	gchar *message = NULL;
 
 	account = purple_media_get_account(gtkmedia->priv->media);
-	buddy = purple_find_buddy(account, gtkmedia->priv->screenname);
+	buddy = purple_blist_find_buddy(account, gtkmedia->priv->screenname);
 	alias = buddy ? purple_buddy_get_contact_alias(buddy) :
 			gtkmedia->priv->screenname;
 	type = gtkmedia->priv->request_type;
@@ -1046,7 +1046,7 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(
 			pidgin_media_new(media, screenname));
-	PurpleBuddy *buddy = purple_find_buddy(account, screenname);
+	PurpleBuddy *buddy = purple_blist_find_buddy(account, screenname);
 	const gchar *alias = buddy ?
 			purple_buddy_get_contact_alias(buddy) : screenname;
 	gtk_window_set_title(GTK_WINDOW(gtkmedia), alias);

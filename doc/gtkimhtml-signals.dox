@@ -58,6 +58,7 @@ void (*format_function_update)(GtkIMHtml *imhtml, gpointer data);
   @signaldesc Emitted when the cursor has moved and formatting has changed
   @param imhtml The GtkIMHtml emitting the signal.
   @param data   User defined data.
+ @endsignaldef
 
  @signaldef paste
  	@signalproto

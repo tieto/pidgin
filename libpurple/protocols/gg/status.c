@@ -90,32 +90,32 @@ GList * ggp_status_types(PurpleAccount *account)
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AVAILABLE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AVAILABLE, "freeforchat", _("Chatty"),
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_AWAY, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_UNAVAILABLE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_INVISIBLE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_value_new(G_TYPE_STRING), NULL));
 
 	types = g_list_append(types, purple_status_type_new_with_attrs(
 		PURPLE_STATUS_OFFLINE, NULL, NULL,
 		TRUE, TRUE, FALSE, "message", _("Message"),
-		purple_value_new(PURPLE_TYPE_STRING), NULL));
+		purple_value_new(G_TYPE_STRING), NULL));
 
 	return types;
 }
@@ -406,7 +406,7 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 	const char *descr)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddy *buddy = purple_find_buddy(account, ggp_uin_to_str(uin));
+	PurpleBuddy *buddy = purple_blist_find_buddy(account, ggp_uin_to_str(uin));
 	const gchar *purple_status = ggp_status_to_purplestatus(status);
 	gchar *status_message = NULL;
 	gboolean is_own;

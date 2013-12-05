@@ -28,12 +28,11 @@
 
 #include "account.h"
 #include "accountopt.h"
-#include "blist.h"
+#include "buddylist.h"
 #include "cipher.h"
 #include "cmds.h"
 #include "debug.h"
 #include "notify.h"
-#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
@@ -94,7 +93,7 @@ PurpleCmdRet yahoo_doodle_purple_cmd_start(PurpleConversation *conv, const char 
 	/* Write a local message to this conversation showing that a request for a
 	 * Doodle session has been made
 	 */
-	purple_conv_im_write(PURPLE_CONV_IM(conv), "", _("Sent Doodle request."),
+	purple_conversation_write_message(conv, "", _("Sent Doodle request."),
 					   PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_RECV, time(NULL));
 
 	return PURPLE_CMD_RET_OK;
@@ -115,7 +114,7 @@ void yahoo_doodle_initiate(PurpleConnection *gc, const char *name)
 		/* Insert this 'session' in the list.  At this point, it's only a
 		 * requested session.
 		 */
-		purple_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
+		purple_whiteboard_new(account, to, DOODLE_STATE_REQUESTING);
 	}
 
 	/* NOTE Perhaps some careful handling of remote assumed established
@@ -158,7 +157,7 @@ static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *f
 		dialog_message, NULL, NULL, NULL);
 		*/
 
-		wb = purple_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
+		wb = purple_whiteboard_new(account, from, DOODLE_STATE_REQUESTED);
 		ds = purple_whiteboard_get_protocol_data(wb);
 		ds->imv_key = g_strdup(imv_key);
 
@@ -371,7 +370,7 @@ void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from)
 	/* TODO Ask if user wants to save picture before the session is closed */
 
 	purple_whiteboard_set_state(wb, DOODLE_STATE_CANCELLED);
-	purple_whiteboard_destroy(wb);
+	g_object_unref(wb);
 }
 
 static void yahoo_doodle_command_send_generic(const char *type,

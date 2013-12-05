@@ -7,28 +7,32 @@
 
 #include "tests.h"
 
-#include "../cipher.h"
+#include "../ciphers/des3cipher.h"
+#include "../ciphers/descipher.h"
+#include "../ciphers/hmaccipher.h"
+#include "../ciphers/md4hash.h"
+#include "../ciphers/md5hash.h"
+#include "../ciphers/sha1hash.h"
+#include "../ciphers/sha256hash.h"
 
 /******************************************************************************
  * MD4 Tests
  *****************************************************************************/
 #define MD4_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[33]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_ciphers_find_cipher("md4"); \
-	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	hash = purple_md4_hash_new(); \
+	purple_hash_append(hash, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_md4_empty_string) {
@@ -75,22 +79,20 @@ END_TEST
  * MD5 Tests
  *****************************************************************************/
 #define MD5_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[33]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_ciphers_find_cipher("md5"); \
-	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	hash = purple_md5_hash_new(); \
+	purple_hash_append(hash, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_md5_empty_string) {
@@ -136,17 +138,15 @@ END_TEST
  * SHA-1 Tests
  *****************************************************************************/
 #define SHA1_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[41]; \
 	gboolean ret = FALSE; \
 	gchar *input = data; \
 	\
-	cipher = purple_ciphers_find_cipher("sha1"); \
-	context = purple_cipher_context_new(cipher, NULL); \
+	hash = purple_sha1_hash_new(); \
 	\
 	if (input) { \
-		purple_cipher_context_append(context, (guchar *)input, strlen(input)); \
+		purple_hash_append(hash, (guchar *)input, strlen(input)); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \
@@ -154,16 +154,16 @@ END_TEST
 		memset(buff, 'a', 1000); \
 		\
 		for(j = 0; j < 1000; j++) \
-			purple_cipher_context_append(context, buff, 1000); \
+			purple_hash_append(hash, buff, 1000); \
 	} \
 	\
-	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_sha1_empty_string) {
@@ -196,17 +196,15 @@ END_TEST
  * SHA-256 Tests
  *****************************************************************************/
 #define SHA256_TEST(data, digest) { \
-	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[65]; \
 	gboolean ret = FALSE; \
 	gchar *input = data; \
 	\
-	cipher = purple_ciphers_find_cipher("sha256"); \
-	context = purple_cipher_context_new(cipher, NULL); \
+	hash = purple_sha256_hash_new(); \
 	\
 	if (input) { \
-		purple_cipher_context_append(context, (guchar *)input, strlen(input)); \
+		purple_hash_append(hash, (guchar *)input, strlen(input)); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \
@@ -214,16 +212,16 @@ END_TEST
 		memset(buff, 'a', 1000); \
 		\
 		for(j = 0; j < 1000; j++) \
-			purple_cipher_context_append(context, buff, 1000); \
+			purple_hash_append(hash, buff, 1000); \
 	} \
 	\
-	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
+	ret = purple_hash_digest_to_str(hash, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(hash); \
 }
 
 START_TEST(test_sha256_empty_string) {
@@ -257,26 +255,24 @@ END_TEST
  *****************************************************************************/
 #define DES_TEST(in, keyz, out, len) { \
 	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
 	guchar answer[len+1]; \
 	gint ret = 0; \
 	guchar decrypt[len+1] = in; \
 	guchar key[8+1] = keyz;\
 	guchar encrypt[len+1] = out;\
 	\
-	cipher = purple_ciphers_find_cipher("des"); \
-	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_set_key(context, key, 8); \
+	cipher = purple_des_cipher_new(); \
+	purple_cipher_set_key(cipher, key, 8); \
 	\
-	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, len); \
+	ret = purple_cipher_encrypt(cipher, decrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
-	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, len); \
+	ret = purple_cipher_decrypt(cipher, encrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(cipher); \
 }
 
 START_TEST(test_des_12345678) {
@@ -303,28 +299,25 @@ END_TEST
 
 #define DES3_TEST(in, key, iv, out, len, mode) { \
 	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
 	guchar answer[len+1]; \
 	guchar decrypt[len+1] = in; \
 	guchar encrypt[len+1] = out; \
 	gint ret = 0; \
 	\
-	cipher = purple_ciphers_find_cipher("des3"); \
-	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_set_key(context, (guchar *)key, 24); \
-	purple_cipher_context_set_batch_mode(context, (mode)); \
-	purple_cipher_context_set_iv(context, (guchar *)iv, 8); \
+	cipher = purple_des3_cipher_new(); \
+	purple_cipher_set_key(cipher, (guchar *)key, 24); \
+	purple_cipher_set_batch_mode(cipher, (mode)); \
+	purple_cipher_set_iv(cipher, (guchar *)iv, 8); \
 	\
-	fprintf(stderr, "len: %lu\n", len); \
-	ret = purple_cipher_context_encrypt(context, decrypt, len, answer, len); \
+	ret = purple_cipher_encrypt(cipher, decrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(encrypt, answer, len) == 0, NULL); \
 	\
-	ret = purple_cipher_context_decrypt(context, encrypt, len, answer, len); \
+	ret = purple_cipher_decrypt(cipher, encrypt, len, answer, len); \
 	fail_unless(ret == len, NULL); \
 	fail_unless(memcmp(decrypt, answer, len) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(cipher); \
 }
 
 START_TEST(test_des3_ecb_nist1) {
@@ -472,22 +465,22 @@ END_TEST
 
 #define HMAC_TEST(data, data_len, key, key_len, type, digest) { \
 	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
+	PurpleHash *hash = NULL; \
 	gchar cdigest[41]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_ciphers_find_cipher("hmac"); \
-	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_set_option(context, "hash", type); \
-	purple_cipher_context_set_key(context, (guchar *)key, (key_len)); \
+	hash = purple_##type##_hash_new(); \
+	cipher = purple_hmac_cipher_new(hash); \
+	purple_cipher_set_key(cipher, (guchar *)key, (key_len)); \
 	\
-	purple_cipher_context_append(context, (guchar *)(data), (data_len)); \
-	ret = purple_cipher_context_digest_to_str(context, cdigest, sizeof(cdigest)); \
+	purple_cipher_append(cipher, (guchar *)(data), (data_len)); \
+	ret = purple_cipher_digest_to_str(cipher, cdigest, sizeof(cdigest)); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(cipher); \
+	g_object_unref(hash); \
 }
 
 /* HMAC MD5 */
@@ -497,7 +490,7 @@ START_TEST(test_hmac_md5_Hi) {
 	          8,
 	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
 	          16,
-	          "md5",
+	          md5,
 	          "9294727a3638bb1c13f48ef8158bfc9d");
 }
 END_TEST
@@ -507,7 +500,7 @@ START_TEST(test_hmac_md5_what) {
 	          28,
 	          "Jefe",
 	          4,
-	          "md5",
+	          md5,
 	          "750c783e6ab0b503eaa86e310a5db738");
 }
 END_TEST
@@ -521,7 +514,7 @@ START_TEST(test_hmac_md5_dd) {
 	          50,
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
 	          16,
-	          "md5",
+	          md5,
 	          "56be34521d144c88dbb8c733f0e8b3f6");
 }
 END_TEST
@@ -537,7 +530,7 @@ START_TEST(test_hmac_md5_cd) {
 	          "\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14"
 	          "\x15\x16\x17\x18\x19",
 	          25,
-	          "md5",
+	          md5,
 	          "697eaf0aca3a3aea3a75164746ffaa79");
 }
 END_TEST
@@ -547,7 +540,7 @@ START_TEST(test_hmac_md5_truncation) {
 	          20,
 	          "\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c",
 	          16,
-	          "md5",
+	          md5,
 	          "56461ef2342edc00f9bab995690efd4c");
 }
 END_TEST
@@ -564,7 +557,7 @@ START_TEST(test_hmac_md5_large_key) {
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
 	          80,
-	          "md5",
+	          md5,
 	          "6b1ab7fe4bd7bf8f0b62e6ce61b9d0cd");
 }
 END_TEST
@@ -581,7 +574,7 @@ START_TEST(test_hmac_md5_large_key_and_data) {
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
 	          80,
-	          "md5",
+	          md5,
 	          "6f630fad67cda0ee1fb1f562db3aa53e");
 }
 END_TEST
@@ -592,7 +585,7 @@ START_TEST(test_hmac_md5_null_key) {
 	          "\x0a\x0b\x00\x0d\x0e\x0f\x1a\x2f\x0b\x0b"
 	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
 	          20,
-	          "md5",
+	          md5,
 	          "597bfd644b797a985561eeb03a169e59");
 }
 END_TEST
@@ -603,7 +596,7 @@ START_TEST(test_hmac_md5_null_text) {
 	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
 	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
 	          20,
-	          "md5",
+	          md5,
 	          "70be8e1b7b50dfcc335d6cd7992c564f");
 }
 END_TEST
@@ -614,7 +607,7 @@ START_TEST(test_hmac_md5_null_key_and_text) {
 	          "\x0c\x0d\x00\x0f\x10\x1a\x3a\x3a\xe6\x34"
 	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
 	          20,
-	          "md5",
+	          md5,
 	          "b31bcbba35a33a067cbba9131cba4889");
 }
 END_TEST
@@ -627,7 +620,7 @@ START_TEST(test_hmac_sha1_Hi) {
 	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
 	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
 	          20,
-	          "sha1",
+	          sha1,
 	          "b617318655057264e28bc0b6fb378c8ef146be00");
 }
 END_TEST
@@ -637,7 +630,7 @@ START_TEST(test_hmac_sha1_what) {
 	          28,
 	          "Jefe",
 	          4,
-	          "sha1",
+	          sha1,
 	          "effcdf6ae5eb2fa2d27416d5f184df9c259a7c79");
 }
 END_TEST
@@ -652,7 +645,7 @@ START_TEST(test_hmac_sha1_dd) {
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
 	          20,
-	          "sha1",
+	          sha1,
 	          "125d7342b9ac11cd91a39af48aa17b4f63f175d3");
 }
 END_TEST
@@ -668,7 +661,7 @@ START_TEST(test_hmac_sha1_cd) {
 	          "\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14"
 	          "\x15\x16\x17\x18\x19",
 	          25,
-	          "sha1",
+	          sha1,
 	          "4c9007f4026250c6bc8414f9bf50c86c2d7235da");
 }
 END_TEST
@@ -679,7 +672,7 @@ START_TEST(test_hmac_sha1_truncation) {
 	          "\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c"
 	          "\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c",
 	          20,
-	          "sha1",
+	          sha1,
 	          "4c1a03424b55e07fe7f27be1d58bb9324a9a5a04");
 }
 END_TEST
@@ -696,7 +689,7 @@ START_TEST(test_hmac_sha1_large_key) {
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
 	          80,
-	          "sha1",
+	          sha1,
 	          "aa4ae5e15272d00e95705637ce8a3b55ed402112");
 }
 END_TEST
@@ -713,7 +706,7 @@ START_TEST(test_hmac_sha1_large_key_and_data) {
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
 	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
 	          80,
-	          "sha1",
+	          sha1,
 	          "e8e99d0f45237d786d6bbaa7965c7808bbff1a91");
 }
 END_TEST
@@ -724,7 +717,7 @@ START_TEST(test_hmac_sha1_null_key) {
 	          "\x0a\x0b\x00\x0d\x0e\x0f\x1a\x2f\x0b\x0b"
 	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
 	          20,
-	          "sha1",
+	          sha1,
 	          "eb62a2e0e33d300be669c52aab3f591bc960aac5");
 }
 END_TEST
@@ -735,7 +728,7 @@ START_TEST(test_hmac_sha1_null_text) {
 	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
 	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
 	          20,
-	          "sha1",
+	          sha1,
 	          "31ca58d849e971e418e3439de2c6f83144b6abb7");
 }
 END_TEST
@@ -746,7 +739,7 @@ START_TEST(test_hmac_sha1_null_key_and_text) {
 	          "\x0c\x0d\x00\x0f\x10\x1a\x3a\x3a\xe6\x34"
 	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
 	          20,
-	          "sha1",
+	          sha1,
 	          "e6b8e2fede87aa09dcb13e554df1435e056eae36");
 }
 END_TEST

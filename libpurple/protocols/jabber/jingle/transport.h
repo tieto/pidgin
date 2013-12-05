@@ -53,8 +53,8 @@ struct _JingleTransportClass
 	GObjectClass parent_class;     /**< The parent class. */
 
 	const gchar *transport_type;
-	xmlnode *(*to_xml) (JingleTransport *transport, xmlnode *content, JingleActionType action);
-	JingleTransport *(*parse) (xmlnode *transport);
+	PurpleXmlNode *(*to_xml) (JingleTransport *transport, PurpleXmlNode *content, JingleActionType action);
+	JingleTransport *(*parse) (PurpleXmlNode *transport);
 	void (*add_local_candidate) (JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
 	GList *(*get_remote_candidates) (JingleTransport *transport);
 };
@@ -79,8 +79,8 @@ const gchar *jingle_transport_get_transport_type(JingleTransport *transport);
 void jingle_transport_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
 GList *jingle_transport_get_remote_candidates(JingleTransport *transport);
 
-JingleTransport *jingle_transport_parse(xmlnode *transport);
-xmlnode *jingle_transport_to_xml(JingleTransport *transport, xmlnode *content, JingleActionType action);
+JingleTransport *jingle_transport_parse(PurpleXmlNode *transport);
+PurpleXmlNode *jingle_transport_to_xml(JingleTransport *transport, PurpleXmlNode *content, JingleActionType action);
 
 G_END_DECLS
 

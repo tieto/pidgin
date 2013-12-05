@@ -54,6 +54,12 @@ struct _PurpleSoundThemeLoader
 struct _PurpleSoundThemeLoaderClass
 {
 	PurpleThemeLoaderClass parent_class;
+
+	/*< private >*/
+	void (*purple_reserved1)(void);
+	void (*purple_reserved2)(void);
+	void (*purple_reserved3)(void);
+	void (*purple_reserved4)(void);
 };
 
 /**************************************************************************/

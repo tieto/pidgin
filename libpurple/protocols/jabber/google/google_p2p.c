@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+#include "glibcompat.h"
 
 #include "google_p2p.h"
 #include "jingle/jingle.h"
@@ -43,18 +44,20 @@ static void jingle_google_p2p_init (JingleGoogleP2P *google_p2p);
 static void jingle_google_p2p_finalize (GObject *object);
 static void jingle_google_p2p_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void jingle_google_p2p_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
-static JingleTransport *jingle_google_p2p_parse_internal(xmlnode *google_p2p);
-static xmlnode *jingle_google_p2p_to_xml_internal(JingleTransport *transport, xmlnode *content, JingleActionType action);
+static JingleTransport *jingle_google_p2p_parse_internal(PurpleXmlNode *google_p2p);
+static PurpleXmlNode *jingle_google_p2p_to_xml_internal(JingleTransport *transport, PurpleXmlNode *content, JingleActionType action);
 static void jingle_google_p2p_add_local_candidate(JingleTransport *transport, const gchar *id, guint generation, PurpleMediaCandidate *candidate);
 static GList *jingle_google_p2p_get_remote_candidates(JingleTransport *transport);
-
-static JingleTransportClass *parent_class = NULL;
 
 enum {
 	PROP_0,
 	PROP_LOCAL_CANDIDATES,
 	PROP_REMOTE_CANDIDATES,
+	PROP_LAST
 };
+
+static JingleTransportClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
 
 static JingleGoogleP2PCandidate *
 jingle_google_p2p_candidate_copy(JingleGoogleP2PCandidate *candidate)
@@ -158,19 +161,19 @@ jingle_google_p2p_class_init(JingleGoogleP2PClass *klass)
 	klass->parent_class.add_local_candidate = jingle_google_p2p_add_local_candidate;
 	klass->parent_class.get_remote_candidates = jingle_google_p2p_get_remote_candidates;
 
-	g_object_class_install_property(gobject_class, PROP_LOCAL_CANDIDATES,
-			g_param_spec_pointer("local-candidates",
+	g_type_class_add_private(klass, sizeof(JingleGoogleP2PPrivate));
+
+	properties[PROP_LOCAL_CANDIDATES] = g_param_spec_pointer("local-candidates",
 			"Local candidates",
 			"The local candidates for this transport.",
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
-	g_object_class_install_property(gobject_class, PROP_REMOTE_CANDIDATES,
-			g_param_spec_pointer("remote-candidates",
+	properties[PROP_REMOTE_CANDIDATES] = g_param_spec_pointer("remote-candidates",
 			"Remote candidates",
 			"The remote candidates for this transport.",
-			G_PARAM_READABLE));
+			G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
-	g_type_class_add_private(klass, sizeof(JingleGoogleP2PPrivate));
+	g_object_class_install_properties(gobject_class, PROP_LAST, properties);
 }
 
 static void
@@ -283,12 +286,17 @@ jingle_google_p2p_add_local_candidate(JingleTransport *transport, const gchar *i
 
 			google_p2p->priv->local_candidates = g_list_append(
 					google_p2p->priv->local_candidates, candidate);
+
+			g_object_notify_by_pspec(G_OBJECT(google_p2p), properties[PROP_LOCAL_CANDIDATES]);
+
 			return;
 		}
 	}
 
 	google_p2p->priv->local_candidates = g_list_append(
 			google_p2p->priv->local_candidates, google_p2p_candidate);
+
+	g_object_notify_by_pspec(G_OBJECT(google_p2p), properties[PROP_LOCAL_CANDIDATES]);
 }
 
 static GList *
@@ -351,25 +359,27 @@ jingle_google_p2p_add_remote_candidate(JingleGoogleP2P *google_p2p, JingleGoogle
 		g_boxed_free(JINGLE_TYPE_GOOGLE_P2P_CANDIDATE, google_p2p_candidate);
 	}
 	priv->remote_candidates = g_list_append(priv->remote_candidates, candidate);
+
+	g_object_notify_by_pspec(G_OBJECT(google_p2p), properties[PROP_REMOTE_CANDIDATES]);
 }
 
 static JingleTransport *
-jingle_google_p2p_parse_internal(xmlnode *google_p2p)
+jingle_google_p2p_parse_internal(PurpleXmlNode *google_p2p)
 {
 	JingleTransport *transport = parent_class->parse(google_p2p);
-	xmlnode *candidate = xmlnode_get_child(google_p2p, "candidate");
+	PurpleXmlNode *candidate = purple_xmlnode_get_child(google_p2p, "candidate");
 	JingleGoogleP2PCandidate *google_p2p_candidate = NULL;
 
-	for (; candidate; candidate = xmlnode_get_next_twin(candidate)) {
-		const gchar *generation = xmlnode_get_attrib(candidate, "generation");
-		const gchar *id = xmlnode_get_attrib(candidate, "name");
-		const gchar *address = xmlnode_get_attrib(candidate, "address");
-		const gchar *port = xmlnode_get_attrib(candidate, "port");
-		const gchar *preference = xmlnode_get_attrib(candidate, "preference");
-		const gchar *type = xmlnode_get_attrib(candidate, "type");
-		const gchar *protocol = xmlnode_get_attrib(candidate, "protocol");
-		const gchar *username = xmlnode_get_attrib(candidate, "username");
-		const gchar *password = xmlnode_get_attrib(candidate, "password");
+	for (; candidate; candidate = purple_xmlnode_get_next_twin(candidate)) {
+		const gchar *generation = purple_xmlnode_get_attrib(candidate, "generation");
+		const gchar *id = purple_xmlnode_get_attrib(candidate, "name");
+		const gchar *address = purple_xmlnode_get_attrib(candidate, "address");
+		const gchar *port = purple_xmlnode_get_attrib(candidate, "port");
+		const gchar *preference = purple_xmlnode_get_attrib(candidate, "preference");
+		const gchar *type = purple_xmlnode_get_attrib(candidate, "type");
+		const gchar *protocol = purple_xmlnode_get_attrib(candidate, "protocol");
+		const gchar *username = purple_xmlnode_get_attrib(candidate, "username");
+		const gchar *password = purple_xmlnode_get_attrib(candidate, "password");
 
 		if (!generation || !id || !address || !port || !preference ||
 				!type || !protocol || !username || !password)
@@ -390,10 +400,10 @@ jingle_google_p2p_parse_internal(xmlnode *google_p2p)
 	return transport;
 }
 
-static xmlnode *
-jingle_google_p2p_to_xml_internal(JingleTransport *transport, xmlnode *content, JingleActionType action)
+static PurpleXmlNode *
+jingle_google_p2p_to_xml_internal(JingleTransport *transport, PurpleXmlNode *content, JingleActionType action)
 {
-	xmlnode *node = parent_class->to_xml(transport, content, action);
+	PurpleXmlNode *node = parent_class->to_xml(transport, content, action);
 
 	if (action == JINGLE_SESSION_INITIATE ||
 			action == JINGLE_SESSION_ACCEPT ||
@@ -405,7 +415,7 @@ jingle_google_p2p_to_xml_internal(JingleTransport *transport, xmlnode *content, 
 
 		for (; iter; iter = g_list_next(iter)) {
 			JingleGoogleP2PCandidate *candidate = iter->data;
-			xmlnode *xmltransport;
+			PurpleXmlNode *xmltransport;
 			gchar *generation, *network, *port, *preference;
 
 			if (candidate->rem_known == TRUE)
@@ -413,22 +423,22 @@ jingle_google_p2p_to_xml_internal(JingleTransport *transport, xmlnode *content, 
 
 			candidate->rem_known = TRUE;
 
-			xmltransport = xmlnode_new_child(node, "candidate");
+			xmltransport = purple_xmlnode_new_child(node, "candidate");
 			generation = g_strdup_printf("%d", candidate->generation);
 			network = g_strdup_printf("%d", candidate->network);
 			port = g_strdup_printf("%d", candidate->port);
 			preference = g_strdup_printf("%d", candidate->preference);
 
-			xmlnode_set_attrib(xmltransport, "generation", generation);
-			xmlnode_set_attrib(xmltransport, "name", candidate->id);
-			xmlnode_set_attrib(xmltransport, "address", candidate->address);
-			xmlnode_set_attrib(xmltransport, "network", network);
-			xmlnode_set_attrib(xmltransport, "port", port);
-			xmlnode_set_attrib(xmltransport, "preference", preference);
-			xmlnode_set_attrib(xmltransport, "protocol", candidate->protocol);
-			xmlnode_set_attrib(xmltransport, "type", candidate->type);
-			xmlnode_set_attrib(xmltransport, "username", candidate->username);
-			xmlnode_set_attrib(xmltransport, "password", candidate->password);
+			purple_xmlnode_set_attrib(xmltransport, "generation", generation);
+			purple_xmlnode_set_attrib(xmltransport, "name", candidate->id);
+			purple_xmlnode_set_attrib(xmltransport, "address", candidate->address);
+			purple_xmlnode_set_attrib(xmltransport, "network", network);
+			purple_xmlnode_set_attrib(xmltransport, "port", port);
+			purple_xmlnode_set_attrib(xmltransport, "preference", preference);
+			purple_xmlnode_set_attrib(xmltransport, "protocol", candidate->protocol);
+			purple_xmlnode_set_attrib(xmltransport, "type", candidate->type);
+			purple_xmlnode_set_attrib(xmltransport, "username", candidate->username);
+			purple_xmlnode_set_attrib(xmltransport, "password", candidate->password);
 
 			g_free(generation);
 			g_free(network);

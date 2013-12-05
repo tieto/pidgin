@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 
+#define PURPLE_TYPE_LOG  (purple_log_get_type())
 
 /********************************************************
  * DATA STRUCTURES **************************************
@@ -112,6 +113,7 @@ struct _PurpleLogLogger {
 	/* Tests whether a log is deletable */
 	gboolean (*is_deletable)(PurpleLog *log);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -187,6 +189,13 @@ G_BEGIN_DECLS
 /** @name Log Functions                */
 /***************************************/
 /*@{*/
+
+/**
+ * Returns the GType for the PurpleLog boxed structure.
+ * TODO Boxing of PurpleLog is a temporary solution to having a GType for
+ *      logs. This should rather be a GObject instead of a GBoxed.
+ */
+GType purple_log_get_type(void);
 
 /**
  * Creates a new log

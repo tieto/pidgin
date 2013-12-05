@@ -24,7 +24,6 @@
 
 #include "account.h"
 #include "debug.h"
-#include "cipher.h"
 #include "core.h"
 #include "conversation.h"
 #include "request.h"
@@ -39,25 +38,28 @@
 #include "iq.h"
 #include "notify.h"
 
+#include "ciphers/hmaccipher.h"
+#include "ciphers/md5hash.h"
+
 static GSList *auth_mechs = NULL;
 
 static void auth_old_result_cb(JabberStream *js, const char *from,
                                JabberIqType type, const char *id,
-                               xmlnode *packet, gpointer data);
+                               PurpleXmlNode *packet, gpointer data);
 
 static void finish_plaintext_authentication(JabberStream *js)
 {
 	JabberIq *iq;
-	xmlnode *query, *x;
+	PurpleXmlNode *query, *x;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
-	query = xmlnode_get_child(iq->node, "query");
-	x = xmlnode_new_child(query, "username");
-	xmlnode_insert_data(x, js->user->node, -1);
-	x = xmlnode_new_child(query, "resource");
-	xmlnode_insert_data(x, js->user->resource, -1);
-	x = xmlnode_new_child(query, "password");
-	xmlnode_insert_data(x, purple_connection_get_password(js->gc), -1);
+	query = purple_xmlnode_get_child(iq->node, "query");
+	x = purple_xmlnode_new_child(query, "username");
+	purple_xmlnode_insert_data(x, js->user->node, -1);
+	x = purple_xmlnode_new_child(query, "resource");
+	purple_xmlnode_insert_data(x, js->user->resource, -1);
+	x = purple_xmlnode_new_child(query, "password");
+	purple_xmlnode_insert_data(x, purple_connection_get_password(js->gc), -1);
 	jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 	jabber_iq_send(iq);
 }
@@ -131,12 +133,12 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 #endif
 
 void
-jabber_auth_start(JabberStream *js, xmlnode *packet)
+jabber_auth_start(JabberStream *js, PurpleXmlNode *packet)
 {
 	GSList *mechanisms = NULL;
 	GSList *l;
-	xmlnode *response = NULL;
-	xmlnode *mechs, *mechnode;
+	PurpleXmlNode *response = NULL;
+	PurpleXmlNode *mechs, *mechnode;
 	JabberSaslState state;
 	char *msg = NULL;
 
@@ -145,7 +147,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
-	mechs = xmlnode_get_child(packet, "mechanisms");
+	mechs = purple_xmlnode_get_child(packet, "mechanisms");
 	if(!mechs) {
 		purple_connection_error(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -153,10 +155,10 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
-	for(mechnode = xmlnode_get_child(mechs, "mechanism"); mechnode;
-			mechnode = xmlnode_get_next_twin(mechnode))
+	for(mechnode = purple_xmlnode_get_child(mechs, "mechanism"); mechnode;
+			mechnode = purple_xmlnode_get_next_twin(mechnode))
 	{
-		char *mech_name = xmlnode_get_data(mechnode);
+		char *mech_name = purple_xmlnode_get_data(mechnode);
 
 		if (mech_name && *mech_name)
 			mechanisms = g_slist_prepend(mechanisms, mech_name);
@@ -201,7 +203,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 				msg ? msg : _("Unknown Error"));
 	} else if (response) {
 		jabber_send(js, response);
-		xmlnode_free(response);
+		purple_xmlnode_free(response);
 	}
 
 	g_free(msg);
@@ -209,7 +211,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 static void auth_old_result_cb(JabberStream *js, const char *from,
                                JabberIqType type, const char *id,
-                               xmlnode *packet, gpointer data)
+                               PurpleXmlNode *packet, gpointer data)
 {
 	if (type == JABBER_IQ_RESULT) {
 		jabber_stream_set_state(js, JABBER_STREAM_POST_AUTH);
@@ -218,14 +220,14 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 		PurpleAccount *account;
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
-		xmlnode *error;
+		PurpleXmlNode *error;
 		const char *err_code;
 
 		account = purple_connection_get_account(js->gc);
 
 		/* FIXME: Why is this not in jabber_parse_error? */
-		if((error = xmlnode_get_child(packet, "error")) &&
-					(err_code = xmlnode_get_attrib(error, "code")) &&
+		if((error = purple_xmlnode_get_child(packet, "error")) &&
+					(err_code = purple_xmlnode_get_attrib(error, "code")) &&
 					g_str_equal(err_code, "401")) {
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
@@ -240,10 +242,10 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 
 static void auth_old_cb(JabberStream *js, const char *from,
                         JabberIqType type, const char *id,
-                        xmlnode *packet, gpointer data)
+                        PurpleXmlNode *packet, gpointer data)
 {
 	JabberIq *iq;
-	xmlnode *query, *x;
+	PurpleXmlNode *query, *x;
 	const char *pw = purple_connection_get_password(js->gc);
 
 	if (type == JABBER_IQ_ERROR) {
@@ -252,60 +254,62 @@ static void auth_old_cb(JabberStream *js, const char *from,
 		purple_connection_error(js->gc, reason, msg);
 		g_free(msg);
 	} else if (type == JABBER_IQ_RESULT) {
-		query = xmlnode_get_child(packet, "query");
+		query = purple_xmlnode_get_child(packet, "query");
 		if (js->stream_id && *js->stream_id &&
-				xmlnode_get_child(query, "digest")) {
+				purple_xmlnode_get_child(query, "digest")) {
 			char *s, *hash;
 
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
-			query = xmlnode_get_child(iq->node, "query");
-			x = xmlnode_new_child(query, "username");
-			xmlnode_insert_data(x, js->user->node, -1);
-			x = xmlnode_new_child(query, "resource");
-			xmlnode_insert_data(x, js->user->resource, -1);
+			query = purple_xmlnode_get_child(iq->node, "query");
+			x = purple_xmlnode_new_child(query, "username");
+			purple_xmlnode_insert_data(x, js->user->node, -1);
+			x = purple_xmlnode_new_child(query, "resource");
+			purple_xmlnode_insert_data(x, js->user->resource, -1);
 
-			x = xmlnode_new_child(query, "digest");
+			x = purple_xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
 			hash = jabber_calculate_data_hash(s, strlen(s), "sha1");
-			xmlnode_insert_data(x, hash, -1);
+			purple_xmlnode_insert_data(x, hash, -1);
 			g_free(hash);
 			g_free(s);
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
-		} else if ((x = xmlnode_get_child(query, "crammd5"))) {
+		} else if ((x = purple_xmlnode_get_child(query, "crammd5"))) {
 			/* For future reference, this appears to be a custom OS X extension
 			 * to non-SASL authentication.
 			 */
 			const char *challenge;
 			gchar digest[33];
-			PurpleCipherContext *hmac;
+			PurpleCipher *hmac;
+			PurpleHash *md5;
 
 			/* Calculate the MHAC-MD5 digest */
-			challenge = xmlnode_get_attrib(x, "challenge");
-			hmac = purple_cipher_context_new_by_name("hmac", NULL);
-			purple_cipher_context_set_option(hmac, "hash", "md5");
-			purple_cipher_context_set_key(hmac, (guchar *)pw, strlen(pw));
-			purple_cipher_context_append(hmac, (guchar *)challenge, strlen(challenge));
-			purple_cipher_context_digest_to_str(hmac, digest, 33);
-			purple_cipher_context_destroy(hmac);
+			md5 = purple_md5_hash_new();
+			hmac = purple_hmac_cipher_new(md5);
+			challenge = purple_xmlnode_get_attrib(x, "challenge");
+			purple_cipher_set_key(hmac, (guchar *)pw, strlen(pw));
+			purple_cipher_append(hmac, (guchar *)challenge, strlen(challenge));
+			purple_cipher_digest_to_str(hmac, digest, 33);
+			g_object_unref(hmac);
+			g_object_unref(md5);
 
 			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
-			query = xmlnode_get_child(iq->node, "query");
+			query = purple_xmlnode_get_child(iq->node, "query");
 
-			x = xmlnode_new_child(query, "username");
-			xmlnode_insert_data(x, js->user->node, -1);
-			x = xmlnode_new_child(query, "resource");
-			xmlnode_insert_data(x, js->user->resource, -1);
+			x = purple_xmlnode_new_child(query, "username");
+			purple_xmlnode_insert_data(x, js->user->node, -1);
+			x = purple_xmlnode_new_child(query, "resource");
+			purple_xmlnode_insert_data(x, js->user->resource, -1);
 
-			x = xmlnode_new_child(query, "crammd5");
+			x = purple_xmlnode_new_child(query, "crammd5");
 
-			xmlnode_insert_data(x, digest, 32);
+			purple_xmlnode_insert_data(x, digest, 32);
 
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
 
-		} else if(xmlnode_get_child(query, "password")) {
+		} else if(purple_xmlnode_get_child(query, "password")) {
 			PurpleAccount *account = purple_connection_get_account(js->gc);
 			if(!jabber_stream_is_ssl(js) && !purple_account_get_bool(account,
 						"auth_plain_in_clear", FALSE)) {
@@ -335,7 +339,7 @@ void jabber_auth_start_old(JabberStream *js)
 {
 	PurpleAccount *account;
 	JabberIq *iq;
-	xmlnode *query, *username;
+	PurpleXmlNode *query, *username;
 
 	account = purple_connection_get_account(js->gc);
 
@@ -381,9 +385,9 @@ void jabber_auth_start_old(JabberStream *js)
 #endif
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:auth");
 
-	query = xmlnode_get_child(iq->node, "query");
-	username = xmlnode_new_child(query, "username");
-	xmlnode_insert_data(username, js->user->node, -1);
+	query = purple_xmlnode_get_child(iq->node, "query");
+	username = purple_xmlnode_new_child(query, "username");
+	purple_xmlnode_insert_data(username, js->user->node, -1);
 
 	jabber_iq_set_callback(iq, auth_old_cb, NULL);
 
@@ -391,9 +395,9 @@ void jabber_auth_start_old(JabberStream *js)
 }
 
 void
-jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
+jabber_auth_handle_challenge(JabberStream *js, PurpleXmlNode *packet)
 {
-	const char *ns = xmlnode_get_namespace(packet);
+	const char *ns = purple_xmlnode_get_namespace(packet);
 
 	if (!purple_strequal(ns, NS_XMPP_SASL)) {
 		purple_connection_error(js->gc,
@@ -403,7 +407,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 	}
 
 	if (js->auth_mech && js->auth_mech->handle_challenge) {
-		xmlnode *response = NULL;
+		PurpleXmlNode *response = NULL;
 		char *msg = NULL;
 		JabberSaslState state = js->auth_mech->handle_challenge(js, packet, &response, &msg);
 		if (state == JABBER_SASL_STATE_FAIL) {
@@ -412,7 +416,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 					msg ? msg : _("Invalid challenge from server"));
 		} else if (response) {
 			jabber_send(js, response);
-			xmlnode_free(response);
+			purple_xmlnode_free(response);
 		}
 
 		g_free(msg);
@@ -420,9 +424,9 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		purple_debug_warning("jabber", "Received unexpected (and unhandled) <challenge/>\n");
 }
 
-void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
+void jabber_auth_handle_success(JabberStream *js, PurpleXmlNode *packet)
 {
-	const char *ns = xmlnode_get_namespace(packet);
+	const char *ns = purple_xmlnode_get_namespace(packet);
 
 	if (!purple_strequal(ns, NS_XMPP_SASL)) {
 		purple_connection_error(js->gc,
@@ -458,19 +462,19 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	jabber_stream_set_state(js, JABBER_STREAM_POST_AUTH);
 }
 
-void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
+void jabber_auth_handle_failure(JabberStream *js, PurpleXmlNode *packet)
 {
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 	char *msg = NULL;
 
 	if (js->auth_mech && js->auth_mech->handle_failure) {
-		xmlnode *stanza = NULL;
+		PurpleXmlNode *stanza = NULL;
 		JabberSaslState state = js->auth_mech->handle_failure(js, packet, &stanza, &msg);
 
 		if (state != JABBER_SASL_STATE_FAIL) {
 			if (stanza) {
 				jabber_send(js, stanza);
-				xmlnode_free(stanza);
+				purple_xmlnode_free(stanza);
 			}
 
 			return;

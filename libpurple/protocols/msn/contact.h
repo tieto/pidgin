@@ -684,8 +684,8 @@ struct _MsnCallbackState
 	MsnListId list_id;
 	MsnCallbackAction action;
 	MsnSession *session;
-	xmlnode *body;
-	xmlnode *token;
+	PurpleXmlNode *body;
+	PurpleXmlNode *token;
 	const gchar *post_action;
 	const gchar *post_url;
 	MsnSoapCallback cb;

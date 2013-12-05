@@ -73,10 +73,10 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 
 static void
 jabber_google_jingle_info_common(JabberStream *js, const char *from,
-                                 JabberIqType type, xmlnode *query)
+                                 JabberIqType type, PurpleXmlNode *query)
 {
-	const xmlnode *stun = xmlnode_get_child(query, "stun");
-	const xmlnode *relay = xmlnode_get_child(query, "relay");
+	const PurpleXmlNode *stun = purple_xmlnode_get_child(query, "stun");
+	const PurpleXmlNode *relay = purple_xmlnode_get_child(query, "relay");
 	gchar *my_bare_jid;
 
 	/*
@@ -102,11 +102,11 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 	purple_debug_info("jabber", "got google:jingleinfo\n");
 
 	if (stun) {
-		xmlnode *server = xmlnode_get_child(stun, "server");
+		PurpleXmlNode *server = purple_xmlnode_get_child(stun, "server");
 
 		if (server) {
-			const gchar *host = xmlnode_get_attrib(server, "host");
-			const gchar *udp = xmlnode_get_attrib(server, "udp");
+			const gchar *host = purple_xmlnode_get_attrib(server, "host");
+			const gchar *udp = purple_xmlnode_get_attrib(server, "udp");
 
 			if (host && udp) {
 				PurpleAccount *account;
@@ -124,19 +124,19 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 	}
 
 	if (relay) {
-		xmlnode *token = xmlnode_get_child(relay, "token");
-		xmlnode *server = xmlnode_get_child(relay, "server");
+		PurpleXmlNode *token = purple_xmlnode_get_child(relay, "token");
+		PurpleXmlNode *server = purple_xmlnode_get_child(relay, "server");
 
 		if (token) {
-			gchar *relay_token = xmlnode_get_data(token);
+			gchar *relay_token = purple_xmlnode_get_data(token);
 
-			/* we let js own the string returned from xmlnode_get_data */
+			/* we let js own the string returned from purple_xmlnode_get_data */
 			js->google_relay_token = relay_token;
 		}
 
 		if (server) {
 			js->google_relay_host =
-				g_strdup(xmlnode_get_attrib(server, "host"));
+				g_strdup(purple_xmlnode_get_attrib(server, "host"));
 		}
 	}
 }
@@ -144,9 +144,9 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 static void
 jabber_google_jingle_info_cb(JabberStream *js, const char *from,
                              JabberIqType type, const char *id,
-                             xmlnode *packet, gpointer data)
+                             PurpleXmlNode *packet, gpointer data)
 {
-	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
+	PurpleXmlNode *query = purple_xmlnode_get_child_with_namespace(packet, "query",
 			NS_GOOGLE_JINGLE_INFO);
 
 	if (query)
@@ -158,7 +158,7 @@ jabber_google_jingle_info_cb(JabberStream *js, const char *from,
 void
 jabber_google_handle_jingle_info(JabberStream *js, const char *from,
                                  JabberIqType type, const char *id,
-                                 xmlnode *child)
+                                 PurpleXmlNode *child)
 {
 	jabber_google_jingle_info_common(js, from, type, child);
 }

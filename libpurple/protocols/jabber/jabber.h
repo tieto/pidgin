@@ -56,7 +56,7 @@ typedef struct _JabberStream JabberStream;
 
 #include <libxml/parser.h>
 #include <glib.h>
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "connection.h"
 #include "dnsquery.h"
 #include "dnssrv.h"
@@ -105,7 +105,7 @@ struct _JabberStream
 	PurpleSrvTxtQueryData *srv_query_data;
 
 	xmlParserCtxt *context;
-	xmlnode *current;
+	PurpleXmlNode *current;
 
 	struct {
 		guint8 major;
@@ -191,7 +191,7 @@ struct _JabberStream
 
 	GSList *pending_buddy_info_requests;
 
-	PurpleCircBuffer *write_buffer;
+	PurpleCircularBuffer *write_buffer;
 	guint writeh;
 
 	gboolean reinit;
@@ -257,6 +257,7 @@ struct _JabberStream
 	guint keepalive_timeout;
 	guint max_inactivity;
 	guint inactivity_timer;
+	guint conn_close_timeout;
 
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
@@ -309,17 +310,17 @@ extern GList *jabber_features;
  */
 extern GList *jabber_identities;
 
-void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
-void jabber_process_packet(JabberStream *js, xmlnode **packet);
-void jabber_send(JabberStream *js, xmlnode *data);
+void jabber_stream_features_parse(JabberStream *js, PurpleXmlNode *packet);
+void jabber_process_packet(JabberStream *js, PurpleXmlNode **packet);
+void jabber_send(JabberStream *js, PurpleXmlNode *data);
 void jabber_send_raw(JabberStream *js, const char *data, int len);
-void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
+void jabber_send_signal_cb(PurpleConnection *pc, PurpleXmlNode **packet,
                            gpointer unused);
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state);
 
 void jabber_register_parse(JabberStream *js, const char *from,
-                           JabberIqType type, const char *id, xmlnode *query);
+                           JabberIqType type, const char *id, PurpleXmlNode *query);
 void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
@@ -331,7 +332,7 @@ char *jabber_get_next_id(JabberStream *js);
  *  @param reason where to store the disconnection reason, or @c NULL if you
  *                don't care or you don't intend to close the connection.
  */
-char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleConnectionError *reason);
+char *jabber_parse_error(JabberStream *js, PurpleXmlNode *packet, PurpleConnectionError *reason);
 
 /**
  * Add a feature to the list of features advertised via disco#info.  If you
@@ -389,7 +390,7 @@ void jabber_close(PurpleConnection *gc);
 void jabber_idle_set(PurpleConnection *gc, int idle);
 void jabber_blocklist_parse_push(JabberStream *js, const char *from,
                                  JabberIqType type, const char *id,
-                                 xmlnode *child);
+                                 PurpleXmlNode *child);
 void jabber_request_block_list(JabberStream *js);
 void jabber_add_deny(PurpleConnection *gc, const char *who);
 void jabber_rem_deny(PurpleConnection *gc, const char *who);

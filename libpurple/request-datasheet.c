@@ -78,15 +78,13 @@ purple_request_datasheet_new(void)
 	sheet->record_li_by_key = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 	purple_signal_register(sheet, "record-changed",
-		purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-		purple_value_new(PURPLE_TYPE_BOXED,
-			"PurpleRequestDatasheet *"),
-		purple_value_new(PURPLE_TYPE_POINTER)); /* NULL for all */
+		purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+		G_TYPE_POINTER, /* (PurpleRequestDatasheet *) */
+		G_TYPE_POINTER); /* NULL for all */
 
 	purple_signal_register(sheet, "destroy",
-		purple_marshal_VOID__POINTER, NULL, 1,
-		purple_value_new(PURPLE_TYPE_BOXED,
-			"PurpleRequestDatasheet *"));
+		purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		G_TYPE_POINTER); /* (PurpleRequestDatasheet *) */
 
 	return sheet;
 }
@@ -428,7 +426,7 @@ purple_request_datasheet_record_set_image_data(
 	purple_request_datasheet_record_set_common_data(rec, col_no, stock_id);
 }
 
-const gchar *
+static const gchar *
 purple_request_datasheet_record_get_common_data(
 	const PurpleRequestDatasheetRecord *rec, guint col_no)
 {

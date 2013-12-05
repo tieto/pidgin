@@ -20,65 +20,44 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+/* When writing a third-party plugin, do not include libpurple's internal.h
+ * included below. This file is for internal libpurple use only. We're including
+ * it here for our own convenience. */
+#include "internal.h"
 
-#include <glib.h>
-
-/* This will prevent compiler errors in some instances and is better explained in the
- * how-to documents on the wiki */
-#ifndef G_GNUC_NULL_TERMINATED
-# if __GNUC__ >= 4
-#  define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
-# else
-#  define G_GNUC_NULL_TERMINATED
-# endif
-#endif
-
-/* This is the required definition of PURPLE_PLUGINS as required for a plugin,
- * but we protect it with an #ifndef because config.h may define it for us
- * already and this would cause an unneeded compiler warning. */
-#ifndef PURPLE_PLUGINS
-# define PURPLE_PLUGINS
-#endif
+/* This file defines PURPLE_PLUGINS and includes all the libpurple headers */
+#include <purple.h>
 
 #define PLUGIN_ID "core-notifyexample"
 #define PLUGIN_AUTHOR "John Bailey <rekkanoryo@cpw.pidgin.im>"
-
-#include <notify.h>
-#include <plugin.h>
-#include <version.h>
-
-static PurplePlugin *notify_example = NULL;
 
 /* The next four functions and the calls within them should cause dialog boxes to appear
  * when you select the plugin action from the Tools->Notify Example menu */
 static void
 notify_error_cb(PurplePluginAction *action)
 {
-	purple_notify_error(notify_example, "Test Notification", "Test Notification",
+	purple_notify_error(action->plugin, "Test Notification", "Test Notification",
 		"This is a test error notification", NULL);
 }
 
 static void
 notify_info_cb(PurplePluginAction *action)
 {
-	purple_notify_info(notify_example, "Test Notification", "Test Notification",
+	purple_notify_info(action->plugin, "Test Notification", "Test Notification",
 		"This is a test informative notification", NULL);
 }
 
 static void
 notify_warn_cb(PurplePluginAction *action)
 {
-	purple_notify_warning(notify_example, "Test Notification", "Test Notification",
+	purple_notify_warning(action->plugin, "Test Notification", "Test Notification",
 		"This is a test warning notification", NULL);
 }
 
 static void
 notify_format_cb(PurplePluginAction *action)
 {
-	purple_notify_formatted(notify_example, "Test Notification", "Test Notification",
+	purple_notify_formatted(action->plugin, "Test Notification", "Test Notification",
 		"Test Notification",
 		"<I>This is a test notification with formatted text.</I>", NULL, NULL);
 }
@@ -87,7 +66,7 @@ static void
 notify_uri_cb(PurplePluginAction *action)
 {
 	/* This one should open your web browser of choice. */
-	purple_notify_uri(notify_example, "https://www.pidgin.im/");
+	purple_notify_uri(action->plugin, "https://www.pidgin.im/");
 }
 
 static GList *
@@ -117,9 +96,6 @@ plugin_actions(PurplePlugin *plugin, gpointer context)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	/* we need a handle for all the notify calls */
-	notify_example = plugin;
-
 	return TRUE;
 }
 

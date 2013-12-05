@@ -30,10 +30,12 @@
 #include <glib.h>
 #include <glib-object.h>
 
-/** An opaque structure representing a group of (usually all) media calls. */
+/** @copydoc _PurpleMediaManager */
 typedef struct _PurpleMediaManager PurpleMediaManager;
-/** The GObject class structure of the PurpleMediaManager object. */
+/** @copydoc _PurpleMediaManagerClass */
 typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
+
+typedef struct _PurpleMediaManagerPrivate PurpleMediaManagerPrivate;
 
 #include "account.h"
 #include "media.h"
@@ -44,6 +46,27 @@ typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 #define PURPLE_IS_MEDIA_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA_MANAGER))
 #define PURPLE_IS_MEDIA_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_MANAGER))
 #define PURPLE_MEDIA_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerClass))
+
+/** The media manager's data. */
+struct _PurpleMediaManager
+{
+	GObject parent;                  /**< The parent of this manager. */
+
+	/*< private >*/
+	PurpleMediaManagerPrivate *priv; /**< Private data for the manager. */
+};
+
+/** The media manager class. */
+struct _PurpleMediaManagerClass
+{
+	GObjectClass parent_class;       /**< The parent class. */
+
+	/*< private >*/
+	void (*purple_reserved1)(void);
+	void (*purple_reserved2)(void);
+	void (*purple_reserved3)(void);
+	void (*purple_reserved4)(void);
+};
 
 G_BEGIN_DECLS
 

@@ -411,7 +411,7 @@ update_selected_account(GntEntry *username, const char *start, const char *end,
 	GList *accounts = gnt_tree_get_rows(GNT_TREE(accountlist->dropdown));
 	const char *name = gnt_entry_get_text(username);
 	while (accounts) {
-		if (purple_find_buddy(accounts->data, name)) {
+		if (purple_blist_find_buddy(accounts->data, name)) {
 			gnt_combo_box_set_selected(accountlist, accounts->data);
 			gnt_widget_draw(GNT_WIDGET(accountlist));
 			break;
@@ -442,7 +442,7 @@ create_string_field(PurpleRequestField *field, GntWidget **username)
 		PurpleBlistNode *node = purple_blist_get_root();
 		gboolean offline = purple_str_has_suffix(hint, "all");
 		for (; node; node = purple_blist_node_next(node, offline)) {
-			if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+			if (!PURPLE_IS_BUDDY(node))
 				continue;
 			gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
 		}
@@ -453,7 +453,7 @@ create_string_field(PurpleRequestField *field, GntWidget **username)
 		PurpleBlistNode *node;
 		for (node = purple_blist_get_root(); node;
 				node = purple_blist_node_get_sibling_next(node)) {
-			if (PURPLE_BLIST_NODE_IS_GROUP(node))
+			if (PURPLE_IS_GROUP(node))
 				gnt_entry_add_suggest(GNT_ENTRY(entry), purple_group_get_name((PurpleGroup *)node));
 		}
 	}

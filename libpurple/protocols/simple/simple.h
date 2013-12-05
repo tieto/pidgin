@@ -27,7 +27,7 @@
 #include <time.h>
 
 #include "cipher.h"
-#include "circbuffer.h"
+#include "circularbuffer.h"
 #include "dnsquery.h"
 #include "dnssrv.h"
 #include "network.h"
@@ -101,7 +101,7 @@ struct simple_account_data {
 	guint resendtimeout;
 	gboolean connecting;
 	PurpleAccount *account;
-	PurpleCircBuffer *txbuf;
+	PurpleCircularBuffer *txbuf;
 	guint tx_handler;
 	gchar *regcallid;
 	GSList *transactions;

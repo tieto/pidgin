@@ -57,6 +57,7 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ##
 LIBS = \
 			-lglib-2.0 \
+			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lpurple \

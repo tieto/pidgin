@@ -53,37 +53,46 @@ ifeq "$(USE_VV)" "1"
 VV_SRC = \
 	media/backend-fs2.c \
 	media/backend-iface.c \
-	media/codec.c \
-	marshallers.c
+	media/codec.c
 else
 VV_SRC =
 endif
 
+BUILT_SRC = marshallers.c enums.c
+
 C_SRC =	\
+			$(BUILT_SRC) \
 			account.c \
+			accounts.c \
 			accountopt.c \
-			blist.c \
+			blistnode.c \
+			blistnodetypes.c \
+			buddylist.c \
 			buddyicon.c \
 			certificate.c \
+			ciphers/aescipher.c \
+			ciphers/descipher.c \
+			ciphers/des3cipher.c \
+			ciphers/hmaccipher.c \
+			ciphers/md4hash.c \
+			ciphers/md5hash.c \
+			ciphers/pbkdf2cipher.c \
+			ciphers/rc4cipher.c \
+			ciphers/sha1hash.c \
+			ciphers/sha256hash.c \
 			cipher.c \
-			ciphers/aes.c \
-			ciphers/des.c \
-			ciphers/gchecksum.c \
-			ciphers/hmac.c \
-			ciphers/md4.c \
-			ciphers/pbkdf2.c \
-			ciphers/rc4.c \
-			circbuffer.c \
+			circularbuffer.c \
 			cmds.c \
 			connection.c \
 			conversation.c \
+			conversationtypes.c \
+			conversations.c \
 			core.c \
 			debug.c \
 			dnsquery.c \
 			dnssrv.c \
 			e2ee.c \
 			eventloop.c \
-			ft.c \
 			http.c \
 			idle.c \
 			imgstore.c \
@@ -102,7 +111,7 @@ C_SRC =	\
 			pluginpref.c \
 			pounce.c \
 			prefs.c \
-			privacy.c \
+			presence.c \
 			proxy.c \
 			prpl.c \
 			purple-socket.c \
@@ -125,9 +134,9 @@ C_SRC =	\
 			theme.c \
 			upnp.c \
 			util.c \
-			value.c \
 			version.c \
 			whiteboard.c \
+			xfer.c \
 			xmlnode.c \
 			win32/giowin32.c \
 			win32/libc_interface.c \
@@ -135,6 +144,16 @@ C_SRC =	\
 			$(VV_SRC)
 
 RC_SRC = win32/libpurplerc.rc
+
+ENUM_HEADERS = \
+	account.h \
+	cipher.h \
+	connection.h \
+	conversation.h \
+	conversationtypes.h \
+	roomlist.h \
+	status.h \
+	xfer.h
 
 OBJECTS = $(C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 
@@ -196,9 +215,13 @@ marshallers.c: marshallers.list marshallers.h
 	@echo "#include \"marshallers.h\"" > marshallers.c
 	@$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --body >> marshallers.c
 
-ifeq "$(USE_VV)" "1"
-mediamanager.c media/backend-iface.c: marshallers.h
-endif
+enums.h: enums.h.in $(ENUM_HEADERS)
+	@echo -e "  GEN\t$@"
+	@$(GLIB_MKENUMS) --template enums.h.in $(ENUM_HEADERS) > enums.h
+
+enums.c: enums.c.in enums.h $(ENUM_HEADERS)
+	@echo -e "  GEN\t$@"
+	@$(GLIB_MKENUMS) --template enums.c.in $(ENUM_HEADERS) > enums.c
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
@@ -207,7 +230,7 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.h marshallers.c
+	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.h marshallers.c enums.h enums.c
 	rm -f $(TARGET).dll $(TARGET).dll.a $(TARGET).def
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean

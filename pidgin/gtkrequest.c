@@ -1686,12 +1686,9 @@ datasheet_button_check_sens(GtkWidget *button, gpointer _sheet_widget)
 static void
 datasheet_selection_changed(GtkWidget *sheet_widget)
 {
-	PurpleRequestDatasheetRecord *rec;
 	GtkVBox *buttons_box;
 
 	g_return_if_fail(sheet_widget != NULL);
-
-	rec = datasheet_get_selected_row(sheet_widget);
 
 	buttons_box = GTK_VBOX(g_object_get_data(G_OBJECT(sheet_widget),
 		"buttons"));
@@ -1887,7 +1884,7 @@ create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 	for (i = 0; i < col_count; i++) {
 		PurpleRequestDatasheetColumnType type;
 		const gchar *title;
-		GtkCellRenderer *renderer;
+		GtkCellRenderer *renderer = NULL;
 		const gchar *type_str = "";
 
 		type = purple_request_datasheet_get_column_type(sheet, i);

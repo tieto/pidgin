@@ -18,7 +18,6 @@ EXTRA_DIST = \
 	account-signals.dox \
 	blist-signals.dox \
 	certificate-signals.dox \
-	cipher-signals.dox \
 	connection-signals.dox \
 	conversation-signals.dox \
 	core-signals.dox \

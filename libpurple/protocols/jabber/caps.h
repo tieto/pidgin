@@ -27,6 +27,7 @@
 typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 #include "jabber.h"
+#include "cipher.h"
 
 /* Implementation of XEP-0115 - Entity Capabilities */
 
@@ -41,7 +42,7 @@ typedef struct _JabberCapsTuple {
 struct _JabberCapsClientInfo {
 	GList *identities; /* JabberIdentity */
 	GList *features; /* char * */
-	GList *forms; /* xmlnode * */
+	GList *forms; /* PurpleXmlNode * */
 	JabberCapsNodeExts *exts;
 
 	const JabberCapsTuple tuple;
@@ -98,7 +99,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
  *	@param hash Hash cipher to be used. Either sha-1 or md5.
  *	@return		The base64 encoded SHA-1 hash; must be freed by caller
  */
-gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash);
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash);
 
 /**
  *  Calculate SHA1 hash for own featureset.
@@ -124,6 +125,6 @@ void jabber_caps_broadcast_change(void);
  * @param query The 'query' element from an IQ reply stanza.
  * @returns A JabberCapsClientInfo struct, or NULL on error
  */
-JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
+JabberCapsClientInfo *jabber_caps_parse_client_info(PurpleXmlNode *query);
 
 #endif /* PURPLE_JABBER_CAPS_H_ */

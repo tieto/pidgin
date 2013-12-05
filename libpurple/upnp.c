@@ -178,9 +178,9 @@ fire_discovery_callbacks(gboolean success)
 }
 
 static gboolean
-purple_upnp_compare_device(const xmlnode* device, const gchar* deviceType)
+purple_upnp_compare_device(const PurpleXmlNode* device, const gchar* deviceType)
 {
-	xmlnode* deviceTypeNode = xmlnode_get_child(device, "deviceType");
+	PurpleXmlNode* deviceTypeNode = purple_xmlnode_get_child(device, "deviceType");
 	char *tmp;
 	gboolean ret;
 
@@ -188,7 +188,7 @@ purple_upnp_compare_device(const xmlnode* device, const gchar* deviceType)
 		return FALSE;
 	}
 
-	tmp = xmlnode_get_data(deviceTypeNode);
+	tmp = purple_xmlnode_get_data(deviceTypeNode);
 	ret = !g_ascii_strcasecmp(tmp, deviceType);
 	g_free(tmp);
 
@@ -196,9 +196,9 @@ purple_upnp_compare_device(const xmlnode* device, const gchar* deviceType)
 }
 
 static gboolean
-purple_upnp_compare_service(const xmlnode* service, const gchar* serviceType)
+purple_upnp_compare_service(const PurpleXmlNode* service, const gchar* serviceType)
 {
-	xmlnode* serviceTypeNode;
+	PurpleXmlNode* serviceTypeNode;
 	char *tmp;
 	gboolean ret;
 
@@ -206,13 +206,13 @@ purple_upnp_compare_service(const xmlnode* service, const gchar* serviceType)
 		return FALSE;
 	}
 
-	serviceTypeNode = xmlnode_get_child(service, "serviceType");
+	serviceTypeNode = purple_xmlnode_get_child(service, "serviceType");
 
 	if(serviceTypeNode == NULL) {
 		return FALSE;
 	}
 
-	tmp = xmlnode_get_data(serviceTypeNode);
+	tmp = purple_xmlnode_get_data(serviceTypeNode);
 	ret = !g_ascii_strcasecmp(tmp, serviceType);
 	g_free(tmp);
 
@@ -224,11 +224,11 @@ purple_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	const gchar* httpURL, const gchar* serviceType)
 {
 	gchar *baseURL, *controlURL, *service;
-	xmlnode *xmlRootNode, *serviceTypeNode, *controlURLNode, *baseURLNode;
+	PurpleXmlNode *xmlRootNode, *serviceTypeNode, *controlURLNode, *baseURLNode;
 	char *tmp;
 
 	/* create the xml root node */
-	if ((xmlRootNode = xmlnode_from_str(httpResponse, len)) == NULL) {
+	if ((xmlRootNode = purple_xmlnode_from_str(httpResponse, len)) == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): Could not parse xml root node\n");
 		return NULL;
@@ -236,8 +236,8 @@ purple_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 
 	/* get the baseURL of the device */
 	baseURL = NULL;
-	if((baseURLNode = xmlnode_get_child(xmlRootNode, "URLBase")) != NULL) {
-		baseURL = xmlnode_get_data(baseURLNode);
+	if((baseURLNode = purple_xmlnode_get_child(xmlRootNode, "URLBase")) != NULL) {
+		baseURL = purple_xmlnode_get_data(baseURLNode);
 	}
 	/* fixes upnp-descriptions with empty urlbase-element */
 	if(baseURL == NULL){
@@ -247,79 +247,79 @@ purple_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	/* get the serviceType child that has the service type as its data */
 
 	/* get urn:schemas-upnp-org:device:InternetGatewayDevice:1 and its devicelist */
-	serviceTypeNode = xmlnode_get_child(xmlRootNode, "device");
+	serviceTypeNode = purple_xmlnode_get_child(xmlRootNode, "device");
 	while(!purple_upnp_compare_device(serviceTypeNode,
 			"urn:schemas-upnp-org:device:InternetGatewayDevice:1") &&
 			serviceTypeNode != NULL) {
-		serviceTypeNode = xmlnode_get_next_twin(serviceTypeNode);
+		serviceTypeNode = purple_xmlnode_get_next_twin(serviceTypeNode);
 	}
 	if(serviceTypeNode == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): could not get serviceTypeNode 1\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
-	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "deviceList");
+	serviceTypeNode = purple_xmlnode_get_child(serviceTypeNode, "deviceList");
 	if(serviceTypeNode == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): could not get serviceTypeNode 2\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
 
 	/* get urn:schemas-upnp-org:device:WANDevice:1 and its devicelist */
-	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "device");
+	serviceTypeNode = purple_xmlnode_get_child(serviceTypeNode, "device");
 	while(!purple_upnp_compare_device(serviceTypeNode,
 			"urn:schemas-upnp-org:device:WANDevice:1") &&
 			serviceTypeNode != NULL) {
-		serviceTypeNode = xmlnode_get_next_twin(serviceTypeNode);
+		serviceTypeNode = purple_xmlnode_get_next_twin(serviceTypeNode);
 	}
 	if(serviceTypeNode == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): could not get serviceTypeNode 3\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
-	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "deviceList");
+	serviceTypeNode = purple_xmlnode_get_child(serviceTypeNode, "deviceList");
 	if(serviceTypeNode == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): could not get serviceTypeNode 4\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
 
 	/* get urn:schemas-upnp-org:device:WANConnectionDevice:1 and its servicelist */
-	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "device");
+	serviceTypeNode = purple_xmlnode_get_child(serviceTypeNode, "device");
 	while(serviceTypeNode && !purple_upnp_compare_device(serviceTypeNode,
 			"urn:schemas-upnp-org:device:WANConnectionDevice:1")) {
-		serviceTypeNode = xmlnode_get_next_twin(serviceTypeNode);
+		serviceTypeNode = purple_xmlnode_get_next_twin(serviceTypeNode);
 	}
 	if(serviceTypeNode == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): could not get serviceTypeNode 5\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
-	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "serviceList");
+	serviceTypeNode = purple_xmlnode_get_child(serviceTypeNode, "serviceList");
 	if(serviceTypeNode == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): could not get serviceTypeNode 6\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
 
 	/* get the serviceType variable passed to this function */
 	service = g_strdup_printf(SEARCH_REQUEST_DEVICE, serviceType);
-	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "service");
+	serviceTypeNode = purple_xmlnode_get_child(serviceTypeNode, "service");
 	while(!purple_upnp_compare_service(serviceTypeNode, service) &&
 			serviceTypeNode != NULL) {
-		serviceTypeNode = xmlnode_get_next_twin(serviceTypeNode);
+		serviceTypeNode = purple_xmlnode_get_next_twin(serviceTypeNode);
 	}
 
 	g_free(service);
@@ -327,21 +327,21 @@ purple_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 		purple_debug_error("upnp",
 			"parse_description_response(): could not get serviceTypeNode 7\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
 
 	/* get the controlURL of the service */
-	if((controlURLNode = xmlnode_get_child(serviceTypeNode,
+	if((controlURLNode = purple_xmlnode_get_child(serviceTypeNode,
 			"controlURL")) == NULL) {
 		purple_debug_error("upnp",
 			"parse_description_response(): Could not find controlURL\n");
 		g_free(baseURL);
-		xmlnode_free(xmlRootNode);
+		purple_xmlnode_free(xmlRootNode);
 		return NULL;
 	}
 
-	tmp = xmlnode_get_data(controlURLNode);
+	tmp = purple_xmlnode_get_data(controlURLNode);
 	if(baseURL && !purple_str_has_prefix(tmp, "http://") &&
 	   !purple_str_has_prefix(tmp, "HTTP://")) {
 		/* Handle absolute paths in a relative URL.  This probably
@@ -361,7 +361,7 @@ purple_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 		controlURL = tmp;
 	}
 	g_free(baseURL);
-	xmlnode_free(xmlRootNode);
+	purple_xmlnode_free(xmlRootNode);
 
 	return controlURL;
 }

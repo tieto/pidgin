@@ -34,14 +34,15 @@ GData **				T_PTR
 const unsigned char *			T_PV
 struct tm *				T_PTR
 const struct tm *			T_PTR
-xmlnode *				T_PTR
-const xmlnode *				T_PTR
 gssize					T_IV
 const void *				T_PTR
+GValue *				T_PTR
+GType					T_IV
 
 Purple::Account				T_PurpleObj
 Purple::Account::Option			T_PurpleObj
 Purple::Account::UserSplit		T_PurpleObj
+Purple::Account::PrivacyType			T_IV
 
 Purple::Buddy::Icon			T_PurpleObj
 Purple::Buddy::Icon::Spec			T_PurpleObj
@@ -51,22 +52,15 @@ Purple::BuddyList::Chat			T_PurpleObj
 Purple::BuddyList::Contact		T_PurpleObj
 Purple::BuddyList::Group			T_PurpleObj
 Purple::BuddyList::Node			T_PurpleObj
-Purple::BuddyList::NodeFlags		T_IV
-Purple::BuddyList::NodeType		T_IV
+Purple::BuddyList::CountingNode		T_PurpleObj
 
 Purple::Cipher				T_PurpleObj
-Purple::CipherCaps			T_IV
-Purple::Cipher::Ops			T_PurpleObj
-Purple::Cipher::Context			T_PurpleObj
+Purple::Hash				T_PurpleObj
 Purple::Cmd::Flag				T_IV
 Purple::Cmd::Id				T_IV
 Purple::Cmd::Priority			T_IV
 Purple::Cmd::Ret				T_IV
 Purple::Connection			T_PurpleObj
-Purple::Conversation			T_PurpleObj
-Purple::Conversation::Chat		T_PurpleObj
-Purple::Conversation::ChatBuddy		T_PurpleObj
-Purple::Conversation::IM			T_PurpleObj
 Purple::Core				T_PurpleObj
 
 Purple::Desktop::Item			T_PurpleObj
@@ -111,8 +105,6 @@ Purple::PluginPrefType			T_IV
 Purple::PluginPref::Frame			T_PurpleObj
 Purple::Pounce				T_PurpleObj
 Purple::PounceEvent			T_IV
-Purple::Presence				T_PurpleObj
-Purple::PrivacyType			T_IV
 Purple::ProtocolOptions			T_IV
 Purple::ProxyInfo				T_PurpleObj
 Purple::ProxyType				T_IV
@@ -141,7 +133,8 @@ Purple::Ssl::Connection			T_PurpleObj
 Purple::Ssl::Ops				T_PurpleObj
 
 Purple::Presence				T_PurpleObj
-Purple::PresenceContext			T_IV
+Purple::AccountPresence				T_PurpleObj
+Purple::BuddyPresence				T_PurpleObj
 Purple::Smiley				T_PurpleObj
 Purple::Status				T_PurpleObj
 Purple::StatusAttr			T_PurpleObj
@@ -154,11 +147,10 @@ Purple::String::Format::Type		T_IV
 Purple::Stringref				T_PurpleObj
 Purple::Util::FetchUrlData	T_PTR
 Purple::Util::InfoFieldFormatCallback	T_PTR
-Purple::Value				T_PurpleObj
 
 Purple::Xfer				T_PurpleObj
 Purple::XferType				T_IV
-Purple::XferStatusType			T_IV
+Purple::XferStatus			T_IV
 
 Purple::XMLNode				T_PurpleObj
 XMLNode::Type				T_IV
@@ -181,12 +173,15 @@ Purple::Cipher::BatchMode	T_IV
 /* debug.h */
 Purple::DebugLevel			T_IV
 
-/* conversation.h */
-Purple::ConvChatBuddyFlags		T_IV
-Purple::ConvUpdateType			T_IV
-Purple::ConversationType		T_IV
+/* conversations.h */
+Purple::Conversation			T_PurpleObj
+Purple::ChatConversation		T_PurpleObj
+Purple::ChatUser			T_PurpleObj
+Purple::IMConversation			T_PurpleObj
+Purple::ChatUser::Flags			T_IV
+Purple::Conversation::UpdateType	T_IV
 Purple::MessageFlags			T_IV
-Purple::TypingState			T_IV
+Purple::IMTypingState			T_IV
 Purple::UnseenState			T_IV
 
 /* connection.h */

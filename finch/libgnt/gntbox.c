@@ -592,7 +592,7 @@ gnt_box_class_init(GntBoxClass *klass)
 			g_param_spec_boolean("vertical", "Vertical",
 				"Whether the child widgets in the box should be stacked vertically.",
 				TRUE,
-				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+				G_PARAM_READWRITE|G_PARAM_CONSTRUCT|G_PARAM_STATIC_STRINGS
 			)
 		);
 	g_object_class_install_property(gclass,
@@ -600,7 +600,7 @@ gnt_box_class_init(GntBoxClass *klass)
 			g_param_spec_boolean("homogeneous", "Homogeneous",
 				"Whether the child widgets in the box should have the same size.",
 				TRUE,
-				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+				G_PARAM_READWRITE|G_PARAM_CONSTRUCT|G_PARAM_STATIC_STRINGS
 			)
 		);
 
@@ -662,11 +662,10 @@ gnt_box_get_gtype(void)
 
 GntWidget *gnt_box_new(gboolean homo, gboolean vert)
 {
-	GntWidget *widget = g_object_new(GNT_TYPE_BOX, NULL);
+	GntWidget *widget = g_object_new(GNT_TYPE_BOX, "homogeneous", homo,
+			"vertical", vert, NULL);
 	GntBox *box = GNT_BOX(widget);
 
-	box->homogeneous = homo;
-	box->vertical = vert;
 	box->alignment = vert ? GNT_ALIGN_LEFT : GNT_ALIGN_MID;
 
 	return widget;
