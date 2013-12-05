@@ -150,8 +150,6 @@ purple_strings_are_different(const char *one, const char *two)
 			((one == NULL || *one == '\0') && (two == NULL || *two == '\0')));
 }
 
-PurpleBlistNode *_purple_blist_get_last_child(PurpleBlistNode *node);
-
 /**************************************************************************/
 /* Buddy API                                                              */
 /**************************************************************************/

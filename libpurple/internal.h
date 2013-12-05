@@ -159,6 +159,25 @@
 #include "accounts.h"
 #include "connection.h"
 
+/**
+ * Sets an error for an account.
+ *
+ * @param account  The account to set the error for.
+ * @param new_err  The #PurpleConnectionErrorInfo instance representing the
+ *                 error.
+ */
+void _purple_account_set_current_error(PurpleAccount *account,
+                                       PurpleConnectionErrorInfo *new_err);
+
+/**
+ * Returns the last child of a particular node.
+ *
+ * @param node  The node whose last child is to be retrieved.
+ *
+ * @return The last child of the node.
+ */
+PurpleBlistNode *_purple_blist_get_last_child(PurpleBlistNode *node);
+
 /* This is for the accounts code to notify the buddy icon code that
  * it's done loading.  We may want to replace this with a signal. */
 void
@@ -234,5 +253,13 @@ void _purple_connection_add_active_chat(PurpleConnection *gc,
  */
 void _purple_connection_remove_active_chat(PurpleConnection *gc,
                                            PurpleChatConversation *chat);
+
+/**
+ * Returns the primitive scores array from status.c.
+ *
+ * @note This function should only be called by
+ *       purple_buddy_presence_compute_score() in presence.c.
+ */
+int *_purple_statuses_get_primitive_scores(void);
 
 #endif /* _PURPLE_INTERNAL_H_ */

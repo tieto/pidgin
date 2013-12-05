@@ -138,9 +138,6 @@ static GObjectClass  *parent_class = NULL;
 static GParamSpec    *properties[PROP_LAST];
 static GList         *handles = NULL;
 
-void _purple_account_set_current_error(PurpleAccount *account,
-		PurpleConnectionErrorInfo *new_err);
-
 /***************
  * Account API *
  ***************/
