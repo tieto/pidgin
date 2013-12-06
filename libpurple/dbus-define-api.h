@@ -1,4 +1,4 @@
-#error "This is file is not a valid C code"
+#error "This file is not a valid C code and is not intended to be compiled."
 
 /* This file contains some of the macros from other header files as
    function declarations.  This does not make sense in C, but it
