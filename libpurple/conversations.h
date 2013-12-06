@@ -90,7 +90,7 @@ GList *purple_conversations_get_chats(void);
  * Finds a conversation of any type with the specified name and Purple account.
  *
  * @param name The name of the conversation.
- * @param account The purple_account associated with the conversation.
+ * @param account The account associated with the conversation.
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
@@ -101,7 +101,7 @@ PurpleConversation *purple_conversations_find_with_account(const char *name,
  * Finds an IM with the specified name and Purple account.
  *
  * @param name The name of the conversation.
- * @param account The purple_account associated with the conversation.
+ * @param account The account associated with the conversation.
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
@@ -112,7 +112,7 @@ PurpleIMConversation *purple_conversations_find_im_with_account(const char *name
  * Finds a chat with the specified name and Purple account.
  *
  * @param name The name of the conversation.
- * @param account The purple_account associated with the conversation.
+ * @param account The account associated with the conversation.
  *
  * @return The conversation if found, or @c NULL otherwise.
  */

@@ -2302,7 +2302,6 @@ get_available_browsers(void)
 	static const struct browser possible_browsers[] = {
 		{N_("Seamonkey"), "seamonkey"},
 		{N_("Opera"), "opera"},
-		{N_("Netscape"), "netscape"},
 		{N_("Mozilla"), "mozilla"},
 		{N_("Konqueror"), "kfmclient"},
 		{N_("Google Chrome"), "google-chrome"},
@@ -4415,6 +4414,13 @@ pidgin_prefs_update_old(void)
 		   window" then change it to "default." */
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/browsers/place",
 				PIDGIN_BROWSER_DEFAULT);
+	}
+
+	/* Added in 3.0.0. */
+	if (g_str_equal(
+			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"),
+			"netscape")) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/browser", "xdg-open");
 	}
 #endif /* !_WIN32 */
 }

@@ -137,7 +137,7 @@ purple_conversations_update_cache(PurpleConversation *conv, const char *name,
 	if (account)
 		hc->account = account;
 	if (name)
-		hc->name = g_strdup(purple_normalize(account, name));
+		hc->name = g_strdup(purple_normalize(hc->account, name));
 
 	g_hash_table_insert(conversation_cache, hc, conv);
 }

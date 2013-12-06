@@ -8563,8 +8563,8 @@ pidgin_conv_attach(PurpleConversation *conv)
 	g_object_set_data(G_OBJECT(conv), "unseen-count", NULL);
 	g_object_set_data(G_OBJECT(conv), "unseen-state", NULL);
 	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
-	purple_conversation_set_ui_data(conv, NULL);
-	private_gtkconv_new(conv, FALSE);
+	if (!PIDGIN_CONVERSATION(conv))
+		private_gtkconv_new(conv, FALSE);
 	timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));
 	if (timer) {
 		purple_timeout_remove(timer);
