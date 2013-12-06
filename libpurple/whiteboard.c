@@ -69,7 +69,7 @@ static GParamSpec *properties[PROP_LAST];
 static PurpleWhiteboardUiOps *whiteboard_ui_ops = NULL;
 /* static PurpleWhiteboardPrplOps *whiteboard_prpl_ops = NULL; */
 
-static GList *wbList = NULL;
+static GList *wb_list = NULL;
 
 /*static gboolean auto_accept = TRUE; */
 
@@ -144,7 +144,7 @@ PurpleWhiteboard *purple_whiteboard_get_session(const PurpleAccount *account, co
 	PurpleWhiteboard *wb;
 	PurpleWhiteboardPrivate *priv;
 
-	GList *l = wbList;
+	GList *l = wb_list;
 
 	/* Look for a whiteboard session between the local user and the remote user
 	 */
@@ -397,7 +397,7 @@ purple_whiteboard_constructed(GObject *object)
 	if(priv->prpl_ops && priv->prpl_ops->start)
 		priv->prpl_ops->start(wb);
 
-	wbList = g_list_append(wbList, wb);
+	wb_list = g_list_append(wb_list, wb);
 }
 
 /* GObject finalize function */
@@ -418,7 +418,7 @@ purple_whiteboard_finalize(GObject *object)
 	if(priv->prpl_ops && priv->prpl_ops->end)
 		priv->prpl_ops->end(wb);
 
-	wbList = g_list_remove(wbList, wb);
+	wb_list = g_list_remove(wb_list, wb);
 
 	g_free(priv->who);
 
