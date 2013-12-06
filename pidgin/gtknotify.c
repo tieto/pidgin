@@ -1376,10 +1376,6 @@ pidgin_notify_uri(const char *uri)
 			remote_command = g_strdup_printf("%s %s -remote "
 											 "openURL(%s,new-tab)",
 											 web_browser, args, escaped);
-		else if (place == PIDGIN_BROWSER_CURRENT)
-			remote_command = g_strdup_printf("%s %s -remote "
-											 "openURL(%s)",
-											 web_browser, args, escaped);
 	}
 	else if (!strcmp(web_browser, "netscape"))
 	{
@@ -1391,11 +1387,6 @@ pidgin_notify_uri(const char *uri)
 											 "openURL(%s,new-window)",
 											 escaped);
 		}
-		else if (place == PIDGIN_BROWSER_CURRENT)
-		{
-			remote_command = g_strdup_printf("netscape -remote "
-											 "openURL(%s)", escaped);
-		}
 	}
 	else if (!strcmp(web_browser, "opera"))
 	{
@@ -1403,12 +1394,6 @@ pidgin_notify_uri(const char *uri)
 			command = g_strdup_printf("opera -newwindow %s", escaped);
 		else if (place == PIDGIN_BROWSER_NEW_TAB)
 			command = g_strdup_printf("opera -newpage %s", escaped);
-		else if (place == PIDGIN_BROWSER_CURRENT)
-		{
-			remote_command = g_strdup_printf("opera -remote "
-											 "openURL(%s)", escaped);
-			command = g_strdup_printf("opera %s", escaped);
-		}
 		else
 			command = g_strdup_printf("opera %s", escaped);
 
