@@ -1,5 +1,15 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+This file intends to list all changes to libpurple, Pidgin, and Finch's public
+API. We sometimes forget to add changes to this file--sorry.
+
+If your plugin fails to build with a new major version (e.g. 3.0.0) we
+suggest checking this list first, in case a function was simply renamed.
+You may still need to consult our API docs or our source code.
+
+If you notice something missing from this list, please let us know and we'll
+add it.
+
 version 3.0.0 (??/??/????):
 	libpurple:
 		Added:
