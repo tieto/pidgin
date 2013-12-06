@@ -40,9 +40,9 @@ struct _PurpleWhiteboardPrivate
 	PurpleAccount *account;         /**< Account associated with this session */
 	char *who;                      /**< Name of the remote user              */
 
-	void *proto_data;               /**< Protocol specific data
-	                                     TODO Remove this, and use
-	                                          protocol-specific subclasses    */
+	/* TODO Remove this and use protocol-specific subclasses. */
+	void *proto_data;               /**< Protocol specific data               */
+
 	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations        */
 
 	GList *draw_list;               /**< List of drawing elements/deltas to
