@@ -1380,7 +1380,7 @@ purple_chat_conversation_set_property(GObject *obj, guint param_id, const GValue
 		case CHAT_PROP_LEFT:
 			{
 				gboolean left = g_value_get_boolean(value);
-				if (left == TRUE)
+				if (left)
 					purple_chat_conversation_leave(chat);
 			}
 			break;
