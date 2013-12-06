@@ -226,7 +226,8 @@ PurpleIMTypingState purple_im_conversation_get_typing_state(const PurpleIMConver
  * Starts the IM's typing timeout.
  *
  * @param im      The IM.
- * @param timeout The timeout.
+ * @param timeout How long in seconds to wait before setting the typing state
+ *        to PURPLE_IM_NOT_TYPING.
  */
 void purple_im_conversation_start_typing_timeout(PurpleIMConversation *im, int timeout);
 
