@@ -46,9 +46,9 @@ struct _PurpleRoomlistPrivate {
 	GList *fields;           /**< The fields.                       */
 	GList *rooms;            /**< The list of rooms.                */
 	gboolean in_progress;    /**< The listing is in progress.       */
-	gpointer proto_data;     /** Protocol private data.
-	                             TODO Remove this, and use
-	                                  protocol-specific subclasses  */
+
+	/* TODO Remove this and use protocol-specific subclasses. */
+	gpointer proto_data;     /** Protocol private data.             */
 };
 
 /**

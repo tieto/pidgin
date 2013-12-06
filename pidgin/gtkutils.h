@@ -58,8 +58,8 @@ typedef enum
 typedef enum
 {
 	PIDGIN_BROWSER_DEFAULT = 0,
-	PIDGIN_BROWSER_CURRENT,
-	PIDGIN_BROWSER_NEW_WINDOW,
+	/* value '1' was used by PIDGIN_BROWSER_CURRENT, which no longer exists */
+	PIDGIN_BROWSER_NEW_WINDOW = 2,
 	PIDGIN_BROWSER_NEW_TAB
 
 } PidginBrowserPlace;

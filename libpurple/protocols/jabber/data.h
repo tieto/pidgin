@@ -1,5 +1,5 @@
 /*
- * purple - Jabber Service Discovery
+ * purple - Handling of XEP-0231: Bits of Binary.
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this

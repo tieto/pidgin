@@ -40,10 +40,10 @@ struct _PurpleWhiteboardPrivate
 	PurpleAccount *account;         /**< Account associated with this session */
 	char *who;                      /**< Name of the remote user              */
 
-	void *proto_data;               /**< Protocol specific data
-	                                     TODO Remove this, and use
-	                                          protocol-specific subclasses    */
-	PurpleWhiteboardOps *protocol_ops; /**< Protocol operations */
+	/* TODO Remove this and use protocol-specific subclasses. */
+	void *proto_data;               /**< Protocol specific data               */
+
+	PurpleWhiteboardOps *protocol_ops; /**< Protocol operations               */
 
 	GList *draw_list;               /**< List of drawing elements/deltas to
 	                                     send                                 */
@@ -69,7 +69,7 @@ static GParamSpec *properties[PROP_LAST];
 static PurpleWhiteboardUiOps *whiteboard_ui_ops = NULL;
 /* static PurpleWhiteboardOps *whiteboard_protocol_ops = NULL; */
 
-static GList *wbList = NULL;
+static GList *wb_list = NULL;
 
 /*static gboolean auto_accept = TRUE; */
 
@@ -144,7 +144,7 @@ PurpleWhiteboard *purple_whiteboard_get_session(const PurpleAccount *account, co
 	PurpleWhiteboard *wb;
 	PurpleWhiteboardPrivate *priv;
 
-	GList *l = wbList;
+	GList *l = wb_list;
 
 	/* Look for a whiteboard session between the local user and the remote user
 	 */
@@ -398,7 +398,7 @@ purple_whiteboard_constructed(GObject *object)
 	if(priv->protocol_ops && priv->protocol_ops->start)
 		priv->protocol_ops->start(wb);
 
-	wbList = g_list_append(wbList, wb);
+	wb_list = g_list_append(wb_list, wb);
 }
 
 /* GObject finalize function */
@@ -419,7 +419,7 @@ purple_whiteboard_finalize(GObject *object)
 	if(priv->protocol_ops && priv->protocol_ops->end)
 		priv->protocol_ops->end(wb);
 
-	wbList = g_list_remove(wbList, wb);
+	wb_list = g_list_remove(wb_list, wb);
 
 	g_free(priv->who);
 

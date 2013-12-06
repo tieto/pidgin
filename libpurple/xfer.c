@@ -100,9 +100,8 @@ struct _PurpleXferPrivate {
 
 	PurpleXferUiOps *ui_ops;     /**< UI-specific operations.             */
 
-	void *proto_data;            /**< Protocol-specific data.
-	                                  TODO Remove this, and use
-	                                       protocol-specific subclasses   */
+	/* TODO Remove this and use protocol-specific subclasses. */
+	void *proto_data;            /**< Protocol-specific data.             */
 
 	/*
 	 * Used to moderate the file transfer when either the read/write ui_ops are

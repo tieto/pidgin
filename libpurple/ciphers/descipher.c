@@ -5,12 +5,12 @@
  *  Copyright (C) 1998 Free Software Foundation, Inc.
  *
  *  Please see below for more legal information!
- *  
+ *
  *   According to the definition of DES in FIPS PUB 46-2 from December 1993.
  *   For a description of triple encryption, see:
  *     Bruce Schneier: Applied Cryptography. Second Edition.
  *     John Wiley & Sons, 1996. ISBN 0-471-12845-7. Pages 358 ff.
- *  
+ *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -63,7 +63,7 @@ enum {
 static GObjectClass *parent_class = NULL;
 static GParamSpec *properties[PROP_LAST];
 
-/*  
+/*
  *  The s-box values are permuted according to the 'primitive function P'
  */
 static guint32 sbox1[64] = {
@@ -275,11 +275,11 @@ static guint8 encrypt_rotate_tab[16] = {
  *            16 encryption rounds.
  *            To calculate subkeys for decryption the caller
  *                have to reorder the generated subkeys.
- *     
+ *
  *        rawkey:       8 Bytes of key data
  *        subkey:       Array of at least 32 guint32s. Will be filled
  *              with calculated subkeys.
- *     
+ *
  */
 static void
 purple_des_cipher_key_schedule(const guint8 * rawkey, guint32 * subkey) {
@@ -579,4 +579,3 @@ PurpleCipher *
 purple_des_cipher_new(void) {
 	return g_object_new(PURPLE_TYPE_DES_CIPHER, NULL);
 }
-

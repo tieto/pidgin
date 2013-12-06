@@ -2434,7 +2434,6 @@ browser_page(void)
 			label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), PURPLE_PREF_INT,
 				PIDGIN_PREFS_ROOT "/browsers/place",
 				_("Browser default"), PIDGIN_BROWSER_DEFAULT,
-				_("Existing window"), PIDGIN_BROWSER_CURRENT,
 				_("New window"), PIDGIN_BROWSER_NEW_WINDOW,
 				_("New tab"), PIDGIN_BROWSER_NEW_TAB,
 				NULL);
@@ -4408,5 +4407,15 @@ pidgin_prefs_update_old(void)
 
 	purple_prefs_remove("/plugins/core/vvconfig");
 	purple_prefs_remove("/plugins/gtk/vvconfig");
+
+#ifndef _WIN32
+	/* Added in 3.0.0. */
+	if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/browsers/place") == 1) {
+		/* If the "open link in" pref is set to the old value for "existing
+		   window" then change it to "default." */
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/browsers/place",
+				PIDGIN_BROWSER_DEFAULT);
+	}
+#endif /* !_WIN32 */
 }
 

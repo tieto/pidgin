@@ -65,9 +65,9 @@ struct _PurpleConnectionPrivate
 
 	GSList *active_chats;         /**< A list of active chats
 	                                  (#PurpleChatConversation structs). */
-	void *proto_data;             /**< Protocol-specific data.            
-	                                  TODO Remove this, and use
-	                                       protocol-specific subclasses  */
+
+	/* TODO Remove this and use protocol-specific subclasses. */
+	void *proto_data;             /**< Protocol-specific data.           */
 
 	char *display_name;           /**< How you appear to other people.   */
 	guint keepalive;              /**< Keep-alive.                       */

@@ -31,10 +31,10 @@
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_RC4_CIPHER, PurpleRC4CipherPrivate))
 
 typedef struct {
-  guchar state[256];
-  guchar x;
-  guchar y;
-  gint key_len;
+	guchar state[256];
+	guchar x;
+	guchar y;
+	gint key_len;
 } PurpleRC4CipherPrivate;
 
 /******************************************************************************

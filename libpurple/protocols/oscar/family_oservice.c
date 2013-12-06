@@ -25,8 +25,6 @@
 
 #include "oscar.h"
 
-#include "ciphers/md5hash.h"
-
 /*
  * Each time we make a FLAP connection to an oscar server the server gives
  * us a list of rate classes.  Each rate class has different properties for
