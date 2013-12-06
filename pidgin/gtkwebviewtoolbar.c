@@ -1529,7 +1529,7 @@ gtk_webviewtoolbar_init(GtkWebViewToolbar *toolbar)
 	gtk_action_set_sensitive(priv->attention, FALSE);
 
 	gtk_action_set_sensitive(priv->smiley,
-		pidgin_themes_get_proto_smileys(NULL) != NULL);
+			pidgin_themes_get_proto_smileys(NULL) != NULL);
 
 	purple_prefs_connect_callback(toolbar,
 	                              PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
