@@ -1,5 +1,5 @@
 /**
- * @file ciphers.h Purple Cipher and Hash API
+ * @file cipher.h Purple Cipher and Hash API
  * @ingroup core
  */
 
@@ -23,8 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_CIPHERS_H
-#define PURPLE_CIPHERS_H
+#ifndef PURPLE_CIPHER_H
+#define PURPLE_CIPHER_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -407,4 +407,4 @@ size_t purple_hash_get_block_size(PurpleHash *hash);
 
 G_END_DECLS
 
-#endif /* PURPLE_CIPHERS_H */
+#endif /* PURPLE_CIPHER_H */
