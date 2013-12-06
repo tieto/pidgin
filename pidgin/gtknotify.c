@@ -1377,17 +1377,6 @@ pidgin_notify_uri(const char *uri)
 											 "openURL(%s,new-tab)",
 											 web_browser, args, escaped);
 	}
-	else if (!strcmp(web_browser, "netscape"))
-	{
-		command = g_strdup_printf("netscape %s", escaped);
-
-		if (place == PIDGIN_BROWSER_NEW_WINDOW)
-		{
-			remote_command = g_strdup_printf("netscape -remote "
-											 "openURL(%s,new-window)",
-											 escaped);
-		}
-	}
 	else if (!strcmp(web_browser, "opera"))
 	{
 		if (place == PIDGIN_BROWSER_NEW_WINDOW)
