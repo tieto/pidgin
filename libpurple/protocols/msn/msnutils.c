@@ -52,6 +52,7 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 	char *cur;
 	GString *pre  = g_string_new(NULL);
 	GString *post = g_string_new(NULL);
+	unsigned int colors[3];
 
 	if (pre_ret  != NULL) *pre_ret  = NULL;
 	if (post_ret != NULL) *post_ret = NULL;
@@ -94,9 +95,8 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 	if (cur && (*(cur = cur + 3) != ';'))
 	{
 		int i;
-		guint8 colors[3];
 
-		i = sscanf(cur, "%02hhx%02hhx%02hhx;", &colors[0], &colors[1], &colors[2]);
+		i = sscanf(cur, "%02x%02x%02x;", &colors[0], &colors[1], &colors[2]);
 
 		if (i > 0)
 		{
@@ -109,7 +109,7 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 			}
 			else if (i == 2)
 			{
-				guint8 temp = colors[0];
+				unsigned int temp = colors[0];
 
 				colors[0] = colors[1];
 				colors[1] = temp;
@@ -117,14 +117,14 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 			}
 			else if (i == 3)
 			{
-				guint8 temp = colors[2];
+				unsigned int temp = colors[2];
 
 				colors[2] = colors[0];
 				colors[0] = temp;
 			}
 
 			g_snprintf(tag, sizeof(tag),
-				"<FONT COLOR=\"#%02hhx%02hhx%02hhx\">",
+				"<FONT COLOR=\"#%02x%02x%02x\">",
 				colors[0] & 0xFF, colors[1] & 0xFF,
 				colors[2] & 0xFF);
 
