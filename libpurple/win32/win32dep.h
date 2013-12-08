@@ -54,6 +54,7 @@ typedef struct {
  **/
 /* Windows helper functions */
 FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure);
+gboolean wpurple_reg_val_exists(HKEY rootkey, const char *subkey, const char *valname);
 gboolean wpurple_read_reg_dword(HKEY rootkey, const char *subkey, const char *valname, LPDWORD result);
 char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valname); /* needs to be g_free'd */
 gboolean wpurple_write_reg_string(HKEY rootkey, const char *subkey, const char *valname, const char *value);

@@ -2452,6 +2452,7 @@ init_plugin(PurplePlugin *plugin)
 static void log_reader_init_prefs(void) {
 	char *path;
 #ifdef _WIN32
+	const gchar *reg_key;
 	char *folder;
 	gboolean found = FALSE;
 #endif
@@ -2542,7 +2543,11 @@ static void log_reader_init_prefs(void) {
 	 */
 
 	path = NULL;
-	if ((folder = wpurple_read_reg_string(HKEY_CLASSES_ROOT, "Trillian.SkinZip\\shell\\Add\\command\\", NULL))) {
+	folder = NULL;
+	reg_key = "Trillian.SkinZip\\shell\\Add\\command\\";
+	if (wpurple_reg_val_exists(HKEY_CLASSES_ROOT, reg_key, NULL))
+		folder = wpurple_read_reg_string(HKEY_CLASSES_ROOT, reg_key, NULL);
+	if (folder) {
 		char *value = folder;
 		char *temp;
 
@@ -2610,15 +2615,21 @@ static void log_reader_init_prefs(void) {
 #else
 		gchar *contents = NULL;
 
-		purple_debug_info("Trillian talk.ini read",
-				  "Reading %s\n", path);
-		if (!g_file_get_contents(path, &contents, NULL, &error)) {
+		if (g_file_test(path, G_FILE_TEST_IS_REGULAR)) {
+			purple_debug_info("Trillian talk.ini read",
+				"Reading %s\n", path);
+		} else {
+			g_free(path);
+			path = NULL;
+		}
+		
+		if (path && !g_file_get_contents(path, &contents, NULL, &error)) {
 			purple_debug_error("Trillian talk.ini read",
 					   "Error reading talk.ini: %s\n",
 					   (error && error->message) ? error->message : "Unknown error");
 			if (error)
 				g_error_free(error);
-		} else {
+		} else if (contents) {
 			char *cursor, *line;
 			line = cursor = contents;
 			while (*cursor) {
