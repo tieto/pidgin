@@ -659,7 +659,6 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
-	0, /* page_num (Reserved) */
 
 	/* padding */
 	NULL,
