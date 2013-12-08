@@ -555,14 +555,22 @@ purple_perl_sv_from_vargs(GType type, va_list *args, void ***copy_arg)
 			return newSVuv((unsigned long)*copy_arg);
 
 		case G_TYPE_INT64:
+			/* XXX This yells and complains. */
+#if 0
 			*copy_arg = (void *)va_arg(*args, gint64);
 
 			return newSViv((gint64)*copy_arg);
+#endif
+			break;
 
 		case G_TYPE_UINT64:
+			/* XXX This also yells and complains. */
+#if 0
 			*copy_arg = (void *)va_arg(*args, guint64);
 
 			return newSVuv((guint64)*copy_arg);
+#endif
+			break;
 
 		case G_TYPE_STRING:
 			if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
