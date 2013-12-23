@@ -291,6 +291,52 @@ static gboolean _reg_read(HKEY reg_key, const char *valname, LPDWORD type, LPBYT
 	return (rv == ERROR_SUCCESS);
 }
 
+gboolean wpurple_reg_val_exists(HKEY rootkey, const char *subkey, const char *valname)
+{
+	HKEY hkey;
+	LONG retv;
+	DWORD index;
+	wchar_t name_buffer[100];
+	BOOL exists = FALSE;
+	wchar_t *wc_valname = NULL;
+	wchar_t *wc_subkey;
+
+	if (subkey == NULL)
+		return FALSE;
+
+	wc_subkey = g_utf8_to_utf16(subkey, -1, NULL, NULL, NULL);
+	retv = RegOpenKeyExW(rootkey, wc_subkey, 0, KEY_ENUMERATE_SUB_KEYS, &hkey);
+	g_free(wc_subkey);
+
+	if (retv != ERROR_SUCCESS)
+		return FALSE;
+
+	if (valname[0] == '\0' || valname == NULL) {
+		RegCloseKey(hkey);
+		return TRUE;
+	}
+
+	wc_valname = g_utf8_to_utf16(valname, -1, NULL, NULL, NULL);
+	index = 0;
+	while (TRUE)
+	{
+		DWORD name_size = sizeof(name_buffer);
+		retv = RegEnumValueW(hkey, index++, name_buffer, &name_size,
+			NULL, NULL, NULL, NULL);
+		if (retv != ERROR_SUCCESS)
+			break;
+		name_size /= sizeof(wchar_t);
+		if (wcsncmp(name_buffer, wc_valname, name_size) == 0) {
+			exists = TRUE;
+			break;
+		}
+	}
+	g_free(wc_valname);
+
+	RegCloseKey(hkey);
+	return exists;
+}
+
 gboolean wpurple_read_reg_dword(HKEY rootkey, const char *subkey, const char *valname, LPDWORD result) {
 
 	DWORD type;

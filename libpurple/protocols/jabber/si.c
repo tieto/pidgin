@@ -1024,7 +1024,7 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 }
 
 static gssize
-jabber_si_xfer_ibb_read(guchar **out_buffer, PurpleXfer *xfer)
+jabber_si_xfer_ibb_read(guchar **out_buffer, size_t buf_size, PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = purple_xfer_get_protocol_data(xfer);
 	guchar *buffer;

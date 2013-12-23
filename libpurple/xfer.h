@@ -503,7 +503,7 @@ PurpleXferUiOps *purple_xfer_get_ui_ops(const PurpleXfer *xfer);
  * @param fnc  The read function.
  */
 void purple_xfer_set_read_fnc(PurpleXfer *xfer,
-		gssize (*fnc)(guchar **, PurpleXfer *));
+		gssize (*fnc)(guchar **, size_t, PurpleXfer *));
 
 /**
  * Sets the write function for the file transfer.

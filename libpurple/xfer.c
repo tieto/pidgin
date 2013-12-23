@@ -93,7 +93,7 @@ struct _PurpleXferPrivate {
 		void (*end)(PurpleXfer *xfer);
 		void (*cancel_send)(PurpleXfer *xfer);
 		void (*cancel_recv)(PurpleXfer *xfer);
-		gssize (*read)(guchar **buffer, PurpleXfer *xfer);
+		gssize (*read)(guchar **buffer, size_t size, PurpleXfer *xfer);
 		gssize (*write)(const guchar *buffer, size_t size, PurpleXfer *xfer);
 		void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
 	} ops;
@@ -1087,7 +1087,7 @@ void purple_xfer_set_request_denied_fnc(PurpleXfer *xfer, void (*fnc)(PurpleXfer
 }
 
 void
-purple_xfer_set_read_fnc(PurpleXfer *xfer, gssize (*fnc)(guchar **, PurpleXfer *))
+purple_xfer_set_read_fnc(PurpleXfer *xfer, gssize (*fnc)(guchar **, size_t, PurpleXfer *))
 {
 	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
 
@@ -1182,7 +1182,7 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 		s = MIN((gssize)purple_xfer_get_bytes_remaining(xfer), (gssize)priv->current_buffer_size);
 
 	if (priv->ops.read != NULL)	{
-		r = (priv->ops.read)(buffer, xfer);
+		r = (priv->ops.read)(buffer, s, xfer);
 	}
 	else {
 		*buffer = g_malloc0(s);
