@@ -116,7 +116,7 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 }
 
 gssize
-msn_xfer_read(guchar **data, PurpleXfer *xfer)
+msn_xfer_read(guchar **data, gsize size, PurpleXfer *xfer)
 {
 	MsnSlpCall *slpcall;
 	gsize len;
