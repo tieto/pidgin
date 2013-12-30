@@ -200,15 +200,14 @@ static void generate_send_to_items(PidginWindow *win);
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void load_conv_theme(PidginConversation *gtkconv);
 static gboolean infopane_entry_activate(PidginConversation *gtkconv);
-#if 0
 static void got_typing_keypress(PidginConversation *gtkconv, gboolean first);
-#endif
 static void gray_stuff_out(PidginConversation *gtkconv);
 static void add_chat_user_common(PurpleChatConversation *chat, PurpleChatUser *cb, const char *old_name);
 static gboolean tab_complete(PurpleConversation *conv);
 static void pidgin_conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type);
 static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state);
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
+static void update_typing_state(PidginConversation *gtkconv, gboolean deleting);
 static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
@@ -2202,6 +2201,20 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		}
 	}
+
+	if (PURPLE_IS_IM_CONVERSATION(conv)) {
+		gboolean deleting = FALSE;
+
+		switch (event->keyval) {
+		case GDK_KEY_BackSpace:
+		case GDK_KEY_Delete:
+		case GDK_KEY_KP_Delete:
+			deleting = TRUE;
+		}
+
+		update_typing_state(gtkconv, deleting);
+	}
+
 	return FALSE;
 }
 
@@ -2413,54 +2426,34 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	pidgin_conv_switch_active_conversation(PURPLE_CONVERSATION(im));
 }
 
-#if 0
 static void
-insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
-			   gchar *new_text, gint new_text_length, gpointer user_data)
+update_typing_state(PidginConversation *gtkconv, gboolean deleting)
 {
-	PidginConversation *gtkconv = (PidginConversation *)user_data;
-
-	g_return_if_fail(gtkconv != NULL);
-
-	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
-		return;
-
-	got_typing_keypress(gtkconv, (gtk_text_iter_is_start(position) &&
-	                    gtk_text_iter_is_end(position)));
-}
-
-static void
-delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
-			   GtkTextIter *end_pos, gpointer user_data)
-{
-	PidginConversation *gtkconv = (PidginConversation *)user_data;
-	PurpleConversation *conv;
 	PurpleIMConversation *im;
+	gchar *text;
 
 	g_return_if_fail(gtkconv != NULL);
-
-	conv = gtkconv->active_conv;
 
 	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 		return;
 
-	im = PURPLE_CONV_IM(conv);
+	im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
 
-	if (gtk_text_iter_is_start(start_pos) && gtk_text_iter_is_end(end_pos)) {
+	text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+
+	if (!*text) {
 
 		/* We deleted all the text, so turn off typing. */
 		purple_im_conversation_stop_send_typed_timeout(im);
 
-		serv_send_typing(purple_conversation_get_connection(conv),
-						 purple_conversation_get_name(conv),
+		serv_send_typing(purple_conversation_get_connection(gtkconv->active_conv),
+						 purple_conversation_get_name(gtkconv->active_conv),
 						 PURPLE_IM_NOT_TYPING);
 	}
 	else {
-		/* We're deleting, but not all of it, so it counts as typing. */
-		got_typing_keypress(gtkconv, FALSE);
+		got_typing_keypress(gtkconv, !deleting && text[1] == '\0');
 	}
 }
-#endif
 
 /**************************************************************************
  * A bunch of buddy icon functions
@@ -3722,7 +3715,6 @@ setup_menubar(PidginWindow *win)
  * Utility functions
  **************************************************************************/
 
-#if 0
 static void
 got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 {
@@ -3734,7 +3726,7 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 	 * send PURPLE_IM_TYPED any time soon.
 	 */
 
-	im = PURPLE_CONV_IM(conv);
+	im = PURPLE_IM_CONVERSATION(conv);
 
 	purple_im_conversation_stop_send_typed_timeout(im);
 	purple_im_conversation_start_send_typed_timeout(im);
@@ -3751,6 +3743,7 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 	}
 }
 
+#if 0
 static gboolean
 typing_animation(gpointer data) {
 	PidginConversation *gtkconv = data;
@@ -4401,7 +4394,7 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 
 		while (purple_utf8_strcasecmp(tmp, *partial)) {
 			(*partial)[*most_matched] = '\0';
-			if (*most_matched < strlen(tmp))
+			if (*most_matched < (goffset)strlen(tmp))
 				tmp[*most_matched] = '\0';
 			(*most_matched)--;
 		}
@@ -5215,7 +5208,7 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 	gtkconv->quickfind_container = widget;
 
 	/* Hook to signals and stuff */
-	g_signal_connect(G_OBJECT(entry), "key_press_event",
+	g_signal_connect(G_OBJECT(entry), "key-press-event",
 			G_CALLBACK(quickfind_process_input), gtkconv);
 	g_signal_connect_swapped(G_OBJECT(close), "button-press-event",
 			G_CALLBACK(pidgin_conv_end_quickfind), gtkconv);
