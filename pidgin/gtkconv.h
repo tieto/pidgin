@@ -91,8 +91,6 @@ struct _PidginConversation
 
 	gboolean make_sound;
 
-	gpointer depr2;
-
 	GtkWidget *tab_cont;
 	GtkWidget *tabby;
 	GtkWidget *menu_tabby;

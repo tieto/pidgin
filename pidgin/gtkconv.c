@@ -4401,7 +4401,7 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 
 		while (purple_utf8_strcasecmp(tmp, *partial)) {
 			(*partial)[*most_matched] = '\0';
-			if (*most_matched < strlen(tmp))
+			if (*most_matched < (goffset)strlen(tmp))
 				tmp[*most_matched] = '\0';
 			(*most_matched)--;
 		}
@@ -5215,7 +5215,7 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 	gtkconv->quickfind_container = widget;
 
 	/* Hook to signals and stuff */
-	g_signal_connect(G_OBJECT(entry), "key_press_event",
+	g_signal_connect(G_OBJECT(entry), "key-press-event",
 			G_CALLBACK(quickfind_process_input), gtkconv);
 	g_signal_connect_swapped(G_OBJECT(close), "button-press-event",
 			G_CALLBACK(pidgin_conv_end_quickfind), gtkconv);
