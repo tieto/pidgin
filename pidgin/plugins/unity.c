@@ -56,7 +56,9 @@ update_launcher()
 {
 	guint count = 0;
 	GList *convs = NULL;
-	g_return_if_fail(launcher != NULL && launcher_count != LAUNCHER_COUNT_DISABLE);
+	g_return_if_fail(launcher != NULL);
+	if (launcher_count == LAUNCHER_COUNT_DISABLE)
+		return;
 
 	if (launcher_count == LAUNCHER_COUNT_MESSAGES) {
 		for (convs = purple_get_conversations(); convs != NULL; convs = convs->next) {
@@ -357,7 +359,8 @@ static void
 launcher_config_cb(GtkWidget *widget, gpointer data)
 {
 	gint option = GPOINTER_TO_INT(data);
-	g_return_if_fail(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
+		return;
 
 	purple_prefs_set_int("/plugins/gtk/unity/launcher_count", option);
 	launcher_count = option;
@@ -371,7 +374,8 @@ static void
 messaging_menu_config_cb(GtkWidget *widget, gpointer data)
 {
 	gint option = GPOINTER_TO_INT(data);
-	g_return_if_fail(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
+		return;
 
 	purple_prefs_set_int("/plugins/gtk/unity/messaging_menu_text", option);
 	messaging_menu_text = option;
