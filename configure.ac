@@ -1566,6 +1566,26 @@ else
 fi
 
 dnl #######################################################################
+dnl # Check for Unity and Messaging Menu
+dnl #######################################################################
+AC_ARG_ENABLE(unity, [AC_HELP_STRING([--enable-unity],
+	[compile with support for unity integration plugin])], enable_unity="$enableval", enable_unity="no")
+if test "$enable_unity" = yes; then
+	PKG_CHECK_MODULES(UNITY, [unity >= 6.8 messaging-menu >= 12.10], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
+You must have libunity9 >= 6.8 and libmessaging-menu >= 12.10 to build the unity integration plugin.
+	])])
+	USES_MM_CHAT_SECTION="X-MessagingMenu-UsesChatSection=true"
+	AC_SUBST(UNITY_CFLAGS)
+	AC_SUBST(UNITY_LIBS)
+	AC_SUBST(USES_MM_CHAT_SECTION)
+else
+	enable_unity=no
+fi
+AM_CONDITIONAL(ENABLE_UNITY, [test "x$enable_unity" = "xyes"])
+
+dnl #######################################################################
 dnl # Check for Secret Service headers
 dnl #######################################################################
 
@@ -2960,6 +2980,7 @@ AC_CONFIG_FILES([Makefile
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
+		   pidgin.desktop.in
 		   pidgin.spec
 		  ])
 AC_OUTPUT
@@ -3006,6 +3027,7 @@ echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with GCR widgets........ : $enable_gcr
+echo Build Unity integration plugin.: $enable_unity
 echo
 echo Build with GNOME Keyring...... : $enable_gnome_keyring
 echo Build with KWallet............ : $enable_kwallet

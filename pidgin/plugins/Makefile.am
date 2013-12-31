@@ -45,6 +45,7 @@ relnot_la_LDFLAGS           = -module -avoid-version
 sendbutton_la_LDFLAGS       = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
 themeedit_la_LDFLAGS        = -module -avoid-version
+unity_la_LDFLAGS            = -module -avoid-version
 webkit_la_LDFLAGS           = -module -avoid-version
 xmppconsole_la_LDFLAGS      = -module -avoid-version
 
@@ -66,6 +67,10 @@ plugin_LTLIBRARIES = \
 	webkit.la           \
 	xmppconsole.la
 
+if ENABLE_UNITY
+plugin_LTLIBRARIES +=	unity.la
+endif
+
 noinst_LTLIBRARIES = \
 	contact_priority.la \
 	gtk_signals_test.la
@@ -84,6 +89,7 @@ relnot_la_SOURCES           = relnot.c
 sendbutton_la_SOURCES       = sendbutton.c
 spellchk_la_SOURCES         = spellchk.c
 themeedit_la_SOURCES        = themeedit.c themeedit-icon.c themeedit-icon.h
+unity_la_SOURCES            = unity.c
 webkit_la_SOURCES           = webkit.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
@@ -101,6 +107,7 @@ relnot_la_LIBADD            = $(GLIB_LIBS)
 sendbutton_la_LIBADD        = $(GTK_LIBS)
 spellchk_la_LIBADD          = $(GTK_LIBS)
 themeedit_la_LIBADD         = $(GTK_LIBS)
+unity_la_LIBADD             = $(GTK_LIBS) $(UNITY_LIBS)
 webkit_la_LIBADD            = $(GTK_LIBS) $(WEBKIT_LIBS)
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
@@ -125,6 +132,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(UNITY_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(PLUGIN_CFLAGS)
