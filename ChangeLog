@@ -12,6 +12,7 @@ version 3.0.0 (??/??/????):
 	  the docklet notification. (Momchil) (#12598)
 	* Complete support for receiving a limited amount of history when
 	  joining a room. (Kha) (#15458)
+	* Add Unity integration plugin.
 
 	Finch:
 	* Support the conversation-extended signal for extending the

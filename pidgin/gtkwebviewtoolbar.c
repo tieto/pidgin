@@ -1085,7 +1085,7 @@ update_buttons(GtkWebViewToolbar *toolbar)
 	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->font),
 	                               (tmp && *tmp), toolbar);
 	if (tmp && *tmp) {
-		gchar *markup = g_strdup_printf("<span font_desc=\"%s\">%s</span>",
+		gchar *markup = g_strdup_printf("<span face=\"%s\">%s</span>",
 		                                tmp, label);
 		g_free(label);
 		label = markup;
