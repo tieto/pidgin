@@ -87,6 +87,7 @@ pidgin-.*.tar.bz2
 pidgin-.*.tar.gz
 pidgin.apspec$
 pidgin.desktop$
+pidgin.desktop.in$
 pidgin.spec$
 pidgin/pidgin$
 pidgin/pixmaps/emotes/default/24/theme
