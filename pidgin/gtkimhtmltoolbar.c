@@ -1040,7 +1040,7 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar)
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->font),
 								   (tmp != NULL), toolbar);
 	if (tmp != NULL) {
-		gchar *markup = g_strdup_printf("<span font_desc=\"%s\">%s</span>",
+		gchar *markup = g_strdup_printf("<span face=\"%s\">%s</span>",
 				tmp, gtk_label_get_label(label));
 		gtk_label_set_markup_with_mnemonic(label, markup);
 		g_free(markup);
