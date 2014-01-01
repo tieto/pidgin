@@ -502,14 +502,44 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Ankit Vani <a@nevitus.org>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",                   UNITY_PLUGIN_ID,
+		"name",                 N_("Unity Integration"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Notification"),
+		"summary",              N_("Provides integration with Unity."),
+		"description",          N_("Provides integration with Unity's "
+		                           "messaging menu and launcher."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"gtk-config-frame-cb",  get_config_frame,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	GList *convs = purple_conversations_get_all();
 	PurpleSavedStatus *saved_status;
 	void *conv_handle = purple_conversations_get_handle();
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
 	void *savedstat_handle = purple_savedstatuses_get_handle();
+
+	purple_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/plugins/gtk/unity");
+	purple_prefs_add_int("/plugins/gtk/unity/launcher_count", LAUNCHER_COUNT_SOURCES);
+	purple_prefs_add_int("/plugins/gtk/unity/messaging_menu_text", MESSAGING_MENU_COUNT);
+	purple_prefs_add_bool("/plugins/gtk/unity/alert_chat_nick", TRUE);
 
 	alert_chat_nick = purple_prefs_get_bool("/plugins/gtk/unity/alert_chat_nick");
 
@@ -556,7 +586,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	GList *convs = purple_conversations_get_all();
 	while (convs) {
@@ -574,64 +604,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PidginPluginUiInfo ui_info =
-{
-	get_config_frame,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                           /**< type           */
-	PIDGIN_PLUGIN_TYPE,                               /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
-
-	UNITY_PLUGIN_ID,                                  /**< id             */
-	N_("Unity Integration"),                          /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Provides integration with Unity."),
-	                                                  /**  description    */
-	N_("Provides integration with Unity's messaging "
-	   "menu and launcher."),
-	                                                  /**< author         */
-	"Ankit Vani <a@nevitus.org>",
-	PURPLE_WEBSITE,                                   /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	&ui_info,                                         /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	purple_prefs_add_none("/plugins/gtk");
-	purple_prefs_add_none("/plugins/gtk/unity");
-	purple_prefs_add_int("/plugins/gtk/unity/launcher_count", LAUNCHER_COUNT_SOURCES);
-	purple_prefs_add_int("/plugins/gtk/unity/messaging_menu_text", MESSAGING_MENU_COUNT);
-	purple_prefs_add_bool("/plugins/gtk/unity/alert_chat_nick", TRUE);
-}
-
-PURPLE_INIT_PLUGIN(unity, init_plugin, info)
+PURPLE_PLUGIN_INIT(unity, plugin_query, plugin_load, plugin_unload);
