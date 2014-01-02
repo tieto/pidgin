@@ -2058,6 +2058,60 @@ gtk_webview_get_selected_text(GtkWebView *webview)
 		return NULL;
 }
 
+void
+gtk_webview_get_caret(GtkWebView *webview, WebKitDOMNode **container_ret,
+		glong *pos_ret)
+{
+	WebKitDOMDocument *dom;
+	WebKitDOMDOMWindow *win;
+	WebKitDOMDOMSelection *sel;
+	WebKitDOMRange *range = NULL;
+	WebKitDOMNode *start_container, *end_container;
+	glong start, end;
+
+	g_return_if_fail(webview && container_ret && pos_ret);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	win = webkit_dom_document_get_default_view(dom);
+	sel = webkit_dom_dom_window_get_selection(win);
+	if (webkit_dom_dom_selection_get_range_count(sel))
+		range = webkit_dom_dom_selection_get_range_at(sel, 0, NULL);
+
+	if (range) {
+		start_container = webkit_dom_range_get_start_container(range, NULL);
+		start = webkit_dom_range_get_start_offset(range, NULL);
+		end_container = webkit_dom_range_get_end_container(range, NULL);
+		end = webkit_dom_range_get_end_offset(range, NULL);
+
+		if (start == end &&
+				webkit_dom_node_is_same_node(start_container, end_container)) {
+
+			*container_ret = start_container;
+			*pos_ret = start;
+			return;
+		}
+	}
+
+	*container_ret = NULL;
+	*pos_ret = -1;
+}
+
+void
+gtk_webview_set_caret(GtkWebView *webview, WebKitDOMNode *container, glong pos)
+{
+	WebKitDOMDocument *dom;
+	WebKitDOMDOMWindow *win;
+	WebKitDOMDOMSelection *sel;
+
+	g_return_if_fail(webview && container && pos >= 0);
+
+	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
+	win = webkit_dom_document_get_default_view(dom);
+	sel = webkit_dom_dom_window_get_selection(win);
+
+	webkit_dom_dom_selection_set_position(sel, container, pos, NULL);
+}
+
 GtkWebViewButtons
 gtk_webview_get_format_functions(GtkWebView *webview)
 {

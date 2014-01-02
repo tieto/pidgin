@@ -4350,20 +4350,17 @@ add_chat_user_common(PurpleChatConversation *chat, PurpleChatUser *cb, const cha
 	g_free(alias_key);
 }
 
-#if 0
 /**
  * @param most_matched Used internally by this function.
  * @param entered The partial string that the user types before hitting the
  *        tab key.
- * @param entered_bytes The length of entered.
+ * @param entered_chars The length of entered.
  * @param partial This is a return variable.  This will be set to a string
  *        containing the largest common string between all matches.  This will
  *        be inserted into the input box at the start of the word that the
  *        user is tab completing.  For example, if a chat room contains
  *        "AlfFan" and "AlfHater" and the user types "a<TAB>" then this will
  *        contain "Alf"
- * @param nick_partial Used internally by this function.  Shoudl be a
- *        temporary buffer that is entered_bytes+1 bytes long.
  * @param matches This is a return variable.  If the given name is a potential
  *        match for the entered string, then add a copy of the name to this
  *        list.  The caller is responsible for g_free'ing the data in this
@@ -4372,12 +4369,21 @@ add_chat_user_common(PurpleChatConversation *chat, PurpleChatUser *cb, const cha
  *        checking for a match.
  */
 static void
-tab_complete_process_item(int *most_matched, const char *entered, gsize entered_bytes, char **partial, char *nick_partial,
+tab_complete_process_item(int *most_matched, const char *entered, gsize entered_chars, char **partial,
 				  GList **matches, const char *name)
 {
-	memcpy(nick_partial, name, entered_bytes);
-	if (purple_utf8_strcasecmp(nick_partial, entered))
+	char *nick_partial;
+	gsize name_len = g_utf8_strlen(name, -1);
+
+	if ((glong)entered_chars > name_len)
 		return;
+
+	nick_partial = g_utf8_substring(name, 0, entered_chars);
+	if (purple_utf8_strcasecmp(nick_partial, entered)) {
+		g_free(nick_partial);
+		return;
+	}
+	g_free(nick_partial);
 
 	/* if we're here, it's a possible completion */
 
@@ -4386,16 +4392,16 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 		 * this will only get called once, since from now
 		 * on *most_matched is >= 0
 		 */
-		*most_matched = strlen(name);
+		*most_matched = name_len;
 		*partial = g_strdup(name);
 	}
 	else if (*most_matched) {
 		char *tmp = g_strdup(name);
 
 		while (purple_utf8_strcasecmp(tmp, *partial)) {
-			(*partial)[*most_matched] = '\0';
-			if (*most_matched < (goffset)strlen(tmp))
-				tmp[*most_matched] = '\0';
+			*(g_utf8_offset_to_pointer(*partial, *most_matched)) = '\0';
+			if (*most_matched < (goffset)g_utf8_strlen(tmp, -1))
+				*(g_utf8_offset_to_pointer(tmp, *most_matched)) = '\0';
 			(*most_matched)--;
 		}
 		(*most_matched)++;
@@ -4406,77 +4412,100 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 	*matches = g_list_insert_sorted(*matches, g_strdup(name),
 								   (GCompareFunc)purple_utf8_strcasecmp);
 }
-#endif
+
+static gboolean
+is_first_container(WebKitDOMNode *container)
+{
+	gchar *name;
+	WebKitDOMNode *parent;
+
+	while (container) {
+		parent = webkit_dom_node_get_parent_node(container);
+		if (parent) {
+			name = webkit_dom_node_get_node_name(parent);
+			
+			if (!strcmp(name, "BODY")) {
+				g_free(name);
+
+				if (webkit_dom_node_get_previous_sibling(container) == NULL)
+					return TRUE;
+				else
+					return FALSE;
+			}
+			g_free(name);
+		}
+		else
+			break;
+
+		container = parent;
+	}
+
+	return FALSE;
+}
 
 static gboolean
 tab_complete(PurpleConversation *conv)
 {
-#if 0
-	/* TODO WebKit */
 	PidginConversation *gtkconv;
-	GtkTextIter cursor, word_start, start_buffer;
-	int start;
-	int most_matched = -1;
+	WebKitDOMNode *container;
+	glong caret, word_start, content_len;
+	int most_matched = -1, colon = 0;
+	char *ch, *ch2 = NULL;
 	char *entered, *partial = NULL;
-	char *text;
-	char *nick_partial;
+	char *content, *sub1, *sub2, *modified;
 	const char *prefix;
 	GList *matches = NULL;
 	gboolean command = FALSE;
-	gsize entered_bytes = 0;
+	gsize entered_chars = 0;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	gtk_text_buffer_get_start_iter(gtkconv->entry_buffer, &start_buffer);
-	gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &cursor,
-			gtk_text_buffer_get_insert(gtkconv->entry_buffer));
-
-	word_start = cursor;
+	gtk_webview_get_caret(GTK_WEBVIEW(gtkconv->entry), &container, &caret);
 
 	/* if there's nothing there just return */
-	if (!gtk_text_iter_compare(&cursor, &start_buffer))
+	if (caret <= 0)
 		return PURPLE_IS_CHAT_CONVERSATION(conv);
 
-	text = gtk_text_buffer_get_text(gtkconv->entry_buffer, &start_buffer,
-									&cursor, FALSE);
+	content = webkit_dom_node_get_node_value(container);
+	content_len = g_utf8_strlen(content, -1);
 
-	/* if we're at the end of ": " we need to move back 2 spaces */
-	start = strlen(text) - 1;
-
-	if (start >= 1 && !strncmp(&text[start-1], ": ", 2)) {
-		gtk_text_iter_backward_chars(&word_start, 2);
+	/* if we're at the end of ":" or ": " we need to move back 1 or 2 spaces */
+	if (caret >= 2) {
+		ch = g_utf8_offset_to_pointer(content, caret - 2);
+		ch2 = g_utf8_find_next_char(ch, NULL);
 	}
 
-	/* find the start of the word that we're tabbing.
-	 * Using gtk_text_iter_backward_word_start won't work, because a nick can contain
-	 * characters (e.g. '.', '/' etc.) that Pango may think are word separators. */
-	while (gtk_text_iter_backward_char(&word_start)) {
-		if (gtk_text_iter_get_char(&word_start) == ' ') {
-			/* Reached the whitespace before the start of the word. Move forward once */
-			gtk_text_iter_forward_char(&word_start);
+	if (caret >= 2 && *ch == ':' && (*ch2 == ' ' || g_utf8_get_char(ch2) == 0xA0))
+		colon = 2;
+	else if (caret >= 1 && content[caret - 1] == ':')
+		colon = 1;
+
+	caret -= colon;
+	word_start = caret;
+
+	/* find the start of the word that we're tabbing. */
+	ch = g_utf8_offset_to_pointer(content, caret);
+	while ((ch = g_utf8_find_prev_char(content, ch))) {
+		if (*ch != ' ' && g_utf8_get_char(ch) != 0xA0)
+			--word_start;
+		else
 			break;
-		}
 	}
 
 	prefix = pidgin_get_cmd_prefix();
-	if (gtk_text_iter_get_offset(&word_start) == 0 &&
-			(strlen(text) >= strlen(prefix)) && !strncmp(text, prefix, strlen(prefix))) {
+	if (word_start == 0 &&
+			((gsize)caret >= strlen(prefix)) && !strncmp(content, prefix, strlen(prefix))) {
 		command = TRUE;
-		gtk_text_iter_forward_chars(&word_start, strlen(prefix));
+		word_start += strlen(prefix);
 	}
 
-	g_free(text);
+	entered = g_utf8_substring(content, word_start, caret);
+	entered_chars = g_utf8_strlen(entered, -1);
 
-	entered = gtk_text_buffer_get_text(gtkconv->entry_buffer, &word_start,
-									   &cursor, FALSE);
-	entered_bytes = strlen(entered);
-
-	if (!g_utf8_strlen(entered, -1)) {
+	if (!entered_chars) {
+		g_free(content);
 		g_free(entered);
 		return PURPLE_IS_CHAT_CONVERSATION(conv);
 	}
-
-	nick_partial = g_malloc0(entered_bytes + 1);
 
 	if (command) {
 		GList *list = purple_cmd_list(conv);
@@ -4484,23 +4513,21 @@ tab_complete(PurpleConversation *conv)
 
 		/* Commands */
 		for (l = list; l != NULL; l = l->next) {
-			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
+			tab_complete_process_item(&most_matched, entered, entered_chars, &partial,
 									  &matches, l->data);
 		}
 		g_list_free(list);
 	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
-		PurpleChatConversation *chat = PURPLE_CONV_CHAT(conv);
-		GList *l = purple_chat_conversation_get_users(chat);
+		GList *l = purple_chat_conversation_get_users(PURPLE_CHAT_CONVERSATION(conv));
 		GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(PIDGIN_CONVERSATION(conv)->u.chat->list));
 		GtkTreeIter iter;
 		int f;
 
 		/* Users */
 		for (; l != NULL; l = l->next) {
-			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
+			tab_complete_process_item(&most_matched, entered, entered_chars, &partial,
 									  &matches, purple_chat_user_get_name((PurpleChatUser *)l->data));
 		}
-
 
 		/* Aliases */
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
@@ -4515,7 +4542,7 @@ tab_complete(PurpleConversation *conv)
 						   -1);
 
 				if (name && alias && strcmp(name, alias))
-					tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
+					tab_complete_process_item(&most_matched, entered, entered_chars, &partial,
 										  &matches, alias);
 				g_free(name);
 				g_free(alias);
@@ -4524,38 +4551,49 @@ tab_complete(PurpleConversation *conv)
 			} while (f != 0);
 		}
 	} else {
-		g_free(nick_partial);
+		g_free(content);
 		g_free(entered);
 		return FALSE;
 	}
 
-	g_free(nick_partial);
-
-	/* we're only here if we're doing new style */
-
 	/* if there weren't any matches, return */
 	if (!matches) {
 		/* if matches isn't set partials won't be either */
+		g_free(content);
 		g_free(entered);
 		return PURPLE_IS_CHAT_CONVERSATION(conv);
 	}
 
-	gtk_text_buffer_delete(gtkconv->entry_buffer, &word_start, &cursor);
+	sub1 = g_utf8_substring(content, 0, word_start);
+	sub2 = g_utf8_substring(content, caret, content_len);
 
 	if (!matches->next) {
 		/* there was only one match. fill it in. */
-		gtk_text_buffer_get_start_iter(gtkconv->entry_buffer, &start_buffer);
-		gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &cursor,
-				gtk_text_buffer_get_insert(gtkconv->entry_buffer));
 
-		if (!gtk_text_iter_compare(&cursor, &start_buffer)) {
-			char *tmp = g_strdup_printf("%s: ", (char *)matches->data);
-			gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, tmp, -1);
+		if (!colon && !word_start && is_first_container(container)) {
+			char *tmp = NULL;
+			if (caret < content_len) {
+				tmp = g_strdup_printf("%s: ", (char *)matches->data);
+			} else {
+				char utf[6] = {0};
+				g_unichar_to_utf8(0xA0, utf);
+				tmp = g_strdup_printf("%s:%s", (char *)matches->data, utf);
+			}
+
+			modified = g_strdup_printf("%s%s", tmp, sub2);
+			webkit_dom_node_set_node_value(container, modified, NULL);
+			gtk_webview_set_caret(GTK_WEBVIEW(gtkconv->entry), container,
+					g_utf8_strlen(tmp, -1));
 			g_free(tmp);
+			g_free(modified);
 		}
-		else
-			gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer,
-											 matches->data, -1);
+		else {
+			modified = g_strdup_printf("%s%s%s", sub1, (char *)matches->data, sub2);
+			webkit_dom_node_set_node_value(container, modified, NULL);
+			gtk_webview_set_caret(GTK_WEBVIEW(gtkconv->entry), container,
+					word_start + g_utf8_strlen(matches->data, -1) + colon);
+			g_free(modified);
+		}
 
 		g_free(matches->data);
 		g_list_free(matches);
@@ -4577,13 +4615,21 @@ tab_complete(PurpleConversation *conv)
 
 		purple_conversation_write(conv, NULL, addthis, PURPLE_MESSAGE_NO_LOG,
 								time(NULL));
-		gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, partial, -1);
+
+		modified = g_strdup_printf("%s%s%s", sub1, partial, sub2);
+		webkit_dom_node_set_node_value(container, modified, NULL);
+		gtk_webview_set_caret(GTK_WEBVIEW(gtkconv->entry), container,
+				word_start + g_utf8_strlen(partial, -1) + colon);
 		g_free(addthis);
+		g_free(modified);
 	}
 
+	g_free(content);
 	g_free(entered);
 	g_free(partial);
-#endif
+	g_free(sub1);
+	g_free(sub2);
+
 	return TRUE;
 }
 
