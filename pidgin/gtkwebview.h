@@ -390,6 +390,31 @@ gchar *gtk_webview_get_body_text(GtkWebView *webview);
 gchar *gtk_webview_get_selected_text(GtkWebView *webview);
 
 /**
+ * Gets the container of the caret, along with its position in the container
+ * from a GtkWebView.
+ *
+ * @param webview       The GtkWebView
+ * @param container_ret A pointer to a pointer to a WebKitDOMNode. This pointer
+ *                      will be set to the container the caret is in. Set to
+ *                      @c NULL if a range is selected.
+ * @param pos_ret       A pointer to a glong. This value will be set to the
+ *                      position of the caret in the container. Set to -1 if a
+ *                      range is selected.
+ */
+void gtk_webview_get_caret(GtkWebView *webview, WebKitDOMNode **container_ret,
+		glong *pos_ret);
+
+/**
+ * Sets the caret position in container, in a GtkWebView.
+ *
+ * @param webview   The GtkWebView
+ * @param container The WebKitDOMNode to set the caret in
+ * @param pos       The position of the caret in the container
+ */
+void gtk_webview_set_caret(GtkWebView *webview, WebKitDOMNode *container,
+		glong pos);
+
+/**
  * Clear all the formatting on a GtkWebView.
  *
  * @param webview The GtkWebView
