@@ -4375,7 +4375,7 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 	char *nick_partial;
 	gsize name_len = g_utf8_strlen(name, -1);
 
-	if ((glong)entered_chars > name_len)
+	if (entered_chars > name_len)
 		return;
 
 	nick_partial = g_utf8_substring(name, 0, entered_chars);
