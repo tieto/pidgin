@@ -4474,7 +4474,7 @@ tab_complete(PurpleConversation *conv)
 		ch2 = g_utf8_find_next_char(ch, NULL);
 	}
 
-	if (caret >= 2 && *ch == ':' && (*ch2 == ' ' || g_utf8_get_char(ch2) == 0xA0))
+	if (caret >= 2 && *ch == ':' && g_unichar_isspace(g_utf8_get_char(ch2)))
 		colon = 2;
 	else if (caret >= 1 && content[caret - 1] == ':')
 		colon = 1;
@@ -4485,7 +4485,7 @@ tab_complete(PurpleConversation *conv)
 	/* find the start of the word that we're tabbing. */
 	ch = g_utf8_offset_to_pointer(content, caret);
 	while ((ch = g_utf8_find_prev_char(content, ch))) {
-		if (*ch != ' ' && g_utf8_get_char(ch) != 0xA0)
+		if (!g_unichar_isspace(g_utf8_get_char(ch)))
 			--word_start;
 		else
 			break;
@@ -4575,9 +4575,9 @@ tab_complete(PurpleConversation *conv)
 			if (caret < content_len) {
 				tmp = g_strdup_printf("%s: ", (char *)matches->data);
 			} else {
-				char utf[6] = {0};
-				g_unichar_to_utf8(0xA0, utf);
-				tmp = g_strdup_printf("%s:%s", (char *)matches->data, utf);
+				char nbsp[6] = {0};
+				g_unichar_to_utf8(0xA0, nbsp);
+				tmp = g_strdup_printf("%s:%s", (char *)matches->data, nbsp);
 			}
 
 			modified = g_strdup_printf("%s%s", tmp, sub2);
