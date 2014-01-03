@@ -5657,13 +5657,6 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	if (!chat) {
 		/* For sending typing notifications for IMs */
-#if 0
-		/* TODO WebKit */
-		g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "insert_text",
-						 G_CALLBACK(insert_text_cb), gtkconv);
-		g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
-						 G_CALLBACK(delete_text_cb), gtkconv);
-#endif
 		gtkconv->u.im->typing_timer = 0;
 		gtkconv->u.im->animate = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons");
 		gtkconv->u.im->show_icon = TRUE;
