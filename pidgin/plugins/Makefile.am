@@ -47,6 +47,7 @@ spellchk_la_LDFLAGS         = -module -avoid-version
 themeedit_la_LDFLAGS        = -module -avoid-version
 unity_la_LDFLAGS            = -module -avoid-version
 webkit_la_LDFLAGS           = -module -avoid-version
+unity_la_LDFLAGS            = -module -avoid-version
 xmppconsole_la_LDFLAGS      = -module -avoid-version
 
 if PLUGINS
@@ -66,6 +67,10 @@ plugin_LTLIBRARIES = \
 	themeedit.la        \
 	webkit.la           \
 	xmppconsole.la
+
+if ENABLE_UNITY
+plugin_LTLIBRARIES +=	unity.la
+endif
 
 if ENABLE_UNITY
 plugin_LTLIBRARIES +=	unity.la
@@ -91,6 +96,7 @@ spellchk_la_SOURCES         = spellchk.c
 themeedit_la_SOURCES        = themeedit.c themeedit-icon.c themeedit-icon.h
 unity_la_SOURCES            = unity.c
 webkit_la_SOURCES           = webkit.c
+unity_la_SOURCES            = unity.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
 convcolors_la_LIBADD        = $(GTK_LIBS)
@@ -109,6 +115,7 @@ spellchk_la_LIBADD          = $(GTK_LIBS)
 themeedit_la_LIBADD         = $(GTK_LIBS)
 unity_la_LIBADD             = $(GTK_LIBS) $(UNITY_LIBS)
 webkit_la_LIBADD            = $(GTK_LIBS) $(WEBKIT_LIBS)
+unity_la_LIBADD             = $(GTK_LIBS) $(UNITY_LIBS)
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
 endif # PLUGINS
