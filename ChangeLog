@@ -12,7 +12,6 @@ version 3.0.0 (??/??/????):
 	  the docklet notification. (Momchil) (#12598)
 	* Complete support for receiving a limited amount of history when
 	  joining a room. (Kha) (#15458)
-	* Add Unity integration plugin.
 
 	Finch:
 	* Support the conversation-extended signal for extending the
@@ -72,7 +71,6 @@ version 3.0.0 (??/??/????):
 	* A single yahoo plugin provides both Yahoo and Yahoo JAPAN protocols.
 
 	General:
-	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
 	* Various core components of libpurple are now GObjects.
 	* Ciphers are now built from the libpurple directory.
 	* Added dependency GPlugin, which is now required to build libpurple with
@@ -81,13 +79,23 @@ version 3.0.0 (??/??/????):
 	  non-native plugin support.
 	* Doxygen has been replaced by gtk-doc for generating documentation.
 
+version 2.10.8:
+	Stock market:
+	* Ludicrous increases on mediocre worldwide economic data.
+
+	General:
+	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
+
+	Pidgin:
+	* Add a Unity integration plugin.
+
 	Gadu-Gadu:
 	* Disabled buddy list import/export from/to server (it didn't worked
 	  anymore). Buddy list synchronization will be implemented in 3.0.0.
 
 	Windows-Specific Changes:
 	* Updates to dependencies:
-		* NSS 3.15.2 and NSPR 4.10.1
+		* NSS 3.15.3 and NSPR 4.10.2
 
 version 2.10.7 (02/13/2013):
 	Alien hatchery:

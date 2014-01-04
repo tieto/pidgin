@@ -81,6 +81,8 @@ struct _PurpleConnectionPrivate
 	 */
 	gboolean wants_to_die;
 
+	gboolean is_finalizing;    /**< The object is being destroyed. */
+
 	/** The connection error and its description if an error occured */
 	PurpleConnectionErrorInfo *error_info;
 
@@ -252,7 +254,8 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 			ops->disconnected(gc);
 	}
 
-	g_object_notify_by_pspec(G_OBJECT(gc), properties[PROP_STATE]);
+	if (!priv->is_finalizing)
+		g_object_notify_by_pspec(G_OBJECT(gc), properties[PROP_STATE]);
 }
 
 void
@@ -729,6 +732,8 @@ purple_connection_finalize(GObject *object)
 	PurpleAccount *account;
 	GSList *buddies;
 	gboolean remove = FALSE;
+
+	priv->is_finalizing = TRUE;
 
 	account = purple_connection_get_account(gc);
 

@@ -4375,7 +4375,7 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 	char *nick_partial;
 	gsize name_len = g_utf8_strlen(name, -1);
 
-	if ((glong)entered_chars > name_len)
+	if (entered_chars > name_len)
 		return;
 
 	nick_partial = g_utf8_substring(name, 0, entered_chars);
@@ -4474,7 +4474,7 @@ tab_complete(PurpleConversation *conv)
 		ch2 = g_utf8_find_next_char(ch, NULL);
 	}
 
-	if (caret >= 2 && *ch == ':' && (*ch2 == ' ' || g_utf8_get_char(ch2) == 0xA0))
+	if (caret >= 2 && *ch == ':' && g_unichar_isspace(g_utf8_get_char(ch2)))
 		colon = 2;
 	else if (caret >= 1 && content[caret - 1] == ':')
 		colon = 1;
@@ -4485,7 +4485,7 @@ tab_complete(PurpleConversation *conv)
 	/* find the start of the word that we're tabbing. */
 	ch = g_utf8_offset_to_pointer(content, caret);
 	while ((ch = g_utf8_find_prev_char(content, ch))) {
-		if (*ch != ' ' && g_utf8_get_char(ch) != 0xA0)
+		if (!g_unichar_isspace(g_utf8_get_char(ch)))
 			--word_start;
 		else
 			break;
@@ -4575,9 +4575,9 @@ tab_complete(PurpleConversation *conv)
 			if (caret < content_len) {
 				tmp = g_strdup_printf("%s: ", (char *)matches->data);
 			} else {
-				char utf[6] = {0};
-				g_unichar_to_utf8(0xA0, utf);
-				tmp = g_strdup_printf("%s:%s", (char *)matches->data, utf);
+				char nbsp[6] = {0};
+				g_unichar_to_utf8(0xA0, nbsp);
+				tmp = g_strdup_printf("%s:%s", (char *)matches->data, nbsp);
 			}
 
 			modified = g_strdup_printf("%s%s", tmp, sub2);
@@ -5657,13 +5657,6 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	if (!chat) {
 		/* For sending typing notifications for IMs */
-#if 0
-		/* TODO WebKit */
-		g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "insert_text",
-						 G_CALLBACK(insert_text_cb), gtkconv);
-		g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
-						 G_CALLBACK(delete_text_cb), gtkconv);
-#endif
 		gtkconv->u.im->typing_timer = 0;
 		gtkconv->u.im->animate = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons");
 		gtkconv->u.im->show_icon = TRUE;

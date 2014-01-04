@@ -258,9 +258,9 @@ purple_core_quit(void)
 	purple_http_uninit();
 	purple_idle_uninit();
 	purple_pounces_uninit();
+	purple_conversations_uninit();
 	purple_blist_uninit();
 	purple_notify_uninit();
-	purple_conversations_uninit();
 	purple_connections_uninit();
 	purple_buddy_icons_uninit();
 	purple_savedstatuses_uninit();
