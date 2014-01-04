@@ -38,7 +38,7 @@ ARCHIVES+="ARC_NSS "
 ARC_NSP="${DOWNLOAD_HOST}mingw32-mozilla-nspr-devel-4.9.6-4.1.noarch.rpm;NSPR;4.9.6-4.1;b15aefbf99ade3042d0e4ed32f9368ff38064ecd;${OBS_SKIP};nss-3.14"
 ARCHIVES+="ARC_NSP "
 
-ARC_GTLS="${DOWNLOAD_HOST}mingw32-libgnutls-devel-2.12.22-2.2.noarch.rpm;GnuTLS;2.12.22-2.2;22ae0425842b2c905bdbb93e8e5f3f813db4680f;${OBS_SKIP};gnutls-2.12"
+ARC_GTLS="${DOWNLOAD_HOST}mingw32-libgnutls-devel-3.1.16-2.2.noarch.rpm;GnuTLS;3.1.16-2.2;50406ff150ff81d1282a2f2a551699aa8a53e175;${OBS_SKIP};gnutls-3.1"
 ARCHIVES+="ARC_GTLS "
 
 ARC_PID="${DOWNLOAD_HOST}pidgin-inst-deps-20130214.tar.gz;inst-deps;20130214;372218ab472c4070cd45489dae175dea5638cf17;;"
@@ -68,7 +68,7 @@ ARCHIVES+="ARC_MGA "
 
 #gtk and friends
 GTK_DIR="gtk2-2.24"
-ARC_GT1="${DOWNLOAD_HOST}mingw32-glib2-devel-2.36.1-1.1.noarch.rpm;gtk: Glib;2.36.1-1.1;af64b014c735cbdb750e35960c0fde9de4fef9f0;${OBS_SKIP};${GTK_DIR}"
+ARC_GT1="${DOWNLOAD_HOST}mingw32-glib2-devel-2.38.0-1.4.noarch.rpm;gtk: Glib;2.38.0-1.4;9299f85c4eb7fc84bc29d47edd9444cc2fdf3c7a;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT1 "
 ARC_GT2="${DOWNLOAD_HOST}mingw32-gtk2-devel-2.24.14-2.7.noarch.rpm;gtk: GTK+2;2.24.14-2.7;4abd5fddf7ca2b6ee7ab35f4b549894bc146a005;${OBS_SKIP};${GTK_DIR}"
 ARCHIVES+="ARC_GT2 "
@@ -139,6 +139,10 @@ ARC_VV2="${DOWNLOAD_HOST}mingw32-gst-plugins-base-devel-0.10.36-15.1.noarch.rpm;
 ARCHIVES+="ARC_VV2 "
 ARC_VV3="${DOWNLOAD_HOST}mingw32-farstream-devel-0.1.2-19.1.noarch.rpm;farstream;0.1.2-19.1;6c9f29de289b661d192c88998ed5bdf17de7bcec;${OBS_SKIP};gstreamer-0.10"
 ARCHIVES+="ARC_VV3 "
+
+ARC_GG="${DOWNLOAD_HOST}mingw32-libgadu-devel-1.12.0rc1-1.5.noarch.rpm;libgadu;1.12.0rc1-1.5;b88941625625628634081cf8aa03dcdc1be63d03;${OBS_SKIP};libgadu-1.12"
+ARCHIVES+="ARC_GG "
+
 
 # implementation
 

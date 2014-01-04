@@ -28,16 +28,17 @@ INCLUDE_PATHS +=\
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
-			-I./lib \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GNUTLS_TOP)/include \
-			-I$(JSON_GLIB_TOP)/include/json-glib-1.0
+			-I$(JSON_GLIB_TOP)/include/json-glib-1.0 \
+			-I$(LIBGADU_TOP)/include
 
 LIB_PATHS += \
 			-L$(GTK_TOP)/lib \
 			-L$(GNUTLS_TOP)/lib \
+			-L$(LIBGADU_TOP)/lib \
 			-L$(JSON_GLIB_TOP)/lib \
 			-L$(PURPLE_TOP)
 
@@ -54,22 +55,6 @@ C_SRC =	\
 	gg.c \
 	html.c \
 	image.c \
-	lib/common.c \
-	lib/dcc.c \
-	lib/dcc7.c \
-	lib/debug.c \
-	lib/deflate.c \
-	lib/encoding.c \
-	lib/events.c \
-	lib/handlers.c \
-	lib/http.c \
-	lib/libgadu.c \
-	lib/message.c \
-	lib/obsolete.c \
-	lib/pubdir.c \
-	lib/pubdir50.c \
-	lib/resolver.c \
-	lib/sha1.c \
 	libgadu-events.c \
 	libgaduw.c \
 	message-prpl.c \
@@ -94,6 +79,7 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 LIBS =	\
+			-lgadu \
 			-lglib-2.0 \
 			-lgobject-2.0 \
 			-lgnutls \

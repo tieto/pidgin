@@ -395,7 +395,8 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			info->imtoken = g_strdup(ev->event.imtoken.imtoken);
 			break;
 		case GG_EVENT_PONG110:
-			purple_debug_info("gg", "gg11: got PONG110 %lu\n", ev->event.pong110.time);
+			purple_debug_info("gg", "gg11: got PONG110 %lu\n",
+				(long unsigned)ev->event.pong110.time);
 			break;
 		case GG_EVENT_CHAT_INFO:
 		case GG_EVENT_CHAT_INFO_GOT_ALL:

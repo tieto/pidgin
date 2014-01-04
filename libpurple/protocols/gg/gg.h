@@ -25,9 +25,15 @@
 #define _PURPLE_GG_H
 
 #define GGP_UIN_LEN_MAX 10
+
+#ifdef _WIN32
+#define GGP_ENABLE_GG11 1
+#else
 #define GGP_ENABLE_GG11 0
+#endif
 
 #include <libgadu.h>
+
 #include "internal.h"
 #include "search.h"
 #include "connection.h"

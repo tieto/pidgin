@@ -79,7 +79,7 @@ void ggp_multilogon_info(PurpleConnection *gc,
 		purple_debug_misc("gg", "ggp_multilogon_info: "
 			"session [%s] logged in at %lu\n",
 			info->sessions[i].name,
-			info->sessions[i].logon_time);
+			(unsigned long)info->sessions[i].logon_time);
 	}
 
 	mldata->session_count = info->count;
