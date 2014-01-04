@@ -21,14 +21,13 @@ fi
 DEBUG_SKIP_DOWNLOADING=0
 DEBUG_SKIP_INSTALL=0
 
-#TODO: this is just a temporary mirror - Tomek Wasilczyk's <tomkiewicz@cpw.pidgin.im> Dropbox
-DOWNLOAD_HOST="https://dl.dropbox.com/u/5448886/pidgin-win32/devel-deps/"
+DOWNLOAD_HOST="https://pidgin.im/~twasilczyk/win32/devel-deps/"
 
 ARCHIVES=""
 OBS_SKIP="usr/i686-w64-mingw32/sys-root/mingw"
 
 # bsdcpio is used for extracting rpms
-ARC_CPI="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.tar.gz;bsdcpio;3.0.3-1.4;0460c7a52f8c93d3c4822d6d1aaf9410f21bd4da;bsdcpio-3.0.3-1.4;bsdcpio"
+ARC_CPI="${DOWNLOAD_HOST}cpio/bsdcpio-3.0.3-1.4.tar.gz;bsdcpio;3.0.3-1.4;0460c7a52f8c93d3c4822d6d1aaf9410f21bd4da;bsdcpio-3.0.3-1.4;bsdcpio"
 ARCHIVES+="ARC_CPI "
 
 ARC_CSA="${DOWNLOAD_HOST}cyrus-sasl-2.1.25.tar.gz;Cyrus SASL;2.1.25;b9d7f510c0c5daa71ee5225daacdd58e948a8d19;cyrus-sasl-2.1.25;cyrus-sasl-2.1"

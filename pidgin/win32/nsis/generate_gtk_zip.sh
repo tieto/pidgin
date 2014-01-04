@@ -10,6 +10,12 @@ if [ ! -e $PIDGIN_BASE/ChangeLog ]; then
 	exit 1
 fi
 
+if [ ! -e $PIDGIN_BASE/VERSION ]; then
+	cd ../../..
+	make -f Makefile.mingw VERSION
+	cd - > /dev/null
+fi
+
 STAGE_DIR=`readlink -f $PIDGIN_BASE/pidgin/win32/nsis/gtk_runtime_stage`
 #Subdirectory of $STAGE_DIR
 INSTALL_DIR=Gtk
@@ -21,7 +27,7 @@ BUNDLE_VERSION=2.24.14.0
 BUNDLE_SHA1SUM="df28047f00934e6a00a5962387a1005114ec772e"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
-BUNDLE_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/gtk-runtime-2.24.14.0.zip"
+BUNDLE_URL="https://pidgin.im/~twasilczyk/win32/gtk-runtime-$BUNDLE_VERSION.zip"
 
 function download() {
 	if [ -e "$2" ]; then
@@ -75,9 +81,8 @@ else
 	exit 0
 fi
 
-#DOWNLOAD_HOST="http://download.opensuse.org/repositories/windows:/mingw:/win32/openSUSE_12.3/noarch/"
-#TODO: this is just a temporary mirror - Tomek Wasilczyk's <tomkiewicz@cpw.pidgin.im> Dropbox
-DOWNLOAD_HOST="https://dl.dropbox.com/u/5448886/pidgin-win32/runtime-deps/"
+# origin: http://download.opensuse.org/repositories/windows:/mingw:/win32/openSUSE_12.3/noarch/
+DOWNLOAD_HOST="https://pidgin.im/~twasilczyk/win32/runtime-deps/"
 
 ALL=""
 
@@ -252,8 +257,7 @@ mkdir $INSTALL_DIR
 #new CONTENTS file
 echo Bundle Version $BUNDLE_VERSION > $CONTENTS_FILE
 
-#TODO: temporary mirror also
-CPIO_URL="https://dl.dropbox.com/u/5448886/pidgin-win32/cpio/bsdcpio-3.0.3-1.4.tar.gz"
+CPIO_URL="https://pidgin.im/~twasilczyk/win32/devel-deps/cpio/bsdcpio-3.0.3-1.4.tar.gz"
 CPIO_SHA1SUM="0460c7a52f8c93d3c4822d6d1aaf9410f21bd4da"
 CPIO_DIR="bsdcpio"
 FILE="bsdcpio.tar.gz"
