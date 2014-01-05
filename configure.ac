@@ -1178,6 +1178,7 @@ fi
 dnl #######################################################################
 dnl # Check for Gadu-Gadu client includes and libraries
 dnl #######################################################################
+dnl TODO: we should get rid of manually entered dirs at some point
 AC_ARG_WITH(gadu-includes, [AS_HELP_STRING([--with-gadu-includes=DIR], [compile the Gadu-Gadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
 AC_ARG_WITH(gadu-libs, [AS_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
@@ -1210,6 +1211,8 @@ else
 	GADU_LIBS="$GADU_LIBS -lgadu"
 	AC_CHECK_LIB(gadu, gg_libgadu_version, [gadu_libs=yes], , $GADU_LIBS)
 fi
+
+dnl TODO: it shouldn't be necessary with 1.12.0 and newer
 GADU_CFLAGS=`echo $GADU_CFLAGS |$sedpath 's/-Wall//'`
 
 if test "x$gadu_libs" = "xyes"; then
@@ -1240,6 +1243,7 @@ if test "x$gadu_libs" = "xyes"; then
 	CPPFLAGS="$CPPFLAGS_save"
 fi
 
+dnl TODO: this one shouldn't be necessary too
 if test "x$gadu_libs" = "xyes" -a "x$gadu_manual_check" = "xyes"; then
 	AC_MSG_CHECKING(for supplied libgadu compatibility)
 	CPPFLAGS_save="$CPPFLAGS"
@@ -1270,6 +1274,14 @@ fi
 
 AM_CONDITIONAL(HAVE_LIBGADU, test "x$gadu_libs" = "xyes")
 AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
+
+if test "x$gadu_libs" = "xyes"; then
+	AC_DEFINE(HAVE_LIBGADU, 1, [Linked with libgadu])
+fi
+
+if test "x$gadu_libs" != "xyes"; then
+	AC_DEFINE(USE_INTERNAL_LIBGADU, 1, [Using internal libgadu])
+fi
 
 if test "x$gadu_libs" = "x"; then
 	gadu_libs=no

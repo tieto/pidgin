@@ -186,12 +186,9 @@ libpidgin_la_LIBADD = \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(X11_LIBS) \
+	$(GADU_LIBS) \
 	$(INTROSPECTION_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
-
-if USE_INTERNAL_LIBGADU
-INTGG_CFLAGS = -DUSE_INTERNAL_LIBGADU
-endif
 
 pidgin_DEPENDENCIES = $(builddir)/libpidgin.la
 pidgin_LDFLAGS = -export-dynamic
@@ -219,7 +216,7 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
-	$(INTGG_CFLAGS) \
+	$(GADU_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
 
 -include $(INTROSPECTION_MAKEFILE)

@@ -12,7 +12,7 @@
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0
 ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant-1.6
-GNUTLS_TOP ?= $(WIN32_DEV_TOP)/gnutls-2.12
+GNUTLS_TOP ?= $(WIN32_DEV_TOP)/gnutls-3.1
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk2-2.24
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/bonjour-sdk
@@ -30,6 +30,7 @@ WEBKITGTK_TOP ?= $(WIN32_DEV_TOP)/libwebkitgtk-1.10
 LIBSOUP_TOP ?= $(WIN32_DEV_TOP)/libsoup-2.42
 GETTEXT_TOP ?= $(WIN32_DEV_TOP)/gettext-0.18
 INTLTOOL_TOP ?= $(WIN32_DEV_TOP)/intltool-0.50
+LIBGADU_TOP ?= $(WIN32_DEV_TOP)/libgadu-1.12
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
