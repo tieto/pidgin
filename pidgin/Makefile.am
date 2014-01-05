@@ -181,11 +181,8 @@ pidgin_LDADD = \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(X11_LIBS) \
+	$(GADU_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
-
-if USE_INTERNAL_LIBGADU
-INTGG_CFLAGS = -DUSE_INTERNAL_LIBGADU
-endif
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
@@ -208,6 +205,6 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
-	$(INTGG_CFLAGS)
+	$(GADU_CFLAGS)
 endif  # ENABLE_GTK
 

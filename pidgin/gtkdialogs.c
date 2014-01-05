@@ -48,6 +48,10 @@
 #include <gst/gst.h>
 #endif
 
+#ifdef HAVE_LIBGADU
+#include <libgadu.h>
+#endif
+
 #include "gtk3compat.h"
 
 static GList *dialogwindows = NULL;
@@ -639,14 +643,12 @@ void pidgin_dialogs_buildinfo(void)
 #endif
 #endif
 
-#if defined(_WIN32) || defined(USE_INTERNAL_LIBGADU)
+#if defined(USE_INTERNAL_LIBGADU)
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Internal</dd>");
-#else
-#ifdef HAVE_LIBGADU
-	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Enabled</dd>");
+#elif defined(HAVE_LIBGADU)
+	g_string_append_printf(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>%s</dd>", gg_libgadu_version());
 #else
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Disabled</dd>");
-#endif
 #endif
 
 #ifdef USE_GTKSPELL
