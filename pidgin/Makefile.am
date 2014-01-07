@@ -181,7 +181,6 @@ pidgin_LDADD = \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(X11_LIBS) \
-	$(GADU_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
 AM_CPPFLAGS = \
@@ -204,7 +203,6 @@ AM_CPPFLAGS = \
 	$(DBUS_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(WEBKIT_CFLAGS) \
-	$(GADU_CFLAGS)
+	$(WEBKIT_CFLAGS)
 endif  # ENABLE_GTK
 
