@@ -888,6 +888,11 @@ static void ggp_keepalive(PurpleConnection *gc)
 	}
 }
 
+static void ggp_action_multilogon(PurplePluginAction *action)
+{
+	ggp_multilogon_dialog((PurpleConnection *)action->context);
+}
+
 static void ggp_action_chpass(PurplePluginAction *action)
 {
 	ggp_account_chpass((PurpleConnection *)action->context);
@@ -915,6 +920,10 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 
 	act = purple_plugin_action_new(_("Change password..."),
 		ggp_action_chpass);
+	m = g_list_append(m, act);
+
+	act = purple_plugin_action_new(_("Show other sessions"),
+		ggp_action_multilogon);
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Show status only for buddies"),
