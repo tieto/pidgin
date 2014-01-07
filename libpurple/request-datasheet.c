@@ -38,6 +38,8 @@ struct _PurpleRequestDatasheet
 
 	GList *record_list;
 	GHashTable *record_li_by_key;
+
+	GHashTable *marked_for_rem;
 };
 
 struct _PurpleRequestDatasheetRecord
@@ -111,6 +113,9 @@ purple_request_datasheet_free(PurpleRequestDatasheet *sheet)
 	g_hash_table_destroy(sheet->record_li_by_key);
 	g_list_free_full(sheet->record_list,
 		(GDestroyNotify)purple_request_datasheet_record_free);
+
+	if (sheet->marked_for_rem != NULL)
+		g_hash_table_destroy(sheet->marked_for_rem);
 
 	g_free(sheet);
 }
@@ -333,8 +338,10 @@ purple_request_datasheet_record_add(PurpleRequestDatasheet *sheet,
 	g_return_val_if_fail(sheet != NULL, NULL);
 
 	rec = purple_request_datasheet_record_find(sheet, key);
-	if (rec != NULL)
+	if (rec != NULL) {
+		g_hash_table_remove(sheet->marked_for_rem, key);
 		return rec;
+	}
 
 	rec = purple_request_datasheet_record_new();
 	rec->sheet = sheet;
@@ -384,6 +391,43 @@ purple_request_datasheet_record_remove_all(PurpleRequestDatasheet *sheet)
 	g_hash_table_remove_all(sheet->record_li_by_key);
 
 	purple_signal_emit(sheet, "record-changed", sheet, NULL);
+}
+
+void
+purple_request_datasheet_record_mark_all_for_rem(PurpleRequestDatasheet *sheet)
+{
+	const GList *it;
+
+	if (sheet->marked_for_rem != NULL)
+		g_hash_table_destroy(sheet->marked_for_rem);
+	sheet->marked_for_rem = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+	it = purple_request_datasheet_get_records(sheet);
+	for (; it != NULL; it = g_list_next(it)) {
+		PurpleRequestDatasheetRecord *rec = it->data;
+		gpointer key = purple_request_datasheet_record_get_key(rec);
+
+		g_hash_table_insert(sheet->marked_for_rem, key, key);
+	}
+}
+
+void
+purple_request_datasheet_record_remove_marked(PurpleRequestDatasheet *sheet)
+{
+	GHashTableIter it;
+	gpointer key;
+	GHashTable *rem;
+
+	if (sheet->marked_for_rem == NULL)
+		return;
+	rem = sheet->marked_for_rem;
+	sheet->marked_for_rem = NULL;
+
+	g_hash_table_iter_init(&it, rem);
+	while (g_hash_table_iter_next(&it, &key, NULL))
+		purple_request_datasheet_record_remove(sheet, key);
+
+	g_hash_table_destroy(rem);
 }
 
 static void

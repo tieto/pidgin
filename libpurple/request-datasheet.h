@@ -314,6 +314,27 @@ void
 purple_request_datasheet_record_remove_all(PurpleRequestDatasheet *sheet);
 
 /**
+ * Marks all records for removal. Record will be unmarked, when touched with
+ * purple_request_datasheet_record_add.
+ *
+ * @param sheet The datasheet.
+ *
+ * @see purple_request_datasheet_record_add.
+ */
+void
+purple_request_datasheet_record_mark_all_for_rem(PurpleRequestDatasheet *sheet);
+
+/**
+ * Removes all marked records.
+ *
+ * @param sheet The datasheet.
+ *
+ * @see purple_request_datasheet_record_mark_all_for_rem.
+ */
+void
+purple_request_datasheet_record_remove_marked(PurpleRequestDatasheet *sheet);
+
+/**
  * Sets data for a string column of specified record.
  *
  * @param rec    The record.
