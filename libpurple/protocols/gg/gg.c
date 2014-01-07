@@ -406,6 +406,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_chat_got_event(gc, ev);
 			break;
 #endif
+		case GG_EVENT_DISCONNECT:
+			ggp_servconn_remote_disconnect(gc);
+			break;
 		default:
 			purple_debug_warning("gg",
 				"unsupported event type=%d\n", ev->type);
