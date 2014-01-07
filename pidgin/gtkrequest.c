@@ -1991,6 +1991,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	size_t extra_actions_count, i;
 	const gchar **tab_names;
 	guint tab_count;
+	gboolean ok_btn = (ok_text != NULL);
 
 	data            = g_new0(PidginRequestData, 1);
 	data->type      = PURPLE_REQUEST_FIELDS;
@@ -2007,7 +2008,6 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
-
 
 #ifdef _WIN32
 	data->dialog = win = pidgin_create_dialog(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
@@ -2047,10 +2047,14 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_set_can_default(button, TRUE);
 
 	/* OK button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
-	data->ok_button = button;
-	gtk_widget_set_can_default(button, TRUE);
-	gtk_window_set_default(GTK_WINDOW(win), button);
+	if (!ok_btn) {
+		gtk_window_set_default(GTK_WINDOW(win), button);
+	} else {
+		button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
+		data->ok_button = button;
+		gtk_widget_set_can_default(button, TRUE);
+		gtk_window_set_default(GTK_WINDOW(win), button);
+	}
 
 	pidgin_widget_decorate_account(hbox,
 		purple_request_cpar_get_account(cpar));
