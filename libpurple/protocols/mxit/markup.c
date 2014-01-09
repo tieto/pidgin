@@ -203,7 +203,8 @@ static unsigned int asn_getlength( const gchar* data, int* size )
  */
 static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
 {
-	int		len;
+	unsigned int len;
+	gchar *out_str;
 
 	/* validate the field type [1 byte] */
 	if ( data[0] != type ) {
@@ -212,10 +213,17 @@ static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
 		return -1;
 	}
 
-	len = data[1];						/* length field [1 bytes] */
-	*utf8 = g_malloc( len + 1 );
-	memcpy( *utf8, &data[2], len );		/* data field */
-	(*utf8)[len] = '\0';
+	len = (uint8_t)data[1]; /* length field [1 byte] */
+	out_str = g_malloc(len + 1);
+	if (out_str == NULL) {
+		purple_debug_fatal(MXIT_PLUGIN_ID, "asn_getUtf8: out of memory");
+		return -1;
+	}
+
+	memcpy(out_str, &data[2], len); /* data field */
+	out_str[len] = '\0';
+
+	*utf8 = out_str;
 
 	return ( len + 2 );
 }
