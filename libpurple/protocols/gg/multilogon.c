@@ -127,7 +127,7 @@ ggp_multilogon_sid_to_libgadu(uint64_t sid)
 	return lsid;
 }
 
-void
+static void
 ggp_multilogon_fill_sessions(PurpleRequestDatasheet *sheet,
 	PurpleConnection *gc)
 {
@@ -183,7 +183,7 @@ ggp_multilogon_info(PurpleConnection *gc, struct gg_event_multilogon_info *info)
 		ggp_multilogon_fill_sessions(mldata->sheet_handle, gc);
 }
 
-void
+static void
 ggp_multilogon_disconnect(PurpleRequestDatasheetRecord *rec, gpointer _gc)
 {
 	PurpleConnection *gc = _gc;

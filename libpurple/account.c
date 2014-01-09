@@ -78,6 +78,11 @@ typedef struct
 	 * is permitted or denied.  We should do this for 3.0.0.
 	 * Or maybe use a GTree.
 	 */
+	/*
+	 * Change that comment to say we should use either GHashTable (if we
+	 * don't iterate through these very often and we're happy with the
+	 * speed of iterating through a GHashTable) or a GTree.
+	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
 	PurpleAccountPrivacyType privacy_type;  /**< The permit/deny setting.   */

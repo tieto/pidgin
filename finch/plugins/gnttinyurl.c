@@ -286,8 +286,11 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 	}
 	*message = t->str;
 	g_string_free(t, FALSE);
-	if (conv == NULL)
+	if (conv == NULL) {
+		/* TODO: Does this ever happen? It seems like it shouldn't. Also it
+		   seems wrong to always create an IM conversations. */
 		conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, sender));
+	}
 	g_object_set_data(G_OBJECT(conv), "TinyURLs", urls);
 	return FALSE;
 }
