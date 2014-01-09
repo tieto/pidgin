@@ -106,7 +106,6 @@ static const struct developer patch_writers[] = {
 	{"Jakub 'haakon' Adam",            NULL,                        NULL},
 	{"Krzysztof Klinikowski",          NULL,                        NULL},
 	{"Eion Robb",                      NULL,                        NULL},
-	{"Ankit",                      NULL,                        NULL},
 	{NULL, NULL, NULL}
 };
 
