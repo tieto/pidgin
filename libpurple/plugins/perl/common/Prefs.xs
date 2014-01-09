@@ -179,11 +179,6 @@ purple_prefs_set_bool(name, value)
 	gboolean value
 
 void
-purple_prefs_set_generic(name, value)
-	const char *name
-	gpointer value
-
-void
 purple_prefs_set_int(name, value)
 	const char *name
 	int value
