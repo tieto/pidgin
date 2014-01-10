@@ -261,6 +261,7 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 	plaintext_len += verify_len;
 
 	iv = intkeyring_gen_salt(purple_cipher_get_block_size(cipher));
+	g_return_val_if_fail(iv != NULL, NULL);
 	purple_cipher_set_iv(cipher, iv->data, iv->len);
 	purple_cipher_set_key(cipher, key->data, key->len);
 	purple_cipher_set_batch_mode(cipher,
