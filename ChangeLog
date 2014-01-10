@@ -12,7 +12,7 @@ version 2.10.8:
 	  session.
 
 	Gadu-Gadu:
-	* Disabled buddy list import/export from/to server (it didn't worked
+	* Disabled buddy list import/export from/to server (it didn't work
 	  anymore). Buddy list synchronization will be implemented in 3.0.0.
 
 	Windows-Specific Changes:
