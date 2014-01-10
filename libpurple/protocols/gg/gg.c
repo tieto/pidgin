@@ -62,6 +62,19 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg);
 
 /* ----- HELPERS -------------------------------------------------------- */
 
+static PurpleInputCondition
+ggp_tcpsocket_inputcond_gg_to_purple(enum gg_check_t check)
+{
+	PurpleInputCondition cond = 0;
+
+	if (check & GG_CHECK_READ)
+		cond |= PURPLE_INPUT_READ;
+	if (check & GG_CHECK_WRITE)
+		cond |= PURPLE_INPUT_WRITE;
+
+	return cond;
+}
+
 /**
  * Set up libgadu's proxy.
  *
@@ -123,10 +136,8 @@ static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	if (token->req->state != GG_STATE_DONE) {
 		purple_input_remove(token->inpa);
 		token->inpa = purple_input_add(token->req->fd,
-						   (token->req->check == 1)
-						   	? PURPLE_INPUT_WRITE
-							: PURPLE_INPUT_READ,
-						   ggp_async_token_handler, gc);
+			ggp_tcpsocket_inputcond_gg_to_purple(token->req->check),
+			ggp_async_token_handler, gc);
 		return;
 	}
 
@@ -191,58 +202,6 @@ static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 /* }}} */
 
 /* ---------------------------------------------------------------------- */
-
-/**
- * Request buddylist from the server.
- * Buddylist is received in the ggp_callback_recv().
- *
- * @param Current action handler.
- */
-static void ggp_action_buddylist_get(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
-
-	purple_debug_info("gg", "Downloading...\n");
-
-	gg_userlist_request(info->session, GG_USERLIST_GET, NULL);
-}
-
-/**
- * Upload the buddylist to the server.
- *
- * @param action Current action handler.
- */
-static void ggp_action_buddylist_put(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
-
-	char *buddylist = ggp_buddylist_dump(purple_connection_get_account(gc));
-
-	purple_debug_info("gg", "Uploading...\n");
-
-	if (buddylist == NULL)
-		return;
-
-	gg_userlist_request(info->session, GG_USERLIST_PUT, buddylist);
-	g_free(buddylist);
-}
-
-/**
- * Delete buddylist from the server.
- *
- * @param action Current action handler.
- */
-static void ggp_action_buddylist_delete(PurplePluginAction *action)
-{
-	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
-
-	purple_debug_info("gg", "Deleting...\n");
-
-	gg_userlist_request(info->session, GG_USERLIST_PUT, NULL);
-}
 
 static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *filename)
 {
@@ -1731,6 +1690,11 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		return;
 	}
 
+	purple_input_remove(gc->inpa);
+	gc->inpa = purple_input_add(info->session->fd,
+		ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+		ggp_callback_recv, gc);
+
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
@@ -1808,22 +1772,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 
 			ggp_generic_status_handler(gc, ev->event.status60.uin,
 				GG_S(ev->event.status60.status), ev->event.status60.descr);
-			break;
-		case GG_EVENT_USERLIST:
-			if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
-				purple_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
-				purple_notify_info(gc, NULL,
-					_("Buddy list downloaded"),
-					_("Your buddy list was downloaded from the server."));
-				if (ev->event.userlist.reply != NULL) {
-					ggp_buddylist_load(gc, ev->event.userlist.reply);
-				}
-			} else {
-				purple_debug_info("gg", "GG_USERLIST_PUT_REPLY\n");
-				purple_notify_info(gc, NULL,
-					_("Buddy list uploaded"),
-					_("Your buddy list was stored on the server."));
-			}
 			break;
 		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
 			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
@@ -1905,8 +1853,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	/** XXX I think that this shouldn't be done if ev->type is GG_EVENT_CONN_FAILED or GG_EVENT_CONN_SUCCESS -datallah */
 	if (info->session->fd >= 0)
 		gc->inpa = purple_input_add(info->session->fd,
-			(info->session->check == 1) ? PURPLE_INPUT_WRITE :
-				PURPLE_INPUT_READ,
+			ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
 			ggp_async_login_handler, gc);
 
 	switch (ev->type) {
@@ -1919,8 +1866,8 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
 				purple_input_remove(gc->inpa);
 				gc->inpa = purple_input_add(info->session->fd,
-							  PURPLE_INPUT_READ,
-							  ggp_callback_recv, gc);
+					ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+					ggp_callback_recv, gc);
 
 				ggp_buddylist_send(gc);
 				purple_connection_update_progress(gc, _("Connected"), 1, 2);
@@ -2190,8 +2137,9 @@ static void ggp_login(PurpleAccount *account)
 		g_free(glp);
 		return;
 	}
-	gc->inpa = purple_input_add(info->session->fd, PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+	gc->inpa = purple_input_add(info->session->fd,
+		ggp_tcpsocket_inputcond_gg_to_purple(info->session->check),
+		ggp_async_login_handler, gc);
 }
 
 static void ggp_close(PurpleConnection *gc)
@@ -2623,18 +2571,6 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
-
-	act = purple_plugin_action_new(_("Upload buddylist to Server"),
-				     ggp_action_buddylist_put);
-	m = g_list_append(m, act);
-
-	act = purple_plugin_action_new(_("Download buddylist from Server"),
-				     ggp_action_buddylist_get);
-	m = g_list_append(m, act);
-
-	act = purple_plugin_action_new(_("Delete buddylist from Server"),
-				     ggp_action_buddylist_delete);
-	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Save buddylist to file..."),
 				     ggp_action_buddylist_save);

@@ -366,11 +366,12 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 		n += strlen(n);
 	}
 
-	n += g_strlcpy(n, "\r\n", end - n);
+	if ((end - n) > 2)
+		n += g_strlcpy(n, "\r\n", end - n);
 
 	body = msn_message_get_bin_data(msg, &body_len);
 
-	if (body != NULL)
+	if (body != NULL && (end - n) > body_len)
 	{
 		memcpy(n, body, body_len);
 		n += body_len;

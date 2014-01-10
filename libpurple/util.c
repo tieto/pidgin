@@ -37,6 +37,8 @@
    specified a length) */
 #define DEFAULT_MAX_HTTP_DOWNLOAD (512 * 1024)
 
+#define MAX_HTTP_CHUNK_SIZE (10 * 1024 * 1024)
+
 struct _PurpleUtilFetchUrlData
 {
 	PurpleUtilFetchUrlCallback callback;
@@ -710,7 +712,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	gint year = 0;
 	long tzoff = PURPLE_NO_TZ_OFF;
 	time_t retval;
-	gboolean mktime_with_utc = TRUE;
+	gboolean mktime_with_utc = FALSE;
 
 	if (rest != NULL)
 		*rest = NULL;
@@ -811,7 +813,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				} while (*str >= '0' && *str <= '9');
 			}
 
-			sign = (*str == '+') ? -1 : 1;
+			sign = (*str == '+') ? 1 : -1;
 
 			/* Process the timezone */
 			if (*str == '+' || *str == '-') {
@@ -820,26 +822,29 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				if (((sscanf(str, "%02d:%02d", &tzhrs, &tzmins) == 2 && (str += 5)) ||
 					(sscanf(str, "%02d%02d", &tzhrs, &tzmins) == 2 && (str += 4))))
 				{
+					mktime_with_utc = TRUE;
 					tzoff = tzhrs * 60 * 60 + tzmins * 60;
 					tzoff *= sign;
-				} else {
-					if (rest != NULL && *str != '\0')
-						*rest = str;
-
-					return 0;
 				}
 			} else if (*str == 'Z') {
 				/* 'Z' = Zulu = UTC */
 				str++;
-				utc = TRUE;
-			} else if (!utc) {
-				/* Local Time */
-				t.tm_isdst = -1;
-				mktime_with_utc = FALSE;
+				mktime_with_utc = TRUE;
+				tzoff = 0;
 			}
 
-			if (utc)
-				tzoff = 0;
+			if (!mktime_with_utc)
+			{
+				/* No timezone specified. */
+
+				if (utc) {
+					mktime_with_utc = TRUE;
+					tzoff = 0;
+				} else {
+					/* Local Time */
+					t.tm_isdst = -1;
+				}
+			}
 		}
 	}
 
@@ -3781,11 +3786,12 @@ process_chunked_data(char *data, gsize *len)
 			break;
 		s += 2;
 
-		if (s + sz > data + *len) {
+		if (sz > MAX_HTTP_CHUNK_SIZE || s + sz > data + *len) {
 			purple_debug_error("util", "Error processing chunked data: "
 					"Chunk size %" G_GSIZE_FORMAT " bytes was longer "
 					"than the data remaining in the buffer (%"
 					G_GSIZE_FORMAT " bytes)\n", sz, data + *len - s);
+			break;
 		}
 
 		/* Move all data overtop of the chunk length that we read in earlier */
@@ -3793,7 +3799,7 @@ process_chunked_data(char *data, gsize *len)
 		p += sz;
 		s += sz;
 		newlen += sz;
-		if (*s != '\r' && *(s + 1) != '\n') {
+		if (*s == '\0' || (*s != '\r' && *(s + 1) != '\n')) {
 			purple_debug_error("util", "Error processing chunked data: "
 					"Expected \\r\\n, found: %s\n", s);
 			break;

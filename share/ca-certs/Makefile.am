@@ -5,6 +5,7 @@ CERTIFICATES = \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
 		Deutsche_Telekom_Root_CA_2.pem \
+		DigiCertHighAssuranceEVRootCA.pem \
 		Entrust.net_Secure_Server_CA.pem \
 		Equifax_Secure_CA.pem \
 		Equifax_Secure_Global_eBusiness_CA-1.pem \

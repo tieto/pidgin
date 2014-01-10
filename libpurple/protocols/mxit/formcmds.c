@@ -267,7 +267,7 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 
 	if (nm) {		/* indicates response must be a structured response */
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
-		gchar*	replycmd = g_strdup_printf("type=reply|nm=%s|res=%s|err=0", nm, replymsg);
+		gchar*	replycmd = g_strdup_printf("type=reply|nm=%s|res=%s|err=0", nm, purple_url_decode(replymsg));
 
 		mxit_add_html_link( mx, replycmd, TRUE, seltext );
 
@@ -298,7 +298,7 @@ static void command_platformreq(GHashTable* hash, GString* msg)
 	char*	dest;
 
 	selmsg = g_hash_table_lookup(hash, "selmsg");			/* find the selection message */
-	if (selmsg) {
+	if (selmsg && (strlen(selmsg) > 0)) {
 		text = g_markup_escape_text(purple_url_decode(selmsg), -1);
 	}
 

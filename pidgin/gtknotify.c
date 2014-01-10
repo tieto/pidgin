@@ -1192,51 +1192,85 @@ pidgin_close_notify(PurpleNotifyType type, void *ui_handle)
 }
 
 #ifndef _WIN32
-static gint
-uri_command(const char *command, gboolean sync)
+static gboolean
+uri_command(GSList *arg_list, gboolean sync)
 {
 	gchar *tmp;
 	GError *error = NULL;
-	gint ret = 0;
+	GSList *it;
+	gchar **argv;
+	gint argc, i;
+	gchar *program;
 
-	purple_debug_misc("gtknotify", "Executing %s\n", command);
+	g_return_val_if_fail(arg_list != NULL, FALSE);
 
-	if (!purple_program_is_valid(command))
-	{
-		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
-							  command ? command : "(none)");
+	program = arg_list->data;
+	purple_debug_misc("gtknotify", "Executing %s (%s)\n", program,
+		sync ? "sync" : "async");
+
+	if (!purple_program_is_valid(program)) {
+		purple_debug_error("gtknotify", "Command \"%s\" is invalid\n",
+			program);
+		tmp = g_strdup_printf(
+			_("The browser command \"%s\" is invalid."),
+			program ? program : "(null)");
 		purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 		g_free(tmp);
 
-	}
-	else if (sync)
-	{
-		gint status;
-
-		if (!g_spawn_command_line_sync(command, NULL, NULL, &status, &error))
-		{
-			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
-										command, error->message);
-			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
-			g_free(tmp);
-			g_error_free(error);
-		}
-		else
-			ret = status;
-	}
-	else
-	{
-		if (!g_spawn_command_line_async(command, &error))
-		{
-			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
-										command, error->message);
-			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
-			g_free(tmp);
-			g_error_free(error);
-		}
+		return FALSE;
 	}
 
-	return ret;
+	argc = g_slist_length(arg_list);
+	argv = g_new(gchar*, argc + 1);
+	i = 0;
+	for (it = arg_list; it; it = g_slist_next(it)) {
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("gtknotify", "argv[%d] = \"%s\"\n",
+				i, (gchar*)it->data);
+		}
+		argv[i++] = it->data;
+	}
+	argv[i] = NULL;
+
+	if (sync) {
+		gint exit_status = 0;
+
+		if (g_spawn_sync(NULL, argv, NULL, G_SPAWN_SEARCH_PATH |
+			G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+			NULL, NULL, NULL, NULL, &exit_status, &error) &&
+			exit_status == 0)
+		{
+			g_free(argv);
+			return TRUE;
+		}
+
+		purple_debug_error("gtknotify",
+			"Error launching \"%s\": %s (status: %d)\n", program,
+			error ? error->message : "(null)", exit_status);
+		tmp = g_strdup_printf(_("Error launching \"%s\": %s"), program,
+			error ? error->message : "(null)");
+		g_error_free(error);
+		purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+		g_free(tmp);
+
+		g_free(argv);
+		return FALSE;
+	}
+
+	if (g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH |
+		G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL, NULL,
+		NULL, NULL, &error))
+	{
+		g_free(argv);
+		return TRUE;
+	}
+
+	purple_debug_warning("gtknotify", "Error launching \"%s\": %s\n",
+		program, error ? error->message : "(null)");
+	g_error_free(error);
+
+	g_free(argv);
+	return FALSE;
 }
 #endif /* _WIN32 */
 
@@ -1244,183 +1278,208 @@ static void *
 pidgin_notify_uri(const char *uri)
 {
 #ifndef _WIN32
-	char *escaped = g_shell_quote(uri);
-	char *command = NULL;
-	char *remote_command = NULL;
 	const char *web_browser;
 	int place;
+	gchar *uri_escaped, *uri_custom = NULL;
+	GSList *argv = NULL, *argv_remote = NULL;
+	gchar **usercmd_argv = NULL;
 
-	web_browser = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser");
+	uri_escaped = g_uri_escape_string(uri, ":/%#,+", FALSE);
+
+	web_browser = purple_prefs_get_string(PIDGIN_PREFS_ROOT
+		"/browsers/browser");
 	place = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/browsers/place");
 
 	/* if they are running gnome, use the gnome web browser */
-	if (purple_running_gnome() == TRUE)
-	{
+	if (purple_running_gnome() == TRUE) {
 		char *tmp = g_find_program_in_path("xdg-open");
 		if (tmp == NULL)
-			command = g_strdup_printf("gnome-open %s", escaped);
+			argv = g_slist_append(argv, "gnome-open");
 		else
-			command = g_strdup_printf("xdg-open %s", escaped);
+			argv = g_slist_append(argv, "xdg-open");
 		g_free(tmp);
-	}
-	else if (purple_running_osx() == TRUE)
-	{
-		command = g_strdup_printf("open %s", escaped);
-	}
-	else if (!strcmp(web_browser, "epiphany") ||
+		argv = g_slist_append(argv, uri_escaped);
+	} else if (purple_running_osx() == TRUE) {
+		argv = g_slist_append(argv, "open");
+		argv = g_slist_append(argv, (gpointer)uri);
+	} else if (!strcmp(web_browser, "epiphany") ||
 		!strcmp(web_browser, "galeon"))
 	{
+		argv = g_slist_append(argv, (gpointer)web_browser);
+
 		if (place == PIDGIN_BROWSER_NEW_WINDOW)
-			command = g_strdup_printf("%s -w %s", web_browser, escaped);
+			argv = g_slist_append(argv, "-w");
 		else if (place == PIDGIN_BROWSER_NEW_TAB)
-			command = g_strdup_printf("%s -n %s", web_browser, escaped);
-		else
-			command = g_strdup_printf("%s %s", web_browser, escaped);
-	}
-	else if (!strcmp(web_browser, "xdg-open"))
-	{
-		command = g_strdup_printf("xdg-open %s", escaped);
-	}
-	else if (!strcmp(web_browser, "gnome-open"))
-	{
-		command = g_strdup_printf("gnome-open %s", escaped);
-	}
-	else if (!strcmp(web_browser, "kfmclient"))
-	{
-		command = g_strdup_printf("kfmclient openURL %s", escaped);
+			argv = g_slist_append(argv, "-n");
+
+		argv = g_slist_append(argv, (gpointer)uri);
+	} else if (!strcmp(web_browser, "xdg-open")) {
+		argv = g_slist_append(argv, "xdg-open");
+		argv = g_slist_append(argv, uri_escaped);
+	} else if (!strcmp(web_browser, "gnome-open")) {
+		argv = g_slist_append(argv, "gnome-open");
+		argv = g_slist_append(argv, uri_escaped);
+	} else if (!strcmp(web_browser, "kfmclient")) {
+		argv = g_slist_append(argv, "kfmclient");
+		argv = g_slist_append(argv, "openURL");
+		argv = g_slist_append(argv, (gpointer)uri);
 		/*
 		 * Does Konqueror have options to open in new tab
 		 * and/or current window?
 		 */
-	}
-	else if (!strcmp(web_browser, "mozilla") ||
-			 !strcmp(web_browser, "mozilla-firebird") ||
-			 !strcmp(web_browser, "firefox") ||
-			 !strcmp(web_browser, "seamonkey"))
+	} else if (!strcmp(web_browser, "mozilla") ||
+		!strcmp(web_browser, "mozilla-firebird") ||
+		!strcmp(web_browser, "firefox") ||
+		!strcmp(web_browser, "seamonkey"))
 	{
-		char *args = "";
+		argv = g_slist_append(argv, (gpointer)web_browser);
+		argv = g_slist_append(argv, uri_escaped);
 
-		command = g_strdup_printf("%s %s", web_browser, escaped);
+		g_assert(uri_custom == NULL);
+		if (place == PIDGIN_BROWSER_NEW_WINDOW) {
+			uri_custom = g_strdup_printf("openURL(%s,new-window)",
+				uri_escaped);
+		} else if (place == PIDGIN_BROWSER_NEW_TAB) {
+			uri_custom = g_strdup_printf("openURL(%s,new-tab)",
+				uri_escaped);
+		} else if (place == PIDGIN_BROWSER_CURRENT) {
+			uri_custom = g_strdup_printf("openURL(%s)",
+				uri_escaped);
+		}
 
-		/*
-		 * Firefox 0.9 and higher require a "-a firefox" option when
-		 * using -remote commands.  This breaks older versions of
-		 * mozilla.  So we include this other handly little string
-		 * when calling firefox.  If the API for remote calls changes
-		 * any more in firefox then firefox should probably be split
-		 * apart from mozilla-firebird and mozilla... but this is good
-		 * for now.
+		if (uri_custom != NULL) {
+			argv_remote = g_slist_append(argv_remote,
+				(gpointer)web_browser);
+
+			/* Firefox 0.9 and higher require a "-a firefox" option
+			 * when using -remote commands. This breaks older
+			 * versions of mozilla. So we include this other handly
+			 * little string when calling firefox. If the API for
+			 * remote calls changes any more in firefox then firefox
+			 * should probably be split apart from mozilla-firebird
+			 * and mozilla... but this is good for now.
+			 */
+			if (!strcmp(web_browser, "firefox")) {
+				argv_remote = g_slist_append(argv_remote, "-a");
+				argv_remote = g_slist_append(argv_remote,
+					"firefox");
+			}
+
+			argv_remote = g_slist_append(argv_remote, "-remote");
+			argv_remote = g_slist_append(argv_remote, uri_custom);
+		}
+	} else if (!strcmp(web_browser, "netscape")) {
+		argv = g_slist_append(argv, "netscape");
+		argv = g_slist_append(argv, (gpointer)uri);
+
+		if (place == PIDGIN_BROWSER_NEW_WINDOW) {
+			uri_custom = g_strdup_printf("openURL(%s,new-window)",
+				uri_escaped);
+		} else if (place == PIDGIN_BROWSER_CURRENT) {
+			uri_custom = g_strdup_printf("openURL(%s)",
+				uri_escaped);
+		}
+
+		if (uri_custom) {
+			argv_remote = g_slist_append(argv_remote, "netscape");
+			argv_remote = g_slist_append(argv_remote, "-remote");
+			argv_remote = g_slist_append(argv_remote, uri_custom);
+		}
+	} else if (!strcmp(web_browser, "opera")) {
+		argv = g_slist_append(argv, "opera");
+
+		if (place == PIDGIN_BROWSER_NEW_WINDOW)
+			argv = g_slist_append(argv, "-newwindow");
+		else if (place == PIDGIN_BROWSER_NEW_TAB)
+			argv = g_slist_append(argv, "-newpage");
+		else if (place == PIDGIN_BROWSER_CURRENT)
+			argv = g_slist_append(argv, "-activetab");
+		/* `opera -remote "openURL(%s)"` command causes Pidgin's hang,
+		 * if there is no Opera instance running.
 		 */
-		if (!strcmp(web_browser, "firefox"))
-			args = "-a firefox";
 
-		if (place == PIDGIN_BROWSER_NEW_WINDOW)
-			remote_command = g_strdup_printf("%s %s -remote "
-											 "openURL(%s,new-window)",
-											 web_browser, args, escaped);
-		else if (place == PIDGIN_BROWSER_NEW_TAB)
-			remote_command = g_strdup_printf("%s %s -remote "
-											 "openURL(%s,new-tab)",
-											 web_browser, args, escaped);
-		else if (place == PIDGIN_BROWSER_CURRENT)
-			remote_command = g_strdup_printf("%s %s -remote "
-											 "openURL(%s)",
-											 web_browser, args, escaped);
-	}
-	else if (!strcmp(web_browser, "netscape"))
-	{
-		command = g_strdup_printf("netscape %s", escaped);
-
-		if (place == PIDGIN_BROWSER_NEW_WINDOW)
-		{
-			remote_command = g_strdup_printf("netscape -remote "
-											 "openURL(%s,new-window)",
-											 escaped);
-		}
-		else if (place == PIDGIN_BROWSER_CURRENT)
-		{
-			remote_command = g_strdup_printf("netscape -remote "
-											 "openURL(%s)", escaped);
-		}
-	}
-	else if (!strcmp(web_browser, "opera"))
-	{
-		if (place == PIDGIN_BROWSER_NEW_WINDOW)
-			command = g_strdup_printf("opera -newwindow %s", escaped);
-		else if (place == PIDGIN_BROWSER_NEW_TAB)
-			command = g_strdup_printf("opera -newpage %s", escaped);
-		else if (place == PIDGIN_BROWSER_CURRENT)
-		{
-			remote_command = g_strdup_printf("opera -remote "
-											 "openURL(%s)", escaped);
-			command = g_strdup_printf("opera %s", escaped);
-		}
-		else
-			command = g_strdup_printf("opera %s", escaped);
-
-	}
-	else if (!strcmp(web_browser, "google-chrome"))
-	{
-		/* Google Chrome doesn't have command-line arguments that control the
-		 * opening of links from external calls.  This is controlled solely from
-		 * a preference within Google Chrome. */
-		command = g_strdup_printf("google-chrome %s", escaped);
-	}
-	else if (!strcmp(web_browser, "chrome"))
-	{
+		argv = g_slist_append(argv, (gpointer)uri);
+	} else if (!strcmp(web_browser, "google-chrome")) {
+		/* Google Chrome doesn't have command-line arguments that
+		 * control the opening of links from external calls. This is
+		 * controlled solely from a preference within Google Chrome.
+		 */
+		argv = g_slist_append(argv, "google-chrome");
+		argv = g_slist_append(argv, (gpointer)uri);
+	} else if (!strcmp(web_browser, "chrome")) {
+		/* Chromium doesn't have command-line arguments that control
+		 * the opening of links from external calls. This is controlled
+		 * solely from a preference within Chromium.
+		 */
+		argv = g_slist_append(argv, "chrome");
+		argv = g_slist_append(argv, (gpointer)uri);
+	} else if (!strcmp(web_browser, "chromium-browser")) {
 		/* Chromium doesn't have command-line arguments that control the
-		 * opening of links from external calls.  This is controlled solely from
-		 * a preference within Chromium. */
-		command = g_strdup_printf("chrome %s", escaped);
-	}
-	else if (!strcmp(web_browser, "chromium-browser"))
-	{
-		/* Chromium doesn't have command-line arguments that control the
-		 * opening of links from external calls.  This is controlled solely from
-		 * a preference within Chromium. */
-		command = g_strdup_printf("chromium-browser %s", escaped);
-	}
-	else if (!strcmp(web_browser, "custom"))
-	{
-		const char *web_command;
+		 * opening of links from external calls. This is controlled
+		 * solely from a preference within Chromium.
+		 */
+		argv = g_slist_append(argv, "chromium-browser");
+		argv = g_slist_append(argv, (gpointer)uri);
+	} else if (!strcmp(web_browser, "custom")) {
+		GError *error = NULL;
+		const char *usercmd_command;
+		gint usercmd_argc, i;
+		gboolean uri_added = FALSE;
 
-		web_command = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/manual_command");
+		usercmd_command = purple_prefs_get_string(PIDGIN_PREFS_ROOT
+			"/browsers/manual_command");
 
-		if (web_command == NULL || *web_command == '\0')
-		{
+		if (usercmd_command == NULL || *usercmd_command == '\0') {
 			purple_notify_error(NULL, NULL, _("Unable to open URL"),
-							  _("The 'Manual' browser command has been "
-								"chosen, but no command has been set."));
+				_("The 'Manual' browser command has been "
+				"chosen, but no command has been set."));
 			return NULL;
 		}
 
-		if (strstr(web_command, "%s"))
-			command = purple_strreplace(web_command, "%s", escaped);
-		else
+		if (!g_shell_parse_argv(usercmd_command, &usercmd_argc,
+			&usercmd_argv, &error))
 		{
-			/*
-			 * There is no "%s" in the browser command.  Assume the user
-			 * wanted the URL tacked on to the end of the command.
-			 */
-			command = g_strdup_printf("%s %s", web_command, escaped);
+			purple_notify_error(NULL, NULL, _("Unable to open URL: "
+				"the 'Manual' browser command seems invalid."),
+				error ? error->message : NULL);
+			g_error_free(error);
+			return NULL;
 		}
+
+		for (i = 0; i < usercmd_argc; i++) {
+			gchar *cmd_part = usercmd_argv[i];
+
+			if (uri_added || strstr(cmd_part, "%s") == NULL) {
+				argv = g_slist_append(argv, cmd_part);
+				continue;
+			}
+
+			uri_custom = purple_strreplace(cmd_part, "%s",
+				uri_escaped);
+			argv = g_slist_append(argv, uri_custom);
+			uri_added = TRUE;
+		}
+
+		/* There is no "%s" in the browser command. Assume the user
+		 * wanted the URL tacked on to the end of the command.
+		 */
+		if (!uri_added)
+			argv = g_slist_append(argv, uri_escaped);
 	}
 
-	g_free(escaped);
-
-	if (remote_command != NULL)
-	{
+	if (argv_remote != NULL) {
 		/* try the remote command first */
-		if (uri_command(remote_command, TRUE) != 0)
-			uri_command(command, FALSE);
+		if (!uri_command(argv_remote, TRUE))
+			uri_command(argv, FALSE);
+	} else
+		uri_command(argv, FALSE);
 
-		g_free(remote_command);
-
-	}
-	else
-		uri_command(command, FALSE);
-
-	g_free(command);
+	if (usercmd_argv != NULL)
+		g_strfreev(usercmd_argv);
+	g_free(uri_escaped);
+	g_free(uri_custom);
+	g_slist_free(argv);
+	g_slist_free(argv_remote);
 
 #else /* !_WIN32 */
 	winpidgin_notify_uri(uri);

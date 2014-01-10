@@ -47,6 +47,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#define GG_HTTP_MAX_LENGTH 1000000000
+
 /**
  * Rozpoczyna połączenie HTTP.
  *
@@ -362,6 +364,11 @@ int gg_http_watch_fd(struct gg_http *h)
 			if (h->body_size <= 0) {
 				gg_debug(GG_DEBUG_MISC, "=> http, content-length not found\n");
 				h->body_size = left;
+			}
+
+			if (h->body_size > GG_HTTP_MAX_LENGTH) {
+				gg_debug(GG_DEBUG_MISC, "=> http, content-length too big\n");
+				h->body_size = GG_HTTP_MAX_LENGTH;
 			}
 
 			if (left > h->body_size) {
