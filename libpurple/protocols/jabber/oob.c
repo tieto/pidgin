@@ -137,8 +137,8 @@ static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
 			*tmp = '\0';
 			lenstr = strstr(jox->headers->str, "Content-Length: ");
 			if(lenstr) {
-				int size;
-				if (sscanf(lenstr, "Content-Length: %d", &size) == 1)
+				gsize size;
+				if (sscanf(lenstr, "Content-Length: %" G_GSIZE_FORMAT, &size) == 1)
 					purple_xfer_set_size(xfer, size);
 				else {
 					purple_debug_error("jabber", "Unable to parse Content-Length!\n");
