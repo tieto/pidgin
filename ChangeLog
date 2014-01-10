@@ -1,14 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.8:
-	Stock market:
-	* Ludicrous increases on mediocre worldwide economic data.
+	General:
+	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
 
 	libpurple:
 	* Impose maximum download size for all HTTP fetches.
-
-	General:
-	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
 
 	Pidgin:
 	* Add Unity integration plugin.
