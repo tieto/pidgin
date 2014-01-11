@@ -146,18 +146,16 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 							 purple_conversation_get_name(conv), sent);
 		}
 	}
-	else {
-		PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(conv);
+	else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
+		int id = purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv));
 		purple_signal_emit(purple_conversations_get_handle(), "sending-chat-msg",
-						 account, &sent,
-						 purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)));
+						 account, &sent, id);
 
 		if (sent != NULL && sent[0] != '\0') {
-			err = serv_chat_send(gc, purple_chat_conversation_get_id(chat), sent, msgflags);
+			err = serv_chat_send(gc, id, sent, msgflags);
 
 			purple_signal_emit(purple_conversations_get_handle(), "sent-chat-msg",
-							 account, sent,
-							 purple_chat_conversation_get_id(chat));
+							 account, sent, id);
 		}
 	}
 
