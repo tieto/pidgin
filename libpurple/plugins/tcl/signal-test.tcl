@@ -119,5 +119,5 @@ proc plugin_init { } {
 	     "Tests Tcl signal handlers" \
              "Debugs a ridiculous amount of signal information." \
              "Ethan Blanton <elb@pidgin.im>" \
-             "https://www.pidgin.im/"
+             "https://pidgin.im/"
 }
