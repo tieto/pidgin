@@ -96,7 +96,7 @@ gboolean msn_email_is_valid(const char *passport);
 /**
  * Handle MSN Challenge Computation
  * This algorithm references
- * http://imfreedom.org/wiki/index.php/MSN:NS/Challenges
+ * https://imfreedom.org/wiki/MSN:NS/Challenges
  *
  * @param input 	Challenge input.
  * @param output 	Callenge output.
