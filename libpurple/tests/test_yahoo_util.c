@@ -55,8 +55,8 @@ START_TEST(test_codes_to_html)
 			yahoo_codes_to_html("\x1B[1mbold \x1B[2mbolditalic \x1B[4mbolditalicunderline\x1B[x1m italicunderline"));
 
 	/* link */
-	assert_string_equal_free("http://pidgin.im/",
-			yahoo_codes_to_html("\x1B[lmhttp://pidgin.im/\x1B[xlm"));
+	assert_string_equal_free("https://pidgin.im/",
+			yahoo_codes_to_html("\x1B[lmhttps://pidgin.im/\x1B[xlm"));
 
 #ifdef USE_CSS_FORMATTING
 	/* font color */
@@ -150,13 +150,13 @@ START_TEST(test_html_to_codes)
 			yahoo_html_to_codes("<b>bold <i>bolditalic</i></b><i> <u>italicunderline</u></i>"));
 
 	/* link */
-	assert_string_equal_free("http://pidgin.im/",
-			yahoo_html_to_codes("<A HREF=\"http://pidgin.im/\">http://pidgin.im/</A>"));
+	assert_string_equal_free("https://pidgin.im/",
+			yahoo_html_to_codes("<A HREF=\"https://pidgin.im/\">https://pidgin.im/</A>"));
 	assert_string_equal_free("mark@example.com",
 			yahoo_html_to_codes("<A HREF=\"mailto:mark@example.com\">mark@example.com</A>"));
 #if 0
-	assert_string_equal_free("Pidgin (http://pidgin.im/)",
-			yahoo_html_to_codes("<A HREF=\"http://pidgin.im/\">Pidgin</A>"));
+	assert_string_equal_free("Pidgin (https://pidgin.im/)",
+			yahoo_html_to_codes("<A HREF=\"https://pidgin.im/\">Pidgin</A>"));
 #endif
 
 	/* font nothing */
