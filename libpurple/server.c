@@ -491,7 +491,7 @@ void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const c
 	g_free(buffy);
 }
 
-/* Ya know, nothing uses this except purple_chat_conversation_dispose(),
+/* Ya know, nothing uses this except purple_chat_conversation_finalize(),
  * I think I'll just merge it into that later...
  * Then again, something might want to use this, from outside prpl-land
  * to leave a chat without destroying the conversation.
