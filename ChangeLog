@@ -62,22 +62,57 @@ version 3.0.0 (??/??/????):
 	* Ciphers are now built from the libpurple directory.
 
 version 2.10.8:
-	Stock market:
-	* Ludicrous increases on mediocre worldwide economic data.
-
 	General:
-	* Add support for Python3 in build scripts. (Ashish Gupta) (#15624)
+	* Python build scripts and example plugins are now compatible with
+	  Python 3. (Ashish Gupta) (#15624)
+
+	libpurple:
+	* Fix handling of SSL certificates without subjects when using libnss.
+	* Fix handling of SSL certificates with timestamps in the distant future
+	  when using libnss. (#15586)
 
 	Pidgin:
-	* Add a Unity integration plugin.
-
-	Gadu-Gadu:
-	* Disabled buddy list import/export from/to server (it didn't worked
-	  anymore). Buddy list synchronization will be implemented in 3.0.0.
+	* Better handling of URLs longer than 1000 letters.
+	* Fix handling of multibyte UTF-8 characters in smiley themes. (#15756)
 
 	Windows-Specific Changes:
+	* Fix Tcl scripts. (#15520)
+	* Fix crash-on-startup when ASLR is always on. (#15521)
 	* Updates to dependencies:
 		* NSS 3.15.3 and NSPR 4.10.2
+
+	Gadu-Gadu:
+	* Disabled buddy list import/export from/to server (it didn't work
+	  anymore). Buddy list synchronization will be implemented in 3.0.0.
+
+	IRC:
+	* Fix bug where initial IRC status would not be set correctly.
+	* Fix bug where IRC wasn't available when libpurple was compiled with
+	  Cyrus SASL support. (#15517)
+
+	MXit:
+	* Fix sporadic crashes that can happen after user is disconnected.
+	* Fix crash when attempting to add a contact via search results.
+	* Show error message if file transfer fails.
+	* Fix compiling with InstantBird.
+	* Fix display of some custom emoticons.
+
+	SILC:
+	* Correctly set whiteboard dimensions in whiteboard sessions.
+
+	XMPP:
+	* Fix possible crash or other erratic behavior when selecting a very
+	  small file for your own buddy icon.
+	* Fix crash if the user tries to initiate a voice/video session with a
+	  resourceless JID.
+	* Fix login errors when the first two available auth mechanisms fail but
+	  a subsequent mechanism would otherwise work when using Cyrus SASL.
+	  (#15524)
+
+	Plugins:
+	* Fix crash in contact availability plugin.
+	* Fix perl function Purple::Network::ip_atoi
+	* Add Unity integration plugin.
 
 version 2.10.7 (02/13/2013):
 	Alien hatchery:
