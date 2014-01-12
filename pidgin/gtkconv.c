@@ -207,7 +207,6 @@ static gboolean tab_complete(PurpleConversation *conv);
 static void pidgin_conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type);
 static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state);
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
-static void update_typing_state(PidginConversation *gtkconv, gboolean deleting);
 static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
@@ -1947,6 +1946,58 @@ gtkconv_cycle_focus(PidginConversation *gtkconv, GtkDirectionType dir)
 	return !!next;
 }
 
+static void
+update_typing_inserting(PidginConversation *gtkconv)
+{
+	gchar *text;
+
+	g_return_if_fail(gtkconv != NULL);
+
+	text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+
+	got_typing_keypress(gtkconv, text[0] == '\0' || !strcmp(text, "\n"));
+
+	g_free(text);
+}
+
+static gboolean
+update_typing_deleting_cb(PidginConversation *gtkconv)
+{
+	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
+	gchar *text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+
+	if (!*text || !strcmp(text, "\n")) {
+		/* We deleted all the text, so turn off typing. */
+		purple_im_conversation_stop_send_typed_timeout(im);
+
+		serv_send_typing(purple_conversation_get_connection(gtkconv->active_conv),
+						 purple_conversation_get_name(gtkconv->active_conv),
+						 PURPLE_IM_NOT_TYPING);
+	}
+	else {
+		/* We're deleting, but not all of it, so it counts as typing. */
+		got_typing_keypress(gtkconv, FALSE);
+	}
+	g_free(text);
+
+	return FALSE;
+}
+
+static void
+update_typing_deleting(PidginConversation *gtkconv)
+{
+	gchar *text;
+
+	g_return_val_if_fail(gtkconv != NULL, FALSE);
+
+	text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+
+	if (*text && strcmp(text, "\n"))
+		purple_timeout_add(0, (GSourceFunc)update_typing_deleting_cb, gtkconv);
+
+	g_free(text);
+}
+
 static gboolean
 conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 {
@@ -2202,17 +2253,18 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		}
 	}
 
-	if (PURPLE_IS_IM_CONVERSATION(conv)) {
-		gboolean deleting = FALSE;
+	if (PURPLE_IS_IM_CONVERSATION(conv) &&
+			purple_prefs_get_bool("/purple/conversations/im/send_typing")) {
 
 		switch (event->keyval) {
 		case GDK_KEY_BackSpace:
 		case GDK_KEY_Delete:
 		case GDK_KEY_KP_Delete:
-			deleting = TRUE;
+			update_typing_deleting(gtkconv);
+			break;
+		default:
+			update_typing_inserting(gtkconv);
 		}
-
-		update_typing_state(gtkconv, deleting);
 	}
 
 	return FALSE;
@@ -2424,35 +2476,6 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 
 	im = purple_im_conversation_new(account, name);
 	pidgin_conv_switch_active_conversation(PURPLE_CONVERSATION(im));
-}
-
-static void
-update_typing_state(PidginConversation *gtkconv, gboolean deleting)
-{
-	PurpleIMConversation *im;
-	gchar *text;
-
-	g_return_if_fail(gtkconv != NULL);
-
-	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
-		return;
-
-	im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
-
-	text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
-
-	if (!*text) {
-
-		/* We deleted all the text, so turn off typing. */
-		purple_im_conversation_stop_send_typed_timeout(im);
-
-		serv_send_typing(purple_conversation_get_connection(gtkconv->active_conv),
-						 purple_conversation_get_name(gtkconv->active_conv),
-						 PURPLE_IM_NOT_TYPING);
-	}
-	else {
-		got_typing_keypress(gtkconv, !deleting && text[1] == '\0');
-	}
 }
 
 /**************************************************************************
