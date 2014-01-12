@@ -6,6 +6,9 @@ version 2.10.8:
 	  Python 3. (Ashish Gupta) (#15624)
 
 	libpurple:
+	* Fix buffer overflow when parsing a malformed HTTP response with
+	  chunked Transfer-Encoding. (discovered by Matt Jones, Volvent)
+	  (CVE-2014-NNNN)
 	* Fix handling of SSL certificates without subjects when using libnss.
 	* Fix handling of SSL certificates with timestamps in the distant future
 	  when using libnss. (#15586)
