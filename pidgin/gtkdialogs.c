@@ -841,6 +841,7 @@ void pidgin_dialogs_plugins_info(void)
 	const char *pver, *plicense, *pwebsite, *pid;
 	gboolean ploaded, ploadable;
 	const char * const *authorlist;
+	guint n_authors;
 	static GtkWidget *plugins_info = NULL;
 
 	str = g_string_sized_new(4096);
@@ -857,10 +858,13 @@ void pidgin_dialogs_plugins_info(void)
 		pname = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
 		authorlist = purple_plugin_info_get_authors(info);
 
-		if (authorlist)
+		if (authorlist) {
 			authors = g_strjoinv(", ", (gchar **)authorlist);
-		else
+			n_authors = g_strv_length((gchar **)authorlist);
+		} else {
 			authors = NULL;
+			n_authors = 0;
+		}
 
 		if (authors)
 			pauthors = g_markup_escape_text(authors, -1);
@@ -891,7 +895,7 @@ void pidgin_dialogs_plugins_info(void)
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
 				pname    ? pname    : "",
-				(g_strv_length((gchar **)authorlist) > 1 ? "Authors" : "Author"),
+				(n_authors > 1 ? "Authors" : "Author"),
 				pauthors ? pauthors : "",
 				pver     ? pver     : "",
 				plicense ? plicense : "",
