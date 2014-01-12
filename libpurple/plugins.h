@@ -97,6 +97,7 @@ typedef struct _PurplePluginAction PurplePluginAction;
 
 typedef void (*PurplePluginActionCb)(PurplePluginAction *);
 typedef GList *(*PurplePluginActionsCb)(PurplePlugin *);
+typedef gchar *(*PurplePluginExtraCb)(PurplePlugin *);
 typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCb)(PurplePlugin *);
 typedef gpointer (*PurplePluginPrefRequestCb)(PurplePlugin *);
 
@@ -524,10 +525,13 @@ GType purple_plugin_info_get_type(void);
  * "abi-version"      (guint32) The ABI version required by the plugin.       \n
  * "actions-cb"       (PurplePluginActionsCb) Callback that returns a list of
  *                             actions the plugin can perform.                \n
+ * "extra-cb"         (PurplePluginExtraCb) Callback that returns a newly
+ *                             allocated string denoting extra information
+ *                             about a plugin.                                \n
  * "pref-frame-cb"    (PurplePluginPrefFrameCb) Callback that returns a
- *                             preferences frame for the plugin.
+ *                             preferences frame for the plugin.              \n
  * "pref-request-cb"  (PurplePluginPrefRequestCb) Callback that returns a
- *                             preferences request handle for the plugin.
+ *                             preferences request handle for the plugin.     \n
  * "flags"            (PurplePluginInfoFlags) The flags for a plugin.         \n
  *
  * @param first_property  The first property name
@@ -676,11 +680,22 @@ guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
  *
  * @param info The plugin info to get the callback from.
  *
- * @constreturn The callback that returns a list of #PurplePluginAction
- *              instances corresponding to the actions a plugin can perform.
+ * @return The callback that returns a list of #PurplePluginAction
+ *         instances corresponding to the actions a plugin can perform.
  */
 PurplePluginActionsCb
 purple_plugin_info_get_actions_cb(const PurplePluginInfo *info);
+
+/**
+ * Returns a callback that gives extra information about a plugin. You must
+ * free the string returned by this callback.
+ *
+ * @param info The plugin info to get extra information from.
+ *
+ * @return The callback that returns extra information about a plugin.
+ */
+PurplePluginExtraCb
+purple_plugin_info_get_extra_cb(const PurplePluginInfo *info);
 
 /**
  * Returns the callback that retrieves the preferences frame for a plugin, set

@@ -835,8 +835,9 @@ void pidgin_dialogs_plugins_info(void)
 	GList *plugins, *l = NULL;
 	PurplePlugin *plugin = NULL;
 	PurplePluginInfo *info;
+	PurplePluginExtraCb extra_cb;
 	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
-	char *pname = NULL, *authors, *pauthors;
+	char *pname = NULL, *authors, *pauthors, *pextra;
 	const char *pver, *plicense, *pwebsite, *pid;
 	gboolean ploaded, ploadable;
 	const char * const *authorlist;
@@ -851,6 +852,7 @@ void pidgin_dialogs_plugins_info(void)
 	for(l = plugins; l; l = l->next) {
 		plugin = PURPLE_PLUGIN(l->data);
 		info = purple_plugin_get_info(plugin);
+		extra_cb = purple_plugin_info_get_extra_cb(info);
 
 		pname = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
 		authorlist = purple_plugin_info_get_authors(info);
@@ -872,6 +874,11 @@ void pidgin_dialogs_plugins_info(void)
 		ploadable = !purple_plugin_info_get_error(info);
 		ploaded = purple_plugin_is_loaded(plugin);
 
+		if (ploaded && extra_cb)
+			pextra = extra_cb(plugin);
+		else
+			pextra = NULL;
+
 		g_string_append_printf(str,
 				"<dt>%s</dt><dd>"
 				"<b>%s:</b> %s<br/>"
@@ -879,6 +886,7 @@ void pidgin_dialogs_plugins_info(void)
 				"<b>License:</b> %s<br/>"
 				"<b>Website:</b> %s<br/>"
 				"<b>ID String:</b> %s<br/>"
+				"<b>Extra:</b> %s<br/>"
 				"<b>Loadable:</b> %s<br/>"
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
@@ -889,10 +897,12 @@ void pidgin_dialogs_plugins_info(void)
 				plicense ? plicense : "",
 				pwebsite ? pwebsite : "",
 				pid,
+				pextra    ? pextra  : "",
 				ploadable ? "Yes" : "<span style=\"color: #FF0000;\"><b>No</b></span>",
 				ploaded   ? "Yes" : "No");
 
 		g_free(pname);
+		g_free(pextra);
 		g_free(pauthors);
 		g_free(authors);
 	}

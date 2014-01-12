@@ -90,6 +90,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugin_info_get_category
 		* purple_plugin_info_get_dependencies
 		* purple_plugin_info_get_error
+		* purple_plugin_info_get_extra_cb
 		* purple_plugin_info_get_flags
 		* purple_plugin_info_get_icon
 		* purple_plugin_info_get_license_id
