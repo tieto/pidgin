@@ -16,6 +16,9 @@ version 2.10.8:
 	* Fix handling of multibyte UTF-8 characters in smiley themes. (#15756)
 
 	Windows-Specific Changes:
+	* When clicking file:// links, show the file in Explorer rather than
+	  attempting to run the file. This reduces the chances of a user
+	  clicking on a link and mistakenly running a malicious file.
 	* Fix Tcl scripts. (#15520)
 	* Fix crash-on-startup when ASLR is always on. (#15521)
 	* Updates to dependencies:
