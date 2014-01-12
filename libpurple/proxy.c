@@ -985,22 +985,34 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 	p = g_strrstr((const gchar *)connect_data->read_buffer, "Content-Length: ");
 	if (p != NULL) {
 		gchar *tmp;
-		int len = 0;
+		gsize content_len;
 		char tmpc;
+
 		p += strlen("Content-Length: ");
 		tmp = strchr(p, '\r');
 		if(tmp)
 			*tmp = '\0';
-		len = atoi(p);
+		if (sscanf(p, "%" G_GSIZE_FORMAT, &content_len) != 1) {
+			/* Couldn't read content length */
+			purple_debug_error("proxy", "Couldn't read content length value "
+					"from %s\n", p);
+			if(tmp)
+				*tmp = '\r';
+			purple_proxy_connect_data_disconnect_formatted(connect_data,
+					_("Unable to parse response from HTTP proxy: %s"),
+					connect_data->read_buffer);
+			return;
+		}
 		if(tmp)
 			*tmp = '\r';
 
 		/* Compensate for what has already been read */
-		len -= connect_data->read_len - headers_len;
+		content_len -= connect_data->read_len - headers_len;
 		/* I'm assuming that we're doing this to prevent the server from
 		   complaining / breaking since we don't read the whole page */
-		while (len--) {
+		while (content_len--) {
 			/* TODO: deal with EAGAIN (and other errors) better */
+			/* TODO: Reading 1 byte at a time is horrible and stupid. */
 			if (read(connect_data->fd, &tmpc, 1) < 0 && errno != EAGAIN)
 				break;
 		}

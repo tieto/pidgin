@@ -9,6 +9,8 @@ version 2.10.8:
 	* Fix buffer overflow when parsing a malformed HTTP response with
 	  chunked Transfer-Encoding. (Discovered by Matt Jones, Volvent)
 	  (CVE-2014-NNNN)
+	* Better handling of HTTP proxy responses with negative Content-Lengths.
+	  (Discovered by Matt Jones, Volvent)
 	* Fix handling of SSL certificates without subjects when using libnss.
 	* Fix handling of SSL certificates with timestamps in the distant future
 	  when using libnss. (#15586)
