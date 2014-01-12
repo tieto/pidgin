@@ -215,11 +215,6 @@ static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
 
 	len = (uint8_t)data[1]; /* length field [1 byte] */
 	out_str = g_malloc(len + 1);
-	if (out_str == NULL) {
-		purple_debug_fatal(MXIT_PLUGIN_ID, "asn_getUtf8: out of memory");
-		return -1;
-	}
-
 	memcpy(out_str, &data[2], len); /* data field */
 	out_str[len] = '\0';
 
