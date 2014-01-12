@@ -1153,6 +1153,12 @@ PURPLE_DEFINE_TYPE_EXTENDED(
 	                                  ggp_protocol_xfer_iface_init)
 );
 
+static gchar *
+plugin_extra(PurplePlugin *plugin)
+{
+	return g_strdup_printf("Using libgadu version %s", gg_libgadu_version());
+}
+
 static PurplePluginInfo *
 plugin_query(GError **error)
 {
@@ -1171,6 +1177,7 @@ plugin_query(GError **error)
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
+		"extra-cb",     plugin_extra,
 		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
 		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
 		NULL
