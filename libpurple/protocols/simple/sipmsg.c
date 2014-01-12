@@ -114,6 +114,11 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 	tmp2 = sipmsg_find_header(msg, "Content-Length");
 	if (tmp2 != NULL)
 		msg->bodylen = strtol(tmp2, NULL, 10);
+	if (msg->bodylen < 0) {
+		purple_debug_warning("simple", "Invalid body length: %d",
+			msg->bodylen);
+		msg->bodylen = 0;
+	}
 
 	if(msg->response) {
 		tmp2 = sipmsg_find_header(msg, "CSeq");
