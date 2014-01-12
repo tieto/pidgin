@@ -410,6 +410,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_chat_got_event(gc, ev);
 			break;
 #endif
+		case GG_EVENT_DISCONNECT:
+			ggp_servconn_remote_disconnect(gc);
+			break;
 		default:
 			purple_debug_warning("gg",
 				"unsupported event type=%d\n", ev->type);
@@ -892,6 +895,11 @@ static void ggp_keepalive(PurpleConnection *gc)
 	}
 }
 
+static void ggp_action_multilogon(PurpleProtocolAction *action)
+{
+	ggp_multilogon_dialog(action->connection);
+}
+
 static void ggp_action_chpass(PurpleProtocolAction *action)
 {
 	ggp_account_chpass(action->connection);
@@ -919,6 +927,10 @@ static GList *ggp_get_actions(PurpleConnection *gc)
 
 	act = purple_protocol_action_new(_("Change password..."),
 		ggp_action_chpass);
+	m = g_list_append(m, act);
+
+	act = purple_protocol_action_new(_("Show other sessions"),
+		ggp_action_multilogon);
 	m = g_list_append(m, act);
 
 	act = purple_protocol_action_new(_("Show status only for buddies"),

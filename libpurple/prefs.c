@@ -51,6 +51,11 @@ struct purple_pref {
 	PurplePrefType type;
 	char *name;
 	union {
+		/* 'generic' is kind of ugly. We use it as an elegant way to refer to
+		   the value of this pref when calling callback functions. We could
+		   use 'boolean' or 'integer' or any other field... but it feels
+		   mildly cleaner to use a gpointer. Maybe it would be best to use a
+		   GValue? */
 		gpointer generic;
 		gboolean boolean;
 		int integer;
@@ -778,21 +783,6 @@ purple_prefs_trigger_callback(const char *name)
 		return;
 	}
 
-	do_callbacks(name, pref);
-}
-
-void
-purple_prefs_set_generic(const char *name, gpointer value)
-{
-	struct purple_pref *pref = find_pref(name);
-
-	if(!pref) {
-		purple_debug_error("prefs",
-				"purple_prefs_set_generic: Unknown pref %s\n", name);
-		return;
-	}
-
-	pref->value.generic = value;
 	do_callbacks(name, pref);
 }
 

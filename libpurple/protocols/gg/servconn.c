@@ -97,3 +97,10 @@ GSList * ggp_servconn_get_servers(void)
 	return ggp_list_copy_to_slist_deep(global_data.server_history,
 		(GCopyFunc)g_strdup, NULL);
 }
+
+void
+ggp_servconn_remote_disconnect(PurpleConnection *gc)
+{
+	purple_debug_info("gg", "Server remotely closes connection");
+	purple_account_disconnect(purple_connection_get_account(gc));
+}

@@ -268,7 +268,9 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 
 	tracker->read_outstanding--;
 
-	if (g_error_matches(error, PURPLE_KEYRING_ERROR,
+	if (error == NULL) {
+		/* no error */
+	} else if (g_error_matches(error, PURPLE_KEYRING_ERROR,
 		PURPLE_KEYRING_ERROR_NOPASSWORD)) {
 		if (purple_debug_is_verbose()) {
 			purple_debug_misc("keyring", "No password found while "
@@ -303,7 +305,7 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 		if (tracker->error != NULL)
 			g_error_free(tracker->error);
 		tracker->error = g_error_copy(error);
-	} else if (error != NULL) {
+	} else {
 		purple_debug_error("keyring", "Unknown error while changing "
 			"keyring for account %s: %s. Aborting changes.\n",
 			purple_keyring_print_account(account), error->message);

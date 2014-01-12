@@ -48,10 +48,6 @@
 #include <gst/gst.h>
 #endif
 
-#ifdef HAVE_LIBGADU
-#include <libgadu.h>
-#endif
-
 #include "gtk3compat.h"
 
 static GList *dialogwindows = NULL;
@@ -110,6 +106,7 @@ static const struct developer patch_writers[] = {
 	{"Jakub 'haakon' Adam",            NULL,                        NULL},
 	{"Krzysztof Klinikowski",          NULL,                        NULL},
 	{"Eion Robb",                      NULL,                        NULL},
+	{"Ankit Vani",                     NULL,                        NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -646,7 +643,7 @@ void pidgin_dialogs_buildinfo(void)
 #if defined(USE_INTERNAL_LIBGADU)
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Internal</dd>");
 #elif defined(HAVE_LIBGADU)
-	g_string_append_printf(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>%s</dd>", gg_libgadu_version());
+	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>External</dd>");
 #else
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Disabled</dd>");
 #endif

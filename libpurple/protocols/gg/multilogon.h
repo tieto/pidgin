@@ -41,6 +41,6 @@ void ggp_multilogon_cleanup(PurpleConnection *gc);
 void ggp_multilogon_info(PurpleConnection *gc,
 	struct gg_event_multilogon_info *msg);
 
-int ggp_multilogon_get_session_count(PurpleConnection *gc);
+void ggp_multilogon_dialog(PurpleConnection *gc);
 
 #endif /* _GGP_MULTILOGON_H */

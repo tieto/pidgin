@@ -55,6 +55,7 @@ C_SRC =	\
 	gg.c \
 	html.c \
 	image.c \
+	keymapper.c \
 	libgadu-events.c \
 	libgaduw.c \
 	message-prpl.c \

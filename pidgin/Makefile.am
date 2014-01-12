@@ -186,7 +186,6 @@ libpidgin_la_LIBADD = \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(X11_LIBS) \
-	$(GADU_LIBS) \
 	$(INTROSPECTION_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -216,7 +215,6 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
-	$(GADU_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
 
 -include $(INTROSPECTION_MAKEFILE)

@@ -2375,13 +2375,13 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 {
 	PurpleRequestUiOps *ops;
 
-	if (G_UNLIKELY(fields == NULL || ok_text == NULL || ok_cb == NULL ||
+	if (G_UNLIKELY(fields == NULL ||
+		((ok_text == NULL) != (ok_cb == NULL)) ||
 		cancel_text == NULL))
 	{
 		purple_request_cpar_unref(cpar);
 		g_warn_if_fail(fields != NULL);
-		g_warn_if_fail(ok_text != NULL);
-		g_warn_if_fail(ok_cb != NULL);
+		g_warn_if_fail((ok_text == NULL) != (ok_cb == NULL));
 		g_warn_if_fail(cancel_text != NULL);
 		g_return_val_if_reached(NULL);
 	}

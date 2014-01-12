@@ -38,5 +38,6 @@ void ggp_servconn_cleanup(void);
 
 void ggp_servconn_add_server(const gchar *server);
 GSList * ggp_servconn_get_servers(void);
+void ggp_servconn_remote_disconnect(PurpleConnection *gc);
 
 #endif /* _GGP_SERVCONN_H */

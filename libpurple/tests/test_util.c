@@ -326,7 +326,7 @@ START_TEST(test_markup_html_to_xhtml)
 
         /* The following tests document a behaviour that looks suspicious */
 
-        /* bug report http://developer.pidgin.im/ticket/13485 */
+        /* bug report https://developer.pidgin.im/ticket/13485 */
         purple_markup_html_to_xhtml("<!--COMMENT-->", &xhtml, &plaintext);
 	assert_string_equal_free("<!--COMMENT-->", xhtml);
 	assert_string_equal_free("COMMENT-->", plaintext);

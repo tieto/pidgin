@@ -826,7 +826,8 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_choice_new("gender", _("Gender"),
-		GINT_TO_POINTER(record->gender));
+		record ? GINT_TO_POINTER(record->gender) :
+			GGP_PUBDIR_GENDER_UNSPECIFIED);
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_choice_add(field, _("Male"),
 		GINT_TO_POINTER(GGP_PUBDIR_GENDER_MALE));

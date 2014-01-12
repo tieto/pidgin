@@ -8,7 +8,7 @@ PLATFORM=`uname -m`
 
 # configuration
 
-BONJOUR_GUID_PACKED="5CA28B3B1DEA7654999C464610C010EB 2EA34582882FE334694F0BCD7D8DE336"
+BONJOUR_SDK_DIR="/cygdrive/c/Program Files/Bonjour SDK"
 ACTIVEPERL_GUID_PACKED="BC98F31FB8440B94CB3674649419766C 547A2C684F806164DB756F228DAB5840 5E7EC16051106BB43818746C209BC8D7"
 PERL_DIR_FALLBACK="/cygdrive/c/Perl/bin"
 if [ "$PLATFORM" == "x86_64" ]; then
@@ -356,10 +356,12 @@ cat "$PIDGIN_BASE/share/ca-certs"/*.pem > "$WIN32DEV_STORE/cacert.pem"
 
 # checking for Bonjour SDK
 
-reg_get_install_path "$BONJOUR_GUID_PACKED"
-BONJOUR_SDK_DIR=$reg_ret
-
-if [ "$BONJOUR_SDK_DIR" == "" ]; then
+# User may choose Bonjour SDK installation during the setup process and it may
+# be read from registry using one of the following GUIDs:
+# 5CA28B3B1DEA7654999C464610C010EB 2EA34582882FE334694F0BCD7D8DE336.
+# Despite this fact, the SDK is installed into hardcoded directory anyway:
+# "C:\Program Files\Bonjour SDK" (for 32bit and 64bit the path is the same).
+if [ ! -d "$BONJOUR_SDK_DIR" ]; then
 	echo "Bonjour SDK for Windows v3.0/v2.0.4 is not installed, please do it."
 	echo "You can download this SDK from https://developer.apple.com/bonjour/"
 	echo "(Apple ID may be required)."

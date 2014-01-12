@@ -70,13 +70,12 @@ typedef struct
 								/*   proxy settings from global prefs.      */
 
 	/*
-	 * TODO: Supplementing the next two linked lists with hash tables
-	 * should help performance a lot when these lists are long.  This
-	 * matters quite a bit for protocols like MSN, where all your
-	 * buddies are added to your permit list.  Currently we have to
-	 * iterate through the entire list if we want to check if someone
-	 * is permitted or denied.  We should do this for 3.0.0.
-	 * Or maybe use a GTree.
+	 * TODO: Instead of linked lists for permit and deny, use a data
+	 * structure that allows fast lookups AND decent performance when
+	 * iterating through all items. Fast lookups should help performance
+	 * for protocols like MSN, where all your buddies exist in your permit
+	 * list therefore the permit list is large. Possibly GTree or
+	 * GHashTable.
 	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
