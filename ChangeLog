@@ -26,6 +26,9 @@ version 2.10.8:
 	  session.
 
 	Gadu-Gadu:
+	* Fix buffer overflow with remote code execution potential. Only
+	  triggerable by a Gadu-Gadu server or a man-in-the-middle.
+	  (discovered by Yves Younan, Sourcefire VRT) (CVE-2014-NNNN)
 	* Disabled buddy list import/export from/to server (it didn't work
 	  anymore). Buddy list synchronization will be implemented in 3.0.0.
 
@@ -35,6 +38,8 @@ version 2.10.8:
 	  Cyrus SASL support. (#15517)
 
 	MXit:
+	* Fix buffer overflow with remote code execution potential.
+	  (discovered by Sourcefire VRT) (CVE-2014-NNNN)
 	* Fix sporadic crashes that can happen after user is disconnected.
 	* Fix crash when attempting to add a contact via search results.
 	* Show error message if file transfer fails.
@@ -43,6 +48,10 @@ version 2.10.8:
 
 	SILC:
 	* Correctly set whiteboard dimensions in whiteboard sessions.
+
+	SIMPLE:
+	* Fix buffer overflow with remote code execution potential.
+	  (discovered by Sourcefire VRT) (CVE-2014-NNNN)
 
 	XMPP:
 	* Fix possible crash or other erratic behavior when selecting a very
