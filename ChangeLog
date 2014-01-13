@@ -69,6 +69,10 @@ version 2.10.8:
 	  (Discovered by Sourcefire VRT) (CVE-2014-NNNN)
 
 	XMPP:
+	* Prevent spoofing of iq replies by verifying that the 'from' address
+	  matches the 'to' address of the iq request. (Discovered by Fabian
+	  Yamaguchi and Christian Wressnegger of the University of Goettingen)
+	  (CVE-2014-NNNN)
 	* Fix possible crash or other erratic behavior when selecting a very
 	  small file for your own buddy icon.
 	* Fix crash if the user tries to initiate a voice/video session with a
