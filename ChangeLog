@@ -14,6 +14,8 @@ version 2.10.8:
 	* Fix handling of SSL certificates without subjects when using libnss.
 	* Fix handling of SSL certificates with timestamps in the distant future
 	  when using libnss. (#15586)
+	* Fix potential crash if libpurple gets an error attempting to read a
+	  reply from a STUN server.
 	* Impose maximum download size for all HTTP fetches.
 
 	Pidgin:
