@@ -1433,6 +1433,7 @@ pidgin_notify_uri(const char *uri)
 			purple_notify_error(NULL, NULL, _("Unable to open URL"),
 				_("The 'Manual' browser command has been "
 				"chosen, but no command has been set."));
+			g_free(uri_escaped);
 			return NULL;
 		}
 
@@ -1443,6 +1444,7 @@ pidgin_notify_uri(const char *uri)
 				"the 'Manual' browser command seems invalid."),
 				error ? error->message : NULL);
 			g_error_free(error);
+			g_free(uri_escaped);
 			return NULL;
 		}
 
