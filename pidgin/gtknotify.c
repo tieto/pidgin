@@ -1474,8 +1474,7 @@ pidgin_notify_uri(const char *uri)
 	} else
 		uri_command(argv, FALSE);
 
-	if (usercmd_argv != NULL)
-		g_strfreev(usercmd_argv);
+	g_strfreev(usercmd_argv);
 	g_free(uri_escaped);
 	g_free(uri_custom);
 	g_slist_free(argv);
