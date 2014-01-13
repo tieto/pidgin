@@ -49,6 +49,15 @@ version 2.10.8:
 	  Cyrus SASL support. (#15517)
 
 	MSN:
+	* Fix NULL pointer dereference parsing headers in MSN.
+	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
+	  University of Goettingen) (CVE-2014-NNNN)
+	* Fix NULL pointer dereference parsing OIM data in MSN.
+	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
+	  University of Goettingen) (CVE-2014-NNNN)
+	* Fix NULL pointer dereference parsing SOAP data in MSN.
+	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
+	  University of Goettingen) (CVE-2014-NNNN)
 	* Fix possible crash when sending very long messages. Not
 	  remotely-triggerable. (Discovered by Matt Jones, Volvent)
 
