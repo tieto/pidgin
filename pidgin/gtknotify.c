@@ -1280,9 +1280,17 @@ pidgin_notify_uri(const char *uri)
 #ifndef _WIN32
 	const char *web_browser;
 	int place;
-	gchar *uri_custom = NULL;
+	gchar *uri_escaped, *uri_custom = NULL;
 	GSList *argv = NULL, *argv_remote = NULL;
 	gchar **usercmd_argv = NULL;
+
+	/* Replace some special characters like $ with their percent-encoded
+	   value. This shouldn't be necessary because we shell-escape the entire
+	   arg before exec'ing the browser, however, we had a report that a URL
+	   containing $(xterm) was causing xterm to start on his system. This is
+	   obviously a bug on his system, but it's pretty easy for us to protect
+	   against it. */
+	uri_escaped = g_uri_escape_string(uri, ":;/%#,+?=&@", FALSE);
 
 	web_browser = purple_prefs_get_string(PIDGIN_PREFS_ROOT
 		"/browsers/browser");
@@ -1296,10 +1304,10 @@ pidgin_notify_uri(const char *uri)
 		else
 			argv = g_slist_append(argv, "xdg-open");
 		g_free(tmp);
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (purple_running_osx() == TRUE) {
 		argv = g_slist_append(argv, "open");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "epiphany") ||
 		!strcmp(web_browser, "galeon"))
 	{
@@ -1310,17 +1318,17 @@ pidgin_notify_uri(const char *uri)
 		else if (place == PIDGIN_BROWSER_NEW_TAB)
 			argv = g_slist_append(argv, "-n");
 
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "xdg-open")) {
 		argv = g_slist_append(argv, "xdg-open");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "gnome-open")) {
 		argv = g_slist_append(argv, "gnome-open");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "kfmclient")) {
 		argv = g_slist_append(argv, "kfmclient");
 		argv = g_slist_append(argv, "openURL");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 		/*
 		 * Does Konqueror have options to open in new tab
 		 * and/or current window?
@@ -1331,15 +1339,18 @@ pidgin_notify_uri(const char *uri)
 		!strcmp(web_browser, "seamonkey"))
 	{
 		argv = g_slist_append(argv, (gpointer)web_browser);
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 
 		g_assert(uri_custom == NULL);
 		if (place == PIDGIN_BROWSER_NEW_WINDOW) {
-			uri_custom = g_strdup_printf("openURL(%s,new-window)", uri);
+			uri_custom = g_strdup_printf("openURL(%s,new-window)",
+				uri_escaped);
 		} else if (place == PIDGIN_BROWSER_NEW_TAB) {
-			uri_custom = g_strdup_printf("openURL(%s,new-tab)", uri);
+			uri_custom = g_strdup_printf("openURL(%s,new-tab)",
+				uri_escaped);
 		} else if (place == PIDGIN_BROWSER_CURRENT) {
-			uri_custom = g_strdup_printf("openURL(%s)", uri);
+			uri_custom = g_strdup_printf("openURL(%s)",
+				uri_escaped);
 		}
 
 		if (uri_custom != NULL) {
@@ -1365,12 +1376,14 @@ pidgin_notify_uri(const char *uri)
 		}
 	} else if (!strcmp(web_browser, "netscape")) {
 		argv = g_slist_append(argv, "netscape");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 
 		if (place == PIDGIN_BROWSER_NEW_WINDOW) {
-			uri_custom = g_strdup_printf("openURL(%s,new-window)", uri);
+			uri_custom = g_strdup_printf("openURL(%s,new-window)",
+				uri_escaped);
 		} else if (place == PIDGIN_BROWSER_CURRENT) {
-			uri_custom = g_strdup_printf("openURL(%s)", uri);
+			uri_custom = g_strdup_printf("openURL(%s)",
+				uri_escaped);
 		}
 
 		if (uri_custom) {
@@ -1391,28 +1404,28 @@ pidgin_notify_uri(const char *uri)
 		 * if there is no Opera instance running.
 		 */
 
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "google-chrome")) {
 		/* Google Chrome doesn't have command-line arguments that
 		 * control the opening of links from external calls. This is
 		 * controlled solely from a preference within Google Chrome.
 		 */
 		argv = g_slist_append(argv, "google-chrome");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "chrome")) {
 		/* Chromium doesn't have command-line arguments that control
 		 * the opening of links from external calls. This is controlled
 		 * solely from a preference within Chromium.
 		 */
 		argv = g_slist_append(argv, "chrome");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "chromium-browser")) {
 		/* Chromium doesn't have command-line arguments that control the
 		 * opening of links from external calls. This is controlled
 		 * solely from a preference within Chromium.
 		 */
 		argv = g_slist_append(argv, "chromium-browser");
-		argv = g_slist_append(argv, (gpointer)uri);
+		argv = g_slist_append(argv, uri_escaped);
 	} else if (!strcmp(web_browser, "custom")) {
 		GError *error = NULL;
 		const char *usercmd_command;
@@ -1426,6 +1439,7 @@ pidgin_notify_uri(const char *uri)
 			purple_notify_error(NULL, NULL, _("Unable to open URL"),
 				_("The 'Manual' browser command has been "
 				"chosen, but no command has been set."));
+			g_free(uri_escaped);
 			return NULL;
 		}
 
@@ -1436,6 +1450,7 @@ pidgin_notify_uri(const char *uri)
 				"the 'Manual' browser command seems invalid."),
 				error ? error->message : NULL);
 			g_error_free(error);
+			g_free(uri_escaped);
 			return NULL;
 		}
 
@@ -1447,7 +1462,8 @@ pidgin_notify_uri(const char *uri)
 				continue;
 			}
 
-			uri_custom = purple_strreplace(cmd_part, "%s", uri);
+			uri_custom = purple_strreplace(cmd_part, "%s",
+				uri_escaped);
 			argv = g_slist_append(argv, uri_custom);
 			uri_added = TRUE;
 		}
@@ -1456,7 +1472,7 @@ pidgin_notify_uri(const char *uri)
 		 * wanted the URL tacked on to the end of the command.
 		 */
 		if (!uri_added)
-			argv = g_slist_append(argv, (gpointer)uri);
+			argv = g_slist_append(argv, uri_escaped);
 	}
 
 	if (argv_remote != NULL) {
@@ -1467,12 +1483,13 @@ pidgin_notify_uri(const char *uri)
 		uri_command(argv, FALSE);
 
 	g_strfreev(usercmd_argv);
+	g_free(uri_escaped);
 	g_free(uri_custom);
 	g_slist_free(argv);
 	g_slist_free(argv_remote);
 
 #else /* !_WIN32 */
-	winpidgin_notify_uri(uri);
+	winpidgin_notify_uri(uri_escaped);
 #endif /* !_WIN32 */
 
 	return NULL;
