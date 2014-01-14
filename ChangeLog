@@ -97,6 +97,10 @@ version 2.10.8:
 	  a subsequent mechanism would otherwise work when using Cyrus SASL.
 	  (#15524)
 
+	Yahoo!:
+	* Fix a bug reading a peer to peer message where a remote user could
+	  trigger a crash. (CVE-2014-NNNN)
+
 	Plugins:
 	* Fix crash in contact availability plugin.
 	* Fix perl function Purple::Network::ip_atoi
