@@ -27,6 +27,8 @@ version 2.10.8:
 	* When clicking file:// links, show the file in Explorer rather than
 	  attempting to run the file. This reduces the chances of a user
 	  clicking on a link and mistakenly running a malicious file.
+	  (Originally discovered by James Burton, Insomnia Security. Rediscovered
+	  by Yves Younan of Sourcefire VRT.) (CVE-NNNN-NNNN)
 	* Fix Tcl scripts. (#15520)
 	* Fix crash-on-startup when ASLR is always on. (#15521)
 	* Updates to dependencies:
@@ -42,7 +44,8 @@ version 2.10.8:
 	Gadu-Gadu:
 	* Fix buffer overflow with remote code execution potential. Only
 	  triggerable by a Gadu-Gadu server or a man-in-the-middle.
-	  (Discovered by Yves Younan, Sourcefire VRT) (CVE-2014-NNNN)
+	  (Discovered by Yves Younan and Ryan Pentney of Sourcefire VRT)
+	  (CVE-2014-NNNN)
 	* Disabled buddy list import/export from/to server (it didn't work
 	  anymore). Buddy list synchronization will be implemented in 3.0.0.
 
@@ -66,7 +69,8 @@ version 2.10.8:
 
 	MXit:
 	* Fix buffer overflow with remote code execution potential.
-	  (Discovered by Sourcefire VRT) (CVE-2014-NNNN)
+	  (Discovered by Yves Younan and Pawel Janic of Sourcefire VRT)
+	  (CVE-2014-NNNN)
 	* Fix sporadic crashes that can happen after user is disconnected.
 	* Fix crash when attempting to add a contact via search results.
 	* Show error message if file transfer fails.
@@ -78,7 +82,7 @@ version 2.10.8:
 
 	SIMPLE:
 	* Fix buffer overflow with remote code execution potential.
-	  (Discovered by Sourcefire VRT) (CVE-2014-NNNN)
+	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2014-NNNN)
 
 	XMPP:
 	* Prevent spoofing of iq replies by verifying that the 'from' address
