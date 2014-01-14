@@ -7,6 +7,7 @@ CERTIFICATES = \
 		Deutsche_Telekom_Root_CA_2.pem \
 		DigiCertHighAssuranceEVRootCA.pem \
 		Entrust.net_Secure_Server_CA.pem \
+		Entrust.net_2048.pem \
 		Equifax_Secure_CA.pem \
 		Equifax_Secure_Global_eBusiness_CA-1.pem \
 		Go_Daddy_Class_2_CA.pem \
