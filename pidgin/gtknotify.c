@@ -1280,11 +1280,9 @@ pidgin_notify_uri(const char *uri)
 #ifndef _WIN32
 	const char *web_browser;
 	int place;
-	gchar *uri_escaped, *uri_custom = NULL;
+	gchar *uri_custom = NULL;
 	GSList *argv = NULL, *argv_remote = NULL;
 	gchar **usercmd_argv = NULL;
-
-	uri_escaped = g_uri_escape_string(uri, ":/%#,+", FALSE);
 
 	web_browser = purple_prefs_get_string(PIDGIN_PREFS_ROOT
 		"/browsers/browser");
@@ -1298,7 +1296,7 @@ pidgin_notify_uri(const char *uri)
 		else
 			argv = g_slist_append(argv, "xdg-open");
 		g_free(tmp);
-		argv = g_slist_append(argv, uri_escaped);
+		argv = g_slist_append(argv, (gpointer)uri);
 	} else if (purple_running_osx() == TRUE) {
 		argv = g_slist_append(argv, "open");
 		argv = g_slist_append(argv, (gpointer)uri);
@@ -1315,10 +1313,10 @@ pidgin_notify_uri(const char *uri)
 		argv = g_slist_append(argv, (gpointer)uri);
 	} else if (!strcmp(web_browser, "xdg-open")) {
 		argv = g_slist_append(argv, "xdg-open");
-		argv = g_slist_append(argv, uri_escaped);
+		argv = g_slist_append(argv, (gpointer)uri);
 	} else if (!strcmp(web_browser, "gnome-open")) {
 		argv = g_slist_append(argv, "gnome-open");
-		argv = g_slist_append(argv, uri_escaped);
+		argv = g_slist_append(argv, (gpointer)uri);
 	} else if (!strcmp(web_browser, "kfmclient")) {
 		argv = g_slist_append(argv, "kfmclient");
 		argv = g_slist_append(argv, "openURL");
@@ -1333,18 +1331,15 @@ pidgin_notify_uri(const char *uri)
 		!strcmp(web_browser, "seamonkey"))
 	{
 		argv = g_slist_append(argv, (gpointer)web_browser);
-		argv = g_slist_append(argv, uri_escaped);
+		argv = g_slist_append(argv, (gpointer)uri);
 
 		g_assert(uri_custom == NULL);
 		if (place == PIDGIN_BROWSER_NEW_WINDOW) {
-			uri_custom = g_strdup_printf("openURL(%s,new-window)",
-				uri_escaped);
+			uri_custom = g_strdup_printf("openURL(%s,new-window)", uri);
 		} else if (place == PIDGIN_BROWSER_NEW_TAB) {
-			uri_custom = g_strdup_printf("openURL(%s,new-tab)",
-				uri_escaped);
+			uri_custom = g_strdup_printf("openURL(%s,new-tab)", uri);
 		} else if (place == PIDGIN_BROWSER_CURRENT) {
-			uri_custom = g_strdup_printf("openURL(%s)",
-				uri_escaped);
+			uri_custom = g_strdup_printf("openURL(%s)", uri);
 		}
 
 		if (uri_custom != NULL) {
@@ -1373,11 +1368,9 @@ pidgin_notify_uri(const char *uri)
 		argv = g_slist_append(argv, (gpointer)uri);
 
 		if (place == PIDGIN_BROWSER_NEW_WINDOW) {
-			uri_custom = g_strdup_printf("openURL(%s,new-window)",
-				uri_escaped);
+			uri_custom = g_strdup_printf("openURL(%s,new-window)", uri);
 		} else if (place == PIDGIN_BROWSER_CURRENT) {
-			uri_custom = g_strdup_printf("openURL(%s)",
-				uri_escaped);
+			uri_custom = g_strdup_printf("openURL(%s)", uri);
 		}
 
 		if (uri_custom) {
@@ -1433,7 +1426,6 @@ pidgin_notify_uri(const char *uri)
 			purple_notify_error(NULL, NULL, _("Unable to open URL"),
 				_("The 'Manual' browser command has been "
 				"chosen, but no command has been set."));
-			g_free(uri_escaped);
 			return NULL;
 		}
 
@@ -1444,7 +1436,6 @@ pidgin_notify_uri(const char *uri)
 				"the 'Manual' browser command seems invalid."),
 				error ? error->message : NULL);
 			g_error_free(error);
-			g_free(uri_escaped);
 			return NULL;
 		}
 
@@ -1456,8 +1447,7 @@ pidgin_notify_uri(const char *uri)
 				continue;
 			}
 
-			uri_custom = purple_strreplace(cmd_part, "%s",
-				uri_escaped);
+			uri_custom = purple_strreplace(cmd_part, "%s", uri);
 			argv = g_slist_append(argv, uri_custom);
 			uri_added = TRUE;
 		}
@@ -1466,7 +1456,7 @@ pidgin_notify_uri(const char *uri)
 		 * wanted the URL tacked on to the end of the command.
 		 */
 		if (!uri_added)
-			argv = g_slist_append(argv, uri_escaped);
+			argv = g_slist_append(argv, (gpointer)uri);
 	}
 
 	if (argv_remote != NULL) {
@@ -1477,7 +1467,6 @@ pidgin_notify_uri(const char *uri)
 		uri_command(argv, FALSE);
 
 	g_strfreev(usercmd_argv);
-	g_free(uri_escaped);
 	g_free(uri_custom);
 	g_slist_free(argv);
 	g_slist_free(argv_remote);
