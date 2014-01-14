@@ -514,7 +514,13 @@ gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
-	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
+	/* We set the text in a separate function call so we can specify a
+	   max length.  This is important so the tooltip isn't too wide for
+	   the screen, and also because some X library function exits the
+	   process when it can't allocate enough memory for a super wide
+	   tooltip. */
+	layout = gtk_widget_create_pango_layout(imhtml->tip_window, NULL);
+	pango_layout_set_text(layout, imhtml->tip, 200);
 
 	gtk_paint_flat_box (imhtml->tip_window->style, imhtml->tip_window->window,
 						GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL, imhtml->tip_window,
@@ -561,7 +567,15 @@ gtk_imhtml_tip (gpointer data)
 							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
 
 	gtk_widget_ensure_style (imhtml->tip_window);
-	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
+
+	/* We set the text in a separate function call so we can specify a
+	   max length.  This is important so the tooltip isn't too wide for
+	   the screen, and also because some X library function exits the
+	   process when it can't allocate enough memory for a super wide
+	   tooltip. */
+	layout = gtk_widget_create_pango_layout(imhtml->tip_window, NULL);
+	pango_layout_set_text(layout, imhtml->tip, 200);
+
 	font = pango_context_load_font(pango_layout_get_context(layout),
 			      imhtml->tip_window->style->font_desc);
 

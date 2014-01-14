@@ -22,6 +22,7 @@ version 2.10.8:
 	* Impose maximum download size for all HTTP fetches.
 
 	Pidgin:
+	* Fix crash displaying tooltip of long URLs. (CVE-2014-NNNN)
 	* Better handling of URLs longer than 1000 letters.
 	* Fix handling of multibyte UTF-8 characters in smiley themes. (#15756)
 
