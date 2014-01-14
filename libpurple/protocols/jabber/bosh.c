@@ -783,7 +783,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 			conn->body_len = len;
 		}
 
-		if (connection && (!end_of_headers || content_length < end_of_headers)) {
+		if (connection && (!end_of_headers || connection < end_of_headers)) {
 			const char *tmp;
 			if (strstr(connection, "\r\n") == NULL)
 				return;
