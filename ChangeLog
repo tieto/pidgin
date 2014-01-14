@@ -9,6 +9,8 @@ version 2.10.8:
 	* Fix potential crash if libpurple gets an error attempting to read a
 	  reply from a STUN server. (Discovered by Coverity static analysis)
 	  (CVE-2014-NNNN)
+	* Fix potential crash parsing a malformed HTTP response. (Discovered by
+	  Jacob Appelbaum of the Tor Project) (CVE-2014-NNNN)
 	* Fix buffer overflow when parsing a malformed HTTP response with
 	  chunked Transfer-Encoding. (Discovered by Matt Jones, Volvent)
 	  (CVE-2014-NNNN)
