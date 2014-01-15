@@ -1988,7 +1988,7 @@ update_typing_deleting(PidginConversation *gtkconv)
 {
 	gchar *text;
 
-	g_return_val_if_fail(gtkconv != NULL, FALSE);
+	g_return_if_fail(gtkconv != NULL);
 
 	text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
 
@@ -9842,6 +9842,9 @@ notebook_remove_tab_from_menu_cb(GtkNotebook *notebook, GtkWidget *child,
                                  guint page_num, PidginWindow *win)
 {
 	GtkWidget *item;
+
+	/* Disconnecting the "child-notify::menu-label" signal. */
+	g_signal_handlers_disconnect_by_data(child, notebook);
 
 	item = g_object_get_data(G_OBJECT(child), "popup-menu-item");
 	gtk_container_remove(GTK_CONTAINER(win->notebook_menu), item);
