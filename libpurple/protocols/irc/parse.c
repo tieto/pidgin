@@ -72,8 +72,8 @@ static struct _irc_msg {
 	{ "322", "ncv:", -1, irc_msg_list },		/* List.			*/
 	{ "323", ":", -1, irc_msg_list },		/* End of list.			*/
 	{ "324", "ncv:", -1, irc_msg_chanmode },	/* Channel modes		*/
-	{ "331", "nc:", -1,	irc_msg_topic },	/* No channel topic		*/
-	{ "332", "nc:", -1, irc_msg_topic },		/* Channel topic		*/
+	{ "331", "nc:", 3, irc_msg_topic },		/* No channel topic		*/
+	{ "332", "nc:", 3, irc_msg_topic },		/* Channel topic		*/
 	{ "333", "ncvv", -1, irc_msg_topicinfo },	/* Topic setter stuff		*/
 	{ "352", "ncvvvnv:", -1, irc_msg_who },		/* Channel WHO			*/
 	{ "353", "nvc:", -1, irc_msg_names },		/* Names list			*/
@@ -104,26 +104,26 @@ static struct _irc_msg {
 	{ "506", "nc:", -1, irc_msg_nosend },		/* Must identify to send	*/
 	{ "515", "nc:", -1, irc_msg_regonly },		/* Registration required	*/
 #ifdef HAVE_CYRUS_SASL
-	{ "903", "*", -1, irc_msg_authok},		/* SASL auth successful		*/
-	{ "904", "*", -1, irc_msg_authtryagain },	/* SASL auth failed, can recover*/
-	{ "905", "*", -1, irc_msg_authfail },		/* SASL auth failed		*/
-	{ "906", "*", -1, irc_msg_authfail },		/* SASL auth failed		*/
-	{ "907", "*", -1, irc_msg_authfail },		/* SASL auth failed		*/
-	{ "cap", "vv:", -1, irc_msg_cap },		/* SASL capable			*/
+	{ "903", "*", 0, irc_msg_authok},		/* SASL auth successful		*/
+	{ "904", "*", 0, irc_msg_authtryagain },	/* SASL auth failed, can recover*/
+	{ "905", "*", 0, irc_msg_authfail },		/* SASL auth failed		*/
+	{ "906", "*", 0, irc_msg_authfail },		/* SASL auth failed		*/
+	{ "907", "*", 0, irc_msg_authfail },		/* SASL auth failed		*/
+	{ "cap", "vv:", 3, irc_msg_cap },		/* SASL capable			*/
 #endif
-	{ "invite", "n:", -1, irc_msg_invite },		/* Invited			*/
-	{ "join", ":", -1, irc_msg_join },		/* Joined a channel		*/
+	{ "invite", "n:", 2, irc_msg_invite },		/* Invited			*/
+	{ "join", ":", 1, irc_msg_join },		/* Joined a channel		*/
 	{ "kick", "cn:", -1, irc_msg_kick },		/* KICK				*/
-	{ "mode", "tv:", -1, irc_msg_mode },		/* MODE for channel		*/
+	{ "mode", "tv:", 2, irc_msg_mode },		/* MODE for channel		*/
 	{ "nick", ":", -1, irc_msg_nick },		/* Nick change			*/
-	{ "notice", "t:", -1, irc_msg_notice },		/* NOTICE recv			*/
-	{ "part", "c:", -1, irc_msg_part },		/* Parted a channel		*/
-	{ "ping", ":", -1, irc_msg_ping },		/* Received PING from server	*/
-	{ "pong", "v:", -1, irc_msg_pong },		/* Received PONG from server	*/
-	{ "privmsg", "t:", -1, irc_msg_privmsg },	/* Received private message	*/
-	{ "topic", "c:", -1, irc_msg_topic },		/* TOPIC command		*/
-	{ "quit", ":", -1, irc_msg_quit },		/* QUIT notice			*/
-	{ "wallops", ":", -1, irc_msg_wallops },	/* WALLOPS command		*/
+	{ "notice", "t:", 2, irc_msg_notice },		/* NOTICE recv			*/
+	{ "part", "c:", 1, irc_msg_part },		/* Parted a channel		*/
+	{ "ping", ":", 1, irc_msg_ping },		/* Received PING from server	*/
+	{ "pong", "v:", 2, irc_msg_pong },		/* Received PONG from server	*/
+	{ "privmsg", "t:", 2, irc_msg_privmsg },	/* Received private message	*/
+	{ "topic", "c:", 2, irc_msg_topic },		/* TOPIC command		*/
+	{ "quit", ":", 1, irc_msg_quit },		/* QUIT notice			*/
+	{ "wallops", ":", 1, irc_msg_wallops },		/* WALLOPS command		*/
 	{ NULL, NULL, 0, NULL }
 };
 

@@ -595,13 +595,13 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	PurpleConversation *convo;
 
 	if (!strcmp(name, "topic")) {
-		if (!args[0] || !args[1])
-			return;
+		g_return_if_fail(args[0]);
+		g_return_if_fail(args[1]);
 		chan = args[0];
 		topic = irc_mirc2txt (args[1]);
 	} else {
-		if (!args[0] || !args[1] || !args[2])
-			return;
+		g_return_if_fail(args[1]);
+		g_return_if_fail(args[2]);
 		chan = args[1];
 		topic = irc_mirc2txt (args[2]);
 	}
@@ -908,8 +908,7 @@ void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, ch
 	GHashTable *components;
 	gchar *nick;
 
-	if (!args || !args[1] || !gc)
-		return;
+	g_return_if_fail(gc);
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	nick = irc_mask_nick(from);
@@ -982,14 +981,13 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	PurpleConvChat *chat;
 	PurpleConvChatBuddy *cb;
 
-	char *nick = irc_mask_nick(from), *userhost, *buf;
+	char *nick, *userhost, *buf;
 	struct irc_buddy *ib;
 	static int id = 1;
 
-	if (!gc) {
-		g_free(nick);
-		return;
-	}
+	g_return_if_fail(gc);
+
+	nick = irc_mask_nick(from);
 
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
 		/* We are joining a channel for the first time */
@@ -1049,12 +1047,11 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	PurpleConversation *convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[0], irc->account);
-	char *nick = irc_mask_nick(from), *buf;
+	char *nick, *buf;
 
-	if (!gc) {
-		g_free(nick);
-		return;
-	}
+	g_return_if_fail(gc);
+
+	nick = irc_mask_nick(from);
 
 	if (!convo) {
 		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Received a KICK for unknown channel %s\n", args[0]);
@@ -1238,9 +1235,6 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 
 void irc_msg_notice(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	if (!args || !args[0] || !args[1])
-		return;
-
 	irc_msg_handle_privmsg(irc, name, from, args[0], args[1], TRUE);
 }
 
@@ -1260,8 +1254,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	PurpleConversation *convo;
 	char *nick, *msg, *channel;
 
-	if (!args || !args[0] || !gc)
-		return;
+	g_return_if_fail(gc);
 
 	/* Undernet likes to :-quote the channel name, for no good reason
 	 * that I can see.  This catches that. */
@@ -1294,8 +1287,6 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_ping(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	char *buf;
-	if (!args || !args[0])
-		return;
 
 	buf = irc_format(irc, "v:", "PONG", args[0]);
 	irc_send(irc, buf);
@@ -1308,9 +1299,6 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 	PurpleConnection *gc;
 	char **parts, *msg;
 	time_t oldstamp;
-
-	if (!args || !args[1])
-		return;
 
 	parts = g_strsplit(args[1], " ", 2);
 
@@ -1345,9 +1333,6 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 
 void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	if (!args || !args[0] || !args[1])
-		return;
-
 	irc_msg_handle_privmsg(irc, name, from, args[0], args[1], FALSE);
 }
 
@@ -1424,9 +1409,6 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	struct irc_buddy *ib;
 	char *data[2];
 
-	if (!args || !args[0] || !gc)
-		return;
-
 	data[0] = irc_mask_nick(from);
 	data[1] = args[0];
 	/* XXX this should have an API, I shouldn't grab this directly */
@@ -1455,9 +1437,6 @@ void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, c
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	char *nick, *msg;
-
-	if (!args || !args[0] || !gc)
-		return;
 
 	nick = irc_mask_nick(from);
 	msg = g_strdup_printf (_("Wallops from %s"), nick);
@@ -1633,7 +1612,7 @@ irc_msg_cap(struct irc_conn *irc, const char *name, const char *from, char **arg
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	const char *mech_list = NULL;
 
-	if (!args[1] || !args[2] || strncmp(args[2], "sasl ", 6))
+	if (strncmp(args[2], "sasl ", 6))
 		return;
 	if (strncmp(args[1], "ACK", 4)) {
 		const char *tmp = _("SASL authentication failed: Server does not support SASL authentication.");
