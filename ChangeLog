@@ -8,12 +8,12 @@ version 2.10.8:
 	libpurple:
 	* Fix potential crash if libpurple gets an error attempting to read a
 	  reply from a STUN server. (Discovered by Coverity static analysis)
-	  (CVE-2014-NNNN)
+	  (CVE-2013-6484)
 	* Fix potential crash parsing a malformed HTTP response. (Discovered by
-	  Jacob Appelbaum of the Tor Project) (CVE-2014-NNNN)
+	  Jacob Appelbaum of the Tor Project) (CVE-2013-6479)
 	* Fix buffer overflow when parsing a malformed HTTP response with
 	  chunked Transfer-Encoding. (Discovered by Matt Jones, Volvent)
-	  (CVE-2014-NNNN)
+	  (CVE-2013-6485)
 	* Better handling of HTTP proxy responses with negative Content-Lengths.
 	  (Discovered by Matt Jones, Volvent)
 	* Fix handling of SSL certificates without subjects when using libnss.
@@ -22,7 +22,7 @@ version 2.10.8:
 	* Impose maximum download size for all HTTP fetches.
 
 	Pidgin:
-	* Fix crash displaying tooltip of long URLs. (CVE-2014-NNNN)
+	* Fix crash displaying tooltip of long URLs. (CVE-2013-6478)
 	* Better handling of URLs longer than 1000 letters.
 	* Fix handling of multibyte UTF-8 characters in smiley themes. (#15756)
 
@@ -31,7 +31,7 @@ version 2.10.8:
 	  attempting to run the file. This reduces the chances of a user
 	  clicking on a link and mistakenly running a malicious file.
 	  (Originally discovered by James Burton, Insomnia Security. Rediscovered
-	  by Yves Younan of Sourcefire VRT.) (CVE-NNNN-NNNN)
+	  by Yves Younan of Sourcefire VRT.) (CVE-2013-6486)
 	* Fix Tcl scripts. (#15520)
 	* Fix crash-on-startup when ASLR is always on. (#15521)
 	* Updates to dependencies:
@@ -48,7 +48,7 @@ version 2.10.8:
 	* Fix buffer overflow with remote code execution potential. Only
 	  triggerable by a Gadu-Gadu server or a man-in-the-middle.
 	  (Discovered by Yves Younan and Ryan Pentney of Sourcefire VRT)
-	  (CVE-2014-NNNN)
+	  (CVE-2013-6487)
 	* Disabled buddy list import/export from/to server (it didn't work
 	  anymore). Buddy list synchronization will be implemented in 3.0.0.
 
@@ -60,20 +60,20 @@ version 2.10.8:
 	MSN:
 	* Fix NULL pointer dereference parsing headers in MSN.
 	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
-	  University of Goettingen) (CVE-2014-NNNN)
+	  University of Goettingen) (CVE-2013-6482)
 	* Fix NULL pointer dereference parsing OIM data in MSN.
 	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
-	  University of Goettingen) (CVE-2014-NNNN)
+	  University of Goettingen) (CVE-2013-6482)
 	* Fix NULL pointer dereference parsing SOAP data in MSN.
 	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
-	  University of Goettingen) (CVE-2014-NNNN)
+	  University of Goettingen) (CVE-2013-6482)
 	* Fix possible crash when sending very long messages. Not
 	  remotely-triggerable. (Discovered by Matt Jones, Volvent)
 
 	MXit:
 	* Fix buffer overflow with remote code execution potential.
 	  (Discovered by Yves Younan and Pawel Janic of Sourcefire VRT)
-	  (CVE-2014-NNNN)
+	  (CVE-2013-6487)
 	* Fix sporadic crashes that can happen after user is disconnected.
 	* Fix crash when attempting to add a contact via search results.
 	* Show error message if file transfer fails.
@@ -85,13 +85,13 @@ version 2.10.8:
 
 	SIMPLE:
 	* Fix buffer overflow with remote code execution potential.
-	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2014-NNNN)
+	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2013-6487)
 
 	XMPP:
 	* Prevent spoofing of iq replies by verifying that the 'from' address
 	  matches the 'to' address of the iq request. (Discovered by Fabian
 	  Yamaguchi and Christian Wressnegger of the University of Goettingen)
-	  (CVE-2014-NNNN)
+	  (CVE-2013-6483)
 	* Fix possible crash or other erratic behavior when selecting a very
 	  small file for your own buddy icon.
 	* Fix crash if the user tries to initiate a voice/video session with a
@@ -102,7 +102,7 @@ version 2.10.8:
 
 	Yahoo!:
 	* Fix a bug reading a peer to peer message where a remote user could
-	  trigger a crash. (CVE-2014-NNNN)
+	  trigger a crash. (CVE-2013-6481)
 
 	Plugins:
 	* Fix crash in contact availability plugin.
