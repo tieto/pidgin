@@ -203,9 +203,6 @@ void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, 
 	gchar **features;
 	int i;
 
-	if (!args || !args[0] || !args[1])
-		return;
-
 	features = g_strsplit(args[1], " ", -1);
 	for (i = 0; features[i]; i++) {
 		char *val;
@@ -220,9 +217,6 @@ void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, 
 
 void irc_msg_luser(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	if (!args || !args[0])
-		return;
-
 	if (!strcmp(name, "251")) {
 		/* 251 is required, so we pluck our nick from here and
 		 * finalize connection */
@@ -237,9 +231,6 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc;
 	char *msg;
-
-	if (!args || !args[1])
-		return;
 
 	if (irc->whois.nick && !purple_utf8_strcasecmp(irc->whois.nick, args[1])) {
 		/* We're doing a whois, show this in the whois dialog */
@@ -266,17 +257,13 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 {
 	PurpleConversation *convo;
 
-	if (!args || !args[0] || !args[1])
-		return;
-
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 						      args[1], irc->account);
 
 	if (!strcmp(name, "367")) {
 		char *msg = NULL;
 		/* Ban list entry */
-		if (!args[2])
-			return;
+		g_return_if_fail(args[2]);
 		if (args[3] && args[4]) {
 			/* This is an extended syntax, not in RFC 1459 */
 			int t1 = atoi(args[4]);
@@ -339,9 +326,6 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 {
 	PurpleConversation *convo;
 	char *buf, *escaped;
-
-	if (!args || !args[1] || !args[2])
-		return;
 
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
 	if (!convo)	/* XXX punt on channels we are not in for now */
@@ -480,13 +464,6 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		PurpleConvChatBuddyFlags flags;
 		GList *keys = NULL, *values = NULL;
 
-		if (!args || !args[0] || !args[1] || !args[2] || !args[3]
-		    || !args[4] || !args[5] || !args[6] || !args[7]) {
-			purple_debug(PURPLE_DEBUG_ERROR, "irc",
-				     "Got a WHO response with not enough arguments\n");
-			return;
-		}
-
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
 		if (!conv) {
 			purple_debug(PURPLE_DEBUG_ERROR, "irc","Got a WHO response for %s, which doesn't exist\n", args[1]);
@@ -561,9 +538,6 @@ void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char
 	if (!strcmp(name, "322")) {
 		PurpleRoomlistRoom *room;
 		char *topic;
-
-		if (!args[0] || !args[1] || !args[2] || !args[3])
-			return;
 
 		if (!purple_roomlist_get_in_progress(irc->roomlist)) {
 			purple_debug_warning("irc", "Buggy server didn't send RPL_LISTSTART.\n");
@@ -643,9 +617,6 @@ void irc_msg_topicinfo(struct irc_conn *irc, const char *name, const char *from,
 	struct tm *tm;
 	time_t t;
 	char *msg, *timestamp, *datestamp;
-	
-	if (!args || !args[1] || !args[2] || !args[3])
-		return;
 
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
 	if (!convo) {
@@ -909,9 +880,6 @@ void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char
 	char **nicks;
 	struct irc_buddy *ib;
 	int i;
-
-	if (!args || !args[1])
-		return;
 
 	nicks = g_strsplit(args[1], " ", -1);
 	for (i = 0; nicks[i]; i++) {

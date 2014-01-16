@@ -50,36 +50,38 @@ extern PurplePlugin *_irc_plugin;
 static struct _irc_msg {
 	char *name;
 	char *format;
-	int req_cnt;
+	/* The required parameters count, based on values we use, not protocol
+	 * specification. */
+	int req_cnt; 
 	void (*cb)(struct irc_conn *irc, const char *name, const char *from, char **args);
 } _irc_msgs[] = {
-	{ "005", "n*", -1, irc_msg_features },		/* Feature list			*/
-	{ "251", "n:", -1, irc_msg_luser },		/* Client & Server count	*/
-	{ "255", "n:", -1, irc_msg_luser },		/* Client & Server count Mk. II	*/
-	{ "301", "nn:", -1, irc_msg_away },		/* User is away			*/
-	{ "303", "n:", -1, irc_msg_ison },		/* ISON reply			*/
-	{ "311", "nnvvv:", -1, irc_msg_whois },		/* Whois user			*/
-	{ "312", "nnv:", -1, irc_msg_whois },		/* Whois server			*/
-	{ "313", "nn:", -1, irc_msg_whois },		/* Whois ircop			*/
-	{ "317", "nnvv", -1, irc_msg_whois },		/* Whois idle			*/
-	{ "318", "nt:", -1, irc_msg_endwhois },		/* End of WHOIS			*/
-	{ "319", "nn:", -1, irc_msg_whois },		/* Whois channels		*/
-	{ "320", "nn:", -1, irc_msg_whois },		/* Whois (fn ident)		*/
-	{ "314", "nnnvv:", -1, irc_msg_whois },		/* Whowas user			*/
-	{ "315", "nt:", -1, irc_msg_who },		/* end of WHO channel		*/
-	{ "369", "nt:", -1, irc_msg_endwhois },		/* End of WHOWAS		*/
-	{ "321", "*", -1, irc_msg_list },		/* Start of list		*/
-	{ "322", "ncv:", -1, irc_msg_list },		/* List.			*/
-	{ "323", ":", -1, irc_msg_list },		/* End of list.			*/
-	{ "324", "ncv:", -1, irc_msg_chanmode },	/* Channel modes		*/
+	{ "005", "n*", 2, irc_msg_features },		/* Feature list			*/
+	{ "251", "n:", 1, irc_msg_luser },		/* Client & Server count	*/
+	{ "255", "n:", 1, irc_msg_luser },		/* Client & Server count Mk. II	*/
+	{ "301", "nn:", 3, irc_msg_away },		/* User is away			*/
+	{ "303", "n:", 2, irc_msg_ison },		/* ISON reply			*/
+	{ "311", "nnvvv:", 6, irc_msg_whois },		/* Whois user			*/
+	{ "312", "nnv:", 4, irc_msg_whois },		/* Whois server			*/
+	{ "313", "nn:", 2, irc_msg_whois },		/* Whois ircop			*/
+	{ "317", "nnvv", 4, irc_msg_whois },		/* Whois idle			*/
+	{ "318", "nt:", 2, irc_msg_endwhois },		/* End of WHOIS			*/
+	{ "319", "nn:", 3, irc_msg_whois },		/* Whois channels		*/
+	{ "320", "nn:", 2, irc_msg_whois },		/* Whois (fn ident)		*/
+	{ "314", "nnnvv:", 6, irc_msg_whois },		/* Whowas user			*/
+	{ "315", "nt:", 0, irc_msg_who },		/* end of WHO channel		*/
+	{ "369", "nt:", 2, irc_msg_endwhois },		/* End of WHOWAS		*/
+	{ "321", "*", 0, irc_msg_list },		/* Start of list		*/
+	{ "322", "ncv:", 4, irc_msg_list },		/* List.			*/
+	{ "323", ":", 0, irc_msg_list },		/* End of list.			*/
+	{ "324", "ncv:", 3, irc_msg_chanmode },		/* Channel modes		*/
 	{ "331", "nc:", 3, irc_msg_topic },		/* No channel topic		*/
 	{ "332", "nc:", 3, irc_msg_topic },		/* Channel topic		*/
-	{ "333", "ncvv", -1, irc_msg_topicinfo },	/* Topic setter stuff		*/
-	{ "352", "ncvvvnv:", -1, irc_msg_who },		/* Channel WHO			*/
-	{ "353", "nvc:", -1, irc_msg_names },		/* Names list			*/
-	{ "366", "nc:", -1, irc_msg_names },		/* End of names			*/
-	{ "367", "ncnnv", -1, irc_msg_ban },		/* Ban list			*/
-	{ "368", "nc:", -1, irc_msg_ban },		/* End of ban list		*/
+	{ "333", "ncvv", 4, irc_msg_topicinfo },	/* Topic setter stuff		*/
+	{ "352", "ncvvvnv:", 8, irc_msg_who },		/* Channel WHO			*/
+	{ "353", "nvc:", 4, irc_msg_names },		/* Names list			*/
+	{ "366", "nc:", 2, irc_msg_names },		/* End of names			*/
+	{ "367", "ncnnv", 3, irc_msg_ban },		/* Ban list			*/
+	{ "368", "nc:", 2, irc_msg_ban },		/* End of ban list		*/
 	{ "372", "n:", 1, irc_msg_motd },		/* MOTD				*/
 	{ "375", "n:", 1, irc_msg_motd },		/* Start MOTD			*/
 	{ "376", "n:", 1, irc_msg_motd },		/* End of MOTD			*/
