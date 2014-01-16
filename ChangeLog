@@ -51,6 +51,9 @@ version 2.10.8:
 	  (CVE-2013-6487)
 	* Disabled buddy list import/export from/to server (it didn't work
 	  anymore). Buddy list synchronization will be implemented in 3.0.0.
+	* Disabled new account registration and password change options, as it
+	  didn't work either. Account registration also caused a crash. Both
+	  functions are available using official Gadu-Gadu website.
 
 	IRC:
 	* Fix bug where initial IRC status would not be set correctly.
