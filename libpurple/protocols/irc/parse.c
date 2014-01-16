@@ -80,29 +80,29 @@ static struct _irc_msg {
 	{ "366", "nc:", -1, irc_msg_names },		/* End of names			*/
 	{ "367", "ncnnv", -1, irc_msg_ban },		/* Ban list			*/
 	{ "368", "nc:", -1, irc_msg_ban },		/* End of ban list		*/
-	{ "372", "n:", -1, irc_msg_motd },		/* MOTD				*/
-	{ "375", "n:", -1, irc_msg_motd },		/* Start MOTD			*/
-	{ "376", "n:", -1, irc_msg_motd },		/* End of MOTD			*/
-	{ "391", "nv:", -1, irc_msg_time },		/* Time reply			*/
-	{ "401", "nt:", -1, irc_msg_nonick },		/* No such nick/chan		*/
-	{ "406", "nt:", -1, irc_msg_nonick },		/* No such nick for WHOWAS	*/
-	{ "403", "nc:", -1, irc_msg_nochan },		/* No such channel		*/
-	{ "404", "nt:", -1, irc_msg_nosend },		/* Cannot send to chan		*/
-	{ "421", "nv:", -1, irc_msg_unknown },		/* Unknown command		*/
-	{ "422", "n:", -1, irc_msg_motd },		/* MOTD file missing		*/
-	{ "432", "vn:", -1, irc_msg_badnick },		/* Erroneous nickname		*/
-	{ "433", "vn:", -1, irc_msg_nickused },		/* Nickname already in use	*/
-	{ "437", "nc:", -1, irc_msg_unavailable },	/* Nick/channel is unavailable	*/
-	{ "438", "nn:", -1, irc_msg_nochangenick },	/* Nick may not change		*/
-	{ "442", "nc:", -1, irc_msg_notinchan },	/* Not in channel		*/
-	{ "473", "nc:", -1, irc_msg_inviteonly },	/* Tried to join invite-only	*/
-	{ "474", "nc:", -1, irc_msg_banned },		/* Banned from channel		*/
-	{ "477", "nc:", -1, irc_msg_regonly },		/* Registration Required	*/
-	{ "478", "nct:", -1, irc_msg_banfull },		/* Banlist is full		*/
-	{ "482", "nc:", -1, irc_msg_notop },		/* Need to be op to do that	*/
-	{ "501", "n:", -1, irc_msg_badmode },		/* Unknown mode flag		*/
-	{ "506", "nc:", -1, irc_msg_nosend },		/* Must identify to send	*/
-	{ "515", "nc:", -1, irc_msg_regonly },		/* Registration required	*/
+	{ "372", "n:", 1, irc_msg_motd },		/* MOTD				*/
+	{ "375", "n:", 1, irc_msg_motd },		/* Start MOTD			*/
+	{ "376", "n:", 1, irc_msg_motd },		/* End of MOTD			*/
+	{ "391", "nv:", 3, irc_msg_time },		/* Time reply			*/
+	{ "401", "nt:", 2, irc_msg_nonick },		/* No such nick/chan		*/
+	{ "406", "nt:", 2, irc_msg_nonick },		/* No such nick for WHOWAS	*/
+	{ "403", "nc:", 2, irc_msg_nochan },		/* No such channel		*/
+	{ "404", "nt:", 3, irc_msg_nosend },		/* Cannot send to chan		*/
+	{ "421", "nv:", 2, irc_msg_unknown },		/* Unknown command		*/
+	{ "422", "n:", 1, irc_msg_motd },		/* MOTD file missing		*/
+	{ "432", "vn:", 0, irc_msg_badnick },		/* Erroneous nickname		*/
+	{ "433", "vn:", 2, irc_msg_nickused },		/* Nickname already in use	*/
+	{ "437", "nc:", 2, irc_msg_unavailable },	/* Nick/channel is unavailable	*/
+	{ "438", "nn:", 3, irc_msg_nochangenick },	/* Nick may not change		*/
+	{ "442", "nc:", 3, irc_msg_notinchan },		/* Not in channel		*/
+	{ "473", "nc:", 2, irc_msg_inviteonly },	/* Tried to join invite-only	*/
+	{ "474", "nc:", 2, irc_msg_banned },		/* Banned from channel		*/
+	{ "477", "nc:", 3, irc_msg_regonly },		/* Registration Required	*/
+	{ "478", "nct:", 3, irc_msg_banfull },		/* Banlist is full		*/
+	{ "482", "nc:", 3, irc_msg_notop },		/* Need to be op to do that	*/
+	{ "501", "n:", 2, irc_msg_badmode },		/* Unknown mode flag		*/
+	{ "506", "nc:", 3, irc_msg_nosend },		/* Must identify to send	*/
+	{ "515", "nc:", 3, irc_msg_regonly },		/* Registration required	*/
 #ifdef HAVE_CYRUS_SASL
 	{ "903", "*", 0, irc_msg_authok},		/* SASL auth successful		*/
 	{ "904", "*", 0, irc_msg_authtryagain },	/* SASL auth failed, can recover*/
