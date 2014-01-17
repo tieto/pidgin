@@ -348,10 +348,10 @@ purple_plugin_is_internal(const PurplePlugin *plugin)
 GSList *
 purple_plugin_get_dependent_plugins(const PurplePlugin *plugin)
 {
-#ifdef PURPLE_PLUGINS
 #warning TODO: Implement this when GPlugin can return dependent plugins.
-	return NULL;
 
+#ifdef PURPLE_PLUGINS
+	return NULL;
 #else
 	return NULL;
 #endif
