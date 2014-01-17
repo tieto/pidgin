@@ -1150,14 +1150,6 @@ const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount 
  */
 void purple_account_clear_current_error(PurpleAccount *account);
 
-/**
- * Get an XML description of an account.
- *
- * @param account  The account
- * @return  The XML description of the account.
- */
-PurpleXmlNode *purple_account_to_xmlnode(PurpleAccount *account);
-
 /*@}*/
 
 G_END_DECLS

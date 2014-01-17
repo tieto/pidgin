@@ -2698,7 +2698,7 @@ ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 }
 
 PurpleXmlNode *
-purple_account_to_xmlnode(PurpleAccount *account)
+_purple_account_to_xmlnode(PurpleAccount *account)
 {
 	PurpleXmlNode *node, *child;
 	const char *tmp;

@@ -52,7 +52,7 @@ accounts_to_xmlnode(void)
 
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 	{
-		child = purple_account_to_xmlnode(cur->data);
+		child = _purple_account_to_xmlnode(cur->data);
 		purple_xmlnode_insert_child(node, child);
 	}
 

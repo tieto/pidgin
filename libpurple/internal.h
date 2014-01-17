@@ -169,6 +169,14 @@ void _purple_account_set_current_error(PurpleAccount *account,
                                        PurpleConnectionErrorInfo *new_err);
 
 /**
+ * Get an XML description of an account.
+ *
+ * @param account  The account
+ * @return  The XML description of the account.
+ */
+PurpleXmlNode *_purple_account_to_xmlnode(PurpleAccount *account);
+
+/**
  * Returns the last child of a particular node.
  *
  * @param node  The node whose last child is to be retrieved.
