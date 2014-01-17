@@ -86,7 +86,7 @@ static PurpleProtocol *my_protocol = NULL;
 
 
 /* plugin preference names */
-#define MW_PROTOCOL_OPT_BASE          "/protocols/meanwhile"
+#define MW_PROTOCOL_OPT_BASE          "/plugins/prpl/meanwhile"
 #define MW_PROTOCOL_OPT_BLIST_ACTION  MW_PROTOCOL_OPT_BASE "/blist_action"
 #define MW_PROTOCOL_OPT_PSYCHIC       MW_PROTOCOL_OPT_BASE "/psychic"
 #define MW_PROTOCOL_OPT_FORCE_LOGIN   MW_PROTOCOL_OPT_BASE "/force_login"
