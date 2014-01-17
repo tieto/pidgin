@@ -1083,8 +1083,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!_irc_protocol)
 		return FALSE;
 
-	purple_prefs_remove("/plugins/prpl/irc/quitmsg");
-	purple_prefs_remove("/plugins/prpl/irc");
+	purple_prefs_remove("/protocols/irc/quitmsg");
+	purple_prefs_remove("/protocols/irc");
 
 	irc_register_commands();
 

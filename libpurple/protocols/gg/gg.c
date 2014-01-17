@@ -1193,7 +1193,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!my_protocol)
 		return FALSE;
 
-	purple_prefs_add_none("/plugins/prpl/gg");
+	purple_prefs_add_none("/protocols/gg");
 
 	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
 		"libgadu %s...\n", gg_libgadu_version());

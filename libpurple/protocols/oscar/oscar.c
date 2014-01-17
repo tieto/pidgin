@@ -751,7 +751,7 @@ oscar_login(PurpleAccount *account)
 
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(purple_connection_get_protocol(gc), "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
-	purple_prefs_connect_callback(purple_connection_get_protocol(gc), "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
+	purple_prefs_connect_callback(purple_connection_get_protocol(gc), "/protocols/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
 	/*
 	 * On 2008-03-05 AOL released some documentation on the OSCAR protocol
@@ -5736,11 +5736,11 @@ plugin_load(PurplePlugin *plugin, GError **error)
 		PURPLE_CALLBACK(oscar_uri_handler), NULL);
 
 	/* Preferences */
-	purple_prefs_add_none("/plugins/prpl/oscar");
-	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
+	purple_prefs_add_none("/protocols/oscar");
+	purple_prefs_add_bool("/protocols/oscar/recent_buddies", FALSE);
 
-	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
-	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
+	purple_prefs_remove("/protocols/oscar/show_idle");
+	purple_prefs_remove("/protocols/oscar/always_use_rv_proxy");
 
 	return TRUE;
 }

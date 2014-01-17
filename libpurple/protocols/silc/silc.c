@@ -2336,7 +2336,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!my_protocol)
 		return FALSE;
 
-	purple_prefs_remove("/plugins/prpl/silc");
+	purple_prefs_remove("/protocols/silc");
 
 	silc_log_set_callback(SILC_LOG_ERROR, silcpurple_log_error, NULL);
 	silcpurple_register_commands();

@@ -1389,7 +1389,7 @@ purple_prefs_init(void)
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/core");
 	purple_prefs_add_none("/plugins/lopl");
-	purple_prefs_add_none("/plugins/prpl");
+	purple_prefs_add_none("/protocols");
 
 	/* Away */
 	purple_prefs_add_none("/purple/away");

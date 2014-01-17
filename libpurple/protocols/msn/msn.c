@@ -3071,7 +3071,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	                  _("nudge: nudge a user to get their attention"), NULL);
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 
-	purple_prefs_remove("/plugins/prpl/msn");
+	purple_prefs_remove("/protocols/msn");
 
 	msn_notification_init();
 	msn_switchboard_init();

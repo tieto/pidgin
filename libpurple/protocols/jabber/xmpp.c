@@ -99,7 +99,7 @@ xmpp_protocol_init(PurpleProtocol *protocol)
 	protocol->protocol_options = g_list_append(protocol->protocol_options,
 		option);
 
-	purple_prefs_remove("/plugins/prpl/jabber");
+	purple_prefs_remove("/protocols/jabber");
 }
 
 static void
