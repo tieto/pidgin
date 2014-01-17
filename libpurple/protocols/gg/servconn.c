@@ -34,7 +34,7 @@
 #include <debug.h>
 #include <glibcompat.h>
 
-#define GGP_SERVCONN_HISTORY_PREF "/protocols/gg/server_history"
+#define GGP_SERVCONN_HISTORY_PREF "/plugins/prpl/gg/server_history"
 #define GGP_SERVCONN_HISTORY_MAXLEN 15
 
 typedef struct
