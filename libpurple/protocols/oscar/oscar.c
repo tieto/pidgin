@@ -5700,7 +5700,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "protocol-oscar",
+		"id",           "prpl-oscar",
 		"name",         "Oscar Protocols",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),

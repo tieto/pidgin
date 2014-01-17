@@ -1168,7 +1168,7 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",           "protocol-gg",
+		"id",           "prpl-gg",
 		"name",         "Gadu-Gadu Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),

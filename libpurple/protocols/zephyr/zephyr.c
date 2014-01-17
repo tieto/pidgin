@@ -3005,7 +3005,7 @@ PURPLE_DEFINE_TYPE_EXTENDED(
 static PurplePluginInfo *plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "protocol-zephyr",
+		"id",           "prpl-zephyr",
 		"name",         "Zephyr Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),

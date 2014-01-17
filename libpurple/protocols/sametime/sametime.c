@@ -75,7 +75,7 @@ static PurpleProtocol *my_protocol = NULL;
    I don't know why I even bother providing these. Oh valiant reader,
    I do it all for you. */
 /* scratch that, I just added it to the protocol options panel */
-#define PLUGIN_ID        "protocol-sametime"
+#define PLUGIN_ID        "prpl-sametime"
 #define PLUGIN_NAME      "Sametime Protocol"
 #define PLUGIN_CATEGORY  "Protocol"
 #define PLUGIN_SUMMARY   "Sametime Protocol Plugin"

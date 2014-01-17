@@ -67,7 +67,7 @@
 
 
 /* Plugin details */
-#define		MXIT_PLUGIN_ID				"protocol-mxit"
+#define		MXIT_PLUGIN_ID				"prpl-mxit"
 #define		MXIT_PLUGIN_NAME			"MXit Protocol"
 #define		MXIT_PLUGIN_CATEGORY		"Protocol"
 #define		MXIT_PLUGIN_AUTHORS			{ "Pieter Loubser <libpurple@mxit.com>", NULL }

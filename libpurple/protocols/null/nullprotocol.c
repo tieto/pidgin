@@ -1205,7 +1205,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
   return purple_plugin_info_new(
-    "id",           "protocol-null",
+    "id",           "prpl-null",
     "name",         "Null Protocol",
     "version",      DISPLAY_VERSION,
     "category",     N_("Protocol"),

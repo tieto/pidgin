@@ -3040,7 +3040,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "protocol-msn",
+		"id",           "prpl-msn",
 		"name",         "MSN Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),

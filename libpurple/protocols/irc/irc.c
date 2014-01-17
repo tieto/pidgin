@@ -1060,7 +1060,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "protocol-irc",
+		"id",           "prpl-irc",
 		"name",         "IRC Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),

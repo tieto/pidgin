@@ -3601,7 +3601,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "protocol-novell",
+		"id",           "prpl-novell",
 		"name",         "Novell GroupWise Protocol",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),

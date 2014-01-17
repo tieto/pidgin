@@ -2312,7 +2312,7 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",           "protocol-silc",
+		"id",           "prpl-silc",
 		"name",         "SILC Protocol",
 		"version",      "1.1",
 		"category",     N_("Protocol"),

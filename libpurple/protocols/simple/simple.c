@@ -2123,7 +2123,7 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",           "protocol-simple",
+		"id",           "prpl-simple",
 		"name",         "SIMPLE Protocol",
 		"version",		DISPLAY_VERSION,
 		"category",		N_("Protocol"),

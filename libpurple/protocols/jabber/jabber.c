@@ -4304,7 +4304,7 @@ static PurplePluginInfo *
 plugin_query(GError **error)
 {
 	return purple_plugin_info_new(
-		"id",           "protocol-xmpp",
+		"id",           "prpl-xmpp",
 		"name",         "XMPP Protocols",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),

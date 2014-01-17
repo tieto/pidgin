@@ -3526,7 +3526,7 @@ plugin_query(GError **error)
 	};
 
 	return purple_plugin_info_new(
-		"id",           "protocol-myspace",
+		"id",           "prpl-myspace",
 		"name",         "MySpaceIM Protocol",
 		"version",      MSIM_PROTOCOL_VERSION_STRING,
 		"category",     "Protocol",
