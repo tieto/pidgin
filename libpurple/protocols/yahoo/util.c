@@ -165,6 +165,8 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 	if (utf8) {
 		if (g_utf8_validate(str, -1, NULL))
 			return g_strdup(str);
+		purple_debug_warning("yahoo", "Server told us a string was supposed "
+				"to be UTF-8, but it was not. Will try another encoding.\n");
 	}
 
 	if (yd->jp)
