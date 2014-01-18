@@ -1551,6 +1551,14 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 	if (purple_conv_chat_is_user_ignored(chat, who))
 		return;
 
+	if (mtime < 0) {
+		purple_debug_error("conversation",
+				"purple_conv_chat_write ignoring negative timestamp\n");
+		/* TODO: Would be more appropriate to use a value that indicates
+		   that the timestamp is unknown, and surface that in the UI. */
+		mtime = time(NULL);
+	}
+
 	if (!(flags & PURPLE_MESSAGE_WHISPER)) {
 		const char *str;
 

@@ -95,6 +95,8 @@ version 2.10.8:
 	  matches the 'to' address of the iq request. (Discovered by Fabian
 	  Yamaguchi and Christian Wressnegger of the University of Goettingen)
 	  (CVE-2013-6483)
+	* Fix crash on some systems when receiving fake delay timestamps with
+	  extreme values. (Discovered by Jaime Breva Ribes) (CVE-2013-6477)
 	* Fix possible crash or other erratic behavior when selecting a very
 	  small file for your own buddy icon.
 	* Fix crash if the user tries to initiate a voice/video session with a
