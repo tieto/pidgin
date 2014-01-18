@@ -20,6 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+/*
+ * Note: If you change any of these functions to use additional args you
+ * MUST ensure the arg count is correct in parse.c. Otherwise it may be
+ * possible for a malicious server or man-in-the-middle to trigger a crash.
+ */
+
 #include "internal.h"
 
 #include "conversation.h"
@@ -250,6 +256,8 @@ void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, c
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 
+	g_return_if_fail(gc);
+
 	purple_notify_error(gc, NULL, _("Bad mode"), args[1]);
 }
 
@@ -298,6 +306,8 @@ void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, ch
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	char *buf;
+
+	g_return_if_fail(gc);
 
 	buf = g_strdup_printf(_("You are banned from %s."), args[1]);
 	purple_notify_error(gc, _("Banned"), _("Banned"), buf);
@@ -645,6 +655,8 @@ void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, c
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	char *buf;
 
+	g_return_if_fail(gc);
+
 	buf = g_strdup_printf(_("Unknown message '%s'"), args[1]);
 	purple_notify_error(gc, _("Unknown message"), buf, _("The IRC server received a message it did not understand."));
 	g_free(buf);
@@ -773,6 +785,8 @@ void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 
+	g_return_if_fail(gc);
+
 	purple_notify_message(gc, PURPLE_NOTIFY_MSG_INFO, _("Time Response"),
 			    _("The IRC server's local time is:"),
 			    args[2], NULL, NULL);
@@ -781,6 +795,8 @@ void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_nochan(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
+
+	g_return_if_fail(gc);
 
 	purple_notify_error(gc, NULL, _("No such channel"), args[1]);
 }
@@ -869,6 +885,8 @@ void irc_msg_inviteonly(struct irc_conn *irc, const char *name, const char *from
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	char *buf;
+
+	g_return_if_fail(gc);
 
 	buf = g_strdup_printf(_("Joining %s requires an invitation."), args[1]);
 	purple_notify_error(gc, _("Invitation only"), _("Invitation only"), buf);
@@ -1179,6 +1197,8 @@ void irc_msg_nochangenick(struct irc_conn *irc, const char *name, const char *fr
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 
+	g_return_if_fail(gc);
+
 	purple_notify_error(gc, _("Cannot change nick"), _("Could not change nick"), args[2]);
 }
 
@@ -1320,6 +1340,8 @@ void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, c
 	PurpleConversation *convo;
 	char *msg;
 
+	g_return_if_fail(gc);
+
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
 	if (convo) {
 		/* This is a channel we're already in; for some reason,
@@ -1339,6 +1361,8 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	struct irc_buddy *ib;
 	char *data[2];
+
+	g_return_if_fail(gc);
 
 	data[0] = irc_mask_nick(from);
 	data[1] = args[0];
@@ -1365,6 +1389,8 @@ void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, c
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	char *nick, *msg;
+
+	g_return_if_fail(gc);
 
 	nick = irc_mask_nick(from);
 	msg = g_strdup_printf (_("Wallops from %s"), nick);
