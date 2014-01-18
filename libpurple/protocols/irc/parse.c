@@ -50,9 +50,11 @@ extern PurplePlugin *_irc_plugin;
 static struct _irc_msg {
 	char *name;
 	char *format;
-	/* The required parameters count, based on values we use, not protocol
-	 * specification. */
-	int req_cnt; 
+
+	/** The required parameter count, based on values we use, not protocol
+	 *  specification. */
+	int req_cnt;
+
 	void (*cb)(struct irc_conn *irc, const char *name, const char *from, char **args);
 } _irc_msgs[] = {
 	{ "005", "n*", 2, irc_msg_features },		/* Feature list			*/
@@ -115,9 +117,9 @@ static struct _irc_msg {
 #endif
 	{ "invite", "n:", 2, irc_msg_invite },		/* Invited			*/
 	{ "join", ":", 1, irc_msg_join },		/* Joined a channel		*/
-	{ "kick", "cn:", -1, irc_msg_kick },		/* KICK				*/
+	{ "kick", "cn:", 3, irc_msg_kick },		/* KICK				*/
 	{ "mode", "tv:", 2, irc_msg_mode },		/* MODE for channel		*/
-	{ "nick", ":", -1, irc_msg_nick },		/* Nick change			*/
+	{ "nick", ":", 1, irc_msg_nick },		/* Nick change			*/
 	{ "notice", "t:", 2, irc_msg_notice },		/* NOTICE recv			*/
 	{ "part", "c:", 1, irc_msg_part },		/* Parted a channel		*/
 	{ "ping", ":", 1, irc_msg_ping },		/* Received PING from server	*/
