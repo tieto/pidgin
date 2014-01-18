@@ -56,6 +56,9 @@ version 2.10.8:
 	  functions are available using official Gadu-Gadu website.
 
 	IRC:
+	* Fix bug where a malicious server or man-in-the-middle could trigger
+	  a crash by not sending enough arguments with various messages.
+	  (Discovered by Daniel Atallah) (CVE-2014-0020)
 	* Fix bug where initial IRC status would not be set correctly.
 	* Fix bug where IRC wasn't available when libpurple was compiled with
 	  Cyrus SASL support. (#15517)
