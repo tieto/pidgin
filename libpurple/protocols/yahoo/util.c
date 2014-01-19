@@ -132,6 +132,7 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 	YahooData *yd = gc->proto_data;
 	char *ret;
 	const char *to_codeset;
+	GError *error = NULL;
 
 	if (yd->jp)
 		return g_strdup(str);
@@ -140,12 +141,22 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 		return g_strdup(str);
 
 	to_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
-	ret = g_convert_with_fallback(str, -1, to_codeset, "UTF-8", "?", NULL, NULL, NULL);
-
-	if (ret)
-		return ret;
-	else
+	ret = g_convert_with_fallback(str, -1, to_codeset, "UTF-8", "?", NULL, NULL, &error);
+	if (!ret) {
+		if (error) {
+			purple_debug_error("yahoo", "Could not convert %s from UTF-8 to "
+					"%s: %d - %s\n", str ? str : "(null)", to_codeset,
+					error->code,
+					error->message ? error->message : "(null)");
+			g_error_free(error);
+		} else {
+			purple_debug_error("yahoo", "Could not convert %s from UTF-8 to "
+					"%s: unkown error\n", str ? str : "(null)", to_codeset);
+		}
 		return g_strdup("");
+	}
+
+	return ret;
 }
 
 /**
@@ -161,6 +172,7 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 	YahooData *yd = gc->proto_data;
 	char *ret;
 	const char *from_codeset;
+	GError *error = NULL;
 
 	if (utf8) {
 		if (g_utf8_validate(str, -1, NULL))
@@ -174,12 +186,22 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 	else
 		from_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
 
-	ret = g_convert_with_fallback(str, -1, "UTF-8", from_codeset, NULL, NULL, NULL, NULL);
-
-	if (ret)
-		return ret;
-	else
+	ret = g_convert_with_fallback(str, -1, "UTF-8", from_codeset, NULL, NULL, NULL, &error);
+	if (!ret) {
+		if (error) {
+			purple_debug_error("yahoo", "Could not convert %s from %s to "
+					"UTF-8: %d - %s\n", str ? str : "(null)", from_codeset,
+					error->code, error->message ? error->message : "(null)");
+			g_error_free(error);
+		} else {
+			purple_debug_error("yahoo", "Could not convert %s from %s to "
+					"UTF-8: unkown error\n", str ? str : "(null)",
+					from_codeset);
+		}
 		return g_strdup("");
+	}
+
+	return ret;
 }
 
 char *yahoo_convert_to_numeric(const char *str)
