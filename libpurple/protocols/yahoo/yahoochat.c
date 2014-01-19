@@ -156,15 +156,25 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 50: /* inviter */
-			who = pair->value;
-			g_string_append_printf(members, "%s\n", who);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+				g_string_append_printf(members, "%s\n", who);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_conference_invite "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 51: /* This user is being invited to the conference. Comes with status = 11, so we wont reach here */
 			break;
 		case 52: /* Invited users. Assuming us invited, since we got this packet */
 			break; /* break needed, or else we add the users to the conference before they accept the invitation */
 		case 53: /* members who have already joined the conference */
-			g_string_append_printf(members, "%s\n", pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				g_string_append_printf(members, "%s\n", pair->value);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_conference_invite "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 58:
 			g_free(msg);
@@ -220,7 +230,12 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 54:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_conference_decline "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 14:
 			g_free(msg);
@@ -277,7 +292,12 @@ void yahoo_process_conference_logon(PurpleConnection *gc, struct yahoo_packet *p
 			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 53:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_conference_logon "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		}
 	}
@@ -309,7 +329,12 @@ void yahoo_process_conference_logoff(PurpleConnection *gc, struct yahoo_packet *
 			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 56:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_conference_logoff "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		}
 	}
@@ -340,7 +365,12 @@ void yahoo_process_conference_message(PurpleConnection *gc, struct yahoo_packet 
 			room = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 3:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_conference_message "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 14:
 			msg = pair->value;
@@ -506,18 +536,38 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 			topic = yahoo_string_decode(gc, pair->value, TRUE);
 			break;
 		case 128:
-			someid = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				someid = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_join "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 108: /* number of joiners */
 			break;
 		case 129:
-			someotherid = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				someotherid = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_join "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 130:
-			somebase64orhashosomething = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				somebase64orhashosomething = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_join "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 126:
-			somenegativenumber = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				somenegativenumber = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_join "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 13: /* this is 1. maybe its the type of room? (normal, user created, private, etc?) */
 			break;
@@ -528,7 +578,12 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 		   info about individual room members, (including us) */
 
 		case 109: /* the yahoo id */
-			members = g_list_append(members, pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				members = g_list_append(members, pair->value);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_join "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 110: /* age */
 			break;
@@ -625,8 +680,14 @@ void yahoo_process_chat_exit(PurpleConnection *gc, struct yahoo_packet *pkt)
 			g_free(room);
 			room = yahoo_string_decode(gc, pair->value, TRUE);
 		}
-		if (pair->key == 109)
-			who = pair->value;
+		if (pair->key == 109) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_exit "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 	}
 
 	if (who && room) {
@@ -658,10 +719,20 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 			room = yahoo_string_decode(gc, pair->value, TRUE);
 			break;
 		case 109:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_message "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 117:
-			msg = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				msg = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_message "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 124:
 			msgtype = strtol(pair->value, NULL, 10);
@@ -724,7 +795,12 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 			msg = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 119:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_chat_addinvite "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 118: /* us */
 			break;
