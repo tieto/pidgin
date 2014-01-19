@@ -1178,6 +1178,20 @@ void purple_str_wipe(gchar *str);
  */
 void purple_utf16_wipe(gunichar2 *str);
 
+/**
+ * Compares two strings representing versions in the typical
+ * MAJOR.MINOR.MICRO format. Any characters after the micro version are
+ * ignored.
+ *
+ * @param v1 The first version to compare
+ * @param v2 The second version to compare
+ *
+ * @return -1 if @v1 is less than @v2.
+ *          0 if @v1 is equal to @v2.
+ *          1 if @v1 is greater than @v2.
+ */
+gint purple_version_strcmp(const gchar *v1, const gchar *v2);
+
 /*@}*/
 
 
