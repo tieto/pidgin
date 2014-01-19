@@ -1337,9 +1337,9 @@ const gchar *purple_gai_strerror(gint errnum);
  * @param a The first string.
  * @param b The second string.
  *
- * @return -1 if @a is less than @a b.
- *          0 if @a is equal to @a b.
- *          1 if @a is greater than @a b.
+ * @return -1 if @a is less than @b.
+ *          0 if @a is equal to @b.
+ *          1 if @a is greater than @b.
  */
 int purple_utf8_strcasecmp(const char *a, const char *b);
 
