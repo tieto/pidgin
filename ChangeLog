@@ -109,6 +109,8 @@ version 2.10.8:
 	  (#15524)
 
 	Yahoo!:
+	* Fix possible crashes handling incoming strings that are not UTF-8.
+	  (Discovered by Thijs Alkemade and Robert Vehse) (CVE-2012-6152)
 	* Fix a bug reading a peer to peer message where a remote user could
 	  trigger a crash. (CVE-2013-6481)
 
