@@ -156,7 +156,12 @@ struct _PurplePluginAction {
 	gpointer user_data;
 };
 
-/** Returns an ABI version to set in plugins using major and minor versions */
+/**
+ * Returns an ABI version to set in plugins using major and minor versions.
+ *
+ * @note The lower six nibbles represent the ABI version for libpurple, the
+ *       rest are required by GPlugin.
+ */
 #define PURPLE_PLUGIN_ABI_VERSION(major,minor) \
 	(0x01000000 | ((major) << 16) | (minor))
 
