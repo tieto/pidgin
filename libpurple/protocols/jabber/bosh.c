@@ -620,6 +620,10 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	g_string_free(buf, TRUE);
 }
 
+/**
+ * Handle one complete BOSH response. This is a <body> node containing
+ * any number of XMPP stanzas.
+ */
 static void
 http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 {
