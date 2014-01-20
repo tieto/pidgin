@@ -1327,8 +1327,8 @@ purple_prefs_get_children_names(const char *name)
 	return list;
 }
 
-void
-purple_prefs_update_old()
+static void
+prefs_update_old(void)
 {
 	purple_prefs_rename("/core", "/purple");
 
@@ -1433,7 +1433,7 @@ purple_prefs_init(void)
 	purple_prefs_remove("/purple/contact/idle_score");
 
 	purple_prefs_load();
-	purple_prefs_update_old();
+	prefs_update_old();
 }
 
 void

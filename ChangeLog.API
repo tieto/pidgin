@@ -344,6 +344,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_unregister_unload_notify_cb
 		* purple_pounces_load
 		* purple_prefs_set_generic
+		* purple_prefs_update_old
 		* purple_presence_add_status
 		* purple_presence_add_list
 		* PurplePresenceContext
