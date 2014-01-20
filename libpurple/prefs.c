@@ -39,6 +39,8 @@
 #include "win32dep.h"
 #endif
 
+#define PREFS_XML_VERSION "1.1"
+
 struct pref_cb {
 	PurplePrefCallback func;
 	gpointer data;
@@ -184,7 +186,7 @@ prefs_to_xmlnode(void)
 
 	/* Create the root preference node */
 	node = purple_xmlnode_new("pref");
-	purple_xmlnode_set_attrib(node, "version", "1");
+	purple_xmlnode_set_attrib(node, "version", PREFS_XML_VERSION);
 	purple_xmlnode_set_attrib(node, "name", "/");
 
 	/* All My Children */
@@ -239,6 +241,7 @@ schedule_prefs_save(void)
  *********************************************************************/
 
 static GList *prefs_stack = NULL;
+static gchar *xml_version = NULL;
 
 static void
 prefs_start_element_handler (GMarkupParseContext *context,
@@ -278,6 +281,12 @@ prefs_start_element_handler (GMarkupParseContext *context,
 				return;
 		} else if(purple_strequal(attribute_names[i], "value")) {
 			pref_value = attribute_values[i];
+		} else if(purple_strequal(attribute_names[i], "version")) {
+			g_free(xml_version);
+			xml_version = g_strdup(attribute_values[i]);
+			if (purple_version_strcmp(xml_version, PREFS_XML_VERSION) > 0)
+				purple_debug_warning("prefs", "prefs.xml on disk is for a "
+						"newer version of libpurple");
 		}
 	}
 
@@ -1327,8 +1336,8 @@ purple_prefs_get_children_names(const char *name)
 	return list;
 }
 
-void
-purple_prefs_update_old()
+static void
+update_old_prefs(void)
 {
 	purple_prefs_rename("/core", "/purple");
 
@@ -1433,7 +1442,12 @@ purple_prefs_init(void)
 	purple_prefs_remove("/purple/contact/idle_score");
 
 	purple_prefs_load();
-	purple_prefs_update_old();
+
+	if (purple_version_strcmp(xml_version, PREFS_XML_VERSION) < 0)
+		update_old_prefs();
+
+	g_free(xml_version);
+	xml_version = NULL;
 }
 
 void

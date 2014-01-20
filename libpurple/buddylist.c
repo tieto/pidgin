@@ -34,6 +34,8 @@
 #include "util.h"
 #include "xmlnode.h"
 
+#define BLIST_XML_VERSION "1.1"
+
 #define PURPLE_BUDDY_LIST_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyListPrivate))
 
@@ -348,7 +350,7 @@ blist_to_xmlnode(void)
 	GList *cur;
 
 	node = purple_xmlnode_new("purple");
-	purple_xmlnode_set_attrib(node, "version", "1.0");
+	purple_xmlnode_set_attrib(node, "version", BLIST_XML_VERSION);
 
 	/* Write groups */
 	child = purple_xmlnode_new_child(node, "blist");
@@ -608,6 +610,7 @@ static void
 load_blist(void)
 {
 	PurpleXmlNode *purple, *blist, *privacy;
+	const char *version;
 
 	blist_loaded = TRUE;
 
@@ -615,6 +618,11 @@ load_blist(void)
 
 	if (purple == NULL)
 		return;
+
+	version = purple_xmlnode_get_attrib(purple, "version");
+	if (purple_version_strcmp(version, BLIST_XML_VERSION) > 0)
+		purple_debug_warning("buddylist", "blist.xml on disk is for a newer "
+				"version of libpurple");
 
 	blist = purple_xmlnode_get_child(purple, "blist");
 	if (blist) {

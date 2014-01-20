@@ -32,6 +32,8 @@
 #include "network.h"
 #include "pounce.h"
 
+#define ACCOUNTS_XML_VERSION "1.1"
+
 static PurpleAccountUiOps *account_ui_ops = NULL;
 
 static GList   *accounts = NULL;
@@ -48,7 +50,7 @@ accounts_to_xmlnode(void)
 	GList *cur;
 
 	node = purple_xmlnode_new("account");
-	purple_xmlnode_set_attrib(node, "version", "1.0");
+	purple_xmlnode_set_attrib(node, "version", ACCOUNTS_XML_VERSION);
 
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 	{
@@ -582,6 +584,7 @@ static void
 load_accounts(void)
 {
 	PurpleXmlNode *node, *child;
+	const char *version;
 
 	accounts_loaded = TRUE;
 
@@ -589,6 +592,11 @@ load_accounts(void)
 
 	if (node == NULL)
 		return;
+
+	version = purple_xmlnode_get_attrib(node, "version");
+	if (purple_version_strcmp(version, ACCOUNTS_XML_VERSION) > 0)
+		purple_debug_warning("accounts", "accounts.xml on disk is for a newer "
+				"version of libpurple");
 
 	for (child = purple_xmlnode_get_child(node, "account"); child != NULL;
 			child = purple_xmlnode_get_next_twin(child))
