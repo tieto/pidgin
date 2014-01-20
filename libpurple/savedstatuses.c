@@ -373,7 +373,7 @@ schedule_save(void)
  *********************************************************************/
 
 static PurpleSavedStatusSub *
-parse_substatus(PurpleXmlNode *substatus)
+parse_substatus(PurpleXmlNode *substatus, const char *version)
 {
 	PurpleSavedStatusSub *ret;
 	PurpleXmlNode *node;
@@ -389,6 +389,16 @@ parse_substatus(PurpleXmlNode *substatus)
 		const char *protocol;
 		acct_name = purple_xmlnode_get_data(node);
 		protocol = purple_xmlnode_get_attrib(node, "protocol");
+
+		if (purple_version_strcmp(version, "1.1") < 0) {
+			if (acct_name && protocol && !strncmp(protocol, "prpl-", 5)) {
+				purple_debug_info("savedstatuses", "status.xml: Migrating "
+						"substatus for account %s from version %s to 1.1\n",
+						acct_name, version);
+				protocol += 5;
+			}
+		}
+
 		if ((acct_name != NULL) && (protocol != NULL))
 			ret->account = purple_accounts_find(acct_name, protocol);
 		g_free(acct_name);
@@ -451,7 +461,7 @@ parse_substatus(PurpleXmlNode *substatus)
  * I know.  Moving, huh?
  */
 static PurpleSavedStatus *
-parse_status(PurpleXmlNode *status)
+parse_status(PurpleXmlNode *status, const char *version)
 {
 	PurpleSavedStatus *ret;
 	PurpleXmlNode *node;
@@ -513,7 +523,7 @@ parse_status(PurpleXmlNode *status)
 			node = purple_xmlnode_get_next_twin(node))
 	{
 		PurpleSavedStatusSub *new;
-		new = parse_substatus(node);
+		new = parse_substatus(node, version);
 		if (new != NULL)
 			ret->substatuses = g_list_prepend(ret->substatuses, new);
 	}
@@ -550,7 +560,7 @@ load_statuses(void)
 			status = purple_xmlnode_get_next_twin(status))
 	{
 		PurpleSavedStatus *new;
-		new = parse_status(status);
+		new = parse_status(status, version);
 		saved_statuses = g_list_prepend(saved_statuses, new);
 	}
 	saved_statuses = g_list_sort(saved_statuses, saved_statuses_sort_func);

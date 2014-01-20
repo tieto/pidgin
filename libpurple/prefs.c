@@ -1443,9 +1443,9 @@ purple_prefs_init(void)
 
 	purple_prefs_load();
 
-	if (purple_version_strcmp(xml_version, PREFS_XML_VERSION) < 0) {
-		purple_debug_info("prefs", "Migrating prefs.xml from version %s to %s\n",
-				xml_version, PREFS_XML_VERSION);
+	if (purple_version_strcmp(xml_version, "1.1") < 0) {
+		purple_debug_info("prefs", "Migrating prefs.xml from version %s to 1.1\n",
+				xml_version);
 		update_old_prefs();
 	}
 

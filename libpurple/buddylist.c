@@ -465,7 +465,8 @@ parse_setting(PurpleBlistNode *node, PurpleXmlNode *setting)
 }
 
 static void
-parse_buddy(PurpleGroup *group, PurpleContact *contact, PurpleXmlNode *bnode)
+parse_buddy(PurpleGroup *group, PurpleContact *contact, PurpleXmlNode *bnode,
+		const char *version)
 {
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
@@ -479,15 +480,24 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, PurpleXmlNode *bnode)
 	if (!acct_name || !proto)
 		return;
 
-	account = purple_accounts_find(acct_name, proto);
-
-	if (!account)
-		return;
-
 	if ((x = purple_xmlnode_get_child(bnode, "name")))
 		name = purple_xmlnode_get_data(x);
 
 	if (!name)
+		return;
+
+	if (purple_version_strcmp(version, "1.1") < 0) {
+		if (!strncmp(proto, "prpl-", 5)) {
+			purple_debug_info("buddylist", "blist.xml: Migrating "
+					"buddy %s for account %s from version %s to 1.1\n",
+					name, acct_name, version);
+			proto += 5;
+		}
+	}
+
+	account = purple_accounts_find(acct_name, proto);
+
+	if (!account)
 		return;
 
 	if ((x = purple_xmlnode_get_child(bnode, "alias")))
@@ -506,7 +516,7 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, PurpleXmlNode *bnode)
 }
 
 static void
-parse_contact(PurpleGroup *group, PurpleXmlNode *cnode)
+parse_contact(PurpleGroup *group, PurpleXmlNode *cnode, const char *version)
 {
 	PurpleContact *contact = purple_contact_new();
 	PurpleXmlNode *x;
@@ -523,7 +533,7 @@ parse_contact(PurpleGroup *group, PurpleXmlNode *cnode)
 		if (x->type != PURPLE_XMLNODE_TYPE_TAG)
 			continue;
 		if (purple_strequal(x->name, "buddy"))
-			parse_buddy(group, contact, x);
+			parse_buddy(group, contact, x, version);
 		else if (purple_strequal(x->name, "setting"))
 			parse_setting(PURPLE_BLIST_NODE(contact), x);
 	}
@@ -534,7 +544,7 @@ parse_contact(PurpleGroup *group, PurpleXmlNode *cnode)
 }
 
 static void
-parse_chat(PurpleGroup *group, PurpleXmlNode *cnode)
+parse_chat(PurpleGroup *group, PurpleXmlNode *cnode, const char *version)
 {
 	PurpleChat *chat;
 	PurpleAccount *account;
@@ -549,13 +559,22 @@ parse_chat(PurpleGroup *group, PurpleXmlNode *cnode)
 	if (!acct_name || !proto)
 		return;
 
+	if ((x = purple_xmlnode_get_child(cnode, "alias")))
+		alias = purple_xmlnode_get_data(x);
+
+	if (purple_version_strcmp(version, "1.1") < 0) {
+		if (!strncmp(proto, "prpl-", 5)) {
+			purple_debug_info("buddylist", "blist.xml: Migrating "
+					"chat %s for account %s from version %s to 1.1\n",
+					alias ? alias : "(no alias)", acct_name, version);
+			proto += 5;
+		}
+	}
+
 	account = purple_accounts_find(acct_name, proto);
 
 	if (!account)
 		return;
-
-	if ((x = purple_xmlnode_get_child(cnode, "alias")))
-		alias = purple_xmlnode_get_data(x);
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
@@ -580,7 +599,7 @@ parse_chat(PurpleGroup *group, PurpleXmlNode *cnode)
 }
 
 static void
-parse_group(PurpleXmlNode *groupnode)
+parse_group(PurpleXmlNode *groupnode, const char *version)
 {
 	const char *name = purple_xmlnode_get_attrib(groupnode, "name");
 	PurpleGroup *group;
@@ -600,9 +619,9 @@ parse_group(PurpleXmlNode *groupnode)
 			parse_setting((PurpleBlistNode*)group, cnode);
 		else if (purple_strequal(cnode->name, "contact") ||
 				purple_strequal(cnode->name, "person"))
-			parse_contact(group, cnode);
+			parse_contact(group, cnode, version);
 		else if (purple_strequal(cnode->name, "chat"))
-			parse_chat(group, cnode);
+			parse_chat(group, cnode, version);
 	}
 }
 
@@ -629,7 +648,7 @@ load_blist(void)
 		PurpleXmlNode *groupnode;
 		for (groupnode = purple_xmlnode_get_child(blist, "group"); groupnode != NULL;
 				groupnode = purple_xmlnode_get_next_twin(groupnode)) {
-			parse_group(groupnode);
+			parse_group(groupnode, version);
 		}
 	}
 
@@ -648,6 +667,15 @@ load_blist(void)
 
 			if (!acct_name || !proto || !mode)
 				continue;
+
+			if (purple_version_strcmp(version, "1.1") < 0) {
+				if (!strncmp(proto, "prpl-", 5)) {
+					purple_debug_info("buddylist", "blist.xml: Migrating "
+							"privacy for account %s from version %s to 1.1\n",
+							acct_name, version);
+					proto += 5;
+				}
+			}
 
 			account = purple_accounts_find(acct_name, proto);
 

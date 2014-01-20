@@ -461,17 +461,18 @@ parse_current_error(PurpleXmlNode *node, PurpleAccount *account)
 }
 
 static PurpleAccount *
-parse_account(PurpleXmlNode *node)
+parse_account(PurpleXmlNode *node, const gchar *version)
 {
 	PurpleAccount *ret;
 	PurpleXmlNode *child;
-	char *protocol_id = NULL;
+	char *read_proto = NULL, *protocol_id;
 	char *name = NULL;
 	char *data;
 
 	child = purple_xmlnode_get_child(node, "protocol");
 	if (child != NULL)
-		protocol_id = purple_xmlnode_get_data(child);
+		read_proto = purple_xmlnode_get_data(child);
+	protocol_id = read_proto;
 
 	child = purple_xmlnode_get_child(node, "name");
 	if (child != NULL)
@@ -484,16 +485,24 @@ parse_account(PurpleXmlNode *node)
 			name = purple_xmlnode_get_data(child);
 	}
 
-	if ((protocol_id == NULL) || (name == NULL))
+	if ((read_proto == NULL) || (name == NULL))
 	{
-		g_free(protocol_id);
+		g_free(read_proto);
 		g_free(name);
 		return NULL;
 	}
 
+	if (purple_version_strcmp(version, "1.1") < 0) {
+		if (!strncmp(protocol_id, "prpl-", 5)) {
+			purple_debug_info("accounts", "accounts.xml: Migrating account %s "
+					"from version %s to 1.1\n", name, version);
+			protocol_id += 5;
+		}
+	}
+
 	ret = purple_account_new(name, protocol_id);
 	g_free(name);
-	g_free(protocol_id);
+	g_free(read_proto);
 
 	/* Read the alias */
 	child = purple_xmlnode_get_child(node, "alias");
@@ -602,7 +611,7 @@ load_accounts(void)
 			child = purple_xmlnode_get_next_twin(child))
 	{
 		PurpleAccount *new_acct;
-		new_acct = parse_account(child);
+		new_acct = parse_account(child, version);
 		purple_accounts_add(new_acct);
 	}
 
