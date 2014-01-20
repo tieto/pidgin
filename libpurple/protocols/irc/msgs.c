@@ -271,7 +271,6 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 	if (!strcmp(name, "367")) {
 		char *msg = NULL;
 		/* Ban list entry */
-		g_return_if_fail(args[2]);
 		if (args[3] && args[4]) {
 			/* This is an extended syntax, not in RFC 1459 */
 			int t1 = atoi(args[4]);
@@ -570,13 +569,9 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	PurpleConversation *convo;
 
 	if (!strcmp(name, "topic")) {
-		g_return_if_fail(args[0]);
-		g_return_if_fail(args[1]);
 		chan = args[0];
 		topic = irc_mirc2txt (args[1]);
 	} else {
-		g_return_if_fail(args[1]);
-		g_return_if_fail(args[2]);
 		chan = args[1];
 		topic = irc_mirc2txt (args[2]);
 	}
