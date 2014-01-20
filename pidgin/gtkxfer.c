@@ -478,7 +478,7 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 	{
 		purple_notify_error(dialog, NULL,
 				_("An error occurred while opening the file."), NULL, NULL);
-		purple_debug_warning("ft", "filename: %s; code: %d\n",
+		purple_debug_warning("xfer", "filename: %s; code: %d\n",
 				purple_xfer_get_local_filename(dialog->selected_xfer), code);
 	}
 #else
@@ -1139,7 +1139,7 @@ pidgin_xfer_cancel_remote(PurpleXfer *xfer)
 static void
 pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 {
-	purple_debug_info("ft", "creating thumbnail for transfer\n");
+	purple_debug_info("xfer", "creating thumbnail for transfer\n");
 
 	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
 		GdkPixbuf *thumbnail =
@@ -1157,13 +1157,13 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 
 			for (i = 0; formats_split[i]; i++) {
 				if (purple_strequal(formats_split[i], "jpeg")) {
-					purple_debug_info("ft", "creating JPEG thumbnail\n");
+					purple_debug_info("xfer", "creating JPEG thumbnail\n");
 					option_keys[0] = "quality";
 					option_values[0] = "90";
 					format = "jpeg";
 					break;
 				} else if (purple_strequal(formats_split[i], "png")) {
-					purple_debug_info("ft", "creating PNG thumbnail\n");
+					purple_debug_info("xfer", "creating PNG thumbnail\n");
 					option_keys[0] = "compression";
 					option_values[0] = "9";
 					format = "png";
@@ -1173,7 +1173,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 
 			/* Try the first format given by the PRPL without options */
 			if (format == NULL) {
-				purple_debug_info("ft",
+				purple_debug_info("xfer",
 				    "creating thumbnail of format %s as demanded by PRPL\n",
 				    formats_split[0]);
 				format = formats_split[0];
@@ -1184,7 +1184,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 
 			if (buffer) {
 				gchar *mimetype = g_strdup_printf("image/%s", format);
-				purple_debug_info("ft",
+				purple_debug_info("xfer",
 				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
 					size);
 				purple_xfer_set_thumbnail(xfer, buffer, size, mimetype);

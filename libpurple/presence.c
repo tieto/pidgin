@@ -125,7 +125,7 @@ purple_presence_set_status_active(PurplePresence *presence, const char *status_i
 	{
 		if (!active)
 		{
-			purple_debug_warning("status",
+			purple_debug_warning("presence",
 					"Attempted to set a non-independent status "
 					"(%s) inactive. Only independent statuses "
 					"can be specifically marked inactive.",

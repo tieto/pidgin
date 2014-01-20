@@ -67,7 +67,7 @@ sync_accounts(void)
 
 	if (!accounts_loaded)
 	{
-		purple_debug_error("account", "Attempted to save accounts before "
+		purple_debug_error("accounts", "Attempted to save accounts before "
 						 "they were read!\n");
 		return;
 	}
@@ -368,7 +368,7 @@ parse_proxy_info(PurpleXmlNode *node, PurpleAccount *account)
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_ENVVAR);
 		else
 		{
-			purple_debug_error("account", "Invalid proxy type found when "
+			purple_debug_error("accounts", "Invalid proxy type found when "
 							 "loading account information for %s\n",
 							 purple_account_get_username(account));
 		}
@@ -437,7 +437,7 @@ parse_current_error(PurpleXmlNode *node, PurpleAccount *account)
 
 	if (type > PURPLE_CONNECTION_ERROR_OTHER_ERROR)
 	{
-		purple_debug_error("account",
+		purple_debug_error("accounts",
 			"Invalid PurpleConnectionError value %d found when "
 			"loading account information for %s\n",
 			type, purple_account_get_username(account));
@@ -570,7 +570,7 @@ parse_account(PurpleXmlNode *node)
 		if (result == TRUE || purple_keyring_get_inuse() == NULL) {
 			purple_account_set_remember_password(ret, TRUE);
 		} else {
-			purple_debug_error("account", "Failed to import password.\n");
+			purple_debug_error("accounts", "Failed to import password.\n");
 		} 
 		purple_str_wipe(data);
 	}
@@ -730,7 +730,7 @@ purple_accounts_reorder(PurpleAccount *account, guint new_index)
 	index = g_list_index(accounts, account);
 
 	if (index < 0) {
-		purple_debug_error("account",
+		purple_debug_error("accounts",
 				   "Unregistered account (%s) discovered during reorder!\n",
 				   purple_account_get_username(account));
 		return;
@@ -810,7 +810,7 @@ purple_accounts_restore_current_statuses()
 	/* If we're not connected to the Internet right now, we bail on this */
 	if (!purple_network_is_available())
 	{
-		purple_debug_warning("account", "Network not connected; skipping reconnect\n");
+		purple_debug_warning("accounts", "Network not connected; skipping reconnect\n");
 		return;
 	}
 

@@ -457,7 +457,7 @@ purple_buddy_update_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 
 	status = purple_presence_get_active_status(priv->presence);
 
-	purple_debug_info("blist", "Updating buddy status for %s (%s)\n",
+	purple_debug_info("blistnodetypes", "Updating buddy status for %s (%s)\n",
 			priv->name, purple_account_get_protocol_name(priv->account));
 
 	if (purple_status_is_online(status) &&
@@ -1494,7 +1494,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 				purple_blist_add_chat((PurpleChat *)child, dest, prev);
 				prev = child;
 			} else {
-				purple_debug(PURPLE_DEBUG_ERROR, "blist",
+				purple_debug(PURPLE_DEBUG_ERROR, "blistnodetypes",
 						"Unknown child type in group %s\n", priv->name);
 			}
 			child = next;

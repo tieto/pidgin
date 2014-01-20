@@ -1249,7 +1249,7 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 	fs_known = (purple_xfer_get_size(xfer) > 0);
 
 	if (fs_known && (goffset)size > purple_xfer_get_bytes_remaining(xfer)) {
-		purple_debug_warning("filetransfer",
+		purple_debug_warning("xfer",
 			"Got too much data (truncating at %" G_GOFFSET_FORMAT
 			").\n", purple_xfer_get_size(xfer));
 		size = purple_xfer_get_bytes_remaining(xfer);
@@ -1259,7 +1259,7 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 		wc = ui_ops->ui_write(xfer, buffer, size);
 	else {
 		if (priv->dest_fp == NULL) {
-			purple_debug_error("filetransfer",
+			purple_debug_error("xfer",
 				"File is not opened for writing\n");
 			purple_xfer_cancel_local(xfer);
 			return FALSE;
@@ -1268,7 +1268,7 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 	}
 
 	if (wc != size) {
-		purple_debug_error("filetransfer",
+		purple_debug_error("xfer",
 			"Unable to write whole buffer.\n");
 		purple_xfer_cancel_local(xfer);
 		return FALSE;
@@ -1299,7 +1299,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
 
 		if (got_len >= 0 && (gsize)got_len > size) {
 			g_free(buffer_got);
-			purple_debug_error("filetransfer",
+			purple_debug_error("xfer",
 				"Got too much data from UI.\n");
 			purple_xfer_cancel_local(xfer);
 			return -1;
@@ -1310,7 +1310,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
 		g_free(buffer_got);
 	} else {
 		if (priv->dest_fp == NULL) {
-			purple_debug_error("filetransfer",
+			purple_debug_error("xfer",
 				"File is not opened for reading\n");
 			purple_xfer_cancel_local(xfer);
 			return -1;
@@ -1319,7 +1319,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
 		if ((got_len < 0 || (gsize)got_len != size) &&
 			ferror(priv->dest_fp))
 		{
-			purple_debug_error("filetransfer",
+			purple_debug_error("xfer",
 				"Unable to read file.\n");
 			purple_xfer_cancel_local(xfer);
 			return -1;
