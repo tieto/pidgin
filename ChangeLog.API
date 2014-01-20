@@ -161,6 +161,7 @@ version 3.0.0 (??/??/????):
 		* purple_roomlist_room_set_expanded_once
 		* purple_roomlist_set_proto_data
 		* purple_roomlist_set_ui_data
+		* purple_version_strcmp
 		* purple_whiteboard_get_account
 		* purple_whiteboard_get_draw_list
 		* purple_whiteboard_set_draw_list
