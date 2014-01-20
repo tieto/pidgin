@@ -188,8 +188,6 @@ void irc_msg_authtryagain(struct irc_conn *irc, const char *name, const char *fr
 void irc_msg_authfail(struct irc_conn *irc, const char *name, const char *from, char **args);
 #endif
 
-void irc_msg_ignore(struct irc_conn *irc, const char *name, const char *from, char **args);
-
 void irc_cmd_table_build(struct irc_conn *irc);
 
 int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, const char **args);

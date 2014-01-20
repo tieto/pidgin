@@ -1764,8 +1764,3 @@ irc_sasl_finish(struct irc_conn *irc)
 	g_free(buf);
 }
 #endif
-
-void irc_msg_ignore(struct irc_conn *irc, const char *name, const char *from, char **args)
-{
-	return;
-}
