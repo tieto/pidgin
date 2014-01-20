@@ -336,6 +336,11 @@ void purple_prefs_trigger_callback(const char *name);
  */
 gboolean purple_prefs_load(void);
 
+/**
+ * Rename legacy prefs and delete some that no longer exist.
+ */
+void purple_prefs_update_old(void);
+
 /*@}*/
 
 G_END_DECLS

@@ -161,7 +161,6 @@ version 3.0.0 (??/??/????):
 		* purple_roomlist_room_set_expanded_once
 		* purple_roomlist_set_proto_data
 		* purple_roomlist_set_ui_data
-		* purple_version_strcmp
 		* purple_whiteboard_get_account
 		* purple_whiteboard_get_draw_list
 		* purple_whiteboard_set_draw_list
@@ -311,8 +310,6 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_find_with_id renamed to purple_plugins_find_plugin
 		* purple_plugins_find_with_filename renamed to
 		  purple_plugins_find_by_filename
-		* Protocol IDs are no longer equivalent to using plugin IDs of prpls.
-		  IDs for in-tree protocols no longer have the leading "prpl-".
 		* proto_chat_entry has been renamed to PurpleProtocolChatEntry
 		* PurpleRoomlist is now a GObject. Please see the documentation for
 		  details.
@@ -459,7 +456,6 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_unload_all
 		* purple_pounces_load
 		* purple_prefs_set_generic
-		* purple_prefs_update_old
 		* purple_presence_add_status
 		* purple_presence_add_list
 		* PurplePresenceContext

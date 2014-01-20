@@ -3811,52 +3811,6 @@ purple_utf16_wipe(gunichar2 *str)
 	g_free(str);
 }
 
-gint
-purple_version_strcmp(const gchar *v1, const gchar *v2)
-{
-	gchar **version[2];
-	gint major[2] = {0}, minor[2] = {0}, micro[2] = {0};
-	gint i, t;
-
-	if (!v1 && v2)
-		return -1;
-	else if (v1 && !v2)
-		return 1;
-	else if (!v1 && !v2)
-		return 0;
-
-	version[0] = g_strsplit(v1, ".", 3);
-	version[1] = g_strsplit(v2, ".", 3);
-
-	for (i = 0; i < 2; ++i) {
-		major[i] = atoi(version[i][0]);
-
-		if (version[i][1]) {
-			minor[i] = atoi(version[i][1]);
-
-			if (version[i][2])
-				micro[i] = atoi(version[i][2]);
-		}
-
-		g_strfreev(version[i]);
-	}
-
-	t = major[0] - major[1];
-	if (t != 0)
-		return t < 0 ? -1 : 1;
-
-	t = minor[0] - minor[1];
-	if (t != 0)
-		return t < 0 ? -1 : 1;
-
-	t = micro[0] - micro[1];
-
-	if (t != 0)
-		return t < 0 ? -1 : 1;
-	else
-		return 0;
-}
-
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/

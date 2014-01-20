@@ -32,8 +32,6 @@
 #include "pounce.h"
 #include "util.h"
 
-#define POUNCES_XML_VERSION "1.1"
-
 /**
  * A buddy pounce structure.
  *
@@ -102,7 +100,6 @@ static GHashTable *pounce_handlers = NULL;
 static GList      *pounces = NULL;
 static guint       save_timer = 0;
 static gboolean    pounces_loaded = FALSE;
-static gchar      *xml_version = NULL;
 
 
 /*********************************************************************
@@ -260,7 +257,7 @@ pounces_to_xmlnode(void)
 	GList *cur;
 
 	node = purple_xmlnode_new("pounces");
-	purple_xmlnode_set_attrib(node, "version", POUNCES_XML_VERSION);
+	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	for (cur = purple_pounces_get_all(); cur != NULL; cur = cur->next)
 	{
@@ -354,15 +351,7 @@ start_element_handler(GMarkupParseContext *context,
 		data->buffer = NULL;
 	}
 
-	if (purple_strequal(element_name, "pounces")) {
-		g_free(xml_version);
-		xml_version = g_strdup(g_hash_table_lookup(atts, "version"));
-
-		if (purple_version_strcmp(xml_version, POUNCES_XML_VERSION) > 0)
-			purple_debug_warning("pounce", "pounces.xml on disk is for a "
-					"newer version of libpurple");
-	}
-	else if (purple_strequal(element_name, "pounce")) {
+	if (purple_strequal(element_name, "pounce")) {
 		const char *ui = g_hash_table_lookup(atts, "ui");
 
 		if (ui == NULL) {
@@ -376,15 +365,6 @@ start_element_handler(GMarkupParseContext *context,
 	}
 	else if (purple_strequal(element_name, "account")) {
 		const char *protocol_id = g_hash_table_lookup(atts, "protocol");
-
-		if (purple_version_strcmp(xml_version, "1.1") < 0) {
-			if (protocol_id && !strncmp(protocol_id, "prpl-", 5)) {
-				purple_debug_info("pounce", "pounces.xml: Migrating "
-						"pounce for %s from version %s to 1.1\n",
-						data->ui_name, xml_version);
-				protocol_id += 5;
-			}
-		}
 
 		if (protocol_id == NULL) {
 			purple_debug(PURPLE_DEBUG_ERROR, "pounce",
@@ -1212,9 +1192,6 @@ purple_pounces_init(void)
 						handle, PURPLE_CALLBACK(received_message_cb), NULL);
 
 	purple_pounces_load();
-
-	g_free(xml_version);
-	xml_version = NULL;
 }
 
 void

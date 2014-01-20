@@ -35,8 +35,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-#define STATUS_XML_VERSION "1.1"
-
 /**
  * The maximum number of transient statuses to save.  This
  * is used during the shutdown process to clean out old
@@ -321,7 +319,7 @@ statuses_to_xmlnode(void)
 	GList *cur;
 
 	node = purple_xmlnode_new("statuses");
-	purple_xmlnode_set_attrib(node, "version", STATUS_XML_VERSION);
+	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	for (cur = saved_statuses; cur != NULL; cur = cur->next)
 	{
@@ -373,7 +371,7 @@ schedule_save(void)
  *********************************************************************/
 
 static PurpleSavedStatusSub *
-parse_substatus(PurpleXmlNode *substatus, const char *version)
+parse_substatus(PurpleXmlNode *substatus)
 {
 	PurpleSavedStatusSub *ret;
 	PurpleXmlNode *node;
@@ -389,16 +387,6 @@ parse_substatus(PurpleXmlNode *substatus, const char *version)
 		const char *protocol;
 		acct_name = purple_xmlnode_get_data(node);
 		protocol = purple_xmlnode_get_attrib(node, "protocol");
-
-		if (purple_version_strcmp(version, "1.1") < 0) {
-			if (acct_name && protocol && !strncmp(protocol, "prpl-", 5)) {
-				purple_debug_info("savedstatuses", "status.xml: Migrating "
-						"substatus for account %s from version %s to 1.1\n",
-						acct_name, version);
-				protocol += 5;
-			}
-		}
-
 		if ((acct_name != NULL) && (protocol != NULL))
 			ret->account = purple_accounts_find(acct_name, protocol);
 		g_free(acct_name);
@@ -461,7 +449,7 @@ parse_substatus(PurpleXmlNode *substatus, const char *version)
  * I know.  Moving, huh?
  */
 static PurpleSavedStatus *
-parse_status(PurpleXmlNode *status, const char *version)
+parse_status(PurpleXmlNode *status)
 {
 	PurpleSavedStatus *ret;
 	PurpleXmlNode *node;
@@ -523,7 +511,7 @@ parse_status(PurpleXmlNode *status, const char *version)
 			node = purple_xmlnode_get_next_twin(node))
 	{
 		PurpleSavedStatusSub *new;
-		new = parse_substatus(node, version);
+		new = parse_substatus(node);
 		if (new != NULL)
 			ret->substatuses = g_list_prepend(ret->substatuses, new);
 	}
@@ -542,7 +530,6 @@ static void
 load_statuses(void)
 {
 	PurpleXmlNode *statuses, *status;
-	const char *version;
 
 	statuses_loaded = TRUE;
 
@@ -551,16 +538,11 @@ load_statuses(void)
 	if (statuses == NULL)
 		return;
 
-	version = purple_xmlnode_get_attrib(statuses, "version");
-	if (purple_version_strcmp(version, STATUS_XML_VERSION) > 0)
-		purple_debug_warning("savedstatuses", "status.xml on disk is for a "
-				"newer version of libpurple");
-
 	for (status = purple_xmlnode_get_child(statuses, "status"); status != NULL;
 			status = purple_xmlnode_get_next_twin(status))
 	{
 		PurpleSavedStatus *new;
-		new = parse_status(status, version);
+		new = parse_status(status);
 		saved_statuses = g_list_prepend(saved_statuses, new);
 	}
 	saved_statuses = g_list_sort(saved_statuses, saved_statuses_sort_func);

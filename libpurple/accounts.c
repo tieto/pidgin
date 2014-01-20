@@ -32,8 +32,6 @@
 #include "network.h"
 #include "pounce.h"
 
-#define ACCOUNTS_XML_VERSION "1.1"
-
 static PurpleAccountUiOps *account_ui_ops = NULL;
 
 static GList   *accounts = NULL;
@@ -50,7 +48,7 @@ accounts_to_xmlnode(void)
 	GList *cur;
 
 	node = purple_xmlnode_new("account");
-	purple_xmlnode_set_attrib(node, "version", ACCOUNTS_XML_VERSION);
+	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 	{
@@ -461,18 +459,17 @@ parse_current_error(PurpleXmlNode *node, PurpleAccount *account)
 }
 
 static PurpleAccount *
-parse_account(PurpleXmlNode *node, const gchar *version)
+parse_account(PurpleXmlNode *node)
 {
 	PurpleAccount *ret;
 	PurpleXmlNode *child;
-	char *read_proto = NULL, *protocol_id;
+	char *protocol_id = NULL;
 	char *name = NULL;
 	char *data;
 
 	child = purple_xmlnode_get_child(node, "protocol");
 	if (child != NULL)
-		read_proto = purple_xmlnode_get_data(child);
-	protocol_id = read_proto;
+		protocol_id = purple_xmlnode_get_data(child);
 
 	child = purple_xmlnode_get_child(node, "name");
 	if (child != NULL)
@@ -485,24 +482,16 @@ parse_account(PurpleXmlNode *node, const gchar *version)
 			name = purple_xmlnode_get_data(child);
 	}
 
-	if ((read_proto == NULL) || (name == NULL))
+	if ((protocol_id == NULL) || (name == NULL))
 	{
-		g_free(read_proto);
+		g_free(protocol_id);
 		g_free(name);
 		return NULL;
 	}
 
-	if (purple_version_strcmp(version, "1.1") < 0) {
-		if (!strncmp(protocol_id, "prpl-", 5)) {
-			purple_debug_info("accounts", "accounts.xml: Migrating account %s "
-					"from version %s to 1.1\n", name, version);
-			protocol_id += 5;
-		}
-	}
-
 	ret = purple_account_new(name, protocol_id);
 	g_free(name);
-	g_free(read_proto);
+	g_free(protocol_id);
 
 	/* Read the alias */
 	child = purple_xmlnode_get_child(node, "alias");
@@ -593,7 +582,6 @@ static void
 load_accounts(void)
 {
 	PurpleXmlNode *node, *child;
-	const char *version;
 
 	accounts_loaded = TRUE;
 
@@ -602,16 +590,11 @@ load_accounts(void)
 	if (node == NULL)
 		return;
 
-	version = purple_xmlnode_get_attrib(node, "version");
-	if (purple_version_strcmp(version, ACCOUNTS_XML_VERSION) > 0)
-		purple_debug_warning("accounts", "accounts.xml on disk is for a newer "
-				"version of libpurple");
-
 	for (child = purple_xmlnode_get_child(node, "account"); child != NULL;
 			child = purple_xmlnode_get_next_twin(child))
 	{
 		PurpleAccount *new_acct;
-		new_acct = parse_account(child, version);
+		new_acct = parse_account(child);
 		purple_accounts_add(new_acct);
 	}
 
