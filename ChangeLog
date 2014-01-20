@@ -108,7 +108,7 @@ version 2.10.8:
 	  a subsequent mechanism would otherwise work when using Cyrus SASL.
 	  (#15524)
 	* Fix dropping incoming stanzas on BOSH connections when we receive
-	  multiple HTTP responses at once. (#15684)
+	  multiple HTTP responses at once. (Issa Gorissen) (#15684)
 
 	Yahoo!:
 	* Fix possible crashes handling incoming strings that are not UTF-8.
