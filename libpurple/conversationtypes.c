@@ -168,7 +168,7 @@ send_typed_cb(gpointer data)
 
 		serv_send_typing(gc, name, PURPLE_IM_TYPED);
 
-		purple_debug(PURPLE_DEBUG_MISC, "conversation", "typed...\n");
+		purple_debug(PURPLE_DEBUG_MISC, "conversationtypes", "typed...\n");
 	}
 
 	return FALSE;
@@ -1633,9 +1633,9 @@ purple_chat_conversation_new(PurpleAccount *account, const char *name)
 	if ((chat = purple_conversations_find_chat_with_account(name, account)) != NULL)
 	{
 		if (!purple_chat_conversation_has_left(chat)) {
-			purple_debug_warning("conversation", "Trying to create multiple "
-					"chats (%s) with the same name is deprecated and will be "
-					"removed in libpurple 3.0.0", name);
+			purple_debug_warning("conversationtypes", "Trying to create "
+					"multiple chats (%s) with the same name is deprecated and "
+					"will be removed in libpurple 3.0.0", name);
 		} else {
 			/*
 			 * This hack is necessary because some protocols (MSN) have unnamed chats

@@ -384,7 +384,7 @@ purple_blist_sync(void)
 
 	if (!blist_loaded)
 	{
-		purple_debug_error("blist", "Attempted to save buddy list before it "
+		purple_debug_error("buddylist", "Attempted to save buddy list before it "
 						 "was read!\n");
 		return;
 	}
@@ -1867,7 +1867,7 @@ purple_blist_set_ui_ops(PurpleBlistUiOps *ops)
 	if (overrode && (ops->save_node    != purple_blist_save_node ||
 	                 ops->remove_node  != purple_blist_save_node ||
 	                 ops->save_account != purple_blist_save_account)) {
-		purple_debug_warning("blist", "Only some of the blist saving UI ops "
+		purple_debug_warning("buddylist", "Only some of the blist saving UI ops "
 				"were overridden. This probably is not what you want!\n");
 	}
 }
@@ -1996,7 +1996,7 @@ purple_blist_uninit(void)
 		purple_blist_sync();
 	}
 
-	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
+	purple_debug(PURPLE_DEBUG_INFO, "buddylist", "Destroying\n");
 
 	if (ops && ops->destroy)
 		ops->destroy(purplebuddylist);
