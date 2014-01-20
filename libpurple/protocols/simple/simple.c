@@ -1643,7 +1643,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		cur += 2;
 		restlen = conn->inbufused - (cur - conn->inbuf);
 		if(restlen >= msg->bodylen) {
-			dummy = g_malloc(msg->bodylen + 1);
+			dummy = g_new(char, msg->bodylen + 1);
 			memcpy(dummy, cur, msg->bodylen);
 			dummy[msg->bodylen] = '\0';
 			msg->body = dummy;

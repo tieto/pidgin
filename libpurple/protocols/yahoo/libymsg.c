@@ -21,6 +21,12 @@
  *
  */
 
+/*
+ * Note: When handling the list of struct yahoo_pair's from an incoming
+ * packet the value might not be UTF-8. You should either validate that
+ * it is UTF-8 using g_utf8_validate() or use yahoo_string_decode().
+ */
+
 #include "internal.h"
 
 #include "account.h"
@@ -598,14 +604,24 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 			yd->current_list15_grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
-			g_free(temp);
-			temp = g_strdup(purple_normalize(account, pair->value));
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				g_free(temp);
+				temp = g_strdup(purple_normalize(account, pair->value));
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_list_15 "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 241: /* user on federated network */
 			fed = strtol(pair->value, NULL, 10);
 			break;
 		case 59: /* somebody told cookies come here too, but im not sure */
-			yahoo_process_cookie(yd, pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				yahoo_process_cookie(yd, pair->value);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_list_15 "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 317: /* Stealth Setting */
 			stealth = strtol(pair->value, NULL, 10);
@@ -667,22 +683,42 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 				g_string_append(yd->tmp_serv_blist, pair->value);
 			break;
 		case 88:
-			if (!yd->tmp_serv_ilist)
-				yd->tmp_serv_ilist = g_string_new(pair->value);
-			else
-				g_string_append(yd->tmp_serv_ilist, pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				if (!yd->tmp_serv_ilist)
+					yd->tmp_serv_ilist = g_string_new(pair->value);
+				else
+					g_string_append(yd->tmp_serv_ilist, pair->value);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_list "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 89:
-			yd->profiles = g_strsplit(pair->value, ",", -1);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				yd->profiles = g_strsplit(pair->value, ",", -1);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_list "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 59: /* cookies, yum */
-			yahoo_process_cookie(yd, pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				yahoo_process_cookie(yd, pair->value);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_list "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case YAHOO_SERVICE_PRESENCE_PERM:
-			if (!yd->tmp_serv_plist)
-				yd->tmp_serv_plist = g_string_new(pair->value);
-			else
-				g_string_append(yd->tmp_serv_plist, pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				if (!yd->tmp_serv_plist)
+					yd->tmp_serv_plist = g_string_new(pair->value);
+				else
+					g_string_append(yd->tmp_serv_plist, pair->value);
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_list "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		}
 	}
@@ -705,6 +741,12 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 			grp = yahoo_string_decode(gc, split[0], FALSE);
 			buddies = g_strsplit(split[1], ",", -1);
 			for (bud = buddies; bud && *bud; bud++) {
+				if (!g_utf8_validate(*bud, -1, NULL)) {
+					purple_debug_warning("yahoo", "yahoo_process_list "
+							"got non-UTF-8 string for bud\n");
+					continue;
+				}
+
 				norm_bud = g_strdup(purple_normalize(account, *bud));
 				f = yahoo_friend_find_or_new(gc, norm_bud);
 
@@ -798,14 +840,26 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
-		if (pair->key == 4 || pair->key == 1)
-			from = pair->value;
+		if (pair->key == 4 || pair->key == 1) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				from = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_notify "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 		if (pair->key == 49)
 			msg = pair->value;
 		if (pair->key == 13)
 			stat = pair->value;
-		if (pair->key == 14)
-			game = pair->value;
+		if (pair->key == 14) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				game = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_notify "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 		if (pair->key == 11)
 			val_11 = strtol(pair->value, NULL, 10);
 		if (pair->key == 241)
@@ -909,10 +963,15 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 	while (l != NULL) {
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 4) {
-			sms = g_new0(struct _yahoo_im, 1);
-			sms->from = g_strdup_printf("+%s", pair->value);
-			sms->time = time(NULL);
-			sms->utf8 = TRUE;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				sms = g_new0(struct _yahoo_im, 1);
+				sms->from = g_strdup_printf("+%s", pair->value);
+				sms->time = time(NULL);
+				sms->utf8 = TRUE;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_sms_message "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 		}
 		if (pair->key == 14) {
 			if (sms)
@@ -921,8 +980,14 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 		if (pair->key == 68)
 			if(sms)
 				g_hash_table_insert(yd->sms_carrier, g_strdup(sms->from), g_strdup(pair->value));
-		if (pair->key == 16)
-			server_msg = pair->value;
+		if (pair->key == 16) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				server_msg = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_sms_message "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 		l = l->next;
 	}
 
@@ -979,13 +1044,18 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		while (l != NULL) {
 			struct yahoo_pair *pair = l->data;
 			if (pair->key == 4 || pair->key == 1) {
-				im = g_new0(struct _yahoo_im, 1);
-				list = g_slist_append(list, im);
-				im->from = pair->value;
-				im->time = time(NULL);
-				im->utf8 = TRUE;
-				im->fed = YAHOO_FEDERATION_NONE;
-				im->fed_from = g_strdup(im->from);
+				if (g_utf8_validate(pair->value, -1, NULL)) {
+					im = g_new0(struct _yahoo_im, 1);
+					list = g_slist_append(list, im);
+					im->from = pair->value;
+					im->time = time(NULL);
+					im->utf8 = TRUE;
+					im->fed = YAHOO_FEDERATION_NONE;
+					im->fed_from = g_strdup(im->from);
+				} else {
+					purple_debug_warning("yahoo", "yahoo_process_message "
+							"got non-UTF-8 string for key %d\n", pair->key);
+				}
 			}
 			if (im && pair->key == 5)
 				im->active_id = pair->value;
@@ -1041,7 +1111,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				}
 			}
 			/* IMV key */
-			if (im && pair->key == 63)
+			if (im && pair->key == 63 && g_utf8_validate(pair->value, -1, NULL))
 			{
 				/* Check for the Doodle IMV, no IMvironment for federated buddies */
 				if (im->from != NULL && im->fed == YAHOO_FEDERATION_NONE)
@@ -1178,10 +1248,22 @@ static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 
-		if (pair->key == 5)
-			me = pair->value;
-		if (pair->key == 14)
-			msg = pair->value;
+		if (pair->key == 5) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				me = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_sysmessage "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
+		if (pair->key == 14) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				msg = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_sysmessage "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 
 		l = l->next;
 	}
@@ -1325,7 +1407,12 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 
 			switch (pair->key) {
 			case 4:
-				temp = pair->value;
+				if (g_utf8_validate(pair->value, -1, NULL)) {
+					temp = pair->value;
+				} else {
+					purple_debug_warning("yahoo", "yahoo_buddy_auth_req_15 "
+							"got non-UTF-8 string for key %d\n", pair->key);
+				}
 				break;
 			case 13:
 				response = strtol(pair->value, NULL, 10);
@@ -1380,22 +1467,42 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 
 			switch (pair->key) {
 			case 4:
-				temp = pair->value;
+				if (g_utf8_validate(pair->value, -1, NULL)) {
+					temp = pair->value;
+				} else {
+					purple_debug_warning("yahoo", "yahoo_buddy_auth_req_15 "
+							"got non-UTF-8 string for key %d\n", pair->key);
+				}
 				break;
 			case 5:
-				add_req->id = g_strdup(pair->value);
+				if (g_utf8_validate(pair->value, -1, NULL)) {
+					add_req->id = g_strdup(pair->value);
+				} else {
+					purple_debug_warning("yahoo", "yahoo_buddy_auth_req_15 "
+							"got non-UTF-8 string for key %d\n", pair->key);
+				}
 				break;
 			case 14:
 				msg = pair->value;
 				break;
 			case 216:
-				firstname = pair->value;
+				if (g_utf8_validate(pair->value, -1, NULL)) {
+					firstname = pair->value;
+				} else {
+					purple_debug_warning("yahoo", "yahoo_buddy_auth_req_15 "
+							"got non-UTF-8 string for key %d\n", pair->key);
+				}
 				break;
 			case 241:
 				add_req->fed = strtol(pair->value, NULL, 10);
 				break;
 			case 254:
-				lastname = pair->value;
+				if (g_utf8_validate(pair->value, -1, NULL)) {
+					lastname = pair->value;
+				} else {
+					purple_debug_warning("yahoo", "yahoo_buddy_auth_req_15 "
+							"got non-UTF-8 string for key %d\n", pair->key);
+				}
 				break;
 
 			}
@@ -1476,10 +1583,20 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		switch (pair->key) {
 		case 1:
-			add_req->id = g_strdup(pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				add_req->id = g_strdup(pair->value);
+			} else {
+					purple_debug_warning("yahoo", "yahoo_buddy_added_us "
+							"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 3:
-			add_req->who = g_strdup(pair->value);
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				add_req->who = g_strdup(pair->value);
+			} else {
+					purple_debug_warning("yahoo", "yahoo_buddy_added_us "
+							"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 15: /* time, for when they add us and we're offline */
 			break;
@@ -1531,10 +1648,20 @@ static void yahoo_buddy_denied_our_add_old(PurpleConnection *gc, struct yahoo_pa
 
 		switch (pair->key) {
 		case 3:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_buddy_denied_our_add_old "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 14:
-			msg = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				msg = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_buddy_denied_our_add_old "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		}
 		l = l->next;
@@ -1631,12 +1758,28 @@ static void yahoo_process_mail(PurpleConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 9)
 			count = strtol(pair->value, NULL, 10);
-		else if (pair->key == 43)
-			who = pair->value;
-		else if (pair->key == 42)
-			email = pair->value;
-		else if (pair->key == 18)
-			subj = pair->value;
+		else if (pair->key == 43) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_mail "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		} else if (pair->key == 42) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				email = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_mail "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		} else if (pair->key == 18) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				subj = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_mail "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 		l = l->next;
 	}
 
@@ -2025,8 +2168,14 @@ static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
-		if (pair->key == 94)
-			seed = pair->value;
+		if (pair->key == 94) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				seed = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_auth "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 		/* (pair->key == 1) -> sn */
 		if (pair->key == 13)
 			m = atoi(pair->value);
@@ -2099,7 +2248,12 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = l->data;
 		switch (pair->key) {
 		case 0:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_ignore "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		/* 1 -> me */
 		case 13:
@@ -2196,8 +2350,14 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 
 		if (pair->key == 66)
 			err = strtol(pair->value, NULL, 10);
-		else if (pair->key == 20)
-			url = pair->value;
+		else if (pair->key == 20) {
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				url = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_authresp "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
+		}
 
 		l = l->next;
 	}
@@ -2276,7 +2436,12 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 			err = strtol(pair->value, NULL, 10);
 			break;
 		case 7:
-			temp = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				temp = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_addbuddy "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 65:
 			group = pair->value;
@@ -2436,11 +2601,16 @@ static void yahoo_p2p_process_p2pfilexfer(gpointer data, gint source, struct yah
 
 		switch (pair->key) {
 		case 4:
-			who = pair->value;
-			if(strncmp(who, p2p_data->host_username, strlen(p2p_data->host_username)) != 0) {
-				/* from whom are we receiving the packets ?? */
-				purple_debug_warning("yahoo","p2p: received data from wrong user\n");
-				return;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+				if(strncmp(who, p2p_data->host_username, strlen(p2p_data->host_username)) != 0) {
+					/* from whom are we receiving the packets ?? */
+					purple_debug_warning("yahoo","p2p: received data from wrong user\n");
+					return;
+				}
+			} else {
+				purple_debug_warning("yahoo", "yahoo_p2p_process_p2pfilexfer "
+						"got non-UTF-8 string for key %d\n", pair->key);
 			}
 			break;
 		case 13:
@@ -2507,7 +2677,7 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 	int pos = 0;
 	int pktlen;
 	struct yahoo_packet *pkt;
-	guchar *start = NULL;
+	guchar *start;
 	struct yahoo_p2p_data *p2p_data;
 	YahooData *yd;
 
@@ -2529,19 +2699,29 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 		return;
 	}
 
+	/* TODO: It looks like there's a bug here (and above) where an incorrect
+	 * assumtion is being made that the buffer will be added to when this
+	 * is next called, but that's not really the case! */
 	if(len < YAHOO_PACKET_HDRLEN)
 		return;
 
-	if(strncmp((char *)buf, "YMSG", MIN(4, len)) != 0) {
+	if(strncmp((char *)buf, "YMSG", 4) != 0) {
 		/* Not a YMSG packet */
+		purple_debug_warning("yahoo", "p2p: Got something other than YMSG packet\n");
+
+		start = (guchar *) g_strstr_len((char *) buf + 1, len - 1 ,"YMSG");
+		if (start == NULL) {
+			/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
+			if (g_hash_table_lookup(yd->peers, p2p_data->host_username))
+				g_hash_table_remove(yd->peers, p2p_data->host_username);
+			else
+				yahoo_p2p_disconnect_destroy_data(data);
+			return;
+		}
 		purple_debug_warning("yahoo","p2p: Got something other than YMSG packet\n");
 
-		start = memchr(buf + 1, 'Y', len - 1);
-		if (start == NULL)
-			return;
-
-		g_memmove(buf, start, len - (start - buf));
-		len -= start - buf;
+		len -= (start - buf);
+		g_memmove(buf, start, len);
 	}
 
 	pos += 4;	/* YMSG */
@@ -2549,7 +2729,17 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 	pos += 2;
 
 	pktlen = yahoo_get16(buf + pos); pos += 2;
-	purple_debug_misc("yahoo", "p2p: %d bytes to read\n", len);
+	if (len < (YAHOO_PACKET_HDRLEN + pktlen)) {
+		purple_debug_error("yahoo", "p2p: packet length(%d) > buffer length(%d)\n",
+				pktlen, (len - pos)); 
+		/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
+		if (g_hash_table_lookup(yd->peers, p2p_data->host_username))
+			g_hash_table_remove(yd->peers, p2p_data->host_username);
+		else
+			yahoo_p2p_disconnect_destroy_data(data);
+		return;
+	} else
+		purple_debug_misc("yahoo", "p2p: %d bytes to read\n", pktlen);
 
 	pkt = yahoo_packet_new(0, 0, 0);
 	pkt->service = yahoo_get16(buf + pos); pos += 2;
@@ -2809,15 +2999,25 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 			/* our identity */
 			break;
 		case 4:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_p2p "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 1:
 			/* who again, the master identity this time? */
 			break;
 		case 12:
-			base64 = pair->value;
-			/* so, this is an ip address. in base64. decoded it's in ascii.
-			   after strtol, it's in reversed byte order. Who thought this up?*/
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				base64 = pair->value;
+				/* so, this is an ip address. in base64. decoded it's in ascii.
+				   after strtol, it's in reversed byte order. Who thought this up?*/
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_p2p "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 13:
 			val_13 = strtol(pair->value, NULL, 10);
@@ -2906,7 +3106,12 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 
 		switch (pair->key) {
 		case 4:
-			who = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				who = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_audible "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 5:
 			/* us */
@@ -2914,11 +3119,21 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 		case 230:
 			/* the audible, in foo.locale.bar.baz format
 			   eg: base.tw.smiley.smiley43 */
-			id = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				id = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_audible "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 231:
 			/* the text of the audible */
-			msg = pair->value;
+			if (g_utf8_validate(pair->value, -1, NULL)) {
+				msg = pair->value;
+			} else {
+				purple_debug_warning("yahoo", "yahoo_process_audible "
+						"got non-UTF-8 string for key %d\n", pair->key);
+			}
 			break;
 		case 232:
 			/* SHA-1 hash of audible SWF file (eg: 4e8691499d9c0fb8374478ff9720f4a9ea4a4915) */

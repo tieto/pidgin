@@ -3650,24 +3650,26 @@ purple_strcasereplace(const char *string, const char *delimiter,
 	return ret;
 }
 
-const char *
-purple_strcasestr(const char *haystack, const char *needle)
+/** TODO: Expose this when we can add API */
+static const char *
+purple_strcasestr_len(const char *haystack, gssize hlen, const char *needle, gssize nlen)
 {
-	size_t hlen, nlen;
 	const char *tmp, *ret;
 
 	g_return_val_if_fail(haystack != NULL, NULL);
 	g_return_val_if_fail(needle != NULL, NULL);
 
-	hlen = strlen(haystack);
-	nlen = strlen(needle);
+	if (hlen == -1)
+		hlen = strlen(haystack);
+	if (nlen == -1)
+		nlen = strlen(needle);
 	tmp = haystack,
 	ret = NULL;
 
 	g_return_val_if_fail(hlen > 0, NULL);
 	g_return_val_if_fail(nlen > 0, NULL);
 
-	while (*tmp && !ret) {
+	while (*tmp && !ret && (hlen - (tmp - haystack)) >= nlen) {
 		if (!g_ascii_strncasecmp(needle, tmp, nlen))
 			ret = tmp;
 		else
@@ -3675,6 +3677,12 @@ purple_strcasestr(const char *haystack, const char *needle)
 	}
 
 	return ret;
+}
+
+const char *
+purple_strcasestr(const char *haystack, const char *needle)
+{
+	return purple_strcasestr_len(haystack, -1, needle, -1);
 }
 
 char *

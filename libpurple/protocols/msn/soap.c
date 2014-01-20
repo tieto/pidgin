@@ -193,9 +193,11 @@ msn_soap_service_recv(PurpleHttpConnection *http_conn,
 			if (xml_url != NULL)
 				url = purple_xmlnode_get_data(xml_url);
 
-			msn_soap_service_send_message_simple(sreq->soaps,
-				sreq->message, url, sreq->secure, sreq->cb,
-				sreq->cb_data);
+			if (url) {
+				msn_soap_service_send_message_simple(sreq->soaps,
+					sreq->message, url, sreq->secure, sreq->cb,
+					sreq->cb_data);
+			}
 
 			/* Steal the message, passed to another call. */
 			sreq->message = NULL;
@@ -208,7 +210,10 @@ msn_soap_service_recv(PurpleHttpConnection *http_conn,
 		if (g_strcmp0(faultdata, "wsse:FailedAuthentication") == 0) {
 			PurpleXmlNode *xml_reason =
 				purple_xmlnode_get_child(xml_fault, "faultstring");
-			gchar *reasondata = purple_xmlnode_get_data(xml_reason);
+			gchar *reasondata = NULL;
+
+			if (xml_reason)
+				reasondata = purple_xmlnode_get_data(xml_reason);
 
 			msn_session_set_error(sreq->soaps->session, MSN_ERROR_AUTH,
 				reasondata);
