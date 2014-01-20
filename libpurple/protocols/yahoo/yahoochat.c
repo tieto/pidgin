@@ -664,8 +664,7 @@ void yahoo_process_chat_exit(PurpleConnection *gc, struct yahoo_packet *pkt)
 		if (pair->key == 104) {
 			g_free(room);
 			room = yahoo_string_decode(gc, pair->value, TRUE);
-		}
-		if (pair->key == 109) {
+		} else if (pair->key == 109) {
 			if (g_utf8_validate(pair->value, -1, NULL)) {
 				who = pair->value;
 			} else {
