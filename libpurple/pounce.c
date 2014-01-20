@@ -32,6 +32,8 @@
 #include "pounce.h"
 #include "util.h"
 
+#define POUNCES_XML_VERSION "1.1"
+
 /**
  * A buddy pounce structure.
  *
@@ -257,7 +259,7 @@ pounces_to_xmlnode(void)
 	GList *cur;
 
 	node = purple_xmlnode_new("pounces");
-	purple_xmlnode_set_attrib(node, "version", "1.0");
+	purple_xmlnode_set_attrib(node, "version", POUNCES_XML_VERSION);
 
 	for (cur = purple_pounces_get_all(); cur != NULL; cur = cur->next)
 	{
@@ -351,7 +353,14 @@ start_element_handler(GMarkupParseContext *context,
 		data->buffer = NULL;
 	}
 
-	if (purple_strequal(element_name, "pounce")) {
+	if (purple_strequal(element_name, "pounces")) {
+		const char *version = g_hash_table_lookup(atts, "version");
+
+		if (purple_version_strcmp(version, POUNCES_XML_VERSION) > 0)
+			purple_debug_warning("pounce", "pounces.xml on disk is for a "
+					"newer version of libpurple");
+	}
+	else if (purple_strequal(element_name, "pounce")) {
 		const char *ui = g_hash_table_lookup(atts, "ui");
 
 		if (ui == NULL) {

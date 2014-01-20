@@ -60,6 +60,7 @@ static char *smileys_dir = NULL;
 #define SMILEYS_LOG_ID				"smileys"
 
 #define XML_FILE_NAME				"smileys.xml"
+#define XML_VERSION				"1.0"
 
 #define XML_ROOT_TAG				"smileys"
 #define XML_PROFILE_TAG			"profile"
@@ -168,7 +169,7 @@ smileys_to_xmlnode(void)
 	PurpleXmlNode *root_node, *profile_node, *smileyset_node;
 
 	root_node = purple_xmlnode_new(XML_ROOT_TAG);
-	purple_xmlnode_set_attrib(root_node, "version", "1.0");
+	purple_xmlnode_set_attrib(root_node, "version", XML_VERSION);
 
 	/* See the top comments above to understand why initial tag elements
 	 * are not being considered by now. */
@@ -250,6 +251,7 @@ purple_smileys_load(void)
 	PurpleXmlNode *root_node, *profile_node;
 	PurpleXmlNode *smileyset_node = NULL;
 	PurpleXmlNode *smiley_node;
+	const char *version;
 
 	smileys_loaded = TRUE;
 
@@ -258,6 +260,11 @@ purple_smileys_load(void)
 
 	if (root_node == NULL)
 		return;
+
+	version = purple_xmlnode_get_attrib(root_node, "version");
+	if (purple_version_strcmp(version, XML_VERSION) > 0)
+		purple_debug_warning("smiley", "%s on disk is for a newer version of "
+				"libpurple", XML_FILE_NAME);
 
 	/* See the top comments above to understand why initial tag elements
 	 * are not being considered by now. */
