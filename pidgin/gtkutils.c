@@ -930,9 +930,9 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 							PurpleAccount **ret_account, char **ret_protocol,
 							char **ret_username, char **ret_alias)
 {
-	char *protocol_id = NULL;
-	char *username    = NULL;
-	char *alias       = NULL;
+	char *protocol = NULL;
+	char *username = NULL;
+	char *alias    = NULL;
 	char *str;
 	char *s;
 	gboolean valid;
@@ -981,18 +981,18 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 			if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
 				username = g_strdup(value);
 			else if (!g_ascii_strcasecmp(key, "X-IM-Protocol:"))
-				protocol_id = g_strdup(value);
+				protocol = g_strdup(value);
 			else if (!g_ascii_strcasecmp(key, "X-IM-Alias:"))
 				alias = g_strdup(value);
 		}
 	}
 
-	if (username != NULL && protocol_id != NULL)
+	if (username != NULL && protocol != NULL)
 	{
 		valid = TRUE;
 
 		*ret_username = username;
-		*ret_protocol = protocol_id;
+		*ret_protocol = protocol;
 
 		if (ret_alias != NULL)
 			*ret_alias = alias;
@@ -1013,16 +1013,16 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 			for (l = list; l != NULL; l = l->next)
 			{
 				PurpleConnection *gc;
-				PurpleProtocol *protocol = NULL;
+				PurpleProtocol *proto = NULL;
 
 				if (all_accounts)
 				{
 					account = (PurpleAccount *)l->data;
 
-					protocol = purple_protocols_find(
+					proto = purple_protocols_find(
 						purple_account_get_protocol_id(account));
 
-					if (protocol == NULL)
+					if (proto == NULL)
 					{
 						account = NULL;
 
@@ -1034,34 +1034,34 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 					gc = (PurpleConnection *)l->data;
 					account = purple_connection_get_account(gc);
 
-					protocol = purple_connection_get_protocol(gc);
+					proto = purple_connection_get_protocol(gc);
 				}
 
-				protoname = purple_protocol_class_list_icon(protocol, account, NULL);
+				protoname = purple_protocol_class_list_icon(proto, account, NULL);
 
-				if (!strcmp(protoname, protocol_id))
+				if (!strcmp(protoname, protocol))
 					break;
 
 				account = NULL;
 			}
 
 			/* Special case for AIM and ICQ */
-			if (account == NULL && (!strcmp(protocol_id, "aim") ||
-									!strcmp(protocol_id, "icq")))
+			if (account == NULL && (!strcmp(protocol, "aim") ||
+									!strcmp(protocol, "icq")))
 			{
 				for (l = list; l != NULL; l = l->next)
 				{
 					PurpleConnection *gc;
-					PurpleProtocol *protocol = NULL;
+					PurpleProtocol *proto = NULL;
 
 					if (all_accounts)
 					{
 						account = (PurpleAccount *)l->data;
 
-						protocol = purple_protocols_find(
+						proto = purple_protocols_find(
 							purple_account_get_protocol_id(account));
 
-						if (protocol == NULL)
+						if (proto == NULL)
 						{
 							account = NULL;
 
@@ -1073,10 +1073,10 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 						gc = (PurpleConnection *)l->data;
 						account = purple_connection_get_account(gc);
 
-						protocol = purple_connection_get_protocol(gc);
+						proto = purple_connection_get_protocol(gc);
 					}
 
-					protoname = purple_protocol_class_list_icon(protocol, account, NULL);
+					protoname = purple_protocol_class_list_icon(proto, account, NULL);
 
 					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
 						break;
@@ -1093,7 +1093,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		valid = FALSE;
 
 		g_free(username);
-		g_free(protocol_id);
+		g_free(protocol);
 		g_free(alias);
 	}
 
