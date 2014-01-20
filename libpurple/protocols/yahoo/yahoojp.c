@@ -90,7 +90,7 @@ yahoojp_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id   = "yahoojp";
+	protocol->id   = "prpl-yahoojp";
 	protocol->name = "Yahoo JAPAN";
 
 	/* delete yahoo's protocol options */

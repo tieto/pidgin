@@ -931,7 +931,7 @@ irc_protocol_init(PurpleProtocol *protocol)
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
-	protocol->id        = "irc";
+	protocol->id        = "prpl-irc";
 	protocol->name      = "IRC";
 	protocol->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL |
 	                      OPT_PROTO_SLASH_COMMANDS_NATIVE;

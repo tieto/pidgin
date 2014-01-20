@@ -214,7 +214,7 @@ yahoo_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id        = "yahoo";
+	protocol->id        = "prpl-yahoo";
 	protocol->name      = "Yahoo";
 	protocol->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC |
 	                      OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;

@@ -2887,7 +2887,7 @@ msn_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id        = "msn";
+	protocol->id        = "prpl-msn";
 	protocol->name      = "MSN";
 	protocol->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_INVITE_MESSAGE;
 	protocol->icon_spec = purple_buddy_icon_spec_new("png,gif",

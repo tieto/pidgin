@@ -2054,7 +2054,7 @@ simple_protocol_init(PurpleProtocol *protocol)
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
-	protocol->id   = "simple";
+	protocol->id   = "prpl-simple";
 	protocol->name = "SIMPLE";
 
 	split = purple_account_user_split_new(_("Server"), "", '@');

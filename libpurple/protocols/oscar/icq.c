@@ -49,7 +49,7 @@ icq_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id   = "icq";
+	protocol->id   = "prpl-icq";
 	protocol->name = "ICQ";
 
 	oscar_init_protocol_options(protocol);

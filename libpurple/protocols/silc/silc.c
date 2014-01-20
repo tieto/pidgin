@@ -2146,7 +2146,7 @@ silcpurple_protocol_init(PurpleProtocol *protocol)
 	PurpleKeyValuePair *kvp;
 	GList *list = NULL;
 
-	protocol->id        = "silc";
+	protocol->id        = "prpl-silc";
 	protocol->name      = "SILC";
 	protocol->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	                      OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |

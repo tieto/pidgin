@@ -33,7 +33,7 @@ aim_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id   = "aim";
+	protocol->id   = "prpl-aim";
 	protocol->name = "AIM";
 
 	oscar_init_protocol_options(protocol);

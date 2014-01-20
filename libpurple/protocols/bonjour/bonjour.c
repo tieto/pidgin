@@ -634,7 +634,7 @@ bonjour_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id        = "bonjour";
+	protocol->id        = "prpl-bonjour";
 	protocol->name      = "Bonjour";
 	protocol->options   = OPT_PROTO_NO_PASSWORD;
 	protocol->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",

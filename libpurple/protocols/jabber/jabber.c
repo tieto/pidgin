@@ -4153,7 +4153,7 @@ static void jabber_uninit_protocol(PurpleProtocol *protocol)
 static void
 jabber_protocol_init(PurpleProtocol *protocol)
 {
-	protocol->id        = "jabber";
+	protocol->id        = "prpl-jabber";
 	protocol->name      = "XMPP";
 	protocol->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	                      OPT_PROTO_MAIL_CHECK |

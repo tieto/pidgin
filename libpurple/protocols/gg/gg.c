@@ -999,7 +999,7 @@ ggp_protocol_init(PurpleProtocol *protocol)
 	GList *encryption_options = NULL;
 	GList *protocol_version = NULL;
 
-	protocol->id        = "gg";
+	protocol->id        = "prpl-gg";
 	protocol->name      = "Gadu-Gadu";
 	protocol->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
 	                      OPT_PROTO_IM_IMAGE;

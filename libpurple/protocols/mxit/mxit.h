@@ -62,7 +62,7 @@
 
 
 /* Protocol details */
-#define		MXIT_PROTOCOL_ID			"loubserp-mxit"
+#define		MXIT_PROTOCOL_ID			"prpl-loubserp-mxit"
 #define		MXIT_PROTOCOL_NAME			"MXit"
 
 

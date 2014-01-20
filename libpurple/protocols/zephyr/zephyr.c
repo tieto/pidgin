@@ -2900,7 +2900,7 @@ zephyr_protocol_init(PurpleProtocol *protocol)
 	PurpleAccountOption *option;
 	char *tmp = get_exposure_level();
 
-	protocol->id      = "zephyr";
+	protocol->id      = "prpl-zephyr";
 	protocol->name    = "Zephyr";
 	protocol->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
 

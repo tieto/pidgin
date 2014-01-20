@@ -40,7 +40,7 @@ gtalk_protocol_init(PurpleProtocol *protocol)
 	PurpleAccountOption *option;
 	GList *encryption_values = NULL;
 
-	protocol->id   = "gtalk";
+	protocol->id   = "prpl-gtalk";
 	protocol->name = "Google Talk (XMPP)";
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */

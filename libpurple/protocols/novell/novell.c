@@ -3506,7 +3506,7 @@ novell_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id   = "novell";
+	protocol->id   = "prpl-novell";
 	protocol->name = "GroupWise";
 
 	option = purple_account_option_string_new(_("Server address"), "server", NULL);

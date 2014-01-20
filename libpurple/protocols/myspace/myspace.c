@@ -3400,7 +3400,7 @@ msim_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	protocol->id        = "myspace";
+	protocol->id        = "prpl-myspace";
 	protocol->name      = "MySpaceIM";
 	protocol->options   = OPT_PROTO_USE_POINTSIZE /* specify font size in sane point size */
 	                      | OPT_PROTO_MAIL_CHECK;

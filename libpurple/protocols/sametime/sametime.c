@@ -67,7 +67,7 @@
 
 static PurpleProtocol *my_protocol = NULL;
 
-#define PROTOCOL_ID        "meanwhile"
+#define PROTOCOL_ID        "prpl-meanwhile"
 #define PROTOCOL_NAME      "Sametime"
 
 
