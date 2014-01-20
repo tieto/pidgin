@@ -491,12 +491,10 @@ static char *_getcookie(char *rawcookie)
 static void yahoo_process_cookie(YahooData *yd, char *c)
 {
 	if (c[0] == 'Y') {
-		if (yd->cookie_y)
-			g_free(yd->cookie_y);
+		g_free(yd->cookie_y);
 		yd->cookie_y = _getcookie(c);
 	} else if (c[0] == 'T') {
-		if (yd->cookie_t)
-			g_free(yd->cookie_t);
+		g_free(yd->cookie_t);
 		yd->cookie_t = _getcookie(c);
 	} else
 		purple_debug_info("yahoo", "Unrecognized cookie '%c'\n", c[0]);
@@ -1442,7 +1440,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			yahoo_buddy_denied_our_add(gc, who, msg);
 		} else
 			purple_debug_error("yahoo", "Received unknown authorization response of %d from buddy '%s'.\n", response, who ? who : "(Unknown Buddy)");
-	g_free(who);
+		g_free(who);
 	}
 	/* Buddy requested authorization to add us. */
 	else if (pkt->status == 3) {
@@ -3826,7 +3824,6 @@ void yahoo_close(PurpleConnection *gc) {
 
 	for (l = yd->cookies; l; l = l->next) {
 		g_free(l->data);
-		l->data=NULL;
 	}
 	g_slist_free(yd->cookies);
 
