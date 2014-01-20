@@ -2843,7 +2843,7 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 	if (g_ascii_strcasecmp(proto, "msnim"))
 		return FALSE;
 
-	acct = find_acct("msn", acct_id);
+	acct = find_acct("prpl-msn", acct_id);
 
 	if (!acct)
 		return FALSE;
@@ -3067,7 +3067,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	id = purple_cmd_register("nudge", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                 "msn", msn_cmd_nudge,
+	                 "prpl-msn", msn_cmd_nudge,
 	                  _("nudge: nudge a user to get their attention"), NULL);
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 

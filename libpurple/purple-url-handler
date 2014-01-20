@@ -119,7 +119,7 @@ def addbuddy(account, screenname, group="", alias=""):
 
 
 def aim(uri):
-    protocol = "aim"
+    protocol = "prpl-aim"
     match = re.match(r"^aim:([^?]*)(\?(.*))", uri)
     if not match:
         print "Invalid aim URI: %s" % uri
@@ -145,7 +145,7 @@ def aim(uri):
         addbuddy(account, screenname, params.get("group", ""))
 
 def gg(uri):
-    protocol = "gg"
+    protocol = "prpl-gg"
     match = re.match(r"^gg:(.*)", uri)
     if not match:
         print "Invalid gg URI: %s" % uri
@@ -156,7 +156,7 @@ def gg(uri):
     goim(account, screenname)
 
 def icq(uri):
-    protocol = "icq"
+    protocol = "prpl-icq"
     match = re.match(r"^icq:([^?]*)(\?(.*))", uri)
     if not match:
         print "Invalid icq URI: %s" % uri
@@ -182,7 +182,7 @@ def icq(uri):
         addbuddy(account, screenname, params.get("group", ""))
 
 def irc(uri):
-    protocol = "irc"
+    protocol = "prpl-irc"
     match = re.match(r"^irc:(//([^/]*))?/?([^?]*)(\?(.*))?", uri)
     if not match:
         print "Invalid irc URI: %s" % uri
@@ -222,7 +222,7 @@ def irc(uri):
             gochat(account, {"server": server, "channel": channel, "password": params.get("key", "")}, params.get("msg"))
 
 def msnim(uri):
-    protocol = "msn"
+    protocol = "prpl-msn"
     match = re.match(r"^msnim:([^?]*)(\?(.*))", uri)
     if not match:
         print "Invalid msnim URI: %s" % uri
@@ -245,12 +245,12 @@ def msnim(uri):
         addbuddy(account, screenname)
 
 def myim(uri):
-        protocol = "myspace"
+        protocol = "prpl-myspace"
         print "TODO: send uri: ", uri
         assert False, "Not implemented"
 
 def sip(uri):
-    protocol = "simple"
+    protocol = "prpl-simple"
     match = re.match(r"^sip:(.*)", uri)
     if not match:
         print "Invalid sip URI: %s" % uri
@@ -261,7 +261,7 @@ def sip(uri):
     goim(account, screenname)
 
 def xmpp(uri):
-    protocol = "jabber"
+    protocol = "prpl-jabber"
     match = re.match(r"^xmpp:(//([^/?#]*)/?)?([^?#]*)(\?([^;#]*)(;([^#]*))?)?(#(.*))?", uri)
     if not match:
         print "Invalid xmpp URI: %s" % uri
@@ -301,7 +301,7 @@ def xmpp(uri):
         goim(account, screenname)
 
 def gtalk(uri):
-    protocol = "jabber"
+    protocol = "prpl-jabber"
     match = re.match(r"^gtalk:([^?]*)(\?(.*))", uri)
     if not match:
         print "Invalid gtalk URI: %s" % uri
@@ -326,7 +326,7 @@ def gtalk(uri):
         goim(account, jid)
 
 def ymsgr(uri):
-    protocol = "yahoo"
+    protocol = "prpl-yahoo"
     match = re.match(r"^ymsgr:([^?]*)(\?([^&]*)(&(.*))?)", uri)
     if not match:
         print "Invalid ymsgr URI: %s" % uri

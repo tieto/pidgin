@@ -112,6 +112,8 @@ def execute(uri):
     protocol = match.group(2)
     if protocol == "xmpp":
         protocol = "jabber"
+    if protocol is not None:
+        protocol = "prpl-" + protocol
     command = match.group(5)
     paramstring = match.group(7)
     params = {}

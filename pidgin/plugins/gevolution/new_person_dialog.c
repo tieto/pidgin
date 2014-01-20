@@ -141,19 +141,19 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 		if (*email)
 			e_contact_set(contact, E_CONTACT_EMAIL_1, (gpointer)email);
 
-		if (!strcmp(im_service, "aim"))
+		if (!strcmp(im_service, "prpl-aim"))
 			field = E_CONTACT_IM_AIM;
-		else if (!strcmp(im_service, "icq"))
+		else if (!strcmp(im_service, "prpl-icq"))
 			field = E_CONTACT_IM_ICQ;
-		else if (!strcmp(im_service, "yahoo"))
+		else if (!strcmp(im_service, "prpl-yahoo"))
 			field = E_CONTACT_IM_YAHOO;
-		else if (!strcmp(im_service, "jabber"))
+		else if (!strcmp(im_service, "prpl-jabber"))
 			field = E_CONTACT_IM_JABBER;
-		else if (!strcmp(im_service, "msn"))
+		else if (!strcmp(im_service, "prpl-msn"))
 			field = E_CONTACT_IM_MSN;
-		else if (!strcmp(im_service, "novell"))
+		else if (!strcmp(im_service, "prpl-novell"))
 			field = E_CONTACT_IM_GROUPWISE;
-		else if (!strcmp(im_service, "gg"))
+		else if (!strcmp(im_service, "prpl-gg"))
 			field = E_CONTACT_IM_GADUGADU;
 
 		if (field > 0)

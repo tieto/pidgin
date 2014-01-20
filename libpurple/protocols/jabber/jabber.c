@@ -3628,40 +3628,40 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 	PurpleCmdId id;
 	id = purple_cmd_register("config", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "jabber", jabber_cmd_chat_config,
+	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("config:  Configure a chat room."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("configure", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "jabber", jabber_cmd_chat_config,
+	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("configure:  Configure a chat room."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("nick", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "jabber", jabber_cmd_chat_nick,
+	                  "prpl-jabber", jabber_cmd_chat_nick,
 	                  _("nick &lt;new nickname&gt;:  Change your nickname."),
 	                  NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("part", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_part, _("part [message]:  Leave the room."),
 	                  NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("register", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "jabber", jabber_cmd_chat_register,
+	                  "prpl-jabber", jabber_cmd_chat_register,
 	                  _("register:  Register with a chat room."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	/* XXX: there needs to be a core /topic cmd, methinks */
 	id = purple_cmd_register("topic", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_topic,
 	                  _("topic [new topic]:  View or change the topic."),
 	                  NULL);
@@ -3669,7 +3669,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 
 	id = purple_cmd_register("ban", "ws", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_ban,
 	                  _("ban &lt;user&gt; [reason]:  Ban a user from the room."),
 	                  NULL);
@@ -3677,7 +3677,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 
 	id = purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_affiliate,
 	                  _("affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get the users with an affiliation or set users' affiliation with the room."),
 	                  NULL);
@@ -3685,7 +3685,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 
 	id = purple_cmd_register("role", "ws", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_role,
 	                  _("role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the users with a role or set users' role with the room."),
 	                  NULL);
@@ -3693,7 +3693,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 
 	id = purple_cmd_register("invite", "ws", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_invite,
 	                  _("invite &lt;user&gt; [message]:  Invite a user to the room."),
 	                  NULL);
@@ -3701,7 +3701,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 
 	id = purple_cmd_register("join", "ws", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_join,
 	                  _("join: &lt;room[@server]&gt; [password]:  Join a chat."),
 	                  NULL);
@@ -3709,7 +3709,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 
 	id = purple_cmd_register("kick", "ws", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "jabber",
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_kick,
 	                  _("kick &lt;user&gt; [reason]:  Kick a user from the room."),
 	                  NULL);
@@ -3717,7 +3717,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 
 	id = purple_cmd_register("msg", "ws", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "jabber", jabber_cmd_chat_msg,
+	                  "prpl-jabber", jabber_cmd_chat_msg,
 	                  _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."),
 	                  NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
@@ -3725,7 +3725,7 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 	id = purple_cmd_register("ping", "w", PURPLE_CMD_P_PROTOCOL,
 					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
 					  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-					  "jabber", jabber_cmd_ping,
+					  "prpl-jabber", jabber_cmd_ping,
 					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
 					  NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
@@ -3733,14 +3733,14 @@ static void jabber_register_commands(PurpleProtocol *protocol)
 	id = purple_cmd_register("buzz", "w", PURPLE_CMD_P_PROTOCOL,
 					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
 					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
-					  "jabber", jabber_cmd_buzz,
+					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("mood", "ws", PURPLE_CMD_P_PROTOCOL,
 	    			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
 	    			  PURPLE_CMD_FLAG_PROTOCOL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
-	    			  "jabber", jabber_cmd_mood,
+	    			  "prpl-jabber", jabber_cmd_mood,
 	    			  _("mood &lt;mood&gt; [text]: Set current user mood"), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 

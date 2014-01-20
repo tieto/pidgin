@@ -724,7 +724,7 @@ oscar_login(PurpleAccount *account)
 	}
 
 	flags = PURPLE_CONNECTION_FLAG_HTML;
-	if (g_str_equal(purple_account_get_protocol_id(account), "icq")) {
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
 	} else {
 		flags |= PURPLE_CONNECTION_FLAG_AUTO_RESP;
@@ -732,7 +732,7 @@ oscar_login(PurpleAccount *account)
 
 	/* Set this flag based on the protocol_id rather than the username,
 	   because that is what's tied to the get_moods protocol callback. */
-	if (g_str_equal(purple_account_get_protocol_id(account), "icq"))
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
 		flags |= PURPLE_CONNECTION_FLAG_SUPPORT_MOODS;
 
 	purple_connection_set_flags(gc, flags);
@@ -5488,10 +5488,13 @@ static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
 gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *params)
 {
 	char *acct_id = g_hash_table_lookup(params, "account");
+	char prpl[11];
 	PurpleAccount *acct;
 
 	if (g_ascii_strcasecmp(proto, "aim") && g_ascii_strcasecmp(proto, "icq"))
 		return FALSE;
+
+	g_snprintf(prpl, sizeof(prpl), "prpl-%s", proto);
 
 	acct = find_acct(proto, acct_id);
 

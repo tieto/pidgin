@@ -2214,11 +2214,11 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 		return FALSE;
 	}
 
-	add_buddies_from_vcard("aim",    group, aims,    alias);
-	add_buddies_from_vcard("icq",    group, icqs,    alias);
-	add_buddies_from_vcard("yahoo",  group, yahoos,  alias);
-	add_buddies_from_vcard("msn",    group, msns,    alias);
-	add_buddies_from_vcard("jabber", group, jabbers, alias);
+	add_buddies_from_vcard("prpl-aim",    group, aims,    alias);
+	add_buddies_from_vcard("prpl-icq",    group, icqs,    alias);
+	add_buddies_from_vcard("prpl-yahoo",  group, yahoos,  alias);
+	add_buddies_from_vcard("prpl-msn",    group, msns,    alias);
+	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);
 
 	g_free(alias);
 

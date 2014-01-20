@@ -104,7 +104,7 @@ migrate_yahoo_japan(PurpleAccount *account)
 	 * to use the new yahoojp protocol.  Also remove the account-specific settings
 	 * we no longer need */
 
-	if(purple_strequal(purple_account_get_protocol_id(account), "yahoo")) {
+	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoo")) {
 		if(purple_account_get_bool(account, "yahoojp", FALSE)) {
 			const char *serverjp = purple_account_get_string(account, "serverjp", NULL);
 			const char *xferjp_host = purple_account_get_string(account, "xferjp_host", NULL);
@@ -115,7 +115,7 @@ migrate_yahoo_japan(PurpleAccount *account)
 			purple_account_set_string(account, "server", serverjp);
 			purple_account_set_string(account, "xfer_host", xferjp_host);
 
-			purple_account_set_protocol_id(account, "yahoojp");
+			purple_account_set_protocol_id(account, "prpl-yahoojp");
 		}
 
 		/* these should always be nuked */
@@ -133,7 +133,7 @@ migrate_icq_server(PurpleAccount *account)
 	 * 'mtn log --last 1 --no-graph --from b6d7712e90b68610df3bd2d8cbaf46d94c8b3794'
 	 * for details on the change. */
 
-	if(purple_strequal(purple_account_get_protocol_id(account), "icq")) {
+	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		const char *tmp = purple_account_get_string(account, "server", NULL);
 
 		/* Non-secure server */
@@ -151,7 +151,7 @@ static void
 migrate_xmpp_encryption(PurpleAccount *account)
 {
 	/* When this is removed, nuke the "old_ssl" and "require_tls" settings */
-	if (g_str_equal(purple_account_get_protocol_id(account), "jabber")) {
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-jabber")) {
 		const char *sec = purple_account_get_string(account, "connection_security", "");
 
 		if (g_str_equal("", sec)) {

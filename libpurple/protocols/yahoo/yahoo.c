@@ -48,26 +48,26 @@ static void yahoo_register_commands(void)
 	id = purple_cmd_register("join", "s", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "yahoo", yahoopurple_cmd_chat_join,
+	                  "prpl-yahoo", yahoopurple_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("list", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
 	                  PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "yahoo", yahoopurple_cmd_chat_list,
+	                  "prpl-yahoo", yahoopurple_cmd_chat_list,
 	                  _("list: List rooms on the Yahoo network"), NULL);
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("buzz", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "yahoo", yahoopurple_cmd_buzz,
+	                  "prpl-yahoo", yahoopurple_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("doodle", "", PURPLE_CMD_P_PROTOCOL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY,
-	                  "yahoo", yahoo_doodle_purple_cmd_start,
+	                  "prpl-yahoo", yahoo_doodle_purple_cmd_start,
 	                 _("doodle: Request user to start a Doodle session"), NULL);
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 }

@@ -722,7 +722,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
-	void *jabber_handle   = purple_protocols_find("jabber");
+	void *jabber_handle   = purple_protocols_find("prpl-jabber");
 
 	/* Accounts subsystem signals */
 	purple_signal_connect(accounts_handle, "account-connecting",
@@ -890,7 +890,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	void *jabber_handle = purple_protocols_find("jabber");
+	void *jabber_handle = purple_protocols_find("prpl-jabber");
 
 	purple_signals_disconnect_by_handle(plugin);
 

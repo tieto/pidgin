@@ -224,7 +224,7 @@ static void irc_register_command(struct _irc_user_cmd *c)
 
 	args[i] = '\0';
 
-	id = purple_cmd_register(c->name, args, PURPLE_CMD_P_PROTOCOL, f, "irc",
+	id = purple_cmd_register(c->name, args, PURPLE_CMD_P_PROTOCOL, f, "prpl-irc",
 	                  irc_parse_purple_cmd, _(c->help), NULL);
 	cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
 }

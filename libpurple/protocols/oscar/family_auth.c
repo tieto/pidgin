@@ -131,7 +131,7 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	aim_encode_password(password, password_encoded);
 
 	distrib = oscar_get_ui_info_int(
-			od->icq ? "protocol-icq-distid" : "protocol-aim-distid",
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
 			ci->distrib);
 
 	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
@@ -238,7 +238,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	aim_encode_password_md5(password, password_len, key, digest);
 
 	distrib = oscar_get_ui_info_int(
-			od->icq ? "protocol-icq-distid" : "protocol-aim-distid",
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
 			ci->distrib);
 
 	aim_tlvlist_add_raw(&tlvlist, 0x0025, 16, digest);
