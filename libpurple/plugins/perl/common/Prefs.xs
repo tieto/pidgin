@@ -242,6 +242,3 @@ PPCODE:
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 		g_free(l->data);
 	}
-
-void
-purple_prefs_update_old()
