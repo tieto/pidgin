@@ -850,7 +850,7 @@ static void
 http_connection_read(PurpleHTTPConnection *conn)
 {
 	char buffer[1025];
-	int cnt, count = 0;
+	int cnt;
 
 	if (!conn->read_buf)
 		conn->read_buf = g_string_new(NULL);
@@ -862,7 +862,6 @@ http_connection_read(PurpleHTTPConnection *conn)
 			cnt = read(conn->fd, buffer, sizeof(buffer));
 
 		if (cnt > 0) {
-			count += cnt;
 			g_string_append_len(conn->read_buf, buffer, cnt);
 		}
 	} while (cnt > 0);
