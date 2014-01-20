@@ -406,7 +406,6 @@ static void yahoo_chat_join(PurpleConnection *gc, const char *dn, const char *ro
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	char *room2;
-	gboolean utf8 = TRUE;
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
@@ -416,7 +415,7 @@ static void yahoo_chat_join(PurpleConnection *gc, const char *dn, const char *ro
 
 	/* apparently room names are always utf8, or else always not utf8,
 	 * so we don't have to actually pass the flag in the packet. Or something. */
-	room2 = yahoo_string_encode(gc, room, &utf8);
+	room2 = yahoo_string_encode(gc, room, TRUE);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "ssss",
@@ -853,10 +852,9 @@ static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *roo
 	struct yahoo_packet *pkt;
 	GList *who;
 	char *msg, *msg2;
-	int utf8 = 1;
 
 	msg = yahoo_html_to_codes(what);
-	msg2 = yahoo_string_encode(gc, msg, &utf8);
+	msg2 = yahoo_string_encode(gc, msg, TRUE);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
@@ -866,8 +864,7 @@ static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *roo
 		yahoo_packet_hash_str(pkt, 53, name);
 	}
 	yahoo_packet_hash(pkt, "ss", 57, room, 14, msg2);
-	if (utf8)
-		yahoo_packet_hash_str(pkt, 97, "1"); /* utf-8 */
+	yahoo_packet_hash_str(pkt, 97, "1"); /* UTF-8 */
 
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg);
@@ -912,7 +909,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleChatConversation *c,
 	char *msg2 = NULL;
 
 	if (msg)
-		msg2 = yahoo_string_encode(gc, msg, NULL);
+		msg2 = yahoo_string_encode(gc, msg, FALSE);
 
 	members = purple_chat_conversation_get_users(c);
 
@@ -938,9 +935,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
-
 	char *eroom;
-	gboolean utf8 = 1;
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
@@ -949,7 +944,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 		return;
 	}
 
-	eroom = yahoo_string_encode(gc, room, &utf8);
+	eroom = yahoo_string_encode(gc, room, TRUE);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sss", 104, eroom, 109, dn, 108, "1");
@@ -991,7 +986,6 @@ static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *roo
 	struct yahoo_packet *pkt;
 	int me = 0;
 	char *msg1, *msg2, *room2;
-	gboolean utf8 = TRUE;
 
 	if (yd->wm) {
 		g_return_val_if_fail(yd->ycht != NULL, 1);
@@ -1006,9 +1000,9 @@ static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *roo
 
 	msg2 = yahoo_html_to_codes(msg1);
 	g_free(msg1);
-	msg1 = yahoo_string_encode(gc, msg2, &utf8);
+	msg1 = yahoo_string_encode(gc, msg2, TRUE);
 	g_free(msg2);
-	room2 = yahoo_string_encode(gc, room, NULL);
+	room2 = yahoo_string_encode(gc, room, FALSE);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_COMMENT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
@@ -1018,8 +1012,7 @@ static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *roo
 	else
 		yahoo_packet_hash_str(pkt, 124, "1");
 	/* fixme: what about /think? (124=3) */
-	if (utf8)
-		yahoo_packet_hash_str(pkt, 97, "1");
+	yahoo_packet_hash_str(pkt, 97, "1"); /* UTF-8 */
 
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg1);
@@ -1035,7 +1028,6 @@ static void yahoo_chat_invite(PurpleConnection *gc, const char *dn, const char *
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	char *room2, *msg2 = NULL;
-	gboolean utf8 = TRUE;
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
@@ -1043,9 +1035,9 @@ static void yahoo_chat_invite(PurpleConnection *gc, const char *dn, const char *
 		return;
 	}
 
-	room2 = yahoo_string_encode(gc, room, &utf8);
+	room2 = yahoo_string_encode(gc, room, TRUE);
 	if (msg)
-		msg2 = yahoo_string_encode(gc, msg, NULL);
+		msg2 = yahoo_string_encode(gc, msg, FALSE);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATADDINVITE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 118, buddy, 104, room2, 117, (msg2?msg2:""), 129, "0");

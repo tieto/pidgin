@@ -1320,7 +1320,7 @@ yahoo_buddy_add_deny_cb(const char *msg, gpointer data)
 	const char *who = add_req->who;
 
 	if (msg && *msg)
-		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
+		encoded_msg = yahoo_string_encode(add_req->gc, msg, FALSE);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
 			YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -1333,7 +1333,7 @@ yahoo_buddy_add_deny_cb(const char *msg, gpointer data)
 						  241, add_req->fed,
 						  13, 2,
 						  334, 0,
-						  97, 1,
+						  97, 1, /* UTF-8 */
 						  14, encoded_msg ? encoded_msg : "");
 	}
 	else {
@@ -1342,7 +1342,7 @@ yahoo_buddy_add_deny_cb(const char *msg, gpointer data)
 						  5, who,
 						  13, 2,
 						  334, 0,
-						  97, 1,
+						  97, 1, /* UTF-8 */
 						  14, encoded_msg ? encoded_msg : "");
 	}
 
@@ -4563,7 +4563,6 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	struct yahoo_packet *pkt = NULL;
 	char *msg = yahoo_html_to_codes(what);
 	char *msg2;
-	gboolean utf8 = TRUE;
 	PurpleWhiteboard *wb;
 	int ret = 1;
 	const char *fed_who;
@@ -4571,7 +4570,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	glong lenc = 0;
 	struct yahoo_p2p_data *p2p_data;
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
-	msg2 = yahoo_string_encode(gc, msg, &utf8);
+	msg2 = yahoo_string_encode(gc, msg, TRUE);
 
 	if(msg2) {
 		lenb = strlen(msg2);
@@ -4654,8 +4653,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	if (fed)
 		yahoo_packet_hash_int(pkt, 241, fed);
 
-	if (utf8)
-		yahoo_packet_hash_str(pkt, 97, "1");
+	yahoo_packet_hash_str(pkt, 97, "1"); /* UTF-8 */
 	yahoo_packet_hash_str(pkt, 14, msg2);
 
 	/*
@@ -4780,7 +4778,6 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	const char *msg = NULL;
 	char *tmp = NULL;
 	char *conv_msg = NULL;
-	gboolean utf8 = TRUE;
 
 	if (!purple_status_is_active(status))
 		return;
@@ -4797,13 +4794,13 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 		msg = purple_status_get_attr_string(status, "message");
 
 		if (purple_status_is_available(status)) {
-			tmp = yahoo_string_encode(gc, msg, &utf8);
+			tmp = yahoo_string_encode(gc, msg, TRUE);
 			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		} else {
 			if ((msg == NULL) || (*msg == '\0'))
 				msg = _("Away");
-			tmp = yahoo_string_encode(gc, msg, &utf8);
+			tmp = yahoo_string_encode(gc, msg, TRUE);
 			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		}
@@ -4821,7 +4818,7 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
-		yahoo_packet_hash_str(pkt, 97, utf8 ? "1" : 0);
+		yahoo_packet_hash_str(pkt, 97, "1"); /* UTF-8 */
 		yahoo_packet_hash_str(pkt, 19, conv_msg);
 	} else {
 		yahoo_packet_hash_str(pkt, 19, "");
@@ -4881,10 +4878,9 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 			status = purple_presence_get_active_status(purple_account_get_presence(purple_connection_get_account(gc)));
 		tmp = purple_status_get_attr_string(status, "message");
 		if (tmp != NULL) {
-			gboolean utf8 = TRUE;
-			msg = yahoo_string_encode(gc, tmp, &utf8);
+			msg = yahoo_string_encode(gc, tmp, TRUE);
 			msg2 = purple_markup_strip_html(msg);
-			yahoo_packet_hash_str(pkt, 97, utf8 ? "1" : 0);
+			yahoo_packet_hash_str(pkt, 97, "1"); /* UTF-8 */
 			yahoo_packet_hash_str(pkt, 19, msg2);
 		} else {
 			/* get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
@@ -5030,13 +5026,13 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, c
 	else
 		group = "Buddies";
 
-	group2 = yahoo_string_encode(gc, group, NULL);
+	group2 = yahoo_string_encode(gc, group, FALSE);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	if (fed) {
 		yahoo_packet_hash(pkt, "sssssssisss",
 						  14, "",
 						  65, group2,
-						  97, "1",
+						  97, "1", /* UTF-8 */
 						  1, purple_connection_get_display_name(gc),
 						  302, "319",
 						  300, "319",
@@ -5051,7 +5047,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, c
 		yahoo_packet_hash(pkt, "ssssssssss",
 						  14, "",
 						  65, group2,
-						  97, "1",
+						  97, "1", /* UTF-8 */
 						  1, purple_connection_get_display_name(gc),
 						  302, "319",
 						  300, "319",
@@ -5101,7 +5097,7 @@ void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 		f = NULL; /* f no longer valid - Just making it clear */
 	}
 
-	cg = yahoo_string_encode(gc, gname, NULL);
+	cg = yahoo_string_encode(gc, gname, FALSE);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	switch (fed) {
@@ -5216,8 +5212,8 @@ void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 	 * end up deleting the buddy, which would be bad.
 	 * This might happen because of the charset conversation.
 	 */
-	gpn = yahoo_string_encode(gc, new_group, NULL);
-	gpo = yahoo_string_encode(gc, old_group, NULL);
+	gpn = yahoo_string_encode(gc, new_group, FALSE);
+	gpo = yahoo_string_encode(gc, old_group, FALSE);
 	if (!strcmp(gpn, gpo)) {
 		g_free(gpn);
 		g_free(gpo);
@@ -5246,8 +5242,8 @@ void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 	struct yahoo_packet *pkt;
 	char *gpn, *gpo;
 
-	gpn = yahoo_string_encode(gc, purple_group_get_name(group), NULL);
-	gpo = yahoo_string_encode(gc, old_name, NULL);
+	gpn = yahoo_string_encode(gc, purple_group_get_name(group), FALSE);
+	gpo = yahoo_string_encode(gc, old_name, FALSE);
 	if (!strcmp(gpn, gpo)) {
 		g_free(gpn);
 		g_free(gpo);

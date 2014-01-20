@@ -116,19 +116,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
 	return ans;
 }
 
-/**
- * Encode some text to send to the yahoo server.
- *
- * @param gc The connection handle.
- * @param str The null terminated utf8 string to encode.
- * @param utf8 If not @c NULL, whether utf8 is okay or not.
- *             Even if it is okay, we may not use it. If we
- *             used it, we set this to @c TRUE, else to
- *             @c FALSE. If @c NULL, false is assumed, and
- *             it is not dereferenced.
- * @return The g_malloced string in the appropriate encoding.
- */
-char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
+char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *ret;
@@ -138,7 +126,7 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 	if (yd->jp)
 		return g_strdup(str);
 
-	if (utf8 && *utf8) /* FIXME: maybe don't use utf8 if it'll fit in latin1 */
+	if (utf8) /* FIXME: maybe don't use utf8 if it'll fit in latin1 */
 		return g_strdup(str);
 
 	to_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");

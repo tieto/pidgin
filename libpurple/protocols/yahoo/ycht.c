@@ -626,7 +626,7 @@ int ycht_chat_send(YchtConn *ycht, const char *room, const char *what)
 	pkt = ycht_packet_new(YCHT_VERSION, YCHT_SERVICE_CHATMSG, 0);
 
 	msg1 = yahoo_html_to_codes(what);
-	msg2 = yahoo_string_encode(ycht->gc, msg1, NULL);
+	msg2 = yahoo_string_encode(ycht->gc, msg1, FALSE);
 	g_free(msg1);
 
 	buf = g_strdup_printf("%s\001%s", ycht->room, msg2);
