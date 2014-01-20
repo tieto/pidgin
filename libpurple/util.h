@@ -1186,9 +1186,9 @@ void purple_utf16_wipe(gunichar2 *str);
  * @param v1 The first version to compare
  * @param v2 The second version to compare
  *
- * @return -1 if @v1 is less than @v2.
- *          0 if @v1 is equal to @v2.
- *          1 if @v1 is greater than @v2.
+ * @return -1 if @a v1 is less than @a v2.
+ *          0 if @a v1 is equal to @a v2.
+ *          1 if @a v1 is greater than @a v2.
  */
 gint purple_version_strcmp(const gchar *v1, const gchar *v2);
 
