@@ -628,6 +628,7 @@ static void
 http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 {
 	xmlnode *node;
+	gchar *message;
 
 	if (conn->failed_connections)
 		/* We've got some data, so reset the number of failed connections */
@@ -637,8 +638,10 @@ http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 
 	node = xmlnode_from_str(data, len);
 
+	message = g_strndup(data, len);
 	purple_debug_info("jabber", "RecvBOSH %s(%d): %s\n",
-	                  conn->ssl ? "(ssl)" : "", len, data);
+	                  conn->ssl ? "(ssl)" : "", len, message);
+	g_free(message);
 
 	if (node) {
 		conn->receive_cb(conn, node);
@@ -753,7 +756,12 @@ void jabber_bosh_connection_connect(PurpleBOSHConnection *bosh) {
 	http_connection_connect(conn);
 }
 
-static void
+/**
+ * @return TRUE if we want to be called again immediately. This happens when
+ *         we parse an HTTP response AND there is more data in read_buf. FALSE
+ *         if we should not be called again unless more data has been read.
+ */
+static gboolean
 jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 {
 	const char *cursor;
@@ -778,7 +786,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 				 * The packet ends in the middle of the Content-Length line.
 				 * We'll try again later when we have more.
 				 */
-				return;
+				return FALSE;
 
 			len = atoi(content_length + strlen("\r\nContent-Length:"));
 			if (len == 0)
@@ -790,7 +798,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 		if (connection && (!end_of_headers || connection < end_of_headers)) {
 			const char *tmp;
 			if (strstr(connection, "\r\n") == NULL)
-				return;
+				return FALSE;
 
 
 			tmp = connection + strlen("\r\nConnection:");
@@ -808,23 +816,31 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 			conn->handled_len = end_of_headers - conn->read_buf->str + 4;
 		} else {
 			conn->handled_len = conn->read_buf->len;
-			return;
+			return FALSE;
 		}
 	}
 
 	/* Have we handled everything in the buffer? */
 	if (conn->handled_len >= conn->read_buf->len)
-		return;
+		return FALSE;
 
 	/* Have we read all that the Content-Length promised us? */
 	if (conn->read_buf->len - conn->handled_len < conn->body_len)
-		return;
+		return FALSE;
 
 	--conn->requests;
 	--conn->bosh->requests;
 
 	http_received_cb(conn->read_buf->str + conn->handled_len, conn->body_len,
 	                 conn->bosh);
+
+	/* Is there another response in the buffer ? */
+	if (conn->read_buf->len > conn->body_len + conn->handled_len) {
+		g_string_erase(conn->read_buf, 0, conn->handled_len + conn->body_len);
+		conn->headers_done = FALSE;
+		conn->handled_len = conn->body_len = 0;
+		return TRUE;
+	}
 
 	/* Connection: Close? */
 	if (conn->close && conn->state == HTTP_CONN_CONNECTED) {
@@ -844,6 +860,8 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	conn->read_buf = NULL;
 	conn->headers_done = FALSE;
 	conn->handled_len = conn->body_len = 0;
+
+	return FALSE;
 }
 
 /*
@@ -887,8 +905,9 @@ http_connection_read(PurpleHTTPConnection *conn)
 		/* Process what we do have */
 	}
 
-	if (conn->read_buf->len > 0)
-		jabber_bosh_http_connection_process(conn);
+	if (conn->read_buf->len > 0) {
+		while (jabber_bosh_http_connection_process(conn));
+	}
 }
 
 static void
