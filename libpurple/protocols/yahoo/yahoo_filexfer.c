@@ -64,7 +64,6 @@ yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 	PurpleConnection *gc;
 	YahooData *yd;
 	PurpleXfer *xfer;
-	GSList *l;
 
 	gc = xd->gc;
 	yd = purple_connection_get_protocol_data(gc);
@@ -76,17 +75,8 @@ yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 			g_hash_table_remove(yd->xfer_peer_idstring_map, xd->xfer_peer_idstring);
 	}
 
-	/* empty file & filesize list */
-	for (l = xd->filename_list; l; l = l->next) {
-		g_free(l->data);
-		l->data=NULL;
-	}
-	for (l = xd->size_list; l; l = l->next) {
-		g_free(l->data);
-		l->data=NULL;
-	}
-	g_slist_free(xd->filename_list);
-	g_slist_free(xd->size_list);
+	g_slist_free_full(xd->filename_list, g_free);
+	g_slist_free_full(xd->size_list, g_free);
 
 	g_free(xd->host);
 	g_free(xd->path);

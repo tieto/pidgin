@@ -3822,10 +3822,7 @@ void yahoo_close(PurpleConnection *gc) {
 	}
 	g_slist_free(yd->confs);
 
-	for (l = yd->cookies; l; l = l->next) {
-		g_free(l->data);
-	}
-	g_slist_free(yd->cookies);
+	g_slist_free_full(yd->cookies, g_free);
 
 	yd->chat_online = FALSE;
 	if (yd->in_chat)

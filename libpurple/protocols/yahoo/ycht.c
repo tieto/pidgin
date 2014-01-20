@@ -415,13 +415,9 @@ static void ycht_packet_process(YchtConn *ycht, YchtPkt *pkt)
 
 static void ycht_packet_free(YchtPkt *pkt)
 {
-	GList *l;
-
 	g_return_if_fail(pkt != NULL);
 
-	for (l = pkt->data; l; l = l->next)
-		g_free(l->data);
-	g_list_free(pkt->data);
+	g_list_free_full(pkt->data, g_free);
 	g_free(pkt);
 }
 
