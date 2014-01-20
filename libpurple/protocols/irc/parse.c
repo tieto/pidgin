@@ -65,7 +65,7 @@ static struct _irc_msg {
 	{ "311", "nnvvv:", 6, irc_msg_whois },		/* Whois user			*/
 	{ "312", "nnv:", 4, irc_msg_whois },		/* Whois server			*/
 	{ "313", "nn:", 2, irc_msg_whois },		/* Whois ircop			*/
-	{ "317", "nnvv", 4, irc_msg_whois },		/* Whois idle			*/
+	{ "317", "nnvv", 3, irc_msg_whois },		/* Whois idle			*/
 	{ "318", "nt:", 2, irc_msg_endwhois },		/* End of WHOIS			*/
 	{ "319", "nn:", 3, irc_msg_whois },		/* Whois channels		*/
 	{ "320", "nn:", 2, irc_msg_whois },		/* Whois (fn ident)		*/
