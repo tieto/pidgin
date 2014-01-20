@@ -281,8 +281,8 @@ purple_plugin_get_info(const PurplePlugin *plugin)
 
 	/* GPlugin refs the plugin info object before returning it. This workaround
 	 * is to avoid managing the reference counts everywhere in our codebase
-	 * where we would need the plugin info. The plugin info instance is
-	 * guaranteed to exist as long as the plugin exists. */
+	 * where we use the plugin info. The plugin info instance is guaranteed to
+	 * exist as long as the plugin exists. */
 	g_object_unref(info);
 
 	if (PURPLE_IS_PLUGIN_INFO(info))
@@ -1002,8 +1002,8 @@ purple_plugins_find_plugin(const gchar *id)
 
 	/* GPlugin refs the plugin object before returning it. This workaround is
 	 * to avoid managing the reference counts everywhere in our codebase where
-	 * we would need the plugin. The object is guaranteed to exist till the
-	 * plugins subsystem is uninitialized. */
+	 * we use plugin instances. A plugin object will exist till the plugins
+	 * subsystem is uninitialized. */
 	g_object_unref(plugin);
 
 	return plugin;
