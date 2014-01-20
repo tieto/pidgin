@@ -623,24 +623,24 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 static void
 http_received_cb(const char *data, int len, PurpleBOSHConnection *conn)
 {
+	xmlnode *node;
+
 	if (conn->failed_connections)
 		/* We've got some data, so reset the number of failed connections */
 		conn->failed_connections = 0;
 
-	if (conn->receive_cb) {
-		xmlnode *node = xmlnode_from_str(data, len);
+	g_return_if_fail(conn->receive_cb);
 
-		purple_debug_info("jabber", "RecvBOSH %s(%d): %s\n",
-		                  conn->ssl ? "(ssl)" : "", len, data);
+	node = xmlnode_from_str(data, len);
 
-		if (node) {
-			conn->receive_cb(conn, node);
-			xmlnode_free(node);
-		} else {
-			purple_debug_warning("jabber", "BOSH: Received invalid XML\n");
-		}
+	purple_debug_info("jabber", "RecvBOSH %s(%d): %s\n",
+	                  conn->ssl ? "(ssl)" : "", len, data);
+
+	if (node) {
+		conn->receive_cb(conn, node);
+		xmlnode_free(node);
 	} else {
-		g_return_if_reached();
+		purple_debug_warning("jabber", "BOSH: Received invalid XML\n");
 	}
 }
 
