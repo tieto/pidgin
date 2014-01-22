@@ -124,7 +124,7 @@ plugin_loaded_cb(GObject *manager, PurplePlugin *plugin)
 	if (!info)
 		return; /* a GPlugin internal plugin */
 
-	loaded_plugins = g_list_append(loaded_plugins, plugin);
+	loaded_plugins = g_list_prepend(loaded_plugins, plugin);
 
 	purple_debug_info("plugins", "Loaded plugin %s\n",
 	                  purple_plugin_get_filename(plugin));
