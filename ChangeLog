@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.8:
+version 2.10.8 (1/28/2014):
 	General:
 	* Python build scripts and example plugins are now compatible with
 	  Python 3. (Ashish Gupta) (#15624)
