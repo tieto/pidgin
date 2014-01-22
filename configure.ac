@@ -47,7 +47,7 @@ m4_define([purple_lt_current], [10])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [10])
 m4_define([purple_micro_version], [8])
-m4_define([purple_version_suffix], [devel])
+m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
@@ -56,7 +56,7 @@ m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [8])
 m4_define([gnt_micro_version], [10])
-m4_define([gnt_version_suffix], [devel])
+m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -304,7 +304,7 @@ if test x$enable_i18n = xyes; then
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
 
-	ALL_LINGUAS="af am ar az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu hy id it ja ka km kn ko ku lo lt mai mhr mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu hy id it ja ka km kn ko ku lo lt mai mhr mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
 
 	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
