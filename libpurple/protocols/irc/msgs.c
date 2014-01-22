@@ -387,7 +387,7 @@ void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, cha
 	} else if (!strcmp(name, "320")) {
 		irc->whois.identified = 1;
 	} else if (!strcmp(name, "330")) {
-		g_message("msg %s: 1=[%s] 2=[%s] 3=[%s]",
+		purple_debug(PURPLE_DEBUG_INFO, "irc", "330 %s: 1=[%s] 2=[%s] 3=[%s]",
 				name, args[1], args[2], args[3]);
 		if (!strcmp(args[3], "is logged in as"))
 			irc->whois.login = g_strdup(args[2]);
