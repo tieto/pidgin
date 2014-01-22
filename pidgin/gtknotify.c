@@ -1489,7 +1489,7 @@ pidgin_notify_uri(const char *uri)
 	g_slist_free(argv_remote);
 
 #else /* !_WIN32 */
-	winpidgin_notify_uri(uri_escaped);
+	winpidgin_notify_uri(uri);
 #endif /* !_WIN32 */
 
 	return NULL;
