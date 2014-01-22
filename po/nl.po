@@ -3,17 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Daniël Heres <danielheres@gmail.com>, 2008.
-# Gideon van Melle <translations@gvmelle.com>, 2011-2013.
-# Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006.
-# Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004.
+# Daniël Heres <danielheres@gmail.com>, 2008
+# Gideon van Melle <translations@gvmelle.com>, 2011-2013
+# Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006
+# Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-11 00:04-0800\n"
-"PO-Revision-Date: 2013-01-27 08:26+0000\n"
-"Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
+"POT-Creation-Date: 2014-01-21 22:24-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/pidgin/language/"
 "nl/)\n"
 "Language: nl\n"
@@ -721,7 +721,7 @@ msgid "buddylist: Show the buddylist."
 msgstr "vriendenlijst: Vriendenlijst weergeven."
 
 msgid "accounts: Show the accounts window."
-msgstr "accounts: Accountsvenster weergeven."
+msgstr "accounts: Accounts venster weergeven."
 
 msgid "debugwin: Show the debug window."
 msgstr "debugwin: Debugvenster weergeven."
@@ -1090,7 +1090,7 @@ msgid "Action"
 msgstr "Actie"
 
 msgid "Open an IM window"
-msgstr "IM-venster openen"
+msgstr "IM venster openen"
 
 msgid "Pop up a notification"
 msgstr "Melding weergeven"
@@ -3076,12 +3076,6 @@ msgid ""
 "invalid."
 msgstr "De computernaam of poort voor uw gegeven proxy-type is ongeldig."
 
-msgid "Token Error"
-msgstr "Onbekende fout"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Kan teken niet ophalen.\n"
-
 msgid "Save Buddylist..."
 msgstr "Vriendenlijst opslaan..."
 
@@ -3109,40 +3103,6 @@ msgstr "Vriendenlijst opslaan..."
 
 msgid "Load buddylist from file..."
 msgstr "Vriendenlijst laden uit bestand..."
-
-msgid "You must fill in all registration fields"
-msgstr "Alle registratievelden moeten ingevuld worden"
-
-msgid "Passwords do not match"
-msgstr "Wachtwoorden komen niet overeen"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr ""
-"Kan geen nieuw account registreren. Er is een onbekende fout opgetreden."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Nieuw Gadu-Gadu Account Geregistreerd"
-
-msgid "Registration completed successfully!"
-msgstr "Registratie voltooid."
-
-msgid "Password"
-msgstr "Wachtwoord"
-
-msgid "Password (again)"
-msgstr "Nieuw wachtwoord (herhalen)"
-
-msgid "Enter captcha text"
-msgstr "Captcha tekst invoeren"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Nieuw Gadu-Gadu Account Registreren"
-
-msgid "Please, fill in the following fields"
-msgstr "Vul de volgende velden in"
 
 msgid "City"
 msgstr "Stad"
@@ -3172,39 +3132,6 @@ msgstr "Vrienden zoeken"
 
 msgid "Please, enter your search criteria below"
 msgstr "Geef hieronder uw zoekcriteria"
-
-msgid "Fill in the fields."
-msgstr "Vul de velden in."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Uw  huidige wachtwoord wijkt af van het door u gegeven wachtwoord."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Kan wachtwoord niet wijzigen. Er is een fout opgetreden.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Wachtwoord wijzigen voor het gadu-gadu account"
-
-msgid "Password was changed successfully!"
-msgstr "Wachtwoord gewijzigd."
-
-msgid "Current password"
-msgstr "Huidige wachtwoord"
-
-msgid "Password (retype)"
-msgstr "Wachtwoord (nogmaals)"
-
-msgid "Enter current token"
-msgstr "Geef huidige teken"
-
-msgid "Current token"
-msgstr "Huidige teken"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Geef uw huidige wachtwoord en nieuwe wachtwoord voor UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-gadu wachtwoord wijzigen"
 
 msgid "Show status to:"
 msgstr "Toon Status aan: "
@@ -3277,18 +3204,6 @@ msgstr "Er zijn geen overeenkomende gebruikers voor uw zoekcriteria"
 msgid "Unable to read from socket"
 msgstr "Kan niet lezen van socket"
 
-msgid "Buddy list downloaded"
-msgstr "Vriendenlijst gedownload"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Uw vriendenlijst is gedownload van de server."
-
-msgid "Buddy list uploaded"
-msgstr "Vriendenlijst verzonden"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Uw vriendenlijst is opgeslagen op de server."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3324,18 +3239,6 @@ msgstr "Niet verbonden met de server"
 
 msgid "Find buddies..."
 msgstr "Vrienden zoeken..."
-
-msgid "Change password..."
-msgstr "Wachtwoord wijzigen..."
-
-msgid "Upload buddylist to Server"
-msgstr "Vriendenlijst opslaan op de server"
-
-msgid "Download buddylist from Server"
-msgstr "Vriendenlijst van server downloaden"
-
-msgid "Delete buddylist from Server"
-msgstr "Vriendenlijst verwijderen van server"
 
 msgid "Save buddylist to file..."
 msgstr "Vriendenlijst opslaan in bestand..."
@@ -3440,7 +3343,6 @@ msgstr "Kan geen verbinding maken"
 msgid "Unable to connect: %s"
 msgstr "Kan geen verbinding maken met %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Server heeft de verbinding verbroken"
 
@@ -3478,6 +3380,9 @@ msgstr "Coderingen"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr "Inkomende UTF-8 automatisch herkennen"
+
+msgid "Ident name"
+msgstr ""
 
 msgid "Real name"
 msgstr "Echte naam"
@@ -3531,6 +3436,14 @@ msgstr " <i>(geïdentificeerd)</i>"
 msgid "Nick"
 msgstr "Nick"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Geen naam"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Computernaam"
+
 msgid "Currently on"
 msgstr "Nu aanwezig"
 
@@ -3560,7 +3473,7 @@ msgstr "Het onderwerp voor %s is: %s"
 
 #, c-format
 msgid "Topic for %s set by %s at %s on %s"
-msgstr ""
+msgstr "Onderwerp voor %s ingesteld door %s om %s op %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -4367,6 +4280,9 @@ msgstr "Datum"
 msgid "Already Registered"
 msgstr "Al Geregistreerd"
 
+msgid "Password"
+msgstr "Wachtwoord"
+
 msgid "Unregister"
 msgstr "Uitschrijven"
 
@@ -4499,6 +4415,9 @@ msgstr "Wachtwoord is veranderd"
 
 msgid "Error changing password"
 msgstr "Fout bij veranderen van wachtwoord"
+
+msgid "Password (again)"
+msgstr "Nieuw wachtwoord (herhalen)"
 
 msgid "Change XMPP Password"
 msgstr "Veranderen XMPP-wachtwoord"
@@ -4725,6 +4644,10 @@ msgstr "Kan media niet opstarten met %s, ongeldige JID"
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "Kan media niet opstarten met %s, gebruiker is niet online"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr "Kan media niet opstarten met %s: bron is niet online"
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -6198,6 +6121,14 @@ msgstr "Over..."
 msgid "The file you are trying to send is too large!"
 msgstr "Het bestand dat u tracht te verzenden is te groot!"
 
+#. file read error
+msgid "Unable to access the local file"
+msgstr "Geen toegang tot lokaal bestand"
+
+#. file write error
+msgid "Unable to save the file"
+msgstr "Kan bestand niet opslaan"
+
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
@@ -6425,7 +6356,7 @@ msgstr "Berichtenfout"
 
 #. could not be decrypted
 msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
+msgstr "Er is een gecodeerd bericht ontvangen dat niet kon worden gedecodeerd."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kan geen omleiding maken met het gebruikte protocol"
@@ -9914,7 +9845,6 @@ msgstr ""
 "Uw account is geblokkeerd ten gevolge van te veel mislukte aanmeldpogingen. "
 "Probeer u aan te melden bij de Yahoo! website."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 "Onbekende fout 52. Opnieuw verbinding maken zou dit moeten herstellen. "
@@ -11251,7 +11181,7 @@ msgstr ""
 "<span weight='bold' size='larger'>Welkom bij %s!</span>\n"
 "\n"
 "Je hebt geen account ingeschakeld. Schakel je accounts in in het "
-"<b>Accounts</b>-venster bij <b>Accounts->Beheer accounts</b>. Als je het "
+"<b>Accounts</b>-venster bij <b>Accounts->Behee accountsr</b>. Als je het "
 "eenmaal hebt ingeschakeld kan je inloggen, je status instellen en praten met "
 "je vrienden."
 
@@ -11743,7 +11673,8 @@ msgstr "webmaster"
 msgid "win32 port"
 msgstr "win32 versie"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11907,6 +11838,9 @@ msgstr "Koerdisch"
 msgid "Lao"
 msgstr "Laotiaans"
 
+msgid "Lithuanian"
+msgstr "Litouws"
+
 msgid "Maithili"
 msgstr "Maithili"
 
@@ -11982,6 +11916,9 @@ msgstr "Albanisch"
 msgid "Serbian"
 msgstr "Servisch"
 
+msgid "Serbian Latin"
+msgstr "Servisch Latijn"
+
 msgid "Sinhala"
 msgstr "Singalees"
 
@@ -11999,9 +11936,6 @@ msgstr "Telugu"
 
 msgid "Thai"
 msgstr "Thais"
-
-msgid "Turkish"
-msgstr "Turks"
 
 msgid "Ukranian"
 msgstr "Ukranian"
@@ -12024,8 +11958,8 @@ msgstr "Traditioneel Chinees"
 msgid "Amharic"
 msgstr "Amharic"
 
-msgid "Lithuanian"
-msgstr "Litouws"
+msgid "Turkish"
+msgstr "Turks"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh en het GNOME-Vi team"
@@ -12058,7 +11992,6 @@ msgstr ""
 "\">Website</A><BR>\t<A HREF=\"%s\">Veelgestelde Vragen</A><BR>\tIRC kanaal: "
 "#pidgin op irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12767,6 +12700,9 @@ msgid ""
 msgstr ""
 "Kan handmatige browser niet starten omdat er geen correcte opdracht is "
 "ingesteld."
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr ""
 
 msgid "No message"
 msgstr "Geen bericht"
@@ -14696,7 +14632,6 @@ msgstr "Voegt op iChat-achtige manier iedere N minuten de tijd toe."
 msgid "Timestamp Format Options"
 msgstr "Instellingen tijdsweergave"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Forceer tijdstempel formaat:"
 
@@ -14897,6 +14832,55 @@ msgid ""
 msgstr ""
 "Geeft de mogelijkheid voor specifieke Pidgin voor Windows opties, zoals "
 "dokken van vriendenlijst."
+
+#. Alerts
+msgid "Chatroom alerts"
+msgstr ""
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr ""
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+msgid "Show number of unread _conversations on launcher icon"
+msgstr ""
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr ""
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Afgemeld.</font>"
