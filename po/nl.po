@@ -721,7 +721,7 @@ msgid "buddylist: Show the buddylist."
 msgstr "vriendenlijst: Vriendenlijst weergeven."
 
 msgid "accounts: Show the accounts window."
-msgstr "accounts: Accounts venster weergeven."
+msgstr "accounts: Accountsvenster weergeven."
 
 msgid "debugwin: Show the debug window."
 msgstr "debugwin: Debugvenster weergeven."
@@ -1090,7 +1090,7 @@ msgid "Action"
 msgstr "Actie"
 
 msgid "Open an IM window"
-msgstr "IM venster openen"
+msgstr "IM-venster openen"
 
 msgid "Pop up a notification"
 msgstr "Melding weergeven"
@@ -11251,7 +11251,7 @@ msgstr ""
 "<span weight='bold' size='larger'>Welkom bij %s!</span>\n"
 "\n"
 "Je hebt geen account ingeschakeld. Schakel je accounts in in het "
-"<b>Accounts</b>-venster bij <b>Accounts->Behee accountsr</b>. Als je het "
+"<b>Accounts</b>-venster bij <b>Accounts->Beheer accounts</b>. Als je het "
 "eenmaal hebt ingeschakeld kan je inloggen, je status instellen en praten met "
 "je vrienden."
 
