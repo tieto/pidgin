@@ -4,7 +4,7 @@
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
 # Copyright (C) 2002-2013, Björn Voigt <bjoernv@arcor.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
-# Copyright (C) 2013, Björn Voigt <bjoernv@arcor.de>,
+# Copyright (C) 2013-2014, Björn Voigt <bjoernv@arcor.de>
 #
 # This file is distributed under the same license as the Pidgin package.
 #
@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-18 21:34+0200\n"
-"PO-Revision-Date: 2013-07-18 21:34+0200\n"
+"POT-Creation-Date: 2014-01-21 19:13+0100\n"
+"PO-Revision-Date: 2014-01-21 19:10+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -3290,18 +3290,6 @@ msgstr "Es gibt keine Benutzer, die Ihrer Anfrage entsprechen."
 msgid "Unable to read from socket"
 msgstr "Socket kann nicht gelesen werden"
 
-msgid "Buddy list downloaded"
-msgstr "Buddy-Liste heruntergeladen"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Ihre Buddy-Liste wurde von Server geladen."
-
-msgid "Buddy list uploaded"
-msgstr "Buddy-Liste hochgeladen"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Ihre Buddy-Liste wurde auf dem Server gespeichert."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3340,15 +3328,6 @@ msgstr "Finde Buddys..."
 
 msgid "Change password..."
 msgstr "Passwort ändern..."
-
-msgid "Upload buddylist to Server"
-msgstr "Buddy-Liste zum Server hochladen"
-
-msgid "Download buddylist from Server"
-msgstr "Buddy-Liste vom Server herunterladen"
-
-msgid "Delete buddylist from Server"
-msgstr "Löschen der Buddy-Liste vom Server"
 
 msgid "Save buddylist to file..."
 msgstr "Buddy-Liste in Datei speichern..."
@@ -3490,6 +3469,9 @@ msgstr "Kodierungen"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr "Eingehendes UTF-8 automatisch erkennen"
+
+msgid "Ident name"
+msgstr "Benutzername"
 
 msgid "Real name"
 msgstr "Echter Name"
@@ -11880,7 +11862,8 @@ msgstr "Webmaster"
 msgid "win32 port"
 msgstr "Win32 Portierung"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -12122,6 +12105,9 @@ msgstr "Albanisch"
 msgid "Serbian"
 msgstr "Serbisch"
 
+msgid "Serbian Latin"
+msgstr "Serbisch (Latin)"
+
 msgid "Sinhala"
 msgstr "Singhalesisch"
 
@@ -12139,9 +12125,6 @@ msgstr "Telugu"
 
 msgid "Thai"
 msgstr "Thailändisch"
-
-msgid "Turkish"
-msgstr "Türkisch"
 
 msgid "Ukranian"
 msgstr "Ukrainisch"
@@ -12163,6 +12146,9 @@ msgstr "Traditionelles Chinesisch"
 
 msgid "Amharic"
 msgstr "Amharisch"
+
+msgid "Turkish"
+msgstr "Türkisch"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh und das Gnome-Vi Team"
@@ -15246,6 +15232,27 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Buddy-Liste heruntergeladen"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Ihre Buddy-Liste wurde von Server geladen."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Buddy-Liste hochgeladen"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Ihre Buddy-Liste wurde auf dem Server gespeichert."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Buddy-Liste zum Server hochladen"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Buddy-Liste vom Server herunterladen"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Löschen der Buddy-Liste vom Server"
 
 #~ msgid "Hidden Number"
 #~ msgstr "Versteckte Nummer"
