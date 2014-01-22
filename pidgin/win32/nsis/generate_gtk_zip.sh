@@ -16,8 +16,8 @@ CONTENTS_FILE=$INSTALL_DIR/CONTENTS
 PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
-BUNDLE_VERSION=2.16.6.1
-BUNDLE_SHA1SUM=3e586e3f716f909ff6c11bf64c5ad23f1a0c98bf
+BUNDLE_VERSION=2.16.6.2
+BUNDLE_SHA1SUM=e1b1ec8d2159fa98b2a9f516dbfe745bf7a22169
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 
 #Download the existing file (so that we distribute the exact same file for all releases with the same bundle version)
@@ -51,7 +51,7 @@ GETTEXT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runt
 GLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.28/glib_2.28.8-1_win32.zip Glib 2.28.8-1 sha1sum:5d158f4c77ca0b5508e1042955be573dd940b574"
 GTK="http://ftp.acc.umu.se/pub/gnome/binaries/win32/gtk+/2.16/gtk+_2.16.6-2_win32.zip GTK+ 2.16.6-2 sha1sum:012853e6de814ebda0cc4459f9eed8ae680e6d17"
 LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.4.12-1_win32.zip libpng 1.4.12-1 gpg:0x71D4DDE53F188CBE"
-PANGO="http://ftp.gnome.org/pub/gnome/binaries/win32/pango/1.29/pango_1.29.4-1_win32.zip Pango 1.29.4-1 sha1sum:3959319bd04fbce513458857f334ada279b8cdd4"
+PANGO="https://developer.pidgin.im/static/win32/pango_1.29.4-1daa_win32.zip Pango 1.29.4-1daa gpg:0x86723FEEDE890574"
 ZLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/zlib_1.2.5-2_win32.zip zlib 1.2.5-2 sha1sum:568907188761df2d9309196e447d91bbc5555d2b"
 
 ALL="ATK CAIRO EXPAT FONTCONFIG FREETYPE GETTEXT GLIB GTK LIBPNG PANGO ZLIB"
