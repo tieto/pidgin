@@ -37,7 +37,7 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 ##  SOURCES, OBJECTS
 ##
-C_SRC =	nullprotocol.c
+C_SRC =	nullprpl.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

@@ -5,14 +5,14 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 NULLSOURCES = \
-	nullprotocol.h \
-	nullprotocol.c
+	nullprpl.h \
+	nullprpl.c
 
 AM_CFLAGS = $(st)
 
 libnull_la_LDFLAGS = -module -avoid-version
 
-# nullprotocol isn't built by default; when it is built, it's dynamically linked
+# nullprpl isn't built by default; when it is built, it's dynamically linked
 st =
 pkg_LTLIBRARIES    = libnull.la
 libnull_la_SOURCES = $(NULLSOURCES)

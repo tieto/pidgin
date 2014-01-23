@@ -5,22 +5,22 @@
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
- * NullProtocol is a mock protocol plugin for Pidgin and libpurple. You can
- * create accounts with it, sign on and off, add buddies, and send and receive
- * IMs, all without connecting to a server!
+ * Nullprpl is a mock protocol plugin for Pidgin and libpurple. You can create
+ * accounts with it, sign on and off, add buddies, and send and receive IMs,
+ * all without connecting to a server!
  *
- * Beyond that basic functionality, nullprotocol supports presence and
+ * Beyond that basic functionality, nullprpl supports presence and
  * away/available messages, offline messages, user info, typing notification,
  * privacy allow/block lists, chat rooms, whispering, room lists, and protocol
  * icons and emblems. Notable missing features are file transfer and account
  * registration and authentication.
  *
- * NullProtocol is intended as an example of how to write a libpurple protocol
+ * Nullprpl is intended as an example of how to write a libpurple protocol
  * plugin. It doesn't contain networking code or an event loop, but it does
  * demonstrate how to use the libpurple API to do pretty much everything a
  * protocol might need to do.
  *
- * NullProtocol is also a useful tool for hacking on Pidgin, Finch, and other
+ * Nullprpl is also a useful tool for hacking on Pidgin, Finch, and other
  * libpurple clients. It's a full-featured protocol plugin, but doesn't depend
  * on an external server, so it's a quick and easy way to exercise test new
  * code. It also allows you to work while you're disconnected.
@@ -52,7 +52,7 @@
  * provide for translation, you'll also need to setup the gettext macros. */
 #include "internal.h"
 
-#include "nullprotocol.h"
+#include "nullprpl.h"
 
 #include "account.h"
 #include "accountopt.h"
@@ -180,12 +180,12 @@ static void discover_status(PurpleConnection *from, PurpleConnection *to,
     if (!strcmp(status_id, NULL_STATUS_ONLINE) ||
         !strcmp(status_id, NULL_STATUS_AWAY) ||
         !strcmp(status_id, NULL_STATUS_OFFLINE)) {
-      purple_debug_info("nullprotocol", "%s sees that %s is %s: %s\n",
+      purple_debug_info("nullprpl", "%s sees that %s is %s: %s\n",
                         from_username, to_username, status_id, message);
       purple_protocol_got_user_status(purple_connection_get_account(from), to_username, status_id,
                                   (message) ? "message" : NULL, message, NULL);
     } else {
-      purple_debug_error("nullprotocol",
+      purple_debug_error("nullprpl",
                          "%s's buddy %s has an unknown status: %s, %s",
                          from_username, to_username, status_id, message);
     }
@@ -194,7 +194,7 @@ static void discover_status(PurpleConnection *from, PurpleConnection *to,
 
 static void report_status_change(PurpleConnection *from, PurpleConnection *to,
                                  gpointer userdata) {
-  purple_debug_info("nullprotocol", "notifying %s that %s changed status\n",
+  purple_debug_info("nullprpl", "notifying %s that %s changed status\n",
                     purple_account_get_username(purple_connection_get_account(to)), purple_account_get_username(purple_connection_get_account(from)));
   discover_status(to, from, NULL);
 }
@@ -207,7 +207,7 @@ static void null_input_user_info(PurpleProtocolAction *action)
 {
   PurpleConnection *gc = action->connection;
   PurpleAccount *acct = purple_connection_get_account(gc);
-  purple_debug_info("nullprotocol", "showing 'Set User Info' dialog for %s\n",
+  purple_debug_info("nullprpl", "showing 'Set User Info' dialog for %s\n",
                     purple_account_get_username(acct));
 
   purple_account_request_change_user_info(acct);
@@ -229,7 +229,7 @@ static const char *null_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 }
 
 static char *null_status_text(PurpleBuddy *buddy) {
-  purple_debug_info("nullprotocol", "getting %s's status text for %s\n",
+  purple_debug_info("nullprpl", "getting %s's status text for %s\n",
                     purple_buddy_get_name(buddy),
                     purple_account_get_username(purple_buddy_get_account(buddy)));
 
@@ -245,12 +245,12 @@ static char *null_status_text(PurpleBuddy *buddy) {
     else
       text = g_strdup(name);
 
-    purple_debug_info("nullprotocol", "%s's status text is %s\n",
+    purple_debug_info("nullprpl", "%s's status text is %s\n",
                       purple_buddy_get_name(buddy), text);
     return text;
 
   } else {
-    purple_debug_info("nullprotocol", "...but %s is not logged in\n", purple_buddy_get_name(buddy));
+    purple_debug_info("nullprpl", "...but %s is not logged in\n", purple_buddy_get_name(buddy));
     return g_strdup("Not logged in");
   }
 }
@@ -284,7 +284,7 @@ static void null_tooltip_text(PurpleBuddy *buddy,
     purple_notify_user_info_add_pair_plaintext(info, _("User info"), _("not logged in"));
   }
 
-  purple_debug_info("nullprotocol", "showing %s tooltip for %s\n",
+  purple_debug_info("nullprpl", "showing %s tooltip for %s\n",
                     (full) ? "full" : "short", purple_buddy_get_name(buddy));
 }
 
@@ -293,7 +293,7 @@ static GList *null_status_types(PurpleAccount *acct)
   GList *types = NULL;
   PurpleStatusType *type;
 
-  purple_debug_info("nullprotocol", "returning status types for %s: %s, %s, %s\n",
+  purple_debug_info("nullprpl", "returning status types for %s: %s, %s, %s\n",
                     purple_account_get_username(acct),
                     NULL_STATUS_ONLINE, NULL_STATUS_AWAY, NULL_STATUS_OFFLINE);
 
@@ -319,18 +319,18 @@ static GList *null_status_types(PurpleAccount *acct)
 }
 
 static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
-  purple_debug_info("nullprotocol", "example menu item clicked on user %s\n",
+  purple_debug_info("nullprpl", "example menu item clicked on user %s\n",
                     purple_buddy_get_name(PURPLE_BUDDY(node)));
 
   purple_notify_info(NULL,  /* plugin handle or PurpleConnection */
                      _("Primary title"),
                      _("Secondary title"),
-                     _("This is the callback for the nullprotocol menu item."),
+                     _("This is the callback for the NullProtocol menu item."),
                      NULL);
 }
 
 static GList *null_blist_node_menu(PurpleBlistNode *node) {
-  purple_debug_info("nullprotocol", "providing buddy list context menu item\n");
+  purple_debug_info("nullprpl", "providing buddy list context menu item\n");
 
   if (PURPLE_IS_BUDDY(node)) {
     PurpleMenuAction *action = purple_menu_action_new(
@@ -347,7 +347,7 @@ static GList *null_blist_node_menu(PurpleBlistNode *node) {
 static GList *null_chat_info(PurpleConnection *gc) {
   PurpleProtocolChatEntry *pce; /* defined in protocols.h */
 
-  purple_debug_info("nullprotocol", "returning chat setting 'room'\n");
+  purple_debug_info("nullprpl", "returning chat setting 'room'\n");
 
   pce = g_new0(PurpleProtocolChatEntry, 1);
   pce->label = _("Chat _room");
@@ -361,7 +361,7 @@ static GHashTable *null_chat_info_defaults(PurpleConnection *gc,
                                                const char *room) {
   GHashTable *defaults;
 
-  purple_debug_info("nullprotocol", "returning chat default setting "
+  purple_debug_info("nullprpl", "returning chat default setting "
                     "'room' = 'default'\n");
 
   defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
@@ -374,7 +374,7 @@ static void null_login(PurpleAccount *acct)
   PurpleConnection *gc = purple_account_get_connection(acct);
   GList *offline_messages;
 
-  purple_debug_info("nullprotocol", "logging in %s\n", purple_account_get_username(acct));
+  purple_debug_info("nullprpl", "logging in %s\n", purple_account_get_username(acct));
 
   purple_connection_update_progress(gc, _("Connecting"),
                                     0,   /* which connection step this is */
@@ -392,12 +392,12 @@ static void null_login(PurpleAccount *acct)
   foreach_null_gc(report_status_change, gc, NULL);
 
   /* fetch stored offline messages */
-  purple_debug_info("nullprotocol", "checking for offline messages for %s\n",
+  purple_debug_info("nullprpl", "checking for offline messages for %s\n",
                     purple_account_get_username(acct));
   offline_messages = g_hash_table_lookup(goffline_messages, purple_account_get_username(acct));
   while (offline_messages) {
     GOfflineMessage *message = (GOfflineMessage *)offline_messages->data;
-    purple_debug_info("nullprotocol", "delivering offline message to %s: %s\n",
+    purple_debug_info("nullprpl", "delivering offline message to %s: %s\n",
                       purple_account_get_username(acct), message->message);
     serv_got_im(gc, message->from, message->message, message->flags,
                 message->mtime);
@@ -427,7 +427,7 @@ static int null_send_im(PurpleConnection *gc, const char *who,
   PurpleAccount *to_acct = purple_accounts_find(who, "null");
   PurpleConnection *to;
 
-  purple_debug_info("nullprotocol", "sending message from %s to %s: %s\n",
+  purple_debug_info("nullprpl", "sending message from %s to %s: %s\n",
                     from_username, who, message);
 
   /* is the sender blocked by the recipient's privacy settings? */
@@ -435,7 +435,7 @@ static int null_send_im(PurpleConnection *gc, const char *who,
       !purple_account_privacy_check(to_acct, purple_account_get_username(purple_connection_get_account(gc)))) {
     char *msg = g_strdup_printf(
       _("Your message was blocked by %s's privacy settings."), who);
-    purple_debug_info("nullprotocol",
+    purple_debug_info("nullprpl",
                       "discarding; %s is blocked by %s's privacy settings\n",
                       from_username, who);
     purple_conversation_present_error(who, purple_connection_get_account(gc), msg);
@@ -452,7 +452,7 @@ static int null_send_im(PurpleConnection *gc, const char *who,
     GOfflineMessage *offline_message;
     GList *messages;
 
-    purple_debug_info("nullprotocol",
+    purple_debug_info("nullprpl",
                       "%s is offline, sending as offline message\n", who);
     offline_message = g_new0(GOfflineMessage, 1);
     offline_message->from = g_strdup(from_username);
@@ -469,7 +469,7 @@ static int null_send_im(PurpleConnection *gc, const char *who,
 }
 
 static void null_set_info(PurpleConnection *gc, const char *info) {
-  purple_debug_info("nullprotocol", "setting %s's user info to %s\n",
+  purple_debug_info("nullprpl", "setting %s's user info to %s\n",
                     purple_account_get_username(purple_connection_get_account(gc)), info);
 }
 
@@ -486,7 +486,7 @@ static void notify_typing(PurpleConnection *from, PurpleConnection *to,
                           gpointer typing) {
   const char *from_username = purple_account_get_username(purple_connection_get_account(from));
   const char *action = typing_state_to_string((PurpleIMTypingState)typing);
-  purple_debug_info("nullprotocol", "notifying %s that %s %s\n",
+  purple_debug_info("nullprpl", "notifying %s that %s %s\n",
                     purple_account_get_username(purple_connection_get_account(to)), from_username, action);
 
   serv_got_typing(to,
@@ -498,7 +498,7 @@ static void notify_typing(PurpleConnection *from, PurpleConnection *to,
 
 static unsigned int null_send_typing(PurpleConnection *gc, const char *name,
                                          PurpleIMTypingState typing) {
-  purple_debug_info("nullprotocol", "%s %s\n", purple_account_get_username(purple_connection_get_account(gc)),
+  purple_debug_info("nullprpl", "%s %s\n", purple_account_get_username(purple_connection_get_account(gc)),
                     typing_state_to_string(typing));
   foreach_null_gc(notify_typing, gc, (gpointer)typing);
   return 0;
@@ -509,7 +509,7 @@ static void null_get_info(PurpleConnection *gc, const char *username) {
   PurpleNotifyUserInfo *info = purple_notify_user_info_new();
   PurpleAccount *acct;
 
-  purple_debug_info("nullprotocol", "Fetching %s's user info for %s\n", username,
+  purple_debug_info("nullprpl", "Fetching %s's user info for %s\n", username,
                     purple_account_get_username(purple_connection_get_account(gc)));
 
   acct = purple_accounts_find(username, "null");
@@ -539,7 +539,7 @@ static void null_get_info(PurpleConnection *gc, const char *username) {
 
 static void null_set_status(PurpleAccount *acct, PurpleStatus *status) {
   const char *msg = purple_status_get_attr_string(status, "message");
-  purple_debug_info("nullprotocol", "setting %s's status to %s: %s\n",
+  purple_debug_info("nullprpl", "setting %s's status to %s: %s\n",
                     purple_account_get_username(acct), purple_status_get_name(status), msg);
 
   foreach_null_gc(report_status_change, get_null_gc(purple_account_get_username(acct)),
@@ -547,14 +547,14 @@ static void null_set_status(PurpleAccount *acct, PurpleStatus *status) {
 }
 
 static void null_set_idle(PurpleConnection *gc, int idletime) {
-  purple_debug_info("nullprotocol",
+  purple_debug_info("nullprpl",
                     "purple reports that %s has been idle for %d seconds\n",
                     purple_account_get_username(purple_connection_get_account(gc)), idletime);
 }
 
 static void null_change_passwd(PurpleConnection *gc, const char *old_pass,
                                    const char *new_pass) {
-  purple_debug_info("nullprotocol", "%s wants to change their password\n",
+  purple_debug_info("nullprpl", "%s wants to change their password\n",
                     purple_account_get_username(purple_connection_get_account(gc)));
 }
 
@@ -564,7 +564,7 @@ static void null_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
   const char *username = purple_account_get_username(purple_connection_get_account(gc));
   PurpleConnection *buddy_gc = get_null_gc(purple_buddy_get_name(buddy));
 
-  purple_debug_info("nullprotocol", "adding %s to %s's buddy list\n", purple_buddy_get_name(buddy),
+  purple_debug_info("nullprpl", "adding %s to %s's buddy list\n", purple_buddy_get_name(buddy),
                     username);
 
   if (buddy_gc) {
@@ -573,10 +573,10 @@ static void null_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
     discover_status(gc, buddy_gc, NULL);
 
     if (purple_blist_find_buddy(buddy_acct, username)) {
-      purple_debug_info("nullprotocol", "%s is already on %s's buddy list\n",
+      purple_debug_info("nullprpl", "%s is already on %s's buddy list\n",
                         username, purple_buddy_get_name(buddy));
     } else {
-      purple_debug_info("nullprotocol", "asking %s if they want to add %s\n",
+      purple_debug_info("nullprpl", "asking %s if they want to add %s\n",
                         purple_buddy_get_name(buddy), username);
       purple_account_request_add(buddy_acct,
                                  username,
@@ -592,7 +592,7 @@ static void null_add_buddies(PurpleConnection *gc, GList *buddies,
   GList *buddy = buddies;
   GList *group = groups;
 
-  purple_debug_info("nullprotocol", "adding multiple buddies\n");
+  purple_debug_info("nullprpl", "adding multiple buddies\n");
 
   while (buddy && group) {
     null_add_buddy(gc, (PurpleBuddy *)buddy->data, (PurpleGroup *)group->data, message);
@@ -604,7 +604,7 @@ static void null_add_buddies(PurpleConnection *gc, GList *buddies,
 static void null_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
                                   PurpleGroup *group)
 {
-  purple_debug_info("nullprotocol", "removing %s from %s's buddy list\n",
+  purple_debug_info("nullprpl", "removing %s from %s's buddy list\n",
                     purple_buddy_get_name(buddy),
                     purple_account_get_username(purple_connection_get_account(gc)));
 }
@@ -614,7 +614,7 @@ static void null_remove_buddies(PurpleConnection *gc, GList *buddies,
   GList *buddy = buddies;
   GList *group = groups;
 
-  purple_debug_info("nullprotocol", "removing multiple buddies\n");
+  purple_debug_info("nullprpl", "removing multiple buddies\n");
 
   while (buddy && group) {
     null_remove_buddy(gc, (PurpleBuddy *)buddy->data,
@@ -631,22 +631,22 @@ static void null_remove_buddies(PurpleConnection *gc, GList *buddies,
  * allowed or blocked.
  */
 static void null_add_permit(PurpleConnection *gc, const char *name) {
-  purple_debug_info("nullprotocol", "%s adds %s to their allowed list\n",
+  purple_debug_info("nullprpl", "%s adds %s to their allowed list\n",
                     purple_account_get_username(purple_connection_get_account(gc)), name);
 }
 
 static void null_add_deny(PurpleConnection *gc, const char *name) {
-  purple_debug_info("nullprotocol", "%s adds %s to their blocked list\n",
+  purple_debug_info("nullprpl", "%s adds %s to their blocked list\n",
                     purple_account_get_username(purple_connection_get_account(gc)), name);
 }
 
 static void null_rem_permit(PurpleConnection *gc, const char *name) {
-  purple_debug_info("nullprotocol", "%s removes %s from their allowed list\n",
+  purple_debug_info("nullprpl", "%s removes %s from their allowed list\n",
                     purple_account_get_username(purple_connection_get_account(gc)), name);
 }
 
 static void null_rem_deny(PurpleConnection *gc, const char *name) {
-  purple_debug_info("nullprotocol", "%s removes %s from their blocked list\n",
+  purple_debug_info("nullprpl", "%s removes %s from their blocked list\n",
                     purple_account_get_username(purple_connection_get_account(gc)), name);
 }
 
@@ -659,7 +659,7 @@ static void null_set_permit_deny(PurpleConnection *gc) {
 static void joined_chat(PurpleChatConversation *from, PurpleChatConversation *to,
                         int id, const char *room, gpointer userdata) {
   /*  tell their chat window that we joined */
-  purple_debug_info("nullprotocol", "%s sees that %s joined chat room %s\n",
+  purple_debug_info("nullprpl", "%s sees that %s joined chat room %s\n",
                     purple_chat_conversation_get_nick(to), purple_chat_conversation_get_nick(from), room);
   purple_chat_conversation_add_user(to,
                             purple_chat_conversation_get_nick(from),
@@ -669,7 +669,7 @@ static void joined_chat(PurpleChatConversation *from, PurpleChatConversation *to
 
   if (from != to) {
     /* add them to our chat window */
-    purple_debug_info("nullprotocol", "%s sees that %s is in chat room %s\n",
+    purple_debug_info("nullprpl", "%s sees that %s is in chat room %s\n",
                       purple_chat_conversation_get_nick(from), purple_chat_conversation_get_nick(to), room);
     purple_chat_conversation_add_user(from,
                               purple_chat_conversation_get_nick(to),
@@ -683,7 +683,7 @@ static void null_join_chat(PurpleConnection *gc, GHashTable *components) {
   const char *username = purple_account_get_username(purple_connection_get_account(gc));
   const char *room = g_hash_table_lookup(components, "room");
   int chat_id = g_str_hash(room);
-  purple_debug_info("nullprotocol", "%s is joining chat room %s\n", username, room);
+  purple_debug_info("nullprpl", "%s is joining chat room %s\n", username, room);
 
   if (!purple_conversations_find_chat(gc, chat_id)) {
     serv_got_joined_chat(gc, chat_id, room);
@@ -694,7 +694,7 @@ static void null_join_chat(PurpleConnection *gc, GHashTable *components) {
     char *tmp = g_strdup_printf(_("%s is already in chat room %s."),
                                 username,
                                 room);
-    purple_debug_info("nullprotocol", "%s is already in chat room %s\n", username,
+    purple_debug_info("nullprpl", "%s is already in chat room %s\n", username,
                       room);
     purple_notify_info(gc, _("Join chat"), _("Join chat"), tmp,
                        purple_request_cpar_from_connection(gc));
@@ -713,7 +713,7 @@ static void null_reject_chat(PurpleConnection *gc, GHashTable *components) {
     _("has rejected your invitation to join the chat room"),
     room);
 
-  purple_debug_info("nullprotocol",
+  purple_debug_info("nullprpl",
                     "%s has rejected %s's invitation to join chat room %s\n",
                     username, invited_by, room);
 
@@ -727,7 +727,7 @@ static void null_reject_chat(PurpleConnection *gc, GHashTable *components) {
 
 static char *null_get_chat_name(GHashTable *components) {
   const char *room = g_hash_table_lookup(components, "room");
-  purple_debug_info("nullprotocol", "reporting chat room name '%s'\n", room);
+  purple_debug_info("nullprpl", "reporting chat room name '%s'\n", room);
   return g_strdup(room);
 }
 
@@ -738,14 +738,14 @@ static void null_chat_invite(PurpleConnection *gc, int id,
   const char *room = purple_conversation_get_name(PURPLE_CONVERSATION(chat));
   PurpleAccount *to_acct = purple_accounts_find(who, "null");
 
-  purple_debug_info("nullprotocol", "%s is inviting %s to join chat room %s\n",
+  purple_debug_info("nullprpl", "%s is inviting %s to join chat room %s\n",
                     username, who, room);
 
   if (to_acct) {
     PurpleChatConversation *to_conv = purple_conversations_find_chat(purple_account_get_connection(to_acct), id);
     if (to_conv) {
       char *tmp = g_strdup_printf("%s is already in chat room %s.", who, room);
-      purple_debug_info("nullprotocol",
+      purple_debug_info("nullprpl",
                         "%s is already in chat room %s; "
                         "ignoring invitation from %s\n",
                         who, room, username);
@@ -766,7 +766,7 @@ static void left_chat_room(PurpleChatConversation *from, PurpleChatConversation 
                            int id, const char *room, gpointer userdata) {
   if (from != to) {
     /*  tell their chat window that we left */
-    purple_debug_info("nullprotocol", "%s sees that %s left chat room %s\n",
+    purple_debug_info("nullprpl", "%s sees that %s left chat room %s\n",
                       purple_chat_conversation_get_nick(to), purple_chat_conversation_get_nick(from), room);
     purple_chat_conversation_remove_user(to,
                                  purple_chat_conversation_get_nick(from),
@@ -776,7 +776,7 @@ static void left_chat_room(PurpleChatConversation *from, PurpleChatConversation 
 
 static void null_chat_leave(PurpleConnection *gc, int id) {
   PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
-  purple_debug_info("nullprotocol", "%s is leaving chat room %s\n",
+  purple_debug_info("nullprpl", "%s is leaving chat room %s\n",
                     purple_account_get_username(purple_connection_get_account(gc)),
                     purple_conversation_get_name(PURPLE_CONVERSATION(chat)));
 
@@ -805,7 +805,7 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
   }
 
   from_username = purple_account_get_username(purple_conversation_get_account(conv));
-  purple_debug_info("nullprotocol", "%s whispers to %s in chat room %s: %s\n",
+  purple_debug_info("nullprpl", "%s whispers to %s in chat room %s: %s\n",
                     from_username, to_username,
                     purple_conversation_get_name(conv), message);
 
@@ -839,7 +839,7 @@ static void null_chat_whisper(PurpleConnection *gc, int id, const char *who,
                                   const char *message) {
   const char *username = purple_account_get_username(purple_connection_get_account(gc));
   PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
-  purple_debug_info("nullprotocol",
+  purple_debug_info("nullprpl",
                     "%s receives whisper from %s in chat room %s: %s\n",
                     username, who, purple_conversation_get_name(PURPLE_CONVERSATION(chat)),
                     message);
@@ -854,7 +854,7 @@ static void receive_chat_message(PurpleChatConversation *from, PurpleChatConvers
   const char *message = (const char *)userdata;
   PurpleConnection *to_gc = get_null_gc(purple_chat_conversation_get_nick(to));
 
-  purple_debug_info("nullprotocol",
+  purple_debug_info("nullprpl",
                     "%s receives message from %s in chat room %s: %s\n",
                     purple_chat_conversation_get_nick(to), purple_chat_conversation_get_nick(from), room, message);
   serv_got_chat_in(to_gc, id, purple_chat_conversation_get_nick(from), PURPLE_MESSAGE_RECV, message,
@@ -867,7 +867,7 @@ static int null_chat_send(PurpleConnection *gc, int id, const char *message,
   PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
 
   if (chat) {
-    purple_debug_info("nullprotocol",
+    purple_debug_info("nullprpl",
                       "%s is sending message to chat room %s: %s\n", username,
                       purple_conversation_get_name(PURPLE_CONVERSATION(chat)), message);
 
@@ -875,7 +875,7 @@ static int null_chat_send(PurpleConnection *gc, int id, const char *message,
     foreach_gc_in_chat(receive_chat_message, gc, id, (gpointer)message);
     return 0;
   } else {
-    purple_debug_info("nullprotocol",
+    purple_debug_info("nullprpl",
                       "tried to send message from %s to chat room #%d: %s\n"
                       "but couldn't find chat room",
                       username, id, message);
@@ -884,32 +884,32 @@ static int null_chat_send(PurpleConnection *gc, int id, const char *message,
 }
 
 static void null_register_user(PurpleAccount *acct) {
- purple_debug_info("nullprotocol", "registering account for %s\n",
+ purple_debug_info("nullprpl", "registering account for %s\n",
                    purple_account_get_username(acct));
 }
 
 static void null_alias_buddy(PurpleConnection *gc, const char *who,
                                  const char *alias) {
- purple_debug_info("nullprotocol", "%s sets %s's alias to %s\n",
+ purple_debug_info("nullprpl", "%s sets %s's alias to %s\n",
                    purple_account_get_username(purple_connection_get_account(gc)), who, alias);
 }
 
 static void null_group_buddy(PurpleConnection *gc, const char *who,
                                  const char *old_group,
                                  const char *new_group) {
-  purple_debug_info("nullprotocol", "%s has moved %s from group %s to group %s\n",
+  purple_debug_info("nullprpl", "%s has moved %s from group %s to group %s\n",
                     purple_account_get_username(purple_connection_get_account(gc)), who, old_group, new_group);
 }
 
 static void null_rename_group(PurpleConnection *gc, const char *old_name,
                                   PurpleGroup *group, GList *moved_buddies) {
-  purple_debug_info("nullprotocol", "%s has renamed group %s to %s\n",
+  purple_debug_info("nullprpl", "%s has renamed group %s to %s\n",
                     purple_account_get_username(purple_connection_get_account(gc)), old_name,
                     purple_group_get_name(group));
 }
 
 static void null_convo_closed(PurpleConnection *gc, const char *who) {
-  purple_debug_info("nullprotocol", "%s's conversation with %s was closed\n",
+  purple_debug_info("nullprpl", "%s's conversation with %s was closed\n",
                     purple_account_get_username(purple_connection_get_account(gc)), who);
 }
 
@@ -923,13 +923,13 @@ static const char *null_normalize(const PurpleAccount *acct,
 
 static void null_set_buddy_icon(PurpleConnection *gc,
                                     PurpleStoredImage *img) {
- purple_debug_info("nullprotocol", "setting %s's buddy icon to %s\n",
+ purple_debug_info("nullprpl", "setting %s's buddy icon to %s\n",
                    purple_account_get_username(purple_connection_get_account(gc)),
                    img ? purple_imgstore_get_filename(img) : "(null)");
 }
 
 static void null_remove_group(PurpleConnection *gc, PurpleGroup *group) {
-  purple_debug_info("nullprotocol", "%s has removed group %s\n",
+  purple_debug_info("nullprpl", "%s has removed group %s\n",
                     purple_account_get_username(purple_connection_get_account(gc)),
                     purple_group_get_name(group));
 }
@@ -962,7 +962,7 @@ static void null_set_chat_topic(PurpleConnection *gc, int id,
   if (!chat)
     return;
 
-  purple_debug_info("nullprotocol", "%s sets topic of chat room '%s' to '%s'\n",
+  purple_debug_info("nullprpl", "%s sets topic of chat room '%s' to '%s'\n",
                     purple_account_get_username(purple_connection_get_account(gc)),
                     purple_conversation_get_name(PURPLE_CONVERSATION(chat)), topic);
 
@@ -989,7 +989,7 @@ static PurpleRoomlist *null_roomlist_get_list(PurpleConnection *gc) {
   GList *chats;
   GList *seen_ids = NULL;
 
-  purple_debug_info("nullprotocol", "%s asks for room list; returning:\n", username);
+  purple_debug_info("nullprpl", "%s asks for room list; returning:\n", username);
 
   /* set up the room list */
   field = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "room",
@@ -1017,7 +1017,7 @@ static PurpleRoomlist *null_roomlist_get_list(PurpleConnection *gc) {
      * of this function and none of the conversations are being deleted
      * in that timespan. */
     seen_ids = g_list_prepend(seen_ids, (char *)name); /* no, it's new. */
-    purple_debug_info("nullprotocol", "%s (%d), ", name, id);
+    purple_debug_info("nullprpl", "%s (%d), ", name, id);
 
     room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, name, NULL);
     purple_roomlist_room_add_field(roomlist, room, name);
@@ -1032,20 +1032,20 @@ static PurpleRoomlist *null_roomlist_get_list(PurpleConnection *gc) {
 
 static void null_roomlist_cancel(PurpleRoomlist *list) {
  PurpleAccount *account = purple_roomlist_get_account(list);
- purple_debug_info("nullprotocol", "%s asked to cancel room list request\n",
+ purple_debug_info("nullprpl", "%s asked to cancel room list request\n",
                    purple_account_get_username(account));
 }
 
 static void null_roomlist_expand_category(PurpleRoomlist *list,
                                               PurpleRoomlistRoom *category) {
  PurpleAccount *account = purple_roomlist_get_account(list);
- purple_debug_info("nullprotocol", "%s asked to expand room list category %s\n",
+ purple_debug_info("nullprpl", "%s asked to expand room list category %s\n",
                    purple_account_get_username(account),
                    purple_roomlist_room_get_name(category));
 }
 
 static gboolean null_offline_message(const PurpleBuddy *buddy) {
-  purple_debug_info("nullprotocol",
+  purple_debug_info("nullprpl",
                     "reporting that offline messages are supported for %s\n",
                     purple_buddy_get_name(buddy));
   return TRUE;
@@ -1060,7 +1060,7 @@ null_protocol_init(PurpleProtocol *protocol)
   PurpleAccountUserSplit *split;
   PurpleAccountOption *option;
 
-  protocol->id        = "null";
+  protocol->id        = "prpl-null";
   protocol->name      = "Null - Testing Protocol";
   protocol->options   = OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC;
   protocol->icon_spec = purple_buddy_icon_spec_new(
@@ -1214,8 +1214,8 @@ plugin_query(GError **error)
     "website",      PURPLE_WEBSITE,
     "abi-version",  PURPLE_ABI_VERSION,
 
-    /* If you're using this as the basis of a protocol plugin that will be
-     * distributed separately from libpurple, do not include these flags.*/
+    /* If you're using this protocol plugin as the basis of a plugin that will
+     * be distributed separately from libpurple, do not include these flags. */
     "flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
                     PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
     NULL
@@ -1236,7 +1236,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
   if (!my_protocol)
     return FALSE;
 
-  purple_debug_info("nullprotocol", "starting up\n");
+  purple_debug_info("nullprpl", "starting up\n");
 
   /* get ready to store offline messages */
   goffline_messages = g_hash_table_new_full(g_str_hash,  /* hash fn */
@@ -1270,7 +1270,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
     cmds = g_slist_delete_link(cmds, cmds);
   }
 
-  purple_debug_info("nullprotocol", "shutting down\n");
+  purple_debug_info("nullprpl", "shutting down\n");
 
   /* remove the protocol from the core */
   if (!purple_protocols_remove(my_protocol, error))
