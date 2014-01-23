@@ -1750,13 +1750,13 @@ AC_SUBST(KWALLET_LIBS)
 AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
 
 dnl #######################################################################
-dnl # Check for GPlugin 0.0.13
+dnl # Check for GPlugin 0.0.14
 dnl #######################################################################
 if test "x$enable_plugins" = "xyes" ; then
-	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.13 gmodule-2.0], , [
+	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.14 gmodule-2.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
-	GPlugin 0.0.13 development headers not found, which are required if you wish to
+	GPlugin 0.0.14 development headers not found, which are required if you wish to
 	enable plugins.
 	Use --disable-plugins if you want to disable plugins.
 	])])
