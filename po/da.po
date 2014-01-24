@@ -15006,7 +15006,7 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 "Fejl ved installeringen af fejlsøgningssymbolerne ($R2).$\\rHvis gentagne "
-"forsøg fejler, har du muligvis brug for det \"offline installeringsprogram\" "
+"forsøg fejler, har du muligvis brug for det 'offline installeringsprogram' "
 "fra http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the GTK+ Runtime failed to download from
@@ -15017,7 +15017,7 @@ msgid ""
 msgstr ""
 "Fejl ved download af GTK+-kørselsmiljø ($R2).$\\rDette er nødvendigt for at "
 "Pidgin kan fungere; hvis gentagne forsøg fejler, har du muligvis brug for "
-"det \"offline installeringsprogram\" fra http://pidgin.im/download/windows/ ."
+"det 'offline installeringsprogram' fra http://pidgin.im/download/windows/ ."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
