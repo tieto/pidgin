@@ -911,7 +911,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 		*tm = t;
 
 	if (tzoff != PURPLE_NO_TZ_OFF)
-		retval += tzoff;
+		retval -= tzoff;
 
 	if (tz_off != NULL)
 		*tz_off = tzoff;

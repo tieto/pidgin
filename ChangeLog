@@ -61,7 +61,7 @@ version 3.0.0 (??/??/????):
 	* Various core components of libpurple are now GObjects.
 	* Ciphers are now built from the libpurple directory.
 
-version 2.10.8:
+version 2.10.8 (1/28/2014):
 	General:
 	* Python build scripts and example plugins are now compatible with
 	  Python 3. (Ashish Gupta) (#15624)
@@ -97,6 +97,8 @@ version 2.10.8:
 	* Fix crash-on-startup when ASLR is always on. (#15521)
 	* Updates to dependencies:
 		* NSS 3.15.4 and NSPR 4.10.2
+		* Pango 1.29.4-1daa
+			Patched for https://bugzilla.gnome.org/show_bug.cgi?id=668154
 
 	AIM:
 	* Fix untrusted certificate error.
@@ -140,7 +142,7 @@ version 2.10.8:
 	MXit:
 	* Fix buffer overflow with remote code execution potential.
 	  (Discovered by Yves Younan and Pawel Janic of Sourcefire VRT)
-	  (CVE-2013-6487)
+	  (CVE-2013-6489)
 	* Fix sporadic crashes that can happen after user is disconnected.
 	* Fix crash when attempting to add a contact via search results.
 	* Show error message if file transfer fails.
@@ -152,13 +154,13 @@ version 2.10.8:
 
 	SIMPLE:
 	* Fix buffer overflow with remote code execution potential.
-	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2013-6487)
+	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2013-6490)
 
 	XMPP:
 	* Prevent spoofing of iq replies by verifying that the 'from' address
 	  matches the 'to' address of the iq request. (Discovered by Fabian
-	  Yamaguchi and Christian Wressnegger of the University of Goettingen)
-	  (CVE-2013-6483)
+	  Yamaguchi and Christian Wressnegger of the University of Goettingen,
+	  fixed by Thijs Alkemade) (CVE-2013-6483)
 	* Fix crash on some systems when receiving fake delay timestamps with
 	  extreme values. (Discovered by Jaime Breva Ribes) (CVE-2013-6477)
 	* Fix possible crash or other erratic behavior when selecting a very
@@ -169,7 +171,7 @@ version 2.10.8:
 	  a subsequent mechanism would otherwise work when using Cyrus SASL.
 	  (#15524)
 	* Fix dropping incoming stanzas on BOSH connections when we receive
-	  multiple HTTP responses at once. (#15684)
+	  multiple HTTP responses at once. (Issa Gorissen) (#15684)
 
 	Yahoo!:
 	* Fix possible crashes handling incoming strings that are not UTF-8.

@@ -269,7 +269,6 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 	if (!strcmp(name, "367")) {
 		char *msg = NULL;
 		/* Ban list entry */
-		g_return_if_fail(args[2]);
 		if (args[3] && args[4]) {
 			/* This is an extended syntax, not in RFC 1459 */
 			int t1 = atoi(args[4]);
@@ -366,8 +365,9 @@ void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!strcmp(name, "301")) {
 		irc->whois.away = g_strdup(args[2]);
 	} else if (!strcmp(name, "311") || !strcmp(name, "314")) {
-		irc->whois.userhost = g_strdup_printf("%s@%s", args[2], args[3]);
-		irc->whois.name = g_strdup(args[5]);
+		irc->whois.ident = g_strdup(args[2]);
+		irc->whois.host = g_strdup(args[3]);
+		irc->whois.real = g_strdup(args[5]);
 	} else if (!strcmp(name, "312")) {
 		irc->whois.server = g_strdup(args[2]);
 		irc->whois.serverinfo = g_strdup(args[3]);
@@ -385,6 +385,11 @@ void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, cha
 		}
 	} else if (!strcmp(name, "320")) {
 		irc->whois.identified = 1;
+	} else if (!strcmp(name, "330")) {
+		purple_debug(PURPLE_DEBUG_INFO, "irc", "330 %s: 1=[%s] 2=[%s] 3=[%s]",
+				name, args[1], args[2], args[3]);
+		if (!strcmp(args[3], "is logged in as"))
+			irc->whois.login = g_strdup(args[2]);
 	}
 }
 
@@ -419,11 +424,21 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Away"), irc->whois.away);
 		g_free(irc->whois.away);
 	}
-	if (irc->whois.userhost) {
-		purple_notify_user_info_add_pair_plaintext(user_info, _("Username"), irc->whois.userhost);
-		purple_notify_user_info_add_pair_plaintext(user_info, _("Real name"), irc->whois.name);
-		g_free(irc->whois.userhost);
-		g_free(irc->whois.name);
+	if (irc->whois.real) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Real name"), irc->whois.real);
+		g_free(irc->whois.real);
+	}
+	if (irc->whois.login) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Login name"), irc->whois.login);
+		g_free(irc->whois.login);
+	}
+	if (irc->whois.ident) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Ident name"), irc->whois.ident);
+		g_free(irc->whois.ident);
+	}
+	if (irc->whois.host) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Host name"), irc->whois.host);
+		g_free(irc->whois.host);
 	}
 	if (irc->whois.server) {
 		tmp = g_strdup_printf("%s (%s)", irc->whois.server, irc->whois.serverinfo);
@@ -550,13 +565,9 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	PurpleChatConversation *chat;
 
 	if (!strcmp(name, "topic")) {
-		g_return_if_fail(args[0]);
-		g_return_if_fail(args[1]);
 		chan = args[0];
 		topic = irc_mirc2txt (args[1]);
 	} else {
-		g_return_if_fail(args[1]);
-		g_return_if_fail(args[2]);
 		chan = args[1];
 		topic = irc_mirc2txt (args[2]);
 	}

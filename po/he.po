@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Richard Laager <rlaager@wiktel.com>, 2011.
-# Shalom Craimer <s.transifex@craimer.org>, 2011, 2012.
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2012.
+# Richard Laager <rlaager@wiktel.com>, 2011
+# Shalom Craimer <s.transifex@craimer.org>, 2011-2013
+# Yaron Shahrabani <sh.yaron@gmail.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-11 00:04-0800\n"
-"PO-Revision-Date: 2013-01-27 08:26+0000\n"
-"Last-Translator: Shalom Craimer <s.transifex@craimer.org>\n"
+"POT-Creation-Date: 2014-01-21 22:24-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/projects/p/pidgin/language/"
 "he/)\n"
 "Language: he\n"
@@ -2984,12 +2984,6 @@ msgid ""
 "invalid."
 msgstr "או כתובת השרת או יציאת השרת שניתנה עבור סוג המתווך שהוגדרלא תקפים."
 
-msgid "Token Error"
-msgstr "שגיאת ערך"
-
-msgid "Unable to fetch the token.\n"
-msgstr "לא ניתן להשיג את הערך.\n"
-
 msgid "Save Buddylist..."
 msgstr "שמור את רשימת אנשי הקשר..."
 
@@ -3017,39 +3011,6 @@ msgstr "שמור את רשימת אנשי הקשר..."
 
 msgid "Load buddylist from file..."
 msgstr "טען את רשימת אנשי הקשר מקובץ..."
-
-msgid "You must fill in all registration fields"
-msgstr "יש למלא את כל שדות ההרשמה"
-
-msgid "Passwords do not match"
-msgstr "הסיסמאות אינן תואמות"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "לא ניתן לבצע הרשמה לחשבון חדש. אירעה שגיאה לא-מוכרת."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "הושלמה ההרשמה לחשבון החדש של Gadu-Gadu"
-
-msgid "Registration completed successfully!"
-msgstr "הרישום בוצע בהצלחה"
-
-msgid "Password"
-msgstr "ססמה"
-
-msgid "Password (again)"
-msgstr "ססמה (שנית)"
-
-msgid "Enter captcha text"
-msgstr "יש להזין את טקסט ב-caphtca"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "בצע רישום לחשבון חדש של Gadu-Gadu"
-
-msgid "Please, fill in the following fields"
-msgstr "יש למלא את השדות הבאים"
 
 msgid "City"
 msgstr "עיר"
@@ -3079,39 +3040,6 @@ msgstr "חפש אנשי קשר"
 
 msgid "Please, enter your search criteria below"
 msgstr "יש להזין את הגדרות החיפוש להלן"
-
-msgid "Fill in the fields."
-msgstr "יש למלא את השדות."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "הססמה הנוכחית שלך שונה מזו שהוזנה."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "לא ניתן לשנות את הססמה. אירעה שגיאה.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "שנה ססמה עבור חשבון ה-Gadu-Gadu."
-
-msgid "Password was changed successfully!"
-msgstr "הססמה שונתה בהצלחה!"
-
-msgid "Current password"
-msgstr "ססמה נוכחית"
-
-msgid "Password (retype)"
-msgstr "ססמה )שוב("
-
-msgid "Enter current token"
-msgstr "הזן ערך נוכחי"
-
-msgid "Current token"
-msgstr "ערך נוכחי"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "יש להזין את סיסמתך הנוכחית וסיסמתך החדשה עבור משתמש מספר: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "שינוי סיסמת Gadu-Gadu"
 
 msgid "Show status to:"
 msgstr "הצג סטטוס ל:"
@@ -3184,18 +3112,6 @@ msgstr "לא נמצאו משתמשים התואמים לקריטריוני הח�
 msgid "Unable to read from socket"
 msgstr "אין אפשרות לקרוא מן השקע"
 
-msgid "Buddy list downloaded"
-msgstr "רשימת אנשי הקשר הועתקה"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "רשימת אנשי הקשר שלך הועתקה מן השרת."
-
-msgid "Buddy list uploaded"
-msgstr "רשימת אנשי הקשר נשלחה"
-
-msgid "Your buddy list was stored on the server."
-msgstr "רשימת אנשי הקשר שלך אוכסנה על השרת"
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3231,18 +3147,6 @@ msgstr "לא מחובר אל השרת"
 
 msgid "Find buddies..."
 msgstr "חפש אנשי קשר..."
-
-msgid "Change password..."
-msgstr "שנה ססמה..."
-
-msgid "Upload buddylist to Server"
-msgstr "שלח את רשימת אנשי הקשר לשרת"
-
-msgid "Download buddylist from Server"
-msgstr "שלוף את רשימת אנשי הקשר מהשרת"
-
-msgid "Delete buddylist from Server"
-msgstr "מחק את רשימת אנשי קשר מהשרת"
 
 msgid "Save buddylist to file..."
 msgstr "שמור את רשימת אנשי הקשר לקובץ..."
@@ -3347,7 +3251,6 @@ msgstr "לא ניתן להתחבר"
 msgid "Unable to connect: %s"
 msgstr "לא ניתן להתחבר: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "השרת סגר את החיבור"
 
@@ -3386,6 +3289,9 @@ msgstr "קידוד"
 msgid "Auto-detect incoming UTF-8"
 msgstr "זהה אוטומטית מסרים נכנסים בקידוד UTF-8"
 
+msgid "Ident name"
+msgstr ""
+
 msgid "Real name"
 msgstr "שם אמיתי"
 
@@ -3397,10 +3303,10 @@ msgid "Use SSL"
 msgstr "השתמש ב-SSL"
 
 msgid "Authenticate with SASL"
-msgstr ""
+msgstr "אימות עם SASL"
 
 msgid "Allow plaintext SASL auth over unencrypted connection"
-msgstr ""
+msgstr "אפשר אימות SASL מעל חיבור לא־מוצפן"
 
 msgid "Bad mode"
 msgstr "מצב לא תקין"
@@ -3436,6 +3342,14 @@ msgstr " <i>(מזוהה)</i>"
 msgid "Nick"
 msgstr "כינוי"
 
+#, fuzzy
+msgid "Login name"
+msgstr "ללא שם"
+
+#, fuzzy
+msgid "Host name"
+msgstr "שם שרת"
+
 msgid "Currently on"
 msgstr "כרגע ב-"
 
@@ -3465,7 +3379,7 @@ msgstr "הנושא של %s הוא: %s"
 
 #, c-format
 msgid "Topic for %s set by %s at %s on %s"
-msgstr ""
+msgstr "הנושא עבור %s נקבע על־ידי %s ב-%s ב-%s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3579,27 +3493,27 @@ msgstr "כאפה מ-%s"
 
 #, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr ""
+msgstr "כישלון באיתחול אימות SASL: %s"
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
-msgstr ""
+msgstr "כישלון באימות SASL: לא נמצא מנגנון אימות מתאים."
 
 #, c-format
 msgid "SASL authentication failed: %s"
-msgstr ""
+msgstr "אימות SASL נכשל: %s"
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
-msgstr ""
+msgstr "אימות SASL נכשל: השרת אינו תומך באימות SASL."
 
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr ""
+msgstr "אימות SASL נכשל: איתחול SASL נכשל."
 
 msgid "Incorrect Password"
-msgstr ""
+msgstr "ססמה שגויה"
 
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr ""
+msgstr "אימות SASL נכשל: לא נמצא מנגנון מתאים"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;פעולה לביצוע&gt;: פעל פעולה ."
@@ -4243,6 +4157,9 @@ msgstr "תאריך"
 msgid "Already Registered"
 msgstr "הכינוי כבר רשום."
 
+msgid "Password"
+msgstr "ססמה"
+
 msgid "Unregister"
 msgstr "הסר רישום"
 
@@ -4375,6 +4292,9 @@ msgstr "הססמה שלך שונתה."
 
 msgid "Error changing password"
 msgstr "שגיאה במהלך שינוי הססמה"
+
+msgid "Password (again)"
+msgstr "ססמה (שנית)"
 
 msgid "Change XMPP Password"
 msgstr "שנה סיסמת XMPP"
@@ -4599,6 +4519,10 @@ msgstr "לא ניתן ליזום מדיה עם %s: JID לא תקף"
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "לא ניתן ליזום מדיה עם %s: המשתמש לא מחובר"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr "לא ניתן ליזום מדיה עם %s: המשאב אינו מקוון"
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -5933,7 +5857,7 @@ msgstr "היכן אני גר/ה"
 
 #. relationship status
 msgid "Relationship Status"
-msgstr ""
+msgstr "מצב אישי"
 
 #. mobile number
 msgid "Mobile Number"
@@ -6030,6 +5954,14 @@ msgstr "אודות..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "הקובץ שברצונך לשלוח גדול מדי!"
+
+#. file read error
+msgid "Unable to access the local file"
+msgstr "לא ניתן לגשת לקובץ המקומי"
+
+#. file write error
+msgid "Unable to save the file"
+msgstr "לא ניתן לשמור את הקובץ"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6163,31 +6095,31 @@ msgid "Enable splash-screen popup"
 msgstr "אפשר פתיחת חלון-הקדמה"
 
 msgid "Don't want to say"
-msgstr ""
+msgstr "אין ברצוני להגיד"
 
 msgid "Single"
-msgstr ""
+msgstr "רווק/ה"
 
 msgid "In a relationship"
-msgstr ""
+msgstr "בקשר"
 
 msgid "Engaged"
-msgstr ""
+msgstr "מאורס/ת"
 
 msgid "Married"
-msgstr ""
+msgstr "נשוא/ה"
 
 msgid "It's complicated"
-msgstr ""
+msgstr "מסובך"
 
 msgid "Widowed"
-msgstr ""
+msgstr "אלמנ/ה"
 
 msgid "Separated"
-msgstr ""
+msgstr "פרוד/ה"
 
 msgid "Divorced"
-msgstr ""
+msgstr "גרוש/ה"
 
 msgid "Last Online"
 msgstr "חיבור אחרון"
@@ -6248,7 +6180,7 @@ msgstr "שגיאת הודעה"
 
 #. could not be decrypted
 msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
+msgstr "התקבלה הודעה מוצפנת שלא היה ניתן לפענח."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "לא ניתן לבצע ניתוב בעזרת הפרוטוקול שנבחר"
@@ -9621,7 +9553,6 @@ msgstr ""
 "חשבונך נעול בגלל יותר מדי ניסיון התחברות כושלים. יש לנסות להיכנס לאתר של "
 "Yahoo!."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "שגיאה לא-מוכרת מספר 52. התחברות מחדש אמורה לתקן זאת."
 
@@ -11409,7 +11340,8 @@ msgstr "מנהל אתר"
 msgid "win32 port"
 msgstr "גירסה לחלונות"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "קא-הינג צ'אונג"
 
@@ -11573,6 +11505,9 @@ msgstr "כורדית"
 msgid "Lao"
 msgstr "לאית"
 
+msgid "Lithuanian"
+msgstr "ליטואנית"
+
 msgid "Maithili"
 msgstr "מאת'ילי"
 
@@ -11648,6 +11583,9 @@ msgstr "אלבנית"
 msgid "Serbian"
 msgstr "סרבית"
 
+msgid "Serbian Latin"
+msgstr ""
+
 msgid "Sinhala"
 msgstr "סרי-לנקית"
 
@@ -11665,9 +11603,6 @@ msgstr "טלוגו"
 
 msgid "Thai"
 msgstr "תאלנדית"
-
-msgid "Turkish"
-msgstr "תורכית"
 
 msgid "Ukranian"
 msgstr "אוקראינית"
@@ -11690,8 +11625,8 @@ msgstr "סינית מסורתית"
 msgid "Amharic"
 msgstr "אמהרית"
 
-msgid "Lithuanian"
-msgstr "ליטואנית"
+msgid "Turkish"
+msgstr "תורכית"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "צוות VI של גנום"
@@ -11722,7 +11657,6 @@ msgstr ""
 "A><BR><A HREF=\"%s\">שאלות נפוצות</A><BR>\tערוץ IRC: #pidgin ברשת irc."
 "freenode.net<BR>» XMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12406,6 +12340,9 @@ msgstr "שגיאה בהפעלת הפקודה \"%s\": %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "נבחרה לביצוע הפקודה 'הידנית' של הדפדפן, אבל לא נקבעה הוראה לביצוע."
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr ""
 
 msgid "No message"
 msgstr "ללא הודעה"
@@ -14305,7 +14242,6 @@ msgstr "הצג חותמות זמן מסוג iChat כל N דקות."
 msgid "Timestamp Format Options"
 msgstr "אפשרויות חותמת-זמן"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr " אלץ שימוש בחותמת-זמן:"
 
@@ -14502,6 +14438,55 @@ msgid ""
 msgstr ""
 "מאפשר גישה לאפשרויות הייחודיות לפידג'ין בחלונות, כגון עגינה של רשימת אנשי "
 "הקשר."
+
+#. Alerts
+msgid "Chatroom alerts"
+msgstr ""
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr ""
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+msgid "Show number of unread _conversations on launcher icon"
+msgstr ""
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr ""
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>נותקה.</font>"

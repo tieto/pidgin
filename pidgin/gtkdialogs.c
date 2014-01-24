@@ -158,6 +158,7 @@ static const struct translator translators[] = {
 	{NULL,                      NULL, "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
 	{N_("Assamese"),            "as", "Amitakhya Phukan", "aphukan@fedoraproject.org"},
+	{N_("Asturian"),            "ast", "Llumex03", "l.lumex03.tornes@gmail.com"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{NULL,                      NULL, "Vladimir (Kaladan) Petkov", "kaladan@gmail.com"},
