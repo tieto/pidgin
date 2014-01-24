@@ -28,6 +28,7 @@ static PurpleEventLoopUiOps eventloop_ui_ops = {
 	g_timeout_add_seconds,
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 
