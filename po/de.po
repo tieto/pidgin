@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-25 00:17+0100\n"
-"PO-Revision-Date: 2014-01-25 00:20+0100\n"
+"POT-Creation-Date: 2014-01-25 19:02+0100\n"
+"PO-Revision-Date: 2014-01-25 19:02+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -14915,7 +14915,7 @@ msgid "Chatroom alerts"
 msgstr "Chatraum-Alarme"
 
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr "Chatraum-Alarme n_ur dann, wenn jemand Ihren Namen sagt"
+msgstr "Chatraum-Alarme nur dann, wenn j_emand Ihren Namen sagt"
 
 #. Launcher integration
 msgid "Launcher Icon"
@@ -14925,10 +14925,10 @@ msgid "_Disable launcher integration"
 msgstr "_Starter-Integration deaktivieren"
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr "Zeige Zahl der ungelesenen _Nachrichten auf dem Starter-Icon"
+msgstr "Zeige Zahl der ungelesenen Nac_hrichten auf dem Starter-Icon"
 
-msgid "Show number of unread _conversations on launcher icon"
-msgstr "Zeige Zahl der ungelesenen _Unterhaltungen auf dem Starter-Icon"
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Zeige Zahl der ungelesenen U_nterhaltungen auf dem Starter-Icon"
 
 #. Messaging menu integration
 msgid "Messaging Menu"
@@ -14959,7 +14959,9 @@ msgstr "Erlaubt die Integration mit Unity."
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr "Erlaubt die Integration mit Unity's Benachrichtigungsfeld und dem Unity-Starter."
+msgstr ""
+"Erlaubt die Integration mit Unity's Benachrichtigungsfeld und dem Unity-"
+"Starter."
 
 msgid "Audio"
 msgstr "Audio"
