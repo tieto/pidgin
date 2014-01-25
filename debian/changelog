@@ -1,3 +1,15 @@
+pidgin (2.10.8-1) unstable; urgency=high
+
+  * Imported Upstream version 2.10.8
+    - Fixes many security issues: CVE-2012-6152, CVE-2013-6477,
+      CVE-2013-6478, CVE-2013-6479, CVE-2013-6481, CVE-2013-6482,
+      CVE-2013-6483, CVE-2013-6484, CVE-2013-6485, CVE-2013-6486,
+      CVE-2013-6487, CVE-2013-6489, CVE-2013-6490, and CVE-2014-0020.
+    - Fixes undefined conversion from double to enum (Closes: #701671)
+  * Imported Upstream version 2.10.8
+
+ -- Ari Pollak <ari@debian.org>  Sat, 25 Jan 2014 11:53:21 -0500
+
 pidgin (2.10.7-2) unstable; urgency=low
 
   * Fix IRC protocol loading by linking with SASL (Closes: #701541)
