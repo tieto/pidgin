@@ -68,6 +68,7 @@ IGNORE_HFILES=\
 	tests \
 	win32 \
 	dbus-types.h \
+	internal.h \
 	purple-client.h \
 	purple-client-bindings.h \
 	dbus-define-api.h

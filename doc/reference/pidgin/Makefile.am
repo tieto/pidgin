@@ -64,7 +64,8 @@ IGNORE_HFILES=\
 	pixmaps \
 	plugins \
 	themes \
-	win32
+	win32 \
+	gtkinternal.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
