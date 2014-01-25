@@ -191,7 +191,7 @@ silcpurple_wb_parse(SilcPurpleWb wbs, PurpleWhiteboard *wb,
 
 	/* Update whiteboard if its dimensions changed */
 	if (width != wbs->width || height != wbs->height)
-		silcpurple_wb_set_dimensions(wb, height, width);
+		silcpurple_wb_set_dimensions(wb, width, height);
 
 	if (command == SILCPURPLE_WB_DRAW) {
 		/* Parse data and draw it */

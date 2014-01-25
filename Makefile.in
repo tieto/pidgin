@@ -56,12 +56,12 @@ subdir = .
 DIST_COMMON = README $(am__configure_deps) $(noinst_HEADERS) \
 	$(srcdir)/Doxyfile.in $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(srcdir)/pidgin.apspec.in $(srcdir)/pidgin.spec.in \
-	$(top_srcdir)/configure \
+	$(srcdir)/pidgin.apspec.in $(srcdir)/pidgin.desktop.in.in \
+	$(srcdir)/pidgin.spec.in $(top_srcdir)/configure \
 	$(top_srcdir)/libpurple/plugins/perl/common/Makefile.PL.in \
 	$(top_srcdir)/pidgin/plugins/perl/common/Makefile.PL.in \
 	AUTHORS COPYING ChangeLog INSTALL NEWS compile config.guess \
-	config.sub depcomp install-sh ltmain.sh missing mkinstalldirs
+	config.sub depcomp install-sh ltmain.sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -69,11 +69,12 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = Doxyfile pidgin.apspec \
 	pidgin/plugins/perl/common/Makefile.PL \
-	libpurple/plugins/perl/common/Makefile.PL pidgin.spec
+	libpurple/plugins/perl/common/Makefile.PL pidgin.desktop.in \
+	pidgin.spec
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
@@ -346,6 +347,9 @@ STRIP = @STRIP@
 TCL_CFLAGS = @TCL_CFLAGS@
 TCL_LIBS = @TCL_LIBS@
 TK_LIBS = @TK_LIBS@
+UNITY_CFLAGS = @UNITY_CFLAGS@
+UNITY_LIBS = @UNITY_LIBS@
+USES_MM_CHAT_SECTION = @USES_MM_CHAT_SECTION@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
@@ -539,6 +543,8 @@ pidgin.apspec: $(top_builddir)/config.status $(srcdir)/pidgin.apspec.in
 pidgin/plugins/perl/common/Makefile.PL: $(top_builddir)/config.status $(top_srcdir)/pidgin/plugins/perl/common/Makefile.PL.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 libpurple/plugins/perl/common/Makefile.PL: $(top_builddir)/config.status $(top_srcdir)/libpurple/plugins/perl/common/Makefile.PL.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+pidgin.desktop.in: $(top_builddir)/config.status $(srcdir)/pidgin.desktop.in.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 pidgin.spec: $(top_builddir)/config.status $(srcdir)/pidgin.spec.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@

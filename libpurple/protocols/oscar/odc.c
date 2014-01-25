@@ -266,7 +266,6 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	 * problems while parsing the binary data section then we stop
 	 * parsing it, and the local user will see broken image icons.
 	 */
-	/* TODO: Use a length argument when looking for the <binary> tag! */
 	binary_start = purple_strcasestr(msg, "<binary>");
 	if (binary_start == NULL)
 		msgend = dataend;
@@ -278,7 +277,6 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		tmp = binary_start + 8;
 
 		/* The embedded binary markup has a mimimum length of 29 bytes */
-		/* TODO: Use a length argument when looking for the <data> tag! */
 		while ((tmp + 29 <= dataend) &&
 				purple_markup_find_tag("data", tmp, &start, &tmp, &attributes))
 		{
@@ -463,6 +461,10 @@ peer_odc_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (bs->offset < bs->len)
 		/* Waiting for more data to arrive */
 		return;
+	/* TODO: Instead of null-terminating this, it would be better if we just
+	   respected the length of the buffer when parsing it.  But it doesn't
+	   really matter and this is easy. */
+	bs->data[bs->len] = '\0';
 
 	/* We have a complete ODC/OFT frame!  Handle it and continue reading */
 	byte_stream_rewind(bs);
@@ -612,7 +614,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		}
 
 		/* We have payload data!  Switch to the ODC watcher to read it. */
-		frame->payload.data = g_new(guint8, frame->payload.len);
+		frame->payload.data = g_new(guint8, frame->payload.len + 1);
 		frame->payload.offset = 0;
 		conn->frame = frame;
 		purple_input_remove(conn->watcher_incoming);

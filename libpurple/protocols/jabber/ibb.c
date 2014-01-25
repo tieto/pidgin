@@ -472,10 +472,6 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 				purple_debug_info("jabber", "IBB: calling closed handler\n");
 				sess->closed_cb(sess);
 			}
-
-		} else {
-			/* this should never happen */
-			purple_debug_error("jabber", "Received bogus iq for IBB session\n");
 		}
 	} else if (open) {
 		JabberIq *result;

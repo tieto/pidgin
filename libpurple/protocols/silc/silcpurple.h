@@ -153,7 +153,7 @@ void silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 					 char **tzstr, char **geostr);
 void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img);
 char *silcpurple_file2mime(const char *filename);
-SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags);
+SilcDList silcpurple_image_message(const char *msg, SilcMessageFlags *mflags);
 
 #ifdef _WIN32
 typedef int uid_t;

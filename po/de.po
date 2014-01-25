@@ -2,8 +2,9 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2012, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2013, Björn Voigt <bjoernv@arcor.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
+# Copyright (C) 2013-2014, Björn Voigt <bjoernv@arcor.de>
 #
 # This file is distributed under the same license as the Pidgin package.
 #
@@ -11,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-12 17:36+0200\n"
-"PO-Revision-Date: 2012-07-12 17:36+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2014-01-21 19:13+0100\n"
+"PO-Revision-Date: 2014-01-21 19:10+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -2978,7 +2979,7 @@ msgid "Buddy Goes _Idle"
 msgstr "Buddy _untätig wird"
 
 msgid "Buddy _Signs On/Off"
-msgstr "Buddy hat_sich an- oder abgemeldet"
+msgstr "Buddy _sich an- oder abgemeldet hat"
 
 #. *< type
 #. *< ui_requirement
@@ -3289,18 +3290,6 @@ msgstr "Es gibt keine Benutzer, die Ihrer Anfrage entsprechen."
 msgid "Unable to read from socket"
 msgstr "Socket kann nicht gelesen werden"
 
-msgid "Buddy list downloaded"
-msgstr "Buddy-Liste heruntergeladen"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Ihre Buddy-Liste wurde von Server geladen."
-
-msgid "Buddy list uploaded"
-msgstr "Buddy-Liste hochgeladen"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Ihre Buddy-Liste wurde auf dem Server gespeichert."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3339,15 +3328,6 @@ msgstr "Finde Buddys..."
 
 msgid "Change password..."
 msgstr "Passwort ändern..."
-
-msgid "Upload buddylist to Server"
-msgstr "Buddy-Liste zum Server hochladen"
-
-msgid "Download buddylist from Server"
-msgstr "Buddy-Liste vom Server herunterladen"
-
-msgid "Delete buddylist from Server"
-msgstr "Löschen der Buddy-Liste vom Server"
 
 msgid "Save buddylist to file..."
 msgstr "Buddy-Liste in Datei speichern..."
@@ -3452,7 +3432,6 @@ msgstr "Verbindung nicht möglich"
 msgid "Unable to connect: %s"
 msgstr "Verbinden nicht möglich: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Der Server hat die Verbindung beendet"
 
@@ -3491,6 +3470,9 @@ msgstr "Kodierungen"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Eingehendes UTF-8 automatisch erkennen"
 
+msgid "Ident name"
+msgstr "Benutzername"
+
 msgid "Real name"
 msgstr "Echter Name"
 
@@ -3500,6 +3482,12 @@ msgstr "Echter Name"
 #.
 msgid "Use SSL"
 msgstr "Benutze SSL"
+
+msgid "Authenticate with SASL"
+msgstr "Mit SASL authentifizieren"
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Erlaube Klartext-Authentifizierung über einen unverschlüsselten Kanal"
 
 msgid "Bad mode"
 msgstr "Falscher Modus"
@@ -3561,6 +3549,10 @@ msgstr "%s hat das Thema entfernt."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Das Thema für %s ist: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr "Das Thema für %s gesetzt von %s um %s auf %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3675,6 +3667,37 @@ msgstr "Der Spitzname oder Kanal ist zur Zeit nicht verfügbar."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops von %s"
+
+#, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Initialisierung der SASL-Authentifizierung fehlgeschlagen: %s"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+"SASL-Authentifizierung fehlgeschlagen: Keine brauchbaren "
+"Authentifizierungsmechanismen gefunden."
+
+#, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL-Authentifizierung fehlgeschlagen: %s"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+"SASL-Authentifizierung fehlgeschlagen: Der Server unterstützt keine SASL-"
+"Authentifizierung."
+
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr ""
+"SASL-Authentifizierung fehlgeschlagen: Initialisierung von SASL "
+"fehlgeschlagen."
+
+msgid "Incorrect Password"
+msgstr "Falsches Passwort"
+
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr ""
+"SASL-Authentifizierung fehlgeschlagen: Keine brauchbaren Mechanismen gefunden"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;Aktion&gt;:  Führe eine Aktion durch."
@@ -4715,6 +4738,12 @@ msgstr "Medien-Sitzung mit %s konnte nicht gestartet werden: ungültige JID"
 msgid "Unable to initiate media with %s: user is not online"
 msgstr ""
 "Medien-Sitzung mit %s konnte nicht gestartet werden: Benutzer ist nicht "
+"online"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr ""
+"Medien-Sitzung mit %s konnte nicht gestartet werden: Ressource ist nicht "
 "online"
 
 #, c-format
@@ -5850,10 +5879,10 @@ msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Einen Kontakt anstoßen, um seine Aufmerksamkeit zu erhalten"
 
 msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Windows Live ID-Authentifikation:Kann nicht verbinden"
+msgstr "Windows Live ID-Authentifizierung:Kann nicht verbinden"
 
 msgid "Windows Live ID authentication:Invalid response"
-msgstr "Windows Live ID-Authentifikation:Ungültige Antwort"
+msgstr "Windows Live ID-Authentifizierung:Ungültige Antwort"
 
 msgid "The following users are missing from your addressbook"
 msgstr "Die folgenden Benutzer fehlen in Ihrem Adressbuch"
@@ -6122,6 +6151,10 @@ msgstr "Über mich"
 msgid "Where I Live"
 msgstr "Wo ich wohne"
 
+#. relationship status
+msgid "Relationship Status"
+msgstr "Beziehungsstatus"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Handynummer"
@@ -6217,6 +6250,14 @@ msgstr "Über..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Die Datei, die Sie senden möchten ist zu groß!"
+
+#. file read error
+msgid "Unable to access the local file"
+msgstr "Kann nicht auf die lokale Datei zugreifen"
+
+#. file write error
+msgid "Unable to save the file"
+msgstr "Kann die Datei nicht speichern"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6340,10 +6381,6 @@ msgstr "Status-Nachricht"
 msgid "Rejection Message"
 msgstr "Ablehnungsnachricht"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Versteckte Nummer"
-
 msgid "No profile available"
 msgstr "Kein Profil verfügbar"
 
@@ -6367,6 +6404,33 @@ msgstr "Über HTTP verbinden"
 
 msgid "Enable splash-screen popup"
 msgstr "Startbildschirm-Popup aktivieren"
+
+msgid "Don't want to say"
+msgstr "Das möchte ich nicht sagen"
+
+msgid "Single"
+msgstr "Ledig"
+
+msgid "In a relationship"
+msgstr "In einer Beziehung"
+
+msgid "Engaged"
+msgstr "Verlobt"
+
+msgid "Married"
+msgstr "Verheiratet"
+
+msgid "It's complicated"
+msgstr "Es ist kompliziert"
+
+msgid "Widowed"
+msgstr "Verwitwet"
+
+msgid "Separated"
+msgstr "Getrennt"
+
+msgid "Divorced"
+msgstr "Geschieden"
 
 msgid "Last Online"
 msgstr "Zuletzt online"
@@ -6426,6 +6490,12 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Nachrichtenfehler"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
+"Es wurde eine verschlüsselte Nachricht empfangen, die nicht entschlüsselt "
+"werden kann."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kann die Umleitung nicht mit dem angegebenen Protokoll durchführen"
@@ -8899,15 +8969,15 @@ msgid ""
 "channel public keys are set then only users whose public keys are listed are "
 "able to join."
 msgstr ""
-"Die Kanalauthentifikation wird benutzt, um einen Kanal vor unbefugtem "
-"Zugriff zu schützen. Die Authentifikation kann auf Passphrasen und digitalen "
-"Signaturen basieren. Wenn die Passphrase-Variante gewählt wird, braucht man "
-"eine Passphrase, um den Kanal betreten zu können. Wenn digitale öffentliche "
-"Schlüssel gewählt werden, können nur solche Benutzer den Kanal betreten, "
-"deren Schlüssel aufgelistet sind."
+"Die Kanalauthentifizierung wird benutzt, um einen Kanal vor unbefugtem "
+"Zugriff zu schützen. Die Authentifizierung kann auf Passphrasen und "
+"digitalen Signaturen basieren. Wenn die Passphrase-Variante gewählt wird, "
+"braucht man eine Passphrase, um den Kanal betreten zu können. Wenn digitale "
+"öffentliche Schlüssel gewählt werden, können nur solche Benutzer den Kanal "
+"betreten, deren Schlüssel aufgelistet sind."
 
 msgid "Channel Authentication"
-msgstr "Kanal-Authentifikation"
+msgstr "Kanal-Authentifizierung"
 
 msgid "Add / Remove"
 msgstr "Hinzufügen / Entfernen"
@@ -9951,7 +10021,6 @@ msgstr ""
 "Ihr Konto wurde aufgrund zu vieler fehlgeschlagener Login-Versuche gesperrt. "
 "Bitte versuchen Sie sich auf der Yahoo!-Webseite anzumelden."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Unbekannter Fehler 52. Ein Neu-Verbinden sollte dies beheben."
 
@@ -11793,7 +11862,8 @@ msgstr "Webmaster"
 msgid "win32 port"
 msgstr "Win32 Portierung"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11957,6 +12027,9 @@ msgstr "Kurdisch"
 msgid "Lao"
 msgstr "Laotisch"
 
+msgid "Lithuanian"
+msgstr "Litauisch"
+
 msgid "Maithili"
 msgstr "Maithili"
 
@@ -12032,6 +12105,9 @@ msgstr "Albanisch"
 msgid "Serbian"
 msgstr "Serbisch"
 
+msgid "Serbian Latin"
+msgstr "Serbisch (Latin)"
+
 msgid "Sinhala"
 msgstr "Singhalesisch"
 
@@ -12049,9 +12125,6 @@ msgstr "Telugu"
 
 msgid "Thai"
 msgstr "Thailändisch"
-
-msgid "Turkish"
-msgstr "Türkisch"
 
 msgid "Ukranian"
 msgstr "Ukrainisch"
@@ -12074,8 +12147,8 @@ msgstr "Traditionelles Chinesisch"
 msgid "Amharic"
 msgstr "Amharisch"
 
-msgid "Lithuanian"
-msgstr "Litauisch"
+msgid "Turkish"
+msgstr "Türkisch"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh und das Gnome-Vi Team"
@@ -12110,7 +12183,6 @@ msgstr ""
 "\tIRC-Channel: #pidgin auf irc.freenode.net<BR>\tXMPP-MUC: devel@conference."
 "pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -14782,7 +14854,6 @@ msgstr "Zeige alle N Minuten iChat-ähnliche Zeitstempel an."
 msgid "Timestamp Format Options"
 msgstr "Zeitstempelformat-Optionen"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Erzwinge Zeitformat:"
 
@@ -15161,6 +15232,30 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Buddy-Liste heruntergeladen"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Ihre Buddy-Liste wurde von Server geladen."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Buddy-Liste hochgeladen"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Ihre Buddy-Liste wurde auf dem Server gespeichert."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Buddy-Liste zum Server hochladen"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Buddy-Liste vom Server herunterladen"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Löschen der Buddy-Liste vom Server"
+
+#~ msgid "Hidden Number"
+#~ msgstr "Versteckte Nummer"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Kein Sametime-Community Server angegeben"

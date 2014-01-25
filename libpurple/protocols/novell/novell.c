@@ -1177,7 +1177,6 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 	const char *dn;
 	const char *name;
 	int idle = 0;
-	gboolean loggedin = TRUE;
 
 	account = purple_buddy_get_account(buddy);
 	name = purple_buddy_get_name(buddy);
@@ -1194,7 +1193,6 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 			break;
 		case NM_STATUS_OFFLINE:
 			status_id = NOVELL_STATUS_TYPE_OFFLINE;
-			loggedin = FALSE;
 			break;
 		case NM_STATUS_AWAY_IDLE:
 			status_id = NOVELL_STATUS_TYPE_AWAY;
@@ -1202,7 +1200,6 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 			break;
 		default:
 			status_id = NOVELL_STATUS_TYPE_OFFLINE;
-			loggedin = FALSE;
 			break;
 	}
 
@@ -1284,7 +1281,6 @@ _add_contacts_to_purple_blist(NMUser * user, NMFolder * folder)
 	PurpleBuddy *buddy = NULL;
 	PurpleGroup *group;
 	NMERR_T cnt = 0, i;
-	const char *text = NULL;
 	const char *name = NULL;
 	const char *fname = NULL;
 	int status = 0;
@@ -1327,7 +1323,6 @@ _add_contacts_to_purple_blist(NMUser * user, NMFolder * folder)
 				user_record = nm_contact_get_user_record(contact);
 				if (user_record) {
 					status = nm_user_record_get_status(user_record);
-					text = nm_user_record_get_status_text(user_record);
 				}
 				_update_buddy_status(user, buddy, status, time(0));
 
@@ -3303,11 +3298,8 @@ novell_set_permit_deny(PurpleConnection *gc)
 				}
 
 				for (node = gc->account->permit; node; node = node->next) {
-					name = NULL;
 					dn = nm_lookup_dn(user, (char *)node->data);
 					if (dn) {
-						user_record = nm_find_user_record(user, dn);
-						name = nm_user_record_get_display_id(user_record);
 
 						if (!g_slist_find_custom(user->allow_list,
 												 dn, (GCompareFunc)purple_utf8_strcasecmp)) {

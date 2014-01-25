@@ -1355,7 +1355,7 @@ aim_locate_setcaps(OscarData *od, guint64 caps)
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
+	if (!(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	aim_tlvlist_add_caps(&tlvlist, 0x0005, caps, mood);

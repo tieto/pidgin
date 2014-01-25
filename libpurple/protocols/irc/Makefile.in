@@ -58,7 +58,7 @@ am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
@@ -92,7 +92,8 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-@STATIC_IRC_FALSE@libirc_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+@STATIC_IRC_FALSE@libirc_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+@STATIC_IRC_FALSE@	$(am__DEPENDENCIES_1)
 am__libirc_la_SOURCES_DIST = cmds.c dcc_send.c irc.c irc.h msgs.c \
 	parse.c
 am__objects_1 = libirc_la-cmds.lo libirc_la-dcc_send.lo \
@@ -318,6 +319,9 @@ STRIP = @STRIP@
 TCL_CFLAGS = @TCL_CFLAGS@
 TCL_LIBS = @TCL_LIBS@
 TK_LIBS = @TK_LIBS@
+UNITY_CFLAGS = @UNITY_CFLAGS@
+UNITY_LIBS = @UNITY_LIBS@
+USES_MM_CHAT_SECTION = @USES_MM_CHAT_SECTION@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
@@ -415,7 +419,7 @@ libirc_la_LDFLAGS = -module -avoid-version
 @STATIC_IRC_TRUE@libirc_la_SOURCES = $(IRCSOURCES)
 @STATIC_IRC_TRUE@libirc_la_CFLAGS = $(AM_CFLAGS)
 @STATIC_IRC_FALSE@pkg_LTLIBRARIES = libirc.la
-@STATIC_IRC_FALSE@libirc_la_LIBADD = $(GLIB_LIBS)
+@STATIC_IRC_FALSE@libirc_la_LIBADD = $(GLIB_LIBS) $(SASL_LIBS)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \

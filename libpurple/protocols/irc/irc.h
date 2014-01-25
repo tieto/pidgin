@@ -72,9 +72,11 @@ struct irc_conn {
 	GString *names;
 	struct _whois {
 		char *nick;
+		char *real;
+		char *login;
+		char *ident;
+		char *host;
 		char *away;
-		char *userhost;
-		char *name;
 		char *server;
 		char *serverinfo;
 		GString *channels;

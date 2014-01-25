@@ -4278,7 +4278,7 @@ tab_complete(PurpleConversation *conv)
 											 matches->data, -1);
 
 		g_free(matches->data);
-		matches = g_list_remove(matches, matches->data);
+		g_list_free(matches);
 	}
 	else {
 		/*
@@ -6546,7 +6546,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_widget_show(win->menu.unblock);
 		}
 
-		if ((account == NULL) || purple_find_buddy(account, purple_conversation_get_name(conv)) == NULL) {
+		if (purple_find_buddy(account, purple_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(win->menu.add);
 			gtk_widget_hide(win->menu.remove);
 		} else {

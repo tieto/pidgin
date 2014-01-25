@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include    "internal.h"
-#include	"purple.h"
+#include	"internal.h"
+#include	"debug.h"
 
 #include	"protocol.h"
 #include	"mxit.h"
@@ -86,7 +86,7 @@ static const char*	vibes[] = {
  *  @param buf				The data to dump
  *  @param len				The length of the data
  */
-static void hex_dump( const char* buf, int len )
+static void hex_dump( const gchar* buf, int len )
 {
 	char		msg[256];
 	int			pos;
@@ -102,11 +102,11 @@ static void hex_dump( const char* buf, int len )
 		if ( pos == 0 )
 			pos += sprintf( &msg[pos], "%04i:  ", i );
 
-		pos += sprintf( &msg[pos], "0x%02X ", (unsigned char) buf[i] );
+		pos += sprintf( &msg[pos], "0x%02X ", buf[i] );
 
 		if ( i % 16 == 15 ) {
 			pos += sprintf( &msg[pos], "\n" );
-			purple_debug_info( MXIT_PLUGIN_ID, msg );
+			purple_debug_info( MXIT_PLUGIN_ID, "%s", msg );
 			pos = 0;
 		}
 		else if ( i % 16 == 7 )
@@ -115,7 +115,7 @@ static void hex_dump( const char* buf, int len )
 
 	if ( pos > 0 ) {
 		pos += sprintf( &msg[pos], "\n" );
-		purple_debug_info( MXIT_PLUGIN_ID, msg );
+		purple_debug_info( MXIT_PLUGIN_ID, "%s", msg );
 		pos = 0;
 	}
 }
@@ -133,27 +133,26 @@ static void hex_dump( const char* buf, int len )
 void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean isStructured, const char* displaytext )
 {
 #ifdef	MXIT_LINK_CLICK
-	char	retstr[256];
-	gchar*	retstr64;
-	char	link[256];
-	int		len;
+	gchar*	link	= NULL;
+	gchar*	link64	= NULL;
 
 	/*
 	 * The link content is encoded as follows:
 	 *  MXIT_LINK_KEY | ACCOUNT_USER | ACCOUNT_PROTO | REPLY_TO | REPLY_FORMAT | REPLY_DATA
 	 */
-	len = g_snprintf( retstr, sizeof( retstr ), "%s|%s|%s|%s|%i|%s",
+	link = g_strdup_printf( "%s|%s|%s|%s|%i|%s",
 			MXIT_LINK_KEY,
 			purple_account_get_username( mx->session->acc ),
 			purple_account_get_protocol_id( mx->session->acc ),
 			mx->from,
 			isStructured ? 1 : 0,
 			replydata );
-	retstr64 = purple_base64_encode( (const unsigned char*) retstr, len );
-	g_snprintf( link, sizeof( link ), "%s%s", MXIT_LINK_PREFIX, retstr64 );
-	g_free( retstr64 );
+	link64 = purple_base64_encode( (const unsigned char*) link, strlen( link ) );
 
-	g_string_append_printf( mx->msg, "<a href=\"%s\">%s</a>", link, displaytext );
+	g_string_append_printf( mx->msg, "<a href=\"%s%s\">%s</a>", MXIT_LINK_PREFIX, link64, displaytext );
+
+	g_free( link64 );
+	g_free( link );
 #else
 	g_string_append_printf( mx->msg, "<b>%s</b>", replydata );
 #endif
@@ -167,7 +166,7 @@ void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean i
  *  @param size				The extracted length
  *  @return					The number of bytes extracted
  */
-static unsigned int asn_getlength( const char* data, int* size )
+static unsigned int asn_getlength( const gchar* data, int* size )
 {
 	unsigned int	len		= 0;
 	unsigned char	bytes;
@@ -202,21 +201,24 @@ static unsigned int asn_getlength( const char* data, int* size )
  *  @param utf8				The extracted string.  Must be deallocated by caller.
  *  @return					The number of bytes extracted
  */
-static int asn_getUtf8( const char* data, char type, char** utf8 )
+static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
 {
-	int		len;
+	unsigned int len;
+	gchar *out_str;
 
 	/* validate the field type [1 byte] */
 	if ( data[0] != type ) {
 		/* this is not a utf-8 string! */
-		purple_debug_error( MXIT_PLUGIN_ID, "Invalid UTF-8 encoded string in ASN data (0x%02X)\n", (unsigned char) data[0] );
+		purple_debug_error( MXIT_PLUGIN_ID, "Invalid UTF-8 encoded string in ASN data (got 0x%02X, expected 0x%02X)\n", data[0], type );
 		return -1;
 	}
 
-	len = data[1];						/* length field [1 bytes] */
-	*utf8 = g_malloc( len + 1 );
-	memcpy( *utf8, &data[2], len );		/* data field */
-	(*utf8)[len] = '\0';
+	len = (uint8_t)data[1]; /* length field [1 byte] */
+	out_str = g_malloc(len + 1);
+	memcpy(out_str, &data[2], len); /* data field */
+	out_str[len] = '\0';
+
+	*utf8 = out_str;
 
 	return ( len + 2 );
 }
@@ -249,12 +251,12 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 {
 	GString*		msg		= NULL;
 	char*			ch		= NULL;
-	int				pos		= 0;
-	int				start	= 0;
-	int				l_nl	= 0;
-	int				l_sp	= 0;
-	int				l_gt	= 0;
-	int				stop	= 0;
+	unsigned int	pos		= 0;
+	unsigned int	start	= 0;
+	unsigned int	l_nl	= 0;
+	unsigned int	l_sp	= 0;
+	unsigned int	l_gt	= 0;
+	unsigned int	stop	= 0;
 	int				tags	= 0;
 	gboolean		intag	= FALSE;
 
@@ -391,7 +393,7 @@ void mxit_show_message( struct RXMsgData* mx )
 			if ( end == mx->msg->len )			/* end of emoticon tag not found */
 				break;
 
-			ii = g_strndup(&mx->msg->str[emo_ofs], end - emo_ofs);
+			ii = g_strndup( &mx->msg->str[emo_ofs], end - emo_ofs );
 
 			/* remove inline image tag */
 			g_string_erase( mx->msg, start, ( end - start ) + 1 );
@@ -408,7 +410,7 @@ void mxit_show_message( struct RXMsgData* mx )
 				g_string_insert( mx->msg, start, tag );
 			}
 
-			g_free(ii);
+			g_free( ii );
 		}
 	}
 
@@ -472,9 +474,8 @@ static void parse_emoticon_str( const char* message, char* emid )
 static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_data, const gchar* url_text, gsize len, const gchar* error_message )
 {
 	struct RXMsgData*	mx			= (struct RXMsgData*) user_data;
-	const char*			data		= url_text;
+	const gchar*		data		= url_text;
 	unsigned int		pos			= 0;
-	char				emo[16];
 	int					id;
 	char*				str;
 	int					em_size		= 0;
@@ -483,9 +484,10 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	int*				intptr		= NULL;
 	int					res;
 
-#ifdef	MXIT_DEBUG_EMO
 	purple_debug_info( MXIT_PLUGIN_ID, "emoticon_returned\n" );
-#endif
+
+	/* remove request from the async outstanding calls list */
+	mx->session->async_calls = g_slist_remove( mx->session->async_calls, url_data );
 
 	if ( !url_text ) {
 		/* no reply from the WAP site */
@@ -497,12 +499,8 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	hex_dump( data, len );
 #endif
 
-	/* parse out the emoticon */
-	pos = 0;
-
-	/* validate the binary data received from the wapsite */
+	/* validate that the returned data starts with the magic constant that indicates it is a custom emoticon */
 	if ( memcmp( MXIT_FRAME_MAGIC, &data[pos], strlen( MXIT_FRAME_MAGIC ) ) != 0 ) {
-		/* bad data, magic constant is wrong */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad magic)\n" );
 		goto done;
 	}
@@ -510,16 +508,14 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 
 	/* validate the image frame desc byte */
 	if ( data[pos] != '\x6F' ) {
-		/* bad frame desc */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad frame desc)\n" );
 		goto done;
 	}
 	pos++;
 
-	/* get the data length */
+	/* get the frame image data length */
 	res = asn_getlength( &data[pos], &em_size );
 	if ( res <= 0 ) {
-		/* bad frame length */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad frame length)\n" );
 		goto done;
 	}
@@ -531,7 +527,6 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	/* utf-8 (emoticon name) */
 	res = asn_getUtf8( &data[pos], 0x0C, &str );
 	if ( res <= 0 ) {
-		/* bad utf-8 string */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad name string)\n" );
 		goto done;
 	}
@@ -545,7 +540,6 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	/* utf-8 (emoticon shortcut) */
 	res = asn_getUtf8( &data[pos], 0x81, &str );
 	if ( res <= 0 ) {
-		/* bad utf-8 string */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad shortcut string)\n" );
 		goto done;
 	}
@@ -557,7 +551,6 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 
 	/* validate the image data type */
 	if ( data[pos] != '\x82' ) {
-		/* bad frame desc */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad data type)\n" );
 		g_free( em_id );
 		goto done;
@@ -577,20 +570,23 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	purple_debug_info( MXIT_PLUGIN_ID, "read the length '%i'\n", em_size );
 #endif
 
+	/* strip the mxit markup tags from the emoticon id (eg, .{XY} -> XY) */
+	if ( ( em_id[0] == '.' ) && ( em_id[1] == '{' ) ) {
+		char	emo[MXIT_MAX_EMO_ID + 1];
+
+		parse_emoticon_str( &em_id[2], emo );
+		strcpy( em_id, emo );
+	}
+
 	if ( g_hash_table_lookup( mx->session->iimages, em_id ) ) {
 		/* emoticon found in the table, so ignore this one */
+		g_free( em_id );
 		goto done;
 	}
 
 	/* make a copy of the data */
 	em_data = g_malloc( em_size );
 	memcpy( em_data, &data[pos], em_size );
-
-	/* strip the mxit markup tags from the emoticon id */
-	if ( ( em_id[0] == '.' ) && ( em_id[1] == '{' ) ) {
-		parse_emoticon_str( &em_id[2], emo );
-		strcpy( em_id, emo );
-	}
 
 	/* we now have the emoticon, store it in the imagestore */
 	id = purple_imgstore_add_with_id( em_data, em_size, NULL );
@@ -632,6 +628,9 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
 	/* reference: "libpurple/util.h" */
 	url = g_strdup_printf( "%s/res/?type=emo&mlh=%i&sc=%s&ts=%li", wapserver, MXIT_EMOTICON_SIZE, id, time( NULL ) );
 	url_data = purple_util_fetch_url_request( url, TRUE, NULL, TRUE, NULL, FALSE, emoticon_returned, mx );
+	if ( url_data )
+		mx->session->async_calls = g_slist_prepend( mx->session->async_calls, url_data );
+
 	g_free( url );
 }
 
@@ -645,7 +644,7 @@ static void emoticon_request( struct RXMsgData* mx, const char* id )
  */
 static int mxit_parse_vibe( struct RXMsgData* mx, const char* message )
 {
-	int		vibeid;
+	unsigned int	vibeid;
 
 	vibeid = message[2] - '0';
 

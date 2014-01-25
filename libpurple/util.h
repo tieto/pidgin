@@ -1196,7 +1196,8 @@ PurpleUtilFetchUrlData *purple_util_fetch_url_request_len(const gchar *url,
  *                   standard GET
  * @param include_headers
  *                   If TRUE, include the HTTP headers in the response.
- * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
+ * @param max_len    The maximum number of bytes to retrieve, or a negative
+ *                   number to use the default max of 512 KiB.
  * @param callback   The callback function.
  * @param data       The user data to pass to the callback function.
  * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one

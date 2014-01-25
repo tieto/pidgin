@@ -516,8 +516,8 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 	g_return_val_if_fail(pool->name, NULL);
 
 	/* Escape all the elements for filesystem-friendliness */
-	esc_scheme_name = pool ? g_strdup(purple_escape_filename(pool->scheme_name)) : NULL;
-	esc_name = pool ? g_strdup(purple_escape_filename(pool->name)) : NULL;
+	esc_scheme_name = g_strdup(purple_escape_filename(pool->scheme_name));
+	esc_name = g_strdup(purple_escape_filename(pool->name));
 	esc_id = id ? g_strdup(purple_escape_filename(id)) : NULL;
 
 	path = g_build_filename(purple_user_dir(),

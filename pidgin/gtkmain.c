@@ -485,7 +485,6 @@ int main(int argc, char *argv[])
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
-	RETSIGTYPE (*prev_sig_disp)(int);
 	char errmsg[BUFSIZ];
 	GIOChannel *signal_channel;
 	GIOStatus signal_status;
@@ -618,7 +617,7 @@ int main(int argc, char *argv[])
 		perror(errmsg);
 	}
 	for(sig_indx = 0; catch_sig_list[sig_indx] != -1; ++sig_indx) {
-		if((prev_sig_disp = signal(catch_sig_list[sig_indx], sighandler)) == SIG_ERR) {
+		if(signal(catch_sig_list[sig_indx], sighandler) == SIG_ERR) {
 			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't set signal %d for catching",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
@@ -630,7 +629,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	for(sig_indx = 0; ignore_sig_list[sig_indx] != -1; ++sig_indx) {
-		if((prev_sig_disp = signal(ignore_sig_list[sig_indx], SIG_IGN)) == SIG_ERR) {
+		if(signal(ignore_sig_list[sig_indx], SIG_IGN) == SIG_ERR) {
 			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't set signal %d to ignore",
 				ignore_sig_list[sig_indx]);
 			perror(errmsg);
