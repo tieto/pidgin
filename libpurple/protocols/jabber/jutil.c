@@ -751,7 +751,7 @@ jabber_calculate_data_hash(gconstpointer data, size_t len,
 
 	if (hash == NULL)
 	{
-		purple_debug_error("jabber", "Could not find %s cipher\n", hash_algo);
+		purple_debug_error("jabber", "Unexpected hashing algorithm %s requested\n", hash_algo);
 		g_return_val_if_reached(NULL);
 	}
 

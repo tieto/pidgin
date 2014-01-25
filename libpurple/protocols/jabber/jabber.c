@@ -4078,12 +4078,12 @@ static void jabber_init_protocol(PurpleProtocol *protocol)
 	purple_signal_register(protocol, "jabber-receiving-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
 			PURPLE_TYPE_CONNECTION,
-			G_TYPE_POINTER); /* modifiable PurpleXmlNode */
+			G_TYPE_POINTER); /* pointer to a PurpleXmlNode* */
 
 	purple_signal_register(protocol, "jabber-sending-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
 			PURPLE_TYPE_CONNECTION,
-			G_TYPE_POINTER); /* modifiable PurpleXmlNode */
+			G_TYPE_POINTER); /* pointer to a PurpleXmlNode* */
 
 	/*
 	 * Do not remove this or the plugin will fail. Completely. You have been
