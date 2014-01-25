@@ -753,7 +753,7 @@ static char *log_get_timestamp(PurpleLog *log, time_t when)
 {
 	gboolean show_date;
 	char *date;
-	struct tm tm;
+	struct tm *tm;
 
 	show_date = (log->type == PURPLE_LOG_SYSTEM) || (time(NULL) > when + 20*60);
 
@@ -763,11 +763,11 @@ static char *log_get_timestamp(PurpleLog *log, time_t when)
 	if (date != NULL)
 		return date;
 
-	tm = *(localtime(&when));
+	tm = localtime(&when);
 	if (show_date)
-		return g_strdup(purple_date_format_long(&tm));
+		return g_strdup(purple_date_format_long(tm));
 	else
-		return g_strdup(purple_time_format(&tm));
+		return g_strdup(purple_time_format(tm));
 }
 
 /* NOTE: This can return msg (which you may or may not want to g_free())
@@ -1146,7 +1146,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 				}
 
 				/* Determine if this (account, name) combination exists as a buddy. */
-				if (account != NULL && name != NULL && *name != '\0')
+				if (account != NULL && *name != '\0')
 					set->buddy = (purple_find_buddy(account, name) != NULL);
 				else
 					set->buddy = FALSE;

@@ -362,11 +362,12 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			if (faultcode) {
 				char *faultcode_str = xmlnode_get_data(faultcode);
 
-				if (g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
+				if (faultcode_str && g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
 					xmlnode *challengeNode = xmlnode_get_child(faultNode,
 						"detail/LockKeyChallenge");
+					char *challenge = NULL;
 
-					if (challengeNode == NULL) {
+					if (challengeNode == NULL || (challenge = xmlnode_get_data(challengeNode)) == NULL) {
 						if (oim->challenge) {
 							g_free(oim->challenge);
 							oim->challenge = NULL;
@@ -384,7 +385,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 					} else {
 						char buf[33];
 
-						char *challenge = xmlnode_get_data(challengeNode);
 						msn_handle_chl(challenge, buf);
 
 						g_free(oim->challenge);
@@ -400,22 +400,23 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 					}
 				} else {
 					/* Report the error */
-					const char *str_reason;
+					const char *str_reason = NULL;
 
-					if (g_str_equal(faultcode_str, "q0:SystemUnavailable")) {
-						str_reason = _("Message was not sent because the system is "
-						               "unavailable. This normally happens when the "
-						               "user is blocked or does not exist.");
+					if (faultcode_str) {
+						if (g_str_equal(faultcode_str, "q0:SystemUnavailable")) {
+							str_reason = _("Message was not sent because the system is "
+							               "unavailable. This normally happens when the "
+							               "user is blocked or does not exist.");
+						} else if (g_str_equal(faultcode_str, "q0:SenderThrottleLimitExceeded")) {
+							str_reason = _("Message was not sent because messages "
+							               "are being sent too quickly.");
+						} else if (g_str_equal(faultcode_str, "q0:InvalidContent")) {
+							str_reason = _("Message was not sent because an unknown "
+							               "encoding error occurred.");
+						}
+					}
 
-					} else if (g_str_equal(faultcode_str, "q0:SenderThrottleLimitExceeded")) {
-						str_reason = _("Message was not sent because messages "
-						               "are being sent too quickly.");
-
-					} else if (g_str_equal(faultcode_str, "q0:InvalidContent")) {
-						str_reason = _("Message was not sent because an unknown "
-						               "encoding error occurred.");
-
-					} else {
+					if (str_reason == NULL) {
 						str_reason = _("Message was not sent because an unknown "
 						               "error occurred.");
 					}
@@ -824,10 +825,10 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 		char *unread = xmlnode_get_data(iu_node);
 		const char *passports[2] = { msn_user_get_passport(session->user) };
 		const char *urls[2] = { session->passport_info.mail_url };
-		int count = atoi(unread);
+		int count;
 
 		/* XXX/khc: pretty sure this is wrong */
-		if (count > 0)
+		if (unread && (count = atoi(unread)) > 0)
 			purple_notify_emails(session->account->gc, count, FALSE, NULL,
 				NULL, passports, urls, NULL, NULL);
 		g_free(unread);

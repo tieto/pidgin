@@ -156,10 +156,19 @@ END_TEST
 
 START_TEST(test_util_str_to_time)
 {
+	struct tm tm;
+	long tz_off;
+	const char *rest;
+	time_t timestamp;
+
 	fail_unless(377182200 == purple_str_to_time("19811214T12:50:00", TRUE, NULL, NULL, NULL));
 	fail_unless(1175919261 == purple_str_to_time("20070407T04:14:21", TRUE, NULL, NULL, NULL));
 	fail_unless(1282941722 == purple_str_to_time("2010-08-27.204202", TRUE, NULL, NULL, NULL));
-	fail_unless(1282941722 == purple_str_to_time("2010-08-27.134202-0700PDT", FALSE, NULL, NULL, NULL));
+
+	timestamp = purple_str_to_time("2010-08-27.134202-0700PDT", FALSE, &tm, &tz_off, &rest);
+	fail_unless(1282941722 == timestamp);
+	fail_unless((-7 * 60 * 60) == tz_off);
+	assert_string_equal("PDT", rest);
 }
 END_TEST
 

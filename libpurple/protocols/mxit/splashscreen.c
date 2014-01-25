@@ -24,9 +24,9 @@
  */
 
 #include "internal.h"
-
-#include "purple.h"
+#include "debug.h"
 #include "imgstore.h"
+#include "request.h"
 
 #include "protocol.h"
 #include "mxit.h"
@@ -93,7 +93,7 @@ void splash_remove(struct MXitSession* session)
 		purple_debug_info(MXIT_PLUGIN_ID, "Removing splashId: '%s'\n", splashId);
 
 		/* Delete stored splash image */
-		filename = g_strdup_printf("%s/mxit/%s.png", purple_user_dir(), splashId);
+		filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit" G_DIR_SEPARATOR_S "%s.png", purple_user_dir(), splashId);
 		g_unlink(filename);
 		g_free(filename);
 
@@ -121,7 +121,7 @@ void splash_update(struct MXitSession* session, const char* splashId, const char
 	splash_remove(session);
 
 	/* Save the new splash image */
-	dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit",  purple_user_dir());
+	dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit", purple_user_dir());
 	purple_build_dir(dir, S_IRUSR | S_IWUSR | S_IXUSR);		/* ensure directory exists */
 
 	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.png", dir, purple_escape_filename(splashId));
@@ -144,7 +144,7 @@ void splash_update(struct MXitSession* session, const char* splashId, const char
  */
 static void splash_click_ok(PurpleConnection* gc, PurpleRequestFields* fields)
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data(gc);
 	const char* splashId;
 
 	/* Get current splash ID */
@@ -179,7 +179,7 @@ void splash_display(struct MXitSession* session)
 	purple_debug_info(MXIT_PLUGIN_ID, "Display Splash: '%s'\n", splashId);
 
 	/* Load splash-screen image from file */
-	filename = g_strdup_printf("%s/mxit/%s.png", purple_user_dir(), splashId);
+	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit" G_DIR_SEPARATOR_S "%s.png", purple_user_dir(), splashId);
 	if (g_file_get_contents(filename, &imgdata, &imglen, NULL)) {
 		char buf[128];
 

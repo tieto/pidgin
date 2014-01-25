@@ -3,20 +3,21 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Copyright (C) Artur Flinta <aflinta@at.kernel.pl>, 2004.
-# Copyright (C) Krzysztof Foltman <kfoltman@onet.pl>, 2003.
-# Copyright (C) Paweł Godlewski <pawel@endure.pl>, 2007.
-# Copyright (C) Piotr Drąg <piotrdrag@gmail.com>, 2009.
-# Copyright (C) Piotr Makowski <pmakowski@aviary.pl>, 2008.
-# Copyright (C) Przemysław Sułek <pbs@linux.net.pl>, 2001.
-# Copyright (C) Tomasz Sałaciński <tsalacinski@gmail.com>, 2007.
-# Piotr Drąg <piotrdrag@gmail.com>, 2012-2013.
+# Copyright (C) Artur Flinta <aflinta@at.kernel.pl>, 2004
+# Copyright (C) Krzysztof Foltman <kfoltman@onet.pl>, 2003
+# Copyright (C) Paweł Godlewski <pawel@endure.pl>, 2007
+# Piotr Drąg <piotrdrag@gmail.com>, 2009
+# Copyright (C) Piotr Makowski <pmakowski@aviary.pl>, 2008
+# Copyright (C) Przemysław Sułek <pbs@linux.net.pl>, 2001
+# Copyright (C) Tomasz Sałaciński <tsalacinski@gmail.com>, 2007
+# Piotr Drąg <piotrdrag@gmail.com>, 2012-2014
+# tomkiewicz, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-11 00:04-0800\n"
-"PO-Revision-Date: 2013-01-27 14:59+0000\n"
+"POT-Creation-Date: 2014-01-21 22:35-0800\n"
+"PO-Revision-Date: 2014-01-21 18:55+0000\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/pidgin/language/"
 "pl/)\n"
@@ -3094,12 +3095,6 @@ msgstr ""
 "Podano nieprawidłową nazwę komputera lub numer portu dla podanego typu "
 "pośrednika."
 
-msgid "Token Error"
-msgstr "Błąd tokenu"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Nie można pobrać tokena.\n"
-
 msgid "Save Buddylist..."
 msgstr "Zapisz listę znajomych..."
 
@@ -3127,39 +3122,6 @@ msgstr "Zapisz listę znajomych..."
 
 msgid "Load buddylist from file..."
 msgstr "Wczytaj listę znajomych z pliku..."
-
-msgid "You must fill in all registration fields"
-msgstr "Należy wypełnić wszystkie wymagane pola rejestracji"
-
-msgid "Passwords do not match"
-msgstr "Hasła się nie zgadzają"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Nie można zarejestrować nowego konta. Wystąpił nieznany błąd."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Zarejestrowano nowe konto Gadu-Gadu"
-
-msgid "Registration completed successfully!"
-msgstr "Pomyślnie ukończono rejestrację."
-
-msgid "Password"
-msgstr "Hasło"
-
-msgid "Password (again)"
-msgstr "Hasło (ponownie)"
-
-msgid "Enter captcha text"
-msgstr "Proszę podać tekst CAPTCHA"
-
-msgid "Captcha"
-msgstr "CAPTCHA"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Rejestracja nowego konta Gadu-Gadu"
-
-msgid "Please, fill in the following fields"
-msgstr "Proszę wypełnić poniższe pola"
 
 msgid "City"
 msgstr "Miasto"
@@ -3189,39 +3151,6 @@ msgstr "Wyszukiwanie znajomych"
 
 msgid "Please, enter your search criteria below"
 msgstr "Proszę poniżej podać kryteria wyszukiwania"
-
-msgid "Fill in the fields."
-msgstr "Proszę wypełnić pola."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Bieżące hasło różni się od podanego."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Nie można zmienić hasła. Wystąpił błąd.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Zmień hasło dla konta Gadu-Gadu"
-
-msgid "Password was changed successfully!"
-msgstr "Pomyślnie zmieniono hasło."
-
-msgid "Current password"
-msgstr "Bieżące hasło"
-
-msgid "Password (retype)"
-msgstr "Hasło (ponownie)"
-
-msgid "Enter current token"
-msgstr "Proszę podać obecny token"
-
-msgid "Current token"
-msgstr "Obecny token"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Proszę podać bieżące i nowe hasło dla identyfikatora użytkownika: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Zmiana hasła Gadu-Gadu"
 
 msgid "Show status to:"
 msgstr "Wyświetlanie stanu:"
@@ -3294,18 +3223,6 @@ msgstr "Brak użytkowników spełniających kryteria wyszukiwania."
 msgid "Unable to read from socket"
 msgstr "Nie można odczytać z gniazda"
 
-msgid "Buddy list downloaded"
-msgstr "Pobrano listę znajomych"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Lista znajomych została pobrana z serwera."
-
-msgid "Buddy list uploaded"
-msgstr "Wysłano listę znajomych"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Lista znajomych została wysłana na serwer."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3341,18 +3258,6 @@ msgstr "Nie połączono z serwerem"
 
 msgid "Find buddies..."
 msgstr "Znajdź znajomych..."
-
-msgid "Change password..."
-msgstr "Zmień hasło..."
-
-msgid "Upload buddylist to Server"
-msgstr "Wyślij listę znajomych na serwer"
-
-msgid "Download buddylist from Server"
-msgstr "Pobierz listę znajomych z serwera"
-
-msgid "Delete buddylist from Server"
-msgstr "Usuń listę znajomych z serwera"
 
 msgid "Save buddylist to file..."
 msgstr "Zapisz listę znajomych do pliku..."
@@ -3457,7 +3362,6 @@ msgstr "Nie można się połączyć"
 msgid "Unable to connect: %s"
 msgstr "Nie można połączyć: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Połączenie zostało zamknięte przez serwer"
 
@@ -3495,6 +3399,9 @@ msgstr "Kodowania"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr "Automatyczne wykrywanie przychodzącego UTF-8"
+
+msgid "Ident name"
+msgstr "Nazwa protokołu Ident"
 
 msgid "Real name"
 msgstr "Imię i nazwisko"
@@ -3548,6 +3455,14 @@ msgstr " <i>(zidentyfikowany)</i>"
 msgid "Nick"
 msgstr "Pseudonim"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Bez nazwy"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Nazwa komputera"
+
 msgid "Currently on"
 msgstr "Obecnie na"
 
@@ -3577,7 +3492,7 @@ msgstr "Temat dla %s to: %s"
 
 #, c-format
 msgid "Topic for %s set by %s at %s on %s"
-msgstr ""
+msgstr "Temat dla %s ustawiony przez użytkownika %s o godzinie %s w dniu %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -4303,8 +4218,7 @@ msgstr "Błąd rejestracji"
 
 msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr ""
-"Zmienianie pseudonimu nie jest obsługiwane w pokojach konferencji nie "
-"będących MUC"
+"Zmienianie pseudonimu nie jest obsługiwane w konferencjach nie będących MUC"
 
 msgid "Error retrieving room list"
 msgstr "Błąd podczas pobierania listy pokoi"
@@ -4391,6 +4305,9 @@ msgstr "Data"
 
 msgid "Already Registered"
 msgstr "Już zarejestrowano"
+
+msgid "Password"
+msgstr "Hasło"
 
 msgid "Unregister"
 msgstr "Wyrejestruj"
@@ -4524,6 +4441,9 @@ msgstr "Hasło zostało zmienione."
 
 msgid "Error changing password"
 msgstr "Błąd podczas zmieniania hasła"
+
+msgid "Password (again)"
+msgstr "Hasło (ponownie)"
 
 msgid "Change XMPP Password"
 msgstr "Zmiana hasła XMPP"
@@ -4753,6 +4673,12 @@ msgstr ""
 msgid "Unable to initiate media with %s: user is not online"
 msgstr ""
 "Nie można zainicjować multimediów z użytkownikiem %s: użytkownik nie jest w "
+"trybie online"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr ""
+"Nie można zainicjować multimediów z użytkownikiem %s: zasób nie jest w "
 "trybie online"
 
 #, c-format
@@ -6236,6 +6162,14 @@ msgstr "O wtyczce..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Wysyłany plik jest za duży."
+
+#. file read error
+msgid "Unable to access the local file"
+msgstr "Nie można uzyskać dostępu do lokalnego pliku"
+
+#. file write error
+msgid "Unable to save the file"
+msgstr "Nie można zapisać pliku"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -9962,7 +9896,6 @@ msgstr ""
 "Konto zostało zablokowane z powodu za dużej ilości nieudanych prób "
 "zalogowania. Proszę spróbować zalogować się na stronie WWW Yahoo!."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Nieznany błąd 52. Ponowne połączenie powinno to naprawić."
 
@@ -10187,7 +10120,7 @@ msgid ""
 "able to rejoin a chatroom"
 msgstr ""
 "Nieznany błąd. Należy wylogować się i poczekać pięć minut przed możliwością "
-"ponownego dołączenia do pokoju konferencji"
+"ponownego dołączenia do konferencji"
 
 #, c-format
 msgid "You are now chatting in %s."
@@ -11793,7 +11726,8 @@ msgstr "webmaster"
 msgid "win32 port"
 msgstr "port dla Win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11957,6 +11891,9 @@ msgstr "kurdyjski"
 msgid "Lao"
 msgstr "laotański"
 
+msgid "Lithuanian"
+msgstr "litewski"
+
 msgid "Maithili"
 msgstr "maithili"
 
@@ -12032,6 +11969,9 @@ msgstr "albański"
 msgid "Serbian"
 msgstr "serbski"
 
+msgid "Serbian Latin"
+msgstr "serbski (alfabet łaciński)"
+
 msgid "Sinhala"
 msgstr "sinhala"
 
@@ -12049,9 +11989,6 @@ msgstr "telugu"
 
 msgid "Thai"
 msgstr "tajlandzki"
-
-msgid "Turkish"
-msgstr "turecki"
 
 msgid "Ukranian"
 msgstr "ukraiński"
@@ -12074,8 +12011,8 @@ msgstr "chiński tradycyjny"
 msgid "Amharic"
 msgstr "amharski"
 
-msgid "Lithuanian"
-msgstr "litewski"
+msgid "Turkish"
+msgstr "turecki"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M. Thanh i Zespół Gnome-Vi"
@@ -12110,7 +12047,6 @@ msgstr ""
 "#pidgin w sieci irc.freenode.net<BR>\tMUC w sieci XMPP: devel@conference."
 "pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12260,7 +12196,7 @@ msgid "Remove Group"
 msgstr "Usunięcie grupy"
 
 msgid "_Remove Group"
-msgstr "_Usuń Grupę"
+msgstr "_Usuń grupę"
 
 #, c-format
 msgid ""
@@ -12546,10 +12482,10 @@ msgid "_Font"
 msgstr "_Czcionka"
 
 msgid "Group Items"
-msgstr "Elementy grupy"
+msgstr "Grupuj elementy"
 
 msgid "Ungroup Items"
-msgstr "Elementy nie będące w grupach"
+msgstr "Nie grupuj elementów"
 
 msgid "Bold"
 msgstr "Pogrubienie"
@@ -12819,6 +12755,11 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "Wybrano \"ręczne\" polecenie przeglądarki, ale nie ustawiono polecenia."
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr ""
+"Nie można otworzyć adresu URL: \"ręczne\" polecenie przeglądarki jest "
+"nieprawidłowe."
 
 msgid "No message"
 msgstr "Brak wiadomości"
@@ -14677,7 +14618,7 @@ msgid "Status Icons"
 msgstr "Ikony stanu"
 
 msgid "Chatroom Emblems"
-msgstr "Emblematy pokoi konferencji"
+msgstr "Emblematy konferencji"
 
 msgid "Dialog Icons"
 msgstr "Ikony okna dialogowego"
@@ -14754,7 +14695,6 @@ msgstr "Wyświetlenie daty w stylu programu iChat do rozmowy co N minut."
 msgid "Timestamp Format Options"
 msgstr "Opcje formatu daty"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Wymuszenie formatu daty i czasu:"
 
@@ -14956,6 +14896,59 @@ msgid ""
 msgstr ""
 "Dostarcza opcje specyficzne dla programu Pidgin dla Windows, takie jak "
 "dokowanie listy znajomych."
+
+#. Alerts
+msgid "Chatroom alerts"
+msgstr "Powiadomienia w konferencjach"
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+"P_owiadamianie o wiadomościach w konferencjach tylko, kiedy ktoś wymawia "
+"nazwę użytkownika"
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr "Ikona aktywatora"
+
+msgid "_Disable launcher integration"
+msgstr "_Wyłączenie integracji z aktywatorem"
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr "Wyświetlanie liczby _nieprzeczytanych wiadomości na ikonie aktywatora"
+
+msgid "Show number of unread _conversations on launcher icon"
+msgstr "Wyświetlanie licz_by nieprzeczytanych rozmów na ikonie aktywatora"
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr "Menu komunikatora"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr "Wyświetlanie _liczby nieprzeczytanych wiadomości w menu komunikatora"
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+"Wyświetlanie _czasu trwania nieprzeczytanych rozmów w menu komunikatora"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr "Integracja ze środowiskiem Unity"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr "Dostarcza integrację ze środowiskiem Unity."
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
+"Dostarcza integrację z menu komunikatora i aktywatorem środowiska Unity."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Wylogowano.</font>"

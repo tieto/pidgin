@@ -148,11 +148,9 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 					}
 				}
 			}
-			if (newmood != NULL && moodtext != NULL)
-			   break;
 		}
 		if (newmood != NULL && moodtext != NULL)
-		   break;
+			break;
 	}
 	if (newmood != NULL) {
 		purple_prpl_got_user_status(js->gc->account, from, "mood",

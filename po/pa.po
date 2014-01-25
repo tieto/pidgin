@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# A S Alam <apreet.alam@gmail.com>, 2012.
+# A S Alam <apreet.alam@gmail.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-11 00:04-0800\n"
-"PO-Revision-Date: 2013-01-27 08:26+0000\n"
-"Last-Translator: A S Alam <apreet.alam@gmail.com>\n"
+"POT-Creation-Date: 2014-01-21 22:24-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.com/projects/p/pidgin/"
 "language/pa/)\n"
 "Language: pa\n"
@@ -2976,12 +2976,6 @@ msgid ""
 "invalid."
 msgstr "ਤੁਹਾਡੇ ਪਰਾਕਸੀ ਵਿੱਚ ਦਿਤਾ ਹੋਸਟ ਨਾਂ ਜਾਂ ਪੋਰਟ ਨੰਬਰ ਗਲਤ ਹੈ।"
 
-msgid "Token Error"
-msgstr "ਟੋਕਨ ਗਲਤੀ"
-
-msgid "Unable to fetch the token.\n"
-msgstr "ਟੋਕਨ ਲੈਣ ਲਈ ਅਸਮਰੱਥ ਹੈ।\n"
-
 msgid "Save Buddylist..."
 msgstr "ਬੱਡੀ ਲਿਸਟ ਸੰਭਾਲੋ..."
 
@@ -3009,39 +3003,6 @@ msgstr "ਬੱਡੀ-ਲਿਸਟ ਸੰਭਾਲੋ..."
 
 msgid "Load buddylist from file..."
 msgstr "ਫਾਇਲ ਤੋਂ ਬੱਡੀ ਲਿਸਟ ਲੋਡ ਕਰੋ..."
-
-msgid "You must fill in all registration fields"
-msgstr "ਤੁਹਾਨੂੰ ਰਜਿਸਟਰੇਸ਼ਨ ਖੇਤਰ ਭਰਨੇ ਹੋਣਗੇ।"
-
-msgid "Passwords do not match"
-msgstr "ਪਾਸਵਰਡ ਮਿਲਦਾ ਨਹੀਂ ਹੈ।"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "ਨਵਾਂ ਕੁਨੈਕਸ਼ਨ ਬਣਾਉਣ ਲਈ ਅਸਮਰੱਥ ਹੈ। ਅਣਜਾਣੀ ਗਲਤੀ ਆਈ ਹੈ।"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "ਨਵਾਂ ਗਡੂ-ਗਡੂ ਅਕਾਊਂਟ ਰਜਿਸਟਰ ਕੀਤਾ ਗਿਆ"
-
-msgid "Registration completed successfully!"
-msgstr "ਰਜਿਸਟਰੇਸ਼ਨ ਠੀਕ ਤਰ੍ਹਾਂ ਪੂਰੀ ਹੋਈ ਹੈ!"
-
-msgid "Password"
-msgstr "ਪਾਸਵਰਡ"
-
-msgid "Password (again)"
-msgstr "ਪਾਸਵਰਡ (ਮੁੜ)"
-
-msgid "Enter captcha text"
-msgstr "ਕੈਪਟਚਾ ਟੈਕਸਟ ਦਿਓ"
-
-msgid "Captcha"
-msgstr "ਕੈਪਟਚਾ"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "ਨਵਾਂ ਗਡੂ-ਗਡੂ ਅਕਾਊਟ ਰਜਿਸਟਰ ਕਰੋ"
-
-msgid "Please, fill in the following fields"
-msgstr "ਹੇਠ ਦਿੱਤੇ ਖੇਤਰ ਭਰੋ ਜੀ"
 
 msgid "City"
 msgstr "ਸ਼ਹਿਰ"
@@ -3071,39 +3032,6 @@ msgstr "ਬੱਡੀ ਖੋਜ"
 
 msgid "Please, enter your search criteria below"
 msgstr "ਆਪਣਾ ਖੋਜ ਖੇਤਰ ਹੇਠਾਂ ਦਿਓ ਜੀ"
-
-msgid "Fill in the fields."
-msgstr "ਖੇਤਰਾਂ 'ਚ ਭਰੋ।"
-
-msgid "Your current password is different from the one that you specified."
-msgstr "ਤੁਹਾਡਾ ਮੌਜੂਦਾ ਪਾਸਵਰਡ ਉਸ ਤੋਂ ਵੱਖਰਾ ਹੈ, ਜੋ ਕਿ ਤੁਸੀਂ ਪਹਿਲਾਂ ਦਿੱਤਾ ਸੀ।"
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "ਪਾਸਵਰਡ ਬਦਲਣ ਲਈ ਅਸਮਰੱਥ ਹੈ। ਗਲਤੀ ਆਈ ਹੈ।\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "ਗਡੂ-ਗਡੂ ਅਕਾਊਂਟ ਲਈ ਪਾਸਵਰਡ ਬਦਲੋ"
-
-msgid "Password was changed successfully!"
-msgstr "ਪਾਸਵਰਡ ਸਫਲਤਾਪੂਰਕ ਤਬਦੀਲ ਕੀਤਾ ਗਿਆ!"
-
-msgid "Current password"
-msgstr "ਮੌਜੂਦਾ ਪਾਸਵਰਡ"
-
-msgid "Password (retype)"
-msgstr "ਪਾਸਵਰਡ (ਮੁੜ-ਲਿਖੋ)"
-
-msgid "Enter current token"
-msgstr "ਮੌਜੂਦਾ ਟੋਕਨ ਦਿਓ"
-
-msgid "Current token"
-msgstr "ਮੌਜੂਦਾ ਟੋਕਨ"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "ਆਪਣਾ ਮੌਜੂਦਾ ਪਾਸਵਰਡ ਅਤੇ ਨਵਾਂ ਪਾਸਵਰਡ ਦਿਓ ਜੀ।"
-
-msgid "Change Gadu-Gadu Password"
-msgstr "ਗਡੂ-ਗਡੂ ਪਾਸਵਰਡ ਬਦਲੋ"
 
 msgid "Show status to:"
 msgstr "ਹਾਲਤ ਵੇਖਾਓ:"
@@ -3176,18 +3104,6 @@ msgstr "ਤੁਹਾਡੀ ਖੋਜ ਸੀਮਾ ਨਾਲ ਮਿਲਦਾ ਕ�
 msgid "Unable to read from socket"
 msgstr "ਸਾਕਟ ਤੋਂ ਤਾਜ਼ਾ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
 
-msgid "Buddy list downloaded"
-msgstr "ਬੱਡੀ ਲਿਸਟ ਡਾਊਨਲੋਡ ਕੀਤੀ ਗਈ"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "ਤੁਹਾਡੀ ਬੱਡੀ ਲਿਸਟ ਸਰਵਰ ਤੋਂ ਡਾਊਨਲੋਡ ਕੀਤੀ ਗਈ ਹੈ।"
-
-msgid "Buddy list uploaded"
-msgstr "ਬੱਡੀ ਲਿਸਟ ਅੱਪਲੋਡ ਕੀਤੀ ਗਈ"
-
-msgid "Your buddy list was stored on the server."
-msgstr "ਤੁਹਾਡੀ ਬੱਡੀ ਲਿਸਟ ਸਰਵਰ ਉੱਤੇ ਅੱਪਲੋਡ ਕੀਤੀ ਗਈ ਹੈ।"
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3223,18 +3139,6 @@ msgstr "ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਟ ਨਹੀਂ ਹੈ"
 
 msgid "Find buddies..."
 msgstr "ਬੱਡੀ ਖੋਜ..."
-
-msgid "Change password..."
-msgstr "ਪਾਸਵਰਡ ਬਦਲੋ..."
-
-msgid "Upload buddylist to Server"
-msgstr "ਬੱਡੀ-ਲਿਸਟ ਸਰਵਰ ਉੱਤੇ ਅੱਪਲੋਡ"
-
-msgid "Download buddylist from Server"
-msgstr "ਸਰਵਰ ਤੋਂ ਬੱਡੀਲਿਸਟ ਡਾਊਨਲੋਡ"
-
-msgid "Delete buddylist from Server"
-msgstr "ਸਰਵਰ ਤੋਂ ਬੱਡੀ-ਲਿਸਟ ਹਟਾਓ"
 
 msgid "Save buddylist to file..."
 msgstr "ਬੱਡੀ ਲਿਸਟ ਫਾਇਲ 'ਚ ਸੰਭਾਲੋ..."
@@ -3339,7 +3243,6 @@ msgstr "ਕੁਨੈਕਟ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
 msgid "Unable to connect: %s"
 msgstr "%s ਨਾਲ ਕੁਨੈਕਟ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "ਸਰਵਰ ਕੁਨੈਕਸ਼ਨ ਬੰਦ ਕੀਤਾ ਗਿਆ ਹੈ।"
 
@@ -3377,6 +3280,9 @@ msgstr "ਇੰਕੋਡਿੰਗ"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr "ਆ ਰਹੀ UTF-8 ਆਟੋਮੈਟਿਕ ਖੋਜ"
+
+msgid "Ident name"
+msgstr ""
 
 msgid "Real name"
 msgstr "ਅਸਲੀ ਨਾਂ"
@@ -3427,6 +3333,14 @@ msgstr " <i>(ਪਛਾਣਿਆ)</i>"
 
 msgid "Nick"
 msgstr "ਨਾਂ"
+
+#, fuzzy
+msgid "Login name"
+msgstr "ਕੋਈ ਨਾਂ ਨਹੀਂ"
+
+#, fuzzy
+msgid "Host name"
+msgstr "ਹੋਸਟ ਨਾਂ"
 
 msgid "Currently on"
 msgstr "ਇਸ ਸਮੇਂ"
@@ -4242,6 +4156,9 @@ msgstr "ਮਿਤੀ"
 msgid "Already Registered"
 msgstr "ਪਹਿਲਾਂ ਹੀ ਰਜਿਸਟਰ"
 
+msgid "Password"
+msgstr "ਪਾਸਵਰਡ"
+
 msgid "Unregister"
 msgstr "ਅਣ-ਰਜਿਸਟਰ"
 
@@ -4374,6 +4291,9 @@ msgstr "ਤੁਹਾਡਾ ਪਾਸਵਰਡ ਤਬਦੀਲ ਹੋ ਗਿਆ �
 
 msgid "Error changing password"
 msgstr "ਪਾਸਵਰਡ ਬਦਲਣ ਦੌਰਾਨ ਗਲਤੀ"
+
+msgid "Password (again)"
+msgstr "ਪਾਸਵਰਡ (ਮੁੜ)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP ਪਾਸਵਰਡ ਬਦਲੋ"
@@ -4598,6 +4518,10 @@ msgstr "%s ਨੂੰ ਮੀਡਿਆ ਸ਼ੁਰੂ ਕਰਨ ਵਾਸਤੇ �
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "%s ਲਈ ਮੀਡਿਆ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਅਸਮਰੱਥ: ਯੂਜ਼ਰ ਆਨਲਾਈਨ ਨਹੀਂ ਹੈ"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr ""
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -6030,6 +5954,14 @@ msgstr "...ਬਾਰੇ"
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "ਫਾਇਲ, ਜੋ ਤੁਸੀਂ ਭੇਜਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਰਹੇ ਹੋ, ਬਹੁਤ ਵੱਡੀ ਹੈ!"
+
+#. file read error
+msgid "Unable to access the local file"
+msgstr ""
+
+#. file write error
+msgid "Unable to save the file"
+msgstr ""
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -9628,7 +9560,6 @@ msgstr ""
 "ਅਕਾਊਂਟ ਲਾਕ ਹੋਇਆ ਹੈ ਬਹੁਤ ਸਾਰੀਆਂ ਫੇਲ੍ਹ ਲਾਗਇਨ ਕੋਸ਼ਿਸ਼ ਕਰਕੇ। Yahoo! ਵੈਬਸਾਇਟ ਉੱਤੇ ਲਾਗਇਨ ਕਰਨ ਨਾਲ "
 "ਸਮੱਸਿਆ ਹੱਲ ਹੋ ਸਕਦੀ ਹੈ।"
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "ਅਣਜਾਣ ਗਲਤੀ 52। ਇਹ ਠੀਕ ਕਰਨ ਲਈ ਮੁੜ-ਕੁਨੈਕਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
 
@@ -11419,7 +11350,8 @@ msgstr "ਵੈੱਬਮਾਸਟਰ"
 msgid "win32 port"
 msgstr "win32 ਪੋਰਟ"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "ਕਾ-ਹਿੰਗ ਚੀਉਂਗ"
 
@@ -11583,6 +11515,9 @@ msgstr "ਕੁਰਦ"
 msgid "Lao"
 msgstr "ਲਾਓ"
 
+msgid "Lithuanian"
+msgstr "ਲੀਥੂਵਨੀਆਈ"
+
 msgid "Maithili"
 msgstr "ਮੈਥਲੀ"
 
@@ -11658,6 +11593,9 @@ msgstr "ਅਲਬਨੀਆਈ"
 msgid "Serbian"
 msgstr "ਸਰਬੀਆਈ"
 
+msgid "Serbian Latin"
+msgstr ""
+
 msgid "Sinhala"
 msgstr "ਸਿੰਹਾਲਾ"
 
@@ -11675,9 +11613,6 @@ msgstr "ਤੇਲਗੂ"
 
 msgid "Thai"
 msgstr "ਥਾਈ"
-
-msgid "Turkish"
-msgstr "ਤੁਰਕ"
 
 msgid "Ukranian"
 msgstr "ਯੂਕਰੇਨੀ"
@@ -11700,8 +11635,8 @@ msgstr "ਮੂਲ ਚੀਨੀ"
 msgid "Amharic"
 msgstr "ਅਮਹਾਰਿਕ"
 
-msgid "Lithuanian"
-msgstr "ਲੀਥੂਵਨੀਆਈ"
+msgid "Turkish"
+msgstr "ਤੁਰਕ"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh ਅਤੇ Gnome-Vi ਟੀਮ"
@@ -11724,7 +11659,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12405,6 +12339,9 @@ msgstr "\"%s\" ਚਲਾਉਣ ਦੌਰਾਨ ਗਲਤੀ: %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "'ਦਸਤੀ' ਝਲਕਾਰਾ ਕਮਾਂਡ ਚੁਣੀ ਗਈ ਹੈ, ਪਰ ਕੋਈ ਕਮਾਂਡ ਨਹੀਂ ਦਿੱਤੀ ਗਈ ਹੈ।"
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr ""
 
 msgid "No message"
 msgstr "ਸੁਨੇਹਾ ਨਹੀਂ"
@@ -14302,7 +14239,6 @@ msgstr "ਹਰੇਕ N ਮਿੰਟ ਬਾਅਦ iChat-ਸਟਾਇਲ ਮੁਤ
 msgid "Timestamp Format Options"
 msgstr "ਟਾਈਮ-ਸਟੈਂਪ ਫਾਰਮੈਟ ਚੋਣ"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "ਸਮਾਂ-ਮੋਹਰ ਫਾਰਮੈਟ ਲਈ ਮਜ਼ਬੂਰ(_F):"
 
@@ -14497,6 +14433,55 @@ msgstr "ਵਿੰਡੋ ਲਈ ਪਿਡਗਿਨ ਖਾਸ ਚੋਣਾਂ"
 msgid ""
 "Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr "ਵਿੰਡੋਜ਼ ਲਈ ਪਿਡਗਿਨ ਲਈ ਖਾਸ ਚੋਣ ਦਿੰਦਾ ਹੈ, ਜਿਵੇਂ ਕਿ ਬੱਡੀ ਲਿਸਟ ਡੌਕਿੰਗ।"
+
+#. Alerts
+msgid "Chatroom alerts"
+msgstr ""
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr ""
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+msgid "Show number of unread _conversations on launcher icon"
+msgstr ""
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr ""
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>ਲਾਗਆਉਟ।</font>"

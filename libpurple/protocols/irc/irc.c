@@ -390,7 +390,7 @@ static void irc_login(PurpleAccount *account)
 static gboolean do_login(PurpleConnection *gc) {
 	char *buf, *tmp = NULL;
 	char *server;
-	const char *username, *realname;
+	const char *nickname, *identname, *realname;
 	struct irc_conn *irc = gc->proto_data;
 	const char *pass = purple_connection_get_password(gc);
 #ifdef HAVE_CYRUS_SASL
@@ -412,14 +412,14 @@ static gboolean do_login(PurpleConnection *gc) {
 	}
 
 	realname = purple_account_get_string(irc->account, "realname", "");
-	username = purple_account_get_string(irc->account, "username", "");
+	identname = purple_account_get_string(irc->account, "username", "");
 
-	if (username == NULL || *username == '\0') {
-		username = g_get_user_name();
+	if (identname == NULL || *identname == '\0') {
+		identname = g_get_user_name();
 	}
 
-	if (username != NULL && strchr(username, ' ') != NULL) {
-		tmp = g_strdup(username);
+	if (identname != NULL && strchr(identname, ' ') != NULL) {
+		tmp = g_strdup(identname);
 		while ((buf = strchr(tmp, ' ')) != NULL) {
 			*buf = '_';
 		}
@@ -432,7 +432,7 @@ static gboolean do_login(PurpleConnection *gc) {
 		server = g_strdup(irc->server);
 	}
 
-	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, "*", server,
+	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : identname, "*", server,
 	                 strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	g_free(tmp);
 	g_free(server);
@@ -441,9 +441,9 @@ static gboolean do_login(PurpleConnection *gc) {
 		return FALSE;
 	}
 	g_free(buf);
-	username = purple_connection_get_display_name(gc);
-	buf = irc_format(irc, "vn", "NICK", username);
-	irc->reqnick = g_strdup(username);
+	nickname = purple_connection_get_display_name(gc);
+	buf = irc_format(irc, "vn", "NICK", nickname);
+	irc->reqnick = g_strdup(nickname);
 	irc->nickused = FALSE;
 	if (irc_send(irc, buf) < 0) {
 		g_free(buf);
@@ -1051,7 +1051,7 @@ static void _init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Auto-detect incoming UTF-8"), "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_string_new(_("Username"), "username", "");
+	option = purple_account_option_string_new(_("Ident name"), "username", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Real name"), "realname", "");

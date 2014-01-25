@@ -901,11 +901,11 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 
 		for(item = xmlnode_get_child(isc, "contact"); item; item = xmlnode_get_next_twin(item))
 		{
-			const char *uri, *name, *groups;
+			const char *uri;
 			char *buddy_name;
 			uri = xmlnode_get_attrib(item, "uri");
-			name = xmlnode_get_attrib(item, "name");
-			groups = xmlnode_get_attrib(item, "groups");
+			/*name = xmlnode_get_attrib(item, "name");
+			groups = xmlnode_get_attrib(item, "groups");*/
 			purple_debug_info("simple", "URI->%s\n", uri);
 
 			buddy_name = g_strdup_printf("sip:%s", uri);
@@ -1640,7 +1640,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		cur += 2;
 		restlen = conn->inbufused - (cur - conn->inbuf);
 		if(restlen >= msg->bodylen) {
-			dummy = g_malloc(msg->bodylen + 1);
+			dummy = g_new(char, msg->bodylen + 1);
 			memcpy(dummy, cur, msg->bodylen);
 			dummy[msg->bodylen] = '\0';
 			msg->body = dummy;

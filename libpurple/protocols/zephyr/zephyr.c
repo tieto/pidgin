@@ -927,12 +927,10 @@ static int  free_parse_tree(parse_tree* tree) {
 	}
 	else {
 		int i;
-		if (tree->children) {
-			for(i=0;i<tree->num_children;i++){
-				if (tree->children[i]) {
-					free_parse_tree(tree->children[i]);
-					g_free(tree->children[i]);
-				}
+		for(i=0;i<tree->num_children;i++){
+			if (tree->children[i]) {
+				free_parse_tree(tree->children[i]);
+				g_free(tree->children[i]);
 			}
 		}
 		if ((tree != &null_parse_tree) && (tree->contents != NULL))
@@ -1515,10 +1513,10 @@ static void process_anyone(PurpleConnection *gc)
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0]) {
-				if (!(b = purple_find_buddy(gc->account, buff))) {
+				if (!purple_find_buddy(gc->account, buff)) {
 					char *stripped_user = zephyr_strip_local_realm(zephyr,buff);
 					purple_debug_info("zephyr","stripped_user %s\n",stripped_user);
-					if (!(b = purple_find_buddy(gc->account,stripped_user))){
+					if (!purple_find_buddy(gc->account,stripped_user)){
 						b = purple_buddy_new(gc->account, stripped_user, NULL);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}

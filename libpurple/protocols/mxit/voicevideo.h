@@ -26,16 +26,11 @@
 #ifndef		_MXIT_VOICEVICEO_H_
 #define		_MXIT_VOICEVIDEO_H_
 
-#include	"media.h"
-
-
 #undef		MXIT_DEV_VV
-
 
 gboolean mxit_audio_enabled(void);
 gboolean mxit_video_enabled(void);
 PurpleMediaCaps mxit_media_caps(PurpleAccount* account, const char* who);
 gboolean mxit_media_initiate(PurpleAccount* account, const char* who, PurpleMediaSessionType type);
-
 
 #endif		/* _MXIT_VOICEVIDEO_H_ */

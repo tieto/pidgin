@@ -25,9 +25,7 @@
 
 
 #include "internal.h"
-#include <glib.h>
-
-#include "purple.h"
+#include "debug.h"
 
 #include "protocol.h"
 #include "mxit.h"
@@ -269,7 +267,7 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 
 	if (nm) {		/* indicates response must be a structured response */
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
-		gchar*	replycmd = g_strdup_printf("type=reply|nm=%s|res=%s|err=0", nm, replymsg);
+		gchar*	replycmd = g_strdup_printf("type=reply|nm=%s|res=%s|err=0", nm, purple_url_decode(replymsg));
 
 		mxit_add_html_link( mx, replycmd, TRUE, seltext );
 
@@ -300,7 +298,7 @@ static void command_platformreq(GHashTable* hash, GString* msg)
 	char*	dest;
 
 	selmsg = g_hash_table_lookup(hash, "selmsg");			/* find the selection message */
-	if (selmsg) {
+	if (selmsg && (strlen(selmsg) > 0)) {
 		text = g_markup_escape_text(purple_url_decode(selmsg), -1);
 	}
 
@@ -327,7 +325,6 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	const char*	img;
 	const char*	reply;
 	guchar*		rawimg;
-	char		link[256];
 	gsize		rawimglen;
 	int			imgid;
 
@@ -336,8 +333,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 		rawimg = purple_base64_decode(img, &rawimglen);
 		//purple_util_write_data_to_file_absolute("/tmp/mxitinline.png", (char*) rawimg, rawimglen);
 		imgid = purple_imgstore_add_with_id(rawimg, rawimglen, NULL);
-		g_snprintf(link, sizeof(link), "<img id=\"%i\">", imgid);
-		g_string_append_printf(msg, "%s", link);
+		g_string_append_printf(msg, "<img id=\"%i\">", imgid);
 		mx->flags |= PURPLE_MESSAGE_IMAGES;
 	}
 	else {
@@ -412,6 +408,8 @@ static void command_imagestrip(struct MXitSession* session, const char* from, GH
 
 		/* base64 decode the image data */
 		rawimg = purple_base64_decode(tmp, &rawimglen);
+		if (!rawimg)
+			return;
 
 		/* save it to a file */
 		dir = g_build_filename(purple_user_dir(), "mxit", "imagestrips", NULL);
@@ -475,7 +473,7 @@ static void command_screeninfo(struct MXitSession* session, const char* from)
  *   menu ::= <menuitem> { ";" <menuitem> }
  *     menuitem ::= { type "," <text> "," <name> "," <meta> }
  *   colors ::= <color> { ";" <color> }
- *     color ::= <colorid> "," <ARGB hex color>   
+ *     color ::= <colorid> "," <ARGB hex color>
  *
  *  @param session		The MXit session object
  *  @param from			The sender of the message.
@@ -530,7 +528,7 @@ static void command_table(struct RXMsgData* mx, GHashTable* hash)
 
 	/* number of columns */
 	tmp = g_hash_table_lookup(hash, "col");
-	nr_columns = atoi(tmp);	
+	nr_columns = atoi(tmp);
 
 	/* number of rows */
 	tmp = g_hash_table_lookup(hash, "row");

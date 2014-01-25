@@ -52,6 +52,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @PLUGINS_TRUE@@USE_VV_TRUE@am__append_1 = vvconfig.la
+@ENABLE_UNITY_TRUE@@PLUGINS_TRUE@am__append_2 = unity.la
 subdir = pidgin/plugins
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -59,7 +60,7 @@ am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
@@ -233,6 +234,16 @@ timestamp_format_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_CFLAGS) $(CFLAGS) $(timestamp_format_la_LDFLAGS) \
 	$(LDFLAGS) -o $@
 @PLUGINS_TRUE@am_timestamp_format_la_rpath = -rpath $(plugindir)
+@PLUGINS_TRUE@unity_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+@PLUGINS_TRUE@	$(am__DEPENDENCIES_1)
+am__unity_la_SOURCES_DIST = unity.c
+@PLUGINS_TRUE@am_unity_la_OBJECTS = unity.lo
+unity_la_OBJECTS = $(am_unity_la_OBJECTS)
+unity_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(unity_la_LDFLAGS) $(LDFLAGS) -o $@
+@ENABLE_UNITY_TRUE@@PLUGINS_TRUE@am_unity_la_rpath = -rpath \
+@ENABLE_UNITY_TRUE@@PLUGINS_TRUE@	$(plugindir)
 @PLUGINS_TRUE@vvconfig_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 @PLUGINS_TRUE@	$(am__DEPENDENCIES_1)
 am__vvconfig_la_SOURCES_DIST = vvconfig.c
@@ -285,7 +296,8 @@ SOURCES = $(contact_priority_la_SOURCES) $(convcolors_la_SOURCES) \
 	$(relnot_la_SOURCES) $(sendbutton_la_SOURCES) \
 	$(spellchk_la_SOURCES) $(themeedit_la_SOURCES) \
 	$(timestamp_la_SOURCES) $(timestamp_format_la_SOURCES) \
-	$(vvconfig_la_SOURCES) $(xmppconsole_la_SOURCES)
+	$(unity_la_SOURCES) $(vvconfig_la_SOURCES) \
+	$(xmppconsole_la_SOURCES)
 DIST_SOURCES = $(am__contact_priority_la_SOURCES_DIST) \
 	$(am__convcolors_la_SOURCES_DIST) \
 	$(am__extplacement_la_SOURCES_DIST) \
@@ -300,7 +312,7 @@ DIST_SOURCES = $(am__contact_priority_la_SOURCES_DIST) \
 	$(am__themeedit_la_SOURCES_DIST) \
 	$(am__timestamp_la_SOURCES_DIST) \
 	$(am__timestamp_format_la_SOURCES_DIST) \
-	$(am__vvconfig_la_SOURCES_DIST) \
+	$(am__unity_la_SOURCES_DIST) $(am__vvconfig_la_SOURCES_DIST) \
 	$(am__xmppconsole_la_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
@@ -521,6 +533,9 @@ STRIP = @STRIP@
 TCL_CFLAGS = @TCL_CFLAGS@
 TCL_LIBS = @TCL_LIBS@
 TK_LIBS = @TK_LIBS@
+UNITY_CFLAGS = @UNITY_CFLAGS@
+UNITY_LIBS = @UNITY_LIBS@
+USES_MM_CHAT_SECTION = @USES_MM_CHAT_SECTION@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
@@ -629,6 +644,7 @@ spellchk_la_LDFLAGS = -module -avoid-version
 themeedit_la_LDFLAGS = -module -avoid-version
 timestamp_la_LDFLAGS = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
+unity_la_LDFLAGS = -module -avoid-version
 vvconfig_la_LDFLAGS = -module -avoid-version
 xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@plugin_LTLIBRARIES = convcolors.la extplacement.la \
@@ -636,7 +652,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@	markerline.la notify.la pidginrc.la relnot.la \
 @PLUGINS_TRUE@	sendbutton.la spellchk.la themeedit.la \
 @PLUGINS_TRUE@	timestamp.la timestamp_format.la xmppconsole.la \
-@PLUGINS_TRUE@	$(am__append_1)
+@PLUGINS_TRUE@	$(am__append_1) $(am__append_2)
 @PLUGINS_TRUE@noinst_LTLIBRARIES = \
 @PLUGINS_TRUE@	contact_priority.la \
 @PLUGINS_TRUE@	gtk_signals_test.la
@@ -657,6 +673,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@themeedit_la_SOURCES = themeedit.c themeedit-icon.c themeedit-icon.h
 @PLUGINS_TRUE@timestamp_la_SOURCES = timestamp.c
 @PLUGINS_TRUE@timestamp_format_la_SOURCES = timestamp_format.c
+@PLUGINS_TRUE@unity_la_SOURCES = unity.c
 @PLUGINS_TRUE@vvconfig_la_SOURCES = vvconfig.c
 @PLUGINS_TRUE@xmppconsole_la_SOURCES = xmppconsole.c
 @PLUGINS_TRUE@convcolors_la_LIBADD = $(GTK_LIBS)
@@ -675,6 +692,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@themeedit_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@timestamp_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@timestamp_format_la_LIBADD = $(GTK_LIBS)
+@PLUGINS_TRUE@unity_la_LIBADD = $(GTK_LIBS) $(UNITY_LIBS)
 @PLUGINS_TRUE@vvconfig_la_LIBADD = $(GTK_LIBS) $(GSTREAMER_LIBS)
 @PLUGINS_TRUE@xmppconsole_la_LIBADD = $(GTK_LIBS)
 EXTRA_DIST = \
@@ -696,6 +714,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(UNITY_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 
@@ -812,6 +831,8 @@ timestamp.la: $(timestamp_la_OBJECTS) $(timestamp_la_DEPENDENCIES) $(EXTRA_times
 	$(AM_V_CCLD)$(timestamp_la_LINK) $(am_timestamp_la_rpath) $(timestamp_la_OBJECTS) $(timestamp_la_LIBADD) $(LIBS)
 timestamp_format.la: $(timestamp_format_la_OBJECTS) $(timestamp_format_la_DEPENDENCIES) $(EXTRA_timestamp_format_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(timestamp_format_la_LINK) $(am_timestamp_format_la_rpath) $(timestamp_format_la_OBJECTS) $(timestamp_format_la_LIBADD) $(LIBS)
+unity.la: $(unity_la_OBJECTS) $(unity_la_DEPENDENCIES) $(EXTRA_unity_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(unity_la_LINK) $(am_unity_la_rpath) $(unity_la_OBJECTS) $(unity_la_LIBADD) $(LIBS)
 vvconfig.la: $(vvconfig_la_OBJECTS) $(vvconfig_la_DEPENDENCIES) $(EXTRA_vvconfig_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(vvconfig_la_LINK) $(am_vvconfig_la_rpath) $(vvconfig_la_OBJECTS) $(vvconfig_la_LIBADD) $(LIBS)
 xmppconsole.la: $(xmppconsole_la_OBJECTS) $(xmppconsole_la_DEPENDENCIES) $(EXTRA_xmppconsole_la_DEPENDENCIES) 
@@ -840,6 +861,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/themeedit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timestamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timestamp_format.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vvconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmppconsole.Plo@am__quote@
 

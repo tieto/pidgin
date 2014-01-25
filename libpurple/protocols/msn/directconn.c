@@ -39,18 +39,18 @@
 
 static void
 msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
-                            const guchar nonce[16], gchar nonce_hash[37])
+                            const guchar *nonce, gsize nonce_len, gchar nonce_hash[37])
 {
 	guchar digest[20];
 
 	if (type == DC_NONCE_SHA1) {
 		PurpleCipher *cipher = purple_ciphers_find_cipher("sha1");
 		PurpleCipherContext *context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, nonce, sizeof(nonce));
+		purple_cipher_context_append(context, nonce, nonce_len);
 		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 		purple_cipher_context_destroy(context);
 	} else if (type == DC_NONCE_PLAIN) {
-		memcpy(digest, nonce, 16);
+		memcpy(digest, nonce, nonce_len);
 	} else {
 		nonce_hash[0] = '\0';
 		g_return_if_reached();
@@ -92,7 +92,7 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 	for (i = 0; i < 4; i++)
 		nonce[i] = rand();
 
-	msn_dc_calculate_nonce_hash(dc->nonce_type, dc->nonce, dc->nonce_hash);
+	msn_dc_calculate_nonce_hash(dc->nonce_type, dc->nonce, sizeof(dc->nonce), dc->nonce_hash);
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "DC %p generated nonce %s\n", dc, dc->nonce_hash);
@@ -494,10 +494,10 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 	if (packet_length != DC_NONCE_PACKET_SIZE)
 		return FALSE;
 
-	memcpy(nonce, dc->in_buffer + 4 + DC_NONCE_PACKET_NONCE, 16);
+	memcpy(nonce, dc->in_buffer + 4 + DC_NONCE_PACKET_NONCE, sizeof(nonce));
 
 	if (dc->nonce_type == DC_NONCE_PLAIN) {
-		if (memcmp(dc->nonce, nonce, 16) == 0) {
+		if (memcmp(dc->nonce, nonce, sizeof(nonce)) == 0) {
 			purple_debug_info("msn",
 					"Nonce from buddy request and nonce from DC attempt match, "
 					"allowing direct connection\n");
@@ -510,7 +510,7 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 		}
 
 	} else if (dc->nonce_type == DC_NONCE_SHA1) {
-		msn_dc_calculate_nonce_hash(dc->nonce_type, nonce, nonce_hash);
+		msn_dc_calculate_nonce_hash(dc->nonce_type, nonce, sizeof(nonce), nonce_hash);
 
 		if (g_str_equal(dc->remote_nonce, nonce_hash)) {
 			purple_debug_info("msn",

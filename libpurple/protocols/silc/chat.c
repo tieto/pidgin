@@ -151,7 +151,7 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 	}
 
 	if (channel->mode) {
-		g_string_append_printf(s, _("<br><b>Channel Modes:</b> "));
+		g_string_append(s, _("<br><b>Channel Modes:</b> "));
 		silcpurple_get_chmode_string(channel->mode, tmp, sizeof(tmp));
 		g_string_append(s, tmp);
 	}
@@ -1225,7 +1225,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 	SilcChannelUser chu;
 	SilcChannelEntry channel = NULL;
 	SilcChannelPrivateKey key = NULL;
-	SilcUInt32 flags;
+	SilcMessageFlags flags;
 	int ret = 0;
 	char *msg2, *tmp;
 	gboolean found = FALSE;
