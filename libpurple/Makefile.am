@@ -452,7 +452,28 @@ if ENABLE_DBUS
 Purple_3_0_gir_INCLUDES += DBus-1.0 DBusGLib-1.0
 endif
 
-Purple_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
+Purple_3_0_gir_CFLAGS = \
+	$(INCLUDES) \
+	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(FARSTREAM_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GSTVIDEO_CFLAGS) \
+	$(GSTINTERFACES_CFLAGS) \
+	$(IDN_CFLAGS) \
+	$(NETWORKMANAGER_CFLAGS) \
+	$(JSON_CFLAGS) \
+	$(GNUTLS_CFLAGS) \
+	$(NSS_CFLAGS) \
+	$(ZLIB_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
+
 Purple_3_0_gir_LIBS = $(builddir)/libpurple.la
 Purple_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir

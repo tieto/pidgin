@@ -227,7 +227,30 @@ introspection_sources = $(libpidgininclude_HEADERS)
 
 Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpidgin.la
 Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-$(GTK_VERSION).0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
-Pidgin_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
+Pidgin_3_0_gir_CFLAGS = \
+	$(INCLUDES) \
+	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/pidgin/\" \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	-I$(top_builddir)/libpurple \
+	-I$(top_srcdir)/libpurple/ \
+	-I$(top_builddir) \
+	-I$(top_srcdir) \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(GCR_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GSTVIDEO_CFLAGS) \
+	$(GSTINTERFACES_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(X11_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(GTKSPELL_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(WEBKIT_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
+
 Pidgin_3_0_gir_LIBS = $(builddir)/libpidgin.la
 Pidgin_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir

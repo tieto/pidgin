@@ -117,7 +117,24 @@ introspection_sources = $(libfinchinclude_HEADERS)
 
 Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libfinch.la
 Finch_3_0_gir_INCLUDES = GObject-2.0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
-Finch_3_0_gir_CFLAGS = $(INCLUDES) $(AM_CPPFLAGS)
+Finch_3_0_gir_CFLAGS = \
+	$(INCLUDES) \
+	-DSTANDALONE \
+	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/finch/\" \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	-I$(top_srcdir)/libpurple/ \
+	-I$(top_srcdir) \
+	-I$(srcdir)/libgnt/ \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(INTROSPECTION_CFLAGS) \
+	$(GNT_CFLAGS)
+
 Finch_3_0_gir_LIBS = $(builddir)/libfinch.la
 Finch_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
