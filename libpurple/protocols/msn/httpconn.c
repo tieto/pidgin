@@ -25,6 +25,7 @@
 #include "httpconn.h"
 
 #include "debug.h"
+#include "glibcompat.h"
 #include "http.h"
 
 #include "msn.h"

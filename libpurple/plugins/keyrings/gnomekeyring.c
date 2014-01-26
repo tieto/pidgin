@@ -27,6 +27,7 @@
 #include "internal.h"
 #include "account.h"
 #include "debug.h"
+#include "glibcompat.h"
 #include "keyring.h"
 #include "plugin.h"
 #include "version.h"
