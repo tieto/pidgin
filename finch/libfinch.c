@@ -27,7 +27,7 @@
 #include "core.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "xfer.h"
+#include "glibcompat.h"
 #include "log.h"
 #include "notify.h"
 #include "plugins.h"
@@ -38,6 +38,7 @@
 #include "status.h"
 #include "util.h"
 #include "whiteboard.h"
+#include "xfer.h"
 
 #include "gntdebug.h"
 #include "gntprefs.h"

@@ -1,6 +1,7 @@
 #include "edisc.h"
 
 #include <debug.h>
+#include <glibcompat.h>
 
 #include "gg.h"
 #include "libgaduw.h"

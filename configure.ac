@@ -474,7 +474,7 @@ running configure.
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
-	WEBKIT_VERSION=1.3.1
+	WEBKIT_VERSION=1.3.7
 	if test "x$with_gtk" = "x3"; then
 		WEBKIT_PC_MODULE="webkitgtk-3.0"
 		PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
@@ -829,10 +829,10 @@ dnl #######################################################################
 dnl # Check for JSON-GLib (required)
 dnl #######################################################################
 
-PKG_CHECK_MODULES([JSON], [json-glib-1.0 >= 0.14.0], , [
+PKG_CHECK_MODULES([JSON], [json-glib-1.0 >= 0.10.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
-You must have JSON-GLib >= 0.14.0 development headers installed to build.
+You must have JSON-GLib >= 0.10.0 development headers installed to build.
 ])])
 
 AC_SUBST(JSON_CFLAGS)

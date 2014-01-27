@@ -26,6 +26,7 @@
 #define _PIDGIN_GTKUTILS_C_
 
 #include "internal.h"
+#include "glibcompat.h"
 #include "pidgin.h"
 
 #ifdef _WIN32

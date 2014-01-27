@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "debug.h"
+#include "glibcompat.h"
 #include "log.h"
 #include "plugins.h"
 #include "pluginpref.h"
