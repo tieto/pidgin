@@ -27,9 +27,11 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "glibcompat.h"
 #include "pidgin.h"
 
 #include <gdk/gdkkeysyms.h>
+
 #include "gtkutils.h"
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
@@ -1342,7 +1344,7 @@ do_formatting(GtkWebView *webview, const char *name, const char *value)
 	}
 
 	priv->edit.block_changed = TRUE;
-	webkit_dom_document_exec_command(dom, name, FALSE, value);
+	webkit_dom_document_exec_command(dom, (gchar *)name, FALSE, (gchar *)value);
 	priv->edit.block_changed = FALSE;
 
 	if (priv->edit.wbfo) {
