@@ -52,8 +52,8 @@ void pidgin_accounts_window_hide(void);
 /**
  * Shows an add/modify account dialog.
  *
- * @param type    The type of dialog.
- * @param account The associated account, or @c NULL for an Add dialog.
+ * @type:    The type of dialog.
+ * @account: The associated account, or @c NULL for an Add dialog.
  */
 void pidgin_account_dialog_show(PidginAccountDialogType type,
 								  PurpleAccount *account);
@@ -61,14 +61,14 @@ void pidgin_account_dialog_show(PidginAccountDialogType type,
 /**
  * Returns the GTK+ account UI ops
  *
- * @return The UI operations structure.
+ * Returns: The UI operations structure.
  */
 PurpleAccountUiOps *pidgin_accounts_get_ui_ops(void);
 
 /**
  * Returns the gtkaccounts handle
  *
- * @return The handle to the GTK+ account system
+ * Returns: The handle to the GTK+ account system
  */
 void *pidgin_accounts_get_handle(void);
 

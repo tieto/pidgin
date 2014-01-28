@@ -74,7 +74,7 @@ struct _GntSliderClass
 G_BEGIN_DECLS
 
 /**
- * @return The GType for GntSlider
+ * Returns: The GType for GntSlider
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -86,11 +86,11 @@ GType gnt_slider_get_gtype(void);
 /**
  * Create a new slider.
  *
- * @param orient A vertical slider is created if @c TRUE, otherwise the slider is horizontal.
- * @param max    The maximum value for the slider
- * @param min    The minimum value for the slider
+ * @orient: A vertical slider is created if @c TRUE, otherwise the slider is horizontal.
+ * @max:    The maximum value for the slider
+ * @min:    The minimum value for the slider
  *
- * @return  The newly created slider
+ * Returns:  The newly created slider
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -99,9 +99,9 @@ GntWidget * gnt_slider_new(gboolean orient, int max, int min);
 /**
  * Set the range of the slider.
  *
- * @param slider  The slider
- * @param max     The maximum value
- * @param min     The minimum value
+ * @slider:  The slider
+ * @max:     The maximum value
+ * @min:     The minimum value
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -110,8 +110,8 @@ void gnt_slider_set_range(GntSlider *slider, int max, int min);
 /**
  * Sets the amount of change at each step.
  *
- * @param slider  The slider
- * @param step    The amount for each step
+ * @slider:  The slider
+ * @step:    The amount for each step
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -120,8 +120,8 @@ void gnt_slider_set_step(GntSlider *slider, int step);
 /**
  * Sets the amount of change a small step.
  *
- * @param slider  The slider
- * @param step    The amount for a small step (for the slider)
+ * @slider:  The slider
+ * @step:    The amount for a small step (for the slider)
  *
  * @since 2.2.0
  */
@@ -130,8 +130,8 @@ void gnt_slider_set_small_step(GntSlider *slider, int step);
 /**
  * Sets the amount of change a large step.
  *
- * @param slider  The slider
- * @param step    The amount for a large step (for the slider)
+ * @slider:  The slider
+ * @step:    The amount for a large step (for the slider)
  *
  * @since 2.2.0
  */
@@ -140,11 +140,11 @@ void gnt_slider_set_large_step(GntSlider *slider, int step);
 /**
  * Advance the slider forward or backward.
  *
- * @param slider   The slider
- * @param steps    The number of amounts to change, positive to change
+ * @slider:   The slider
+ * @steps:    The number of amounts to change, positive to change
  *                 forward, negative to change backward
  *
- * @return   The value of the slider after the change
+ * Returns:   The value of the slider after the change
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -153,8 +153,8 @@ int gnt_slider_advance_step(GntSlider *slider, int steps);
 /**
  * Set the current value for the slider.
  *
- * @param slider  The slider
- * @param value   The current value
+ * @slider:  The slider
+ * @value:   The current value
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -163,7 +163,7 @@ void gnt_slider_set_value(GntSlider *slider, int value);
 /**
  * Get the current value for the slider.
  *
- * @param slider The slider
+ * @slider: The slider
  *
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
@@ -173,8 +173,8 @@ int gnt_slider_get_value(GntSlider *slider);
 /**
  * Update a label with the value of the slider whenever the value changes.
  *
- * @param slider   The slider
- * @param label    The label to update
+ * @slider:   The slider
+ * @label:    The label to update
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */

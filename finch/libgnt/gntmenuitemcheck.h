@@ -66,33 +66,33 @@ struct _GntMenuItemCheckClass
 G_BEGIN_DECLS
 
 /**
- * @return GType for GntMenuItemCheck.
+ * Returns: GType for GntMenuItemCheck.
  */
 GType gnt_menuitem_check_get_gtype(void);
 
 /**
  * Create a new menuitem.
  *
- * @param text  The text for the menuitem.
+ * @text:  The text for the menuitem.
  *
- * @return  The newly created menuitem.
+ * Returns:  The newly created menuitem.
  */
 GntMenuItem * gnt_menuitem_check_new(const char *text);
 
 /**
  * Check whether the menuitem is checked or not.
  *
- * @param item  The menuitem.
+ * @item:  The menuitem.
  *
- * @return @c TRUE if the item is checked, @c FALSE otherwise.
+ * Returns: @c TRUE if the item is checked, @c FALSE otherwise.
  */
 gboolean gnt_menuitem_check_get_checked(GntMenuItemCheck *item);
 
 /**
  * Set whether the menuitem is checked or not.
  *
- * @param item  The menuitem.
- * @param set   @c TRUE if the item should be checked, @c FALSE otherwise.
+ * @item:  The menuitem.
+ * @set:   @c TRUE if the item should be checked, @c FALSE otherwise.
  */
 void gnt_menuitem_check_set_checked(GntMenuItemCheck *item, gboolean set);
 

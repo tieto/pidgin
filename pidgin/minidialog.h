@@ -100,9 +100,9 @@ typedef struct {
 } PidginMiniDialogClass;
 
 /** The type of a callback triggered by a button in a mini-dialog being pressed.
- * @param mini_dialog a dialog, one of whose buttons has been pressed.
- * @param button      the button which was pressed.
- * @param user_data   arbitrary data, supplied to
+ * @mini_dialog: a dialog, one of whose buttons has been pressed.
+ * @button:      the button which was pressed.
+ * @user_data:   arbitrary data, supplied to
  *                    pidgin_mini_dialog_add_button() when the button was
  *                    created.
  */
@@ -114,55 +114,55 @@ GType pidgin_mini_dialog_get_type (void);
 
 /** Creates a new #PidginMiniDialog with a stock icon. This is a shortcut for creating the dialog
  *  with @c g_object_new() then setting each property yourself.
- *  @return a new #PidginMiniDialog.
+ *  Returns: a new #PidginMiniDialog.
  */
 PidginMiniDialog *pidgin_mini_dialog_new(const gchar *title,
 	const gchar *description, const gchar *icon_name);
 
 /** Creates a new #PidginMiniDialog with a custom icon. This is a shortcut for creating the dialog
  *  with @c g_object_new() then setting each property yourself.
- *  @return a new #PidginMiniDialog.
+ *  Returns: a new #PidginMiniDialog.
  */
 PidginMiniDialog *pidgin_mini_dialog_new_with_custom_icon(const gchar *title,
 	const gchar *description, GdkPixbuf *custom_icon);
 
 /** Shortcut for setting a mini-dialog's title via GObject properties.
- *  @param mini_dialog a mini-dialog
- *  @param title       the new title for @a mini_dialog
+ *  @mini_dialog: a mini-dialog
+ *  @title:       the new title for @a mini_dialog
  */
 void pidgin_mini_dialog_set_title(PidginMiniDialog *mini_dialog,
 	const char *title);
 
 /** Shortcut for setting a mini-dialog's description via GObject properties.
- *  @param mini_dialog a mini-dialog
- *  @param description the new description for @a mini_dialog, or @c NULL to
+ *  @mini_dialog: a mini-dialog
+ *  @description: the new description for @a mini_dialog, or @c NULL to
  *                     hide the description widget.
  */
 void pidgin_mini_dialog_set_description(PidginMiniDialog *mini_dialog,
 	const char *description);
 
 /** Enable GMarkup elements in the mini-dialog's description.
- *  @param mini_dialog a mini-dialog
+ *  @mini_dialog: a mini-dialog
  */
 void pidgin_mini_dialog_enable_description_markup(PidginMiniDialog *mini_dialog);
 
 /** Sets a callback which gets invoked when a hyperlink in the dialog's description is clicked on.
- *  @param mini_dialog a mini-dialog
- *  @param cb the callback to invoke
- *  @param user_data the user data to pass to the callback
+ *  @mini_dialog: a mini-dialog
+ *  @cb: the callback to invoke
+ *  @user_data: the user data to pass to the callback
  */
 void pidgin_mini_dialog_set_link_callback(PidginMiniDialog *mini_dialog, GCallback cb, gpointer user_data);
 
 /** Shortcut for setting a mini-dialog's icon via GObject properties.
- *  @param mini_dialog a mini-dialog
- *  @param icon_name   the Gtk stock ID of an icon, or @c NULL for no icon.
+ *  @mini_dialog: a mini-dialog
+ *  @icon_name:   the Gtk stock ID of an icon, or @c NULL for no icon.
  */
 void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
 	const char *icon_name);
 
 /** Shortcut for setting a mini-dialog's custom icon via GObject properties.
- *  @param mini_dialog a mini-dialog
- *  @param custom_icon the pixbuf to use as a custom icon
+ *  @mini_dialog: a mini-dialog
+ *  @custom_icon: the pixbuf to use as a custom icon
  */
 void pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog,
 	GdkPixbuf *custom_icon);
@@ -170,10 +170,10 @@ void pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog,
 /** Adds a new button to a mini-dialog, and attaches the supplied callback to
  *  its <tt>clicked</tt> signal.  After a button is clicked, the dialog is
  *  destroyed.
- *  @param mini_dialog a mini-dialog
- *  @param text        the text to display on the new button
- *  @param clicked_cb  the function to call when the button is clicked
- *  @param user_data   arbitrary data to pass to @a clicked_cb when it is
+ *  @mini_dialog: a mini-dialog
+ *  @text:        the text to display on the new button
+ *  @clicked_cb:  the function to call when the button is clicked
+ *  @user_data:   arbitrary data to pass to @a clicked_cb when it is
  *                     called.
  */
 void pidgin_mini_dialog_add_button(PidginMiniDialog *mini_dialog,
@@ -188,8 +188,8 @@ void pidgin_mini_dialog_add_non_closing_button(PidginMiniDialog *mini_dialog,
 	gpointer user_data);
 
 /** Gets the number of widgets packed into PidginMiniDialog.contents.
- *  @param mini_dialog a mini-dialog
- *  @return the number of widgets in @a mini_dialog->contents.
+ *  @mini_dialog: a mini-dialog
+ *  Returns: the number of widgets in @a mini_dialog->contents.
  */
 guint pidgin_mini_dialog_get_num_children(PidginMiniDialog *mini_dialog);
 

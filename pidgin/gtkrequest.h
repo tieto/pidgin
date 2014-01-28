@@ -33,16 +33,16 @@ G_BEGIN_DECLS
 /**
  * Returns the UI operations structure for GTK+ request functions.
  *
- * @return The GTK+ UI request operations structure.
+ * Returns: The GTK+ UI request operations structure.
  */
 PurpleRequestUiOps *pidgin_request_get_ui_ops(void);
 
 /**
  * Gets dialog window for specified libpurple request.
  *
- * @param ui_handle The UI handle.
+ * @ui_handle: The UI handle.
  *
- * @return The dialog window.
+ * Returns: The dialog window.
  */
 GtkWindow *
 pidgin_request_get_dialog_window(void *ui_handle);
@@ -55,7 +55,7 @@ pidgin_request_get_dialog_window(void *ui_handle);
 /**
  * Returns the gtk requests subsystem handle.
  *
- * @return The requests subsystem handle.
+ * Returns: The requests subsystem handle.
  */
 void *pidgin_request_get_handle(void);
 

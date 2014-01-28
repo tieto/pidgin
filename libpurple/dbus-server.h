@@ -121,8 +121,8 @@ void purple_dbus_init_ids(void);
 /**
     Registers a typed pointer.
 
-    @param node   The pointer to register.
-    @param type   Type of that pointer.
+    @node:   The pointer to register.
+    @type:   Type of that pointer.
  */
 void purple_dbus_register_pointer(gpointer node, PurpleDBusType *type);
 
@@ -130,7 +130,7 @@ void purple_dbus_register_pointer(gpointer node, PurpleDBusType *type);
     Unregisters a pointer previously registered with
     purple_dbus_register_pointer.
 
-    @param node   The pointer to register.
+    @node:   The pointer to register.
  */
 void purple_dbus_unregister_pointer(gpointer node);
 
@@ -139,10 +139,10 @@ void purple_dbus_unregister_pointer(gpointer node);
 /**
     Emits a dbus signal.
 
-    @param name        The name of the signal ("bla-bla-blaa")
-    @param num_values  The number of parameters.
-    @param types       Array of GTypes representing the types of the parameters.
-    @param vargs       A va_list containing the actual parameters.
+    @name:        The name of the signal ("bla-bla-blaa")
+    @num_values:  The number of parameters.
+    @types:       Array of GTypes representing the types of the parameters.
+    @vargs:       A va_list containing the actual parameters.
   */
 void purple_dbus_signal_emit_purple(const char *name, int num_values,
 				GType *types, va_list vargs);
@@ -156,7 +156,7 @@ void purple_dbus_signal_emit_purple(const char *name, int num_values,
  * PURPLE_DBUS_RETURN_FALSE_IF_DISABLED macro to short-circuit
  * initialization if Purple's D-BUS subsystem is not running.
  *
- * @return If the D-BUS subsystem started with no problems then this
+ * Returns: If the D-BUS subsystem started with no problems then this
  *         will return NULL and everything will be hunky dory.  If
  *         there was an error initializing the D-BUS subsystem then
  *         this will return an error message explaining why.
@@ -166,7 +166,7 @@ const char *purple_dbus_get_init_error(void);
 /**
  * Returns the dbus subsystem handle.
  *
- * @return The dbus subsystem handle.
+ * Returns: The dbus subsystem handle.
  */
 void *purple_dbus_get_handle(void);
 

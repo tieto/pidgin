@@ -130,7 +130,7 @@ G_BEGIN_DECLS
 /**
  * Get the handle for the GTK+ blist system.
  *
- * @return the handle to the blist system
+ * Returns: the handle to the blist system
  */
 void *pidgin_blist_get_handle(void);
 
@@ -147,7 +147,7 @@ void pidgin_blist_uninit(void);
 /**
  * Returns the UI operations structure for the buddy list.
  *
- * @return The GTK+ list operations structure.
+ * Returns: The GTK+ list operations structure.
  */
 PurpleBlistUiOps *pidgin_blist_get_ui_ops(void);
 
@@ -158,16 +158,16 @@ PurpleBlistUiOps *pidgin_blist_get_ui_ops(void);
  * returns the PidginBuddyList we're most likely wanting to work with. This is slightly
  * cleaner than an externed global.
  *
- * @return The default GTK+ buddy list
+ * Returns: The default GTK+ buddy list
  */
 PidginBuddyList *pidgin_blist_get_default_gtk_blist(void);
 
 /**
  * Populates a menu with the items shown on the buddy list for a buddy.
  *
- * @param menu  The menu to populate
- * @param buddy The buddy whose menu to get
- * @param sub   TRUE if this is a sub-menu, FALSE otherwise
+ * @menu:  The menu to populate
+ * @buddy: The buddy whose menu to get
+ * @sub:   TRUE if this is a sub-menu, FALSE otherwise
  */
 void pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub);
 
@@ -175,7 +175,7 @@ void pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean 
  * Refreshes all the nodes of the buddy list.
  * This should only be called when something changes to affect most of the nodes (such as a ui preference changing)
  *
- * @param list   This is the core list that gets updated from
+ * @list:   This is the core list that gets updated from
  */
 void pidgin_blist_refresh(PurpleBuddyList *list);
 
@@ -188,9 +188,9 @@ void pidgin_blist_update_refresh_timeout(void);
  * This may be an existing pixbuf that has been given an additional ref,
  * so it shouldn't be modified.
  *
- * @param node   The node to return an emblem for
+ * @node:   The node to return an emblem for
  *
- * @return  A GdkPixbuf for the emblem to show, or NULL
+ * Returns:  A GdkPixbuf for the emblem to show, or NULL
  */
 GdkPixbuf *
 pidgin_blist_get_emblem(PurpleBlistNode *node);
@@ -207,8 +207,8 @@ GdkPixbuf *pidgin_blist_get_status_icon(PurpleBlistNode *node,
  * This only makes sense for contact and buddy nodes. @c FALSE is returned
  * for other types of nodes.
  *
- * @param node The node in question.
- * @return A boolean indicating if @a node is part of an expanded contact.
+ * @node: The node in question.
+ * Returns: A boolean indicating if @a node is part of an expanded contact.
  */
 gboolean pidgin_blist_node_is_contact_expanded(PurpleBlistNode *node);
 
@@ -238,21 +238,21 @@ void pidgin_blist_visibility_manager_remove(void);
 /**
  * Adds a mini-alert to the blist scrollbook
  *
- * @param widget   The widget to add
+ * @widget:   The widget to add
  */
 void pidgin_blist_add_alert(GtkWidget *widget);
 
 /**
  * Sets the current theme for Pidgin to use
  *
- * @param theme	the new theme to use
+ * @theme:	the new theme to use
  */
 void pidgin_blist_set_theme(PidginBlistTheme *theme);
 
 /**
  * Gets Pidgin's current buddy list theme
  *
- * @returns	the current theme
+ * Returns:s	the current theme
  */
 PidginBlistTheme *pidgin_blist_get_theme(void);
 
@@ -265,7 +265,7 @@ typedef void (*pidgin_blist_sort_function)(PurpleBlistNode *new, PurpleBuddyList
 /**
  * Gets the current list of sort methods.
  *
- * @return A GSlist of sort methods
+ * Returns: A GSlist of sort methods
  */
 GList *pidgin_blist_get_sort_methods(void);
 
@@ -280,9 +280,9 @@ typedef struct pidgin_blist_sort_method PidginBlistSortMethod;
 /**
  * Registers a buddy list sorting method.
  *
- * @param id   The unique ID of the sorting method
- * @param name The method's name.
- * @param func  A pointer to the function.
+ * @id:   The unique ID of the sorting method
+ * @name: The method's name.
+ * @func:  A pointer to the function.
  *
  */
 void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist_sort_function func);
@@ -290,14 +290,14 @@ void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist
 /**
  * Unregisters a buddy list sorting method.
  *
- * @param id The method's id
+ * @id: The method's id
  */
 void pidgin_blist_sort_method_unreg(const char *id);
 
 /**
  * Sets a buddy list sorting method.
  *
- * @param id The method's id.
+ * @id: The method's id.
  */
 void pidgin_blist_sort_method_set(const char *id);
 
@@ -324,7 +324,7 @@ void pidgin_blist_update_sort_methods(void);
 /**
  * Determines if showing the join chat dialog is a valid action.
  *
- * @return Returns TRUE if there are accounts online capable of
+ * Returns: Returns TRUE if there are accounts online capable of
  *         joining chat rooms.  Otherwise returns FALSE.
  */
 gboolean pidgin_blist_joinchat_is_showable(void);
@@ -358,11 +358,11 @@ void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *no
  * This is currently used for mail notification, but could theoretically be used for anything.
  * Only the most recent headline will be shown.
  *
- * @param text	    Pango Markup for the label text
- * @param pixbuf    The GdkPixbuf for the icon
- * @param callback  The callback to call when headline is clicked
- * @param user_data The userdata to include in the callback
- * @param destroy   The callback to call when headline is closed or replaced by another headline.
+ * @text:	    Pango Markup for the label text
+ * @pixbuf:    The GdkPixbuf for the icon
+ * @callback:  The callback to call when headline is clicked
+ * @user_data: The userdata to include in the callback
+ * @destroy:   The callback to call when headline is closed or replaced by another headline.
  */
 void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data,
 		GDestroyNotify destroy);
@@ -370,10 +370,10 @@ void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback ca
 /**
  * Returns a buddy's Pango markup appropriate for setting in a GtkCellRenderer.
  *
- * @param buddy The buddy to return markup from
- * @param selected  Whether this buddy is selected. If TRUE, the markup will not change the color.
- * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its username and status information
- * @return The markup for this buddy
+ * @buddy: The buddy to return markup from
+ * @selected:  Whether this buddy is selected. If TRUE, the markup will not change the color.
+ * @aliased:  TRUE to return the appropriate alias of this buddy, FALSE to return its username and status information
+ * Returns: The markup for this buddy
  */
 gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gboolean aliased);
 
@@ -383,8 +383,8 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gbool
  * This tooltip will be destroyed the next time this function is called, or when XXXX
  * is called
  *
- * @param node The buddy list node to show a tooltip for
- * @param widget The widget to draw the tooltip on
+ * @node: The buddy list node to show a tooltip for
+ * @widget: The widget to draw the tooltip on
  */
 void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget);
 

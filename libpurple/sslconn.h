@@ -88,7 +88,7 @@ struct _PurpleSslConnection
 typedef struct
 {
 	/** Initializes the SSL system provided.
-	 *  @return @a TRUE if initialization succeeded
+	 *  Returns: @a TRUE if initialization succeeded
 	 *  @see purple_ssl_init
 	 */
 	gboolean (*init)(void);
@@ -107,27 +107,27 @@ typedef struct
 	 */
 	void (*close)(PurpleSslConnection *gsc);
 	/** Reads data from a connection (like POSIX read())
-	 * @param gsc   Connection context
-	 * @param data  Pointer to buffer to drop data into
-	 * @param len   Maximum number of bytes to read
-	 * @return      Number of bytes actually written into @a data (which may be
+	 * @gsc:   Connection context
+	 * @data:  Pointer to buffer to drop data into
+	 * @len:   Maximum number of bytes to read
+	 * Returns:      Number of bytes actually written into @a data (which may be
 	 *              less than @a len), or <0 on error
 	 * @see purple_ssl_read
 	*/
 	size_t (*read)(PurpleSslConnection *gsc, void *data, size_t len);
 	/** Writes data to a connection (like POSIX send())
-	* @param gsc    Connection context
-	* @param data   Data buffer to send data from
-	* @param len    Number of bytes to send from buffer
-	* @return       The number of bytes written to @a data (may be less than
+	* @gsc:    Connection context
+	* @data:   Data buffer to send data from
+	* @len:    Number of bytes to send from buffer
+	* Returns:       The number of bytes written to @a data (may be less than
 	*               @a len) or <0 on error
 	* @see purple_ssl_write
 	*/
 	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
 	/** Obtains the certificate chain provided by the peer
 	 *
-	 * @param gsc   Connection context
-	 * @return      A newly allocated list containing the certificates
+	 * @gsc:   Connection context
+	 * Returns:      A newly allocated list containing the certificates
 	 *              the peer provided.
 	 * @see PurpleCertificate
 	 * @todo        Decide whether the ordering of certificates in this
@@ -152,15 +152,15 @@ G_BEGIN_DECLS
 /**
  * Returns whether or not SSL is currently supported.
  *
- * @return @a TRUE if SSL is supported, or @a FALSE otherwise.
+ * Returns: @a TRUE if SSL is supported, or @a FALSE otherwise.
  */
 gboolean purple_ssl_is_supported(void);
 
 /**
  * Returns a human-readable string for an SSL error.
  *
- * @param error      Error code
- * @return Human-readable error explanation
+ * @error:      Error code
+ * Returns: Human-readable error explanation
  */
 const gchar * purple_ssl_strerror(PurpleSslErrorType error);
 
@@ -169,17 +169,17 @@ const gchar * purple_ssl_strerror(PurpleSslErrorType error);
  * should keep track of the returned value and use it to cancel the
  * connection, if needed.
  *
- * @param account    The account making the connection.
- * @param host       The destination host.
- * @param port       The destination port.
- * @param func       The SSL input handler function.
- * @param error_func The SSL error handler function.  This function
+ * @account:    The account making the connection.
+ * @host:       The destination host.
+ * @port:       The destination port.
+ * @func:       The SSL input handler function.
+ * @error_func: The SSL error handler function.  This function
  *                   should <strong>NOT</strong> call purple_ssl_close().  In
  *                   the event of an error the #PurpleSslConnection will be
  *                   destroyed for you.
- * @param data       User-defined data.
+ * @data:       User-defined data.
  *
- * @return The SSL connection handle.
+ * Returns: The SSL connection handle.
  */
 PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host,
 									int port, PurpleSslInputFunction func,
@@ -191,18 +191,18 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
  * name to verify with the certificate.  The caller should keep track of the
  * returned value and use it to cancel the connection, if needed.
  *
- * @param account    The account making the connection.
- * @param host       The destination host.
- * @param port       The destination port.
- * @param func       The SSL input handler function.
- * @param error_func The SSL error handler function.  This function
+ * @account:    The account making the connection.
+ * @host:       The destination host.
+ * @port:       The destination port.
+ * @func:       The SSL input handler function.
+ * @error_func: The SSL error handler function.  This function
  *                   should <strong>NOT</strong> call purple_ssl_close().  In
  *                   the event of an error the #PurpleSslConnection will be
  *                   destroyed for you.
- * @param ssl_host   The hostname of the other peer (to verify the CN)
- * @param data       User-defined data.
+ * @ssl_host:   The hostname of the other peer (to verify the CN)
+ * @data:       User-defined data.
  *
- * @return The SSL connection handle.
+ * Returns: The SSL connection handle.
  */
 PurpleSslConnection *purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host,
 									int port, PurpleSslInputFunction func,
@@ -213,14 +213,14 @@ PurpleSslConnection *purple_ssl_connect_with_ssl_cn(PurpleAccount *account, cons
 /**
  * Makes a SSL connection using an already open file descriptor.
  *
- * @param account    The account making the connection.
- * @param fd         The file descriptor.
- * @param func       The SSL input handler function.
- * @param error_func The SSL error handler function.
- * @param host       The hostname of the other peer (to verify the CN)
- * @param data       User-defined data.
+ * @account:    The account making the connection.
+ * @fd:         The file descriptor.
+ * @func:       The SSL input handler function.
+ * @error_func: The SSL error handler function.
+ * @host:       The hostname of the other peer (to verify the CN)
+ * @data:       User-defined data.
  *
- * @return The SSL connection handle.
+ * Returns: The SSL connection handle.
  */
 PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
                                            PurpleSslInputFunction func,
@@ -232,9 +232,9 @@ PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int
  * Adds an input watcher for the specified SSL connection.
  * Once the SSL handshake is complete, use this to watch for actual data across it.
  *
- * @param gsc   The SSL connection handle.
- * @param func  The callback function.
- * @param data  User-defined data.
+ * @gsc:   The SSL connection handle.
+ * @func:  The callback function.
+ * @data:  User-defined data.
  */
 void purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
 						void *data);
@@ -244,7 +244,7 @@ void purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
  *
  * If there is no input watcher set, does nothing.
  *
- * @param gsc The SSL connection handle.
+ * @gsc: The SSL connection handle.
  */
 void
 purple_ssl_input_remove(PurpleSslConnection *gsc);
@@ -252,38 +252,38 @@ purple_ssl_input_remove(PurpleSslConnection *gsc);
 /**
  * Closes a SSL connection.
  *
- * @param gsc The SSL connection to close.
+ * @gsc: The SSL connection to close.
  */
 void purple_ssl_close(PurpleSslConnection *gsc);
 
 /**
  * Reads data from an SSL connection.
  *
- * @param gsc    The SSL connection handle.
- * @param buffer The destination buffer.
- * @param len    The maximum number of bytes to read.
+ * @gsc:    The SSL connection handle.
+ * @buffer: The destination buffer.
+ * @len:    The maximum number of bytes to read.
  *
- * @return The number of bytes read.
+ * Returns: The number of bytes read.
  */
 size_t purple_ssl_read(PurpleSslConnection *gsc, void *buffer, size_t len);
 
 /**
  * Writes data to an SSL connection.
  *
- * @param gsc    The SSL connection handle.
- * @param buffer The buffer to write.
- * @param len    The length of the data to write.
+ * @gsc:    The SSL connection handle.
+ * @buffer: The buffer to write.
+ * @len:    The length of the data to write.
  *
- * @return The number of bytes written.
+ * Returns: The number of bytes written.
  */
 size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len);
 
 /**
  * Obtains the peer's presented certificates
  *
- * @param gsc    The SSL connection handle
+ * @gsc:    The SSL connection handle
  *
- * @return The peer certificate chain, in the order of certificate, issuer,
+ * Returns: The peer certificate chain, in the order of certificate, issuer,
  *         issuer's issuer, etc. @a NULL if no certificates have been provided,
  */
 GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
@@ -298,14 +298,14 @@ GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 /**
  * Sets the current SSL operations structure.
  *
- * @param ops The SSL operations structure to assign.
+ * @ops: The SSL operations structure to assign.
  */
 void purple_ssl_set_ops(PurpleSslOps *ops);
 
 /**
  * Returns the current SSL operations structure.
  *
- * @return The SSL operations structure.
+ * Returns: The SSL operations structure.
  */
 PurpleSslOps *purple_ssl_get_ops(void);
 

@@ -161,8 +161,8 @@
 /**
  * Sets an error for an account.
  *
- * @param account  The account to set the error for.
- * @param new_err  The #PurpleConnectionErrorInfo instance representing the
+ * @account:  The account to set the error for.
+ * @new_err:  The #PurpleConnectionErrorInfo instance representing the
  *                 error.
  */
 void _purple_account_set_current_error(PurpleAccount *account,
@@ -171,17 +171,17 @@ void _purple_account_set_current_error(PurpleAccount *account,
 /**
  * Get an XML description of an account.
  *
- * @param account  The account
- * @return  The XML description of the account.
+ * @account:  The account
+ * Returns:  The XML description of the account.
  */
 PurpleXmlNode *_purple_account_to_xmlnode(PurpleAccount *account);
 
 /**
  * Returns the last child of a particular node.
  *
- * @param node  The node whose last child is to be retrieved.
+ * @node:  The node whose last child is to be retrieved.
  *
- * @return The last child of the node.
+ * Returns: The last child of the node.
  */
 PurpleBlistNode *_purple_blist_get_last_child(PurpleBlistNode *node);
 
@@ -207,10 +207,10 @@ _purple_buddy_icons_blist_loaded_cb(void);
  *       in account.c.  If you're trying to sign on an account, use that
  *       function instead.
  *
- * @param account  The account the connection should be connecting to.
- * @param regist   Whether we are registering a new account or just
+ * @account:  The account the connection should be connecting to.
+ * @regist:   Whether we are registering a new account or just
  *                 trying to do a normal signon.
- * @param password The password to use.
+ * @password: The password to use.
  */
 void _purple_connection_new(PurpleAccount *account, gboolean regist,
                             const char *password);
@@ -221,10 +221,10 @@ void _purple_connection_new(PurpleAccount *account, gboolean regist,
  * @note This function should only be called by purple_account_unregister()
  *       in account.c.
  *
- * @param account  The account to unregister
- * @param password The password to use.
- * @param cb Optional callback to be called when unregistration is complete
- * @param user_data user data to pass to the callback
+ * @account:  The account to unregister
+ * @password: The password to use.
+ * @cb: Optional callback to be called when unregistration is complete
+ * @user_data: user data to pass to the callback
  */
 void _purple_connection_new_unregister(PurpleAccount *account, const char *password,
                                        PurpleAccountUnregistrationCb cb, void *user_data);
@@ -234,7 +234,7 @@ void _purple_connection_new_unregister(PurpleAccount *account, const char *passw
  * @note This function should only be called by purple_account_set_enabled()
  *       in account.c.
  *
- * @param gc  The connection to check
+ * @gc:  The connection to check
  */
 gboolean _purple_connection_wants_to_die(const PurpleConnection *gc);
 
@@ -244,8 +244,8 @@ gboolean _purple_connection_wants_to_die(const PurpleConnection *gc);
  * @note This function should only be called by serv_got_joined_chat()
  *       in server.c.
  *
- * @param gc    The connection
- * @param chat  The chat conversation to add
+ * @gc:    The connection
+ * @chat:  The chat conversation to add
  */
 void _purple_connection_add_active_chat(PurpleConnection *gc,
                                         PurpleChatConversation *chat);
@@ -255,8 +255,8 @@ void _purple_connection_add_active_chat(PurpleConnection *gc,
  * @note This function should only be called by serv_got_chat_left()
  *       in server.c.
  *
- * @param gc    The connection
- * @param chat  The chat conversation to remove
+ * @gc:    The connection
+ * @chat:  The chat conversation to remove
  */
 void _purple_connection_remove_active_chat(PurpleConnection *gc,
                                            PurpleChatConversation *chat);

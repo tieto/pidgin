@@ -45,14 +45,14 @@ void pidgin_status_window_hide(void);
  * Shows a status editor (used for adding a new saved status or
  * editing an already existing saved status).
  *
- * @param edit   TRUE if we want to edit an existing saved
+ * @edit:   TRUE if we want to edit an existing saved
  *               status or FALSE to create a new one.  You
  *               can not edit transient statuses--they don't
  *               have titles.  If you want to edit a transient
  *               status, set this to FALSE and seed the dialog
  *               with the transient status using the status
  *               parameter to this function.
- * @param status If edit is TRUE then this should be a
+ * @status: If edit is TRUE then this should be a
  *               pointer to the PurpleSavedStatus to edit.
  *               If edit is FALSE then this can be NULL,
  *               or you can pass in a saved status to
@@ -64,16 +64,16 @@ void pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *status);
  * Creates a dropdown menu of saved statuses and calls a callback
  * when one is selected
  *
- * @param status   The default saved_status to show as 'selected'
- * @param callback The callback to call when the selection changes
- * @return         The menu widget
+ * @status:   The default saved_status to show as 'selected'
+ * @callback: The callback to call when the selection changes
+ * Returns:         The menu widget
  */
 GtkWidget *pidgin_status_menu(PurpleSavedStatus *status, GCallback callback);
 
 /**
  * Returns the GTK+ status handle.
  *
- * @return The handle to the GTK+ status system.
+ * Returns: The handle to the GTK+ status system.
  */
 void *pidgin_status_get_handle(void);
 

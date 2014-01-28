@@ -82,11 +82,11 @@ GType pidgin_plugin_info_get_type(void);
  * which should be a callback that returns a GtkWidget for the plugin's
  * configuration (see PidginPluginConfigFrameCb).
  *
- * @param first_property  The first property name
- * @param ...  The value of the first property, followed optionally by more
+ * @first_property:  The first property name
+ * @...:  The value of the first property, followed optionally by more
  *             name/value pairs, followed by @c NULL
  *
- * @return A new #PidginPluginInfo instance.
+ * Returns: A new #PidginPluginInfo instance.
  *
  * @see purple_plugin_info_new()
  */

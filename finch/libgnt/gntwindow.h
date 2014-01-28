@@ -74,7 +74,7 @@ struct _GntWindowClass
 G_BEGIN_DECLS
 
 /**
- * @return  GType for GntWindow.
+ * Returns:  GType for GntWindow.
  */
 GType gnt_window_get_gtype(void);
 
@@ -84,35 +84,35 @@ GType gnt_window_get_gtype(void);
 /**
  * Create a new window.
  *
- * @return The newly created window.
+ * Returns: The newly created window.
  */
 GntWidget * gnt_window_new(void);
 
 /**
  * Create a new window.
  *
- * @param homo  @c TRUE if the widgets inside the window should have the same dimensions.
- * @param vert  @c TRUE if the widgets inside the window should be stacked vertically.
+ * @homo:  @c TRUE if the widgets inside the window should have the same dimensions.
+ * @vert:  @c TRUE if the widgets inside the window should be stacked vertically.
  *
- * @return  The newly created window.
+ * Returns:  The newly created window.
  */
 GntWidget * gnt_window_box_new(gboolean homo, gboolean vert);
 
 /**
  * Set the menu for a window.
  *
- * @param window  The window.
- * @param menu    The menu for the window.
+ * @window:  The window.
+ * @menu:    The menu for the window.
  */
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
 
 /**
  * Return the id of a menuitem specified to a keystroke.
  *
- * @param window    The window.
- * @param key       The keystroke.
+ * @window:    The window.
+ * @key:       The keystroke.
  *
- * @return The id of the menuitem bound to the keystroke, or @c NULL.
+ * Returns: The id of the menuitem bound to the keystroke, or @c NULL.
  *
  * @since 2.3.0
  */
@@ -121,8 +121,8 @@ const char * gnt_window_get_accel_item(GntWindow *window, const char *key);
 /**
  * Maximize a window, either horizontally or vertically, or both.
  *
- * @param window    The window to maximize.
- * @param maximize  The maximization state of the window.
+ * @window:    The window to maximize.
+ * @maximize:  The maximization state of the window.
  *
  * @since 2.3.0
  */
@@ -131,9 +131,9 @@ void gnt_window_set_maximize(GntWindow *window, GntWindowFlags maximize);
 /**
  * Get the maximization state of a window.
  *
- * @param window  The window.
+ * @window:  The window.
  *
- * @return  The maximization state of the window.
+ * Returns:  The maximization state of the window.
  *
  * @since 2.3.0
  */

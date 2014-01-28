@@ -65,14 +65,14 @@ G_BEGIN_DECLS
 /**
  * Registers a signal in an instance.
  *
- * @param instance   The instance to register the signal for.
- * @param signal     The signal name.
- * @param marshal    The marshal function.
- * @param ret_type   The return type, or G_TYPE_NONE for no return type.
- * @param num_values The number of values to be passed to the callbacks.
- * @param ...        The types of the parameters for the callbacks.
+ * @instance:   The instance to register the signal for.
+ * @signal:     The signal name.
+ * @marshal:    The marshal function.
+ * @ret_type:   The return type, or G_TYPE_NONE for no return type.
+ * @num_values: The number of values to be passed to the callbacks.
+ * @...:        The types of the parameters for the callbacks.
  *
- * @return The signal ID local to that instance, or 0 if the signal
+ * Returns: The signal ID local to that instance, or 0 if the signal
  *         couldn't be registered.
  */
 gulong purple_signal_register(void *instance, const char *signal,
@@ -82,26 +82,26 @@ gulong purple_signal_register(void *instance, const char *signal,
 /**
  * Unregisters a signal in an instance.
  *
- * @param instance The instance to unregister the signal for.
- * @param signal   The signal name.
+ * @instance: The instance to unregister the signal for.
+ * @signal:   The signal name.
  */
 void purple_signal_unregister(void *instance, const char *signal);
 
 /**
  * Unregisters all signals in an instance.
  *
- * @param instance The instance to unregister the signal for.
+ * @instance: The instance to unregister the signal for.
  */
 void purple_signals_unregister_by_instance(void *instance);
 
 /**
  * Returns a list of value types used for a signal.
  *
- * @param instance    The instance the signal is registered to.
- * @param signal      The signal.
- * @param ret_type    The return type.
- * @param num_values  The returned number of parameters.
- * @param param_types The returned list of parameter types.
+ * @instance:    The instance the signal is registered to.
+ * @signal:      The signal.
+ * @ret_type:    The return type.
+ * @num_values:  The returned number of parameters.
+ * @param_types: The returned list of parameter types.
  */
 void purple_signal_get_types(void *instance, const char *signal,
 							GType *ret_type, int *num_values,
@@ -113,17 +113,17 @@ void purple_signal_get_types(void *instance, const char *signal,
  * Take care not to register a handler function twice. Purple will
  * not correct any mistakes for you in this area.
  *
- * @param instance The instance to connect to.
- * @param signal   The name of the signal to connect.
- * @param handle   The handle of the receiver.
- * @param func     The callback function.
- * @param data     The data to pass to the callback function.
- * @param priority The priority with which the handler should be called. Signal
+ * @instance: The instance to connect to.
+ * @signal:   The name of the signal to connect.
+ * @handle:   The handle of the receiver.
+ * @func:     The callback function.
+ * @data:     The data to pass to the callback function.
+ * @priority: The priority with which the handler should be called. Signal
  *                 handlers are called in ascending numerical order of @a
  *                 priority from #PURPLE_SIGNAL_PRIORITY_LOWEST to
  *                 #PURPLE_SIGNAL_PRIORITY_HIGHEST.
  *
- * @return The signal handler ID.
+ * Returns: The signal handler ID.
  *
  * @see purple_signal_disconnect()
  */
@@ -137,13 +137,13 @@ gulong purple_signal_connect_priority(void *instance, const char *signal,
  * Take care not to register a handler function twice. Purple will
  * not correct any mistakes for you in this area.
  *
- * @param instance The instance to connect to.
- * @param signal   The name of the signal to connect.
- * @param handle   The handle of the receiver.
- * @param func     The callback function.
- * @param data     The data to pass to the callback function.
+ * @instance: The instance to connect to.
+ * @signal:   The name of the signal to connect.
+ * @handle:   The handle of the receiver.
+ * @func:     The callback function.
+ * @data:     The data to pass to the callback function.
  *
- * @return The signal handler ID.
+ * Returns: The signal handler ID.
  *
  * @see purple_signal_disconnect()
  */
@@ -159,17 +159,17 @@ gulong purple_signal_connect(void *instance, const char *signal,
  * Take care not to register a handler function twice. Purple will
  * not correct any mistakes for you in this area.
  *
- * @param instance The instance to connect to.
- * @param signal   The name of the signal to connect.
- * @param handle   The handle of the receiver.
- * @param func     The callback function.
- * @param data     The data to pass to the callback function.
- * @param priority The priority with which the handler should be called. Signal
+ * @instance: The instance to connect to.
+ * @signal:   The name of the signal to connect.
+ * @handle:   The handle of the receiver.
+ * @func:     The callback function.
+ * @data:     The data to pass to the callback function.
+ * @priority: The priority with which the handler should be called. Signal
  *                 handlers are called in ascending numerical order of @a
  *                 priority from #PURPLE_SIGNAL_PRIORITY_LOWEST to
  *                 #PURPLE_SIGNAL_PRIORITY_HIGHEST.
  *
- * @return The signal handler ID.
+ * Returns: The signal handler ID.
  *
  * @see purple_signal_disconnect()
  */
@@ -186,13 +186,13 @@ gulong purple_signal_connect_priority_vargs(void *instance, const char *signal,
  * Take care not to register a handler function twice. Purple will
  * not correct any mistakes for you in this area.
  *
- * @param instance The instance to connect to.
- * @param signal   The name of the signal to connect.
- * @param handle   The handle of the receiver.
- * @param func     The callback function.
- * @param data     The data to pass to the callback function.
+ * @instance: The instance to connect to.
+ * @signal:   The name of the signal to connect.
+ * @handle:   The handle of the receiver.
+ * @func:     The callback function.
+ * @data:     The data to pass to the callback function.
  *
- * @return The signal handler ID.
+ * Returns: The signal handler ID.
  *
  * @see purple_signal_disconnect()
  */
@@ -202,10 +202,10 @@ gulong purple_signal_connect_vargs(void *instance, const char *signal,
 /**
  * Disconnects a signal handler from a signal on an object.
  *
- * @param instance The instance to disconnect from.
- * @param signal   The name of the signal to disconnect.
- * @param handle   The handle of the receiver.
- * @param func     The registered function to disconnect.
+ * @instance: The instance to disconnect from.
+ * @signal:   The name of the signal to disconnect.
+ * @handle:   The handle of the receiver.
+ * @func:     The registered function to disconnect.
  *
  * @see purple_signal_connect()
  */
@@ -215,15 +215,15 @@ void purple_signal_disconnect(void *instance, const char *signal,
 /**
  * Removes all callbacks associated with a receiver handle.
  *
- * @param handle The receiver handle.
+ * @handle: The receiver handle.
  */
 void purple_signals_disconnect_by_handle(void *handle);
 
 /**
  * Emits a signal.
  *
- * @param instance The instance emitting the signal.
- * @param signal   The signal being emitted.
+ * @instance: The instance emitting the signal.
+ * @signal:   The signal being emitted.
  *
  * @see purple_signal_connect()
  * @see purple_signal_disconnect()
@@ -233,9 +233,9 @@ void purple_signal_emit(void *instance, const char *signal, ...);
 /**
  * Emits a signal, using a va_list of arguments.
  *
- * @param instance The instance emitting the signal.
- * @param signal   The signal being emitted.
- * @param args     The arguments list.
+ * @instance: The instance emitting the signal.
+ * @signal:   The signal being emitted.
+ * @args:     The arguments list.
  *
  * @see purple_signal_connect()
  * @see purple_signal_disconnect()
@@ -248,10 +248,10 @@ void purple_signal_emit_vargs(void *instance, const char *signal, va_list args);
  * Further signal handlers are NOT called after a handler returns
  * something other than NULL.
  *
- * @param instance The instance emitting the signal.
- * @param signal   The signal being emitted.
+ * @instance: The instance emitting the signal.
+ * @signal:   The signal being emitted.
  *
- * @return The first non-NULL return value
+ * Returns: The first non-NULL return value
  */
 void *purple_signal_emit_return_1(void *instance, const char *signal, ...);
 
@@ -261,11 +261,11 @@ void *purple_signal_emit_return_1(void *instance, const char *signal, ...);
  * Further signal handlers are NOT called after a handler returns
  * something other than NULL.
  *
- * @param instance The instance emitting the signal.
- * @param signal   The signal being emitted.
- * @param args     The arguments list.
+ * @instance: The instance emitting the signal.
+ * @signal:   The signal being emitted.
+ * @args:     The arguments list.
  *
- * @return The first non-NULL return value
+ * Returns: The first non-NULL return value
  */
 void *purple_signal_emit_vargs_return_1(void *instance, const char *signal,
 									  va_list args);

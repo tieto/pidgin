@@ -36,7 +36,7 @@
 /**
  * Returns the GNT idle UI ops.
  *
- * @return The UI operations structure.
+ * Returns: The UI operations structure.
  */
 PurpleIdleUiOps *finch_idle_get_ui_ops(void);
 

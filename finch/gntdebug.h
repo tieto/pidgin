@@ -36,7 +36,7 @@
 /**
  * Get the ui-functions.
  *
- * @return The PurpleDebugUiOps structure populated with the appropriate functions.
+ * Returns: The PurpleDebugUiOps structure populated with the appropriate functions.
  */
 PurpleDebugUiOps *finch_debug_get_ui_ops(void);
 

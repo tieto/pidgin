@@ -53,7 +53,7 @@ G_BEGIN_DECLS
 /**
  * Creates new Datasheet.
  *
- * @return The new datasheet.
+ * Returns: The new datasheet.
  */
 PurpleRequestDatasheet *
 purple_request_datasheet_new(void);
@@ -61,7 +61,7 @@ purple_request_datasheet_new(void);
 /**
  * Destroys datasheet with all its contents.
  *
- * @param sheet The datasheet.
+ * @sheet: The datasheet.
  */
 void
 purple_request_datasheet_free(PurpleRequestDatasheet *sheet);
@@ -71,9 +71,9 @@ purple_request_datasheet_free(PurpleRequestDatasheet *sheet);
  *
  * You cannot add a column if datasheet contains any data.
  *
- * @param sheet The datasheet.
- * @param type  The column type.
- * @param title The column title (may be @c NULL).
+ * @sheet: The datasheet.
+ * @type:  The column type.
+ * @title: The column title (may be @c NULL).
  */
 void
 purple_request_datasheet_add_column(PurpleRequestDatasheet *sheet,
@@ -82,9 +82,9 @@ purple_request_datasheet_add_column(PurpleRequestDatasheet *sheet,
 /**
  * Returns the column count of datasheet.
  *
- * @param sheet The datasheet.
+ * @sheet: The datasheet.
  *
- * @return The column count.
+ * Returns: The column count.
  */
 guint
 purple_request_datasheet_get_column_count(PurpleRequestDatasheet *sheet);
@@ -92,10 +92,10 @@ purple_request_datasheet_get_column_count(PurpleRequestDatasheet *sheet);
 /**
  * Returns the column type for a datasheet.
  *
- * @param sheet  The datasheet.
- * @param col_no The column number (0 is the first one).
+ * @sheet:  The datasheet.
+ * @col_no: The column number (0 is the first one).
  *
- * @return The column type.
+ * Returns: The column type.
  */
 PurpleRequestDatasheetColumnType
 purple_request_datasheet_get_column_type(PurpleRequestDatasheet *sheet,
@@ -104,10 +104,10 @@ purple_request_datasheet_get_column_type(PurpleRequestDatasheet *sheet,
 /**
  * Returns the column title for a datasheet.
  *
- * @param sheet  The datasheet.
- * @param col_no The column number (0 is the first one).
+ * @sheet:  The datasheet.
+ * @col_no: The column number (0 is the first one).
  *
- * @return The column title.
+ * Returns: The column title.
  */
 const gchar *
 purple_request_datasheet_get_column_title(PurpleRequestDatasheet *sheet,
@@ -118,9 +118,9 @@ purple_request_datasheet_get_column_title(PurpleRequestDatasheet *sheet,
  *
  * You shouldn't modify datasheet's data while iterating through it.
  *
- * @param sheet The datasheet.
+ * @sheet: The datasheet.
  *
- * @constreturn The list of records.
+ * Returns: (TODO const): The list of records.
  */
 const GList *
 purple_request_datasheet_get_records(PurpleRequestDatasheet *sheet);
@@ -130,8 +130,8 @@ purple_request_datasheet_get_records(PurpleRequestDatasheet *sheet);
  *
  * Action object is owned by the datasheet since this call.
  *
- * @param sheet  The datasheet.
- * @param action The action.
+ * @sheet:  The datasheet.
+ * @action: The action.
  */
 void
 purple_request_datasheet_add_action(PurpleRequestDatasheet *sheet,
@@ -140,9 +140,9 @@ purple_request_datasheet_add_action(PurpleRequestDatasheet *sheet,
 /**
  * Returns the list of actions in a datasheet.
  *
- * @param sheet The datasheet.
+ * @sheet: The datasheet.
  *
- * @constreturn The list of actions.
+ * Returns: (TODO const): The list of actions.
  */
 const GList *
 purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);
@@ -158,7 +158,7 @@ purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);
 /**
  * Creates new datasheet action.
  *
- * @return The new action.
+ * Returns: The new action.
  */
 PurpleRequestDatasheetAction *
 purple_request_datasheet_action_new(void);
@@ -166,7 +166,7 @@ purple_request_datasheet_action_new(void);
 /**
  * Destroys the datasheet action.
  *
- * @param act The action.
+ * @act: The action.
  */
 void
 purple_request_datasheet_action_free(PurpleRequestDatasheetAction *act);
@@ -174,8 +174,8 @@ purple_request_datasheet_action_free(PurpleRequestDatasheetAction *act);
 /**
  * Sets the localized label for the action.
  *
- * @param act   The action.
- * @param label The label.
+ * @act:   The action.
+ * @label: The label.
  */
 void
 purple_request_datasheet_action_set_label(PurpleRequestDatasheetAction *act,
@@ -184,9 +184,9 @@ purple_request_datasheet_action_set_label(PurpleRequestDatasheetAction *act,
 /**
  * Gets the label of action.
  *
- * @param act The action.
+ * @act: The action.
  *
- * @return The localized label text.
+ * Returns: The localized label text.
  */
 const gchar*
 purple_request_datasheet_action_get_label(PurpleRequestDatasheetAction *act);
@@ -194,9 +194,9 @@ purple_request_datasheet_action_get_label(PurpleRequestDatasheetAction *act);
 /**
  * Sets the callback for the action.
  *
- * @param act       The action.
- * @param cb        The callback function.
- * @param user_data The data to be passed to the callback function.
+ * @act:       The action.
+ * @cb:        The callback function.
+ * @user_data: The data to be passed to the callback function.
  */
 void
 purple_request_datasheet_action_set_cb(PurpleRequestDatasheetAction *act,
@@ -205,8 +205,8 @@ purple_request_datasheet_action_set_cb(PurpleRequestDatasheetAction *act,
 /**
  * Calls the callback of the action.
  *
- * @param act The action.
- * @param rec The user selected record.
+ * @act: The action.
+ * @rec: The user selected record.
  */
 void
 purple_request_datasheet_action_call(PurpleRequestDatasheetAction *act,
@@ -218,9 +218,9 @@ purple_request_datasheet_action_call(PurpleRequestDatasheetAction *act,
  * If there is no callback set, default is used: the action is enabled, if any
  * record is active.
  *
- * @param act       The action.
- * @param cb        The callback function, may be @c NULL.
- * @param user_data The data to be passed to the callback function.
+ * @act:       The action.
+ * @cb:        The callback function, may be @c NULL.
+ * @user_data: The data to be passed to the callback function.
  */
 void
 purple_request_datasheet_action_set_sens_cb(
@@ -230,10 +230,10 @@ purple_request_datasheet_action_set_sens_cb(
 /**
  * Checks, if the action is enabled for the active record.
  *
- * @param act The action.
- * @param rec The record.
+ * @act: The action.
+ * @rec: The record.
  *
- * @return @c TRUE, if the action is enabled, @c FALSE otherwise.
+ * Returns: @c TRUE, if the action is enabled, @c FALSE otherwise.
  */
 gboolean
 purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
@@ -250,9 +250,9 @@ purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
 /**
  * Returns the key of a record.
  *
- * @param rec The record.
+ * @rec: The record.
  *
- * @return The key.
+ * Returns: The key.
  */
 gpointer
 purple_request_datasheet_record_get_key(
@@ -261,9 +261,9 @@ purple_request_datasheet_record_get_key(
 /**
  * Returns the datasheet of a record.
  *
- * @param rec The record.
+ * @rec: The record.
  *
- * @return The datasheet.
+ * Returns: The datasheet.
  */
 PurpleRequestDatasheet *
 purple_request_datasheet_record_get_datasheet(
@@ -272,10 +272,10 @@ purple_request_datasheet_record_get_datasheet(
 /**
  * Looks up for a record in datasheet.
  *
- * @param sheet The datasheet.
- * @param key   The key.
+ * @sheet: The datasheet.
+ * @key:   The key.
  *
- * @return The record if found, @c NULL otherwise.
+ * Returns: The record if found, @c NULL otherwise.
  */
 PurpleRequestDatasheetRecord *
 purple_request_datasheet_record_find(PurpleRequestDatasheet *sheet,
@@ -286,10 +286,10 @@ purple_request_datasheet_record_find(PurpleRequestDatasheet *sheet,
  *
  * If the specified key already exists in datasheet, old record is returned.
  *
- * @param sheet The datasheet.
- * @param key   The key.
+ * @sheet: The datasheet.
+ * @key:   The key.
  *
- * @return The record.
+ * Returns: The record.
  */
 PurpleRequestDatasheetRecord *
 purple_request_datasheet_record_add(PurpleRequestDatasheet *sheet,
@@ -298,8 +298,8 @@ purple_request_datasheet_record_add(PurpleRequestDatasheet *sheet,
 /**
  * Removes a record from a datasheet.
  *
- * @param sheet The datasheet.
- * @param key   The key.
+ * @sheet: The datasheet.
+ * @key:   The key.
  */
 void
 purple_request_datasheet_record_remove(PurpleRequestDatasheet *sheet,
@@ -308,7 +308,7 @@ purple_request_datasheet_record_remove(PurpleRequestDatasheet *sheet,
 /**
  * Removes all records from a datasheet.
  *
- * @param sheet The datasheet.
+ * @sheet: The datasheet.
  */
 void
 purple_request_datasheet_record_remove_all(PurpleRequestDatasheet *sheet);
@@ -317,7 +317,7 @@ purple_request_datasheet_record_remove_all(PurpleRequestDatasheet *sheet);
  * Marks all records for removal. Record will be unmarked, when touched with
  * purple_request_datasheet_record_add.
  *
- * @param sheet The datasheet.
+ * @sheet: The datasheet.
  *
  * @see purple_request_datasheet_record_add.
  */
@@ -327,7 +327,7 @@ purple_request_datasheet_record_mark_all_for_rem(PurpleRequestDatasheet *sheet);
 /**
  * Removes all marked records.
  *
- * @param sheet The datasheet.
+ * @sheet: The datasheet.
  *
  * @see purple_request_datasheet_record_mark_all_for_rem.
  */
@@ -337,9 +337,9 @@ purple_request_datasheet_record_remove_marked(PurpleRequestDatasheet *sheet);
 /**
  * Sets data for a string column of specified record.
  *
- * @param rec    The record.
- * @param col_no The column.
- * @param data   The data.
+ * @rec:    The record.
+ * @col_no: The column.
+ * @data:   The data.
  */
 void
 purple_request_datasheet_record_set_string_data(
@@ -348,9 +348,9 @@ purple_request_datasheet_record_set_string_data(
 /**
  * Sets data for a image column of specified record.
  *
- * @param rec    The record.
- * @param col_no The column.
- * @param data   The stock identifier of a image.
+ * @rec:    The record.
+ * @col_no: The column.
+ * @data:   The stock identifier of a image.
  */
 void
 purple_request_datasheet_record_set_image_data(
@@ -359,10 +359,10 @@ purple_request_datasheet_record_set_image_data(
 /**
  * Returns data for a string column of specified record.
  *
- * @param rec    The record.
- * @param col_no The column.
+ * @rec:    The record.
+ * @col_no: The column.
  *
- * @return The data.
+ * Returns: The data.
  */
 const gchar *
 purple_request_datasheet_record_get_string_data(
@@ -371,10 +371,10 @@ purple_request_datasheet_record_get_string_data(
 /**
  * Returns data for an image column of specified record.
  *
- * @param rec    The record.
- * @param col_no The column.
+ * @rec:    The record.
+ * @col_no: The column.
  *
- * @return The stock id of an image.
+ * Returns: The stock id of an image.
  */
 const gchar *
 purple_request_datasheet_record_get_image_data(
