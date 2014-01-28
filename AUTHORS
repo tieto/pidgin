@@ -75,8 +75,8 @@ Hylke Bons - Icons
 
 Other Contributions:
 -------------------
-Much thanks to Evan Martin <martine@cs.washington.edu> for writing 
-GtkSpell <http://gtkspell.sourceforge.net> responsible for the 
+Much thanks to Evan Martin <martine@cs.washington.edu> for writing
+GtkSpell <http://gtkspell.sourceforge.net> responsible for the
 "Highlight misspelled words" feature and for gtk-nativewin
 <http://bunny.darktech.org/cvs/gtk-nativewin/> the default GTK+-2.0
 engine originally used in our win32 port.
@@ -84,11 +84,11 @@ engine originally used in our win32 port.
 ** ORIGINAL LOGO DESIGNED BY: Naru Sundar **
 
 Peter Teichiman <peter@helixcode.com>
-Larry Ewing 
+Larry Ewing
 Jeramey A. Crawford
 	Thanks to these boys.  Peter and Larry managed to stomp
 	out a large list of Mem Leaks.  Jeramey found the remaining
-	onees and pointed me to those.  Props to the boys at 
+	onees and pointed me to those.  Props to the boys at
 	Helix Code.  Thanks guys.
 
 Nathan Walp
@@ -99,15 +99,15 @@ Neil Sanchala
 
 Arkadiusz Miskiewicz
 	Wrote the Gadu-Gadu plugin
-	
-David Prater    <IM: dRaven43>          draven@tcsx.net   
+
+David Prater    <IM: dRaven43>          draven@tcsx.net
 	Log and Colour Button Images
 
 Sébastien Carpe <IM: Seb Carpe>
 	Base HTTP Proxy Support
 
 Ari Pollak      <IM: Ari Pollak>	compwiz.dhs.org
-	Resize conversation window patch   
+	Resize conversation window patch
 
 Decklin Foster
 	Many GUI improvements, other nifty additions and fixes
