@@ -1001,7 +1001,7 @@ jabber_stream_new(PurpleAccount *account)
 	js->user_jb->subscription |= JABBER_SUB_BOTH;
 
 	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
+			g_free, (GDestroyNotify)jabber_iq_callbackdata_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_chat_free);
 	js->next_id = g_random_int();

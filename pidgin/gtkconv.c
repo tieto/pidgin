@@ -9845,8 +9845,7 @@ notebook_remove_tab_from_menu_cb(GtkNotebook *notebook, GtkWidget *child,
 	GtkWidget *item;
 
 	/* Disconnecting the "child-notify::menu-label" signal. */
-	g_signal_handlers_disconnect_matched(child, G_SIGNAL_MATCH_DATA, 0, 0,
-			NULL, NULL, notebook);
+	g_signal_handlers_disconnect_by_data(child, notebook);
 
 	item = g_object_get_data(G_OBJECT(child), "popup-menu-item");
 	gtk_container_remove(GTK_CONTAINER(win->notebook_menu), item);

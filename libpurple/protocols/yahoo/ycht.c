@@ -415,13 +415,9 @@ static void ycht_packet_process(YchtConn *ycht, YchtPkt *pkt)
 
 static void ycht_packet_free(YchtPkt *pkt)
 {
-	GList *l;
-
 	g_return_if_fail(pkt != NULL);
 
-	for (l = pkt->data; l; l = l->next)
-		g_free(l->data);
-	g_list_free(pkt->data);
+	g_list_free_full(pkt->data, g_free);
 	g_free(pkt);
 }
 
@@ -626,7 +622,7 @@ int ycht_chat_send(YchtConn *ycht, const char *room, const char *what)
 	pkt = ycht_packet_new(YCHT_VERSION, YCHT_SERVICE_CHATMSG, 0);
 
 	msg1 = yahoo_html_to_codes(what);
-	msg2 = yahoo_string_encode(ycht->gc, msg1, NULL);
+	msg2 = yahoo_string_encode(ycht->gc, msg1, FALSE);
 	g_free(msg1);
 
 	buf = g_strdup_printf("%s\001%s", ycht->room, msg2);

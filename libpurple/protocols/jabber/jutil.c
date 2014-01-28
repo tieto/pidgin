@@ -511,6 +511,34 @@ jabber_id_free(JabberID *jid)
 	}
 }
 
+
+gboolean
+jabber_id_equal(JabberStream *js, const JabberID *jid1, const JabberID *jid2)
+{
+	const JabberID *j1, *j2;
+	JabberID *bare_user_jid;
+	gboolean equal;
+
+	/* If an outgoing stanza has no 'to', or an incoming has no 'from',
+	 * then those are "the server acting as my account". This function will
+	 * handle that correctly.
+	 */
+	if (!jid1 && !jid2)
+		return TRUE;
+
+	bare_user_jid = jabber_id_to_bare_jid(js->user);
+	j1 = jid1 ? jid1 : bare_user_jid;
+	j2 = jid2 ? jid2 : bare_user_jid;
+
+	equal = purple_strequal(j1->node, j2->node) &&
+			purple_strequal(j1->domain, j2->domain) &&
+			purple_strequal(j1->resource, j2->resource);
+
+	jabber_id_free(bare_user_jid);
+
+	return equal;
+}
+
 char *jabber_get_domain(const char *in)
 {
 	JabberID *jid = jabber_id_new(in);
@@ -539,6 +567,17 @@ char *jabber_get_resource(const char *in)
 	return out;
 }
 
+JabberID *
+jabber_id_to_bare_jid(const JabberID *jid)
+{
+	JabberID *result = g_new0(JabberID, 1);
+
+	result->node = g_strdup(jid->node);
+	result->domain = g_strdup(jid->domain);
+
+	return result;
+}
+
 char *
 jabber_get_bare_jid(const char *in)
 {
@@ -561,6 +600,19 @@ jabber_id_get_bare_jid(const JabberID *jid)
 	return g_strconcat(jid->node ? jid->node : "",
 	                   jid->node ? "@" : "",
 	                   jid->domain,
+	                   NULL);
+}
+
+char *
+jabber_id_get_full_jid(const JabberID *jid)
+{
+	g_return_val_if_fail(jid != NULL, NULL);
+
+	return g_strconcat(jid->node ? jid->node : "",
+	                   jid->node ? "@" : "",
+	                   jid->domain,
+	                   jid->resource ? "/" : "",
+	                   jid->resource ? jid->resource : "",
 	                   NULL);
 }
 

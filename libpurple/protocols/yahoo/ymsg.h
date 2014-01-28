@@ -330,14 +330,12 @@ yahoo_account_use_http_proxy(PurpleConnection *conn);
  *
  * @param gc The connection handle.
  * @param str The null terminated utf8 string to encode.
- * @param utf8 If not @c NULL, whether utf8 is okay or not.
- *             Even if it is okay, we may not use it. If we
- *             used it, we set this to @c TRUE, else to
- *             @c FALSE. If @c NULL, false is assumed, and
- *             it is not dereferenced.
- * @return The g_malloced string in the appropriate encoding.
+ * @param utf8 Whether to return a UTF-8 string.
+ * @return A g_malloc'ed string in the appropriate encoding. If jd->jp or
+ *         utf8 is true then the string is copied verbatim. Otherwise the
+ *         encoding from account settings is used.
  */
-char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8);
+gchar *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean utf8);
 
 /**
  * Decode some text received from the server.

@@ -771,10 +771,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 static void
 icq_shutdown(OscarData *od, aim_module_t *mod)
 {
-	GSList *cur;
-	for (cur = od->icq_info; cur; cur = cur->next)
-		aim_icq_freeinfo(cur->data);
-	g_slist_free(od->icq_info);
+	g_slist_free_full(od->icq_info, aim_icq_freeinfo);
 }
 
 int

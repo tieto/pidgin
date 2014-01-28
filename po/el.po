@@ -3,18 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Panayotis Katsaloulis <panayotis@panayotis.com>, 2005.
-# Panos Bouklis <panos@echidna-band.com>, 2012-2013.
-# Richard Laager <rlaager@wiktel.com>, 2011.
-# Ubuntu Greek Translators <ubuntu-gr@lists.ubuntu.com.>, 2005.
+# Panayotis Katsaloulis <panayotis@panayotis.com>, 2005
+# Panos Bouklis <panos@echidna-band.com>, 2012-2013
+# Richard Laager <rlaager@wiktel.com>, 2011
+# Ubuntu Greek Translators <ubuntu-gr@lists.ubuntu.com.>, 2005
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-11 00:04-0800\n"
-"PO-Revision-Date: 2013-01-30 20:02+0000\n"
-"Last-Translator: Panos Bouklis <panos@echidna-band.com>\n"
-"Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
+"POT-Creation-Date: 2014-01-21 22:23-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Greek (http://www.transifex.com/projects/p/pidgin/language/"
+"el/)\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3123,12 +3124,6 @@ msgstr ""
 "Το όνομα κεντρικού υπολογιστή ή ο αριθμός θύρας που ορίστηκαν για τον τύπο "
 "διαμεσολαβητή είναι λανθασμένα."
 
-msgid "Token Error"
-msgstr "Σφάλμα token"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Αδυναμία λήψης token.\n"
-
 msgid "Save Buddylist..."
 msgstr "Αποθήκευση λίστας φίλων..."
 
@@ -3156,39 +3151,6 @@ msgstr "Αποθήκευση λίστας φίλων..."
 
 msgid "Load buddylist from file..."
 msgstr "Φόρτωμα λίστας φίλων από αρχείο..."
-
-msgid "You must fill in all registration fields"
-msgstr "Πρέπει να συμπληρώσετε σωστά όλα τα πεδία εγγραφής"
-
-msgid "Passwords do not match"
-msgstr "Οι κωδικοί δεν ταιριάζουν"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Αδυναμία δημιουργίας νέου λογαριασμού. Συνέβη ένα άγνωστο σφάλμα."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Καταχωρήθηκε νέος λογαριασμός Gadu-Gadu"
-
-msgid "Registration completed successfully!"
-msgstr "Η καταχώρηση ολοκληρώθηκε με επιτυχία!"
-
-msgid "Password"
-msgstr "Κωδικός"
-
-msgid "Password (again)"
-msgstr "Κωδικός (ξανά)"
-
-msgid "Enter captcha text"
-msgstr "Εισάγετε το κείμενο captcha"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Καταχώρηση νέου λογαριασμού Gadu-Gadu"
-
-msgid "Please, fill in the following fields"
-msgstr "Παρακαλούμε, συμπληρώστε τα ακόλουθα πεδία"
 
 msgid "City"
 msgstr "Πόλη"
@@ -3218,41 +3180,6 @@ msgstr "Εύρεση φίλων"
 
 msgid "Please, enter your search criteria below"
 msgstr "Παρακαλούμε εισάγετε παρακάτω τα κριτήρια αναζήτηση"
-
-msgid "Fill in the fields."
-msgstr "Συμπληρώστε τα πεδία:"
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Ο τρέχων κωδικός σας είναι διαφορετικός από αυτόν που ορίσατε."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Αδυναμία αλλαγής του κωδικού πρόσβασης. Συνέβη ένα σφάλμα.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Αλλαγή κωδικού για το λογαριασμό Gadu-Gadu"
-
-msgid "Password was changed successfully!"
-msgstr "Ο κωδικός πρόσβασης άλλαξε με επιτυχία!"
-
-msgid "Current password"
-msgstr "Τρέχον κωδικός πρόσβασης"
-
-msgid "Password (retype)"
-msgstr "Κωδικός πρόσβασης (ξανά)"
-
-msgid "Enter current token"
-msgstr "Εισαγωγή τρέχοντος token"
-
-msgid "Current token"
-msgstr "Τρέχον token"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
-"Παρακαλούμε εισάγετε τον τρέχοντα και τον καινούριο κωδικό πρόσβασής σας για "
-"το UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Αλλαγή κωδικού πρόσβασης Gadu-Gadu"
 
 msgid "Show status to:"
 msgstr "Εμφάνιση κατάστασης σε:"
@@ -3325,18 +3252,6 @@ msgstr "Δε βρέθηκαν χρήστες που να ταιριάζουν μ
 msgid "Unable to read from socket"
 msgstr "Αδυναμία ανάγνωσης από τον υποδοχέα"
 
-msgid "Buddy list downloaded"
-msgstr "Η λίστα φίλων κατέβηκε"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Η λίστα φίλων σας κατέβηκε από τον εξυπηρετητή."
-
-msgid "Buddy list uploaded"
-msgstr "Η λίστα φίλων ανέβηκε"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Η λίστα φίλων σας ανέβηκε στον εξυπηρετητή."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3372,18 +3287,6 @@ msgstr "Δεν υπάρχει σύνδεση με τον εξυπηρετητή"
 
 msgid "Find buddies..."
 msgstr "Εύρεση φίλων..."
-
-msgid "Change password..."
-msgstr "Αλλαγή κωδικού..."
-
-msgid "Upload buddylist to Server"
-msgstr "Αποστολή λίστας φίλων στον εξυπηρετητή"
-
-msgid "Download buddylist from Server"
-msgstr "Λήψη λίστας φίλων από τον εξυπηρετητή"
-
-msgid "Delete buddylist from Server"
-msgstr "Διαγραφή λίστας φίλων από τον εξυπηρετητή"
 
 msgid "Save buddylist to file..."
 msgstr "Αποθήκευση λίστας φίλων σε αρχείο..."
@@ -3488,7 +3391,6 @@ msgstr "Αδυναμία σύνδεσης"
 msgid "Unable to connect: %s"
 msgstr "Αδυναμία σύνδεσης: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Ο εξυπηρετητής έκλεισε τη σύνδεση"
 
@@ -3526,6 +3428,9 @@ msgstr "Κωδικοποιήσεις"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr "Αυτόματος εντοπισμός εισερχόμενου UTF-8"
+
+msgid "Ident name"
+msgstr ""
 
 msgid "Real name"
 msgstr "Πραγματικό όνομα"
@@ -3579,6 +3484,14 @@ msgstr " <i>(αναγνωρισμένος)</i>"
 msgid "Nick"
 msgstr "Ψευδώνυμο"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Χωρίς όνομα"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Όνομα υπολογιστή"
+
 msgid "Currently on"
 msgstr "Παρών στα"
 
@@ -3608,7 +3521,7 @@ msgstr "Το θέμα συζήτησης του %s είναι: %s"
 
 #, c-format
 msgid "Topic for %s set by %s at %s on %s"
-msgstr ""
+msgstr "Το θέμα συζήτησης για το %s ορίστηκε από %s σε %s στις %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -4422,6 +4335,9 @@ msgstr "Ημερομηνία"
 msgid "Already Registered"
 msgstr "Ήδη καταχωρημένος"
 
+msgid "Password"
+msgstr "Κωδικός"
+
 msgid "Unregister"
 msgstr "Απεγγραφή"
 
@@ -4558,6 +4474,9 @@ msgstr "Ο κωδικός σας έχει αλλάξει."
 
 msgid "Error changing password"
 msgstr "Σφάλμα αλλαγής κωδικού"
+
+msgid "Password (again)"
+msgstr "Κωδικός (ξανά)"
 
 msgid "Change XMPP Password"
 msgstr "Αλλαγή κωδικού XMPP"
@@ -4784,6 +4703,10 @@ msgstr "Αδυναμία εκκίνησης πολυμέσων με %s: μη έ�
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "Αδυναμία εκκίνησης πολυμέσων με %s: ο χρήστης δεν είναι συνδεδεμένος"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr "Αδυναμία εκκίνησης πολυμέσων με %s: η πηγή δεν είναι συνδεδεμένη"
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -6271,6 +6194,14 @@ msgstr "Σχετικά..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Το αρχείο που προσπαθείτε να στείλετε είναι πολύ μεγάλο!"
+
+#. file read error
+msgid "Unable to access the local file"
+msgstr "Αδυναμία πρόσβασης στο τοπικό αρχείο"
+
+#. file write error
+msgid "Unable to save the file"
+msgstr "Αδυναμία αποθήκευσης αρχείου"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -10019,7 +9950,6 @@ msgstr ""
 "Ο λογαριασμός κλειδώθηκε επειδή υπήρξαν πολλές αποτυχημένες προσπάθειες "
 "εισόδου. Παρακαλούμε δοκιμάστε να συνδεθείτε στην ιστοσελίδα του Yahoo!."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Άγνωστο σφάλμα 52. Πιθανώς να διορθωθεί με επανασύνδεση."
 
@@ -11861,7 +11791,8 @@ msgstr "Διαχειριστής ιστοσελίδας"
 msgid "win32 port"
 msgstr "Έκδοση win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -12025,6 +11956,9 @@ msgstr "Κουρδικά"
 msgid "Lao"
 msgstr "Λαοτινά"
 
+msgid "Lithuanian"
+msgstr "Λιθουανικά"
+
 msgid "Maithili"
 msgstr "Μαϊθιλί"
 
@@ -12100,6 +12034,9 @@ msgstr "Αλβανικά"
 msgid "Serbian"
 msgstr "Σέρβικα"
 
+msgid "Serbian Latin"
+msgstr ""
+
 msgid "Sinhala"
 msgstr "Σινχάλα"
 
@@ -12117,9 +12054,6 @@ msgstr "Τελούγκου"
 
 msgid "Thai"
 msgstr "Ταϊλανδικά"
-
-msgid "Turkish"
-msgstr "Τούρκικα"
 
 msgid "Ukranian"
 msgstr "Ουκρανικά"
@@ -12142,8 +12076,8 @@ msgstr "Παραδοσιακά Κινέζικα"
 msgid "Amharic"
 msgstr "Αμχαρικά"
 
-msgid "Lithuanian"
-msgstr "Λιθουανικά"
+msgid "Turkish"
+msgstr "Τούρκικα"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh και ομάδα Gnome-Vi"
@@ -12176,7 +12110,6 @@ msgstr ""
 "\">Ιστοσελίδα</A><BR>\t<A HREF=\"%s\">Συχνές Ερωτήσεις</A><BR>\tΚανάλι IRC: "
 "#pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12894,6 +12827,9 @@ msgid ""
 msgstr ""
 "Έχει επιλεχθεί η 'με το χέρι' εντολή του περιηγητή, αλλά δεν έχει ορισθεί "
 "καμία εντολή."
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr ""
 
 msgid "No message"
 msgstr "Χωρίς μήνυμα"
@@ -14857,7 +14793,6 @@ msgstr "Εμφανίζει χρονόσημα στο στυλ του iChat κά�
 msgid "Timestamp Format Options"
 msgstr "Επιλογές μορφοποίησης χρονοσήμων"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Εξαναγκασμός μορφής ώρας:"
 
@@ -15058,6 +14993,55 @@ msgid ""
 msgstr ""
 "Παρέχει επιλογές ειδικά για το Pidgin για Windows, όπως είναι η προσάρτηση "
 "της λίστας φίλων."
+
+#. Alerts
+msgid "Chatroom alerts"
+msgstr ""
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr ""
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+msgid "Show number of unread _conversations on launcher icon"
+msgstr ""
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr ""
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Αποσυνδέθηκε.</font>"

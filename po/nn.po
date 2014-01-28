@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Yngve Spjeld Landro <l10n@landro.net>, 2011-2012.
-# Yngve Spjeld Landro <l10n@landro.net>, 2011-2012, 2012-2013.
+# Yngve Spjeld Landro <l10n@landro.net>, 2011-2012
+# Yngve Spjeld Landro <l10n@landro.net>, 2012-2013
+# Yngve Spjeld Landro <l10n@landro.net>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-11 00:04-0800\n"
-"PO-Revision-Date: 2013-02-07 22:35+0000\n"
-"Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
+"POT-Creation-Date: 2014-01-21 22:24-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
 "language/nn/)\n"
 "Language: nn\n"
@@ -3049,12 +3050,6 @@ msgid ""
 msgstr ""
 "Vertsnamnet eller portnummeret til det spesifiserte mellomlageret er ugyldig."
 
-msgid "Token Error"
-msgstr "Markørfeil"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Klarte ikkje å henta markøren.\n"
-
 msgid "Save Buddylist..."
 msgstr "Lagra vennelista …"
 
@@ -3082,39 +3077,6 @@ msgstr "Lagra vennelista …"
 
 msgid "Load buddylist from file..."
 msgstr "Hent vennelista frå fil …"
-
-msgid "You must fill in all registration fields"
-msgstr "Du må fylla ut alle registreringsfelta"
-
-msgid "Passwords do not match"
-msgstr "Passorda samsvarer ikkje"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Klarer ikkje å registrera ein ny konto. Det oppstod ein ukjend feil."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Ein ny Gadu-gadu-konto er registrert"
-
-msgid "Registration completed successfully!"
-msgstr "Registreringa er ferdig."
-
-msgid "Password"
-msgstr "Passord"
-
-msgid "Password (again)"
-msgstr "Passord (om att)"
-
-msgid "Enter captcha text"
-msgstr "Skriv teksten til tastetestbiletet"
-
-msgid "Captcha"
-msgstr "Tastetestbilete"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Registrera ny Gadu-Gadu-konto"
-
-msgid "Please, fill in the following fields"
-msgstr "Fyll ut følgjande felt"
 
 msgid "City"
 msgstr "By"
@@ -3144,39 +3106,6 @@ msgstr "Finn venner"
 
 msgid "Please, enter your search criteria below"
 msgstr "Skriv søkjekriteria nedanfor"
-
-msgid "Fill in the fields."
-msgstr "Fyll ut felta."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Det noverande passordet ditt er forskjellig frå det du oppgav."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Klarte ikkje å endra passordet. Ein feil oppstod.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Endra passordet til Gadu-Gadu-kontoen"
-
-msgid "Password was changed successfully!"
-msgstr "Passordet blei endra."
-
-msgid "Current password"
-msgstr "Noverande passord"
-
-msgid "Password (retype)"
-msgstr "Passord (éin gong til)"
-
-msgid "Enter current token"
-msgstr "Skriv inn noverande markør"
-
-msgid "Current token"
-msgstr "Noverande markør"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Skriv inn det noverande og det nye passordet til UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Endra Gadu-Gadu-passord"
 
 msgid "Show status to:"
 msgstr "Endra statusen til:"
@@ -3249,18 +3178,6 @@ msgstr "Det er ingen brukarar som høver til søkjekriteria dine."
 msgid "Unable to read from socket"
 msgstr "Klarte ikkje å lesa frå endepunktet"
 
-msgid "Buddy list downloaded"
-msgstr "Lasta ned venneliste"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Vennelista di blei henta frå tenaren."
-
-msgid "Buddy list uploaded"
-msgstr "Vennelista blei lasta opp"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Vennelista di blei lagra på tenaren."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3296,18 +3213,6 @@ msgstr "Ikkje tilkopla tenaren"
 
 msgid "Find buddies..."
 msgstr "Søk etter venner …"
-
-msgid "Change password..."
-msgstr "Endra passordet …"
-
-msgid "Upload buddylist to Server"
-msgstr "Last opp vennelista til tenaren"
-
-msgid "Download buddylist from Server"
-msgstr "Last ned vennelista frå tenaren"
-
-msgid "Delete buddylist from Server"
-msgstr "Slett vennelista frå tenaren"
 
 msgid "Save buddylist to file..."
 msgstr "Lagra vennelista til fil …"
@@ -3412,7 +3317,6 @@ msgstr "Klarte ikkje å kopla til"
 msgid "Unable to connect: %s"
 msgstr "Klarer ikkje å kopla til: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Tenaren lukka tilkoplinga"
 
@@ -3450,6 +3354,9 @@ msgstr "Teiknkodingar"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr "Automatisk oppdaging av innkomande UTF-8"
+
+msgid "Ident name"
+msgstr ""
 
 msgid "Real name"
 msgstr "Eigentleg namn"
@@ -3501,6 +3408,14 @@ msgstr " <i>(identifisert)</i>"
 msgid "Nick"
 msgstr "Kallenamn"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Ikkje noko namn"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Vertsnamn"
+
 msgid "Currently on"
 msgstr "Er no på"
 
@@ -3530,7 +3445,7 @@ msgstr "Emnet i %s er: %s"
 
 #, c-format
 msgid "Topic for %s set by %s at %s on %s"
-msgstr ""
+msgstr "Emnet i %s vart bestemt av %s (%s %s)"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -4327,6 +4242,9 @@ msgstr "Dato"
 msgid "Already Registered"
 msgstr "Allereie registrert"
 
+msgid "Password"
+msgstr "Passord"
+
 msgid "Unregister"
 msgstr "Avregistrer"
 
@@ -4459,6 +4377,9 @@ msgstr "Passordet ditt er blitt endra."
 
 msgid "Error changing password"
 msgstr "Klarte ikkje å endra passordet"
+
+msgid "Password (again)"
+msgstr "Passord (om att)"
 
 msgid "Change XMPP Password"
 msgstr "Endra XMPP-passord"
@@ -4685,6 +4606,10 @@ msgstr "Klarte ikkje å klargjera media med %s: ugyldig JID"
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "Klarte ikkje å klargjera media med %s: brukaren er ikkje tilkopla"
+
+#, c-format
+msgid "Unable to initiate media with %s: resource is not online"
+msgstr "Klarte ikkje å klargjera media med %s: ressursen er ikkje tilkopla"
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -6143,6 +6068,14 @@ msgstr "Om …"
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Meldinga du prøver å senda er for stor."
+
+#. file read error
+msgid "Unable to access the local file"
+msgstr "Får ikkje tilgang til den lokale fila"
+
+#. file write error
+msgid "Unable to save the file"
+msgstr "Klarte ikkje å lagra fila"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -9816,7 +9749,6 @@ msgstr ""
 "Kontoen er låst grunna for mange forsøk på å logga på. Logg deg på Yahoo! "
 "sin nettstad."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Ukjend feilnummer 52. Oppattilkopling burde ordna problemet."
 
@@ -11630,7 +11562,8 @@ msgstr "nettansvarleg"
 msgid "win32 port"
 msgstr "win32-port"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11794,6 +11727,9 @@ msgstr "Kurdisk"
 msgid "Lao"
 msgstr "Lao"
 
+msgid "Lithuanian"
+msgstr "Litauisk"
+
 msgid "Maithili"
 msgstr "Maithili"
 
@@ -11869,6 +11805,9 @@ msgstr "Albansk"
 msgid "Serbian"
 msgstr "Serbisk"
 
+msgid "Serbian Latin"
+msgstr ""
+
 msgid "Sinhala"
 msgstr "Singalesisk"
 
@@ -11886,9 +11825,6 @@ msgstr "Telugu"
 
 msgid "Thai"
 msgstr "Thai"
-
-msgid "Turkish"
-msgstr "Tyrkisk"
 
 msgid "Ukranian"
 msgstr "Ukrainsk"
@@ -11911,8 +11847,8 @@ msgstr "Tradisjonell kinesisk"
 msgid "Amharic"
 msgstr "Amharisk"
 
-msgid "Lithuanian"
-msgstr "Litauisk"
+msgid "Turkish"
+msgstr "Tyrkisk"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T. M. Thanh og Gnome-Vi-laget"
@@ -11945,7 +11881,6 @@ msgstr ""
 "#pidgin på irc.freenode.net<BR>\tXMPP fleirbrukarprat (MUC): "
 "devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12647,6 +12582,9 @@ msgstr "Klarte ikkje å starta \"%s\": %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "'Manuell' nettlesarkommando er vald, men ingen kommando er brukt."
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr ""
 
 msgid "No message"
 msgstr "Inga melding"
@@ -14565,7 +14503,6 @@ msgstr "Vis iChat-liknande tidsstempel kvart N minutt."
 msgid "Timestamp Format Options"
 msgstr "Formateringsval for tidsstempel"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Tving tidsstempelformatet:"
 
@@ -14765,6 +14702,55 @@ msgid ""
 msgstr ""
 "Tilbyr val som berre gjeld Pidgin under Windows, slik som festing av "
 "vennelista."
+
+#. Alerts
+msgid "Chatroom alerts"
+msgstr ""
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr ""
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+msgid "Show number of unread _conversations on launcher icon"
+msgstr ""
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr ""
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Utlogga</font>"

@@ -89,9 +89,11 @@ struct irc_conn {
 	GString *names;
 	struct _whois {
 		char *nick;
+		char *real;
+		char *login;
+		char *ident;
+		char *host;
 		char *away;
-		char *userhost;
-		char *name;
 		char *server;
 		char *serverinfo;
 		GString *channels;
@@ -206,8 +208,6 @@ void irc_msg_authok(struct irc_conn *irc, const char *name, const char *from, ch
 void irc_msg_authtryagain(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_authfail(struct irc_conn *irc, const char *name, const char *from, char **args);
 #endif
-
-void irc_msg_ignore(struct irc_conn *irc, const char *name, const char *from, char **args);
 
 void irc_cmd_table_build(struct irc_conn *irc);
 

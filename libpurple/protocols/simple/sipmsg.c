@@ -35,6 +35,8 @@
 #include "simple.h"
 #include "sipmsg.h"
 
+#define MAX_CONTENT_LENGTH 30000000
+
 struct sipmsg *sipmsg_parse_msg(const gchar *msg) {
 	const char *tmp = strstr(msg, "\r\n\r\n");
 	char *line;
@@ -114,6 +116,16 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 	tmp2 = sipmsg_find_header(msg, "Content-Length");
 	if (tmp2 != NULL)
 		msg->bodylen = strtol(tmp2, NULL, 10);
+	if (msg->bodylen < 0) {
+		purple_debug_warning("simple", "Invalid body length: %d",
+			msg->bodylen);
+		msg->bodylen = 0;
+	} else if (msg->bodylen > MAX_CONTENT_LENGTH) {
+		purple_debug_warning("simple", "Got Content-Length of %d bytes on "
+				"incoming message (max is %u bytes). Ignoring message body.\n",
+				msg->bodylen, MAX_CONTENT_LENGTH);
+		msg->bodylen = 0;
+	}
 
 	if(msg->response) {
 		tmp2 = sipmsg_find_header(msg, "CSeq");

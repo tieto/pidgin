@@ -79,36 +79,88 @@ version 3.0.0 (??/??/????):
 	  non-native plugin support.
 	* Doxygen has been replaced by gtk-doc for generating documentation.
 
-version 2.10.8:
+version 2.10.8 (1/28/2014):
 	General:
 	* Python build scripts and example plugins are now compatible with
 	  Python 3. (Ashish Gupta) (#15624)
 
 	libpurple:
+	* Fix potential crash if libpurple gets an error attempting to read a
+	  reply from a STUN server. (Discovered by Coverity static analysis)
+	  (CVE-2013-6484)
+	* Fix potential crash parsing a malformed HTTP response. (Discovered by
+	  Jacob Appelbaum of the Tor Project) (CVE-2013-6479)
+	* Fix buffer overflow when parsing a malformed HTTP response with
+	  chunked Transfer-Encoding. (Discovered by Matt Jones, Volvent)
+	  (CVE-2013-6485)
+	* Better handling of HTTP proxy responses with negative Content-Lengths.
+	  (Discovered by Matt Jones, Volvent)
 	* Fix handling of SSL certificates without subjects when using libnss.
 	* Fix handling of SSL certificates with timestamps in the distant future
 	  when using libnss. (#15586)
+	* Impose maximum download size for all HTTP fetches.
 
 	Pidgin:
+	* Fix crash displaying tooltip of long URLs. (CVE-2013-6478)
 	* Better handling of URLs longer than 1000 letters.
 	* Fix handling of multibyte UTF-8 characters in smiley themes. (#15756)
 
 	Windows-Specific Changes:
+	* When clicking file:// links, show the file in Explorer rather than
+	  attempting to run the file. This reduces the chances of a user
+	  clicking on a link and mistakenly running a malicious file.
+	  (Originally discovered by James Burton, Insomnia Security. Rediscovered
+	  by Yves Younan of Sourcefire VRT.) (CVE-2013-6486)
 	* Fix Tcl scripts. (#15520)
 	* Fix crash-on-startup when ASLR is always on. (#15521)
 	* Updates to dependencies:
-		* NSS 3.15.3 and NSPR 4.10.2
+		* NSS 3.15.4 and NSPR 4.10.2
+		* Pango 1.29.4-1daa
+			Patched for https://bugzilla.gnome.org/show_bug.cgi?id=668154
+
+	AIM:
+	* Fix untrusted certificate error.
+
+	AIM and ICQ:
+	* Fix a possible crash when receiving a malformed message in a Direct IM
+	  session.
 
 	Gadu-Gadu:
+	* Fix buffer overflow with remote code execution potential. Only
+	  triggerable by a Gadu-Gadu server or a man-in-the-middle.
+	  (Discovered by Yves Younan and Ryan Pentney of Sourcefire VRT)
+	  (CVE-2013-6487)
 	* Disabled buddy list import/export from/to server (it didn't work
 	  anymore). Buddy list synchronization will be implemented in 3.0.0.
+	* Disabled new account registration and password change options, as it
+	  didn't work either. Account registration also caused a crash. Both
+	  functions are available using official Gadu-Gadu website.
 
 	IRC:
+	* Fix bug where a malicious server or man-in-the-middle could trigger
+	  a crash by not sending enough arguments with various messages.
+	  (Discovered by Daniel Atallah) (CVE-2014-0020)
 	* Fix bug where initial IRC status would not be set correctly.
 	* Fix bug where IRC wasn't available when libpurple was compiled with
 	  Cyrus SASL support. (#15517)
 
+	MSN:
+	* Fix NULL pointer dereference parsing headers in MSN.
+	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
+	  University of Goettingen) (CVE-2013-6482)
+	* Fix NULL pointer dereference parsing OIM data in MSN.
+	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
+	  University of Goettingen) (CVE-2013-6482)
+	* Fix NULL pointer dereference parsing SOAP data in MSN.
+	  (Discovered by Fabian Yamaguchi and Christian Wressnegger of the
+	  University of Goettingen) (CVE-2013-6482)
+	* Fix possible crash when sending very long messages. Not
+	  remotely-triggerable. (Discovered by Matt Jones, Volvent)
+
 	MXit:
+	* Fix buffer overflow with remote code execution potential.
+	  (Discovered by Yves Younan and Pawel Janic of Sourcefire VRT)
+	  (CVE-2013-6489)
 	* Fix sporadic crashes that can happen after user is disconnected.
 	* Fix crash when attempting to add a contact via search results.
 	* Show error message if file transfer fails.
@@ -118,7 +170,17 @@ version 2.10.8:
 	SILC:
 	* Correctly set whiteboard dimensions in whiteboard sessions.
 
+	SIMPLE:
+	* Fix buffer overflow with remote code execution potential.
+	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2013-6490)
+
 	XMPP:
+	* Prevent spoofing of iq replies by verifying that the 'from' address
+	  matches the 'to' address of the iq request. (Discovered by Fabian
+	  Yamaguchi and Christian Wressnegger of the University of Goettingen,
+	  fixed by Thijs Alkemade) (CVE-2013-6483)
+	* Fix crash on some systems when receiving fake delay timestamps with
+	  extreme values. (Discovered by Jaime Breva Ribes) (CVE-2013-6477)
 	* Fix possible crash or other erratic behavior when selecting a very
 	  small file for your own buddy icon.
 	* Fix crash if the user tries to initiate a voice/video session with a
@@ -126,6 +188,14 @@ version 2.10.8:
 	* Fix login errors when the first two available auth mechanisms fail but
 	  a subsequent mechanism would otherwise work when using Cyrus SASL.
 	  (#15524)
+	* Fix dropping incoming stanzas on BOSH connections when we receive
+	  multiple HTTP responses at once. (Issa Gorissen) (#15684)
+
+	Yahoo!:
+	* Fix possible crashes handling incoming strings that are not UTF-8.
+	  (Discovered by Thijs Alkemade and Robert Vehse) (CVE-2012-6152)
+	* Fix a bug reading a peer to peer message where a remote user could
+	  trigger a crash. (CVE-2013-6481)
 
 	Plugins:
 	* Fix crash in contact availability plugin.

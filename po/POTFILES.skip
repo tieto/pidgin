@@ -36,7 +36,8 @@ libpurple/plugins/perl/common/Stringref.c
 libpurple/plugins/perl/common/Util.c
 libpurple/plugins/perl/common/Whiteboard.c
 libpurple/plugins/perl/common/XMLNode.c
-libpurple/protocols/null/nullprotocol.c
+libpurple/protocols/null/nullprpl.c
+pidgin.desktop.in.in
 pidgin/plugins/crazychat/cc_pidgin_plugin.c
 pidgin/plugins/perl/common/GtkAccount.c
 pidgin/plugins/perl/common/GtkBlist.c

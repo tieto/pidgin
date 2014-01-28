@@ -490,6 +490,14 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	account  = purple_connection_get_account(gc);
 
+	if (mtime < 0) {
+		purple_debug_error("server",
+				"serv_got_im ignoring negative timestamp\n");
+		/* TODO: Would be more appropriate to use a value that indicates
+		   that the timestamp is unknown, and surface that in the UI. */
+		mtime = time(NULL);
+	}
+
 	/*
 	 * XXX: Should we be setting this here, or relying on protocols to set it?
 	 */
@@ -815,6 +823,14 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
+
+	if (mtime < 0) {
+		purple_debug_error("server",
+				"serv_got_chat_in ignoring negative timestamp\n");
+		/* TODO: Would be more appropriate to use a value that indicates
+		   that the timestamp is unknown, and surface that in the UI. */
+		mtime = time(NULL);
+	}
 
 	for (bcs = purple_connection_get_active_chats(g); bcs != NULL; bcs = bcs->next) {
 		if (purple_chat_conversation_get_id(
