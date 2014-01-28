@@ -39,6 +39,7 @@
 #include "cmds.h"
 #include "core.h"
 #include "debug.h"
+#include "glibcompat.h"
 #include "idle.h"
 #include "imgstore.h"
 #include "log.h"

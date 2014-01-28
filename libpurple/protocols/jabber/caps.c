@@ -469,6 +469,7 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 			hasher = purple_md5_hash_new();
 		}
 		hash = jabber_caps_calculate_hash(info, hasher);
+		g_object_unref(hasher);
 
 		if (!hash || !g_str_equal(hash, userdata->ver)) {
 			purple_debug_warning("jabber", "Could not validate caps info from "
@@ -484,7 +485,6 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 		}
 
 		g_free(hash);
-		g_object_unref(hasher);
 	}
 
 	if (!userdata->hash && userdata->node_exts) {
@@ -814,7 +814,6 @@ static void
 append_escaped_string(PurpleHash *hash, const gchar *str)
 {
 	g_return_if_fail(hash != NULL);
-	g_object_ref(hash);
 
 	if (str && *str) {
 		char *tmp = g_markup_escape_text(str, -1);
@@ -823,7 +822,6 @@ append_escaped_string(PurpleHash *hash, const gchar *str)
 	}
 
 	purple_hash_append(hash, (const guchar *)"<", 1);
-	g_object_unref(hash);
 }
 
 gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
@@ -835,8 +833,6 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
 
 	if (!info || !hash)
 		return NULL;
-
-	g_object_ref(hash);
 
 	/* sort identities, features and x-data forms */
 	info->identities = g_list_sort(info->identities, jabber_identity_compare);
@@ -912,8 +908,6 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
 	/* generate hash */
 	success = purple_hash_digest(hash, checksum, checksum_size);
 	checksum_size = purple_hash_get_digest_size(hash);
-
-	g_object_unref(hash);
 
 	return (success ? purple_base64_encode(checksum, checksum_size) : NULL);
 }

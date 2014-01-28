@@ -27,6 +27,7 @@
 
 #include "internal.h"
 
+#include "glibcompat.h"
 #include "notify.h"
 #include "request.h"
 #include "debug.h"

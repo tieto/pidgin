@@ -28,7 +28,7 @@
 #include "account.h"
 #include "dbus-maybe.h"
 #include "debug.h"
-#include "internal.h"
+#include "glibcompat.h"
 #include "log.h"
 #include "prefs.h"
 #include "util.h"

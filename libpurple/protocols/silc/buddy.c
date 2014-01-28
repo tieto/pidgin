@@ -18,6 +18,7 @@
 */
 
 #include "internal.h"
+#include "glibcompat.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"

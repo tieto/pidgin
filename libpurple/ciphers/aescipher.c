@@ -362,7 +362,8 @@ purple_aes_cipher_nss_crypt(const guchar *input, guchar *output, size_t len,
 		return FALSE;
 	}
 
-	ret = PK11_CipherOp(context.enc_context, output, &outlen, len, input, len);
+	ret = PK11_CipherOp(context.enc_context, output, &outlen, len,
+			(guchar *)input, len);
 	if (ret != SECSuccess) {
 		purple_debug_error("cipher-aes",
 			"PK11_CipherOp failed: %d\n", PR_GetError());

@@ -1,6 +1,7 @@
 #include "message-prpl.h"
 
 #include <debug.h>
+#include <glibcompat.h>
 
 #include "gg.h"
 #include "chat.h"

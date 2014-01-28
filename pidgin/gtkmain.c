@@ -30,7 +30,7 @@
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "xfer.h"
+#include "glibcompat.h"
 #include "log.h"
 #include "network.h"
 #include "notify.h"
@@ -41,6 +41,7 @@
 #include "status.h"
 #include "util.h"
 #include "whiteboard.h"
+#include "xfer.h"
 
 #include "gtkaccount.h"
 #include "gtkblist.h"

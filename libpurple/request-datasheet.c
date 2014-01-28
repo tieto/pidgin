@@ -27,6 +27,7 @@
 #include "request-datasheet.h"
 
 #include "debug.h"
+#include "glibcompat.h"
 #include "signals.h"
 
 struct _PurpleRequestDatasheet
