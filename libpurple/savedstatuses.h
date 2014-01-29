@@ -169,7 +169,7 @@ void purple_savedstatus_delete_by_status(PurpleSavedStatus *saved_status);
 /**
  * Returns all saved statuses.
  *
- * Returns: (TODO const): A list of saved statuses.
+ * Returns: (transfer none): A list of saved statuses.
  */
 GList *purple_savedstatuses_get_all(void);
 

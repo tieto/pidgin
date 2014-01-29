@@ -485,7 +485,7 @@ void purple_request_fields_add_group(PurpleRequestFields *fields,
  *
  * @fields: The fields list.
  *
- * Returns: (TODO const): A list of groups.
+ * Returns: (transfer none): A list of groups.
  */
 GList *purple_request_fields_get_groups(const PurpleRequestFields *fields);
 
@@ -526,7 +526,7 @@ gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
  *
  * @fields: The fields list.
  *
- * Returns: (TODO const): The list of required fields.
+ * Returns: (transfer none): The list of required fields.
  */
 const GList *purple_request_fields_get_required(
 	const PurpleRequestFields *fields);
@@ -536,7 +536,7 @@ const GList *purple_request_fields_get_required(
  *
  * @fields: The fields list.
  *
- * Returns: (TODO const): The list of validated fields.
+ * Returns: (transfer none): The list of validated fields.
  */
 const GList *purple_request_fields_get_validatable(
 	const PurpleRequestFields *fields);
@@ -546,7 +546,7 @@ const GList *purple_request_fields_get_validatable(
  *
  * @fields: The fields list.
  *
- * Returns: (TODO const): The list of fields with automatic sensitivity callback.
+ * Returns: (transfer none): The list of fields with automatic sensitivity callback.
  */
 const GList *
 purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
@@ -736,7 +736,7 @@ const char *purple_request_field_group_get_title(
  *
  * @group: The group.
  *
- * Returns: (TODO const): The list of fields in the group.
+ * Returns: (transfer none): The list of fields in the group.
  */
 GList *purple_request_field_group_get_fields(
 		const PurpleRequestFieldGroup *group);
@@ -746,7 +746,7 @@ GList *purple_request_field_group_get_fields(
  *
  * @group: The group.
  *
- * Returns: (TODO const): The list of fields in the group.
+ * Returns: (transfer none): The list of fields in the group.
  */
 PurpleRequestFields *purple_request_field_group_get_fields_list(
 		const PurpleRequestFieldGroup *group);
@@ -1304,7 +1304,7 @@ purple_request_field_choice_get_value(const PurpleRequestField *field);
  *
  * @field: The field.
  *
- * Returns: (TODO const): The list of pairs <label, value>.
+ * Returns: (transfer none): The list of pairs <label, value>.
  */
 GList *
 purple_request_field_choice_get_elements(const PurpleRequestField *field);
@@ -1422,7 +1422,7 @@ gboolean purple_request_field_list_is_selected(const PurpleRequestField *field,
  *
  * @field: The field.
  *
- * Returns: (TODO const): The list of selected items.
+ * Returns: (transfer none): The list of selected items.
  */
 GList *purple_request_field_list_get_selected(
 	const PurpleRequestField *field);
@@ -1432,7 +1432,7 @@ GList *purple_request_field_list_get_selected(
  *
  * @field: The field.
  *
- * Returns: (TODO const): The list of items.
+ * Returns: (transfer none): The list of items.
  */
 GList *purple_request_field_list_get_items(const PurpleRequestField *field);
 
@@ -1443,7 +1443,7 @@ GList *purple_request_field_list_get_items(const PurpleRequestField *field);
  *
  * @field: The field.
  *
- * Returns: (TODO const): The list of icons or %NULL (i.e. the empty GList) if no
+ * Returns: (transfer none): The list of icons or %NULL (i.e. the empty GList) if no
  *              items have icons.
  */
 GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
@@ -1694,7 +1694,7 @@ PurpleRequestField *purple_request_field_datasheet_new(const char *id,
  *
  * @field: The field.
  *
- * Returns: (TODO const): The datasheet object.
+ * Returns: (transfer none): The datasheet object.
  */
 PurpleRequestDatasheet *purple_request_field_datasheet_get_sheet(
 	PurpleRequestField *field);

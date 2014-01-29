@@ -83,7 +83,7 @@ void purple_plugin_pref_frame_add(PurplePluginPrefFrame *frame, PurplePluginPref
  * Get the plugin preferences from a plugin preference frame
  *
  * @frame: The plugin frame to get the plugin preferences from
- * Returns: (TODO const): a GList of plugin preferences
+ * Returns: (transfer none): a GList of plugin preferences
  */
 GList *purple_plugin_pref_frame_get_prefs(PurplePluginPrefFrame *frame);
 
@@ -205,7 +205,7 @@ void purple_plugin_pref_add_choice(PurplePluginPref *pref, const char *label, gp
  * Get the choices for a choices plugin pref
  *
  * @pref: The plugin pref
- * Returns: (TODO const): GList of the choices
+ * Returns: (transfer none): GList of the choices
  */
 GList *purple_plugin_pref_get_choices(PurplePluginPref *pref);
 

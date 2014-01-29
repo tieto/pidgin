@@ -134,7 +134,7 @@ void purple_accounts_reorder(PurpleAccount *account, guint new_index);
 /**
  * Returns a list of all accounts.
  *
- * Returns: (TODO const): A list of all accounts.
+ * Returns: (transfer none): A list of all accounts.
  */
 GList *purple_accounts_get_all(void);
 

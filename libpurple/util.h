@@ -1439,7 +1439,7 @@ void purple_restore_default_signal_handlers(void);
  * Gets the host name of the machine. If it not possible to determine the
  * host name, "localhost" is returned
  *
- * Returns: (TODO const): The hostname
+ * Returns: The hostname
  */
 const gchar *purple_get_host_name(void);
 

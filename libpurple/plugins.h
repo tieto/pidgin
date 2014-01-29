@@ -485,7 +485,7 @@ gboolean purple_plugin_is_internal(const PurplePlugin *plugin);
  *
  * @plugin: The plugin whose dependent plugins are returned.
  *
- * Returns: (TODO const): The list of a plugins that depend on the specified plugin.
+ * Returns: (transfer none): The list of a plugins that depend on the specified plugin.
  */
 GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
 
@@ -810,7 +810,7 @@ GList *purple_plugins_find_all(void);
 /**
  * Returns a list of all loaded plugins.
  *
- * Returns: (TODO const): A list of all loaded plugins.
+ * Returns: (transfer none): A list of all loaded plugins.
  */
 GList *purple_plugins_get_loaded(void);
 
