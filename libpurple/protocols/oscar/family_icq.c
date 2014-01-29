@@ -23,6 +23,8 @@
  *
  */
 
+#include "glibcompat.h"
+
 #include "encoding.h"
 #include "oscar.h"
 
@@ -771,7 +773,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 static void
 icq_shutdown(OscarData *od, aim_module_t *mod)
 {
-	g_slist_free_full(od->icq_info, aim_icq_freeinfo);
+	g_slist_free_full(od->icq_info, (GDestroyNotify)aim_icq_freeinfo);
 }
 
 int
