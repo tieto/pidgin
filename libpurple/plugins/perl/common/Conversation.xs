@@ -90,12 +90,6 @@ void
 purple_conversations_remove(conv)
     Purple::Conversation conv
 
-void
-purple_conversations_update_cache(conv, name, account)
-	Purple::Conversation conv
-	const char * name
-	Purple::Account account
-
 Purple::Handle
 purple_conversations_get_handle()
 

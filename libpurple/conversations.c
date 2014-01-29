@@ -115,7 +115,7 @@ purple_conversations_remove(PurpleConversation *conv)
 }
 
 void
-purple_conversations_update_cache(PurpleConversation *conv, const char *name,
+_purple_conversations_update_cache(PurpleConversation *conv, const char *name,
 		PurpleAccount *account)
 {
 	PurpleAccount *old_account;

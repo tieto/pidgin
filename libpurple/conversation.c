@@ -335,7 +335,7 @@ purple_conversation_set_account(PurpleConversation *conv, PurpleAccount *account
 	if (account == purple_conversation_get_account(conv))
 		return;
 
-	purple_conversations_update_cache(conv, NULL, account);
+	_purple_conversations_update_cache(conv, NULL, account);
 	priv->account = account;
 
 	g_object_notify_by_pspec(G_OBJECT(conv), properties[PROP_ACCOUNT]);
@@ -428,7 +428,7 @@ purple_conversation_set_name(PurpleConversation *conv, const char *name)
 
 	g_return_if_fail(priv != NULL);
 
-	purple_conversations_update_cache(conv, name, NULL);
+	_purple_conversations_update_cache(conv, name, NULL);
 
 	g_free(priv->name);
 	priv->name = g_strdup(name);

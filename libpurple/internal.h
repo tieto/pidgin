@@ -264,6 +264,21 @@ void _purple_connection_remove_active_chat(PurpleConnection *gc,
                                            PurpleChatConversation *chat);
 
 /**
+ * Updates the conversation cache to use a new conversation name and/or
+ * account. This function only updates the conversation cache. It is the
+ * caller's responsibility to actually update the conversation.
+ *
+ * @note This function should only be called by purple_conversation_set_name()
+ *       and purple_conversation_set_account() in conversation.c.
+ *
+ * @param conv    The conversation.
+ * @param name    The new name. If no change, use @c NULL.
+ * @param account The new account. If no change, use @c NULL.
+ */
+void _purple_conversations_update_cache(PurpleConversation *conv,
+		const char *name, PurpleAccount *account);
+
+/**
  * Returns the primitive scores array from status.c.
  *
  * @note This function should only be called by
