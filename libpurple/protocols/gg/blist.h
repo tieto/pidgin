@@ -25,7 +25,6 @@
 #define _PURPLE_GG_BLIST_H
 
 #include "connection.h"
-#include "account.h"
 
 void
 ggp_buddylist_send(PurpleConnection *gc);

@@ -44,7 +44,6 @@
 #include "blist.h"
 #include "utils.h"
 #include "resolver-purple.h"
-#include "account.h"
 #include "deprecated.h"
 #include "purplew.h"
 #include "libgadu-events.h"
@@ -900,11 +899,6 @@ static void ggp_action_multilogon(PurpleProtocolAction *action)
 	ggp_multilogon_dialog(action->connection);
 }
 
-static void ggp_action_chpass(PurpleProtocolAction *action)
-{
-	ggp_account_chpass(action->connection);
-}
-
 static void ggp_action_status_broadcasting(PurpleProtocolAction *action)
 {
 	ggp_status_broadcasting_dialog(action->connection);
@@ -924,10 +918,6 @@ static GList *ggp_get_actions(PurpleConnection *gc)
 {
 	GList *m = NULL;
 	PurpleProtocolAction *act;
-
-	act = purple_protocol_action_new(_("Change password..."),
-		ggp_action_chpass);
-	m = g_list_append(m, act);
 
 	act = purple_protocol_action_new(_("Show other sessions"),
 		ggp_action_multilogon);
@@ -1001,8 +991,7 @@ ggp_protocol_init(PurpleProtocol *protocol)
 
 	protocol->id        = "prpl-gg";
 	protocol->name      = "Gadu-Gadu";
-	protocol->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
-	                      OPT_PROTO_IM_IMAGE;
+	protocol->options   = OPT_PROTO_IM_IMAGE;
 	protocol->icon_spec = purple_buddy_icon_spec_new("png",
 	                                                 1, 1, 200, 200, 0,
 	                                                 PURPLE_ICON_SCALE_DISPLAY |
@@ -1072,7 +1061,6 @@ ggp_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
 static void
 ggp_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
 {
-	server_iface->register_user  = ggp_account_register;
 	server_iface->get_info       = ggp_pubdir_get_info_protocol;
 	server_iface->set_status     = ggp_status_set_purplestatus;
 	server_iface->add_buddy      = ggp_add_buddy;

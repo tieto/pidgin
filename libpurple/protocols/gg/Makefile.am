@@ -55,8 +55,6 @@ GADU_LIBS += $(JSON_LIBS)
 
 GGSOURCES = \
 	$(INTGGSOURCES) \
-	account.c \
-	account.h \
 	avatar.c \
 	avatar.h \
 	blist.c \

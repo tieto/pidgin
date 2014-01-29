@@ -30,6 +30,8 @@
 #ifndef _GGP_ACCOUNT_H
 #define _GGP_ACCOUNT_H
 
+#error "This file is outdated"
+
 #include <internal.h>
 
 typedef struct

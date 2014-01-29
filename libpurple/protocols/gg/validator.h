@@ -33,8 +33,11 @@
 #include <internal.h>
 #include <request.h>
 
+#if 0
+/* see account.h */
 gboolean ggp_validator_token(PurpleRequestField *field, gchar **errmsg,
 	void *token);
+#endif
 
 gboolean ggp_validator_password(PurpleRequestField *field, gchar **errmsg,
 	void *user_data);

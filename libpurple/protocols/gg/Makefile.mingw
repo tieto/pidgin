@@ -46,7 +46,6 @@ LIB_PATHS += \
 ##  SOURCES, OBJECTS
 ##
 C_SRC =	\
-	account.c \
 	avatar.c \
 	blist.c \
 	chat.c \
