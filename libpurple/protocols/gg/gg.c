@@ -44,7 +44,6 @@
 #include "blist.h"
 #include "utils.h"
 #include "resolver-purple.h"
-#include "account.h"
 #include "deprecated.h"
 #include "purplew.h"
 #include "libgadu-events.h"
@@ -896,11 +895,6 @@ static void ggp_action_multilogon(PurplePluginAction *action)
 	ggp_multilogon_dialog((PurpleConnection *)action->context);
 }
 
-static void ggp_action_chpass(PurplePluginAction *action)
-{
-	ggp_account_chpass((PurpleConnection *)action->context);
-}
-
 static void ggp_action_status_broadcasting(PurplePluginAction *action)
 {
 	ggp_status_broadcasting_dialog((PurpleConnection *)action->context);
@@ -920,10 +914,6 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
 	PurplePluginAction *act;
-
-	act = purple_plugin_action_new(_("Change password..."),
-		ggp_action_chpass);
-	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Show other sessions"),
 		ggp_action_multilogon);
@@ -991,7 +981,7 @@ ggp_get_max_message_size(PurpleConversation *conv)
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_IM_IMAGE,
+	OPT_PROTO_IM_IMAGE,
 	NULL,				/* user_splits */
 	NULL,				/* protocol_options */
 	{"png", 1, 1, 200, 200, 0, PURPLE_ICON_SCALE_DISPLAY | PURPLE_ICON_SCALE_SEND},	/* icon_spec */
@@ -1037,7 +1027,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 #endif
 	ggp_keepalive,			/* keepalive */
-	ggp_account_register,		/* register_user */
+	NULL,				/* register_user */
 	NULL,				/* get_cb_info */
 	ggp_roster_alias_buddy,		/* alias_buddy */
 	ggp_roster_group_buddy,		/* group_buddy */

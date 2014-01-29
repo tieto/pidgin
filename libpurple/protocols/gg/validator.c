@@ -29,8 +29,10 @@
 
 #include "validator.h"
 
-#include "account.h"
 #include "utils.h"
+
+#if 0
+#include "account.h"
 
 gboolean ggp_validator_token(PurpleRequestField *field, gchar **errmsg,
 	void *token)
@@ -50,6 +52,7 @@ gboolean ggp_validator_token(PurpleRequestField *field, gchar **errmsg,
 		*errmsg = g_strdup(_("Captcha validation failed"));
 	return FALSE;
 }
+#endif
 
 gboolean ggp_validator_password(PurpleRequestField *field, gchar **errmsg,
 	void *user_data)

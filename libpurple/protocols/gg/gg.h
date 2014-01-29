@@ -40,7 +40,6 @@
 
 #include "image.h"
 #include "avatar.h"
-#include "account.h"
 #include "roster.h"
 #include "multilogon.h"
 #include "status.h"
