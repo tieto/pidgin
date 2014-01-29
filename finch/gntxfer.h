@@ -48,7 +48,7 @@ void finch_xfer_dialog_destroy(void);
 
 /**
  * Displays the file transfer dialog given.
- * If dialog is @c NULL, displays the default dialog, creating one if necessary
+ * If dialog is %NULL, displays the default dialog, creating one if necessary
  */
 void finch_xfer_dialog_show(void);
 

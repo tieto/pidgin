@@ -124,7 +124,7 @@ void gnt_bindable_action_param_free(GntBindableActionParam *param);
  * @klass:      The class the binding is for.
  * @name:       The name of the binding.
  * @callback:   The callback  for the binding.
- * @trigger:    The default trigger for the binding, or @c NULL, followed by a NULL-terminated
+ * @trigger:    The default trigger for the binding, or %NULL, followed by a NULL-terminated
  *                   list of default parameters.
  */
 void gnt_bindable_class_register_action(GntBindableClass *klass, const char *name, GntBindableActionCallback callback, const char *trigger, ...);
@@ -134,7 +134,7 @@ void gnt_bindable_class_register_action(GntBindableClass *klass, const char *nam
  *
  * @klass:     The class the binding is for.
  * @name:      The name of the binding.
- * @trigger:   A new trigger for the binding, followed by a @c NULL-terminated list of parameters for the callback.
+ * @trigger:   A new trigger for the binding, followed by a %NULL-terminated list of parameters for the callback.
  */
 void gnt_bindable_register_binding(GntBindableClass *klass, const char *name, const char *trigger, ...);
 
@@ -144,7 +144,7 @@ void gnt_bindable_register_binding(GntBindableClass *klass, const char *name, co
  * @bindable:  The bindable object.
  * @keys:      The key to trigger the action.
  *
- * Returns:  @c TRUE if the action was performed successfully, @c FALSE otherwise.
+ * Returns:  %TRUE if the action was performed successfully, %FALSE otherwise.
  */
 gboolean gnt_bindable_perform_action_key(GntBindable *bindable, const char *keys);
 
@@ -154,7 +154,7 @@ gboolean gnt_bindable_perform_action_key(GntBindable *bindable, const char *keys
  * @bindable:  The bindable object.
  * @keys:      The key to check for.
  *
- * Returns:  @c TRUE if the the key has an action associated with it.
+ * Returns:  %TRUE if the the key has an action associated with it.
  */
 gboolean gnt_bindable_check_key(GntBindable *bindable, const char *keys);
 
@@ -162,9 +162,9 @@ gboolean gnt_bindable_check_key(GntBindable *bindable, const char *keys);
  * Perform an action on a bindable object.
  *
  * @bindable:  The bindable object.
- * @name:      The action to perform, followed by a @c NULL-terminated list of parameters.
+ * @name:      The action to perform, followed by a %NULL-terminated list of parameters.
  *
- * Returns:  @c TRUE if the action was performed successfully, @c FALSE otherwise.
+ * Returns:  %TRUE if the action was performed successfully, %FALSE otherwise.
  */
 gboolean gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...) G_GNUC_NULL_TERMINATED;
 
@@ -183,7 +183,7 @@ GntBindable * gnt_bindable_bindings_view(GntBindable *bind);
  *
  * @bindable:   The object to list the bindings for.
  *
- * Returns:  @c TRUE
+ * Returns:  %TRUE
  */
 
 gboolean gnt_bindable_build_help_window(GntBindable *bindable);

@@ -91,8 +91,8 @@ GntWidget * gnt_window_new(void);
 /**
  * Create a new window.
  *
- * @homo:  @c TRUE if the widgets inside the window should have the same dimensions.
- * @vert:  @c TRUE if the widgets inside the window should be stacked vertically.
+ * @homo:  %TRUE if the widgets inside the window should have the same dimensions.
+ * @vert:  %TRUE if the widgets inside the window should be stacked vertically.
  *
  * Returns:  The newly created window.
  */
@@ -112,7 +112,7 @@ void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
  * @window:    The window.
  * @key:       The keystroke.
  *
- * Returns: The id of the menuitem bound to the keystroke, or @c NULL.
+ * Returns: The id of the menuitem bound to the keystroke, or %NULL.
  *
  * @since 2.3.0
  */

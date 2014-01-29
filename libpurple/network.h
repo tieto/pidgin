@@ -64,7 +64,7 @@ const char *purple_network_get_public_ip(void);
  *
  * You probably want to use purple_network_get_my_ip() instead.
  *
- * @note The returned string is a pointer to a static buffer. If this
+ * Note: The returned string is a pointer to a static buffer. If this
  *       function is called twice, it may be important to make a copy
  *       of the returned string.
  *
@@ -76,7 +76,7 @@ const char *purple_network_get_local_system_ip(int fd);
 /**
  * Returns all IP addresses of the local system.
  *
- * @note The caller must free this list.  If libpurple was built with
+ * Note: The caller must free this list.  If libpurple was built with
  *       support for it, this function also enumerates IPv6 addresses.
  *
  * Returns: A list of local IP addresses.
@@ -93,7 +93,7 @@ GList *purple_network_get_all_local_system_ips(void);
  * IP address returned by purple_network_get_local_system_ip()
  * is returned.
  *
- * @note The returned string is a pointer to a static buffer. If this
+ * Note: The returned string is a pointer to a static buffer. If this
  *       function is called twice, it may be important to make a copy
  *       of the returned string.
  *
@@ -220,7 +220,7 @@ unsigned short purple_network_get_port_from_fd(int fd);
 gboolean purple_network_is_available(void);
 
 /**
- * Makes purple_network_is_available() always return @c TRUE.
+ * Makes purple_network_is_available() always return %TRUE.
  *
  * This is what backs the --force-online command line argument in Pidgin,
  * for example.  This is useful for offline testing, especially when

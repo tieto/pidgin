@@ -199,7 +199,7 @@ purple_imgstore_ref(PurpleStoredImage *img);
  *
  * @img: The image.
  *
- * Returns: @a img or @c NULL if the reference count reached zero.
+ * Returns: @a img or %NULL if the reference count reached zero.
  */
 PurpleStoredImage *
 purple_imgstore_unref(PurpleStoredImage *img);

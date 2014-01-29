@@ -188,7 +188,7 @@ const gchar **purple_media_get_available_params(PurpleMedia *media);
  * @media: The media object
  * @param: name of parameter
  *
- * Returns: @c TRUE if backend recognizes the parameter, @c FALSE otherwise.
+ * Returns: %TRUE if backend recognizes the parameter, %FALSE otherwise.
  */
 gboolean purple_media_param_is_supported(PurpleMedia *media, const gchar *param);
 
@@ -207,7 +207,7 @@ gboolean purple_media_param_is_supported(PurpleMedia *media, const gchar *param)
  * @num_params: The number of parameters to pass to Farsight.
  * @params: The parameters to pass to Farsight.
  *
- * Returns: @c TRUE The stream was added successfully, @c FALSE otherwise.
+ * Returns: %TRUE The stream was added successfully, %FALSE otherwise.
  */
 gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		const gchar *who, PurpleMediaSessionType type,
@@ -301,7 +301,7 @@ GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
  * @participant: The name of the remote user to set the candidates from.
  * @codecs: The list of remote codecs to set.
  *
- * Returns: @c TRUE The codecs were set successfully, or @c FALSE otherwise.
+ * Returns: %TRUE The codecs were set successfully, or %FALSE otherwise.
  */
 gboolean purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,
 					const gchar *participant, GList *codecs);
@@ -313,7 +313,7 @@ gboolean purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id
  * @session_id: The session id of the session to check.
  * @participant: The remote user to check for.
  *
- * Returns: @c TRUE All streams for the given session_id/participant combination have candidates prepared, @c FALSE otherwise.
+ * Returns: %TRUE All streams for the given session_id/participant combination have candidates prepared, %FALSE otherwise.
  */
 gboolean purple_media_candidates_prepared(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
@@ -325,7 +325,7 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media,
  * @sess_id: The session id of the session to set the codec for.
  * @codec: The codec to set the session to stream.
  *
- * Returns: @c TRUE The codec was successfully changed, or @c FALSE otherwise.
+ * Returns: %TRUE The codec was successfully changed, or %FALSE otherwise.
  */
 gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec);
 
@@ -335,7 +335,7 @@ gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, P
  * @media: The media object to find the session in.
  * @sess_id: The session id of the session to check.
  *
- * Returns: @c TRUE The codecs are ready, or @c FALSE otherwise.
+ * Returns: %TRUE The codecs are ready, or %FALSE otherwise.
  */
 gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
 
@@ -358,7 +358,7 @@ gboolean purple_media_is_initiator(PurpleMedia *media,
  * @sess_id: The session id of the session to check.
  * @participant: The participant to check.
  *
- * Returns: @c TRUE The selected streams have been accepted, or @c FALSE otherwise.
+ * Returns: %TRUE The selected streams have been accepted, or %FALSE otherwise.
  */
 gboolean purple_media_accepted(PurpleMedia *media, const gchar *sess_id,
 		const gchar *participant);

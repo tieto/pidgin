@@ -396,7 +396,7 @@ void purple_account_set_connection(PurpleAccount *account, PurpleConnection *gc)
 /**
  * purple_account_set_remember_password:
  * @account: The account.
- * @value:   @c TRUE if it should remember the password.
+ * @value:   %TRUE if it should remember the password.
  *
  * Sets whether or not this account should save its password.
  */
@@ -405,7 +405,7 @@ void purple_account_set_remember_password(PurpleAccount *account, gboolean value
 /**
  * purple_account_set_check_mail:
  * @account: The account.
- * @value:   @c TRUE if it should check for mail.
+ * @value:   %TRUE if it should check for mail.
  *
  * Sets whether or not this account should check for mail.
  */
@@ -415,7 +415,7 @@ void purple_account_set_check_mail(PurpleAccount *account, gboolean value);
  * purple_account_set_enabled:
  * @account: The account.
  * @ui:      The UI.
- * @value:   @c TRUE if it is enabled.
+ * @value:   %TRUE if it is enabled.
  *
  * Sets whether or not this account is enabled for the specified
  * UI.
@@ -528,14 +528,14 @@ void purple_account_get_public_alias(PurpleAccount *account,
  *
  * Return whether silence suppression is used during voice call.
  *
- * Returns: @c TRUE if suppression is used, or @c FALSE if not.
+ * Returns: %TRUE if suppression is used, or %FALSE if not.
  */
 gboolean purple_account_get_silence_suppression(const PurpleAccount *account);
 
 /**
  * purple_account_set_silence_suppression:
  * @account: The account.
- * @value:   @c TRUE if suppression should be used.
+ * @value:   %TRUE if suppression should be used.
  *
  * Sets whether silence suppression is used during voice call.
  */
@@ -654,7 +654,7 @@ gpointer purple_account_get_ui_data(const PurpleAccount *account);
  *
  * Returns whether or not the account is connected.
  *
- * Returns: @c TRUE if connected, or @c FALSE otherwise.
+ * Returns: %TRUE if connected, or %FALSE otherwise.
  */
 gboolean purple_account_is_connected(const PurpleAccount *account);
 
@@ -664,7 +664,7 @@ gboolean purple_account_is_connected(const PurpleAccount *account);
  *
  * Returns whether or not the account is connecting.
  *
- * Returns: @c TRUE if connecting, or @c FALSE otherwise.
+ * Returns: %TRUE if connecting, or %FALSE otherwise.
  */
 gboolean purple_account_is_connecting(const PurpleAccount *account);
 
@@ -674,7 +674,7 @@ gboolean purple_account_is_connecting(const PurpleAccount *account);
  *
  * Returns whether or not the account is disconnected.
  *
- * Returns: @c TRUE if disconnected, or @c FALSE otherwise.
+ * Returns: %TRUE if disconnected, or %FALSE otherwise.
  */
 gboolean purple_account_is_disconnected(const PurpleAccount *account);
 
@@ -783,7 +783,7 @@ const gchar *purple_account_get_name_for_display(const PurpleAccount *account);
  *
  * Returns whether or not this account should save its password.
  *
- * Returns: @c TRUE if it should remember the password.
+ * Returns: %TRUE if it should remember the password.
  */
 gboolean purple_account_get_remember_password(const PurpleAccount *account);
 
@@ -793,7 +793,7 @@ gboolean purple_account_get_remember_password(const PurpleAccount *account);
  *
  * Returns whether or not this account should check for mail.
  *
- * Returns: @c TRUE if it should check for mail.
+ * Returns: %TRUE if it should check for mail.
  */
 gboolean purple_account_get_check_mail(const PurpleAccount *account);
 
@@ -805,7 +805,7 @@ gboolean purple_account_get_check_mail(const PurpleAccount *account);
  * Returns whether or not this account is enabled for the
  * specified UI.
  *
- * Returns: @c TRUE if it enabled on this UI.
+ * Returns: %TRUE if it enabled on this UI.
  */
 gboolean purple_account_get_enabled(const PurpleAccount *account,
 				  const char *ui);
@@ -839,7 +839,7 @@ PurpleAccountPrivacyType purple_account_get_privacy_type(const PurpleAccount *ac
  *
  * Adds a user to the account's permit list.
  *
- * Returns: TRUE if the user was added successfully, or @c FALSE otherwise.
+ * Returns: TRUE if the user was added successfully, or %FALSE otherwise.
  */
 gboolean purple_account_privacy_permit_add(PurpleAccount *account,
 								const char *name, gboolean local_only);
@@ -853,7 +853,7 @@ gboolean purple_account_privacy_permit_add(PurpleAccount *account,
  *
  * Removes a user from the account's permit list.
  *
- * Returns: TRUE if the user was removed successfully, or @c FALSE otherwise.
+ * Returns: TRUE if the user was removed successfully, or %FALSE otherwise.
  */
 gboolean purple_account_privacy_permit_remove(PurpleAccount *account,
 									const char *name, gboolean local_only);
@@ -867,7 +867,7 @@ gboolean purple_account_privacy_permit_remove(PurpleAccount *account,
  *
  * Adds a user to the account's deny list.
  *
- * Returns: TRUE if the user was added successfully, or @c FALSE otherwise.
+ * Returns: TRUE if the user was added successfully, or %FALSE otherwise.
  */
 gboolean purple_account_privacy_deny_add(PurpleAccount *account,
 									const char *name, gboolean local_only);
@@ -881,7 +881,7 @@ gboolean purple_account_privacy_deny_add(PurpleAccount *account,
  *
  * Removes a user from the account's deny list.
  *
- * Returns: TRUE if the user was removed successfully, or @c FALSE otherwise.
+ * Returns: TRUE if the user was removed successfully, or %FALSE otherwise.
  */
 gboolean purple_account_privacy_deny_remove(PurpleAccount *account,
 									const char *name, gboolean local_only);
@@ -963,8 +963,8 @@ GSList *purple_account_privacy_get_denied(PurpleAccount *account);
  *
  * Check the privacy-setting for a user.
  *
- * Returns: @c FALSE if the specified account's privacy settings block the user
- *		or @c TRUE otherwise. The meaning of "block" is protocol-dependent and
+ * Returns: %FALSE if the specified account's privacy settings block the user
+ *		or %TRUE otherwise. The meaning of "block" is protocol-dependent and
  *				generally relates to status and/or sending of messages.
  */
 gboolean purple_account_privacy_check(PurpleAccount *account, const char *who);
@@ -1148,8 +1148,8 @@ gboolean purple_account_get_ui_bool(const PurpleAccount *account, const char *ui
  *
  * Returns the system log for an account.
  *
- * Note: Callers should almost always pass @c FALSE for @a create.
- *       Passing @c TRUE could result in an existing log being reopened,
+ * Note: Callers should almost always pass %FALSE for @a create.
+ *       Passing %TRUE could result in an existing log being reopened,
  *       if the log has already been closed, which not all loggers deal
  *       with appropriately.
  *
@@ -1244,11 +1244,11 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
  * purple_account_get_current_error:
  * @account: The account whose error should be retrieved.
  *
- * Get the error that caused the account to be disconnected, or @c NULL if the
+ * Get the error that caused the account to be disconnected, or %NULL if the
  * account is happily connected or disconnected without an error.
  *
  * Returns: (transfer none): The type of error and a human-readable description
- *          of the current error, or @c NULL if there is no current error.  This
+ *          of the current error, or %NULL if there is no current error.  This
  *          pointer is guaranteed to remain valid until the @ref
  *          account-error-changed signal is emitted for @a account.
  */
@@ -1258,7 +1258,7 @@ const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount 
  * purple_account_clear_current_error:
  * @account: The account whose error state should be cleared.
  *
- * Clear an account's current error state, resetting it to @c NULL.
+ * Clear an account's current error state, resetting it to %NULL.
  */
 void purple_account_clear_current_error(PurpleAccount *account);
 

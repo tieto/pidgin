@@ -255,7 +255,7 @@ PurpleRequestCommonParameters *
 purple_request_cpar_unref(PurpleRequestCommonParameters *cpar);
 
 /**
- * Sets the #PurpleAccount associated with the request, or @c NULL, if none is.
+ * Sets the #PurpleAccount associated with the request, or %NULL, if none is.
  *
  * @cpar:    The parameters set.
  * @account: The #PurpleAccount to associate.
@@ -267,7 +267,7 @@ purple_request_cpar_set_account(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the #PurpleAccount associated with the request.
  *
- * @cpar: The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
  * Returns: The associated #PurpleAccount, or NULL if none is.
  */
@@ -275,7 +275,7 @@ PurpleAccount *
 purple_request_cpar_get_account(PurpleRequestCommonParameters *cpar);
 
 /**
- * Sets the #PurpleConversation associated with the request, or @c NULL, if
+ * Sets the #PurpleConversation associated with the request, or %NULL, if
  * none is.
  *
  * @cpar: The parameters set.
@@ -288,7 +288,7 @@ purple_request_cpar_set_conversation(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the #PurpleConversation associated with the request.
  *
- * @cpar: The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
  * Returns: The associated #PurpleConversation, or NULL if none is.
  */
@@ -319,7 +319,7 @@ purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar);
  * Sets the custom icon associated with the request.
  *
  * @cpar:      The parameters set.
- * @icon_data: The icon image contents (@c NULL to reset).
+ * @icon_data: The icon image contents (%NULL to reset).
  * @icon_size: The icon image size.
  */
 void
@@ -329,9 +329,9 @@ purple_request_cpar_set_custom_icon(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the custom icon associated with the request.
  *
- * @cpar:      The parameters set (may be @c NULL).
+ * @cpar:      The parameters set (may be %NULL).
  * @icon_size: The pointer to variable, where icon size should be stored
- *                  (may be @c NULL).
+ *                  (may be %NULL).
  *
  * Returns: The icon image contents.
  */
@@ -354,9 +354,9 @@ purple_request_cpar_set_html(PurpleRequestCommonParameters *cpar,
 /**
  * Checks, if the text passed to the request is HTML.
  *
- * @cpar: The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
- * Returns: @c TRUE, if the text is HTML, @c FALSE otherwise.
+ * Returns: %TRUE, if the text is HTML, %FALSE otherwise.
  */
 gboolean
 purple_request_cpar_is_html(PurpleRequestCommonParameters *cpar);
@@ -374,7 +374,7 @@ purple_request_cpar_set_compact(PurpleRequestCommonParameters *cpar,
 /**
  * Gets dialog display mode.
  *
- * @cpar: The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
  * Returns: TRUE for compact, FALSE for default.
  */
@@ -395,7 +395,7 @@ purple_request_cpar_set_help_cb(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the callback for the Help button.
  *
- * @cpar:      The parameters set (may be @c NULL).
+ * @cpar:      The parameters set (may be %NULL).
  * @user_data: The pointer to the variable, where user data (to be passed
  *                  to callback function) should be stored.
  *
@@ -422,7 +422,7 @@ purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...);
 /**
  * Gets extra actions for the PurpleRequestFields dialog.
  *
- * @cpar: The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
  * Returns: A list of actions (pairs of arguments, as in setter).
  */
@@ -443,7 +443,7 @@ purple_request_cpar_set_parent_from(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the parent "donor" for this dialog.
  *
- * @cpar: The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
  * Returns: The donors UI handle.
  */
@@ -494,7 +494,7 @@ GList *purple_request_fields_get_groups(const PurpleRequestFields *fields);
  *
  * @fields:    The fields list.
  * @tab_names: NULL-terminated array of localized tab labels,
- *                  may be @c NULL.
+ *                  may be %NULL.
  */
 void purple_request_fields_set_tab_names(PurpleRequestFields *fields,
 	const gchar **tab_names);
@@ -598,7 +598,7 @@ PurpleRequestField *purple_request_fields_get_field(
  * @fields: The fields list.
  * @id:     The ID of the field.
  *
- * Returns: The string value, if found, or @c NULL otherwise.
+ * Returns: The string value, if found, or %NULL otherwise.
  */
 const char *purple_request_fields_get_string(const PurpleRequestFields *fields,
 										   const char *id);
@@ -620,7 +620,7 @@ int purple_request_fields_get_integer(const PurpleRequestFields *fields,
  * @fields: The fields list.
  * @id:     The ID of the field.
  *
- * Returns: The boolean value, if found, or @c FALSE otherwise.
+ * Returns: The boolean value, if found, or %FALSE otherwise.
  */
 gboolean purple_request_fields_get_bool(const PurpleRequestFields *fields,
 									  const char *id);
@@ -1064,7 +1064,7 @@ const char *purple_request_field_string_get_value(const PurpleRequestField *fiel
  *
  * @field: The field.
  *
- * Returns: @c TRUE if the field is mulit-line, or @c FALSE otherwise.
+ * Returns: %TRUE if the field is mulit-line, or %FALSE otherwise.
  */
 gboolean purple_request_field_string_is_multiline(const PurpleRequestField *field);
 
@@ -1073,7 +1073,7 @@ gboolean purple_request_field_string_is_multiline(const PurpleRequestField *fiel
  *
  * @field: The field.
  *
- * Returns: @c TRUE if the field is masked, or @c FALSE otherwise.
+ * Returns: %TRUE if the field is masked, or %FALSE otherwise.
  */
 gboolean purple_request_field_string_is_masked(const PurpleRequestField *field);
 
@@ -1372,7 +1372,7 @@ void *purple_request_field_list_get_data(const PurpleRequestField *field,
  *
  * @field: The list field.
  * @item:  The list item.
- * @icon_path: The path to icon file, or @c NULL for no icon.
+ * @icon_path: The path to icon file, or %NULL for no icon.
  * @data:  The associated data.
  */
 void purple_request_field_list_add_icon(PurpleRequestField *field,
@@ -1443,7 +1443,7 @@ GList *purple_request_field_list_get_items(const PurpleRequestField *field);
  *
  * @field: The field.
  *
- * Returns: (TODO const): The list of icons or @c NULL (i.e. the empty GList) if no
+ * Returns: (TODO const): The list of icons or %NULL (i.e. the empty GList) if no
  *              items have icons.
  */
 GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
@@ -1681,7 +1681,7 @@ PurpleCertificate *purple_request_field_certificate_get_value(
  * Creates a datasheet item field.
  *
  * @id:    The field ID.
- * @text:  The label of the field, may be @c NULL.
+ * @text:  The label of the field, may be %NULL.
  * @sheet: The datasheet.
  *
  * Returns: The new field.
@@ -1757,26 +1757,26 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
  *                      <em>not</em> closed it is <strong>very</strong>
  *                      likely to cause a crash whenever the callback
  *                      handler functions are triggered.
- * @title:         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      no title.
- * @primary:       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @secondary:     Secondary information, or @c NULL if there is none.
+ * @secondary:     Secondary information, or %NULL if there is none.
  * @default_value: The default value.
- * @multiline:     @c TRUE if the inputted text can span multiple lines.
- * @masked:        @c TRUE if the inputted text should be masked in some
+ * @multiline:     %TRUE if the inputted text can span multiple lines.
+ * @masked:        %TRUE if the inputted text should be masked in some
  *                      way (such as by displaying characters as stars).  This
  *                      might be because the input is some kind of password.
  * @hint:          Optionally suggest how the input box should appear.
  *                      Use "html", for example, to allow the user to enter
  *                      HTML.
- * @ok_text:       The text for the @c OK button, which may not be @c NULL.
+ * @ok_text:       The text for the @c OK button, which may not be %NULL.
  * @ok_cb:         The callback for the @c OK button, which may not be @c
  *                      NULL.
  * @cancel_text:   The text for the @c Cancel button, which may not be @c
  *                      NULL.
  * @cancel_cb:     The callback for the @c Cancel button, which may be
- *                      @c NULL.
+ *                      %NULL.
  * @cpar:          The #PurpleRequestCommonParameters object, which gets
  *                      unref'ed after this call.
  * @user_data:     The data to pass to the callback.
@@ -1797,26 +1797,26 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
  * @handle:        The plugin or connection handle.  For some things this
  *                      is <em>extremely</em> important.  See the comments on
  *                      purple_request_input().
- * @title:         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      no title.
- * @primary:       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @secondary:     Secondary information, or @c NULL if there is none.
+ * @secondary:     Secondary information, or %NULL if there is none.
  * @default_value: The default choice; this should be one of the values
  *                      listed in the varargs.
- * @ok_text:       The text for the @c OK button, which may not be @c NULL.
+ * @ok_text:       The text for the @c OK button, which may not be %NULL.
  * @ok_cb:         The callback for the @c OK button, which may not be @c
  *                      NULL.
  * @cancel_text:   The text for the @c Cancel button, which may not be @c
  *                      NULL.
- * @cancel_cb:     The callback for the @c Cancel button, or @c NULL to
+ * @cancel_cb:     The callback for the @c Cancel button, or %NULL to
  *                      do nothing.
  * @cpar:          The #PurpleRequestCommonParameters object, which gets
  *                      unref'ed after this call.
  * @user_data:     The data to pass to the callback.
  * @...:           The choices, which should be pairs of <tt>char *</tt>
  *                      descriptions and <tt>int</tt> values, terminated with a
- *                      @c NULL parameter.
+ *                      %NULL parameter.
  *
  * Returns: A UI-specific handle.
  */
@@ -1845,11 +1845,11 @@ void *purple_request_choice_varg(void *handle, const char *title,
  * @handle:         The plugin or connection handle.  For some things this
  *                       is <em>extremely</em> important.  See the comments on
  *                       purple_request_input().
- * @title:          The title of the message, or @c NULL if it should have
+ * @title:          The title of the message, or %NULL if it should have
  *                       no title.
- * @primary:        The main point of the message, or @c NULL if you're
+ * @primary:        The main point of the message, or %NULL if you're
  *                       feeling enigmatic.
- * @secondary:      Secondary information, or @c NULL if there is none.
+ * @secondary:      Secondary information, or %NULL if there is none.
  * @default_action: The default action, zero-indexed; if the third action
  *                       supplied should be the default, supply <tt>2</tt>.
  *                       The should be the action that users are most likely
@@ -1889,15 +1889,15 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
  * @handle:        The plugin or connection handle.  For some things this
  *                      is <em>extremely</em> important.  See the comments on
  *                      purple_request_input().
- * @title:         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      default title.
- * @primary:       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @secondary:     Secondary information, or @c NULL if there is none.
- * @with_progress: @c TRUE, if we want to display progress bar, @c FALSE
+ * @secondary:     Secondary information, or %NULL if there is none.
+ * @with_progress: %TRUE, if we want to display progress bar, %FALSE
  *                      otherwise
  * @cancel_cb:     The callback for the @c Cancel button, which may be
- *                      @c NULL.
+ *                      %NULL.
  * @cpar:          The #PurpleRequestCommonParameters object, which gets
  *                      unref'ed after this call.
  * @user_data:     The data to pass to the callback.
@@ -1935,19 +1935,19 @@ purple_request_wait_progress(void *ui_handle, gfloat fraction);
  * @handle:      The plugin or connection handle.  For some things this
  *                    is <em>extremely</em> important.  See the comments on
  *                    purple_request_input().
- * @title:       The title of the message, or @c NULL if it should have
+ * @title:       The title of the message, or %NULL if it should have
  *                    no title.
- * @primary:     The main point of the message, or @c NULL if you're
+ * @primary:     The main point of the message, or %NULL if you're
  *                    feeling enigmatic.
- * @secondary:   Secondary information, or @c NULL if there is none.
+ * @secondary:   Secondary information, or %NULL if there is none.
  * @fields:      The list of fields.
- * @ok_text:     The text for the @c OK button, which may not be @c NULL.
+ * @ok_text:     The text for the @c OK button, which may not be %NULL.
  * @ok_cb:       The callback for the @c OK button, which may not be @c
  *                    NULL.
  * @cancel_text: The text for the @c Cancel button, which may not be @c
  *                    NULL.
  * @cancel_cb:   The callback for the @c Cancel button, which may be
- *                    @c NULL.
+ *                    %NULL.
  * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
  * @user_data:   The data to pass to the callback.
@@ -1967,7 +1967,7 @@ purple_request_fields(void *handle, const char *title, const char *primary,
  *
  * @ui_handle: The UI handle.
  * @type:      The pointer to variable, where request type may be stored
- *                  (may be @c NULL).
+ *                  (may be %NULL).
  *
  * Returns: TRUE, if handle is valid, FALSE otherwise.
  */
@@ -2037,13 +2037,13 @@ void purple_request_close_with_handle(void *handle);
  * @handle:      The plugin or connection handle.  For some things this
  *                    is <em>extremely</em> important.  See the comments on
  *                    purple_request_input().
- * @title:       The title of the message, or @c NULL if it should have
+ * @title:       The title of the message, or %NULL if it should have
  *                    no title.
- * @filename:    The default filename (may be @c NULL)
+ * @filename:    The default filename (may be %NULL)
  * @savedialog:  True if this dialog is being used to save a file.
  *                    False if it is being used to open a file.
  * @ok_cb:       The callback for the @c OK button.
- * @cancel_cb:   The callback for the @c Cancel button, which may be @c NULL.
+ * @cancel_cb:   The callback for the @c Cancel button, which may be %NULL.
  * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
  * @user_data:   The data to pass to the callback.
@@ -2062,11 +2062,11 @@ purple_request_file(void *handle, const char *title, const char *filename,
  * @handle:      The plugin or connection handle.  For some things this
  *                    is <em>extremely</em> important.  See the comments on
  *                    purple_request_input().
- * @title:       The title of the message, or @c NULL if it should have
+ * @title:       The title of the message, or %NULL if it should have
  *                    no title.
- * @dirname:     The default directory name (may be @c NULL)
+ * @dirname:     The default directory name (may be %NULL)
  * @ok_cb:       The callback for the @c OK button.
- * @cancel_cb:   The callback for the @c Cancel button, which may be @c NULL.
+ * @cancel_cb:   The callback for the @c Cancel button, which may be %NULL.
  * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
  * @user_data:   The data to pass to the callback.
@@ -2086,19 +2086,19 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
  * @handle:        The plugin or connection handle.  For some things this
  *                      is <em>extremely</em> important.  See the comments on
  *                      purple_request_input().
- * @title:         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      no title.
- * @primary:       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @secondary:     Secondary information, or @c NULL if there is none.
+ * @secondary:     Secondary information, or %NULL if there is none.
  * @cert:          The #PurpleCertificate associated with this request.
- * @ok_text:       The text for the @c OK button, which may not be @c NULL.
+ * @ok_text:       The text for the @c OK button, which may not be %NULL.
  * @ok_cb:         The callback for the @c OK button, which may not be
- *                      @c NULL.
+ *                      %NULL.
  * @cancel_text:   The text for the @c Cancel button, which may not be
- *                      @c NULL.
+ *                      %NULL.
  * @cancel_cb:     The callback for the @c Cancel button, which may be
- *                      @c NULL.
+ *                      %NULL.
  * @user_data:     The data to pass to the callback.
  *
  * Returns: A UI-specific handle.

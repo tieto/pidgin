@@ -203,7 +203,7 @@ _purple_buddy_icons_blist_loaded_cb(void);
  * have called purple_account_set_status(account, "away").
  * (And this will call purple_account_connect() automatically).
  *
- * @note This function should only be called by purple_account_connect()
+ * Note: This function should only be called by purple_account_connect()
  *       in account.c.  If you're trying to sign on an account, use that
  *       function instead.
  *
@@ -218,7 +218,7 @@ void _purple_connection_new(PurpleAccount *account, gboolean regist,
  * Tries to unregister the account on the server. If the account is not
  * connected, also creates a new connection.
  *
- * @note This function should only be called by purple_account_unregister()
+ * Note: This function should only be called by purple_account_unregister()
  *       in account.c.
  *
  * @account:  The account to unregister
@@ -231,7 +231,7 @@ void _purple_connection_new_unregister(PurpleAccount *account, const char *passw
 /**
  * Checks if a connection is disconnecting, and should not attempt to reconnect.
  *
- * @note This function should only be called by purple_account_set_enabled()
+ * Note: This function should only be called by purple_account_set_enabled()
  *       in account.c.
  *
  * @gc:  The connection to check
@@ -241,7 +241,7 @@ gboolean _purple_connection_wants_to_die(const PurpleConnection *gc);
 /**
  * Adds a chat to the active chats list of a connection
  *
- * @note This function should only be called by serv_got_joined_chat()
+ * Note: This function should only be called by serv_got_joined_chat()
  *       in server.c.
  *
  * @gc:    The connection
@@ -252,7 +252,7 @@ void _purple_connection_add_active_chat(PurpleConnection *gc,
 /**
  * Removes a chat from the active chats list of a connection
  *
- * @note This function should only be called by serv_got_chat_left()
+ * Note: This function should only be called by serv_got_chat_left()
  *       in server.c.
  *
  * @gc:    The connection
@@ -264,7 +264,7 @@ void _purple_connection_remove_active_chat(PurpleConnection *gc,
 /**
  * Returns the primitive scores array from status.c.
  *
- * @note This function should only be called by
+ * Note: This function should only be called by
  *       purple_buddy_presence_compute_score() in presence.c.
  */
 int *_purple_statuses_get_primitive_scores(void);

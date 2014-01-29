@@ -77,7 +77,7 @@ GType gnt_line_get_gtype(void);
 /**
  * Create new line
  *
- * @vertical:  @c TRUE if the line should be vertical, @c FALSE for a horizontal line.
+ * @vertical:  %TRUE if the line should be vertical, %FALSE for a horizontal line.
  *
  * Returns:  The newly created line.
  */

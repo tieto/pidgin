@@ -208,7 +208,7 @@ void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room);
  *
  * @gc: The PurpleConnection to have get a list.
  *
- * Returns: A PurpleRoomlist* or @c NULL if the protocol
+ * Returns: A PurpleRoomlist* or %NULL if the protocol
  *         doesn't support that.
  */
 PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc);
@@ -216,7 +216,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc);
 /**
  * Tells the protocol to stop fetching the list.
  * If this is possible and done, the protocol will
- * call set_in_progress with @c FALSE and possibly
+ * call set_in_progress with %FALSE and possibly
  * unref the list if it took a reference.
  *
  * @list: The room list to cancel a get_list on.
@@ -239,7 +239,7 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 /**
  * Get the list of fields for a roomlist.
  *
- * @roomlist: The roomlist, which must not be @c NULL.
+ * @roomlist: The roomlist, which must not be %NULL.
  * Returns: (TODO const): A list of fields
  */
 GList *purple_roomlist_get_fields(PurpleRoomlist *roomlist);
@@ -247,7 +247,7 @@ GList *purple_roomlist_get_fields(PurpleRoomlist *roomlist);
 /**
  * Get the protocol data associated with this room list.
  *
- * @list: The roomlist, which must not be @c NULL.
+ * @list: The roomlist, which must not be %NULL.
  *
  * Returns: The protocol data associated with this room list.  This is a
  *         convenience field provided to the protocol -- it is not
@@ -258,7 +258,7 @@ gpointer purple_roomlist_get_protocol_data(PurpleRoomlist *list);
 /**
  * Set the protocol data associated with this room list.
  *
- * @list: The roomlist, which must not be @c NULL.
+ * @list: The roomlist, which must not be %NULL.
  * @proto_data: A pointer to associate with this room list.
  */
 void purple_roomlist_set_protocol_data(PurpleRoomlist *list, gpointer proto_data);
@@ -266,7 +266,7 @@ void purple_roomlist_set_protocol_data(PurpleRoomlist *list, gpointer proto_data
 /**
  * Get the UI data associated with this room list.
  *
- * @list: The roomlist, which must not be @c NULL.
+ * @list: The roomlist, which must not be %NULL.
  *
  * Returns: The UI data associated with this room list.  This is a
  *         convenience field provided to the UIs--it is not
@@ -277,7 +277,7 @@ gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list);
 /**
  * Set the UI data associated with this room list.
  *
- * @list: The roomlist, which must not be @c NULL.
+ * @list: The roomlist, which must not be %NULL.
  * @ui_data: A pointer to associate with this room list.
  */
 void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
@@ -325,29 +325,29 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room);
 
 /**
  * Get the type of a room.
- * @room:  The room, which must not be @c NULL.
+ * @room:  The room, which must not be %NULL.
  * Returns: The type of the room.
  */
 PurpleRoomlistRoomType purple_roomlist_room_get_room_type(PurpleRoomlistRoom *room);
 
 /**
  * Get the name of a room.
- * @room:  The room, which must not be @c NULL.
+ * @room:  The room, which must not be %NULL.
  * Returns: The name of the room.
  */
 const char * purple_roomlist_room_get_name(PurpleRoomlistRoom *room);
 
 /**
  * Get the parent of a room.
- * @room:  The room, which must not be @c NULL.
- * Returns: The parent of the room, which can be @c NULL.
+ * @room:  The room, which must not be %NULL.
+ * Returns: The parent of the room, which can be %NULL.
  */
 PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room);
 
 /**
  * Get the value of the expanded_once flag.
  *
- * @room:  The room, which must not be @c NULL.
+ * @room:  The room, which must not be %NULL.
  *
  * Returns: The value of the expanded_once flag.
  */
@@ -356,7 +356,7 @@ gboolean purple_roomlist_room_get_expanded_once(PurpleRoomlistRoom *room);
 /**
  * Set the expanded_once flag.
  *
- * @room: The room, which must not be @c NULL.
+ * @room: The room, which must not be %NULL.
  * @expanded_once: The new value of the expanded_once flag.
  */
 void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean expanded_once);
@@ -364,7 +364,7 @@ void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean e
 /**
  * Get the list of fields for a room.
  *
- * @room:  The room, which must not be @c NULL.
+ * @room:  The room, which must not be %NULL.
  * Returns: (TODO const): A list of fields
  */
 GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
@@ -399,7 +399,7 @@ PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
 /**
  * Get the type of a field.
  *
- * @field:  A PurpleRoomlistField, which must not be @c NULL.
+ * @field:  A PurpleRoomlistField, which must not be %NULL.
  *
  * Returns:  The type of the field.
  */
@@ -408,7 +408,7 @@ PurpleRoomlistFieldType purple_roomlist_field_get_field_type(PurpleRoomlistField
 /**
  * Get the label of a field.
  *
- * @field:  A PurpleRoomlistField, which must not be @c NULL.
+ * @field:  A PurpleRoomlistField, which must not be %NULL.
  *
  * Returns:  The label of the field.
  */
@@ -416,9 +416,9 @@ const char * purple_roomlist_field_get_label(PurpleRoomlistField *field);
 
 /**
  * Check whether a roomlist-field is hidden.
- * @field:  A PurpleRoomlistField, which must not be @c NULL.
+ * @field:  A PurpleRoomlistField, which must not be %NULL.
  *
- * Returns:  @c TRUE if the field is hidden, @c FALSE otherwise.
+ * Returns:  %TRUE if the field is hidden, %FALSE otherwise.
  */
 gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field);
 

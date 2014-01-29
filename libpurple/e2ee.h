@@ -70,7 +70,7 @@ purple_e2ee_state_ref(PurpleE2eeState *state);
  *
  * @state: The E2EE state.
  *
- * Returns: @a state or @c NULL if the reference count reached zero.
+ * Returns: @a state or %NULL if the reference count reached zero.
  */
 PurpleE2eeState *
 purple_e2ee_state_unref(PurpleE2eeState *state);
@@ -158,8 +158,8 @@ purple_e2ee_provider_free(PurpleE2eeProvider *provider);
  *
  * @provider: The E2EE provider.
  *
- * Returns: @c TRUE, if the provider was successfully registered,
- *         @c FALSE otherwise.
+ * Returns: %TRUE, if the provider was successfully registered,
+ *         %FALSE otherwise.
  */
 gboolean
 purple_e2ee_provider_register(PurpleE2eeProvider *provider);

@@ -77,7 +77,7 @@ typedef struct _PurpleBuddyPresenceClass  PurpleBuddyPresenceClass;
  * never saved to disk.  The information they contain is only relevant
  * for the current PurpleSession.
  *
- * @note When a presence is destroyed with the last g_object_unref(), all
+ * Note: When a presence is destroyed with the last g_object_unref(), all
  *       statuses added to this list will be destroyed along with the presence.
  */
 struct _PurplePresence

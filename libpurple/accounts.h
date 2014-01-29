@@ -153,7 +153,7 @@ GList *purple_accounts_get_all_active(void);
  * @name:     The account username.
  * @protocol: The account protocol ID.
  *
- * Returns: The account, if found, or @c FALSE otherwise.
+ * Returns: The account, if found, or %FALSE otherwise.
  */
 PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
 

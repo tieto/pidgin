@@ -207,8 +207,8 @@ struct _PurpleProtocolClientIface
 	PurpleChat *(*find_blist_chat)(PurpleAccount *account, const char *name);
 
 	/** Checks whether offline messages to @a buddy are supported.
-	 *  Returns: @c TRUE if @a buddy can be sent messages while they are
-	 *          offline, or @c FALSE if not.
+	 *  Returns: %TRUE if @a buddy can be sent messages while they are
+	 *          offline, or %FALSE if not.
 	 */
 	gboolean (*offline_message)(const PurpleBuddy *buddy);
 
@@ -225,7 +225,7 @@ struct _PurpleProtocolClientIface
 
 	/**
 	 * Returns an array of "PurpleMood"s, with the last one having
-	 * "mood" set to @c NULL.
+	 * "mood" set to %NULL.
 	 */
 	PurpleMood *(*get_moods)(PurpleAccount *account);
 

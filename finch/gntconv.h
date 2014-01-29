@@ -110,7 +110,7 @@ void finch_conversation_set_active(PurpleConversation *conv);
  * Sets the information widget for the conversation window.
  *
  * @conv:   The conversation.
- * @widget: The widget containing the information. If @c NULL,
+ * @widget: The widget containing the information. If %NULL,
  *               the current information widget is removed.
  */
 void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget);

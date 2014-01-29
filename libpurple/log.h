@@ -139,7 +139,7 @@ struct _PurpleLog {
 	                                           started, saved with original
 	                                           timezone data, if available and
 	                                           if struct tm has the BSD
-	                                           timezone fields, else @c NULL.
+	                                           timezone fields, else %NULL.
 	                                           Do NOT modify anything in this struct.*/
 
 	/* IMPORTANT: Some code in log.c allocates these without zeroing them.
@@ -167,7 +167,7 @@ struct _PurpleLogSet {
 	char *name;                           /**< The name of the logs available */
 	PurpleAccount *account;                 /**< The account the available logs
 	                                           took place on. This will be
-	                                           @c NULL if the account no longer
+	                                           %NULL if the account no longer
 	                                           exists. (Depending on a
 	                                           logger's implementation of
 	                                           list, it may not be possible
@@ -225,7 +225,7 @@ void purple_log_free(PurpleLog *log);
  *
  * @log:          The log to write to
  * @type:         The type of message being logged
- * @from:         Whom this message is coming from, or @c NULL for
+ * @from:         Whom this message is coming from, or %NULL for
  *                     system messages
  * @time:         A timestamp in UNIX time
  * @message:      The message to log
@@ -314,8 +314,8 @@ int purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleAc
 /**
  * Tests whether a log is deletable
  *
- * A return value of @c FALSE indicates that purple_log_delete() will fail on this
- * log, unless something changes between the two calls.  A return value of @c TRUE,
+ * A return value of %FALSE indicates that purple_log_delete() will fail on this
+ * log, unless something changes between the two calls.  A return value of %TRUE,
  * however, does not guarantee the log can be deleted.
  *
  * @log:                 The log
@@ -503,7 +503,7 @@ gboolean purple_log_common_is_deletable(PurpleLog *log);
  *                     @c create and @c write is acceptable (for a total of
  *                     two functions). Passing @c create and @c finalize,
  *                     however, is not. To accomplish that, the caller must
- *                     pass @c create, @c NULL (a placeholder for @c write),
+ *                     pass @c create, %NULL (a placeholder for @c write),
  *                     and @c finalize (for a total of 3 functions).
  *
  * Returns: The new logger

@@ -122,7 +122,7 @@ void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
  *
  * @item:   The menuitem.
  *
- * Returns:  The submenu, or @c NULL.
+ * Returns:  The submenu, or %NULL.
  *
  * @since 2.3.0
  */

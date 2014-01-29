@@ -36,8 +36,8 @@ typedef gpointer (*GDupFunc)(gconstpointer data);
  * Compute the width and height required to view the text on the screen.
  *
  * @text:     The text to be displayed.
- * @width:    The width required is set here, if not @c NULL.
- * @height:   The height required is set here, if not @c NULL.
+ * @width:    The width required is set here, if not %NULL.
+ * @height:   The height required is set here, if not %NULL.
  */
 void gnt_util_get_text_bound(const char *text, int *width, int *height);
 
@@ -48,7 +48,7 @@ void gnt_util_get_text_bound(const char *text, int *width, int *height);
  * @start:  The beginning of the string.
  * @end:    The end of the string. The width returned is the width
  *               upto (but not including) end. If end is NULL, then start
- *               is considered as a @c NULL-terminated string.
+ *               is considered as a %NULL-terminated string.
  *
  * Returns:       The on-screen width of the string.
  */
@@ -59,7 +59,7 @@ int gnt_util_onscreen_width(const char *start, const char *end);
  *
  * @str:  The string.
  * @len:  The length to consider. If non-positive, the entire screenlength is used.
- * @param w    The actual width of the string upto the returned offset, if not @c NULL.
+ * @param w    The actual width of the string upto the returned offset, if not %NULL.
  *
  * Returns:     The string after len offset.
  */
@@ -138,7 +138,7 @@ void gnt_util_parse_widgets(const char *string, int num, ...);
  *
  * @string:   The XHTML string
  * @tv:       The GntTextView
- * Returns:  @c TRUE if the string was added to the textview properly, @c FALSE otherwise.
+ * Returns:  %TRUE if the string was added to the textview properly, %FALSE otherwise.
  *
  * @since 2.2.0
  */

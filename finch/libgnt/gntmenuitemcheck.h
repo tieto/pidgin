@@ -84,7 +84,7 @@ GntMenuItem * gnt_menuitem_check_new(const char *text);
  *
  * @item:  The menuitem.
  *
- * Returns: @c TRUE if the item is checked, @c FALSE otherwise.
+ * Returns: %TRUE if the item is checked, %FALSE otherwise.
  */
 gboolean gnt_menuitem_check_get_checked(GntMenuItemCheck *item);
 
@@ -92,7 +92,7 @@ gboolean gnt_menuitem_check_get_checked(GntMenuItemCheck *item);
  * Set whether the menuitem is checked or not.
  *
  * @item:  The menuitem.
- * @set:   @c TRUE if the item should be checked, @c FALSE otherwise.
+ * @set:   %TRUE if the item should be checked, %FALSE otherwise.
  */
 void gnt_menuitem_check_set_checked(GntMenuItemCheck *item, gboolean set);
 

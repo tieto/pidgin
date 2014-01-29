@@ -124,7 +124,7 @@ void purple_prefs_add_string(const char *name, const char *value);
  *
  * @name:  The name of the pref
  * @value: The initial value to set
- * @note This function takes a copy of the strings in the value list. The list
+ * Note: This function takes a copy of the strings in the value list. The list
  *       itself and original copies of the strings are up to the caller to
  *       free.
  */
@@ -143,7 +143,7 @@ void purple_prefs_add_path(const char *name, const char *value);
  *
  * @name:  The name of the pref
  * @value: The initial value to set
- * @note This function takes a copy of the strings in the value list. The list
+ * Note: This function takes a copy of the strings in the value list. The list
  *       itself and original copies of the strings are up to the caller to
  *       free.
  */
@@ -296,7 +296,7 @@ GList *purple_prefs_get_path_list(const char *name);
  *
  * @name: The parent pref
  * Returns: A list of newly allocated strings denoting the names of the children.
- *         Returns @c NULL if there are no children or if pref doesn't exist.
+ *         Returns %NULL if there are no children or if pref doesn't exist.
  *         The caller must free all the strings and the list.
  */
 GList *purple_prefs_get_children_names(const char *name);

@@ -79,7 +79,7 @@ GType gnt_ws_get_gtype(void);
 /**
  * Create a new workspace with the specified name.
  *
- * @name:  The desired name of the workspace, or @c NULL.
+ * @name:  The desired name of the workspace, or %NULL.
  *
  * Returns: The newly created workspace.
  *
@@ -171,7 +171,7 @@ void gnt_ws_show(GntWS *ws, GHashTable *table);
  * Get the name of a workspace.
  *
  * @ws:   The workspace.
- * Returns:  The name of the workspace (can be @c NULL).
+ * Returns:  The name of the workspace (can be %NULL).
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */

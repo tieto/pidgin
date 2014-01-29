@@ -57,8 +57,8 @@ void purple_conversations_remove(PurpleConversation *conv);
  * caller's responsibility to actually update the conversation.
  *
  * @conv:    The conversation.
- * @name:    The new name. If no change, use @c NULL.
- * @account: The new account. If no change, use @c NULL.
+ * @name:    The new name. If no change, use %NULL.
+ * @account: The new account. If no change, use %NULL.
  */
 void purple_conversations_update_cache(PurpleConversation *conv,
 		const char *name, PurpleAccount *account);
@@ -92,7 +92,7 @@ GList *purple_conversations_get_chats(void);
  * @name: The name of the conversation.
  * @account: The account associated with the conversation.
  *
- * Returns: The conversation if found, or @c NULL otherwise.
+ * Returns: The conversation if found, or %NULL otherwise.
  */
 PurpleConversation *purple_conversations_find_with_account(const char *name,
 		const PurpleAccount *account);
@@ -103,7 +103,7 @@ PurpleConversation *purple_conversations_find_with_account(const char *name,
  * @name: The name of the conversation.
  * @account: The account associated with the conversation.
  *
- * Returns: The conversation if found, or @c NULL otherwise.
+ * Returns: The conversation if found, or %NULL otherwise.
  */
 PurpleIMConversation *purple_conversations_find_im_with_account(const char *name,
 		const PurpleAccount *account);
@@ -114,7 +114,7 @@ PurpleIMConversation *purple_conversations_find_im_with_account(const char *name
  * @name: The name of the conversation.
  * @account: The account associated with the conversation.
  *
- * Returns: The conversation if found, or @c NULL otherwise.
+ * Returns: The conversation if found, or %NULL otherwise.
  */
 PurpleChatConversation *purple_conversations_find_chat_with_account(const char *name,
 		const PurpleAccount *account);

@@ -174,7 +174,7 @@ PurpleStoredImage *purple_smiley_get_stored_image(const PurpleSmiley *smiley);
  * Returns the custom smiley's data.
  *
  * @smiley:  The custom smiley.
- * @len:     If not @c NULL, the length of the image data returned
+ * @len:     If not %NULL, the length of the image data returned
  *                will be set in the location pointed to by this.
  *
  * Returns: A pointer to the custom smiley data.
@@ -186,7 +186,7 @@ gconstpointer purple_smiley_get_data(const PurpleSmiley *smiley, size_t *len);
  *
  * @smiley:  The custom smiley.
  *
- * Returns: The custom smiley's extension, "icon" if unknown, or @c NULL if
+ * Returns: The custom smiley's extension, "icon" if unknown, or %NULL if
  *         the image data has disappeared.
  */
 const char *purple_smiley_get_extension(const PurpleSmiley *smiley);
@@ -205,7 +205,7 @@ const char *purple_smiley_get_extension(const PurpleSmiley *smiley);
  *
  * @smiley:  The custom smiley.
  *
- * Returns: A full path to the file, or @c NULL under various conditions.
+ * Returns: A full path to the file, or %NULL under various conditions.
  *         The caller should use g_free to free the returned string.
  */
 char *purple_smiley_get_full_path(PurpleSmiley *smiley);
@@ -232,7 +232,7 @@ purple_smileys_get_all(void);
  *
  * @shortcut: The custom smiley's shortcut.
  *
- * Returns: The custom smiley if found, or @c NULL if not found.
+ * Returns: The custom smiley if found, or %NULL if not found.
  */
 PurpleSmiley *
 purple_smileys_find_by_shortcut(const char *shortcut);
@@ -242,7 +242,7 @@ purple_smileys_find_by_shortcut(const char *shortcut);
  *
  * @checksum: The custom smiley's checksum.
  *
- * Returns: The custom smiley if found, or @c NULL if not found.
+ * Returns: The custom smiley if found, or %NULL if not found.
  */
 PurpleSmiley *
 purple_smileys_find_by_checksum(const char *checksum);

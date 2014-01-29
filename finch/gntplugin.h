@@ -93,7 +93,7 @@ GType finch_plugin_info_get_type(void);
  *
  * @first_property:  The first property name
  * @...:  The value of the first property, followed optionally by more
- *             name/value pairs, followed by @c NULL
+ *             name/value pairs, followed by %NULL
  *
  * Returns: A new #FinchPluginInfo instance.
  *

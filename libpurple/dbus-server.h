@@ -39,7 +39,7 @@ G_BEGIN_DECLS
    with those introduced by other plugins.
 
    The structure PurpleDbusType has only one element (PurpleDBusType::parent), a
-   contains a pointer to the parent type, or @c NULL if the type has no
+   contains a pointer to the parent type, or %NULL if the type has no
    parent.  Parent means the same as the base class in object oriented
    programming.
 */

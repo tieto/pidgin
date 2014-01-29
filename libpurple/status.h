@@ -201,9 +201,9 @@ GType purple_status_type_get_type(void);
  * Creates a new status type.
  *
  * @primitive:     The primitive status type.
- * @id:            The ID of the status type, or @c NULL to use the id of
+ * @id:            The ID of the status type, or %NULL to use the id of
  *                      the primitive status type.
- * @name:          The name presented to the user, or @c NULL to use the
+ * @name:          The name presented to the user, or %NULL to use the
  *                      name of the primitive status type.
  * @saveable:      TRUE if the information set for this status by the
  *                      user can be saved for future sessions.
@@ -224,9 +224,9 @@ PurpleStatusType *purple_status_type_new_full(PurpleStatusPrimitive primitive,
  * saveable and not independent).
  *
  * @primitive:     The primitive status type.
- * @id:            The ID of the status type, or @c NULL to use the id of
+ * @id:            The ID of the status type, or %NULL to use the id of
  *                      the primitive status type.
- * @name:          The name presented to the user, or @c NULL to use the
+ * @name:          The name presented to the user, or %NULL to use the
  *                      name of the primitive status type.
  * @user_settable: TRUE if this is a status the user can manually set.
  *
@@ -240,9 +240,9 @@ PurpleStatusType *purple_status_type_new(PurpleStatusPrimitive primitive,
  * Creates a new status type with attributes.
  *
  * @primitive:     The primitive status type.
- * @id:            The ID of the status type, or @c NULL to use the id of
+ * @id:            The ID of the status type, or %NULL to use the id of
  *                      the primitive status type.
- * @name:          The name presented to the user, or @c NULL to use the
+ * @name:          The name presented to the user, or %NULL to use the
  *                      name of the primitive status type.
  * @saveable:      TRUE if the information set for this status by the
  *                      user can be saved for future sessions.

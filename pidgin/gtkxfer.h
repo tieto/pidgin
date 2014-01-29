@@ -59,7 +59,7 @@ void pidgin_xfer_dialog_destroy(PidginXferDialog *dialog);
 
 /**
  * Displays the file transfer dialog given.
- * If dialog is @c NULL, displays the default dialog, creating one if necessary
+ * If dialog is %NULL, displays the default dialog, creating one if necessary
  *
  * @dialog: The file transfer dialog to show.
  */

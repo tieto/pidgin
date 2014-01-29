@@ -200,7 +200,7 @@ void gnt_wm_add_workspace(GntWM *wm, GntWS *ws);
  * @wm:   The window-manager.
  * @param n    Index of the workspace to switch to.
  *
- * Returns:   @c TRUE if the switch was successful.
+ * Returns:   %TRUE if the switch was successful.
  */
 gboolean gnt_wm_switch_workspace(GntWM *wm, gint n);
 
@@ -267,7 +267,7 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget);
  * @wm:      The window-manager.
  * @string:  The input string to process.
  *
- * Returns: @c TRUE of the string was processed, @c FALSE otherwise.
+ * Returns: %TRUE of the string was processed, %FALSE otherwise.
  */
 gboolean gnt_wm_process_input(GntWM *wm, const char *string);
 
@@ -279,7 +279,7 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *string);
  * @param y       The y-coordinate of the mouse.
  * @widget:  The widget under the mouse.
  *
- * Returns:  @c TRUE if the event was handled, @c FALSE otherwise.
+ * Returns:  %TRUE if the event was handled, %FALSE otherwise.
  */
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget);
 

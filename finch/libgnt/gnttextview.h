@@ -172,8 +172,8 @@ int gnt_text_view_get_lines_above(GntTextView *view);
  *
  * @view:   The textview.
  * @name:   The name of the tag.
- * @text:   The new text for the text. If 'text' is @c NULL, the tag is removed.
- * @all:    @c TRUE if all of the instancess of the tag should be changed, @c FALSE if
+ * @text:   The new text for the text. If 'text' is %NULL, the tag is removed.
+ * @all:    %TRUE if all of the instancess of the tag should be changed, %FALSE if
  *               only the first instance should be changed.
  *
  * Returns:  The number of instances changed.

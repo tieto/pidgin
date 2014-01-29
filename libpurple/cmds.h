@@ -128,8 +128,8 @@ G_BEGIN_DECLS
  *               <li><tt>'S'</tt>: Same as <tt>'s'</tt> but with formatting.</li>
  *             </ul>
  *             If args is the empty string, then the command accepts no arguments.
- *             The args passed to the callback @a func will be a @c NULL
- *             terminated array of @c NULL terminated strings, and will always
+ *             The args passed to the callback @a func will be a %NULL
+ *             terminated array of %NULL terminated strings, and will always
  *             match the number of arguments asked for, unless
  *             #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed.
  * @param p This is the priority. Higher priority commands will be run first,
@@ -142,7 +142,7 @@ G_BEGIN_DECLS
  * @protocol_id: If the #PURPLE_CMD_FLAG_PROTOCOL_ONLY flag is set, this is the id
  *                of the protocol to which the command applies (such as
  *                <tt>"prpl-msn"</tt>). If the flag is not set, this parameter
- *                is ignored; pass @c NULL (or a humourous string of your
+ *                is ignored; pass %NULL (or a humourous string of your
  *                choice!).
  * @func: This is the function to call when someone enters this command.
  * @helpstr: a whitespace sensitive, UTF-8, HTML string describing how to
@@ -200,7 +200,7 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
  * might unregister a command, as the <tt>const char *</tt>'s used get freed
  * then.
  *
- * @conv: The conversation, or @c NULL.
+ * @conv: The conversation, or %NULL.
  * Returns: A @c GList of <tt>const char *</tt>, which must be freed with
  *         <tt>g_list_free()</tt>.
  */
@@ -212,9 +212,9 @@ GList *purple_cmd_list(PurpleConversation *conv);
  * Returns the help strings for a given command in the form of a GList,
  * one node for each matching command.
  *
- * @conv: The conversation, or @c NULL for no context.
+ * @conv: The conversation, or %NULL for no context.
  * @cmd: The command. No wildcards accepted, but returns help for all
- *            commands if @c NULL.
+ *            commands if %NULL.
  * Returns: A <tt>GList</tt> of <tt>const char *</tt>s, which is the help string
  *         for that command.
  */

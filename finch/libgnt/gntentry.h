@@ -161,7 +161,7 @@ void gnt_entry_clear(GntEntry *entry);
  * Set whether the text in the entry box should be masked for display.
  *
  * @entry:  The entry box.
- * @set:    @c TRUE if the text should be masked, @c FALSE otherwise.
+ * @set:    %TRUE if the text should be masked, %FALSE otherwise.
  */
 void gnt_entry_set_masked(GntEntry *entry, gboolean set);
 
@@ -187,7 +187,7 @@ void gnt_entry_set_history_length(GntEntry *entry, int num);
  * individual word in the entry box.
  *
  * @entry:   The entry box.
- * @word:    @c TRUE if the suggestions are for individual words, @c FALSE otherwise.
+ * @word:    %TRUE if the suggestions are for individual words, %FALSE otherwise.
  */
 void gnt_entry_set_word_suggest(GntEntry *entry, gboolean word);
 
@@ -196,7 +196,7 @@ void gnt_entry_set_word_suggest(GntEntry *entry, gboolean word);
  * tab-completion key is pressed (the TAB key, by default).
  *
  * @entry:    The entry box.
- * @always:   @c TRUE if the suggestion list should always be displayed.
+ * @always:   %TRUE if the suggestion list should always be displayed.
  */
 void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always);
 

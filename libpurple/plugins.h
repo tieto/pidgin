@@ -159,7 +159,7 @@ struct _PurplePluginAction {
 /**
  * Returns an ABI version to set in plugins using major and minor versions.
  *
- * @note The lower six nibbles represent the ABI version for libpurple, the
+ * Note: The lower six nibbles represent the ABI version for libpurple, the
  *       rest are required by GPlugin.
  */
 #define PURPLE_PLUGIN_ABI_VERSION(major,minor) \
@@ -380,10 +380,10 @@ G_BEGIN_DECLS
  * Attempts to load a plugin.
  *
  * @plugin: The plugin to load.
- * @error:  Return location for a #GError or @c NULL. If provided, this
+ * @error:  Return location for a #GError or %NULL. If provided, this
  *               will be set to the reason if the load fails.
  *
- * Returns: @c TRUE if successful or already loaded, @c FALSE otherwise.
+ * Returns: %TRUE if successful or already loaded, %FALSE otherwise.
  *
  * @see purple_plugin_unload()
  */
@@ -393,10 +393,10 @@ gboolean purple_plugin_load(PurplePlugin *plugin, GError **error);
  * Unloads the specified plugin.
  *
  * @plugin: The plugin handle.
- * @error:  Return location for a #GError or @c NULL. If provided, this
+ * @error:  Return location for a #GError or %NULL. If provided, this
  *               will be set to the reason if the unload fails.
  *
- * Returns: @c TRUE if successful or not loaded, @c FALSE otherwise.
+ * Returns: %TRUE if successful or not loaded, %FALSE otherwise.
  *
  * @see purple_plugin_load()
  */
@@ -407,7 +407,7 @@ gboolean purple_plugin_unload(PurplePlugin *plugin, GError **error);
  *
  * @plugin: The plugin.
  *
- * Returns: @c TRUE if loaded, or @c FALSE otherwise.
+ * Returns: %TRUE if loaded, or %FALSE otherwise.
  */
 gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
@@ -476,7 +476,7 @@ void purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
  *
  * @plugin: The plugin.
  *
- * Returns: @c TRUE if the plugin is an internal plugin, @c FALSE otherwise.
+ * Returns: %TRUE if the plugin is an internal plugin, %FALSE otherwise.
  */
 gboolean purple_plugin_is_internal(const PurplePlugin *plugin);
 
@@ -541,7 +541,7 @@ GType purple_plugin_info_get_type(void);
  *
  * @first_property:  The first property name
  * @...:  The value of the first property, followed optionally by more
- *             name/value pairs, followed by @c NULL
+ *             name/value pairs, followed by %NULL
  *
  * Returns: A new #PurplePluginInfo instance.
  *
@@ -565,7 +565,7 @@ const gchar *purple_plugin_info_get_id(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The name of the plugin, or @c NULL.
+ * Returns: The name of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_name(const PurplePluginInfo *info);
 
@@ -574,7 +574,7 @@ const gchar *purple_plugin_info_get_name(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The version of the plugin, or @c NULL.
+ * Returns: The version of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_version(const PurplePluginInfo *info);
 
@@ -583,7 +583,7 @@ const gchar *purple_plugin_info_get_version(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The primary category of the plugin, or @c NULL.
+ * Returns: The primary category of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_category(const PurplePluginInfo *info);
 
@@ -592,7 +592,7 @@ const gchar *purple_plugin_info_get_category(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The summary of the plugin, or @c NULL.
+ * Returns: The summary of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_summary(const PurplePluginInfo *info);
 
@@ -601,7 +601,7 @@ const gchar *purple_plugin_info_get_summary(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The description of the plugin, or @c NULL.
+ * Returns: The description of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_description(const PurplePluginInfo *info);
 
@@ -610,7 +610,7 @@ const gchar *purple_plugin_info_get_description(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The authors of the plugin, or @c NULL.
+ * Returns: The authors of the plugin, or %NULL.
  */
 const gchar * const *
 purple_plugin_info_get_authors(const PurplePluginInfo *info);
@@ -620,7 +620,7 @@ purple_plugin_info_get_authors(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The website of the plugin, or @c NULL.
+ * Returns: The website of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_website(const PurplePluginInfo *info);
 
@@ -629,7 +629,7 @@ const gchar *purple_plugin_info_get_website(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The path to the plugin's icon, or @c NULL.
+ * Returns: The path to the plugin's icon, or %NULL.
  */
 const gchar *purple_plugin_info_get_icon(const PurplePluginInfo *info);
 
@@ -638,7 +638,7 @@ const gchar *purple_plugin_info_get_icon(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The license name of the plugin, or @c NULL.
+ * Returns: The license name of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_license_id(const PurplePluginInfo *info);
 
@@ -647,7 +647,7 @@ const gchar *purple_plugin_info_get_license_id(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The license text of the plugin, or @c NULL.
+ * Returns: The license text of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_license_text(const PurplePluginInfo *info);
 
@@ -656,7 +656,7 @@ const gchar *purple_plugin_info_get_license_text(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The license URL of the plugin, or @c NULL.
+ * Returns: The license URL of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_license_url(const PurplePluginInfo *info);
 
@@ -665,7 +665,7 @@ const gchar *purple_plugin_info_get_license_url(const PurplePluginInfo *info);
  *
  * @info: The plugin's info instance.
  *
- * Returns: The dependencies of the plugin, or @c NULL.
+ * Returns: The dependencies of the plugin, or %NULL.
  */
 const gchar * const *
 purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
@@ -740,7 +740,7 @@ purple_plugin_info_get_flags(const PurplePluginInfo *info);
  *
  * @info: The plugin info.
  *
- * Returns: The plugin info error, or @c NULL.
+ * Returns: The plugin info error, or %NULL.
  */
 const gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
 
@@ -834,7 +834,7 @@ void purple_plugins_refresh(void);
  *
  * @id: The plugin ID.
  *
- * Returns: The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_plugin(const gchar *id);
 
@@ -843,7 +843,7 @@ PurplePlugin *purple_plugins_find_plugin(const gchar *id);
  *
  * @filename: The plugin filename.
  *
- * Returns: The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_by_filename(const char *filename);
 

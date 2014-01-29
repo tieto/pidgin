@@ -123,7 +123,7 @@ typedef enum /*< flags >*/
  *
  * The conversation can be an IM or a chat.
  *
- * @note When a conversation is destroyed with the last g_object_unref(), the
+ * Note: When a conversation is destroyed with the last g_object_unref(), the
  *       specified conversation is removed from the parent window. If this
  *       conversation is the only one contained in the parent window, that
  *       window is also destroyed.
@@ -178,14 +178,14 @@ struct _PurpleConversationUiOps
 
 	/** Called just before @a conv is freed. */
 	void (*destroy_conversation)(PurpleConversation *conv);
-	/** Write a message to a chat.  If this field is @c NULL, libpurple will
+	/** Write a message to a chat.  If this field is %NULL, libpurple will
 	 *  fall back to using #write_conv.
 	 *  @see purple_chat_conversation_write()
 	 */
 	void (*write_chat)(PurpleChatConversation *chat, const char *who,
 	                  const char *message, PurpleMessageFlags flags,
 	                  time_t mtime);
-	/** Write a message to an IM conversation.  If this field is @c NULL,
+	/** Write a message to an IM conversation.  If this field is %NULL,
 	 *  libpurple will fall back to using #write_conv.
 	 *  @see purple_im_conversation_write()
 	 */
@@ -240,8 +240,8 @@ struct _PurpleConversationUiOps
 	void (*present)(PurpleConversation *conv);
 
 	/** If this UI has a concept of focus (as in a windowing system) and
-	 *  this conversation has the focus, return @c TRUE; otherwise, return
-	 *  @c FALSE.
+	 *  this conversation has the focus, return %TRUE; otherwise, return
+	 *  %FALSE.
 	 */
 	gboolean (*has_focus)(PurpleConversation *conv);
 
@@ -254,7 +254,7 @@ struct _PurpleConversationUiOps
 
 	/** Prompt the user for confirmation to send @a message.  This function
 	 *  should arrange for the message to be sent if the user accepts.  If
-	 *  this field is @c NULL, libpurple will fall back to using
+	 *  this field is %NULL, libpurple will fall back to using
 	 *  #purple_request_action().
 	 */
 	void (*send_confirm)(PurpleConversation *conv, const char *message);
@@ -405,7 +405,7 @@ purple_conversation_get_e2ee_state(PurpleConversation *conv);
  * Enables or disables logging for this conversation.
  *
  * @conv: The conversation.
- * @log:  @c TRUE if logging should be enabled, or @c FALSE otherwise.
+ * @log:  %TRUE if logging should be enabled, or %FALSE otherwise.
  */
 void purple_conversation_set_logging(PurpleConversation *conv, gboolean log);
 
@@ -414,7 +414,7 @@ void purple_conversation_set_logging(PurpleConversation *conv, gboolean log);
  *
  * @conv: The conversation.
  *
- * Returns: @c TRUE if logging is enabled, or @c FALSE otherwise.
+ * Returns: %TRUE if logging is enabled, or %FALSE otherwise.
  */
 gboolean purple_conversation_is_logging(const PurpleConversation *conv);
 
@@ -506,7 +506,7 @@ PurpleConnectionFlags purple_conversation_get_features(PurpleConversation *conv)
  *
  * @conv:    The conversation.
  *
- * Returns: @c TRUE if the conversation has focus, @c FALSE if
+ * Returns: %TRUE if the conversation has focus, %FALSE if
  * it does not or the UI does not have a concept of conversation focus
  */
 gboolean purple_conversation_has_focus(PurpleConversation *conv);
@@ -572,9 +572,9 @@ void purple_conversation_send_confirm(PurpleConversation *conv, const char *mess
 
 /**
  * Adds a smiley to the conversation's smiley tree. If this returns
- * @c TRUE you should call purple_conversation_custom_smiley_write() one or more
+ * %TRUE you should call purple_conversation_custom_smiley_write() one or more
  * times, and then purple_conversation_custom_smiley_close(). If this returns
- * @c FALSE, either the conv or smile were invalid, or the icon was
+ * %FALSE, either the conv or smile were invalid, or the icon was
  * found in the cache. In either case, calling write or close would
  * be an error.
  *
@@ -582,11 +582,11 @@ void purple_conversation_send_confirm(PurpleConversation *conv, const char *mess
  * @smile: The text associated with the smiley
  * @cksum_type: The type of checksum.
  * @chksum: The checksum, as a NUL terminated base64 string.
- * @remote: @c TRUE if the custom smiley is set by the remote user (buddy).
- * Returns:      @c TRUE if an icon is expected, else FALSE. Note that
+ * @remote: %TRUE if the custom smiley is set by the remote user (buddy).
+ * Returns:      %TRUE if an icon is expected, else FALSE. Note that
  *              it is an error to never call purple_conversation_custom_smiley_close if
- *              this function returns @c TRUE, but an error to call it if
- *              @c FALSE is returned.
+ *              this function returns %TRUE, but an error to call it if
+ *              %FALSE is returned.
  */
 
 gboolean purple_conversation_custom_smiley_add(PurpleConversation *conv, const char *smile,
@@ -634,11 +634,11 @@ GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
  *
  * @conv:    The conversation.
  * @cmdline: The entire command including the arguments.
- * @markup:  @c NULL, or the formatted command line.
+ * @markup:  %NULL, or the formatted command line.
  * @error:   If the command failed errormsg is filled in with the appropriate error
- *                message, if not @c NULL. It must be freed by the caller with g_free().
+ *                message, if not %NULL. It must be freed by the caller with g_free().
  *
- * Returns:  @c TRUE if the command was executed successfully, @c FALSE otherwise.
+ * Returns:  %TRUE if the command was executed successfully, %FALSE otherwise.
  */
 gboolean purple_conversation_do_command(PurpleConversation *conv,
 		const gchar *cmdline, const gchar *markup, gchar **error);

@@ -413,7 +413,7 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  *
  * @gc:          the connection which is closing.
  * @reason:      why the connection is closing.
- * @description: a localized description of the error (not @c NULL ).
+ * @description: a localized description of the error (not %NULL ).
  */
 void
 purple_connection_error(PurpleConnection *gc,
@@ -427,7 +427,7 @@ purple_connection_error(PurpleConnection *gc,
  * @gc: The connection.
  *
  * Returns: The #PurpleConnectionErrorInfo instance of the connection if an
- *         error exists, @c NULL otherwise.
+ *         error exists, %NULL otherwise.
  */
 PurpleConnectionErrorInfo *
 purple_connection_get_error_info(const PurpleConnection *gc);
@@ -448,14 +448,14 @@ purple_connection_ssl_error (PurpleConnection *gc,
  * For instance, #PURPLE_CONNECTION_ERROR_NETWORK_ERROR is a temporary error,
  * which might be caused by losing the network connection, so <tt>
  * purple_connection_error_is_fatal (PURPLE_CONNECTION_ERROR_NETWORK_ERROR)</tt>
- * is @c FALSE.  On the other hand,
+ * is %FALSE.  On the other hand,
  * #PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED probably indicates a
  * misconfiguration of the account which needs the user to go fix it up, so
  * <tt> purple_connection_error_is_fatal
- * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is @c TRUE.
+ * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is %TRUE.
  *
- * Returns: @c TRUE if the account should not be automatically reconnected, and
- *         @c FALSE otherwise.
+ * Returns: %TRUE if the account should not be automatically reconnected, and
+ *         %FALSE otherwise.
  */
 gboolean
 purple_connection_error_is_fatal (PurpleConnectionError reason);
@@ -498,7 +498,7 @@ GList *purple_connections_get_connecting(void);
 /**
  * Checks if gc is still a valid pointer to a gc.
  *
- * Returns: @c TRUE if gc is valid.
+ * Returns: %TRUE if gc is valid.
  *
  * @deprecated Do not use this.  Instead, cancel your asynchronous request
  *             when the PurpleConnection is destroyed.

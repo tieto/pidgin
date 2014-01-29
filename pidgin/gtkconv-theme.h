@@ -117,7 +117,7 @@ void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info
  * @key:      The key to find
  * @specific: Whether to search variant-specific keys
  *
- * Returns: The key information. If @a specific is @c TRUE, then keys are first
+ * Returns: The key information. If @a specific is %TRUE, then keys are first
  *         searched by variant, then by general ones. Otherwise, only general
  *         key values are returned.
  */

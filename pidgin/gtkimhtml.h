@@ -273,7 +273,7 @@ void gtk_imhtml_set_funcs(GtkIMHtml *imhtml, GtkIMHtmlFuncs *f);
  * Enables or disables showing the contents of HTML comments in a GTK+ IM/HTML.
  *
  * @imhtml: The GTK+ IM/HTML.
- * @show:   @c TRUE if comments should be shown, or @c FALSE otherwise.
+ * @show:   %TRUE if comments should be shown, or %FALSE otherwise.
  */
 void gtk_imhtml_show_comments(GtkIMHtml *imhtml, gboolean show);
 
@@ -308,7 +308,7 @@ void gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name)
  * @imhtml:  The GTK+ IM/HTML.
  * @text:    The formatted text to append.
  * @options: A GtkIMHtmlOptions object indicating insert behavior.
- * @unused:  Use @c NULL value.
+ * @unused:  Use %NULL value.
  */
 void gtk_imhtml_append_text_with_images(GtkIMHtml *imhtml,
                                          const gchar *text,
@@ -413,7 +413,7 @@ void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIt
  * @imhtml: The GTK+ IM/HTML.
  * @text:   The string to search for.
  *
- * Returns: @c TRUE if a search was performed, or @c FALSE if not.
+ * Returns: %TRUE if a search was performed, or %FALSE if not.
  */
 gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text);
 
@@ -428,7 +428,7 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
  * Enables or disables editing in a GTK+ IM/HTML.
  *
  * @imhtml:   The GTK+ IM/HTML.
- * @editable: @c TRUE to make the widget editable, or @c FALSE otherwise.
+ * @editable: %TRUE to make the widget editable, or %FALSE otherwise.
  */
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
 
@@ -438,7 +438,7 @@ void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
  * buffer instead of specific text.
  *
  * @imhtml: The GTK+ IM/HTML.
- * @wbfo:   @c TRUE to enable the mode, or @c FALSE otherwise.
+ * @wbfo:   %TRUE to enable the mode, or %FALSE otherwise.
  */
 void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo);
 
@@ -460,13 +460,13 @@ void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons
 GtkIMHtmlButtons gtk_imhtml_get_format_functions(GtkIMHtml *imhtml);
 
 /**
- * Sets each boolean to @c TRUE or @c FALSE to indicate if that formatting option
+ * Sets each boolean to %TRUE or %FALSE to indicate if that formatting option
  * is enabled at the current position in a GTK+ IM/HTML.
  *
  * @imhtml:    The GTK+ IM/HTML.
- * @bold:      The boolean to set for bold or @c NULL.
- * @italic:    The boolean to set for italic or @c NULL.
- * @underline: The boolean to set for underline or @c NULL.
+ * @bold:      The boolean to set for bold or %NULL.
+ * @italic:    The boolean to set for italic or %NULL.
+ * @underline: The boolean to set for underline or %NULL.
  */
 void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold, gboolean *italic, gboolean *underline);
 
@@ -476,7 +476,7 @@ void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold, gboolean *
  *
  * @imhtml: The GTK+ IM/HTML.
  *
- * Returns: A string containg the font face or @c NULL if none is set.
+ * Returns: A string containg the font face or %NULL if none is set.
  */
 char *gtk_imhtml_get_current_fontface(GtkIMHtml *imhtml);
 
@@ -486,7 +486,7 @@ char *gtk_imhtml_get_current_fontface(GtkIMHtml *imhtml);
  *
  * @imhtml: The GTK+ IM/HTML.
  *
- * Returns: A string containg the foreground color or @c NULL if none is set.
+ * Returns: A string containg the foreground color or %NULL if none is set.
  */
 char *gtk_imhtml_get_current_forecolor(GtkIMHtml *imhtml);
 
@@ -496,7 +496,7 @@ char *gtk_imhtml_get_current_forecolor(GtkIMHtml *imhtml);
  *
  * @imhtml: The GTK+ IM/HTML.
  *
- * Returns: A string containg the font background color or @c NULL if none is set.
+ * Returns: A string containg the font background color or %NULL if none is set.
  */
 char *gtk_imhtml_get_current_backcolor(GtkIMHtml *imhtml);
 
@@ -506,7 +506,7 @@ char *gtk_imhtml_get_current_backcolor(GtkIMHtml *imhtml);
  *
  * @imhtml: The GTK+ IM/HTML.
  *
- * Returns: A string containg the background color or @c NULL if none is set.
+ * Returns: A string containg the background color or %NULL if none is set.
  */
 char *gtk_imhtml_get_current_background(GtkIMHtml *imhtml);
 
@@ -525,7 +525,7 @@ gint gtk_imhtml_get_current_fontsize(GtkIMHtml *imhtml);
  *
  * @imhtml: The GTK+ IM/HTML.
  *
- * Returns: @c TRUE if the IM/HTML is editable, or @c FALSE otherwise.
+ * Returns: %TRUE if the IM/HTML is editable, or %FALSE otherwise.
  */
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
 
@@ -569,9 +569,9 @@ void gtk_imhtml_toggle_strike(GtkIMHtml *imhtml);
  * IM/HTML.
  *
  * @imhtml: The GTK+ IM/HTML.
- * @color:  The HTML-style color, or @c NULL or "" to clear the color.
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
  *
- * Returns: @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
 gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
 
@@ -580,9 +580,9 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
  * IM/HTML.
  *
  * @imhtml: The GTK+ IM/HTML.
- * @color:  The HTML-style color, or @c NULL or "" to clear the color.
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
  *
- * Returns: @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
 
@@ -591,9 +591,9 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
  * IM/HTML.
  *
  * @imhtml: The GTK+ IM/HTML.
- * @color:  The HTML-style color, or @c NULL or "" to clear the color.
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
  *
- * Returns: @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
 gboolean gtk_imhtml_toggle_background(GtkIMHtml *imhtml, const char *color);
 
@@ -601,9 +601,9 @@ gboolean gtk_imhtml_toggle_background(GtkIMHtml *imhtml, const char *color);
  * Toggles a font face at the current location or selection in a GTK+ IM/HTML.
  *
  * @imhtml: The GTK+ IM/HTML.
- * @face:   The font face name, or @c NULL or "" to clear the font.
+ * @face:   The font face name, or %NULL or "" to clear the font.
  *
- * Returns: @c TRUE if a font name was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a font name was set, or %FALSE if it was cleared.
  */
 gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face);
 
@@ -612,7 +612,7 @@ gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face);
  * in a GTK+ IM/HTML.
  *
  * @imhtml: The GTK+ IM/HTML.
- * @url:    The URL for the link or @c NULL to terminate the link.
+ * @url:    The URL for the link or %NULL to terminate the link.
  */
 void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url);
 
@@ -733,7 +733,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
  *
  * @file:       The image file for the smiley
  * @shortcut:   The key shortcut for the smiley
- * @hide:       @c TRUE if the smiley should be hidden in the smiley dialog, @c FALSE otherwise
+ * @hide:       %TRUE if the smiley should be hidden in the smiley dialog, %FALSE otherwise
  * @flags:      The smiley flags
  *
  * Returns: The newly created smiley
@@ -761,15 +761,15 @@ void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
  *
  * @name:      The name of the protocol (e.g. http://)
  * @activate:  The callback to trigger when the protocol text is clicked.
- *                  Removes any current protocol definition if @c NULL. The
- *                  callback should return @c TRUE if the link was activated
- *                  properly, @c FALSE otherwise.
+ *                  Removes any current protocol definition if %NULL. The
+ *                  callback should return %TRUE if the link was activated
+ *                  properly, %FALSE otherwise.
  * @context_menu:  The callback to trigger when the context menu is popped
  *                      up on the protocol text. The callback should return
- *                      @c TRUE if the request for context menu was processed
- *                      successfully, @c FALSE otherwise.
+ *                      %TRUE if the request for context menu was processed
+ *                      successfully, %FALSE otherwise.
  *
- * Returns:  @c TRUE if the protocol was successfully registered (or unregistered, when \a activate is @c NULL)
+ * Returns:  %TRUE if the protocol was successfully registered (or unregistered, when \a activate is %NULL)
  */
 gboolean gtk_imhtml_class_register_protocol(const char *name,
 		gboolean (*activate)(GtkIMHtml *imhtml, GtkIMHtmlLink *link),
@@ -789,7 +789,7 @@ const char *gtk_imhtml_link_get_url(GtkIMHtmlLink *link);
  *
  * @link:   The GtkIMHtmlLink object sent to the callback functions
  *
- * Returns:  The GtkTextTag object, or @c NULL
+ * Returns:  The GtkTextTag object, or %NULL
  */
 const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
 
@@ -799,7 +799,7 @@ const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
  *
  * @link:   The GtkIMHtmlLink object sent to the callback functions
  *
- * Returns:  @c TRUE if 'url-clicked' signal was emitted, @c FALSE otherwise.
+ * Returns:  %TRUE if 'url-clicked' signal was emitted, %FALSE otherwise.
  */
 gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link);
 

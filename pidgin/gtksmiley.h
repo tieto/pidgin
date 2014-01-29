@@ -76,8 +76,8 @@ void pidgin_smiley_manager_show(void);
 /**
  * Shows an editor for a smiley.
  *
- * @widget: The parent widget to be linked or @c NULL
- * @smiley: The PurpleSmiley to be edited, or @c NULL for a new smiley
+ * @widget: The parent widget to be linked or %NULL
+ * @smiley: The PurpleSmiley to be edited, or %NULL for a new smiley
  * Returns: The smiley add dialog
  *
  * @see pidgin_smiley_editor_set_shortcut

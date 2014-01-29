@@ -70,7 +70,7 @@ G_BEGIN_DECLS
  *       NULL, the description widget will be hidden.
  *   </dd>
  *   <dt><tt>"icon-name"</tt> (<tt>char *</tt>)</dt>
- *   <dd>The Gtk stock id of an icon for the dialog, or @c NULL for no icon.
+ *   <dd>The Gtk stock id of an icon for the dialog, or %NULL for no icon.
  *       @see pidginstock.h
  *   </dd>
  *   <dt><tt>"custom-icon"</tt> (<tt>GdkPixbuf *</tt>)</dt>
@@ -135,7 +135,7 @@ void pidgin_mini_dialog_set_title(PidginMiniDialog *mini_dialog,
 
 /** Shortcut for setting a mini-dialog's description via GObject properties.
  *  @mini_dialog: a mini-dialog
- *  @description: the new description for @a mini_dialog, or @c NULL to
+ *  @description: the new description for @a mini_dialog, or %NULL to
  *                     hide the description widget.
  */
 void pidgin_mini_dialog_set_description(PidginMiniDialog *mini_dialog,
@@ -155,7 +155,7 @@ void pidgin_mini_dialog_set_link_callback(PidginMiniDialog *mini_dialog, GCallba
 
 /** Shortcut for setting a mini-dialog's icon via GObject properties.
  *  @mini_dialog: a mini-dialog
- *  @icon_name:   the Gtk stock ID of an icon, or @c NULL for no icon.
+ *  @icon_name:   the Gtk stock ID of an icon, or %NULL for no icon.
  */
 void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
 	const char *icon_name);

@@ -91,10 +91,10 @@ void pidgin_setup_webview(GtkWidget *webview);
  * function puts both widgets in a nice GtkFrame.  They're separated by an
  * attractive GtkSeparator.
  *
- * @editable: @c TRUE if this webview should be editable.  If this is
- *        @c FALSE, then the toolbar will NOT be created.  If this webview
+ * @editable: %TRUE if this webview should be editable.  If this is
+ *        %FALSE, then the toolbar will NOT be created.  If this webview
  *        should be read-only at first, but may become editable later, then
- *        pass in @c TRUE here and then manually call gtk_webview_set_editable()
+ *        pass in %TRUE here and then manually call gtk_webview_set_editable()
  *        later.
  * @webview_ret: A pointer to a pointer to a GtkWidget.  This pointer
  *        will be set to the webview when this function exits.
@@ -117,20 +117,20 @@ GtkWidget *pidgin_create_small_button(GtkWidget *image);
 /**
  * Creates a new window
  *
- * @title:        The window title, or @c NULL
+ * @title:        The window title, or %NULL
  * @border_width: The window's desired border width
- * @role:         A string indicating what the window is responsible for doing, or @c NULL
- * @resizable:    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
+ * @role:         A string indicating what the window is responsible for doing, or %NULL
+ * @resizable:    Whether the window should be resizable (%TRUE) or not (%FALSE)
  */
 GtkWidget *pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable);
 
 /**
  * Creates a new dialog window
  *
- * @title:        The window title, or @c NULL
+ * @title:        The window title, or %NULL
  * @border_width: The window's desired border width
- * @role:         A string indicating what the window is responsible for doing, or @c NULL
- * @resizable:    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
+ * @role:         A string indicating what the window is responsible for doing, or %NULL
+ * @resizable:    Whether the window should be resizable (%TRUE) or not (%FALSE)
  */
 GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable);
 
@@ -173,7 +173,7 @@ GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog);
 /**
  * Toggles the sensitivity of a widget.
  *
- * @widget:    @c NULL. Used for signal handlers.
+ * @widget:    %NULL. Used for signal handlers.
  * @to_toggle: The widget to toggle.
  */
 void pidgin_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
@@ -191,7 +191,7 @@ void pidgin_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
 /**
  * Toggles the sensitivity of all widgets in a pointer array.
  *
- * @param w    @c NULL. Used for signal handlers.
+ * @param w    %NULL. Used for signal handlers.
  * @data: The array containing the widgets to toggle.
  */
 void pidgin_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
@@ -199,7 +199,7 @@ void pidgin_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
 /**
  * Toggles the visibility of a widget.
  *
- * @widget:    @c NULL. Used for signal handlers.
+ * @widget:    %NULL. Used for signal handlers.
  * @to_toggle: The widget to toggle.
  */
 void pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
@@ -243,7 +243,7 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
  * @menu:       The menu to which to append the menu item.
  * @str:        The title for the menu item.
  * @icon:       An icon to place to the left of the menu item,
- *                   or @c NULL for no icon.
+ *                   or %NULL for no icon.
  * @cb:         A function to call when the menu item is activated.
  * @data:       Data to pass to the signal function.
  * @accel_key:  Something.
@@ -350,10 +350,10 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
  *
  * @entry:       The GtkEntry on which to setup autocomplete.
  * @optmenu:     A menu for accounts, returned by pidgin_account_option_menu_new().
- *                    If @a optmenu is not @c NULL, it'll be updated when a username is chosen
+ *                    If @a optmenu is not %NULL, it'll be updated when a username is chosen
  *                    from the autocomplete list.
  * @filter_func: A function for checking if an autocomplete entry
- *                    should be shown. This can be @c NULL.
+ *                    should be shown. This can be %NULL.
  * @user_data:  The data to be passed to the filter_func function.
  */
 void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data);
@@ -362,9 +362,9 @@ void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, 
  * The default filter function for username autocomplete.
  *
  * @completion_entry: The completion entry to filter.
- * @all_accounts:  If this is @c FALSE, only the autocompletion entries
+ * @all_accounts:  If this is %FALSE, only the autocompletion entries
  *                         which belong to an online account will be filtered.
- * Returns: Returns @c TRUE if the autocompletion entry is filtered.
+ * Returns: Returns %TRUE if the autocompletion entry is filtered.
  */
 gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts);
 
@@ -562,7 +562,7 @@ GtkWidget *pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
  * After setting the cursor, the display is flushed, so the change will
  * take effect immediately.
  *
- * If the window for @a widget is @c NULL, this function simply returns.
+ * If the window for @a widget is %NULL, this function simply returns.
  *
  * @widget:      The widget for which to set the mouse pointer
  * @cursor_type: The type of cursor to set
@@ -572,11 +572,11 @@ void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
 /**
  * Sets the mouse point for a GtkWidget back to that of its parent window.
  *
- * If @a widget is @c NULL, this function simply returns.
+ * If @a widget is %NULL, this function simply returns.
  *
- * If the window for @a widget is @c NULL, this function simply returns.
+ * If the window for @a widget is %NULL, this function simply returns.
  *
- * @note The display is not flushed from this function.
+ * Note: The display is not flushed from this function.
  */
 void pidgin_clear_cursor(GtkWidget *widget);
 
@@ -595,9 +595,9 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
  *
  * @protocol:   The protocol to convert the icon
  * @path:       The path of a file to convert
- * @len:        If not @c NULL, the length of the returned data will be set here.
+ * @len:        If not %NULL, the length of the returned data will be set here.
  *
- * Returns:           The converted image data, or @c NULL if an error occurred.
+ * Returns:           The converted image data, or %NULL if an error occurred.
  */
 gpointer pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *len);
 
@@ -620,19 +620,19 @@ typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
  * embedding in the buddy list scrollbook with pidgin_blist_add_alert().
  *
  * @handle:         The #PurpleConnection to which this mini-dialog
- *                       refers, or @c NULL if it does not refer to a
+ *                       refers, or %NULL if it does not refer to a
  *                       connection.  If @a handle is supplied, the mini-dialog
  *                       will be automatically removed and destroyed when the
  *                       connection signs off.
  * @stock_id:       The ID of a stock image to use in the mini dialog.
  * @primary:        The primary text
- * @secondary:      The secondary text, or @c NULL for no description.
+ * @secondary:      The secondary text, or %NULL for no description.
  * @user_data:      Data to pass to the callbacks
  * @...:            a <tt>NULL</tt>-terminated list of button labels
  *                       (<tt>char *</tt>) and callbacks
  *                       (#PidginUtilMiniDialogCallback).  @a user_data will be
  *                       passed as the first argument.  (Callbacks may lack a
- *                       second argument, or be @c NULL to take no action when
+ *                       second argument, or be %NULL to take no action when
  *                       the corresponding button is pressed.) When a button is
  *                       pressed, the callback (if any) will be called; when
  *                       the callback returns the dialog will be destroyed.
@@ -741,11 +741,11 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
  * Add a labelled widget to a GtkVBox
  *
  * @vbox:         The GtkVBox to add the widget to.
- * @widget_label: The label to give the widget, can be @c NULL.
- * @sg:           The GtkSizeGroup to add the label to, can be @c NULL.
+ * @widget_label: The label to give the widget, can be %NULL.
+ * @sg:           The GtkSizeGroup to add the label to, can be %NULL.
  * @widget:       The GtkWidget to add.
  * @expand:       Whether to expand the widget horizontally.
- * @p_label:      Place to store a pointer to the GtkLabel, or @c NULL if you don't care.
+ * @p_label:      Place to store a pointer to the GtkLabel, or %NULL if you don't care.
  *
  * Returns:  A GtkHBox already added to the GtkVBox containing the GtkLabel and the GtkWidget.
  */

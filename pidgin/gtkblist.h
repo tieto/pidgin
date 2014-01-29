@@ -204,7 +204,7 @@ GdkPixbuf *pidgin_blist_get_status_icon(PurpleBlistNode *node,
 /**
  * Returns a boolean indicating if @a node is part of an expanded contact.
  *
- * This only makes sense for contact and buddy nodes. @c FALSE is returned
+ * This only makes sense for contact and buddy nodes. %FALSE is returned
  * for other types of nodes.
  *
  * @node: The node in question.

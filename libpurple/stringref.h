@@ -92,7 +92,7 @@ void purple_stringref_unref(PurpleStringref *stringref);
 /**
  * Retrieve the value of a stringref.
  *
- * @note This value should not be cached or stored in a local variable.
+ * Note: This value should not be cached or stored in a local variable.
  *       While there is nothing inherently incorrect about doing so, it
  *       is easy to forget that the cached value is in fact a
  *       reference-counted object and accidentally use it after

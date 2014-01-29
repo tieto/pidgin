@@ -362,7 +362,7 @@ PurpleGroup *purple_blist_find_group(const char *name);
  * @account: The chat's account.
  * @name:    The chat's name.
  *
- * Returns: The chat, or @c NULL if the chat does not exist.
+ * Returns: The chat, or %NULL if the chat does not exist.
  */
 PurpleChat *purple_blist_find_chat(PurpleAccount *account, const char *name);
 

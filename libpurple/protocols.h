@@ -242,7 +242,7 @@ void purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const ch
  *
  * @type: The attention type.
  * @name: The icon's name.
- * @note Icons are optional for attention events.
+ * Note: Icons are optional for attention events.
  */
 void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *name);
 
@@ -285,8 +285,8 @@ const char *purple_attention_type_get_outgoing_desc(const PurpleAttentionType *t
  * Get the attention type's icon name.
  *
  * @type: The attention type.
- * Returns: The icon name or @c NULL if unset/empty.
- * @note Icons are optional for attention events.
+ * Returns: The icon name or %NULL if unset/empty.
+ * Note: Icons are optional for attention events.
  */
 const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type);
 
@@ -581,10 +581,10 @@ PurpleProtocol *purple_protocols_find(const char *id);
  * Adds a protocol to the list of protocols.
  *
  * @protocol_type:  The type of the protocol to add.
- * @error:  Return location for a #GError or @c NULL. If provided, this
+ * @error:  Return location for a #GError or %NULL. If provided, this
  *               will be set to the reason if adding fails.
  *
- * Returns: The protocol instance if the protocol was added, else @c NULL.
+ * Returns: The protocol instance if the protocol was added, else %NULL.
  */
 PurpleProtocol *purple_protocols_add(GType protocol_type, GError **error);
 
@@ -594,7 +594,7 @@ PurpleProtocol *purple_protocols_add(GType protocol_type, GError **error);
  * and protocol options.
  *
  * @protocol:  The protocol to remove.
- * @error:  Return location for a #GError or @c NULL. If provided, this
+ * @error:  Return location for a #GError or %NULL. If provided, this
  *               will be set to the reason if removing fails.
  *
  * Returns: TRUE if the protocol was removed, else FALSE.

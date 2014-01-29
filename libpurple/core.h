@@ -90,7 +90,7 @@ G_BEGIN_DECLS
  * @ui: The ID of the UI using the core. This should be a
  *           unique ID, registered with the purple team.
  *
- * Returns: @c TRUE if successful, or @c FALSE otherwise.
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  */
 gboolean purple_core_init(const char *ui);
 
@@ -163,8 +163,8 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
  * so whether that process is using the same configuration directory as this
  * process.
  *
- * Returns: @c TRUE if this is the first instance of libpurple running;
- *         @c FALSE if there is another instance running.
+ * Returns: %TRUE if this is the first instance of libpurple running;
+ *         %FALSE if there is another instance running.
  */
 gboolean purple_core_ensure_single_instance(void);
 

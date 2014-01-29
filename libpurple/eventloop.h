@@ -58,7 +58,7 @@ struct _PurpleEventLoopUiOps
 	/**
 	 * Should create a callback timer with an interval measured in
 	 * milliseconds.  The supplied @a function should be called every @a
-	 * interval seconds until it returns @c FALSE, after which it should not
+	 * interval seconds until it returns %FALSE, after which it should not
 	 * be called again.
 	 *
 	 * Analogous to g_timeout_add in glib.
@@ -84,7 +84,7 @@ struct _PurpleEventLoopUiOps
 	 * Should remove a callback timer.  Analogous to g_source_remove in glib.
 	 * @handle: an identifier for a timeout, as returned by
 	 *               #timeout_add.
-	 * Returns:       @c TRUE if the timeout identified by @a handle was
+	 * Returns:       %TRUE if the timeout identified by @a handle was
 	 *               found and removed.
 	 * @see purple_timeout_remove
 	 */
@@ -111,7 +111,7 @@ struct _PurpleEventLoopUiOps
 	/**
 	 * Should remove an input handler.  Analogous to g_source_remove in glib.
 	 * @handle: an identifier, as returned by #input_add.
-	 * Returns:       @c TRUE if the input handler was found and removed.
+	 * Returns:       %TRUE if the input handler was found and removed.
 	 * @see purple_input_remove
 	 */
 	gboolean (*input_remove)(guint handle);
@@ -161,7 +161,7 @@ G_BEGIN_DECLS
 /**
  * Creates a callback timer.
  *
- * The timer will repeat until the function returns @c FALSE. The
+ * The timer will repeat until the function returns %FALSE. The
  * first call will be at the end of the first interval.
  *
  * If the timer is in a multiple of seconds, use purple_timeout_add_seconds()
@@ -179,7 +179,7 @@ guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
 /**
  * Creates a callback timer.
  *
- * The timer will repeat until the function returns @c FALSE. The
+ * The timer will repeat until the function returns %FALSE. The
  * first call will be at the end of the first interval.
  *
  * This function allows UIs to group timers for better power efficiency.  For
@@ -199,7 +199,7 @@ guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer 
  *
  * @handle: The handle, as returned by purple_timeout_add().
  *
- * Returns: @c TRUE if the handler was successfully removed.
+ * Returns: %TRUE if the handler was successfully removed.
  */
 gboolean purple_timeout_remove(guint handle);
 

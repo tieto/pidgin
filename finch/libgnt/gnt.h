@@ -52,7 +52,7 @@ void gnt_main(void);
 /**
  * Check whether the terminal is capable of UTF8 display.
  *
- * Returns:  @c FALSE if the terminal is capable of drawing UTF-8, @c TRUE otherwise.
+ * Returns:  %FALSE if the terminal is capable of drawing UTF-8, %TRUE otherwise.
  */
 gboolean gnt_ascii_only(void);
 
@@ -115,7 +115,7 @@ void gnt_screen_rename_widget(GntWidget *widget, const char *text);
  *
  * @widget:  The widget.
  *
- * Returns:  @c TRUE if the widget has the current focus, @c FALSE otherwise.
+ * Returns:  %TRUE if the widget has the current focus, %FALSE otherwise.
  */
 gboolean gnt_widget_has_focus(GntWidget *widget);
 
@@ -139,7 +139,7 @@ void gnt_register_action(const char *label, void (*callback)(void));
  *
  * @menu:  The menu to display.
  *
- * Returns: @c TRUE if the menu is displayed, @c FALSE otherwise (e.g., if another menu is currently displayed).
+ * Returns: %TRUE if the menu is displayed, %FALSE otherwise (e.g., if another menu is currently displayed).
  */
 gboolean gnt_screen_menu_show(gpointer menu);
 
@@ -174,14 +174,14 @@ void gnt_set_clipboard_string(const gchar *string);
  *
  * @wd:    The working directory for the new application.
  * @argv:  The argument vector.
- * @envp:  The environment, or @c NULL.
- * @stin:  Location to store the child's stdin, or @c NULL.
- * @stout: Location to store the child's stdout, or @c NULL.
- * @sterr: Location to store the child's stderr, or @c NULL.
+ * @envp:  The environment, or %NULL.
+ * @stin:  Location to store the child's stdin, or %NULL.
+ * @stout: Location to store the child's stdout, or %NULL.
+ * @sterr: Location to store the child's stderr, or %NULL.
  * @callback:   The callback to call after the child exits.
  * @data:  The data to pass to the callback.
  *
- * Returns:  @c TRUE if the child was successfully spawned, @c FALSE otherwise.
+ * Returns:  %TRUE if the child was successfully spawned, %FALSE otherwise.
  */
 gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 		gint *stin, gint *stout, gint *sterr,
@@ -190,8 +190,8 @@ gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 /**
  * Check whether a child process is in control of the current terminal.
  *
- * Returns: @c TRUE if a child process (eg., PAGER) is occupying the current
- *         terminal, @c FALSE otherwise.
+ * Returns: %TRUE if a child process (eg., PAGER) is occupying the current
+ *         terminal, %FALSE otherwise.
  */
 gboolean gnt_is_refugee(void);
 

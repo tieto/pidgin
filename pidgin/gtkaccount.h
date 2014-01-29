@@ -53,7 +53,7 @@ void pidgin_accounts_window_hide(void);
  * Shows an add/modify account dialog.
  *
  * @type:    The type of dialog.
- * @account: The associated account, or @c NULL for an Add dialog.
+ * @account: The associated account, or %NULL for an Add dialog.
  */
 void pidgin_account_dialog_show(PidginAccountDialogType type,
 								  PurpleAccount *account);

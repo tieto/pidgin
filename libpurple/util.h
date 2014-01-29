@@ -175,9 +175,9 @@ purple_menu_action_get_stock_icon(PurpleMenuAction *act);
 /**
  * Set the appropriate presence values for the currently playing song.
  *
- * @title:     The title of the song, @c NULL to unset the value.
- * @artist:    The artist of the song, can be @c NULL.
- * @album:     The album of the song, can be @c NULL.
+ * @title:     The title of the song, %NULL to unset the value.
+ * @artist:    The artist of the song, can be %NULL.
+ * @album:     The album of the song, can be %NULL.
  */
 void purple_util_set_current_song(const char *title, const char *artist,
 		const char *album);
@@ -185,10 +185,10 @@ void purple_util_set_current_song(const char *title, const char *artist,
 /**
  * Format song information.
  *
- * @title:     The title of the song, @c NULL to unset the value.
- * @artist:    The artist of the song, can be @c NULL.
- * @album:     The album of the song, can be @c NULL.
- * @unused:    Currently unused, must be @c NULL.
+ * @title:     The title of the song, %NULL to unset the value.
+ * @artist:    The artist of the song, can be %NULL.
+ * @album:     The album of the song, can be %NULL.
+ * @unused:    Currently unused, must be %NULL.
  *
  * Returns:   The formatted string. The caller must g_free the returned string.
  */
@@ -375,11 +375,11 @@ char *purple_mime_decode_field(const char *str);
  * should not be used.
  *
  * @format: The format string, in UTF-8
- * @tm:     The time to format, or @c NULL to use the current local time
+ * @tm:     The time to format, or %NULL to use the current local time
  *
  * Returns: The formatted time, in UTF-8.
  *
- * @note @a format is required to be in UTF-8.  This differs from strftime(),
+ * Note: @a format is required to be in UTF-8.  This differs from strftime(),
  *       where the format is provided in the locale charset.
  */
 const char *purple_utf8_strftime(const char *format, const struct tm *tm);
@@ -400,7 +400,7 @@ const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @tm: The time to format, or @c NULL to use the current local time
+ * @tm: The time to format, or %NULL to use the current local time
  *
  * Returns: The date, formatted as per the user's settings.  In the USA this
  *         is something like "02/18/13"
@@ -413,7 +413,7 @@ const char *purple_date_format_short(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @tm: The time to format, or @c NULL to use the current local time
+ * @tm: The time to format, or %NULL to use the current local time
  *
  * Returns: The timestamp, formatted as per the user's settings.  In the USA
  *         this is something like "02/18/13 15:26:44"
@@ -426,7 +426,7 @@ const char *purple_date_format_long(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @tm: The time to format, or @c NULL to use the current local time
+ * @tm: The time to format, or %NULL to use the current local time
  *
  * Returns: The date and time, formatted as per the user's settings.  In the
  *         USA this is something like "Mon Feb 18 15:26:44 2013"
@@ -439,7 +439,7 @@ const char *purple_date_format_full(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @tm: The time to format, or @c NULL to use the current local time
+ * @tm: The time to format, or %NULL to use the current local time
  *
  * Returns: The time, formatted as per the user's settings.  In the USA this
  *         is something like "15:26:44"
@@ -471,15 +471,15 @@ time_t purple_time_build(int year, int month, int day, int hour,
  *
  * @timestamp: The timestamp
  * @utc:       Assume UTC if no timezone specified
- * @tm:        If not @c NULL, the caller can get a copy of the
+ * @tm:        If not %NULL, the caller can get a copy of the
  *                  struct tm used to calculate the time_t return value.
- * @tz_off:    If not @c NULL, the caller can get a copy of the
+ * @tz_off:    If not %NULL, the caller can get a copy of the
  *                  timezone offset (from UTC) used to calculate the time_t
  *                  return value. Note: Zero is a valid offset. As such,
  *                  the value of the macro @c PURPLE_NO_TZ_OFF indicates no
  *                  offset was specified (which means that the local
  *                  timezone was used in the calculation).
- * @rest:      If not @c NULL, the caller can get a pointer to the
+ * @rest:      If not %NULL, the caller can get a pointer to the
  *                  part of @a timestamp left over after parsing is
  *                  completed, if it's not the end of @a timestamp.
  *
@@ -495,7 +495,7 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
  *               See http://unicode.org/reports/tr35/
  *               (NOTE: not all formats are supported)
  * @len:    The length of the formatting string
- * @tm:     The time to format, or @c NULL to use the current local time
+ * @tm:     The time to format, or %NULL to use the current local time
  *
  * Returns: The time, formatted as per the user's settings.
  */
@@ -672,14 +672,14 @@ char *purple_markup_get_tag_name(const char *tag);
  * entity pointed to by @a text. For example, purple_markup_unescape_entity("&amp;")
  * will return "&". The @a text variable is expected to point to an '&',
  * the first character of the entity. If given an unrecognized entity, the function
- * returns @c NULL.
+ * returns %NULL.
  *
  * Note that this function, unlike purple_unescape_html(), does not search
  * the string for the entity, does not replace the entity, and does not
  * return a newly allocated string.
  *
  * @text:   A string containing an HTML entity.
- * @length: If not @c NULL, the string length of the entity is stored in this location.
+ * @length: If not %NULL, the string length of the entity is stored in this location.
  *
  * Returns: A constant string containing the character representation of the given entity.
  */
@@ -694,7 +694,7 @@ const char * purple_markup_unescape_entity(const char *text, int *length);
  * "color") would return "#dc4d1b".
  *
  * On error or if the requested property was not found, the function returns
- * @c NULL.
+ * %NULL.
  *
  * @style: A string containing the inline CSS text.
  * @opt:   The requested CSS property.
@@ -826,7 +826,7 @@ PurpleXmlNode *purple_util_read_xml_from_file(const char *filename,
  * @path:   The returned path to the temp file.
  * @binary: Text or binary, for platforms where it matters.
  *
- * Returns: A file pointer to the temporary file, or @c NULL on failure.
+ * Returns: A file pointer to the temporary file, or %NULL on failure.
  */
 FILE *purple_mkstemp(char **path, gboolean binary);
 
@@ -893,7 +893,7 @@ gboolean purple_running_osx(void);
  *
  * @fd: The socket file descriptor.
  *
- * Returns: The IP address, or @c NULL on error.
+ * Returns: The IP address, or %NULL on error.
  */
 char *purple_fd_get_ip(int fd);
 
@@ -930,12 +930,12 @@ gboolean purple_socket_speaks_ipv4(int fd);
  * Tests two strings for equality.
  *
  * Unlike strcmp(), this function will not crash if one or both of the
- * strings are @c NULL.
+ * strings are %NULL.
  *
  * @left:	A string
  * @right: A string to compare with left
  *
- * Returns: @c TRUE if the strings are the same, else @c FALSE.
+ * Returns: %TRUE if the strings are the same, else %FALSE.
  */
 gboolean purple_strequal(const gchar *left, const gchar *right);
 
@@ -1289,7 +1289,7 @@ GList *purple_uri_list_extract_filenames(const gchar *uri_list);
  *
  * @str: The source string.
  *
- * Returns: The UTF-8 string, or @c NULL if it could not be converted.
+ * Returns: The UTF-8 string, or %NULL if it could not be converted.
  */
 gchar *purple_utf8_try_convert(const char *str);
 
@@ -1496,7 +1496,7 @@ void purple_value_free(GValue *value);
  * @nonce:        The nonce provided by the server
  * @client_nonce: The nonce provided by the client
  *
- * Returns: The session key, or @c NULL if an error occurred.
+ * Returns: The session key, or %NULL if an error occurred.
  */
 gchar *purple_http_digest_calculate_session_key(
 		const gchar *algorithm, const gchar *username,
@@ -1517,7 +1517,7 @@ gchar *purple_http_digest_calculate_session_key(
  * @client_nonce:      The nonce provided by the client
  * @session_key:       The session key from purple_cipher_http_digest_calculate_session_key()
  *
- * Returns: The hashed response, or @c NULL if an error occurred.
+ * Returns: The hashed response, or %NULL if an error occurred.
  */
 gchar *purple_http_digest_calculate_response(
 		const gchar *algorithm, const gchar *method,

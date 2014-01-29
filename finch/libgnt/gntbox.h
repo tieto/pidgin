@@ -99,9 +99,9 @@ GType gnt_box_get_gtype(void);
 /**
  * Create a new GntBox.
  *
- * @homo:  If @c TRUE, all the widgets in it will have the same width (or height)
- * @vert:  Whether the widgets in it should be stacked vertically (if @c TRUE)
- *              or horizontally (if @c FALSE).
+ * @homo:  If %TRUE, all the widgets in it will have the same width (or height)
+ * @vert:  Whether the widgets in it should be stacked vertically (if %TRUE)
+ *              or horizontally (if %FALSE).
  *
  * Returns: The new GntBox.
  */
@@ -137,7 +137,7 @@ void gnt_box_set_pad(GntBox *box, int pad);
  * @e .gntrc)
  *
  * @box: The box
- * @set: @c TRUE if it's a toplevel box, @c FALSE otherwise.
+ * @set: %TRUE if it's a toplevel box, %FALSE otherwise.
  */
 void gnt_box_set_toplevel(GntBox *box, gboolean set);
 

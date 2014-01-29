@@ -85,7 +85,7 @@ GntWidget * gnt_check_box_new(const char *text);
  * Set whether the checkbox should be checked or not.
  *
  * @box:   The checkbox.
- * @set:   @c TRUE if the checkbox should be selected, @c FALSE otherwise.
+ * @set:   %TRUE if the checkbox should be selected, %FALSE otherwise.
  */
 void gnt_check_box_set_checked(GntCheckBox *box, gboolean set);
 
@@ -94,7 +94,7 @@ void gnt_check_box_set_checked(GntCheckBox *box, gboolean set);
  *
  * @box:  The checkbox.
  *
- * Returns:     @c TRUE if the checkbox is selected, @c FALSE otherwise.
+ * Returns:     %TRUE if the checkbox is selected, %FALSE otherwise.
  */
 gboolean gnt_check_box_get_checked(GntCheckBox *box);
 

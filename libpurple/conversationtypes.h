@@ -380,19 +380,19 @@ GList *purple_chat_conversation_get_ignored(const PurpleChatConversation *chat);
  * @chat: The chat.
  * @user: The user to check in the ignore list.
  *
- * Returns: The ignored user if found, complete with prefixes, or @c NULL
+ * Returns: The ignored user if found, complete with prefixes, or %NULL
  *         if not found.
  */
 const char *purple_chat_conversation_get_ignored_user(const PurpleChatConversation *chat,
 											const char *user);
 
 /**
- * Returns @c TRUE if the specified user is ignored.
+ * Returns %TRUE if the specified user is ignored.
  *
  * @chat: The chat.
  * @user: The user.
  *
- * Returns: @c TRUE if the user is in the ignore list; @c FALSE otherwise.
+ * Returns: %TRUE if the user is in the ignore list; %FALSE otherwise.
  */
 gboolean purple_chat_conversation_is_ignored_user(const PurpleChatConversation *chat,
 										const char *user);
@@ -467,7 +467,7 @@ void purple_chat_conversation_add_user(PurpleChatConversation *chat, const char 
  *                     user.  This list may be shorter than @a users, in which
  *                     case, the users after the end of extra_msgs will not have
  *                     an extra message.  By extension, this means that extra_msgs
- *                     can simply be @c NULL and none of the users will have an
+ *                     can simply be %NULL and none of the users will have an
  *                     extra message.
  * @flags:        The list of flags for each user.
  * @new_arrivals: Decides whether or not to show join notices.
@@ -492,7 +492,7 @@ void purple_chat_conversation_rename_user(PurpleChatConversation *chat,
  *
  * @chat:   The chat.
  * @user:   The user that is being removed.
- * @reason: The optional reason given for the removal. Can be @c NULL.
+ * @reason: The optional reason given for the removal. Can be %NULL.
  */
 void purple_chat_conversation_remove_user(PurpleChatConversation *chat,
 		const char *user, const char *reason);
@@ -502,7 +502,7 @@ void purple_chat_conversation_remove_user(PurpleChatConversation *chat,
  *
  * @chat:   The chat.
  * @users:  The users that are being removed.
- * @reason: The optional reason given for the removal. Can be @c NULL.
+ * @reason: The optional reason given for the removal. Can be %NULL.
  */
 void purple_chat_conversation_remove_users(PurpleChatConversation *chat,
 		GList *users, const char *reason);
@@ -568,7 +568,7 @@ PurpleChatUser *purple_chat_conversation_find_user(PurpleChatConversation *chat,
  * @user:     The user to invite to the chat.
  * @message:  The message to send with the invitation.
  * @confirm:  Prompt before sending the invitation. The user is always
- *                 prompted if either \a user or \a message is @c NULL.
+ *                 prompted if either \a user or \a message is %NULL.
  */
 void purple_chat_conversation_invite_user(PurpleChatConversation *chat,
 		const char *user, const char *message, gboolean confirm);
@@ -579,7 +579,7 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat,
  *
  * @chat: The chat.
  *
- * Returns: @c TRUE if we left the chat already, @c FALSE if
+ * Returns: %TRUE if we left the chat already, %FALSE if
  * we're still there.
  */
 gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);

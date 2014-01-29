@@ -225,7 +225,7 @@ gboolean gnt_widget_set_size(GntWidget *widget, int width, int height);
  * @width:    The requested width.
  * @height:    The requested height.
  *
- * Returns:  @c TRUE if the new size was confirmed, @c FALSE otherwise.
+ * Returns:  %TRUE if the new size was confirmed, %FALSE otherwise.
  */
 gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height);
 
@@ -235,7 +235,7 @@ gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height);
  * @widget:  The widget.
  * @keys:    The keypress on the widget.
  *
- * Returns:  @c TRUE if the key-press was handled, @c FALSE otherwise.
+ * Returns:  %TRUE if the key-press was handled, %FALSE otherwise.
  */
 gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
 
@@ -247,17 +247,17 @@ gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
  * @param x        The x-coordinate of the mouse.
  * @param y        The y-coordinate of the mouse.
  *
- * Returns:  @c TRUE if the event was handled, @c FALSE otherwise.
+ * Returns:  %TRUE if the event was handled, %FALSE otherwise.
  */
 gboolean gnt_widget_clicked(GntWidget *widget, GntMouseEvent event, int x, int y);
 
 /**
  * Give or remove focus to a widget.
  * @widget:  The widget.
- * @set:     @c TRUE of focus should be given to the widget, @c FALSE if
+ * @set:     %TRUE of focus should be given to the widget, %FALSE if
  *                focus should be removed.
  *
- * Returns: @c TRUE if the focus has been changed, @c FALSE otherwise.
+ * Returns: %TRUE if the focus has been changed, %FALSE otherwise.
  */
 gboolean gnt_widget_set_focus(GntWidget *widget, gboolean set);
 
@@ -291,7 +291,7 @@ void gnt_widget_queue_update(GntWidget *widget);
  * Set whether a widget can take focus or not.
  *
  * @widget:   The widget.
- * @set:      @c TRUE if the widget can take focus.
+ * @set:      %TRUE if the widget can take focus.
  */
 void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 
@@ -308,7 +308,7 @@ void gnt_widget_set_visible(GntWidget *widget, gboolean set);
  *
  * @widget:  The widget.
  *
- * Returns:  @c TRUE if the widget has shadows. This checks both the user-setting
+ * Returns:  %TRUE if the widget has shadows. This checks both the user-setting
  *          and whether the widget can have shadows at all.
  */
 gboolean gnt_widget_has_shadow(GntWidget *widget);

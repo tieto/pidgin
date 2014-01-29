@@ -78,9 +78,9 @@ void finch_blist_show(void);
  * Get the position of the buddy list.
  *
  * @param x The x-coordinate is set here if not @ NULL.
- * @param y The y-coordinate is set here if not @c NULL.
+ * @param y The y-coordinate is set here if not %NULL.
  *
- * Returns: Returns @c TRUE if the values were set, @c FALSE otherwise.
+ * Returns: Returns %TRUE if the values were set, %FALSE otherwise.
  */
 gboolean finch_blist_get_position(int *x, int *y);
 
@@ -96,9 +96,9 @@ void finch_blist_set_position(int x, int y);
  * Get the size of the buddy list.
  *
  * @width:  The width is set here if not @ NULL.
- * @height: The height is set here if not @c NULL.
+ * @height: The height is set here if not %NULL.
  *
- * Returns: Returns @c TRUE if the values were set, @c FALSE otherwise.
+ * Returns: Returns %TRUE if the values were set, %FALSE otherwise.
  */
 gboolean finch_blist_get_size(int *width, int *height);
 
@@ -145,7 +145,7 @@ void finch_blist_uninstall_manager(const FinchBlistManager *manager);
  *
  * @id:   The identifier for the desired buddy list manager.
  *
- * Returns:  The manager with the requested identifier, if available. @c NULL otherwise.
+ * Returns:  The manager with the requested identifier, if available. %NULL otherwise.
  */
 FinchBlistManager * finch_blist_manager_find(const char *id);
 

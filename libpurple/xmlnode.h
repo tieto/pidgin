@@ -52,10 +52,10 @@ struct _PurpleXmlNode
 	PurpleXmlNodeType type;           /**< The type of the node. */
 	char *data;                 /**< The data for the node. */
 	size_t data_sz;             /**< The size of the data. */
-	PurpleXmlNode *parent;            /**< The parent node or @c NULL.*/
-	PurpleXmlNode *child;             /**< The child node or @c NULL.*/
-	PurpleXmlNode *lastchild;         /**< The last child node or @c NULL.*/
-	PurpleXmlNode *next;              /**< The next node or @c NULL. */
+	PurpleXmlNode *parent;            /**< The parent node or %NULL.*/
+	PurpleXmlNode *child;             /**< The child node or %NULL.*/
+	PurpleXmlNode *lastchild;         /**< The last child node or %NULL.*/
+	PurpleXmlNode *next;              /**< The next node or %NULL. */
 	char *prefix;               /**< The namespace prefix if any. */
 	GHashTable *namespace_map;  /**< The namespace map. */
 };

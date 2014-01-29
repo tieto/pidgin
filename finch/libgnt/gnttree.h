@@ -210,7 +210,7 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  *
  * @tree:  The tree
  * @key:   A key corresponding to the row in question. If key
- *              is @c NULL, the text list for the selected row will
+ *              is %NULL, the text list for the selected row will
  *              be returned.
  *
  * Returns: A list of texts of a row. The list and its data should be
@@ -339,8 +339,8 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
  * @tree:    The tree
  * @key:     The key for the row
  * @row:     The row to add
- * @parent:  The parent of the row, or @c NULL
- * @bigbro:  The row to insert after, or @c NULL
+ * @parent:  The parent of the row, or %NULL
+ * @bigbro:  The row to insert after, or %NULL
  *
  * Returns:  The row inserted.
  *
@@ -356,7 +356,7 @@ GntTreeRow * gnt_tree_add_choice(GntTree *tree, void *key, GntTreeRow *row, void
  *
  * @tree:   The tree
  * @key:    The key for the row
- * @set:    @c TRUE if the item should be checked, @c FALSE if not
+ * @set:    %TRUE if the item should be checked, %FALSE if not
  */
 void gnt_tree_set_choice(GntTree *tree, void *key, gboolean set);
 
@@ -366,7 +366,7 @@ void gnt_tree_set_choice(GntTree *tree, void *key, gboolean set);
  * @tree:  The tree
  * @key:   The key for the row
  *
- * Returns:    @c TRUE if the row is checked, @c FALSE otherwise.
+ * Returns:    %TRUE if the row is checked, %FALSE otherwise.
  */
 gboolean gnt_tree_get_choice(GntTree *tree, void *key);
 
@@ -468,7 +468,7 @@ void gnt_tree_set_column_titles(GntTree *tree, ...);
  * Set whether to display the title of the columns.
  *
  * @tree:  The tree
- * @set:   If @c TRUE, the column titles are displayed
+ * @set:   If %TRUE, the column titles are displayed
  *
  * @see gnt_tree_set_column_title
  * @see gnt_tree_set_column_titles
@@ -499,7 +499,7 @@ void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded);
  * Set whether to show column separators.
  *
  * @tree:  The tree
- * @set:   If @c TRUE, the column separators are displayed
+ * @set:   If %TRUE, the column separators are displayed
  */
 void gnt_tree_set_show_separator(GntTree *tree, gboolean set);
 
@@ -538,7 +538,7 @@ void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer k
  *
  * @tree:  The tree
  * @col:   The index of the column
- * @vis:   If @c FALSE, the column will not be displayed
+ * @vis:   If %FALSE, the column will not be displayed
  */
 void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
 
@@ -548,7 +548,7 @@ void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
  *
  * @tree:  The tree
  * @col:   The index of the column
- * @res:   If @c FALSE, the column will not be resized when the
+ * @res:   If %FALSE, the column will not be resized when the
  *              tree is resized
  *
  * @see gnt_tree_set_col_width
@@ -564,7 +564,7 @@ void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res);
  *
  * @tree:  The tree
  * @col:   The index of the column
- * @bin:   @c TRUE if the data for the column is binary
+ * @bin:   %TRUE if the data for the column is binary
  */
 void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin);
 
@@ -573,7 +573,7 @@ void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin);
  *
  * @tree:  The tree
  * @col:   The index of the column
- * @right: @c TRUE if the text in the column should be right aligned
+ * @right: %TRUE if the text in the column should be right aligned
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -609,7 +609,7 @@ void gnt_tree_set_search_column(GntTree *tree, int col);
  * Check whether the user is currently in the middle of a search.
  *
  * @tree:   The tree
- * Returns:  @c TRUE if the user is searching, @c FALSE otherwise.
+ * Returns:  %TRUE if the user is searching, %FALSE otherwise.
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -622,7 +622,7 @@ gboolean gnt_tree_is_searching(GntTree *tree);
  * @func:  The custom search function. The search function is
  *              sent the tree itself, the key of a row, the search
  *              string and the content of row in the search column.
- *              If the function returns @c TRUE, the row is dislayed,
+ *              If the function returns %TRUE, the row is dislayed,
  *              otherwise it's not.
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)

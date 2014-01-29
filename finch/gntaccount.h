@@ -58,7 +58,7 @@ void finch_accounts_show_all(void);
 /**
  * Show the edit dialog for an account.
  *
- * @account:  The account to edit, or @c NULL to create a new account.
+ * @account:  The account to edit, or %NULL to create a new account.
  */
 void finch_account_dialog_show(PurpleAccount *account);
 

@@ -198,7 +198,7 @@ void purple_whiteboard_start(PurpleWhiteboard *wb);
  * @account: The account.
  * @who:     The user.
  *
- * Returns: The whiteboard if found, otherwise @c NULL.
+ * Returns: The whiteboard if found, otherwise %NULL.
  */
 PurpleWhiteboard *purple_whiteboard_get_session(const PurpleAccount *account, const char *who);
 

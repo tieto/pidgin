@@ -184,7 +184,7 @@ GType purple_cipher_get_type(void);
 
 /**
  * Resets a cipher to it's default value
- * @note If you have set an IV you will have to set it after resetting
+ * Note: If you have set an IV you will have to set it after resetting
  *
  * @cipher:  The cipher
  */
@@ -203,7 +203,7 @@ void purple_cipher_reset_state(PurpleCipher *cipher);
 
 /**
  * Sets the initialization vector for a cipher
- * @note This should only be called right after a cipher is created or reset
+ * Note: This should only be called right after a cipher is created or reset
  *
  * @cipher:  The cipher
  * @iv:      The initialization vector to set
@@ -341,7 +341,7 @@ GType purple_hash_get_type(void);
 
 /**
  * Resets a hash to it's default value
- * @note If you have set an IV you will have to set it after resetting
+ * Note: If you have set an IV you will have to set it after resetting
  *
  * @hash:  The hash
  */

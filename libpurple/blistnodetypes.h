@@ -375,7 +375,7 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy);
 void purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias);
 
 /**
- * Returns the local alias for the buddy, or @c NULL if none exists.
+ * Returns the local alias for the buddy, or %NULL if none exists.
  *
  * @buddy:  The buddy
  * Returns:       The local alias for the buddy
@@ -522,7 +522,7 @@ void purple_chat_set_alias(PurpleChat *chat, const char *alias);
  *
  * @chat: The chat.
  *
- * Returns: The parent group, or @c NULL if the chat is not in a group.
+ * Returns: The parent group, or %NULL if the chat is not in a group.
  */
 PurpleGroup *purple_chat_get_group(PurpleChat *chat);
 

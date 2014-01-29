@@ -115,7 +115,7 @@ GntWidget * gnt_file_sel_new(void);
  * @sel:   The file selector.
  * @path:  The current path of the selector.
  *
- * Returns: @c TRUE if the current location was successfully changed, @c FALSE otherwise.
+ * Returns: %TRUE if the current location was successfully changed, %FALSE otherwise.
  */
 gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 
@@ -123,7 +123,7 @@ gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
  * Set wheter to only allow selecting directories.
  *
  * @sel:    The file selector.
- * @dirs:   @c TRUE if only directories can be selected, @c FALSE if files
+ * @dirs:   %TRUE if only directories can be selected, %FALSE if files
  *               can also be selected.
  */
 void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
@@ -133,7 +133,7 @@ void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
  *
  * @sel:  The file selector.
  *
- * Returns:  @c TRUE if only directories can be selected.
+ * Returns:  %TRUE if only directories can be selected.
  */
 gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
 
@@ -141,7 +141,7 @@ gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
  * Set whether a selected file must exist.
  *
  * @sel:   The file selector.
- * @must:  @c TRUE if the selected file must exist.
+ * @must:  %TRUE if the selected file must exist.
  */
 void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
 
@@ -150,7 +150,7 @@ void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
  *
  * @sel:  The file selector.
  *
- * Returns:  @c TRUE if the selected file must exist, @c FALSE if a non-existent
+ * Returns:  %TRUE if the selected file must exist, %FALSE if a non-existent
  *          file can be selected.
  */
 gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
@@ -179,7 +179,7 @@ GList * gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
  * Allow selecting multiple files.
  *
  * @sel:  The file selector.
- * @set:  @c TRUE if selecting multiple files should be allowed.
+ * @set:  %TRUE if selecting multiple files should be allowed.
  */
 void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 

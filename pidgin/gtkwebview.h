@@ -245,7 +245,7 @@ void pidgin_webview_set_spellcheck(GtkWebView *webview, gboolean enable);
  * buffer instead of specific text.
  *
  * @webview: The GtkWebView
- * @wbfo:    @c TRUE to enable the mode, or @c FALSE otherwise.
+ * @wbfo:    %TRUE to enable the mode, or %FALSE otherwise.
  */
 void gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview,
                                                   gboolean wbfo);
@@ -274,16 +274,16 @@ void gtk_webview_activate_anchor(WebKitDOMHTMLAnchorElement *link);
  *
  * @name:      The name of the protocol (e.g. http://)
  * @activate:  The callback to trigger when the protocol text is clicked.
- *                  Removes any current protocol definition if @c NULL. The
- *                  callback should return @c TRUE if the link was activated
- *                  properly, @c FALSE otherwise.
+ *                  Removes any current protocol definition if %NULL. The
+ *                  callback should return %TRUE if the link was activated
+ *                  properly, %FALSE otherwise.
  * @context_menu:  The callback to trigger when the context menu is popped
  *                      up on the protocol text. The callback should return
- *                      @c TRUE if the request for context menu was processed
- *                      successfully, @c FALSE otherwise.
+ *                      %TRUE if the request for context menu was processed
+ *                      successfully, %FALSE otherwise.
  *
- * Returns:  @c TRUE if the protocol was successfully registered
- *          (or unregistered, when \a activate is @c NULL)
+ * Returns:  %TRUE if the protocol was successfully registered
+ *          (or unregistered, when \a activate is %NULL)
  */
 gboolean gtk_webview_class_register_protocol(const char *name,
 		gboolean (*activate)(GtkWebView *webview, const char *uri),
@@ -299,14 +299,14 @@ gboolean gtk_webview_class_register_protocol(const char *name,
 GtkWebViewButtons gtk_webview_get_format_functions(GtkWebView *webview);
 
 /**
- * Sets each boolean to @c TRUE or @c FALSE to indicate if that formatting
+ * Sets each boolean to %TRUE or %FALSE to indicate if that formatting
  * option is enabled at the current position in a GtkWebView.
  *
  * @webview:       The GtkWebView
- * @bold:          The boolean to set for bold or @c NULL.
- * @italic:        The boolean to set for italic or @c NULL.
- * @underline:     The boolean to set for underline or @c NULL.
- * @strikethrough: The boolean to set for strikethrough or @c NULL.
+ * @bold:          The boolean to set for bold or %NULL.
+ * @italic:        The boolean to set for italic or %NULL.
+ * @underline:     The boolean to set for underline or %NULL.
+ * @strikethrough: The boolean to set for strikethrough or %NULL.
  */
 void gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
                                     gboolean *italic, gboolean *underline,
@@ -318,7 +318,7 @@ void gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
  *
  * @webview: The GtkWebView
  *
- * Returns: A string containing the font face or @c NULL if none is set.
+ * Returns: A string containing the font face or %NULL if none is set.
  */
 char *gtk_webview_get_current_fontface(GtkWebView *webview);
 
@@ -328,7 +328,7 @@ char *gtk_webview_get_current_fontface(GtkWebView *webview);
  *
  * @webview: The GtkWebView
  *
- * Returns: A string containing the foreground color or @c NULL if none is set.
+ * Returns: A string containing the foreground color or %NULL if none is set.
  */
 char *gtk_webview_get_current_forecolor(GtkWebView *webview);
 
@@ -338,7 +338,7 @@ char *gtk_webview_get_current_forecolor(GtkWebView *webview);
  *
  * @webview: The GtkWebView
  *
- * Returns: A string containing the background color or @c NULL if none is set.
+ * Returns: A string containing the background color or %NULL if none is set.
  */
 char *gtk_webview_get_current_backcolor(GtkWebView *webview);
 
@@ -396,7 +396,7 @@ gchar *gtk_webview_get_selected_text(GtkWebView *webview);
  * @webview:       The GtkWebView
  * @container_ret: A pointer to a pointer to a WebKitDOMNode. This pointer
  *                      will be set to the container the caret is in. Set to
- *                      @c NULL if a range is selected.
+ *                      %NULL if a range is selected.
  * @pos_ret:       A pointer to a glong. This value will be set to the
  *                      position of the caret in the container. Set to -1 if a
  *                      range is selected.
@@ -454,9 +454,9 @@ void gtk_webview_toggle_strike(GtkWebView *webview);
  * GtkWebView.
  *
  * @webview: The GtkWebView
- * @color:  The HTML-style color, or @c NULL or "" to clear the color.
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
  *
- * Returns: @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
 gboolean gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color);
 
@@ -465,9 +465,9 @@ gboolean gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color);
  * GtkWebView.
  *
  * @webview: The GtkWebView
- * @color:  The HTML-style color, or @c NULL or "" to clear the color.
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
  *
- * Returns: @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
 gboolean gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color);
 
@@ -475,9 +475,9 @@ gboolean gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color);
  * Toggles a font face at the current location or selection in a GtkWebView.
  *
  * @webview: The GtkWebView
- * @face:   The font face name, or @c NULL or "" to clear the font.
+ * @face:   The font face name, or %NULL or "" to clear the font.
  *
- * Returns: @c TRUE if a font name was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a font name was set, or %FALSE if it was cleared.
  */
 gboolean gtk_webview_toggle_fontface(GtkWebView *webview, const char *face);
 
@@ -551,8 +551,8 @@ void gtk_webview_set_protocol_name(GtkWebView *webview, const char *protocol_nam
  *
  * @file:      The image file for the smiley
  * @shortcut:  The key shortcut for the smiley
- * @hide:      @c TRUE if the smiley should be hidden in the smiley dialog,
- *                  @c FALSE otherwise
+ * @hide:      %TRUE if the smiley should be hidden in the smiley dialog,
+ *                  %FALSE otherwise
  * @flags:     The smiley flags
  *
  * Returns: The newly created smiley

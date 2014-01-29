@@ -73,7 +73,7 @@ purple_request_datasheet_free(PurpleRequestDatasheet *sheet);
  *
  * @sheet: The datasheet.
  * @type:  The column type.
- * @title: The column title (may be @c NULL).
+ * @title: The column title (may be %NULL).
  */
 void
 purple_request_datasheet_add_column(PurpleRequestDatasheet *sheet,
@@ -219,7 +219,7 @@ purple_request_datasheet_action_call(PurpleRequestDatasheetAction *act,
  * record is active.
  *
  * @act:       The action.
- * @cb:        The callback function, may be @c NULL.
+ * @cb:        The callback function, may be %NULL.
  * @user_data: The data to be passed to the callback function.
  */
 void
@@ -233,7 +233,7 @@ purple_request_datasheet_action_set_sens_cb(
  * @act: The action.
  * @rec: The record.
  *
- * Returns: @c TRUE, if the action is enabled, @c FALSE otherwise.
+ * Returns: %TRUE, if the action is enabled, %FALSE otherwise.
  */
 gboolean
 purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
@@ -275,7 +275,7 @@ purple_request_datasheet_record_get_datasheet(
  * @sheet: The datasheet.
  * @key:   The key.
  *
- * Returns: The record if found, @c NULL otherwise.
+ * Returns: The record if found, %NULL otherwise.
  */
 PurpleRequestDatasheetRecord *
 purple_request_datasheet_record_find(PurpleRequestDatasheet *sheet,

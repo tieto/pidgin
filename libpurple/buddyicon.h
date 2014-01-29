@@ -53,7 +53,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
 /** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
-	/** This is a comma-delimited list of image formats or @c NULL if icons
+	/** This is a comma-delimited list of image formats or %NULL if icons
 	 *  are not supported.  Neither the core nor the protocol will actually
 	 *  check to see if the data it's given matches this; it's entirely up
 	 *  to the UI to do what it wants
@@ -90,7 +90,7 @@ GType purple_buddy_icon_get_type(void);
  * @username:  The username the icon belongs to.
  * @icon_data: The buddy icon data.
  * @icon_len:  The buddy icon length.
- * @checksum:  A protocol checksum from the protocol or @c NULL.
+ * @checksum:  A protocol checksum from the protocol or %NULL.
  *
  * Returns: The buddy icon structure, with a reference for the caller.
  */
@@ -130,7 +130,7 @@ void purple_buddy_icon_update(PurpleBuddyIcon *icon);
  * @data: The buddy icon data, which the buddy icon code
  *             takes ownership of and will free.
  * @len:  The length of the data in @a data.
- * @checksum:  A protocol checksum from the protocol or @c NULL.
+ * @checksum:  A protocol checksum from the protocol or %NULL.
  */
 void
 purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
@@ -169,7 +169,7 @@ const char *purple_buddy_icon_get_checksum(const PurpleBuddyIcon *icon);
  * Returns the buddy icon's data.
  *
  * @icon: The buddy icon.
- * @len:  If not @c NULL, the length of the icon data returned will be
+ * @len:  If not %NULL, the length of the icon data returned will be
  *             set in the location pointed to by this.
  *
  * Returns: A pointer to the icon data.
@@ -181,7 +181,7 @@ gconstpointer purple_buddy_icon_get_data(const PurpleBuddyIcon *icon, size_t *le
  *
  * @icon: The buddy icon.
  *
- * Returns: The icon's extension, "icon" if unknown, or @c NULL if
+ * Returns: The icon's extension, "icon" if unknown, or %NULL if
  *         the image data has disappeared.
  */
 const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
@@ -198,7 +198,7 @@ const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
  *
  * @icon: The buddy icon
  *
- * Returns: A full path to the file, or @c NULL under various conditions.
+ * Returns: A full path to the file, or %NULL under various conditions.
  */
 char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
 
@@ -217,7 +217,7 @@ char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
  * @icon_data: The buddy icon data, which the buddy icon code
  *                  takes ownership of and will free.
  * @icon_len:  The length of the icon data.
- * @checksum:  A protocol checksum from the protocol or @c NULL.
+ * @checksum:  A protocol checksum from the protocol or %NULL.
  */
 void
 purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
@@ -243,7 +243,7 @@ purple_buddy_icons_get_checksum_for_user(PurpleBuddy *buddy);
  * @account:  The account the user is on.
  * @username: The username of the user.
  *
- * Returns: The icon (with a reference for the caller) if found, or @c NULL if
+ * Returns: The icon (with a reference for the caller) if found, or %NULL if
  *         not found.
  */
 PurpleBuddyIcon *
@@ -427,7 +427,7 @@ GType purple_buddy_icon_spec_get_type(void);
 /**
  * Creates a new #PurpleBuddyIconSpec instance.
  *
- * @format:        A comma-delimited list of image formats or @c NULL if
+ * @format:        A comma-delimited list of image formats or %NULL if
  *                      icons are not supported
  * @min_width:     Minimum width of an icon
  * @min_height:    Minimum height of an icon

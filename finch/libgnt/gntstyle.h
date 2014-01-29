@@ -47,18 +47,18 @@ void gnt_style_read_configure_file(const char *filename);
 /**
  * Get the user-setting for a style.
  * @style:  The style.
- * Returns:  The user-setting, or @c NULL.
+ * Returns:  The user-setting, or %NULL.
  */
 const char *gnt_style_get(GntStyle style);
 
 /**
  * Get the value of a preference in ~/.gntrc.
  *
- * @group:   The name of the group in the keyfile. If @c NULL, the prgname
+ * @group:   The name of the group in the keyfile. If %NULL, the prgname
  *                will be used first, if available. Otherwise, "general" will be used.
  * @key:     The key
  *
- * Returns:  The value of the setting as a string, or @c NULL
+ * Returns:  The value of the setting as a string, or %NULL
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -67,7 +67,7 @@ char *gnt_style_get_from_name(const char *group, const char *key);
 /**
  * Get the value of a preference in ~/.gntrc.
  *
- * @group:   The name of the group in the keyfile. If @c NULL, the prgname
+ * @group:   The name of the group in the keyfile. If %NULL, the prgname
  *                will be used first, if available. Otherwise, "general" will be used.
  * @key:     The key
  * @length:  Return location for the number of strings returned, or NULL
@@ -81,7 +81,7 @@ char **gnt_style_get_string_list(const char *group, const char *key, gsize *leng
 /**
  * Get the value of a color pair in ~/.gntrc.
  *
- * @group:   The name of the group in the keyfile. If @c NULL, the prgname
+ * @group:   The name of the group in the keyfile. If %NULL, the prgname
  *                will be used first, if available. Otherwise, "general" will be used.
  * @key:     The key
  *
@@ -93,7 +93,7 @@ int gnt_style_get_color(char *group, char *key);
 
 /**
  * Parse a boolean preference. For example, if 'value' is "false" (ignoring case)
- * or "0", the return value will be @c FALSE, otherwise @c TRUE.
+ * or "0", the return value will be %FALSE, otherwise %TRUE.
  *
  * @value:   The value of the boolean setting as a string
  * Returns:    The boolean value
@@ -129,7 +129,7 @@ void gnt_style_read_actions(GType type, GntBindableClass *klass);
  * @name:  The name of the window.
  * @table: The hastable to store the accel information.
  *
- * Returns:  @c TRUE if some accels were read, @c FALSE otherwise.
+ * Returns:  %TRUE if some accels were read, %FALSE otherwise.
  */
 gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table);
 

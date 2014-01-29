@@ -113,7 +113,7 @@ void gnt_menu_add_item(GntMenu *menu, GntMenuItem *item);
  * @menu:   The menu.
  * @id:     The ID for an item.
  *
- * Returns:  The menuitem with the given ID, or @c NULL.
+ * Returns:  The menuitem with the given ID, or %NULL.
  *
  * @since 2.3.0
  */

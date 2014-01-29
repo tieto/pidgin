@@ -35,7 +35,7 @@
  * @param w          The value of this should be set to the desired width of the tooltip window.
  * @param h          The value of this should be set to the desired height of the tooltip window.
  *
- * Returns:  @c TRUE if the tooltip was created correctly, @c FALSE otherwise.
+ * Returns:  %TRUE if the tooltip was created correctly, %FALSE otherwise.
  */
 typedef gboolean (*PidginTooltipCreateForTree)(GtkWidget *tipwindow,
 			GtkTreePath *path, gpointer userdata, int *w, int *h);
@@ -46,7 +46,7 @@ typedef gboolean (*PidginTooltipCreateForTree)(GtkWidget *tipwindow,
  * @param w          The value of this should be set to the desired width of the tooltip window.
  * @param h          The value of this should be set to the desired height of the tooltip window.
  *
- * Returns:  @c TRUE if the tooltip was created correctly, @c FALSE otherwise.
+ * Returns:  %TRUE if the tooltip was created correctly, %FALSE otherwise.
  */
 typedef gboolean (*PidginTooltipCreate)(GtkWidget *tipwindow,
 			gpointer userdata, int *w, int *h);
@@ -56,7 +56,7 @@ typedef gboolean (*PidginTooltipCreate)(GtkWidget *tipwindow,
  * @cr:          The cairo context for drawing.
  * @userdata:    The userdata set during pidgin_tooltip_setup_for_treeview or pidgin_tooltip_show.
  *
- * Returns:  @c TRUE if the tooltip was painted correctly, @c FALSE otherwise.
+ * Returns:  %TRUE if the tooltip was painted correctly, %FALSE otherwise.
  */
 typedef gboolean (*PidginTooltipPaint)(GtkWidget *tipwindow, cairo_t *cr,
 			gpointer userdata);
@@ -71,7 +71,7 @@ G_BEGIN_DECLS
  * @create_cb:    Callback function to create the tooltip for a GtkTreePath
  * @paint_cb:     Callback function to paint the tooltip
  *
- * Returns:   @c TRUE if the tooltip callbacks were setup correctly.
+ * Returns:   %TRUE if the tooltip callbacks were setup correctly.
  */
 gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
 		PidginTooltipCreateForTree create_cb, PidginTooltipPaint paint_cb);
@@ -84,7 +84,7 @@ gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
  * @create_cb:    Callback function to create the tooltip for the widget
  * @paint_cb:     Callback function to paint the tooltip
  *
- * Returns:   @c TRUE if the tooltip callbacks were setup correctly.
+ * Returns:   %TRUE if the tooltip callbacks were setup correctly.
  */
 gboolean pidgin_tooltip_setup_for_widget(GtkWidget *widget, gpointer userdata,
 		PidginTooltipCreate create_cb, PidginTooltipPaint paint_cb);

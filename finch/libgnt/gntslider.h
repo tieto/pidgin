@@ -86,7 +86,7 @@ GType gnt_slider_get_gtype(void);
 /**
  * Create a new slider.
  *
- * @orient: A vertical slider is created if @c TRUE, otherwise the slider is horizontal.
+ * @orient: A vertical slider is created if %TRUE, otherwise the slider is horizontal.
  * @max:    The maximum value for the slider
  * @min:    The minimum value for the slider
  *

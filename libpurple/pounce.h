@@ -138,7 +138,7 @@ void purple_pounce_set_pouncee(PurplePounce *pounce, const char *pouncee);
  * Sets whether or not the pounce should be saved after execution.
  *
  * @pounce: The buddy pounce.
- * @save:   @c TRUE if the pounce should be saved, or @c FALSE otherwise.
+ * @save:   %TRUE if the pounce should be saved, or %FALSE otherwise.
  */
 void purple_pounce_set_save(PurplePounce *pounce, gboolean save);
 
@@ -163,7 +163,7 @@ void purple_pounce_action_set_enabled(PurplePounce *pounce, const char *action,
 /**
  * Sets a value for an attribute in an action.
  *
- * If @a value is @c NULL, the value will be unset.
+ * If @a value is %NULL, the value will be unset.
  *
  * @pounce: The buddy pounce.
  * @action: The action name.
@@ -222,8 +222,8 @@ const char *purple_pounce_get_pouncee(const PurplePounce *pounce);
  *
  * @pounce: The buddy pounce.
  *
- * Returns: @c TRUE if the pounce should be saved after execution, or
- *         @c FALSE otherwise.
+ * Returns: %TRUE if the pounce should be saved after execution, or
+ *         %FALSE otherwise.
  */
 gboolean purple_pounce_get_save(const PurplePounce *pounce);
 
@@ -233,7 +233,7 @@ gboolean purple_pounce_get_save(const PurplePounce *pounce);
  * @pounce: The buddy pounce.
  * @action: The action name.
  *
- * Returns: @c TRUE if the action is enabled, or @c FALSE otherwise.
+ * Returns: %TRUE if the action is enabled, or %FALSE otherwise.
  */
 gboolean purple_pounce_action_is_enabled(const PurplePounce *pounce,
 									   const char *action);
@@ -245,7 +245,7 @@ gboolean purple_pounce_action_is_enabled(const PurplePounce *pounce,
  * @action: The action name.
  * @attr:   The attribute name.
  *
- * Returns: The attribute value, if it exists, or @c NULL.
+ * Returns: The attribute value, if it exists, or %NULL.
  */
 const char *purple_pounce_action_get_attribute(const PurplePounce *pounce,
 											 const char *action,
@@ -284,7 +284,7 @@ void purple_pounce_execute(const PurpleAccount *pouncer, const char *pouncee,
  * @pouncee: The buddy to match against.
  * @events:  The event(s) to match against.
  *
- * Returns: The pounce if found, or @c NULL otherwise.
+ * Returns: The pounce if found, or %NULL otherwise.
  */
 PurplePounce *purple_find_pounce(const PurpleAccount *pouncer,
 							 const char *pouncee, PurplePounceEvent events);

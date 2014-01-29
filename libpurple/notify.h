@@ -334,7 +334,7 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
  * @primary:   The main point of the message.
  * @secondary: The secondary information.
  * @cpar:      The #PurpleRequestCommonParameters associated with this
- *                  request, or @c NULL if none is.
+ *                  request, or %NULL if none is.
  * @cb:        The callback to call when the user closes
  *                  the notification.
  * @user_data: The data to pass to the callback.
@@ -372,7 +372,7 @@ void *purple_notify_email(void *handle, const char *subject,
  * @count:     The number of emails.  '0' can be used to signify that
  *                  the user has no unread emails and the UI should remove
  *                  the mail notification.
- * @detailed:  @c TRUE if there is information for each email in the
+ * @detailed:  %TRUE if there is information for each email in the
  *                  arrays.
  * @subjects:  The array of subjects.
  * @froms:     The array of from addresses.
@@ -661,7 +661,7 @@ void *purple_notify_uri(void *handle, const char *uri);
  *
  * @ui_handle: The UI handle.
  * @type:      The pointer to variable, where request type may be stored
- *                  (may be @c NULL).
+ *                  (may be %NULL).
  *
  * Returns: TRUE, if handle is valid, FALSE otherwise.
  */
