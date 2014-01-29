@@ -53,7 +53,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
 /** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
-	/** This is a comma-delimited list of image formats or %NULL if icons
+	/** This is a comma-delimited list of image formats or @c NULL if icons
 	 *  are not supported.  Neither the core nor the protocol will actually
 	 *  check to see if the data it's given matches this; it's entirely up
 	 *  to the UI to do what it wants
@@ -86,13 +86,13 @@ GType purple_buddy_icon_get_type(void);
  * If an icon for this account+username already exists, you'll get a reference
  * to that structure, which will have been updated with the data supplied.
  *
- * @account:   The account the user is on.
- * @username:  The username the icon belongs to.
- * @icon_data: The buddy icon data.
- * @icon_len:  The buddy icon length.
- * @checksum:  A protocol checksum from the protocol or %NULL.
+ * @param account   The account the user is on.
+ * @param username  The username the icon belongs to.
+ * @param icon_data The buddy icon data.
+ * @param icon_len  The buddy icon length.
+ * @param checksum  A protocol checksum from the protocol or @c NULL.
  *
- * Returns: The buddy icon structure, with a reference for the caller.
+ * @return The buddy icon structure, with a reference for the caller.
  */
 PurpleBuddyIcon *purple_buddy_icon_new(PurpleAccount *account, const char *username,
                                        void *icon_data, size_t icon_len,
@@ -101,9 +101,9 @@ PurpleBuddyIcon *purple_buddy_icon_new(PurpleAccount *account, const char *usern
 /**
  * Increments the reference count on a buddy icon.
  *
- * @icon: The buddy icon.
+ * @param icon The buddy icon.
  *
- * Returns: @a icon.
+ * @return @a icon.
  */
 PurpleBuddyIcon *purple_buddy_icon_ref(PurpleBuddyIcon *icon);
 
@@ -112,25 +112,25 @@ PurpleBuddyIcon *purple_buddy_icon_ref(PurpleBuddyIcon *icon);
  *
  * If the reference count reaches 0, the icon will be destroyed.
  *
- * @icon: The buddy icon.
+ * @param icon The buddy icon.
  */
 void purple_buddy_icon_unref(PurpleBuddyIcon *icon);
 
 /**
  * Updates every instance of this icon.
  *
- * @icon: The buddy icon.
+ * @param icon The buddy icon.
  */
 void purple_buddy_icon_update(PurpleBuddyIcon *icon);
 
 /**
  * Sets the buddy icon's data.
  *
- * @icon: The buddy icon.
- * @data: The buddy icon data, which the buddy icon code
+ * @param icon The buddy icon.
+ * @param data The buddy icon data, which the buddy icon code
  *             takes ownership of and will free.
- * @len:  The length of the data in @a data.
- * @checksum:  A protocol checksum from the protocol or %NULL.
+ * @param len  The length of the data in @a data.
+ * @param checksum  A protocol checksum from the protocol or @c NULL.
  */
 void
 purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
@@ -139,18 +139,18 @@ purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
 /**
  * Returns the buddy icon's account.
  *
- * @icon: The buddy icon.
+ * @param icon The buddy icon.
  *
- * Returns: The account.
+ * @return The account.
  */
 PurpleAccount *purple_buddy_icon_get_account(const PurpleBuddyIcon *icon);
 
 /**
  * Returns the buddy icon's username.
  *
- * @icon: The buddy icon.
+ * @param icon The buddy icon.
  *
- * Returns: The username.
+ * @return The username.
  */
 const char *purple_buddy_icon_get_username(const PurpleBuddyIcon *icon);
 
@@ -159,29 +159,29 @@ const char *purple_buddy_icon_get_username(const PurpleBuddyIcon *icon);
  *
  * This function is really only for protocol use.
  *
- * @icon: The buddy icon.
+ * @param icon The buddy icon.
  *
- * Returns: The checksum.
+ * @return The checksum.
  */
 const char *purple_buddy_icon_get_checksum(const PurpleBuddyIcon *icon);
 
 /**
  * Returns the buddy icon's data.
  *
- * @icon: The buddy icon.
- * @len:  If not %NULL, the length of the icon data returned will be
+ * @param icon The buddy icon.
+ * @param len  If not @c NULL, the length of the icon data returned will be
  *             set in the location pointed to by this.
  *
- * Returns: A pointer to the icon data.
+ * @return A pointer to the icon data.
  */
 gconstpointer purple_buddy_icon_get_data(const PurpleBuddyIcon *icon, size_t *len);
 
 /**
  * Returns an extension corresponding to the buddy icon's file type.
  *
- * @icon: The buddy icon.
+ * @param icon The buddy icon.
  *
- * Returns: The icon's extension, "icon" if unknown, or %NULL if
+ * @return The icon's extension, "icon" if unknown, or @c NULL if
  *         the image data has disappeared.
  */
 const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
@@ -196,9 +196,9 @@ const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
  * directly.  If you find yourself wanting to use this function, think
  * very long and hard about it, and then don't.
  *
- * @icon: The buddy icon
+ * @param icon The buddy icon
  *
- * Returns: A full path to the file, or %NULL under various conditions.
+ * @return A full path to the file, or @c NULL under various conditions.
  */
 char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
 
@@ -212,12 +212,12 @@ char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
 /**
  * Sets a buddy icon for a user.
  *
- * @account:   The account the user is on.
- * @username:  The username of the user.
- * @icon_data: The buddy icon data, which the buddy icon code
+ * @param account   The account the user is on.
+ * @param username  The username of the user.
+ * @param icon_data The buddy icon data, which the buddy icon code
  *                  takes ownership of and will free.
- * @icon_len:  The length of the icon data.
- * @checksum:  A protocol checksum from the protocol or %NULL.
+ * @param icon_len  The length of the icon data.
+ * @param checksum  A protocol checksum from the protocol or @c NULL.
  */
 void
 purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
@@ -230,9 +230,9 @@ purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
  * This avoids loading the icon image data from the cache if it's
  * not already loaded for some other reason.
  *
- * @buddy: The buddy
+ * @param buddy The buddy
  *
- * Returns: The checksum.
+ * @return The checksum.
  */
 const char *
 purple_buddy_icons_get_checksum_for_user(PurpleBuddy *buddy);
@@ -240,10 +240,10 @@ purple_buddy_icons_get_checksum_for_user(PurpleBuddy *buddy);
 /**
  * Returns the buddy icon information for a user.
  *
- * @account:  The account the user is on.
- * @username: The username of the user.
+ * @param account  The account the user is on.
+ * @param username The username of the user.
  *
- * Returns: The icon (with a reference for the caller) if found, or %NULL if
+ * @return The icon (with a reference for the caller) if found, or @c NULL if
  *         not found.
  */
 PurpleBuddyIcon *
@@ -259,9 +259,9 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username);
  * needed, so it should be called in any case where you want the
  * appropriate icon.
  *
- * @account: The account
+ * @param account The account
  *
- * Returns: The account's buddy icon image.
+ * @return The account's buddy icon image.
  */
 PurpleStoredImage *
 purple_buddy_icons_find_account_icon(PurpleAccount *account);
@@ -272,12 +272,12 @@ purple_buddy_icons_find_account_icon(PurpleAccount *account);
  * This function will deal with saving a record of the icon,
  * caching the data, etc.
  *
- * @account:   The account for which to set a custom icon.
- * @icon_data: The image data of the icon, which the
+ * @param account   The account for which to set a custom icon.
+ * @param icon_data The image data of the icon, which the
  *                  buddy icon code will free.
- * @icon_len:  The length of the data in @a icon_data.
+ * @param icon_len  The length of the data in @a icon_data.
  *
- * Returns: The icon that was set.  The caller does NOT own
+ * @return The icon that was set.  The caller does NOT own
  *         a reference to this, and must call purple_imgstore_ref()
  *         if it wants one.
  */
@@ -291,9 +291,9 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
  * This is intended for use in protocols that require a timestamp for
  * buddy icon update reasons.
  *
- * @account: The account
+ * @param account The account
  *
- * Returns: The time the icon was set, or 0 if an error occurred.
+ * @return The time the icon was set, or 0 if an error occurred.
  */
 time_t
 purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account);
@@ -301,9 +301,9 @@ purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account);
 /**
  * Returns a boolean indicating if a given blist node has a custom buddy icon.
  *
- * @node: The blist node.
+ * @param node The blist node.
  *
- * Returns: A boolean indicating if @a node has a custom buddy icon.
+ * @return A boolean indicating if @a node has a custom buddy icon.
  */
 gboolean
 purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
@@ -318,9 +318,9 @@ purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
  * needed, so it should be called in any case where you want the
  * appropriate icon.
  *
- * @node: The node.
+ * @param node The node.
  *
- * Returns: The custom buddy icon.
+ * @return The custom buddy icon.
  */
 PurpleStoredImage *
 purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
@@ -331,12 +331,12 @@ purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
  * This function will deal with saving a record of the icon, caching the data,
  * etc.
  *
- * @node:      The blist node for which to set a custom icon.
- * @icon_data: The image data of the icon, which the buddy icon code will
+ * @param node      The blist node for which to set a custom icon.
+ * @param icon_data The image data of the icon, which the buddy icon code will
  *                  free. Use NULL to unset the icon.
- * @icon_len:  The length of the data in @a icon_data.
+ * @param icon_len  The length of the data in @a icon_data.
  *
- * Returns: The icon that was set. The caller does NOT own a reference to this,
+ * @return The icon that was set. The caller does NOT own a reference to this,
  *         and must call purple_imgstore_ref() if it wants one.
  */
 PurpleStoredImage *
@@ -349,11 +349,11 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
  * Convenience wrapper around purple_buddy_icons_node_set_custom_icon.
  * @see purple_buddy_icons_node_set_custom_icon()
  *
- * @node:      The blist node for which to set a custom icon.
- * @filename:  The path to the icon to set for the blist node. Use NULL
+ * @param node      The blist node for which to set a custom icon.
+ * @param filename  The path to the icon to set for the blist node. Use NULL
  *                  to unset the custom icon.
  *
- * Returns: The icon that was set. The caller does NOT own a reference to this,
+ * @return The icon that was set. The caller does NOT own a reference to this,
  *         and must call purple_imgstore_ref() if it wants one.
  */
 PurpleStoredImage *
@@ -363,7 +363,7 @@ purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
 /**
  * Sets whether or not buddy icon caching is enabled.
  *
- * @caching: TRUE if buddy icon caching should be enabled, or
+ * @param caching TRUE if buddy icon caching should be enabled, or
  *                FALSE otherwise.
  */
 void purple_buddy_icons_set_caching(gboolean caching);
@@ -374,14 +374,14 @@ void purple_buddy_icons_set_caching(gboolean caching);
  * The default is TRUE, unless otherwise specified by
  * purple_buddy_icons_set_caching().
  *
- * Returns: TRUE if buddy icon caching is enabled, or FALSE otherwise.
+ * @return TRUE if buddy icon caching is enabled, or FALSE otherwise.
  */
 gboolean purple_buddy_icons_is_caching(void);
 
 /**
  * Sets the directory used to store buddy icon cache files.
  *
- * @cache_dir: The directory to store buddy icon cache files to.
+ * @param cache_dir The directory to store buddy icon cache files to.
  */
 void purple_buddy_icons_set_cache_dir(const char *cache_dir);
 
@@ -391,14 +391,14 @@ void purple_buddy_icons_set_cache_dir(const char *cache_dir);
  * The default directory is PURPLEDIR/icons, unless otherwise specified
  * by purple_buddy_icons_set_cache_dir().
  *
- * Returns: The directory to store buddy icon cache files to.
+ * @return The directory to store buddy icon cache files to.
  */
 const char *purple_buddy_icons_get_cache_dir(void);
 
 /**
  * Returns the buddy icon subsystem handle.
  *
- * Returns: The subsystem handle.
+ * @return The subsystem handle.
  */
 void *purple_buddy_icons_get_handle(void);
 
@@ -427,16 +427,16 @@ GType purple_buddy_icon_spec_get_type(void);
 /**
  * Creates a new #PurpleBuddyIconSpec instance.
  *
- * @format:        A comma-delimited list of image formats or %NULL if
+ * @param format        A comma-delimited list of image formats or @c NULL if
  *                      icons are not supported
- * @min_width:     Minimum width of an icon
- * @min_height:    Minimum height of an icon
- * @max_width:     Maximum width of an icon
- * @max_height:    Maximum height of an icon
- * @max_filesize:  Maximum file size in bytes
- * @scale_rules:   How to stretch this icon
+ * @param min_width     Minimum width of an icon
+ * @param min_height    Minimum height of an icon
+ * @param max_width     Maximum width of an icon
+ * @param max_height    Maximum height of an icon
+ * @param max_filesize  Maximum file size in bytes
+ * @param scale_rules   How to stretch this icon
  *
- * Returns:  A new buddy icon spec.
+ * @return  A new buddy icon spec.
  */
 PurpleBuddyIconSpec *purple_buddy_icon_spec_new(char *format, int min_width,
 		int min_height, int max_width, int max_height, size_t max_filesize,

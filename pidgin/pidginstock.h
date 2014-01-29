@@ -224,7 +224,7 @@ GType pidgin_stock_icon_theme_get_type(void);
 /**
  * Loades all of the icons from the status icon theme into Pidgin stock
  *
- * @theme:		the theme to load, or null to load all the default icons
+ * @param theme		the theme to load, or null to load all the default icons
  */
 void pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme);
 

@@ -219,9 +219,9 @@ typedef struct
 	 * Called when an error causes a connection to be disconnected.
 	 * Called before #disconnected.
 	 *
-	 * @reason:  why the connection ended, if known, or
+	 * @param reason  why the connection ended, if known, or
 	 *                #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
-	 * @text:  a localized message describing the disconnection
+	 * @param text  a localized message describing the disconnection
 	 *              in more detail to the user.
 	 * @see #purple_connection_error
 	 */
@@ -279,57 +279,57 @@ GType purple_connection_error_info_get_type(void);
  * the core can call protocol's set_status, and it successfully changes
  * your status, then the account is online.
  *
- * @gc:    The connection.
- * @state: The connection state.
+ * @param gc    The connection.
+ * @param state The connection state.
  */
 void purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state);
 
 /**
  * Sets the connection flags.
  *
- * @gc:    The connection.
- * @flags: The flags.
+ * @param gc    The connection.
+ * @param flags The flags.
  */
 void purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags);
 
 /**
  * Sets the connection's displayed name.
  *
- * @gc:   The connection.
- * @name: The displayed name.
+ * @param gc   The connection.
+ * @param name The displayed name.
  */
 void purple_connection_set_display_name(PurpleConnection *gc, const char *name);
 
 /**
  * Sets the protocol data for a connection.
  *
- * @connection: The PurpleConnection.
- * @proto_data: The protocol data to set for the connection.
+ * @param connection The PurpleConnection.
+ * @param proto_data The protocol data to set for the connection.
  */
 void purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data);
 
 /**
  * Returns the connection state.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The connection state.
+ * @return The connection state.
  */
 PurpleConnectionState purple_connection_get_state(const PurpleConnection *gc);
 
 /**
  * Returns the connection flags.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The connection flags.
+ * @return The connection flags.
  */
 PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
 
 /**
  * Returns TRUE if the account is connected, otherwise returns FALSE.
  *
- * Returns: TRUE if the account is connected, otherwise returns FALSE.
+ * @return TRUE if the account is connected, otherwise returns FALSE.
  */
 #define PURPLE_CONNECTION_IS_CONNECTED(gc) \
 	(purple_connection_get_state(gc) == PURPLE_CONNECTION_CONNECTED)
@@ -337,64 +337,64 @@ PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
 /**
  * Returns the connection's account.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The connection's account.
+ * @return The connection's account.
  */
 PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
 
 /**
  * Returns the protocol managing a connection.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The protocol.
+ * @return The protocol.
  */
 PurpleProtocol *purple_connection_get_protocol(const PurpleConnection *gc);
 
 /**
  * Returns the connection's password.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The connection's password.
+ * @return The connection's password.
  */
 const char *purple_connection_get_password(const PurpleConnection *gc);
 
 /**
  * Returns a list of active chat conversations on a connection.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The active chats on the connection.
+ * @return The active chats on the connection.
  */
 GSList *purple_connection_get_active_chats(const PurpleConnection *gc);
 
 /**
  * Returns the connection's displayed name.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The connection's displayed name.
+ * @return The connection's displayed name.
  */
 const char *purple_connection_get_display_name(const PurpleConnection *gc);
 
 /**
  * Gets the protocol data from a connection.
  *
- * @connection: The PurpleConnection.
+ * @param connection The PurpleConnection.
  *
- * Returns: The protocol data for the connection.
+ * @return The protocol data for the connection.
  */
 void *purple_connection_get_protocol_data(const PurpleConnection *gc);
 
 /**
  * Updates the connection progress.
  *
- * @gc:    The connection.
- * @text:  Information on the current step.
- * @step:  The current step.
- * @count: The total number of steps.
+ * @param gc    The connection.
+ * @param text  Information on the current step.
+ * @param step  The current step.
+ * @param count The total number of steps.
  */
 void purple_connection_update_progress(PurpleConnection *gc, const char *text,
 									 size_t step, size_t count);
@@ -402,8 +402,8 @@ void purple_connection_update_progress(PurpleConnection *gc, const char *text,
 /**
  * Displays a connection-specific notice.
  *
- * @gc:   The connection.
- * @text: The notice text.
+ * @param gc   The connection.
+ * @param text The notice text.
  */
 void purple_connection_notice(PurpleConnection *gc, const char *text);
 
@@ -411,9 +411,9 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  * Closes a connection with an error and a human-readable description of the
  * error.
  *
- * @gc:          the connection which is closing.
- * @reason:      why the connection is closing.
- * @description: a localized description of the error (not %NULL ).
+ * @param gc          the connection which is closing.
+ * @param reason      why the connection is closing.
+ * @param description a localized description of the error (not @c NULL ).
  */
 void
 purple_connection_error(PurpleConnection *gc,
@@ -424,10 +424,10 @@ purple_connection_error(PurpleConnection *gc,
  * Returns the #PurpleConnectionErrorInfo instance of a connection if an
  * error exists.
  *
- * @gc: The connection.
+ * @param gc The connection.
  *
- * Returns: The #PurpleConnectionErrorInfo instance of the connection if an
- *         error exists, %NULL otherwise.
+ * @return The #PurpleConnectionErrorInfo instance of the connection if an
+ *         error exists, @c NULL otherwise.
  */
 PurpleConnectionErrorInfo *
 purple_connection_get_error_info(const PurpleConnection *gc);
@@ -448,14 +448,14 @@ purple_connection_ssl_error (PurpleConnection *gc,
  * For instance, #PURPLE_CONNECTION_ERROR_NETWORK_ERROR is a temporary error,
  * which might be caused by losing the network connection, so <tt>
  * purple_connection_error_is_fatal (PURPLE_CONNECTION_ERROR_NETWORK_ERROR)</tt>
- * is %FALSE.  On the other hand,
+ * is @c FALSE.  On the other hand,
  * #PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED probably indicates a
  * misconfiguration of the account which needs the user to go fix it up, so
  * <tt> purple_connection_error_is_fatal
- * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is %TRUE.
+ * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is @c TRUE.
  *
- * Returns: %TRUE if the account should not be automatically reconnected, and
- *         %FALSE otherwise.
+ * @return @c TRUE if the account should not be automatically reconnected, and
+ *         @c FALSE otherwise.
  */
 gboolean
 purple_connection_error_is_fatal (PurpleConnectionError reason);
@@ -464,7 +464,7 @@ purple_connection_error_is_fatal (PurpleConnectionError reason);
  * Indicate that a packet was received on the connection.
  * Set by the protocol to avoid sending unneeded keepalives.
  *
- * @gc:   The connection.
+ * @param gc   The connection.
  */
 void purple_connection_update_last_received(PurpleConnection *gc);
 
@@ -484,21 +484,21 @@ void purple_connections_disconnect_all(void);
  * Returns a list of all active connections.  This does not
  * include connections that are in the process of connecting.
  *
- * Returns: (transfer none): A list of all active connections.
+ * @constreturn A list of all active connections.
  */
 GList *purple_connections_get_all(void);
 
 /**
  * Returns a list of all connections in the process of connecting.
  *
- * Returns: (transfer none): A list of connecting connections.
+ * @constreturn A list of connecting connections.
  */
 GList *purple_connections_get_connecting(void);
 
 /**
  * Checks if gc is still a valid pointer to a gc.
  *
- * Returns: %TRUE if gc is valid.
+ * @return @c TRUE if gc is valid.
  *
  * @deprecated Do not use this.  Instead, cancel your asynchronous request
  *             when the PurpleConnection is destroyed.
@@ -519,14 +519,14 @@ GList *purple_connections_get_connecting(void);
 /**
  * Sets the UI operations structure to be used for connections.
  *
- * @ops: The UI operations structure.
+ * @param ops The UI operations structure.
  */
 void purple_connections_set_ui_ops(PurpleConnectionUiOps *ops);
 
 /**
  * Returns the UI operations structure used for connections.
  *
- * Returns: The UI operations structure in use.
+ * @return The UI operations structure in use.
  */
 PurpleConnectionUiOps *purple_connections_get_ui_ops(void);
 
@@ -550,7 +550,7 @@ void purple_connections_uninit(void);
 /**
  * Returns the handle to the connections subsystem.
  *
- * Returns: The connections subsystem handle.
+ * @return The connections subsystem handle.
  */
 void *purple_connections_get_handle(void);
 

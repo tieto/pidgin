@@ -71,10 +71,10 @@ GType pidgin_icon_theme_get_type(void);
 /**
  * Returns a copy of the filename for the icon event or NULL if it is not set
  *
- * @theme:     the theme
- * @event:		the pidgin icon event to look up
+ * @param theme     the theme
+ * @param event		the pidgin icon event to look up
  *
- * Returns:s the filename of the icon event
+ * @returns the filename of the icon event
  */
 const gchar *pidgin_icon_theme_get_icon(PidginIconTheme *theme,
 		const gchar *event);
@@ -82,9 +82,9 @@ const gchar *pidgin_icon_theme_get_icon(PidginIconTheme *theme,
 /**
  * Sets the filename for a given icon id, setting the icon to NULL will remove the icon from the theme
  *
- * @theme:         the theme
- * @icon_id:		a string representing what the icon is to be used for
- * @filename:		the name of the file to be used for the given id
+ * @param theme         the theme
+ * @param icon_id		a string representing what the icon is to be used for
+ * @param filename		the name of the file to be used for the given id
  */
 void pidgin_icon_theme_set_icon(PidginIconTheme *theme,
 		const gchar *icon_id,

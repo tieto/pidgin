@@ -74,7 +74,7 @@ G_BEGIN_DECLS
 /**
  * Gets the GtkWhiteboard UI Operations.
  *
- * Returns: The GtkWhiteboard UI Operations.
+ * @return The GtkWhiteboard UI Operations.
  */
 PurpleWhiteboardUiOps *pidgin_whiteboard_get_ui_ops( void );
 

@@ -73,16 +73,16 @@ struct _GntButtonClass
 G_BEGIN_DECLS
 
 /**
- * Returns:  GType for Gntbutton
+ * @return  GType for Gntbutton
  */
 GType gnt_button_get_gtype(void);
 
 /**
  * Create a new button.
  *
- * @text:   The text for the button.
+ * @param text   The text for the button.
  *
- * Returns:  The newly created button.
+ * @return  The newly created button.
  */
 GntWidget * gnt_button_new(const char *text);
 

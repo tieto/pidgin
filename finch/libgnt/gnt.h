@@ -52,7 +52,7 @@ void gnt_main(void);
 /**
  * Check whether the terminal is capable of UTF8 display.
  *
- * Returns:  %FALSE if the terminal is capable of drawing UTF-8, %TRUE otherwise.
+ * @return  @c FALSE if the terminal is capable of drawing UTF-8, @c TRUE otherwise.
  */
 gboolean gnt_ascii_only(void);
 
@@ -60,7 +60,7 @@ gboolean gnt_ascii_only(void);
  * Present a window. If the event was triggered because of user interaction,
  * the window is moved to the foreground. Otherwise, the Urgent hint is set.
  *
- * @window:   The window the present.
+ * @param window   The window the present.
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -87,16 +87,16 @@ void gnt_screen_update(GntWidget *widget);
 /**
  * Resize a widget.
  *
- * @widget:  The widget to resize.
- * @width:   The desired width.
- * @height:  The desired height.
+ * @param widget  The widget to resize.
+ * @param width   The desired width.
+ * @param height  The desired height.
  */
 void gnt_screen_resize_widget(GntWidget *widget, int width, int height);
 
 /**
  * Move a widget.
  *
- * @widget: The widget to move.
+ * @param widget The widget to move.
  * @param x      The desired x-coordinate.
  * @param y      The desired y-coordinate.
  */
@@ -105,41 +105,41 @@ void gnt_screen_move_widget(GntWidget *widget, int x, int y);
 /**
  * Rename a widget.
  *
- * @widget:  The widget to rename.
- * @text:    The new name for the widget.
+ * @param widget  The widget to rename.
+ * @param text    The new name for the widget.
  */
 void gnt_screen_rename_widget(GntWidget *widget, const char *text);
 
 /**
  * Check whether a widget has focus.
  *
- * @widget:  The widget.
+ * @param widget  The widget.
  *
- * Returns:  %TRUE if the widget has the current focus, %FALSE otherwise.
+ * @return  @c TRUE if the widget has the current focus, @c FALSE otherwise.
  */
 gboolean gnt_widget_has_focus(GntWidget *widget);
 
 /**
  * Set the URGENT hint for a widget.
  *
- * @widget:  The widget to set the URGENT hint for.
+ * @param widget  The widget to set the URGENT hint for.
  */
 void gnt_widget_set_urgent(GntWidget *widget);
 
 /**
  * Register a global action.
  *
- * @label:      The user-visible label for the action.
- * @callback:   The callback function for the action.
+ * @param label      The user-visible label for the action.
+ * @param callback   The callback function for the action.
  */
 void gnt_register_action(const char *label, void (*callback)(void));
 
 /**
  * Show a menu.
  *
- * @menu:  The menu to display.
+ * @param menu  The menu to display.
  *
- * Returns: %TRUE if the menu is displayed, %FALSE otherwise (e.g., if another menu is currently displayed).
+ * @return @c TRUE if the menu is displayed, @c FALSE otherwise (e.g., if another menu is currently displayed).
  */
 gboolean gnt_screen_menu_show(gpointer menu);
 
@@ -151,37 +151,37 @@ void gnt_quit(void);
 /**
  * Get the global clipboard.
  *
- * Returns:  The clipboard.
+ * @return  The clipboard.
  */
 GntClipboard * gnt_get_clipboard(void);
 
 /**
  * Get the string in the clipboard.
  *
- * Returns: A copy of the string in the clipboard. The caller must @c g_free the string.
+ * @return A copy of the string in the clipboard. The caller must @c g_free the string.
  */
 gchar * gnt_get_clipboard_string(void);
 
 /**
  * Set the contents of the global clipboard.
  *
- * @string:  The new content of the new clipboard.
+ * @param string  The new content of the new clipboard.
  */
 void gnt_set_clipboard_string(const gchar *string);
 
 /**
  * Spawn a different application that will consume the console.
  *
- * @wd:    The working directory for the new application.
- * @argv:  The argument vector.
- * @envp:  The environment, or %NULL.
- * @stin:  Location to store the child's stdin, or %NULL.
- * @stout: Location to store the child's stdout, or %NULL.
- * @sterr: Location to store the child's stderr, or %NULL.
- * @callback:   The callback to call after the child exits.
- * @data:  The data to pass to the callback.
+ * @param wd    The working directory for the new application.
+ * @param argv  The argument vector.
+ * @param envp  The environment, or @c NULL.
+ * @param stin  Location to store the child's stdin, or @c NULL.
+ * @param stout Location to store the child's stdout, or @c NULL.
+ * @param sterr Location to store the child's stderr, or @c NULL.
+ * @param callback   The callback to call after the child exits.
+ * @param data  The data to pass to the callback.
  *
- * Returns:  %TRUE if the child was successfully spawned, %FALSE otherwise.
+ * @return  @c TRUE if the child was successfully spawned, @c FALSE otherwise.
  */
 gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 		gint *stin, gint *stout, gint *sterr,
@@ -190,8 +190,8 @@ gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 /**
  * Check whether a child process is in control of the current terminal.
  *
- * Returns: %TRUE if a child process (eg., PAGER) is occupying the current
- *         terminal, %FALSE otherwise.
+ * @return @c TRUE if a child process (eg., PAGER) is occupying the current
+ *         terminal, @c FALSE otherwise.
  */
 gboolean gnt_is_refugee(void);
 

@@ -52,10 +52,10 @@ struct _PurpleXmlNode
 	PurpleXmlNodeType type;           /**< The type of the node. */
 	char *data;                 /**< The data for the node. */
 	size_t data_sz;             /**< The size of the data. */
-	PurpleXmlNode *parent;            /**< The parent node or %NULL.*/
-	PurpleXmlNode *child;             /**< The child node or %NULL.*/
-	PurpleXmlNode *lastchild;         /**< The last child node or %NULL.*/
-	PurpleXmlNode *next;              /**< The next node or %NULL. */
+	PurpleXmlNode *parent;            /**< The parent node or @c NULL.*/
+	PurpleXmlNode *child;             /**< The child node or @c NULL.*/
+	PurpleXmlNode *lastchild;         /**< The last child node or @c NULL.*/
+	PurpleXmlNode *next;              /**< The next node or @c NULL. */
 	char *prefix;               /**< The namespace prefix if any. */
 	GHashTable *namespace_map;  /**< The namespace map. */
 };
@@ -70,66 +70,66 @@ GType purple_xmlnode_get_type(void);
 /**
  * Creates a new PurpleXmlNode.
  *
- * @name: The name of the node.
+ * @param name The name of the node.
  *
- * Returns: The new node.
+ * @return The new node.
  */
 PurpleXmlNode *purple_xmlnode_new(const char *name);
 
 /**
  * Creates a new PurpleXmlNode child.
  *
- * @parent: The parent node.
- * @name:   The name of the child node.
+ * @param parent The parent node.
+ * @param name   The name of the child node.
  *
- * Returns: The new child node.
+ * @return The new child node.
  */
 PurpleXmlNode *purple_xmlnode_new_child(PurpleXmlNode *parent, const char *name);
 
 /**
  * Inserts a node into a node as a child.
  *
- * @parent: The parent node to insert child into.
- * @child:  The child node to insert into parent.
+ * @param parent The parent node to insert child into.
+ * @param child  The child node to insert into parent.
  */
 void purple_xmlnode_insert_child(PurpleXmlNode *parent, PurpleXmlNode *child);
 
 /**
  * Gets a child node named name.
  *
- * @parent: The parent node.
- * @name:   The child's name.
+ * @param parent The parent node.
+ * @param name   The child's name.
  *
- * Returns: The child or NULL.
+ * @return The child or NULL.
  */
 PurpleXmlNode *purple_xmlnode_get_child(const PurpleXmlNode *parent, const char *name);
 
 /**
  * Gets a child node named name in a namespace.
  *
- * @parent: The parent node.
- * @name:   The child's name.
- * @xmlns:  The namespace.
+ * @param parent The parent node.
+ * @param name   The child's name.
+ * @param xmlns  The namespace.
  *
- * Returns: The child or NULL.
+ * @return The child or NULL.
  */
 PurpleXmlNode *purple_xmlnode_get_child_with_namespace(const PurpleXmlNode *parent, const char *name, const char *xmlns);
 
 /**
  * Gets the next node with the same name as node.
  *
- * @node: The node of a twin to find.
+ * @param node The node of a twin to find.
  *
- * Returns: The twin of node or NULL.
+ * @return The twin of node or NULL.
  */
 PurpleXmlNode *purple_xmlnode_get_next_twin(PurpleXmlNode *node);
 
 /**
  * Inserts data into a node.
  *
- * @node:   The node to insert data into.
- * @data:   The data to insert.
- * @size:   The size of the data to insert.  If data is
+ * @param node   The node to insert data into.
+ * @param data   The data to insert.
+ * @param size   The size of the data to insert.  If data is
  *               null-terminated you can pass in -1.
  */
 void purple_xmlnode_insert_data(PurpleXmlNode *node, const char *data, gssize size);
@@ -137,9 +137,9 @@ void purple_xmlnode_insert_data(PurpleXmlNode *node, const char *data, gssize si
 /**
  * Gets (escaped) data from a node.
  *
- * @node: The node to get data from.
+ * @param node The node to get data from.
  *
- * Returns: The data from the node or NULL. This data is in raw escaped format.
+ * @return The data from the node or NULL. This data is in raw escaped format.
  *         You must g_free this string when finished using it.
  */
 char *purple_xmlnode_get_data(const PurpleXmlNode *node);
@@ -147,9 +147,9 @@ char *purple_xmlnode_get_data(const PurpleXmlNode *node);
 /**
  * Gets unescaped data from a node.
  *
- * @node: The node to get data from.
+ * @param node The node to get data from.
  *
- * Returns: The data from the node, in unescaped form.   You must g_free
+ * @return The data from the node, in unescaped form.   You must g_free
  *         this string when finished using it.
  */
 char *purple_xmlnode_get_data_unescaped(const PurpleXmlNode *node);
@@ -157,20 +157,20 @@ char *purple_xmlnode_get_data_unescaped(const PurpleXmlNode *node);
 /**
  * Sets an attribute for a node.
  *
- * @node:  The node to set an attribute for.
- * @attr:  The name of the attribute.
- * @value: The value of the attribute.
+ * @param node  The node to set an attribute for.
+ * @param attr  The name of the attribute.
+ * @param value The value of the attribute.
  */
 void purple_xmlnode_set_attrib(PurpleXmlNode *node, const char *attr, const char *value);
 
 /**
  * Sets a namespaced attribute for a node
  *
- * @node:   The node to set an attribute for.
- * @attr:   The name of the attribute to set
- * @xmlns:  The namespace of the attribute to set
- * @prefix: The prefix of the attribute to set
- * @value:  The value of the attribute
+ * @param node   The node to set an attribute for.
+ * @param attr   The name of the attribute to set
+ * @param xmlns  The namespace of the attribute to set
+ * @param prefix The prefix of the attribute to set
+ * @param value  The value of the attribute
  */
 void purple_xmlnode_set_attrib_full(PurpleXmlNode *node, const char *attr, const char *xmlns,
 		const char *prefix, const char *value);
@@ -178,54 +178,54 @@ void purple_xmlnode_set_attrib_full(PurpleXmlNode *node, const char *attr, const
 /**
  * Gets an attribute from a node.
  *
- * @node: The node to get an attribute from.
- * @attr: The attribute to get.
+ * @param node The node to get an attribute from.
+ * @param attr The attribute to get.
  *
- * Returns: The value of the attribute.
+ * @return The value of the attribute.
  */
 const char *purple_xmlnode_get_attrib(const PurpleXmlNode *node, const char *attr);
 
 /**
  * Gets a namespaced attribute from a node
  *
- * @node:  The node to get an attribute from.
- * @attr:  The attribute to get
- * @xmlns: The namespace of the attribute to get
+ * @param node  The node to get an attribute from.
+ * @param attr  The attribute to get
+ * @param xmlns The namespace of the attribute to get
  *
- * Returns: The value of the attribute/
+ * @return The value of the attribute/
  */
 const char *purple_xmlnode_get_attrib_with_namespace(const PurpleXmlNode *node, const char *attr, const char *xmlns);
 
 /**
  * Removes an attribute from a node.
  *
- * @node: The node to remove an attribute from.
- * @attr: The attribute to remove.
+ * @param node The node to remove an attribute from.
+ * @param attr The attribute to remove.
  */
 void purple_xmlnode_remove_attrib(PurpleXmlNode *node, const char *attr);
 
 /**
  * Removes a namespaced attribute from a node
  *
- * @node:  The node to remove an attribute from
- * @attr:  The attribute to remove
- * @xmlns: The namespace of the attribute to remove
+ * @param node  The node to remove an attribute from
+ * @param attr  The attribute to remove
+ * @param xmlns The namespace of the attribute to remove
  */
 void purple_xmlnode_remove_attrib_with_namespace(PurpleXmlNode *node, const char *attr, const char *xmlns);
 
 /**
  * Sets the namespace of a node
  *
- * @node: The node to qualify
- * @xmlns: The namespace of the node
+ * @param node The node to qualify
+ * @param xmlns The namespace of the node
  */
 void purple_xmlnode_set_namespace(PurpleXmlNode *node, const char *xmlns);
 
 /**
  * Returns the namespace of a node
  *
- * @node: The node to get the namepsace from
- * Returns: The namespace of this node
+ * @param node The node to get the namepsace from
+ * @return The namespace of this node
  */
 const char *purple_xmlnode_get_namespace(const PurpleXmlNode *node);
 
@@ -245,33 +245,33 @@ const char *purple_xmlnode_get_namespace(const PurpleXmlNode *node);
  * The default namespace of all nodes (including 'child1') is "jabber:client",
  * though the namespace for 'element' is "http://example.org/ns1".
  *
- * @node: The node for which to return the default namespace
- * Returns: The default namespace of this node
+ * @param node The node for which to return the default namespace
+ * @return The default namespace of this node
  */
 const char *purple_xmlnode_get_default_namespace(const PurpleXmlNode *node);
 
 /**
  * Returns the defined namespace for a prefix.
  *
- * @node: The node from which to start the search.
- * @prefix: The prefix for which to return the associated namespace.
- * Returns: The namespace for this prefix.
+ * @param node The node from which to start the search.
+ * @param prefix The prefix for which to return the associated namespace.
+ * @return The namespace for this prefix.
  */
 const char *purple_xmlnode_get_prefix_namespace(const PurpleXmlNode *node, const char *prefix);
 
 /**
  * Sets the prefix of a node
  *
- * @node:   The node to qualify
- * @prefix: The prefix of the node
+ * @param node   The node to qualify
+ * @param prefix The prefix of the node
  */
 void purple_xmlnode_set_prefix(PurpleXmlNode *node, const char *prefix);
 
 /**
  * Returns the prefix of a node
  *
- * @node: The node to get the prefix from
- * Returns: The prefix of this node
+ * @param node The node to get the prefix from
+ * @return The prefix of this node
  */
 const char *purple_xmlnode_get_prefix(const PurpleXmlNode *node);
 
@@ -284,26 +284,26 @@ const char *purple_xmlnode_get_prefix(const PurpleXmlNode *node);
  * break some applications (SOAP / XPath apparently often rely on
  * the prefixes having the same name.
  *
- * @node: The node from which to strip prefixes
+ * @param node The node from which to strip prefixes
  */
 void purple_xmlnode_strip_prefixes(PurpleXmlNode *node);
 
 /**
  * Gets the parent node.
  *
- * @child: The child node.
+ * @param child The child node.
  *
- * Returns: The parent or NULL.
+ * @return The parent or NULL.
  */
 PurpleXmlNode *purple_xmlnode_get_parent(const PurpleXmlNode *child);
 
 /**
  * Returns the node in a string of xml.
  *
- * @node: The starting node to output.
- * @len:  Address for the size of the string.
+ * @param node The starting node to output.
+ * @param len  Address for the size of the string.
  *
- * Returns: The node represented as a string.  You must
+ * @return The node represented as a string.  You must
  *         g_free this string when finished using it.
  */
 char *purple_xmlnode_to_str(const PurpleXmlNode *node, int *len);
@@ -311,10 +311,10 @@ char *purple_xmlnode_to_str(const PurpleXmlNode *node, int *len);
 /**
  * Returns the node in a string of human readable xml.
  *
- * @node: The starting node to output.
- * @len:  Address for the size of the string.
+ * @param node The starting node to output.
+ * @param len  Address for the size of the string.
  *
- * Returns: The node as human readable string including
+ * @return The node as human readable string including
  *         tab and new line characters.  You must
  *         g_free this string when finished using it.
  */
@@ -325,27 +325,27 @@ char *purple_xmlnode_to_formatted_str(const PurpleXmlNode *node, int *len);
  * root node of an XML document will parse the entire document
  * into a tree of nodes, and return the PurpleXmlNode of the root.
  *
- * @str:  The string of xml.
- * @size: The size of the string, or -1 if @a str is
+ * @param str  The string of xml.
+ * @param size The size of the string, or -1 if @a str is
  *             NUL-terminated.
  *
- * Returns: The new node.
+ * @return The new node.
  */
 PurpleXmlNode *purple_xmlnode_from_str(const char *str, gssize size);
 
 /**
  * Creates a new node from the source node.
  *
- * @src: The node to copy.
+ * @param src The node to copy.
  *
- * Returns: A new copy of the src node.
+ * @return A new copy of the src node.
  */
 PurpleXmlNode *purple_xmlnode_copy(const PurpleXmlNode *src);
 
 /**
  * Frees a node and all of its children.
  *
- * @node: The node to free.
+ * @param node The node to free.
  */
 void purple_xmlnode_free(PurpleXmlNode *node);
 
@@ -354,14 +354,14 @@ void purple_xmlnode_free(PurpleXmlNode *node);
  * root node of an XML document will parse the entire document
  * into a tree of nodes, and return the PurpleXmlNode of the root.
  *
- * @dir:  The directory where the file is located
- * @filename:  The filename
- * @description:  A description of the file being parsed. Displayed to
+ * @param dir  The directory where the file is located
+ * @param filename  The filename
+ * @param description  A description of the file being parsed. Displayed to
  *        the user if the file cannot be read.
- * @process:  The subsystem that is calling purple_xmlnode_from_file. Used as
+ * @param process  The subsystem that is calling purple_xmlnode_from_file. Used as
  *        the category for debugging.
  *
- * Returns: The new node or NULL if an error occurred.
+ * @return The new node or NULL if an error occurred.
  */
 PurpleXmlNode *purple_xmlnode_from_file(const char *dir, const char *filename,
 		const char *description, const char *process);

@@ -68,7 +68,7 @@ void finch_log_init(void);
 /**
  * Returns the GNT log subsystem handle.
  *
- * Returns: The GNT log subsystem handle.
+ * @return The GNT log subsystem handle.
  */
 void *finch_log_get_handle(void);
 

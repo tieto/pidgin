@@ -51,8 +51,8 @@ void pidgin_privacy_dialog_hide(void);
  *
  * If @a name is not specified, an input dialog will be presented.
  *
- * @account: The account.
- * @name:    The name of the user to add.
+ * @param account The account.
+ * @param name    The name of the user to add.
  */
 void pidgin_request_add_permit(PurpleAccount *account, const char *name);
 
@@ -62,8 +62,8 @@ void pidgin_request_add_permit(PurpleAccount *account, const char *name);
  *
  * If @a name is not specified, an input dialog will be presented.
  *
- * @account: The account.
- * @name:    The name of the user to add.
+ * @param account The account.
+ * @param name    The name of the user to add.
  */
 void pidgin_request_add_block(PurpleAccount *account, const char *name);
 

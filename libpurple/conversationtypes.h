@@ -174,11 +174,11 @@ GType purple_im_conversation_get_type(void);
 /**
  * Creates a new IM conversation.
  *
- * @account: The account opening the conversation window on the purple
+ * @param account The account opening the conversation window on the purple
  *                user's end.
- * @name:    Name of the buddy.
+ * @param name    Name of the buddy.
  *
- * Returns: The new conversation.
+ * @return The new conversation.
  */
 PurpleIMConversation *purple_im_conversation_new(PurpleAccount *account,
 		const char *name);
@@ -189,8 +189,8 @@ PurpleIMConversation *purple_im_conversation_new(PurpleAccount *account,
  * This should only be called from within Purple. You probably want to
  * call purple_buddy_icon_set_data().
  *
- * @im:   The IM.
- * @icon: The buddy icon.
+ * @param im   The IM.
+ * @param icon The buddy icon.
  *
  * @see purple_buddy_icon_set_data()
  */
@@ -199,34 +199,34 @@ void purple_im_conversation_set_icon(PurpleIMConversation *im, PurpleBuddyIcon *
 /**
  * Returns the IM's buddy icon.
  *
- * @im: The IM.
+ * @param im The IM.
  *
- * Returns: The buddy icon.
+ * @return The buddy icon.
  */
 PurpleBuddyIcon *purple_im_conversation_get_icon(const PurpleIMConversation *im);
 
 /**
  * Sets the IM's typing state.
  *
- * @im:    The IM.
- * @state: The typing state.
+ * @param im    The IM.
+ * @param state The typing state.
  */
 void purple_im_conversation_set_typing_state(PurpleIMConversation *im, PurpleIMTypingState state);
 
 /**
  * Returns the IM's typing state.
  *
- * @im: The IM.
+ * @param im The IM.
  *
- * Returns: The IM's typing state.
+ * @return The IM's typing state.
  */
 PurpleIMTypingState purple_im_conversation_get_typing_state(const PurpleIMConversation *im);
 
 /**
  * Starts the IM's typing timeout.
  *
- * @im:      The IM.
- * @timeout: How long in seconds to wait before setting the typing state
+ * @param im      The IM.
+ * @param timeout How long in seconds to wait before setting the typing state
  *        to PURPLE_IM_NOT_TYPING.
  */
 void purple_im_conversation_start_typing_timeout(PurpleIMConversation *im, int timeout);
@@ -234,16 +234,16 @@ void purple_im_conversation_start_typing_timeout(PurpleIMConversation *im, int t
 /**
  * Stops the IM's typing timeout.
  *
- * @im: The IM.
+ * @param im The IM.
  */
 void purple_im_conversation_stop_typing_timeout(PurpleIMConversation *im);
 
 /**
  * Returns the IM's typing timeout.
  *
- * @im: The IM.
+ * @param im The IM.
  *
- * Returns: The timeout.
+ * @return The timeout.
  */
 guint purple_im_conversation_get_typing_timeout(const PurpleIMConversation *im);
 
@@ -253,8 +253,8 @@ guint purple_im_conversation_get_typing_timeout(const PurpleIMConversation *im);
  * typing after this quiet-period, then another PURPLE_IM_TYPING message
  * will be sent.
  *
- * @im:  The IM.
- * @val: The number of seconds to wait before allowing another
+ * @param im  The IM.
+ * @param val The number of seconds to wait before allowing another
  *            PURPLE_IM_TYPING message to be sent to the user.  Or 0 to
  *            not send another PURPLE_IM_TYPING message.
  */
@@ -263,9 +263,9 @@ void purple_im_conversation_set_type_again(PurpleIMConversation *im, unsigned in
 /**
  * Returns the time after which another PURPLE_IM_TYPING message should be sent.
  *
- * @im: The IM.
+ * @param im The IM.
  *
- * Returns: The time in seconds since the epoch.  Or 0 if no additional
+ * @return The time in seconds since the epoch.  Or 0 if no additional
  *         PURPLE_IM_TYPING message should be sent.
  */
 time_t purple_im_conversation_get_type_again(const PurpleIMConversation *im);
@@ -273,30 +273,30 @@ time_t purple_im_conversation_get_type_again(const PurpleIMConversation *im);
 /**
  * Starts the IM's type again timeout.
  *
- * @im:      The IM.
+ * @param im      The IM.
  */
 void purple_im_conversation_start_send_typed_timeout(PurpleIMConversation *im);
 
 /**
  * Stops the IM's type again timeout.
  *
- * @im: The IM.
+ * @param im The IM.
  */
 void purple_im_conversation_stop_send_typed_timeout(PurpleIMConversation *im);
 
 /**
  * Returns the IM's type again timeout interval.
  *
- * @im: The IM.
+ * @param im The IM.
  *
- * Returns: The type again timeout interval.
+ * @return The type again timeout interval.
  */
 guint purple_im_conversation_get_send_typed_timeout(const PurpleIMConversation *im);
 
 /**
  * Updates the visual typing notification for an IM conversation.
  *
- * @im: The IM.
+ * @param im The IM.
  */
 void purple_im_conversation_update_typing(PurpleIMConversation *im);
 
@@ -315,11 +315,11 @@ GType purple_chat_conversation_get_type(void);
 /**
  * Creates a new chat conversation.
  *
- * @account: The account opening the conversation window on the purple
+ * @param account The account opening the conversation window on the purple
  *                user's end.
- * @name:    The name of the conversation.
+ * @param name    The name of the conversation.
  *
- * Returns: The new conversation.
+ * @return The new conversation.
  */
 PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
 		const char *name);
@@ -328,44 +328,44 @@ PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
  * Returns a list of users in the chat room.  The members of the list
  * are PurpleChatUser objects.
  *
- * @chat: The chat.
+ * @param chat The chat.
  *
- * Returns: (transfer none): The list of users.
+ * @constreturn The list of users.
  */
 GList *purple_chat_conversation_get_users(const PurpleChatConversation *chat);
 
 /**
  * Ignores a user in a chat room.
  *
- * @chat: The chat.
- * @name: The name of the user.
+ * @param chat The chat.
+ * @param name The name of the user.
  */
 void purple_chat_conversation_ignore(PurpleChatConversation *chat, const char *name);
 
 /**
  * Unignores a user in a chat room.
  *
- * @chat: The chat.
- * @name: The name of the user.
+ * @param chat The chat.
+ * @param name The name of the user.
  */
 void purple_chat_conversation_unignore(PurpleChatConversation *chat, const char *name);
 
 /**
  * Sets the list of ignored users in the chat room.
  *
- * @chat:    The chat.
- * @ignored: The list of ignored users.
+ * @param chat    The chat.
+ * @param ignored The list of ignored users.
  *
- * Returns: The list passed.
+ * @return The list passed.
  */
 GList *purple_chat_conversation_set_ignored(PurpleChatConversation *chat, GList *ignored);
 
 /**
  * Returns the list of ignored users in the chat room.
  *
- * @chat: The chat.
+ * @param chat The chat.
  *
- * Returns: (transfer none): The list of ignored users.
+ * @constreturn The list of ignored users.
  */
 GList *purple_chat_conversation_get_ignored(const PurpleChatConversation *chat);
 
@@ -377,22 +377,22 @@ GList *purple_chat_conversation_get_ignored(const PurpleChatConversation *chat);
  * returned. The username passed to the function does not have to have this
  * formatting.
  *
- * @chat: The chat.
- * @user: The user to check in the ignore list.
+ * @param chat The chat.
+ * @param user The user to check in the ignore list.
  *
- * Returns: The ignored user if found, complete with prefixes, or %NULL
+ * @return The ignored user if found, complete with prefixes, or @c NULL
  *         if not found.
  */
 const char *purple_chat_conversation_get_ignored_user(const PurpleChatConversation *chat,
 											const char *user);
 
 /**
- * Returns %TRUE if the specified user is ignored.
+ * Returns @c TRUE if the specified user is ignored.
  *
- * @chat: The chat.
- * @user: The user.
+ * @param chat The chat.
+ * @param user The user.
  *
- * Returns: %TRUE if the user is in the ignore list; %FALSE otherwise.
+ * @return @c TRUE if the user is in the ignore list; @c FALSE otherwise.
  */
 gboolean purple_chat_conversation_is_ignored_user(const PurpleChatConversation *chat,
 										const char *user);
@@ -400,9 +400,9 @@ gboolean purple_chat_conversation_is_ignored_user(const PurpleChatConversation *
 /**
  * Sets the chat room's topic.
  *
- * @chat:  The chat.
- * @who:   The user that set the topic.
- * @topic: The topic.
+ * @param chat  The chat.
+ * @param who   The user that set the topic.
+ * @param topic The topic.
  */
 void purple_chat_conversation_set_topic(PurpleChatConversation *chat, const char *who,
 							  const char *topic);
@@ -410,46 +410,46 @@ void purple_chat_conversation_set_topic(PurpleChatConversation *chat, const char
 /**
  * Returns the chat room's topic.
  *
- * @chat: The chat.
+ * @param chat The chat.
  *
- * Returns: The chat's topic.
+ * @return The chat's topic.
  */
 const char *purple_chat_conversation_get_topic(const PurpleChatConversation *chat);
 
 /**
  * Returns who set the chat room's topic.
  *
- * @chat: The chat.
+ * @param chat The chat.
  *
- * Returns: Who set the topic.
+ * @return Who set the topic.
  */
 const char *purple_chat_conversation_get_topic_who(const PurpleChatConversation *chat);
 
 /**
  * Sets the chat room's ID.
  *
- * @chat: The chat.
- * @id:   The ID.
+ * @param chat The chat.
+ * @param id   The ID.
  */
 void purple_chat_conversation_set_id(PurpleChatConversation *chat, int id);
 
 /**
  * Returns the chat room's ID.
  *
- * @chat: The chat.
+ * @param chat The chat.
  *
- * Returns: The ID.
+ * @return The ID.
  */
 int purple_chat_conversation_get_id(const PurpleChatConversation *chat);
 
 /**
  * Adds a user to a chat.
  *
- * @chat:        The chat.
- * @user:        The user to add.
- * @extra_msg:   An extra message to display with the join message.
- * @flags:       The users flags
- * @new_arrival: Decides whether or not to show a join notice.
+ * @param chat        The chat.
+ * @param user        The user to add.
+ * @param extra_msg   An extra message to display with the join message.
+ * @param flags       The users flags
+ * @param new_arrival Decides whether or not to show a join notice.
  */
 void purple_chat_conversation_add_user(PurpleChatConversation *chat, const char *user,
 							 const char *extra_msg, PurpleChatUserFlags flags,
@@ -461,16 +461,16 @@ void purple_chat_conversation_add_user(PurpleChatConversation *chat, const char 
  * The data is copied from @a users, @a extra_msgs, and @a flags, so it is up to
  * the caller to free this list after calling this function.
  *
- * @chat:         The chat.
- * @users:        The list of users to add.
- * @extra_msgs:   An extra message to display with the join message for each
+ * @param chat         The chat.
+ * @param users        The list of users to add.
+ * @param extra_msgs   An extra message to display with the join message for each
  *                     user.  This list may be shorter than @a users, in which
  *                     case, the users after the end of extra_msgs will not have
  *                     an extra message.  By extension, this means that extra_msgs
- *                     can simply be %NULL and none of the users will have an
+ *                     can simply be @c NULL and none of the users will have an
  *                     extra message.
- * @flags:        The list of flags for each user.
- * @new_arrivals: Decides whether or not to show join notices.
+ * @param flags        The list of flags for each user.
+ * @param new_arrivals Decides whether or not to show join notices.
  */
 void purple_chat_conversation_add_users(PurpleChatConversation *chat,
 		GList *users, GList *extra_msgs, GList *flags, gboolean new_arrivals);
@@ -478,9 +478,9 @@ void purple_chat_conversation_add_users(PurpleChatConversation *chat,
 /**
  * Renames a user in a chat.
  *
- * @chat:     The chat.
- * @old_user: The old username.
- * @new_user: The new username.
+ * @param chat     The chat.
+ * @param old_user The old username.
+ * @param new_user The new username.
  */
 void purple_chat_conversation_rename_user(PurpleChatConversation *chat,
 		const char *old_user, const char *new_user);
@@ -490,9 +490,9 @@ void purple_chat_conversation_rename_user(PurpleChatConversation *chat,
  *
  * It is up to the developer to free this list after calling this function.
  *
- * @chat:   The chat.
- * @user:   The user that is being removed.
- * @reason: The optional reason given for the removal. Can be %NULL.
+ * @param chat   The chat.
+ * @param user   The user that is being removed.
+ * @param reason The optional reason given for the removal. Can be @c NULL.
  */
 void purple_chat_conversation_remove_user(PurpleChatConversation *chat,
 		const char *user, const char *reason);
@@ -500,9 +500,9 @@ void purple_chat_conversation_remove_user(PurpleChatConversation *chat,
 /**
  * Removes a list of users from a chat, optionally with a single reason.
  *
- * @chat:   The chat.
- * @users:  The users that are being removed.
- * @reason: The optional reason given for the removal. Can be %NULL.
+ * @param chat   The chat.
+ * @param users  The users that are being removed.
+ * @param reason The optional reason given for the removal. Can be @c NULL.
  */
 void purple_chat_conversation_remove_users(PurpleChatConversation *chat,
 		GList *users, const char *reason);
@@ -510,10 +510,10 @@ void purple_chat_conversation_remove_users(PurpleChatConversation *chat,
 /**
  * Checks if a user is in a chat
  *
- * @chat:   The chat.
- * @user:   The user to look for.
+ * @param chat   The chat.
+ * @param user   The user to look for.
  *
- * Returns: TRUE if the user is in the chat, FALSE if not
+ * @return TRUE if the user is in the chat, FALSE if not
  */
 gboolean purple_chat_conversation_has_user(PurpleChatConversation *chat,
 		const char *user);
@@ -521,15 +521,15 @@ gboolean purple_chat_conversation_has_user(PurpleChatConversation *chat,
 /**
  * Clears all users from a chat.
  *
- * @chat: The chat.
+ * @param chat The chat.
  */
 void purple_chat_conversation_clear_users(PurpleChatConversation *chat);
 
 /**
  * Sets your nickname (used for hilighting) for a chat.
  *
- * @chat: The chat.
- * @nick: The nick.
+ * @param chat The chat.
+ * @param nick The nick.
  */
 void purple_chat_conversation_set_nick(PurpleChatConversation *chat,
 		const char *nick);
@@ -537,8 +537,8 @@ void purple_chat_conversation_set_nick(PurpleChatConversation *chat,
 /**
  * Gets your nickname (used for hilighting) for a chat.
  *
- * @chat: The chat.
- * Returns:  The nick.
+ * @param chat The chat.
+ * @return  The nick.
  */
 const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat);
 
@@ -546,15 +546,15 @@ const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat);
  * Lets the core know we left a chat, without destroying it.
  * Called from serv_got_chat_left().
  *
- * @chat: The chat.
+ * @param chat The chat.
  */
 void purple_chat_conversation_leave(PurpleChatConversation *chat);
 
 /**
  * Find a chat user in a chat
  *
- * @chat: The chat.
- * @name: The name of the chat user to find.
+ * @param chat The chat.
+ * @param name The name of the chat user to find.
  */
 PurpleChatUser *purple_chat_conversation_find_user(PurpleChatConversation *chat,
 		const char *name);
@@ -564,11 +564,11 @@ PurpleChatUser *purple_chat_conversation_find_user(PurpleChatConversation *chat,
  * The user will be prompted to enter the user's name or a message if one is
  * not given.
  *
- * @chat:     The chat.
- * @user:     The user to invite to the chat.
- * @message:  The message to send with the invitation.
- * @confirm:  Prompt before sending the invitation. The user is always
- *                 prompted if either \a user or \a message is %NULL.
+ * @param chat     The chat.
+ * @param user     The user to invite to the chat.
+ * @param message  The message to send with the invitation.
+ * @param confirm  Prompt before sending the invitation. The user is always
+ *                 prompted if either \a user or \a message is @c NULL.
  */
 void purple_chat_conversation_invite_user(PurpleChatConversation *chat,
 		const char *user, const char *message, gboolean confirm);
@@ -577,9 +577,9 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat,
  * Returns true if we're no longer in this chat,
  * and just left the window open.
  *
- * @chat: The chat.
+ * @param chat The chat.
  *
- * Returns: %TRUE if we left the chat already, %FALSE if
+ * @return @c TRUE if we left the chat already, @c FALSE if
  * we're still there.
  */
 gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
@@ -599,8 +599,8 @@ GType purple_chat_user_get_type(void);
 /**
  * Set the chat conversation associated with this chat user.
  *
- * @cb:	The chat user
- * @chat:	The chat conversation that the buddy belongs to.
+ * @param cb	The chat user
+ * @param chat	The chat conversation that the buddy belongs to.
  */
 void purple_chat_user_set_chat(PurpleChatUser *cb,
 		PurpleChatConversation *chat);
@@ -608,21 +608,21 @@ void purple_chat_user_set_chat(PurpleChatUser *cb,
 /**
  * Get the chat conversation associated with this chat user.
  *
- * @cb:	The chat user.
+ * @param cb	The chat user.
  *
- * Returns:		The chat conversation that the buddy belongs to.
+ * @return		The chat conversation that the buddy belongs to.
  */
 PurpleChatConversation *purple_chat_user_get_chat(const PurpleChatUser *cb);
 
 /**
  * Creates a new chat user
  *
- * @chat: The chat that the buddy belongs to.
- * @name: The name.
- * @alias: The alias.
- * @flags: The flags.
+ * @param chat The chat that the buddy belongs to.
+ * @param name The name.
+ * @param alias The alias.
+ * @param flags The flags.
  *
- * Returns: The new chat user
+ * @return The new chat user
  */
 PurpleChatUser *purple_chat_user_new(PurpleChatConversation *chat,
 		const char *name, const char *alias, PurpleChatUserFlags flags);
@@ -630,17 +630,17 @@ PurpleChatUser *purple_chat_user_new(PurpleChatConversation *chat,
 /**
  * Set the UI data associated with this chat user.
  *
- * @cb:			The chat user
- * @ui_data:		A pointer to associate with this chat user.
+ * @param cb			The chat user
+ * @param ui_data		A pointer to associate with this chat user.
  */
 void purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data);
 
 /**
  * Get the UI data associated with this chat user.
  *
- * @cb:			The chat user.
+ * @param cb			The chat user.
  *
- * Returns: The UI data associated with this chat user.  This is a
+ * @return The UI data associated with this chat user.  This is a
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
@@ -649,44 +649,44 @@ gpointer purple_chat_user_get_ui_data(const PurpleChatUser *cb);
 /**
  * Get the alias of a chat user
  *
- * @cb:    The chat user.
+ * @param cb    The chat user.
  *
- * Returns: The alias of the chat user.
+ * @return The alias of the chat user.
  */
 const char *purple_chat_user_get_alias(const PurpleChatUser *cb);
 
 /**
  * Get the name of a chat user
  *
- * @cb:    The chat user.
+ * @param cb    The chat user.
  *
- * Returns: The name of the chat user.
+ * @return The name of the chat user.
  */
 const char *purple_chat_user_get_name(const PurpleChatUser *cb);
 
 /**
  * Set the flags of a chat user.
  *
- * @cb:     The chat user.
- * @flags:  The new flags.
+ * @param cb     The chat user.
+ * @param flags  The new flags.
  */
 void purple_chat_user_set_flags(PurpleChatUser *cb, PurpleChatUserFlags flags);
 
 /**
  * Get the flags of a chat user.
  *
- * @cb:	The chat user.
+ * @param cb	The chat user.
  *
- * Returns: The flags of the chat user.
+ * @return The flags of the chat user.
  */
 PurpleChatUserFlags purple_chat_user_get_flags(const PurpleChatUser *cb);
 
 /**
  * Indicates if this chat user is on the buddy list.
  *
- * @cb:	The chat user.
+ * @param cb	The chat user.
  *
- * Returns: TRUE if the chat user is on the buddy list.
+ * @return TRUE if the chat user is on the buddy list.
  */
 gboolean purple_chat_user_is_buddy(const PurpleChatUser *cb);
 

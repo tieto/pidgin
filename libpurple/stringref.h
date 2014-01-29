@@ -37,10 +37,10 @@ G_BEGIN_DECLS
  * Creates an immutable reference-counted string object.  The newly
  * created object will have a reference count of 1.
  *
- * @value: This will be the value of the string; it will be
+ * @param value This will be the value of the string; it will be
  *              duplicated.
  *
- * Returns: A newly allocated string reference object with a refcount
+ * @return A newly allocated string reference object with a refcount
  *         of 1.
  */
 PurpleStringref *purple_stringref_new(const char *value);
@@ -51,10 +51,10 @@ PurpleStringref *purple_stringref_new(const char *value);
  * not referenced before the next iteration of the mainloop it will
  * be freed at that time.
  *
- * @value: This will be the value of the string; it will be
+ * @param value This will be the value of the string; it will be
  *              duplicated.
  *
- * Returns: A newly allocated string reference object with a refcount
+ * @return A newly allocated string reference object with a refcount
  *         of zero.
  */
 PurpleStringref *purple_stringref_new_noref(const char *value);
@@ -64,9 +64,9 @@ PurpleStringref *purple_stringref_new_noref(const char *value);
  * format specification and arguments.  The created object will have a
  * reference count of 1.
  *
- * @format: A printf-style format specification.
+ * @param format A printf-style format specification.
  *
- * Returns: A newly allocated string reference object with a refcount
+ * @return A newly allocated string reference object with a refcount
  *         of 1.
  */
 PurpleStringref *purple_stringref_printf(const char *format, ...);
@@ -74,9 +74,9 @@ PurpleStringref *purple_stringref_printf(const char *format, ...);
 /**
  * Increase the reference count of the given stringref.
  *
- * @stringref: String to be referenced.
+ * @param stringref String to be referenced.
  *
- * Returns: A pointer to the referenced string.
+ * @return A pointer to the referenced string.
  */
 PurpleStringref *purple_stringref_ref(PurpleStringref *stringref);
 
@@ -85,14 +85,14 @@ PurpleStringref *purple_stringref_ref(PurpleStringref *stringref);
  * reference count reaches zero, the stringref will be freed; thus
  * you MUST NOT use this string after dereferencing it.
  *
- * @stringref: String to be dereferenced.
+ * @param stringref String to be dereferenced.
  */
 void purple_stringref_unref(PurpleStringref *stringref);
 
 /**
  * Retrieve the value of a stringref.
  *
- * Note: This value should not be cached or stored in a local variable.
+ * @note This value should not be cached or stored in a local variable.
  *       While there is nothing inherently incorrect about doing so, it
  *       is easy to forget that the cached value is in fact a
  *       reference-counted object and accidentally use it after
@@ -101,9 +101,9 @@ void purple_stringref_unref(PurpleStringref *stringref);
  *       be valid or invalid nondeterministically based on how many
  *       other references to it exist.
  *
- * @stringref: String reference from which to retrieve the value.
+ * @param stringref String reference from which to retrieve the value.
  *
- * Returns: The contents of the string reference.
+ * @return The contents of the string reference.
  */
 const char *purple_stringref_value(const PurpleStringref *stringref);
 
@@ -112,20 +112,20 @@ const char *purple_stringref_value(const PurpleStringref *stringref);
  * value as strcmp would, where <0 indicates that s1 is "less than" s2
  * in the ASCII lexicography, 0 indicates equality, etc.
  *
- * @s1: The reference string.
+ * @param s1 The reference string.
  *
- * @s2: The string to compare against the reference.
+ * @param s2 The string to compare against the reference.
  *
- * Returns: An ordering indication on s1 and s2.
+ * @return An ordering indication on s1 and s2.
  */
 int purple_stringref_cmp(const PurpleStringref *s1, const PurpleStringref *s2);
 
 /**
  * Find the length of the string inside a stringref.
  *
- * @stringref: The string in whose length we are interested.
+ * @param stringref The string in whose length we are interested.
  *
- * Returns: The length of the string in stringref
+ * @return The length of the string in stringref
  */
 size_t purple_stringref_len(const PurpleStringref *stringref);
 

@@ -197,18 +197,18 @@ struct _PurpleProtocolClientIface
 	 * On the other hand, both of these are invalid for protocols with
 	 * number-based usernames, so function should return NULL in such case.
 	 *
-	 * @account:  The account the username is related to. Can
+	 * @param account  The account the username is related to. Can
 	 *                 be NULL.
-	 * @who:      The username to convert.
-	 * Returns:         Normalized username, or NULL, if it's invalid.
+	 * @param who      The username to convert.
+	 * @return         Normalized username, or NULL, if it's invalid.
 	 */
 	const char *(*normalize)(const PurpleAccount *account, const char *who);
 
 	PurpleChat *(*find_blist_chat)(PurpleAccount *account, const char *name);
 
 	/** Checks whether offline messages to @a buddy are supported.
-	 *  Returns: %TRUE if @a buddy can be sent messages while they are
-	 *          offline, or %FALSE if not.
+	 *  @return @c TRUE if @a buddy can be sent messages while they are
+	 *          offline, or @c FALSE if not.
 	 */
 	gboolean (*offline_message)(const PurpleBuddy *buddy);
 
@@ -217,15 +217,15 @@ struct _PurpleProtocolClientIface
 	 * table instead of expanding the struct for every addition.  This hash
 	 * table is allocated every call and MUST be unrefed by the caller.
 	 *
-	 * @account: The account to specify.  This can be NULL.
-	 * Returns: The protocol's string hash table. The hash table should be
+	 * @param account The account to specify.  This can be NULL.
+	 * @return The protocol's string hash table. The hash table should be
 	 *         destroyed by the caller when it's no longer needed.
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
 
 	/**
 	 * Returns an array of "PurpleMood"s, with the last one having
-	 * "mood" set to %NULL.
+	 * "mood" set to @c NULL.
 	 */
 	PurpleMood *(*get_moods)(PurpleAccount *account);
 
@@ -241,10 +241,10 @@ struct _PurpleProtocolClientIface
 	 *  - formatting,
 	 *  - used special characters.
 	 *
-	 * @conv: The conversation to query, or NULL to get safe minimum
+	 * @param conv The conversation to query, or NULL to get safe minimum
 	 *             for the protocol.
 	 *
-	 * Returns:     Maximum message size, 0 if unspecified, -1 for infinite.
+	 * @return     Maximum message size, 0 if unspecified, -1 for infinite.
 	 */
 	gssize (*get_max_message_size)(PurpleConversation *conv);
 };
@@ -348,12 +348,12 @@ struct _PurpleProtocolServerIface
 	 * call one of the callbacks from an idle/0-second timeout) depending
 	 * on if the nickname is set successfully.
 	 *
-	 * @gc:    The connection for which to set an alias
-	 * @alias: The new server-side alias/nickname for this account,
+	 * @param gc    The connection for which to set an alias
+	 * @param alias The new server-side alias/nickname for this account,
 	 *              or NULL to unset the alias/nickname (or return it to
 	 *              a protocol-specific "default").
-	 * @success_cb: Callback to be called if the public alias is set
-	 * @failure_cb: Callback to be called if setting the public alias
+	 * @param success_cb Callback to be called if the public alias is set
+	 * @param failure_cb Callback to be called if setting the public alias
 	 *                   fails
 	 * @see purple_account_set_public_alias
 	 */
@@ -368,9 +368,9 @@ struct _PurpleProtocolServerIface
 	 * call one of the callbacks from an idle/0-second timeout) depending
 	 * on if the nickname is retrieved.
 	 *
-	 * @gc:    The connection for which to retireve the alias
-	 * @success_cb: Callback to be called with the retrieved alias
-	 * @failure_cb: Callback to be called if the protocol is unable to
+	 * @param gc    The connection for which to retireve the alias
+	 * @param success_cb Callback to be called with the retrieved alias
+	 * @param failure_cb Callback to be called if the protocol is unable to
 	 *                   retrieve the alias
 	 * @see purple_account_get_public_alias
 	 */
@@ -411,7 +411,7 @@ struct _PurpleProtocolIMIface
 					PurpleMessageFlags flags);
 
 	/**
-	 * Returns: If this protocol requires the PURPLE_IM_TYPING message to
+	 * @return If this protocol requires the PURPLE_IM_TYPING message to
 	 *         be sent repeatedly to signify that the user is still
 	 *         typing, then the protocol should return the number of
 	 *         seconds to wait before sending a subsequent notification.
@@ -444,7 +444,7 @@ struct _PurpleProtocolChatIface
 	 * information required by the protocol to join a chat. libpurple will
 	 * call join_chat along with the information filled by the user.
 	 *
-	 * Returns: A list of #PurpleProtocolChatEntry structs
+	 * @return A list of #PurpleProtocolChatEntry structs
 	 */
 	GList *(*info)(PurpleConnection *);
 
@@ -456,8 +456,8 @@ struct _PurpleProtocolChatIface
 	 * #get_chat_name if you instead need to extract a chat name from a
 	 * hashtable.
 	 *
-	 * @chat_name: The chat name to be turned into components
-	 * Returns: Hashtable containing the information extracted from chat_name
+	 * @param chat_name The chat name to be turned into components
+	 * @return Hashtable containing the information extracted from chat_name
 	 */
 	GHashTable *(*info_defaults)(PurpleConnection *,
 									  const char *chat_name);
@@ -466,7 +466,7 @@ struct _PurpleProtocolChatIface
 	 * Called when the user requests joining a chat. Should arrange for
 	 * #serv_got_joined_chat to be called.
 	 *
-	 * @components: A hashtable containing information required to
+	 * @param components A hashtable containing information required to
 	 *                   join the chat as described by the entries returned
 	 *                   by #chat_info. It may also be called when accepting
 	 *                   an invitation, in which case this matches the
@@ -477,7 +477,7 @@ struct _PurpleProtocolChatIface
 	/**
 	 * Called when the user refuses a chat invitation.
 	 *
-	 * @components: A hashtable containing information required to
+	 * @param components A hashtable containing information required to
 	 *                   join the chat as passed to #serv_got_chat_invite.
 	 */
 	void (*reject)(PurpleConnection *, GHashTable *components);
@@ -487,33 +487,33 @@ struct _PurpleProtocolChatIface
 	 * #chat_info_defaults if you instead need to generate a hashtable
 	 * from a chat name.
 	 *
-	 * @components: A hashtable containing information about the chat.
+	 * @param components A hashtable containing information about the chat.
 	 */
 	char *(*get_name)(GHashTable *components);
 
 	/**
 	 * Invite a user to join a chat.
 	 *
-	 * @id:      The id of the chat to invite the user to.
-	 * @message: A message displayed to the user when the invitation
+	 * @param id      The id of the chat to invite the user to.
+	 * @param message A message displayed to the user when the invitation
 	 *                is received.
-	 * @who:     The name of the user to send the invation to.
+	 * @param who     The name of the user to send the invation to.
 	 */
 	void (*invite)(PurpleConnection *, int id,
 						const char *message, const char *who);
 	/**
 	 * Called when the user requests leaving a chat.
 	 *
-	 * @id: The id of the chat to leave
+	 * @param id The id of the chat to leave
 	 */
 	void (*leave)(PurpleConnection *, int id);
 
 	/**
 	 * Send a whisper to a user in a chat.
 	 *
-	 * @id:      The id of the chat.
-	 * @who:     The name of the user to send the whisper to.
-	 * @message: The message of the whisper.
+	 * @param id      The id of the chat.
+	 * @param who     The name of the user to send the whisper to.
+	 * @param message The message of the whisper.
 	 */
 	void (*whisper)(PurpleConnection *, int id,
 						 const char *who, const char *message);
@@ -527,11 +527,11 @@ struct _PurpleProtocolChatIface
 	 * some other negative value.  You can use one of the valid
 	 * errno values, or just big something.
 	 *
-	 * @id:      The id of the chat to send the message to.
-	 * @message: The message to send to the chat.
-	 * @flags:   A bitwise OR of #PurpleMessageFlags representing
+	 * @param id      The id of the chat to send the message to.
+	 * @param message The message to send to the chat.
+	 * @param flags   A bitwise OR of #PurpleMessageFlags representing
 	 *                message flags.
-	 * Returns: 	  A positive number or 0 in case of success,
+	 * @return 	  A positive number or 0 in case of success,
 	 *                a negative error number in case of failure.
 	 */
 	int  (*send)(PurpleConnection *, int id, const char *message,
@@ -540,10 +540,10 @@ struct _PurpleProtocolChatIface
 	/** Gets the real name of a participant in a chat.  For example, on
 	 *  XMPP this turns a chat room nick <tt>foo</tt> into
 	 *  <tt>room\@server/foo</tt>
-	 *  @gc:  the connection on which the room is.
-	 *  @id:  the ID of the chat room.
-	 *  @who: the nickname of the chat participant.
-	 *  Returns:    the real name of the participant.  This string must be
+	 *  @param gc  the connection on which the room is.
+	 *  @param id  the ID of the chat room.
+	 *  @param who the nickname of the chat participant.
+	 *  @return    the real name of the participant.  This string must be
 	 *             freed by the caller.
 	 */
 	char *(*get_user_real_name)(PurpleConnection *gc, int id, const char *who);
@@ -671,10 +671,10 @@ struct _PurpleProtocolMediaIface
 	/**
 	 * Initiate a media session with the given contact.
 	 *
-	 * @account: The account to initiate the media session on.
-	 * @who: The remote user to initiate the session with.
-	 * @type: The type of media session to initiate.
-	 * Returns: TRUE if the call succeeded else FALSE. (Doesn't imply the media
+	 * @param account The account to initiate the media session on.
+	 * @param who The remote user to initiate the session with.
+	 * @param type The type of media session to initiate.
+	 * @return TRUE if the call succeeded else FALSE. (Doesn't imply the media
 	 *         session or stream will be successfully created)
 	 */
 	gboolean (*initiate_session)(PurpleAccount *account, const char *who,
@@ -684,9 +684,9 @@ struct _PurpleProtocolMediaIface
 	 * Checks to see if the given contact supports the given type of media
 	 * session.
 	 *
-	 * @account: The account the contact is on.
-	 * @who: The remote user to check for media capability with.
-	 * Returns: The media caps the contact supports.
+	 * @param account The account the contact is on.
+	 * @param who The remote user to check for media capability with.
+	 * @return The media caps the contact supports.
 	 */
 	PurpleMediaCaps (*get_caps)(PurpleAccount *account,
 					  const char *who);
@@ -763,63 +763,63 @@ GType purple_protocol_get_type(void);
 /**
  * Returns the ID of a protocol.
  *
- * @protocol: The protocol.
+ * @param protocol The protocol.
  *
- * Returns: The ID of the protocol.
+ * @return The ID of the protocol.
  */
 const char *purple_protocol_get_id(const PurpleProtocol *protocol);
 
 /**
  * Returns the translated name of a protocol.
  *
- * @protocol: The protocol.
+ * @param protocol The protocol.
  *
- * Returns: The translated name of the protocol.
+ * @return The translated name of the protocol.
  */
 const char *purple_protocol_get_name(const PurpleProtocol *protocol);
 
 /**
  * Returns the options of a protocol.
  *
- * @protocol: The protocol.
+ * @param protocol The protocol.
  *
- * Returns: The options of the protocol.
+ * @return The options of the protocol.
  */
 PurpleProtocolOptions purple_protocol_get_options(const PurpleProtocol *protocol);
 
 /**
  * Returns the user splits of a protocol.
  *
- * @protocol: The protocol.
+ * @param protocol The protocol.
  *
- * Returns: The user splits of the protocol.
+ * @return The user splits of the protocol.
  */
 GList *purple_protocol_get_user_splits(const PurpleProtocol *protocol);
 
 /**
  * Returns the protocol options of a protocol.
  *
- * @protocol: The protocol.
+ * @param protocol The protocol.
  *
- * Returns: The protocol options of the protocol.
+ * @return The protocol options of the protocol.
  */
 GList *purple_protocol_get_protocol_options(const PurpleProtocol *protocol);
 
 /**
  * Returns the icon spec of a protocol.
  *
- * @protocol: The protocol.
+ * @param protocol The protocol.
  *
- * Returns: The icon spec of the protocol.
+ * @return The icon spec of the protocol.
  */
 PurpleBuddyIconSpec *purple_protocol_get_icon_spec(const PurpleProtocol *protocol);
 
 /**
  * Returns the whiteboard ops of a protocol.
  *
- * @protocol: The protocol.
+ * @param protocol The protocol.
  *
- * Returns: The whiteboard ops of the protocol.
+ * @return The whiteboard ops of the protocol.
  */
 PurpleWhiteboardOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *protocol);
 
@@ -829,8 +829,8 @@ PurpleWhiteboardOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *pr
  * This function is called in the *_init() function of your derived protocol,
  * to delete the parent type's data so you can define your own.
  *
- * @protocol: The protocol instance.
- * @flags:    What instance data to delete.
+ * @param protocol The protocol instance.
+ * @param flags    What instance data to delete.
  */
 void purple_protocol_override(PurpleProtocol *protocol,
 		PurpleProtocolOverrideFlags flags);

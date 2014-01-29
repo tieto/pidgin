@@ -140,13 +140,13 @@ struct _GntWidgetClass
 G_BEGIN_DECLS
 
 /**
- * Returns:  GType for GntWidget.
+ * @return  GType for GntWidget.
  */
 GType gnt_widget_get_gtype(void);
 
 /**
  * Destroy a widget.
- * @widget: The widget to destroy.
+ * @param widget The widget to destroy.
  */
 void gnt_widget_destroy(GntWidget *widget);
 
@@ -154,13 +154,13 @@ void gnt_widget_destroy(GntWidget *widget);
  * Show a widget. This should only be used for toplevel widgets. For the rest
  * of the widgets, use #gnt_widget_draw instead.
  *
- * @widget:  The widget to show.
+ * @param widget  The widget to show.
  */
 void gnt_widget_show(GntWidget *widget);
 
 /**
  * Draw a widget.
- * @widget:   The widget to draw.
+ * @param widget   The widget to draw.
  */
 void gnt_widget_draw(GntWidget *widget);
 
@@ -172,14 +172,14 @@ void gnt_widget_expose(GntWidget *widget, int x, int y, int width, int height);
 
 /**
  * Hide a widget.
- * @widget:   The widget to hide.
+ * @param widget   The widget to hide.
  */
 void gnt_widget_hide(GntWidget *widget);
 
 /**
  * Get the position of a widget.
  *
- * @widget:  The widget.
+ * @param widget  The widget.
  * @param x       Location to store the x-coordinate of the widget.
  * @param y       Location to store the y-coordinate of the widget.
  */
@@ -187,7 +187,7 @@ void gnt_widget_get_position(GntWidget *widget, int *x, int *y);
 
 /**
  * Set the position of a widget.
- * @widget:   The widget to reposition.
+ * @param widget   The widget to reposition.
  * @param x        The x-coordinate of the widget.
  * @param y        The x-coordinate of the widget.
  */
@@ -195,89 +195,89 @@ void gnt_widget_set_position(GntWidget *widget, int x, int y);
 
 /**
  * Request a widget to calculate its desired size.
- * @widget:  The widget.
+ * @param widget  The widget.
  */
 void gnt_widget_size_request(GntWidget *widget);
 
 /**
  * Get the size of a widget.
- * @widget:    The widget.
- * @width:     Location to store the width of the widget.
- * @height:    Location to store the height of the widget.
+ * @param widget    The widget.
+ * @param width     Location to store the width of the widget.
+ * @param height    Location to store the height of the widget.
  */
 void gnt_widget_get_size(GntWidget *widget, int *width, int *height);
 
 /**
  * Set the size of a widget.
  *
- * @widget:  The widget to resize.
- * @width:   The width of the widget.
- * @height:  The height of the widget.
+ * @param widget  The widget to resize.
+ * @param width   The width of the widget.
+ * @param height  The height of the widget.
  *
- * Returns:  If the widget was resized to the new size.
+ * @return  If the widget was resized to the new size.
  */
 gboolean gnt_widget_set_size(GntWidget *widget, int width, int height);
 
 /**
  * Confirm a requested a size for a widget.
  *
- * @widget:   The widget.
- * @width:    The requested width.
- * @height:    The requested height.
+ * @param widget   The widget.
+ * @param width    The requested width.
+ * @param height    The requested height.
  *
- * Returns:  %TRUE if the new size was confirmed, %FALSE otherwise.
+ * @return  @c TRUE if the new size was confirmed, @c FALSE otherwise.
  */
 gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height);
 
 /**
  * Trigger the key-press callbacks for a widget.
  *
- * @widget:  The widget.
- * @keys:    The keypress on the widget.
+ * @param widget  The widget.
+ * @param keys    The keypress on the widget.
  *
- * Returns:  %TRUE if the key-press was handled, %FALSE otherwise.
+ * @return  @c TRUE if the key-press was handled, @c FALSE otherwise.
  */
 gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
 
 /**
  * Trigger the 'click' callback of a widget.
  *
- * @widget:   The widget.
- * @event:    The mouseevent.
+ * @param widget   The widget.
+ * @param event    The mouseevent.
  * @param x        The x-coordinate of the mouse.
  * @param y        The y-coordinate of the mouse.
  *
- * Returns:  %TRUE if the event was handled, %FALSE otherwise.
+ * @return  @c TRUE if the event was handled, @c FALSE otherwise.
  */
 gboolean gnt_widget_clicked(GntWidget *widget, GntMouseEvent event, int x, int y);
 
 /**
  * Give or remove focus to a widget.
- * @widget:  The widget.
- * @set:     %TRUE of focus should be given to the widget, %FALSE if
+ * @param widget  The widget.
+ * @param set     @c TRUE of focus should be given to the widget, @c FALSE if
  *                focus should be removed.
  *
- * Returns: %TRUE if the focus has been changed, %FALSE otherwise.
+ * @return @c TRUE if the focus has been changed, @c FALSE otherwise.
  */
 gboolean gnt_widget_set_focus(GntWidget *widget, gboolean set);
 
 /**
  * Activate a widget. This only applies to widgets that can be activated (eg. GntButton)
- * @widget:  The widget to activate.
+ * @param widget  The widget to activate.
  */
 void gnt_widget_activate(GntWidget *widget);
 
 /**
  * Set the name of a widget.
- * @widget:   The widget.
- * @name:     A new name for the widget.
+ * @param widget   The widget.
+ * @param name     A new name for the widget.
  */
 void gnt_widget_set_name(GntWidget *widget, const char *name);
 
 /**
  * Get the name of a widget.
- * @widget:   The widget.
- * Returns: The name of the widget.
+ * @param widget   The widget.
+ * @return The name of the widget.
  */
 const char *gnt_widget_get_name(GntWidget *widget);
 
@@ -290,25 +290,25 @@ void gnt_widget_queue_update(GntWidget *widget);
 /**
  * Set whether a widget can take focus or not.
  *
- * @widget:   The widget.
- * @set:      %TRUE if the widget can take focus.
+ * @param widget   The widget.
+ * @param set      @c TRUE if the widget can take focus.
  */
 void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 
 /**
  * Set the visibility of a widget.
  *
- * @widget:  The widget.
- * @set:     Whether the widget is visible or not.
+ * @param widget  The widget.
+ * @param set     Whether the widget is visible or not.
  */
 void gnt_widget_set_visible(GntWidget *widget, gboolean set);
 
 /**
  * Check whether the widget has shadows.
  *
- * @widget:  The widget.
+ * @param widget  The widget.
  *
- * Returns:  %TRUE if the widget has shadows. This checks both the user-setting
+ * @return  @c TRUE if the widget has shadows. This checks both the user-setting
  *          and whether the widget can have shadows at all.
  */
 gboolean gnt_widget_has_shadow(GntWidget *widget);

@@ -87,42 +87,42 @@ struct _GntMenuItemClass
 G_BEGIN_DECLS
 
 /**
- * Returns: GType for GntMenuItem.
+ * @return GType for GntMenuItem.
  */
 GType gnt_menuitem_get_gtype(void);
 
 /**
  * Create a new menuitem.
  *
- * @text:   Label for the menuitem.
+ * @param text   Label for the menuitem.
  *
- * Returns:  The newly created menuitem.
+ * @return  The newly created menuitem.
  */
 GntMenuItem * gnt_menuitem_new(const char *text);
 
 /**
  * Set a callback function for a menuitem.
  *
- * @item:       The menuitem.
- * @callback:   The callback function.
- * @data:       Data to send to the callback function.
+ * @param item       The menuitem.
+ * @param callback   The callback function.
+ * @param data       Data to send to the callback function.
  */
 void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, gpointer data);
 
 /**
  * Set a submenu for a menuitem. A menuitem with a submenu cannot have a callback.
  *
- * @item:  The menuitem.
- * @menu:  The submenu.
+ * @param item  The menuitem.
+ * @param menu  The submenu.
  */
 void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
 
 /**
  * Get the submenu for a menuitem.
  *
- * @item:   The menuitem.
+ * @param item   The menuitem.
  *
- * Returns:  The submenu, or %NULL.
+ * @return  The submenu, or @c NULL.
  *
  * @since 2.3.0
  */
@@ -131,17 +131,17 @@ GntMenu *gnt_menuitem_get_submenu(GntMenuItem *item);
 /**
  * Set a trigger key for the item.
  *
- * @item:     The menuitem
- * @trigger:  The key that will trigger the item when the parent manu is visible
+ * @param item     The menuitem
+ * @param trigger  The key that will trigger the item when the parent manu is visible
  */
 void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger);
 
 /**
  * Get the trigger key for a menuitem.
  *
- * @item:   The menuitem
+ * @param item   The menuitem
  *
- * Returns: The trigger key for the menuitem.
+ * @return The trigger key for the menuitem.
  *
  * @see gnt_menuitem_set_trigger
  */
@@ -150,8 +150,8 @@ char gnt_menuitem_get_trigger(GntMenuItem *item);
 /**
  * Set an ID for the menuitem.
  *
- * @item:   The menuitem.
- * @id:     The ID for the menuitem.
+ * @param item   The menuitem.
+ * @param id     The ID for the menuitem.
  *
  * @since 2.3.0
  */
@@ -160,9 +160,9 @@ void gnt_menuitem_set_id(GntMenuItem *item, const char *id);
 /**
  * Get the ID of the menuitem.
  *
- * @item:   The menuitem.
+ * @param item   The menuitem.
  *
- * Returns:  The ID for the menuitem.
+ * @return  The ID for the menuitem.
  *
  * @since 2.3.0
  */
@@ -173,9 +173,9 @@ const char * gnt_menuitem_get_id(GntMenuItem *item);
  * Activating the menuitem will first trigger the 'activate' signal for the
  * menuitem. Then the callback for the menuitem is triggered, if there is one.
  *
- * @item:   The menuitem.
+ * @param item   The menuitem.
  *
- * Returns:  Whether the callback for the menuitem was called.
+ * @return  Whether the callback for the menuitem was called.
  *
  * @since 2.3.0
  */

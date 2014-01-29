@@ -29,34 +29,34 @@
 #include <gtk/gtk.h>
 
 /**
- * @tipwindow:  The window for the tooltip.
- * @path:       The GtkTreePath representing the row under the cursor.
- * @userdata:   The userdata set during pidgin_tooltip_setup_for_treeview.
+ * @param tipwindow  The window for the tooltip.
+ * @param path       The GtkTreePath representing the row under the cursor.
+ * @param userdata   The userdata set during pidgin_tooltip_setup_for_treeview.
  * @param w          The value of this should be set to the desired width of the tooltip window.
  * @param h          The value of this should be set to the desired height of the tooltip window.
  *
- * Returns:  %TRUE if the tooltip was created correctly, %FALSE otherwise.
+ * @return  @c TRUE if the tooltip was created correctly, @c FALSE otherwise.
  */
 typedef gboolean (*PidginTooltipCreateForTree)(GtkWidget *tipwindow,
 			GtkTreePath *path, gpointer userdata, int *w, int *h);
 
 /**
- * @tipwindow:  The window for the tooltip.
- * @userdata:   The userdata set during pidgin_tooltip_show.
+ * @param tipwindow  The window for the tooltip.
+ * @param userdata   The userdata set during pidgin_tooltip_show.
  * @param w          The value of this should be set to the desired width of the tooltip window.
  * @param h          The value of this should be set to the desired height of the tooltip window.
  *
- * Returns:  %TRUE if the tooltip was created correctly, %FALSE otherwise.
+ * @return  @c TRUE if the tooltip was created correctly, @c FALSE otherwise.
  */
 typedef gboolean (*PidginTooltipCreate)(GtkWidget *tipwindow,
 			gpointer userdata, int *w, int *h);
 
 /**
- * @tipwindow:   The window for the tooltip.
- * @cr:          The cairo context for drawing.
- * @userdata:    The userdata set during pidgin_tooltip_setup_for_treeview or pidgin_tooltip_show.
+ * @param  tipwindow   The window for the tooltip.
+ * @param  cr          The cairo context for drawing.
+ * @param  userdata    The userdata set during pidgin_tooltip_setup_for_treeview or pidgin_tooltip_show.
  *
- * Returns:  %TRUE if the tooltip was painted correctly, %FALSE otherwise.
+ * @return  @c TRUE if the tooltip was painted correctly, @c FALSE otherwise.
  */
 typedef gboolean (*PidginTooltipPaint)(GtkWidget *tipwindow, cairo_t *cr,
 			gpointer userdata);
@@ -66,12 +66,12 @@ G_BEGIN_DECLS
 /**
  * Setup tooltip drawing functions for a treeview.
  *
- * @tree:         The treeview
- * @userdata:     The userdata to send to the callback functions
- * @create_cb:    Callback function to create the tooltip for a GtkTreePath
- * @paint_cb:     Callback function to paint the tooltip
+ * @param tree         The treeview
+ * @param userdata     The userdata to send to the callback functions
+ * @param create_cb    Callback function to create the tooltip for a GtkTreePath
+ * @param paint_cb     Callback function to paint the tooltip
  *
- * Returns:   %TRUE if the tooltip callbacks were setup correctly.
+ * @return   @c TRUE if the tooltip callbacks were setup correctly.
  */
 gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
 		PidginTooltipCreateForTree create_cb, PidginTooltipPaint paint_cb);
@@ -79,12 +79,12 @@ gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
 /**
  * Setup tooltip drawing functions for any widget.
  *
- * @widget:       The widget
- * @userdata:     The userdata to send to the callback functions
- * @create_cb:    Callback function to create the tooltip for the widget
- * @paint_cb:     Callback function to paint the tooltip
+ * @param widget       The widget
+ * @param userdata     The userdata to send to the callback functions
+ * @param create_cb    Callback function to create the tooltip for the widget
+ * @param paint_cb     Callback function to paint the tooltip
  *
- * Returns:   %TRUE if the tooltip callbacks were setup correctly.
+ * @return   @c TRUE if the tooltip callbacks were setup correctly.
  */
 gboolean pidgin_tooltip_setup_for_widget(GtkWidget *widget, gpointer userdata,
 		PidginTooltipCreate create_cb, PidginTooltipPaint paint_cb);
@@ -97,10 +97,10 @@ void pidgin_tooltip_destroy(void);
 /**
  * Create and show a tooltip.
  *
- * @widget:      The widget the tooltip is for
- * @userdata:    The userdata to send to the callback functions
- * @create_cb:    Callback function to create the tooltip from the GtkTreePath
- * @paint_cb:     Callback function to paint the tooltip
+ * @param widget      The widget the tooltip is for
+ * @param userdata    The userdata to send to the callback functions
+ * @param create_cb    Callback function to create the tooltip from the GtkTreePath
+ * @param paint_cb     Callback function to paint the tooltip
  */
 void pidgin_tooltip_show(GtkWidget *widget, gpointer userdata,
 		PidginTooltipCreate create_cb, PidginTooltipPaint paint_cb);

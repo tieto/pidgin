@@ -74,23 +74,23 @@ void gnt_uninit_colors(void);
 /**
  * Parse color information from a file.
  *
- * @kfile:  The file containing color information.
+ * @param kfile  The file containing color information.
  */
 void gnt_colors_parse(GKeyFile *kfile);
 
 /**
  * Parse color-pair information from a file.
  *
- * @kfile: The file containing the color-pair information.
+ * @param kfile The file containing the color-pair information.
  */
 void gnt_color_pairs_parse(GKeyFile *kfile);
 
 /**
  * Parse a string color
  *
- * @kfile: The string value
+ * @param kfile The string value
  *
- * Returns: A color. For an unknown color name, returns -EINVAL.
+ * @return A color. For an unknown color name, returns -EINVAL.
  *
  * @since 2.4.0
  */
@@ -101,9 +101,9 @@ int gnt_colors_get_color(char *key);
  * If the terminal doesn't have color support, this returns A_STANDOUT
  * when deemed appropriate.
  *
- * @color:   The color code.
+ * @param color   The color code.
  *
- * Returns:  A character attribute.
+ * @return  A character attribute.
  *
  * @since 2.3.0
  */
@@ -112,10 +112,10 @@ int gnt_color_pair(int color);
 /**
  * Adds a color definition
  *
- * @fg:   Foreground
- * @bg:   Background
+ * @param fg   Foreground
+ * @param bg   Background
  *
- * Returns:  A color pair
+ * @return  A color pair
  *
  * @since 2.4.0
  */

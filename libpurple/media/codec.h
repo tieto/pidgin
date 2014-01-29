@@ -29,11 +29,7 @@
 
 #include "enum-types.h"
 
-/**
- * PurpleMediaCodec:
- *
- * An opaque structure representing an audio or video codec.
- */
+/** An opaque structure representing an audio or video codec. */
 typedef struct _PurpleMediaCodec PurpleMediaCodec;
 
 #include "../util.h"
@@ -51,151 +47,136 @@ G_BEGIN_DECLS
 
 
 /**
- * purple_media_codec_get_type:
- *
  * Gets the type of the media codec structure.
  *
- * Returns: The media codec's GType
+ * @return The media codec's GType
  */
 GType purple_media_codec_get_type(void);
 
 /**
- * purple_media_codec_new:
- * @id: Codec identifier.
- * @encoding_name: Name of the media type this encodes.
- * @media_type: PurpleMediaSessionType of this codec.
- * @clock_rate: The clock rate this codec encodes at, if applicable.
- *
  * Creates a new PurpleMediaCodec instance.
  *
- * Returns: The newly created PurpleMediaCodec.
+ * @param id Codec identifier.
+ * @param encoding_name Name of the media type this encodes.
+ * @param media_type PurpleMediaSessionType of this codec.
+ * @param clock_rate The clock rate this codec encodes at, if applicable.
+ *
+ * @return The newly created PurpleMediaCodec.
  */
 PurpleMediaCodec *purple_media_codec_new(int id, const char *encoding_name,
 		PurpleMediaSessionType media_type, guint clock_rate);
 
 /**
- * purple_media_codec_get_id:
- * @codec: The codec to get the id from.
- *
  * Gets the codec id.
  *
- * Returns: The codec id.
+ * @param The codec to get the id from.
+ *
+ * @return The codec id.
  */
 guint purple_media_codec_get_id(PurpleMediaCodec *codec);
 
 /**
- * purple_media_codec_get_encoding_name:
- * @codec: The codec to get the encoding name from.
- *
  * Gets the encoding name.
  *
- * Returns: The encoding name.
+ * @param The codec to get the encoding name from.
+ *
+ * @return The encoding name.
  */
 gchar *purple_media_codec_get_encoding_name(PurpleMediaCodec *codec);
 
 /**
- * purple_media_codec_get_clock_rate:
- * @codec: The codec to get the clock rate from.
- *
  * Gets the clock rate.
  *
- * Returns: The clock rate.
+ * @param The codec to get the clock rate from.
+ *
+ * @return The clock rate.
  */
 guint purple_media_codec_get_clock_rate(PurpleMediaCodec *codec);
 
 /**
- * purple_media_codec_get_channels:
- * @codec: The codec to get the number of channels from.
- *
  * Gets the number of channels.
  *
- * Returns: The number of channels.
+ * @param The codec to get the number of channels from.
+ *
+ * @return The number of channels.
  */
 guint purple_media_codec_get_channels(PurpleMediaCodec *codec);
 
 /**
- * purple_media_codec_get_optional_parameters:
- * @codec: The codec to get the optional parameters from.
- *
  * Gets a list of the optional parameters.
  *
  * The list consists of PurpleKeyValuePair's.
  *
- * Returns: The list of optional parameters. The list is owned by the codec and
+ * @param The codec to get the optional parameters from.
+ *
+ * @return The list of optional parameters. The list is owned by the codec and
  *         should not be freed.
  */
 GList *purple_media_codec_get_optional_parameters(PurpleMediaCodec *codec);
 
 /**
- * purple_media_codec_add_optional_parameter:
- * @codec: The codec to add the parameter to.
- * @name: The name of the parameter to add.
- * @value: The value of the parameter to add.
- *
  * Adds an optional parameter to the codec.
+ *
+ * @param codec The codec to add the parameter to.
+ * @param name The name of the parameter to add.
+ * @param value The value of the parameter to add.
  */
 void purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
 		const gchar *name, const gchar *value);
 
 /**
- * purple_media_codec_remove_optional_parameter:
- * @codec: The codec to remove the parameter from.
- * @param: A pointer to the parameter to remove.
- *
  * Removes an optional parameter from the codec.
+ *
+ * @param codec The codec to remove the parameter from.
+ * @param param A pointer to the parameter to remove.
  */
 void purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
 		PurpleKeyValuePair *param);
 
 /**
- * purple_media_codec_get_optional_parameter:
- * @codec: The codec to find the parameter in.
- * @name: The name of the parameter to search for.
- * @value: The value to search for or NULL.
- *
  * Gets an optional parameter based on the values given.
  *
- * Returns: The value found or NULL.
+ * @param codec The codec to find the parameter in.
+ * @param name The name of the parameter to search for.
+ * @param value The value to search for or NULL.
+ *
+ * @return The value found or NULL.
  */
 PurpleKeyValuePair *purple_media_codec_get_optional_parameter(
 		PurpleMediaCodec *codec, const gchar *name,
 		const gchar *value);
 
 /**
- * purple_media_codec_copy:
- * @codec: The codec to copy.
- *
  * Copies a PurpleMediaCodec object.
  *
- * Returns: The copy of the codec.
+ * @param codec The codec to copy.
+ *
+ * @return The copy of the codec.
  */
 PurpleMediaCodec *purple_media_codec_copy(PurpleMediaCodec *codec);
 
 /**
- * purple_media_codec_list_copy:
- * @codecs: The list of codecs to be copied.
- *
  * Copies a GList of PurpleMediaCodec and its contents.
  *
- * Returns: The copy of the GList.
+ * @param codecs The list of codecs to be copied.
+ *
+ * @return The copy of the GList.
  */
 GList *purple_media_codec_list_copy(GList *codecs);
 
 /**
- * purple_media_codec_list_free:
- * @codecs: The list of codecs to be freed.
- *
  * Frees a GList of PurpleMediaCodec and its contents.
+ *
+ * @param codecs The list of codecs to be freed.
  */
 void purple_media_codec_list_free(GList *codecs);
 
 /**
- * purple_media_codec_to_string:
- * @codec: The codec to create the string of.
- *
  * Creates a string representation of the codec.
  *
- * Returns: The new string representation.
+ * @param codec The codec to create the string of.
+ *
+ * @return The new string representation.
  */
 gchar *purple_media_codec_to_string(const PurpleMediaCodec *codec);
 

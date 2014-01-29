@@ -37,7 +37,7 @@
 /**
  * Creates a new file transfer dialog.
  *
- * Returns: The new dialog.
+ * @return The new dialog.
  */
 void finch_xfer_dialog_new(void);
 
@@ -48,7 +48,7 @@ void finch_xfer_dialog_destroy(void);
 
 /**
  * Displays the file transfer dialog given.
- * If dialog is %NULL, displays the default dialog, creating one if necessary
+ * If dialog is @c NULL, displays the default dialog, creating one if necessary
  */
 void finch_xfer_dialog_show(void);
 
@@ -60,28 +60,28 @@ void finch_xfer_dialog_hide(void);
 /**
  * Adds a file transfer to the dialog.
  *
- * @xfer:   The file transfer.
+ * @param xfer   The file transfer.
  */
 void finch_xfer_dialog_add_xfer(PurpleXfer *xfer);
 
 /**
  * Removes a file transfer from the dialog.
  *
- * @xfer:   The file transfer.
+ * @param xfer   The file transfer.
  */
 void finch_xfer_dialog_remove_xfer(PurpleXfer *xfer);
 
 /**
  * Indicate in a file transfer dialog that a transfer was cancelled.
  *
- * @xfer:   The file transfer that was cancelled.
+ * @param xfer   The file transfer that was cancelled.
  */
 void finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer);
 
 /**
  * Updates the information for a transfer in the dialog.
  *
- * @xfer:   The file transfer.
+ * @param xfer   The file transfer.
  */
 void finch_xfer_dialog_update_xfer(PurpleXfer *xfer);
 
@@ -105,7 +105,7 @@ void finch_xfers_uninit(void);
 /**
  * Returns the UI operations structure for the GNT file transfer UI.
  *
- * Returns: The GNT file transfer UI operations structure.
+ * @return The GNT file transfer UI operations structure.
  */
 PurpleXferUiOps *finch_xfers_get_ui_ops(void);
 

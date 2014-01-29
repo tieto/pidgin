@@ -93,8 +93,8 @@ typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificati
 
 /**
  * Callback function for the results of a verification check
- * @st:       Status code
- * @userdata: User-defined data
+ * @param st       Status code
+ * @param userdata User-defined data
  */
 typedef void (*PurpleCertificateVerifiedCallback)
 		(PurpleCertificateVerificationStatus st,
@@ -141,7 +141,7 @@ struct _PurpleCertificatePool
 	 *
 	 * Upon calling purple_certificate_register_pool() , this function will
 	 * be called. May be NULL.
-	 * Returns: TRUE if the initialization succeeded, otherwise FALSE
+	 * @return TRUE if the initialization succeeded, otherwise FALSE
 	 */
 	gboolean (* init)(void);
 
@@ -158,7 +158,7 @@ struct _PurpleCertificatePool
 	PurpleCertificate * (* get_cert)(const gchar *id);
 	/** Add a certificate to the pool. Must overwrite any other
 	 *  certificates sharing the same ID in the pool.
-	 *  Returns: TRUE if the operation succeeded, otherwise FALSE
+	 *  @return TRUE if the operation succeeded, otherwise FALSE
 	 */
 	gboolean (* put_cert)(const gchar *id, PurpleCertificate *crt);
 	/** Delete a certificate from the pool */
@@ -200,8 +200,8 @@ struct _PurpleCertificateScheme
 
 	/** Imports a certificate from a file
 	 *
-	 *  @filename:   File to import the certificate from
-	 *  Returns:           Pointer to the newly allocated Certificate struct
+	 *  @param filename   File to import the certificate from
+	 *  @return           Pointer to the newly allocated Certificate struct
 	 *                    or NULL on failure.
 	 */
 	PurpleCertificate * (* import_certificate)(const gchar * filename);
@@ -209,9 +209,9 @@ struct _PurpleCertificateScheme
 	/**
 	 * Exports a certificate to a file
 	 *
-	 * @filename:    File to export the certificate to
-	 * @crt:         Certificate to export
-	 * Returns: TRUE if the export succeeded, otherwise FALSE
+	 * @param filename    File to export the certificate to
+	 * @param crt         Certificate to export
+	 * @return TRUE if the export succeeded, otherwise FALSE
 	 * @see purple_certificate_export()
 	 */
 	gboolean (* export_certificate)(const gchar *filename, PurpleCertificate *crt);
@@ -222,7 +222,7 @@ struct _PurpleCertificateScheme
 	 * Certificates are generally assumed to be read-only, so feel free to
 	 * do any sort of reference-counting magic you want here. If this ever
 	 * changes, please remember to change the magic accordingly.
-	 * Returns: Reference to the new copy
+	 * @return Reference to the new copy
 	 */
 	PurpleCertificate * (* copy_certificate)(PurpleCertificate *crt);
 
@@ -231,7 +231,7 @@ struct _PurpleCertificateScheme
 	 *  Destroys a Certificate's internal data structures and calls
 	 *  free(crt)
 	 *
-	 *  @crt:  Certificate instance to be destroyed. It WILL NOT be
+	 *  @param crt  Certificate instance to be destroyed. It WILL NOT be
 	 *              destroyed if it is not of the correct
 	 *              CertificateScheme. Can be NULL
 	 */
@@ -243,8 +243,8 @@ struct _PurpleCertificateScheme
 	/**
 	 * Retrieves the certificate public key fingerprint using SHA1
 	 *
-	 * @crt:   Certificate instance
-	 * Returns: Binary representation of SHA1 hash - must be freed using
+	 * @param crt   Certificate instance
+	 * @return Binary representation of SHA1 hash - must be freed using
 	 *         g_byte_array_free()
 	 */
 	GByteArray * (* get_fingerprint_sha1)(PurpleCertificate *crt);
@@ -252,8 +252,8 @@ struct _PurpleCertificateScheme
 	/**
 	 * Retrieves a unique certificate identifier
 	 *
-	 * @crt:   Certificate instance
-	 * Returns: Newly allocated string that can be used to uniquely
+	 * @param crt   Certificate instance
+	 * @return Newly allocated string that can be used to uniquely
 	 *         identify the certificate.
 	 */
 	gchar * (* get_unique_id)(PurpleCertificate *crt);
@@ -261,8 +261,8 @@ struct _PurpleCertificateScheme
 	/**
 	 * Retrieves a unique identifier for the certificate's issuer
 	 *
-	 * @crt:   Certificate instance
-	 * Returns: Newly allocated string that can be used to uniquely
+	 * @param crt   Certificate instance
+	 * @return Newly allocated string that can be used to uniquely
 	 *         identify the issuer's certificate.
 	 */
 	gchar * (* get_issuer_unique_id)(PurpleCertificate *crt);
@@ -275,15 +275,15 @@ struct _PurpleCertificateScheme
 	 *
 	 * @see purple_certificate_get_subject_name()
 	 *
-	 * @crt:   Certificate instance
-	 * Returns: Newly allocated string with the certificate subject.
+	 * @param crt   Certificate instance
+	 * @return Newly allocated string with the certificate subject.
 	 */
 	gchar * (* get_subject_name)(PurpleCertificate *crt);
 
 	/**
 	 * Check the subject name against that on the certificate
 	 * @see purple_certificate_check_subject_name()
-	 * Returns: TRUE if it is a match, else FALSE
+	 * @return TRUE if it is a match, else FALSE
 	 */
 	gboolean (* check_subject_name)(PurpleCertificate *crt, const gchar *name);
 
@@ -292,8 +292,8 @@ struct _PurpleCertificateScheme
 
 	/** Imports certificates from a file
 	 *
-	 *  @filename:   File to import the certificates from
-	 *  Returns:           GSList of pointers to the newly allocated Certificate structs
+	 *  @param filename   File to import the certificates from
+	 *  @return           GSList of pointers to the newly allocated Certificate structs
 	 *                    or NULL on failure.
 	 */
 	GSList * (* import_certificates)(const gchar * filename);
@@ -301,8 +301,8 @@ struct _PurpleCertificateScheme
 	/**
 	 * Retrieves the certificate data in DER form
 	 *
-	 * @crt:   Certificate instance
-	 * Returns: Binary DER representation of certificate - must be freed using
+	 * @param crt   Certificate instance
+	 * @return Binary DER representation of certificate - must be freed using
 	 *         g_byte_array_free()
 	 */
 	GByteArray * (* get_der_data)(PurpleCertificate *crt);
@@ -310,8 +310,8 @@ struct _PurpleCertificateScheme
 	/**
 	 * Retrieves a string representation of the certificate suitable for display
 	 *
-	 * @crt:   Certificate instance
-	 * Returns: User-displayable string representation of certificate - must be
+	 * @param crt   Certificate instance
+	 * @return User-displayable string representation of certificate - must be
 	 *         freed using g_free().
 	 */
 	gchar * (* get_display_string)(PurpleCertificate *crt);
@@ -349,7 +349,7 @@ struct _PurpleCertificateVerifier
 	 * given VerificationRequest to check the certificate and callback
 	 * the requester with the verification results.
 	 *
-	 * @vrq:      Request to process
+	 * @param vrq      Request to process
 	 */
 	void (* start_verification)(PurpleCertificateVerificationRequest *vrq);
 
@@ -359,7 +359,7 @@ struct _PurpleCertificateVerifier
 	 * whatever PurpleCertificateVerificationRequest::data points to.
 	 * It should not call free(vrq)
 	 *
-	 * @vrq:       Request to destroy
+	 * @param vrq       Request to destroy
 	 */
 	void (* destroy_request)(PurpleCertificateVerificationRequest *vrq);
 
@@ -421,22 +421,22 @@ G_BEGIN_DECLS
  * It is possible that the callback will be called immediately upon calling
  * this function. Plan accordingly.
  *
- * @verifier:      Verification logic to use.
+ * @param verifier      Verification logic to use.
  *                      @see purple_certificate_find_verifier()
  *
- * @subject_name:  Name that should match the first certificate in the
+ * @param subject_name  Name that should match the first certificate in the
  *                      chain for the certificate to be valid. Will be strdup'd
  *                      into the Request struct
  *
- * @cert_chain:    Certificate chain to check. If there is more than one
+ * @param cert_chain    Certificate chain to check. If there is more than one
  *                      certificate in the chain (X.509), the peer's
  *                      certificate comes first, then the issuer/signer's
  *                      certificate, etc. The whole list is duplicated into the
  *                      Request struct.
  *
- * @cb:            Callback function to be called with whether the
+ * @param cb            Callback function to be called with whether the
  *                      certificate was approved or not.
- * @cb_data:       User-defined data for the above.
+ * @param cb_data       User-defined data for the above.
  */
 void
 purple_certificate_verify (PurpleCertificateVerifier *verifier,
@@ -447,8 +447,8 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 /**
  * Completes and destroys a VerificationRequest
  *
- * @vrq:           Request to conclude
- * @st:            Success/failure code to pass to the request's
+ * @param vrq           Request to conclude
+ * @param st            Success/failure code to pass to the request's
  *                      completion callback.
  */
 void
@@ -470,8 +470,8 @@ GType purple_certificate_get_type(void);
 /**
  * Makes a duplicate of a certificate
  *
- * @crt:        Instance to duplicate
- * Returns: Pointer to new instance
+ * @param crt        Instance to duplicate
+ * @return Pointer to new instance
  */
 PurpleCertificate *
 purple_certificate_copy(PurpleCertificate *crt);
@@ -479,8 +479,8 @@ purple_certificate_copy(PurpleCertificate *crt);
 /**
  * Duplicates an entire list of certificates
  *
- * @crt_list:   List to duplicate
- * Returns: New list copy
+ * @param crt_list   List to duplicate
+ * @return New list copy
  */
 GList *
 purple_certificate_copy_list(GList *crt_list);
@@ -488,7 +488,7 @@ purple_certificate_copy_list(GList *crt_list);
 /**
  * Destroys and free()'s a Certificate
  *
- * @crt:        Instance to destroy. May be NULL.
+ * @param crt        Instance to destroy. May be NULL.
  */
 void
 purple_certificate_destroy (PurpleCertificate *crt);
@@ -496,7 +496,7 @@ purple_certificate_destroy (PurpleCertificate *crt);
 /**
  * Destroy an entire list of Certificate instances and the containing list
  *
- * @crt_list:   List of certificates to destroy. May be NULL.
+ * @param crt_list   List of certificates to destroy. May be NULL.
  */
 void
 purple_certificate_destroy_list (GList * crt_list);
@@ -504,10 +504,10 @@ purple_certificate_destroy_list (GList * crt_list);
 /**
  * Check whether 'crt' has a valid signature made by 'issuer'
  *
- * @crt:        Certificate instance to check signature of
- * @issuer:     Certificate thought to have signed 'crt'
+ * @param crt        Certificate instance to check signature of
+ * @param issuer     Certificate thought to have signed 'crt'
  *
- * Returns: TRUE if 'crt' has a valid signature made by 'issuer',
+ * @return TRUE if 'crt' has a valid signature made by 'issuer',
  *         otherwise FALSE
  * @todo Find a way to give the reason (bad signature, not the issuer, etc.)
  */
@@ -521,12 +521,12 @@ purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
  * in the chain carries a valid signature from the next. A single-certificate
  * chain is considered to be valid.
  *
- * @chain:      List of PurpleCertificate instances comprising the chain,
+ * @param chain      List of PurpleCertificate instances comprising the chain,
  *                   in the order certificate, issuer, issuer's issuer, etc.
- * @failing:    A pointer to a PurpleCertificate*. If not NULL, if the
+ * @param failing    A pointer to a PurpleCertificate*. If not NULL, if the
  *                   chain fails to validate, this will be set to the
  *                   certificate whose signature could not be validated.
- * Returns: TRUE if the chain is valid. See description.
+ * @return TRUE if the chain is valid. See description.
  */
 gboolean
 purple_certificate_check_signature_chain(GList *chain,
@@ -535,9 +535,9 @@ purple_certificate_check_signature_chain(GList *chain,
 /**
  * Imports a PurpleCertificate from a file
  *
- * @scheme:      Scheme to import under
- * @filename:    File path to import from
- * Returns: Pointer to a new PurpleCertificate, or NULL on failure
+ * @param scheme      Scheme to import under
+ * @param filename    File path to import from
+ * @return Pointer to a new PurpleCertificate, or NULL on failure
  */
 PurpleCertificate *
 purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename);
@@ -545,9 +545,9 @@ purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename
 /**
  * Imports a list of PurpleCertificates from a file
  *
- * @scheme:      Scheme to import under
- * @filename:    File path to import from
- * Returns: Pointer to a GSList of new PurpleCertificates, or NULL on failure
+ * @param scheme      Scheme to import under
+ * @param filename    File path to import from
+ * @return Pointer to a GSList of new PurpleCertificates, or NULL on failure
  */
 GSList *
 purple_certificates_import(PurpleCertificateScheme *scheme, const gchar *filename);
@@ -555,9 +555,9 @@ purple_certificates_import(PurpleCertificateScheme *scheme, const gchar *filenam
 /**
  * Exports a PurpleCertificate to a file
  *
- * @filename:    File to export the certificate to
- * @crt:         Certificate to export
- * Returns: TRUE if the export succeeded, otherwise FALSE
+ * @param filename    File to export the certificate to
+ * @param crt         Certificate to export
+ * @return TRUE if the export succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_export(const gchar *filename, PurpleCertificate *crt);
@@ -566,8 +566,8 @@ purple_certificate_export(const gchar *filename, PurpleCertificate *crt);
 /**
  * Retrieves the certificate public key fingerprint using SHA1.
  *
- * @crt:        Certificate instance
- * Returns: Binary representation of the hash. You are responsible for free()ing
+ * @param crt        Certificate instance
+ * @return Binary representation of the hash. You are responsible for free()ing
  *         this.
  * @see purple_base16_encode_chunked()
  */
@@ -577,8 +577,8 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
 /**
  * Get a unique identifier for the certificate
  *
- * @crt:        Certificate instance
- * Returns: String representing the certificate uniquely. Must be g_free()'ed
+ * @param crt        Certificate instance
+ * @return String representing the certificate uniquely. Must be g_free()'ed
  */
 gchar *
 purple_certificate_get_unique_id(PurpleCertificate *crt);
@@ -586,8 +586,8 @@ purple_certificate_get_unique_id(PurpleCertificate *crt);
 /**
  * Get a unique identifier for the certificate's issuer
  *
- * @crt:        Certificate instance
- * Returns: String representing the certificate's issuer uniquely. Must be
+ * @param crt        Certificate instance
+ * @return String representing the certificate's issuer uniquely. Must be
  *         g_free()'ed
  */
 gchar *
@@ -599,17 +599,17 @@ purple_certificate_get_issuer_unique_id(PurpleCertificate *crt);
  * For X.509, this is the "Common Name" field, as we're only using it
  * for hostname verification at the moment
  *
- * @crt:   Certificate instance
- * Returns: Newly allocated string with the certificate subject.
+ * @param crt   Certificate instance
+ * @return Newly allocated string with the certificate subject.
  */
 gchar *
 purple_certificate_get_subject_name(PurpleCertificate *crt);
 
 /**
  * Check the subject name against that on the certificate
- * @crt:   Certificate instance
- * @name:  Name to check.
- * Returns: TRUE if it is a match, else FALSE
+ * @param crt   Certificate instance
+ * @param name  Name to check.
+ * @return TRUE if it is a match, else FALSE
  */
 gboolean
 purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name);
@@ -617,12 +617,12 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
 /**
  * Get the expiration/activation times.
  *
- * @crt:          Certificate instance
- * @activation:   Reference to store the activation time at. May be NULL
+ * @param crt          Certificate instance
+ * @param activation   Reference to store the activation time at. May be NULL
  *                     if you don't actually want it.
- * @expiration:   Reference to store the expiration time at. May be NULL
+ * @param expiration   Reference to store the expiration time at. May be NULL
  *                     if you don't actually want it.
- * Returns: TRUE if the requested values were obtained, otherwise FALSE.
+ * @return TRUE if the requested values were obtained, otherwise FALSE.
  */
 gboolean
 purple_certificate_get_times(PurpleCertificate *crt, gint64 *activation, gint64 *expiration);
@@ -630,9 +630,9 @@ purple_certificate_get_times(PurpleCertificate *crt, gint64 *activation, gint64 
 /**
  * Retrieves the certificate data in DER form.
  *
- * @crt: Certificate instance
+ * @param crt Certificate instance
  *
- * Returns: Binary DER representation of the certificate - must be freed using
+ * @return Binary DER representation of the certificate - must be freed using
  *         g_byte_array_free().
  */
 GByteArray *
@@ -641,9 +641,9 @@ purple_certificate_get_der_data(PurpleCertificate *crt);
 /**
  * Retrieves a string suitable for displaying a certificate to the user.
  *
- * @crt: Certificate instance
+ * @param crt Certificate instance
  *
- * Returns: String representing the certificate that may be displayed to the user
+ * @return String representing the certificate that may be displayed to the user
  *         - must be freed using g_free().
  */
 char *
@@ -670,9 +670,9 @@ GType purple_certificate_pool_get_type(void);
  *
  * All components will be escaped for filesystem friendliness.
  *
- * @pool:   CertificatePool to build a path for
- * @id:     Key to look up a Certificate by. May be NULL.
- * Returns: A newly allocated path of the form
+ * @param pool   CertificatePool to build a path for
+ * @param id     Key to look up a Certificate by. May be NULL.
+ * @return A newly allocated path of the form
  *         ~/.purple/certificates/scheme_name/pool_name/unique_id
  */
 gchar *
@@ -683,9 +683,9 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id);
  *
  * Checks whether the associated CertificateScheme is loaded.
  *
- * @pool:   Pool to check
+ * @param pool   Pool to check
  *
- * Returns: TRUE if the pool can be used, otherwise FALSE
+ * @return TRUE if the pool can be used, otherwise FALSE
  */
 gboolean
 purple_certificate_pool_usable(PurpleCertificatePool *pool);
@@ -693,9 +693,9 @@ purple_certificate_pool_usable(PurpleCertificatePool *pool);
 /**
  * Looks up the scheme the pool operates under
  *
- * @pool:   Pool to get the scheme of
+ * @param pool   Pool to get the scheme of
  *
- * Returns: Pointer to the pool's scheme, or NULL if it isn't loaded.
+ * @return Pointer to the pool's scheme, or NULL if it isn't loaded.
  * @see purple_certificate_pool_usable()
  */
 PurpleCertificateScheme *
@@ -703,18 +703,18 @@ purple_certificate_pool_get_scheme(PurpleCertificatePool *pool);
 
 /**
  * Check for presence of an ID in a pool.
- * @pool:   Pool to look in
- * @id:     ID to look for
- * Returns: TRUE if the ID is in the pool, else FALSE
+ * @param pool   Pool to look in
+ * @param id     ID to look for
+ * @return TRUE if the ID is in the pool, else FALSE
  */
 gboolean
 purple_certificate_pool_contains(PurpleCertificatePool *pool, const gchar *id);
 
 /**
  * Retrieve a certificate from a pool.
- * @pool:   Pool to fish in
- * @id:     ID to look up
- * Returns: Retrieved certificate, or NULL if it wasn't there
+ * @param pool   Pool to fish in
+ * @param id     ID to look up
+ * @return Retrieved certificate, or NULL if it wasn't there
  */
 PurpleCertificate *
 purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id);
@@ -724,10 +724,10 @@ purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id);
  *
  * Any pre-existing certificate of the same ID will be overwritten.
  *
- * @pool:   Pool to add to
- * @id:     ID to store the certificate with
- * @crt:    Certificate to store
- * Returns: TRUE if the operation succeeded, otherwise FALSE
+ * @param pool   Pool to add to
+ * @param id     ID to store the certificate with
+ * @param crt    Certificate to store
+ * @return TRUE if the operation succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt);
@@ -735,9 +735,9 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 /**
  * Remove a certificate from a pool
  *
- * @pool:   Pool to remove from
- * @id:     ID to remove
- * Returns: TRUE if the operation succeeded, otherwise FALSE
+ * @param pool   Pool to remove from
+ * @param id     ID to remove
+ * @return TRUE if the operation succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_pool_delete(PurpleCertificatePool *pool, const gchar *id);
@@ -745,8 +745,8 @@ purple_certificate_pool_delete(PurpleCertificatePool *pool, const gchar *id);
 /**
  * Get the list of IDs currently in the pool.
  *
- * @pool:   Pool to enumerate
- * Returns: GList pointing to newly-allocated id strings. Free using
+ * @param pool   Pool to enumerate
+ * @return GList pointing to newly-allocated id strings. Free using
  *         purple_certificate_pool_destroy_idlist()
  */
 GList *
@@ -755,7 +755,7 @@ purple_certificate_pool_get_idlist(PurpleCertificatePool *pool);
 /**
  * Destroys the result given by purple_certificate_pool_get_idlist()
  *
- * @idlist: ID List to destroy
+ * @param idlist ID List to destroy
  */
 void
 purple_certificate_pool_destroy_idlist(GList *idlist);
@@ -786,8 +786,8 @@ gpointer
 purple_certificate_get_handle(void);
 
 /** Look up a registered CertificateScheme by name
- * @name:   The scheme name. Case insensitive.
- * Returns: Pointer to the located Scheme, or NULL if it isn't found.
+ * @param name   The scheme name. Case insensitive.
+ * @return Pointer to the located Scheme, or NULL if it isn't found.
  */
 PurpleCertificateScheme *
 purple_certificate_find_scheme(const gchar *name);
@@ -795,7 +795,7 @@ purple_certificate_find_scheme(const gchar *name);
 /**
  * Get all registered CertificateSchemes
  *
- * Returns: GList pointing to all registered CertificateSchemes . This value
+ * @return GList pointing to all registered CertificateSchemes . This value
  *         is owned by libpurple
  */
 GList *
@@ -806,26 +806,26 @@ purple_certificate_get_schemes(void);
  * No two schemes can be registered with the same name; this function enforces
  * that.
  *
- * @scheme:  Pointer to the scheme to register.
- * Returns: TRUE if the scheme was successfully added, otherwise FALSE
+ * @param scheme  Pointer to the scheme to register.
+ * @return TRUE if the scheme was successfully added, otherwise FALSE
  */
 gboolean
 purple_certificate_register_scheme(PurpleCertificateScheme *scheme);
 
 /** Unregister a CertificateScheme from libpurple
  *
- * @scheme:    Scheme to unregister.
+ * @param scheme    Scheme to unregister.
  *                  If the scheme is not registered, this is a no-op.
  *
- * Returns: TRUE if the unregister completed successfully
+ * @return TRUE if the unregister completed successfully
  */
 gboolean
 purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme);
 
 /** Look up a registered PurpleCertificateVerifier by scheme and name
- * @scheme_name:  Scheme name. Case insensitive.
- * @ver_name:     The verifier name. Case insensitive.
- * Returns: Pointer to the located Verifier, or NULL if it isn't found.
+ * @param scheme_name  Scheme name. Case insensitive.
+ * @param ver_name     The verifier name. Case insensitive.
+ * @return Pointer to the located Verifier, or NULL if it isn't found.
  */
 PurpleCertificateVerifier *
 purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name);
@@ -833,7 +833,7 @@ purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name
 /**
  * Get the list of registered CertificateVerifiers
  *
- * Returns: GList of all registered PurpleCertificateVerifier. This value
+ * @return GList of all registered PurpleCertificateVerifier. This value
  *         is owned by libpurple
  */
 GList *
@@ -842,8 +842,8 @@ purple_certificate_get_verifiers(void);
 /**
  * Register a CertificateVerifier with libpurple
  *
- * @vr:     Verifier to register.
- * Returns: TRUE if register succeeded, otherwise FALSE
+ * @param vr     Verifier to register.
+ * @return TRUE if register succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_register_verifier(PurpleCertificateVerifier *vr);
@@ -851,16 +851,16 @@ purple_certificate_register_verifier(PurpleCertificateVerifier *vr);
 /**
  * Unregister a CertificateVerifier with libpurple
  *
- * @vr:     Verifier to unregister.
- * Returns: TRUE if unregister succeeded, otherwise FALSE
+ * @param vr     Verifier to unregister.
+ * @return TRUE if unregister succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr);
 
 /** Look up a registered PurpleCertificatePool by scheme and name
- * @scheme_name:  Scheme name. Case insensitive.
- * @pool_name:    Pool name. Case insensitive.
- * Returns: Pointer to the located Pool, or NULL if it isn't found.
+ * @param scheme_name  Scheme name. Case insensitive.
+ * @param pool_name    Pool name. Case insensitive.
+ * @return Pointer to the located Pool, or NULL if it isn't found.
  */
 PurpleCertificatePool *
 purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name);
@@ -868,7 +868,7 @@ purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name);
 /**
  * Get the list of registered Pools
  *
- * Returns: GList of all registered PurpleCertificatePool s. This value
+ * @return GList of all registered PurpleCertificatePool s. This value
  *         is owned by libpurple
  */
 GList *
@@ -877,8 +877,8 @@ purple_certificate_get_pools(void);
 /**
  * Register a CertificatePool with libpurple and call its init function
  *
- * @pool:   Pool to register.
- * Returns: TRUE if the register succeeded, otherwise FALSE
+ * @param pool   Pool to register.
+ * @return TRUE if the register succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_register_pool(PurpleCertificatePool *pool);
@@ -886,8 +886,8 @@ purple_certificate_register_pool(PurpleCertificatePool *pool);
 /**
  * Unregister a CertificatePool with libpurple and call its uninit function
  *
- * @pool:   Pool to unregister.
- * Returns: TRUE if the unregister succeeded, otherwise FALSE
+ * @param pool   Pool to unregister.
+ * @return TRUE if the unregister succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_unregister_pool(PurpleCertificatePool *pool);
@@ -898,7 +898,7 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool);
 /**
  * Add a search path for certificates.
  *
- * @path:   Path to search for certificates.
+ * @param path   Path to search for certificates.
  */
 void purple_certificate_add_ca_search_path(const char *path);
 

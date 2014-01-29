@@ -55,7 +55,7 @@ typedef struct
 /**
  * Get the ui-functions.
  *
- * Returns: The PurpleBlistUiOps structure populated with the appropriate functions.
+ * @return The PurpleBlistUiOps structure populated with the appropriate functions.
  */
 PurpleBlistUiOps * finch_blist_get_ui_ops(void);
 
@@ -78,9 +78,9 @@ void finch_blist_show(void);
  * Get the position of the buddy list.
  *
  * @param x The x-coordinate is set here if not @ NULL.
- * @param y The y-coordinate is set here if not %NULL.
+ * @param y The y-coordinate is set here if not @c NULL.
  *
- * Returns: Returns %TRUE if the values were set, %FALSE otherwise.
+ * @return Returns @c TRUE if the values were set, @c FALSE otherwise.
  */
 gboolean finch_blist_get_position(int *x, int *y);
 
@@ -95,64 +95,64 @@ void finch_blist_set_position(int x, int y);
 /**
  * Get the size of the buddy list.
  *
- * @width:  The width is set here if not @ NULL.
- * @height: The height is set here if not %NULL.
+ * @param width  The width is set here if not @ NULL.
+ * @param height The height is set here if not @c NULL.
  *
- * Returns: Returns %TRUE if the values were set, %FALSE otherwise.
+ * @return Returns @c TRUE if the values were set, @c FALSE otherwise.
  */
 gboolean finch_blist_get_size(int *width, int *height);
 
 /**
  * Set the size of the buddy list.
  *
- * @width:  The width of the buddy list.
- * @height: The height of the buddy list.
+ * @param width  The width of the buddy list.
+ * @param height The height of the buddy list.
  */
 void finch_blist_set_size(int width, int height);
 
 /**
  * Get information about a user. Show immediate feedback.
  *
- * @conn:   The connection to get information fro
- * @name:   The user to get information about.
+ * @param conn   The connection to get information fro
+ * @param name   The user to get information about.
  *
- * Returns:  Returns the ui-handle for the userinfo notification.
+ * @return  Returns the ui-handle for the userinfo notification.
  */
 gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name);
 
 /**
  * Get the tree list of the buddy list.
- * Returns:  The GntTree widget.
+ * @return  The GntTree widget.
  */
 GntTree * finch_blist_get_tree(void);
 
 /**
  * Add an alternate buddy list manager.
  *
- * @manager:   The alternate buddylist manager.
+ * @param manager   The alternate buddylist manager.
  */
 void finch_blist_install_manager(const FinchBlistManager *manager);
 
 /**
  * Remove an alternate buddy list manager.
  *
- * @manager:   The buddy list manager to remove.
+ * @param manager   The buddy list manager to remove.
  */
 void finch_blist_uninstall_manager(const FinchBlistManager *manager);
 
 /**
  * Find a buddy list manager.
  *
- * @id:   The identifier for the desired buddy list manager.
+ * @param id   The identifier for the desired buddy list manager.
  *
- * Returns:  The manager with the requested identifier, if available. %NULL otherwise.
+ * @return  The manager with the requested identifier, if available. @c NULL otherwise.
  */
 FinchBlistManager * finch_blist_manager_find(const char *id);
 
 /**
  * Request the active buddy list manager to add a node.
  *
- * @node:  The node to add
+ * @param node  The node to add
  */
 void finch_blist_manager_add_node(PurpleBlistNode *node);
 

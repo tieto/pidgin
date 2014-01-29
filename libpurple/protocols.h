@@ -196,15 +196,15 @@ GType purple_attention_type_get_type(void);
 /**
  * Creates a new #PurpleAttentionType object and sets its mandatory parameters.
  *
- * @ulname: A non-localized string that can be used by UIs in need of such
+ * @param ulname A non-localized string that can be used by UIs in need of such
  *               non-localized strings.  This should be the same as @a name,
  *               without localization.
- * @name: A localized string that the UI may display for the event. This
+ * @param name A localized string that the UI may display for the event. This
  *             should be the same string as @a ulname, with localization.
- * @inc_desc: A localized description shown when the event is received.
- * @out_desc: A localized description shown when the event is sent.
+ * @param inc_desc A localized description shown when the event is received.
+ * @param out_desc A localized description shown when the event is sent.
  *
- * Returns: A pointer to the new object.
+ * @return A pointer to the new object.
  */
 PurpleAttentionType *purple_attention_type_new(const char *ulname, const char *name,
 								const char *inc_desc, const char *out_desc);
@@ -212,8 +212,8 @@ PurpleAttentionType *purple_attention_type_new(const char *ulname, const char *n
 /**
  * Sets the displayed name of the attention-demanding event.
  *
- * @type: The attention type.
- * @name: The localized name that will be displayed by UIs. This should be
+ * @param type The attention type.
+ * @param name The localized name that will be displayed by UIs. This should be
  *             the same string given as the unlocalized name, but with
  *             localization.
  */
@@ -223,8 +223,8 @@ void purple_attention_type_set_name(PurpleAttentionType *type, const char *name)
  * Sets the description of the attention-demanding event shown in  conversations
  * when the event is received.
  *
- * @type: The attention type.
- * @desc: The localized description for incoming events.
+ * @param type The attention type.
+ * @param desc The localized description for incoming events.
  */
 void purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const char *desc);
 
@@ -232,17 +232,17 @@ void purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const ch
  * Sets the description of the attention-demanding event shown in conversations
  * when the event is sent.
  *
- * @type: The attention type.
- * @desc: The localized description for outgoing events.
+ * @param type The attention type.
+ * @param desc The localized description for outgoing events.
  */
 void purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const char *desc);
 
 /**
  * Sets the name of the icon to display for the attention event; this is optional.
  *
- * @type: The attention type.
- * @name: The icon's name.
- * Note: Icons are optional for attention events.
+ * @param type The attention type.
+ * @param name The icon's name.
+ * @note Icons are optional for attention events.
  */
 void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *name);
 
@@ -250,8 +250,8 @@ void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *
  * Sets the unlocalized name of the attention event; some UIs may need this,
  * thus it is required.
  *
- * @type: The attention type.
- * @ulname: The unlocalized name.  This should be the same string given as
+ * @param type The attention type.
+ * @param ulname The unlocalized name.  This should be the same string given as
  *               the localized name, but without localization.
  */
 void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const char *ulname);
@@ -259,42 +259,42 @@ void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const
 /**
  * Get the attention type's name as displayed by the UI.
  *
- * @type: The attention type.
+ * @param type The attention type.
  *
- * Returns: The name.
+ * @return The name.
  */
 const char *purple_attention_type_get_name(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's description shown when the event is received.
  *
- * @type: The attention type.
- * Returns: The description.
+ * @param type The attention type.
+ * @return The description.
  */
 const char *purple_attention_type_get_incoming_desc(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's description shown when the event is sent.
  *
- * @type: The attention type.
- * Returns: The description.
+ * @param type The attention type.
+ * @return The description.
  */
 const char *purple_attention_type_get_outgoing_desc(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's icon name.
  *
- * @type: The attention type.
- * Returns: The icon name or %NULL if unset/empty.
- * Note: Icons are optional for attention events.
+ * @param type The attention type.
+ * @return The icon name or @c NULL if unset/empty.
+ * @note Icons are optional for attention events.
  */
 const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's unlocalized name; this is useful for some UIs.
  *
- * @type: The attention type
- * Returns: The unlocalized name.
+ * @param type The attention type
+ * @return The unlocalized name.
  */
 const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type);
 
@@ -314,8 +314,8 @@ GType purple_protocol_action_get_type(void);
  * Allocates and returns a new PurpleProtocolAction. Use this to add actions in
  * a list in the get_actions function of the protocol.
  *
- * @label:    The description of the action to show to the user.
- * @callback: The callback to call when the user selects this action.
+ * @param label    The description of the action to show to the user.
+ * @param callback The callback to call when the user selects this action.
  */
 PurpleProtocolAction *purple_protocol_action_new(const char* label,
 		PurpleProtocolActionCallback callback);
@@ -323,7 +323,7 @@ PurpleProtocolAction *purple_protocol_action_new(const char* label,
 /**
  * Frees a PurpleProtocolAction
  *
- * @action: The PurpleProtocolAction to free.
+ * @param action The PurpleProtocolAction to free.
  */
 void purple_protocol_action_free(PurpleProtocolAction *action);
 
@@ -351,9 +351,9 @@ GType purple_protocol_chat_entry_get_type(void);
  *
  * This is meant to be called from protocols.
  *
- * @account:   The account.
- * @idle:      The user's idle state.
- * @idle_time: The user's idle time.
+ * @param account   The account.
+ * @param idle      The user's idle state.
+ * @param idle_time The user's idle time.
  */
 void purple_protocol_got_account_idle(PurpleAccount *account, gboolean idle,
                                       time_t idle_time);
@@ -363,8 +363,8 @@ void purple_protocol_got_account_idle(PurpleAccount *account, gboolean idle,
  *
  * This is meant to be called from protocols.
  *
- * @account:    The account the user is on.
- * @login_time: The user's log-in time.
+ * @param account    The account the user is on.
+ * @param login_time The user's log-in time.
  */
 void purple_protocol_got_account_login_time(PurpleAccount *account,
                                             time_t login_time);
@@ -374,9 +374,9 @@ void purple_protocol_got_account_login_time(PurpleAccount *account,
  *
  * This is meant to be called from protocols.
  *
- * @account:   The account the user is on.
- * @status_id: The status ID.
- * @...:       A NULL-terminated list of attribute IDs and values,
+ * @param account   The account the user is on.
+ * @param status_id The status ID.
+ * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
 void purple_protocol_got_account_status(PurpleAccount *account,
@@ -390,7 +390,7 @@ void purple_protocol_got_account_status(PurpleAccount *account,
  *
  * This is meant to be called from protocols.
  *
- * @account:   The account.
+ * @param account   The account.
  *
  * @see account-actions-changed
  */
@@ -401,10 +401,10 @@ void purple_protocol_got_account_actions(PurpleAccount *account);
  *
  * This is meant to be called from protocols.
  *
- * @account:   The account the user is on.
- * @name:      The name of the buddy.
- * @idle:      The user's idle state.
- * @idle_time: The user's idle time.  This is the time at
+ * @param account   The account the user is on.
+ * @param name      The name of the buddy.
+ * @param idle      The user's idle state.
+ * @param idle_time The user's idle time.  This is the time at
  *                  which the user became idle, in seconds since
  *                  the epoch.  If the protocol does not know this value
  *                  then it should pass 0.
@@ -417,9 +417,9 @@ void purple_protocol_got_user_idle(PurpleAccount *account, const char *name,
  *
  * This is meant to be called from protocols.
  *
- * @account:    The account the user is on.
- * @name:       The name of the buddy.
- * @login_time: The user's log-in time.
+ * @param account    The account the user is on.
+ * @param name       The name of the buddy.
+ * @param login_time The user's log-in time.
  */
 void purple_protocol_got_user_login_time(PurpleAccount *account,
                                          const char *name, time_t login_time);
@@ -429,10 +429,10 @@ void purple_protocol_got_user_login_time(PurpleAccount *account,
  *
  * This is meant to be called from protocols.
  *
- * @account:   The account the user is on.
- * @name:      The name of the buddy.
- * @status_id: The status ID.
- * @...:       A NULL-terminated list of attribute IDs and values,
+ * @param account   The account the user is on.
+ * @param name      The name of the buddy.
+ * @param status_id The status ID.
+ * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
 void purple_protocol_got_user_status(PurpleAccount *account, const char *name,
@@ -444,9 +444,9 @@ void purple_protocol_got_user_status(PurpleAccount *account, const char *name,
  *
  * This is meant to be called from protocols.
  *
- * @account:   The account the user is on.
- * @name:      The name of the buddy.
- * @status_id: The status ID.
+ * @param account   The account the user is on.
+ * @param name      The name of the buddy.
+ * @param status_id The status ID.
  */
 void purple_protocol_got_user_status_deactive(PurpleAccount *account,
                                               const char *name,
@@ -455,9 +455,9 @@ void purple_protocol_got_user_status_deactive(PurpleAccount *account,
 /**
  * Informs the server that our account's status changed.
  *
- * @account:    The account the user is on.
- * @old_status: The previous status.
- * @new_status: The status that was activated, or deactivated
+ * @param account    The account the user is on.
+ * @param old_status The previous status.
+ * @param new_status The status that was activated, or deactivated
  *                   (in the case of independent statuses).
  */
 void purple_protocol_change_account_status(PurpleAccount *account,
@@ -467,10 +467,10 @@ void purple_protocol_change_account_status(PurpleAccount *account,
 /**
  * Retrieves the list of stock status types from a protocol.
  *
- * @account: The account the user is on.
- * @presence: The presence for which we're going to get statuses
+ * @param account The account the user is on.
+ * @param presence The presence for which we're going to get statuses
  *
- * Returns: List of statuses
+ * @return List of statuses
  */
 GList *purple_protocol_get_statuses(PurpleAccount *account,
                                     PurplePresence *presence);
@@ -478,9 +478,9 @@ GList *purple_protocol_get_statuses(PurpleAccount *account,
 /**
  * Send an attention request message.
  *
- * @gc: The connection to send the message on.
- * @who: Whose attention to request.
- * @type_code: An index into the protocol's attention_types list
+ * @param gc The connection to send the message on.
+ * @param who Whose attention to request.
+ * @param type_code An index into the protocol's attention_types list
  *                  determining the type of the attention request command to
  *                  send. 0 if protocol only defines one (for example, Yahoo and
  *                  MSN), but some protocols define more (MySpaceIM).
@@ -494,9 +494,9 @@ void purple_protocol_send_attention(PurpleConnection *gc, const char *who,
 /**
  * Process an incoming attention message.
  *
- * @gc: The connection that received the attention message.
- * @who: Who requested your attention.
- * @type_code: An index into the protocol's attention_types list
+ * @param gc The connection that received the attention message.
+ * @param who Who requested your attention.
+ * @param type_code An index into the protocol's attention_types list
  *                  determining the type of the attention request command to
  *                  send.
  */
@@ -506,10 +506,10 @@ void purple_protocol_got_attention(PurpleConnection *gc, const char *who,
 /**
  * Process an incoming attention message in a chat.
  *
- * @gc: The connection that received the attention message.
- * @id: The chat id.
- * @who: Who requested your attention.
- * @type_code: An index into the protocol's attention_types list
+ * @param gc The connection that received the attention message.
+ * @param id The chat id.
+ * @param who Who requested your attention.
+ * @param type_code An index into the protocol's attention_types list
  *                  determining the type of the attention request command to
  *                  send.
  */
@@ -519,10 +519,10 @@ void purple_protocol_got_attention_in_chat(PurpleConnection *gc, int id,
 /**
  * Determines if the contact supports the given media session type.
  *
- * @account: The account the user is on.
- * @who: The name of the contact to check capabilities for.
+ * @param account The account the user is on.
+ * @param who The name of the contact to check capabilities for.
  *
- * Returns: The media caps the contact supports.
+ * @return The media caps the contact supports.
  */
 PurpleMediaCaps purple_protocol_get_media_caps(PurpleAccount *account,
                                                const char *who);
@@ -530,11 +530,11 @@ PurpleMediaCaps purple_protocol_get_media_caps(PurpleAccount *account,
 /**
  * Initiates a media session with the given contact.
  *
- * @account: The account the user is on.
- * @who: The name of the contact to start a session with.
- * @type: The type of media session to start.
+ * @param account The account the user is on.
+ * @param who The name of the contact to start a session with.
+ * @param type The type of media session to start.
  *
- * Returns: TRUE if the call succeeded else FALSE. (Doesn't imply the media
+ * @return TRUE if the call succeeded else FALSE. (Doesn't imply the media
  *         session or stream will be successfully created)
  */
 gboolean purple_protocol_initiate_media(PurpleAccount *account,
@@ -546,8 +546,8 @@ gboolean purple_protocol_initiate_media(PurpleAccount *account,
  *
  * This function is intended to be used only by protocols.
  *
- * @account: The account the user is on.
- * @who: The name of the contact for which capabilities have been received.
+ * @param account The account the user is on.
+ * @param who The name of the contact for which capabilities have been received.
  */
 void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
 
@@ -556,9 +556,9 @@ void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
  *
  * @see PurpleProtocol#get_max_message_size
  *
- * @protocol: The protocol to query.
+ * @param protocol The protocol to query.
  *
- * Returns: Maximum message size, 0 if unspecified, -1 for infinite.
+ * @return Maximum message size, 0 if unspecified, -1 for infinite.
  */
 gssize
 purple_protocol_get_max_message_size(PurpleProtocol *protocol);
@@ -573,18 +573,18 @@ purple_protocol_get_max_message_size(PurpleProtocol *protocol);
 /**
  * Finds a protocol by ID.
  *
- * @id: The protocol's ID.
+ * @param id The protocol's ID.
  */
 PurpleProtocol *purple_protocols_find(const char *id);
 
 /**
  * Adds a protocol to the list of protocols.
  *
- * @protocol_type:  The type of the protocol to add.
- * @error:  Return location for a #GError or %NULL. If provided, this
+ * @param protocol_type  The type of the protocol to add.
+ * @param error  Return location for a #GError or @c NULL. If provided, this
  *               will be set to the reason if adding fails.
  *
- * Returns: The protocol instance if the protocol was added, else %NULL.
+ * @return The protocol instance if the protocol was added, else @c NULL.
  */
 PurpleProtocol *purple_protocols_add(GType protocol_type, GError **error);
 
@@ -593,18 +593,18 @@ PurpleProtocol *purple_protocols_add(GType protocol_type, GError **error);
  * connected accounts using this protocol, and free the protocol's user splits
  * and protocol options.
  *
- * @protocol:  The protocol to remove.
- * @error:  Return location for a #GError or %NULL. If provided, this
+ * @param protocol  The protocol to remove.
+ * @param error  Return location for a #GError or @c NULL. If provided, this
  *               will be set to the reason if removing fails.
  *
- * Returns: TRUE if the protocol was removed, else FALSE.
+ * @return TRUE if the protocol was removed, else FALSE.
  */
 gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error);
 
 /**
  * Returns a list of all loaded protocols.
  *
- * Returns: A list of all loaded protocols. The list is owned by the caller, and
+ * @return A list of all loaded protocols. The list is owned by the caller, and
  *         must be g_list_free()d to avoid leaking the nodes.
  */
 GList *purple_protocols_get_all(void);
@@ -624,7 +624,7 @@ void purple_protocols_init(void);
 /**
  * Returns the protocols subsystem handle.
  *
- * Returns: The protocols subsystem handle.
+ * @return The protocols subsystem handle.
  */
 void *purple_protocols_get_handle(void);
 

@@ -67,34 +67,34 @@ struct _GntLabelClass
 G_BEGIN_DECLS
 
 /**
- * Returns: GType for GntLabel.
+ * @return GType for GntLabel.
  */
 GType gnt_label_get_gtype(void);
 
 /**
  * Create a new GntLabel.
  *
- * @text:  The text of the label.
+ * @param text  The text of the label.
  *
- * Returns:  The newly created label.
+ * @return  The newly created label.
  */
 GntWidget * gnt_label_new(const char *text);
 
 /**
  * Create a new label with specified text attributes.
  *
- * @text:    The text.
- * @flags:   Text attributes for the text.
+ * @param text    The text.
+ * @param flags   Text attributes for the text.
  *
- * Returns:  The newly created label.
+ * @return  The newly created label.
  */
 GntWidget * gnt_label_new_with_format(const char *text, GntTextFormatFlags flags);
 
 /**
  * Change the text of a label.
  *
- * @label:  The label.
- * @text:   The new text to set in the label.
+ * @param label  The label.
+ * @param text   The new text to set in the label.
  */
 void gnt_label_set_text(GntLabel *label, const char *text);
 

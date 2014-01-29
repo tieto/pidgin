@@ -77,7 +77,7 @@ typedef struct _PurpleBuddyPresenceClass  PurpleBuddyPresenceClass;
  * never saved to disk.  The information they contain is only relevant
  * for the current PurpleSession.
  *
- * Note: When a presence is destroyed with the last g_object_unref(), all
+ * @note When a presence is destroyed with the last g_object_unref(), all
  *       statuses added to this list will be destroyed along with the presence.
  */
 struct _PurplePresence
@@ -155,18 +155,18 @@ GType purple_account_presence_get_type(void);
 /**
  * Creates a presence for an account.
  *
- * @account: The account to associate with the presence.
+ * @param account The account to associate with the presence.
  *
- * Returns: The new presence.
+ * @return The new presence.
  */
 PurpleAccountPresence *purple_account_presence_new(PurpleAccount *account);
 
 /**
  * Returns an account presence's account.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: The presence's account.
+ * @return The presence's account.
  */
 PurpleAccount *purple_account_presence_get_account(const PurpleAccountPresence *presence);
 
@@ -185,28 +185,28 @@ GType purple_buddy_presence_get_type(void);
 /**
  * Creates a presence for a buddy.
  *
- * @buddy: The buddy to associate with the presence.
+ * @param buddy The buddy to associate with the presence.
  *
- * Returns: The new presence.
+ * @return The new presence.
  */
 PurpleBuddyPresence *purple_buddy_presence_new(PurpleBuddy *buddy);
 
 /**
  * Returns the buddy presence's buddy.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: The presence's buddy.
+ * @return The presence's buddy.
  */
 PurpleBuddy *purple_buddy_presence_get_buddy(const PurpleBuddyPresence *presence);
 
 /**
  * Compares two buddy presences for availability.
  *
- * @buddy_presence1: The first presence.
- * @buddy_presence2: The second presence.
+ * @param buddy_presence1 The first presence.
+ * @param buddy_presence2 The second presence.
  *
- * Returns: -1 if @a buddy_presence1 is more available than @a buddy_presence2.
+ * @return -1 if @a buddy_presence1 is more available than @a buddy_presence2.
  *          0 if @a buddy_presence1 is equal to @a buddy_presence2.
  *          1 if @a buddy_presence1 is less available than @a buddy_presence2.
  */
@@ -232,9 +232,9 @@ GType purple_presence_get_type(void);
  * be set active, so if you wish to disable a status, set another
  * non-independent status to active, or use purple_presence_switch_status().
  *
- * @presence:  The presence.
- * @status_id: The ID of the status.
- * @active:    The active state.
+ * @param presence  The presence.
+ * @param status_id The ID of the status.
+ * @param active    The active state.
  */
 void purple_presence_set_status_active(PurplePresence *presence,
 									 const char *status_id, gboolean active);
@@ -245,8 +245,8 @@ void purple_presence_set_status_active(PurplePresence *presence,
  * This is similar to purple_presence_set_status_active(), except it won't
  * activate independent statuses.
  *
- * @presence: The presence.
- * @status_id: The status ID to switch to.
+ * @param presence The presence.
+ * @param status_id The status ID to switch to.
  */
 void purple_presence_switch_status(PurplePresence *presence,
 								 const char *status_id);
@@ -254,9 +254,9 @@ void purple_presence_switch_status(PurplePresence *presence,
 /**
  * Sets the idle state and time on a presence.
  *
- * @presence:  The presence.
- * @idle:      The idle state.
- * @idle_time: The idle time, if @a idle is TRUE.  This
+ * @param presence  The presence.
+ * @param idle      The idle state.
+ * @param idle_time The idle time, if @a idle is TRUE.  This
  *                  is the time at which the user became idle,
  *                  in seconds since the epoch.  If this value is
  *                  unknown then 0 should be used.
@@ -267,27 +267,27 @@ void purple_presence_set_idle(PurplePresence *presence, gboolean idle,
 /**
  * Sets the login time on a presence.
  *
- * @presence:   The presence.
- * @login_time: The login time.
+ * @param presence   The presence.
+ * @param login_time The login time.
  */
 void purple_presence_set_login_time(PurplePresence *presence, time_t login_time);
 
 /**
  * Returns all the statuses in a presence.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: (transfer none): The statuses.
+ * @constreturn The statuses.
  */
 GList *purple_presence_get_statuses(const PurplePresence *presence);
 
 /**
  * Returns the status with the specified ID from a presence.
  *
- * @presence:  The presence.
- * @status_id: The ID of the status.
+ * @param presence  The presence.
+ * @param status_id The ID of the status.
  *
- * Returns: The status if found, or NULL.
+ * @return The status if found, or NULL.
  */
 PurpleStatus *purple_presence_get_status(const PurplePresence *presence,
 									 const char *status_id);
@@ -295,9 +295,9 @@ PurpleStatus *purple_presence_get_status(const PurplePresence *presence,
 /**
  * Returns the active exclusive status from a presence.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: The active exclusive status.
+ * @return The active exclusive status.
  */
 PurpleStatus *purple_presence_get_active_status(const PurplePresence *presence);
 
@@ -306,18 +306,18 @@ PurpleStatus *purple_presence_get_active_status(const PurplePresence *presence);
  *
  * Available presences are online and possibly invisible, but not away or idle.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: TRUE if the presence is available, or FALSE otherwise.
+ * @return TRUE if the presence is available, or FALSE otherwise.
  */
 gboolean purple_presence_is_available(const PurplePresence *presence);
 
 /**
  * Returns whether or not a presence is online.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: TRUE if the presence is online, or FALSE otherwise.
+ * @return TRUE if the presence is online, or FALSE otherwise.
  */
 gboolean purple_presence_is_online(const PurplePresence *presence);
 
@@ -326,10 +326,10 @@ gboolean purple_presence_is_online(const PurplePresence *presence);
  *
  * A status is active if itself or any of its sub-statuses are active.
  *
- * @presence:  The presence.
- * @status_id: The ID of the status.
+ * @param presence  The presence.
+ * @param status_id The ID of the status.
  *
- * Returns: TRUE if the status is active, or FALSE.
+ * @return TRUE if the status is active, or FALSE.
  */
 gboolean purple_presence_is_status_active(const PurplePresence *presence,
 										const char *status_id);
@@ -340,10 +340,10 @@ gboolean purple_presence_is_status_active(const PurplePresence *presence,
  *
  * A status is active if itself or any of its sub-statuses are active.
  *
- * @presence:  The presence.
- * @primitive: The status primitive.
+ * @param presence  The presence.
+ * @param primitive The status primitive.
  *
- * Returns: TRUE if the status is active, or FALSE.
+ * @return TRUE if the status is active, or FALSE.
  */
 gboolean purple_presence_is_status_primitive_active(
 	const PurplePresence *presence, PurpleStatusPrimitive primitive);
@@ -351,9 +351,9 @@ gboolean purple_presence_is_status_primitive_active(
 /**
  * Returns whether or not a presence is idle.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: TRUE if the presence is idle, or FALSE otherwise.
+ * @return TRUE if the presence is idle, or FALSE otherwise.
  *         If the presence is offline (purple_presence_is_online()
  *         returns FALSE) then FALSE is returned.
  */
@@ -362,18 +362,18 @@ gboolean purple_presence_is_idle(const PurplePresence *presence);
 /**
  * Returns the presence's idle time.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: The presence's idle time.
+ * @return The presence's idle time.
  */
 time_t purple_presence_get_idle_time(const PurplePresence *presence);
 
 /**
  * Returns the presence's login time.
  *
- * @presence: The presence.
+ * @param presence The presence.
  *
- * Returns: The presence's login time.
+ * @return The presence's login time.
  */
 time_t purple_presence_get_login_time(const PurplePresence *presence);
 

@@ -158,9 +158,9 @@ G_BEGIN_DECLS
  * Lookup the id of a primitive status type based on the type.  This
  * ID is a unique plain-text name of the status, without spaces.
  *
- * @type: A primitive status type.
+ * @param type A primitive status type.
  *
- * Returns: The unique ID for this type.
+ * @return The unique ID for this type.
  */
 const char *purple_primitive_get_id_from_type(PurpleStatusPrimitive type);
 
@@ -169,9 +169,9 @@ const char *purple_primitive_get_id_from_type(PurpleStatusPrimitive type);
  * name is the plain-English name of the status type.  It is usually one
  * or two words.
  *
- * @type: A primitive status type.
+ * @param type A primitive status type.
  *
- * Returns: The name of this type, suitable for users to see.
+ * @return The name of this type, suitable for users to see.
  */
 const char *purple_primitive_get_name_from_type(PurpleStatusPrimitive type);
 
@@ -179,9 +179,9 @@ const char *purple_primitive_get_name_from_type(PurpleStatusPrimitive type);
  * Lookup the value of a primitive status type based on the id.  The
  * ID is a unique plain-text name of the status, without spaces.
  *
- * @id: The unique ID of a primitive status type.
+ * @param id The unique ID of a primitive status type.
  *
- * Returns: The PurpleStatusPrimitive value.
+ * @return The PurpleStatusPrimitive value.
  */
 PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 
@@ -200,18 +200,18 @@ GType purple_status_type_get_type(void);
 /**
  * Creates a new status type.
  *
- * @primitive:     The primitive status type.
- * @id:            The ID of the status type, or %NULL to use the id of
+ * @param primitive     The primitive status type.
+ * @param id            The ID of the status type, or @c NULL to use the id of
  *                      the primitive status type.
- * @name:          The name presented to the user, or %NULL to use the
+ * @param name          The name presented to the user, or @c NULL to use the
  *                      name of the primitive status type.
- * @saveable:      TRUE if the information set for this status by the
+ * @param saveable      TRUE if the information set for this status by the
  *                      user can be saved for future sessions.
- * @user_settable: TRUE if this is a status the user can manually set.
- * @independent:   TRUE if this is an independent (non-exclusive)
+ * @param user_settable TRUE if this is a status the user can manually set.
+ * @param independent   TRUE if this is an independent (non-exclusive)
  *                      status type.
  *
- * Returns: A new status type.
+ * @return A new status type.
  */
 PurpleStatusType *purple_status_type_new_full(PurpleStatusPrimitive primitive,
 										  const char *id, const char *name,
@@ -223,14 +223,14 @@ PurpleStatusType *purple_status_type_new_full(PurpleStatusPrimitive primitive,
  * Creates a new status type with some default values (
  * saveable and not independent).
  *
- * @primitive:     The primitive status type.
- * @id:            The ID of the status type, or %NULL to use the id of
+ * @param primitive     The primitive status type.
+ * @param id            The ID of the status type, or @c NULL to use the id of
  *                      the primitive status type.
- * @name:          The name presented to the user, or %NULL to use the
+ * @param name          The name presented to the user, or @c NULL to use the
  *                      name of the primitive status type.
- * @user_settable: TRUE if this is a status the user can manually set.
+ * @param user_settable TRUE if this is a status the user can manually set.
  *
- * Returns: A new status type.
+ * @return A new status type.
  */
 PurpleStatusType *purple_status_type_new(PurpleStatusPrimitive primitive,
 									 const char *id, const char *name,
@@ -239,22 +239,22 @@ PurpleStatusType *purple_status_type_new(PurpleStatusPrimitive primitive,
 /**
  * Creates a new status type with attributes.
  *
- * @primitive:     The primitive status type.
- * @id:            The ID of the status type, or %NULL to use the id of
+ * @param primitive     The primitive status type.
+ * @param id            The ID of the status type, or @c NULL to use the id of
  *                      the primitive status type.
- * @name:          The name presented to the user, or %NULL to use the
+ * @param name          The name presented to the user, or @c NULL to use the
  *                      name of the primitive status type.
- * @saveable:      TRUE if the information set for this status by the
+ * @param saveable      TRUE if the information set for this status by the
  *                      user can be saved for future sessions.
- * @user_settable: TRUE if this is a status the user can manually set.
- * @independent:   TRUE if this is an independent (non-exclusive)
+ * @param user_settable TRUE if this is a status the user can manually set.
+ * @param independent   TRUE if this is an independent (non-exclusive)
  *                      status type.
- * @attr_id:       The ID of the first attribute.
- * @attr_name:     The name of the first attribute.
- * @attr_value:    The value type of the first attribute.
- * @...:           Additional attribute information.
+ * @param attr_id       The ID of the first attribute.
+ * @param attr_name     The name of the first attribute.
+ * @param attr_value    The value type of the first attribute.
+ * @param ...           Additional attribute information.
  *
- * Returns: A new status type.
+ * @return A new status type.
  */
 PurpleStatusType *purple_status_type_new_with_attrs(PurpleStatusPrimitive primitive,
 												const char *id,
@@ -269,16 +269,16 @@ PurpleStatusType *purple_status_type_new_with_attrs(PurpleStatusPrimitive primit
 /**
  * Destroys a status type.
  *
- * @status_type: The status type to destroy.
+ * @param status_type The status type to destroy.
  */
 void purple_status_type_destroy(PurpleStatusType *status_type);
 
 /**
  * Returns the primitive type of a status type.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: The primitive type of the status type.
+ * @return The primitive type of the status type.
  */
 PurpleStatusPrimitive purple_status_type_get_primitive(
 	const PurpleStatusType *status_type);
@@ -286,27 +286,27 @@ PurpleStatusPrimitive purple_status_type_get_primitive(
 /**
  * Returns the ID of a status type.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: The ID of the status type.
+ * @return The ID of the status type.
  */
 const char *purple_status_type_get_id(const PurpleStatusType *status_type);
 
 /**
  * Returns the name of a status type.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: The name of the status type.
+ * @return The name of the status type.
  */
 const char *purple_status_type_get_name(const PurpleStatusType *status_type);
 
 /**
  * Returns whether or not the status type is saveable.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: TRUE if user-defined statuses based off this type are saveable.
+ * @return TRUE if user-defined statuses based off this type are saveable.
  *         FALSE otherwise.
  */
 gboolean purple_status_type_is_saveable(const PurpleStatusType *status_type);
@@ -315,9 +315,9 @@ gboolean purple_status_type_is_saveable(const PurpleStatusType *status_type);
  * Returns whether or not the status type can be set or modified by the
  * user.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: TRUE if the status type can be set or modified by the user.
+ * @return TRUE if the status type can be set or modified by the user.
  *         FALSE if it's a protocol-set setting.
  */
 gboolean purple_status_type_is_user_settable(const PurpleStatusType *status_type);
@@ -328,18 +328,18 @@ gboolean purple_status_type_is_user_settable(const PurpleStatusType *status_type
  * Independent status types are non-exclusive. If other status types on
  * the same hierarchy level are set, this one will not be affected.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: TRUE if the status type is independent, or FALSE otherwise.
+ * @return TRUE if the status type is independent, or FALSE otherwise.
  */
 gboolean purple_status_type_is_independent(const PurpleStatusType *status_type);
 
 /**
  * Returns whether the status type is exclusive.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: TRUE if the status type is exclusive, FALSE otherwise.
+ * @return TRUE if the status type is exclusive, FALSE otherwise.
  */
 gboolean purple_status_type_is_exclusive(const PurpleStatusType *status_type);
 
@@ -348,19 +348,19 @@ gboolean purple_status_type_is_exclusive(const PurpleStatusType *status_type);
  *
  * Available status types are online and possibly invisible, but not away.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: TRUE if the status is available, or FALSE otherwise.
+ * @return TRUE if the status is available, or FALSE otherwise.
  */
 gboolean purple_status_type_is_available(const PurpleStatusType *status_type);
 
 /**
  * Returns the attribute with the specified ID.
  *
- * @status_type: The status type containing the attribute.
- * @id:          The ID of the desired attribute.
+ * @param status_type The status type containing the attribute.
+ * @param id          The ID of the desired attribute.
  *
- * Returns: The attribute, if found. NULL otherwise.
+ * @return The attribute, if found. NULL otherwise.
  */
 PurpleStatusAttribute *purple_status_type_get_attr(const PurpleStatusType *status_type,
 										  const char *id);
@@ -368,19 +368,19 @@ PurpleStatusAttribute *purple_status_type_get_attr(const PurpleStatusType *statu
 /**
  * Returns a list of all attributes in a status type.
  *
- * @status_type: The status type.
+ * @param status_type The status type.
  *
- * Returns: (transfer none): The list of attributes.
+ * @constreturn The list of attributes.
  */
 GList *purple_status_type_get_attrs(const PurpleStatusType *status_type);
 
 /**
  * Find the PurpleStatusType with the given id.
  *
- * @status_types: A list of status types.  Often account->status_types.
- * @id: The unique ID of the status type you wish to find.
+ * @param status_types A list of status types.  Often account->status_types.
+ * @param id The unique ID of the status type you wish to find.
  *
- * Returns: The status type with the given ID, or NULL if one could
+ * @return The status type with the given ID, or NULL if one could
  *         not be found.
  */
 const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
@@ -401,11 +401,11 @@ GType purple_status_attribute_get_type(void);
 /**
  * Creates a new status attribute.
  *
- * @id:         The ID of the attribute.
- * @name:       The name presented to the user.
- * @value_type: The type of data contained in the attribute.
+ * @param id         The ID of the attribute.
+ * @param name       The name presented to the user.
+ * @param value_type The type of data contained in the attribute.
  *
- * Returns: A new status attribute.
+ * @return A new status attribute.
  */
 PurpleStatusAttribute *purple_status_attribute_new(const char *id, const char *name,
 									 GValue *value_type);
@@ -413,34 +413,34 @@ PurpleStatusAttribute *purple_status_attribute_new(const char *id, const char *n
 /**
  * Destroys a status attribute.
  *
- * @attr: The status attribute to destroy.
+ * @param attr The status attribute to destroy.
  */
 void purple_status_attribute_destroy(PurpleStatusAttribute *attr);
 
 /**
  * Returns the ID of a status attribute.
  *
- * @attr: The status attribute.
+ * @param attr The status attribute.
  *
- * Returns: The status attribute's ID.
+ * @return The status attribute's ID.
  */
 const char *purple_status_attribute_get_id(const PurpleStatusAttribute *attr);
 
 /**
  * Returns the name of a status attribute.
  *
- * @attr: The status attribute.
+ * @param attr The status attribute.
  *
- * Returns: The status attribute's name.
+ * @return The status attribute's name.
  */
 const char *purple_status_attribute_get_name(const PurpleStatusAttribute *attr);
 
 /**
  * Returns the value of a status attribute.
  *
- * @attr: The status attribute.
+ * @param attr The status attribute.
  *
- * Returns: The status attribute's value.
+ * @return The status attribute's value.
  */
 GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
 
@@ -471,10 +471,10 @@ GType purple_status_get_type(void);
 /**
  * Creates a new status.
  *
- * @status_type: The type of status.
- * @presence:    The parent presence.
+ * @param status_type The type of status.
+ * @param presence    The parent presence.
  *
- * Returns: The new status.
+ * @return The new status.
  */
 PurpleStatus *purple_status_new(PurpleStatusType *status_type,
 							PurplePresence *presence);
@@ -484,8 +484,8 @@ PurpleStatus *purple_status_new(PurpleStatusType *status_type,
  *
  * This should only be called by the account, conversation, and buddy APIs.
  *
- * @status: The status.
- * @active: The active state.
+ * @param status The status.
+ * @param active The active state.
  */
 void purple_status_set_active(PurpleStatus *status, gboolean active);
 
@@ -494,9 +494,9 @@ void purple_status_set_active(PurpleStatus *status, gboolean active);
  *
  * This should only be called by the account, conversation, and buddy APIs.
  *
- * @status: The status.
- * @active: The active state.
- * @args:   A list of attributes to set on the status.  This list is
+ * @param status The status.
+ * @param active The active state.
+ * @param args   A list of attributes to set on the status.  This list is
  *               composed of key/value pairs, where each key is a valid
  *               attribute name for this PurpleStatusType.  The list should
  *               be NULL terminated.
@@ -509,9 +509,9 @@ void purple_status_set_active_with_attrs(PurpleStatus *status, gboolean active,
  *
  * This should only be called by the account, conversation, and buddy APIs.
  *
- * @status: The status.
- * @active: The active state.
- * @attrs:  A list of attributes to set on the status.  This list is
+ * @param status The status.
+ * @param active The active state.
+ * @param attrs  A list of attributes to set on the status.  This list is
  *               composed of key/value pairs, where each key is a valid
  *               attribute name for this PurpleStatusType.  The list is
  *               not modified or freed by this function.
@@ -522,18 +522,18 @@ void purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean act
 /**
  * Returns the status's type.
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: The status's type.
+ * @return The status's type.
  */
 PurpleStatusType *purple_status_get_status_type(const PurpleStatus *status);
 
 /**
  * Returns the status's presence.
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: The status's presence.
+ * @return The status's presence.
  */
 PurplePresence *purple_status_get_presence(const PurpleStatus *status);
 
@@ -543,9 +543,9 @@ PurplePresence *purple_status_get_presence(const PurpleStatus *status);
  * This is a convenience method for
  * purple_status_type_get_id(purple_status_get_type(status)).
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: The status's ID.
+ * @return The status's ID.
  */
 const char *purple_status_get_id(const PurpleStatus *status);
 
@@ -555,9 +555,9 @@ const char *purple_status_get_id(const PurpleStatus *status);
  * This is a convenience method for
  * purple_status_type_get_name(purple_status_get_type(status)).
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: The status's name.
+ * @return The status's name.
  */
 const char *purple_status_get_name(const PurpleStatus *status);
 
@@ -567,9 +567,9 @@ const char *purple_status_get_name(const PurpleStatus *status);
  * This is a convenience method for
  * purple_status_type_is_independent(purple_status_get_type(status)).
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: TRUE if the status is independent, or FALSE otherwise.
+ * @return TRUE if the status is independent, or FALSE otherwise.
  */
 gboolean purple_status_is_independent(const PurpleStatus *status);
 
@@ -579,9 +579,9 @@ gboolean purple_status_is_independent(const PurpleStatus *status);
  * This is a convenience method for
  * purple_status_type_is_exclusive(purple_status_get_type(status)).
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: TRUE if the status is exclusive, FALSE otherwise.
+ * @return TRUE if the status is exclusive, FALSE otherwise.
  */
 gboolean purple_status_is_exclusive(const PurpleStatus *status);
 
@@ -593,37 +593,37 @@ gboolean purple_status_is_exclusive(const PurpleStatus *status);
  * This is a convenience method for
  * purple_status_type_is_available(purple_status_get_type(status)).
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: TRUE if the status is available, or FALSE otherwise.
+ * @return TRUE if the status is available, or FALSE otherwise.
  */
 gboolean purple_status_is_available(const PurpleStatus *status);
 
 /**
  * Returns the active state of a status.
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: The active state of the status.
+ * @return The active state of the status.
  */
 gboolean purple_status_is_active(const PurpleStatus *status);
 
 /**
  * Returns whether or not a status is considered 'online'
  *
- * @status: The status.
+ * @param status The status.
  *
- * Returns: TRUE if the status is considered online, FALSE otherwise
+ * @return TRUE if the status is considered online, FALSE otherwise
  */
 gboolean purple_status_is_online(const PurpleStatus *status);
 
 /**
  * Returns the value of an attribute in a status with the specified ID.
  *
- * @status: The status.
- * @id:     The attribute ID.
+ * @param status The status.
+ * @param id     The attribute ID.
  *
- * Returns: The value of the attribute.
+ * @return The value of the attribute.
  */
 GValue *purple_status_get_attr_value(const PurpleStatus *status,
 									  const char *id);
@@ -631,10 +631,10 @@ GValue *purple_status_get_attr_value(const PurpleStatus *status,
 /**
  * Returns the boolean value of an attribute in a status with the specified ID.
  *
- * @status: The status.
- * @id:     The attribute ID.
+ * @param status The status.
+ * @param id     The attribute ID.
  *
- * Returns: The boolean value of the attribute.
+ * @return The boolean value of the attribute.
  */
 gboolean purple_status_get_attr_boolean(const PurpleStatus *status,
 									  const char *id);
@@ -642,20 +642,20 @@ gboolean purple_status_get_attr_boolean(const PurpleStatus *status,
 /**
  * Returns the integer value of an attribute in a status with the specified ID.
  *
- * @status: The status.
- * @id:     The attribute ID.
+ * @param status The status.
+ * @param id     The attribute ID.
  *
- * Returns: The integer value of the attribute.
+ * @return The integer value of the attribute.
  */
 int purple_status_get_attr_int(const PurpleStatus *status, const char *id);
 
 /**
  * Returns the string value of an attribute in a status with the specified ID.
  *
- * @status: The status.
- * @id:     The attribute ID.
+ * @param status The status.
+ * @param id     The attribute ID.
  *
- * Returns: The string value of the attribute.
+ * @return The string value of the attribute.
  */
 const char *purple_status_get_attr_string(const PurpleStatus *status,
 										const char *id);
@@ -663,10 +663,10 @@ const char *purple_status_get_attr_string(const PurpleStatus *status,
 /**
  * Compares two statuses for availability.
  *
- * @status1: The first status.
- * @status2: The second status.
+ * @param status1 The first status.
+ * @param status2 The second status.
  *
- * Returns: -1 if @a status1 is more available than @a status2.
+ * @return -1 if @a status1 is more available than @a status2.
  *          0 if @a status1 is equal to @a status2.
  *          1 if @a status2 is more available than @a status1.
  */
@@ -682,7 +682,7 @@ gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *stat
 /**
  * Get the handle for the status subsystem.
  *
- * Returns: the handle to the status subsystem
+ * @return the handle to the status subsystem
  */
 void *purple_statuses_get_handle(void);
 

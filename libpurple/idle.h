@@ -73,14 +73,14 @@ void purple_idle_set(time_t time);
 /**
  * Sets the UI operations structure to be used for idle reporting.
  *
- * @ops: The UI operations structure.
+ * @param ops The UI operations structure.
  */
 void purple_idle_set_ui_ops(PurpleIdleUiOps *ops);
 
 /**
  * Returns the UI operations structure used for idle reporting.
  *
- * Returns: The UI operations structure in use.
+ * @return The UI operations structure in use.
  */
 PurpleIdleUiOps *purple_idle_get_ui_ops(void);
 

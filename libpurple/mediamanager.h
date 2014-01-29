@@ -78,27 +78,27 @@ G_BEGIN_DECLS
 /**
  * Gets the media manager's GType.
  *
- * Returns: The media manager's GType.
+ * @return The media manager's GType.
  */
 GType purple_media_manager_get_type(void);
 
 /**
  * Gets the "global" media manager object. It's created if it doesn't already exist.
  *
- * Returns: The "global" instance of the media manager object.
+ * @return The "global" instance of the media manager object.
  */
 PurpleMediaManager *purple_media_manager_get(void);
 
 /**
  * Creates a media session.
  *
- * @manager: The media manager to create the session under.
- * @account: The account to create the session on.
- * @conference_type: The conference type to feed into Farsight2.
- * @remote_user: The remote user to initiate the session with.
- * @initiator: TRUE if the local user is the initiator of this media call, FALSE otherwise.
+ * @param manager The media manager to create the session under.
+ * @param account The account to create the session on.
+ * @param conference_type The conference type to feed into Farsight2.
+ * @param remote_user The remote user to initiate the session with.
+ * @param initiator TRUE if the local user is the initiator of this media call, FALSE otherwise.
  *
- * Returns: A newly created media session.
+ * @return A newly created media session.
  */
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 						PurpleAccount *account,
@@ -109,19 +109,19 @@ PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 /**
  * Gets all of the media sessions.
  *
- * @manager: The media manager to get all of the sessions from.
+ * @param manager The media manager to get all of the sessions from.
  *
- * Returns: A list of all the media sessions.
+ * @return A list of all the media sessions.
  */
 GList *purple_media_manager_get_media(PurpleMediaManager *manager);
 
 /**
  * Gets all of the media sessions for a given account.
  *
- * @manager: The media manager to get the sessions from.
- * @account: The account the sessions are on.
+ * @param manager The media manager to get the sessions from.
+ * @param account The account the sessions are on.
  *
- * Returns: A list of the media sessions on the given account.
+ * @return A list of the media sessions on the given account.
  */
 GList *purple_media_manager_get_media_by_account(
 		PurpleMediaManager *manager, PurpleAccount *account);
@@ -129,8 +129,8 @@ GList *purple_media_manager_get_media_by_account(
 /**
  * Removes a media session from the media manager.
  *
- * @manager: The media manager to remove the media session from.
- * @media: The media session to remove.
+ * @param manager The media manager to remove the media session from.
+ * @param media The media session to remove.
  */
 void
 purple_media_manager_remove_media(PurpleMediaManager *manager,
@@ -141,12 +141,12 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
  *
  * This shouldn't be called outside of mediamanager.c and media.c
  *
- * @manager: Manager the output windows are registered with.
- * @media: Media session the output windows are registered for.
- * @session_id: The session the output windows are registered with.
- * @participant: The participant the output windows are registered with.
+ * @param manager Manager the output windows are registered with.
+ * @param media Media session the output windows are registered for.
+ * @param session_id The session the output windows are registered with.
+ * @param participant The participant the output windows are registered with.
  *
- * Returns: TRUE if it succeeded, FALSE if it failed.
+ * @return TRUE if it succeeded, FALSE if it failed.
  */
 gboolean purple_media_manager_create_output_window(
 		PurpleMediaManager *manager, PurpleMedia *media,
@@ -155,13 +155,13 @@ gboolean purple_media_manager_create_output_window(
 /**
  * Registers a video output window to be created for a given stream.
  *
- * @manager: The manager to register the output window with.
- * @media: The media instance to find the stream in.
- * @session_id: The session the stream is associated with.
- * @participant: The participant the stream is associated with.
- * @window_id: The window ID to embed the video in.
+ * @param manager The manager to register the output window with.
+ * @param media The media instance to find the stream in.
+ * @param session_id The session the stream is associated with.
+ * @param participant The participant the stream is associated with.
+ * @param window_id The window ID to embed the video in.
  *
- * Returns: A unique ID to the registered output window, 0 if it failed.
+ * @return A unique ID to the registered output window, 0 if it failed.
  */
 gulong purple_media_manager_set_output_window(PurpleMediaManager *manager,
 		PurpleMedia *media, const gchar *session_id,
@@ -170,10 +170,10 @@ gulong purple_media_manager_set_output_window(PurpleMediaManager *manager,
 /**
  * Remove a previously registerd output window.
  *
- * @manager: The manager the output window was registered with.
- * @output_window_id: The ID of the output window.
+ * @param manager The manager the output window was registered with.
+ * @param output_window_id The ID of the output window.
  *
- * Returns: TRUE if it found the output window and was successful, else FALSE.
+ * @return TRUE if it found the output window and was successful, else FALSE.
  */
 gboolean purple_media_manager_remove_output_window(
 		PurpleMediaManager *manager, gulong output_window_id);
@@ -181,10 +181,10 @@ gboolean purple_media_manager_remove_output_window(
 /**
  * Remove all output windows for a given conference/session/participant/stream.
  *
- * @manager: The manager the output windows were registered with.
- * @media: The media instance the output windows were registered for.
- * @session_id: The session the output windows were registered for.
- * @participant: The participant the output windows were registered for.
+ * @param manager The manager the output windows were registered with.
+ * @param media The media instance the output windows were registered for.
+ * @param session_id The session the output windows were registered for.
+ * @param participant The participant the output windows were registered for.
  */
 void purple_media_manager_remove_output_windows(
 		PurpleMediaManager *manager, PurpleMedia *media,
@@ -193,8 +193,8 @@ void purple_media_manager_remove_output_windows(
 /**
  * Sets which media caps the UI supports.
  *
- * @manager: The manager to set the caps on.
- * @caps: The caps to set.
+ * @param manager The manager to set the caps on.
+ * @param caps The caps to set.
  */
 void purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
 		PurpleMediaCaps caps);
@@ -202,17 +202,17 @@ void purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
 /**
  * Gets which media caps the UI supports.
  *
- * @manager: The manager to get caps from.
+ * @param manager The manager to get caps from.
  *
- * Returns: caps The caps retrieved.
+ * @return caps The caps retrieved.
  */
 PurpleMediaCaps purple_media_manager_get_ui_caps(PurpleMediaManager *manager);
 
 /**
  * Sets which media backend type media objects will use.
  *
- * @manager: The manager to set the caps on.
- * @backend_type: The media backend type to use.
+ * @param manager The manager to set the caps on.
+ * @param backend_type The media backend type to use.
  */
 void purple_media_manager_set_backend_type(PurpleMediaManager *manager,
 		GType backend_type);
@@ -220,9 +220,9 @@ void purple_media_manager_set_backend_type(PurpleMediaManager *manager,
 /**
  * Gets which media backend type media objects will use.
  *
- * @manager: The manager to get the media backend type from.
+ * @param manager The manager to get the media backend type from.
  *
- * Returns: The type of media backend type media objects will use.
+ * @return The type of media backend type media objects will use.
  */
 GType purple_media_manager_get_backend_type(PurpleMediaManager *manager);
 

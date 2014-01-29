@@ -69,7 +69,7 @@ G_BEGIN_DECLS
 /**
  *
  *
- * Returns:
+ * @return
  */
 GType gnt_bindable_get_gtype(void);
 
@@ -107,24 +107,24 @@ struct _GntBindableActionParam
 /**
  * Free a bindable action.
  *
- * @action: The bindable action.
+ * @param action The bindable action.
  */
 void gnt_bindable_action_free(GntBindableAction *action);
 
 /**
  * Free a GntBindableActionParam.
  *
- * @param:  The GntBindableActionParam to free.
+ * @param param  The GntBindableActionParam to free.
  */
 void gnt_bindable_action_param_free(GntBindableActionParam *param);
 
 /**
  * Register a bindable action for a class.
  *
- * @klass:      The class the binding is for.
- * @name:       The name of the binding.
- * @callback:   The callback  for the binding.
- * @trigger:    The default trigger for the binding, or %NULL, followed by a NULL-terminated
+ * @param klass      The class the binding is for.
+ * @param name       The name of the binding.
+ * @param callback   The callback  for the binding.
+ * @param trigger    The default trigger for the binding, or @c NULL, followed by a NULL-terminated
  *                   list of default parameters.
  */
 void gnt_bindable_class_register_action(GntBindableClass *klass, const char *name, GntBindableActionCallback callback, const char *trigger, ...);
@@ -132,48 +132,48 @@ void gnt_bindable_class_register_action(GntBindableClass *klass, const char *nam
 /**
  * Register a key-binding to an existing action.
  *
- * @klass:     The class the binding is for.
- * @name:      The name of the binding.
- * @trigger:   A new trigger for the binding, followed by a %NULL-terminated list of parameters for the callback.
+ * @param klass     The class the binding is for.
+ * @param name      The name of the binding.
+ * @param trigger   A new trigger for the binding, followed by a @c NULL-terminated list of parameters for the callback.
  */
 void gnt_bindable_register_binding(GntBindableClass *klass, const char *name, const char *trigger, ...);
 
 /**
  * Perform an action from a keybinding.
  *
- * @bindable:  The bindable object.
- * @keys:      The key to trigger the action.
+ * @param bindable  The bindable object.
+ * @param keys      The key to trigger the action.
  *
- * Returns:  %TRUE if the action was performed successfully, %FALSE otherwise.
+ * @return  @c TRUE if the action was performed successfully, @c FALSE otherwise.
  */
 gboolean gnt_bindable_perform_action_key(GntBindable *bindable, const char *keys);
 
 /**
  * Discover if a key is bound.
  *
- * @bindable:  The bindable object.
- * @keys:      The key to check for.
+ * @param bindable  The bindable object.
+ * @param keys      The key to check for.
  *
- * Returns:  %TRUE if the the key has an action associated with it.
+ * @return  @c TRUE if the the key has an action associated with it.
  */
 gboolean gnt_bindable_check_key(GntBindable *bindable, const char *keys);
 
 /**
  * Perform an action on a bindable object.
  *
- * @bindable:  The bindable object.
- * @name:      The action to perform, followed by a %NULL-terminated list of parameters.
+ * @param bindable  The bindable object.
+ * @param name      The action to perform, followed by a @c NULL-terminated list of parameters.
  *
- * Returns:  %TRUE if the action was performed successfully, %FALSE otherwise.
+ * @return  @c TRUE if the action was performed successfully, @c FALSE otherwise.
  */
 gboolean gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Returns a GntTree populated with "key" -> "binding" for the widget.
  *
- * @bind:  The object to list the bindings for.
+ * @param bind  The object to list the bindings for.
  *
- * Returns:   The GntTree.
+ * @return   The GntTree.
  */
 GntBindable * gnt_bindable_bindings_view(GntBindable *bind);
 
@@ -181,9 +181,9 @@ GntBindable * gnt_bindable_bindings_view(GntBindable *bind);
  * Builds a window that list the key bindings for a GntBindable object.
  * From this window a user can select a listing to rebind a new key for the given action.
  *
- * @bindable:   The object to list the bindings for.
+ * @param bindable   The object to list the bindings for.
  *
- * Returns:  %TRUE
+ * @return  @c TRUE
  */
 
 gboolean gnt_bindable_build_help_window(GntBindable *bindable);

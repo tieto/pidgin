@@ -36,7 +36,7 @@
 /**
  * Get the ui-functions.
  *
- * Returns: The PurpleNotifyUiOps structure populated with the appropriate functions.
+ * @return The PurpleNotifyUiOps structure populated with the appropriate functions.
  */
 PurpleNotifyUiOps *finch_notify_get_ui_ops(void);
 

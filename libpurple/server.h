@@ -37,10 +37,10 @@ G_BEGIN_DECLS
  *
  * TODO: Could probably move this into the conversation API.
  *
- * @gc:    The connection over which to send the typing notification.
- * @name:  The user to send the typing notification to.
- * @state: One of PURPLE_IM_TYPING, PURPLE_IM_TYPED, or PURPLE_IM_NOT_TYPING.
- * Returns: A quiet-period, specified in seconds, where Purple will not
+ * @param gc    The connection over which to send the typing notification.
+ * @param name  The user to send the typing notification to.
+ * @param state One of PURPLE_IM_TYPING, PURPLE_IM_TYPED, or PURPLE_IM_NOT_TYPING.
+ * @return A quiet-period, specified in seconds, where Purple will not
  *         send any additional typing notification messages.  Most
  *         protocols should return 0, which means that no additional
  *         PURPLE_IM_TYPING messages need to be sent.  If this is 5, for
@@ -55,7 +55,7 @@ int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageF
 
 /** Get information about an account's attention commands, from the protocol.
  *
- * Returns: The attention command numbered 'code' from the protocol's attention_types, or NULL.
+ * @return The attention command numbered 'code' from the protocol's attention_types, or NULL.
  */
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
 
@@ -79,9 +79,9 @@ void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
  * the server.  Private aliases are the aliases the user sets, while public
  * aliases are the aliases or display names that buddies set for themselves.
  *
- * @gc: The connection on which the alias was received.
- * @who: The name of the buddy whose alias was received.
- * @alias: The alias that was received.
+ * @param gc The connection on which the alias was received.
+ * @param who The name of the buddy whose alias was received.
+ * @param alias The alias that was received.
  */
 void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char *alias);
 
@@ -93,14 +93,14 @@ void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const 
  *
  * TODO: Could probably move this into the conversation API.
  *
- * @gc:      The connection on which the typing message was received.
- * @name:    The name of the remote user.
- * @timeout: If this is a number greater than 0, then
+ * @param gc      The connection on which the typing message was received.
+ * @param name    The name of the remote user.
+ * @param timeout If this is a number greater than 0, then
  *        Purple will wait this number of seconds and then
  *        set this buddy to the PURPLE_IM_NOT_TYPING state.  This
  *        is used by protocols that send repeated typing messages
  *        while the user is composing the message.
- * @state:   The typing state received
+ * @param state   The typing state received
  */
 void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 					 PurpleIMTypingState state);
@@ -114,13 +114,13 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				 PurpleMessageFlags flags, time_t mtime);
 
 /**
- * @data: The hash function should be g_str_hash() and the equal
+ * @param data The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
 void serv_join_chat(PurpleConnection *, GHashTable *data);
 
 /**
- * @data: The hash function should be g_str_hash() and the equal
+ * @param data The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
 void serv_reject_chat(PurpleConnection *, GHashTable *data);
@@ -128,11 +128,11 @@ void serv_reject_chat(PurpleConnection *, GHashTable *data);
 /**
  * Called by a protocol when an account is invited into a chat.
  *
- * @gc:      The connection on which the invite arrived.
- * @name:    The name of the chat you're being invited to.
- * @who:     The username of the person inviting the account.
- * @message: The optional invite message.
- * @data:    The components necessary if you want to call serv_join_chat().
+ * @param gc      The connection on which the invite arrived.
+ * @param name    The name of the chat you're being invited to.
+ * @param who     The username of the person inviting the account.
+ * @param message The optional invite message.
+ * @param data    The components necessary if you want to call serv_join_chat().
  *                The hash function should be g_str_hash() and the equal
  *                function should be g_str_equal().
  */
@@ -143,10 +143,10 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 /**
  * Called by a protocol when an account has joined a chat.
  *
- * @gc:   The connection on which the chat was joined.
- * @id:   The id of the chat, assigned by the protocol.
- * @name: The name of the chat.
- * Returns:     The resulting conversation
+ * @param gc   The connection on which the chat was joined.
+ * @param id   The id of the chat, assigned by the protocol.
+ * @param name The name of the chat.
+ * @return     The resulting conversation
  */
 PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
@@ -154,8 +154,8 @@ PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
  * Called by a protocol when an attempt to join a chat via serv_join_chat()
  * fails.
  *
- * @gc:      The connection on which chat joining failed
- * @data:    The components passed to serv_join_chat() originally.
+ * @param gc      The connection on which chat joining failed
+ * @param data    The components passed to serv_join_chat() originally.
  *                The hash function should be g_str_hash() and the equal
  *                function should be g_str_equal().
  */
@@ -165,7 +165,7 @@ void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data);
  * Called by a protocol when an account has left a chat.
  *
  * @param g  The connection on which the chat was left.
- * @id: The id of the chat, as assigned by the protocol.
+ * @param id The id of the chat, as assigned by the protocol.
  */
 void serv_got_chat_left(PurpleConnection *g, int id);
 
@@ -173,11 +173,11 @@ void serv_got_chat_left(PurpleConnection *g, int id);
  * Called by a protocol when a message has been received in a chat.
  *
  * @param g       The connection on which the message was received.
- * @id:      The id of the chat, as assigned by the protocol.
- * @who:     The name of the user who sent the message.
- * @flags:   The flags of the message.
- * @message: The message received in the chat.
- * @mtime:   The time when the message was received.
+ * @param id      The id of the chat, as assigned by the protocol.
+ * @param who     The name of the user who sent the message.
+ * @param flags   The flags of the message.
+ * @param message The message received in the chat.
+ * @param mtime   The time when the message was received.
  */
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);

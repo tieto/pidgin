@@ -69,13 +69,13 @@ G_BEGIN_DECLS
 /**
  * Creates a new buddy pounce.
  *
- * @ui_type: The type of UI the pounce is for.
- * @pouncer: The account that will pounce.
- * @pouncee: The buddy to pounce on.
- * @event:   The event(s) to pounce on.
- * @option:  Pounce options.
+ * @param ui_type The type of UI the pounce is for.
+ * @param pouncer The account that will pounce.
+ * @param pouncee The buddy to pounce on.
+ * @param event   The event(s) to pounce on.
+ * @param option  Pounce options.
  *
- * Returns: The new buddy pounce structure.
+ * @return The new buddy pounce structure.
  */
 PurplePounce *purple_pounce_new(const char *ui_type, PurpleAccount *pouncer,
 							const char *pouncee, PurplePounceEvent event,
@@ -84,78 +84,78 @@ PurplePounce *purple_pounce_new(const char *ui_type, PurpleAccount *pouncer,
 /**
  * Destroys a buddy pounce.
  *
- * @pounce: The buddy pounce.
+ * @param pounce The buddy pounce.
  */
 void purple_pounce_destroy(PurplePounce *pounce);
 
 /**
  * Destroys all buddy pounces for the account
  *
- * @account: The account to remove all pounces from.
+ * @param account The account to remove all pounces from.
  */
 void purple_pounce_destroy_all_by_account(PurpleAccount *account);
 
 /**
  * Destroys all buddy pounces for a buddy
  *
- * @buddy: The buddy whose pounces are to be removed
+ * @param buddy The buddy whose pounces are to be removed
  */
 void purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy);
 
 /**
  * Sets the events a pounce should watch for.
  *
- * @pounce: The buddy pounce.
- * @events: The events to watch for.
+ * @param pounce The buddy pounce.
+ * @param events The events to watch for.
  */
 void purple_pounce_set_events(PurplePounce *pounce, PurplePounceEvent events);
 
 /**
  * Sets the options for a pounce.
  *
- * @pounce:  The buddy pounce.
- * @options: The options for the pounce.
+ * @param pounce  The buddy pounce.
+ * @param options The options for the pounce.
  */
 void purple_pounce_set_options(PurplePounce *pounce, PurplePounceOption options);
 
 /**
  * Sets the account that will do the pouncing.
  *
- * @pounce:  The buddy pounce.
- * @pouncer: The account that will pounce.
+ * @param pounce  The buddy pounce.
+ * @param pouncer The account that will pounce.
  */
 void purple_pounce_set_pouncer(PurplePounce *pounce, PurpleAccount *pouncer);
 
 /**
  * Sets the buddy a pounce should pounce on.
  *
- * @pounce:  The buddy pounce.
- * @pouncee: The buddy to pounce on.
+ * @param pounce  The buddy pounce.
+ * @param pouncee The buddy to pounce on.
  */
 void purple_pounce_set_pouncee(PurplePounce *pounce, const char *pouncee);
 
 /**
  * Sets whether or not the pounce should be saved after execution.
  *
- * @pounce: The buddy pounce.
- * @save:   %TRUE if the pounce should be saved, or %FALSE otherwise.
+ * @param pounce The buddy pounce.
+ * @param save   @c TRUE if the pounce should be saved, or @c FALSE otherwise.
  */
 void purple_pounce_set_save(PurplePounce *pounce, gboolean save);
 
 /**
  * Registers an action type for the pounce.
  *
- * @pounce: The buddy pounce.
- * @name:   The action name.
+ * @param pounce The buddy pounce.
+ * @param name   The action name.
  */
 void purple_pounce_action_register(PurplePounce *pounce, const char *name);
 
 /**
  * Enables or disables an action for a pounce.
  *
- * @pounce:  The buddy pounce.
- * @action:  The name of the action.
- * @enabled: The enabled state.
+ * @param pounce  The buddy pounce.
+ * @param action  The name of the action.
+ * @param enabled The enabled state.
  */
 void purple_pounce_action_set_enabled(PurplePounce *pounce, const char *action,
 									gboolean enabled);
@@ -163,12 +163,12 @@ void purple_pounce_action_set_enabled(PurplePounce *pounce, const char *action,
 /**
  * Sets a value for an attribute in an action.
  *
- * If @a value is %NULL, the value will be unset.
+ * If @a value is @c NULL, the value will be unset.
  *
- * @pounce: The buddy pounce.
- * @action: The action name.
- * @attr:   The attribute name.
- * @value:  The value.
+ * @param pounce The buddy pounce.
+ * @param action The action name.
+ * @param attr   The attribute name.
+ * @param value  The value.
  */
 void purple_pounce_action_set_attribute(PurplePounce *pounce, const char *action,
 									  const char *attr, const char *value);
@@ -176,64 +176,64 @@ void purple_pounce_action_set_attribute(PurplePounce *pounce, const char *action
 /**
  * Sets the pounce-specific data.
  *
- * @pounce: The buddy pounce.
- * @data:   Data specific to the pounce.
+ * @param pounce The buddy pounce.
+ * @param data   Data specific to the pounce.
  */
 void purple_pounce_set_data(PurplePounce *pounce, void *data);
 
 /**
  * Returns the events a pounce should watch for.
  *
- * @pounce: The buddy pounce.
+ * @param pounce The buddy pounce.
  *
- * Returns: The events the pounce is watching for.
+ * @return The events the pounce is watching for.
  */
 PurplePounceEvent purple_pounce_get_events(const PurplePounce *pounce);
 
 /**
  * Returns the options for a pounce.
  *
- * @pounce: The buddy pounce.
+ * @param pounce The buddy pounce.
  *
- * Returns: The options for the pounce.
+ * @return The options for the pounce.
  */
 PurplePounceOption purple_pounce_get_options(const PurplePounce *pounce);
 
 /**
  * Returns the account that will do the pouncing.
  *
- * @pounce: The buddy pounce.
+ * @param pounce The buddy pounce.
  *
- * Returns: The account that will pounce.
+ * @return The account that will pounce.
  */
 PurpleAccount *purple_pounce_get_pouncer(const PurplePounce *pounce);
 
 /**
  * Returns the buddy a pounce should pounce on.
  *
- * @pounce: The buddy pounce.
+ * @param pounce The buddy pounce.
  *
- * Returns: The buddy to pounce on.
+ * @return The buddy to pounce on.
  */
 const char *purple_pounce_get_pouncee(const PurplePounce *pounce);
 
 /**
  * Returns whether or not the pounce should save after execution.
  *
- * @pounce: The buddy pounce.
+ * @param pounce The buddy pounce.
  *
- * Returns: %TRUE if the pounce should be saved after execution, or
- *         %FALSE otherwise.
+ * @return @c TRUE if the pounce should be saved after execution, or
+ *         @c FALSE otherwise.
  */
 gboolean purple_pounce_get_save(const PurplePounce *pounce);
 
 /**
  * Returns whether or not an action is enabled.
  *
- * @pounce: The buddy pounce.
- * @action: The action name.
+ * @param pounce The buddy pounce.
+ * @param action The action name.
  *
- * Returns: %TRUE if the action is enabled, or %FALSE otherwise.
+ * @return @c TRUE if the action is enabled, or @c FALSE otherwise.
  */
 gboolean purple_pounce_action_is_enabled(const PurplePounce *pounce,
 									   const char *action);
@@ -241,11 +241,11 @@ gboolean purple_pounce_action_is_enabled(const PurplePounce *pounce,
 /**
  * Returns the value for an attribute in an action.
  *
- * @pounce: The buddy pounce.
- * @action: The action name.
- * @attr:   The attribute name.
+ * @param pounce The buddy pounce.
+ * @param action The action name.
+ * @param attr   The attribute name.
  *
- * Returns: The attribute value, if it exists, or %NULL.
+ * @return The attribute value, if it exists, or @c NULL.
  */
 const char *purple_pounce_action_get_attribute(const PurplePounce *pounce,
 											 const char *action,
@@ -254,18 +254,18 @@ const char *purple_pounce_action_get_attribute(const PurplePounce *pounce,
 /**
  * Returns the pounce-specific data.
  *
- * @pounce: The buddy pounce.
+ * @param pounce The buddy pounce.
  *
- * Returns: The data specific to a buddy pounce.
+ * @return The data specific to a buddy pounce.
  */
 void *purple_pounce_get_data(const PurplePounce *pounce);
 
 /**
  * Executes a pounce with the specified pouncer, pouncee, and event type.
  *
- * @pouncer: The account that will do the pouncing.
- * @pouncee: The buddy that is being pounced.
- * @events:  The events that triggered the pounce.
+ * @param pouncer The account that will do the pouncing.
+ * @param pouncee The buddy that is being pounced.
+ * @param events  The events that triggered the pounce.
  */
 void purple_pounce_execute(const PurpleAccount *pouncer, const char *pouncee,
 						 PurplePounceEvent events);
@@ -280,11 +280,11 @@ void purple_pounce_execute(const PurpleAccount *pouncer, const char *pouncee,
 /**
  * Finds a pounce with the specified event(s) and buddy.
  *
- * @pouncer: The account to match against.
- * @pouncee: The buddy to match against.
- * @events:  The event(s) to match against.
+ * @param pouncer The account to match against.
+ * @param pouncee The buddy to match against.
+ * @param events  The event(s) to match against.
  *
- * Returns: The pounce if found, or %NULL otherwise.
+ * @return The pounce if found, or @c NULL otherwise.
  */
 PurplePounce *purple_find_pounce(const PurpleAccount *pouncer,
 							 const char *pouncee, PurplePounceEvent events);
@@ -292,10 +292,10 @@ PurplePounce *purple_find_pounce(const PurpleAccount *pouncer,
 /**
  * Registers a pounce handler for a UI.
  *
- * @ui:          The UI name.
- * @cb:          The callback function.
- * @new_pounce:  The function called when a pounce is created.
- * @free_pounce: The function called when a pounce is freed.
+ * @param ui          The UI name.
+ * @param cb          The callback function.
+ * @param new_pounce  The function called when a pounce is created.
+ * @param free_pounce The function called when a pounce is freed.
  */
 void purple_pounces_register_handler(const char *ui, PurplePounceCb cb,
 								   void (*new_pounce)(PurplePounce *pounce),
@@ -304,23 +304,23 @@ void purple_pounces_register_handler(const char *ui, PurplePounceCb cb,
 /**
  * Unregisters a pounce handle for a UI.
  *
- * @ui: The UI name.
+ * @param ui The UI name.
  */
 void purple_pounces_unregister_handler(const char *ui);
 
 /**
  * Returns a list of all registered buddy pounces.
  *
- * Returns: (transfer none): The list of buddy pounces.
+ * @constreturn The list of buddy pounces.
  */
 GList *purple_pounces_get_all(void);
 
 /**
  * Returns a list of registered buddy pounces for the ui-type.
  *
- * @ui:  The ID of the UI using the core.
+ * @param ui  The ID of the UI using the core.
  *
- * Returns: The list of buddy pounces. The list should be freed by
+ * @return The list of buddy pounces. The list should be freed by
  *         the caller when it's no longer used.
  */
 GList *purple_pounces_get_all_for_ui(const char *ui);
@@ -328,7 +328,7 @@ GList *purple_pounces_get_all_for_ui(const char *ui);
 /**
  * Returns the buddy pounce subsystem handle.
  *
- * Returns: The subsystem handle.
+ * @return The subsystem handle.
  */
 void *purple_pounces_get_handle(void);
 

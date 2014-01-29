@@ -43,19 +43,13 @@ G_BEGIN_DECLS
 #define PURPLE_MEDIA_BACKEND_FS2_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_BACKEND_FS2, PurpleMediaBackendFs2))
 #define PURPLE_MEDIA_BACKEND_FS2_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_BACKEND_FS2, PurpleMediaBackendFs2))
 
-/**
- * PurpleMediaBackendFs2:
- *
- * An opaque structure representing the Farsight 2 media backend.
- */
+/** An opaque structure representing the Farsight 2 media backend. */
 typedef struct _PurpleMediaBackendFs2 PurpleMediaBackendFs2;
 
 /**
- * purple_media_backend_fs2_get_type:
- *
  * Gets the type of the Farsight 2 media backend object.
  *
- * Returns: The Farsight 2 media backend's GType
+ * @return The Farsight 2 media backend's GType
  */
 GType purple_media_backend_fs2_get_type(void);
 

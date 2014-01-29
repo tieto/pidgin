@@ -41,7 +41,7 @@ void finch_roomlist_init(void);
 /**
  * Get the ui-functions.
  *
- * Returns: The PurpleRoomlistUiOps structure populated with the appropriate functions.
+ * @return The PurpleRoomlistUiOps structure populated with the appropriate functions.
  */
 PurpleRoomlistUiOps *finch_roomlist_get_ui_ops(void);
 

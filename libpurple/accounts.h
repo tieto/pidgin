@@ -62,7 +62,7 @@ struct _PurpleAccountUiOps
 	 * list.  To authorize them to see this account's presence, call \a
 	 * authorize_cb (\a message, \a user_data); otherwise call
 	 * \a deny_cb (\a message, \a user_data);
-	 * Returns: a UI-specific handle, as passed to #close_account_request.
+	 * @return a UI-specific handle, as passed to #close_account_request.
 	 */
 	void *(*request_authorize)(PurpleAccount *account,
 	                           const char *remote_user,
@@ -101,14 +101,14 @@ G_BEGIN_DECLS
 /**
  * Adds an account to the list of accounts.
  *
- * @account: The account.
+ * @param account The account.
  */
 void purple_accounts_add(PurpleAccount *account);
 
 /**
  * Removes an account from the list of accounts.
  *
- * @account: The account.
+ * @param account The account.
  */
 void purple_accounts_remove(PurpleAccount *account);
 
@@ -119,29 +119,29 @@ void purple_accounts_remove(PurpleAccount *account);
  * account, buddy pounces that belong to this account, and will also
  * destroy @a account.
  *
- * @account: The account.
+ * @param account The account.
  */
 void purple_accounts_delete(PurpleAccount *account);
 
 /**
  * Reorders an account.
  *
- * @account:   The account to reorder.
- * @new_index: The new index for the account.
+ * @param account   The account to reorder.
+ * @param new_index The new index for the account.
  */
 void purple_accounts_reorder(PurpleAccount *account, guint new_index);
 
 /**
  * Returns a list of all accounts.
  *
- * Returns: (transfer none): A list of all accounts.
+ * @constreturn A list of all accounts.
  */
 GList *purple_accounts_get_all(void);
 
 /**
  * Returns a list of all enabled accounts
  *
- * Returns: A list of all enabled accounts. The list is owned
+ * @return A list of all enabled accounts. The list is owned
  *         by the caller, and must be g_list_free()d to avoid
  *         leaking the nodes.
  */
@@ -150,10 +150,10 @@ GList *purple_accounts_get_all_active(void);
 /**
  * Finds an account with the specified name and protocol id.
  *
- * @name:     The account username.
- * @protocol: The account protocol ID.
+ * @param name     The account username.
+ * @param protocol The account protocol ID.
  *
- * Returns: The account, if found, or %FALSE otherwise.
+ * @return The account, if found, or @c FALSE otherwise.
  */
 PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
 
@@ -178,14 +178,14 @@ void purple_accounts_restore_current_statuses(void);
 /**
  * Sets the UI operations structure to be used for accounts.
  *
- * @ops: The UI operations structure.
+ * @param ops The UI operations structure.
  */
 void purple_accounts_set_ui_ops(PurpleAccountUiOps *ops);
 
 /**
  * Returns the UI operations structure used for accounts.
  *
- * Returns: The UI operations structure in use.
+ * @return The UI operations structure in use.
  */
 PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 
@@ -200,7 +200,7 @@ PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 /**
  * Returns the accounts subsystem handle.
  *
- * Returns: The accounts subsystem handle.
+ * @return The accounts subsystem handle.
  */
 void *purple_accounts_get_handle(void);
 

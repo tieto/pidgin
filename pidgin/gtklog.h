@@ -72,7 +72,7 @@ void pidgin_log_init(void);
 /**
  * Returns the GTK+ log subsystem handle.
  *
- * Returns: The GTK+ log subsystem handle.
+ * @return The GTK+ log subsystem handle.
  */
 void *pidgin_log_get_handle(void);
 

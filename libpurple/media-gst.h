@@ -76,35 +76,35 @@ G_BEGIN_DECLS
 /**
  * Gets the element type's GType.
  *
- * Returns: The element type's GType.
+ * @return The element type's GType.
  */
 GType purple_media_element_type_get_type(void);
 
 /**
  * Gets the element info's GType.
  *
- * Returns: The element info's GType.
+ * @return The element info's GType.
  */
 GType purple_media_element_info_get_type(void);
 
 /**
  * Gets the source from a session
  *
- * @media: The media object the session is in.
- * @sess_id: The session id of the session to get the source from.
+ * @param media The media object the session is in.
+ * @param sess_id The session id of the session to get the source from.
  *
- * Returns: The source retrieved.
+ * @return The source retrieved.
  */
 GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
 
 /**
  * Gets the tee from a given session/stream.
  *
- * @media: The instance to get the tee from.
- * @session_id: The id of the session to get the tee from.
- * @participant: Optionally, the participant of the stream to get the tee from.
+ * @param media The instance to get the tee from.
+ * @param session_id The id of the session to get the tee from.
+ * @param participant Optionally, the participant of the stream to get the tee from.
  *
- * Returns: The GstTee element from the chosen session/stream.
+ * @return The GstTee element from the chosen session/stream.
  */
 GstElement *purple_media_get_tee(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
@@ -113,20 +113,20 @@ GstElement *purple_media_get_tee(PurpleMedia *media,
 /**
  * Gets the pipeline from the media manager.
  *
- * @manager: The media manager to get the pipeline from.
+ * @param manager The media manager to get the pipeline from.
  *
- * Returns: The pipeline.
+ * @return The pipeline.
  */
 GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
 
 /**
  * Returns a GStreamer source or sink for audio or video.
  *
- * @manager: The media manager to use to obtain the source/sink.
- * @type: The type of source/sink to get.
- * @media: The media call this element is requested for.
- * @session_id: The id of the session this element is requested for or NULL.
- * @participant: The remote user this element is requested for or NULL.
+ * @param manager The media manager to use to obtain the source/sink.
+ * @param type The type of source/sink to get.
+ * @param media The media call this element is requested for.
+ * @param session_id The id of the session this element is requested for or NULL.
+ * @param participant The remote user this element is requested for or NULL.
  */
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -149,8 +149,8 @@ PurpleMediaElementInfo *purple_media_manager_get_active_element(
  * Useful to force negotiation of smaller picture resolution more suitable for
  * use with particular codec and communication protocol without rescaling.
  *
- * @manager: The media manager to set the media formats.
- * @caps: Set of allowed media formats.
+ * @param manager The media manager to set the media formats.
+ * @param caps Set of allowed media formats.
  */
 void purple_media_manager_set_video_caps(PurpleMediaManager *manager,
 		GstCaps *caps);
@@ -158,9 +158,9 @@ void purple_media_manager_set_video_caps(PurpleMediaManager *manager,
 /**
  * Returns current set of media formats limiting the output from video source.
  *
- * @manager: The media manager to get the media formats from.
+ * @param manager The media manager to get the media formats from.
  *
- * Returns: @c GstCaps limiting the video source's formats.
+ * @return @c GstCaps limiting the video source's formats.
  */
 GstCaps *purple_media_manager_get_video_caps(PurpleMediaManager *manager);
 

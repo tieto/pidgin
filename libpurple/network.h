@@ -45,7 +45,7 @@ typedef void (*PurpleNetworkListenCallback) (int listenfd, gpointer data);
  * (file transfer, direct IM, etc.) and should therefore be
  * publicly accessible.
  *
- * @ip: The local IP address.
+ * @param ip The local IP address.
  */
 void purple_network_set_public_ip(const char *ip);
 
@@ -55,7 +55,7 @@ void purple_network_set_public_ip(const char *ip);
  * This returns the value set via purple_network_set_public_ip().
  * You probably want to use purple_network_get_my_ip() instead.
  *
- * Returns: The local IP address set in preferences.
+ * @return The local IP address set in preferences.
  */
 const char *purple_network_get_public_ip(void);
 
@@ -64,22 +64,22 @@ const char *purple_network_get_public_ip(void);
  *
  * You probably want to use purple_network_get_my_ip() instead.
  *
- * Note: The returned string is a pointer to a static buffer. If this
+ * @note The returned string is a pointer to a static buffer. If this
  *       function is called twice, it may be important to make a copy
  *       of the returned string.
  *
- * @fd: The fd to use to help figure out the IP, or else -1.
- * Returns: The local IP address.
+ * @param fd The fd to use to help figure out the IP, or else -1.
+ * @return The local IP address.
  */
 const char *purple_network_get_local_system_ip(int fd);
 
 /**
  * Returns all IP addresses of the local system.
  *
- * Note: The caller must free this list.  If libpurple was built with
+ * @note The caller must free this list.  If libpurple was built with
  *       support for it, this function also enumerates IPv6 addresses.
  *
- * Returns: A list of local IP addresses.
+ * @return A list of local IP addresses.
  */
 GList *purple_network_get_all_local_system_ips(void);
 
@@ -93,12 +93,12 @@ GList *purple_network_get_all_local_system_ips(void);
  * IP address returned by purple_network_get_local_system_ip()
  * is returned.
  *
- * Note: The returned string is a pointer to a static buffer. If this
+ * @note The returned string is a pointer to a static buffer. If this
  *       function is called twice, it may be important to make a copy
  *       of the returned string.
  *
- * @fd: The fd to use to help figure out the IP, or -1.
- * Returns: The local IP address to be used.
+ * @param fd The fd to use to help figure out the IP, or -1.
+ * @return The local IP address to be used.
  */
 const char *purple_network_get_my_ip(int fd);
 
@@ -119,24 +119,24 @@ const char *purple_network_get_my_ip(int fd);
  * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
  * addresses, a mapping is done).
  *
- * @port: The port number to bind to.  Must be greater than 0.
- * @socket_family: The protocol family of the socket.  This should be
+ * @param port The port number to bind to.  Must be greater than 0.
+ * @param socket_family The protocol family of the socket.  This should be
  *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
  *                      may or may not be able to accept IPv4 connections
  *                      based on the system configuration (use
  *                      purple_socket_speaks_ipv4 to check).  If an IPv6
  *                      socket doesn't accept V4-mapped addresses, you will
  *                      need a second listener to support both v4 and v6.
- * @socket_type: The type of socket to open for listening.
+ * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
- * @map_external: Should the open port be mapped externally using
+ * @param map_external Should the open port be mapped externally using
  *           NAT-PNP or UPnP?  (default should be TRUE)
- * @cb: The callback to be invoked when the port to listen on is available.
+ * @param cb The callback to be invoked when the port to listen on is available.
  *           The file descriptor of the listening socket will be specified in
  *           this callback, or -1 if no socket could be established.
- * @cb_data: extra data to be returned when cb is called
+ * @param cb_data extra data to be returned when cb is called
  *
- * Returns: A pointer to a data structure that can be used to cancel
+ * @return A pointer to a data structure that can be used to cancel
  *         the pending listener, or NULL if unable to obtain a local
  *         socket to listen on.
  */
@@ -162,28 +162,28 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
  * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
  * addresses, a mapping is done).
  *
- * @start: The port number to bind to, or 0 to pick a random port.
+ * @param start The port number to bind to, or 0 to pick a random port.
  *              Users are allowed to override this arg in prefs.
- * @end: The highest possible port in the range of ports to listen on,
+ * @param end The highest possible port in the range of ports to listen on,
  *            or 0 to pick a random port.  Users are allowed to override this
  *            arg in prefs.
- * @socket_family: The protocol family of the socket.  This should be
+ * @param socket_family The protocol family of the socket.  This should be
  *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
  *                      may or may not be able to accept IPv4 connections
  *                      based on the system configuration (use
  *                      purple_socket_speaks_ipv4 to check).  If an IPv6
  *                      socket doesn't accept V4-mapped addresses, you will
  *                      need a second listener to support both v4 and v6.
- * @socket_type: The type of socket to open for listening.
+ * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
- * @map_external: Should the open port be mapped externally using
+ * @param map_external Should the open port be mapped externally using
  *           NAT-PNP or UPnP?  (default should be TRUE)
- * @cb: The callback to be invoked when the port to listen on is available.
+ * @param cb The callback to be invoked when the port to listen on is available.
  *           The file descriptor of the listening socket will be specified in
  *           this callback, or -1 if no socket could be established.
- * @cb_data: extra data to be returned when cb is called
+ * @param cb_data extra data to be returned when cb is called
  *
- * Returns: A pointer to a data structure that can be used to cancel
+ * @return A pointer to a data structure that can be used to cancel
  *         the pending listener, or NULL if unable to obtain a local
  *         socket to listen on.
  */
@@ -197,7 +197,7 @@ PurpleNetworkListenData *purple_network_listen_range(
  * by passing in the return value from either purple_network_listen()
  * or purple_network_listen_range().
  *
- * @listen_data: This listener attempt will be cancelled and
+ * @param listen_data This listener attempt will be cancelled and
  *        the struct will be freed.
  */
 void purple_network_listen_cancel(PurpleNetworkListenData *listen_data);
@@ -205,22 +205,22 @@ void purple_network_listen_cancel(PurpleNetworkListenData *listen_data);
 /**
  * Gets a port number from a file descriptor.
  *
- * @fd: The file descriptor. This should be a tcp socket. The current
+ * @param fd The file descriptor. This should be a tcp socket. The current
  *           implementation probably dies on anything but IPv4. Perhaps this
  *           possible bug will inspire new and valuable contributors to Purple.
- * Returns: The port number, in host byte order.
+ * @return The port number, in host byte order.
  */
 unsigned short purple_network_get_port_from_fd(int fd);
 
 /**
  * Detects if there is an available network connection.
  *
- * Returns: TRUE if the network is available
+ * @return TRUE if the network is available
  */
 gboolean purple_network_is_available(void);
 
 /**
- * Makes purple_network_is_available() always return %TRUE.
+ * Makes purple_network_is_available() always return @c TRUE.
  *
  * This is what backs the --force-online command line argument in Pidgin,
  * for example.  This is useful for offline testing, especially when
@@ -231,7 +231,7 @@ void purple_network_force_online(void);
 /**
  * Get the handle for the network system
  *
- * Returns: the handle to the network system
+ * @return the handle to the network system
  */
 void *purple_network_get_handle(void);
 
@@ -239,14 +239,14 @@ void *purple_network_get_handle(void);
  * Update the STUN server IP given the host name
  * Will result in a DNS query being executed asynchronous
  *
- * @stun_server: The host name of the STUN server to set
+ * @param stun_server The host name of the STUN server to set
  */
 void purple_network_set_stun_server(const gchar *stun_server);
 
 /**
  * Get the IP address of the STUN server as a string representation
  *
- * Returns: the IP address
+ * @return the IP address
  */
 const gchar *purple_network_get_stun_ip(void);
 
@@ -254,21 +254,21 @@ const gchar *purple_network_get_stun_ip(void);
  * Update the TURN server IP given the host name
  * Will result in a DNS query being executed asynchronous
  *
- * @turn_server: The host name of the TURN server to set
+ * @param turn_server The host name of the TURN server to set
  */
 void purple_network_set_turn_server(const gchar *turn_server);
 
 /**
  * Get the IP address of the TURN server as a string representation
  *
- * Returns: the IP address
+ * @return the IP address
  */
 const gchar *purple_network_get_turn_ip(void);
 
 /**
  * Remove a port mapping (UPnP or NAT-PMP) associated with listening socket
  *
- * @fd: Socket to remove the port mapping for
+ * @param fd Socket to remove the port mapping for
  */
 void purple_network_remove_port_mapping(gint fd);
 
@@ -282,10 +282,10 @@ void purple_network_remove_port_mapping(gint fd);
  *
  * In general, a buffer of about 512 bytes is the appropriate size to use.
  *
- * @in:      The hostname to be converted.
- * @out:     The output buffer where an allocated string will be returned.
+ * @param in      The hostname to be converted.
+ * @param out     The output buffer where an allocated string will be returned.
  *                The caller is responsible for freeing this.
- * Returns:s       0 on success, -1 if the out is NULL, or an error code
+ * @returns       0 on success, -1 if the out is NULL, or an error code
  *                that currently corresponds to the Idna_rc enum in libidn.
  */
 int purple_network_convert_idn_to_ascii(const gchar *in, gchar **out);

@@ -31,9 +31,9 @@
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
- * @account:    The optional account to use.
- * @name:       The optional name to pounce on.
- * @cur_pounce: The current buddy pounce, if editing an existing one.
+ * @param account    The optional account to use.
+ * @param name       The optional name to pounce on.
+ * @param cur_pounce The current buddy pounce, if editing an existing one.
  */
 void finch_pounce_editor_show(PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
@@ -51,7 +51,7 @@ void finch_pounces_manager_hide(void);
 /**
  * Returns the gtkpounces handle
  *
- * Returns: The handle to the GTK+ pounces system
+ * @return The handle to the GTK+ pounces system
  */
 void *finch_pounces_get_handle(void);
 

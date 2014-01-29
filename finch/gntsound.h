@@ -36,21 +36,21 @@
 /**
  * Get the name of the active sound profile.
  *
- * Returns: The name of the profile
+ * @return The name of the profile
  */
 const char *finch_sound_get_active_profile(void);
 
 /**
  * Set the active profile.  If the profile doesn't exist, nothing is changed.
  *
- * @name:  The name of the profile
+ * @param name  The name of the profile
  */
 void finch_sound_set_active_profile(const char *name);
 
 /**
  * Get a list of available sound profiles.
  *
- * Returns: A list of strings denoting sound profile names.
+ * @return A list of strings denoting sound profile names.
  *         Caller must free the list (but not the data).
  */
 GList *finch_sound_get_profiles(void);
@@ -58,7 +58,7 @@ GList *finch_sound_get_profiles(void);
 /**
  * Determine whether any sound will be played or not.
  *
- * Returns: Returns FALSE if preference is set to 'No sound', or if volume is
+ * @return Returns FALSE if preference is set to 'No sound', or if volume is
  *         set to zero.
  */
 gboolean finch_sound_is_enabled(void);
@@ -66,7 +66,7 @@ gboolean finch_sound_is_enabled(void);
 /**
  * Gets GNT sound UI ops.
  *
- * Returns: The UI operations structure.
+ * @return The UI operations structure.
  */
 PurpleSoundUiOps *finch_sound_get_ui_ops(void);
 

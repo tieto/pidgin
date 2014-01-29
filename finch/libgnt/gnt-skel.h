@@ -63,14 +63,14 @@ G_BEGIN_DECLS
 /**
  *
  *
- * Returns:
+ * @return
  */
 GType gnt_skel_get_gtype(void);
 
 /**
  *
  *
- * Returns:
+ * @return
  */
 GntWidget * gnt_skel_new();
 

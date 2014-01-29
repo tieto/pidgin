@@ -36,7 +36,7 @@
 /**
  * Get the ui-functions.
  *
- * Returns: The PurpleConnectionUiOps structure populated with the appropriate functions.
+ * @return The PurpleConnectionUiOps structure populated with the appropriate functions.
  */
 PurpleConnectionUiOps *finch_connections_get_ui_ops(void);
 
