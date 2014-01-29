@@ -121,7 +121,7 @@ version 2.10.8 (1/28/2014):
 	Plugins:
 	* Fix crash in contact availability plugin.
 	* Fix perl function Purple::Network::ip_atoi
-	* Add Unity integration plugin.
+	* Add Ubuntu Unity UI integration plugin.
 
 version 2.10.7 (02/13/2013):
 	Alien hatchery:
