@@ -44,23 +44,23 @@ typedef enum {
 G_BEGIN_DECLS
 
 /**
+ * purple_pmp_init:
+ *
  * Initialize nat-pmp
  */
 void purple_pmp_init(void);
 
-/**
- *
- */
 char *purple_pmp_get_public_ip(void);
 
 /**
- * Remove the NAT-PMP mapping for a specified type on a specified port
- *
+ * purple_pmp_create_map:
  * @type:        The PurplePmpType
  * @privateport: The private port on which we are listening locally
  * @publicport:  The public port on which we are expecting a response
  * @lifetime:    The lifetime of the mapping. It is recommended that this
  *                    be PURPLE_PMP_LIFETIME.
+ *
+ * Remove the NAT-PMP mapping for a specified type on a specified port
  *
  * Returns: TRUE if successful; FALSE if unsuccessful
  */
@@ -68,10 +68,11 @@ gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport,
                                unsigned short publicport, int lifetime);
 
 /**
- * Remove the NAT-PMP mapping for a specified type on a specified port
- *
+ * purple_pmp_destroy_map:
  * @type:        The PurplePmpType
  * @privateport: The private port on which the mapping was previously made
+ *
+ * Remove the NAT-PMP mapping for a specified type on a specified port
  *
  * Returns: TRUE if successful; FALSE if unsuccessful
  */

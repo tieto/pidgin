@@ -41,9 +41,12 @@
 
 typedef struct PurpleCore PurpleCore;
 
-/** Callbacks that fire at different points of the initialization and teardown
- *  of libpurple, along with a hook to return descriptive information about the
- *  UI.
+/**
+ * PurpleCoreUiOps:
+ *
+ * Callbacks that fire at different points of the initialization and teardown
+ * of libpurple, along with a hook to return descriptive information about the
+ * UI.
  */
 typedef struct
 {
@@ -83,24 +86,29 @@ typedef struct
 G_BEGIN_DECLS
 
 /**
+ * purple_core_init:
+ * @ui: The ID of the UI using the core. This should be a
+ *           unique ID, registered with the purple team.
+ *
  * Initializes the core of purple.
  *
  * This will setup preferences for all the core subsystems.
- *
- * @ui: The ID of the UI using the core. This should be a
- *           unique ID, registered with the purple team.
  *
  * Returns: %TRUE if successful, or %FALSE otherwise.
  */
 gboolean purple_core_init(const char *ui);
 
 /**
+ * purple_core_quit:
+ *
  * Quits the core of purple, which, depending on the UI, may quit the
  * application using the purple core.
  */
 void purple_core_quit(void);
 
 /**
+ * purple_core_quit_cb:
+ *
  * <p>
  * Calls purple_core_quit().  This can be used as the function
  * passed to purple_timeout_add() when you want to shutdown Purple
@@ -122,6 +130,8 @@ void purple_core_quit(void);
 gboolean purple_core_quit_cb(gpointer unused);
 
 /**
+ * purple_core_get_version:
+ *
  * Returns the version of the core library.
  *
  * Returns: The version of the core library.
@@ -129,6 +139,8 @@ gboolean purple_core_quit_cb(gpointer unused);
 const char *purple_core_get_version(void);
 
 /**
+ * purple_core_get_ui:
+ *
  * Returns the ID of the UI that is using the core, as passed to
  * purple_core_init().
  *
@@ -137,6 +149,8 @@ const char *purple_core_get_version(void);
 const char *purple_core_get_ui(void);
 
 /**
+ * purple_get_core:
+ *
  * Returns a handle to the purple core.
  *
  * This is used to connect to @ref core-signals "core signals".
@@ -144,13 +158,16 @@ const char *purple_core_get_ui(void);
 PurpleCore *purple_get_core(void);
 
 /**
- * Sets the UI ops for the core.
- *
+ * purple_core_set_ui_ops:
  * @ops: A UI ops structure for the core.
+ *
+ * Sets the UI ops for the core.
  */
 void purple_core_set_ui_ops(PurpleCoreUiOps *ops);
 
 /**
+ * purple_core_get_ui_ops:
+ *
  * Returns the UI ops for the core.
  *
  * Returns: The core's UI ops structure.
@@ -158,6 +175,8 @@ void purple_core_set_ui_ops(PurpleCoreUiOps *ops);
 PurpleCoreUiOps *purple_core_get_ui_ops(void);
 
 /**
+ * purple_core_ensure_single_instance:
+ *
  * Ensures that only one instance is running.  If libpurple is built with D-Bus
  * support, this checks if another process owns the libpurple bus name and if
  * so whether that process is using the same configuration directory as this
@@ -169,6 +188,8 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
 gboolean purple_core_ensure_single_instance(void);
 
 /**
+ * purple_core_get_ui_info:
+ *
  * Returns a hash table containing various information about the UI.  The
  * following well-known entries may be in the table (along with any others the
  * UI might choose to include):

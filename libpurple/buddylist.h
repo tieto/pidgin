@@ -38,33 +38,34 @@
 #define PURPLE_IS_BUDDY_LIST_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_BUDDY_LIST))
 #define PURPLE_BUDDY_LIST_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyListClass))
 
-/** @copydoc _PurpleBuddyList */
 typedef struct _PurpleBuddyList       PurpleBuddyList;
-/** @copydoc _PurpleBuddyList */
 typedef struct _PurpleBuddyListClass  PurpleBuddyListClass;
 
-/** @copydoc _PurpleBlistUiOps */
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 
 /**************************************************************************/
 /* Data Structures                                                        */
 /**************************************************************************/
 /**
+ * PurpleBuddyList:
+ * @root:    The first node in the buddy list
+ * @ui_data: The UI data associated with this buddy list. This is a convenience
+ *           field provided to the UIs -- it is not used by the libpurple core.
+ *
  * The Buddy List
  */
 struct _PurpleBuddyList {
 	GObject gparent;
 
-	/** The first node in the buddy list */
 	PurpleBlistNode *root;
-
-	/** The UI data associated with this buddy list. This is a convenience
-	 *  field provided to the UIs -- it is not used by the libpurple core.
-	 */
 	gpointer ui_data;
 };
 
-/** The base class for all #PurpleBuddyList's. */
+/**
+ * PurpleBuddyListClass:
+ *
+ * The base class for all #PurpleBuddyList's.
+ */
 struct _PurpleBuddyListClass {
 	GObjectClass gparent_class;
 
@@ -76,6 +77,8 @@ struct _PurpleBuddyListClass {
 };
 
 /**
+ * PurpleBlistUiOps:
+ *
  * Buddy list UI operations.
  *
  * Any UI representing a buddy list must assign a filled-out PurpleBlistUiOps
@@ -152,11 +155,15 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * purple_buddy_list_get_type:
+ *
  * Returns the GType for the PurpleBuddyList object.
  */
 GType purple_buddy_list_get_type(void);
 
 /**
+ * purple_blist_get_buddy_list:
+ *
  * Returns the main buddy list.
  *
  * Returns: The main buddy list.
@@ -164,6 +171,8 @@ GType purple_buddy_list_get_type(void);
 PurpleBuddyList *purple_blist_get_buddy_list(void);
 
 /**
+ * purple_blist_get_root:
+ *
  * Returns the root node of the main buddy list.
  *
  * Returns: The root node.
@@ -171,6 +180,8 @@ PurpleBuddyList *purple_blist_get_buddy_list(void);
 PurpleBlistNode *purple_blist_get_root(void);
 
 /**
+ * purple_blist_get_buddies:
+ *
  * Returns a list of every buddy in the list.  Use of this function is
  * discouraged if you do not actually need every buddy in the list.  Use
  * purple_blist_find_buddies instead.
@@ -183,6 +194,8 @@ PurpleBlistNode *purple_blist_get_root(void);
 GSList *purple_blist_get_buddies(void);
 
 /**
+ * purple_blist_get_ui_data:
+ *
  * Returns the UI data for the list.
  *
  * Returns: The UI data for the list.
@@ -190,156 +203,175 @@ GSList *purple_blist_get_buddies(void);
 gpointer purple_blist_get_ui_data(void);
 
 /**
- * Sets the UI data for the list.
- *
+ * purple_blist_set_ui_data:
  * @ui_data: The UI data for the list.
+ *
+ * Sets the UI data for the list.
  */
 void purple_blist_set_ui_data(gpointer ui_data);
 
 /**
+ * purple_blist_show:
+ *
  * Shows the buddy list, creating a new one if necessary.
  */
 void purple_blist_show(void);
 
 /**
- * Hides or unhides the buddy list.
- *
+ * purple_blist_set_visible:
  * @show:   Whether or not to show the buddy list
+ *
+ * Hides or unhides the buddy list.
  */
 void purple_blist_set_visible(gboolean show);
 
 /**
+ * purple_blist_update_buddies_cache:
+ * @buddy:  The buddy whose name will be changed.
+ * @name:   The new name of the buddy.
+ *
  * Updates the buddies hash table when a buddy has been renamed. This only
  * updates the cache, the caller is responsible for the actual renaming of
  * the buddy after updating the cache.
- *
- * @buddy:  The buddy whose name will be changed.
- * @name:   The new name of the buddy.
  */
 void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name);
 
 /**
+ * purple_blist_update_groups_cache:
+ * @group:  The group whose name will be changed.
+ * @name:   The new name of the group.
+ *
  * Updates the groups hash table when a group has been renamed. This only
  * updates the cache, the caller is responsible for the actual renaming of
  * the group after updating the cache.
- *
- * @group:  The group whose name will be changed.
- * @name:   The new name of the group.
  */
 void purple_blist_update_groups_cache(PurpleGroup *group, const char *new_name);
 
 /**
+ * purple_blist_add_chat:
+ * @chat:  The new chat who gets added
+ * @group:  The group to add the new chat to.
+ * @node:   The insertion point
+ *
  * Adds a new chat to the buddy list.
  *
  * The chat will be inserted right after node or appended to the end
  * of group if node is NULL.  If both are NULL, the buddy will be added to
  * the "Chats" group.
- *
- * @chat:  The new chat who gets added
- * @group:  The group to add the new chat to.
- * @node:   The insertion point
  */
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node);
 
 /**
- * Adds a new buddy to the buddy list.
- *
- * The buddy will be inserted right after node or prepended to the
- * group if node is NULL.  If both are NULL, the buddy will be added to
- * the "Buddies" group.
- *
+ * purple_blist_add_buddy:
  * @buddy:   The new buddy who gets added
  * @contact: The optional contact to place the buddy in.
  * @group:   The group to add the new buddy to.
  * @node:    The insertion point.  Pass in NULL to add the node as
  *                the first child in the given group.
+ *
+ * Adds a new buddy to the buddy list.
+ *
+ * The buddy will be inserted right after node or prepended to the
+ * group if node is NULL.  If both are NULL, the buddy will be added to
+ * the "Buddies" group.
  */
 void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
 
 /**
+ * purple_blist_add_group:
+ * @group:  The group
+ * @node:   The insertion point
+ *
  * Adds a new group to the buddy list.
  *
  * The new group will be inserted after insert or prepended to the list if
  * node is NULL.
- *
- * @group:  The group
- * @node:   The insertion point
  */
 void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node);
 
 /**
+ * purple_blist_add_contact:
+ * @contact: The contact
+ * @group:   The group to add the contact to
+ * @node:    The insertion point
+ *
  * Adds a new contact to the buddy list.
  *
  * The new contact will be inserted after insert or prepended to the list if
  * node is NULL.
- *
- * @contact: The contact
- * @group:   The group to add the contact to
- * @node:    The insertion point
  */
 void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
 
 /**
+ * purple_blist_remove_buddy:
+ * @buddy:   The buddy to be removed
+ *
  * Removes a buddy from the buddy list and frees the memory allocated to it.
  * This doesn't actually try to remove the buddy from the server list.
- *
- * @buddy:   The buddy to be removed
  *
  * @see purple_account_remove_buddy
  */
 void purple_blist_remove_buddy(PurpleBuddy *buddy);
 
 /**
+ * purple_blist_remove_contact:
+ * @contact: The contact to be removed
+ *
  * Removes a contact, and any buddies it contains, and frees the memory
  * allocated to it. This calls purple_blist_remove_buddy and therefore
  * doesn't remove the buddies from the server list.
- *
- * @contact: The contact to be removed
  *
  * @see purple_blist_remove_buddy
  */
 void purple_blist_remove_contact(PurpleContact *contact);
 
 /**
- * Removes a chat from the buddy list and frees the memory allocated to it.
- *
+ * purple_blist_remove_chat:
  * @chat:   The chat to be removed
+ *
+ * Removes a chat from the buddy list and frees the memory allocated to it.
  */
 void purple_blist_remove_chat(PurpleChat *chat);
 
 /**
+ * purple_blist_remove_group:
+ * @group:   The group to be removed
+ *
  * Removes a group from the buddy list and frees the memory allocated to it and to
  * its children
- *
- * @group:   The group to be removed
  */
 void purple_blist_remove_group(PurpleGroup *group);
 
 /**
- * Finds the buddy struct given a name and an account
- *
+ * purple_blist_find_buddy:
  * @account: The account this buddy belongs to
  * @name:    The buddy's name
+ *
+ * Finds the buddy struct given a name and an account
+ *
  * Returns:        The buddy or NULL if the buddy does not exist
  */
 PurpleBuddy *purple_blist_find_buddy(PurpleAccount *account, const char *name);
 
 /**
- * Finds the buddy struct given a name, an account, and a group
- *
+ * purple_blist_find_buddy_in_group:
  * @account: The account this buddy belongs to
  * @name:    The buddy's name
  * @group:   The group to look in
+ *
+ * Finds the buddy struct given a name, an account, and a group
+ *
  * Returns:        The buddy or NULL if the buddy does not exist in the group
  */
 PurpleBuddy *purple_blist_find_buddy_in_group(PurpleAccount *account, const char *name,
 		PurpleGroup *group);
 
 /**
- * Finds all PurpleBuddy structs given a name and an account
- *
+ * purple_blist_find_buddies:
  * @account: The account this buddy belongs to
  * @name:    The buddy's name (or NULL to return all buddies for the account)
+ *
+ * Finds all PurpleBuddy structs given a name and an account
  *
  * Returns:        NULL if the buddy doesn't exist, or a GSList of
  *                PurpleBuddy structs.  You must free the GSList using
@@ -349,36 +381,41 @@ PurpleBuddy *purple_blist_find_buddy_in_group(PurpleAccount *account, const char
 GSList *purple_blist_find_buddies(PurpleAccount *account, const char *name);
 
 /**
+ * purple_blist_find_group:
+ * @name:    The group's name
+ *
  * Finds a group by name
  *
- * @name:    The group's name
  * Returns:        The group or NULL if the group does not exist
  */
 PurpleGroup *purple_blist_find_group(const char *name);
 
 /**
- * Finds a chat by name.
- *
+ * purple_blist_find_chat:
  * @account: The chat's account.
  * @name:    The chat's name.
+ *
+ * Finds a chat by name.
  *
  * Returns: The chat, or %NULL if the chat does not exist.
  */
 PurpleChat *purple_blist_find_chat(PurpleAccount *account, const char *name);
 
 /**
+ * purple_blist_add_account:
+ * @account:   The account
+ *
  * Called when an account connects.  Tells the UI to update all the
  * buddies.
- *
- * @account:   The account
  */
 void purple_blist_add_account(PurpleAccount *account);
 
 /**
+ * purple_blist_remove_account:
+ * @account:   The account
+ *
  * Called when an account disconnects.  Sets the presence of all the buddies to 0
  * and tells the UI to update them.
- *
- * @account:   The account
  */
 void purple_blist_remove_account(PurpleAccount *account);
 
@@ -389,6 +426,8 @@ void purple_blist_remove_account(PurpleAccount *account);
 /****************************************************************************************/
 
 /**
+ * purple_blist_schedule_save:
+ *
  * Schedule a save of the blist.xml file.  This is used by the privacy
  * API whenever the privacy settings are changed.  If you make a change
  * to blist.xml using one of the functions in the buddy list API, then
@@ -398,30 +437,34 @@ void purple_blist_remove_account(PurpleAccount *account);
 void purple_blist_schedule_save(void);
 
 /**
- * Requests from the user information needed to add a buddy to the
- * buddy list.
- *
+ * purple_blist_request_add_buddy:
  * @account:  The account the buddy is added to.
  * @username: The username of the buddy.
  * @group:    The name of the group to place the buddy in.
  * @alias:    The optional alias for the buddy.
+ *
+ * Requests from the user information needed to add a buddy to the
+ * buddy list.
  */
 void purple_blist_request_add_buddy(PurpleAccount *account, const char *username,
 								  const char *group, const char *alias);
 
 /**
- * Requests from the user information needed to add a chat to the
- * buddy list.
- *
+ * purple_blist_request_add_chat:
  * @account: The account the buddy is added to.
  * @group:   The optional group to add the chat to.
  * @alias:   The optional alias for the chat.
  * @name:    The required chat name.
+ *
+ * Requests from the user information needed to add a chat to the
+ * buddy list.
  */
 void purple_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 								 const char *alias, const char *name);
 
 /**
+ * purple_blist_request_add_group:
+ *
  * Requests from the user information needed to add a group to the
  * buddy list.
  */
@@ -433,13 +476,16 @@ void purple_blist_request_add_group(void);
 /*@{*/
 
 /**
- * Sets the UI operations structure to be used for the buddy list.
- *
+ * purple_blist_set_ui_ops:
  * @ops: The ops struct.
+ *
+ * Sets the UI operations structure to be used for the buddy list.
  */
 void purple_blist_set_ui_ops(PurpleBlistUiOps *ops);
 
 /**
+ * purple_blist_get_ui_ops:
+ *
  * Returns the UI operations structure to be used for the buddy list.
  *
  * Returns: The UI operations structure.
@@ -454,6 +500,8 @@ PurpleBlistUiOps *purple_blist_get_ui_ops(void);
 /*@{*/
 
 /**
+ * purple_blist_get_handle:
+ *
  * Returns the handle for the buddy list subsystem.
  *
  * Returns: The buddy list subsystem handle.
@@ -461,11 +509,15 @@ PurpleBlistUiOps *purple_blist_get_ui_ops(void);
 void *purple_blist_get_handle(void);
 
 /**
+ * purple_blist_init:
+ *
  * Initializes the buddy list subsystem.
  */
 void purple_blist_init(void);
 
 /**
+ * purple_blist_boot:
+ *
  * Loads the buddy list.
  *
  * You shouldn't call this. purple_core_init() will do it for you.
@@ -473,6 +525,8 @@ void purple_blist_init(void);
 void purple_blist_boot(void);
 
 /**
+ * purple_blist_uninit:
+ *
  * Uninitializes the buddy list subsystem.
  */
 void purple_blist_uninit(void);

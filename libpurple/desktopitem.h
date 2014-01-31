@@ -116,22 +116,24 @@ GType purple_desktop_item_get_type       (void);
 #define PURPLE_DESKTOP_ITEM_DOC_PATH	"X-GNOME-DocPath" /* string */
 
 /**
- * This function loads 'filename' and turns it into a PurpleDesktopItem.
- *
+ * purple_desktop_item_new_from_file:
  * @filename: The filename or directory path to load the PurpleDesktopItem from
+ *
+ * This function loads 'filename' and turns it into a PurpleDesktopItem.
  *
  * Returns: The newly loaded item, or NULL on error.
  */
 PurpleDesktopItem *purple_desktop_item_new_from_file (const char *filename);
 
 /**
+ * purple_desktop_item_get_entry_type:
+ * @item: A desktop item
+ *
  * Gets the type attribute (the 'Type' field) of the item.  This should
  * usually be 'Application' for an application, but it can be 'Directory'
  * for a directory description.  There are other types available as well.
  * The type usually indicates how the desktop item should be handeled and
  * how the 'Exec' field should be handeled.
- *
- * @item: A desktop item
  *
  * Returns: The type of the specified 'item'. The returned memory
  * remains owned by the PurpleDesktopItem and should not be freed.
@@ -139,10 +141,11 @@ PurpleDesktopItem *purple_desktop_item_new_from_file (const char *filename);
 PurpleDesktopItemType purple_desktop_item_get_entry_type (const PurpleDesktopItem *item);
 
 /**
- * Gets the value of an attribute of the item, as a string.
- *
+ * purple_desktop_item_get_string:
  * @item: A desktop item
  * @attr: The attribute to look for
+ *
+ * Gets the value of an attribute of the item, as a string.
  *
  * Returns: The value of the specified item attribute.
  */
@@ -150,20 +153,22 @@ const char *purple_desktop_item_get_string (const PurpleDesktopItem *item,
 					  const char *attr);
 
 /**
+ * purple_desktop_item_copy:
+ * @item: The item to be copied
+ *
  * Creates a copy of a PurpleDesktopItem.  The new copy has a refcount of 1.
  * Note: Section stack is NOT copied.
- *
- * @item: The item to be copied
  *
  * Returns: The new copy
  */
 PurpleDesktopItem *purple_desktop_item_copy (const PurpleDesktopItem *item);
 
 /**
+ * purple_desktop_item_unref:
+ * @item: A desktop item
+ *
  * Decreases the reference count of the specified item, and destroys
  * the item if there are no more references left.
- *
- * @item: A desktop item
  */
 void purple_desktop_item_unref (PurpleDesktopItem *item);
 

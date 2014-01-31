@@ -30,20 +30,23 @@
 G_BEGIN_DECLS
 
 /**
- * Generates the base64 encoded type 1 message needed for NTLM authentication
- *
+ * purple_ntlm_gen_type1:
  * @hostname: Your hostname
  * @domain: The domain to authenticate to
+ *
+ * Generates the base64 encoded type 1 message needed for NTLM authentication
+ *
  * Returns: base64 encoded string to send to the server.  This should
  *         be g_free'd by the caller.
  */
 gchar *purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
 
 /**
- * Parses the ntlm type 2 message
- *
+ * purple_ntlm_parse_type2:
  * @type2: String containing the base64 encoded type2 message
  * @flags: If not %NULL, this will store the flags for the message
+ *
+ * Parses the ntlm type 2 message
  *
  * Returns: The nonce for use in message type3.  This is a statically
  *         allocated 8 byte binary string.
@@ -51,16 +54,18 @@ gchar *purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
 guint8 *purple_ntlm_parse_type2(const gchar *type2, guint32 *flags);
 
 /**
- * Generates a type3 message
- *
+ * purple_ntlm_gen_type3:
  * @username: The username
  * @passw: The password
  * @hostname: The hostname
  * @domain: The domain to authenticate against
  * @nonce: The nonce returned by purple_ntlm_parse_type2
  * @flags: Pointer to the flags returned by purple_ntlm_parse_type2
+ *
+ * Generates a type3 message
+ *
  * Returns: A base64 encoded type3 message.  This should be g_free'd by
- *         the caller.
+ *          the caller.
  */
 gchar *purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags);
 

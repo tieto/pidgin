@@ -31,6 +31,8 @@
 #include "account.h"
 
 /**
+ * PurpleDnsQueryData:
+ *
  * An opaque structure representing a DNS query.  The hostname and port
  * associated with the query can be retrieved using
  * purple_dnsquery_get_host() and purple_dnsquery_get_port().
@@ -38,6 +40,8 @@
 typedef struct _PurpleDnsQueryData PurpleDnsQueryData;
 
 /**
+ * PurpleDnsQueryConnectFunction:
+ *
  * The "hosts" parameter is a linked list containing pairs of
  * one size_t addrlen and one struct sockaddr *addr.  It should
  * be free'd by the callback function.
@@ -45,12 +49,22 @@ typedef struct _PurpleDnsQueryData PurpleDnsQueryData;
 typedef void (*PurpleDnsQueryConnectFunction)(GSList *hosts, gpointer data, const char *error_message);
 
 /**
- * Callbacks used by the UI if it handles resolving DNS
+ * PurpleDnsQueryResolvedCallback:
+ *
+ * DNS query resolved callback used by the UI if it handles resolving DNS
  */
 typedef void  (*PurpleDnsQueryResolvedCallback) (PurpleDnsQueryData *query_data, GSList *hosts);
+
+/**
+ * PurpleDnsQueryFailedCallback:
+ *
+ * DNS query failed callback used by the UI if it handles resolving DNS
+ */
 typedef void  (*PurpleDnsQueryFailedCallback) (PurpleDnsQueryData *query_data, const gchar *error_message);
 
 /**
+ * PurpleDnsQueryUiOps:
+ *
  * DNS Request UI operations;  UIs should implement this if they want to do DNS
  * lookups themselves, rather than relying on the core.
  *
@@ -64,8 +78,8 @@ typedef struct
 	                         PurpleDnsQueryResolvedCallback resolved_cb,
 	                         PurpleDnsQueryFailedCallback failed_cb);
 
-	/** Called just before @a query_data is freed; this should cancel any
-	 *  further use of @a query_data the UI would make. Unneeded if
+	/** Called just before @query_data is freed; this should cancel any
+	 *  further use of @query_data the UI would make. Unneeded if
 	 *  #resolve_host is not implemented.
 	 */
 	void (*destroy)(PurpleDnsQueryData *query_data);
@@ -85,13 +99,14 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Perform an asynchronous DNS query.
- *
+ * purple_dnsquery_a:
  * @account:  The account that the query is being done for (or NULL)
  * @hostname: The hostname to resolve.
  * @port:     A port number which is stored in the struct sockaddr.
  * @callback: The callback function to call after resolving.
  * @data:     Extra data to pass to the callback function.
+ *
+ * Perform an asynchronous DNS query.
  *
  * Returns: NULL if there was an error, otherwise return a reference to
  *         a data structure that can be used to cancel the pending
@@ -101,23 +116,27 @@ G_BEGIN_DECLS
 PurpleDnsQueryData *purple_dnsquery_a(PurpleAccount *account, const char *hostname, int port, PurpleDnsQueryConnectFunction callback, gpointer data);
 
 /**
- * Cancel a DNS query and destroy the associated data structure.
- *
+ * purple_dnsquery_destroy:
  * @query_data: The DNS query to cancel.  This data structure
  *        is freed by this function.
+ *
+ * Cancel a DNS query and destroy the associated data structure.
  */
 void purple_dnsquery_destroy(PurpleDnsQueryData *query_data);
 
 /**
+ * purple_dnsquery_set_ui_ops:
+ * @ops: The UI operations structure.
+ *
  * Sets the UI operations structure to be used when doing a DNS
  * resolve.  The UI operations need only be set if the UI wants to
  * handle the resolve itself; otherwise, leave it as NULL.
- *
- * @ops: The UI operations structure.
  */
 void purple_dnsquery_set_ui_ops(PurpleDnsQueryUiOps *ops);
 
 /**
+ * purple_dnsquery_get_ui_ops:
+ *
  * Returns the UI operations structure to be used when doing a DNS
  * resolve.
  *
@@ -126,27 +145,35 @@ void purple_dnsquery_set_ui_ops(PurpleDnsQueryUiOps *ops);
 PurpleDnsQueryUiOps *purple_dnsquery_get_ui_ops(void);
 
 /**
+ * purple_dnsquery_get_host:
+ * @query_data: The DNS query
+ *
  * Get the host associated with a PurpleDnsQueryData
  *
- * @query_data: The DNS query
  * Returns: The host.
  */
 char *purple_dnsquery_get_host(PurpleDnsQueryData *query_data);
 
 /**
+ * purple_dnsquery_get_port:
+ * @query_data: The DNS query
+ *
  * Get the port associated with a PurpleDnsQueryData
  *
- * @query_data: The DNS query
  * Returns: The port.
  */
 unsigned short purple_dnsquery_get_port(PurpleDnsQueryData *query_data);
 
 /**
+ * purple_dnsquery_init:
+ *
  * Initializes the DNS query subsystem.
  */
 void purple_dnsquery_init(void);
 
 /**
+ * purple_dnsquery_uninit:
+ *
  * Uninitializes the DNS query subsystem.
  */
 void purple_dnsquery_uninit(void);

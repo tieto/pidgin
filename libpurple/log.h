@@ -51,11 +51,13 @@ typedef enum {
 } PurpleLogReadFlags;
 
 #include "account.h"
-#include "conversation.h"
+#include "conversations.h"
 
 typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 
 /**
+ * PurpleLogLogger:
+ *
  * A log logger.
  *
  * This struct gets filled out and is included in the PurpleLog.  It contains everything
@@ -104,7 +106,7 @@ struct _PurpleLogLogger {
 	 *  need to implement this function.
 	 *
 	 *  Loggers which implement this function must create a PurpleLogSet,
-	 *  then call @a cb with @a sets and the newly created PurpleLogSet. */
+	 *  then call @cb with @sets and the newly created PurpleLogSet. */
 	void (*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets);
 
 	/* Attempts to delete the specified log, indicating success or failure */
@@ -121,32 +123,40 @@ struct _PurpleLogLogger {
 };
 
 /**
+ * PurpleLog:
+ * @type:        The type of log this is
+ * @name:        The name of this log
+ * @account:     The account this log is taking place on
+ * @conv:        The conversation being logged
+ * @time:        The time this conversation started, converted to the local
+ *               timezone
+ * @logger:      The logging mechanism this log is to use
+ * @logger_data: Data used by the log logger
+ * @tm:          The time this conversation started, saved with original
+ *               timezone data, if available and if struct tm has the BSD
+ *               timezone fields, else %NULL. Do NOT modify anything in this
+ *               struct.
+ *
  * A log.  Not the wooden type.
  */
 struct _PurpleLog {
-	PurpleLogType type;                     /**< The type of log this is */
-	char *name;                           /**< The name of this log */
-	PurpleAccount *account;                 /**< The account this log is taking
-	                                           place on */
-	PurpleConversation *conv;               /**< The conversation being logged */
-	time_t time;                          /**< The time this conversation
-	                                           started, converted to the local timezone */
+	PurpleLogType type;
+	char *name;
+	PurpleAccount *account;
+	PurpleConversation *conv;
+	time_t time;
 
-	PurpleLogLogger *logger;                /**< The logging mechanism this log
-	                                           is to use */
-	void *logger_data;                    /**< Data used by the log logger */
-	struct tm *tm;                        /**< The time this conversation
-	                                           started, saved with original
-	                                           timezone data, if available and
-	                                           if struct tm has the BSD
-	                                           timezone fields, else %NULL.
-	                                           Do NOT modify anything in this struct.*/
+	PurpleLogLogger *logger;
+	void *logger_data;
+	struct tm *tm;
 
 	/* IMPORTANT: Some code in log.c allocates these without zeroing them.
 	 * IMPORTANT: Update that code if you add members here. */
 };
 
 /**
+ * PurpleLogCommonLoggerData:
+ *
  * A common logger_data struct containing a file handle and path, as well
  * as a pointer to something else for additional data.
  */
@@ -157,27 +167,28 @@ struct _PurpleLogCommonLoggerData {
 };
 
 /**
+ * PurpleLogSet:
+ * @type:            The type of logs available
+ * @name:            The name of the logs available
+ * @account:         The account the available logs took place on. This will be
+ *                   %NULL if the account no longer exists. (Depending on a
+ *                   logger's implementation of list, it may not be possible to
+ *                   load such logs.)
+ * @buddy:           Is this (account, name) a buddy on the buddy list?
+ * @normalized_name: The normalized version of @name. It must be set, and may
+ *                   be set to the same pointer value as @name.
+ *
  * Describes available logs.
  *
  * By passing the elements of this struct to purple_log_get_logs(), the caller
  * can get all available PurpleLogs.
  */
 struct _PurpleLogSet {
-	PurpleLogType type;                     /**< The type of logs available */
-	char *name;                           /**< The name of the logs available */
-	PurpleAccount *account;                 /**< The account the available logs
-	                                           took place on. This will be
-	                                           %NULL if the account no longer
-	                                           exists. (Depending on a
-	                                           logger's implementation of
-	                                           list, it may not be possible
-	                                           to load such logs.) */
-	gboolean buddy;                       /**< Is this (account, name) a buddy
-	                                           on the buddy list? */
-	char *normalized_name;                /**< The normalized version of
-	                                           @a name. It must be set, and
-	                                           may be set to the same pointer
-	                                           value as @a name. */
+	PurpleLogType type;
+	char *name;
+	PurpleAccount *account;
+	gboolean buddy;
+	char *normalized_name;
 
 	/* IMPORTANT: Some code in log.c allocates these without zeroing them.
 	 * IMPORTANT: Update that code if you add members here. */
@@ -191,6 +202,8 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * purple_log_get_type:
+ *
  * Returns the GType for the PurpleLog boxed structure.
  * TODO Boxing of PurpleLog is a temporary solution to having a GType for
  *      logs. This should rather be a GObject instead of a GBoxed.
@@ -198,8 +211,7 @@ G_BEGIN_DECLS
 GType purple_log_get_type(void);
 
 /**
- * Creates a new log
- *
+ * purple_log_new:
  * @type:        The type of log this is.
  * @name:        The name of this conversation (buddy name, chat name,
  *                    etc.)
@@ -208,27 +220,32 @@ GType purple_log_get_type(void);
  * @time:        The time this conversation started
  * @tm:          The time this conversation started, with timezone data,
  *                    if available and if struct tm has the BSD timezone fields.
+ *
+ * Creates a new log
+ *
  * Returns:            The new log
  */
 PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *account,
                       PurpleConversation *conv, time_t time, const struct tm *tm);
 
 /**
- * Frees a log
- *
+ * purple_log_free:
  * @log:         The log to destroy
+ *
+ * Frees a log
  */
 void purple_log_free(PurpleLog *log);
 
 /**
- * Writes to a log file. Assumes you have checked preferences already.
- *
+ * purple_log_write:
  * @log:          The log to write to
  * @type:         The type of message being logged
  * @from:         Whom this message is coming from, or %NULL for
  *                     system messages
  * @time:         A timestamp in UNIX time
  * @message:      The message to log
+ *
+ * Writes to a log file. Assumes you have checked preferences already.
  */
 void purple_log_write(PurpleLog *log,
 		    PurpleMessageFlags type,
@@ -237,26 +254,31 @@ void purple_log_write(PurpleLog *log,
 		    const char *message);
 
 /**
- * Reads from a log
- *
+ * purple_log_read:
  * @log:   The log to read from
  * @flags: The returned logging flags.
+ *
+ * Reads from a log
  *
  * Returns: The contents of this log in Purple Markup.
  */
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags);
 
 /**
- * Returns a list of all available logs
- *
+ * purple_log_get_logs:
  * @type:                The type of the log
  * @name:                The name of the log
  * @account:             The account
+ *
+ * Returns a list of all available logs
+ *
  * Returns:                    A sorted list of PurpleLogs
  */
 GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *account);
 
 /**
+ * purple_log_get_log_sets:
+ *
  * Returns a GHashTable of PurpleLogSets.
  *
  * A "log set" here means the information necessary to gather the
@@ -275,96 +297,115 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
 GHashTable *purple_log_get_log_sets(void);
 
 /**
+ * purple_log_get_system_logs:
+ * @account: The account
+ *
  * Returns a list of all available system logs
  *
- * @account: The account
  * Returns:        A sorted list of PurpleLogs
  */
 GList *purple_log_get_system_logs(PurpleAccount *account);
 
 /**
+ * purple_log_get_size:
+ * @log:                 The log
+ *
  * Returns the size of a log
  *
- * @log:                 The log
  * Returns:                    The size of the log, in bytes
  */
 int purple_log_get_size(PurpleLog *log);
 
 /**
- * Returns the size, in bytes, of all available logs in this conversation
- *
+ * purple_log_get_total_size:
  * @type:                The type of the log
  * @name:                The name of the log
  * @account:             The account
+ *
+ * Returns the size, in bytes, of all available logs in this conversation
+ *
  * Returns:                    The size in bytes
  */
 int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
 
 /**
- * Returns the activity score of a log, based on total size in bytes,
- * which is then decayed based on age
- *
+ * purple_log_get_activity_score:
  * @type:                The type of the log
  * @name:                The name of the log
  * @account:             The account
+ *
+ * Returns the activity score of a log, based on total size in bytes,
+ * which is then decayed based on age
+ *
  * Returns:                    The activity score
  */
 int purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleAccount *account);
 
 /**
+ * purple_log_is_deletable:
+ * @log:                 The log
+ *
  * Tests whether a log is deletable
  *
  * A return value of %FALSE indicates that purple_log_delete() will fail on this
  * log, unless something changes between the two calls.  A return value of %TRUE,
  * however, does not guarantee the log can be deleted.
  *
- * @log:                 The log
  * Returns:                    A boolean indicating if the log is deletable
  */
 gboolean purple_log_is_deletable(PurpleLog *log);
 
 /**
+ * purple_log_delete:
+ * @log:                 The log
+ *
  * Deletes a log
  *
- * @log:                 The log
  * Returns:                    A boolean indicating success or failure
  */
 gboolean purple_log_delete(PurpleLog *log);
 
 /**
+ * purple_log_get_log_dir:
+ * @type:                The type of the log.
+ * @name:                The name of the log.
+ * @account:             The account.
+ *
  * Returns the default logger directory Purple uses for a given account
  * and username.  This would be where Purple stores logs created by
  * the built-in text or HTML loggers.
  *
- * @type:                The type of the log.
- * @name:                The name of the log.
- * @account:             The account.
  * Returns:                    The default logger directory for Purple.
  */
 char *purple_log_get_log_dir(PurpleLogType type, const char *name, PurpleAccount *account);
 
 /**
- * Implements GCompareFunc for PurpleLogs
- *
+ * purple_log_compare:
  * @y:                   A PurpleLog
  * @z:                   Another PurpleLog
+ *
+ * Implements GCompareFunc for PurpleLogs
+ *
  * Returns:                    A value as specified by GCompareFunc
  */
 gint purple_log_compare(gconstpointer y, gconstpointer z);
 
 /**
- * Implements GCompareFunc for PurpleLogSets
- *
+ * purple_log_set_compare:
  * @y:                   A PurpleLogSet
  * @z:                   Another PurpleLogSet
+ *
+ * Implements GCompareFunc for PurpleLogSets
+ *
  * Returns:                    A value as specified by GCompareFunc
  */
 gint purple_log_set_compare(gconstpointer y, gconstpointer z);
 
 /**
- * Frees a log set
- *
+ * purple_log_set_free:
  * @set:         The log set to destroy
+ *
+ * Frees a log set
  */
 void purple_log_set_free(PurpleLogSet *set);
 
@@ -376,6 +417,10 @@ void purple_log_set_free(PurpleLogSet *set);
 /*@{*/
 
 /**
+ * purple_log_common_writer:
+ * @log:   The log to write to.
+ * @ext:   The file extension to give to this log file.
+ *
  * Opens a new log file in the standard Purple log location
  * with the given file extension, named for the current time,
  * for writing.  If a log file is already open, the existing
@@ -384,29 +429,27 @@ void purple_log_set_free(PurpleLogSet *set);
  * file handle and log path.
  *
  * This function is intended to be used as a "common"
- * implementation of a logger's @c write function.
+ * implementation of a logger's <tt>write</tt> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
- *
- * @log:   The log to write to.
- * @ext:   The file extension to give to this log file.
  */
 void purple_log_common_writer(PurpleLog *log, const char *ext);
 
 /**
- * Returns a sorted GList of PurpleLogs of the requested type.
- *
- * This function should only be used with logs that are written
- * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's @c list function.
- * It should only be passed to purple_log_logger_new() and never
- * called directly.
- *
+ * purple_log_common_lister:
  * @type:     The type of the logs being listed.
  * @name:     The name of the log.
  * @account:  The account of the log.
  * @ext:      The file extension this log format uses.
  * @logger:   A reference to the logger struct for this log.
+ *
+ * Returns a sorted GList of PurpleLogs of the requested type.
+ *
+ * This function should only be used with logs that are written
+ * with purple_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's <tt>list</tt> function.
+ * It should only be passed to purple_log_logger_new() and never
+ * called directly.
  *
  * Returns: A sorted GList of PurpleLogs matching the parameters.
  */
@@ -415,20 +458,21 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name,
 							  PurpleLogLogger *logger);
 
 /**
- * Returns the total size of all the logs for a given user, with
- * a given extension.
- *
- * This function should only be used with logs that are written
- * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's @c total_size function.
- * It should only be passed to purple_log_logger_new() and never
- * called directly.
- *
+ * purple_log_common_total_sizer:
  * @type:     The type of the logs being sized.
  * @name:     The name of the logs to size
  *                 (e.g. the username or chat name).
  * @account:  The account of the log.
  * @ext:      The file extension this log format uses.
+ *
+ * Returns the total size of all the logs for a given user, with
+ * a given extension.
+ *
+ * This function should only be used with logs that are written
+ * with purple_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's <tt>total_size</tt> function.
+ * It should only be passed to purple_log_logger_new() and never
+ * called directly.
  *
  * Returns: The size of all the logs with the specified extension
  *         for the specified user.
@@ -437,45 +481,48 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name,
 								PurpleAccount *account, const char *ext);
 
 /**
+ * purple_log_common_sizer:
+ * @log:      The PurpleLog to size.
+ *
  * Returns the size of a given PurpleLog.
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's @c size function.
+ * a "common" implementation of a logger's <tt>size</tt> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
- *
- * @log:      The PurpleLog to size.
  *
  * Returns: An integer indicating the size of the log in bytes.
  */
 int purple_log_common_sizer(PurpleLog *log);
 
 /**
+ * purple_log_common_deleter:
+ * @log:      The PurpleLog to delete.
+ *
  * Deletes a log
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's @c delete function.
+ * a "common" implementation of a logger's <tt>delete</tt> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
- *
- * @log:      The PurpleLog to delete.
  *
  * Returns: A boolean indicating success or failure.
  */
 gboolean purple_log_common_deleter(PurpleLog *log);
 
 /**
+ * purple_log_common_is_deletable:
+ * @log:      The PurpleLog to check.
+ *
  * Checks to see if a log is deletable
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's @c is_deletable function.
+ * a "common" implementation of a logger's <tt>is_deletable</tt> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
- *
- * @log:      The PurpleLog to check.
  *
  * Returns: A boolean indicating if the log is deletable.
  */
@@ -489,58 +536,64 @@ gboolean purple_log_common_is_deletable(PurpleLog *log);
 /*@{*/
 
 /**
- * Creates a new logger
- *
+ * purple_log_logger_new:
  * @id:           The logger's id.
  * @name:         The logger's name.
  * @functions:    The number of functions being passed. The following
- *                     functions are currently available (in order): @c create,
- *                     @c write, @c finalize, @c list, @c read, @c size,
- *                     @c total_size, @c list_syslog, @c get_log_sets,
- *                     @c remove, @c is_deletable.
- *                     For details on these functions, see PurpleLogLogger.
- *                     Functions may not be skipped. For example, passing
- *                     @c create and @c write is acceptable (for a total of
- *                     two functions). Passing @c create and @c finalize,
- *                     however, is not. To accomplish that, the caller must
- *                     pass @c create, %NULL (a placeholder for @c write),
- *                     and @c finalize (for a total of 3 functions).
+ *                functions are currently available (in order): <tt>create</tt>,
+ *                <tt>write</tt>, <tt>finalize</tt>, <tt>list</tt>,
+ *                <tt>read</tt>, <tt>size</tt>, <tt>total_size</tt>,
+ *                <tt>list_syslog</tt>, <tt>get_log_sets</tt>, <tt>remove</tt>,
+ *                <tt>is_deletable</tt>.
+ *                For details on these functions, see PurpleLogLogger.
+ *                Functions may not be skipped. For example, passing
+ *                <tt>create</tt> and <tt>write</tt> is acceptable (for a total
+ *                of two functions). Passing <tt>create</tt> and
+ *                <tt>finalize</tt>, however, is not. To accomplish that, the
+ *                caller must pass <tt>create</tt>, %NULL (a placeholder for
+ *                <tt>write</tt>), and <tt>finalize</tt> (for a total of 3
+ *                functions).
+ *
+ * Creates a new logger
  *
  * Returns: The new logger
  */
 PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int functions, ...);
 
 /**
- * Frees a logger
- *
+ * purple_log_logger_free:
  * @logger:       The logger to free
+ *
+ * Frees a logger
  */
 void purple_log_logger_free(PurpleLogLogger *logger);
 
 /**
- * Adds a new logger
- *
+ * purple_log_logger_add:
  * @logger:       The new logger to add
+ *
+ * Adds a new logger
  */
 void purple_log_logger_add (PurpleLogLogger *logger);
 
 /**
+ * purple_log_logger_remove:
+ * @logger:       The logger to remove
  *
  * Removes a logger
- *
- * @logger:       The logger to remove
  */
 void purple_log_logger_remove (PurpleLogLogger *logger);
 
 /**
+ * purple_log_logger_set:
+ * @logger:       The logger to set
  *
  * Sets the current logger
- *
- * @logger:       The logger to set
  */
 void purple_log_logger_set (PurpleLogLogger *logger);
 
 /**
+ * purple_log_logger_get:
  *
  * Returns the current logger
  *
@@ -549,6 +602,8 @@ void purple_log_logger_set (PurpleLogLogger *logger);
 PurpleLogLogger *purple_log_logger_get (void);
 
 /**
+ * purple_log_logger_get_options:
+ *
  * Returns a GList containing the IDs and names of the registered
  * loggers.
  *
@@ -562,11 +617,15 @@ GList *purple_log_logger_get_options(void);
 /*@{*/
 
 /**
+ * purple_log_init:
+ *
  * Initializes the log subsystem.
  */
 void purple_log_init(void);
 
 /**
+ * purple_log_get_handle:
+ *
  * Returns the log subsystem handle.
  *
  * Returns: The log subsystem handle.
@@ -574,6 +633,8 @@ void purple_log_init(void);
 void *purple_log_get_handle(void);
 
 /**
+ * purple_log_uninit:
+ *
  * Uninitializes the log subsystem.
  */
 void purple_log_uninit(void);

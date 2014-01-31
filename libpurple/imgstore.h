@@ -33,8 +33,11 @@
 #define PURPLE_STORED_IMAGE_PROTOCOL "purple-image:"
 #define PURPLE_STOCK_IMAGE_PROTOCOL "purple-stock-image:"
 
-/** A reference-counted immutable wrapper around an image's data and its
- *  filename.
+/**
+ * PurpleStoredImage:
+ *
+ * A reference-counted immutable wrapper around an image's data and its
+ * filename.
  */
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
@@ -43,6 +46,8 @@ typedef struct _PurpleStoredImage PurpleStoredImage;
 G_BEGIN_DECLS
 
 /**
+ * purple_imgstore_get_type:
+ *
  * Returns the GType for the PurpleStoredImage boxed structure.
  * TODO Boxing of PurpleStoredImage is a temporary solution to having a GType
  *      for stored images. This should rather be a GObject instead of a GBoxed.
@@ -50,15 +55,7 @@ G_BEGIN_DECLS
 GType purple_imgstore_get_type(void);
 
 /**
- * Create a new PurpleStoredImage.
- *
- * The image is not added to the image store and no ID is assigned.  If you
- * need to reference the image by an ID, use purple_imgstore_new_with_id()
- * instead.
- *
- * The caller owns a reference to this image and must dereference it with
- * purple_imgstore_unref() for it to be freed.
- *
+ * purple_imgstore_new:
  * @data:      Pointer to the image data, which the imgstore will take
  *                  ownership of and free as appropriate.  If you want a
  *                  copy of the data, make it before calling this function.
@@ -72,6 +69,15 @@ GType purple_imgstore_get_type(void);
  *                  disk, make sure the filename is appropriately escaped.
  *                  You may wish to use purple_escape_filename().
  *
+ * Create a new PurpleStoredImage.
+ *
+ * The image is not added to the image store and no ID is assigned.  If you
+ * need to reference the image by an ID, use purple_imgstore_new_with_id()
+ * instead.
+ *
+ * The caller owns a reference to this image and must dereference it with
+ * purple_imgstore_unref() for it to be freed.
+ *
  * Returns: The image, or NULL if the image could not be created (because of
  *         empty data or size).
  */
@@ -79,6 +85,9 @@ PurpleStoredImage *
 purple_imgstore_new(gpointer data, size_t size, const char *filename);
 
 /**
+ * purple_imgstore_new_from_file:
+ * @path: The path to the image.
+ *
  * Create a PurpleStoredImage using purple_imgstore_new() by reading the
  * given filename from disk.
  *
@@ -93,8 +102,6 @@ purple_imgstore_new(gpointer data, size_t size, const char *filename);
  * The caller owns a reference to this image and must dereference it with
  * purple_imgstore_unref() for it to be freed.
  *
- * @path: The path to the image.
- *
  * Returns: The image, or NULL if the image could not be created (because of
  *         empty data or size).
  */
@@ -102,13 +109,7 @@ PurpleStoredImage *
 purple_imgstore_new_from_file(const char *path);
 
 /**
- * Create a PurpleStoredImage using purple_imgstore_new() and add the
- * image to the image store.  A unique ID will be assigned to the image.
- *
- * The caller owns a reference to the image and must dereference it with
- * purple_imgstore_unref() or purple_imgstore_unref_by_id() for it to be
- * freed.
- *
+ * purple_imgstore_new_with_id:
  * @data:      Pointer to the image data, which the imgstore will take
  *                  ownership of and free as appropriate.  If you want a
  *                  copy of the data, make it before calling this function.
@@ -122,6 +123,13 @@ purple_imgstore_new_from_file(const char *path);
  *                  disk, make sure the filename is appropriately escaped.
  *                  You may wish to use purple_escape_filename()
  *
+ * Create a PurpleStoredImage using purple_imgstore_new() and add the
+ * image to the image store.  A unique ID will be assigned to the image.
+ *
+ * The caller owns a reference to the image and must dereference it with
+ * purple_imgstore_unref() or purple_imgstore_unref_by_id() for it to be
+ * freed.
+ *
  * Returns: ID for the image.  This is a unique number that can be used
  *         within libpurple to reference the image.  0 is returned if the
  *         image could not be created (because of empty data or size).
@@ -129,19 +137,21 @@ purple_imgstore_new_from_file(const char *path);
 int purple_imgstore_new_with_id(gpointer data, size_t size, const char *filename);
 
 /**
+ * purple_imgstore_find_by_id:
+ * @id: The ID for the image.
+ *
  * Retrieve an image from the store. The caller does not own a
  * reference to the image.
- *
- * @id: The ID for the image.
  *
  * Returns: A pointer to the requested image, or NULL if it was not found.
  */
 PurpleStoredImage *purple_imgstore_find_by_id(int id);
 
 /**
- * Retrieves a pointer to the image's data.
- *
+ * purple_imgstore_get_data:
  * @img: The Image.
+ *
+ * Retrieves a pointer to the image's data.
  *
  * Returns: A pointer to the data, which must not
  *         be freed or modified.
@@ -149,9 +159,10 @@ PurpleStoredImage *purple_imgstore_find_by_id(int id);
 gconstpointer purple_imgstore_get_data(PurpleStoredImage *img);
 
 /**
- * Retrieves the length of the image's data.
- *
+ * purple_imgstore_get_size:
  * @img: The Image.
+ *
+ * Retrieves the length of the image's data.
  *
  * Returns: The size of the data that the pointer returned by
  *         purple_imgstore_get_data points to.
@@ -159,12 +170,13 @@ gconstpointer purple_imgstore_get_data(PurpleStoredImage *img);
 size_t purple_imgstore_get_size(PurpleStoredImage *img);
 
 /**
+ * purple_imgstore_get_filename:
+ * @img: The image.
+ *
  * Retrieves a pointer to the image's filename.  If you intend to use this
  * filename to write the file to disk, make sure the filename was
  * appropriately escaped when you created the PurpleStoredImage.  You may
  * wish to use purple_escape_filename().
- *
- * @img: The image.
  *
  * Returns: A pointer to the filename, which must not
  *         be freed or modified.
@@ -172,10 +184,11 @@ size_t purple_imgstore_get_size(PurpleStoredImage *img);
 const char *purple_imgstore_get_filename(const PurpleStoredImage *img);
 
 /**
+ * purple_imgstore_get_extension:
+ * @img: The image.
+ *
  * Looks at the magic numbers of the image data (the first few bytes)
  * and returns an extension corresponding to the image's file type.
- *
- * @img: The image.
  *
  * Returns: The image's extension (for example "png") or "icon"
  *         if unknown.
@@ -183,50 +196,56 @@ const char *purple_imgstore_get_filename(const PurpleStoredImage *img);
 const char *purple_imgstore_get_extension(PurpleStoredImage *img);
 
 /**
- * Increment the reference count.
- *
+ * purple_imgstore_ref:
  * @img: The image.
  *
- * Returns: @a img
+ * Increment the reference count.
+ *
+ * Returns: @img
  */
 PurpleStoredImage *
 purple_imgstore_ref(PurpleStoredImage *img);
 
 /**
+ * purple_imgstore_unref:
+ * @img: The image.
+ *
  * Decrement the reference count.
  *
  * If the reference count reaches zero, the image will be freed.
  *
- * @img: The image.
- *
- * Returns: @a img or %NULL if the reference count reached zero.
+ * Returns: @img or %NULL if the reference count reached zero.
  */
 PurpleStoredImage *
 purple_imgstore_unref(PurpleStoredImage *img);
 
 /**
+ * purple_imgstore_ref_by_id:
+ * @id: The ID for the image.
+ *
  * Increment the reference count using an ID.
  *
  * This is a convience wrapper for purple_imgstore_find_by_id() and
  * purple_imgstore_ref(), so if you have a PurpleStoredImage, it'll
  * be more efficient to call purple_imgstore_ref() directly.
- *
- * @id: The ID for the image.
  */
 void purple_imgstore_ref_by_id(int id);
 
 /**
+ * purple_imgstore_unref_by_id:
+ * @id: The ID for the image.
+ *
  * Decrement the reference count using an ID.
  *
  * This is a convience wrapper for purple_imgstore_find_by_id() and
  * purple_imgstore_unref(), so if you have a PurpleStoredImage, it'll
  * be more efficient to call purple_imgstore_unref() directly.
- *
- * @id: The ID for the image.
  */
 void purple_imgstore_unref_by_id(int id);
 
 /**
+ * purple_imgstore_get_handle:
+ *
  * Returns the image store subsystem handle.
  *
  * Returns: The subsystem handle.
@@ -234,11 +253,15 @@ void purple_imgstore_unref_by_id(int id);
 void *purple_imgstore_get_handle(void);
 
 /**
+ * purple_imgstore_init:
+ *
  * Initializes the image store subsystem.
  */
 void purple_imgstore_init(void);
 
 /**
+ * purple_imgstore_uninit:
+ *
  * Uninitializes the image store subsystem.
  */
 void purple_imgstore_uninit(void);
