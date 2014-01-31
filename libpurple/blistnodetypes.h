@@ -540,7 +540,7 @@ PurpleAccount *purple_chat_get_account(PurpleChat *chat);
  *
  * @chat:  The chat.
  *
- * Returns: (TODO const):  The hashtable.
+ * Returns: (transfer none):  The hashtable.
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
 

@@ -56,21 +56,21 @@ void purple_conversations_remove(PurpleConversation *conv);
  *
  * This list includes both IMs and chats.
  *
- * Returns: (TODO const): A GList of all conversations.
+ * Returns: (transfer none): A GList of all conversations.
  */
 GList *purple_conversations_get_all(void);
 
 /**
  * Returns a list of all IMs.
  *
- * Returns: (TODO const): A GList of all IMs.
+ * Returns: (transfer none): A GList of all IMs.
  */
 GList *purple_conversations_get_ims(void);
 
 /**
  * Returns a list of all chats.
  *
- * Returns: (TODO const): A GList of all chats.
+ * Returns: (transfer none): A GList of all chats.
  */
 GList *purple_conversations_get_chats(void);
 

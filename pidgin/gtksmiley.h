@@ -61,7 +61,7 @@ void pidgin_smileys_uninit(void);
 /**
  * Returns a GSList with the GtkIMHtmlSmiley of each custom smiley
  *
- * Returns: (TODO const): A GtkIMHmlSmiley list
+ * Returns: (transfer none): A GtkIMHmlSmiley list
  */
 GSList *pidgin_smileys_get_all(void);
 

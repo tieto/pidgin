@@ -62,7 +62,7 @@ char *purple_pmp_get_public_ip(void);
  * @lifetime:    The lifetime of the mapping. It is recommended that this
  *                    be PURPLE_PMP_LIFETIME.
  *
- * Returns:s TRUE if successful; FALSE if unsuccessful
+ * Returns: TRUE if successful; FALSE if unsuccessful
  */
 gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport,
                                unsigned short publicport, int lifetime);
@@ -73,7 +73,7 @@ gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport,
  * @type:        The PurplePmpType
  * @privateport: The private port on which the mapping was previously made
  *
- * Returns:s TRUE if successful; FALSE if unsuccessful
+ * Returns: TRUE if successful; FALSE if unsuccessful
  */
 gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport);
 

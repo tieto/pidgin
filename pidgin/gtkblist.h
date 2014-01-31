@@ -252,7 +252,7 @@ void pidgin_blist_set_theme(PidginBlistTheme *theme);
 /**
  * Gets Pidgin's current buddy list theme
  *
- * Returns:s	the current theme
+ * Returns:	the current theme
  */
 PidginBlistTheme *pidgin_blist_get_theme(void);
 

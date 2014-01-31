@@ -93,7 +93,7 @@ void purple_theme_manager_refresh(void);
  * @name: The name of the PurpleTheme.
  * @type: The type of the PurpleTheme.
  *
- * Returns:s The PurpleTheme, or NULL if it wasn't found.
+ * Returns: The PurpleTheme, or NULL if it wasn't found.
  */
 PurpleTheme *purple_theme_manager_find_theme(const gchar *name, const gchar *type);
 

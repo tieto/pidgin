@@ -240,7 +240,7 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
  * Get the list of fields for a roomlist.
  *
  * @roomlist: The roomlist, which must not be %NULL.
- * Returns: (TODO const): A list of fields
+ * Returns: (transfer none): A list of fields
  */
 GList *purple_roomlist_get_fields(PurpleRoomlist *roomlist);
 
@@ -365,7 +365,7 @@ void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean e
  * Get the list of fields for a room.
  *
  * @room:  The room, which must not be %NULL.
- * Returns: (TODO const): A list of fields
+ * Returns: (transfer none): A list of fields
  */
 GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
 
