@@ -30,11 +30,13 @@
 #include "account.h"
 #include "status.h"
 
-/** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps  PurpleAccountUiOps;
 
-/**  Account UI operations, used to notify the user of status changes and when
- *   buddies add this account to their buddy lists.
+/**
+ * PurpleAccountUiOps:
+ *
+ * Account UI operations, used to notify the user of status changes and when
+ * buddies add this account to their buddy lists.
  */
 struct _PurpleAccountUiOps
 {
@@ -99,39 +101,45 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Adds an account to the list of accounts.
- *
+ * purple_accounts_add:
  * @account: The account.
+ *
+ * Adds an account to the list of accounts.
  */
 void purple_accounts_add(PurpleAccount *account);
 
 /**
- * Removes an account from the list of accounts.
- *
+ * purple_accounts_remove:
  * @account: The account.
+ *
+ * Removes an account from the list of accounts.
  */
 void purple_accounts_remove(PurpleAccount *account);
 
 /**
+ * purple_accounts_delete:
+ * @account: The account.
+ *
  * Deletes an account.
  *
  * This will remove any buddies from the buddy list that belong to this
  * account, buddy pounces that belong to this account, and will also
- * destroy @a account.
- *
- * @account: The account.
+ * destroy @account.
  */
 void purple_accounts_delete(PurpleAccount *account);
 
 /**
- * Reorders an account.
- *
+ * purple_accounts_reorder:
  * @account:   The account to reorder.
  * @new_index: The new index for the account.
+ *
+ * Reorders an account.
  */
 void purple_accounts_reorder(PurpleAccount *account, guint new_index);
 
 /**
+ * purple_accounts_get_all:
+ *
  * Returns a list of all accounts.
  *
  * Returns: (transfer none): A list of all accounts.
@@ -139,6 +147,8 @@ void purple_accounts_reorder(PurpleAccount *account, guint new_index);
 GList *purple_accounts_get_all(void);
 
 /**
+ * purple_accounts_get_all_active:
+ *
  * Returns a list of all enabled accounts
  *
  * Returns: A list of all enabled accounts. The list is owned
@@ -148,16 +158,19 @@ GList *purple_accounts_get_all(void);
 GList *purple_accounts_get_all_active(void);
 
 /**
- * Finds an account with the specified name and protocol id.
- *
+ * purple_accounts_find:
  * @name:     The account username.
  * @protocol: The account protocol ID.
+ *
+ * Finds an account with the specified name and protocol id.
  *
  * Returns: The account, if found, or %FALSE otherwise.
  */
 PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
 
 /**
+ * purple_accounts_restore_current_statuses:
+ *
  * This is called by the core after all subsystems and what
  * not have been initialized.  It sets all enabled accounts
  * to their startup status by signing them on, setting them
@@ -176,13 +189,16 @@ void purple_accounts_restore_current_statuses(void);
 /**************************************************************************/
 /*@{*/
 /**
- * Sets the UI operations structure to be used for accounts.
- *
+ * purple_accounts_set_ui_ops:
  * @ops: The UI operations structure.
+ *
+ * Sets the UI operations structure to be used for accounts.
  */
 void purple_accounts_set_ui_ops(PurpleAccountUiOps *ops);
 
 /**
+ * purple_accounts_get_ui_ops:
+ *
  * Returns the UI operations structure used for accounts.
  *
  * Returns: The UI operations structure in use.
@@ -198,6 +214,8 @@ PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 /*@{*/
 
 /**
+ * purple_accounts_get_handle:
+ *
  * Returns the accounts subsystem handle.
  *
  * Returns: The accounts subsystem handle.
@@ -205,16 +223,22 @@ PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 void *purple_accounts_get_handle(void);
 
 /**
+ * purple_accounts_init:
+ *
  * Initializes the accounts subsystem.
  */
 void purple_accounts_init(void);
 
 /**
+ * purple_accounts_uninit:
+ *
  * Uninitializes the accounts subsystem.
  */
 void purple_accounts_uninit(void);
 
 /**
+ * purple_accounts_schedule_save:
+ *
  * Schedules saving of accounts
  */
 void purple_accounts_schedule_save(void);
