@@ -291,12 +291,7 @@ init_libpurple(int argc, char **argv)
 
 	/* scan command-line options */
 	opterr = 1;
-	while ((opt = getopt_long(argc, argv,
-#ifndef _WIN32
-				  "c:dhn::v",
-#else
-				  "c:dhn::v",
-#endif
+	while ((opt = getopt_long(argc, argv, "c:dhn::v",
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'c':	/* config dir */
@@ -413,7 +408,7 @@ init_libpurple(int argc, char **argv)
 	return 1;
 }
 
-static gboolean gnt_start(int *argc, char ***argv)
+gboolean gnt_start(int *argc, char ***argv)
 {
 	/* Initialize the libpurple stuff */
 	if (!init_libpurple(*argc, *argv))
@@ -421,31 +416,5 @@ static gboolean gnt_start(int *argc, char ***argv)
 
 	purple_blist_show();
 	return TRUE;
-}
-
-int main(int argc, char *argv[])
-{
-	signal(SIGPIPE, SIG_IGN);
-
-#if !GLIB_CHECK_VERSION(2, 32, 0)
-	/* GLib threading system is automaticaly initialized since 2.32.
-	 * For earlier versions, it have to be initialized before calling any
-	 * Glib or GTK+ functions.
-	 */
-	g_thread_init(NULL);
-#endif
-
-	g_set_prgname("Finch");
-	g_set_application_name(_("Finch"));
-
-	if (gnt_start(&argc, &argv)) {
-		gnt_main();
-
-#ifdef STANDALONE
-		purple_core_quit();
-#endif
-	}
-
-	return 0;
 }
 

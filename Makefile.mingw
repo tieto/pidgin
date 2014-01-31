@@ -64,7 +64,7 @@ EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 
 include $(PIDGIN_COMMON_RULES)
 
-.PHONY: all docs install installer installer_offline installer_zip debug_symbols_zip installers clean uninstall create_release_install_dir generate_installer_includes $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) gtk_runtime_zip
+.PHONY: all install installer installer_offline installer_zip debug_symbols_zip installers clean uninstall create_release_install_dir generate_installer_includes $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) gtk_runtime_zip
 
 all: $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H)
 	$(MAKE_at) $(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
@@ -174,20 +174,12 @@ endif
 
 installers: installer installer_offline debug_symbols_zip installer_zip
 
-Doxyfile.mingw: Doxyfile.in
-	sed -e "s/@PACKAGE@/pidgin/" -e "s/@VERSION@/$(PIDGIN_VERSION)/" -e "s/@top_srcdir@/$(PIDGIN_TREE_TOP)/g" -e "s/@enable_dot@/NO/" $< > $@
-
-docs: Doxyfile.mingw
-	@echo "Running doxygen..."
-	@doxygen Doxyfile.mingw
-
 clean:
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) clean
 	rm -f $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) ./VERSION pidgin-$(PIDGIN_VERSION)*.exe pidgin-$(PIDGIN_VERSION)-win32-bin.zip $(DEBUG_SYMBOLS_DIR).zip
-	rm -rf doc/html Doxyfile.mingw
 
 uninstall:
 	rm -rf $(PURPLE_INSTALL_PERL_DIR) $(PIDGIN_INSTALL_PLUGINS_DIR) $(PURPLE_INSTALL_PO_DIR) $(PIDGIN_INSTALL_DIR) $(STRIPPED_RELEASE_DIR) $(DEBUG_SYMBOLS_DIR)

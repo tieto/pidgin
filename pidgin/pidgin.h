@@ -60,5 +60,10 @@
 #define PIDGIN_HIG_BORDER        12
 #define PIDGIN_HIG_BOX_SPACE      6
 
+/**
+ * Start pidgin with the given command line arguments.
+ */
+int pidgin_start(int argc, char *argv[]);
+
 #endif /* _PIDGIN_H_ */
 

@@ -1,10 +1,7 @@
-/**
- * @defgroup finch Finch (GNT User Interface)
- */
-
-/* finch
+/*
+ * pidgin
  *
- * Finch is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -21,22 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
  */
-#ifndef _FINCH_H_
-#define _FINCH_H_
 
-#include <glib.h>
+#include "internal.h"
+#include "pidgin.h"
 
-#define FINCH_UI "gnt-purple"
-
-#define FINCH_PREFS_ROOT "/finch"
-
-#define FINCH_GET_DATA(obj)        (obj)->ui_data
-#define FINCH_SET_DATA(obj, data)  (obj)->ui_data = data
-
-/**
- * Start finch with the given command line arguments.
- */
-gboolean gnt_start(int *argc, char ***argv);
-
+#ifdef _WIN32
+/* suppress gcc "no previous prototype" warning */
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[]);
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[])
+#else
+int main(int argc, char *argv[])
 #endif
+{
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+	/* GLib threading system is automaticaly initialized since 2.32.
+	 * For earlier versions, it have to be initialized before calling any
+	 * Glib or GTK+ functions.
+	 */
+	g_thread_init(NULL);
+#endif
+
+	g_set_prgname("Pidgin");
+	g_set_application_name(PIDGIN_NAME);
+
+	return pidgin_start(argc, argv);
+}

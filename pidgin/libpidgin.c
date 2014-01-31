@@ -421,14 +421,7 @@ show_usage(const char *name, gboolean terse)
 	g_free(text);
 }
 
-/* FUCKING GET ME A TOWEL! */
-#ifdef _WIN32
-/* suppress gcc "no previous prototype" warning */
-int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[]);
-int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[])
-#else
-int main(int argc, char *argv[])
-#endif
+int pidgin_start(int argc, char *argv[])
 {
 	gboolean opt_force_online = FALSE;
 	gboolean opt_help = FALSE;
@@ -486,16 +479,6 @@ int main(int argc, char *argv[])
 #else
 	debug_enabled = FALSE;
 #endif
-
-#if !GLIB_CHECK_VERSION(2, 32, 0)
-	/* GLib threading system is automaticaly initialized since 2.32.
-	 * For earlier versions, it have to be initialized before calling any
-	 * Glib or GTK+ functions.
-	 */
-	g_thread_init(NULL);
-#endif
-
-	g_set_prgname("Pidgin");
 
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -751,8 +734,6 @@ int main(int argc, char *argv[])
 
 	g_free(search_path);
 #endif
-
-	g_set_application_name(PIDGIN_NAME);
 
 #ifdef _WIN32
 	winpidgin_init(hint);

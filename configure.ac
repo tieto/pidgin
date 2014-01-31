@@ -80,7 +80,7 @@ AM_SILENT_RULES([yes])
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
 PURPLE_MICRO_VERSION=purple_micro_version
-PURPLE_VERSION=[purple_display_version]
+PURPLE_VERSION=purple_display_version
 AC_SUBST(PURPLE_MAJOR_VERSION)
 AC_SUBST(PURPLE_MINOR_VERSION)
 AC_SUBST(PURPLE_MICRO_VERSION)
@@ -92,7 +92,7 @@ AC_SUBST(PURPLE_LT_VERSION_INFO)
 GNT_MAJOR_VERSION=gnt_major_version
 GNT_MINOR_VERSION=gnt_minor_version
 GNT_MICRO_VERSION=gnt_micro_version
-GNT_VERSION=[gnt_display_version]
+GNT_VERSION=gnt_display_version
 AC_SUBST(GNT_MAJOR_VERSION)
 AC_SUBST(GNT_MINOR_VERSION)
 AC_SUBST(GNT_MICRO_VERSION)
@@ -2860,62 +2860,12 @@ AC_ARG_ENABLE(trayicon-compat, AS_HELP_STRING([--enable-trayicon-compat], [insta
 
 AM_CONDITIONAL(ENABLE_TRAYCOMPAT, test "x$enable_traycompat" = "xyes")
 
-dnl #######################################################################
-dnl # Check for Doxygen and dot (part of GraphViz)
-dnl #######################################################################
-AC_ARG_ENABLE(doxygen,
-	[AS_HELP_STRING([--disable-doxygen],
-		[disable documentation with doxygen])],
-	enable_doxygen="$enableval", enable_doxygen="yes")
-AC_ARG_ENABLE(dot,
-	[AS_HELP_STRING([--disable-dot],
-		[disable graphs in doxygen via 'dot'])],
-	enable_dot="$enableval", enable_dot="yes")
-AC_ARG_ENABLE(devhelp,
-	[AS_HELP_STRING([--disable-devhelp],
-		[disable building index for devhelp documentation browser])],
-	enable_devhelp="$enableval", enable_devhelp="yes")
-
-if test "x$enable_doxygen" = xyes; then
-	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
-	if test $DOXYGEN = false; then
-		AC_MSG_WARN([*** Doxygen not found, docs will not be available])
-		enable_doxygen="no"
-	else
-		AC_DEFINE_UNQUOTED(HAVE_DOXYGEN, 1, [whether or not we have doxygen])
-
-		if test "x$enable_dot" = "xyes"; then
-			AC_CHECK_PROG(DOT, dot, true, false)
-
-			if test $DOT = false; then
-				enable_dot="no";
-				AC_MSG_WARN([*** GraphViz dot not found, docs will not have graphs])
-			else
-				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
-			fi
-		fi
-
-		if test "x$enable_devhelp" = "xyes"; then
-			AC_CHECK_PROG(XSLTPROC, xsltproc, true, false)
-
-			if test $XSLTPROC = false; then
-				enable_devhelp="no";
-				AC_MSG_WARN([*** xsltproc not found; devhelp index will not be created])
-			else
-				AC_DEFINE_UNQUOTED(HAVE_XSLTPROC, 1, [whether or not we have xsltproc for devhelp index])
-			fi
-		fi
-	fi
-else
-	enable_dot="no"
-	enable_devhelp="no"
-fi
-
-AC_SUBST(enable_doxygen)
-AC_SUBST(enable_dot)
-AC_SUBST(enable_devhelp)
-AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
-AM_CONDITIONAL(HAVE_XSLTPROC, test "x$enable_devhelp" = "xyes")
+# check for gtk-doc
+m4_ifdef([GTK_DOC_CHECK], [
+GTK_DOC_CHECK([1.16],[--flavour no-tmpl])
+],[
+AM_CONDITIONAL([ENABLE_GTK_DOC], false)
+])
 
 AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
@@ -2927,10 +2877,16 @@ fi
 AM_CONDITIONAL(PURPLE_AVAILABLE, true)
 
 AC_CONFIG_FILES([Makefile
-		   Doxyfile
 		   doc/Makefile
 		   doc/pidgin.1
 		   doc/finch.1
+		   doc/reference/Makefile
+		   doc/reference/finch/Makefile
+		   doc/reference/finch/version.xml
+		   doc/reference/libpurple/Makefile
+		   doc/reference/libpurple/version.xml
+		   doc/reference/pidgin/Makefile
+		   doc/reference/pidgin/version.xml
 		   m4macros/Makefile
 		   pidgin.apspec
 		   pidgin/Makefile
@@ -3052,6 +3008,7 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo
 echo Print debugging messages...... : $enable_debug
+echo Generate documentation........ : $enable_gtk_doc
 echo
 eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then
