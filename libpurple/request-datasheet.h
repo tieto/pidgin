@@ -120,7 +120,7 @@ purple_request_datasheet_get_column_title(PurpleRequestDatasheet *sheet,
  *
  * @sheet: The datasheet.
  *
- * Returns: (TODO const): The list of records.
+ * Returns: (transfer none): The list of records.
  */
 const GList *
 purple_request_datasheet_get_records(PurpleRequestDatasheet *sheet);
@@ -142,7 +142,7 @@ purple_request_datasheet_add_action(PurpleRequestDatasheet *sheet,
  *
  * @sheet: The datasheet.
  *
- * Returns: (TODO const): The list of actions.
+ * Returns: (transfer none): The list of actions.
  */
 const GList *
 purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);

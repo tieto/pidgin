@@ -330,7 +330,7 @@ PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
  *
  * @chat: The chat.
  *
- * Returns: (TODO const): The list of users.
+ * Returns: (transfer none): The list of users.
  */
 GList *purple_chat_conversation_get_users(const PurpleChatConversation *chat);
 
@@ -365,7 +365,7 @@ GList *purple_chat_conversation_set_ignored(PurpleChatConversation *chat, GList 
  *
  * @chat: The chat.
  *
- * Returns: (TODO const): The list of ignored users.
+ * Returns: (transfer none): The list of ignored users.
  */
 GList *purple_chat_conversation_get_ignored(const PurpleChatConversation *chat);
 

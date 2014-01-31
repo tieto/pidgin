@@ -464,7 +464,7 @@ void purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info);
  *
  * @user_info:  The PurpleNotifyUserInfo
  *
- * Returns: (TODO const): A GQueue of PurpleNotifyUserInfoEntry objects.
+ * Returns: (transfer none): A GQueue of PurpleNotifyUserInfoEntry objects.
  */
 GQueue *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
 

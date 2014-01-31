@@ -370,7 +370,7 @@ PurpleStatusAttribute *purple_status_type_get_attr(const PurpleStatusType *statu
  *
  * @status_type: The status type.
  *
- * Returns: (TODO const): The list of attributes.
+ * Returns: (transfer none): The list of attributes.
  */
 GList *purple_status_type_get_attrs(const PurpleStatusType *status_type);
 

@@ -87,8 +87,8 @@ void purple_mime_document_write(PurpleMimeDocument *doc, GString *str);
  *
  * @doc: The MIME document.
  *
- * Returns: (TODO const): A list of strings indicating the fields (but not the values
- *              of the fields) in the header of doc.
+ * Returns: (transfer none): A list of strings indicating the fields (but not
+ *          the values of the fields) in the header of doc.
  */
 GList *purple_mime_document_get_fields(PurpleMimeDocument *doc);
 
@@ -122,7 +122,7 @@ void purple_mime_document_set_field(PurpleMimeDocument *doc,
  *
  * @doc: The MIME document.
  *
- * Returns: (TODO const):   List of PurpleMimePart contained within doc.
+ * Returns: (transfer none):   List of PurpleMimePart contained within doc.
  */
 GList *purple_mime_document_get_parts(PurpleMimeDocument *doc);
 
@@ -139,8 +139,8 @@ PurpleMimePart *purple_mime_part_new(PurpleMimeDocument *doc);
  *
  * @part: The MIME document part.
  *
- * Returns: (TODO const): List of strings indicating the fields (but not the values
- *              of the fields) in the header of part.
+ * Returns: (transfer none): List of strings indicating the fields (but not the
+ *          values of the fields) in the header of part.
  */
 GList *purple_mime_part_get_fields(PurpleMimePart *part);
 

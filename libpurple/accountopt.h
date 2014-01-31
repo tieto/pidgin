@@ -280,7 +280,7 @@ purple_account_option_string_get_masked(const PurpleAccountOption *option);
  *
  * @option: The account option.
  *
- * Returns: (TODO const): A list of hints, stored as strings.
+ * Returns: (transfer none): A list of hints, stored as strings.
  */
 const GSList * purple_account_option_string_get_hints(const PurpleAccountOption *option);
 
@@ -289,7 +289,7 @@ const GSList * purple_account_option_string_get_hints(const PurpleAccountOption 
  *
  * @option: The account option.
  *
- * Returns: (TODO const): A list of #PurpleKeyValuePair, mapping the human-readable
+ * Returns: (transfer none): A list of #PurpleKeyValuePair, mapping the human-readable
  *              description of the value to the <tt>(const char *)</tt> that
  *              should be passed to purple_account_set_string() to set the
  *              option.

@@ -484,14 +484,14 @@ void purple_connections_disconnect_all(void);
  * Returns a list of all active connections.  This does not
  * include connections that are in the process of connecting.
  *
- * Returns: (TODO const): A list of all active connections.
+ * Returns: (transfer none): A list of all active connections.
  */
 GList *purple_connections_get_all(void);
 
 /**
  * Returns a list of all connections in the process of connecting.
  *
- * Returns: (TODO const): A list of connecting connections.
+ * Returns: (transfer none): A list of connecting connections.
  */
 GList *purple_connections_get_connecting(void);
 

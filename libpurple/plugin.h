@@ -518,7 +518,7 @@ void purple_plugins_add_search_path(const char *path);
 /**
  * Returns a list of plugin search paths.
  *
- * Returns: (TODO const): A list of searched paths.
+ * Returns: (transfer none): A list of searched paths.
  */
 GList *purple_plugins_get_search_paths(void);
 
@@ -607,7 +607,7 @@ PurplePlugin *purple_plugins_find_with_id(const char *id);
 /**
  * Returns a list of all loaded plugins.
  *
- * Returns: (TODO const): A list of all loaded plugins.
+ * Returns: (transfer none): A list of all loaded plugins.
  */
 GList *purple_plugins_get_loaded(void);
 
@@ -617,14 +617,14 @@ GList *purple_plugins_get_loaded(void);
  * to the PURPLE_INIT_PLUGIN() macro, or if it was compiled
  * against an incompatable API version.
  *
- * Returns: (TODO const): A list of all protocol plugins.
+ * Returns: (transfer none): A list of all protocol plugins.
  */
 GList *purple_plugins_get_protocols(void);
 
 /**
  * Returns a list of all plugins, whether loaded or not.
  *
- * Returns: (TODO const): A list of all plugins.
+ * Returns: (transfer none): A list of all plugins.
  */
 GList *purple_plugins_get_all(void);
 

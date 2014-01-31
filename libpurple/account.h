@@ -858,7 +858,7 @@ void purple_account_privacy_deny(PurpleAccount *account, const char *who);
  * Returns the account's permit list.
  *
  * @account:	The account.
- * Returns: (TODO const):     A list of the permitted users
+ * Returns: (transfer none):     A list of the permitted users
  */
 GSList *purple_account_privacy_get_permitted(PurpleAccount *account);
 
@@ -866,7 +866,7 @@ GSList *purple_account_privacy_get_permitted(PurpleAccount *account);
  * Returns the account's deny list.
  *
  * @account:	The account.
- * Returns: (TODO const):     A list of the denied users
+ * Returns: (transfer none):     A list of the denied users
  */
 GSList *purple_account_privacy_get_denied(PurpleAccount *account);
 
@@ -959,7 +959,7 @@ gboolean purple_account_is_status_active(const PurpleAccount *account,
  *
  * @account: The account.
  *
- * Returns: (TODO const): The account's status types.
+ * Returns: (transfer none): The account's status types.
  */
 GList *purple_account_get_status_types(const PurpleAccount *account);
 
@@ -1136,7 +1136,7 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
  * account is happily connected or disconnected without an error.
  *
  * @account: The account whose error should be retrieved.
- * Returns: (TODO const):   The type of error and a human-readable description of the
+ * Returns: (transfer none):   The type of error and a human-readable description of the
  *                current error, or %NULL if there is no current error.  This
  *                pointer is guaranteed to remain valid until the @ref
  *                account-error-changed signal is emitted for @a account.
