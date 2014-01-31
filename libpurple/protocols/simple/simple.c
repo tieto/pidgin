@@ -2061,21 +2061,21 @@ simple_protocol_init(PurpleProtocol *protocol)
 	protocol->user_splits = g_list_append(protocol->user_splits, split);
 
 	option = purple_account_option_bool_new(_("Publish status (note: everyone may watch you)"), "dopublish", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", 0);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Use UDP"), "udp", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_bool_new(_("Use proxy"), "useproxy", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_string_new(_("Proxy"), "proxy", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_string_new(_("Auth User"), "authuser", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_string_new(_("Auth Domain"), "authdomain", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
 static void

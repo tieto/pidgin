@@ -61,11 +61,11 @@ purple_protocol_get_user_splits(const PurpleProtocol *protocol)
 }
 
 GList *
-purple_protocol_get_protocol_options(const PurpleProtocol *protocol)
+purple_protocol_get_account_options(const PurpleProtocol *protocol)
 {
 	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
 
-	return protocol->protocol_options;
+	return protocol->account_options;
 }
 
 PurpleBuddyIconSpec *
@@ -98,16 +98,16 @@ user_splits_free(PurpleProtocol *protocol)
 }
 
 static void
-protocol_options_free(PurpleProtocol *protocol)
+account_options_free(PurpleProtocol *protocol)
 {
 	g_return_if_fail(PURPLE_IS_PROTOCOL(protocol));
 
-	while (protocol->protocol_options) {
-		PurpleAccountOption *option = protocol->protocol_options->data;
+	while (protocol->account_options) {
+		PurpleAccountOption *option = protocol->account_options->data;
 		purple_account_option_destroy(option);
-		protocol->protocol_options =
-				g_list_delete_link(protocol->protocol_options,
-				                   protocol->protocol_options);
+		protocol->account_options =
+				g_list_delete_link(protocol->account_options,
+				                   protocol->account_options);
 	}
 }
 
@@ -129,7 +129,7 @@ purple_protocol_override(PurpleProtocol *protocol,
 	if (flags & PURPLE_PROTOCOL_OVERRIDE_USER_SPLITS)
 		user_splits_free(protocol);
 	if (flags & PURPLE_PROTOCOL_OVERRIDE_PROTOCOL_OPTIONS)
-		protocol_options_free(protocol);
+		account_options_free(protocol);
 	if (flags & PURPLE_PROTOCOL_OVERRIDE_ICON_SPEC)
 		icon_spec_free(protocol);
 }
@@ -171,7 +171,7 @@ purple_protocol_finalize(GObject *object)
 	purple_prefs_disconnect_by_handle(protocol);
 
 	user_splits_free(protocol);
-	protocol_options_free(protocol);
+	account_options_free(protocol);
 	icon_spec_free(protocol);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(protocol);

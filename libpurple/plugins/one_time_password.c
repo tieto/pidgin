@@ -93,7 +93,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
 			option = purple_account_option_bool_new(_("One Time Password"),
 								PREF_NAME, FALSE);
-			protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+			protocol->account_options = g_list_append(protocol->account_options, option);
 		}
 	}
 	g_list_free(list);
@@ -118,11 +118,11 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	for (l = list; l != NULL; l = l->next) {
 		protocol = PURPLE_PROTOCOL(l->data);
 		if (protocol != NULL && !(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD)) {
-			options = purple_protocol_get_protocol_options(protocol);
+			options = purple_protocol_get_account_options(protocol);
 			while (options != NULL) {
 				option = (PurpleAccountOption *) options->data;
 				if (strcmp(PREF_NAME, purple_account_option_get_setting(option)) == 0) {
-					protocol->protocol_options = g_list_delete_link(protocol->protocol_options, options);
+					protocol->account_options = g_list_delete_link(protocol->account_options, options);
 					purple_account_option_destroy(option);
 					break;
 				}

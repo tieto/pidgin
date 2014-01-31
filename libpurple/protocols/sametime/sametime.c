@@ -5659,7 +5659,7 @@ mw_protocol_init(PurpleProtocol *protocol)
              MW_KEY_FAKE_IT, FALSE);
   l = g_list_append(l, opt);
 
-  protocol->protocol_options = l;
+  protocol->account_options = l;
   l = NULL;
 }
 

@@ -940,36 +940,36 @@ irc_protocol_init(PurpleProtocol *protocol)
 	protocol->user_splits = g_list_append(protocol->user_splits, split);
 
 	option = purple_account_option_int_new(_("Port"), "port", IRC_DEFAULT_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Encodings"), "encoding", IRC_DEFAULT_CHARSET);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Auto-detect incoming UTF-8"), "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Ident name"), "username", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Real name"), "realname", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	/*
 	option = purple_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	*/
 
 	option = purple_account_option_bool_new(_("Use SSL"), "ssl", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 #ifdef HAVE_CYRUS_SASL
 	option = purple_account_option_bool_new(_("Authenticate with SASL"), "sasl", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(
 						_("Allow plaintext SASL auth over unencrypted connection"),
 						"auth_plain_in_clear", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 #endif
 }
 

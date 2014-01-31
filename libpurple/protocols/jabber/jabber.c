@@ -2580,7 +2580,7 @@ GList *jabber_get_actions(PurpleConnection *gc)
 	                             jabber_setup_set_info);
 	m = g_list_append(m, act);
 
-	/* if (js->protocol_options & CHANGE_PASSWORD) { */
+	/* if (js->account_options & CHANGE_PASSWORD) { */
 		act = purple_protocol_action_new(_("Change Password..."),
 		                             jabber_password_change);
 		m = g_list_append(m, act);

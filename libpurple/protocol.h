@@ -70,13 +70,13 @@ typedef enum /*< flags >*/
 
 /**
  * PurpleProtocol:
- * @id:               Protocol ID
- * @name:             Translated name of the protocol
- * @options:          Protocol options
- * @user_splits:      A GList of PurpleAccountUserSplit
- * @protocol_options: A GList of PurpleAccountOption
- * @icon_spec:        The icon spec.
- * @whiteboard_ops:   Whiteboard operations
+ * @id:              Protocol ID
+ * @name:            Translated name of the protocol
+ * @options:         Protocol options
+ * @user_splits:     A GList of PurpleAccountUserSplit
+ * @account_options: A GList of PurpleAccountOption
+ * @icon_spec:       The icon spec.
+ * @whiteboard_ops:  Whiteboard operations
  *
  * Represents an instance of a protocol registered with the protocols
  * subsystem. Protocols must initialize the members to appropriate values.
@@ -91,7 +91,7 @@ struct _PurpleProtocol
 	PurpleProtocolOptions options;
 
 	GList *user_splits;
-	GList *protocol_options;
+	GList *account_options;
 
 	PurpleBuddyIconSpec *icon_spec;
 	PurpleWhiteboardOps *whiteboard_ops;
@@ -827,14 +827,14 @@ PurpleProtocolOptions purple_protocol_get_options(const PurpleProtocol *protocol
 GList *purple_protocol_get_user_splits(const PurpleProtocol *protocol);
 
 /**
- * purple_protocol_get_protocol_options:
+ * purple_protocol_get_account_options:
  * @protocol: The protocol.
  *
  * Returns the account options for a protocol.
  *
  * Returns: The account options for the protocol.
  */
-GList *purple_protocol_get_protocol_options(const PurpleProtocol *protocol);
+GList *purple_protocol_get_account_options(const PurpleProtocol *protocol);
 
 /**
  * purple_protocol_get_icon_spec:

@@ -3510,12 +3510,12 @@ novell_protocol_init(PurpleProtocol *protocol)
 	protocol->name = "GroupWise";
 
 	option = purple_account_option_string_new(_("Server address"), "server", NULL);
-	protocol->protocol_options =
-		g_list_append(protocol->protocol_options, option);
+	protocol->account_options =
+		g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_int_new(_("Server port"), "port", DEFAULT_PORT);
-	protocol->protocol_options =
-		g_list_append(protocol->protocol_options, option);
+	protocol->account_options =
+		g_list_append(protocol->account_options, option);
 }
 
 static void

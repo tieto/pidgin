@@ -746,13 +746,13 @@ mxit_protocol_init( PurpleProtocol *protocol )
 
 	/* WAP server (reference: "libpurple/accountopt.h") */
 	option = purple_account_option_string_new( _( "WAP Server" ), MXIT_CONFIG_WAPSERVER, DEFAULT_WAPSITE );
-	protocol->protocol_options = g_list_append( protocol->protocol_options, option );
+	protocol->account_options = g_list_append( protocol->account_options, option );
 
 	option = purple_account_option_bool_new( _( "Connect via HTTP" ), MXIT_CONFIG_USE_HTTP, FALSE );
-	protocol->protocol_options = g_list_append( protocol->protocol_options, option );
+	protocol->account_options = g_list_append( protocol->account_options, option );
 
 	option = purple_account_option_bool_new( _( "Enable splash-screen popup" ), MXIT_CONFIG_SPLASHPOPUP, FALSE );
-	protocol->protocol_options = g_list_append( protocol->protocol_options, option );
+	protocol->account_options = g_list_append( protocol->account_options, option );
 }
 
 

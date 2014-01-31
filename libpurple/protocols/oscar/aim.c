@@ -36,14 +36,14 @@ aim_protocol_init(PurpleProtocol *protocol)
 	protocol->id   = "prpl-aim";
 	protocol->name = "AIM";
 
-	oscar_init_protocol_options(protocol);
+	oscar_init_account_options(protocol);
 
 	option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 											OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(FALSE, TRUE));
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
 static void

@@ -97,19 +97,19 @@ yahoojp_protocol_init(PurpleProtocol *protocol)
 	purple_protocol_override(protocol, PURPLE_PROTOCOL_OVERRIDE_PROTOCOL_OPTIONS);
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOOJP_XFER_HOST);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOOJP_ROOMLIST_LOCALE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
 static void

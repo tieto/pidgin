@@ -225,26 +225,26 @@ yahoo_protocol_init(PurpleProtocol *protocol)
 	protocol->whiteboard_ops = &yahoo_whiteboard_ops;
 
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Encoding"), "local_charset", "UTF-8");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 #if 0
 	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 #endif
 }
 

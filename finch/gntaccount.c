@@ -218,7 +218,7 @@ save_account_cb(AccountEditDialog *dialog)
 	{
 		GList *iter, *entries;
 
-		for (iter = purple_protocol_get_protocol_options(protocol), entries = dialog->protocol_entries;
+		for (iter = purple_protocol_get_account_options(protocol), entries = dialog->protocol_entries;
 				iter && entries; iter = iter->next, entries = entries->next)
 		{
 			PurpleAccountOption *option = iter->data;
@@ -374,7 +374,7 @@ update_user_splits(AccountEditDialog *dialog)
 }
 
 static void
-add_protocol_options(AccountEditDialog *dialog)
+add_account_options(AccountEditDialog *dialog)
 {
 	PurpleProtocol *protocol;
 	GList *iter;
@@ -405,7 +405,7 @@ add_protocol_options(AccountEditDialog *dialog)
 
 	account = dialog->account;
 
-	for (iter = purple_protocol_get_protocol_options(protocol); iter; iter = iter->next)
+	for (iter = purple_protocol_get_account_options(protocol); iter; iter = iter->next)
 	{
 		PurpleAccountOption *option = iter->data;
 		PurplePrefType type = purple_account_option_get_type(option);
@@ -529,7 +529,7 @@ static void
 protocol_changed_cb(GntWidget *combo, PurpleProtocol *old, PurpleProtocol *new, AccountEditDialog *dialog)
 {
 	update_user_splits(dialog);
-	add_protocol_options(dialog);
+	add_account_options(dialog);
 	update_user_options(dialog);  /* This may not be necessary here */
 	gnt_box_readjust(GNT_BOX(dialog->window));
 	gnt_widget_draw(dialog->window);
@@ -645,7 +645,7 @@ edit_account_continue(PurpleAccount *account,
 	gnt_box_add_widget(GNT_BOX(window), gnt_line_new(FALSE));
 
 	/* The advanced box */
-	add_protocol_options(dialog);
+	add_account_options(dialog);
 	gnt_box_add_widget(GNT_BOX(window), dialog->protocols);
 
 	/* TODO: Add proxy options */

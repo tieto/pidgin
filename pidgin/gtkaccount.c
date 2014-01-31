@@ -169,7 +169,7 @@ static void set_account(GtkListStore *store, GtkTreeIter *iter,
  **************************************************************************/
 static void add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent);
-static void add_protocol_options(AccountPrefsDialog *dialog);
+static void add_account_options(AccountPrefsDialog *dialog);
 static void add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 static void add_voice_options(AccountPrefsDialog *dialog);
 
@@ -246,7 +246,7 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
-	add_protocol_options(dialog);
+	add_account_options(dialog);
 	add_voice_options(dialog);
 
 	gtk_widget_grab_focus(dialog->protocol_menu);
@@ -891,7 +891,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
-add_protocol_options(AccountPrefsDialog *dialog)
+add_account_options(AccountPrefsDialog *dialog)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
@@ -923,7 +923,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 	}
 
 	if (dialog->protocol == NULL ||
-			purple_protocol_get_protocol_options(dialog->protocol) == NULL)
+			purple_protocol_get_account_options(dialog->protocol) == NULL)
 		return;
 
 	account = dialog->account;
@@ -935,7 +935,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
 	gtk_widget_show(vbox);
 
-	for (l = purple_protocol_get_protocol_options(dialog->protocol); l != NULL; l = l->next)
+	for (l = purple_protocol_get_account_options(dialog->protocol); l != NULL; l = l->next)
 	{
 		option = (PurpleAccountOption *)l->data;
 
@@ -1786,7 +1786,7 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 		gtk_widget_hide(button);
 
 	/* Setup the page with 'Advanced' (protocol options). */
-	add_protocol_options(dialog);
+	add_account_options(dialog);
 
 	/* Setup the page with 'Proxy'. */
 	dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);

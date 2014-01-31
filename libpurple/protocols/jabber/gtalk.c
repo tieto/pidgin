@@ -70,22 +70,22 @@ gtalk_protocol_init(PurpleProtocol *protocol)
 #undef ADD_VALUE
 
 	option = purple_account_option_list_new(_("Connection security"), "connection_security", encryption_values);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 						   option);
 
 	option = purple_account_option_bool_new(
 						_("Allow plaintext auth over unencrypted streams"),
 						"auth_plain_in_clear", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 						   option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 						   option);
 
 	option = purple_account_option_string_new(_("Connect server"),
 						  "connect_server", NULL);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 						  option);
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
@@ -93,19 +93,19 @@ gtalk_protocol_init(PurpleProtocol *protocol)
 						/* TODO: Is this an acceptable default?
 						 * Also, keep this in sync as they add more servers */
 						  JABBER_DEFAULT_FT_PROXIES);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 						  option);
 
 	option = purple_account_option_string_new(_("BOSH URL"),
 						  "bosh_url", NULL);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 						  option);
 
 	/* this should probably be part of global smiley theme settings later on,
 	  shared with MSN */
 	option = purple_account_option_bool_new(_("Show Custom Smileys"),
 		"custom_smileys", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 		option);
 }
 

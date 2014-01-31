@@ -482,7 +482,7 @@ static gboolean
 _set_default_name_cb(gpointer data) {
 	gchar *fullname = data;
 	const char *splitpoint;
-	GList *tmp = protocol.protocol_options;
+	GList *tmp = protocol.account_options;
 	PurpleAccountOption *option;
 
 	if (!fullname) {
@@ -643,22 +643,22 @@ bonjour_protocol_init(PurpleProtocol *protocol)
 
 	/* Creating the options for the protocol */
 	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("First name"), "first", default_firstname);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Last name"), "last", default_lastname);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Email"), "email", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
 static void

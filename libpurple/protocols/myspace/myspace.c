@@ -3410,30 +3410,30 @@ msim_protocol_init(PurpleProtocol *protocol)
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */
 	option = purple_account_option_string_new(_("Connect server"), "server", MSIM_SERVER);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 #ifdef MSIM_USER_WANTS_TO_CONFIGURE_STATUS_TEXT
 	option = purple_account_option_bool_new(_("Show display name in status text"), "show_display_name", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Show headline in status text"), "show_headline", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 #endif
 
 #ifdef MSIM_USER_WANTS_TO_DISABLE_EMOTICONS
 	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 #endif
 
 #ifdef MSIM_USER_REALLY_CARES_ABOUT_PRECISE_FONT_SIZES
 	option = purple_account_option_int_new(_("Screen resolution (dots per inch)"), "dpi", MSIM_DEFAULT_DPI);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_int_new(_("Base font size (points)"), "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 #endif
 }
 

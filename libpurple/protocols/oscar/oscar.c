@@ -5552,7 +5552,7 @@ gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *param
 	return FALSE;
 }
 
-void oscar_init_protocol_options(PurpleProtocol *protocol)
+void oscar_init_account_options(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 	static const gchar *encryption_keys[] = {
@@ -5571,7 +5571,7 @@ void oscar_init_protocol_options(PurpleProtocol *protocol)
 	int i;
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	for (i = 0; encryption_keys[i]; i++) {
 		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
@@ -5580,16 +5580,16 @@ void oscar_init_protocol_options(PurpleProtocol *protocol)
 		encryption_options = g_list_append(encryption_options, kvp);
 	}
 	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
 			OSCAR_DEFAULT_USE_CLIENTLOGIN);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(
 		_("Always use AIM/ICQ proxy server for\nfile transfers and direct IM (slower,\nbut does not reveal your IP address)"), "always_use_rv_proxy",
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
 static void

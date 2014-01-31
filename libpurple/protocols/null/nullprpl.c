@@ -1084,7 +1084,7 @@ null_protocol_init(PurpleProtocol *protocol)
     "default");               /* default value */
 
   protocol->user_splits = g_list_append(NULL, split);
-  protocol->protocol_options = g_list_append(NULL, option);
+  protocol->account_options = g_list_append(NULL, option);
 }
 
 /*

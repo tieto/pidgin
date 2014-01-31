@@ -2896,36 +2896,36 @@ msn_protocol_init(PurpleProtocol *protocol)
 
 	option = purple_account_option_string_new(_("Server"), "server",
 											MSN_SERVER);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 											   option);
 
 	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Use HTTP Method"),
 										  "http_method", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 											   option);
 
 	option = purple_account_option_string_new(_("HTTP Method Server"),
 										  "http_method_server", MSN_HTTPCONN_SERVER);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Show custom smileys"),
 										  "custom_smileys", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Allow direct connections"),
 										  "direct_connect", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 											   option);
 
 	option = purple_account_option_bool_new(_("Allow connecting from multiple locations"),
 										  "mpop", TRUE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 											   option);
 }
 

@@ -999,7 +999,7 @@ ggp_protocol_init(PurpleProtocol *protocol)
 
 	option = purple_account_option_string_new(_("GG server"),
 			"gg_server", "");
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 			option);
 	ggp_server_option = option;
 
@@ -1017,7 +1017,7 @@ ggp_protocol_init(PurpleProtocol *protocol)
 
 	option = purple_account_option_list_new(_("Connection security"),
 		"encryption", encryption_options);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 		option);
 
 	ADD_VALUE(protocol_version, _("Default"), "default");
@@ -1026,12 +1026,12 @@ ggp_protocol_init(PurpleProtocol *protocol)
 
 	option = purple_account_option_list_new(_("Protocol version"),
 		"protocol_version", protocol_version);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 		option);
 
 	option = purple_account_option_bool_new(_("Show links from strangers"),
 		"show_links_from_strangers", 1);
-	protocol->protocol_options = g_list_append(protocol->protocol_options,
+	protocol->account_options = g_list_append(protocol->account_options,
 		option);
 }
 

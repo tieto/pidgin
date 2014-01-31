@@ -2164,17 +2164,17 @@ silcpurple_protocol_init(PurpleProtocol *protocol)
 	option = purple_account_option_string_new(_("Connect server"),
 						  "server",
 						  "silc.silcnet.org");
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_int_new(_("Port"), "port", 706);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
 	option = purple_account_option_string_new(_("Public Key file"),
 						  "public-key", tmp);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
 	option = purple_account_option_string_new(_("Private Key file"),
 						  "private-key", tmp);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	for (i = 0; silc_default_ciphers[i].name; i++) {
 		kvp = g_new0(PurpleKeyValuePair, 1);
@@ -2183,7 +2183,7 @@ silcpurple_protocol_init(PurpleProtocol *protocol)
 		list = g_list_append(list, kvp);
 	}
 	option = purple_account_option_list_new(_("Cipher"), "cipher", list);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	list = NULL;
 	for (i = 0; silc_default_hmacs[i].name; i++) {
@@ -2193,27 +2193,27 @@ silcpurple_protocol_init(PurpleProtocol *protocol)
 		list = g_list_append(list, kvp);
 	}
 	option = purple_account_option_list_new(_("HMAC"), "hmac", list);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Use Perfect Forward Secrecy"),
 						"pfs", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(_("Public key authentication"),
 						"pubkey-auth", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_bool_new(_("Block IMs without Key Exchange"),
 						"block-ims", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_bool_new(_("Block messages to whiteboard"),
 						"block-wb", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_bool_new(_("Automatically open whiteboard"),
 						"open-wb", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 	option = purple_account_option_bool_new(_("Digitally sign and verify all messages"),
 						"sign-verify", FALSE);
-	protocol->protocol_options = g_list_append(protocol->protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
 static void
