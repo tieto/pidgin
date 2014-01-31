@@ -34,7 +34,6 @@
       <xi:include href="xml/gntentry.xml" />
       <xi:include href="xml/gntfilesel.xml" />
       <xi:include href="xml/gntidle.xml" />
-      <xi:include href="xml/gntinternal.xml" />
       <xi:include href="xml/gntkeys.xml" />
       <xi:include href="xml/gntlabel.xml" />
       <xi:include href="xml/gntline.xml" />
