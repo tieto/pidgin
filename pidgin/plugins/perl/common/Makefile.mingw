@@ -55,8 +55,6 @@ XS_FILES = \
 	GtkDebug.xs \
 	GtkDialogs.xs \
 	GtkFt.xs \
-	GtkIMHtml.xs \
-	GtkIMHtmlToolbar.xs \
 	GtkLog.xs \
 	GtkMenuTray.xs \
 	GtkPlugin.xs \

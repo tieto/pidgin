@@ -9,8 +9,6 @@ common_sources = \
 	common/GtkDebug.xs \
 	common/GtkDialogs.xs \
 	common/GtkFt.xs \
-	common/GtkIMHtml.xs \
-	common/GtkIMHtmlToolbar.xs \
 	common/GtkLog.xs \
 	common/GtkMenuTray.xs \
 	common/GtkPlugin.xs \

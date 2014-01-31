@@ -50,7 +50,6 @@
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkxfer.h"
-#include "gtkimhtml.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"
@@ -5024,24 +5023,9 @@ account_status_changed(PurpleAccount *account, PurpleStatus *old,
 static gboolean
 gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList *gtkblist)
 {
-	GtkWidget *widget;
-
-	if (!gtkblist)
-		return FALSE;
-
 	/* clear any tooltips */
 	pidgin_blist_tooltip_destroy();
 
-	widget = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
-
-	if (GTK_IS_IMHTML(widget) || GTK_IS_ENTRY(widget)) {
-#if GTK_CHECK_VERSION(3,0,0)
-		if (gtk_bindings_activate(G_OBJECT(widget), event->keyval, event->state))
-#else
-		if (gtk_bindings_activate(GTK_OBJECT(widget), event->keyval, event->state))
-#endif
-			return TRUE;
-	}
 	return FALSE;
 }
 
