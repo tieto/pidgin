@@ -38,20 +38,24 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Adds a conversation to the list of conversations.
- *
+ * purple_conversations_add:
  * @conv: The conversation.
+ *
+ * Adds a conversation to the list of conversations.
  */
 void purple_conversations_add(PurpleConversation *conv);
 
 /**
- * Removes a conversation from the list of conversations.
- *
+ * purple_conversations_remove:
  * @conv: The conversation.
+ *
+ * Removes a conversation from the list of conversations.
  */
 void purple_conversations_remove(PurpleConversation *conv);
 
 /**
+ * purple_conversations_get_all:
+ *
  * Returns a list of all conversations.
  *
  * This list includes both IMs and chats.
@@ -61,6 +65,8 @@ void purple_conversations_remove(PurpleConversation *conv);
 GList *purple_conversations_get_all(void);
 
 /**
+ * purple_conversations_get_ims:
+ *
  * Returns a list of all IMs.
  *
  * Returns: (transfer none): A GList of all IMs.
@@ -68,6 +74,8 @@ GList *purple_conversations_get_all(void);
 GList *purple_conversations_get_ims(void);
 
 /**
+ * purple_conversations_get_chats:
+ *
  * Returns a list of all chats.
  *
  * Returns: (transfer none): A GList of all chats.
@@ -75,10 +83,11 @@ GList *purple_conversations_get_ims(void);
 GList *purple_conversations_get_chats(void);
 
 /**
- * Finds a conversation of any type with the specified name and Purple account.
- *
+ * purple_conversations_find_with_account:
  * @name: The name of the conversation.
  * @account: The account associated with the conversation.
+ *
+ * Finds a conversation of any type with the specified name and Purple account.
  *
  * Returns: The conversation if found, or %NULL otherwise.
  */
@@ -86,10 +95,11 @@ PurpleConversation *purple_conversations_find_with_account(const char *name,
 		const PurpleAccount *account);
 
 /**
- * Finds an IM with the specified name and Purple account.
- *
+ * purple_conversations_find_im_with_account:
  * @name: The name of the conversation.
  * @account: The account associated with the conversation.
+ *
+ * Finds an IM with the specified name and Purple account.
  *
  * Returns: The conversation if found, or %NULL otherwise.
  */
@@ -97,10 +107,11 @@ PurpleIMConversation *purple_conversations_find_im_with_account(const char *name
 		const PurpleAccount *account);
 
 /**
- * Finds a chat with the specified name and Purple account.
- *
+ * purple_conversations_find_chat_with_account:
  * @name: The name of the conversation.
  * @account: The account associated with the conversation.
+ *
+ * Finds a chat with the specified name and Purple account.
  *
  * Returns: The conversation if found, or %NULL otherwise.
  */
@@ -108,23 +119,27 @@ PurpleChatConversation *purple_conversations_find_chat_with_account(const char *
 		const PurpleAccount *account);
 
 /**
- * Finds a chat with the specified chat ID.
- *
+ * purple_conversations_find_chat:
  * @gc: The purple_connection.
  * @id: The chat ID.
+ *
+ * Finds a chat with the specified chat ID.
  *
  * Returns: The chat conversation.
  */
 PurpleChatConversation *purple_conversations_find_chat(const PurpleConnection *gc, int id);
 
 /**
- * Sets the default conversation UI operations structure.
- *
+ * purple_conversations_set_ui_ops:
  * @ops:  The UI conversation operations structure.
+ *
+ * Sets the default conversation UI operations structure.
  */
 void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops);
 
 /**
+ * purple_conversations_get_ui_ops:
+ *
  * Gets the default conversation UI operations structure.
  *
  * Returns:  The UI conversation operations structure.
@@ -132,6 +147,8 @@ void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops);
 PurpleConversationUiOps *purple_conversations_get_ui_ops(void);
 
 /**
+ * purple_conversations_get_handle:
+ *
  * Returns the conversation subsystem handle.
  *
  * Returns: The conversation subsystem handle.
@@ -139,11 +156,15 @@ PurpleConversationUiOps *purple_conversations_get_ui_ops(void);
 void *purple_conversations_get_handle(void);
 
 /**
+ * purple_conversations_init:
+ *
  * Initializes the conversation subsystem.
  */
 void purple_conversations_init(void);
 
 /**
+ * purple_conversations_uninit:
+ *
  * Uninitializes the conversation subsystem.
  */
 void purple_conversations_uninit(void);

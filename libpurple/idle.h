@@ -29,6 +29,8 @@
 #include <time.h>
 
 /**
+ * PurpleIdleUiOps:
+ *
  * Idle UI operations.
  */
 typedef struct
@@ -50,6 +52,8 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * purple_idle_touch:
+ *
  * Touch our idle tracker.  This signifies that the user is
  * 'active'.  The conversation code calls this when the
  * user sends an IM, for example.
@@ -57,6 +61,8 @@ G_BEGIN_DECLS
 void purple_idle_touch(void);
 
 /**
+ * purple_idle_set:
+ *
  * Fake our idle time by setting the time at which our
  * accounts purportedly became idle.  This is used by
  * the I'dle Mak'er plugin.
@@ -71,13 +77,16 @@ void purple_idle_set(time_t time);
 /*@{*/
 
 /**
- * Sets the UI operations structure to be used for idle reporting.
- *
+ * purple_idle_set_ui_ops:
  * @ops: The UI operations structure.
+ *
+ * Sets the UI operations structure to be used for idle reporting.
  */
 void purple_idle_set_ui_ops(PurpleIdleUiOps *ops);
 
 /**
+ * purple_idle_get_ui_ops:
+ *
  * Returns the UI operations structure used for idle reporting.
  *
  * Returns: The UI operations structure in use.
@@ -85,11 +94,15 @@ void purple_idle_set_ui_ops(PurpleIdleUiOps *ops);
 PurpleIdleUiOps *purple_idle_get_ui_ops(void);
 
 /**
+ * purple_idle_init:
+ *
  * Initializes the idle system.
  */
 void purple_idle_init(void);
 
 /**
+ * purple_idle_uninit:
+ *
  * Uninitializes the idle system.
  */
 void purple_idle_uninit(void);

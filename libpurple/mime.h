@@ -1,3 +1,11 @@
+/**
+ * @file mime.h
+ * @ingroup core
+ *
+ * Rudimentary parsing of multi-part MIME messages into more
+ * accessible structures.
+ */
+
 /*
  * Purple
  *
@@ -27,19 +35,15 @@
 #include <glib.h>
 
 /**
- * @file mime.h
- * @ingroup core
+ * PurpleMimeDocument:
  *
- * Rudimentary parsing of multi-part MIME messages into more
- * accessible structures.
- */
-
-/**
  * A MIME document.
  */
 typedef struct _PurpleMimeDocument PurpleMimeDocument;
 
 /**
+ * PurpleMimePart:
+ *
  * A part of a multipart MIME document.
  */
 typedef struct _PurpleMimePart PurpleMimePart;
@@ -47,45 +51,53 @@ typedef struct _PurpleMimePart PurpleMimePart;
 G_BEGIN_DECLS
 
 /**
+ * purple_mime_document_new:
+ *
  * Allocate an empty MIME document.
  */
 PurpleMimeDocument *purple_mime_document_new(void);
 
 /**
- * Frees memory used in a MIME document and all of its parts and fields
- *
+ * purple_mime_document_free:
  * @doc: The MIME document to free.
+ *
+ * Frees memory used in a MIME document and all of its parts and fields
  */
 void purple_mime_document_free(PurpleMimeDocument *doc);
 
 /**
- * Parse a MIME document from a NUL-terminated string.
- *
+ * purple_mime_document_parse:
  * @buf: The NULL-terminated string containing the MIME-encoded data.
+ *
+ * Parse a MIME document from a NUL-terminated string.
  *
  * Returns: A MIME document.
  */
 PurpleMimeDocument *purple_mime_document_parse(const char *buf);
 
 /**
- * Parse a MIME document from a string
- *
+ * purple_mime_document_parsen:
  * @buf: The string containing the MIME-encoded data.
  * @len: Length of buf.
+ *
+ * Parse a MIME document from a string
  *
  * Returns:   A MIME document.
  */
 PurpleMimeDocument *purple_mime_document_parsen(const char *buf, gsize len);
 
 /**
+ * purple_mime_document_write:
+ *
  * Write (append) a MIME document onto a GString.
  */
 void purple_mime_document_write(PurpleMimeDocument *doc, GString *str);
 
 /**
- * The list of fields in the header of a document
- *
+ * purple_mime_document_get_fields:
  * @doc: The MIME document.
+ *
+ * The list of fields in the header of a document
  *
  * Returns: (transfer none): A list of strings indicating the fields (but not
  *          the values of the fields) in the header of doc.
@@ -93,10 +105,11 @@ void purple_mime_document_write(PurpleMimeDocument *doc, GString *str);
 GList *purple_mime_document_get_fields(PurpleMimeDocument *doc);
 
 /**
- * Get the value of a specific field in the header of a document.
- *
+ * purple_mime_document_get_field:
  * @doc:   The MIME document.
  * @field: Case-insensitive field name.
+ *
+ * Get the value of a specific field in the header of a document.
  *
  * Returns:     Value associated with the indicated header field, or
  *              NULL if the field doesn't exist.
@@ -105,39 +118,43 @@ const char *purple_mime_document_get_field(PurpleMimeDocument *doc,
 					 const char *field);
 
 /**
- * Set or replace the value of a specific field in the header of a
- * document.
- *
+ * purple_mime_document_set_field:
  * @doc:   The MIME document.
  * @field: Case-insensitive field name.
  * @value: Value to associate with the indicated header field,
  *              of NULL to remove the field.
+ *
+ * Set or replace the value of a specific field in the header of a
+ * document.
  */
 void purple_mime_document_set_field(PurpleMimeDocument *doc,
 				  const char *field,
 				  const char *value);
 
 /**
- * The list of parts in a multipart document.
- *
+ * purple_mime_document_get_parts:
  * @doc: The MIME document.
+ *
+ * The list of parts in a multipart document.
  *
  * Returns: (transfer none):   List of PurpleMimePart contained within doc.
  */
 GList *purple_mime_document_get_parts(PurpleMimeDocument *doc);
 
 /**
- * Create and insert a new part into a MIME document.
- *
+ * purple_mime_part_new:
  * @doc: The new part's parent MIME document.
+ *
+ * Create and insert a new part into a MIME document.
  */
 PurpleMimePart *purple_mime_part_new(PurpleMimeDocument *doc);
 
 
 /**
- * The list of fields in the header of a document part.
- *
+ * purple_mime_part_get_fields:
  * @part: The MIME document part.
+ *
+ * The list of fields in the header of a document part.
  *
  * Returns: (transfer none): List of strings indicating the fields (but not the
  *          values of the fields) in the header of part.
@@ -146,10 +163,11 @@ GList *purple_mime_part_get_fields(PurpleMimePart *part);
 
 
 /**
- * Get the value of a specific field in the header of a document part.
- *
+ * purple_mime_part_get_field:
  * @part:  The MIME document part.
  * @field: Case-insensitive name of the header field.
+ *
+ * Get the value of a specific field in the header of a document part.
  *
  * Returns:     Value of the specified header field, or NULL if the
  *              field doesn't exist.
@@ -158,6 +176,8 @@ const char *purple_mime_part_get_field(PurpleMimePart *part,
 				     const char *field);
 
 /**
+ * purple_mime_part_get_field_decoded:
+ *
  * Get the decoded value of a specific field in the header of a
  * document part.
  */
@@ -165,44 +185,49 @@ char *purple_mime_part_get_field_decoded(PurpleMimePart *part,
 				       const char *field);
 
 /**
- * Set or replace the value of a specific field in the header of a
- * document.
- *
+ * purple_mime_part_set_field:
  * @part:  The part of the MIME document.
  * @field: Case-insensitive field name
  * @value: Value to associate with the indicated header field,
  *              of NULL to remove the field.
+ *
+ * Set or replace the value of a specific field in the header of a
+ * document.
  */
 void purple_mime_part_set_field(PurpleMimePart *part,
 			      const char *field,
 			      const char *value);
 
 /**
- * Get the (possibly encoded) data portion of a MIME document part.
- *
+ * purple_mime_part_get_data:
  * @part: The MIME document part.
+ *
+ * Get the (possibly encoded) data portion of a MIME document part.
  *
  * Returns:    NULL-terminated data found in the document part
  */
 const char *purple_mime_part_get_data(PurpleMimePart *part);
 
 /**
+ * purple_mime_part_get_data_decoded:
+ * @part: The MIME documemt part.
+ * @data: Buffer for the data.
+ * @len:  The length of the buffer.
+ *
  * Get the data portion of a MIME document part, after attempting to
  * decode it according to the content-transfer-encoding field. If the
  * specified encoding method is not supported, this function will
  * return NULL.
- *
- * @part: The MIME documemt part.
- * @data: Buffer for the data.
- * @len:  The length of the buffer.
  */
 void purple_mime_part_get_data_decoded(PurpleMimePart *part,
 				     guchar **data, gsize *len);
 
 /**
+ * purple_mime_part_get_length:
+ * @part: The MIME document part.
+ *
  * Get the length of the data portion of a MIME document part.
  *
- * @part: The MIME document part.
  * Returns:    Length of the data in the document part.
  */
 gsize purple_mime_part_get_length(PurpleMimePart *part);

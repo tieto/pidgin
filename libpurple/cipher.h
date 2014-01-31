@@ -178,150 +178,166 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * purple_cipher_get_type:
+ *
  * Returns the GType for the Cipher object.
  */
 GType purple_cipher_get_type(void);
 
 /**
+ * purple_cipher_reset:
+ * @cipher:  The cipher
+ *
  * Resets a cipher to it's default value
  * Note: If you have set an IV you will have to set it after resetting
- *
- * @cipher:  The cipher
  */
 void purple_cipher_reset(PurpleCipher *cipher);
 
 /**
+ * purple_cipher_reset_state:
+ * @cipher:  The cipher
+ *
  * Resets a cipher state to it's default value, but doesn't touch stateless
  * configuration.
  *
  * That means, IV and digest will be wiped out, but keys, ops or salt
  * will remain untouched.
- *
- * @cipher:  The cipher
  */
 void purple_cipher_reset_state(PurpleCipher *cipher);
 
 /**
- * Sets the initialization vector for a cipher
- * Note: This should only be called right after a cipher is created or reset
- *
+ * purple_cipher_set_iv:
  * @cipher:  The cipher
  * @iv:      The initialization vector to set
  * @len:     The len of the IV
+ *
+ * Sets the initialization vector for a cipher
+ * Note: This should only be called right after a cipher is created or reset
  */
 void purple_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len);
 
 /**
- * Appends data to the cipher context
- *
+ * purple_cipher_append:
  * @cipher:  The cipher
  * @data:    The data to append
  * @len:     The length of the data
+ *
+ * Appends data to the cipher context
  */
 void purple_cipher_append(PurpleCipher *cipher, const guchar *data, size_t len);
 
 /**
- * Digests a cipher context
- *
+ * purple_cipher_digest:
  * @cipher:  The cipher
  * @digest:  The return buffer for the digest
  * @len:     The length of the buffer
+ *
+ * Digests a cipher context
  */
 gboolean purple_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len);
 
 /**
- * Converts a guchar digest into a hex string
- *
+ * purple_cipher_digest_to_str:
  * @cipher:   The cipher
  * @digest_s: The return buffer for the string digest
  * @len:      The length of the buffer
+ *
+ * Converts a guchar digest into a hex string
  */
 gboolean purple_cipher_digest_to_str(PurpleCipher *cipher, gchar digest_s[], size_t len);
 
 /**
- * Gets the digest size of a cipher
- *
+ * purple_cipher_get_digest_size:
  * @cipher: The cipher whose digest size to get
+ *
+ * Gets the digest size of a cipher
  *
  * Returns: The digest size of the cipher
  */
 size_t purple_cipher_get_digest_size(PurpleCipher *cipher);
 
 /**
- * Encrypts data using the cipher
- *
+ * purple_cipher_encrypt:
  * @cipher:   The cipher
  * @input:    The data to encrypt
  * @in_len:   The length of the data
  * @output:   The output buffer
  * @out_size: The size of the output buffer
  *
+ * Encrypts data using the cipher
+ *
  * Returns: A length of data that was outputed or -1, if failed
  */
 ssize_t purple_cipher_encrypt(PurpleCipher *cipher, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 /**
- * Decrypts data using the cipher
- *
+ * purple_cipher_decrypt:
  * @cipher:   The cipher
  * @input:    The data to encrypt
  * @in_len:   The length of the returned value
  * @output:   The output buffer
  * @out_size: The size of the output buffer
  *
+ * Decrypts data using the cipher
+ *
  * Returns: A length of data that was outputed or -1, if failed
  */
 ssize_t purple_cipher_decrypt(PurpleCipher *cipher, const guchar input[], size_t in_len, guchar output[], size_t out_size);
 
 /**
- * Sets the salt on a cipher
- *
+ * purple_cipher_set_salt:
  * @cipher:  The cipher whose salt to set
  * @salt:    The salt
  * @len:     The length of the salt
+ *
+ * Sets the salt on a cipher
  */
 void purple_cipher_set_salt(PurpleCipher *cipher, const guchar *salt, size_t len);
 
 /**
- * Sets the key on a cipher
- *
+ * purple_cipher_set_key:
  * @cipher:  The cipher whose key to set
  * @key:     The key
  * @len:     The size of the key
+ *
+ * Sets the key on a cipher
  */
 void purple_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len);
 
 /**
- * Gets the size of the key if the cipher supports it
- *
+ * purple_cipher_get_key_size:
  * @cipher: The cipher whose key size to get
+ *
+ * Gets the size of the key if the cipher supports it
  *
  * Returns: The size of the key
  */
 size_t purple_cipher_get_key_size(PurpleCipher *cipher);
 
 /**
- * Sets the batch mode of a cipher
- *
+ * purple_cipher_set_batch_mode:
  * @cipher:  The cipher whose batch mode to set
  * @mode:    The batch mode under which the cipher should operate
  *
+ * Sets the batch mode of a cipher
  */
 void purple_cipher_set_batch_mode(PurpleCipher *cipher, PurpleCipherBatchMode mode);
 
 /**
- * Gets the batch mode of a cipher
- *
+ * purple_cipher_get_batch_mode:
  * @cipher: The cipher whose batch mode to get
+ *
+ * Gets the batch mode of a cipher
  *
  * Returns: The batch mode under which the cipher is operating
  */
 PurpleCipherBatchMode purple_cipher_get_batch_mode(PurpleCipher *cipher);
 
 /**
- * Gets the block size of a cipher
- *
+ * purple_cipher_get_block_size:
  * @cipher: The cipher whose block size to get
+ *
+ * Gets the block size of a cipher
  *
  * Returns: The block size of the cipher
  */
@@ -335,69 +351,78 @@ size_t purple_cipher_get_block_size(PurpleCipher *cipher);
 /*@{*/
 
 /**
+ * purple_hash_get_type:
+ *
  * Returns the GType for the Hash object.
  */
 GType purple_hash_get_type(void);
 
 /**
+ * purple_hash_reset:
+ * @hash:  The hash
+ *
  * Resets a hash to it's default value
  * Note: If you have set an IV you will have to set it after resetting
- *
- * @hash:  The hash
  */
 void purple_hash_reset(PurpleHash *hash);
 
 /**
+ * purple_hash_reset_state:
+ * @hash:  The hash
+ *
  * Resets a hash state to it's default value, but doesn't touch stateless
  * configuration.
  *
  * That means, IV and digest will be wiped out, but keys, ops or salt
  * will remain untouched.
- *
- * @hash:  The hash
  */
 void purple_hash_reset_state(PurpleHash *hash);
 
 /**
- * Appends data to the hash context
- *
+ * purple_hash_append:
  * @hash:    The hash
  * @data:    The data to append
  * @len:     The length of the data
+ *
+ * Appends data to the hash context
  */
 void purple_hash_append(PurpleHash *hash, const guchar *data, size_t len);
 
 /**
- * Digests a hash context
- *
+ * purple_hash_digest:
  * @hash:    The hash
  * @digest:  The return buffer for the digest
  * @len:     The length of the buffer
+ *
+ * Digests a hash context
  */
 gboolean purple_hash_digest(PurpleHash *hash, guchar digest[], size_t len);
 
 /**
- * Converts a guchar digest into a hex string
- *
+ * purple_hash_digest_to_str:
  * @hash:     The hash
  * @digest_s: The return buffer for the string digest
  * @len:      The length of the buffer
+ *
+ * Converts a guchar digest into a hex string
  */
 gboolean purple_hash_digest_to_str(PurpleHash *hash, gchar digest_s[], size_t len);
 
 /**
- * Gets the digest size of a hash
- *
+ * purple_hash_get_digest_size:
  * @hash: The hash whose digest size to get
+ *
+ * Gets the digest size of a hash
  *
  * Returns: The digest size of the hash
  */
 size_t purple_hash_get_digest_size(PurpleHash *hash);
 
 /**
- * Gets the block size of a hash
- *
+ * purple_hash_get_block_size:
  * @hash: The hash whose block size to get
+ *
+ * Gets the block size of a hash
  *
  * Returns: The block size of the hash
  */
