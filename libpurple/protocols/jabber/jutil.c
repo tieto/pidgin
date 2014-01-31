@@ -510,30 +510,21 @@ jabber_id_free(JabberID *jid)
 
 
 gboolean
-jabber_id_equal(JabberStream *js, const JabberID *jid1, const JabberID *jid2)
+jabber_id_equal(const JabberID *jid1, const JabberID *jid2)
 {
-	const JabberID *j1, *j2;
-	JabberID *bare_user_jid;
-	gboolean equal;
-
-	/* If an outgoing stanza has no 'to', or an incoming has no 'from',
-	 * then those are "the server acting as my account". This function will
-	 * handle that correctly.
-	 */
-	if (!jid1 && !jid2)
+	if (!jid1 && !jid2) {
+		/* Both are null therefore equal */
 		return TRUE;
+	}
 
-	bare_user_jid = jabber_id_to_bare_jid(js->user);
-	j1 = jid1 ? jid1 : bare_user_jid;
-	j2 = jid2 ? jid2 : bare_user_jid;
+	if (!jid1 || !jid2) {
+		/* One is null, other is non-null, therefore not equal */
+		return FALSE;
+	}
 
-	equal = purple_strequal(j1->node, j2->node) &&
-			purple_strequal(j1->domain, j2->domain) &&
-			purple_strequal(j1->resource, j2->resource);
-
-	jabber_id_free(bare_user_jid);
-
-	return equal;
+	return purple_strequal(jid1->node, jid2->node) &&
+			purple_strequal(jid1->domain, jid2->domain) &&
+			purple_strequal(jid1->resource, jid2->resource);
 }
 
 char *jabber_get_domain(const char *in)
