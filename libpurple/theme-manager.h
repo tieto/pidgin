@@ -90,10 +90,10 @@ void purple_theme_manager_refresh(void);
 /**
  * Finds the PurpleTheme object stored by the theme manager.
  *
- * @param name The name of the PurpleTheme.
- * @param type The type of the PurpleTheme.
+ * @name: The name of the PurpleTheme.
+ * @type: The type of the PurpleTheme.
  *
- * @returns The PurpleTheme, or NULL if it wasn't found.
+ * Returns:s The PurpleTheme, or NULL if it wasn't found.
  */
 PurpleTheme *purple_theme_manager_find_theme(const gchar *name, const gchar *type);
 
@@ -101,43 +101,43 @@ PurpleTheme *purple_theme_manager_find_theme(const gchar *name, const gchar *typ
  * Adds a PurpleTheme to the theme manager.  If the theme already exists
  * then this function does nothing.
  *
- * @param theme The PurpleTheme to add to the manager.
+ * @theme: The PurpleTheme to add to the manager.
  */
 void purple_theme_manager_add_theme(PurpleTheme *theme);
 
 /**
  * Removes a PurpleTheme from the theme manager and frees the theme.
  *
- * @param theme The PurpleTheme to remove from the manager.
+ * @theme: The PurpleTheme to remove from the manager.
  */
 void purple_theme_manager_remove_theme(PurpleTheme *theme);
 
 /**
  * Adds a loader to the theme manager so it knows how to build themes.
  *
- * @param loader The PurpleThemeLoader to add.
+ * @loader: The PurpleThemeLoader to add.
  */
 void purple_theme_manager_register_type(PurpleThemeLoader *loader);
 
 /**
  * Removes the loader and all themes of the same type from the loader.
  *
- * @param loader The PurpleThemeLoader to be removed.
+ * @loader: The PurpleThemeLoader to be removed.
  */
 void purple_theme_manager_unregister_type(PurpleThemeLoader *loader);
 
 /**
  * Calls the given function on each purple theme.
  *
- * @param func The PTFunc to be applied to each theme.
+ * @func: The PTFunc to be applied to each theme.
  */
 void purple_theme_manager_for_each_theme(PTFunc func);
 
 /**
  * Loads a theme of the given type without adding it to the manager
  *
- * @param theme_dir	the directory of the theme to load
- * @param type		the type of theme to load
+ * @theme_dir:	the directory of the theme to load
+ * @type:		the type of theme to load
  */
 PurpleTheme *purple_theme_manager_load_theme(const gchar *theme_dir, const gchar *type);
 

@@ -89,7 +89,7 @@ G_BEGIN_DECLS
 
 /**
  * The GType for GntBox.
- * @return The GType.
+ * Returns: The GType.
  */
 GType gnt_box_get_gtype(void);
 
@@ -99,35 +99,35 @@ GType gnt_box_get_gtype(void);
 /**
  * Create a new GntBox.
  *
- * @param homo  If @c TRUE, all the widgets in it will have the same width (or height)
- * @param vert  Whether the widgets in it should be stacked vertically (if @c TRUE)
- *              or horizontally (if @c FALSE).
+ * @homo:  If %TRUE, all the widgets in it will have the same width (or height)
+ * @vert:  Whether the widgets in it should be stacked vertically (if %TRUE)
+ *              or horizontally (if %FALSE).
  *
- * @return The new GntBox.
+ * Returns: The new GntBox.
  */
 GntWidget * gnt_box_new(gboolean homo, gboolean vert);
 
 /**
  * Add a widget in the box.
  *
- * @param box     The box
- * @param widget  The widget to add
+ * @box:     The box
+ * @widget:  The widget to add
  */
 void gnt_box_add_widget(GntBox *box, GntWidget *widget);
 
 /**
  * Set a title for the box.
  *
- * @param box    The box
- * @param title	 The title to set
+ * @box:    The box
+ * @title:	 The title to set
  */
 void gnt_box_set_title(GntBox *box, const char *title);
 
 /**
  * Set the padding to use between the widgets in the box.
  *
- * @param box The box
- * @param pad The padding to use
+ * @box: The box
+ * @pad: The padding to use
  */
 void gnt_box_set_pad(GntBox *box, int pad);
 
@@ -136,38 +136,38 @@ void gnt_box_set_pad(GntBox *box, int pad);
  * then it will show borders, the title (if set) and shadow (if enabled in
  * @e .gntrc)
  *
- * @param box The box
- * @param set @c TRUE if it's a toplevel box, @c FALSE otherwise.
+ * @box: The box
+ * @set: %TRUE if it's a toplevel box, %FALSE otherwise.
  */
 void gnt_box_set_toplevel(GntBox *box, gboolean set);
 
 /**
  * Reposition and refresh the widgets in the box.
  *
- * @param box The box
+ * @box: The box
  */
 void gnt_box_sync_children(GntBox *box);
 
 /**
  * Set the alignment for the widgets in the box.
  *
- * @param box       The box
- * @param alignment The alignment to use
+ * @box:       The box
+ * @alignment: The alignment to use
  */
 void gnt_box_set_alignment(GntBox *box, GntAlignment alignment);
 
 /**
  * Remove a widget from the box. Calling this does NOT destroy the removed widget.
  *
- * @param box       The box
- * @param widget    The widget to remove
+ * @box:       The box
+ * @widget:    The widget to remove
  */
 void gnt_box_remove(GntBox *box, GntWidget *widget);
 
 /**
  * Remove all widgets from the box. This DOES destroy all widgets in the box.
  *
- * @param box The box
+ * @box: The box
  */
 void gnt_box_remove_all(GntBox *box);
 
@@ -175,23 +175,23 @@ void gnt_box_remove_all(GntBox *box);
  * Readjust the size of each child widget, reposition the child widgets and
  * recalculate the size of the box.
  *
- * @param box  The box
+ * @box:  The box
  */
 void gnt_box_readjust(GntBox *box);
 
 /**
  * Set whether the widgets in the box should fill the empty spaces.
  *
- * @param box   The box
- * @param fill  Whether the child widgets should fill the empty space
+ * @box:   The box
+ * @fill:  Whether the child widgets should fill the empty space
  */
 void gnt_box_set_fill(GntBox *box, gboolean fill);
 
 /**
  * Move the focus from one widget to the other.
  *
- * @param box The box
- * @param dir The direction. If it's 1, then the focus is moved forwards, if it's
+ * @box: The box
+ * @dir: The direction. If it's 1, then the focus is moved forwards, if it's
  *            -1, the focus is moved backwards.
  */
 void gnt_box_move_focus(GntBox *box, int dir);
@@ -199,8 +199,8 @@ void gnt_box_move_focus(GntBox *box, int dir);
 /**
  * Give focus to a specific child widget.
  *
- * @param box       The box
- * @param widget    The child widget to give focus
+ * @box:       The box
+ * @widget:    The child widget to give focus
  */
 void gnt_box_give_focus_to_child(GntBox *box, GntWidget *widget);
 

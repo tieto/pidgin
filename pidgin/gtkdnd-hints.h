@@ -57,16 +57,16 @@ G_BEGIN_DECLS
 /**
  * Shows a drag-and-drop hint at the specified location.
  *
- * @param id The ID of the hint to show.
- * @param x  The X location to show it at.
- * @param y  The Y location to show it at.
+ * @id: The ID of the hint to show.
+ * @x:  The X location to show it at.
+ * @y:  The Y location to show it at.
  */
 void dnd_hints_show(DndHintWindowId id, gint x, gint y);
 
 /**
  * Hides the specified drag-and-drop hint.
  *
- * @param id The ID of the hint to hide.
+ * @id: The ID of the hint to hide.
  */
 void dnd_hints_hide(DndHintWindowId id);
 
@@ -78,10 +78,10 @@ void dnd_hints_hide_all(void);
 /**
  * Shows a drag-and-drop hint relative to a widget.
  *
- * @param id     The ID of the hint.
- * @param widget The widget that the hint is relative to.
- * @param horiz  The horizontal relative position.
- * @param vert   The vertical relative position.
+ * @id:     The ID of the hint.
+ * @widget: The widget that the hint is relative to.
+ * @horiz:  The horizontal relative position.
+ * @vert:   The vertical relative position.
  */
 void dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 							 DndHintPosition horiz, DndHintPosition vert);

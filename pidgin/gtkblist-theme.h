@@ -88,60 +88,60 @@ G_BEGIN_DECLS
 /**
  * Create a new PidginThemeFont.
  *
- * @param face  The font face
- * @param color The color of the font
+ * @face:  The font face
+ * @color: The color of the font
  *
- * @return A newly created PidginThemeFont
+ * Returns: A newly created PidginThemeFont
  */
 PidginThemeFont * pidgin_theme_font_new(const gchar *face, GdkColor *color);
 
 /**
  * Frees a font and color pair
  *
- * @param font The theme font
+ * @font: The theme font
  */
 void pidgin_theme_font_free(PidginThemeFont *font);
 
 /**
  * Set the font-face of a PidginThemeFont.
  *
- * @param font  The PidginThemeFont
- * @param face  The font-face
+ * @font:  The PidginThemeFont
+ * @face:  The font-face
  */
 void pidgin_theme_font_set_font_face(PidginThemeFont *font, const gchar *face);
 
 /**
  * Set the color of a PidginThemeFont.
  *
- * @param font  The PidginThemeFont
- * @param color The color
+ * @font:  The PidginThemeFont
+ * @color: The color
  */
 void pidgin_theme_font_set_color(PidginThemeFont *font, const GdkColor *color);
 
 /**
  * Get the font-face of a PidginThemeFont.
  *
- * @param font  The PidginThemeFont
+ * @font:  The PidginThemeFont
  *
- * @return The font-face, or NULL if none is set.
+ * Returns: The font-face, or NULL if none is set.
  */
 const gchar * pidgin_theme_font_get_font_face(PidginThemeFont *font);
 
 /**
  * Get the color of a PidginThemeFont as a GdkColor object.
  *
- * @param font  The PidginThemeFont
+ * @font:  The PidginThemeFont
  *
- * @return The color, or NULL if none is set.
+ * Returns: The color, or NULL if none is set.
  */
 const GdkColor * pidgin_theme_font_get_color(PidginThemeFont *font);
 
 /**
  * Get the color of a PidginThemeFont.
  *
- * @param font  The PidginThemeFont
+ * @font:  The PidginThemeFont
  *
- * @return The color, or NULL if none is set.
+ * Returns: The color, or NULL if none is set.
  */
 const gchar * pidgin_theme_font_get_color_describe(PidginThemeFont *font);
 
@@ -160,9 +160,9 @@ GType pidgin_blist_theme_get_type(void);
 /**
  * Returns the background color of the buddy list.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A gdk color.
+ * Returns:s A gdk color.
  */
  GdkColor *pidgin_blist_theme_get_background_color(PidginBlistTheme *theme);
 
@@ -170,117 +170,117 @@ GType pidgin_blist_theme_get_type(void);
  * Returns the opacity of the buddy list window
  * (0.0 or clear to 1.0 fully opaque).
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns The opacity
+ * Returns:s The opacity
  */
 gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
 
 /**
  * Returns the layout to be used with the buddy list.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns The buddy list layout.
+ * Returns:s The buddy list layout.
  */
 PidginBlistLayout *pidgin_blist_theme_get_layout(PidginBlistTheme *theme);
 
 /**
  * Returns the background color to be used with expanded groups.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A gdk color.
+ * Returns:s A gdk color.
  */
 GdkColor *pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used with expanded groups.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_expanded_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the background color to be used with collapsed groups.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A gdk color.
+ * Returns:s A gdk color.
  */
 GdkColor *pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used with collapsed groups.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the colors to be used for contacts and chats.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A gdkcolor for contacts and chats.
+ * Returns:s A gdkcolor for contacts and chats.
  */
 GdkColor *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for expanded contacts.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_contact_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for online buddies.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_online_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for away and idle buddies.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_away_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for offline buddies.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_offline_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for idle buddies.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_idle_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for buddies with unread messages.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_unread_message_text_info(PidginBlistTheme *theme);
 
@@ -288,18 +288,18 @@ PidginThemeFont *pidgin_blist_theme_get_unread_message_text_info(PidginBlistThem
  * Returns the text font and color to be used for chats with unread messages
  * that mention your nick.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_unread_message_nick_said_text_info(PidginBlistTheme *theme);
 
 /**
  * Returns the text font and color to be used for a buddy's status message.
  *
- * @param theme  The PidginBlist theme.
+ * @theme:  The PidginBlist theme.
  *
- * @returns A font and color pair.
+ * Returns:s A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme);
 
@@ -308,112 +308,112 @@ PidginThemeFont *pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme
 /**
  * Sets the background color to be used for this buddy list theme.
  *
- * @param theme  The PidginBlist theme.
- * @param color The new background color.
+ * @theme:  The PidginBlist theme.
+ * @color: The new background color.
  */
 void pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the opacity to be used for this buddy list theme.
  *
- * @param theme  The PidginBlist theme.
- * @param opacity The new opacity setting.
+ * @theme:  The PidginBlist theme.
+ * @opacity: The new opacity setting.
  */
 void pidgin_blist_theme_set_opacity(PidginBlistTheme *theme, gdouble opacity);
 
 /**
  * Sets the buddy list layout to be used for this buddy list theme.
  *
- * @param theme  The PidginBlist theme.
- * @param layout The new layout.
+ * @theme:  The PidginBlist theme.
+ * @layout: The new layout.
  */
 void pidgin_blist_theme_set_layout(PidginBlistTheme *theme, const PidginBlistLayout *layout);
 
 /**
  * Sets the background color to be used for expanded groups.
  *
- * @param theme  The PidginBlist theme.
- * @param color The new background color.
+ * @theme:  The PidginBlist theme.
+ * @color: The new background color.
  */
 void pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the text color and font to be used for expanded groups.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the background color to be used for collapsed groups.
  *
- * @param theme  The PidginBlist theme.
- * @param color The new background color.
+ * @theme:  The PidginBlist theme.
+ * @color: The new background color.
  */
 void pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the text color and font to be used for expanded groups.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the background color to be used for contacts and chats.
  *
- * @param theme  The PidginBlist theme.
- * @param color The color to use for contacts and chats.
+ * @theme:  The PidginBlist theme.
+ * @color: The color to use for contacts and chats.
  */
 void pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColor *color);
 
 /**
  * Sets the text color and font to be used for expanded contacts.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_contact_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the text color and font to be used for online buddies.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_online_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the text color and font to be used for away and idle buddies.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_away_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the text color and font to be used for offline buddies.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_offline_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the text color and font to be used for idle buddies.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_idle_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the text color and font to be used for buddies with unread messages.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
@@ -421,16 +421,16 @@ void pidgin_blist_theme_set_unread_message_text_info(PidginBlistTheme *theme, co
  * Sets the text color and font to be used for a chat with unread messages
  * that mention your nick.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_unread_message_nick_said_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 
 /**
  * Sets the text color and font to be used for buddy status messages.
  *
- * @param theme  The PidginBlist theme.
- * @param pair The new text font and color pair.
+ * @theme:  The PidginBlist theme.
+ * @pair: The new text font and color pair.
  */
 void pidgin_blist_theme_set_status_text_info(PidginBlistTheme *theme, const PidginThemeFont *pair);
 

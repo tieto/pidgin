@@ -53,30 +53,30 @@ G_BEGIN_DECLS
 /**
  * Returns the GType for a GtkWebViewToolbar widget
  *
- * @return The GType for GtkWebViewToolbar widget
+ * Returns: The GType for GtkWebViewToolbar widget
  */
 GType gtk_webviewtoolbar_get_type(void);
 
 /**
  * Create a new GtkWebViewToolbar object
  *
- * @return A GtkWidget corresponding to the GtkWebViewToolbar object
+ * Returns: A GtkWidget corresponding to the GtkWebViewToolbar object
  */
 GtkWidget *gtk_webviewtoolbar_new(void);
 
 /**
  * Attach a GtkWebViewToolbar object to a GtkWebView
  *
- * @param toolbar The GtkWebViewToolbar object
- * @param webview The GtkWebView object
+ * @toolbar: The GtkWebViewToolbar object
+ * @webview: The GtkWebView object
  */
 void gtk_webviewtoolbar_attach(GtkWebViewToolbar *toolbar, GtkWidget *webview);
 
 /**
  * Associate the smileys from a protocol to a GtkWebViewToolbar object
  *
- * @param toolbar  The GtkWebViewToolbar object
- * @param proto_id The ID of the protocol from which smileys are associated
+ * @toolbar:  The GtkWebViewToolbar object
+ * @proto_id: The ID of the protocol from which smileys are associated
  */
 void gtk_webviewtoolbar_associate_smileys(GtkWebViewToolbar *toolbar,
                                           const char *proto_id);
@@ -84,8 +84,8 @@ void gtk_webviewtoolbar_associate_smileys(GtkWebViewToolbar *toolbar,
 /**
  * Switch the active conversation for a GtkWebViewToolbar object
  *
- * @param toolbar The GtkWebViewToolbar object
- * @param conv    The new conversation
+ * @toolbar: The GtkWebViewToolbar object
+ * @conv:    The new conversation
  */
 void gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
                                                    PurpleConversation *conv);
@@ -93,8 +93,8 @@ void gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
 /**
  * Activate a GtkWebViewToolbar action
  *
- * @param toolbar The GtkWebViewToolbar object
- * @param action  The GtkWebViewAction
+ * @toolbar: The GtkWebViewToolbar object
+ * @action:  The GtkWebViewAction
  */
 void gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
                                  GtkWebViewAction action);

@@ -194,10 +194,10 @@ GType purple_buddy_get_type(void);
  * to add the buddy to the list and purple_account_add_buddy to sync up
  * with the server.
  *
- * @param account    The account this buddy will get added to
- * @param name       The name of the new buddy
- * @param alias      The alias of the new buddy (or NULL if unaliased)
- * @return           A newly allocated buddy
+ * @account:    The account this buddy will get added to
+ * @name:       The name of the new buddy
+ * @alias:      The alias of the new buddy (or NULL if unaliased)
+ * Returns:           A newly allocated buddy
  *
  * @see purple_account_add_buddy
  * @see purple_blist_add_buddy
@@ -210,8 +210,8 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
  * This should only be called from within Purple. You probably want to
  * call purple_buddy_icon_set_data().
  *
- * @param buddy The buddy.
- * @param icon  The buddy icon.
+ * @buddy: The buddy.
+ * @icon:  The buddy icon.
  *
  * @see purple_buddy_icon_set_data()
  */
@@ -220,35 +220,35 @@ void purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon);
 /**
  * Returns a buddy's icon.
  *
- * @param buddy The buddy.
+ * @buddy: The buddy.
  *
- * @return The buddy icon.
+ * Returns: The buddy icon.
  */
 PurpleBuddyIcon *purple_buddy_get_icon(const PurpleBuddy *buddy);
 
 /**
  * Returns a buddy's account.
  *
- * @param buddy The buddy.
+ * @buddy: The buddy.
  *
- * @return The account
+ * Returns: The account
  */
 PurpleAccount *purple_buddy_get_account(const PurpleBuddy *buddy);
 
 /**
  * Sets a buddy's name
  *
- * @param buddy The buddy.
- * @param name  The name.
+ * @buddy: The buddy.
+ * @name:  The name.
  */
 void purple_buddy_set_name(PurpleBuddy *buddy, const char *name);
 
 /**
  * Returns a buddy's name
  *
- * @param buddy The buddy.
+ * @buddy: The buddy.
  *
- * @return The name.
+ * Returns: The name.
  */
 const char *purple_buddy_get_name(const PurpleBuddy *buddy);
 
@@ -257,8 +257,8 @@ const char *purple_buddy_get_name(const PurpleBuddy *buddy);
  *
  * This should only be called from the associated protocol.
  *
- * @param buddy The buddy.
- * @return      The protocol data.
+ * @buddy: The buddy.
+ * Returns:      The protocol data.
  *
  * @see purple_buddy_set_protocol_data()
  */
@@ -269,8 +269,8 @@ gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
  *
  * This should only be called from the associated protocol.
  *
- * @param buddy The buddy.
- * @param data  The data.
+ * @buddy: The buddy.
+ * @data:  The data.
  *
  * @see purple_buddy_get_protocol_data()
  */
@@ -279,18 +279,18 @@ void purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data);
 /**
  * Returns a buddy's contact.
  *
- * @param buddy The buddy.
+ * @buddy: The buddy.
  *
- * @return The buddy's contact.
+ * Returns: The buddy's contact.
  */
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy);
 
 /**
  * Returns a buddy's presence.
  *
- * @param buddy The buddy.
+ * @buddy: The buddy.
  *
- * @return The buddy's presence.
+ * Returns: The buddy's presence.
  */
 PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
 
@@ -299,32 +299,32 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
  *
  * This should only be called from within Purple.
  *
- * @param buddy      The buddy whose status has changed.
- * @param old_status The status from which we are changing.
+ * @buddy:      The buddy whose status has changed.
+ * @old_status: The status from which we are changing.
  */
 void purple_buddy_update_status(PurpleBuddy *buddy, PurpleStatus *old_status);
 
 /**
  * Gets the media caps from a buddy.
  *
- * @param buddy The buddy.
- * @return      The media caps.
+ * @buddy: The buddy.
+ * Returns:      The media caps.
  */
 PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy);
 
 /**
  * Sets the media caps for a buddy.
  *
- * @param buddy      The PurpleBuddy.
- * @param media_caps The PurpleMediaCaps.
+ * @buddy:      The PurpleBuddy.
+ * @media_caps: The PurpleMediaCaps.
  */
 void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps);
 
 /**
  * Returns the alias of a buddy.
  *
- * @param buddy   The buddy whose alias will be returned.
- * @return        The alias (if set), server alias (if set),
+ * @buddy:   The buddy whose alias will be returned.
+ * Returns:        The alias (if set), server alias (if set),
  *                or NULL.
  */
 const char *purple_buddy_get_alias_only(PurpleBuddy *buddy);
@@ -332,16 +332,16 @@ const char *purple_buddy_get_alias_only(PurpleBuddy *buddy);
 /**
  * Sets the server alias for a buddy.
  *
- * @param buddy  The buddy.
- * @param alias  The server alias to be set.
+ * @buddy:  The buddy.
+ * @alias:  The server alias to be set.
  */
 void purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *alias);
 
 /**
  * Gets the server alias for a buddy.
  *
- * @param buddy  The buddy whose server alias will be returned
- * @return  The server alias, or NULL if it is not set.
+ * @buddy:  The buddy whose server alias will be returned
+ * Returns:  The server alias, or NULL if it is not set.
  */
 const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
 
@@ -350,8 +350,8 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  * into account. In order of precedence: the buddy's alias; the buddy's
  * contact alias; the buddy's server alias; the buddy's user name.
  *
- * @param buddy  The buddy whose alias will be returned
- * @return       The appropriate name or alias, or NULL.
+ * @buddy:  The buddy whose alias will be returned
+ * Returns:       The appropriate name or alias, or NULL.
  *
  */
 const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
@@ -361,32 +361,32 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
  * the buddy's local alias; the buddy's server alias; the buddy's contact alias;
  * the buddy's user name.
  *
- * @param buddy   The buddy whose alias will be returned.
- * @return        The appropriate name or alias, or NULL
+ * @buddy:   The buddy whose alias will be returned.
+ * Returns:        The appropriate name or alias, or NULL
  */
 const char *purple_buddy_get_alias(PurpleBuddy *buddy);
 
 /**
  * Sets the local alias for the buddy.
  *
- * @param buddy  The buddy
- * @param alias  The local alias for the buddy
+ * @buddy:  The buddy
+ * @alias:  The local alias for the buddy
  */
 void purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias);
 
 /**
- * Returns the local alias for the buddy, or @c NULL if none exists.
+ * Returns the local alias for the buddy, or %NULL if none exists.
  *
- * @param buddy  The buddy
- * @return       The local alias for the buddy
+ * @buddy:  The buddy
+ * Returns:       The local alias for the buddy
  */
 const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
 
 /**
  * Returns the group of which the buddy is a member.
  *
- * @param buddy   The buddy
- * @return        The group or NULL if the buddy is not in a group
+ * @buddy:   The buddy
+ * Returns:        The group or NULL if the buddy is not in a group
  */
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
 
@@ -405,49 +405,49 @@ GType purple_contact_get_type(void);
 /**
  * Creates a new contact
  *
- * @return       A new contact struct
+ * Returns:       A new contact struct
  */
 PurpleContact *purple_contact_new(void);
 
 /**
  * Gets the PurpleGroup from a PurpleContact
  *
- * @param contact  The contact
- * @return         The group
+ * @contact:  The contact
+ * Returns:         The group
  */
 PurpleGroup *purple_contact_get_group(const PurpleContact *contact);
 
 /**
  * Returns the highest priority buddy for a given contact.
  *
- * @param contact  The contact
- * @return The highest priority buddy
+ * @contact:  The contact
+ * Returns: The highest priority buddy
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
 /**
  * Sets the alias for a contact.
  *
- * @param contact  The contact
- * @param alias    The alias
+ * @contact:  The contact
+ * @alias:    The alias
  */
 void purple_contact_set_alias(PurpleContact *contact, const char *alias);
 
 /**
  * Gets the alias for a contact.
  *
- * @param contact  The contact
- * @return  The alias, or NULL if it is not set.
+ * @contact:  The contact
+ * Returns:  The alias, or NULL if it is not set.
  */
 const char *purple_contact_get_alias(PurpleContact *contact);
 
 /**
  * Determines whether an account owns any buddies in a given contact
  *
- * @param contact  The contact to search through.
- * @param account  The account.
+ * @contact:  The contact to search through.
+ * @account:  The account.
  *
- * @return TRUE if there are any buddies from account in the contact, or FALSE otherwise.
+ * Returns: TRUE if there are any buddies from account in the contact, or FALSE otherwise.
  */
 gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *account);
 
@@ -455,7 +455,7 @@ gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *accoun
  * Invalidates the priority buddy so that the next call to
  * purple_contact_get_priority_buddy recomputes it.
  *
- * @param contact  The contact
+ * @contact:  The contact
  */
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
 
@@ -464,8 +464,8 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
  *
  * All of the buddies from source will be moved to target
  *
- * @param source  The contact to merge
- * @param node    The place to merge to (a buddy or contact)
+ * @source:  The contact to merge
+ * @node:    The place to merge to (a buddy or contact)
  */
 void purple_contact_merge(PurpleContact *source, PurpleBlistNode *node);
 
@@ -484,63 +484,63 @@ GType purple_chat_get_type(void);
 /**
  * Creates a new chat for the buddy list
  *
- * @param account    The account this chat will get added to
- * @param alias      The alias of the new chat
- * @param components The info the protocol needs to join the chat.  The
+ * @account:    The account this chat will get added to
+ * @alias:      The alias of the new chat
+ * @components: The info the protocol needs to join the chat.  The
  *                   hash function should be g_str_hash() and the
  *                   equal function should be g_str_equal().
- * @return           A newly allocated chat
+ * Returns:           A newly allocated chat
  */
 PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components);
 
 /**
  * Returns the correct name to display for a blist chat.
  *
- * @param chat   The chat whose name will be returned.
- * @return       The alias (if set), or first component value.
+ * @chat:   The chat whose name will be returned.
+ * Returns:       The alias (if set), or first component value.
  */
 const char *purple_chat_get_name(PurpleChat *chat);
 
 /**
  * Returns the name of the chat
  *
- * @param chat   The chat whose name will be returned.
- * @return       The first component value.
+ * @chat:   The chat whose name will be returned.
+ * Returns:       The first component value.
  */
 const char *purple_chat_get_name_only(PurpleChat *chat);
 
 /**
  * Sets the alias for a blist chat.
  *
- * @param chat   The chat
- * @param alias  The alias
+ * @chat:   The chat
+ * @alias:  The alias
  */
 void purple_chat_set_alias(PurpleChat *chat, const char *alias);
 
 /**
  * Returns the group of which the chat is a member.
  *
- * @param chat The chat.
+ * @chat: The chat.
  *
- * @return The parent group, or @c NULL if the chat is not in a group.
+ * Returns: The parent group, or %NULL if the chat is not in a group.
  */
 PurpleGroup *purple_chat_get_group(PurpleChat *chat);
 
 /**
  * Returns the account the chat belongs to.
  *
- * @param chat  The chat.
+ * @chat:  The chat.
  *
- * @return  The account the chat belongs to.
+ * Returns:  The account the chat belongs to.
  */
 PurpleAccount *purple_chat_get_account(PurpleChat *chat);
 
 /**
  * Get a hashtable containing information about a chat.
  *
- * @param chat  The chat.
+ * @chat:  The chat.
  *
- * @constreturn  The hashtable.
+ * Returns: (TODO const):  The hashtable.
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
 
@@ -562,17 +562,17 @@ GType purple_group_get_type(void);
  * You can't have more than one group with the same name.  Sorry.  If you pass
  * this the name of a group that already exists, it will return that group.
  *
- * @param name   The name of the new group
- * @return       A new group struct
+ * @name:   The name of the new group
+ * Returns:       A new group struct
 */
 PurpleGroup *purple_group_new(const char *name);
 
 /**
  * Returns a list of accounts that have buddies in this group
  *
- * @param g The group
+ * @g: The group
  *
- * @return A GSList of accounts (which must be freed), or NULL if the group
+ * Returns: A GSList of accounts (which must be freed), or NULL if the group
  *         has no accounts.
  */
 GSList *purple_group_get_accounts(PurpleGroup *g);
@@ -580,27 +580,27 @@ GSList *purple_group_get_accounts(PurpleGroup *g);
 /**
  * Determines whether an account owns any buddies in a given group
  *
- * @param g       The group to search through.
- * @param account The account.
+ * @g:       The group to search through.
+ * @account: The account.
  *
- * @return TRUE if there are any buddies in the group, or FALSE otherwise.
+ * Returns: TRUE if there are any buddies in the group, or FALSE otherwise.
  */
 gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account);
 
 /**
  * Sets the name of a group.
  *
- * @param group The group.
- * @param name  The name of the group.
+ * @group: The group.
+ * @name:  The name of the group.
  */
 void purple_group_set_name(PurpleGroup *group, const char *name);
 
 /**
  * Returns the name of a group.
  *
- * @param group The group.
+ * @group: The group.
  *
- * @return The name of the group.
+ * Returns: The name of the group.
  */
 const char *purple_group_get_name(PurpleGroup *group);
 

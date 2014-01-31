@@ -38,7 +38,7 @@ void pidgin_roomlist_init(void);
 /**
  * Determines if showing the room list dialog is a valid action.
  *
- * @return TRUE if there are accounts online that support listing
+ * Returns: TRUE if there are accounts online that support listing
  *         chat rooms.  Otherwise return FALSE.
  */
 gboolean pidgin_roomlist_is_showable(void);
@@ -51,7 +51,7 @@ void pidgin_roomlist_dialog_show(void);
 /**
  * Shows a new room list dialog and fetches the list for the specified account.
  *
- * @param account The account to use.
+ * @account: The account to use.
  */
 void pidgin_roomlist_dialog_show_with_account(PurpleAccount *account);
 

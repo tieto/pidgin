@@ -111,16 +111,16 @@ G_BEGIN_DECLS
 /**
  * Returns the GType for a GtkWebView widget
  *
- * @return The GType for GtkWebView widget
+ * Returns: The GType for GtkWebView widget
  */
 GType gtk_webview_get_type(void);
 
 /**
  * Create a new GtkWebView object
  *
- * @param editable Whether this GtkWebView will be user-editable
+ * @editable: Whether this GtkWebView will be user-editable
  *
- * @return A GtkWidget corresponding to the GtkWebView object
+ * Returns: A GtkWidget corresponding to the GtkWebView object
  */
 GtkWidget *gtk_webview_new(gboolean editable);
 
@@ -128,16 +128,16 @@ GtkWidget *gtk_webview_new(gboolean editable);
  * A very basic routine to append html, which can be considered
  * equivalent to a "document.write" using JavaScript.
  *
- * @param webview The GtkWebView object
- * @param markup  The html markup to append
+ * @webview: The GtkWebView object
+ * @markup:  The html markup to append
  */
 void gtk_webview_append_html(GtkWebView *webview, const char *markup);
 
 /**
  * Requests loading of the given content.
  *
- * @param webview The GtkWebView object
- * @param html    The HTML content to load
+ * @webview: The GtkWebView object
+ * @html:    The HTML content to load
  */
 void gtk_webview_load_html_string(GtkWebView *webview, const char *html);
 
@@ -147,8 +147,8 @@ void gtk_webview_load_html_string(GtkWebView *webview, const char *html);
  * used to set the selection. This tag is then removed so that querying the
  * WebView's HTML contents will no longer return it.
  *
- * @param webview The GtkWebView object
- * @param html    The HTML content to load
+ * @webview: The GtkWebView object
+ * @html:    The HTML content to load
  */
 void gtk_webview_load_html_string_with_selection(GtkWebView *webview, const char *html);
 
@@ -159,8 +159,8 @@ void gtk_webview_load_html_string_with_selection(GtkWebView *webview, const char
  * conditions when calling JS functions immediately after opening the
  * page.
  *
- * @param webview The GtkWebView object
- * @param script  The script to execute
+ * @webview: The GtkWebView object
+ * @script:  The script to execute
  */
 void gtk_webview_safe_execute_script(GtkWebView *webview, const char *script);
 
@@ -168,25 +168,25 @@ void gtk_webview_safe_execute_script(GtkWebView *webview, const char *script);
  * A convenience routine to quote a string for use as a JavaScript
  * string. For instance, "hello 'world'" becomes "'hello \\'world\\''"
  *
- * @param str The string to escape and quote
+ * @str: The string to escape and quote
  *
- * @return The quoted string
+ * Returns: The quoted string
  */
 char *gtk_webview_quote_js_string(const char *str);
 
 /**
  * Set the vertical adjustment for the GtkWebView.
  *
- * @param webview  The GtkWebView object
- * @param vadj     The GtkAdjustment that control the webview
+ * @webview:  The GtkWebView object
+ * @vadj:     The GtkAdjustment that control the webview
  */
 void gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj);
 
 /**
  * Scrolls the Webview to the end of its contents.
  *
- * @param webview The GtkWebView object
- * @param smooth  A boolean indicating if smooth scrolling should be used
+ * @webview: The GtkWebView object
+ * @smooth:  A boolean indicating if smooth scrolling should be used
  */
 void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth);
 
@@ -194,8 +194,8 @@ void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth);
  * Set whether the GtkWebView stays at its end when HTML content is appended. If
  * not already at the end before appending, then scrolling will not occur.
  *
- * @param webview The GtkWebView object
- * @param scroll  Whether to automatically scroll
+ * @webview: The GtkWebView object
+ * @scroll:  Whether to automatically scroll
  */
 void gtk_webview_set_autoscroll(GtkWebView *webview, gboolean scroll);
 
@@ -203,39 +203,39 @@ void gtk_webview_set_autoscroll(GtkWebView *webview, gboolean scroll);
  * Set whether the GtkWebView stays at its end when HTML content is appended. If
  * not already at the end before appending, then scrolling will not occur.
  *
- * @param webview The GtkWebView object
+ * @webview: The GtkWebView object
  *
- * @return Whether to automatically scroll
+ * Returns: Whether to automatically scroll
  */
 gboolean gtk_webview_get_autoscroll(GtkWebView *webview);
 
 /**
  * Scrolls a GtkWebView up by one page.
  *
- * @param webview The GtkWebView.
+ * @webview: The GtkWebView.
  */
 void gtk_webview_page_up(GtkWebView *webview);
 
 /**
  * Scrolls a GtkWebView down by one page.
  *
- * @param webview The GtkWebView.
+ * @webview: The GtkWebView.
  */
 void gtk_webview_page_down(GtkWebView *webview);
 
 /**
  * Setup formatting for a GtkWebView depending on the flags specified.
  *
- * @param webview The GtkWebView.
- * @param flags   The connection flags describing the allowed formatting.
+ * @webview: The GtkWebView.
+ * @flags:   The connection flags describing the allowed formatting.
  */
 void gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags);
 
 /**
  * Setup spell-checking on a GtkWebView.
  *
- * @param webview The GtkWebView.
- * @param enable  Whether to enable or disable spell-checking.
+ * @webview: The GtkWebView.
+ * @enable:  Whether to enable or disable spell-checking.
  */
 void pidgin_webview_set_spellcheck(GtkWebView *webview, gboolean enable);
 
@@ -244,8 +244,8 @@ void pidgin_webview_set_spellcheck(GtkWebView *webview, gboolean enable);
  * In this mode formatting options to the buffer take effect for the entire
  * buffer instead of specific text.
  *
- * @param webview The GtkWebView
- * @param wbfo    @c TRUE to enable the mode, or @c FALSE otherwise.
+ * @webview: The GtkWebView
+ * @wbfo:    %TRUE to enable the mode, or %FALSE otherwise.
  */
 void gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview,
                                                   gboolean wbfo);
@@ -253,8 +253,8 @@ void gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview,
 /**
  * Indicates which formatting functions to enable and disable in a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param buttons A GtkWebViewButtons bitmask indicating which functions to use
+ * @webview: The GtkWebView
+ * @buttons: A GtkWebViewButtons bitmask indicating which functions to use
  */
 void gtk_webview_set_format_functions(GtkWebView *webview,
                                       GtkWebViewButtons buttons);
@@ -263,7 +263,7 @@ void gtk_webview_set_format_functions(GtkWebView *webview,
  * Activates a WebKitDOMHTMLAnchorElement object. This triggers the navigation
  * signals, and marks the link as visited (when possible).
  *
- * @param link   The WebKitDOMHTMLAnchorElement object
+ * @link:   The WebKitDOMHTMLAnchorElement object
  *
  */
 void gtk_webview_activate_anchor(WebKitDOMHTMLAnchorElement *link);
@@ -272,18 +272,18 @@ void gtk_webview_activate_anchor(WebKitDOMHTMLAnchorElement *link);
  * Register a protocol with the GtkWebView widget. Registering a protocol would
  * allow certain text to be clickable.
  *
- * @param name      The name of the protocol (e.g. http://)
- * @param activate  The callback to trigger when the protocol text is clicked.
- *                  Removes any current protocol definition if @c NULL. The
- *                  callback should return @c TRUE if the link was activated
- *                  properly, @c FALSE otherwise.
- * @param context_menu  The callback to trigger when the context menu is popped
+ * @name:      The name of the protocol (e.g. http://)
+ * @activate:  The callback to trigger when the protocol text is clicked.
+ *                  Removes any current protocol definition if %NULL. The
+ *                  callback should return %TRUE if the link was activated
+ *                  properly, %FALSE otherwise.
+ * @context_menu:  The callback to trigger when the context menu is popped
  *                      up on the protocol text. The callback should return
- *                      @c TRUE if the request for context menu was processed
- *                      successfully, @c FALSE otherwise.
+ *                      %TRUE if the request for context menu was processed
+ *                      successfully, %FALSE otherwise.
  *
- * @return  @c TRUE if the protocol was successfully registered
- *          (or unregistered, when \a activate is @c NULL)
+ * Returns:  %TRUE if the protocol was successfully registered
+ *          (or unregistered, when \a activate is %NULL)
  */
 gboolean gtk_webview_class_register_protocol(const char *name,
 		gboolean (*activate)(GtkWebView *webview, const char *uri),
@@ -292,21 +292,21 @@ gboolean gtk_webview_class_register_protocol(const char *name,
 /**
  * Returns which formatting functions are enabled in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return A GtkWebViewButtons bitmask indicating which functions to are enabled
+ * Returns: A GtkWebViewButtons bitmask indicating which functions to are enabled
  */
 GtkWebViewButtons gtk_webview_get_format_functions(GtkWebView *webview);
 
 /**
- * Sets each boolean to @c TRUE or @c FALSE to indicate if that formatting
+ * Sets each boolean to %TRUE or %FALSE to indicate if that formatting
  * option is enabled at the current position in a GtkWebView.
  *
- * @param webview       The GtkWebView
- * @param bold          The boolean to set for bold or @c NULL.
- * @param italic        The boolean to set for italic or @c NULL.
- * @param underline     The boolean to set for underline or @c NULL.
- * @param strikethrough The boolean to set for strikethrough or @c NULL.
+ * @webview:       The GtkWebView
+ * @bold:          The boolean to set for bold or %NULL.
+ * @italic:        The boolean to set for italic or %NULL.
+ * @underline:     The boolean to set for underline or %NULL.
+ * @strikethrough: The boolean to set for strikethrough or %NULL.
  */
 void gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
                                     gboolean *italic, gboolean *underline,
@@ -316,9 +316,9 @@ void gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
  * Returns a string containing the selected font face at the current position
  * in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return A string containing the font face or @c NULL if none is set.
+ * Returns: A string containing the font face or %NULL if none is set.
  */
 char *gtk_webview_get_current_fontface(GtkWebView *webview);
 
@@ -326,9 +326,9 @@ char *gtk_webview_get_current_fontface(GtkWebView *webview);
  * Returns a string containing the selected foreground color at the current
  * position in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return A string containing the foreground color or @c NULL if none is set.
+ * Returns: A string containing the foreground color or %NULL if none is set.
  */
 char *gtk_webview_get_current_forecolor(GtkWebView *webview);
 
@@ -336,9 +336,9 @@ char *gtk_webview_get_current_forecolor(GtkWebView *webview);
  * Returns a string containing the selected font background color at the current
  * position in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return A string containing the background color or @c NULL if none is set.
+ * Returns: A string containing the background color or %NULL if none is set.
  */
 char *gtk_webview_get_current_backcolor(GtkWebView *webview);
 
@@ -346,45 +346,45 @@ char *gtk_webview_get_current_backcolor(GtkWebView *webview);
  * Returns a integer containing the selected HTML font size at the current
  * position in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return The HTML font size.
+ * Returns: The HTML font size.
  */
 gint gtk_webview_get_current_fontsize(GtkWebView *webview);
 
 /**
  * Gets the content of the head element of a GtkWebView as HTML.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return The HTML from the head element.
+ * Returns: The HTML from the head element.
  */
 gchar *gtk_webview_get_head_html(GtkWebView *webview);
 
 /**
  * Gets the HTML content of a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return The HTML that is currently displayed.
+ * Returns: The HTML that is currently displayed.
  */
 gchar *gtk_webview_get_body_html(GtkWebView *webview);
 
 /**
  * Gets the text content of a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return The HTML-free text that is currently displayed.
+ * Returns: The HTML-free text that is currently displayed.
  */
 gchar *gtk_webview_get_body_text(GtkWebView *webview);
 
 /**
  * Gets the selected text of a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  *
- * @return The HTML-free text that is currently selected, or NULL if nothing is
+ * Returns: The HTML-free text that is currently selected, or NULL if nothing is
  *         currently selected.
  */
 gchar *gtk_webview_get_selected_text(GtkWebView *webview);
@@ -393,11 +393,11 @@ gchar *gtk_webview_get_selected_text(GtkWebView *webview);
  * Gets the container of the caret, along with its position in the container
  * from a GtkWebView.
  *
- * @param webview       The GtkWebView
- * @param container_ret A pointer to a pointer to a WebKitDOMNode. This pointer
+ * @webview:       The GtkWebView
+ * @container_ret: A pointer to a pointer to a WebKitDOMNode. This pointer
  *                      will be set to the container the caret is in. Set to
- *                      @c NULL if a range is selected.
- * @param pos_ret       A pointer to a glong. This value will be set to the
+ *                      %NULL if a range is selected.
+ * @pos_ret:       A pointer to a glong. This value will be set to the
  *                      position of the caret in the container. Set to -1 if a
  *                      range is selected.
  */
@@ -407,9 +407,9 @@ void gtk_webview_get_caret(GtkWebView *webview, WebKitDOMNode **container_ret,
 /**
  * Sets the caret position in container, in a GtkWebView.
  *
- * @param webview   The GtkWebView
- * @param container The WebKitDOMNode to set the caret in
- * @param pos       The position of the caret in the container
+ * @webview:   The GtkWebView
+ * @container: The WebKitDOMNode to set the caret in
+ * @pos:       The position of the caret in the container
  */
 void gtk_webview_set_caret(GtkWebView *webview, WebKitDOMNode *container,
 		glong pos);
@@ -417,35 +417,35 @@ void gtk_webview_set_caret(GtkWebView *webview, WebKitDOMNode *container,
 /**
  * Clear all the formatting on a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_clear_formatting(GtkWebView *webview);
 
 /**
  * Toggles bold at the cursor location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_toggle_bold(GtkWebView *webview);
 
 /**
  * Toggles italic at the cursor location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_toggle_italic(GtkWebView *webview);
 
 /**
  * Toggles underline at the cursor location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_toggle_underline(GtkWebView *webview);
 
 /**
  * Toggles strikethrough at the cursor location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_toggle_strike(GtkWebView *webview);
 
@@ -453,10 +453,10 @@ void gtk_webview_toggle_strike(GtkWebView *webview);
  * Toggles a foreground color at the current location or selection in a
  * GtkWebView.
  *
- * @param webview The GtkWebView
- * @param color  The HTML-style color, or @c NULL or "" to clear the color.
+ * @webview: The GtkWebView
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
  *
- * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
 gboolean gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color);
 
@@ -464,28 +464,28 @@ gboolean gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color);
  * Toggles a background color at the current location or selection in a
  * GtkWebView.
  *
- * @param webview The GtkWebView
- * @param color  The HTML-style color, or @c NULL or "" to clear the color.
+ * @webview: The GtkWebView
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
  *
- * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
 gboolean gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color);
 
 /**
  * Toggles a font face at the current location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param face   The font face name, or @c NULL or "" to clear the font.
+ * @webview: The GtkWebView
+ * @face:   The font face name, or %NULL or "" to clear the font.
  *
- * @return @c TRUE if a font name was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a font name was set, or %FALSE if it was cleared.
  */
 gboolean gtk_webview_toggle_fontface(GtkWebView *webview, const char *face);
 
 /**
  * Sets the font size at the current location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param size   The HTML font size to use.
+ * @webview: The GtkWebView
+ * @size:   The HTML font size to use.
  */
 void gtk_webview_font_set_size(GtkWebView *webview, gint size);
 
@@ -493,7 +493,7 @@ void gtk_webview_font_set_size(GtkWebView *webview, gint size);
  * Decreases the font size by 1 at the current location or selection in a
  * GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_font_shrink(GtkWebView *webview);
 
@@ -501,7 +501,7 @@ void gtk_webview_font_shrink(GtkWebView *webview);
  * Increases the font size by 1 at the current location or selection in a
  * GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_font_grow(GtkWebView *webview);
 
@@ -509,16 +509,16 @@ void gtk_webview_font_grow(GtkWebView *webview);
  * Inserts a horizontal rule at the current location or selection in a
  * GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 void gtk_webview_insert_hr(GtkWebView *webview);
 
 /**
  * Inserts a link at the current location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param url     The URL of the link
- * @param desc    The text description of the link. If not supplied, the URL is
+ * @webview: The GtkWebView
+ * @url:     The URL of the link
+ * @desc:    The text description of the link. If not supplied, the URL is
  *                used instead.
  */
 void gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *desc);
@@ -526,36 +526,36 @@ void gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *d
 /**
  * Inserts an image at the current location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param id      The PurpleStoredImage id
+ * @webview: The GtkWebView
+ * @id:      The PurpleStoredImage id
  */
 void gtk_webview_insert_image(GtkWebView *webview, int id);
 
 /**
  * Gets the protocol name associated with this GtkWebView.
  *
- * @param webview The GtkWebView
+ * @webview: The GtkWebView
  */
 const char *gtk_webview_get_protocol_name(GtkWebView *webview);
 
 /**
  * Associates a protocol name with a GtkWebView.
  *
- * @param webview       The GtkWebView
- * @param protocol_name The protocol name to associate with the GtkWebView
+ * @webview:       The GtkWebView
+ * @protocol_name: The protocol name to associate with the GtkWebView
  */
 void gtk_webview_set_protocol_name(GtkWebView *webview, const char *protocol_name);
 
 /**
  * Create a new GtkWebViewSmiley.
  *
- * @param file      The image file for the smiley
- * @param shortcut  The key shortcut for the smiley
- * @param hide      @c TRUE if the smiley should be hidden in the smiley dialog,
- *                  @c FALSE otherwise
- * @param flags     The smiley flags
+ * @file:      The image file for the smiley
+ * @shortcut:  The key shortcut for the smiley
+ * @hide:      %TRUE if the smiley should be hidden in the smiley dialog,
+ *                  %FALSE otherwise
+ * @flags:     The smiley flags
  *
- * @return The newly created smiley
+ * Returns: The newly created smiley
  */
 GtkWebViewSmiley *gtk_webview_smiley_create(const char *file,
                                             const char *shortcut,
@@ -565,59 +565,59 @@ GtkWebViewSmiley *gtk_webview_smiley_create(const char *file,
 /**
  * Reload the image data for the smiley.
  *
- * @param smiley    The smiley to reload
+ * @smiley:    The smiley to reload
  */
 void gtk_webview_smiley_reload(GtkWebViewSmiley *smiley);
 
 /**
  * Destroy a GtkWebViewSmiley.
  *
- * @param smiley    The smiley to destroy
+ * @smiley:    The smiley to destroy
  */
 void gtk_webview_smiley_destroy(GtkWebViewSmiley *smiley);
 
 /**
  * Returns the text associated with a smiley.
  *
- * @param smiley    The smiley
+ * @smiley:    The smiley
  *
- * @return The text
+ * Returns: The text
  */
 const char *gtk_webview_smiley_get_smile(const GtkWebViewSmiley *smiley);
 
 /**
  * Returns the file associated with a smiley.
  *
- * @param smiley    The smiley
+ * @smiley:    The smiley
  *
- * @return The file
+ * Returns: The file
  */
 const char *gtk_webview_smiley_get_file(const GtkWebViewSmiley *smiley);
 
 /**
  * Returns the invisibility of a smiley.
  *
- * @param smiley    The smiley
+ * @smiley:    The smiley
  *
- * @return The hidden status
+ * Returns: The hidden status
  */
 gboolean gtk_webview_smiley_get_hidden(const GtkWebViewSmiley *smiley);
 
 /**
  * Returns the flags associated with a smiley.
  *
- * @param smiley    The smiley
+ * @smiley:    The smiley
  *
- * @return The flags
+ * Returns: The flags
  */
 GtkWebViewSmileyFlags gtk_webview_smiley_get_flags(const GtkWebViewSmiley *smiley);
 
 /**
  * Returns the smiley object associated with the text.
  *
- * @param webview The GtkWebView
- * @param sml     The name of the smiley category
- * @param text    The text associated with the smiley
+ * @webview: The GtkWebView
+ * @sml:     The name of the smiley category
+ * @text:    The text associated with the smiley
  */
 GtkWebViewSmiley *gtk_webview_smiley_find(GtkWebView *webview, const char *sml,
                                           const char *text);
@@ -625,9 +625,9 @@ GtkWebViewSmiley *gtk_webview_smiley_find(GtkWebView *webview, const char *sml,
 /**
  * Associates a smiley with a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param sml     The name of the smiley category
- * @param smiley  The GtkWebViewSmiley to associate
+ * @webview: The GtkWebView
+ * @sml:     The name of the smiley category
+ * @smiley:  The GtkWebViewSmiley to associate
  */
 void gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
                                   GtkWebViewSmiley *smiley);
@@ -635,16 +635,16 @@ void gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
 /**
  * Removes all smileys associated with a GtkWebView.
  *
- * @param webview The GtkWebView.
+ * @webview: The GtkWebView.
  */
 void gtk_webview_remove_smileys(GtkWebView *webview);
 
 /**
  * Inserts a smiley at the current location or selection in a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param sml     The category of the smiley
- * @param smiley  The text of the smiley to insert
+ * @webview: The GtkWebView
+ * @sml:     The category of the smiley
+ * @smiley:  The text of the smiley to insert
  */
 void gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
                                const char *smiley);
@@ -652,22 +652,22 @@ void gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
 /**
  * Makes the toolbar associated with a GtkWebView visible.
  *
- * @param webview The GtkWebView.
+ * @webview: The GtkWebView.
  */
 void gtk_webview_show_toolbar(GtkWebView *webview);
 
 /**
  * Makes the toolbar associated with a GtkWebView invisible.
  *
- * @param webview The GtkWebView.
+ * @webview: The GtkWebView.
  */
 void gtk_webview_hide_toolbar(GtkWebView *webview);
 
 /**
  * Activate an action on the toolbar associated with a GtkWebView.
  *
- * @param webview The GtkWebView
- * @param action  The GtkWebViewAction
+ * @webview: The GtkWebView
+ * @action:  The GtkWebViewAction
  */
 void gtk_webview_activate_toolbar(GtkWebView *webview, GtkWebViewAction action);
 

@@ -53,50 +53,50 @@ G_BEGIN_DECLS
  * Registers the PidginMenuTray class if necessary and returns the
  * type ID assigned to it.
  *
- * @return The PidginMenuTray type ID
+ * Returns: The PidginMenuTray type ID
  */
 GType pidgin_menu_tray_get_type(void);
 
 /**
  * Creates a new PidginMenuTray
  *
- * @return A new PidginMenuTray
+ * Returns: A new PidginMenuTray
  */
 GtkWidget *pidgin_menu_tray_new(void);
 
 /**
  * Gets the box for the PidginMenuTray
  *
- * @param menu_tray The PidginMenuTray
+ * @menu_tray: The PidginMenuTray
  *
- * @return The box that this menu tray is using
+ * Returns: The box that this menu tray is using
  */
 GtkWidget *pidgin_menu_tray_get_box(PidginMenuTray *menu_tray);
 
 /**
  * Appends a widget into the tray
  *
- * @param menu_tray The tray
- * @param widget    The widget
- * @param tooltip   The tooltip for this widget (widget requires its own X-window)
+ * @menu_tray: The tray
+ * @widget:    The widget
+ * @tooltip:   The tooltip for this widget (widget requires its own X-window)
  */
 void pidgin_menu_tray_append(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
  * Prepends a widget into the tray
  *
- * @param menu_tray The tray
- * @param widget    The widget
- * @param tooltip   The tooltip for this widget (widget requires its own X-window)
+ * @menu_tray: The tray
+ * @widget:    The widget
+ * @tooltip:   The tooltip for this widget (widget requires its own X-window)
  */
 void pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
  * Set the tooltip for a widget
  *
- * @param menu_tray The tray
- * @param widget    The widget
- * @param tooltip   The tooltip to set for the widget (widget requires its own X-window)
+ * @menu_tray: The tray
+ * @widget:    The widget
+ * @tooltip:   The tooltip to set for the widget (widget requires its own X-window)
  */
 void pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 

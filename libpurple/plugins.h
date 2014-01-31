@@ -159,7 +159,7 @@ struct _PurplePluginAction {
 /**
  * Returns an ABI version to set in plugins using major and minor versions.
  *
- * @note The lower six nibbles represent the ABI version for libpurple, the
+ * Note: The lower six nibbles represent the ABI version for libpurple, the
  *       rest are required by GPlugin.
  */
 #define PURPLE_PLUGIN_ABI_VERSION(major,minor) \
@@ -231,9 +231,9 @@ struct _PurplePluginAction {
  * The type will be registered statically if used in a static protocol or if
  * plugins support is disabled.
  *
- * @param TN   The name of the new type, in Camel case.
- * @param t_n  The name of the new type, in lowercase, words separated by '_'.
- * @param T_P  The #GType of the parent type.
+ * @TN:   The name of the new type, in Camel case.
+ * @t_n:  The name of the new type, in lowercase, words separated by '_'.
+ * @T_P:  The #GType of the parent type.
  */
 #if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
 #define PURPLE_DEFINE_TYPE(TN, t_n, T_P) \
@@ -249,11 +249,11 @@ struct _PurplePluginAction {
  * A more general version of PURPLE_DEFINE_TYPE() which allows you to
  * specify #GTypeFlags and custom code.
  *
- * @param TN     The name of the new type, in Camel case.
- * @param t_n    The name of the new type, in lowercase, words separated by '_'.
- * @param T_P    The #GType of the parent type.
- * @param flags  #GTypeFlags to register the type with.
- * @param CODE   Custom code that gets inserted in *_get_type().
+ * @TN:     The name of the new type, in Camel case.
+ * @t_n:    The name of the new type, in lowercase, words separated by '_'.
+ * @T_P:    The #GType of the parent type.
+ * @flags:  #GTypeFlags to register the type with.
+ * @CODE:   Custom code that gets inserted in *_get_type().
  */
 #if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
 #define PURPLE_DEFINE_TYPE_EXTENDED \
@@ -270,8 +270,8 @@ struct _PurplePluginAction {
  * of PURPLE_DEFINE_TYPE_EXTENDED(). You should use this macro if the
  * interface is a part of the libpurple core.
  *
- * @param TYPE_IFACE  The #GType of the interface to add.
- * @param iface_init  The interface init function.
+ * @TYPE_IFACE:  The #GType of the interface to add.
+ * @iface_init:  The interface init function.
  */
 #define PURPLE_IMPLEMENT_INTERFACE_STATIC(TYPE_IFACE, iface_init) { \
 	const GInterfaceInfo interface_info = { \
@@ -287,8 +287,8 @@ struct _PurplePluginAction {
  * of PURPLE_DEFINE_TYPE_EXTENDED(). You should use this macro if the
  * interface lives in the plugin.
  *
- * @param TYPE_IFACE  The #GType of the interface to add.
- * @param iface_init  The interface init function.
+ * @TYPE_IFACE:  The #GType of the interface to add.
+ * @iface_init:  The interface init function.
  */
 #if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
 #define PURPLE_IMPLEMENT_INTERFACE(TYPE_IFACE, iface_init) \
@@ -379,11 +379,11 @@ G_BEGIN_DECLS
 /**
  * Attempts to load a plugin.
  *
- * @param plugin The plugin to load.
- * @param error  Return location for a #GError or @c NULL. If provided, this
+ * @plugin: The plugin to load.
+ * @error:  Return location for a #GError or %NULL. If provided, this
  *               will be set to the reason if the load fails.
  *
- * @return @c TRUE if successful or already loaded, @c FALSE otherwise.
+ * Returns: %TRUE if successful or already loaded, %FALSE otherwise.
  *
  * @see purple_plugin_unload()
  */
@@ -392,11 +392,11 @@ gboolean purple_plugin_load(PurplePlugin *plugin, GError **error);
 /**
  * Unloads the specified plugin.
  *
- * @param plugin The plugin handle.
- * @param error  Return location for a #GError or @c NULL. If provided, this
+ * @plugin: The plugin handle.
+ * @error:  Return location for a #GError or %NULL. If provided, this
  *               will be set to the reason if the unload fails.
  *
- * @return @c TRUE if successful or not loaded, @c FALSE otherwise.
+ * Returns: %TRUE if successful or not loaded, %FALSE otherwise.
  *
  * @see purple_plugin_load()
  */
@@ -405,27 +405,27 @@ gboolean purple_plugin_unload(PurplePlugin *plugin, GError **error);
 /**
  * Returns whether or not a plugin is currently loaded.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return @c TRUE if loaded, or @c FALSE otherwise.
+ * Returns: %TRUE if loaded, or %FALSE otherwise.
  */
 gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's filename, along with the path.
  *
- * @param info The plugin.
+ * @info: The plugin.
  *
- * @return The plugin's filename.
+ * Returns: The plugin's filename.
  */
 const gchar *purple_plugin_get_filename(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's #PurplePluginInfo instance.
  *
- * @param info The plugin.
+ * @info: The plugin.
  *
- * @return The plugin's #PurplePluginInfo instance.
+ * Returns: The plugin's #PurplePluginInfo instance.
  */
 PurplePluginInfo *purple_plugin_get_info(const PurplePlugin *plugin);
 
@@ -442,15 +442,15 @@ void purple_plugin_disable(PurplePlugin *plugin);
 /**
  * Registers a new dynamic type.
  *
- * @param plugin  The plugin that is registering the type.
- * @param parent  Type from which this type will be derived.
- * @param name    Name of the new type.
- * @param info    Information to initialize and destroy a type's classes and
+ * @plugin:  The plugin that is registering the type.
+ * @parent:  Type from which this type will be derived.
+ * @name:    Name of the new type.
+ * @info:    Information to initialize and destroy a type's classes and
  *                instances.
- * @param flags   Bitwise combination of values that determines the nature
+ * @flags:   Bitwise combination of values that determines the nature
  *                (e.g. abstract or not) of the type.
  *
- * @return The new GType, or @c G_TYPE_INVALID if registration failed.
+ * Returns: The new GType, or @c G_TYPE_INVALID if registration failed.
  */
 GType purple_plugin_register_type(PurplePlugin *plugin, GType parent,
                                   const gchar *name, const GTypeInfo *info,
@@ -459,10 +459,10 @@ GType purple_plugin_register_type(PurplePlugin *plugin, GType parent,
 /**
  * Adds a dynamic interface type to an instantiable type.
  *
- * @param plugin          The plugin that is adding the interface type.
- * @param instance_type   The GType of the instantiable type.
- * @param interface_type  The GType of the interface type.
- * @param interface_info  Information used to manage the interface type.
+ * @plugin:          The plugin that is adding the interface type.
+ * @instance_type:   The GType of the instantiable type.
+ * @interface_type:  The GType of the interface type.
+ * @interface_info:  Information used to manage the interface type.
  */
 void purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
                                  GType interface_type,
@@ -474,18 +474,18 @@ void purple_plugin_add_interface(PurplePlugin *plugin, GType instance_type,
  * not be shown in plugin lists. Examples of such plugins are in-tree protocol
  * plugins, loaders etc.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return @c TRUE if the plugin is an internal plugin, @c FALSE otherwise.
+ * Returns: %TRUE if the plugin is an internal plugin, %FALSE otherwise.
  */
 gboolean purple_plugin_is_internal(const PurplePlugin *plugin);
 
 /**
  * Returns a list of plugins that depend on a particular plugin.
  *
- * @param plugin The plugin whose dependent plugins are returned.
+ * @plugin: The plugin whose dependent plugins are returned.
  *
- * @constreturn The list of a plugins that depend on the specified plugin.
+ * Returns: (TODO const): The list of a plugins that depend on the specified plugin.
  */
 GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
 
@@ -539,11 +539,11 @@ GType purple_plugin_info_get_type(void);
  *                             preferences request handle for the plugin.     \n
  * "flags"            (PurplePluginInfoFlags) The flags for a plugin.         \n
  *
- * @param first_property  The first property name
- * @param ...  The value of the first property, followed optionally by more
- *             name/value pairs, followed by @c NULL
+ * @first_property:  The first property name
+ * @...:  The value of the first property, followed optionally by more
+ *             name/value pairs, followed by %NULL
  *
- * @return A new #PurplePluginInfo instance.
+ * Returns: A new #PurplePluginInfo instance.
  *
  * @see PURPLE_PLUGIN_ABI_VERSION
  * @see @ref plugin-ids
@@ -554,63 +554,63 @@ PurplePluginInfo *purple_plugin_info_new(const char *first_property, ...)
 /**
  * Returns a plugin's ID.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The plugin's ID.
+ * Returns: The plugin's ID.
  */
 const gchar *purple_plugin_info_get_id(const PurplePluginInfo *info);
 
 /**
  * Returns a plugin's translated name.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The name of the plugin, or @c NULL.
+ * Returns: The name of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_name(const PurplePluginInfo *info);
 
 /**
  * Returns a plugin's version.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The version of the plugin, or @c NULL.
+ * Returns: The version of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_version(const PurplePluginInfo *info);
 
 /**
  * Returns a plugin's primary category.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The primary category of the plugin, or @c NULL.
+ * Returns: The primary category of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_category(const PurplePluginInfo *info);
 
 /**
  * Returns a plugin's summary.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The summary of the plugin, or @c NULL.
+ * Returns: The summary of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_summary(const PurplePluginInfo *info);
 
 /**
  * Returns a plugin's description.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The description of the plugin, or @c NULL.
+ * Returns: The description of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_description(const PurplePluginInfo *info);
 
 /**
  * Returns a NULL-terminated list of the plugin's authors.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The authors of the plugin, or @c NULL.
+ * Returns: The authors of the plugin, or %NULL.
  */
 const gchar * const *
 purple_plugin_info_get_authors(const PurplePluginInfo *info);
@@ -618,54 +618,54 @@ purple_plugin_info_get_authors(const PurplePluginInfo *info);
 /**
  * Returns a plugin's website.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The website of the plugin, or @c NULL.
+ * Returns: The website of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_website(const PurplePluginInfo *info);
 
 /**
  * Returns the path to a plugin's icon.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The path to the plugin's icon, or @c NULL.
+ * Returns: The path to the plugin's icon, or %NULL.
  */
 const gchar *purple_plugin_info_get_icon(const PurplePluginInfo *info);
 
 /**
  * Returns a short name of the plugin's license.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The license name of the plugin, or @c NULL.
+ * Returns: The license name of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_license_id(const PurplePluginInfo *info);
 
 /**
  * Returns the text of a plugin's license.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The license text of the plugin, or @c NULL.
+ * Returns: The license text of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_license_text(const PurplePluginInfo *info);
 
 /**
  * Returns the URL of a plugin's license.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The license URL of the plugin, or @c NULL.
+ * Returns: The license URL of the plugin, or %NULL.
  */
 const gchar *purple_plugin_info_get_license_url(const PurplePluginInfo *info);
 
 /**
  * Returns a NULL-terminated list of IDs of plugins required by a plugin.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The dependencies of the plugin, or @c NULL.
+ * Returns: The dependencies of the plugin, or %NULL.
  */
 const gchar * const *
 purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
@@ -673,9 +673,9 @@ purple_plugin_info_get_dependencies(const PurplePluginInfo *info);
 /**
  * Returns the required purple ABI version for a plugin.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The required purple ABI version for the plugin.
+ * Returns: The required purple ABI version for the plugin.
  */
 guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
 
@@ -683,9 +683,9 @@ guint32 purple_plugin_info_get_abi_version(const PurplePluginInfo *info);
  * Returns the callback that retrieves the list of actions a plugin can perform
  * at that moment.
  *
- * @param info The plugin info to get the callback from.
+ * @info: The plugin info to get the callback from.
  *
- * @return The callback that returns a list of #PurplePluginAction
+ * Returns: The callback that returns a list of #PurplePluginAction
  *         instances corresponding to the actions a plugin can perform.
  */
 PurplePluginActionsCb
@@ -695,9 +695,9 @@ purple_plugin_info_get_actions_cb(const PurplePluginInfo *info);
  * Returns a callback that gives extra information about a plugin. You must
  * free the string returned by this callback.
  *
- * @param info The plugin info to get extra information from.
+ * @info: The plugin info to get extra information from.
  *
- * @return The callback that returns extra information about a plugin.
+ * Returns: The callback that returns extra information about a plugin.
  */
 PurplePluginExtraCb
 purple_plugin_info_get_extra_cb(const PurplePluginInfo *info);
@@ -706,9 +706,9 @@ purple_plugin_info_get_extra_cb(const PurplePluginInfo *info);
  * Returns the callback that retrieves the preferences frame for a plugin, set
  * via the "pref-frame-cb" property of the plugin info.
  *
- * @param info The plugin info to get the callback from.
+ * @info: The plugin info to get the callback from.
  *
- * @return The callback that returns the preferences frame.
+ * Returns: The callback that returns the preferences frame.
  */
 PurplePluginPrefFrameCb
 purple_plugin_info_get_pref_frame_cb(const PurplePluginInfo *info);
@@ -717,9 +717,9 @@ purple_plugin_info_get_pref_frame_cb(const PurplePluginInfo *info);
  * Returns the callback that retrieves the preferences request handle for a
  * plugin, set via the "pref-request-cb" property of the plugin info.
  *
- * @param info The plugin info to get the callback from.
+ * @info: The plugin info to get the callback from.
  *
- * @return The callback that returns the preferences request handle.
+ * Returns: The callback that returns the preferences request handle.
  */
 PurplePluginPrefRequestCb
 purple_plugin_info_get_pref_request_cb(const PurplePluginInfo *info);
@@ -727,9 +727,9 @@ purple_plugin_info_get_pref_request_cb(const PurplePluginInfo *info);
 /**
  * Returns the plugin's flags.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The flags of the plugin.
+ * Returns: The flags of the plugin.
  */
 PurplePluginInfoFlags
 purple_plugin_info_get_flags(const PurplePluginInfo *info);
@@ -738,26 +738,26 @@ purple_plugin_info_get_flags(const PurplePluginInfo *info);
  * Returns an error in the plugin info that would prevent the plugin from being
  * loaded.
  *
- * @param info The plugin info.
+ * @info: The plugin info.
  *
- * @return The plugin info error, or @c NULL.
+ * Returns: The plugin info error, or %NULL.
  */
 const gchar *purple_plugin_info_get_error(const PurplePluginInfo *info);
 
 /**
  * Set the UI data associated with a plugin.
  *
- * @param info The plugin's info instance.
- * @param ui_data A pointer to associate with this object.
+ * @info: The plugin's info instance.
+ * @ui_data: A pointer to associate with this object.
  */
 void purple_plugin_info_set_ui_data(PurplePluginInfo *info, gpointer ui_data);
 
 /**
  * Returns the UI data associated with a plugin.
  *
- * @param info The plugin's info instance.
+ * @info: The plugin's info instance.
  *
- * @return The UI data associated with this plugin.  This is a
+ * Returns: The UI data associated with this plugin.  This is a
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
@@ -779,8 +779,8 @@ GType purple_plugin_action_get_type(void);
  * Allocates and returns a new PurplePluginAction. Use this to add actions in a
  * list in the "actions-cb" callback for your plugin.
  *
- * @param label    The description of the action to show to the user.
- * @param callback The callback to call when the user selects this action.
+ * @label:    The description of the action to show to the user.
+ * @callback: The callback to call when the user selects this action.
  */
 PurplePluginAction *purple_plugin_action_new(const char* label,
 		PurplePluginActionCb callback);
@@ -788,7 +788,7 @@ PurplePluginAction *purple_plugin_action_new(const char* label,
 /**
  * Frees a PurplePluginAction
  *
- * @param action The PurplePluginAction to free.
+ * @action: The PurplePluginAction to free.
  */
 void purple_plugin_action_free(PurplePluginAction *action);
 
@@ -802,7 +802,7 @@ void purple_plugin_action_free(PurplePluginAction *action);
 /**
  * Returns a list of all plugins, whether loaded or not.
  *
- * @return A list of all plugins. The list is owned by the caller, and must be
+ * Returns: A list of all plugins. The list is owned by the caller, and must be
  *         g_list_free()d to avoid leaking the nodes.
  */
 GList *purple_plugins_find_all(void);
@@ -810,14 +810,14 @@ GList *purple_plugins_find_all(void);
 /**
  * Returns a list of all loaded plugins.
  *
- * @constreturn A list of all loaded plugins.
+ * Returns: (TODO const): A list of all loaded plugins.
  */
 GList *purple_plugins_get_loaded(void);
 
 /**
  * Add a new directory to search for plugins
  *
- * @param path The new search path.
+ * @path: The new search path.
  */
 void purple_plugins_add_search_path(const gchar *path);
 
@@ -832,18 +832,18 @@ void purple_plugins_refresh(void);
 /**
  * Finds a plugin with the specified plugin ID.
  *
- * @param id The plugin ID.
+ * @id: The plugin ID.
  *
- * @return The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_plugin(const gchar *id);
 
 /**
  * Finds a plugin with the specified filename (filename with a path).
  *
- * @param filename The plugin filename.
+ * @filename: The plugin filename.
  *
- * @return The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_by_filename(const char *filename);
 
@@ -851,7 +851,7 @@ PurplePlugin *purple_plugins_find_by_filename(const char *filename);
  * Saves the list of loaded plugins to the specified preference key.
  * Plugins that are set to auto-load are not saved.
  *
- * @param key The preference key to save the list of plugins to.
+ * @key: The preference key to save the list of plugins to.
  */
 void purple_plugins_save_loaded(const char *key);
 
@@ -859,7 +859,7 @@ void purple_plugins_save_loaded(const char *key);
  * Attempts to load all the plugins in the specified preference key
  * that were loaded when purple last quit.
  *
- * @param key The preference key containing the list of plugins.
+ * @key: The preference key containing the list of plugins.
  */
 void purple_plugins_load_saved(const char *key);
 
@@ -873,7 +873,7 @@ void purple_plugins_load_saved(const char *key);
 /**
  * Returns the plugin subsystem handle.
  *
- * @return The plugin sybsystem handle.
+ * Returns: The plugin sybsystem handle.
  */
 void *purple_plugins_get_handle(void);
 

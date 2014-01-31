@@ -76,23 +76,23 @@ struct _PurpleMediaBackendIface
 /**
  * Gets the media backend's GType.
  *
- * @return The media backend's GType.
+ * Returns: The media backend's GType.
  */
 GType purple_media_backend_get_type(void);
 
 /**
  * Creates and adds a stream to the media backend.
  *
- * @param self The backend to add the stream to.
- * @param sess_id The session id of the stream to add.
- * @param who The remote participant of the stream to add.
- * @param type The media type and direction of the stream to add.
- * @param initiator True if the local user initiated the stream.
- * @param transmitter The string id of the tranmsitter to use.
- * @param num_params The number of parameters in the param parameter.
- * @param params The additional parameters to pass when creating the stream.
+ * @self: The backend to add the stream to.
+ * @sess_id: The session id of the stream to add.
+ * @who: The remote participant of the stream to add.
+ * @type: The media type and direction of the stream to add.
+ * @initiator: True if the local user initiated the stream.
+ * @transmitter: The string id of the tranmsitter to use.
+ * @num_params: The number of parameters in the param parameter.
+ * @params: The additional parameters to pass when creating the stream.
  *
- * @return True if the stream was successfully created, othewise False.
+ * Returns: True if the stream was successfully created, othewise False.
  */
 gboolean purple_media_backend_add_stream(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *who,
@@ -103,10 +103,10 @@ gboolean purple_media_backend_add_stream(PurpleMediaBackend *self,
 /**
  * Add remote candidates to a stream.
  *
- * @param self The backend the stream is in.
- * @param sess_id The session id associated with the stream.
- * @param participant The participant associated with the stream.
- * @param remote_candidates The list of remote candidates to add.
+ * @self: The backend the stream is in.
+ * @sess_id: The session id associated with the stream.
+ * @participant: The participant associated with the stream.
+ * @remote_candidates: The list of remote candidates to add.
  */
 void purple_media_backend_add_remote_candidates(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
@@ -118,10 +118,10 @@ void purple_media_backend_add_remote_candidates(PurpleMediaBackend *self,
  * A codec is ready if all of the attributes and additional
  * parameters have been collected.
  *
- * @param self The media backend the session is in.
- * @param sess_id The session id of the session to check.
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to check.
  *
- * @return True if the codecs are ready, otherwise False.
+ * Returns: True if the codecs are ready, otherwise False.
  */
 gboolean purple_media_backend_codecs_ready(PurpleMediaBackend *self,
 		const gchar *sess_id);
@@ -132,10 +132,10 @@ gboolean purple_media_backend_codecs_ready(PurpleMediaBackend *self,
  * The intersection list consists of all codecs that are compatible
  * between the local and remote software.
  *
- * @param self The media backend the session is in.
- * @param sess_id The session id of the session to use.
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to use.
  *
- * @return The codec intersection list.
+ * Returns: The codec intersection list.
  */
 GList *purple_media_backend_get_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id);
@@ -143,11 +143,11 @@ GList *purple_media_backend_get_codecs(PurpleMediaBackend *self,
 /**
  * Gets the list of local candidates for a stream.
  *
- * @param self The media backend the stream is in.
- * @param sess_id The session id associated with the stream.
- * @param particilant The participant associated with the stream.
+ * @self: The media backend the stream is in.
+ * @sess_id: The session id associated with the stream.
+ * @particilant: The participant associated with the stream.
  *
- * @return The list of local candidates.
+ * Returns: The list of local candidates.
  */
 GList *purple_media_backend_get_local_candidates(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
@@ -155,12 +155,12 @@ GList *purple_media_backend_get_local_candidates(PurpleMediaBackend *self,
 /**
  * Sets the remote codecs on a stream.
  *
- * @param self The media backend the stream is in.
- * @param sess_id The session id the stream is associated with.
- * @param participant The participant the stream is associated with.
- * @param codecs The list of remote codecs to set.
+ * @self: The media backend the stream is in.
+ * @sess_id: The session id the stream is associated with.
+ * @participant: The participant the stream is associated with.
+ * @codecs: The list of remote codecs to set.
  *
- * @return True if the remote codecs were set successfully, otherwise False.
+ * Returns: True if the remote codecs were set successfully, otherwise False.
  */
 gboolean purple_media_backend_set_remote_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
@@ -169,11 +169,11 @@ gboolean purple_media_backend_set_remote_codecs(PurpleMediaBackend *self,
 /**
  * Sets which codec format to send media content in for a session.
  *
- * @param self The media backend the session is in.
- * @param sess_id The session id of the session to set the codec for.
- * @param codec The codec to set.
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to set the codec for.
+ * @codec: The codec to set.
  *
- * @return True if set successfully, otherwise False.
+ * Returns: True if set successfully, otherwise False.
  */
 gboolean purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
@@ -181,9 +181,9 @@ gboolean purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 /**
  * Sets various optional parameters of the media backend.
  *
- * @param self The media backend to set the parameters on.
- * @param num_params The number of parameters to pass to backend
- * @param params Array of @c GParameter to pass to backend
+ * @self: The media backend to set the parameters on.
+ * @num_params: The number of parameters to pass to backend
+ * @params: Array of @c GParameter to pass to backend
  */
 void purple_media_backend_set_params(PurpleMediaBackend *self,
 		guint num_params, GParameter *params);
@@ -193,9 +193,9 @@ void purple_media_backend_set_params(PurpleMediaBackend *self,
  *
  * The list should NOT be freed.
  *
- * @param self The media backend
+ * @self: The media backend
  *
- * @return NULL-terminated array of names of supported parameters.
+ * Returns: NULL-terminated array of names of supported parameters.
  */
 const gchar **purple_media_backend_get_available_params(PurpleMediaBackend *self);
 

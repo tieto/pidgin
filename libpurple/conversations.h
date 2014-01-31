@@ -40,14 +40,14 @@ G_BEGIN_DECLS
 /**
  * Adds a conversation to the list of conversations.
  *
- * @param conv The conversation.
+ * @conv: The conversation.
  */
 void purple_conversations_add(PurpleConversation *conv);
 
 /**
  * Removes a conversation from the list of conversations.
  *
- * @param conv The conversation.
+ * @conv: The conversation.
  */
 void purple_conversations_remove(PurpleConversation *conv);
 
@@ -56,31 +56,31 @@ void purple_conversations_remove(PurpleConversation *conv);
  *
  * This list includes both IMs and chats.
  *
- * @constreturn A GList of all conversations.
+ * Returns: (TODO const): A GList of all conversations.
  */
 GList *purple_conversations_get_all(void);
 
 /**
  * Returns a list of all IMs.
  *
- * @constreturn A GList of all IMs.
+ * Returns: (TODO const): A GList of all IMs.
  */
 GList *purple_conversations_get_ims(void);
 
 /**
  * Returns a list of all chats.
  *
- * @constreturn A GList of all chats.
+ * Returns: (TODO const): A GList of all chats.
  */
 GList *purple_conversations_get_chats(void);
 
 /**
  * Finds a conversation of any type with the specified name and Purple account.
  *
- * @param name The name of the conversation.
- * @param account The account associated with the conversation.
+ * @name: The name of the conversation.
+ * @account: The account associated with the conversation.
  *
- * @return The conversation if found, or @c NULL otherwise.
+ * Returns: The conversation if found, or %NULL otherwise.
  */
 PurpleConversation *purple_conversations_find_with_account(const char *name,
 		const PurpleAccount *account);
@@ -88,10 +88,10 @@ PurpleConversation *purple_conversations_find_with_account(const char *name,
 /**
  * Finds an IM with the specified name and Purple account.
  *
- * @param name The name of the conversation.
- * @param account The account associated with the conversation.
+ * @name: The name of the conversation.
+ * @account: The account associated with the conversation.
  *
- * @return The conversation if found, or @c NULL otherwise.
+ * Returns: The conversation if found, or %NULL otherwise.
  */
 PurpleIMConversation *purple_conversations_find_im_with_account(const char *name,
 		const PurpleAccount *account);
@@ -99,10 +99,10 @@ PurpleIMConversation *purple_conversations_find_im_with_account(const char *name
 /**
  * Finds a chat with the specified name and Purple account.
  *
- * @param name The name of the conversation.
- * @param account The account associated with the conversation.
+ * @name: The name of the conversation.
+ * @account: The account associated with the conversation.
  *
- * @return The conversation if found, or @c NULL otherwise.
+ * Returns: The conversation if found, or %NULL otherwise.
  */
 PurpleChatConversation *purple_conversations_find_chat_with_account(const char *name,
 		const PurpleAccount *account);
@@ -110,31 +110,31 @@ PurpleChatConversation *purple_conversations_find_chat_with_account(const char *
 /**
  * Finds a chat with the specified chat ID.
  *
- * @param gc The purple_connection.
- * @param id The chat ID.
+ * @gc: The purple_connection.
+ * @id: The chat ID.
  *
- * @return The chat conversation.
+ * Returns: The chat conversation.
  */
 PurpleChatConversation *purple_conversations_find_chat(const PurpleConnection *gc, int id);
 
 /**
  * Sets the default conversation UI operations structure.
  *
- * @param ops  The UI conversation operations structure.
+ * @ops:  The UI conversation operations structure.
  */
 void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops);
 
 /**
  * Gets the default conversation UI operations structure.
  *
- * @return  The UI conversation operations structure.
+ * Returns:  The UI conversation operations structure.
  */
 PurpleConversationUiOps *purple_conversations_get_ui_ops(void);
 
 /**
  * Returns the conversation subsystem handle.
  *
- * @return The conversation subsystem handle.
+ * Returns: The conversation subsystem handle.
  */
 void *purple_conversations_get_handle(void);
 

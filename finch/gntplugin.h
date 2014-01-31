@@ -91,11 +91,11 @@ GType finch_plugin_info_get_type(void);
  * which should be a callback that returns a GntWidget for the plugin's
  * preferences (see FinchPluginPrefFrameCb).
  *
- * @param first_property  The first property name
- * @param ...  The value of the first property, followed optionally by more
- *             name/value pairs, followed by @c NULL
+ * @first_property:  The first property name
+ * @...:  The value of the first property, followed optionally by more
+ *             name/value pairs, followed by %NULL
  *
- * @return A new #FinchPluginInfo instance.
+ * Returns: A new #FinchPluginInfo instance.
  *
  * @see purple_plugin_info_new()
  */
