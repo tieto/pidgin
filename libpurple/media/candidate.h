@@ -46,21 +46,21 @@ typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
 /**
  * Gets the type of the media candidate structure.
  *
- * @return The media canditate's GType
+ * Returns: The media canditate's GType
  */
 GType purple_media_candidate_get_type(void);
 
 /**
  * Creates a PurpleMediaCandidate instance.
  *
- * @param foundation The foundation of the candidate.
- * @param component_id The component this candidate is for.
- * @param type The type of candidate.
- * @param proto The protocol this component is for.
- * @param ip The IP address of this component.
- * @param port The network port.
+ * @foundation: The foundation of the candidate.
+ * @component_id: The component this candidate is for.
+ * @type: The type of candidate.
+ * @proto: The protocol this component is for.
+ * @ip: The IP address of this component.
+ * @port: The network port.
  *
- * @return The newly created PurpleMediaCandidate instance.
+ * Returns: The newly created PurpleMediaCandidate instance.
  */
 PurpleMediaCandidate *purple_media_candidate_new(
 		const gchar *foundation, guint component_id,
@@ -71,9 +71,9 @@ PurpleMediaCandidate *purple_media_candidate_new(
 /**
  * Copies a PurpleMediaCandidate.
  *
- * @param candidate The candidate to copy.
+ * @candidate: The candidate to copy.
  *
- * @return The copy of the PurpleMediaCandidate.
+ * Returns: The copy of the PurpleMediaCandidate.
  */
 PurpleMediaCandidate *purple_media_candidate_copy(
 		PurpleMediaCandidate *candidate);
@@ -81,52 +81,52 @@ PurpleMediaCandidate *purple_media_candidate_copy(
 /**
  * Copies a GList of PurpleMediaCandidate and its contents.
  *
- * @param candidates The list of candidates to be copied.
+ * @candidates: The list of candidates to be copied.
  *
- * @return The copy of the GList.
+ * Returns: The copy of the GList.
  */
 GList *purple_media_candidate_list_copy(GList *candidates);
 
 /**
  * Frees a GList of PurpleMediaCandidate and its contents.
  *
- * @param candidates The list of candidates to be freed.
+ * @candidates: The list of candidates to be freed.
  */
 void purple_media_candidate_list_free(GList *candidates);
 
 /**
  * Gets the foundation (identifier) from the candidate.
  *
- * @param candidate The candidate to get the foundation from.
+ * @candidate: The candidate to get the foundation from.
  *
- * @return The foundation.
+ * Returns: The foundation.
  */
 gchar *purple_media_candidate_get_foundation(PurpleMediaCandidate *candidate);
 
 /**
  * Gets the component id (rtp or rtcp)
  *
- * @param candidate The candidate to get the compnent id from.
+ * @candidate: The candidate to get the compnent id from.
  *
- * @return The component id.
+ * Returns: The component id.
  */
 guint purple_media_candidate_get_component_id(PurpleMediaCandidate *candidate);
 
 /**
  * Gets the IP address.
  *
- * @param candidate The candidate to get the IP address from.
+ * @candidate: The candidate to get the IP address from.
  *
- * @return The IP address.
+ * Returns: The IP address.
  */
 gchar *purple_media_candidate_get_ip(PurpleMediaCandidate *candidate);
 
 /**
  * Gets the port.
  *
- * @param candidate The candidate to get the port from.
+ * @candidate: The candidate to get the port from.
  *
- * @return The port.
+ * Returns: The port.
  */
 guint16 purple_media_candidate_get_port(PurpleMediaCandidate *candidate);
 
@@ -135,9 +135,9 @@ guint16 purple_media_candidate_get_port(PurpleMediaCandidate *candidate);
  *
  * This can be NULL.
  *
- * @param candidate The candidate to get the base IP address from.
+ * @candidate: The candidate to get the base IP address from.
  *
- * @return The base IP address.
+ * Returns: The base IP address.
  */
 gchar *purple_media_candidate_get_base_ip(PurpleMediaCandidate *candidate);
 
@@ -146,18 +146,18 @@ gchar *purple_media_candidate_get_base_ip(PurpleMediaCandidate *candidate);
  *
  * Invalid if the base IP is NULL.
  *
- * @param candidate The candidate to get the base port.
+ * @candidate: The candidate to get the base port.
  *
- * @return The base port.
+ * Returns: The base port.
  */
 guint16 purple_media_candidate_get_base_port(PurpleMediaCandidate *candidate);
 
 /**
  * Gets the protocol (TCP or UDP).
  *
- * @param candidate The candidate to get the protocol from.
+ * @candidate: The candidate to get the protocol from.
  *
- * @return The protocol.
+ * Returns: The protocol.
  */
 PurpleMediaNetworkProtocol purple_media_candidate_get_protocol(
 		PurpleMediaCandidate *candidate);
@@ -165,18 +165,18 @@ PurpleMediaNetworkProtocol purple_media_candidate_get_protocol(
 /**
  * Gets the priority.
  *
- * @param candidate The candidate to get the priority from.
+ * @candidate: The candidate to get the priority from.
  *
- * @return The priority.
+ * Returns: The priority.
  */
 guint32 purple_media_candidate_get_priority(PurpleMediaCandidate *candidate);
 
 /**
  * Gets the candidate type.
  *
- * @param candidate The candidate to get the candidate type from.
+ * @candidate: The candidate to get the candidate type from.
  *
- * @return The candidate type.
+ * Returns: The candidate type.
  */
 PurpleMediaCandidateType purple_media_candidate_get_candidate_type(
 		PurpleMediaCandidate *candidate);
@@ -186,9 +186,9 @@ PurpleMediaCandidateType purple_media_candidate_get_candidate_type(
  *
  * This can be NULL. It depends on the transmission type.
  *
- * @param The candidate to get the username from.
+ * @The: candidate to get the username from.
  *
- * @return The username.
+ * Returns: The username.
  */
 gchar *purple_media_candidate_get_username(PurpleMediaCandidate *candidate);
 
@@ -197,18 +197,18 @@ gchar *purple_media_candidate_get_username(PurpleMediaCandidate *candidate);
  *
  * This can be NULL. It depends on the transmission type.
  *
- * @param The candidate to get the password from.
+ * @The: candidate to get the password from.
  *
- * @return The password.
+ * Returns: The password.
  */
 gchar *purple_media_candidate_get_password(PurpleMediaCandidate *candidate);
 
 /**
  * Gets the TTL.
  *
- * @param The candidate to get the TTL from.
+ * @The: candidate to get the TTL from.
  *
- * @return The TTL.
+ * Returns: The TTL.
  */
 guint purple_media_candidate_get_ttl(PurpleMediaCandidate *candidate);
 

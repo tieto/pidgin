@@ -33,9 +33,9 @@ G_BEGIN_DECLS
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
- * @param account    The optional account to use.
- * @param name       The optional name to pounce on.
- * @param cur_pounce The current buddy pounce, if editing an existing one.
+ * @account:    The optional account to use.
+ * @name:       The optional name to pounce on.
+ * @cur_pounce: The current buddy pounce, if editing an existing one.
  */
 void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
@@ -53,7 +53,7 @@ void pidgin_pounces_manager_hide(void);
 /**
  * Returns the gtkpounces handle
  *
- * @return The handle to the GTK+ pounces system
+ * Returns: The handle to the GTK+ pounces system
  */
 void *pidgin_pounces_get_handle(void);
 

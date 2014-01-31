@@ -43,7 +43,7 @@ void pidgin_debug_uninit(void);
 /**
  * Get the handle for the GTK+ debug system.
  *
- * @return the handle to the debug system
+ * Returns: the handle to the debug system
  */
 void *pidgin_debug_get_handle(void);
 
@@ -60,7 +60,7 @@ void pidgin_debug_window_hide(void);
 /**
  * Returns the UI operations structure for GTK+ debug output.
  *
- * @return The GTK+ UI debug operations structure.
+ * Returns: The GTK+ UI debug operations structure.
  */
 PurpleDebugUiOps *pidgin_debug_get_ui_ops(void);
 

@@ -78,7 +78,7 @@ typedef struct
 } PurpleSrvTxtQueryUiOps;
 
 /**
- * @param resp An array of PurpleSrvResponse of size results.  The array
+ * @resp: An array of PurpleSrvResponse of size results.  The array
  *        is sorted based on the order described in the DNS SRV RFC.
  *        Users of this API should try each record in resp in order,
  *        starting at the beginning.
@@ -88,8 +88,8 @@ typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer
 /**
  * Callback that returns the data retrieved from a DNS TXT lookup.
  *
- * @param responses   A GList of PurpleTxtResponse objects.
- * @param data        The extra data passed to purple_txt_resolve.
+ * @responses:   A GList of PurpleTxtResponse objects.
+ * @data:        The extra data passed to purple_txt_resolve.
  */
 typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
 
@@ -98,14 +98,14 @@ G_BEGIN_DECLS
 /**
  * Queries an SRV record.
  *
- * @param account   The account that the query is being done for (or NULL)
- * @param protocol  Name of the protocol (e.g. "sip")
- * @param transport Name of the transport ("tcp" or "udp")
- * @param domain    Domain name to query (e.g. "blubb.com")
- * @param cb        A callback which will be called with the results
- * @param extradata Extra data to be passed to the callback
+ * @account:   The account that the query is being done for (or NULL)
+ * @protocol:  Name of the protocol (e.g. "sip")
+ * @transport: Name of the transport ("tcp" or "udp")
+ * @domain:    Domain name to query (e.g. "blubb.com")
+ * @cb:        A callback which will be called with the results
+ * @extradata: Extra data to be passed to the callback
  *
- * @return NULL if there was an error, otherwise return a reference to
+ * Returns: NULL if there was an error, otherwise return a reference to
  *         a data structure that can be used to cancel the pending
  *         DNS query, if needed.
  */
@@ -114,13 +114,13 @@ PurpleSrvTxtQueryData *purple_srv_resolve(PurpleAccount *account, const char *pr
 /**
  * Queries an TXT record.
  *
- * @param account   The account that the query is being done for (or NULL)
- * @param owner     Name of the protocol (e.g. "_xmppconnect")
- * @param domain    Domain name to query (e.g. "blubb.com")
- * @param cb        A callback which will be called with the results
- * @param extradata Extra data to be passed to the callback
+ * @account:   The account that the query is being done for (or NULL)
+ * @owner:     Name of the protocol (e.g. "_xmppconnect")
+ * @domain:    Domain name to query (e.g. "blubb.com")
+ * @cb:        A callback which will be called with the results
+ * @extradata: Extra data to be passed to the callback
  *
- * @return NULL if there was an error, otherwise return a reference to
+ * Returns: NULL if there was an error, otherwise return a reference to
  *         a data structure that can be used to cancel the pending
  *         DNS query, if needed.
  */
@@ -129,23 +129,23 @@ PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account, const char *ow
 /**
  * Get the value of the current TXT record.
  *
- * @param response  The TXT response record
+ * @response:  The TXT response record
  *
- * @return The value of the current TXT record.
+ * Returns: The value of the current TXT record.
  */
 const gchar *purple_txt_response_get_content(PurpleTxtResponse *response);
 
 /**
  * Destroy a TXT DNS response object.
  *
- * @param response The PurpleTxtResponse to destroy.
+ * @response: The PurpleTxtResponse to destroy.
  */
 void purple_txt_response_destroy(PurpleTxtResponse *response);
 
 /**
  * Cancel a SRV/TXT query and destroy the associated data structure.
  *
- * @param query_data The SRV/TXT query to cancel.  This data structure
+ * @query_data: The SRV/TXT query to cancel.  This data structure
  *        is freed by this function.
  */
 void purple_srv_txt_query_destroy(PurpleSrvTxtQueryData *query_data);
@@ -155,7 +155,7 @@ void purple_srv_txt_query_destroy(PurpleSrvTxtQueryData *query_data);
  * resolve.  The UI operations need only be set if the UI wants to
  * handle the resolve itself; otherwise, leave it as NULL.
  *
- * @param ops The UI operations structure.
+ * @ops: The UI operations structure.
  */
 void purple_srv_txt_query_set_ui_ops(PurpleSrvTxtQueryUiOps *ops);
 
@@ -163,23 +163,23 @@ void purple_srv_txt_query_set_ui_ops(PurpleSrvTxtQueryUiOps *ops);
  * Returns the UI operations structure to be used when doing a SRV/TXT
  * resolve.
  *
- * @return The UI operations structure.
+ * Returns: The UI operations structure.
  */
 PurpleSrvTxtQueryUiOps *purple_srv_txt_query_get_ui_ops(void);
 
 /**
  * Get the query from a PurpleSrvTxtQueryData
  *
- * @param query_data The SRV/TXT query
- * @return The query.
+ * @query_data: The SRV/TXT query
+ * Returns: The query.
  */
 char *purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data);
 
 /**
  * Get the type from a PurpleSrvTxtQueryData (TXT or SRV)
  *
- * @param query_data The query
- * @return The query.
+ * @query_data: The query
+ * Returns: The query.
  */
 int purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data);
 

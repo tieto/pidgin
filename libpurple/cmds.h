@@ -112,9 +112,9 @@ G_BEGIN_DECLS
  * The command will only happen if commands are enabled,
  * which is a UI pref. UIs don't have to support commands at all.
  *
- * @param cmd The command. This should be a UTF-8 (or ASCII) string, with no spaces
+ * @cmd: The command. This should be a UTF-8 (or ASCII) string, with no spaces
  *            or other white space.
- * @param args A string of characters describing to libpurple how to parse this
+ * @args: A string of characters describing to libpurple how to parse this
  *             command's arguments.  If what the user types doesn't match this
  *             pattern, libpurple will keep looking for another command, unless
  *             the flag #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed in @a f.
@@ -128,32 +128,32 @@ G_BEGIN_DECLS
  *               <li><tt>'S'</tt>: Same as <tt>'s'</tt> but with formatting.</li>
  *             </ul>
  *             If args is the empty string, then the command accepts no arguments.
- *             The args passed to the callback @a func will be a @c NULL
- *             terminated array of @c NULL terminated strings, and will always
+ *             The args passed to the callback @a func will be a %NULL
+ *             terminated array of %NULL terminated strings, and will always
  *             match the number of arguments asked for, unless
  *             #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed.
- * @param p This is the priority. Higher priority commands will be run first,
+ * @p: This is the priority. Higher priority commands will be run first,
  *          and usually the first command will stop any others from being
  *          called.
- * @param f Flags specifying various options about this command, combined with
+ * @f: Flags specifying various options about this command, combined with
  *          <tt>|</tt> (bitwise OR). You need to at least pass one of
  *          #PURPLE_CMD_FLAG_IM or #PURPLE_CMD_FLAG_CHAT (you may pass both) in
  *          order for the command to ever actually be called.
- * @param prpl_id If the #PURPLE_CMD_FLAG_PRPL_ONLY flag is set, this is the id
+ * @prpl_id: If the #PURPLE_CMD_FLAG_PRPL_ONLY flag is set, this is the id
  *                of the prpl to which the command applies (such as
  *                <tt>"prpl-msn"</tt>). If the flag is not set, this parameter
- *                is ignored; pass @c NULL (or a humourous string of your
+ *                is ignored; pass %NULL (or a humourous string of your
  *                choice!).
- * @param func This is the function to call when someone enters this command.
- * @param helpstr a whitespace sensitive, UTF-8, HTML string describing how to
+ * @func: This is the function to call when someone enters this command.
+ * @helpstr: a whitespace sensitive, UTF-8, HTML string describing how to
  *                use the command.  The preferred format of this string is the
  *                command's name, followed by a space and any arguments it
  *                accepts (if it takes any arguments, otherwise no space),
  *                followed by a colon, two spaces, and a description of the
  *                command in sentence form.  Do not include a slash before the
  *                command name.
- * @param data User defined data to pass to the #PurpleCmdFunc @a f.
- * @return A #PurpleCmdId, which is only used for calling
+ * @data: User defined data to pass to the #PurpleCmdFunc @a f.
+ * Returns: A #PurpleCmdId, which is only used for calling
  *         #purple_cmd_unregister, or @a 0 on failure.
  */
 PurpleCmdId purple_cmd_register(const gchar *cmd, const gchar *args, PurpleCmdPriority p, PurpleCmdFlag f,
@@ -166,7 +166,7 @@ PurpleCmdId purple_cmd_register(const gchar *cmd, const gchar *args, PurpleCmdPr
  * or something else that might go away. Normally this is called when the plugin
  * unloads itself.
  *
- * @param id The #PurpleCmdId to unregister, as returned by #purple_cmd_register.
+ * @id: The #PurpleCmdId to unregister, as returned by #purple_cmd_register.
  */
 void purple_cmd_unregister(PurpleCmdId id);
 
@@ -176,17 +176,17 @@ void purple_cmd_unregister(PurpleCmdId id);
  * Normally the UI calls this to perform a command. This might also be useful
  * if aliases are ever implemented.
  *
- * @param conv The conversation the command was typed in.
- * @param cmdline The command the user typed (including all arguments) as a single string.
+ * @conv: The conversation the command was typed in.
+ * @cmdline: The command the user typed (including all arguments) as a single string.
  *            The caller doesn't have to do any parsing, except removing the command
  *            prefix, which the core has no knowledge of. cmd should not contain any
  *            formatting, and should be in plain text (no html entities).
- * @param markup This is the same as cmd, but is the formatted version. It should be in
+ * @markup: This is the same as cmd, but is the formatted version. It should be in
  *               HTML, with < > and &, at least, escaped to html entities, and should
  *               include both the default formatting and any extra manual formatting.
- * @param errormsg If the command failed errormsg is filled in with the appropriate error
+ * @errormsg: If the command failed errormsg is filled in with the appropriate error
  *                 message. It must be freed by the caller with g_free().
- * @return A #PurpleCmdStatus indicating if the command succeeded or failed.
+ * Returns: A #PurpleCmdStatus indicating if the command succeeded or failed.
  */
 PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmdline,
                                   const gchar *markup, gchar **errormsg);
@@ -200,8 +200,8 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
  * might unregister a command, as the <tt>const char *</tt>'s used get freed
  * then.
  *
- * @param conv The conversation, or @c NULL.
- * @return A @c GList of <tt>const char *</tt>, which must be freed with
+ * @conv: The conversation, or %NULL.
+ * Returns: A @c GList of <tt>const char *</tt>, which must be freed with
  *         <tt>g_list_free()</tt>.
  */
 GList *purple_cmd_list(PurpleConversation *conv);
@@ -212,17 +212,17 @@ GList *purple_cmd_list(PurpleConversation *conv);
  * Returns the help strings for a given command in the form of a GList,
  * one node for each matching command.
  *
- * @param conv The conversation, or @c NULL for no context.
- * @param cmd The command. No wildcards accepted, but returns help for all
- *            commands if @c NULL.
- * @return A <tt>GList</tt> of <tt>const char *</tt>s, which is the help string
+ * @conv: The conversation, or %NULL for no context.
+ * @cmd: The command. No wildcards accepted, but returns help for all
+ *            commands if %NULL.
+ * Returns: A <tt>GList</tt> of <tt>const char *</tt>s, which is the help string
  *         for that command.
  */
 GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
 
 /**
  * Get the handle for the commands API
- * @return The handle
+ * Returns: The handle
  */
 gpointer purple_cmds_get_handle(void);
 

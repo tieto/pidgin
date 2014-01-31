@@ -106,42 +106,42 @@ typedef enum {
 /**
  * Gets the media candidate type's GType
  *
- * @return The media candidate type's GType.
+ * Returns: The media candidate type's GType.
  */
 GType purple_media_candidate_type_get_type(void);
 
 /**
  * Gets the type of the media caps flags
  *
- * @return The media caps flags' GType
+ * Returns: The media caps flags' GType
  */
 GType purple_media_caps_get_type(void);
 
 /**
  * Gets the type of the info type enum
  *
- * @return The info type enum's GType
+ * Returns: The info type enum's GType
  */
 GType purple_media_info_type_get_type(void);
 
 /**
  * Gets the media network protocol's GType
  *
- * @return The media network protocol's GType.
+ * Returns: The media network protocol's GType.
  */
 GType purple_media_network_protocol_get_type(void);
 
 /**
  * Gets the media session type's GType
  *
- * @return The media session type's GType.
+ * Returns: The media session type's GType.
  */
 GType purple_media_session_type_get_type(void);
 
 /**
  * Gets the type of the state-changed enum
  *
- * @return The state-changed enum's GType
+ * Returns: The state-changed enum's GType
  */
 GType purple_media_state_changed_get_type(void);
 

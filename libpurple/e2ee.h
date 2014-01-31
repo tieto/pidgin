@@ -48,9 +48,9 @@ G_BEGIN_DECLS
  *
  * State objects are global (shared between multiple conversations).
  *
- * @param provider The E2EE provider that created this state.
+ * @provider: The E2EE provider that created this state.
  *
- * @return New E2EE state.
+ * Returns: New E2EE state.
  */
 PurpleE2eeState *
 purple_e2ee_state_new(PurpleE2eeProvider *provider);
@@ -58,7 +58,7 @@ purple_e2ee_state_new(PurpleE2eeProvider *provider);
 /**
  * Increment the reference count.
  *
- * @param state The E2EE state.
+ * @state: The E2EE state.
  */
 void
 purple_e2ee_state_ref(PurpleE2eeState *state);
@@ -68,9 +68,9 @@ purple_e2ee_state_ref(PurpleE2eeState *state);
  *
  * If the reference count reaches zero, the state will be freed.
  *
- * @param state The E2EE state.
+ * @state: The E2EE state.
  *
- * @return @a state or @c NULL if the reference count reached zero.
+ * Returns: @a state or %NULL if the reference count reached zero.
  */
 PurpleE2eeState *
 purple_e2ee_state_unref(PurpleE2eeState *state);
@@ -78,9 +78,9 @@ purple_e2ee_state_unref(PurpleE2eeState *state);
 /**
  * Gets the provider of specified E2EE state.
  *
- * @param state The E2EE state.
+ * @state: The E2EE state.
  *
- * @return The provider for this state.
+ * Returns: The provider for this state.
  */
 PurpleE2eeProvider *
 purple_e2ee_state_get_provider(PurpleE2eeState *state);
@@ -88,8 +88,8 @@ purple_e2ee_state_get_provider(PurpleE2eeState *state);
 /**
  * Sets the name for the E2EE state.
  *
- * @param state The E2EE state.
- * @param name  The localized name.
+ * @state: The E2EE state.
+ * @name:  The localized name.
  */
 void
 purple_e2ee_state_set_name(PurpleE2eeState *state, const gchar *name);
@@ -97,9 +97,9 @@ purple_e2ee_state_set_name(PurpleE2eeState *state, const gchar *name);
 /**
  * Gets the name of the E2EE state.
  *
- * @param state The E2EE state.
+ * @state: The E2EE state.
  *
- * @return The localized name.
+ * Returns: The localized name.
  */
 const gchar *
 purple_e2ee_state_get_name(PurpleE2eeState *state);
@@ -107,8 +107,8 @@ purple_e2ee_state_get_name(PurpleE2eeState *state);
 /**
  * Sets the icon for the E2EE state.
  *
- * @param state      The E2EE state.
- * @param stock_icon The stock icon identifier.
+ * @state:      The E2EE state.
+ * @stock_icon: The stock icon identifier.
  */
 void
 purple_e2ee_state_set_stock_icon(PurpleE2eeState *state,
@@ -117,9 +117,9 @@ purple_e2ee_state_set_stock_icon(PurpleE2eeState *state,
 /**
  * Gets the icon of the E2EE state.
  *
- * @param state The E2EE state.
+ * @state: The E2EE state.
  *
- * @return The stock icon identifier.
+ * Returns: The stock icon identifier.
  */
 const gchar *
 purple_e2ee_state_get_stock_icon(PurpleE2eeState *state);
@@ -135,7 +135,7 @@ purple_e2ee_state_get_stock_icon(PurpleE2eeState *state);
 /**
  * Creates new E2EE provider.
  *
- * @return New E2EE provider.
+ * Returns: New E2EE provider.
  */
 PurpleE2eeProvider *
 purple_e2ee_provider_new(void);
@@ -145,7 +145,7 @@ purple_e2ee_provider_new(void);
  *
  * The provider have to be unregistered prior.
  *
- * @param provider The provider.
+ * @provider: The provider.
  */
 void
 purple_e2ee_provider_free(PurpleE2eeProvider *provider);
@@ -156,10 +156,10 @@ purple_e2ee_provider_free(PurpleE2eeProvider *provider);
  * Currently, there is no support for multiple E2EE providers - only the first
  * one is registered.
  *
- * @param provider The E2EE provider.
+ * @provider: The E2EE provider.
  *
- * @return @c TRUE, if the provider was successfully registered,
- *         @c FALSE otherwise.
+ * Returns: %TRUE, if the provider was successfully registered,
+ *         %FALSE otherwise.
  */
 gboolean
 purple_e2ee_provider_register(PurpleE2eeProvider *provider);
@@ -167,7 +167,7 @@ purple_e2ee_provider_register(PurpleE2eeProvider *provider);
 /**
  * Unregisters the E2EE provider.
  *
- * @param provider The E2EE provider.
+ * @provider: The E2EE provider.
  */
 void
 purple_e2ee_provider_unregister(PurpleE2eeProvider *provider);
@@ -175,7 +175,7 @@ purple_e2ee_provider_unregister(PurpleE2eeProvider *provider);
 /**
  * Gets main E2EE provider.
  *
- * @return The main E2EE provider.
+ * Returns: The main E2EE provider.
  */
 PurpleE2eeProvider *
 purple_e2ee_provider_get_main(void);
@@ -183,8 +183,8 @@ purple_e2ee_provider_get_main(void);
 /**
  * Sets the name for the E2EE provider.
  *
- * @param provider The E2EE provider.
- * @param name     The localized name.
+ * @provider: The E2EE provider.
+ * @name:     The localized name.
  */
 void
 purple_e2ee_provider_set_name(PurpleE2eeProvider *provider, const gchar *name);
@@ -192,9 +192,9 @@ purple_e2ee_provider_set_name(PurpleE2eeProvider *provider, const gchar *name);
 /**
  * Gets the name of the E2EE provider.
  *
- * @param provider The E2EE provider.
+ * @provider: The E2EE provider.
  *
- * @return The localized name of specified E2EE provider.
+ * Returns: The localized name of specified E2EE provider.
  */
 const gchar *
 purple_e2ee_provider_get_name(PurpleE2eeProvider *provider);
@@ -207,8 +207,8 @@ purple_e2ee_provider_get_name(PurpleE2eeProvider *provider);
  *
  * Function should return the GList of PurpleMenuAction objects.
  *
- * @param provider     The E2EE provider.
- * @param conv_menu_cb The callback.
+ * @provider:     The E2EE provider.
+ * @conv_menu_cb: The callback.
  */
 void
 purple_e2ee_provider_set_conv_menu_cb(PurpleE2eeProvider *provider,
@@ -217,9 +217,9 @@ purple_e2ee_provider_set_conv_menu_cb(PurpleE2eeProvider *provider,
 /**
  * Gets the conversation menu callback of the E2EE provider.
  *
- * @param provider The E2EE provider.
+ * @provider: The E2EE provider.
  *
- * @return The callback.
+ * Returns: The callback.
  */
 PurpleE2eeConvMenuCallback
 purple_e2ee_provider_get_conv_menu_cb(PurpleE2eeProvider *provider);

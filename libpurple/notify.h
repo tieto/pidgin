@@ -118,9 +118,9 @@ typedef enum
 /**
  * Callback for a button in a search result.
  *
- * @param c         the PurpleConnection passed to purple_notify_searchresults
- * @param row       the contents of the selected row
- * @param user_data User defined data.
+ * @c:         the PurpleConnection passed to purple_notify_searchresults
+ * @row:       the contents of the selected row
+ * @user_data: User defined data.
  */
 typedef void (*PurpleNotifySearchResultsCallback)(PurpleConnection *c, GList *row,
 												gpointer user_data);
@@ -194,18 +194,18 @@ G_BEGIN_DECLS
  * a window with a list of all found buddies, where you are given the
  * option of adding buddies to your buddy list.
  *
- * @param gc        The PurpleConnection handle associated with the information.
- * @param title     The title of the message.  If this is NULL, the title
+ * @gc:        The PurpleConnection handle associated with the information.
+ * @title:     The title of the message.  If this is NULL, the title
  *                  will be "Search Results."
- * @param primary   The main point of the message.
- * @param secondary The secondary information.
- * @param results   The PurpleNotifySearchResults instance.
- * @param cb        The callback to call when the user closes
+ * @primary:   The main point of the message.
+ * @secondary: The secondary information.
+ * @results:   The PurpleNotifySearchResults instance.
+ * @cb:        The callback to call when the user closes
  *                  the notification.
- * @param user_data The data to pass to the close callback and any other
+ * @user_data: The data to pass to the close callback and any other
  *                  callback associated with a button.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_notify_searchresults(PurpleConnection *gc, const char *title,
 								const char *primary, const char *secondary,
@@ -215,16 +215,16 @@ void *purple_notify_searchresults(PurpleConnection *gc, const char *title,
 /**
  * Frees a PurpleNotifySearchResults object.
  *
- * @param results The PurpleNotifySearchResults to free.
+ * @results: The PurpleNotifySearchResults to free.
  */
 void purple_notify_searchresults_free(PurpleNotifySearchResults *results);
 
 /**
  * Replace old rows with the new. Reuse an existing window.
  *
- * @param gc        The PurpleConnection structure.
- * @param results   The PurpleNotifySearchResults structure.
- * @param data      Data returned by the purple_notify_searchresults().
+ * @gc:        The PurpleConnection structure.
+ * @results:   The PurpleNotifySearchResults structure.
+ * @data:      Data returned by the purple_notify_searchresults().
  */
 void purple_notify_searchresults_new_rows(PurpleConnection *gc,
 										PurpleNotifySearchResults *results,
@@ -234,10 +234,10 @@ void purple_notify_searchresults_new_rows(PurpleConnection *gc,
 /**
  * Adds a stock button that will be displayed in the search results dialog.
  *
- * @param results The search results object.
- * @param type    Type of the button. (TODO: Only one button of a given type
+ * @results: The search results object.
+ * @type:    Type of the button. (TODO: Only one button of a given type
  *                can be displayed.)
- * @param cb      Function that will be called on the click event.
+ * @cb:      Function that will be called on the click event.
  */
 void purple_notify_searchresults_button_add(PurpleNotifySearchResults *results,
 										  PurpleNotifySearchButtonType type,
@@ -248,9 +248,9 @@ void purple_notify_searchresults_button_add(PurpleNotifySearchResults *results,
  * Adds a plain labelled button that will be displayed in the search results
  * dialog.
  *
- * @param results The search results object
- * @param label   The label to display
- * @param cb      Function that will be called on the click event
+ * @results: The search results object
+ * @label:   The label to display
+ * @cb:      Function that will be called on the click event
  */
 void purple_notify_searchresults_button_add_labeled(PurpleNotifySearchResults *results,
                                                   const char *label,
@@ -260,7 +260,7 @@ void purple_notify_searchresults_button_add_labeled(PurpleNotifySearchResults *r
 /**
  * Returns a newly created search results object.
  *
- * @return The new search results object.
+ * Returns: The new search results object.
  */
 PurpleNotifySearchResults *purple_notify_searchresults_new(void);
 
@@ -268,43 +268,43 @@ PurpleNotifySearchResults *purple_notify_searchresults_new(void);
  * Returns a newly created search result column object.  The column defaults
  * to being visible.
  *
- * @param title Title of the column. NOTE: Title will get g_strdup()ed.
+ * @title: Title of the column. NOTE: Title will get g_strdup()ed.
  *
- * @return The new search column object.
+ * Returns: The new search column object.
  */
 PurpleNotifySearchColumn *purple_notify_searchresults_column_new(const char *title);
 
 /**
  * Returns the title of the column
  *
- * @param column The search column object.
+ * @column: The search column object.
  *
- * @return The title of the column
+ * Returns: The title of the column
  */
 const char *purple_notify_searchresult_column_get_title(const PurpleNotifySearchColumn *column);
 
 /**
  * Sets whether or not a search result column is visible.
  *
- * @param column  The search column object.
- * @param visible TRUE if visible, or FALSE if not.
+ * @column:  The search column object.
+ * @visible: TRUE if visible, or FALSE if not.
  */
 void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible);
 
 /**
  * Returns whether or not a search result column is visible.
  *
- * @param column The search column object.
+ * @column: The search column object.
  *
- * @return TRUE if the search result column is visible. FALSE otherwise.
+ * Returns: TRUE if the search result column is visible. FALSE otherwise.
  */
 gboolean purple_notify_searchresult_column_is_visible(const PurpleNotifySearchColumn *column);
 
 /**
  * Adds a new column to the search result object.
  *
- * @param results The result object to which the column will be added.
- * @param column The column that will be added to the result object.
+ * @results: The result object to which the column will be added.
+ * @column: The column that will be added to the result object.
  */
 void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
 										  PurpleNotifySearchColumn *column);
@@ -312,8 +312,8 @@ void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
 /**
  * Adds a new row of the results to the search results object.
  *
- * @param results The search results object.
- * @param row     The row of the results.
+ * @results: The search results object.
+ * @row:     The row of the results.
  */
 void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 									   GList *row);
@@ -328,18 +328,18 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 /**
  * Displays a notification message to the user.
  *
- * @param handle    The plugin or connection handle.
- * @param type      The notification type.
- * @param title     The title of the message.
- * @param primary   The main point of the message.
- * @param secondary The secondary information.
- * @param cpar      The #PurpleRequestCommonParameters associated with this
- *                  request, or @c NULL if none is.
- * @param cb        The callback to call when the user closes
+ * @handle:    The plugin or connection handle.
+ * @type:      The notification type.
+ * @title:     The title of the message.
+ * @primary:   The main point of the message.
+ * @secondary: The secondary information.
+ * @cpar:      The #PurpleRequestCommonParameters associated with this
+ *                  request, or %NULL if none is.
+ * @cb:        The callback to call when the user closes
  *                  the notification.
- * @param user_data The data to pass to the callback.
+ * @user_data: The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_notify_message(void *handle, PurpleNotifyMsgType type,
 	const char *title, const char *primary, const char *secondary,
@@ -349,16 +349,16 @@ void *purple_notify_message(void *handle, PurpleNotifyMsgType type,
 /**
  * Displays a single email notification to the user.
  *
- * @param handle    The plugin or connection handle.
- * @param subject   The subject of the email.
- * @param from      The from address.
- * @param to        The destination address.
- * @param url       The URL where the message can be read.
- * @param cb        The callback to call when the user closes
+ * @handle:    The plugin or connection handle.
+ * @subject:   The subject of the email.
+ * @from:      The from address.
+ * @to:        The destination address.
+ * @url:       The URL where the message can be read.
+ * @cb:        The callback to call when the user closes
  *                  the notification.
- * @param user_data The data to pass to the callback.
+ * @user_data: The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_notify_email(void *handle, const char *subject,
 						const char *from, const char *to,
@@ -368,21 +368,21 @@ void *purple_notify_email(void *handle, const char *subject,
 /**
  * Displays a notification for multiple emails to the user.
  *
- * @param handle    The plugin or connection handle.
- * @param count     The number of emails.  '0' can be used to signify that
+ * @handle:    The plugin or connection handle.
+ * @count:     The number of emails.  '0' can be used to signify that
  *                  the user has no unread emails and the UI should remove
  *                  the mail notification.
- * @param detailed  @c TRUE if there is information for each email in the
+ * @detailed:  %TRUE if there is information for each email in the
  *                  arrays.
- * @param subjects  The array of subjects.
- * @param froms     The array of from addresses.
- * @param tos       The array of destination addresses.
- * @param urls      The URLs where the messages can be read.
- * @param cb        The callback to call when the user closes
+ * @subjects:  The array of subjects.
+ * @froms:     The array of from addresses.
+ * @tos:       The array of destination addresses.
+ * @urls:      The URLs where the messages can be read.
+ * @cb:        The callback to call when the user closes
  *                  the notification.
- * @param user_data The data to pass to the callback.
+ * @user_data: The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_notify_emails(void *handle, size_t count, gboolean detailed,
 						 const char **subjects, const char **froms,
@@ -395,16 +395,16 @@ void *purple_notify_emails(void *handle, size_t count, gboolean detailed,
  * The text is essentially a stripped-down format of HTML, the same that
  * IMs may send.
  *
- * @param handle    The plugin or connection handle.
- * @param title     The title of the message.
- * @param primary   The main point of the message.
- * @param secondary The secondary information.
- * @param text      The formatted text.
- * @param cb        The callback to call when the user closes
+ * @handle:    The plugin or connection handle.
+ * @title:     The title of the message.
+ * @primary:   The main point of the message.
+ * @secondary: The secondary information.
+ * @text:      The formatted text.
+ * @cb:        The callback to call when the user closes
  *                  the notification.
- * @param user_data The data to pass to the callback.
+ * @user_data: The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_notify_formatted(void *handle, const char *title,
 							const char *primary, const char *secondary,
@@ -417,13 +417,13 @@ void *purple_notify_formatted(void *handle, const char *title,
  * The text is essentially a stripped-down format of HTML, the same that
  * IMs may send.
  *
- * @param gc         The PurpleConnection handle associated with the information.
- * @param who        The username associated with the information.
- * @param user_info  The PurpleNotifyUserInfo which contains the information
- * @param cb         The callback to call when the user closes the notification.
- * @param user_data  The data to pass to the callback.
+ * @gc:         The PurpleConnection handle associated with the information.
+ * @who:        The username associated with the information.
+ * @user_info:  The PurpleNotifyUserInfo which contains the information
+ * @cb:         The callback to call when the user closes the notification.
+ * @user_data:  The data to pass to the callback.
  *
- * @return  A UI-specific handle.
+ * Returns:  A UI-specific handle.
  */
 void *purple_notify_userinfo(PurpleConnection *gc, const char *who,
 						   PurpleNotifyUserInfo *user_info, PurpleNotifyCloseCallback cb,
@@ -438,14 +438,14 @@ GType purple_notify_user_info_get_type(void);
  * Create a new PurpleNotifyUserInfo which is suitable for passing to
  * purple_notify_userinfo()
  *
- * @return  A new PurpleNotifyUserInfo, which the caller must destroy when done
+ * Returns:  A new PurpleNotifyUserInfo, which the caller must destroy when done
  */
 PurpleNotifyUserInfo *purple_notify_user_info_new(void);
 
 /**
  * Destroy a PurpleNotifyUserInfo
  *
- * @param user_info  The PurpleNotifyUserInfo
+ * @user_info:  The PurpleNotifyUserInfo
  */
 void purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info);
 
@@ -462,9 +462,9 @@ void purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info);
  * To remove a PurpleNotifyUserInfoEntry, use
  * purple_notify_user_info_remove_entry(). Do not use the GQueue directly.
  *
- * @param user_info  The PurpleNotifyUserInfo
+ * @user_info:  The PurpleNotifyUserInfo
  *
- * @constreturn A GQueue of PurpleNotifyUserInfoEntry objects.
+ * Returns: (TODO const): A GQueue of PurpleNotifyUserInfoEntry objects.
  */
 GQueue *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
 
@@ -472,8 +472,8 @@ GQueue *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
  * Create a textual representation of a PurpleNotifyUserInfo, separating
  * entries with newline
  *
- * @param user_info  The PurpleNotifyUserInfo
- * @param newline    The separation character
+ * @user_info:  The PurpleNotifyUserInfo
+ * @newline:    The separation character
  */
 char *purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_info, const char *newline);
 
@@ -481,12 +481,12 @@ char *purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_i
  * Add a label/value pair to a PurpleNotifyUserInfo object.
  * PurpleNotifyUserInfo keeps track of the order in which pairs are added.
  *
- * @param user_info  The PurpleNotifyUserInfo
- * @param label      A label, which for example might be displayed by a
+ * @user_info:  The PurpleNotifyUserInfo
+ * @label:      A label, which for example might be displayed by a
  *                   UI with a colon after it ("Status:"). Do not include
  *                   a colon.  If NULL, value will be displayed without a
  *                   label.
- * @param value      The value, which might be displayed by a UI after
+ * @value:      The value, which might be displayed by a UI after
  *                   the label.  This should be valid HTML.  If you want
  *                   to insert plaintext then use
  *                   purple_notify_user_info_add_pair_plaintext(), instead.
@@ -518,8 +518,8 @@ void purple_notify_user_info_prepend_pair_plaintext(PurpleNotifyUserInfo *user_i
  * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object
  * without freeing the entry.
  *
- * @param user_info        The PurpleNotifyUserInfo
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ * @user_info:        The PurpleNotifyUserInfo
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
  */
 void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, PurpleNotifyUserInfoEntry *user_info_entry);
 
@@ -534,10 +534,10 @@ void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, Purpl
  * purple_notify_user_info_prepend_pair_plaintext() are convenience
  * methods for creating entries and adding them to a PurpleNotifyUserInfo.
  *
- * @param label  A label, which for example might be displayed by a UI
+ * @label:  A label, which for example might be displayed by a UI
  *               with a colon after it ("Status:"). Do not include a
  *               colon.  If NULL, value will be displayed without a label.
- * @param value  The value, which might be displayed by a UI after the
+ * @value:  The value, which might be displayed by a UI after the
  *               label.  If NULL, label will still be displayed; the UI
  *               should then treat label as independent and not include a
  *               colon if it would otherwise.
@@ -549,21 +549,21 @@ PurpleNotifyUserInfoEntry *purple_notify_user_info_entry_new(const char *label, 
 /**
  * Destroy a PurpleNotifyUserInfoEntry
  *
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
  */
 void purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Add a section break.  A UI might display this as a horizontal line.
  *
- * @param user_info  The PurpleNotifyUserInfo
+ * @user_info:  The PurpleNotifyUserInfo
  */
 void purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info);
 
 /**
  * Prepend a section break.  A UI might display this as a horizontal line.
  *
- * @param user_info  The PurpleNotifyUserInfo
+ * @user_info:  The PurpleNotifyUserInfo
  */
 void purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_info);
 
@@ -571,8 +571,8 @@ void purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_in
  * Add a section header.  A UI might display this in a different font
  * from other text.
  *
- * @param user_info  The PurpleNotifyUserInfo
- * @param label      The name of the section
+ * @user_info:  The PurpleNotifyUserInfo
+ * @label:      The name of the section
  */
 void purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info, const char *label);
 
@@ -580,8 +580,8 @@ void purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info,
  * Prepend a section header.  A UI might display this in a different font
  * from other text.
  *
- * @param user_info  The PurpleNotifyUserInfo
- * @param label      The name of the section
+ * @user_info:  The PurpleNotifyUserInfo
+ * @label:      The name of the section
  */
 void purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo *user_info, const char *label);
 
@@ -594,24 +594,24 @@ void purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo *user_info);
 /**
  * Get the label for a PurpleNotifyUserInfoEntry
  *
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
  *
- * @return  The label
+ * Returns:  The label
  */
 const gchar *purple_notify_user_info_entry_get_label(PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Set the label for a PurpleNotifyUserInfoEntry
  *
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
- * @param label            The label
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
+ * @label:            The label
  */
 void purple_notify_user_info_entry_set_label(PurpleNotifyUserInfoEntry *user_info_entry, const char *label);
 
 /**
  * Get the value for a PurpleNotifyUserInfoEntry
  *
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
  *
  * @result  The value
  */
@@ -620,8 +620,8 @@ const gchar *purple_notify_user_info_entry_get_value(PurpleNotifyUserInfoEntry *
 /**
  * Set the value for a PurpleNotifyUserInfoEntry
  *
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
- * @param value            The value
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
+ * @value:            The value
  */
 void purple_notify_user_info_entry_set_value(PurpleNotifyUserInfoEntry *user_info_entry, const char *value);
 
@@ -629,17 +629,17 @@ void purple_notify_user_info_entry_set_value(PurpleNotifyUserInfoEntry *user_inf
 /**
  * Get the type of a PurpleNotifyUserInfoEntry
  *
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
  *
- * @return  The PurpleNotifyUserInfoEntryType
+ * Returns:  The PurpleNotifyUserInfoEntryType
  */
 PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Set the type of a PurpleNotifyUserInfoEntry
  *
- * @param user_info_entry  The PurpleNotifyUserInfoEntry
- * @param type             The PurpleNotifyUserInfoEntryType
+ * @user_info_entry:  The PurpleNotifyUserInfoEntry
+ * @type:             The PurpleNotifyUserInfoEntryType
  */
 void purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info_entry,
 										  PurpleNotifyUserInfoEntryType type);
@@ -647,10 +647,10 @@ void purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info
 /**
  * Opens a URI or somehow presents it to the user.
  *
- * @param handle The plugin or connection handle.
- * @param uri    The URI to display or go to.
+ * @handle: The plugin or connection handle.
+ * @uri:    The URI to display or go to.
  *
- * @return A UI-specific handle, if any. This may only be presented if
+ * Returns: A UI-specific handle, if any. This may only be presented if
  *         the UI code displays a dialog instead of a webpage, or something
  *         similar.
  */
@@ -659,11 +659,11 @@ void *purple_notify_uri(void *handle, const char *uri);
 /**
  * Checks, if passed UI handle is valid.
  *
- * @param ui_handle The UI handle.
- * @param type      The pointer to variable, where request type may be stored
- *                  (may be @c NULL).
+ * @ui_handle: The UI handle.
+ * @type:      The pointer to variable, where request type may be stored
+ *                  (may be %NULL).
  *
- * @return TRUE, if handle is valid, FALSE otherwise.
+ * Returns: TRUE, if handle is valid, FALSE otherwise.
  */
 gboolean
 purple_notify_is_valid_ui_handle(void *ui_handle, PurpleNotifyType *type);
@@ -674,15 +674,15 @@ purple_notify_is_valid_ui_handle(void *ui_handle, PurpleNotifyType *type);
  * This should be used only by the UI operation functions and part of the
  * core.
  *
- * @param type      The notification type.
- * @param ui_handle The notification UI handle.
+ * @type:      The notification type.
+ * @ui_handle: The notification UI handle.
  */
 void purple_notify_close(PurpleNotifyType type, void *ui_handle);
 
 /**
  * Closes all notifications registered with the specified handle.
  *
- * @param handle The handle.
+ * @handle: The handle.
  */
 void purple_notify_close_with_handle(void *handle);
 
@@ -718,7 +718,7 @@ void purple_notify_close_with_handle(void *handle);
  * Sets the UI operations structure to be used when displaying a
  * notification.
  *
- * @param ops The UI operations structure.
+ * @ops: The UI operations structure.
  */
 void purple_notify_set_ui_ops(PurpleNotifyUiOps *ops);
 
@@ -726,7 +726,7 @@ void purple_notify_set_ui_ops(PurpleNotifyUiOps *ops);
  * Returns the UI operations structure to be used when displaying a
  * notification.
  *
- * @return The UI operations structure.
+ * Returns: The UI operations structure.
  */
 PurpleNotifyUiOps *purple_notify_get_ui_ops(void);
 
@@ -740,7 +740,7 @@ PurpleNotifyUiOps *purple_notify_get_ui_ops(void);
 /**
  * Returns the notify subsystem handle.
  *
- * @return The notify subsystem handle.
+ * Returns: The notify subsystem handle.
  */
 void *purple_notify_get_handle(void);
 

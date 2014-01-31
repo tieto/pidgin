@@ -66,99 +66,99 @@ G_BEGIN_DECLS
 /**
  * Creates a proxy information structure.
  *
- * @return The proxy information structure.
+ * Returns: The proxy information structure.
  */
 PurpleProxyInfo *purple_proxy_info_new(void);
 
 /**
  * Destroys a proxy information structure.
  *
- * @param info The proxy information structure to destroy.
+ * @info: The proxy information structure to destroy.
  */
 void purple_proxy_info_destroy(PurpleProxyInfo *info);
 
 /**
  * Sets the type of proxy.
  *
- * @param info The proxy information.
- * @param type The proxy type.
+ * @info: The proxy information.
+ * @type: The proxy type.
  */
 void purple_proxy_info_set_type(PurpleProxyInfo *info, PurpleProxyType type);
 
 /**
  * Sets the proxy host.
  *
- * @param info The proxy information.
- * @param host The host.
+ * @info: The proxy information.
+ * @host: The host.
  */
 void purple_proxy_info_set_host(PurpleProxyInfo *info, const char *host);
 
 /**
  * Sets the proxy port.
  *
- * @param info The proxy information.
- * @param port The port.
+ * @info: The proxy information.
+ * @port: The port.
  */
 void purple_proxy_info_set_port(PurpleProxyInfo *info, int port);
 
 /**
  * Sets the proxy username.
  *
- * @param info     The proxy information.
- * @param username The username.
+ * @info:     The proxy information.
+ * @username: The username.
  */
 void purple_proxy_info_set_username(PurpleProxyInfo *info, const char *username);
 
 /**
  * Sets the proxy password.
  *
- * @param info     The proxy information.
- * @param password The password.
+ * @info:     The proxy information.
+ * @password: The password.
  */
 void purple_proxy_info_set_password(PurpleProxyInfo *info, const char *password);
 
 /**
  * Returns the proxy's type.
  *
- * @param info The proxy information.
+ * @info: The proxy information.
  *
- * @return The type.
+ * Returns: The type.
  */
 PurpleProxyType purple_proxy_info_get_type(const PurpleProxyInfo *info);
 
 /**
  * Returns the proxy's host.
  *
- * @param info The proxy information.
+ * @info: The proxy information.
  *
- * @return The host.
+ * Returns: The host.
  */
 const char *purple_proxy_info_get_host(const PurpleProxyInfo *info);
 
 /**
  * Returns the proxy's port.
  *
- * @param info The proxy information.
+ * @info: The proxy information.
  *
- * @return The port.
+ * Returns: The port.
  */
 int purple_proxy_info_get_port(const PurpleProxyInfo *info);
 
 /**
  * Returns the proxy's username.
  *
- * @param info The proxy information.
+ * @info: The proxy information.
  *
- * @return The username.
+ * Returns: The username.
  */
 const char *purple_proxy_info_get_username(const PurpleProxyInfo *info);
 
 /**
  * Returns the proxy's password.
  *
- * @param info The proxy information.
+ * @info: The proxy information.
  *
- * @return The password.
+ * Returns: The password.
  */
 const char *purple_proxy_info_get_password(const PurpleProxyInfo *info);
 
@@ -172,14 +172,14 @@ const char *purple_proxy_info_get_password(const PurpleProxyInfo *info);
 /**
  * Returns purple's global proxy information.
  *
- * @return The global proxy information.
+ * Returns: The global proxy information.
  */
 PurpleProxyInfo *purple_global_proxy_get_info(void);
 
 /**
  * Set purple's global proxy information.
  *
- * @param info     The proxy information.
+ * @info:     The proxy information.
  */
 void purple_global_proxy_set_info(PurpleProxyInfo *info);
 
@@ -193,7 +193,7 @@ void purple_global_proxy_set_info(PurpleProxyInfo *info);
 /**
  * Returns the proxy subsystem handle.
  *
- * @return The proxy subsystem handle.
+ * Returns: The proxy subsystem handle.
  */
 void *purple_proxy_get_handle(void);
 
@@ -210,9 +210,9 @@ void purple_proxy_uninit(void);
 /**
  * Returns configuration of a proxy.
  *
- * @param account The account for which the configuration is needed.
+ * @account: The account for which the configuration is needed.
  *
- * @return The configuration of a proxy.
+ * Returns: The configuration of a proxy.
  */
 PurpleProxyInfo *purple_proxy_get_setup(PurpleAccount *account);
 
@@ -222,21 +222,21 @@ PurpleProxyInfo *purple_proxy_get_setup(PurpleAccount *account);
  * connect," it is used for establishing any outgoing TCP connection,
  * whether through a proxy or not.
  *
- * @param handle     A handle that should be associated with this
+ * @handle:     A handle that should be associated with this
  *                   connection attempt.  The handle can be used
  *                   to cancel the connection attempt using the
  *                   purple_proxy_connect_cancel_with_handle()
  *                   function.
- * @param account    The account making the connection.
- * @param host       The destination host.
- * @param port       The destination port.
- * @param connect_cb The function to call when the connection is
+ * @account:    The account making the connection.
+ * @host:       The destination host.
+ * @port:       The destination port.
+ * @connect_cb: The function to call when the connection is
  *                   established.  If the connection failed then
  *                   fd will be -1 and error message will be set
  *                   to something descriptive (hopefully).
- * @param data       User-defined data.
+ * @data:       User-defined data.
  *
- * @return NULL if there was an error, or a reference to an
+ * Returns: NULL if there was an error, or a reference to an
  *         opaque data structure that can be used to cancel
  *         the pending connection, if needed.
  */
@@ -251,21 +251,21 @@ PurpleProxyConnectData *purple_proxy_connect(void *handle,
  * connect," it is used for establishing any outgoing UDP connection,
  * whether through a proxy or not.
  *
- * @param handle     A handle that should be associated with this
+ * @handle:     A handle that should be associated with this
  *                   connection attempt.  The handle can be used
  *                   to cancel the connection attempt using the
  *                   purple_proxy_connect_cancel_with_handle()
  *                   function.
- * @param account    The account making the connection.
- * @param host       The destination host.
- * @param port       The destination port.
- * @param connect_cb The function to call when the connection is
+ * @account:    The account making the connection.
+ * @host:       The destination host.
+ * @port:       The destination port.
+ * @connect_cb: The function to call when the connection is
  *                   established.  If the connection failed then
  *                   fd will be -1 and error message will be set
  *                   to something descriptive (hopefully).
- * @param data       User-defined data.
+ * @data:       User-defined data.
  *
- * @return NULL if there was an error, or a reference to an
+ * Returns: NULL if there was an error, or a reference to an
  *         opaque data structure that can be used to cancel
  *         the pending connection, if needed.
  */
@@ -280,22 +280,22 @@ PurpleProxyConnectData *purple_proxy_connect_udp(void *handle,
  * Note that if the account that is making the connection uses a proxy, this
  * connection to a SOCKS5 proxy will be made through the account proxy.
  *
- * @param handle     A handle that should be associated with this
+ * @handle:     A handle that should be associated with this
  *                   connection attempt.  The handle can be used
  *                   to cancel the connection attempt using the
  *                   purple_proxy_connect_cancel_with_handle()
  *                   function.
- * @param account    The account making the connection.
- * @param gpi        The PurpleProxyInfo specifying the proxy settings
- * @param host       The destination host.
- * @param port       The destination port.
- * @param connect_cb The function to call when the connection is
+ * @account:    The account making the connection.
+ * @gpi:        The PurpleProxyInfo specifying the proxy settings
+ * @host:       The destination host.
+ * @port:       The destination port.
+ * @connect_cb: The function to call when the connection is
  *                   established.  If the connection failed then
  *                   fd will be -1 and error message will be set
  *                   to something descriptive (hopefully).
- * @param data       User-defined data.
+ * @data:       User-defined data.
  *
- * @return NULL if there was an error, or a reference to an
+ * Returns: NULL if there was an error, or a reference to an
  *         opaque data structure that can be used to cancel
  *         the pending connection, if needed.
  */
@@ -318,7 +318,7 @@ void purple_proxy_connect_cancel(PurpleProxyConnectData *connect_data);
 /*
  * Closes all proxy connections registered with the specified handle.
  *
- * @param handle The handle.
+ * @handle: The handle.
  */
 void purple_proxy_connect_cancel_with_handle(void *handle);
 

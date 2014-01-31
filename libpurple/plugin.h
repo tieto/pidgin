@@ -257,10 +257,10 @@ GType purple_plugin_get_type(void);
 /**
  * Creates a new plugin structure.
  *
- * @param native Whether or not the plugin is native.
- * @param path   The path to the plugin, or @c NULL if statically compiled.
+ * @native: Whether or not the plugin is native.
+ * @path:   The path to the plugin, or %NULL if statically compiled.
  *
- * @return A new PurplePlugin structure.
+ * Returns: A new PurplePlugin structure.
  */
 PurplePlugin *purple_plugin_new(gboolean native, const char *path);
 
@@ -268,9 +268,9 @@ PurplePlugin *purple_plugin_new(gboolean native, const char *path);
  * Probes a plugin, retrieving the information on it and adding it to the
  * list of available plugins.
  *
- * @param filename The plugin's filename.
+ * @filename: The plugin's filename.
  *
- * @return The plugin handle.
+ * Returns: The plugin handle.
  *
  * @see purple_plugin_load()
  * @see purple_plugin_destroy()
@@ -284,10 +284,10 @@ PurplePlugin *purple_plugin_probe(const char *filename);
  * Plugins should use the PURPLE_INIT_PLUGIN() macro to register themselves
  * with the core.
  *
- * @param plugin The plugin to register.
+ * @plugin: The plugin to register.
  *
- * @return @c TRUE if the plugin was registered successfully.  Otherwise
- *         @c FALSE is returned (this happens if the plugin does not contain
+ * Returns: %TRUE if the plugin was registered successfully.  Otherwise
+ *         %FALSE is returned (this happens if the plugin does not contain
  *         the necessary information).
  */
 gboolean purple_plugin_register(PurplePlugin *plugin);
@@ -295,9 +295,9 @@ gboolean purple_plugin_register(PurplePlugin *plugin);
 /**
  * Attempts to load a previously probed plugin.
  *
- * @param plugin The plugin to load.
+ * @plugin: The plugin to load.
  *
- * @return @c TRUE if successful, or @c FALSE otherwise.
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  *
  * @see purple_plugin_reload()
  * @see purple_plugin_unload()
@@ -307,9 +307,9 @@ gboolean purple_plugin_load(PurplePlugin *plugin);
 /**
  * Unloads the specified plugin.
  *
- * @param plugin The plugin handle.
+ * @plugin: The plugin handle.
  *
- * @return @c TRUE if successful, or @c FALSE otherwise.
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  *
  * @see purple_plugin_load()
  * @see purple_plugin_reload()
@@ -329,9 +329,9 @@ void purple_plugin_disable(PurplePlugin *plugin);
 /**
  * Reloads a plugin.
  *
- * @param plugin The old plugin handle.
+ * @plugin: The old plugin handle.
  *
- * @return @c TRUE if successful, or @c FALSE otherwise.
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  *
  * @see purple_plugin_load()
  * @see purple_plugin_unload()
@@ -341,93 +341,93 @@ gboolean purple_plugin_reload(PurplePlugin *plugin);
 /**
  * Unloads a plugin and destroys the structure from memory.
  *
- * @param plugin The plugin handle.
+ * @plugin: The plugin handle.
  */
 void purple_plugin_destroy(PurplePlugin *plugin);
 
 /**
  * Returns whether or not a plugin is currently loaded.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return @c TRUE if loaded, or @c FALSE otherwise.
+ * Returns: %TRUE if loaded, or %FALSE otherwise.
  */
 gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
 /**
  * Returns whether or not a plugin is unloadable.
  *
- * If this returns @c TRUE, the plugin is guaranteed to not
- * be loadable. However, a return value of @c FALSE does not
+ * If this returns %TRUE, the plugin is guaranteed to not
+ * be loadable. However, a return value of %FALSE does not
  * guarantee the plugin is loadable.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return @c TRUE if the plugin is known to be unloadable,\
- *         @c FALSE otherwise
+ * Returns: %TRUE if the plugin is known to be unloadable,\
+ *         %FALSE otherwise
  */
 gboolean purple_plugin_is_unloadable(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's id.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return The plugin's id.
+ * Returns: The plugin's id.
  */
 const gchar *purple_plugin_get_id(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's name.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return THe name of the plugin, or @c NULL.
+ * Returns: THe name of the plugin, or %NULL.
  */
 const gchar *purple_plugin_get_name(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's version.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return The plugin's version or @c NULL.
+ * Returns: The plugin's version or %NULL.
  */
 const gchar *purple_plugin_get_version(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's summary.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return The plugin's summary.
+ * Returns: The plugin's summary.
  */
 const gchar *purple_plugin_get_summary(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's description.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return The plugin's description.
+ * Returns: The plugin's description.
  */
 const gchar *purple_plugin_get_description(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's author.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return The plugin's author.
+ * Returns: The plugin's author.
  */
 const gchar *purple_plugin_get_author(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's homepage.
  *
- * @param plugin The plugin.
+ * @plugin: The plugin.
  *
- * @return The plugin's homepage.
+ * Returns: The plugin's homepage.
  */
 const gchar *purple_plugin_get_homepage(const PurplePlugin *plugin);
 
@@ -441,15 +441,15 @@ const gchar *purple_plugin_get_homepage(const PurplePlugin *plugin);
 /**
  * Registers an IPC command in a plugin.
  *
- * @param plugin     The plugin to register the command with.
- * @param command    The name of the command.
- * @param func       The function to execute.
- * @param marshal    The marshalling function.
- * @param ret_type   The return type.
- * @param num_params The number of parameters.
- * @param ...        The parameter types.
+ * @plugin:     The plugin to register the command with.
+ * @command:    The name of the command.
+ * @func:       The function to execute.
+ * @marshal:    The marshalling function.
+ * @ret_type:   The return type.
+ * @num_params: The number of parameters.
+ * @...:        The parameter types.
  *
- * @return TRUE if the function was registered successfully, or
+ * Returns: TRUE if the function was registered successfully, or
  *         FALSE otherwise.
  */
 gboolean purple_plugin_ipc_register(PurplePlugin *plugin, const char *command,
@@ -460,28 +460,28 @@ gboolean purple_plugin_ipc_register(PurplePlugin *plugin, const char *command,
 /**
  * Unregisters an IPC command in a plugin.
  *
- * @param plugin  The plugin to unregister the command from.
- * @param command The name of the command.
+ * @plugin:  The plugin to unregister the command from.
+ * @command: The name of the command.
  */
 void purple_plugin_ipc_unregister(PurplePlugin *plugin, const char *command);
 
 /**
  * Unregisters all IPC commands in a plugin.
  *
- * @param plugin The plugin to unregister the commands from.
+ * @plugin: The plugin to unregister the commands from.
  */
 void purple_plugin_ipc_unregister_all(PurplePlugin *plugin);
 
 /**
  * Returns a list of value types used for an IPC command.
  *
- * @param plugin      The plugin.
- * @param command     The name of the command.
- * @param ret_type    The returned return type.
- * @param num_params  The returned number of parameters.
- * @param param_types The returned list of parameter types.
+ * @plugin:      The plugin.
+ * @command:     The name of the command.
+ * @ret_type:    The returned return type.
+ * @num_params:  The returned number of parameters.
+ * @param_types: The returned list of parameter types.
  *
- * @return TRUE if the command was found, or FALSE otherwise.
+ * Returns: TRUE if the command was found, or FALSE otherwise.
  */
 gboolean purple_plugin_ipc_get_types(PurplePlugin *plugin, const char *command,
 									GType *ret_type, int *num_params,
@@ -490,12 +490,12 @@ gboolean purple_plugin_ipc_get_types(PurplePlugin *plugin, const char *command,
 /**
  * Executes an IPC command.
  *
- * @param plugin  The plugin to execute the command on.
- * @param command The name of the command.
- * @param ok      TRUE if the call was successful, or FALSE otherwise.
- * @param ...     The parameters to pass.
+ * @plugin:  The plugin to execute the command on.
+ * @command: The name of the command.
+ * @ok:      TRUE if the call was successful, or FALSE otherwise.
+ * @...:     The parameters to pass.
  *
- * @return The return value, which will be NULL if the command doesn't
+ * Returns: The return value, which will be NULL if the command doesn't
  *         return a value.
  */
 void *purple_plugin_ipc_call(PurplePlugin *plugin, const char *command,
@@ -511,14 +511,14 @@ void *purple_plugin_ipc_call(PurplePlugin *plugin, const char *command,
 /**
  * Add a new directory to search for plugins
  *
- * @param path The new search path.
+ * @path: The new search path.
  */
 void purple_plugins_add_search_path(const char *path);
 
 /**
  * Returns a list of plugin search paths.
  *
- * @constreturn A list of searched paths.
+ * Returns: (TODO const): A list of searched paths.
  */
 GList *purple_plugins_get_search_paths(void);
 
@@ -540,7 +540,7 @@ void purple_plugins_destroy_all(void);
 /**
  * Saves the list of loaded plugins to the specified preference key
  *
- * @param key The preference key to save the list of plugins to.
+ * @key: The preference key to save the list of plugins to.
  */
 void purple_plugins_save_loaded(const char *key);
 
@@ -548,14 +548,14 @@ void purple_plugins_save_loaded(const char *key);
  * Attempts to load all the plugins in the specified preference key
  * that were loaded when purple last quit.
  *
- * @param key The preference key containing the list of plugins.
+ * @key: The preference key containing the list of plugins.
  */
 void purple_plugins_load_saved(const char *key);
 
 /**
  * Probes for plugins in the registered module paths.
  *
- * @param ext The extension type to probe for, or @c NULL for all.
+ * @ext: The extension type to probe for, or %NULL for all.
  *
  * @see purple_plugin_set_probe_path()
  */
@@ -564,50 +564,50 @@ void purple_plugins_probe(const char *ext);
 /**
  * Returns whether or not plugin support is enabled.
  *
- * @return TRUE if plugin support is enabled, or FALSE otherwise.
+ * Returns: TRUE if plugin support is enabled, or FALSE otherwise.
  */
 gboolean purple_plugins_enabled(void);
 
 /**
  * Finds a plugin with the specified name.
  *
- * @param name The plugin name.
+ * @name: The plugin name.
  *
- * @return The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_with_name(const char *name);
 
 /**
  * Finds a plugin with the specified filename (filename with a path).
  *
- * @param filename The plugin filename.
+ * @filename: The plugin filename.
  *
- * @return The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_with_filename(const char *filename);
 
 /**
  * Finds a plugin with the specified basename (filename without a path).
  *
- * @param basename The plugin basename.
+ * @basename: The plugin basename.
  *
- * @return The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_with_basename(const char *basename);
 
 /**
  * Finds a plugin with the specified plugin ID.
  *
- * @param id The plugin ID.
+ * @id: The plugin ID.
  *
- * @return The plugin if found, or @c NULL if not found.
+ * Returns: The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_with_id(const char *id);
 
 /**
  * Returns a list of all loaded plugins.
  *
- * @constreturn A list of all loaded plugins.
+ * Returns: (TODO const): A list of all loaded plugins.
  */
 GList *purple_plugins_get_loaded(void);
 
@@ -617,14 +617,14 @@ GList *purple_plugins_get_loaded(void);
  * to the PURPLE_INIT_PLUGIN() macro, or if it was compiled
  * against an incompatable API version.
  *
- * @constreturn A list of all protocol plugins.
+ * Returns: (TODO const): A list of all protocol plugins.
  */
 GList *purple_plugins_get_protocols(void);
 
 /**
  * Returns a list of all plugins, whether loaded or not.
  *
- * @constreturn A list of all plugins.
+ * Returns: (TODO const): A list of all plugins.
  */
 GList *purple_plugins_get_all(void);
 
@@ -638,7 +638,7 @@ GList *purple_plugins_get_all(void);
 /**
  * Returns the plugin subsystem handle.
  *
- * @return The plugin sybsystem handle.
+ * Returns: The plugin sybsystem handle.
  */
 void *purple_plugins_get_handle(void);
 
@@ -657,15 +657,15 @@ void purple_plugins_uninit(void);
 /**
  * Allocates and returns a new PurplePluginAction.
  *
- * @param label    The description of the action to show to the user.
- * @param callback The callback to call when the user selects this action.
+ * @label:    The description of the action to show to the user.
+ * @callback: The callback to call when the user selects this action.
  */
 PurplePluginAction *purple_plugin_action_new(const char* label, void (*callback)(PurplePluginAction *));
 
 /**
  * Frees a PurplePluginAction
  *
- * @param action The PurplePluginAction to free.
+ * @action: The PurplePluginAction to free.
  */
 void purple_plugin_action_free(PurplePluginAction *action);
 

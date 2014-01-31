@@ -42,7 +42,7 @@ void finch_savedstatus_show_all(void);
 /**
  * Show a dialog to edit a status.
  *
- * @param saved The saved status to edit. Set it to @c NULL to create a new status.
+ * @saved: The saved status to edit. Set it to %NULL to create a new status.
  */
 void finch_savedstatus_edit(PurpleSavedStatus *saved);
 

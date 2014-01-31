@@ -87,10 +87,10 @@ G_BEGIN_DECLS
  *
  * This will setup preferences for all the core subsystems.
  *
- * @param ui The ID of the UI using the core. This should be a
+ * @ui: The ID of the UI using the core. This should be a
  *           unique ID, registered with the purple team.
  *
- * @return @c TRUE if successful, or @c FALSE otherwise.
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  */
 gboolean purple_core_init(const char *ui);
 
@@ -124,7 +124,7 @@ gboolean purple_core_quit_cb(gpointer unused);
 /**
  * Returns the version of the core library.
  *
- * @return The version of the core library.
+ * Returns: The version of the core library.
  */
 const char *purple_core_get_version(void);
 
@@ -132,7 +132,7 @@ const char *purple_core_get_version(void);
  * Returns the ID of the UI that is using the core, as passed to
  * purple_core_init().
  *
- * @return The ID of the UI that is currently using the core.
+ * Returns: The ID of the UI that is currently using the core.
  */
 const char *purple_core_get_ui(void);
 
@@ -146,14 +146,14 @@ PurpleCore *purple_get_core(void);
 /**
  * Sets the UI ops for the core.
  *
- * @param ops A UI ops structure for the core.
+ * @ops: A UI ops structure for the core.
  */
 void purple_core_set_ui_ops(PurpleCoreUiOps *ops);
 
 /**
  * Returns the UI ops for the core.
  *
- * @return The core's UI ops structure.
+ * Returns: The core's UI ops structure.
  */
 PurpleCoreUiOps *purple_core_get_ui_ops(void);
 
@@ -163,8 +163,8 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
  * so whether that process is using the same configuration directory as this
  * process.
  *
- * @return @c TRUE if this is the first instance of libpurple running;
- *         @c FALSE if there is another instance running.
+ * Returns: %TRUE if this is the first instance of libpurple running;
+ *         %FALSE if there is another instance running.
  */
 gboolean purple_core_ensure_single_instance(void);
 
@@ -193,7 +193,7 @@ gboolean purple_core_ensure_single_instance(void);
  *
  * </dl>
  *
- * @return A GHashTable with strings for keys and values.  This
+ * Returns: A GHashTable with strings for keys and values.  This
  * hash table must not be freed and should not be modified.
  *
  */

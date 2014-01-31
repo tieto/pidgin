@@ -88,40 +88,40 @@ struct _GntTextViewClass
 G_BEGIN_DECLS
 
 /**
- * @return  GType for GntTextView.
+ * Returns:  GType for GntTextView.
  */
 GType gnt_text_view_get_gtype(void);
 
 /**
  * Create a new textview.
  *
- * @return The newly created textview.
+ * Returns: The newly created textview.
  */
 GntWidget * gnt_text_view_new(void);
 
 /**
  * Scroll the textview.
- * @param view     The textview to scroll.
- * @param scroll   scroll > 0 means scroll up, < 0 means scroll down, == 0 means scroll to the end.
+ * @view:     The textview to scroll.
+ * @scroll:   scroll > 0 means scroll up, < 0 means scroll down, == 0 means scroll to the end.
  */
 void gnt_text_view_scroll(GntTextView *view, int scroll);
 
 /**
  * Append new text in a textview.
  *
- * @param view   The textview.
- * @param text   The text to append to the textview.
- * @param flags  The text-flags to apply to the new text.
+ * @view:   The textview.
+ * @text:   The text to append to the textview.
+ * @flags:  The text-flags to apply to the new text.
  */
 void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextFormatFlags flags);
 
 /**
  * Append text in the textview, with some identifier (tag) for the added text.
  *
- * @param view   The textview.
- * @param text   The text to append.
- * @param flags  The text-flags to apply to the new text.
- * @param tag    The tag for the appended text, so it can be changed later (@see gnt_text_view_tag_change)
+ * @view:   The textview.
+ * @text:   The text to append.
+ * @flags:  The text-flags to apply to the new text.
+ * @tag:    The tag for the appended text, so it can be changed later (@see gnt_text_view_tag_change)
  */
 void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text, GntTextFormatFlags flags, const char *tag);
 
@@ -129,54 +129,54 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text, Gnt
  * Move the cursor to the beginning of the next line and resets text-attributes.
  * It first completes the current line with the current text-attributes.
  *
- * @param view  The textview.
+ * @view:  The textview.
  */
 void gnt_text_view_next_line(GntTextView *view);
 
 /**
  * Convert GNT-text formats to ncurses-text attributes.
  *
- * @param flags  The GNT text format.
+ * @flags:  The GNT text format.
  *
- * @return  Nucrses text attribute.
+ * Returns:  Nucrses text attribute.
  */
 chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags);
 
 /**
  * Clear the contents of the textview.
  *
- * @param view  The textview.
+ * @view:  The textview.
  */
 void gnt_text_view_clear(GntTextView *view);
 
 /**
  * The number of lines below the bottom-most visible line.
  *
- * @param view  The textview.
+ * @view:  The textview.
  *
- * @return  Number of lines below the bottom-most visible line.
+ * Returns:  Number of lines below the bottom-most visible line.
  */
 int gnt_text_view_get_lines_below(GntTextView *view);
 
 /**
  * The number of lines above the topmost visible line.
  *
- * @param view  The textview.
+ * @view:  The textview.
  *
- * @return  Number of lines above the topmost visible line.
+ * Returns:  Number of lines above the topmost visible line.
  */
 int gnt_text_view_get_lines_above(GntTextView *view);
 
 /**
  * Change the text of a tag.
  *
- * @param view   The textview.
- * @param name   The name of the tag.
- * @param text   The new text for the text. If 'text' is @c NULL, the tag is removed.
- * @param all    @c TRUE if all of the instancess of the tag should be changed, @c FALSE if
+ * @view:   The textview.
+ * @name:   The name of the tag.
+ * @text:   The new text for the text. If 'text' is %NULL, the tag is removed.
+ * @all:    %TRUE if all of the instancess of the tag should be changed, %FALSE if
  *               only the first instance should be changed.
  *
- * @return  The number of instances changed.
+ * Returns:  The number of instances changed.
  */
 int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *text, gboolean all);
 
@@ -184,8 +184,8 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
  * Setup hooks so that pressing up/down/page-up/page-down keys when 'widget' is
  * in focus scrolls the textview.
  *
- * @param view    The textview.
- * @param widget  The trigger widget.
+ * @view:    The textview.
+ * @widget:  The trigger widget.
  */
 void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
 
@@ -203,8 +203,8 @@ void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
  * path = /path/to/pager
  * @endcode
  *
- * @param view    The textview.
- * @param pager   The widget to trigger the PAGER.
+ * @view:    The textview.
+ * @pager:   The widget to trigger the PAGER.
  */
 void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager);
 
@@ -222,16 +222,16 @@ void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager);
  * path = /path/to/editor
  * @endcode
  *
- * @param view     The textview.
- * @param widget   The widget to trigger the EDITOR.
+ * @view:     The textview.
+ * @widget:   The widget to trigger the EDITOR.
  */
 void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *widget);
 
 /**
  * Set a GntTextViewFlag for the textview widget.
  *
- * @param view  The textview widget
- * @param flag  The flag to set
+ * @view:  The textview widget
+ * @flag:  The flag to set
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */

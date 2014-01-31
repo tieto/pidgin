@@ -204,7 +204,7 @@ G_BEGIN_DECLS
  * Creates new parameters set for the request, which may or may not be used by
  * the UI to display the request.
  *
- * @return The new parameters set.
+ * Returns: The new parameters set.
  */
 PurpleRequestCommonParameters *
 purple_request_cpar_new(void);
@@ -212,7 +212,7 @@ purple_request_cpar_new(void);
 /**
  * Creates new parameters set initially bound with the #PurpleConnection.
  *
- * @return The new parameters set.
+ * Returns: The new parameters set.
  */
 PurpleRequestCommonParameters *
 purple_request_cpar_from_connection(PurpleConnection *gc);
@@ -220,7 +220,7 @@ purple_request_cpar_from_connection(PurpleConnection *gc);
 /**
  * Creates new parameters set initially bound with the #PurpleAccount.
  *
- * @return The new parameters set.
+ * Returns: The new parameters set.
  */
 PurpleRequestCommonParameters *
 purple_request_cpar_from_account(PurpleAccount *account);
@@ -228,7 +228,7 @@ purple_request_cpar_from_account(PurpleAccount *account);
 /**
  * Creates new parameters set initially bound with the #PurpleConversation.
  *
- * @return The new parameters set.
+ * Returns: The new parameters set.
  */
 PurpleRequestCommonParameters *
 purple_request_cpar_from_conversation(PurpleConversation *conv);
@@ -236,7 +236,7 @@ purple_request_cpar_from_conversation(PurpleConversation *conv);
 /*
  * Increases the reference count on the parameters set.
  *
- * @param cpar The object to ref.
+ * @cpar: The object to ref.
  */
 void
 purple_request_cpar_ref(PurpleRequestCommonParameters *cpar);
@@ -246,18 +246,18 @@ purple_request_cpar_ref(PurpleRequestCommonParameters *cpar);
  *
  * The object will be destroyed when this reaches 0.
  *
- * @param cpar The parameters set object to unref and possibly destroy.
+ * @cpar: The parameters set object to unref and possibly destroy.
  *
- * @return The NULL, if object was destroyed, cpar otherwise.
+ * Returns: The NULL, if object was destroyed, cpar otherwise.
  */
 PurpleRequestCommonParameters *
 purple_request_cpar_unref(PurpleRequestCommonParameters *cpar);
 
 /**
- * Sets the #PurpleAccount associated with the request, or @c NULL, if none is.
+ * Sets the #PurpleAccount associated with the request, or %NULL, if none is.
  *
- * @param cpar    The parameters set.
- * @param account The #PurpleAccount to associate.
+ * @cpar:    The parameters set.
+ * @account: The #PurpleAccount to associate.
  */
 void
 purple_request_cpar_set_account(PurpleRequestCommonParameters *cpar,
@@ -266,19 +266,19 @@ purple_request_cpar_set_account(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the #PurpleAccount associated with the request.
  *
- * @param cpar The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
- * @return The associated #PurpleAccount, or NULL if none is.
+ * Returns: The associated #PurpleAccount, or NULL if none is.
  */
 PurpleAccount *
 purple_request_cpar_get_account(PurpleRequestCommonParameters *cpar);
 
 /**
- * Sets the #PurpleConversation associated with the request, or @c NULL, if
+ * Sets the #PurpleConversation associated with the request, or %NULL, if
  * none is.
  *
- * @param cpar The parameters set.
- * @param conv The #PurpleConversation to associate.
+ * @cpar: The parameters set.
+ * @conv: The #PurpleConversation to associate.
  */
 void
 purple_request_cpar_set_conversation(PurpleRequestCommonParameters *cpar,
@@ -287,9 +287,9 @@ purple_request_cpar_set_conversation(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the #PurpleConversation associated with the request.
  *
- * @param cpar The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
- * @return The associated #PurpleConversation, or NULL if none is.
+ * Returns: The associated #PurpleConversation, or NULL if none is.
  */
 PurpleConversation *
 purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar);
@@ -297,8 +297,8 @@ purple_request_cpar_get_conversation(PurpleRequestCommonParameters *cpar);
 /**
  * Sets the icon associated with the request.
  *
- * @param cpar      The parameters set.
- * @param icon_type The icon type.
+ * @cpar:      The parameters set.
+ * @icon_type: The icon type.
  */
 void
 purple_request_cpar_set_icon(PurpleRequestCommonParameters *cpar,
@@ -307,9 +307,9 @@ purple_request_cpar_set_icon(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the icon associated with the request.
  *
- * @param cpar The parameters set.
+ * @cpar: The parameters set.
  *
- * @returns icon_type The icon type.
+ * Returns:s icon_type The icon type.
  */
 PurpleRequestIconType
 purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar);
@@ -317,9 +317,9 @@ purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar);
 /**
  * Sets the custom icon associated with the request.
  *
- * @param cpar      The parameters set.
- * @param icon_data The icon image contents (@c NULL to reset).
- * @param icon_size The icon image size.
+ * @cpar:      The parameters set.
+ * @icon_data: The icon image contents (%NULL to reset).
+ * @icon_size: The icon image size.
  */
 void
 purple_request_cpar_set_custom_icon(PurpleRequestCommonParameters *cpar,
@@ -328,11 +328,11 @@ purple_request_cpar_set_custom_icon(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the custom icon associated with the request.
  *
- * @param cpar      The parameters set (may be @c NULL).
- * @param icon_size The pointer to variable, where icon size should be stored
- *                  (may be @c NULL).
+ * @cpar:      The parameters set (may be %NULL).
+ * @icon_size: The pointer to variable, where icon size should be stored
+ *                  (may be %NULL).
  *
- * @return The icon image contents.
+ * Returns: The icon image contents.
  */
 gconstpointer
 purple_request_cpar_get_custom_icon(PurpleRequestCommonParameters *cpar,
@@ -341,8 +341,8 @@ purple_request_cpar_get_custom_icon(PurpleRequestCommonParameters *cpar,
 /**
  * Switches the request text to be HTML or not.
  *
- * @param cpar    The parameters set.
- * @param enabled 1, if the text passed with the request contains HTML,
+ * @cpar:    The parameters set.
+ * @enabled: 1, if the text passed with the request contains HTML,
  *                0 otherwise. Don't use any other values, as they may be
  *                redefined in the future.
  */
@@ -353,9 +353,9 @@ purple_request_cpar_set_html(PurpleRequestCommonParameters *cpar,
 /**
  * Checks, if the text passed to the request is HTML.
  *
- * @param cpar The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
- * @return @c TRUE, if the text is HTML, @c FALSE otherwise.
+ * Returns: %TRUE, if the text is HTML, %FALSE otherwise.
  */
 gboolean
 purple_request_cpar_is_html(PurpleRequestCommonParameters *cpar);
@@ -363,8 +363,8 @@ purple_request_cpar_is_html(PurpleRequestCommonParameters *cpar);
 /**
  * Sets dialog display mode to compact or default.
  *
- * @param cpar    The parameters set.
- * @param compact TRUE for compact, FALSE otherwise.
+ * @cpar:    The parameters set.
+ * @compact: TRUE for compact, FALSE otherwise.
  */
 void
 purple_request_cpar_set_compact(PurpleRequestCommonParameters *cpar,
@@ -373,9 +373,9 @@ purple_request_cpar_set_compact(PurpleRequestCommonParameters *cpar,
 /**
  * Gets dialog display mode.
  *
- * @param cpar The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
- * @return TRUE for compact, FALSE for default.
+ * Returns: TRUE for compact, FALSE for default.
  */
 gboolean
 purple_request_cpar_is_compact(PurpleRequestCommonParameters *cpar);
@@ -383,9 +383,9 @@ purple_request_cpar_is_compact(PurpleRequestCommonParameters *cpar);
 /**
  * Sets the callback for the Help button.
  *
- * @param cpar      The parameters set.
- * @param cb        The callback.
- * @param user_data The data to be passed to the callback.
+ * @cpar:      The parameters set.
+ * @cb:        The callback.
+ * @user_data: The data to be passed to the callback.
  */
 void
 purple_request_cpar_set_help_cb(PurpleRequestCommonParameters *cpar,
@@ -394,11 +394,11 @@ purple_request_cpar_set_help_cb(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the callback for the Help button.
  *
- * @param cpar      The parameters set (may be @c NULL).
- * @param user_data The pointer to the variable, where user data (to be passed
+ * @cpar:      The parameters set (may be %NULL).
+ * @user_data: The pointer to the variable, where user data (to be passed
  *                  to callback function) should be stored.
  *
- * @return The callback.
+ * Returns: The callback.
  */
 PurpleRequestHelpCb
 purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
@@ -407,8 +407,8 @@ purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
 /**
  * Sets extra actions for the PurpleRequestFields dialog.
  *
- * @param cpar The parameters set.
- * @param ...  A list of actions. These are pairs of arguments. The first of
+ * @cpar: The parameters set.
+ * @...:  A list of actions. These are pairs of arguments. The first of
  *             each pair is the <tt>char *</tt> label that appears on the
  *             button. It should have an underscore before the letter you want
  *             to use as the accelerator key for the button. The second of each
@@ -421,9 +421,9 @@ purple_request_cpar_set_extra_actions(PurpleRequestCommonParameters *cpar, ...);
 /**
  * Gets extra actions for the PurpleRequestFields dialog.
  *
- * @param cpar The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
- * @return A list of actions (pairs of arguments, as in setter).
+ * Returns: A list of actions (pairs of arguments, as in setter).
  */
 GSList *
 purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar);
@@ -432,8 +432,8 @@ purple_request_cpar_get_extra_actions(PurpleRequestCommonParameters *cpar);
  * Sets the same parent window for this dialog, as the parent of specified
  * Notify API or Request API dialog UI handle.
  *
- * @param cpar      The parameters set.
- * @param ui_handle The UI handle.
+ * @cpar:      The parameters set.
+ * @ui_handle: The UI handle.
  */
 void
 purple_request_cpar_set_parent_from(PurpleRequestCommonParameters *cpar,
@@ -442,9 +442,9 @@ purple_request_cpar_set_parent_from(PurpleRequestCommonParameters *cpar,
 /**
  * Gets the parent "donor" for this dialog.
  *
- * @param cpar The parameters set (may be @c NULL).
+ * @cpar: The parameters set (may be %NULL).
  *
- * @return The donors UI handle.
+ * Returns: The donors UI handle.
  */
 gpointer
 purple_request_cpar_get_parent_from(PurpleRequestCommonParameters *cpar);
@@ -459,22 +459,22 @@ purple_request_cpar_get_parent_from(PurpleRequestCommonParameters *cpar);
 /**
  * Creates a list of fields to pass to purple_request_fields().
  *
- * @return A PurpleRequestFields structure.
+ * Returns: A PurpleRequestFields structure.
  */
 PurpleRequestFields *purple_request_fields_new(void);
 
 /**
  * Destroys a list of fields.
  *
- * @param fields The list of fields to destroy.
+ * @fields: The list of fields to destroy.
  */
 void purple_request_fields_destroy(PurpleRequestFields *fields);
 
 /**
  * Adds a group of fields to the list.
  *
- * @param fields The fields list.
- * @param group  The group to add.
+ * @fields: The fields list.
+ * @group:  The group to add.
  */
 void purple_request_fields_add_group(PurpleRequestFields *fields,
 								   PurpleRequestFieldGroup *group);
@@ -482,18 +482,18 @@ void purple_request_fields_add_group(PurpleRequestFields *fields,
 /**
  * Returns a list of all groups in a field list.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @constreturn A list of groups.
+ * Returns: (TODO const): A list of groups.
  */
 GList *purple_request_fields_get_groups(const PurpleRequestFields *fields);
 
 /**
  * Set tab names for a field list.
  *
- * @param fields    The fields list.
- * @param tab_names NULL-terminated array of localized tab labels,
- *                  may be @c NULL.
+ * @fields:    The fields list.
+ * @tab_names: NULL-terminated array of localized tab labels,
+ *                  may be %NULL.
  */
 void purple_request_fields_set_tab_names(PurpleRequestFields *fields,
 	const gchar **tab_names);
@@ -501,9 +501,9 @@ void purple_request_fields_set_tab_names(PurpleRequestFields *fields,
 /**
  * Returns tab names of a field list.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @return NULL-terminated array of localized tab labels, or NULL if tabs
+ * Returns: NULL-terminated array of localized tab labels, or NULL if tabs
  *         are disabled.
  */
 const gchar **
@@ -512,10 +512,10 @@ purple_request_fields_get_tab_names(const PurpleRequestFields *fields);
 /**
  * Returns whether or not the field with the specified ID exists.
  *
- * @param fields The fields list.
- * @param id     The ID of the field.
+ * @fields: The fields list.
+ * @id:     The ID of the field.
  *
- * @return TRUE if the field exists, or FALSE.
+ * Returns: TRUE if the field exists, or FALSE.
  */
 gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
 									const char *id);
@@ -523,9 +523,9 @@ gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
 /**
  * Returns a list of all required fields.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @constreturn The list of required fields.
+ * Returns: (TODO const): The list of required fields.
  */
 const GList *purple_request_fields_get_required(
 	const PurpleRequestFields *fields);
@@ -533,9 +533,9 @@ const GList *purple_request_fields_get_required(
 /**
  * Returns a list of all validated fields.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @constreturn The list of validated fields.
+ * Returns: (TODO const): The list of validated fields.
  */
 const GList *purple_request_fields_get_validatable(
 	const PurpleRequestFields *fields);
@@ -543,9 +543,9 @@ const GList *purple_request_fields_get_validatable(
 /**
  * Returns a list of all fields with sensitivity callback added.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @constreturn The list of fields with automatic sensitivity callback.
+ * Returns: (TODO const): The list of fields with automatic sensitivity callback.
  */
 const GList *
 purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
@@ -553,10 +553,10 @@ purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
 /**
  * Returns whether or not a field with the specified ID is required.
  *
- * @param fields The fields list.
- * @param id     The field ID.
+ * @fields: The fields list.
+ * @id:     The field ID.
  *
- * @return TRUE if the specified field is required, or FALSE.
+ * Returns: TRUE if the specified field is required, or FALSE.
  */
 gboolean purple_request_fields_is_field_required(const PurpleRequestFields *fields,
 											   const char *id);
@@ -564,9 +564,9 @@ gboolean purple_request_fields_is_field_required(const PurpleRequestFields *fiel
 /**
  * Returns whether or not all required fields have values.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @return TRUE if all required fields have values, or FALSE.
+ * Returns: TRUE if all required fields have values, or FALSE.
  */
 gboolean purple_request_fields_all_required_filled(
 	const PurpleRequestFields *fields);
@@ -574,19 +574,19 @@ gboolean purple_request_fields_all_required_filled(
 /**
  * Returns whether or not all fields are valid.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @return TRUE if all fields are valid, or FALSE.
+ * Returns: TRUE if all fields are valid, or FALSE.
  */
 gboolean purple_request_fields_all_valid(const PurpleRequestFields *fields);
 
 /**
  * Return the field with the specified ID.
  *
- * @param fields The fields list.
- * @param id     The ID of the field.
+ * @fields: The fields list.
+ * @id:     The ID of the field.
  *
- * @return The field, if found.
+ * Returns: The field, if found.
  */
 PurpleRequestField *purple_request_fields_get_field(
 		const PurpleRequestFields *fields, const char *id);
@@ -594,10 +594,10 @@ PurpleRequestField *purple_request_fields_get_field(
 /**
  * Returns the string value of a field with the specified ID.
  *
- * @param fields The fields list.
- * @param id     The ID of the field.
+ * @fields: The fields list.
+ * @id:     The ID of the field.
  *
- * @return The string value, if found, or @c NULL otherwise.
+ * Returns: The string value, if found, or %NULL otherwise.
  */
 const char *purple_request_fields_get_string(const PurpleRequestFields *fields,
 										   const char *id);
@@ -605,10 +605,10 @@ const char *purple_request_fields_get_string(const PurpleRequestFields *fields,
 /**
  * Returns the integer value of a field with the specified ID.
  *
- * @param fields The fields list.
- * @param id     The ID of the field.
+ * @fields: The fields list.
+ * @id:     The ID of the field.
  *
- * @return The integer value, if found, or 0 otherwise.
+ * Returns: The integer value, if found, or 0 otherwise.
  */
 int purple_request_fields_get_integer(const PurpleRequestFields *fields,
 									const char *id);
@@ -616,10 +616,10 @@ int purple_request_fields_get_integer(const PurpleRequestFields *fields,
 /**
  * Returns the boolean value of a field with the specified ID.
  *
- * @param fields The fields list.
- * @param id     The ID of the field.
+ * @fields: The fields list.
+ * @id:     The ID of the field.
  *
- * @return The boolean value, if found, or @c FALSE otherwise.
+ * Returns: The boolean value, if found, or %FALSE otherwise.
  */
 gboolean purple_request_fields_get_bool(const PurpleRequestFields *fields,
 									  const char *id);
@@ -627,10 +627,10 @@ gboolean purple_request_fields_get_bool(const PurpleRequestFields *fields,
 /**
  * Returns the choice index of a field with the specified ID.
  *
- * @param fields The fields list.
- * @param id     The ID of the field.
+ * @fields: The fields list.
+ * @id:     The ID of the field.
  *
- * @return The choice value, if found, or NULL otherwise.
+ * Returns: The choice value, if found, or NULL otherwise.
  */
 gpointer
 purple_request_fields_get_choice(const PurpleRequestFields *fields,
@@ -639,10 +639,10 @@ purple_request_fields_get_choice(const PurpleRequestFields *fields,
 /**
  * Returns the account of a field with the specified ID.
  *
- * @param fields The fields list.
- * @param id     The ID of the field.
+ * @fields: The fields list.
+ * @id:     The ID of the field.
  *
- * @return The account value, if found, or NULL otherwise.
+ * Returns: The account value, if found, or NULL otherwise.
  */
 PurpleAccount *purple_request_fields_get_account(const PurpleRequestFields *fields,
 											 const char *id);
@@ -650,9 +650,9 @@ PurpleAccount *purple_request_fields_get_account(const PurpleRequestFields *fiel
 /**
  * Returns the UI data associated with this object.
  *
- * @param fields The fields list.
+ * @fields: The fields list.
  *
- * @return The UI data associated with this object.  This is a
+ * Returns: The UI data associated with this object.  This is a
  *         convenience field provided to the UIs--it is not
  *         used by the libuprple core.
  */
@@ -661,8 +661,8 @@ gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields);
 /**
  * Set the UI data associated with this object.
  *
- * @param fields The fields list.
- * @param ui_data A pointer to associate with this object.
+ * @fields: The fields list.
+ * @ui_data: A pointer to associate with this object.
  */
 void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_data);
 
@@ -676,17 +676,17 @@ void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_
 /**
  * Creates a fields group with an optional title.
  *
- * @param title The optional title to give the group.
+ * @title: The optional title to give the group.
  *
- * @return A new fields group
+ * Returns: A new fields group
  */
 PurpleRequestFieldGroup *purple_request_field_group_new(const char *title);
 
 /**
  * Sets tab number for a group.
  *
- * @param group  The group.
- * @param tab_no The tab number.
+ * @group:  The group.
+ * @tab_no: The tab number.
  *
  * @see purple_request_fields_set_tab_names
  */
@@ -696,9 +696,9 @@ void purple_request_field_group_set_tab(PurpleRequestFieldGroup *group,
 /**
  * Returns tab number of a group.
  *
- * @param group The group.
+ * @group: The group.
  *
- * @return Tab number.
+ * Returns: Tab number.
  *
  * @see purple_request_fields_get_tab_names
  */
@@ -707,15 +707,15 @@ guint purple_request_field_group_get_tab(const PurpleRequestFieldGroup *group);
 /**
  * Destroys a fields group.
  *
- * @param group The group to destroy.
+ * @group: The group to destroy.
  */
 void purple_request_field_group_destroy(PurpleRequestFieldGroup *group);
 
 /**
  * Adds a field to the group.
  *
- * @param group The group to add the field to.
- * @param field The field to add to the group.
+ * @group: The group to add the field to.
+ * @field: The field to add to the group.
  */
 void purple_request_field_group_add_field(PurpleRequestFieldGroup *group,
 										PurpleRequestField *field);
@@ -723,9 +723,9 @@ void purple_request_field_group_add_field(PurpleRequestFieldGroup *group,
 /**
  * Returns the title of a fields group.
  *
- * @param group The group.
+ * @group: The group.
  *
- * @return The title, if set.
+ * Returns: The title, if set.
  */
 const char *purple_request_field_group_get_title(
 		const PurpleRequestFieldGroup *group);
@@ -733,9 +733,9 @@ const char *purple_request_field_group_get_title(
 /**
  * Returns a list of all fields in a group.
  *
- * @param group The group.
+ * @group: The group.
  *
- * @constreturn The list of fields in the group.
+ * Returns: (TODO const): The list of fields in the group.
  */
 GList *purple_request_field_group_get_fields(
 		const PurpleRequestFieldGroup *group);
@@ -743,9 +743,9 @@ GList *purple_request_field_group_get_fields(
 /**
  * Returns a list of all fields in a group.
  *
- * @param group The group.
+ * @group: The group.
  *
- * @constreturn The list of fields in the group.
+ * Returns: (TODO const): The list of fields in the group.
  */
 PurpleRequestFields *purple_request_field_group_get_fields_list(
 		const PurpleRequestFieldGroup *group);
@@ -760,11 +760,11 @@ PurpleRequestFields *purple_request_field_group_get_fields_list(
 /**
  * Creates a field of the specified type.
  *
- * @param id   The field ID.
- * @param text The text label of the field.
- * @param type The type of field.
+ * @id:   The field ID.
+ * @text: The text label of the field.
+ * @type: The type of field.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_new(const char *id, const char *text,
 										 PurpleRequestFieldType type);
@@ -772,23 +772,23 @@ PurpleRequestField *purple_request_field_new(const char *id, const char *text,
 /**
  * Destroys a field.
  *
- * @param field The field to destroy.
+ * @field: The field to destroy.
  */
 void purple_request_field_destroy(PurpleRequestField *field);
 
 /**
  * Sets the label text of a field.
  *
- * @param field The field.
- * @param label The text label.
+ * @field: The field.
+ * @label: The text label.
  */
 void purple_request_field_set_label(PurpleRequestField *field, const char *label);
 
 /**
  * Sets whether or not a field is visible.
  *
- * @param field   The field.
- * @param visible TRUE if visible, or FALSE if not.
+ * @field:   The field.
+ * @visible: TRUE if visible, or FALSE if not.
  */
 void purple_request_field_set_visible(PurpleRequestField *field, gboolean visible);
 
@@ -798,8 +798,8 @@ void purple_request_field_set_visible(PurpleRequestField *field, gboolean visibl
  * This is optionally used by the UIs to provide such features as
  * auto-completion for type hints like "account" and "screenname".
  *
- * @param field     The field.
- * @param type_hint The type hint.
+ * @field:     The field.
+ * @type_hint: The type hint.
  */
 void purple_request_field_set_type_hint(PurpleRequestField *field,
 									  const char *type_hint);
@@ -810,8 +810,8 @@ void purple_request_field_set_type_hint(PurpleRequestField *field,
  * This is optionally used by the UIs to provide a tooltip for
  * the field.
  *
- * @param field     The field.
- * @param tooltip   The tooltip text.
+ * @field:     The field.
+ * @tooltip:   The tooltip text.
  */
 void purple_request_field_set_tooltip(PurpleRequestField *field,
 									const char *tooltip);
@@ -819,8 +819,8 @@ void purple_request_field_set_tooltip(PurpleRequestField *field,
 /**
  * Sets whether or not a field is required.
  *
- * @param field    The field.
- * @param required TRUE if required, or FALSE.
+ * @field:    The field.
+ * @required: TRUE if required, or FALSE.
  */
 void purple_request_field_set_required(PurpleRequestField *field,
 									 gboolean required);
@@ -828,90 +828,90 @@ void purple_request_field_set_required(PurpleRequestField *field,
 /**
  * Returns the type of a field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The field's type.
+ * Returns: The field's type.
  */
 PurpleRequestFieldType purple_request_field_get_type(const PurpleRequestField *field);
 
 /**
  * Returns the group for the field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The UI data.
+ * Returns: The UI data.
  */
 PurpleRequestFieldGroup *purple_request_field_get_group(const PurpleRequestField *field);
 
 /**
  * Returns the ID of a field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The ID
+ * Returns: The ID
  */
 const char *purple_request_field_get_id(const PurpleRequestField *field);
 
 /**
  * Returns the label text of a field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The label text.
+ * Returns: The label text.
  */
 const char *purple_request_field_get_label(const PurpleRequestField *field);
 
 /**
  * Returns whether or not a field is visible.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return TRUE if the field is visible. FALSE otherwise.
+ * Returns: TRUE if the field is visible. FALSE otherwise.
  */
 gboolean purple_request_field_is_visible(const PurpleRequestField *field);
 
 /**
  * Returns the field's type hint.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The field's type hint.
+ * Returns: The field's type hint.
  */
 const char *purple_request_field_get_type_hint(const PurpleRequestField *field);
 
 /**
  * Returns the field's tooltip.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The field's tooltip.
+ * Returns: The field's tooltip.
  */
 const char *purple_request_field_get_tooltip(const PurpleRequestField *field);
 
 /**
  * Returns whether or not a field is required.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return TRUE if the field is required, or FALSE.
+ * Returns: TRUE if the field is required, or FALSE.
  */
 gboolean purple_request_field_is_required(const PurpleRequestField *field);
 
 /**
  * Checks, if specified field has value.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return TRUE if the field has value, or FALSE.
+ * Returns: TRUE if the field has value, or FALSE.
  */
 gboolean purple_request_field_is_filled(const PurpleRequestField *field);
 
 /**
  * Sets validator for a single field.
  *
- * @param field The field.
- * @param validator The validator callback, NULL to disable validation.
- * @param user_data The data to pass to the callback.
+ * @field: The field.
+ * @validator: The validator callback, NULL to disable validation.
+ * @user_data: The data to pass to the callback.
  */
 void purple_request_field_set_validator(PurpleRequestField *field,
 	PurpleRequestFieldValidator validator, void *user_data);
@@ -919,9 +919,9 @@ void purple_request_field_set_validator(PurpleRequestField *field,
 /**
  * Returns whether or not field has validator set.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return TRUE if the field has validator, or FALSE.
+ * Returns: TRUE if the field has validator, or FALSE.
  */
 gboolean purple_request_field_is_validatable(PurpleRequestField *field);
 
@@ -934,19 +934,19 @@ gboolean purple_request_field_is_validatable(PurpleRequestField *field);
  *
  * Note: empty, not required fields are valid.
  *
- * @param field The field.
- * @param errmsg If non-NULL, the memory area, where the pointer to validation
+ * @field: The field.
+ * @errmsg: If non-NULL, the memory area, where the pointer to validation
  *        failure message will be set.
  *
- * @return TRUE, if the field is valid, FALSE otherwise.
+ * Returns: TRUE, if the field is valid, FALSE otherwise.
  */
 gboolean purple_request_field_is_valid(PurpleRequestField *field, gchar **errmsg);
 
 /**
  * Sets field editable.
  *
- * @param field     The field.
- * @param sensitive TRUE if the field should be sensitive for user input.
+ * @field:     The field.
+ * @sensitive: TRUE if the field should be sensitive for user input.
  */
 void purple_request_field_set_sensitive(PurpleRequestField *field,
 	gboolean sensitive);
@@ -954,17 +954,17 @@ void purple_request_field_set_sensitive(PurpleRequestField *field,
 /**
  * Checks, if field is editable.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return TRUE, if the field is sensitive for user input.
+ * Returns: TRUE, if the field is sensitive for user input.
  */
 gboolean purple_request_field_is_sensitive(PurpleRequestField *field);
 
 /**
  * Sets the callback, used to determine if the field should be editable.
  *
- * @param field The field.
- * @param cb    The callback.
+ * @field: The field.
+ * @cb:    The callback.
  */
 void purple_request_field_set_sensitivity_cb(PurpleRequestField *field,
 	PurpleRequestFieldSensitivityCb cb);
@@ -972,19 +972,19 @@ void purple_request_field_set_sensitivity_cb(PurpleRequestField *field,
 /**
  * Returns the ui_data for a field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The UI data.
+ * Returns: The UI data.
  */
 gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
 
 /**
  * Sets the ui_data for a field.
  *
- * @param field The field.
- * @param ui_data The UI data.
+ * @field: The field.
+ * @ui_data: The UI data.
  *
- * @return The UI data.
+ * Returns: The UI data.
  */
 void purple_request_field_set_ui_data(PurpleRequestField *field,
                                       gpointer ui_data);
@@ -999,12 +999,12 @@ void purple_request_field_set_ui_data(PurpleRequestField *field,
 /**
  * Creates a string request field.
  *
- * @param id            The field ID.
- * @param text          The text label of the field.
- * @param default_value The optional default value.
- * @param multiline     Whether or not this should be a multiline string.
+ * @id:            The field ID.
+ * @text:          The text label of the field.
+ * @default_value: The optional default value.
+ * @multiline:     Whether or not this should be a multiline string.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_string_new(const char *id,
 												const char *text,
@@ -1014,8 +1014,8 @@ PurpleRequestField *purple_request_field_string_new(const char *id,
 /**
  * Sets the default value in a string field.
  *
- * @param field         The field.
- * @param default_value The default value.
+ * @field:         The field.
+ * @default_value: The default value.
  */
 void purple_request_field_string_set_default_value(PurpleRequestField *field,
 												 const char *default_value);
@@ -1023,8 +1023,8 @@ void purple_request_field_string_set_default_value(PurpleRequestField *field,
 /**
  * Sets the value in a string field.
  *
- * @param field The field.
- * @param value The value.
+ * @field: The field.
+ * @value: The value.
  */
 void purple_request_field_string_set_value(PurpleRequestField *field,
 										 const char *value);
@@ -1033,8 +1033,8 @@ void purple_request_field_string_set_value(PurpleRequestField *field,
  * Sets whether or not a string field is masked
  * (commonly used for password fields).
  *
- * @param field  The field.
- * @param masked The masked value.
+ * @field:  The field.
+ * @masked: The masked value.
  */
 void purple_request_field_string_set_masked(PurpleRequestField *field,
 										  gboolean masked);
@@ -1042,9 +1042,9 @@ void purple_request_field_string_set_masked(PurpleRequestField *field,
 /**
  * Returns the default value in a string field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The default value.
+ * Returns: The default value.
  */
 const char *purple_request_field_string_get_default_value(
 		const PurpleRequestField *field);
@@ -1052,27 +1052,27 @@ const char *purple_request_field_string_get_default_value(
 /**
  * Returns the user-entered value in a string field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The value.
+ * Returns: The value.
  */
 const char *purple_request_field_string_get_value(const PurpleRequestField *field);
 
 /**
  * Returns whether or not a string field is multi-line.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return @c TRUE if the field is mulit-line, or @c FALSE otherwise.
+ * Returns: %TRUE if the field is mulit-line, or %FALSE otherwise.
  */
 gboolean purple_request_field_string_is_multiline(const PurpleRequestField *field);
 
 /**
  * Returns whether or not a string field is masked.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return @c TRUE if the field is masked, or @c FALSE otherwise.
+ * Returns: %TRUE if the field is masked, or %FALSE otherwise.
  */
 gboolean purple_request_field_string_is_masked(const PurpleRequestField *field);
 
@@ -1086,13 +1086,13 @@ gboolean purple_request_field_string_is_masked(const PurpleRequestField *field);
 /**
  * Creates an integer field.
  *
- * @param id            The field ID.
- * @param text          The text label of the field.
- * @param default_value The default value.
- * @param lower_bound   The lower bound.
- * @param upper_bound   The upper bound.
+ * @id:            The field ID.
+ * @text:          The text label of the field.
+ * @default_value: The default value.
+ * @lower_bound:   The lower bound.
+ * @upper_bound:   The upper bound.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_int_new(const char *id,
 	const char *text, int default_value, int lower_bound, int upper_bound);
@@ -1100,8 +1100,8 @@ PurpleRequestField *purple_request_field_int_new(const char *id,
 /**
  * Sets the default value in an integer field.
  *
- * @param field         The field.
- * @param default_value The default value.
+ * @field:         The field.
+ * @default_value: The default value.
  */
 void purple_request_field_int_set_default_value(PurpleRequestField *field,
 											  int default_value);
@@ -1109,60 +1109,60 @@ void purple_request_field_int_set_default_value(PurpleRequestField *field,
 /**
  * Sets the lower bound in an integer field.
  *
- * @param field       The field.
- * @param lower_bound The lower bound.
+ * @field:       The field.
+ * @lower_bound: The lower bound.
  */
 void purple_request_field_int_set_lower_bound(PurpleRequestField *field, int lower_bound);
 
 /**
  * Sets the upper bound in an integer field.
  *
- * @param field       The field.
- * @param upper_bound The upper bound.
+ * @field:       The field.
+ * @upper_bound: The upper bound.
  */
 void purple_request_field_int_set_upper_bound(PurpleRequestField *field, int lower_bound);
 
 /**
  * Sets the value in an integer field.
  *
- * @param field The field.
- * @param value The value.
+ * @field: The field.
+ * @value: The value.
  */
 void purple_request_field_int_set_value(PurpleRequestField *field, int value);
 
 /**
  * Returns the default value in an integer field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The default value.
+ * Returns: The default value.
  */
 int purple_request_field_int_get_default_value(const PurpleRequestField *field);
 
 /**
  * Returns the lower bound in an integer field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The lower bound.
+ * Returns: The lower bound.
  */
 int purple_request_field_int_get_lower_bound(const PurpleRequestField *field);
 
 /**
  * Returns the upper bound in an integer field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The upper bound.
+ * Returns: The upper bound.
  */
 int purple_request_field_int_get_upper_bound(const PurpleRequestField *field);
 
 /**
  * Returns the user-entered value in an integer field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The value.
+ * Returns: The value.
  */
 int purple_request_field_int_get_value(const PurpleRequestField *field);
 
@@ -1178,11 +1178,11 @@ int purple_request_field_int_get_value(const PurpleRequestField *field);
  *
  * This is often represented as a checkbox.
  *
- * @param id            The field ID.
- * @param text          The text label of the field.
- * @param default_value The default value.
+ * @id:            The field ID.
+ * @text:          The text label of the field.
+ * @default_value: The default value.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_bool_new(const char *id,
 											  const char *text,
@@ -1191,8 +1191,8 @@ PurpleRequestField *purple_request_field_bool_new(const char *id,
 /**
  * Sets the default value in an boolean field.
  *
- * @param field         The field.
- * @param default_value The default value.
+ * @field:         The field.
+ * @default_value: The default value.
  */
 void purple_request_field_bool_set_default_value(PurpleRequestField *field,
 											   gboolean default_value);
@@ -1200,8 +1200,8 @@ void purple_request_field_bool_set_default_value(PurpleRequestField *field,
 /**
  * Sets the value in an boolean field.
  *
- * @param field The field.
- * @param value The value.
+ * @field: The field.
+ * @value: The value.
  */
 void purple_request_field_bool_set_value(PurpleRequestField *field,
 									   gboolean value);
@@ -1209,9 +1209,9 @@ void purple_request_field_bool_set_value(PurpleRequestField *field,
 /**
  * Returns the default value in an boolean field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The default value.
+ * Returns: The default value.
  */
 gboolean purple_request_field_bool_get_default_value(
 		const PurpleRequestField *field);
@@ -1219,9 +1219,9 @@ gboolean purple_request_field_bool_get_default_value(
 /**
  * Returns the user-entered value in an boolean field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The value.
+ * Returns: The value.
  */
 gboolean purple_request_field_bool_get_value(const PurpleRequestField *field);
 
@@ -1237,11 +1237,11 @@ gboolean purple_request_field_bool_get_value(const PurpleRequestField *field);
  *
  * This is often represented as a group of radio buttons.
  *
- * @param id            The field ID.
- * @param text          The optional label of the field.
- * @param default_value The default choice.
+ * @id:            The field ID.
+ * @text:          The optional label of the field.
+ * @default_value: The default choice.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *
 purple_request_field_choice_new(const char *id, const char *text,
@@ -1250,9 +1250,9 @@ purple_request_field_choice_new(const char *id, const char *text,
 /**
  * Adds a choice to a multiple choice field.
  *
- * @param field The choice field.
- * @param label The choice label.
- * @param data  The choice value.
+ * @field: The choice field.
+ * @label: The choice label.
+ * @data:  The choice value.
  */
 void
 purple_request_field_choice_add(PurpleRequestField *field, const char *label,
@@ -1261,8 +1261,8 @@ purple_request_field_choice_add(PurpleRequestField *field, const char *label,
 /**
  * Sets the default value in an choice field.
  *
- * @param field         The field.
- * @param default_value The default value.
+ * @field:         The field.
+ * @default_value: The default value.
  */
 void
 purple_request_field_choice_set_default_value(PurpleRequestField *field,
@@ -1271,8 +1271,8 @@ purple_request_field_choice_set_default_value(PurpleRequestField *field,
 /**
  * Sets the value in an choice field.
  *
- * @param field The field.
- * @param value The value.
+ * @field: The field.
+ * @value: The value.
  */
 void
 purple_request_field_choice_set_value(PurpleRequestField *field,
@@ -1281,9 +1281,9 @@ purple_request_field_choice_set_value(PurpleRequestField *field,
 /**
  * Returns the default value in an choice field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The default value.
+ * Returns: The default value.
  */
 gpointer
 purple_request_field_choice_get_default_value(const PurpleRequestField *field);
@@ -1291,9 +1291,9 @@ purple_request_field_choice_get_default_value(const PurpleRequestField *field);
 /**
  * Returns the user-entered value in an choice field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The value.
+ * Returns: The value.
  */
 gpointer
 purple_request_field_choice_get_value(const PurpleRequestField *field);
@@ -1301,9 +1301,9 @@ purple_request_field_choice_get_value(const PurpleRequestField *field);
 /**
  * Returns a list of elements in a choice field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @constreturn The list of pairs <label, value>.
+ * Returns: (TODO const): The list of pairs <label, value>.
  */
 GList *
 purple_request_field_choice_get_elements(const PurpleRequestField *field);
@@ -1311,8 +1311,8 @@ purple_request_field_choice_get_elements(const PurpleRequestField *field);
 /**
  * Sets the destructor for field values.
  *
- * @param field   The field.
- * @param destroy The destroy function.
+ * @field:   The field.
+ * @destroy: The destroy function.
  */
 void
 purple_request_field_choice_set_data_destructor(PurpleRequestField *field,
@@ -1328,18 +1328,18 @@ purple_request_field_choice_set_data_destructor(PurpleRequestField *field,
 /**
  * Creates a multiple list item field.
  *
- * @param id   The field ID.
- * @param text The optional label of the field.
+ * @id:   The field ID.
+ * @text: The optional label of the field.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_list_new(const char *id, const char *text);
 
 /**
  * Sets whether or not a list field allows multiple selection.
  *
- * @param field        The list field.
- * @param multi_select TRUE if multiple selection is enabled,
+ * @field:        The list field.
+ * @multi_select: TRUE if multiple selection is enabled,
  *                     or FALSE otherwise.
  */
 void purple_request_field_list_set_multi_select(PurpleRequestField *field,
@@ -1348,9 +1348,9 @@ void purple_request_field_list_set_multi_select(PurpleRequestField *field,
 /**
  * Returns whether or not a list field allows multiple selection.
  *
- * @param field The list field.
+ * @field: The list field.
  *
- * @return TRUE if multiple selection is enabled, or FALSE otherwise.
+ * Returns: TRUE if multiple selection is enabled, or FALSE otherwise.
  */
 gboolean purple_request_field_list_get_multi_select(
 	const PurpleRequestField *field);
@@ -1358,10 +1358,10 @@ gboolean purple_request_field_list_get_multi_select(
 /**
  * Returns the data for a particular item.
  *
- * @param field The list field.
- * @param text  The item text.
+ * @field: The list field.
+ * @text:  The item text.
  *
- * @return The data associated with the item.
+ * Returns: The data associated with the item.
  */
 void *purple_request_field_list_get_data(const PurpleRequestField *field,
 									   const char *text);
@@ -1369,10 +1369,10 @@ void *purple_request_field_list_get_data(const PurpleRequestField *field,
 /**
  * Adds an item to a list field.
  *
- * @param field The list field.
- * @param item  The list item.
- * @param icon_path The path to icon file, or @c NULL for no icon.
- * @param data  The associated data.
+ * @field: The list field.
+ * @item:  The list item.
+ * @icon_path: The path to icon file, or %NULL for no icon.
+ * @data:  The associated data.
  */
 void purple_request_field_list_add_icon(PurpleRequestField *field,
 								 const char *item, const char* icon_path, void* data);
@@ -1380,8 +1380,8 @@ void purple_request_field_list_add_icon(PurpleRequestField *field,
 /**
  * Adds a selected item to the list field.
  *
- * @param field The field.
- * @param item  The item to add.
+ * @field: The field.
+ * @item:  The item to add.
  */
 void purple_request_field_list_add_selected(PurpleRequestField *field,
 										  const char *item);
@@ -1389,15 +1389,15 @@ void purple_request_field_list_add_selected(PurpleRequestField *field,
 /**
  * Clears the list of selected items in a list field.
  *
- * @param field The field.
+ * @field: The field.
  */
 void purple_request_field_list_clear_selected(PurpleRequestField *field);
 
 /**
  * Sets a list of selected items in a list field.
  *
- * @param field The field.
- * @param items The list of selected items, which is not modified or freed.
+ * @field: The field.
+ * @items: The list of selected items, which is not modified or freed.
  */
 void purple_request_field_list_set_selected(PurpleRequestField *field,
 										  GList *items);
@@ -1405,10 +1405,10 @@ void purple_request_field_list_set_selected(PurpleRequestField *field,
 /**
  * Returns whether or not a particular item is selected in a list field.
  *
- * @param field The field.
- * @param item  The item.
+ * @field: The field.
+ * @item:  The item.
  *
- * @return TRUE if the item is selected. FALSE otherwise.
+ * Returns: TRUE if the item is selected. FALSE otherwise.
  */
 gboolean purple_request_field_list_is_selected(const PurpleRequestField *field,
 											 const char *item);
@@ -1419,9 +1419,9 @@ gboolean purple_request_field_list_is_selected(const PurpleRequestField *field,
  * To retrieve the data for each item, use
  * purple_request_field_list_get_data().
  *
- * @param field The field.
+ * @field: The field.
  *
- * @constreturn The list of selected items.
+ * Returns: (TODO const): The list of selected items.
  */
 GList *purple_request_field_list_get_selected(
 	const PurpleRequestField *field);
@@ -1429,9 +1429,9 @@ GList *purple_request_field_list_get_selected(
 /**
  * Returns a list of items in a list field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @constreturn The list of items.
+ * Returns: (TODO const): The list of items.
  */
 GList *purple_request_field_list_get_items(const PurpleRequestField *field);
 
@@ -1440,9 +1440,9 @@ GList *purple_request_field_list_get_items(const PurpleRequestField *field);
  *
  * The icons will correspond with the items, in order.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @constreturn The list of icons or @c NULL (i.e. the empty GList) if no
+ * Returns: (TODO const): The list of icons or %NULL (i.e. the empty GList) if no
  *              items have icons.
  */
 GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
@@ -1457,10 +1457,10 @@ GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
 /**
  * Creates a label field.
  *
- * @param id   The field ID.
- * @param text The label of the field.
+ * @id:   The field ID.
+ * @text: The label of the field.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_label_new(const char *id,
 											   const char *text);
@@ -1475,12 +1475,12 @@ PurpleRequestField *purple_request_field_label_new(const char *id,
 /**
  * Creates an image field.
  *
- * @param id   The field ID.
- * @param text The label of the field.
- * @param buf  The image data.
- * @param size The size of the data in @a buffer.
+ * @id:   The field ID.
+ * @text: The label of the field.
+ * @buf:  The image data.
+ * @size: The size of the data in @a buffer.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_image_new(const char *id, const char *text,
 											   const char *buf, gsize size);
@@ -1488,45 +1488,45 @@ PurpleRequestField *purple_request_field_image_new(const char *id, const char *t
 /**
  * Sets the scale factors of an image field.
  *
- * @param field The image field.
- * @param x     The x scale factor.
- * @param y     The y scale factor.
+ * @field: The image field.
+ * @x:     The x scale factor.
+ * @y:     The y scale factor.
  */
 void purple_request_field_image_set_scale(PurpleRequestField *field, unsigned int x, unsigned int y);
 
 /**
  * Returns pointer to the image.
  *
- * @param field The image field.
+ * @field: The image field.
  *
- * @return Pointer to the image.
+ * Returns: Pointer to the image.
  */
 const char *purple_request_field_image_get_buffer(PurpleRequestField *field);
 
 /**
  * Returns size (in bytes) of the image.
  *
- * @param field The image field.
+ * @field: The image field.
  *
- * @return Size of the image.
+ * Returns: Size of the image.
  */
 gsize purple_request_field_image_get_size(PurpleRequestField *field);
 
 /**
  * Returns X scale coefficient of the image.
  *
- * @param field The image field.
+ * @field: The image field.
  *
- * @return X scale coefficient of the image.
+ * Returns: X scale coefficient of the image.
  */
 unsigned int purple_request_field_image_get_scale_x(PurpleRequestField *field);
 
 /**
  * Returns Y scale coefficient of the image.
  *
- * @param field The image field.
+ * @field: The image field.
  *
- * @return Y scale coefficient of the image.
+ * Returns: Y scale coefficient of the image.
  */
 unsigned int purple_request_field_image_get_scale_y(PurpleRequestField *field);
 
@@ -1542,11 +1542,11 @@ unsigned int purple_request_field_image_get_scale_y(PurpleRequestField *field);
  *
  * By default, this field will not show offline accounts.
  *
- * @param id      The field ID.
- * @param text    The text label of the field.
- * @param account The optional default account.
+ * @id:      The field ID.
+ * @text:    The text label of the field.
+ * @account: The optional default account.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_account_new(const char *id,
 												 const char *text,
@@ -1555,8 +1555,8 @@ PurpleRequestField *purple_request_field_account_new(const char *id,
 /**
  * Sets the default account on an account field.
  *
- * @param field         The account field.
- * @param default_value The default account.
+ * @field:         The account field.
+ * @default_value: The default account.
  */
 void purple_request_field_account_set_default_value(PurpleRequestField *field,
 												  PurpleAccount *default_value);
@@ -1564,8 +1564,8 @@ void purple_request_field_account_set_default_value(PurpleRequestField *field,
 /**
  * Sets the account in an account field.
  *
- * @param field The account field.
- * @param value The account.
+ * @field: The account field.
+ * @value: The account.
  */
 void purple_request_field_account_set_value(PurpleRequestField *field,
 										  PurpleAccount *value);
@@ -1576,8 +1576,8 @@ void purple_request_field_account_set_value(PurpleRequestField *field,
  * If TRUE, all accounts, online or offline, will be shown. If FALSE,
  * only online accounts will be shown.
  *
- * @param field    The account field.
- * @param show_all Whether or not to show all accounts.
+ * @field:    The account field.
+ * @show_all: Whether or not to show all accounts.
  */
 void purple_request_field_account_set_show_all(PurpleRequestField *field,
 											 gboolean show_all);
@@ -1588,8 +1588,8 @@ void purple_request_field_account_set_show_all(PurpleRequestField *field,
  * This function will determine which accounts get displayed and which
  * don't.
  *
- * @param field       The account field.
- * @param filter_func The account filter function.
+ * @field:       The account field.
+ * @filter_func: The account filter function.
  */
 void purple_request_field_account_set_filter(PurpleRequestField *field,
 										   PurpleFilterAccountFunc filter_func);
@@ -1597,9 +1597,9 @@ void purple_request_field_account_set_filter(PurpleRequestField *field,
 /**
  * Returns the default account in an account field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The default account.
+ * Returns: The default account.
  */
 PurpleAccount *purple_request_field_account_get_default_value(
 		const PurpleRequestField *field);
@@ -1607,9 +1607,9 @@ PurpleAccount *purple_request_field_account_get_default_value(
 /**
  * Returns the user-entered account in an account field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The user-entered account.
+ * Returns: The user-entered account.
  */
 PurpleAccount *purple_request_field_account_get_value(
 		const PurpleRequestField *field);
@@ -1620,8 +1620,8 @@ PurpleAccount *purple_request_field_account_get_value(
  * If TRUE, all accounts, online or offline, will be shown. If FALSE,
  * only online accounts will be shown.
  *
- * @param field    The account field.
- * @return Whether or not to show all accounts.
+ * @field:    The account field.
+ * Returns: Whether or not to show all accounts.
  */
 gboolean purple_request_field_account_get_show_all(
 		const PurpleRequestField *field);
@@ -1632,9 +1632,9 @@ gboolean purple_request_field_account_get_show_all(
  * This function will determine which accounts get displayed and which
  * don't.
  *
- * @param field       The account field.
+ * @field:       The account field.
  *
- * @return The account filter function.
+ * Returns: The account filter function.
  */
 PurpleFilterAccountFunc purple_request_field_account_get_filter(
 		const PurpleRequestField *field);
@@ -1649,11 +1649,11 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
 /**
  * Creates a certificate field.
  *
- * @param id   The field ID.
- * @param text The label of the field.
- * @param cert The certificate of the field.
+ * @id:   The field ID.
+ * @text: The label of the field.
+ * @cert: The certificate of the field.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_certificate_new(const char *id,
 														 const char *text,
@@ -1662,9 +1662,9 @@ PurpleRequestField *purple_request_field_certificate_new(const char *id,
 /**
  * Returns the certificate in a certificate field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @return The certificate.
+ * Returns: The certificate.
  */
 PurpleCertificate *purple_request_field_certificate_get_value(
 		const PurpleRequestField *field);
@@ -1679,11 +1679,11 @@ PurpleCertificate *purple_request_field_certificate_get_value(
 /**
  * Creates a datasheet item field.
  *
- * @param id    The field ID.
- * @param text  The label of the field, may be @c NULL.
- * @param sheet The datasheet.
+ * @id:    The field ID.
+ * @text:  The label of the field, may be %NULL.
+ * @sheet: The datasheet.
  *
- * @return The new field.
+ * Returns: The new field.
  */
 PurpleRequestField *purple_request_field_datasheet_new(const char *id,
 	const gchar *text, PurpleRequestDatasheet *sheet);
@@ -1691,9 +1691,9 @@ PurpleRequestField *purple_request_field_datasheet_new(const char *id,
 /**
  * Returns a datasheet for a field.
  *
- * @param field The field.
+ * @field: The field.
  *
- * @constreturn The datasheet object.
+ * Returns: (TODO const): The datasheet object.
  */
 PurpleRequestDatasheet *purple_request_field_datasheet_get_sheet(
 	PurpleRequestField *field);
@@ -1710,11 +1710,11 @@ PurpleRequestDatasheet *purple_request_field_datasheet_get_sheet(
  *
  * @see purple_request_field_set_validator
  *
- * @param field The field.
- * @param errmsg (Optional) destination for error message.
- * @param user_data Ignored.
+ * @field: The field.
+ * @errmsg: (Optional) destination for error message.
+ * @user_data: Ignored.
  *
- * @return TRUE, if field contains valid email address.
+ * Returns: TRUE, if field contains valid email address.
  */
 gboolean purple_request_field_email_validator(PurpleRequestField *field,
 	gchar **errmsg, void *user_data);
@@ -1724,11 +1724,11 @@ gboolean purple_request_field_email_validator(PurpleRequestField *field,
  *
  * @see purple_request_field_set_validator
  *
- * @param field The field.
- * @param errmsg (Optional) destination for error message.
- * @param user_data (Optional) allowed character list (NULL-terminated string).
+ * @field: The field.
+ * @errmsg: (Optional) destination for error message.
+ * @user_data: (Optional) allowed character list (NULL-terminated string).
  *
- * @return TRUE, if field contains only alphanumeric characters.
+ * Returns: TRUE, if field contains only alphanumeric characters.
  */
 gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 	gchar **errmsg, void *allowed_characters);
@@ -1743,7 +1743,7 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 /**
  * Prompts the user for text input.
  *
- * @param handle        The plugin or connection handle.  For some
+ * @handle:        The plugin or connection handle.  For some
  *                      things this is <em>extremely</em> important.  The
  *                      handle is used to programmatically close the request
  *                      dialog when it is no longer needed.  For PRPLs this
@@ -1756,31 +1756,31 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
  *                      <em>not</em> closed it is <strong>very</strong>
  *                      likely to cause a crash whenever the callback
  *                      handler functions are triggered.
- * @param title         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      no title.
- * @param primary       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @param secondary     Secondary information, or @c NULL if there is none.
- * @param default_value The default value.
- * @param multiline     @c TRUE if the inputted text can span multiple lines.
- * @param masked        @c TRUE if the inputted text should be masked in some
+ * @secondary:     Secondary information, or %NULL if there is none.
+ * @default_value: The default value.
+ * @multiline:     %TRUE if the inputted text can span multiple lines.
+ * @masked:        %TRUE if the inputted text should be masked in some
  *                      way (such as by displaying characters as stars).  This
  *                      might be because the input is some kind of password.
- * @param hint          Optionally suggest how the input box should appear.
+ * @hint:          Optionally suggest how the input box should appear.
  *                      Use "html", for example, to allow the user to enter
  *                      HTML.
- * @param ok_text       The text for the @c OK button, which may not be @c NULL.
- * @param ok_cb         The callback for the @c OK button, which may not be @c
+ * @ok_text:       The text for the @c OK button, which may not be %NULL.
+ * @ok_cb:         The callback for the @c OK button, which may not be @c
  *                      NULL.
- * @param cancel_text   The text for the @c Cancel button, which may not be @c
+ * @cancel_text:   The text for the @c Cancel button, which may not be @c
  *                      NULL.
- * @param cancel_cb     The callback for the @c Cancel button, which may be
- *                      @c NULL.
- * @param cpar          The #PurpleRequestCommonParameters object, which gets
+ * @cancel_cb:     The callback for the @c Cancel button, which may be
+ *                      %NULL.
+ * @cpar:          The #PurpleRequestCommonParameters object, which gets
  *                      unref'ed after this call.
- * @param user_data     The data to pass to the callback.
+ * @user_data:     The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_request_input(void *handle, const char *title, const char *primary,
 	const char *secondary, const char *default_value, gboolean multiline,
@@ -1793,31 +1793,31 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
 /**
  * Prompts the user for multiple-choice input.
  *
- * @param handle        The plugin or connection handle.  For some things this
+ * @handle:        The plugin or connection handle.  For some things this
  *                      is <em>extremely</em> important.  See the comments on
  *                      purple_request_input().
- * @param title         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      no title.
- * @param primary       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @param secondary     Secondary information, or @c NULL if there is none.
- * @param default_value The default choice; this should be one of the values
+ * @secondary:     Secondary information, or %NULL if there is none.
+ * @default_value: The default choice; this should be one of the values
  *                      listed in the varargs.
- * @param ok_text       The text for the @c OK button, which may not be @c NULL.
- * @param ok_cb         The callback for the @c OK button, which may not be @c
+ * @ok_text:       The text for the @c OK button, which may not be %NULL.
+ * @ok_cb:         The callback for the @c OK button, which may not be @c
  *                      NULL.
- * @param cancel_text   The text for the @c Cancel button, which may not be @c
+ * @cancel_text:   The text for the @c Cancel button, which may not be @c
  *                      NULL.
- * @param cancel_cb     The callback for the @c Cancel button, or @c NULL to
+ * @cancel_cb:     The callback for the @c Cancel button, or %NULL to
  *                      do nothing.
- * @param cpar          The #PurpleRequestCommonParameters object, which gets
+ * @cpar:          The #PurpleRequestCommonParameters object, which gets
  *                      unref'ed after this call.
- * @param user_data     The data to pass to the callback.
- * @param ...           The choices, which should be pairs of <tt>char *</tt>
+ * @user_data:     The data to pass to the callback.
+ * @...:           The choices, which should be pairs of <tt>char *</tt>
  *                      descriptions and <tt>int</tt> values, terminated with a
- *                      @c NULL parameter.
+ *                      %NULL parameter.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_request_choice(void *handle, const char *title, const char *primary,
 	const char *secondary, gpointer default_value,
@@ -1841,23 +1841,23 @@ void *purple_request_choice_varg(void *handle, const char *title,
  *
  * This is often represented as a dialog with a button for each action.
  *
- * @param handle         The plugin or connection handle.  For some things this
+ * @handle:         The plugin or connection handle.  For some things this
  *                       is <em>extremely</em> important.  See the comments on
  *                       purple_request_input().
- * @param title          The title of the message, or @c NULL if it should have
+ * @title:          The title of the message, or %NULL if it should have
  *                       no title.
- * @param primary        The main point of the message, or @c NULL if you're
+ * @primary:        The main point of the message, or %NULL if you're
  *                       feeling enigmatic.
- * @param secondary      Secondary information, or @c NULL if there is none.
- * @param default_action The default action, zero-indexed; if the third action
+ * @secondary:      Secondary information, or %NULL if there is none.
+ * @default_action: The default action, zero-indexed; if the third action
  *                       supplied should be the default, supply <tt>2</tt>.
  *                       The should be the action that users are most likely
  *                       to select.
- * @param cpar           The #PurpleRequestCommonParameters object, which gets
+ * @cpar:           The #PurpleRequestCommonParameters object, which gets
  *                       unref'ed after this call.
- * @param user_data      The data to pass to the callback.
- * @param action_count   The number of actions.
- * @param ...            A list of actions.  These are pairs of
+ * @user_data:      The data to pass to the callback.
+ * @action_count:   The number of actions.
+ * @...:            A list of actions.  These are pairs of
  *                       arguments.  The first of each pair is the
  *                       <tt>char *</tt> label that appears on the button.  It
  *                       should have an underscore before the letter you want
@@ -1865,7 +1865,7 @@ void *purple_request_choice_varg(void *handle, const char *title,
  *                       second of each pair is the #PurpleRequestActionCb
  *                       function to use when the button is clicked.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *
 purple_request_action(void *handle, const char *title, const char *primary,
@@ -1885,23 +1885,23 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 /**
  * Displays a "please wait" dialog.
  *
- * @param handle        The plugin or connection handle.  For some things this
+ * @handle:        The plugin or connection handle.  For some things this
  *                      is <em>extremely</em> important.  See the comments on
  *                      purple_request_input().
- * @param title         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      default title.
- * @param primary       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @param secondary     Secondary information, or @c NULL if there is none.
- * @param with_progress @c TRUE, if we want to display progress bar, @c FALSE
+ * @secondary:     Secondary information, or %NULL if there is none.
+ * @with_progress: %TRUE, if we want to display progress bar, %FALSE
  *                      otherwise
- * @param cancel_cb     The callback for the @c Cancel button, which may be
- *                      @c NULL.
- * @param cpar          The #PurpleRequestCommonParameters object, which gets
+ * @cancel_cb:     The callback for the @c Cancel button, which may be
+ *                      %NULL.
+ * @cpar:          The #PurpleRequestCommonParameters object, which gets
  *                      unref'ed after this call.
- * @param user_data     The data to pass to the callback.
+ * @user_data:     The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *
 purple_request_wait(void *handle, const char *title, const char *primary,
@@ -1913,7 +1913,7 @@ purple_request_wait(void *handle, const char *title, const char *primary,
  * Notifies the "please wait" dialog that some progress has been made, but you
  * don't know how much.
  *
- * @param ui_handle The request UI handle.
+ * @ui_handle: The request UI handle.
  */
 void
 purple_request_wait_pulse(void *ui_handle);
@@ -1921,8 +1921,8 @@ purple_request_wait_pulse(void *ui_handle);
 /**
  * Notifies the "please wait" dialog about progress has been made.
  *
- * @param ui_handle The request UI handle.
- * @param fraction  The part of task that is done (between 0.0 and 1.0,
+ * @ui_handle: The request UI handle.
+ * @fraction:  The part of task that is done (between 0.0 and 1.0,
  *                  inclusive).
  */
 void
@@ -1931,27 +1931,27 @@ purple_request_wait_progress(void *ui_handle, gfloat fraction);
 /**
  * Displays groups of fields for the user to fill in.
  *
- * @param handle      The plugin or connection handle.  For some things this
+ * @handle:      The plugin or connection handle.  For some things this
  *                    is <em>extremely</em> important.  See the comments on
  *                    purple_request_input().
- * @param title       The title of the message, or @c NULL if it should have
+ * @title:       The title of the message, or %NULL if it should have
  *                    no title.
- * @param primary     The main point of the message, or @c NULL if you're
+ * @primary:     The main point of the message, or %NULL if you're
  *                    feeling enigmatic.
- * @param secondary   Secondary information, or @c NULL if there is none.
- * @param fields      The list of fields.
- * @param ok_text     The text for the @c OK button, which may not be @c NULL.
- * @param ok_cb       The callback for the @c OK button, which may not be @c
+ * @secondary:   Secondary information, or %NULL if there is none.
+ * @fields:      The list of fields.
+ * @ok_text:     The text for the @c OK button, which may not be %NULL.
+ * @ok_cb:       The callback for the @c OK button, which may not be @c
  *                    NULL.
- * @param cancel_text The text for the @c Cancel button, which may not be @c
+ * @cancel_text: The text for the @c Cancel button, which may not be @c
  *                    NULL.
- * @param cancel_cb   The callback for the @c Cancel button, which may be
- *                    @c NULL.
- * @param cpar        The #PurpleRequestCommonParameters object, which gets
+ * @cancel_cb:   The callback for the @c Cancel button, which may be
+ *                    %NULL.
+ * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
- * @param user_data   The data to pass to the callback.
+ * @user_data:   The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *
 purple_request_fields(void *handle, const char *title, const char *primary,
@@ -1964,11 +1964,11 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 /**
  * Checks, if passed UI handle is valid.
  *
- * @param ui_handle The UI handle.
- * @param type      The pointer to variable, where request type may be stored
- *                  (may be @c NULL).
+ * @ui_handle: The UI handle.
+ * @type:      The pointer to variable, where request type may be stored
+ *                  (may be %NULL).
  *
- * @return TRUE, if handle is valid, FALSE otherwise.
+ * Returns: TRUE, if handle is valid, FALSE otherwise.
  */
 gboolean
 purple_request_is_valid_ui_handle(void *ui_handle, PurpleRequestType *type);
@@ -1976,9 +1976,9 @@ purple_request_is_valid_ui_handle(void *ui_handle, PurpleRequestType *type);
 /**
  * Adds a function called when notification dialog is closed.
  *
- * @param ui_handle   The UI handle.
- * @param notify      The function to be called.
- * @param notify_data The data to be passed to the callback function.
+ * @ui_handle:   The UI handle.
+ * @notify:      The function to be called.
+ * @notify_data: The data to be passed to the callback function.
  */
 void
 purple_request_add_close_notify(void *ui_handle, GDestroyNotify notify,
@@ -1987,15 +1987,15 @@ purple_request_add_close_notify(void *ui_handle, GDestroyNotify notify,
 /**
  * Closes a request.
  *
- * @param type     The request type.
- * @param uihandle The request UI handle.
+ * @type:     The request type.
+ * @uihandle: The request UI handle.
  */
 void purple_request_close(PurpleRequestType type, void *uihandle);
 
 /**
  * Closes all requests registered with the specified handle.
  *
- * @param handle The handle, as supplied as the @a handle parameter to one of the
+ * @handle: The handle, as supplied as the @a handle parameter to one of the
  *               <tt>purple_request_*</tt> functions.
  *
  * @see purple_request_input().
@@ -2033,21 +2033,21 @@ void purple_request_close_with_handle(void *handle);
  * Displays a file selector request dialog.  Returns the selected filename to
  * the callback.  Can be used for either opening a file or saving a file.
  *
- * @param handle      The plugin or connection handle.  For some things this
+ * @handle:      The plugin or connection handle.  For some things this
  *                    is <em>extremely</em> important.  See the comments on
  *                    purple_request_input().
- * @param title       The title of the message, or @c NULL if it should have
+ * @title:       The title of the message, or %NULL if it should have
  *                    no title.
- * @param filename    The default filename (may be @c NULL)
- * @param savedialog  True if this dialog is being used to save a file.
+ * @filename:    The default filename (may be %NULL)
+ * @savedialog:  True if this dialog is being used to save a file.
  *                    False if it is being used to open a file.
- * @param ok_cb       The callback for the @c OK button.
- * @param cancel_cb   The callback for the @c Cancel button, which may be @c NULL.
- * @param cpar        The #PurpleRequestCommonParameters object, which gets
+ * @ok_cb:       The callback for the @c OK button.
+ * @cancel_cb:   The callback for the @c Cancel button, which may be %NULL.
+ * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
- * @param user_data   The data to pass to the callback.
+ * @user_data:   The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *
 purple_request_file(void *handle, const char *title, const char *filename,
@@ -2058,19 +2058,19 @@ purple_request_file(void *handle, const char *title, const char *filename,
  * Displays a folder select dialog. Returns the selected filename to
  * the callback.
  *
- * @param handle      The plugin or connection handle.  For some things this
+ * @handle:      The plugin or connection handle.  For some things this
  *                    is <em>extremely</em> important.  See the comments on
  *                    purple_request_input().
- * @param title       The title of the message, or @c NULL if it should have
+ * @title:       The title of the message, or %NULL if it should have
  *                    no title.
- * @param dirname     The default directory name (may be @c NULL)
- * @param ok_cb       The callback for the @c OK button.
- * @param cancel_cb   The callback for the @c Cancel button, which may be @c NULL.
- * @param cpar        The #PurpleRequestCommonParameters object, which gets
+ * @dirname:     The default directory name (may be %NULL)
+ * @ok_cb:       The callback for the @c OK button.
+ * @cancel_cb:   The callback for the @c Cancel button, which may be %NULL.
+ * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
- * @param user_data   The data to pass to the callback.
+ * @user_data:   The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *
 purple_request_folder(void *handle, const char *title, const char *dirname,
@@ -2082,25 +2082,25 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
  *
  * This is often represented as a dialog with a button for each action.
  *
- * @param handle        The plugin or connection handle.  For some things this
+ * @handle:        The plugin or connection handle.  For some things this
  *                      is <em>extremely</em> important.  See the comments on
  *                      purple_request_input().
- * @param title         The title of the message, or @c NULL if it should have
+ * @title:         The title of the message, or %NULL if it should have
  *                      no title.
- * @param primary       The main point of the message, or @c NULL if you're
+ * @primary:       The main point of the message, or %NULL if you're
  *                      feeling enigmatic.
- * @param secondary     Secondary information, or @c NULL if there is none.
- * @param cert          The #PurpleCertificate associated with this request.
- * @param ok_text       The text for the @c OK button, which may not be @c NULL.
- * @param ok_cb         The callback for the @c OK button, which may not be
- *                      @c NULL.
- * @param cancel_text   The text for the @c Cancel button, which may not be
- *                      @c NULL.
- * @param cancel_cb     The callback for the @c Cancel button, which may be
- *                      @c NULL.
- * @param user_data     The data to pass to the callback.
+ * @secondary:     Secondary information, or %NULL if there is none.
+ * @cert:          The #PurpleCertificate associated with this request.
+ * @ok_text:       The text for the @c OK button, which may not be %NULL.
+ * @ok_cb:         The callback for the @c OK button, which may not be
+ *                      %NULL.
+ * @cancel_text:   The text for the @c Cancel button, which may not be
+ *                      %NULL.
+ * @cancel_cb:     The callback for the @c Cancel button, which may be
+ *                      %NULL.
+ * @user_data:     The data to pass to the callback.
  *
- * @return A UI-specific handle.
+ * Returns: A UI-specific handle.
  */
 void *purple_request_certificate(void *handle, const char *title,
 	const char *primary, const char *secondary, PurpleCertificate *cert,
@@ -2119,7 +2119,7 @@ void *purple_request_certificate(void *handle, const char *title,
  * Sets the UI operations structure to be used when displaying a
  * request.
  *
- * @param ops The UI operations structure.
+ * @ops: The UI operations structure.
  */
 void purple_request_set_ui_ops(PurpleRequestUiOps *ops);
 
@@ -2127,7 +2127,7 @@ void purple_request_set_ui_ops(PurpleRequestUiOps *ops);
  * Returns the UI operations structure to be used when displaying a
  * request.
  *
- * @return The UI operations structure.
+ * Returns: The UI operations structure.
  */
 PurpleRequestUiOps *purple_request_get_ui_ops(void);
 

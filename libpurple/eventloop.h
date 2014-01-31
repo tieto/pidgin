@@ -58,7 +58,7 @@ struct _PurpleEventLoopUiOps
 	/**
 	 * Should create a callback timer with an interval measured in
 	 * milliseconds.  The supplied @a function should be called every @a
-	 * interval seconds until it returns @c FALSE, after which it should not
+	 * interval seconds until it returns %FALSE, after which it should not
 	 * be called again.
 	 *
 	 * Analogous to g_timeout_add in glib.
@@ -67,13 +67,13 @@ struct _PurpleEventLoopUiOps
 	 * the libpurple thread.  You should make sure to detect this situation
 	 * and to only call "function" from the libpurple thread.
 	 *
-	 * @param interval the interval in <em>milliseconds</em> between calls
+	 * @interval: the interval in <em>milliseconds</em> between calls
 	 *                 to @a function.
-	 * @param data     arbitrary data to be passed to @a function at each
+	 * @data:     arbitrary data to be passed to @a function at each
 	 *                 call.
 	 * @todo Who is responsible for freeing @a data?
 	 *
-	 * @return a handle for the timeout, which can be passed to
+	 * Returns: a handle for the timeout, which can be passed to
 	 *         #timeout_remove.
 	 *
 	 * @see purple_timeout_add
@@ -82,9 +82,9 @@ struct _PurpleEventLoopUiOps
 
 	/**
 	 * Should remove a callback timer.  Analogous to g_source_remove in glib.
-	 * @param handle an identifier for a timeout, as returned by
+	 * @handle: an identifier for a timeout, as returned by
 	 *               #timeout_add.
-	 * @return       @c TRUE if the timeout identified by @a handle was
+	 * Returns:       %TRUE if the timeout identified by @a handle was
 	 *               found and removed.
 	 * @see purple_timeout_remove
 	 */
@@ -94,13 +94,13 @@ struct _PurpleEventLoopUiOps
 	 * Should add an input handler.  Analogous to g_io_add_watch_full in
 	 * glib.
 	 *
-	 * @param fd        a file descriptor to watch for events
-	 * @param cond      a bitwise OR of events on @a fd for which @a func
+	 * @fd:        a file descriptor to watch for events
+	 * @cond:      a bitwise OR of events on @a fd for which @a func
 	 *                  should be called.
-	 * @param func      a callback to fire whenever a relevant event on @a
+	 * @func:      a callback to fire whenever a relevant event on @a
 	 *                  fd occurs.
-	 * @param user_data arbitrary data to pass to @a fd.
-	 * @return          an identifier for this input handler, which can be
+	 * @user_data: arbitrary data to pass to @a fd.
+	 * Returns:          an identifier for this input handler, which can be
 	 *                  passed to #input_remove.
 	 *
 	 * @see purple_input_add
@@ -110,8 +110,8 @@ struct _PurpleEventLoopUiOps
 
 	/**
 	 * Should remove an input handler.  Analogous to g_source_remove in glib.
-	 * @param handle an identifier, as returned by #input_add.
-	 * @return       @c TRUE if the input handler was found and removed.
+	 * @handle: an identifier, as returned by #input_add.
+	 * Returns:       %TRUE if the input handler was found and removed.
 	 * @see purple_input_remove
 	 */
 	gboolean (*input_remove)(guint handle);
@@ -161,17 +161,17 @@ G_BEGIN_DECLS
 /**
  * Creates a callback timer.
  *
- * The timer will repeat until the function returns @c FALSE. The
+ * The timer will repeat until the function returns %FALSE. The
  * first call will be at the end of the first interval.
  *
  * If the timer is in a multiple of seconds, use purple_timeout_add_seconds()
  * instead as it allows UIs to group timers for power efficiency.
  *
- * @param interval	The time between calls of the function, in
+ * @interval:	The time between calls of the function, in
  *                      milliseconds.
- * @param function	The function to call.
- * @param data		data to pass to @a function.
- * @return A handle to the timer which can be passed to
+ * @function:	The function to call.
+ * @data:		data to pass to @a function.
+ * Returns: A handle to the timer which can be passed to
  *         purple_timeout_remove() to remove the timer.
  */
 guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
@@ -179,17 +179,17 @@ guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
 /**
  * Creates a callback timer.
  *
- * The timer will repeat until the function returns @c FALSE. The
+ * The timer will repeat until the function returns %FALSE. The
  * first call will be at the end of the first interval.
  *
  * This function allows UIs to group timers for better power efficiency.  For
  * this reason, @a interval may be rounded by up to a second.
  *
- * @param interval	The time between calls of the function, in
+ * @interval:	The time between calls of the function, in
  *                      seconds.
- * @param function	The function to call.
- * @param data		data to pass to @a function.
- * @return A handle to the timer which can be passed to
+ * @function:	The function to call.
+ * @data:		data to pass to @a function.
+ * Returns: A handle to the timer which can be passed to
  *         purple_timeout_remove() to remove the timer.
  */
 guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data);
@@ -197,21 +197,21 @@ guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer 
 /**
  * Removes a timeout handler.
  *
- * @param handle The handle, as returned by purple_timeout_add().
+ * @handle: The handle, as returned by purple_timeout_add().
  *
- * @return @c TRUE if the handler was successfully removed.
+ * Returns: %TRUE if the handler was successfully removed.
  */
 gboolean purple_timeout_remove(guint handle);
 
 /**
  * Adds an input handler.
  *
- * @param fd        The input file descriptor.
- * @param cond      The condition type.
- * @param func      The callback function for data.
- * @param user_data User-specified data.
+ * @fd:        The input file descriptor.
+ * @cond:      The condition type.
+ * @func:      The callback function for data.
+ * @user_data: User-specified data.
  *
- * @return The resulting handle (will be greater than 0).
+ * Returns: The resulting handle (will be greater than 0).
  * @see g_io_add_watch_full
  */
 guint purple_input_add(int fd, PurpleInputCondition cond,
@@ -220,7 +220,7 @@ guint purple_input_add(int fd, PurpleInputCondition cond,
 /**
  * Removes an input handler.
  *
- * @param handle The handle of the input handler. Note that this is the return
+ * @handle: The handle of the input handler. Note that this is the return
  *               value from purple_input_add(), <i>not</i> the file descriptor.
  */
 gboolean purple_input_remove(guint handle);
@@ -232,11 +232,11 @@ gboolean purple_input_remove(guint handle);
  * option name of SO_ERROR, and this is how the error is determined if the UI does not
  * implement the input_get_error UI op.
  *
- * @param fd        The input file descriptor.
- * @param error     A pointer to an @c int which on return will have the error, or
+ * @fd:        The input file descriptor.
+ * @error:     A pointer to an @c int which on return will have the error, or
  *                  @c 0 if no error.
  *
- * @return @c 0 if there is no error; @c -1 if there is an error, in which case
+ * Returns: @c 0 if there is no error; @c -1 if there is an error, in which case
  *         @a errno will be set.
  */
 int
@@ -253,9 +253,9 @@ purple_input_get_error(int fd, int *error);
  * On Windows it's simulated by creating a pair of connected sockets, on other
  * systems pipe() is used.
  *
- * @param pipefd Array used to return file descriptors for both ends of pipe.
+ * @pipefd: Array used to return file descriptors for both ends of pipe.
  *
- * @return @c 0 on success, @c -1 on error.
+ * Returns: @c 0 on success, @c -1 on error.
  */
 int
 purple_input_pipe(int pipefd[2]);
@@ -271,14 +271,14 @@ purple_input_pipe(int pipefd[2]);
 /**
  * Sets the UI operations structure to be used for accounts.
  *
- * @param ops The UI operations structure.
+ * @ops: The UI operations structure.
  */
 void purple_eventloop_set_ui_ops(PurpleEventLoopUiOps *ops);
 
 /**
  * Returns the UI operations structure used for accounts.
  *
- * @return The UI operations structure in use.
+ * Returns: The UI operations structure in use.
  */
 PurpleEventLoopUiOps *purple_eventloop_get_ui_ops(void);
 

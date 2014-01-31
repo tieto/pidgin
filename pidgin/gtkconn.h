@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 /**
  * Gets GTK+ Connection UI ops
  *
- * @return UI operations struct
+ * Returns: UI operations struct
  */
 PurpleConnectionUiOps *pidgin_connections_get_ui_ops(void);
 
@@ -44,7 +44,7 @@ PurpleConnectionUiOps *pidgin_connections_get_ui_ops(void);
 /**
  * Returns the GTK+ connection handle.
  *
- * @return The handle to the GTK+ connection system.
+ * Returns: The handle to the GTK+ connection system.
  */
 void *pidgin_connection_get_handle(void);
 

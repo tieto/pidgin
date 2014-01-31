@@ -112,48 +112,48 @@ void gnt_init_keys(void);
  * Refine input text. This usually looks at what the terminal claims it is,
  * and tries to change the text to work around some oft-broken terminfo entries.
  *
- * @param text  The input text to refine.
+ * @text:  The input text to refine.
  */
 void gnt_keys_refine(char *text);
 
 /**
  * Translate a user-readable representation of an input to a machine-readable representation.
  *
- * @param name   The user-readable representation of an input (eg.: c-t)
+ * @name:   The user-readable representation of an input (eg.: c-t)
  *
- * @return  A machine-readable representation of the input.
+ * Returns:  A machine-readable representation of the input.
  */
 const char *gnt_key_translate(const char *name);
 
 /**
  * Translate a machine-readable representation of an input to a user-readable representation.
  *
- * @param key  The machine-readable representation of an input.
+ * @key:  The machine-readable representation of an input.
  *
- * @return  A user-readable representation of the input (eg.: c-t).
+ * Returns:  A user-readable representation of the input (eg.: c-t).
  */
 const char *gnt_key_lookup(const char *key);
 
 /**
  * Add a key combination to the internal key-tree.
  *
- * @param key  The key to add
+ * @key:  The key to add
  */
 void gnt_keys_add_combination(const char *key);
 
 /**
  * Remove a key combination from the internal key-tree.
  *
- * @param key The key to remove.
+ * @key: The key to remove.
  */
 void gnt_keys_del_combination(const char *key);
 
 /**
  * Find a combination from the given string.
  *
- * @param key  The input string.
+ * @key:  The input string.
  *
- * @return The number of bytes in the combination that starts at the beginning
+ * Returns: The number of bytes in the combination that starts at the beginning
  *         of key (can be 0).
  */
 int gnt_keys_find_combination(const char *key);

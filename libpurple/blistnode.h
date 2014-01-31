@@ -129,9 +129,9 @@ GType purple_blist_node_get_type(void);
  * Returns the next node of a given node. This function is to be used to iterate
  * over the tree returned by purple_blist_get_buddy_list.
  *
- * @param node		A node.
- * @param offline	Whether to include nodes for offline accounts
- * @return	The next node
+ * @node:		A node.
+ * @offline:	Whether to include nodes for offline accounts
+ * Returns:	The next node
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
@@ -142,8 +142,8 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
 /**
  * Returns the parent node of a given node.
  *
- * @param node A node.
- * @return  The parent node.
+ * @node: A node.
+ * Returns:  The parent node.
  *
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
@@ -155,8 +155,8 @@ PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
 /**
  * Returns the the first child node of a given node.
  *
- * @param node A node.
- * @return  The child node.
+ * @node: A node.
+ * Returns:  The child node.
  *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_sibling_next
@@ -168,8 +168,8 @@ PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
 /**
  * Returns the sibling node of a given node.
  *
- * @param node A node.
- * @return  The sibling node.
+ * @node: A node.
+ * Returns:  The sibling node.
  *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
@@ -181,8 +181,8 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
 /**
  * Returns the previous sibling node of a given node.
  *
- * @param node A node.
- * @return  The sibling node.
+ * @node: A node.
+ * Returns:  The sibling node.
  *
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
@@ -194,82 +194,82 @@ PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
 /**
  * Returns the UI data of a given node.
  *
- * @param node The node.
- * @return The UI data.
+ * @node: The node.
+ * Returns: The UI data.
  */
 gpointer purple_blist_node_get_ui_data(const PurpleBlistNode *node);
 
 /**
  * Sets the UI data of a given node.
  *
- * @param node The node.
- * @param ui_data The UI data.
+ * @node: The node.
+ * @ui_data: The UI data.
  */
 void purple_blist_node_set_ui_data(PurpleBlistNode *node, gpointer ui_data);
 
 /**
  * Returns a node's settings
  *
- * @param node  The node to from which to get settings
+ * @node:  The node to from which to get settings
  *
- * @return The hash table with the node's settings
+ * Returns: The hash table with the node's settings
  */
 GHashTable *purple_blist_node_get_settings(PurpleBlistNode *node);
 
 /**
  * Checks whether a named setting exists for a node in the buddy list
  *
- * @param node  The node to check from which to check settings
- * @param key   The identifier of the data
+ * @node:  The node to check from which to check settings
+ * @key:   The identifier of the data
  *
- * @return TRUE if a value exists, or FALSE if there is no setting
+ * Returns: TRUE if a value exists, or FALSE if there is no setting
  */
 gboolean purple_blist_node_has_setting(PurpleBlistNode *node, const char *key);
 
 /**
  * Associates a boolean with a node in the buddy list
  *
- * @param node  The node to associate the data with
- * @param key   The identifier for the data
- * @param value The value to set
+ * @node:  The node to associate the data with
+ * @key:   The identifier for the data
+ * @value: The value to set
  */
 void purple_blist_node_set_bool(PurpleBlistNode *node, const char *key, gboolean value);
 
 /**
  * Retrieves a named boolean setting from a node in the buddy list
  *
- * @param node  The node to retrieve the data from
- * @param key   The identifier of the data
+ * @node:  The node to retrieve the data from
+ * @key:   The identifier of the data
  *
- * @return The value, or FALSE if there is no setting
+ * Returns: The value, or FALSE if there is no setting
  */
 gboolean purple_blist_node_get_bool(PurpleBlistNode *node, const char *key);
 
 /**
  * Associates an integer with a node in the buddy list
  *
- * @param node  The node to associate the data with
- * @param key   The identifier for the data
- * @param value The value to set
+ * @node:  The node to associate the data with
+ * @key:   The identifier for the data
+ * @value: The value to set
  */
 void purple_blist_node_set_int(PurpleBlistNode *node, const char *key, int value);
 
 /**
  * Retrieves a named integer setting from a node in the buddy list
  *
- * @param node  The node to retrieve the data from
- * @param key   The identifier of the data
+ * @node:  The node to retrieve the data from
+ * @key:   The identifier of the data
  *
- * @return The value, or 0 if there is no setting
+ * Returns: The value, or 0 if there is no setting
  */
 int purple_blist_node_get_int(PurpleBlistNode *node, const char *key);
 
 /**
  * Associates a string with a node in the buddy list
  *
- * @param node  The node to associate the data with
- * @param key   The identifier for the data
- * @param value The value to set
+ * @node:  The node to associate the data with
+ * @key:   The identifier for the data
+ * @value: The value to set
  */
 void purple_blist_node_set_string(PurpleBlistNode *node, const char *key,
 		const char *value);
@@ -277,26 +277,26 @@ void purple_blist_node_set_string(PurpleBlistNode *node, const char *key,
 /**
  * Retrieves a named string setting from a node in the buddy list
  *
- * @param node  The node to retrieve the data from
- * @param key   The identifier of the data
+ * @node:  The node to retrieve the data from
+ * @key:   The identifier of the data
  *
- * @return The value, or NULL if there is no setting
+ * Returns: The value, or NULL if there is no setting
  */
 const char *purple_blist_node_get_string(PurpleBlistNode *node, const char *key);
 
 /**
  * Removes a named setting from a blist node
  *
- * @param node  The node from which to remove the setting
- * @param key   The name of the setting
+ * @node:  The node from which to remove the setting
+ * @key:   The name of the setting
  */
 void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key);
 
 /**
  * Sets whether the node should be saved with the buddy list or not
  *
- * @param node  The node
- * @param transient TRUE if the node should NOT be saved, FALSE if node should
+ * @node:  The node
+ * @transient: TRUE if the node should NOT be saved, FALSE if node should
  *                  be saved
  */
 void purple_blist_node_set_transient(PurpleBlistNode *node, gboolean transient);
@@ -304,9 +304,9 @@ void purple_blist_node_set_transient(PurpleBlistNode *node, gboolean transient);
 /**
  * Gets whether the node should be saved with the buddy list or not
  *
- * @param node  The node
+ * @node:  The node
  *
- * @return TRUE if the node should NOT be saved, FALSE if node should be saved
+ * Returns: TRUE if the node should NOT be saved, FALSE if node should be saved
  */
 gboolean purple_blist_node_is_transient(PurpleBlistNode *node);
 
@@ -314,8 +314,8 @@ gboolean purple_blist_node_is_transient(PurpleBlistNode *node);
 
 /**
  * Retrieves the extended menu items for a buddy list node.
- * @param n The blist node for which to obtain the extended menu items.
- * @return  A list of PurpleMenuAction items, as harvested by the
+ * @n: The blist node for which to obtain the extended menu items.
+ * Returns:  A list of PurpleMenuAction items, as harvested by the
  *          blist-node-extended-menu signal.
  */
 GList *purple_blist_node_get_extended_menu(PurpleBlistNode *n);
@@ -335,9 +335,9 @@ GType purple_counting_node_get_type(void);
 /**
  * Returns the total number of children of the counting node.
  *
- * @param counter  The node
+ * @counter:  The node
  *
- * @return  The total number of children of the node
+ * Returns:  The total number of children of the node
  */
 int purple_counting_node_get_total_size(PurpleCountingNode *counter);
 
@@ -345,18 +345,18 @@ int purple_counting_node_get_total_size(PurpleCountingNode *counter);
  * Returns the number of children of the counting node corresponding to online
  * accounts.
  *
- * @param counter  The node
+ * @counter:  The node
  *
- * @return  The number of children with online accounts
+ * Returns:  The number of children with online accounts
  */
 int purple_counting_node_get_current_size(PurpleCountingNode *counter);
 
 /**
  * Returns the number of children of the counting node that are online.
  *
- * @param counter  The node
+ * @counter:  The node
  *
- * @return  The total number of online children
+ * Returns:  The total number of online children
  */
 int purple_counting_node_get_online_count(PurpleCountingNode *counter);
 
@@ -365,8 +365,8 @@ int purple_counting_node_get_online_count(PurpleCountingNode *counter);
  * delta value is added to the count, or if it's negative, the count is
  * decreased.
  *
- * @param counter  The node
- * @param delta    The value to change the total size by
+ * @counter:  The node
+ * @delta:    The value to change the total size by
  */
 void purple_counting_node_change_total_size(PurpleCountingNode *counter, int delta);
 
@@ -375,8 +375,8 @@ void purple_counting_node_change_total_size(PurpleCountingNode *counter, int del
  * accounts. The provided delta value is added to the count, or if it's
  * negative, the count is decreased.
  *
- * @param counter  The node
- * @param delta    The value to change the current size by
+ * @counter:  The node
+ * @delta:    The value to change the current size by
  */
 void purple_counting_node_change_current_size(PurpleCountingNode *counter, int delta);
 
@@ -385,16 +385,16 @@ void purple_counting_node_change_current_size(PurpleCountingNode *counter, int d
  * provided delta value is added to the count, or if it's negative, the count is
  * decreased.
  *
- * @param counter  The node
- * @param delta    The value to change the online count by
+ * @counter:  The node
+ * @delta:    The value to change the online count by
  */
 void purple_counting_node_change_online_count(PurpleCountingNode *counter, int delta);
 
 /**
  * Sets the total number of children of the counting node.
  *
- * @param counter    The node
- * @param totalsize  The total number of children of the node
+ * @counter:    The node
+ * @totalsize:  The total number of children of the node
  */
 void purple_counting_node_set_total_size(PurpleCountingNode *counter, int totalsize);
 
@@ -402,16 +402,16 @@ void purple_counting_node_set_total_size(PurpleCountingNode *counter, int totals
  * Sets the number of children of the counting node corresponding to online
  * accounts.
  *
- * @param counter      The node
- * @param currentsize  The number of children with online accounts
+ * @counter:      The node
+ * @currentsize:  The number of children with online accounts
  */
 void purple_counting_node_set_current_size(PurpleCountingNode *counter, int currentsize);
 
 /**
  * Sets the number of children of the counting node that are online.
  *
- * @param counter      The node
- * @param onlinecount  The total number of online children
+ * @counter:      The node
+ * @onlinecount:  The total number of online children
  */
 void purple_counting_node_set_online_count(PurpleCountingNode *counter, int onlinecount);
 

@@ -43,11 +43,11 @@ extern "C" {
  * Checks that the libpurple version is compatible with the requested
  * version
  *
- * @param required_major: the required major version.
- * @param required_minor: the required minor version.
- * @param required_micro: the required micro version.
+ * @required_major: the required major version.
+ * @required_minor: the required minor version.
+ * @required_micro: the required micro version.
  *
- * @return NULL if the versions are compatible, or a string describing
+ * Returns: NULL if the versions are compatible, or a string describing
  *         the version mismatch if not compatible.
  */
 const char *purple_version_check(guint required_major, guint required_minor, guint required_micro);

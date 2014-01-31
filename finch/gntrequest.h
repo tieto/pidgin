@@ -37,7 +37,7 @@
 /**
  * Get the ui-functions.
  *
- * @return The PurpleRequestUiOps structure populated with the appropriate functions.
+ * Returns: The PurpleRequestUiOps structure populated with the appropriate functions.
  */
 PurpleRequestUiOps *finch_request_get_ui_ops(void);
 
@@ -60,9 +60,9 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *fields);
 /**
  * Create a widget field for a request-field.
  *
- * @param field   The request field.
+ * @field:   The request field.
  *
- * @return A GntWidget for the request field.
+ * Returns: A GntWidget for the request field.
  */
 GntWidget *finch_request_field_get_widget(PurpleRequestField *field);
 /*@}*/
