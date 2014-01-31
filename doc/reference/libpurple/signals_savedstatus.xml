@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-savedstatus">
+<title>Saved Status signals</title>
+
+<refsect1 id="savedstatuses.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="savedstatuses-savedstatus-changed">savedstatus-changed</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="savedstatuses.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="savedstatuses-savedstatus-changed" role="signal">
+ <title>The <literal>&quot;savedstatus-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleSavedStatus *new,
+                                                        PurpleSavedStatus *old,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a new saved status is activated.
+  </para>
+</refsect2>
+
+</refsect1>
+
+</chapter>

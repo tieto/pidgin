@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-notify">
+<title>Notify signals</title>
+
+<refsect1 id="notify.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="notify-displaying-userinfo">displaying-userinfo</link>&quot;
+  &quot;<link linkend="notify-displaying-email-notification">displaying-email-notification</link>&quot;
+  &quot;<link linkend="notify-displaying-emails-notification">displaying-emails-notification</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="notify.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="notify-displaying-userinfo" role="signal">
+ <title>The <literal>&quot;displaying-userinfo&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        PurpleNotifyUserInfo *user_info,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted before userinfo is handed to the UI to display. <literal>user_info</literal> can be manipulated via the PurpleNotifyUserInfo API in notify.c.
+  </para>
+  <note><para>
+If adding a PurpleNotifyUserInfoEntry, be sure not to free it -- PurpleNotifyUserInfo assumes responsibility for its objects.
+  </para></note>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account on which the info was obtained.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the buddy whose info is to be displayed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_info</parameter>&#160;:</term>
+    <listitem><simpara>The information to be displayed, as PurpleNotifyUserInfoEntry objects.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="notify-displaying-email-notification" role="signal">
+ <title>The <literal>&quot;displaying-email-notification&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (const char *subject,
+                                                        const char *from,
+                                                        const char *to,
+                                                        const char *url,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted before notification of a single email is handed to the UI to display.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>subject</parameter>&#160;:</term>
+    <listitem><simpara>Subject of email being notified of.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>from</parameter>&#160;:</term>
+    <listitem><simpara>Who the email is from.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>to</parameter>&#160;:</term>
+    <listitem><simpara>Who the email is to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>url</parameter>&#160;:</term>
+    <listitem><simpara>A url to view the email.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="notify-displaying-emails-notification" role="signal">
+ <title>The <literal>&quot;displaying-emails-notification&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (const char **subjects,
+                                                        const char **froms,
+                                                        const char **tos,
+                                                        const char **urls,
+                                                        guint count,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted before notification of multiple emails is handed to the UI to display.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>subjects</parameter>&#160;:</term>
+    <listitem><simpara>Subjects of emails being notified of.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>froms</parameter>&#160;:</term>
+    <listitem><simpara>Who the emails are from.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>tos</parameter>&#160;:</term>
+    <listitem><simpara>Who the emails are to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>urls</parameter>&#160;:</term>
+    <listitem><simpara>The urls to view the emails.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>count</parameter>&#160;:</term>
+    <listitem><simpara>Number of emails being notified of.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

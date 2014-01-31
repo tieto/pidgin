@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-xfer">
+<title>File Transfer signals</title>
+
+<refsect1 id="xfers.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="xfers-file-recv-accept">file-recv-accept</link>&quot;
+  &quot;<link linkend="xfers-file-recv-start">file-recv-start</link>&quot;
+  &quot;<link linkend="xfers-file-recv-cancel">file-recv-cancel</link>&quot;
+  &quot;<link linkend="xfers-file-recv-complete">file-recv-complete</link>&quot;
+  &quot;<link linkend="xfers-file-recv-request">file-recv-request</link>&quot;
+  &quot;<link linkend="xfers-file-send-accept">file-send-accept</link>&quot;
+  &quot;<link linkend="xfers-file-send-start">file-send-start</link>&quot;
+  &quot;<link linkend="xfers-file-send-cancel">file-send-cancel</link>&quot;
+  &quot;<link linkend="xfers-file-send-complete">file-send-complete</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="xfers.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="xfers-file-recv-accept" role="signal">
+ <title>The <literal>&quot;file-recv-accept&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an incoming file transfer has been accepted.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-recv-start" role="signal">
+ <title>The <literal>&quot;file-recv-start&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an incoming file transfer has been started.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-recv-cancel" role="signal">
+ <title>The <literal>&quot;file-recv-cancel&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an incoming file transfer has been canceled.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-recv-complete" role="signal">
+ <title>The <literal>&quot;file-recv-complete&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an incoming file transfer has been completed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-recv-request" role="signal">
+ <title>The <literal>&quot;file-recv-request&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted before the user is prompted for an incoming file-transfer. Plugins can intercept the signal to auto-accept/auto-reject the requests. To auto-accept the file transfer, use purple_xfer_request_accepted(). To auto-reject, set the status of the xfer to PURPLE_XFER_STATUS_CANCEL_LOCAL.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-send-accept" role="signal">
+ <title>The <literal>&quot;file-send-accept&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an outgoing file transfer has been accepted.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-send-start" role="signal">
+ <title>The <literal>&quot;file-send-start&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an outgoing file transfer has started.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-send-cancel" role="signal">
+ <title>The <literal>&quot;file-send-cancel&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an outgoing file transfer has been canceled.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="xfers-file-send-complete" role="signal">
+ <title>The <literal>&quot;file-send-complete&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleXfer *xfer,
+                                                        gpointer data)
+</programlisting>
+  <para>
+Emitted when an outgoing file transfer has been completed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>xfer</parameter>&#160;:</term>
+    <listitem><simpara>The file transfer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>data</parameter>&#160;:</term>
+    <listitem><simpara>User data.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

@@ -1,0 +1,1 @@
+SUBDIRS = libpurple finch pidgin

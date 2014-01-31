@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+
+<!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>Pidgin Reference Manual</title>
+    <releaseinfo>
+      for pidgin &version;
+    </releaseinfo>
+  </bookinfo>
+
+  <reference label="I">
+    <title>API Reference</title>
+
+      <xi:include href="xml/getopt.xml" />
+      <xi:include href="xml/gtk3compat.xml" />
+      <xi:include href="xml/gtkaccount.xml" />
+      <xi:include href="xml/gtkblist-theme-loader.xml" />
+      <xi:include href="xml/gtkblist-theme.xml" />
+      <xi:include href="xml/gtkblist.xml" />
+      <xi:include href="xml/gtkcellrendererexpander.xml" />
+      <xi:include href="xml/gtkcertmgr.xml" />
+      <xi:include href="xml/gtkconn.xml" />
+      <xi:include href="xml/gtkconv-theme-loader.xml" />
+      <xi:include href="xml/gtkconv-theme.xml" />
+      <xi:include href="xml/gtkconvwin.xml" />
+      <xi:include href="xml/gtkconv.xml" />
+      <xi:include href="xml/gtkdebug.xml" />
+      <xi:include href="xml/gtkdialogs.xml" />
+      <xi:include href="xml/gtkdnd-hints.xml" />
+      <xi:include href="xml/gtkdocklet.xml" />
+      <xi:include href="xml/gtkeventloop.xml" />
+      <xi:include href="xml/gtkicon-theme-loader.xml" />
+      <xi:include href="xml/gtkicon-theme.xml" />
+      <xi:include href="xml/gtkidle.xml" />
+      <xi:include href="xml/gtkimhtmltoolbar.xml" />
+      <xi:include href="xml/gtkimhtml.xml" />
+      <xi:include href="xml/gtklog.xml" />
+      <xi:include href="xml/gtkmedia.xml" />
+      <xi:include href="xml/gtkmenutray.xml" />
+      <xi:include href="xml/gtknickcolors.xml" />
+      <xi:include href="xml/gtknotify.xml" />
+      <xi:include href="xml/gtkpluginpref.xml" />
+      <xi:include href="xml/gtkplugin.xml" />
+      <xi:include href="xml/gtkpounce.xml" />
+      <xi:include href="xml/gtkprefs.xml" />
+      <xi:include href="xml/gtkprivacy.xml" />
+      <xi:include href="xml/gtkrequest.xml" />
+      <xi:include href="xml/gtkroomlist.xml" />
+      <xi:include href="xml/gtksavedstatuses.xml" />
+      <xi:include href="xml/gtkscrollbook.xml" />
+      <xi:include href="xml/gtksession.xml" />
+      <xi:include href="xml/gtksmiley.xml" />
+      <xi:include href="xml/gtksound.xml" />
+      <xi:include href="xml/gtksourceiter.xml" />
+      <xi:include href="xml/gtksourceundomanager.xml" />
+      <xi:include href="xml/gtksourceview-marshal.xml" />
+      <xi:include href="xml/gtkstatusbox.xml" />
+      <xi:include href="xml/gtkstatus-icon-theme.xml" />
+      <xi:include href="xml/gtkthemes.xml" />
+      <xi:include href="xml/gtkutils.xml" />
+      <xi:include href="xml/gtkwebviewtoolbar.xml" />
+      <xi:include href="xml/gtkwebview.xml" />
+      <xi:include href="xml/gtkwhiteboard.xml" />
+      <xi:include href="xml/gtkxfer.xml" />
+      <xi:include href="xml/minidialog.xml" />
+      <xi:include href="xml/pidginstock.xml" />
+      <xi:include href="xml/pidgintooltip.xml" />
+      <xi:include href="xml/pidgin.xml" />
+      <xi:include href="xml/smileyparser.xml" />
+  </reference>
+
+  <reference label="II">
+    <title>Purple-signals Reference</title>
+
+      <xi:include href="signals_gtkaccount.xml" />
+      <xi:include href="signals_gtkblist.xml" />
+      <xi:include href="signals_gtkconv.xml" />
+      <xi:include href="signals_gtkimhtml.xml" />
+      <xi:include href="signals_gtklog.xml" />
+  </reference>
+
+  <index id="api-index-full">
+    <title>Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
+  <index id="api-index-deprecated" role="deprecated">
+    <title>Index of deprecated symbols</title>
+    <xi:include href="xml/api-index-deprecated.xml"><xi:fallback /></xi:include>
+  </index>
+
+</book>

@@ -1,0 +1,521 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-account">
+<title>Account signals</title>
+
+<refsect1 id="accounts.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="accounts-account-created">account-created</link>&quot;
+  &quot;<link linkend="accounts-account-destroying">account-destroying</link>&quot;
+  &quot;<link linkend="accounts-account-added">account-added</link>&quot;
+  &quot;<link linkend="accounts-account-connecting">account-connecting</link>&quot;
+  &quot;<link linkend="accounts-account-removed">account-removed</link>&quot;
+  &quot;<link linkend="accounts-account-disabled">account-disabled</link>&quot;
+  &quot;<link linkend="accounts-account-enabled">account-enabled</link>&quot;
+  &quot;<link linkend="accounts-account-setting-info">account-setting-info</link>&quot;
+  &quot;<link linkend="accounts-account-set-info">account-set-info</link>&quot;
+  &quot;<link linkend="accounts-account-status-changed">account-status-changed</link>&quot;
+  &quot;<link linkend="accounts-account-actions-changed">account-actions-changed</link>&quot;
+  &quot;<link linkend="accounts-account-alias-changed">account-alias-changed</link>&quot;
+  &quot;<link linkend="accounts-account-authorization-requested">account-authorization-requested</link>&quot;
+  &quot;<link linkend="accounts-account-authorization-denied">account-authorization-denied</link>&quot;
+  &quot;<link linkend="accounts-account-authorization-granted">account-authorization-granted</link>&quot;
+  &quot;<link linkend="accounts-account-error-changed">account-error-changed</link>&quot;
+  &quot;<link linkend="accounts-account-signed-on">account-signed-on</link>&quot;
+  &quot;<link linkend="accounts-account-signed-off">account-signed-off</link>&quot;
+  &quot;<link linkend="accounts-account-connection-error">account-connection-error</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="accounts.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="accounts-account-created" role="signal">
+ <title>The <literal>&quot;account-created&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account is created by calling purple_account_new.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-destroying" role="signal">
+ <title>The <literal>&quot;account-destroying&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account is about to be destroyed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-added" role="signal">
+ <title>The <literal>&quot;account-added&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account is added.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that was added. See <literal>purple_accounts_add</literal>.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-connecting" role="signal">
+ <title>The <literal>&quot;account-connecting&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+This is called when an account is in the process of connecting.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account in the process of connecting.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-removed" role="signal">
+ <title>The <literal>&quot;account-removed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account is removed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that was removed. See <literal>purple_accounts_remove</literal>.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-disabled" role="signal">
+ <title>The <literal>&quot;account-disabled&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account is disabled.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that was disabled.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-enabled" role="signal">
+ <title>The <literal>&quot;account-enabled&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account is enabled.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that was enabled.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-setting-info" role="signal">
+ <title>The <literal>&quot;account-setting-info&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *new_info,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a user is about to send his new user info, or profile, to the server.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that the info will be set on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>new_info</parameter>&#160;:</term>
+    <listitem><simpara>The new information to set.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-set-info" role="signal">
+ <title>The <literal>&quot;account-set-info&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *new_info,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a user sent his new user info, or profile, to the server.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that the info was set on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>new_info</parameter>&#160;:</term>
+    <listitem><simpara>The new information set.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-status-changed" role="signal">
+ <title>The <literal>&quot;account-status-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        PurpleStatus *old,
+                                                        PurpleStatus *new,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when the status of an account changes (after the change).
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that changed status.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>old</parameter>&#160;:</term>
+    <listitem><simpara>The status before change.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>new</parameter>&#160;:</term>
+    <listitem><simpara>The status after change.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-actions-changed" role="signal">
+ <title>The <literal>&quot;account-actions-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when the account actions are changed after initial connection.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account whose actions changed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-alias-changed" role="signal">
+ <title>The <literal>&quot;account-alias-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *old,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when the alias of an account changes (after the change).
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account for which the alias was changed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>old</parameter>&#160;:</term>
+    <listitem><simpara>The alias before change.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-authorization-requested" role="signal">
+ <title>The <literal>&quot;account-authorization-requested&quot;</literal> signal</title>
+<programlisting>
+int                 user_function                      (PurpleAccount *account,
+                                                        const char *user,
+                                                        const char *message,
+                                                        char **response,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a user requests authorization.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user requesting authorization.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The authorization request message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>response</parameter>&#160;:</term>
+    <listitem><simpara>The message to send in the response.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>PURPLE_ACCOUNT_RESPONSE_IGNORE to silently ignore the request, PURPLE_ACCOUNT_RESPONSE_DENY to block the request (the sender might get informed), PURPLE_ACCOUNT_RESPONSE_ACCEPT if the request should be granted. If PURPLE_ACCOUNT_RESPONSE_PASS is returned, then the user will be prompted with the request.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-authorization-denied" role="signal">
+ <title>The <literal>&quot;account-authorization-denied&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *user,
+                                                        const char *message,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when the authorization request for a buddy is denied.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user requesting authorization.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message to tell the buddy who was denied.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-authorization-granted" role="signal">
+ <title>The <literal>&quot;account-authorization-granted&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *user,
+                                                        const char *message,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when the authorization request for a buddy is granted.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user requesting authorization.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message to tell the buddy who was granted authorization.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-error-changed" role="signal">
+ <title>The <literal>&quot;account-error-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const PurpleConnectionErrorInfo *old_error,
+                                                        const PurpleConnectionErrorInfo *current_error,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when <literal>account</literal>'s error changes.  You should not call purple_account_clear_current_error() while this signal is being emitted.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account whose error has changed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>old_error</parameter>&#160;:</term>
+    <listitem><simpara>The account's previous error, or <literal>NULL</literal> if it had no error.  After this signal is emitted, <literal>old_error</literal> is not guaranteed to be a valid pointer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>new_error</parameter>&#160;:</term>
+    <listitem><simpara>The account's new error, or <literal>NULL</literal> if it has no error. If not <literal>NULL</literal>, <literal>new_error</literal> will remain a valid until pointer just after the next time this signal is emitted for this <literal>account</literal>. See <literal>purple_account_get_current_error</literal>().</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-signed-on" role="signal">
+ <title>The <literal>&quot;account-signed-on&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account has signed on.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that has signed on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-signed-off" role="signal">
+ <title>The <literal>&quot;account-signed-off&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an account has signed off.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account that has signed off.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="accounts-account-connection-error" role="signal">
+ <title>The <literal>&quot;account-connection-error&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *gc,
+                                                        PurpleConnectionError err,
+                                                        const gchar *desc,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a connection error occurs, before <literal>"signed"</literal>-off.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account on which the error has occurred.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>err</parameter>&#160;:</term>
+    <listitem><simpara>The error that occurred.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>desc</parameter>&#160;:</term>
+    <listitem><simpara>A description of the error, giving more information.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

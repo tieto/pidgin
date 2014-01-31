@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-jabber">
+<title>Jabber signals</title>
+
+<refsect1 id="jabber.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="jabber-jabber-receiving-iq">jabber-receiving-iq</link>&quot;
+  &quot;<link linkend="jabber-jabber-receiving-message">jabber-receiving-message</link>&quot;
+  &quot;<link linkend="jabber-jabber-receiving-presence">jabber-receiving-presence</link>&quot;
+  &quot;<link linkend="jabber-jabber-watched-iq">jabber-watched-iq</link>&quot;
+  &quot;<link linkend="jabber-jabber-register-namespace-watcher">jabber-register-namespace-watcher</link>&quot;
+  &quot;<link linkend="jabber-jabber-unregister-namespace-watcher">jabber-unregister-namespace-watcher</link>&quot;
+  &quot;<link linkend="jabber-jabber-sending-xmlnode">jabber-sending-xmlnode</link>&quot;
+  &quot;<link linkend="jabber-jabber-receiving-xmlnode">jabber-receiving-xmlnode</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="jabber.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="jabber-jabber-receiving-iq" role="signal">
+ <title>The <literal>&quot;jabber-receiving-iq&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (PurpleConnection *gc,
+                                                        const char *type,
+                                                        const char *id,
+                                                        const char *from,
+                                                        PurpleXmlNode *iq,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an XMPP IQ stanza is received. Allows a plugin to process IQ stanzas.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection on which the stanza is received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>type</parameter>&#160;:</term>
+    <listitem><simpara>The IQ type ('get', 'set', 'result', or 'error').</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>id</parameter>&#160;:</term>
+    <listitem><simpara>The ID attribute from the stanza. MUST NOT be NULL.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>from</parameter>&#160;:</term>
+    <listitem><simpara>The originator of the stanza. MAY BE NULL if the stanza originated from the user's server.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>iq</parameter>&#160;:</term>
+    <listitem><simpara>The full stanza received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>TRUE if the plugin processed this stanza and *nobody else* should process it. FALSE otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="jabber-jabber-receiving-message" role="signal">
+ <title>The <literal>&quot;jabber-receiving-message&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (PurpleConnection *gc,
+                                                        const char *type,
+                                                        const char *id,
+                                                        const char *from,
+                                                        const char *to,
+                                                        PurpleXmlNode *message,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an XMPP message stanza is received. Allows a plugin to process message stanzas.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection on which the stanza is received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>type</parameter>&#160;:</term>
+    <listitem><simpara>The message type (see rfc3921 or rfc3921bis).</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>id</parameter>&#160;:</term>
+    <listitem><simpara>The ID attribute from the stanza. MAY BE NULL.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>from</parameter>&#160;:</term>
+    <listitem><simpara>The originator of the stanza. MAY BE NULL if the stanza originated from the user's server.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>to</parameter>&#160;:</term>
+    <listitem><simpara>The destination of the stanza. This is probably either the full JID of the receiver or the receiver's bare JID.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The full stanza received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>TRUE if the plugin processed this stanza and *nobody else* should process it. FALSE otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="jabber-jabber-receiving-presence" role="signal">
+ <title>The <literal>&quot;jabber-receiving-presence&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (PurpleConnection *gc,
+                                                        const char *type,
+                                                        const char *from,
+                                                        PurpleXmlNode *presence,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an XMPP presence stanza is received. Allows a plugin to process presence stanzas.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection on which the stanza is received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>type</parameter>&#160;:</term>
+    <listitem><simpara>The presence type (see rfc3921 or rfc3921bis). NULL indicates this is an "available" (i.e. online) presence.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>from</parameter>&#160;:</term>
+    <listitem><simpara>The originator of the stanza. MAY BE NULL if the stanza originated from the user's server.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>presence</parameter>&#160;:</term>
+    <listitem><simpara>The full stanza received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>TRUE if the plugin processed this stanza and *nobody else* should process it. FALSE otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="jabber-jabber-watched-iq" role="signal">
+ <title>The <literal>&quot;jabber-watched-iq&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (PurpleConnection *gc,
+                                                        const char *type,
+                                                        const char *id,
+                                                        const char *from,
+                                                        PurpleXmlNode *child,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an IQ with a watched (child, namespace) pair is received.  See jabber-register-namespace-watcher and jabber-unregister-namespace-watcher.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection on which the stanza is received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>type</parameter>&#160;:</term>
+    <listitem><simpara>The IQ type ('get', 'set', 'result', or 'error').</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>id</parameter>&#160;:</term>
+    <listitem><simpara>The ID attribute from the stanza. MUST NOT be NULL.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>from</parameter>&#160;:</term>
+    <listitem><simpara>The originator of the stanza. MAY BE NULL if the stanza originated from the user's server.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>child</parameter>&#160;:</term>
+    <listitem><simpara>The child node with namespace.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>TRUE if the plugin processed this stanza and *nobody else* should process it. FALSE otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="jabber-jabber-register-namespace-watcher" role="signal">
+ <title>The <literal>&quot;jabber-register-namespace-watcher&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (const char *node,
+                                                        const char *namespace,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emit this signal to register your desire to have specific IQ stanzas to be emitted via the jabber-watched-iq signal when received.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>node</parameter>&#160;:</term>
+    <listitem><simpara>The IQ child name to longer watch.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>namespace</parameter>&#160;:</term>
+    <listitem><simpara>The IQ child namespace to longer watch.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="jabber-jabber-unregister-namespace-watcher" role="signal">
+ <title>The <literal>&quot;jabber-unregister-namespace-watcher&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (const char *node,
+                                                        const char *namespace,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emit this signal to unregister your desire to have specific IQ stanzas to be emitted via the jabber-watched-iq signal when received.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>node</parameter>&#160;:</term>
+    <listitem><simpara>The IQ child name to no longer watch.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>namespace</parameter>&#160;:</term>
+    <listitem><simpara>The IQ child namespace to no longer watch.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="jabber-jabber-sending-xmlnode" role="signal">
+ <title>The <literal>&quot;jabber-sending-xmlnode&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        PurpleXmlNode **stanza,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emit this signal (<literal>purple_signal_emit</literal>) to send a stanza. It is preferred to use this instead of purple_protocol_server_iface_send_raw.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection on which to send the stanza.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>stanza</parameter>&#160;:</term>
+    <listitem><simpara>The stanza to send. If stanza is not NULL after being sent, the emitter should free it.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="jabber-jabber-receiving-xmlnode" role="signal">
+ <title>The <literal>&quot;jabber-receiving-xmlnode&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        PurpleXmlNode **stanza,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when an XMPP stanza is received. Allows a plugin to process any stanza.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection on which the stanza was received.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>stanza</parameter>&#160;:</term>
+    <listitem><simpara>The received stanza. Set stanza to NULL (and free it) to stop processing the stanza.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

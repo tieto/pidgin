@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-dbus-server">
+<title>D-Bus Server signals</title>
+
+<refsect1 id="dbus_server.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="dbus_server-dbus-method-called">dbus-method-called</link>&quot;
+  &quot;<link linkend="dbus_server-dbus-introspect">dbus-introspect</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="dbus_server.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="dbus_server-dbus-method-called" role="signal">
+ <title>The <literal>&quot;dbus-method-called&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (DBusConnection *connection,
+                                                        DBusMessage *message,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a dbus method is going to be called.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>connection</parameter>&#160;:</term>
+    <listitem><simpara>The DBus connection.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The DBus message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>TRUE if signal handler handled the method. ???.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="dbus_server-dbus-introspect" role="signal">
+ <title>The <literal>&quot;dbus-introspect&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (GList **bidings_list,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+???.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>bindings_list</parameter>&#160;:</term>
+    <listitem><simpara>???.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

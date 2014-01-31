@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-gtkconv">
+<title>Conversation signals</title>
+
+<refsect1 id="gtkconvs.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="gtkconvs-conversation-dragging">conversation-dragging</link>&quot;
+  &quot;<link linkend="gtkconvs-conversation-timestamp">conversation-timestamp</link>&quot;
+  &quot;<link linkend="gtkconvs-displaying-im-msg">displaying-im-msg</link>&quot;
+  &quot;<link linkend="gtkconvs-displayed-im-msg">displayed-im-msg</link>&quot;
+  &quot;<link linkend="gtkconvs-displaying-chat-msg">displaying-chat-msg</link>&quot;
+  &quot;<link linkend="gtkconvs-displayed-chat-msg">displayed-chat-msg</link>&quot;
+  &quot;<link linkend="gtkconvs-conversation-switched">conversation-switched</link>&quot;
+  &quot;<link linkend="gtkconvs-conversation-hiding">conversation-hiding</link>&quot;
+  &quot;<link linkend="gtkconvs-conversation-displayed">conversation-displayed</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="gtkconvs.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="gtkconvs-conversation-dragging" role="signal">
+ <title>The <literal>&quot;conversation-dragging&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PidginWindow *source,
+                                                        PidginWindow *destination,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a conversation is being drag and dropped between windows.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>source</parameter>&#160;:</term>
+    <listitem><simpara>The window where the conversation is.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>destination</parameter>&#160;:</term>
+    <listitem><simpara>The window where the conversation will be moved to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-conversation-timestamp" role="signal">
+ <title>The <literal>&quot;conversation-timestamp&quot;</literal> signal</title>
+<programlisting>
+char *              user_function                      (PurpleConversation *conv,
+                                                        time_t when,
+                                                        gboolean show_date,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted to allow plugins to customize the timestamp on a message.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation the message belongs to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>when</parameter>&#160;:</term>
+    <listitem><simpara>The time to be converted to a string.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>show_date</parameter>&#160;:</term>
+    <listitem><simpara>Whether the date should be displayed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara>A textual representation of the time, or <literal>NULL</literal> to use a default format.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-displaying-im-msg" role="signal">
+ <title>The <literal>&quot;displaying-im-msg&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char **message,
+                                                        PurpleConversation *conv,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted just before a message is displayed in an IM conversation. <literal>message</literal> is a pointer to a string, so the plugin can replace the message that will be displayed. This can also be used to cancel displaying a message by returning <literal>TRUE</literal>.
+  </para>
+  <note><para>
+Make sure to free <literal>*message</literal> before you replace it!
+  </para></note>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the message should be canceled, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-displayed-im-msg" role="signal">
+ <title>The <literal>&quot;displayed-im-msg&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char *message,
+                                                        PurpleConversation *conv,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted after a message is displayed in an IM conversation.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>The message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-displaying-chat-msg" role="signal">
+ <title>The <literal>&quot;displaying-chat-msg&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char **message,
+                                                        PurpleConversation *conv,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted just before a message is displayed in a chat. <literal>message</literal> is a pointer to a string, so the plugin can replace the message that will be displayed. This can also be used to cancel displaying a message by returning <literal>TRUE</literal>.
+  </para>
+  <note><para>
+Make sure to free <literal>*message</literal> before you replace it!
+  </para></note>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message is being displayed and sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message that will be displayed and sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation the message is being displayed and sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the message should be canceled, or <literal>FALSE</literal> otherwise.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-displayed-chat-msg" role="signal">
+ <title>The <literal>&quot;displayed-chat-msg&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleAccount *account,
+                                                        const char *who,
+                                                        char *message,
+                                                        PurpleConversation *conv,
+                                                        PurpleMessageFlags flags,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted after a message is displayed in a chat conversation.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>account</parameter>&#160;:</term>
+    <listitem><simpara>The account the message is being displayed and sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>who</parameter>&#160;:</term>
+    <listitem><simpara>The name of the user.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>message</parameter>&#160;:</term>
+    <listitem><simpara>A pointer to the message that will be displayed and sent.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>conv</parameter>&#160;:</term>
+    <listitem><simpara>The conversation the message is being displayed and sent on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>flags</parameter>&#160;:</term>
+    <listitem><simpara>Flags for this message.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-conversation-switched" role="signal">
+ <title>The <literal>&quot;conversation-switched&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConversation *conv,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a window switched from one conversation to another.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>new_conv</parameter>&#160;:</term>
+    <listitem><simpara>The now active conversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-conversation-hiding" role="signal">
+ <title>The <literal>&quot;conversation-hiding&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PidginConversation *gtkconv,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted immediately before an existing conversation is hidden.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gtkconv</parameter>&#160;:</term>
+    <listitem><simpara>The PidginConversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="gtkconvs-conversation-displayed" role="signal">
+ <title>The <literal>&quot;conversation-displayed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PidginConversation *gtkconv,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted right after the Pidgin UI is attached to a new or a hidden conversation.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gtkconv</parameter>&#160;:</term>
+    <listitem><simpara>The PidginConversation.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>
