@@ -83,9 +83,7 @@ libpurple/plugins/perl/common/const-xs.inc
 libpurple/plugins/perl/common/lib
 libpurple/purple-client-bindings.[ch]
 libpurple/purple-client-example
-libpurple/Purple.gir
 libpurple/purple.h$
-libpurple/Purple.typelib
 libpurple/tests/check_libpurple
 libpurple/tests/libpurple..
 ^libpurple/tests/test-suite\.log$
