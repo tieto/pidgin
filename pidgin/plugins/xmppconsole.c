@@ -25,7 +25,6 @@
 #include "prpl.h"
 #include "xmlnode.h"
 
-#include "gtkimhtml.h"
 #include "gtkwebview.h"
 #include "gtkutils.h"
 
@@ -865,7 +864,6 @@ create_console(PurplePluginAction *action)
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
 	console->entry = gtk_webview_new(TRUE);
-	gtk_webview_hide_toolbar(GTK_WEBVIEW(console->entry));
 	gtk_webview_set_whole_buffer_formatting_only(GTK_WEBVIEW(console->entry), TRUE);
 	g_signal_connect(G_OBJECT(console->entry),"key-press-event", G_CALLBACK(message_send_cb), console);
 
