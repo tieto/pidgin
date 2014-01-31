@@ -44,7 +44,6 @@ disco#info:
 #include "version.h"
 
 #include "gtkconv.h"
-#include "gtkimhtml.h"
 #include "gtkplugin.h"
 
 #include "xmppdisco.h"

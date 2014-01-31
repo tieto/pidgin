@@ -25,7 +25,6 @@
 #include "prpl.h"
 #include "xmlnode.h"
 
-#include "gtkimhtml.h"
 #include "gtkwebview.h"
 #include "gtkutils.h"
 
@@ -48,6 +47,10 @@ typedef struct {
 XmppConsole *console = NULL;
 static void *xmpp_console_handle = NULL;
 
+static const gchar *xmpp_prpls[] = {
+	"prpl-jabber", "prpl-gtalk", "prpl-facebook-xmpp", NULL
+};
+
 #define EMPTY_HTML \
 "<html><head><style type='text/css'>" \
 	"body { word-wrap: break-word; margin: 0; }" \
@@ -61,6 +64,24 @@ static void *xmpp_console_handle = NULL;
 	"span.value { color: #324aa4; }" \
 	"span.xmlns { color: #2cb12f; font-weight: bold;}" \
 "</style></head></html>"
+
+static gboolean
+xmppconsole_is_xmpp_account(PurpleAccount *account)
+{
+	const gchar *prpl_name;
+	int i;
+
+	prpl_name = purple_account_get_protocol_id(account);
+
+	i = 0;
+	while (xmpp_prpls[i] != NULL) {
+		if (g_strcmp0(xmpp_prpls[i], prpl_name) == 0)
+			return TRUE;
+		i++;
+	}
+
+	return FALSE;
+}
 
 static char *
 purple_xmlnode_to_pretty_str(PurpleXmlNode *node, int *len)
@@ -656,7 +677,7 @@ signing_on_cb(PurpleConnection *gc)
 		return;
 
 	account = purple_connection_get_account(gc);
-	if (strcmp(purple_account_get_protocol_id(account), "prpl-jabber"))
+	if (!xmppconsole_is_xmpp_account(account))
 		return;
 
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(console->dropdown),
@@ -709,21 +730,37 @@ signed_off_cb(PurpleConnection *gc)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	PurplePlugin *jabber;
-
-	jabber = purple_find_prpl("prpl-jabber");
-	if (!jabber)
-		return FALSE;
+	int i;
+	gboolean any_registered = FALSE;
 
 	xmpp_console_handle = plugin;
-	purple_signal_connect(jabber, "jabber-receiving-xmlnode", xmpp_console_handle,
-			    PURPLE_CALLBACK(purple_xmlnode_received_cb), NULL);
-	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
-			    PURPLE_CALLBACK(purple_xmlnode_sent_cb), NULL);
+
+	i = 0;
+	while (xmpp_prpls[i] != NULL) {
+		PurplePlugin *xmpp;
+
+		xmpp = purple_find_prpl(xmpp_prpls[i]);
+		i++;
+
+		if (!xmpp)
+			continue;
+		any_registered = TRUE;
+
+		purple_signal_connect(xmpp, "jabber-receiving-xmlnode",
+			xmpp_console_handle,
+			PURPLE_CALLBACK(purple_xmlnode_received_cb), NULL);
+		purple_signal_connect(xmpp, "jabber-sending-text",
+			xmpp_console_handle,
+			PURPLE_CALLBACK(purple_xmlnode_sent_cb), NULL);
+	}
+
+	if (!any_registered)
+		return FALSE;
+
 	purple_signal_connect(purple_connections_get_handle(), "signing-on",
-			    plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
+		plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",
-			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
+		plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
 
 	return TRUE;
 }
@@ -783,7 +820,7 @@ create_console(PurplePluginAction *action)
 	console->dropdown = gtk_combo_box_text_new();
 	for (connections = purple_connections_get_all(); connections; connections = connections->next) {
 		PurpleConnection *gc = connections->data;
-		if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), "prpl-jabber")) {
+		if (xmppconsole_is_xmpp_account(purple_connection_get_account(gc))) {
 			console->count++;
 			console->accounts = g_list_append(console->accounts, gc);
 			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(console->dropdown),
@@ -827,7 +864,6 @@ create_console(PurplePluginAction *action)
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
 	console->entry = gtk_webview_new(TRUE);
-	gtk_webview_hide_toolbar(GTK_WEBVIEW(console->entry));
 	gtk_webview_set_whole_buffer_formatting_only(GTK_WEBVIEW(console->entry), TRUE);
 	g_signal_connect(G_OBJECT(console->entry),"key-press-event", G_CALLBACK(message_send_cb), console);
 

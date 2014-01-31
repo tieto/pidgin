@@ -27,8 +27,6 @@ typedef struct group *Pidgin__Group;
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkxfer.h"
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkmenutray.h"
 #include "gtkplugin.h"
@@ -61,17 +59,6 @@ typedef PidginConvPlacementFunc		Pidgin__Conversation__PlacementFunc;
 
 /* gtkxfer.h */
 typedef PidginXferDialog *		Pidgin__Xfer__Dialog;
-
-/* gtkimhtml.h */
-typedef GtkIMHtml *			Pidgin__IMHtml;
-typedef GtkIMHtmlButtons		Pidgin__IMHtml__Buttons;
-typedef GtkIMHtmlFuncs *		Pidgin__IMHtml__Funcs;
-typedef GtkIMHtmlScalable *		Pidgin__IMHtml__Scalable;
-typedef GtkIMHtmlSmiley *		Pidgin__IMHtml__Smiley;
-typedef GtkIMHtmlOptions		Pidgin__IMHtml__Options;
-
-/* gtkimhtmltoolbar.h */
-typedef GtkIMHtmlToolbar *		Pidgin__IMHtmlToolbar;
 
 /* gtkmenutray.h */
 typedef PidginMenuTray *		Pidgin__MenuTray;
