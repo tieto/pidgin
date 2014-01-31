@@ -49,7 +49,7 @@ Core plugins may not contain any UI-specific code.
 </entry>
       </row>
       <row>
-<entry><literal>protocol</literal></entry>
+<entry><literal>prpl</literal></entry>
 <entry>
 A protocol plugin. This is a core plugin which provides libpurple the ability to
 connect to another IM or chat
