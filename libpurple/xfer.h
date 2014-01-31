@@ -108,7 +108,7 @@ typedef struct
 	 *                libpurple will free the data.
 	 * @size:    The maximum amount of data to put in the buffer.
 	 *
-	 * Returns:s The amount of data in the buffer, 0 if nothing is available,
+	 * Returns: The amount of data in the buffer, 0 if nothing is available,
 	 *          and a negative value if an error occurred and the transfer
 	 *          should be cancelled (libpurple will cancel).
 	 */

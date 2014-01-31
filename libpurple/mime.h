@@ -63,7 +63,7 @@ void purple_mime_document_free(PurpleMimeDocument *doc);
  *
  * @buf: The NULL-terminated string containing the MIME-encoded data.
  *
- * Returns:s A MIME document.
+ * Returns: A MIME document.
  */
 PurpleMimeDocument *purple_mime_document_parse(const char *buf);
 
@@ -73,7 +73,7 @@ PurpleMimeDocument *purple_mime_document_parse(const char *buf);
  * @buf: The string containing the MIME-encoded data.
  * @len: Length of buf.
  *
- * Returns:s   A MIME document.
+ * Returns:   A MIME document.
  */
 PurpleMimeDocument *purple_mime_document_parsen(const char *buf, gsize len);
 
@@ -98,7 +98,7 @@ GList *purple_mime_document_get_fields(PurpleMimeDocument *doc);
  * @doc:   The MIME document.
  * @field: Case-insensitive field name.
  *
- * Returns:s     Value associated with the indicated header field, or
+ * Returns:     Value associated with the indicated header field, or
  *              NULL if the field doesn't exist.
  */
 const char *purple_mime_document_get_field(PurpleMimeDocument *doc,
@@ -151,7 +151,7 @@ GList *purple_mime_part_get_fields(PurpleMimePart *part);
  * @part:  The MIME document part.
  * @field: Case-insensitive name of the header field.
  *
- * Returns:s     Value of the specified header field, or NULL if the
+ * Returns:     Value of the specified header field, or NULL if the
  *              field doesn't exist.
  */
 const char *purple_mime_part_get_field(PurpleMimePart *part,
@@ -182,7 +182,7 @@ void purple_mime_part_set_field(PurpleMimePart *part,
  *
  * @part: The MIME document part.
  *
- * Returns:s    NULL-terminated data found in the document part
+ * Returns:    NULL-terminated data found in the document part
  */
 const char *purple_mime_part_get_data(PurpleMimePart *part);
 
@@ -203,7 +203,7 @@ void purple_mime_part_get_data_decoded(PurpleMimePart *part,
  * Get the length of the data portion of a MIME document part.
  *
  * @part: The MIME document part.
- * Returns:s    Length of the data in the document part.
+ * Returns:    Length of the data in the document part.
  */
 gsize purple_mime_part_get_length(PurpleMimePart *part);
 

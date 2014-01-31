@@ -162,7 +162,7 @@ GType pidgin_blist_theme_get_type(void);
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A gdk color.
+ * Returns: A gdk color.
  */
  GdkColor *pidgin_blist_theme_get_background_color(PidginBlistTheme *theme);
 
@@ -172,7 +172,7 @@ GType pidgin_blist_theme_get_type(void);
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s The opacity
+ * Returns: The opacity
  */
 gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
 
@@ -181,7 +181,7 @@ gdouble pidgin_blist_theme_get_opacity(PidginBlistTheme *theme);
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s The buddy list layout.
+ * Returns: The buddy list layout.
  */
 PidginBlistLayout *pidgin_blist_theme_get_layout(PidginBlistTheme *theme);
 
@@ -190,7 +190,7 @@ PidginBlistLayout *pidgin_blist_theme_get_layout(PidginBlistTheme *theme);
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A gdk color.
+ * Returns: A gdk color.
  */
 GdkColor *pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *theme);
 
@@ -199,7 +199,7 @@ GdkColor *pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *the
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_expanded_text_info(PidginBlistTheme *theme);
 
@@ -208,7 +208,7 @@ PidginThemeFont *pidgin_blist_theme_get_expanded_text_info(PidginBlistTheme *the
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A gdk color.
+ * Returns: A gdk color.
  */
 GdkColor *pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *theme);
 
@@ -217,7 +217,7 @@ GdkColor *pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *th
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *theme);
 
@@ -226,7 +226,7 @@ PidginThemeFont *pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *th
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A gdkcolor for contacts and chats.
+ * Returns: A gdkcolor for contacts and chats.
  */
 GdkColor *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
 
@@ -235,7 +235,7 @@ GdkColor *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_contact_text_info(PidginBlistTheme *theme);
 
@@ -244,7 +244,7 @@ PidginThemeFont *pidgin_blist_theme_get_contact_text_info(PidginBlistTheme *them
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_online_text_info(PidginBlistTheme *theme);
 
@@ -253,7 +253,7 @@ PidginThemeFont *pidgin_blist_theme_get_online_text_info(PidginBlistTheme *theme
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_away_text_info(PidginBlistTheme *theme);
 
@@ -262,7 +262,7 @@ PidginThemeFont *pidgin_blist_theme_get_away_text_info(PidginBlistTheme *theme);
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_offline_text_info(PidginBlistTheme *theme);
 
@@ -271,7 +271,7 @@ PidginThemeFont *pidgin_blist_theme_get_offline_text_info(PidginBlistTheme *them
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_idle_text_info(PidginBlistTheme *theme);
 
@@ -280,7 +280,7 @@ PidginThemeFont *pidgin_blist_theme_get_idle_text_info(PidginBlistTheme *theme);
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_unread_message_text_info(PidginBlistTheme *theme);
 
@@ -290,7 +290,7 @@ PidginThemeFont *pidgin_blist_theme_get_unread_message_text_info(PidginBlistThem
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_unread_message_nick_said_text_info(PidginBlistTheme *theme);
 
@@ -299,7 +299,7 @@ PidginThemeFont *pidgin_blist_theme_get_unread_message_nick_said_text_info(Pidgi
  *
  * @theme:  The PidginBlist theme.
  *
- * Returns:s A font and color pair.
+ * Returns: A font and color pair.
  */
 PidginThemeFont *pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme);
 

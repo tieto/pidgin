@@ -81,7 +81,7 @@ GType purple_sound_theme_get_type(void);
  * @theme: The theme.
  * @event: The purple sound event to look up.
  *
- * Returns:s The filename of the sound event.
+ * Returns: The filename of the sound event.
  */
 const gchar *purple_sound_theme_get_file(PurpleSoundTheme *theme,
 		const gchar *event);
@@ -92,7 +92,7 @@ const gchar *purple_sound_theme_get_file(PurpleSoundTheme *theme,
  * @theme: The theme.
  * @event: The purple sound event to look up
  *
- * Returns:s The directory + '/' + filename of the sound event.  This is
+ * Returns: The directory + '/' + filename of the sound event.  This is
  *          a newly allocated string that should be freed with g_free.
  */
 gchar *purple_sound_theme_get_file_full(PurpleSoundTheme *theme,

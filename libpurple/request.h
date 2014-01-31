@@ -309,7 +309,7 @@ purple_request_cpar_set_icon(PurpleRequestCommonParameters *cpar,
  *
  * @cpar: The parameters set.
  *
- * Returns:s icon_type The icon type.
+ * Returns: icon_type The icon type.
  */
 PurpleRequestIconType
 purple_request_cpar_get_icon(PurpleRequestCommonParameters *cpar);

@@ -82,7 +82,7 @@ GType purple_theme_loader_get_type(void);
  *
  * @self: The theme loader
  *
- * Returns:s The string representing this type
+ * Returns: The string representing this type
  */
 const gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
 
@@ -92,7 +92,7 @@ const gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
  * @loader: The theme loader
  * @dir:    The directory containing the theme
  *
- * Returns:s A PurpleTheme containing the information from the directory
+ * Returns: A PurpleTheme containing the information from the directory
  */
 PurpleTheme *purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir);
 
@@ -106,7 +106,7 @@ PurpleTheme *purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *d
  * @loader: The theme loader
  * @dir:    The directory that may contain the theme
  *
- * Returns:s TRUE if the directory appears to contain a theme, FALSE otherwise.
+ * Returns: TRUE if the directory appears to contain a theme, FALSE otherwise.
  */
 gboolean purple_theme_loader_probe(PurpleThemeLoader *loader, const gchar *dir);
 

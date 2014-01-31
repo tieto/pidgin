@@ -74,7 +74,7 @@ GType pidgin_icon_theme_get_type(void);
  * @theme:     the theme
  * @event:		the pidgin icon event to look up
  *
- * Returns:s the filename of the icon event
+ * Returns: the filename of the icon event
  */
 const gchar *pidgin_icon_theme_get_icon(PidginIconTheme *theme,
 		const gchar *event);
