@@ -33,7 +33,6 @@ syntax: regexp
 .*\.rej$
 .*\.so$
 .*\.moc$
-Doxyfile(\.mingw)?$
 VERSION$
 aclocal.m4
 autogen.args
