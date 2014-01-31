@@ -297,7 +297,7 @@ version 3.0.0 (??/??/????):
 		  PurpleProtocolAction for protocol actions.
 		* PURPLE_INIT_PLUGIN(pluginname, initfunc, plugininfo) is now
 		  PURPLE_PLUGIN_INIT(pluginname, query_func, load_func, unload_func).
-		  See C-HOWTO for an example.
+		  See "C Plugins tutorial" (tut_c_plugins.xml) for an example.
 		* purple_plugin_load and purple_plugin_unload now use an error argument
 		  to return load/unload errors
 		* purple_plugins_get_all is now purple_plugins_find_all, and the
