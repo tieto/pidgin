@@ -177,7 +177,8 @@ gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 	EBookQuery *full_query;
 	GSList *groups, *g;
 	EContact *result;
-	EContactField protocol_field = gevo_prpl_get_field(buddy->account, buddy);
+	EContactField protocol_field =
+		gevo_prpl_get_field(purple_buddy_get_account(buddy), buddy);
 
 	if (protocol_field == 0)
 		return NULL;
@@ -187,7 +188,8 @@ gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 		EBookQuery *queries[2];
 
 		queries[0] = query;
-		queries[1] = e_book_query_field_test(protocol_field, E_BOOK_QUERY_IS, buddy->name);
+		queries[1] = e_book_query_field_test(protocol_field,
+			E_BOOK_QUERY_IS, purple_buddy_get_name(buddy));
 		if (queries[1] == NULL)
 		{
 			purple_debug_error("evolution", "Error in creating protocol query\n");
@@ -199,7 +201,8 @@ gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 	}
 	else
 	{
-		full_query = e_book_query_field_test(protocol_field, E_BOOK_QUERY_IS, buddy->name);
+		full_query = e_book_query_field_test(protocol_field,
+			E_BOOK_QUERY_IS, purple_buddy_get_name(buddy));
 		if (full_query == NULL)
 		{
 			purple_debug_error("evolution", "Error in creating protocol query\n");

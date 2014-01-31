@@ -96,7 +96,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 	char *full_name = NULL;
 
 	if (dialog->person_only)
-		username = dialog->buddy->name;
+		username = purple_buddy_get_name(dialog->buddy);
 	else
 		username = gtk_entry_get_text(GTK_ENTRY(dialog->username));
 

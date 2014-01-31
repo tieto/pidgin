@@ -29,7 +29,7 @@ void
 gevo_add_buddy(PurpleAccount *account, const char *group_name,
 			   const char *buddy_name, const char *alias)
 {
-	PurpleConversation *conv = NULL;
+	PurpleIMConversation *conv = NULL;
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 
@@ -53,8 +53,9 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 
 	if (conv != NULL)
 	{
-		purple_buddy_icon_update(purple_im_conversation_get_icon(PURPLE_CONV_IM(conv)));
-		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_ADD);
+		purple_buddy_icon_update(purple_im_conversation_get_icon(conv));
+		purple_conversation_update(PURPLE_CONVERSATION(conv),
+			PURPLE_CONVERSATION_UPDATE_ADD);
 	}
 }
 
@@ -81,7 +82,8 @@ gevo_get_groups(void)
 			if (PURPLE_IS_GROUP(gnode))
 			{
 				g = PURPLE_GROUP(gnode);
-				list = g_list_append(list, g->name);
+				list = g_list_append(list,
+					(gpointer)purple_group_get_name(g));
 			}
 		}
 	}

@@ -248,14 +248,15 @@ menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 		}
 		else
 		{
-			purple_notify_error(NULL, NULL, _("Unable to send email"),
-							  _("The evolution executable was not found in the PATH."));
+			purple_notify_error(NULL, NULL, _("Unable to send "
+				"email"), _("The evolution executable was not "
+				"found in the PATH."), NULL);
 		}
 	}
 	else
 	{
 		purple_notify_error(NULL, NULL, _("Unable to send email"),
-						  _("An email address was not found for this buddy."));
+			_("An email address was not found for this buddy."), NULL);
 	}
 }
 
@@ -515,7 +516,6 @@ get_config_frame(PurplePlugin *plugin)
 static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,	/**< get_config_frame */
-	0,			/**< page_num */
 	/* Padding */
 	NULL,
 	NULL,

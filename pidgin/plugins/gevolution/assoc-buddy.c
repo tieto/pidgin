@@ -188,7 +188,8 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 		return;
 	}
 
-	prpl_id = purple_account_get_protocol_id(dialog->buddy->account);
+	prpl_id = purple_account_get_protocol_id(purple_buddy_get_account(
+		dialog->buddy));
 
 	for (c = cards; c != NULL; c = c->next)
 	{
@@ -207,8 +208,9 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 						   -1);
 
 		/* See if this user has the buddy in its list. */
-		protocol_field = gevo_prpl_get_field(dialog->buddy->account,
-											 dialog->buddy);
+		protocol_field = gevo_prpl_get_field(
+			purple_buddy_get_account(dialog->buddy),
+			dialog->buddy);
 
 		if (protocol_field > 0)
 		{
@@ -218,7 +220,8 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 
 			for (l = ims; l != NULL; l = l->next)
 			{
-				if (!strcmp(l->data, dialog->buddy->name))
+				if (!strcmp(l->data,
+					purple_buddy_get_name(dialog->buddy)))
 				{
 					GtkTreeSelection *selection;
 
@@ -256,9 +259,10 @@ addrbook_change_cb(GtkComboBox *combo, GevoAssociateBuddyDialog *dialog)
 static void
 new_person_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 {
-	gevo_new_person_dialog_show(dialog->book, NULL, dialog->buddy->account,
-								dialog->buddy->name, NULL, dialog->buddy,
-								TRUE);
+	gevo_new_person_dialog_show(dialog->book, NULL,
+		purple_buddy_get_account(dialog->buddy),
+		purple_buddy_get_name(dialog->buddy),
+		NULL, dialog->buddy, TRUE);
 
 	delete_win_cb(NULL, NULL, dialog);
 }
@@ -289,13 +293,15 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 					   COLUMN_DATA, &contact,
 					   -1);
 
-	protocol_field = gevo_prpl_get_field(dialog->buddy->account, dialog->buddy);
+	protocol_field = gevo_prpl_get_field(
+		purple_buddy_get_account(dialog->buddy), dialog->buddy);
 
 	if (protocol_field == 0)
 		return; /* XXX */
 
 	list = e_contact_get(contact, protocol_field);
-	list = g_list_append(list, g_strdup(dialog->buddy->name));
+	list = g_list_append(list,
+		g_strdup(purple_buddy_get_name(dialog->buddy)));
 
 	e_contact_set(contact, protocol_field, list);
 
