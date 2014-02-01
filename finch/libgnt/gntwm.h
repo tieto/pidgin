@@ -105,7 +105,7 @@ struct _GntWM
 	GntWS *cws;
 
 	GntListWindow _list;
-	GntListWindow *windows,         /* Window-list window */
+	GntListWindow *windows;         /* Window-list window */
 	GntListWindow *actions;         /* Action-list window */
 
 	GHashTable *nodes;    /* GntWidget -> GntNode */
