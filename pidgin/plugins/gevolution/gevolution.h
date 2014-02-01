@@ -97,7 +97,6 @@ typedef struct
 	GtkWidget *addrbooks_combo;
 	GtkWidget *search_field;
 	GtkWidget *assoc_button;
-	GtkWidget *imhtml;
 	GtkListStore *model;
 
 	GtkTreeModel *addrbooks;

@@ -22,7 +22,6 @@
 #include "gtkblist.h"
 #include "pidgin.h"
 #include "gtkutils.h"
-#include "gtkimhtml.h"
 
 #include "debug.h"
 
@@ -204,8 +203,9 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 						   -1);
 
 		/* See if this user has the buddy in its list. */
-		protocol_field = gevo_protocol_get_field(purple_buddy_get_account(dialog->buddy),
-											 dialog->buddy);
+		protocol_field = gevo_protocol_get_field(
+			purple_buddy_get_account(dialog->buddy),
+			dialog->buddy);
 
 		if (protocol_field > 0)
 		{
@@ -215,7 +215,8 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 
 			for (l = ims; l != NULL; l = l->next)
 			{
-				if (!strcmp(l->data, purple_buddy_get_name(dialog->buddy)))
+				if (!strcmp(l->data,
+					purple_buddy_get_name(dialog->buddy)))
 				{
 					GtkTreeSelection *selection;
 
@@ -253,9 +254,10 @@ addrbook_change_cb(GtkComboBox *combo, GevoAssociateBuddyDialog *dialog)
 static void
 new_person_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 {
-	gevo_new_person_dialog_show(dialog->book, NULL, purple_buddy_get_account(dialog->buddy),
-								purple_buddy_get_name(dialog->buddy), NULL, dialog->buddy,
-								TRUE);
+	gevo_new_person_dialog_show(dialog->book, NULL,
+		purple_buddy_get_account(dialog->buddy),
+		purple_buddy_get_name(dialog->buddy),
+		NULL, dialog->buddy, TRUE);
 
 	delete_win_cb(NULL, NULL, dialog);
 }
@@ -286,13 +288,15 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 					   COLUMN_DATA, &contact,
 					   -1);
 
-	protocol_field = gevo_protocol_get_field(purple_buddy_get_account(dialog->buddy), dialog->buddy);
+	protocol_field = gevo_protocol_get_field(
+		purple_buddy_get_account(dialog->buddy), dialog->buddy);
 
 	if (protocol_field == 0)
 		return; /* XXX */
 
 	list = e_contact_get(contact, protocol_field);
-	list = g_list_append(list, g_strdup(purple_buddy_get_name(dialog->buddy)));
+	list = g_list_append(list,
+		g_strdup(purple_buddy_get_name(dialog->buddy)));
 
 	e_contact_set(contact, protocol_field, list);
 
@@ -316,7 +320,6 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	GtkWidget *hbox;
 	GtkWidget *bbox;
 	GtkWidget *sep;
-	GtkWidget *expander;
 	GtkTreeSelection *selection;
 	GtkCellRenderer *cell;
 
@@ -415,21 +418,6 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	g_signal_connect(G_OBJECT(dialog->addrbooks_combo), "changed",
 					 G_CALLBACK(addrbook_change_cb), dialog);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->addrbooks_combo), 0);
-
-	/* Add the expander */
-	expander = gtk_expander_new_with_mnemonic(_("User _details"));
-	gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
-	gtk_widget_show(expander);
-
-	/*
-	 * User details
-	 */
-
-	/* Textview */
-	dialog->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(expander), 
-		pidgin_make_scrollable(dialog->imhtml, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1));
-	gtk_widget_show(dialog->imhtml);
 
 	/* Separator. */
 	sep = gtk_hseparator_new();

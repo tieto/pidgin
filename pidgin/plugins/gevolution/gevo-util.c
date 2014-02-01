@@ -54,7 +54,8 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 	if (im != NULL)
 	{
 		purple_buddy_icon_update(purple_im_conversation_get_icon(im));
-		purple_conversation_update(PURPLE_CONVERSATION(im), PURPLE_CONVERSATION_UPDATE_ADD);
+		purple_conversation_update(PURPLE_CONVERSATION(im),
+			PURPLE_CONVERSATION_UPDATE_ADD);
 	}
 }
 
@@ -81,7 +82,8 @@ gevo_get_groups(void)
 			if (PURPLE_IS_GROUP(gnode))
 			{
 				g = PURPLE_GROUP(gnode);
-				list = g_list_append(list, (gpointer)purple_group_get_name(g));
+				list = g_list_append(list,
+					(gpointer)purple_group_get_name(g));
 			}
 		}
 	}
