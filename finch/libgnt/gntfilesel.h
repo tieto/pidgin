@@ -98,11 +98,15 @@ struct _GntFile
 G_BEGIN_DECLS
 
 /**
+ * gnt_file_sel_get_gtype:
+ *
  * Returns: GType for GntFileSel.
  */
 GType gnt_file_sel_get_gtype(void);
 
 /**
+ * gnt_file_sel_new:
+ *
  * Create a new file selector.
  *
  * Returns:  The newly created file selector.
@@ -110,45 +114,50 @@ GType gnt_file_sel_get_gtype(void);
 GntWidget * gnt_file_sel_new(void);
 
 /**
- * Set the current location of the file selector.
- *
+ * gnt_file_sel_set_current_location:
  * @sel:   The file selector.
  * @path:  The current path of the selector.
+ *
+ * Set the current location of the file selector.
  *
  * Returns: %TRUE if the current location was successfully changed, %FALSE otherwise.
  */
 gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 
 /**
- * Set wheter to only allow selecting directories.
- *
+ * gnt_file_sel_set_dirs_only:
  * @sel:    The file selector.
  * @dirs:   %TRUE if only directories can be selected, %FALSE if files
  *               can also be selected.
+ *
+ * Set wheter to only allow selecting directories.
  */
 void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
 
 /**
- * Check whether the file selector allows only selecting directories.
- *
+ * gnt_file_sel_get_dirs_only:
  * @sel:  The file selector.
+ *
+ * Check whether the file selector allows only selecting directories.
  *
  * Returns:  %TRUE if only directories can be selected.
  */
 gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
 
 /**
- * Set whether a selected file must exist.
- *
+ * gnt_file_sel_set_must_exist:
  * @sel:   The file selector.
  * @must:  %TRUE if the selected file must exist.
+ *
+ * Set whether a selected file must exist.
  */
 void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
 
 /**
- * Check whether the selector allows selecting non-existent files.
- *
+ * gnt_file_sel_get_must_exist:
  * @sel:  The file selector.
+ *
+ * Check whether the selector allows selecting non-existent files.
  *
  * Returns:  %TRUE if the selected file must exist, %FALSE if a non-existent
  *          file can be selected.
@@ -156,9 +165,10 @@ void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
 gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
 
 /**
- * Get the selected file in the selector.
- *
+ * gnt_file_sel_get_selected_file:
  * @sel:  The file selector.
+ *
+ * Get the selected file in the selector.
  *
  * Returns: The path of the selected file. The caller should g_free the returned
  *         string.
@@ -166,9 +176,10 @@ gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
 char * gnt_file_sel_get_selected_file(GntFileSel *sel);
 
 /**
- * Get the list of selected files in the selector.
- *
+ * gnt_file_sel_get_selected_multi_files:
  * @sel:  The file selector.
+ *
+ * Get the list of selected files in the selector.
  *
  * Returns:  A list of paths for the selected files. The caller must g_free the
  *          contents of the list, and g_list_free the list.
@@ -176,43 +187,48 @@ char * gnt_file_sel_get_selected_file(GntFileSel *sel);
 GList * gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
 
 /**
- * Allow selecting multiple files.
- *
+ * gnt_file_sel_set_multi_select:
  * @sel:  The file selector.
  * @set:  %TRUE if selecting multiple files should be allowed.
+ *
+ * Allow selecting multiple files.
  */
 void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 
 /**
- * Set the suggested file to have selected at startup.
- *
+ * gnt_file_sel_set_suggested_filename:
  * @sel:      The file selector.
  * @suggest:  The suggested filename.
+ *
+ * Set the suggested file to have selected at startup.
  */
 void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest);
 
 /**
- * Set custom functions to read the names of files.
- *
+ * gnt_file_sel_set_read_fn:
  * @sel:      The file selector.
  * @read_fn:  The custom read function.
+ *
+ * Set custom functions to read the names of files.
  */
 void gnt_file_sel_set_read_fn(GntFileSel *sel, gboolean (*read_fn)(const char *path, GList **files, GError **error));
 
 /**
- * Create a new GntFile.
- *
+ * gnt_file_new:
  * @name:   The name of the file.
  * @size:   The size of the file.
+ *
+ * Create a new GntFile.
  *
  * Returns:  The newly created GntFile.
  */
 GntFile* gnt_file_new(const char *name, unsigned long size);
 
 /**
- * Create a new GntFile for a directory.
- *
+ * gnt_file_new_dir:
  * @name:  The name of the directory.
+ *
+ * Create a new GntFile for a directory.
  *
  * Returns:  The newly created GntFile.
  */

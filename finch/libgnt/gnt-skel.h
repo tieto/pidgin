@@ -60,18 +60,8 @@ struct _GntSkelClass
 
 G_BEGIN_DECLS
 
-/**
- *
- *
- * Returns:
- */
 GType gnt_skel_get_gtype(void);
 
-/**
- *
- *
- * Returns:
- */
 GntWidget * gnt_skel_new();
 
 G_END_DECLS

@@ -60,14 +60,17 @@ struct _GntClipboardClass
 G_BEGIN_DECLS
 
 /**
+ * gnt_clipboard_get_gtype:
+ *
  * Returns: GType for GntClipboard.
  */
 GType gnt_clipboard_get_gtype(void);
 
 /**
- * Get the current text from the clipboard.
- *
+ * gnt_clipboard_get_string:
  * @clip:  The clipboard.
+ *
+ * Get the current text from the clipboard.
  *
  * Returns:  A copy of the string in the clipboard. The caller should free the
  *          returned value.
@@ -75,10 +78,11 @@ GType gnt_clipboard_get_gtype(void);
 gchar * gnt_clipboard_get_string(GntClipboard *clip);
 
 /**
- * Set the text in the clipboard.
- *
+ * gnt_clipboard_set_string:
  * @clip:     The clipboard.
  * @string:   New string for the clipboard.
+ *
+ * Set the text in the clipboard.
  */
 void gnt_clipboard_set_string(GntClipboard *clip, const gchar *string);
 

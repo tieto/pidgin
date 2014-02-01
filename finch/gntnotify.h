@@ -34,6 +34,8 @@
 /*@{*/
 
 /**
+ * finch_notify_get_ui_ops:
+ *
  * Get the ui-functions.
  *
  * Returns: The PurpleNotifyUiOps structure populated with the appropriate functions.
@@ -41,11 +43,15 @@
 PurpleNotifyUiOps *finch_notify_get_ui_ops(void);
 
 /**
+ * finch_notify_init:
+ *
  * Perform necessary initializations.
  */
 void finch_notify_init(void);
 
 /**
+ * finch_notify_uninit:
+ *
  * Perform necessary uninitializations.
  */
 void finch_notify_uninit(void);

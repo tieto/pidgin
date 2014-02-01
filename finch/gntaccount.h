@@ -34,6 +34,8 @@
 /*@{*/
 
 /**
+ * finch_accounts_get_ui_ops:
+ *
  * Get the ui-functions.
  *
  * Returns: The PurpleAccountUiOps structure populated with the appropriate functions.
@@ -41,24 +43,31 @@
 PurpleAccountUiOps *finch_accounts_get_ui_ops(void);
 
 /**
+ * finch_accounts_init:
+ *
  * Perform necessary initializations.
  */
 void finch_accounts_init(void);
 
 /**
+ * finch_accounts_uninit:
+ *
  * Perform necessary uninitializations.
  */
 void finch_accounts_uninit(void);
 
 /**
+ * finch_accounts_show_all:
+ *
  * Show the account-manager dialog.
  */
 void finch_accounts_show_all(void);
 
 /**
- * Show the edit dialog for an account.
- *
+ * finch_account_dialog_show:
  * @account:  The account to edit, or %NULL to create a new account.
+ *
+ * Show the edit dialog for an account.
  */
 void finch_account_dialog_show(PurpleAccount *account);
 

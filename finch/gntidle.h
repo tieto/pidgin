@@ -34,6 +34,8 @@
 /*@{*/
 
 /**
+ * finch_idle_get_ui_ops:
+ *
  * Returns the GNT idle UI ops.
  *
  * Returns: The UI operations structure.

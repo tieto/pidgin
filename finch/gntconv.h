@@ -83,6 +83,8 @@ struct _FinchConvIm
 };
 
 /**
+ * finch_conv_get_ui_ops:
+ *
  * Get the ui-functions.
  *
  * Returns: The PurpleConversationUiOps populated with the appropriate functions.
@@ -90,28 +92,34 @@ struct _FinchConvIm
 PurpleConversationUiOps *finch_conv_get_ui_ops(void);
 
 /**
+ * finch_conversation_init:
+ *
  * Perform the necessary initializations.
  */
 void finch_conversation_init(void);
 
 /**
+ * finch_conversation_uninit:
+ *
  * Perform the necessary uninitializations.
  */
 void finch_conversation_uninit(void);
 
 /**
- * Set a conversation as active in a contactized conversation
- *
+ * finch_conversation_set_active:
  * @conv: The conversation to make active.
+ *
+ * Set a conversation as active in a contactized conversation
  */
 void finch_conversation_set_active(PurpleConversation *conv);
 
 /**
- * Sets the information widget for the conversation window.
- *
+ * finch_conversation_set_info_widget:
  * @conv:   The conversation.
  * @widget: The widget containing the information. If %NULL,
  *               the current information widget is removed.
+ *
+ * Sets the information widget for the conversation window.
  */
 void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget);
 

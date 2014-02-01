@@ -68,31 +68,36 @@ struct _GntCheckBoxClass
 G_BEGIN_DECLS
 
 /**
+ * gnt_check_box_get_gtype:
+ *
  * Returns: GType for GntCheckBox
  */
 GType gnt_check_box_get_gtype(void);
 
 /**
- * Create a new checkbox.
- *
+ * gnt_check_box_new:
  * @text: The text for the checkbox.
+ *
+ * Create a new checkbox.
  *
  * Returns:  The newly created checkbox.
  */
 GntWidget * gnt_check_box_new(const char *text);
 
 /**
- * Set whether the checkbox should be checked or not.
- *
+ * gnt_check_box_set_checked:
  * @box:   The checkbox.
  * @set:   %TRUE if the checkbox should be selected, %FALSE otherwise.
+ *
+ * Set whether the checkbox should be checked or not.
  */
 void gnt_check_box_set_checked(GntCheckBox *box, gboolean set);
 
 /**
- * Return the checked state of the checkbox.
- *
+ * gnt_check_box_get_checked:
  * @box:  The checkbox.
+ *
+ * Return the checked state of the checkbox.
  *
  * Returns:     %TRUE if the checkbox is selected, %FALSE otherwise.
  */

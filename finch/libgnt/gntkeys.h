@@ -30,7 +30,7 @@
 #include <curses.h>
 #include <term.h>
 
-/**
+/*
  * terminfo/termcap doesn't provide all the information that I want to use, eg.
  * ctrl-up, ctrl-down etc. So I am going to hard-code some of the information
  * for some popular $TERMs
@@ -104,54 +104,62 @@ extern char *gnt_key_cright;
 #define GNT_KEY_F12        SAFE(key_f12)
 
 /**
+ * gnt_init_keys:
+ *
  * Initialize the keys.
  */
 void gnt_init_keys(void);
 
 /**
+ * gnt_keys_refine:
+ * @text:  The input text to refine.
+ *
  * Refine input text. This usually looks at what the terminal claims it is,
  * and tries to change the text to work around some oft-broken terminfo entries.
- *
- * @text:  The input text to refine.
  */
 void gnt_keys_refine(char *text);
 
 /**
- * Translate a user-readable representation of an input to a machine-readable representation.
- *
+ * gnt_key_translate:
  * @name:   The user-readable representation of an input (eg.: c-t)
+ *
+ * Translate a user-readable representation of an input to a machine-readable representation.
  *
  * Returns:  A machine-readable representation of the input.
  */
 const char *gnt_key_translate(const char *name);
 
 /**
- * Translate a machine-readable representation of an input to a user-readable representation.
- *
+ * gnt_key_lookup:
  * @key:  The machine-readable representation of an input.
+ *
+ * Translate a machine-readable representation of an input to a user-readable representation.
  *
  * Returns:  A user-readable representation of the input (eg.: c-t).
  */
 const char *gnt_key_lookup(const char *key);
 
 /**
- * Add a key combination to the internal key-tree.
- *
+ * gnt_keys_add_combination:
  * @key:  The key to add
+ *
+ * Add a key combination to the internal key-tree.
  */
 void gnt_keys_add_combination(const char *key);
 
 /**
- * Remove a key combination from the internal key-tree.
- *
+ * gnt_keys_del_combination:
  * @key: The key to remove.
+ *
+ * Remove a key combination from the internal key-tree.
  */
 void gnt_keys_del_combination(const char *key);
 
 /**
- * Find a combination from the given string.
- *
+ * gnt_keys_find_combination:
  * @key:  The input string.
+ *
+ * Find a combination from the given string.
  *
  * Returns: The number of bytes in the combination that starts at the beginning
  *         of key (can be 0).

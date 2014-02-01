@@ -35,12 +35,13 @@
 /*@{*/
 
 /**
- * Add a PurpleMenuAction to a GntMenu.
- *
+ * gnt_append_menu_action:
  * @menu:   the GntMenu to add to
  * @action: the PurpleMenuAction to add
  * @ctx:    the callback context, passed as the first argument to
  *               the PurpleMenuAction's PurpleCallback function.
+ *
+ * Add a PurpleMenuAction to a GntMenu.
  */
 void gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx);
 
