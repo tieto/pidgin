@@ -74,9 +74,11 @@ struct _GntSliderClass
 G_BEGIN_DECLS
 
 /**
+ * gnt_slider_get_gtype:
+ *
  * Returns: The GType for GntSlider
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 GType gnt_slider_get_gtype(void);
 
@@ -84,102 +86,109 @@ GType gnt_slider_get_gtype(void);
 #define gnt_vslider_new(max, min) gnt_slider_new(TRUE, max, min)
 
 /**
- * Create a new slider.
- *
+ * gnt_slider_new:
  * @orient: A vertical slider is created if %TRUE, otherwise the slider is horizontal.
  * @max:    The maximum value for the slider
  * @min:    The minimum value for the slider
  *
+ * Create a new slider.
+ *
  * Returns:  The newly created slider
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 GntWidget * gnt_slider_new(gboolean orient, int max, int min);
 
 /**
- * Set the range of the slider.
- *
+ * gnt_slider_set_range:
  * @slider:  The slider
  * @max:     The maximum value
  * @min:     The minimum value
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Set the range of the slider.
+ *
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_set_range(GntSlider *slider, int max, int min);
 
 /**
- * Sets the amount of change at each step.
- *
+ * gnt_slider_set_step:
  * @slider:  The slider
  * @step:    The amount for each step
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Sets the amount of change at each step.
+ *
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_set_step(GntSlider *slider, int step);
 
 /**
- * Sets the amount of change a small step.
- *
+ * gnt_slider_set_small_step:
  * @slider:  The slider
  * @step:    The amount for a small step (for the slider)
  *
- * @since 2.2.0
+ * Sets the amount of change a small step.
+ *
+ * Since: 2.2.0
  */
 void gnt_slider_set_small_step(GntSlider *slider, int step);
 
 /**
- * Sets the amount of change a large step.
- *
+ * gnt_slider_set_large_step:
  * @slider:  The slider
  * @step:    The amount for a large step (for the slider)
  *
- * @since 2.2.0
+ * Sets the amount of change a large step.
+ *
+ * Since: 2.2.0
  */
 void gnt_slider_set_large_step(GntSlider *slider, int step);
 
 /**
- * Advance the slider forward or backward.
- *
+ * gnt_slider_advance_step:
  * @slider:   The slider
  * @steps:    The number of amounts to change, positive to change
  *                 forward, negative to change backward
  *
+ * Advance the slider forward or backward.
+ *
  * Returns:   The value of the slider after the change
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 int gnt_slider_advance_step(GntSlider *slider, int steps);
 
 /**
- * Set the current value for the slider.
- *
+ * gnt_slider_set_value:
  * @slider:  The slider
  * @value:   The current value
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Set the current value for the slider.
+ *
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_set_value(GntSlider *slider, int value);
 
 /**
- * Get the current value for the slider.
- *
+ * gnt_slider_get_value:
  * @slider: The slider
  *
+ * Get the current value for the slider.
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 int gnt_slider_get_value(GntSlider *slider);
 
 /**
- * Update a label with the value of the slider whenever the value changes.
- *
+ * gnt_slider_reflect_label:
  * @slider:   The slider
  * @label:    The label to update
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Update a label with the value of the slider whenever the value changes.
+ *
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_reflect_label(GntSlider *slider, GntLabel *label);
-
 
 G_END_DECLS
 
