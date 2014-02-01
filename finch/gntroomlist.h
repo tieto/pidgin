@@ -34,11 +34,15 @@
 /*@{*/
 
 /**
+ * finch_roomlist_init:
+ *
  * Initialize the roomlist subsystem.
  */
 void finch_roomlist_init(void);
 
 /**
+ * finch_roomlist_get_ui_ops:
+ *
  * Get the ui-functions.
  *
  * Returns: The PurpleRoomlistUiOps structure populated with the appropriate functions.
@@ -46,11 +50,15 @@ void finch_roomlist_init(void);
 PurpleRoomlistUiOps *finch_roomlist_get_ui_ops(void);
 
 /**
+ * finch_roomlist_show_all:
+ *
  * Show the roomlist dialog.
  */
 void finch_roomlist_show_all(void);
 
 /**
+ * finch_roomlist_uninit:
+ *
  * Uninitialize the roomlist subsystem.
  */
 void finch_roomlist_uninit(void);

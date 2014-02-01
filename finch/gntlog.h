@@ -33,19 +33,27 @@
 typedef struct _FinchLogViewer FinchLogViewer;
 
 /**
+ * FinchLogViewer:
+ * @logs: The list of logs viewed in this viewer
+ * @window: The viewer's window
+ * @tree:   The tree representing said treestore
+ * @text:   The text to display said logs
+ * @entry:  The search entry, in which search terms are entered
+ * @flags:  The most recently used log flags
+ * @search: The string currently being searched for
+ *
  * A GNT Log Viewer.  You can look at logs with it.
  */
 struct _FinchLogViewer {
-	GList *logs;                 /**< The list of logs viewed in this viewer   */
+	GList *logs;
 
-	GntWidget	*window;    /**< The viewer's window                      */
-	GntWidget	*tree;      /**< The tree representing said treestore */
-	GntWidget	*text;      /**< The text to display said logs          */
-	GntWidget	*entry;     /**< The search entry, in which search terms
-	                              *   are entered                              */
+	GntWidget	*window;
+	GntWidget	*tree;
+	GntWidget	*text;
+	GntWidget	*entry;
 	GntWidget	*label;
-	PurpleLogReadFlags flags;      /**< The most recently used log flags         */
-	char		*search;    /**< The string currently being searched for  */
+	PurpleLogReadFlags flags;
+	char		*search;
 };
 
 
@@ -61,11 +69,15 @@ void finch_syslog_show(void);
 /*@{*/
 
 /**
+ * finch_log_init:
+ *
  * Initializes the GNT log subsystem.
  */
 void finch_log_init(void);
 
 /**
+ * finch_log_get_handle:
+ *
  * Returns the GNT log subsystem handle.
  *
  * Returns: The GNT log subsystem handle.
@@ -73,6 +85,8 @@ void finch_log_init(void);
 void *finch_log_get_handle(void);
 
 /**
+ * finch_log_uninit:
+ *
  * Uninitializes the GNT log subsystem.
  */
 void finch_log_uninit(void);

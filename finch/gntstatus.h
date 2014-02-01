@@ -35,14 +35,17 @@
 /*@{*/
 
 /**
+ * finch_savedstatus_show_all:
+ *
  * Show a dialog with all the saved statuses.
  */
 void finch_savedstatus_show_all(void);
 
 /**
- * Show a dialog to edit a status.
- *
+ * finch_savedstatus_edit:
  * @saved: The saved status to edit. Set it to %NULL to create a new status.
+ *
+ * Show a dialog to edit a status.
  */
 void finch_savedstatus_edit(PurpleSavedStatus *saved);
 

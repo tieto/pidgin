@@ -34,6 +34,8 @@
 /*@{*/
 
 /**
+ * finch_connections_get_ui_ops:
+ *
  * Get the ui-functions.
  *
  * Returns: The PurpleConnectionUiOps structure populated with the appropriate functions.
@@ -41,11 +43,15 @@
 PurpleConnectionUiOps *finch_connections_get_ui_ops(void);
 
 /**
+ * finch_connections_init:
+ *
  * Perform necessary initializations.
  */
 void finch_connections_init(void);
 
 /**
+ * finch_connections_uninit:
+ *
  * Perform necessary uninitializations.
  */
 void finch_connections_uninit(void);
