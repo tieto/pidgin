@@ -36,14 +36,14 @@
 #define PIDGIN_IS_PLUGIN_INFO_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_PLUGIN_INFO))
 #define PIDGIN_PLUGIN_INFO_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_PLUGIN_INFO, PidginPluginInfoClass))
 
-/** @copydoc _PidginPluginInfo */
 typedef struct _PidginPluginInfo PidginPluginInfo;
-/** @copydoc _PidginPluginInfoClass */
 typedef struct _PidginPluginInfoClass PidginPluginInfoClass;
 
 typedef GtkWidget *(*PidginPluginConfigFrameCb)(PurplePlugin *);
 
 /**
+ * PidginPluginInfo:
+ *
  * Extends #PurplePluginInfo to hold UI information for pidgin.
  */
 struct _PidginPluginInfo {
@@ -68,37 +68,45 @@ struct _PidginPluginInfoClass {
 G_BEGIN_DECLS
 
 /**
+ * pidgin_plugin_info_get_type:
+ *
  * Returns the GType for the PidginPluginInfo object.
  */
 GType pidgin_plugin_info_get_type(void);
 
 /**
+ * pidgin_plugin_info_new:
+ * @first_property:  The first property name
+ * @...:  The value of the first property, followed optionally by more
+ *             name/value pairs, followed by %NULL
+ *
  * Creates a new #PidginPluginInfo instance to be returned from
  * gplugin_plugin_query() of a pidgin plugin, using the provided name/value
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.
- * Additionally, you can provide the property "gtk-config-frame-cb",
- * which should be a callback that returns a GtkWidget for the plugin's
- * configuration (see PidginPluginConfigFrameCb).
- *
- * @first_property:  The first property name
- * @...:  The value of the first property, followed optionally by more
- *             name/value pairs, followed by %NULL
- *
- * Returns: A new #PidginPluginInfo instance.
+ * Additionally, you can provide the property
+ * <literal>"gtk-config-frame-cb"</literal>, which should be a callback that
+ * returns a #GtkWidget for the plugin's configuration
+ * (see #PidginPluginConfigFrameCb).
  *
  * @see purple_plugin_info_new()
+ *
+ * Returns: A new #PidginPluginInfo instance.
  */
 PidginPluginInfo *pidgin_plugin_info_new(const char *first_property, ...)
                   G_GNUC_NULL_TERMINATED;
 
 /**
+ * pidgin_plugins_save:
+ *
  * Saves all loaded plugins.
  */
 void pidgin_plugins_save(void);
 
 /**
+ * pidgin_plugin_dialog_show:
+ *
  * Shows the Plugins dialog
  */
 void pidgin_plugin_dialog_show(void);

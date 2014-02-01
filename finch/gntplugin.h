@@ -42,14 +42,14 @@
 #define FINCH_IS_PLUGIN_INFO_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), FINCH_TYPE_PLUGIN_INFO))
 #define FINCH_PLUGIN_INFO_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), FINCH_TYPE_PLUGIN_INFO, FinchPluginInfoClass))
 
-/** @copydoc _FinchPluginInfo */
 typedef struct _FinchPluginInfo FinchPluginInfo;
-/** @copydoc _FinchPluginInfoClass */
 typedef struct _FinchPluginInfoClass FinchPluginInfoClass;
 
 typedef GntWidget* (*FinchPluginPrefFrameCb) (void);
 
 /**
+ * FinchPluginInfo:
+ *
  * Extends #PurplePluginInfo to hold UI information for finch.
  */
 struct _FinchPluginInfo {
@@ -77,27 +77,31 @@ struct _FinchPluginInfoClass {
 /*@{*/
 
 /**
+ * finch_plugin_info_get_type:
+ *
  * Returns the GType for the FinchPluginInfo object.
  */
 GType finch_plugin_info_get_type(void);
 
 /**
+ * finch_plugin_info_new:
+ * @first_property:  The first property name
+ * @...:  The value of the first property, followed optionally by more
+ *             name/value pairs, followed by %NULL
+ *
  * Creates a new #FinchPluginInfo instance to be returned from
  * gplugin_plugin_query() of a finch plugin, using the provided name/value
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.
- * Additionally, you can provide the property "gnt-pref-frame-cb",
- * which should be a callback that returns a GntWidget for the plugin's
- * preferences (see FinchPluginPrefFrameCb).
- *
- * @first_property:  The first property name
- * @...:  The value of the first property, followed optionally by more
- *             name/value pairs, followed by %NULL
- *
- * Returns: A new #FinchPluginInfo instance.
+ * Additionally, you can provide the property
+ * <literal>"gnt-pref-frame-cb"</literal>, which should be a callback that
+ * returns a #GntWidget for the plugin's preferences
+ * (see #FinchPluginPrefFrameCb).
  *
  * @see purple_plugin_info_new()
+ *
+ * Returns: A new #FinchPluginInfo instance.
  */
 FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...)
                  G_GNUC_NULL_TERMINATED;
@@ -110,11 +114,15 @@ FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...)
 /*@{*/
 
 /**
+ * finch_plugins_show_all:
+ *
  * Show a list of plugins.
  */
 void finch_plugins_show_all(void);
 
 /**
+ * finch_plugins_save_loaded:
+ *
  * Save the list of loaded plugins.
  */
 void finch_plugins_save_loaded(void);

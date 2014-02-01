@@ -35,6 +35,8 @@
 #define FINCH_SET_DATA(obj, data)  (obj)->ui_data = data
 
 /**
+ * gnt_start:
+ *
  * Start finch with the given command line arguments.
  */
 gboolean gnt_start(int *argc, char ***argv);
