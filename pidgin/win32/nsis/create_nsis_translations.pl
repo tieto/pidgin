@@ -107,7 +107,8 @@ my %localeNames = (
   "es" =>	["Spanish", "WINDOWS-1252", "1034"],
   "et" =>	["Estonian", "WINDOWS-1257", "1061"],
   "eu" =>	["Basque", "WINDOWS-1252", "1069"],
-  "fa" =>	["Farsi", "WINDOWS-1256", "1065"],
+#Some values in the farsi translation can't be represented in what iconv thinks is WINDOWS-1256, so we disable it
+#  "fa" =>	["Farsi", "WINDOWS-1256", "1065"],
   "fi" =>	["Finnish", "WINDOWS-1252", "1035"],
   "fr" =>	["French", "WINDOWS-1252", "1036"],
   "ga" =>	["Irish", "WINDOWS-1252", "2108"],
