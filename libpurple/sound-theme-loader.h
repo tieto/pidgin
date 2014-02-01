@@ -30,12 +30,6 @@
 #include <glib-object.h>
 #include "theme-loader.h"
 
-/**
- * A purple sound theme loader. extends PurpleThemeLoader (theme-loader.h)
- * This is a class designed to build sound themes
- *
- * PurpleSoundThemeLoader is a GObject.
- */
 typedef struct _PurpleSoundThemeLoader        PurpleSoundThemeLoader;
 typedef struct _PurpleSoundThemeLoaderClass   PurpleSoundThemeLoaderClass;
 
@@ -46,6 +40,12 @@ typedef struct _PurpleSoundThemeLoaderClass   PurpleSoundThemeLoaderClass;
 #define PURPLE_IS_SOUND_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_SOUND_THEME_LOADER))
 #define PURPLE_SOUND_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoaderClass))
 
+/**
+ * PurpleSoundThemeLoader:
+ *
+ * A purple sound theme loader. extends PurpleThemeLoader (theme-loader.h)
+ * This is a class designed to build sound themes
+ */
 struct _PurpleSoundThemeLoader
 {
 	PurpleThemeLoader parent;
@@ -68,6 +68,8 @@ struct _PurpleSoundThemeLoaderClass
 G_BEGIN_DECLS
 
 /**
+ * purple_sound_theme_loader_get_type:
+ *
  * GObject foo.
  * @internal.
  */

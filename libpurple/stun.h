@@ -33,9 +33,13 @@
 
 typedef struct _PurpleStunNatDiscovery PurpleStunNatDiscovery;
 
+/**
+ * PurpleStunStatus:
+ * @PURPLE_STUN_STATUS_UNKNOWN: no STUN server reachable
+ */
 typedef enum {
 	PURPLE_STUN_STATUS_UNDISCOVERED = -1,
-	PURPLE_STUN_STATUS_UNKNOWN, /* no STUN server reachable */
+	PURPLE_STUN_STATUS_UNKNOWN,
 	PURPLE_STUN_STATUS_DISCOVERING,
 	PURPLE_STUN_STATUS_DISCOVERED
 } PurpleStunStatus;
@@ -62,13 +66,14 @@ typedef void (*StunCallback) (PurpleStunNatDiscovery *);
 G_BEGIN_DECLS
 
 /**
- * Starts a NAT discovery. It returns a PurpleStunNatDiscovery if the discovery
- * is already done. Otherwise the callback is called when the discovery is over
- * and NULL is returned.
- *
+ * purple_stun_discover:
  * @cb: The callback to call when the STUN discovery is finished if the
  *           discovery would block.  If the discovery is done, this is NOT
  *           called.
+ *
+ * Starts a NAT discovery. It returns a PurpleStunNatDiscovery if the discovery
+ * is already done. Otherwise the callback is called when the discovery is over
+ * and NULL is returned.
  *
  * Returns: a PurpleStunNatDiscovery which includes the public IP and the type
  *         of NAT or NULL is discovery would block

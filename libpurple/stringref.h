@@ -34,11 +34,12 @@ typedef struct _PurpleStringref PurpleStringref;
 G_BEGIN_DECLS
 
 /**
- * Creates an immutable reference-counted string object.  The newly
- * created object will have a reference count of 1.
- *
+ * purple_stringref_new:
  * @value: This will be the value of the string; it will be
  *              duplicated.
+ *
+ * Creates an immutable reference-counted string object.  The newly
+ * created object will have a reference count of 1.
  *
  * Returns: A newly allocated string reference object with a refcount
  *         of 1.
@@ -46,13 +47,14 @@ G_BEGIN_DECLS
 PurpleStringref *purple_stringref_new(const char *value);
 
 /**
+ * purple_stringref_new_noref:
+ * @value: This will be the value of the string; it will be
+ *              duplicated.
+ *
  * Creates an immutable reference-counted string object.  The newly
  * created object will have a reference count of zero, and if it is
  * not referenced before the next iteration of the mainloop it will
  * be freed at that time.
- *
- * @value: This will be the value of the string; it will be
- *              duplicated.
  *
  * Returns: A newly allocated string reference object with a refcount
  *         of zero.
@@ -60,11 +62,12 @@ PurpleStringref *purple_stringref_new(const char *value);
 PurpleStringref *purple_stringref_new_noref(const char *value);
 
 /**
+ * purple_stringref_printf:
+ * @format: A printf-style format specification.
+ *
  * Creates an immutable reference-counted string object from a printf
  * format specification and arguments.  The created object will have a
  * reference count of 1.
- *
- * @format: A printf-style format specification.
  *
  * Returns: A newly allocated string reference object with a refcount
  *         of 1.
@@ -72,24 +75,29 @@ PurpleStringref *purple_stringref_new_noref(const char *value);
 PurpleStringref *purple_stringref_printf(const char *format, ...);
 
 /**
- * Increase the reference count of the given stringref.
- *
+ * purple_stringref_ref:
  * @stringref: String to be referenced.
+ *
+ * Increase the reference count of the given stringref.
  *
  * Returns: A pointer to the referenced string.
  */
 PurpleStringref *purple_stringref_ref(PurpleStringref *stringref);
 
 /**
+ * purple_stringref_unref:
+ * @stringref: String to be dereferenced.
+ *
  * Decrease the reference count of the given stringref.  If this
  * reference count reaches zero, the stringref will be freed; thus
  * you MUST NOT use this string after dereferencing it.
- *
- * @stringref: String to be dereferenced.
  */
 void purple_stringref_unref(PurpleStringref *stringref);
 
 /**
+ * purple_stringref_value:
+ * @stringref: String reference from which to retrieve the value.
+ *
  * Retrieve the value of a stringref.
  *
  * Note: This value should not be cached or stored in a local variable.
@@ -101,29 +109,28 @@ void purple_stringref_unref(PurpleStringref *stringref);
  *       be valid or invalid nondeterministically based on how many
  *       other references to it exist.
  *
- * @stringref: String reference from which to retrieve the value.
- *
  * Returns: The contents of the string reference.
  */
 const char *purple_stringref_value(const PurpleStringref *stringref);
 
 /**
+ * purple_stringref_cmp:
+ * @s1: The reference string.
+ * @s2: The string to compare against the reference.
+ *
  * Compare two stringrefs for string equality.  This returns the same
  * value as strcmp would, where <0 indicates that s1 is "less than" s2
  * in the ASCII lexicography, 0 indicates equality, etc.
- *
- * @s1: The reference string.
- *
- * @s2: The string to compare against the reference.
  *
  * Returns: An ordering indication on s1 and s2.
  */
 int purple_stringref_cmp(const PurpleStringref *s1, const PurpleStringref *s2);
 
 /**
- * Find the length of the string inside a stringref.
- *
+ * purple_stringref_len:
  * @stringref: The string in whose length we are interested.
+ *
+ * Find the length of the string inside a stringref.
  *
  * Returns: The length of the string in stringref
  */

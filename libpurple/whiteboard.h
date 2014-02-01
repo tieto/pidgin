@@ -32,19 +32,16 @@
 #define PURPLE_IS_WHITEBOARD_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_WHITEBOARD))
 #define PURPLE_WHITEBOARD_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_WHITEBOARD, PurpleWhiteboardClass))
 
-/** @copydoc _PurpleWhiteboard */
 typedef struct _PurpleWhiteboard PurpleWhiteboard;
-/** @copydoc _PurpleWhiteboardClass */
 typedef struct _PurpleWhiteboardClass PurpleWhiteboardClass;
 
-/**
- * Whiteboard PRPL Operations
- */
 typedef struct _PurpleWhiteboardPrplOps PurpleWhiteboardPrplOps;
 
 #include "account.h"
 
 /**
+ * PurpleWhiteboardUiOps:
+ *
  * The PurpleWhiteboard UI Operations
  */
 typedef struct _PurpleWhiteboardUiOps
@@ -68,7 +65,9 @@ typedef struct _PurpleWhiteboardUiOps
 } PurpleWhiteboardUiOps;
 
 /**
- * PurpleWhiteboard PRPL Operations
+ * PurpleWhiteboardPrplOps:
+ *
+ * Whiteboard protocol operations
  */
 struct _PurpleWhiteboardPrplOps
 {
@@ -89,19 +88,24 @@ struct _PurpleWhiteboardPrplOps
 };
 
 /**
+ * PurpleWhiteboard:
+ * @ui_data: The UI data associated with this whiteboard. This is a convenience
+ *           field provided to the UIs -- it is not used by the libpurple core.
+ *
  * A PurpleWhiteboard
  */
 struct _PurpleWhiteboard
 {
 	GObject gparent;
 
-	/** The UI data associated with this whiteboard. This is a convenience
-	 *  field provided to the UIs -- it is not used by the libpurple core.
-	 */
 	gpointer ui_data;
 };
 
-/** Base class for all #PurpleWhiteboard's */
+/**
+ * PurpleWhiteboardClass:
+ *
+ * Base class for all #PurpleWhiteboard's
+ */
 struct _PurpleWhiteboardClass {
 	GObjectClass parent_class;
 
@@ -120,137 +124,152 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * purple_whiteboard_get_type:
+ *
  * Returns the GType for the PurpleWhiteboard object.
  */
 GType purple_whiteboard_get_type(void);
 
 /**
- * Sets the UI operations
- *
+ * purple_whiteboard_set_ui_ops:
  * @ops: The UI operations to set
+ *
+ * Sets the UI operations
  */
 void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops);
 
 /**
- * Sets the prpl operations for a whiteboard
+ * purple_whiteboard_set_protocol_ops:
+ * @wb:  The whiteboard for which to set the protocol operations
+ * @ops: The protocol operations to set
  *
- * @wb:  The whiteboard for which to set the prpl operations
- * @ops: The prpl operations to set
+ * Sets the protocol operations for a whiteboard
  */
 void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops);
 
 /**
- * Creates a new whiteboard
- *
+ * purple_whiteboard_new:
  * @account: The account.
  * @who:     Who you're drawing with.
  * @state:   The state.
+ *
+ * Creates a new whiteboard
  *
  * Returns: The new whiteboard
  */
 PurpleWhiteboard *purple_whiteboard_new(PurpleAccount *account, const char *who, int state);
 
 /**
- * Returns the whiteboard's account.
- *
+ * purple_whiteboard_get_account:
  * @wb:		The whiteboard.
+ *
+ * Returns the whiteboard's account.
  *
  * Returns: The whiteboard's account.
  */
 PurpleAccount *purple_whiteboard_get_account(const PurpleWhiteboard *wb);
 
 /**
- * Return who you're drawing with.
- *
+ * purple_whiteboard_get_who:
  * @wb:		The whiteboard
+ *
+ * Return who you're drawing with.
  *
  * Returns: Who you're drawing with.
  */
 const char *purple_whiteboard_get_who(const PurpleWhiteboard *wb);
 
 /**
- * Set the state of the whiteboard.
- *
+ * purple_whiteboard_set_state:
  * @wb:		The whiteboard.
  * @state:		The state
+ *
+ * Set the state of the whiteboard.
  */
 void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state);
 
 /**
- * Return the state of the whiteboard.
- *
+ * purple_whiteboard_get_state:
  * @wb:		The whiteboard.
+ *
+ * Return the state of the whiteboard.
  *
  * Returns: The state of the whiteboard.
  */
 int purple_whiteboard_get_state(const PurpleWhiteboard *wb);
 
 /**
- * Starts a whiteboard
- *
+ * purple_whiteboard_start:
  * @wb: The whiteboard.
+ *
+ * Starts a whiteboard
  */
 void purple_whiteboard_start(PurpleWhiteboard *wb);
 
 /**
- * Finds a whiteboard from an account and user.
- *
+ * purple_whiteboard_get_session:
  * @account: The account.
  * @who:     The user.
+ *
+ * Finds a whiteboard from an account and user.
  *
  * Returns: The whiteboard if found, otherwise %NULL.
  */
 PurpleWhiteboard *purple_whiteboard_get_session(const PurpleAccount *account, const char *who);
 
 /**
- * Destorys a drawing list for a whiteboard
- *
+ * purple_whiteboard_draw_list_destroy:
  * @draw_list: The drawing list.
+ *
+ * Destorys a drawing list for a whiteboard
  */
 void purple_whiteboard_draw_list_destroy(GList *draw_list);
 
 /**
- * Gets the dimension of a whiteboard.
- *
+ * purple_whiteboard_get_dimensions:
  * @wb:		The whiteboard.
  * @width:		The width to be set.
  * @height:	The height to be set.
+ *
+ * Gets the dimension of a whiteboard.
  *
  * Returns: TRUE if the values of width and height were set.
  */
 gboolean purple_whiteboard_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height);
 
 /**
- * Sets the dimensions for a whiteboard.
- *
+ * purple_whiteboard_set_dimensions:
  * @wb:     The whiteboard.
  * @width:  The width.
  * @height: The height.
+ *
+ * Sets the dimensions for a whiteboard.
  */
 void purple_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int height);
 
 /**
- * Draws a point on a whiteboard.
- *
+ * purple_whiteboard_draw_point:
  * @wb:    The whiteboard.
  * @x:     The x coordinate.
  * @y:     The y coordinate.
  * @color: The color to use.
  * @size:  The brush size.
+ *
+ * Draws a point on a whiteboard.
  */
 void purple_whiteboard_draw_point(PurpleWhiteboard *wb, int x, int y, int color, int size);
 
 /**
- * Send a list of points to draw to the buddy.
- *
+ * purple_whiteboard_send_draw_list:
  * @wb:	The whiteboard
  * @list:	A GList of points
+ *
+ * Send a list of points to draw to the buddy.
  */
 void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list);
 
 /**
- * Draws a line on a whiteboard
- *
+ * purple_whiteboard_draw_line:
  * @wb:    The whiteboard.
  * @x1:    The top-left x coordinate.
  * @y1:    The top-left y coordinate.
@@ -258,98 +277,111 @@ void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list);
  * @y2:    The bottom-right y coordinate.
  * @color: The color to use.
  * @size:  The brush size.
+ *
+ * Draws a line on a whiteboard
  */
 void purple_whiteboard_draw_line(PurpleWhiteboard *wb, int x1, int y1, int x2, int y2, int color, int size);
 
 /**
- * Clears a whiteboard
- *
+ * purple_whiteboard_clear:
  * @wb: The whiteboard.
+ *
+ * Clears a whiteboard
  */
 void purple_whiteboard_clear(PurpleWhiteboard *wb);
 
 /**
- * Sends a request to the buddy to clear the whiteboard.
- *
+ * purple_whiteboard_send_clear:
  * @wb: The whiteboard
+ *
+ * Sends a request to the buddy to clear the whiteboard.
  */
 void purple_whiteboard_send_clear(PurpleWhiteboard *wb);
 
 /**
- * Sends a request to change the size and color of the brush.
- *
+ * purple_whiteboard_send_brush:
  * @wb:	The whiteboard
  * @size:	The size of the brush
  * @color:	The color of the brush
+ *
+ * Sends a request to change the size and color of the brush.
  */
 void purple_whiteboard_send_brush(PurpleWhiteboard *wb, int size, int color);
 
 /**
- * Gets the size and color of the brush.
- *
+ * purple_whiteboard_get_brush:
  * @wb:	The whiteboard
  * @size:	The size of the brush
  * @color:	The color of the brush
+ *
+ * Gets the size and color of the brush.
  *
  * Returns:	TRUE if the size and color were set.
  */
 gboolean purple_whiteboard_get_brush(const PurpleWhiteboard *wb, int *size, int *color);
 
 /**
- * Sets the size and color of the brush.
- *
+ * purple_whiteboard_set_brush:
  * @wb:	The whiteboard
  * @size:	The size of the brush
  * @color:	The color of the brush
+ *
+ * Sets the size and color of the brush.
  */
 void purple_whiteboard_set_brush(PurpleWhiteboard *wb, int size, int color);
 
 /**
- * Return the drawing list.
- *
+ * purple_whiteboard_get_draw_list:
  * @wb:			The whiteboard.
+ *
+ * Return the drawing list.
  *
  * Returns: The drawing list
  */
 GList *purple_whiteboard_get_draw_list(const PurpleWhiteboard *wb);
 
 /**
- * Set the drawing list.
- *
+ * purple_whiteboard_set_draw_list:
  * @wb:			The whiteboard
  * @draw_list:		The drawing list.
+ *
+ * Set the drawing list.
  */
 void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list);
 
 /**
- * Sets the protocol data for a whiteboard.
- *
+ * purple_whiteboard_set_protocol_data:
  * @wb:			The whiteboard.
  * @proto_data:	The protocol data to set for the whiteboard.
+ *
+ * Sets the protocol data for a whiteboard.
  */
 void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data);
 
 /**
- * Gets the protocol data for a whiteboard.
- *
+ * purple_whiteboard_get_protocol_data:
  * @wb:			The whiteboard.
+ *
+ * Gets the protocol data for a whiteboard.
  *
  * Returns: The protocol data for the whiteboard.
  */
 gpointer purple_whiteboard_get_protocol_data(const PurpleWhiteboard *wb);
 
 /**
- * Set the UI data associated with this whiteboard.
- *
+ * purple_whiteboard_set_ui_data:
  * @wb:			The whiteboard.
  * @ui_data:		A pointer to associate with this whiteboard.
+ *
+ * Set the UI data associated with this whiteboard.
  */
 void purple_whiteboard_set_ui_data(PurpleWhiteboard *wb, gpointer ui_data);
 
 /**
- * Get the UI data associated with this whiteboard.
- *
+ * purple_whiteboard_get_ui_data:
  * @wb:			The whiteboard..
+ *
+ * Get the UI data associated with this whiteboard.
  *
  * Returns: The UI data associated with this whiteboard.  This is a
  *         convenience field provided to the UIs--it is not

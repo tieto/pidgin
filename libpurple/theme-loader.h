@@ -30,9 +30,7 @@
 #include <glib-object.h>
 #include "theme.h"
 
-/** @copydoc _PurpleThemeLoader */
 typedef struct _PurpleThemeLoader        PurpleThemeLoader;
-/** @copydoc _PurpleThemeLoaderClass */
 typedef struct _PurpleThemeLoaderClass   PurpleThemeLoaderClass;
 
 #define PURPLE_TYPE_THEME_LOADER            (purple_theme_loader_get_type())
@@ -43,6 +41,8 @@ typedef struct _PurpleThemeLoaderClass   PurpleThemeLoaderClass;
 #define PURPLE_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_THEME_LOADER, PurpleThemeLoaderClass))
 
 /**
+ * PurpleThemeLoader:
+ *
  * A purple theme loader.
  * This is an abstract class for Purple to use with the Purple theme manager.
  * The loader is responsible for building each type of theme
@@ -72,43 +72,49 @@ struct _PurpleThemeLoaderClass
 G_BEGIN_DECLS
 
 /**
+ * purple_theme_loader_get_type:
+ *
  * GObject foo.
  * @internal.
  */
 GType purple_theme_loader_get_type(void);
 
 /**
- * Returns the string representing the type of the theme loader
- *
+ * purple_theme_loader_get_type_string:
  * @self: The theme loader
+ *
+ * Returns the string representing the type of the theme loader
  *
  * Returns: The string representing this type
  */
 const gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
 
 /**
- * Creates a new PurpleTheme
- *
+ * purple_theme_loader_build:
  * @loader: The theme loader
  * @dir:    The directory containing the theme
+ *
+ * Creates a new PurpleTheme
  *
  * Returns: A PurpleTheme containing the information from the directory
  */
 PurpleTheme *purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir);
 
 /**
+ * purple_theme_loader_probe:
+ * @loader: The theme loader
+ * @dir:    The directory that may contain the theme
+ *
  * Probes a directory to see if it might possibly contain a theme
  *
  * This function might only check for obvious files or directory structure.
  * Loading of a theme may fail for other reasons.
  * The default prober checks for $dir/purple/$type.
  *
- * @loader: The theme loader
- * @dir:    The directory that may contain the theme
- *
  * Returns: TRUE if the directory appears to contain a theme, FALSE otherwise.
  */
 gboolean purple_theme_loader_probe(PurpleThemeLoader *loader, const gchar *dir);
 
 G_END_DECLS
+
 #endif /* PURPLE_THEME_LOADER_H */
