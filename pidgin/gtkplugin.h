@@ -32,6 +32,8 @@
 typedef struct _PidginPluginUiInfo PidginPluginUiInfo;
 
 /**
+ * PidginPluginUiInfo:
+ *
  * A GTK+ UI structure for plugins.
  */
 struct _PidginPluginUiInfo
@@ -57,11 +59,15 @@ struct _PidginPluginUiInfo
 G_BEGIN_DECLS
 
 /**
+ * pidgin_plugins_save:
+ *
  * Saves all loaded plugins.
  */
 void pidgin_plugins_save(void);
 
 /**
+ * pidgin_plugin_dialog_show:
+ *
  * Shows the Plugins dialog
  */
 void pidgin_plugin_dialog_show(void);

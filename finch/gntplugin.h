@@ -46,6 +46,8 @@ typedef GntWidget* (*FinchPluginFrame) (void);
 #define FINCH_PLUGIN_TYPE FINCH_UI
 
 /**
+ * PURPLE_IS_GNT_PLUGIN:
+ *
  * Decide whether a plugin is a GNT-plugin.
  */
 #define PURPLE_IS_GNT_PLUGIN(plugin) \
@@ -53,17 +55,23 @@ typedef GntWidget* (*FinchPluginFrame) (void);
 	 !strcmp((plugin)->info->ui_requirement, FINCH_PLUGIN_TYPE))
 
 /**
+ * FINCH_PLUGIN_UI_INFO:
+ *
  * Get the ui-info from GNT-plugins.
  */
 #define FINCH_PLUGIN_UI_INFO(plugin) \
 	(FinchPluginFrame)((plugin)->info->ui_info)
 
 /**
+ * finch_plugins_show_all:
+ *
  * Show a list of plugins.
  */
 void finch_plugins_show_all(void);
 
 /**
+ * finch_plugins_save_loaded:
+ *
  * Save the list of loaded plugins.
  */
 void finch_plugins_save_loaded(void);

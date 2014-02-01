@@ -37,31 +37,38 @@
 #define BRUSH_STATE_DOWN    1
 #define BRUSH_STATE_MOTION  2
 
-/* XXX: This seems duplicated with the Yahoo! Doodle prpl code.
+/* XXX: This seems duplicated with the Yahoo! Doodle protocol code.
  * XXX: How should they work together? */
 #define PALETTE_NUM_COLORS  7
 
-/**
- * A PidginWhiteboard's private data
- */
 typedef struct _PidginWhiteboardPrivate PidginWhiteboardPrivate;
 
 /**
+ * PidginWhiteboard:
+ * @priv:         Internal data
+ * @wb:           Backend data for this whiteboard
+ * @window:       Window for the Doodle session
+ * @drawing_area: Drawing area
+ * @width:        Canvas width
+ * @height:       Canvas height
+ * @brush_color:  Foreground color
+ * @brush_size:   Brush size
+ *
  * A PidginWhiteboard
  */
 typedef struct _PidginWhiteboard
 {
-	PidginWhiteboardPrivate *priv;  /**< Internal data */
+	PidginWhiteboardPrivate *priv;
 
-	PurpleWhiteboard *wb;           /**< Backend data for this whiteboard */
+	PurpleWhiteboard *wb;
 
-	GtkWidget *window;              /**< Window for the Doodle session */
-	GtkWidget *drawing_area;        /**< Drawing area */
+	GtkWidget *window;
+	GtkWidget *drawing_area;
 
-	int width;                      /**< Canvas width */
-	int height;                     /**< Canvas height */
-	int brush_color;                /**< Foreground color */
-	int brush_size;                 /**< Brush size */
+	int width;
+	int height;
+	int brush_color;
+	int brush_size;
 } PidginWhiteboard;
 
 G_BEGIN_DECLS
@@ -72,6 +79,8 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * pidgin_whiteboard_get_ui_ops:
+ *
  * Gets the GtkWhiteboard UI Operations.
  *
  * Returns: The GtkWhiteboard UI Operations.

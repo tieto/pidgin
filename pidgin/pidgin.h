@@ -34,6 +34,8 @@
 #endif
 
 /**
+ * PIDGIN_UI:
+ *
  * Our UI's identifier.
  */
 /* leave this as gtk-gaim until we have a decent way to migrate UI-prefs */
@@ -61,6 +63,8 @@
 #define PIDGIN_HIG_BOX_SPACE      6
 
 /**
+ * pidgin_start:
+ *
  * Start pidgin with the given command line arguments.
  */
 int pidgin_start(int argc, char *argv[]);
