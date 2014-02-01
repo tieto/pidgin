@@ -35,29 +35,47 @@
 
 
 /**
+ * PurpleSoundEventID:
+ * @PURPLE_SOUND_BUDDY_ARRIVE:   Buddy signs on.
+ * @PURPLE_SOUND_BUDDY_LEAVE:    Buddy signs off.
+ * @PURPLE_SOUND_RECEIVE:        Receive an IM.
+ * @PURPLE_SOUND_FIRST_RECEIVE:  Receive an IM that starts a conv.
+ * @PURPLE_SOUND_SEND:           Send an IM.
+ * @PURPLE_SOUND_CHAT_JOIN:      Someone joins a chat.
+ * @PURPLE_SOUND_CHAT_LEAVE:     Someone leaves a chat.
+ * @PURPLE_SOUND_CHAT_YOU_SAY:   You say something in a chat.
+ * @PURPLE_SOUND_CHAT_SAY:       Someone else says somthing in a chat.
+ * @PURPLE_SOUND_POUNCE_DEFAULT: Default sound for a buddy pounce.
+ * @PURPLE_SOUND_CHAT_NICK:      Someone says your name in a chat.
+ * @PURPLE_SOUND_GOT_ATTENTION:  Got an attention.
+ * @PURPLE_NUM_SOUNDS:           Total number of sounds.
+ *
  * A type of sound.
  */
 
 typedef enum
 {
-	PURPLE_SOUND_BUDDY_ARRIVE = 0, /**< Buddy signs on.                       */
-	PURPLE_SOUND_BUDDY_LEAVE,      /**< Buddy signs off.                      */
-	PURPLE_SOUND_RECEIVE,          /**< Receive an IM.                        */
-	PURPLE_SOUND_FIRST_RECEIVE,    /**< Receive an IM that starts a conv.     */
-	PURPLE_SOUND_SEND,             /**< Send an IM.                           */
-	PURPLE_SOUND_CHAT_JOIN,        /**< Someone joins a chat.                 */
-	PURPLE_SOUND_CHAT_LEAVE,       /**< Someone leaves a chat.                */
-	PURPLE_SOUND_CHAT_YOU_SAY,     /**< You say something in a chat.          */
-	PURPLE_SOUND_CHAT_SAY,         /**< Someone else says somthing in a chat. */
-	PURPLE_SOUND_POUNCE_DEFAULT,   /**< Default sound for a buddy pounce.     */
-	PURPLE_SOUND_CHAT_NICK,        /**< Someone says your name in a chat.     */
-	PURPLE_SOUND_GOT_ATTENTION,	   /**< Got an attention					  */
-	PURPLE_NUM_SOUNDS              /**< Total number of sounds.               */
+	PURPLE_SOUND_BUDDY_ARRIVE = 0,
+	PURPLE_SOUND_BUDDY_LEAVE,
+	PURPLE_SOUND_RECEIVE,
+	PURPLE_SOUND_FIRST_RECEIVE,
+	PURPLE_SOUND_SEND,
+	PURPLE_SOUND_CHAT_JOIN,
+	PURPLE_SOUND_CHAT_LEAVE,
+	PURPLE_SOUND_CHAT_YOU_SAY,
+	PURPLE_SOUND_CHAT_SAY,
+	PURPLE_SOUND_POUNCE_DEFAULT,
+	PURPLE_SOUND_CHAT_NICK,
+	PURPLE_SOUND_GOT_ATTENTION,
+	PURPLE_NUM_SOUNDS
 
 } PurpleSoundEventID;
 
-/** Operations used by the core to request that particular sound files, or the
- *  sound associated with a particular event, should be played.
+/**
+ * PurpleSoundUiOps:
+ *
+ * Operations used by the core to request that particular sound files, or the
+ * sound associated with a particular event, should be played.
  */
 typedef struct _PurpleSoundUiOps
 {
@@ -81,35 +99,40 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * Plays the specified sound file.
- *
+ * purple_sound_play_file:
  * @filename: The file to play.
  * @account: The account that this sound is associated with, or
  *        NULL if the sound is not associated with any specific
  *        account.  This is needed for the "sounds while away?"
  *        preference to work correctly.
+ *
+ * Plays the specified sound file.
  */
 void purple_sound_play_file(const char *filename, const PurpleAccount *account);
 
 /**
- * Plays the sound associated with the specified event.
- *
+ * purple_sound_play_event:
  * @event: The event.
  * @account: The account that this sound is associated with, or
  *        NULL if the sound is not associated with any specific
  *        account.  This is needed for the "sounds while away?"
  *        preference to work correctly.
+ *
+ * Plays the sound associated with the specified event.
  */
 void purple_sound_play_event(PurpleSoundEventID event, const PurpleAccount *account);
 
 /**
- * Sets the UI sound operations
- *
+ * purple_sound_set_ui_ops:
  * @ops: The UI sound operations structure.
+ *
+ * Sets the UI sound operations
  */
 void purple_sound_set_ui_ops(PurpleSoundUiOps *ops);
 
 /**
+ * purple_sound_get_ui_ops:
+ *
  * Gets the UI sound operations
  *
  * Returns: The UI sound operations structure.
@@ -117,16 +140,22 @@ void purple_sound_set_ui_ops(PurpleSoundUiOps *ops);
 PurpleSoundUiOps *purple_sound_get_ui_ops(void);
 
 /**
+ * purple_sound_init:
+ *
  * Initializes the sound subsystem
  */
 void purple_sound_init(void);
 
 /**
+ * purple_sound_uninit:
+ *
  * Shuts down the sound subsystem
  */
 void purple_sound_uninit(void);
 
 /**
+ * purple_sounds_get_handle:
+ *
  * Returns the sound subsystem handle.
  *
  * Returns: The sound subsystem handle.

@@ -30,9 +30,7 @@
 #include <glib-object.h>
 #include "imgstore.h"
 
-/** @copydoc _PurpleTheme */
 typedef struct _PurpleTheme        PurpleTheme;
-/** @copydoc _PurpleThemeClass */
 typedef struct _PurpleThemeClass   PurpleThemeClass;
 
 #define PURPLE_TYPE_THEME            (purple_theme_get_type ())
@@ -43,6 +41,8 @@ typedef struct _PurpleThemeClass   PurpleThemeClass;
 #define PURPLE_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_THEME, PurpleThemeClass))
 
 /**
+ * PurpleTheme:
+ *
  * A purple theme.
  * This is an abstract class for Purple to use with the Purple theme manager.
  */
@@ -68,113 +68,128 @@ struct _PurpleThemeClass
 G_BEGIN_DECLS
 
 /**
+ * purple_theme_get_type:
+ *
  * GObject foo.
  * @internal.
  */
 GType purple_theme_get_type(void);
 
 /**
- * Returns the name of the PurpleTheme object.
- *
+ * purple_theme_get_name:
  * @theme:  The purple theme.
+ *
+ * Returns the name of the PurpleTheme object.
  *
  * Returns: The string representing the name of the theme.
  */
 const gchar *purple_theme_get_name(PurpleTheme *theme);
 
 /**
- * Sets the name of the PurpleTheme object.
- *
+ * purple_theme_set_name:
  * @theme: The purple theme.
  * @name:  The name of the PurpleTheme object.
+ *
+ * Sets the name of the PurpleTheme object.
  */
 void purple_theme_set_name(PurpleTheme *theme, const gchar *name);
 
 /**
- * Returns the description of the PurpleTheme object.
- *
+ * purple_theme_get_description:
  * @theme:  The purple theme.
+ *
+ * Returns the description of the PurpleTheme object.
  *
  * Returns: A short description of the theme.
  */
 const gchar *purple_theme_get_description(PurpleTheme *theme);
 
 /**
- * Sets the description of the PurpleTheme object.
- *
+ * purple_theme_set_description:
  * @theme:  The purple theme.
  * @description: The description of the PurpleTheme object.
+ *
+ * Sets the description of the PurpleTheme object.
  */
 void purple_theme_set_description(PurpleTheme *theme, const gchar *description);
 
 /**
- * Returns the author of the PurpleTheme object.
- *
+ * purple_theme_get_author:
  * @theme:  The purple theme.
+ *
+ * Returns the author of the PurpleTheme object.
  *
  * Returns: The author of the theme.
  */
 const gchar *purple_theme_get_author(PurpleTheme *theme);
 
 /**
- * Sets the author of the PurpleTheme object.
- *
+ * purple_theme_set_author:
  * @theme:  The purple theme.
  * @author: The author of the PurpleTheme object.
+ *
+ * Sets the author of the PurpleTheme object.
  */
 void purple_theme_set_author(PurpleTheme *theme, const gchar *author);
 
 /**
- * Returns the type (string) of the PurpleTheme object.
- *
+ * purple_theme_get_type_string:
  * @theme:  The purple theme.
+ *
+ * Returns the type (string) of the PurpleTheme object.
  *
  * Returns: The string representing the type.
  */
 const gchar *purple_theme_get_type_string(PurpleTheme *theme);
 
 /**
- * Returns the directory of the PurpleTheme object.
- *
+ * purple_theme_get_dir:
  * @theme:  The purple theme.
+ *
+ * Returns the directory of the PurpleTheme object.
  *
  * Returns: The string representing the theme directory.
  */
 const gchar *purple_theme_get_dir(PurpleTheme *theme);
 
 /**
- * Sets the directory of the PurpleTheme object.
- *
+ * purple_theme_set_dir:
  * @theme:  The purple theme.
  * @dir:    The directory of the PurpleTheme object.
+ *
+ * Sets the directory of the PurpleTheme object.
  */
 void purple_theme_set_dir(PurpleTheme *theme, const gchar *dir);
 
 /**
- * Returns the image preview of the PurpleTheme object.
- *
+ * purple_theme_get_image:
  * @theme:  The purple theme.
+ *
+ * Returns the image preview of the PurpleTheme object.
  *
  * Returns: The image preview of the PurpleTheme object.
  */
 const gchar *purple_theme_get_image(PurpleTheme *theme);
 
 /**
- * Returns the image preview and directory of the PurpleTheme object.
- *
+ * purple_theme_get_image_full:
  * @theme:  The purple theme.
+ *
+ * Returns the image preview and directory of the PurpleTheme object.
  *
  * Returns: The image preview of the PurpleTheme object.
  */
 gchar *purple_theme_get_image_full(PurpleTheme *theme);
 
 /**
- * Sets the directory of the PurpleTheme object.
- *
+ * purple_theme_set_image:
  * @theme:	 The purple theme.
  * @img:    The image preview of the PurpleTheme object.
+ *
+ * Sets the directory of the PurpleTheme object.
  */
 void purple_theme_set_image(PurpleTheme *theme, const gchar *img);
 
 G_END_DECLS
+
 #endif /* PURPLE_THEME_H */

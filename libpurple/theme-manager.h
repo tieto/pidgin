@@ -64,6 +64,8 @@ struct _PurpleThemeManagerClass {
 G_BEGIN_DECLS
 
 /**
+ * purple_theme_manager_get_type:
+ *
  * GObject foo.
  *
  * @internal.
@@ -71,75 +73,89 @@ G_BEGIN_DECLS
 GType purple_theme_manager_get_type(void);
 
 /**
+ * purple_theme_manager_init:
+ *
  * Initalizes the theme manager.
  */
 void purple_theme_manager_init(void);
 
 /**
+ * purple_theme_manager_uninit:
+ *
  * Uninitalizes the manager then frees all the themes and loaders it is
  * responsible for.
  */
 void purple_theme_manager_uninit(void);
 
 /**
+ * purple_theme_manager_refresh:
+ *
  * Rebuilds all the themes in the theme manager.
  * (Removes all current themes but keeps the added loaders.)
  */
 void purple_theme_manager_refresh(void);
 
 /**
- * Finds the PurpleTheme object stored by the theme manager.
- *
+ * purple_theme_manager_find_theme:
  * @name: The name of the PurpleTheme.
  * @type: The type of the PurpleTheme.
+ *
+ * Finds the PurpleTheme object stored by the theme manager.
  *
  * Returns: The PurpleTheme, or NULL if it wasn't found.
  */
 PurpleTheme *purple_theme_manager_find_theme(const gchar *name, const gchar *type);
 
 /**
+ * purple_theme_manager_add_theme:
+ * @theme: The PurpleTheme to add to the manager.
+ *
  * Adds a PurpleTheme to the theme manager.  If the theme already exists
  * then this function does nothing.
- *
- * @theme: The PurpleTheme to add to the manager.
  */
 void purple_theme_manager_add_theme(PurpleTheme *theme);
 
 /**
- * Removes a PurpleTheme from the theme manager and frees the theme.
- *
+ * purple_theme_manager_remove_theme:
  * @theme: The PurpleTheme to remove from the manager.
+ *
+ * Removes a PurpleTheme from the theme manager and frees the theme.
  */
 void purple_theme_manager_remove_theme(PurpleTheme *theme);
 
 /**
- * Adds a loader to the theme manager so it knows how to build themes.
- *
+ * purple_theme_manager_register_type:
  * @loader: The PurpleThemeLoader to add.
+ *
+ * Adds a loader to the theme manager so it knows how to build themes.
  */
 void purple_theme_manager_register_type(PurpleThemeLoader *loader);
 
 /**
- * Removes the loader and all themes of the same type from the loader.
- *
+ * purple_theme_manager_unregister_type:
  * @loader: The PurpleThemeLoader to be removed.
+ *
+ * Removes the loader and all themes of the same type from the loader.
  */
 void purple_theme_manager_unregister_type(PurpleThemeLoader *loader);
 
 /**
- * Calls the given function on each purple theme.
- *
+ * purple_theme_manager_for_each_theme:
  * @func: The PTFunc to be applied to each theme.
+ *
+ * Calls the given function on each purple theme.
  */
 void purple_theme_manager_for_each_theme(PTFunc func);
 
 /**
- * Loads a theme of the given type without adding it to the manager
- *
+ * purple_theme_manager_load_theme:
  * @theme_dir:	the directory of the theme to load
  * @type:		the type of theme to load
+ *
+ * Loads a theme of the given type without adding it to the manager
  */
 PurpleTheme *purple_theme_manager_load_theme(const gchar *theme_dir, const gchar *type);
 
 G_END_DECLS
+
 #endif /* PURPLE_THEME_MANAGER_H */
