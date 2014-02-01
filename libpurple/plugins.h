@@ -561,39 +561,82 @@ GType purple_plugin_info_get_type(void);
  * Creates a new #PurplePluginInfo instance to be returned from
  * gplugin_plugin_query() of a plugin, using the provided name/value pairs.
  *
- * All properties except "id" and "purple-abi" are optional.
+ * All properties except <literal>"id"</literal> and
+ * <literal>"purple-abi"</literal> are optional.
  *
- * Valid property names are:                                                  \n
- * "id"               (string) The ID of the plugin.                          \n
- * "name"             (string) The translated name of the plugin.             \n
- * "version"          (string) Version of the plugin.                         \n
- * "category"         (string) Primary category of the plugin.                \n
- * "summary"          (string) Brief summary of the plugin.                   \n
- * "description"      (string) Full description of the plugin.                \n
- * "authors"          (const gchar * const *) A NULL-terminated list of plugin
- *                             authors. format: First Last <user@domain.com>  \n
- * "website"          (string) Website of the plugin.                         \n
- * "icon"             (string) Path to a plugin's icon.                       \n
- * "license-id"       (string) Short name of the plugin's license. This should
- *                        either be an identifier of the license from
- *                        http://dep.debian.net/deps/dep5/#license-specification
- *                        or "Other" for custom licenses.                     \n
- * "license-text"     (string) The text of the plugin's license, if unlisted on
- *                             DEP5.                                          \n
- * "license-url"      (string) The plugin's license URL, if unlisted on DEP5. \n
- * "dependencies"     (const gchar * const *) A NULL-terminated list of plugin
- *                             IDs required by the plugin.                    \n
- * "abi-version"      (guint32) The ABI version required by the plugin.       \n
- * "actions-cb"       (PurplePluginActionsCb) Callback that returns a list of
- *                             actions the plugin can perform.                \n
- * "extra-cb"         (PurplePluginExtraCb) Callback that returns a newly
- *                             allocated string denoting extra information
- *                             about a plugin.                                \n
- * "pref-frame-cb"    (PurplePluginPrefFrameCb) Callback that returns a
- *                             preferences frame for the plugin.              \n
- * "pref-request-cb"  (PurplePluginPrefRequestCb) Callback that returns a
- *                             preferences request handle for the plugin.     \n
- * "flags"            (PurplePluginInfoFlags) The flags for a plugin.         \n
+ * Valid property names are:
+ * <informaltable frame='none'>
+ *   <tgroup cols='2'><tbody>
+ *   <row><entry><literal>"id"</literal></entry>
+ *     <entry>(string) The ID of the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"abi-version"</literal></entry>
+ *     <entry>(<type>guint32</type>) The ABI version required by the
+ *       plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"name"</literal></entry>
+ *     <entry>(string) The translated name of the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"version"</literal></entry>
+ *     <entry>(string) Version of the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"category"</literal></entry>
+ *     <entry>(string) Primary category of the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"summary"</literal></entry>
+ *     <entry>(string) Brief summary of the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"description"</literal></entry>
+ *     <entry>(string) Full description of the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"authors"</literal></entry>
+ *     <entry>(<type>const gchar * const *</type>) A %NULL-terminated list of
+ *       plugin authors. format: First Last &lt;user\@domain.com&gt;</entry>
+ *   </row>
+ *   <row><entry><literal>"website"</literal></entry>
+ *     <entry>(string) Website of the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"icon"</literal></entry>
+ *     <entry>(string) Path to a plugin's icon.</entry>
+ *   </row>
+ *   <row><entry><literal>"license-id"</literal></entry>
+ *     <entry>(string) Short name of the plugin's license. This should
+ *       either be an identifier of the license from
+ *       <ulink url="http://dep.debian.net/deps/dep5/#license-specification"/>
+ *       or "Other" for custom licenses.</entry>
+ *   </row>
+ *   <row><entry><literal>"license-text"</literal></entry>
+ *     <entry>(string) The text of the plugin's license, if unlisted on
+ *       DEP5.</entry>
+ *   </row>
+ *   <row><entry><literal>"license-url"</literal></entry>
+ *     <entry>(string) The plugin's license URL, if unlisted on DEP5.</entry>
+ *   </row>
+ *   <row><entry><literal>"dependencies"</literal></entry>
+ *     <entry>(<type>const gchar * const *</type>) A %NULL-terminated list of
+ *       plugin IDs required by the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"actions-cb"</literal></entry>
+ *     <entry>(#PurplePluginActionsCb) Callback that returns a list of
+ *       actions the plugin can perform.</entry>
+ *   </row>
+ *   <row><entry><literal>"extra-cb"</literal></entry>
+ *     <entry>(#PurplePluginExtraCb) Callback that returns a newly
+ *       allocated string denoting extra information about a plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"pref-frame-cb"</literal></entry>
+ *     <entry>(#PurplePluginPrefFrameCb) Callback that returns a
+ *       preferences frame for the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"pref-request-cb"</literal></entry>
+ *     <entry>(#PurplePluginPrefRequestCb) Callback that returns a
+ *       preferences request handle for the plugin.</entry>
+ *   </row>
+ *   <row><entry><literal>"flags"</literal></entry>
+ *     <entry>(#PurplePluginInfoFlags) The flags for a plugin.</entry>
+ *   </row>
+ *   </tbody></tgroup>
+ * </informaltable>
  *
  * Returns: A new #PurplePluginInfo instance.
  *
