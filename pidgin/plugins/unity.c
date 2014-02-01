@@ -469,7 +469,7 @@ get_config_frame(PurplePlugin *plugin)
 			G_CALLBACK(launcher_config_cb), GUINT_TO_POINTER(LAUNCHER_COUNT_MESSAGES));
 
 	toggle = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(toggle),
-			_("Show number of unread _conversations on launcher icon"));
+			_("Show number of unread co_nversations on launcher icon"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 		purple_prefs_get_int("/plugins/gtk/unity/launcher_count") == LAUNCHER_COUNT_SOURCES);
