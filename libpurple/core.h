@@ -109,23 +109,21 @@ void purple_core_quit(void);
 /**
  * purple_core_quit_cb:
  *
- * <p>
  * Calls purple_core_quit().  This can be used as the function
  * passed to purple_timeout_add() when you want to shutdown Purple
  * in a specified amount of time.  When shutting down Purple
  * from a plugin, you must use this instead of purple_core_quit();
  * for an immediate exit, use a timeout value of 0:
- * </p>
  *
- * <code>purple_timeout_add(0, purple_core_quitcb, NULL);</code>
+ * <programlisting>
+ * purple_timeout_add(0, purple_core_quitcb, NULL)
+ * </programlisting>
  *
- * <p>
  * This is ensures that code from your plugin is not being
  * executed when purple_core_quit() is called.  If the plugin
  * called purple_core_quit() directly, you would get a core dump
  * after purple_core_quit() executes and control returns to your
  * plugin because purple_core_quit() frees all plugins.
- * </p>
  */
 gboolean purple_core_quit_cb(gpointer unused);
 
@@ -183,7 +181,7 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
  * process.
  *
  * Returns: %TRUE if this is the first instance of libpurple running;
- *         %FALSE if there is another instance running.
+ *          %FALSE if there is another instance running.
  */
 gboolean purple_core_ensure_single_instance(void);
 
@@ -194,25 +192,33 @@ gboolean purple_core_ensure_single_instance(void);
  * following well-known entries may be in the table (along with any others the
  * UI might choose to include):
  *
- * <dl>
- *   <dt><tt>name</tt></dt>
- *   <dd>the user-readable name for the UI.</dd>
- *
- *   <dt><tt>version</tt></dt>
- *   <dd>a user-readable description of the current version of the UI.</dd>
- *
- *   <dt><tt>website</tt></dt>
- *   <dd>the UI's website, such as https://pidgin.im.</dd>
- *
- *   <dt><tt>dev_website</tt></dt>
- *   <dd>the UI's development/support website, such as https://developer.pidgin.im.</dd>
- *
- *   <dt><tt>client_type</tt></dt>
- *   <dd>the type of UI. Possible values include 'pc', 'console', 'phone',
+ * <informaltable frame='none'>
+ *   <tgroup cols='2'><tbody>
+ *   <row>
+ *     <entry><tt>name</tt></entry>
+ *     <entry>the user-readable name for the UI.</entry>
+ *   </row>
+ *   <row>
+ *     <entry><tt>version</tt></entry>
+ *     <entry>a user-readable description of the current version of the UI.</entry>
+ *   </row>
+ *   <row>
+ *     <entry><tt>website</tt></entry>
+ *     <entry>the UI's website, such as https://pidgin.im.</entry>
+ *   </row>
+ *   <row>
+ *     <entry><tt>dev_website</tt></entry>
+ *     <entry>the UI's development/support website, such as
+ *       https://developer.pidgin.im.</entry>
+ *   </row>
+ *   <row>
+ *     <entry><tt>client_type</tt></entry>
+ *     <entry>the type of UI. Possible values include 'pc', 'console', 'phone',
  *       'handheld', 'web', and 'bot'. These values are compared
- *       programmatically and should not be localized.</dd>
- *
- * </dl>
+ *       programmatically and should not be localized.</entry>
+ *   </row>
+ *   </tbody></tgroup>
+ * </informaltable>
  *
  * Returns: A GHashTable with strings for keys and values.  This
  * hash table must not be freed and should not be modified.

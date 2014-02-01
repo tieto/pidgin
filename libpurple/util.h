@@ -556,11 +556,11 @@ char *purple_uts35_to_str(const char *format, size_t len, struct tm *tm);
  * purple_markup_escape_text:
  *
  * Escapes special characters in a plain-text string so they display
- * correctly as HTML.  For example, & is replaced with &amp; and < is
- * replaced with &lt;
+ * correctly as HTML.  For example, &amp; is replaced with &amp;amp; and &lt; is
+ * replaced with &amp;lt;
  *
  * This is exactly the same as g_markup_escape_text(), except that it
- * does not change ' to &apos; because &apos; is not a valid HTML 4 entity,
+ * does not change ' to &amp;apos; because &amp;apos; is not a valid HTML 4 entity,
  * and is displayed literally in IE7.
  */
 gchar *purple_markup_escape_text(const gchar *text, gssize length);
@@ -657,13 +657,14 @@ char *purple_markup_linkify(const char *str);
  * @text: The string in which to unescape any HTML entities
  *
  * Unescapes HTML entities to their literal characters in the text.
- * For example "&amp;" is replaced by '&' and so on.  Also converts
- * numerical entities (e.g. "&#38;" is also '&').
+ * For example "&amp;amp;" is replaced by '&amp;' and so on.  Also converts
+ * numerical entities (e.g. "&amp;\#38;" is also '&amp;').
  *
  * This function currently supports the following named entities:
- *     "&amp;", "&lt;", "&gt;", "&copy;", "&quot;", "&reg;", "&apos;"
+ *     "&amp;amp;", "&amp;lt;", "&amp;gt;", "&amp;copy;", "&amp;quot;",
+ *     "&amp;reg;", "&amp;apos;"
  *
- * purple_unescape_html() is similar, but also converts "<br>" into "\n".
+ * purple_unescape_html() is similar, but also converts "&lt;br&gt;" into "\n".
  *
  * Returns: The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
@@ -677,7 +678,7 @@ char *purple_unescape_text(const char *text);
  * @html: The string in which to unescape any HTML entities
  *
  * Unescapes HTML entities to their literal characters and converts
- * "<br>" to "\n".  See purple_unescape_text() for more details.
+ * "&lt;br&gt;" to "\n".  See purple_unescape_text() for more details.
  *
  * Returns: The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
@@ -729,8 +730,8 @@ char *purple_markup_get_tag_name(const char *tag);
  * @length: If not %NULL, the string length of the entity is stored in this location.
  *
  * Returns a constant string of the character representation of the HTML
- * entity pointed to by @text. For example, purple_markup_unescape_entity("&amp;")
- * will return "&". The @text variable is expected to point to an '&',
+ * entity pointed to by @text. For example, purple_markup_unescape_entity("&amp;amp;")
+ * will return "&amp;". The @text variable is expected to point to an '&amp;',
  * the first character of the entity. If given an unrecognized entity, the function
  * returns %NULL.
  *
