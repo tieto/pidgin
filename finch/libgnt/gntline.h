@@ -67,6 +67,8 @@ struct _GntLineClass
 G_BEGIN_DECLS
 
 /**
+ * gnt_line_get_gtype:
+ *
  * Returns: GType for GntLine.
  */
 GType gnt_line_get_gtype(void);
@@ -75,9 +77,10 @@ GType gnt_line_get_gtype(void);
 #define gnt_vline_new() gnt_line_new(TRUE)
 
 /**
- * Create new line
- *
+ * gnt_line_new:
  * @vertical:  %TRUE if the line should be vertical, %FALSE for a horizontal line.
+ *
+ * Create new line
  *
  * Returns:  The newly created line.
  */
