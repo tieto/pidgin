@@ -22,7 +22,6 @@
 #include "gtkblist.h"
 #include "pidgin.h"
 #include "gtkutils.h"
-#include "gtkimhtml.h"
 
 #include "debug.h"
 
@@ -325,7 +324,6 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	GtkWidget *hbox;
 	GtkWidget *bbox;
 	GtkWidget *sep;
-	GtkWidget *expander;
 	GtkTreeSelection *selection;
 	GtkCellRenderer *cell;
 
@@ -424,21 +422,6 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	g_signal_connect(G_OBJECT(dialog->addrbooks_combo), "changed",
 					 G_CALLBACK(addrbook_change_cb), dialog);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->addrbooks_combo), 0);
-
-	/* Add the expander */
-	expander = gtk_expander_new_with_mnemonic(_("User _details"));
-	gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
-	gtk_widget_show(expander);
-
-	/*
-	 * User details
-	 */
-
-	/* Textview */
-	dialog->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(expander), 
-		pidgin_make_scrollable(dialog->imhtml, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1));
-	gtk_widget_show(dialog->imhtml);
 
 	/* Separator. */
 	sep = gtk_hseparator_new();

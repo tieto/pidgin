@@ -23,7 +23,6 @@
 #include "gtkblist.h"
 #include "pidgin.h"
 #include "gtkutils.h"
-#include "gtkimhtml.h"
 
 #include "debug.h"
 #include "gevolution.h"
