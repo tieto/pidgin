@@ -1440,7 +1440,7 @@ purple_request_field_choice_get_value(const PurpleRequestField *field);
  *
  * Returns a list of elements in a choice field.
  *
- * Returns: (transfer none): The list of pairs <label, value>.
+ * Returns: (transfer none): The list of pairs of {label, value}.
  */
 GList *
 purple_request_field_choice_get_elements(const PurpleRequestField *field);
