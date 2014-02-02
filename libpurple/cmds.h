@@ -140,11 +140,14 @@ G_BEGIN_DECLS
  *             This string should contain no whitespace, and use a single
  *             character for each argument.  The recognized characters are:
  *             <ul>
- *               <li><tt>'w'</tt>: Matches a single word.</li>
- *               <li><tt>'W'</tt>: Matches a single word, with formatting.</li>
- *               <li><tt>'s'</tt>: Matches the rest of the arguments after this
- *                                 point, as a single string.</li>
- *               <li><tt>'S'</tt>: Same as <tt>'s'</tt> but with formatting.</li>
+ *               <li><literal>'w'</literal>: Matches a single word.</li>
+ *               <li><literal>'W'</literal>: Matches a single word, with
+ *                                           formatting.</li>
+ *               <li><literal>'s'</literal>: Matches the rest of the arguments
+ *                                           after this point, as a single
+ *                                           string.</li>
+ *               <li><literal>'S'</literal>: Same as <literal>'s'</literal> but
+ *                                           with formatting.</li>
  *             </ul>
  *             If args is the empty string, then the command accepts no arguments.
  *             The args passed to the callback @func will be a %NULL
@@ -155,14 +158,14 @@ G_BEGIN_DECLS
  *          and usually the first command will stop any others from being
  *          called.
  * @f: Flags specifying various options about this command, combined with
- *          <tt>|</tt> (bitwise OR). You need to at least pass one of
+ *          <literal>|</literal> (bitwise OR). You need to at least pass one of
  *          #PURPLE_CMD_FLAG_IM or #PURPLE_CMD_FLAG_CHAT (you may pass both) in
  *          order for the command to ever actually be called.
  * @protocol_id: If the #PURPLE_CMD_FLAG_PRPL_ONLY flag is set, this is the id
  *                of the protocol to which the command applies (such as
- *                <tt>"prpl-msn"</tt>). If the flag is not set, this parameter
- *                is ignored; pass %NULL (or a humourous string of your
- *                choice!).
+ *                <literal>"prpl-msn"</literal>). If the flag is not set, this
+ *                parameter is ignored; pass %NULL (or a humourous string of
+ *                your choice!).
  * @func: This is the function to call when someone enters this command.
  * @helpstr: a whitespace sensitive, UTF-8, HTML string describing how to
  *                use the command.  The preferred format of this string is the
@@ -225,14 +228,14 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
  *
  * List registered commands.
  *
- * Returns a <tt>GList</tt> (which must be freed by the caller) of all commands
+ * Returns a #GList (which must be freed by the caller) of all commands
  * that are valid in the context of @conv, or all commands, if @conv is
  * %NULL.  Don't keep this list around past the main loop, or anything else that
- * might unregister a command, as the <tt>const char *</tt>'s used get freed
+ * might unregister a command, as the <type>const char *</type>'s used get freed
  * then.
  *
- * Returns: A #GList of <tt>const char *</tt>, which must be freed with
- *         <tt>g_list_free()</tt>.
+ * Returns: A #GList of <type>const char *</type>, which must be freed with
+ *          g_list_free().
  */
 GList *purple_cmd_list(PurpleConversation *conv);
 
@@ -247,7 +250,7 @@ GList *purple_cmd_list(PurpleConversation *conv);
  * Returns the help strings for a given command in the form of a GList,
  * one node for each matching command.
  *
- * Returns: A <tt>GList</tt> of <tt>const char *</tt>s, which is the help string
+ * Returns: A #GList of <type>const char *</type>s, which is the help string
  *         for that command.
  */
 GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);

@@ -59,9 +59,9 @@ typedef enum
  * @type: the type of the preferenced named @name
  * @val:  the new value of the preferencs; should be cast to the correct
  *             type.  For instance, to recover the value of a #PURPLE_PREF_INT
- *             preference, use <tt>GPOINTER_TO_INT(val)</tt>.  Alternatively,
- *             just call purple_prefs_get_int(), purple_prefs_get_string_list()
- *             etc.
+ *             preference, use <literal>GPOINTER_TO_INT(val)</literal>.
+ *             Alternatively, just call purple_prefs_get_int(),
+ *             purple_prefs_get_string_list() etc.
  * @data: Arbitrary data specified when the callback was connected with
  *             purple_prefs_connect_callback().
  *

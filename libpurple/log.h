@@ -429,7 +429,7 @@ void purple_log_set_free(PurpleLogSet *set);
  * file handle and log path.
  *
  * This function is intended to be used as a "common"
- * implementation of a logger's <tt>write</tt> function.
+ * implementation of a logger's <literal>write</literal> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
  */
@@ -447,7 +447,7 @@ void purple_log_common_writer(PurpleLog *log, const char *ext);
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's <tt>list</tt> function.
+ * a "common" implementation of a logger's <literal>list</literal> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
  *
@@ -470,8 +470,8 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name,
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's <tt>total_size</tt> function.
- * It should only be passed to purple_log_logger_new() and never
+ * a "common" implementation of a logger's <literal>total_size</literal>
+ * function. It should only be passed to purple_log_logger_new() and never
  * called directly.
  *
  * Returns: The size of all the logs with the specified extension
@@ -488,7 +488,7 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name,
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's <tt>size</tt> function.
+ * a "common" implementation of a logger's <literal>size</literal> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
  *
@@ -504,7 +504,7 @@ int purple_log_common_sizer(PurpleLog *log);
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's <tt>delete</tt> function.
+ * a "common" implementation of a logger's <literal>delete</literal> function.
  * It should only be passed to purple_log_logger_new() and never
  * called directly.
  *
@@ -520,8 +520,8 @@ gboolean purple_log_common_deleter(PurpleLog *log);
  *
  * This function should only be used with logs that are written
  * with purple_log_common_writer().  It's intended to be used as
- * a "common" implementation of a logger's <tt>is_deletable</tt> function.
- * It should only be passed to purple_log_logger_new() and never
+ * a "common" implementation of a logger's <literal>is_deletable</literal>
+ * function. It should only be passed to purple_log_logger_new() and never
  * called directly.
  *
  * Returns: A boolean indicating if the log is deletable.
@@ -540,19 +540,22 @@ gboolean purple_log_common_is_deletable(PurpleLog *log);
  * @id:           The logger's id.
  * @name:         The logger's name.
  * @functions:    The number of functions being passed. The following
- *                functions are currently available (in order): <tt>create</tt>,
- *                <tt>write</tt>, <tt>finalize</tt>, <tt>list</tt>,
- *                <tt>read</tt>, <tt>size</tt>, <tt>total_size</tt>,
- *                <tt>list_syslog</tt>, <tt>get_log_sets</tt>, <tt>remove</tt>,
- *                <tt>is_deletable</tt>.
+ *                functions are currently available (in order):
+ *                <literal>create</literal>, <literal>write</literal>,
+ *                <literal>finalize</literal>, <literal>list</literal>,
+ *                <literal>read</literal>, <literal>size</literal>,
+ *                <literal>total_size</literal>, <literal>list_syslog</literal>,
+ *                <literal>get_log_sets</literal>, <literal>remove</literal>,
+ *                <literal>is_deletable</literal>.
  *                For details on these functions, see PurpleLogLogger.
  *                Functions may not be skipped. For example, passing
- *                <tt>create</tt> and <tt>write</tt> is acceptable (for a total
- *                of two functions). Passing <tt>create</tt> and
- *                <tt>finalize</tt>, however, is not. To accomplish that, the
- *                caller must pass <tt>create</tt>, %NULL (a placeholder for
- *                <tt>write</tt>), and <tt>finalize</tt> (for a total of 3
- *                functions).
+ *                <literal>create</literal> and <literal>write</literal> is
+ *                acceptable (for a total of two functions). Passing
+ *                <literal>create</literal> and <literal>finalize</literal>,
+ *                however, is not. To accomplish that, the caller must pass
+ *                <literal>create</literal>, %NULL (a placeholder for
+ *                <literal>write</literal>), and <literal>finalize</literal>
+ *                (for a total of 3 functions).
  *
  * Creates a new logger
  *
