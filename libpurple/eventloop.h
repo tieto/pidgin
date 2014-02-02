@@ -76,7 +76,7 @@ struct _PurpleEventLoopUiOps
 	 * the libpurple thread.  You should make sure to detect this situation
 	 * and to only call "function" from the libpurple thread.
 	 *
-	 * @interval: the interval in <em>milliseconds</em> between calls
+	 * @interval: the interval in <emphasis>milliseconds</emphasis> between calls
 	 *                 to @function.
 	 * @data:     arbitrary data to be passed to @function at each
 	 *                 call.

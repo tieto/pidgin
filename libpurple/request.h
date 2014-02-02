@@ -1917,7 +1917,7 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 /**
  * purple_request_input:
  * @handle:        The plugin or connection handle.  For some
- *                 things this is <em>extremely</em> important.  The
+ *                 things this is <emphasis>extremely</emphasis> important.  The
  *                 handle is used to programmatically close the request
  *                 dialog when it is no longer needed.  For protocols this
  *                 is often a pointer to the #PurpleConnection
@@ -1926,7 +1926,7 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
  *                 because it allows a request to be closed with
  *                 purple_request_close_with_handle() when, for
  *                 example, you sign offline.  If the request is
- *                 <em>not</em> closed it is <strong>very</strong>
+ *                 <emphasis>not</emphasis> closed it is <strong>very</strong>
  *                 likely to cause a crash whenever the callback
  *                 handler functions are triggered.
  * @title:         The title of the message, or %NULL if it should have
@@ -1968,7 +1968,7 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
 /**
  * purple_request_choice:
  * @handle:        The plugin or connection handle.  For some things this
- *                 is <em>extremely</em> important.  See the comments on
+ *                 is <emphasis>extremely</emphasis> important.  See the comments on
  *                 purple_request_input().
  * @title:         The title of the message, or %NULL if it should have
  *                 no title.
@@ -2019,7 +2019,7 @@ void *purple_request_choice_varg(void *handle, const char *title,
 /**
  * purple_request_action:
  * @handle:         The plugin or connection handle.  For some things this
- *                       is <em>extremely</em> important.  See the comments on
+ *                       is <emphasis>extremely</emphasis> important.  See the comments on
  *                       purple_request_input().
  * @title:          The title of the message, or %NULL if it should have
  *                       no title.
@@ -2069,7 +2069,7 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 /**
  * purple_request_wait:
  * @handle:        The plugin or connection handle.  For some things this
- *                 is <em>extremely</em> important.  See the comments on
+ *                 is <emphasis>extremely</emphasis> important.  See the comments on
  *                 purple_request_input().
  * @title:         The title of the message, or %NULL if it should have
  *                 default title.
@@ -2118,7 +2118,7 @@ purple_request_wait_progress(void *ui_handle, gfloat fraction);
 /**
  * purple_request_fields:
  * @handle:      The plugin or connection handle.  For some things this
- *               is <em>extremely</em> important.  See the comments on
+ *               is <emphasis>extremely</emphasis> important.  See the comments on
  *               purple_request_input().
  * @title:       The title of the message, or %NULL if it should have
  *               no title.
@@ -2234,7 +2234,7 @@ void purple_request_close_with_handle(void *handle);
 /**
  * purple_request_file:
  * @handle:      The plugin or connection handle.  For some things this
- *                    is <em>extremely</em> important.  See the comments on
+ *                    is <emphasis>extremely</emphasis> important.  See the comments on
  *                    purple_request_input().
  * @title:       The title of the message, or %NULL if it should have
  *                    no title.
@@ -2261,7 +2261,7 @@ purple_request_file(void *handle, const char *title, const char *filename,
 /**
  * purple_request_folder:
  * @handle:      The plugin or connection handle.  For some things this
- *                    is <em>extremely</em> important.  See the comments on
+ *                    is <emphasis>extremely</emphasis> important.  See the comments on
  *                    purple_request_input().
  * @title:       The title of the message, or %NULL if it should have
  *                    no title.
@@ -2286,7 +2286,7 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
 /**
  * purple_request_certificate:
  * @handle:        The plugin or connection handle.  For some things this
- *                 is <em>extremely</em> important.  See the comments on
+ *                 is <emphasis>extremely</emphasis> important.  See the comments on
  *                 purple_request_input().
  * @title:         The title of the message, or %NULL if it should have
  *                 no title.
