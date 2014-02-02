@@ -4,16 +4,16 @@
 #
 # Translators:
 # Daniël Heres <danielheres@gmail.com>, 2008
-# Gideon van Melle <translations@gvmelle.com>, 2011-2013
+# Gideon van Melle <translations@gvmelle.com>, 2011-2014
 # Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-21 22:24-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"POT-Creation-Date: 2014-02-01 21:45-0800\n"
+"PO-Revision-Date: 2014-01-29 09:24+0000\n"
+"Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/pidgin/language/"
 "nl/)\n"
 "Language: nl\n"
@@ -3382,7 +3382,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Inkomende UTF-8 automatisch herkennen"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Ident naam"
 
 msgid "Real name"
 msgstr "Echte naam"
@@ -11712,6 +11712,9 @@ msgstr "Arabisch"
 msgid "Assamese"
 msgstr "Assamese"
 
+msgid "Asturian"
+msgstr ""
+
 msgid "Belarusian Latin"
 msgstr "Witrussisch Latijn"
 
@@ -12703,6 +12706,7 @@ msgstr ""
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
+"Kan URL niet openen:het 'Handleiding' browser commando lijkt ongeldig. "
 
 msgid "No message"
 msgstr "Geen bericht"
@@ -14682,6 +14686,59 @@ msgstr ""
 "Deze plug-in staat de gebruiker toe het formaat van logboek- en "
 "gesprekstijdstempels aan te passen."
 
+#. Alerts
+msgid "Chatroom alerts"
+msgstr "Chatroom waarschuwingen"
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+"Chatroom berichten waarschuwingen  _alleen waar iemand uw gebruikersnaam zegt"
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr "Launcher pictogram"
+
+msgid "_Disable launcher integration"
+msgstr "_Uitschakelen launcher integratie"
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr "Toon aantal ongelezen _berichten op launcher pictogram"
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Toon aantal ongelezen _conversaties op launcher pictogram"
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr "Berichtgeving menu"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+"Toon aantal _ongelezen berichten voor conversaties in berichtgeving menu"
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+"Toon _verstreken tijd voor ongelezen conversaties in het berichtgeving menu"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr "Unity Integratie"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr "Zorgt voor integratie met Unity."
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Zorgt voor integratie met Unity's berichtgeving menu en launcher."
+
 msgid "Audio"
 msgstr "Audio"
 
@@ -14832,55 +14889,6 @@ msgid ""
 msgstr ""
 "Geeft de mogelijkheid voor specifieke Pidgin voor Windows opties, zoals "
 "dokken van vriendenlijst."
-
-#. Alerts
-msgid "Chatroom alerts"
-msgstr ""
-
-msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
-
-#. Launcher integration
-msgid "Launcher Icon"
-msgstr ""
-
-msgid "_Disable launcher integration"
-msgstr ""
-
-msgid "Show number of unread _messages on launcher icon"
-msgstr ""
-
-msgid "Show number of unread _conversations on launcher icon"
-msgstr ""
-
-#. Messaging menu integration
-msgid "Messaging Menu"
-msgstr ""
-
-msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
-
-msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-msgid "Unity Integration"
-msgstr ""
-
-#. *< name
-#. *< version
-#. *  summary
-msgid "Provides integration with Unity."
-msgstr ""
-
-#. *  description
-msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Afgemeld.</font>"
