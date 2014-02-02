@@ -61,7 +61,7 @@ void pidgin_smileys_uninit(void);
 /**
  * Returns a GSList with the GtkWebViewSmiley of each custom smiley
  *
- * Returns: (transfer none): A GtkIMHmlSmiley list
+ * Returns: (transfer none): A GtkWebViewSmiley list
  */
 GSList *pidgin_smileys_get_all(void);
 

@@ -90,8 +90,8 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 /******************************************************************************
  * GtkWebViewSmileys stuff
  *****************************************************************************/
-/* Perhaps these should be in gtkimhtml.c instead. -- sadrul */
-static void add_gtkimhtml_to_list(GtkWebViewSmiley *gtksmiley)
+/* Perhaps these should be in gtkwebview.c instead. -- sadrul */
+static void add_gtkwebview_to_list(GtkWebViewSmiley *gtksmiley)
 {
 	gtk_smileys = g_slist_prepend(gtk_smileys, gtksmiley);
 
@@ -128,7 +128,7 @@ image_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
 #endif
 }
 
-static GtkWebViewSmiley *smiley_purple_to_gtkimhtml(PurpleSmiley *smiley)
+static GtkWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
 {
 	GtkWebViewSmiley *gtksmiley;
 	gchar *filename;
@@ -188,8 +188,8 @@ void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
 {
 	GtkWebViewSmiley *gtksmiley;
 
-	gtksmiley = smiley_purple_to_gtkimhtml(smiley);
-	add_gtkimhtml_to_list(gtksmiley);
+	gtksmiley = smiley_purple_to_gtkwebview(smiley);
+	add_gtkwebview_to_list(gtksmiley);
 	g_signal_connect(G_OBJECT(smiley), "destroy", G_CALLBACK(pidgin_smiley_del_from_list), NULL);
 }
 

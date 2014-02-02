@@ -76,8 +76,6 @@ PIDGIN_C_SRC =	\
 			gtkicon-theme-loader.c \
 			gtkicon-theme.c \
 			gtkidle.c \
-			gtkimhtml.c \
-			gtkimhtmltoolbar.c \
 			gtklog.c \
 			gtkpidgin.c \
 			gtkmedia.c \
