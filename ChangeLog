@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.9:
+version 2.10.9 (2/2/2014):
 	XMPP:
 	* Fix problems logging into some servers including jabber.org and
 	  chat.facebook.com. (#15879)
