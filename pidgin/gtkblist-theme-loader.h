@@ -30,12 +30,6 @@
 #include <glib-object.h>
 #include "theme-loader.h"
 
-/**
- * A pidgin buddy list theme loader. extends PurpleThemeLoader (theme-loader.h)
- * This is a class designed to build sound themes
- *
- * PidginBlistThemeLoader is a GObject.
- */
 typedef struct _PidginBlistThemeLoader        PidginBlistThemeLoader;
 typedef struct _PidginBlistThemeLoaderClass   PidginBlistThemeLoaderClass;
 
@@ -46,6 +40,12 @@ typedef struct _PidginBlistThemeLoaderClass   PidginBlistThemeLoaderClass;
 #define PIDGIN_IS_BLIST_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_BLIST_THEME_LOADER))
 #define PIDGIN_BLIST_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_BLIST_THEME_LOADER, PidginBlistThemeLoaderClass))
 
+/**
+ * PidginBlistThemeLoader:
+ *
+ * A pidgin buddy list theme loader. extends PurpleThemeLoader (theme-loader.h)
+ * This is a class designed to build sound themes
+ */
 struct _PidginBlistThemeLoader
 {
 	PurpleThemeLoader parent;
@@ -62,6 +62,8 @@ struct _PidginBlistThemeLoaderClass
 G_BEGIN_DECLS
 
 /**
+ * pidgin_blist_theme_loader_get_type:
+ *
  * GObject foo.
  * @internal.
  */

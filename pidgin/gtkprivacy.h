@@ -31,39 +31,47 @@
 G_BEGIN_DECLS
 
 /**
+ * pidgin_privacy_init:
+ *
  * Initializes the GTK+ privacy subsystem.
  */
 void pidgin_privacy_init(void);
 
 /**
+ * pidgin_privacy_dialog_show:
+ *
  * Shows the privacy dialog.
  */
 void pidgin_privacy_dialog_show(void);
 
 /**
+ * pidgin_privacy_dialog_hide:
+ *
  * Hides the privacy dialog.
  */
 void pidgin_privacy_dialog_hide(void);
 
 /**
+ * pidgin_request_add_permit:
+ * @account: The account.
+ * @name:    The name of the user to add.
+ *
  * Requests confirmation to add a user to the allow list for an account,
  * and then adds it.
  *
- * If @a name is not specified, an input dialog will be presented.
- *
- * @account: The account.
- * @name:    The name of the user to add.
+ * If @name is not specified, an input dialog will be presented.
  */
 void pidgin_request_add_permit(PurpleAccount *account, const char *name);
 
 /**
+ * pidgin_request_add_block:
+ * @account: The account.
+ * @name:    The name of the user to add.
+ *
  * Requests confirmation to add a user to the block list for an account,
  * and then adds it.
  *
- * If @a name is not specified, an input dialog will be presented.
- *
- * @account: The account.
- * @name:    The name of the user to add.
+ * If @name is not specified, an input dialog will be presented.
  */
 void pidgin_request_add_block(PurpleAccount *account, const char *name);
 

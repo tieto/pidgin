@@ -51,6 +51,8 @@ struct _GtkWebViewToolbarClass {
 G_BEGIN_DECLS
 
 /**
+ * gtk_webviewtoolbar_get_type:
+ *
  * Returns the GType for a GtkWebViewToolbar widget
  *
  * Returns: The GType for GtkWebViewToolbar widget
@@ -58,6 +60,8 @@ G_BEGIN_DECLS
 GType gtk_webviewtoolbar_get_type(void);
 
 /**
+ * gtk_webviewtoolbar_new:
+ *
  * Create a new GtkWebViewToolbar object
  *
  * Returns: A GtkWidget corresponding to the GtkWebViewToolbar object
@@ -65,36 +69,40 @@ GType gtk_webviewtoolbar_get_type(void);
 GtkWidget *gtk_webviewtoolbar_new(void);
 
 /**
- * Attach a GtkWebViewToolbar object to a GtkWebView
- *
+ * gtk_webviewtoolbar_attach:
  * @toolbar: The GtkWebViewToolbar object
  * @webview: The GtkWebView object
+ *
+ * Attach a GtkWebViewToolbar object to a GtkWebView
  */
 void gtk_webviewtoolbar_attach(GtkWebViewToolbar *toolbar, GtkWidget *webview);
 
 /**
- * Associate the smileys from a protocol to a GtkWebViewToolbar object
- *
+ * gtk_webviewtoolbar_associate_smileys:
  * @toolbar:  The GtkWebViewToolbar object
  * @proto_id: The ID of the protocol from which smileys are associated
+ *
+ * Associate the smileys from a protocol to a GtkWebViewToolbar object
  */
 void gtk_webviewtoolbar_associate_smileys(GtkWebViewToolbar *toolbar,
                                           const char *proto_id);
 
 /**
- * Switch the active conversation for a GtkWebViewToolbar object
- *
+ * gtk_webviewtoolbar_switch_active_conversation:
  * @toolbar: The GtkWebViewToolbar object
  * @conv:    The new conversation
+ *
+ * Switch the active conversation for a GtkWebViewToolbar object
  */
 void gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
                                                    PurpleConversation *conv);
 
 /**
- * Activate a GtkWebViewToolbar action
- *
+ * gtk_webviewtoolbar_activate:
  * @toolbar: The GtkWebViewToolbar object
  * @action:  The GtkWebViewAction
+ *
+ * Activate a GtkWebViewToolbar action
  */
 void gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
                                  GtkWebViewAction action);

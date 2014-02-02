@@ -31,13 +31,6 @@
 #include "conversation.h"
 #include "theme.h"
 
-/**
- * extends PurpleTheme (theme.h)
- * A pidgin icon theme.
- * This object represents a Pidgin icon theme.
- *
- * PidginConvTheme is a PurpleTheme Object.
- */
 typedef struct _PidginConvTheme        PidginConvTheme;
 typedef struct _PidginConvThemeClass   PidginConvThemeClass;
 
@@ -48,6 +41,15 @@ typedef struct _PidginConvThemeClass   PidginConvThemeClass;
 #define PIDGIN_IS_CONV_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_CONV_THEME))
 #define PIDGIN_CONV_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_CONV_THEME, PidginConvThemeClass))
 
+/**
+ * PidginConvTheme:
+ *
+ * extends PurpleTheme (theme.h)
+ * A pidgin icon theme.
+ * This object represents a Pidgin icon theme.
+ *
+ * PidginConvTheme is a PurpleTheme Object.
+ */
 struct _PidginConvTheme
 {
 	PurpleTheme parent;
@@ -83,15 +85,18 @@ typedef enum {
 G_BEGIN_DECLS
 
 /**
+ * pidgin_conversation_theme_get_type:
+ *
  * GObject foo.
  * @internal.
  */
 GType pidgin_conversation_theme_get_type(void);
 
 /**
- * Get the Info.plist hash table from a conversation theme.
- *
+ * pidgin_conversation_theme_get_info:
  * @theme: The conversation theme
+ *
+ * Get the Info.plist hash table from a conversation theme.
  *
  * Returns: The hash table. Keys are strings as outlined for message styles,
  *         values are GValue*s. This is an internal structure. Take a ref if
@@ -100,34 +105,36 @@ GType pidgin_conversation_theme_get_type(void);
 const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *theme);
 
 /**
- * Set the Info.plist hash table for a conversation theme.
- *
+ * pidgin_conversation_theme_set_info:
  * @theme: The conversation theme
  * @info:  The new hash table. The theme will take ownership of this hash
  *              table. Do not use it yourself afterwards with holding a ref.
- *              For key and value specifications, @see pidgin_conversation_theme_get_info.
+ *              For key and value specifications, see pidgin_conversation_theme_get_info().
  *
+ * Set the Info.plist hash table for a conversation theme.
  */
 void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
 
 /**
- * Lookup a key in a theme
- *
+ * pidgin_conversation_theme_lookup:
  * @theme:    The conversation theme
  * @key:      The key to find
  * @specific: Whether to search variant-specific keys
  *
- * Returns: The key information. If @a specific is %TRUE, then keys are first
+ * Lookup a key in a theme
+ *
+ * Returns: The key information. If @specific is %TRUE, then keys are first
  *         searched by variant, then by general ones. Otherwise, only general
  *         key values are returned.
  */
 const GValue *pidgin_conversation_theme_lookup(PidginConvTheme *theme, const char *key, gboolean specific);
 
 /**
- * Get the template data from a conversation theme.
- *
+ * pidgin_conversation_theme_get_template:
  * @theme: The conversation theme
  * @type:  The type of template data
+ *
+ * Get the template data from a conversation theme.
  *
  * Returns: The template data requested. Fallback is made as required by styles.
  *         Subsequent calls to this function will return cached values.
@@ -135,38 +142,41 @@ const GValue *pidgin_conversation_theme_lookup(PidginConvTheme *theme, const cha
 const char *pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTemplateType type);
 
 /**
- * Add an available variant name to a conversation theme.
- *
+ * pidgin_conversation_theme_add_variant:
  * @theme:   The conversation theme
  * @variant: The name of the variant
  *
- * @Note The conversation theme will take ownership of the variant name string.
+ * Add an available variant name to a conversation theme.
+ *
+ * Note: The conversation theme will take ownership of the variant name string.
  *       This function should normally only be called by the theme loader.
  */
 void pidgin_conversation_theme_add_variant(PidginConvTheme *theme, char *variant);
 
 /**
- * Get the currently set variant name for a conversation theme.
- *
+ * pidgin_conversation_theme_get_variant:
  * @theme: The conversation theme
+ *
+ * Get the currently set variant name for a conversation theme.
  *
  * Returns: The current variant name.
  */
 const char *pidgin_conversation_theme_get_variant(PidginConvTheme *theme);
 
 /**
- * Set the variant name for a conversation theme.
- *
+ * pidgin_conversation_theme_set_variant:
  * @theme:   The conversation theme
  * @variant: The name of the variant
  *
+ * Set the variant name for a conversation theme.
  */
 void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant);
 
 /**
- * Get a list of available variants for a conversation theme.
- *
+ * pidgin_conversation_theme_get_variants:
  * @theme: The conversation theme
+ *
+ * Get a list of available variants for a conversation theme.
  *
  * Returns: The list of variants. This GList and the string data are owned by
  *         the theme and should not be freed by the caller.
@@ -174,32 +184,36 @@ void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *v
 const GList *pidgin_conversation_theme_get_variants(PidginConvTheme *theme);
 
 /**
- * Get the path to the template HTML file.
- *
+ * pidgin_conversation_theme_get_template_path:
  * @theme: The conversation theme
+ *
+ * Get the path to the template HTML file.
  *
  * Returns: The path to the HTML file.
  */
 char *pidgin_conversation_theme_get_template_path(PidginConvTheme *theme);
 
 /**
- * Get the path to the current variant CSS file.
- *
+ * pidgin_conversation_theme_get_css_path:
  * @theme: The conversation theme
+ *
+ * Get the path to the current variant CSS file.
  *
  * Returns: The path to the CSS file.
  */
 char *pidgin_conversation_theme_get_css_path(PidginConvTheme *theme);
 
 /**
- * Get (and reference) the array of nick colors
- *
+ * pidgin_conversation_theme_get_nick_colors:
  * @theme: The conversation theme
+ *
+ * Get (and reference) the array of nick colors
  *
  * Returns: Pointer to GArray of nick colors, or NULL if no colors in theme
  */
 GArray *pidgin_conversation_theme_get_nick_colors(PidginConvTheme *theme);
 
 G_END_DECLS
+
 #endif /* PIDGIN_CONV_THEME_H */
 

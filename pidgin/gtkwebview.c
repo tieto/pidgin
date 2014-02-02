@@ -293,7 +293,7 @@ gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
 		else if (*x == '<') /* Because we're all WYSIWYG now, a '<' char should
 		                     * only appear as the start of a tag.  Perhaps a
 		                     * safer (but costlier) check would be to call
-		                     * gtk_imhtml_is_tag on it */
+		                     * gtk_webview_is_tag on it */
 			break;
 		else {
 			alen = 1;
@@ -507,10 +507,12 @@ gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
 
 			wids = gtk_text_child_anchor_get_widgets(anchor);
 
+#if 0
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext",
 			                       purple_unescape_html(smiley->smile), g_free);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext",
 			                       g_strdup(smiley->smile), g_free);
+#endif
 
 			if (smiley->webview) {
 				if (wids) {

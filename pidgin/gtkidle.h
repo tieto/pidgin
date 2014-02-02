@@ -36,6 +36,8 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * pidgin_idle_get_ui_ops:
+ *
  * Returns the GTK+ idle UI ops.
  *
  * Returns: The UI operations structure.

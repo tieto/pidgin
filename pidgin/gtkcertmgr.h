@@ -34,6 +34,8 @@
 typedef struct _PidginCertificateManager PidginCertificateManager;
 
 /**
+ * PidginCertificateManager:
+ *
  * GTK+ Certificate Manager subwidget
  */
 struct _PidginCertificateManager {
@@ -50,11 +52,15 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 /**
+ * pidgin_certmgr_show:
+ *
  * Show the certificate manager window
  */
 void pidgin_certmgr_show(void);
 
 /**
+ * pidgin_certmgr_hide:
+ *
  * Hide the certificate manager window
  */
 void pidgin_certmgr_hide(void);

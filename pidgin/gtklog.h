@@ -35,20 +35,31 @@
 typedef struct _PidginLogViewer PidginLogViewer;
 
 /**
+ * PidginLogViewer:
+ * @logs:      The list of logs viewed in this viewer
+ * @window:    The viewer's window
+ * @treestore: The treestore containing said logs
+ * @treeview:  The treeview representing said treestore
+ * @web_view:  The webkit web view to display said logs
+ * @entry:     The search entry, in which search terms are entered
+ * @flags:     The most recently used log flags
+ * @search:    The string currently being searched for
+ * @label:     The label at the top of the log viewer
+ *
  * A GTK+ Log Viewer.  You can look at logs with it.
  */
 struct _PidginLogViewer {
-	GList *logs;                 /**< The list of logs viewed in this viewer   */
+	GList *logs;
 
-	GtkWidget        *window;    /**< The viewer's window                      */
-	GtkTreeStore     *treestore; /**< The treestore containing said logs       */
-	GtkWidget        *treeview;  /**< The treeview representing said treestore */
-	GtkWidget        *web_view;  /**< The webkit web view to display said logs */
-	GtkWidget        *entry;     /**< The search entry, in which search terms
-	                              *   are entered                              */
-	PurpleLogReadFlags flags;      /**< The most recently used log flags         */
-	char             *search;    /**< The string currently being searched for  */
-	GtkWidget        *label;     /**< The label at the top of the log viewer   */
+	GtkWidget        *window;
+	GtkTreeStore     *treestore;
+	GtkWidget        *treeview;
+	GtkWidget        *web_view;
+	GtkWidget        *entry;
+
+	PurpleLogReadFlags flags;
+	char             *search;
+	GtkWidget        *label;
 };
 
 
@@ -65,11 +76,15 @@ void pidgin_syslog_show(void);
 /*@{*/
 
 /**
+ * pidgin_log_init:
+ *
  * Initializes the GTK+ log subsystem.
  */
 void pidgin_log_init(void);
 
 /**
+ * pidgin_log_get_handle:
+ *
  * Returns the GTK+ log subsystem handle.
  *
  * Returns: The GTK+ log subsystem handle.
@@ -77,6 +92,8 @@ void pidgin_log_init(void);
 void *pidgin_log_get_handle(void);
 
 /**
+ * pidgin_log_uninit:
+ *
  * Uninitializes the GTK+ log subsystem.
  */
 void pidgin_log_uninit(void);

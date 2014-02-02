@@ -29,13 +29,6 @@
 #include <glib-object.h>
 #include "gtkicon-theme.h"
 
-/**
- * extends PidginIconTheme (gtkicon-theme.h)
- * A pidgin status icon theme.
- * This object represents a Pidgin status icon theme.
- *
- * PidginStatusIconTheme is a PidginIconTheme Object.
- */
 typedef struct _PidginStatusIconTheme        PidginStatusIconTheme;
 typedef struct _PidginStatusIconThemeClass   PidginStatusIconThemeClass;
 
@@ -46,6 +39,15 @@ typedef struct _PidginStatusIconThemeClass   PidginStatusIconThemeClass;
 #define PIDGIN_IS_STATUS_ICON_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_STATUS_ICON_THEME))
 #define PIDGIN_STATUS_ICON_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconThemeClass))
 
+/**
+ * PidginStatusIconTheme:
+ *
+ * extends PidginIconTheme (gtkicon-theme.h)
+ * A pidgin status icon theme.
+ * This object represents a Pidgin status icon theme.
+ *
+ * PidginStatusIconTheme is a PidginIconTheme Object.
+ */
 struct _PidginStatusIconTheme
 {
 	PidginIconTheme parent;
@@ -57,15 +59,18 @@ struct _PidginStatusIconThemeClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Status Icon Theme API                                          */
+/** @name Pidgin Status Icon Theme API                                    */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
+ * pidgin_status_icon_theme_get_type:
+ *
  * GObject foo.
  * @internal.
  */
 GType pidgin_status_icon_theme_get_type(void);
 
 G_END_DECLS
+
 #endif /* PIDGIN_STATUS_ICON_THEME_H */

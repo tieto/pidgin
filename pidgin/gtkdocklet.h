@@ -35,6 +35,8 @@ typedef enum
 } PidginDockletFlag;
 
 /**
+ * pidgin_docklet_get_status_icon:
+ *
  * Returns the GtkStatusIcon used for the docklet.
  */
 GtkStatusIcon *pidgin_docklet_get_status_icon(void);

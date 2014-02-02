@@ -91,6 +91,7 @@ G_BEGIN_DECLS
  * gnt_box_get_gtype:
  *
  * The GType for GntBox.
+ *
  * Returns: The GType.
  */
 GType gnt_box_get_gtype(void);
