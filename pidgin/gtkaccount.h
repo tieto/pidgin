@@ -40,25 +40,32 @@ typedef enum
 G_BEGIN_DECLS
 
 /**
+ * pidgin_accounts_window_show:
+ *
  * Shows the accounts window.
  */
 void pidgin_accounts_window_show(void);
 
 /**
+ * pidgin_accounts_window_hide:
+ *
  * Hides the accounts window.
  */
 void pidgin_accounts_window_hide(void);
 
 /**
- * Shows an add/modify account dialog.
- *
+ * pidgin_account_dialog_show:
  * @type:    The type of dialog.
  * @account: The associated account, or %NULL for an Add dialog.
+ *
+ * Shows an add/modify account dialog.
  */
 void pidgin_account_dialog_show(PidginAccountDialogType type,
 								  PurpleAccount *account);
 
 /**
+ * pidgin_accounts_get_ui_ops:
+ *
  * Returns the GTK+ account UI ops
  *
  * Returns: The UI operations structure.
@@ -66,6 +73,8 @@ void pidgin_account_dialog_show(PidginAccountDialogType type,
 PurpleAccountUiOps *pidgin_accounts_get_ui_ops(void);
 
 /**
+ * pidgin_accounts_get_handle:
+ *
  * Returns the gtkaccounts handle
  *
  * Returns: The handle to the GTK+ account system
@@ -73,11 +82,15 @@ PurpleAccountUiOps *pidgin_accounts_get_ui_ops(void);
 void *pidgin_accounts_get_handle(void);
 
 /**
+ * pidgin_accounts_init:
+ *
  * Initializes the GTK+ account system
  */
 void pidgin_accounts_init(void);
 
 /**
+ * pidgin_accounts_uninit:
+ *
  * Uninitializes the GTK+ account system
  */
 void pidgin_accounts_uninit(void);

@@ -30,12 +30,6 @@
 #include <glib-object.h>
 #include "theme-loader.h"
 
-/**
- * A pidgin conversation theme loader. Extends PurpleThemeLoader (theme-loader.h)
- * This is a class designed to build conversation themes
- *
- * PidginConvThemeLoader is a GObject.
- */
 typedef struct _PidginConvThemeLoader       PidginConvThemeLoader;
 typedef struct _PidginConvThemeLoaderClass  PidginConvThemeLoaderClass;
 
@@ -46,6 +40,12 @@ typedef struct _PidginConvThemeLoaderClass  PidginConvThemeLoaderClass;
 #define PIDGIN_IS_CONV_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_CONV_THEME_LOADER))
 #define PIDGIN_CONV_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_CONV_THEME_LOADER, PidginConvThemeLoaderClass))
 
+/**
+ * PidginConvThemeLoader:
+ *
+ * A pidgin conversation theme loader. Extends PurpleThemeLoader (theme-loader.h)
+ * This is a class designed to build conversation themes
+ */
 struct _PidginConvThemeLoader
 {
 	PurpleThemeLoader parent;
@@ -62,6 +62,8 @@ struct _PidginConvThemeLoaderClass
 G_BEGIN_DECLS
 
 /**
+ * pidgin_conversation_theme_loader_get_type:
+ *
  * GObject foo.
  * @internal.
  */

@@ -74,15 +74,21 @@ struct _PidginWindowMenu
 };
 
 /**
+ * PidginWindow:
+ * @window:        The window.
+ * @notebook:      The notebook of conversations.
+ * @notebook_menu: The menu on the notebook.
+ * @clicked_tab:   The menu currently clicked.
+ *
  * A GTK+ representation of a graphical window containing one or more
  * conversations.
  */
 struct _PidginWindow
 {
-	GtkWidget *window;           /**< The window.                      */
-	GtkWidget *notebook;         /**< The notebook of conversations.   */
-	GtkWidget *notebook_menu;    /**< The menu on the notebook.        */
-	PidginConversation *clicked_tab; /**< The menu currently clicked.      */
+	GtkWidget *window;
+	GtkWidget *notebook;
+	GtkWidget *notebook_menu;
+	PidginConversation *clicked_tab;
 	GList *gtkconvs;
 
 	PidginWindowMenu *menu;
