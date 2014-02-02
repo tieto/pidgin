@@ -60,8 +60,6 @@ pidgin_SOURCES = \
 	gtkicon-theme.c \
 	gtkicon-theme-loader.c \
 	gtkidle.c \
-	gtkimhtml.c \
-	gtkimhtmltoolbar.c \
 	gtklog.c \
 	gtkmain.c \
 	gtkmedia.c \
@@ -114,8 +112,6 @@ pidgin_headers = \
 	gtkicon-theme.h \
 	gtkicon-theme-loader.h \
 	gtkidle.h \
-	gtkimhtml.h \
-	gtkimhtmltoolbar.h \
 	gtklog.h \
 	gtkmedia.h \
 	gtkmenutray.h \
