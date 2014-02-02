@@ -34,7 +34,7 @@ typedef struct _PidginSmiley PidginSmiley;
 G_BEGIN_DECLS
 
 /**
- * Add a PurpleSmiley to the GtkIMHtmlSmiley's list to be able to use it
+ * Add a PurpleSmiley to the GtkWebViewSmiley's list to be able to use it
  * in pidgin
  *
  * @smiley:	The smiley to be added.
@@ -42,24 +42,24 @@ G_BEGIN_DECLS
 void pidgin_smiley_add_to_list(PurpleSmiley *smiley);
 
 /**
- * Delete a PurpleSmiley from the GtkIMHtmlSmiley's list
+ * Delete a PurpleSmiley from the GtkWebViewSmiley's list
  *
  * @smiley:	The smiley to be deleted.
  */
 void pidgin_smiley_del_from_list(PurpleSmiley *smiley);
 
 /**
- * Load the GtkIMHtml list
+ * Load the GtkWebViewSmiley list
  */
 void pidgin_smileys_init(void);
 
 /**
- * Uninit the GtkIMHtml list
+ * Uninit the GtkWebViewSmiley list
  */
 void pidgin_smileys_uninit(void);
 
 /**
- * Returns a GSList with the GtkIMHtmlSmiley of each custom smiley
+ * Returns a GSList with the GtkWebViewSmiley of each custom smiley
  *
  * Returns: (transfer none): A GtkIMHmlSmiley list
  */

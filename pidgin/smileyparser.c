@@ -157,7 +157,9 @@ smiley_parse_markup(const char *markup, const char *proto_id)
 	}
 
 	for (list = current_smiley_theme->list; list; list = list->next) {
-		if (g_str_equal(list->sml, proto_name)) {
+		if (g_str_equal(list->sml, "default") ||
+			g_str_equal(list->sml, proto_name))
+		{
 			temp2 = parse_for_smiley_list(temp, list->files);
 			g_free(temp);
 			temp = temp2;
