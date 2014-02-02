@@ -49,7 +49,9 @@ typedef enum
 	GNT_KP_MODE_WAIT_ON_CHILD
 } GntKeyPressMode;
 
-typedef struct _GntNode
+typedef struct _GntNode GntNode;
+
+struct _GntNode
 {
 	GntWidget *me;
 
@@ -57,7 +59,7 @@ typedef struct _GntNode
 	int scroll;
 	PANEL *panel;
 	GntWS *ws;
-} GntNode;
+};
 
 typedef struct _GntWM GntWM;
 
@@ -122,6 +124,7 @@ struct _GntWM
 
 	GHashTable *positions;
 
+	/*< private >*/
 	void *res1;
 	void *res2;
 	void *res3;

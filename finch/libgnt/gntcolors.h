@@ -95,7 +95,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile);
 
 /**
  * gnt_colors_get_color:
- * @kfile: The string value
+ * @key: The string value
  *
  * Parse a string color
  *
