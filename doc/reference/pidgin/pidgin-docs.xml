@@ -37,8 +37,6 @@
       <xi:include href="xml/gtkicon-theme-loader.xml" />
       <xi:include href="xml/gtkicon-theme.xml" />
       <xi:include href="xml/gtkidle.xml" />
-      <xi:include href="xml/gtkimhtmltoolbar.xml" />
-      <xi:include href="xml/gtkimhtml.xml" />
       <xi:include href="xml/gtklog.xml" />
       <xi:include href="xml/gtkmedia.xml" />
       <xi:include href="xml/gtkmenutray.xml" />
@@ -80,7 +78,6 @@
       <xi:include href="signals_gtkaccount.xml" />
       <xi:include href="signals_gtkblist.xml" />
       <xi:include href="signals_gtkconv.xml" />
-      <xi:include href="signals_gtkimhtml.xml" />
       <xi:include href="signals_gtklog.xml" />
   </reference>
 

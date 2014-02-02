@@ -26,7 +26,6 @@ SUBDIRS = \
 
 plugindir = $(libdir)/pidgin
 
-convcolors_la_LDFLAGS       = -module -avoid-version
 contact_priority_la_LDFLAGS = -module -avoid-version
 extplacement_la_LDFLAGS     = -module -avoid-version
 gtk_signals_test_la_LDFLAGS = -module -avoid-version
@@ -47,7 +46,6 @@ xmppconsole_la_LDFLAGS      = -module -avoid-version
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	convcolors.la       \
 	extplacement.la     \
 	gtkbuddynote.la     \
 	history.la          \
@@ -70,7 +68,6 @@ noinst_LTLIBRARIES = \
 	contact_priority.la \
 	gtk_signals_test.la
 
-convcolors_la_SOURCES       = convcolors.c
 contact_priority_la_SOURCES = contact_priority.c
 extplacement_la_SOURCES     = extplacement.c
 gtk_signals_test_la_SOURCES = gtk-signals-test.c
@@ -88,7 +85,6 @@ unity_la_SOURCES            = unity.c
 webkit_la_SOURCES           = webkit.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
-convcolors_la_LIBADD        = $(GTK_LIBS)
 contact_priority_la_LIBADD  = $(GTK_LIBS)
 extplacement_la_LIBADD      = $(GTK_LIBS)
 gtk_signals_test_la_LIBADD  = $(GTK_LIBS)

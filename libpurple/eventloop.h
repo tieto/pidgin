@@ -60,7 +60,7 @@ typedef struct _PurpleEventLoopUiOps PurpleEventLoopUiOps;
  * An abstraction of an application's mainloop; libpurple will use this to
  * watch file descriptors and schedule timed callbacks.  If your application
  * uses the glib mainloop, there is an implementation of this struct in
- * <tt>libpurple/example/nullclient.c</tt> which you can use verbatim.
+ * <filename>libpurple/example/nullclient.c</filename> which you can use verbatim.
  */
 struct _PurpleEventLoopUiOps
 {
@@ -76,7 +76,7 @@ struct _PurpleEventLoopUiOps
 	 * the libpurple thread.  You should make sure to detect this situation
 	 * and to only call "function" from the libpurple thread.
 	 *
-	 * @interval: the interval in <em>milliseconds</em> between calls
+	 * @interval: the interval in <emphasis>milliseconds</emphasis> between calls
 	 *                 to @function.
 	 * @data:     arbitrary data to be passed to @function at each
 	 *                 call.
@@ -131,8 +131,8 @@ struct _PurpleEventLoopUiOps
 	 *
 	 * Implementation of this UI op is optional. Implement it if the UI's
 	 * sockets or event loop needs to customize determination of socket
-	 * error status.  If unimplemented, <tt>getsockopt(2)</tt> will be used
-	 * instead.
+	 * error status.  If unimplemented, <literal>getsockopt(2)</literal> will
+	 * be used instead.
 	 *
 	 * @see purple_input_get_error
 	 */

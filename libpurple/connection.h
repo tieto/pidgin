@@ -507,13 +507,13 @@ purple_connection_ssl_error (PurpleConnection *gc,
  * should probably not be automatically reconnected) or transient (so
  * auto-reconnection is a good idea).
  * For instance, #PURPLE_CONNECTION_ERROR_NETWORK_ERROR is a temporary error,
- * which might be caused by losing the network connection, so <tt>
- * purple_connection_error_is_fatal (PURPLE_CONNECTION_ERROR_NETWORK_ERROR)</tt>
+ * which might be caused by losing the network connection, so <literal>
+ * purple_connection_error_is_fatal (PURPLE_CONNECTION_ERROR_NETWORK_ERROR)</literal>
  * is %FALSE.  On the other hand,
  * #PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED probably indicates a
  * misconfiguration of the account which needs the user to go fix it up, so
- * <tt> purple_connection_error_is_fatal
- * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is %TRUE.
+ * <literal> purple_connection_error_is_fatal
+ * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</literal> is %TRUE.
  *
  * Returns: %TRUE if the account should not be automatically reconnected, and
  *         %FALSE otherwise.

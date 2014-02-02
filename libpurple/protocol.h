@@ -323,7 +323,8 @@ struct _PurpleProtocolServerIface
 	 *  active connections.  You'd want to do this if you need to repeatedly
 	 *  send some kind of keepalive packet to the server to avoid being
 	 *  disconnected.  ("Regularly" is defined by
-	 *  <code>KEEPALIVE_INTERVAL</code> in <tt>libpurple/connection.c</tt>.)
+	 *  <literal>KEEPALIVE_INTERVAL</literal> in
+	 *  <filename>libpurple/connection.c</filename>.)
 	 */
 	void (*keepalive)(PurpleConnection *);
 
@@ -551,8 +552,8 @@ struct _PurpleProtocolChatIface
 					  PurpleMessageFlags flags);
 
 	/** Gets the real name of a participant in a chat.  For example, on
-	 *  XMPP this turns a chat room nick <tt>foo</tt> into
-	 *  <tt>room\@server/foo</tt>
+	 *  XMPP this turns a chat room nick <literal>foo</literal> into
+	 *  <literal>room\@server/foo</literal>
 	 *  @gc:  the connection on which the room is.
 	 *  @id:  the ID of the chat room.
 	 *  @who: the nickname of the chat participant.

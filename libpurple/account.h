@@ -452,12 +452,13 @@ void purple_account_set_status_types(PurpleAccount *account, GList *status_types
 /**
  * @account:   The account.
  * @status_id: The ID of the status.
- * @active:    Whether @a status_id is to be activated (<tt>TRUE</tt>) or
- *             deactivated (<tt>FALSE</tt>).
- * @...:       A NULL-terminated list of pairs of <tt>const char *</tt>
- *             attribute name followed by <tt>const char *</tt> attribute value
- *             for the status. (For example, one pair might be
- *             <tt>"message"</tt> followed by <tt>"hello, talk to me!"</tt>.)
+ * @active:    Whether @a status_id is to be activated (%TRUE) or
+ *             deactivated (%FALSE).
+ * @...:       A NULL-terminated list of pairs of <type>const char *</type>
+ *             attribute name followed by <type>const char *</type> attribute
+ *             value for the status. (For example, one pair might be
+ *             <literal>"message"</literal> followed by
+ *             <literal>"hello, talk to me!"</literal>.)
  *
  * Variadic version of purple_account_set_status_list().
  */
@@ -469,12 +470,12 @@ void purple_account_set_status(PurpleAccount *account, const char *status_id,
  * purple_account_set_status_list:
  * @account:   The account.
  * @status_id: The ID of the status.
- * @active:    Whether @a status_id is to be activated (<tt>TRUE</tt>) or
- *             deactivated (<tt>FALSE</tt>).
- * @attrs:     A list of <tt>const char *</tt> attribute names followed by
- *             <tt>const char *</tt> attribute values for the status.
- *             (For example, one pair might be <tt>"message"</tt> followed
- *             by <tt>"hello, talk to me!"</tt>.)
+ * @active:    Whether @a status_id is to be activated (%TRUE) or
+ *             deactivated (%FALSE).
+ * @attrs:     A list of <type>const char *</type> attribute names followed by
+ *             <type>const char *</type> attribute values for the status.
+ *             (For example, one pair might be <literal>"message"</literal>
+ *             followed by <literal>"hello, talk to me!"</literal>.)
  *
  * Activates or deactivates a status.  All changes to the statuses of
  * an account go through this function or purple_account_set_status().

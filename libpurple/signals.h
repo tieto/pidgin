@@ -55,8 +55,8 @@ G_BEGIN_DECLS
  * PURPLE_SIGNAL_PRIORITY_HIGHEST:
  *
  * The largest signal priority; signals with this priority will be called
- * <em>last</em>.  (This is highest as in numerical value, not as in order of
- * importance.)
+ * <emphasis>last</emphasis>.  (This is highest as in numerical value, not as in
+ * order of importance.)
  *
  * @see purple_signal_connect_priority().
  */
@@ -66,8 +66,8 @@ G_BEGIN_DECLS
  * PURPLE_SIGNAL_PRIORITY_LOWEST:
  *
  * The smallest signal priority; signals with this priority will be called
- * <em>first</em>.  (This is lowest as in numerical value, not as in order of
- * importance.)
+ * <emphasis>first</emphasis>.  (This is lowest as in numerical value, not as in
+ * order of importance.)
  *
  * @see purple_signal_connect_priority().
  */

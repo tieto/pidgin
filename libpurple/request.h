@@ -209,8 +209,8 @@ typedef gboolean (*PurpleRequestFieldSensitivityCb)(PurpleRequestField *field);
  * PurpleRequestActionCb:
  *
  * The type of callbacks passed to purple_request_action().  The first
- * argument is the <tt>user_data</tt> parameter; the second is the index in the
- * list of actions of the one chosen.
+ * argument is the <literal>user_data</literal> parameter; the second is the
+ * index in the list of actions of the one chosen.
  */
 typedef void (*PurpleRequestActionCb)(void *, int);
 
@@ -458,7 +458,7 @@ purple_request_cpar_get_help_cb(PurpleRequestCommonParameters *cpar,
  * purple_request_cpar_set_extra_actions:
  * @cpar: The parameters set.
  * @...:  A list of actions. These are pairs of arguments. The first of
- *             each pair is the <tt>char *</tt> label that appears on the
+ *             each pair is the <type>char *</type> label that appears on the
  *             button. It should have an underscore before the letter you want
  *             to use as the accelerator key for the button. The second of each
  *             pair is the #PurpleRequestFieldsCb function to use when the
@@ -610,7 +610,8 @@ const GList *purple_request_fields_get_validatable(
  *
  * Returns a list of all fields with sensitivity callback added.
  *
- * Returns: (transfer none): The list of fields with automatic sensitivity callback.
+ * Returns: (transfer none): The list of fields with automatic sensitivity
+ *          callback.
  */
 const GList *
 purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
@@ -1592,8 +1593,8 @@ GList *purple_request_field_list_get_items(const PurpleRequestField *field);
  *
  * The icons will correspond with the items, in order.
  *
- * Returns: (transfer none): The list of icons or %NULL (i.e. the empty GList) if no
- *              items have icons.
+ * Returns: (transfer none): The list of icons or %NULL (i.e. the empty #GList)
+ *          if no items have icons.
  */
 GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
 
@@ -1916,40 +1917,40 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 /**
  * purple_request_input:
  * @handle:        The plugin or connection handle.  For some
- *                      things this is <em>extremely</em> important.  The
- *                      handle is used to programmatically close the request
- *                      dialog when it is no longer needed.  For protocols this
- *                      is often a pointer to the #PurpleConnection
- *                      instance.  For plugins this should be a similar,
- *                      unique memory location.  This value is important
- *                      because it allows a request to be closed with
- *                      purple_request_close_with_handle() when, for
- *                      example, you sign offline.  If the request is
- *                      <em>not</em> closed it is <strong>very</strong>
- *                      likely to cause a crash whenever the callback
- *                      handler functions are triggered.
+ *                 things this is <emphasis>extremely</emphasis> important.  The
+ *                 handle is used to programmatically close the request
+ *                 dialog when it is no longer needed.  For protocols this
+ *                 is often a pointer to the #PurpleConnection
+ *                 instance.  For plugins this should be a similar,
+ *                 unique memory location.  This value is important
+ *                 because it allows a request to be closed with
+ *                 purple_request_close_with_handle() when, for
+ *                 example, you sign offline.  If the request is
+ *                 <emphasis>not</emphasis> closed it is <strong>very</strong>
+ *                 likely to cause a crash whenever the callback
+ *                 handler functions are triggered.
  * @title:         The title of the message, or %NULL if it should have
- *                      no title.
+ *                 no title.
  * @primary:       The main point of the message, or %NULL if you're
- *                      feeling enigmatic.
+ *                 feeling enigmatic.
  * @secondary:     Secondary information, or %NULL if there is none.
  * @default_value: The default value.
  * @multiline:     %TRUE if the inputted text can span multiple lines.
  * @masked:        %TRUE if the inputted text should be masked in some
- *                      way (such as by displaying characters as stars).  This
- *                      might be because the input is some kind of password.
+ *                 way (such as by displaying characters as stars).  This
+ *                 might be because the input is some kind of password.
  * @hint:          Optionally suggest how the input box should appear.
- *                      Use "html", for example, to allow the user to enter
- *                      HTML.
- * @ok_text:       The text for the <tt>OK</tt> button, which may not be %NULL.
- * @ok_cb:         The callback for the <tt>OK</tt> button, which may not be
- *                      %NULL.
- * @cancel_text:   The text for the <tt>Cancel</tt> button, which may not be
- *                      %NULL.
- * @cancel_cb:     The callback for the <tt>Cancel</tt> button, which may be
- *                      %NULL.
+ *                 Use "html", for example, to allow the user to enter HTML.
+ * @ok_text:       The text for the <literal>OK</literal> button, which may not
+ *                 be %NULL.
+ * @ok_cb:         The callback for the <literal>OK</literal> button, which may
+ *                 not be %NULL.
+ * @cancel_text:   The text for the <literal>Cancel</literal> button, which may
+ *                 not be %NULL.
+ * @cancel_cb:     The callback for the <literal>Cancel</literal> button, which
+ *                 may be %NULL.
  * @cpar:          The #PurpleRequestCommonParameters object, which gets
- *                      unref'ed after this call.
+ *                 unref'ed after this call.
  * @user_data:     The data to pass to the callback.
  *
  * Prompts the user for text input.
@@ -1967,28 +1968,29 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
 /**
  * purple_request_choice:
  * @handle:        The plugin or connection handle.  For some things this
- *                      is <em>extremely</em> important.  See the comments on
- *                      purple_request_input().
+ *                 is <emphasis>extremely</emphasis> important.  See the comments on
+ *                 purple_request_input().
  * @title:         The title of the message, or %NULL if it should have
- *                      no title.
+ *                 no title.
  * @primary:       The main point of the message, or %NULL if you're
- *                      feeling enigmatic.
+ *                 feeling enigmatic.
  * @secondary:     Secondary information, or %NULL if there is none.
  * @default_value: The default choice; this should be one of the values
- *                      listed in the varargs.
- * @ok_text:       The text for the <tt>OK</tt> button, which may not be %NULL.
- * @ok_cb:         The callback for the <tt>OK</tt> button, which may not be
- *                      %NULL.
- * @cancel_text:   The text for the <tt>Cancel</tt> button, which may not be
- *                      %NULL.
- * @cancel_cb:     The callback for the <tt>Cancel</tt> button, or %NULL to
- *                      do nothing.
+ *                 listed in the varargs.
+ * @ok_text:       The text for the <literal>OK</literal> button, which may not
+ *                 be %NULL.
+ * @ok_cb:         The callback for the <literal>OK</literal> button, which may
+ *                 not be %NULL.
+ * @cancel_text:   The text for the <literal>Cancel</literal> button, which may
+ *                 not be %NULL.
+ * @cancel_cb:     The callback for the <literal>Cancel</literal> button, or
+ *                 %NULL to do nothing.
  * @cpar:          The #PurpleRequestCommonParameters object, which gets
- *                      unref'ed after this call.
+ *                 unref'ed after this call.
  * @user_data:     The data to pass to the callback.
- * @...:           The choices, which should be pairs of <tt>char *</tt>
- *                      descriptions and <tt>int</tt> values, terminated with a
- *                      %NULL parameter.
+ * @...:           The choices, which should be pairs of <type>char *</type>
+ *                 descriptions and <type>int</type> values, terminated with a
+ *                 %NULL parameter.
  *
  * Prompts the user for multiple-choice input.
  *
@@ -2004,7 +2006,8 @@ void *purple_request_choice(void *handle, const char *title, const char *primary
 /**
  * purple_request_choice_varg:
  *
- * <tt>va_list</tt> version of purple_request_choice(); see its documentation.
+ * <literal>va_list</literal> version of purple_request_choice(); see its
+ * documentation.
  */
 void *purple_request_choice_varg(void *handle, const char *title,
 	const char *primary, const char *secondary, gpointer default_value,
@@ -2016,7 +2019,7 @@ void *purple_request_choice_varg(void *handle, const char *title,
 /**
  * purple_request_action:
  * @handle:         The plugin or connection handle.  For some things this
- *                       is <em>extremely</em> important.  See the comments on
+ *                       is <emphasis>extremely</emphasis> important.  See the comments on
  *                       purple_request_input().
  * @title:          The title of the message, or %NULL if it should have
  *                       no title.
@@ -2024,17 +2027,17 @@ void *purple_request_choice_varg(void *handle, const char *title,
  *                       feeling enigmatic.
  * @secondary:      Secondary information, or %NULL if there is none.
  * @default_action: The default action, zero-indexed; if the third action
- *                       supplied should be the default, supply <tt>2</tt>.
- *                       The should be the action that users are most likely
- *                       to select.
+ *                       supplied should be the default, supply
+ *                       <literal>2</literal>.  This should be the action that
+ *                       users are most likely to select.
  * @cpar:           The #PurpleRequestCommonParameters object, which gets
  *                       unref'ed after this call.
  * @user_data:      The data to pass to the callback.
  * @action_count:   The number of actions.
  * @...:            A list of actions.  These are pairs of
  *                       arguments.  The first of each pair is the
- *                       <tt>char *</tt> label that appears on the button.  It
- *                       should have an underscore before the letter you want
+ *                       <type>char *</type> label that appears on the button.
+ *                       It should have an underscore before the letter you want
  *                       to use as the accelerator key for the button.  The
  *                       second of each pair is the #PurpleRequestActionCb
  *                       function to use when the button is clicked.
@@ -2054,7 +2057,8 @@ purple_request_action(void *handle, const char *title, const char *primary,
 /**
  * purple_request_action_varg:
  *
- * <tt>va_list</tt> version of purple_request_action(); see its documentation.
+ * <literal>va_list</literal> version of purple_request_action(); see its
+ * documentation.
  */
 void *
 purple_request_action_varg(void *handle, const char *title, const char *primary,
@@ -2065,19 +2069,19 @@ purple_request_action_varg(void *handle, const char *title, const char *primary,
 /**
  * purple_request_wait:
  * @handle:        The plugin or connection handle.  For some things this
- *                      is <em>extremely</em> important.  See the comments on
- *                      purple_request_input().
+ *                 is <emphasis>extremely</emphasis> important.  See the comments on
+ *                 purple_request_input().
  * @title:         The title of the message, or %NULL if it should have
- *                      default title.
+ *                 default title.
  * @primary:       The main point of the message, or %NULL if you're
- *                      feeling enigmatic.
+ *                 feeling enigmatic.
  * @secondary:     Secondary information, or %NULL if there is none.
  * @with_progress: %TRUE, if we want to display progress bar, %FALSE
- *                      otherwise
- * @cancel_cb:     The callback for the <tt>Cancel</tt> button, which may be
- *                      %NULL.
+ *                 otherwise
+ * @cancel_cb:     The callback for the <literal>Cancel</literal> button, which
+ *                 may be %NULL.
  * @cpar:          The #PurpleRequestCommonParameters object, which gets
- *                      unref'ed after this call.
+ *                 unref'ed after this call.
  * @user_data:     The data to pass to the callback.
  *
  * Displays a "please wait" dialog.
@@ -2114,23 +2118,25 @@ purple_request_wait_progress(void *ui_handle, gfloat fraction);
 /**
  * purple_request_fields:
  * @handle:      The plugin or connection handle.  For some things this
- *                    is <em>extremely</em> important.  See the comments on
- *                    purple_request_input().
+ *               is <emphasis>extremely</emphasis> important.  See the comments on
+ *               purple_request_input().
  * @title:       The title of the message, or %NULL if it should have
- *                    no title.
+ *               no title.
  * @primary:     The main point of the message, or %NULL if you're
- *                    feeling enigmatic.
+ *               feeling enigmatic.
  * @secondary:   Secondary information, or %NULL if there is none.
  * @fields:      The list of fields.
- * @ok_text:     The text for the <tt>OK</tt> button, which may not be %NULL.
- * @ok_cb:       The callback for the <tt>OK</tt> button, which may not be
- *                    %NULL.
- * @cancel_text: The text for the <tt>Cancel</tt> button, which may not be
- *                    %NULL.
- * @cancel_cb:   The callback for the <tt>Cancel</tt> button, which may be
- *                    %NULL.
+ * @ok_text:     The text for the <literal>OK</literal> button, which may not be
+ *               %NULL.
+ * @ok_cb:       The callback for the <literal>OK</literal> button, which may
+ *               not be
+ *               %NULL.
+ * @cancel_text: The text for the <literal>Cancel</literal> button, which may
+ *               not be %NULL.
+ * @cancel_cb:   The callback for the <literal>Cancel</literal> button, which
+ *               may be %NULL.
  * @cpar:        The #PurpleRequestCommonParameters object, which gets
- *                    unref'ed after this call.
+ *               unref'ed after this call.
  * @user_data:   The data to pass to the callback.
  *
  * Displays groups of fields for the user to fill in.
@@ -2182,7 +2188,7 @@ void purple_request_close(PurpleRequestType type, void *uihandle);
 /**
  * purple_request_close_with_handle:
  * @handle: The handle, as supplied as the @handle parameter to one of the
- *               <tt>purple_request_*</tt> functions.
+ *               <literal>purple_request_*</literal> functions.
  *
  * Closes all requests registered with the specified handle.
  *
@@ -2193,8 +2199,8 @@ void purple_request_close_with_handle(void *handle);
 /**
  * purple_request_yes_no:
  *
- * A wrapper for purple_request_action() that uses <tt>Yes</tt> and <tt>No</tt>
- * buttons.
+ * A wrapper for purple_request_action() that uses <literal>Yes</literal> and
+ * <literal>No</literal> buttons.
  */
 #define purple_request_yes_no(handle, title, primary, secondary, \
 	default_action, cpar, user_data, yes_cb, no_cb) \
@@ -2205,8 +2211,8 @@ void purple_request_close_with_handle(void *handle);
 /**
  * purple_request_ok_cancel:
  *
- * A wrapper for purple_request_action() that uses <tt>OK</tt> and
- * <tt>Cancel</tt> buttons.
+ * A wrapper for purple_request_action() that uses <literal>OK</literal> and
+ * <literal>Cancel</literal> buttons.
  */
 #define purple_request_ok_cancel(handle, title, primary, secondary, \
 	default_action, cpar, user_data, ok_cb, cancel_cb) \
@@ -2228,15 +2234,16 @@ void purple_request_close_with_handle(void *handle);
 /**
  * purple_request_file:
  * @handle:      The plugin or connection handle.  For some things this
- *                    is <em>extremely</em> important.  See the comments on
+ *                    is <emphasis>extremely</emphasis> important.  See the comments on
  *                    purple_request_input().
  * @title:       The title of the message, or %NULL if it should have
  *                    no title.
  * @filename:    The default filename (may be %NULL)
  * @savedialog:  True if this dialog is being used to save a file.
  *                    False if it is being used to open a file.
- * @ok_cb:       The callback for the <tt>OK</tt> button.
- * @cancel_cb:   The callback for the <tt>Cancel</tt> button, which may be %NULL.
+ * @ok_cb:       The callback for the <literal>OK</literal> button.
+ * @cancel_cb:   The callback for the <literal>Cancel</literal> button, which
+ *                    may be %NULL.
  * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
  * @user_data:   The data to pass to the callback.
@@ -2254,13 +2261,14 @@ purple_request_file(void *handle, const char *title, const char *filename,
 /**
  * purple_request_folder:
  * @handle:      The plugin or connection handle.  For some things this
- *                    is <em>extremely</em> important.  See the comments on
+ *                    is <emphasis>extremely</emphasis> important.  See the comments on
  *                    purple_request_input().
  * @title:       The title of the message, or %NULL if it should have
  *                    no title.
  * @dirname:     The default directory name (may be %NULL)
- * @ok_cb:       The callback for the <tt>OK</tt> button.
- * @cancel_cb:   The callback for the <tt>Cancel</tt> button, which may be %NULL.
+ * @ok_cb:       The callback for the <literal>OK</literal> button.
+ * @cancel_cb:   The callback for the <literal>Cancel</literal> button, which
+ *                    may be %NULL.
  * @cpar:        The #PurpleRequestCommonParameters object, which gets
  *                    unref'ed after this call.
  * @user_data:   The data to pass to the callback.
@@ -2278,21 +2286,22 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
 /**
  * purple_request_certificate:
  * @handle:        The plugin or connection handle.  For some things this
- *                      is <em>extremely</em> important.  See the comments on
- *                      purple_request_input().
+ *                 is <emphasis>extremely</emphasis> important.  See the comments on
+ *                 purple_request_input().
  * @title:         The title of the message, or %NULL if it should have
- *                      no title.
+ *                 no title.
  * @primary:       The main point of the message, or %NULL if you're
- *                      feeling enigmatic.
+ *                 feeling enigmatic.
  * @secondary:     Secondary information, or %NULL if there is none.
  * @cert:          The #PurpleCertificate associated with this request.
- * @ok_text:       The text for the <tt>OK</tt> button, which may not be %NULL.
- * @ok_cb:         The callback for the <tt>OK</tt> button, which may not be
- *                      %NULL.
- * @cancel_text:   The text for the <tt>Cancel</tt> button, which may not be
- *                      %NULL.
- * @cancel_cb:     The callback for the <tt>Cancel</tt> button, which may be
- *                      %NULL.
+ * @ok_text:       The text for the <literal>OK</literal> button, which may not
+ *                 be %NULL.
+ * @ok_cb:         The callback for the <literal>OK</literal> button, which may
+ *                 not be %NULL.
+ * @cancel_text:   The text for the <literal>Cancel</literal> button, which may
+ *                 not be %NULL.
+ * @cancel_cb:     The callback for the <literal>Cancel</literal> button, which
+ *                 may be %NULL.
  * @user_data:     The data to pass to the callback.
  *
  * Prompts the user for action over a certificate.

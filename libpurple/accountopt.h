@@ -126,7 +126,7 @@ PurpleAccountOption *purple_account_option_string_new(const char *text,
  * strings inside will be freed automatically.
  *
  * The list is a list of #PurpleKeyValuePair items. The key is the label that
- * should be displayed to the user, and the <tt>(const char *)</tt> value is
+ * should be displayed to the user, and the <type>(const char *)</type> value is
  * the internal ID that should be passed to purple_account_set_string() to
  * choose that value.
  *
@@ -328,7 +328,7 @@ const GSList * purple_account_option_string_get_hints(const PurpleAccountOption 
  * Returns the list values for an account option.
  *
  * Returns: (transfer none): A list of #PurpleKeyValuePair, mapping the human-readable
- *              description of the value to the <tt>(const char *)</tt> that
+ *              description of the value to the <type>(const char *)</type> that
  *              should be passed to purple_account_set_string() to set the
  *              option.
  */

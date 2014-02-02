@@ -259,7 +259,7 @@ struct _PurpleConversationUiOps
 	void (*chat_rename_user)(PurpleChatConversation *chat, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	/** Remove @users from a chat.
-	 *  @users:    A GList of <tt>const char *</tt>s.
+	 *  @users:    A GList of <type>const char *</type>s.
 	 *  @see purple_chat_conversation_rename_user()
 	 */
 	void (*chat_remove_users)(PurpleChatConversation *chat, GList *users);

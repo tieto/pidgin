@@ -689,8 +689,8 @@ typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
  * @primary:        The primary text
  * @secondary:      The secondary text, or %NULL for no description.
  * @user_data:      Data to pass to the callbacks
- * @...:            a <tt>NULL</tt>-terminated list of button labels
- *                       (<tt>char *</tt>) and callbacks
+ * @...:            a %NULL-terminated list of button labels
+ *                       (<type>char *</type>) and callbacks
  *                       (#PidginUtilMiniDialogCallback).  @user_data will be
  *                       passed as the first argument.  (Callbacks may lack a
  *                       second argument, or be %NULL to take no action when
