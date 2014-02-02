@@ -32,19 +32,22 @@
 G_BEGIN_DECLS
 
 /**
- * Adds a buddy pounce to the buddy pounce dialog
- *
+ * pidgin_notify_pounce_add:
  * @account:	The account
  * @pounce:	The pounce
  * @alias:		The buddy alias
  * @event:		Event description
  * @message:	Pounce message
  * @date:		Pounce date
+ *
+ * Adds a buddy pounce to the buddy pounce dialog
  */
 void pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
 		const char *alias, const char *event, const char *message, const char *date);
 
 /**
+ * pidgin_notify_get_ui_ops:
+ *
  * Returns the UI operations structure for GTK+ notification functions.
  *
  * Returns: The GTK+ UI notify operations structure.
@@ -52,18 +55,22 @@ void pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
 PurpleNotifyUiOps *pidgin_notify_get_ui_ops(void);
 
 /**
+ * pidgin_notify_init:
+ *
  * Initializes the GTK+ notifications subsystem.
  */
 void pidgin_notify_init(void);
 
 /**
+ * pidgin_notify_uninit:
+ *
  * Uninitialized the GTK+ notifications subsystem.
  */
 void pidgin_notify_uninit(void);
 
-G_END_DECLS
-
 /**
+ * pidgin_notify_emails_pending:
+ *
  * Returns TRUE if there are unseen emails, FALSE otherwise.
  *
  * Returns: TRUE if there are unseen emails, FALSE otherwise.
@@ -71,10 +78,14 @@ G_END_DECLS
 gboolean pidgin_notify_emails_pending(void);
 
 /**
+ * pidgin_notify_emails_present:
+ *
  * Presents mail dialog to the user.
  *
  * Returns: void.
  */
 void pidgin_notify_emails_present(void *data);
+
+G_END_DECLS
 
 #endif /* _PIDGINNOTIFY_H_ */

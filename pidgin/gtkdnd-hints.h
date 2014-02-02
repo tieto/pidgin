@@ -28,60 +28,78 @@
 #include <gtk/gtk.h>
 
 /**
+ * DndHintWindowId:
+ * @HINT_ARROW_UP:    Up arrow.
+ * @HINT_ARROW_DOWN:  Down arrow.
+ * @HINT_ARROW_LEFT:  Left arrow.
+ * @HINT_ARROW_RIGHT: Right arrow.
+ *
  * Conversation drag-and-drop arrow types.
  */
 typedef enum
 {
-	HINT_ARROW_UP,    /**< Up arrow.    */
-	HINT_ARROW_DOWN,  /**< Down arrow.  */
-	HINT_ARROW_LEFT,  /**< Left arrow.  */
-	HINT_ARROW_RIGHT  /**< Right arrow. */
+	HINT_ARROW_UP,
+	HINT_ARROW_DOWN,
+	HINT_ARROW_LEFT,
+	HINT_ARROW_RIGHT
 
 } DndHintWindowId;
 
 /**
+ * DndHintPosition:
+ * @HINT_POSITION_RIGHT:  Position to the right of a tab.
+ * @HINT_POSITION_LEFT:   Position to the left of a tab.
+ * @HINT_POSITION_TOP:    Position above a tab.
+ * @HINT_POSITION_BOTTOM: Position below a tab.
+ * @HINT_POSITION_CENTER: Position in the center of a tab.
+ *
  * Conversation drag-and-drop arrow positions.
  */
 typedef enum {
 
-	HINT_POSITION_RIGHT,  /**< Position to the right of a tab.  */
-	HINT_POSITION_LEFT,   /**< Position to the left of a tab.   */
-	HINT_POSITION_TOP,    /**< Position above a tab.            */
-	HINT_POSITION_BOTTOM, /**< Position below a tab.            */
-	HINT_POSITION_CENTER  /**< Position in the center of a tab. */
+	HINT_POSITION_RIGHT,
+	HINT_POSITION_LEFT,
+	HINT_POSITION_TOP,
+	HINT_POSITION_BOTTOM,
+	HINT_POSITION_CENTER
 
 } DndHintPosition;
 
 G_BEGIN_DECLS
 
 /**
- * Shows a drag-and-drop hint at the specified location.
- *
+ * dnd_hints_show:
  * @id: The ID of the hint to show.
  * @x:  The X location to show it at.
  * @y:  The Y location to show it at.
+ *
+ * Shows a drag-and-drop hint at the specified location.
  */
 void dnd_hints_show(DndHintWindowId id, gint x, gint y);
 
 /**
- * Hides the specified drag-and-drop hint.
- *
+ * dnd_hints_hide:
  * @id: The ID of the hint to hide.
+ *
+ * Hides the specified drag-and-drop hint.
  */
 void dnd_hints_hide(DndHintWindowId id);
 
 /**
+ * dnd_hints_hide_all:
+ *
  * Hides all drag-and-drop hints.
  */
 void dnd_hints_hide_all(void);
 
 /**
- * Shows a drag-and-drop hint relative to a widget.
- *
+ * dnd_hints_show_relative:
  * @id:     The ID of the hint.
  * @widget: The widget that the hint is relative to.
  * @horiz:  The horizontal relative position.
  * @vert:   The vertical relative position.
+ *
+ * Shows a drag-and-drop hint relative to a widget.
  */
 void dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 							 DndHintPosition horiz, DndHintPosition vert);

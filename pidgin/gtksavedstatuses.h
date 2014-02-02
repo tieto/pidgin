@@ -32,45 +32,54 @@
 G_BEGIN_DECLS
 
 /**
+ * pidgin_status_window_show:
+ *
  * Shows the status window.
  */
 void pidgin_status_window_show(void);
 
 /**
+ * pidgin_status_window_hide:
+ *
  * Hides the status window.
  */
 void pidgin_status_window_hide(void);
 
 /**
- * Shows a status editor (used for adding a new saved status or
- * editing an already existing saved status).
- *
- * @edit:   TRUE if we want to edit an existing saved
- *               status or FALSE to create a new one.  You
+ * pidgin_status_editor_show:
+ * @edit:   %TRUE if we want to edit an existing saved
+ *               status or %FALSE to create a new one.  You
  *               can not edit transient statuses--they don't
  *               have titles.  If you want to edit a transient
- *               status, set this to FALSE and seed the dialog
+ *               status, set this to %FALSE and seed the dialog
  *               with the transient status using the status
  *               parameter to this function.
- * @status: If edit is TRUE then this should be a
+ * @status: If edit is %TRUE then this should be a
  *               pointer to the PurpleSavedStatus to edit.
- *               If edit is FALSE then this can be NULL,
+ *               If edit is %FALSE then this can be NULL,
  *               or you can pass in a saved status to
  *               seed the initial values of the new status.
+ *
+ * Shows a status editor (used for adding a new saved status or
+ * editing an already existing saved status).
  */
 void pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *status);
 
 /**
+ * pidgin_status_menu:
+ * @status:   The default saved_status to show as 'selected'
+ * @callback: The callback to call when the selection changes
+ *
  * Creates a dropdown menu of saved statuses and calls a callback
  * when one is selected
  *
- * @status:   The default saved_status to show as 'selected'
- * @callback: The callback to call when the selection changes
  * Returns:         The menu widget
  */
 GtkWidget *pidgin_status_menu(PurpleSavedStatus *status, GCallback callback);
 
 /**
+ * pidgin_status_get_handle:
+ *
  * Returns the GTK+ status handle.
  *
  * Returns: The handle to the GTK+ status system.
@@ -78,11 +87,15 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *status, GCallback callback);
 void *pidgin_status_get_handle(void);
 
 /**
+ * pidgin_status_init:
+ *
  * Initializes the GTK+ status system.
  */
 void pidgin_status_init(void);
 
 /**
+ * pidgin_status_uninit:
+ *
  * Uninitializes the GTK+ status system.
  */
 void pidgin_status_uninit(void);

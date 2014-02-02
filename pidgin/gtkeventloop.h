@@ -31,6 +31,8 @@
 G_BEGIN_DECLS
 
 /**
+ * pidgin_eventloop_get_ui_ops:
+ *
  * Returns the GTK+ event loop UI operations structure.
  *
  * Returns: The GTK+ event loop UI operations structure.

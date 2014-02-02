@@ -36,20 +36,26 @@
 typedef struct _PidginMenuTray				PidginMenuTray;
 typedef struct _PidginMenuTrayClass		PidginMenuTrayClass;
 
-/** A PidginMenuTray */
+/**
+ * PidginMenuTray:
+ * @tray: The tray
+ *
+ * A PidginMenuTray
+ */
 struct _PidginMenuTray {
-	GtkMenuItem gparent;					/**< The parent instance */
-	GtkWidget *tray;						/**< The tray */
+	GtkMenuItem gparent;
+	GtkWidget *tray;
 };
 
-/** A PidginMenuTrayClass */
 struct _PidginMenuTrayClass {
-	GtkMenuItemClass gparent;				/**< The parent class */
+	GtkMenuItemClass gparent;
 };
 
 G_BEGIN_DECLS
 
 /**
+ * pidgin_menu_tray_get_type:
+ *
  * Registers the PidginMenuTray class if necessary and returns the
  * type ID assigned to it.
  *
@@ -58,6 +64,8 @@ G_BEGIN_DECLS
 GType pidgin_menu_tray_get_type(void);
 
 /**
+ * pidgin_menu_tray_new:
+ *
  * Creates a new PidginMenuTray
  *
  * Returns: A new PidginMenuTray
@@ -65,38 +73,42 @@ GType pidgin_menu_tray_get_type(void);
 GtkWidget *pidgin_menu_tray_new(void);
 
 /**
- * Gets the box for the PidginMenuTray
- *
+ * pidgin_menu_tray_get_box:
  * @menu_tray: The PidginMenuTray
+ *
+ * Gets the box for the PidginMenuTray
  *
  * Returns: The box that this menu tray is using
  */
 GtkWidget *pidgin_menu_tray_get_box(PidginMenuTray *menu_tray);
 
 /**
- * Appends a widget into the tray
- *
+ * pidgin_menu_tray_append:
  * @menu_tray: The tray
  * @widget:    The widget
  * @tooltip:   The tooltip for this widget (widget requires its own X-window)
+ *
+ * Appends a widget into the tray
  */
 void pidgin_menu_tray_append(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
- * Prepends a widget into the tray
- *
+ * pidgin_menu_tray_prepend:
  * @menu_tray: The tray
  * @widget:    The widget
  * @tooltip:   The tooltip for this widget (widget requires its own X-window)
+ *
+ * Prepends a widget into the tray
  */
 void pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
- * Set the tooltip for a widget
- *
+ * pidgin_menu_tray_set_tooltip:
  * @menu_tray: The tray
  * @widget:    The widget
  * @tooltip:   The tooltip to set for the widget (widget requires its own X-window)
+ *
+ * Set the tooltip for a widget
  */
 void pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
