@@ -1,6 +1,7 @@
 syntax: glob
 .*.swp
 clang_output_*
+pidgin-*
 
 syntax: regexp
 (.*/)?TAGS$
