@@ -195,24 +195,24 @@ gboolean purple_core_ensure_single_instance(void);
  * <informaltable frame='none'>
  *   <tgroup cols='2'><tbody>
  *   <row>
- *     <entry><tt>name</tt></entry>
+ *     <entry><literal>name</literal></entry>
  *     <entry>the user-readable name for the UI.</entry>
  *   </row>
  *   <row>
- *     <entry><tt>version</tt></entry>
+ *     <entry><literal>version</literal></entry>
  *     <entry>a user-readable description of the current version of the UI.</entry>
  *   </row>
  *   <row>
- *     <entry><tt>website</tt></entry>
+ *     <entry><literal>website</literal></entry>
  *     <entry>the UI's website, such as https://pidgin.im.</entry>
  *   </row>
  *   <row>
- *     <entry><tt>dev_website</tt></entry>
+ *     <entry><literal>dev_website</literal></entry>
  *     <entry>the UI's development/support website, such as
  *       https://developer.pidgin.im.</entry>
  *   </row>
  *   <row>
- *     <entry><tt>client_type</tt></entry>
+ *     <entry><literal>client_type</literal></entry>
  *     <entry>the type of UI. Possible values include 'pc', 'console', 'phone',
  *       'handheld', 'web', and 'bot'. These values are compared
  *       programmatically and should not be localized.</entry>
