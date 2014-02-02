@@ -77,7 +77,6 @@ content_files = version.xml \
 	signals_gtkaccount.xml \
 	signals_gtkblist.xml \
 	signals_gtkconv.xml \
-	signals_gtkimhtml.xml \
 	signals_gtklog.xml
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded
