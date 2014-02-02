@@ -34,6 +34,8 @@
  **********************************************************************/
 /*@{*/
 
+typedef struct _FinchBlistManager  FinchBlistManager;
+
 /**
  * FinchBlistManager:
  * @id:   An identifier for the manager.
@@ -42,7 +44,7 @@
  * Buddylist manager for finch. This decides the visility, ordering and hierarchy
  * of the buddylist nodes. This also manages the creation of tooltips.
  */
-typedef struct
+struct _FinchBlistManager
 {
 	const char *id;
 	const char *name;
@@ -54,7 +56,7 @@ typedef struct
 
 	/*< private >*/
 	gpointer reserved[4];
-} FinchBlistManager;
+};
 
 /**
  * finch_blist_get_ui_ops:

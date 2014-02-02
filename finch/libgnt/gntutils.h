@@ -125,10 +125,10 @@ GntWidget * gnt_widget_bindings_view(GntWidget *widget);
  * <programlisting>
  * GntWidget *win, *button;
  * gnt_util_parse_widgets("\
- *      <vwindow id='0' fill='0' align='2'>     \
- *          <label>This is a test</label>       \
- *          <button id='1'>OK</button>          \
- *      </vwindow>",
+ *      &lt;vwindow id='0' fill='0' align='2'&gt;     \
+ *          &lt;label&gt;This is a test&lt;/label&gt;       \
+ *          &lt;button id='1'&gt;OK&lt;/button&gt;          \
+ *      &lt;/vwindow&gt;",
  *   2, &win, &button);
  * </programlisting>
  */

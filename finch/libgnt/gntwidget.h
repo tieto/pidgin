@@ -151,6 +151,9 @@ GType gnt_widget_get_gtype(void);
  * @widget: The widget to destroy.
  *
  * Destroy a widget.
+ *
+ * Emits the "destroy" signal notifying all reference holders that they
+ * should release @widget.
  */
 void gnt_widget_destroy(GntWidget *widget);
 
