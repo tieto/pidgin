@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2011-08-17 21:17+0200\n"
 "Last-Translator: F Wolff <friedel@translate.org.za>\n"
 "Language-Team: translate-discuss-af@lists.sourceforge.net\n"
@@ -2060,64 +2060,8 @@ msgstr "Lêeroordrag na %s het misluk."
 msgid "File transfer from %s failed."
 msgstr "Lêeroordrag vanaf %s het misluk."
 
-msgid "Run the command in a terminal"
-msgstr "Loop die bevel in 'n terminaal"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"aim\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"gg\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"icq\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"irc\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"msnim\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"sip\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"xmpp\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"ymsgr\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Die vatsel vir \"aim\"-URL'e"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Die vatsel vir \"gg\"-URL'e"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Die vatsel vir \"icq\"-URL'e"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Die vatsel vir \"irc\"-URL'e"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Die vatsel vir \"msnim\"-URL'e"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Die vatsel vir \"sip\"-URL'e"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Die vatsel vir \"xmpp\"-URL'e"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Die vatsel vir \"ymsgr\"-URL'e"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Of die gespesifiseerde bevel \"aim\"-URL'e moet hanteer"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2126,12 +2070,41 @@ msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"aim\"-URL'e "
 "moet hanteer."
 
+msgid "The handler for \"aim\" URLs"
+msgstr "Die vatsel vir \"aim\"-URL'e"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"aim\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Run the command in a terminal"
+msgstr "Loop die bevel in 'n terminaal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Waar indien die bevel wat hierdie tipe URL hanteer in 'n terminaal moet loop."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Of die gespesifiseerde bevel \"gg\"-URL'e moet hanteer"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"gg\"-URL'e "
 "moet hanteer."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Die vatsel vir \"gg\"-URL'e"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"gg\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Of die gespesifiseerde bevel \"icq\"-URL'e moet hanteer"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
@@ -2140,12 +2113,32 @@ msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"icq\"-URL'e "
 "moet hanteer."
 
+msgid "The handler for \"icq\" URLs"
+msgstr "Die vatsel vir \"icq\"-URL'e"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"icq\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Of die gespesifiseerde bevel \"irc\"-URL'e moet hanteer"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"irc\"-URL'e "
 "moet hanteer."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Die vatsel vir \"irc\"-URL'e"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"irc\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Of die gespesifiseerde bevel \"msnim\"-URL'e moet hanteer"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
@@ -2154,12 +2147,32 @@ msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"msnim\"-"
 "URL'e moet hanteer."
 
+msgid "The handler for \"msnim\" URLs"
+msgstr "Die vatsel vir \"msnim\"-URL'e"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"msnim\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Of die gespesifiseerde bevel \"sip\"-URL'e moet hanteer"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"sip\"-URL'e "
 "moet hanteer."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Die vatsel vir \"sip\"-URL'e"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"sip\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Of die gespesifiseerde bevel \"xmpp\"-URL'e moet hanteer"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
@@ -2168,6 +2181,16 @@ msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"xmpp\"-"
 "URL'e moet hanteer."
 
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Die vatsel vir \"xmpp\"-URL'e"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"xmpp\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Of die gespesifiseerde bevel \"ymsgr\"-URL'e moet hanteer"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
@@ -2175,35 +2198,12 @@ msgstr ""
 "Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"ymsgr\"-"
 "URL'e moet hanteer."
 
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Die vatsel vir \"ymsgr\"-URL'e"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
-"Waar indien die bevel wat hierdie tipe URL hanteer in 'n terminaal moet loop."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Of die gespesifiseerde bevel \"aim\"-URL'e moet hanteer"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Of die gespesifiseerde bevel \"gg\"-URL'e moet hanteer"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Of die gespesifiseerde bevel \"icq\"-URL'e moet hanteer"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Of die gespesifiseerde bevel \"irc\"-URL'e moet hanteer"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Of die gespesifiseerde bevel \"msnim\"-URL'e moet hanteer"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Of die gespesifiseerde bevel \"sip\"-URL'e moet hanteer"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Of die gespesifiseerde bevel \"xmpp\"-URL'e moet hanteer"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Of die gespesifiseerde bevel \"ymsgr\"-URL'e moet hanteer"
+"Die bevel wat gebruik word om \"ymsgr\"-URL'e te hanteer, indien geaktiveer."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2264,6 +2264,10 @@ msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
+msgstr "'n Onbekende sertifikaatfout het voorgekom."
 
 msgid "Error with your microphone"
 msgstr "Fout met u mikrofoon"
@@ -3066,12 +3070,6 @@ msgstr ""
 "Óf die gasheernaam óf die poortnommer wat vir u gegewe instaanbedienertipe "
 "gespesifiseer is, is ongeldig."
 
-msgid "Token Error"
-msgstr "Tekenfout"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Kon nie die teken haal nie.\n"
-
 msgid "Save Buddylist..."
 msgstr "Stoor vriendelys..."
 
@@ -3099,40 +3097,6 @@ msgstr "Stoor vriendelys..."
 
 msgid "Load buddylist from file..."
 msgstr "Laai vriendelys van lêer..."
-
-msgid "You must fill in all registration fields"
-msgstr "Alle registrasievelde moet ingevul word"
-
-msgid "Passwords do not match"
-msgstr "Wagwoorde stem nie ooreen nie"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr ""
-"Kan nie nuwe rekening registreer nie.  'n Onbekende fout het voorgekom."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Nuwe Gadu-Gadu-rekening geregistreer"
-
-msgid "Registration completed successfully!"
-msgstr "Registrasie suksesvol voltooi!"
-
-msgid "Password"
-msgstr "Wagwoord"
-
-msgid "Password (again)"
-msgstr "Wagwoord (weer)"
-
-msgid "Enter captcha text"
-msgstr "Tik captcha in"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Registreer nuwe Gadu-Gadu-rekening"
-
-msgid "Please, fill in the following fields"
-msgstr "Vul gerus die volgende velde in"
 
 msgid "City"
 msgstr "Stad"
@@ -3162,39 +3126,6 @@ msgstr "Vind vriende"
 
 msgid "Please, enter your search criteria below"
 msgstr "Tik gerus u soekkriteria hier onder"
-
-msgid "Fill in the fields."
-msgstr "Vul die velde in."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "U huidige wagwoord verskil van die gespesifiseerde een."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Kan nie wagwoord verander nie. 'n Fout het voorgekom.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Verander wagwoord vir die Gadu-Gadu-rekening"
-
-msgid "Password was changed successfully!"
-msgstr "Wagwoord is suksesvol verander!"
-
-msgid "Current password"
-msgstr "Huidige wagwoord"
-
-msgid "Password (retype)"
-msgstr "Wagwoord (weer)"
-
-msgid "Enter current token"
-msgstr "Tik huidige teken"
-
-msgid "Current token"
-msgstr "Huidige teken"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Tik gerus u huidige wagwoord en u nuwe wagwoord vir UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Verander Gadu-Gadu-wagwoord"
 
 msgid "Show status to:"
 msgstr "Wys status aan:"
@@ -3268,18 +3199,6 @@ msgstr "Daar is geen gebruikers wat by u soekkriteria pas nie."
 msgid "Unable to read from socket"
 msgstr "Kan nie van sok lees nie"
 
-msgid "Buddy list downloaded"
-msgstr "Vriendelys afgelaai"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "U vriendelys is van die bediener afgelaai."
-
-msgid "Buddy list uploaded"
-msgstr "Vriendelys opgelaai"
-
-msgid "Your buddy list was stored on the server."
-msgstr "U vriendelys is na die bediener opgelaai."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3315,18 +3234,6 @@ msgstr "Nie aan die bediener gekoppel nie"
 
 msgid "Find buddies..."
 msgstr "Vind vriende..."
-
-msgid "Change password..."
-msgstr "Verander wagwoord..."
-
-msgid "Upload buddylist to Server"
-msgstr "Laai vriendelys op na bediener"
-
-msgid "Download buddylist from Server"
-msgstr "Laai vriendelys af van bediener"
-
-msgid "Delete buddylist from Server"
-msgstr "Verwyder vriendelys van bediener"
 
 msgid "Save buddylist to file..."
 msgstr "Stoor vriendelys in lêer..."
@@ -3431,7 +3338,6 @@ msgstr "Kan nie koppel nie"
 msgid "Unable to connect: %s"
 msgstr "Kan nie koppel nie: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Bediener het die koppeling toegemaak"
 
@@ -3470,6 +3376,10 @@ msgstr "Enkoderings"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Outobespeur inkomende UTF-8"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Ongeldige naam"
+
 msgid "Real name"
 msgstr "Regte naam"
 
@@ -3479,6 +3389,14 @@ msgstr "Regte naam"
 #.
 msgid "Use SSL"
 msgstr "Gebruik SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Stawing"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Laat skoonteksstawing oor ongeënkripteerde strome toe"
 
 msgid "Bad mode"
 msgstr "Slegte modus"
@@ -3514,6 +3432,14 @@ msgstr " <i>(geïdentifiseer)</i>"
 msgid "Nick"
 msgstr "Bynaam"
 
+#, fuzzy
+msgid "Login name"
+msgstr "MXit-aanmeldnaam"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Gasheernaam"
+
 msgid "Currently on"
 msgstr "Tans in"
 
@@ -3540,6 +3466,10 @@ msgstr "%s het die onderwerp geskrap."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Die onderwerp vir %s is: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3654,6 +3584,33 @@ msgstr "Bynaam of kanaal is tydelik nie beskikbaar nie."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Loesing van %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Kan nie SILC-kliëntkoppeling inisialiseer nie"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL-stawing het misluk"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL-stawing het misluk"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Verkeerde wagwoord"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL-stawing het misluk"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;aksie om uit te voer&gt;:  Verrig 'n aksie."
@@ -4311,6 +4268,9 @@ msgstr "Datum"
 msgid "Already Registered"
 msgstr "Reeds geregistreer"
 
+msgid "Password"
+msgstr "Wagwoord"
+
 msgid "Unregister"
 msgstr "Deregistreer"
 
@@ -4445,6 +4405,9 @@ msgstr "U wagwoord is verander."
 
 msgid "Error changing password"
 msgstr "Kon nie wagwoord verander nie"
+
+msgid "Password (again)"
+msgstr "Wagwoord (weer)"
 
 msgid "Change XMPP Password"
 msgstr "Verander XMPP-wagwoord"
@@ -4670,6 +4633,10 @@ msgstr "Kan nie media inisieer met %s nie: ongeldige JID"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Kan nie media inisieer met %s nie: gebruiker is nie aanlyn nie"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Kan nie media inisieer met %s nie: gebruiker is nie aanlyn nie"
 
 #, c-format
@@ -6039,6 +6006,11 @@ msgstr "Meer oor my"
 msgid "Where I Live"
 msgstr "Waar ek woon"
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Vee status uit"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Selfoonnommer"
@@ -6134,6 +6106,16 @@ msgstr "Aangaande..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Die lêer wat u probeer stuur is te groot!"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Kan nie inprop laai nie"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Kan nie lêer open nie."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6249,10 +6231,6 @@ msgstr "Statusboodskap"
 msgid "Rejection Message"
 msgstr "Ontvangde boodskappe"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Versteekte nommer"
-
 msgid "No profile available"
 msgstr "Geen profiel beskikbaar nie"
 
@@ -6276,6 +6254,37 @@ msgstr "Koppel via HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Aktiveer opsspring vir spatskerm"
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Kenwysie"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Bekommerd"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Dronk"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Departement"
+
+msgid "Divorced"
+msgstr ""
 
 msgid "Last Online"
 msgstr "Laas aanlyn"
@@ -6335,6 +6344,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Boodskapfout"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kan nie herverwysing doen met die gespesifiseerde protokol nie"
@@ -9801,7 +9814,6 @@ msgstr ""
 "U rekening is vasgesluit weens te veel mislukte pogings om aan te meld.  "
 "Probeer o mby die Yahoo!-webwerf aan te meld."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Onbekende fout 52.  Herkoppeling behoort dit op te los."
 
@@ -10451,17 +10463,17 @@ msgstr ""
 "Kon nie volledig u %s lees nie.  Die lêer is nie gelaai nie, en die ou lêer "
 "is hernoem na %s~."
 
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin Internetboodskapper"
+
+msgid "Internet Messenger"
+msgstr "Internetboodskapper"
+
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 "Gesels met kitsboodsappe.  Daar is ondersteuning vir AIM, Google Talk, "
 "Jabber/XMPP, MSN, Yahoo en meer"
-
-msgid "Internet Messenger"
-msgstr "Internetboodskapper"
-
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Internetboodskapper"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11503,6 +11515,14 @@ msgstr "Ongelese boodskappe"
 msgid "New Event"
 msgstr "Nuwe gebeurtenis"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Die rekening is ontkoppel en u is nie meer in hierdie geselsie nie. U sal "
+"outomaties by die geselsie aansluit word wanneer die rekening weer koppel."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Maak die gesprekvenster skoon."
 
@@ -11608,7 +11628,8 @@ msgstr "webmeester"
 msgid "win32 port"
 msgstr "win32-weergawe"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11645,6 +11666,9 @@ msgstr "Arabies"
 
 msgid "Assamese"
 msgstr "Assamees"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Witrussies in Latynse skrif"
@@ -11772,6 +11796,9 @@ msgstr "Koerdies"
 msgid "Lao"
 msgstr "Lao"
 
+msgid "Lithuanian"
+msgstr "Litous"
+
 msgid "Maithili"
 msgstr "Maithili"
 
@@ -11792,6 +11819,9 @@ msgstr "Mahratti"
 
 msgid "Malay"
 msgstr "Maleisies"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Bokmål-Noorweegs"
@@ -11844,6 +11874,10 @@ msgstr "Albanees"
 msgid "Serbian"
 msgstr "Serwies"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Witrussies in Latynse skrif"
+
 msgid "Sinhala"
 msgstr "Sinhalees"
 
@@ -11862,9 +11896,6 @@ msgstr "Teloegoe"
 msgid "Thai"
 msgstr "Thai"
 
-msgid "Turkish"
-msgstr "Turks"
-
 msgid "Ukranian"
 msgstr "Oekraïens"
 
@@ -11873,9 +11904,6 @@ msgstr "Oerdoe"
 
 msgid "Vietnamese"
 msgstr "Viëtnamees"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh en die Gnome-Vi-span"
 
 msgid "Simplified Chinese"
 msgstr "Vereenvoudigde Sjinees"
@@ -11889,8 +11917,11 @@ msgstr "Tradisionele Sjinees"
 msgid "Amharic"
 msgstr "Amharies"
 
-msgid "Lithuanian"
-msgstr "Litous"
+msgid "Turkish"
+msgstr "Turks"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh en die Gnome-Vi-span"
 
 #, c-format
 msgid ""
@@ -11919,7 +11950,6 @@ msgstr ""
 "\">Webwerf</A><BR>\t<A HREF=\"%s\">Algemene vrae</A><BR>\tIRC-kanaal: "
 "#pidgin op irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12628,6 +12658,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "Die 'Handmatige' blaaier-bevel is gekies, maar geen bevel is gestel nie."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Die blaaierbevel \"%s\" is ongeldig."
 
 msgid "No message"
 msgstr "Geen boodskap"
@@ -13611,11 +13645,11 @@ msgstr "Pidgin-nutswenk"
 msgid "Pidgin smileys"
 msgstr "Pidgin-gesiggies"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Deur hier te kies, deaktiveer u grafiese gesiggies."
-
 msgid "none"
 msgstr "geen"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Deur hier te kies, deaktiveer u grafiese gesiggies."
 
 msgid "Small"
 msgstr "Klein"
@@ -14568,7 +14602,6 @@ msgstr "Wys iChat-tydstempels elke N minute."
 msgid "Timestamp Format Options"
 msgstr "Tydstempelformateeropsies"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Forseer tydstempelformaat:"
 
@@ -14618,6 +14651,63 @@ msgid ""
 msgstr ""
 "Hierdie inprop stel die gebruiker in staat om die formaat van tydstempels in "
 "gesprekke in staaflêers aan te pas."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Geselsiekamer-embleme"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Net wanneer iemand u gebruikernaam noem"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Stoor ikoon"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Getal gesprekke per venster"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Boodskap gestuur"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution-integrasie"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Verskaf integrasie met Evolution."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Verskaf integrasie met Evolution."
 
 msgid "Audio"
 msgstr "Oudio"
@@ -14796,6 +14886,18 @@ msgstr "Stuur en ontvang rou XMPP-stanzas."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Hierdie inprop is nuttig om XMPP-bedieners of -kliënte te ontfout."
 
+msgid "The installer is already running."
+msgstr "Die installeerder loop reeds."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin loop reeds êrens.  Verlaat Pidgin eers en probeer dan weer."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Volgende >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14804,53 +14906,81 @@ msgstr ""
 "$(^Name) word vrygestel onderhewig aan die GNU General Public License (GPL). "
 "Die lisensie word hier slegs vir kennisname verskaf. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Multi-platform-gereedskap vir programkoppelvlakke, gebruik deur Pidgin"
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin-kitsboodskapkliënt (benodigd)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr "Pidgin loop reeds êrens.  Verlaat Pidgin eers en probeer dan weer."
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+-looptydomgewing (nodig indien nie geïnstalleer nie)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Kortpaaie"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Werkskerm"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Begin-kieslys"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Vertalings"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Kern-Pidgin-lêers en DLL'e"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Skep 'n Begin-kieslysinskrywing vir Pidgin"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Kortpaaie om Pidgin mee te begin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Skep 'n kortpad na Pidgin op die werkskerm"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Skep 'n Begin-kieslysinskrywing vir Pidgin"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Multi-platform-gereedskap vir programkoppelvlakke, gebruik deur Pidgin"
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Ontfoutsimbole (vir omvalverslae)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Besoek die WinPidgin-webblad"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Kan nie die tans geïnstalleerde weergawe van Pidgin verwyder nie. Die nuwe "
+"weergawe sal geïnstalleer word sonder om die huidige een te verwyder."
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin benodig 'n versoenbare GTK+-looptydomgewing (wat skynbaar nog nie "
+"beskikbaar is nie).$\\rWil u definitief die installasie van die GTK+-"
+"looptydomgewing oorslaan?"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Werkskerm"
+msgid "URI Handlers"
+msgstr "URI-hanteerders"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Fout met die aflaai van die GTK+looptydomgewing ($R2).$\\rDit word benodig "
-"vir Pidgin om te werk; as dit weer nie werk nie, probeer die vanlyn-"
-"installasielêer ('offline installer') by http://pidgin.im/download/windows/"
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Fout met installasie van ontfoutsimbole ($R2).$\\rAs dit weer nie werk nie, "
-"probeer die vanlyn-installasielêer ('offline installer') by http://pidgin.im/"
-"download/windows/"
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Speltoets-ondersteuning"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14864,55 +14994,30 @@ msgstr ""
 "developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+-looptydomgewing (nodig indien nie geïnstalleer nie)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Vertalings"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Volgende >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin-kitsboodskapkliënt (benodigd)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Pidgin benodig 'n versoenbare GTK+-looptydomgewing (wat skynbaar nog nie "
-"beskikbaar is nie).$\\rWil u definitief die installasie van die GTK+-"
-"looptydomgewing oorslaan?"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Kortpaaie"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Kortpaaie om Pidgin mee te begin"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Speltoets-ondersteuning"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Begin-kieslys"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 "Ondersteuning vir speltoeter.  (Internetverbinding benodigd vir installasie)"
 
-msgid "The installer is already running."
-msgstr "Die installeerder loop reeds."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Fout met installasie van ontfoutsimbole ($R2).$\\rAs dit weer nie werk nie, "
+"probeer die vanlyn-installasielêer ('offline installer') by http://pidgin.im/"
+"download/windows/"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Fout met die aflaai van die GTK+looptydomgewing ($R2).$\\rDit word benodig "
+"vir Pidgin om te werk; as dit weer nie werk nie, probeer die vanlyn-"
+"installasielêer ('offline installer') by http://pidgin.im/download/windows/"
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -14921,23 +15026,102 @@ msgstr ""
 "Kon nie register-inskrywings vir Piding kry tydens verwydering nie.$\\rDit "
 "is waarskynlik dat 'n ander gebruiker hierdie program geïnstalleer het."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "URI-hanteerders"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Kan nie die tans geïnstalleerde weergawe van Pidgin verwyder nie. Die nuwe "
-"weergawe sal geïnstalleer word sonder om die huidige een te verwyder."
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Besoek die WinPidgin-webblad"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
+
+#~ msgid "Token Error"
+#~ msgstr "Tekenfout"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Kon nie die teken haal nie.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Alle registrasievelde moet ingevul word"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Wagwoorde stem nie ooreen nie"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr ""
+#~ "Kan nie nuwe rekening registreer nie.  'n Onbekende fout het voorgekom."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Nuwe Gadu-Gadu-rekening geregistreer"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Registrasie suksesvol voltooi!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Tik captcha in"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Registreer nuwe Gadu-Gadu-rekening"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Vul gerus die volgende velde in"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Vul die velde in."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "U huidige wagwoord verskil van die gespesifiseerde een."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Kan nie wagwoord verander nie. 'n Fout het voorgekom.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Verander wagwoord vir die Gadu-Gadu-rekening"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Wagwoord is suksesvol verander!"
+
+#~ msgid "Current password"
+#~ msgstr "Huidige wagwoord"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Wagwoord (weer)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Tik huidige teken"
+
+#~ msgid "Current token"
+#~ msgstr "Huidige teken"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Tik gerus u huidige wagwoord en u nuwe wagwoord vir UIN: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Verander Gadu-Gadu-wagwoord"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Vriendelys afgelaai"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "U vriendelys is van die bediener afgelaai."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Vriendelys opgelaai"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "U vriendelys is na die bediener opgelaai."
+
+#~ msgid "Change password..."
+#~ msgstr "Verander wagwoord..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Laai vriendelys op na bediener"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Laai vriendelys af van bediener"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Verwyder vriendelys van bediener"
+
+#~ msgid "Hidden Number"
+#~ msgstr "Versteekte nommer"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Geen Sametime-gemeenskapsbediener gespesifiseer nie"
@@ -15345,9 +15529,6 @@ msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
 #~ msgid "Flag"
 #~ msgstr "Vlag"
 
-#~ msgid "Invalid name"
-#~ msgstr "Ongeldige naam"
-
 #~ msgid "Select icon..."
 #~ msgstr "Kies ikoon..."
 
@@ -15632,9 +15813,6 @@ msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
 
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "Die bynaam wat gegee is, is ongeldig."
-
-#~ msgid "MXit Login Name"
-#~ msgstr "MXit-aanmeldnaam"
 
 #~ msgid "Nick Name"
 #~ msgstr "Bynaam"
@@ -16208,9 +16386,6 @@ msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
 #~ msgid "User Profile"
 #~ msgstr "Gebruikerprofiel"
 
-#~ msgid "Jingle"
-#~ msgstr "Kenwysie"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Kenwysie-klank"
 
@@ -16348,10 +16523,6 @@ msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Kon nie gasheernaam oplos nie"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Verkeerde wagwoord"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"

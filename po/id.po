@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -2091,59 +2091,8 @@ msgstr "Transfer file kepada %s gagal."
 msgid "File transfer from %s failed."
 msgstr "Transfer file dari %s gagal."
 
-msgid "Run the command in a terminal"
-msgstr "Jalankan perintah dalam terminal"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"aim\" , jika diaktifkan."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"gg\" , jika diaktifkan."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"icq\" , jika diaktifkan."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"irc\"  jika diaktifkan."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Perintah yang digunakan untuk menangani URL \"msnim\" , jika diaktifkan."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"sip\" , jika diaktifkan."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Perintah yang digunakan untuk menangani URL \"xmpp\" , jika diaktifkan."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Perintah yang digunakan untuk menangani URL \"ymsgr\" , jika diaktifkan."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Penanganan untuk URL \"aim\" "
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Penanganan untuk URL \"gg\" "
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Penanganan untuk URL \"icq\" "
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Penanganan untuk URL \"irc\" "
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Penanganan untuk URL \"msnim\" "
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Penanganan untuk URL \"sip\" "
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Penanganan untuk URL \"xmpp\" "
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Penanganan untuk URL \"ymsgr\" "
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"aim\" "
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2152,54 +2101,14 @@ msgstr ""
 "Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
 "URL-URL\"aim\" ."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL \"gg\" ."
+msgid "The handler for \"aim\" URLs"
+msgstr "Penanganan untuk URL \"aim\" "
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"icq\" ."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"aim\" , jika diaktifkan."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"irc\" ."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"msnim\" ."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"sip\" ."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"xmpp\" ."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"ymsgr\" ."
+msgid "Run the command in a terminal"
+msgstr "Jalankan perintah dalam terminal"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2208,29 +2117,120 @@ msgstr ""
 "Benar jika perintah yang digunakan untuk menangani jenis URL ini dijalankan "
 "dalamterminal."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"aim\" "
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Perlukah perintah yang ditetapkan menangani URL \"gg\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL \"gg\" ."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Penanganan untuk URL \"gg\" "
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"gg\" , jika diaktifkan."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Perlukah perintah yang ditetapkan menangani URL \"icq\" "
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"icq\" ."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Penanganan untuk URL \"icq\" "
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"icq\" , jika diaktifkan."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Perlukah perintah yang ditetapkan menangani URL \"irc\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"irc\" ."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Penanganan untuk URL \"irc\" "
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"irc\"  jika diaktifkan."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Perlukah perintah yang ditetapkan menangani URL \"msnim\" "
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"msnim\" ."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Penanganan untuk URL \"msnim\" "
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Perintah yang digunakan untuk menangani URL \"msnim\" , jika diaktifkan."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Perlukah perintah yang ditetapkan menangani URL \"sip\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"sip\" ."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Penanganan untuk URL \"sip\" "
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"sip\" , jika diaktifkan."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Perlukah perintah yang ditetapkan menangani URL \"xmpp\" "
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"xmpp\" ."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Penanganan untuk URL \"xmpp\" "
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Perintah yang digunakan untuk menangani URL \"xmpp\" , jika diaktifkan."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Perlukah perintah yang ditetapkan menangani URL \"ymsgr\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"ymsgr\" ."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Penanganan untuk URL \"ymsgr\" "
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Perintah yang digunakan untuk menangani URL \"ymsgr\" , jika diaktifkan."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Logger tidak memiliki fungsi baca</font></b>"
@@ -2288,6 +2288,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Kesalahan signon tidak dikenal terjadi: %s."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Kesalahan signon tidak dikenal terjadi: %s."
 
 msgid "Error with your microphone"
@@ -3097,12 +3101,6 @@ msgstr ""
 "Kemungkinan nama host atau nomor port yang disebutkan untuk jenis proxy anda "
 "tidak valid."
 
-msgid "Token Error"
-msgstr "Kesalahan Token"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Tidak dapat mengambil token.\n"
-
 msgid "Save Buddylist..."
 msgstr "Kirim Daftar teman..."
 
@@ -3130,43 +3128,6 @@ msgstr "Simpan daftar teman..."
 
 msgid "Load buddylist from file..."
 msgstr "Muat daftar teman dari file..."
-
-#, fuzzy
-msgid "You must fill in all registration fields"
-msgstr "Isi bagian-dalam dalam pendaftaran."
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "Kata sandi tidak sama."
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Tidak dapat mendaftarkan akun baru. Kesalahan terjadi.\n"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Akun Gadu-Gadu Baru Terdaftar"
-
-msgid "Registration completed successfully!"
-msgstr "Pendaftaran selesai dengan sukses!"
-
-msgid "Password"
-msgstr "Kata sandi"
-
-msgid "Password (again)"
-msgstr "Kata Sandi (lagi)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha"
-msgstr "Simpan Gambar"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Daftarkan Akun Gadu-Gadu Baru"
-
-msgid "Please, fill in the following fields"
-msgstr "Mohon isi bagian-bagian berikut"
 
 msgid "City"
 msgstr "Kota"
@@ -3196,40 +3157,6 @@ msgstr "Cari teman"
 
 msgid "Please, enter your search criteria below"
 msgstr "Mohon masukkan kriteria pencarian anda di bawah"
-
-msgid "Fill in the fields."
-msgstr "Isi bagian-bagian ini."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Kata sandi anda sekarang berbeda dengan yang ditentukan sebelumnya."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Tidak dapat mengganti kata sandi. Kesalahan terjadi.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Ganti kata sandi untuk akun Gadu-Gadu"
-
-msgid "Password was changed successfully!"
-msgstr "Kata sandi diganti dengan sukses!"
-
-msgid "Current password"
-msgstr "Kata sandi sekarang"
-
-msgid "Password (retype)"
-msgstr "Kata sandi (ketik ulang)"
-
-msgid "Enter current token"
-msgstr "Masukkan token sekarang"
-
-msgid "Current token"
-msgstr "Token sekarang"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
-"Mohon masukkan kata sandi anda sekarang dan kata sandi baru untuk UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Ganti kata sandi Gadu-Gadu"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3306,18 +3233,6 @@ msgstr "Tidak terdapat pengguna yang sesuai dengan kriteria pencarian anda."
 msgid "Unable to read from socket"
 msgstr "Tidak dapat membaca dari soket"
 
-msgid "Buddy list downloaded"
-msgstr "Daftar teman terdownload"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Daftar teman telah didownload dari server."
-
-msgid "Buddy list uploaded"
-msgstr "Daftar teman diupload"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Daftar teman anda telah disimpan pada server."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3354,18 +3269,6 @@ msgstr "Tidak tersambung ke server."
 
 msgid "Find buddies..."
 msgstr "Cari teman-teman..."
-
-msgid "Change password..."
-msgstr "Ganti kata sandi..."
-
-msgid "Upload buddylist to Server"
-msgstr "Upload daftar teman ke Server"
-
-msgid "Download buddylist from Server"
-msgstr "Download daftar teman dari Server"
-
-msgid "Delete buddylist from Server"
-msgstr "Hapus daftar teman dari Server"
 
 msgid "Save buddylist to file..."
 msgstr "Simpan daftar teman ke file..."
@@ -3479,7 +3382,7 @@ msgstr "Tidak dapat tersambung"
 msgid "Unable to connect: %s"
 msgstr "Tidak dapat menyambung ke %s"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "Server menutup sambungan."
 
@@ -3518,6 +3421,10 @@ msgstr "Pengkodean"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Nama Layar"
+
 msgid "Real name"
 msgstr "Nama Asli"
 
@@ -3527,6 +3434,14 @@ msgstr "Nama Asli"
 #.
 msgid "Use SSL"
 msgstr "Gunakan SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Mengotentikasi"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Ijinkan otorisasi teks biasa melalui aliran tanpa enkripsi "
 
 msgid "Bad mode"
 msgstr "Mode Buruk"
@@ -3563,6 +3478,14 @@ msgstr " <i>(dikenal)</i>"
 msgid "Nick"
 msgstr "Nama Panggilan"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Tanpa nama"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Nama Host"
+
 msgid "Currently on"
 msgstr "Sedang ada"
 
@@ -3589,6 +3512,10 @@ msgstr "%s telah membersihkan topik."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Topik untuk %s adalah: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3704,6 +3631,33 @@ msgstr "Nama panggilan atau saluran sementara tidak tersedia."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Bantingan dari %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Tidak dapat menginisialisasi sambungan Klien SILC"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Otentikasi gagal"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Otentikasi gagal"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Kata sandi salah"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Otentikasi gagal"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "aksi &lt;action to perform&gt;:  Lakukan sebuah aksi."
@@ -4403,6 +4357,9 @@ msgstr "Tanggal"
 msgid "Already Registered"
 msgstr "Sudah Terdaftar"
 
+msgid "Password"
+msgstr "Kata sandi"
+
 msgid "Unregister"
 msgstr "Daftar Keluar"
 
@@ -4539,6 +4496,9 @@ msgstr "Kata sandi anda telah diganti."
 
 msgid "Error changing password"
 msgstr "Kesalahan penggantian kata sandi"
+
+msgid "Password (again)"
+msgstr "Kata Sandi (lagi)"
 
 msgid "Change XMPP Password"
 msgstr "Rubah Kata Sandi XMPP"
@@ -4762,6 +4722,11 @@ msgstr "Tidak dapat mengirim file kepada %s, JID tidak valid"
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr ""
+"Tidak dapat mengirim file ke %s, pengguna tidak mendukung transfer file"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr ""
 "Tidak dapat mengirim file ke %s, pengguna tidak mendukung transfer file"
 
@@ -6227,6 +6192,11 @@ msgstr "Tentang %s"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Status Penghapusan"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6342,6 +6312,16 @@ msgstr "Tentang %s"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Pesan terlalu panjang."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Tidak dapat memuat plugin"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Tidak dapat membuka file."
 
 #, fuzzy
 msgid ""
@@ -6476,11 +6456,6 @@ msgstr "Pesan status"
 msgid "Rejection Message"
 msgstr "Pesan-pesan Diterima"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Nama Tengah"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Tidak tersedia"
@@ -6509,6 +6484,37 @@ msgid "Connect via HTTP"
 msgstr "Menyambung menggunakan TCP"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Jingle"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Bosan"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Undang"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Departmen"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6575,6 +6581,10 @@ msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
 #, fuzzy
 msgid "Message Error"
 msgstr "Kesalahan Pesan XMPP"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -10129,7 +10139,6 @@ msgstr ""
 "Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
 "ini."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10794,15 +10803,15 @@ msgstr ""
 "Kesalahan ditemukan dalam membaca %s anda.  File belum dimuat, dan file lama "
 "anda telah dirubah namanya menjadi %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Pesan Internet Pidgin"
 
 msgid "Internet Messenger"
 msgstr "Pengirim Pesan Internet"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pesan Internet Pidgin"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11917,6 +11926,11 @@ msgstr "Pesan-pesan yang belum dibaca"
 msgid "New Event"
 msgstr "Peristiwa Baru"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "bersihkan: Membersihkan semuarangkaian (gulungan) percakapan."
 
@@ -12026,7 +12040,8 @@ msgstr "pengembang & webmaster"
 msgid "win32 port"
 msgstr "port ke win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -12064,6 +12079,9 @@ msgstr "Arab"
 #, fuzzy
 msgid "Assamese"
 msgstr "Malu"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Latin Belorusia"
@@ -12195,6 +12213,9 @@ msgstr "Kurdi"
 msgid "Lao"
 msgstr "Lao"
 
+msgid "Lithuanian"
+msgstr "Lithuania"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Nihilist"
@@ -12221,6 +12242,9 @@ msgstr "Gujarati"
 #, fuzzy
 msgid "Malay"
 msgstr "Pria"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Norwegia Bokmål"
@@ -12275,6 +12299,10 @@ msgid "Serbian"
 msgstr "Serbia"
 
 #, fuzzy
+msgid "Serbian Latin"
+msgstr "Latin Belorusia"
+
+#, fuzzy
 msgid "Sinhala"
 msgstr "Sosial"
 
@@ -12293,9 +12321,6 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thailand"
 
-msgid "Turkish"
-msgstr "Turki"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "Rumania"
@@ -12305,9 +12330,6 @@ msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnam"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh dan Tim Gnome-Vi"
 
 msgid "Simplified Chinese"
 msgstr "Tionghoa yang Disederhanakan"
@@ -12321,8 +12343,11 @@ msgstr "Tionghoa Tradisional"
 msgid "Amharic"
 msgstr "Amharic"
 
-msgid "Lithuanian"
-msgstr "Lithuania"
+msgid "Turkish"
+msgstr "Turki"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh dan Tim Gnome-Vi"
 
 #, fuzzy, c-format
 msgid ""
@@ -12351,7 +12376,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -13073,6 +13097,10 @@ msgid ""
 msgstr ""
 "Perintah 'Manual' browser telah dipilih, tapi tidak ada perintah yang "
 "dipasang."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Perintah browser \"%s\" itidak valid."
 
 #, fuzzy
 msgid "No message"
@@ -14128,11 +14156,11 @@ msgstr "Pidgin"
 msgid "Pidgin smileys"
 msgstr "Senyuman Pidgin"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Memilih ini akan mematikan emotikon grafis."
-
 msgid "none"
 msgstr "tidak ada"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Memilih ini akan mematikan emotikon grafis."
 
 #, fuzzy
 msgid "Small"
@@ -15131,7 +15159,7 @@ msgstr "Tampilkan Penanda Waktu bergaya iChat setiap N menit."
 msgid "Timestamp Format Options"
 msgstr "Pilihan Pemformatan Penanda Waktu"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "_Paksa format waktu 24 jam"
 
@@ -15184,6 +15212,63 @@ msgid ""
 msgstr ""
 "Plugin ini memungkinkan pengguna untuk mengkostumisasi percakapan dan format "
 "penanda waktu pesan log."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Kamar Pengguna Lokal"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Hanya ketika seseorang menyebut nama layar anda"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Simpan Ikon"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Jumlah percakapan per jendela"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Pesan terkirim"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Integrasi Evolution"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Menyediakan Integrasi dengan Evolution."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Menyediakan Integrasi dengan Evolution."
 
 #, fuzzy
 msgid "Audio"
@@ -15375,23 +15460,65 @@ msgstr "Kirim dan terima bait-bait XMPP mentah."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Nama percakapan ini telah digunakan"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pesan Internet Pidgin"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Versi Runtime GTK+"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Urut"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "_Terima Standar"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Awalan"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Lokasi"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -15399,29 +15526,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "_Terima Standar"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "pengatur myim URL"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15432,79 +15565,127 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "Versi Runtime GTK+"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Lokasi"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pesan Internet Pidgin"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Urut"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Awalan"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "Nama percakapan ini telah digunakan"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "pengatur myim URL"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Token Error"
+#~ msgstr "Kesalahan Token"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Tidak dapat mengambil token.\n"
+
+#, fuzzy
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Isi bagian-dalam dalam pendaftaran."
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "Kata sandi tidak sama."
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Tidak dapat mendaftarkan akun baru. Kesalahan terjadi.\n"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Akun Gadu-Gadu Baru Terdaftar"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Pendaftaran selesai dengan sukses!"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "Simpan Gambar"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Daftarkan Akun Gadu-Gadu Baru"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Mohon isi bagian-bagian berikut"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Isi bagian-bagian ini."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Kata sandi anda sekarang berbeda dengan yang ditentukan sebelumnya."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Tidak dapat mengganti kata sandi. Kesalahan terjadi.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Ganti kata sandi untuk akun Gadu-Gadu"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Kata sandi diganti dengan sukses!"
+
+#~ msgid "Current password"
+#~ msgstr "Kata sandi sekarang"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Kata sandi (ketik ulang)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Masukkan token sekarang"
+
+#~ msgid "Current token"
+#~ msgstr "Token sekarang"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr ""
+#~ "Mohon masukkan kata sandi anda sekarang dan kata sandi baru untuk UIN: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Ganti kata sandi Gadu-Gadu"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Daftar teman terdownload"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Daftar teman telah didownload dari server."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Daftar teman diupload"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Daftar teman anda telah disimpan pada server."
+
+#~ msgid "Change password..."
+#~ msgstr "Ganti kata sandi..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Upload daftar teman ke Server"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Download daftar teman dari Server"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Hapus daftar teman dari Server"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Nama Tengah"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Tidak Ada Sever Komunitas Sametime yang Ditentukan"
@@ -16678,9 +16859,6 @@ msgstr ""
 #~ msgid "Reachability Address"
 #~ msgstr "Alamat Tetap"
 
-#~ msgid "Jingle"
-#~ msgstr "Jingle"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Audio Jingle"
 
@@ -16817,10 +16995,6 @@ msgstr ""
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Tidak dapat me-resolve nama host"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Kata sandi salah"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
@@ -17334,9 +17508,6 @@ msgstr ""
 
 #~ msgid "Available Message"
 #~ msgstr "Pesan Tersedia"
-
-#~ msgid "Screen name"
-#~ msgstr "Nama Layar"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "Nama percakapan tidak valid ditentukan."

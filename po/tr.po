@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2007-11-09 00:33+0200\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team:  <tr@li.org>\n"
@@ -2055,58 +2055,8 @@ msgstr "%s kullanıcısında dosya transferi yapılamadı."
 msgid "File transfer from %s failed."
 msgstr "%s kullanıcısından dosya transferi yapılamadı."
 
-msgid "Run the command in a terminal"
-msgstr "Komutu bir terminalde çalıştır."
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"aim\" adreslerini açmak için kullanılır."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"gg\" adreslerini açmak için kullanılır."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"icq\" adreslerini açmak için kullanılır."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"irc\" adreslerini açmak için kullanılır."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Bu komut etkinleştirilirse \"msnim\" adreslerini açmak için kullanılır."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"sip\" adreslerini açmak için kullanılır."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"xmpp\" adreslerini açmak için kullanılır."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Bu komut etkinleştirilirse \"ymsgr\" adreslerini açmak için kullanılır."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" adresleri için yakalayıcı"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" adresleri için yakalayıcı"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" adresleri için yakalayıcı"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" adresleri için yakalayıcı"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" adresleri için yakalayıcı"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" adresleri için yakalayıcı"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" adresleri için yakalayıcı"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" adresleri için yakalayıcı"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Belirtilen komut \"aim\" adreslerini yakalayabiliyor mu"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2115,12 +2065,39 @@ msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"aim\" adreslerini "
 "yakalayabiliyorsa doğru."
 
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"aim\" adreslerini açmak için kullanılır."
+
+msgid "Run the command in a terminal"
+msgstr "Komutu bir terminalde çalıştır."
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Bu komut bir uçbirimde çalıştırılabilen adresleri yakalayabiliyorsa doğru."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Belirtilen komut \"gg\" adreslerini yakalayabiliyor mu"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"gg\" adreslerini "
 "yakalayabiliyorsa doğru."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"gg\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Belirtilen komut \"icq\" adreslerini yakalayabiliyor mu"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
@@ -2129,12 +2106,30 @@ msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"icq\" adreslerini "
 "yakalayabiliyorsa doğru."
 
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"icq\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Belirtilen komut \"irc\" adreslerini yakalayabiliyor mu"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"irc\" adreslerini "
 "yakalayabiliyorsa doğru."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"irc\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Belirtilen komut \"msnim\" adreslerini yakalayabiliyor mu"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
@@ -2143,12 +2138,31 @@ msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"msnim\" adreslerini "
 "yakalayabiliyorsa doğru."
 
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Bu komut etkinleştirilirse \"msnim\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Belirtilen komut \"sip\" adreslerini yakalayabiliyor mu"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"sip\" adreslerini "
 "yakalayabiliyorsa doğru."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"sip\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Belirtilen komut \"xmpp\" adreslerini yakalayabiliyor mu"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
@@ -2157,6 +2171,15 @@ msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"xmpp\" adreslerini "
 "yakalayabiliyorsa doğru."
 
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"xmpp\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Belirtilen komut \"ymsgr\" adreslerini yakalayabiliyor mu"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
@@ -2164,35 +2187,12 @@ msgstr ""
 "\"komut\" içerisinde belirtilen komut kısayolu \"ymsgr\" adreslerini "
 "yakalayabiliyorsa doğru."
 
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
-"Bu komut bir uçbirimde çalıştırılabilen adresleri yakalayabiliyorsa doğru."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Belirtilen komut \"aim\" adreslerini yakalayabiliyor mu"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Belirtilen komut \"gg\" adreslerini yakalayabiliyor mu"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Belirtilen komut \"icq\" adreslerini yakalayabiliyor mu"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Belirtilen komut \"irc\" adreslerini yakalayabiliyor mu"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Belirtilen komut \"msnim\" adreslerini yakalayabiliyor mu"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Belirtilen komut \"sip\" adreslerini yakalayabiliyor mu"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Belirtilen komut \"xmpp\" adreslerini yakalayabiliyor mu"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Belirtilen komut \"ymsgr\" adreslerini yakalayabiliyor mu"
+"Bu komut etkinleştirilirse \"ymsgr\" adreslerini açmak için kullanılır."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Kaydedicinin okuma fonksiyonu yok</font></b>"
@@ -2250,6 +2250,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Bilinmeyen bağlantı hatası oluştu: %s."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Bilinmeyen bağlantı hatası oluştu: %s."
 
 msgid "Error with your microphone"
@@ -3034,12 +3038,6 @@ msgstr ""
 "Proxy ayarlarınız için girdiğiniz host adresi ya da port numarası geçerli "
 "değil."
 
-msgid "Token Error"
-msgstr "Belirti Hatası"
-
-msgid "Unable to fetch the token.\n"
-msgstr "İfade eşlenemedi.\n"
-
 msgid "Save Buddylist..."
 msgstr "Kişi Listesini Kaydet..."
 
@@ -3067,43 +3065,6 @@ msgstr "Kişi listesi Kaydet..."
 
 msgid "Load buddylist from file..."
 msgstr "Kişi listesini dosyadan yükle..."
-
-#, fuzzy
-msgid "You must fill in all registration fields"
-msgstr "Kayıt alanlarını doldurun."
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "Parolalar çelişiyor."
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Yeni hesap kaydedilemedi. Bir hata oluştu.\n"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Yeni Gadu-Gadu Hesabı Kaydedildi"
-
-msgid "Registration completed successfully!"
-msgstr "Kayıt başarıyla tamamlandı!"
-
-msgid "Password"
-msgstr "Parola"
-
-msgid "Password (again)"
-msgstr "Yeni parola (tekrar)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha"
-msgstr "Resmi Kaydet"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Yeni Gadu-Gadu Hesabı Oluştur"
-
-msgid "Please, fill in the following fields"
-msgstr "Lütfen alanları doldurun"
 
 msgid "City"
 msgstr "Şehir"
@@ -3133,39 +3094,6 @@ msgstr "Kişi bul"
 
 msgid "Please, enter your search criteria below"
 msgstr "Lütfen arama kriterinizi aşağıya girin"
-
-msgid "Fill in the fields."
-msgstr "Alanları doldurun."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Şimdiki parolanız önceden belirlediğiniz paroladan farklı."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Parola değiştirilemedi. Hata oluştu.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Gadu-Gudu hesabı için parola değiştir"
-
-msgid "Password was changed successfully!"
-msgstr "Parola başarıyla değiştirildi!"
-
-msgid "Current password"
-msgstr "Şimdiki parola"
-
-msgid "Password (retype)"
-msgstr "Parola (tekrar)"
-
-msgid "Enter current token"
-msgstr "Geçerli ifadeyi girin"
-
-msgid "Current token"
-msgstr "Geçerli ifade"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Lütfen UIN için şimdiki parolanızı ve yeni parolanızı girin:"
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu Parolası Değiştir"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3241,18 +3169,6 @@ msgstr "Arama kirterlerinize uyan bir kullanıcı bulunamadı."
 msgid "Unable to read from socket"
 msgstr "Soketten okunamıyor"
 
-msgid "Buddy list downloaded"
-msgstr "Kişi listesi indirildi"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Kiş listeniz sunucudan indirildi."
-
-msgid "Buddy list uploaded"
-msgstr "Kişi listesi gönderildi"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Kişi listeniz sunucuya gönderildi."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3289,18 +3205,6 @@ msgstr "Sunucuya bağlı değilsiniz."
 
 msgid "Find buddies..."
 msgstr "Kişi bul..."
-
-msgid "Change password..."
-msgstr "Parola değiştir..."
-
-msgid "Upload buddylist to Server"
-msgstr "Kişi Listesini Sunucuya Gönder"
-
-msgid "Download buddylist from Server"
-msgstr "Kişi Listesini Sunucudan İndir"
-
-msgid "Delete buddylist from Server"
-msgstr "Kişi Listesini Sunucudan Sil"
 
 msgid "Save buddylist to file..."
 msgstr "Kişi listesini dosyaya kaydet..."
@@ -3414,7 +3318,7 @@ msgstr "Bağlanılamıyor"
 msgid "Unable to connect: %s"
 msgstr "%s konumuna bağlanılamadı"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "Sunucu bağlantıyı kapattı."
 
@@ -3453,6 +3357,10 @@ msgstr "Kodlamalar"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Kayıtlı isim"
+
 msgid "Real name"
 msgstr "Gerçek Ad"
 
@@ -3462,6 +3370,14 @@ msgstr "Gerçek Ad"
 #.
 msgid "Use SSL"
 msgstr "SSL Kullan"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Kimlik Doğrulaması Yapılıyor"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Şifrelenmemiş sistemlerden gelen düzyazılara (plain text) izin ver."
 
 msgid "Bad mode"
 msgstr "Kötü mod"
@@ -3498,6 +3414,14 @@ msgstr "<i>(tanımlandı)</i>"
 msgid "Nick"
 msgstr "Takma isim"
 
+#, fuzzy
+msgid "Login name"
+msgstr "İsimsiz"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Barındırıcı adı"
+
 msgid "Currently on"
 msgstr "Şu anda açık"
 
@@ -3524,6 +3448,10 @@ msgstr "%s konuyu sildi."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s için konu: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3639,6 +3567,33 @@ msgstr "Takma ad veya kanal geçici olarak hizmet dışı."
 #, c-format
 msgid "Wallops from %s"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "SILC Client bağlantısı başlatılamadı"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Kimlik denetimi başarısız"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Kimlik denetimi başarısız"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Yanlış parola"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Kimlik denetimi başarısız"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt;:  Bir hareket yap."
@@ -4322,6 +4277,9 @@ msgstr "Tarih"
 msgid "Already Registered"
 msgstr "Zaten Kayıtlı"
 
+msgid "Password"
+msgstr "Parola"
+
 msgid "Unregister"
 msgstr "Kayıt Sil"
 
@@ -4456,6 +4414,9 @@ msgstr "Parolanız değiştirildi."
 
 msgid "Error changing password"
 msgstr "Parola değiştirilirken hata"
+
+msgid "Password (again)"
+msgstr "Yeni parola (tekrar)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP Parolası Değiştir"
@@ -4679,6 +4640,10 @@ msgstr "İleti %s kişisine gönderilemedi, geçersiz JID"
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Dosya %s kişisine gönderilemedi, kullanıcı bağlı değil"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Dosya %s kişisine gönderilemedi, kullanıcı bağlı değil"
 
 #, fuzzy, c-format
@@ -6123,6 +6088,11 @@ msgstr "%s Hakkında"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Durumu Sil"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6238,6 +6208,16 @@ msgstr "%s Hakkında"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Mesajınız çok uzun."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Eklenti yüklenemedi"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Dosya açılamıyor."
 
 #, fuzzy
 msgid ""
@@ -6368,11 +6348,6 @@ msgstr "Gönderilmiş İletiler"
 msgid "Rejection Message"
 msgstr "Alınan İletiler"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "İkinci İsim"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Erişilebilir değil"
@@ -6401,6 +6376,36 @@ msgid "Connect via HTTP"
 msgstr "TCP kullanarak bağlan"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Sıkılmış"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Davet Et"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Departman"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6465,6 +6470,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP İleti Hatası"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -9909,7 +9918,6 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10554,15 +10562,15 @@ msgstr ""
 "%s okunurken bir hata oluştu.  Dosyalar yüklenmedi ve eski dosya %s~ olarak "
 "yeniden adlandırıldı."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin İnternet Mesajlaşma Aracı"
 
 msgid "Internet Messenger"
 msgstr "İnternet Mesajlaşma Aracı"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin İnternet Mesajlaşma Aracı"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11663,6 +11671,11 @@ msgstr "Okunmamış İletiler"
 msgid "New Event"
 msgstr "Yeni Olay"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Konuşma ekranını temizler."
 
@@ -11771,7 +11784,8 @@ msgstr "geliştirici & site yöneticisi"
 msgid "win32 port"
 msgstr "win32 portu"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -11809,6 +11823,9 @@ msgstr "Arapça"
 #, fuzzy
 msgid "Assamese"
 msgstr "Mahçup"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Belarusça Latin"
@@ -11940,6 +11957,9 @@ msgstr "Kürtçe"
 msgid "Lao"
 msgstr "Lao"
 
+msgid "Lithuanian"
+msgstr "Litvanca"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Nihilist"
@@ -11966,6 +11986,9 @@ msgstr "Gujarati (Hindistanda konuşulan bir dil)"
 #, fuzzy
 msgid "Malay"
 msgstr " Bay"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Norveççe"
@@ -12020,6 +12043,10 @@ msgid "Serbian"
 msgstr "Sırpça"
 
 #, fuzzy
+msgid "Serbian Latin"
+msgstr "Belarusça Latin"
+
+#, fuzzy
 msgid "Sinhala"
 msgstr "Sosyal"
 
@@ -12038,9 +12065,6 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Tayvan Dili"
 
-msgid "Turkish"
-msgstr "Türkçe"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "Romence"
@@ -12050,9 +12074,6 @@ msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnam Dili"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh ve Gnome-Vi Takımı"
 
 msgid "Simplified Chinese"
 msgstr "Çince (Basit)"
@@ -12066,8 +12087,11 @@ msgstr "Çince (Geleneksel)"
 msgid "Amharic"
 msgstr "Habeşçe (EZ+)"
 
-msgid "Lithuanian"
-msgstr "Litvanca"
+msgid "Turkish"
+msgstr "Türkçe"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh ve Gnome-Vi Takımı"
 
 #, fuzzy, c-format
 msgid ""
@@ -12095,7 +12119,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12795,6 +12818,10 @@ msgid ""
 msgstr ""
 "Tarayıcı yapılandırmasında 'El ile ayarla' seçili, ancak bu seçenek için "
 "komut belirtilmemiş."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Tarayıcı komutu \"%s\" geçersiz."
 
 #, fuzzy
 msgid "No message"
@@ -13845,11 +13872,11 @@ msgstr "Pidgin"
 msgid "Pidgin smileys"
 msgstr "Pidgin gülenyüzleri"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Bunu seçmek görsel duygu simgelerini pasifleştirir."
-
 msgid "none"
 msgstr "hiçbiri"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Bunu seçmek görsel duygu simgelerini pasifleştirir."
 
 #, fuzzy
 msgid "Small"
@@ -14835,7 +14862,7 @@ msgstr "iChat gibi her N dakikada bir zaman etiketleri göster."
 msgid "Timestamp Format Options"
 msgstr "Zaman Etiketi Biçemi Seçenekleri"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "24 saat _biçemini zorla"
 
@@ -14888,6 +14915,63 @@ msgid ""
 msgstr ""
 "Bu eklenti kullanıcının sohbet penceresinde ve kayıtlarda zaman etiketlerini "
 "özelleştirebilmesini sağlar."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Sohbet Odası Yereli"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Sadece birisi sizin takma adınızı söylediğinde"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Simgeyi Kaydet"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Her pencere için yazışma sayısı"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Mesaj gönderildiğinde"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution Entegrasyonu"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Evolution ile entegresyonu sağlar."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Evolution ile entegresyonu sağlar."
 
 #, fuzzy
 msgid "Audio"
@@ -15079,23 +15163,65 @@ msgstr ""
 "Bu eklenti XMPP sunucularının ve istemcilerinin hatalarını ayıklamak için "
 "kullanışlıdır."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Bu sohbet adı zaten kullanımda"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin İnternet Mesajlaşma Aracı"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime Sürümü"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Sırala"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Varsayılanları _Kabul Et"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Başlangıç"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Konum"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -15103,29 +15229,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "Varsayılanları _Kabul Et"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim adres yakalayıcı"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15136,79 +15268,126 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime Sürümü"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Konum"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin İnternet Mesajlaşma Aracı"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Sırala"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Başlangıç"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "Bu sohbet adı zaten kullanımda"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "myim adres yakalayıcı"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Token Error"
+#~ msgstr "Belirti Hatası"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "İfade eşlenemedi.\n"
+
+#, fuzzy
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Kayıt alanlarını doldurun."
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "Parolalar çelişiyor."
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Yeni hesap kaydedilemedi. Bir hata oluştu.\n"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Yeni Gadu-Gadu Hesabı Kaydedildi"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Kayıt başarıyla tamamlandı!"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "Resmi Kaydet"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Yeni Gadu-Gadu Hesabı Oluştur"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Lütfen alanları doldurun"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Alanları doldurun."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Şimdiki parolanız önceden belirlediğiniz paroladan farklı."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Parola değiştirilemedi. Hata oluştu.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Gadu-Gudu hesabı için parola değiştir"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Parola başarıyla değiştirildi!"
+
+#~ msgid "Current password"
+#~ msgstr "Şimdiki parola"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Parola (tekrar)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Geçerli ifadeyi girin"
+
+#~ msgid "Current token"
+#~ msgstr "Geçerli ifade"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Lütfen UIN için şimdiki parolanızı ve yeni parolanızı girin:"
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu Parolası Değiştir"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Kişi listesi indirildi"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Kiş listeniz sunucudan indirildi."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Kişi listesi gönderildi"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Kişi listeniz sunucuya gönderildi."
+
+#~ msgid "Change password..."
+#~ msgstr "Parola değiştir..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Kişi Listesini Sunucuya Gönder"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Kişi Listesini Sunucudan İndir"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Kişi Listesini Sunucudan Sil"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "İkinci İsim"
 
 #~ msgid "Connect"
 #~ msgstr "Bağlan"
@@ -16375,10 +16554,6 @@ msgstr ""
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Makine adı çözümlenemedi"
 
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Yanlış parola"
-
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
 #~ "%s"
@@ -16853,9 +17028,6 @@ msgstr ""
 
 #~ msgid "Available Message"
 #~ msgstr "Erişilebilir İletisi"
-
-#~ msgid "Screen name"
-#~ msgstr "Kayıtlı isim"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "Geçersiz sohbet adı belirlendi."

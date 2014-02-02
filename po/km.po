@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: km\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2010-02-25 15:29+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -2023,76 +2023,72 @@ msgstr "បាន​បរាជ័យ​ក្នុងកា​រផ្ទេ
 msgid "File transfer from %s failed."
 msgstr "បាន​បរាជ័យ​ក្នុងការ​ផ្ទេរ​ពី %s ។"
 
-msgid "Run the command in a terminal"
-msgstr "រត់​ពាក្យ​បញ្ជា​នៅ​ក្នុង​ស្ថានីយ"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"aim\" URLs ប្រសិន​បើ​បាន​បើក ។"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​​ដើម្បី​គ្រប់គ្រង \"gg\" URLs ប្រសិនបើ​បាន​បើក ។"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"icq\" URLs ប្រសិន​បើ​បាន​បើក ។"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"irc\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"msnim\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"sip\" URLs ប្រសិនបើ​បានបើក ។"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"xmpp\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"ymsgr\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"aim\""
-
-msgid "The handler for \"gg\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រ​ងសម្រាប់ URLs \"gg\""
-
-msgid "The handler for \"icq\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"icq\""
-
-msgid "The handler for \"irc\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"irc\""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"msnim\""
-
-msgid "The handler for \"sip\" URLs"
-msgstr "កម្ម​វិធី​គ្រប់គ្រង​សម្រាប់ URLs \"sip\""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"xmpp\""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"ymsgr\""
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរគ្រប់គ្រង URLs \"aim\" ។"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
 "URLs."
 msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បានបញ្ជាក់​នៅ​​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"aim\" ។"
 
+msgid "The handler for \"aim\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"aim\" URLs ប្រសិន​បើ​បាន​បើក ។"
+
+msgid "Run the command in a terminal"
+msgstr "រត់​ពាក្យ​បញ្ជា​នៅ​ក្នុង​ស្ថានីយ"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​​រត់​នៅ​ក្នុង​ស្ថានីយ ។"
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "ថាតើ​ពាក្យ​បញ្ជា​ដែលបាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"gg\" ។"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"gg\" ។"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រ​ងសម្រាប់ URLs \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​​ដើម្បី​គ្រប់គ្រង \"gg\" URLs ប្រសិនបើ​បាន​បើក ។"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បានប​ញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"icq\" ។"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
 "URLs."
 msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"icq\" ។"
 
+msgid "The handler for \"icq\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"icq\" URLs ប្រសិន​បើ​បាន​បើក ។"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់គួរ​គ្រប់គ្រង URLs \"irc\" ។"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"irc\" ។"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"irc\" URLs ប្រសិន​បើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែលបានបញ្ជាក់គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
@@ -2100,10 +2096,28 @@ msgid ""
 msgstr ""
 "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
 
+msgid "The handler for \"msnim\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"msnim\" URLs ប្រសិន​បើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"sip\""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"sip\" ។"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "កម្ម​វិធី​គ្រប់គ្រង​សម្រាប់ URLs \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"sip\" URLs ប្រសិនបើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"xmpp\" ។"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
@@ -2111,40 +2125,26 @@ msgid ""
 msgstr ""
 "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"xmpp\" ។"
 
+msgid "The handler for \"xmpp\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"xmpp\" URLs ប្រសិន​បើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជាក់​ដែលបានបញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
 msgstr ""
 "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
 
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​​រត់​នៅ​ក្នុង​ស្ថានីយ ។"
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"ymsgr\""
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរគ្រប់គ្រង URLs \"aim\" ។"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "ថាតើ​ពាក្យ​បញ្ជា​ដែលបាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"gg\" ។"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បានប​ញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"icq\" ។"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់គួរ​គ្រប់គ្រង URLs \"irc\" ។"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែលបានបញ្ជាក់គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"sip\""
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"xmpp\" ។"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជាក់​ដែលបានបញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"ymsgr\" URLs ប្រសិន​បើ​បានបើក ។"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">មិនមាន​មុខងារ​អាន​ទៀតទេ</font></b>"
@@ -2203,6 +2203,10 @@ msgid ""
 msgstr "មិន​មាន​កូឌិក​​នៅ​សល់ទេ​ ។ ចំណូលចិត្ត​កូឌិក​របស់​​អ្នក​នៅ​ក្នុង​ fs-codecs.conf តឹងរឹង​ពេក ។"
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "កំហុស Farsight2 ដែល​មិនអាច​យក​ចេញ​​បានកើត​ឡើង ។"
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "កំហុស Farsight2 ដែល​មិនអាច​យក​ចេញ​​បានកើត​ឡើង ។"
 
 msgid "Error with your microphone"
@@ -2993,12 +2997,6 @@ msgid ""
 "invalid."
 msgstr "ឈ្មោះ​ម៉ាស៊ីន ឬ​លេខ​ច្រក​ដែល​បាន​បញ្ជាក់​សម្រាប់​ប្រភេទ​ប្រូកស៊ី​ដែលបានផ្ដល់​មិន​ត្រឹមត្រូវ​ទេ ។"
 
-msgid "Token Error"
-msgstr "កំហុស​ថូខឹន"
-
-msgid "Unable to fetch the token.\n"
-msgstr "មិនអាច​ទៅ​យក​ថូខឹន​បានទេ ។\n"
-
 msgid "Save Buddylist..."
 msgstr "រក្សា​​ទុក​​​បញ្ជី​មិត្តភក្ដិ..."
 
@@ -3026,39 +3024,6 @@ msgstr "រក្សា​​ទុក​​បញ្ជីមិត្តភក
 
 msgid "Load buddylist from file..."
 msgstr "ផ្ទុក​បញ្ជីមិត្តភក្ដិ​ពី​ឯកសារ..."
-
-msgid "You must fill in all registration fields"
-msgstr "អ្នក​ត្រូវ​តែ​បំពេញ ​ក្នុង​វាល​ចុះឈ្មោះ​ទាំងអស់"
-
-msgid "Passwords do not match"
-msgstr "ពាក្យ​សម្ងាត់​មិន​ផ្គូផ្គង​ទេ"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "មិនអាច​ចុះឈ្មោះ​គណនី​ថ្មី​បាន​ទេ ​។ កំហុស​មិន​ស្គាល់​បានកើត​ឡើង ។"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "គណនី Gadu-Gadu ដែលបានចុះឈ្មោះ​ថ្មី"
-
-msgid "Registration completed successfully!"
-msgstr "ការ​ចុះឈ្មោះ​បានបញ្ចប់​ដោយ​ជោគជ័យ !"
-
-msgid "Password"
-msgstr "ពាក្យ​​​សម្ងាត់"
-
-msgid "Password (again)"
-msgstr "ពាក្យ​សម្ងាត់ (ម្ដង​ទៀត)"
-
-msgid "Enter captcha text"
-msgstr "បញ្ចូល​អត្ថបទ captcha"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "ចុះឈ្មោះ​គណនី Gadu-Gadu ថ្មី"
-
-msgid "Please, fill in the following fields"
-msgstr "សូមបំពេញ​វាល​ដូច​ខាងក្រោម"
 
 msgid "City"
 msgstr "ទីក្រុង​"
@@ -3088,39 +3053,6 @@ msgstr "រក​មិត្តភក្ដិ"
 
 msgid "Please, enter your search criteria below"
 msgstr "សូម​បញ្ចូល​លក្ខខណ្ឌ​ស្វែងរក​របស់​អ្នក​ខាង​ក្រោម"
-
-msgid "Fill in the fields."
-msgstr "បំពេញ​វាល ។"
-
-msgid "Your current password is different from the one that you specified."
-msgstr "ពាក្យ​សម្ងាត់​បច្ចុប្បន្ន​របស់​អ្នក ខុស​ពី​ពាក្យ​សម្ងាត់​ដែល​អ្នក​បានបញ្ជាក់ ។"
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "មិន​អាច​ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់​បានទេ ។ កំហុស​បានកើត​ឡើង ។\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់​សម្រាប់​​គណនី Gadu-Gadu"
-
-msgid "Password was changed successfully!"
-msgstr "ពាក្យ​សម្ងាត់​ត្រូវ​បាន​ផ្លាស់ប្ដូរ​ជោគជ័យ !"
-
-msgid "Current password"
-msgstr "ពាក្យ​សម្ងាត់​បច្ចុប្បន្ន"
-
-msgid "Password (retype)"
-msgstr "ពាក្យ​​​សម្ងាត់ (វាយ​ឡើង​វិញ)"
-
-msgid "Enter current token"
-msgstr "បញ្ចូល​ថូខឹន​បច្ចុប្បន្ន"
-
-msgid "Current token"
-msgstr "ថូខឹន​បច្ចុប្បន្ន"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "សូម​បញ្ចូល​ពាក្យ​សម្ងាត់​បច្ចុប្បន្ន និង​ពាក្យ​សម្ងាត់​ថ្មី​របស់​អ្នក​សម្រាប់ UIN ៖ "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់ Gadu-Gadu"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3196,18 +3128,6 @@ msgstr "មិនមាន​អ្នក​ប្រើ​ដែល​ផ្គ
 msgid "Unable to read from socket"
 msgstr "មិនអាច​អាន​ពី​រន្ធ​បានទេ"
 
-msgid "Buddy list downloaded"
-msgstr "បានទាញយក​បញ្ជីមិត្តភក្ដិ"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "បញ្ជី​មិត្តភក្ដិ​របស់​អ្នក​ត្រូ​វបាន​ទាញយក​ពី​ម៉ាស៊ីនបម្រើ ។"
-
-msgid "Buddy list uploaded"
-msgstr "បានផ្ទុក​បញ្ជីមិត្តភក្ដិ​ឡើង"
-
-msgid "Your buddy list was stored on the server."
-msgstr "បញ្ជី​មិត្តភក្ដិ​របស់​អ្នក​ត្រូ​វបាន​ទុក​នៅ​លើ​ម៉ាស៊ីនបម្រើ ។"
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3244,18 +3164,6 @@ msgstr "មិនបានតភ្ជាប់​ទៅ​កាន់​ម៉
 
 msgid "Find buddies..."
 msgstr "រក​មិត្តភក្ដិ..."
-
-msgid "Change password..."
-msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់..."
-
-msgid "Upload buddylist to Server"
-msgstr "ផ្ទុក​បញ្ជីមិត្តភក្ដិ​ឡើង​ទៅកាន់​ម៉ាស៊ីនបម្រើ"
-
-msgid "Download buddylist from Server"
-msgstr "ទាញយក​បញ្ជីមិត្តភក្ដិ​ពី​ម៉ាស៊ីន​បម្រើ"
-
-msgid "Delete buddylist from Server"
-msgstr "លុប​បញ្ជីមិត្តភក្ដិ​ពី​ម៉ាស៊ីនបម្រើ"
 
 msgid "Save buddylist to file..."
 msgstr "រក្សាទុក​បញ្ជីមិត្តភក្ដិ​ទៅ​កាន់​ឯកសារ..."
@@ -3364,7 +3272,6 @@ msgstr "មិនអាច​តភ្ជាប់​ទេ"
 msgid "Unable to connect: %s"
 msgstr "មិនអាច​តភ្ជាប់​ទៅ ៖ %s បាន​ទេ"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "ម៉ាស៊ីនបម្រើ​បាន​បិទ​ការ​តភ្ជាប់ ។"
 
@@ -3403,6 +3310,10 @@ msgstr "ការ​អ៊ិនកូដ"
 msgid "Auto-detect incoming UTF-8"
 msgstr "រកឃើញ UTF-8 ចូល​ដោយ​ស្វ័យ​ប្រវត្តិ"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "ឈ្មោះ​មិន​ត្រឹមត្រូវ"
+
 msgid "Real name"
 msgstr "ឈ្មោះ​ពិត"
 
@@ -3412,6 +3323,14 @@ msgstr "ឈ្មោះ​ពិត"
 #.
 msgid "Use SSL"
 msgstr "ប្រើ SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "អនុញ្ញាត​ឲ្យ​អត្ថបទ​ធម្មតា​លើ​ស្ទ្រីម​ដែល​មិន​បានអ៊ិនគ្រីប"
 
 msgid "Bad mode"
 msgstr "របៀប​មិនល្អ"
@@ -3447,6 +3366,14 @@ msgstr " <i>(បាន​បញ្ជាក់អត្តសញ្ញាណ)</i
 msgid "Nick"
 msgstr "សម្មតិនាម"
 
+#, fuzzy
+msgid "Login name"
+msgstr "ឈ្មោះ​ចូល​របស់ MXit"
+
+#, fuzzy
+msgid "Host name"
+msgstr "ឈ្មោះ​ម៉ាស៊ីន"
+
 msgid "Currently on"
 msgstr "បច្ចុប្បន្ន​បើក"
 
@@ -3473,6 +3400,10 @@ msgstr "%s បានជម្រះ​ប្រធានបទ ។"
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "ប្រធាន​បទ​សម្រាប់ %s គឺ ៖ %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3585,6 +3516,33 @@ msgstr "សម្មតិនាម ឬ​ឆានែល​មិនអាច�
 #, c-format
 msgid "Wallops from %s"
 msgstr "វាយ​ពី %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "មិន​អាច​ចាប់ផ្ដើម​ការ​តភ្ជាប់​ម៉ាស៊ីន​ភ្ញៀវ SILC បាន​ទេ​"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "បាន​បរាជ័យ​ក្នុង​​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​របស់​ SASL"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "បាន​បរាជ័យ​ក្នុង​​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​របស់​ SASL"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "បាន​បរាជ័យ​ក្នុង​​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​របស់​ SASL"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "សកម្មភាព &lt;សកម្មភាព​ត្រូវ​អនុវត្ត&gt; ៖  អនុវត្ត​សកម្មភាព ។"
@@ -4241,6 +4199,9 @@ msgstr "កាល​​បរិច្ឆេទ"
 msgid "Already Registered"
 msgstr "បានចុះឈ្មោះ​រួច​ហើយ"
 
+msgid "Password"
+msgstr "ពាក្យ​​​សម្ងាត់"
+
 msgid "Unregister"
 msgstr "មិន​ចុះឈ្មោះ"
 
@@ -4375,6 +4336,9 @@ msgstr "ពាក្យ​សម្ងាត់​របស់​អ្នក​
 
 msgid "Error changing password"
 msgstr "កំហុស​ក្នុងកា​រផ្លាស់ប្ដូរ​ពាក្យសម្ងាត់"
+
+msgid "Password (again)"
+msgstr "ពាក្យ​សម្ងាត់ (ម្ដង​ទៀត)"
 
 msgid "Change XMPP Password"
 msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់ XMPP"
@@ -4598,6 +4562,10 @@ msgstr "មិន​អាច​ចាប់ផ្ដើម​មេឌៀជា
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "មិនអាច​ចាប់ផ្ដើម​មេឌៀ​ជា​មួយ %s ៖ អ្នក​ប្រើ​មិន​នៅ​លើ​បណ្ដាញ​ទេ"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "មិនអាច​ចាប់ផ្ដើម​មេឌៀ​ជា​មួយ %s ៖ អ្នក​ប្រើ​មិន​នៅ​លើ​បណ្ដាញ​ទេ"
 
 #, c-format
@@ -5996,6 +5964,11 @@ msgstr "អំពី​ខ្ញុំ"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "លុប​ស្ថានភាព"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "លេខ​ទូរស័ព្ទ​ចល័ត"
@@ -6101,6 +6074,16 @@ msgstr "អំពី..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "ឯកសារ​ដែល​អ្នក​កំពុង​តែ​ព្យាយាម​​ផ្ញើ​ធំពេក !"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "មិន​អាច​ផ្ទុក​កម្មវិធី​ជំនួយ​បានទេ"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "មិនអាច​បើក​ឯកសារ​បានទេ ។"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6217,10 +6200,6 @@ msgstr "សារ​ស្ថានភាព"
 msgid "Rejection Message"
 msgstr "សារ​បានទទួល"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "លេខ​ដែល​លាក់​"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "មិនមាន"
@@ -6248,6 +6227,36 @@ msgstr "តភ្ជាប់​តាមរយៈ HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "បើក​​អេក្រង់​ស្វាគមន៍​លេច​ឡើង"
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "អផ្សុក"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "បាន​អញ្ជើញ"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "នាយកដ្ឋាន"
+
+msgid "Divorced"
+msgstr ""
 
 #, fuzzy
 msgid "Last Online"
@@ -6307,6 +6316,10 @@ msgstr "%s បាន​ផ្ញើ​ឲ្យ​អ្នក​នូវ​ស
 
 msgid "Message Error"
 msgstr "កំហុស​សារ"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "មិនអាច​អនុវត្ត​កា​របញ្ចូន​បន្ត​ដោយ​ប្រើ​ពិធីការ​ដែលបាន​បញ្ជាក់​​នោះ​ទេ"
@@ -9708,7 +9721,6 @@ msgstr ""
 "គណនី​របស់​អ្នក​ត្រូវ​បាន​ចាក់សោ ដោយ​សារ​តែ​​បាន​​​បរាជ័យ​ក្នុងការ​​​​​ប៉ុនប៉ង​ចូល​ច្រើន​​ដង​ពេក ។ សូម​ព្យាយាម​ចូល​​ក្នុង​តំបន់​"
 "បណ្ដាញ​​យ៉ាហ៊ូ​ !"
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "មិន​ស្គាល់កំហុស ៥២ ។ កា​រតភ្ជាប់ឡើងវិញ​គួរតែ​កែ​វា​បាន ។"
 
@@ -10337,16 +10349,16 @@ msgstr ""
 "មានកំហុស​មួយ​ក្នុងការ​អាន​ %s របស់​អ្នក ។ ឯកសារ​មិន​ត្រូវ​បានផ្ទុក​ទេ ហើយ​ឯកសារ​ចាស់​ត្រូវ​បាន​ប្ដូរ​ឈ្មោះ​ទៅ​"
 "ជា %s~ ។"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
-"ជជែក​កំសាន្ត​តាម​ IM ។ គាំទ្រ AIM, Google Talk, Jabber/XMPP, MSN, យ៉ាហ៊ូ​ និង​​ផ្សេងៗ​ទៀត"
+msgid "Pidgin Internet Messenger"
+msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត​របស់ Pidgin"
 
 msgid "Internet Messenger"
 msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត"
 
-msgid "Pidgin Internet Messenger"
-msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត​របស់ Pidgin"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+"ជជែក​កំសាន្ត​តាម​ IM ។ គាំទ្រ AIM, Google Talk, Jabber/XMPP, MSN, យ៉ាហ៊ូ​ និង​​ផ្សេងៗ​ទៀត"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11390,6 +11402,14 @@ msgstr "សារ​មិន​បានអាន"
 msgid "New Event"
 msgstr "ព្រឹត្តិការណ៍​ថ្មី"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"គណនី​​បាន​ផ្ដាច់ ហើយ​អ្នក​មិន​នៅ​ក្នុង​ការ​ជជែក​នេះ​ទៀតទេ ។ អ្នក​នឹង​ត្រូវ​បានចូល​ឡើង​វិញ​ដោយ​ស្វ័យ​ប្រវត្តិ​នៅ​"
+"ក្នុងការ​ជជែក នៅពេល​អ្នក​តភ្ជាប់គណនី​នេះ​ឡើង​វិញ ។"
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "ជម្រះ ៖ ជម្រះ​ការ​សន្ទនា​ទាំង​អស់ ។"
 
@@ -11495,7 +11515,8 @@ msgstr "ប្រធាន​បណ្ដាញ"
 msgid "win32 port"
 msgstr "ច្រក win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11533,6 +11554,9 @@ msgstr "អារ៉ាប់"
 #, fuzzy
 msgid "Assamese"
 msgstr "អៀនខ្មាស់"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "បេឡារុស្ស ឡាទីន"
@@ -11661,6 +11685,9 @@ msgstr "ឃឺដ"
 msgid "Lao"
 msgstr "ឡាវ"
 
+msgid "Lithuanian"
+msgstr "លីទុយអានី"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "ស្វាហ៊ីលី"
@@ -11684,6 +11711,9 @@ msgstr "ម៉ារ៉ា​ធី"
 
 msgid "Malay"
 msgstr "ម៉ាឡេស៊ី"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "ប៊ុកម៉ល​ណ័រវ៉េ"
@@ -11736,6 +11766,10 @@ msgstr "អាល់បានី"
 msgid "Serbian"
 msgstr "សែប៊ី"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "បេឡារុស្ស ឡាទីន"
+
 msgid "Sinhala"
 msgstr "ស៊ីនហាលា"
 
@@ -11754,9 +11788,6 @@ msgstr "តេលូហ្គូ"
 msgid "Thai"
 msgstr "ថៃ"
 
-msgid "Turkish"
-msgstr "ទួរគី"
-
 msgid "Ukranian"
 msgstr "អ៊ុយ​ក្រែន"
 
@@ -11765,9 +11796,6 @@ msgstr "​អ៊ូរ្ឌូ"
 
 msgid "Vietnamese"
 msgstr "វៀតណាម"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh និង​ក្រុម Gnome-Vi"
 
 msgid "Simplified Chinese"
 msgstr "ចិន​សាមញ្ញ"
@@ -11781,8 +11809,11 @@ msgstr "ចិនបុរាណ"
 msgid "Amharic"
 msgstr "អាមហារីច"
 
-msgid "Lithuanian"
-msgstr "លីទុយអានី"
+msgid "Turkish"
+msgstr "ទួរគី"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh និង​ក្រុម Gnome-Vi"
 
 #, fuzzy, c-format
 msgid ""
@@ -11809,7 +11840,7 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12495,6 +12526,10 @@ msgstr "កំហុស​ក្នុងកា​រចាប់ផ្ដើម
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "ពាក្យ​បញ្ជា​កម្មវិធី​រុករក 'ដោយដៃ' ត្រូវ​បាន​ជ្រើស ប៉ុន្តែ​គ្មាន​ពាក្យ​បញ្ជា​ត្រូវ​បាន​ជ្រើស​ទេ ។"
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "ពាក្យ​បញ្ជា​កម្មវិធីរុករក \"%s\" មិន​ត្រឹមត្រូវ ។"
 
 msgid "No message"
 msgstr "គ្មាន​សារ"
@@ -13461,11 +13496,11 @@ msgstr "ព័ត៌មាន​ជំនួយ Pidgin"
 msgid "Pidgin smileys"
 msgstr "សញ្ញាអារម្មណ៍​របស់ Pidgin"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "ជ្រើស​សញ្ញាអារម្មណ៍​ក្រាហ្វិក​ដែល​បិទ​នេះ ។"
-
 msgid "none"
 msgstr "គ្មាន"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "ជ្រើស​សញ្ញាអារម្មណ៍​ក្រាហ្វិក​ដែល​បិទ​នេះ ។"
 
 msgid "Small"
 msgstr "តូច"
@@ -14392,7 +14427,7 @@ msgstr "បង្ហាញ​ត្រា​ពេលវេលា​របស់
 msgid "Timestamp Format Options"
 msgstr "ជម្រើស​ទ្រង់ទ្រាយ​ត្រា​ពេលវេលា"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "បង្ខំ​ទ្រង់ទ្រាយ​ពេលវេលា​ ២៤- ម៉ោង"
 
@@ -14445,6 +14480,63 @@ msgid ""
 msgstr ""
 "កម្មវិធី​ជំនួយ​នេះ​អនុញ្ញាត​ឲ្យ​អ្នកប្រើ​ប្ដូរ​ទ្រង់ទ្រាយ​​ការ​សន្ទនា និង​កា​រចុះ​កំណត់ហេតុ​សារ​ត្រាពេលវេលា​"
 "ផ្ទាល់ខ្លួន ។"
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "រូប​​បន្ទប់​ជជែកកំសាន្ត"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\tតែ​នៅពេល​មាន​អ្នកណាម្នាក់​និយាយ​អំពីឈ្មោះ​អ្នកប្រើ​របស់​អ្នក"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "រក្សា​​ទុក​​​រូបតំណាង"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "ចំនួន​សន្ទនា​ក្នុង​មួយ​បង្អួច"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "បាន​ផ្ញើសារ"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "ការ​រួម​បញ្ចូល Evolution"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "ផ្ដល់​នូវការ​បញ្ចូល​ជា​មួយ Evolution ។"
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "ផ្ដល់​នូវការ​បញ្ចូល​ជា​មួយ Evolution ។"
 
 msgid "Audio"
 msgstr "អូឌីយ៉ូ"
@@ -14625,23 +14717,64 @@ msgstr "ផ្ញើ​ និង​ទទួល​ XMPP stanzas ដើម ។"
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្រយោជន៍​សម្រាប់បំបាត់​កំហុស​ម៉ាស៊ីនបម្រើ ឬ​ម៉ាស៊ីន​ភ្ញៀវ XMPP ។"
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "សម្មតិនាម \"%s\" កំពុង​ប្រើ​រួច​ហើយ ។"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត​របស់ Pidgin"
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "ផ្លូវ​កាត់"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "ផ្ទៃតុ​លំនាំដើម"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "ចាប់ផ្ដើម"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "ទីតាំង"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -14649,29 +14782,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "ផ្ទៃតុ​លំនាំដើម"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "កម្មវិធី​គ្រប់គ្រង myim URL"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -14682,78 +14821,124 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "ទីតាំង"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត​របស់ Pidgin"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "ផ្លូវ​កាត់"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "ចាប់ផ្ដើម"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "សម្មតិនាម \"%s\" កំពុង​ប្រើ​រួច​ហើយ ។"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "កម្មវិធី​គ្រប់គ្រង myim URL"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Token Error"
+#~ msgstr "កំហុស​ថូខឹន"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "មិនអាច​ទៅ​យក​ថូខឹន​បានទេ ។\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "អ្នក​ត្រូវ​តែ​បំពេញ ​ក្នុង​វាល​ចុះឈ្មោះ​ទាំងអស់"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "ពាក្យ​សម្ងាត់​មិន​ផ្គូផ្គង​ទេ"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "មិនអាច​ចុះឈ្មោះ​គណនី​ថ្មី​បាន​ទេ ​។ កំហុស​មិន​ស្គាល់​បានកើត​ឡើង ។"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "គណនី Gadu-Gadu ដែលបានចុះឈ្មោះ​ថ្មី"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "ការ​ចុះឈ្មោះ​បានបញ្ចប់​ដោយ​ជោគជ័យ !"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "បញ្ចូល​អត្ថបទ captcha"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "ចុះឈ្មោះ​គណនី Gadu-Gadu ថ្មី"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "សូមបំពេញ​វាល​ដូច​ខាងក្រោម"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "បំពេញ​វាល ។"
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "ពាក្យ​សម្ងាត់​បច្ចុប្បន្ន​របស់​អ្នក ខុស​ពី​ពាក្យ​សម្ងាត់​ដែល​អ្នក​បានបញ្ជាក់ ។"
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "មិន​អាច​ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់​បានទេ ។ កំហុស​បានកើត​ឡើង ។\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់​សម្រាប់​​គណនី Gadu-Gadu"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "ពាក្យ​សម្ងាត់​ត្រូវ​បាន​ផ្លាស់ប្ដូរ​ជោគជ័យ !"
+
+#~ msgid "Current password"
+#~ msgstr "ពាក្យ​សម្ងាត់​បច្ចុប្បន្ន"
+
+#~ msgid "Password (retype)"
+#~ msgstr "ពាក្យ​​​សម្ងាត់ (វាយ​ឡើង​វិញ)"
+
+#~ msgid "Enter current token"
+#~ msgstr "បញ្ចូល​ថូខឹន​បច្ចុប្បន្ន"
+
+#~ msgid "Current token"
+#~ msgstr "ថូខឹន​បច្ចុប្បន្ន"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "សូម​បញ្ចូល​ពាក្យ​សម្ងាត់​បច្ចុប្បន្ន និង​ពាក្យ​សម្ងាត់​ថ្មី​របស់​អ្នក​សម្រាប់ UIN ៖ "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់ Gadu-Gadu"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "បានទាញយក​បញ្ជីមិត្តភក្ដិ"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "បញ្ជី​មិត្តភក្ដិ​របស់​អ្នក​ត្រូ​វបាន​ទាញយក​ពី​ម៉ាស៊ីនបម្រើ ។"
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "បានផ្ទុក​បញ្ជីមិត្តភក្ដិ​ឡើង"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "បញ្ជី​មិត្តភក្ដិ​របស់​អ្នក​ត្រូ​វបាន​ទុក​នៅ​លើ​ម៉ាស៊ីនបម្រើ ។"
+
+#~ msgid "Change password..."
+#~ msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "ផ្ទុក​បញ្ជីមិត្តភក្ដិ​ឡើង​ទៅកាន់​ម៉ាស៊ីនបម្រើ"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "ទាញយក​បញ្ជីមិត្តភក្ដិ​ពី​ម៉ាស៊ីន​បម្រើ"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "លុប​បញ្ជីមិត្តភក្ដិ​ពី​ម៉ាស៊ីនបម្រើ"
+
+#~ msgid "Hidden Number"
+#~ msgstr "លេខ​ដែល​លាក់​"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "គ្មាន​ម៉ាស៊ីន​បម្រើ​សហគមន៍​បានបញ្ជាក់​ទេ"
@@ -15171,9 +15356,6 @@ msgstr ""
 #~ msgid "Ver"
 #~ msgstr "កំណែ"
 
-#~ msgid "Invalid name"
-#~ msgstr "ឈ្មោះ​មិន​ត្រឹមត្រូវ"
-
 #~ msgid "Select icon..."
 #~ msgstr "ជ្រើស​រូបតំណាង..."
 
@@ -15464,9 +15646,6 @@ msgstr ""
 
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "សម្មតិនាម​ ដែល​អ្នក​បាន​បញ្ចូលមិន​ត្រឹមត្រូវ​ទេ ។"
-
-#~ msgid "MXit Login Name"
-#~ msgstr "ឈ្មោះ​ចូល​របស់ MXit"
 
 #~ msgid "Nick Name"
 #~ msgstr "សម្មតិនាម"

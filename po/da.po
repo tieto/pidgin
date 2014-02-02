@@ -42,7 +42,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-21 21:42-0800\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2013-09-20 10:57+0100\n"
 "Last-Translator: Nicky Thomassen <nicky@aptget.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -11674,6 +11674,9 @@ msgstr "Arabisk"
 msgid "Assamese"
 msgstr "Assamesisk"
 
+msgid "Asturian"
+msgstr ""
+
 msgid "Belarusian Latin"
 msgstr "Hviderussisk latinsk"
 
@@ -14644,6 +14647,63 @@ msgstr ""
 "Dette udvidelsesmodul tillader brugeren selv at tilpasse formatet på "
 "tidsstempler i samtaler og logge."
 
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Samtalerumsemblemer"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Kun når nogen siger dit brugernavn"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Gem ikon"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Antal samtaler pr. vindue"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Besked sendt"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution-integration"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Giver integration med Evolution."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Giver integration med Evolution."
+
 msgid "Audio"
 msgstr "Lyd"
 
@@ -14794,63 +14854,6 @@ msgid ""
 msgstr ""
 "Giver indstillinger specifikt til Pidgin for Windows, såsom dokning af "
 "venneliste."
-
-#. Alerts
-#, fuzzy
-msgid "Chatroom alerts"
-msgstr "Samtalerumsemblemer"
-
-#, fuzzy
-msgid "Chatroom message alerts _only where someone says your username"
-msgstr "\t_Kun når nogen siger dit brugernavn"
-
-#. Launcher integration
-#, fuzzy
-msgid "Launcher Icon"
-msgstr "Gem ikon"
-
-msgid "_Disable launcher integration"
-msgstr ""
-
-msgid "Show number of unread _messages on launcher icon"
-msgstr ""
-
-#, fuzzy
-msgid "Show number of unread _conversations on launcher icon"
-msgstr "Antal samtaler pr. vindue"
-
-#. Messaging menu integration
-#, fuzzy
-msgid "Messaging Menu"
-msgstr "Besked sendt"
-
-msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
-
-msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#, fuzzy
-msgid "Unity Integration"
-msgstr "Evolution-integration"
-
-#. *< name
-#. *< version
-#. *  summary
-#, fuzzy
-msgid "Provides integration with Unity."
-msgstr "Giver integration med Evolution."
-
-#. *  description
-#, fuzzy
-msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr "Giver integration med Evolution."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Loggede ud.</font>"

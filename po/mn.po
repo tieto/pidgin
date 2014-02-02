@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2005-06-17 23:22-0800\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2002,55 +2002,7 @@ msgstr "%s рүү файл шилжүүлэлт амжилтгүй боллоо.
 msgid "File transfer from %s failed."
 msgstr "%s ээс файл шилжүүлэлт амжилтгүй боллоо."
 
-msgid "Run the command in a terminal"
-msgstr "Терминалаас командыг ажиллуулах"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"aim\" URLs-г удирдах ашиглах."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"gg\" URLs-г удирдахад ашиглах."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"icq\" URLs-г удирдахад ашиглах."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"irc\" URLs -г удирдахад ашиглах."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"msnim\" URLs-г удирдахад ашиглах."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"sip\" URLs -г удирдахад ашиглах."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"xmpp\" URLs-г удирдахад ашиглах."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Идэвхтэй байвал, \"ymsgr\" URLs-г удирдахад ашиглах."
-
-msgid "The handler for \"aim\" URLs"
-msgstr ""
-
-msgid "The handler for \"gg\" URLs"
-msgstr ""
-
-msgid "The handler for \"icq\" URLs"
-msgstr ""
-
-msgid "The handler for \"irc\" URLs"
-msgstr ""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr ""
-
-msgid "The handler for \"sip\" URLs"
-msgstr ""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr ""
-
-msgid "The handler for \"ymsgr\" URLs"
+msgid "Whether the specified command should handle \"aim\" URLs"
 msgstr ""
 
 msgid ""
@@ -2058,9 +2010,35 @@ msgid ""
 "URLs."
 msgstr ""
 
+msgid "The handler for \"aim\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"aim\" URLs-г удирдах ашиглах."
+
+msgid "Run the command in a terminal"
+msgstr "Терминалаас командыг ажиллуулах"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr ""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
+msgstr ""
+
+msgid "The handler for \"gg\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"gg\" URLs-г удирдахад ашиглах."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr ""
 
 msgid ""
@@ -2068,9 +2046,27 @@ msgid ""
 "URLs."
 msgstr ""
 
+msgid "The handler for \"icq\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"icq\" URLs-г удирдахад ашиглах."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr ""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
+msgstr ""
+
+msgid "The handler for \"irc\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"irc\" URLs -г удирдахад ашиглах."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr ""
 
 msgid ""
@@ -2078,9 +2074,27 @@ msgid ""
 "URLs."
 msgstr ""
 
+msgid "The handler for \"msnim\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"msnim\" URLs-г удирдахад ашиглах."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr ""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
+msgstr ""
+
+msgid "The handler for \"sip\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"sip\" URLs -г удирдахад ашиглах."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr ""
 
 msgid ""
@@ -2088,39 +2102,25 @@ msgid ""
 "URLs."
 msgstr ""
 
+msgid "The handler for \"xmpp\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"xmpp\" URLs-г удирдахад ашиглах."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr ""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
 msgstr ""
 
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
+msgid "The handler for \"ymsgr\" URLs"
 msgstr ""
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr ""
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Идэвхтэй байвал, \"ymsgr\" URLs-г удирдахад ашиглах."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2178,6 +2178,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Дараах алдаанууд гарсан:"
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Дараах алдаанууд гарсан:"
 
 msgid "Error with your microphone"
@@ -2948,12 +2952,6 @@ msgid ""
 "invalid."
 msgstr ""
 
-msgid "Token Error"
-msgstr ""
-
-msgid "Unable to fetch the token.\n"
-msgstr ""
-
 msgid "Save Buddylist..."
 msgstr "Харилцагчийн жагсаалтыг хадгалах..."
 
@@ -2981,43 +2979,6 @@ msgstr "Харилцагчийн жагсаалтыг хадгалах..."
 
 msgid "Load buddylist from file..."
 msgstr "Файлаас харилцагчдын жагсаалтыг ачаалах"
-
-#, fuzzy
-msgid "You must fill in all registration fields"
-msgstr "Бүртгэлийн талбаруудыг бөглө."
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "Нууц үг тохирохгүй байна."
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Шинэ бүртгэл  бүртгэх боломжгүй.Алдаа гарлаа.\n"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Шинээр Gadu-Gadu Бүртгэлийг бүртгэж авлаа"
-
-msgid "Registration completed successfully!"
-msgstr "Бүртгэл ажилттай боллоо"
-
-msgid "Password"
-msgstr "Нууц үг"
-
-msgid "Password (again)"
-msgstr "Нууц үг (дахиад)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha"
-msgstr "Зургийг Хадгалах"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Шинэ Gadu-Gadu бүртгэлийг бүртгэх"
-
-msgid "Please, fill in the following fields"
-msgstr "Дараах талбаруудыг бөглө нүү"
 
 msgid "City"
 msgstr "Хот"
@@ -3047,39 +3008,6 @@ msgstr "Харилцагч хайх"
 
 msgid "Please, enter your search criteria below"
 msgstr "Хайх үгээ оруулна уу"
-
-msgid "Fill in the fields."
-msgstr "Талбаруудыг бөглө."
-
-msgid "Your current password is different from the one that you specified."
-msgstr ""
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Нууц үг өөрчлөх боломжгүй. Алдаа гарлаа.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Gadu-Gadu бүртгэлийн нууц үгийг өөрчлөх"
-
-msgid "Password was changed successfully!"
-msgstr "Нууц үгийг амжилттай өөрчиллөө"
-
-msgid "Current password"
-msgstr "Одоогийн нууц үг"
-
-msgid "Password (retype)"
-msgstr "Нууц үг (дахин оруул)"
-
-msgid "Enter current token"
-msgstr ""
-
-msgid "Current token"
-msgstr ""
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu ийн нууц үгийг өөрчлөх"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3155,18 +3083,6 @@ msgstr ""
 msgid "Unable to read from socket"
 msgstr "Сокетоос унших боломжгүй"
 
-msgid "Buddy list downloaded"
-msgstr "Харилцагчийн жагсаалтыг татаж авсан"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Серверээс харилцагчийн жагсаалтыг татаж авсан"
-
-msgid "Buddy list uploaded"
-msgstr "Харилцагчийн жагсаалтыг сервер лүү хуулсан"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Таны харилцагчийн жагсаалт серверт хадгалагдлаа."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3203,18 +3119,6 @@ msgstr "Сервертэй холбогдож чадсангүй."
 
 msgid "Find buddies..."
 msgstr "Харилцагчдыг хайх"
-
-msgid "Change password..."
-msgstr "Нууц үгийг солих..."
-
-msgid "Upload buddylist to Server"
-msgstr "Сервер лүү харилцагчдын жагсаалтыг хуулах"
-
-msgid "Download buddylist from Server"
-msgstr "Серверээс харилцагчдын жагсаалтыг татаж авах"
-
-msgid "Delete buddylist from Server"
-msgstr "Серверээс харилцагчдын жагсаалтыг устгах"
 
 msgid "Save buddylist to file..."
 msgstr "Харилцагчдын жагсаалтыг файлд хадгалах..."
@@ -3325,7 +3229,7 @@ msgstr ""
 msgid "Unable to connect: %s"
 msgstr "%s рүү холбогдох боломжгүй"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "Сервер холболтыг тасалсан. "
 
@@ -3364,6 +3268,10 @@ msgstr "Кодчилол"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Буруу нэр"
+
 msgid "Real name"
 msgstr "Жинхэнэ нэр"
 
@@ -3373,6 +3281,12 @@ msgstr "Жинхэнэ нэр"
 #.
 msgid "Use SSL"
 msgstr "SSL ашиглах"
+
+msgid "Authenticate with SASL"
+msgstr ""
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr ""
 
 msgid "Bad mode"
 msgstr "Буруу горим"
@@ -3408,6 +3322,14 @@ msgstr " <i>(identified)</i>"
 msgid "Nick"
 msgstr ""
 
+#, fuzzy
+msgid "Login name"
+msgstr "Нэргүй"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Хостын нэр"
+
 msgid "Currently on"
 msgstr ""
 
@@ -3433,6 +3355,10 @@ msgstr ""
 
 #, c-format
 msgid "The topic for %s is: %s"
+msgstr ""
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
 msgstr ""
 
 #, c-format
@@ -3549,6 +3475,33 @@ msgstr ""
 #, c-format
 msgid "Wallops from %s"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Холболтыг эхлүүлэх боломжгүй байна"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SSL Холболт амжилтгүй болсон"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SSL Холболт амжилтгүй болсон"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Буруу нууц үг"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SSL Холболт амжилтгүй болсон"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt;:  Үйлдлийг гүйцэтгэх."
@@ -4187,6 +4140,9 @@ msgstr "Он сар"
 msgid "Already Registered"
 msgstr ""
 
+msgid "Password"
+msgstr "Нууц үг"
+
 msgid "Unregister"
 msgstr ""
 
@@ -4321,6 +4277,9 @@ msgstr "Таны нууц үг өөрчилөгдсөн"
 
 msgid "Error changing password"
 msgstr "Нууц үг өөрчлөхөд алдаа гарлаа"
+
+msgid "Password (again)"
+msgstr "Нууц үг (дахиад)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP ийн нууц үгийг өөрчлөх"
@@ -4544,6 +4503,10 @@ msgstr " %s рүү файл илгээх боломжгүй,  буруу JID"
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "%s рүү файл илгээх боломжгүй, онлайнд байхгүй байна"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "%s рүү файл илгээх боломжгүй, онлайнд байхгүй байна"
 
 #, c-format
@@ -5947,6 +5910,11 @@ msgstr "%s ийн талаар"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Төлөвийг Усгах"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6061,6 +6029,16 @@ msgstr "%s ийн талаар"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Мессеж хэтэрхий урт байна."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Нэмэлт програмыг ачаалах боломжгүй"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Файл нээх боломжгүй."
 
 #, fuzzy
 msgid ""
@@ -6190,11 +6168,6 @@ msgstr "Илгээгдсэн Мессеж"
 msgid "Rejection Message"
 msgstr "Хүлээж авсан Мессеж"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Гэрийн утасны дугаар"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Ашиглах боломжгүй"
@@ -6223,6 +6196,36 @@ msgid "Connect via HTTP"
 msgstr "TCP ашиглан холбох"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Ядарсан"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Урих"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Салбар"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6287,6 +6290,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP Мессежийн Алдаа"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -9627,7 +9634,6 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr ""
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10262,15 +10268,15 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Пизин Интернет Мессенжер"
 
 msgid "Internet Messenger"
 msgstr "Интернет Мессенжер"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Пизин Интернет Мессенжер"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11348,6 +11354,14 @@ msgstr "Уншаагүй Мессеж"
 msgid "New Event"
 msgstr ""
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Бүртгэл холболтоос тасарсан учраас та чатад байхгүй байна. Бүртгэл дахин "
+"холбогдоход та автоматаар чатад дахин нэвтрэх болно. "
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr ""
 
@@ -11455,7 +11469,8 @@ msgstr "хөгжүүлэг & вэбмастер"
 msgid "win32 port"
 msgstr "win32 порт"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -11493,6 +11508,9 @@ msgstr "Араб хэл"
 #, fuzzy
 msgid "Assamese"
 msgstr "Ичсэн"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Беларусын Латин хэл"
@@ -11623,6 +11641,9 @@ msgstr "Курди хэл"
 msgid "Lao"
 msgstr "Лаос хэл"
 
+msgid "Lithuanian"
+msgstr "Литви хэл"
+
 msgid "Maithili"
 msgstr ""
 
@@ -11648,6 +11669,9 @@ msgstr "Гужарати хэл"
 #, fuzzy
 msgid "Malay"
 msgstr "эр"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Норвеги хэл"
@@ -11701,6 +11725,10 @@ msgstr "Албани хэл"
 msgid "Serbian"
 msgstr "Серви хэл"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Беларусын Латин хэл"
+
 msgid "Sinhala"
 msgstr "Синхала хэл"
 
@@ -11719,9 +11747,6 @@ msgstr "Телуги хэл"
 msgid "Thai"
 msgstr "Тай хэл"
 
-msgid "Turkish"
-msgstr "Турк хэл"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "Румын хэл"
@@ -11731,9 +11756,6 @@ msgstr "Урду хэл"
 
 msgid "Vietnamese"
 msgstr "Вьетнам хэл"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr ""
 
 msgid "Simplified Chinese"
 msgstr "Хялбарчилсан Хятад хэл"
@@ -11747,8 +11769,11 @@ msgstr "Уламжлалт Хятад хэл "
 msgid "Amharic"
 msgstr "Араб хэл"
 
-msgid "Lithuanian"
-msgstr "Литви хэл"
+msgid "Turkish"
+msgstr "Турк хэл"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -11768,7 +11793,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12434,6 +12458,10 @@ msgstr ""
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "\"%s\" браузерийн команд буруу байна."
 
 #, fuzzy
 msgid "No message"
@@ -13445,10 +13473,10 @@ msgstr ""
 msgid "Pidgin smileys"
 msgstr ""
 
-msgid "Selecting this disables graphical emoticons."
+msgid "none"
 msgstr ""
 
-msgid "none"
+msgid "Selecting this disables graphical emoticons."
 msgstr ""
 
 #, fuzzy
@@ -14389,7 +14417,7 @@ msgstr ""
 msgid "Timestamp Format Options"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "Мессежийн хугацааны формат"
 
@@ -14436,6 +14464,59 @@ msgstr "Мессежийн хугацааны форматыг өөртөө то
 msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
+msgstr ""
+
+#. Alerts
+msgid "Chatroom alerts"
+msgstr ""
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Дүрс зургийг хадгалах"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Цонх бүрийн харилцааны тоо"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Мессеж илгээхэд"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Миний мэдээллийг өөрчлөх"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
 msgstr ""
 
 #, fuzzy
@@ -14619,23 +14700,63 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Энэ чатын нэрийг ашиглаж байна"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Пизин Интернет Мессенжер"
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Товчны хослол"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Систем эхлүүлэлт"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Байршил"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -14643,28 +14764,34 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
 #. Installer Subsection Text
-msgid "Desktop"
+msgid "URI Handlers"
 msgstr ""
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -14675,77 +14802,108 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Байршил"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Пизин Интернет Мессенжер"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Товчны хослол"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Систем эхлүүлэлт"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "Энэ чатын нэрийг ашиглаж байна"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr ""
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Бүртгэлийн талбаруудыг бөглө."
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "Нууц үг тохирохгүй байна."
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Шинэ бүртгэл  бүртгэх боломжгүй.Алдаа гарлаа.\n"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Шинээр Gadu-Gadu Бүртгэлийг бүртгэж авлаа"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Бүртгэл ажилттай боллоо"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "Зургийг Хадгалах"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Шинэ Gadu-Gadu бүртгэлийг бүртгэх"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Дараах талбаруудыг бөглө нүү"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Талбаруудыг бөглө."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Нууц үг өөрчлөх боломжгүй. Алдаа гарлаа.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Gadu-Gadu бүртгэлийн нууц үгийг өөрчлөх"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Нууц үгийг амжилттай өөрчиллөө"
+
+#~ msgid "Current password"
+#~ msgstr "Одоогийн нууц үг"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Нууц үг (дахин оруул)"
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu ийн нууц үгийг өөрчлөх"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Харилцагчийн жагсаалтыг татаж авсан"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Серверээс харилцагчийн жагсаалтыг татаж авсан"
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Харилцагчийн жагсаалтыг сервер лүү хуулсан"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Таны харилцагчийн жагсаалт серверт хадгалагдлаа."
+
+#~ msgid "Change password..."
+#~ msgstr "Нууц үгийг солих..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Сервер лүү харилцагчдын жагсаалтыг хуулах"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Серверээс харилцагчдын жагсаалтыг татаж авах"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Серверээс харилцагчдын жагсаалтыг устгах"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Гэрийн утасны дугаар"
 
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Харилцагчийн жагсаалтанд байхгүй харилцагчийг автоматаар татгалзах"
@@ -14819,10 +14977,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Modify Extended Information"
-#~ msgstr "Миний мэдээллийг өөрчлөх"
-
-#, fuzzy
-#~ msgid "Modify Information"
 #~ msgstr "Миний мэдээллийг өөрчлөх"
 
 #, fuzzy
@@ -15024,9 +15178,6 @@ msgstr ""
 #, fuzzy
 #~ msgid " Zone"
 #~ msgstr "Утас"
-
-#~ msgid "Invalid name"
-#~ msgstr "Буруу нэр"
 
 #, fuzzy
 #~ msgid "Select icon..."
@@ -15572,10 +15723,6 @@ msgstr ""
 
 #~ msgid "Could not write"
 #~ msgstr "Бичиж чадсангүй"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Буруу нууц үг"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
