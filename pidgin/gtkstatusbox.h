@@ -45,6 +45,8 @@ G_BEGIN_DECLS
 #define PIDGIN_STATUS_BOX_GET_CLASS(inst)  (G_TYPE_INSTANCE_GET_CLASS ((inst), PIDGIN_TYPE_STATUS_BOX, PidginStatusBoxClass))
 
 /**
+ * PidginStatusBoxItemType:
+ *
  * This is a hidden field in the GtkStatusBox that identifies the
  * item in the list store.  The item could be a normal
  * PurpleStatusPrimitive, or it could be something special like the
@@ -64,26 +66,25 @@ typedef enum
 typedef struct _PidginStatusBox      PidginStatusBox;
 typedef struct _PidginStatusBoxClass PidginStatusBoxClass;
 
+/**
+ * PidginStatusBox:
+ * @store:          This GtkListStore contains only one row--the currently
+ *                  selected status.
+ * @dropdown_store: This is the dropdown GtkListStore that contains the
+ *                  available statuses, plus some recently used statuses, plus
+ *                  the "Custom..." and "Saved..." options.
+ * @token_status_account: This will be non-NULL and contain a sample account
+ *                        when all enabled accounts use the same statuses
+ */
 struct _PidginStatusBox
 {
 	GtkContainer parent_instance;
 
-	/**
-	 * This GtkListStore contains only one row--the currently selected status.
-	 */
 	GtkListStore *store;
-
-	/**
-	 * This is the dropdown GtkListStore that contains the available statuses,
-	 * plus some recently used statuses, plus the "Custom..." and "Saved..."
-	 * options.
-	 */
 	GtkListStore *dropdown_store;
 
 	PurpleAccount *account;
 
-	/* This will be non-NULL and contain a sample account
-	 * when all enabled accounts use the same statuses */
 	PurpleAccount *token_status_account;
 
 	GtkWidget *vbox, *sw;

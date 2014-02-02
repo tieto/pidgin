@@ -29,6 +29,8 @@
 #include "xfer.h"
 
 /**
+ * PidginXferDialog:
+ *
  * A file transfer dialog.
  *
  * The structure is opaque, as nobody should be touching anything inside of
@@ -44,6 +46,8 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
+ * pidgin_xfer_dialog_new:
+ *
  * Creates a new file transfer dialog.
  *
  * Returns: The new dialog.
@@ -51,58 +55,65 @@ G_BEGIN_DECLS
 PidginXferDialog *pidgin_xfer_dialog_new(void);
 
 /**
- * Destroys a file transfer dialog.
- *
+ * pidgin_xfer_dialog_destroy:
  * @dialog: The file transfer dialog.
+ *
+ * Destroys a file transfer dialog.
  */
 void pidgin_xfer_dialog_destroy(PidginXferDialog *dialog);
 
 /**
+ * pidgin_xfer_dialog_show:
+ * @dialog: The file transfer dialog to show.
+ *
  * Displays the file transfer dialog given.
  * If dialog is %NULL, displays the default dialog, creating one if necessary
- *
- * @dialog: The file transfer dialog to show.
  */
 void pidgin_xfer_dialog_show(PidginXferDialog *dialog);
 
 /**
- * Hides the file transfer dialog.
- *
+ * pidgin_xfer_dialog_hide:
  * @dialog: The file transfer dialog to hide.
+ *
+ * Hides the file transfer dialog.
  */
 void pidgin_xfer_dialog_hide(PidginXferDialog *dialog);
 
 /**
- * Adds a file transfer to the dialog.
- *
+ * pidgin_xfer_dialog_add_xfer:
  * @dialog: The file transfer dialog.
  * @xfer:   The file transfer.
+ *
+ * Adds a file transfer to the dialog.
  */
 void pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer);
 
 /**
- * Removes a file transfer from the dialog.
- *
+ * pidgin_xfer_dialog_remove_xfer:
  * @dialog: The file transfer dialog.
  * @xfer:   The file transfer.
+ *
+ * Removes a file transfer from the dialog.
  */
 void pidgin_xfer_dialog_remove_xfer(PidginXferDialog *dialog,
 									 PurpleXfer *xfer);
 
 /**
- * Indicate in a file transfer dialog that a transfer was cancelled.
- *
+ * pidgin_xfer_dialog_cancel_xfer:
  * @dialog: The file transfer dialog.
  * @xfer:   The file transfer that was cancelled.
+ *
+ * Indicate in a file transfer dialog that a transfer was cancelled.
  */
 void pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									 PurpleXfer *xfer);
 
 /**
- * Updates the information for a transfer in the dialog.
- *
+ * pidgin_xfer_dialog_update_xfer:
  * @dialog: The file transfer dialog.
  * @xfer:   The file transfer.
+ *
+ * Updates the information for a transfer in the dialog.
  */
 void pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 									 PurpleXfer *xfer);
@@ -115,23 +126,30 @@ void pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 /*@{*/
 
 /**
+ * pidgin_xfers_init:
+ *
  * Initializes the GTK+ file transfer system.
  */
 void pidgin_xfers_init(void);
 
 /**
+ * pidgin_xfers_uninit:
+ *
  * Uninitializes the GTK+ file transfer system.
  */
 void pidgin_xfers_uninit(void);
 
 /**
- * Sets pidgin's main file transfer dialog.
- *
+ * pidgin_set_xfer_dialog:
  * @dialog: The main dialog.
+ *
+ * Sets pidgin's main file transfer dialog.
  */
 void pidgin_set_xfer_dialog(PidginXferDialog *dialog);
 
 /**
+ * pidgin_get_xfer_dialog:
+ *
  * Returns pirgin's main file transfer dialog.
  *
  * Returns: The main dialog.
@@ -139,6 +157,8 @@ void pidgin_set_xfer_dialog(PidginXferDialog *dialog);
 PidginXferDialog *pidgin_get_xfer_dialog(void);
 
 /**
+ * pidgin_xfers_get_ui_ops:
+ *
  * Returns the UI operations structure for the GTK+ file transfer UI.
  *
  * Returns: The GTK+ file transfer UI operations structure.
