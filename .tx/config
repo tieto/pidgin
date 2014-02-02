@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[pidgin.pidgin]
+[pidgin.pidgin_pot-for-2_x_y]
 file_filter = po/<lang>.po
 source_file = po/pidgin.pot
 source_lang = en
