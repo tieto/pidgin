@@ -23,6 +23,7 @@
   <reference label="II">
     <title>API Reference</title>
 
+      <xi:include href="xml/purple.xml" />
       <xi:include href="xml/account.xml" />
       <xi:include href="xml/accountopt.xml" />
       <xi:include href="xml/accounts.xml" />
@@ -84,7 +85,6 @@
       <xi:include href="xml/protocol.xml" />
       <xi:include href="xml/proxy.xml" />
       <xi:include href="xml/purple-socket.xml" />
-      <xi:include href="xml/purple.xml" />
       <xi:include href="xml/request.xml" />
       <xi:include href="xml/request-datasheet.xml" />
       <xi:include href="xml/roomlist.xml" />
