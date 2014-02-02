@@ -35,7 +35,7 @@
   callbacks may be connected to it. This is done using
   <link linkend="purple-signal-register"><function>purple_signal_register()</function></link>.
   Here is a slightly modified example from
-  <link linkend="purple-plugins-init"><function>purple_plugins_init</function></link>
+  <link linkend="purple-plugins-init"><function>purple_plugins_init()</function></link>
   in <literal>plugin.c</literal>:
 
 <programlisting>
@@ -111,7 +111,7 @@ gboolean cb(void *arg1, void *arg2, void *arg3, void *data)
   <literal>PURPLE_TYPE_PLUGIN</literal> specifies that the first argument given to the callback
   will be a <literal>PurplePlugin*</literal>. You will need as many "type of argument"
   arguments to
-  <link linkend="purple-signal-register"><function>purple_signal_register</function></link>
+  <link linkend="purple-signal-register"><function>purple_signal_register()</function></link>
   as you specified in
   "Number of arguments" above.
 
@@ -180,14 +180,14 @@ purple_signal_connect(purple_plugins_get_handle(), "plugin-load", /* What to con
   </para>
 
   <para>
-  As seen in <link linkend="purple-plugin-load"><function>purple_plugin_load</function></link>
+  As seen in <link linkend="purple-plugin-load"><function>purple_plugin_load()</function></link>
   in plugin.c:
 <programlisting>
 purple_signal_emit(purple_plugins_get_handle(), "plugin-load", plugin);
 </programlisting>
   This causes the signal "plugin-load" to be emitted from the plugin module
   (given by
-  <link linkend="purple-plugins-get-handle"><function>purple_plugins_get_handle</function></link>),
+  <link linkend="purple-plugins-get-handle"><function>purple_plugins_get_handle()</function></link>),
   with the newly loaded plugin as
   the argument to pass to any registered callback functions.
   </para>
