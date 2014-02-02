@@ -106,7 +106,7 @@ PURPLE_PLUGIN_INIT(hello_world, plugin_query, plugin_load, plugin_unload);
   plugin system, and returns various information about the plugin in form of a
   newly created <literal>PurplePluginInfo</literal> instance.  For a list of all
   available properties, see
-  <link linkend="purple-plugin-info-new"><function>purple_plugin_info_new</function></link>.
+  <link linkend="purple-plugin-info-new"><function>purple_plugin_info_new()</function></link>.
   </para>
 
   <para>
@@ -122,12 +122,13 @@ PURPLE_PLUGIN_INIT(hello_world, plugin_query, plugin_load, plugin_unload);
   </para>
 
   <para>
-  Finally we have <literal>PURPLE_PLUGIN_INIT()</literal>.
-  <literal>PURPLE_PLUGIN_INIT</literal> is a macro that every plugin MUST have.
-  <literal>PURPLE_PLUGIN_INIT</literal> tells libpurple some basic things about
-  your plugin, like what name to use if the plugin is compiled statically, and
-  the <literal>plugin_query</literal>, <literal>plugin_load</literal>, and
-  <literal>plugin_unload</literal> functions.
+  Finally we have
+  <link linkend="PURPLE-PLUGIN-INIT:CAPS"><function>PURPLE_PLUGIN_INIT()</function></link>.
+  It is a macro that every plugin MUST have. It tells libpurple some basic
+  things about your plugin, like what name to use if the plugin is compiled
+  statically, along with the <literal>plugin_query</literal>,
+  <literal>plugin_load</literal>, and <literal>plugin_unload</literal>
+  functions.
   </para>
  </sect2>
 </chapter>
