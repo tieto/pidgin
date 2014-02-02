@@ -2445,7 +2445,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	{
 		/* This is done in default_formatize, which is called from clear_formatting_cb,
 		 * which is (obviously) a clear_formatting signal handler.  However, if we're
-		 * here, we didn't call gtk_imhtml_clear_formatting() (because we want to
+		 * here, we didn't call gtk_webview_clear_formatting() (because we want to
 		 * preserve the formatting exactly as it is), so we have to do this now. */
 		gtk_webview_set_whole_buffer_formatting_only(entry,
 			(features & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO));
