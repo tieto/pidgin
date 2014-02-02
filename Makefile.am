@@ -49,7 +49,6 @@ version-check:
 # Ensure ChangeLogs have the correct version
 	head ChangeLog     | grep "^version $(PACKAGE_VERSION) (.*):$$" >/dev/null
 	head ChangeLog.API | grep "^version $(PACKAGE_VERSION):$$" >/dev/null
-	head po/ChangeLog  | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
 	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`
