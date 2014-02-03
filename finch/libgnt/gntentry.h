@@ -97,6 +97,8 @@ struct _GntEntryClass
 	GntWidgetClass parent;
 
 	void (*text_changed)(GntEntry *entry);
+
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

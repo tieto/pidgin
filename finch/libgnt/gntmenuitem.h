@@ -80,6 +80,7 @@ struct _GntMenuItemClass
 {
 	GObjectClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

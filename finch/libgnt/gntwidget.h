@@ -106,6 +106,7 @@ struct _GntWidget
 	GntWidgetPriv priv;
 	WINDOW *window;
 
+	/*< private >*/
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);
     void (*gnt_reserved3)(void);
@@ -133,6 +134,7 @@ struct _GntWidgetClass
 	void (*activate)(GntWidget *widget);
 	gboolean (*clicked)(GntWidget *widget, GntMouseEvent event, int x, int y);
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

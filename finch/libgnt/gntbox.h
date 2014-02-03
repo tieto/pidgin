@@ -71,6 +71,7 @@ struct _GntBox
 	char *title;
 	GList *focus;		/* List of widgets to cycle focus (only valid for parent boxes) */
 
+	/*< private >*/
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);
     void (*gnt_reserved3)(void);
@@ -81,6 +82,7 @@ struct _GntBoxClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

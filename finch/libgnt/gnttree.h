@@ -95,6 +95,7 @@ struct _GntTreeClass
 	void (*selection_changed)(GntTreeRow *old, GntTreeRow * current);
 	void (*toggled)(GntTree *tree, gpointer key);
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

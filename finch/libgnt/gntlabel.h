@@ -50,6 +50,7 @@ struct _GntLabel
 	char *text;
 	GntTextFormatFlags flags;
 
+	/*< private >*/
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);
     void (*gnt_reserved3)(void);
@@ -60,6 +61,7 @@ struct _GntLabelClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

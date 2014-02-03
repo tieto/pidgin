@@ -77,6 +77,8 @@ struct _GntFileSelClass
 	GntWindowClass parent;
 
 	void (*file_selected)(GntFileSel *sel, const char *path, const char *filename);
+
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
