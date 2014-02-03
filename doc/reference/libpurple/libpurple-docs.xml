@@ -13,11 +13,11 @@
     </releaseinfo>
   </bookinfo>
 
-  <reference label="I">
+  <part label="I">
     <title>Tutorials</title>
 
       <xi:include href="tut_signals.xml" />
-  </reference>
+  </part>
 
   <reference label="II">
     <title>API Reference</title>
@@ -26,28 +26,18 @@
       <xi:include href="xml/account.xml" />
       <xi:include href="xml/accountopt.xml" />
       <xi:include href="xml/accounts.xml" />
-      <xi:include href="xml/blistnodetypes.xml" />
       <xi:include href="xml/blistnode.xml" />
-      <xi:include href="xml/buddyicon.xml" />
+      <xi:include href="xml/blistnodetypes.xml" />
       <xi:include href="xml/buddylist.xml" />
+      <xi:include href="xml/buddyicon.xml" />
       <xi:include href="xml/certificate.xml" />
       <xi:include href="xml/cipher.xml" />
-      <xi:include href="xml/aescipher.xml" />
-      <xi:include href="xml/des3cipher.xml" />
-      <xi:include href="xml/descipher.xml" />
-      <xi:include href="xml/hmaccipher.xml" />
-      <xi:include href="xml/pbkdf2cipher.xml" />
-      <xi:include href="xml/rc4cipher.xml" />
-      <xi:include href="xml/md4hash.xml" />
-      <xi:include href="xml/md5hash.xml" />
-      <xi:include href="xml/sha1hash.xml" />
-      <xi:include href="xml/sha256hash.xml" />
       <xi:include href="xml/circularbuffer.xml" />
       <xi:include href="xml/cmds.xml" />
       <xi:include href="xml/connection.xml" />
-      <xi:include href="xml/conversations.xml" />
-      <xi:include href="xml/conversationtypes.xml" />
       <xi:include href="xml/conversation.xml" />
+      <xi:include href="xml/conversationtypes.xml" />
+      <xi:include href="xml/conversations.xml" />
       <xi:include href="xml/core.xml" />
       <xi:include href="xml/debug.xml" />
       <xi:include href="xml/desktopitem.xml" />
@@ -62,13 +52,6 @@
       <xi:include href="xml/keyring.xml" />
       <xi:include href="xml/log.xml" />
       <xi:include href="xml/marshallers.xml" />
-      <xi:include href="xml/media-gst.xml" />
-      <xi:include href="xml/mediamanager.xml" />
-      <xi:include href="xml/media.xml" />
-      <xi:include href="xml/backend-iface.xml" />
-      <xi:include href="xml/candidate.xml" />
-      <xi:include href="xml/codec.xml" />
-      <xi:include href="xml/enum-types.xml" />
       <xi:include href="xml/mime.xml" />
       <xi:include href="xml/nat-pmp.xml" />
       <xi:include href="xml/network.xml" />
@@ -107,11 +90,45 @@
       <xi:include href="xml/xfer.xml" />
       <xi:include href="xml/xmlnode.xml" />
       <xi:include href="xml/enums.xml" />
-      <xi:include href="xml/dbus-bindings.xml" />
-      <xi:include href="xml/dbus-maybe.xml" />
-      <xi:include href="xml/dbus-purple.xml" />
-      <xi:include href="xml/dbus-server.xml" />
-      <xi:include href="xml/dbus-useful.xml" />
+  </reference>
+
+  <reference label="">
+    <reference label="a">
+      <title>Ciphers and Hashes</title>
+
+        <xi:include href="xml/aescipher.xml" />
+        <xi:include href="xml/des3cipher.xml" />
+        <xi:include href="xml/descipher.xml" />
+        <xi:include href="xml/hmaccipher.xml" />
+        <xi:include href="xml/pbkdf2cipher.xml" />
+        <xi:include href="xml/rc4cipher.xml" />
+        <xi:include href="xml/md4hash.xml" />
+        <xi:include href="xml/md5hash.xml" />
+        <xi:include href="xml/sha1hash.xml" />
+        <xi:include href="xml/sha256hash.xml" />
+    </reference>
+
+    <reference label="b">
+      <title>Media APIs</title>
+
+        <xi:include href="xml/media.xml" />
+        <xi:include href="xml/mediamanager.xml" />
+        <xi:include href="xml/media-gst.xml" />
+        <xi:include href="xml/backend-iface.xml" />
+        <xi:include href="xml/candidate.xml" />
+        <xi:include href="xml/codec.xml" />
+        <xi:include href="xml/enum-types.xml" />
+    </reference>
+
+    <reference label="c">
+      <title>D-Bus APIs</title>
+
+        <xi:include href="xml/dbus-bindings.xml" />
+        <xi:include href="xml/dbus-maybe.xml" />
+        <xi:include href="xml/dbus-purple.xml" />
+        <xi:include href="xml/dbus-server.xml" />
+        <xi:include href="xml/dbus-useful.xml" />
+    </reference>
   </reference>
 
   <reference label="III">
