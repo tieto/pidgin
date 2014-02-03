@@ -23,27 +23,27 @@
   <reference label="I">
     <title>Finch API Reference</title>
 
-      <xi:include href="xml/finch.xml" />
       <xi:include href="xml/gntaccount.xml" />
       <xi:include href="xml/gntblist.xml" />
+      <xi:include href="xml/gntpounce.xml" />
       <xi:include href="xml/gntcertmgr.xml" />
       <xi:include href="xml/gntconn.xml" />
       <xi:include href="xml/gntconv.xml" />
       <xi:include href="xml/gntdebug.xml" />
+      <xi:include href="xml/gntxfer.xml" />
       <xi:include href="xml/gntidle.xml" />
       <xi:include href="xml/gntlog.xml" />
       <xi:include href="xml/gntmedia.xml" />
       <xi:include href="xml/gntmenuutil.xml" />
       <xi:include href="xml/gntnotify.xml" />
       <xi:include href="xml/gntplugin.xml" />
-      <xi:include href="xml/gntpounce.xml" />
       <xi:include href="xml/gntprefs.xml" />
       <xi:include href="xml/gntrequest.xml" />
       <xi:include href="xml/gntroomlist.xml" />
       <xi:include href="xml/gntsound.xml" />
       <xi:include href="xml/gntstatus.xml" />
       <xi:include href="xml/gntui.xml" />
-      <xi:include href="xml/gntxfer.xml" />
+      <xi:include href="xml/finch.xml" />
   </reference>
 
   <reference label="II">

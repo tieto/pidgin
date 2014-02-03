@@ -1,8 +1,3 @@
-/**
- * @file gntblist.h GNT BuddyList API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gntblist
+ * @section_id: finch-gntblist
+ * @short_description: <filename>gntblist.h</filename>
+ * @title: Buddy List API
+ */
+
 #ifndef _GNT_BLIST_H
 #define _GNT_BLIST_H
 

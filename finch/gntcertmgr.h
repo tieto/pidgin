@@ -1,8 +1,3 @@
-/**
- * @file gntcertmgr.h GNT Certificate Manager API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -24,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:gntcertmgr
+ * @section_id: finch-gntcertmgr
+ * @short_description: <filename>gntcertmgr.h</filename>
+ * @title: Certificate Manager API
+ */
+
 #ifndef _GNT_CERTMGR_H
 #define _GNT_CERTMGR_H
 

@@ -1,8 +1,3 @@
-/**
- * @file gntsound.h GNT Sound API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gntsound
+ * @section_id: finch-gntsound
+ * @short_description: <filename>gntsound.h</filename>
+ * @title: Sound API
+ */
+
 #ifndef _GNT_SOUND_H
 #define _GNT_SOUND_H
 

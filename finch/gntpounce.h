@@ -1,8 +1,3 @@
-/**
- * @file gntpounce.h GNT Buddy Pounce API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gntpounce
+ * @section_id: finch-gntpounce
+ * @short_description: <filename>gntpounce.h</filename>
+ * @title: Buddy Pounce API
+ */
+
 #ifndef _FINCHPOUNCE_H_
 #define _FINCHPOUNCE_H_
 

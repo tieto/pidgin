@@ -1,7 +1,3 @@
-/**
- * @defgroup finch Finch (GNT User Interface)
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -22,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:finch
+ * @section_id: finch-finch
+ * @short_description: <filename>finch.h</filename>
+ * @title: Finch Application
+ */
+
 #ifndef _FINCH_H_
 #define _FINCH_H_
 
