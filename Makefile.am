@@ -16,15 +16,13 @@ EXTRA_DIST = \
 		intltool-update.in \
 		package_revision.h \
 		pidgin.apspec.in \
-		pidgin.spec.in \
 		pidgin.desktop.in \
 		po/Makefile.mingw \
 		valgrind-suppressions
 
 noinst_HEADERS = config.h package_revision.h
 
-dist-hook: pidgin.spec
-	cp pidgin.spec $(distdir)
+dist-hook:
 	rm $(distdir)/config.h
 
 distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
