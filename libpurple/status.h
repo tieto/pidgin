@@ -1,7 +1,3 @@
-/**
- * @file status.h Status API
- * @ingroup core
- */
 /*
  * purple
  *
@@ -23,6 +19,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:status
+ * @section_id: libpurple-status
+ * @short_description: <filename>status.h</filename>
+ * @title: Status object API
+ */
+
 #ifndef _PURPLE_STATUS_H_
 #define _PURPLE_STATUS_H_
 

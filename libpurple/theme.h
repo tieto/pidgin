@@ -1,7 +1,3 @@
-/**
- * @file theme.h  Purple Theme Abstact Class API
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -21,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:theme
+ * @section_id: libpurple-theme
+ * @short_description: <filename>theme.h</filename>
+ * @title: Theme abstact class
  */
 
 #ifndef PURPLE_THEME_H

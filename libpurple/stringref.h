@@ -1,10 +1,5 @@
 /* TODO: Can we just replace this whole thing with a GCache */
 
-/**
- * @file stringref.h Reference-counted immutable strings
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -26,6 +21,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:stringref
+ * @section_id: libpurple-stringref
+ * @short_description: <filename>stringref.h</filename>
+ * @title: Reference-counted immutable strings
+ */
+
 #ifndef _PURPLE_STRINGREF_H_
 #define _PURPLE_STRINGREF_H_
 

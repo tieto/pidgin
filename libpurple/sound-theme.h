@@ -1,7 +1,3 @@
-/**
- * @file sound-theme.h  Purple Sound Theme Abstact Class API
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -21,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:sound-theme
+ * @section_id: libpurple-sound-theme
+ * @short_description: <filename>sound-theme.h</filename>
+ * @title: Sound Theme abstact class
  */
 
 #ifndef PURPLE_SOUND_THEME_H
