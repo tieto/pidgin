@@ -22,7 +22,7 @@
  * SECTION:protocol
  * @section_id: libpurple-protocol
  * @short_description: <filename>protocol.h</filename>
- * @title: Protocol object and interfaces
+ * @title: Protocol Object and Interfaces
  */
 
 #ifndef _PURPLE_PROTOCOL_H_
