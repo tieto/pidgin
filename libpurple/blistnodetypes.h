@@ -21,8 +21,8 @@
 /**
  * SECTION:blistnodetypes
  * @section_id: libpurple-blistnodetypes
- * @title: Buddy, Chat, Contact and Group node objects
  * @short_description: <filename>blistnodetypes.h</filename>
+ * @title: Buddy, Chat, Contact and Group node objects
  */
 
 #ifndef _PURPLE_BLISTNODE_TYPES_H_

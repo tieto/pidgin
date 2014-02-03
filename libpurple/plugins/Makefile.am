@@ -21,7 +21,6 @@ helloworld_la_LDFLAGS       = -module -avoid-version
 idle_la_LDFLAGS             = -module -avoid-version
 joinpart_la_LDFLAGS         = -module -avoid-version
 log_reader_la_LDFLAGS       = -module -avoid-version
-newline_la_LDFLAGS          = -module -avoid-version
 notify_example_la_LDFLAGS   = -module -avoid-version
 offlinemsg_la_LDFLAGS       = -module -avoid-version
 one_time_password_la_LDFLAGS	= -module -avoid-version
@@ -42,7 +41,6 @@ plugin_LTLIBRARIES = \
 	idle.la             \
 	joinpart.la         \
 	log_reader.la       \
-	newline.la          \
 	offlinemsg.la       \
 	psychic.la          \
 	statenotify.la      \
@@ -72,7 +70,6 @@ helloworld_la_SOURCES       = helloworld.c
 idle_la_SOURCES             = idle.c
 joinpart_la_SOURCES         = joinpart.c
 log_reader_la_SOURCES       = log_reader.c
-newline_la_SOURCES          = newline.c
 notify_example_la_SOURCES   = notify_example.c
 offlinemsg_la_SOURCES       = offlinemsg.c
 one_time_password_la_SOURCES	= one_time_password.c
@@ -91,7 +88,6 @@ codeinline_la_LIBADD		= $(GLIB_LIBS)
 idle_la_LIBADD              = $(GLIB_LIBS)
 joinpart_la_LIBADD          = $(GLIB_LIBS)
 log_reader_la_LIBADD        = $(GLIB_LIBS)
-newline_la_LIBADD           = $(GLIB_LIBS)
 notify_example_la_LIBADD    = $(GLIB_LIBS)
 offlinemsg_la_LIBADD        = $(GLIB_LIBS)
 one_time_password_la_LIBADD = $(GLIB_LIBS)

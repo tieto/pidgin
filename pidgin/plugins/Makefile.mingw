@@ -100,7 +100,6 @@ plugins: \
 		iconaway.dll \
 		markerline.dll \
 		notify.dll \
-		pidginrc.dll \
 		relnot.dll \
 		sendbutton.dll \
 		spellchk.dll \

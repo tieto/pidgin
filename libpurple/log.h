@@ -1,9 +1,3 @@
-/**
- * @file log.h Logging API
- * @ingroup core
- * @see @ref log-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:log
+ * @section_id: libpurple-log
+ * @short_description: <filename>log.h</filename>
+ * @title: Logging API
+ * @see_also: <link linkend="chapter-signals-log">Log signals</link>
+ */
+
 #ifndef _PURPLE_LOG_H_
 #define _PURPLE_LOG_H_
 

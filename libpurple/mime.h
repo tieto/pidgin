@@ -1,11 +1,3 @@
-/**
- * @file mime.h
- * @ingroup core
- *
- * Rudimentary parsing of multi-part MIME messages into more
- * accessible structures.
- */
-
 /*
  * Purple
  *
@@ -27,6 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301,
  * USA.
+ */
+/**
+ * SECTION:mime
+ * @section_id: libpurple-mime
+ * @short_description: <filename>mime.h</filename>
+ * @title: Multi-part MIME message parsing
+ *
+ * Rudimentary parsing of multi-part MIME messages into more
+ * accessible structures.
  */
 
 #ifndef _PURPLE_MIME_H

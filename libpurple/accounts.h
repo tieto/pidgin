@@ -21,8 +21,8 @@
 /**
  * SECTION:accounts
  * @section_id: libpurple-accounts
- * @title: Accounts subsystem API
  * @short_description: <filename>accounts.h</filename>
+ * @title: Accounts subsystem API
  * @see_also: <link linkend="chapter-signals-account">Account signals</link>
  */
 

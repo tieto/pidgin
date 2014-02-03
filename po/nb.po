@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2010-02-11 12:17+0100\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.ui.no>\n"
@@ -2054,56 +2054,8 @@ msgstr "Filoverføring til %s feilet."
 msgid "File transfer from %s failed."
 msgstr "Filoverføring fra %s feilet."
 
-msgid "Run the command in a terminal"
-msgstr "Kjør kommandoen i en terminal"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Kommando for å håndtere «aim»-URLer, hvis aktivert."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Kommando for å håndtere «gg»-URLer, hvis aktivert."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Kommando for å håndtere «icq»-URLer, hvis aktivert."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Kommando for å håndtere «irc»-URLer, hvis aktivert."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Kommando for å håndtere «msnim»-URLer, hvis aktivert."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Kommando for å håndtere «sip»-URLer, hvis aktivert."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Kommando for å håndtere «xmpp»-URLer, hvis aktivert."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Kommando for å håndtere «ymsgr»-URLer, hvis aktivert."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Håndtereren for «aim»-URLer"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Håndtereren for «gg»-URLer"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Håndtereren for «icq»-URLer"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Håndtereren for «irc»-URLer"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Håndtereren for «msnim»-URLer"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Håndtereren for «sip»-URLer"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Håndtereren for «xmpp»-URLer"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Håndtereren for «ymsgr»-URLer"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Om den spesifike kommandoen skal håndtere «aim»-URLer"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2112,54 +2064,14 @@ msgstr ""
 "Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «aim»-"
 "URLer."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «gg»-"
-"URLer."
+msgid "The handler for \"aim\" URLs"
+msgstr "Håndtereren for «aim»-URLer"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «icq»-"
-"URLer."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Kommando for å håndtere «aim»-URLer, hvis aktivert."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «irc»-"
-"URLer."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «msnim»-"
-"URLer."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «sip»-"
-"URLer."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «xmpp»-"
-"URLer."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «ymsgr»-"
-"URLer."
+msgid "Run the command in a terminal"
+msgstr "Kjør kommandoen i en terminal"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2168,29 +2080,117 @@ msgstr ""
 "Sann hvis kommandoen som skal håndtere denne type URLer skal kjøres i en "
 "terminal."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Om den spesifike kommandoen skal håndtere «aim»-URLer"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Om den spesifike kommandoen skal håndtere «gg»-URLer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «gg»-"
+"URLer."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Håndtereren for «gg»-URLer"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Kommando for å håndtere «gg»-URLer, hvis aktivert."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Om den spesifike kommandoen skal håndtere «icq»-URLer"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «icq»-"
+"URLer."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Håndtereren for «icq»-URLer"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Kommando for å håndtere «icq»-URLer, hvis aktivert."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Om den spesifike kommandoen skal håndtere «irc»-URLer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «irc»-"
+"URLer."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Håndtereren for «irc»-URLer"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Kommando for å håndtere «irc»-URLer, hvis aktivert."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Om den spesifike kommandoen skal håndtere «msnim»-URLer"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «msnim»-"
+"URLer."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Håndtereren for «msnim»-URLer"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Kommando for å håndtere «msnim»-URLer, hvis aktivert."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Om den spesifike kommandoen skal håndtere «sip»-URLer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «sip»-"
+"URLer."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Håndtereren for «sip»-URLer"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Kommando for å håndtere «sip»-URLer, hvis aktivert."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Om den spesifike kommandoen skal håndtere «xmpp»-URLer"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «xmpp»-"
+"URLer."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Håndtereren for «xmpp»-URLer"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Kommando for å håndtere «xmpp»-URLer, hvis aktivert."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Om den spesifike kommandoen skal håndtere «ymsgr»-URLer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Sann hvis kommandoen spesifisert i «kommando»-nøkkelen skal håndtere «ymsgr»-"
+"URLer."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Håndtereren for «ymsgr»-URLer"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Kommando for å håndtere «ymsgr»-URLer, hvis aktivert."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Loggeren har ingen lesefunksjon</font></b>"
@@ -2247,6 +2247,10 @@ msgid ""
 msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "En ugjenopprettelig Farsight2-feil har inntruffet."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "En ugjenopprettelig Farsight2-feil har inntruffet."
 
 msgid "Error with your microphone"
@@ -3054,12 +3058,6 @@ msgid ""
 "invalid."
 msgstr "Det spesifiserte maskinnavnet eller portnummeret for proxy er ugyldig."
 
-msgid "Token Error"
-msgstr "Symbolfeil"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Klarte ikke hente symbolet.\n"
-
 msgid "Save Buddylist..."
 msgstr "Lagre kontaktliste ..."
 
@@ -3087,39 +3085,6 @@ msgstr "Lagre kontaktliste ..."
 
 msgid "Load buddylist from file..."
 msgstr "Last inn kontaktliste fra fil..."
-
-msgid "You must fill in all registration fields"
-msgstr "Fyll inn alle registreringsfeltene"
-
-msgid "Passwords do not match"
-msgstr "Passordene stemmer ikke overens"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Klarte ikke registere ny konto. En ukjent feil oppsto."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Ny Gadu-Gadu konto registrert"
-
-msgid "Registration completed successfully!"
-msgstr "Registreringen var vellykket!"
-
-msgid "Password"
-msgstr "Passord"
-
-msgid "Password (again)"
-msgstr "Passord (igjen)"
-
-msgid "Enter captcha text"
-msgstr "Fyll inn captcha-tekst"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Registrere ny Gadu-Gadu-konto"
-
-msgid "Please, fill in the following fields"
-msgstr "Vennligst fyll ut følgende felt"
 
 msgid "City"
 msgstr "By"
@@ -3149,40 +3114,6 @@ msgstr "Finn kontakter"
 
 msgid "Please, enter your search criteria below"
 msgstr "Skriv inn søkekriteriet ditt nedenfor"
-
-msgid "Fill in the fields."
-msgstr "Fyll inn feltene."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Ditt nåværende passord er forskjellig fra det du skrev."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Klarte ikke endre passord. En feil oppstod.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Endre passord for Gadu-Gadu kontoen"
-
-msgid "Password was changed successfully!"
-msgstr "Endring av passord vellykket!"
-
-msgid "Current password"
-msgstr "Nåværende passord"
-
-msgid "Password (retype)"
-msgstr "Passord (gjenta)"
-
-msgid "Enter current token"
-msgstr "Skriv inn gjeldende symbol"
-
-msgid "Current token"
-msgstr "Gjeldende symbol"
-
-#
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Skriv inn ditt nåværende passord og ditt nye passord for UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Endre Gadu-Gadu-passord"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3259,18 +3190,6 @@ msgstr "Skriv inn ditt nye passord."
 msgid "Unable to read from socket"
 msgstr "Klarte ikke lese fra endepunkt"
 
-msgid "Buddy list downloaded"
-msgstr "Kontaktliste nedlastet"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Kontaktlisten din har blitt lastet ned fra serveren."
-
-msgid "Buddy list uploaded"
-msgstr "Kontaktliste lastet opp"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Kontaktlisten ble lagret på serveren."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3306,18 +3225,6 @@ msgstr "Ikke koblet til tjeneren"
 
 msgid "Find buddies..."
 msgstr "Finn kontakter..."
-
-msgid "Change password..."
-msgstr "Endre passord..."
-
-msgid "Upload buddylist to Server"
-msgstr "Eksporter kontaktliste til Server"
-
-msgid "Download buddylist from Server"
-msgstr "Last ned  kontaktliste fra Server"
-
-msgid "Delete buddylist from Server"
-msgstr "Slett kontaktliste fra Server"
 
 msgid "Save buddylist to file..."
 msgstr "Lagre kompisliste til fil..."
@@ -3426,7 +3333,6 @@ msgstr "Klarte ikke koble til"
 msgid "Unable to connect: %s"
 msgstr "Klarte ikke koble til: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Tjeneren lukket forbindelsen"
 
@@ -3465,6 +3371,10 @@ msgstr "Tegnkodinger"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Automatisk oppdag innkommende UTF-8"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Skjermnavn"
+
 msgid "Real name"
 msgstr "Virkelig navn"
 
@@ -3474,6 +3384,14 @@ msgstr "Virkelig navn"
 #.
 msgid "Use SSL"
 msgstr "Bruk SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Autentiserer"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Tillat identitetsbekreftelse i ren tekst over ukrypterte forbindelser"
 
 msgid "Bad mode"
 msgstr "Ugyldig mode"
@@ -3509,6 +3427,14 @@ msgstr " <i>(registrert)</i>"
 msgid "Nick"
 msgstr "Kallenavn"
 
+#, fuzzy
+msgid "Login name"
+msgstr "MXit brukernavn"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Vertsnavn"
+
 msgid "Currently on"
 msgstr "Pålogget på"
 
@@ -3535,6 +3461,10 @@ msgstr "%s har endret tema."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Temaet for %s er: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3649,6 +3579,33 @@ msgstr "Kallenavn eller kanal er midlertidig utilgjengelig."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops fra %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Kan ikke starte opp SILC-klientforbindelse"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL-autentisering feilet"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL-autentisering feilet"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Feil passord"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL-autentisering feilet"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt;:  Utfør noe."
@@ -4315,6 +4272,9 @@ msgstr "Dato"
 msgid "Already Registered"
 msgstr "Du er allerede registrert"
 
+msgid "Password"
+msgstr "Passord"
+
 msgid "Unregister"
 msgstr "Avregistrer"
 
@@ -4452,6 +4412,9 @@ msgstr "Passordet ditt har blitt endret."
 
 msgid "Error changing password"
 msgstr "Feil ved endring av passord"
+
+msgid "Password (again)"
+msgstr "Passord (igjen)"
 
 msgid "Change XMPP Password"
 msgstr "Endre XMPP-passord"
@@ -4678,6 +4641,10 @@ msgstr "Klarte ikke starte media med %s: Ugyldig JID"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Klarte ikke starte media med %s: Brukeren er ikke pålogget"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Klarte ikke starte media med %s: Brukeren er ikke pålogget"
 
 #, c-format
@@ -6106,6 +6073,11 @@ msgstr "Om meg"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Slett status"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Mobilnummer"
@@ -6214,6 +6186,16 @@ msgstr "Om ..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Fila du prøver å sende er for stor."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Klarte ikke å laste tillegget"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Klarte ikke åpne fil."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6333,10 +6315,6 @@ msgstr "Statusmelding"
 msgid "Rejection Message"
 msgstr "Mottatte beskjeder"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Skjult nummer"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Ikke tilgjengelig"
@@ -6364,6 +6342,37 @@ msgstr "Koble til via HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Slå på sprettopp-velkomstbilde"
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Jingle"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Kjeder seg"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Invitert"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Avdeling"
+
+msgid "Divorced"
+msgstr ""
 
 #, fuzzy
 msgid "Last Online"
@@ -6426,6 +6435,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Meldingsfeil"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kan ikke utføre videresending med den spesifisert protokollen"
@@ -9918,7 +9931,6 @@ msgstr ""
 "Kontoen din er låst på grunn av for mange mislykkede innloggingsforsøk. Prøv "
 "å logge inn på Yahoo! sitt nettsted."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Ukjent feil 52. Koble til igjen for å løse dette."
 
@@ -10568,16 +10580,16 @@ msgstr ""
 "Det oppstod en feil under lesing av din %s. Fila har ikke blitt lastet, og "
 "den gamle filen ble flyttet til %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
-"Samtale over IM. Støtter AIM, Google Talk, Jabber/XMPP, MSN, Yahoo! og mer"
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin Lynmeldingsklient"
 
 msgid "Internet Messenger"
 msgstr "Lynmeldingsklient"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Lynmeldingsklient"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+"Samtale over IM. Støtter AIM, Google Talk, Jabber/XMPP, MSN, Yahoo! og mer"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11633,6 +11645,14 @@ msgstr "Uleste beskjeder"
 msgid "New Event"
 msgstr "Ny hendelse"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Denne kontoen er koblet av og du er ikke lenger med i denne samtalen. Du "
+"blir automatisk med i samtalen når kontoen kobler til igjen."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Renser alle samtaler i tilbakeblikk."
 
@@ -11739,7 +11759,8 @@ msgstr "nettansvarlig"
 msgid "win32 port"
 msgstr "win32-portering"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11777,6 +11798,9 @@ msgstr "Arabisk"
 #, fuzzy
 msgid "Assamese"
 msgstr "Skamfull"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Belarusian Latin"
@@ -11905,6 +11929,9 @@ msgstr "Kurdisk"
 msgid "Lao"
 msgstr "Lao"
 
+msgid "Lithuanian"
+msgstr "Litauisk"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Swahili"
@@ -11928,6 +11955,9 @@ msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malayisk"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Norsk Bokmål"
@@ -11980,6 +12010,10 @@ msgstr "Albansk"
 msgid "Serbian"
 msgstr "Serbisk"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Belarusian Latin"
+
 msgid "Sinhala"
 msgstr "Singalesisk"
 
@@ -11998,9 +12032,6 @@ msgstr "Dravidisk"
 msgid "Thai"
 msgstr "Thai"
 
-msgid "Turkish"
-msgstr "Tyrkisk"
-
 msgid "Ukranian"
 msgstr "Ukrainsk"
 
@@ -12009,9 +12040,6 @@ msgstr "Urdu"
 
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh og Gnome-Vi laget"
 
 msgid "Simplified Chinese"
 msgstr "Forenklet kinesisk"
@@ -12026,8 +12054,11 @@ msgstr "Tradisjonell kinesisk"
 msgid "Amharic"
 msgstr "Amharisk"
 
-msgid "Lithuanian"
-msgstr "Litauisk"
+msgid "Turkish"
+msgstr "Tyrkisk"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh og Gnome-Vi laget"
 
 #, fuzzy, c-format
 msgid ""
@@ -12055,7 +12086,7 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12762,6 +12793,10 @@ msgid ""
 msgstr ""
 "Klarte ikke å starte en nettleser fordi 'Manuell' nettleserkommando er "
 "valgt, men ingen kommando for denne har blitt satt."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Nettleserkommandoen «%s» er ugyldig."
 
 msgid "No message"
 msgstr "Ingen beskjed"
@@ -13735,11 +13770,11 @@ msgstr "Pidgin verktøytips"
 msgid "Pidgin smileys"
 msgstr "Pidgin smileys"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Valg av dette fjerner bruk av grafiske animasjons ikoner."
-
 msgid "none"
 msgstr "ingen"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Valg av dette fjerner bruk av grafiske animasjons ikoner."
 
 msgid "Small"
 msgstr "Liten"
@@ -14692,7 +14727,7 @@ msgstr "Vis tidsstempel i iChat-stil hvert Nte minutt."
 msgid "Timestamp Format Options"
 msgstr "Innstillinger for Tidsstempel Format"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "_Tving 24-timers format"
 
@@ -14746,6 +14781,63 @@ msgid ""
 msgstr ""
 "Dette tillegget tillater brukeren å lage egne samtale og loggings "
 "tidsstempler."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Samtaleromsymbol"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Kun når noen sier brukernavnet ditt"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Lagre ikon"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Antall samtaler per vindu"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Beskjed sendt"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution-integrasjon"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Tilbyr integrasjon med Evolution."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Tilbyr integrasjon med Evolution."
 
 msgid "Audio"
 msgstr "Lyd"
@@ -14933,6 +15025,18 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dette tillegget er kjekt å ha for debugging av XMPP servere og klienter."
 
+msgid "The installer is already running."
+msgstr "Installeren kjører allerede."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "En instans av Pidgin kjører fra før. Avslutt Pidgin og prøv igjen."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Neste >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14941,47 +15045,78 @@ msgstr ""
 "$(^Name) er utgitt under GPL (GNU General Public License). Lisensen er "
 "oppgitt her kun med henblikk på informasjon. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Et GUI-verktøy for flere ulike plattformer, brukes av Pidgin."
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Hurtigmeldingsklient (obligatorisk)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr "En instans av Pidgin kjører fra før. Avslutt Pidgin og prøv igjen."
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime Environment (obligatorisk)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Snarveier"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Skrivebord"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Startmeny"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Sted"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidgins kjernefiler og dll'er"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Legg til Pidgin i Startmenyen"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Snarveier for å starte Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Lag en snarvei til Pidgin på Skrivebordet"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Legg til Pidgin i Startmenyen"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Et GUI-verktøy for flere ulike plattformer, brukes av Pidgin."
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Besøk Pidgin for Windows' Nettside"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Skrivebord"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+msgid "URI Handlers"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Støtte for stavekontroll"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14991,54 +15126,24 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime Environment (obligatorisk)"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Sted"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Neste >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Hurtigmeldingsklient (obligatorisk)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Snarveier"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Snarveier for å starte Pidgin"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Støtte for stavekontroll"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Startmeny"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 "Støtte for stavekontroll. (Internettoppkobling påkrevd for installasjon)"
 
-msgid "The installer is already running."
-msgstr "Installeren kjører allerede."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -15047,21 +15152,102 @@ msgstr ""
 "Avinstalleringsprogrammet kunne ikke finne noen registeroppføring for Pidgin."
 "$\\rTrolig har en annen bruker avinstallert denne applikasjonen."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr ""
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Besøk Pidgin for Windows' Nettside"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
+
+#~ msgid "Token Error"
+#~ msgstr "Symbolfeil"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Klarte ikke hente symbolet.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Fyll inn alle registreringsfeltene"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Passordene stemmer ikke overens"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Klarte ikke registere ny konto. En ukjent feil oppsto."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Ny Gadu-Gadu konto registrert"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Registreringen var vellykket!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Fyll inn captcha-tekst"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Registrere ny Gadu-Gadu-konto"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Vennligst fyll ut følgende felt"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Fyll inn feltene."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Ditt nåværende passord er forskjellig fra det du skrev."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Klarte ikke endre passord. En feil oppstod.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Endre passord for Gadu-Gadu kontoen"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Endring av passord vellykket!"
+
+#~ msgid "Current password"
+#~ msgstr "Nåværende passord"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Passord (gjenta)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Skriv inn gjeldende symbol"
+
+#~ msgid "Current token"
+#~ msgstr "Gjeldende symbol"
+
+#
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Skriv inn ditt nåværende passord og ditt nye passord for UIN: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Endre Gadu-Gadu-passord"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Kontaktliste nedlastet"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Kontaktlisten din har blitt lastet ned fra serveren."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Kontaktliste lastet opp"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Kontaktlisten ble lagret på serveren."
+
+#~ msgid "Change password..."
+#~ msgstr "Endre passord..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Eksporter kontaktliste til Server"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Last ned  kontaktliste fra Server"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Slett kontaktliste fra Server"
+
+#~ msgid "Hidden Number"
+#~ msgstr "Skjult nummer"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Ingen Sametime fellesskapstjener oppgitt "
@@ -15779,9 +15965,6 @@ msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "Det inntastede kallenavnet er ugyldig."
 
-#~ msgid "MXit Login Name"
-#~ msgstr "MXit brukernavn"
-
 #~ msgid "Nick Name"
 #~ msgstr "Kallenavn"
 
@@ -16234,9 +16417,6 @@ msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 #~ msgid "Reachability Address"
 #~ msgstr "Adresse en kan nåes på"
 
-#~ msgid "Jingle"
-#~ msgstr "Jingle"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Jingle-audio"
 
@@ -16373,10 +16553,6 @@ msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Kan ikke finne datamaskinnavnet"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Feil passord"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
@@ -16900,9 +17076,6 @@ msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 
 #~ msgid "Available Message"
 #~ msgstr "Tilstedebeskjed"
-
-#~ msgid "Screen name"
-#~ msgstr "Skjermnavn"
 
 #~ msgid "Away Message"
 #~ msgstr "Fraværsbeskjed"

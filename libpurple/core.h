@@ -1,9 +1,3 @@
-/**
- * @file core.h Startup and shutdown of libpurple
- * @defgroup core libpurple
- * @see @ref core-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-
-/*! @mainpage Pidgin/Finch/libpurple API Documentation
- *
- * <a href="group__core.html">libpurple</a> is intended to be the core of an IM
- * program.  <a href="group__pidgin.html">Pidgin</a> is a GTK+ frontend
- * to libpurple, and <a href="group__finch.html">Finch</a> is an ncurses
- * frontend built using <a href="group__gnt.html">libgnt</a>
- * (GLib Ncurses Toolkit).
+/**
+ * SECTION:core
+ * @section_id: libpurple-core
+ * @short_description: <filename>core.h</filename>
+ * @title: Startup and shutdown of libpurple
+ * @see_also: <link linkend="chapter-signals-core">Core signals</link>
  */
 
 #ifndef _PURPLE_CORE_H_

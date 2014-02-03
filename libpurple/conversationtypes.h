@@ -1,8 +1,3 @@
-/**
- * @file conversationtypes.h Chat and IM Conversation API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:conversationtypes
+ * @section_id: libpurple-conversationtypes
+ * @short_description: <filename>conversationtypes.h</filename>
+ * @title: Chat and IM Conversation objects
+ */
+
 #ifndef _PURPLE_CONVERSATION_TYPES_H_
 #define _PURPLE_CONVERSATION_TYPES_H_
 

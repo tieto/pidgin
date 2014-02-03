@@ -21,8 +21,8 @@
 /**
  * SECTION:accountopt
  * @section_id: libpurple-accountopt
- * @title: Account Options API
  * @short_description: <filename>accountopt.h</filename>
+ * @title: Account Options API
  */
 
 #ifndef _PURPLE_ACCOUNTOPT_H_

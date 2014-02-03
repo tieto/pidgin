@@ -191,7 +191,7 @@ const char * ggp_buddylist_get_buddy_name(PurpleConnection *gc, const uin_t uin)
 	const char *uin_s = ggp_uin_to_str(uin);
 	PurpleBuddy *buddy = purple_blist_find_buddy(
 		purple_connection_get_account(gc), uin_s);
-	
+
 	if (buddy != NULL)
 		return purple_buddy_get_alias(buddy);
 	else

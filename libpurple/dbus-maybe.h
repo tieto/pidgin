@@ -1,7 +1,14 @@
-/* This file contains macros that wrap calls to the purple dbus module.
-   These macros call the appropriate functions if the build includes
-   dbus support and do nothing otherwise.  See "dbus-server.h" for
-   documentation.  */
+/**
+ * SECTION:dbus-maybe
+ * @section_id: libpurple-dbus-maybe
+ * @short_description: <filename>dbus-maybe.h</filename>
+ * @title: DBUS wrappers
+ *
+ * This file contains macros that wrap calls to the purple dbus module.
+ * These macros call the appropriate functions if the build includes
+ * dbus support and do nothing otherwise.  See "dbus-server.h" for
+ * documentation.
+ */
 
 #ifndef _PURPLE_DBUS_MAYBE_H_
 #define _PURPLE_DBUS_MAYBE_H_

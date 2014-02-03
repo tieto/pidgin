@@ -1,8 +1,3 @@
-/**
- * @file nat-pmp.h NAT-PMP Implementation
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -27,6 +22,12 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
+ */
+/**
+ * SECTION:nat-pmp
+ * @section_id: libpurple-nat-pmp
+ * @short_description: <filename>nat-pmp.h</filename>
+ * @title: NAT-PMP Implementation
  */
 
 #ifndef _PURPLE_NAT_PMP_H

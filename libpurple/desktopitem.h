@@ -1,8 +1,3 @@
-/**
- * @file desktopitem.h Functions for managing .desktop files
- * @ingroup core
- */
-
 /* Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -21,6 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
+ */
+/**
+ * SECTION:desktopitem
+ * @section_id: libpurple-desktopitem
+ * @short_description: <filename>desktopitem.h</filename>
+ * @title: Managing .desktop files
  */
 
 /*

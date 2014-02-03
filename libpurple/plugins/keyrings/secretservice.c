@@ -326,4 +326,3 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 }
 
 PURPLE_PLUGIN_INIT(secret_service, plugin_query, plugin_load, plugin_unload);
-

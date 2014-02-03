@@ -65,6 +65,7 @@ IGNORE_HFILES=\
 	plugins \
 	themes \
 	win32 \
+	gtk3compat.h \
 	gtkinternal.h
 
 # Images to copy into HTML directory.

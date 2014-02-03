@@ -1,3 +1,10 @@
+/**
+ * SECTION:dbus-useful
+ * @section_id: libpurple-dbus-useful
+ * @short_description: <filename>dbus-useful.h</filename>
+ * @title: Misc functions for DBUS server
+ */
+
 #include "conversation.h"
 
 G_BEGIN_DECLS

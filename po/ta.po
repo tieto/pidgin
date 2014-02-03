@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2010-10-05 16:08+0530\n"
 "Last-Translator: I Felix <ifelix25@gmail.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -2046,56 +2046,8 @@ msgstr "%s க்கு கோப்பு பரிமாற்றம் தவ
 msgid "File transfer from %s failed."
 msgstr "%s லிருந்து கோப்பு பரிமாற்றம் தவறியது."
 
-msgid "Run the command in a terminal"
-msgstr "ஒரு முனையில் கட்டளையை இயக்கு"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URLs,செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URLs கான கையாளுபவர்"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URLs கான கையாளுபவர்"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URLs கான கையாளுபவர்"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URLs கான கையாளுபவர்"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLs கான கையாளுபவர்"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URLs கான கையாளுபவர்"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URLs கான கையாளுபவர்"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLs கான கையாளுபவர்"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "குறிப்பிட்ட கட்டளை \"aim\" URLsஐ கையாள வேண்டுமா"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2104,12 +2056,38 @@ msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்படப்பட்ட கட்டளை \"aim\" URLs இல் கையாளப்பட "
 "வேண்டும்."
 
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URLs கான கையாளுபவர்"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
+
+msgid "Run the command in a terminal"
+msgstr "ஒரு முனையில் கட்டளையை இயக்கு"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "சரியென்றால் கட்டளையானது இந்த வகையான URLஐ ஒரு முனையில் கையாளலாம்."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "குறிப்பிட்ட கட்டளை \"gg\" URLsஐ கையாள வேண்டுமா"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்பிடப்பட்ட கட்டளை \"gg\" URLs இல் கையாளப்பட "
 "வேண்டும்."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URLs கான கையாளுபவர்"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "குறிப்பிட்ட கட்டளை \"icq\" URLsஐ கையாள வேண்டுமா"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
@@ -2118,12 +2096,30 @@ msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்பிடப்பட்ட கட்டளை \"icq\" URLs இல் கையாளப்பட "
 "வேண்டும்."
 
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URLs கான கையாளுபவர்"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "குறிப்பிட்ட கட்டளை \"irc\" URLsஐ கையாள வேண்டுமா"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்பிடப்பட்ட கட்டளை \"irc\" URLs இல் கையாளப்பட "
 "வேண்டும்."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URLs கான கையாளுபவர்"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "குறிபிட்ட கட்டளை \"msnim\" URLsஐ கையாள வேண்டுமா"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
@@ -2132,12 +2128,30 @@ msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்பிடப்பட்ட கட்டளை \"msnim\" URLs இல் கையாளப்பட "
 "வேண்டும்."
 
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URLs கான கையாளுபவர்"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "குறிப்பிட்ட கட்டளை \"sip\" URLsஐ கையாள வேண்டுமா"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்பிடப்பட்ட கட்டளை \"sip\" URLs இல் கையாளப்பட "
 "வேண்டும்."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URLs கான கையாளுபவர்"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "குறிப்பிட்ட கட்டளை \"xmpp\" URLsஐ கையாள வேண்டுமா"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
@@ -2146,6 +2160,15 @@ msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்பிடப்பட்ட கட்டளை \"xmpp\" URLs இல் கையாளப்பட "
 "வேண்டும்."
 
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URLs கான கையாளுபவர்"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URLs, செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "குறிப்பிட்ட கட்டளை \"ymsgr\" URLsஐ கையாள வேண்டுமா"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
@@ -2153,34 +2176,11 @@ msgstr ""
 "சரியென்றால் \"command\" விசையில் குறிப்பிடப்பட்ட கட்டளை \"ymsgr\" URLs இல் கையாளப்பட "
 "வ்வேண்டும்."
 
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "சரியென்றால் கட்டளையானது இந்த வகையான URLஐ ஒரு முனையில் கையாளலாம்."
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URLs கான கையாளுபவர்"
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "குறிப்பிட்ட கட்டளை \"aim\" URLsஐ கையாள வேண்டுமா"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "குறிப்பிட்ட கட்டளை \"gg\" URLsஐ கையாள வேண்டுமா"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "குறிப்பிட்ட கட்டளை \"icq\" URLsஐ கையாள வேண்டுமா"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "குறிப்பிட்ட கட்டளை \"irc\" URLsஐ கையாள வேண்டுமா"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "குறிபிட்ட கட்டளை \"msnim\" URLsஐ கையாள வேண்டுமா"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "குறிப்பிட்ட கட்டளை \"sip\" URLsஐ கையாள வேண்டுமா"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "குறிப்பிட்ட கட்டளை \"xmpp\" URLsஐ கையாள வேண்டுமா"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "குறிப்பிட்ட கட்டளை \"ymsgr\" URLsஐ கையாள வேண்டுமா"
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URLs,செயல்படுத்தப்பட்டால் கட்டளையானது கையாள பயன்படுகிறது."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">பதிவேட்டில் வாசிக்கும் அமைப்பு இல்லை </font></b>"
@@ -2242,6 +2242,10 @@ msgstr ""
 "கடுமையானது."
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "ஒரு கண்டுபிடிக்கப்படாத Farsight2 பிழை ஏற்பட்டுவிட்டது."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "ஒரு கண்டுபிடிக்கப்படாத Farsight2 பிழை ஏற்பட்டுவிட்டது."
 
 msgid "Error with your microphone"
@@ -3043,12 +3047,6 @@ msgstr ""
 "உங்களது கொடுக்கப்பட்ட பதிலாள் வகைக்காக தெரிவிக்கப்பட்டுள்ள தள எண் அல்லது புரவலன் பெயர் "
 "செல்லாது."
 
-msgid "Token Error"
-msgstr "டோக்கன் பிழை"
-
-msgid "Unable to fetch the token.\n"
-msgstr "டோக்கனை பெற முடியவில்லை.\n"
-
 msgid "Save Buddylist..."
 msgstr "நண்பர் பட்டியலை சேமி..."
 
@@ -3076,39 +3074,6 @@ msgstr "நண்பர் பட்டியலை சேமி..."
 
 msgid "Load buddylist from file..."
 msgstr "நண்பர் பட்டியலை கோப்பிலிருந்து ஏற்றவும்..."
-
-msgid "You must fill in all registration fields"
-msgstr "அனைத்து பதிவுப் புலங்களில் நீங்கள் நிரப்ப வேண்டும்."
-
-msgid "Passwords do not match"
-msgstr "கடவுச்சொற்கள் பொருந்தவில்லை"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "புதிய கணக்கை பதிவு  செய்ய முடியவில்லை. ஒரு தெரியாத பிழை ஏற்பட்டது."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "புதிய காடு-காடு கணக்கு பதியப்பட்டது"
-
-msgid "Registration completed successfully!"
-msgstr "பதிவு வெற்றிகரமாக முடிந்தது!"
-
-msgid "Password"
-msgstr "கடவுச்சொல்"
-
-msgid "Password (again)"
-msgstr "கடவுச்சொல் (மீண்டும்)"
-
-msgid "Enter captcha text"
-msgstr "captcha உரையை உள்ளிடு"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "புதிய காடு-காடு கணக்கு பதிவு"
-
-msgid "Please, fill in the following fields"
-msgstr "தயவுசெய்து, கீழ்க்கண்ட புலங்களை நிரப்புக"
 
 msgid "City"
 msgstr "நகரம்"
@@ -3138,40 +3103,6 @@ msgstr "நண்பர்களை தேடு"
 
 msgid "Please, enter your search criteria below"
 msgstr "தயவுசெய்து, உங்களது தேடல் வகைகளை கீழே கொடுக்கவும்"
-
-msgid "Fill in the fields."
-msgstr "இந்த புலங்களை நிரப்பவும்."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "உங்களது தற்போதைய கடவுச்சொல் நீங்கள் குறிப்பிட்டதிலிருந்து வேறுபடுகிறது."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "கடவுச்சொல்லை மாற்ற முடியவில்லை. பிழை ஏற்பட்டது.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "காடு-காடு கணக்கிற்கு கடவுச்சொல் மாற்று"
-
-msgid "Password was changed successfully!"
-msgstr "கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது!"
-
-msgid "Current password"
-msgstr "தற்போதைய கடவுச்சொல்"
-
-msgid "Password (retype)"
-msgstr "கடவுச்சொல் (மீண்டும்)"
-
-msgid "Enter current token"
-msgstr "தற்போதைய டோக்கனை உள்ளிவும்"
-
-msgid "Current token"
-msgstr "தற்போதைய டோக்கன்"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
-"தயவுசெய்து யுஎன்ஐ (UIN) க்கான தங்களது தற்போதைய மற்றும் புதிய கடவுச்சொல்லை கொடுக்கவும்: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "காடு-காடு கடவுச்சொல் மாற்று"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3248,18 +3179,6 @@ msgstr "உங்கள் தேடல் அளபுருகளுக்க�
 msgid "Unable to read from socket"
 msgstr "சாக்கெட்டிலிருந்து வாசிக்க முடியவில்லை"
 
-msgid "Buddy list downloaded"
-msgstr "நண்பர் பட்டியல் தரவிறக்கப் பட்டது."
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "நண்பர் பட்டியல் சேவையகத்திலிருந்து தரவிறக்கப் பட்டது."
-
-msgid "Buddy list uploaded"
-msgstr "நண்பர் பட்டியல் மேலேற்றப் பட்டது"
-
-msgid "Your buddy list was stored on the server."
-msgstr "நண்பர் பட்டியல் சேவையகத்தில் சேமிக்கப் பட்டது."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3295,18 +3214,6 @@ msgstr "சேவையகத்துடன் இணைக்கப்பட�
 
 msgid "Find buddies..."
 msgstr "நண்பர்களை தேடுக.."
-
-msgid "Change password..."
-msgstr "கடவுச்சொல்லை மாற்றுக..."
-
-msgid "Upload buddylist to Server"
-msgstr "நண்பர் பட்டியலை சேவையகத்துக்கு ஏற்று"
-
-msgid "Download buddylist from Server"
-msgstr "நண்பர் பட்டியலை சேவையகத்திலிருந்து இறக்கு"
-
-msgid "Delete buddylist from Server"
-msgstr "நண்பர் பட்டியலை சேவையகத்திலிருந்து நீக்கு"
 
 msgid "Save buddylist to file..."
 msgstr "நண்பர் பட்டியலை கோப்பில் சேமிக்கவும்..."
@@ -3415,7 +3322,6 @@ msgstr "இணைக்க முடியவில்லை"
 msgid "Unable to connect: %s"
 msgstr "இணைக்க முடியவில்லை: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "சேவையகம் இணைப்பை மூடியது "
 
@@ -3454,6 +3360,10 @@ msgstr "குறியீடுகள்"
 msgid "Auto-detect incoming UTF-8"
 msgstr "உள்வரும் தானான- கண்டுபிடிப்பு UTF-8"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "திரைப்பெயர்:"
+
 msgid "Real name"
 msgstr "இயற் பெயர்"
 
@@ -3463,6 +3373,14 @@ msgstr "இயற் பெயர்"
 #.
 msgid "Use SSL"
 msgstr "எஸ்எஸ்எல் பயன்படுத்து"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "உறுதிப்படுத்துகிறது"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "குறியாக்கம் செய்யாத வாய்க்கால்களில் வெற்று உரை அனுமதியை செயல் படுத்து."
 
 msgid "Bad mode"
 msgstr "கெட்ட வகை"
@@ -3498,6 +3416,14 @@ msgstr " <i>(அடையாளம் தெரிந்த)</i>"
 msgid "Nick"
 msgstr "செல்லப்பெயர்"
 
+#, fuzzy
+msgid "Login name"
+msgstr "MXit உட்புகு பெயர் "
+
+#, fuzzy
+msgid "Host name"
+msgstr "புரவலன் பெயர்"
+
 msgid "Currently on"
 msgstr "தற்போது இயலும்"
 
@@ -3524,6 +3450,10 @@ msgstr "%s தலைப்பை நீக்கிவிட்டார்"
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s க்கான தலைப்பு: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3638,6 +3568,33 @@ msgstr "செல்லப்பெயர் அல்லது வாய்க�
 #, c-format
 msgid "Wallops from %s"
 msgstr "உதை %s லிருந்து"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "SILC வாடிக்கையாளர் இணைப்பை துவக்க முடியவில்லை"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL அங்கீகரிக்க முடியவில்லை"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL அங்கீகரிக்க முடியவில்லை"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "கடவுச்சொல் தவறு."
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL அங்கீகரிக்க முடியவில்லை"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "செயல் &lt; செய்யவேண்டிய செயல்&gt;: செயலை செய்"
@@ -4298,6 +4255,9 @@ msgstr "நாள்"
 msgid "Already Registered"
 msgstr "ஏற்கனவே பதியப்பட்டது"
 
+msgid "Password"
+msgstr "கடவுச்சொல்"
+
 msgid "Unregister"
 msgstr "பதிவு செய்யப்படாத"
 
@@ -4432,6 +4392,9 @@ msgstr "உங்களது கடவுச்சொல் மாற்றப�
 
 msgid "Error changing password"
 msgstr "கடவுச்சொல்லை மாற்றுவதில் பிழை."
+
+msgid "Password (again)"
+msgstr "கடவுச்சொல் (மீண்டும்)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP கடவுச்சொல்லை மாற்று"
@@ -4657,6 +4620,10 @@ msgstr "ஊடகத்துடன் %sஐ துவக்க முடிய�
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "ஊடகத்துடன் %sஐ துவக்க முடியவில்லை: பயனர் ஆன்லைனில் இல்லை"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "ஊடகத்துடன் %sஐ துவக்க முடியவில்லை: பயனர் ஆன்லைனில் இல்லை"
 
 #, c-format
@@ -6052,6 +6019,11 @@ msgstr "என்னைப் பற்றி"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "நிலையை அழி"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "மொபைல் எண்"
@@ -6157,6 +6129,16 @@ msgstr "பற்றி..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "நீங்கள் அனுப்ப முயற்சிக்கும் கோப்பு மிக நீளமாக உள்ளது!"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "உங்களது சொருகுபொருளை ஏற்ற முடியவில்லை"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "கோப்பை திறக்க இயலவில்லை."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6274,10 +6256,6 @@ msgstr "நிலை செய்தி"
 msgid "Rejection Message"
 msgstr "பெறப்பட்ட செய்திகள்"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "மறைக்கப்பட்ட எண்"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "இருப்பில் இல்லை"
@@ -6305,6 +6283,35 @@ msgstr "HTTP வழியாக இணை"
 
 msgid "Enable splash-screen popup"
 msgstr "ஸ்பாலாஷ்- திரை பாப்அப்பை செயல்படுத்துகிறது"
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "பிங்"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+msgid "Married"
+msgstr ""
+
+msgid "It's complicated"
+msgstr ""
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "துறை"
+
+msgid "Divorced"
+msgstr ""
 
 #, fuzzy
 msgid "Last Online"
@@ -6368,6 +6375,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "செய்தி பிழை"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "குறிப்பிட்ட நெறிமுறையை பயன்படுத்தி மறுநேரை செயல்படுத்த முடியவில்லை"
@@ -9824,7 +9835,6 @@ msgstr ""
 "உங்கள் கணக்கு அதிக முறை உட்புகு முயற்சியால் பூட்டப்பட்டது.   Yahoo! இணையத்தளத்தில் உட்புக "
 "முயற்சிக்கவும்."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "தெரியாத பிழை 52.  மறுஇணைத்தல் இதை பொருத்தும்."
 
@@ -10464,17 +10474,17 @@ msgstr ""
 "உங்களது %s ஐ படிக்கும்பொழுது பிழை ஏற்பட்டது. அந்த கோப்பு ஏற்றப்படவில்லை, மற்றும் பழைய "
 "கோப்பு %s~ என மறுபெயரிடப்பட்டது."
 
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin இணையத்தள மேலாளர்"
+
+msgid "Internet Messenger"
+msgstr "இணையதள தூதுவர்"
+
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 "அரட்டை IM முடிந்தது.  AIMக்கு துணைபுரிகிறது, Google Talk, Jabber/XMPP, MSN, "
 "Yahoo மற்றும் மேலும்"
-
-msgid "Internet Messenger"
-msgstr "இணையதள தூதுவர்"
-
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin இணையத்தள மேலாளர்"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11531,6 +11541,14 @@ msgstr "படிக்காத செய்திகள்"
 msgid "New Event"
 msgstr "புதிய நிகழ்வு"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"இந்த அரட்டையில் நீங்கள் தொடரவில்லை எனில் கணக்கு துண்டிக்கப்பட்டுவிடும். கணக்கு எப்போது "
+"மறுஅணைக்கப்படுகிறதோ அப்போது நீங்கள் தானாகவே மறுஇணைக்கப்படுவீர்கள்."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "துடை: உரையாடல் பின் செல்லலை துடைக்கிறது."
 
@@ -11636,7 +11654,8 @@ msgstr "வலைமேலாளர்"
 msgid "win32 port"
 msgstr "விண்32 தளம்"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "கா-ஜிங் செய்ங்"
 
@@ -11674,6 +11693,9 @@ msgstr "அராபிக்"
 #, fuzzy
 msgid "Assamese"
 msgstr "விளையாட்டுகள்"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "பெலாருசியன் லத்தீன்"
@@ -11802,6 +11824,9 @@ msgstr "குர்தீஷ்"
 msgid "Lao"
 msgstr "லௌ"
 
+msgid "Lithuanian"
+msgstr "லித்துனியன்"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "சவாஹிலி"
@@ -11825,6 +11850,9 @@ msgstr "மராத்தி"
 
 msgid "Malay"
 msgstr "மலாய்"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "போக்மால் நார்வேஜியன்"
@@ -11877,6 +11905,10 @@ msgstr "அல்பேனியன்"
 msgid "Serbian"
 msgstr "ஸெர்பியன்"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "பெலாருசியன் லத்தீன்"
+
 msgid "Sinhala"
 msgstr "சின்ஹாலா"
 
@@ -11895,9 +11927,6 @@ msgstr "தெலுங்கு"
 msgid "Thai"
 msgstr "தாய்"
 
-msgid "Turkish"
-msgstr "துருக்கி"
-
 msgid "Ukranian"
 msgstr "உக்ரேனியன்"
 
@@ -11906,9 +11935,6 @@ msgstr "உருது"
 
 msgid "Vietnamese"
 msgstr "வியட்நாமிஸ்"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "டி.எம். தான்ஹ் மற்றும் க்னோம்-விஐ குழு"
 
 msgid "Simplified Chinese"
 msgstr "எளிய சைனீஸ்"
@@ -11922,8 +11948,11 @@ msgstr "பாரம்பரிய சைனீஸ்"
 msgid "Amharic"
 msgstr "அம்ஹாரிக்"
 
-msgid "Lithuanian"
-msgstr "லித்துனியன்"
+msgid "Turkish"
+msgstr "துருக்கி"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "டி.எம். தான்ஹ் மற்றும் க்னோம்-விஐ குழு"
 
 # , c-format
 #, fuzzy, c-format
@@ -11953,7 +11982,7 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12659,6 +12688,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "'கைமுறை'  உலாவி கட்டளை  தேர்வு செய்யப்பட்டுள்ளது, ஆனால் எந்த கட்டளையும் அமைக்கப்படவில்லை."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "உலாவி கட்டளை \"%s\" செல்லுபடியற்றது."
 
 msgid "No message"
 msgstr "செய்தி இல்லை"
@@ -13635,11 +13668,11 @@ msgstr "பிட்ஜினு கருவி துணுக்கு"
 msgid "Pidgin smileys"
 msgstr "பிட்ஜின் ஸ்மைலிகள்"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "இந்த செயல்நீக்கப்பட்ட வரைகலை எமோடிகன்களை தேர்ந்தெடுக்கிறது."
-
 msgid "none"
 msgstr "ஒன்றுமில்லாத"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "இந்த செயல்நீக்கப்பட்ட வரைகலை எமோடிகன்களை தேர்ந்தெடுக்கிறது."
 
 msgid "Small"
 msgstr "சிறிய"
@@ -14585,7 +14618,7 @@ msgstr "ஒவ்வொரு N நிமிடங்களுக்கும்
 msgid "Timestamp Format Options"
 msgstr "காலமுத்திரை வடிவத் தேர்வுகள்"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "24-மணி நேர வடிவ செயல்திறம் (_F)"
 
@@ -14638,6 +14671,63 @@ msgid ""
 msgstr ""
 "இந்த சொருகுப்பொருள் செய்தி மற்றும் லாக் பதிவு காலமுத்திரை வடிவமைப்புகளை பயனர் தனிப்பயன் "
 "ஆக்க உதவுகிறது"
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "அரட்டை அறை அடையாளங்கள்"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\tஉங்கள் பயனர்பெயரை யாராவது சொல்லும் போது மட்டும் (_O)"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "குறும்படத்தை சேமி"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "ஒவ்வொரு சாளரத்தின் உரையாடல் எண்ணிக்கை"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "தகவல் அனுப்பப்பட்டது"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "எவல்யுஷன் ஒருங்கிணைப்பு"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "எவல்யுஷன் உடன் ஒருங்கிணைப்பை கொடுக்கிறது."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "எவல்யுஷன் உடன் ஒருங்கிணைப்பை கொடுக்கிறது."
 
 msgid "Audio"
 msgstr "ஆடியோ"
@@ -14822,23 +14912,65 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "பிழைதிருத்தி XMPP சேவையகங்கள் அல்லது வாடிக்கையாளருக்காக இந்த செருகி பயன்படுகிறது."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "புனைப்பெயர் \"%s\" ஏற்கனவே பயன்பாட்டில் உள்ளது."
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin இணையத்தள மேலாளர்"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "ஜிடிகே+ ஒடும் நேரம் பதிப்பு"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "குறுக்குவழி"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "பணிமேடை முன்னிருப்பு"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "ஆரம்பம்"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "இடம்"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -14846,29 +14978,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "பணிமேடை முன்னிருப்பு"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim URL கையாளுபவர்"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -14879,79 +15017,126 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "ஜிடிகே+ ஒடும் நேரம் பதிப்பு"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "இடம்"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin இணையத்தள மேலாளர்"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "குறுக்குவழி"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "ஆரம்பம்"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "புனைப்பெயர் \"%s\" ஏற்கனவே பயன்பாட்டில் உள்ளது."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "myim URL கையாளுபவர்"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Token Error"
+#~ msgstr "டோக்கன் பிழை"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "டோக்கனை பெற முடியவில்லை.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "அனைத்து பதிவுப் புலங்களில் நீங்கள் நிரப்ப வேண்டும்."
+
+#~ msgid "Passwords do not match"
+#~ msgstr "கடவுச்சொற்கள் பொருந்தவில்லை"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "புதிய கணக்கை பதிவு  செய்ய முடியவில்லை. ஒரு தெரியாத பிழை ஏற்பட்டது."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "புதிய காடு-காடு கணக்கு பதியப்பட்டது"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "பதிவு வெற்றிகரமாக முடிந்தது!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "captcha உரையை உள்ளிடு"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "புதிய காடு-காடு கணக்கு பதிவு"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "தயவுசெய்து, கீழ்க்கண்ட புலங்களை நிரப்புக"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "இந்த புலங்களை நிரப்பவும்."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "உங்களது தற்போதைய கடவுச்சொல் நீங்கள் குறிப்பிட்டதிலிருந்து வேறுபடுகிறது."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "கடவுச்சொல்லை மாற்ற முடியவில்லை. பிழை ஏற்பட்டது.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "காடு-காடு கணக்கிற்கு கடவுச்சொல் மாற்று"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது!"
+
+#~ msgid "Current password"
+#~ msgstr "தற்போதைய கடவுச்சொல்"
+
+#~ msgid "Password (retype)"
+#~ msgstr "கடவுச்சொல் (மீண்டும்)"
+
+#~ msgid "Enter current token"
+#~ msgstr "தற்போதைய டோக்கனை உள்ளிவும்"
+
+#~ msgid "Current token"
+#~ msgstr "தற்போதைய டோக்கன்"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr ""
+#~ "தயவுசெய்து யுஎன்ஐ (UIN) க்கான தங்களது தற்போதைய மற்றும் புதிய கடவுச்சொல்லை "
+#~ "கொடுக்கவும்: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "காடு-காடு கடவுச்சொல் மாற்று"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "நண்பர் பட்டியல் தரவிறக்கப் பட்டது."
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "நண்பர் பட்டியல் சேவையகத்திலிருந்து தரவிறக்கப் பட்டது."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "நண்பர் பட்டியல் மேலேற்றப் பட்டது"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "நண்பர் பட்டியல் சேவையகத்தில் சேமிக்கப் பட்டது."
+
+#~ msgid "Change password..."
+#~ msgstr "கடவுச்சொல்லை மாற்றுக..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "நண்பர் பட்டியலை சேவையகத்துக்கு ஏற்று"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "நண்பர் பட்டியலை சேவையகத்திலிருந்து இறக்கு"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "நண்பர் பட்டியலை சேவையகத்திலிருந்து நீக்கு"
+
+#~ msgid "Hidden Number"
+#~ msgstr "மறைக்கப்பட்ட எண்"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "சேம்டைம் சமூக சேவையகம் ஏதும் குறிப்பிடப்படவில்லை"
@@ -15735,9 +15920,6 @@ msgstr ""
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "நீங்கள் உள்ளிட்ட புனைப்பெயர் தவறானது."
 
-#~ msgid "MXit Login Name"
-#~ msgstr "MXit உட்புகு பெயர் "
-
 #~ msgid "Nick Name"
 #~ msgstr "புனைப் பெயர்"
 
@@ -16076,10 +16258,6 @@ msgstr ""
 #~ msgstr "மின்னஞ்சல்"
 
 #, fuzzy
-#~ msgid "Jingle"
-#~ msgstr "பிங்"
-
-#, fuzzy
 #~ msgid "User Nickname"
 #~ msgstr "பயனர் பெயர்"
 
@@ -16193,10 +16371,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Could not resolve hostname"
 #~ msgstr "புரவலரை நிர்ணயிக்க முடியவில்லை"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "கடவுச்சொல் தவறு."
 
 #~ msgid "Yahoo Japan"
 #~ msgstr "யாகூ ஜப்பான்"
@@ -16664,10 +16838,6 @@ msgstr ""
 
 #~ msgid "Available Message"
 #~ msgstr "கிடைப்பில் உள்ள தகவல்"
-
-#, fuzzy
-#~ msgid "Screen name"
-#~ msgstr "திரைப்பெயர்:"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "குறிப்பிட்ட திரைப்பெயர் செல்லாதது."

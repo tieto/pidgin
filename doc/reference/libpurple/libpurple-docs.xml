@@ -8,9 +8,14 @@
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
     <title>Purple Reference Manual</title>
-    <releaseinfo>
-      for libpurple &version;
-    </releaseinfo>
+    <abstract>
+      <title>Libpurple &version;</title>
+      <para>
+        libpurple is intended to be the core of an IM program. Pidgin is a GTK+
+        frontend to libpurple, and Finch is an ncurses frontend built using
+        libgnt (GLib Ncurses Toolkit).
+      </para>
+    </abstract>
   </bookinfo>
 
   <part label="I">
@@ -40,13 +45,13 @@
       <xi:include href="xml/conversationtypes.xml" />
       <xi:include href="xml/conversations.xml" />
       <xi:include href="xml/core.xml" />
+      <xi:include href="xml/dbus-maybe.xml" />
       <xi:include href="xml/debug.xml" />
       <xi:include href="xml/desktopitem.xml" />
       <xi:include href="xml/dnsquery.xml" />
       <xi:include href="xml/dnssrv.xml" />
       <xi:include href="xml/e2ee.xml" />
       <xi:include href="xml/eventloop.xml" />
-      <xi:include href="xml/glibcompat.xml" />
       <xi:include href="xml/http.xml" />
       <xi:include href="xml/idle.xml" />
       <xi:include href="xml/imgstore.xml" />
@@ -86,7 +91,6 @@
       <xi:include href="xml/theme.xml" />
       <xi:include href="xml/upnp.xml" />
       <xi:include href="xml/util.xml" />
-      <xi:include href="xml/valgrind.xml" />
       <xi:include href="xml/version.xml" />
       <xi:include href="xml/whiteboard.xml" />
       <xi:include href="xml/xfer.xml" />
@@ -123,10 +127,9 @@
     </reference>
 
     <reference label="c">
-      <title>D-Bus APIs</title>
+      <title>D-Bus Server APIs</title>
 
         <xi:include href="xml/dbus-bindings.xml" />
-        <xi:include href="xml/dbus-maybe.xml" />
         <xi:include href="xml/dbus-purple.xml" />
         <xi:include href="xml/dbus-server.xml" />
         <xi:include href="xml/dbus-useful.xml" />

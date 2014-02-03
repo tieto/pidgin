@@ -1,7 +1,3 @@
-/**
- * @file presence.h Presence, account presence and buddy presence API
- * @ingroup core
- */
 /*
  * purple
  *
@@ -23,6 +19,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:presence
+ * @section_id: libpurple-presence
+ * @short_description: <filename>presence.h</filename>
+ * @title: Presence objects API
+ *
+ * This file contains the presence base type, account presence, and buddy
+ * presence API.
+ */
+
 #ifndef _PURPLE_PRESENCE_H_
 #define _PURPLE_PRESENCE_H_
 

@@ -1,8 +1,3 @@
-/**
- * @file conversation.h Conversation base class API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:conversation
+ * @section_id: libpurple-conversation
+ * @short_description: <filename>conversation.h</filename>
+ * @title: Conversation base class
+ */
+
 #ifndef _PURPLE_CONVERSATION_H_
 #define _PURPLE_CONVERSATION_H_
 
