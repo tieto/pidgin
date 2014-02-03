@@ -105,7 +105,7 @@ void ggp_message_setup(PurpleConnection *gc)
 void ggp_message_cleanup(PurpleConnection *gc)
 {
 	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
-	
+
 	g_list_free_full(sdata->pending_messages,
 		(GDestroyNotify)ggp_message_got_data_free);
 	g_free(sdata);
@@ -221,7 +221,7 @@ static gboolean ggp_message_request_images(PurpleConnection *gc,
 	GList *it;
 	if (msg->pending_images == NULL)
 		return FALSE;
-	
+
 	it = msg->pending_images;
 	while (it)
 	{
@@ -340,9 +340,9 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 		g_string_append(res, "]");
 		return FALSE;
 	}
-	
+
 	stored_id = ggp_image_get_cached(msg->gc, id);
-	
+
 	if (stored_id > 0)
 	{
 		purple_debug_info("gg", "ggp_message_format_from_gg_found_img: "
@@ -353,14 +353,14 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 		g_free(replacement);
 		return FALSE;
 	}
-	
+
 	if (NULL == g_list_find_custom(msg->pending_images, &id,
 		ggp_int64_compare))
 	{
 		msg->pending_images = g_list_append(msg->pending_images,
 			ggp_uint64dup(id));
 	}
-	
+
 	replacement = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
 	g_string_append(res, replacement);
 	g_free(replacement);
@@ -487,7 +487,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 				pending_objects = NULL;
 			}
 		}
-		
+
 		/* opening formatting-related tags again */
 		if (text_before && !in_any_tag)
 		{
@@ -495,7 +495,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			GList *styles = NULL;
 			gboolean has_size = (font_new->size > 0 &&
 				font_new->size <= 7 && font_new->size != 3);
-			
+
 			if (has_size)
 				styles = g_list_append(styles, g_strdup_printf(
 					"font-size:%dpt;",
@@ -510,7 +510,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			if (font_new->color >= 0)
 				styles = g_list_append(styles, g_strdup_printf(
 					"color:#%06x;", font_new->color));
-			
+
 			if (styles)
 			{
 				gchar *combined = ggp_strjoin_list(" ", styles);
@@ -574,7 +574,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			uint64_t id;
 			int stored_id = -1;
 			ggp_image_prepare_result res = -1;
-		
+
 			if ((val = g_hash_table_lookup(attribs, "src")) != NULL
 				&& g_str_has_prefix(val,
 				PURPLE_STORED_IMAGE_PROTOCOL))
@@ -583,10 +583,10 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 				if (sscanf(val, "%u", &stored_id) != 1)
 					stored_id = -1;
 			}
-			
+
 			if (stored_id >= 0)
 				res = ggp_image_prepare(conv, stored_id, &id);
-			
+
 			if (res == GGP_IMAGE_PREPARE_OK)
 			{
 				pending_objects = g_list_prepend(
@@ -607,7 +607,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 					_("Image cannot be sent."),
 					PURPLE_MESSAGE_ERROR, time(NULL));
 			}
-			
+
 			g_hash_table_destroy(attribs);
 		}
 		else if (tag == GGP_HTML_TAG_FONT && !tag_close)
@@ -689,7 +689,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			|| tag == GGP_HTML_TAG_DIV) && tag_close)
 		{
 			font_changed = TRUE;
-			
+
 			ggp_font_free(font_new);
 			if (font_stack)
 			{

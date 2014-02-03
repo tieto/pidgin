@@ -67,12 +67,12 @@ ggp_purplew_request_processing_handle * ggp_purplew_request_processing(
 void ggp_purplew_request_processing_done(
 	ggp_purplew_request_processing_handle *handle);
 
-// ignores default group
+/* ignores default group */
 PurpleGroup * ggp_purplew_buddy_get_group_only(PurpleBuddy *buddy);
 
 GList * ggp_purplew_group_get_buddies(PurpleGroup *group, PurpleAccount *account);
 
-// you must g_free returned list
+/* you must g_free returned list */
 GList * ggp_purplew_account_get_groups(PurpleAccount *account, gboolean exclusive);
 
 #endif /* _GGP_PURPLEW_H */
