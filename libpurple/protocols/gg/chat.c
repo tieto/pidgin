@@ -23,13 +23,13 @@ struct _ggp_chat_local_info
 {
 	int local_id;
 	uint64_t id;
-	
+
 	PurpleChatConversation *conv;
 	PurpleConnection *gc;
-	
+
 	gboolean left;
 	gboolean previously_joined;
-	
+
 	uin_t *participants;
 	int participants_count;
 };
@@ -237,7 +237,7 @@ static void ggp_chat_joined(ggp_chat_local_info *chat, uin_t uin)
 	chat->participants = g_realloc(chat->participants,
 		sizeof(uin) * chat->participants_count);
 	chat->participants[chat->participants_count - 1] = uin;
-	
+
 	if (!chat->conv)
 		return;
 	purple_chat_conversation_add_user(chat->conv,
@@ -290,7 +290,7 @@ GList * ggp_chat_info(PurpleConnection *gc)
 	pce->identifier = "id";
 	pce->required = FALSE;
 	m = g_list_append(m, pce);
-	
+
 	return m;
 }
 
@@ -392,7 +392,7 @@ static void ggp_chat_join_id(PurpleConnection *gc, uint64_t id)
 		ggp_chat_open_conv(chat);
 		return;
 	}
-	
+
 	if (!chat)
 	{
 		char *id_s = g_strdup_printf("%" G_GUINT64_FORMAT, id);
@@ -421,7 +421,7 @@ void ggp_chat_leave(PurpleConnection *gc, int local_id)
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	ggp_chat_local_info *chat;
 	uin_t me;
-	
+
 	chat = ggp_chat_get_local(gc, local_id);
 	if (!chat)
 	{
@@ -429,7 +429,7 @@ void ggp_chat_leave(PurpleConnection *gc, int local_id)
 			"chat %u doesn't exists\n", local_id);
 		return;
 	}
-	
+
 	if (gg_chat_leave(info->session, chat->id) < 0)
 	{
 		purple_debug_error("gg", "ggp_chat_leave: "
@@ -451,7 +451,7 @@ void ggp_chat_invite(PurpleConnection *gc, int local_id, const char *message,
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	ggp_chat_local_info *chat;
 	uin_t invited;
-	
+
 	chat = ggp_chat_get_local(gc, local_id);
 	if (!chat)
 	{
@@ -459,7 +459,7 @@ void ggp_chat_invite(PurpleConnection *gc, int local_id, const char *message,
 			"chat %u doesn't exists\n", local_id);
 		return;
 	}
-	
+
 	invited = ggp_str_to_uin(who);
 	if (gg_chat_invite(info->session, chat->id, &invited, 1) < 0)
 	{
@@ -478,7 +478,7 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 	gboolean succ = TRUE;
 	const gchar *me;
 	gchar *gg_msg;
-	
+
 	chat = ggp_chat_get_local(gc, local_id);
 	if (!chat)
 	{
@@ -486,7 +486,7 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 			"chat %u doesn't exists\n", local_id);
 		return -1;
 	}
-	
+
 	conv = purple_conversations_find_chat_with_account(
 		ggp_chat_get_name_from_id(chat->id),
 		purple_connection_get_account(gc));
@@ -508,10 +508,10 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 {
 	ggp_chat_local_info *chat;
 	uin_t me;
-	
+
 	me = ggp_str_to_uin(purple_account_get_username(
 		purple_connection_get_account(gc)));
-	
+
 	chat = ggp_chat_get(gc, chat_id);
 	if (!chat)
 	{
@@ -578,9 +578,9 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 		time_t date;
 		const gchar *status;
 		int count = chat->participants_count;
-		
+
 		date = (uint32_t)(chat->id >> 32);
-		
+
 		if (chat->conv)
 			status = _("Joined");
 		else if (chat->left)
@@ -590,7 +590,7 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 			status = _("Can join chat");
 			count--;
 		}
-		
+
 		name = ggp_chat_get_name_from_id(chat->id);
 		room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM,
 			name, NULL);
