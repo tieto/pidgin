@@ -56,7 +56,6 @@ struct _ggp_multilogon_session_data
 static inline ggp_multilogon_session_data *
 ggp_multilogon_get_mldata(PurpleConnection *gc);
 
-////////////
 
 static inline ggp_multilogon_session_data *
 ggp_multilogon_get_mldata(PurpleConnection *gc)

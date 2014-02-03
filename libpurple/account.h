@@ -22,7 +22,7 @@
  * SECTION:account
  * @section_id: libpurple-account
  * @short_description: <filename>account.h</filename>
- * @title: Account object
+ * @title: Account Object
  */
 
 #ifndef _PURPLE_ACCOUNT_H_

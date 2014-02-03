@@ -34,21 +34,21 @@
 gboolean ggp_xml_get_string(const PurpleXmlNode *xml, gchar *childName, gchar **var)
 {
 	char *str;
-	
+
 	g_return_val_if_fail(xml != NULL, FALSE);
 	g_return_val_if_fail(var != NULL, FALSE);
-	
+
 	if (childName != NULL)
 	{
 		xml = purple_xmlnode_get_child(xml, childName);
 		if (xml == NULL)
 			return FALSE;
 	}
-	
+
 	str = purple_xmlnode_get_data(xml);
 	if (str == NULL)
 		return FALSE;
-	
+
 	*var = str;
 	return TRUE;
 }
@@ -57,17 +57,17 @@ gboolean ggp_xml_get_bool(const PurpleXmlNode *xml, gchar *childName, gboolean *
 {
 	char *str;
 	gboolean succ;
-	
+
 	succ = ggp_xml_get_string(xml, childName, &str);
 	if (!succ)
 		return FALSE;
-	
+
 	*var = (strcmp(str, "true") == 0 ||
 		strcmp(str, "True") == 0 ||
 		strcmp(str, "TRUE") == 0 ||
 		strcmp(str, "1") == 0);
 	g_free(str);
-	
+
 	return TRUE;
 }
 
@@ -76,17 +76,17 @@ gboolean ggp_xml_get_uint(const PurpleXmlNode *xml, gchar *childName, unsigned i
 	char *str, *endptr;
 	gboolean succ;
 	unsigned int val;
-	
+
 	succ = ggp_xml_get_string(xml, childName, &str);
 	if (!succ)
 		return FALSE;
-	
+
 	errno = 0;
 	val = strtoul(str, &endptr, 10);
-	
+
 	succ = (errno != ERANGE && endptr[0] == '\0');
 	g_free(str);
-	
+
 	if (succ)
 		*var = val;
 	return succ;
@@ -96,7 +96,7 @@ gboolean ggp_xml_set_string(PurpleXmlNode *xml, gchar *childName, const gchar *v
 {
 	g_return_val_if_fail(xml != NULL, FALSE);
 	g_return_val_if_fail(val != NULL, FALSE);
-	
+
 	if (childName != NULL)
 	{
 		PurpleXmlNode *child = purple_xmlnode_get_child(xml, childName);
@@ -104,10 +104,10 @@ gboolean ggp_xml_set_string(PurpleXmlNode *xml, gchar *childName, const gchar *v
 			child = purple_xmlnode_new_child(xml, childName);
 		xml = child;
 	}
-	
+
 	ggp_xmlnode_remove_children(xml);
 	purple_xmlnode_insert_data(xml, val, -1);
-	
+
 	return TRUE;
 }
 
@@ -139,9 +139,9 @@ unsigned int ggp_xml_child_count(PurpleXmlNode *xml, const gchar *childName)
 {
 	PurpleXmlNode *child;
 	unsigned int count = 0;
-	
+
 	g_return_val_if_fail(xml != NULL, 0);
-	
+
 	if (childName)
 	{
 		child = purple_xmlnode_get_child(xml, childName);
@@ -160,6 +160,6 @@ unsigned int ggp_xml_child_count(PurpleXmlNode *xml, const gchar *childName)
 			count++;
 		}
 	}
-	
+
 	return count;
 }

@@ -59,7 +59,7 @@ const gchar * ggp_libgaduw_version(PurpleConnection *gc)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
 	const gchar *ver = accdata->session->client_version;
-	
+
 	if (ver != NULL && isdigit(ver[0]))
 		return ver;
 	return GG_DEFAULT_CLIENT_VERSION;
@@ -124,7 +124,7 @@ ggp_libgaduw_http_req * ggp_libgaduw_http_watch(PurpleConnection *gc,
 	ggp_libgaduw_http_req *req;
 	purple_debug_misc("gg", "ggp_libgaduw_http_watch(h=%p, "
 		"show_processing=%d)\n", h, show_processing);
-	
+
 	req = g_new(ggp_libgaduw_http_req, 1);
 	req->user_data = user_data;
 	req->cb = cb;
@@ -136,7 +136,7 @@ ggp_libgaduw_http_req * ggp_libgaduw_http_watch(PurpleConnection *gc,
 			req, ggp_libgaduw_http_processing_cancel);
 	req->inpa = ggp_purplew_http_input_add(h, ggp_libgaduw_http_handler,
 		req);
-	
+
 	return req;
 }
 
@@ -152,7 +152,7 @@ static void ggp_libgaduw_http_handler(gpointer _req, gint fd,
 	PurpleInputCondition cond)
 {
 	ggp_libgaduw_http_req *req = _req;
-	
+
 	if (req->h->callback(req->h) == -1 || req->h->state == GG_STATE_ERROR)
 	{
 		purple_debug_error("gg", "ggp_libgaduw_http_handler: failed to "
@@ -160,11 +160,13 @@ static void ggp_libgaduw_http_handler(gpointer _req, gint fd,
 		ggp_libgaduw_http_finish(req, FALSE);
 		return;
 	}
-	
-	//TODO: verbose mode
-	//purple_debug_misc("gg", "ggp_libgaduw_http_handler: got fd update "
-	//	"[check=%d, state=%d]\n", req->h->check, req->h->state);
-	
+
+	if (purple_debug_is_verbose()) {
+		purple_debug_misc("gg", "ggp_libgaduw_http_handler: got fd "
+			"update [check=%d, state=%d]\n", req->h->check,
+			req->h->state);
+	}
+
 	if (req->h->state != GG_STATE_DONE)
 	{
 		purple_input_remove(req->inpa);
@@ -172,7 +174,7 @@ static void ggp_libgaduw_http_handler(gpointer _req, gint fd,
 			ggp_libgaduw_http_handler, req);
 		return;
 	}
-	
+
 	if (!req->h->data || !req->h->body)
 	{
 		purple_debug_error("gg", "ggp_libgaduw_http_handler: got empty "

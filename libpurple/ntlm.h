@@ -23,7 +23,7 @@
  * SECTION:ntlm
  * @section_id: libpurple-ntlm
  * @short_description: <filename>ntlm.h</filename>
- * @title: NTLM authentication
+ * @title: NTLM Authentication
  */
 
 #ifndef _PURPLE_NTLM_H

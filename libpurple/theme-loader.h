@@ -22,7 +22,7 @@
  * SECTION:theme-loader
  * @section_id: libpurple-theme-loader
  * @short_description: <filename>theme-loader.h</filename>
- * @title: Theme Loader abstact class
+ * @title: Theme Loader Abstact Class
  */
 
 #ifndef PURPLE_THEME_LOADER_H

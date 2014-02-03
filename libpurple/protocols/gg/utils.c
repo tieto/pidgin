@@ -53,16 +53,16 @@ uin_t ggp_str_to_uin(const char *str)
 const char * ggp_uin_to_str(uin_t uin)
 {
 	static char buff[GGP_UIN_LEN_MAX + 1];
-	
+
 	g_snprintf(buff, GGP_UIN_LEN_MAX + 1, "%u", uin);
-	
+
 	return buff;
 }
 
 uin_t ggp_get_my_uin(PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, 0);
-	
+
 	return ggp_str_to_uin(purple_account_get_username(
 		purple_connection_get_account(gc)));
 }
@@ -118,18 +118,18 @@ gchar * ggp_utf8_strndup(const gchar *str, gsize n)
 		return NULL;
 	if (raw_len <= n)
 		return g_strdup(str);
-	
+
 	end_ptr = g_utf8_offset_to_pointer(str, g_utf8_pointer_to_offset(str, &str[n]));
 	raw_len = end_ptr - str;
-	
+
 	if (raw_len > n)
 	{
 		end_ptr = g_utf8_prev_char(end_ptr);
 		raw_len = end_ptr - str;
 	}
-	
+
 	g_assert(raw_len <= n);
-	
+
 	return g_strndup(str, raw_len);
 }
 
@@ -138,7 +138,7 @@ GSList * ggp_list_copy_to_slist_deep(GList *list, GCopyFunc func,
 {
 	GSList *new_list = NULL;
 	GList *it;
-	
+
 	it = g_list_first(list);
 	while (it)
 	{
@@ -153,7 +153,7 @@ GList * ggp_strsplit_list(const gchar *string, const gchar *delimiter,
 {
 	gchar **splitted, **it;
 	GList *list = NULL;
-	
+
 	it = splitted = g_strsplit(string, delimiter, max_tokens);
 	while (*it)
 	{
@@ -161,7 +161,7 @@ GList * ggp_strsplit_list(const gchar *string, const gchar *delimiter,
 		it++;
 	}
 	g_free(splitted);
-	
+
 	return list;
 }
 
@@ -171,10 +171,10 @@ gchar * ggp_strjoin_list(const gchar *separator, GList *list)
 	gchar *joined;
 	gint list_len, i;
 	GList *it;
-	
+
 	list_len = g_list_length(list);
 	str_array = g_new(gchar*, list_len + 1);
-	
+
 	it = g_list_first(list);
 	i = 0;
 	while (it)
@@ -183,10 +183,10 @@ gchar * ggp_strjoin_list(const gchar *separator, GList *list)
 		it = g_list_next(it);
 	}
 	str_array[i] = NULL;
-	
+
 	joined = g_strjoinv(separator, str_array);
 	g_free(str_array);
-	
+
 	return joined;
 }
 
@@ -229,7 +229,7 @@ const gchar * ggp_date_strftime(const gchar *format, time_t date)
 {
 	GDate g_date;
 	static gchar buff[30];
-	
+
 	g_date_set_time_t(&g_date, date);
 	if (0 == g_date_strftime(buff, sizeof(buff), format, &g_date))
 		return NULL;
@@ -239,7 +239,7 @@ const gchar * ggp_date_strftime(const gchar *format, time_t date)
 time_t ggp_date_from_iso8601(const gchar *str)
 {
 	GTimeVal g_timeval;
-	
+
 	if (!str)
 		return 0;
 	if (!g_time_val_from_iso8601(str, &g_timeval))

@@ -22,7 +22,7 @@
  * SECTION:blistnode
  * @section_id: libpurple-blistnode
  * @short_description: <filename>blistnode.h</filename>
- * @title: Buddy list node and counting node types
+ * @title: Buddy List Node and Counting Node types
  */
 
 #ifndef _PURPLE_BLIST_NODE_H_

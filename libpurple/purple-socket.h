@@ -22,7 +22,7 @@
  * SECTION:purple-socket
  * @section_id: libpurple-purple-socket
  * @short_description: <filename>purple-socket.h</filename>
- * @title: Generic sockets
+ * @title: Generic Sockets
  */
 
 #ifndef _PURPLE_SOCKET_H_

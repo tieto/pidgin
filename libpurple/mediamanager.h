@@ -22,7 +22,7 @@
  * SECTION:mediamanager
  * @section_id: libpurple-mediamanager
  * @short_description: <filename>mediamanager.h</filename>
- * @title: Media Manager object
+ * @title: Media Manager Object
  */
 
 #ifndef _PURPLE_MEDIA_MANAGER_H_

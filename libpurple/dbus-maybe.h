@@ -2,7 +2,7 @@
  * SECTION:dbus-maybe
  * @section_id: libpurple-dbus-maybe
  * @short_description: <filename>dbus-maybe.h</filename>
- * @title: DBUS wrappers
+ * @title: DBUS Wrappers
  *
  * This file contains macros that wrap calls to the purple dbus module.
  * These macros call the appropriate functions if the build includes

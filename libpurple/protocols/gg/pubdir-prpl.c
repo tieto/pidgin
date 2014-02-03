@@ -74,7 +74,7 @@ static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
 	void *user_data);
 
-// Searching for buddies.
+/* Searching for buddies. */
 
 #define GGP_PUBDIR_SEARCH_TITLE _("Gadu-Gadu Public Directory")
 #define GGP_PUBDIR_SEARCH_PER_PAGE 20
@@ -116,7 +116,7 @@ static void ggp_pubdir_search_results_info(PurpleConnection *gc, GList *row,
 static void ggp_pubdir_search_results_new(PurpleConnection *gc, GList *row,
 	gpointer _form);
 
-// Own profile.
+/* Own profile. */
 
 static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	const ggp_pubdir_record *records, int next_offset, void *user_data);
@@ -244,7 +244,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		ggp_pubdir_request_free(request);
 		return;
 	}
-	
+
 	succ &= ggp_xml_get_uint(xml, "status", &status);
 	if (!ggp_xml_get_uint(xml, "nextOffset", &next_offset))
 		next_offset = 0;
@@ -257,10 +257,10 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		ggp_pubdir_request_free(request);
 		return;
 	}
-	
+
 	record_count = ggp_xml_child_count(xml, "user");
 	records = g_new0(ggp_pubdir_record, record_count);
-	
+
 	xml = purple_xmlnode_get_child(xml, "user");
 	i = 0;
 	while (xml)
@@ -269,9 +269,9 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		gchar *city = NULL, *birth_s = NULL;
 		unsigned int gender = 0;
 		const gchar *uin_s;
-		
+
 		g_assert(i <= record_count);
-		
+
 		record->uin = ggp_str_to_uin(purple_xmlnode_get_attrib(xml, "uin"));
 		if (record->uin == 0)
 			ggp_xml_get_uint(xml, "uin", &record->uin);
@@ -279,7 +279,7 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 			purple_debug_error("gg", "ggp_pubdir_got_data:"
 				" invalid uin\n");
 		uin_s = ggp_uin_to_str(record->uin);
-		
+
 		ggp_xml_get_string(xml, "label", &record->label);
 		ggp_xml_get_string(xml, "nick", &record->nickname);
 		ggp_xml_get_string(xml, "name", &record->first_name);
@@ -289,14 +289,14 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		ggp_xml_get_uint(xml, "gender", &gender);
 		ggp_xml_get_uint(xml, "age", &record->age);
 		ggp_xml_get_uint(xml, "province", &record->province);
-		
+
 		record->label = ggp_free_if_equal(record->label, uin_s);
 		record->label = ggp_free_if_equal(record->label, "");
 		record->nickname = ggp_free_if_equal(record->nickname, uin_s);
 		record->nickname = ggp_free_if_equal(record->nickname, "");
 		record->first_name = ggp_free_if_equal(record->first_name, "");
 		record->last_name = ggp_free_if_equal(record->last_name, "");
-		
+
 		if (record->label) {}
 		else if (record->nickname)
 			record->label = g_strdup(record->nickname);
@@ -311,14 +311,14 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 			g_strstrip(record->label);
 		if (record->nickname)
 			g_strstrip(record->nickname);
-		
+
 		if (gender == 1)
 			record->gender = GGP_PUBDIR_GENDER_FEMALE;
 		else if (gender == 2)
 			record->gender = GGP_PUBDIR_GENDER_MALE;
 		else
 			record->gender = GGP_PUBDIR_GENDER_UNSPECIFIED;
-		
+
 		if (city && city[0] != '\0')
 			record->city = g_strdup(city);
 		if (record->city)
@@ -328,25 +328,27 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 			g_free(record->city);
 			record->city = NULL;
 		}
-		
+
 		record->birth = ggp_date_from_iso8601(birth_s);
-		//TODO: calculate age from birth
-		
-		//TODO: verbose
-		purple_debug_misc("gg", "ggp_pubdir_got_data: [uin:%d] "
-			"[label:%s] [nick:%s] [first name:%s] [last name:%s] "
-			"[city:%s] [gender:%d] [age:%d] [birth:%lu]\n",
-			record->uin, record->label, record->nickname,
-			record->first_name, record->last_name, record->city,
-			record->gender, record->age, record->birth);
-		
+		/*TODO: calculate age from birth */
+
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("gg", "ggp_pubdir_got_data: [uin:%d] "
+				"[label:%s] [nick:%s] [first name:%s] "
+				"[last name:%s] [city:%s] [gender:%d] [age:%d] "
+				"[birth:%lu]\n", record->uin, record->label,
+				record->nickname, record->first_name,
+				record->last_name, record->city, record->gender,
+				record->age, record->birth);
+		}
+
 		g_free(city);
-		
+
 		xml = purple_xmlnode_get_next_twin(xml);
 	}
-	
+
 	request->cb(gc, record_count, records, next_offset, request->user_data);
-	
+
 	ggp_pubdir_request_free(request);
 	ggp_pubdir_record_free(records, record_count);
 }
@@ -371,9 +373,9 @@ static void ggp_pubdir_get_info_protocol_got(PurpleConnection *gc,
 	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
 	const ggp_pubdir_record *record = &records[0];
 	PurpleBuddy *buddy;
-	
+
 	g_free(_uin_p);
-	
+
 	if (records_count < 1)
 	{
 		purple_debug_error("gg", "ggp_pubdir_get_info_protocol_got: "
@@ -385,11 +387,11 @@ static void ggp_pubdir_get_info_protocol_got(PurpleConnection *gc,
 		purple_notify_user_info_destroy(info);
 		return;
 	}
-	
+
 	purple_debug_info("gg", "ggp_pubdir_get_info_protocol_got: %u\n", uin);
 	g_assert(uin == record->uin);
 	g_assert(records_count == 1);
-	
+
 	buddy = purple_blist_find_buddy(purple_connection_get_account(gc),
 		ggp_uin_to_str(uin));
 	if (buddy)
@@ -397,12 +399,12 @@ static void ggp_pubdir_get_info_protocol_got(PurpleConnection *gc,
 		const char *alias;
 		PurpleStatus *status;
 		gchar *status_message;
-		
+
 		alias = purple_buddy_get_alias_only(buddy);
 		if (alias)
 			purple_notify_user_info_add_pair_plaintext(info,
 				_("Alias"), alias);
-		
+
 		status = purple_presence_get_active_status(
 			purple_buddy_get_presence(buddy));
 		ggp_status_from_purplestatus(status, &status_message);
@@ -412,7 +414,7 @@ static void ggp_pubdir_get_info_protocol_got(PurpleConnection *gc,
 			purple_notify_user_info_add_pair_plaintext(info,
 				_("Message"), status_message);
 	}
-	
+
 	if (record->nickname)
 		purple_notify_user_info_add_pair_plaintext(info,
 			_("Nickname"), record->nickname);
@@ -439,7 +441,7 @@ static void ggp_pubdir_get_info_protocol_got(PurpleConnection *gc,
 			age_s);
 		g_free(age_s);
 	}
-	
+
 	purple_notify_userinfo(gc, ggp_uin_to_str(uin), info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
 }
@@ -459,7 +461,7 @@ static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 {
 	uin_t uin;
 	const gchar *alias;
-	
+
 	if (records_count < 0)
 	{
 		purple_debug_error("gg", "ggp_pubdir_request_buddy_alias_got: "
@@ -467,7 +469,7 @@ static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 		return;
 	}
 	uin = records[0].uin;
-	
+
 	alias = records[0].label;
 	if (!alias)
 	{
@@ -478,7 +480,7 @@ static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 
 	purple_debug_info("gg", "ggp_pubdir_request_buddy_alias_got: "
 		"public alias for %u is \"%s\"\n", uin, alias);
-	
+
 	serv_got_alias(gc, ggp_uin_to_str(uin), alias);
 }
 
@@ -497,7 +499,7 @@ ggp_pubdir_search_form * ggp_pubdir_search_form_clone(
 	const ggp_pubdir_search_form *form)
 {
 	ggp_pubdir_search_form *dup = g_new(ggp_pubdir_search_form, 1);
-	
+
 	dup->nick = g_strdup(form->nick);
 	dup->city = g_strdup(form->city);
 	dup->gender = form->gender;
@@ -505,7 +507,7 @@ ggp_pubdir_search_form * ggp_pubdir_search_form_clone(
 	dup->limit = form->limit;
 
 	dup->display_handle = form->display_handle;
-	
+
 	return dup;
 }
 
@@ -517,15 +519,15 @@ void ggp_pubdir_search(PurpleConnection *gc,
 	PurpleRequestField *field;
 
 	purple_debug_info("gg", "ggp_pubdir_search\n");
-	
+
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
-	
+
 	field = purple_request_field_string_new("name", _("Name"),
 		form ? form->nick : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
-	
+
 	field = purple_request_field_string_new("city", _("City"),
 		form ? form->city : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
@@ -538,7 +540,7 @@ void ggp_pubdir_search(PurpleConnection *gc,
 	purple_request_field_choice_add(field, _("Female"),
 		GINT_TO_POINTER(GGP_PUBDIR_GENDER_FEMALE));
 	purple_request_field_group_add_field(group, field);
-	
+
 	purple_request_fields(gc, _("Find buddies"), _("Find buddies"),
 		_("Please, enter your search criteria below"), fields,
 		_("OK"), G_CALLBACK(ggp_pubdir_search_request),
@@ -552,14 +554,14 @@ static void ggp_pubdir_search_request(PurpleConnection *gc,
 	ggp_pubdir_search_form *form = g_new0(ggp_pubdir_search_form, 1);
 
 	purple_debug_info("gg", "ggp_pubdir_search_request\n");
-	
+
 	form->nick = g_strdup(purple_request_fields_get_string(fields, "name"));
 	form->city = g_strdup(purple_request_fields_get_string(fields, "city"));
 	form->gender = GPOINTER_TO_INT(purple_request_fields_get_choice(fields,
 		"gender"));
 	form->offset = 0;
 	form->limit = GGP_PUBDIR_SEARCH_PER_PAGE;
-	
+
 	ggp_pubdir_search_execute(gc, form, ggp_pubdir_search_results_display,
 		form);
 }
@@ -568,7 +570,7 @@ static gchar * ggp_pubdir_search_make_query(const ggp_pubdir_search_form *form)
 {
 	gchar *nick, *city, *gender;
 	gchar *query;
-	
+
 	if (form->nick && form->nick[0] != '\0')
 	{
 		gchar *nick_e = g_uri_escape_string(form->nick, NULL, FALSE);
@@ -577,7 +579,7 @@ static gchar * ggp_pubdir_search_make_query(const ggp_pubdir_search_form *form)
 	}
 	else
 		nick = g_strdup("");
-	
+
 	if (form->city && form->city[0] != '\0')
 	{
 		gchar *city_e = g_uri_escape_string(form->city, NULL, FALSE);
@@ -586,20 +588,20 @@ static gchar * ggp_pubdir_search_make_query(const ggp_pubdir_search_form *form)
 	}
 	else
 		city = g_strdup("");
-	
+
 	if (form->gender != GGP_PUBDIR_GENDER_UNSPECIFIED)
 		gender = g_strdup_printf("&gender=%d",
 			form->gender == GGP_PUBDIR_GENDER_MALE ? 2 : 1);
 	else
 		gender = g_strdup("");
-	
+
 	query = g_strdup_printf("/users.xml?offset=%d&limit=%d%s%s%s",
 		form->offset, form->limit, nick, city, gender);
-	
+
 	g_free(nick);
 	g_free(city);
 	g_free(gender);
-	
+
 	return query;
 }
 
@@ -676,7 +678,7 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 		ggp_pubdir_search_form_free(form);
 		return;
 	}
-	
+
 	if (records_count == 0)
 	{
 		purple_notify_info(gc, GGP_PUBDIR_SEARCH_TITLE,
@@ -686,11 +688,11 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 		ggp_pubdir_search_form_free(form);
 		return;
 	}
-	
+
 	form->offset = next_offset;
-	
+
 	results = purple_notify_searchresults_new();
-	
+
 	purple_notify_searchresults_column_add(results,
 		purple_notify_searchresults_column_new(_("GG Number")));
 	purple_notify_searchresults_column_add(results,
@@ -701,7 +703,7 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 		purple_notify_searchresults_column_new(_("Gender")));
 	purple_notify_searchresults_column_add(results,
 		purple_notify_searchresults_column_new(_("Age")));
-	
+
 	for (i = 0; i < records_count; i++)
 	{
 		GList *row = NULL;
@@ -712,10 +714,10 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 			gender = g_strdup("male");
 		else if (record->gender == GGP_PUBDIR_GENDER_FEMALE)
 			gender = g_strdup("female");
-		
+
 		if (record->age)
 			age = g_strdup_printf("%d", record->age);
-		
+
 		row = g_list_append(row, g_strdup(ggp_uin_to_str(record->uin)));
 		row = g_list_append(row, g_strdup(record->label));
 		row = g_list_append(row, g_strdup(record->city));
@@ -723,7 +725,7 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 		row = g_list_append(row, age);
 		purple_notify_searchresults_row_add(results, row);
 	}
-	
+
 	purple_notify_searchresults_button_add(results,
 		PURPLE_NOTIFY_BUTTON_ADD, ggp_pubdir_search_results_add);
 	purple_notify_searchresults_button_add(results,
@@ -736,7 +738,7 @@ static void ggp_pubdir_search_results_display(PurpleConnection *gc,
 		purple_notify_searchresults_button_add(results,
 			PURPLE_NOTIFY_BUTTON_CONTINUE,
 			ggp_pubdir_search_results_next);
-	
+
 	if (!form->display_handle)
 		form->display_handle = purple_notify_searchresults(gc,
 			GGP_PUBDIR_SEARCH_TITLE, _("Search results"), NULL,
@@ -807,16 +809,16 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	PurpleRequestField *field;
 	gsize i;
 	const ggp_pubdir_record *record;
-	
+
 	purple_debug_info("gg", "ggp_pubdir_set_info_dialog (record: %d)\n",
 		records_count);
-	
+
 	record = (records_count == 1 ? &records[0] : NULL);
-	
+
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
-	
+
 	field = purple_request_field_string_new("first_name", _("First name"),
 		record ? record->first_name : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
@@ -844,7 +846,7 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	field = purple_request_field_string_new("city", _("City"),
 		record ? record->city : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
-	
+
 	field = purple_request_field_choice_new("province", _("Voivodeship"), 0);
 	purple_request_field_group_add_field(group, field);
 	for (i = 0; i < ggp_pubdir_provinces_count; i++)
@@ -857,13 +859,12 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 			purple_request_field_choice_set_default_value(field, GINT_TO_POINTER(i));
 		}
 	}
-	
+
 	purple_request_fields(gc, _("Set User Info"), _("Set User Info"),
 		NULL, fields,
 		_("OK"), G_CALLBACK(ggp_pubdir_set_info_request),
 		_("Cancel"), NULL,
 		purple_request_cpar_from_connection(gc), gc);
-	
 }
 
 static void ggp_pubdir_set_info_request(PurpleConnection *gc,
@@ -874,7 +875,7 @@ static void ggp_pubdir_set_info_request(PurpleConnection *gc,
 		purple_connection_get_account(gc)));
 	ggp_pubdir_record *record = g_new0(ggp_pubdir_record, 1);
 	gchar *birth_s;
-	
+
 	purple_debug_info("gg", "ggp_pubdir_set_info_request\n");
 
 	record->uin = uin;
@@ -888,7 +889,7 @@ static void ggp_pubdir_set_info_request(PurpleConnection *gc,
 		"city"));
 	record->province = GPOINTER_TO_INT(
 		purple_request_fields_get_choice(fields, "province"));
-	
+
 	birth_s = g_strdup_printf("%sT10:00:00+00:00",
 		purple_request_fields_get_string(fields, "birth_date"));
 	record->birth = ggp_date_from_iso8601(birth_s);
@@ -914,15 +915,15 @@ static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 
 	if (!token || !PURPLE_CONNECTION_IS_VALID(gc))
 	{
-		// TODO: notify about failure
+		/* TODO: notify about failure */
 		ggp_pubdir_record_free(record, 1);
 		return;
 	}
-	
+
 	name = g_uri_escape_string(record->first_name, NULL, FALSE);
 	surname = g_uri_escape_string(record->last_name, NULL, FALSE);
 	city = g_uri_escape_string(record->city, NULL, FALSE);
-	
+
 	request_data = g_strdup_printf(
 		"name=%s&"
 		"surname=%s&"

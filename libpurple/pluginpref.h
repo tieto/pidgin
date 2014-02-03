@@ -23,7 +23,7 @@
  * SECTION:pluginpref
  * @section_id: libpurple-pluginpref
  * @short_description: <filename>pluginpref.h</filename>
- * @title: Plugin Preferences frontend
+ * @title: Plugin Preferences Frontend
  */
 
 #ifndef _PURPLE_PLUGINPREF_H_

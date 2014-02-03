@@ -43,7 +43,7 @@ int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message);
 const gchar * ggp_status_to_purplestatus(int status);
 const gchar * ggp_status_get_name(const gchar *purple_status);
 
-// own status
+/* own status */
 
 void ggp_status_set_initial(PurpleConnection *gc, struct gg_login_params *glp);
 
@@ -57,7 +57,7 @@ void ggp_status_set_status_broadcasting(PurpleConnection *gc,
 	gboolean broadcasting);
 void ggp_status_broadcasting_dialog(PurpleConnection *gc);
 
-// buddy status
+/* buddy status */
 
 void ggp_status_got_others(PurpleConnection *gc, struct gg_event *ev);
 char * ggp_status_buddy_text(PurpleBuddy *buddy);

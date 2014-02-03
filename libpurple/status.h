@@ -23,7 +23,7 @@
  * SECTION:status
  * @section_id: libpurple-status
  * @short_description: <filename>status.h</filename>
- * @title: Status object API
+ * @title: Status Object API
  */
 
 #ifndef _PURPLE_STATUS_H_

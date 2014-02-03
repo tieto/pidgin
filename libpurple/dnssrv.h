@@ -20,7 +20,7 @@
  * SECTION:dnssrv
  * @section_id: libpurple-dnssrv
  * @short_description: <filename>dnssrv.h</filename>
- * @title: DNS SRV utilities
+ * @title: DNS SRV Utilities
  */
 
 #ifndef _PURPLE_DNSSRV_H

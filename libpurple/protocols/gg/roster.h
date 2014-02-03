@@ -37,28 +37,28 @@ typedef struct
 {
 	gpointer content;
 	gboolean is_updating;
-	
+
 	GList *sent_updates;
 	GList *pending_updates;
-	
+
 	guint timer;
 } ggp_roster_session_data;
 
-// setup
+/* setup */
 gboolean ggp_roster_enabled(void);
 void ggp_roster_setup(PurpleConnection *gc);
 void ggp_roster_cleanup(PurpleConnection *gc);
 
-// synchronization control
+/* synchronization control */
 void ggp_roster_request_update(PurpleConnection *gc);
 
-// libgadu callbacks
+/* libgadu callbacks */
 void ggp_roster_reply(PurpleConnection *gc,
 	struct gg_event_userlist100_reply *reply);
 void ggp_roster_version(PurpleConnection *gc,
 	struct gg_event_userlist100_version *version);
 
-// libpurple callbacks
+/* libpurple callbacks */
 void ggp_roster_alias_buddy(PurpleConnection *gc, const char *who,
 	const char *alias);
 void ggp_roster_group_buddy(PurpleConnection *gc, const char *who,

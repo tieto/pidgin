@@ -22,7 +22,7 @@
  * SECTION:theme
  * @section_id: libpurple-theme
  * @short_description: <filename>theme.h</filename>
- * @title: Theme abstact class
+ * @title: Theme Abstact Class
  */
 
 #ifndef PURPLE_THEME_H

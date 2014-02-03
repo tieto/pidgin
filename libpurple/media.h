@@ -22,7 +22,7 @@
  * SECTION:media
  * @section_id: libpurple-media
  * @short_description: <filename>media.h</filename>
- * @title: Media object API
+ * @title: Media Object API
  */
 
 #ifndef _PURPLE_MEDIA_H_
