@@ -1,9 +1,3 @@
-/**
- * @file accounts.h Accounts API
- * @ingroup core
- * @see @ref account-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:accounts
+ * @section_id: libpurple-accounts
+ * @title: Accounts subsystem API
+ * @short_description: <filename>accounts.h</filename>
+ * @see_also: <link linkend="chapter-signals-account">Account signals</link>
+ */
+
 #ifndef _PURPLE_ACCOUNTS_H_
 #define _PURPLE_ACCOUNTS_H_
 

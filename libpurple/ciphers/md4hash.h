@@ -1,7 +1,4 @@
-/**
- * @file md4.h Purple MD4 hash
- * @ingroup core
- *
+/*
  * purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +19,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+/**
+ * SECTION:md4hash
+ * @section_id: libpurple-md4hash
+ * @short_description: <filename>ciphers/md4hash.h</filename>
+ * @title: MD4 hash
+ */
+
 #ifndef PURPLE_MD4_HASH_H
 #define PURPLE_MD4_HASH_H
 

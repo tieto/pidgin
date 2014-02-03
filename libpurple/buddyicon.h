@@ -1,8 +1,3 @@
-/**
- * @file buddyicon.h Buddy Icon API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:buddyicon
+ * @section_id: libpurple-buddyicon
+ * @short_description: <filename>buddyicon.h</filename>
+ * @title: Buddy Icon API
+ */
+
 #ifndef _PURPLE_BUDDYICON_H_
 #define _PURPLE_BUDDYICON_H_
 

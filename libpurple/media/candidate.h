@@ -1,8 +1,3 @@
-/**
- * @file candidate.h Candidate for Media API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:candidate
+ * @section_id: libpurple-candidate
+ * @short_description: <filename>media/candidate.h</filename>
+ * @title: Candidate for Media API
  */
 
 #ifndef _PURPLE_MEDIA_CANDIDATE_H_

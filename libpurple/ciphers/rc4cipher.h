@@ -1,8 +1,3 @@
-/**
- * @file rc4.h Purple RC4 Cipher
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:rc4cipher
+ * @section_id: libpurple-rc4cipher
+ * @short_description: <filename>ciphers/rc4cipher.h</filename>
+ * @title: RC4 Cipher
+ */
+
 #ifndef PURPLE_RC4_CIPHER_H
 #define PURPLE_RC4_CIPHER_H
 

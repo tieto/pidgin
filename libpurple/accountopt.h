@@ -1,8 +1,3 @@
-/**
- * @file accountopt.h Account Options API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:accountopt
+ * @section_id: libpurple-accountopt
+ * @title: Account Options API
+ * @short_description: <filename>accountopt.h</filename>
+ */
+
 #ifndef _PURPLE_ACCOUNTOPT_H_
 #define _PURPLE_ACCOUNTOPT_H_
 

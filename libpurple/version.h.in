@@ -1,6 +1,4 @@
-/**
- * @file version.h Purple Versioning
- *
+/*
  * purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -21,6 +19,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:version
+ * @section_id: libpurple-version
+ * @short_description: <filename>version.h</filename>
+ * @title: Purple Versioning
+ */
+
 #ifndef _PURPLE_VERSION_H_
 #define _PURPLE_VERSION_H_
 

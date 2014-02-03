@@ -1,8 +1,3 @@
-/**
- * @file hmac.h Purple HMAC Cipher
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:hmaccipher
+ * @section_id: libpurple-hmaccipher
+ * @short_description: <filename>ciphers/hmaccipher.h</filename>
+ * @title: HMAC Cipher
+ */
+
 #ifndef PURPLE_HMAC_CIPHER_H
 #define PURPLE_HMAC_CIPHER_H
 
