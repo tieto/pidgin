@@ -308,7 +308,7 @@ static void ggp_account_register_dialog_ok(
 }
 
 #if 0
-// libgadu 1.12.x: use it for invalid token
+/* libgadu 1.12.x: use it for invalid token */
 static void ggp_account_register_dialog_invalid(
 	ggp_account_register_data *register_data, const gchar *message)
 {
@@ -342,7 +342,7 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 	}
 	if (!success || !register_result->success)
 	{
-		//TODO (libgadu 1.12.x): check register_result->error
+		/* TODO (libgadu 1.12.x): check register_result->error */
 		purple_debug_error("gg", "ggp_account_register_response: "
 			"error\n");
 		purple_notify_error(NULL,
@@ -627,7 +627,7 @@ static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
 	}
 	if (!success || !chpass_result->success)
 	{
-		//TODO (libgadu 1.12.x): check chpass_result->error
+		/* TODO (libgadu 1.12.x): check chpass_result->error */
 		purple_debug_error("gg", "ggp_account_chpass_response: "
 			"error\n");
 		purple_notify_error(NULL,
@@ -651,6 +651,6 @@ static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
 
 	ggp_account_chpass_data_free(chpass_data);
 
-	//TODO: reconnect / check how it is done in original client
+	/* TODO: reconnect / check how it is done in original client */
 	purple_account_disconnect(account);
 }

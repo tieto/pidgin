@@ -37,7 +37,7 @@
 #include "utils.h"
 #include "oauth/oauth-purple.h"
 
-// Common
+/* Common */
 
 static inline ggp_avatar_session_data *
 ggp_avatar_get_avdata(PurpleConnection *gc);
@@ -47,7 +47,7 @@ static gboolean ggp_avatar_timer_cb(gpointer _gc);
 #define GGP_AVATAR_USERAGENT "GG Client build 11.0.0.7562"
 #define GGP_AVATAR_SIZE_MAX 1048576
 
-// Buddy avatars updating
+/* Buddy avatars updating */
 
 typedef struct
 {
@@ -64,7 +64,7 @@ static void ggp_avatar_buddy_update_received(PurpleHttpConnection *http_conn,
 
 #define GGP_AVATAR_BUDDY_URL "http://avatars.gg.pl/%u/s,big"
 
-// Own avatar setting
+/* Own avatar setting */
 
 typedef struct
 {
@@ -132,9 +132,10 @@ static gboolean ggp_avatar_timer_cb(gpointer _gc)
 	avdata = ggp_avatar_get_avdata(gc);
 	if (avdata->current_update != NULL)
 	{
-		//TODO: verbose mode
-		//purple_debug_misc("gg", "ggp_avatar_timer_cb(%p): there is "
-		//	"already an update running\n", gc);
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("gg", "ggp_avatar_timer_cb(%p): "
+				"there is already an update running\n", gc);
+		}
 		return TRUE;
 	}
 
@@ -151,7 +152,7 @@ void ggp_avatar_buddy_update(PurpleConnection *gc, uin_t uin, time_t timestamp)
 {
 	ggp_avatar_session_data *avdata = ggp_avatar_get_avdata(gc);
 	ggp_avatar_buddy_update_req *pending_update =
-		g_new(ggp_avatar_buddy_update_req, 1); //TODO: leak?
+		g_new(ggp_avatar_buddy_update_req, 1); /* TODO: leak? */
 
 	if (purple_debug_is_verbose()) {
 		purple_debug_misc("gg", "ggp_avatar_buddy_update(%p, %u, %lu)\n", gc,
