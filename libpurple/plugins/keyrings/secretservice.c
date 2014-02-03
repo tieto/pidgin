@@ -334,4 +334,3 @@ init_plugin(PurplePlugin *plugin)
 }
 
 PURPLE_INIT_PLUGIN(secret_service, init_plugin, plugininfo)
-
