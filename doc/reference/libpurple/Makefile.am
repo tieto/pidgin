@@ -67,6 +67,7 @@ IGNORE_HFILES=\
 	protocols \
 	tests \
 	win32 \
+	backend-fs2.h \
 	dbus-types.h \
 	internal.h \
 	purple-client.h \
