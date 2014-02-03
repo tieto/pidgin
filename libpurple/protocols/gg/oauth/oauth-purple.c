@@ -45,7 +45,7 @@ typedef struct
 	gpointer user_data;
 	gchar *token;
 	gchar *token_secret;
-	
+
 	gchar *sign_method, *sign_url;
 } ggp_oauth_data;
 
@@ -163,7 +163,7 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 
 	req = purple_http_request_new("https://login.gadu-gadu.pl/authorize");
 	purple_http_request_set_max_len(req, GGP_OAUTH_RESPONSE_MAX);
-	// we don't need any results, nor 302 redirection
+	/* we don't need any results, nor 302 redirection */
 	purple_http_request_set_max_redirects(req, 0);
 	purple_http_request_set_method(req, "POST");
 	purple_http_request_header_set(req, "Content-Type", "application/x-www-form-urlencoded");
@@ -254,10 +254,10 @@ static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
 	{
 		PurpleAccount *account;
 		gchar *auth;
-		
+
 		purple_debug_misc("gg", "ggp_oauth_access_token_got: "
 			"got access token, returning signed url\n");
-		
+
 		account = purple_connection_get_account(data->gc);
 		auth = gg_oauth_generate_header(
 			data->sign_method, data->sign_url,
