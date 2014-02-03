@@ -1,7 +1,3 @@
-/**
- * @file gntmenuitemcheck.h Check Menuitem API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntmenuitemcheck
+ * @section_id: libgnt-gntmenuitemcheck
+ * @short_description: <filename>gntmenuitemcheck.h</filename>
+ * @title: Check Menuitem
  */
 
 #ifndef GNT_MENU_ITEM_CHECK_H

@@ -1,7 +1,3 @@
-/**
- * @file gntentry.h Entry API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntentry
+ * @section_id: libgnt-gntentry
+ * @short_description: <filename>gntentry.h</filename>
+ * @title: Entry
  */
 
 #ifndef GNT_ENTRY_H

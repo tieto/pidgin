@@ -11,8 +11,11 @@
     <abstract>
       <title>Finch &version;</title>
       <para>
-        Finch is an ncurses frontend to libpurple, built using libgnt
-        (GLib Ncurses Toolkit).
+        GNT (GLib Ncurses Toolkit) is an ncurses toolkit for creating text-mode
+        graphical user interfaces in a fast and easy way.
+      </para>
+      <para>
+        Finch is a text-mode frontend to libpurple, built using libgnt.
       </para>
     </abstract>
   </bookinfo>
@@ -47,10 +50,12 @@
   <reference label="II">
     <title>GNT API Reference</title>
 
+      <xi:include href="xml/gnt.xml" />
       <xi:include href="xml/gntbindable.xml" />
       <xi:include href="xml/gntbox.xml" />
       <xi:include href="xml/gntbutton.xml" />
       <xi:include href="xml/gntcheckbox.xml" />
+      <xi:include href="xml/gntmenuitemcheck.xml" />
       <xi:include href="xml/gntclipboard.xml" />
       <xi:include href="xml/gntcolors.xml" />
       <xi:include href="xml/gntcombobox.xml" />
@@ -59,22 +64,19 @@
       <xi:include href="xml/gntkeys.xml" />
       <xi:include href="xml/gntlabel.xml" />
       <xi:include href="xml/gntline.xml" />
-      <xi:include href="xml/gntmarshal.xml" />
-      <xi:include href="xml/gntmenuitemcheck.xml" />
-      <xi:include href="xml/gntmenuitem.xml" />
       <xi:include href="xml/gntmenu.xml" />
+      <xi:include href="xml/gntmenuitem.xml" />
       <xi:include href="xml/gntprogressbar.xml" />
       <xi:include href="xml/gnt-skel.xml" />
       <xi:include href="xml/gntslider.xml" />
       <xi:include href="xml/gntstyle.xml" />
       <xi:include href="xml/gnttextview.xml" />
       <xi:include href="xml/gnttree.xml" />
-      <xi:include href="xml/gntutils.xml" />
       <xi:include href="xml/gntwidget.xml" />
       <xi:include href="xml/gntwindow.xml" />
       <xi:include href="xml/gntwm.xml" />
       <xi:include href="xml/gntws.xml" />
-      <xi:include href="xml/gnt.xml" />
+      <xi:include href="xml/gntutils.xml" />
   </reference>
 
   <index id="api-index-full">

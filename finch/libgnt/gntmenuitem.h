@@ -1,7 +1,3 @@
-/**
- * @file gntmenuitem.h Menuitem API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntmenuitem
+ * @section_id: libgnt-gntmenuitem
+ * @short_description: <filename>gntmenuitem.h</filename>
+ * @title: Menuitem
  */
 
 #ifndef GNT_MENUITEM_H
