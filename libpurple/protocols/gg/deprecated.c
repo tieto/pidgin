@@ -34,7 +34,7 @@
 gboolean ggp_deprecated_setup_proxy(PurpleConnection *gc)
 {
 	PurpleProxyInfo *gpi = purple_proxy_get_setup(purple_connection_get_account(gc));
-	
+
 	if ((purple_proxy_info_get_type(gpi) != PURPLE_PROXY_NONE) &&
 		(purple_proxy_info_get_host(gpi) == NULL ||
 		purple_proxy_info_get_port(gpi) <= 0))
@@ -46,7 +46,7 @@ gboolean ggp_deprecated_setup_proxy(PurpleConnection *gc)
 			purple_request_cpar_from_connection(gc));
 		return FALSE;
 	}
-	
+
 	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_NONE)
 	{
 		gg_proxy_enabled = 0;
@@ -54,11 +54,11 @@ gboolean ggp_deprecated_setup_proxy(PurpleConnection *gc)
 	}
 
 	gg_proxy_enabled = 1;
-	//TODO: memleak
+	/* TODO: memleak */
 	gg_proxy_host = g_strdup(purple_proxy_info_get_host(gpi));
 	gg_proxy_port = purple_proxy_info_get_port(gpi);
 	gg_proxy_username = g_strdup(purple_proxy_info_get_username(gpi));
 	gg_proxy_password = g_strdup(purple_proxy_info_get_password(gpi));
-	
+
 	return TRUE;
 }

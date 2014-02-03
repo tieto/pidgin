@@ -96,9 +96,9 @@ void ggp_image_setup(PurpleConnection *gc)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
 	ggp_image_session_data *sdata = g_new0(ggp_image_session_data, 1);
-	
+
 	accdata->image_data = sdata;
-	
+
 	sdata->got_images = g_hash_table_new_full(
 		g_int64_hash, g_int64_equal, g_free,
 		ggp_image_got_free);
@@ -113,7 +113,7 @@ void ggp_image_setup(PurpleConnection *gc)
 void ggp_image_cleanup(PurpleConnection *gc)
 {
 	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
-	
+
 	g_hash_table_destroy(sdata->got_images);
 	g_hash_table_destroy(sdata->incoming_images);
 	g_hash_table_destroy(sdata->sent_images);
@@ -130,31 +130,31 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 	gconstpointer image_data;
 	uint32_t image_crc;
 	ggp_image_sent *sent_image;
-	
+
 	if (!image)
 	{
 		purple_debug_error("gg", "ggp_image_prepare: image %d "
 			"not found in image store\n", stored_id);
 		return GGP_IMAGE_PREPARE_FAILURE;
 	}
-	
+
 	image_size = purple_imgstore_get_size(image);
-	
+
 	if (image_size > GGP_IMAGE_SIZE_MAX)
 	{
 		purple_debug_warning("gg", "ggp_image_prepare: image "
 			"is too big (max bytes: %d)\n", GGP_IMAGE_SIZE_MAX);
 		return GGP_IMAGE_PREPARE_TOO_BIG;
 	}
-	
+
 	purple_imgstore_ref(image);
 	image_data = purple_imgstore_get_data(image);
 	image_crc = gg_crc32(0, image_data, image_size);
-	
+
 	purple_debug_info("gg", "ggp_image_prepare: image prepared "
 		"[id=%d, crc=%u, size=%" G_GSIZE_FORMAT "]\n",
 		stored_id, image_crc, image_size);
-	
+
 	*id = ggp_image_params_to_id(image_crc, image_size);
 
 	sent_image = g_new(ggp_image_sent, 1);
@@ -162,7 +162,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 	sent_image->conv_name = g_strdup(purple_conversation_get_name(conv));
 	g_hash_table_insert(sdata->sent_images, ggp_uint64dup(*id),
 		sent_image);
-	
+
 	return GGP_IMAGE_PREPARE_OK;
 }
 
@@ -174,7 +174,7 @@ void ggp_image_recv(PurpleConnection *gc,
 	ggp_image_requested *req;
 	GList *it;
 	uint64_t id;
-	
+
 	/* TODO: This PurpleStoredImage will be rendered within the IM window
 	   and right-clicking the image will allow the user to save the image
 	   to disk.  The default filename used in this dialog is the filename
@@ -187,9 +187,9 @@ void ggp_image_recv(PurpleConnection *gc,
 		g_memdup(image_reply->image, image_reply->size),
 		image_reply->size,
 		image_reply->filename);
-	
+
 	id = ggp_image_params_to_id(image_reply->crc32, image_reply->size);
-	
+
 	purple_debug_info("gg", "ggp_image_recv: got image "
 		"[stored_id=%d, crc=%u, size=%u, filename=%s, id="
 		GGP_IMAGE_ID_FORMAT "]\n",
@@ -216,7 +216,7 @@ void ggp_image_recv(PurpleConnection *gc,
 	{
 		ggp_image_requested_listener *listener = it->data;
 		it = g_list_next(it);
-		
+
 		listener->cb(gc, id, stored_id, listener->user_data);
 	}
 	g_hash_table_remove(sdata->incoming_images, &id);
@@ -232,17 +232,17 @@ void ggp_image_send(PurpleConnection *gc,
 	PurpleConversation *conv;
 	uint64_t id;
 	gchar *gg_filename;
-	
+
 	purple_debug_info("gg", "ggp_image_send: got image request "
 		"[uin=%u, crc=%u, size=%u]\n",
 		image_request->sender,
 		image_request->crc32,
 		image_request->size);
-	
+
 	id = ggp_image_params_to_id(image_request->crc32, image_request->size);
-	
+
 	sent_image = g_hash_table_lookup(sdata->sent_images, &id);
-	
+
 	if (sent_image == NULL && image_request->sender == ggp_str_to_uin(
 		purple_account_get_username(purple_connection_get_account(gc))))
 	{
@@ -256,15 +256,15 @@ void ggp_image_send(PurpleConnection *gc,
 			"not found\n");
 		return;
 	}
-	
+
 	purple_debug_misc("gg", "ggp_image_send: requested image found "
 		"[id=" GGP_IMAGE_ID_FORMAT ", stored id=%d, conv=%s]\n",
 		id,
 		sent_image->id,
 		sent_image->conv_name);
-	
+
 	image = purple_imgstore_find_by_id(sent_image->id);
-	
+
 	if (!image)
 	{
 		purple_debug_error("gg", "ggp_image_send: requested image "
@@ -273,15 +273,15 @@ void ggp_image_send(PurpleConnection *gc,
 			GINT_TO_POINTER(image_request->crc32));
 		return;
 	}
-	
-	//TODO: check allowed recipients
+
+	/* TODO: check allowed recipients */
 	gg_filename = g_strdup_printf(GGP_IMAGE_ID_FORMAT, id);
 	gg_image_reply(accdata->session, image_request->sender,
 		gg_filename,
 		purple_imgstore_get_data(image),
 		purple_imgstore_get_size(image));
 	g_free(gg_filename);
-	
+
 	conv = purple_conversations_find_with_account(
 		sent_image->conv_name,
 		purple_connection_get_account(gc));
@@ -305,7 +305,7 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 	ggp_image_requested_listener *listener;
 	uint32_t crc = id >> 32;
 	uint32_t size = id;
-	
+
 	if (size > GGP_IMAGE_SIZE_MAX && crc <= GGP_IMAGE_SIZE_MAX)
 	{
 		uint32_t tmp;
@@ -315,7 +315,7 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 		crc = size;
 		size = tmp;
 	}
-	
+
 	req = g_hash_table_lookup(sdata->incoming_images, &id);
 	if (!req)
 	{
@@ -333,7 +333,7 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 			"image " GGP_IMAGE_ID_FORMAT " already requested\n",
 			id);
 	}
-	
+
 	listener = g_new0(ggp_image_requested_listener, 1);
 	listener->cb = cb;
 	listener->user_data = user_data;
