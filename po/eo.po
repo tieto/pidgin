@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2009-08-16 20:26+0200\n"
 "Last-Translator: Stéphane Fillod <fillods@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
@@ -1973,56 +1973,8 @@ msgstr "Dosiero alŝuto al %s malsukcesis."
 msgid "File transfer from %s failed."
 msgstr "Dosiero elŝuto de %s malsukcesis."
 
-msgid "Run the command in a terminal"
-msgstr "Eku komandon en terminalo"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"aim\" URL-ojn, se enŝaltita."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"gg\" URL-ojn, se enŝaltita."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"icq\" URL-ojn, se enŝaltita."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"irc\" URL-ojn, se enŝaltita."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"msnim\" URL-ojn, se enŝaltita."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"sip\" URL-ojn, se enŝaltita."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"xmpp\" URL-ojn, se enŝaltita."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"ymsgr\" URL-ojn, se enŝaltita."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "La traktilo por \"aim\" URL-oj"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "La traktilo por \"gg\" URL-oj"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "La traktilo por \"icq\" URL-oj"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "La traktilo por \"irc\" URL-oj"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "La traktilo por \"msnim\" URL-oj"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "La traktilo por \"sip\" URL-oj"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "La traktilo por \"xmpp\" URL-oj"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "La traktilo por \"ymsgr\" URL-oj"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"aim\" URL-ojn"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2031,54 +1983,14 @@ msgstr ""
 "Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"aim\" URL-"
 "ojn."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"gg\" URL-"
-"ojn."
+msgid "The handler for \"aim\" URLs"
+msgstr "La traktilo por \"aim\" URL-oj"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"icq\" URL-"
-"ojn."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"aim\" URL-ojn, se enŝaltita."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"irc\" URL-"
-"ojn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"msnim\" "
-"URL-ojn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"sip\" URL-"
-"ojn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"xmpp\" URL-"
-"ojn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"ymsgr\" "
-"URL-ojn."
+msgid "Run the command in a terminal"
+msgstr "Eku komandon en terminalo"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2087,29 +1999,117 @@ msgstr ""
 "Vera se la komando uzata por trakti tiun tipon de URL-o devu esti lanĉita en "
 "terminalo."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"aim\" URL-ojn"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Ĉu la donita komando devu trakti \"gg\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"gg\" URL-"
+"ojn."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "La traktilo por \"gg\" URL-oj"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"gg\" URL-ojn, se enŝaltita."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Ĉu la donita komando devu trakti \"icq\" URL-ojn"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"icq\" URL-"
+"ojn."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "La traktilo por \"icq\" URL-oj"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"icq\" URL-ojn, se enŝaltita."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Ĉu la donita komando devu trakti \"irc\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"irc\" URL-"
+"ojn."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "La traktilo por \"irc\" URL-oj"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"irc\" URL-ojn, se enŝaltita."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Ĉu la donita komando devu trakti \"msnim\" URL-ojn"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"msnim\" "
+"URL-ojn."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "La traktilo por \"msnim\" URL-oj"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"msnim\" URL-ojn, se enŝaltita."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Ĉu la donita komando devu trakti \"sip\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"sip\" URL-"
+"ojn."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "La traktilo por \"sip\" URL-oj"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"sip\" URL-ojn, se enŝaltita."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Ĉu la donita komando devu trakti \"xmpp\" URL-ojn"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"xmpp\" URL-"
+"ojn."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "La traktilo por \"xmpp\" URL-oj"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"xmpp\" URL-ojn, se enŝaltita."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Ĉu la donita komando devu trakti \"ymsgr\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"ymsgr\" "
+"URL-ojn."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "La traktilo por \"ymsgr\" URL-oj"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"ymsgr\" URL-ojn, se enŝaltita."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">La protokolilo ne havas legkapablon</font></b>"
@@ -2167,6 +2167,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Nekonata ensaluteraro okazis: %s."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Nekonata ensaluteraro okazis: %s."
 
 msgid "Error with your microphone"
@@ -2935,12 +2939,6 @@ msgid ""
 "invalid."
 msgstr ""
 
-msgid "Token Error"
-msgstr ""
-
-msgid "Unable to fetch the token.\n"
-msgstr ""
-
 msgid "Save Buddylist..."
 msgstr "Konservu Kunulliston..."
 
@@ -2968,39 +2966,6 @@ msgstr "Konservu kunulliston..."
 
 msgid "Load buddylist from file..."
 msgstr "Ŝarĝu kunulliston el dosiero..."
-
-msgid "You must fill in all registration fields"
-msgstr ""
-
-msgid "Passwords do not match"
-msgstr "Pasvortoj ne akordas"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr ""
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Nova Gadu-Gadu-a Konto Registrita"
-
-msgid "Registration completed successfully!"
-msgstr "Registro pleniĝis sukcese!"
-
-msgid "Password"
-msgstr "Pasvorto"
-
-msgid "Password (again)"
-msgstr "Pasvorto (denove)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-msgid "Captcha"
-msgstr ""
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Registru Novan Gadu-Gadu-an Konton"
-
-msgid "Please, fill in the following fields"
-msgstr ""
 
 msgid "City"
 msgstr "Urbo"
@@ -3030,39 +2995,6 @@ msgstr "Trovu kunulojn"
 
 msgid "Please, enter your search criteria below"
 msgstr ""
-
-msgid "Fill in the fields."
-msgstr ""
-
-msgid "Your current password is different from the one that you specified."
-msgstr ""
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr ""
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr ""
-
-msgid "Password was changed successfully!"
-msgstr ""
-
-msgid "Current password"
-msgstr "Aktuala pasvorto"
-
-msgid "Password (retype)"
-msgstr "Pasvorto (retajpu)"
-
-msgid "Enter current token"
-msgstr ""
-
-msgid "Current token"
-msgstr ""
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Ŝanĝu Gadu-Gadu Pasvorton"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3138,18 +3070,6 @@ msgstr ""
 msgid "Unable to read from socket"
 msgstr ""
 
-msgid "Buddy list downloaded"
-msgstr ""
-
-msgid "Your buddy list was downloaded from the server."
-msgstr ""
-
-msgid "Buddy list uploaded"
-msgstr ""
-
-msgid "Your buddy list was stored on the server."
-msgstr ""
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3185,18 +3105,6 @@ msgstr "Ne konektita al servilo"
 
 msgid "Find buddies..."
 msgstr "Trovu kunulojn..."
-
-msgid "Change password..."
-msgstr "Ŝanĝu pasvorton..."
-
-msgid "Upload buddylist to Server"
-msgstr "Alŝutu kunulliston al Servilo"
-
-msgid "Download buddylist from Server"
-msgstr "Elŝutu kunulliston el Servilo"
-
-msgid "Delete buddylist from Server"
-msgstr "Forigu kunulliston de Servilo"
 
 msgid "Save buddylist to file..."
 msgstr "Konservu kunulliston en dosiero..."
@@ -3305,7 +3213,6 @@ msgstr "Malkonekteblas"
 msgid "Unable to connect: %s"
 msgstr "Ne konekteblas: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Servilo fermis la konekton"
 
@@ -3344,6 +3251,10 @@ msgstr "Kodoprezentoj"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Ekrannomo"
+
 msgid "Real name"
 msgstr "Vera nomo"
 
@@ -3353,6 +3264,14 @@ msgstr "Vera nomo"
 #.
 msgid "Use SSL"
 msgstr "Uzu SSL-n"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Aŭtentokontrolante"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Permesi plattekstan permeson tra malĉifritaj datumstrioj"
 
 msgid "Bad mode"
 msgstr "Malbona moduso"
@@ -3388,6 +3307,14 @@ msgstr " <i>(identiĝita)</i>"
 msgid "Nick"
 msgstr "Karesnomo"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Neniu nomo"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Komputilnomo"
+
 msgid "Currently on"
 msgstr "Aktuale ĉe"
 
@@ -3414,6 +3341,10 @@ msgstr "%s forviŝis la temon."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "La temo por %s estas: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3528,6 +3459,33 @@ msgstr "Karesnomo aŭ kanalo estas provizore ne disponebla."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops el %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Ne povis konekti al aŭtentokontrolo servilo: %s"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL aŭtentokontrolo malsukcesis"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL aŭtentokontrolo malsukcesis"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Misa pasvorto"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL aŭtentokontrolo malsukcesis"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "ago &lt;ago farenda&gt;:  Faru agon."
@@ -4145,6 +4103,9 @@ msgstr "Dato"
 msgid "Already Registered"
 msgstr "Jam Registrita"
 
+msgid "Password"
+msgstr "Pasvorto"
+
 msgid "Unregister"
 msgstr "Forregistru"
 
@@ -4280,6 +4241,9 @@ msgstr "Via pasvorto estas ŝanĝita."
 
 msgid "Error changing password"
 msgstr "Erara ŝanĝante pasvorton"
+
+msgid "Password (again)"
+msgstr "Pasvorto (denove)"
 
 msgid "Change XMPP Password"
 msgstr "Ŝanĝu XMPP Pasvorton"
@@ -4503,6 +4467,10 @@ msgstr "Ne eblas eki medion kun %s, malvalida JID"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Ne eblas eki medion kun %s, uzanto ne estas konektita"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Ne eblas eki medion kun %s, uzanto ne estas konektita"
 
 #, c-format
@@ -5874,6 +5842,11 @@ msgstr "Pri mi"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Forigu Staton"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -5987,6 +5960,16 @@ msgstr "Pri mi"
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr ""
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Ne eblas ŝargi kromaĵon"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Dosiero malfermeblas."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6113,11 +6096,6 @@ msgstr "Senditaj Mesaĝoj"
 msgid "Rejection Message"
 msgstr "Ricevitaj Mesaĝoj"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Meza Nomo"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Ne disponebla"
@@ -6146,6 +6124,35 @@ msgid "Connect via HTTP"
 msgstr "Konekti per TCP"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+msgid "Married"
+msgstr ""
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Invitu"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Departemento"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6211,6 +6218,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP Mesaĝo Eraro"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -9497,7 +9508,6 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr ""
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10114,15 +10124,15 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Piĝin Interreta Mesaĝilo"
 
 msgid "Internet Messenger"
 msgstr "Interreta Mesaĝilo"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Piĝin Interreta Mesaĝilo"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11163,6 +11173,11 @@ msgstr "Nelegitaj mesaĝoj"
 msgid "New Event"
 msgstr "Nova Evento"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr ""
 
@@ -11269,7 +11284,8 @@ msgstr "retestro"
 msgid "win32 port"
 msgstr "win32 portebliĝo"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -11307,6 +11323,9 @@ msgstr "Araba"
 #, fuzzy
 msgid "Assamese"
 msgstr "Ludoj"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Belorusa Latina"
@@ -11435,6 +11454,9 @@ msgstr "Kurda"
 msgid "Lao"
 msgstr "Laŭa"
 
+msgid "Lithuanian"
+msgstr "Litova"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Svahila"
@@ -11460,6 +11482,9 @@ msgstr "Guĝarata"
 #, fuzzy
 msgid "Malay"
 msgstr "Malina"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Bokmål Norvega"
@@ -11513,6 +11538,10 @@ msgstr "Albana"
 msgid "Serbian"
 msgstr "Serba"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Belorusa Latina"
+
 msgid "Sinhala"
 msgstr "Sinhala"
 
@@ -11531,9 +11560,6 @@ msgstr "Telugua"
 msgid "Thai"
 msgstr "Taja"
 
-msgid "Turkish"
-msgstr "Turka"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "Armena"
@@ -11543,9 +11569,6 @@ msgstr "Urdua"
 
 msgid "Vietnamese"
 msgstr "Vjetnama"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh kaj la Gnome-Vi Teamo"
 
 msgid "Simplified Chinese"
 msgstr "Simpligita Ĉina"
@@ -11559,8 +11582,11 @@ msgstr "Tradicia Ĉina"
 msgid "Amharic"
 msgstr "Amhara"
 
-msgid "Lithuanian"
-msgstr "Litova"
+msgid "Turkish"
+msgstr "Turka"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh kaj la Gnome-Vi Teamo"
 
 #, fuzzy, c-format
 msgid ""
@@ -11589,7 +11615,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12265,6 +12290,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "La 'Mana' foliumilo komando estis elektita, sed nenia komando estis difinita."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "La retumila komando \"%s\" estas malvalida."
 
 msgid "No message"
 msgstr "Neniu mesaĝo"
@@ -13247,11 +13276,11 @@ msgstr ""
 msgid "Pidgin smileys"
 msgstr "Piĝinaj ridmienoj"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr ""
-
 msgid "none"
 msgstr "neniu"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr ""
 
 msgid "Small"
 msgstr "Malgranda"
@@ -14171,7 +14200,7 @@ msgstr "Montru iChat-stilajn tempomarkojn ĉiuj N minutoj."
 msgid "Timestamp Format Options"
 msgstr "Tempomarko Formato Opcioj"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "_Devigi 24-horan tempoformaton"
 
@@ -14224,6 +14253,61 @@ msgid ""
 msgstr ""
 "Tiu kromaĵo ebligas la uzanto agordi konversaciajn kaj protokolajn mesaĝajn "
 "tempmarkajn formatojn."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Babilejo lokaĵaro"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Nur kiam iun diras vian uzantnomon"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Konservu Piktogramon"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Nombro de konversacioj po fenestro"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Mesaĝo sendita"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Ŝanĝu Informon"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
 
 #, fuzzy
 msgid "Audio"
@@ -14405,23 +14489,65 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Tiu karesnomo \"%s\" jam estas uzata."
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Piĝin Interreta Mesaĝilo"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Rultempa Versio"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Ligilo"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Labortablo Aprioro"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Eko"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Loko"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -14429,29 +14555,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "Labortablo Aprioro"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "_Tenilo:"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -14462,79 +14594,68 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Rultempa Versio"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Loko"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Piĝin Interreta Mesaĝilo"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Ligilo"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Eko"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "Tiu karesnomo \"%s\" jam estas uzata."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "_Tenilo:"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Pasvortoj ne akordas"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Nova Gadu-Gadu-a Konto Registrita"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Registro pleniĝis sukcese!"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Registru Novan Gadu-Gadu-an Konton"
+
+#~ msgid "Current password"
+#~ msgstr "Aktuala pasvorto"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Pasvorto (retajpu)"
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Ŝanĝu Gadu-Gadu Pasvorton"
+
+#~ msgid "Change password..."
+#~ msgstr "Ŝanĝu pasvorton..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Alŝutu kunulliston al Servilo"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Elŝutu kunulliston el Servilo"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Forigu kunulliston de Servilo"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Meza Nomo"
 
 #~ msgid "Connect"
 #~ msgstr "Kontaktu"
@@ -14682,9 +14803,6 @@ msgstr ""
 
 #~ msgid "Modify Extended Information"
 #~ msgstr "Ŝanĝi Detalan Informon"
-
-#~ msgid "Modify Information"
-#~ msgstr "Ŝanĝu Informon"
 
 #~ msgid "Update"
 #~ msgstr "Aktualigi"
@@ -15389,9 +15507,6 @@ msgstr ""
 
 #~ msgid "Available Message"
 #~ msgstr "Disponeblaj Mesaĝoj"
-
-#~ msgid "Screen name"
-#~ msgstr "Ekrannomo"
 
 #~ msgid "Away Message"
 #~ msgstr "Formesaĝo"

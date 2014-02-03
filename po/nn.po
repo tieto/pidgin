@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-21 22:24-0800\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2014-01-21 08:25+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
@@ -11601,6 +11601,9 @@ msgstr "Arabisk"
 msgid "Assamese"
 msgstr "Assamesisk"
 
+msgid "Asturian"
+msgstr ""
+
 msgid "Belarusian Latin"
 msgstr "Kviterussisk latinsk"
 
@@ -14553,6 +14556,56 @@ msgstr ""
 "Dette programtillegget tillèt at brukaren tilpassar tidsstempelformata for "
 "samtalar og loggmeldingar."
 
+#. Alerts
+msgid "Chatroom alerts"
+msgstr ""
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr ""
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Tal på samtalar per vindauge"
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr ""
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr ""
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
+
 msgid "Audio"
 msgstr "Lyd"
 
@@ -14702,55 +14755,6 @@ msgid ""
 msgstr ""
 "Tilbyr val som berre gjeld Pidgin under Windows, slik som festing av "
 "vennelista."
-
-#. Alerts
-msgid "Chatroom alerts"
-msgstr ""
-
-msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
-
-#. Launcher integration
-msgid "Launcher Icon"
-msgstr ""
-
-msgid "_Disable launcher integration"
-msgstr ""
-
-msgid "Show number of unread _messages on launcher icon"
-msgstr ""
-
-msgid "Show number of unread _conversations on launcher icon"
-msgstr ""
-
-#. Messaging menu integration
-msgid "Messaging Menu"
-msgstr ""
-
-msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
-
-msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-msgid "Unity Integration"
-msgstr ""
-
-#. *< name
-#. *< version
-#. *  summary
-msgid "Provides integration with Unity."
-msgstr ""
-
-#. *  description
-msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Utlogga</font>"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2007-10-01 16:15+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
@@ -2112,56 +2112,8 @@ msgstr "%s (으)로의 파일 전송에 실패했습니다."
 msgid "File transfer from %s failed."
 msgstr "%s (으)로부터의 파일 전송에 실패했습니다."
 
-msgid "Run the command in a terminal"
-msgstr "터미널로부터 명령 수행"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" 용 핸들"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" 용 핸들"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" 용 핸들"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" 용 핸들"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" 용 핸들"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" 용 핸들"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" 용 핸들"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" 용 핸들"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "지정한 명령으로 \"aim\" URL을 처리할까 말까"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2169,50 +2121,14 @@ msgid ""
 msgstr ""
 "\"command\" 키로 지정한 명령으로 \"aim\" URL을 처리하는 경우에는 TRUE 입니다."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"gg\" URL을 처리하는 경우에는 TRUE 입니다."
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" 용 핸들"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"icq\" URL을 처리하는 경우에는 TRUE 입니다."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"irc\" URL을 처리하는 경우에는 TRUE 입니다."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"msnim\" URL을 처리하는 경우에는 TRUE 입니"
-"다."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"sip\" URL을 처리하는 경우에는 TRUE 입니다."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"xmpp\" URL을 처리하는 경우에는 TRUE 입니"
-"다."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"ymsgr\" URL을 처리하는 경우에는 TRUE 입니"
-"다."
+msgid "Run the command in a terminal"
+msgstr "터미널로부터 명령 수행"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2221,29 +2137,113 @@ msgstr ""
 "이 형식의 URL을 처리하기 위해 사용하는 명령을 터미널로부터 시작하는 경우에는 "
 "TRUE 입니다."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "지정한 명령으로 \"aim\" URL을 처리할까 말까"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "지정한 명령으로 \"gg\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"gg\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" 용 핸들"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "지정한 명령으로 \"icq\" URL을 처리할까 말까"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"icq\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" 용 핸들"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "지정한 명령으로 \"irc\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"irc\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" 용 핸들"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "지정한 명령으로 \"msnim\" URL을 처리할까 말까"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"msnim\" URL을 처리하는 경우에는 TRUE 입니"
+"다."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" 용 핸들"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "지정한 명령으로 \"sip\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"sip\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" 용 핸들"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "지정한 명령으로 \"xmpp\" URL을 처리할까 말까"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"xmpp\" URL을 처리하는 경우에는 TRUE 입니"
+"다."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" 용 핸들"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "지정한 명령으로 \"ymsgr\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"ymsgr\" URL을 처리하는 경우에는 TRUE 입니"
+"다."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" 용 핸들"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">로그 기록에는 읽기 함수가 없습니다.</font></b>"
@@ -2301,6 +2301,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "원인을 알 수 없는 접속 오류가 발생했습니다: %s"
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "원인을 알 수 없는 접속 오류가 발생했습니다: %s"
 
 msgid "Error with your microphone"
@@ -3112,12 +3116,6 @@ msgid ""
 "invalid."
 msgstr "지정한 프록시에 대한 호스트명 또는 포트 번호가 올바르지 않습니다."
 
-msgid "Token Error"
-msgstr "토큰 오류"
-
-msgid "Unable to fetch the token.\n"
-msgstr "토큰을 취득할 수 없습니다.\n"
-
 msgid "Save Buddylist..."
 msgstr "친구 목록 저장..."
 
@@ -3145,43 +3143,6 @@ msgstr "친구 목록 저장..."
 
 msgid "Load buddylist from file..."
 msgstr "친구 목록 가져오기..."
-
-#, fuzzy
-msgid "You must fill in all registration fields"
-msgstr "등록 정보 항목을 입력해 주십시오."
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "비밀번호가 일치하지 않습니다."
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "새 계정을 등록할 수 없습니다. 오류가 발생했습니다.\n"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "새로운 Gadu-Gadu 계정을 등록했습니다."
-
-msgid "Registration completed successfully!"
-msgstr "등록이 성공적으로 완료되었습니다!"
-
-msgid "Password"
-msgstr "비밀번호"
-
-msgid "Password (again)"
-msgstr "비밀번호 (재확인)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha"
-msgstr "이미지 저장"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "새로운 Gadu-Gadu 계정 등록"
-
-msgid "Please, fill in the following fields"
-msgstr "다음의 빈 칸을 입력해 주십시오."
 
 msgid "City"
 msgstr "도시"
@@ -3211,39 +3172,6 @@ msgstr "친구 찾기"
 
 msgid "Please, enter your search criteria below"
 msgstr "검색 조건을 입력해 주십시오."
-
-msgid "Fill in the fields."
-msgstr "다음의 빈 칸을 입력해 주십시오."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "현재 사용하고 있는 비밀번호와 지정한 비밀번호가 일치하지 않았습니다."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "비밀번호를 변경할 수 없습니다. 오류가 발생했습니다.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Gadu-Gadu 계정의 비밀번호 변경"
-
-msgid "Password was changed successfully!"
-msgstr "비밀번호를 성공적으로 변경했습니다!"
-
-msgid "Current password"
-msgstr "현재의 비밀번호"
-
-msgid "Password (retype)"
-msgstr "비밀번호 (재입력)"
-
-msgid "Enter current token"
-msgstr "현재의 토큰을 입력해 주십시오."
-
-msgid "Current token"
-msgstr "현재의 토큰"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "현재 사용하고 있는 비밀번호와 UIN 의 새 비밀번호를 입력해 주십시오:"
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu 비밀번호 변경"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3319,18 +3247,6 @@ msgstr "검색 조건에 일치하는 사용자가 존재하지 않았습니다.
 msgid "Unable to read from socket"
 msgstr "소켓으로부터 읽을 수 없습니다."
 
-msgid "Buddy list downloaded"
-msgstr "친구 목록을 다운로드 했습니다."
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "친구 목록을 서버로부터 다운로드 했습니다."
-
-msgid "Buddy list uploaded"
-msgstr "친구 목록을 업로드 했습니다."
-
-msgid "Your buddy list was stored on the server."
-msgstr "친구 목록을 서버에 업로드 했습니다."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3367,18 +3283,6 @@ msgstr "서버에 접속되어 있지 않습니다."
 
 msgid "Find buddies..."
 msgstr "친구 찾기..."
-
-msgid "Change password..."
-msgstr "비밀번호 변경..."
-
-msgid "Upload buddylist to Server"
-msgstr "친구 목록 업로드"
-
-msgid "Download buddylist from Server"
-msgstr "친구 목록 다운로드"
-
-msgid "Delete buddylist from Server"
-msgstr "서버로부터 친구 목록 삭제"
 
 msgid "Save buddylist to file..."
 msgstr "친구 목록 내보내기..."
@@ -3493,7 +3397,7 @@ msgstr "접속할 수 없습니다."
 msgid "Unable to connect: %s"
 msgstr "%s (으)로 접속할 수 없습니다."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "서버가 접속을 닫았습니다."
 
@@ -3532,6 +3436,10 @@ msgstr "인코딩"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "아이디"
+
 msgid "Real name"
 msgstr "실명"
 
@@ -3541,6 +3449,14 @@ msgstr "실명"
 #.
 msgid "Use SSL"
 msgstr "SSL 사용"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "인증 중"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "암호화 되어 있지 않은 스트림을 통한 문자열 인증 허가"
 
 msgid "Bad mode"
 msgstr "모드 오류"
@@ -3577,6 +3493,14 @@ msgstr " <i>(identified)</i>"
 msgid "Nick"
 msgstr "별명"
 
+#, fuzzy
+msgid "Login name"
+msgstr "이름 없음"
+
+#, fuzzy
+msgid "Host name"
+msgstr "호스트명"
+
 msgid "Currently on"
 msgstr "채널"
 
@@ -3603,6 +3527,10 @@ msgstr "%s 님이 주제를 지웠습니다."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s 의 주제: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3718,6 +3646,33 @@ msgstr "일시적으로 별명 또는 채널을 이용할 수 없습니다."
 #, c-format
 msgid "Wallops from %s"
 msgstr "%s 님으로부터의 wallops 입니다."
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "SILC 클라이언트 접속을 초기화 할 수 없습니다."
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "인증에 실패했습니다."
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "인증에 실패했습니다."
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "비밀번호가 틀립니다."
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "인증에 실패했습니다."
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;실행할 동작&gt;:  동작을 실행합니다."
@@ -4412,6 +4367,9 @@ msgstr "날짜"
 msgid "Already Registered"
 msgstr "이미 등록되어 있습니다."
 
+msgid "Password"
+msgstr "비밀번호"
+
 #, fuzzy
 msgid "Unregister"
 msgstr "등록"
@@ -4557,6 +4515,9 @@ msgstr "비밀번호가 변경되었습니다."
 
 msgid "Error changing password"
 msgstr "비밀번호 변경 오류"
+
+msgid "Password (again)"
+msgstr "비밀번호 (재확인)"
 
 #, fuzzy
 msgid "Change XMPP Password"
@@ -4786,6 +4747,11 @@ msgstr "%s 님에게 메시지를 보낼 수 없습니다."
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr ""
+"%s 님에게 파일을 전송하지 못했습니다. 사용자는 파일 전송을 지원하지 않습니다."
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr ""
 "%s 님에게 파일을 전송하지 못했습니다. 사용자는 파일 전송을 지원하지 않습니다."
 
@@ -6260,6 +6226,11 @@ msgstr "%s 정보"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "상태 삭제"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6375,6 +6346,16 @@ msgstr "%s 정보"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "메시지가 너무 깁니다."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "플러그인을 읽을 수 없었습니다."
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "파일을 열 수 없습니다."
 
 #, fuzzy
 msgid ""
@@ -6505,11 +6486,6 @@ msgstr "상태 메시지"
 msgid "Rejection Message"
 msgstr "받은 메시지"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "가운데 이름"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "이용 불가"
@@ -6538,6 +6514,37 @@ msgid "Connect via HTTP"
 msgstr "접속"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "참가"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "지루함"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "초대"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "부서"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6602,6 +6609,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "Jabber 메시지 오류"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -10138,7 +10149,6 @@ msgstr ""
 "알 수 없는 오류 번호 %d 입니다. Yahoo! 웹사이트로 로그인하면 해결될 수도 있습"
 "니다."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10807,15 +10817,15 @@ msgstr ""
 "%s 을(를) 읽는 중 오류가 발생했습니다. 이 정보는 읽을 수 없습니다. 또한, 오래"
 "된 파일 이름을 \"%s~\" (으)로 변경했습니다."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin 인터넷 메신저"
 
 msgid "Internet Messenger"
 msgstr "인터넷 메신저"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin 인터넷 메신저"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11928,6 +11938,11 @@ msgstr "읽지 않은 메시지"
 msgid "New Event"
 msgstr "새 이벤트"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 #, fuzzy
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "비우기: 대화 창에 있는 이전의 메시지를 삭제합니다."
@@ -12036,7 +12051,8 @@ msgstr "개발자/웹마스터"
 msgid "win32 port"
 msgstr "Win32 포팅"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -12074,6 +12090,9 @@ msgstr "아라비아어"
 #, fuzzy
 msgid "Assamese"
 msgstr "부끄러움"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr ""
@@ -12210,6 +12229,9 @@ msgstr "쿠르드어"
 msgid "Lao"
 msgstr "사자자리"
 
+msgid "Lithuanian"
+msgstr "리투아니아어"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Nihilist"
@@ -12237,6 +12259,9 @@ msgstr "구자라티어"
 #, fuzzy
 msgid "Malay"
 msgstr "남"
+
+msgid "Burmese"
+msgstr ""
 
 #, fuzzy
 msgid "Bokmål Norwegian"
@@ -12294,6 +12319,10 @@ msgid "Serbian"
 msgstr "세르비아어"
 
 #, fuzzy
+msgid "Serbian Latin"
+msgstr "세르비아어"
+
+#, fuzzy
 msgid "Sinhala"
 msgstr "파티"
 
@@ -12312,9 +12341,6 @@ msgstr "텔루구어"
 msgid "Thai"
 msgstr "타이어"
 
-msgid "Turkish"
-msgstr "터키어"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "루마니아어"
@@ -12324,9 +12350,6 @@ msgstr ""
 
 msgid "Vietnamese"
 msgstr "베트남어"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh 및 Gnome-Vi 팀"
 
 msgid "Simplified Chinese"
 msgstr "중국어 (간체)"
@@ -12340,8 +12363,11 @@ msgstr "중국어 (번체)"
 msgid "Amharic"
 msgstr "아무하라어"
 
-msgid "Lithuanian"
-msgstr "리투아니아어"
+msgid "Turkish"
+msgstr "터키어"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh 및 Gnome-Vi 팀"
 
 #, fuzzy, c-format
 msgid ""
@@ -12368,7 +12394,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -13076,6 +13101,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "브라우저 명령이 '수동설정'으로 되어 있지만, 명령이 지정되어 있지 않습니다."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "브라우저 명령 \"%s\" 이(가) 올바르지 않습니다."
 
 #, fuzzy
 msgid "No message"
@@ -14134,12 +14163,12 @@ msgstr ""
 msgid "Pidgin smileys"
 msgstr ""
 
-msgid "Selecting this disables graphical emoticons."
-msgstr ""
-
 #, fuzzy
 msgid "none"
 msgstr "(없음)"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr ""
 
 #, fuzzy
 msgid "Small"
@@ -15123,7 +15152,7 @@ msgstr "iChat 형식의 타임스탬프를 N분 마다 대화에 삽입합니다
 msgid "Timestamp Format Options"
 msgstr "타임스탬프 서식 설정"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "강제적으로 24-시간제 적용(_F)"
 
@@ -15176,6 +15205,63 @@ msgid ""
 msgstr ""
 "이 플러그인을 사용하면 대화나 로그 메시지에 부여하는 타임스탬프의 형식을 정의"
 "할 수 있습니다."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "대화실 위치"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t누군가가 나의 아이디를 호출할 때만(_O)"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "아이콘 저장"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "창마다 대화 탭의 개수"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "메시지를 보냈습니다."
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution과의 연대"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Evolution과의 연대 기능을 제공합니다."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Evolution과의 연대 기능을 제공합니다."
 
 #, fuzzy
 msgid "Audio"
@@ -15365,53 +15451,98 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "이것은 XMPP 서버 또는 클라이언트를 디버그 할 때에 편리한 플러그인입니다."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
+msgid "The installer is already running."
 msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "가임이 사용하는 멀티 플랫폼 GUI 툴킷"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
-#. Installer Subsection Detailed Description
-msgid "Core Pidgin files and dlls"
-msgstr "가임의 코어 파일과 dll"
-
-#. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
 msgstr ""
 
-#. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
 msgstr ""
 
 #. Installer Subsection Text
-msgid "Debug Symbols (for reporting crashes)"
-msgstr ""
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "가임 메신저 (필수)"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ 런타임 환경 (필수)"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "상태 문자"
 
 #. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "기본값 적용(_A)"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "시작"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "위치"
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "가임의 코어 파일과 dll"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "가임이 사용하는 멀티 플랫폼 GUI 툴킷"
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15422,54 +15553,22 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ 런타임 환경 (필수)"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "위치"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "가임 메신저 (필수)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "상태 문자"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "시작"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-msgid "The installer is already running."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
 msgstr ""
 
 msgid ""
@@ -15479,21 +15578,104 @@ msgstr ""
 "언인스톨러가 가임의 레지스트리 엔트리를 찾을 수 없습니다.$\\r이 프로그램을 다"
 "른 유저 권한으로 설치한 것 같습니다."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr ""
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
+
+#~ msgid "Token Error"
+#~ msgstr "토큰 오류"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "토큰을 취득할 수 없습니다.\n"
+
+#, fuzzy
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "등록 정보 항목을 입력해 주십시오."
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "비밀번호가 일치하지 않습니다."
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "새 계정을 등록할 수 없습니다. 오류가 발생했습니다.\n"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "새로운 Gadu-Gadu 계정을 등록했습니다."
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "등록이 성공적으로 완료되었습니다!"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "이미지 저장"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "새로운 Gadu-Gadu 계정 등록"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "다음의 빈 칸을 입력해 주십시오."
+
+#~ msgid "Fill in the fields."
+#~ msgstr "다음의 빈 칸을 입력해 주십시오."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr ""
+#~ "현재 사용하고 있는 비밀번호와 지정한 비밀번호가 일치하지 않았습니다."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "비밀번호를 변경할 수 없습니다. 오류가 발생했습니다.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Gadu-Gadu 계정의 비밀번호 변경"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "비밀번호를 성공적으로 변경했습니다!"
+
+#~ msgid "Current password"
+#~ msgstr "현재의 비밀번호"
+
+#~ msgid "Password (retype)"
+#~ msgstr "비밀번호 (재입력)"
+
+#~ msgid "Enter current token"
+#~ msgstr "현재의 토큰을 입력해 주십시오."
+
+#~ msgid "Current token"
+#~ msgstr "현재의 토큰"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "현재 사용하고 있는 비밀번호와 UIN 의 새 비밀번호를 입력해 주십시오:"
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu 비밀번호 변경"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "친구 목록을 다운로드 했습니다."
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "친구 목록을 서버로부터 다운로드 했습니다."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "친구 목록을 업로드 했습니다."
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "친구 목록을 서버에 업로드 했습니다."
+
+#~ msgid "Change password..."
+#~ msgstr "비밀번호 변경..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "친구 목록 업로드"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "친구 목록 다운로드"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "서버로부터 친구 목록 삭제"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "가운데 이름"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Sametime 커뮤니티 서버를 지정해 주십시오."
@@ -16628,10 +16810,6 @@ msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
 #~ msgstr "이메일 주소"
 
 #, fuzzy
-#~ msgid "Jingle"
-#~ msgstr "참가"
-
-#, fuzzy
 #~ msgid "User Nickname"
 #~ msgstr "사용자명"
 
@@ -16736,10 +16914,6 @@ msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "호스트명을 해석할 수 없었습니다."
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "비밀번호가 틀립니다."
 
 #, fuzzy
 #~ msgid ""
@@ -17511,9 +17685,6 @@ msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
 
 #~ msgid "You have been signed off for an unknown reason."
 #~ msgstr "원인은 알 수 없지만, 접속이 끊어졌습니다."
-
-#~ msgid "Screen name"
-#~ msgstr "아이디"
 
 #~ msgid ""
 #~ "Your screen name is currently formatted as follows:\n"

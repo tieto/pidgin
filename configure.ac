@@ -2993,7 +2993,6 @@ AC_CONFIG_FILES([Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
 		   pidgin.desktop.in
-		   pidgin.spec
 		  ])
 AC_OUTPUT
 
