@@ -65,6 +65,7 @@ IGNORE_HFILES=\
 	plugins \
 	themes \
 	win32 \
+	getopt.h \
 	gtk3compat.h \
 	gtkinternal.h
 

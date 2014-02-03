@@ -24,7 +24,6 @@
     <title>Finch API Reference</title>
 
       <xi:include href="xml/finch.xml" />
-      <xi:include href="xml/getopt.xml" />
       <xi:include href="xml/gntaccount.xml" />
       <xi:include href="xml/gntblist.xml" />
       <xi:include href="xml/gntcertmgr.xml" />

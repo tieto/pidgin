@@ -64,6 +64,7 @@ IGNORE_HFILES=\
 	plugins \
 	test \
 	wms \
+	getopt.h \
 	gntinternal.h \
 	gntmarshal.h
 
