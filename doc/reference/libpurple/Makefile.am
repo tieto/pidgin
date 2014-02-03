@@ -68,11 +68,13 @@ IGNORE_HFILES=\
 	tests \
 	win32 \
 	backend-fs2.h \
+	dbus-define-api.h \
 	dbus-types.h \
+	glibcompat.h \
 	internal.h \
 	purple-client.h \
-	purple-client-bindings.h \
-	dbus-define-api.h
+	purple-client-bindings.h
+	valgrind.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
