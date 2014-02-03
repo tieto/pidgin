@@ -22,7 +22,7 @@
  * SECTION:conversation
  * @section_id: libpurple-conversation
  * @short_description: <filename>conversation.h</filename>
- * @title: Conversation base class
+ * @title: Conversation Base Class
  */
 
 #ifndef _PURPLE_CONVERSATION_H_

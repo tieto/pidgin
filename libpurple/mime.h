@@ -24,7 +24,7 @@
  * SECTION:mime
  * @section_id: libpurple-mime
  * @short_description: <filename>mime.h</filename>
- * @title: Multi-part MIME message parsing
+ * @title: Multi-part MIME Message Parsing
  *
  * Rudimentary parsing of multi-part MIME messages into more
  * accessible structures.

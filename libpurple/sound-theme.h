@@ -22,7 +22,7 @@
  * SECTION:sound-theme
  * @section_id: libpurple-sound-theme
  * @short_description: <filename>sound-theme.h</filename>
- * @title: Sound Theme abstact class
+ * @title: Sound Theme Abstact Class
  */
 
 #ifndef PURPLE_SOUND_THEME_H

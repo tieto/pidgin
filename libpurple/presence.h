@@ -23,7 +23,7 @@
  * SECTION:presence
  * @section_id: libpurple-presence
  * @short_description: <filename>presence.h</filename>
- * @title: Presence objects API
+ * @title: Presence Objects API
  *
  * This file contains the presence base type, account presence, and buddy
  * presence API.

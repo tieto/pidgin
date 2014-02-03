@@ -23,7 +23,7 @@
  * SECTION:md4hash
  * @section_id: libpurple-md4hash
  * @short_description: <filename>ciphers/md4hash.h</filename>
- * @title: MD4 hash
+ * @title: MD4 Hash
  */
 
 #ifndef PURPLE_MD4_HASH_H

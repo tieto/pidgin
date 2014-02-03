@@ -22,7 +22,7 @@
  * SECTION:conversationtypes
  * @section_id: libpurple-conversationtypes
  * @short_description: <filename>conversationtypes.h</filename>
- * @title: Chat and IM Conversation objects
+ * @title: Chat and IM Conversation Objects
  */
 
 #ifndef _PURPLE_CONVERSATION_TYPES_H_

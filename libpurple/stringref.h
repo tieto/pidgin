@@ -25,7 +25,7 @@
  * SECTION:stringref
  * @section_id: libpurple-stringref
  * @short_description: <filename>stringref.h</filename>
- * @title: Reference-counted immutable strings
+ * @title: Reference-counted Immutable Strings
  */
 
 #ifndef _PURPLE_STRINGREF_H_

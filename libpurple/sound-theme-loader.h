@@ -22,7 +22,7 @@
  * SECTION:sound-theme-loader
  * @section_id: libpurple-sound-theme-loader
  * @short_description: <filename>sound-theme-loader.h</filename>
- * @title: Sound Theme Loader class
+ * @title: Sound Theme Loader Class
  */
 
 #ifndef PURPLE_SOUND_THEME_LOADER_H

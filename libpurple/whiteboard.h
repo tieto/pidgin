@@ -22,7 +22,7 @@
  * SECTION:whiteboard
  * @section_id: libpurple-whiteboard
  * @short_description: <filename>whiteboard.h</filename>
- * @title: Whiteboard object
+ * @title: Whiteboard Object
  */
 
 #ifndef _PURPLE_WHITEBOARD_H_

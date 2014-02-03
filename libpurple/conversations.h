@@ -22,7 +22,7 @@
  * SECTION:conversations
  * @section_id: libpurple-conversations
  * @short_description: <filename>conversations.h</filename>
- * @title: Conversations subsystem API
+ * @title: Conversations Subsystem API
  * @see_also: <link linkend="chapter-signals-conversation">Conversation signals</link>
  */
 

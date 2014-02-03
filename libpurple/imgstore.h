@@ -22,7 +22,7 @@
  * SECTION:imgstore
  * @section_id: libpurple-imgstore
  * @short_description: <filename>imgstore.h</filename>
- * @title: In-memory image data utility functions
+ * @title: In-memory Image data Utility functions
  * @see_also: <link linkend="chapter-signals-imgstore">Stored Image signals</link>
  *
  * This file contains utility functions for reference-counted in-memory image

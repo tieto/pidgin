@@ -22,7 +22,7 @@
  * SECTION:e2ee
  * @section_id: libpurple-e2ee
  * @short_description: <filename>e2ee.h</filename>
- * @title: End-to-end encryption API
+ * @title: End-to-end Encryption API
  */
 
 #ifndef _PURPLE_E2EE_H_
