@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2010-02-18 11:24+0530\n"
 "Last-Translator: Runa Bhattacharjee <runab@redhat.com>\n"
 "Language-Team: Bengali INDIA <anubad@lists.ankur.org.in>\n"
@@ -2039,56 +2039,8 @@ msgstr "%s-এ ফাইল বিনিময় বাতিল করা হয়�
 msgid "File transfer from %s failed."
 msgstr "%s থেকে ফাইল পরিবহণ বাতিল করা হয়েছে।"
 
-msgid "Run the command in a terminal"
-msgstr "টার্মিন্যালের মধ্যে কমান্ড সঞ্চালিত হবে"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"aim\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"gg\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"icq\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"irc\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"msnim\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"sip\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"xmpp\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "সক্রিয় থাকলে, \"ymsgr\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" রূপের URL-গুলির হ্যান্ডলার"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" রূপের URL-গুলির হ্যান্ডলার"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" রূপের URL-গুলির হ্যান্ডলার"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" রূপের URL-গুলির হ্যান্ডলার"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" রূপের URL-গুলির হ্যান্ডলার"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" রূপের URL-গুলির হ্যান্ডলার"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" রূপের URL-গুলির হ্যান্ডলার"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" রূপের URL-গুলির হ্যান্ডলার"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"aim\" URL পরিচালিত হবে কি না"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2097,54 +2049,14 @@ msgstr ""
 "\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"aim\" URL পরিচালিত হলে মান "
 "True (সত্য) হবে।"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"gg\" URL পরিচালিত হলে মান "
-"True (সত্য) হবে।"
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" রূপের URL-গুলির হ্যান্ডলার"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"icq\" URL পরিচালিত হলে মান "
-"True (সত্য) হবে।"
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"aim\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"irc\" URL পরিচালিত হলে মান "
-"True (সত্য) হবে।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"msnim\" URL পরিচালিত হলে মান "
-"True (সত্য) হবে।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"sip\" URL পরিচালিত হলে মান "
-"True (সত্য) হবে।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"xmpp\" URL পরিচালিত হলে মান "
-"True (সত্য) হবে।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"ymsgr\" URL পরিচালিত হলে মান "
-"True (সত্য) হবে।"
+msgid "Run the command in a terminal"
+msgstr "টার্মিন্যালের মধ্যে কমান্ড সঞ্চালিত হবে"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2153,29 +2065,117 @@ msgstr ""
 "এই ধরনের URL পরিচালনার জন্য চিহ্নিত কমান্ড টার্মিন্যালের মধ্যে সঞ্চালনার জন্য ধার্য "
 "করা হলে মান True (সত্য) হবে।"
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"aim\" URL পরিচালিত হবে কি না"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"gg\" URL পরিচালিত হবে কি না"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"gg\" URL পরিচালিত হলে মান "
+"True (সত্য) হবে।"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" রূপের URL-গুলির হ্যান্ডলার"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"gg\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"icq\" URL পরিচালিত হবে কি না"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"icq\" URL পরিচালিত হলে মান "
+"True (সত্য) হবে।"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" রূপের URL-গুলির হ্যান্ডলার"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"icq\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"irc\" URL পরিচালিত হবে কি না"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"irc\" URL পরিচালিত হলে মান "
+"True (সত্য) হবে।"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" রূপের URL-গুলির হ্যান্ডলার"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"irc\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"msnim\" URL পরিচালিত হবে কি না"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"msnim\" URL পরিচালিত হলে মান "
+"True (সত্য) হবে।"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" রূপের URL-গুলির হ্যান্ডলার"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"msnim\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"sip\" URL পরিচালিত হবে কি না"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"sip\" URL পরিচালিত হলে মান "
+"True (সত্য) হবে।"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" রূপের URL-গুলির হ্যান্ডলার"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"sip\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"xmpp\" URL পরিচালিত হবে কি না"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"xmpp\" URL পরিচালিত হলে মান "
+"True (সত্য) হবে।"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" রূপের URL-গুলির হ্যান্ডলার"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"xmpp\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "নির্দিষ্ট কমান্ড সাহায্যে \"ymsgr\" URL পরিচালিত হবে কি না"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"\"command\" কি দ্বারা নির্ধারিত কমান্ডের সাহায্যে \"ymsgr\" URL পরিচালিত হলে মান "
+"True (সত্য) হবে।"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" রূপের URL-গুলির হ্যান্ডলার"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "সক্রিয় থাকলে, \"ymsgr\" URL ব্যবস্থাপনার জন্য ব্যবহারযোগ্য কমান্ড।"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2237,6 +2237,10 @@ msgstr ""
 "পছন্দ নির্ধারিত হয়েছে।"
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Farsight2 সংক্রান্ত একটি অসংশোধনযোগ্য ত্রুটি দেখা দিয়েছে।"
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Farsight2 সংক্রান্ত একটি অসংশোধনযোগ্য ত্রুটি দেখা দিয়েছে।"
 
 msgid "Error with your microphone"
@@ -3043,12 +3047,6 @@ msgid ""
 "invalid."
 msgstr "চিহ্নিত প্রক্সির ধরনের জন্য চিহ্নিত হোস্টের নাম অথবা পোর্টের সংখ্যা বৈধ নয়।"
 
-msgid "Token Error"
-msgstr "টোকেনে ত্রুটি"
-
-msgid "Unable to fetch the token.\n"
-msgstr "টোকেন প্রাপ্ত করতে ব্যর্থ।\n"
-
 msgid "Save Buddylist..."
 msgstr "বন্ধুর তালিকা সংরক্ষণ করুন..."
 
@@ -3076,39 +3074,6 @@ msgstr "বন্ধুতালিকা সংরক্ষণ করুন..."
 
 msgid "Load buddylist from file..."
 msgstr "ফাইল থেকে বন্ধুতালিকা লোড করুন..."
-
-msgid "You must fill in all registration fields"
-msgstr "নিবন্ধনের জন্য সকল ক্ষেত্রে মান পূরণ করা আবশ্যক"
-
-msgid "Passwords do not match"
-msgstr "পাসওয়ার্ডে গরমিল"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "নতুন অ্যাকাউন্ট নিবন্ধন করতে ব্যর্থ।  একটি অজানা ত্রুটি দেখা দিয়েছে।"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "নতুন Gadu-Gadu অ্যাকাউন্ট নিবন্ধিত হয়েছে"
-
-msgid "Registration completed successfully!"
-msgstr "সাফল্যের সাথে নিবন্ধন করা হয়েছে!"
-
-msgid "Password"
-msgstr "পাসওয়ার্ড"
-
-msgid "Password (again)"
-msgstr "পাসওয়ার্ড (পুনরায় লিখুন)"
-
-msgid "Enter captcha text"
-msgstr "ক্যাপচাতে প্রদর্শিত টেক্সট লিখুন"
-
-msgid "Captcha"
-msgstr "ক্যাপচা"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "নতুন Gadu-Gadu অ্যাকাউন্ট নিবন্ধন করুন"
-
-msgid "Please, fill in the following fields"
-msgstr "অনুগ্রহ করে নিম্নলিখিত ক্ষেত্রে মান পূরণ করুন"
 
 msgid "City"
 msgstr "শহর"
@@ -3138,39 +3103,6 @@ msgstr "বন্ধু অনুসন্ধান করুন"
 
 msgid "Please, enter your search criteria below"
 msgstr "অনুগ্রহ করে অনুসন্ধানের বিষয়বস্তু নীচে লিখুন"
-
-msgid "Fill in the fields."
-msgstr "ক্ষেত্রে মান পূরণ করুন।"
-
-msgid "Your current password is different from the one that you specified."
-msgstr "আপনার বর্তমান পাসওয়ার্ড ও চিহ্নিত পাসওয়ার্ড এক নয়।"
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "পাসওয়ার্ড পরিবর্তন করতে ব্যর্থ। ত্রুটি দেখা দিয়েছে।\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Gadu-Gadu অ্যাকাউন্টের জন্য পাসওয়ার্ড পরিবর্তন করুন"
-
-msgid "Password was changed successfully!"
-msgstr "সাফল্যের সাথে পাসওয়ার্ড পরিবর্তন করা হয়েছে!"
-
-msgid "Current password"
-msgstr "বর্তমান পাসওয়ার্ড"
-
-msgid "Password (retype)"
-msgstr "পাসওয়ার্ড (পুনরায় লিখুন)"
-
-msgid "Enter current token"
-msgstr "বর্তমান টোকেন লিখুন"
-
-msgid "Current token"
-msgstr "বর্তমান টোকেন"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "অনুগ্রহ করে UIN-র জন্য বর্তমান ও নতুন পাসওয়ার্ড লিখুন: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu পাসওয়ার্ড পরিবর্তন করুন"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3246,18 +3178,6 @@ msgstr "অনুসন্ধানের জন্য চিহ্নিত ম
 msgid "Unable to read from socket"
 msgstr "সকেট থেকে পড়তে ব্যর্থ"
 
-msgid "Buddy list downloaded"
-msgstr "বন্ধুর তালিকা ডাউনলোড করা হয়েছে"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "সার্ভার থেকে আপনার বন্ধুদের তালিকা ডাউনলোড করা হয়েছে।"
-
-msgid "Buddy list uploaded"
-msgstr "বন্ধুর তালিকা আপলোড করা হয়েছে"
-
-msgid "Your buddy list was stored on the server."
-msgstr "সার্ভারের মধ্যে বন্ধুর তালিকা সংরক্ষণ করা হয়েছে।"
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3293,18 +3213,6 @@ msgstr "সার্ভারের সাথে সংযুক্ত নয়"
 
 msgid "Find buddies..."
 msgstr "বন্ধু অনুসন্ধান করুন..."
-
-msgid "Change password..."
-msgstr "পাসওয়ার্ড পরিবর্তন করুন..."
-
-msgid "Upload buddylist to Server"
-msgstr "সার্ভারের মধ্যে বন্ধুর তালিকা আপলোড করুন"
-
-msgid "Download buddylist from Server"
-msgstr "সার্ভার থেকে বন্ধু তালিকা ডাউনলোড করুন"
-
-msgid "Delete buddylist from Server"
-msgstr "সার্ভার থেকে বন্ধু তালিকা মুছে ফেলুন"
 
 msgid "Save buddylist to file..."
 msgstr "ফাইলের মধ্যে বন্ধু তালিকা সংরক্ষণ করুন..."
@@ -3413,7 +3321,6 @@ msgstr "সংযোগ করতে ব্যর্থ"
 msgid "Unable to connect: %s"
 msgstr "সংযোগ করতে ব্যর্থ: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "সার্ভারের সাথে সংযোগ বন্ধ হয়েছে"
 
@@ -3452,6 +3359,10 @@ msgstr "এনকোডিং"
 msgid "Auto-detect incoming UTF-8"
 msgstr "আগমনকারী UTF-8 স্বয়ংক্রিয়ভাবে সনাক্ত করা হবে"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "অবৈধ নাম"
+
 msgid "Real name"
 msgstr "সঠিক নাম"
 
@@ -3461,6 +3372,14 @@ msgstr "সঠিক নাম"
 #.
 msgid "Use SSL"
 msgstr "SSL ব্যবহার করা হবে"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "অনুমোদন করা হচ্ছে"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "এনক্রিপ্ট না করা স্ট্রিমের মাধ্যমে প্লেইন-টেক্সট অনুমোদনের অনুমতি প্রদান করা হবে"
 
 msgid "Bad mode"
 msgstr "ভুল মোড"
@@ -3496,6 +3415,14 @@ msgstr " <i>(identified)</i>"
 msgid "Nick"
 msgstr "উপনাম"
 
+#, fuzzy
+msgid "Login name"
+msgstr "MXit লগ-ইনের নাম"
+
+#, fuzzy
+msgid "Host name"
+msgstr "হোস্ট-নেম"
+
 msgid "Currently on"
 msgstr "বর্তমানে চলমান"
 
@@ -3522,6 +3449,10 @@ msgstr "%s দ্বারা প্রসঙ্গ মুছে ফেলা �
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s-র বিষয় হল: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3636,6 +3567,33 @@ msgstr "উপনাম অথবা চ্যানেল সাময়িকভ
 #, c-format
 msgid "Wallops from %s"
 msgstr "%s থেকে প্রাপ্ত Wallops"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "SILC ক্লায়েন্ট সংযোগ আরম্ভ করতে ব্যর্থ"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL অনুমোদন ব্যর্থ"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL অনুমোদন ব্যর্থ"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "পাসওয়ার্ড সঠিক নয়"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL অনুমোদন ব্যর্থ"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt;:  কোনো কাজ সঞ্চালন করুন।"
@@ -4303,6 +4261,9 @@ msgstr "তারিখ"
 msgid "Already Registered"
 msgstr "পূর্বে নিবন্ধিত হয়েছে"
 
+msgid "Password"
+msgstr "পাসওয়ার্ড"
+
 msgid "Unregister"
 msgstr "নিবন্ধন বাতিল করুন"
 
@@ -4437,6 +4398,9 @@ msgstr "আপনার পাসওয়ার্ড পরিবর্তিত 
 
 msgid "Error changing password"
 msgstr "পাসওয়ার্ড পরিবর্তন করতে সমস্যা"
+
+msgid "Password (again)"
+msgstr "পাসওয়ার্ড (পুনরায় লিখুন)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP পাসওয়ার্ড পরিবর্তন করুন"
@@ -4661,6 +4625,10 @@ msgstr "%s-র সাথে মিডিয়া আরম্ভ করতে ব�
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "%s-র সাথে মিডিয়া আরম্ভ করতে ব্যর্থ: ব্যবহারকারী অন-লাইন নেই"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "%s-র সাথে মিডিয়া আরম্ভ করতে ব্যর্থ: ব্যবহারকারী অন-লাইন নেই"
 
 #, c-format
@@ -6097,6 +6065,11 @@ msgstr "নিজের পরিচয়"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "অবস্থা মুছে ফেলুন"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "মোবাইল ফোনের সংখ্যা"
@@ -6202,6 +6175,16 @@ msgstr "পরিচিতি..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "পাঠানোর জন্য চিহ্নিত ফাইলটি অত্যাধিক বড়!"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "প্লাগ-ইন লোড করতে ব্যর্থ"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "ফাইল খুলতে ব্যর্থ।"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6326,10 +6309,6 @@ msgstr "অবস্থাসূচক বার্তা"
 msgid "Rejection Message"
 msgstr "প্রাপ্ত বার্তা"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "আড়াল করা সংখ্যা"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "উপলব্ধ নয়"
@@ -6357,6 +6336,36 @@ msgstr "HTTP-র মাধ্যমে সংযোগ স্থাপন কর
 
 msgid "Enable splash-screen popup"
 msgstr "স্প্ল্যাশ-স্ক্রিনের পর্দা সক্রিয় করুন"
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "একঘেয়ে"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "আমন্ত্রিত"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "বিভাগ"
+
+msgid "Divorced"
+msgstr ""
 
 #, fuzzy
 msgid "Last Online"
@@ -6420,6 +6429,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "বার্তা সংক্রান্ত ত্রুটি"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "নির্ধারিত প্রোটোকল সহযোগে রি-ডিরেক্ট করা সম্ভব নয়"
@@ -9927,7 +9940,6 @@ msgstr ""
 "লগ-ইনের অত্যাধিক বিফল প্রয়াসের ফলে আপনার অ্যাকাউন্ট লক করা হয়েছে।  অনুগ্রহ করে "
 "Yahoo! ওয়েব-সাইটে লগ-ইন করার প্রচেষ্টা করুন।"
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "অজানা ত্রুটি ৫২। পুনরায় সংযোগ করা হলে সম্ভবত এই সমস্যা সমাধান করা যাবে।"
 
@@ -10575,17 +10587,17 @@ msgstr ""
 "আপনার %s পড়তে একটি সমস্যা দেখা দিয়েছে।  ফাইলটি লোড করা হয়নি ও পুরোনো ফাইলটির "
 "নাম %s~ রূপে পরিবর্তন করা হয়েছে।"
 
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin ইন্টারনেট মেসেঞ্জার"
+
+msgid "Internet Messenger"
+msgstr "ইন্টারনেট মেসেঞ্জার"
+
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 "IM-র মাধ্যমে আলাপ।  AIM, Google Talk, Jabber/XMPP, MSN, Yahoo এবং আরো অনেক "
 "সমর্থিত হয়"
-
-msgid "Internet Messenger"
-msgstr "ইন্টারনেট মেসেঞ্জার"
-
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin ইন্টারনেট মেসেঞ্জার"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11644,6 +11656,14 @@ msgstr "পাঠ না করা বার্তা"
 msgid "New Event"
 msgstr "নতুন ইভেন্ট"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"অ্যাকাউন্টের সংযোগ বিচ্ছিন্ন হয়েছে এবং আপনি বর্তমানে এই আলাপনে উপস্থিত নেই। "
+"অ্যাকাউন্ট পুনরায় সংযুক্ত হলে আপনি স্বয়ংক্রিভাবে সংশ্লিষ্ট আলাপনে পুনরায় যোগ দেবেন।"
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: পূর্ববর্তী কথোপকথোন মুছে ফেলা হয়"
 
@@ -11749,7 +11769,8 @@ msgstr "ওয়েব-মাস্টার"
 msgid "win32 port"
 msgstr "win32 পোর্ট"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "কা-হিং চেউং"
 
@@ -11787,6 +11808,9 @@ msgstr "আরবি"
 #, fuzzy
 msgid "Assamese"
 msgstr "লজ্জিত"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "বেলারুশিয়ান লাতিন"
@@ -11915,6 +11939,9 @@ msgstr "কুর্ডিশ"
 msgid "Lao"
 msgstr "লাও"
 
+msgid "Lithuanian"
+msgstr "লিথুয়ানিয়ান"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "সোয়াহিলি"
@@ -11938,6 +11965,9 @@ msgstr "মারাঠি"
 
 msgid "Malay"
 msgstr "মালায়"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "নরওয়েজিয়ান বোকমাল"
@@ -11990,6 +12020,10 @@ msgstr "আলবেনিয়ান"
 msgid "Serbian"
 msgstr "সার্বিয়ান"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "বেলারুশিয়ান লাতিন"
+
 msgid "Sinhala"
 msgstr "সিংহালা"
 
@@ -12008,9 +12042,6 @@ msgstr "তেলুগু"
 msgid "Thai"
 msgstr "থাই"
 
-msgid "Turkish"
-msgstr "তুর্কি"
-
 msgid "Ukranian"
 msgstr "ইউক্রেনিয়ান"
 
@@ -12019,9 +12050,6 @@ msgstr "উর্দু"
 
 msgid "Vietnamese"
 msgstr "ভিয়েতনামিস"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "টি.এম.থান ও Gnome-Vi দল"
 
 msgid "Simplified Chinese"
 msgstr "সরলীকৃত চিনা"
@@ -12035,8 +12063,11 @@ msgstr "পারম্পরিক চিনা"
 msgid "Amharic"
 msgstr "আমহারিক"
 
-msgid "Lithuanian"
-msgstr "লিথুয়ানিয়ান"
+msgid "Turkish"
+msgstr "তুর্কি"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "টি.এম.থান ও Gnome-Vi দল"
 
 #, fuzzy, c-format
 msgid ""
@@ -12065,7 +12096,7 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12776,6 +12807,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "'Manual' ব্রাউজার কমান্ড নির্বাচিত হয়েছে, কিন্তু কোনো কমান্ড নির্ধারণ করা হয়নি।"
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "\"%s\" ব্রাউজার কমান্ডটি বৈধ নয়।"
 
 msgid "No message"
 msgstr "কোনো বার্তা নেই"
@@ -13760,11 +13795,11 @@ msgstr "Pidgin-র টুল-টিপ"
 msgid "Pidgin smileys"
 msgstr "Pidgin-র হাসিমুখ"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "এটি নির্বাচন করা হলে গ্রাফিক্যাল ভাব-প্রতীক নিষ্ক্রিয় করা হবে।"
-
 msgid "none"
 msgstr "শূণ্য"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "এটি নির্বাচন করা হলে গ্রাফিক্যাল ভাব-প্রতীক নিষ্ক্রিয় করা হবে।"
 
 msgid "Small"
 msgstr "ক্ষুদ্র"
@@ -14714,7 +14749,7 @@ msgstr "প্রতি N মিনিট অন্তর iChat-বিন্য�
 msgid "Timestamp Format Options"
 msgstr "সময়ের চিহ্ন প্রদর্শনের বিন্যাসের বিকল্প"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "বাধ্যতামূলকভাবে ২৪ ঘন্টার সময়ের বিন্যাস প্রয়োগ করা হবে (_F)"
 
@@ -14767,6 +14802,63 @@ msgid ""
 msgstr ""
 "এই প্লাগ-ইনের সাহায্যে ব্যবহারকারীরা তাদের কথোপকথোন ও লগিং বার্তার সাথে প্রদর্শিত "
 "সময়ের চিহ্নের বিন্যাস নির্ধারণ করতে সক্ষম হবেন।"
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "চ্যাট-রুমের প্রতীক চিহ্ন"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\tশুধুমাত্র আপনার অ্যাকাউন্টের নাম উল্লিখিত হলে (_O)"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "আইকন সংরক্ষণ করুন"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "প্রতি উইন্ডোর মধ্যে প্রদর্শিত কথোপকথোনের সংখ্যা"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "বার্তা প্রেরিত হয়েছে"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution-র সাথে একত্রীকরণ"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Evolution-র সাথে ব্যবহারের সুবিধা উপলব্ধ করে।"
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Evolution-র সাথে ব্যবহারের সুবিধা উপলব্ধ করে।"
 
 msgid "Audio"
 msgstr "অডিও"
@@ -14950,23 +15042,64 @@ msgstr "Raw XMPP অনুচ্ছেদ প্রেরণ ও প্রাপ
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "XMPP সার্ভার বা ক্লায়েন্ট-এর ত্রুটি খোঁজার জন্য এই প্লাগ-ইন ব্যবহার করা যায়"
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "\"%s\" উপনাম বর্তমানে ব্যবহৃত হচ্ছে।"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin ইন্টারনেট মেসেঞ্জার"
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "শর্ট-কাট"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "ডেস্কটপের ডিফল্ট মান"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Startup"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "অবস্থান"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -14974,29 +15107,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "ডেস্কটপের ডিফল্ট মান"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim URL হ্যান্ডলার"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15007,78 +15146,124 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "অবস্থান"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin ইন্টারনেট মেসেঞ্জার"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "শর্ট-কাট"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Startup"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "\"%s\" উপনাম বর্তমানে ব্যবহৃত হচ্ছে।"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "myim URL হ্যান্ডলার"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Token Error"
+#~ msgstr "টোকেনে ত্রুটি"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "টোকেন প্রাপ্ত করতে ব্যর্থ।\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "নিবন্ধনের জন্য সকল ক্ষেত্রে মান পূরণ করা আবশ্যক"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "পাসওয়ার্ডে গরমিল"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "নতুন অ্যাকাউন্ট নিবন্ধন করতে ব্যর্থ।  একটি অজানা ত্রুটি দেখা দিয়েছে।"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "নতুন Gadu-Gadu অ্যাকাউন্ট নিবন্ধিত হয়েছে"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "সাফল্যের সাথে নিবন্ধন করা হয়েছে!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "ক্যাপচাতে প্রদর্শিত টেক্সট লিখুন"
+
+#~ msgid "Captcha"
+#~ msgstr "ক্যাপচা"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "নতুন Gadu-Gadu অ্যাকাউন্ট নিবন্ধন করুন"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "অনুগ্রহ করে নিম্নলিখিত ক্ষেত্রে মান পূরণ করুন"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "ক্ষেত্রে মান পূরণ করুন।"
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "আপনার বর্তমান পাসওয়ার্ড ও চিহ্নিত পাসওয়ার্ড এক নয়।"
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "পাসওয়ার্ড পরিবর্তন করতে ব্যর্থ। ত্রুটি দেখা দিয়েছে।\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Gadu-Gadu অ্যাকাউন্টের জন্য পাসওয়ার্ড পরিবর্তন করুন"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "সাফল্যের সাথে পাসওয়ার্ড পরিবর্তন করা হয়েছে!"
+
+#~ msgid "Current password"
+#~ msgstr "বর্তমান পাসওয়ার্ড"
+
+#~ msgid "Password (retype)"
+#~ msgstr "পাসওয়ার্ড (পুনরায় লিখুন)"
+
+#~ msgid "Enter current token"
+#~ msgstr "বর্তমান টোকেন লিখুন"
+
+#~ msgid "Current token"
+#~ msgstr "বর্তমান টোকেন"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "অনুগ্রহ করে UIN-র জন্য বর্তমান ও নতুন পাসওয়ার্ড লিখুন: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu পাসওয়ার্ড পরিবর্তন করুন"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "বন্ধুর তালিকা ডাউনলোড করা হয়েছে"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "সার্ভার থেকে আপনার বন্ধুদের তালিকা ডাউনলোড করা হয়েছে।"
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "বন্ধুর তালিকা আপলোড করা হয়েছে"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "সার্ভারের মধ্যে বন্ধুর তালিকা সংরক্ষণ করা হয়েছে।"
+
+#~ msgid "Change password..."
+#~ msgstr "পাসওয়ার্ড পরিবর্তন করুন..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "সার্ভারের মধ্যে বন্ধুর তালিকা আপলোড করুন"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "সার্ভার থেকে বন্ধু তালিকা ডাউনলোড করুন"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "সার্ভার থেকে বন্ধু তালিকা মুছে ফেলুন"
+
+#~ msgid "Hidden Number"
+#~ msgstr "আড়াল করা সংখ্যা"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "কোনো Sametime Community সার্ভার উল্লিখিত হয়নি"
@@ -15501,9 +15686,6 @@ msgstr ""
 #~ msgid "Ver"
 #~ msgstr "Ver"
 
-#~ msgid "Invalid name"
-#~ msgstr "অবৈধ নাম"
-
 #~ msgid "Select icon..."
 #~ msgstr "আইকন নির্বাচন করুন..."
 
@@ -15796,9 +15978,6 @@ msgstr ""
 
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "উল্লিখিত উপনাম বৈধ নয়।"
-
-#~ msgid "MXit Login Name"
-#~ msgstr "MXit লগ-ইনের নাম"
 
 #~ msgid "Nick Name"
 #~ msgstr "উপনাম"

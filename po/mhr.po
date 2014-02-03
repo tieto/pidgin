@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2010-11-22 14:17+0300\n"
 "Last-Translator: Andrey Chemyshev <chemyshev.andrey@gmail.com>\n"
 "Language-Team: Mari <muter@lists.linux-ink.ru>\n"
@@ -2057,56 +2057,8 @@ msgstr "%s-лан файл колтымашым ыштен кертме огыл
 msgid "File transfer from %s failed."
 msgstr "%s деч файл колтымашым ыштен кертме огыл."
 
-msgid "Run the command in a terminal"
-msgstr "Терминалыште командым шукташ"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URL-лан келыштарыше"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URL -лан келыштарыше"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URL-лан келыштарыше"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URL-лан келыштарыше"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URL-лан келыштарыше"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URL-лан келыштарыше"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URL-лан келыштарыше"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URL-лан келыштарыше"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Палемдыме команде \"aim\" URL-ым келыштарышаш мо"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2114,10 +2066,36 @@ msgid ""
 msgstr ""
 "Чын, \"command\" сравочышто ойлымо команде \"aim\" кыл деке эҥерта гын."
 
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Run the command in a terminal"
+msgstr "Терминалыште командым шукташ"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "Чын, тыгай кылвер дене ончыктымо командым терминалыште шуктыман гын."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Палемдыме команде \"gg\" URL-ым келыштарышаш мо"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr "Чын, \"command\" сравочышто ойлымо команде \"gg\" кыл деке эҥерта гын."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URL -лан келыштарыше"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Палемдыме команде \"icq\" URL-ым келыштарышаш мо"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
@@ -2125,11 +2103,29 @@ msgid ""
 msgstr ""
 "Чын, \"command\" сравочышто ойлымо команде \"icq\" кыл деке эҥерта гын."
 
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Палемдыме команде \"irc\" URL-ым келыштарышаш мо"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr ""
 "Чын, \"command\" сравочышто ойлымо команде \"irc\" кыл деке эҥерта гын."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Палемдыме команде \"msnim\" URL-ым келыштарышаш мо"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
@@ -2137,11 +2133,29 @@ msgid ""
 msgstr ""
 "Чын, \"command\" сравочышто ойлымо команде \"msnim\" кыл деке эҥерта гын."
 
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Палемдыме команде \"sip\" URL-ым келыштарышаш мо"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr ""
 "Чын, \"command\" сравочышто ойлымо команде \"sip\" кыл деке эҥерта гын."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Палемдыме команде \"xmpp\" URL-ым келыштарышаш мо"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
@@ -2149,40 +2163,26 @@ msgid ""
 msgstr ""
 "Чын, \"command\" сравочышто ойлымо команде \"xmpp\" кыл деке эҥерта гын."
 
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Палемдыме команде \"ymsgr\" URL-ым келыштарышаш мо"
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
 msgstr ""
 "Чын, \"command\" сравочышто ойлымо команде \"ymsgr\" кыл деке эҥерта гын."
 
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "Чын, тыгай кылвер дене ончыктымо командым терминалыште шуктыман гын."
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URL-лан келыштарыше"
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Палемдыме команде \"aim\" URL-ым келыштарышаш мо"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Палемдыме команде \"gg\" URL-ым келыштарышаш мо"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Палемдыме команде \"icq\" URL-ым келыштарышаш мо"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Палемдыме команде \"irc\" URL-ым келыштарышаш мо"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Палемдыме команде \"msnim\" URL-ым келыштарышаш мо"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Палемдыме команде \"sip\" URL-ым келыштарышаш мо"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Палемдыме команде \"xmpp\" URL-ым келыштарышаш мо"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Палемдыме команде \"ymsgr\" URL-ым келыштарышаш мо"
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URL дене кучылталтше команде, чӱктымӧ гын."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2243,6 +2243,10 @@ msgstr ""
 "пеҥгыде улыт."
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Farsight2 тӧрлатыдыме йоҥылыш лийын."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Farsight2 тӧрлатыдыме йоҥылыш лийын."
 
 msgid "Error with your microphone"
@@ -3046,12 +3050,6 @@ msgid ""
 "invalid."
 msgstr "Ты прокси типлан палемдыме хост лӱм але порт номер чын огытыл."
 
-msgid "Token Error"
-msgstr "Маркер йоҥылыш"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Маркерым пурташ ыш лий.\n"
-
 msgid "Save Buddylist..."
 msgstr "... мутланыше-влакын лӱмерыштым аныклаш"
 
@@ -3079,39 +3077,6 @@ msgstr "... мутланыше лӱмерым аныклаш"
 
 msgid "Load buddylist from file..."
 msgstr "Мутланыше лӱмерым файл гыч налаш..."
-
-msgid "You must fill in all registration fields"
-msgstr "Тый чыла возалтмаш аланым тичмашлышаш улат"
-
-msgid "Passwords do not match"
-msgstr "Шолыпмут-влак икгай огытыл"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "У шотыш налме возышым возыкташ ыш лий. Палыдыме йоҥылыш лие."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Gadu-Gadu у шотыш налме возыш возыкталте"
-
-msgid "Registration completed successfully!"
-msgstr "Возалтмаш лие!"
-
-msgid "Password"
-msgstr "Шолыпмут"
-
-msgid "Password (again)"
-msgstr "Шолыпмут (эше ик гана)"
-
-msgid "Enter captcha text"
-msgstr "Чынле код текстым пурто"
-
-msgid "Captcha"
-msgstr "Чынле код"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Gadu-Gadu у шотыш налме возышым возыкташ"
-
-msgid "Please, fill in the following fields"
-msgstr "Нине алан-влакым тичмашле"
 
 msgid "City"
 msgstr "Ола"
@@ -3141,39 +3106,6 @@ msgstr "Мутланыше-влакым муаш"
 
 msgid "Please, enter your search criteria below"
 msgstr "Тыйын кычалме негызым ӱлнӧ пурто"
-
-msgid "Fill in the fields."
-msgstr "Алан-влакым тичмашле."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Тыйын кызытсе шолыпмут ондак палемдыме деч ойыртемалтеш."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Шолыпмутым вашталтен кертме огыл. Йоҥылыш лийын.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Gadu-Gadu шотыш налме возышлан шолыпмутым вашталташ"
-
-msgid "Password was changed successfully!"
-msgstr "Шолыпмутым вашталтыме!"
-
-msgid "Current password"
-msgstr "Кызытсе шолыпмут"
-
-msgid "Password (retype)"
-msgstr "Шолыпмут (эше ик гана савыкте)"
-
-msgid "Enter current token"
-msgstr "Кызытсе маркерым пурто"
-
-msgid "Current token"
-msgstr "Кызытсе маркер"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "UIN-лан кызытсе да у шолыпмутым пурто: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu шолыпмутым вашталташ"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3250,18 +3182,6 @@ msgstr "Кычалме негызлан келшен толшо пайдалан
 msgid "Unable to read from socket"
 msgstr "Сокет гыч лудын керташ ыш лий"
 
-msgid "Buddy list downloaded"
-msgstr "Мутланыше лӱмерым шупшын налме"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Мутланыше лӱмерым сервер гыч шупшын налме."
-
-msgid "Buddy list uploaded"
-msgstr "Мутланыше лӱмерым пыштыме"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Мутланыше лӱмер серверыште аныклалтын."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3297,18 +3217,6 @@ msgstr "Сервер дене ушымо огыл"
 
 msgid "Find buddies..."
 msgstr "Мутланыше-влакым муаш..."
-
-msgid "Change password..."
-msgstr "Шолыпмутым вашталташ..."
-
-msgid "Upload buddylist to Server"
-msgstr "Мутланыше лӱмерым серверышке пыштыме"
-
-msgid "Download buddylist from Server"
-msgstr "Мутланыше лӱмерым сервер гыч шупшын налаш"
-
-msgid "Delete buddylist from Server"
-msgstr "Мутланыше лӱмерым сервер гыч кораҥдаш"
 
 msgid "Save buddylist to file..."
 msgstr "Мутланыше лӱмерым файлыш аныклаш..."
@@ -3417,7 +3325,6 @@ msgstr "Ушен кертме огыл"
 msgid "Unable to connect: %s"
 msgstr "Ушен кертме огыл: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Сервер ушымашым петырен"
 
@@ -3456,6 +3363,10 @@ msgstr "Кодировко-влак"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Пурышо UTF-8 -м вигак муаш"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Чын огыл лӱм"
+
 msgid "Real name"
 msgstr "Чын лӱм"
 
@@ -3465,6 +3376,14 @@ msgstr "Чын лӱм"
 #.
 msgid "Use SSL"
 msgstr "SSL-ым кучылташ"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Чылык тергымаш"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Тыглай текст дене шифрдыме толкын-влак гыч идентификаций дене кӧнаш"
 
 msgid "Bad mode"
 msgstr "Йоҥылыш режим"
@@ -3500,6 +3419,14 @@ msgstr " <i>(идентифицироватлыме)</i>"
 msgid "Nick"
 msgstr "Шолыплӱм"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Mxit пурымо лӱм"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Хостлӱм"
+
 msgid "Currently on"
 msgstr "Кызыт (кушто)"
 
@@ -3526,6 +3453,10 @@ msgstr "%s темым эрыктен."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s-лан теме: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3640,6 +3571,33 @@ msgstr "Шолыплӱм але канал жаплан лиймеямде ог�
 #, c-format
 msgid "Wallops from %s"
 msgstr "%s деч рашкалтымаш"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "SILC-клиент ушымашым инициализироватлен кертме огыл"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL чылык тергымаш экшыкыш логалын"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL чылык тергымаш экшыкыш логалын"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Чын огыл шолыпмут"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL чылык тергымаш экшыкыш логалын"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;ыштымашым шукташлан&gt;:  Ыштымашым шукташ."
@@ -4302,6 +4260,9 @@ msgstr "Кече"
 msgid "Already Registered"
 msgstr "Шаҥгак возыктымо"
 
+msgid "Password"
+msgstr "Шолыпмут"
+
 msgid "Unregister"
 msgstr "Возыктымым чараш"
 
@@ -4438,6 +4399,9 @@ msgstr "Шолыпмутетым вашталтыме."
 
 msgid "Error changing password"
 msgstr "Шолыпмутым вашталтыме годым йоҥылыш лийын"
+
+msgid "Password (again)"
+msgstr "Шолыпмут (эше ик гана)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP шолыпмутым вашталташ"
@@ -4661,6 +4625,10 @@ msgstr "%s дене медиа ыш лий: чын огыл JID"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "%s дене медиа ыш лий: пайдаланыше вотышто огыл"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "%s дене медиа ыш лий: пайдаланыше вотышто огыл"
 
 #, fuzzy, c-format
@@ -6057,6 +6025,11 @@ msgstr "Мыйын нерген"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Могай улмым кораҥдаш"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Мобил номер"
@@ -6162,6 +6135,16 @@ msgstr "Плагин нерген..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Файл, кудым тый колташ толашет, утыж ден кугу!"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Плагиным налаш ок лий"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Файлым почын кертме огыл."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6284,10 +6267,6 @@ msgstr "Могай улмо каласымаш-влак"
 msgid "Rejection Message"
 msgstr "Ӧрдыжтарыме каласымаш-влак"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Шылтыме номер"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Лиймеямде огыл"
@@ -6315,6 +6294,37 @@ msgstr "HTTP гоч ушымаш"
 
 msgid "Enable splash-screen popup"
 msgstr "Экран-заставкын лекше менюм чӱкташ"
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Чаҥ"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Вургыжланыше"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Шӱшӧ"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Пӧлка"
+
+msgid "Divorced"
+msgstr ""
 
 #, fuzzy
 msgid "Last Online"
@@ -6376,6 +6386,10 @@ msgstr "%s тыланет веб-камер деке ӱжыкым колтен, 
 
 msgid "Message Error"
 msgstr "Йоҥылыш нерген каласымаш"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Палемдыме ойвозышым кучылтын вес вере колтымашым ыштен ом керт"
@@ -9866,7 +9880,6 @@ msgstr ""
 "Тыйын шотыш налме возышым пеш шуко чын огыл авторизацийым ышташ тӧчымылан "
 "кӧра тӱкылымӧ. Yahoo! Вот-лаштыкыш пурен ончо."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Палыдыме йоҥылыш - 52.  Угыч ушымаш тидым тӧрлатышаш."
 
@@ -10518,17 +10531,17 @@ msgstr ""
 "%s лудмо годым йоҥылыш лийын. Файлым налме огыл, тошто файллан %s~ лӱмым "
 "пуымо."
 
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin писе каласымаш алмаш клиент"
+
+msgid "Internet Messenger"
+msgstr "Писе каласымаш алмаш клиент"
+
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 "Писе каласымаш дене тототлымвер. AIM, Google Talk, Jabber/XMPP, MSN, Yahoo "
 "да молылын эҥерта"
-
-msgid "Internet Messenger"
-msgstr "Писе каласымаш алмаш клиент"
-
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin писе каласымаш алмаш клиент"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11593,6 +11606,14 @@ msgstr "Луддымо каласымаш-влак"
 msgid "New Event"
 msgstr "У лиймаш"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Шотыш налме возышым кӱрлмо, ынде тый тототлымверыште отыл. Тый вигак "
+"тототлымвер деке ушнет, кунам шотыш налме возыш угыч ушналтеш."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Чыла мутланымаш тӧрзам эрыкташ."
 
@@ -11698,7 +11719,8 @@ msgstr "вот-мастар"
 msgid "win32 port"
 msgstr "win32 порт"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ка-Хин Чон"
 
@@ -11736,6 +11758,9 @@ msgstr "Араб"
 #, fuzzy
 msgid "Assamese"
 msgstr "Вожылшо"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Белорус латинице"
@@ -11864,6 +11889,9 @@ msgstr "Курд"
 msgid "Lao"
 msgstr "Лаос"
 
+msgid "Lithuanian"
+msgstr "Литов"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Суахили"
@@ -11887,6 +11915,9 @@ msgstr "Маратхи"
 
 msgid "Malay"
 msgstr "Малай"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Букмол"
@@ -11940,6 +11971,10 @@ msgstr "Албан"
 msgid "Serbian"
 msgstr "Серб"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Белорус латинице"
+
 msgid "Sinhala"
 msgstr "Сингал"
 
@@ -11958,9 +11993,6 @@ msgstr "Телугу"
 msgid "Thai"
 msgstr "Тай"
 
-msgid "Turkish"
-msgstr "Турций"
-
 msgid "Ukranian"
 msgstr "Украин"
 
@@ -11969,9 +12001,6 @@ msgstr "Урду"
 
 msgid "Vietnamese"
 msgstr "Вьетнам"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh да Gnome-Vi команде"
 
 msgid "Simplified Chinese"
 msgstr "Китай куштылемдыме"
@@ -11985,8 +12014,11 @@ msgstr "Тыглай китай"
 msgid "Amharic"
 msgstr "Амхар"
 
-msgid "Lithuanian"
-msgstr "Литов"
+msgid "Turkish"
+msgstr "Турций"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh да Gnome-Vi команде"
 
 #, fuzzy, c-format
 msgid ""
@@ -12018,7 +12050,7 @@ msgstr ""
 "Канал: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12726,6 +12758,10 @@ msgstr "\"%s\" колтымаш йоҥылыш: %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Ончыктышын \"Полшык\" командым ойырымо, да командым ыштымо огыл."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Ончыктышыште \"%s\" команде чын огыл."
 
 msgid "No message"
 msgstr "Каласымаш уке"
@@ -13712,11 +13748,11 @@ msgstr "Pidgin каҥаш"
 msgid "Pidgin smileys"
 msgstr "Pidgin-ын шырий-влак"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Тидым ойырымаш график кумылым йӧрыкта."
-
 msgid "none"
 msgstr "уке"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Тидым ойырымаш график кумылым йӧрыкта."
 
 msgid "Small"
 msgstr "Изи"
@@ -14674,7 +14710,7 @@ msgstr "iChat сын дене жап палым кажне N минут гыч �
 msgid "Timestamp Format Options"
 msgstr "Жап пале формат ойыркалыме йӧн-влак"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "Жап пале форматым _виеш кучылташ"
 
@@ -14727,6 +14763,63 @@ msgid ""
 msgstr ""
 "Тиде плагин пайдаланышылан мутланымаш да журнал каласымаш-влакыште жап пале "
 "форматым вашталташ йӧным пуа."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Тототлымвер пӧлем эмблеме-влак"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Тунам гына, кунам иктаж-кӧ тыйын пайдаланыше лӱмым ойла"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Изисӱретым аныклаш"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Тӧрзаште мутланымаш-влак чот"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Каласымашым колтымо"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution дене варнымаш"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Evolution дене варнаш йӧным ышта."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Evolution дене варнаш йӧным ышта."
 
 msgid "Audio"
 msgstr "Аудио"
@@ -14909,6 +15002,18 @@ msgstr "Кӱчымӧ XMPP страфа-влакым колташ да налаш
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Тиде плагин XMPP сервер але клиент-влакым лачештарымашлан кӱлешан."
 
+msgid "The installer is already running."
+msgstr "Шындышым шаҥгак тӱҥалтен колтымо."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin-ым шаҥгак тӱҥалтыме. Pidgin-ым петыре да угыч колтен ончо."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Умбакыже >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14917,53 +15022,80 @@ msgstr ""
 "$(^Name) GPL лицензий дене ыштыме. Лицензийым тыште палдарыкташлан гына "
 "ончыктымо. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Мультиплатформ график ӱзгар, Pidgin-ште кучылталтше."
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin IM клиент (кӱлеш)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr "Pidgin-ым шаҥгак тӱҥалтыме. Pidgin-ым петыре да угыч колтен ончо."
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ йырвел (кӱлеш, уке улеш гын)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Ярлык-влак"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Паша ӱстел"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Тӱҥалтыш полдыш"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Локализаций-влак"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidgin тӱҥ файл да библиотек-влак"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Pidgin-лан тӱҥалтыш полдышым ышташ"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Pidgin-ым тӱҥалташ ярлык-влак"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Паша ӱстелыште Pidgin ярлыкым ышташ"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Pidgin-лан тӱҥалтыш полдышым ышташ"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Мультиплатформ график ӱзгар, Pidgin-ште кучылталтше."
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Лачештарымаш символ-влак (йоҥылыш нерген отчёт-влаклан)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Pidgin вот-лаштыкыш пурен лек"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Кызытсе шындыме Pidgin версийым кораҥден кертме огыл. У версий кызытсым "
+"кораҥдыде шындыме лиеш."
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin GTK+ дене келшыше йырвелым кӱшта  (очыни, кудым шындыме огыл).$\\rТый "
+"чынак мо GTK+ йырвелым шындымым коден кайынет?"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Паша ӱстел"
+msgid "URI Handlers"
+msgstr "URI келыштарыше-влак"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-"GTK+йырвелыште шупшын налме годым йоҥылыш ($R2).$\\rPidgin ыштыже манын, "
-"тиде кӱлеш; угыч шот огеш лек гын, 'Автоном шындыше'-м кучылт, кудым тиде "
-"кылвер дене налаш лиеш: http://pidgin.im/download/windows/."
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Лачештарымаш символ-влакым шындыме годым йоҥылыш ($R2).$\\rУгыч шот огеш лек "
-"гын, 'Автоном шындыше'-м кучылт,кудым тиде кылвер дене налаш лиеш: http://"
-"pidgin.im/download/windows/."
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Орфографийым тергыше эҥертыш"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14976,53 +15108,29 @@ msgstr ""
 "гын, кид дене шындашлан полшык тыште: http://developer.pidgin.im/wiki/"
 "Installing%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ йырвел (кӱлеш, уке улеш гын)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Локализаций-влак"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Умбакыже >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin IM клиент (кӱлеш)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Pidgin GTK+ дене келшыше йырвелым кӱшта  (очыни, кудым шындыме огыл).$\\rТый "
-"чынак мо GTK+ йырвелым шындымым коден кайынет?"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Ярлык-влак"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Pidgin-ым тӱҥалташ ярлык-влак"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Орфографийым тергыше эҥертыш"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Тӱҥалтыш полдыш"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Орфографийым тергышылан эҥертыш.  (Интернет-ушымашым шындаш кӱлеш)"
 
-msgid "The installer is already running."
-msgstr "Шындышым шаҥгак тӱҥалтен колтымо."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Лачештарымаш символ-влакым шындыме годым йоҥылыш ($R2).$\\rУгыч шот огеш лек "
+"гын, 'Автоном шындыше'-м кучылт,кудым тиде кылвер дене налаш лиеш: http://"
+"pidgin.im/download/windows/."
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"GTK+йырвелыште шупшын налме годым йоҥылыш ($R2).$\\rPidgin ыштыже манын, "
+"тиде кӱлеш; угыч шот огеш лек гын, 'Автоном шындыше'-м кучылт, кудым тиде "
+"кылвер дене налаш лиеш: http://pidgin.im/download/windows/."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -15031,23 +15139,101 @@ msgstr ""
 "Шӧрышӧ программе Pidgin данныйым реестрыште муын огыл.$\\rОчыни, тиде "
 "приложенийым вес пайдаланыше шынден."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "URI келыштарыше-влак"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Кызытсе шындыме Pidgin версийым кораҥден кертме огыл. У версий кызытсым "
-"кораҥдыде шындыме лиеш."
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Pidgin вот-лаштыкыш пурен лек"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "Тиде приложенийым кораҥдашлан тыйын прават уке."
+
+#~ msgid "Token Error"
+#~ msgstr "Маркер йоҥылыш"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Маркерым пурташ ыш лий.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Тый чыла возалтмаш аланым тичмашлышаш улат"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Шолыпмут-влак икгай огытыл"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "У шотыш налме возышым возыкташ ыш лий. Палыдыме йоҥылыш лие."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Gadu-Gadu у шотыш налме возыш возыкталте"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Возалтмаш лие!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Чынле код текстым пурто"
+
+#~ msgid "Captcha"
+#~ msgstr "Чынле код"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Gadu-Gadu у шотыш налме возышым возыкташ"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Нине алан-влакым тичмашле"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Алан-влакым тичмашле."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Тыйын кызытсе шолыпмут ондак палемдыме деч ойыртемалтеш."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Шолыпмутым вашталтен кертме огыл. Йоҥылыш лийын.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Gadu-Gadu шотыш налме возышлан шолыпмутым вашталташ"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Шолыпмутым вашталтыме!"
+
+#~ msgid "Current password"
+#~ msgstr "Кызытсе шолыпмут"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Шолыпмут (эше ик гана савыкте)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Кызытсе маркерым пурто"
+
+#~ msgid "Current token"
+#~ msgstr "Кызытсе маркер"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "UIN-лан кызытсе да у шолыпмутым пурто: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu шолыпмутым вашталташ"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Мутланыше лӱмерым шупшын налме"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Мутланыше лӱмерым сервер гыч шупшын налме."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Мутланыше лӱмерым пыштыме"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Мутланыше лӱмер серверыште аныклалтын."
+
+#~ msgid "Change password..."
+#~ msgstr "Шолыпмутым вашталташ..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Мутланыше лӱмерым серверышке пыштыме"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Мутланыше лӱмерым сервер гыч шупшын налаш"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Мутланыше лӱмерым сервер гыч кораҥдаш"
+
+#~ msgid "Hidden Number"
+#~ msgstr "Шылтыме номер"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Кызытсе мер серверым палемдыме огыл"
@@ -15523,9 +15709,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 #~ msgid "Ver"
 #~ msgstr "Вер"
 
-#~ msgid "Invalid name"
-#~ msgstr "Чын огыл лӱм"
-
 #~ msgid "Select icon..."
 #~ msgstr "Изисӱретым ойыраш..."
 
@@ -15846,9 +16029,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 #, fuzzy
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "Тыйын пуртымо шолыплӱм чын огыл."
-
-#~ msgid "MXit Login Name"
-#~ msgstr "Mxit пурымо лӱм"
 
 #~ msgid "Nick Name"
 #~ msgstr "Шолыплӱм"
@@ -16324,9 +16504,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 #~ msgid "Reachability Address"
 #~ msgstr "Лиймеямде адрес"
 
-#~ msgid "Jingle"
-#~ msgstr "Чаҥ"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Чыҥгыртатыше йӱк"
 
@@ -16460,10 +16637,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Хостлӱмлан кӧнен кертме огыл"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Чын огыл шолыпмут"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2011-05-02 20:24+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -2039,56 +2039,8 @@ msgstr "Přenos souboru k %s selhal."
 msgid "File transfer from %s failed."
 msgstr "Přenos souboru od %s selhal."
 
-msgid "Run the command in a terminal"
-msgstr "Spustit příkaz v terminálu"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"aim\", je-li povolen."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"gg\", je-li povolen."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"icq\", je-li povolen."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"irc\", je-li povolen."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"msnim\", je-li povolen."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"sip\", je-li povolen."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"xmpp\", je-li povolen."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Příkaz používaný pro obsluhu URL \"ymsgr\", je-li povolen."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Obsluha URL \"aim\""
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Obsluha URL \"gg\""
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Obsluha URL \"icq\""
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Obsluha URL \"irc\""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Obsluha URL \"msnim\""
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Obsluha URL \"sip\""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Obsluha URL \"xmpp\""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Obsluha URL \"ymsgr\""
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Jestli má zadaný příkaz obsluhovat URL \"aim\""
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2096,50 +2048,14 @@ msgid ""
 msgstr ""
 "Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"aim\"."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"gg\"."
+msgid "The handler for \"aim\" URLs"
+msgstr "Obsluha URL \"aim\""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"icq\"."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"aim\", je-li povolen."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"irc\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"msnim"
-"\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"sip\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"xmpp"
-"\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"ymsgr"
-"\"."
+msgid "Run the command in a terminal"
+msgstr "Spustit příkaz v terminálu"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2148,29 +2064,113 @@ msgstr ""
 "Pravda, jestliže příkaz používaný pro obsluhu tohoto typu URL má běžet v "
 "terminálu."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Jestli má zadaný příkaz obsluhovat URL \"aim\""
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Jestli má zadaný příkaz obsluhovat URL \"gg\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Obsluha URL \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"gg\", je-li povolen."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Jestli má zadaný příkaz obsluhovat URL \"icq\""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Obsluha URL \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"icq\", je-li povolen."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Jestli má zadaný příkaz obsluhovat URL \"irc\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Obsluha URL \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"irc\", je-li povolen."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Jestli má zadaný příkaz obsluhovat URL \"msnim\""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"msnim"
+"\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Obsluha URL \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"msnim\", je-li povolen."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Jestli má zadaný příkaz obsluhovat URL \"sip\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"sip\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Obsluha URL \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"sip\", je-li povolen."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Jestli má zadaný příkaz obsluhovat URL \"xmpp\""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"xmpp"
+"\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Obsluha URL \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"xmpp\", je-li povolen."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Jestli má zadaný příkaz obsluhovat URL \"ymsgr\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Pravda, jestliže příkaz zadaný v klíči \"command\" má obsluhovat URL \"ymsgr"
+"\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Obsluha URL \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Příkaz používaný pro obsluhu URL \"ymsgr\", je-li povolen."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2230,6 +2230,10 @@ msgid ""
 msgstr "Nezanechán kodek. Preference v fs-codecs.conf jsou příliš přísné."
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Nastala neobnovitelná Farsight2 chyba."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Nastala neobnovitelná Farsight2 chyba."
 
 msgid "Error with your microphone"
@@ -3034,12 +3038,6 @@ msgstr ""
 "Buď jméno počítače nebo číslo portu uvedené pro vámi zadaný typ proxy je "
 "neplatné."
 
-msgid "Token Error"
-msgstr "Chyba tokenu"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Nemohu získat token.\n"
-
 msgid "Save Buddylist..."
 msgstr "Uložit seznam kamarádů..."
 
@@ -3067,39 +3065,6 @@ msgstr "Uložit seznam kamarádů..."
 
 msgid "Load buddylist from file..."
 msgstr "Načíst seznam kamarádů ze serveru..."
-
-msgid "You must fill in all registration fields"
-msgstr "Vyplňte všechna pole pro registraci"
-
-msgid "Passwords do not match"
-msgstr "Hesla nesouhlasí"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Nemohu zaregistrovat nový účet. Došlo k neznámé chybě."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Nový účet Gadu-Gadu zaregistrován"
-
-msgid "Registration completed successfully!"
-msgstr "Registrace úspěšně dokončena!"
-
-msgid "Password"
-msgstr "Heslo"
-
-msgid "Password (again)"
-msgstr "Heslo (znovu)"
-
-msgid "Enter captcha text"
-msgstr "Vložta text z obrázku"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Zaregistrovat nový účet Gadu-Gadu"
-
-msgid "Please, fill in the following fields"
-msgstr "Vyplňte prosím následující pole"
 
 msgid "City"
 msgstr "Město"
@@ -3129,39 +3094,6 @@ msgstr "Hledat kamarády"
 
 msgid "Please, enter your search criteria below"
 msgstr "Zadejte prosím podmínky hledání níže"
-
-msgid "Fill in the fields."
-msgstr "Vyplňte tato pole."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Vaše aktuální heslo je jiné než to, které jste zadali."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Nemohu změnit heslo. Došlo k chybě.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Změnit heslo pro účet Gadu-Gadu"
-
-msgid "Password was changed successfully!"
-msgstr "Heslo bylo úspěšně změněno!"
-
-msgid "Current password"
-msgstr "Aktuální heslo"
-
-msgid "Password (retype)"
-msgstr "Heslo (znovu)"
-
-msgid "Enter current token"
-msgstr "Zadejte aktuální token"
-
-msgid "Current token"
-msgstr "Aktuální token"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Zadejte prosím své aktuální a nové heslo pro UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Změnit heslo Gadu-Gadu"
 
 msgid "Show status to:"
 msgstr "Ukázat stav:"
@@ -3234,18 +3166,6 @@ msgstr "Neexistuje žádný uživatel odpovídající vašim podmínkám hledán
 msgid "Unable to read from socket"
 msgstr "Nemohu číst ze socketu"
 
-msgid "Buddy list downloaded"
-msgstr "Seznam kamarádů stažen"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Váš seznam kamarádů byl stažen ze serveru."
-
-msgid "Buddy list uploaded"
-msgstr "Seznam kamarádů odeslán"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Váš seznam kamarádů byl uložen na serveru."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3281,18 +3201,6 @@ msgstr "Nepřipojen k serveru"
 
 msgid "Find buddies..."
 msgstr "Hledat kamarády..."
-
-msgid "Change password..."
-msgstr "Změnit heslo..."
-
-msgid "Upload buddylist to Server"
-msgstr "Odeslat seznam kamarádů na server"
-
-msgid "Download buddylist from Server"
-msgstr "Stáhnout seznam kamarádů ze serveru"
-
-msgid "Delete buddylist from Server"
-msgstr "Odstranit seznam kamarádů ze serveru"
 
 msgid "Save buddylist to file..."
 msgstr "Uložit seznam kamarádů do souboru..."
@@ -3397,7 +3305,6 @@ msgstr "Nemohu se připojit"
 msgid "Unable to connect: %s"
 msgstr "Nemohu připojit: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Server zavřel spojení."
 
@@ -3436,6 +3343,10 @@ msgstr "Kódování"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Automaticky detekovat příchozí UTF-8"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Jméno uživatele"
+
 msgid "Real name"
 msgstr "Skutečné jméno"
 
@@ -3445,6 +3356,14 @@ msgstr "Skutečné jméno"
 #.
 msgid "Use SSL"
 msgstr "Používat SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Autentizuji"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Povolit textovou autentizaci po nešifrovaných proudech"
 
 msgid "Bad mode"
 msgstr "Špatný mód"
@@ -3480,6 +3399,14 @@ msgstr " <i>(identifikován)</i>"
 msgid "Nick"
 msgstr "Přezdívka"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Přihlašovací jméno MXit"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Název počítače"
+
 msgid "Currently on"
 msgstr "Momentálně na"
 
@@ -3506,6 +3433,10 @@ msgstr "%s vyčistil téma."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Téma pro %s je: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3620,6 +3551,33 @@ msgstr "Přezdívka nebo kanál je dočasně nedostupná."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops od %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Nemohu inicializovat připojení klienta SILC"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL autentizace selhala"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL autentizace selhala"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Nesprávné heslo"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL autentizace selhala"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;akce, kterou provést&gt;: Provést akci."
@@ -4275,6 +4233,9 @@ msgstr "Datum"
 msgid "Already Registered"
 msgstr "Již zaregistrován"
 
+msgid "Password"
+msgstr "Heslo"
+
 msgid "Unregister"
 msgstr "Zrušit registraci"
 
@@ -4407,6 +4368,9 @@ msgstr "Vaše heslo bylo změněno."
 
 msgid "Error changing password"
 msgstr "Chyba při změně hesla"
+
+msgid "Password (again)"
+msgstr "Heslo (znovu)"
 
 msgid "Change XMPP Password"
 msgstr "Změnit heslo XMPP"
@@ -4632,6 +4596,10 @@ msgstr "Nemohu inicializovat multimédia s %s: neplatné JID"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Nemohu inicializovat multimédia s %s: uživatel není online"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Nemohu inicializovat multimédia s %s: uživatel není online"
 
 #, c-format
@@ -5990,6 +5958,11 @@ msgstr "O mně"
 msgid "Where I Live"
 msgstr "Kde bydlím"
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Odstranit stav"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Mobilní telefonní číslo"
@@ -6085,6 +6058,16 @@ msgstr "O..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Soubor, který se pokoušíte poslat, je příliš velký!"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Nemohu načíst zásuvný modul"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Nemohu otevřít soubor."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6193,10 +6176,6 @@ msgstr "Stavová zpráva"
 msgid "Rejection Message"
 msgstr "Zamítnutí zprávy"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Skryté číslo"
-
 msgid "No profile available"
 msgstr "Není dostupný profil"
 
@@ -6220,6 +6199,37 @@ msgstr "Připojit se pomocí HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Povolit zobrazení spouštěcí obrazovky"
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Jingle"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Ustaraný"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Opilý"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Oddělení"
+
+msgid "Divorced"
+msgstr ""
 
 msgid "Last Online"
 msgstr "Naposledy připojen"
@@ -6279,6 +6289,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Chyba zprávy"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Nemohu provést přesměrování pomocí daného protokolu"
@@ -9735,7 +9749,6 @@ msgstr ""
 "Účet uzamčen pro příliš mnoho pokusů o přihlášení. Přihlaste se na stránku "
 "Yahoo!."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Neznámá chyba 52. Znovupřipojení by to mělo vyřešit."
 
@@ -10387,16 +10400,16 @@ msgstr ""
 "Při čtení vašeho %s došlo k chybě. Nebyl načten a starý soubor byl "
 "přejmenován na %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
-"Chat pomocí IM. Podporuje AIM, Google Talk, Jabber/XMPP, MSN, Yahoo a další"
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin Internet Messenger"
 
 msgid "Internet Messenger"
 msgstr "Internet Messenger"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Internet Messenger"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+"Chat pomocí IM. Podporuje AIM, Google Talk, Jabber/XMPP, MSN, Yahoo a další"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11442,6 +11455,14 @@ msgstr "Nepřečtené zprávy"
 msgid "New Event"
 msgstr "Nová událost"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Účet byl odpojen a nejste dále na chatu. Budete automaticky znovu připojen k "
+"chatu při připojení účtu."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Vymaže všechny paměti řádků konverzace."
 
@@ -11547,7 +11568,8 @@ msgstr "webmaster"
 msgid "win32 port"
 msgstr "port na win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11584,6 +11606,9 @@ msgstr "Arabština"
 
 msgid "Assamese"
 msgstr "Ásámština"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Běloruština (latinka)"
@@ -11711,6 +11736,9 @@ msgstr "Kurdština"
 msgid "Lao"
 msgstr "Laonština"
 
+msgid "Lithuanian"
+msgstr "Litevština"
+
 msgid "Maithili"
 msgstr "Maithili"
 
@@ -11731,6 +11759,9 @@ msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malajština"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Norština Bokmål"
@@ -11783,6 +11814,10 @@ msgstr "Albánština"
 msgid "Serbian"
 msgstr "Srbština"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Běloruština (latinka)"
+
 msgid "Sinhala"
 msgstr "Sinhálština"
 
@@ -11801,9 +11836,6 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thajština"
 
-msgid "Turkish"
-msgstr "Turečtina"
-
 msgid "Ukranian"
 msgstr "Ukrajinština"
 
@@ -11812,9 +11844,6 @@ msgstr "Urdu"
 
 msgid "Vietnamese"
 msgstr "Vietnamština"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh a tým Gnome-Vi"
 
 msgid "Simplified Chinese"
 msgstr "Zjednodušená čínština"
@@ -11828,8 +11857,11 @@ msgstr "Tradiční čínština"
 msgid "Amharic"
 msgstr "Amharština"
 
-msgid "Lithuanian"
-msgstr "Litevština"
+msgid "Turkish"
+msgstr "Turečtina"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh a tým Gnome-Vi"
 
 #, c-format
 msgid ""
@@ -11858,7 +11890,6 @@ msgstr ""
 "stránka</A><BR>\t<A HREF=\"%s\">Často kladené otázky</A><BR>\tIRC kanál: "
 "#pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12559,6 +12590,10 @@ msgstr "Chyba při spouštění \"%s\": %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Byl zvolen 'Ruční' příkaz prohlížeče, ale nebyl nastaven žádný příkaz."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Příkaz prohlížeče \"%s\" není platný."
 
 msgid "No message"
 msgstr "Žádná zpráva"
@@ -13532,11 +13567,11 @@ msgstr "Pidgin tipy"
 msgid "Pidgin smileys"
 msgstr "Smajlíky Pidginu"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Výběr tohoto zakáže grafické emotikony."
-
 msgid "none"
 msgstr "žádné"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Výběr tohoto zakáže grafické emotikony."
 
 msgid "Small"
 msgstr "Malý"
@@ -14475,7 +14510,6 @@ msgstr "Každých N minut přidává ke konverzacím časové značky ve stylu i
 msgid "Timestamp Format Options"
 msgstr "Možnosti formátu časové značky"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Vnutit formát času:"
 
@@ -14525,6 +14559,63 @@ msgid ""
 msgstr ""
 "Tento zásuvný modul umožňuje uživateli upravit formáty časových značek zpráv "
 "v konverzacích a záznamech."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Emblémy místnosti chatu"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Jen když někdo řekne vaše jméno uživatele"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Uložit ikonu"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Počet konverzací v okně"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Zpráva odeslána"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Integrace s Evolution"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Poskytuje integraci s Evolution."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Poskytuje integraci s Evolution."
 
 msgid "Audio"
 msgstr "Audio"
@@ -14705,6 +14796,18 @@ msgstr "Přijímat a odesílat přímo sekce XMPP."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů XMPP."
 
+msgid "The installer is already running."
+msgstr "Instalační program již běží."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin je aktuálně spuštěn. Prosím ukončete Pidgin a zkuste to znovu."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Další >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14713,52 +14816,80 @@ msgstr ""
 "K použití $(^Name) se vztahuje GPL licence. Licence je zde uvedena pouze pro "
 "Vaší informaci. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Multi-platform GUI toolkit používaný Pidginem"
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Instant Messaging Client (nutné)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr "Pidgin je aktuálně spuštěn. Prosím ukončete Pidgin a zkuste to znovu."
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime (nutné)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Zástupci"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Plocha"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Start menu"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Lokalizace"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Základní soubory a DLL pro Pidgin"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Vytvořit položku v menu Start pro Pidgin"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Zástupce pro spuštění Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Vytvořit zástupce na ploše pro Pidgin"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Vytvořit položku v menu Start pro Pidgin"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Multi-platform GUI toolkit používaný Pidginem"
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Debug symboly (potřebné pro reportování chyb)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Navštívit Pidgin Web Page"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Nemohu odinstalovat aktuálně nainstalovanou verzi Pidgin. Nová verze bude "
+"nainstalována bez odstranění aktuálně nainstalované verze."
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin potřebuje kompatabilní GTK+ Runtime (vypadá to, že momentálně chybí).$"
+"\\rJste si jistí přeskočením instalace GTK+ Runtime?"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Plocha"
+msgid "URI Handlers"
+msgstr "Obsluha URI"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Chyba stahování GTK+ Runtime z ($R2).$\\rRuntime je potřeba pro správnou "
-"funkci Pidgin. Jestliže jeho stažení selže, použijte 'Offline instalační "
-"program' z http://pidgin.im/download/windows/ ."
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Chyba instalace Debug symbolů: ($R2).$\\rJestliže jeho stažení selže, "
-"použijte 'Offline instalační program' z http://pidgin.im/download/windows/ ."
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Podpora kontroly pravopisu"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14771,54 +14902,29 @@ msgstr ""
 "postupujte podle instrukcí na: http://developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime (nutné)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Lokalizace"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Další >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Instant Messaging Client (nutné)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Pidgin potřebuje kompatabilní GTK+ Runtime (vypadá to, že momentálně chybí).$"
-"\\rJste si jistí přeskočením instalace GTK+ Runtime?"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Zástupci"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Zástupce pro spuštění Pidgin"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Podpora kontroly pravopisu"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Start menu"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 "Podpora kontroly pravopisu. (Internetové připojení je potřeba pro instalaci)"
 
-msgid "The installer is already running."
-msgstr "Instalační program již běží."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Chyba instalace Debug symbolů: ($R2).$\\rJestliže jeho stažení selže, "
+"použijte 'Offline instalační program' z http://pidgin.im/download/windows/ ."
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Chyba stahování GTK+ Runtime z ($R2).$\\rRuntime je potřeba pro správnou "
+"funkci Pidgin. Jestliže jeho stažení selže, použijte 'Offline instalační "
+"program' z http://pidgin.im/download/windows/ ."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -14827,23 +14933,101 @@ msgstr ""
 "Odinstalční proces nemůže najít záznamy pro Pidgin v registrech.$"
 "\\rPravděpodobně instalaci této aplikace provedl jiný uživatel."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "Obsluha URI"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Nemohu odinstalovat aktuálně nainstalovanou verzi Pidgin. Nová verze bude "
-"nainstalována bez odstranění aktuálně nainstalované verze."
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Navštívit Pidgin Web Page"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnění k odinstalaci této aplikace."
+
+#~ msgid "Token Error"
+#~ msgstr "Chyba tokenu"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Nemohu získat token.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Vyplňte všechna pole pro registraci"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Hesla nesouhlasí"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Nemohu zaregistrovat nový účet. Došlo k neznámé chybě."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Nový účet Gadu-Gadu zaregistrován"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Registrace úspěšně dokončena!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Vložta text z obrázku"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Zaregistrovat nový účet Gadu-Gadu"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Vyplňte prosím následující pole"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Vyplňte tato pole."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Vaše aktuální heslo je jiné než to, které jste zadali."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Nemohu změnit heslo. Došlo k chybě.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Změnit heslo pro účet Gadu-Gadu"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Heslo bylo úspěšně změněno!"
+
+#~ msgid "Current password"
+#~ msgstr "Aktuální heslo"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Heslo (znovu)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Zadejte aktuální token"
+
+#~ msgid "Current token"
+#~ msgstr "Aktuální token"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Zadejte prosím své aktuální a nové heslo pro UIN: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Změnit heslo Gadu-Gadu"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Seznam kamarádů stažen"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Váš seznam kamarádů byl stažen ze serveru."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Seznam kamarádů odeslán"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Váš seznam kamarádů byl uložen na serveru."
+
+#~ msgid "Change password..."
+#~ msgstr "Změnit heslo..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Odeslat seznam kamarádů na server"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Stáhnout seznam kamarádů ze serveru"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Odstranit seznam kamarádů ze serveru"
+
+#~ msgid "Hidden Number"
+#~ msgstr "Skryté číslo"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Nezadán server komunity Sametime"
@@ -15564,9 +15748,6 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "Zadaná přezdívka není platná"
 
-#~ msgid "MXit Login Name"
-#~ msgstr "Přihlašovací jméno MXit"
-
 #~ msgid "Nick Name"
 #~ msgstr "Přezdívka"
 
@@ -16020,9 +16201,6 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 #~ msgid "Reachability Address"
 #~ msgstr "Dostupnost adres"
 
-#~ msgid "Jingle"
-#~ msgstr "Jingle"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Jingle Audio"
 
@@ -16157,10 +16335,6 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Nemohu přeložit název počítače"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Nesprávné heslo"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
@@ -16806,9 +16980,6 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 
 #~ msgid "Screen name sent"
 #~ msgstr "Jméno uživatele odesláno"
-
-#~ msgid "Screen name"
-#~ msgstr "Jméno uživatele"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "Zadán neplatný název chatu."

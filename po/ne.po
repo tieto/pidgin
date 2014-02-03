@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin.ne\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2006-06-27 21:08+0545\n"
 "Last-Translator: Shyam Krishna Bal <shyamkrishna_bal@yahoo.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -2143,55 +2143,7 @@ msgstr "%s मा फाइल स्थानान्तरण परित्
 msgid "File transfer from %s failed."
 msgstr "%s बाट गरिएको फाइल स्थानान्तरण परित्याग गरियो ।\n"
 
-msgid "Run the command in a terminal"
-msgstr ""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-
-msgid "The handler for \"aim\" URLs"
-msgstr ""
-
-msgid "The handler for \"gg\" URLs"
-msgstr ""
-
-msgid "The handler for \"icq\" URLs"
-msgstr ""
-
-msgid "The handler for \"irc\" URLs"
-msgstr ""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr ""
-
-msgid "The handler for \"sip\" URLs"
-msgstr ""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr ""
-
-msgid "The handler for \"ymsgr\" URLs"
+msgid "Whether the specified command should handle \"aim\" URLs"
 msgstr ""
 
 msgid ""
@@ -2199,39 +2151,13 @@ msgid ""
 "URLs."
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
+msgid "The handler for \"aim\" URLs"
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
+msgid "The command used to handle \"aim\" URLs, if enabled."
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
+msgid "Run the command in a terminal"
 msgstr ""
 
 msgid ""
@@ -2239,28 +2165,102 @@ msgid ""
 "terminal."
 msgstr ""
 
-msgid "Whether the specified command should handle \"aim\" URLs"
+msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr ""
 
-msgid "Whether the specified command should handle \"gg\" URLs"
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"gg\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"icq\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"irc\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"msnim\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"sip\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -2319,6 +2319,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "एउटा अज्ञात साइनअन त्रुटि देखा पर्यो: %s ।"
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "एउटा अज्ञात साइनअन त्रुटि देखा पर्यो: %s ।"
 
 msgid "Error with your microphone"
@@ -3138,14 +3142,6 @@ msgstr ""
 "तपाईँको प्रोक्सीका लागि निर्दिष्ट गरिएको होस्ट नाम वा पोर्ट नम्बर अवैध हुन सक्दछ ।"
 
 #, fuzzy
-msgid "Token Error"
-msgstr "जडान त्रुटि"
-
-#, fuzzy
-msgid "Unable to fetch the token.\n"
-msgstr "कोठा सूची तान्न अक्षम ।"
-
-#, fuzzy
 msgid "Save Buddylist..."
 msgstr "साथी सूची पठाउनुहोस्"
 
@@ -3179,44 +3175,6 @@ msgstr "साथी सूची पठाउनुहोस्"
 msgid "Load buddylist from file..."
 msgstr ""
 
-msgid "You must fill in all registration fields"
-msgstr ""
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "नयाँ पासवर्डहरू मेल खाएन ।"
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "नयाँ जडान सिर्जना गर्न अक्षम ।"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr ""
-
-#, fuzzy
-msgid "Registration completed successfully!"
-msgstr "दर्ता सफल भयो"
-
-msgid "Password"
-msgstr "पासवर्ड"
-
-msgid "Password (again)"
-msgstr "पासवर्ड(फेरि)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha"
-msgstr "छवि बचत गर्नुहोस्"
-
-#, fuzzy
-msgid "Register New Gadu-Gadu Account"
-msgstr "नयाँ ज्याबर खाता रजिष्टार गर्नुहोस्"
-
-msgid "Please, fill in the following fields"
-msgstr ""
-
 msgid "City"
 msgstr "शहर"
 
@@ -3248,48 +3206,6 @@ msgstr "निस्क्रिय साथीहरुलाई मधुर�
 #, fuzzy
 msgid "Please, enter your search criteria below"
 msgstr "कृपया तपाईँको नयाँ पासवर्ड प्रविष्टि गराउनुहोस्"
-
-msgid "Fill in the fields."
-msgstr ""
-
-msgid "Your current password is different from the one that you specified."
-msgstr ""
-
-#, fuzzy
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Gadu-Gadu पासवर्ड परिवर्तन गर्न अक्षम"
-
-#, fuzzy
-msgid "Change password for the Gadu-Gadu account"
-msgstr "%s का लागि पासवर्ड परिवर्तन गर्नुहोस्"
-
-#, fuzzy
-msgid "Password was changed successfully!"
-msgstr "पासवर्ड सफलतापूर्वक परिवर्तन गरियो"
-
-#, fuzzy
-msgid "Current password"
-msgstr "गलत पासवर्ड ।"
-
-#, fuzzy
-msgid "Password (retype)"
-msgstr "पासवर्ड पठाइयो"
-
-#, fuzzy
-msgid "Enter current token"
-msgstr "%s अहिले लगइन छैन ।"
-
-#, fuzzy
-msgid "Current token"
-msgstr "हालसालै"
-
-#, fuzzy
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "कृपया तपाईँको हालको पासवर्ड र तपाईँको नयाँ पासवर्ड प्रविष्टि गर्नुहोस् ।"
-
-#, fuzzy
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu पासवर्ड परिवर्तन गर्न अक्षम"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3370,22 +3286,6 @@ msgstr ""
 msgid "Unable to read from socket"
 msgstr "सकेट पढ्न अक्षम भयो"
 
-#, fuzzy
-msgid "Buddy list downloaded"
-msgstr "साथी आइडल छ:"
-
-#, fuzzy
-msgid "Your buddy list was downloaded from the server."
-msgstr "तपाईँ सर्भरबाट बिच्छेदन हुनुभयो ।"
-
-#, fuzzy
-msgid "Buddy list uploaded"
-msgstr "साथी प्रदर्शन"
-
-#, fuzzy
-msgid "Your buddy list was stored on the server."
-msgstr "त्यहाँ Gadu-Gadu सर्भरमा कुनै साथी सूची भण्डारण गरिएको छैन ।"
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3428,22 +3328,6 @@ msgstr "तपाईँ सर्भरबाट बिच्छेदन हु
 #, fuzzy
 msgid "Find buddies..."
 msgstr "निस्क्रिय साथीहरुलाई मधुरो पार्नुहोस्"
-
-#, fuzzy
-msgid "Change password..."
-msgstr "पासवर्ड परिवर्तन गर्नुहोस्..."
-
-#, fuzzy
-msgid "Upload buddylist to Server"
-msgstr "सर्भरमा साथी सूची निर्यात गर्नुहोस्"
-
-#, fuzzy
-msgid "Download buddylist from Server"
-msgstr "सर्भरबाट साथी सूची मेट्नुहोस्"
-
-#, fuzzy
-msgid "Delete buddylist from Server"
-msgstr "सर्भरबाट साथी सूची मेट्नुहोस्"
 
 msgid "Save buddylist to file..."
 msgstr ""
@@ -3557,7 +3441,7 @@ msgstr "जडान गर्न अक्षम छ"
 msgid "Unable to connect: %s"
 msgstr "सर्भरमा जडान गर्न अक्षम ।"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "जडान सिर्जना गर्दा त्रुटि"
 
@@ -3596,6 +3480,10 @@ msgstr "सङ्केतनहरू"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "पर्दा नाम"
+
 msgid "Real name"
 msgstr "वास्तविक नाम"
 
@@ -3606,6 +3494,14 @@ msgstr "वास्तविक नाम"
 #, fuzzy
 msgid "Use SSL"
 msgstr "SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "प्रमाणित गर्दा"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "गुप्तिकृत नभएको स्ट्रीमहरू माथि खाली पाठ प्रमाणीकरण अनुमति दिनुहोस्"
 
 msgid "Bad mode"
 msgstr "खराव मोड"
@@ -3642,6 +3538,14 @@ msgstr " <i>(परिचित)</i>"
 msgid "Nick"
 msgstr "निक"
 
+#, fuzzy
+msgid "Login name"
+msgstr "(नाम छैन)"
+
+#, fuzzy
+msgid "Host name"
+msgstr "गइसकेको होस्ट"
+
 msgid "Currently on"
 msgstr "हालसालै"
 
@@ -3670,6 +3574,10 @@ msgstr "%s विषयमा परिवर्तन भएको छ:%s"
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s का लागि विषय:%s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3788,6 +3696,33 @@ msgstr "सेवा अस्थायी रुपमा उपलब्ध �
 #, c-format
 msgid "Wallops from %s"
 msgstr "%s बाट वालपहरू"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "SILC ग्राहक जडान सुरू गर्न सक्दैन"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "प्रमाणीकरण असफल भयो"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "प्रमाणीकरण असफल भयो"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "गलत पासवर्ड ।"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "प्रमाणीकरण असफल भयो"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "कार्य &lt;सम्पादन गर्न कार्य&gt;:  एउटा कार्य सम्पादन गर्नुहोस् ।"
@@ -4490,6 +4425,9 @@ msgstr "मिति"
 msgid "Already Registered"
 msgstr "पहिल्यै रजिष्टार भएको छ"
 
+msgid "Password"
+msgstr "पासवर्ड"
+
 #, fuzzy
 msgid "Unregister"
 msgstr "दर्ता"
@@ -4635,6 +4573,9 @@ msgstr "तपाईँको पासवर्ड परिवर्तन भ
 
 msgid "Error changing password"
 msgstr "पासवर्ड परिवर्तन गर्दा त्रुटि"
+
+msgid "Password (again)"
+msgstr "पासवर्ड(फेरि)"
 
 #, fuzzy
 msgid "Change XMPP Password"
@@ -4862,6 +4803,10 @@ msgstr "%s मा सन्देश पठाउन अक्षम:"
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "%s मा फाइल पठाउन अक्षम भयो,प्रयोगकर्ताले फाइल स्थानान्तरणहरू समर्थन गर्दैन"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "%s मा फाइल पठाउन अक्षम भयो,प्रयोगकर्ताले फाइल स्थानान्तरणहरू समर्थन गर्दैन"
 
 #, fuzzy, c-format
@@ -6373,6 +6318,11 @@ msgstr "गाइमको बारेमा"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "अनलाइन वस्तु स्थिति"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6490,6 +6440,16 @@ msgstr "गाइमको बारेमा"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "सन्देश अति ठूलो छ ।"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "प्रयोगकर्ता प्रोफाइल पहुँच गर्न अक्षम भयो ।"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "फाइल खोल्न अक्षम ।"
 
 #, fuzzy
 msgid ""
@@ -6626,11 +6586,6 @@ msgstr "सन्देश पठाउनुहोस्"
 msgid "Rejection Message"
 msgstr "सन्देश पठाउनुहोस्"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "बिचको नाम"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "उपलब्ध छैन"
@@ -6659,6 +6614,37 @@ msgid "Connect via HTTP"
 msgstr "जडान"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "पिङ्ग गर्नुहोस्"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "नरमाइलो महशुस"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "आमन्त्रण गर्नुहोस्"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "विभाग"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6725,6 +6711,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "ज्याबर सन्देश त्रुटि"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -10337,7 +10327,6 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr "अज्ञात त्रुटि सङ्ख्या %d । याहू! वेबसाइटमा लगइन गर्नाले यसलाई स्थिर गर्न सक्छ ।"
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -11024,17 +11013,17 @@ msgstr ""
 "एउटा त्रुटि तपाईँको साथी सूची पद वर्णन गरेर देखा पर्यो । यो लोड भएको छैन, र पुरानो "
 "फाइल blist.xml~ मा सर्यो ।"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+#, fuzzy
+msgid "Pidgin Internet Messenger"
+msgstr "तात्कालिक मेसेन्जरहरू"
 
 #, fuzzy
 msgid "Internet Messenger"
 msgstr "तात्कालिक मेसेन्जरहरू"
 
-#, fuzzy
-msgid "Pidgin Internet Messenger"
-msgstr "तात्कालिक मेसेन्जरहरू"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12200,6 +12189,11 @@ msgstr "सन्देश पठाउनुहोस्"
 msgid "New Event"
 msgstr "घटना"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 #, fuzzy
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "सफा गर्नुहोस्: स्क्रोल ब्याक वार्तालाप सफा गर्दछ ।"
@@ -12317,7 +12311,8 @@ msgstr "विकासकर्ता र वेब मास्टर"
 msgid "win32 port"
 msgstr "win32 पोर्ट"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -12358,6 +12353,9 @@ msgstr "अम्हारिक"
 #, fuzzy
 msgid "Assamese"
 msgstr "लज्जित"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr ""
@@ -12494,6 +12492,9 @@ msgstr "टर्कीस"
 msgid "Lao"
 msgstr ""
 
+msgid "Lithuanian"
+msgstr "लिथुवानियाली"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "निहिलिस्ट"
@@ -12520,6 +12521,9 @@ msgstr "ठेगाना"
 #, fuzzy
 msgid "Malay"
 msgstr "पुरुष"
+
+msgid "Burmese"
+msgstr "बर्मेली"
 
 #, fuzzy
 msgid "Bokmål Norwegian"
@@ -12577,6 +12581,10 @@ msgstr "अल्वानियन"
 msgid "Serbian"
 msgstr "सेर्वियन"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "सेर्वियन"
+
 msgid "Sinhala"
 msgstr ""
 
@@ -12596,9 +12604,6 @@ msgstr ""
 msgid "Thai"
 msgstr ""
 
-msgid "Turkish"
-msgstr "टर्कीस"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "युक्रेनियन"
@@ -12608,9 +12613,6 @@ msgstr ""
 
 msgid "Vietnamese"
 msgstr "भियतनामिज"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.थान्ह र जिनोम-Vi टीम"
 
 msgid "Simplified Chinese"
 msgstr "सरलीकृत चिनियाँ"
@@ -12624,8 +12626,11 @@ msgstr "परम्परागत चिनियाँ"
 msgid "Amharic"
 msgstr "अम्हारिक"
 
-msgid "Lithuanian"
-msgstr "लिथुवानियाली"
+msgid "Turkish"
+msgstr "टर्कीस"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.थान्ह र जिनोम-Vi टीम"
 
 #, c-format
 msgid ""
@@ -12645,7 +12650,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -13384,6 +13388,10 @@ msgstr "<b>%s</b> सुरुवात गर्दा त्रुटि: %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "'म्यानुअल' ब्राउजर आदेश रोजिएको छ, तर कुनै आदेश सेट गरिएको छैन ।"
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "ब्राउजर आदेश<b>%s</b>वैध छैन ।"
 
 #, fuzzy
 msgid "No message"
@@ -14494,12 +14502,12 @@ msgstr "पेगिङ्ग"
 msgid "Pidgin smileys"
 msgstr ""
 
-msgid "Selecting this disables graphical emoticons."
-msgstr ""
-
 #, fuzzy
 msgid "none"
 msgstr "कोही पनि"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr ""
 
 #, fuzzy
 msgid "Small"
@@ -15521,7 +15529,6 @@ msgstr "प्रतेक N मिनेट वार्तालापहर�
 msgid "Timestamp Format Options"
 msgstr ""
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr ""
 
@@ -15573,6 +15580,63 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr ""
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "कुराकानी कोठा स्थानीयता"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "कुराकानीमा तपाईँको नाम कसैले भन्दा"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "प्रतिमा बचत गर्नुहोस्"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "प्रति सञ्झ्याल वार्तालापहरुको संख्या"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "सन्देश पठाइँदा"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "विकास अनुकलन"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "ximian विकास सँगै अनुकलन उपलब्ध गर्दछ ।"
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "ximian विकास सँगै अनुकलन उपलब्ध गर्दछ ।"
 
 #, fuzzy
 msgid "Audio"
@@ -15765,23 +15829,65 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "त्यो फाइल पहिलेनै अवस्थित छ"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "तात्कालिक मेसेन्जरहरू"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+रनटाइम संस्करण"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "सर्टकटहरू"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "पूर्वनिर्धारणहरू स्विकार गर्नुहोस्"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "थालनी गर्नुहोस्"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "स्थान"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -15789,29 +15895,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "पूर्वनिर्धारणहरू स्विकार गर्नुहोस्"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "ह्यान्डल:"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15822,79 +15934,131 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+रनटाइम संस्करण"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "स्थान"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "तात्कालिक मेसेन्जरहरू"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "सर्टकटहरू"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "थालनी गर्नुहोस्"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "त्यो फाइल पहिलेनै अवस्थित छ"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "ह्यान्डल:"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Token Error"
+#~ msgstr "जडान त्रुटि"
+
+#, fuzzy
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "कोठा सूची तान्न अक्षम ।"
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "नयाँ पासवर्डहरू मेल खाएन ।"
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "नयाँ जडान सिर्जना गर्न अक्षम ।"
+
+#, fuzzy
+#~ msgid "Registration completed successfully!"
+#~ msgstr "दर्ता सफल भयो"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "छवि बचत गर्नुहोस्"
+
+#, fuzzy
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "नयाँ ज्याबर खाता रजिष्टार गर्नुहोस्"
+
+#, fuzzy
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Gadu-Gadu पासवर्ड परिवर्तन गर्न अक्षम"
+
+#, fuzzy
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "%s का लागि पासवर्ड परिवर्तन गर्नुहोस्"
+
+#, fuzzy
+#~ msgid "Password was changed successfully!"
+#~ msgstr "पासवर्ड सफलतापूर्वक परिवर्तन गरियो"
+
+#, fuzzy
+#~ msgid "Current password"
+#~ msgstr "गलत पासवर्ड ।"
+
+#, fuzzy
+#~ msgid "Password (retype)"
+#~ msgstr "पासवर्ड पठाइयो"
+
+#, fuzzy
+#~ msgid "Enter current token"
+#~ msgstr "%s अहिले लगइन छैन ।"
+
+#, fuzzy
+#~ msgid "Current token"
+#~ msgstr "हालसालै"
+
+#, fuzzy
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "कृपया तपाईँको हालको पासवर्ड र तपाईँको नयाँ पासवर्ड प्रविष्टि गर्नुहोस् ।"
+
+#, fuzzy
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu पासवर्ड परिवर्तन गर्न अक्षम"
+
+#, fuzzy
+#~ msgid "Buddy list downloaded"
+#~ msgstr "साथी आइडल छ:"
+
+#, fuzzy
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "तपाईँ सर्भरबाट बिच्छेदन हुनुभयो ।"
+
+#, fuzzy
+#~ msgid "Buddy list uploaded"
+#~ msgstr "साथी प्रदर्शन"
+
+#, fuzzy
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "त्यहाँ Gadu-Gadu सर्भरमा कुनै साथी सूची भण्डारण गरिएको छैन ।"
+
+#, fuzzy
+#~ msgid "Change password..."
+#~ msgstr "पासवर्ड परिवर्तन गर्नुहोस्..."
+
+#, fuzzy
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "सर्भरमा साथी सूची निर्यात गर्नुहोस्"
+
+#, fuzzy
+#~ msgid "Download buddylist from Server"
+#~ msgstr "सर्भरबाट साथी सूची मेट्नुहोस्"
+
+#, fuzzy
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "सर्भरबाट साथी सूची मेट्नुहोस्"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "बिचको नाम"
 
 #, fuzzy
 #~ msgid "Meanwhile Connection Setup"
@@ -16866,10 +17030,6 @@ msgstr ""
 #~ msgstr "इमेल ठेगाना"
 
 #, fuzzy
-#~ msgid "Jingle"
-#~ msgstr "पिङ्ग गर्नुहोस्"
-
-#, fuzzy
 #~ msgid "User Nickname"
 #~ msgstr "प्रयोगकर्ता नाम"
 
@@ -16990,10 +17150,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Could not resolve hostname"
 #~ msgstr "होस्टनाम निश्चय गर्न अक्षम भयो ।"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "गलत पासवर्ड ।"
 
 #~ msgid "Yahoo Japan"
 #~ msgstr "याहू जापान"
@@ -17464,10 +17620,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Available Message"
 #~ msgstr "उपलब्ध सन्देश:"
-
-#, fuzzy
-#~ msgid "Screen name"
-#~ msgstr "पर्दा नाम"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "अवैध कुराकानी नाम निर्दिष्ट गरियो।"
@@ -18065,9 +18217,6 @@ msgstr ""
 #~ msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 #~ msgstr "भ्ल्याडिमिरा गिर्गिनिभा र भ्ल्याडिमिर (कालाडन) पेटकोभ"
 
-#~ msgid "Burmese"
-#~ msgstr "बर्मेली"
-
 #~ msgid "Xhosa"
 #~ msgstr "होजा"
 
@@ -18463,9 +18612,6 @@ msgstr ""
 
 #~ msgid "Import Buddy List from Server"
 #~ msgstr "सर्भरबाट साथी सूची आयात गर्नहोस्"
-
-#~ msgid "Unable to access user profile."
-#~ msgstr "प्रयोगकर्ता प्रोफाइल पहुँच गर्न अक्षम भयो ।"
 
 #~ msgid ""
 #~ "Pidgin was unable to access this user's profile due to an error "

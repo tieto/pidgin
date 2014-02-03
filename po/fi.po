@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2011-08-16 15:08+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -2052,56 +2052,8 @@ msgstr "Tiedostonsiirto käyttäjälle %s epäonnistui."
 msgid "File transfer from %s failed."
 msgstr "Tiedostonsiirto käyttäjältä %s epäonnistui."
 
-msgid "Run the command in a terminal"
-msgstr "Suorita komento päätteessä"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Komento jota käytetään \"aim\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Komento jota käytetään \"gg\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Komento jota käytetään \"icq\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Komento jota käytetään \"irc\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Komento jota käytetään \"msnim\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Komento jota käytetään \"sip\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Komento jota käytetään \"xmpp\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Komento jota käytetään \"ymsgr\"-URLien käsittelyyn, jos käytössä."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\"-URLien käsittelijä"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\"-URLien käsittelijä"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\"-URLien käsittelijä"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\"-URLien käsittelijä"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\"-URLien käsittelijä"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\"-URLien käsittelijä"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\"-URLien käsittelijä"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\"-URLien käsittelijä"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Määritellyn komennon tulee käsitellä \"aim\"-URLt"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2110,54 +2062,14 @@ msgstr ""
 "Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"aim\"-"
 "URLien käsittelyyn."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"gg\"-"
-"URLien käsittelyyn."
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\"-URLien käsittelijä"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"icq\"-"
-"URLien käsittelyyn."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Komento jota käytetään \"aim\"-URLien käsittelyyn, jos käytössä."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"irc\"-"
-"URLien käsittelyyn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"msnim"
-"\"-URLien käsittelyyn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"sip\"-"
-"URLien käsittelyyn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"xmpp\"-"
-"URLien käsittelyyn."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"ymsgr"
-"\"-URLien käsittelyyn."
+msgid "Run the command in a terminal"
+msgstr "Suorita komento päätteessä"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2166,29 +2078,117 @@ msgstr ""
 "Tosi, jos tämäntyyppisen URL:n käsittelyyn käytettävä komento tulisi ajaa "
 "päätteessä."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Määritellyn komennon tulee käsitellä \"aim\"-URLt"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Määritellyn komennon tulee käsitellä \"gg\"-URLt"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"gg\"-"
+"URLien käsittelyyn."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\"-URLien käsittelijä"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Komento jota käytetään \"gg\"-URLien käsittelyyn, jos käytössä."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Määritellyn komennon tulee käsitellä \"icq\"-URLt"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"icq\"-"
+"URLien käsittelyyn."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\"-URLien käsittelijä"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Komento jota käytetään \"icq\"-URLien käsittelyyn, jos käytössä."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Määritellyn komennon tulee käsitellä \"irc\"-URLt"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"irc\"-"
+"URLien käsittelyyn."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\"-URLien käsittelijä"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Komento jota käytetään \"irc\"-URLien käsittelyyn, jos käytössä."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Määritellyn komennon tulee käsitellä \"msnim\"-URLt"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"msnim"
+"\"-URLien käsittelyyn."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\"-URLien käsittelijä"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Komento jota käytetään \"msnim\"-URLien käsittelyyn, jos käytössä."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Määritellyn komennon tulee käsitellä \"sip\"-URLt"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"sip\"-"
+"URLien käsittelyyn."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\"-URLien käsittelijä"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Komento jota käytetään \"sip\"-URLien käsittelyyn, jos käytössä."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Määritellyn komennon tulee käsitellä \"xmpp\"-URLt"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"xmpp\"-"
+"URLien käsittelyyn."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\"-URLien käsittelijä"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Komento jota käytetään \"xmpp\"-URLien käsittelyyn, jos käytössä."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Määritellyn komennon tulee käsitellä \"ymsgr\"-URLt"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Tosi, jos \"komento\"-avaimessa määriteltyä komentoa tulisi käyttää \"ymsgr"
+"\"-URLien käsittelyyn."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\"-URLien käsittelijä"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Komento jota käytetään \"ymsgr\"-URLien käsittelyyn, jos käytössä."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Lokilla ei ole read-funktiota</font></b>"
@@ -2249,6 +2249,10 @@ msgstr ""
 "koodekkiasetukset ovat liian tiukat."
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Korjaamaton Farsight2-virhe."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Korjaamaton Farsight2-virhe."
 
 msgid "Error with your microphone"
@@ -3059,12 +3063,6 @@ msgid ""
 msgstr ""
 "Joko isäntä tai porttinumero on virheellinen annetulle proxy-asetukselle."
 
-msgid "Token Error"
-msgstr "Vastamerkkivirhe"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Polettia ei voi hakea.\n"
-
 msgid "Save Buddylist..."
 msgstr "Tallenna tuttavat..."
 
@@ -3092,40 +3090,6 @@ msgstr "Tallenna tuttavat..."
 
 msgid "Load buddylist from file..."
 msgstr "Tuo tuttavat tiedostosta..."
-
-msgid "You must fill in all registration fields"
-msgstr "Täytä kaikki rekisteröitymiskentät"
-
-msgid "Passwords do not match"
-msgstr "Salasanat eivät täsmää"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr ""
-"Uuden käyttäjätilin rekisteröinti epäonnistui tuntemattoman virheen takia."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Uusi Gadu-Gadu-käyttäjätili rekisteröity"
-
-msgid "Registration completed successfully!"
-msgstr "Rekisteröinti onnistui!"
-
-msgid "Password"
-msgstr "Salasana"
-
-msgid "Password (again)"
-msgstr "Salasana (uudelleen)"
-
-msgid "Enter captcha text"
-msgstr "Syötä captcha-teksti"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Rekisteröi uusi Gadu-Gadu-käyttäjätili"
-
-msgid "Please, fill in the following fields"
-msgstr "Täytä seuraavat kentät"
 
 msgid "City"
 msgstr "Paikkakunta"
@@ -3155,39 +3119,6 @@ msgstr "Etsi tuttavia"
 
 msgid "Please, enter your search criteria below"
 msgstr "Anna hakukriteerisi alla"
-
-msgid "Fill in the fields."
-msgstr "Täytä kentät."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Nykyinen salasanasi ei ole se jonka kirjoitit."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Salasanaa ei voi muuttaa. Tapahtui virhe.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Vaihda Gadu-Gadu-käyttäjätilin salasana"
-
-msgid "Password was changed successfully!"
-msgstr "Salasanan vaihto onnistui!"
-
-msgid "Current password"
-msgstr "Nykyinen salasana"
-
-msgid "Password (retype)"
-msgstr "Salasana (uudelleen)"
-
-msgid "Enter current token"
-msgstr "Syötä nykyinen poletti"
-
-msgid "Current token"
-msgstr "Nykyinen poletti"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Syötä sekä nykyinen että uusi salasana tunnukselle: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Muuta Gadu-Gadu-salasana"
 
 msgid "Show status to:"
 msgstr "Näytä tila seuraaville:"
@@ -3260,18 +3191,6 @@ msgstr "Hakuvalintojasi vastaavia käyttäjiä ei ole."
 msgid "Unable to read from socket"
 msgstr "Ei kyetty lukemaan pistoketta"
 
-msgid "Buddy list downloaded"
-msgstr "Tuttavat ladattu"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Tuttavasi ladattiin palvelimelta."
-
-msgid "Buddy list uploaded"
-msgstr "Tuttavat lähetettiin"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Tuttavasi tallennettiin palvelimelle."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3307,18 +3226,6 @@ msgstr "Ei yhdistettynä palvelimeen"
 
 msgid "Find buddies..."
 msgstr "Etsi tuttavia..."
-
-msgid "Change password..."
-msgstr "Vaihda salasana..."
-
-msgid "Upload buddylist to Server"
-msgstr "Vie tuttavat palvelimelle"
-
-msgid "Download buddylist from Server"
-msgstr "Tuo tuttavat palvelimelta"
-
-msgid "Delete buddylist from Server"
-msgstr "Poista tuttavat palvelimelta"
 
 msgid "Save buddylist to file..."
 msgstr "Vie tuttavat tiedostoon..."
@@ -3426,7 +3333,6 @@ msgstr "Yhteyden muodostaminen epäonnistui"
 msgid "Unable to connect: %s"
 msgstr "Ei voi yhdistää: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Palvelin on katkaissut yhteyden"
 
@@ -3465,6 +3371,10 @@ msgstr "Merkistöt"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Tunnista sisääntuleva UTF-8 automaattisesti"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Näyttönimi"
+
 msgid "Real name"
 msgstr "Oikea nimi"
 
@@ -3474,6 +3384,14 @@ msgstr "Oikea nimi"
 #.
 msgid "Use SSL"
 msgstr "Käytä SSL:ää"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Todennetaan"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Salli salaamaton tunnistautuminen salaamattoman yhteyden yli"
 
 msgid "Bad mode"
 msgstr "Väärä tila"
@@ -3509,6 +3427,13 @@ msgstr "<i>(tunnistettu)</i>"
 msgid "Nick"
 msgstr "Kutsumanimi"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Ei nimeä"
+
+msgid "Host name"
+msgstr "Isäntä"
+
 msgid "Currently on"
 msgstr "Tällä hetkellä"
 
@@ -3535,6 +3460,10 @@ msgstr "%s on poistanut aiheen."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s:n aihe on: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3649,6 +3578,32 @@ msgstr "Kutsumanimi tai kanava ei tilapäisesti ole käytössä."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops %s:ltä"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "SILC-asiakasyhteyttä ei voi alustaa"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "SASL-todennus epäonnistui"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "SASL-todennus epäonnistui"
+
+msgid "Incorrect Password"
+msgstr "Virheellinen salasana"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "SASL-todennus epäonnistui"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;tehtävä toiminta&gt;: Tee toiminta."
@@ -4311,6 +4266,9 @@ msgstr "Päiväys"
 msgid "Already Registered"
 msgstr "Valmiiksi rekisteröity"
 
+msgid "Password"
+msgstr "Salasana"
+
 msgid "Unregister"
 msgstr "Rekisteröinnin poisto"
 
@@ -4443,6 +4401,9 @@ msgstr "Salasana vaihdettu"
 
 msgid "Error changing password"
 msgstr "Virhe vaihdettaessa salasanaa"
+
+msgid "Password (again)"
+msgstr "Salasana (uudelleen)"
 
 msgid "Change XMPP Password"
 msgstr "Vaihda XMPP-salasana"
@@ -4669,6 +4630,10 @@ msgstr "Mediaa ei voi alustaa käyttäjän %s kanssa: virheellinen JID."
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Mediaa ei voi alustaa käyttäjän %s kanssa: käyttäjä ei ole linjoilla"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Mediaa ei voi alustaa käyttäjän %s kanssa: käyttäjä ei ole linjoilla"
 
 #, c-format
@@ -6064,6 +6029,11 @@ msgstr "Omat tiedot"
 msgid "Where I Live"
 msgstr "Missä asun"
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Poista tila"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Matkapuhelinnumero"
@@ -6174,6 +6144,16 @@ msgstr "Tietoja..."
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Viesti on liian suuri."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Käyttäjäprofiiliin ei pääsyä."
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Tiedoston avaaminen epäonnistui."
 
 #, fuzzy
 msgid ""
@@ -6315,11 +6295,6 @@ msgstr "Tilaviesti"
 msgid "Rejection Message"
 msgstr "Vastaanotetut viestit"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Muut etunimet"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Ei olemassa"
@@ -6348,6 +6323,37 @@ msgid "Connect via HTTP"
 msgstr "Yhdistetään käyttäen TCP:tä"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Jingle"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Tylsistynyt"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Kutsu"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Osasto"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6414,6 +6420,10 @@ msgstr "%s on lähettänyt puhekeskustelukutsun, mitä ei vielä tueta."
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP-viestivirhe"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -9893,7 +9903,6 @@ msgstr ""
 "Käyttäjätili lukittu. liian monta epäonnistunutta kirjautumisyritystä. "
 "Yahoo!--sivustolle kirjautuminen saattaa korjata tämän."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Tuntematon virhe 52. Yhdistäminen uudelleen pitäisi auttaa."
 
@@ -10544,15 +10553,15 @@ msgstr ""
 "%s:n lukemisessa tapahtui virhe. Tiedostoa ei ladattu ja vanha tiedosto on "
 "nimetty uudelleen nimelle %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin-pikaviestin"
 
 msgid "Internet Messenger"
 msgstr "Pikaviestin"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin-pikaviestin"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11600,6 +11609,14 @@ msgstr "Lukemattomat viestit"
 msgid "New Event"
 msgstr "Uusi tapahtuma"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Yhteys käyttäjätiliin on katkennut, etkä ole enää tässä keskustelussa. "
+"Keskusteluun liitytään uudelleen kun käyttäjätili on jälleen yhdistettynä. "
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Tyhjentää kaikki keskustelut"
 
@@ -11706,7 +11723,8 @@ msgstr "verkkosivujen ylläpitäjä"
 msgid "win32 port"
 msgstr "win32-käännös"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11744,6 +11762,9 @@ msgstr "arabia"
 #, fuzzy
 msgid "Assamese"
 msgstr "Häpeää"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "valkovenäjä latinalainen"
@@ -11872,6 +11893,9 @@ msgstr "kurdi"
 msgid "Lao"
 msgstr "lao"
 
+msgid "Lithuanian"
+msgstr "liettua"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "swahili"
@@ -11897,6 +11921,9 @@ msgstr "gudžarati"
 #, fuzzy
 msgid "Malay"
 msgstr "Mies"
+
+msgid "Burmese"
+msgstr "burma"
 
 msgid "Bokmål Norwegian"
 msgstr "kirjanorja"
@@ -11950,6 +11977,10 @@ msgstr "albania"
 msgid "Serbian"
 msgstr "serbia"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "valkovenäjä latinalainen"
+
 msgid "Sinhala"
 msgstr "sinhali"
 
@@ -11968,9 +11999,6 @@ msgstr "telugu"
 msgid "Thai"
 msgstr "thai"
 
-msgid "Turkish"
-msgstr "turkki"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "ukraina"
@@ -11980,9 +12008,6 @@ msgstr "urdu"
 
 msgid "Vietnamese"
 msgstr "vietnam"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M Thanh ja Gnomen Vi-työryhmä"
 
 msgid "Simplified Chinese"
 msgstr "kiina (yksinkertaistettu)"
@@ -11996,8 +12021,11 @@ msgstr "kiina (perinteinen)"
 msgid "Amharic"
 msgstr "amhara"
 
-msgid "Lithuanian"
-msgstr "liettua"
+msgid "Turkish"
+msgstr "turkki"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M Thanh ja Gnomen Vi-työryhmä"
 
 #, c-format
 msgid ""
@@ -12025,7 +12053,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12720,6 +12747,10 @@ msgstr "Virhe käynnistettäessä \"%s\": %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Oma selainkomento -asetus valittu, mutta komentoa ei ole asetettu."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Selainkomento \"%s\" on virheellinen."
 
 msgid "No message"
 msgstr "Ei viestiä"
@@ -13699,11 +13730,11 @@ msgstr "Pidgin-työkaluvihje"
 msgid "Pidgin smileys"
 msgstr "Pidgin-hymiöt"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Tämän valitseminen ottaa graafiset hymiöt pois käytöstä"
-
 msgid "none"
 msgstr "ei mitään"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Tämän valitseminen ottaa graafiset hymiöt pois käytöstä"
 
 msgid "Small"
 msgstr "Pienet"
@@ -14653,7 +14684,6 @@ msgstr "Näytä iChat-tyyliset aikaleimat N minuutin välein."
 msgid "Timestamp Format Options"
 msgstr "Aikaleiman muotoiluasetukset"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Pakota aikamuoto"
 
@@ -14703,6 +14733,63 @@ msgid ""
 msgstr ""
 "Tämä liitännäinen mahdollistaa keskustelu- ja lokiviestien aikaleimamuotojen "
 "muokkaamisen."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Keskusteluhuoneiden tunnuskuvat"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Vain kun joku sanoo käyttäjänimesi"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Tallenna kuvake"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Keskustelujen määrä per ikkuna"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Viesti lähetetty"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution-integrointi"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Mahdollistaa integroinnin Evolutionin kanssa."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Mahdollistaa integroinnin Evolutionin kanssa."
 
 msgid "Audio"
 msgstr "Ääni"
@@ -14892,6 +14979,19 @@ msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
 
+msgid "The installer is already running."
+msgstr "Asennusohjelma on jo käynnissä."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+"Pidgin on tällä hetkellä käynnissä. Poistu Pidginistä ja yritä uudelleen."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Seuraava >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14900,48 +15000,76 @@ msgstr ""
 "$(^Name) on julkaistu GPL-lisenssin alla. Lisenssi esitetään tässä vain "
 "tiedotuksena. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Pidginin käyttämä monialustainen käyttöliittymäkirjasto"
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin-pikaviestin (vaaditaan)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr ""
-"Pidgin on tällä hetkellä käynnissä. Poistu Pidginistä ja yritä uudelleen."
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Ajonaikainen GTK-ympäristö (vaaditaan jos ei ole jo)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Pikakuvakkeet"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Työpöytä"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Käynnistysvalikko"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Kielikäännökset"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidginin ytimen tiedostot ja kirjastot"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Tee Pidgin-pikakuvake käynnistysvalikkoon"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Pikakuvakkeet Pidginin käynnistämiseksi"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Tee Pidgin-pikakuvake työpöydälle"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Tee Pidgin-pikakuvake käynnistysvalikkoon"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Pidginin käyttämä monialustainen käyttöliittymäkirjasto"
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Virheenjäljityssymbolit (kaatumisraportteihin)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Vieraile Pidginin WWW-sivustolla"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Työpöytä"
+msgid "URI Handlers"
+msgstr "URI-käsittelijät"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Oikolukutuki"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14951,51 +15079,23 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "Ajonaikainen GTK-ympäristö (vaaditaan jos ei ole jo)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Kielikäännökset"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Seuraava >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin-pikaviestin (vaaditaan)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Pikakuvakkeet"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Pikakuvakkeet Pidginin käynnistämiseksi"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Oikolukutuki"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Käynnistysvalikko"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Tuki oikoluvulle.  (Asennukseen tarvitaan Internet-yhteys)"
 
-msgid "The installer is already running."
-msgstr "Asennusohjelma on jo käynnissä."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -15004,21 +15104,103 @@ msgstr ""
 "Asennuksen poistaja ei löytänyt rekisteristä tietoja Pidginista.$\\rOn "
 "todennäköistä että joku muu käyttäjä on asentanut ohjelman."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "URI-käsittelijät"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Vieraile Pidginin WWW-sivustolla"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
+
+#~ msgid "Token Error"
+#~ msgstr "Vastamerkkivirhe"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Polettia ei voi hakea.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Täytä kaikki rekisteröitymiskentät"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Salasanat eivät täsmää"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr ""
+#~ "Uuden käyttäjätilin rekisteröinti epäonnistui tuntemattoman virheen takia."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Uusi Gadu-Gadu-käyttäjätili rekisteröity"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Rekisteröinti onnistui!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Syötä captcha-teksti"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Rekisteröi uusi Gadu-Gadu-käyttäjätili"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Täytä seuraavat kentät"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Täytä kentät."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Nykyinen salasanasi ei ole se jonka kirjoitit."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Salasanaa ei voi muuttaa. Tapahtui virhe.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Vaihda Gadu-Gadu-käyttäjätilin salasana"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Salasanan vaihto onnistui!"
+
+#~ msgid "Current password"
+#~ msgstr "Nykyinen salasana"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Salasana (uudelleen)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Syötä nykyinen poletti"
+
+#~ msgid "Current token"
+#~ msgstr "Nykyinen poletti"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Syötä sekä nykyinen että uusi salasana tunnukselle: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Muuta Gadu-Gadu-salasana"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Tuttavat ladattu"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Tuttavasi ladattiin palvelimelta."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Tuttavat lähetettiin"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Tuttavasi tallennettiin palvelimelle."
+
+#~ msgid "Change password..."
+#~ msgstr "Vaihda salasana..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Vie tuttavat palvelimelle"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Tuo tuttavat palvelimelta"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Poista tuttavat palvelimelta"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Muut etunimet"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Sametime-yhteisöpalvelinta ei ole määritelty"
@@ -16191,9 +16373,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Reachability Address"
 #~ msgstr "Tavoitettavuusosoite"
 
-#~ msgid "Jingle"
-#~ msgstr "Jingle"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Jingle-ääni"
 
@@ -16328,9 +16507,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Isäntänimeä ei voi selvittää"
-
-#~ msgid "Incorrect Password"
-#~ msgstr "Virheellinen salasana"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
@@ -16948,9 +17124,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 
 #~ msgid "Screen name sent"
 #~ msgstr "Näyttönimi lähetetty"
-
-#~ msgid "Screen name"
-#~ msgstr "Näyttönimi"
 
 #~ msgid "_Merge"
 #~ msgstr "_Yhdistä"
@@ -18070,9 +18243,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Pounce Action"
 #~ msgstr "Ilmoittimen toiminto"
 
-#~ msgid "Host name"
-#~ msgstr "Isäntä"
-
 #~ msgid "Jabber ID"
 #~ msgstr "Jabber ID"
 
@@ -18615,9 +18785,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 #~ msgstr "Vladimira Girginova ja Vladimir (Kaladan) Petkov"
 
-#~ msgid "Burmese"
-#~ msgstr "burma"
-
 #~ msgid "Xhosa"
 #~ msgstr "xhosa"
 
@@ -18872,9 +19039,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgstr ""
 #~ "Pidgin ei voinut vaihtaa salasanaa koska yhteyttä Gadu-Gadu -palvelimelle "
 #~ "ei voitu muodostaa. Yritä myöhemmin uudelleen."
-
-#~ msgid "Unable to access user profile."
-#~ msgstr "Käyttäjäprofiiliin ei pääsyä."
 
 #~ msgid ""
 #~ "Pidgin was unable to access this user's profile due to an error "

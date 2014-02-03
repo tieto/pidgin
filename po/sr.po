@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -2043,56 +2043,8 @@ msgstr "Пренос датотеке до %s прекинут."
 msgid "File transfer from %s failed."
 msgstr "Пренос датотеке од %s пропао."
 
-msgid "Run the command in a terminal"
-msgstr "Покрени команду у терминалу"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Команда за рад са аим адресама, уколико је омогућено."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Команда за рад са qq адресама, уколико је омогућено"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Команда за рад са icq адресама, уколико је омогућено."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Команда за рад са ирц адресама, уколико је омогућно."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Команда за рад са мсн адресама, уколико је омогућено."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Команда за рад са сип адресама, уколико је омогућено."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Команда за рад са џабер адресама, уколико је омогућено"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Команда за рад са јаху адресама, уколико је омогућено."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Руководилац аим адреса"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Руководилац qq адресама"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Руководилац icq адресама"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Руководилац ирц адресама"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Руководилац мсн адресама"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Руководилац сип адресама"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Руководилац џабер адресама"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Руководилац јаху адресама"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Да ли да унесена команда руководи аим адресама"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2100,46 +2052,14 @@ msgid ""
 msgstr ""
 "„Тачно“ уколико команда унесена у кључу „команда“ подржава „аим“ адресе."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr "„Тачно“ уколико команда унесена у кључу „команда“ подржава „gg“ адресе"
+msgid "The handler for \"aim\" URLs"
+msgstr "Руководилац аим адреса"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"„Тачно“ уколико команда унесена у кључу „команда“ подржава „icq“ адресе"
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Команда за рад са аим адресама, уколико је омогућено."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"„Тачно“ уколико команда унесена у кључу „команда“ подржава „ирц“ адресе"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"„Тачно“ уколико команда унесена у кључу „команда“ подржава „мсн“ адресе"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"„Тачно“ уколико команда унесена у кључу „команда“ подржава „сип“ адресе"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"„Тачно“ уколико команда унесена у кључу „команда“ подржава „џабер“ адресе"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"„Тачно“ уколико команда унесена у кључу „команда“ подржава „јаху“ адресе"
+msgid "Run the command in a terminal"
+msgstr "Покрени команду у терминалу"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2148,29 +2068,109 @@ msgstr ""
 "„Тачно“ уколико би команда за рад са овим типом адреса требала бити "
 "покренута у терминалу."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Да ли да унесена команда руководи аим адресама"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Да ли да унесена команда руководи qq адресама"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr "„Тачно“ уколико команда унесена у кључу „команда“ подржава „gg“ адресе"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Руководилац qq адресама"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Команда за рад са qq адресама, уколико је омогућено"
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Да ли да унесена команда руководи icq адресама"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"„Тачно“ уколико команда унесена у кључу „команда“ подржава „icq“ адресе"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Руководилац icq адресама"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Команда за рад са icq адресама, уколико је омогућено."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Да ли да унесена команда руководи ирц адресама"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"„Тачно“ уколико команда унесена у кључу „команда“ подржава „ирц“ адресе"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Руководилац ирц адресама"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Команда за рад са ирц адресама, уколико је омогућно."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Да ли да унесена команда руководи мсн адресама"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"„Тачно“ уколико команда унесена у кључу „команда“ подржава „мсн“ адресе"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Руководилац мсн адресама"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Команда за рад са мсн адресама, уколико је омогућено."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Да ли да унесена команда руководи сип адресама"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"„Тачно“ уколико команда унесена у кључу „команда“ подржава „сип“ адресе"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Руководилац сип адресама"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Команда за рад са сип адресама, уколико је омогућено."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Да ли да унесена команда руководи џабер адресама"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"„Тачно“ уколико команда унесена у кључу „команда“ подржава „џабер“ адресе"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Руководилац џабер адресама"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Команда за рад са џабер адресама, уколико је омогућено"
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Да ли да унесена команда руководи јаху адресама"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"„Тачно“ уколико команда унесена у кључу „команда“ подржава „јаху“ адресе"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Руководилац јаху адресама"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Команда за рад са јаху адресама, уколико је омогућено."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Дневник не омогућава читање</font></b>"
@@ -2228,6 +2228,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Дошло је до непознате грешке при пријави: %s."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Дошло је до непознате грешке при пријави: %s."
 
 msgid "Error with your microphone"
@@ -3030,12 +3034,6 @@ msgstr ""
 "Неисправно је или име рачунара или број порта вашег посредника међу "
 "подешавањима."
 
-msgid "Token Error"
-msgstr "Токен грешка"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Не могу да добацим токен.\n"
-
 msgid "Save Buddylist..."
 msgstr "Сними списак другара..."
 
@@ -3063,42 +3061,6 @@ msgstr "Сачувај списак другара..."
 
 msgid "Load buddylist from file..."
 msgstr "Учитај списак другара из датотеке..."
-
-#, fuzzy
-msgid "You must fill in all registration fields"
-msgstr "Попуни поља за регистрацију."
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "Лозинке нису исте."
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Не могу да региструјем нови налог. Десила се грешка.\n"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Регистрован нови Гаду-Гаду налог"
-
-msgid "Registration completed successfully!"
-msgstr "Регистрација завршена успешно!"
-
-msgid "Password"
-msgstr "Лозинка"
-
-msgid "Password (again)"
-msgstr "Лозинка (поновите)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-msgid "Captcha"
-msgstr ""
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Региструј нови Гаду-Гаду налог"
-
-msgid "Please, fill in the following fields"
-msgstr "Молим вас попуните следећа поља"
 
 msgid "City"
 msgstr "Град"
@@ -3128,39 +3090,6 @@ msgstr "Пронађи другаре"
 
 msgid "Please, enter your search criteria below"
 msgstr "Молим вас унесите испод ваш критеријум"
-
-msgid "Fill in the fields."
-msgstr "Попуни поља."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Ваша тренутна лозинка је различита од оне коју сте назначили."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Не могу да изменим лозинку. Десила се грешка.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Измени лозинку за Гаду-Гаду налог"
-
-msgid "Password was changed successfully!"
-msgstr "Лозинка је успешно измењена!"
-
-msgid "Current password"
-msgstr "Тренутна лозинка"
-
-msgid "Password (retype)"
-msgstr "Лозинка (поново откуцајте)"
-
-msgid "Enter current token"
-msgstr "Унесите тренутни токен"
-
-msgid "Current token"
-msgstr "Тренутни токен"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Молим вас унесите текућу лозинку и нову лозинку: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Измени Гаду-Гаду лозинку"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3237,18 +3166,6 @@ msgstr "Нема нађених корисника по вашем критер�
 msgid "Unable to read from socket"
 msgstr "Не могу да читам утичницу"
 
-msgid "Buddy list downloaded"
-msgstr "Списак другова преузет"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Ваша листа другова је преузета са сервера."
-
-msgid "Buddy list uploaded"
-msgstr "Листа другова послата"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Ваша листа другова је послана на сервер."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3285,18 +3202,6 @@ msgstr "Нисте у вези са сервером."
 
 msgid "Find buddies..."
 msgstr "Нађи другаре..."
-
-msgid "Change password..."
-msgstr "Промени лозинку..."
-
-msgid "Upload buddylist to Server"
-msgstr "Извези списак другара на сервер"
-
-msgid "Download buddylist from Server"
-msgstr "Добави списак другара са сервера"
-
-msgid "Delete buddylist from Server"
-msgstr "Уклони списак другара са сервера"
 
 msgid "Save buddylist to file..."
 msgstr "Сачувај списак другара у датотеку..."
@@ -3410,7 +3315,7 @@ msgstr "Немогуће повезивање"
 msgid "Unable to connect: %s"
 msgstr "Не могу да се повежем на %s"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "Сервер је прекинуо везу"
 
@@ -3449,6 +3354,10 @@ msgstr "Кодирања"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Сам пронађи долазни УТФ-8"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Корисничко име:"
+
 msgid "Real name"
 msgstr "Право име"
 
@@ -3458,6 +3367,14 @@ msgstr "Право име"
 #.
 msgid "Use SSL"
 msgstr "Користи SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Идентификација"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Дозволи нескривене лозинке на нешифрованим токовима"
 
 msgid "Bad mode"
 msgstr "Лош мод"
@@ -3494,6 +3411,14 @@ msgstr " <i>(идентификовани)</i>"
 msgid "Nick"
 msgstr "Надимак"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Без имена"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Име домаћина"
+
 msgid "Currently on"
 msgstr "Тренутно присутан"
 
@@ -3520,6 +3445,10 @@ msgstr "%s очисти тему."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Тема за %s је: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3635,6 +3564,33 @@ msgstr "Надимак или канал је привремено недост�
 #, c-format
 msgid "Wallops from %s"
 msgstr "Wallops са %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Не може се покренути SILC програмска веза"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Неуспешна идентификација"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Неуспешна идентификација"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Неисправна лозинка"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Неуспешна идентификација"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;акција&gt;:  Изведи одређену акцију."
@@ -4329,6 +4285,9 @@ msgstr "Датум"
 msgid "Already Registered"
 msgstr "Већ је регистрован"
 
+msgid "Password"
+msgstr "Лозинка"
+
 msgid "Unregister"
 msgstr "Одјави регистрацију"
 
@@ -4468,6 +4427,9 @@ msgstr "Ваша лозинка је измењена."
 
 msgid "Error changing password"
 msgstr "Грешка при измени лозинке"
+
+msgid "Password (again)"
+msgstr "Лозинка (поновите)"
 
 msgid "Change XMPP Password"
 msgstr "Промени Џабер лозинку"
@@ -4692,6 +4654,10 @@ msgstr "Не могу да пошаљем датотеку за %s, погреш
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Слање датотеке кориснику %s није успело јер је ван мреже"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Слање датотеке кориснику %s није успело јер је ван мреже"
 
 #, fuzzy, c-format
@@ -6149,6 +6115,11 @@ msgstr "О мени"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Стање брисања"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6264,6 +6235,16 @@ msgstr "О мени"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Порука је предугачка."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Не могу да учитам додатак"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Не могу да прочитам датотеку."
 
 #, fuzzy
 msgid ""
@@ -6398,16 +6379,6 @@ msgstr "Послате поруке"
 msgid "Rejection Message"
 msgstr "Примљене поруке"
 
-# Овде је некада стајало 'име оца'. Код нас је средње име углавном име
-# оца, али то дефинитивно не мора да буде случај на другим местима. Нпр
-# у Холандији је врло уобичајено да људи имају по 4-5 имена; увек се зна
-# које је прво, званично, име али свако може да изабере било које од њих
-# као омиљено. Онда се тако представља, тако га зову пријатељи итд.
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Средње име"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Недоступан"
@@ -6436,6 +6407,37 @@ msgid "Connect via HTTP"
 msgstr "Повежи се помоћу ТЦП-а"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Џингл"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Досадан"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Позови"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Одељење"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6508,6 +6510,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "Грешка у Џабер поруци"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -10044,7 +10050,6 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr "Непознат број грешке: %d. Пријава на Јаху можда може да то отклони."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10711,15 +10716,15 @@ msgstr ""
 "Дошло је до грешке при обради вашег %s.  Није учитано, а старом фајлу је име "
 "промењено у %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Пиџин Интернет писмоноша"
 
 msgid "Internet Messenger"
 msgstr "Интернет писмоноша"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Пиџин Интернет писмоноша"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11813,6 +11818,11 @@ msgstr "Непрочитане поруке"
 msgid "New Event"
 msgstr "Нови догађај"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: чисти све прозоре разговора."
 
@@ -11918,7 +11928,8 @@ msgstr "веб уредник"
 msgid "win32 port"
 msgstr "Windows издање"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -11956,6 +11967,9 @@ msgstr "арапски"
 #, fuzzy
 msgid "Assamese"
 msgstr "Стидан"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "белоруски латиница"
@@ -12086,6 +12100,9 @@ msgstr "курдски"
 msgid "Lao"
 msgstr "лао"
 
+msgid "Lithuanian"
+msgstr "литвански"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Нихилиста"
@@ -12111,6 +12128,9 @@ msgstr "гујарати"
 #, fuzzy
 msgid "Malay"
 msgstr "Мушки"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "норвешки (бокмал)"
@@ -12164,6 +12184,10 @@ msgstr "албански"
 msgid "Serbian"
 msgstr "српски"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "белоруски латиница"
+
 msgid "Sinhala"
 msgstr ""
 
@@ -12182,9 +12206,6 @@ msgstr "телугу"
 msgid "Thai"
 msgstr "тајландски (таи)"
 
-msgid "Turkish"
-msgstr "турски"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "румунски"
@@ -12194,9 +12215,6 @@ msgstr ""
 
 msgid "Vietnamese"
 msgstr "вијетнамски"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "Т.М.Тханх и Вијетнамски Гном тим"
 
 msgid "Simplified Chinese"
 msgstr "упрошћени кинески"
@@ -12210,8 +12228,11 @@ msgstr "традиционални кинески"
 msgid "Amharic"
 msgstr "амхарски"
 
-msgid "Lithuanian"
-msgstr "литвански"
+msgid "Turkish"
+msgstr "турски"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "Т.М.Тханх и Вијетнамски Гном тим"
 
 #, fuzzy, c-format
 msgid ""
@@ -12242,7 +12263,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12941,6 +12961,10 @@ msgstr "Грешка при покретању „%s“: %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Изабрана је „ручна“ наредба за веб читач, а наредба није постављена."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Команда читачу „%s“ није исправна."
 
 #, fuzzy
 msgid "No message"
@@ -13964,11 +13988,11 @@ msgstr "Пиџинови савети"
 msgid "Pidgin smileys"
 msgstr "Пиџинови смешци"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Избор ове опције онемогућава исцртавање смешка."
-
 msgid "none"
 msgstr "нико"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Избор ове опције онемогућава исцртавање смешка."
 
 msgid "Small"
 msgstr "Мало"
@@ -14947,7 +14971,7 @@ msgstr ""
 msgid "Timestamp Format Options"
 msgstr "Опције форматирања временских ознака"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "_Приморај приказ 24-часовног времена"
 
@@ -15000,6 +15024,63 @@ msgid ""
 msgstr ""
 "Овај додатак дозвољава кориснику да подеси формат временских ознака при "
 "комуникацији и у дневниу порука "
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Локализација причаонице"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Само када неко помене ваше име"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Сачувај икону"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Број разговора у једном прозору"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Порука послата"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Сарадња са Еволуцијом"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Омогућава интеграцију са програмом Еволуција."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Омогућава интеграцију са програмом Еволуција."
 
 #, fuzzy
 msgid "Audio"
@@ -15191,23 +15272,65 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Овај додатак је користан за уклањање грешака Џабер сервера или програма"
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Ово име ћаскања је већ заузето"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Пиџин Интернет писмоноша"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "ГТК+ библиотека издање"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Стање"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Подразумевано на ситему"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Покретање"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Место"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -15215,29 +15338,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "Подразумевано на ситему"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "Руководилац адреса Мог свемира"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15248,79 +15377,127 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "ГТК+ библиотека издање"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Место"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Пиџин Интернет писмоноша"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Стање"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Покретање"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "Ово име ћаскања је већ заузето"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "Руководилац адреса Мог свемира"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Token Error"
+#~ msgstr "Токен грешка"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Не могу да добацим токен.\n"
+
+#, fuzzy
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Попуни поља за регистрацију."
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "Лозинке нису исте."
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Не могу да региструјем нови налог. Десила се грешка.\n"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Регистрован нови Гаду-Гаду налог"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Регистрација завршена успешно!"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Региструј нови Гаду-Гаду налог"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Молим вас попуните следећа поља"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Попуни поља."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Ваша тренутна лозинка је различита од оне коју сте назначили."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Не могу да изменим лозинку. Десила се грешка.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Измени лозинку за Гаду-Гаду налог"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Лозинка је успешно измењена!"
+
+#~ msgid "Current password"
+#~ msgstr "Тренутна лозинка"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Лозинка (поново откуцајте)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Унесите тренутни токен"
+
+#~ msgid "Current token"
+#~ msgstr "Тренутни токен"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Молим вас унесите текућу лозинку и нову лозинку: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Измени Гаду-Гаду лозинку"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Списак другова преузет"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Ваша листа другова је преузета са сервера."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Листа другова послата"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Ваша листа другова је послана на сервер."
+
+#~ msgid "Change password..."
+#~ msgstr "Промени лозинку..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Извези списак другара на сервер"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Добави списак другара са сервера"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Уклони списак другара са сервера"
+
+# Овде је некада стајало 'име оца'. Код нас је средње име углавном име
+# оца, али то дефинитивно не мора да буде случај на другим местима. Нпр
+# у Холандији је врло уобичајено да људи имају по 4-5 имена; увек се зна
+# које је прво, званично, име али свако може да изабере било које од њих
+# као омиљено. Онда се тако представља, тако га зову пријатељи итд.
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Средње име"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Није одређен Sametime сервер заједнице"
@@ -16417,9 +16594,6 @@ msgstr ""
 #~ msgid "Reachability Address"
 #~ msgstr "Адреса за контакт"
 
-#~ msgid "Jingle"
-#~ msgstr "Џингл"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Џингл звук"
 
@@ -16551,10 +16725,6 @@ msgstr ""
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Не могу да добијем име домаћина"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Неисправна лозинка"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
@@ -16975,9 +17145,6 @@ msgstr ""
 
 #~ msgid "Available Message"
 #~ msgstr "Доступна порука"
-
-#~ msgid "Screen name"
-#~ msgstr "Корисничко име:"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "Наведено је неисправно име ћаскања."

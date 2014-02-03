@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CVS Version of Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2011-09-03 21:00+0700\n"
 "Last-Translator: Nguyễn Vũ Hưng <vuhung16plus@gmail.com>\n"
 "Language-Team: Du an MOST <du-an-most@lists.hanoilug.org>\n"
@@ -2052,56 +2052,8 @@ msgstr "Tiến trình truyền tập tin cho %s bị lỗi."
 msgid "File transfer from %s failed."
 msgstr "Tiến trình truyền tập tin từ %s bị lỗi."
 
-msgid "Run the command in a terminal"
-msgstr "Chạy lệnh trong thiết bị cuối"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « aim », nếu bật."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « gg », nếu bật."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « icq », nếu bật."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « irc », nếu bật."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « msnim », nếu bật."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « sip », nếu bật."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « xmpp », nếu bật."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « ymsgr », nếu bật."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « aim »"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « gg »"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « icq »"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « irc »"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « msnim »"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « sip »"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « xmpp »"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « ymsgr »"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « aim » hay không"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2110,54 +2062,14 @@ msgstr ""
 "Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
 "« aim »."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« gg »."
+msgid "The handler for \"aim\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « aim »"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« icq »."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « aim », nếu bật."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« irc »."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« msnim »."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« sip »."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« xmpp »."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« ymsgr »."
+msgid "Run the command in a terminal"
+msgstr "Chạy lệnh trong thiết bị cuối"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2166,29 +2078,117 @@ msgstr ""
 "Đúng nếu lệnh được dùng để quản lý địa chỉ URL kiểu này nên được chạy trong "
 "thiết bị cuối."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « aim » hay không"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « gg » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« gg »."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « gg »"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « gg », nếu bật."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « icq » hay không"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« icq »."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « icq »"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « icq », nếu bật."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « irc » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« irc »."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « irc »"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « irc », nếu bật."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « msnim » hay không"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« msnim »."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « msnim »"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « msnim », nếu bật."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « sip » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« sip »."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « sip »"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « sip », nếu bật."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « xmpp » hay không"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« xmpp »."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « xmpp »"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « xmpp », nếu bật."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « ymsgr » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« ymsgr »."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « ymsgr »"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « ymsgr », nếu bật."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Trình ghi lưu không có chức năng đọc</font></b>"
@@ -2250,6 +2250,10 @@ msgstr ""
 "codecs.conf » vẫn quá bị hạn chế."
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Gặp một lỗi Farsight2 từ đó không thể phục hồi."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Gặp một lỗi Farsight2 từ đó không thể phục hồi."
 
 msgid "Error with your microphone"
@@ -3065,12 +3069,6 @@ msgid ""
 msgstr ""
 "Bạn chỉ định tên máy hay số hiệu cổng không hợp lệ cho kiểu ủy nhiệm đã cho."
 
-msgid "Token Error"
-msgstr "Lỗi hiệu bài"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Không thể lấy hiệu bài.\n"
-
 msgid "Save Buddylist..."
 msgstr "Lưu danh sách bạn bè..."
 
@@ -3098,40 +3096,6 @@ msgstr "Lưu danh sách bạn bè..."
 
 msgid "Load buddylist from file..."
 msgstr "Nạp danh sách bạn bè từ tập tin..."
-
-msgid "You must fill in all registration fields"
-msgstr "Phải điền vào tất cả các trường đăng ký"
-
-msgid "Passwords do not match"
-msgstr "Hai mật khẩu không trùng nhau"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Không thể đăng ký tài khoản mới. Gặp một lỗi không rõ."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Tài khoản Gadu-Gadu mới đã đăng ký"
-
-msgid "Registration completed successfully!"
-msgstr "Đăng ký thành công."
-
-msgid "Password"
-msgstr "Mật khẩu"
-
-msgid "Password (again)"
-msgstr "Nhập lại mật khẩu"
-
-msgid "Enter captcha text"
-msgstr "Gõ chuỗi Captcha"
-
-# Tên: đừng dịch
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Đăng ký tài khoản Gadu-Gadu mới"
-
-msgid "Please, fill in the following fields"
-msgstr "Vui lòng điền vào các trường sau"
 
 msgid "City"
 msgstr "T.P."
@@ -3161,39 +3125,6 @@ msgstr "Tìm bạn bè"
 
 msgid "Please, enter your search criteria below"
 msgstr "Hãy nhập bên dưới tiêu chuẩn tìm kiếm"
-
-msgid "Fill in the fields."
-msgstr "Điền vào trường."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Mật khẩu hiện tại khác với mật khẩu bạn đã cung cấp."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Không thể đổi mật khẩu. Lỗi xảy ra.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Đổi mật khẩu cho tài khoản Gadu-Gadu"
-
-msgid "Password was changed successfully!"
-msgstr "Đổi thành công mật khẩu."
-
-msgid "Current password"
-msgstr "Mật khẩu hiện tại"
-
-msgid "Password (retype)"
-msgstr "Mật khẩu (gõ lại)"
-
-msgid "Enter current token"
-msgstr "Nhập hiệu bài hiện có"
-
-msgid "Current token"
-msgstr "Hiệu bài hiện có"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Hãy nhập mật khẩu hiện tại và mật khẩu mới của bạn cho UIN: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Đổi mật khẩu Gadu-Gadu"
 
 msgid "Show status to:"
 msgstr "Hiện trạng thái với: "
@@ -3266,18 +3197,6 @@ msgstr "Không có người dùng tương ứng với tiêu chuẩn tìm kiếm 
 msgid "Unable to read from socket"
 msgstr "Không thể đọc từ ổ cắm"
 
-msgid "Buddy list downloaded"
-msgstr "Danh sách bạn bè đã tải xuống"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Danh sách bạn bè của bạn đã được tải xuống máy phục vụ."
-
-msgid "Buddy list uploaded"
-msgstr "Danh sách bạn bè đã tải lên"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Danh sách bạn bè của bạn đã được cất giữ trên máy phục vụ."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3313,19 +3232,6 @@ msgstr "Không phải có kết nối tới máy phục vụ"
 
 msgid "Find buddies..."
 msgstr "Tìm bạn bè..."
-
-msgid "Change password..."
-msgstr "Đổi mật khẩu..."
-
-msgid "Upload buddylist to Server"
-msgstr "Tải danh sách bạn bè lên máy phục vụ"
-
-# Hành động này tải xuống một bản sao, vẫn còn để lại danh sách bạn bè của bạn trên máy phục vụ.
-msgid "Download buddylist from Server"
-msgstr "Tải danh sách bạn bè xuống máy phục vụ"
-
-msgid "Delete buddylist from Server"
-msgstr "Xoá danh sách bạn bè khỏi máy phục vụ"
 
 msgid "Save buddylist to file..."
 msgstr "Lưu danh sách bạn bè vào tập tin..."
@@ -3431,7 +3337,6 @@ msgstr "Không thể kết nối"
 msgid "Unable to connect: %s"
 msgstr "Không thể kết nối: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Máy phục vụ đã đóng kết nối"
 
@@ -3470,6 +3375,10 @@ msgstr "Bảng mã"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Tự động phát hiện UTF-8 gửi đến"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Tên không hợp lệ"
+
 msgid "Real name"
 msgstr "Tên thật"
 
@@ -3479,6 +3388,14 @@ msgstr "Tên thật"
 #.
 msgid "Use SSL"
 msgstr "Dùng SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Đang xác thực"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Cho phép xác thực bằng nhập thô qua luồng dữ liệu không mật mã"
 
 msgid "Bad mode"
 msgstr "Chế độ sai"
@@ -3514,6 +3431,14 @@ msgstr " <i>(đã nhận diện)</i>"
 msgid "Nick"
 msgstr "Tên hiệu"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Tên đăng nhập MXit"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Tên máy"
+
 msgid "Currently on"
 msgstr "Hiện thời trên"
 
@@ -3540,6 +3465,10 @@ msgstr "%s đã gột chủ đề."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Chủ đề cho %s: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3654,6 +3583,33 @@ msgstr "Tên hiệu hay kênh này tạm thời không sẵn sàng."
 #, c-format
 msgid "Wallops from %s"
 msgstr "tin nhắn gửi cho mọi quản trị từ %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Không thể khởi tạo được kết nối Khách SILC"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Lỗi xác thực SASL"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Lỗi xác thực SASL"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Mật khẩu sai"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Lỗi xác thực SASL"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;việc cần làm&gt;:  Thực hiện một hành động."
@@ -4315,6 +4271,9 @@ msgstr "Ngày tháng"
 msgid "Already Registered"
 msgstr "Đã đăng ký"
 
+msgid "Password"
+msgstr "Mật khẩu"
+
 msgid "Unregister"
 msgstr "Hủy đăng ký"
 
@@ -4449,6 +4408,9 @@ msgstr "Mật khẩu của bạn đã được thay đổi."
 
 msgid "Error changing password"
 msgstr "Lỗi khi thay đổi mật khẩu"
+
+msgid "Password (again)"
+msgstr "Nhập lại mật khẩu"
 
 msgid "Change XMPP Password"
 msgstr "Đổi mật khẩu XMPP"
@@ -4674,6 +4636,10 @@ msgstr "Không thể khởi đầu phương tiện với %s, JID không hợp l�
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Không thể khởi đầu phương tiện với %s, người dùng chưa kết nối"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Không thể khởi đầu phương tiện với %s, người dùng chưa kết nối"
 
 #, c-format
@@ -6042,6 +6008,11 @@ msgstr "Tự giới thiệu "
 msgid "Where I Live"
 msgstr "Nơi tôi sống "
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Xoá trạng thái"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "Số điện thoại di động"
@@ -6137,6 +6108,16 @@ msgstr "Giới thiệu..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "Bạn đang thử gửi một tập tin quá lớn !"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Không thể nạp phần bổ sung"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Không thể mở tập tin."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6249,10 +6230,6 @@ msgstr "Thông điệp trạng thái"
 msgid "Rejection Message"
 msgstr "Từ chối tin nhắn "
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "Con số bị ẩn"
-
 msgid "No profile available"
 msgstr "Không có tiểu sử "
 
@@ -6276,6 +6253,36 @@ msgstr "Kết nối qua HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Bật tự mở màn hình giật gân"
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Lo"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Say"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Phòng ban"
+
+msgid "Divorced"
+msgstr ""
 
 msgid "Last Online"
 msgstr "Trực tuyến lần cuối "
@@ -6332,6 +6339,10 @@ msgstr ""
 
 msgid "Message Error"
 msgstr "Lỗi thông điệp"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr "Không thể giải mã thông điệp đã mã hóa đã nhận được "
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Không thể thực hiện chức năng chuyển hướng dùng giao thức đã ghi rõ"
@@ -9774,7 +9785,6 @@ msgstr ""
 "Tài khoản của bạn bị khoá do quá nhiều lần đăng nhập không thành công. Đăng "
 "nhập vào địa chỉ Web của Yahoo có thể giúp khắc phục."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "Gặp lỗi không rõ 52. Tái kết nối nên giúp khắc phục."
 
@@ -10416,17 +10426,17 @@ msgstr ""
 "Gặp lỗi khi đọc %s của bạn nên chưa nạp và tên tập tin cũ đã bị thay đổi "
 "thành « %s~ »."
 
+msgid "Pidgin Internet Messenger"
+msgstr "Tin Nhắn Pidgin"
+
+msgid "Internet Messenger"
+msgstr "Tin Nhắn"
+
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 "Trò chuyện qua mạng tin nhắn tức khắc: hỗ trợ AIM, Google Talk, Jabber/XMPP, "
 "MSN, Yahoo và nhiều mạng khác"
-
-msgid "Internet Messenger"
-msgstr "Tin Nhắn"
-
-msgid "Pidgin Internet Messenger"
-msgstr "Tin Nhắn Pidgin"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11467,6 +11477,14 @@ msgstr "tin nhắn chưa đọc"
 msgid "New Event"
 msgstr "Dữ kiện mới"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Tài khoản đã ngắt kết nối nên bạn không còn tham gia cuộc chat này. Tài "
+"khoản tái kết nối thì bạn tham gia lại một cách tự động."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Gột mọi vùng cuộn ngược của cuộc thoại"
 
@@ -11572,7 +11590,8 @@ msgstr "chủ Web"
 msgid "win32 port"
 msgstr "bản cho win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11609,6 +11628,9 @@ msgstr "Tiếng A Rập"
 
 msgid "Assamese"
 msgstr "Assamese"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Tiếng Be-la-ru La-tinh"
@@ -11736,6 +11758,9 @@ msgstr "Tiếng Kuổ-đít"
 msgid "Lao"
 msgstr "Tiếng Lào"
 
+msgid "Lithuanian"
+msgstr "Tiếng Li-tu-a-ni"
+
 msgid "Maithili"
 msgstr "Maithili"
 
@@ -11756,6 +11781,9 @@ msgstr "Tiếng Ma-ra-ti"
 
 msgid "Malay"
 msgstr "TIếng Mã Lai"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Tiếng Na-uy (Bóc-măn)"
@@ -11808,6 +11836,10 @@ msgstr "Tiếng An-ba-ni"
 msgid "Serbian"
 msgstr "Tiếng Séc-bi"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Tiếng Be-la-ru La-tinh"
+
 msgid "Sinhala"
 msgstr "Tiếng Xin-ha-la"
 
@@ -11826,9 +11858,6 @@ msgstr "Tiếng Te-lu-gu"
 msgid "Thai"
 msgstr "Tiếng Thái"
 
-msgid "Turkish"
-msgstr "TIếng Thổ Nhĩ Kỳ"
-
 msgid "Ukranian"
 msgstr "Tiếng U-cợ-rainh"
 
@@ -11837,9 +11866,6 @@ msgstr "Tiếng Ổ-đu"
 
 msgid "Vietnamese"
 msgstr "Tiếng Việt"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "Nhóm Việt hoá Phần mềm Tự do"
 
 msgid "Simplified Chinese"
 msgstr "Tiếng Trung (phổ thông)"
@@ -11853,8 +11879,11 @@ msgstr "Tiếng Trung (truyền thống)"
 msgid "Amharic"
 msgstr "Tiếng Am-ha-ríc"
 
-msgid "Lithuanian"
-msgstr "Tiếng Li-tu-a-ni"
+msgid "Turkish"
+msgstr "TIếng Thổ Nhĩ Kỳ"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "Nhóm Việt hoá Phần mềm Tự do"
 
 #, c-format
 msgid ""
@@ -11884,7 +11913,6 @@ msgstr ""
 "chủ</A><BR>\t<A HREF=\"%s\">Hỏi Đáp</A><BR>\tKênh IRC: #pidgin on irc."
 "freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12583,6 +12611,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "Đã chọn lệnh chạy trình duyệt « Bằng tay », nhưng không cung cấp lệnh nào."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Lệnh trình duyệt « %s » không hợp lệ."
 
 msgid "No message"
 msgstr "Không có tin nhắn"
@@ -13564,11 +13596,11 @@ msgstr "Gợi ý Công cụ Pidgin"
 msgid "Pidgin smileys"
 msgstr "Hình cười Pidgin"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Chọn điều này thì tắt dùng biểu tượng xúc cảm kiểu đồ họa."
-
 msgid "none"
 msgstr "không có"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Chọn điều này thì tắt dùng biểu tượng xúc cảm kiểu đồ họa."
 
 msgid "Small"
 msgstr "Nhỏ"
@@ -14517,7 +14549,6 @@ msgstr "Thêm nhãn thời gian kiểu iChat vào cuộc thoại N phút một l
 msgid "Timestamp Format Options"
 msgstr "Tùy chọn định dạng nhãn thời gian"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "_Cưỡng chế định dạng thời gian: "
 
@@ -14567,6 +14598,63 @@ msgid ""
 msgstr ""
 "Phần bổ sung này cho phép người dùng tùy chỉnh các định dạng của nhãn thời "
 "gian trong tin nhắn cuộc thoại và bản ghi."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Hình tượng phòng chát"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Chỉ khi ai đó nói tên người dùng của bạn"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Lưu biểu tượng"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Số cuộc thoại trong mỗi cửa sổ"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Gửi tin nhắn"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Hợp nhất với Evolution"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Cung cấp cách hợp nhất với trình duyệt Evolution."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Cung cấp cách hợp nhất với trình duyệt Evolution."
 
 msgid "Audio"
 msgstr "Âm thanh"
@@ -14748,6 +14836,18 @@ msgstr "Gửi và nhận các đoạn dòng XMPP thô."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Phần bổ sung này có ích cho gỡ lỗi máy phục vụ hay máy chủ XMPP."
 
+msgid "The installer is already running."
+msgstr "Trình cài đặt đang chạy."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Một thực thể Pidgin đang chạy. Hãy tắt Pidgin và thử lại."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Tiếp>"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -14756,51 +14856,80 @@ msgstr ""
 "$(^Name) được phát hành dưới giấy phép GPL (GNU General Public License)."
 "Thông tin ở đây chỉ có tính tham khảo. $_CLICK "
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Bộ công cụ GUI hỗ trợ nhiều hệ điều hành, được dùng bởi Pidgin "
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Tin nhắn Pidgin (bắt buộc)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr "Một thực thể Pidgin đang chạy. Hãy tắt Pidgin và thử lại."
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime (cần nếu chưa cài đặt)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Lối tắt"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Màn hình nền "
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Thực đơn khởi chạy"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Địa phương hóa "
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Tệp và dll chính của Pidgin Core. "
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Tạo Thực đơn Khởi động cho Pidgin "
+msgid "Shortcuts for starting Pidgin"
+msgstr "Lối tắt khởi động Pidgin "
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Tạo lối tắt cho Pidgin trên Màn hình nền"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Tạo Thực đơn Khởi động cho Pidgin "
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Bộ công cụ GUI hỗ trợ nhiều hệ điều hành, được dùng bởi Pidgin "
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "Ký hiệu gỡ rối (dùng khi báo cáo lỗi đổ vỡ)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Tới trang chủ của Pidgin "
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Không thể gỡ bỏ Pidgin. Sẽ cài song song, không gỡ bỏ phiên bản Pidgin hiện "
+"tại. "
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin đòi hỏi GTK+ Runtime tương thích (có vẻ như chưa cài đặt).$\\r Bạn "
+"muốn bỏ không cài GTK+ Runtime?"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Màn hình nền "
+msgid "URI Handlers"
+msgstr "URI Handler"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Lỗi tải về GTK+ runtime ($R2).$\\r. Để Pidgin chạy được, cần GTK+ runtime, "
-"bạn cần dùng bản cài đặt ngoại tuyến http://pidgin.im/download/windows/ ."
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"Lỗi cài Biểu tượng gõ rối ($R2).$\\r Nếu thử lại vẫn thất bại, bạn cần cài "
-"đặt ngoại tuyến http://pidgin.im/download/windows/ ."
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Hỗ trợ Kiểm tra Chính tả "
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14813,53 +14942,27 @@ msgstr ""
 "thủ công theo hướng dẫn ở đây: http://developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime (cần nếu chưa cài đặt)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "Địa phương hóa "
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Tiếp>"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Tin nhắn Pidgin (bắt buộc)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Pidgin đòi hỏi GTK+ Runtime tương thích (có vẻ như chưa cài đặt).$\\r Bạn "
-"muốn bỏ không cài GTK+ Runtime?"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Lối tắt"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Lối tắt khởi động Pidgin "
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Hỗ trợ Kiểm tra Chính tả "
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Thực đơn khởi chạy"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Hỗ trợ Kiểm tra Chính tả. (Để cài đặt, cần kết nối Internet)"
 
-msgid "The installer is already running."
-msgstr "Trình cài đặt đang chạy."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Lỗi cài Biểu tượng gõ rối ($R2).$\\r Nếu thử lại vẫn thất bại, bạn cần cài "
+"đặt ngoại tuyến http://pidgin.im/download/windows/ ."
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Lỗi tải về GTK+ runtime ($R2).$\\r. Để Pidgin chạy được, cần GTK+ runtime, "
+"bạn cần dùng bản cài đặt ngoại tuyến http://pidgin.im/download/windows/ ."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -14868,26 +14971,103 @@ msgstr ""
 "Trình gỡ bỏ phần mềm không tìm thấy registry cho Pidgin.$\\r Có vẻ rằng một "
 "người dùng khác đã cài chương trình này. "
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "URI Handler"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Không thể gỡ bỏ Pidgin. Sẽ cài song song, không gỡ bỏ phiên bản Pidgin hiện "
-"tại. "
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Tới trang chủ của Pidgin "
-
 msgid "You do not have permission to uninstall this application."
 msgstr "Không đủ quyền gỡ bỏ chương trình. "
 
-#~ msgid "An encrypted message was received which could not be decrypted."
-#~ msgstr "Không thể giải mã thông điệp đã mã hóa đã nhận được "
+#~ msgid "Token Error"
+#~ msgstr "Lỗi hiệu bài"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Không thể lấy hiệu bài.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Phải điền vào tất cả các trường đăng ký"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Hai mật khẩu không trùng nhau"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Không thể đăng ký tài khoản mới. Gặp một lỗi không rõ."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Tài khoản Gadu-Gadu mới đã đăng ký"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Đăng ký thành công."
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Gõ chuỗi Captcha"
+
+# Tên: đừng dịch
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Đăng ký tài khoản Gadu-Gadu mới"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Vui lòng điền vào các trường sau"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Điền vào trường."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Mật khẩu hiện tại khác với mật khẩu bạn đã cung cấp."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Không thể đổi mật khẩu. Lỗi xảy ra.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Đổi mật khẩu cho tài khoản Gadu-Gadu"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Đổi thành công mật khẩu."
+
+#~ msgid "Current password"
+#~ msgstr "Mật khẩu hiện tại"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Mật khẩu (gõ lại)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Nhập hiệu bài hiện có"
+
+#~ msgid "Current token"
+#~ msgstr "Hiệu bài hiện có"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Hãy nhập mật khẩu hiện tại và mật khẩu mới của bạn cho UIN: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Đổi mật khẩu Gadu-Gadu"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Danh sách bạn bè đã tải xuống"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Danh sách bạn bè của bạn đã được tải xuống máy phục vụ."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Danh sách bạn bè đã tải lên"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Danh sách bạn bè của bạn đã được cất giữ trên máy phục vụ."
+
+#~ msgid "Change password..."
+#~ msgstr "Đổi mật khẩu..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Tải danh sách bạn bè lên máy phục vụ"
+
+# Hành động này tải xuống một bản sao, vẫn còn để lại danh sách bạn bè của bạn trên máy phục vụ.
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Tải danh sách bạn bè xuống máy phục vụ"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Xoá danh sách bạn bè khỏi máy phục vụ"
+
+#~ msgid "Hidden Number"
+#~ msgstr "Con số bị ẩn"
 
 #~ msgid "DN"
 #~ msgstr "DN "
@@ -15327,9 +15507,6 @@ msgstr "Không đủ quyền gỡ bỏ chương trình. "
 #~ msgid "Ver"
 #~ msgstr "Pb"
 
-#~ msgid "Invalid name"
-#~ msgstr "Tên không hợp lệ"
-
 #~ msgid "Select icon..."
 #~ msgstr "Chọn biểu tượng..."
 
@@ -15622,9 +15799,6 @@ msgstr "Không đủ quyền gỡ bỏ chương trình. "
 
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "Bạn đã gõ một tên hiệu không đúng."
-
-#~ msgid "MXit Login Name"
-#~ msgstr "Tên đăng nhập MXit"
 
 #~ msgid "Nick Name"
 #~ msgstr "Tên hiệu"
