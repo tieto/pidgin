@@ -1,8 +1,3 @@
-/**
- * @file aes.h Purple AES Cipher
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:aescipher
+ * @section_id: libpurple-aescipher
+ * @title: ciphers/aescipher.h
+ * @short_description: AES Cipher
+ */
+
 #ifndef PURPLE_AES_CIPHER_H
 #define PURPLE_AES_CIPHER_H
 

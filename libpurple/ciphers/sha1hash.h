@@ -1,8 +1,3 @@
-/**
- * @file sha1.h Purple SHA1 Hash
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:sha1hash
+ * @section_id: libpurple-sha1hash
+ * @title: ciphers/sha1hash.h
+ * @short_description: SHA1 Hash
+ */
+
 #ifndef PURPLE_SHA1_HASH_H
 #define PURPLE_SHA1_HASH_H
 

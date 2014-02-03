@@ -1,8 +1,3 @@
-/**
- * @file des3.h Purple Triple-DES Cipher
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:des3cipher
+ * @section_id: libpurple-des3cipher
+ * @title: ciphers/des3cipher.h
+ * @short_description: Triple-DES Cipher
+ */
+
 #ifndef PURPLE_DES3_CIPHER_H
 #define PURPLE_DES3_CIPHER_H
 
