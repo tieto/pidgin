@@ -143,7 +143,7 @@ ggp_roster_get_rdata(PurpleConnection *gc)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
 	return &accdata->roster_data;
-} 
+}
 
 static void ggp_roster_content_free(ggp_roster_content *content)
 {
@@ -1123,4 +1123,3 @@ static void ggp_roster_reply_reject(PurpleConnection *gc, uint32_t version)
 }
 
 /******************************************************************************/
-

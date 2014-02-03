@@ -42,7 +42,7 @@ typedef struct
 {
 	gpointer user_data;
 	ggp_libgaduw_http_cb cb;
-	
+
 	gboolean cancelled;
 	struct gg_http *h;
 	ggp_purplew_request_processing_handle *processing;

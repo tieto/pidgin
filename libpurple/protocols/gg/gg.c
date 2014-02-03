@@ -845,7 +845,7 @@ static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, Purp
 	gg_typing_notification(
 		info->session,
 		ggp_str_to_uin(name),
-		dummy_length); 
+		dummy_length);
 
 	return 1; /* wait 1 second before another notification */
 }

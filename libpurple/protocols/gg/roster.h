@@ -37,10 +37,10 @@ typedef struct
 {
 	gpointer content;
 	gboolean is_updating;
-	
+
 	GList *sent_updates;
 	GList *pending_updates;
-	
+
 	guint timer;
 } ggp_roster_session_data;
 

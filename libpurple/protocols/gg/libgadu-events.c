@@ -43,7 +43,7 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 		G_GSIZE_FORMAT "]\n", data->type, data->user_count);
 
 	/*
-	type = 
+	type =
 		1, 3:	user information sent after connecting (divided by
 			20 contacts; 3 - last one; 1 - rest of them)
 		0: data update
