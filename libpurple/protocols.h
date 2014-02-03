@@ -1,8 +1,3 @@
-/**
- * @file protocols.h Protocols API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:protocols
+ * @section_id: libpurple-protocols
+ * @short_description: <filename>protocols.h</filename>
+ * @title: Protocols subsystem API
+ * @see_also: <link linkend="chapter-signals-protocol">Protocol signals</link>
  */
 
 #ifndef _PURPLE_PROTOCOLS_H_
