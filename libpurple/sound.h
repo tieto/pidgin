@@ -1,9 +1,3 @@
-/**
- * @file sound.h Sound API
- * @ingroup core
- * @see @ref sound-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:sound
+ * @section_id: libpurple-sound
+ * @short_description: <filename>sound.h</filename>
+ * @title: Sound API
+ * @see_also: <link linkend="chapter-signals-sound">Sound signals</link>
+ */
+
 #ifndef _PURPLE_SOUND_H_
 #define _PURPLE_SOUND_H_
 

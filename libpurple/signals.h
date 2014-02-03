@@ -1,8 +1,3 @@
-/**
- * @file signals.h Signal API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:signals
+ * @section_id: libpurple-signals
+ * @short_description: <filename>signals.h</filename>
+ * @title: Purple-signals API
+ * @see_also: <link linkend="chapter-tut-signals">Signals tutorial</link>
+ */
+
 #ifndef _PURPLE_SIGNALS_H_
 #define _PURPLE_SIGNALS_H_
 

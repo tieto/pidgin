@@ -1,7 +1,3 @@
-/**
- * @file theme-manager.h  Theme Manager API
- */
-
 /*
  * purple
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:theme-manager
+ * @section_id: libpurple-theme-manager
+ * @short_description: <filename>theme-manager.h</filename>
+ * @title: Theme Manager API
  */
 
 #ifndef PURPLE_THEME_MANAGER_H

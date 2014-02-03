@@ -1,8 +1,3 @@
-/**
- * @file request-datasheet.h Request Datasheet API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
+/**
+ * SECTION:request-datasheet
+ * @section_id: libpurple-request-datasheet
+ * @short_description: <filename>request-datasheet.h</filename>
+ * @title: Request Datasheet API
+ */
+
 #ifndef _PURPLE_REQUEST_DATA_H_
 #define _PURPLE_REQUEST_DATA_H_
 

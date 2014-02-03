@@ -1,9 +1,3 @@
-/**
- * @file xfer.h File Transfer API
- * @ingroup core
- * @see @ref xfer-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:xfer
+ * @section_id: libpurple-xfer
+ * @short_description: <filename>xfer.h</filename>
+ * @title: File Transfer API
+ * @see_also: <link linkend="chapter-signals-xfer">File Transfer signals</link>
+ */
+
 #ifndef _PURPLE_XFER_H_
 #define _PURPLE_XFER_H_
 

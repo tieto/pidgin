@@ -1,9 +1,3 @@
-/**
- * @file savedstatuses.h Saved Status API
- * @ingroup core
- * @see @ref savedstatus-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:savedstatuses
+ * @section_id: libpurple-savedstatuses
+ * @short_description: <filename>savedstatuses.h</filename>
+ * @title: Saved Status API
+ * @see_also: <link linkend="chapter-signals-savedstatus">Saved Status signals</link>
+ */
+
 #ifndef _PURPLE_SAVEDSTATUSES_H_
 #define _PURPLE_SAVEDSTATUSES_H_
 

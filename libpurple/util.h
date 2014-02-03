@@ -1,8 +1,3 @@
-/**
- * @file util.h Utility Functions
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -26,6 +21,13 @@
  * @todo Rename the functions so that they live somewhere in the purple
  *       namespace.
  */
+/**
+ * SECTION:util
+ * @section_id: libpurple-util
+ * @short_description: <filename>util.h</filename>
+ * @title: Utility Functions
+ */
+
 #ifndef _PURPLE_UTIL_H_
 #define _PURPLE_UTIL_H_
 

@@ -1,8 +1,3 @@
-/**
- * @file purple-socket.h Generic sockets
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
+ */
+/**
+ * SECTION:purple-socket
+ * @section_id: libpurple-purple-socket
+ * @short_description: <filename>purple-socket.h</filename>
+ * @title: Generic sockets
  */
 
 #ifndef _PURPLE_SOCKET_H_

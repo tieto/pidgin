@@ -1,8 +1,3 @@
-/**
- * @file stun.h STUN API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:stun
+ * @section_id: libpurple-stun
+ * @short_description: <filename>stun.h</filename>
+ * @title: STUN API
+ */
+
 #ifndef _PURPLE_STUN_H_
 #define _PURPLE_STUN_H_
 
