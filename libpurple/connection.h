@@ -1,9 +1,3 @@
-/**
- * @file connection.h Connection API
- * @ingroup core
- * @see @ref connection-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:connection
+ * @section_id: libpurple-connection
+ * @title: connection.h
+ * @short_description: Connection API
+ * @see_also: <link linkend="chapter-signals-connection">Connection signals</link>
+ */
+
 #ifndef _PURPLE_CONNECTION_H_
 #define _PURPLE_CONNECTION_H_
 

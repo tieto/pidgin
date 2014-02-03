@@ -1,9 +1,3 @@
-/**
- * @file cmds.h Commands API
- * @ingroup core
- * @see @ref cmd-signals
- */
-
 /* Copyright (C) 2003 Timothy Ringenbach <omarvo@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +15,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:cmds
+ * @section_id: libpurple-cmds
+ * @title: cmds.h
+ * @short_description: Commands API
+ * @see_also: <link linkend="chapter-signals-cmd">Command signals</link>
+ */
+
 #ifndef _PURPLE_CMDS_H_
 #define _PURPLE_CMDS_H_
 

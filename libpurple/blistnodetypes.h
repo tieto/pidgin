@@ -1,7 +1,3 @@
-/**
- * @file blistnodetypes.h Buddy, Chat, Contact and Group API
- * @ingroup core
- */
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:blistnodetypes
+ * @section_id: libpurple-blistnodetypes
+ * @title: blistnodetypes.h
+ * @short_description: Buddy list's Buddy, Chat, Contact and Group objects
+ */
+
 #ifndef _PURPLE_BLISTNODE_TYPES_H_
 #define _PURPLE_BLISTNODE_TYPES_H_
 

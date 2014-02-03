@@ -1,8 +1,3 @@
-/**
- * @file circbuffer.h Buffer Utility Functions
- * @ingroup core
- */
-
 /* Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -21,6 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:circularbuffer
+ * @section_id: libpurple-circularbuffer
+ * @title: circularbuffer.h
+ * @short_description: Buffer Utility Functions
+ */
+
 #ifndef PURPLE_CIRCULAR_BUFFER_H
 #define PURPLE_CIRCULAR_BUFFER_H
 

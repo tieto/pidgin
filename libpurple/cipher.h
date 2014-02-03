@@ -1,8 +1,3 @@
-/**
- * @file cipher.h Purple Cipher and Hash API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:cipher
+ * @section_id: libpurple-cipher
+ * @title: cipher.h
+ * @short_description: Cipher and Hash API
+ */
+
 #ifndef PURPLE_CIPHER_H
 #define PURPLE_CIPHER_H
 
