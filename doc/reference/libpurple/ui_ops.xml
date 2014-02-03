@@ -3,29 +3,29 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
 <chapter id="chapter-ui-ops">
-  <title>List of UiOps Structures</title>
+  <title>List of <literal>UiOps</literal> Structures</title>
 
   <para>
   When implementing a UI for libpurple, you need to fill in various UiOps
   structures:
 
   <itemizedlist>
-<listitem><para><literal>PurpleAccountUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleBlistUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleConnectionUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleConversationUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleCoreUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleDebugUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleDnsQueryUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleEventLoopUiOps</literal> (without this, nothing will work and you will cry)</para></listitem>
-<listitem><para><literal>PurpleIdleUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleNotifyUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleRequestUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleRoomlistUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleSoundUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleSrvTxtQueryUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleWhiteboardUiOps</literal></para></listitem>
-<listitem><para><literal>PurpleXferUiOps</literal></para></listitem>
+<listitem><link linkend="PurpleAccountUiOps"><literal>PurpleAccountUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleBlistUiOps"><literal>PurpleBlistUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleConnectionUiOps"><literal>PurpleConnectionUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleConversationUiOps"><literal>PurpleConversationUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleCoreUiOps"><literal>PurpleCoreUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleDebugUiOps"><literal>PurpleDebugUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleDnsQueryUiOps"><literal>PurpleDnsQueryUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleEventLoopUiOps"><literal>PurpleEventLoopUiOps</literal></link> (without this, nothing will work and you will cry)</listitem>
+<listitem><link linkend="PurpleIdleUiOps"><literal>PurpleIdleUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleNotifyUiOps"><literal>PurpleNotifyUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleRequestUiOps"><literal>PurpleRequestUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleRoomlistUiOps"><literal>PurpleRoomlistUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleSoundUiOps"><literal>PurpleSoundUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleSrvTxtQueryUiOps"><literal>PurpleSrvTxtQueryUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleWhiteboardUiOps"><literal>PurpleWhiteboardUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleXferUiOps"><literal>PurpleXferUiOps</literal></link></listitem>
   </itemizedlist>
  </para>
 
