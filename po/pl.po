@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-21 22:35-0800\n"
-"PO-Revision-Date: 2014-01-21 18:55+0000\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-02-02 15:39+0000\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/pidgin/language/"
 "pl/)\n"
@@ -3455,11 +3455,9 @@ msgstr " <i>(zidentyfikowany)</i>"
 msgid "Nick"
 msgstr "Pseudonim"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Bez nazwy"
+msgstr "Login"
 
-#, fuzzy
 msgid "Host name"
 msgstr "Nazwa komputera"
 
@@ -11765,6 +11763,9 @@ msgstr "arabski"
 msgid "Assamese"
 msgstr "asamski"
 
+msgid "Asturian"
+msgstr "asturyjski"
+
 msgid "Belarusian Latin"
 msgstr "białoruski (alfabet łaciński)"
 
@@ -12482,10 +12483,10 @@ msgid "_Font"
 msgstr "_Czcionka"
 
 msgid "Group Items"
-msgstr "Grupuj elementy"
+msgstr "Grupowanie elementów"
 
 msgid "Ungroup Items"
-msgstr "Nie grupuj elementów"
+msgstr "Bez grupowania elementów"
 
 msgid "Bold"
 msgstr "Pogrubienie"
@@ -14745,6 +14746,59 @@ msgstr ""
 "Ta wtyczka umożliwia użytkownikowi dostosowanie formatów daty wiadomości i "
 "dziennika."
 
+#. Alerts
+msgid "Chatroom alerts"
+msgstr "Powiadomienia w konferencjach"
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+"P_owiadamianie o wiadomościach w konferencjach tylko, kiedy ktoś wymawia "
+"nazwę użytkownika"
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr "Ikona aktywatora"
+
+msgid "_Disable launcher integration"
+msgstr "_Wyłączenie integracji z aktywatorem"
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr "Wyświetlanie liczby _nieprzeczytanych wiadomości na ikonie aktywatora"
+
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Wyświetlanie liczby _nieprzeczytanych rozmów na ikonie aktywatora"
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr "Menu komunikatora"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr "Wyświetlanie _liczby nieprzeczytanych wiadomości w menu komunikatora"
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+"Wyświetlanie _czasu trwania nieprzeczytanych rozmów w menu komunikatora"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr "Integracja ze środowiskiem Unity"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr "Dostarcza integrację ze środowiskiem Unity."
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
+"Dostarcza integrację z menu komunikatora i aktywatorem środowiska Unity."
+
 msgid "Audio"
 msgstr "Dźwięk"
 
@@ -14896,59 +14950,6 @@ msgid ""
 msgstr ""
 "Dostarcza opcje specyficzne dla programu Pidgin dla Windows, takie jak "
 "dokowanie listy znajomych."
-
-#. Alerts
-msgid "Chatroom alerts"
-msgstr "Powiadomienia w konferencjach"
-
-msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
-"P_owiadamianie o wiadomościach w konferencjach tylko, kiedy ktoś wymawia "
-"nazwę użytkownika"
-
-#. Launcher integration
-msgid "Launcher Icon"
-msgstr "Ikona aktywatora"
-
-msgid "_Disable launcher integration"
-msgstr "_Wyłączenie integracji z aktywatorem"
-
-msgid "Show number of unread _messages on launcher icon"
-msgstr "Wyświetlanie liczby _nieprzeczytanych wiadomości na ikonie aktywatora"
-
-msgid "Show number of unread _conversations on launcher icon"
-msgstr "Wyświetlanie licz_by nieprzeczytanych rozmów na ikonie aktywatora"
-
-#. Messaging menu integration
-msgid "Messaging Menu"
-msgstr "Menu komunikatora"
-
-msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr "Wyświetlanie _liczby nieprzeczytanych wiadomości w menu komunikatora"
-
-msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
-"Wyświetlanie _czasu trwania nieprzeczytanych rozmów w menu komunikatora"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-msgid "Unity Integration"
-msgstr "Integracja ze środowiskiem Unity"
-
-#. *< name
-#. *< version
-#. *  summary
-msgid "Provides integration with Unity."
-msgstr "Dostarcza integrację ze środowiskiem Unity."
-
-#. *  description
-msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
-"Dostarcza integrację z menu komunikatora i aktywatorem środowiska Unity."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Wylogowano.</font>"

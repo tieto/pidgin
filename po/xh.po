@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2005-03-23 12:21+0200\n"
 "Last-Translator: Canonical Ltd <translations@canonical.com>\n"
 "Language-Team: Xhosa <xh-translate@ubuntu.com>\n"
@@ -2170,55 +2170,7 @@ msgstr "Ukudluliswa kwefayili ukuya ku-%s kuyekiwe.\n"
 msgid "File transfer from %s failed."
 msgstr "Ukudluliswa kwefayili ukusuka ku-%s kuyekiwe.\n"
 
-msgid "Run the command in a terminal"
-msgstr ""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-
-msgid "The handler for \"aim\" URLs"
-msgstr ""
-
-msgid "The handler for \"gg\" URLs"
-msgstr ""
-
-msgid "The handler for \"icq\" URLs"
-msgstr ""
-
-msgid "The handler for \"irc\" URLs"
-msgstr ""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr ""
-
-msgid "The handler for \"sip\" URLs"
-msgstr ""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr ""
-
-msgid "The handler for \"ymsgr\" URLs"
+msgid "Whether the specified command should handle \"aim\" URLs"
 msgstr ""
 
 msgid ""
@@ -2226,39 +2178,13 @@ msgid ""
 "URLs."
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
+msgid "The handler for \"aim\" URLs"
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
+msgid "The command used to handle \"aim\" URLs, if enabled."
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
+msgid "Run the command in a terminal"
 msgstr ""
 
 msgid ""
@@ -2266,28 +2192,102 @@ msgid ""
 "terminal."
 msgstr ""
 
-msgid "Whether the specified command should handle \"aim\" URLs"
+msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr ""
 
-msgid "Whether the specified command should handle \"gg\" URLs"
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"gg\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"icq\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"irc\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"msnim\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"sip\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -2347,6 +2347,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Kwenzeke impazamo engaziwayo yokungena: %s."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Kwenzeke impazamo engaziwayo yokungena: %s."
 
 msgid "Error with your microphone"
@@ -3170,14 +3174,6 @@ msgstr ""
 "malunga nohlobo lomqobo wakho owunikiweyo ayisebenzi."
 
 #, fuzzy
-msgid "Token Error"
-msgstr "Impazamo engaziwayo"
-
-#, fuzzy
-msgid "Unable to fetch the token.\n"
-msgstr "Akukwazeki ukulanda uluhlu lwegumbi."
-
-#, fuzzy
 msgid "Save Buddylist..."
 msgstr "Thumela uLuhlu Lobuhlobo"
 
@@ -3212,44 +3208,6 @@ msgstr "Thumela uLuhlu Lobuhlobo"
 msgid "Load buddylist from file..."
 msgstr "Ngenisa uLuhlu lomHlobo ukusuka kwiSeva"
 
-msgid "You must fill in all registration fields"
-msgstr ""
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "Ii-password ezintsha azingqamani."
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Akukwazeki ukuyila unxibelelwano olutsha."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr ""
-
-#, fuzzy
-msgid "Registration completed successfully!"
-msgstr "Impumelelo yoBhaliso"
-
-msgid "Password"
-msgstr "I-Password"
-
-msgid "Password (again)"
-msgstr "I-Password (kwakhona)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha"
-msgstr "Gcina umFanekiso"
-
-#, fuzzy
-msgid "Register New Gadu-Gadu Account"
-msgstr "Bhalisa i-Akhawunti eNtsha yeJabber"
-
-msgid "Please, fill in the following fields"
-msgstr ""
-
 msgid "City"
 msgstr "Isixeko"
 
@@ -3281,48 +3239,6 @@ msgstr "Yenza mfiliba aba_hlobo abalaleleyo"
 #, fuzzy
 msgid "Please, enter your search criteria below"
 msgstr "Nceda ufake i-password yakho entsha"
-
-msgid "Fill in the fields."
-msgstr ""
-
-msgid "Your current password is different from the one that you specified."
-msgstr ""
-
-#, fuzzy
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Akukwazeki ukutshintsha ipassword"
-
-#, fuzzy
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Tshintsha i-password ye %s"
-
-#, fuzzy
-msgid "Password was changed successfully!"
-msgstr "I-Password itshintshe ngempumelelo"
-
-#, fuzzy
-msgid "Current password"
-msgstr "I-Password ephosakeleyo."
-
-#, fuzzy
-msgid "Password (retype)"
-msgstr "Ukuthunyelwa kwepassword"
-
-#, fuzzy
-msgid "Enter current token"
-msgstr "I-%s ayingenanga ngokwangoku."
-
-#, fuzzy
-msgid "Current token"
-msgstr "Iyasebenza ngeli thuba"
-
-#, fuzzy
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Nceda ufake i-password yakho yangoku kunye ne-password yakho entsha."
-
-#, fuzzy
-msgid "Change Gadu-Gadu Password"
-msgstr "Akukwazeki ukutshintsha ipassword"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3404,22 +3320,6 @@ msgstr "Nceda ufake i-password yakho entsha"
 msgid "Unable to read from socket"
 msgstr "Akukwazeki ukufunda isokethi"
 
-#, fuzzy
-msgid "Buddy list downloaded"
-msgstr "Umhlobo ulalele:"
-
-#, fuzzy
-msgid "Your buddy list was downloaded from the server."
-msgstr "Ubuqhawukile kwiseva."
-
-#, fuzzy
-msgid "Buddy list uploaded"
-msgstr "Bonisa umHlobo"
-
-#, fuzzy
-msgid "Your buddy list was stored on the server."
-msgstr "Akukho Luhlu lomHlobo olugcinwe kwiseva yeGadu-Gadu."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3462,22 +3362,6 @@ msgstr "Ubuqhawukile kwiseva."
 #, fuzzy
 msgid "Find buddies..."
 msgstr "Yenza mfiliba aba_hlobo abalaleleyo"
-
-#, fuzzy
-msgid "Change password..."
-msgstr "Tshintsha i-Password..."
-
-#, fuzzy
-msgid "Upload buddylist to Server"
-msgstr "Ukuhambisa uLuhlu lomHlobo ukuya kwiSeva"
-
-#, fuzzy
-msgid "Download buddylist from Server"
-msgstr "Cima uLuhlu lomHlobo kwiSeva"
-
-#, fuzzy
-msgid "Delete buddylist from Server"
-msgstr "Cima uLuhlu lomHlobo kwiSeva"
 
 #, fuzzy
 msgid "Save buddylist to file..."
@@ -3592,7 +3476,7 @@ msgstr "Akukwazeki ukunxulumana"
 msgid "Unable to connect: %s"
 msgstr "Akwazeki ukunxulumana neseva"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "Impazamo yokudala unxibelelwano"
 
@@ -3631,6 +3515,10 @@ msgstr "Iindlela zonxulumano"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "iGama le_skrini"
+
 msgid "Real name"
 msgstr "IGama lokwenyani"
 
@@ -3641,6 +3529,14 @@ msgstr "IGama lokwenyani"
 #, fuzzy
 msgid "Use SSL"
 msgstr "I-SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Ukuqinisekisa"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Vumela umbhalo ocacileyo ngaphezu kwemijelo entsonkothileyo"
 
 msgid "Bad mode"
 msgstr "Imo engaLunganga"
@@ -3677,6 +3573,14 @@ msgstr " <i>(echongiweyo)</i>"
 msgid "Nick"
 msgstr "Isikhewu"
 
+#, fuzzy
+msgid "Login name"
+msgstr "iFani:"
+
+#, fuzzy
+msgid "Host name"
+msgstr "iFani:"
+
 msgid "Currently on"
 msgstr "Iyasebenza ngeli thuba"
 
@@ -3705,6 +3609,10 @@ msgstr "%s iguqule isihloko ukuba: %s"
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Isihloko se %s siyi: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3820,6 +3728,33 @@ msgstr "Inkonzo ayifumaneki okwethutyana."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Ibetha ukusuka ku-%s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Akukwazeki ukuqalisa unxibelelwano nomXumi weSILC"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Ukuqinisekisa akuphumelelanga"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Ukuqinisekisa akuphumelelanga"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "I-Password ephosakeleyo."
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Ukuqinisekisa akuphumelelanga"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;intshukumo yokwenza&gt;:  Ukwenza intshukumo."
@@ -4538,6 +4473,9 @@ msgstr "Umhla"
 msgid "Already Registered"
 msgstr "Sewubhalisile"
 
+msgid "Password"
+msgstr "I-Password"
+
 #, fuzzy
 msgid "Unregister"
 msgstr "Bhalisa"
@@ -4683,6 +4621,9 @@ msgstr "I-password yakho itshintshile."
 
 msgid "Error changing password"
 msgstr "ImPazamo yokutshintsha i-password"
+
+msgid "Password (again)"
+msgstr "I-Password (kwakhona)"
 
 #, fuzzy
 msgid "Change XMPP Password"
@@ -4913,6 +4854,12 @@ msgstr "Akukwazeki ukuthumela umyalezo kwi-%s:"
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr ""
+"Akukwazeki ukuthumela ifayili ku-%s, umsebenzisi akaxhasi ukudluliswa "
+"kwefayili"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr ""
 "Akukwazeki ukuthumela ifayili ku-%s, umsebenzisi akaxhasi ukudluliswa "
 "kwefayili"
@@ -6445,6 +6392,11 @@ msgstr "Malunga nePidgin"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Imo yokuba kuNxibelelwano"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6562,6 +6514,16 @@ msgstr "Malunga nePidgin"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Lo myalezo mkhulu kakhulu."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Akukwazeki ukufikelela kwinkangeleko yomsebenzisi."
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Akukwazeki ukuvula ifayili."
 
 #, fuzzy
 msgid ""
@@ -6704,11 +6666,6 @@ msgstr "Thumela umYalezo"
 msgid "Rejection Message"
 msgstr "Thumela umYalezo"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "iGama eliPhakathi"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Akufumaneki"
@@ -6737,6 +6694,37 @@ msgid "Connect via HTTP"
 msgstr "Ukunxulumana"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "I-Ping"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Okruqukileyo"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Mema"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Isebe"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6804,6 +6792,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "ImPazamo yoMyalezo weJabber"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -10480,7 +10472,6 @@ msgstr ""
 "Impazamo engaziwayo yenani %d. Ukungena kunxibelelwano kwi-website kaYahoo! "
 "kungakulungisa oku."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -11170,17 +11161,17 @@ msgstr ""
 "Kuvele impazamo xa kwahlulwa uluhlu lomhlobo ngezijungqe.  Belufakelwanga, "
 "yaye ifayili endala ishenxile ukuya kwi-blist.xml~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+#, fuzzy
+msgid "Pidgin Internet Messenger"
+msgstr "Abathumeli bemiYalezo yaNgoko nangoko"
 
 #, fuzzy
 msgid "Internet Messenger"
 msgstr "Abathumeli bemiYalezo yaNgoko nangoko"
 
-#, fuzzy
-msgid "Pidgin Internet Messenger"
-msgstr "Abathumeli bemiYalezo yaNgoko nangoko"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12348,6 +12339,11 @@ msgstr "Thumela umYalezo"
 msgid "New Event"
 msgstr "Isiganeko"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 #, fuzzy
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "%s ivale ifestile yencoko."
@@ -12465,7 +12461,8 @@ msgstr "umphuhlisi nomyili wesiza se-inthanethi"
 msgid "win32 port"
 msgstr "isiqhagamsheli win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -12506,6 +12503,9 @@ msgstr "IsiAmharic"
 #, fuzzy
 msgid "Assamese"
 msgstr "Oneentloni"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr ""
@@ -12645,6 +12645,9 @@ msgstr "IsiTurkishi"
 msgid "Lao"
 msgstr ""
 
+msgid "Lithuanian"
+msgstr "IsiLithuania"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Umtshabalalisi"
@@ -12671,6 +12674,9 @@ msgstr "iDilesi"
 #, fuzzy
 msgid "Malay"
 msgstr "Indoda"
+
+msgid "Burmese"
+msgstr ""
 
 #, fuzzy
 msgid "Bokmål Norwegian"
@@ -12728,6 +12734,10 @@ msgstr "IsiAlbania"
 msgid "Serbian"
 msgstr "IsiSerbia"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "IsiSerbia"
+
 msgid "Sinhala"
 msgstr ""
 
@@ -12747,9 +12757,6 @@ msgstr ""
 msgid "Thai"
 msgstr ""
 
-msgid "Turkish"
-msgstr "IsiTurkishi"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "IsiUkrainia"
@@ -12759,9 +12766,6 @@ msgstr ""
 
 msgid "Vietnamese"
 msgstr "IsiVietnam"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "I-T.M.Thanh neGnome-Vi Team"
 
 msgid "Simplified Chinese"
 msgstr "IsiTshayina esiLula"
@@ -12775,8 +12779,11 @@ msgstr "IsiTshayin seMveli"
 msgid "Amharic"
 msgstr "IsiAmharic"
 
-msgid "Lithuanian"
-msgstr "IsiLithuania"
+msgid "Turkish"
+msgstr "IsiTurkishi"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "I-T.M.Thanh neGnome-Vi Team"
 
 #, c-format
 msgid ""
@@ -12796,7 +12803,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -13531,6 +13537,10 @@ msgid ""
 msgstr ""
 "'Incwadana' yomyalelo wokukhangela ikhethiwe, kodwa akukho myalelo "
 "umiselweyo."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Umyalelo wesikhangeli <b>%s</b> awusebenzi."
 
 #, fuzzy
 msgid "No message"
@@ -14638,12 +14648,12 @@ msgstr "Ukubiza ngomnxeba"
 msgid "Pidgin smileys"
 msgstr ""
 
-msgid "Selecting this disables graphical emoticons."
-msgstr ""
-
 #, fuzzy
 msgid "none"
 msgstr "Nabani na"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr ""
 
 #, fuzzy
 msgid "Small"
@@ -15680,7 +15690,6 @@ msgstr ""
 msgid "Timestamp Format Options"
 msgstr ""
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr ""
 
@@ -15733,6 +15742,63 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr ""
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Uluhlu lwe-Url lweGumbi leNcoko"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "Umntu othile ubiza igama lakho kwincoko"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Gcina umFanekiso womQondiso"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Inani leencoko zefestile nganye"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Umyalezo uthunyelwe"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Umanyano lwe-Evolution"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Ibonelela ngomanyano lwe Ximian Evolution."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Ibonelela ngomanyano lwe Ximian Evolution."
 
 #, fuzzy
 msgid "Audio"
@@ -15926,23 +15992,66 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Loo fayili sele ikhona"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+#, fuzzy
+msgid "Next >"
+msgstr "Umbhalo"
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Abathumeli bemiYalezo yaNgoko nangoko"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "I-GTK+ iNguqulelo yeXesha lokuSebenza"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Izniqumlisi"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Yamkela eziMiselweyo"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Ukuvula"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Indawo"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -15950,29 +16059,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "Yamkela eziMiselweyo"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "_Isikhombisi:"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15983,80 +16098,132 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "I-GTK+ iNguqulelo yeXesha lokuSebenza"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Indawo"
-
-#. "Next >" appears on a button on the License Page of the Installer
-#, fuzzy
-msgid "Next >"
-msgstr "Umbhalo"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Abathumeli bemiYalezo yaNgoko nangoko"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Izniqumlisi"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Ukuvula"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "Loo fayili sele ikhona"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "_Isikhombisi:"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Token Error"
+#~ msgstr "Impazamo engaziwayo"
+
+#, fuzzy
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Akukwazeki ukulanda uluhlu lwegumbi."
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "Ii-password ezintsha azingqamani."
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Akukwazeki ukuyila unxibelelwano olutsha."
+
+#, fuzzy
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Impumelelo yoBhaliso"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "Gcina umFanekiso"
+
+#, fuzzy
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Bhalisa i-Akhawunti eNtsha yeJabber"
+
+#, fuzzy
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Akukwazeki ukutshintsha ipassword"
+
+#, fuzzy
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Tshintsha i-password ye %s"
+
+#, fuzzy
+#~ msgid "Password was changed successfully!"
+#~ msgstr "I-Password itshintshe ngempumelelo"
+
+#, fuzzy
+#~ msgid "Current password"
+#~ msgstr "I-Password ephosakeleyo."
+
+#, fuzzy
+#~ msgid "Password (retype)"
+#~ msgstr "Ukuthunyelwa kwepassword"
+
+#, fuzzy
+#~ msgid "Enter current token"
+#~ msgstr "I-%s ayingenanga ngokwangoku."
+
+#, fuzzy
+#~ msgid "Current token"
+#~ msgstr "Iyasebenza ngeli thuba"
+
+#, fuzzy
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr ""
+#~ "Nceda ufake i-password yakho yangoku kunye ne-password yakho entsha."
+
+#, fuzzy
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Akukwazeki ukutshintsha ipassword"
+
+#, fuzzy
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Umhlobo ulalele:"
+
+#, fuzzy
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Ubuqhawukile kwiseva."
+
+#, fuzzy
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Bonisa umHlobo"
+
+#, fuzzy
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Akukho Luhlu lomHlobo olugcinwe kwiseva yeGadu-Gadu."
+
+#, fuzzy
+#~ msgid "Change password..."
+#~ msgstr "Tshintsha i-Password..."
+
+#, fuzzy
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Ukuhambisa uLuhlu lomHlobo ukuya kwiSeva"
+
+#, fuzzy
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Cima uLuhlu lomHlobo kwiSeva"
+
+#, fuzzy
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Cima uLuhlu lomHlobo kwiSeva"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "iGama eliPhakathi"
 
 #, fuzzy
 #~ msgid "No Sametime Community Server specified"
@@ -17042,10 +17209,6 @@ msgstr ""
 #~ msgstr "Idilesi ye-iMeyile"
 
 #, fuzzy
-#~ msgid "Jingle"
-#~ msgstr "I-Ping"
-
-#, fuzzy
 #~ msgid "User Nickname"
 #~ msgstr "Igama lesiqhulo"
 
@@ -17167,10 +17330,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Akukwazeki ukusombulula igama lomququzeleli."
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "I-Password ephosakeleyo."
 
 #~ msgid "Yahoo Japan"
 #~ msgstr "U-Yahoo eJapan"
@@ -17643,10 +17802,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Available Message"
 #~ msgstr "UmYalezo oFumanekayo:"
-
-#, fuzzy
-#~ msgid "Screen name"
-#~ msgstr "iGama le_skrini"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "Kuchazwe igama elingasebenziyo lencoko."
@@ -18995,9 +19150,6 @@ msgstr ""
 
 #~ msgid "Directory Search"
 #~ msgstr "Ukukhangela uVimba weefayili"
-
-#~ msgid "Unable to access user profile."
-#~ msgstr "Akukwazeki ukufikelela kwinkangeleko yomsebenzisi."
 
 #~ msgid ""
 #~ "Pidgin was unable to access this user's profile due to an error "

@@ -57,8 +57,8 @@ typedef struct
 	GError *error;
 	PurpleKeyringSetInUseCallback cb;
 	gpointer cb_data;
-	PurpleKeyring *new;
-	PurpleKeyring *old;
+	PurpleKeyring *new_kr;
+	PurpleKeyring *old_kr;
 
 	/**
 	 * We are done when finished is positive and read_outstanding is zero.
@@ -220,11 +220,11 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 	g_return_if_fail(tracker != NULL);
 
 	if (tracker->succeeded) {
-		purple_keyring_close(tracker->old);
+		purple_keyring_close(tracker->old_kr);
 
 		purple_debug_info("keyring", "Successfully changed keyring.\n");
 
-		purple_keyring_inuse = tracker->new;
+		purple_keyring_inuse = tracker->new_kr;
 		current_change_tracker = NULL;
 
 		if (tracker->cb != NULL)
@@ -235,11 +235,11 @@ purple_keyring_set_inuse_drop_cb(gpointer _tracker)
 
 	purple_debug_error("keyring", "Failed to change keyring, aborting.\n");
 
-	purple_keyring_close(tracker->new);
+	purple_keyring_close(tracker->new_kr);
 
 	purple_keyring_pref_disconnect();
 	purple_prefs_set_string("/purple/keyring/active",
-		purple_keyring_get_id(tracker->old));
+		purple_keyring_get_id(tracker->old_kr));
 	purple_keyring_pref_connect();
 
 	current_change_tracker = NULL;
@@ -322,11 +322,11 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 	/* This was the last one. */
 	if (tracker->abort && !tracker->force) {
 		tracker->succeeded = FALSE;
-		purple_keyring_drop_passwords(tracker->new,
+		purple_keyring_drop_passwords(tracker->new_kr,
 			purple_keyring_set_inuse_drop_cb, tracker);
 	} else {
 		tracker->succeeded = TRUE;
-		purple_keyring_drop_passwords(tracker->old,
+		purple_keyring_drop_passwords(tracker->old_kr,
 			purple_keyring_set_inuse_drop_cb, tracker);
 	}
 }
@@ -358,7 +358,7 @@ purple_keyring_set_inuse_read_cb(PurpleAccount *account, const gchar *password,
 		return;
 	}
 
-	save_cb = purple_keyring_get_save_password(tracker->new);
+	save_cb = purple_keyring_get_save_password(tracker->new_kr);
 	g_assert(save_cb != NULL);
 
 	save_cb(account, password, purple_keyring_set_inuse_save_cb, tracker);
@@ -431,8 +431,8 @@ purple_keyring_set_inuse(PurpleKeyring *newkeyring, gboolean force,
 
 	tracker->cb = cb;
 	tracker->cb_data = data;
-	tracker->new = newkeyring;
-	tracker->old = oldkeyring;
+	tracker->new_kr = newkeyring;
+	tracker->old_kr = oldkeyring;
 	tracker->force = force;
 
 	for (it = purple_accounts_get_all(); it != NULL; it = it->next) {
@@ -1215,10 +1215,10 @@ static void purple_keyring_core_quitting_cb()
 	if (current_change_tracker != NULL) {
 		PurpleKeyringChangeTracker *tracker = current_change_tracker;
 		tracker->abort = TRUE;
-		if (tracker->old)
-			purple_keyring_cancel_requests(tracker->old);
-		if (current_change_tracker == tracker && tracker->new)
-			purple_keyring_cancel_requests(tracker->new);
+		if (tracker->old_kr)
+			purple_keyring_cancel_requests(tracker->old_kr);
+		if (current_change_tracker == tracker && tracker->new_kr)
+			purple_keyring_cancel_requests(tracker->new_kr);
 	}
 
 	purple_keyring_is_quitting = TRUE;

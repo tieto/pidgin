@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2011-03-10 18:20+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -2003,60 +2003,29 @@ msgstr "给 %s 传送文件失败。"
 msgid "File transfer from %s failed."
 msgstr "来自 %s 的文件传送失败。"
 
-msgid "Run the command in a terminal"
-msgstr "在终端中运行命令"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“aim”URL 的命令。"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“gg”URL 的命令。"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“icq”URL 的命令。"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“irc”URL 的命令。"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“msnim”URL 的命令。"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“sip”URL 的命令。"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“xmpp”URL 的命令。"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "如果启用的话，用于处理“ymsgr”URL 的命令。"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "“aim”URL 的处理程序"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "“gg”URL 的处理程序"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "“icq”URL 的处理程序"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "“irc”URL 的处理程序"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "“msnim”URL 的处理程序"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "“sip”URL 的处理程序"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "“xmpp”URL 的处理程序"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "“ymsgr”URL 的处理程序"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr ""
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
 "URLs."
+msgstr ""
+
+msgid "The handler for \"aim\" URLs"
+msgstr "“aim”URL 的处理程序"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“aim”URL 的命令。"
+
+msgid "Run the command in a terminal"
+msgstr "在终端中运行命令"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+
+msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr ""
 
 msgid ""
@@ -2064,9 +2033,27 @@ msgid ""
 "URLs."
 msgstr ""
 
+msgid "The handler for \"gg\" URLs"
+msgstr "“gg”URL 的处理程序"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“gg”URL 的命令。"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr ""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
 "URLs."
+msgstr ""
+
+msgid "The handler for \"icq\" URLs"
+msgstr "“icq”URL 的处理程序"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“icq”URL 的命令。"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr ""
 
 msgid ""
@@ -2074,9 +2061,27 @@ msgid ""
 "URLs."
 msgstr ""
 
+msgid "The handler for \"irc\" URLs"
+msgstr "“irc”URL 的处理程序"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“irc”URL 的命令。"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr ""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
 "URLs."
+msgstr ""
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "“msnim”URL 的处理程序"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“msnim”URL 的命令。"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr ""
 
 msgid ""
@@ -2084,9 +2089,27 @@ msgid ""
 "URLs."
 msgstr ""
 
+msgid "The handler for \"sip\" URLs"
+msgstr "“sip”URL 的处理程序"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“sip”URL 的命令。"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr ""
+
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
 "URLs."
+msgstr ""
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "“xmpp”URL 的处理程序"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“xmpp”URL 的命令。"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr ""
 
 msgid ""
@@ -2094,34 +2117,11 @@ msgid ""
 "URLs."
 msgstr ""
 
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "“ymsgr”URL 的处理程序"
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr ""
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr ""
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "如果启用的话，用于处理“ymsgr”URL 的命令。"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color\"=red\">登录程序没有读取功能</font></b>"
@@ -2178,6 +2178,10 @@ msgid ""
 msgstr "没有可用的解码器。您的 fs.codecs.conf 中规则过于严格。"
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "发生不可恢复的 Farsight2 错误。"
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "发生不可恢复的 Farsight2 错误。"
 
 msgid "Error with your microphone"
@@ -2949,12 +2953,6 @@ msgid ""
 "invalid."
 msgstr "您为给定代理类型所指定的主机名或端口号无效。"
 
-msgid "Token Error"
-msgstr "令牌错误"
-
-msgid "Unable to fetch the token.\n"
-msgstr "无法获取令牌。\n"
-
 msgid "Save Buddylist..."
 msgstr "保存好友列表..."
 
@@ -2982,39 +2980,6 @@ msgstr "保存好友列表..."
 
 msgid "Load buddylist from file..."
 msgstr "从文件载入好友列表..."
-
-msgid "You must fill in all registration fields"
-msgstr "填入注册字段。"
-
-msgid "Passwords do not match"
-msgstr "密码不匹配。"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "无法创建新帐号。发生了错误。"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "注册了新的 Gadu-Gadu 帐号"
-
-msgid "Registration completed successfully!"
-msgstr "注册成功！"
-
-msgid "Password"
-msgstr "密码"
-
-msgid "Password (again)"
-msgstr "再次输入新密码"
-
-msgid "Enter captcha text"
-msgstr "输入验证文本"
-
-msgid "Captcha"
-msgstr "验证码图像"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "注册新的 Gadu-Gadu 帐号"
-
-msgid "Please, fill in the following fields"
-msgstr "请填入下列字段"
 
 msgid "City"
 msgstr "城市"
@@ -3044,39 +3009,6 @@ msgstr "查找好友"
 
 msgid "Please, enter your search criteria below"
 msgstr "请在下面输入您的搜索条件"
-
-msgid "Fill in the fields."
-msgstr "填入字段。"
-
-msgid "Your current password is different from the one that you specified."
-msgstr "您目前的密码与您所指定的密码不同。"
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "无法更改密码。发生了错误。\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "更改 Gadu-Gadu 帐号的密码"
-
-msgid "Password was changed successfully!"
-msgstr "密码成功更改！"
-
-msgid "Current password"
-msgstr "当前密码"
-
-msgid "Password (retype)"
-msgstr "密码(重新输入)"
-
-msgid "Enter current token"
-msgstr "输入当前令牌"
-
-msgid "Current token"
-msgstr "当前令牌"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "请输入您目前 UIN 的密码和新密码："
-
-msgid "Change Gadu-Gadu Password"
-msgstr "更改 Gadu-Gadu 密码"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3153,18 +3085,6 @@ msgstr "没有与您的搜索条件匹配的用户。"
 msgid "Unable to read from socket"
 msgstr "无法读取套接字"
 
-msgid "Buddy list downloaded"
-msgstr "好友列表已下载"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "您的好友列表已经从服务器上下载。"
-
-msgid "Buddy list uploaded"
-msgstr "好友列表已上传"
-
-msgid "Your buddy list was stored on the server."
-msgstr "您的好友列表存储于服务器上。"
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3200,18 +3120,6 @@ msgstr "未连接到服务器。"
 
 msgid "Find buddies..."
 msgstr "查找好友..."
-
-msgid "Change password..."
-msgstr "更改密码..."
-
-msgid "Upload buddylist to Server"
-msgstr "将好友列表上传到服务器"
-
-msgid "Download buddylist from Server"
-msgstr "从服务器下载好友列表"
-
-msgid "Delete buddylist from Server"
-msgstr "从服务器删除好友列表"
 
 msgid "Save buddylist to file..."
 msgstr "将好友列表保存到文件..."
@@ -3316,7 +3224,6 @@ msgstr "无法连接"
 msgid "Unable to connect: %s"
 msgstr "无法连接到 %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "服务器关闭了连接。"
 
@@ -3355,6 +3262,10 @@ msgstr "编码"
 msgid "Auto-detect incoming UTF-8"
 msgstr "自动检测 UTF-8 编码文本"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "用户名"
+
 msgid "Real name"
 msgstr "真名"
 
@@ -3364,6 +3275,14 @@ msgstr "真名"
 #.
 msgid "Use SSL"
 msgstr "使用 SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "正在认证"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "允许在不加密流上的纯文本验证"
 
 msgid "Bad mode"
 msgstr "无效模式"
@@ -3399,6 +3318,14 @@ msgstr " <i>(已认证)</i>"
 msgid "Nick"
 msgstr "昵称"
 
+#, fuzzy
+msgid "Login name"
+msgstr "MXit 登录名称"
+
+#, fuzzy
+msgid "Host name"
+msgstr "主机名"
+
 msgid "Currently on"
 msgstr "目前位于"
 
@@ -3425,6 +3352,10 @@ msgstr "%s 清除了话题。"
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s 的话题为：%s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3535,6 +3466,32 @@ msgstr "昵称或频道暂时不可用。"
 #, c-format
 msgid "Wallops from %s"
 msgstr "来自 %s 的 Wallops"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "无法初始化 SILC 客户连接"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "认证失败"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "认证失败"
+
+msgid "Incorrect Password"
+msgstr "密码错误"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "认证失败"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;要执行的动作&gt;: 执行动作。"
@@ -4153,6 +4110,9 @@ msgstr "日期"
 msgid "Already Registered"
 msgstr "已注册"
 
+msgid "Password"
+msgstr "密码"
+
 msgid "Unregister"
 msgstr "取消注册"
 
@@ -4285,6 +4245,9 @@ msgstr "您的密码已更改。"
 
 msgid "Error changing password"
 msgstr "更改密码出错"
+
+msgid "Password (again)"
+msgstr "再次输入新密码"
 
 msgid "Change XMPP Password"
 msgstr "更改 XMPP 密码"
@@ -4508,6 +4471,10 @@ msgstr "无法同 %s 创建多媒体会话：无效的 JID"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "无法同 %s 创建多媒体会话：用户不在线"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "无法同 %s 创建多媒体会话：用户不在线"
 
 #, c-format
@@ -5829,6 +5796,11 @@ msgstr "关于我"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "删除状态"
+
 #. mobile number
 msgid "Mobile Number"
 msgstr "手机号码"
@@ -5934,6 +5906,16 @@ msgstr "关于..."
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr "您要发送的文件太大！"
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "无法载入插件"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "无法打开文件。"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6044,10 +6026,6 @@ msgstr "状态消息"
 msgid "Rejection Message"
 msgstr "拒绝消息"
 
-#. hidden number
-msgid "Hidden Number"
-msgstr "隐藏号码"
-
 msgid "No profile available"
 msgstr "无可用配置文件"
 
@@ -6072,6 +6050,37 @@ msgstr "通过 HTTP 连接"
 
 msgid "Enable splash-screen popup"
 msgstr "启用飞溅屏幕"
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Jingle"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "担忧"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "醉酒"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "部门"
+
+msgid "Divorced"
+msgstr ""
 
 msgid "Last Online"
 msgstr "最后在线"
@@ -6130,6 +6139,10 @@ msgstr "%s 向您发送了加密的消息，但尚不支持。"
 
 msgid "Message Error"
 msgstr "消息错误"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "无法用指定的协议执行重定向"
@@ -9433,7 +9446,6 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr "由于失败的尝试次数过多，您的帐号已被锁定，请尝试到 Yahoo! 网站登录。"
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "未知错误 52。重新连接应可以修复此问题。"
 
@@ -10055,15 +10067,15 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr "读取您的 %s 时遇到了错误。该文件未载入，旧文件被移动到 %s~ 中了。"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr "互联网通讯程序。 支持 AIM、Google Talk、Jabber/XMPP、MSN、Yahoo 和更多"
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin 互联网通讯程序"
 
 msgid "Internet Messenger"
 msgstr "互联网通讯程序"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin 互联网通讯程序"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr "互联网通讯程序。 支持 AIM、Google Talk、Jabber/XMPP、MSN、Yahoo 和更多"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11094,6 +11106,12 @@ msgstr "未读消息"
 msgid "New Event"
 msgstr "新事件"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr "帐号已禁用，您已退出此会话。当帐号重新连接时您将自动重新加入此会话。"
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear：清除全部对话回滚。"
 
@@ -11199,7 +11217,8 @@ msgstr "网络管理员"
 msgid "win32 port"
 msgstr "Win32 移植"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "张家兴"
 
@@ -11236,6 +11255,9 @@ msgstr "阿拉伯语"
 
 msgid "Assamese"
 msgstr "阿萨姆语"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "白俄罗斯拉丁语"
@@ -11363,6 +11385,9 @@ msgstr "库得语"
 msgid "Lao"
 msgstr "老挝语"
 
+msgid "Lithuanian"
+msgstr "立陶宛语"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "斯瓦希里语"
@@ -11385,6 +11410,9 @@ msgstr "马拉地语"
 
 msgid "Malay"
 msgstr "马来语"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "书面挪威语"
@@ -11437,6 +11465,10 @@ msgstr "阿尔巴尼亚语"
 msgid "Serbian"
 msgstr "塞尔维亚语"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "白俄罗斯拉丁语"
+
 msgid "Sinhala"
 msgstr "僧伽罗语"
 
@@ -11455,9 +11487,6 @@ msgstr "泰卢固语"
 msgid "Thai"
 msgstr "泰语"
 
-msgid "Turkish"
-msgstr "土耳其语"
-
 msgid "Ukranian"
 msgstr "乌克兰语"
 
@@ -11466,9 +11495,6 @@ msgstr "乌尔都语"
 
 msgid "Vietnamese"
 msgstr "越南语"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh 及Gnome 越南语小组"
 
 msgid "Simplified Chinese"
 msgstr "中文(简体)"
@@ -11482,8 +11508,11 @@ msgstr "中文(繁体)"
 msgid "Amharic"
 msgstr "阿姆哈拉语"
 
-msgid "Lithuanian"
-msgstr "立陶宛语"
+msgid "Turkish"
+msgstr "土耳其语"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh 及Gnome 越南语小组"
 
 #, c-format
 msgid ""
@@ -11510,7 +11539,6 @@ msgstr ""
 "\t<A HREF=\"%s\">常见问题</A><BR>\tIRC 频道：#pidgin (irc.freenode.net)<BR>"
 "\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12181,6 +12209,10 @@ msgstr "调用“%s”出错：%s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "选择了“手动”浏览器命令，但未设置命令。"
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "浏览器命令“%s”无效。"
 
 msgid "No message"
 msgstr "无消息"
@@ -13142,11 +13174,11 @@ msgstr "Pidgin 工具提示"
 msgid "Pidgin smileys"
 msgstr "Pidgin 表情"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "选择此选项将禁用图形化表情。"
-
 msgid "none"
 msgstr "无"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "选择此选项将禁用图形化表情。"
 
 msgid "Small"
 msgstr "小"
@@ -14069,7 +14101,6 @@ msgstr "每 N 分钟显示一次 iChat 风格的时间戳。"
 msgid "Timestamp Format Options"
 msgstr "时间戳格式选项"
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr "强制时间戳格式(_F)"
 
@@ -14117,6 +14148,63 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr "此插件允许用户自定义会话和聊天记录消息的时间戳格式。"
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "聊天聊天室语系"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t仅当别人提到您的名字时(_O)"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "保存图标"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "每个窗口的对话数"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "发送消息"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution 集成"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "提供与 Evolution 的集成。"
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "提供与 Evolution 的集成。"
 
 msgid "Audio"
 msgstr "音频"
@@ -14296,57 +14384,96 @@ msgstr "发送和接受原始 XMPP 节。"
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr "$(^Name) 以 GPL 许可发布。在此提供此许可仅为参考。$_CLICK"
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Pidgin 所用的多平台 GUI 工具包"
+msgid "The installer is already running."
+msgstr "安装程序已经运行。"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr "Pidgin 的实例正在运行中。请退出 Pidgin 然后再试一次。"
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "下一步 >"
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr "$(^Name) 以 GPL 许可发布。在此提供此许可仅为参考。$_CLICK"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin 即时通讯程序(必需)"
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ 运行时刻环境(必需)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "快捷方式"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "桌面"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "开始菜单"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "支持的语言"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidgin 核心文件和 DLLs"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "启动 Pidgin 的快捷方式"
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "在桌面上创建 Pidgin 的快捷方式"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "在开始菜单中创建 Pidgin 的快捷方式"
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr "在桌面上创建 Pidgin 的快捷方式"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Pidgin 所用的多平台 GUI 工具包"
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr "调试符号(用于报告崩溃错误)"
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "访问 Pidgin 网站"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr "无法卸载已安装版本的 Pidgin，新版将不删除已有文件而直接安装。"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin 需要一个兼容的 GTK+ 运行时(您的系统上没有安装)。$\\r您确定不安装 GTK+ "
+"运行时吗？"
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "桌面"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+msgid "URI Handlers"
 msgstr ""
-"下载 GTK+ 运行时($R2)出错。$\\rPidgin 需要它方可工作，如果重试仍然失败，则您"
-"可能需要使用离线安装程序 http://pidgin.im/download/windows/"
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
-"安装调试符号($R2)出错。$\\r如果重试仍然失败，则您可能需要使用离线安装程序 "
-"http://pidgin.im/download/windows/"
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "拼写检查支持"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14359,74 +14486,128 @@ msgstr ""
 "developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ 运行时刻环境(必需)"
-
-#. Installer Subsection Text
-msgid "Localizations"
-msgstr "支持的语言"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "下一步 >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin 即时通讯程序(必需)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-"Pidgin 需要一个兼容的 GTK+ 运行时(您的系统上没有安装)。$\\r您确定不安装 GTK+ "
-"运行时吗？"
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "快捷方式"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "启动 Pidgin 的快捷方式"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "拼写检查支持"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "开始菜单"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "拼写检查支持。(安装需要连接到 Internet)"
 
-msgid "The installer is already running."
-msgstr "安装程序已经运行。"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"安装调试符号($R2)出错。$\\r如果重试仍然失败，则您可能需要使用离线安装程序 "
+"http://pidgin.im/download/windows/"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"下载 GTK+ 运行时($R2)出错。$\\rPidgin 需要它方可工作，如果重试仍然失败，则您"
+"可能需要使用离线安装程序 http://pidgin.im/download/windows/"
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr "卸载程序找不到 Pidgin 的注册表项目。$\\r可能是另外的用户安装了此程序。"
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr ""
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr "无法卸载已安装版本的 Pidgin，新版将不删除已有文件而直接安装。"
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "访问 Pidgin 网站"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "您没有权限卸载此程序。"
+
+#~ msgid "Token Error"
+#~ msgstr "令牌错误"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "无法获取令牌。\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "填入注册字段。"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "密码不匹配。"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "无法创建新帐号。发生了错误。"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "注册了新的 Gadu-Gadu 帐号"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "注册成功！"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "输入验证文本"
+
+#~ msgid "Captcha"
+#~ msgstr "验证码图像"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "注册新的 Gadu-Gadu 帐号"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "请填入下列字段"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "填入字段。"
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "您目前的密码与您所指定的密码不同。"
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "无法更改密码。发生了错误。\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "更改 Gadu-Gadu 帐号的密码"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "密码成功更改！"
+
+#~ msgid "Current password"
+#~ msgstr "当前密码"
+
+#~ msgid "Password (retype)"
+#~ msgstr "密码(重新输入)"
+
+#~ msgid "Enter current token"
+#~ msgstr "输入当前令牌"
+
+#~ msgid "Current token"
+#~ msgstr "当前令牌"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "请输入您目前 UIN 的密码和新密码："
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "更改 Gadu-Gadu 密码"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "好友列表已下载"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "您的好友列表已经从服务器上下载。"
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "好友列表已上传"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "您的好友列表存储于服务器上。"
+
+#~ msgid "Change password..."
+#~ msgstr "更改密码..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "将好友列表上传到服务器"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "从服务器下载好友列表"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "从服务器删除好友列表"
+
+#~ msgid "Hidden Number"
+#~ msgstr "隐藏号码"
 
 #~ msgid "Meanwhile Connection Setup"
 #~ msgstr "Meanwhile 连接设置"
@@ -15113,9 +15294,6 @@ msgstr "您没有权限卸载此程序。"
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "您输入的昵称无效。"
 
-#~ msgid "MXit Login Name"
-#~ msgstr "MXit 登录名称"
-
 #~ msgid "Nick Name"
 #~ msgstr "昵称"
 
@@ -15500,9 +15678,6 @@ msgstr "您没有权限卸载此程序。"
 #~ msgid "Reachability Address"
 #~ msgstr "可用地址"
 
-#~ msgid "Jingle"
-#~ msgstr "Jingle"
-
 #~ msgid "User Nickname"
 #~ msgstr "用户昵称"
 
@@ -15615,9 +15790,6 @@ msgstr "您没有权限卸载此程序。"
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "无法解析主机名"
-
-#~ msgid "Incorrect Password"
-#~ msgstr "密码错误"
 
 #, fuzzy
 #~ msgid ""
@@ -16121,9 +16293,6 @@ msgstr "您没有权限卸载此程序。"
 
 #~ msgid "Available Message"
 #~ msgstr "可用消息"
-
-#~ msgid "Screen name"
-#~ msgstr "用户名"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "指定的聊天名称无效。"

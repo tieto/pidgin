@@ -68,7 +68,6 @@ plugins: \
 		idle.dll \
 		joinpart.dll \
 		log_reader.dll \
-		newline.dll \
 		offlinemsg.dll \
 		psychic.dll \
 		statenotify.dll

@@ -1,6 +1,7 @@
 syntax: glob
 .*.swp
 clang_output_*
+pidgin-*
 
 syntax: regexp
 (.*/)?TAGS$
@@ -109,7 +110,6 @@ pidgin-.*.tar.gz
 pidgin.apspec$
 pidgin.desktop$
 pidgin.desktop.in$
-pidgin.spec$
 pidgin/.*\.html\.h$
 pidgin/pidgin$
 pidgin/pixmaps/emotes/default/24/theme

@@ -14,15 +14,13 @@ EXTRA_DIST = \
 		intltool-update.in \
 		package_revision.h \
 		pidgin.apspec.in \
-		pidgin.spec.in \
 		pidgin.desktop.in \
 		po/Makefile.mingw \
 		valgrind-suppressions
 
 noinst_HEADERS = config.h package_revision.h
 
-dist-hook: pidgin.spec
-	cp pidgin.spec $(distdir)
+dist-hook:
 	rm $(distdir)/config.h
 
 distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
@@ -45,7 +43,6 @@ version-check:
 # Ensure ChangeLogs have the correct version
 	head ChangeLog     | grep "^version $(PACKAGE_VERSION) (.*):$$" >/dev/null
 	head ChangeLog.API | grep "^version $(PACKAGE_VERSION):$$" >/dev/null
-	head po/ChangeLog  | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
 	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`

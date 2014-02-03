@@ -62,7 +62,7 @@ version 3.0.0 (??/??/????):
 	* Ciphers are now built from the libpurple directory.
 	* Doxygen has been replaced by gtk-doc for generating documentation.
 
-version 2.10.9:
+version 2.10.9 (2/2/2014):
 	XMPP:
 	* Fix problems logging into some servers including jabber.org and
 	  chat.facebook.com. (#15879)
