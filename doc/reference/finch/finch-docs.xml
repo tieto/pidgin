@@ -8,9 +8,13 @@
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
     <title>Finch Reference Manual</title>
-    <releaseinfo>
-      for finch &version;
-    </releaseinfo>
+    <abstract>
+      <title>Finch &version;</title>
+      <para>
+        Finch is an ncurses frontend to libpurple, built using libgnt
+        (GLib Ncurses Toolkit).
+      </para>
+    </abstract>
   </bookinfo>
 
   <reference label="I">

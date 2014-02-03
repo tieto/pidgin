@@ -8,9 +8,12 @@
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
     <title>Pidgin Reference Manual</title>
-    <releaseinfo>
-      for pidgin &version;
-    </releaseinfo>
+    <abstract>
+      <title>Pidgin &version;</title>
+      <para>
+        Pidgin is a GTK+ frontend to libpurple.
+      </para>
+    </abstract>
   </bookinfo>
 
   <reference label="I">

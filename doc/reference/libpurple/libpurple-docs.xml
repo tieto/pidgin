@@ -8,9 +8,14 @@
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
     <title>Purple Reference Manual</title>
-    <releaseinfo>
-      for libpurple &version;
-    </releaseinfo>
+    <abstract>
+      <title>Libpurple &version;</title>
+      <para>
+        libpurple is intended to be the core of an IM program. Pidgin is a GTK+
+        frontend to libpurple, and Finch is an ncurses frontend built using
+        libgnt (GLib Ncurses Toolkit).
+      </para>
+    </abstract>
   </bookinfo>
 
   <part label="I">
