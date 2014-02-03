@@ -73,8 +73,7 @@ GHashTable * ggp_html_tag_attribs(const gchar *attribs_str)
 		return attribs;
 
 	g_regex_match(global_data.re_html_attr, attribs_str, 0, &match);
-	while (g_match_info_matches(match))
-	{
+	while (g_match_info_matches(match)) {
 		g_hash_table_insert(attribs,
 			g_match_info_fetch(match, 1),
 			g_match_info_fetch(match, 2));
@@ -96,8 +95,7 @@ GHashTable * ggp_html_css_attribs(const gchar *attribs_str)
 		return attribs;
 
 	g_regex_match(global_data.re_css_attr, attribs_str, 0, &match);
-	while (g_match_info_matches(match))
-	{
+	while (g_match_info_matches(match)) {
 		g_hash_table_insert(attribs,
 			g_match_info_fetch(match, 1),
 			g_match_info_fetch(match, 2));
@@ -115,8 +113,7 @@ int ggp_html_decode_color(const gchar *str)
 	int color = -1;
 
 	g_regex_match(global_data.re_color_hex, str, 0, &match);
-	if (g_match_info_matches(match))
-	{
+	if (g_match_info_matches(match)) {
 		if (sscanf(str + 1, "%x", &color) != 1)
 			color = -1;
 	}
@@ -125,8 +122,7 @@ int ggp_html_decode_color(const gchar *str)
 		return color;
 
 	g_regex_match(global_data.re_color_rgb, str, 0, &match);
-	if (g_match_info_matches(match))
-	{
+	if (g_match_info_matches(match)) {
 		int r = -1, g = -1, b = -1;
 		gchar *c_str;
 

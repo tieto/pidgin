@@ -50,22 +50,18 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 	*/
 	is_update = (data->type == 0);
 
-	for (user_idx = 0; user_idx < data->user_count; user_idx++)
-	{
+	for (user_idx = 0; user_idx < data->user_count; user_idx++) {
 		struct gg_event_user_data_user *data_user =
 			&data->users[user_idx];
 		uin_t uin = data_user->uin;
 		guint attr_idx;
 		gboolean got_avatar = FALSE;
-		for (attr_idx = 0; attr_idx < data_user->attr_count; attr_idx++)
-		{
+		for (attr_idx = 0; attr_idx < data_user->attr_count; attr_idx++) {
 			struct gg_event_user_data_attr *data_attr =
 				&data_user->attrs[attr_idx];
-			if (strcmp(data_attr->key, "avatar") == 0)
-			{
+			if (strcmp(data_attr->key, "avatar") == 0) {
 				time_t timestamp;
-				if (data_attr->type == 0)
-				{
+				if (data_attr->type == 0) {
 					ggp_avatar_buddy_remove(gc, uin);
 					continue;
 				}

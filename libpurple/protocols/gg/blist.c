@@ -63,7 +63,7 @@ void ggp_buddylist_send(PurpleConnection *gc)
 		userlist[i] = ggp_str_to_uin(name);
 		types[i]    = GG_USER_NORMAL;
 		purple_debug_info("gg", "ggp_buddylist_send: adding %d\n",
-		                  userlist[i]);
+			userlist[i]);
 	}
 
 	ret = gg_notify_ex(info->session, userlist, types, size);
@@ -136,8 +136,8 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			g_strfreev(group_tbl);
 		}
 
-		buddy = purple_buddy_new(purple_connection_get_account(gc), name,
-					 strlen(show) ? show : NULL);
+		buddy = purple_buddy_new(purple_connection_get_account(gc),
+			name, strlen(show) ? show : NULL);
 
 		if (!(group = purple_blist_find_group(g))) {
 			group = purple_group_new(g);
@@ -164,7 +164,8 @@ char *ggp_buddylist_dump(PurpleAccount *account)
 	char *ptr;
 
 	for (buddies = purple_blist_find_buddies(account, NULL); buddies;
-			buddies = g_slist_delete_link(buddies, buddies)) {
+		buddies = g_slist_delete_link(buddies, buddies))
+	{
 		PurpleBuddy *buddy = buddies->data;
 		PurpleGroup *group = purple_buddy_get_group(buddy);
 		const char *bname = purple_buddy_get_name(buddy);

@@ -72,16 +72,14 @@ void ggp_account_token_request(PurpleConnection *gc,
 	purple_debug_info("gg", "ggp_account_token_request: "
 		"requesting token...\n");
 
-	if (!ggp_deprecated_setup_proxy(gc))
-	{
+	if (!ggp_deprecated_setup_proxy(gc)) {
 		callback(gc, NULL, user_data);
 		return;
 	}
 
 	h = gg_token(TRUE);
 
-	if (!h)
-	{
+	if (!h) {
 		callback(gc, NULL, user_data);
 		return;
 	}
@@ -106,8 +104,7 @@ static void ggp_account_token_response(struct gg_http *h, gboolean success,
 	if (cancelled)
 		purple_debug_info("gg", "ggp_account_token_handler: "
 			"cancelled\n");
-	else if (success)
-	{
+	else if (success) {
 		purple_debug_info("gg", "ggp_account_token_handler: "
 			"got token\n");
 
@@ -118,9 +115,7 @@ static void ggp_account_token_response(struct gg_http *h, gboolean success,
 		token->size = h->body_size;
 		token->data = g_memdup(h->body, token->size);
 		token->length = token_info->length;
-	}
-	else
-	{
+	} else {
 		purple_debug_error("gg", "ggp_account_token_handler: error\n");
 		purple_notify_error(
 			purple_connection_get_account(reqdata->gc),
@@ -200,8 +195,7 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 
 	purple_debug_info("gg", "ggp_account_register_dialog(%p, %p, %p)\n",
 		gc, token, _register_data);
-	if (!token)
-	{
+	if (!token) {
 		ggp_account_register_completed(register_data, FALSE);
 		return;
 	}
@@ -333,15 +327,13 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 
 	g_assert(!(success && cancelled));
 
-	if (cancelled)
-	{
+	if (cancelled) {
 		purple_debug_info("gg", "ggp_account_register_response: "
 			"cancelled\n");
 		ggp_account_register_completed(register_data, FALSE);
 		return;
 	}
-	if (!success || !register_result->success)
-	{
+	if (!success || !register_result->success) {
 		/* TODO (libgadu 1.12.x): check register_result->error */
 		purple_debug_error("gg", "ggp_account_register_response: "
 			"error\n");
@@ -457,8 +449,7 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 
 	purple_debug_info("gg", "ggp_account_chpass_dialog(%p, %p, %p)\n",
 		gc, token, _chpass_data);
-	if (!token)
-	{
+	if (!token) {
 		ggp_account_chpass_data_free(chpass_data);
 		return;
 	}
@@ -618,15 +609,13 @@ static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
 
 	g_assert(!(success && cancelled));
 
-	if (cancelled)
-	{
+	if (cancelled) {
 		purple_debug_info("gg", "ggp_account_chpass_response: "
 			"cancelled\n");
 		ggp_account_chpass_data_free(chpass_data);
 		return;
 	}
-	if (!success || !chpass_result->success)
-	{
+	if (!success || !chpass_result->success) {
 		/* TODO (libgadu 1.12.x): check chpass_result->error */
 		purple_debug_error("gg", "ggp_account_chpass_response: "
 			"error\n");
