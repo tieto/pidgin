@@ -103,7 +103,7 @@ void ggp_avatar_cleanup(PurpleConnection *gc)
 	{
 		ggp_avatar_buddy_update_req *current_update =
 			avdata->current_update;
-		
+
 		purple_http_conn_cancel(current_update->request);
 		g_free(current_update);
 	}
@@ -332,7 +332,7 @@ void ggp_avatar_own_set(PurpleConnection *gc, PurpleStoredImage *img)
 	
 	if (!PURPLE_CONNECTION_IS_VALID(gc) || !PURPLE_CONNECTION_IS_CONNECTED(gc))
 		return;
-	
+
 	purple_debug_info("gg", "ggp_avatar_own_set(%p, %p)", gc, img);
 	
 	own_data = ggp_avatar_get_avdata(gc)->own_data;

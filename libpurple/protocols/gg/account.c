@@ -110,9 +110,9 @@ static void ggp_account_token_response(struct gg_http *h, gboolean success,
 	{
 		purple_debug_info("gg", "ggp_account_token_handler: "
 			"got token\n");
-	
+
 		token = g_new(ggp_account_token, 1);
-	
+
 		token_info = h->data;
 		token->id = g_strdup(token_info->tokenid);
 		token->size = h->body_size;
@@ -302,7 +302,7 @@ static void ggp_account_register_dialog_ok(
 
 	h = gg_register3(register_data->email, register_data->password,
 		register_data->token->id, register_data->token_value, TRUE);
-	
+
 	ggp_libgaduw_http_watch(register_data->gc, h,
 		ggp_account_register_response, register_data, TRUE);
 }
@@ -357,19 +357,19 @@ static void ggp_account_register_response(struct gg_http *h, gboolean success,
 	uin = register_result->uin;
 	purple_debug_info("gg", "ggp_account_register_response: "
 		"registered uin %u\n", uin);
-	
+
 	purple_account_set_username(account, ggp_uin_to_str(uin));
 	purple_account_set_remember_password(account,
 		register_data->password_remember);
 	purple_account_set_password(account, register_data->password,
 		NULL, NULL);
-	
+
 	tmp = g_strdup_printf(_("Your new GG number: %u."), uin);
 	purple_notify_info(account, GGP_ACCOUNT_REGISTER_TITLE,
 		_("Registration completed successfully!"), tmp,
 		purple_request_cpar_from_account(account));
 	g_free(tmp);
-	
+
 	ggp_account_register_completed(register_data, TRUE);
 }
 
@@ -381,13 +381,13 @@ static void ggp_account_register_completed(
 
 	purple_debug_misc("gg", "ggp_account_register_completed: %d\n",
 		success);
-	
+
 	g_free(register_data->email);
 	g_free(register_data->password);
 	g_free(register_data->token_value);
 	ggp_account_token_free(register_data->token);
 	g_free(register_data);
-	
+
 	purple_account_disconnect(account);
 	purple_account_register_completed(account, success);
 }
@@ -517,14 +517,14 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 	
 	primary = g_strdup_printf(_("Change password for %s"),
 		purple_account_get_username(account));
-	
+
 	purple_request_fields(gc, GGP_ACCOUNT_CHPASS_TITLE, primary,
 		_("Please enter your current password and your new password."),
 		fields,
 		_("OK"), G_CALLBACK(ggp_account_chpass_dialog_ok),
 		_("Cancel"), G_CALLBACK(ggp_account_chpass_dialog_cancel),
 		purple_request_cpar_from_connection(gc), chpass_data);
-	
+
 	g_free(primary);
 }
 
@@ -585,7 +585,7 @@ static void ggp_account_chpass_dialog_ok(
 	h = gg_change_passwd4(uin, chpass_data->email,
 		chpass_data->password_current, chpass_data->password_new,
 		chpass_data->token->id, chpass_data->token_value, TRUE);
-	
+
 	ggp_libgaduw_http_watch(chpass_data->gc, h,
 		ggp_account_chpass_response, chpass_data, TRUE);
 }
@@ -641,14 +641,14 @@ static void ggp_account_chpass_response(struct gg_http *h, gboolean success,
 
 	purple_debug_info("gg", "ggp_account_chpass_response: "
 		"password changed\n");
-	
+
 	purple_account_set_password(account, chpass_data->password_new,
 		NULL, NULL);
 
 	purple_notify_info(account, GGP_ACCOUNT_CHPASS_TITLE,
 		_("Your password has been changed."), NULL,
 		purple_request_cpar_from_connection(chpass_data->gc));
-	
+
 	ggp_account_chpass_data_free(chpass_data);
 	
 	//TODO: reconnect / check how it is done in original client
