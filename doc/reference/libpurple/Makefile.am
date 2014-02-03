@@ -72,6 +72,7 @@ IGNORE_HFILES=\
 	dbus-types.h \
 	glibcompat.h \
 	internal.h \
+	marshallers.h \
 	purple-client.h \
 	purple-client-bindings.h
 	valgrind.h
