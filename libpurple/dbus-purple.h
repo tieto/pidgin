@@ -20,6 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:dbus-purple
+ * @section_id: libpurple-dbus-purple
+ * @short_description: <filename>dbus-purple.h</filename>
+ * @title: DBUS Purple defines
+ */
 
 #ifndef _DBUS_PURPLE_H_
 #define _DBUS_PURPLE_H_

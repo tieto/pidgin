@@ -1,9 +1,3 @@
-/**
- * @file dbus-server.h Purple DBUS Server
- * @ingroup core
- * @see @ref dbus-server-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:dbus-server
+ * @section_id: libpurple-dbus-server
+ * @short_description: <filename>dbus-server.h</filename>
+ * @title: DBUS Server
+ * @see_also: <link linkend="chapter-signals-dbus-server">D-Bus Server signals</link>
  */
 
 #ifndef _PURPLE_DBUS_SERVER_H_

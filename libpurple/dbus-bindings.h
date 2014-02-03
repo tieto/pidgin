@@ -1,8 +1,3 @@
-/**
- * @file dbus-bindings.h Purple DBUS Bindings
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
+ */
+/**
+ * SECTION:dbus-bindings
+ * @section_id: libpurple-dbus-bindings
+ * @short_description: <filename>dbus-bindings.h</filename>
+ * @title: DBUS Bindings
  */
 
 #ifndef _PURPLE_DBUS_BINDINGS_H_
