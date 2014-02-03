@@ -21,8 +21,8 @@
 /**
  * SECTION:cipher
  * @section_id: libpurple-cipher
- * @title: cipher.h
- * @short_description: Cipher and Hash API
+ * @short_description: <filename>cipher.h</filename>
+ * @title: Cipher and Hash API
  */
 
 #ifndef PURPLE_CIPHER_H

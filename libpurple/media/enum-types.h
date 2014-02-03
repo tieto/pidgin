@@ -21,8 +21,8 @@
 /**
  * SECTION:enum-types
  * @section_id: libpurple-enum-types
- * @title: media/enum-types.h
- * @short_description: Enum types for Media API
+ * @short_description: <filename>media/enum-types.h</filename>
+ * @title: Enum types for Media API
  */
 
 #ifndef _PURPLE_MEDIA_ENUM_TYPES_H_

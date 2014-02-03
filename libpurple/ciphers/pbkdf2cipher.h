@@ -21,8 +21,8 @@
 /**
  * SECTION:pbkdf2cipher
  * @section_id: libpurple-pbkdf2cipher
- * @title: ciphers/pbkdf2cipher.h
- * @short_description: PBKDF2 Cipher
+ * @short_description: <filename>ciphers/pbkdf2cipher.h</filename>
+ * @title: PBKDF2 Cipher
  */
 
 #ifndef PURPLE_PBKDF2_CIPHER_H

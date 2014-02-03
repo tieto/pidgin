@@ -21,8 +21,8 @@
 /**
  * SECTION:descipher
  * @section_id: libpurple-descipher
- * @title: ciphers/descipher.h
- * @short_description: DES Cipher
+ * @short_description: <filename>ciphers/descipher.h</filename>
+ * @title: DES Cipher
  */
 
 #ifndef PURPLE_DES_CIPHER_H

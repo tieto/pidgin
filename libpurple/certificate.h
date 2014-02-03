@@ -23,8 +23,8 @@
 /**
  * SECTION:certificate
  * @section_id: libpurple-certificate
- * @title: certificate.h
- * @short_description: Public-Key Certificate API
+ * @short_description: <filename>certificate.h</filename>
+ * @title: Public-Key Certificate API
  * @see_also: <link linkend="chapter-signals-certificate">Certificate signals</link>
  */
 

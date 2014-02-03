@@ -19,8 +19,8 @@
 /**
  * SECTION:circularbuffer
  * @section_id: libpurple-circularbuffer
- * @title: circularbuffer.h
- * @short_description: Buffer Utility Functions
+ * @short_description: <filename>circularbuffer.h</filename>
+ * @title: Buffer Utility Functions
  */
 
 #ifndef PURPLE_CIRCULAR_BUFFER_H

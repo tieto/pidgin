@@ -21,8 +21,8 @@
 /**
  * SECTION:candidate
  * @section_id: libpurple-candidate
- * @title: media/candidate.h
- * @short_description: Candidate for Media API
+ * @short_description: <filename>media/candidate.h</filename>
+ * @title: Candidate for Media API
  */
 
 #ifndef _PURPLE_MEDIA_CANDIDATE_H_

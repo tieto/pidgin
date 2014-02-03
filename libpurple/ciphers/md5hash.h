@@ -21,8 +21,8 @@
 /**
  * SECTION:md5hash
  * @section_id: libpurple-md5hash
- * @title: ciphers/md5hash.h
- * @short_description: MD5 Hash
+ * @short_description: <filename>ciphers/md5hash.h</filename>
+ * @title: MD5 Hash
  */
 
 #ifndef PURPLE_MD5_HASH_H

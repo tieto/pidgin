@@ -21,8 +21,8 @@
 /**
  * SECTION:backend-fs2
  * @section_id: libpurple-backend-fs2
- * @title: media/backend-fs2.h
- * @short_description: Farsight 2 backend for media API
+ * @short_description: <filename>media/backend-fs2.h</filename>
+ * @title: Farsight 2 backend for media API
  */
 
 /*

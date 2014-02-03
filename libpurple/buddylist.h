@@ -21,8 +21,8 @@
 /**
  * SECTION:buddylist
  * @section_id: libpurple-buddylist
- * @title: buddylist.h
- * @short_description: Buddy List API
+ * @short_description: <filename>buddylist.h</filename>
+ * @title: Buddy List API
  * @see_also: <link linkend="chapter-signals-blist">Buddy List signals</link>
  */
 

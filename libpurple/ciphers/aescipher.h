@@ -21,8 +21,8 @@
 /**
  * SECTION:aescipher
  * @section_id: libpurple-aescipher
- * @title: ciphers/aescipher.h
- * @short_description: AES Cipher
+ * @short_description: <filename>ciphers/aescipher.h</filename>
+ * @title: AES Cipher
  */
 
 #ifndef PURPLE_AES_CIPHER_H

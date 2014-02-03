@@ -21,8 +21,8 @@
 /**
  * SECTION:backend-iface
  * @section_id: libpurple-backend-iface
- * @title: media/backend-iface.h
- * @short_description: Interface for media backends
+ * @short_description: <filename>media/backend-iface.h</filename>
+ * @title: Interface for media backends
  */
 
 #ifndef _MEDIA_BACKEND_IFACE_H_

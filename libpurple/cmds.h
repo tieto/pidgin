@@ -18,8 +18,8 @@
 /**
  * SECTION:cmds
  * @section_id: libpurple-cmds
- * @title: cmds.h
- * @short_description: Commands API
+ * @short_description: <filename>cmds.h</filename>
+ * @title: Commands API
  * @see_also: <link linkend="chapter-signals-cmd">Command signals</link>
  */
 

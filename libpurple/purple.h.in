@@ -21,8 +21,8 @@
 /**
  * SECTION:purple
  * @section_id: libpurple-purple
- * @title: purple.h
- * @short_description: Header files and defines
+ * @short_description: <filename>purple.h</filename>
+ * @title: Header files and defines
  *
  * This file contains all the necessary preprocessor directives to include
  * libpurple's headers and other preprocessor directives required for plugins

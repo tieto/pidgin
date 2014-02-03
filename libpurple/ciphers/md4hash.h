@@ -22,8 +22,8 @@
 /**
  * SECTION:md4hash
  * @section_id: libpurple-md4hash
- * @title: ciphers/md4hash.h
- * @short_description: MD4 hash
+ * @short_description: <filename>ciphers/md4hash.h</filename>
+ * @title: MD4 hash
  */
 
 #ifndef PURPLE_MD4_HASH_H

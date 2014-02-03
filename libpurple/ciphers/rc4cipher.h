@@ -21,8 +21,8 @@
 /**
  * SECTION:rc4cipher
  * @section_id: libpurple-rc4cipher
- * @title: ciphers/rc4cipher.h
- * @short_description: RC4 Cipher
+ * @short_description: <filename>ciphers/rc4cipher.h</filename>
+ * @title: RC4 Cipher
  */
 
 #ifndef PURPLE_RC4_CIPHER_H

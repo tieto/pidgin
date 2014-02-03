@@ -21,8 +21,8 @@
 /**
  * SECTION:codec
  * @section_id: libpurple-codec
- * @title: media/codec.h
- * @short_description: Codec for Media API
+ * @short_description: <filename>media/codec.h</filename>
+ * @title: Codec for Media API
  */
 
 #ifndef _PURPLE_MEDIA_CODEC_H_

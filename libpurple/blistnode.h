@@ -21,8 +21,8 @@
 /**
  * SECTION:blistnode
  * @section_id: libpurple-blistnode
- * @title: blistnode.h
- * @short_description: Buddy list node and Counting node objects
+ * @title: Buddy list node and counting node types
+ * @short_description: <filename>blistnode.h</filename>
  */
 
 #ifndef _PURPLE_BLIST_NODE_H_

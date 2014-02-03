@@ -21,8 +21,8 @@
 /**
  * SECTION:buddyicon
  * @section_id: libpurple-buddyicon
- * @title: buddyicon.h
- * @short_description: Buddy Icon API
+ * @short_description: <filename>buddyicon.h</filename>
+ * @title: Buddy Icon API
  */
 
 #ifndef _PURPLE_BUDDYICON_H_

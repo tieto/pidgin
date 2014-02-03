@@ -21,8 +21,8 @@
 /**
  * SECTION:hmaccipher
  * @section_id: libpurple-hmaccipher
- * @title: ciphers/hmaccipher.h
- * @short_description: HMAC Cipher
+ * @short_description: <filename>ciphers/hmaccipher.h</filename>
+ * @title: HMAC Cipher
  */
 
 #ifndef PURPLE_HMAC_CIPHER_H

@@ -21,8 +21,8 @@
 /**
  * SECTION:des3cipher
  * @section_id: libpurple-des3cipher
- * @title: ciphers/des3cipher.h
- * @short_description: Triple-DES Cipher
+ * @short_description: <filename>ciphers/des3cipher.h</filename>
+ * @title: Triple-DES Cipher
  */
 
 #ifndef PURPLE_DES3_CIPHER_H

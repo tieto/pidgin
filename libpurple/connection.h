@@ -21,8 +21,8 @@
 /**
  * SECTION:connection
  * @section_id: libpurple-connection
- * @title: connection.h
- * @short_description: Connection API
+ * @short_description: <filename>connection.h</filename>
+ * @title: Connection API
  * @see_also: <link linkend="chapter-signals-connection">Connection signals</link>
  */
 

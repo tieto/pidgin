@@ -21,8 +21,8 @@
 /**
  * SECTION:sha256hash
  * @section_id: libpurple-sha256hash
- * @title: ciphers/sha256hash.h
- * @short_description: SHA256 Hash
+ * @short_description: <filename>ciphers/sha256hash.h</filename>
+ * @title: SHA256 Hash
  */
 
 #ifndef PURPLE_SHA256_HASH_H

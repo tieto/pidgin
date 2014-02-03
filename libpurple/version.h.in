@@ -22,8 +22,8 @@
 /**
  * SECTION:version
  * @section_id: libpurple-version
- * @title: version.h
- * @short_description: Purple Versioning
+ * @short_description: <filename>version.h</filename>
+ * @title: Purple Versioning
  */
 
 #ifndef _PURPLE_VERSION_H_
