@@ -1,10 +1,3 @@
-/**
- * @file imgstore.h Utility functions for reference-counted in-memory
- *       image data.
- * @ingroup core
- * @see @ref imgstore-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -25,6 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:imgstore
+ * @section_id: libpurple-imgstore
+ * @short_description: <filename>imgstore.h</filename>
+ * @title: In-memory image data utility functions
+ * @see_also: <link linkend="chapter-signals-imgstore">Stored Image signals</link>
+ *
+ * This file contains utility functions for reference-counted in-memory image
+ * data.
+ */
+
 #ifndef _PURPLE_IMGSTORE_H_
 #define _PURPLE_IMGSTORE_H_
 

@@ -1,8 +1,3 @@
-/**
- * @file media-gst.h Media API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:media-gst
+ * @section_id: libpurple-media-gst
+ * @short_description: <filename>media-gst.h</filename>
+ * @title: Media Element API
  */
 
 #ifndef _PURPLE_MEDIA_GST_H_

@@ -1,8 +1,3 @@
-/**
- * @file pluginpref.h Plugin Preferences API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:pluginpref
+ * @section_id: libpurple-pluginpref
+ * @short_description: <filename>pluginpref.h</filename>
+ * @title: Plugin Preferences frontend
+ */
+
 #ifndef _PURPLE_PLUGINPREF_H_
 #define _PURPLE_PLUGINPREF_H_
 

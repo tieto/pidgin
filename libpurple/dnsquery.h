@@ -1,8 +1,3 @@
-/**
- * @file dnsquery.h DNS query API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:dnsquery
+ * @section_id: libpurple-dnsquery
+ * @short_description: <filename>dnsquery.h</filename>
+ * @title: DNS Query API
+ */
+
 #ifndef _PURPLE_DNSQUERY_H_
 #define _PURPLE_DNSQUERY_H_
 

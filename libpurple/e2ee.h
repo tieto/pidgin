@@ -1,8 +1,3 @@
-/**
- * @file e2ee.h End-to-end encryption API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
+ */
+/**
+ * SECTION:e2ee
+ * @section_id: libpurple-e2ee
+ * @short_description: <filename>e2ee.h</filename>
+ * @title: End-to-end encryption API
  */
 
 #ifndef _PURPLE_E2EE_H_

@@ -1,7 +1,3 @@
-/**
- * @file ntlm.h
- */
-
 /* purple
  *
  * Copyright (C) 2005, Thomas Butter <butter@uni-mannheim.de>
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:ntlm
+ * @section_id: libpurple-ntlm
+ * @short_description: <filename>ntlm.h</filename>
+ * @title: NTLM authentication
  */
 
 #ifndef _PURPLE_NTLM_H

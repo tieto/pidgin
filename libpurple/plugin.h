@@ -1,11 +1,3 @@
-/**
- * @file plugin.h Plugin API
- * @ingroup core
- * @see @ref plugin-signals
- * @see @ref plugin-ids
- * @see @ref plugin-i18n
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -26,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:plugin
+ * @section_id: libpurple-plugin
+ * @short_description: <filename>plugin.h</filename>
+ * @title: Plugin API
+ */
+
 #ifndef _PURPLE_PLUGIN_H_
 #define _PURPLE_PLUGIN_H_
 

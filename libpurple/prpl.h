@@ -1,8 +1,3 @@
-/**
- * @file prpl.h Protocol Plugin functions
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:prpl
+ * @section_id: libpurple-prpl
+ * @short_description: <filename>prpl.h</filename>
+ * @title: Protocol Plugin functions
  */
 
 /* this file should be all that prpls need to include. therefore, by including

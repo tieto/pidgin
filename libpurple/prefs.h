@@ -1,8 +1,3 @@
-/**
- * @file prefs.h Prefs API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:prefs
+ * @section_id: libpurple-prefs
+ * @short_description: <filename>prefs.h</filename>
+ * @title: Preferences API
+ */
+
 #ifndef _PURPLE_PREFS_H_
 #define _PURPLE_PREFS_H_
 

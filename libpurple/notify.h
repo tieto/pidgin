@@ -1,9 +1,3 @@
-/**
- * @file notify.h Notification API
- * @ingroup core
- * @see @ref notify-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:notify
+ * @section_id: libpurple-notify
+ * @short_description: <filename>notify.h</filename>
+ * @title: Notification API
+ * @see_also: <link linkend="chapter-signals-notify">Notify signals</link>
+ */
+
 #ifndef _PURPLE_NOTIFY_H_
 #define _PURPLE_NOTIFY_H_
 
