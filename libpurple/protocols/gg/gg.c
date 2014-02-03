@@ -833,20 +833,20 @@ static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, Purp
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	int dummy_length; /* we don't send real length of typed message */
-	
+
 	if (state == PURPLE_IM_TYPED) /* not supported */
 		return 1;
-	
+
 	if (state == PURPLE_IM_TYPING)
 		dummy_length = (int)g_random_int();
 	else /* PURPLE_NOT_TYPING */
 		dummy_length = 0;
-	
+
 	gg_typing_notification(
 		info->session,
 		ggp_str_to_uin(name),
 		dummy_length); 
-	
+
 	return 1; /* wait 1 second before another notification */
 }
 

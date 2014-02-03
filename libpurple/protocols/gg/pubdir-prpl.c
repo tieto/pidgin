@@ -74,7 +74,7 @@ static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 	int records_count, const ggp_pubdir_record *records, int next_offset,
 	void *user_data);
 
-// Searching for buddies.
+/* Searching for buddies. */
 
 #define GGP_PUBDIR_SEARCH_TITLE _("Gadu-Gadu Public Directory")
 #define GGP_PUBDIR_SEARCH_PER_PAGE 20
@@ -116,7 +116,7 @@ static void ggp_pubdir_search_results_info(PurpleConnection *gc, GList *row,
 static void ggp_pubdir_search_results_new(PurpleConnection *gc, GList *row,
 	gpointer _form);
 
-// Own profile.
+/* Own profile. */
 
 static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 	const ggp_pubdir_record *records, int next_offset, void *user_data);
@@ -330,15 +330,17 @@ static void ggp_pubdir_got_data(PurpleHttpConnection *http_conn,
 		}
 
 		record->birth = ggp_date_from_iso8601(birth_s);
-		//TODO: calculate age from birth
+		/*TODO: calculate age from birth */
 
-		//TODO: verbose
-		purple_debug_misc("gg", "ggp_pubdir_got_data: [uin:%d] "
-			"[label:%s] [nick:%s] [first name:%s] [last name:%s] "
-			"[city:%s] [gender:%d] [age:%d] [birth:%lu]\n",
-			record->uin, record->label, record->nickname,
-			record->first_name, record->last_name, record->city,
-			record->gender, record->age, record->birth);
+		if (purple_debug_is_verbose()) {
+			purple_debug_misc("gg", "ggp_pubdir_got_data: [uin:%d] "
+				"[label:%s] [nick:%s] [first name:%s] "
+				"[last name:%s] [city:%s] [gender:%d] [age:%d] "
+				"[birth:%lu]\n", record->uin, record->label,
+				record->nickname, record->first_name,
+				record->last_name, record->city, record->gender,
+				record->age, record->birth);
+		}
 
 		g_free(city);
 
@@ -913,7 +915,7 @@ static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 
 	if (!token || !PURPLE_CONNECTION_IS_VALID(gc))
 	{
-		// TODO: notify about failure
+		/* TODO: notify about failure */
 		ggp_pubdir_record_free(record, 1);
 		return;
 	}
