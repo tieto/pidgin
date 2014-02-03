@@ -181,7 +181,7 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 static gboolean remove_current_mech(JabberStream *js) {
 	char *pos;
 	if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
-		int len = strlen(js->current_mech);
+		size_t len = strlen(js->current_mech);
 		/* Clean up space that separated this Mech from the one before or after it */
 		if (pos > js->sasl_mechs->str && *(pos - 1) == ' ') {
 			/* Handle removing space before when current_mech isn't the first mech in the list */
