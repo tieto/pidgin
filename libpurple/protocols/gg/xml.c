@@ -38,8 +38,7 @@ gboolean ggp_xml_get_string(const PurpleXmlNode *xml, gchar *childName, gchar **
 	g_return_val_if_fail(xml != NULL, FALSE);
 	g_return_val_if_fail(var != NULL, FALSE);
 
-	if (childName != NULL)
-	{
+	if (childName != NULL) {
 		xml = purple_xmlnode_get_child(xml, childName);
 		if (xml == NULL)
 			return FALSE;
@@ -97,8 +96,7 @@ gboolean ggp_xml_set_string(PurpleXmlNode *xml, gchar *childName, const gchar *v
 	g_return_val_if_fail(xml != NULL, FALSE);
 	g_return_val_if_fail(val != NULL, FALSE);
 
-	if (childName != NULL)
-	{
+	if (childName != NULL) {
 		PurpleXmlNode *child = purple_xmlnode_get_child(xml, childName);
 		if (child == NULL)
 			child = purple_xmlnode_new_child(xml, childName);
@@ -126,8 +124,7 @@ gboolean ggp_xml_set_uint(PurpleXmlNode *xml, gchar *childName, unsigned int val
 void ggp_xmlnode_remove_children(PurpleXmlNode *xml)
 {
 	PurpleXmlNode *child = xml->child;
-	while (child)
-	{
+	while (child) {
 		PurpleXmlNode *next = child->next;
 		if (child->type != PURPLE_XMLNODE_TYPE_ATTRIB)
 			purple_xmlnode_free(child);
@@ -142,20 +139,15 @@ unsigned int ggp_xml_child_count(PurpleXmlNode *xml, const gchar *childName)
 
 	g_return_val_if_fail(xml != NULL, 0);
 
-	if (childName)
-	{
+	if (childName) {
 		child = purple_xmlnode_get_child(xml, childName);
-		while (child)
-		{
+		while (child) {
 			child = purple_xmlnode_get_next_twin(child);
 			count++;
 		}
-	}
-	else
-	{
+	} else {
 		child = xml->child;
-		while (child)
-		{
+		while (child) {
 			child = child->next;
 			count++;
 		}

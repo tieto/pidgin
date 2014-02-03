@@ -72,8 +72,7 @@ void ggp_servconn_add_server(const gchar *server)
 
 	old_entry = g_list_find_custom(global_data.server_history, server,
 		(GCompareFunc)g_strcmp0);
-	if (old_entry)
-	{
+	if (old_entry) {
 		g_free(old_entry->data);
 		global_data.server_history = g_list_delete_link(
 			global_data.server_history, old_entry);
