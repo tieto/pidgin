@@ -1,8 +1,3 @@
-/**
- * @file gntprefs.h GNT Preferences API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gntprefs
+ * @section_id: finch-gntprefs
+ * @short_description: <filename>gntprefs.h</filename>
+ * @title: Preferences API
+ */
+
 #ifndef _GNT_PREFS_H
 #define _GNT_PREFS_H
 

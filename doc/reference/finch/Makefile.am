@@ -64,7 +64,9 @@ IGNORE_HFILES=\
 	plugins \
 	test \
 	wms \
-	gntinternal.h
+	getopt.h \
+	gntinternal.h \
+	gntmarshal.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

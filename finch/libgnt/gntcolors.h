@@ -1,7 +1,3 @@
-/**
- * @file gntcolors.h Colors API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntcolors
+ * @section_id: libgnt-gntcolors
+ * @short_description: <filename>gntcolors.h</filename>
+ * @title: Colors
  */
 
 #ifndef GNT_COLORS_H

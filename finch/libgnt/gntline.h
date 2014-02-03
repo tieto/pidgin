@@ -1,7 +1,3 @@
-/**
- * @file gntline.h Line API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntline
+ * @section_id: libgnt-gntline
+ * @short_description: <filename>gntline.h</filename>
+ * @title: Line
  */
 
 #ifndef GNT_LINE_H
@@ -58,6 +60,7 @@ struct _GntLineClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

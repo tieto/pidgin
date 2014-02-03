@@ -1,7 +1,3 @@
-/**
- * @file gntbindable.h Bindable API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntbindable
+ * @section_id: libgnt-gntbindable
+ * @short_description: <filename>gntbindable.h</filename>
+ * @title: Bindable
  */
 
 #ifndef GNT_BINDABLE_H
@@ -59,6 +61,7 @@ struct _GntBindableClass
 
 	GntBindable * help_window;
 
+	/*< private >*/
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
 	void (*gnt_reserved4)(void);

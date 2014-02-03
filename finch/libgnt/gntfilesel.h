@@ -1,7 +1,3 @@
-/**
- * @file gntfilesel.h File selector API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntfilesel
+ * @section_id: libgnt-gntfilesel
+ * @short_description: <filename>gntfilesel.h</filename>
+ * @title: File Selector
  */
 
 #ifndef GNT_FILE_SEL_H
@@ -75,6 +77,8 @@ struct _GntFileSelClass
 	GntWindowClass parent;
 
 	void (*file_selected)(GntFileSel *sel, const char *path, const char *filename);
+
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

@@ -1,7 +1,3 @@
-/**
- * @file gnttree.h Tree API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gnttree
+ * @section_id: libgnt-gnttree
+ * @short_description: <filename>gnttree.h</filename>
+ * @title: Tree
  */
 
 #ifndef GNT_TREE_H
@@ -93,6 +95,7 @@ struct _GntTreeClass
 	void (*selection_changed)(GntTreeRow *old, GntTreeRow * current);
 	void (*toggled)(GntTree *tree, gpointer key);
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

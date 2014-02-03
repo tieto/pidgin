@@ -1,7 +1,3 @@
-/**
- * @file gntcombobox.h Combobox API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntcombobox
+ * @section_id: libgnt-gntcombobox
+ * @short_description: <filename>gntcombobox.h</filename>
+ * @title: Combobox
  */
 
 #ifndef GNT_COMBO_BOX_H
@@ -60,6 +62,7 @@ struct _GntComboBoxClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

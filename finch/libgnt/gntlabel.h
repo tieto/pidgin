@@ -1,7 +1,3 @@
-/**
- * @file gntlabel.h Label API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntlabel
+ * @section_id: libgnt-gntlabel
+ * @short_description: <filename>gntlabel.h</filename>
+ * @title: Label
  */
 
 #ifndef GNT_LABEL_H
@@ -48,6 +50,7 @@ struct _GntLabel
 	char *text;
 	GntTextFormatFlags flags;
 
+	/*< private >*/
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);
     void (*gnt_reserved3)(void);
@@ -58,6 +61,7 @@ struct _GntLabelClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

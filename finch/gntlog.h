@@ -1,8 +1,3 @@
-/**
- * @file gntlog.h GNT Log viewer
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gntlog
+ * @section_id: finch-gntlog
+ * @short_description: <filename>gntlog.h</filename>
+ * @title: Log Viewer
+ */
+
 #ifndef _FINCHLOG_H_
 #define _FINCHLOG_H_
 

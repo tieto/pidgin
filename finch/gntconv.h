@@ -1,8 +1,3 @@
-/**
- * @file gntconv.h GNT Conversation API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gntconv
+ * @section_id: finch-gntconv
+ * @short_description: <filename>gntconv.h</filename>
+ * @title: Conversation API
+ */
+
 #ifndef _GNT_CONV_H
 #define _GNT_CONV_H
 

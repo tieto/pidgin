@@ -1,7 +1,3 @@
-/**
- * @file gntwidget.h Widget API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntwidget
+ * @section_id: libgnt-gntwidget
+ * @short_description: <filename>gntwidget.h</filename>
+ * @title: Widget
  */
 
 #ifndef GNT_WIDGET_H
@@ -104,6 +106,7 @@ struct _GntWidget
 	GntWidgetPriv priv;
 	WINDOW *window;
 
+	/*< private >*/
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);
     void (*gnt_reserved3)(void);
@@ -131,6 +134,7 @@ struct _GntWidgetClass
 	void (*activate)(GntWidget *widget);
 	gboolean (*clicked)(GntWidget *widget, GntMouseEvent event, int x, int y);
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

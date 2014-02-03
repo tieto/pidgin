@@ -1,7 +1,3 @@
-/**
- * @file gntcheckbox.h Checkbox API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntcheckbox
+ * @section_id: libgnt-gntcheckbox
+ * @short_description: <filename>gntcheckbox.h</filename>
+ * @title: Checkbox
  */
 
 #ifndef GNT_CHECK_BOX_H
@@ -59,6 +61,7 @@ struct _GntCheckBoxClass
 
 	void (*toggled)(void);
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);

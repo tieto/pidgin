@@ -11,8 +11,11 @@
     <abstract>
       <title>Finch &version;</title>
       <para>
-        Finch is an ncurses frontend to libpurple, built using libgnt
-        (GLib Ncurses Toolkit).
+        GNT (GLib Ncurses Toolkit) is an ncurses toolkit for creating text-mode
+        graphical user interfaces in a fast and easy way.
+      </para>
+      <para>
+        Finch is a text-mode frontend to libpurple, built using libgnt.
       </para>
     </abstract>
   </bookinfo>
@@ -20,37 +23,38 @@
   <reference label="I">
     <title>Finch API Reference</title>
 
-      <xi:include href="xml/finch.xml" />
-      <xi:include href="xml/getopt.xml" />
       <xi:include href="xml/gntaccount.xml" />
       <xi:include href="xml/gntblist.xml" />
+      <xi:include href="xml/gntpounce.xml" />
       <xi:include href="xml/gntcertmgr.xml" />
       <xi:include href="xml/gntconn.xml" />
       <xi:include href="xml/gntconv.xml" />
       <xi:include href="xml/gntdebug.xml" />
+      <xi:include href="xml/gntxfer.xml" />
       <xi:include href="xml/gntidle.xml" />
       <xi:include href="xml/gntlog.xml" />
       <xi:include href="xml/gntmedia.xml" />
       <xi:include href="xml/gntmenuutil.xml" />
       <xi:include href="xml/gntnotify.xml" />
       <xi:include href="xml/gntplugin.xml" />
-      <xi:include href="xml/gntpounce.xml" />
       <xi:include href="xml/gntprefs.xml" />
       <xi:include href="xml/gntrequest.xml" />
       <xi:include href="xml/gntroomlist.xml" />
       <xi:include href="xml/gntsound.xml" />
       <xi:include href="xml/gntstatus.xml" />
       <xi:include href="xml/gntui.xml" />
-      <xi:include href="xml/gntxfer.xml" />
+      <xi:include href="xml/finch.xml" />
   </reference>
 
   <reference label="II">
     <title>GNT API Reference</title>
 
+      <xi:include href="xml/gnt.xml" />
       <xi:include href="xml/gntbindable.xml" />
       <xi:include href="xml/gntbox.xml" />
       <xi:include href="xml/gntbutton.xml" />
       <xi:include href="xml/gntcheckbox.xml" />
+      <xi:include href="xml/gntmenuitemcheck.xml" />
       <xi:include href="xml/gntclipboard.xml" />
       <xi:include href="xml/gntcolors.xml" />
       <xi:include href="xml/gntcombobox.xml" />
@@ -59,22 +63,19 @@
       <xi:include href="xml/gntkeys.xml" />
       <xi:include href="xml/gntlabel.xml" />
       <xi:include href="xml/gntline.xml" />
-      <xi:include href="xml/gntmarshal.xml" />
-      <xi:include href="xml/gntmenuitemcheck.xml" />
-      <xi:include href="xml/gntmenuitem.xml" />
       <xi:include href="xml/gntmenu.xml" />
+      <xi:include href="xml/gntmenuitem.xml" />
       <xi:include href="xml/gntprogressbar.xml" />
       <xi:include href="xml/gnt-skel.xml" />
       <xi:include href="xml/gntslider.xml" />
       <xi:include href="xml/gntstyle.xml" />
       <xi:include href="xml/gnttextview.xml" />
       <xi:include href="xml/gnttree.xml" />
-      <xi:include href="xml/gntutils.xml" />
       <xi:include href="xml/gntwidget.xml" />
       <xi:include href="xml/gntwindow.xml" />
       <xi:include href="xml/gntwm.xml" />
       <xi:include href="xml/gntws.xml" />
-      <xi:include href="xml/gnt.xml" />
+      <xi:include href="xml/gntutils.xml" />
   </reference>
 
   <index id="api-index-full">

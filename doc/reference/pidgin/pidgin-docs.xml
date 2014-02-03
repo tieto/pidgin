@@ -19,7 +19,6 @@
   <reference label="I">
     <title>API Reference</title>
 
-      <xi:include href="xml/getopt.xml" />
       <xi:include href="xml/gtkaccount.xml" />
       <xi:include href="xml/gtkblist-theme-loader.xml" />
       <xi:include href="xml/gtkblist-theme.xml" />

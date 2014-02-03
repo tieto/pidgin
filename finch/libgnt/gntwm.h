@@ -1,7 +1,3 @@
-/**
- * @file gntwm.h Window-manager API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gntwm
+ * @section_id: libgnt-gntwm
+ * @short_description: <filename>gntwm.h</filename>
+ * @title: Window-manager API
  */
 
 #ifndef GNTWM_H

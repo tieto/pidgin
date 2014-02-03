@@ -1,7 +1,3 @@
-/**
- * @file gnt-skel.h -skel API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -22,6 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gnt-skel
+ * @section_id: libgnt-gnt-skel
+ * @short_description: <filename>gnt-skel.h</filename>
+ * @title: Skel API
  */
 
 #ifndef GNT_SKEL_H
@@ -52,6 +54,7 @@ struct _GntSkelClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
