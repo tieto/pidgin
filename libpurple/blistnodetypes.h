@@ -90,7 +90,6 @@ typedef struct _PurpleChatClass PurpleChatClass;
 /**************************************************************************/
 /**
  * PurpleBuddy:
- * @node: The node that this buddy inherits from
  *
  * A buddy on the buddy list.
  */
@@ -115,10 +114,11 @@ struct _PurpleBuddyClass {
 
 /**
  * PurpleContact:
- * @counting: The counting node that this contact inherits from. This keeps
- *            track of the counts of the buddies under this contact.
  *
  * A contact on the buddy list.
+ *
+ * A contact is a counting node, which means it keeps track of the counts of
+ * the buddies under this contact.
  */
 struct _PurpleContact {
 	PurpleCountingNode counting;
@@ -141,10 +141,11 @@ struct _PurpleContactClass {
 
 /**
  * PurpleGroup:
- * @counting: The counting node that this group inherits from. This keeps track
- *            of the counts of the chats and contacts under this group.
  *
  * A group on the buddy list.
+ *
+ * A group is a counting node, which means it keeps track of the counts of the
+ * chats and contacts under this group.
  */
 struct _PurpleGroup {
 	PurpleCountingNode counting;
@@ -167,7 +168,6 @@ struct _PurpleGroupClass {
 
 /**
  * PurpleChat:
- * @node: The node that this chat inherits from
  *
  * A chat on the buddy list.
  */
@@ -200,7 +200,7 @@ G_BEGIN_DECLS
 /**
  * purple_buddy_get_type:
  *
- * Returns the GType for the PurpleBuddy object.
+ * Returns: The #GType for the #PurpleBuddy object.
  */
 GType purple_buddy_get_type(void);
 
@@ -447,7 +447,7 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
 /**
  * purple_contact_get_type:
  *
- * Returns the GType for the PurpleContact object.
+ * Returns: The #GType for the #PurpleContact object.
  */
 GType purple_contact_get_type(void);
 
@@ -540,7 +540,7 @@ void purple_contact_merge(PurpleContact *source, PurpleBlistNode *node);
 /**
  * purple_chat_get_type:
  *
- * Returns the GType for the PurpleChat object.
+ * Returns: The #GType for the #PurpleChat object.
  */
 GType purple_chat_get_type(void);
 
@@ -627,7 +627,7 @@ GHashTable *purple_chat_get_components(PurpleChat *chat);
 /**
  * purple_group_get_type:
  *
- * Returns the GType for the PurpleGroup object.
+ * Returns: The #GType for the #PurpleGroup object.
  */
 GType purple_group_get_type(void);
 

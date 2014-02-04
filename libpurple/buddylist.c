@@ -37,9 +37,9 @@
 #define PURPLE_BUDDY_LIST_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyListPrivate))
 
-/** Private data for a buddy list. */
+/* Private data for a buddy list. */
 typedef struct  {
-	GHashTable *buddies;  /**< Every buddy in this list */
+	GHashTable *buddies;  /* Every buddy in this list */
 } PurpleBuddyListPrivate;
 
 static PurpleBlistUiOps *blist_ui_ops = NULL;
@@ -48,14 +48,14 @@ static PurpleBuddyList *purplebuddylist = NULL;
 
 static GObjectClass *parent_class;
 
-/**
+/*
  * A hash table used for efficient lookups of buddies by name.
  * PurpleAccount* => GHashTable*, with the inner hash table being
  * struct _purple_hbuddy => PurpleBuddy*
  */
 static GHashTable *buddies_cache = NULL;
 
-/**
+/*
  * A hash table used for efficient lookups of groups by name.
  * UTF-8 collate-key => PurpleGroup*.
  */
@@ -1141,7 +1141,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 						empty_contact = TRUE;
 					purple_blist_remove_buddy(b);
 
-					/** in purple_blist_remove_buddy(), if the last buddy in a
+					/* in purple_blist_remove_buddy(), if the last buddy in a
 					 * contact is removed, the contact is cleaned up and
 					 * g_free'd, so we mustn't try to reference bnode->next */
 					if (empty_contact)

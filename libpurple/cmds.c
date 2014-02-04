@@ -105,7 +105,7 @@ void purple_cmd_unregister(PurpleCmdId id)
 	}
 }
 
-/**
+/*
  * This sets args to a NULL-terminated array of strings.  It should
  * be freed using g_strfreev().
  */

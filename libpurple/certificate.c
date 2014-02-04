@@ -29,11 +29,11 @@
 #include "signals.h"
 #include "util.h"
 
-/** List holding pointers to all registered certificate schemes */
+/* List holding pointers to all registered certificate schemes */
 static GList *cert_schemes = NULL;
-/** List of registered Verifiers */
+/* List of registered Verifiers */
 static GList *cert_verifiers = NULL;
-/** List of registered Pools */
+/* List of registered Pools */
 static GList *cert_pools = NULL;
 
 static const gchar *
@@ -776,7 +776,7 @@ static PurpleCertificateVerifier x509_singleuse = {
 
 static PurpleCertificatePool x509_ca;
 
-/** Holds a key-value pair for quickish certificate lookup */
+/* Holds a key-value pair for quickish certificate lookup */
 typedef struct {
 	gchar *dn;
 	PurpleCertificate *crt;
@@ -792,18 +792,18 @@ x509_ca_element_free(x509_ca_element *el)
 	g_free(el);
 }
 
-/** System directory to probe for CA certificates */
+/* System directory to probe for CA certificates */
 /* This is set in the lazy_init function */
 static GList *x509_ca_paths = NULL;
 
-/** A list of loaded CAs, populated from the above path whenever the lazy_init
-    happens. Contains pointers to x509_ca_elements */
+/* A list of loaded CAs, populated from the above path whenever the lazy_init
+   happens. Contains pointers to x509_ca_elements */
 static GList *x509_ca_certs = NULL;
 
-/** Used for lazy initialization purposes. */
+/* Used for lazy initialization purposes. */
 static gboolean x509_ca_initialized = FALSE;
 
-/** Adds a certificate to the in-memory cache, doing nothing else */
+/* Adds a certificate to the in-memory cache, doing nothing else */
 static gboolean
 x509_ca_quiet_put_cert(PurpleCertificate *crt)
 {
@@ -959,7 +959,7 @@ x509_ca_uninit(void)
 	x509_ca_paths = NULL;
 }
 
-/** Look up a ca_element by dn */
+/* Look up a ca_element by dn */
 static x509_ca_element *
 x509_ca_locate_cert(GList *lst, const gchar *dn)
 {
@@ -1334,10 +1334,14 @@ x509_tls_cached_user_auth_reject_cb(PurpleCertificateVerificationRequest *vrq)
 	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_REJECTED);
 }
 
-/** Validates a certificate by asking the user
- * @param reason    String to explain why the user needs to accept/refuse the
- *                  certificate.
- * @todo Needs a handle argument
+/*
+ * x509_tls_cached_user_auth:
+ *
+ * Validates a certificate by asking the user
+ * @reason:    String to explain why the user needs to accept/refuse the
+ *             certificate.
+ *
+ * TODO Needs a handle argument
  */
 static void
 x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,

@@ -44,46 +44,45 @@
 #define PURPLE_CONNECTION_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CONNECTION, PurpleConnectionPrivate))
 
-/** @copydoc _PurpleConnectionPrivate */
 typedef struct _PurpleConnectionPrivate  PurpleConnectionPrivate;
 
-/** Private data for a connection */
+/* Private data for a connection */
 struct _PurpleConnectionPrivate
 {
-	PurpleProtocol *protocol;     /**< The protocol.                     */
-	PurpleConnectionFlags flags;  /**< Connection flags.                 */
+	PurpleProtocol *protocol;     /* The protocol.                     */
+	PurpleConnectionFlags flags;  /* Connection flags.                 */
 
-	PurpleConnectionState state;  /**< The connection state.             */
+	PurpleConnectionState state;  /* The connection state.             */
 
-	PurpleAccount *account;       /**< The account being connected to.   */
-	char *password;               /**< The password used.                */
+	PurpleAccount *account;       /* The account being connected to.   */
+	char *password;               /* The password used.                */
 
-	GSList *active_chats;         /**< A list of active chats
+	GSList *active_chats;         /* A list of active chats
 	                                  (#PurpleChatConversation structs). */
 
 	/* TODO Remove this and use protocol-specific subclasses. */
-	void *proto_data;             /**< Protocol-specific data.           */
+	void *proto_data;             /* Protocol-specific data.           */
 
-	char *display_name;           /**< How you appear to other people.   */
-	guint keepalive;              /**< Keep-alive.                       */
+	char *display_name;           /* How you appear to other people.   */
+	guint keepalive;              /* Keep-alive.                       */
 
-	/** Wants to Die state.  This is set when the user chooses to log out, or
+	/* Wants to Die state.  This is set when the user chooses to log out, or
 	 * when the protocol is disconnected and should not be automatically
 	 * reconnected (incorrect password, etc.).  Protocols should rely on
 	 * purple_connection_error() to set this for them rather than
 	 * setting it themselves.
-	 * @see purple_connection_error_is_fatal
+	 * See purple_connection_error_is_fatal()
 	 */
 	gboolean wants_to_die;
 
-	gboolean is_finalizing;    /**< The object is being destroyed. */
+	gboolean is_finalizing;    /* The object is being destroyed. */
 
-	/** The connection error and its description if an error occured */
+	/* The connection error and its description if an error occured */
 	PurpleConnectionErrorInfo *error_info;
 
-	guint disconnect_timeout;  /**< Timer used for nasty stack tricks         */
-	time_t last_received;      /**< When we last received a packet. Set by the
-	                                protocols to avoid sending unneeded keepalives */
+	guint disconnect_timeout;  /* Timer used for nasty stack tricks         */
+	time_t last_received;      /* When we last received a packet. Set by the
+	                              protocols to avoid sending unneeded keepalives */
 };
 
 /* GObject property enums */

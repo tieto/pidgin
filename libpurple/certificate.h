@@ -35,50 +35,45 @@
 
 #include <glib.h>
 
+/**
+ * PurpleCertificateVerificationStatus:
+ * @PURPLE_CERTIFICATE_UNKNOWN_ERROR: Unknown error.
+ * @PURPLE_CERTIFICATE_VALID: Not an error.
+ * @PURPLE_CERTIFICATE_NON_FATALS_MASK: Non-fatal.
+ * @PURPLE_CERTIFICATE_SELF_SIGNED: The certificate is self-signed.
+ * @PURPLE_CERTIFICATE_CA_UNKNOWN: The CA is not in libpurple's pool of
+ *                     certificates.
+ * @PURPLE_CERTIFICATE_NOT_ACTIVATED: The current time is before the
+ *                     certificate's specified activation time.
+ * @PURPLE_CERTIFICATE_EXPIRED: The current time is after the certificate's
+ *                     specified expiration time.
+ * @PURPLE_CERTIFICATE_NAME_MISMATCH: The certificate's subject name doesn't
+ *                     match the expected.
+ * @PURPLE_CERTIFICATE_NO_CA_POOL: No CA pool was found. This shouldn't happen.
+ * @PURPLE_CERTIFICATE_FATALS_MASK: Fatal
+ * @PURPLE_CERTIFICATE_INVALID_CHAIN: The signature chain could not be
+ *                     validated. Due to limitations in the the current API,
+ *                     this also indicates one of the CA certificates in the
+ *                     chain is expired (or not yet activated).
+ * @PURPLE_CERTIFICATE_REVOKED: The signature has been revoked.
+ * @PURPLE_CERTIFICATE_REJECTED: The certificate was rejected by the user.
+ */
+/* FIXME 3.0.0 PURPLE_CERTIFICATE_INVALID_CHAIN -- see description */
 typedef enum
 {
 	PURPLE_CERTIFICATE_UNKNOWN_ERROR = -1,
-
-	/* Not an error */
 	PURPLE_CERTIFICATE_VALID = 0,
-
-	/* Non-fatal */
 	PURPLE_CERTIFICATE_NON_FATALS_MASK = 0x0000FFFF,
-
-	/* The certificate is self-signed. */
 	PURPLE_CERTIFICATE_SELF_SIGNED = 0x01,
-
-	/* The CA is not in libpurple's pool of certificates. */
 	PURPLE_CERTIFICATE_CA_UNKNOWN = 0x02,
-
-	/* The current time is before the certificate's specified
-	 * activation time.
-	 */
 	PURPLE_CERTIFICATE_NOT_ACTIVATED = 0x04,
-
-	/* The current time is after the certificate's specified expiration time */
 	PURPLE_CERTIFICATE_EXPIRED = 0x08,
-
-	/* The certificate's subject name doesn't match the expected */
 	PURPLE_CERTIFICATE_NAME_MISMATCH = 0x10,
-
-	/* No CA pool was found. This shouldn't happen... */
 	PURPLE_CERTIFICATE_NO_CA_POOL = 0x20,
-
-	/* Fatal */
 	PURPLE_CERTIFICATE_FATALS_MASK = 0xFFFF0000,
-
-	/* The signature chain could not be validated. Due to limitations in the
-	 * the current API, this also indicates one of the CA certificates in the
-	 * chain is expired (or not yet activated). FIXME 3.0.0 */
 	PURPLE_CERTIFICATE_INVALID_CHAIN = 0x10000,
-
-	/* The signature has been revoked. */
 	PURPLE_CERTIFICATE_REVOKED = 0x20000,
-
-	/* The certificate was rejected by the user. */
 	PURPLE_CERTIFICATE_REJECTED = 0x40000,
-
 	PURPLE_CERTIFICATE_LAST = 0x80000,
 } PurpleCertificateVerificationStatus;
 
@@ -99,19 +94,18 @@ typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificati
  *
  * Callback function for the results of a verification check
  */
-typedef void (*PurpleCertificateVerifiedCallback)
-		(PurpleCertificateVerificationStatus st,
-		 gpointer userdata);
+typedef void (*PurpleCertificateVerifiedCallback)(PurpleCertificateVerificationStatus st,
+		gpointer userdata);
 
 /**
  * PurpleCertificate:
  * @scheme: Scheme this certificate is under
  * @data:   Opaque pointer to internal data
  *
- *  A certificate instance
+ * A certificate instance
  *
- *  An opaque data structure representing a single certificate under some
- *  CertificateScheme
+ * An opaque data structure representing a single certificate under some
+ * CertificateScheme
  */
 struct _PurpleCertificate
 {
@@ -121,58 +115,49 @@ struct _PurpleCertificate
 
 /**
  * PurpleCertificatePool:
+ * @scheme_name:  Scheme this Pool operates for
+ * @name:         Internal name to refer to the pool by
+ * @fullname:     User-friendly name for this type. ex: N_("SSL Servers"). When
+ *                this is displayed anywhere, it should be i18ned.
+ *                ex: _(pool->fullname)
+ * @data:         Internal pool data
+ * @init:         Set up the Pool's internal state
+ *                <sbr/>Upon calling purple_certificate_register_pool() , this
+ *                function will be called. May be %NULL.
+ *                <sbr/>Returns: %TRUE if the initialization succeeded,
+ *                               otherwise %FALSE.
+ * @uninit:       Uninit the Pool's internal state. Will be called by
+ *                purple_certificate_unregister_pool(). May be %NULL.
+ * @cert_in_pool: Check for presence of a certificate in the pool using unique
+ *                ID
+ * @get_cert:     Retrieve a PurpleCertificate from the pool
+ * @put_cert:     Add a certificate to the pool. Must overwrite any other
+ *                certificates sharing the same ID in the pool.
+ *                <sbr/>Returns: %TRUE if the operation succeeded, otherwise
+ *                               %FALSE.
+ * @delete_cert:  Delete a certificate from the pool
+ * @get_idlist:   Returns a list of IDs stored in the pool
  *
- *  Database for retrieval or storage of Certificates
+ * Database for retrieval or storage of Certificates
  *
- *  More or less a hash table; all lookups and writes are controlled by a string
- *  key.
+ * More or less a hash table; all lookups and writes are controlled by a string
+ * key.
  */
 struct _PurpleCertificatePool
 {
-	/** Scheme this Pool operates for */
 	gchar *scheme_name;
-	/** Internal name to refer to the pool by */
 	gchar *name;
-
-	/** User-friendly name for this type
-	 *  ex: N_("SSL Servers")
-	 *  When this is displayed anywhere, it should be i18ned
-	 *  ex: _(pool->fullname)
-	 */
 	gchar *fullname;
-
-	/** Internal pool data */
 	gpointer data;
 
-	/**
-	 * Set up the Pool's internal state
-	 *
-	 * Upon calling purple_certificate_register_pool() , this function will
-	 * be called. May be NULL.
-	 * Returns: TRUE if the initialization succeeded, otherwise FALSE
-	 */
 	gboolean (* init)(void);
-
-	/**
-	 * Uninit the Pool's internal state
-	 *
-	 * Will be called by purple_certificate_unregister_pool() . May be NULL
-	 */
 	void (* uninit)(void);
 
-	/** Check for presence of a certificate in the pool using unique ID */
 	gboolean (* cert_in_pool)(const gchar *id);
-	/** Retrieve a PurpleCertificate from the pool */
 	PurpleCertificate * (* get_cert)(const gchar *id);
-	/** Add a certificate to the pool. Must overwrite any other
-	 *  certificates sharing the same ID in the pool.
-	 *  Returns: TRUE if the operation succeeded, otherwise FALSE
-	 */
 	gboolean (* put_cert)(const gchar *id, PurpleCertificate *crt);
-	/** Delete a certificate from the pool */
 	gboolean (* delete_cert)(const gchar *id);
 
-	/** Returns a list of IDs stored in the pool */
 	GList * (* get_idlist)(void);
 
 	/*< private >*/
@@ -185,13 +170,13 @@ struct _PurpleCertificatePool
 /**
  * PurpleCertificateScheme:
  *
- *  A certificate type
+ * A certificate type.
  *
- *  A CertificateScheme must implement all of the fields in the structure,
- *  and register it using purple_certificate_register_scheme()
+ * A CertificateScheme must implement all of the fields in the structure,
+ * and register it using purple_certificate_register_scheme().
  *
- *  There may be only ONE CertificateScheme provided for each certificate
- *  type, as specified by the "name" field.
+ * There may be only ONE CertificateScheme provided for each certificate
+ * type, as specified by the "name" field.
  */
 struct _PurpleCertificateScheme
 {
@@ -329,52 +314,45 @@ struct _PurpleCertificateScheme
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /**
  * PurpleCertificateVerifier:
+ * @scheme_name:        Name of the scheme this Verifier operates on. The scheme
+ *                      will be looked up by name when a Request is generated
+ *                      using this Verifier.
+ * @name:               Name of the Verifier - case insensitive.
+ * @start_verification: Start the verification process. To be called from
+ *                      purple_certificate_verify() once it has constructed the
+ *                      request. This will use the information in the given
+ *                      VerificationRequest to check the certificate and
+ *                      callback the requester with the verification results.
+ *                      <sbr/>@vrq: The request to process.
+ * @destroy_request:    Destroy a completed Request under this Verifier. The
+ *                      function pointed to here is only responsible for
+ *                      cleaning up whatever
+ *                      #PurpleCertificateVerificationRequest::data points to.
+ *                      It should not call free(@vrq).
+ *                      <sbr/>@vrq: The request to destroy.
  *
  * A set of operations used to provide logic for verifying a Certificate's
  * authenticity.
  *
  * A Verifier provider must fill out these fields, then register it using
- * purple_certificate_register_verifier()
+ * purple_certificate_register_verifier().
  *
  * The (scheme_name, name) value must be unique for each Verifier - you may not
- * register more than one Verifier of the same name for each Scheme
+ * register more than one Verifier of the same name for each Scheme.
  */
 struct _PurpleCertificateVerifier
 {
-	/** Name of the scheme this Verifier operates on
-	 *
-	 * The scheme will be looked up by name when a Request is generated
-	 * using this Verifier
-	 */
 	gchar *scheme_name;
-
-	/** Name of the Verifier - case insensitive */
 	gchar *name;
 
-	/**
-	 * Start the verification process
-	 *
-	 * To be called from purple_certificate_verify once it has
-	 * constructed the request. This will use the information in the
-	 * given VerificationRequest to check the certificate and callback
-	 * the requester with the verification results.
-	 *
-	 * @vrq:      Request to process
-	 */
 	void (* start_verification)(PurpleCertificateVerificationRequest *vrq);
-
-	/**
-	 * Destroy a completed Request under this Verifier
-	 * The function pointed to here is only responsible for cleaning up
-	 * whatever PurpleCertificateVerificationRequest::data points to.
-	 * It should not call free(vrq)
-	 *
-	 * @vrq:       Request to destroy
-	 */
 	void (* destroy_request)(PurpleCertificateVerificationRequest *vrq);
 
 	/*< private >*/
@@ -386,42 +364,32 @@ struct _PurpleCertificateVerifier
 
 /**
  * PurpleCertificateVerificationRequest:
+ * @verifier:     Reference to the verification logic used.
+ * @scheme:       Reference to the scheme used. This is looked up from the
+ *                Verifier when the Request is generated.
+ * @subject_name: Name to check that the certificate is issued to. For X.509
+ *                certificates, this is the Common Name.
+ * @cert_chain:   List of certificates in the chain to be verified (such as that
+ *                returned by purple_ssl_get_peer_certificates()). This is most
+ *                relevant for X.509 certificates used in SSL sessions. The list
+ *                order should be: certificate, issuer, issuer's issuer, etc.
+ * @data:         Internal data used by the Verifier code.
+ * @cb:           Function to call with the verification result.
+ * @cb_data:      Data to pass to the post-verification callback.
  *
- *  Structure for a single certificate request
+ * Structure for a single certificate request
  *
- *  Useful for keeping track of the state of a verification that involves
- *  several steps
+ * Useful for keeping track of the state of a verification that involves
+ * several steps
  */
 struct _PurpleCertificateVerificationRequest
 {
-	/** Reference to the verification logic used */
 	PurpleCertificateVerifier *verifier;
-	/** Reference to the scheme used.
-	 *
-	 * This is looked up from the Verifier when the Request is generated
-	 */
 	PurpleCertificateScheme *scheme;
-
-	/**
-	 * Name to check that the certificate is issued to
-	 *
-	 * For X.509 certificates, this is the Common Name
-	 */
 	gchar *subject_name;
-
-	/** List of certificates in the chain to be verified (such as that returned by purple_ssl_get_peer_certificates )
-	 *
-	 * This is most relevant for X.509 certificates used in SSL sessions.
-	 * The list order should be: certificate, issuer, issuer's issuer, etc.
-	 */
 	GList *cert_chain;
-
-	/** Internal data used by the Verifier code */
 	gpointer data;
-
-	/** Function to call with the verification result */
 	PurpleCertificateVerifiedCallback cb;
-	/** Data to pass to the post-verification callback */
 	gpointer cb_data;
 };
 
@@ -435,7 +403,7 @@ G_BEGIN_DECLS
 /**
  * purple_certificate_verify:
  * @verifier:      Verification logic to use.
- *                      @see purple_certificate_find_verifier()
+ *                      See purple_certificate_find_verifier().
  * @subject_name:  Name that should match the first certificate in the
  *                      chain for the certificate to be valid. Will be strdup'd
  *                      into the Request struct
@@ -481,7 +449,7 @@ purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 /**
  * purple_certificate_get_type:
  *
- * Returns the GType for the PurpleCertificate boxed structure.
+ * Returns: The #GType for the #PurpleCertificate boxed structure.
  */
 GType purple_certificate_get_type(void);
 
@@ -601,10 +569,10 @@ purple_certificate_export(const gchar *filename, PurpleCertificate *crt);
  * @crt:        Certificate instance
  *
  * Retrieves the certificate public key fingerprint using SHA1.
+ * See purple_base16_encode_chunked().
  *
  * Returns: Binary representation of the hash. You are responsible for free()ing
  *         this.
- * @see purple_base16_encode_chunked()
  */
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
@@ -707,11 +675,11 @@ purple_certificate_get_display_string(PurpleCertificate *crt);
 /**
  * purple_certificate_pool_get_type:
  *
- * Returns the GType for the PurpleCertificatePool boxed structure.
- * TODO Boxing of PurpleCertificatePool is a temporary solution to having a
- *      GType for certificate pools. This should rather be a GObject instead of
- *      a GBoxed.
+ * Returns: The #GType for the #PurpleCertificatePool boxed structure.
  */
+/* TODO: Boxing of PurpleCertificatePool is a temporary solution to having a
+ *       GType for certificate pools. This should rather be a GObject instead of
+ *       a GBoxed. */
 GType purple_certificate_pool_get_type(void);
 
 /**
@@ -747,10 +715,10 @@ purple_certificate_pool_usable(PurpleCertificatePool *pool);
  * purple_certificate_pool_get_scheme:
  * @pool:   Pool to get the scheme of
  *
- * Looks up the scheme the pool operates under
+ * Looks up the scheme the pool operates under.
+ * See purple_certificate_pool_usable()
  *
  * Returns: Pointer to the pool's scheme, or NULL if it isn't loaded.
- * @see purple_certificate_pool_usable()
  */
 PurpleCertificateScheme *
 purple_certificate_pool_get_scheme(PurpleCertificatePool *pool);

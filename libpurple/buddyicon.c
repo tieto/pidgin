@@ -32,15 +32,15 @@
  * NOTE: be sure to update purple_buddy_icon_new() if you add members. */
 struct _PurpleBuddyIcon
 {
-	PurpleAccount *account;    /**< The account the user is on.          */
-	PurpleStoredImage *img;    /**< The stored image containing
-	                                the icon data.                       */
-	char *username;            /**< The username the icon belongs to.    */
-	char *checksum;            /**< The protocol checksum.               */
-	unsigned int ref_count;    /**< The buddy icon reference count.      */
+	PurpleAccount *account;    /* The account the user is on.          */
+	PurpleStoredImage *img;    /* The stored image containing
+	                              the icon data.                       */
+	char *username;            /* The username the icon belongs to.    */
+	char *checksum;            /* The protocol checksum.               */
+	unsigned int ref_count;    /* The buddy icon reference count.      */
 };
 
-/**
+/*
  * This is the big grand daddy hash table that contains references to
  * everybody's buddy icons.
  *
@@ -52,7 +52,7 @@ struct _PurpleBuddyIcon
  */
 static GHashTable *account_cache = NULL;
 
-/**
+/*
  * This hash table contains a bunch of PurpleStoredImages that are
  * shared across all accounts.
  *
@@ -69,7 +69,7 @@ static GHashTable *account_cache = NULL;
  */
 static GHashTable *icon_data_cache = NULL;
 
-/**
+/*
  * This hash table contains reference counts for how many times each
  * icon in the ~/.purple/icons/ directory is being used.  It's pretty
  * crazy.  It maintains the reference count across sessions, too, so
@@ -89,7 +89,7 @@ static GHashTable *icon_data_cache = NULL;
  */
 static GHashTable *icon_file_cache = NULL;
 
-/**
+/*
  * This hash table is used for both custom buddy icons on PurpleBlistNodes and
  * account icons.
  */
@@ -97,7 +97,7 @@ static GHashTable *pointer_icon_cache = NULL;
 
 static char       *cache_dir     = NULL;
 
-/** "Should icons be cached to disk?" */
+/* "Should icons be cached to disk?" */
 static gboolean    icon_caching  = TRUE;
 
 static void delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name);

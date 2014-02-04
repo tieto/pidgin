@@ -1772,7 +1772,7 @@ purple_account_privacy_deny_remove(PurpleAccount *account, const char *who,
 	return TRUE;
 }
 
-/**
+/*
  * This makes sure your permit list contains all buddies from your
  * buddy list and ONLY buddies from your buddy list.
  */
