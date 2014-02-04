@@ -46,6 +46,8 @@ typedef struct _PidginMenuTrayClass		PidginMenuTrayClass;
  */
 struct _PidginMenuTray {
 	GtkMenuItem gparent;
+
+	/*< public >*/
 	GtkWidget *tray;
 };
 

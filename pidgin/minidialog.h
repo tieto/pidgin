@@ -91,11 +91,10 @@ G_BEGIN_DECLS
  */
 typedef struct {
 	GtkVBox parent;
-
-	GtkBox *contents;
-
-	/*< private >*/
 	gpointer priv;
+
+	/*< public >*/
+	GtkBox *contents;
 } PidginMiniDialog;
 
 /**

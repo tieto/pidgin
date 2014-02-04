@@ -63,16 +63,19 @@ struct _PidginBlistThemeClass
 };
 
 #if 0
-typedef struct
+typedef struct _PidginThemeFont PidginThemeFont;
+struct _PidginThemeFont
 {
 	const gchar *font;
 	const gchar *color;
 
-} PidginThemeFont;
+};
 #endif
 typedef struct _PidginThemeFont PidginThemeFont;
 
-typedef struct
+typedef struct _PidginBlistLayout PidginBlistLayout;
+
+struct _PidginBlistLayout
 {
 	gint status_icon;
 	gint text;
@@ -81,7 +84,7 @@ typedef struct
 	gint buddy_icon;
 	gboolean show_status;
 
-} PidginBlistLayout;
+};
 
 G_BEGIN_DECLS
 

@@ -92,35 +92,35 @@ static void remove_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box);
 static void choose_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box);
 
 enum {
-	/** A PidginStatusBoxItemType */
+	/* A PidginStatusBoxItemType */
 	TYPE_COLUMN,
 
-	/** This is the stock-id for the icon. */
+	/* This is the stock-id for the icon. */
 	ICON_STOCK_COLUMN,
 
-	/**
+	/*
 	 * This is a GdkPixbuf (the other columns are strings).
 	 * This column is visible.
 	 */
 	ICON_COLUMN,
 
-	/** The text displayed on the status box.  This column is visible. */
+	/* The text displayed on the status box.  This column is visible. */
 	TEXT_COLUMN,
 
-	/** The plain-English title of this item */
+	/* The plain-English title of this item */
 	TITLE_COLUMN,
 
-	/** A plain-English description of this item */
+	/* A plain-English description of this item */
 	DESC_COLUMN,
 
-	/**
+	/*
 	 * This value depends on TYPE_COLUMN.  For POPULAR types,
 	 * this is the creation time.  For PRIMITIVE types,
 	 * this is the PurpleStatusPrimitive.
 	 */
 	DATA_COLUMN,
 
-	/**
+	/*
  	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored.
 	 * In the GtkTreeModel for the dropdown, this is the stock-id (gchararray), and for the
 	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the protocol icon
@@ -128,7 +128,7 @@ enum {
  	 */
 	EMBLEM_COLUMN,
 
-	/**
+	/*
  	* This column stores whether to show the emblem.
  	*/
 	EMBLEM_VISIBLE_COLUMN,
@@ -603,7 +603,7 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	                               );
 }
 
-/**
+/*
  * This updates the text displayed on the status box so that it shows
  * the current status.  This is the only function in this file that
  * should modify status_box->store
@@ -763,7 +763,7 @@ find_status_type_by_index(const PurpleAccount *account, gint active)
 	return NULL;
 }
 
-/**
+/*
  * This updates the GtkTreeView so that it correctly shows the state
  * we are currently using.  It is used when the current state is
  * updated from somewhere other than the GtkStatusBox (from a plugin,
@@ -2115,26 +2115,27 @@ pidgin_status_box_new_with_account(PurpleAccount *account)
 	                    "iconsel", TRUE, NULL);
 }
 
-/**
- * Add a row to the dropdown menu.
- *
- * @param status_box The status box itself.
- * @param type       A PidginStatusBoxItemType.
- * @param pixbuf     The icon to associate with this row in the menu. The
+/*
+ * pidgin_status_box_add:
+ * @status_box: The status box itself.
+ * @type:       A PidginStatusBoxItemType.
+ * @pixbuf:     The icon to associate with this row in the menu. The
  *                   function will try to decide a pixbuf if none is given.
- * @param title      The title of this item.  For the primitive entries,
+ * @title:      The title of this item.  For the primitive entries,
  *                   this is something like "Available" or "Away."  For
  *                   the saved statuses, this is something like
  *                   "My favorite away message!"  This should be
  *                   plaintext (non-markedup) (this function escapes it).
- * @param desc       The secondary text for this item.  This will be
+ * @desc:       The secondary text for this item.  This will be
  *                   placed on the row below the title, in a dimmer
  *                   font (generally gray).  This text should be plaintext
  *                   (non-markedup) (this function escapes it).
- * @param data       Data to be associated with this row in the dropdown
+ * @data:       Data to be associated with this row in the dropdown
  *                   menu.  For primitives this is the value of the
  *                   PurpleStatusPrimitive.  For saved statuses this is the
  *                   creation timestamp.
+ *
+ * Add a row to the dropdown menu.
  */
 void
 pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type, GdkPixbuf *pixbuf,

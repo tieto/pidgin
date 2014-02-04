@@ -155,7 +155,7 @@ static int color_away;
 static int color_offline;
 static int color_idle;
 
-/**
+/*
  * Buddy List Manager functions.
  */
 

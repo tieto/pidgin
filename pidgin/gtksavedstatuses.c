@@ -43,7 +43,7 @@
  *       may be open.
  */
 
-/**
+/*
  * These are used for the GtkTreeView when you're scrolling through
  * all your saved statuses.
  */
@@ -58,21 +58,21 @@ enum
 	STATUS_WINDOW_NUM_COLUMNS
 };
 
-/**
+/*
  * These are used for the GtkTreeView containing the list of accounts
  * at the bottom of the window when you're editing a particular
  * saved status.
  */
 enum
 {
-	/** A hidden column containing a pointer to the PurpleAccount. */
+	/* A hidden column containing a pointer to the PurpleAccount. */
 	STATUS_EDITOR_COLUMN_ACCOUNT,
-	/** A hidden column containing a pointer to the editor for this substatus. */
+	/* A hidden column containing a pointer to the editor for this substatus. */
 	STATUS_EDITOR_COLUMN_WINDOW,
 	STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS,
 	STATUS_EDITOR_COLUMN_ICON,
 	STATUS_EDITOR_COLUMN_USERNAME,
-	/** A hidden column containing the ID of this PurpleStatusType. */
+	/* A hidden column containing the ID of this PurpleStatusType. */
 	STATUS_EDITOR_COLUMN_STATUS_ID,
 	STATUS_EDITOR_COLUMN_STATUS_NAME,
 	STATUS_EDITOR_COLUMN_STATUS_MESSAGE,
@@ -80,7 +80,7 @@ enum
 	STATUS_EDITOR_NUM_COLUMNS
 };
 
-/**
+/*
  * These are used in the GtkComboBox to select the specific PurpleStatusType
  * when setting a (sub)status for a particular saved status.
  */
@@ -1550,31 +1550,31 @@ enum {
 };
 
 enum {
-	/** _SSMenuEntryType */
+	/* _SSMenuEntryType */
 	SS_MENU_TYPE_COLUMN,
 
-	/**
+	/*
 	 * This is a GdkPixbuf (the other columns are strings).
 	 * This column is visible.
 	 */
 	SS_MENU_ICON_COLUMN,
 
-	/** The text displayed on the status box.  This column is visible. */
+	/* The text displayed on the status box.  This column is visible. */
 	SS_MENU_TEXT_COLUMN,
 
-	/**
+	/*
 	 * This value depends on SS_MENU_TYPE_COLUMN.  For _SAVEDSTATUS types,
 	 * this is the creation time.  For _PRIMITIVE types,
 	 * this is the PurpleStatusPrimitive.
 	 */
 	SS_MENU_DATA_COLUMN,
 
-	/**
+	/*
 	 * This is the emblem to use for this status
 	 */
 	SS_MENU_EMBLEM_COLUMN,
 
-	/**
+	/*
 	 * And whether or not that emblem is visible
 	 */
 	SS_MENU_EMBLEM_VISIBLE_COLUMN,

@@ -72,7 +72,7 @@
 #define GTK_TOOLTIPS_VAR gtkconv->tooltips
 #include "gtk3compat.h"
 
-/**
+/*
  * A GTK+ Instant Message pane.
  */
 struct _PidginImPane
@@ -95,7 +95,7 @@ struct _PidginImPane
 	guint32 icon_timer;
 };
 
-/**
+/*
  * GTK+ Chat panes.
  */
 struct _PidginChatPane
@@ -4369,22 +4369,23 @@ add_chat_user_common(PurpleChatConversation *chat, PurpleChatUser *cb, const cha
 	g_free(alias_key);
 }
 
-/**
- * @param most_matched Used internally by this function.
- * @param entered The partial string that the user types before hitting the
+/*
+ * tab_complete_process_item:
+ * @most_matched: Used internally by this function.
+ * @entered: The partial string that the user types before hitting the
  *        tab key.
- * @param entered_chars The length of entered.
- * @param partial This is a return variable.  This will be set to a string
+ * @entered_chars: The length of entered.
+ * @partial: This is a return variable.  This will be set to a string
  *        containing the largest common string between all matches.  This will
  *        be inserted into the input box at the start of the word that the
  *        user is tab completing.  For example, if a chat room contains
  *        "AlfFan" and "AlfHater" and the user types "a<TAB>" then this will
  *        contain "Alf"
- * @param matches This is a return variable.  If the given name is a potential
+ * @matches: This is a return variable.  If the given name is a potential
  *        match for the entered string, then add a copy of the name to this
  *        list.  The caller is responsible for g_free'ing the data in this
  *        list.
- * @param name The buddy name or alias or slash command name that we're
+ * @name: The buddy name or alias or slash command name that we're
  *        checking for a match.
  */
 static void

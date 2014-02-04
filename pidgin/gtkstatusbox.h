@@ -80,6 +80,7 @@ struct _PidginStatusBox
 {
 	GtkContainer parent_instance;
 
+	/*< public >*/
 	GtkListStore *store;
 	GtkListStore *dropdown_store;
 
