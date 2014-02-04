@@ -1,7 +1,3 @@
-/**
- * @file gtkstatus-icon-theme.h  Pidgin Icon Theme  Class API
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -21,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gtkstatus-icon-theme
+ * @section_id: pidgin-gtkstatus-icon-theme
+ * @short_description: <filename>gtkstatus-icon-theme.h</filename>
+ * @title: Pidgin Icon Theme Class
  */
 
 #ifndef PIDGIN_STATUS_ICON_THEME_H

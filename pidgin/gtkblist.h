@@ -1,9 +1,3 @@
-/**
- * @file gtkblist.h GTK+ Buddy List API
- * @ingroup pidgin
- * @see @ref gtkblist-signals
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkblist
+ * @section_id: pidgin-gtkblist
+ * @short_description: <filename>gtkblist.h</filename>
+ * @title: Buddy List API
+ * @see_also: <link linkend="chapter-signals-gtkblist">Buddy List signals</link>
+ */
+
 #ifndef _PIDGINBLIST_H_
 #define _PIDGINBLIST_H_
 

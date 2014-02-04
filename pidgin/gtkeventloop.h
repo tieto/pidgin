@@ -1,8 +1,3 @@
-/**
- * @file gtkeventloop.h Pidgin GTK+ Event Loop Implementation
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkeventloop
+ * @section_id: pidgin-gtkeventloop
+ * @short_description: <filename>gtkeventloop.h</filename>
+ * @title: Event Loop Implementation
+ */
+
 #ifndef _PIDGINEVENTLOOP_H_
 #define _PIDGINEVENTLOOP_H_
 

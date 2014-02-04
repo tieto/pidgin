@@ -22,7 +22,7 @@
  * SECTION:finch
  * @section_id: finch-finch
  * @short_description: <filename>finch.h</filename>
- * @title: Finch Application
+ * @title: UI Definitions and Includes
  */
 
 #ifndef _FINCH_H_

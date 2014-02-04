@@ -1,8 +1,3 @@
-/**
- * @file pidgin.h UI definitions and includes
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 /* #warning ***pidgin*** */
+/**
+ * SECTION:pidgin
+ * @section_id: pidgin-pidgin
+ * @short_description: <filename>pidgin.h</filename>
+ * @title: UI Definitions and Includes
+ */
+
 #ifndef _PIDGIN_H_
 #define _PIDGIN_H_
 

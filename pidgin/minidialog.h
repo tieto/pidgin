@@ -1,8 +1,3 @@
-/**
- * @file minidialog.h API for the #PidginMiniDialog Gtk widget.
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:minidialog
+ * @section_id: pidgin-minidialog
+ * @short_description: <filename>minidialog.h</filename>
+ * @title: Mini Dialog Widget
  */
 
 #ifndef __PIDGIN_MINI_DIALOG_H__

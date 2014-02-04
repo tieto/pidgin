@@ -1,7 +1,3 @@
-/**
- * @file gtkwhiteboard.h The PidginWhiteboard frontend object
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -21,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gtkwhiteboard
+ * @section_id: pidgin-gtkwhiteboard
+ * @short_description: <filename>gtkwhiteboard.h</filename>
+ * @title: Whiteboard Frontend
  */
 
 #ifndef _PIDGINWHITEBOARD_H_

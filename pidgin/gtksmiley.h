@@ -1,8 +1,3 @@
-/**
- * @file gtksmiley.h GTK+ Custom Smiley API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gtksmiley
+ * @section_id: pidgin-gtksmiley
+ * @short_description: <filename>gtksmiley.h</filename>
+ * @title: Custom Smiley API
  */
 
 #ifndef PIDGIN_GTKSMILEY_H

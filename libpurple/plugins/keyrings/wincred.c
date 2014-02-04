@@ -158,8 +158,7 @@ wincred_save(PurpleAccount *account, const gchar *password,
 	target_name = wincred_get_target_name(account);
 	g_return_if_fail(target_name != NULL);
 
-	if (password == NULL)
-	{
+	if (password == NULL) {
 		if (CredDeleteW(target_name, CRED_TYPE_GENERIC, 0)) {
 			purple_debug_misc("keyring-wincred", "Password for "
 				"account %s removed\n",

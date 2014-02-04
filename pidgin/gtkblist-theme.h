@@ -1,7 +1,3 @@
-/**
- * @file gtkblist-theme.h GTK+ Buddy List Theme API
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -21,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gtkblist-theme
+ * @section_id: pidgin-gtkblist-theme
+ * @short_description: <filename>gtkblist-theme.h</filename>
+ * @title: Buddy List Theme API
  */
 
 #ifndef PIDGIN_BLIST_THEME_H

@@ -131,8 +131,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 	uint32_t image_crc;
 	ggp_image_sent *sent_image;
 
-	if (!image)
-	{
+	if (!image) {
 		purple_debug_error("gg", "ggp_image_prepare: image %d "
 			"not found in image store\n", stored_id);
 		return GGP_IMAGE_PREPARE_FAILURE;
@@ -140,8 +139,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 
 	image_size = purple_imgstore_get_size(image);
 
-	if (image_size > GGP_IMAGE_SIZE_MAX)
-	{
+	if (image_size > GGP_IMAGE_SIZE_MAX) {
 		purple_debug_warning("gg", "ggp_image_prepare: image "
 			"is too big (max bytes: %d)\n", GGP_IMAGE_SIZE_MAX);
 		return GGP_IMAGE_PREPARE_TOO_BIG;
@@ -176,13 +174,14 @@ void ggp_image_recv(PurpleConnection *gc,
 	uint64_t id;
 
 	/* TODO: This PurpleStoredImage will be rendered within the IM window
-	   and right-clicking the image will allow the user to save the image
-	   to disk.  The default filename used in this dialog is the filename
-	   that we pass to purple_imgstore_new_with_id(), so we should call
-	   g_path_get_basename() and purple_escape_filename() on it before
-	   passing it in.  This is easy, but it's not clear if there might be
-	   other implications because this filename is used elsewhere within
-	   this protocol. */
+	 * and right-clicking the image will allow the user to save the image
+	 * to disk.  The default filename used in this dialog is the filename
+	 * that we pass to purple_imgstore_new_with_id(), so we should call
+	 * g_path_get_basename() and purple_escape_filename() on it before
+	 * passing it in.  This is easy, but it's not clear if there might be
+	 * other implications because this filename is used elsewhere within
+	 * this protocol.
+	 */
 	stored_id = purple_imgstore_new_with_id(
 		g_memdup(image_reply->image, image_reply->size),
 		image_reply->size,
@@ -203,8 +202,7 @@ void ggp_image_recv(PurpleConnection *gc,
 		GINT_TO_POINTER(stored_id));
 
 	req = g_hash_table_lookup(sdata->incoming_images, &id);
-	if (!req)
-	{
+	if (!req) {
 		purple_debug_warning("gg", "ggp_image_recv: "
 			"image " GGP_IMAGE_ID_FORMAT " wasn't requested\n",
 			id);
@@ -212,8 +210,7 @@ void ggp_image_recv(PurpleConnection *gc,
 	}
 
 	it = g_list_first(req->listeners);
-	while (it)
-	{
+	while (it) {
 		ggp_image_requested_listener *listener = it->data;
 		it = g_list_next(it);
 
@@ -250,8 +247,7 @@ void ggp_image_send(PurpleConnection *gc,
 			"not found, but this may be another session request\n");
 		return;
 	}
-	if (sent_image == NULL)
-	{
+	if (sent_image == NULL) {
 		purple_debug_warning("gg", "ggp_image_send: requested image "
 			"not found\n");
 		return;
@@ -265,8 +261,7 @@ void ggp_image_send(PurpleConnection *gc,
 
 	image = purple_imgstore_find_by_id(sent_image->id);
 
-	if (!image)
-	{
+	if (!image) {
 		purple_debug_error("gg", "ggp_image_send: requested image "
 			"found, but doesn't exists in image store\n");
 		g_hash_table_remove(sdata->sent_images,
@@ -285,8 +280,7 @@ void ggp_image_send(PurpleConnection *gc,
 	conv = purple_conversations_find_with_account(
 		sent_image->conv_name,
 		purple_connection_get_account(gc));
-	if (conv != NULL)
-	{
+	if (conv != NULL) {
 		gchar *msg = g_strdup_printf(_("Image delivered to %u."),
 			image_request->sender);
 		purple_conversation_write(conv, "", msg,
@@ -306,8 +300,7 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 	uint32_t crc = id >> 32;
 	uint32_t size = id;
 
-	if (size > GGP_IMAGE_SIZE_MAX && crc <= GGP_IMAGE_SIZE_MAX)
-	{
+	if (size > GGP_IMAGE_SIZE_MAX && crc <= GGP_IMAGE_SIZE_MAX) {
 		uint32_t tmp;
 		purple_debug_warning("gg", "ggp_image_request: "
 			"crc and size are swapped!\n");
@@ -317,8 +310,7 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 	}
 
 	req = g_hash_table_lookup(sdata->incoming_images, &id);
-	if (!req)
-	{
+	if (!req) {
 		req = g_new0(ggp_image_requested, 1);
 		g_hash_table_insert(sdata->incoming_images,
 			ggp_uint64dup(id), req);
@@ -326,9 +318,7 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 			"requesting image " GGP_IMAGE_ID_FORMAT "\n", id);
 		if (gg_image_request(accdata->session, uin, size, crc) != 0)
 			purple_debug_error("gg", "ggp_image_request: failed\n");
-	}
-	else
-	{
+	} else {
 		purple_debug_info("gg", "ggp_image_request: "
 			"image " GGP_IMAGE_ID_FORMAT " already requested\n",
 			id);

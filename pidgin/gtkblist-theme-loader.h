@@ -1,7 +1,3 @@
-/**
- * @file gtkblist-theme-loader.h  Pidgin Buddy List Theme Loader Class API
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -21,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gtkblist-theme-loader
+ * @section_id: pidgin-gtkblist-theme-loader
+ * @short_description: <filename>gtkblist-theme-loader.h</filename>
+ * @title: Buddy List Theme Loader Class
  */
 
 #ifndef PIDGIN_BLIST_THEME_LOADER_H

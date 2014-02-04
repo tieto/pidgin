@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 ]>
-<chapter id="chapter-signals-account">
+<chapter id="chapter-signals-gtkaccount">
 <title>Account signals</title>
 
 <refsect1 id="gtkaccounts.signals" role="signal_proto">

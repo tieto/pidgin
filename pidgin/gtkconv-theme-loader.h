@@ -1,7 +1,3 @@
-/**
- * @file gtkconv-theme-loader.h  Pidgin Conversation Theme Loader Class API
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -21,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+/**
+ * SECTION:gtkconv-theme-loader
+ * @section_id: pidgin-gtkconv-theme-loader
+ * @short_description: <filename>gtkconv-theme-loader.h</filename>
+ * @title: Conversation Theme Loader Class
  */
 
 #ifndef PIDGIN_CONV_THEME_LOADER_H

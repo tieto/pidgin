@@ -1,8 +1,3 @@
-/**
- * @file gtkplugin.h GTK+ Plugin API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkplugin
+ * @section_id: pidgin-gtkplugin
+ * @short_description: <filename>gtkplugin.h</filename>
+ * @title: Plugin API
+ */
+
 #ifndef _PIDGINPLUGIN_H_
 #define _PIDGINPLUGIN_H_
 

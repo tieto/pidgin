@@ -1,9 +1,3 @@
-/**
- * @file gtkaccount.h GTK+ Account Editor UI
- * @ingroup pidgin
- * @see @ref gtkaccount-signals
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkaccount
+ * @section_id: pidgin-gtkaccount
+ * @short_description: <filename>gtkaccount.h</filename>
+ * @title: Account Editor UI
+ * @see_also: <link linkend="chapter-signals-gtkaccount">Account signals</link>
+ */
+
 #ifndef _PIDGINACCOUNT_H_
 #define _PIDGINACCOUNT_H_
 

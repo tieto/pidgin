@@ -1,7 +1,3 @@
-/**
- * @file gtkcertmgr.h GTK+ Certificate Manager API
- * @ingroup pidgin
- */
 /*
  * pidgin
  *
@@ -23,6 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
+ */
+/**
+ * SECTION:gtkcertmgr
+ * @section_id: pidgin-gtkcertmgr
+ * @short_description: <filename>gtkcertmgr.h</filename>
+ * @title: Certificate Manager API
  */
 
 #ifndef _PIDGINCERTMGR_H_

@@ -105,13 +105,15 @@ gnomekeyring_read_cb(GnomeKeyringResult result, const char *password,
 			PURPLE_KEYRING_ERROR_NOPASSWORD,
 			_("No password found for account."));
 	} else if (result == GNOME_KEYRING_RESULT_DENIED ||
-		result == GNOME_KEYRING_RESULT_CANCELLED) {
+		result == GNOME_KEYRING_RESULT_CANCELLED)
+	{
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_ACCESSDENIED,
 			_("Access denied."));
 		gnomekeyring_cancel_queue();
 	} else if (result == GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON ||
-		result == GNOME_KEYRING_RESULT_IO_ERROR) {
+		result == GNOME_KEYRING_RESULT_IO_ERROR)
+	{
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			_("Communication with GNOME Keyring failed."));
@@ -174,17 +176,20 @@ gnomekeyring_save_cb(GnomeKeyringResult result, gpointer _req)
 	if (result == GNOME_KEYRING_RESULT_OK) {
 		error = NULL;
 	} else if (result == GNOME_KEYRING_RESULT_NO_MATCH &&
-		req->password == NULL) {
+		req->password == NULL)
+	{
 		error = NULL;
 		already_removed = TRUE;
 	} else if (result == GNOME_KEYRING_RESULT_DENIED ||
-		result == GNOME_KEYRING_RESULT_CANCELLED) {
+		result == GNOME_KEYRING_RESULT_CANCELLED)
+	{
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_ACCESSDENIED,
 			_("Access denied."));
 		gnomekeyring_cancel_queue();
 	} else if (result == GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON ||
-		result == GNOME_KEYRING_RESULT_IO_ERROR) {
+		result == GNOME_KEYRING_RESULT_IO_ERROR)
+	{
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			_("Communication with GNOME Keyring failed."));
@@ -305,7 +310,8 @@ gnomekeyring_process_queue(void)
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
 	} else if (req->type == GNOMEKEYRING_REQUEST_SAVE &&
-		req->password != NULL) {
+		req->password != NULL)
+	{
 		gchar *display_name = g_strdup_printf(
 			_("Pidgin IM password for account %s"),
 			purple_account_get_username(account));
@@ -318,7 +324,8 @@ gnomekeyring_process_queue(void)
 			NULL);
 		g_free(display_name);
 	} else if (req->type == GNOMEKEYRING_REQUEST_SAVE &&
-		req->password == NULL) {
+		req->password == NULL)
+	{
 		current_request = gnome_keyring_delete_password(
 			GNOME_KEYRING_NETWORK_PASSWORD, gnomekeyring_save_cb,
 			req, gnomekeyring_request_cancel,

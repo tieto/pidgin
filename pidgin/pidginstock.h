@@ -1,8 +1,3 @@
-/**
- * @file pidginstock.h GTK+ Stock resources
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:pidginstock
+ * @section_id: pidgin-pidginstock
+ * @short_description: <filename>pidginstock.h</filename>
+ * @title: Stock Resources
+ */
+
 #include <gtk/gtk.h>
 #include "gtkstatus-icon-theme.h"
 

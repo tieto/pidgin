@@ -47,8 +47,7 @@ gboolean ggp_deprecated_setup_proxy(PurpleConnection *gc)
 		return FALSE;
 	}
 
-	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_NONE)
-	{
+	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_NONE) {
 		gg_proxy_enabled = 0;
 		return TRUE;
 	}

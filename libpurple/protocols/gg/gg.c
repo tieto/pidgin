@@ -251,16 +251,14 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 	PurpleXmlNode *xmlnode_next_event;
 
 	xml = purple_xmlnode_from_str(data, -1);
-	if (xml == NULL)
-	{
+	if (xml == NULL) {
 		purple_debug_error("gg", "ggp_xml_event_handler: "
 			"invalid xml: [%s]\n", data);
 		goto out;
 	}
 
 	xmlnode_next_event = purple_xmlnode_get_child(xml, "event");
-	while (xmlnode_next_event != NULL)
-	{
+	while (xmlnode_next_event != NULL) {
 		PurpleXmlNode *xmlnode_current_event = xmlnode_next_event;
 
 		PurpleXmlNode *xmlnode_type;
@@ -282,8 +280,7 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 		g_free(event_type_raw);
 
 		xmlnode_sender = purple_xmlnode_get_child(xmlnode_current_event, "sender");
-		if (xmlnode_sender != NULL)
-		{
+		if (xmlnode_sender != NULL) {
 			event_sender_raw = purple_xmlnode_get_data(xmlnode_sender);
 			if (event_sender_raw != NULL)
 				event_sender = ggp_str_to_uin(event_sender_raw);
@@ -472,7 +469,7 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 #endif
 		default:
 			purple_debug_error("gg", "unknown state = %d\n",
-					 info->session->state);
+				info->session->state);
 		break;
 	}
 
@@ -513,8 +510,8 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 #endif
 				purple_input_remove(info->inpa);
 				info->inpa = purple_input_add(info->session->fd,
-							  PURPLE_INPUT_READ,
-							  ggp_callback_recv, gc);
+					PURPLE_INPUT_READ,
+					ggp_callback_recv, gc);
 
 				purple_connection_update_progress(gc, _("Connected"), 1, 2);
 				purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);
@@ -524,8 +521,7 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 			}
 			break;
 		case GG_EVENT_CONN_FAILED:
-			if (info->inpa > 0)
-			{
+			if (info->inpa > 0) {
 				purple_input_remove(info->inpa);
 				info->inpa = 0;
 			}
@@ -588,20 +584,19 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 			}
 			break;
 		case GG_EVENT_MSG:
-			if (ev->event.msg.sender == 0)
-			{
+			if (ev->event.msg.sender == 0) {
 				if (ev->event.msg.message == NULL)
 					break;
 
 				/* system messages are mostly ads */
 				purple_debug_info("gg", "System message:\n%s\n",
 					ev->event.msg.message);
-			}
-			else
+			} else {
 				purple_debug_warning("gg", "GG_EVENT_MSG: message from user %u "
 					"unexpected while connecting:\n%s\n",
 					ev->event.msg.sender,
 					ev->event.msg.message);
+			}
 			break;
 		default:
 			purple_debug_error("gg", "strange event: %d\n", ev->type);
@@ -806,8 +801,7 @@ static void ggp_close(PurpleConnection *gc)
 	purple_notify_close_with_handle(gc);
 
 	if (info) {
-		if (info->session != NULL)
-		{
+		if (info->session != NULL) {
 			ggp_status_set_disconnected(account);
 			gg_logoff(info->session);
 			gg_free_session(info->session);
@@ -940,11 +934,11 @@ static GList *ggp_get_actions(PurpleConnection *gc)
 	m = g_list_append(m, NULL);
 
 	act = purple_protocol_action_new(_("Save buddylist to file..."),
-				     ggp_action_buddylist_save);
+		ggp_action_buddylist_save);
 	m = g_list_append(m, act);
 
 	act = purple_protocol_action_new(_("Load buddylist from file..."),
-				     ggp_action_buddylist_load);
+		ggp_action_buddylist_load);
 	m = g_list_append(m, act);
 
 	return m;

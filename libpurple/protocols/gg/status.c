@@ -127,8 +127,7 @@ int ggp_status_from_purplestatus(PurpleStatus *status, gchar **message)
 	g_return_val_if_fail(message != NULL, 0);
 
 	*message = NULL;
-	if (status_message)
-	{
+	if (status_message) {
 		gchar *stripped = purple_markup_strip_html(status_message);
 		g_strstrip(stripped);
 		*message = ggp_status_validate_description(stripped);
@@ -307,8 +306,7 @@ void ggp_status_fake_to_self(PurpleConnection *gc)
 		"message");
 	gchar *status_msg_gg = NULL;
 
-	if (status_msg != NULL && status_msg[0] != '\0')
-	{
+	if (status_msg != NULL && status_msg[0] != '\0') {
 		status_msg_gg = g_new0(gchar, GG_STATUS_DESCR_MAXSIZE + 1);
 		g_utf8_strncpy(status_msg_gg, status_msg,
 			GG_STATUS_DESCR_MAXSIZE);
@@ -381,21 +379,17 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 
 void ggp_status_got_others(PurpleConnection *gc, struct gg_event *ev)
 {
-	if (ev->type == GG_EVENT_NOTIFY60)
-	{
+	if (ev->type == GG_EVENT_NOTIFY60) {
 		struct gg_event_notify60 *notify = ev->event.notify60;
 		int i;
 		for (i = 0; notify[i].uin; i++)
 			ggp_status_got_others_buddy(gc, notify[i].uin,
 				GG_S(notify[i].status), notify[i].descr);
-	}
-	else if (ev->type == GG_EVENT_STATUS60)
-	{
+	} else if (ev->type == GG_EVENT_STATUS60) {
 		struct gg_event_status60 *notify = &ev->event.status60;
 		ggp_status_got_others_buddy(gc, notify->uin,
 			GG_S(notify->status), notify->descr);
-	}
-	else
+	} else
 		purple_debug_fatal("gg", "ggp_status_got_others: "
 			"unexpected event %d\n", ev->type);
 }
@@ -409,14 +403,15 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 	gchar *status_message = NULL;
 	gboolean is_own;
 
-	is_own = 0 == g_strcmp0(ggp_uin_to_str(uin), purple_account_get_username(account));
+	is_own = (!g_strcmp0(ggp_uin_to_str(uin),
+		purple_account_get_username(account)));
 
-	if (!buddy)
-	{
-		if (!is_own)
+	if (!buddy) {
+		if (!is_own) {
 			purple_debug_warning("gg",
 				"ggp_status_got_others_buddy: "
 				"buddy %u not found\n", uin);
+		}
 		return;
 	}
 	ggp_buddy_get_data(buddy)->blocked = (status == GG_STATUS_BLOCKED);
@@ -426,37 +421,29 @@ void ggp_status_got_others_buddy(PurpleConnection *gc, uin_t uin, int status,
 	ggp_buddy_get_data(buddy)->not_a_friend = FALSE;
 #endif
 
-	if (descr != NULL)
-	{
+	if (descr != NULL) {
 		status_message = g_strdup(descr);
 		g_strstrip(status_message);
-		if (status_message[0] == '\0')
-		{
+		if (status_message[0] == '\0') {
 			g_free(status_message);
 			status_message = NULL;
 		}
 	}
 
-	if (uin == ggp_str_to_uin(purple_account_get_username(account)))
-	{
+	if (uin == ggp_str_to_uin(purple_account_get_username(account))) {
 		purple_debug_info("gg", "ggp_status_got_others_buddy: "
 			"own status changed to %s [%s]\n",
 			purple_status, status_message ? status_message : "");
-	}
-	else if (purple_debug_is_verbose())
-	{
+	} else if (purple_debug_is_verbose()) {
 		purple_debug_misc("gg", "ggp_status_got_others_buddy: "
 			"status of %u changed to %s [%s]\n", uin,
 			purple_status, status_message ? status_message : "");
 	}
 
-	if (status_message)
-	{
+	if (status_message) {
 		purple_protocol_got_user_status(account, ggp_uin_to_str(uin),
 			purple_status, "message", status_message, NULL);
-	}
-	else
-	{
+	} else {
 		purple_protocol_got_user_status(account, ggp_uin_to_str(uin),
 			purple_status, NULL);
 	}

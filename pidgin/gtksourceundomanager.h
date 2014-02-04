@@ -22,6 +22,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02111-1301, USA. * *
  */
+/**
+ * SECTION:gtksourceundomanager
+ * @section_id: pidgin-gtksourceundomanager
+ * @short_description: <filename>gtksourceundomanager.h</filename>
+ * @title: Source Undo Manager
+ */
 
 #ifndef __GTK_SOURCE_UNDO_MANAGER_H__
 #define __GTK_SOURCE_UNDO_MANAGER_H__
