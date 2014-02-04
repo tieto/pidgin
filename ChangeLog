@@ -1,5 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.9 (2/2/2014):
+	XMPP:
+	* Fix problems logging into some servers including jabber.org and
+	  chat.facebook.com. (#15879)
+
 version 2.10.8 (1/28/2014):
 	General:
 	* Python build scripts and example plugins are now compatible with
@@ -81,7 +86,7 @@ version 2.10.8 (1/28/2014):
 	MXit:
 	* Fix buffer overflow with remote code execution potential.
 	  (Discovered by Yves Younan and Pawel Janic of Sourcefire VRT)
-	  (CVE-2013-6487)
+	  (CVE-2013-6489)
 	* Fix sporadic crashes that can happen after user is disconnected.
 	* Fix crash when attempting to add a contact via search results.
 	* Show error message if file transfer fails.
@@ -93,13 +98,13 @@ version 2.10.8 (1/28/2014):
 
 	SIMPLE:
 	* Fix buffer overflow with remote code execution potential.
-	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2013-6487)
+	  (Discovered by Yves Younan of Sourcefire VRT) (CVE-2013-6490)
 
 	XMPP:
 	* Prevent spoofing of iq replies by verifying that the 'from' address
 	  matches the 'to' address of the iq request. (Discovered by Fabian
-	  Yamaguchi and Christian Wressnegger of the University of Goettingen)
-	  (CVE-2013-6483)
+	  Yamaguchi and Christian Wressnegger of the University of Goettingen,
+	  fixed by Thijs Alkemade) (CVE-2013-6483)
 	* Fix crash on some systems when receiving fake delay timestamps with
 	  extreme values. (Discovered by Jaime Breva Ribes) (CVE-2013-6477)
 	* Fix possible crash or other erratic behavior when selecting a very
@@ -121,7 +126,7 @@ version 2.10.8 (1/28/2014):
 	Plugins:
 	* Fix crash in contact availability plugin.
 	* Fix perl function Purple::Network::ip_atoi
-	* Add Unity integration plugin.
+	* Add Ubuntu Unity UI integration plugin.
 
 version 2.10.7 (02/13/2013):
 	Alien hatchery:

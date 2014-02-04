@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-21 19:13+0100\n"
-"PO-Revision-Date: 2014-01-21 19:10+0100\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-01-28 22:25+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -3088,12 +3088,6 @@ msgid ""
 "invalid."
 msgstr "Hostname oder Portnummer Ihres Proxys sind falsch angegeben."
 
-msgid "Token Error"
-msgstr "Token-Fehler"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Kann das Token nicht abholen.\n"
-
 msgid "Save Buddylist..."
 msgstr "Buddy-Liste speichern..."
 
@@ -3121,40 +3115,6 @@ msgstr "Buddy-Liste speichern..."
 
 msgid "Load buddylist from file..."
 msgstr "Buddy-Liste aus Datei laden..."
-
-msgid "You must fill in all registration fields"
-msgstr "Sie müssen alle Registrierungsfelder ausfüllen"
-
-msgid "Passwords do not match"
-msgstr "Passwörter stimmen nicht überein"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr ""
-"Kann neues Konto nicht anlegen. Es ist ein unbekannter Fehler aufgetreten."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Neues Gadu-Gadu-Konto angelegt"
-
-msgid "Registration completed successfully!"
-msgstr "Registrierung erfolgreich abgeschlossen!"
-
-msgid "Password"
-msgstr "Passwort"
-
-msgid "Password (again)"
-msgstr "Passwort (nochmal)"
-
-msgid "Enter captcha text"
-msgstr "Captcha-Text eingeben"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Registrierung eines neuen Gadu-Gadu-Kontos"
-
-msgid "Please, fill in the following fields"
-msgstr "Bitte füllen Sie die folgenden Felder aus"
 
 msgid "City"
 msgstr "Stadt"
@@ -3184,40 +3144,6 @@ msgstr "Suche Buddys"
 
 msgid "Please, enter your search criteria below"
 msgstr "Bitte geben Sie Ihre Suchkriterien unten ein"
-
-msgid "Fill in the fields."
-msgstr "Füllen Sie die Felder aus."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Ihr aktuelles Passwort ist anders als das angegebene."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Konnte das Passwort nicht ändern. Es trat ein Fehler auf.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Ändern des Passworts für dieses Gadu-Gadu-Konto"
-
-msgid "Password was changed successfully!"
-msgstr "Das Passwort wurde erfolgreich geändert!"
-
-msgid "Current password"
-msgstr "Aktuelles Passwort"
-
-msgid "Password (retype)"
-msgstr "Passwort (nochmal)"
-
-msgid "Enter current token"
-msgstr "Geben Sie das aktuelle Token ein"
-
-msgid "Current token"
-msgstr "Aktuelles Token"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
-"Bitte geben Sie Ihr aktuelles und Ihr neues Passwort für folgende UIN ein: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu Passwort ändern"
 
 msgid "Show status to:"
 msgstr "Zeige Status:"
@@ -3325,9 +3251,6 @@ msgstr "Nicht mit dem Server verbunden"
 
 msgid "Find buddies..."
 msgstr "Finde Buddys..."
-
-msgid "Change password..."
-msgstr "Passwort ändern..."
 
 msgid "Save buddylist to file..."
 msgstr "Buddy-Liste in Datei speichern..."
@@ -3522,6 +3445,12 @@ msgstr " <i>(identifiziert)</i>"
 
 msgid "Nick"
 msgstr "Spitzname"
+
+msgid "Login name"
+msgstr "Anmeldename"
+
+msgid "Host name"
+msgstr "Rechnername"
 
 msgid "Currently on"
 msgstr "Im Moment in"
@@ -4375,6 +4304,9 @@ msgstr "Datum"
 msgid "Already Registered"
 msgstr "Schon registriert"
 
+msgid "Password"
+msgstr "Passwort"
+
 msgid "Unregister"
 msgstr "Aufheben der Registrierung"
 
@@ -4511,6 +4443,9 @@ msgstr "Ihr Passwort wurde geändert."
 
 msgid "Error changing password"
 msgstr "Fehler beim Ändern des Passworts"
+
+msgid "Password (again)"
+msgstr "Passwort (nochmal)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP-Passwort ändern"
@@ -11901,6 +11836,9 @@ msgstr "Arabisch"
 msgid "Assamese"
 msgstr "Assamesisch"
 
+msgid "Asturian"
+msgstr "Asturisch"
+
 msgid "Belarusian Latin"
 msgstr "Weißrussisch (Latin)"
 
@@ -12907,6 +12845,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "Das benutzerdefinierte Browserkommando wurde ausgewählt, aber nicht gesetzt."
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr ""
+"Kann die URL nicht öffnen: der 'manuelle' Browser scheint ungültig zu sein."
 
 msgid "No message"
 msgstr "Keine Nachricht"
@@ -14904,6 +14846,59 @@ msgstr ""
 "Dieses Plugin erlaubt es dem Benutzer die Zeitstempel in Unterhaltungen und "
 "im Mitschnitt anzupassen."
 
+#. Alerts
+msgid "Chatroom alerts"
+msgstr "Chatraum-Alarme"
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "Chatraum-Alarme nur dann, wenn j_emand Ihren Namen sagt"
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr "Starter-Icon"
+
+msgid "_Disable launcher integration"
+msgstr "_Starter-Integration deaktivieren"
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr "Zeige Zahl der ungelesenen Nac_hrichten auf dem Starter-Icon"
+
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Zeige Zahl der ungelesenen U_nterhaltungen auf dem Starter-Icon"
+
+#. Messaging menu integration
+msgid "Messaging Menu"
+msgstr "Benachrichtigungsfeld"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr "Zeige Zahl der _ungelesenen Nachrichten im Benachrichtigungsfeld"
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+"Zeige die _abgelaufene Zeit für ungelesene Nachrichten im "
+"Benachrichtigungsfeld"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Unity Integration"
+msgstr "Unity-Integration"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Provides integration with Unity."
+msgstr "Erlaubt die Integration mit Unity."
+
+#. *  description
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr ""
+"Erlaubt die Integration mit Unity's Benachrichtigungsfeld und dem Unity-"
+"Starter."
+
 msgid "Audio"
 msgstr "Audio"
 
@@ -15232,6 +15227,78 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "Token Error"
+#~ msgstr "Token-Fehler"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Kann das Token nicht abholen.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Sie müssen alle Registrierungsfelder ausfüllen"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Passwörter stimmen nicht überein"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr ""
+#~ "Kann neues Konto nicht anlegen. Es ist ein unbekannter Fehler aufgetreten."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Neues Gadu-Gadu-Konto angelegt"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Registrierung erfolgreich abgeschlossen!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Captcha-Text eingeben"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Registrierung eines neuen Gadu-Gadu-Kontos"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Bitte füllen Sie die folgenden Felder aus"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Füllen Sie die Felder aus."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Ihr aktuelles Passwort ist anders als das angegebene."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Konnte das Passwort nicht ändern. Es trat ein Fehler auf.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Ändern des Passworts für dieses Gadu-Gadu-Konto"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Das Passwort wurde erfolgreich geändert!"
+
+#~ msgid "Current password"
+#~ msgstr "Aktuelles Passwort"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Passwort (nochmal)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Geben Sie das aktuelle Token ein"
+
+#~ msgid "Current token"
+#~ msgstr "Aktuelles Token"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr ""
+#~ "Bitte geben Sie Ihr aktuelles und Ihr neues Passwort für folgende UIN "
+#~ "ein: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu Passwort ändern"
+
+#~ msgid "Change password..."
+#~ msgstr "Passwort ändern..."
 
 #~ msgid "Buddy list downloaded"
 #~ msgstr "Buddy-Liste heruntergeladen"

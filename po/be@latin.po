@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2008-03-29 21:08+0200\n"
 "Last-Translator: YOUR NAME <E-MAIL@ADDRESS>\n"
 "Language-Team: Belarusian Latin <be-latin.open-tran.eu>\n"
@@ -2063,56 +2063,8 @@ msgstr "Pamyłka pieradačy fajłu dla %s."
 msgid "File transfer from %s failed."
 msgstr "Pamyłka pieradačy fajłu ad %s."
 
-msgid "Run the command in a terminal"
-msgstr "Vykanaj zahad u terminale"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"aim\", kali ŭklučanyja."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"gg\", kali ŭklučanyja."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"icq\", kali ŭklučanyja."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"irc\", kali ŭklučanyja."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"msnim\", kali ŭklučanyja."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"sip\", kali ŭklučanyja."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"xmpp\", kali ŭklučanyja."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"ymsgr\", kali ŭklučanyja."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Adčynieńnie spasyłak \"aim\""
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Adčynieńnie spasyłak \"gg\""
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Adčynieńnie spasyłak \"icq\""
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Adčynieńnie spasyłak \"irc\""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Adčynieńnie spasyłak \"msnim\""
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Adčynieńnie spasyłak \"sip\""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Adčynieńnie spasyłak \"xmpp\""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Adčynieńnie spasyłak \"ymsgr\""
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ci adčyniać spasyłki \"aim\" akreślenym zahadam"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2121,54 +2073,14 @@ msgstr ""
 "Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
 "spasyłki \"aim\"."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"gg\"."
+msgid "The handler for \"aim\" URLs"
+msgstr "Adčynieńnie spasyłak \"aim\""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"icq\"."
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"aim\", kali ŭklučanyja."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"irc\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"msnim\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"sip\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"xmpp\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"ymsgr\"."
+msgid "Run the command in a terminal"
+msgstr "Vykanaj zahad u terminale"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2177,29 +2089,117 @@ msgstr ""
 "Praŭda, kali zahad dziela adčynieńnia spasyłak hetaha typu pavinny "
 "vykonvacca ŭ terminale."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ci adčyniać spasyłki \"aim\" akreślenym zahadam"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Ci adčyniać spasyłki \"gg\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Adčynieńnie spasyłak \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"gg\", kali ŭklučanyja."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Ci adčyniać spasyłki \"icq\" akreślenym zahadam"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Adčynieńnie spasyłak \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"icq\", kali ŭklučanyja."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Ci adčyniać spasyłki \"irc\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Adčynieńnie spasyłak \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"irc\", kali ŭklučanyja."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Ci adčyniać spasyłki \"msnim\" akreślenym zahadam"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"msnim\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Adčynieńnie spasyłak \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"msnim\", kali ŭklučanyja."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Ci adčyniać spasyłki \"sip\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"sip\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Adčynieńnie spasyłak \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"sip\", kali ŭklučanyja."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Ci adčyniać spasyłki \"xmpp\" akreślenym zahadam"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"xmpp\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Adčynieńnie spasyłak \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"xmpp\", kali ŭklučanyja."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Ci adčyniać spasyłki \"ymsgr\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"ymsgr\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Adčynieńnie spasyłak \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"ymsgr\", kali ŭklučanyja."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Časapiśnik nia maje funkcyi čytańnia</font></b>"
@@ -2257,6 +2257,10 @@ msgstr ""
 
 #, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Adbyłasia nieviadomaja pamyłka ŭvachodu: %s."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Adbyłasia nieviadomaja pamyłka ŭvachodu: %s."
 
 msgid "Error with your microphone"
@@ -3072,12 +3076,6 @@ msgstr ""
 "Albo nazva hostu, albo numar portu, akreślenyja dla tvajho typu proxy, "
 "niapravilnyja."
 
-msgid "Token Error"
-msgstr "Pamyłka znaku"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Niemahčyma zahruzić znak.\n"
-
 msgid "Save Buddylist..."
 msgstr "Zachavaj śpis siabroŭ..."
 
@@ -3105,43 +3103,6 @@ msgstr "Zachavaj śpis siabroŭ..."
 
 msgid "Load buddylist from file..."
 msgstr "Zahruzi śpis siabroŭ z fajłu..."
-
-#, fuzzy
-msgid "You must fill in all registration fields"
-msgstr "Zapoŭni pali rehistracyi."
-
-#, fuzzy
-msgid "Passwords do not match"
-msgstr "Paroli roznyja."
-
-#, fuzzy
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Niemahčyma zarehistravać novy kont. Adbyłasia pamyłka.\n"
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Zarehistravany novy kont Gadu-Gadu"
-
-msgid "Registration completed successfully!"
-msgstr "Rehistracyja paśpiachova skončanaja!"
-
-msgid "Password"
-msgstr "Parol"
-
-msgid "Password (again)"
-msgstr "Parol (znoŭ)"
-
-msgid "Enter captcha text"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha"
-msgstr "Zapišy vyjavu"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Zarehistruj novy kont Gadu-Gadu"
-
-msgid "Please, fill in the following fields"
-msgstr "Zapoŭni nastupnyja pali"
 
 msgid "City"
 msgstr "Horad"
@@ -3171,39 +3132,6 @@ msgstr "Znajdzi siabroj"
 
 msgid "Please, enter your search criteria below"
 msgstr "Uviadzi kryter dziela pošuku"
-
-msgid "Fill in the fields."
-msgstr "Zapoŭni pali."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Tvoj dziejny parol adroźnivajecca ad akreślenaha."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Niemahčyma źmianić parol. Adbyłasia pamyłka.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Źmiani parol dla kontu Gadu-Gadu"
-
-msgid "Password was changed successfully!"
-msgstr "Parol paśpiachova źmienieny!"
-
-msgid "Current password"
-msgstr "Dziejny parol"
-
-msgid "Password (retype)"
-msgstr "Parol (paŭtary)"
-
-msgid "Enter current token"
-msgstr "Uviadzi dziejny znak"
-
-msgid "Current token"
-msgstr "Dziejny znak"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Uviadzi dziejny parol i tvoj novy parol dla UIN'a: "
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Źmiani parol Gadu-Gadu"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3280,18 +3208,6 @@ msgstr "Niama karystalnikaŭ, jakija adpaviadajuć tvaim kryteram pošuku."
 msgid "Unable to read from socket"
 msgstr "Niemahčyma pračytać z sokieta"
 
-msgid "Buddy list downloaded"
-msgstr "Śpis siabroŭ zahružany"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Tvoj śpis siabroŭ zahružany z servera."
-
-msgid "Buddy list uploaded"
-msgstr "Śpis siabroŭ zahružany na server"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Tvoj śpis siabroŭ zachavany na servery."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3328,18 +3244,6 @@ msgstr "Niama spałučeńnia z serveram."
 
 msgid "Find buddies..."
 msgstr "Šukaj siabroj..."
-
-msgid "Change password..."
-msgstr "Źmiani parol..."
-
-msgid "Upload buddylist to Server"
-msgstr "Zahruzi śpis siabroŭ na server"
-
-msgid "Download buddylist from Server"
-msgstr "Zahruzi śpis siabroŭ z servera"
-
-msgid "Delete buddylist from Server"
-msgstr "Vydali śpis siabroŭ z servera"
 
 msgid "Save buddylist to file..."
 msgstr "Zachavaj śpis siabroŭ u fajle..."
@@ -3453,7 +3357,7 @@ msgstr "Niemahčyma spałučycca"
 msgid "Unable to connect: %s"
 msgstr "Niemahčyma spałučycca z %s"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "Server začyniŭ spałučeńnie."
 
@@ -3492,6 +3396,10 @@ msgstr "Kadavańni"
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Niapravilnaja nazva"
+
 msgid "Real name"
 msgstr "Sapraŭdnaje imia"
 
@@ -3501,6 +3409,14 @@ msgstr "Sapraŭdnaje imia"
 #.
 msgid "Use SSL"
 msgstr "Užyj SSL"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Aŭtaryzacyja"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Dazvol aŭtaryzacyju prostym tekstam praź niešyfravanyja kanały"
 
 msgid "Bad mode"
 msgstr "Kiepski režym"
@@ -3536,6 +3452,14 @@ msgstr " <i>(identyfikavany)</i>"
 msgid "Nick"
 msgstr "Mianuška"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Biaz nazvy"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Nazva hostu"
+
 msgid "Currently on"
 msgstr "Zaraz uklučany"
 
@@ -3562,6 +3486,10 @@ msgstr "%s ačyščaje temu."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "Tema dla %s: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3677,6 +3605,33 @@ msgstr "Mianuška albo kanał časova niedastupnyja."
 #, c-format
 msgid "Wallops from %s"
 msgstr "Udary ad %s"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Niamahčyma inicyjalizavać spałučeńnie klijenta SILC"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Pamyłka aŭtaryzacyi"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Pamyłka aŭtaryzacyi"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Niapravilny parol"
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Pamyłka aŭtaryzacyi"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;dziejańnie&gt;:  Vykonvaje dziejańnie."
@@ -4363,6 +4318,9 @@ msgstr "Data"
 msgid "Already Registered"
 msgstr "Užo zarehistravany"
 
+msgid "Password"
+msgstr "Parol"
+
 msgid "Unregister"
 msgstr "Skasuj rehistracyju"
 
@@ -4497,6 +4455,9 @@ msgstr "Tvoj parol źmianiŭsia."
 
 msgid "Error changing password"
 msgstr "Pamyłka źmieny parolu"
+
+msgid "Password (again)"
+msgstr "Parol (znoŭ)"
 
 msgid "Change XMPP Password"
 msgstr "Źmiani parol XMPP"
@@ -4720,6 +4681,10 @@ msgstr "Niemahčyma dasłać fajł da %s, niapravilny JID"
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Niemahčyma dasłać fajł da %s, karystalnik adłučany"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Niemahčyma dasłać fajł da %s, karystalnik adłučany"
 
 #, fuzzy, c-format
@@ -6195,6 +6160,11 @@ msgstr "Ab %s"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Vydali status"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6310,6 +6280,16 @@ msgstr "Ab %s"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Paviedamleńnie zavialikaje."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Niemahčyma zahruzić plugin"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Niemahčyma adčynić fajł."
 
 #, fuzzy
 msgid ""
@@ -6444,11 +6424,6 @@ msgstr "Dasłanyja paviedamleńni"
 msgid "Rejection Message"
 msgstr "Atrymanyja paviedamleńni"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Siaredniaje imia"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Niedastupny"
@@ -6477,6 +6452,37 @@ msgid "Connect via HTTP"
 msgstr "Spałučysia praz TCP"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Jingle"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Nudny"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Zaprasi"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Addzieł"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6546,6 +6552,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "Pamyłka paviedamleńnia XMPP"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -10101,7 +10111,6 @@ msgstr ""
 "Numar %d nieviadomaj pamyłki. Naviedvańnie sajtu Yahoo! moža vypravić hetuju "
 "prablemu."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10773,15 +10782,15 @@ msgstr ""
 "Pry čytańni tvajho %s adbyłasia pamyłka. Jany nie byli zahružanyja, a stary "
 "fajł pieranazvany ŭ %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Internet-kamunikatar Pidgin"
 
 msgid "Internet Messenger"
 msgstr "Internet-kamunikatar"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Internet-kamunikatar Pidgin"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11880,6 +11889,14 @@ msgstr "Niepračytanyja paviedamleńni"
 msgid "New Event"
 msgstr "Novaja padzieja"
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Kont adłučany i ty bolš nia ŭdzielničaješ u hutarcy. Kali kont znoŭ "
+"dałučycca, ty znoŭ pryjadnajeśsia da razmovy."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Ačyščaje ŭsie bufery prakrutki razmovaŭ."
 
@@ -11988,7 +12005,8 @@ msgstr "raspracoŭščyk i webmajstar"
 msgid "win32 port"
 msgstr "port na win32"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -12026,6 +12044,9 @@ msgstr "Arabskaja"
 #, fuzzy
 msgid "Assamese"
 msgstr "Zasaromleny"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Biełaruskaja łacinka"
@@ -12157,6 +12178,9 @@ msgstr "Kurdzkaja"
 msgid "Lao"
 msgstr "Laoskaja"
 
+msgid "Lithuanian"
+msgstr "Litoŭskaja"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Nihilist"
@@ -12183,6 +12207,9 @@ msgstr "Gujarati"
 #, fuzzy
 msgid "Malay"
 msgstr "Mužčynski"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Narveskaja Bokmål"
@@ -12236,6 +12263,10 @@ msgstr "Albanskaja"
 msgid "Serbian"
 msgstr "Serbskaja"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Biełaruskaja łacinka"
+
 msgid "Sinhala"
 msgstr "Sinhaleskaja"
 
@@ -12254,9 +12285,6 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Tajskaja"
 
-msgid "Turkish"
-msgstr "Tureckaja"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "Rumynskaja"
@@ -12266,9 +12294,6 @@ msgstr "Urdu"
 
 msgid "Vietnamese"
 msgstr "Vijetnamskaja"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh i Kamanda Gnome-Vi"
 
 msgid "Simplified Chinese"
 msgstr "Sproščanaja kitajskaja"
@@ -12282,8 +12307,11 @@ msgstr "Tradycyjnaja kitajskaja"
 msgid "Amharic"
 msgstr "Amharskaja"
 
-msgid "Lithuanian"
-msgstr "Litoŭskaja"
+msgid "Turkish"
+msgstr "Tureckaja"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh i Kamanda Gnome-Vi"
 
 #, fuzzy, c-format
 msgid ""
@@ -12312,7 +12340,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -13028,6 +13055,10 @@ msgstr "Pamyłka ŭruchamleńnia \"%s\": %s"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Abrany 'Admysłovy' hartač, ale zahad nie akreśleny."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Zahad hartača \"%s\" niapravilny."
 
 #, fuzzy
 msgid "No message"
@@ -14072,11 +14103,11 @@ msgstr "Padkazka Pidgin"
 msgid "Pidgin smileys"
 msgstr "Smajły Pidgina"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Abraŭšy heta, ty adklučyš hrafičnyja smajły."
-
 msgid "none"
 msgstr "niama"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Abraŭšy heta, ty adklučyš hrafičnyja smajły."
 
 #, fuzzy
 msgid "Small"
@@ -15068,7 +15099,7 @@ msgstr "Pakazvaj adbitki času ŭ styli iChat kožnyja N chvilin."
 msgid "Timestamp Format Options"
 msgstr "Opcyi farmatavańnia adbitkaŭ času"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "_Prymusova ŭžyvaj 24-hadzinny farmat času"
 
@@ -15121,6 +15152,63 @@ msgid ""
 msgstr ""
 "Hety plugin dazvalaje karystalniku źmianiać farmatavańnie adbitkaŭ času dla "
 "razmovaŭ i logaŭ."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Lakalnaść pakoju hutarki"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Tolki kali chtości pramaŭlaje tvajo imia"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Zapišy ikonu"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Kolkaść razmoŭ u vaknie"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Dasłanaje paviedamleńnie"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Intehracyja z Evolution'am"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Intehruje z Evolution'am."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Intehruje z Evolution'am."
 
 #, fuzzy
 msgid "Audio"
@@ -15312,23 +15400,65 @@ msgstr "Dasyłaj i atrymvaj suvoryja strofy XMPP."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Hety plugin užyvajecca dziela debugavańnia serveraŭ i klijentaŭ XMPP."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Hetaja nazva hutarki ŭžo zaniataja"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Internet-kamunikatar Pidgin"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Versija GTK+"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Paradkuj"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Zmoŭčany ŭ asiarodździ"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Uruchamleńnie"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Raźmiaščeńnie"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -15336,29 +15466,35 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "Zmoŭčany ŭ asiarodździ"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "Adčynieńnie spasyłak myim"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15369,79 +15505,126 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "Versija GTK+"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Raźmiaščeńnie"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Internet-kamunikatar Pidgin"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Paradkuj"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Uruchamleńnie"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "Hetaja nazva hutarki ŭžo zaniataja"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "URI Handlers"
-msgstr "Adčynieńnie spasyłak myim"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Token Error"
+#~ msgstr "Pamyłka znaku"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Niemahčyma zahruzić znak.\n"
+
+#, fuzzy
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Zapoŭni pali rehistracyi."
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "Paroli roznyja."
+
+#, fuzzy
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Niemahčyma zarehistravać novy kont. Adbyłasia pamyłka.\n"
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Zarehistravany novy kont Gadu-Gadu"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Rehistracyja paśpiachova skončanaja!"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "Zapišy vyjavu"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Zarehistruj novy kont Gadu-Gadu"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Zapoŭni nastupnyja pali"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Zapoŭni pali."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Tvoj dziejny parol adroźnivajecca ad akreślenaha."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Niemahčyma źmianić parol. Adbyłasia pamyłka.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Źmiani parol dla kontu Gadu-Gadu"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Parol paśpiachova źmienieny!"
+
+#~ msgid "Current password"
+#~ msgstr "Dziejny parol"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Parol (paŭtary)"
+
+#~ msgid "Enter current token"
+#~ msgstr "Uviadzi dziejny znak"
+
+#~ msgid "Current token"
+#~ msgstr "Dziejny znak"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr "Uviadzi dziejny parol i tvoj novy parol dla UIN'a: "
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Źmiani parol Gadu-Gadu"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Śpis siabroŭ zahružany"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Tvoj śpis siabroŭ zahružany z servera."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Śpis siabroŭ zahružany na server"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Tvoj śpis siabroŭ zachavany na servery."
+
+#~ msgid "Change password..."
+#~ msgstr "Źmiani parol..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Zahruzi śpis siabroŭ na server"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Zahruzi śpis siabroŭ z servera"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Vydali śpis siabroŭ z servera"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Siaredniaje imia"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Supolny server Sametime nie akreśleny"
@@ -15886,9 +16069,6 @@ msgstr ""
 #, fuzzy
 #~ msgid " Zone"
 #~ msgstr "Niama"
-
-#~ msgid "Invalid name"
-#~ msgstr "Niapravilnaja nazva"
 
 #, fuzzy
 #~ msgid "Select icon..."
@@ -16615,9 +16795,6 @@ msgstr ""
 #~ msgid "Reachability Address"
 #~ msgstr "Adras dasiahalnaści"
 
-#~ msgid "Jingle"
-#~ msgstr "Jingle"
-
 #~ msgid "Jingle Audio"
 #~ msgstr "Jingle Audio"
 
@@ -16749,10 +16926,6 @@ msgstr ""
 
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Niemahčyma vyjaśnić nazvu hostu"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Niapravilny parol"
 
 #~ msgid ""
 #~ "Could not establish a connection with %s:\n"
