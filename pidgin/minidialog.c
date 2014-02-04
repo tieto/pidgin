@@ -1,8 +1,3 @@
-/**
- * @file minidialog.c Implementation of the #PidginMiniDialog Gtk widget.
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

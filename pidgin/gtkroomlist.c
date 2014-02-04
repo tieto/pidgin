@@ -1,8 +1,3 @@
-/**
- * @file gtkroomlist.c GTK+ Room List UI
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

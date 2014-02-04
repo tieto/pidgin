@@ -1,8 +1,3 @@
-/**
- * @file backend-fs2.c Farstream backend for media API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous

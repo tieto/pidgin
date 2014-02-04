@@ -1,8 +1,3 @@
-/*
- * @file gtkwebviewtoolbar.c GTK+ WebView Toolbar
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

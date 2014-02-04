@@ -1,6 +1,3 @@
-/**
- * @file xfer.c File Transfer API
- */
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous

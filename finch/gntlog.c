@@ -1,8 +1,3 @@
-/**
- * @file gntlog.c GNT Log viewer
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous

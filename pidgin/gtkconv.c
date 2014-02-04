@@ -1,8 +1,3 @@
-/**
- * @file gtkconv.c GTK+ Conversation API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -9056,11 +9051,7 @@ pidgin_conversations_uninit(void)
 /* down here is where gtkconvwin.c ought to start. except they share like every freaking function,
  * and touch each others' private members all day long */
 
-/**
- * @file gtkconvwin.c GTK+ Conversation Window API
- * @ingroup pidgin
- *
- * pidgin
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this

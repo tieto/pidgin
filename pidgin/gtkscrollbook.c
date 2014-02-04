@@ -1,8 +1,3 @@
-/*
- * @file gtkscrollbook.c GTK+ Scrolling notebook widget
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

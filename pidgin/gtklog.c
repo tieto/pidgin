@@ -1,8 +1,3 @@
-/**
- * @file gtklog.c GTK+ Log viewer
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

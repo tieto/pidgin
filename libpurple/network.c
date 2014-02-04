@@ -1,8 +1,3 @@
-/**
- * @file network.c Network Implementation
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
