@@ -41,6 +41,8 @@
 typedef struct _PurpleConnection PurpleConnection;
 typedef struct _PurpleConnectionClass PurpleConnectionClass;
 
+typedef struct _PurpleConnectionUiOps PurpleConnectionUiOps;
+
 /**
  * PurpleConnectionFlags:
  * @PURPLE_CONNECTION_FLAG_HTML: Connection sends/receives in 'HTML'
@@ -190,72 +192,58 @@ typedef struct
 
 /**
  * PurpleConnectionUiOps:
+ * @connect_progress: When an account is connecting, this operation is called to
+ *                    notify the UI of what is happening, as well as which @step
+ *                    out of @step_count has been reached (which might be
+ *                    displayed as a progress bar).
+ *                    <sbr/>See purple_connection_update_progress().
+ * @connected: Called when a connection is established (just before the
+ *   <link linkend="connections-signed-on"><literal>"signed-on"</literal></link>
+ *             signal).
+ * @disconnected: Called when a connection is ended (between the
+ *   <link linkend="connections-signing-off"><literal>"signing-off"</literal></link>
+ *   and <link linkend="connections-signed-off"><literal>"signed-off"</literal></link>
+ *                signals).
+ * @notice: Used to display connection-specific notices. (Pidgin's Gtk user
+ *          interface implements this as a no-op; purple_connection_notice(),
+ *          which uses this operation, is not used by any of the protocols
+ *          shipped with libpurple.)
+ * @network_connected: Called when libpurple discovers that the computer's
+ *                     network connection is active.  On Linux, this uses
+ *                     Network Manager if available; on Windows, it uses
+ *                     Win32's network change notification infrastructure.
+ * @network_disconnected: Called when libpurple discovers that the computer's
+ *                        network connection has gone away.
+ * @report_disconnect: Called when an error causes a connection to be
+ *                     disconnected. Called before @disconnected.
+ *                     <sbr/>See purple_connection_error().
+ *                     <sbr/>@reason: why the connection ended, if known, or
+ *                                 #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
+ *                     <sbr/>@text:   a localized message describing the
+ *                                 disconnection in more detail to the user.
  *
  * Connection UI operations.  Used to notify the user of changes to
  * connections, such as being disconnected, and to respond to the
  * underlying network connection appearing and disappearing.  UIs should
  * call #purple_connections_set_ui_ops() with an instance of this struct.
  *
- * @see @ref ui-ops
+ * See <link linkend="chapter-ui-ops">List of <literal>UiOps</literal> Structures</link>
  */
-typedef struct
+struct _PurpleConnectionUiOps
 {
-	/**
-	 * When an account is connecting, this operation is called to notify
-	 * the UI of what is happening, as well as which @a step out of @a
-	 * step_count has been reached (which might be displayed as a progress
-	 * bar).
-	 * @see #purple_connection_update_progress
-	 */
 	void (*connect_progress)(PurpleConnection *gc,
 	                         const char *text,
 	                         size_t step,
 	                         size_t step_count);
 
-	/**
-	 * Called when a connection is established (just before the
-	 * @ref signed-on signal).
-	 */
 	void (*connected)(PurpleConnection *gc);
-
-	/**
-	 * Called when a connection is ended (between the @ref signing-off
-	 * and @ref signed-off signals).
-	 */
 	void (*disconnected)(PurpleConnection *gc);
 
-	/**
-	 * Used to display connection-specific notices.  (Pidgin's Gtk user
-	 * interface implements this as a no-op; #purple_connection_notice(),
-	 * which uses this operation, is not used by any of the protocols
-	 * shipped with libpurple.)
-	 */
 	void (*notice)(PurpleConnection *gc, const char *text);
 
-	/**
-	 * Called when libpurple discovers that the computer's network
-	 * connection is active.  On Linux, this uses Network Manager if
-	 * available; on Windows, it uses Win32's network change notification
-	 * infrastructure.
-	 */
 	void (*network_connected)(void);
-
-	/**
-	 * Called when libpurple discovers that the computer's network
-	 * connection has gone away.
-	 */
 	void (*network_disconnected)(void);
 
-	/**
-	 * Called when an error causes a connection to be disconnected.
-	 * Called before #disconnected.
-	 *
-	 * @reason:  why the connection ended, if known, or
-	 *                #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
-	 * @text:  a localized message describing the disconnection
-	 *              in more detail to the user.
-	 * @see #purple_connection_error
-	 */
 	void (*report_disconnect)(PurpleConnection *gc,
 	                          PurpleConnectionError reason,
 	                          const char *text);
@@ -265,7 +253,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleConnectionUiOps;
+};
 
 /**
  * PurpleConnection:
@@ -302,14 +290,14 @@ G_BEGIN_DECLS
 /**
  * purple_connection_get_type:
  *
- * Returns the GType for the Connection object.
+ * Returns: The #GType for the Connection object.
  */
 GType purple_connection_get_type(void);
 
 /**
  * purple_connection_error_info_get_type:
  *
- * Returns the GType for the PurpleConnectionErrorInfo boxed structure.
+ * Returns: The #GType for the #PurpleConnectionErrorInfo boxed structure.
  */
 GType purple_connection_error_info_get_type(void);
 
@@ -567,13 +555,14 @@ GList *purple_connections_get_connecting(void);
 
 /**
  * PURPLE_CONNECTION_IS_VALID:
+ * @gc: The connection to check
  *
- * Checks if gc is still a valid pointer to a gc.
+ * Checks if @gc is still a valid pointer to a connection.
  *
- * Returns: %TRUE if gc is valid.
+ * This is deprecated -- do not use this. Instead, cancel your asynchronous
+ * request when the #PurpleConnection is destroyed.
  *
- * Deprecated: Do not use this.  Instead, cancel your asynchronous request
- *             when the PurpleConnection is destroyed.
+ * Returns: %TRUE if @gc is valid.
  */
 /*
  * TODO: Eventually this bad boy will be removed, because it is

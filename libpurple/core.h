@@ -32,40 +32,37 @@
 #include <glib.h>
 
 typedef struct PurpleCore PurpleCore;
+typedef struct _PurpleCoreUiOps PurpleCoreUiOps;
 
 /**
  * PurpleCoreUiOps:
+ * @ui_prefs_init: Called just after the preferences subsystem is initialized;
+ *                 the UI could use this callback to add some preferences it
+ *                 needs to be in place when other subsystems are initialized.
+ * @debug_ui_init: Called just after the debug subsystem is initialized, but
+ *                 before just about every other component's initialization. The
+ *                 UI should use this hook to call purple_debug_set_ui_ops() so
+ *                 that debugging information for other components can be logged
+ *                 during their initialization.
+ * @ui_init:       Called after all of libpurple has been initialized. The UI
+ *                 should use this hook to set all other necessary
+ *    <link linkend="chapter-ui-ops"><literal>UiOps structures</literal></link>.
+ * @quit:          Called after most of libpurple has been uninitialized.
+ * @get_ui_info:   Called by purple_core_get_ui_info(); should return the
+ *                 information documented there.
  *
  * Callbacks that fire at different points of the initialization and teardown
  * of libpurple, along with a hook to return descriptive information about the
  * UI.
  */
-typedef struct
+struct _PurpleCoreUiOps
 {
-	/** Called just after the preferences subsystem is initialized; the UI
-	 *  could use this callback to add some preferences it needs to be in
-	 *  place when other subsystems are initialized.
-	 */
 	void (*ui_prefs_init)(void);
-	/** Called just after the debug subsystem is initialized, but before
-	 *  just about every other component's initialization.  The UI should
-	 *  use this hook to call purple_debug_set_ui_ops() so that debugging
-	 *  information for other components can be logged during their
-	 *  initialization.
-	 */
 	void (*debug_ui_init)(void);
-	/** Called after all of libpurple has been initialized.  The UI should
-	 *  use this hook to set all other necessary UiOps structures.
-	 *
-	 *  @see @ref ui-ops
-	 */
 	void (*ui_init)(void);
-	/** Called after most of libpurple has been uninitialized. */
+
 	void (*quit)(void);
 
-	/** Called by purple_core_get_ui_info(); should return the information
-	 *  documented there.
-	 */
 	GHashTable* (*get_ui_info)(void);
 
 	/*< private >*/
@@ -73,7 +70,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleCoreUiOps;
+};
 
 G_BEGIN_DECLS
 
@@ -141,9 +138,10 @@ const char *purple_core_get_ui(void);
 /**
  * purple_get_core:
  *
- * Returns a handle to the purple core.
+ * This is used to connect to
+ * <link linkend="chapter-signals-core">core signals</link>.
  *
- * This is used to connect to @ref core-signals "core signals".
+ * Returns: A handle to the purple core.
  */
 PurpleCore *purple_get_core(void);
 

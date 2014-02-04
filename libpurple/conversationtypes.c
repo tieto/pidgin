@@ -31,35 +31,32 @@
 #define PURPLE_CHAT_CONVERSATION_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationPrivate))
 
-/** @copydoc _PurpleChatConversationPrivate */
 typedef struct _PurpleChatConversationPrivate     PurpleChatConversationPrivate;
 
 #define PURPLE_IM_CONVERSATION_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationPrivate))
 
-/** @copydoc _PurpleIMConversationPrivate */
 typedef struct _PurpleIMConversationPrivate       PurpleIMConversationPrivate;
 
 #define PURPLE_CHAT_USER_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CHAT_USER, PurpleChatUserPrivate))
 
-/** @copydoc _PurpleChatUserPrivate */
 typedef struct _PurpleChatUserPrivate  PurpleChatUserPrivate;
 
-/**
+/*
  * Data specific to Chats.
  */
 struct _PurpleChatConversationPrivate
 {
-	GList *in_room;     /**< The users in the room.
-	                         @deprecated Will be removed in 3.0.0 TODO */
-	GList *ignored;     /**< Ignored users.                            */
-	char  *who;         /**< The person who set the topic.             */
-	char  *topic;       /**< The topic.                                */
-	int    id;          /**< The chat ID.                              */
-	char *nick;         /**< Your nick in this chat.                   */
-	gboolean left;      /**< We left the chat and kept the window open */
-	GHashTable *users;  /**< Hash table of the users in the room.      */
+	GList *in_room;     /* The users in the room.
+	                       Deprecated: Will be removed in 3.0.0 TODO */
+	GList *ignored;     /* Ignored users.                            */
+	char  *who;         /* The person who set the topic.             */
+	char  *topic;       /* The topic.                                */
+	int    id;          /* The chat ID.                              */
+	char *nick;         /* Your nick in this chat.                   */
+	gboolean left;      /* We left the chat and kept the window open */
+	GHashTable *users;  /* Hash table of the users in the room.      */
 };
 
 /* Chat Property enums */
@@ -73,16 +70,16 @@ enum {
 	CHAT_PROP_LAST
 };
 
-/**
+/*
  * Data specific to Instant Messages.
  */
 struct _PurpleIMConversationPrivate
 {
-	PurpleIMTypingState typing_state;  /**< The current typing state.    */
-	guint  typing_timeout;             /**< The typing timer handle.     */
-	time_t type_again;                 /**< The type again time.         */
-	guint  send_typed_timeout;         /**< The type again timer handle. */
-	PurpleBuddyIcon *icon;             /**< The buddy icon.              */
+	PurpleIMTypingState typing_state;  /* The current typing state.    */
+	guint  typing_timeout;             /* The typing timer handle.     */
+	time_t type_again;                 /* The type again time.         */
+	guint  send_typed_timeout;         /* The type again timer handle. */
+	PurpleBuddyIcon *icon;             /* The buddy icon.              */
 };
 
 /* IM Property enums */
@@ -93,25 +90,25 @@ enum {
 	IM_PROP_LAST
 };
 
-/**
+/*
  * Data for "Chat Buddies"
  */
 struct _PurpleChatUserPrivate
 {
-	PurpleChatConversation *chat;  /**< The chat                              */
-	char *name;                    /**< The chat participant's name in the
-	                                    chat.                                 */
-	char *alias;                   /**< The chat participant's alias, if known;
-	                                    @a NULL otherwise.                    */
-	char *alias_key;               /**< A string by which this user will be
-	                                    sorted, or @c NULL if the user should be
-	                                    sorted by its @c name.
-	                                    (This is currently always @c NULL.    */
-	gboolean buddy;                /**< @a TRUE if this chat participant is on
-	                                    the buddy list; @a FALSE otherwise.   */
-	PurpleChatUserFlags flags;     /**< A bitwise OR of flags for this
-	                                    participant, such as whether they
-	                                    are a channel operator.               */
+	PurpleChatConversation *chat;  /* The chat                              */
+	char *name;                    /* The chat participant's name in the
+	                                  chat.                                 */
+	char *alias;                   /* The chat participant's alias, if known;
+	                                  NULL otherwise.                       */
+	char *alias_key;               /* A string by which this user will be
+	                                  sorted, or @c NULL if the user should be
+	                                  sorted by its @name.
+	                                  (This is currently always NULL.       */
+	gboolean buddy;                /* TRUE if this chat participant is on
+	                                  the buddy list; FALSE otherwise.      */
+	PurpleChatUserFlags flags;     /* A bitwise OR of flags for this
+	                                  participant, such as whether they
+	                                  are a channel operator.               */
 };
 
 /* Chat User Property enums */

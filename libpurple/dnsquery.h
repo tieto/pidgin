@@ -40,6 +40,7 @@
  * purple_dnsquery_get_host() and purple_dnsquery_get_port().
  */
 typedef struct _PurpleDnsQueryData PurpleDnsQueryData;
+typedef struct _PurpleDnsQueryUiOps PurpleDnsQueryUiOps;
 
 /**
  * PurpleDnsQueryConnectFunction:
@@ -66,24 +67,24 @@ typedef void  (*PurpleDnsQueryFailedCallback) (PurpleDnsQueryData *query_data, c
 
 /**
  * PurpleDnsQueryUiOps:
+ * @resolve_host: If implemented, return %TRUE if the UI takes responsibility
+ *                for DNS queries. When returning %FALSE, the standard
+ *                implementation is used.
+ * @destroy:      Called just before @query_data is freed; this should cancel
+ *                any further use of @query_data the UI would make. Unneeded if
+ *                @resolve_host is not implemented.
  *
  * DNS Request UI operations;  UIs should implement this if they want to do DNS
  * lookups themselves, rather than relying on the core.
  *
  * @see @ref ui-ops
  */
-typedef struct
+struct _PurpleDnsQueryUiOps
 {
-	/** If implemented, return TRUE if the UI takes responsibility for DNS
-	  * queries. When returning FALSE, the standard implementation is used. */
 	gboolean (*resolve_host)(PurpleDnsQueryData *query_data,
 	                         PurpleDnsQueryResolvedCallback resolved_cb,
 	                         PurpleDnsQueryFailedCallback failed_cb);
 
-	/** Called just before @query_data is freed; this should cancel any
-	 *  further use of @query_data the UI would make. Unneeded if
-	 *  #resolve_host is not implemented.
-	 */
 	void (*destroy)(PurpleDnsQueryData *query_data);
 
 	/*< private >*/
@@ -91,7 +92,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleDnsQueryUiOps;
+};
 
 G_BEGIN_DECLS
 

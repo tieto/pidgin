@@ -165,20 +165,20 @@ struct _PurpleConversation
 {
 	GObject gparent;
 
+	/*< public >*/
 	gpointer ui_data;
 };
 
 /**
  * PurpleConversationClass:
+ * @write_message: Writes a message to a chat or IM conversation. See
+ *                 purple_conversation_write_message().
  *
  * Base class for all #PurpleConversation's
  */
 struct _PurpleConversationClass {
 	GObjectClass parent_class;
 
-	/** Writes a message to a chat or IM conversation.
-	 *  @see purple_conversation_write_message()
-	 */
 	void (*write_message)(PurpleConversation *conv, const char *who,
 			const char *message, PurpleMessageFlags flags, time_t mtime);
 
@@ -199,43 +199,67 @@ struct _PurpleConversationClass {
 /**************************************************************************/
 /**
  * PurpleConversationUiOps:
+ * @create_conversation: Called when @conv is created (but before the
+ *   <link linkend="conversations-conversation-created"><literal>"conversation-created"</literal></link>
+ *                       signal is emitted).
+ * @destroy_conversation: Called just before @conv is freed.
+ * @write_chat: Write a message to a chat. If this field is %NULL, libpurple
+ *              will fall back to using @write_conv.
+ *              See purple_chat_conversation_write().
+ * @write_im: Write a message to an IM conversation. If this field is %NULL,
+ *            libpurple will fall back to using @write_conv.
+ *            See purple_im_conversation_write().
+ * @write_conv: Write a message to a conversation. This is used rather than the
+ *              chat- or im-specific ops for errors, system messages (such as "x
+ *              is now know as y"), and as the fallback if @write_im and
+ *              @write_chat are not implemented. It should be implemented, or
+ *              the UI will miss conversation error messages and your users will
+ *              hate you. See purple_conversation_write().
+ * @chat_add_users: Add @cbuddies to a chat.
+ *                  <sbr/>@cbuddies:     A GList of #PurpleChatUser structs.
+ *                  <sbr/>@new_arrivals: Whether join notices should be shown.
+ *                                       (Join notices are actually written to
+ *                                       the conversation by
+ *                                       purple_chat_conversation_add_users())
+ * @chat_rename_user: Rename the user in this chat named @old_name to @new_name.
+ *                    (The rename message is written to the conversation by
+ *                    libpurple.) See purple_chat_conversation_rename_user().
+ *                    <sbr/>@new_alias: @new_name's new alias, if they have one.
+ * @chat_remove_users: Remove @users from a chat @chat.
+ *                     See purple_chat_conversation_remove_users().
+ * @chat_update_user: Called when a user's flags are changed.
+ *                    See purple_chat_user_set_flags().
+ * @present: Present this conversation to the user; for example, by displaying
+ *           the IM dialog.
+ * @has_focus: If this UI has a concept of focus (as in a windowing system) and
+ *             this conversation has the focus, return %TRUE; otherwise, return
+ *             %FALSE.
+ * @custom_smiley_add: Add a custom smiley
+ * @custom_smiley_write: Write a custom smiley
+ * @custom_smiley_close: Close a custom smiley
+ * @send_confirm: Prompt the user for confirmation to send @message. This
+ *                function should arrange for the message to be sent if the user
+ *                accepts. If this field is %NULL, libpurple will fall back to
+ *                using purple_request_action().
  *
  * Conversation operations and events.
  *
  * Any UI representing a conversation must assign a filled-out
- * PurpleConversationUiOps structure to the PurpleConversation.
+ * #PurpleConversationUiOps structure to the #PurpleConversation.
  */
 struct _PurpleConversationUiOps
 {
-	/** Called when @conv is created (but before the @ref
-	 *  conversation-created signal is emitted).
-	 */
 	void (*create_conversation)(PurpleConversation *conv);
-
-	/** Called just before @conv is freed. */
 	void (*destroy_conversation)(PurpleConversation *conv);
-	/** Write a message to a chat.  If this field is %NULL, libpurple will
-	 *  fall back to using #write_conv.
-	 *  @see purple_chat_conversation_write()
-	 */
+
 	void (*write_chat)(PurpleChatConversation *chat, const char *who,
 	                  const char *message, PurpleMessageFlags flags,
 	                  time_t mtime);
-	/** Write a message to an IM conversation.  If this field is %NULL,
-	 *  libpurple will fall back to using #write_conv.
-	 *  @see purple_im_conversation_write()
-	 */
+
 	void (*write_im)(PurpleIMConversation *im, const char *who,
 	                 const char *message, PurpleMessageFlags flags,
 	                 time_t mtime);
-	/** Write a message to a conversation.  This is used rather than the
-	 *  chat- or im-specific ops for errors, system messages (such as "x is
-	 *  now know as y"), and as the fallback if #write_im and #write_chat
-	 *  are not implemented.  It should be implemented, or the UI will miss
-	 *  conversation error messages and your users will hate you.
-	 *
-	 *  @see purple_conversation_write()
-	 */
+
 	void (*write_conv)(PurpleConversation *conv,
 	                   const char *name,
 	                   const char *alias,
@@ -243,56 +267,26 @@ struct _PurpleConversationUiOps
 	                   PurpleMessageFlags flags,
 	                   time_t mtime);
 
-	/** Add @cbuddies to a chat.
-	 *  @cbuddies:      A GList of #PurpleChatUser structs.
-	 *  @new_arrivals:  Whether join notices should be shown.
-	 *                       (Join notices are actually written to the
-	 *                       conversation by
-	 *                       #purple_chat_conversation_add_users().)
-	 */
 	void (*chat_add_users)(PurpleChatConversation *chat,
 	                       GList *cbuddies,
 	                       gboolean new_arrivals);
-	/** Rename the user in this chat named @old_name to @new_name.  (The
-	 *  rename message is written to the conversation by libpurple.)
-	 *  @new_alias:  @new_name's new alias, if they have one.
-	 *  @see purple_chat_conversation_add_users()
-	 */
+
 	void (*chat_rename_user)(PurpleChatConversation *chat, const char *old_name,
 	                         const char *new_name, const char *new_alias);
-	/** Remove @users from a chat.
-	 *  @users:    A GList of <type>const char *</type>s.
-	 *  @see purple_chat_conversation_rename_user()
-	 */
+
 	void (*chat_remove_users)(PurpleChatConversation *chat, GList *users);
-	/** Called when a user's flags are changed.
-	 *  @see purple_chat_user_set_flags()
-	 */
+
 	void (*chat_update_user)(PurpleChatUser *cb);
 
-	/** Present this conversation to the user; for example, by displaying
-	 *  the IM dialog.
-	 */
 	void (*present)(PurpleConversation *conv);
-
-	/** If this UI has a concept of focus (as in a windowing system) and
-	 *  this conversation has the focus, return %TRUE; otherwise, return
-	 *  %FALSE.
-	 */
 	gboolean (*has_focus)(PurpleConversation *conv);
 
-	/* Custom Smileys */
 	gboolean (*custom_smiley_add)(PurpleConversation *conv, const char *smile,
 	                            gboolean remote);
 	void (*custom_smiley_write)(PurpleConversation *conv, const char *smile,
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(PurpleConversation *conv, const char *smile);
 
-	/** Prompt the user for confirmation to send @message.  This function
-	 *  should arrange for the message to be sent if the user accepts.  If
-	 *  this field is %NULL, libpurple will fall back to using
-	 *  #purple_request_action().
-	 */
 	void (*send_confirm)(PurpleConversation *conv, const char *message);
 
 	/*< private >*/
@@ -312,7 +306,7 @@ G_BEGIN_DECLS
 /**
  * purple_conversation_get_type:
  *
- * Returns the GType for the Conversation object.
+ * Returns: The #GType for the Conversation object.
  */
 GType purple_conversation_get_type(void);
 
@@ -766,7 +760,7 @@ gboolean purple_conversation_present_error(const char *who, PurpleAccount *accou
 /**
  * purple_conversation_message_get_type:
  *
- * Returns the GType for the PurpleConversationMessage boxed structure.
+ * Returns: The #GType for the #PurpleConversationMessage boxed structure.
  */
 GType purple_conversation_message_get_type(void);
 
