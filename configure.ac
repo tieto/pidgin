@@ -556,7 +556,7 @@ Use --without-x if you do not need X11 support.
 			else
 				if test "x$force_deps" = "xyes" ; then
 					AC_MSG_ERROR([
-XScreenSaver extension development headers not found.
+XScreenSaver extension development headers (libXScrnSaver-devel) not found.
 Use --disable-screensaver if you do not need XScreenSaver extension support,
 this is required for detecting idle time by mouse and keyboard usage.
 ])
