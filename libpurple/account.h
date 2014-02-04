@@ -107,6 +107,7 @@ struct _PurpleAccount
 {
 	GObject gparent;
 
+	/*< public >*/
 	gpointer ui_data;
 };
 
@@ -135,7 +136,7 @@ G_BEGIN_DECLS
 /**
  * purple_account_get_type:
  *
- * Returns the GType for the Account object.
+ * Returns: The #GType for the Account object.
  */
 GType purple_account_get_type(void);
 
@@ -452,6 +453,7 @@ void purple_account_set_privacy_type(PurpleAccount *account, PurpleAccountPrivac
 void purple_account_set_status_types(PurpleAccount *account, GList *status_types);
 
 /**
+ * purple_account_set_status:
  * @account:   The account.
  * @status_id: The ID of the status.
  * @active:    Whether @a status_id is to be activated (%TRUE) or

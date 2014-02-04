@@ -71,6 +71,7 @@ typedef struct _PurpleCountingNodeClass PurpleCountingNodeClass;
 struct _PurpleBlistNode {
 	GObject gparent;
 
+	/*< public >*/
 	PurpleBlistNode *prev;
 	PurpleBlistNode *next;
 	PurpleBlistNode *parent;
@@ -96,7 +97,6 @@ struct _PurpleBlistNodeClass {
 
 /**
  * PurpleCountingNode:
- * @node: The blist node that this counting node inherits from
  *
  * A node that keeps count of the number of children that it has. It tracks the
  * total number of children, the number of children corresponding to online
@@ -106,8 +106,7 @@ struct _PurpleBlistNodeClass {
  * 1. Contact: Keeps track of the number of buddies under it.
  * 2. Group:   Keeps track of the number of chats and contacts under it.
  *
- * @see PurpleContact
- * @see PurpleGroup
+ * See #PurpleContact, #PurpleGroup
  */
 struct _PurpleCountingNode {
 	PurpleBlistNode node;
@@ -138,7 +137,7 @@ G_BEGIN_DECLS
 /**
  * purple_blist_node_get_type:
  *
- * Returns the GType for the PurpleBlistNode object.
+ * Returns: The #GType for the #PurpleBlistNode object.
  */
 GType purple_blist_node_get_type(void);
 
@@ -356,7 +355,7 @@ gboolean purple_blist_node_is_transient(PurpleBlistNode *node);
 
 /**
  * purple_blist_node_get_extended_menu:
- * @n The blist node for which to obtain the extended menu items.
+ * @n: The blist node for which to obtain the extended menu items.
  *
  * Retrieves the extended menu items for a buddy list node.
  *
@@ -375,7 +374,7 @@ GList *purple_blist_node_get_extended_menu(PurpleBlistNode *n);
 /**
  * purple_counting_node_get_type:
  *
- * Returns the GType for the PurpleCountingNode object.
+ * Returns: The #GType for the #PurpleCountingNode object.
  */
 GType purple_counting_node_get_type(void);
 

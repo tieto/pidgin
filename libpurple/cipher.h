@@ -182,7 +182,7 @@ G_BEGIN_DECLS
 /**
  * purple_cipher_get_type:
  *
- * Returns the GType for the Cipher object.
+ * Returns: The #GType for the Cipher object.
  */
 GType purple_cipher_get_type(void);
 
@@ -355,7 +355,7 @@ size_t purple_cipher_get_block_size(PurpleCipher *cipher);
 /**
  * purple_hash_get_type:
  *
- * Returns the GType for the Hash object.
+ * Returns: The #GType for the Hash object.
  */
 GType purple_hash_get_type(void);
 

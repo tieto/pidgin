@@ -59,6 +59,7 @@ typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 struct _PurpleBuddyList {
 	GObject gparent;
 
+	/*< public >*/
 	PurpleBlistNode *root;
 	gpointer ui_data;
 };
@@ -80,6 +81,43 @@ struct _PurpleBuddyListClass {
 
 /**
  * PurpleBlistUiOps:
+ * @new_list:     Sets UI-specific data on a buddy list.
+ * @new_node:     Sets UI-specific data on a node.
+ * @show:         The core will call this when it's finished doing its core
+ *                stuff
+ * @update:       This will update a node in the buddy list.
+ * @remove:       This removes a node from the list
+ * @destroy:      When the list is destroyed, this is called to destroy the UI.
+ * @set_visible:  Hides or unhides the buddy list
+ * @save_node:    This is called when a node has been modified and should be
+ *                saved.
+ *                <sbr/>Implementation of this UI op is
+ *                <emphasis>OPTIONAL</emphasis>. If not implemented, it will be
+ *                set to a fallback function that saves data to
+ *                <filename>blist.xml</filename> like in previous libpurple
+ *                versions.
+ *                <sbr/>@node: The node which has been modified.
+ * @remove_node:  Called when a node is about to be removed from the buddy list.
+ *                The UI op should update the relevant data structures to remove
+ *                this node (for example, removing a buddy from the group this
+ *                node is in).
+ *                <sbr/>Implementation of this UI op is
+ *                <emphasis>OPTIONAL</emphasis>. If not implemented,
+ *                it will be set to a fallback function that saves data to
+ *                <filename>blist.xml</filename> like in previous libpurple
+ *                versions.
+ *                <sbr/>@node: The node which has been modified.
+ * @save_account: Called to save all the data for an account. If the UI sets
+ *                this, the callback must save the privacy and buddy list data
+ *                for an account. If the account is %NULL, save the data for all
+ *                accounts.
+ *                <sbr/>Implementation of this UI op is
+ *                <emphasis>OPTIONAL</emphasis>. If not implemented, it will be
+ *                set to a fallback function that saves data to
+ *                <filename>blist.xml</filename> like in previous
+ *                libpurple versions.
+ *                <sbr/>@account: The account whose data to save. If %NULL,
+ *                                save all data for all accounts.
  *
  * Buddy list UI operations.
  *
@@ -88,58 +126,25 @@ struct _PurpleBuddyListClass {
  */
 struct _PurpleBlistUiOps
 {
-	void (*new_list)(PurpleBuddyList *list); /**< Sets UI-specific data on a buddy list. */
-	void (*new_node)(PurpleBlistNode *node); /**< Sets UI-specific data on a node. */
-	void (*show)(PurpleBuddyList *list);     /**< The core will call this when it's finished doing its core stuff */
-	void (*update)(PurpleBuddyList *list,
-		       PurpleBlistNode *node);       /**< This will update a node in the buddy list. */
-	void (*remove)(PurpleBuddyList *list,
-		       PurpleBlistNode *node);       /**< This removes a node from the list */
-	void (*destroy)(PurpleBuddyList *list);  /**< When the list is destroyed, this is called to destroy the UI. */
-	void (*set_visible)(PurpleBuddyList *list,
-			    gboolean show);            /**< Hides or unhides the buddy list */
+	void (*new_list)(PurpleBuddyList *list);
+	void (*new_node)(PurpleBlistNode *node);
+	void (*show)(PurpleBuddyList *list);
+	void (*update)(PurpleBuddyList *list, PurpleBlistNode *node);
+	void (*remove)(PurpleBuddyList *list, PurpleBlistNode *node);
+	void (*destroy)(PurpleBuddyList *list);
+	void (*set_visible)(PurpleBuddyList *list, gboolean show);
+
 	void (*request_add_buddy)(PurpleAccount *account, const char *username,
 							  const char *group, const char *alias);
+
 	void (*request_add_chat)(PurpleAccount *account, PurpleGroup *group,
 							 const char *alias, const char *name);
+
 	void (*request_add_group)(void);
 
-	/**
-	 * This is called when a node has been modified and should be saved.
-	 *
-	 * Implementation of this UI op is OPTIONAL. If not implemented, it will
-	 * be set to a fallback function that saves data to blist.xml like in
-	 * previous libpurple versions.
-	 *
-	 * @node:    The node which has been modified.
-	 */
 	void (*save_node)(PurpleBlistNode *node);
-
-	/**
-	 * Called when a node is about to be removed from the buddy list.
-	 * The UI op should update the relevant data structures to remove this
-	 * node (for example, removing a buddy from the group this node is in).
-	 *
-	 * Implementation of this UI op is OPTIONAL. If not implemented, it will
-	 * be set to a fallback function that saves data to blist.xml like in
-	 * previous libpurple versions.
-	 *
-	 * @node:  The node which has been modified.
-	 */
 	void (*remove_node)(PurpleBlistNode *node);
 
-	/**
-	 * Called to save all the data for an account. If the UI sets this,
-	 * the callback must save the privacy and buddy list data for an account.
-	 * If the account is NULL, save the data for all accounts.
-	 *
-	 * Implementation of this UI op is OPTIONAL. If not implemented, it will
-	 * be set to a fallback function that saves data to blist.xml like in
-	 * previous libpurple versions.
-	 *
-	 * @account:  The account whose data to save. If NULL, save all data
-	 *                  for all accounts.
-	 */
 	void (*save_account)(PurpleAccount *account);
 
 	/*< private >*/
@@ -159,7 +164,7 @@ G_BEGIN_DECLS
 /**
  * purple_buddy_list_get_type:
  *
- * Returns the GType for the PurpleBuddyList object.
+ * Returns: The #GType for the #PurpleBuddyList object.
  */
 GType purple_buddy_list_get_type(void);
 
@@ -229,8 +234,8 @@ void purple_blist_set_visible(gboolean show);
 
 /**
  * purple_blist_update_buddies_cache:
- * @buddy:  The buddy whose name will be changed.
- * @name:   The new name of the buddy.
+ * @buddy:    The buddy whose name will be changed.
+ * @new_name: The new name of the buddy.
  *
  * Updates the buddies hash table when a buddy has been renamed. This only
  * updates the cache, the caller is responsible for the actual renaming of
@@ -240,8 +245,8 @@ void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name)
 
 /**
  * purple_blist_update_groups_cache:
- * @group:  The group whose name will be changed.
- * @name:   The new name of the group.
+ * @group:    The group whose name will be changed.
+ * @new_name: The new name of the group.
  *
  * Updates the groups hash table when a group has been renamed. This only
  * updates the cache, the caller is responsible for the actual renaming of
@@ -430,11 +435,11 @@ void purple_blist_remove_account(PurpleAccount *account);
 /**
  * purple_blist_schedule_save:
  *
- * Schedule a save of the blist.xml file.  This is used by the privacy
- * API whenever the privacy settings are changed.  If you make a change
- * to blist.xml using one of the functions in the buddy list API, then
- * the buddy list is saved automatically, so you should not need to
- * call this.
+ * Schedule a save of the <filename>blist.xml</filename> file.  This is used by
+ * the account API whenever the privacy settings are changed.  If you make a
+ * change to <filename>blist.xml</filename> using one of the functions in the
+ * buddy list API, then the buddy list is saved automatically, so you should not
+ * need to call this.
  */
 void purple_blist_schedule_save(void);
 

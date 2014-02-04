@@ -56,7 +56,7 @@ G_BEGIN_DECLS
 /**
  * purple_buddy_icon_get_type:
  *
- * Returns the GType for the PurpleBuddyIcon boxed structure.
+ * Returns: The #GType for the #PurpleBuddyIcon boxed structure.
  */
 GType purple_buddy_icon_get_type(void);
 

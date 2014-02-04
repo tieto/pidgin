@@ -36,38 +36,42 @@ typedef struct _PurpleAccountUiOps  PurpleAccountUiOps;
 
 /**
  * PurpleAccountUiOps:
+ * @notify_added:          A buddy who is already on this account's buddy list
+ *                         added this account to their buddy list.
+ * @status_changed:        This account's status changed.
+ * @request_add:           Someone we don't have on our list added us; prompt
+ *                         to add them.
+ * @request_authorize:     Prompt for authorization when someone adds this
+ *                         account to their buddy list.  To authorize them to
+ *                         see this account's presence, call
+ *                         @authorize_cb (@message, @user_data) otherwise call
+ *                         @deny_cb (@message, @user_data).
+ *                         <sbr/>Returns: A UI-specific handle, as passed to
+ *                         @close_account_request.
+ * @close_account_request: Close a pending request for authorization.
+ *                         @ui_handle is a handle as returned by
+ *                         @request_authorize.
  *
  * Account UI operations, used to notify the user of status changes and when
  * buddies add this account to their buddy lists.
  */
 struct _PurpleAccountUiOps
 {
-	/** A buddy who is already on this account's buddy list added this account
-	 *  to their buddy list.
-	 */
 	void (*notify_added)(PurpleAccount *account,
 	                     const char *remote_user,
 	                     const char *id,
 	                     const char *alias,
 	                     const char *message);
 
-	/** This account's status changed. */
 	void (*status_changed)(PurpleAccount *account,
 	                       PurpleStatus *status);
 
-	/** Someone we don't have on our list added us; prompt to add them. */
 	void (*request_add)(PurpleAccount *account,
 	                    const char *remote_user,
 	                    const char *id,
 	                    const char *alias,
 	                    const char *message);
 
-	/** Prompt for authorization when someone adds this account to their buddy
-	 * list.  To authorize them to see this account's presence, call \a
-	 * authorize_cb (\a message, \a user_data); otherwise call
-	 * \a deny_cb (\a message, \a user_data);
-	 * Returns: a UI-specific handle, as passed to #close_account_request.
-	 */
 	void *(*request_authorize)(PurpleAccount *account,
 	                           const char *remote_user,
 	                           const char *id,
@@ -78,9 +82,6 @@ struct _PurpleAccountUiOps
 	                           PurpleAccountRequestAuthorizationCb deny_cb,
 	                           void *user_data);
 
-	/** Close a pending request for authorization.  \a ui_handle is a handle
-	 *  as returned by #request_authorize.
-	 */
 	void (*close_account_request)(void *ui_handle);
 
 	void (*permit_added)(PurpleAccount *account, const char *name);
