@@ -46,12 +46,10 @@ typedef enum {
 JabberID* jabber_id_new(const char *str);
 
 /**
- * Compare two JIDs for equality.
- *
- * Warning: If either JID is NULL then this function uses the user's
- * bare JID, instead!
+ * Compare two JIDs for equality. In addition to the node and domain,
+ * the resources of the two JIDs must also be equal (or both absent).
  */
-gboolean jabber_id_equal(JabberStream *js, const JabberID *jid1, const JabberID *jid2);
+gboolean jabber_id_equal(const JabberID *jid1, const JabberID *jid2);
 
 void jabber_id_free(JabberID *jid);
 

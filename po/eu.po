@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2009-08-29 23:23+0200\n"
 "Last-Translator: Mikel Pascual Aldabaldetreku <mikel.paskual@gmail.com>\n"
 "Language-Team:  <en@li.org>\n"
@@ -2049,56 +2049,8 @@ msgstr "Errorea fitxategia hona bidaltzean: %s"
 msgid "File transfer from %s failed."
 msgstr "Errorea fitxategia hemendik jasotzean: %s"
 
-msgid "Run the command in a terminal"
-msgstr "Terminalean exekutatu agindua"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URLen kudeatzailea"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URLen kudeatzailea"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URLen kudeatzailea"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URLen kudeatzailea"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLen kudeatzailea"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URLen kudeatzailea"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URLen kudeatzailea"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLen kudeatzailea"
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ea zehaztutako aginduak \"aim\" URLak kudeatu beharko lituzkeen"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2107,54 +2059,14 @@ msgstr ""
 "Egia, \"agindua\" gakoan zehaztutako aginduak \"aim\" URLak kudeatu beharko "
 "balitu"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"gg\" URLak kudeatu beharko "
-"balitu"
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URLen kudeatzailea"
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"icq\" URLak kudeatu beharko "
-"balitu"
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"irc\" URLak kudeatu beharko "
-"balitu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"msnim\" URLak kudeatu "
-"beharko balitu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"sip\" URLak kudeatu beharko "
-"balitu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"xmpp\" URLak kudeatu beharko "
-"balitu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"ymsgr\" URLak kudeatu "
-"beharko balitu"
+msgid "Run the command in a terminal"
+msgstr "Terminalean exekutatu agindua"
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2163,29 +2075,117 @@ msgstr ""
 "Egia, URL-mota hau kudeatzeko erabilitako agindua terminalean exekutatu "
 "beharko balitz"
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ea zehaztutako aginduak \"aim\" URLak kudeatu beharko lituzkeen"
-
 msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr "Ea zehaztutako aginduak \"gg\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"gg\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URLen kudeatzailea"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URLak kudeatzeko erabilitako agindua, gaituz gero."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr "Ea zehaztutako aginduak \"icq\" URLak kudeatu beharko lituzkeen"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"icq\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URLen kudeatzailea"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
 msgid "Whether the specified command should handle \"irc\" URLs"
 msgstr "Ea zehaztutako aginduak \"irc\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"irc\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URLen kudeatzailea"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URLak kudeatzeko erabilitako agindua, gaituz gero."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr "Ea zehaztutako aginduak \"msnim\" URLak kudeatu beharko lituzkeen"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"msnim\" URLak kudeatu "
+"beharko balitu"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URLen kudeatzailea"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Ea zehaztutako aginduak \"sip\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"sip\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URLen kudeatzailea"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URLak kudeatzeko erabilitako agindua, gaituz gero."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr "Ea zehaztutako aginduak \"xmpp\" URLak kudeatu beharko lituzkeen"
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"xmpp\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URLen kudeatzailea"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
 msgstr "Ea zehaztutako aginduak \"ymsgr\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"ymsgr\" URLak kudeatu "
+"beharko balitu"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URLen kudeatzailea"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URLak kudeatzeko erabilitako agindua, gaituz gero."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2247,6 +2247,10 @@ msgstr ""
 "hobespenak."
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Farsight2-errore berreskuraezina bat gertatu da."
+
+#, fuzzy
+msgid "A non-recoverable Farstream error has occurred."
 msgstr "Farsight2-errore berreskuraezina bat gertatu da."
 
 #, fuzzy
@@ -3052,12 +3056,6 @@ msgstr ""
 "Zehaztutako proxy-motarentzat, baliogabeak dira emandako ostalari-izena edo "
 "ataka-zenbakia."
 
-msgid "Token Error"
-msgstr "Testigu-Errorea"
-
-msgid "Unable to fetch the token.\n"
-msgstr "Ezin testigua eskuratu.\n"
-
 msgid "Save Buddylist..."
 msgstr "Lagun-Zerrenda Gorde..."
 
@@ -3085,39 +3083,6 @@ msgstr "Lagun-zerrenda gorde..."
 
 msgid "Load buddylist from file..."
 msgstr "Fitxategitik kargatu lagun-zerrenda..."
-
-msgid "You must fill in all registration fields"
-msgstr "Erregistro-eremu guztiak bete behar dituzu"
-
-msgid "Passwords do not match"
-msgstr "Pasahitzak ez datoz bat"
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Ezin kontu berria erregistratu. Errore ezezaguna gertatu da."
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr "Gadu-Gadu Kontu Berria Erregistratua"
-
-msgid "Registration completed successfully!"
-msgstr "Arrakastaz burutu da erregistroa!"
-
-msgid "Password"
-msgstr "Pasahitza"
-
-msgid "Password (again)"
-msgstr "Pasahitza (berriro)"
-
-msgid "Enter captcha text"
-msgstr "Captcha testua sartu"
-
-msgid "Captcha"
-msgstr "Captcha"
-
-msgid "Register New Gadu-Gadu Account"
-msgstr "Gadu-Gadu Kontu Berria Erregistratu"
-
-msgid "Please, fill in the following fields"
-msgstr "Ondorengo eremuak bete itzazu"
 
 msgid "City"
 msgstr "Herria"
@@ -3147,41 +3112,6 @@ msgstr "Lagunak bilatu"
 
 msgid "Please, enter your search criteria below"
 msgstr "Azpian sar itzazu zure bilaketaren irizpideak"
-
-msgid "Fill in the fields."
-msgstr "Eremuak bete itzazu."
-
-msgid "Your current password is different from the one that you specified."
-msgstr "Zure pasahitza ez da zehaztu duzuna."
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr "Ezin pasahitza aldatu. Errorea gertatu da.\n"
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr "Gadu-Gadu kontuaren pasahitza aldatu"
-
-msgid "Password was changed successfully!"
-msgstr "Arrakastaz aldatu da pasahitza!"
-
-msgid "Current password"
-msgstr "Oraingo pasahitza"
-
-msgid "Password (retype)"
-msgstr "Pasahitza (berriro)"
-
-# , fuzzy
-msgid "Enter current token"
-msgstr "Oraingo lekukoa sartu"
-
-# , fuzzy
-msgid "Current token"
-msgstr "Oraingo lekukoa"
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Zure UIN-arentzako oraingo pasahitza eta pasahitz berria sar itzazu:"
-
-msgid "Change Gadu-Gadu Password"
-msgstr "Gadu-Gadu Pasahitza Aldatu"
 
 #, fuzzy
 msgid "Show status to:"
@@ -3258,18 +3188,6 @@ msgstr "Ez dago zure irizpideak betetzen dituen erabiltzailerik."
 msgid "Unable to read from socket"
 msgstr "Ezin socket-etik irakurri"
 
-msgid "Buddy list downloaded"
-msgstr "Lagun-zerrenda deskargatuta"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr "Zerbitzaritik deskargatu da zure lagun-zerrenda."
-
-msgid "Buddy list uploaded"
-msgstr "Lagun-zerrenda igota"
-
-msgid "Your buddy list was stored on the server."
-msgstr "Zerbitzarian gorde da zure lagun-zerrenda."
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3305,18 +3223,6 @@ msgstr "Zerbitzaritik deskonektatuta zaude"
 
 msgid "Find buddies..."
 msgstr "Lagunak bilatu..."
-
-msgid "Change password..."
-msgstr "Pasahitza aldatu..."
-
-msgid "Upload buddylist to Server"
-msgstr "Lagun-Zerrenda Zerbitzarira igo"
-
-msgid "Download buddylist from Server"
-msgstr "Lagun-Zerrenda Zerbitzaritik deskargatu"
-
-msgid "Delete buddylist from Server"
-msgstr "Lagun-Zerrenda Zerbitzaritik ezabatu"
 
 msgid "Save buddylist to file..."
 msgstr "Lagun-Zerrenda fitxategian gorde..."
@@ -3425,7 +3331,6 @@ msgstr "Ezin konektatu"
 msgid "Unable to connect: %s"
 msgstr "Ezin konektatu: %s"
 
-#, c-format
 msgid "Server closed the connection"
 msgstr "Zerbitzariak amaituarazi du konexioa"
 
@@ -3464,6 +3369,10 @@ msgstr "Kodeketak"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Sarrerako UTF-8a autodetektatu"
 
+#, fuzzy
+msgid "Ident name"
+msgstr "Pantaila-izena:"
+
 msgid "Real name"
 msgstr "Benetako izena"
 
@@ -3473,6 +3382,14 @@ msgstr "Benetako izena"
 #.
 msgid "Use SSL"
 msgstr "SSL Erabili"
+
+#, fuzzy
+msgid "Authenticate with SASL"
+msgstr "Balioztatzen"
+
+#, fuzzy
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr "Enkriptatu gabeko jarioen bidezko testu-arrunt balioztatzea onartu"
 
 msgid "Bad mode"
 msgstr "Modu okerra"
@@ -3508,6 +3425,14 @@ msgstr " <i>(identifikatuta)</i>"
 msgid "Nick"
 msgstr "Ezizena"
 
+#, fuzzy
+msgid "Login name"
+msgstr "Izenik ez"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Ostalaria"
+
 msgid "Currently on"
 msgstr "Orain hemen: "
 
@@ -3534,6 +3459,10 @@ msgstr "%s(e)k gaia garbitu du."
 #, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s(e)ko gaia: %s"
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
+msgstr ""
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3648,6 +3577,33 @@ msgstr "Ezizena edo kanala ez dago eskuragarri oraintxe."
 #, c-format
 msgid "Wallops from %s"
 msgstr "%s(r)en astinduak"
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Ezin SILC Bezeroaren konexioa hasieratu"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Errorea SASL balioztatzean"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Errorea SASL balioztatzean"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Okerreko pasahitza."
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Errorea SASL balioztatzean"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;burutuko den ekintza&gt;:  Wkintza bat burutu."
@@ -4319,6 +4275,9 @@ msgstr "Data"
 msgid "Already Registered"
 msgstr "Dagoeneko Erregistratuta"
 
+msgid "Password"
+msgstr "Pasahitza"
+
 msgid "Unregister"
 msgstr "Deserregistratu"
 
@@ -4453,6 +4412,9 @@ msgstr "Zure pasahitza aldatu da."
 
 msgid "Error changing password"
 msgstr "Errorea pasahitza aldatzean"
+
+msgid "Password (again)"
+msgstr "Pasahitza (berriro)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP-Pasahitza Aldatu"
@@ -4678,6 +4640,10 @@ msgstr "Ezin multimedia hasiarazi %s(r)ekin: JID baliogabea"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Ezin multimedia hasiarazi %s(r)ekin: erabiltzailea ez dago konektatuta"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Ezin multimedia hasiarazi %s(r)ekin: erabiltzailea ez dago konektatuta"
 
 #, c-format
@@ -6128,6 +6094,11 @@ msgstr "Niri buruz"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Egoera Ezabatu"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6244,6 +6215,16 @@ msgstr "Niri buruz"
 #, fuzzy
 msgid "The file you are trying to send is too large!"
 msgstr "Mezua luzeegia da."
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Ezin plugina kargatu"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Ezin fitxategia ireki."
 
 #, fuzzy
 msgid ""
@@ -6378,11 +6359,6 @@ msgstr "Bidalitako Mezuak"
 msgid "Rejection Message"
 msgstr "Jasotako Mezuak"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Bigarren Izena"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "Eskuragaitz"
@@ -6411,6 +6387,37 @@ msgid "Connect via HTTP"
 msgstr "TCP bidez konektatu"
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+#, fuzzy
+msgid "Single"
+msgstr "Ping"
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+#, fuzzy
+msgid "Married"
+msgstr "Aspertuta"
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "Gonbidatu"
+
+msgid "Widowed"
+msgstr ""
+
+#, fuzzy
+msgid "Separated"
+msgstr "Departamentua"
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6479,6 +6486,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP Mezu Errorea"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -9998,7 +10009,6 @@ msgstr ""
 "Zure kontua blokeatua izan da, konexio-saiakera gehiegi hutsegin direlako.   "
 "Yahoo! webgunean konektatuz konpon liteke."
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr "52 errore ezezaguna.  Berriro konektatzean konpondu beharko litzateke."
 
@@ -10649,15 +10659,15 @@ msgstr ""
 "Errore bat aurkitu da zure %s irakurtzean.  Ez da fitxategia kargatu, eta "
 "fitxategi zaharra berrizendatu da: %s~."
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgid "Pidgin Internet Messenger"
+msgstr "Pidgin Internet-Mezularia"
 
 msgid "Internet Messenger"
 msgstr "Internet-Mezularia"
 
-msgid "Pidgin Internet Messenger"
-msgstr "Pidgin Internet-Mezularia"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11710,6 +11720,14 @@ msgstr "Irakurri Gabeko Mezuak"
 msgid "New Event"
 msgstr "Gertaera Berria "
 
+#, fuzzy
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+"Kontua deskonektatu egin da eta jadanik ez zaude berriketa honetan. "
+"Automatikoki batuko zara berriketara, kontua berkonektatu bezain laster."
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Solasaldiak garbitu."
 
@@ -11815,7 +11833,8 @@ msgstr "webmaster-a"
 msgid "win32 port"
 msgstr "win32 bertsioa"
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
@@ -11853,6 +11872,9 @@ msgstr "Arabiera"
 #, fuzzy
 msgid "Assamese"
 msgstr "Lotsatuta"
+
+msgid "Asturian"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr ""
@@ -11981,6 +12003,9 @@ msgstr "Kurduera"
 msgid "Lao"
 msgstr "Laoera"
 
+msgid "Lithuanian"
+msgstr "Lituaniera"
+
 #, fuzzy
 msgid "Maithili"
 msgstr "Swahili"
@@ -12006,6 +12031,9 @@ msgstr "Gujaratera"
 #, fuzzy
 msgid "Malay"
 msgstr "Gizonezkoa"
+
+msgid "Burmese"
+msgstr ""
 
 msgid "Bokmål Norwegian"
 msgstr "Bokmål Norvegiera"
@@ -12061,6 +12089,10 @@ msgstr "Albaniera"
 msgid "Serbian"
 msgstr "Serbiera"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Serbiera"
+
 msgid "Sinhala"
 msgstr "Zingaliera"
 
@@ -12079,9 +12111,6 @@ msgstr "Teluguera"
 msgid "Thai"
 msgstr "Thaiera"
 
-msgid "Turkish"
-msgstr "Turkiera"
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "Armeniera"
@@ -12091,9 +12120,6 @@ msgstr "Urdu"
 
 msgid "Vietnamese"
 msgstr "Vietnamera"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh eta Gnome-Vi Taldea"
 
 msgid "Simplified Chinese"
 msgstr "Txinera Sinplifikatua"
@@ -12107,8 +12133,11 @@ msgstr "Txinera Tradizionala"
 msgid "Amharic"
 msgstr "Amharera"
 
-msgid "Lithuanian"
-msgstr "Lituaniera"
+msgid "Turkish"
+msgstr "Turkiera"
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
+msgstr "T.M.Thanh eta Gnome-Vi Taldea"
 
 #, fuzzy, c-format
 msgid ""
@@ -12136,7 +12165,7 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12839,6 +12868,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
 "Arakatzailearen 'Eskuz' komandoa aukeratu da, baina ez da komandorik ezarri."
+
+#, fuzzy
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
+msgstr "Baliogabea da arakatzailearen <b>\"%s\"</b> agindua."
 
 msgid "No message"
 msgstr "Mezurik ez"
@@ -13846,11 +13879,11 @@ msgstr "Pidgin Aholkua"
 msgid "Pidgin smileys"
 msgstr "Pidgin smiley-ak"
 
-msgid "Selecting this disables graphical emoticons."
-msgstr "Hau hautatzean, emotikono grafikoak ezgaituko dira."
-
 msgid "none"
 msgstr "batere ez"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr "Hau hautatzean, emotikono grafikoak ezgaituko dira."
 
 msgid "Small"
 msgstr "Txikia"
@@ -14810,7 +14843,7 @@ msgstr "iChat moduko ordu-markak erakutsi N minututo"
 msgid "Timestamp Format Options"
 msgstr "Ordu-marka Formatu Aukerak"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Force timestamp format:"
 msgstr "24 _orduko ordu-formatua behartu"
 
@@ -14863,6 +14896,63 @@ msgid ""
 msgstr ""
 "Plugin honi esker, erabiltzaileak elkarrizketen eta txosten-mezuen ordu-"
 "marken formatua pertsonalizatu dezake."
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Solasaldien Ikurrak"
+
+#, fuzzy
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr "\t_Norbaitek zure erabiltzaile-izena aipatzean"
+
+#. Launcher integration
+#, fuzzy
+msgid "Launcher Icon"
+msgstr "Ikonoa Gorde"
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Leiho bakoitzeko solasaldi kopurua"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "Mezua bidali da"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution Integrazioa"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Evolution-ekin integratzea ahalbidetzen du."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Evolution-ekin integratzea ahalbidetzen du."
 
 msgid "Audio"
 msgstr "Audio"
@@ -15049,6 +15139,18 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "XMPP zerbitzariak edo bezeroak arazteko erabilgarria da plugin hau."
 
+msgid "The installer is already running."
+msgstr "Instalatzailea martxan dago."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin istantzia bat dago martxan. Pidgin itxi eta berriro saiatu."
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Jarraitu >"
+
 #. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
@@ -15057,47 +15159,80 @@ msgstr ""
 "GNU Lizentzia Orokor Publikopean (GPL) argitaratzen da $(^Name). "
 "Informatzeko helburu soilarekin aurkezten da hemen lizentzia. $_CLICK"
 
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Plataforma anitzeko GUI tresna-sorta, Pidgin-ek erabilia"
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Istanteko Mezularitza Bezeroa (beharrezkoa)"
 
-msgid ""
-"An instance of Pidgin is currently running.  Please exit Pidgin and try "
-"again."
-msgstr "Pidgin istantzia bat dago martxan. Pidgin itxi eta berriro saiatu."
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ exekuzio ingurunea (beharrezkoa)"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Lasterbideak"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Mahaigaina"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Abio-menua"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Kokalekua"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Funtsezko Pidgin fitxategi eta dll-ak"
 
 #. Installer Subsection Detailed Description
-msgid "Create a Start Menu entry for Pidgin"
-msgstr "Pidgin-entzako lasterbidea Abio-Menuan"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Pidgin abiarazteko lasterbideak"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Pidgin-entzako lasterbidea Mahaigainean"
 
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Pidgin-entzako lasterbidea Abio-Menuan"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Plataforma anitzeko GUI tresna-sorta, Pidgin-ek erabilia"
+
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Pidgin Webgunera etorri"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Ezin izan da jadanik instalatuta zegoen Pidgin bertsioa kendu. Aurreko "
+"bertsioa kendu gabe instalatuko da bertsio berria."
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
 #. Installer Subsection Text
-msgid "Desktop"
-msgstr "Mahaigaina"
+msgid "URI Handlers"
+msgstr "URI Kudeatzaileak"
 
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
-msgstr ""
-
-#. $R2 will display the URL that the Debug Symbols failed to download from
-msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
-msgstr ""
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Zuzentzaile Ortografikoa"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -15107,53 +15242,23 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ exekuzio ingurunea (beharrezkoa)"
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Kokalekua"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr "Jarraitu >"
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Istanteko Mezularitza Bezeroa (beharrezkoa)"
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Shortcuts"
-msgstr "Lasterbideak"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr "Pidgin abiarazteko lasterbideak"
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr "Zuzentzaile Ortografikoa"
-
-#. Installer Subsection Text
-msgid "Start Menu"
-msgstr "Abio-menua"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Zuzentzaile Ortografikoa.  (Internet konexioa behar du instalatzeko)"
 
-msgid "The installer is already running."
-msgstr "Instalatzailea martxan dago."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
@@ -15162,23 +15267,105 @@ msgstr ""
 "Ezin izan dira Pidgin-en erregistro-sarrerak aurkitu.$\\rZiurrenik, beste "
 "erabiltzaile batek instalatu zuen aplikazio hau."
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr "URI Kudeatzaileak"
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-"Ezin izan da jadanik instalatuta zegoen Pidgin bertsioa kendu. Aurreko "
-"bertsioa kendu gabe instalatuko da bertsio berria."
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr "Pidgin Webgunera etorri"
-
 msgid "You do not have permission to uninstall this application."
 msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
+
+#~ msgid "Token Error"
+#~ msgstr "Testigu-Errorea"
+
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Ezin testigua eskuratu.\n"
+
+#~ msgid "You must fill in all registration fields"
+#~ msgstr "Erregistro-eremu guztiak bete behar dituzu"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Pasahitzak ez datoz bat"
+
+#~ msgid "Unable to register new account.  An unknown error occurred."
+#~ msgstr "Ezin kontu berria erregistratu. Errore ezezaguna gertatu da."
+
+#~ msgid "New Gadu-Gadu Account Registered"
+#~ msgstr "Gadu-Gadu Kontu Berria Erregistratua"
+
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Arrakastaz burutu da erregistroa!"
+
+#~ msgid "Enter captcha text"
+#~ msgstr "Captcha testua sartu"
+
+#~ msgid "Captcha"
+#~ msgstr "Captcha"
+
+#~ msgid "Register New Gadu-Gadu Account"
+#~ msgstr "Gadu-Gadu Kontu Berria Erregistratu"
+
+#~ msgid "Please, fill in the following fields"
+#~ msgstr "Ondorengo eremuak bete itzazu"
+
+#~ msgid "Fill in the fields."
+#~ msgstr "Eremuak bete itzazu."
+
+#~ msgid "Your current password is different from the one that you specified."
+#~ msgstr "Zure pasahitza ez da zehaztu duzuna."
+
+#~ msgid "Unable to change password. Error occurred.\n"
+#~ msgstr "Ezin pasahitza aldatu. Errorea gertatu da.\n"
+
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "Gadu-Gadu kontuaren pasahitza aldatu"
+
+#~ msgid "Password was changed successfully!"
+#~ msgstr "Arrakastaz aldatu da pasahitza!"
+
+#~ msgid "Current password"
+#~ msgstr "Oraingo pasahitza"
+
+#~ msgid "Password (retype)"
+#~ msgstr "Pasahitza (berriro)"
+
+# , fuzzy
+#~ msgid "Enter current token"
+#~ msgstr "Oraingo lekukoa sartu"
+
+# , fuzzy
+#~ msgid "Current token"
+#~ msgstr "Oraingo lekukoa"
+
+#~ msgid "Please, enter your current password and your new password for UIN: "
+#~ msgstr ""
+#~ "Zure UIN-arentzako oraingo pasahitza eta pasahitz berria sar itzazu:"
+
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Gadu-Gadu Pasahitza Aldatu"
+
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Lagun-zerrenda deskargatuta"
+
+#~ msgid "Your buddy list was downloaded from the server."
+#~ msgstr "Zerbitzaritik deskargatu da zure lagun-zerrenda."
+
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Lagun-zerrenda igota"
+
+#~ msgid "Your buddy list was stored on the server."
+#~ msgstr "Zerbitzarian gorde da zure lagun-zerrenda."
+
+#~ msgid "Change password..."
+#~ msgstr "Pasahitza aldatu..."
+
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Lagun-Zerrenda Zerbitzarira igo"
+
+#~ msgid "Download buddylist from Server"
+#~ msgstr "Lagun-Zerrenda Zerbitzaritik deskargatu"
+
+#~ msgid "Delete buddylist from Server"
+#~ msgstr "Lagun-Zerrenda Zerbitzaritik ezabatu"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Bigarren Izena"
 
 #~ msgid "No Sametime Community Server specified"
 #~ msgstr "Ez da Sametime Komunitate Zerbitzaririk zehaztu"
@@ -16326,10 +16513,6 @@ msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
 #~ msgstr "Helbide elektronikoa"
 
 #, fuzzy
-#~ msgid "Jingle"
-#~ msgstr "Ping"
-
-#, fuzzy
 #~ msgid "User Nickname"
 #~ msgstr "Erabiltzaile-izena "
 
@@ -16446,10 +16629,6 @@ msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
 #, fuzzy
 #~ msgid "Could not resolve hostname"
 #~ msgstr "Ezin izan da ostalaria"
-
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Okerreko pasahitza."
 
 #~ msgid "Yahoo Japan"
 #~ msgstr "Japoniako yahoo"
@@ -16929,10 +17108,6 @@ msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
 
 #~ msgid "Available Message"
 #~ msgstr "Mezua eskuragarri:"
-
-#, fuzzy
-#~ msgid "Screen name"
-#~ msgstr "Pantaila-izena:"
 
 #~ msgid "Invalid chat name specified."
 #~ msgstr "Zehaztutako berriketa-izena ez da baliozkoa."

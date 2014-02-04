@@ -283,6 +283,52 @@ void jabber_iq_remove_callback_by_id(JabberStream *js, const char *id)
 	g_hash_table_remove(js->iq_callbacks, id);
 }
 
+/**
+ * Verify that the 'from' attribute of an IQ reply is a valid match for
+ * a given IQ request. The expected behavior is outlined in section
+ * 8.1.2.1 of the XMPP CORE spec (RFC 6120). We consider the reply to
+ * be a valid match if any of the following is true:
+ * - Request 'to' matches reply 'from' (including the case where
+ *   neither are set).
+ * - Request 'to' was empty and reply 'from' is server JID.
+ * - Request 'to' was empty and reply 'from' is my JID. The spec says
+ *   we should only allow bare JID, but we also allow full JID for
+ *   compatibility with some servers.
+ *
+ * These rules should allow valid IQ replies while preventing spoofed
+ * ones.
+ *
+ * For more discussion see the "Spoofing of iq ids and misbehaving
+ * servers" email thread from January 2014 on the jdev and security
+ * mailing lists.
+ *
+ * @return TRUE if this reply is valid for the given request.
+ */
+static gboolean does_reply_from_match_request_to(JabberStream *js, JabberID *to, JabberID *from)
+{
+	if (jabber_id_equal(to, from)) {
+		/* Request 'to' matches reply 'from' */
+		return TRUE;
+	}
+
+	if (!to && purple_strequal(from->domain, js->user->domain)) {
+		/* Request 'to' is empty and reply 'from' domain matches our domain */
+
+		if (!from->node && !from->resource) {
+			/* Reply 'from' is server bare JID */
+			return TRUE;
+		}
+
+		if (purple_strequal(from->node, js->user->node)
+				&& (!from->resource || purple_strequal(from->resource, js->user->resource))) {
+			/* Reply 'from' is my full or bare JID */
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberIqCallbackData *jcd;
@@ -377,8 +423,9 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	/* First, lets see if a special callback got registered */
 	if(type == JABBER_IQ_RESULT || type == JABBER_IQ_ERROR) {
-		if((jcd = g_hash_table_lookup(js->iq_callbacks, id))) {
-			if(jabber_id_equal(js, jcd->to, from_id)) {
+		jcd = g_hash_table_lookup(js->iq_callbacks, id);
+		if (jcd) {
+			if (does_reply_from_match_request_to(js, jcd->to, from_id)) {
 				jcd->callback(js, from, type, id, packet, jcd->data);
 				jabber_iq_remove_callback_by_id(js, id);
 				jabber_id_free(from_id);

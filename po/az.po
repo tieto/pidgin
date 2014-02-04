@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 02:49-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2004-06-28 14:03+0300\n"
 "Last-Translator: Metin Amiroff <metin@karegen.com>\n"
 "Language-Team: Azerbaijani <translation-team-az@lists.sourceforge.net>\n"
@@ -2092,55 +2092,7 @@ msgstr "Fayl transfer qovşağı"
 msgid "File transfer from %s failed."
 msgstr "Fayl transfer qovşağı"
 
-msgid "Run the command in a terminal"
-msgstr ""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-
-msgid "The handler for \"aim\" URLs"
-msgstr ""
-
-msgid "The handler for \"gg\" URLs"
-msgstr ""
-
-msgid "The handler for \"icq\" URLs"
-msgstr ""
-
-msgid "The handler for \"irc\" URLs"
-msgstr ""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr ""
-
-msgid "The handler for \"sip\" URLs"
-msgstr ""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr ""
-
-msgid "The handler for \"ymsgr\" URLs"
+msgid "Whether the specified command should handle \"aim\" URLs"
 msgstr ""
 
 msgid ""
@@ -2148,39 +2100,13 @@ msgid ""
 "URLs."
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
+msgid "The handler for \"aim\" URLs"
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
+msgid "The command used to handle \"aim\" URLs, if enabled."
 msgstr ""
 
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
+msgid "Run the command in a terminal"
 msgstr ""
 
 msgid ""
@@ -2188,28 +2114,102 @@ msgid ""
 "terminal."
 msgstr ""
 
-msgid "Whether the specified command should handle \"aim\" URLs"
+msgid "Whether the specified command should handle \"gg\" URLs"
 msgstr ""
 
-msgid "Whether the specified command should handle \"gg\" URLs"
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"gg\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"icq\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"icq\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"irc\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"msnim\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"sip\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
 msgstr ""
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
 msgstr ""
 
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -2263,6 +2263,9 @@ msgid ""
 msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
+msgstr ""
+
+msgid "A non-recoverable Farstream error has occurred."
 msgstr ""
 
 msgid "Error with your microphone"
@@ -3070,14 +3073,6 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Token Error"
-msgstr "Xəta"
-
-#, fuzzy
-msgid "Unable to fetch the token.\n"
-msgstr "Otaq siyahısı alına bilmədi."
-
-#, fuzzy
 msgid "Save Buddylist..."
 msgstr "_Alias..."
 
@@ -3110,39 +3105,6 @@ msgstr "Fərqli Qeyd Et..."
 msgid "Load buddylist from file..."
 msgstr "_Alias..."
 
-msgid "You must fill in all registration fields"
-msgstr ""
-
-msgid "Passwords do not match"
-msgstr ""
-
-msgid "Unable to register new account.  An unknown error occurred."
-msgstr ""
-
-msgid "New Gadu-Gadu Account Registered"
-msgstr ""
-
-msgid "Registration completed successfully!"
-msgstr ""
-
-msgid "Password"
-msgstr "Şifrə"
-
-msgid "Password (again)"
-msgstr ""
-
-msgid "Enter captcha text"
-msgstr ""
-
-msgid "Captcha"
-msgstr ""
-
-msgid "Register New Gadu-Gadu Account"
-msgstr ""
-
-msgid "Please, fill in the following fields"
-msgstr ""
-
 msgid "City"
 msgstr ""
 
@@ -3174,41 +3136,6 @@ msgstr "Əlaqələr"
 #, fuzzy
 msgid "Please, enter your search criteria below"
 msgstr "Xahiş edirik şəxs haqqında məlumatı aşağıda bildirin."
-
-msgid "Fill in the fields."
-msgstr ""
-
-msgid "Your current password is different from the one that you specified."
-msgstr ""
-
-msgid "Unable to change password. Error occurred.\n"
-msgstr ""
-
-msgid "Change password for the Gadu-Gadu account"
-msgstr ""
-
-msgid "Password was changed successfully!"
-msgstr ""
-
-#, fuzzy
-msgid "Current password"
-msgstr "Səhv şifrə."
-
-#, fuzzy
-msgid "Password (retype)"
-msgstr "Şifrə"
-
-msgid "Enter current token"
-msgstr ""
-
-msgid "Current token"
-msgstr ""
-
-msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
-
-msgid "Change Gadu-Gadu Password"
-msgstr ""
 
 #, fuzzy
 msgid "Show status to:"
@@ -3291,20 +3218,6 @@ msgstr "Xahiş edirik şəxs haqqında məlumatı aşağıda bildirin."
 msgid "Unable to read from socket"
 msgstr "Soket açıla bilmədi"
 
-#, fuzzy
-msgid "Buddy list downloaded"
-msgstr "Əlaqə hərəkətsizdir:"
-
-msgid "Your buddy list was downloaded from the server."
-msgstr ""
-
-#, fuzzy
-msgid "Buddy list uploaded"
-msgstr "Əlaqə hərəkətsizdir:"
-
-msgid "Your buddy list was stored on the server."
-msgstr ""
-
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
@@ -3347,20 +3260,6 @@ msgstr "Transfer üçün bağlana bilmədi."
 #, fuzzy
 msgid "Find buddies..."
 msgstr "Əlaqələr"
-
-#, fuzzy
-msgid "Change password..."
-msgstr "Səhv şifrə."
-
-#, fuzzy
-msgid "Upload buddylist to Server"
-msgstr "Əlaqə verici siyahısına əlavə edilə bilmədi"
-
-msgid "Download buddylist from Server"
-msgstr ""
-
-msgid "Delete buddylist from Server"
-msgstr ""
 
 #, fuzzy
 msgid "Save buddylist to file..."
@@ -3472,7 +3371,7 @@ msgstr "Bağlanıla bilmədi"
 msgid "Unable to connect: %s"
 msgstr "Bağlanıla bilmədi"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Server closed the connection"
 msgstr "_Yenidən bağlan"
 
@@ -3513,6 +3412,10 @@ msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
 #, fuzzy
+msgid "Ident name"
+msgstr "_Ləqəb"
+
+#, fuzzy
 msgid "Real name"
 msgstr "Yeni_dən Adlandır"
 
@@ -3523,6 +3426,12 @@ msgstr "Yeni_dən Adlandır"
 #, fuzzy
 msgid "Use SSL"
 msgstr "SSL"
+
+msgid "Authenticate with SASL"
+msgstr ""
+
+msgid "Allow plaintext SASL auth over unencrypted connection"
+msgstr ""
 
 msgid "Bad mode"
 msgstr ""
@@ -3558,6 +3467,14 @@ msgstr ""
 msgid "Nick"
 msgstr ""
 
+#, fuzzy
+msgid "Login name"
+msgstr "Soyad:"
+
+#, fuzzy
+msgid "Host name"
+msgstr "Soyad:"
+
 msgid "Currently on"
 msgstr ""
 
@@ -3587,6 +3504,10 @@ msgstr ""
 
 #, c-format
 msgid "The topic for %s is: %s"
+msgstr ""
+
+#, c-format
+msgid "Topic for %s set by %s at %s on %s"
 msgstr ""
 
 #, c-format
@@ -3700,6 +3621,33 @@ msgstr ""
 #, c-format
 msgid "Wallops from %s"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed to initialize SASL authentication: %s"
+msgstr "Bağlanıla bilmədi"
+
+msgid "SASL authentication failed: No worthy authentication mechanisms found."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "SASL authentication failed: %s"
+msgstr "Bağlantı bacarılmadı"
+
+msgid ""
+"SASL authentication failed: Server does not support SASL authentication."
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed: Initializing SASL failed."
+msgstr "Bağlantı bacarılmadı"
+
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Səhv şifrə."
+
+#, fuzzy
+msgid "SASL authentication failed: No worthy mechanisms found"
+msgstr "Bağlantı bacarılmadı"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr ""
@@ -4336,6 +4284,9 @@ msgstr "Tarix"
 msgid "Already Registered"
 msgstr ""
 
+msgid "Password"
+msgstr "Şifrə"
+
 #, fuzzy
 msgid "Unregister"
 msgstr "Qeyd Et"
@@ -4474,6 +4425,9 @@ msgid "Your password has been changed."
 msgstr ""
 
 msgid "Error changing password"
+msgstr ""
+
+msgid "Password (again)"
 msgstr ""
 
 #, fuzzy
@@ -4701,6 +4655,10 @@ msgstr "Soket açıla bilmədi"
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
+msgstr "Soket açıla bilmədi"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: resource is not online"
 msgstr "Soket açıla bilmədi"
 
 #, c-format
@@ -6114,6 +6072,11 @@ msgstr "Hesablar"
 msgid "Where I Live"
 msgstr ""
 
+#. relationship status
+#, fuzzy
+msgid "Relationship Status"
+msgstr "Sil"
+
 #. mobile number
 #, fuzzy
 msgid "Mobile Number"
@@ -6225,6 +6188,16 @@ msgstr "Hesablar"
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr ""
+
+#. file read error
+#, fuzzy
+msgid "Unable to access the local file"
+msgstr "Soket açıla bilmədi"
+
+#. file write error
+#, fuzzy
+msgid "Unable to save the file"
+msgstr "Soket açıla bilmədi"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6346,11 +6319,6 @@ msgstr "İsmarış"
 msgid "Rejection Message"
 msgstr "Uzaqdayam İsmarışları"
 
-#. hidden number
-#, fuzzy
-msgid "Hidden Number"
-msgstr "Orta Ad"
-
 #, fuzzy
 msgid "No profile available"
 msgstr "MOTD yoxdur"
@@ -6378,6 +6346,34 @@ msgid "Connect via HTTP"
 msgstr "Bağlanılır..."
 
 msgid "Enable splash-screen popup"
+msgstr ""
+
+msgid "Don't want to say"
+msgstr ""
+
+msgid "Single"
+msgstr ""
+
+msgid "In a relationship"
+msgstr ""
+
+msgid "Engaged"
+msgstr ""
+
+msgid "Married"
+msgstr ""
+
+#, fuzzy
+msgid "It's complicated"
+msgstr "_Daxil Et"
+
+msgid "Widowed"
+msgstr ""
+
+msgid "Separated"
+msgstr ""
+
+msgid "Divorced"
 msgstr ""
 
 #, fuzzy
@@ -6444,6 +6440,10 @@ msgstr ""
 #, fuzzy
 msgid "Message Error"
 msgstr "İsmarış"
+
+#. could not be decrypted
+msgid "An encrypted message was received which could not be decrypted."
+msgstr ""
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -9823,7 +9823,6 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr ""
 
-#, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
 msgstr ""
 
@@ -10475,15 +10474,15 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgid "Pidgin Internet Messenger"
 msgstr ""
 
 #, fuzzy
 msgid "Internet Messenger"
 msgstr "Canlı İsmarışlaşma"
 
-msgid "Pidgin Internet Messenger"
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
 
 #. Build the login options frame.
@@ -11630,6 +11629,11 @@ msgstr "Uzaqdayam İsmarışları"
 msgid "New Event"
 msgstr "Hadisə"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will "
+"automatically rejoin the chat when the account reconnects."
+msgstr ""
+
 msgid "clear: Clears all conversation scrollbacks."
 msgstr ""
 
@@ -11742,7 +11746,8 @@ msgstr ""
 msgid "win32 port"
 msgstr ""
 
-#. feel free to not translate this
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
 msgid "Ka-Hing Cheung"
 msgstr ""
 
@@ -11779,6 +11784,9 @@ msgid "Arabic"
 msgstr "Amharik Dili"
 
 msgid "Assamese"
+msgstr ""
+
+msgid "Asturian"
 msgstr ""
 
 msgid "Belarusian Latin"
@@ -11917,6 +11925,9 @@ msgstr ""
 msgid "Lao"
 msgstr ""
 
+msgid "Lithuanian"
+msgstr ""
+
 msgid "Maithili"
 msgstr ""
 
@@ -11942,6 +11953,9 @@ msgstr "Ünvan"
 #, fuzzy
 msgid "Malay"
 msgstr "Səs Çal"
+
+msgid "Burmese"
+msgstr ""
 
 #, fuzzy
 msgid "Bokmål Norwegian"
@@ -12000,6 +12014,10 @@ msgstr "Rumın Dili"
 msgid "Serbian"
 msgstr "Serb Dili"
 
+#, fuzzy
+msgid "Serbian Latin"
+msgstr "Serb Dili"
+
 msgid "Sinhala"
 msgstr ""
 
@@ -12019,9 +12037,6 @@ msgstr ""
 msgid "Thai"
 msgstr ""
 
-msgid "Turkish"
-msgstr ""
-
 #, fuzzy
 msgid "Ukranian"
 msgstr "Rumın Dili"
@@ -12031,9 +12046,6 @@ msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vyetnam Dili"
-
-msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr ""
 
 msgid "Simplified Chinese"
 msgstr "Bəsidləşdirilmiş Çin Dili"
@@ -12047,7 +12059,10 @@ msgstr "Ənənəvi Çin Dili"
 msgid "Amharic"
 msgstr "Amharik Dili"
 
-msgid "Lithuanian"
+msgid "Turkish"
+msgstr ""
+
+msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr ""
 
 #, c-format
@@ -12068,7 +12083,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12780,6 +12794,9 @@ msgstr "MOTD göstərilə bilmir"
 
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
+msgstr ""
+
+msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
 
 #, fuzzy
@@ -13856,12 +13873,12 @@ msgstr "Əlavələr"
 msgid "Pidgin smileys"
 msgstr ""
 
-msgid "Selecting this disables graphical emoticons."
-msgstr ""
-
 #, fuzzy
 msgid "none"
 msgstr "Hər kimsə"
+
+msgid "Selecting this disables graphical emoticons."
+msgstr ""
 
 msgid "Small"
 msgstr ""
@@ -14859,7 +14876,6 @@ msgstr "Danışıqlara hər N dəqiqədə bir iChat tərzində vaxt mühürü ə
 msgid "Timestamp Format Options"
 msgstr ""
 
-#, c-format
 msgid "_Force timestamp format:"
 msgstr ""
 
@@ -14912,6 +14928,61 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr ""
+
+#. Alerts
+#, fuzzy
+msgid "Chatroom alerts"
+msgstr "Söhbət Otağı Siyahısı Ünvanı"
+
+msgid "Chatroom message alerts _only where someone says your username"
+msgstr ""
+
+#. Launcher integration
+msgid "Launcher Icon"
+msgstr ""
+
+msgid "_Disable launcher integration"
+msgstr ""
+
+msgid "Show number of unread _messages on launcher icon"
+msgstr ""
+
+#, fuzzy
+msgid "Show number of unread co_nversations on launcher icon"
+msgstr "Pəncərə başına danışıq ədədi"
+
+#. Messaging menu integration
+#, fuzzy
+msgid "Messaging Menu"
+msgstr "İsmarış"
+
+msgid "Show number of _unread messages for conversations in messaging menu"
+msgstr ""
+
+msgid "Show _elapsed time for unread conversations in messaging menu"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Unity Integration"
+msgstr "Evolution İnteqrasiyası"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Provides integration with Unity."
+msgstr "Evolution ilə inteqrasiya xidməti verir."
+
+#. *  description
+#, fuzzy
+msgid "Provides integration with Unity's messaging menu and launcher."
+msgstr "Evolution ilə inteqrasiya xidməti verir."
 
 #, fuzzy
 msgid "Audio"
@@ -15096,23 +15167,63 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
-msgid ""
-"$(^Name) is released under the GNU General Public License (GPL). The license "
-"is provided here for information purposes only. $_CLICK"
-msgstr ""
-
-#. Installer Subsection Detailed Description
-msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+#, fuzzy
+msgid "The installer is already running."
+msgstr "O fayl onsuz da mövcuddur"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
 
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Qısa Yollar"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Sil"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Vəziyyət"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Mövqe"
+
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
 #. Installer Subsection Detailed Description
@@ -15120,29 +15231,34 @@ msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
 #. Installer Subsection Detailed Description
-msgid "Create a shortcut to Pidgin on the Desktop"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#. Installer Subsection Text
-#, fuzzy
-msgid "Desktop"
-msgstr "Sil"
-
-#. $R2 will display the URL that the GTK+ Runtime failed to download from
-msgid ""
-"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
-"function; if retrying fails, you may need to use the 'Offline Installer' "
-"from http://pidgin.im/download/windows/ ."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
 msgstr ""
 
-#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
-"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
-"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
 msgstr ""
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15153,76 +15269,67 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
-#. Installer Subsection Text
-msgid "GTK+ Runtime (required if not present)"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Localizations"
-msgstr "Mövqe"
-
-#. "Next >" appears on a button on the License Page of the Installer
-msgid "Next >"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Pidgin Instant Messaging Client (required)"
-msgstr ""
-
-msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Shortcuts"
-msgstr "Qısa Yollar"
-
-#. Installer Subsection Detailed Description
-msgid "Shortcuts for starting Pidgin"
-msgstr ""
-
-#. Installer Subsection Text
-msgid "Spellchecking Support"
-msgstr ""
-
-#. Installer Subsection Text
-#, fuzzy
-msgid "Start Menu"
-msgstr "Vəziyyət"
-
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
-msgid "The installer is already running."
-msgstr "O fayl onsuz da mövcuddur"
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. Installer Subsection Text
-msgid "URI Handlers"
-msgstr ""
-
-msgid ""
-"Unable to uninstall the currently installed version of Pidgin. The new "
-"version will be installed without removing the currently installed version."
-msgstr ""
-
-#. Text displayed on Installer Finish Page
-msgid "Visit the Pidgin Web Page"
-msgstr ""
-
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Token Error"
+#~ msgstr "Xəta"
+
+#, fuzzy
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "Otaq siyahısı alına bilmədi."
+
+#, fuzzy
+#~ msgid "Current password"
+#~ msgstr "Səhv şifrə."
+
+#, fuzzy
+#~ msgid "Password (retype)"
+#~ msgstr "Şifrə"
+
+#, fuzzy
+#~ msgid "Buddy list downloaded"
+#~ msgstr "Əlaqə hərəkətsizdir:"
+
+#, fuzzy
+#~ msgid "Buddy list uploaded"
+#~ msgstr "Əlaqə hərəkətsizdir:"
+
+#, fuzzy
+#~ msgid "Change password..."
+#~ msgstr "Səhv şifrə."
+
+#, fuzzy
+#~ msgid "Upload buddylist to Server"
+#~ msgstr "Əlaqə verici siyahısına əlavə edilə bilmədi"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Orta Ad"
 
 #, fuzzy
 #~ msgid "No Sametime Community Server specified"
@@ -15977,10 +16084,6 @@ msgstr ""
 #~ msgid "Could not write"
 #~ msgstr "Soket açıla bilmədi"
 
-#, fuzzy
-#~ msgid "Incorrect Password"
-#~ msgstr "Səhv şifrə."
-
 #~ msgid "Yahoo Japan"
 #~ msgstr "Yahoo Yaponiya"
 
@@ -16211,10 +16314,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Available Message"
 #~ msgstr "Uzaqdayam İsmarışları"
-
-#, fuzzy
-#~ msgid "Screen name"
-#~ msgstr "_Ləqəb"
 
 #, fuzzy
 #~ msgid "Show how long you have been idle"
