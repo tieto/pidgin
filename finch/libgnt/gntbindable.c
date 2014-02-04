@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -283,7 +283,7 @@ gnt_bindable_get_gtype(void)
 	return type;
 }
 
-/**
+/*
  * Key Remaps
  */
 const char *
@@ -304,7 +304,7 @@ gnt_bindable_remap_keys(GntBindable *bindable, const char *text)
 	return (remap ? remap : text);
 }
 
-/**
+/*
  * Actions and Bindings
  */
 gboolean

@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -201,7 +201,7 @@ const char *gnt_key_lookup(const char *key)
 	return k.name;
 }
 
-/**
+/*
  * The key-bindings will be saved in a tree. When a keystroke happens, GNT will
  * find the sequence that matches a binding and return the length.
  * A sequence should not be a prefix of another sequence. If it is, then only

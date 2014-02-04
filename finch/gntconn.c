@@ -40,7 +40,7 @@ typedef struct {
 	guint timeout;
 } FinchAutoRecon;
 
-/**
+/*
  * Contains accounts that are auto-reconnecting.
  * The key is a pointer to the PurpleAccount and the
  * value is a pointer to a FinchAutoRecon.
