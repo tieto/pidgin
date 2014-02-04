@@ -1,8 +1,3 @@
-/**
- * @file certificate.c Public-Key Certificate API
- * @ingroup core
- */
-
 /*
  *
  * purple

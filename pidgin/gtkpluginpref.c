@@ -1,8 +1,3 @@
-/**
- * @file gtkpluginpref.c GTK+ Plugin preferences
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

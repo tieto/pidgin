@@ -1,8 +1,3 @@
-/*
- * @file gtkwebview.c GTK+ WebKitWebView wrapper class.
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

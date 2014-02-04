@@ -1,8 +1,3 @@
-/**
- * @file gtksmiley.c GTK+ Smiley Manager API
- * @ingroup pidgin
- */
-
 /*
  * pidgin
  *

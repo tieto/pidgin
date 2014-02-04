@@ -1,8 +1,3 @@
-/**
- * @file pidgintooltip.c Pidgin Tooltip API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

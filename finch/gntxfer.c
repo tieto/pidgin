@@ -1,8 +1,3 @@
-/**
- * @file gntxfer.c GNT File Transfer UI
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous

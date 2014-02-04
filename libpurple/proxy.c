@@ -1,8 +1,3 @@
-/**
- * @file proxy.c Proxy API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous

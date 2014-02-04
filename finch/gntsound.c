@@ -1,8 +1,3 @@
-/**
- * @file gntsound.c GNT Sound API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous

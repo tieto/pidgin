@@ -1,8 +1,3 @@
-/**
- * @file purple-socket.c Generic sockets
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
