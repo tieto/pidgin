@@ -418,8 +418,7 @@ intkeyring_process_queue(void)
 	requests = g_list_first(intkeyring_pending_requests);
 	intkeyring_pending_requests = NULL;
 
-	for (it = requests; it != NULL; it = g_list_next(it))
-	{
+	for (it = requests; it != NULL; it = g_list_next(it)) {
 		intkeyring_request *req = it->data;
 
 		if (open && req->type == INTKEYRING_REQUEST_READ) {
@@ -526,7 +525,8 @@ intkeyring_unlock_ok(gpointer _unused,
 	intkeyring_masterpw_uirequest = NULL;
 
 	if (g_strcmp0(purple_prefs_get_string(INTKEYRING_PREFS
-		"encryption_method"), INTKEYRING_ENCRYPTION_METHOD) != 0) {
+		"encryption_method"), INTKEYRING_ENCRYPTION_METHOD) != 0)
+	{
 		purple_notify_error(NULL,
 			_("Unlocking internal keyring"),
 			_("Selected encryption method is not supported."),
