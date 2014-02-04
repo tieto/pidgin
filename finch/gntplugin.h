@@ -81,7 +81,7 @@ struct _FinchPluginInfoClass {
 /**
  * finch_plugin_info_get_type:
  *
- * Returns the GType for the FinchPluginInfo object.
+ * Returns: The #GType for the #FinchPluginInfo object.
  */
 GType finch_plugin_info_get_type(void);
 
@@ -92,7 +92,7 @@ GType finch_plugin_info_get_type(void);
  *             name/value pairs, followed by %NULL
  *
  * Creates a new #FinchPluginInfo instance to be returned from
- * gplugin_plugin_query() of a finch plugin, using the provided name/value
+ * #plugin_query of a finch plugin, using the provided name/value
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.

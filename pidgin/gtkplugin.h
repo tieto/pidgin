@@ -72,7 +72,7 @@ G_BEGIN_DECLS
 /**
  * pidgin_plugin_info_get_type:
  *
- * Returns the GType for the PidginPluginInfo object.
+ * Returns: The #GType for the #PidginPluginInfo object.
  */
 GType pidgin_plugin_info_get_type(void);
 
@@ -83,7 +83,7 @@ GType pidgin_plugin_info_get_type(void);
  *             name/value pairs, followed by %NULL
  *
  * Creates a new #PidginPluginInfo instance to be returned from
- * gplugin_plugin_query() of a pidgin plugin, using the provided name/value
+ * #plugin_query of a pidgin plugin, using the provided name/value
  * pairs.
  *
  * See purple_plugin_info_new() for a list of available property names.
