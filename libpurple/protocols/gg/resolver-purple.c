@@ -77,8 +77,7 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 
 	data->purpleQuery = NULL;
 
-	if (error_message)
-	{
+	if (error_message) {
 		purple_debug_error("gg", "ggp_resolver_purple_cb failed: %s\n",
 			error_message);
 	}
@@ -89,21 +88,17 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 	addresses = malloc((all_count + 1) * sizeof(struct in_addr));
 
 	ipv4_count = 0;
-	while (hosts && (hosts = g_slist_delete_link(hosts, hosts)))
-	{
+	while (hosts && (hosts = g_slist_delete_link(hosts, hosts))) {
 		const struct sockaddr *addr = hosts->data;
 		char dst[INET6_ADDRSTRLEN];
 
-		if (addr->sa_family == AF_INET6)
-		{
+		if (addr->sa_family == AF_INET6) {
 			inet_ntop(addr->sa_family,
 				&((struct sockaddr_in6 *) addr)->sin6_addr,
 				dst, sizeof(dst));
 			purple_debug_misc("gg", "ggp_resolver_purple_cb "
 				"ipv6 (ignore): %s\n", dst);
-		}
-		else if (addr->sa_family == AF_INET)
-		{
+		} else if (addr->sa_family == AF_INET) {
 			const struct in_addr addr_ipv4 =
 				((struct sockaddr_in *) addr)->sin_addr;
 			inet_ntop(addr->sa_family, &addr_ipv4,
@@ -113,9 +108,7 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 
 			g_assert(ipv4_count < all_count);
 			addresses[ipv4_count++] = addr_ipv4;
-		}
-		else
-		{
+		} else {
 			purple_debug_warning("gg", "ggp_resolver_purple_cb "
 				"unexpected sa_family: %d\n", addr->sa_family);
 		}
@@ -127,8 +120,7 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 	addresses[ipv4_count].s_addr = INADDR_NONE;
 
 	write_size = (ipv4_count + 1) * sizeof(struct in_addr);
-	if (write(fd, addresses, write_size) != write_size)
-	{
+	if (write(fd, addresses, write_size) != write_size) {
 		purple_debug_error("gg",
 			"ggp_resolver_purple_cb write error\n");
 	}
@@ -148,8 +140,7 @@ int ggp_resolver_purple_start(int *fd, void **private_data,
 	data->pipes[0] = 0;
 	data->pipes[1] = 0;
 
-	if (purple_input_pipe(data->pipes) != 0)
-	{
+	if (purple_input_pipe(data->pipes) != 0) {
 		purple_debug_error("gg", "ggp_resolver_purple_start: "
 			"unable to create pipe\n");
 		ggp_resolver_purple_cleanup(private_data, 0);
@@ -162,8 +153,7 @@ int ggp_resolver_purple_start(int *fd, void **private_data,
 	data->purpleQuery = purple_dnsquery_a(NULL, hostname, 80,
 		ggp_resolver_purple_cb, (gpointer)data);
 
-	if (!data->purpleQuery)
-	{
+	if (!data->purpleQuery) {
 		purple_debug_error("gg", "ggp_resolver_purple_start: "
 			"unable to call purple_dnsquery_a\n");
 		ggp_resolver_purple_cleanup(private_data, 0);

@@ -76,13 +76,15 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 #if GGP_ENABLE_GG11
 		|| (level & GG_DEBUG_VERBOSE)
 #endif
-		) {
+		)
+	{
 		if (!purple_debug_is_verbose())
 			return;
 	}
 
 	if ((level & GG_DEBUG_DUMP) || /* GG session protocol packets */
-		(level & GG_DEBUG_TRAFFIC)) { /* HTTP traffic */
+		(level & GG_DEBUG_TRAFFIC)) /* HTTP traffic */
+	{
 		if (!purple_debug_is_verbose() || !purple_debug_is_unsafe())
 			return;
 	}
@@ -153,8 +155,7 @@ static void ggp_libgaduw_http_handler(gpointer _req, gint fd,
 {
 	ggp_libgaduw_http_req *req = _req;
 
-	if (req->h->callback(req->h) == -1 || req->h->state == GG_STATE_ERROR)
-	{
+	if (req->h->callback(req->h) == -1 || req->h->state == GG_STATE_ERROR) {
 		purple_debug_error("gg", "ggp_libgaduw_http_handler: failed to "
 			"make http request: %d\n", req->h->error);
 		ggp_libgaduw_http_finish(req, FALSE);
@@ -167,16 +168,14 @@ static void ggp_libgaduw_http_handler(gpointer _req, gint fd,
 			req->h->state);
 	}
 
-	if (req->h->state != GG_STATE_DONE)
-	{
+	if (req->h->state != GG_STATE_DONE) {
 		purple_input_remove(req->inpa);
 		req->inpa = ggp_purplew_http_input_add(req->h,
 			ggp_libgaduw_http_handler, req);
 		return;
 	}
 
-	if (!req->h->data || !req->h->body)
-	{
+	if (!req->h->data || !req->h->body) {
 		purple_debug_error("gg", "ggp_libgaduw_http_handler: got empty "
 			"http response: %d\n", req->h->error);
 		ggp_libgaduw_http_finish(req, FALSE);
@@ -199,8 +198,7 @@ static void ggp_libgaduw_http_finish(ggp_libgaduw_http_req *req,
 {
 	purple_debug_misc("gg", "ggp_libgaduw_http_finish(h=%p, processing=%p):"
 		" success=%d\n", req->h, req->processing, success);
-	if (req->processing)
-	{
+	if (req->processing) {
 		ggp_purplew_request_processing_done(req->processing);
 		req->processing = NULL;
 	}

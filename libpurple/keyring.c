@@ -270,7 +270,8 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 	if (error == NULL) {
 		/* no error */
 	} else if (g_error_matches(error, PURPLE_KEYRING_ERROR,
-		PURPLE_KEYRING_ERROR_NOPASSWORD)) {
+		PURPLE_KEYRING_ERROR_NOPASSWORD))
+	{
 		if (purple_debug_is_verbose()) {
 			purple_debug_misc("keyring", "No password found while "
 				"changing keyring for account %s: %s.\n",
@@ -278,7 +279,8 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 				error->message);
 		}
 	} else if (g_error_matches(error, PURPLE_KEYRING_ERROR,
-		PURPLE_KEYRING_ERROR_ACCESSDENIED)) {
+		PURPLE_KEYRING_ERROR_ACCESSDENIED))
+	{
 		purple_debug_info("keyring", "Access denied while changing "
 			"keyring for account %s: %s.\n",
 			purple_keyring_print_account(account), error->message);
@@ -287,7 +289,8 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 			g_error_free(tracker->error);
 		tracker->error = g_error_copy(error);
 	} else if (g_error_matches(error, PURPLE_KEYRING_ERROR,
-		PURPLE_KEYRING_ERROR_CANCELLED)) {
+		PURPLE_KEYRING_ERROR_CANCELLED))
+	{
 		purple_debug_info("keyring", "Operation cancelled while "
 			"changing keyring for account %s: %s.\n",
 			purple_keyring_print_account(account), error->message);
@@ -295,7 +298,8 @@ purple_keyring_set_inuse_save_cb(PurpleAccount *account, GError *error,
 		if (tracker->error == NULL)
 			tracker->error = g_error_copy(error);
 	} else if (g_error_matches(error, PURPLE_KEYRING_ERROR,
-		PURPLE_KEYRING_ERROR_BACKENDFAIL)) {
+		PURPLE_KEYRING_ERROR_BACKENDFAIL))
+	{
 		purple_debug_error("keyring", "Failed to communicate with "
 			"backend while changing keyring for account %s: %s. "
 			"Aborting changes.\n",
@@ -349,7 +353,8 @@ purple_keyring_set_inuse_read_cb(PurpleAccount *account, const gchar *password,
 	if (error != NULL) {
 		if (tracker->force == TRUE || g_error_matches(error,
 			PURPLE_KEYRING_ERROR,
-			PURPLE_KEYRING_ERROR_NOPASSWORD)) {
+			PURPLE_KEYRING_ERROR_NOPASSWORD))
+		{
 			/* Don't save password, and ignore it. */
 		} else {
 			tracker->abort = TRUE;
@@ -464,7 +469,8 @@ purple_keyring_register(PurpleKeyring *keyring)
 	if (purple_keyring_get_id(keyring) == NULL ||
 		purple_keyring_get_name(keyring) == NULL ||
 		purple_keyring_get_read_password(keyring) == NULL ||
-		purple_keyring_get_save_password(keyring) == NULL) {
+		purple_keyring_get_save_password(keyring) == NULL)
+	{
 		purple_debug_error("keyring", "Cannot register %s, some "
 			"required fields are missing.\n",
 			keyring_id ? keyring_id : "(null)");
@@ -479,7 +485,8 @@ purple_keyring_register(PurpleKeyring *keyring)
 
 	/* If this is the configured keyring, use it. */
 	if (purple_keyring_inuse == NULL &&
-		g_strcmp0(keyring_id, purple_keyring_to_use) == 0) {
+		g_strcmp0(keyring_id, purple_keyring_to_use) == 0)
+	{
 		purple_debug_misc("keyring", "Keyring %s matches keyring to "
 			"use, using it.", keyring_id);
 		purple_keyring_set_inuse(keyring, TRUE, NULL, NULL);
@@ -539,7 +546,8 @@ purple_keyring_get_options(void)
 	static gchar currentDisabledName[40];
 
 	if (purple_keyring_get_inuse() == NULL && purple_keyring_to_use != NULL
-		&& purple_keyring_to_use[0] != '\0') {
+		&& purple_keyring_to_use[0] != '\0')
+	{
 		g_snprintf(currentDisabledName, sizeof(currentDisabledName),
 			_("%s (disabled)"), purple_keyring_to_use);
 
@@ -1284,8 +1292,7 @@ purple_keyring_init(void)
 
 	purple_keyring_pref_connect();
 
-	for (it = purple_plugins_get_all(); it != NULL; it = it->next)
-	{
+	for (it = purple_plugins_get_all(); it != NULL; it = it->next) {
 		PurplePlugin *plugin = (PurplePlugin *)it->data;
 
 		if (plugin->info == NULL || plugin->info->id == NULL)
@@ -1296,8 +1303,7 @@ purple_keyring_init(void)
 		if (purple_plugin_is_loaded(plugin))
 			continue;
 
-		if (purple_plugin_load(plugin))
-		{
+		if (purple_plugin_load(plugin)) {
 			purple_keyring_loaded_plugins = g_list_append(
 				purple_keyring_loaded_plugins, plugin);
 		}

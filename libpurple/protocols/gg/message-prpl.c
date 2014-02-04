@@ -199,16 +199,14 @@ static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
 	gchar *tmp, *tag_search, *tag_replace;
 
 	m_it = g_list_find(sdata->pending_messages, msg);
-	if (!m_it)
-	{
+	if (!m_it) {
 		purple_debug_error("gg", "ggp_message_request_images_got: "
 			"message %p is not in queue\n", msg);
 		return;
 	}
 
 	i_it = g_list_find_custom(msg->pending_images, &id, ggp_int64_compare);
-	if (!i_it)
-	{
+	if (!i_it) {
 		purple_debug_error("gg", "ggp_message_request_images_got: "
 			"image " GGP_IMAGE_ID_FORMAT " is not present in this "
 			"message\n", id);
@@ -227,8 +225,7 @@ static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
 
 	g_free(i_it->data);
 	msg->pending_images = g_list_delete_link(msg->pending_images, i_it);
-	if (msg->pending_images != NULL)
-	{
+	if (msg->pending_images != NULL) {
 		purple_debug_info("gg", "ggp_message_request_images_got: "
 			"got image " GGP_IMAGE_ID_FORMAT ", but the message "
 			"contains more of them\n", id);
@@ -250,8 +247,7 @@ static gboolean ggp_message_request_images(PurpleConnection *gc,
 		return FALSE;
 
 	it = msg->pending_images;
-	while (it)
-	{
+	while (it) {
 		ggp_image_request(gc, msg->user, *(uint64_t*)it->data,
 			ggp_message_request_images_got, msg);
 		it = g_list_next(it);
@@ -271,12 +267,10 @@ void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 	msg->user = ev->sender;
 
 #if GGP_ENABLE_GG11
-	if (ev->chat_id != 0)
-	{
+	if (ev->chat_id != 0) {
 		msg->type = GGP_MESSAGE_GOT_TYPE_CHAT;
 		msg->chat_id = ev->chat_id;
-	}
-	else
+	} else
 #endif
 	{
 		msg->type = GGP_MESSAGE_GOT_TYPE_IM;
@@ -300,12 +294,10 @@ void ggp_message_got_multilogon(PurpleConnection *gc,
 	msg->user = ev->sender; /* not really a sender*/
 
 #if GGP_ENABLE_GG11
-	if (ev->chat_id != 0)
-	{
+	if (ev->chat_id != 0) {
 		msg->type = GGP_MESSAGE_GOT_TYPE_CHAT;
 		msg->chat_id = ev->chat_id;
-	}
-	else
+	} else
 #endif
 	{
 		msg->type = GGP_MESSAGE_GOT_TYPE_MULTILOGON;
@@ -322,28 +314,24 @@ void ggp_message_got_multilogon(PurpleConnection *gc,
 static void ggp_message_got_display(PurpleConnection *gc,
 	ggp_message_got_data *msg)
 {
-	if (msg->type == GGP_MESSAGE_GOT_TYPE_IM)
-	{
+	if (msg->type == GGP_MESSAGE_GOT_TYPE_IM) {
 		serv_got_im(gc, ggp_uin_to_str(msg->user), msg->text,
 			PURPLE_MESSAGE_RECV, msg->time);
 	}
 #if GGP_ENABLE_GG11
-	else if (msg->type == GGP_MESSAGE_GOT_TYPE_CHAT)
-	{
+	else if (msg->type == GGP_MESSAGE_GOT_TYPE_CHAT) {
 		ggp_chat_got_message(gc, msg->chat_id, msg->text, msg->time,
 			msg->user);
 	}
 #endif
-	else if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON)
-	{
+	else if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON) {
 		PurpleIMConversation *im = ggp_message_get_conv(gc, msg->user);
 		const gchar *me = purple_account_get_username(
 			purple_connection_get_account(gc));
 
 		purple_conversation_write(PURPLE_CONVERSATION(im), me, msg->text,
 			PURPLE_MESSAGE_SEND, msg->time);
-	}
-	else
+	} else
 		purple_debug_error("gg", "ggp_message_got_display: "
 			"unexpected message type: %d\n", msg->type);
 }
@@ -360,8 +348,7 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 	if (sscanf(name, "%" G_GINT64_MODIFIER "x", &id) != 1)
 		id = 0;
 	g_free(name);
-	if (!id)
-	{
+	if (!id) {
 		g_string_append(res, "[");
 		g_string_append(res, _("broken image"));
 		g_string_append(res, "]");
@@ -370,8 +357,7 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 
 	stored_id = ggp_image_get_cached(msg->gc, id);
 
-	if (stored_id > 0)
-	{
+	if (stored_id > 0) {
 		purple_debug_info("gg", "ggp_message_format_from_gg_found_img: "
 			"getting image " GGP_IMAGE_ID_FORMAT " from cache\n",
 			id);
@@ -400,8 +386,7 @@ static void ggp_message_format_from_gg(ggp_message_got_data *msg,
 {
 	gchar *text_new, *tmp;
 
-	if (text == NULL)
-	{
+	if (text == NULL) {
 		msg->text = g_strdup("");
 		return;
 	}
@@ -449,8 +434,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	text_new = purple_strreplace(text, "&nbsp;", " ");
 
 	/* add end-of-message tag */
-	if (strstr(text_new, "<eom>") != NULL)
-	{
+	if (strstr(text_new, "<eom>") != NULL) {
 		tmp = text_new;
 		text_new = purple_strreplace(text_new, "<eom>", "");
 		g_free(tmp);
@@ -462,8 +446,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	g_free(tmp);
 
 	g_regex_match(global_data.re_html_tag, text_new, 0, &match);
-	while (g_match_info_matches(match))
-	{
+	while (g_match_info_matches(match)) {
 		int m_start, m_end, m_pos;
 		gboolean tag_close;
 		gchar *tag_str, *attribs_str;
@@ -481,9 +464,10 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 		attribs_str = g_match_info_fetch(match, 3);
 		g_match_info_next(match, NULL);
 
-		if (tag == GGP_HTML_TAG_UNKNOWN)
+		if (tag == GGP_HTML_TAG_UNKNOWN) {
 			purple_debug_warning("gg", "ggp_message_format_to_gg: "
 				"uknown tag %s\n", tag_str);
+		}
 
 		/* closing *all* formatting-related tags (GG11 weirness)
 		 * and adding pending objects */
@@ -491,8 +475,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			(tag == GGP_HTML_TAG_EOM && tag_close))
 		{
 			font_changed = FALSE;
-			if (in_any_tag)
-			{
+			if (in_any_tag) {
 				in_any_tag = FALSE;
 				if (font_current->s && !GGP_GG11_FORCE_COMPAT)
 					rt = g_list_prepend(rt,
@@ -508,16 +491,14 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 						g_strdup("</b>"));
 				rt = g_list_prepend(rt, g_strdup("</span>"));
 			}
-			if (pending_objects)
-			{
+			if (pending_objects) {
 				rt = g_list_concat(pending_objects, rt);
 				pending_objects = NULL;
 			}
 		}
 
 		/* opening formatting-related tags again */
-		if (text_before && !in_any_tag)
-		{
+		if (text_before && !in_any_tag) {
 			gchar *style;
 			GList *styles = NULL;
 			gboolean has_size = (font_new->size > 0 &&
@@ -538,15 +519,13 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 				styles = g_list_append(styles, g_strdup_printf(
 					"color:#%06x;", font_new->color));
 
-			if (styles)
-			{
+			if (styles) {
 				gchar *combined = ggp_strjoin_list(" ", styles);
 				g_list_free_full(styles, g_free);
 				style = g_strdup_printf(" style=\"%s\"",
 					combined);
 				g_free(combined);
-			}
-			else
+			} else
 				style = g_strdup("");
 			rt = g_list_prepend(rt, g_strdup_printf("<span%s>",
 				style));
@@ -567,35 +546,25 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 
 			in_any_tag = TRUE;
 		}
-		if (text_before)
-		{
+		if (text_before) {
 			rt = g_list_prepend(rt,
 				g_strndup(text_new + pos, m_start - pos));
 		}
 
 		/* set formatting of a following text */
-		if (tag == GGP_HTML_TAG_B)
-		{
+		if (tag == GGP_HTML_TAG_B) {
 			font_changed |= (font_new->b != !tag_close);
 			font_new->b = !tag_close;
-		}
-		else if (tag == GGP_HTML_TAG_I)
-		{
+		} else if (tag == GGP_HTML_TAG_I) {
 			font_changed |= (font_new->i != !tag_close);
 			font_new->i = !tag_close;
-		}
-		else if (tag == GGP_HTML_TAG_U)
-		{
+		} else if (tag == GGP_HTML_TAG_U) {
 			font_changed |= (font_new->u != !tag_close);
 			font_new->u = !tag_close;
-		}
-		else if (tag == GGP_HTML_TAG_S)
-		{
+		} else if (tag == GGP_HTML_TAG_S) {
 			font_changed |= (font_new->s != !tag_close);
 			font_new->s = !tag_close;
-		}
-		else if (tag == GGP_HTML_TAG_IMG && !tag_close)
-		{
+		} else if (tag == GGP_HTML_TAG_IMG && !tag_close) {
 			GHashTable *attribs = ggp_html_tag_attribs(attribs_str);
 			gchar *val = NULL;
 			uint64_t id;
@@ -614,31 +583,24 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			if (stored_id >= 0)
 				res = ggp_image_prepare(conv, stored_id, &id);
 
-			if (res == GGP_IMAGE_PREPARE_OK)
-			{
+			if (res == GGP_IMAGE_PREPARE_OK) {
 				pending_objects = g_list_prepend(
 					pending_objects, g_strdup_printf(
 					"<img name=\"" GGP_IMAGE_ID_FORMAT
 					"\">", id));
-			}
-			else if (res == GGP_IMAGE_PREPARE_TOO_BIG)
-			{
+			} else if (res == GGP_IMAGE_PREPARE_TOO_BIG) {
 				purple_conversation_write(conv, "",
 					_("Image is too large, please try "
 					"smaller one."), PURPLE_MESSAGE_ERROR,
 					time(NULL));
-			}
-			else
-			{
+			} else {
 				purple_conversation_write(conv, "",
 					_("Image cannot be sent."),
 					PURPLE_MESSAGE_ERROR, time(NULL));
 			}
 
 			g_hash_table_destroy(attribs);
-		}
-		else if (tag == GGP_HTML_TAG_FONT && !tag_close)
-		{
+		} else if (tag == GGP_HTML_TAG_FONT && !tag_close) {
 			GHashTable *attribs = ggp_html_tag_attribs(attribs_str);
 			gchar *val = NULL;
 
@@ -718,36 +680,25 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			font_changed = TRUE;
 
 			ggp_font_free(font_new);
-			if (font_stack)
-			{
+			if (font_stack) {
 				font_new = (ggp_font*)font_stack->data;
 				font_stack = g_list_delete_link(
 					font_stack, font_stack);
 			}
 			else
 				font_new = ggp_font_clone(font_base);
-		}
-		else if (tag == GGP_HTML_TAG_BR)
-		{
+		} else if (tag == GGP_HTML_TAG_BR) {
 			pending_objects = g_list_prepend(pending_objects,
 				g_strdup("<br>"));
-		}
-		else if (tag == GGP_HTML_TAG_HR)
-		{
+		} else if (tag == GGP_HTML_TAG_HR) {
 			pending_objects = g_list_prepend(pending_objects,
 				g_strdup("<br><span>---</span><br>"));
-		}
-		else if (tag == GGP_HTML_TAG_A || tag == GGP_HTML_TAG_EOM)
-		{
+		} else if (tag == GGP_HTML_TAG_A || tag == GGP_HTML_TAG_EOM) {
 			/* do nothing */
-		}
-		else if (tag == GGP_HTML_TAG_UNKNOWN)
-		{
+		} else if (tag == GGP_HTML_TAG_UNKNOWN) {
 			purple_debug_warning("gg", "ggp_message_format_to_gg: "
 				"uknown tag %s\n", tag_str);
-		}
-		else
-		{
+		} else {
 			purple_debug_error("gg", "ggp_message_format_to_gg: "
 				"not handled tag %s\n", tag_str);
 		}
@@ -758,8 +709,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	}
 	g_match_info_free(match);
 
-	if (pos < strlen(text_new) || in_any_tag)
-	{
+	if (pos < strlen(text_new) || in_any_tag) {
 		purple_debug_fatal("gg", "ggp_message_format_to_gg: "
 			"end of message not reached\n");
 	}
@@ -809,8 +759,7 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(im), message);
 
 	/* TODO: splitting messages */
-	if (strlen(gg_msg) > GG_MSG_MAXSIZE)
-	{
+	if (strlen(gg_msg) > GG_MSG_MAXSIZE) {
 		g_free(gg_msg);
 		return -E2BIG;
 	}

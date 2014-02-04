@@ -78,8 +78,7 @@ static gchar * ggp_convert(const gchar *src, const char *srcenc,
 
 	dst = g_convert_with_fallback(src, strlen(src), dstenc, srcenc, "?",
 		NULL, NULL, &err);
-	if (err != NULL)
-	{
+	if (err != NULL) {
 		purple_debug_error("gg", "error converting from %s to %s: %s\n",
 			srcenc, dstenc, err->message);
 		g_error_free(err);
@@ -122,8 +121,7 @@ gchar * ggp_utf8_strndup(const gchar *str, gsize n)
 	end_ptr = g_utf8_offset_to_pointer(str, g_utf8_pointer_to_offset(str, &str[n]));
 	raw_len = end_ptr - str;
 
-	if (raw_len > n)
-	{
+	if (raw_len > n) {
 		end_ptr = g_utf8_prev_char(end_ptr);
 		raw_len = end_ptr - str;
 	}
@@ -140,8 +138,7 @@ GSList * ggp_list_copy_to_slist_deep(GList *list, GCopyFunc func,
 	GList *it;
 
 	it = g_list_first(list);
-	while (it)
-	{
+	while (it) {
 		new_list = g_slist_append(new_list, func(it->data, user_data));
 		it = g_list_next(it);
 	}
@@ -155,8 +152,7 @@ GList * ggp_strsplit_list(const gchar *string, const gchar *delimiter,
 	GList *list = NULL;
 
 	it = splitted = g_strsplit(string, delimiter, max_tokens);
-	while (*it)
-	{
+	while (*it) {
 		list = g_list_append(list, *it);
 		it++;
 	}
@@ -177,8 +173,7 @@ gchar * ggp_strjoin_list(const gchar *separator, GList *list)
 
 	it = g_list_first(list);
 	i = 0;
-	while (it)
-	{
+	while (it) {
 		str_array[i++] = it->data;
 		it = g_list_next(it);
 	}
@@ -206,8 +201,7 @@ const gchar * ggp_ipv4_to_str(uint32_t raw_ip)
 
 GList * ggp_list_truncate(GList *list, guint length, GDestroyNotify free_func)
 {
-	while (g_list_length(list) > length)
-	{
+	while (g_list_length(list) > length) {
 		GList *last = g_list_last(list);
 		free_func(last->data);
 		list = g_list_delete_link(list, last);
@@ -217,8 +211,7 @@ GList * ggp_list_truncate(GList *list, guint length, GDestroyNotify free_func)
 
 gchar * ggp_free_if_equal(gchar *str, const gchar *pattern)
 {
-	if (g_strcmp0(str, pattern) == 0)
-	{
+	if (g_strcmp0(str, pattern) == 0) {
 		g_free(str);
 		return NULL;
 	}

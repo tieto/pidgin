@@ -1099,14 +1099,12 @@ static void ggp_ggdrive_auth(PurpleConnection *gc, ggp_ggdrive_auth_cb cb,
 	g_return_if_fail(sdata != NULL);
 
 	imtoken = ggp_get_imtoken(gc);
-	if (!imtoken)
-	{
+	if (!imtoken) {
 		cb(gc, FALSE, user_data);
 		return;
 	}
 
-	if (sdata->auth_done)
-	{
+	if (sdata->auth_done) {
 		cb(gc, sdata->security_token != NULL, user_data);
 		return;
 	}

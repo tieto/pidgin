@@ -115,15 +115,13 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 	gboolean succ = TRUE;
 	const gchar *xml_raw;
 
-	if (!PURPLE_CONNECTION_IS_VALID(data->gc))
-	{
+	if (!PURPLE_CONNECTION_IS_VALID(data->gc)) {
 		ggp_oauth_data_free(data);
 		return;
 	}
 	account = purple_connection_get_account(data->gc);
 
-	if (!purple_http_response_is_successful(response))
-	{
+	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
 			"requested token not received\n");
 		ggp_oauth_data_free(data);
@@ -135,8 +133,7 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 
 	xml_raw = purple_http_response_get_data(response, NULL);
 	xml = purple_xmlnode_from_str(xml_raw, -1);
-	if (xml == NULL)
-	{
+	if (xml == NULL) {
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
 			"invalid xml\n");
 		ggp_oauth_data_free(data);
@@ -147,8 +144,7 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 	succ &= ggp_xml_get_string(xml, "oauth_token_secret",
 		&data->token_secret);
 	purple_xmlnode_free(xml);
-	if (!succ)
-	{
+	if (!succ) {
 		purple_debug_error("gg", "ggp_oauth_request_token_got: "
 			"invalid xml - token is not present\n");
 		ggp_oauth_data_free(data);
@@ -185,16 +181,14 @@ static void ggp_oauth_authorization_done(PurpleHttpConnection *http_conn,
 	const char *url = "http://api.gadu-gadu.pl/access_token";
 	int response_code;
 
-	if (!PURPLE_CONNECTION_IS_VALID(data->gc))
-	{
+	if (!PURPLE_CONNECTION_IS_VALID(data->gc)) {
 		ggp_oauth_data_free(data);
 		return;
 	}
 	account = purple_connection_get_account(data->gc);
 
 	response_code = purple_http_response_get_code(response);
-	if (response_code != 302)
-	{
+	if (response_code != 302) {
 		purple_debug_error("gg", "ggp_oauth_authorization_done: "
 			"failed (code = %d)", response_code);
 		ggp_oauth_data_free(data);
@@ -230,8 +224,7 @@ static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
 
 	xml_raw = purple_http_response_get_data(response, NULL);
 	xml = purple_xmlnode_from_str(xml_raw, -1);
-	if (xml == NULL)
-	{
+	if (xml == NULL) {
 		purple_debug_error("gg", "ggp_oauth_access_token_got: "
 			"invalid xml\n");
 		ggp_oauth_data_free(data);
@@ -242,16 +235,14 @@ static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
 	succ &= ggp_xml_get_string(xml, "oauth_token_secret",
 		&token_secret);
 	purple_xmlnode_free(xml);
-	if (!succ || strlen(token) < 10)
-	{
+	if (!succ || strlen(token) < 10) {
 		purple_debug_error("gg", "ggp_oauth_access_token_got: "
 			"invalid xml - token is not present\n");
 		ggp_oauth_data_free(data);
 		return;
 	}
 
-	if (data->sign_url)
-	{
+	if (data->sign_url) {
 		PurpleAccount *account;
 		gchar *auth;
 
@@ -265,9 +256,7 @@ static void ggp_oauth_access_token_got(PurpleHttpConnection *http_conn,
 			purple_connection_get_password(data->gc),
 			token, token_secret);
 		data->callback(data->gc, auth, data->user_data);
-	}
-	else
-	{
+	} else {
 		purple_debug_misc("gg", "ggp_oauth_access_token_got: "
 			"got access token, returning it\n");
 		data->callback(data->gc, token, data->user_data);
