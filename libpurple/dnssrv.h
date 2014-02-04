@@ -29,6 +29,7 @@
 typedef struct _PurpleSrvTxtQueryData PurpleSrvTxtQueryData;
 typedef struct _PurpleSrvResponse PurpleSrvResponse;
 typedef struct _PurpleTxtResponse PurpleTxtResponse;
+typedef struct _PurpleSrvTxtQueryUiOps PurpleSrvTxtQueryUiOps;
 
 #include <glib.h>
 
@@ -53,25 +54,25 @@ typedef void  (*PurpleSrvTxtQueryFailedCallback) (PurpleSrvTxtQueryData *query_d
 
 /**
  * PurpleSrvTxtQueryUiOps:
+ * @resolve: implemented, return %TRUE if the UI takes responsibility for SRV
+ *           queries. When returning %FALSE, the standard implementation is
+ *           used. These callbacks <emphasis>MUST</emphasis> be called
+ *           asynchronously.
+ * @destroy: Called just before @query_data is freed; this should cancel any
+ *           further use of @query_data the UI would make. Unneeded if @resolve
+ *           is not implemented.
  *
  * SRV Request UI operations;  UIs should implement this if they want to do SRV
  * lookups themselves, rather than relying on the core.
  *
- * @see @ref ui-ops
+ * See <link linkend="chapter-ui-ops">List of <literal>UiOps</literal> Structures</link>
  */
-typedef struct
+struct _PurpleSrvTxtQueryUiOps
 {
-	/** If implemented, return TRUE if the UI takes responsibility for SRV
-	  * queries. When returning FALSE, the standard implementation is used. 
-	  * These callbacks MUST be called asynchronously. */
 	gboolean (*resolve)(PurpleSrvTxtQueryData *query_data,
 	                    PurpleSrvTxtQueryResolvedCallback resolved_cb,
 	                    PurpleSrvTxtQueryFailedCallback failed_cb);
 
-	/** Called just before @query_data is freed; this should cancel any
-	 *  further use of @query_data the UI would make. Unneeded if
-	 *  #resolve is not implemented.
-	 */
 	void (*destroy)(PurpleSrvTxtQueryData *query_data);
 
 	/*< private >*/
@@ -79,7 +80,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleSrvTxtQueryUiOps;
+};
 
 /**
  * PurpleSrvCallback:

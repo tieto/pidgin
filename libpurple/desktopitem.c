@@ -818,10 +818,12 @@ lookup_locale (const PurpleDesktopItem *item, const char *key, const char *local
 	}
 }
 
-/**
+/*
+ * try_english_key:
+ *
  * Fallback to find something suitable for C locale.
  *
- * @return A newly allocated string which should be g_freed by the caller.
+ * Returns: A newly allocated string which should be g_freed by the caller.
  */
 static char *
 try_english_key (PurpleDesktopItem *item, const char *key)

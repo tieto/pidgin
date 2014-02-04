@@ -27,7 +27,7 @@ static GList *ims = NULL;
 static GList *chats = NULL;
 static PurpleConversationUiOps *default_ops = NULL;
 
-/**
+/*
  * A hash table used for efficient lookups of conversations by name.
  * struct _purple_hconv => PurpleConversation*
  */

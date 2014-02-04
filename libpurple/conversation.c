@@ -39,31 +39,30 @@
 #define PURPLE_CONVERSATION_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CONVERSATION, PurpleConversationPrivate))
 
-/** @copydoc _PurpleConversationPrivate */
 typedef struct _PurpleConversationPrivate  PurpleConversationPrivate;
 
-/** General private data for a conversation */
+/* General private data for a conversation */
 struct _PurpleConversationPrivate
 {
-	PurpleAccount *account;           /**< The user using this conversation. */
+	PurpleAccount *account;           /* The user using this conversation. */
 
-	char *name;                       /**< The name of the conversation.     */
-	char *title;                      /**< The window title.                 */
+	char *name;                       /* The name of the conversation.     */
+	char *title;                      /* The window title.                 */
 
-	gboolean logging;                 /**< The status of logging.            */
+	gboolean logging;                 /* The status of logging.            */
 
-	GList *logs;                      /**< This conversation's logs          */
+	GList *logs;                      /* This conversation's logs          */
 
-	PurpleConversationUiOps *ui_ops;  /**< UI-specific operations.           */
+	PurpleConversationUiOps *ui_ops;  /* UI-specific operations.           */
 
-	PurpleConnectionFlags features;   /**< The supported features            */
-	GList *message_history;           /**< Message history, as a GList of
+	PurpleConnectionFlags features;   /* The supported features            */
+	GList *message_history;           /* Message history, as a GList of
 	                                       PurpleConversationMessage's       */
 
-	PurpleE2eeState *e2ee_state;      /**< End-to-end encryption state.      */
+	PurpleE2eeState *e2ee_state;      /* End-to-end encryption state.      */
 };
 
-/**
+/*
  * Description of a conversation message
  */
 struct _PurpleConversationMessage

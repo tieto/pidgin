@@ -79,7 +79,7 @@ gboolean purple_dbus_is_owner(void)
 	return(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER == dbus_request_name_reply);
 }
 
-/**
+/*
  * This function initializes the pointer-id traslation system.  It
  * creates the three above hashtables and defines parents of some types.
  */

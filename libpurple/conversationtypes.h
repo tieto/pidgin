@@ -174,6 +174,7 @@ struct _PurpleChatUser
 {
 	GObject gparent;
 
+	/*< public >*/
 	gpointer ui_data;
 };
 
@@ -202,7 +203,7 @@ G_BEGIN_DECLS
 /**
  * purple_im_conversation_get_type:
  *
- * Returns the GType for the IMConversation object.
+ * Returns: The #GType for the IMConversation object.
  */
 GType purple_im_conversation_get_type(void);
 
@@ -359,7 +360,7 @@ void purple_im_conversation_update_typing(PurpleIMConversation *im);
 /**
  * purple_chat_conversation_get_type:
  *
- * Returns the GType for the ChatConversation object.
+ * Returns: The #GType for the ChatConversation object.
  */
 GType purple_chat_conversation_get_type(void);
 
@@ -672,7 +673,7 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 /**
  * purple_chat_user_get_type:
  *
- * Returns the GType for the ChatConversationBuddy object.
+ * Returns: The #GType for the ChatConversationBuddy object.
  */
 GType purple_chat_user_get_type(void);
 
