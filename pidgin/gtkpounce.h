@@ -1,8 +1,3 @@
-/**
- * @file gtkpounce.h GTK+ Buddy Pounce API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkpounce
+ * @section_id: pidgin-gtkpounce
+ * @short_description: <filename>gtkpounce.h</filename>
+ * @title: Buddy Pounce API
+ */
+
 #ifndef _PIDGINPOUNCE_H_
 #define _PIDGINPOUNCE_H_
 

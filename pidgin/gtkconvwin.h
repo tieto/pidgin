@@ -1,8 +1,3 @@
-/**
- * @file gtkconvwin.h GTK+ Conversation Window API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkconvwin
+ * @section_id: pidgin-gtkconvwin
+ * @short_description: <filename>gtkconvwin.h</filename>
+ * @title: Conversation Window API
+ */
+
 #ifndef _PIDGIN_CONVERSATION_WINDOW_H_
 #define _PIDGIN_CONVERSATION_WINDOW_H_
 

@@ -1,8 +1,3 @@
-/**
- * @file gtksound.h GTK+ Sound API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtksound
+ * @section_id: pidgin-gtksound
+ * @short_description: <filename>gtksound.h</filename>
+ * @title: Sound API
+ */
+
 #ifndef _PIDGINSOUND_H_
 #define _PIDGINSOUND_H_
 

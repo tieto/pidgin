@@ -1,8 +1,3 @@
-/**
- * @file gtkmedia.h Pidgin Media API
- * @ingroup pidgin
- */
-
 /* Pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -22,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
+ */
+/**
+ * SECTION:gtkmedia
+ * @section_id: pidgin-gtkmedia
+ * @short_description: <filename>gtkmedia.h</filename>
+ * @title: Media API
  */
 
 #ifndef __GTKMEDIA_H_

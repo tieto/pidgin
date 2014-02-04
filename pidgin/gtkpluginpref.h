@@ -1,8 +1,3 @@
-/**
- * @file gtkpluginpref.h GTK+ Plugin Preferences
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:gtkpluginpref
+ * @section_id: pidgin-gtkpluginpref
+ * @short_description: <filename>gtkpluginpref.h</filename>
+ * @title: Plugin Preferences
+ */
+
 #ifndef _PIDGINPLUGINPREF_H_
 #define _PIDGINPLUGINPREF_H_
 

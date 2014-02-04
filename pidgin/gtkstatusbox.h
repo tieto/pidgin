@@ -1,8 +1,3 @@
-/*
- * @file gtkstatusbox.c GTK+ Status Selection Widget
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,7 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-
+/**
+ * SECTION:gtkstatusbox
+ * @section_id: pidgin-gtkstatusbox
+ * @short_description: <filename>gtkstatusbox.h</filename>
+ * @title: Status Selection Widget
+ */
 
 #ifndef __PIDGIN_STATUS_BOX_H__
 #define __PIDGIN_STATUS_BOX_H__

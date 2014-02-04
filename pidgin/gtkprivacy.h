@@ -1,8 +1,3 @@
-/**
- * @file gtkprivacy.h GTK+ Privacy UI
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkprivacy
+ * @section_id: pidgin-gtkprivacy
+ * @short_description: <filename>gtkprivacy.h</filename>
+ * @title: Privacy UI
+ */
+
 #ifndef _PIDGINPRIVACY_H_
 #define _PIDGINPRIVACY_H_
 

@@ -1,9 +1,3 @@
-/**
- * @file gtkconv.h GTK+ Conversation API
- * @ingroup pidgin
- * @see @ref gtkconv-signals
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtkconv
+ * @section_id: pidgin-gtkconv
+ * @short_description: <filename>gtkconv.h</filename>
+ * @title: Conversation API
+ * @see_also: <link linkend="chapter-signals-gtkconv">Conversation signals</link>
+ */
+
 #ifndef _PIDGIN_CONVERSATION_H_
 #define _PIDGIN_CONVERSATION_H_
 

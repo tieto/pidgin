@@ -1,8 +1,3 @@
-/**
- * @file gtkdnd-hints.h GTK+ Drag-and-Drop arrow hints
- * @ingroup pidgin
- */
-
 /* Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -21,6 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301, USA.
  */
+/**
+ * SECTION:gtkdnd-hints
+ * @section_id: pidgin-gtkdnd-hints
+ * @short_description: <filename>gtkdnd-hints.h</filename>
+ * @title: Drag-and-Drop Arrow Hints
+ */
+
 #ifndef _PIDGIN_DND_HINTS_H_
 #define _PIDGIN_DND_HINTS_H_
 

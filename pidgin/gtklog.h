@@ -1,9 +1,3 @@
-/**
- * @file gtklog.h GTK+ Log viewer
- * @ingroup pidgin
- * @see @ref gtklog-signals
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,6 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtklog
+ * @section_id: pidgin-gtklog
+ * @short_description: <filename>gtklog.h</filename>
+ * @title: Log Viewer
+ * @see_also: <link linkend="chapter-signals-gtklog">Log signals</link>
+ */
+
 #ifndef _PIDGINLOG_H_
 #define _PIDGINLOG_H_
 

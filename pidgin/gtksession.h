@@ -1,8 +1,3 @@
-/**
- * @file gtksession.h X Windows session management API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,6 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+/**
+ * SECTION:gtksession
+ * @section_id: pidgin-gtksession
+ * @short_description: <filename>gtksession.h</filename>
+ * @title: X Windows Session Management
+ */
+
 #ifndef _PIDGINSESSION_H_
 #define _PIDGINSESSION_H_
 

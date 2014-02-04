@@ -1,4 +1,4 @@
-/* gtkxcellrendererexpander.h
+/*
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -18,6 +18,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+/**
+ * SECTION:gtkcellrendererexpander
+ * @section_id: pidgin-gtkcellrendererexpander
+ * @short_description: <filename>gtkcellrendererexpander.h</filename>
+ * @title: Cell Renderer Expander
+ */
+
 #ifndef _PIDGINCELLRENDEREREXPANDER_H_
 #define _PIDGINCELLRENDEREREXPANDER_H_
 
