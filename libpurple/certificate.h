@@ -169,154 +169,114 @@ struct _PurpleCertificatePool
 
 /**
  * PurpleCertificateScheme:
+ * @name: Name of the certificate type. ex: "x509", "pgp", etc.
+ *        <sbr/> This must be globally unique - you may not register more than
+ *        one CertificateScheme of the same name at a time.
+ * @fullname: User-friendly name for this type. ex: N_("X.509 Certificates")
+ *            <sbr/> When this is displayed anywhere, it should be i18ned. ex:
+ *            _(scheme->fullname)
+ * @import_certificate: Imports a certificate from a file
+ *                      <sbr/> @filename: File to import the certificate from
+ *                      <sbr/> Returns: Pointer to the newly allocated
+ *                      Certificate struct or NULL on failure.
+ * @export_certificate: Exports a certificate to a file.
+ *                      <sbr/>See purple_certificate_export().
+ *                      <sbr/>@filename: File to export the certificate to
+ *                      <sbr/>@crt:      Certificate to export
+ *                      <sbr/>Returns:   %TRUE if the export succeeded,
+ *                                       otherwise %FALSE
+ * @copy_certificate: Duplicates a certificate
+ *                    <sbr/>Certificates are generally assumed to be read-only,
+ *                    so feel free to do any sort of reference-counting magic
+ *                    you want here. If this ever changes, please remember to
+ *                    change the magic accordingly.
+ *                    <sbr/>Returns: Reference to the new copy
+ * @destroy_certificate: Destroys and frees a Certificate structure
+ *                       <sbr/> Destroys a Certificate's internal data
+ *                       structures and calls free(@crt)
+ *                       <sbr/> @crt:  Certificate instance to be destroyed.
+ *                       It <emphasis>WILL NOT</emphasis> be destroyed if it is
+ *                       not of the correct CertificateScheme. Can be %NULL.
+ * @signed_by: Find whether "crt" has a valid signature from issuer "issuer".
+ *             <sbr/>See purple_certificate_signed_by().
+ * @get_fingerprint_sha1: Retrieves the certificate public key fingerprint using
+ *                        SHA1
+ *                        <sbr/>@crt:    Certificate instance
+ *                        <sbr/>Returns: Binary representation of SHA1 hash -
+ *                                       must be freed using g_byte_array_free().
+ * @get_unique_id: Retrieves a unique certificate identifier
+ *                 <sbr/>@crt:    Certificate instance
+ *                 <sbr/>Returns: Newly allocated string that can be used to
+ *                                uniquely identify the certificate.
+ * @get_issuer_unique_id: Retrieves a unique identifier for the certificate's
+ *                        issuer
+ *                        <sbr/>@crt:    Certificate instance
+ *                        <sbr/>Returns: Newly allocated string that can be used
+ *                                       to uniquely identify the issuer's
+ *                                       certificate.
+ * @get_subject_name: Gets the certificate subject's name
+ *                    <sbr/>For X.509, this is the "Common Name" field, as we're
+ *                    only using it for hostname verification at the moment.
+ *                    <sbr/>See purple_certificate_get_subject_name().
+ *                    <sbr/>@crt:    Certificate instance
+ *                    <sbr/>Returns: Newly allocated string with the certificate
+ *                                   subject.
+ * @check_subject_name: Check the subject name against that on the certificate
+ *                      <sbr/>See purple_certificate_check_subject_name().
+ *                      <sbr/>Returns: %TRUE if it is a match, else %FALSE
+ * @get_times: Retrieve the certificate activation/expiration times
+ * @import_certificates: Imports certificates from a file
+ *                       <sbr/> @filename: File to import the certificates from
+ *                       <sbr/> Returns:   #GSList of pointers to the newly
+ *                                         allocated Certificate structs or
+ *                                         %NULL on failure.
+ * @get_der_data: Retrieves the certificate data in DER form
+ *                <sbr/>@crt:    Certificate instance
+ *                <sbr/>Returns: Binary DER representation of certificate - must
+ *                               be freed using g_byte_array_free().
+ * @get_display_string: Retrieves a string representation of the certificate
+ *                      suitable for display
+ *                      <sbr/>@crt:   Certificate instance
+ *                      <sbr/>Returns: User-displayable string representation of
+ *                                     certificate - must be freed using
+ *                                     g_free().
  *
  * A certificate type.
  *
  * A CertificateScheme must implement all of the fields in the structure,
  * and register it using purple_certificate_register_scheme().
  *
- * There may be only ONE CertificateScheme provided for each certificate
- * type, as specified by the "name" field.
+ * There may be only <emphasis>ONE</emphasis> CertificateScheme provided for
+ * each certificate type, as specified by the "name" field.
  */
 struct _PurpleCertificateScheme
 {
-	/** Name of the certificate type
-	 *  ex: "x509", "pgp", etc.
-	 *  This must be globally unique - you may not register more than one
-	 *  CertificateScheme of the same name at a time.
-	 */
 	gchar * name;
-
-	/** User-friendly name for this type
-	 *  ex: N_("X.509 Certificates")
-	 *  When this is displayed anywhere, it should be i18ned
-	 *  ex: _(scheme->fullname)
-	 */
 	gchar * fullname;
 
-	/** Imports a certificate from a file
-	 *
-	 *  @filename:   File to import the certificate from
-	 *  Returns:           Pointer to the newly allocated Certificate struct
-	 *                    or NULL on failure.
-	 */
 	PurpleCertificate * (* import_certificate)(const gchar * filename);
-
-	/**
-	 * Exports a certificate to a file
-	 *
-	 * @filename:    File to export the certificate to
-	 * @crt:         Certificate to export
-	 * Returns: TRUE if the export succeeded, otherwise FALSE
-	 * @see purple_certificate_export()
-	 */
 	gboolean (* export_certificate)(const gchar *filename, PurpleCertificate *crt);
 
-	/**
-	 * Duplicates a certificate
-	 *
-	 * Certificates are generally assumed to be read-only, so feel free to
-	 * do any sort of reference-counting magic you want here. If this ever
-	 * changes, please remember to change the magic accordingly.
-	 * Returns: Reference to the new copy
-	 */
 	PurpleCertificate * (* copy_certificate)(PurpleCertificate *crt);
-
-	/** Destroys and frees a Certificate structure
-	 *
-	 *  Destroys a Certificate's internal data structures and calls
-	 *  free(crt)
-	 *
-	 *  @crt:  Certificate instance to be destroyed. It WILL NOT be
-	 *              destroyed if it is not of the correct
-	 *              CertificateScheme. Can be NULL
-	 */
 	void (* destroy_certificate)(PurpleCertificate * crt);
 
-	/** Find whether "crt" has a valid signature from issuer "issuer"
-	 *  @see purple_certificate_signed_by() */
 	gboolean (*signed_by)(PurpleCertificate *crt, PurpleCertificate *issuer);
-	/**
-	 * Retrieves the certificate public key fingerprint using SHA1
-	 *
-	 * @crt:   Certificate instance
-	 * Returns: Binary representation of SHA1 hash - must be freed using
-	 *         g_byte_array_free()
-	 */
 	GByteArray * (* get_fingerprint_sha1)(PurpleCertificate *crt);
-
-	/**
-	 * Retrieves a unique certificate identifier
-	 *
-	 * @crt:   Certificate instance
-	 * Returns: Newly allocated string that can be used to uniquely
-	 *         identify the certificate.
-	 */
 	gchar * (* get_unique_id)(PurpleCertificate *crt);
-
-	/**
-	 * Retrieves a unique identifier for the certificate's issuer
-	 *
-	 * @crt:   Certificate instance
-	 * Returns: Newly allocated string that can be used to uniquely
-	 *         identify the issuer's certificate.
-	 */
 	gchar * (* get_issuer_unique_id)(PurpleCertificate *crt);
 
-	/**
-	 * Gets the certificate subject's name
-	 *
-	 * For X.509, this is the "Common Name" field, as we're only using it
-	 * for hostname verification at the moment
-	 *
-	 * @see purple_certificate_get_subject_name()
-	 *
-	 * @crt:   Certificate instance
-	 * Returns: Newly allocated string with the certificate subject.
-	 */
 	gchar * (* get_subject_name)(PurpleCertificate *crt);
-
-	/**
-	 * Check the subject name against that on the certificate
-	 * @see purple_certificate_check_subject_name()
-	 * Returns: TRUE if it is a match, else FALSE
-	 */
 	gboolean (* check_subject_name)(PurpleCertificate *crt, const gchar *name);
 
-	/** Retrieve the certificate activation/expiration times */
 	gboolean (* get_times)(PurpleCertificate *crt, gint64 *activation, gint64 *expiration);
 
-	/** Imports certificates from a file
-	 *
-	 *  @filename:   File to import the certificates from
-	 *  Returns:           GSList of pointers to the newly allocated Certificate structs
-	 *                    or NULL on failure.
-	 */
 	GSList * (* import_certificates)(const gchar * filename);
-
-	/**
-	 * Retrieves the certificate data in DER form
-	 *
-	 * @crt:   Certificate instance
-	 * Returns: Binary DER representation of certificate - must be freed using
-	 *         g_byte_array_free()
-	 */
 	GByteArray * (* get_der_data)(PurpleCertificate *crt);
 
-	/**
-	 * Retrieves a string representation of the certificate suitable for display
-	 *
-	 * @crt:   Certificate instance
-	 * Returns: User-displayable string representation of certificate - must be
-	 *         freed using g_free().
-	 */
 	gchar * (* get_display_string)(PurpleCertificate *crt);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 };
 
 /**
