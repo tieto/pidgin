@@ -433,7 +433,8 @@ kwallet_read(PurpleAccount *account, PurpleKeyringReadCallback cb,
 		new KWalletPlugin::read_request(account, cb, data);
 
 	if (KWallet::Wallet::keyDoesNotExist(KWALLET_WALLET_NAME,
-		KWALLET_FOLDER_NAME, kwallet_account_key(account))) {
+		KWALLET_FOLDER_NAME, kwallet_account_key(account)))
+	{
 		req->detailedAbort(PURPLE_KEYRING_ERROR_NOPASSWORD);
 		delete req;
 	}
@@ -447,7 +448,8 @@ kwallet_save(PurpleAccount *account, const char *password,
 {
 	if (password == NULL && KWallet::Wallet::keyDoesNotExist(
 		KWALLET_WALLET_NAME, KWALLET_FOLDER_NAME,
-		kwallet_account_key(account))) {
+		kwallet_account_key(account)))
+	{
 		if (cb != NULL)
 			cb(account, NULL, data);
 	}

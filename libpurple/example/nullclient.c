@@ -64,13 +64,13 @@ static gboolean purple_glib_io_invoke(GIOChannel *source, GIOCondition condition
 		purple_cond |= PURPLE_INPUT_WRITE;
 
 	closure->function(closure->data, g_io_channel_unix_get_fd(source),
-			  purple_cond);
+		purple_cond);
 
 	return TRUE;
 }
 
-static guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function,
-							   gpointer data)
+static guint glib_input_add(gint fd, PurpleInputCondition condition,
+	PurpleInputFunction function, gpointer data)
 {
 	PurpleGLibIOClosure *closure = g_new0(PurpleGLibIOClosure, 1);
 	GIOChannel *channel;
@@ -89,8 +89,8 @@ static guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInput
 #else
 	channel = g_io_channel_unix_new(fd);
 #endif
-	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-					      purple_glib_io_invoke, closure, purple_glib_io_destroy);
+	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT,
+		cond, purple_glib_io_invoke, closure, purple_glib_io_destroy);
 
 	g_io_channel_unref(channel);
 	return closure->result;
@@ -315,4 +315,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
