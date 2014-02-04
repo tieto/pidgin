@@ -334,7 +334,7 @@ GtkWebViewButtons gtk_webview_get_format_functions(GtkWebView *webview);
  */
 void gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
                                     gboolean *italic, gboolean *underline,
-                                    gboolean *strike);
+                                    gboolean *strikethrough);
 
 /**
  * gtk_webview_get_current_fontface:

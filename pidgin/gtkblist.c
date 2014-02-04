@@ -105,13 +105,13 @@ typedef struct
 
 typedef struct
 {
-	/** Used to hold error minidialogs.  Gets packed
-	 *  inside PidginBuddyList.error_buttons
+	/* Used to hold error minidialogs.  Gets packed
+	 * inside PidginBuddyList.error_buttons
 	 */
 	PidginScrollBook *error_scrollbook;
 
-	/** Pointer to the mini-dialog about having signed on elsewhere, if one
-	 *  is showing; @c NULL otherwise.
+	/* Pointer to the mini-dialog about having signed on elsewhere, if one
+	 * is showing; %NULL otherwise.
 	 */
 	PidginMiniDialog *signed_on_elsewhere;
 
@@ -120,9 +120,9 @@ typedef struct
 	guint select_notebook_page_timeout;
 
 #if !GTK_CHECK_VERSION(3,0,0)
-	GdkCursor *hand_cursor;         /**< Hand cursor */
-	GdkCursor *arrow_cursor;        /**< Arrow cursor */
-	gboolean changing_style;        /**< True when changing GTK+ theme style */
+	GdkCursor *hand_cursor;         /* Hand cursor */
+	GdkCursor *arrow_cursor;        /* Arrow cursor */
+	gboolean changing_style;        /* True when changing GTK+ theme style */
 #endif
 
 } PidginBuddyListPrivate;
@@ -4616,7 +4616,7 @@ static const char *require_connection[] =
 static const int require_connection_size = sizeof(require_connection)
 											/ sizeof(*require_connection);
 
-/**
+/*
  * Rebuild dynamic menus and make menu items sensitive/insensitive
  * where appropriate.
  */

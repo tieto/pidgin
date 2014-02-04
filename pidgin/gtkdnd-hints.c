@@ -39,7 +39,7 @@ typedef struct
 
 } HintWindowInfo;
 
-/**
+/*
  * Info about each hint widget. See DndHintWindowId enum.
  */
 static HintWindowInfo hint_windows[] = {

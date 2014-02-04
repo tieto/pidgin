@@ -2261,8 +2261,10 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 	return dialog->icon_filesel;
 }
 
-/**
- * @return True if any string from array a exists in array b.
+/*
+ * str_array_match:
+ *
+ * Returns: %TRUE if any string from array @a exists in array @b.
  */
 static gboolean
 str_array_match(char **a, char **b)
@@ -3216,8 +3218,9 @@ copy_email_address(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWid
 	return TRUE;
 }
 
-/**
- * @param filename The path to a file. Specifically this is the link target
+/*
+ * open_file:
+ * @filename: The path to a file. Specifically this is the link target
  *        from a link in an IM window with the leading "file://" removed.
  */
 static void

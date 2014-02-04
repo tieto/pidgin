@@ -44,7 +44,7 @@ typedef struct {
 	guint timeout;
 } PidginAutoRecon;
 
-/**
+/*
  * Contains accounts that are auto-reconnecting.
  * The key is a pointer to the PurpleAccount and the
  * value is a pointer to a PidginAutoRecon.

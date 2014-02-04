@@ -94,8 +94,8 @@ void pidgin_setup_webview(GtkWidget *webview);
  * @editable: %TRUE if this webview should be editable.  If this is
  *        %FALSE, then the toolbar will NOT be created.  If this webview
  *        should be read-only at first, but may become editable later, then
- *        pass in %TRUE here and then manually call gtk_webview_set_editable()
- *        later.
+ *        pass in %TRUE here and then manually call
+ *        webkit_web_view_set_editable() later.
  * @webview_ret: A pointer to a pointer to a GtkWidget.  This pointer
  *        will be set to the webview when this function exits.
  * @sw_ret: This will be filled with a pointer to the scrolled window
