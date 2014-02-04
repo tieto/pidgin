@@ -675,7 +675,7 @@ GtkWebViewSmileyFlags gtk_webview_smiley_get_flags(const GtkWebViewSmiley *smile
  * @sml:     The name of the smiley category
  * @text:    The text associated with the smiley
  *
- * Returns the smiley object associated with the text.
+ * Returns: The smiley object associated with the text.
  */
 GtkWebViewSmiley *gtk_webview_smiley_find(GtkWebView *webview, const char *sml,
                                           const char *text);
