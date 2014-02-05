@@ -172,8 +172,8 @@ void purple_menu_action_set_children(PurpleMenuAction *act, GList *children);
 
 /**
  * purple_menu_action_set_stock_icon:
- * @act:    The menu action.
- * @strock: The stock icon identifier.
+ * @act:   The menu action.
+ * @stock: The stock icon identifier.
  *
  * Sets the icon for the PurpleMenuAction.
  */

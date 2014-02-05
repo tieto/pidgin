@@ -386,8 +386,8 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 	if(nattype.status != PURPLE_STUN_STATUS_UNDISCOVERED) {
 		gboolean use_cached_result = TRUE;
 
-		/** Deal with the server name having changed since we did the
-		    lookup */
+		/* Deal with the server name having changed since we did the
+		   lookup */
 		if (servername && strlen(servername) > 1
 				&& !purple_strequal(servername, nattype.servername)) {
 			use_cached_result = FALSE;

@@ -117,6 +117,7 @@ struct _PurpleRoomlistUiOps {
 struct _PurpleRoomlist {
 	GObject gparent;
 
+	/*< public >*/
 	gpointer ui_data;
 };
 
@@ -145,7 +146,7 @@ G_BEGIN_DECLS
 /**
  * purple_roomlist_get_type:
  *
- * Returns the GType for the Room List object.
+ * Returns: The #GType for the Room List object.
  */
 GType purple_roomlist_get_type(void);
 
@@ -327,7 +328,7 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
 /**
  * purple_roomlist_room_get_type:
  *
- * Returns the GType for the PurpleRoomlistRoom boxed structure.
+ * Returns: The #GType for the #PurpleRoomlistRoom boxed structure.
  */
 GType purple_roomlist_room_get_type(void);
 
@@ -432,7 +433,7 @@ GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
 /**
  * purple_roomlist_field_get_type:
  *
- * Returns the GType for the PurpleRoomlistField boxed structure.
+ * Returns: The #GType for the #PurpleRoomlistField boxed structure.
  */
 GType purple_roomlist_field_get_type(void);
 

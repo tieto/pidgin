@@ -42,6 +42,8 @@
 typedef struct _PurpleXfer PurpleXfer;
 typedef struct _PurpleXferClass PurpleXferClass;
 
+typedef struct _PurpleXferUiOps PurpleXferUiOps;
+
 #include <glib.h>
 #include <stdio.h>
 
@@ -90,13 +92,40 @@ typedef enum
 
 /**
  * PurpleXferUiOps:
+ * @ui_write: UI op to write data received from the protocol. The UI must deal
+ *            with the entire buffer and return size, or it is treated as an
+ *            error.
+ *            <sbr/>@xfer:   The file transfer structure
+ *            <sbr/>@buffer: The buffer to write
+ *            <sbr/>@size:   The size of the buffer
+ *            <sbr/>Returns: size if the write was successful, or a value
+ *                           between 0 and size on error.
+ * @ui_read: UI op to read data to send to the protocol for a file transfer.
+ *           <sbr/>@xfer:   The file transfer structure
+ *           <sbr/>@buffer: A pointer to a buffer. The UI must allocate this
+ *                          buffer. libpurple will free the data.
+ *           <sbr/>@size:   The maximum amount of data to put in the buffer.
+ *           <sbr/>Returns: The amount of data in the buffer, 0 if nothing is
+ *                          available, and a negative value if an error occurred
+ *                          and the transfer should be cancelled (libpurple will
+ *                          cancel).
+ * @data_not_sent: Op to notify the UI that not all the data read in was
+ *                 written. The UI should re-enqueue this data and return it the
+ *                 next time read is called.
+ *                 <sbr/>This <emphasis>MUST</emphasis> be implemented if read
+ *                 and write are implemented.
+ *                 <sbr/>@xfer:   The file transfer structure
+ *                 <sbr/>@buffer: A pointer to the beginning of the unwritten
+ *                                data.
+ *                 <sbr/>@size:   The amount of unwritten data.
+ * @add_thumbnail: Op to create a thumbnail image for a file transfer
  *
  * File transfer UI operations.
  *
  * Any UI representing a file transfer must assign a filled-out
  * PurpleXferUiOps structure to the purple_xfer.
  */
-typedef struct
+struct _PurpleXferUiOps
 {
 	void (*new_xfer)(PurpleXfer *xfer);
 	void (*destroy)(PurpleXfer *xfer);
@@ -104,53 +133,11 @@ typedef struct
 	void (*update_progress)(PurpleXfer *xfer, double percent);
 	void (*cancel_local)(PurpleXfer *xfer);
 	void (*cancel_remote)(PurpleXfer *xfer);
-
-	/**
-	 * UI op to write data received from the protocol. The UI must deal with the
-	 * entire buffer and return size, or it is treated as an error.
-	 *
-	 * @xfer:    The file transfer structure
-	 * @buffer:  The buffer to write
-	 * @size:    The size of the buffer
-	 *
-	 * Returns: size if the write was successful, or a value between 0 and
-	 *         size on error.
-	 */
 	gssize (*ui_write)(PurpleXfer *xfer, const guchar *buffer, gssize size);
-
-	/**
-	 * UI op to read data to send to the protocol for a file transfer.
-	 *
-	 * @xfer:    The file transfer structure
-	 * @buffer:  A pointer to a buffer. The UI must allocate this buffer.
-	 *                libpurple will free the data.
-	 * @size:    The maximum amount of data to put in the buffer.
-	 *
-	 * Returns: The amount of data in the buffer, 0 if nothing is available,
-	 *          and a negative value if an error occurred and the transfer
-	 *          should be cancelled (libpurple will cancel).
-	 */
 	gssize (*ui_read)(PurpleXfer *xfer, guchar **buffer, gssize size);
-
-	/**
-	 * Op to notify the UI that not all the data read in was written. The UI
-	 * should re-enqueue this data and return it the next time read is called.
-	 *
-	 * This MUST be implemented if read and write are implemented.
-	 *
-	 * @xfer:    The file transfer structure
-	 * @buffer:  A pointer to the beginning of the unwritten data.
-	 * @size:    The amount of unwritten data.
-	 */
 	void (*data_not_sent)(PurpleXfer *xfer, const guchar *buffer, gsize size);
-
-	/**
-	 * Op to create a thumbnail image for a file transfer
-	 *
-	 * @xfer:   The file transfer structure
-	 */
 	void (*add_thumbnail)(PurpleXfer *xfer, const gchar *formats);
-} PurpleXferUiOps;
+};
 
 /**
  * PurpleXfer:
@@ -164,6 +151,7 @@ struct _PurpleXfer
 {
 	GObject gparent;
 
+	/*< public >*/
 	gpointer ui_data;
 };
 
@@ -193,7 +181,7 @@ G_BEGIN_DECLS
 /**
  * purple_xfer_get_type:
  *
- * Returns the GType for the PurpleXfer object.
+ * Returns: The #GType for the #PurpleXfer object.
  */
 GType purple_xfer_get_type(void);
 

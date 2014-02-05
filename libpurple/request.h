@@ -64,6 +64,8 @@ typedef struct _PurpleRequestFieldGroup PurpleRequestFieldGroup;
  */
 typedef struct _PurpleRequestCommonParameters PurpleRequestCommonParameters;
 
+typedef struct _PurpleRequestUiOps PurpleRequestUiOps;
+
 #include "account.h"
 
 #define PURPLE_DEFAULT_ACTION_NONE	-1
@@ -133,14 +135,22 @@ typedef void (*PurpleRequestCancelCb)(gpointer);
 
 /**
  * PurpleRequestUiOps:
+ * @request_input:       See purple_request_input().
+ * @request_choice:      See purple_request_choice_varg().
+ * @request_action:      See purple_request_action_varg().
+ * @request_wait:        See purple_request_wait().
+ * @request_wait_update: See purple_request_wait_pulse(),
+ *                           purple_request_wait_progress().
+ * @request_fields:      See purple_request_fields().
+ * @request_file:        See purple_request_file().
+ * @request_folder:      See purple_request_folder().
  *
  * Request UI operations.
  */
-typedef struct
+struct _PurpleRequestUiOps
 {
 	PurpleRequestFeature features;
 
-	/** @see purple_request_input(). */
 	void *(*request_input)(const char *title, const char *primary,
 		const char *secondary, const char *default_value,
 		gboolean multiline, gboolean masked, gchar *hint,
@@ -148,45 +158,35 @@ typedef struct
 		const char *cancel_text, GCallback cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
 
-	/** @see purple_request_choice_varg(). */
 	void *(*request_choice)(const char *title, const char *primary,
 		const char *secondary, gpointer default_value,
 		const char *ok_text, GCallback ok_cb, const char *cancel_text,
 		GCallback cancel_cb, PurpleRequestCommonParameters *cpar,
 		void *user_data, va_list choices);
 
-	/** @see purple_request_action_varg(). */
 	void *(*request_action)(const char *title, const char *primary,
 		const char *secondary, int default_action,
 		PurpleRequestCommonParameters *cpar, void *user_data,
 		size_t action_count, va_list actions);
 
-	/** @see purple_request_wait(). */
 	void *(*request_wait)(const char *title, const char *primary,
 		const char *secondary, gboolean with_progress,
 		PurpleRequestCancelCb cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
 
-	/**
-	 * @see purple_request_wait_pulse().
-	 * @see purple_request_wait_progress().
-	 */
 	void (*request_wait_update)(void *ui_handle, gboolean pulse,
 		gfloat fraction);
 
-	/** @see purple_request_fields(). */
 	void *(*request_fields)(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *fields,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
 
-	/** @see purple_request_file(). */
 	void *(*request_file)(const char *title, const char *filename,
 		gboolean savedialog, GCallback ok_cb, GCallback cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
 
-	/** @see purple_request_folder(). */
 	void *(*request_folder)(const char *title, const char *dirname,
 		GCallback ok_cb, GCallback cancel_cb,
 		PurpleRequestCommonParameters *cpar, void *user_data);
@@ -198,7 +198,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleRequestUiOps;
+};
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
 
@@ -1243,7 +1243,7 @@ void purple_request_field_int_set_lower_bound(PurpleRequestField *field, int low
  *
  * Sets the upper bound in an integer field.
  */
-void purple_request_field_int_set_upper_bound(PurpleRequestField *field, int lower_bound);
+void purple_request_field_int_set_upper_bound(PurpleRequestField *field, int upper_bound);
 
 /**
  * purple_request_field_int_set_value:
@@ -1897,8 +1897,9 @@ gboolean purple_request_field_email_validator(PurpleRequestField *field,
 /**
  * purple_request_field_alphanumeric_validator:
  * @field: The field.
- * @errmsg: (Optional) destination for error message.
- * @user_data: (Optional) allowed character list (NULL-terminated string).
+ * @errmsg: (allow-none): destination for error message.
+ * @allowed_characters: (allow-none): allowed character list
+ *                      (NULL-terminated string).
  *
  * Validates a field which should contain alphanumeric content.
  *

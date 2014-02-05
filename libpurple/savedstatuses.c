@@ -30,19 +30,19 @@
 #include "util.h"
 #include "xmlnode.h"
 
-/**
+/*
  * The maximum number of transient statuses to save.  This
  * is used during the shutdown process to clean out old
  * transient statuses.
  */
 #define MAX_TRANSIENTS 5
 
-/**
+/*
  * The default message to use when the user becomes auto-away.
  */
 #define DEFAULT_AUTOAWAY_MESSAGE _("I'm not here right now")
 
-/**
+/*
  * The information stores a snap-shot of the statuses of all
  * your accounts.  Basically these are your saved away messages.
  * There is an overall status and message that applies to
@@ -59,14 +59,14 @@ struct _PurpleSavedStatus
 	PurpleStatusPrimitive type;
 	char *message;
 
-	/** The timestamp when this saved status was created. This must be unique. */
+	/* The timestamp when this saved status was created. This must be unique. */
 	time_t creation_time;
 
 	time_t lastused;
 
 	unsigned int usage_count;
 
-	GList *substatuses;      /**< A list of PurpleSavedStatusSub's. */
+	GList *substatuses;      /* A list of PurpleSavedStatusSub's. */
 };
 
 /*
@@ -151,7 +151,7 @@ set_creation_time(PurpleSavedStatus *status, time_t creation_time)
 						status);
 }
 
-/**
+/*
  * A magic number is calculated for each status, and then the
  * statuses are ordered by the magic number.  The magic number
  * is the date the status was last used offset by one day for
@@ -178,7 +178,7 @@ saved_statuses_sort_func(gconstpointer a, gconstpointer b)
 	return 0;
 }
 
-/**
+/*
  * Transient statuses are added and removed automatically by
  * Purple.  If they're not used for a certain length of time then
  * they'll expire and be automatically removed.  This function
@@ -419,7 +419,7 @@ parse_substatus(PurpleXmlNode *substatus)
 	return ret;
 }
 
-/**
+/*
  * Parse a saved status and add it to the saved_statuses linked list.
  *
  * Here's an example of the XML for a saved status:
@@ -515,11 +515,13 @@ parse_status(PurpleXmlNode *status)
 	return ret;
 }
 
-/**
+/*
+ * load_statuses:
+ *
  * Read the saved statuses from a file in the Purple user dir.
  *
- * @return TRUE on success, FALSE on failure (if the file can not
- *         be opened, or if it contains invalid XML).
+ * Returns: TRUE on success, FALSE on failure (if the file can not
+ *          be opened, or if it contains invalid XML).
  */
 static void
 load_statuses(void)

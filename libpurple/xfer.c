@@ -39,48 +39,47 @@
 #define PURPLE_XFER_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_XFER, PurpleXferPrivate))
 
-/** @copydoc _PurpleXferPrivate */
 typedef struct _PurpleXferPrivate  PurpleXferPrivate;
 
 static PurpleXferUiOps *xfer_ui_ops = NULL;
 static GList *xfers;
 
-/** Private data for a file transfer */
+/* Private data for a file transfer */
 struct _PurpleXferPrivate {
-	PurpleXferType type;         /**< The type of transfer.               */
+	PurpleXferType type;         /* The type of transfer.               */
 
-	PurpleAccount *account;      /**< The account.                        */
+	PurpleAccount *account;      /* The account.                        */
 
-	char *who;                   /**< The person on the other end of the
-	                                  transfer.                           */
+	char *who;                   /* The person on the other end of the
+	                                transfer.                           */
 
-	char *message;               /**< A message sent with the request     */
-	char *filename;              /**< The name sent over the network.     */
-	char *local_filename;        /**< The name on the local hard drive.   */
-	goffset size;                /**< The size of the file.               */
+	char *message;               /* A message sent with the request     */
+	char *filename;              /* The name sent over the network.     */
+	char *local_filename;        /* The name on the local hard drive.   */
+	goffset size;                /* The size of the file.               */
 
-	FILE *dest_fp;               /**< The destination file pointer.       */
+	FILE *dest_fp;               /* The destination file pointer.       */
 
-	char *remote_ip;             /**< The remote IP address.              */
-	guint16 local_port;          /**< The local port.                     */
-	guint16 remote_port;         /**< The remote port.                    */
+	char *remote_ip;             /* The remote IP address.              */
+	guint16 local_port;          /* The local port.                     */
+	guint16 remote_port;         /* The remote port.                    */
 
-	int fd;                      /**< The socket file descriptor.         */
-	int watcher;                 /**< Watcher.                            */
+	int fd;                      /* The socket file descriptor.         */
+	int watcher;                 /* Watcher.                            */
 
-	goffset bytes_sent;          /**< The number of bytes sent.           */
-	goffset bytes_remaining;     /**< The number of bytes remaining.      */
-	time_t start_time;           /**< When the transfer of data began.    */
-	time_t end_time;             /**< When the transfer of data ended.    */
+	goffset bytes_sent;          /* The number of bytes sent.           */
+	goffset bytes_remaining;     /* The number of bytes remaining.      */
+	time_t start_time;           /* When the transfer of data began.    */
+	time_t end_time;             /* When the transfer of data ended.    */
 
-	size_t current_buffer_size;  /**< This gradually increases for fast
-	                                   network connections.               */
+	size_t current_buffer_size;  /* This gradually increases for fast
+	                                 network connections.               */
 
-	PurpleXferStatus status;     /**< File Transfer's status.             */
+	PurpleXferStatus status;     /* File Transfer's status.             */
 
-	/** I/O operations, which should be set by the prpl using
-	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
-	 *  mandatory; all others are optional.
+	/* I/O operations, which should be set by the prpl using
+	 * purple_xfer_set_init_fnc() and friends.  Setting #init is
+	 * mandatory; all others are optional.
 	 */
 	struct
 	{
@@ -95,10 +94,10 @@ struct _PurpleXferPrivate {
 		void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
 	} ops;
 
-	PurpleXferUiOps *ui_ops;     /**< UI-specific operations.             */
+	PurpleXferUiOps *ui_ops;     /* UI-specific operations.             */
 
 	/* TODO Remove this and use protocol-specific subclasses. */
-	void *proto_data;            /**< prpl-specific data.                 */
+	void *proto_data;            /* prpl-specific data.                 */
 
 	/*
 	 * Used to moderate the file transfer when either the read/write ui_ops are
@@ -114,7 +113,7 @@ struct _PurpleXferPrivate {
 	/* TODO: Should really use a PurpleCircBuffer for this. */
 	GByteArray *buffer;
 
-	gpointer thumbnail_data;     /**< thumbnail image */
+	gpointer thumbnail_data;     /* thumbnail image */
 	gsize thumbnail_size;
 	gchar *thumbnail_mimetype;
 };

@@ -32,10 +32,9 @@
 #define PURPLE_STATUS_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_STATUS, PurpleStatusPrivate))
 
-/** @copydoc _PurpleStatusPrivate */
 typedef struct _PurpleStatusPrivate  PurpleStatusPrivate;
 
-/**
+/*
  * A type of status.
  */
 struct _PurpleStatusType
@@ -52,7 +51,7 @@ struct _PurpleStatusType
 	GList *attrs;
 };
 
-/**
+/*
  * A status attribute.
  */
 struct _PurpleStatusAttribute
@@ -62,7 +61,7 @@ struct _PurpleStatusAttribute
 	GValue *value_type;
 };
 
-/**
+/*
  * Private data for PurpleStatus
  */
 struct _PurpleStatusPrivate

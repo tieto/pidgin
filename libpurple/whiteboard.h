@@ -95,12 +95,13 @@ struct _PurpleWhiteboardPrplOps
  * @ui_data: The UI data associated with this whiteboard. This is a convenience
  *           field provided to the UIs -- it is not used by the libpurple core.
  *
- * A PurpleWhiteboard
+ * A Whiteboard
  */
 struct _PurpleWhiteboard
 {
 	GObject gparent;
 
+	/*< public >*/
 	gpointer ui_data;
 };
 
@@ -129,7 +130,7 @@ G_BEGIN_DECLS
 /**
  * purple_whiteboard_get_type:
  *
- * Returns the GType for the PurpleWhiteboard object.
+ * Returns: The #GType for the #PurpleWhiteboard object.
  */
 GType purple_whiteboard_get_type(void);
 

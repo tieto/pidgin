@@ -31,41 +31,40 @@
 #define PURPLE_ROOMLIST_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ROOMLIST, PurpleRoomlistPrivate))
 
-/** @copydoc _PurpleRoomlistPrivate */
 typedef struct _PurpleRoomlistPrivate  PurpleRoomlistPrivate;
 
-/**
+/*
  * Private data for a room list.
  */
 struct _PurpleRoomlistPrivate {
-	PurpleAccount *account;  /**< The account this list belongs to. */
-	GList *fields;           /**< The fields.                       */
-	GList *rooms;            /**< The list of rooms.                */
-	gboolean in_progress;    /**< The listing is in progress.       */
+	PurpleAccount *account;  /* The account this list belongs to. */
+	GList *fields;           /* The fields.                       */
+	GList *rooms;            /* The list of rooms.                */
+	gboolean in_progress;    /* The listing is in progress.       */
 
 	/* TODO Remove this and use protocol-specific subclasses. */
-	gpointer proto_data;     /** Protocol private data.             */
+	gpointer proto_data;     /* Protocol private data.             */
 };
 
-/**
+/*
  * Represents a room.
  */
 struct _PurpleRoomlistRoom {
-	PurpleRoomlistRoomType type; /**< The type of room. */
-	gchar *name; /**< The name of the room. */
-	GList *fields; /**< Other fields. */
-	PurpleRoomlistRoom *parent; /**< The parent room, or NULL. */
-	gboolean expanded_once; /**< A flag the UI uses to avoid multiple expand prpl cbs. */
+	PurpleRoomlistRoomType type; /* The type of room. */
+	gchar *name; /* The name of the room. */
+	GList *fields; /* Other fields. */
+	PurpleRoomlistRoom *parent; /* The parent room, or NULL. */
+	gboolean expanded_once; /* A flag the UI uses to avoid multiple expand prpl cbs. */
 };
 
-/**
+/*
  * A field a room might have.
  */
 struct _PurpleRoomlistField {
-	PurpleRoomlistFieldType type; /**< The type of field. */
-	gchar *label; /**< The i18n user displayed name of the field. */
-	gchar *name; /**< The internal name of the field. */
-	gboolean hidden; /**< Hidden? */
+	PurpleRoomlistFieldType type; /* The type of field. */
+	gchar *label; /* The i18n user displayed name of the field. */
+	gchar *name; /* The internal name of the field. */
+	gboolean hidden; /* Hidden? */
 };
 
 /* Room list property enums */
