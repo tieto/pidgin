@@ -52,8 +52,9 @@ G_BEGIN_DECLS
 /**
  * purple_imgstore_get_type:
  *
- * Returns the GType for the PurpleStoredImage boxed structure.
- * TODO Boxing of PurpleStoredImage is a temporary solution to having a GType
+ * Returns: The #GType for the #PurpleStoredImage boxed structure.
+ */
+/* TODO Boxing of PurpleStoredImage is a temporary solution to having a GType
  *      for stored images. This should rather be a GObject instead of a GBoxed.
  */
 GType purple_imgstore_get_type(void);

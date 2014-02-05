@@ -550,7 +550,7 @@ GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
 /**
  * purple_plugin_info_get_type:
  *
- * Returns the GType for the PurplePluginInfo object.
+ * Returns: The #GType for the #PurplePluginInfo object.
  */
 GType purple_plugin_info_get_type(void);
 
@@ -892,7 +892,7 @@ gpointer purple_plugin_info_get_ui_data(const PurplePluginInfo *info);
 /**
  * purple_plugin_action_get_type:
  *
- * Returns the GType for the PurplePluginAction boxed structure.
+ * Returns: The #GType for the #PurplePluginAction boxed structure.
  */
 GType purple_plugin_action_get_type(void);
 

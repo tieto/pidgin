@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-/**
+/*
  * SECTION:internal
  * @section_id: libpurple-internal
  * @short_description: <filename>internal.h</filename>
@@ -291,10 +291,10 @@ void _purple_conversations_update_cache(PurpleConversation *conv,
 /**
  * _purple_statuses_get_primitive_scores:
  *
- * Returns the primitive scores array from status.c.
- *
  * Note: This function should only be called by
  *       purple_buddy_presence_compute_score() in presence.c.
+ *
+ * Returns: The primitive scores array from status.c.
  */
 int *_purple_statuses_get_primitive_scores(void);
 

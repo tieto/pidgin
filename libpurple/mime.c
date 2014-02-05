@@ -28,9 +28,7 @@
 #include "mime.h"
 #include "util.h"
 
-/**
- * @struct mime_fields
- *
+/*
  * Utility structure used in both MIME document and parts, which maps
  * field names to their values, and keeps an easily accessible list of
  * keys.

@@ -735,7 +735,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 #if defined(GG_CONFIG_HAVE_GNUTLS) || defined(GG_CONFIG_HAVE_OPENSSL)
 			if (sess->ssl != NULL) {
 #ifdef GG_CONFIG_HAVE_GNUTLS
-				gnutls_transport_set_ptr(GG_SESSION_GNUTLS(sess), (gnutls_transport_ptr_t) sess->fd);
+				gnutls_transport_set_ptr(GG_SESSION_GNUTLS(sess), (gnutls_transport_ptr_t)(long)sess->fd);
 #endif
 #ifdef GG_CONFIG_HAVE_OPENSSL
 				SSL_set_fd(sess->ssl, sess->fd);

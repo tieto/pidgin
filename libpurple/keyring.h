@@ -399,7 +399,7 @@ purple_keyring_apply_settings(void *notify_handle, PurpleRequestFields *fields);
 /**
  * purple_keyring_get_type:
  *
- * Returns the GType for the PurpleKeyring boxed structure.
+ * Returns: The #GType for the #PurpleKeyring boxed structure.
  */
 GType purple_keyring_get_type(void);
 
@@ -481,7 +481,7 @@ purple_keyring_set_name(PurpleKeyring *keyring, const gchar *name);
 /**
  * purple_keyring_set_id:
  * @keyring: The keyring.
- * @name:    Keyring ID.
+ * @id:      Keyring ID.
  *
  * Sets keyring ID.
  *

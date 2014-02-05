@@ -18,14 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-/**
+/*
  * SECTION:backend-fs2
  * @section_id: libpurple-backend-fs2
  * @short_description: <filename>media/backend-fs2.h</filename>
  * @title: Farsight 2 backend for media API
- */
-
-/*
+ *
  * This file should not yet be part of libpurple's API.
  * It should remain internal only for now.
  */

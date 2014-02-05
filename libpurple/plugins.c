@@ -30,32 +30,31 @@
 #define PURPLE_PLUGIN_INFO_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PLUGIN_INFO, PurplePluginInfoPrivate))
 
-/** @copydoc _PurplePluginInfoPrivate */
 typedef struct _PurplePluginInfoPrivate  PurplePluginInfoPrivate;
 
 /**************************************************************************
  * Plugin info private data
  **************************************************************************/
 struct _PurplePluginInfoPrivate {
-	char *ui_requirement;  /**< ID of UI that is required to load the plugin */
-	char *error;           /**< Why a plugin is not loadable                 */
+	char *ui_requirement;  /* ID of UI that is required to load the plugin */
+	char *error;           /* Why a plugin is not loadable                 */
 
-	PurplePluginInfoFlags flags; /**< Flags for the plugin */
+	PurplePluginInfoFlags flags; /* Flags for the plugin */
 
-	/** Callback that returns a list of actions the plugin can perform */
+	/* Callback that returns a list of actions the plugin can perform */
 	PurplePluginActionsCb actions_cb;
 
-	/** Callback that returns extra information about a plugin */
+	/* Callback that returns extra information about a plugin */
 	PurplePluginExtraCb extra_cb;
 
-	/** Callback that returns a preferences frame for a plugin */
+	/* Callback that returns a preferences frame for a plugin */
 	PurplePluginPrefFrameCb pref_frame_cb;
 
-	/** Callback that returns a preferences request handle for a plugin */
+	/* Callback that returns a preferences request handle for a plugin */
 	PurplePluginPrefRequestCb pref_request_cb;
 
-	/** TRUE if a plugin has been unloaded at least once. Auto-load
-	 *  plugins that have been unloaded once will not be auto-loaded again. */
+	/* TRUE if a plugin has been unloaded at least once. Auto-load
+	 * plugins that have been unloaded once will not be auto-loaded again. */
 	gboolean unloaded;
 };
 

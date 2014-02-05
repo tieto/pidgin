@@ -166,7 +166,7 @@ purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 	return nonce;
 }
 
-/**
+/*
  * Create a 64bit DES key by taking a 56bit key and adding
  * a parity bit after every 7th bit.
  */

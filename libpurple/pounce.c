@@ -27,7 +27,7 @@
 #include "pounce.h"
 #include "util.h"
 
-/**
+/*
  * A buddy pounce structure.
  *
  * Buddy pounces are actions triggered by a buddy-related event. For
@@ -37,19 +37,19 @@
  */
 struct _PurplePounce
 {
-	char *ui_type;                /**< The type of UI.            */
+	char *ui_type;                /* The type of UI.            */
 
-	PurplePounceEvent events;       /**< The event(s) to pounce on. */
-	PurplePounceOption options;     /**< The pounce options         */
-	PurpleAccount *pouncer;         /**< The user who is pouncing.  */
+	PurplePounceEvent events;     /* The event(s) to pounce on. */
+	PurplePounceOption options;   /* The pounce options         */
+	PurpleAccount *pouncer;       /* The user who is pouncing.  */
 
-	char *pouncee;                /**< The buddy to pounce on.    */
+	char *pouncee;                /* The buddy to pounce on.    */
 
-	GHashTable *actions;          /**< The registered actions.    */
+	GHashTable *actions;          /* The registered actions.    */
 
-	gboolean save;                /**< Whether or not the pounce should
+	gboolean save;                /* Whether or not the pounce should
 	                                   be saved after activation. */
-	void *data;                   /**< Pounce-specific data.      */
+	void *data;                   /* Pounce-specific data.      */
 };
 
 typedef struct
