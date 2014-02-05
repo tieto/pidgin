@@ -160,7 +160,7 @@ GList *purple_media_backend_get_codecs(PurpleMediaBackend *self,
  * purple_media_backend_get_local_candidates:
  * @self: The media backend the stream is in.
  * @sess_id: The session id associated with the stream.
- * @particilant: The participant associated with the stream.
+ * @participant: The participant associated with the stream.
  *
  * Gets the list of local candidates for a stream.
  *

@@ -89,16 +89,14 @@ struct _PurplePresence
 
 /**
  * PurplePresenceClass:
+ * @update_idle: Updates the logs and the UI when the idle state or time of the
+ *               presence changes.
  *
  * Base class for all #PurplePresence's
  */
 struct _PurplePresenceClass {
 	GObjectClass parent_class;
 
-	/**
-	 * Updates the logs and the UI when the idle state or time of the presence
-	 * changes.
-	 */
 	void (*update_idle)(PurplePresence *presence, gboolean old_idle);
 
 	/*< private >*/
@@ -168,7 +166,7 @@ G_BEGIN_DECLS
 /**
  * purple_account_presence_get_type:
  *
- * Returns the GType for the PurpleAccountPresence object.
+ * Returns: The #GType for the #PurpleAccountPresence object.
  */
 GType purple_account_presence_get_type(void);
 
@@ -202,7 +200,7 @@ PurpleAccount *purple_account_presence_get_account(const PurpleAccountPresence *
 /**
  * purple_buddy_presence_get_type:
  *
- * Returns the GType for the PurpleBuddyPresence object.
+ * Returns: The #GType for the #PurpleBuddyPresence object.
  */
 GType purple_buddy_presence_get_type(void);
 
@@ -250,7 +248,7 @@ gint purple_buddy_presence_compare(const PurpleBuddyPresence *buddy_presence1,
 /**
  * purple_presence_get_type:
  *
- * Returns the GType for the PurplePresence object.
+ * Returns: The #GType for the #PurplePresence object.
  */
 GType purple_presence_get_type(void);
 

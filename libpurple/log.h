@@ -206,8 +206,9 @@ G_BEGIN_DECLS
 /**
  * purple_log_get_type:
  *
- * Returns the GType for the PurpleLog boxed structure.
- * TODO Boxing of PurpleLog is a temporary solution to having a GType for
+ * Returns: The #GType for the #PurpleLog boxed structure.
+ */
+/* TODO Boxing of PurpleLog is a temporary solution to having a GType for
  *      logs. This should rather be a GObject instead of a GBoxed.
  */
 GType purple_log_get_type(void);

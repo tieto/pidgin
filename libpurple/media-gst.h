@@ -154,7 +154,7 @@ GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
  * @session_id: The id of the session this element is requested for or NULL.
  * @participant: The remote user this element is requested for or NULL.
  *
- * Returns a GStreamer source or sink for audio or video.
+ * Returns: A GStreamer source or sink for audio or video.
  */
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,

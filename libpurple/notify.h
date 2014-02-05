@@ -490,7 +490,7 @@ void *purple_notify_userinfo(PurpleConnection *gc, const char *who,
 /**
  * purple_notify_user_info_get_type:
  *
- * Returns the GType for the PurpleNotifyUserInfo boxed structure.
+ * Returns: The #GType for the #PurpleNotifyUserInfo boxed structure.
  */
 GType purple_notify_user_info_get_type(void);
 
