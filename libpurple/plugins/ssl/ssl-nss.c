@@ -266,6 +266,46 @@ ssl_nss_get_peer_certificates(PRFileDesc *socket, PurpleSslConnection * gsc)
 	return peer_certs;
 }
 
+/*
+ * Ideally this information would be exposed to the UI somehow, but for now we
+ * just print it to the debug log
+ */
+static void 
+printSecurityInfo(PRFileDesc *fd)
+{
+	SECStatus result;
+	SSLChannelInfo channel;
+	SSLCipherSuiteInfo suite;
+
+	result = SSL_GetChannelInfo(fd, &channel, sizeof channel);
+	if (result == SECSuccess && channel.length == sizeof channel
+			&& channel.cipherSuite) {
+		result = SSL_GetCipherSuiteInfo(channel.cipherSuite,
+				&suite, sizeof suite);
+
+		if (result == SECSuccess) {
+			purple_debug_info("nss", "SSL version %d.%d using "
+					"%d-bit %s with %d-bit %s MAC\n"
+					"Server Auth: %d-bit %s, "
+					"Key Exchange: %d-bit %s, "
+					"Compression: %s\n"
+					"Cipher Suite Name: %s\n",
+					channel.protocolVersion >> 8,
+				       	channel.protocolVersion & 0xff,
+					suite.effectiveKeyBits,
+				       	suite.symCipherName,
+					suite.macBits,
+					suite.macAlgorithmName,
+					channel.authKeyBits,
+					suite.authAlgorithmName,
+					channel.keaKeyBits, suite.keaTypeName,
+					channel.compressionMethodName,
+					suite.cipherSuiteName);
+		}
+	}
+}
+
+
 static void
 ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 {
@@ -292,6 +332,8 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 
 		return;
 	}
+
+	printSecurityInfo(nss_data->in);
 
 	purple_input_remove(nss_data->handshake_handler);
 	nss_data->handshake_handler = 0;
