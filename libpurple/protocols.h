@@ -176,7 +176,7 @@ G_BEGIN_DECLS
 /**
  * purple_attention_type_get_type:
  *
- * Returns the GType for the #PurpleAttentionType boxed structure.
+ * Returns: The #GType for the #PurpleAttentionType boxed structure.
  */
 GType purple_attention_type_get_type(void);
 
@@ -312,7 +312,7 @@ const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType
 /**
  * purple_protocol_action_get_type:
  *
- * Returns the GType for the #PurpleProtocolAction boxed structure.
+ * Returns: The #GType for the #PurpleProtocolAction boxed structure.
  */
 GType purple_protocol_action_get_type(void);
 
@@ -345,7 +345,7 @@ void purple_protocol_action_free(PurpleProtocolAction *action);
 /**
  * purple_protocol_chat_entry_get_type:
  *
- * Returns the GType for the #PurpleProtocolChatEntry boxed structure.
+ * Returns: The #GType for the #PurpleProtocolChatEntry boxed structure.
  */
 GType purple_protocol_chat_entry_get_type(void);
 

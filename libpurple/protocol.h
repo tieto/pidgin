@@ -86,6 +86,7 @@ struct _PurpleProtocol
 {
 	GObject gparent;
 
+	/*< public >*/
 	const char *id;
 	const char *name;
 
@@ -165,6 +166,7 @@ struct _PurpleProtocolClientIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	/**
 	 * Returns the actions the protocol can perform. These will show up in the
 	 * Accounts menu, under a submenu with the name of the account.
@@ -279,6 +281,7 @@ struct _PurpleProtocolServerIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	/** new user registration */
 	void (*register_user)(PurpleAccount *);
 
@@ -411,6 +414,7 @@ struct _PurpleProtocolIMIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	/**
 	 * This protocol function should return a positive value on success.
 	 * If the message is too big to be sent, return -E2BIG.  If
@@ -454,6 +458,7 @@ struct _PurpleProtocolChatIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	/**
 	 * Returns a list of #PurpleProtocolChatEntry structs, which represent
 	 * information required by the protocol to join a chat. libpurple will
@@ -585,6 +590,7 @@ struct _PurpleProtocolPrivacyIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	void (*add_permit)(PurpleConnection *, const char *name);
 	void (*add_deny)(PurpleConnection *, const char *name);
 	void (*rem_permit)(PurpleConnection *, const char *name);
@@ -611,6 +617,7 @@ struct _PurpleProtocolXferIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	gboolean (*can_receive)(PurpleConnection *, const char *who);
 	void (*send)(PurpleConnection *, const char *who,
 					  const char *filename);
@@ -636,6 +643,7 @@ struct _PurpleProtocolRoomlistIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	PurpleRoomlist *(*get_list)(PurpleConnection *gc);
 	void (*cancel)(PurpleRoomlist *list);
 	void (*expand_category)(PurpleRoomlist *list,
@@ -664,6 +672,7 @@ struct _PurpleProtocolAttentionIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	gboolean (*send)(PurpleConnection *gc, const char *username,
 							   guint type);
 	GList *(*get_types)(PurpleAccount *acct);
@@ -688,6 +697,7 @@ struct _PurpleProtocolMediaIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	/**
 	 * Initiate a media session with the given contact.
 	 *
@@ -732,6 +742,7 @@ struct _PurpleProtocolFactoryIface
 	/*< private >*/
 	GTypeInterface parent_iface;
 
+	/*< public >*/
 	/**
 	 * Creates a new protocol-specific connection object that inherits
 	 * PurpleConnection.
@@ -784,7 +795,7 @@ G_BEGIN_DECLS
 /**
  * purple_protocol_get_type:
  *
- * Returns the GType for #PurpleProtocol.
+ * Returns: The #GType for #PurpleProtocol.
  */
 GType purple_protocol_get_type(void);
 
@@ -898,7 +909,7 @@ const char *purple_protocol_class_list_icon(PurpleProtocol *,
 /**
  * purple_protocol_client_iface_get_type:
  *
- * Returns the GType for the protocol client interface.
+ * Returns: The #GType for the protocol client interface.
  */
 GType purple_protocol_client_iface_get_type(void);
 
@@ -950,7 +961,7 @@ gssize purple_protocol_client_iface_get_max_message_size(PurpleProtocol *,
 /**
  * purple_protocol_server_iface_get_type:
  *
- * Returns the GType for the protocol server interface.
+ * Returns: The #GType for the protocol server interface.
  */
 GType purple_protocol_server_iface_get_type(void);
 
@@ -1031,7 +1042,7 @@ void purple_protocol_server_iface_get_public_alias(PurpleProtocol *,
 /**
  * purple_protocol_im_iface_get_type:
  *
- * Returns the GType for the protocol IM interface.
+ * Returns: The #GType for the protocol IM interface.
  */
 GType purple_protocol_im_iface_get_type(void);
 
@@ -1051,7 +1062,7 @@ unsigned int purple_protocol_im_iface_send_typing(PurpleProtocol *,
 /**
  * purple_protocol_chat_iface_get_type:
  *
- * Returns the GType for the protocol chat interface.
+ * Returns: The #GType for the protocol chat interface.
  */
 GType purple_protocol_chat_iface_get_type(void);
 
@@ -1098,7 +1109,7 @@ void purple_protocol_chat_iface_set_topic(PurpleProtocol *,
 /**
  * purple_protocol_privacy_iface_get_type:
  *
- * Returns the GType for the protocol privacy interface.
+ * Returns: The #GType for the protocol privacy interface.
  */
 GType purple_protocol_privacy_iface_get_type(void);
 
@@ -1127,7 +1138,7 @@ void purple_protocol_privacy_iface_set_permit_deny(PurpleProtocol *,
 /**
  * purple_protocol_xfer_iface_get_type:
  *
- * Returns the GType for the protocol xfer interface.
+ * Returns: The #GType for the protocol xfer interface.
  */
 GType purple_protocol_xfer_iface_get_type(void);
 
@@ -1150,7 +1161,7 @@ PurpleXfer *purple_protocol_xfer_iface_new_xfer(PurpleProtocol *,
 /**
  * purple_protocol_roomlist_iface_get_type:
  *
- * Returns the GType for the protocol roomlist interface.
+ * Returns: The #GType for the protocol roomlist interface.
  */
 GType purple_protocol_roomlist_iface_get_type(void);
 
@@ -1176,7 +1187,7 @@ char *purple_protocol_roomlist_iface_room_serialize(PurpleProtocol *,
 /**
  * purple_protocol_attention_iface_get_type:
  *
- * Returns the GType for the protocol attention interface.
+ * Returns: The #GType for the protocol attention interface.
  */
 GType purple_protocol_attention_iface_get_type(void);
 
@@ -1196,7 +1207,7 @@ GList *purple_protocol_attention_iface_get_types(PurpleProtocol *,
 /**
  * purple_protocol_media_iface_get_type:
  *
- * Returns the GType for the protocol media interface.
+ * Returns: The #GType for the protocol media interface.
  */
 GType purple_protocol_media_iface_get_type(void);
 
@@ -1216,7 +1227,7 @@ PurpleMediaCaps purple_protocol_media_iface_get_caps(PurpleProtocol *,
 /**
  * purple_protocol_factory_iface_get_type:
  *
- * Returns the GType for the protocol factory interface.
+ * Returns: The #GType for the protocol factory interface.
  */
 GType purple_protocol_factory_iface_get_type(void);
 
