@@ -86,7 +86,7 @@ G_BEGIN_DECLS
 /**
  * purple_xmlnode_get_type:
  *
- * Returns the GType for the PurpleXmlNode boxed structure.
+ * Returns: The #GType for the #PurpleXmlNode boxed structure.
  */
 GType purple_xmlnode_get_type(void);
 

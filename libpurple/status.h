@@ -209,7 +209,7 @@ PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 /**
  * purple_status_type_get_type:
  *
- * Returns the GType for the PurpleStatusType boxed structure.
+ * Returns: The #GType for the #PurpleStatusType boxed structure.
  */
 GType purple_status_type_get_type(void);
 
@@ -427,7 +427,7 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
 /**
  * purple_status_attribute_get_type:
  *
- * Returns the GType for the PurpleStatusAttribute boxed structure.
+ * Returns: The #GType for the #PurpleStatusAttribute boxed structure.
  */
 GType purple_status_attribute_get_type(void);
 
@@ -492,7 +492,7 @@ GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
 /**
  * purple_mood_get_type:
  *
- * Returns the GType for the PurpleMood boxed structure.
+ * Returns: The #GType for the #PurpleMood boxed structure.
  */
 GType purple_mood_get_type(void);
 
@@ -506,7 +506,7 @@ GType purple_mood_get_type(void);
 /**
  * purple_status_get_type:
  *
- * Returns the GType for the Status object.
+ * Returns: The #GType for the Status object.
  */
 GType purple_status_get_type(void);
 

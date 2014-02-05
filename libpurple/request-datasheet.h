@@ -377,9 +377,9 @@ purple_request_datasheet_record_set_string_data(
 
 /**
  * purple_request_datasheet_record_set_image_data:
- * @rec:    The record.
- * @col_no: The column.
- * @data:   The stock identifier of a image.
+ * @rec:      The record.
+ * @col_no:   The column.
+ * @stock_id: The stock identifier of a image.
  *
  * Sets data for a image column of specified record.
  */
