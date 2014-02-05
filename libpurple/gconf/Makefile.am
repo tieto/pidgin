@@ -13,7 +13,7 @@ schema_DATA = $(schema_in_files:.schemas.in=.schemas)
 if GCONF_SCHEMAS_INSTALL
 install-data-local:
 	LANG=en GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(schema_DATA) 2>&1 | \
-		grep -v "^WARNING: failed to install schema" | grep -v "^Attached schema" 1>&2
+		grep -v "^WARNING: failed to install schema" | grep -v "^Attached schema" 1>&2 || true
 else
 install-data-local:
 endif #GCONF_SCHEMAS_INSTALL
