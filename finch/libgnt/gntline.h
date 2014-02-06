@@ -70,7 +70,7 @@ struct _GntLineClass
 G_BEGIN_DECLS
 
 /**
- * gnt_line_get_gtype:
+ * gnt_line_get_type:
  *
  * Returns: GType for GntLine.
  */

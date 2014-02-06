@@ -102,7 +102,7 @@ struct _GntFile
 G_BEGIN_DECLS
 
 /**
- * gnt_file_sel_get_gtype:
+ * gnt_file_sel_get_type:
  *
  * Returns: GType for GntFileSel.
  */

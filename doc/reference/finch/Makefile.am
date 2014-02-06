@@ -66,7 +66,8 @@ IGNORE_HFILES=\
 	wms \
 	getopt.h \
 	gntinternal.h \
-	gntmarshal.h
+	gntmarshal.h \
+	gnt-skel.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

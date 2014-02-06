@@ -72,7 +72,7 @@ struct _GntWSClass
 G_BEGIN_DECLS
 
 /**
- * gnt_ws_get_gtype:
+ * gnt_ws_get_type:
  *
  * Returns: The GType for GntWS.
  *

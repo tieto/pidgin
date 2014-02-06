@@ -63,7 +63,7 @@ struct _GntClipboardClass
 G_BEGIN_DECLS
 
 /**
- * gnt_clipboard_get_gtype:
+ * gnt_clipboard_get_type:
  *
  * Returns: GType for GntClipboard.
  */

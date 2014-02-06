@@ -193,7 +193,7 @@ PurpleSrvTxtQueryUiOps *purple_srv_txt_query_get_ui_ops(void);
 char *purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data);
 
 /**
- * purple_srv_txt_query_get_type:
+ * purple_srv_txt_query_get_query_type:
  * @query_data: The query
  *
  * Get the type from a PurpleSrvTxtQueryData (TXT or SRV)

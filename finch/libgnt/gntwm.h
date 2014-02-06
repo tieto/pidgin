@@ -193,7 +193,7 @@ struct _GntWMClass
 G_BEGIN_DECLS
 
 /**
- * gnt_wm_get_gtype:
+ * gnt_wm_get_type:
  *
  * Returns: GType for GntWM.
  */

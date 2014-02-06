@@ -227,7 +227,7 @@ void purple_account_option_add_list_item(PurpleAccountOption *option,
 									   const char *key, const char *value);
 
 /**
- * purple_account_option_get_type:
+ * purple_account_option_get_pref_type:
  * @option: The account option.
  *
  * Returns the specified account option's type.

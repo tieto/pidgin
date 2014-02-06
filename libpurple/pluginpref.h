@@ -212,7 +212,7 @@ void purple_plugin_pref_set_bounds(PurplePluginPref *pref, int min, int max);
 void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max);
 
 /**
- * purple_plugin_pref_set_type:
+ * purple_plugin_pref_set_pref_type:
  * @pref: The plugin pref
  * @type: The type
  *
@@ -221,7 +221,7 @@ void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max);
 void purple_plugin_pref_set_pref_type(PurplePluginPref *pref, PurplePluginPrefType type);
 
 /**
- * purple_plugin_pref_get_type:
+ * purple_plugin_pref_get_pref_type:
  * @pref: The plugin pref
  *
  * Get the type of a plugin pref

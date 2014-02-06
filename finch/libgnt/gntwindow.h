@@ -77,7 +77,7 @@ struct _GntWindowClass
 G_BEGIN_DECLS
 
 /**
- * gnt_window_get_gtype:
+ * gnt_window_get_type:
  *
  * Returns:  GType for GntWindow.
  */

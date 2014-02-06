@@ -93,7 +93,7 @@ struct _GntMenuClass
 G_BEGIN_DECLS
 
 /**
- * gnt_menu_get_gtype:
+ * gnt_menu_get_type:
  *
  * Returns:  The GType for GntMenu.
  */

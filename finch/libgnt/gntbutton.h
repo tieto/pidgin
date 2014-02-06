@@ -77,7 +77,7 @@ struct _GntButtonClass
 G_BEGIN_DECLS
 
 /**
- * gnt_button_get_gtype:
+ * gnt_button_get_type:
  *
  * Returns:  GType for Gntbutton
  */

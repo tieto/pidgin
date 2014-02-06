@@ -276,7 +276,7 @@ void purple_prefs_set_path_list(const char *name, GList *value);
 gboolean purple_prefs_exists(const char *name);
 
 /**
- * purple_prefs_get_type:
+ * purple_prefs_get_pref_type:
  * @name: The name of the pref
  *
  * Get pref type
