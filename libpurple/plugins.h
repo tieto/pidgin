@@ -411,7 +411,7 @@ void type_name##_register_type(PurplePlugin *plugin) { }
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Plugin API                                                      */
+/* Plugin API                                                             */
 /**************************************************************************/
 /*@{*/
 
@@ -423,9 +423,9 @@ G_BEGIN_DECLS
  *
  * Attempts to load a plugin.
  *
- * Returns: %TRUE if successful or already loaded, %FALSE otherwise.
+ * Also see purple_plugin_unload().
  *
- * @see purple_plugin_unload()
+ * Returns: %TRUE if successful or already loaded, %FALSE otherwise.
  */
 gboolean purple_plugin_load(PurplePlugin *plugin, GError **error);
 
@@ -437,9 +437,9 @@ gboolean purple_plugin_load(PurplePlugin *plugin, GError **error);
  *
  * Unloads the specified plugin.
  *
- * Returns: %TRUE if successful or not loaded, %FALSE otherwise.
+ * Also see purple_plugin_load().
  *
- * @see purple_plugin_load()
+ * Returns: %TRUE if successful or not loaded, %FALSE otherwise.
  */
 gboolean purple_plugin_unload(PurplePlugin *plugin, GError **error);
 
@@ -543,7 +543,7 @@ GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
 /*@}*/
 
 /**************************************************************************/
-/** @name PluginInfo API                                                  */
+/* PluginInfo API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -640,10 +640,10 @@ GType purple_plugin_info_get_type(void);
  *   </tbody></tgroup>
  * </informaltable>
  *
- * Returns: A new #PurplePluginInfo instance.
+ * See #PURPLE_PLUGIN_ABI_VERSION,
+ *     <link linkend="chapter-plugin-ids">Plugin IDs</link>.
  *
- * @see PURPLE_PLUGIN_ABI_VERSION
- * @see @ref plugin-ids
+ * Returns: A new #PurplePluginInfo instance.
  */
 PurplePluginInfo *purple_plugin_info_new(const char *first_property, ...)
                   G_GNUC_NULL_TERMINATED;
@@ -885,7 +885,7 @@ gpointer purple_plugin_info_get_ui_data(const PurplePluginInfo *info);
 /*@}*/
 
 /**************************************************************************/
-/** @name PluginAction API                                                */
+/* PluginAction API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -918,7 +918,7 @@ void purple_plugin_action_free(PurplePluginAction *action);
 /*@}*/
 
 /**************************************************************************/
-/** @name Plugins API                                                     */
+/* Plugins API                                                            */
 /**************************************************************************/
 /*@{*/
 
@@ -955,7 +955,7 @@ void purple_plugins_add_search_path(const gchar *path);
  * Forces a refresh of all plugins found in the search paths, and loads plugins
  * that are to be auto-loaded.
  *
- * @see purple_plugins_add_search_path()
+ * See purple_plugins_add_search_path().
  */
 void purple_plugins_refresh(void);
 
@@ -1000,7 +1000,7 @@ void purple_plugins_load_saved(const char *key);
 /*@}*/
 
 /**************************************************************************/
-/** @name Plugins Subsystem API                                           */
+/* Plugins Subsystem API                                                  */
 /**************************************************************************/
 /*@{*/
 
