@@ -110,7 +110,6 @@ if ENABLE_GNT
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
 INTROSPECTION_SCANNER_ARGS = \
-	--add-include-path=$(builddir) \
 	--add-include-path=$(builddir)/libgnt \
 	--add-include-path=$(top_builddir)/libpurple
 
