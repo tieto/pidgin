@@ -143,7 +143,7 @@ gnt_button_init(GTypeInstance *instance, gpointer class)
  * GntButton API
  *****************************************************************************/
 GType
-gnt_button_get_gtype(void) {
+gnt_button_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {

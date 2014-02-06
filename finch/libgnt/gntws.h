@@ -33,7 +33,7 @@
 
 #include <panel.h>
 
-#define GNT_TYPE_WS				(gnt_ws_get_gtype())
+#define GNT_TYPE_WS				(gnt_ws_get_type())
 #define GNT_WS(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WS, GntWS))
 #define GNT_IS_WS(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_WS))
 #define GNT_IS_WS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_WS))
@@ -78,7 +78,7 @@ G_BEGIN_DECLS
  *
  * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
-GType gnt_ws_get_gtype(void);
+GType gnt_ws_get_type(void);
 
 /**
  * gnt_ws_new:

@@ -48,7 +48,7 @@ typedef enum
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Datasheet API                                                   */
+/* Datasheet API                                                          */
 /**************************************************************************/
 /*@{*/
 
@@ -163,7 +163,7 @@ purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);
 
 
 /**************************************************************************/
-/** @name Datasheet actions API                                           */
+/* Datasheet actions API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -264,7 +264,7 @@ purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
 
 
 /**************************************************************************/
-/** @name Datasheet record API                                            */
+/* Datasheet record API                                                   */
 /**************************************************************************/
 /*@{*/
 
@@ -347,7 +347,7 @@ purple_request_datasheet_record_remove_all(PurpleRequestDatasheet *sheet);
  * Marks all records for removal. Record will be unmarked, when touched with
  * purple_request_datasheet_record_add.
  *
- * @see purple_request_datasheet_record_add.
+ * See purple_request_datasheet_record_add().
  */
 void
 purple_request_datasheet_record_mark_all_for_rem(PurpleRequestDatasheet *sheet);
@@ -358,7 +358,7 @@ purple_request_datasheet_record_mark_all_for_rem(PurpleRequestDatasheet *sheet);
  *
  * Removes all marked records.
  *
- * @see purple_request_datasheet_record_mark_all_for_rem.
+ * See purple_request_datasheet_record_mark_all_for_rem().
  */
 void
 purple_request_datasheet_record_remove_marked(PurpleRequestDatasheet *sheet);

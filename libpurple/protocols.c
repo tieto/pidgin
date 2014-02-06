@@ -33,16 +33,16 @@
 static GHashTable *protocols = NULL;
 
 /**************************************************************************/
-/** @name Attention Type API                                              */
+/* Attention Type API                                                     */
 /**************************************************************************/
 
 struct _PurpleAttentionType
 {
-	const char *name;                  /**< Shown in GUI elements */
-	const char *incoming_description;  /**< Shown when sent */
-	const char *outgoing_description;  /**< Shown when receied */
-	const char *icon_name;             /**< Icon to display (optional) */
-	const char *unlocalized_name;      /**< Unlocalized name for UIs needing it */
+	const char *name;                  /* Shown in GUI elements */
+	const char *incoming_description;  /* Shown when sent */
+	const char *outgoing_description;  /* Shown when receied */
+	const char *icon_name;             /* Icon to display (optional) */
+	const char *unlocalized_name;      /* Unlocalized name for UIs needing it */
 };
 
 
@@ -207,7 +207,7 @@ purple_protocol_chat_entry_get_type(void)
 }
 
 /**************************************************************************/
-/** @name Protocol API                                                    */
+/* Protocol API                                                           */
 /**************************************************************************/
 void
 purple_protocol_got_account_idle(PurpleAccount *account, gboolean idle,

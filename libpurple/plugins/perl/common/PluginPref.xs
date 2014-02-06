@@ -112,7 +112,7 @@ purple_plugin_pref_get_name(pref)
 	Purple::PluginPref pref
 
 Purple::PluginPrefType
-purple_plugin_pref_get_type(pref)
+purple_plugin_pref_get_pref_type(pref)
 	Purple::PluginPref pref
 
 Purple::PluginPref
@@ -170,7 +170,7 @@ purple_plugin_pref_set_name(pref, name)
 	const char *name
 
 void
-purple_plugin_pref_set_type(pref, type)
+purple_plugin_pref_set_pref_type(pref, type)
 	Purple::PluginPref pref
 	Purple::PluginPrefType type
 PREINIT:
@@ -185,4 +185,4 @@ CODE:
 	} else if (type == 3) {
 		gpp_type = PURPLE_PLUGIN_PREF_STRING_FORMAT;
 	}
-	purple_plugin_pref_set_type(pref, gpp_type);
+	purple_plugin_pref_set_pref_type(pref, gpp_type);

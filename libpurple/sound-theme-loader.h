@@ -65,15 +65,14 @@ struct _PurpleSoundThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Purple Theme-Loader API                                         */
+/* Purple Theme-Loader API                                                */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
  * purple_sound_theme_loader_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for sound theme loader.
  */
 GType purple_sound_theme_loader_get_type(void);
 

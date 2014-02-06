@@ -55,7 +55,7 @@ typedef struct _PidginRoomlist {
 	PidginRoomlistDialog *dialog;
 	GtkTreeStore *model;
 	GtkWidget *tree;
-	GHashTable *cats; /**< Meow. */
+	GHashTable *cats; /* Meow. */
 	gint num_rooms, total_rooms;
 	GtkWidget *tipwindow;
 	GdkRectangle tip_rect;

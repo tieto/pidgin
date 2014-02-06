@@ -131,7 +131,7 @@ gnt_window_init(GTypeInstance *instance, gpointer class)
  * GntWindow API
  *****************************************************************************/
 GType
-gnt_window_get_gtype(void)
+gnt_window_get_type(void)
 {
 	static GType type = 0;
 

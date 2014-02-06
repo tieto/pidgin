@@ -157,7 +157,7 @@ struct _PurpleBlistUiOps
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Buddy List API                                                  */
+/* Buddy List API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -196,7 +196,7 @@ PurpleBlistNode *purple_blist_get_root(void);
  * Returns: A list of every buddy in the list. Caller is responsible for
  *         freeing the list.
  *
- * @see purple_blist_find_buddies
+ * See purple_blist_find_buddies().
  */
 GSList *purple_blist_get_buddies(void);
 
@@ -316,7 +316,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
  * Removes a buddy from the buddy list and frees the memory allocated to it.
  * This doesn't actually try to remove the buddy from the server list.
  *
- * @see purple_account_remove_buddy
+ * See purple_account_remove_buddy().
  */
 void purple_blist_remove_buddy(PurpleBuddy *buddy);
 
@@ -328,7 +328,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy);
  * allocated to it. This calls purple_blist_remove_buddy and therefore
  * doesn't remove the buddies from the server list.
  *
- * @see purple_blist_remove_buddy
+ * See purple_blist_remove_buddy().
  */
 void purple_blist_remove_contact(PurpleContact *contact);
 
@@ -429,7 +429,7 @@ void purple_blist_remove_account(PurpleAccount *account);
 /*@}*/
 
 /****************************************************************************************/
-/** @name Buddy list file management API                                                */
+/* Buddy list file management API                                                       */
 /****************************************************************************************/
 
 /**
@@ -478,7 +478,7 @@ void purple_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 void purple_blist_request_add_group(void);
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -502,7 +502,7 @@ PurpleBlistUiOps *purple_blist_get_ui_ops(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Buddy List Subsystem                                            */
+/* Buddy List Subsystem                                                   */
 /**************************************************************************/
 /*@{*/
 

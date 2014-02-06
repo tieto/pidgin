@@ -38,9 +38,9 @@ struct _PurpleStoredImage
 {
 	int id;
 	guint8 refcount;
-	size_t size;     /**< The image data's size. */
-	char *filename;  /**< The filename (for the UI) */
-	gpointer data;   /**< The image data. */
+	size_t size;     /* The image data's size. */
+	char *filename;  /* The filename (for the UI) */
+	gpointer data;   /* The image data. */
 };
 
 PurpleStoredImage *

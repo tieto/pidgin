@@ -72,15 +72,14 @@ struct _PurpleSmileyClass
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Custom Smiley API                                               */
+/* Custom Smiley API                                                      */
 /**************************************************************************/
 /*@{*/
 
 /**
  * purple_smiley_get_type:
  *
- * GObject-fu.
- * @internal.
+ * Returns: The #GType for a smiley.
  */
 GType purple_smiley_get_type(void);
 
@@ -229,7 +228,7 @@ char *purple_smiley_get_full_path(PurpleSmiley *smiley);
 
 
 /**************************************************************************/
-/** @name Custom Smiley Subsystem API                                     */
+/* Custom Smiley Subsystem API                                            */
 /**************************************************************************/
 /*@{*/
 

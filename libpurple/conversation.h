@@ -299,7 +299,7 @@ struct _PurpleConversationUiOps
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Conversation API                                                */
+/* Conversation API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -497,7 +497,7 @@ void purple_conversation_close_logs(PurpleConversation *conv);
  * This can be used to write generic messages, such as "so and so closed
  * the conversation window."
  *
- * @see purple_conversation_write_message()
+ * See purple_conversation_write_message().
  */
 void purple_conversation_write(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags,
@@ -706,7 +706,7 @@ GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
  * @error:   If the command failed errormsg is filled in with the appropriate error
  *                message, if not %NULL. It must be freed by the caller with g_free().
  *
- * Perform a command in a conversation. Similar to @see purple_cmd_do_command
+ * Perform a command in a conversation. Similar to purple_cmd_do_command().
  *
  * Returns:  %TRUE if the command was executed successfully, %FALSE otherwise.
  */
@@ -719,7 +719,7 @@ gboolean purple_conversation_do_command(PurpleConversation *conv,
  *
  * Gets the maximum message size in bytes for the conversation.
  *
- * @see PurplePluginProtocolInfo#get_max_message_size
+ * See #PurplePluginProtocolInfo.get_max_message_size
  *
  * Returns: Maximum message size, 0 if unspecified, -1 for infinite.
  */
@@ -729,7 +729,7 @@ purple_conversation_get_max_message_size(PurpleConversation *conv);
 /*@}*/
 
 /**************************************************************************/
-/** @name Conversation Helper API                                         */
+/* Conversation Helper API                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -753,7 +753,7 @@ gboolean purple_conversation_present_error(const char *who, PurpleAccount *accou
 /*@}*/
 
 /**************************************************************************/
-/** @name Conversation Message API                                        */
+/* Conversation Message API                                               */
 /**************************************************************************/
 /*@{*/
 

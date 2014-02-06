@@ -1064,7 +1064,7 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
  * GntEntry API
  *****************************************************************************/
 GType
-gnt_entry_get_gtype(void)
+gnt_entry_get_type(void)
 {
 	static GType type = 0;
 

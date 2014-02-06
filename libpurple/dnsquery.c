@@ -893,7 +893,7 @@ initiate_resolving(gpointer data)
 		/* resolve_ip calls purple_dnsquery_resolved */
 		return FALSE;
 
-	proxy_type = purple_proxy_info_get_type(
+	proxy_type = purple_proxy_info_get_proxy_type(
 		purple_proxy_get_setup(query_data->account));
 	if (proxy_type == PURPLE_PROXY_TOR) {
 		purple_dnsquery_failed(query_data,

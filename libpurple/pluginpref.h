@@ -65,7 +65,7 @@ typedef enum {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Plugin Preference API                                           */
+/* Plugin Preference API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -218,7 +218,7 @@ void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max);
  *
  * Set the type of a plugin pref
  */
-void purple_plugin_pref_set_type(PurplePluginPref *pref, PurplePluginPrefType type);
+void purple_plugin_pref_set_pref_type(PurplePluginPref *pref, PurplePluginPrefType type);
 
 /**
  * purple_plugin_pref_get_type:
@@ -228,7 +228,7 @@ void purple_plugin_pref_set_type(PurplePluginPref *pref, PurplePluginPrefType ty
  *
  * Returns: The type
  */
-PurplePluginPrefType purple_plugin_pref_get_type(PurplePluginPref *pref);
+PurplePluginPrefType purple_plugin_pref_get_pref_type(PurplePluginPref *pref);
 
 /**
  * purple_plugin_pref_add_choice:

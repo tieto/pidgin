@@ -239,7 +239,7 @@ docklet_update_status(void)
 			newflags |= PIDGIN_DOCKLET_EMAIL_PENDING;
 	}
 
-	newstatus = purple_savedstatus_get_type(saved_status);
+	newstatus = purple_savedstatus_get_primitive_type(saved_status);
 
 	/* update the icon if we changed status */
 	if (status != newstatus || flags != newflags) {
@@ -411,7 +411,7 @@ show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 	PurpleSavedStatus *saved_status;
 	saved_status = purple_savedstatus_get_current();
 
-	if (purple_savedstatus_get_type(saved_status) == PURPLE_STATUS_AVAILABLE)
+	if (purple_savedstatus_get_primitive_type(saved_status) == PURPLE_STATUS_AVAILABLE)
 		saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_AWAY);
 
 	pidgin_status_editor_show(FALSE,
@@ -449,7 +449,7 @@ activate_status_account_cb(GtkMenuItem *menuitem, gpointer user_data)
 
 	for (; iter != NULL; iter = iter->next) {
 		PurpleSavedStatus *ss = iter->data;
-		if ((purple_savedstatus_get_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
+		if ((purple_savedstatus_get_primitive_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
 			purple_savedstatus_has_substatuses(ss))
 		{
 			gboolean found = FALSE;
@@ -458,7 +458,7 @@ activate_status_account_cb(GtkMenuItem *menuitem, gpointer user_data)
 				PurpleAccount *acct = tmp->data;
 				PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
 				if (sub) {
-					const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
+					const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_status_type(sub);
 					const char *subtype_status_id = purple_status_type_get_id(sub_type);
 					if (subtype_status_id && !strcmp(subtype_status_id,
 							purple_status_type_get_id(status_type)))
@@ -609,7 +609,7 @@ docklet_status_submenu(void)
 		time_t creation_time = purple_savedstatus_get_creation_time(saved_status);
 		new_menu_item_with_status_icon(submenu,
 			purple_savedstatus_get_title(saved_status),
-			purple_savedstatus_get_type(saved_status), G_CALLBACK(activate_saved_status_cb),
+			purple_savedstatus_get_primitive_type(saved_status), G_CALLBACK(activate_saved_status_cb),
 			GINT_TO_POINTER(creation_time), 0, 0, NULL);
 	}
 	g_list_free(popular_statuses);

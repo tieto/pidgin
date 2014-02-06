@@ -29,24 +29,23 @@
 #define PURPLE_WHITEBOARD_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_WHITEBOARD, PurpleWhiteboardPrivate))
 
-/** @copydoc _PurpleWhiteboardPrivate */
 typedef struct _PurpleWhiteboardPrivate  PurpleWhiteboardPrivate;
 
-/** Private data for a whiteboard */
+/* Private data for a whiteboard */
 struct _PurpleWhiteboardPrivate
 {
-	int state;                      /**< State of whiteboard session          */
+	int state;                      /* State of whiteboard session          */
 
-	PurpleAccount *account;         /**< Account associated with this session */
-	char *who;                      /**< Name of the remote user              */
+	PurpleAccount *account;         /* Account associated with this session */
+	char *who;                      /* Name of the remote user              */
 
 	/* TODO Remove this and use protocol-specific subclasses. */
-	void *proto_data;               /**< Protocol specific data               */
+	void *proto_data;               /* Protocol specific data               */
 
-	PurpleWhiteboardOps *protocol_ops; /**< Protocol operations               */
+	PurpleWhiteboardOps *protocol_ops; /* Protocol operations               */
 
-	GList *draw_list;               /**< List of drawing elements/deltas to
-	                                     send                                 */
+	GList *draw_list;               /* List of drawing elements/deltas to
+	                                   send                                 */
 };
 
 /* GObject Property enums */

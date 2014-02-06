@@ -38,7 +38,7 @@
 #define FINCH_CONV(conv) ((FinchConv *)purple_conversation_get_ui_data(conv))
 
 /***************************************************************************
- * @name GNT Conversations API
+ * GNT Conversations API
  ***************************************************************************/
 /*@{*/
 

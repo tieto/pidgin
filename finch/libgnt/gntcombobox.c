@@ -321,7 +321,7 @@ gnt_combo_box_init(GTypeInstance *instance, gpointer class)
  * GntComboBox API
  *****************************************************************************/
 GType
-gnt_combo_box_get_gtype(void)
+gnt_combo_box_get_type(void)
 {
 	static GType type = 0;
 

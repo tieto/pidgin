@@ -82,15 +82,14 @@ typedef enum {
 } PidginConvThemeTemplateType;
 
 /**************************************************************************/
-/** @name Pidgin Conversation Theme API                                   */
+/* Pidgin Conversation Theme API                                          */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
  * pidgin_conversation_theme_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a conversation theme.
  */
 GType pidgin_conversation_theme_get_type(void);
 

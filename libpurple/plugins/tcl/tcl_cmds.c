@@ -1058,7 +1058,7 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_WrongNumArgs(interp, 1, objv, "path");
 			return TCL_ERROR;
 		}
-		preftype = purple_prefs_get_type(Tcl_GetString(objv[2]));
+		preftype = purple_prefs_get_pref_type(Tcl_GetString(objv[2]));
 		switch (preftype) {
 		case PURPLE_PREF_NONE:
 			Tcl_SetObjResult(interp,
@@ -1099,7 +1099,7 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_WrongNumArgs(interp, 1, objv, "path value");
 			return TCL_ERROR;
 		}
-		preftype = purple_prefs_get_type(Tcl_GetString(objv[2]));
+		preftype = purple_prefs_get_pref_type(Tcl_GetString(objv[2]));
 		switch (preftype) {
 		case PURPLE_PREF_NONE:
 			Tcl_SetObjResult(interp,
@@ -1139,7 +1139,7 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_WrongNumArgs(interp, 1, objv, "path");
 			return TCL_ERROR;
 		}
-		preftype = purple_prefs_get_type(Tcl_GetString(objv[2]));
+		preftype = purple_prefs_get_pref_type(Tcl_GetString(objv[2]));
 		switch (preftype) {
 		case PURPLE_PREF_NONE:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("none", -1));
@@ -1376,7 +1376,7 @@ int tcl_cmd_savedstatus(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 			return TCL_ERROR;
 		result = Tcl_NewListObj(0, NULL);
 		Tcl_ListObjAppendElement(interp, result, Tcl_NewStringObj(purple_savedstatus_get_title(saved_status), -1));
-		Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(purple_savedstatus_get_type(saved_status)));
+		Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(purple_savedstatus_get_primitive_type(saved_status)));
 		Tcl_ListObjAppendElement(interp, result, Tcl_NewStringObj(purple_savedstatus_get_message(saved_status), -1));
 		Tcl_SetObjResult(interp,result);
 		break;

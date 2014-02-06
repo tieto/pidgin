@@ -62,15 +62,14 @@ struct _PidginIconThemeClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Icon Theme API                                          */
+/* Pidgin Icon Theme API                                                  */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
  * pidgin_icon_theme_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for an icon theme.
  */
 GType pidgin_icon_theme_get_type(void);
 

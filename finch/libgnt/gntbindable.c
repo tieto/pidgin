@@ -257,7 +257,7 @@ duplicate_hashes(GntBindableClass *klass)
  * GntBindable API
  *****************************************************************************/
 GType
-gnt_bindable_get_gtype(void)
+gnt_bindable_get_type(void)
 {
 	static GType type = 0;
 

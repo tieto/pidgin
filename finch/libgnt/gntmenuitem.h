@@ -32,7 +32,7 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#define GNT_TYPE_MENU_ITEM				(gnt_menuitem_get_gtype())
+#define GNT_TYPE_MENU_ITEM				(gnt_menuitem_get_type())
 #define GNT_MENU_ITEM(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_MENU_ITEM, GntMenuItem))
 #define GNT_MENU_ITEM_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_MENU_ITEM, GntMenuItemClass))
 #define GNT_IS_MENU_ITEM(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_MENU_ITEM))
@@ -94,7 +94,7 @@ G_BEGIN_DECLS
  *
  * Returns: GType for GntMenuItem.
  */
-GType gnt_menuitem_get_gtype(void);
+GType gnt_menuitem_get_type(void);
 
 /**
  * gnt_menuitem_new:
@@ -152,7 +152,7 @@ void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger);
  *
  * Get the trigger key for a menuitem.
  *
- * @see gnt_menuitem_set_trigger
+ * See gnt_menuitem_set_trigger().
  *
  * Returns: The trigger key for the menuitem.
  */

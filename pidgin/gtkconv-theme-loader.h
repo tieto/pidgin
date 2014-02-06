@@ -59,18 +59,18 @@ struct _PidginConvThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Conversation Theme-Loader API                            */
+/* Pidgin Conversation Theme-Loader API                                   */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
  * pidgin_conversation_theme_loader_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a conversation theme loader.
  */
 GType pidgin_conversation_theme_loader_get_type(void);
 
 G_END_DECLS
+
 #endif /* PIDGIN_CONV_THEME_LOADER_H */
 

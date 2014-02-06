@@ -98,7 +98,7 @@ PPCODE:
 	}
 
 Purple::PrefType
-purple_account_option_get_type(option)
+purple_account_option_get_pref_type(option)
 	Purple::Account::Option option
 
 gboolean

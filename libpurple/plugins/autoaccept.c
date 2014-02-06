@@ -244,7 +244,7 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	pref = purple_plugin_pref_new_with_name_and_label(PREF_STRANGER,
 					_("When a file-transfer request arrives from a user who is\n"
                       "*not* on your buddy list:"));
-	purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
+	purple_plugin_pref_set_pref_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
 	purple_plugin_pref_add_choice(pref, _("Ask"), GINT_TO_POINTER(FT_ASK));
 	purple_plugin_pref_add_choice(pref, _("Auto Accept"), GINT_TO_POINTER(FT_ACCEPT));
 	purple_plugin_pref_add_choice(pref, _("Auto Reject"), GINT_TO_POINTER(FT_REJECT));

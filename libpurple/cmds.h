@@ -29,7 +29,7 @@
 #include "conversation.h"
 
 /**************************************************************************/
-/** @name Structures                                                      */
+/* Structures                                                             */
 /**************************************************************************/
 /*@{*/
 
@@ -74,9 +74,8 @@ typedef enum {
  * PurpleCmdFunc:
  *
  * A function implementing a command, as passed to purple_cmd_register().
- *
- * @todo document the arguments to these functions.
  */
+/* TODO document the arguments to these functions. */
 typedef PurpleCmdRet (*PurpleCmdFunc)(PurpleConversation *, const gchar *cmd,
                                   gchar **args, gchar **error, void *data);
 /**
@@ -112,7 +111,7 @@ typedef enum {
  * have at least one of #PURPLE_CMD_FLAG_IM and #PURPLE_CMD_FLAG_CHAT set in
  * order to be even slighly useful.
  *
- * @see purple_cmd_register
+ * See purple_cmd_register().
  */
 typedef enum {
 	PURPLE_CMD_FLAG_IM               = 0x01,
@@ -127,7 +126,7 @@ typedef enum {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Commands API                                                    */
+/* Commands API                                                           */
 /**************************************************************************/
 /*@{*/
 

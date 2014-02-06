@@ -32,7 +32,7 @@
 #define _PIDGIN_STOCK_H_
 
 /**************************************************************************/
-/** @name Stock images                                                    */
+/* Stock images                                                           */
 /**************************************************************************/
 /*@{*/
 #define PIDGIN_STOCK_ACTION          "pidgin-action"
@@ -222,8 +222,7 @@ G_BEGIN_DECLS
 /**
  * pidgin_stock_icon_theme_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a stock icon theme.
  */
 GType pidgin_stock_icon_theme_get_type(void);
 

@@ -51,7 +51,7 @@
 
 
 /**************************************************************************/
-/** @name Purple DBUS pointer registration mechanism                        */
+/* Purple DBUS pointer registration mechanism                             */
 /**************************************************************************/
 
 /*
@@ -179,7 +179,7 @@ purple_dbus_id_to_pointer_error(gint id, PurpleDBusType *type,
 
 
 /**************************************************************************/
-/** @name Modified versions of some DBus functions                        */
+/* Modified versions of some DBus functions                               */
 /**************************************************************************/
 
 dbus_bool_t
@@ -278,7 +278,7 @@ purple_dbus_message_iter_get_args_valist(DBusMessageIter *iter,
 
 
 /**************************************************************************/
-/** @name Useful functions                                                */
+/* Useful functions                                                       */
 /**************************************************************************/
 
 const char *empty_to_null(const char *str)
@@ -642,7 +642,7 @@ purple_dbus_dispatch_init(void)
 
 
 /**************************************************************************/
-/** @name Signals                                                         */
+/* Signals                                                                */
 /**************************************************************************/
 
 

@@ -47,7 +47,7 @@ typedef void (*PurpleProtocolActionCallback)(PurpleProtocolAction *);
 typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/
-/** @name Basic Protocol Information                                      */
+/* Basic Protocol Information                                             */
 /**************************************************************************/
 
 /**
@@ -169,7 +169,7 @@ struct _PurpleProtocolAction {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Attention Type API                                              */
+/* Attention Type API                                                     */
 /**************************************************************************/
 /*@{*/
 
@@ -305,7 +305,7 @@ const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType
 /*@}*/
 
 /**************************************************************************/
-/** @name Protocol Action API                                             */
+/* Protocol Action API                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -406,7 +406,7 @@ void purple_protocol_got_account_status(PurpleAccount *account,
  *
  * This is meant to be called from protocols.
  *
- * @see account-actions-changed
+ * See <link linkend="accounts-account-actions-changed"><literal>"account-actions-changed"</literal></link>
  */
 void purple_protocol_got_account_actions(PurpleAccount *account);
 
@@ -583,7 +583,7 @@ void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
  *
  * Gets the safe maximum message size in bytes for the protocol.
  *
- * @see PurpleProtocol#get_max_message_size
+ * See #PurpleProtocol.get_max_message_size
  *
  * Returns: Maximum message size, 0 if unspecified, -1 for infinite.
  */
@@ -593,7 +593,7 @@ purple_protocol_get_max_message_size(PurpleProtocol *protocol);
 /*@}*/
 
 /**************************************************************************/
-/** @name Protocols API                                                   */
+/* Protocols API                                                          */
 /**************************************************************************/
 /*@{*/
 

@@ -1057,7 +1057,7 @@ purple_request_field_set_required(PurpleRequestField *field, gboolean required)
 }
 
 PurpleRequestFieldType
-purple_request_field_get_type(const PurpleRequestField *field)
+purple_request_field_get_field_type(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, PURPLE_REQUEST_FIELD_NONE);
 
@@ -1097,7 +1097,7 @@ purple_request_field_is_visible(const PurpleRequestField *field)
 }
 
 const char *
-purple_request_field_get_type_hint(const PurpleRequestField *field)
+purple_request_field_get_field_type_hint(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
 
@@ -1125,7 +1125,7 @@ purple_request_field_is_filled(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
 
-	switch (purple_request_field_get_type(field))
+	switch (purple_request_field_get_field_type(field))
 	{
 		case PURPLE_REQUEST_FIELD_STRING:
 			return (purple_request_field_string_get_value(field) != NULL &&

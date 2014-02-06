@@ -59,62 +59,67 @@ typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 
 /**
  * PurpleLogLogger:
+ * @name:         The logger's name
+ * @id:           An identifier to refer to this logger
+ * @create:       This gets called when the log is first created. I don't think
+ *                this is actually needed.
+ * @write:        This is used to write to the log file
+ * @finalize:     Called when the log is destroyed
+ * @list:         This function returns a sorted #GList of available PurpleLogs
+ * @read:         Given one of the logs returned by the logger's list function,
+ *                this returns the contents of the log in #GtkWebView markup
+ * @size:         Given one of the logs returned by the logger's list function,
+ *                this returns the size of the log in bytes
+ * @total_size:   Returns the total size of all the logs. If this is undefined a
+ *                default implementation is used
+ * @list_syslog:  This function returns a sorted #GList of available system
+ *                #PurpleLog's
+ * @get_log_sets: Adds #PurpleLogSet's to a #GHashTable. By passing the data in
+ *                the #PurpleLogSet's to list, the caller can get every
+ *                available #PurpleLog from the logger. Loggers using
+ *                purple_log_common_writer() (or otherwise storing their logs in
+ *                the same directory structure as the stock loggers) do not
+ *                need to implement this function.
+ *                <sbr/>Loggers which implement this function must create a
+ *                #PurpleLogSet, then call @cb with @sets and the newly created
+ *                #PurpleLogSet.
+ * @remove:       Attempts to delete the specified log, indicating success or
+ *                failure
+ * @is_deletable: Tests whether a log is deletable
  *
  * A log logger.
  *
- * This struct gets filled out and is included in the PurpleLog.  It contains everything
- * needed to write and read from logs.
+ * This struct gets filled out and is included in the PurpleLog.  It contains
+ * everything needed to write and read from logs.
  */
 struct _PurpleLogLogger {
-	char *name;               /**< The logger's name */
-	char *id;                 /**< an identifier to refer to this logger */
+	char *name;
+	char *id;
 
-	/** This gets called when the log is first created.
-	    I don't think this is actually needed. */
 	void (*create)(PurpleLog *log);
 
-	/** This is used to write to the log file */
 	gsize (*write)(PurpleLog *log,
 		     PurpleMessageFlags type,
 		     const char *from,
 		     time_t time,
 		     const char *message);
 
-	/** Called when the log is destroyed */
 	void (*finalize)(PurpleLog *log);
 
-	/** This function returns a sorted GList of available PurpleLogs */
 	GList *(*list)(PurpleLogType type, const char *name, PurpleAccount *account);
 
-	/** Given one of the logs returned by the logger's list function,
-	 *  this returns the contents of the log in GtkIMHtml markup */
 	char *(*read)(PurpleLog *log, PurpleLogReadFlags *flags);
 
-	/** Given one of the logs returned by the logger's list function,
-	 *  this returns the size of the log in bytes */
 	int (*size)(PurpleLog *log);
 
-	/** Returns the total size of all the logs. If this is undefined a default
-	 *  implementation is used */
 	int (*total_size)(PurpleLogType type, const char *name, PurpleAccount *account);
 
-	/** This function returns a sorted GList of available system PurpleLogs */
 	GList *(*list_syslog)(PurpleAccount *account);
 
-	/** Adds PurpleLogSets to a GHashTable. By passing the data in the PurpleLogSets
-	 *  to list, the caller can get every available PurpleLog from the logger.
-	 *  Loggers using purple_log_common_writer() (or otherwise storing their
-	 *  logs in the same directory structure as the stock loggers) do not
-	 *  need to implement this function.
-	 *
-	 *  Loggers which implement this function must create a PurpleLogSet,
-	 *  then call @cb with @sets and the newly created PurpleLogSet. */
 	void (*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets);
 
-	/* Attempts to delete the specified log, indicating success or failure */
 	gboolean (*remove)(PurpleLog *log);
 
-	/* Tests whether a log is deletable */
 	gboolean (*is_deletable)(PurpleLog *log);
 
 	/*< private >*/
@@ -199,7 +204,7 @@ struct _PurpleLogSet {
 G_BEGIN_DECLS
 
 /***************************************/
-/** @name Log Functions                */
+/* Log Functions                       */
 /***************************************/
 /*@{*/
 
@@ -415,7 +420,7 @@ void purple_log_set_free(PurpleLogSet *set);
 /*@}*/
 
 /******************************************/
-/** @name Common Logger Functions         */
+/* Common Logger Functions                */
 /******************************************/
 /*@{*/
 
@@ -534,7 +539,7 @@ gboolean purple_log_common_is_deletable(PurpleLog *log);
 /*@}*/
 
 /******************************************/
-/** @name Logger Functions                */
+/* Logger Functions                       */
 /******************************************/
 /*@{*/
 
@@ -618,7 +623,7 @@ PurpleLogLogger *purple_log_logger_get (void);
 GList *purple_log_logger_get_options(void);
 
 /**************************************************************************/
-/** @name Log Subsystem                                                   */
+/* Log Subsystem                                                          */
 /**************************************************************************/
 /*@{*/
 

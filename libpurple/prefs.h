@@ -69,7 +69,7 @@ typedef enum
  *
  * The type of callbacks for preference changes.
  *
- * @see purple_prefs_connect_callback()
+ * See purple_prefs_connect_callback().
  */
 typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 		gconstpointer val, gpointer data);
@@ -77,7 +77,7 @@ typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Prefs API
+/*  Prefs API
     Preferences are named according to a directory-like structure.
     Example: "/plugins/core/potato/is_from_idaho" (probably a boolean)    */
 /**************************************************************************/
@@ -283,7 +283,7 @@ gboolean purple_prefs_exists(const char *name);
  *
  * Returns: The type of the pref
  */
-PurplePrefType purple_prefs_get_type(const char *name);
+PurplePrefType purple_prefs_get_pref_type(const char *name);
 
 /**
  * purple_prefs_get_bool:
@@ -366,9 +366,9 @@ GList *purple_prefs_get_children_names(const char *name);
  *
  * Add a callback to a pref (and its children)
  *
- * Returns: An id to disconnect the callback
+ * See purple_prefs_disconnect_callback().
  *
- * @see purple_prefs_disconnect_callback
+ * Returns: An id to disconnect the callback
  */
 guint purple_prefs_connect_callback(void *handle, const char *name, PurplePrefCallback cb,
 		gpointer data);

@@ -127,7 +127,7 @@ purple_proxy_info_destroy(PurpleProxyInfo *info)
 }
 
 void
-purple_proxy_info_set_type(PurpleProxyInfo *info, PurpleProxyType type)
+purple_proxy_info_set_proxy_type(PurpleProxyInfo *info, PurpleProxyType type)
 {
 	g_return_if_fail(info != NULL);
 
@@ -170,7 +170,7 @@ purple_proxy_info_set_password(PurpleProxyInfo *info, const char *password)
 }
 
 PurpleProxyType
-purple_proxy_info_get_type(const PurpleProxyInfo *info)
+purple_proxy_info_get_proxy_type(const PurpleProxyInfo *info)
 {
 	g_return_val_if_fail(info != NULL, PURPLE_PROXY_NONE);
 
@@ -507,7 +507,7 @@ purple_win32_proxy_get_info(void)
 				} else
 					specific = proxy_list;
 
-				purple_proxy_info_set_type(&info, PURPLE_PROXY_HTTP);
+				purple_proxy_info_set_proxy_type(&info, PURPLE_PROXY_HTTP);
 				_proxy_fill_hostinfo(&info, specific, 80);
 				/* TODO: is there a way to set the username/password? */
 				purple_proxy_info_set_username(&info, NULL);
@@ -525,7 +525,7 @@ purple_win32_proxy_get_info(void)
 					*tmp = '\0';
 				/* specific now points the proxy server (and port) */
 
-				purple_proxy_info_set_type(&info, PURPLE_PROXY_SOCKS5);
+				purple_proxy_info_set_proxy_type(&info, PURPLE_PROXY_SOCKS5);
 				_proxy_fill_hostinfo(&info, specific, 1080);
 				/* TODO: is there a way to set the username/password? */
 				purple_proxy_info_set_username(&info, NULL);
@@ -539,7 +539,7 @@ purple_win32_proxy_get_info(void)
 
 				purple_debug_info("proxy", "Windows Proxy Settings: No supported proxy specified.\n");
 
-				purple_proxy_info_set_type(&info, PURPLE_PROXY_NONE);
+				purple_proxy_info_set_proxy_type(&info, PURPLE_PROXY_NONE);
 
 			}
 		}
@@ -549,7 +549,7 @@ purple_win32_proxy_get_info(void)
 		g_free(proxy_list);
 	} else {
 		purple_debug_info("proxy", "No Windows proxy set.\n");
-		purple_proxy_info_set_type(&info, PURPLE_PROXY_NONE);
+		purple_proxy_info_set_proxy_type(&info, PURPLE_PROXY_NONE);
 	}
 
 	if (ie_proxy_config.lpszAutoConfigUrl)
@@ -2194,7 +2194,7 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 		return;
 	}
 
-	switch (purple_proxy_info_get_type(connect_data->gpi)) {
+	switch (purple_proxy_info_get_proxy_type(connect_data->gpi)) {
 		case PURPLE_PROXY_NONE:
 			proxy_connect_none(connect_data, addr, addrlen);
 			break;
@@ -2259,12 +2259,12 @@ purple_proxy_get_setup(PurpleAccount *account)
 	static PurpleProxyInfo *tmp_none_proxy_info = NULL;
 	if (!tmp_none_proxy_info) {
 		tmp_none_proxy_info = purple_proxy_info_new();
-		purple_proxy_info_set_type(tmp_none_proxy_info, PURPLE_PROXY_NONE);
+		purple_proxy_info_set_proxy_type(tmp_none_proxy_info, PURPLE_PROXY_NONE);
 	}
 
 	if (account && purple_account_get_proxy_info(account) != NULL) {
 		gpi = purple_account_get_proxy_info(account);
-		if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_GLOBAL)
+		if (purple_proxy_info_get_proxy_type(gpi) == PURPLE_PROXY_USE_GLOBAL)
 			gpi = NULL;
 	}
 	if (gpi == NULL) {
@@ -2274,7 +2274,7 @@ purple_proxy_get_setup(PurpleAccount *account)
 			gpi = purple_global_proxy_get_info();
 	}
 
-	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR) {
+	if (purple_proxy_info_get_proxy_type(gpi) == PURPLE_PROXY_USE_ENVVAR) {
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
 			(tmp = g_getenv("HTTPPROXY")) != NULL)
@@ -2350,7 +2350,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 	connect_data->gpi = purple_proxy_get_setup(account);
 	connect_data->account = account;
 
-	if ((purple_proxy_info_get_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
+	if ((purple_proxy_info_get_proxy_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
 		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
 		 purple_proxy_info_get_port(connect_data->gpi) <= 0)) {
 
@@ -2362,7 +2362,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 		return NULL;
 	}
 
-	switch (purple_proxy_info_get_type(connect_data->gpi))
+	switch (purple_proxy_info_get_proxy_type(connect_data->gpi))
 	{
 		case PURPLE_PROXY_NONE:
 			break;
@@ -2378,7 +2378,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 
 		default:
 			purple_debug_error("proxy", "Invalid Proxy type (%d) specified.\n",
-							   purple_proxy_info_get_type(connect_data->gpi));
+							   purple_proxy_info_get_proxy_type(connect_data->gpi));
 			purple_proxy_connect_data_destroy(connect_data);
 			return NULL;
 	}
@@ -2421,7 +2421,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 	connect_data->gpi = purple_proxy_get_setup(account);
 	connect_data->account = account;
 
-	if ((purple_proxy_info_get_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
+	if ((purple_proxy_info_get_proxy_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
 		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
 		 purple_proxy_info_get_port(connect_data->gpi) <= 0)) {
 
@@ -2433,7 +2433,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 		return NULL;
 	}
 
-	switch (purple_proxy_info_get_type(connect_data->gpi))
+	switch (purple_proxy_info_get_proxy_type(connect_data->gpi))
 	{
 		case PURPLE_PROXY_NONE:
 			break;
@@ -2444,12 +2444,12 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 		case PURPLE_PROXY_TOR:
 		case PURPLE_PROXY_USE_ENVVAR:
 			purple_debug_info("proxy", "Ignoring Proxy type (%d) for UDP.\n",
-			                  purple_proxy_info_get_type(connect_data->gpi));
+			                  purple_proxy_info_get_proxy_type(connect_data->gpi));
 			break;
 
 		default:
 			purple_debug_error("proxy", "Invalid Proxy type (%d) specified.\n",
-			                   purple_proxy_info_get_type(connect_data->gpi));
+			                   purple_proxy_info_get_proxy_type(connect_data->gpi));
 			purple_proxy_connect_data_destroy(connect_data);
 			return NULL;
 	}
@@ -2607,7 +2607,7 @@ proxy_pref_cb(const char *name, PurplePrefType type,
 		else
 			proxytype = -1;
 
-		purple_proxy_info_set_type(info, proxytype);
+		purple_proxy_info_set_proxy_type(info, proxytype);
 	} else if (purple_strequal(name, "/purple/proxy/host"))
 		purple_proxy_info_set_host(info, value);
 	else if (purple_strequal(name, "/purple/proxy/port"))

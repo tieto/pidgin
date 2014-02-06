@@ -377,7 +377,7 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 /*@}*/
 
 /**************************************************************************/
-/** @name Notification API                                                */
+/* Notification API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -722,7 +722,8 @@ void purple_notify_user_info_entry_set_value(PurpleNotifyUserInfoEntry *user_inf
  *
  * Returns:  The PurpleNotifyUserInfoEntryType
  */
-PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry *user_info_entry);
+PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_entry_type(
+		PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * purple_notify_user_info_entry_set_type:
@@ -731,8 +732,8 @@ PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotif
  *
  * Set the type of a PurpleNotifyUserInfoEntry
  */
-void purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info_entry,
-										  PurpleNotifyUserInfoEntryType type);
+void purple_notify_user_info_entry_set_entry_type(
+		PurpleNotifyUserInfoEntry *user_info_entry, PurpleNotifyUserInfoEntryType type);
 
 /**
  * purple_notify_uri:
@@ -810,7 +811,7 @@ void purple_notify_close_with_handle(void *handle);
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -836,7 +837,7 @@ PurpleNotifyUiOps *purple_notify_get_ui_ops(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Notify Subsystem                                                */
+/* Notify Subsystem                                                       */
 /**************************************************************************/
 /*@{*/
 

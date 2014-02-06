@@ -111,7 +111,7 @@ FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...)
 /*@}*/
 
 /**********************************************************************
- * @name GNT Plugins API
+ * GNT Plugins API
  **********************************************************************/
 /*@{*/
 

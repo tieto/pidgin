@@ -157,7 +157,7 @@ gnt_label_init(GTypeInstance *instance, gpointer class)
  * GntLabel API
  *****************************************************************************/
 GType
-gnt_label_get_gtype(void)
+gnt_label_get_type(void)
 {
 	static GType type = 0;
 

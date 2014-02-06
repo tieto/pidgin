@@ -43,7 +43,7 @@ gnt_menuitem_check_init(GTypeInstance *instance, gpointer class)
  * GntMenuItemCheck API
  *****************************************************************************/
 GType
-gnt_menuitem_check_get_gtype(void)
+gnt_menuitem_check_get_type(void)
 {
 	static GType type = 0;
 

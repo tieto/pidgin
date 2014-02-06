@@ -40,7 +40,7 @@ typedef GList * (*PurpleE2eeConvMenuCallback)(PurpleConversation *conv);
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Encryption states for conversations.                            */
+/* Encryption states for conversations.                                   */
 /**************************************************************************/
 /*@{*/
 
@@ -137,7 +137,7 @@ purple_e2ee_state_get_stock_icon(PurpleE2eeState *state);
 
 
 /**************************************************************************/
-/** @name Encryption providers API.                                       */
+/* Encryption providers API.                                              */
 /**************************************************************************/
 /*@{*/
 

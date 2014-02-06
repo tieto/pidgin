@@ -54,7 +54,7 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	ppref = purple_plugin_pref_new_with_name_and_label(
 									"/plugins/core/pluginpref_example/int_choice",
 									"integer choice");
-	purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
+	purple_plugin_pref_set_pref_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
 	purple_plugin_pref_add_choice(ppref, "One", GINT_TO_POINTER(1));
 	purple_plugin_pref_add_choice(ppref, "Two", GINT_TO_POINTER(2));
 	purple_plugin_pref_add_choice(ppref, "Four", GINT_TO_POINTER(4));
@@ -88,7 +88,7 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	ppref = purple_plugin_pref_new_with_name_and_label(
 							"/plugins/core/pluginpref_example/string_choice",
 							"string choice");
-	purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
+	purple_plugin_pref_set_pref_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
 	purple_plugin_pref_add_choice(ppref, "red", "red");
 	purple_plugin_pref_add_choice(ppref, "orange", "orange");
 	purple_plugin_pref_add_choice(ppref, "yellow", "yellow");

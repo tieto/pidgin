@@ -288,7 +288,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		char *dstaddr, *hash;
 		PurpleAccount *account;
 		jsx->gpi = purple_proxy_info_new();
-		purple_proxy_info_set_type(jsx->gpi, PURPLE_PROXY_SOCKS5);
+		purple_proxy_info_set_proxy_type(jsx->gpi, PURPLE_PROXY_SOCKS5);
 		purple_proxy_info_set_host(jsx->gpi, streamhost->host);
 		purple_proxy_info_set_port(jsx->gpi, streamhost->port);
 
@@ -962,7 +962,7 @@ jabber_si_xfer_bytestreams_send_init(PurpleXfer *xfer)
 
 	/* TODO: This should probably be done with an account option instead of
 	 *       piggy-backing on the TOR proxy type. */
-	proxy_type = purple_proxy_info_get_type(
+	proxy_type = purple_proxy_info_get_proxy_type(
 		purple_proxy_get_setup(purple_connection_get_account(jsx->js->gc)));
 	if (proxy_type == PURPLE_PROXY_TOR) {
 		purple_debug_info("jabber", "Skipping attempting local streamhost.\n");

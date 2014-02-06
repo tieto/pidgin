@@ -572,7 +572,7 @@ purple_notify_user_info_entry_set_value(PurpleNotifyUserInfoEntry *user_info_ent
 }
 
 PurpleNotifyUserInfoEntryType
-purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry *user_info_entry)
+purple_notify_user_info_entry_get_entry_type(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_val_if_fail(user_info_entry != NULL, PURPLE_NOTIFY_USER_INFO_ENTRY_PAIR);
 
@@ -580,7 +580,8 @@ purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry *user_info_entr
 }
 
 void
-purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info_entry, PurpleNotifyUserInfoEntryType type)
+purple_notify_user_info_entry_set_entry_type(PurpleNotifyUserInfoEntry *user_info_entry,
+		PurpleNotifyUserInfoEntryType type)
 {
 	g_return_if_fail(user_info_entry != NULL);
 

@@ -636,7 +636,7 @@ chat_components_edit_ok(PurpleChat *chat, PurpleRequestFields *allfields)
 			char *val;
 
 			id = purple_request_field_get_id(field);
-			if (purple_request_field_get_type(field) == PURPLE_REQUEST_FIELD_INTEGER)
+			if (purple_request_field_get_field_type(field) == PURPLE_REQUEST_FIELD_INTEGER)
 				val = g_strdup_printf("%d", purple_request_field_int_get_value(field));
 			else
 				val = g_strdup(purple_request_field_string_get_value(field));

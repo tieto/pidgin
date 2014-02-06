@@ -85,7 +85,7 @@ static void purple_roomlist_field_free(PurpleRoomlistField *f);
 static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r);
 
 /**************************************************************************/
-/** @name Room List API                                                   */
+/* Room List API                                                          */
 /**************************************************************************/
 /*@{*/
 
@@ -252,7 +252,7 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
 /*@}*/
 
 /**************************************************************************/
-/** @name Room List GObject code                                          */
+/* Room List GObject code                                                 */
 /**************************************************************************/
 /*@{*/
 
@@ -428,7 +428,7 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 /*@}*/
 
 /**************************************************************************/
-/** @name Room API                                                        */
+/* Room API                                                               */
 /**************************************************************************/
 /*@{*/
 
@@ -562,7 +562,7 @@ static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoo
 /*@}*/
 
 /**************************************************************************/
-/** @name Room GBoxed code                                                */
+/* Room GBoxed code                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -598,7 +598,7 @@ GType purple_roomlist_room_get_type(void)
 /*@}*/
 
 /**************************************************************************/
-/** @name Room Field API                                                  */
+/* Room Field API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -639,7 +639,7 @@ gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field)
 /*@}*/
 
 /**************************************************************************/
-/** @name Room Field GBoxed code                                          */
+/* Room Field GBoxed code                                                 */
 /**************************************************************************/
 /*@{*/
 
@@ -675,7 +675,7 @@ GType purple_roomlist_field_get_type(void)
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 

@@ -34,7 +34,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_ENTRY				(gnt_entry_get_gtype())
+#define GNT_TYPE_ENTRY				(gnt_entry_get_type())
 #define GNT_ENTRY(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_ENTRY, GntEntry))
 #define GNT_ENTRY_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_ENTRY, GntEntryClass))
 #define GNT_IS_ENTRY(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_ENTRY))
@@ -88,8 +88,8 @@ struct _GntEntry
 	gboolean word;      /* Are the suggestions for only a word, or for the whole thing? */
 	gboolean always;    /* Should the list of suggestions show at all times, or only on tab-press? */
 	GntWidget *ddown;   /* The dropdown with the suggested list */
-	GntEntryKillRing *killring; /**< Since: 2.3.0 */
-	GntEntrySearch *search;		/**< Since: 2.7.0 */
+	GntEntryKillRing *killring; /* Since: 2.3.0 */
+	GntEntrySearch *search;		/* Since: 2.7.0 */
 };
 
 struct _GntEntryClass
@@ -112,7 +112,7 @@ G_BEGIN_DECLS
  *
  * Returns: GType for GntEntry.
  */
-GType gnt_entry_get_gtype(void);
+GType gnt_entry_get_type(void);
 
 /**
  * gnt_entry_new:

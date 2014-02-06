@@ -89,7 +89,7 @@ struct _PidginBlistLayout
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name PidginThemeFont API                                               */
+/* PidginThemeFont API                                                    */
 /**************************************************************************/
 
 /**
@@ -160,14 +160,13 @@ const GdkColor * pidgin_theme_font_get_color(PidginThemeFont *font);
 const gchar * pidgin_theme_font_get_color_describe(PidginThemeFont *font);
 
 /**************************************************************************/
-/** @name Purple Buddy List Theme API                                     */
+/* Purple Buddy List Theme API                                            */
 /**************************************************************************/
 
 /**
  * pidgin_blist_theme_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a blist theme.
  */
 GType pidgin_blist_theme_get_type(void);
 

@@ -89,16 +89,22 @@ typedef enum
 
 /**
  * PurpleRoomlistUiOps:
+ * @show_with_account: Force the ui to pop up a dialog and get the list.
+ * @create:            A new list was created.
+ * @set_fields:        Sets the columns.
+ * @add_room:          Add a room to the list.
+ * @in_progress:       Are we fetching stuff still?
+ * @destroy:           We're destroying list.
  *
  * The room list ops to be filled out by the UI.
  */
 struct _PurpleRoomlistUiOps {
-	void (*show_with_account)(PurpleAccount *account); /**< Force the ui to pop up a dialog and get the list */
-	void (*create)(PurpleRoomlist *list); /**< A new list was created. */
-	void (*set_fields)(PurpleRoomlist *list, GList *fields); /**< Sets the columns. */
-	void (*add_room)(PurpleRoomlist *list, PurpleRoomlistRoom *room); /**< Add a room to the list. */
-	void (*in_progress)(PurpleRoomlist *list, gboolean flag); /**< Are we fetching stuff still? */
-	void (*destroy)(PurpleRoomlist *list); /**< We're destroying list. */
+	void (*show_with_account)(PurpleAccount *account);
+	void (*create)(PurpleRoomlist *list);
+	void (*set_fields)(PurpleRoomlist *list, GList *fields);
+	void (*add_room)(PurpleRoomlist *list, PurpleRoomlistRoom *room);
+	void (*in_progress)(PurpleRoomlist *list, gboolean flag);
+	void (*destroy)(PurpleRoomlist *list);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
@@ -139,7 +145,7 @@ struct _PurpleRoomlistClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Room List API                                                   */
+/* Room List API                                                          */
 /**************************************************************************/
 /*@{*/
 
@@ -321,7 +327,7 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
 /*@}*/
 
 /**************************************************************************/
-/** @name Room API                                                        */
+/* Room API                                                               */
 /**************************************************************************/
 /*@{*/
 
@@ -426,7 +432,7 @@ GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
 /*@}*/
 
 /**************************************************************************/
-/** @name Room Field API                                                  */
+/* Room Field API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -486,7 +492,7 @@ gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field);
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 

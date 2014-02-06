@@ -633,7 +633,7 @@ gnt_box_init(GTypeInstance *instance, gpointer class)
  * GntBox API
  *****************************************************************************/
 GType
-gnt_box_get_gtype(void)
+gnt_box_get_type(void)
 {
 	static GType type = 0;
 

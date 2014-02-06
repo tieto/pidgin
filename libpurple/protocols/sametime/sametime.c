@@ -5113,7 +5113,7 @@ mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
   pref = purple_plugin_pref_new_with_name(MW_PROTOCOL_OPT_BLIST_ACTION);
   purple_plugin_pref_set_label(pref, _("Buddy List Storage Mode"));
 
-  purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
+  purple_plugin_pref_set_pref_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
   purple_plugin_pref_add_choice(pref, _("Local Buddy List Only"),
 			      GINT_TO_POINTER(blist_choice_LOCAL));
   purple_plugin_pref_add_choice(pref, _("Merge List from Server"),

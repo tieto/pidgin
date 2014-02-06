@@ -34,7 +34,7 @@
 #include "gntkeys.h"
 #include "gntwidget.h"
 
-#define GNT_TYPE_COMBO_BOX				(gnt_combo_box_get_gtype())
+#define GNT_TYPE_COMBO_BOX				(gnt_combo_box_get_type())
 #define GNT_COMBO_BOX(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_COMBO_BOX, GntComboBox))
 #define GNT_COMBO_BOX_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_COMBO_BOX, GntComboBoxClass))
 #define GNT_IS_COMBO_BOX(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_COMBO_BOX))
@@ -76,7 +76,7 @@ G_BEGIN_DECLS
  *
  * Returns:  Get the GType for GntComboBox
  */
-GType gnt_combo_box_get_gtype(void);
+GType gnt_combo_box_get_type(void);
 
 /**
  * gnt_combo_box_new:

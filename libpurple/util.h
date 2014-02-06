@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
- * @todo Rename the functions so that they live somewhere in the purple
- *       namespace.
+ * TODO Rename the functions so that they live somewhere in the purple
+ *      namespace.
  */
 /**
  * SECTION:util
@@ -217,7 +217,7 @@ char * purple_util_format_song_info(const char *title, const char *artist,
 		const char *album, gpointer unused);
 
 /**************************************************************************/
-/** @name Utility Subsystem                                               */
+/* Utility Subsystem                                                      */
 /**************************************************************************/
 /*@{*/
 
@@ -238,7 +238,7 @@ void purple_util_uninit(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Base16 Functions                                                */
+/* Base16 Functions                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -249,10 +249,10 @@ void purple_util_uninit(void);
  *
  * Converts a chunk of binary data to its base-16 equivalent.
  *
+ *  See purple_base16_decode()
+ *
  * Returns: The base-16 string in the ASCII encoding.  Must be
  *         g_free'd when no longer needed.
- *
- * @see purple_base16_decode()
  */
 gchar *purple_base16_encode(const guchar *data, gsize len);
 
@@ -268,9 +268,9 @@ gchar *purple_base16_encode(const guchar *data, gsize len);
  * Converts an ASCII string of base-16 encoded data to
  * the binary equivalent.
  *
- * Returns: The raw data.  Must be g_free'd when no longer needed.
+ *  See purple_base16_encode()
  *
- * @see purple_base16_encode()
+ * Returns: The raw data.  Must be g_free'd when no longer needed.
  */
 guchar *purple_base16_decode(const char *str, gsize *ret_len);
 
@@ -293,7 +293,7 @@ gchar *purple_base16_encode_chunked(const guchar *data, gsize len);
 /*@}*/
 
 /**************************************************************************/
-/** @name Base64 Functions                                                */
+/* Base64 Functions                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -304,10 +304,10 @@ gchar *purple_base16_encode_chunked(const guchar *data, gsize len);
  *
  * Converts a chunk of binary data to its base-64 equivalent.
  *
+ *  See purple_base64_decode()
+ *
  * Returns: The base-64 string in the ASCII encoding.  Must be
  *         g_free'd when no longer needed.
- *
- * @see purple_base64_decode()
  */
 gchar *purple_base64_encode(const guchar *data, gsize len);
 
@@ -323,16 +323,16 @@ gchar *purple_base64_encode(const guchar *data, gsize len);
  * Converts an ASCII string of base-64 encoded data to
  * the binary equivalent.
  *
- * Returns: The raw data.  Must be g_free'd when no longer needed.
+ *  See purple_base64_encode()
  *
- * @see purple_base64_encode()
+ * Returns: The raw data.  Must be g_free'd when no longer needed.
  */
 guchar *purple_base64_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 
 /**************************************************************************/
-/** @name Quoted Printable Functions                                      */
+/* Quoted Printable Functions                                             */
 /**************************************************************************/
 /*@{*/
 
@@ -354,7 +354,7 @@ guchar *purple_quotedp_decode(const char *str, gsize *ret_len);
 /*@}*/
 
 /**************************************************************************/
-/** @name MIME Functions                                                  */
+/* MIME Functions                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -384,7 +384,7 @@ char *purple_mime_decode_field(const char *str);
 
 
 /**************************************************************************/
-/** @name Date/Time Functions                                             */
+/* Date/Time Functions                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -550,7 +550,7 @@ char *purple_uts35_to_str(const char *format, size_t len, struct tm *tm);
 
 
 /**************************************************************************/
-/** @name Markup Functions                                                */
+/* Markup Functions                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -668,10 +668,10 @@ char *purple_markup_linkify(const char *str);
  *
  * purple_unescape_html() is similar, but also converts "&lt;br&gt;" into "\n".
  *
+ *  See purple_unescape_html()
+ *
  * Returns: The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
- *
- * @see purple_unescape_html()
  */
 char *purple_unescape_text(const char *text);
 
@@ -682,10 +682,10 @@ char *purple_unescape_text(const char *text);
  * Unescapes HTML entities to their literal characters and converts
  * "&lt;br&gt;" to "\n".  See purple_unescape_text() for more details.
  *
+ *  See purple_unescape_text()
+ *
  * Returns: The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
- *
- * @see purple_unescape_text()
  */
 char *purple_unescape_html(const char *html);
 
@@ -778,7 +778,7 @@ gboolean purple_markup_is_rtl(const char *html);
 
 
 /**************************************************************************/
-/** @name Path/Filename Functions                                         */
+/* Path/Filename Functions                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -787,9 +787,9 @@ gboolean purple_markup_is_rtl(const char *html);
  *
  * Returns the user's home directory.
  *
- * Returns: The user's home directory.
+ *  See purple_user_dir()
  *
- * @see purple_user_dir()
+ * Returns: The user's home directory.
  */
 const gchar *purple_home_dir(void);
 
@@ -799,9 +799,9 @@ const gchar *purple_home_dir(void);
  * Returns the purple settings directory in the user's home directory.
  * This is usually ~/.purple
  *
- * Returns: The purple settings directory.
+ *  See purple_home_dir()
  *
- * @see purple_home_dir()
+ * Returns: The purple settings directory.
  */
 const char *purple_user_dir(void);
 
@@ -856,13 +856,12 @@ gboolean purple_util_write_data_to_file(const char *filename, const char *data,
  *
  * This exists for Glib backwards compatibility reasons.
  *
+ *  See purple_util_write_data_to_file()
+ *
  * Returns: TRUE if the file was written successfully.  FALSE otherwise.
- *
- * @todo Remove this function (use g_file_set_contents instead) when 3.0.0
- *       rolls around.
- * @see purple_util_write_data_to_file()
- *
  */
+/* TODO: Remove this function (use g_file_set_contents instead) when 3.0.0
+ *       rolls around. */
 gboolean
 purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, gssize size);
 
@@ -930,7 +929,7 @@ char *purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
 
 
 /**************************************************************************/
-/** @name Environment Detection Functions                                 */
+/* Environment Detection Functions                                        */
 /**************************************************************************/
 /*@{*/
 
@@ -1009,7 +1008,7 @@ gboolean purple_socket_speaks_ipv4(int fd);
 
 
 /**************************************************************************/
-/** @name String Functions                                                */
+/* String Functions                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -1291,7 +1290,7 @@ void purple_utf16_wipe(gunichar2 *str);
 
 
 /**************************************************************************/
-/** @name URI/URL Functions                                               */
+/* URI/URL Functions                                                      */
 /**************************************************************************/
 /*@{*/
 

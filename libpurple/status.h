@@ -136,7 +136,7 @@ typedef enum
  * A PurplePresence is like a collection of PurpleStatuses (plus some
  * other random info).
  *
- * @see presence.h
+ * See <link linkend="libpurple-presence">Presence API</link>
  */
 struct _PurpleStatus
 {
@@ -161,7 +161,7 @@ struct _PurpleStatusClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name PurpleStatusPrimitive API                                       */
+/* PurpleStatusPrimitive API                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -202,7 +202,7 @@ PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusType API                                            */
+/* PurpleStatusType API                                                   */
 /**************************************************************************/
 /*@{*/
 
@@ -420,7 +420,7 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusAttribute API                                       */
+/* PurpleStatusAttribute API                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -485,7 +485,7 @@ GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleMood API                                                  */
+/* PurpleMood API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -499,7 +499,7 @@ GType purple_mood_get_type(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatus API                                                */
+/* PurpleStatus API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -592,7 +592,7 @@ PurplePresence *purple_status_get_presence(const PurpleStatus *status);
  * Returns the status's type ID.
  *
  * This is a convenience method for
- * purple_status_type_get_id(purple_status_get_type(status)).
+ * purple_status_type_get_id(purple_status_get_status_type(status)).
  *
  * Returns: The status's ID.
  */
@@ -605,7 +605,7 @@ const char *purple_status_get_id(const PurpleStatus *status);
  * Returns the status's name.
  *
  * This is a convenience method for
- * purple_status_type_get_name(purple_status_get_type(status)).
+ * purple_status_type_get_name(purple_status_get_status_type(status)).
  *
  * Returns: The status's name.
  */
@@ -618,7 +618,7 @@ const char *purple_status_get_name(const PurpleStatus *status);
  * Returns whether or not a status is independent.
  *
  * This is a convenience method for
- * purple_status_type_is_independent(purple_status_get_type(status)).
+ * purple_status_type_is_independent(purple_status_get_status_type(status)).
  *
  * Returns: TRUE if the status is independent, or FALSE otherwise.
  */
@@ -631,7 +631,7 @@ gboolean purple_status_is_independent(const PurpleStatus *status);
  * Returns whether or not a status is exclusive.
  *
  * This is a convenience method for
- * purple_status_type_is_exclusive(purple_status_get_type(status)).
+ * purple_status_type_is_exclusive(purple_status_get_status_type(status)).
  *
  * Returns: TRUE if the status is exclusive, FALSE otherwise.
  */
@@ -646,7 +646,7 @@ gboolean purple_status_is_exclusive(const PurpleStatus *status);
  * Available statuses are online and possibly invisible, but not away or idle.
  *
  * This is a convenience method for
- * purple_status_type_is_available(purple_status_get_type(status)).
+ * purple_status_type_is_available(purple_status_get_status_type(status)).
  *
  * Returns: TRUE if the status is available, or FALSE otherwise.
  */
@@ -735,7 +735,7 @@ gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *stat
 /*@}*/
 
 /**************************************************************************/
-/** @name Statuses subsystem                                                */
+/* Statuses subsystem                                                     */
 /**************************************************************************/
 /*@{*/
 

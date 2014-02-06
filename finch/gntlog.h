@@ -66,7 +66,7 @@ void finch_log_show_contact(PurpleContact *contact);
 void finch_syslog_show(void);
 
 /**************************************************************************/
-/** @name GNT Log Subsystem                                              */
+/* GNT Log Subsystem                                                      */
 /**************************************************************************/
 /*@{*/
 

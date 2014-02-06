@@ -36,7 +36,7 @@
 #include <panel.h>
 #include <time.h>
 
-#define GNT_TYPE_WM				(gnt_wm_get_gtype())
+#define GNT_TYPE_WM				(gnt_wm_get_type())
 #define GNT_WM(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WM, GntWM))
 #define GNT_WM_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_WM, GntWMClass))
 #define GNT_IS_WM(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_WM))
@@ -197,7 +197,7 @@ G_BEGIN_DECLS
  *
  * Returns: GType for GntWM.
  */
-GType gnt_wm_get_gtype(void);
+GType gnt_wm_get_type(void);
 
 /**
  * gnt_wm_add_workspace:
@@ -360,14 +360,14 @@ void gnt_wm_raise_window(GntWM *wm, GntWidget *widget);
 /**
  * gnt_wm_set_event_stack:
  *
- * @internal
+ * Internal function -- do not use.
  */
 void gnt_wm_set_event_stack(GntWM *wm, gboolean set);
 
 /**
  * gnt_wm_copy_win:
  *
- * @internal
+ * Internal function -- do not use.
  */
 void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
 
@@ -379,4 +379,5 @@ void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
 time_t gnt_wm_get_idle_time(void);
 
 G_END_DECLS
+
 #endif

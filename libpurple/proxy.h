@@ -72,7 +72,7 @@ typedef void (*PurpleProxyConnectFunction)(gpointer data, gint source, const gch
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Proxy structure API                                             */
+/* Proxy structure API                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -100,7 +100,7 @@ void purple_proxy_info_destroy(PurpleProxyInfo *info);
  *
  * Sets the type of proxy.
  */
-void purple_proxy_info_set_type(PurpleProxyInfo *info, PurpleProxyType type);
+void purple_proxy_info_set_proxy_type(PurpleProxyInfo *info, PurpleProxyType type);
 
 /**
  * purple_proxy_info_set_host:
@@ -146,7 +146,7 @@ void purple_proxy_info_set_password(PurpleProxyInfo *info, const char *password)
  *
  * Returns: The type.
  */
-PurpleProxyType purple_proxy_info_get_type(const PurpleProxyInfo *info);
+PurpleProxyType purple_proxy_info_get_proxy_type(const PurpleProxyInfo *info);
 
 /**
  * purple_proxy_info_get_host:
@@ -191,7 +191,7 @@ const char *purple_proxy_info_get_password(const PurpleProxyInfo *info);
 /*@}*/
 
 /**************************************************************************/
-/** @name Global Proxy API                                                */
+/* Global Proxy API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -215,7 +215,7 @@ void purple_global_proxy_set_info(PurpleProxyInfo *info);
 /*@}*/
 
 /**************************************************************************/
-/** @name Proxy API                                                       */
+/* Proxy API                                                              */
 /**************************************************************************/
 /*@{*/
 

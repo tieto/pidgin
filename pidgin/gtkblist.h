@@ -64,7 +64,7 @@ typedef enum {
 #include "gtkblist-theme.h"
 
 /**************************************************************************
- * @name Structures
+ * Structures
  **************************************************************************/
 /**
  * PidginBuddyList:
@@ -153,7 +153,7 @@ struct _PidginBuddyList {
 G_BEGIN_DECLS
 
 /**************************************************************************
- * @name GTK+ Buddy List API
+ * GTK+ Buddy List API
  **************************************************************************/
 
 /**
@@ -313,7 +313,7 @@ void pidgin_blist_set_theme(PidginBlistTheme *theme);
 PidginBlistTheme *pidgin_blist_get_theme(void);
 
 /**************************************************************************
- * @name GTK+ Buddy List sorting functions
+ * GTK+ Buddy List sorting functions
  **************************************************************************/
 
 typedef void (*pidgin_blist_sort_function)(PurpleBlistNode *new, PurpleBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
@@ -410,24 +410,24 @@ void pidgin_blist_joinchat_show(void);
  * pidgin_append_blist_node_privacy_menu:
  *
  * Appends the privacy menu items for a PurpleBlistNode
- * @todo Rename these.
  */
+/* TODO Rename these. */
 void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
  * pidgin_append_blist_node_proto_menu:
  *
  * Appends the protocol specific menu items for a PurpleBlistNode
- * @todo Rename these.
  */
+/* TODO Rename these. */
 void pidgin_append_blist_node_proto_menu (GtkWidget *menu, PurpleConnection *gc, PurpleBlistNode *node);
 
 /**
  * pidgin_append_blist_node_extended_menu:
  *
  * Appends the extended menu items for a PurpleBlistNode
- * @todo Rename these.
  */
+/* TODO Rename these. */
 void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**

@@ -59,15 +59,14 @@ struct _PidginIconThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Icon Theme-Loader API                                    */
+/* Pidgin Icon Theme-Loader API                                           */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
  * pidgin_icon_theme_loader_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for an icon theme loader.
  */
 GType pidgin_icon_theme_loader_get_type(void);
 

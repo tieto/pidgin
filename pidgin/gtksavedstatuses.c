@@ -374,9 +374,9 @@ add_status_to_saved_status_list(GtkListStore *model, PurpleSavedStatus *saved_st
 		return;
 
 	title = purple_savedstatus_get_title(saved_status);
-	type = purple_primitive_get_name_from_type(purple_savedstatus_get_type(saved_status));
+	type = purple_primitive_get_name_from_type(purple_savedstatus_get_primitive_type(saved_status));
 	message = purple_markup_strip_html(purple_savedstatus_get_message(saved_status));
-	icon = get_stock_icon_from_primitive(purple_savedstatus_get_type(saved_status));
+	icon = get_stock_icon_from_primitive(purple_savedstatus_get_primitive_type(saved_status));
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
@@ -758,7 +758,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		/* Modify the old status */
 		if (strcmp(title, dialog->original_title))
 			purple_savedstatus_set_title(saved_status, title);
-		purple_savedstatus_set_type(saved_status, type);
+		purple_savedstatus_set_primitive_type(saved_status, type);
 	}
 
 	if (*unformatted == '\0')
@@ -1007,7 +1007,7 @@ status_editor_set_account(GtkListStore *store, PurpleAccount *account,
 	{
 		const PurpleStatusType *type;
 
-		type = purple_savedstatus_substatus_get_type(substatus);
+		type = purple_savedstatus_substatus_get_status_type(substatus);
 		id = purple_status_type_get_id(type);
 		name = purple_status_type_get_name(type);
 		prim = purple_status_type_get_primitive(type);
@@ -1134,7 +1134,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 
 	/* Status type */
 	if (saved_status != NULL)
-		dropdown = create_status_type_menu(purple_savedstatus_get_type(saved_status));
+		dropdown = create_status_type_menu(purple_savedstatus_get_primitive_type(saved_status));
 	else
 		dropdown = create_status_type_menu(PURPLE_STATUS_AWAY);
 	dialog->type = GTK_COMBO_BOX(dropdown);
@@ -1484,7 +1484,8 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 		if ((saved_status = purple_savedstatus_find(status_editor->original_title)) != NULL) {
 			if ((substatus = purple_savedstatus_get_substatus(saved_status, account)) != NULL) {
 				message = (char *)purple_savedstatus_substatus_get_message(substatus);
-				status_id = (char *)purple_status_type_get_id(purple_savedstatus_substatus_get_type(substatus));
+				status_id = (char *)purple_status_type_get_id(
+						purple_savedstatus_substatus_get_status_type(substatus));
 			}
 		}
 	}
@@ -1637,7 +1638,7 @@ static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget 
 
 	if (purple_savedstatus_is_transient(current_status)
 			&& !purple_savedstatus_has_substatuses(current_status)
-			&& purple_savedstatus_get_type(current_status) == primitive)
+			&& purple_savedstatus_get_primitive_type(current_status) == primitive)
 		currently_selected = TRUE;
 
 	return currently_selected;
@@ -1652,7 +1653,7 @@ pidgin_status_menu_update_iter(GtkWidget *combobox, GtkListStore *store, GtkTree
 	if (store == NULL)
 		store = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(combobox)));
 
-	primitive = purple_savedstatus_get_type(status);
+	primitive = purple_savedstatus_get_primitive_type(status);
 	gtk_list_store_set(store, iter,
 			SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_SAVEDSTATUS,
 			SS_MENU_ICON_COLUMN, pidgin_stock_id_from_status_primitive(primitive),

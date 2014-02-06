@@ -159,7 +159,7 @@ struct _PurpleBuddyPresenceClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name PurpleAccountPresence API                                       */
+/* PurpleAccountPresence API                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -193,7 +193,7 @@ PurpleAccount *purple_account_presence_get_account(const PurpleAccountPresence *
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleBuddyPresence API                                         */
+/* PurpleBuddyPresence API                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -241,7 +241,7 @@ gint purple_buddy_presence_compare(const PurpleBuddyPresence *buddy_presence1,
 /*@}*/
 
 /**************************************************************************/
-/** @name PurplePresence API                                              */
+/* PurplePresence API                                                     */
 /**************************************************************************/
 /*@{*/
 

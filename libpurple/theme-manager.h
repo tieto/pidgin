@@ -61,16 +61,14 @@ struct _PurpleThemeManagerClass {
 };
 
 /**************************************************************************/
-/** @name Purple Theme Manager API                                        */
+/* Purple Theme Manager API                                               */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
  * purple_theme_manager_get_type:
  *
- * GObject foo.
- *
- * @internal.
+ * Returns: The #GType for theme manager.
  */
 GType purple_theme_manager_get_type(void);
 

@@ -554,7 +554,7 @@ gnt_file_sel_init(GTypeInstance *instance, gpointer class)
  * GntFileSel API
  *****************************************************************************/
 GType
-gnt_file_sel_get_gtype(void)
+gnt_file_sel_get_type(void)
 {
 	static GType type = 0;
 

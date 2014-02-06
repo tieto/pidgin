@@ -81,7 +81,7 @@ struct _PurpleBuddyIconSpec {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Buddy Icon API                                                  */
+/* Buddy Icon API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -228,7 +228,7 @@ char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
 /*@}*/
 
 /**************************************************************************/
-/** @name Buddy Icon Subsystem API                                        */
+/* Buddy Icon Subsystem API                                               */
 /**************************************************************************/
 /*@{*/
 
@@ -384,7 +384,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
  * Sets a custom buddy icon for a blist node.
  *
  * Convenience wrapper around purple_buddy_icons_node_set_custom_icon.
- * @see purple_buddy_icons_node_set_custom_icon()
+ * See purple_buddy_icons_node_set_custom_icon().
  *
  * Returns: The icon that was set. The caller does NOT own a reference to this,
  *         and must call purple_imgstore_ref() if it wants one.
@@ -460,7 +460,7 @@ void purple_buddy_icons_uninit(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Buddy Icon Spec API                                             */
+/* Buddy Icon Spec API                                                    */
 /**************************************************************************/
 /*@{*/
 

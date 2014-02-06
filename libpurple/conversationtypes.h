@@ -196,7 +196,7 @@ struct _PurpleChatUserClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name IM Conversation API                                             */
+/* IM Conversation API                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -230,7 +230,7 @@ PurpleIMConversation *purple_im_conversation_new(PurpleAccount *account,
  * This should only be called from within Purple. You probably want to
  * call purple_buddy_icon_set_data().
  *
- * @see purple_buddy_icon_set_data()
+ * See purple_buddy_icon_set_data().
  */
 void purple_im_conversation_set_icon(PurpleIMConversation *im, PurpleBuddyIcon *icon);
 
@@ -353,7 +353,7 @@ void purple_im_conversation_update_typing(PurpleIMConversation *im);
 /*@}*/
 
 /**************************************************************************/
-/** @name Chat Conversation API                                           */
+/* Chat Conversation API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -666,7 +666,7 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 /*@}*/
 
 /**************************************************************************/
-/** @name Chat Conversation User API                                      */
+/* Chat Conversation User API                                             */
 /**************************************************************************/
 /*@{*/
 

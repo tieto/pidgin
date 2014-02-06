@@ -27,19 +27,17 @@
 #define PURPLE_BLIST_NODE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BLIST_NODE, PurpleBlistNodePrivate))
 
-/** @copydoc _PurpleBlistNodePrivate */
 typedef struct _PurpleBlistNodePrivate  PurpleBlistNodePrivate;
 
 #define PURPLE_COUNTING_NODE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_COUNTING_NODE, PurpleCountingNodePrivate))
 
-/** @copydoc _PurpleCountingNodePrivate */
 typedef struct _PurpleCountingNodePrivate  PurpleCountingNodePrivate;
 
-/** Private data of a buddy list node */
+/* Private data of a buddy list node */
 struct _PurpleBlistNodePrivate {
-	GHashTable *settings;  /**< per-node settings                            */
-	gboolean transient;    /**< node should not be saved with the buddy list */
+	GHashTable *settings;  /* per-node settings                            */
+	gboolean transient;    /* node should not be saved with the buddy list */
 };
 
 /* Blist node property enums */
@@ -50,13 +48,13 @@ enum
 	BLNODE_PROP_LAST
 };
 
-/** Private data of a counting node */
+/* Private data of a counting node */
 struct _PurpleCountingNodePrivate {
-	int totalsize;    /**< The number of children under this node            */
-	int currentsize;  /**< The number of children under this node
-	                       corresponding to online accounts                  */
-	int onlinecount;  /**< The number of children under this contact who are
-	                       currently online                                  */
+	int totalsize;    /* The number of children under this node            */
+	int currentsize;  /* The number of children under this node
+	                     corresponding to online accounts                  */
+	int onlinecount;  /* The number of children under this contact who are
+	                     currently online                                  */
 };
 
 /* Counting node property enums */

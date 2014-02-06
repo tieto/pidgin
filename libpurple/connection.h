@@ -122,9 +122,6 @@ typedef enum
  *         username cannot contain white space.  This reason should not be used
  *         for incorrect passwords etc: use
  *         #PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED for that.
- *         @todo This reason really shouldn't be necessary.  Usernames and
- *               other account preferences should be validated when the
- *               account is created.
  * @PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED: The server did not provide a
  *         SSL certificate.
  * @PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED: The server's SSL certificate could
@@ -155,7 +152,12 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT = 4,
 	PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR = 5,
 	PURPLE_CONNECTION_ERROR_NAME_IN_USE = 6,
+
+	/* TODO This reason really shouldn't be necessary. Usernames and
+	 *      other account preferences should be validated when the
+	 *      account is created. */
 	PURPLE_CONNECTION_ERROR_INVALID_SETTINGS = 7,
+
 	PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED = 8,
 	PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED = 9,
 	PURPLE_CONNECTION_ERROR_CERT_EXPIRED = 10,
@@ -285,7 +287,7 @@ struct _PurpleConnectionClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Connection API                                                  */
+/* Connection API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -525,7 +527,7 @@ void purple_connection_update_last_received(PurpleConnection *gc);
 /*@}*/
 
 /**************************************************************************/
-/** @name Connections API                                                 */
+/* Connections API                                                        */
 /**************************************************************************/
 /*@{*/
 
@@ -576,7 +578,7 @@ GList *purple_connections_get_connecting(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -600,7 +602,7 @@ PurpleConnectionUiOps *purple_connections_get_ui_ops(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Connections Subsystem                                           */
+/* Connections Subsystem                                                  */
 /**************************************************************************/
 /*@{*/
 
