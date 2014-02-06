@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-/**
+/*
  * SECTION:gnt-skel
  * @section_id: libgnt-gnt-skel
  * @short_description: <filename>gnt-skel.h</filename>
