@@ -92,7 +92,7 @@ struct _GntBoxClass
 G_BEGIN_DECLS
 
 /**
- * gnt_box_get_gtype:
+ * gnt_box_get_type:
  *
  * The GType for GntBox.
  *

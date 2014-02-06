@@ -71,7 +71,7 @@ struct _GntCheckBoxClass
 G_BEGIN_DECLS
 
 /**
- * gnt_check_box_get_gtype:
+ * gnt_check_box_get_type:
  *
  * Returns: GType for GntCheckBox
  */

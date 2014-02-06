@@ -94,7 +94,7 @@ PurpleProxyInfo *purple_proxy_info_new(void);
 void purple_proxy_info_destroy(PurpleProxyInfo *info);
 
 /**
- * purple_proxy_info_set_type:
+ * purple_proxy_info_set_proxy_type:
  * @info: The proxy information.
  * @type: The proxy type.
  *
@@ -139,7 +139,7 @@ void purple_proxy_info_set_username(PurpleProxyInfo *info, const char *username)
 void purple_proxy_info_set_password(PurpleProxyInfo *info, const char *password);
 
 /**
- * purple_proxy_info_get_type:
+ * purple_proxy_info_get_proxy_type:
  * @info: The proxy information.
  *
  * Returns the proxy's type.

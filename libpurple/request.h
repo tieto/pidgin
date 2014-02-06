@@ -920,7 +920,7 @@ void purple_request_field_set_required(PurpleRequestField *field,
 									 gboolean required);
 
 /**
- * purple_request_field_get_type:
+ * purple_request_field_get_field_type:
  * @field: The field.
  *
  * Returns the type of a field.

@@ -144,7 +144,7 @@ struct _GntWidgetClass
 G_BEGIN_DECLS
 
 /**
- * gnt_widget_get_gtype:
+ * gnt_widget_get_type:
  *
  * Returns:  GType for GntWidget.
  */

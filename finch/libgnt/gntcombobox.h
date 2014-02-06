@@ -72,7 +72,7 @@ struct _GntComboBoxClass
 G_BEGIN_DECLS
 
 /**
- * gnt_combo_box_get_gtype:
+ * gnt_combo_box_get_type:
  *
  * Returns:  Get the GType for GntComboBox
  */

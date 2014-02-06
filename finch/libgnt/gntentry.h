@@ -108,7 +108,7 @@ struct _GntEntryClass
 G_BEGIN_DECLS
 
 /**
- * gnt_entry_get_gtype:
+ * gnt_entry_get_type:
  *
  * Returns: GType for GntEntry.
  */

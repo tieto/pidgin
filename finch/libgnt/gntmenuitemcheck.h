@@ -69,7 +69,7 @@ struct _GntMenuItemCheckClass
 G_BEGIN_DECLS
 
 /**
- * gnt_menuitem_check_get_gtype:
+ * gnt_menuitem_check_get_type:
  *
  * Returns: GType for GntMenuItemCheck.
  */

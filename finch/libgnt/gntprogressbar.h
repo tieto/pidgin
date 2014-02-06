@@ -63,9 +63,10 @@ typedef struct _GntProgressBarClass
 G_BEGIN_DECLS
 
 /**
- * gnt_progress_bar_get_gtype:
+ * gnt_progress_bar_get_type:
  *
- * Get the GType for GntProgressBar
+ * Get the #GType for GntProgressBar
+ *
  * Returns: The GType for GntProrgressBar
  */
 GType

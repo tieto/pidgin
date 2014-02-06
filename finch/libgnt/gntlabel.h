@@ -71,7 +71,7 @@ struct _GntLabelClass
 G_BEGIN_DECLS
 
 /**
- * gnt_label_get_gtype:
+ * gnt_label_get_type:
  *
  * Returns: GType for GntLabel.
  */

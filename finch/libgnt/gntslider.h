@@ -78,7 +78,7 @@ struct _GntSliderClass
 G_BEGIN_DECLS
 
 /**
- * gnt_slider_get_gtype:
+ * gnt_slider_get_type:
  *
  * Returns: The GType for GntSlider
  *

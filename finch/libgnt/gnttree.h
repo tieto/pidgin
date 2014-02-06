@@ -105,7 +105,7 @@ struct _GntTreeClass
 G_BEGIN_DECLS
 
 /**
- * gnt_tree_get_gtype:
+ * gnt_tree_get_type:
  *
  * Returns: The GType for GntTree
  */

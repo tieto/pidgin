@@ -91,7 +91,7 @@ struct _GntTextViewClass
 G_BEGIN_DECLS
 
 /**
- * gnt_text_view_get_gtype:
+ * gnt_text_view_get_type:
  *
  * Returns:  GType for GntTextView.
  */
