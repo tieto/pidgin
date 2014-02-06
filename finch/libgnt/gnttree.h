@@ -42,9 +42,6 @@
 #define GNT_IS_TREE_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_TREE))
 #define GNT_TREE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_TREE, GntTreeClass))
 
-typedef guint (*GntTreeHashFunc)(gconstpointer);
-typedef gboolean (*GntTreeHashEqualityFunc)(gconstpointer, gconstpointer);
-
 typedef struct _GntTree			GntTree;
 typedef struct _GntTreePriv		GntTreePriv;
 typedef struct _GntTreeClass		GntTreeClass;
@@ -81,8 +78,8 @@ struct _GntTree
 
 	GList *list;            /* List of GntTreeRow s */
 	GHashTable *hash;       /* We need this for quickly referencing the rows */
-	GntTreeHashFunc hash_func;
-	GntTreeHashEqualityFunc hash_eq_func;
+	guint (*hash_func)(gconstpointer);
+	gboolean (*hash_eq_func)(gconstpointer, gconstpointer);
 	GDestroyNotify key_destroy;
 	GDestroyNotify value_destroy;
 
