@@ -89,8 +89,8 @@ struct _GntBindableAction
 {
 	char *name;        /* The name of the action */
 	union {
-		gboolean (*action)(GntBindable *bindable, GList *params);
-		gboolean (*action_noparam)(GntBindable *bindable);
+		GntBindableActionCallback action;
+		GntBindableActionCallbackNoParam action_noparam;
 	} u;
 };
 

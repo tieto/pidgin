@@ -57,10 +57,10 @@ struct _GntButton
 	GntButtonPriv *priv;
 
 	/*< private >*/
-    void (*gnt_reserved1)(void);
-    void (*gnt_reserved2)(void);
-    void (*gnt_reserved3)(void);
-    void (*gnt_reserved4)(void);
+    void *res1;
+    void *res2;
+    void *res3;
+    void *res4;
 };
 
 struct _GntButtonClass
