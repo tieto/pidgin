@@ -312,7 +312,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 		for (; fields ; fields = fields->next)
 		{
 			PurpleRequestField *field = fields->data;
-			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			PurpleRequestFieldType type = purple_request_field_get_field_type(field);
 			if (!purple_request_field_is_visible(field))
 				continue;
 			if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
@@ -433,7 +433,7 @@ create_boolean_field(PurpleRequestField *field)
 static GntWidget*
 create_string_field(PurpleRequestField *field, GntWidget **username)
 {
-	const char *hint = purple_request_field_get_type_hint(field);
+	const char *hint = purple_request_field_get_field_type_hint(field);
 	GntWidget *entry = gnt_entry_new(
 			purple_request_field_string_get_default_value(field));
 	gnt_entry_set_masked(GNT_ENTRY(entry),
@@ -628,7 +628,7 @@ finch_request_fields(const char *title, const char *primary,
 		for (; fields ; fields = fields->next)
 		{
 			PurpleRequestField *field = fields->data;
-			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			PurpleRequestFieldType type = purple_request_field_get_field_type(field);
 			const char *label = purple_request_field_get_label(field);
 
 			if (!purple_request_field_is_visible(field))
@@ -848,7 +848,7 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 
 		for (; fields ; fields = fields->next) {
 			PurpleRequestField *field = fields->data;
-			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			PurpleRequestFieldType type = purple_request_field_get_field_type(field);
 			PurplePrefType pt;
 			gpointer val = NULL;
 			const char *id = purple_request_field_get_id(field);
@@ -871,7 +871,7 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 					break;
 			}
 
-			pt = purple_prefs_get_type(id);
+			pt = purple_prefs_get_pref_type(id);
 			switch (pt) {
 				case PURPLE_PREF_INT:
 				{
@@ -897,7 +897,7 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 GntWidget *finch_request_field_get_widget(PurpleRequestField *field)
 {
 	GntWidget *ret = NULL;
-	switch (purple_request_field_get_type(field)) {
+	switch (purple_request_field_get_field_type(field)) {
 		case PURPLE_REQUEST_FIELD_BOOLEAN:
 			ret = create_boolean_field(field);
 			break;
@@ -917,7 +917,8 @@ GntWidget *finch_request_field_get_widget(PurpleRequestField *field)
 			ret = create_account_field(field);
 			break;
 		default:
-			purple_debug_error("GntRequest", "Unimplemented request-field %d\n", purple_request_field_get_type(field));
+			purple_debug_error("GntRequest", "Unimplemented request-field %d\n",
+					purple_request_field_get_field_type(field));
 			break;
 	}
 	return ret;

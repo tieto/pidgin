@@ -182,7 +182,7 @@ void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max);
  * @param pref The plugin pref
  * @param type The type
  */
-void purple_plugin_pref_set_type(PurplePluginPref *pref, PurplePluginPrefType type);
+void purple_plugin_pref_set_pref_type(PurplePluginPref *pref, PurplePluginPrefType type);
 
 /**
  * Get the type of a plugin pref
@@ -190,7 +190,7 @@ void purple_plugin_pref_set_type(PurplePluginPref *pref, PurplePluginPrefType ty
  * @param pref The plugin pref
  * @return The type
  */
-PurplePluginPrefType purple_plugin_pref_get_type(PurplePluginPref *pref);
+PurplePluginPrefType purple_plugin_pref_get_pref_type(PurplePluginPref *pref);
 
 /**
  * Set the choices for a choices plugin pref

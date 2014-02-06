@@ -1097,7 +1097,7 @@ chat_components_edit_ok(PurpleChat *chat, PurpleRequestFields *allfields)
 			char *val;
 
 			id = purple_request_field_get_id(field);
-			if (purple_request_field_get_type(field) == PURPLE_REQUEST_FIELD_INTEGER)
+			if (purple_request_field_get_field_type(field) == PURPLE_REQUEST_FIELD_INTEGER)
 				val = g_strdup_printf("%d", purple_request_field_int_get_value(field));
 			else
 				val = g_strdup(purple_request_field_string_get_value(field));
@@ -2180,7 +2180,7 @@ remove_typing_cb(gpointer null)
 
 	current = purple_savedstatus_get_current();
 	message = purple_savedstatus_get_message(current);
-	prim = purple_savedstatus_get_type(current);
+	prim = purple_savedstatus_get_primitive_type(current);
 
 	newmessage = gnt_entry_get_text(GNT_ENTRY(ggblist->statustext));
 	item = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(ggblist->status));
@@ -2191,7 +2191,7 @@ remove_typing_cb(gpointer null)
 			newprim = item->u.prim;
 			break;
 		case STATUS_SAVED_POPULAR:
-			newprim = purple_savedstatus_get_type(item->u.saved);
+			newprim = purple_savedstatus_get_primitive_type(item->u.saved);
 			break;
 		default:
 			goto end;  /* 'New' or 'Saved' is selected, but this should never happen. */
@@ -2292,7 +2292,7 @@ savedstatus_changed(PurpleSavedStatus *now, PurpleSavedStatus *old)
 	g_signal_handlers_block_matched(ggblist->statustext, G_SIGNAL_MATCH_FUNC,
 			0, 0, NULL, status_text_changed, NULL);
 
-	prim = purple_savedstatus_get_type(now);
+	prim = purple_savedstatus_get_primitive_type(now);
 	message = purple_savedstatus_get_message(now);
 
 	/* Rebuild the status dropdown */

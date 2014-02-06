@@ -104,7 +104,7 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 
 	/* Translators: "New conversations" should match the text in the preferences dialog and "By conversation count" should be the same text used above */
 	ppref = purple_plugin_pref_new_with_label(_("Note: The preference for \"New conversations\" must be set to \"By conversation count\"."));
-	purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_INFO);
+	purple_plugin_pref_set_pref_type(ppref, PURPLE_PLUGIN_PREF_INFO);
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(

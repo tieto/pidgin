@@ -143,6 +143,8 @@ version 3.0.0 (??/??/????):
 		  details.
 		* purple_account_get_alias renamed to purple_account_get_private_alias
 		* purple_account_set_alias renamed to purple_account_set_private_alias
+		* purple_account_option_get_type renamed to
+		  purple_account_option_get_pref_type
 		* PurplePrivacyType renamed to PurpleAccountPrivacyType
 		* purple_privacy_* functions are now purple_account_privacy_*
 		* Removed arguments local and restore from purple_account_privacy_allow
@@ -215,15 +217,36 @@ version 3.0.0 (??/??/????):
 		  purple_notify_user_info_add_pair_html
 		* purple_notify_user_info_get_entries returns a GQueue instead of
 		  a GList
+		* purple_notify_user_info_entry_get_type renamed to
+		  purple_notify_user_info_entry_get_entry_type
+		* purple_notify_user_info_entry_set_type renamed to
+		  purple_notify_user_info_entry_set_entry_type
 		* purple_notify_user_info_prepend_pair renamed to
 		  purple_notify_user_info_prepend_pair_html
+		* purple_plugin_pref_get_type renamed to
+		  purple_plugin_pref_get_pref_type
+		* purple_plugin_pref_set_type renamed to
+		  purple_plugin_pref_set_pref_type
+		* purple_prefs_get_type renamed to purple_prefs_get_pref_type
+		* purple_proxy_info_get_type renamed to purple_proxy_info_get_proxy_type
+		* purple_proxy_info_set_type renamed to purple_proxy_info_set_proxy_type
+		* purple_request_field_get_type renamed to
+		  purple_request_field_get_field_type
 		* PurpleRoomlist is now a GObject. Please see the documentation for
 		  details.
 		* purple_roomlist_room_get_type is now
 		  purple_roomlist_room_get_room_type
 		* purple_roomlist_field_get_type is now
 		  purple_roomlist_field_get_field_type
+		* purple_savedstatus_get_type renamed to
+		  purple_savedstatus_get_primitive_type
+		* purple_savedstatus_set_type renamed to
+		  purple_savedstatus_set_primitive_type
+		* purple_savedstatus_substatus_get_type renamed to
+		  purple_savedstatus_substatus_get_status_type
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
+		* purple_srv_txt_query_get_type renamed to
+		  purple_srv_txt_query_get_query_type
 		* PurpleStatus is now a GObject. Please see the documentation for
 		  details.
 		* purple_status_attr_* functions are now purple_status_attribute_*

@@ -633,7 +633,8 @@ void purple_notify_user_info_entry_set_value(PurpleNotifyUserInfoEntry *user_inf
  *
  * @return  The PurpleNotifyUserInfoEntryType
  */
-PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry *user_info_entry);
+PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_entry_type(
+		PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Set the type of a PurpleNotifyUserInfoEntry
@@ -641,8 +642,8 @@ PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotif
  * @param user_info_entry  The PurpleNotifyUserInfoEntry
  * @param type             The PurpleNotifyUserInfoEntryType
  */
-void purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info_entry,
-										  PurpleNotifyUserInfoEntryType type);
+void purple_notify_user_info_entry_set_entry_type(
+		PurpleNotifyUserInfoEntry *user_info_entry, PurpleNotifyUserInfoEntryType type);
 
 /**
  * Opens a URI or somehow presents it to the user.

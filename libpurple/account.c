@@ -2609,7 +2609,7 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 	int int_value;
 	char buf[21];
 
-	proxy_type = purple_proxy_info_get_type(proxy_info);
+	proxy_type = purple_proxy_info_get_proxy_type(proxy_info);
 
 	node = purple_xmlnode_new("proxy");
 

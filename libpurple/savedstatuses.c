@@ -597,7 +597,7 @@ purple_savedstatus_set_title(PurpleSavedStatus *status, const char *title)
 }
 
 void
-purple_savedstatus_set_type(PurpleSavedStatus *status, PurpleStatusPrimitive type)
+purple_savedstatus_set_primitive_type(PurpleSavedStatus *status, PurpleStatusPrimitive type)
 {
 	g_return_if_fail(status != NULL);
 
@@ -878,7 +878,7 @@ purple_savedstatus_set_idleaway(gboolean idleaway)
 	if (!idleaway)
 		purple_idle_touch();
 
-	if (idleaway && (purple_savedstatus_get_type(old) != PURPLE_STATUS_AVAILABLE))
+	if (idleaway && (purple_savedstatus_get_primitive_type(old) != PURPLE_STATUS_AVAILABLE))
 		/* Our global status is already "away," so don't change anything */
 		return;
 
@@ -1008,7 +1008,7 @@ purple_savedstatus_get_title(const PurpleSavedStatus *saved_status)
 	if ((message == NULL) || (*message == '\0'))
 	{
 		PurpleStatusPrimitive primitive;
-		primitive = purple_savedstatus_get_type(saved_status);
+		primitive = purple_savedstatus_get_primitive_type(saved_status);
 		return purple_primitive_get_name_from_type(primitive);
 	}
 	else
@@ -1031,7 +1031,7 @@ purple_savedstatus_get_title(const PurpleSavedStatus *saved_status)
 }
 
 PurpleStatusPrimitive
-purple_savedstatus_get_type(const PurpleSavedStatus *saved_status)
+purple_savedstatus_get_primitive_type(const PurpleSavedStatus *saved_status)
 {
 	g_return_val_if_fail(saved_status != NULL, PURPLE_STATUS_OFFLINE);
 
@@ -1083,7 +1083,7 @@ purple_savedstatus_get_substatus(const PurpleSavedStatus *saved_status,
 }
 
 const PurpleStatusType *
-purple_savedstatus_substatus_get_type(const PurpleSavedStatusSub *substatus)
+purple_savedstatus_substatus_get_status_type(const PurpleSavedStatusSub *substatus)
 {
 	g_return_val_if_fail(substatus != NULL, NULL);
 
@@ -1186,7 +1186,7 @@ purple_savedstatus_copy(PurpleSavedStatus *savedstatus)
 }
 
 GType
-purple_savedstatus_get_g_type(void)
+purple_savedstatus_get_type(void)
 {
 	static GType type = 0;
 

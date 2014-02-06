@@ -1045,7 +1045,7 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 			proxy_info = purple_proxy_info_new();
 			purple_account_set_proxy_info(jdata->account, proxy_info);
 		}
-		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
+		purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_NONE);
 
 		connect_data = purple_proxy_connect(
 						    purple_account_get_connection(jdata->account),

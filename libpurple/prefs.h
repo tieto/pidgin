@@ -241,7 +241,7 @@ gboolean purple_prefs_exists(const char *name);
  * @param name The name of the pref
  * @return The type of the pref
  */
-PurplePrefType purple_prefs_get_type(const char *name);
+PurplePrefType purple_prefs_get_pref_type(const char *name);
 
 /**
  * Get boolean pref value

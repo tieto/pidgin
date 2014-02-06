@@ -72,7 +72,7 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 	pref_label = purple_plugin_pref_get_label(pref);
 	format = purple_plugin_pref_get_format_type(pref);
 
-	switch(purple_plugin_pref_get_type(pref)) {
+	switch(purple_plugin_pref_get_pref_type(pref)) {
 		case PURPLE_PLUGIN_PREF_CHOICE:
 			gtk_label = pidgin_prefs_dropdown_from_list(parent, pref_label,
 											  PURPLE_PREF_STRING, pref_name,
@@ -165,7 +165,7 @@ make_int_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 	pref_name = purple_plugin_pref_get_name(pref);
 	pref_label = purple_plugin_pref_get_label(pref);
 
-	switch(purple_plugin_pref_get_type(pref)) {
+	switch(purple_plugin_pref_get_pref_type(pref)) {
 		case PURPLE_PLUGIN_PREF_CHOICE:
 			gtk_label = pidgin_prefs_dropdown_from_list(parent, pref_label,
 					PURPLE_PREF_INT, pref_name, purple_plugin_pref_get_choices(pref));
@@ -224,7 +224,7 @@ pidgin_plugin_pref_create_frame(PurplePluginPrefFrame *frame) {
 			if(label == NULL)
 				continue;
 
-			if(purple_plugin_pref_get_type(pref) == PURPLE_PLUGIN_PREF_INFO) {
+			if(purple_plugin_pref_get_pref_type(pref) == PURPLE_PLUGIN_PREF_INFO) {
 				make_info_pref(parent, pref);
 			} else {
 				parent = pidgin_make_frame(ret, label);
@@ -234,7 +234,7 @@ pidgin_plugin_pref_create_frame(PurplePluginPrefFrame *frame) {
 			continue;
 		}
 
-		switch(purple_prefs_get_type(name)) {
+		switch(purple_prefs_get_pref_type(name)) {
 			case PURPLE_PREF_BOOLEAN:
 				pidgin_prefs_checkbox(label, name, parent);
 				break;

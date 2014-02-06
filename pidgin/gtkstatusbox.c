@@ -663,7 +663,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	else if (account_status)
 		primary = g_strdup(purple_status_get_name(purple_account_get_active_status(acct)));
 	else if (purple_savedstatus_is_transient(saved_status))
-		primary = g_strdup(purple_primitive_get_name_from_type(purple_savedstatus_get_type(saved_status)));
+		primary = g_strdup(purple_primitive_get_name_from_type(purple_savedstatus_get_primitive_type(saved_status)));
 	else
 		primary = g_markup_escape_text(purple_savedstatus_get_title(saved_status), -1);
 
@@ -705,7 +705,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 			status_type = purple_status_get_status_type(purple_account_get_active_status(acct));
 	        prim = purple_status_type_get_primitive(status_type);
 	    } else {
-			prim = purple_savedstatus_get_type(saved_status);
+			prim = purple_savedstatus_get_primitive_type(saved_status);
 	    }
 
 		stock = pidgin_stock_id_from_status_primitive(prim);
@@ -802,7 +802,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 	 * If there is a token-account, then select the primitive from the
 	 * dropdown using a loop. Otherwise select from the default list.
 	 */
-	primitive = purple_savedstatus_get_type(saved_status);
+	primitive = purple_savedstatus_get_primitive_type(saved_status);
 	if (!status_box->token_status_account && purple_savedstatus_is_transient(saved_status) &&
 		((primitive == PURPLE_STATUS_AVAILABLE) || (primitive == PURPLE_STATUS_AWAY) ||
 		 (primitive == PURPLE_STATUS_INVISIBLE) || (primitive == PURPLE_STATUS_OFFLINE) ||
@@ -2181,7 +2181,7 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 				type == PIDGIN_STATUS_BOX_TYPE_POPULAR) {
 			PurpleSavedStatus *saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
 			if (saved) {
-				prim = purple_savedstatus_get_type(saved);
+				prim = purple_savedstatus_get_primitive_type(saved);
 			}
 		}
 
@@ -2429,14 +2429,14 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 				/* Make sure that statusbox displays the correct thing.
 				 * It can get messed up if the previous selection was a
 				 * saved status that wasn't supported by this account */
-				if ((purple_savedstatus_get_type(ss) == primitive)
+				if ((purple_savedstatus_get_primitive_type(ss) == primitive)
 					&& purple_savedstatus_is_transient(ss)
 					&& purple_savedstatus_has_substatuses(ss))
 					changed = FALSE;
 			}
 		} else {
 			saved_status = purple_savedstatus_get_current();
-			if (purple_savedstatus_get_type(saved_status) == primitive &&
+			if (purple_savedstatus_get_primitive_type(saved_status) == primitive &&
 			    !purple_savedstatus_has_substatuses(saved_status) &&
 				purple_strequal(purple_savedstatus_get_message(saved_status), message))
 			{
@@ -2456,7 +2456,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 					const char *ss_msg = purple_savedstatus_get_message(ss);
 					/* find a known transient status that is the same as the
 					 * new selected one */
-					if ((purple_savedstatus_get_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
+					if ((purple_savedstatus_get_primitive_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
 						purple_savedstatus_has_substatuses(ss) && /* Must have substatuses */
 						purple_strequal(ss_msg, message))
 					{
@@ -2466,7 +2466,8 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 							PurpleAccount *acct = tmp->data;
 							PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
 							if (sub) {
-								const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
+								const PurpleStatusType *sub_type =
+										purple_savedstatus_substatus_get_status_type(sub);
 								const char *subtype_status_id = purple_status_type_get_id(sub_type);
 								if (purple_strequal(subtype_status_id, id)) {
 									found = TRUE;
@@ -2688,7 +2689,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		{
 			PurpleSavedStatus *saved_status;
 			saved_status = purple_savedstatus_get_current();
-			if (purple_savedstatus_get_type(saved_status) == PURPLE_STATUS_AVAILABLE)
+			if (purple_savedstatus_get_primitive_type(saved_status) == PURPLE_STATUS_AVAILABLE)
 				saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_AWAY);
 			pidgin_status_editor_show(FALSE,
 				purple_savedstatus_is_transient(saved_status)
@@ -2764,7 +2765,7 @@ get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status)
 {
 	gint index = -1;
 
-	switch (purple_savedstatus_get_type(saved_status))
+	switch (purple_savedstatus_get_primitive_type(saved_status))
 	{
 		/* In reverse order */
 		case PURPLE_STATUS_OFFLINE:

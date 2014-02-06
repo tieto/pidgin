@@ -346,26 +346,26 @@ parse_proxy_info(PurpleXmlNode *node, PurpleAccount *account)
 	proxy_info = purple_proxy_info_new();
 
 	/* Use the global proxy settings, by default */
-	purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_GLOBAL);
+	purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_USE_GLOBAL);
 
 	/* Read proxy type */
 	child = purple_xmlnode_get_child(node, "type");
 	if ((child != NULL) && ((data = purple_xmlnode_get_data(child)) != NULL))
 	{
 		if (purple_strequal(data, "global"))
-			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_GLOBAL);
+			purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_USE_GLOBAL);
 		else if (purple_strequal(data, "none"))
-			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
+			purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_NONE);
 		else if (purple_strequal(data, "http"))
-			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_HTTP);
+			purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_HTTP);
 		else if (purple_strequal(data, "socks4"))
-			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS4);
+			purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_SOCKS4);
 		else if (purple_strequal(data, "socks5"))
-			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS5);
+			purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_SOCKS5);
 		else if (purple_strequal(data, "tor"))
-			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_TOR);
+			purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_TOR);
 		else if (purple_strequal(data, "envvar"))
-			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_ENVVAR);
+			purple_proxy_info_set_proxy_type(proxy_info, PURPLE_PROXY_USE_ENVVAR);
 		else
 		{
 			purple_debug_error("accounts", "Invalid proxy type found when "
@@ -408,7 +408,7 @@ parse_proxy_info(PurpleXmlNode *node, PurpleAccount *account)
 	}
 
 	/* If there are no values set then proxy_info NULL */
-	if ((purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_GLOBAL) &&
+	if ((purple_proxy_info_get_proxy_type(proxy_info) == PURPLE_PROXY_USE_GLOBAL) &&
 		(purple_proxy_info_get_host(proxy_info) == NULL) &&
 		(purple_proxy_info_get_port(proxy_info) == 0) &&
 		(purple_proxy_info_get_username(proxy_info) == NULL) &&

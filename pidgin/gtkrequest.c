@@ -1044,7 +1044,7 @@ pidgin_request_wait_update(void *ui_handle, gboolean pulse, gfloat fraction)
 static void
 req_entry_field_changed_cb(GtkWidget *entry, PurpleRequestField *field)
 {
-	if (purple_request_field_get_type(field) == PURPLE_REQUEST_FIELD_INTEGER) {
+	if (purple_request_field_get_field_type(field) == PURPLE_REQUEST_FIELD_INTEGER) {
 		int value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(entry));
 		purple_request_field_int_set_value(field, value);
 		return;
@@ -1113,7 +1113,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 	g_signal_connect(G_OBJECT(entry), "changed",
 		G_CALLBACK(req_field_changed_cb), field);
 
-	if ((type_hint = purple_request_field_get_type_hint(field)) != NULL)
+	if ((type_hint = purple_request_field_get_field_type_hint(field)) != NULL)
 	{
 		if (purple_str_has_prefix(type_hint, "screenname"))
 		{
@@ -1128,10 +1128,10 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 				PurpleRequestField *fld = fields->data;
 				fields = fields->next;
 
-				if (purple_request_field_get_type(fld) == PURPLE_REQUEST_FIELD_ACCOUNT &&
+				if (purple_request_field_get_field_type(fld) == PURPLE_REQUEST_FIELD_ACCOUNT &&
 						purple_request_field_is_visible(fld))
 				{
-					const char *type_hint = purple_request_field_get_type_hint(fld);
+					const char *type_hint = purple_request_field_get_field_type_hint(fld);
 					if (type_hint != NULL && strcmp(type_hint, "account") == 0)
 					{
 						optmenu = GTK_WIDGET(purple_request_field_get_ui_data(fld));
@@ -2217,7 +2217,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 			field = (PurpleRequestField *)fl->data;
 
-			type = purple_request_field_get_type(field);
+			type = purple_request_field_get_field_type(field);
 
 			if (type == PURPLE_REQUEST_FIELD_DATASHEET)
 				contains_resizable = TRUE;
@@ -2278,7 +2278,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					continue;
 				}
 
-				type = purple_request_field_get_type(field);
+				type = purple_request_field_get_field_type(field);
 				field_label = pidgin_request_escape(cpar,
 					purple_request_field_get_label(field));
 

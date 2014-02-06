@@ -556,11 +556,11 @@ purple_request_field_get_label(field)
 	Purple::Request::Field field
 
 Purple::RequestFieldType
-purple_request_field_get_type(field)
+purple_request_field_get_field_type(field)
 	Purple::Request::Field field
 
 const char *
-purple_request_field_get_type_hint(field)
+purple_request_field_get_field_type_hint(field)
 	Purple::Request::Field field
 
 gboolean

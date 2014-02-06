@@ -54,7 +54,7 @@
  *       something we should look into once the status box gets fleshed
  *       out more.
  */
-#define PURPLE_TYPE_SAVEDSTATUS  (purple_savedstatus_get_g_type())
+#define PURPLE_TYPE_SAVEDSTATUS  (purple_savedstatus_get_type())
 
 typedef struct _PurpleSavedStatus     PurpleSavedStatus;
 typedef struct _PurpleSavedStatusSub  PurpleSavedStatusSub;
@@ -73,7 +73,7 @@ G_BEGIN_DECLS
  * TODO Boxing of PurpleSavedStatus is a temporary solution to having a GType
  *      for saved statuses. This should rather be a GObject instead of a GBoxed.
  */
-GType purple_savedstatus_get_g_type(void);
+GType purple_savedstatus_get_type(void);
 
 /**
  * Create a new saved status.  This will add the saved status to the
@@ -105,7 +105,7 @@ void purple_savedstatus_set_title(PurpleSavedStatus *status,
  * @param status  The saved status.
  * @param type    The type of saved status.
  */
-void purple_savedstatus_set_type(PurpleSavedStatus *status,
+void purple_savedstatus_set_primitive_type(PurpleSavedStatus *status,
 							   PurpleStatusPrimitive type);
 
 /**
@@ -123,7 +123,7 @@ void purple_savedstatus_set_message(PurpleSavedStatus *status,
  *
  * @param status	The saved status.
  * @param account	The account.
- * @param type		The status type for the account in the staved
+ * @param type		The status type for the account in the saved
  *                  status.
  * @param message	The message for the account in the substatus.
  */
@@ -311,7 +311,7 @@ const char *purple_savedstatus_get_title(const PurpleSavedStatus *saved_status);
  *
  * @return The name.
  */
-PurpleStatusPrimitive purple_savedstatus_get_type(const PurpleSavedStatus *saved_status);
+PurpleStatusPrimitive purple_savedstatus_get_primitive_type(const PurpleSavedStatus *saved_status);
 
 /**
  * Return the default message of a given saved status.
@@ -375,7 +375,8 @@ PurpleSavedStatusSub *purple_savedstatus_get_substatus(
  *
  * @return The status type.
  */
-const PurpleStatusType *purple_savedstatus_substatus_get_type(const PurpleSavedStatusSub *substatus);
+const PurpleStatusType *purple_savedstatus_substatus_get_status_type(
+		const PurpleSavedStatusSub *substatus);
 
 /**
  * Get the message of a given substatus.

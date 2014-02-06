@@ -46,9 +46,9 @@ account_update(GtkWidget *widget, GtkWidget *optmenu)
 static void
 pref_update(GtkWidget *widget, char *pref)
 {
-	if (purple_prefs_get_type(pref) == PURPLE_PREF_INT)
+	if (purple_prefs_get_pref_type(pref) == PURPLE_PREF_INT)
 		purple_prefs_set_int(pref, gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget)));
-	if (purple_prefs_get_type(pref) == PURPLE_PREF_BOOLEAN)
+	if (purple_prefs_get_pref_type(pref) == PURPLE_PREF_BOOLEAN)
 		purple_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
 

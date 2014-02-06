@@ -153,7 +153,7 @@ PPCODE:
 	}
 
 Purple::PrefType
-purple_prefs_get_type(name)
+purple_prefs_get_pref_type(name)
 	const char *name
 
 gboolean

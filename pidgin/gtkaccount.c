@@ -943,7 +943,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 		option = (PurpleAccountOption *)l->data;
 
 		opt_entry = g_new0(ProtocolOptEntry, 1);
-		opt_entry->type = purple_account_option_get_type(option);
+		opt_entry->type = purple_account_option_get_pref_type(option);
 		opt_entry->setting = g_strdup(purple_account_option_get_setting(option));
 
 		switch (opt_entry->type)
@@ -1278,7 +1278,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		const char *value;
 		int int_val;
 
-		dialog->new_proxy_type = purple_proxy_info_get_type(proxy_info);
+		dialog->new_proxy_type = purple_proxy_info_get_proxy_type(proxy_info);
 
 		if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), value);
@@ -1613,7 +1613,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	}
 
 	/* Set the proxy info type. */
-	purple_proxy_info_set_type(proxy_info, dialog->new_proxy_type);
+	purple_proxy_info_set_proxy_type(proxy_info, dialog->new_proxy_type);
 
 	/* Host */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_host_entry));
@@ -1648,7 +1648,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		purple_proxy_info_set_password(proxy_info, NULL);
 
 	/* If there are no values set then proxy_info NULL */
-	if ((purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_GLOBAL) &&
+	if ((purple_proxy_info_get_proxy_type(proxy_info) == PURPLE_PROXY_USE_GLOBAL) &&
 		(purple_proxy_info_get_host(proxy_info) == NULL) &&
 		(purple_proxy_info_get_port(proxy_info) == 0) &&
 		(purple_proxy_info_get_username(proxy_info) == NULL) &&

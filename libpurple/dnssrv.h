@@ -179,9 +179,9 @@ char *purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data);
  * Get the type from a PurpleSrvTxtQueryData (TXT or SRV)
  *
  * @param query_data The query
- * @return The query.
+ * @return The query type.
  */
-int purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data);
+int purple_srv_txt_query_get_query_type(PurpleSrvTxtQueryData *query_data);
 
 G_END_DECLS
 

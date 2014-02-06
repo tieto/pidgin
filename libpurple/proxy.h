@@ -83,7 +83,7 @@ void purple_proxy_info_destroy(PurpleProxyInfo *info);
  * @param info The proxy information.
  * @param type The proxy type.
  */
-void purple_proxy_info_set_type(PurpleProxyInfo *info, PurpleProxyType type);
+void purple_proxy_info_set_proxy_type(PurpleProxyInfo *info, PurpleProxyType type);
 
 /**
  * Sets the proxy host.
@@ -124,7 +124,7 @@ void purple_proxy_info_set_password(PurpleProxyInfo *info, const char *password)
  *
  * @return The type.
  */
-PurpleProxyType purple_proxy_info_get_type(const PurpleProxyInfo *info);
+PurpleProxyType purple_proxy_info_get_proxy_type(const PurpleProxyInfo *info);
 
 /**
  * Returns the proxy's host.

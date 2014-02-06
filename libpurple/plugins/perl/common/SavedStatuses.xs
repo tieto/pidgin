@@ -4,7 +4,7 @@
  * type I get errors from gcc. One way about ignoring types in a cast, and the
  * other about assigning to read-only variables.
 const Purple::StatusType
-purple_savedstatus_substatus_get_type(substatus)
+purple_savedstatus_substatus_get_status_type(substatus)
 	const Purple::SavedStatus::Sub substatus
 */
 
@@ -22,7 +22,7 @@ purple_savedstatus_set_title(status, title)
 	const char *title
 
 void
-purple_savedstatus_set_type(status, type)
+purple_savedstatus_set_primitive_type(status, type)
 	Purple::SavedStatus status
 	Purple::StatusPrimitive type
 
@@ -88,7 +88,7 @@ purple_savedstatus_get_title(saved_status)
 	const Purple::SavedStatus saved_status
 
 Purple::StatusPrimitive
-purple_savedstatus_get_type(saved_status)
+purple_savedstatus_get_primitive_type(saved_status)
 	const Purple::SavedStatus saved_status
 
 const char *
