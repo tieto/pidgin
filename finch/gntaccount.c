@@ -220,7 +220,7 @@ save_account_cb(AccountEditDialog *dialog)
 		{
 			PurpleAccountOption *option = iter->data;
 			GntWidget *entry = entries->data;
-			PurplePrefType type = purple_account_option_get_type(option);
+			PurplePrefType type = purple_account_option_get_pref_type(option);
 			const char *setting = purple_account_option_get_setting(option);
 
 			if (type == PURPLE_PREF_STRING)
@@ -410,7 +410,7 @@ add_protocol_options(AccountEditDialog *dialog)
 	for (iter = prplinfo->protocol_options; iter; iter = iter->next)
 	{
 		PurpleAccountOption *option = iter->data;
-		PurplePrefType type = purple_account_option_get_type(option);
+		PurplePrefType type = purple_account_option_get_pref_type(option);
 
 		box = gnt_hbox_new(TRUE);
 		gnt_box_set_pad(GNT_BOX(box), 0);

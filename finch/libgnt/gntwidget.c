@@ -268,7 +268,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
  * GntWidget API
  *****************************************************************************/
 GType
-gnt_widget_get_gtype(void)
+gnt_widget_get_type(void)
 {
 	static GType type = 0;
 

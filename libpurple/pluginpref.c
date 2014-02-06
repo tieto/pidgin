@@ -194,7 +194,7 @@ purple_plugin_pref_set_bounds(PurplePluginPref *pref, int min, int max)
 	g_return_if_fail(pref       != NULL);
 	g_return_if_fail(pref->name != NULL);
 
-	if (purple_prefs_get_type(pref->name) != PURPLE_PREF_INT)
+	if (purple_prefs_get_pref_type(pref->name) != PURPLE_PREF_INT)
 	{
 		purple_debug_warning("pluginpref",
 				"purple_plugin_pref_set_bounds: %s is not an integer pref\n",
@@ -218,7 +218,7 @@ void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max)
 	g_return_if_fail(pref       != NULL);
 	g_return_if_fail(pref->name != NULL);
 
-	if (purple_prefs_get_type(pref->name) != PURPLE_PREF_INT)
+	if (purple_prefs_get_pref_type(pref->name) != PURPLE_PREF_INT)
 	{
 		purple_debug_warning("pluginpref",
 				"purple_plugin_pref_get_bounds: %s is not an integer pref\n",
@@ -231,7 +231,7 @@ void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max)
 }
 
 void
-purple_plugin_pref_set_type(PurplePluginPref *pref, PurplePluginPrefType type)
+purple_plugin_pref_set_pref_type(PurplePluginPref *pref, PurplePluginPrefType type)
 {
 	g_return_if_fail(pref != NULL);
 
@@ -239,7 +239,7 @@ purple_plugin_pref_set_type(PurplePluginPref *pref, PurplePluginPrefType type)
 }
 
 PurplePluginPrefType
-purple_plugin_pref_get_type(PurplePluginPref *pref)
+purple_plugin_pref_get_pref_type(PurplePluginPref *pref)
 {
 	g_return_val_if_fail(pref != NULL, PURPLE_PLUGIN_PREF_NONE);
 
@@ -251,7 +251,7 @@ purple_plugin_pref_add_choice(PurplePluginPref *pref, const char *label, gpointe
 {
 	g_return_if_fail(pref  != NULL);
 	g_return_if_fail(label != NULL);
-	g_return_if_fail(choice || purple_prefs_get_type(pref->name) == PURPLE_PREF_INT);
+	g_return_if_fail(choice || purple_prefs_get_pref_type(pref->name) == PURPLE_PREF_INT);
 
 	pref->choices = g_list_append(pref->choices, (gpointer)label);
 	pref->choices = g_list_append(pref->choices, choice);

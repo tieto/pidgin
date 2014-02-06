@@ -504,7 +504,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 			if(label == NULL)
 				continue;
 
-			if(purple_plugin_pref_get_type(pref) == PURPLE_PLUGIN_PREF_INFO) {
+			if(purple_plugin_pref_get_pref_type(pref) == PURPLE_PLUGIN_PREF_INFO) {
 				field = purple_request_field_label_new("*", purple_plugin_pref_get_label(pref));
 				purple_request_field_group_add_field(group, field);
 			} else {
@@ -515,8 +515,8 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 		}
 
 		field = NULL;
-		type = purple_prefs_get_type(name);
-		if(purple_plugin_pref_get_type(pref) == PURPLE_PLUGIN_PREF_CHOICE) {
+		type = purple_prefs_get_pref_type(name);
+		if(purple_plugin_pref_get_pref_type(pref) == PURPLE_PLUGIN_PREF_CHOICE) {
 			GList *list = purple_plugin_pref_get_choices(pref);
 			gpointer current_value = NULL;
 

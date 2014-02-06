@@ -292,7 +292,7 @@ purple_notify_user_info_get_xhtml(PurpleNotifyUserInfo *user_info)
 	for (l = purple_notify_user_info_get_entries(user_info)->head; l != NULL;
 			l = l->next) {
 		PurpleNotifyUserInfoEntry *user_info_entry = l->data;
-		PurpleNotifyUserInfoEntryType type = purple_notify_user_info_entry_get_type(user_info_entry);
+		PurpleNotifyUserInfoEntryType type = purple_notify_user_info_entry_get_entry_type(user_info_entry);
 		const char *label = purple_notify_user_info_entry_get_label(user_info_entry);
 		const char *value = purple_notify_user_info_entry_get_value(user_info_entry);
 

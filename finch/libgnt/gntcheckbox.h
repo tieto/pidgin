@@ -34,7 +34,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_CHECK_BOX				(gnt_check_box_get_gtype())
+#define GNT_TYPE_CHECK_BOX				(gnt_check_box_get_type())
 #define GNT_CHECK_BOX(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_CHECK_BOX, GntCheckBox))
 #define GNT_CHECK_BOX_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_CHECK_BOX, GntCheckBoxClass))
 #define GNT_IS_CHECK_BOX(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_CHECK_BOX))
@@ -75,7 +75,7 @@ G_BEGIN_DECLS
  *
  * Returns: GType for GntCheckBox
  */
-GType gnt_check_box_get_gtype(void);
+GType gnt_check_box_get_type(void);
 
 /**
  * gnt_check_box_new:

@@ -45,7 +45,7 @@ yahoo_account_use_http_proxy(PurpleConnection *pc)
 	else
 		ppi = purple_proxy_get_setup(NULL);
 
-	type = purple_proxy_info_get_type(ppi);
+	type = purple_proxy_info_get_proxy_type(ppi);
 
 	return (type == PURPLE_PROXY_HTTP || type == PURPLE_PROXY_USE_ENVVAR);
 }

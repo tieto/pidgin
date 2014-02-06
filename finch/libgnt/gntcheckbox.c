@@ -125,7 +125,7 @@ gnt_check_box_init(GTypeInstance *instance, gpointer class)
  * GntCheckBox API
  *****************************************************************************/
 GType
-gnt_check_box_get_gtype(void)
+gnt_check_box_get_type(void)
 {
 	static GType type = 0;
 

@@ -927,7 +927,7 @@ void purple_request_field_set_required(PurpleRequestField *field,
  *
  * Returns: The field's type.
  */
-PurpleRequestFieldType purple_request_field_get_type(const PurpleRequestField *field);
+PurpleRequestFieldType purple_request_field_get_field_type(const PurpleRequestField *field);
 
 /**
  * purple_request_field_get_group:
@@ -977,7 +977,7 @@ gboolean purple_request_field_is_visible(const PurpleRequestField *field);
  *
  * Returns: The field's type hint.
  */
-const char *purple_request_field_get_type_hint(const PurpleRequestField *field);
+const char *purple_request_field_get_field_type_hint(const PurpleRequestField *field);
 
 /**
  * purple_request_field_get_tooltip:

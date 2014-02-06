@@ -722,7 +722,8 @@ void purple_notify_user_info_entry_set_value(PurpleNotifyUserInfoEntry *user_inf
  *
  * Returns:  The PurpleNotifyUserInfoEntryType
  */
-PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry *user_info_entry);
+PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_entry_type(
+		PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * purple_notify_user_info_entry_set_type:
@@ -731,8 +732,8 @@ PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotif
  *
  * Set the type of a PurpleNotifyUserInfoEntry
  */
-void purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info_entry,
-										  PurpleNotifyUserInfoEntryType type);
+void purple_notify_user_info_entry_set_entry_type(
+		PurpleNotifyUserInfoEntry *user_info_entry, PurpleNotifyUserInfoEntryType type);
 
 /**
  * purple_notify_uri:

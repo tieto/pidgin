@@ -33,7 +33,7 @@
 #include "gnt.h"
 #include "gntlabel.h"
 
-#define GNT_TYPE_SLIDER             (gnt_slider_get_gtype())
+#define GNT_TYPE_SLIDER             (gnt_slider_get_type())
 #define GNT_SLIDER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_SLIDER, GntSlider))
 #define GNT_SLIDER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_SLIDER, GntSliderClass))
 #define GNT_IS_SLIDER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_SLIDER))
@@ -84,7 +84,7 @@ G_BEGIN_DECLS
  *
  * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
-GType gnt_slider_get_gtype(void);
+GType gnt_slider_get_type(void);
 
 #define gnt_hslider_new(max, min) gnt_slider_new(FALSE, max, min)
 #define gnt_vslider_new(max, min) gnt_slider_new(TRUE, max, min)

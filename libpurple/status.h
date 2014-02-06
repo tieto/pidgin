@@ -592,7 +592,7 @@ PurplePresence *purple_status_get_presence(const PurpleStatus *status);
  * Returns the status's type ID.
  *
  * This is a convenience method for
- * purple_status_type_get_id(purple_status_get_type(status)).
+ * purple_status_type_get_id(purple_status_get_status_type(status)).
  *
  * Returns: The status's ID.
  */
@@ -605,7 +605,7 @@ const char *purple_status_get_id(const PurpleStatus *status);
  * Returns the status's name.
  *
  * This is a convenience method for
- * purple_status_type_get_name(purple_status_get_type(status)).
+ * purple_status_type_get_name(purple_status_get_status_type(status)).
  *
  * Returns: The status's name.
  */
@@ -618,7 +618,7 @@ const char *purple_status_get_name(const PurpleStatus *status);
  * Returns whether or not a status is independent.
  *
  * This is a convenience method for
- * purple_status_type_is_independent(purple_status_get_type(status)).
+ * purple_status_type_is_independent(purple_status_get_status_type(status)).
  *
  * Returns: TRUE if the status is independent, or FALSE otherwise.
  */
@@ -631,7 +631,7 @@ gboolean purple_status_is_independent(const PurpleStatus *status);
  * Returns whether or not a status is exclusive.
  *
  * This is a convenience method for
- * purple_status_type_is_exclusive(purple_status_get_type(status)).
+ * purple_status_type_is_exclusive(purple_status_get_status_type(status)).
  *
  * Returns: TRUE if the status is exclusive, FALSE otherwise.
  */
@@ -646,7 +646,7 @@ gboolean purple_status_is_exclusive(const PurpleStatus *status);
  * Available statuses are online and possibly invisible, but not away or idle.
  *
  * This is a convenience method for
- * purple_status_type_is_available(purple_status_get_type(status)).
+ * purple_status_type_is_available(purple_status_get_status_type(status)).
  *
  * Returns: TRUE if the status is available, or FALSE otherwise.
  */

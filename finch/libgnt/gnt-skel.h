@@ -34,7 +34,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_SKEL				(gnt_skel_get_gtype())
+#define GNT_TYPE_SKEL				(gnt_skel_get_type())
 #define GNT_SKEL(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_SKEL, GntSkel))
 #define GNT_SKEL_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_SKEL, GntSkelClass))
 #define GNT_IS_SKEL(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_SKEL))
@@ -63,7 +63,7 @@ struct _GntSkelClass
 
 G_BEGIN_DECLS
 
-GType gnt_skel_get_gtype(void);
+GType gnt_skel_get_type(void);
 
 GntWidget * gnt_skel_new();
 

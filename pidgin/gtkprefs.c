@@ -2663,7 +2663,7 @@ keyring_page_settings_changed(GtkWidget *widget, gpointer _setting)
 
 	gtk_widget_set_sensitive(keyring_apply, TRUE);
 
-	field_type = purple_request_field_get_type(setting);
+	field_type = purple_request_field_get_field_type(setting);
 
 	if (field_type == PURPLE_REQUEST_FIELD_BOOLEAN) {
 		purple_request_field_bool_set_value(setting,
@@ -2690,7 +2690,7 @@ keyring_page_add_settings_field(GtkBox *vbox, PurpleRequestField *setting,
 
 	label = purple_request_field_get_label(setting);
 
-	field_type = purple_request_field_get_type(setting);
+	field_type = purple_request_field_get_field_type(setting);
 	if (field_type == PURPLE_REQUEST_FIELD_BOOLEAN) {
 		widget = gtk_check_button_new_with_label(label);
 		label = NULL;
@@ -4296,7 +4296,7 @@ pidgin_prefs_update_old(void)
 	 * that at the moment. -- rekkanoryo
 	 */
 	if (purple_prefs_exists(PIDGIN_PREFS_ROOT "/browsers/command") &&
-		purple_prefs_get_type(PIDGIN_PREFS_ROOT "/browsers/command") ==
+		purple_prefs_get_pref_type(PIDGIN_PREFS_ROOT "/browsers/command") ==
 			PURPLE_PREF_PATH)
 	{
 		const char *str = purple_prefs_get_path(

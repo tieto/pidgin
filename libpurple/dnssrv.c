@@ -739,7 +739,7 @@ purple_srv_resolve(PurpleAccount *account, const char *protocol,
 		g_return_val_if_reached(NULL);
 	}
 
-	proxy_type = purple_proxy_info_get_type(
+	proxy_type = purple_proxy_info_get_proxy_type(
 		purple_proxy_get_setup(account));
 	if (proxy_type == PURPLE_PROXY_TOR) {
 		purple_debug_info("dnssrv", "Aborting SRV lookup in Tor Proxy mode.\n");
@@ -859,7 +859,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account,
 	GError* err = NULL;
 #endif
 
-	proxy_type = purple_proxy_info_get_type(
+	proxy_type = purple_proxy_info_get_proxy_type(
 		purple_proxy_get_setup(account));
 	if (proxy_type == PURPLE_PROXY_TOR) {
 		purple_debug_info("dnssrv", "Aborting TXT lookup in Tor Proxy mode.\n");
@@ -1094,7 +1094,7 @@ purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data)
 
 
 int
-purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data)
+purple_srv_txt_query_get_query_type(PurpleSrvTxtQueryData *query_data)
 {
 	g_return_val_if_fail(query_data != NULL, 0);
 

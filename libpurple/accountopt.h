@@ -234,7 +234,7 @@ void purple_account_option_add_list_item(PurpleAccountOption *option,
  *
  * Returns: The account option's type.
  */
-PurplePrefType purple_account_option_get_type(const PurpleAccountOption *option);
+PurplePrefType purple_account_option_get_pref_type(const PurpleAccountOption *option);
 
 /**
  * purple_account_option_get_text:

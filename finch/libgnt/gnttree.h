@@ -35,7 +35,7 @@
 #include "gntkeys.h"
 #include "gnttextview.h"
 
-#define GNT_TYPE_TREE				(gnt_tree_get_gtype())
+#define GNT_TYPE_TREE				(gnt_tree_get_type())
 #define GNT_TREE(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_TREE, GntTree))
 #define GNT_TREE_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_TREE, GntTreeClass))
 #define GNT_IS_TREE(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_TREE))
@@ -109,7 +109,7 @@ G_BEGIN_DECLS
  *
  * Returns: The GType for GntTree
  */
-GType gnt_tree_get_gtype(void);
+GType gnt_tree_get_type(void);
 
 /**
  * gnt_tree_new:

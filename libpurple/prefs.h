@@ -283,7 +283,7 @@ gboolean purple_prefs_exists(const char *name);
  *
  * Returns: The type of the pref
  */
-PurplePrefType purple_prefs_get_type(const char *name);
+PurplePrefType purple_prefs_get_pref_type(const char *name);
 
 /**
  * purple_prefs_get_bool:

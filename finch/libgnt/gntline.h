@@ -34,7 +34,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_LINE				(gnt_line_get_gtype())
+#define GNT_TYPE_LINE				(gnt_line_get_type())
 #define GNT_LINE(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_LINE, GntLine))
 #define GNT_LINE_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_LINE, GntLineClass))
 #define GNT_IS_LINE(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_LINE))
@@ -74,7 +74,7 @@ G_BEGIN_DECLS
  *
  * Returns: GType for GntLine.
  */
-GType gnt_line_get_gtype(void);
+GType gnt_line_get_type(void);
 
 #define gnt_hline_new() gnt_line_new(FALSE)
 #define gnt_vline_new() gnt_line_new(TRUE)

@@ -13,7 +13,7 @@
 
 #include "buddylist.h"
 
-#define TYPE_S				(s_get_gtype())
+#define TYPE_S				(s_get_type())
 
 #ifdef _S
 #undef _S
@@ -29,7 +29,7 @@ typedef struct _SClass
 	GntWMClass inherit;
 } SClass;
 
-GType s_get_gtype(void);
+GType s_get_type(void);
 void gntwm_init(GntWM **wm);
 
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
@@ -197,7 +197,7 @@ void gntwm_init(GntWM **wm)
 	*wm = g_object_new(TYPE_S, NULL);
 }
 
-GType s_get_gtype(void)
+GType s_get_type(void)
 {
 	static GType type = 0;
 

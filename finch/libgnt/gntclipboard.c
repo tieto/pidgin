@@ -67,7 +67,7 @@ static void gnt_clipboard_init(GTypeInstance *instance, gpointer class) {
 }
 
 GType
-gnt_clipboard_get_gtype(void)
+gnt_clipboard_get_type(void)
 {
 	static GType type = 0;
 

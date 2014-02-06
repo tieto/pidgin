@@ -29,7 +29,7 @@
 #ifndef _PURPLE_SAVEDSTATUSES_H_
 #define _PURPLE_SAVEDSTATUSES_H_
 
-#define PURPLE_TYPE_SAVEDSTATUS  (purple_savedstatus_get_g_type())
+#define PURPLE_TYPE_SAVEDSTATUS  (purple_savedstatus_get_type())
 
 /**
  * PurpleSavedStatus:
@@ -73,14 +73,14 @@ G_BEGIN_DECLS
 /*@{*/
 
 /**
- * purple_savedstatus_get_g_type:
+ * purple_savedstatus_get_type:
  *
  * Returns: The #GType for the #PurpleSavedStatus boxed structure.
  */
 /* TODO Boxing of PurpleSavedStatus is a temporary solution to having a GType
  *      for saved statuses. This should rather be a GObject instead of a GBoxed.
  */
-GType purple_savedstatus_get_g_type(void);
+GType purple_savedstatus_get_type(void);
 
 /**
  * purple_savedstatus_new:
@@ -109,13 +109,13 @@ void purple_savedstatus_set_title(PurpleSavedStatus *status,
 								const char *title);
 
 /**
- * purple_savedstatus_set_type:
+ * purple_savedstatus_set_primitive_type:
  * @status:  The saved status.
  * @type:    The type of saved status.
  *
  * Set the type for the given saved status.
  */
-void purple_savedstatus_set_type(PurpleSavedStatus *status,
+void purple_savedstatus_set_primitive_type(PurpleSavedStatus *status,
 							   PurpleStatusPrimitive type);
 
 /**
@@ -133,7 +133,7 @@ void purple_savedstatus_set_message(PurpleSavedStatus *status,
  * purple_savedstatus_set_substatus:
  * @status:	The saved status.
  * @account:	The account.
- * @type:		The status type for the account in the staved
+ * @type:		The status type for the account in the saved
  *                  status.
  * @message:	The message for the account in the substatus.
  *
@@ -339,14 +339,14 @@ gboolean purple_savedstatus_is_transient(const PurpleSavedStatus *saved_status);
 const char *purple_savedstatus_get_title(const PurpleSavedStatus *saved_status);
 
 /**
- * purple_savedstatus_get_type:
+ * purple_savedstatus_get_primitive_type:
  * @saved_status: The saved status.
  *
  * Return the type of a given saved status.
  *
  * Returns: The primitive type.
  */
-PurpleStatusPrimitive purple_savedstatus_get_type(const PurpleSavedStatus *saved_status);
+PurpleStatusPrimitive purple_savedstatus_get_primitive_type(const PurpleSavedStatus *saved_status);
 
 /**
  * purple_savedstatus_get_message:
@@ -408,14 +408,15 @@ PurpleSavedStatusSub *purple_savedstatus_get_substatus(
 									const PurpleAccount *account);
 
 /**
- * purple_savedstatus_substatus_get_type:
+ * purple_savedstatus_substatus_get_status_type:
  * @substatus: The substatus.
  *
  * Get the status type of a given substatus.
  *
  * Returns: The status type.
  */
-const PurpleStatusType *purple_savedstatus_substatus_get_type(const PurpleSavedStatusSub *substatus);
+const PurpleStatusType *purple_savedstatus_substatus_get_status_type(
+		const PurpleSavedStatusSub *substatus);
 
 /**
  * purple_savedstatus_substatus_get_message:

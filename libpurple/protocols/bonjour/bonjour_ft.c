@@ -1054,7 +1054,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 		snprintf(p, 3, "%02x", hashval[i]);
 
 	xf->proxy_info = purple_proxy_info_new();
-	purple_proxy_info_set_type(xf->proxy_info, PURPLE_PROXY_SOCKS5);
+	purple_proxy_info_set_proxy_type(xf->proxy_info, PURPLE_PROXY_SOCKS5);
 	purple_proxy_info_set_host(xf->proxy_info, xf->proxy_host);
 	purple_proxy_info_set_port(xf->proxy_info, xf->proxy_port);
 	xf->proxy_connection = purple_proxy_connect_socks5_account(

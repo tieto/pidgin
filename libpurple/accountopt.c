@@ -278,7 +278,7 @@ purple_account_option_add_list_item(PurpleAccountOption *option,
 }
 
 PurplePrefType
-purple_account_option_get_type(const PurpleAccountOption *option)
+purple_account_option_get_pref_type(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, PURPLE_PREF_NONE);
 

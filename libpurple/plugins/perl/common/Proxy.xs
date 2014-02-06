@@ -44,7 +44,7 @@ purple_proxy_info_get_port(info)
 	Purple::ProxyInfo info
 
 Purple::ProxyType
-purple_proxy_info_get_type(info)
+purple_proxy_info_get_proxy_type(info)
 	Purple::ProxyInfo info
 
 const char *
@@ -70,7 +70,7 @@ purple_proxy_info_set_port(info, port)
 	int port
 
 void
-purple_proxy_info_set_type(info, type)
+purple_proxy_info_set_proxy_type(info, type)
 	Purple::ProxyInfo info
 	Purple::ProxyType type
 
