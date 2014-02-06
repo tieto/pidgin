@@ -280,11 +280,11 @@ const char *purple_xmlnode_get_namespace(const PurpleXmlNode *node);
  * own namespace.
  *
  * For example, given:
- * \verbatim
- * <iq type='get' xmlns='jabber:client' xmlns:ns1='http://example.org/ns1'>
- *     <ns1:element><child1/></ns1:element>
- * </iq>
- * \endverbatim
+ * <programlisting>
+ * &lt;iq type='get' xmlns='jabber:client' xmlns:ns1='http://example.org/ns1'&gt;
+ *     &lt;ns1:element&gt;&lt;child1/&gt;&lt;/ns1:element&gt;
+ * &lt;/iq&gt;
+ * </programlisting>
  *
  * The default namespace of all nodes (including 'child1') is "jabber:client",
  * though the namespace for 'element' is "http://example.org/ns1".

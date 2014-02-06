@@ -1929,9 +1929,9 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
  *                 because it allows a request to be closed with
  *                 purple_request_close_with_handle() when, for
  *                 example, you sign offline.  If the request is
- *                 <emphasis>not</emphasis> closed it is <strong>very</strong>
- *                 likely to cause a crash whenever the callback
- *                 handler functions are triggered.
+ *                 <emphasis>not</emphasis> closed it is
+ *                 <emphasis>very</emphasis> likely to cause a crash whenever
+ *                 the callback handler functions are triggered.
  * @title:         The title of the message, or %NULL if it should have
  *                 no title.
  * @primary:       The main point of the message, or %NULL if you're

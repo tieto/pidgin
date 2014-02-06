@@ -178,9 +178,9 @@ const gchar * purple_ssl_strerror(PurpleSslErrorType error);
  * @port:       The destination port.
  * @func:       The SSL input handler function.
  * @error_func: The SSL error handler function.  This function
- *                   should <strong>NOT</strong> call purple_ssl_close().  In
- *                   the event of an error the #PurpleSslConnection will be
- *                   destroyed for you.
+ *              should <emphasis>NOT</emphasis> call purple_ssl_close(). In
+ *              the event of an error the #PurpleSslConnection will be
+ *              destroyed for you.
  * @data:       User-defined data.
  *
  * Makes a SSL connection to the specified host and port.  The caller
@@ -201,9 +201,9 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
  * @port:       The destination port.
  * @func:       The SSL input handler function.
  * @error_func: The SSL error handler function.  This function
- *                   should <strong>NOT</strong> call purple_ssl_close().  In
- *                   the event of an error the #PurpleSslConnection will be
- *                   destroyed for you.
+ *              should <emphasis>NOT</emphasis> call purple_ssl_close(). In
+ *              the event of an error the #PurpleSslConnection will be
+ *              destroyed for you.
  * @ssl_host:   The hostname of the other peer (to verify the CN)
  * @data:       User-defined data.
  *

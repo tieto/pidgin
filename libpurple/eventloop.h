@@ -221,7 +221,8 @@ guint purple_input_add(int fd, PurpleInputCondition cond,
 /**
  * purple_input_remove:
  * @handle: The handle of the input handler. Note that this is the return
- *               value from purple_input_add(), <i>not</i> the file descriptor.
+ *          value from purple_input_add(), <emphasis>not</emphasis> the
+ *          file descriptor.
  *
  * Removes an input handler.
  */

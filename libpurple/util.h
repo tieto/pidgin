@@ -649,8 +649,8 @@ char *purple_markup_strip_html(const char *str);
  * Adds the necessary HTML code to turn URIs into HTML links in a string.
  *
  * Returns: The new string with all URIs surrounded in standard
- *         HTML <a href="whatever"></a> tags.  You must g_free this
- *         string when finished with it.
+ *          HTML &lt;a href="whatever"&gt;&lt;/a&gt; tags. You must g_free()
+ *          this string when finished with it.
  */
 char *purple_markup_linkify(const char *str);
 
@@ -1039,7 +1039,7 @@ gboolean purple_strequal(const gchar *left, const gchar *right);
  * Normalizes a string, so that it is suitable for comparison.
  *
  * The returned string will point to a static buffer, so if the
- * string is intended to be kept long-term, you <i>must</i>
+ * string is intended to be kept long-term, you <emphasis>must</emphasis>
  * g_strdup() it. Also, calling normalize() twice in the same line
  * will lead to problems.
  *
