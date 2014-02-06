@@ -72,24 +72,24 @@ void gnt_window_present(GntWidget *window);
 /**
  * gnt_screen_occupy:
  *
- * @internal
- * Use #gnt_widget_show instead.
+ * Internal function -- do not use.
+ * Use gnt_widget_show() instead.
  */
 void gnt_screen_occupy(GntWidget *widget);
 
 /**
  * gnt_screen_release:
  *
- * @internal
- * Use #gnt_widget_hide instead.
+ * Internal function -- do not use.
+ * Use gnt_widget_hide() instead.
  */
 void gnt_screen_release(GntWidget *widget);
 
 /**
  * gnt_screen_update:
  *
- * @internal
- * Use #gnt_widget_draw instead.
+ * Internal function -- do not use.
+ * Use gnt_widget_draw() instead.
  */
 void gnt_screen_update(GntWidget *widget);
 

@@ -72,8 +72,7 @@ G_BEGIN_DECLS
 /**
  * purple_theme_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a theme.
  */
 GType purple_theme_get_type(void);
 

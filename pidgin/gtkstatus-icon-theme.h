@@ -68,8 +68,7 @@ G_BEGIN_DECLS
 /**
  * pidgin_status_icon_theme_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a status icon theme.
  */
 GType pidgin_status_icon_theme_get_type(void);
 

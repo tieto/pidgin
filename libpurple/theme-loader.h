@@ -76,8 +76,7 @@ G_BEGIN_DECLS
 /**
  * purple_theme_loader_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for theme loader.
  */
 GType purple_theme_loader_get_type(void);
 

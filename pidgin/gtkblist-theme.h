@@ -166,8 +166,7 @@ const gchar * pidgin_theme_font_get_color_describe(PidginThemeFont *font);
 /**
  * pidgin_blist_theme_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a blist theme.
  */
 GType pidgin_blist_theme_get_type(void);
 

@@ -181,8 +181,9 @@ void gnt_widget_draw(GntWidget *widget);
 /**
  * gnt_widget_expose:
  *
- * @internal
  * Expose part of a widget.
+ *
+ * Internal function -- do not use.
  */
 void gnt_widget_expose(GntWidget *widget, int x, int y, int width, int height);
 
@@ -322,8 +323,8 @@ const char *gnt_widget_get_name(GntWidget *widget);
 /**
  * gnt_widget_queue_update:
  *
- * @internal
- * Use #gnt_widget_draw instead.
+ * Internal function -- do not use.
+ * Use gnt_widget_draw() instead.
  */
 void gnt_widget_queue_update(GntWidget *widget);
 

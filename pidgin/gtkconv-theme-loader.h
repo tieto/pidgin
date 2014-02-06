@@ -66,11 +66,11 @@ G_BEGIN_DECLS
 /**
  * pidgin_conversation_theme_loader_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a conversation theme loader.
  */
 GType pidgin_conversation_theme_loader_get_type(void);
 
 G_END_DECLS
+
 #endif /* PIDGIN_CONV_THEME_LOADER_H */
 

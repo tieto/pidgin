@@ -79,8 +79,7 @@ G_BEGIN_DECLS
 /**
  * purple_smiley_get_type:
  *
- * GObject-fu.
- * @internal.
+ * Returns: The #GType for a smiley.
  */
 GType purple_smiley_get_type(void);
 

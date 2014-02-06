@@ -66,10 +66,10 @@ G_BEGIN_DECLS
 /**
  * pidgin_blist_theme_loader_get_type:
  *
- * GObject foo.
- * @internal.
+ * Returns: The #GType for a blist theme loader.
  */
 GType pidgin_blist_theme_loader_get_type(void);
 
 G_END_DECLS
+
 #endif /* PIDGIN_BLIST_THEME_LOADER_H */

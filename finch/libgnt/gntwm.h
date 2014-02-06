@@ -360,14 +360,14 @@ void gnt_wm_raise_window(GntWM *wm, GntWidget *widget);
 /**
  * gnt_wm_set_event_stack:
  *
- * @internal
+ * Internal function -- do not use.
  */
 void gnt_wm_set_event_stack(GntWM *wm, gboolean set);
 
 /**
  * gnt_wm_copy_win:
  *
- * @internal
+ * Internal function -- do not use.
  */
 void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
 
@@ -379,4 +379,5 @@ void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
 time_t gnt_wm_get_idle_time(void);
 
 G_END_DECLS
+
 #endif
