@@ -33,7 +33,7 @@
 
 #include "gntbindable.h"
 
-#define GNT_TYPE_WIDGET				(gnt_widget_get_gtype())
+#define GNT_TYPE_WIDGET				(gnt_widget_get_type())
 #define GNT_WIDGET(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WIDGET, GntWidget))
 #define GNT_WIDGET_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_WIDGET, GntWidgetClass))
 #define GNT_IS_WIDGET(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_WIDGET))
@@ -142,7 +142,7 @@ G_BEGIN_DECLS
 /**
  * @return  GType for GntWidget.
  */
-GType gnt_widget_get_gtype(void);
+GType gnt_widget_get_type(void);
 
 /**
  * Destroy a widget.

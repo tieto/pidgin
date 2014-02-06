@@ -32,7 +32,7 @@
 #include "gnt.h"
 #include "gntwidget.h"
 
-#define GNT_TYPE_BUTTON				(gnt_button_get_gtype())
+#define GNT_TYPE_BUTTON				(gnt_button_get_type())
 #define GNT_BUTTON(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_BUTTON, GntButton))
 #define GNT_BUTTON_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_BUTTON, GntButtonClass))
 #define GNT_IS_BUTTON(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_BUTTON))
@@ -75,7 +75,7 @@ G_BEGIN_DECLS
 /**
  * @return  GType for Gntbutton
  */
-GType gnt_button_get_gtype(void);
+GType gnt_button_get_type(void);
 
 /**
  * Create a new button.

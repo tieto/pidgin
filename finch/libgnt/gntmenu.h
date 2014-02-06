@@ -31,7 +31,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_MENU				(gnt_menu_get_gtype())
+#define GNT_TYPE_MENU				(gnt_menu_get_type())
 #define GNT_MENU(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_MENU, GntMenu))
 #define GNT_MENU_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_MENU, GntMenuClass))
 #define GNT_IS_MENU(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_MENU))
@@ -88,7 +88,7 @@ G_BEGIN_DECLS
 /**
  * @return  The GType for GntMenu.
  */
-GType gnt_menu_get_gtype(void);
+GType gnt_menu_get_type(void);
 
 /**
  * Create a new menu.

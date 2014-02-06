@@ -470,7 +470,7 @@ gnt_text_view_init(GTypeInstance *instance, gpointer class)
  * GntTextView API
  *****************************************************************************/
 GType
-gnt_text_view_get_gtype(void)
+gnt_text_view_get_type(void)
 {
 	static GType type = 0;
 

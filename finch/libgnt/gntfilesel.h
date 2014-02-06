@@ -32,7 +32,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_FILE_SEL				(gnt_file_sel_get_gtype())
+#define GNT_TYPE_FILE_SEL				(gnt_file_sel_get_type())
 #define GNT_FILE_SEL(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_FILE_SEL, GntFileSel))
 #define GNT_FILE_SEL_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_FILE_SEL, GntFileSelClass))
 #define GNT_IS_FILE_SEL(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_FILE_SEL))
@@ -100,7 +100,7 @@ G_BEGIN_DECLS
 /**
  * @return GType for GntFileSel.
  */
-GType gnt_file_sel_get_gtype(void);
+GType gnt_file_sel_get_type(void);
 
 /**
  * Create a new file selector.

@@ -30,7 +30,7 @@
 #include "gnt.h"
 #include "gntwidget.h"
 
-#define GNT_TYPE_BOX				(gnt_box_get_gtype())
+#define GNT_TYPE_BOX				(gnt_box_get_type())
 #define GNT_BOX(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_BOX, GntBox))
 #define GNT_BOX_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_BOX, GntBoxClass))
 #define GNT_IS_BOX(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_BOX))
@@ -91,7 +91,7 @@ G_BEGIN_DECLS
  * The GType for GntBox.
  * @return The GType.
  */
-GType gnt_box_get_gtype(void);
+GType gnt_box_get_type(void);
 
 #define gnt_vbox_new(homo) gnt_box_new(homo, TRUE)
 #define gnt_hbox_new(homo) gnt_box_new(homo, FALSE)

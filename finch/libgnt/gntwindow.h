@@ -33,7 +33,7 @@
 #include "gntkeys.h"
 #include "gntmenu.h"
 
-#define GNT_TYPE_WINDOW				(gnt_window_get_gtype())
+#define GNT_TYPE_WINDOW				(gnt_window_get_type())
 #define GNT_WINDOW(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WINDOW, GntWindow))
 #define GNT_WINDOW_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_WINDOW, GntWindowClass))
 #define GNT_IS_WINDOW(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_WINDOW))
@@ -76,7 +76,7 @@ G_BEGIN_DECLS
 /**
  * @return  GType for GntWindow.
  */
-GType gnt_window_get_gtype(void);
+GType gnt_window_get_type(void);
 
 #define gnt_vwindow_new(homo) gnt_window_box_new(homo, TRUE)
 #define gnt_hwindow_new(homo) gnt_window_box_new(homo, FALSE)

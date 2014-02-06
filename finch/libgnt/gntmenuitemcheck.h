@@ -32,7 +32,7 @@
 #include "gntkeys.h"
 #include "gntmenuitem.h"
 
-#define GNT_TYPE_MENU_ITEM_CHECK				(gnt_menuitem_check_get_gtype())
+#define GNT_TYPE_MENU_ITEM_CHECK				(gnt_menuitem_check_get_type())
 #define GNT_MENU_ITEM_CHECK(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_MENU_ITEM_CHECK, GntMenuItemCheck))
 #define GNT_MENU_ITEM_CHECK_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_MENU_ITEM_CHECK, GntMenuItemCheckClass))
 #define GNT_IS_MENU_ITEM_CHECK(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_MENU_ITEM_CHECK))
@@ -68,7 +68,7 @@ G_BEGIN_DECLS
 /**
  * @return GType for GntMenuItemCheck.
  */
-GType gnt_menuitem_check_get_gtype(void);
+GType gnt_menuitem_check_get_type(void);
 
 /**
  * Create a new menuitem.

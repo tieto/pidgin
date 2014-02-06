@@ -143,7 +143,7 @@ gnt_progress_bar_init (GTypeInstance *instance, gpointer g_class)
 }
 
 GType
-gnt_progress_bar_get_gtype (void)
+gnt_progress_bar_get_type (void)
 {
 	static GType type = 0;
 

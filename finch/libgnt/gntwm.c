@@ -1590,7 +1590,7 @@ gnt_wm_class_init(GntWMClass *klass)
  * GntWM API
  *****************************************************************************/
 GType
-gnt_wm_get_gtype(void)
+gnt_wm_get_type(void)
 {
 	static GType type = 0;
 

@@ -32,7 +32,7 @@
 #include <glib-object.h>
 #include <ncurses.h>
 
-#define GNT_TYPE_BINDABLE				(gnt_bindable_get_gtype())
+#define GNT_TYPE_BINDABLE				(gnt_bindable_get_type())
 #define GNT_BINDABLE(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_BINDABLE, GntBindable))
 #define GNT_BINDABLE_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_BINDABLE, GntBindableClass))
 #define GNT_IS_BINDABLE(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_BINDABLE))
@@ -71,7 +71,7 @@ G_BEGIN_DECLS
  *
  * @return
  */
-GType gnt_bindable_get_gtype(void);
+GType gnt_bindable_get_type(void);
 
 /******************/
 /*   Key Remaps   */

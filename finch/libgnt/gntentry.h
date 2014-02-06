@@ -32,7 +32,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_ENTRY				(gnt_entry_get_gtype())
+#define GNT_TYPE_ENTRY				(gnt_entry_get_type())
 #define GNT_ENTRY(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_ENTRY, GntEntry))
 #define GNT_ENTRY_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_ENTRY, GntEntryClass))
 #define GNT_IS_ENTRY(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_ENTRY))
@@ -106,7 +106,7 @@ G_BEGIN_DECLS
 /**
  * @return GType for GntEntry.
  */
-GType gnt_entry_get_gtype(void);
+GType gnt_entry_get_type(void);
 
 /**
  * Create a new GntEntry.

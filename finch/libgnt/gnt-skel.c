@@ -92,7 +92,7 @@ gnt_skel_init(GTypeInstance *instance, gpointer class)
  * GntSkel API
  *****************************************************************************/
 GType
-gnt_skel_get_gtype(void)
+gnt_skel_get_type(void)
 {
 	static GType type = 0;
 

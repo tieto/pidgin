@@ -43,7 +43,7 @@
 #include "gntwindow.h"
 #include "gntlabel.h"
 
-#define TYPE_IRSSI				(irssi_get_gtype())
+#define TYPE_IRSSI				(irssi_get_type())
 
 typedef struct _Irssi
 {
@@ -60,7 +60,7 @@ typedef struct _IrssiClass
 	GntWMClass inherit;
 } IrssiClass;
 
-GType irssi_get_gtype(void);
+GType irssi_get_type(void);
 void gntwm_init(GntWM **wm);
 
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
@@ -367,7 +367,7 @@ void gntwm_init(GntWM **wm)
 	irssi->buddylistwidth = 0;
 }
 
-GType irssi_get_gtype(void)
+GType irssi_get_type(void)
 {
 	static GType type = 0;
 

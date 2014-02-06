@@ -34,7 +34,7 @@
 #include <panel.h>
 #include <time.h>
 
-#define GNT_TYPE_WM				(gnt_wm_get_gtype())
+#define GNT_TYPE_WM				(gnt_wm_get_type())
 #define GNT_WM(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WM, GntWM))
 #define GNT_WM_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_WM, GntWMClass))
 #define GNT_IS_WM(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_WM))
@@ -186,7 +186,7 @@ G_BEGIN_DECLS
 /**
  * @return GType for GntWM.
  */
-GType gnt_wm_get_gtype(void);
+GType gnt_wm_get_type(void);
 
 /**
  * Add a workspace.

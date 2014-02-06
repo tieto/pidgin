@@ -1142,7 +1142,7 @@ gnt_tree_init(GTypeInstance *instance, gpointer class)
  * GntTree API
  *****************************************************************************/
 GType
-gnt_tree_get_gtype(void)
+gnt_tree_get_type(void)
 {
 	static GType type = 0;
 

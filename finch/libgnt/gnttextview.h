@@ -32,7 +32,7 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-#define GNT_TYPE_TEXT_VIEW				(gnt_text_view_get_gtype())
+#define GNT_TYPE_TEXT_VIEW				(gnt_text_view_get_type())
 #define GNT_TEXT_VIEW(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_TEXT_VIEW, GntTextView))
 #define GNT_TEXT_VIEW_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_TEXT_VIEW, GntTextViewClass))
 #define GNT_IS_TEXT_VIEW(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_TEXT_VIEW))
@@ -90,7 +90,7 @@ G_BEGIN_DECLS
 /**
  * @return  GType for GntTextView.
  */
-GType gnt_text_view_get_gtype(void);
+GType gnt_text_view_get_type(void);
 
 /**
  * Create a new textview.
