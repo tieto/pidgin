@@ -42,8 +42,6 @@ G_BEGIN_DECLS
  *
  * Send a typing message to a given user over a given connection.
  *
- * @todo Could probably move this into the conversation API.
- *
  * Returns: A quiet-period, specified in seconds, where Purple will not
  *         send any additional typing notification messages.  Most
  *         protocols should return 0, which means that no additional
@@ -52,6 +50,7 @@ G_BEGIN_DECLS
  *         user is still typing then Purple will send another PURPLE_IM_TYPING
  *         message.
  */
+/* TODO Could probably move this into the conversation API. */
 unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state);
 
 void serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);

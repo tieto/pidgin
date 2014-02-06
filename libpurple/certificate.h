@@ -464,8 +464,8 @@ purple_certificate_destroy_list (GList * crt_list);
  *
  * Returns: TRUE if 'crt' has a valid signature made by 'issuer',
  *         otherwise FALSE
- * @todo Find a way to give the reason (bad signature, not the issuer, etc.)
  */
+/* TODO Find a way to give the reason (bad signature, not the issuer, etc.) */
 gboolean
 purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
 

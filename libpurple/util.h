@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
- * @todo Rename the functions so that they live somewhere in the purple
- *       namespace.
+ * TODO Rename the functions so that they live somewhere in the purple
+ *      namespace.
  */
 /**
  * SECTION:util
