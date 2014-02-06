@@ -42,7 +42,7 @@ extern char *gnt_key_cdown;
 extern char *gnt_key_cleft;
 extern char *gnt_key_cright;
 
-#define SAFE(x)   ((x) ? (x) : "")
+#define SAFE(x)   ((cur_term && (x)) ? (x) : "")
 
 #define GNT_KEY_POPUP   SAFE(key_f16)   /* Apparently */
 
@@ -62,12 +62,12 @@ extern char *gnt_key_cright;
 #define GNT_KEY_HOME   SAFE(key_home)
 #define GNT_KEY_END    SAFE(key_end)
 
-#define GNT_KEY_ENTER  carriage_return
+#define GNT_KEY_ENTER  SAFE(carriage_return)
 
 #define GNT_KEY_BACKSPACE SAFE(key_backspace)
 #define GNT_KEY_DEL    SAFE(key_dc)
 #define GNT_KEY_INS    SAFE(key_ic)
-#define GNT_KEY_BACK_TAB (back_tab ? back_tab : SAFE(key_btab))
+#define GNT_KEY_BACK_TAB ((cur_term && back_tab) ? back_tab : SAFE(key_btab))
 
 #define GNT_KEY_CTRL_A     "\001"
 #define GNT_KEY_CTRL_B     "\002"

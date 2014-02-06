@@ -48,6 +48,7 @@ typedef struct _GntTreeClass		GntTreeClass;
 
 typedef struct _GntTreeRow		GntTreeRow;
 typedef struct _GntTreeCol		GntTreeCol;
+typedef struct _GntTreeColInfo		GntTreeColInfo;
 
 typedef enum {
 	GNT_TREE_COLUMN_INVISIBLE    = 1 << 0,
@@ -55,6 +56,14 @@ typedef enum {
 	GNT_TREE_COLUMN_BINARY_DATA  = 1 << 2,
 	GNT_TREE_COLUMN_RIGHT_ALIGNED = 1 << 3,
 } GntTreeColumnFlag;
+
+struct _GntTreeColInfo
+{
+	int width;
+	char *title;
+	int width_ratio;
+	GntTreeColumnFlag flags;
+};
 
 struct _GntTree
 {
@@ -75,13 +84,7 @@ struct _GntTree
 	GDestroyNotify value_destroy;
 
 	int ncol;               /* No. of columns */
-	struct _GntTreeColInfo
-	{
-		int width;
-		char *title;
-		int width_ratio;
-		GntTreeColumnFlag flags;
-	} *columns;             /* Would a GList be better? */
+	GntTreeColInfo *columns; /* Would a GList be better? */
 	gboolean show_title;
 	gboolean show_separator; /* Whether to show column separators */
 
