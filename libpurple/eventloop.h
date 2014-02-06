@@ -240,7 +240,7 @@ gboolean purple_input_remove(guint handle);
  * implement the input_get_error UI op.
  *
  * Returns: 0 if there is no error; -1 if there is an error, in which case
- *          %errno will be set.
+ *          #errno will be set.
  */
 int
 purple_input_get_error(int fd, int *error);

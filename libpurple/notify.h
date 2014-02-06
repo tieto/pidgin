@@ -48,6 +48,9 @@ typedef struct _PurpleNotifySearchColumn	PurpleNotifySearchColumn;
 #include "connection.h"
 #include "request.h"
 
+typedef struct _PurpleNotifySearchResults PurpleNotifySearchResults;
+
+typedef struct _PurpleNotifyUiOps	PurpleNotifyUiOps;
 
 /**
  * PurpleNotifyCloseCallback:
@@ -126,13 +129,13 @@ typedef enum
  *
  * Search results object.
  */
-typedef struct
+struct _PurpleNotifySearchResults
 {
 	GList *columns;
 	GList *rows;
 	GList *buttons;
 
-} PurpleNotifySearchResults;
+};
 
 /**
  * PurpleNotifyUserInfoEntryType:
@@ -180,7 +183,7 @@ typedef struct
  *
  * Notification UI operations.
  */
-typedef struct
+struct _PurpleNotifyUiOps
 {
 	void *(*notify_message)(PurpleNotifyMsgType type, const char *title,
 		const char *primary, const char *secondary,
@@ -218,7 +221,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleNotifyUiOps;
+};
 
 
 G_BEGIN_DECLS

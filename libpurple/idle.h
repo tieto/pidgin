@@ -30,12 +30,14 @@
 
 #include <time.h>
 
+typedef struct _PurpleIdleUiOps PurpleIdleUiOps;
+
 /**
  * PurpleIdleUiOps:
  *
  * Idle UI operations.
  */
-typedef struct
+struct _PurpleIdleUiOps
 {
 	time_t (*get_time_idle)(void);
 
@@ -44,7 +46,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleIdleUiOps;
+};
 
 G_BEGIN_DECLS
 

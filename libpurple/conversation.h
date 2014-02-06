@@ -205,10 +205,10 @@ struct _PurpleConversationClass {
  * @destroy_conversation: Called just before @conv is freed.
  * @write_chat: Write a message to a chat. If this field is %NULL, libpurple
  *              will fall back to using @write_conv.
- *              See purple_chat_conversation_write().
+ *              See purple_conversation_write().
  * @write_im: Write a message to an IM conversation. If this field is %NULL,
  *            libpurple will fall back to using @write_conv.
- *            See purple_im_conversation_write().
+ *            See purple_conversation_write().
  * @write_conv: Write a message to a conversation. This is used rather than the
  *              chat- or im-specific ops for errors, system messages (such as "x
  *              is now know as y"), and as the fallback if @write_im and

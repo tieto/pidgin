@@ -25,7 +25,7 @@
  * @short_description: <filename>enums.h</filename>
  * @title: GEnums and GFlags
  *
- * This file contains all the #GEnum and #GFlag type definitions of libpurple.
+ * This file contains all the #GEnum and #GFlags type definitions of libpurple.
  */
 
 #ifndef PURPLE_ENUMS_H

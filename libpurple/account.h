@@ -343,7 +343,7 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
  *
  * The password in the keyring might not be immediately updated, but the cached
  * version will be, and it is therefore safe to read the password back before
- * the callback has been triggered. One can also set a NULL callback if
+ * the callback has been triggered. One can also set a %NULL callback if
  * notification of saving to the keyring is not required.
  */
 void purple_account_set_password(PurpleAccount *account, const gchar *password,
@@ -458,7 +458,7 @@ void purple_account_set_status_types(PurpleAccount *account, GList *status_types
  * @status_id: The ID of the status.
  * @active:    Whether @a status_id is to be activated (%TRUE) or
  *             deactivated (%FALSE).
- * @...:       A NULL-terminated list of pairs of <type>const char *</type>
+ * @...:       A %NULL-terminated list of pairs of <type>const char *</type>
  *             attribute name followed by <type>const char *</type> attribute
  *             value for the status. (For example, one pair might be
  *             <literal>"message"</literal> followed by
@@ -494,13 +494,13 @@ void purple_account_set_status_list(PurpleAccount *account,
 /**
  * purple_account_set_public_alias:
  * @account:    The account
- * @alias:      The new public alias for this account or NULL
+ * @alias:      The new public alias for this account or %NULL
  *                   to unset the alias/nickname (or return it to
  *                   a protocol-specific "default", like the username)
  * @success_cb: A callback which will be called if the alias
- *                   is successfully set on the server (or NULL).
+ *                   is successfully set on the server (or %NULL).
  * @failure_cb: A callback which will be called if the alias
- *                   is not successfully set on the server (or NULL).
+ *                   is not successfully set on the server (or %NULL).
  *
  * Set a server-side (public) alias for this account.  The account
  * must already be connected.
@@ -993,10 +993,7 @@ PurpleStatus *purple_account_get_active_status(const PurpleAccount *account);
  *
  * Returns the account status with the specified ID.
  *
- * Note that this works differently than purple_buddy_get_status() in that
- * it will only return NULL if the status was not registered.
- *
- * Returns: The status, or NULL if it was never registered.
+ * Returns: The status, or %NULL if it was never registered.
  */
 PurpleStatus *purple_account_get_status(const PurpleAccount *account,
 									const char *status_id);
@@ -1008,7 +1005,7 @@ PurpleStatus *purple_account_get_status(const PurpleAccount *account,
  *
  * Returns the account status type with the specified ID.
  *
- * Returns: The status type if found, or NULL.
+ * Returns: The status type if found, or %NULL.
  */
 PurpleStatusType *purple_account_get_status_type(const PurpleAccount *account,
 											 const char *id);
@@ -1023,7 +1020,7 @@ PurpleStatusType *purple_account_get_status_type(const PurpleAccount *account,
  * PurpleStatusType with the same primitive.  In this case, the
  * first PurpleStatusType is returned.
  *
- * Returns: The status if found, or NULL.
+ * Returns: The status if found, or %NULL.
  */
 PurpleStatusType *purple_account_get_status_type_with_primitive(
 							const PurpleAccount *account,

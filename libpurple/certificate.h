@@ -296,7 +296,7 @@ struct _PurpleCertificateScheme
  * @destroy_request:    Destroy a completed Request under this Verifier. The
  *                      function pointed to here is only responsible for
  *                      cleaning up whatever
- *                      #PurpleCertificateVerificationRequest::data points to.
+ *                      #PurpleCertificateVerificationRequest.data points to.
  *                      It should not call free(@vrq).
  *                      <sbr/>@vrq: The request to destroy.
  *

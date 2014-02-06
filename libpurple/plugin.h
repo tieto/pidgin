@@ -621,7 +621,7 @@ void purple_plugins_load_saved(const char *key);
  *
  * Probes for plugins in the registered module paths.
  *
- * @see purple_plugin_set_probe_path()
+ * See purple_plugins_add_search_path().
  */
 void purple_plugins_probe(const char *ext);
 

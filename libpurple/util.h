@@ -398,16 +398,16 @@ char *purple_mime_decode_field(const char *str);
  * This is essentially strftime(), but it has a static buffer
  * and handles the UTF-8 conversion for the caller.
  *
- * This function also provides the GNU %z formatter if the underlying C
+ * This function also provides the GNU \%z formatter if the underlying C
  * library doesn't.  However, the format string parser is very naive, which
- * means that conversions specifiers to %z cannot be guaranteed.  The GNU
- * strftime(3) man page describes %z as: 'The time-zone as hour offset from
+ * means that conversions specifiers to \%z cannot be guaranteed.  The GNU
+ * strftime(3) man page describes \%z as: 'The time-zone as hour offset from
  * GMT.  Required to emit RFC822-conformant dates
- * (using "%a, %d %b %Y %H:%M:%S %z"). (GNU)'
+ * (using "\%a, \%d \%b \%Y \%H:\%M:\%S \%z"). (GNU)'
  *
- * On Windows, this function also converts the results for %Z from a timezone
- * name (as returned by the system strftime() %Z format string) to a timezone
- * abbreviation (as is the case on Unix).  As with %z, conversion specifiers
+ * On Windows, this function also converts the results for \%Z from a timezone
+ * name (as returned by the system strftime() \%Z format string) to a timezone
+ * abbreviation (as is the case on Unix).  As with \%z, conversion specifiers
  * should not be used.
  *
  * Note: @format is required to be in UTF-8.  This differs from strftime(),
@@ -534,7 +534,7 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
 
 /**
  * purple_uts35_to_str:
- * @format: The formatting string, according to UTS #35
+ * @format: The formatting string, according to UTS \#35
  *               See http://unicode.org/reports/tr35/
  *               (NOTE: not all formats are supported)
  * @len:    The length of the formatting string
@@ -1441,8 +1441,8 @@ gchar *purple_utf8_strip_unprintables(const gchar *str);
  * purple_gai_strerror:
  * @errnum: The error code.
  *
- * Return the UTF-8 version of gai_strerror().  It calls gai_strerror()
- * then converts the result to UTF-8.  This function is analogous to
+ * Return the UTF-8 version of #gai_strerror. It calls #gai_strerror
+ * then converts the result to UTF-8. This function is analogous to
  * g_strerror().
  *
  * Returns: The UTF-8 error message.
@@ -1654,7 +1654,7 @@ gchar *purple_http_digest_calculate_session_key(
  * @nonce:             The nonce provided by the server
  * @nonce_count:       The nonce count
  * @client_nonce:      The nonce provided by the client
- * @session_key:       The session key from purple_cipher_http_digest_calculate_session_key()
+ * @session_key:       The session key from purple_http_digest_calculate_session_key()
  *
  * Calculate a response for HTTP Digest authentication
  *

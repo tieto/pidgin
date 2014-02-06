@@ -156,7 +156,7 @@ void purple_dbus_signal_emit_purple(const char *name, int num_values,
  * purple_dbus_get_init_error:
  *
  * Returns whether Purple's D-BUS subsystem is up and running.  If it's
- * NOT running then purple_dbus_dispatch_init() failed for some reason,
+ * NOT running then #purple_dbus_dispatch_init failed for some reason,
  * and a message should have been purple_debug_error()'ed.
  *
  * Purple plugins that use D-BUS should use the
@@ -164,9 +164,9 @@ void purple_dbus_signal_emit_purple(const char *name, int num_values,
  * initialization if Purple's D-BUS subsystem is not running.
  *
  * Returns: If the D-BUS subsystem started with no problems then this
- *         will return NULL and everything will be hunky dory.  If
- *         there was an error initializing the D-BUS subsystem then
- *         this will return an error message explaining why.
+ *          will return NULL and everything will be hunky dory.  If
+ *          there was an error initializing the D-BUS subsystem then
+ *          this will return an error message explaining why.
  */
 const char *purple_dbus_get_init_error(void);
 

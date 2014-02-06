@@ -109,7 +109,8 @@ void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *mapping_data);
  * this purple client. Essentially, this function takes care of the port
  * forwarding so things like file transfers can work behind NAT firewalls
  *
- * Returns: Data which can be passed to purple_upnp_port_mapping_cancel() to cancel
+ * Returns: Data which can be passed to purple_upnp_cancel_port_mapping() to
+ *          cancel
  */
 UPnPMappingAddRemove *purple_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 		PurpleUPnPCallback cb, gpointer cb_data);
@@ -127,7 +128,8 @@ UPnPMappingAddRemove *purple_upnp_set_port_mapping(unsigned short portmap, const
  * port forwarding after they have completed a connection so another client on
  * the local network can take advantage of the port forwarding
  *
- * Returns: Data which can be passed to purple_upnp_port_mapping_cancel() to cancel
+ * Returns: Data which can be passed to purple_upnp_cancel_port_mapping() to
+ *          cancel
  */
 UPnPMappingAddRemove *purple_upnp_remove_port_mapping(unsigned short portmap,
 		const gchar* protocol, PurpleUPnPCallback cb, gpointer cb_data);

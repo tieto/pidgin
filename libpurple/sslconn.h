@@ -57,10 +57,10 @@ typedef void (*PurpleSslErrorFunction)(PurpleSslConnection *, PurpleSslErrorType
  * PurpleSslConnection:
  * @host:            Hostname to which the SSL connection will be made
  * @port:            Port to connect to
- * @connect_cb_data: Data to pass to PurpleSslConnection::connect_cb()
+ * @connect_cb_data: Data to pass to @connect_cb
  * @connect_cb:      Callback triggered once the SSL handshake is complete
  * @error_cb:        Callback triggered if there is an error during connection
- * @recv_cb_data:    Data passed to PurpleSslConnection::recv_cb()
+ * @recv_cb_data:    Data passed to @recv_cb
  * @recv_cb:         User-defined callback executed when the SSL connection
  *                   receives data
  * @fd:              File descriptor used to refer to the socket
