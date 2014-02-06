@@ -88,8 +88,8 @@ struct _GntEntry
 	gboolean word;      /* Are the suggestions for only a word, or for the whole thing? */
 	gboolean always;    /* Should the list of suggestions show at all times, or only on tab-press? */
 	GntWidget *ddown;   /* The dropdown with the suggested list */
-	GntEntryKillRing *killring; /**< Since: 2.3.0 */
-	GntEntrySearch *search;		/**< Since: 2.7.0 */
+	GntEntryKillRing *killring; /* Since: 2.3.0 */
+	GntEntrySearch *search;		/* Since: 2.7.0 */
 };
 
 struct _GntEntryClass

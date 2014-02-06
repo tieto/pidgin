@@ -39,28 +39,28 @@
 
 typedef struct
 {
-	char *username;             /**< The username.                          */
-	char *alias;                /**< How you appear to yourself.            */
-	char *password;             /**< The account password.                  */
-	char *user_info;            /**< User information.                      */
+	char *username;             /* The username.                          */
+	char *alias;                /* How you appear to yourself.            */
+	char *password;             /* The account password.                  */
+	char *user_info;            /* User information.                      */
 
-	char *buddy_icon_path;      /**< The buddy icon's non-cached path.      */
+	char *buddy_icon_path;      /* The buddy icon's non-cached path.      */
 
-	gboolean remember_pass;     /**< Remember the password.                 */
+	gboolean remember_pass;     /* Remember the password.                 */
 
 	/*
 	 * TODO: After a GObject representing a protocol is ready, use it
 	 * here instead of the protocol ID.
 	 */
-	char *protocol_id;          /**< The ID of the protocol.                */
+	char *protocol_id;          /* The ID of the protocol.                */
 
-	PurpleConnection *gc;         /**< The connection handle.               */
-	gboolean disconnecting;     /**< The account is currently disconnecting */
+	PurpleConnection *gc;       /* The connection handle.               */
+	gboolean disconnecting;     /* The account is currently disconnecting */
 
-	GHashTable *settings;       /**< Protocol-specific settings.            */
-	GHashTable *ui_settings;    /**< UI-specific settings.                  */
+	GHashTable *settings;       /* Protocol-specific settings.            */
+	GHashTable *ui_settings;    /* UI-specific settings.                  */
 
-	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set */
+	PurpleProxyInfo *proxy_info;  /* Proxy information.  This will be set */
 								/*   to NULL when the account inherits      */
 								/*   proxy settings from global prefs.      */
 
@@ -72,19 +72,19 @@ typedef struct
 	 * list therefore the permit list is large. Possibly GTree or
 	 * GHashTable.
 	 */
-	GSList *permit;             /**< Permit list.                           */
-	GSList *deny;               /**< Deny list.                             */
-	PurpleAccountPrivacyType privacy_type;  /**< The permit/deny setting.   */
+	GSList *permit;             /* Permit list.                           */
+	GSList *deny;               /* Deny list.                             */
+	PurpleAccountPrivacyType privacy_type;  /* The permit/deny setting.   */
 
-	GList *status_types;        /**< Status types.                          */
+	GList *status_types;        /* Status types.                          */
 
-	PurplePresence *presence;     /**< Presence.                            */
-	PurpleLog *system_log;        /**< The system log                       */
+	PurplePresence *presence;     /* Presence.                            */
+	PurpleLog *system_log;        /* The system log                       */
 
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
 
-	PurpleConnectionErrorInfo *current_error;	/**< Errors */
+	PurpleConnectionErrorInfo *current_error;	/* Errors */
 } PurpleAccountPrivate;
 
 typedef struct

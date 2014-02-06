@@ -40,8 +40,13 @@ typedef struct _FinchBlistManager  FinchBlistManager;
 
 /**
  * FinchBlistManager:
- * @id:   An identifier for the manager.
- * @name: Displayable name for the manager.
+ * @id:             An identifier for the manager.
+ * @name:           Displayable name for the manager.
+ * @init:           Called right before it's being used.
+ * @uninit:         Called right after it's not being used any more.
+ * @can_add_node:   Whether a node should be added to the view.
+ * @find_parent:    Find the parent row for a node.
+ * @create_tooltip: Create tooltip for a selected row.
  *
  * Buddylist manager for finch. This decides the visility, ordering and hierarchy
  * of the buddylist nodes. This also manages the creation of tooltips.
@@ -50,11 +55,11 @@ struct _FinchBlistManager
 {
 	const char *id;
 	const char *name;
-	gboolean (*init)(void);                            /**< Called right before it's being used. */
-	gboolean (*uninit)(void);                          /**< Called right after it's not being used any more. */
-	gboolean (*can_add_node)(PurpleBlistNode *node);   /**< Whether a node should be added to the view. */
-	gpointer (*find_parent)(PurpleBlistNode *node);    /**< Find the parent row for a node. */
-	gboolean (*create_tooltip)(gpointer selected_row, GString **body, char **title);  /**< Create tooltip for a selected row. */
+	gboolean (*init)(void);
+	gboolean (*uninit)(void);
+	gboolean (*can_add_node)(PurpleBlistNode *node);
+	gpointer (*find_parent)(PurpleBlistNode *node);
+	gboolean (*create_tooltip)(gpointer selected_row, GString **body, char **title);
 
 	/*< private >*/
 	gpointer reserved[4];

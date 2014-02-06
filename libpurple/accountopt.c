@@ -32,17 +32,17 @@
  */
 struct _PurpleAccountOption
 {
-	PurplePrefType type;      /**< The type of value.                     */
+	PurplePrefType type;      /* The type of value.                     */
 
-	char *text;             /**< The text that will appear to the user. */
-	char *pref_name;        /**< The name of the associated preference. */
+	char *text;             /* The text that will appear to the user. */
+	char *pref_name;        /* The name of the associated preference. */
 
 	union
 	{
-		gboolean boolean;   /**< The default boolean value.             */
-		int integer;        /**< The default integer value.             */
-		char *string;       /**< The default string value.              */
-		GList *list;        /**< The default list value.                */
+		gboolean boolean;   /* The default boolean value.             */
+		int integer;        /* The default integer value.             */
+		char *string;       /* The default string value.              */
+		GList *list;        /* The default list value.                */
 
 	} default_value;
 
@@ -50,11 +50,11 @@ struct _PurpleAccountOption
 	{
 		struct
 		{
-			gboolean masked; /**< Whether the value entered should
+			gboolean masked; /* Whether the value entered should
 			                  *   be obscured from view (for
 			                  *   passwords and similar options)
 			                  */
-			GSList *hints;    /**< List of hinted values */
+			GSList *hints;    /* List of hinted values */
 		} string;
 	} params;
 };
@@ -67,12 +67,12 @@ struct _PurpleAccountOption
  */
 struct _PurpleAccountUserSplit
 {
-	char *text;             /**< The text that will appear to the user. */
-	char *default_value;    /**< The default value.                     */
-	char  field_sep;        /**< The field separator.                   */
-	gboolean reverse;       /**< TRUE if the separator should be found
-							  starting a the end of the string, FALSE
-							  otherwise                                 */
+	char *text;             /* The text that will appear to the user. */
+	char *default_value;    /* The default value.                     */
+	char  field_sep;        /* The field separator.                   */
+	gboolean reverse;       /* TRUE if the separator should be found
+							   starting a the end of the string, FALSE
+							   otherwise                                 */
 };
 
 
