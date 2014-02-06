@@ -31,6 +31,8 @@
 #include <glib.h>
 #include <stdarg.h>
 
+typedef struct _PurpleDebugUiOps PurpleDebugUiOps;
+
 /**
  * PurpleDebugLevel:
  * @PURPLE_DEBUG_ALL:     All debug levels.
@@ -58,7 +60,7 @@ typedef enum
  *
  * Debug UI operations.
  */
-typedef struct
+struct _PurpleDebugUiOps
 {
 	void (*print)(PurpleDebugLevel level, const char *category,
 				  const char *arg_s);
@@ -70,7 +72,7 @@ typedef struct
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleDebugUiOps;
+};
 
 G_BEGIN_DECLS
 

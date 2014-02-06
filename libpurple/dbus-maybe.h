@@ -35,7 +35,6 @@
 }
 
 #define PURPLE_DBUS_UNREGISTER_POINTER(ptr)
-#define DBUS_EXPORT
 
 #endif	/* HAVE_DBUS */
 

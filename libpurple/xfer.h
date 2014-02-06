@@ -693,7 +693,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size);
  *
  * Starts a file transfer.
  *
- * Either @fd must be specified <i>or</i> @ip and @port on a
+ * Either @fd must be specified <emphasis>or</emphasis> @ip and @port on a
  * file receive transfer. On send, @fd must be specified, and
  * @ip and @port are ignored.
  *
@@ -745,8 +745,8 @@ void purple_xfer_cancel_remote(PurpleXfer *xfer);
  * Displays a file transfer-related error message.
  *
  * This is a wrapper around purple_notify_error(), which automatically
- * specifies a title ("File transfer to <i>user</i> failed" or
- * "File Transfer from <i>user</i> failed").
+ * specifies a title ("File transfer to <literal>user</literal> failed" or
+ * "File Transfer from <literal>user</literal> failed").
  */
 void purple_xfer_error(PurpleXferType type, PurpleAccount *account, const char *who, const char *msg);
 

@@ -67,31 +67,31 @@ typedef struct _PurpleProtocolChatEntry PurpleProtocolChatEntry;
 /**
  * PurpleProtocolOptions:
  * @OPT_PROTO_UNIQUE_CHATNAME: User names are unique to a chat and are not
- *           shared between rooms.<br/>
+ *           shared between rooms.<sbr/>
  *           XMPP lets you choose what name you want in chats, so it shouldn't
  *           be pulling the aliases from the buddy list for the chat list; it
  *           gets annoying.
- * @OPT_PROTO_CHAT_TOPIC: Chat rooms have topics.<br/>
+ * @OPT_PROTO_CHAT_TOPIC: Chat rooms have topics.<sbr/>
  *           IRC and XMPP support this.
- * @OPT_PROTO_NO_PASSWORD: Don't require passwords for sign-in.<br/>
+ * @OPT_PROTO_NO_PASSWORD: Don't require passwords for sign-in.<sbr/>
  *           Zephyr doesn't require passwords, so there's no need for a
  *           password prompt.
- * @OPT_PROTO_MAIL_CHECK: Notify on new mail.<br/>
+ * @OPT_PROTO_MAIL_CHECK: Notify on new mail.<sbr/>
  *           MSN and Yahoo notify you when you have new mail.
- * @OPT_PROTO_IM_IMAGE: Images in IMs.<br/>
+ * @OPT_PROTO_IM_IMAGE: Images in IMs.<sbr/>
  *           Oscar lets you send images in direct IMs.
- * @OPT_PROTO_PASSWORD_OPTIONAL: Allow passwords to be optional.<br/>
+ * @OPT_PROTO_PASSWORD_OPTIONAL: Allow passwords to be optional.<sbr/>
  *           Passwords in IRC are optional, and are needed for certain
  *           functionality.
  * @OPT_PROTO_USE_POINTSIZE: Allows font size to be specified in sane point
- *           size.<br/>
+ *           size.<sbr/>
  *           Probably just XMPP and Y!M
  * @OPT_PROTO_REGISTER_NOSCREENNAME: Set the Register button active even when
- *           the username has not been specified.<br/>
+ *           the username has not been specified.<sbr/>
  *           Gadu-Gadu doesn't need a username to register new account (because
  *           usernames are assigned by the server).
  * @OPT_PROTO_SLASH_COMMANDS_NATIVE: Indicates that slash commands are native
- *           to this protocol.<br/>
+ *           to this protocol.<sbr/>
  *           Used as a hint that unknown commands should not be sent as
  *           messages.
  * @OPT_PROTO_INVITE_MESSAGE: Indicates that this protocol supports sending a

@@ -38,50 +38,66 @@
 typedef struct _PurpleWhiteboard PurpleWhiteboard;
 typedef struct _PurpleWhiteboardClass PurpleWhiteboardClass;
 
+typedef struct _PurpleWhiteboardUiOps PurpleWhiteboardUiOps;
 typedef struct _PurpleWhiteboardOps PurpleWhiteboardOps;
 
 #include "account.h"
 
 /**
  * PurpleWhiteboardUiOps:
+ * @create:         create whiteboard
+ * @destroy:        destory whiteboard
+ * @set_dimensions: set whiteboard dimensions
+ * @set_brush:      set the size and color of the brush
+ * @draw_point:     draw a point
+ * @draw_line:      draw a line
+ * @clear:          clear whiteboard
  *
  * The PurpleWhiteboard UI Operations
  */
-typedef struct _PurpleWhiteboardUiOps
+struct _PurpleWhiteboardUiOps
 {
-	void (*create)(PurpleWhiteboard *wb);                                /**< create function */
-	void (*destroy)(PurpleWhiteboard *wb);                               /**< destory function */
-	void (*set_dimensions)(PurpleWhiteboard *wb, int width, int height); /**< set_dimensions function */
-	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);       /**< set the size and color of the brush */
+	void (*create)(PurpleWhiteboard *wb);
+	void (*destroy)(PurpleWhiteboard *wb);
+	void (*set_dimensions)(PurpleWhiteboard *wb, int width, int height);
+	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);
 	void (*draw_point)(PurpleWhiteboard *wb, int x, int y,
-	                   int color, int size);                             /**< draw_point function */
+	                   int color, int size);
 	void (*draw_line)(PurpleWhiteboard *wb, int x1, int y1,
 	                  int x2, int y2,
-	                  int color, int size);                              /**< draw_line function */
-	void (*clear)(PurpleWhiteboard *wb);                                 /**< clear function */
+	                  int color, int size);
+	void (*clear)(PurpleWhiteboard *wb);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
-} PurpleWhiteboardUiOps;
+};
 
 /**
  * PurpleWhiteboardOps:
+ * @start:          start function
+ * @end:            end function
+ * @get_dimensions: get whiteboard dimensions
+ * @set_dimensions: set whiteboard dimensions
+ * @get_brush:      get the brush size and color
+ * @set_brush:      set the brush size and color
+ * @send_draw_list: send_draw_list function
+ * @clear:          clear whiteboard
  *
  * Whiteboard protocol operations
  */
 struct _PurpleWhiteboardOps
 {
-	void (*start)(PurpleWhiteboard *wb);                                   /**< start function */
-	void (*end)(PurpleWhiteboard *wb);                                     /**< end function */
-	void (*get_dimensions)(const PurpleWhiteboard *wb, int *width, int *height); /**< get_dimensions function */
-	void (*set_dimensions)(PurpleWhiteboard *wb, int width, int height);   /**< set_dimensions function */
-	void (*get_brush) (const PurpleWhiteboard *wb, int *size, int *color); /**< get the brush size and color */
-	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);         /**< set the brush size and color */
-	void (*send_draw_list)(PurpleWhiteboard *wb, GList *draw_list);        /**< send_draw_list function */
-	void (*clear)(PurpleWhiteboard *wb);                                   /**< clear function */
+	void (*start)(PurpleWhiteboard *wb);
+	void (*end)(PurpleWhiteboard *wb);
+	void (*get_dimensions)(const PurpleWhiteboard *wb, int *width, int *height);
+	void (*set_dimensions)(PurpleWhiteboard *wb, int width, int height);
+	void (*get_brush) (const PurpleWhiteboard *wb, int *size, int *color);
+	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);
+	void (*send_draw_list)(PurpleWhiteboard *wb, GList *draw_list);
+	void (*clear)(PurpleWhiteboard *wb);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);

@@ -43,6 +43,8 @@ typedef struct _PurpleConnectionClass PurpleConnectionClass;
 
 typedef struct _PurpleConnectionUiOps PurpleConnectionUiOps;
 
+typedef struct _PurpleConnectionErrorInfo PurpleConnectionErrorInfo;
+
 /**
  * PurpleConnectionFlags:
  * @PURPLE_CONNECTION_FLAG_HTML: Connection sends/receives in 'HTML'
@@ -177,11 +179,11 @@ typedef enum
  *
  * Holds the type of an error along with its description.
  */
-typedef struct
+struct _PurpleConnectionErrorInfo
 {
 	PurpleConnectionError type;
 	char *description;
-} PurpleConnectionErrorInfo;
+};
 
 #include <time.h>
 

@@ -221,7 +221,8 @@ guint purple_input_add(int fd, PurpleInputCondition cond,
 /**
  * purple_input_remove:
  * @handle: The handle of the input handler. Note that this is the return
- *               value from purple_input_add(), <i>not</i> the file descriptor.
+ *          value from purple_input_add(), <emphasis>not</emphasis> the
+ *          file descriptor.
  *
  * Removes an input handler.
  */
@@ -240,7 +241,7 @@ gboolean purple_input_remove(guint handle);
  * implement the input_get_error UI op.
  *
  * Returns: 0 if there is no error; -1 if there is an error, in which case
- *          %errno will be set.
+ *          #errno will be set.
  */
 int
 purple_input_get_error(int fd, int *error);

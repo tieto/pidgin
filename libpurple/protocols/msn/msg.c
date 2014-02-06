@@ -323,37 +323,30 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 char *
 msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 {
+	GString *payload;
 	GList *l;
-	char *n, *base, *end;
-	int len;
-	size_t body_len = 0;
+	size_t body_len;
 	const void *body;
 
 	g_return_val_if_fail(msg != NULL, NULL);
 
-	len = MSN_BUF_LEN;
+	/* 8192 is a reasonable guess at a large enough buffer to avoid realloc */
+	payload = g_string_sized_new(8192);
 
-	base = n = end = g_malloc(len + 1);
-	end += len;
-
-	/* Standard header. */
-	if (msg->charset == NULL)
-	{
-		g_snprintf(n, len,
-				   "MIME-Version: 1.0\r\n"
-				   "Content-Type: %s\r\n",
-				   msg->content_type);
-	}
-	else
-	{
-		g_snprintf(n, len,
-				   "MIME-Version: 1.0\r\n"
-				   "Content-Type: %s; charset=%s\r\n",
-				   msg->content_type, msg->charset);
+	/* Standard header */
+	if (msg->charset == NULL) {
+		g_string_append_printf(payload,
+				"MIME-Version: 1.0\r\n"
+				"Content-Type: %s\r\n",
+				msg->content_type);
+	} else {
+		g_string_append_printf(payload,
+				"MIME-Version: 1.0\r\n"
+				"Content-Type: %s; charset=%s\r\n",
+				msg->content_type, msg->charset);
 	}
 
-	n += strlen(n);
-
+	/* Headers */
 	for (l = msg->header_list; l != NULL; l = l->next)
 	{
 		const char *key;
@@ -362,31 +355,25 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 		key = l->data;
 		value = msn_message_get_header_value(msg, key);
 
-		g_snprintf(n, end - n, "%s: %s\r\n", key, value);
-		n += strlen(n);
+		g_string_append_printf(payload, "%s: %s\r\n", key, value);
 	}
 
-	if ((end - n) > 2)
-		n += g_strlcpy(n, "\r\n", end - n);
+	/* End of headers */
+	g_string_append(payload, "\r\n");
 
+	/* Body */
 	body = msn_message_get_bin_data(msg, &body_len);
-
-	if (body != NULL && (size_t)(end - n) > body_len)
-	{
-		memcpy(n, body, body_len);
-		n += body_len;
-		*n = '\0';
+	if (body != NULL) {
+		g_string_append_len(payload, body, body_len);
 	}
 
-	if (ret_size != NULL)
-	{
-		*ret_size = n - base;
-
-		if (*ret_size > 1664)
-			*ret_size = 1664;
+	if (ret_size != NULL) {
+		/* Use MIN to truncate the payload to 1664 bytes? Why do we do this?
+		   It seems like it will lead to brokenness. */
+		*ret_size = MIN(payload->len, 1664);
 	}
 
-	return base;
+	return g_string_free(payload, FALSE);
 }
 
 void

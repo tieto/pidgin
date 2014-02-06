@@ -141,18 +141,18 @@ G_BEGIN_DECLS
  *             the flag #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed in @f.
  *             This string should contain no whitespace, and use a single
  *             character for each argument.  The recognized characters are:
- *             <ul>
- *               <li><literal>'w'</literal>: Matches a single word.</li>
- *               <li><literal>'W'</literal>: Matches a single word, with
- *                                           formatting.</li>
- *               <li><literal>'s'</literal>: Matches the rest of the arguments
- *                                           after this point, as a single
- *                                           string.</li>
- *               <li><literal>'S'</literal>: Same as <literal>'s'</literal> but
- *                                           with formatting.</li>
- *             </ul>
- *             If args is the empty string, then the command accepts no arguments.
- *             The args passed to the callback @func will be a %NULL
+ *         <itemizedlist>
+ *           <listitem><literal>'w'</literal>: Matches a single word.</listitem>
+ *           <listitem><literal>'W'</literal>: Matches a single word, with
+ *                                             formatting.</listitem>
+ *           <listitem><literal>'s'</literal>: Matches the rest of the
+ *                                             arguments after this point,
+ *                                             as a single string.</listitem>
+ *           <listitem><literal>'S'</literal>: Same as <literal>'s'</literal>
+ *                                             but with formatting.</listitem>
+ *         </itemizedlist>
+ *             If args is the empty string, then the command accepts no
+ *             arguments. The args passed to the callback @func will be a %NULL
  *             terminated array of %NULL terminated strings, and will always
  *             match the number of arguments asked for, unless
  *             #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed.
