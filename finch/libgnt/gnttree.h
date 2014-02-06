@@ -116,9 +116,9 @@ GType gnt_tree_get_type(void);
  *
  * Create a tree with one column.
  *
- * Returns: The newly created tree
- *
  * See gnt_tree_new_with_columns().
+ *
+ * Returns: The newly created tree
  */
 GntWidget * gnt_tree_new(void);
 
