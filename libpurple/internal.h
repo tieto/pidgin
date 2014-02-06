@@ -125,16 +125,6 @@
 #endif
 
 #include <glib.h>
-
-/* This wasn't introduced until Glib 2.14 :( */
-#ifndef G_MAXSSIZE
-#	if GLIB_SIZEOF_LONG == 8
-#		define G_MAXSSIZE ((gssize) 0x7fffffffffffffff)
-#	else
-#		define G_MAXSSIZE ((gssize) 0x7fffffff)
-#	endif
-#endif
-
 #include <glib/gstdio.h>
 
 #ifdef _WIN32
