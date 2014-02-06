@@ -69,28 +69,33 @@ extern char *gnt_key_cright;
 #define GNT_KEY_INS    SAFE(key_ic)
 #define GNT_KEY_BACK_TAB ((cur_term && back_tab) ? back_tab : SAFE(key_btab))
 
-#define GNT_KEY_CTRL_A     "\001"
-#define GNT_KEY_CTRL_B     "\002"
-#define GNT_KEY_CTRL_D     "\004"
-#define GNT_KEY_CTRL_E     "\005"
-#define GNT_KEY_CTRL_F     "\006"
-#define GNT_KEY_CTRL_G     "\007"
-#define GNT_KEY_CTRL_H     "\010"
-#define GNT_KEY_CTRL_I     "\011"
-#define GNT_KEY_CTRL_J     "\012"
-#define GNT_KEY_CTRL_K     "\013"
-#define GNT_KEY_CTRL_L     "\014"
-#define GNT_KEY_CTRL_M     "\012"
-#define GNT_KEY_CTRL_N     "\016"
-#define GNT_KEY_CTRL_O     "\017"
-#define GNT_KEY_CTRL_P     "\020"
-#define GNT_KEY_CTRL_R     "\022"
-#define GNT_KEY_CTRL_T     "\024"
-#define GNT_KEY_CTRL_U     "\025"
-#define GNT_KEY_CTRL_V     "\026"
-#define GNT_KEY_CTRL_W     "\027"
-#define GNT_KEY_CTRL_X     "\030"
-#define GNT_KEY_CTRL_Y     "\031"
+/* This is needed so that g-ir-scanner does not take GNT_KEY_CTRL_* as
+   constants -- because if it does, the .gir contains the following invalid XML
+   characters, and parsing explodes */
+#define CONST(x) x
+
+#define GNT_KEY_CTRL_A     CONST("\001")
+#define GNT_KEY_CTRL_B     CONST("\002")
+#define GNT_KEY_CTRL_D     CONST("\004")
+#define GNT_KEY_CTRL_E     CONST("\005")
+#define GNT_KEY_CTRL_F     CONST("\006")
+#define GNT_KEY_CTRL_G     CONST("\007")
+#define GNT_KEY_CTRL_H     CONST("\010")
+#define GNT_KEY_CTRL_I     CONST("\011")
+#define GNT_KEY_CTRL_J     CONST("\012")
+#define GNT_KEY_CTRL_K     CONST("\013")
+#define GNT_KEY_CTRL_L     CONST("\014")
+#define GNT_KEY_CTRL_M     CONST("\012")
+#define GNT_KEY_CTRL_N     CONST("\016")
+#define GNT_KEY_CTRL_O     CONST("\017")
+#define GNT_KEY_CTRL_P     CONST("\020")
+#define GNT_KEY_CTRL_R     CONST("\022")
+#define GNT_KEY_CTRL_T     CONST("\024")
+#define GNT_KEY_CTRL_U     CONST("\025")
+#define GNT_KEY_CTRL_V     CONST("\026")
+#define GNT_KEY_CTRL_W     CONST("\027")
+#define GNT_KEY_CTRL_X     CONST("\030")
+#define GNT_KEY_CTRL_Y     CONST("\031")
 
 #define GNT_KEY_F1         SAFE(key_f1)
 #define GNT_KEY_F2         SAFE(key_f2)
