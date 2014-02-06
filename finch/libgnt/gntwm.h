@@ -102,6 +102,7 @@ struct _GntWM
 {
 	GntBindable inherit;
 
+	/*< public >*/
 	GMainLoop *loop;
 
 	GList *workspaces;
