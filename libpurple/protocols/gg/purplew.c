@@ -39,8 +39,8 @@ guint ggp_purplew_http_input_add(struct gg_http *http_req,
 {
 	if (purple_debug_is_verbose()) {
 		purple_debug_misc("gg", "ggp_purplew_http_input_add: "
-			"[req=%x, fd=%d, cond=%d]\n",
-			(unsigned int)http_req, http_req->fd, http_req->check);
+			"[req=%p, fd=%d, cond=%d]\n",
+			http_req, http_req->fd, http_req->check);
 	}
 	return purple_input_add(http_req->fd,
 		ggp_tcpsocket_inputcond_gg_to_purple(http_req->check),
