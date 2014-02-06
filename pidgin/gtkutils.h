@@ -703,7 +703,7 @@ typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
  * Creates a #PidginMiniDialog, tied to a #PurpleConnection, suitable for
  * embedding in the buddy list scrollbook with pidgin_blist_add_alert().
  *
- * @see pidginstock.h
+ * See <link linkend="pidgin-pidginstock">Stock Resources</link>.
  *
  * Returns:               A #PidginMiniDialog, suitable for passing to
  *                       pidgin_blist_add_alert().

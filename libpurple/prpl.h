@@ -846,7 +846,7 @@ void purple_prpl_got_account_status(PurpleAccount *account,
  *
  * This is meant to be called from protocol plugins.
  *
- * @see account-actions-changed
+ * See <link linkend="accounts-account-actions-changed"><literal>"account-actions-changed"</literal></link>
  */
 void purple_prpl_got_account_actions(PurpleAccount *account);
 
@@ -1014,7 +1014,7 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
  *
  * Gets the safe maximum message size in bytes for the protocol plugin.
  *
- * @see PurplePluginProtocolInfo#get_max_message_size
+ * See #PurplePluginProtocolInfo.get_max_message_size
  *
  * Returns: Maximum message size, 0 if unspecified, -1 for infinite.
  */

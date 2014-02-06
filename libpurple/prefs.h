@@ -69,7 +69,7 @@ typedef enum
  *
  * The type of callbacks for preference changes.
  *
- * @see purple_prefs_connect_callback()
+ * See purple_prefs_connect_callback().
  */
 typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 		gconstpointer val, gpointer data);
@@ -366,9 +366,9 @@ GList *purple_prefs_get_children_names(const char *name);
  *
  * Add a callback to a pref (and its children)
  *
- * Returns: An id to disconnect the callback
+ * See purple_prefs_disconnect_callback().
  *
- * @see purple_prefs_disconnect_callback
+ * Returns: An id to disconnect the callback
  */
 guint purple_prefs_connect_callback(void *handle, const char *name, PurplePrefCallback cb,
 		gpointer data);

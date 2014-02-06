@@ -212,8 +212,9 @@ gboolean purple_timeout_remove(guint handle);
  *
  * Adds an input handler.
  *
+ * See g_io_add_watch_full().
+ *
  * Returns: The resulting handle (will be greater than 0).
- * @see g_io_add_watch_full
  */
 guint purple_input_add(int fd, PurpleInputCondition cond,
                        PurpleInputFunction func, gpointer user_data);

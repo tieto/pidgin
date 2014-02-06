@@ -347,7 +347,7 @@ purple_request_datasheet_record_remove_all(PurpleRequestDatasheet *sheet);
  * Marks all records for removal. Record will be unmarked, when touched with
  * purple_request_datasheet_record_add.
  *
- * @see purple_request_datasheet_record_add.
+ * See purple_request_datasheet_record_add().
  */
 void
 purple_request_datasheet_record_mark_all_for_rem(PurpleRequestDatasheet *sheet);
@@ -358,7 +358,7 @@ purple_request_datasheet_record_mark_all_for_rem(PurpleRequestDatasheet *sheet);
  *
  * Removes all marked records.
  *
- * @see purple_request_datasheet_record_mark_all_for_rem.
+ * See purple_request_datasheet_record_mark_all_for_rem().
  */
 void
 purple_request_datasheet_record_remove_marked(PurpleRequestDatasheet *sheet);

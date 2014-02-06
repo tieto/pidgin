@@ -769,7 +769,7 @@ PurpleRequestFieldGroup *purple_request_field_group_new(const char *title);
  *
  * Sets tab number for a group.
  *
- * @see purple_request_fields_set_tab_names
+ * See purple_request_fields_set_tab_names().
  */
 void purple_request_field_group_set_tab(PurpleRequestFieldGroup *group,
 	guint tab_no);
@@ -780,9 +780,9 @@ void purple_request_field_group_set_tab(PurpleRequestFieldGroup *group,
  *
  * Returns tab number of a group.
  *
- * Returns: Tab number.
+ * See purple_request_fields_get_tab_names().
  *
- * @see purple_request_fields_get_tab_names
+ * Returns: Tab number.
  */
 guint purple_request_field_group_get_tab(const PurpleRequestFieldGroup *group);
 
@@ -1887,7 +1887,7 @@ PurpleRequestDatasheet *purple_request_field_datasheet_get_sheet(
  *
  * Validates a field which should contain an email address.
  *
- * @see purple_request_field_set_validator
+ * See purple_request_field_set_validator().
  *
  * Returns: TRUE, if field contains valid email address.
  */
@@ -1903,7 +1903,7 @@ gboolean purple_request_field_email_validator(PurpleRequestField *field,
  *
  * Validates a field which should contain alphanumeric content.
  *
- * @see purple_request_field_set_validator
+ * See purple_request_field_set_validator().
  *
  * Returns: TRUE, if field contains only alphanumeric characters.
  */
@@ -2195,7 +2195,7 @@ void purple_request_close(PurpleRequestType type, void *uihandle);
  *
  * Closes all requests registered with the specified handle.
  *
- * @see purple_request_input().
+ * See purple_request_input().
  */
 void purple_request_close_with_handle(void *handle);
 

@@ -79,7 +79,8 @@ G_BEGIN_DECLS
  *   </row>
  *   <row><entry><literal>"icon-name"</literal></entry>
  *     <entry>(<type>char *</type>)The Gtk stock id of an icon for the dialog,
- *       or %NULL for no icon.  @see pidginstock.h</entry>
+ *       or %NULL for no icon. See
+ *       <link linkend="pidgin-pidginstock">Stock Resources</link></entry>
  *   </row>
  *   <row><entry><literal>"custom-icon"</literal></entry>
  *     <entry>(<type>GdkPixbuf *</type>) The custom icon to use instead of a

@@ -112,7 +112,7 @@ typedef enum {
  * have at least one of #PURPLE_CMD_FLAG_IM and #PURPLE_CMD_FLAG_CHAT set in
  * order to be even slighly useful.
  *
- * @see purple_cmd_register
+ * See purple_cmd_register().
  */
 typedef enum {
 	PURPLE_CMD_FLAG_IM               = 0x01,

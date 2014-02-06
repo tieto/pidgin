@@ -77,7 +77,8 @@ typedef void  (*PurpleDnsQueryFailedCallback) (PurpleDnsQueryData *query_data, c
  * DNS Request UI operations;  UIs should implement this if they want to do DNS
  * lookups themselves, rather than relying on the core.
  *
- * @see @ref ui-ops
+ * See <link linkend="chapter-ui-ops">List of <literal>UiOps</literal>
+ *     Structures</link>
  */
 struct _PurpleDnsQueryUiOps
 {

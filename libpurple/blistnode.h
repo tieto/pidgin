@@ -149,12 +149,10 @@ GType purple_blist_node_get_type(void);
  * Returns the next node of a given node. This function is to be used to iterate
  * over the tree returned by purple_blist_get_buddy_list.
  *
- * Returns:	The next node
+ * See purple_blist_node_get_parent(), purple_blist_node_get_first_child(),
+ *   purple_blist_node_get_sibling_next(), purple_blist_node_get_sibling_prev().
  *
- * @see purple_blist_node_get_parent
- * @see purple_blist_node_get_first_child
- * @see purple_blist_node_get_sibling_next
- * @see purple_blist_node_get_sibling_prev
+ * Returns:	The next node
  */
 PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline);
 
@@ -164,12 +162,10 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
  *
  * Returns the parent node of a given node.
  *
- * Returns:  The parent node.
+ * See purple_blist_node_get_first_child(), purple_blist_node_get_sibling_next(),
+ *     purple_blist_node_get_sibling_prev(), purple_blist_node_next().
  *
- * @see purple_blist_node_get_first_child
- * @see purple_blist_node_get_sibling_next
- * @see purple_blist_node_get_sibling_prev
- * @see purple_blist_node_next
+ * Returns:  The parent node.
  */
 PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
 
@@ -179,12 +175,10 @@ PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
  *
  * Returns the the first child node of a given node.
  *
- * Returns:  The child node.
+ * See purple_blist_node_get_parent(), purple_blist_node_get_sibling_next(),
+ *     purple_blist_node_get_sibling_prev(), purple_blist_node_next().
  *
- * @see purple_blist_node_get_parent
- * @see purple_blist_node_get_sibling_next
- * @see purple_blist_node_get_sibling_prev
- * @see purple_blist_node_next
+ * Returns:  The child node.
  */
 PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
 
@@ -194,12 +188,10 @@ PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
  *
  * Returns the sibling node of a given node.
  *
- * Returns:  The sibling node.
+ * See purple_blist_node_get_parent(), purple_blist_node_get_first_child(),
+ *     purple_blist_node_get_sibling_prev(), purple_blist_node_next().
  *
- * @see purple_blist_node_get_parent
- * @see purple_blist_node_get_first_child
- * @see purple_blist_node_get_sibling_prev
- * @see purple_blist_node_next
+ * Returns:  The sibling node.
  */
 PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
 
@@ -209,12 +201,10 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
  *
  * Returns the previous sibling node of a given node.
  *
- * Returns:  The sibling node.
+ * See purple_blist_node_get_parent(), purple_blist_node_get_first_child(),
+ *     purple_blist_node_get_sibling_next(), purple_blist_node_next().
  *
- * @see purple_blist_node_get_parent
- * @see purple_blist_node_get_first_child
- * @see purple_blist_node_get_sibling_next
- * @see purple_blist_node_next
+ * Returns:  The sibling node.
  */
 PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
 

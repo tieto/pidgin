@@ -100,7 +100,7 @@ void purple_debug(PurpleDebugLevel level, const char *category,
  * This is a wrapper for purple_debug(), and uses PURPLE_DEBUG_MISC as
  * the level.
  *
- * @see purple_debug()
+ * See purple_debug().
  */
 void purple_debug_misc(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
@@ -114,7 +114,7 @@ void purple_debug_misc(const char *category, const char *format, ...) G_GNUC_PRI
  * This is a wrapper for purple_debug(), and uses PURPLE_DEBUG_INFO as
  * the level.
  *
- * @see purple_debug()
+ * See purple_debug().
  */
 void purple_debug_info(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
@@ -128,7 +128,7 @@ void purple_debug_info(const char *category, const char *format, ...) G_GNUC_PRI
  * This is a wrapper for purple_debug(), and uses PURPLE_DEBUG_WARNING as
  * the level.
  *
- * @see purple_debug()
+ * See purple_debug().
  */
 void purple_debug_warning(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
@@ -142,7 +142,7 @@ void purple_debug_warning(const char *category, const char *format, ...) G_GNUC_
  * This is a wrapper for purple_debug(), and uses PURPLE_DEBUG_ERROR as
  * the level.
  *
- * @see purple_debug()
+ * See purple_debug().
  */
 void purple_debug_error(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
@@ -156,7 +156,7 @@ void purple_debug_error(const char *category, const char *format, ...) G_GNUC_PR
  * This is a wrapper for purple_debug(), and uses PURPLE_DEBUG_ERROR as
  * the level.
  *
- * @see purple_debug()
+ * See purple_debug().
  */
 void purple_debug_fatal(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 

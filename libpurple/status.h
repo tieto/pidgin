@@ -136,7 +136,7 @@ typedef enum
  * A PurplePresence is like a collection of PurpleStatuses (plus some
  * other random info).
  *
- * @see presence.h
+ * See <link linkend="libpurple-presence">Presence API</link>
  */
 struct _PurpleStatus
 {

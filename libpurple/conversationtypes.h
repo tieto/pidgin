@@ -230,7 +230,7 @@ PurpleIMConversation *purple_im_conversation_new(PurpleAccount *account,
  * This should only be called from within Purple. You probably want to
  * call purple_buddy_icon_set_data().
  *
- * @see purple_buddy_icon_set_data()
+ * See purple_buddy_icon_set_data().
  */
 void purple_im_conversation_set_icon(PurpleIMConversation *im, PurpleBuddyIcon *icon);
 

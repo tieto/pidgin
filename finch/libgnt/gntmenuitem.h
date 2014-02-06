@@ -152,7 +152,7 @@ void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger);
  *
  * Get the trigger key for a menuitem.
  *
- * @see gnt_menuitem_set_trigger
+ * See gnt_menuitem_set_trigger().
  *
  * Returns: The trigger key for the menuitem.
  */

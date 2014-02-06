@@ -118,7 +118,7 @@ GType gnt_tree_get_gtype(void);
  *
  * Returns: The newly created tree
  *
- * @see gnt_tree_new_with_columns
+ * See gnt_tree_new_with_columns().
  */
 GntWidget * gnt_tree_new(void);
 
@@ -128,7 +128,7 @@ GntWidget * gnt_tree_new(void);
  *
  * Create a tree with a specified number of columns.
  *
- * @see gnt_tree_new
+ * See gnt_tree_new().
  *
  * Returns:  The newly created tree
  */
@@ -173,9 +173,7 @@ void gnt_tree_scroll(GntTree *tree, int count);
  *
  * Insert a row in the tree.
  *
- * @see gnt_tree_create_row
- * @see gnt_tree_add_row_last
- * @see gnt_tree_add_choice
+ * See gnt_tree_create_row(), gnt_tree_add_row_last(), gnt_tree_add_choice().
  *
  * Returns:  The inserted row
  */
@@ -190,9 +188,7 @@ GntTreeRow * gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, v
  *
  * Insert a row at the end of the tree.
  *
- * @see gnt_tree_create_row
- * @see gnt_tree_add_row_after
- * @see gnt_tree_add_choice
+ * See gnt_tree_create_row(), gnt_tree_add_row_after(), gnt_tree_add_choice().
  *
  * Returns: The inserted row
  */
@@ -214,8 +210,7 @@ gpointer gnt_tree_get_selection_data(GntTree *tree);
  *
  * Get the text displayed for the selected row.
  *
- * @see gnt_tree_get_row_text_list
- * @see gnt_tree_get_selection_text_list
+ * See gnt_tree_get_row_text_list(), gnt_tree_get_selection_text_list().
  *
  * Returns:  The text, which needs to be freed by the caller
  */
@@ -230,8 +225,7 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  *
  * Get a list of text for a row.
  *
- * @see gnt_tree_get_selection_text_list
- * @see gnt_tree_get_selection_text
+ * See gnt_tree_get_selection_text_list(), gnt_tree_get_selection_text().
  *
  * Returns: A list of texts of a row. The list and its data should be
  *         freed by the caller. The caller should make sure that if
@@ -310,8 +304,7 @@ GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row);
  *
  * Get a list of text of the current row.
  *
- * @see gnt_tree_get_row_text_list
- * @see gnt_tree_get_selection_text
+ * See gnt_tree_get_row_text_list(), gnt_tree_get_selection_text().
  *
  * Returns: A list of texts of the currently selected row. The list
  *         and its data should be freed by the caller. The caller
@@ -378,10 +371,8 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
  *
  * Add a checkable item in the tree.
  *
- * @see gnt_tree_create_row
- * @see gnt_tree_create_row_from_list
- * @see gnt_tree_add_row_last
- * @see gnt_tree_add_row_after
+ * See gnt_tree_create_row(), gnt_tree_create_row_from_list(),
+ *     gnt_tree_add_row_last(), gnt_tree_add_row_after().
  *
  * Returns:  The row inserted.
  */
@@ -446,10 +437,8 @@ void gnt_tree_set_selected(GntTree *tree , void *key);
  *
  * Create a row to insert in the tree.
  *
- * @see gnt_tree_create_row_from_list
- * @see gnt_tree_add_row_after
- * @see gnt_tree_add_row_last
- * @see gnt_tree_add_choice
+ * See gnt_tree_create_row_from_list(), gnt_tree_add_row_after(),
+ *     gnt_tree_add_row_last(), gnt_tree_add_choice().
  *
  * Returns:   The row
  */
@@ -462,10 +451,8 @@ GntTreeRow * gnt_tree_create_row(GntTree *tree, ...);
  *
  * Create a row from a list of text.
  *
- * @see gnt_tree_create_row
- * @see gnt_tree_add_row_after
- * @see gnt_tree_add_row_last
- * @see gnt_tree_add_choice
+ * See gnt_tree_create_row(), gnt_tree_add_row_after(), gnt_tree_add_row_last(),
+ *     gnt_tree_add_choice().
  *
  * Returns:   The row
  */
@@ -479,8 +466,7 @@ GntTreeRow * gnt_tree_create_row_from_list(GntTree *tree, GList *list);
  *
  * Set the width of a column in the tree.
  *
- * @see gnt_tree_set_column_width_ratio
- * @see gnt_tree_set_column_resizable
+ * See gnt_tree_set_column_width_ratio(), gnt_tree_set_column_resizable()
  */
 void gnt_tree_set_col_width(GntTree *tree, int col, int width);
 
@@ -492,8 +478,7 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width);
  *
  * Set the title for a column.
  *
- * @see gnt_tree_set_column_titles
- * @see gnt_tree_set_show_title
+ * See gnt_tree_set_column_titles(), gnt_tree_set_show_title().
  *
  * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -506,8 +491,7 @@ void gnt_tree_set_column_title(GntTree *tree, int index, const char *title);
  *
  * Set the titles of the columns
  *
- * @see gnt_tree_set_column_title
- * @see gnt_tree_set_show_title
+ * See gnt_tree_set_column_title(), gnt_tree_set_show_title().
  */
 void gnt_tree_set_column_titles(GntTree *tree, ...);
 
@@ -518,8 +502,7 @@ void gnt_tree_set_column_titles(GntTree *tree, ...);
  *
  * Set whether to display the title of the columns.
  *
- * @see gnt_tree_set_column_title
- * @see gnt_tree_set_column_titles
+ * See gnt_tree_set_column_title(), gnt_tree_set_column_titles().
  */
 void gnt_tree_set_show_title(GntTree *tree, gboolean set);
 
@@ -531,7 +514,7 @@ void gnt_tree_set_show_title(GntTree *tree, gboolean set);
  *
  * Set the compare function for sorting the data.
  *
- * @see gnt_tree_sort_row
+ * See gnt_tree_sort_row().
  */
 void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func);
 
@@ -561,7 +544,7 @@ void gnt_tree_set_show_separator(GntTree *tree, gboolean set);
  *
  * Sort a row in the tree.
  *
- * @see gnt_tree_set_compare_func
+ * See gnt_tree_set_compare_func().
  */
 void gnt_tree_sort_row(GntTree *tree, void *row);
 
@@ -607,8 +590,7 @@ void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
  * Set whether a column can be resized to keep the same ratio when the
  * tree is resized.
  *
- * @see gnt_tree_set_col_width
- * @see gnt_tree_set_column_width_ratio
+ * See gnt_tree_set_col_width(), gnt_tree_set_column_width_ratio().
  *
  * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
@@ -647,8 +629,7 @@ void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right
  * Set column widths to use when calculating column widths after a tree
  * is resized.
  *
- * @see gnt_tree_set_col_width
- * @see gnt_tree_set_column_resizable
+ * See gnt_tree_set_col_width(), gnt_tree_set_column_resizable().
  *
  * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */

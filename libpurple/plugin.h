@@ -301,10 +301,9 @@ PurplePlugin *purple_plugin_new(gboolean native, const char *path);
  * Probes a plugin, retrieving the information on it and adding it to the
  * list of available plugins.
  *
- * Returns: The plugin handle.
+ * See purple_plugin_load(), purple_plugin_destroy().
  *
- * @see purple_plugin_load()
- * @see purple_plugin_destroy()
+ * Returns: The plugin handle.
  */
 PurplePlugin *purple_plugin_probe(const char *filename);
 
@@ -330,10 +329,9 @@ gboolean purple_plugin_register(PurplePlugin *plugin);
  *
  * Attempts to load a previously probed plugin.
  *
- * Returns: %TRUE if successful, or %FALSE otherwise.
+ * See purple_plugin_reload(), purple_plugin_unload().
  *
- * @see purple_plugin_reload()
- * @see purple_plugin_unload()
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  */
 gboolean purple_plugin_load(PurplePlugin *plugin);
 
@@ -343,10 +341,9 @@ gboolean purple_plugin_load(PurplePlugin *plugin);
  *
  * Unloads the specified plugin.
  *
- * Returns: %TRUE if successful, or %FALSE otherwise.
+ * See purple_plugin_load(), purple_plugin_reload().
  *
- * @see purple_plugin_load()
- * @see purple_plugin_reload()
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  */
 gboolean purple_plugin_unload(PurplePlugin *plugin);
 
@@ -368,10 +365,9 @@ void purple_plugin_disable(PurplePlugin *plugin);
  *
  * Reloads a plugin.
  *
- * Returns: %TRUE if successful, or %FALSE otherwise.
+ * See purple_plugin_load(), purple_plugin_unload().
  *
- * @see purple_plugin_load()
- * @see purple_plugin_unload()
+ * Returns: %TRUE if successful, or %FALSE otherwise.
  */
 gboolean purple_plugin_reload(PurplePlugin *plugin);
 

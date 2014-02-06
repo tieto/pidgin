@@ -91,8 +91,7 @@ void pidgin_smiley_manager_show(void);
  *
  * Shows an editor for a smiley.
  *
- * @see pidgin_smiley_editor_set_shortcut
- * @see pidgin_smiley_editor_set_image
+ * See pidgin_smiley_editor_set_shortcut(), pidgin_smiley_editor_set_image().
  *
  * Returns: The smiley add dialog
  */
