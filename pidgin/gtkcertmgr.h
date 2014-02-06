@@ -31,7 +31,7 @@
 #define _PIDGINCERTMGR_H_
 
 /**************************************************************************
- * @name Structures                                                       *
+ * Structures                                                             *
  **************************************************************************/
 typedef struct _PidginCertificateManager PidginCertificateManager;
 
@@ -50,7 +50,7 @@ struct _PidginCertificateManager {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Certificate Manager API                                         */
+/* Certificate Manager API                                                */
 /**************************************************************************/
 /*@{*/
 /**

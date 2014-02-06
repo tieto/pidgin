@@ -33,7 +33,7 @@ typedef struct _UPnPMappingAddRemove UPnPMappingAddRemove;
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name UPnP API                                                        */
+/* UPnP API                                                               */
 /**************************************************************************/
 /*@{*/
 

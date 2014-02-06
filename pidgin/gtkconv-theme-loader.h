@@ -59,7 +59,7 @@ struct _PidginConvThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Conversation Theme-Loader API                            */
+/* Pidgin Conversation Theme-Loader API                                   */
 /**************************************************************************/
 G_BEGIN_DECLS
 

@@ -77,7 +77,7 @@ typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Prefs API
+/*  Prefs API
     Preferences are named according to a directory-like structure.
     Example: "/plugins/core/potato/is_from_idaho" (probably a boolean)    */
 /**************************************************************************/

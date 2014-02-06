@@ -157,7 +157,7 @@ struct _PurpleBlistUiOps
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Buddy List API                                                  */
+/* Buddy List API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -429,7 +429,7 @@ void purple_blist_remove_account(PurpleAccount *account);
 /*@}*/
 
 /****************************************************************************************/
-/** @name Buddy list file management API                                                */
+/* Buddy list file management API                                                       */
 /****************************************************************************************/
 
 /**
@@ -478,7 +478,7 @@ void purple_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 void purple_blist_request_add_group(void);
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -502,7 +502,7 @@ PurpleBlistUiOps *purple_blist_get_ui_ops(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Buddy List Subsystem                                            */
+/* Buddy List Subsystem                                                   */
 /**************************************************************************/
 /*@{*/
 

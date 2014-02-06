@@ -224,7 +224,7 @@ typedef void (*PurpleRequestHelpCb)(gpointer);
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Common parameters API                                           */
+/* Common parameters API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -508,7 +508,7 @@ purple_request_cpar_get_parent_from(PurpleRequestCommonParameters *cpar);
 /*@}*/
 
 /**************************************************************************/
-/** @name Field List API                                                  */
+/* Field List API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -748,7 +748,7 @@ void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_
 /*@}*/
 
 /**************************************************************************/
-/** @name Fields Group API                                                */
+/* Fields Group API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -840,7 +840,7 @@ PurpleRequestFields *purple_request_field_group_get_fields_list(
 /*@}*/
 
 /**************************************************************************/
-/** @name Field API                                                       */
+/* Field API                                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -1103,7 +1103,7 @@ void purple_request_field_set_ui_data(PurpleRequestField *field,
 /*@}*/
 
 /**************************************************************************/
-/** @name String Field API                                                */
+/* String Field API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -1198,7 +1198,7 @@ gboolean purple_request_field_string_is_masked(const PurpleRequestField *field);
 /*@}*/
 
 /**************************************************************************/
-/** @name Integer Field API                                               */
+/* Integer Field API                                                      */
 /**************************************************************************/
 /*@{*/
 
@@ -1297,7 +1297,7 @@ int purple_request_field_int_get_value(const PurpleRequestField *field);
 /*@}*/
 
 /**************************************************************************/
-/** @name Boolean Field API                                               */
+/* Boolean Field API                                                      */
 /**************************************************************************/
 /*@{*/
 
@@ -1361,7 +1361,7 @@ gboolean purple_request_field_bool_get_value(const PurpleRequestField *field);
 /*@}*/
 
 /**************************************************************************/
-/** @name Choice Field API                                                */
+/* Choice Field API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -1462,7 +1462,7 @@ purple_request_field_choice_set_data_destructor(PurpleRequestField *field,
 /*@}*/
 
 /**************************************************************************/
-/** @name List Field API                                                  */
+/* List Field API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -1603,7 +1603,7 @@ GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
 /*@}*/
 
 /**************************************************************************/
-/** @name Label Field API                                                 */
+/* Label Field API                                                        */
 /**************************************************************************/
 /*@{*/
 
@@ -1622,7 +1622,7 @@ PurpleRequestField *purple_request_field_label_new(const char *id,
 /*@}*/
 
 /**************************************************************************/
-/** @name Image Field API                                                 */
+/* Image Field API                                                        */
 /**************************************************************************/
 /*@{*/
 
@@ -1693,7 +1693,7 @@ unsigned int purple_request_field_image_get_scale_y(PurpleRequestField *field);
 /*@}*/
 
 /**************************************************************************/
-/** @name Account Field API                                               */
+/* Account Field API                                                      */
 /**************************************************************************/
 /*@{*/
 
@@ -1812,7 +1812,7 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
 /*@}*/
 
 /**************************************************************************/
-/** @name Certificate Field API                                           */
+/* Certificate Field API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -1844,7 +1844,7 @@ PurpleCertificate *purple_request_field_certificate_get_value(
 /*@}*/
 
 /**************************************************************************/
-/** @name Datasheet Field API                                             */
+/* Datasheet Field API                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -1875,7 +1875,7 @@ PurpleRequestDatasheet *purple_request_field_datasheet_get_sheet(
 /*@}*/
 
 /**************************************************************************/
-/** @name Validators for request fields.                                  */
+/* Validators for request fields.                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -1913,7 +1913,7 @@ gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 /*@}*/
 
 /**************************************************************************/
-/** @name Request API                                                     */
+/* Request API                                                            */
 /**************************************************************************/
 /*@{*/
 
@@ -2322,7 +2322,7 @@ void *purple_request_certificate(void *handle, const char *title,
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 

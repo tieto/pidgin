@@ -48,7 +48,7 @@ typedef enum
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Datasheet API                                                   */
+/* Datasheet API                                                          */
 /**************************************************************************/
 /*@{*/
 
@@ -163,7 +163,7 @@ purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);
 
 
 /**************************************************************************/
-/** @name Datasheet actions API                                           */
+/* Datasheet actions API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -264,7 +264,7 @@ purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
 
 
 /**************************************************************************/
-/** @name Datasheet record API                                            */
+/* Datasheet record API                                                   */
 /**************************************************************************/
 /*@{*/
 

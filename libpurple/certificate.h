@@ -358,7 +358,7 @@ struct _PurpleCertificateVerificationRequest
 G_BEGIN_DECLS
 
 /*****************************************************************************/
-/** @name Certificate Verification Functions                                 */
+/* Certificate Verification Functions                                        */
 /*****************************************************************************/
 /*@{*/
 
@@ -404,7 +404,7 @@ purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 /*@}*/
 
 /*****************************************************************************/
-/** @name Certificate Functions                                              */
+/* Certificate Functions                                                     */
 /*****************************************************************************/
 /*@{*/
 
@@ -630,7 +630,7 @@ purple_certificate_get_display_string(PurpleCertificate *crt);
 /*@}*/
 
 /*****************************************************************************/
-/** @name Certificate Pool Functions                                         */
+/* Certificate Pool Functions                                                */
 /*****************************************************************************/
 /*@{*/
 
@@ -760,7 +760,7 @@ purple_certificate_pool_destroy_idlist(GList *idlist);
 /*@}*/
 
 /*****************************************************************************/
-/** @name Certificate Subsystem API                                          */
+/* Certificate Subsystem API                                                 */
 /*****************************************************************************/
 /*@{*/
 

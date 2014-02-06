@@ -53,7 +53,7 @@ GtkWindow *
 pidgin_request_get_dialog_window(void *ui_handle);
 
 /**************************************************************************/
-/** @name GTK+ Requests Subsystem                                         */
+/* GTK+ Requests Subsystem                                                */
 /**************************************************************************/
 /*@{*/
 

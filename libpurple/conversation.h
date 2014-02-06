@@ -299,7 +299,7 @@ struct _PurpleConversationUiOps
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Conversation API                                                */
+/* Conversation API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -729,7 +729,7 @@ purple_conversation_get_max_message_size(PurpleConversation *conv);
 /*@}*/
 
 /**************************************************************************/
-/** @name Conversation Helper API                                         */
+/* Conversation Helper API                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -753,7 +753,7 @@ gboolean purple_conversation_present_error(const char *who, PurpleAccount *accou
 /*@}*/
 
 /**************************************************************************/
-/** @name Conversation Message API                                        */
+/* Conversation Message API                                               */
 /**************************************************************************/
 /*@{*/
 

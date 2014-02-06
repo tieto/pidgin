@@ -204,7 +204,7 @@ struct _PurpleLogSet {
 G_BEGIN_DECLS
 
 /***************************************/
-/** @name Log Functions                */
+/* Log Functions                       */
 /***************************************/
 /*@{*/
 
@@ -420,7 +420,7 @@ void purple_log_set_free(PurpleLogSet *set);
 /*@}*/
 
 /******************************************/
-/** @name Common Logger Functions         */
+/* Common Logger Functions                */
 /******************************************/
 /*@{*/
 
@@ -539,7 +539,7 @@ gboolean purple_log_common_is_deletable(PurpleLog *log);
 /*@}*/
 
 /******************************************/
-/** @name Logger Functions                */
+/* Logger Functions                       */
 /******************************************/
 /*@{*/
 
@@ -623,7 +623,7 @@ PurpleLogLogger *purple_log_logger_get (void);
 GList *purple_log_logger_get_options(void);
 
 /**************************************************************************/
-/** @name Log Subsystem                                                   */
+/* Log Subsystem                                                          */
 /**************************************************************************/
 /*@{*/
 

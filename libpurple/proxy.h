@@ -72,7 +72,7 @@ typedef void (*PurpleProxyConnectFunction)(gpointer data, gint source, const gch
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Proxy structure API                                             */
+/* Proxy structure API                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -191,7 +191,7 @@ const char *purple_proxy_info_get_password(const PurpleProxyInfo *info);
 /*@}*/
 
 /**************************************************************************/
-/** @name Global Proxy API                                                */
+/* Global Proxy API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -215,7 +215,7 @@ void purple_global_proxy_set_info(PurpleProxyInfo *info);
 /*@}*/
 
 /**************************************************************************/
-/** @name Proxy API                                                       */
+/* Proxy API                                                              */
 /**************************************************************************/
 /*@{*/
 

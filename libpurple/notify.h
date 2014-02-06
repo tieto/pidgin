@@ -377,7 +377,7 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 /*@}*/
 
 /**************************************************************************/
-/** @name Notification API                                                */
+/* Notification API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -810,7 +810,7 @@ void purple_notify_close_with_handle(void *handle);
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -836,7 +836,7 @@ PurpleNotifyUiOps *purple_notify_get_ui_ops(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Notify Subsystem                                                */
+/* Notify Subsystem                                                       */
 /**************************************************************************/
 /*@{*/
 

@@ -86,7 +86,7 @@ typedef void (*PurplePounceCb)(PurplePounce *, PurplePounceEvent, void *);
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Buddy Pounce API                                                */
+/* Buddy Pounce API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -319,7 +319,7 @@ void purple_pounce_execute(const PurpleAccount *pouncer, const char *pouncee,
 /*@}*/
 
 /**************************************************************************/
-/** @name Buddy Pounce Subsystem API                                      */
+/* Buddy Pounce Subsystem API                                             */
 /**************************************************************************/
 /*@{*/
 

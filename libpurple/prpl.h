@@ -42,7 +42,7 @@ typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
 typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/
-/** @name Basic Protocol Information                                      */
+/* Basic Protocol Information                                             */
 /**************************************************************************/
 
 /**
@@ -665,7 +665,7 @@ struct _PurplePluginProtocolInfo
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Attention Type API                                              */
+/* Attention Type API                                                     */
 /**************************************************************************/
 /*@{*/
 
@@ -794,7 +794,7 @@ const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType
 /*@}*/
 
 /**************************************************************************/
-/** @name Protocol Plugin API                                             */
+/* Protocol Plugin API                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -1024,7 +1024,7 @@ purple_prpl_get_max_message_size(PurplePlugin *prpl);
 /*@}*/
 
 /**************************************************************************/
-/** @name Protocol Plugin Subsystem API                                   */
+/* Protocol Plugin Subsystem API                                          */
 /**************************************************************************/
 /*@{*/
 

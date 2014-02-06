@@ -33,7 +33,7 @@ typedef struct _PidginWindow       PidginWindow;
 
 
 /**************************************************************************
- * @name Structures
+ * Structures
  **************************************************************************/
 /*@{*/
 
@@ -112,7 +112,7 @@ struct _PidginWindow
 G_BEGIN_DECLS
 
 /**************************************************************************
- * @name GTK+ Conversation Window API
+ * GTK+ Conversation Window API
  **************************************************************************/
 /*@{*/
 
@@ -142,7 +142,7 @@ PidginWindow *pidgin_conv_window_last_chat(void);
 /*@}*/
 
 /**************************************************************************
- * @name GTK+ Conversation Placement API
+ * GTK+ Conversation Placement API
  **************************************************************************/
 /*@{*/
 

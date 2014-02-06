@@ -61,7 +61,7 @@ struct _PurpleThemeManagerClass {
 };
 
 /**************************************************************************/
-/** @name Purple Theme Manager API                                        */
+/* Purple Theme Manager API                                               */
 /**************************************************************************/
 G_BEGIN_DECLS
 

@@ -59,7 +59,7 @@ struct _PidginBlistThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Buddy List Theme-Loader API                                     */
+/* Buddy List Theme-Loader API                                            */
 /**************************************************************************/
 G_BEGIN_DECLS
 

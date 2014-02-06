@@ -48,7 +48,7 @@
 #define PURPLE_KEYRING_ERROR purple_keyring_error_domain()
 
 /**************************************************************************/
-/** @name Data structures and types                                       */
+/* Data structures and types                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -57,7 +57,7 @@ typedef struct _PurpleKeyring PurpleKeyring;
 /*@}*/
 
 /**************************************************************************/
-/** @name Callbacks for keyrings access functions                         */
+/* Callbacks for keyrings access functions                                */
 /**************************************************************************/
 /*@{*/
 
@@ -109,7 +109,7 @@ typedef void (*PurpleKeyringSetInUseCallback)(GError *error, gpointer data);
 /*@}*/
 
 /**************************************************************************/
-/** @name Keyrings access functions                                       */
+/* Keyrings access functions                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -218,7 +218,7 @@ typedef gboolean (*PurpleKeyringApplySettings)(void *notify_handle,
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Setting used keyrings                                           */
+/* Setting used keyrings                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -295,7 +295,7 @@ purple_keyring_get_options(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Keyring plugin wrappers                                         */
+/* Keyring plugin wrappers                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -392,7 +392,7 @@ purple_keyring_apply_settings(void *notify_handle, PurpleRequestFields *fields);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleKeyring accessors                                         */
+/* PurpleKeyring accessors                                                */
 /**************************************************************************/
 /*@{*/
 
@@ -543,7 +543,7 @@ PurpleKeyringApplySettings apply_settings);
 /*@}*/
 
 /**************************************************************************/
-/** @name Error Codes                                                     */
+/* Error Codes                                                            */
 /**************************************************************************/
 /*@{*/
 
@@ -588,7 +588,7 @@ enum PurpleKeyringError
 /*}@*/
 
 /**************************************************************************/
-/** @name Keyring Subsystem                                               */
+/* Keyring Subsystem                                                      */
 /**************************************************************************/
 /*@{*/
 

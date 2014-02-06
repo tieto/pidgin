@@ -67,7 +67,7 @@ struct _PurpleSoundThemeClass
 };
 
 /**************************************************************************/
-/** @name Purple Sound Theme API                                          */
+/* Purple Sound Theme API                                                 */
 /**************************************************************************/
 G_BEGIN_DECLS
 

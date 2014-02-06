@@ -30,7 +30,7 @@
 #include "util.h"
 
 /**************************************************************************/
-/** @name Attention Type API                                              */
+/* Attention Type API                                                     */
 /**************************************************************************/
 
 struct _PurpleAttentionType
@@ -142,7 +142,7 @@ purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type)
 }
 
 /**************************************************************************/
-/** @name Protocol Plugin API  */
+/* Protocol Plugin API                                                    */
 /**************************************************************************/
 void
 purple_prpl_got_account_idle(PurpleAccount *account, gboolean idle,

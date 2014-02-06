@@ -72,7 +72,7 @@ struct _PurpleSmileyClass
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Custom Smiley API                                               */
+/* Custom Smiley API                                                      */
 /**************************************************************************/
 /*@{*/
 
@@ -229,7 +229,7 @@ char *purple_smiley_get_full_path(PurpleSmiley *smiley);
 
 
 /**************************************************************************/
-/** @name Custom Smiley Subsystem API                                     */
+/* Custom Smiley Subsystem API                                            */
 /**************************************************************************/
 /*@{*/
 

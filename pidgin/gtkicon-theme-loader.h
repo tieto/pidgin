@@ -59,7 +59,7 @@ struct _PidginIconThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Icon Theme-Loader API                                    */
+/* Pidgin Icon Theme-Loader API                                           */
 /**************************************************************************/
 G_BEGIN_DECLS
 

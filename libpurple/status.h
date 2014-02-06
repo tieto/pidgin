@@ -161,7 +161,7 @@ struct _PurpleStatusClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name PurpleStatusPrimitive API                                       */
+/* PurpleStatusPrimitive API                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -202,7 +202,7 @@ PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusType API                                            */
+/* PurpleStatusType API                                                   */
 /**************************************************************************/
 /*@{*/
 
@@ -420,7 +420,7 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusAttribute API                                       */
+/* PurpleStatusAttribute API                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -485,7 +485,7 @@ GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleMood API                                                  */
+/* PurpleMood API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -499,7 +499,7 @@ GType purple_mood_get_type(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatus API                                                */
+/* PurpleStatus API                                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -735,7 +735,7 @@ gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *stat
 /*@}*/
 
 /**************************************************************************/
-/** @name Statuses subsystem                                                */
+/* Statuses subsystem                                                     */
 /**************************************************************************/
 /*@{*/
 

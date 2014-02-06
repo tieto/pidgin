@@ -196,7 +196,7 @@ struct _PurpleChatUserClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name IM Conversation API                                             */
+/* IM Conversation API                                                    */
 /**************************************************************************/
 /*@{*/
 
@@ -353,7 +353,7 @@ void purple_im_conversation_update_typing(PurpleIMConversation *im);
 /*@}*/
 
 /**************************************************************************/
-/** @name Chat Conversation API                                           */
+/* Chat Conversation API                                                  */
 /**************************************************************************/
 /*@{*/
 
@@ -666,7 +666,7 @@ gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 /*@}*/
 
 /**************************************************************************/
-/** @name Chat Conversation User API                                      */
+/* Chat Conversation User API                                             */
 /**************************************************************************/
 /*@{*/
 

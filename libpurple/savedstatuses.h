@@ -68,7 +68,7 @@ typedef struct _PurpleSavedStatusSub  PurpleSavedStatusSub;
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Saved status subsystem                                          */
+/* Saved status subsystem                                                 */
 /**************************************************************************/
 /*@{*/
 

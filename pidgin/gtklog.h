@@ -73,7 +73,7 @@ void pidgin_log_show_contact(PurpleContact *contact);
 void pidgin_syslog_show(void);
 
 /**************************************************************************/
-/** @name GTK+ Log Subsystem                                              */
+/* GTK+ Log Subsystem                                                     */
 /**************************************************************************/
 /*@{*/
 

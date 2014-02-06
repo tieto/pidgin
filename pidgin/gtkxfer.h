@@ -43,7 +43,7 @@ typedef struct _PidginXferDialog PidginXferDialog;
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name GTK+ File Transfer Dialog API                                   */
+/* GTK+ File Transfer Dialog API                                          */
 /**************************************************************************/
 /*@{*/
 
@@ -123,7 +123,7 @@ void pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 /*@}*/
 
 /**************************************************************************/
-/** @name GTK+ File Transfer API                                          */
+/* GTK+ File Transfer API                                                 */
 /**************************************************************************/
 /*@{*/
 

@@ -285,7 +285,7 @@ struct _PurpleConnectionClass {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Connection API                                                  */
+/* Connection API                                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -525,7 +525,7 @@ void purple_connection_update_last_received(PurpleConnection *gc);
 /*@}*/
 
 /**************************************************************************/
-/** @name Connections API                                                 */
+/* Connections API                                                        */
 /**************************************************************************/
 /*@{*/
 
@@ -576,7 +576,7 @@ GList *purple_connections_get_connecting(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
 /*@{*/
 
@@ -600,7 +600,7 @@ PurpleConnectionUiOps *purple_connections_get_ui_ops(void);
 /*@}*/
 
 /**************************************************************************/
-/** @name Connections Subsystem                                           */
+/* Connections Subsystem                                                  */
 /**************************************************************************/
 /*@{*/
 

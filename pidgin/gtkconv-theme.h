@@ -82,7 +82,7 @@ typedef enum {
 } PidginConvThemeTemplateType;
 
 /**************************************************************************/
-/** @name Pidgin Conversation Theme API                                   */
+/* Pidgin Conversation Theme API                                          */
 /**************************************************************************/
 G_BEGIN_DECLS
 

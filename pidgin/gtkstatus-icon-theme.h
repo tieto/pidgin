@@ -61,7 +61,7 @@ struct _PidginStatusIconThemeClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Status Icon Theme API                                    */
+/* Pidgin Status Icon Theme API                                           */
 /**************************************************************************/
 G_BEGIN_DECLS
 
