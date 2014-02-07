@@ -60,7 +60,7 @@ typedef struct _PurpleProtocolClass PurpleProtocolClass;
  * Flags to indicate what base protocol's data a derived protocol wants to
  * override.
  *
- * @see purple_protocol_override()
+ * See purple_protocol_override().
  */
 typedef enum /*< flags >*/
 {

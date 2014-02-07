@@ -100,7 +100,7 @@ GType finch_plugin_info_get_type(void);
  * returns a #GntWidget for the plugin's preferences
  * (see #FinchPluginPrefFrameCb).
  *
- * @see purple_plugin_info_new()
+ * See purple_plugin_info_new().
  *
  * Returns: A new #FinchPluginInfo instance.
  */

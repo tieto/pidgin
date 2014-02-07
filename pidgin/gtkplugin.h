@@ -92,7 +92,7 @@ GType pidgin_plugin_info_get_type(void);
  * returns a #GtkWidget for the plugin's configuration
  * (see #PidginPluginConfigFrameCb).
  *
- * @see purple_plugin_info_new()
+ * See purple_plugin_info_new().
  *
  * Returns: A new #PidginPluginInfo instance.
  */
