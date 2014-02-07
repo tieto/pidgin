@@ -215,7 +215,7 @@ AM_CPPFLAGS = \
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --add-include-path=$(top_builddir)/libpurple
+INTROSPECTION_SCANNER_ARGS = --warn-all --add-include-path=$(top_builddir)/libpurple
 INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple
 
 if HAVE_INTROSPECTION
