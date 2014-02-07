@@ -685,7 +685,7 @@ purple_protocol_get_max_message_size(PurpleProtocol *protocol)
 }
 
 /**************************************************************************/
-/** @name Protocol Action API                                             */
+/* Protocol Action API                                                    */
 /**************************************************************************/
 
 PurpleProtocolAction *

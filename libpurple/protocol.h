@@ -741,7 +741,7 @@ struct _PurpleProtocolFactoryIface
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Protocol Object API                                             */
+/* Protocol Object API                                                    */
 /**************************************************************************/
 
 /**
@@ -835,7 +835,7 @@ void purple_protocol_override(PurpleProtocol *protocol,
 		PurpleProtocolOverrideFlags flags);
 
 /**************************************************************************/
-/** @name Protocol Class API                                              */
+/* Protocol Class API                                                     */
 /**************************************************************************/
 
 void purple_protocol_class_login(PurpleProtocol *, PurpleAccount *);
@@ -849,7 +849,7 @@ const char *purple_protocol_class_list_icon(PurpleProtocol *,
 		PurpleAccount *account, PurpleBuddy *buddy);
 
 /**************************************************************************/
-/** @name Protocol Client Interface API                                   */
+/* Protocol Client Interface API                                          */
 /**************************************************************************/
 
 /**
@@ -898,7 +898,7 @@ gssize purple_protocol_client_iface_get_max_message_size(PurpleProtocol *,
 		PurpleConversation *conv);
 
 /**************************************************************************/
-/** @name Protocol Server Interface API                                   */
+/* Protocol Server Interface API                                          */
 /**************************************************************************/
 
 /**
@@ -976,7 +976,7 @@ void purple_protocol_server_iface_get_public_alias(PurpleProtocol *,
 		PurpleGetPublicAliasFailureCallback failure_cb);
 
 /**************************************************************************/
-/** @name Protocol IM Interface API                                       */
+/* Protocol IM Interface API                                              */
 /**************************************************************************/
 
 /**
@@ -993,7 +993,7 @@ unsigned int purple_protocol_im_iface_send_typing(PurpleProtocol *,
 		PurpleConnection *, const char *name, PurpleIMTypingState state);
 
 /**************************************************************************/
-/** @name Protocol Chat Interface API                                     */
+/* Protocol Chat Interface API                                            */
 /**************************************************************************/
 
 /**
@@ -1037,7 +1037,7 @@ void purple_protocol_chat_iface_set_topic(PurpleProtocol *,
 		PurpleConnection *gc, int id, const char *topic);
 
 /**************************************************************************/
-/** @name Protocol Privacy Interface API                                  */
+/* Protocol Privacy Interface API                                         */
 /**************************************************************************/
 
 /**
@@ -1063,7 +1063,7 @@ void purple_protocol_privacy_iface_set_permit_deny(PurpleProtocol *,
 		PurpleConnection *);
 
 /**************************************************************************/
-/** @name Protocol Xfer Interface API                                     */
+/* Protocol Xfer Interface API                                            */
 /**************************************************************************/
 
 /**
@@ -1083,7 +1083,7 @@ PurpleXfer *purple_protocol_xfer_iface_new_xfer(PurpleProtocol *,
 		PurpleConnection *, const char *who);
 
 /**************************************************************************/
-/** @name Protocol Roomlist Interface API                                 */
+/* Protocol Roomlist Interface API                                        */
 /**************************************************************************/
 
 /**
@@ -1106,7 +1106,7 @@ char *purple_protocol_roomlist_iface_room_serialize(PurpleProtocol *,
 		PurpleRoomlistRoom *room);
 
 /**************************************************************************/
-/** @name Protocol Attention Interface API                                */
+/* Protocol Attention Interface API                                       */
 /**************************************************************************/
 
 /**
@@ -1123,7 +1123,7 @@ GList *purple_protocol_attention_iface_get_types(PurpleProtocol *,
 		PurpleAccount *acct);
 
 /**************************************************************************/
-/** @name Protocol Media Interface API                                    */
+/* Protocol Media Interface API                                           */
 /**************************************************************************/
 
 /**
@@ -1140,7 +1140,7 @@ PurpleMediaCaps purple_protocol_media_iface_get_caps(PurpleProtocol *,
 		PurpleAccount *account, const char *who);
 
 /**************************************************************************/
-/** @name Protocol Factory Interface API                                  */
+/* Protocol Factory Interface API                                         */
 /**************************************************************************/
 
 /**
