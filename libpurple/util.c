@@ -3731,7 +3731,7 @@ purple_str_seconds_to_string(guint secs)
 	hrs  = secs / (60 * 60);
 	secs = secs % (60 * 60);
 	mins = secs / 60;
-	secs = secs % 60;
+	/* secs = secs % 60; */
 
 	if (days > 0)
 	{
@@ -3870,8 +3870,12 @@ void purple_got_protocol_handler_uri(const char *uri)
 		while (*tmp || *pairstart) {
 			if (*tmp == delimiter || !(*tmp)) {
 				/* If there is no explicit value */
-				if (keyend == NULL)
+				if (keyend == NULL) {
 					keyend = tmp;
+				}
+				/* without these brackets, clang won't
+				 * recognize tmp as a non-NULL
+				 */
 
 				if (keyend && keyend != pairstart) {
 					char *p;

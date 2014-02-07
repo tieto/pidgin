@@ -208,7 +208,8 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 	halfkey_pad = priv->out_len - (halfkey_count - 1) * halfkey_len;
 
 	salt_ext = g_new(guchar, salt_ext_len);
-	memcpy(salt_ext, priv->salt, priv->salt_len);
+	if (priv->salt_len > 0)
+		memcpy(salt_ext, priv->salt, priv->salt_len);
 
 	for (halfkey_no = 1; halfkey_no <= halfkey_count; halfkey_no++) {
 		memset(halfkey, 0, halfkey_len);
