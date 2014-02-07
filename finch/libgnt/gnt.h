@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_H
+#define GNT_H
 /**
  * SECTION:gnt
  * @section_id: libgnt-gnt
  * @short_description: <filename>gnt.h</filename>
  * @title: GNT API
  */
-
-#ifndef GNT_H
-#define GNT_H
 
 #include <glib.h>
 #include "gntwidget.h"

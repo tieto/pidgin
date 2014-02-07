@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_MENU_ITEM_CHECK_H
+#define GNT_MENU_ITEM_CHECK_H
 /**
  * SECTION:gntmenuitemcheck
  * @section_id: libgnt-gntmenuitemcheck
  * @short_description: <filename>gntmenuitemcheck.h</filename>
  * @title: Check Menuitem
  */
-
-#ifndef GNT_MENU_ITEM_CHECK_H
-#define GNT_MENU_ITEM_CHECK_H
 
 #include "gnt.h"
 #include "gntcolors.h"

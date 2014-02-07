@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINGTK3COMPAT_H_
+#define _PIDGINGTK3COMPAT_H_
 /*
  * SECTION:gtk3compat
  * @section_id: pidgin-gtk3compat
@@ -27,9 +30,6 @@
  * This file is internal to Pidgin. Do not use!
  * Also, any public API should not depend on this file.
  */
-
-#ifndef _PIDGINGTK3COMPAT_H_
-#define _PIDGINGTK3COMPAT_H_
 
 #if !GTK_CHECK_VERSION(3,2,0)
 

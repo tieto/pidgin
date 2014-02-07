@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINSAVEDSTATUSES_H_
+#define _PIDGINSAVEDSTATUSES_H_
 /**
  * SECTION:gtksavedstatuses
  * @section_id: pidgin-gtksavedstatuses
  * @short_description: <filename>gtksavedstatuses.h</filename>
  * @title: Saved Status Editor UI
  */
-
-#ifndef _PIDGINSAVEDSTATUSES_H_
-#define _PIDGINSAVEDSTATUSES_H_
 
 #include "savedstatuses.h"
 #include "status.h"

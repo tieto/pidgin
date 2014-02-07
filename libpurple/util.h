@@ -21,15 +21,15 @@
  * TODO Rename the functions so that they live somewhere in the purple
  *      namespace.
  */
+
+#ifndef _PURPLE_UTIL_H_
+#define _PURPLE_UTIL_H_
 /**
  * SECTION:util
  * @section_id: libpurple-util
  * @short_description: <filename>util.h</filename>
  * @title: Utility Functions
  */
-
-#ifndef _PURPLE_UTIL_H_
-#define _PURPLE_UTIL_H_
 
 #include <stdio.h>
 

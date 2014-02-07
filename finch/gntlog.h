@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _FINCHLOG_H_
+#define _FINCHLOG_H_
 /**
  * SECTION:gntlog
  * @section_id: finch-gntlog
  * @short_description: <filename>gntlog.h</filename>
  * @title: Log Viewer
  */
-
-#ifndef _FINCHLOG_H_
-#define _FINCHLOG_H_
 
 #include "log.h"
 #include "account.h"

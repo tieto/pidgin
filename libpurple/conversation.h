@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_CONVERSATION_H_
+#define _PURPLE_CONVERSATION_H_
 /**
  * SECTION:conversation
  * @section_id: libpurple-conversation
  * @short_description: <filename>conversation.h</filename>
  * @title: Conversation Base Class
  */
-
-#ifndef _PURPLE_CONVERSATION_H_
-#define _PURPLE_CONVERSATION_H_
 
 #define PURPLE_TYPE_CONVERSATION             (purple_conversation_get_type())
 #define PURPLE_CONVERSATION(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CONVERSATION, PurpleConversation))

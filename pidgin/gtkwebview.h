@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PIDGIN_WEBVIEW_H_
+#define _PIDGIN_WEBVIEW_H_
 /**
  * SECTION:gtkwebview
  * @section_id: pidgin-gtkwebview
@@ -27,9 +30,6 @@
  *
  * Wrapper over the Gtk WebKitWebView component.
  */
-
-#ifndef _PIDGIN_WEBVIEW_H_
-#define _PIDGIN_WEBVIEW_H_
 
 #include <glib.h>
 #include <gtk/gtk.h>

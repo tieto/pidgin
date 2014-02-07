@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef __PIDGIN_SCROLL_BOOK_H__
+#define __PIDGIN_SCROLL_BOOK_H__
 /**
  * SECTION:gtkscrollbook
  * @section_id: pidgin-gtkscrollbook
  * @short_description: <filename>gtkscrollbook.h</filename>
  * @title: Scrolling Notebook Widget
  */
-
-#ifndef __PIDGIN_SCROLL_BOOK_H__
-#define __PIDGIN_SCROLL_BOOK_H__
 
 #include <gtk/gtk.h>
 

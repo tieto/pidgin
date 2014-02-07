@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNTWS_H
+#define GNTWS_H
 /**
  * SECTION:gntws
  * @section_id: libgnt-gntws
  * @short_description: <filename>gntws.h</filename>
  * @title: Workspace API
  */
-
-#ifndef GNTWS_H
-#define GNTWS_H
 
 #include "gntwidget.h"
 

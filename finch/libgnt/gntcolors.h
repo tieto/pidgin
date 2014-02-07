@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_COLORS_H
+#define GNT_COLORS_H
 /**
  * SECTION:gntcolors
  * @section_id: libgnt-gntcolors
  * @short_description: <filename>gntcolors.h</filename>
  * @title: Colors
  */
-
-#ifndef GNT_COLORS_H
-#define GNT_COLORS_H
 
 #include <glib.h>
 

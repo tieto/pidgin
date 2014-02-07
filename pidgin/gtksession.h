@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINSESSION_H_
+#define _PIDGINSESSION_H_
 /**
  * SECTION:gtksession
  * @section_id: pidgin-gtksession
  * @short_description: <filename>gtksession.h</filename>
  * @title: X Windows Session Management
  */
-
-#ifndef _PIDGINSESSION_H_
-#define _PIDGINSESSION_H_
 
 G_BEGIN_DECLS
 

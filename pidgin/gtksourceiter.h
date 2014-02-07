@@ -24,15 +24,15 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301, USA.
  */
+
+#ifndef _PIDGINSOURCEITER_H_
+#define _PIDGINSOURCEITER_H_
 /**
  * SECTION:gtksourceiter
  * @section_id: pidgin-gtksourceiter
  * @short_description: <filename>gtksourceiter.h</filename>
  * @title: Source Iterator utilities
  */
-
-#ifndef _PIDGINSOURCEITER_H_
-#define _PIDGINSOURCEITER_H_
 
 #include <gtk/gtk.h>
 

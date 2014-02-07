@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGIN_CONVERSATION_H_
+#define _PIDGIN_CONVERSATION_H_
 /**
  * SECTION:gtkconv
  * @section_id: pidgin-gtkconv
@@ -25,9 +28,6 @@
  * @title: Conversation API
  * @see_also: <link linkend="chapter-signals-gtkconv">Conversation signals</link>
  */
-
-#ifndef _PIDGIN_CONVERSATION_H_
-#define _PIDGIN_CONVERSATION_H_
 
 typedef struct _PidginImPane       PidginImPane;
 typedef struct _PidginChatPane     PidginChatPane;

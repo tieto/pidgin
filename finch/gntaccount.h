@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_ACCOUNT_H
+#define _GNT_ACCOUNT_H
 /**
  * SECTION:gntaccount
  * @section_id: finch-gntaccount
  * @short_description: <filename>gntaccount.h</filename>
  * @title: Account API
  */
-
-#ifndef _GNT_ACCOUNT_H
-#define _GNT_ACCOUNT_H
 
 #include "account.h"
 

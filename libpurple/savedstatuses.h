@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_SAVEDSTATUSES_H_
+#define _PURPLE_SAVEDSTATUSES_H_
 /**
  * SECTION:savedstatuses
  * @section_id: libpurple-savedstatuses
@@ -25,9 +28,6 @@
  * @title: Saved Status API
  * @see_also: <link linkend="chapter-signals-savedstatus">Saved Status signals</link>
  */
-
-#ifndef _PURPLE_SAVEDSTATUSES_H_
-#define _PURPLE_SAVEDSTATUSES_H_
 
 #define PURPLE_TYPE_SAVEDSTATUS  (purple_savedstatus_get_type())
 

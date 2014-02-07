@@ -20,6 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301,
  * USA.
  */
+
+#ifndef _PURPLE_MIME_H
+#define _PURPLE_MIME_H
 /**
  * SECTION:mime
  * @section_id: libpurple-mime
@@ -29,9 +32,6 @@
  * Rudimentary parsing of multi-part MIME messages into more
  * accessible structures.
  */
-
-#ifndef _PURPLE_MIME_H
-#define _PURPLE_MIME_H
 
 #include <glib.h>
 

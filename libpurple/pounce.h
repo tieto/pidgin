@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_POUNCE_H_
+#define _PURPLE_POUNCE_H_
 /**
  * SECTION:pounce
  * @section_id: libpurple-pounce
  * @short_description: <filename>pounce.h</filename>
  * @title: Buddy Pounce API
  */
-
-#ifndef _PURPLE_POUNCE_H_
-#define _PURPLE_POUNCE_H_
 
 typedef struct _PurplePounce PurplePounce;
 

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_MENUUTIL_H
+#define _GNT_MENUUTIL_H
 /**
  * SECTION:gntmenuutil
  * @section_id: finch-gntmenuutil
  * @short_description: <filename>gntmenuutil.h</filename>
  * @title: Menu Utility functions
  */
-
-#ifndef _GNT_MENUUTIL_H
-#define _GNT_MENUUTIL_H
 
 #include <gnt.h>
 #include <gntmenu.h>

@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_DBUS_SERVER_H_
+#define _PURPLE_DBUS_SERVER_H_
 /**
  * SECTION:dbus-server
  * @section_id: libpurple-dbus-server
@@ -25,9 +28,6 @@
  * @title: DBUS Server
  * @see_also: <link linkend="chapter-signals-dbus-server">D-Bus Server signals</link>
  */
-
-#ifndef _PURPLE_DBUS_SERVER_H_
-#define _PURPLE_DBUS_SERVER_H_
 
 #include "dbus-purple.h"
 

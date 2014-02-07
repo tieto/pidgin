@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINPLUGIN_H_
+#define _PIDGINPLUGIN_H_
 /**
  * SECTION:gtkplugin
  * @section_id: pidgin-gtkplugin
  * @short_description: <filename>gtkplugin.h</filename>
  * @title: Plugin API
  */
-
-#ifndef _PIDGINPLUGIN_H_
-#define _PIDGINPLUGIN_H_
 
 #include "pidgin.h"
 #include "plugins.h"

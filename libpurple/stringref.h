@@ -21,15 +21,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PURPLE_STRINGREF_H_
+#define _PURPLE_STRINGREF_H_
 /**
  * SECTION:stringref
  * @section_id: libpurple-stringref
  * @short_description: <filename>stringref.h</filename>
  * @title: Reference-counted Immutable Strings
  */
-
-#ifndef _PURPLE_STRINGREF_H_
-#define _PURPLE_STRINGREF_H_
 
 typedef struct _PurpleStringref PurpleStringref;
 

@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PURPLE_DBUS_BINDINGS_H_
+#define _PURPLE_DBUS_BINDINGS_H_
 /**
  * SECTION:dbus-bindings
  * @section_id: libpurple-dbus-bindings
  * @short_description: <filename>dbus-bindings.h</filename>
  * @title: DBUS Bindings
  */
-
-#ifndef _PURPLE_DBUS_BINDINGS_H_
-#define _PURPLE_DBUS_BINDINGS_H_
 
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>

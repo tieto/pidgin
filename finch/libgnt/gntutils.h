@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_UTILS_H
+#define GNT_UTILS_H
 /**
  * SECTION:gntutils
  * @section_id: libgnt-gntutils
@@ -162,3 +165,4 @@ gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv);
  */
 void gnt_util_set_trigger_widget(GntWidget *widget, const char *key, GntWidget *button);
 
+#endif /* GNT_UTILS_H */

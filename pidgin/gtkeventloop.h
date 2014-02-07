@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINEVENTLOOP_H_
+#define _PIDGINEVENTLOOP_H_
 /**
  * SECTION:gtkeventloop
  * @section_id: pidgin-gtkeventloop
  * @short_description: <filename>gtkeventloop.h</filename>
  * @title: Event Loop Implementation
  */
-
-#ifndef _PIDGINEVENTLOOP_H_
-#define _PIDGINEVENTLOOP_H_
 
 #include "eventloop.h"
 

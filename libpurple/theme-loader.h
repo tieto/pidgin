@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_THEME_LOADER_H
+#define PURPLE_THEME_LOADER_H
 /**
  * SECTION:theme-loader
  * @section_id: libpurple-theme-loader
  * @short_description: <filename>theme-loader.h</filename>
  * @title: Theme Loader Abstact Class
  */
-
-#ifndef PURPLE_THEME_LOADER_H
-#define PURPLE_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>

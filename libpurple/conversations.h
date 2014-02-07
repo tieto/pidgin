@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_CONVERSATIONS_H_
+#define _PURPLE_CONVERSATIONS_H_
 /**
  * SECTION:conversations
  * @section_id: libpurple-conversations
@@ -25,9 +28,6 @@
  * @title: Conversations Subsystem API
  * @see_also: <link linkend="chapter-signals-conversation">Conversation signals</link>
  */
-
-#ifndef _PURPLE_CONVERSATIONS_H_
-#define _PURPLE_CONVERSATIONS_H_
 
 #include "conversationtypes.h"
 #include "server.h"

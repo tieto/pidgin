@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_RC4_CIPHER_H
+#define PURPLE_RC4_CIPHER_H
 /**
  * SECTION:rc4cipher
  * @section_id: libpurple-rc4cipher
  * @short_description: <filename>ciphers/rc4cipher.h</filename>
  * @title: RC4 Cipher
  */
-
-#ifndef PURPLE_RC4_CIPHER_H
-#define PURPLE_RC4_CIPHER_H
 
 #include "cipher.h"
 

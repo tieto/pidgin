@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_ACCOUNTOPT_H_
+#define _PURPLE_ACCOUNTOPT_H_
 /**
  * SECTION:accountopt
  * @section_id: libpurple-accountopt
  * @short_description: <filename>accountopt.h</filename>
  * @title: Account Options API
  */
-
-#ifndef _PURPLE_ACCOUNTOPT_H_
-#define _PURPLE_ACCOUNTOPT_H_
 
 #include "prefs.h"
 

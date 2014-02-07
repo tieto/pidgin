@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_CIRCULAR_BUFFER_H
+#define PURPLE_CIRCULAR_BUFFER_H
 /**
  * SECTION:circularbuffer
  * @section_id: libpurple-circularbuffer
  * @short_description: <filename>circularbuffer.h</filename>
  * @title: Buffer Utility Functions
  */
-
-#ifndef PURPLE_CIRCULAR_BUFFER_H
-#define PURPLE_CIRCULAR_BUFFER_H
 
 #include <glib.h>
 #include <glib-object.h>

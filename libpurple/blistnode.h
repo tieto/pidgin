@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_BLIST_NODE_H_
+#define _PURPLE_BLIST_NODE_H_
 /**
  * SECTION:blistnode
  * @section_id: libpurple-blistnode
  * @short_description: <filename>blistnode.h</filename>
  * @title: Buddy List Node and Counting Node types
  */
-
-#ifndef _PURPLE_BLIST_NODE_H_
-#define _PURPLE_BLIST_NODE_H_
 
 #include <glib.h>
 #include <glib-object.h>

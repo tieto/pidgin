@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_PRESENCE_H_
+#define _PURPLE_PRESENCE_H_
 /**
  * SECTION:presence
  * @section_id: libpurple-presence
@@ -28,9 +31,6 @@
  * This file contains the presence base type, account presence, and buddy
  * presence API.
  */
-
-#ifndef _PURPLE_PRESENCE_H_
-#define _PURPLE_PRESENCE_H_
 
 #define PURPLE_TYPE_PRESENCE             (purple_presence_get_type())
 #define PURPLE_PRESENCE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PRESENCE, PurplePresence))

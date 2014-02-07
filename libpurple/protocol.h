@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_PROTOCOL_H_
+#define _PURPLE_PROTOCOL_H_
 /**
  * SECTION:protocol
  * @section_id: libpurple-protocol
  * @short_description: <filename>protocol.h</filename>
  * @title: Protocol Object and Interfaces
  */
-
-#ifndef _PURPLE_PROTOCOL_H_
-#define _PURPLE_PROTOCOL_H_
 
 #define PURPLE_TYPE_PROTOCOL            (purple_protocol_get_type())
 #define PURPLE_PROTOCOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_PROTOCOL, PurpleProtocol))

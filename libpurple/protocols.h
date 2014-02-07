@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_PROTOCOLS_H_
+#define _PURPLE_PROTOCOLS_H_
 /**
  * SECTION:protocols
  * @section_id: libpurple-protocols
@@ -25,9 +28,6 @@
  * @title: Protocols Subsystem API
  * @see_also: <link linkend="chapter-signals-protocol">Protocol signals</link>
  */
-
-#ifndef _PURPLE_PROTOCOLS_H_
-#define _PURPLE_PROTOCOLS_H_
 
 #define PURPLE_PROTOCOLS_DOMAIN  (g_quark_from_static_string("protocols"))
 

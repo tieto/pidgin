@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PURPLE_SMILEY_H_
+#define _PURPLE_SMILEY_H_
 /**
  * SECTION:smiley
  * @section_id: libpurple-smiley
  * @short_description: <filename>smiley.h</filename>
  * @title: Smiley API
  */
-
-#ifndef _PURPLE_SMILEY_H_
-#define _PURPLE_SMILEY_H_
 
 #include <glib-object.h>
 

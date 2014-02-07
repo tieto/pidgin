@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PIDGIN_MENU_TRAY_H
+#define PIDGIN_MENU_TRAY_H
 /**
  * SECTION:gtkmenutray
  * @section_id: pidgin-gtkmenutray
  * @short_description: <filename>gtkmenutray.h</filename>
  * @title: Tray Menu Item
  */
-
-#ifndef PIDGIN_MENU_TRAY_H
-#define PIDGIN_MENU_TRAY_H
 
 #include <gtk/gtk.h>
 

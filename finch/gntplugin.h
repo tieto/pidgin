@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_PLUGIN_H
+#define _GNT_PLUGIN_H
 /**
  * SECTION:gntplugin
  * @section_id: finch-gntplugin
  * @short_description: <filename>gntplugin.h</filename>
  * @title: Plugin API
  */
-
-#ifndef _GNT_PLUGIN_H
-#define _GNT_PLUGIN_H
 
 #include <gnt.h>
 

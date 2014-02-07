@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
+
+#ifndef _PURPLE_E2EE_H_
+#define _PURPLE_E2EE_H_
 /**
  * SECTION:e2ee
  * @section_id: libpurple-e2ee
  * @short_description: <filename>e2ee.h</filename>
  * @title: End-to-end Encryption API
  */
-
-#ifndef _PURPLE_E2EE_H_
-#define _PURPLE_E2EE_H_
 
 typedef struct _PurpleE2eeState PurpleE2eeState;
 

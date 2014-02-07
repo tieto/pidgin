@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_BINDABLE_H
+#define GNT_BINDABLE_H
 /**
  * SECTION:gntbindable
  * @section_id: libgnt-gntbindable
  * @short_description: <filename>gntbindable.h</filename>
  * @title: Bindable
  */
-
-#ifndef GNT_BINDABLE_H
-#define GNT_BINDABLE_H
 
 #include <stdio.h>
 #include <glib.h>

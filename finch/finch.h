@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _FINCH_H_
+#define _FINCH_H_
 /**
  * SECTION:finch
  * @section_id: finch-finch
  * @short_description: <filename>finch.h</filename>
  * @title: UI Definitions and Includes
  */
-
-#ifndef _FINCH_H_
-#define _FINCH_H_
 
 #include <glib.h>
 

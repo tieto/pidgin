@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_IMGSTORE_H_
+#define _PURPLE_IMGSTORE_H_
 /**
  * SECTION:imgstore
  * @section_id: libpurple-imgstore
@@ -28,9 +31,6 @@
  * This file contains utility functions for reference-counted in-memory image
  * data.
  */
-
-#ifndef _PURPLE_IMGSTORE_H_
-#define _PURPLE_IMGSTORE_H_
 
 #include <glib.h>
 

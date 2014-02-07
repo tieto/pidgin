@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_MEDIA_CODEC_H_
+#define _PURPLE_MEDIA_CODEC_H_
 /**
  * SECTION:codec
  * @section_id: libpurple-codec
  * @short_description: <filename>media/codec.h</filename>
  * @title: Codec for Media API
  */
-
-#ifndef _PURPLE_MEDIA_CODEC_H_
-#define _PURPLE_MEDIA_CODEC_H_
 
 #include "enum-types.h"
 

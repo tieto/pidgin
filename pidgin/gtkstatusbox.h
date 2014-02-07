@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef __PIDGIN_STATUS_BOX_H__
+#define __PIDGIN_STATUS_BOX_H__
 /**
  * SECTION:gtkstatusbox
  * @section_id: pidgin-gtkstatusbox
  * @short_description: <filename>gtkstatusbox.h</filename>
  * @title: Status Selection Widget
  */
-
-#ifndef __PIDGIN_STATUS_BOX_H__
-#define __PIDGIN_STATUS_BOX_H__
 
 #include <gtk/gtk.h>
 #include "gtkwebview.h"

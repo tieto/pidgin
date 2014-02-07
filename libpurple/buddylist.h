@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_BUDDY_LIST_H_
+#define _PURPLE_BUDDY_LIST_H_
 /**
  * SECTION:buddylist
  * @section_id: libpurple-buddylist
@@ -25,9 +28,6 @@
  * @title: Buddy List API
  * @see_also: <link linkend="chapter-signals-blist">Buddy List signals</link>
  */
-
-#ifndef _PURPLE_BUDDY_LIST_H_
-#define _PURPLE_BUDDY_LIST_H_
 
 /* I can't believe I let ChipX86 inspire me to write good code. -Sean */
 

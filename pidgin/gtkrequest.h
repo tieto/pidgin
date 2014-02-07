@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINREQUEST_H_
+#define _PIDGINREQUEST_H_
 /**
  * SECTION:gtkrequest
  * @section_id: pidgin-gtkrequest
  * @short_description: <filename>gtkrequest.h</filename>
  * @title: Request API
  */
-
-#ifndef _PIDGINREQUEST_H_
-#define _PIDGINREQUEST_H_
 
 #include "request.h"
 

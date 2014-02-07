@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PIDGIN_SMILEYPARSER_H_
+#define _PIDGIN_SMILEYPARSER_H_
 /**
  * SECTION:smileyparser
  * @section_id: pidgin-smileyparser
@@ -33,3 +36,4 @@ smiley_parse_markup(const char *markup, const char *sml);
 
 G_END_DECLS
 
+#endif /* _PIDGIN_SMILEYPARSER_H_ */

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_INTERNAL_H_
+#define _PURPLE_INTERNAL_H_
 /*
  * SECTION:internal
  * @section_id: libpurple-internal
  * @short_description: <filename>internal.h</filename>
  * @title: Internal definitions and includes
  */
-
-#ifndef _PURPLE_INTERNAL_H_
-#define _PURPLE_INTERNAL_H_
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

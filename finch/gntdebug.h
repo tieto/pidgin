@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_DEBUG_H
+#define _GNT_DEBUG_H
 /**
  * SECTION:gntdebug
  * @section_id: finch-gntdebug
  * @short_description: <filename>gntdebug.h</filename>
  * @title: Debug API
  */
-
-#ifndef _GNT_DEBUG_H
-#define _GNT_DEBUG_H
 
 #include "debug.h"
 

@@ -17,12 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-/**
- * SECTION:desktopitem
- * @section_id: libpurple-desktopitem
- * @short_description: <filename>desktopitem.h</filename>
- * @title: Managing .desktop files
- */
 
 /*
  * The following code has been adapted from gnome-desktop-item.[ch],
@@ -56,6 +50,12 @@
 
 #ifndef _PURPLE_DESKTOP_ITEM_H_
 #define _PURPLE_DESKTOP_ITEM_H_
+/**
+ * SECTION:desktopitem
+ * @section_id: libpurple-desktopitem
+ * @short_description: <filename>desktopitem.h</filename>
+ * @title: Managing .desktop files
+ */
 
 #include <glib.h>
 #include <glib-object.h>

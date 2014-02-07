@@ -17,15 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINNICKCOLORS_H_
+#define _PIDGINNICKCOLORS_H_
 /**
  * SECTION:gtknickcolors
  * @section_id: pidgin-gtknickcolors
  * @short_description: <filename>gtknickcolors.h</filename>
  * @title: Conversation Nick Colors
  */
-
-#ifndef _PIDGINNICKCOLORS_H_
-#define _PIDGINNICKCOLORS_H_
 
 static const GdkColor nick_seed_colors[] = {
 	{0, 64764, 59881, 20303},       /* Butter #1 */

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_DNSQUERY_H_
+#define _PURPLE_DNSQUERY_H_
 /**
  * SECTION:dnsquery
  * @section_id: libpurple-dnsquery
  * @short_description: <filename>dnsquery.h</filename>
  * @title: DNS Query API
  */
-
-#ifndef _PURPLE_DNSQUERY_H_
-#define _PURPLE_DNSQUERY_H_
 
 #include <glib.h>
 #include "eventloop.h"

@@ -21,6 +21,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02111-1301, USA.
  */
+
+#ifndef _GTKDOCKLET_H_
+#define _GTKDOCKLET_H_
 /**
  * SECTION:gtkdocklet
  * @section_id: pidgin-gtkdocklet
@@ -29,9 +32,6 @@
  *
  * This file provides the System tray icon (aka docklet) implementation.
  */
-
-#ifndef _GTKDOCKLET_H_
-#define _GTKDOCKLET_H_
 
 G_BEGIN_DECLS
 

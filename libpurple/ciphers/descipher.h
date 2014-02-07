@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+#ifndef PURPLE_DES_CIPHER_H
+#define PURPLE_DES_CIPHER_H
 /**
  * SECTION:descipher
  * @section_id: libpurple-descipher
  * @short_description: <filename>ciphers/descipher.h</filename>
  * @title: DES Cipher
  */
-
-#ifndef PURPLE_DES_CIPHER_H
-#define PURPLE_DES_CIPHER_H
 
 #include "cipher.h"
 

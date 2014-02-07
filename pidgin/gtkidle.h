@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGIN_IDLE_H_
+#define _PIDGIN_IDLE_H_
 /**
  * SECTION:gtkidle
  * @section_id: pidgin-gtkidle
  * @short_description: <filename>gtkidle.h</filename>
  * @title: Idle API
  */
-
-#ifndef _PIDGIN_IDLE_H_
-#define _PIDGIN_IDLE_H_
 
 #include "idle.h"
 

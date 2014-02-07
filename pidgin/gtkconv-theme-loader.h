@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PIDGIN_CONV_THEME_LOADER_H
+#define PIDGIN_CONV_THEME_LOADER_H
 /**
  * SECTION:gtkconv-theme-loader
  * @section_id: pidgin-gtkconv-theme-loader
  * @short_description: <filename>gtkconv-theme-loader.h</filename>
  * @title: Conversation Theme Loader Class
  */
-
-#ifndef PIDGIN_CONV_THEME_LOADER_H
-#define PIDGIN_CONV_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>

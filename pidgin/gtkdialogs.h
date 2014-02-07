@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINDIALOGS_H_
+#define _PIDGINDIALOGS_H_
 /**
  * SECTION:gtkdialogs
  * @section_id: pidgin-gtkdialogs
  * @short_description: <filename>gtkdialogs.h</filename>
  * @title: Pidgin Dialogs
  */
-
-#ifndef _PIDGINDIALOGS_H_
-#define _PIDGINDIALOGS_H_
 
 #include "pidgin.h"
 

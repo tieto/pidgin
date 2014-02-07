@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGIN_TOOLTIP_H_
+#define _PIDGIN_TOOLTIP_H_
 /**
  * SECTION:pidgintooltip
  * @section_id: pidgin-pidgintooltip
  * @short_description: <filename>pidgintooltip.h</filename>
  * @title: Pidgin Tooltip API
  */
-
-#ifndef _PIDGIN_TOOLTIP_H_
-#define _PIDGIN_TOOLTIP_H_
 
 #include <gtk/gtk.h>
 

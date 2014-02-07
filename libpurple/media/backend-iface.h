@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _MEDIA_BACKEND_IFACE_H_
+#define _MEDIA_BACKEND_IFACE_H_
 /**
  * SECTION:backend-iface
  * @section_id: libpurple-backend-iface
  * @short_description: <filename>media/backend-iface.h</filename>
  * @title: Interface for Media Backends
  */
-
-#ifndef _MEDIA_BACKEND_IFACE_H_
-#define _MEDIA_BACKEND_IFACE_H_
 
 #include "codec.h"
 #include "enum-types.h"

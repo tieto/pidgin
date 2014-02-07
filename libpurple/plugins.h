@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_PLUGINS_H_
+#define _PURPLE_PLUGINS_H_
 /**
  * SECTION:plugins
  * @section_id: libpurple-plugins
@@ -27,9 +30,6 @@
  *     <link linkend="chapter-plugin-ids">Plugin IDs</link>,
  *     <link linkend="chapter-plugin-i18n">Third Party Plugin Translation</link>
  */
-
-#ifndef _PURPLE_PLUGINS_H_
-#define _PURPLE_PLUGINS_H_
 
 #ifdef PURPLE_PLUGINS
 #include <gplugin.h>

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINROOMLIST_H_
+#define _PIDGINROOMLIST_H_
 /**
  * SECTION:gtkroomlist
  * @section_id: pidgin-gtkroomlist
  * @short_description: <filename>gtkroomlist.h</filename>
  * @title: Room List UI
  */
-
-#ifndef _PIDGINROOMLIST_H_
-#define _PIDGINROOMLIST_H_
 
 #include "roomlist.h"
 

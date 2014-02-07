@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_SOUND_THEME_LOADER_H
+#define PURPLE_SOUND_THEME_LOADER_H
 /**
  * SECTION:sound-theme-loader
  * @section_id: libpurple-sound-theme-loader
  * @short_description: <filename>sound-theme-loader.h</filename>
  * @title: Sound Theme Loader Class
  */
-
-#ifndef PURPLE_SOUND_THEME_LOADER_H
-#define PURPLE_SOUND_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>

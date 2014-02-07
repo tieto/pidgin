@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_XMLNODE_H_
+#define _PURPLE_XMLNODE_H_
 /**
  * SECTION:xmlnode
  * @section_id: libpurple-xmlnode
  * @short_description: <filename>xmlnode.h</filename>
  * @title: XML DOM functions
  */
-
-#ifndef _PURPLE_XMLNODE_H_
-#define _PURPLE_XMLNODE_H_
 
 #include <glib.h>
 #include <glib-object.h>

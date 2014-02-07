@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301, USA.
  */
+
+#ifndef _PIDGIN_DND_HINTS_H_
+#define _PIDGIN_DND_HINTS_H_
 /**
  * SECTION:gtkdnd-hints
  * @section_id: pidgin-gtkdnd-hints
  * @short_description: <filename>gtkdnd-hints.h</filename>
  * @title: Drag-and-Drop Arrow Hints
  */
-
-#ifndef _PIDGIN_DND_HINTS_H_
-#define _PIDGIN_DND_HINTS_H_
 
 #include <glib.h>
 #include <gtk/gtk.h>

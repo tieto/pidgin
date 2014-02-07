@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_MEDIA_CANDIDATE_H_
+#define _PURPLE_MEDIA_CANDIDATE_H_
 /**
  * SECTION:candidate
  * @section_id: libpurple-candidate
  * @short_description: <filename>media/candidate.h</filename>
  * @title: Candidate for Media API
  */
-
-#ifndef _PURPLE_MEDIA_CANDIDATE_H_
-#define _PURPLE_MEDIA_CANDIDATE_H_
 
 #include "enum-types.h"
 

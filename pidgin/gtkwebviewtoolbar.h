@@ -20,15 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PIDGINWEBVIEWTOOLBAR_H_
+#define _PIDGINWEBVIEWTOOLBAR_H_
 /**
  * SECTION:gtkwebviewtoolbar
  * @section_id: pidgin-gtkwebviewtoolbar
  * @short_description: <filename>gtkwebviewtoolbar.h</filename>
  * @title: WebView Toolbar
  */
-
-#ifndef _PIDGINWEBVIEWTOOLBAR_H_
-#define _PIDGINWEBVIEWTOOLBAR_H_
 
 #include <gtk/gtk.h>
 #include "gtkwebview.h"

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef __PIDGIN_MINI_DIALOG_H__
+#define __PIDGIN_MINI_DIALOG_H__
 /**
  * SECTION:minidialog
  * @section_id: pidgin-minidialog
  * @short_description: <filename>minidialog.h</filename>
  * @title: Mini Dialog Widget
  */
-
-#ifndef __PIDGIN_MINI_DIALOG_H__
-#define __PIDGIN_MINI_DIALOG_H__
 
 #include <glib-object.h>
 #include <gtk/gtk.h>

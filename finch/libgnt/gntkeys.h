@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_KEYS_H
+#define GNT_KEYS_H
 /**
  * SECTION:gntkeys
  * @section_id: libgnt-gntkeys
  * @short_description: <filename>gntkeys.h</filename>
  * @title: Keys API
  */
-
-#ifndef GNT_KEYS_H
-#define GNT_KEYS_H
 
 #include <curses.h>
 #include <term.h>
