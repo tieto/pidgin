@@ -272,7 +272,7 @@ typedef struct _PurpleProtocolServerIface PurpleProtocolServerIface;
  *                   protocol's active connections. You'd want to do this if you
  *                   need to repeatedly send some kind of keepalive packet to
  *                   the server to avoid being disconnected. ("Regularly" is
- *                   defined by #KEEPALIVE_INTERVAL in
+ *                   defined by <literal>KEEPALIVE_INTERVAL</literal> in
  *                   <filename>libpurple/connection.c</filename>.)
  * @alias_buddy:     Save/store buddy's alias on server list/roster
  * @group_buddy:     Change a buddy's group on a server list/roster
@@ -387,12 +387,13 @@ typedef struct _PurpleProtocolIMIface PurpleProtocolIMIface;
 /**
  * PurpleProtocolIMIface:
  * @send:        This protocol function should return a positive value on
- *               success. If the message is too big to be sent, return -#E2BIG.
- *               If the account is not connected, return -#ENOTCONN. If the
- *               protocol is unable to send the message for another reason,
- *               return some other negative value. You can use one of the valid
- *               #errno values, or just big something. If the message should not
- *               be echoed to the conversation window, return 0.
+ *               success. If the message is too big to be sent, return
+ *               <literal>-E2BIG</literal>. If the account is not connected,
+ *               return <literal>-ENOTCONN</literal>. If the protocol is unable
+ *               to send the message for another reason, return some other
+ *               negative value. You can use one of the valid #errno values, or
+ *               just big something. If the message should not be echoed to the
+ *               conversation window, return 0.
  * @send_typing: If this protocol requires the #PURPLE_IM_TYPING message to be
  *               sent repeatedly to signify that the user is still typing, then
  *               the protocol should return the number of seconds to wait before
@@ -467,11 +468,12 @@ typedef struct _PurpleProtocolChatIface PurpleProtocolChatIface;
  *           <sbr/>@message: The message of the whisper.
  * @send: Send a message to a chat.
  *              <sbr/>This protocol function should return a positive value on
- *              success. If the message is too big to be sent, return -#E2BIG.
- *              If the account is not connected, return -#ENOTCONN. If the
- *              protocol is unable to send the message for another reason,
- *              return some other negative value. You can use one of the valid
- *              #errno values, or just big something.
+ *              success. If the message is too big to be sent, return
+ *              <literal>-E2BIG</literal>. If the account is not connected,
+ *              return <literal>-ENOTCONN</literal>. If the protocol is unable
+ *              to send the message for another reason, return some other
+ *              negative value. You can use one of the valid #errno values, or
+ *              just big something.
  *              <sbr/>@id:      The id of the chat to send the message to.
  *              <sbr/>@message: The message to send to the chat.
  *              <sbr/>@flags:   A bitwise OR of #PurpleMessageFlags representing
@@ -726,7 +728,7 @@ struct _PurpleProtocolFactoryIface
 /**
  * PURPLE_PROTOCOL_IMPLEMENTS:
  * @protocol: The protocol in which to check
- * @IFACE:    The interface name in caps. e.g. #CLIENT_IFACE
+ * @IFACE:    The interface name in caps. e.g. <literal>CLIENT_IFACE</literal>
  * @func:     The function to check
  *
  * Returns: %TRUE if a protocol implements a function in an interface,

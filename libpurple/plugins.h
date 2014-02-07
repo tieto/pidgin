@@ -605,8 +605,8 @@ GType purple_plugin_info_get_type(void);
  *   <row><entry><literal>"license-id"</literal></entry>
  *     <entry>(string) Short name of the plugin's license. This should
  *       either be an identifier of the license from
- *       <ulink url="http://dep.debian.net/deps/dep5/#license-specification" />
- *       or "Other" for custom licenses.</entry>
+ *       <ulink url="http://dep.debian.net/deps/dep5/#license-specification">
+ *       DEP5</ulink> or "Other" for custom licenses.</entry>
  *   </row>
  *   <row><entry><literal>"license-text"</literal></entry>
  *     <entry>(string) The text of the plugin's license, if unlisted on

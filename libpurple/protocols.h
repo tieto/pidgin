@@ -386,7 +386,7 @@ void purple_protocol_got_account_login_time(PurpleAccount *account,
  * @account:   The account the user is on.
  * @status_id: The status ID.
  * @...:       A NULL-terminated list of attribute IDs and values,
- *             beginning with the value for #attr_id.
+ *             beginning with the value for <literal>attr_id</literal>.
  *
  * Notifies Purple that our account's status has changed.
  *
@@ -446,7 +446,7 @@ void purple_protocol_got_user_login_time(PurpleAccount *account,
  * @name:      The name of the buddy.
  * @status_id: The status ID.
  * @...:       A NULL-terminated list of attribute IDs and values,
- *             beginning with the value for %attr_id.
+ *             beginning with the value for <literal>attr_id</literal>.
  *
  * Notifies Purple that a buddy's status has been activated.
  *
@@ -583,7 +583,7 @@ void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
  *
  * Gets the safe maximum message size in bytes for the protocol.
  *
- * See #PurpleProtocolClientIface.get_max_message_size
+ * See #PurpleProtocolClientIface's <literal>get_max_message_size</literal>.
  *
  * Returns: Maximum message size, 0 if unspecified, -1 for infinite.
  */
