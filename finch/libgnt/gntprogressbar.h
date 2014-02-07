@@ -48,8 +48,9 @@ typedef enum
 } GntProgressBarOrientation;
 
 typedef struct _GntProgressBar GntProgressBar;
+typedef struct _GntProgressBarClass GntProgressBarClass;
 
-typedef struct _GntProgressBarClass
+struct _GntProgressBarClass
 {
    GntWidgetClass parent;
 
@@ -58,7 +59,7 @@ typedef struct _GntProgressBarClass
    void (*gnt_reserved2)(void);
    void (*gnt_reserved3)(void);
    void (*gnt_reserved4)(void);
-} GntProgressBarClass;
+};
 
 G_BEGIN_DECLS
 
