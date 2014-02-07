@@ -226,7 +226,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Common parameters API                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_cpar_new:
@@ -505,12 +504,9 @@ purple_request_cpar_set_parent_from(PurpleRequestCommonParameters *cpar,
 gpointer
 purple_request_cpar_get_parent_from(PurpleRequestCommonParameters *cpar);
 
-/*@}*/
-
 /**************************************************************************/
 /* Field List API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_fields_new:
@@ -745,12 +741,9 @@ gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields);
  */
 void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_data);
 
-/*@}*/
-
 /**************************************************************************/
 /* Fields Group API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_group_new:
@@ -837,12 +830,9 @@ GList *purple_request_field_group_get_fields(
 PurpleRequestFields *purple_request_field_group_get_fields_list(
 		const PurpleRequestFieldGroup *group);
 
-/*@}*/
-
 /**************************************************************************/
 /* Field API                                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_new:
@@ -1100,12 +1090,9 @@ gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
 void purple_request_field_set_ui_data(PurpleRequestField *field,
                                       gpointer ui_data);
 
-/*@}*/
-
 /**************************************************************************/
 /* String Field API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_string_new:
@@ -1195,12 +1182,9 @@ gboolean purple_request_field_string_is_multiline(const PurpleRequestField *fiel
  */
 gboolean purple_request_field_string_is_masked(const PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Integer Field API                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_int_new:
@@ -1294,12 +1278,9 @@ int purple_request_field_int_get_upper_bound(const PurpleRequestField *field);
  */
 int purple_request_field_int_get_value(const PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Boolean Field API                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_bool_new:
@@ -1358,12 +1339,9 @@ gboolean purple_request_field_bool_get_default_value(
  */
 gboolean purple_request_field_bool_get_value(const PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Choice Field API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_choice_new:
@@ -1459,12 +1437,9 @@ void
 purple_request_field_choice_set_data_destructor(PurpleRequestField *field,
 	GDestroyNotify destroy);
 
-/*@}*/
-
 /**************************************************************************/
 /* List Field API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_list_new:
@@ -1600,12 +1575,9 @@ GList *purple_request_field_list_get_items(const PurpleRequestField *field);
  */
 GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Label Field API                                                        */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_label_new:
@@ -1619,12 +1591,9 @@ GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
 PurpleRequestField *purple_request_field_label_new(const char *id,
 											   const char *text);
 
-/*@}*/
-
 /**************************************************************************/
 /* Image Field API                                                        */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_image_new:
@@ -1690,12 +1659,9 @@ unsigned int purple_request_field_image_get_scale_x(PurpleRequestField *field);
  */
 unsigned int purple_request_field_image_get_scale_y(PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Account Field API                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_account_new:
@@ -1809,12 +1775,9 @@ gboolean purple_request_field_account_get_show_all(
 PurpleFilterAccountFunc purple_request_field_account_get_filter(
 		const PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Certificate Field API                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_certificate_new:
@@ -1841,12 +1804,9 @@ PurpleRequestField *purple_request_field_certificate_new(const char *id,
 PurpleCertificate *purple_request_field_certificate_get_value(
 		const PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Datasheet Field API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_datasheet_new:
@@ -1872,12 +1832,9 @@ PurpleRequestField *purple_request_field_datasheet_new(const char *id,
 PurpleRequestDatasheet *purple_request_field_datasheet_get_sheet(
 	PurpleRequestField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* Validators for request fields.                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_field_email_validator:
@@ -1910,12 +1867,9 @@ gboolean purple_request_field_email_validator(PurpleRequestField *field,
 gboolean purple_request_field_alphanumeric_validator(PurpleRequestField *field,
 	gchar **errmsg, void *allowed_characters);
 
-/*@}*/
-
 /**************************************************************************/
 /* Request API                                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_input:
@@ -2319,12 +2273,9 @@ void *purple_request_certificate(void *handle, const char *title,
 	const char *cancel_text, GCallback cancel_cb,
 	void *user_data);
 
-/*@}*/
-
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_set_ui_ops:
@@ -2344,8 +2295,6 @@ void purple_request_set_ui_ops(PurpleRequestUiOps *ops);
  * Returns: The UI operations structure.
  */
 PurpleRequestUiOps *purple_request_get_ui_ops(void);
-
-/*@}*/
 
 G_END_DECLS
 

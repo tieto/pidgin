@@ -79,7 +79,6 @@ enum {
 /**************************************************************************
  * Structures
  **************************************************************************/
-/*@{*/
 
 /**
  * PidginConversation:
@@ -150,14 +149,11 @@ struct _PidginConversation
 	GtkWidget *quickfind_container;
 };
 
-/*@}*/
-
 G_BEGIN_DECLS
 
 /**************************************************************************
  * GTK+ Conversation API
  **************************************************************************/
-/*@{*/
 
 /**
  * pidgin_conversations_get_conv_ui_ops:
@@ -302,12 +298,10 @@ GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_ico
 void pidgin_conv_new(PurpleConversation *conv);
 int pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right);
 gboolean pidgin_conv_is_hidden(PidginConversation *gtkconv);
-/*@}*/
 
 /**************************************************************************/
 /* GTK+ Conversations Subsystem                                           */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_conversations_get_handle:
@@ -331,8 +325,6 @@ void pidgin_conversations_init(void);
  * Uninitialized the GTK+ conversation subsystem.
  */
 void pidgin_conversations_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

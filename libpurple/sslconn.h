@@ -150,7 +150,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* SSL API                                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_ssl_is_supported:
@@ -304,12 +303,9 @@ size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len
  */
 GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 
-/*@}*/
-
 /**************************************************************************/
 /* Subsystem API                                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_ssl_set_ops:
@@ -341,8 +337,6 @@ void purple_ssl_init(void);
  * Uninitializes the SSL subsystem.
  */
 void purple_ssl_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

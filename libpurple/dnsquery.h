@@ -100,7 +100,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* DNS query API                                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_dnsquery_a:
@@ -181,8 +180,6 @@ void purple_dnsquery_init(void);
  * Uninitializes the DNS query subsystem.
  */
 void purple_dnsquery_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

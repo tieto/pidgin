@@ -37,7 +37,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Conversations Subsystem                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_conversations_add:
@@ -170,8 +169,6 @@ void purple_conversations_init(void);
  * Uninitializes the conversation subsystem.
  */
 void purple_conversations_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

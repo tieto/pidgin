@@ -33,7 +33,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* X Windows session subsystem                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_session_init:
@@ -55,8 +54,6 @@ void pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
  * manager.
  */
 void pidgin_session_end(void);
-
-/*@}*/
 
 G_END_DECLS
 

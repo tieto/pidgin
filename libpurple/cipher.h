@@ -177,7 +177,6 @@ G_BEGIN_DECLS
 /*****************************************************************************/
 /* PurpleCipher API                                                          */
 /*****************************************************************************/
-/*@{*/
 
 /**
  * purple_cipher_get_type:
@@ -345,12 +344,9 @@ PurpleCipherBatchMode purple_cipher_get_batch_mode(PurpleCipher *cipher);
  */
 size_t purple_cipher_get_block_size(PurpleCipher *cipher);
 
-/*@}*/
-
 /*****************************************************************************/
 /* PurpleHash API                                                            */
 /*****************************************************************************/
-/*@{*/
 
 /**
  * purple_hash_get_type:
@@ -429,8 +425,6 @@ size_t purple_hash_get_digest_size(PurpleHash *hash);
  * Returns: The block size of the hash
  */
 size_t purple_hash_get_block_size(PurpleHash *hash);
-
-/*@}*/
 
 G_END_DECLS
 

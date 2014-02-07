@@ -43,7 +43,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Signal API                                                             */
 /**************************************************************************/
-/*@{*/
 
 /**
  * PURPLE_SIGNAL_PRIORITY_DEFAULT:
@@ -311,12 +310,9 @@ void purple_signals_init(void);
  */
 void purple_signals_uninit(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Marshal Functions                                                      */
 /**************************************************************************/
-/*@{*/
 
 void purple_marshal_VOID(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
@@ -400,7 +396,6 @@ void purple_marshal_POINTER__POINTER_INT64_BOOLEAN(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
 void purple_marshal_POINTER__POINTER_POINTER(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
-/*@}*/
 
 G_END_DECLS
 

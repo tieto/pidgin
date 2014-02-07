@@ -50,7 +50,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Datasheet API                                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_datasheet_new:
@@ -159,13 +158,10 @@ purple_request_datasheet_add_action(PurpleRequestDatasheet *sheet,
 const GList *
 purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Datasheet actions API                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_datasheet_action_new:
@@ -260,13 +256,10 @@ gboolean
 purple_request_datasheet_action_is_sensitive(PurpleRequestDatasheetAction *act,
 	PurpleRequestDatasheetRecord *rec);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Datasheet record API                                                   */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_request_datasheet_record_get_key:
@@ -412,8 +405,6 @@ purple_request_datasheet_record_get_string_data(
 const gchar *
 purple_request_datasheet_record_get_image_data(
 	const PurpleRequestDatasheetRecord *rec, guint col_no);
-
-/*@}*/
 
 G_END_DECLS
 

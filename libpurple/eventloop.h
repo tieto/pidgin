@@ -152,7 +152,7 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Event Loop API                                                         */
 /**************************************************************************/
-/*@{*/
+
 /**
  * purple_timeout_add:
  * @interval:	The time between calls of the function, in
@@ -267,13 +267,11 @@ int
 purple_input_pipe(int pipefd[2]);
 
 
-/*@}*/
-
 
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
+
 /**
  * purple_eventloop_set_ui_ops:
  * @ops: The UI operations structure.
@@ -290,8 +288,6 @@ void purple_eventloop_set_ui_ops(PurpleEventLoopUiOps *ops);
  * Returns: The UI operations structure in use.
  */
 PurpleEventLoopUiOps *purple_eventloop_get_ui_ops(void);
-
-/*@}*/
 
 G_END_DECLS
 

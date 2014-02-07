@@ -74,7 +74,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Proxy structure API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_proxy_info_new:
@@ -188,12 +187,9 @@ const char *purple_proxy_info_get_username(const PurpleProxyInfo *info);
  */
 const char *purple_proxy_info_get_password(const PurpleProxyInfo *info);
 
-/*@}*/
-
 /**************************************************************************/
 /* Global Proxy API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_global_proxy_get_info:
@@ -212,12 +208,9 @@ PurpleProxyInfo *purple_global_proxy_get_info(void);
  */
 void purple_global_proxy_set_info(PurpleProxyInfo *info);
 
-/*@}*/
-
 /**************************************************************************/
 /* Proxy API                                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_proxy_get_handle:
@@ -363,8 +356,6 @@ void purple_proxy_connect_cancel(PurpleProxyConnectData *connect_data);
  * Closes all proxy connections registered with the specified handle.
  */
 void purple_proxy_connect_cancel_with_handle(void *handle);
-
-/*@}*/
 
 G_END_DECLS
 

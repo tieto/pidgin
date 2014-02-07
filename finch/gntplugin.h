@@ -113,7 +113,6 @@ FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...)
 /**********************************************************************
  * GNT Plugins API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_plugins_show_all:
@@ -128,7 +127,5 @@ void finch_plugins_show_all(void);
  * Save the list of loaded plugins.
  */
 void finch_plugins_save_loaded(void);
-
-/*@}*/
 
 #endif

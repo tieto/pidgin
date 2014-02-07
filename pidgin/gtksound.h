@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* GTK+ Sound API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_sound_get_event_option:
@@ -83,8 +82,6 @@ void *pidgin_sound_get_handle(void);
  * Returns: TRUE if non default sounds are used.
  */
 gboolean pidgin_sound_is_customized(void);
-
-/*@}*/
 
 G_END_DECLS
 

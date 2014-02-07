@@ -147,7 +147,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Room List API                                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_roomlist_get_type:
@@ -324,12 +323,9 @@ gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list);
  */
 void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
 
-/*@}*/
-
 /**************************************************************************/
 /* Room API                                                               */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_roomlist_room_get_type:
@@ -429,12 +425,9 @@ void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean e
  */
 GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
 
-/*@}*/
-
 /**************************************************************************/
 /* Room Field API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_roomlist_field_get_type:
@@ -489,12 +482,9 @@ const char * purple_roomlist_field_get_label(PurpleRoomlistField *field);
  */
 gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field);
 
-/*@}*/
-
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_roomlist_set_ui_ops:
@@ -513,8 +503,6 @@ void purple_roomlist_set_ui_ops(PurpleRoomlistUiOps *ops);
  * Returns: A filled-out PurpleRoomlistUiOps structure.
  */
 PurpleRoomlistUiOps *purple_roomlist_get_ui_ops(void);
-
-/*@}*/
 
 G_END_DECLS
 

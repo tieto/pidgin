@@ -227,12 +227,9 @@ gboolean purple_debug_is_unsafe(void);
  */
 void purple_debug_set_colored(gboolean colored);
 
-/*@}*/
-
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_debug_set_ui_ops:
@@ -253,12 +250,9 @@ void purple_debug_set_ui_ops(PurpleDebugUiOps *ops);
  */
 PurpleDebugUiOps *purple_debug_get_ui_ops(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Debug Subsystem                                                        */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_debug_init:
@@ -266,8 +260,6 @@ PurpleDebugUiOps *purple_debug_get_ui_ops(void);
  * Initializes the debug subsystem.
  */
 void purple_debug_init(void);
-
-/*@}*/
 
 G_END_DECLS
 

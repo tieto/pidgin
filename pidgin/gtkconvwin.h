@@ -35,7 +35,6 @@ typedef struct _PidginWindow       PidginWindow;
 /**************************************************************************
  * Structures
  **************************************************************************/
-/*@{*/
 
 struct _PidginWindowMenu
 {
@@ -107,14 +106,11 @@ struct _PidginWindow
 	gint drag_leave_signal;
 };
 
-/*@}*/
-
 G_BEGIN_DECLS
 
 /**************************************************************************
  * GTK+ Conversation Window API
  **************************************************************************/
-/*@{*/
 
 PidginWindow * pidgin_conv_window_new(void);
 void pidgin_conv_window_destroy(PidginWindow *win);
@@ -139,12 +135,9 @@ PidginWindow *pidgin_conv_window_last_im(void);
 PidginWindow *pidgin_conv_window_first_chat(void);
 PidginWindow *pidgin_conv_window_last_chat(void);
 
-/*@}*/
-
 /**************************************************************************
  * GTK+ Conversation Placement API
  **************************************************************************/
-/*@{*/
 
 typedef void (*PidginConvPlacementFunc)(PidginConversation *);
 
@@ -156,8 +149,6 @@ PidginConvPlacementFunc pidgin_conv_placement_get_fnc(const char *id);
 void pidgin_conv_placement_set_current_func(PidginConvPlacementFunc func);
 PidginConvPlacementFunc pidgin_conv_placement_get_current_func(void);
 void pidgin_conv_placement_place(PidginConversation *gtkconv);
-
-/*@}*/
 
 G_END_DECLS
 

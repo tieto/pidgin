@@ -33,7 +33,6 @@
 /**********************************************************************
  * GNT Notify API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_notify_get_ui_ops:
@@ -57,8 +56,6 @@ void finch_notify_init(void);
  * Perform necessary uninitializations.
  */
 void finch_notify_uninit(void);
-
-/*@}*/
 
 #endif
 

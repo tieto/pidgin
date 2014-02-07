@@ -31,7 +31,6 @@
 /**********************************************************************
  * GNT Preferences API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_prefs_init:
@@ -60,6 +59,5 @@ void finch_prefs_show_keyring(void);
  * You don't need to know about this.
  */
 void finch_prefs_update_old(void);
-/*@}*/
 
 #endif

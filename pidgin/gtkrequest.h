@@ -55,7 +55,6 @@ pidgin_request_get_dialog_window(void *ui_handle);
 /**************************************************************************/
 /* GTK+ Requests Subsystem                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_request_get_handle:
@@ -79,8 +78,6 @@ void pidgin_request_init(void);
  * Uninitializes the GTK+ requests subsystem.
  */
 void pidgin_request_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

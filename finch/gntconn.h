@@ -33,7 +33,6 @@
 /**********************************************************************
  * GNT Connection API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_connections_get_ui_ops:
@@ -57,7 +56,5 @@ void finch_connections_init(void);
  * Perform necessary uninitializations.
  */
 void finch_connections_uninit(void);
-
-/*@}*/
 
 #endif

@@ -33,7 +33,6 @@
 /**********************************************************************
  * GNT Room List API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_roomlist_init:
@@ -64,8 +63,6 @@ void finch_roomlist_show_all(void);
  * Uninitialize the roomlist subsystem.
  */
 void finch_roomlist_uninit(void);
-
-/*@}*/
 
 #endif
 

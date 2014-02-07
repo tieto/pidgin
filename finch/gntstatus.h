@@ -34,7 +34,6 @@
 /**********************************************************************
  * GNT BuddyList API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_savedstatus_show_all:
@@ -50,7 +49,5 @@ void finch_savedstatus_show_all(void);
  * Show a dialog to edit a status.
  */
 void finch_savedstatus_edit(PurpleSavedStatus *saved);
-
-/*@}*/
 
 #endif

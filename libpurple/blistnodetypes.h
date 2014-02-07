@@ -195,7 +195,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Buddy API                                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_buddy_get_type:
@@ -212,14 +211,13 @@ GType purple_buddy_get_type(void);
  *
  * Creates a new buddy.
  *
- * This function only creates the PurpleBuddy. Use purple_blist_add_buddy
- * to add the buddy to the list and purple_account_add_buddy to sync up
+ * This function only creates the #PurpleBuddy. Use purple_blist_add_buddy()
+ * to add the buddy to the list and purple_account_add_buddy() to sync up
  * with the server.
  *
- * Returns:           A newly allocated buddy
+ * See purple_account_add_buddy(), purple_blist_add_buddy().
  *
- * @see purple_account_add_buddy
- * @see purple_blist_add_buddy
+ * Returns: A newly allocated buddy
  */
 PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias);
 
@@ -233,7 +231,7 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
  * This should only be called from within Purple. You probably want to
  * call purple_buddy_icon_set_data().
  *
- * @see purple_buddy_icon_set_data()
+ * See purple_buddy_icon_set_data().
  */
 void purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon);
 
@@ -284,9 +282,9 @@ const char *purple_buddy_get_name(const PurpleBuddy *buddy);
  *
  * This should only be called from the associated protocol.
  *
- * Returns:      The protocol data.
+ * See purple_buddy_set_protocol_data().
  *
- * @see purple_buddy_set_protocol_data()
+ * Returns:      The protocol data.
  */
 gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
 
@@ -299,7 +297,7 @@ gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
  *
  * This should only be called from the associated protocol.
  *
- * @see purple_buddy_get_protocol_data()
+ * See purple_buddy_get_protocol_data().
  */
 void purple_buddy_set_protocol_data(PurpleBuddy *buddy, gpointer data);
 
@@ -437,12 +435,9 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
  */
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
 
-/*@}*/
-
 /**************************************************************************/
 /* Contact API                                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_contact_get_type:
@@ -530,12 +525,9 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
  */
 void purple_contact_merge(PurpleContact *source, PurpleBlistNode *node);
 
-/*@}*/
-
 /**************************************************************************/
 /* Chat API                                                               */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_chat_get_type:
@@ -617,12 +609,9 @@ PurpleAccount *purple_chat_get_account(PurpleChat *chat);
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
 
-/*@}*/
-
 /**************************************************************************/
 /* Group API                                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_group_get_type:
@@ -684,8 +673,6 @@ void purple_group_set_name(PurpleGroup *group, const char *name);
  * Returns: The name of the group.
  */
 const char *purple_group_get_name(PurpleGroup *group);
-
-/*@}*/
 
 G_END_DECLS
 

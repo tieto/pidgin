@@ -171,7 +171,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Attention Type API                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_attention_type_get_type:
@@ -302,12 +301,9 @@ const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type)
  */
 const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type);
 
-/*@}*/
-
 /**************************************************************************/
 /* Protocol Action API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_action_get_type:
@@ -590,12 +586,9 @@ void purple_protocol_got_media_caps(PurpleAccount *account, const char *who);
 gssize
 purple_protocol_get_max_message_size(PurpleProtocol *protocol);
 
-/*@}*/
-
 /**************************************************************************/
 /* Protocols API                                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocols_find:
@@ -670,8 +663,6 @@ void *purple_protocols_get_handle(void);
  * Uninitializes the protocols subsystem.
  */
 void purple_protocols_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

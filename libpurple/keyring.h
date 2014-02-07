@@ -50,16 +50,12 @@
 /**************************************************************************/
 /* Data structures and types                                              */
 /**************************************************************************/
-/*@{*/
 
 typedef struct _PurpleKeyring PurpleKeyring;
-
-/*@}*/
 
 /**************************************************************************/
 /* Callbacks for keyrings access functions                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * PurpleKeyringReadCallback:
@@ -106,12 +102,9 @@ typedef void (*PurpleKeyringChangeMasterCallback)(GError *error, gpointer data);
  */
 typedef void (*PurpleKeyringSetInUseCallback)(GError *error, gpointer data);
 
-/*@}*/
-
 /**************************************************************************/
 /* Keyrings access functions                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * PurpleKeyringRead:
@@ -213,14 +206,11 @@ typedef PurpleRequestFields * (*PurpleKeyringReadSettings)(void);
 typedef gboolean (*PurpleKeyringApplySettings)(void *notify_handle,
 	PurpleRequestFields *fields);
 
-/*@}*/
-
 G_BEGIN_DECLS
 
 /**************************************************************************/
 /* Setting used keyrings                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_keyring_find_keyring_by_id:
@@ -292,12 +282,9 @@ purple_keyring_unregister(PurpleKeyring *keyring);
 GList *
 purple_keyring_get_options(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Keyring plugin wrappers                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_keyring_import_password:
@@ -389,12 +376,9 @@ purple_keyring_read_settings(void);
 gboolean
 purple_keyring_apply_settings(void *notify_handle, PurpleRequestFields *fields);
 
-/*@}*/
-
 /**************************************************************************/
 /* PurpleKeyring accessors                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_keyring_get_type:
@@ -540,12 +524,9 @@ void
 purple_keyring_set_apply_settings(PurpleKeyring *keyring,
 PurpleKeyringApplySettings apply_settings);
 
-/*@}*/
-
 /**************************************************************************/
 /* Error Codes                                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_keyring_error_domain:
@@ -590,7 +571,6 @@ enum PurpleKeyringError
 /**************************************************************************/
 /* Keyring Subsystem                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_keyring_init:

@@ -34,7 +34,6 @@
 /**********************************************************************
  * GNT Request API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_request_get_ui_ops:
@@ -76,7 +75,5 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *fields);
  * Returns: A GntWidget for the request field.
  */
 GntWidget *finch_request_field_get_widget(PurpleRequestField *field);
-
-/*@}*/
 
 #endif

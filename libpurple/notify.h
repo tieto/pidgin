@@ -230,7 +230,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /** Search results notification API                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_notify_searchresults:
@@ -374,12 +373,9 @@ void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
 void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 									   GList *row);
 
-/*@}*/
-
 /**************************************************************************/
 /* Notification API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_notify_message:
@@ -808,12 +804,9 @@ void purple_notify_close_with_handle(void *handle);
 	purple_notify_message((handle), PURPLE_NOTIFY_MSG_ERROR, (title), \
 		(primary), (secondary), (cpar), NULL, NULL)
 
-/*@}*/
-
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_notify_set_ui_ops:
@@ -834,12 +827,9 @@ void purple_notify_set_ui_ops(PurpleNotifyUiOps *ops);
  */
 PurpleNotifyUiOps *purple_notify_get_ui_ops(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Notify Subsystem                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_notify_get_handle:
@@ -863,8 +853,6 @@ void purple_notify_init(void);
  * Uninitializes the notify subsystem.
  */
 void purple_notify_uninit(void);
-
-/*@}*/
 
 
 G_END_DECLS

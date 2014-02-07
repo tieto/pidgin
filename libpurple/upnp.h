@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* UPnP API                                                               */
 /**************************************************************************/
-/*@{*/
 
 /* typedef struct _PurpleUPnPRequestData PurpleUPnPRequestData; */
 
@@ -133,8 +132,6 @@ UPnPMappingAddRemove *purple_upnp_set_port_mapping(unsigned short portmap, const
  */
 UPnPMappingAddRemove *purple_upnp_remove_port_mapping(unsigned short portmap,
 		const gchar* protocol, PurpleUPnPCallback cb, gpointer cb_data);
-
-/*@}*/
 
 G_END_DECLS
 

@@ -81,7 +81,6 @@ G_BEGIN_DECLS
     Preferences are named according to a directory-like structure.
     Example: "/plugins/core/potato/is_from_idaho" (probably a boolean)    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_prefs_get_handle:
@@ -400,8 +399,6 @@ void purple_prefs_trigger_callback(const char *name);
  * Read preferences
  */
 gboolean purple_prefs_load(void);
-
-/*@}*/
 
 G_END_DECLS
 

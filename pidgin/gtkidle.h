@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* GTK+ Idle API                                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_idle_get_ui_ops:
@@ -45,8 +44,6 @@ G_BEGIN_DECLS
  * Returns: The UI operations structure.
  */
 PurpleIdleUiOps *pidgin_idle_get_ui_ops(void);
-
-/*@}*/
 
 G_END_DECLS
 

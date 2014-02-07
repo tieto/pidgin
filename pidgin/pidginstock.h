@@ -34,7 +34,7 @@
 /**************************************************************************/
 /* Stock images                                                           */
 /**************************************************************************/
-/*@{*/
+
 #define PIDGIN_STOCK_ACTION          "pidgin-action"
 #define PIDGIN_STOCK_ALIAS           "pidgin-alias"
 #define PIDGIN_STOCK_AWAY            "pidgin-away"
@@ -175,8 +175,6 @@
 #define PIDGIN_STOCK_TRAY_PENDING         "pidgin-tray-pending"
 #define PIDGIN_STOCK_TRAY_EMAIL		  "pidgin-tray-email"
 
-
-/*@}*/
 
 /*
  * For using icons that aren't one of the default GTK_ICON_SIZEs

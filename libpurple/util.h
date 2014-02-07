@@ -219,7 +219,6 @@ char * purple_util_format_song_info(const char *title, const char *artist,
 /**************************************************************************/
 /* Utility Subsystem                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_util_init:
@@ -235,12 +234,9 @@ void purple_util_init(void);
  */
 void purple_util_uninit(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Base16 Functions                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_base16_encode:
@@ -290,12 +286,9 @@ guchar *purple_base16_decode(const char *str, gsize *ret_len);
 gchar *purple_base16_encode_chunked(const guchar *data, gsize len);
 
 
-/*@}*/
-
 /**************************************************************************/
 /* Base64 Functions                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_base64_encode:
@@ -329,12 +322,9 @@ gchar *purple_base64_encode(const guchar *data, gsize len);
  */
 guchar *purple_base64_decode(const char *str, gsize *ret_len);
 
-/*@}*/
-
 /**************************************************************************/
 /* Quoted Printable Functions                                             */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_quotedp_decode:
@@ -351,12 +341,9 @@ guchar *purple_base64_decode(const char *str, gsize *ret_len);
  */
 guchar *purple_quotedp_decode(const char *str, gsize *ret_len);
 
-/*@}*/
-
 /**************************************************************************/
 /* MIME Functions                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_mime_decode_field:
@@ -380,13 +367,10 @@ guchar *purple_quotedp_decode(const char *str, gsize *ret_len);
  */
 char *purple_mime_decode_field(const char *str);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Date/Time Functions                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_utf8_strftime:
@@ -546,13 +530,10 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
  */
 char *purple_uts35_to_str(const char *format, size_t len, struct tm *tm);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Markup Functions                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_markup_escape_text:
@@ -774,13 +755,10 @@ char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
  */
 gboolean purple_markup_is_rtl(const char *html);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Path/Filename Functions                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_home_dir:
@@ -925,13 +903,10 @@ purple_util_get_image_extension(gconstpointer data, size_t len);
  */
 char *purple_util_get_image_filename(gconstpointer image_data, size_t image_len);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Environment Detection Functions                                        */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_program_is_valid:
@@ -1004,13 +979,10 @@ int purple_socket_get_family(int fd);
  */
 gboolean purple_socket_speaks_ipv4(int fd);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* String Functions                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_strequal:
@@ -1286,13 +1258,10 @@ void purple_str_wipe(gchar *str);
  */
 void purple_utf16_wipe(gunichar2 *str);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* URI/URL Functions                                                      */
 /**************************************************************************/
-/*@{*/
 
 void purple_got_protocol_handler_uri(const char *uri);
 
@@ -1391,12 +1360,9 @@ GList *purple_uri_list_extract_uris(const gchar *uri_list);
  */
 GList *purple_uri_list_extract_filenames(const gchar *uri_list);
 
-/*@}*/
-
 /**************************************************************************
  * UTF8 String Functions
  **************************************************************************/
-/*@{*/
 
 /**
  * purple_utf8_try_convert:
@@ -1510,8 +1476,6 @@ gboolean purple_message_meify(char *message, gssize len);
  * Returns: The stripped string
  */
 char *purple_text_strip_mnemonic(const char *in);
-
-/*@}*/
 
 /**
  * purple_add_eight:

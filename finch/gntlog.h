@@ -68,7 +68,6 @@ void finch_syslog_show(void);
 /**************************************************************************/
 /* GNT Log Subsystem                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * finch_log_init:
@@ -92,7 +91,5 @@ void *finch_log_get_handle(void);
  * Uninitializes the GNT log subsystem.
  */
 void finch_log_uninit(void);
-
-/*@}*/
 
 #endif

@@ -34,7 +34,6 @@
 /***************************************************************************
  * GNT Menu Utility Functions
  ***************************************************************************/
-/*@{*/
 
 /**
  * gnt_append_menu_action:
@@ -46,7 +45,5 @@
  * Add a PurpleMenuAction to a GntMenu.
  */
 void gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx);
-
-/*@}*/
 
 #endif

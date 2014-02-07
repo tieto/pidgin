@@ -78,7 +78,6 @@ G_BEGIN_DECLS
 /*****************************************************************************/
 /* PidginWhiteboard API                                                      */
 /*****************************************************************************/
-/*@{*/
 
 /**
  * pidgin_whiteboard_get_ui_ops:
@@ -88,8 +87,6 @@ G_BEGIN_DECLS
  * Returns: The GtkWhiteboard UI Operations.
  */
 PurpleWhiteboardUiOps *pidgin_whiteboard_get_ui_ops( void );
-
-/*@}*/
 
 G_END_DECLS
 

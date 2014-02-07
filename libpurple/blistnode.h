@@ -132,7 +132,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Buddy list node API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_blist_node_get_type:
@@ -341,8 +340,6 @@ void purple_blist_node_set_transient(PurpleBlistNode *node, gboolean transient);
  */
 gboolean purple_blist_node_is_transient(PurpleBlistNode *node);
 
-/*@}*/
-
 /**
  * purple_blist_node_get_extended_menu:
  * @n: The blist node for which to obtain the extended menu items.
@@ -354,12 +351,9 @@ gboolean purple_blist_node_is_transient(PurpleBlistNode *node);
  */
 GList *purple_blist_node_get_extended_menu(PurpleBlistNode *n);
 
-/*@}*/
-
 /**************************************************************************/
 /* Counting node API                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_counting_node_get_type:
@@ -459,8 +453,6 @@ void purple_counting_node_set_current_size(PurpleCountingNode *counter, int curr
  * Sets the number of children of the counting node that are online.
  */
 void purple_counting_node_set_online_count(PurpleCountingNode *counter, int onlinecount);
-
-/*@}*/
 
 G_END_DECLS
 

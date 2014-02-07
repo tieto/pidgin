@@ -74,7 +74,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Custom Smiley API                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_smiley_get_type:
@@ -224,13 +223,10 @@ const char *purple_smiley_get_extension(const PurpleSmiley *smiley);
  */
 char *purple_smiley_get_full_path(PurpleSmiley *smiley);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Custom Smiley Subsystem API                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_smileys_get_all:
@@ -289,8 +285,6 @@ void purple_smileys_init(void);
  * Uninitializes the custom smiley subsystem.
  */
 void purple_smileys_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 
