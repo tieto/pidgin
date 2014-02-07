@@ -331,12 +331,9 @@ PurpleProtocolAction *purple_protocol_action_new(const char* label,
  */
 void purple_protocol_action_free(PurpleProtocolAction *action);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Chat Entry API                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_chat_entry_get_type:
@@ -345,12 +342,9 @@ void purple_protocol_action_free(PurpleProtocolAction *action);
  */
 GType purple_protocol_chat_entry_get_type(void);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_got_account_idle:
@@ -634,12 +628,9 @@ gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error);
  */
 GList *purple_protocols_get_all(void);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocols Subsytem API                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocols_init:

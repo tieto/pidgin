@@ -743,7 +743,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /** @name Protocol Object API                                             */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_get_type:
@@ -835,12 +834,9 @@ PurpleWhiteboardOps *purple_protocol_get_whiteboard_ops(const PurpleProtocol *pr
 void purple_protocol_override(PurpleProtocol *protocol,
 		PurpleProtocolOverrideFlags flags);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Class API                                              */
 /**************************************************************************/
-/*@{*/
 
 void purple_protocol_class_login(PurpleProtocol *, PurpleAccount *);
 
@@ -852,12 +848,9 @@ GList *purple_protocol_class_status_types(PurpleProtocol *,
 const char *purple_protocol_class_list_icon(PurpleProtocol *,
 		PurpleAccount *account, PurpleBuddy *buddy);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Client Interface API                                   */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_client_iface_get_type:
@@ -904,12 +897,9 @@ PurpleMood *purple_protocol_client_iface_get_moods(PurpleProtocol *,
 gssize purple_protocol_client_iface_get_max_message_size(PurpleProtocol *,
 		PurpleConversation *conv);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Server Interface API                                   */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_server_iface_get_type:
@@ -985,12 +975,9 @@ void purple_protocol_server_iface_get_public_alias(PurpleProtocol *,
 		PurpleConnection *gc, PurpleGetPublicAliasSuccessCallback success_cb,
 		PurpleGetPublicAliasFailureCallback failure_cb);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol IM Interface API                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_im_iface_get_type:
@@ -1005,12 +992,9 @@ int purple_protocol_im_iface_send(PurpleProtocol *, PurpleConnection *,
 unsigned int purple_protocol_im_iface_send_typing(PurpleProtocol *,
 		PurpleConnection *, const char *name, PurpleIMTypingState state);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Chat Interface API                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_chat_iface_get_type:
@@ -1052,12 +1036,9 @@ char *purple_protocol_chat_iface_get_user_real_name(PurpleProtocol *,
 void purple_protocol_chat_iface_set_topic(PurpleProtocol *,
 		PurpleConnection *gc, int id, const char *topic);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Privacy Interface API                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_privacy_iface_get_type:
@@ -1081,12 +1062,9 @@ void purple_protocol_privacy_iface_rem_deny(PurpleProtocol *,
 void purple_protocol_privacy_iface_set_permit_deny(PurpleProtocol *,
 		PurpleConnection *);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Xfer Interface API                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_xfer_iface_get_type:
@@ -1104,12 +1082,9 @@ void purple_protocol_xfer_iface_send(PurpleProtocol *, PurpleConnection *,
 PurpleXfer *purple_protocol_xfer_iface_new_xfer(PurpleProtocol *,
 		PurpleConnection *, const char *who);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Roomlist Interface API                                 */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_roomlist_iface_get_type:
@@ -1130,12 +1105,9 @@ void purple_protocol_roomlist_iface_expand_category(PurpleProtocol *,
 char *purple_protocol_roomlist_iface_room_serialize(PurpleProtocol *,
 		PurpleRoomlistRoom *room);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Attention Interface API                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_attention_iface_get_type:
@@ -1150,12 +1122,9 @@ gboolean purple_protocol_attention_iface_send(PurpleProtocol *,
 GList *purple_protocol_attention_iface_get_types(PurpleProtocol *,
 		PurpleAccount *acct);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Media Interface API                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_media_iface_get_type:
@@ -1170,12 +1139,9 @@ gboolean purple_protocol_media_iface_initiate_session(PurpleProtocol *,
 PurpleMediaCaps purple_protocol_media_iface_get_caps(PurpleProtocol *,
 		PurpleAccount *account, const char *who);
 
-/*@}*/
-
 /**************************************************************************/
 /** @name Protocol Factory Interface API                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_protocol_factory_iface_get_type:
@@ -1195,8 +1161,6 @@ PurpleWhiteboard *purple_protocol_factory_iface_whiteboard_new(PurpleProtocol *,
 
 PurpleXfer *purple_protocol_factory_iface_xfer_new(PurpleProtocol *,
 		PurpleAccount *account, PurpleXferType type, const char *who);
-
-/*@}*/
 
 G_END_DECLS
 

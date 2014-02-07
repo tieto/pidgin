@@ -414,7 +414,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Plugin API                                                             */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugin_load:
@@ -541,12 +540,9 @@ gboolean purple_plugin_is_internal(const PurplePlugin *plugin);
  */
 GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
 
-/*@}*/
-
 /**************************************************************************/
 /* PluginInfo API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugin_info_get_type:
@@ -883,12 +879,9 @@ void purple_plugin_info_set_ui_data(PurplePluginInfo *info, gpointer ui_data);
  */
 gpointer purple_plugin_info_get_ui_data(const PurplePluginInfo *info);
 
-/*@}*/
-
 /**************************************************************************/
 /* PluginAction API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugin_action_get_type:
@@ -916,12 +909,9 @@ PurplePluginAction *purple_plugin_action_new(const char* label,
  */
 void purple_plugin_action_free(PurplePluginAction *action);
 
-/*@}*/
-
 /**************************************************************************/
 /* Plugins API                                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugins_find_all:
@@ -998,12 +988,9 @@ void purple_plugins_save_loaded(const char *key);
  */
 void purple_plugins_load_saved(const char *key);
 
-/*@}*/
-
 /**************************************************************************/
 /* Plugins Subsystem API                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugins_get_handle:
@@ -1027,8 +1014,6 @@ void purple_plugins_init(void);
  * Uninitializes the plugin subsystem
  */
 void purple_plugins_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

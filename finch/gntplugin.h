@@ -76,7 +76,6 @@ struct _FinchPluginInfoClass {
 /**********************************************************************
  * @name Plugin Info API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_plugin_info_get_type:
@@ -107,8 +106,6 @@ GType finch_plugin_info_get_type(void);
  */
 FinchPluginInfo *finch_plugin_info_new(const char *first_property, ...)
                  G_GNUC_NULL_TERMINATED;
-
-/*@}*/
 
 /**********************************************************************
  * GNT Plugins API
