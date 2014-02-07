@@ -742,7 +742,7 @@ purple_protocol_action_get_type(void)
 /**************************************************************************
  * Protocols API
  **************************************************************************/
-/**
+/*
  * Negative if a before b, 0 if equal, positive if a after b.
  */
 static gint

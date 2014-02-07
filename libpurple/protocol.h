@@ -775,7 +775,7 @@ struct _PurpleProtocolFactoryIface
 /**
  * PURPLE_PROTOCOL_IMPLEMENTS:
  * @protocol: The protocol in which to check
- * @IFACE:    The interface name in caps. e.g. %CLIENT_IFACE
+ * @IFACE:    The interface name in caps. e.g. #CLIENT_IFACE
  * @func:     The function to check
  *
  * Returns: %TRUE if a protocol implements a function in an interface,

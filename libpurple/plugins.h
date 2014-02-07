@@ -132,6 +132,7 @@ struct _PurplePluginInfo {
 	GObject parent;
 #endif
 
+	/*< public >*/
 	gpointer ui_data;
 };
 
@@ -170,10 +171,10 @@ struct _PurplePluginAction {
 /**
  * PURPLE_PLUGIN_ABI_VERSION:
  *
- * Returns an ABI version to set in plugins using major and minor versions.
- *
  * Note: The lower six nibbles represent the ABI version for libpurple, the
  *       rest are required by GPlugin.
+ *
+ * Returns: An ABI version to set in plugins using major and minor versions.
  */
 #define PURPLE_PLUGIN_ABI_VERSION(major,minor) \
 	(0x01000000 | ((major) << 16) | (minor))
@@ -181,7 +182,7 @@ struct _PurplePluginAction {
 /**
  * PURPLE_PLUGIN_ABI_MAJOR_VERSION:
  *
- * Returns the major version from an ABI version
+ * Returns: The major version from an ABI version
  */
 #define PURPLE_PLUGIN_ABI_MAJOR_VERSION(abi) \
 	((abi >> 16) & 0xff)
@@ -189,7 +190,7 @@ struct _PurplePluginAction {
 /**
  * PURPLE_PLUGIN_ABI_MINOR_VERSION:
  *
- * Returns the minor version from an ABI version
+ * Returns: The minor version from an ABI version
  */
 #define PURPLE_PLUGIN_ABI_MINOR_VERSION(abi) \
 	(abi & 0xffff)
@@ -455,7 +456,7 @@ gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
 /**
  * purple_plugin_get_filename:
- * @info: The plugin.
+ * @plugin: The plugin.
  *
  * Returns a plugin's filename, along with the path.
  *
@@ -465,7 +466,7 @@ const gchar *purple_plugin_get_filename(const PurplePlugin *plugin);
 
 /**
  * purple_plugin_get_info:
- * @info: The plugin.
+ * @plugin: The plugin.
  *
  * Returns a plugin's #PurplePluginInfo instance.
  *
@@ -561,7 +562,7 @@ GType purple_plugin_info_get_type(void);
  *             name/value pairs, followed by %NULL
  *
  * Creates a new #PurplePluginInfo instance to be returned from
- * gplugin_plugin_query() of a plugin, using the provided name/value pairs.
+ * #plugin_query of a plugin, using the provided name/value pairs.
  *
  * All properties except <literal>"id"</literal> and
  * <literal>"purple-abi"</literal> are optional.
@@ -604,7 +605,7 @@ GType purple_plugin_info_get_type(void);
  *   <row><entry><literal>"license-id"</literal></entry>
  *     <entry>(string) Short name of the plugin's license. This should
  *       either be an identifier of the license from
- *       <ulink url="http://dep.debian.net/deps/dep5/#license-specification"/>
+ *       <ulink url="http://dep.debian.net/deps/dep5/#license-specification" />
  *       or "Other" for custom licenses.</entry>
  *   </row>
  *   <row><entry><literal>"license-text"</literal></entry>

@@ -467,7 +467,7 @@ void purple_buddy_icons_uninit(void);
 /**
  * purple_buddy_icon_spec_get_type:
  *
- * Returns the GType for the #PurpleBuddyIconSpec boxed structure.
+ * Returns: The #GType for the #PurpleBuddyIconSpec boxed structure.
  */
 GType purple_buddy_icon_spec_get_type(void);
 
