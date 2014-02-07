@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PURPLE_PREFS_H_
+#define _PURPLE_PREFS_H_
 /**
  * SECTION:prefs
  * @section_id: libpurple-prefs
  * @short_description: <filename>prefs.h</filename>
  * @title: Preferences API
  */
-
-#ifndef _PURPLE_PREFS_H_
-#define _PURPLE_PREFS_H_
 
 #include <glib.h>
 

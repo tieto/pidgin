@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_MEDIA_MANAGER_H_
+#define _PURPLE_MEDIA_MANAGER_H_
 /**
  * SECTION:mediamanager
  * @section_id: libpurple-mediamanager
  * @short_description: <filename>mediamanager.h</filename>
  * @title: Media Manager Object
  */
-
-#ifndef _PURPLE_MEDIA_MANAGER_H_
-#define _PURPLE_MEDIA_MANAGER_H_
 
 #include <glib.h>
 #include <glib-object.h>

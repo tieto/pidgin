@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PIDGINPLUGINPREF_H_
+#define _PIDGINPLUGINPREF_H_
 /**
  * SECTION:gtkpluginpref
  * @section_id: pidgin-gtkpluginpref
  * @short_description: <filename>gtkpluginpref.h</filename>
  * @title: Plugin Preferences
  */
-
-#ifndef _PIDGINPLUGINPREF_H_
-#define _PIDGINPLUGINPREF_H_
 
 #include "pluginpref.h"
 

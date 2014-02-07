@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_CONNECTION_H_
+#define _PURPLE_CONNECTION_H_
 /**
  * SECTION:connection
  * @section_id: libpurple-connection
@@ -25,9 +28,6 @@
  * @title: Connection API
  * @see_also: <link linkend="chapter-signals-connection">Connection signals</link>
  */
-
-#ifndef _PURPLE_CONNECTION_H_
-#define _PURPLE_CONNECTION_H_
 
 #define PURPLE_TYPE_CONNECTION             (purple_connection_get_type())
 #define PURPLE_CONNECTION(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CONNECTION, PurpleConnection))

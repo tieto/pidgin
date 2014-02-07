@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_STYLE_H
+#define GNT_STYLE_H
 /**
  * SECTION:gntstyle
  * @section_id: libgnt-gntstyle
@@ -173,4 +176,4 @@ void gnt_init_styles(void);
  */
 void gnt_uninit_styles(void);
 
-
+#endif /* GNT_STYLE_H */

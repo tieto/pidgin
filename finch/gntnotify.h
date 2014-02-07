@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_NOTIFY_H
+#define _GNT_NOTIFY_H
 /**
  * SECTION:gntnotify
  * @section_id: finch-gntnotify
  * @short_description: <filename>gntnotify.h</filename>
  * @title: Notify API
  */
-
-#ifndef _GNT_NOTIFY_H
-#define _GNT_NOTIFY_H
 
 #include "notify.h"
 

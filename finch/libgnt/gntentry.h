@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_ENTRY_H
+#define GNT_ENTRY_H
 /**
  * SECTION:gntentry
  * @section_id: libgnt-gntentry
  * @short_description: <filename>gntentry.h</filename>
  * @title: Entry
  */
-
-#ifndef GNT_ENTRY_H
-#define GNT_ENTRY_H
 
 #include "gntwidget.h"
 #include "gnt.h"

@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGIN_STOCK_H_
+#define _PIDGIN_STOCK_H_
 /**
  * SECTION:pidginstock
  * @section_id: pidgin-pidginstock
@@ -27,9 +30,6 @@
 
 #include <gtk/gtk.h>
 #include "gtkstatus-icon-theme.h"
-
-#ifndef _PIDGIN_STOCK_H_
-#define _PIDGIN_STOCK_H_
 
 /**************************************************************************/
 /* Stock images                                                           */

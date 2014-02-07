@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_SERVER_H_
+#define _PURPLE_SERVER_H_
 /**
  * SECTION:server
  * @section_id: libpurple-server
  * @short_description: <filename>server.h</filename>
  * @title: Server API
  */
-
-#ifndef _PURPLE_SERVER_H_
-#define _PURPLE_SERVER_H_
 
 #include "accounts.h"
 #include "conversations.h"

@@ -1,3 +1,5 @@
+#ifndef _PURPLE_DBUS_MAYBE_H_
+#define _PURPLE_DBUS_MAYBE_H_
 /**
  * SECTION:dbus-maybe
  * @section_id: libpurple-dbus-maybe
@@ -9,9 +11,6 @@
  * dbus support and do nothing otherwise.  See "dbus-server.h" for
  * documentation.
  */
-
-#ifndef _PURPLE_DBUS_MAYBE_H_
-#define _PURPLE_DBUS_MAYBE_H_
 
 #ifdef HAVE_DBUS
 

@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PIDGINPREFS_H_
+#define _PIDGINPREFS_H_
 /**
  * SECTION:gtkprefs
  * @section_id: pidgin-gtkprefs
  * @short_description: <filename>gtkprefs.h</filename>
  * @title: Preferences
  */
-
-#ifndef _PIDGINPREFS_H_
-#define _PIDGINPREFS_H_
 
 #include "prefs.h"
 

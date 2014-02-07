@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_IDLE_H_
+#define _GNT_IDLE_H_
 /**
  * SECTION:gntidle
  * @section_id: finch-gntidle
  * @short_description: <filename>gntidle.h</filename>
  * @title: Idle API
  */
-
-#ifndef _GNT_IDLE_H_
-#define _GNT_IDLE_H_
 
 #include "idle.h"
 

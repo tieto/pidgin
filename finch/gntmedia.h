@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_MEDIA_H
+#define GNT_MEDIA_H
 /**
  * SECTION:gntmedia
  * @section_id: finch-gntmedia
  * @short_description: <filename>gntmedia.h</filename>
  * @title: Media API
  */
-
-#ifndef GNT_MEDIA_H
-#define GNT_MEDIA_H
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

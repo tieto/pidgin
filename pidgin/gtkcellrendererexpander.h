@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PIDGINCELLRENDEREREXPANDER_H_
+#define _PIDGINCELLRENDEREREXPANDER_H_
 /**
  * SECTION:gtkcellrendererexpander
  * @section_id: pidgin-gtkcellrendererexpander
  * @short_description: <filename>gtkcellrendererexpander.h</filename>
  * @title: Cell Renderer Expander
  */
-
-#ifndef _PIDGINCELLRENDEREREXPANDER_H_
-#define _PIDGINCELLRENDEREREXPANDER_H_
 
 #include <gtk/gtk.h>
 

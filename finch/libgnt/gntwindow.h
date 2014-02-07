@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_WINDOW_H
+#define GNT_WINDOW_H
 /**
  * SECTION:gntwindow
  * @section_id: libgnt-gntwindow
  * @short_description: <filename>gntwindow.h</filename>
  * @title: Window
  */
-
-#ifndef GNT_WINDOW_H
-#define GNT_WINDOW_H
 
 #include "gnt.h"
 #include "gntbox.h"

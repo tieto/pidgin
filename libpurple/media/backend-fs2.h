@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _MEDIA_BACKEND_FS2_H_
+#define _MEDIA_BACKEND_FS2_H_
 /*
  * SECTION:backend-fs2
  * @section_id: libpurple-backend-fs2
@@ -27,9 +30,6 @@
  * This file should not yet be part of libpurple's API.
  * It should remain internal only for now.
  */
-
-#ifndef _MEDIA_BACKEND_FS2_H_
-#define _MEDIA_BACKEND_FS2_H_
 
 #include <glib-object.h>
 

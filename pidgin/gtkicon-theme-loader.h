@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PIDGIN_ICON_THEME_LOADER_H
+#define PIDGIN_ICON_THEME_LOADER_H
 /**
  * SECTION:gtkicon-theme-loader
  * @section_id: pidgin-gtkicon-theme-loader
  * @short_description: <filename>gtkicon-theme-loader.h</filename>
  * @title: Pidgin Icon Theme Loader Class
  */
-
-#ifndef PIDGIN_ICON_THEME_LOADER_H
-#define PIDGIN_ICON_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>

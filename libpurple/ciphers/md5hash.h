@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_MD5_HASH_H
+#define PURPLE_MD5_HASH_H
 /**
  * SECTION:md5hash
  * @section_id: libpurple-md5hash
  * @short_description: <filename>ciphers/md5hash.h</filename>
  * @title: MD5 Hash
  */
-
-#ifndef PURPLE_MD5_HASH_H
-#define PURPLE_MD5_HASH_H
 
 #include "cipher.h"
 

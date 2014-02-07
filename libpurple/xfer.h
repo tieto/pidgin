@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_XFER_H_
+#define _PURPLE_XFER_H_
 /**
  * SECTION:xfer
  * @section_id: libpurple-xfer
@@ -25,9 +28,6 @@
  * @title: File Transfer API
  * @see_also: <link linkend="chapter-signals-xfer">File Transfer signals</link>
  */
-
-#ifndef _PURPLE_XFER_H_
-#define _PURPLE_XFER_H_
 
 #define PURPLE_TYPE_XFER             (purple_xfer_get_type())
 #define PURPLE_XFER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_XFER, PurpleXfer))

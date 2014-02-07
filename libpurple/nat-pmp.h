@@ -23,15 +23,15 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  */
+
+#ifndef _PURPLE_NAT_PMP_H
+#define _PURPLE_NAT_PMP_H
 /**
  * SECTION:nat-pmp
  * @section_id: libpurple-nat-pmp
  * @short_description: <filename>nat-pmp.h</filename>
  * @title: NAT-PMP Implementation
  */
-
-#ifndef _PURPLE_NAT_PMP_H
-#define _PURPLE_NAT_PMP_H
 
 #include <glib.h>
 

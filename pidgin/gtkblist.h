@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINBLIST_H_
+#define _PIDGINBLIST_H_
 /**
  * SECTION:gtkblist
  * @section_id: pidgin-gtkblist
@@ -25,9 +28,6 @@
  * @title: Buddy List API
  * @see_also: <link linkend="chapter-signals-gtkblist">Buddy List signals</link>
  */
-
-#ifndef _PIDGINBLIST_H_
-#define _PIDGINBLIST_H_
 
 typedef struct _PidginBuddyList PidginBuddyList;
 

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
+
+#ifndef _PURPLE_SOCKET_H_
+#define _PURPLE_SOCKET_H_
 /**
  * SECTION:purple-socket
  * @section_id: libpurple-purple-socket
  * @short_description: <filename>purple-socket.h</filename>
  * @title: Generic Sockets
  */
-
-#ifndef _PURPLE_SOCKET_H_
-#define _PURPLE_SOCKET_H_
 
 #include "connection.h"
 

@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_SLIDER_H
+#define GNT_SLIDER_H
 /**
  * SECTION:gntslider
  * @section_id: libgnt-gntslider
  * @short_description: <filename>gntslider.h</filename>
  * @title: Slider
  */
-
-#ifndef GNT_SLIDER_H
-#define GNT_SLIDER_H
 
 #include "gntwidget.h"
 #include "gnt.h"

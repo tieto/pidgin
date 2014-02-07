@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _GNT_CERTMGR_H
+#define _GNT_CERTMGR_H
 /**
  * SECTION:gntcertmgr
  * @section_id: finch-gntcertmgr
  * @short_description: <filename>gntcertmgr.h</filename>
  * @title: Certificate Manager API
  */
-
-#ifndef _GNT_CERTMGR_H
-#define _GNT_CERTMGR_H
 
 void finch_certmgr_show(void);
 

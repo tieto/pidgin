@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNTWM_H
+#define GNTWM_H
 /**
  * SECTION:gntwm
  * @section_id: libgnt-gntwm
  * @short_description: <filename>gntwm.h</filename>
  * @title: Window-manager API
  */
-
-#ifndef GNTWM_H
-#define GNTWM_H
 
 #include "gntwidget.h"
 #include "gntmenu.h"

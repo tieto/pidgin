@@ -20,6 +20,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_CERTIFICATE_H
+#define _PURPLE_CERTIFICATE_H
 /**
  * SECTION:certificate
  * @section_id: libpurple-certificate
@@ -27,9 +30,6 @@
  * @title: Public-Key Certificate API
  * @see_also: <link linkend="chapter-signals-certificate">Certificate signals</link>
  */
-
-#ifndef _PURPLE_CERTIFICATE_H
-#define _PURPLE_CERTIFICATE_H
 
 #include <time.h>
 

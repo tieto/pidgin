@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_STATUS_H
+#define _GNT_STATUS_H
 /**
  * SECTION:gntstatus
  * @section_id: finch-gntstatus
  * @short_description: <filename>gntstatus.h</filename>
  * @title: Status API
  */
-
-#ifndef _GNT_STATUS_H
-#define _GNT_STATUS_H
 
 #include <status.h>
 #include <savedstatuses.h>

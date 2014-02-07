@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_IDLE_H_
+#define _PURPLE_IDLE_H_
 /**
  * SECTION:idle
  * @section_id: libpurple-idle
  * @short_description: <filename>idle.h</filename>
  * @title: Idle API
  */
-
-#ifndef _PURPLE_IDLE_H_
-#define _PURPLE_IDLE_H_
 
 #include <time.h>
 

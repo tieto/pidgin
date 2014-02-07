@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PURPLE_PLUGINPREF_H_
+#define _PURPLE_PLUGINPREF_H_
 /**
  * SECTION:pluginpref
  * @section_id: libpurple-pluginpref
  * @short_description: <filename>pluginpref.h</filename>
  * @title: Plugin Preferences Frontend
  */
-
-#ifndef _PURPLE_PLUGINPREF_H_
-#define _PURPLE_PLUGINPREF_H_
 
 typedef struct _PurplePluginPrefFrame		PurplePluginPrefFrame;
 typedef struct _PurplePluginPref			PurplePluginPref;

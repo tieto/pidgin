@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
+
+#ifndef _PURPLE_KEYRING_H_
+#define _PURPLE_KEYRING_H_
 /**
  * SECTION:keyring
  * @section_id: libpurple-keyring
  * @short_description: <filename>keyring.h</filename>
  * @title: Keyring API
  */
-
-#ifndef _PURPLE_KEYRING_H_
-#define _PURPLE_KEYRING_H_
 
 #include "account.h"
 #include "request.h"

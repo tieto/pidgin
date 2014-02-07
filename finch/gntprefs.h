@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_PREFS_H
+#define _GNT_PREFS_H
 /**
  * SECTION:gntprefs
  * @section_id: finch-gntprefs
  * @short_description: <filename>gntprefs.h</filename>
  * @title: Preferences API
  */
-
-#ifndef _GNT_PREFS_H
-#define _GNT_PREFS_H
 
 /**********************************************************************
  * GNT Preferences API

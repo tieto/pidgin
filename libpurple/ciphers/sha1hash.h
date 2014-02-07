@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_SHA1_HASH_H
+#define PURPLE_SHA1_HASH_H
 /**
  * SECTION:sha1hash
  * @section_id: libpurple-sha1hash
  * @short_description: <filename>ciphers/sha1hash.h</filename>
  * @title: SHA1 Hash
  */
-
-#ifndef PURPLE_SHA1_HASH_H
-#define PURPLE_SHA1_HASH_H
 
 #include "cipher.h"
 

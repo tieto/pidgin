@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINLOG_H_
+#define _PIDGINLOG_H_
 /**
  * SECTION:gtklog
  * @section_id: pidgin-gtklog
@@ -25,9 +28,6 @@
  * @title: Log Viewer
  * @see_also: <link linkend="chapter-signals-gtklog">Log signals</link>
  */
-
-#ifndef _PIDGINLOG_H_
-#define _PIDGINLOG_H_
 
 #include "pidgin.h"
 #include "log.h"

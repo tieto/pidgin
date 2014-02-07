@@ -1,3 +1,5 @@
+#ifndef _PURPLE_DBUS_USEFUL_H_
+#define _PURPLE_DBUS_USEFUL_H_
 /**
  * SECTION:dbus-useful
  * @section_id: libpurple-dbus-useful
@@ -18,3 +20,4 @@ PurpleAccount *purple_accounts_find_connected(const char *name, const char *prot
 
 G_END_DECLS
 
+#endif

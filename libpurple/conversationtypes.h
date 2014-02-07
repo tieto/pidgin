@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_CONVERSATION_TYPES_H_
+#define _PURPLE_CONVERSATION_TYPES_H_
 /**
  * SECTION:conversationtypes
  * @section_id: libpurple-conversationtypes
  * @short_description: <filename>conversationtypes.h</filename>
  * @title: Chat and IM Conversation Objects
  */
-
-#ifndef _PURPLE_CONVERSATION_TYPES_H_
-#define _PURPLE_CONVERSATION_TYPES_H_
 
 /**************************************************************************/
 /** Data Structures                                                       */

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINCONN_H_
+#define _PIDGINCONN_H_
 /**
  * SECTION:gtkconn
  * @section_id: pidgin-gtkconn
  * @short_description: <filename>gtkconn.h</filename>
  * @title: Connection API
  */
-
-#ifndef _PIDGINCONN_H_
-#define _PIDGINCONN_H_
 
 G_BEGIN_DECLS
 

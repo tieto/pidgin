@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_MEDIA_ENUM_TYPES_H_
+#define _PURPLE_MEDIA_ENUM_TYPES_H_
 /**
  * SECTION:enum-types
  * @section_id: libpurple-enum-types
  * @short_description: <filename>media/enum-types.h</filename>
  * @title: Enum types for Media API
  */
-
-#ifndef _PURPLE_MEDIA_ENUM_TYPES_H_
-#define _PURPLE_MEDIA_ENUM_TYPES_H_
 
 #include <glib-object.h>
 

@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_COMBO_BOX_H
+#define GNT_COMBO_BOX_H
 /**
  * SECTION:gntcombobox
  * @section_id: libgnt-gntcombobox
  * @short_description: <filename>gntcombobox.h</filename>
  * @title: Combobox
  */
-
-#ifndef GNT_COMBO_BOX_H
-#define GNT_COMBO_BOX_H
 
 #include "gnt.h"
 #include "gntcolors.h"

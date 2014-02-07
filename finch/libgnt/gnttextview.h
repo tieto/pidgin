@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_TEXT_VIEW_H
+#define GNT_TEXT_VIEW_H
 /**
  * SECTION:gnttextview
  * @section_id: libgnt-gnttextview
  * @short_description: <filename>gnttextview.h</filename>
  * @title: Textview
  */
-
-#ifndef GNT_TEXT_VIEW_H
-#define GNT_TEXT_VIEW_H
 
 #include "gntwidget.h"
 #include "gnt.h"

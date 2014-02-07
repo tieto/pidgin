@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_DNSSRV_H
+#define _PURPLE_DNSSRV_H
 /**
  * SECTION:dnssrv
  * @section_id: libpurple-dnssrv
  * @short_description: <filename>dnssrv.h</filename>
  * @title: DNS SRV Utilities
  */
-
-#ifndef _PURPLE_DNSSRV_H
-#define _PURPLE_DNSSRV_H
 
 typedef struct _PurpleSrvTxtQueryData PurpleSrvTxtQueryData;
 typedef struct _PurpleSrvResponse PurpleSrvResponse;

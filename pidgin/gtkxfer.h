@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINXFER_H_
+#define _PIDGINXFER_H_
 /**
  * SECTION:gtkxfer
  * @section_id: pidgin-gtkxfer
  * @short_description: <filename>gtkxfer.h</filename>
  * @title: File Transfer UI
  */
-
-#ifndef _PIDGINXFER_H_
-#define _PIDGINXFER_H_
 
 #include "xfer.h"
 

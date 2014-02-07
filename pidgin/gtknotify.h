@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINNOTIFY_H_
+#define _PIDGINNOTIFY_H_
 /**
  * SECTION:gtknotify
  * @section_id: pidgin-gtknotify
  * @short_description: <filename>gtknotify.h</filename>
  * @title: Notification API
  */
-
-#ifndef _PIDGINNOTIFY_H_
-#define _PIDGINNOTIFY_H_
 
 #include "notify.h"
 #include "pounce.h"

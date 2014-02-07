@@ -15,6 +15,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#ifndef _PURPLE_CMDS_H_
+#define _PURPLE_CMDS_H_
 /**
  * SECTION:cmds
  * @section_id: libpurple-cmds
@@ -22,9 +25,6 @@
  * @title: Commands API
  * @see_also: <link linkend="chapter-signals-cmd">Command signals</link>
  */
-
-#ifndef _PURPLE_CMDS_H_
-#define _PURPLE_CMDS_H_
 
 #include "conversation.h"
 

@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_MEDIA_GST_H_
+#define _PURPLE_MEDIA_GST_H_
 /**
  * SECTION:media-gst
  * @section_id: libpurple-media-gst
  * @short_description: <filename>media-gst.h</filename>
  * @title: Media Element API
  */
-
-#ifndef _PURPLE_MEDIA_GST_H_
-#define _PURPLE_MEDIA_GST_H_
 
 #include "media.h"
 #include "mediamanager.h"

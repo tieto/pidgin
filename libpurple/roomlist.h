@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_ROOMLIST_H_
+#define _PURPLE_ROOMLIST_H_
 /**
  * SECTION:roomlist
  * @section_id: libpurple-roomlist
  * @short_description: <filename>roomlist.h</filename>
  * @title: Room List API
  */
-
-#ifndef _PURPLE_ROOMLIST_H_
-#define _PURPLE_ROOMLIST_H_
 
 #define PURPLE_TYPE_ROOMLIST             (purple_roomlist_get_type())
 #define PURPLE_ROOMLIST(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ROOMLIST, PurpleRoomlist))

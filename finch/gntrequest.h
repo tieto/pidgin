@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_REQUEST_H
+#define _GNT_REQUEST_H
 /**
  * SECTION:gntrequest
  * @section_id: finch-gntrequest
  * @short_description: <filename>gntrequest.h</filename>
  * @title: Request API
  */
-
-#ifndef _GNT_REQUEST_H
-#define _GNT_REQUEST_H
 
 #include "request.h"
 #include "gnt.h"

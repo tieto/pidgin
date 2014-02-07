@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_LINE_H
+#define GNT_LINE_H
 /**
  * SECTION:gntline
  * @section_id: libgnt-gntline
  * @short_description: <filename>gntline.h</filename>
  * @title: Line
  */
-
-#ifndef GNT_LINE_H
-#define GNT_LINE_H
 
 #include "gntwidget.h"
 #include "gnt.h"

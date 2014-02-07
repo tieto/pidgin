@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_WHITEBOARD_H_
+#define _PURPLE_WHITEBOARD_H_
 /**
  * SECTION:whiteboard
  * @section_id: libpurple-whiteboard
  * @short_description: <filename>whiteboard.h</filename>
  * @title: Whiteboard Object
  */
-
-#ifndef _PURPLE_WHITEBOARD_H_
-#define _PURPLE_WHITEBOARD_H_
 
 #define PURPLE_TYPE_WHITEBOARD             (purple_whiteboard_get_type())
 #define PURPLE_WHITEBOARD(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_WHITEBOARD, PurpleWhiteboard))

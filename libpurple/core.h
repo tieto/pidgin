@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_CORE_H_
+#define _PURPLE_CORE_H_
 /**
  * SECTION:core
  * @section_id: libpurple-core
@@ -25,9 +28,6 @@
  * @title: Startup and Shutdown of libpurple
  * @see_also: <link linkend="chapter-signals-core">Core signals</link>
  */
-
-#ifndef _PURPLE_CORE_H_
-#define _PURPLE_CORE_H_
 
 #include <glib.h>
 

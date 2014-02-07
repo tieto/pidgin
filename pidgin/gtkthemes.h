@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINTHEMES_H_
+#define _PIDGINTHEMES_H_
 /**
  * SECTION:gtkthemes
  * @section_id: pidgin-gtkthemes
  * @short_description: <filename>gtkthemes.h</filename>
  * @title: Smiley Theme API
  */
-
-#ifndef _PIDGINTHEMES_H_
-#define _PIDGINTHEMES_H_
 
 struct smiley_list {
 	char *sml;

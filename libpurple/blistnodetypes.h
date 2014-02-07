@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_BLISTNODE_TYPES_H_
+#define _PURPLE_BLISTNODE_TYPES_H_
 /**
  * SECTION:blistnodetypes
  * @section_id: libpurple-blistnodetypes
  * @short_description: <filename>blistnodetypes.h</filename>
  * @title: Buddy, Chat, Contact and Group node Objects
  */
-
-#ifndef _PURPLE_BLISTNODE_TYPES_H_
-#define _PURPLE_BLISTNODE_TYPES_H_
 
 #include "blistnode.h"
 

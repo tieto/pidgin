@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_THEME_MANAGER_H
+#define PURPLE_THEME_MANAGER_H
 /**
  * SECTION:theme-manager
  * @section_id: libpurple-theme-manager
  * @short_description: <filename>theme-manager.h</filename>
  * @title: Theme Manager API
  */
-
-#ifndef PURPLE_THEME_MANAGER_H
-#define PURPLE_THEME_MANAGER_H
 
 #include <glib-object.h>
 #include <glib.h>

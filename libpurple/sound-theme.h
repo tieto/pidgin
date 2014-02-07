@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_SOUND_THEME_H
+#define PURPLE_SOUND_THEME_H
 /**
  * SECTION:sound-theme
  * @section_id: libpurple-sound-theme
  * @short_description: <filename>sound-theme.h</filename>
  * @title: Sound Theme Abstact Class
  */
-
-#ifndef PURPLE_SOUND_THEME_H
-#define PURPLE_SOUND_THEME_H
 
 #include <glib.h>
 #include <glib-object.h>

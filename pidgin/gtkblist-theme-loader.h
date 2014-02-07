@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PIDGIN_BLIST_THEME_LOADER_H
+#define PIDGIN_BLIST_THEME_LOADER_H
 /**
  * SECTION:gtkblist-theme-loader
  * @section_id: pidgin-gtkblist-theme-loader
  * @short_description: <filename>gtkblist-theme-loader.h</filename>
  * @title: Buddy List Theme Loader Class
  */
-
-#ifndef PIDGIN_BLIST_THEME_LOADER_H
-#define PIDGIN_BLIST_THEME_LOADER_H
 
 #include <glib.h>
 #include <glib-object.h>

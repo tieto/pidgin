@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_CIPHER_H
+#define PURPLE_CIPHER_H
 /**
  * SECTION:cipher
  * @section_id: libpurple-cipher
  * @short_description: <filename>cipher.h</filename>
  * @title: Cipher and Hash API
  */
-
-#ifndef PURPLE_CIPHER_H
-#define PURPLE_CIPHER_H
 
 #include <glib.h>
 #include <glib-object.h>

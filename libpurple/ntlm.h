@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_NTLM_H
+#define _PURPLE_NTLM_H
 /**
  * SECTION:ntlm
  * @section_id: libpurple-ntlm
  * @short_description: <filename>ntlm.h</filename>
  * @title: NTLM Authentication
  */
-
-#ifndef _PURPLE_NTLM_H
-#define _PURPLE_NTLM_H
 
 G_BEGIN_DECLS
 

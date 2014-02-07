@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef PURPLE_THEME_H
+#define PURPLE_THEME_H
 /**
  * SECTION:theme
  * @section_id: libpurple-theme
  * @short_description: <filename>theme.h</filename>
  * @title: Theme Abstact Class
  */
-
-#ifndef PURPLE_THEME_H
-#define PURPLE_THEME_H
 
 #include <glib.h>
 #include <glib-object.h>

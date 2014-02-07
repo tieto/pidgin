@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_DEBUG_H_
+#define _PURPLE_DEBUG_H_
 /**
  * SECTION:debug
  * @section_id: libpurple-debug
  * @short_description: <filename>debug.h</filename>
  * @title: Debug API
  */
-
-#ifndef _PURPLE_DEBUG_H_
-#define _PURPLE_DEBUG_H_
 
 #include <glib.h>
 #include <stdarg.h>

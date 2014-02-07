@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_BUDDYICON_H_
+#define _PURPLE_BUDDYICON_H_
 /**
  * SECTION:buddyicon
  * @section_id: libpurple-buddyicon
  * @short_description: <filename>buddyicon.h</filename>
  * @title: Buddy Icon API
  */
-
-#ifndef _PURPLE_BUDDYICON_H_
-#define _PURPLE_BUDDYICON_H_
 
 #define PURPLE_TYPE_BUDDY_ICON (purple_buddy_icon_get_type())
 

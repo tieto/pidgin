@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _GNT_SOUND_H
+#define _GNT_SOUND_H
 /**
  * SECTION:gntsound
  * @section_id: finch-gntsound
  * @short_description: <filename>gntsound.h</filename>
  * @title: Sound API
  */
-
-#ifndef _GNT_SOUND_H
-#define _GNT_SOUND_H
 
 #include "sound.h"
 

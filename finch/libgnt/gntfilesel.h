@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef GNT_FILE_SEL_H
+#define GNT_FILE_SEL_H
 /**
  * SECTION:gntfilesel
  * @section_id: libgnt-gntfilesel
  * @short_description: <filename>gntfilesel.h</filename>
  * @title: File Selector
  */
-
-#ifndef GNT_FILE_SEL_H
-#define GNT_FILE_SEL_H
 
 #include "gntwindow.h"
 #include "gnt.h"

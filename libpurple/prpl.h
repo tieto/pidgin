@@ -18,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_PRPL_H_
+#define _PURPLE_PRPL_H_
 /**
  * SECTION:prpl
  * @section_id: libpurple-prpl
@@ -27,9 +30,6 @@
 
 /* this file should be all that prpls need to include. therefore, by including
  * this file, they should get glib, proxy, purple_connection, prpl, etc. */
-
-#ifndef _PURPLE_PRPL_H_
-#define _PURPLE_PRPL_H_
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
 

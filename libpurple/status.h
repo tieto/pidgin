@@ -19,15 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PURPLE_STATUS_H_
+#define _PURPLE_STATUS_H_
 /**
  * SECTION:status
  * @section_id: libpurple-status
  * @short_description: <filename>status.h</filename>
  * @title: Status Object API
  */
-
-#ifndef _PURPLE_STATUS_H_
-#define _PURPLE_STATUS_H_
 
 #define PURPLE_TYPE_STATUS             (purple_status_get_type())
 #define PURPLE_STATUS(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_STATUS, PurpleStatus))

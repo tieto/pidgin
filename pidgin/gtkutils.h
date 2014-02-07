@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#ifndef _PIDGINUTILS_H_
+#define _PIDGINUTILS_H_
 /**
  * SECTION:gtkutils
  * @section_id: pidgin-gtkutils
  * @short_description: <filename>gtkutils.h</filename>
  * @title: Utility functions
  */
-
-#ifndef _PIDGINUTILS_H_
-#define _PIDGINUTILS_H_
 
 #include "gtkconv.h"
 #include "pidgin.h"
