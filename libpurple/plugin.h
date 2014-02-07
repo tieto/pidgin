@@ -128,6 +128,7 @@ struct _PurplePluginInfo
 
 	GList *(*actions)(PurplePlugin *plugin, gpointer context);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -148,6 +149,7 @@ struct _PurplePluginLoaderInfo
 	gboolean (*unload)(PurplePlugin *plugin);
 	void     (*destroy)(PurplePlugin *plugin);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -183,6 +185,7 @@ struct _PurplePlugin
 	GList *dependent_plugins;
 	gpointer ui_data;
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -196,6 +199,7 @@ struct _PurplePluginUiInfo {
 	PurplePluginPrefFrame *(*get_plugin_pref_frame)(PurplePlugin *plugin);
 	gpointer (*get_plugin_pref_request)(PurplePlugin *plugin);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
