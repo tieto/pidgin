@@ -667,7 +667,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Attention Type API                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_attention_type_new:
@@ -791,12 +790,9 @@ const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type)
  */
 const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type);
 
-/*@}*/
-
 /**************************************************************************/
 /* Protocol Plugin API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_prpl_got_account_idle:
@@ -1021,12 +1017,9 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 gssize
 purple_prpl_get_max_message_size(PurplePlugin *prpl);
 
-/*@}*/
-
 /**************************************************************************/
 /* Protocol Plugin Subsystem API                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_find_prpl:
@@ -1035,8 +1028,6 @@ purple_prpl_get_max_message_size(PurplePlugin *prpl);
  * Finds a protocol plugin structure of the specified type.
  */
 PurplePlugin *purple_find_prpl(const char *id);
-
-/*@}*/
 
 G_END_DECLS
 

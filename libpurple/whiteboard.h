@@ -141,7 +141,6 @@ G_BEGIN_DECLS
 /******************************************************************************/
 /* PurpleWhiteboard API                                                       */
 /******************************************************************************/
-/*@{*/
 
 /**
  * purple_whiteboard_get_type:
@@ -408,8 +407,6 @@ void purple_whiteboard_set_ui_data(PurpleWhiteboard *wb, gpointer ui_data);
  *         used by the libpurple core.
  */
 gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb);
-
-/*@}*/
 
 G_END_DECLS
 

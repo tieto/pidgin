@@ -88,7 +88,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Buddy Pounce API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_pounce_new:
@@ -316,12 +315,9 @@ void *purple_pounce_get_data(const PurplePounce *pounce);
 void purple_pounce_execute(const PurpleAccount *pouncer, const char *pouncee,
 						 PurplePounceEvent events);
 
-/*@}*/
-
 /**************************************************************************/
 /* Buddy Pounce Subsystem API                                             */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_find_pounce:
@@ -399,8 +395,6 @@ void purple_pounces_init(void);
  * Uninitializes the pounces subsystem.
  */
 void purple_pounces_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

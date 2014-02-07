@@ -176,7 +176,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* File Transfer API                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_xfer_get_type:
@@ -876,12 +875,9 @@ void purple_xfer_set_ui_data(PurpleXfer *xfer, gpointer ui_data);
  */
 gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer);
 
-/*@}*/
-
 /**************************************************************************/
 /* File Transfer Subsystem API                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_xfers_get_all:
@@ -931,8 +927,6 @@ void purple_xfers_set_ui_ops(PurpleXferUiOps *ops);
  * Returns: The UI operations structure.
  */
 PurpleXferUiOps *purple_xfers_get_ui_ops(void);
-
-/*@}*/
 
 G_END_DECLS
 

@@ -87,7 +87,6 @@ static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoo
 /**************************************************************************/
 /* Room List API                                                          */
 /**************************************************************************/
-/*@{*/
 
 void purple_roomlist_show_with_account(PurpleAccount *account)
 {
@@ -261,12 +260,9 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
 	list->ui_data = ui_data;
 }
 
-/*@}*/
-
 /**************************************************************************/
 /* Room List GObject code                                                 */
 /**************************************************************************/
-/*@{*/
 
 /* Set method for GObject properties */
 static void
@@ -423,12 +419,9 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 	);
 }
 
-/*@}*/
-
 /**************************************************************************/
 /* Room API                                                               */
 /**************************************************************************/
-/*@{*/
 
 PurpleRoomlistRoom *purple_roomlist_room_new(PurpleRoomlistRoomType type, const gchar *name,
                                          PurpleRoomlistRoom *parent)
@@ -557,12 +550,9 @@ static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoo
 	g_free(r);
 }
 
-/*@}*/
-
 /**************************************************************************/
 /* Room GBoxed code                                                       */
 /**************************************************************************/
-/*@{*/
 
 static PurpleRoomlistRoom *purple_roomlist_room_copy(PurpleRoomlistRoom *r)
 {
@@ -593,12 +583,9 @@ GType purple_roomlist_room_get_type(void)
 	return type;
 }
 
-/*@}*/
-
 /**************************************************************************/
 /* Room Field API                                                         */
 /**************************************************************************/
-/*@{*/
 
 PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
                                            const gchar *label, const gchar *name,
@@ -634,12 +621,9 @@ gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field)
 	return field->hidden;
 }
 
-/*@}*/
-
 /**************************************************************************/
 /* Room Field GBoxed code                                                 */
 /**************************************************************************/
-/*@{*/
 
 static PurpleRoomlistField *purple_roomlist_field_copy(PurpleRoomlistField *f)
 {
@@ -670,12 +654,9 @@ GType purple_roomlist_field_get_type(void)
 	return type;
 }
 
-/*@}*/
-
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 
 void purple_roomlist_set_ui_ops(PurpleRoomlistUiOps *ui_ops)

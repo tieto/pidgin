@@ -131,7 +131,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Account API                                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_account_get_type:
@@ -1262,8 +1261,6 @@ const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount 
  * Clear an account's current error state, resetting it to %NULL.
  */
 void purple_account_clear_current_error(PurpleAccount *account);
-
-/*@}*/
 
 G_END_DECLS
 

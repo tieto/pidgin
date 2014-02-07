@@ -75,7 +75,6 @@ void pidgin_syslog_show(void);
 /**************************************************************************/
 /* GTK+ Log Subsystem                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_log_init:
@@ -99,8 +98,6 @@ void *pidgin_log_get_handle(void);
  * Uninitializes the GTK+ log subsystem.
  */
 void pidgin_log_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

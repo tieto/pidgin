@@ -195,7 +195,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Buddy API                                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_buddy_get_type:
@@ -436,12 +435,9 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
  */
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
 
-/*@}*/
-
 /**************************************************************************/
 /* Contact API                                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_contact_get_type:
@@ -529,12 +525,9 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
  */
 void purple_contact_merge(PurpleContact *source, PurpleBlistNode *node);
 
-/*@}*/
-
 /**************************************************************************/
 /* Chat API                                                               */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_chat_get_type:
@@ -616,12 +609,9 @@ PurpleAccount *purple_chat_get_account(PurpleChat *chat);
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
 
-/*@}*/
-
 /**************************************************************************/
 /* Group API                                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_group_get_type:
@@ -683,8 +673,6 @@ void purple_group_set_name(PurpleGroup *group, const char *name);
  * Returns: The name of the group.
  */
 const char *purple_group_get_name(PurpleGroup *group);
-
-/*@}*/
 
 G_END_DECLS
 

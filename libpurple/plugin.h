@@ -275,7 +275,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Plugin API                                                             */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugin_get_type:
@@ -478,12 +477,9 @@ const gchar *purple_plugin_get_author(const PurplePlugin *plugin);
  */
 const gchar *purple_plugin_get_homepage(const PurplePlugin *plugin);
 
-/*@}*/
-
 /**************************************************************************/
 /* Plugin IPC API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugin_ipc_register:
@@ -553,12 +549,9 @@ gboolean purple_plugin_ipc_get_types(PurplePlugin *plugin, const char *command,
 void *purple_plugin_ipc_call(PurplePlugin *plugin, const char *command,
 						   gboolean *ok, ...);
 
-/*@}*/
-
 /**************************************************************************/
 /* Plugins API                                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugins_add_search_path:
@@ -704,12 +697,9 @@ GList *purple_plugins_get_protocols(void);
  */
 GList *purple_plugins_get_all(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Plugins SubSytem API                                                   */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugins_get_handle:
@@ -733,8 +723,6 @@ void purple_plugins_init(void);
  * Uninitializes the plugin subsystem
  */
 void purple_plugins_uninit(void);
-
-/*@}*/
 
 /**
  * purple_plugin_action_new:

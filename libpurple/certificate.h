@@ -360,7 +360,6 @@ G_BEGIN_DECLS
 /*****************************************************************************/
 /* Certificate Verification Functions                                        */
 /*****************************************************************************/
-/*@{*/
 
 /**
  * purple_certificate_verify:
@@ -401,12 +400,9 @@ void
 purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 				   PurpleCertificateVerificationStatus st);
 
-/*@}*/
-
 /*****************************************************************************/
 /* Certificate Functions                                                     */
 /*****************************************************************************/
-/*@{*/
 
 /**
  * purple_certificate_get_type:
@@ -627,12 +623,9 @@ purple_certificate_get_der_data(PurpleCertificate *crt);
 char *
 purple_certificate_get_display_string(PurpleCertificate *crt);
 
-/*@}*/
-
 /*****************************************************************************/
 /* Certificate Pool Functions                                                */
 /*****************************************************************************/
-/*@{*/
 
 /**
  * purple_certificate_pool_get_type:
@@ -757,12 +750,9 @@ purple_certificate_pool_get_idlist(PurpleCertificatePool *pool);
 void
 purple_certificate_pool_destroy_idlist(GList *idlist);
 
-/*@}*/
-
 /*****************************************************************************/
 /* Certificate Subsystem API                                                 */
 /*****************************************************************************/
-/*@{*/
 
 /**
  * purple_certificate_init:
@@ -933,8 +923,6 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool);
  * Add a search path for certificates.
  */
 void purple_certificate_add_ca_search_path(const char *path);
-
-/*@}*/
 
 G_END_DECLS
 

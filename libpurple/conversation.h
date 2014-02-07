@@ -301,7 +301,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Conversation API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_conversation_get_type:
@@ -726,12 +725,9 @@ gboolean purple_conversation_do_command(PurpleConversation *conv,
 gssize
 purple_conversation_get_max_message_size(PurpleConversation *conv);
 
-/*@}*/
-
 /**************************************************************************/
 /* Conversation Helper API                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_conversation_present_error:
@@ -750,12 +746,9 @@ purple_conversation_get_max_message_size(PurpleConversation *conv);
  */
 gboolean purple_conversation_present_error(const char *who, PurpleAccount *account, const char *what);
 
-/*@}*/
-
 /**************************************************************************/
 /* Conversation Message API                                               */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_conversation_message_get_type:
@@ -823,8 +816,6 @@ const char *purple_conversation_message_get_alias(const PurpleConversationMessag
  * Returns:   The conversation
  */
 PurpleConversation *purple_conversation_message_get_conversation(const PurpleConversationMessage *msg);
-
-/*@}*/
 
 G_END_DECLS
 

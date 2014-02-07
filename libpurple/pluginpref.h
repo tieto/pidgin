@@ -67,7 +67,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Plugin Preference API                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_plugin_pref_frame_new:
@@ -307,8 +306,6 @@ void purple_plugin_pref_set_format_type(PurplePluginPref *pref, PurpleStringForm
  * Returns: The format of the pref
  */
 PurpleStringFormatType purple_plugin_pref_get_format_type(PurplePluginPref *pref);
-
-/*@}*/
 
 G_END_DECLS
 

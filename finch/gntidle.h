@@ -33,7 +33,6 @@
 /**************************************************************************/
 /* GNT Idle API                                                           */
 /**************************************************************************/
-/*@{*/
 
 /**
  * finch_idle_get_ui_ops:
@@ -43,7 +42,5 @@
  * Returns: The UI operations structure.
  */
 PurpleIdleUiOps *finch_idle_get_ui_ops(void);
-
-/*@}*/
 
 #endif /* _Finch_IDLE_H_ */

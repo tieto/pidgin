@@ -40,7 +40,6 @@
 /**********************************************************************
  * GNT Plugins API
  **********************************************************************/
-/*@{*/
 
 typedef GntWidget* (*FinchPluginFrame) (void);
 
@@ -77,7 +76,5 @@ void finch_plugins_show_all(void);
  * Save the list of loaded plugins.
  */
 void finch_plugins_save_loaded(void);
-
-/*@}*/
 
 #endif

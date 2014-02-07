@@ -52,7 +52,7 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Certificate Manager API                                                */
 /**************************************************************************/
-/*@{*/
+
 /**
  * pidgin_certmgr_show:
  *
@@ -66,8 +66,6 @@ void pidgin_certmgr_show(void);
  * Hide the certificate manager window
  */
 void pidgin_certmgr_hide(void);
-
-/*@}*/
 
 G_END_DECLS
 

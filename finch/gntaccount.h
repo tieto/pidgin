@@ -33,7 +33,6 @@
 /**********************************************************************
  * GNT Account API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_accounts_get_ui_ops:
@@ -72,7 +71,5 @@ void finch_accounts_show_all(void);
  * Show the edit dialog for an account.
  */
 void finch_account_dialog_show(PurpleAccount *account);
-
-/*@}*/
 
 #endif

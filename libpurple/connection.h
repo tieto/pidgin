@@ -289,7 +289,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Connection API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_connection_get_type:
@@ -524,12 +523,9 @@ purple_connection_error_is_fatal (PurpleConnectionError reason);
  */
 void purple_connection_update_last_received(PurpleConnection *gc);
 
-/*@}*/
-
 /**************************************************************************/
 /* Connections API                                                        */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_connections_disconnect_all:
@@ -575,12 +571,9 @@ GList *purple_connections_get_connecting(void);
 #define PURPLE_CONNECTION_IS_VALID(gc) \
 	(g_list_find(purple_connections_get_all(), (gc)) != NULL)
 
-/*@}*/
-
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_connections_set_ui_ops:
@@ -599,12 +592,9 @@ void purple_connections_set_ui_ops(PurpleConnectionUiOps *ops);
  */
 PurpleConnectionUiOps *purple_connections_get_ui_ops(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Connections Subsystem                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_connections_init:
@@ -628,8 +618,6 @@ void purple_connections_uninit(void);
  * Returns: The connections subsystem handle.
  */
 void *purple_connections_get_handle(void);
-
-/*@}*/
 
 
 G_END_DECLS

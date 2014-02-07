@@ -206,7 +206,6 @@ G_BEGIN_DECLS
 /***************************************/
 /* Log Functions                       */
 /***************************************/
-/*@{*/
 
 /**
  * purple_log_get_type:
@@ -417,12 +416,9 @@ gint purple_log_set_compare(gconstpointer y, gconstpointer z);
  */
 void purple_log_set_free(PurpleLogSet *set);
 
-/*@}*/
-
 /******************************************/
 /* Common Logger Functions                */
 /******************************************/
-/*@{*/
 
 /**
  * purple_log_common_writer:
@@ -536,12 +532,9 @@ gboolean purple_log_common_deleter(PurpleLog *log);
  */
 gboolean purple_log_common_is_deletable(PurpleLog *log);
 
-/*@}*/
-
 /******************************************/
 /* Logger Functions                       */
 /******************************************/
-/*@{*/
 
 /**
  * purple_log_logger_new:
@@ -625,7 +618,6 @@ GList *purple_log_logger_get_options(void);
 /**************************************************************************/
 /* Log Subsystem                                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_log_init:
@@ -649,8 +641,6 @@ void *purple_log_get_handle(void);
  * Uninitializes the log subsystem.
  */
 void purple_log_uninit(void);
-
-/*@}*/
 
 
 G_END_DECLS

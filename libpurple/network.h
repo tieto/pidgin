@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Network API                                                            */
 /**************************************************************************/
-/*@{*/
 
 typedef struct _PurpleNetworkListenData PurpleNetworkListenData;
 
@@ -334,8 +333,6 @@ void purple_network_init(void);
  * Shuts down the network subsystem.
  */
 void purple_network_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

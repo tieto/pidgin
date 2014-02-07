@@ -40,7 +40,6 @@
 /***************************************************************************
  * GNT Conversations API
  ***************************************************************************/
-/*@{*/
 
 typedef struct _FinchConv FinchConv;
 typedef struct _FinchConvChat FinchConvChat;
@@ -124,7 +123,5 @@ void finch_conversation_set_active(PurpleConversation *conv);
  * Sets the information widget for the conversation window.
  */
 void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget);
-
-/*@}*/
 
 #endif

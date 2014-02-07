@@ -34,7 +34,6 @@
 /**********************************************************************
  * GNT BuddyList API
  **********************************************************************/
-/*@{*/
 
 typedef struct _FinchBlistManager  FinchBlistManager;
 
@@ -187,7 +186,5 @@ FinchBlistManager * finch_blist_manager_find(const char *id);
  * Request the active buddy list manager to add a node.
  */
 void finch_blist_manager_add_node(PurpleBlistNode *node);
-
-/*@}*/
 
 #endif

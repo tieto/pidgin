@@ -70,7 +70,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Saved status subsystem                                                 */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_savedstatus_get_type:
@@ -471,8 +470,6 @@ void purple_savedstatuses_init(void);
  * Uninitializes the status subsystem.
  */
 void purple_savedstatuses_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

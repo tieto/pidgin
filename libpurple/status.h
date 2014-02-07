@@ -163,7 +163,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* PurpleStatusPrimitive API                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_primitive_get_id_from_type:
@@ -199,12 +198,9 @@ const char *purple_primitive_get_name_from_type(PurpleStatusPrimitive type);
  */
 PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 
-/*@}*/
-
 /**************************************************************************/
 /* PurpleStatusType API                                                   */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_status_type_get_type:
@@ -417,12 +413,9 @@ GList *purple_status_type_get_attrs(const PurpleStatusType *status_type);
 const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
 													const char *id);
 
-/*@}*/
-
 /**************************************************************************/
 /* PurpleStatusAttribute API                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_status_attribute_get_type:
@@ -482,12 +475,9 @@ const char *purple_status_attribute_get_name(const PurpleStatusAttribute *attr);
  */
 GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
 
-/*@}*/
-
 /**************************************************************************/
 /* PurpleMood API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_mood_get_type:
@@ -496,12 +486,9 @@ GValue *purple_status_attribute_get_value(const PurpleStatusAttribute *attr);
  */
 GType purple_mood_get_type(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* PurpleStatus API                                                       */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_status_get_type:
@@ -732,12 +719,9 @@ const char *purple_status_get_attr_string(const PurpleStatus *status,
  */
 gint purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2);
 
-/*@}*/
-
 /**************************************************************************/
 /* Statuses subsystem                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_statuses_get_handle:
@@ -761,8 +745,6 @@ void purple_statuses_init(void);
  * Uninitializes the status subsystem.
  */
 void purple_statuses_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

@@ -42,7 +42,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Encryption states for conversations.                                   */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_e2ee_state_new:
@@ -133,13 +132,10 @@ purple_e2ee_state_set_stock_icon(PurpleE2eeState *state,
 const gchar *
 purple_e2ee_state_get_stock_icon(PurpleE2eeState *state);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Encryption providers API.                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_e2ee_provider_new:
@@ -243,8 +239,6 @@ purple_e2ee_provider_set_conv_menu_cb(PurpleE2eeProvider *provider,
  */
 PurpleE2eeConvMenuCallback
 purple_e2ee_provider_get_conv_menu_cb(PurpleE2eeProvider *provider);
-
-/*@}*/
 
 G_END_DECLS
 

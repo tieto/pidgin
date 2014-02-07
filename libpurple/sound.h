@@ -98,7 +98,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Sound API                                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_sound_play_file:
@@ -163,8 +162,6 @@ void purple_sound_uninit(void);
  * Returns: The sound subsystem handle.
  */
 void *purple_sounds_get_handle(void);
-
-/*@}*/
 
 G_END_DECLS
 

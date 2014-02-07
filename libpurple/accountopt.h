@@ -59,7 +59,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Account Option API                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_account_option_new:
@@ -336,13 +335,10 @@ const GSList * purple_account_option_string_get_hints(const PurpleAccountOption 
  */
 GList *purple_account_option_get_list(const PurpleAccountOption *option);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Account User Split API                                                 */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_account_user_split_new:
@@ -415,8 +411,6 @@ gboolean purple_account_user_split_get_reverse(const PurpleAccountUserSplit *spl
  * Sets the 'reverse' value for an account split.
  */
 void purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, gboolean reverse);
-
-/*@}*/
 
 G_END_DECLS
 

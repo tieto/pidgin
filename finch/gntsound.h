@@ -33,7 +33,6 @@
 /**********************************************************************/
 /* GNT Sound API                                                      */
 /**********************************************************************/
-/*@{*/
 
 /**
  * finch_sound_get_active_profile:
@@ -87,7 +86,5 @@ PurpleSoundUiOps *finch_sound_get_ui_ops(void);
  * Show the sound settings dialog.
  */
 void finch_sounds_show_all(void);
-
-/*@}*/
 
 #endif

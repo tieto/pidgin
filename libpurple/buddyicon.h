@@ -51,7 +51,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Buddy Icon API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_buddy_icon_get_type:
@@ -193,12 +192,9 @@ const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
  */
 char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
 
-/*@}*/
-
 /**************************************************************************/
 /* Buddy Icon Subsystem API                                               */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_buddy_icons_set_for_user:
@@ -425,12 +421,9 @@ void purple_buddy_icons_init(void);
  */
 void purple_buddy_icons_uninit(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Buddy Icon Helper API                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_buddy_icon_get_scale_size:
@@ -438,8 +431,6 @@ void purple_buddy_icons_uninit(void);
  * Gets display size for a buddy icon
  */
 void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int *height);
-
-/*@}*/
 
 G_END_DECLS
 

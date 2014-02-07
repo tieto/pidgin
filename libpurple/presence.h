@@ -161,7 +161,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* PurpleAccountPresence API                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_account_presence_get_type:
@@ -190,12 +189,9 @@ PurpleAccountPresence *purple_account_presence_new(PurpleAccount *account);
  */
 PurpleAccount *purple_account_presence_get_account(const PurpleAccountPresence *presence);
 
-/*@}*/
-
 /**************************************************************************/
 /* PurpleBuddyPresence API                                                */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_buddy_presence_get_type:
@@ -238,12 +234,9 @@ PurpleBuddy *purple_buddy_presence_get_buddy(const PurpleBuddyPresence *presence
 gint purple_buddy_presence_compare(const PurpleBuddyPresence *buddy_presence1,
 						   const PurpleBuddyPresence *buddy_presence2);
 
-/*@}*/
-
 /**************************************************************************/
 /* PurplePresence API                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_presence_get_type:
@@ -417,8 +410,6 @@ time_t purple_presence_get_idle_time(const PurplePresence *presence);
  * Returns: The presence's login time.
  */
 time_t purple_presence_get_login_time(const PurplePresence *presence);
-
-/*@}*/
 
 G_END_DECLS
 

@@ -198,7 +198,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* IM Conversation API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_im_conversation_get_type:
@@ -350,12 +349,9 @@ guint purple_im_conversation_get_send_typed_timeout(const PurpleIMConversation *
  */
 void purple_im_conversation_update_typing(PurpleIMConversation *im);
 
-/*@}*/
-
 /**************************************************************************/
 /* Chat Conversation API                                                  */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_chat_conversation_get_type:
@@ -663,12 +659,9 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat,
  */
 gboolean purple_chat_conversation_has_left(PurpleChatConversation *chat);
 
-/*@}*/
-
 /**************************************************************************/
 /* Chat Conversation User API                                             */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_chat_user_get_type:
@@ -780,8 +773,6 @@ PurpleChatUserFlags purple_chat_user_get_flags(const PurpleChatUser *cb);
  * Returns: TRUE if the chat user is on the buddy list.
  */
 gboolean purple_chat_user_is_buddy(const PurpleChatUser *cb);
-
-/*@}*/
 
 G_END_DECLS
 

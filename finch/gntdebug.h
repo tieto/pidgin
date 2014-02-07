@@ -33,7 +33,6 @@
 /**********************************************************************
  * GNT Debug API
  **********************************************************************/
-/*@{*/
 
 /**
  * finch_debug_get_ui_ops:
@@ -64,7 +63,5 @@ void finch_debug_uninit(void);
  * Show the debug window.
  */
 void finch_debug_window_show(void);
-
-/*@}*/
 
 #endif

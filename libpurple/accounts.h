@@ -101,7 +101,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Accounts API                                                           */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_accounts_add:
@@ -184,13 +183,11 @@ PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
  */
 void purple_accounts_restore_current_statuses(void);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
+
 /**
  * purple_accounts_set_ui_ops:
  * @ops: The UI operations structure.
@@ -208,13 +205,10 @@ void purple_accounts_set_ui_ops(PurpleAccountUiOps *ops);
  */
 PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 
-/*@}*/
-
 
 /**************************************************************************/
 /* Accounts Subsystem                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_accounts_get_handle:
@@ -245,8 +239,6 @@ void purple_accounts_uninit(void);
  * Schedules saving of accounts
  */
 void purple_accounts_schedule_save(void);
-
-/*@}*/
 
 G_END_DECLS
 

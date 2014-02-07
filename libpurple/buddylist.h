@@ -159,7 +159,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Buddy List API                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_buddy_list_get_type:
@@ -426,8 +425,6 @@ void purple_blist_add_account(PurpleAccount *account);
  */
 void purple_blist_remove_account(PurpleAccount *account);
 
-/*@}*/
-
 /****************************************************************************************/
 /* Buddy list file management API                                                       */
 /****************************************************************************************/
@@ -480,7 +477,6 @@ void purple_blist_request_add_group(void);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_blist_set_ui_ops:
@@ -499,12 +495,9 @@ void purple_blist_set_ui_ops(PurpleBlistUiOps *ops);
  */
 PurpleBlistUiOps *purple_blist_get_ui_ops(void);
 
-/*@}*/
-
 /**************************************************************************/
 /* Buddy List Subsystem                                                   */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_blist_get_handle:
@@ -537,8 +530,6 @@ void purple_blist_boot(void);
  * Uninitializes the buddy list subsystem.
  */
 void purple_blist_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

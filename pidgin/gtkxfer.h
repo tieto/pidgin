@@ -45,7 +45,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* GTK+ File Transfer Dialog API                                          */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_xfer_dialog_new:
@@ -120,12 +119,9 @@ void pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 void pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 									 PurpleXfer *xfer);
 
-/*@}*/
-
 /**************************************************************************/
 /* GTK+ File Transfer API                                                 */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_xfers_init:
@@ -166,8 +162,6 @@ PidginXferDialog *pidgin_get_xfer_dialog(void);
  * Returns: The GTK+ file transfer UI operations structure.
  */
 PurpleXferUiOps *pidgin_xfers_get_ui_ops(void);
-
-/*@}*/
 
 G_END_DECLS
 

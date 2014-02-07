@@ -33,7 +33,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* GTK+ Connection API                                                    */
 /**************************************************************************/
-/*@{*/
 
 /**
  * pidgin_connections_get_ui_ops:
@@ -43,8 +42,6 @@ G_BEGIN_DECLS
  * Returns: UI operations struct
  */
 PurpleConnectionUiOps *pidgin_connections_get_ui_ops(void);
-
-/*@}*/
 
 /**
  * pidgin_connection_get_handle:

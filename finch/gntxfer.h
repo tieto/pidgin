@@ -34,7 +34,6 @@
 /**************************************************************************/
 /* GNT File Transfer Dialog API                                           */
 /**************************************************************************/
-/*@{*/
 
 /**
  * finch_xfer_dialog_new:
@@ -99,12 +98,9 @@ void finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer);
  */
 void finch_xfer_dialog_update_xfer(PurpleXfer *xfer);
 
-/*@}*/
-
 /**************************************************************************/
 /* GNT  File Transfer API                                                 */
 /**************************************************************************/
-/*@{*/
 
 /**
  * finch_xfers_init:
@@ -128,7 +124,5 @@ void finch_xfers_uninit(void);
  * Returns: The GNT file transfer UI operations structure.
  */
 PurpleXferUiOps *finch_xfers_get_ui_ops(void);
-
-/*@}*/
 
 #endif /* _GNT_XFER_H_ */

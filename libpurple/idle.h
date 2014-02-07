@@ -53,7 +53,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Idle API                                                               */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_idle_touch:
@@ -73,12 +72,9 @@ void purple_idle_touch(void);
  */
 void purple_idle_set(time_t time);
 
-/*@}*/
-
 /**************************************************************************/
 /* Idle Subsystem                                                         */
 /**************************************************************************/
-/*@{*/
 
 /**
  * purple_idle_set_ui_ops:
@@ -110,8 +106,6 @@ void purple_idle_init(void);
  * Uninitializes the idle system.
  */
 void purple_idle_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 
