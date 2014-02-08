@@ -609,6 +609,8 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_ACCEPTED);
 		priv->ops.init(xfer);
 		return;
+	} else {
+		g_return_if_fail(filename != NULL);
 	}
 
 	buddy = purple_blist_find_buddy(account, priv->who);

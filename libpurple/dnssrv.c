@@ -134,6 +134,8 @@ select_random_response(GList *list, PurpleSrvResponseContainer **container_ptr)
 	size_t runningtotal;
 	int r;
 
+	g_return_val_if_fail(list != NULL, NULL);
+
 	runningtotal = 0;
 	cur = list;
 
@@ -154,6 +156,8 @@ select_random_response(GList *list, PurpleSrvResponseContainer **container_ptr)
 	r = runningtotal ? g_random_int_range(1, runningtotal + 1) : 0;
 	cur = list;
 	while (r > ((PurpleSrvResponseContainer *)cur->data)->sum) {
+		if (G_UNLIKELY(!cur->next))
+			break;
 		cur = cur->next;
 	}
 
@@ -177,6 +181,8 @@ srv_reorder(GList *list, int num)
 		/* Nothing to sort */
 		return;
 
+	g_return_if_fail(list != NULL);
+
 	/* First build a list of container structs */
 	for (i = 0, cur = list; i < num; i++, cur = cur->next) {
 		container = g_new(PurpleSrvResponseContainer, 1);
@@ -195,6 +201,7 @@ srv_reorder(GList *list, int num)
 		cur->data = container->response;
 		g_free(container);
 		cur = cur->next;
+		g_return_if_fail(cur);
 	}
 }
 
@@ -224,6 +231,9 @@ purple_srv_sort(GList *list)
 	count = 1;
 	while (cur) {
 		PurpleSrvResponse *next_response;
+
+		g_return_val_if_fail(cur->data, list);
+
 		pref = ((PurpleSrvResponse *)cur->data)->pref;
 		next_response = cur->next ? cur->next->data : NULL;
 		if (!next_response || next_response->pref != pref) {
