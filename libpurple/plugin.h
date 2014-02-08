@@ -26,6 +26,9 @@
  * @section_id: libpurple-plugin
  * @short_description: <filename>plugin.h</filename>
  * @title: Plugin API
+ * @see_also: <link linkend="chapter-signals-plugin">Plugin signals</link>,
+ *     <link linkend="chapter-plugin-ids">Plugin IDs</link>,
+ *     <link linkend="chapter-plugin-i18n">Third Party Plugin Translation</link>
  */
 
 #include <glib.h>

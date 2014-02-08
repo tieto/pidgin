@@ -21,6 +21,7 @@
   <part label="I">
     <title>Tutorials</title>
 
+      <xi:include href="tut_c_plugins.xml" />
       <xi:include href="tut_signals.xml" />
   </part>
 
@@ -147,12 +148,15 @@
       <xi:include href="signals_xfer.xml" />
       <xi:include href="signals_log.xml" />
       <xi:include href="signals_notify.xml" />
+      <xi:include href="signals_plugin.xml" />
       <xi:include href="signals_savedstatus.xml" />
       <xi:include href="signals_sound.xml" />
       <xi:include href="signals_imgstore.xml" />
       <xi:include href="signals_jabber.xml" />
   </reference>
 
+  <xi:include href="plugin_ids.xml" />
+  <xi:include href="plugin_i18n.xml" />
   <xi:include href="ui_ops.xml" />
 
   <index id="api-index-full">
