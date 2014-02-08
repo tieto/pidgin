@@ -105,7 +105,7 @@ When you're ready, 'cd' into the directory with the source files for your
 plugin.
     </para></listitem>
     <listitem><para>
-Open the file containing the PurplePluginInfo structure.
+Open the file containing the 'plugin_query' function.
     </para></listitem>
     <listitem><para>
 If you're not already, please make sure that you are including the
