@@ -114,7 +114,7 @@ static gint time_until_next_idle_event;
 static void
 check_idleness(void)
 {
-	time_t time_idle;
+	time_t time_idle = 0;
 	gboolean auto_away;
 	const gchar *idle_reporting;
 	gboolean report_idle = TRUE;
@@ -142,7 +142,6 @@ check_idleness(void)
 	else
 	{
 		/* Don't report idle time */
-		time_idle = 0;
 		report_idle = FALSE;
 
 		/* If we're not reporting idle, we can still do auto-away.

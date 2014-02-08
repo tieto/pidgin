@@ -412,8 +412,10 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	gnutls_set_default_priority(gnutls_data->session);
 #endif
 
-	gnutls_server_name_set(gnutls_data->session, GNUTLS_NAME_DNS, gsc->host,
-		strlen(gsc->host));
+	if (gsc->host) {
+		gnutls_server_name_set(gnutls_data->session, GNUTLS_NAME_DNS,
+			gsc->host, strlen(gsc->host));
+	}
 
 	gnutls_credentials_set(gnutls_data->session, GNUTLS_CRD_CERTIFICATE,
 		xcred);
@@ -1192,6 +1194,7 @@ x509_display_string(PurpleCertificate *crt)
 
 	/* Pull out the SHA1 checksum */
 	sha_bin = x509_sha1sum(crt);
+	g_return_val_if_fail(sha_bin != NULL, NULL);
 	sha_asc = purple_base16_encode_chunked(sha_bin->data, sha_bin->len);
 
 	/* Get the cert Common Name */

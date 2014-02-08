@@ -1701,7 +1701,7 @@ if test "x$enable_kwallet" = "xyes"; then
 	if test "$ac_kwallet_includes" != "no"; then
 		KWALLET_CXXFLAGS="-I$ac_kwallet_includes"
 	elif test "x$KDE4_CONFIG" != "xno"; then
-		KWALLET_CXXFLAGS="-I`$KDE4_CONFIG --path include`"
+		KWALLET_CXXFLAGS="$QT4_CFLAGS -I`$KDE4_CONFIG --path include`"
 	fi
 	CPPFLAGS="$CPPFLAGS $KWALLET_CXXFLAGS"
 	AC_CHECK_HEADER([kwallet.h], , [

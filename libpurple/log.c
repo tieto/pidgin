@@ -287,6 +287,10 @@ gint purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleA
 
 				while (logs) {
 					PurpleLog *log = (PurpleLog*)(logs->data);
+					if (!log) {
+						g_warn_if_reached();
+						continue;
+					}
 					/* Activity score counts bytes in the log, exponentially
 					   decayed with a half-life of 14 days. */
 					score_double += purple_log_get_size(log) *
@@ -447,6 +451,8 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 
 void purple_log_logger_free(PurpleLogLogger *logger)
 {
+	if (!logger)
+		return;
 	g_free(logger->name);
 	g_free(logger->id);
 	g_free(logger);
@@ -1571,7 +1577,7 @@ static gsize txt_logger_write(PurpleLog *log,
 		data = log->logger_data;
 
 		/* if we can't write to the file, give up before we hurt ourselves */
-		if(!data->file)
+		if(!data || !data->file)
 			return 0;
 
 		if (log->type == PURPLE_LOG_SYSTEM)
