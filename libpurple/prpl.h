@@ -1010,7 +1010,7 @@ void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
  *
  * Gets the safe maximum message size in bytes for the protocol plugin.
  *
- * See #PurplePluginProtocolInfo.get_max_message_size
+ * See #PurplePluginProtocolInfo's #get_max_message_size
  *
  * Returns: Maximum message size, 0 if unspecified, -1 for infinite.
  */
