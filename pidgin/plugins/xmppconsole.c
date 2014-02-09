@@ -185,7 +185,7 @@ purple_xmlnode_received_cb(PurpleConnection *gc, PurpleXmlNode **packet, gpointe
 		return;
 	str = purple_xmlnode_to_pretty_str(*packet, NULL);
 	formatted = g_strdup_printf("<div class=incoming>%s</div>", str);
-	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
 	g_free(str);
 }
@@ -206,7 +206,7 @@ purple_xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 
 	str = purple_xmlnode_to_pretty_str(node, NULL);
 	formatted = g_strdup_printf("<div class=outgoing>%s</div>", str);
-	gtk_webview_append_html(GTK_WEBVIEW(console->webview), formatted);
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(console->webview), formatted);
 	g_free(formatted);
 	g_free(str);
 	purple_xmlnode_free(node);
@@ -227,13 +227,13 @@ message_send_cb(GtkWidget *widget, GdkEventKey *event, gpointer p)
 	if (gc)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
-	text = gtk_webview_get_body_text(GTK_WEBVIEW(widget));
+	text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(widget));
 
 	if (prpl_info && prpl_info->send_raw != NULL)
 		prpl_info->send_raw(gc, text, strlen(text));
 
 	g_free(text);
-	gtk_webview_load_html_string(GTK_WEBVIEW(console->entry), "");
+	pidgin_webview_load_html_string(PIDGIN_WEBVIEW(console->entry), "");
 
 	return TRUE;
 }
@@ -275,15 +275,15 @@ entry_changed_cb(GtkWidget *webview, void *data)
 	gtk_widget_set_size_request(console->sw, -1, height + 6);
 #endif
 
-	str = gtk_webview_get_body_text(GTK_WEBVIEW(webview));
+	str = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(webview));
 	if (!str)
 		return;
 	xmlstr = g_strdup_printf("<xml>%s</xml>", str);
 	node = purple_xmlnode_from_str(xmlstr, -1);
 	if (node) {
-		gtk_webview_clear_formatting(GTK_WEBVIEW(console->entry));
+		pidgin_webview_clear_formatting(PIDGIN_WEBVIEW(console->entry));
 	} else {
-		gtk_webview_toggle_backcolor(GTK_WEBVIEW(console->entry), "#ffcece");
+		pidgin_webview_toggle_backcolor(PIDGIN_WEBVIEW(console->entry), "#ffcece");
 	}
 	g_free(str);
 	g_free(xmlstr);
@@ -360,7 +360,7 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 				 g_random_int(),
 				 gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(type_combo)));
 
-	gtk_webview_load_html_string_with_selection(GTK_WEBVIEW(console->entry), stanza);
+	pidgin_webview_load_html_string_with_selection(PIDGIN_WEBVIEW(console->entry), stanza);
 	gtk_widget_grab_focus(console->entry);
 	g_free(to);
 	g_free(stanza);
@@ -515,7 +515,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	                         *priority ? priority : "",
 	                         *priority ? "&lt;/priority&gt;" : "");
 
-	gtk_webview_load_html_string_with_selection(GTK_WEBVIEW(console->entry), stanza);
+	pidgin_webview_load_html_string_with_selection(PIDGIN_WEBVIEW(console->entry), stanza);
 	gtk_widget_grab_focus(console->entry);
 	g_free(stanza);
 	g_free(to);
@@ -656,7 +656,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	                         *thread ? thread : "",
 	                         *thread ? "&lt;/thread&gt;" : "");
 
-	gtk_webview_load_html_string_with_selection(GTK_WEBVIEW(console->entry), stanza);
+	pidgin_webview_load_html_string_with_selection(PIDGIN_WEBVIEW(console->entry), stanza);
 	gtk_widget_grab_focus(console->entry);
 	g_free(stanza);
 	g_free(to);
@@ -687,7 +687,7 @@ signing_on_cb(PurpleConnection *gc)
 
 	if (console->count == 1) {
 		console->gc = gc;
-		gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
+		pidgin_webview_load_html_string(PIDGIN_WEBVIEW(console->webview), EMPTY_HTML);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(console->dropdown), 0);
 	} else
 		gtk_widget_show_all(console->hbox);
@@ -721,7 +721,7 @@ signed_off_cb(PurpleConnection *gc)
 	if (gc == console->gc) {
 		char *tmp = g_strdup_printf("<div class=info>%s</div>",
 		                            _("Logged out."));
-		gtk_webview_append_html(GTK_WEBVIEW(console->webview), tmp);
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(console->webview), tmp);
 		g_free(tmp);
 		console->gc = NULL;
 	}
@@ -788,7 +788,7 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 		return;
 
 	console->gc = g_list_nth_data(console->accounts, gtk_combo_box_get_active(GTK_COMBO_BOX(console->dropdown)));
-	gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
+	pidgin_webview_load_html_string(PIDGIN_WEBVIEW(console->webview), EMPTY_HTML);
 }
 
 static void
@@ -833,12 +833,12 @@ create_console(PurplePluginAction *action)
 	gtk_box_pack_start(GTK_BOX(console->hbox), console->dropdown, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(console->dropdown), "changed", G_CALLBACK(dropdown_changed_cb), NULL);
 
-	console->webview = gtk_webview_new(FALSE);
-	gtk_webview_load_html_string(GTK_WEBVIEW(console->webview), EMPTY_HTML);
+	console->webview = pidgin_webview_new(FALSE);
+	pidgin_webview_load_html_string(PIDGIN_WEBVIEW(console->webview), EMPTY_HTML);
 	if (console->count == 0) {
 		char *tmp = g_strdup_printf("<div class=info>%s</div>",
 		                            _("Not connected to XMPP"));
-		gtk_webview_append_html(GTK_WEBVIEW(console->webview), tmp);
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(console->webview), tmp);
 		g_free(tmp);
 	}
 	gtk_box_pack_start(GTK_BOX(vbox), 
@@ -863,8 +863,8 @@ create_console(PurplePluginAction *action)
 
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
-	console->entry = gtk_webview_new(TRUE);
-	gtk_webview_set_whole_buffer_formatting_only(GTK_WEBVIEW(console->entry), TRUE);
+	console->entry = pidgin_webview_new(TRUE);
+	pidgin_webview_set_whole_buffer_formatting_only(PIDGIN_WEBVIEW(console->entry), TRUE);
 	g_signal_connect(G_OBJECT(console->entry),"key-press-event", G_CALLBACK(message_send_cb), console);
 
 	console->sw = pidgin_make_scrollable(console->entry, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1);

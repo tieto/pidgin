@@ -1,8 +1,3 @@
-/**
- * @file dnsquery.c DNS query API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -511,11 +506,13 @@ purple_dnsquery_resolver_new(gboolean show_debug)
 	return resolver;
 }
 
-/**
- * @return TRUE if the request was sent succesfully.  FALSE
- *         if the request could not be sent.  This isn't
- *         necessarily an error.  If the child has expired,
- *         for example, we won't be able to send the message.
+/*
+ * send_dns_request_to_child:
+ *
+ * Returns: TRUE if the request was sent succesfully.  FALSE
+ *          if the request could not be sent.  This isn't
+ *          necessarily an error.  If the child has expired,
+ *          for example, we won't be able to send the message.
  */
 static gboolean
 send_dns_request_to_child(PurpleDnsQueryData *query_data,

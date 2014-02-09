@@ -1,9 +1,3 @@
-/**
- * @file gtkconv.h GTK+ Conversation API
- * @ingroup pidgin
- * @see @ref gtkconv-signals
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,23 +18,38 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGIN_CONVERSATION_H_
 #define _PIDGIN_CONVERSATION_H_
+/**
+ * SECTION:gtkconv
+ * @section_id: pidgin-gtkconv
+ * @short_description: <filename>gtkconv.h</filename>
+ * @title: Conversation API
+ * @see_also: <link linkend="chapter-signals-gtkconv">Conversation signals</link>
+ */
 
 typedef struct _PidginImPane       PidginImPane;
 typedef struct _PidginChatPane     PidginChatPane;
 typedef struct _PidginConversation PidginConversation;
 
 /**
+ * PidginUnseenState:
+ * @PIDGIN_UNSEEN_NONE:   No unseen text in the conversation.
+ * @PIDGIN_UNSEEN_EVENT:  Unseen events in the conversation.
+ * @PIDGIN_UNSEEN_NO_LOG: Unseen text with NO_LOG flag.
+ * @PIDGIN_UNSEEN_TEXT:   Unseen text in the conversation.
+ * @PIDGIN_UNSEEN_NICK:   Unseen text and the nick was said.
+ *
  * Unseen text states.
  */
 typedef enum
 {
-	PIDGIN_UNSEEN_NONE,   /**< No unseen text in the conversation. */
-	PIDGIN_UNSEEN_EVENT,  /**< Unseen events in the conversation.  */
-	PIDGIN_UNSEEN_NO_LOG, /**< Unseen text with NO_LOG flag.       */
-	PIDGIN_UNSEEN_TEXT,   /**< Unseen text in the conversation.    */
-	PIDGIN_UNSEEN_NICK    /**< Unseen text and the nick was said.  */
+	PIDGIN_UNSEEN_NONE,
+	PIDGIN_UNSEEN_EVENT,
+	PIDGIN_UNSEEN_NO_LOG,
+	PIDGIN_UNSEEN_TEXT,
+	PIDGIN_UNSEEN_NICK
 } PidginUnseenState;
 
 enum {
@@ -68,16 +77,12 @@ enum {
 #include "gtkconv-theme.h"
 
 /**************************************************************************
- * @name Structures
+ * Structures
  **************************************************************************/
-/*@{*/
 
 /**
- * A GTK+ representation of a graphical window containing one or more
- * conversations.
- */
-
-/**
+ * PidginConversation:
+ *
  * A GTK+ conversation pane.
  */
 struct _PidginConversation
@@ -137,58 +142,68 @@ struct _PidginConversation
 	int attach_timer;
 	GList *attach_current;
 
-	/**
+	/*
 	 * Quick Find.
 	 */
 	GtkWidget *quickfind_entry;
 	GtkWidget *quickfind_container;
 };
 
-/*@}*/
-
 G_BEGIN_DECLS
 
 /**************************************************************************
- * @name GTK+ Conversation API
+ * GTK+ Conversation API
  **************************************************************************/
-/*@{*/
 
 /**
+ * pidgin_conversations_get_conv_ui_ops:
+ *
  * Returns the UI operations structure for GTK+ conversations.
  *
- * @return The GTK+ conversation operations structure.
+ * Returns: The GTK+ conversation operations structure.
  */
 PurpleConversationUiOps *pidgin_conversations_get_conv_ui_ops(void);
 
 /**
+ * pidgin_conversations_get_default_theme:
+ *
  * Returns the default theme for GTK+ conversations.
  *
- * @return The default GTK+ conversation theme.
+ * Returns: The default GTK+ conversation theme.
  */
 PurpleTheme *pidgin_conversations_get_default_theme(void);
 
 /**
- * Updates the buddy icon on a conversation.
+ * pidgin_conv_update_buddy_icon:
+ * @im: The IM conversation.
  *
- * @param conv The conversation.
+ * Updates the buddy icon on a conversation.
  */
 void pidgin_conv_update_buddy_icon(PurpleIMConversation *im);
 
 /**
- * Sets the active conversation within a GTK-conversation.
+ * pidgin_conv_switch_active_conversation:
+ * @conv: The conversation
  *
- * @param conv The conversation
+ * Sets the active conversation within a GTK-conversation.
  */
 void pidgin_conv_switch_active_conversation(PurpleConversation *conv);
 
 /**
- * Updates conversation buttons by protocol.
+ * pidgin_conv_update_buttons_by_protocol:
+ * @conv: The conversation.
  *
- * @param conv The conversation.
+ * Updates conversation buttons by protocol.
  */
 void pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv);
 
 /**
+ * pidgin_conversations_get_unseen_all:
+ * @min_state:    The minimum unseen state.
+ * @hidden_only:  If TRUE, only consider hidden conversations.
+ * @max_count:    Maximum number of conversations to return, or 0 for
+ *                     no maximum.
+ *
  * Returns a list of conversations of any type which have an unseen
  * state greater than or equal to the specified minimum state. Using the
  * hidden_only parameter, this search can be limited to hidden
@@ -196,11 +211,7 @@ void pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv);
  * converations returned if greater than zero. The returned list should
  * be freed by the caller.
  *
- * @param min_state    The minimum unseen state.
- * @param hidden_only  If TRUE, only consider hidden conversations.
- * @param max_count    Maximum number of conversations to return, or 0 for
- *                     no maximum.
- * @return             List of PurpleConversation matching criteria, or NULL.
+ * Returns:             List of PurpleConversation matching criteria, or %NULL.
  */
 GList *
 pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
@@ -208,6 +219,12 @@ pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
 										guint max_count);
 
 /**
+ * pidgin_conversations_get_unseen_ims:
+ * @min_state:    The minimum unseen state.
+ * @hidden_only:  If TRUE, only consider hidden conversations.
+ * @max_count:    Maximum number of conversations to return, or 0 for
+ *                     no maximum.
+ *
  * Returns a list of IM conversations which have an unseen state greater
  * than or equal to the specified minimum state. Using the hidden_only
  * parameter, this search can be limited to hidden IM conversations. The
@@ -215,12 +232,8 @@ pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
  * returned if greater than zero. The returned list should be freed by the
  * caller.
  *
- * @param min_state    The minimum unseen state.
- * @param hidden_only  If TRUE, only consider hidden conversations.
- * @param max_count    Maximum number of conversations to return, or 0 for
- *                     no maximum.
- * @return             List of PurpleIMConversation matching criteria,
- *                     or NULL.
+ * Returns:             List of PurpleIMConversation matching criteria,
+ *                     or %NULL.
  */
 GList *
 pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
@@ -228,6 +241,12 @@ pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
 										guint max_count);
 
 /**
+ * pidgin_conversations_get_unseen_chats:
+ * @min_state:    The minimum unseen state.
+ * @hidden_only:  If TRUE, only consider hidden conversations.
+ * @max_count:    Maximum number of conversations to return, or 0 for
+ *                     no maximum.
+ *
  * Returns a list of chat conversations which have an unseen state greater
  * than or equal to the specified minimum state. Using the hidden_only
  * parameter, this search can be limited to hidden chat conversations. The
@@ -235,11 +254,7 @@ pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
  * returned if greater than zero. The returned list should be freed by the
  * caller.
  *
- * @param min_state    The minimum unseen state.
- * @param hidden_only  If TRUE, only consider hidden conversations.
- * @param max_count    Maximum number of conversations to return, or 0 for
- *                     no maximum.
- * @return             List of PurpleChatConversation matching criteria,
+ * Returns:             List of PurpleChatConversation matching criteria,
  *                     or NULL.
  */
 GList *
@@ -248,29 +263,33 @@ pidgin_conversations_get_unseen_chats(PidginUnseenState min_state,
 										guint max_count);
 
 /**
+ * pidgin_conversations_fill_menu:
+ * @menu:   Menu widget to add items to.
+ * @convs:  List of PurpleConversation to add to menu.
+ *
  * Fill a menu with a list of conversations. Clicking the conversation
  * menu item will present that conversation to the user.
  *
- * @param menu   Menu widget to add items to.
- * @param convs  List of PurpleConversation to add to menu.
- * @return       Number of conversations added to menu.
+ * Returns:       Number of conversations added to menu.
  */
 guint
 pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
 
 /**
- * Presents a purple conversation to the user.
+ * pidgin_conv_present_conversation:
+ * @conv: The conversation.
  *
- * @param conv The conversation.
+ * Presents a purple conversation to the user.
  */
 void pidgin_conv_present_conversation(PurpleConversation *conv);
 
 /**
+ * pidgin_conv_attach_to_conversation:
+ * @conv:  The conversation.
+ *
  * Reattach Pidgin UI to a conversation.
  *
- * @param conv  The conversation.
- *
- * @return  Wheter Pidgin UI was successfully attached.
+ * Returns:  Wheter Pidgin UI was successfully attached.
  */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
@@ -279,31 +298,33 @@ GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_ico
 void pidgin_conv_new(PurpleConversation *conv);
 int pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right);
 gboolean pidgin_conv_is_hidden(PidginConversation *gtkconv);
-/*@}*/
 
 /**************************************************************************/
-/** @name GTK+ Conversations Subsystem                                    */
+/* GTK+ Conversations Subsystem                                           */
 /**************************************************************************/
-/*@{*/
 
 /**
+ * pidgin_conversations_get_handle:
+ *
  * Returns the gtk conversations subsystem handle.
  *
- * @return The conversations subsystem handle.
+ * Returns: The conversations subsystem handle.
  */
 void *pidgin_conversations_get_handle(void);
 
 /**
+ * pidgin_conversations_init:
+ *
  * Initializes the GTK+ conversations subsystem.
  */
 void pidgin_conversations_init(void);
 
 /**
+ * pidgin_conversations_uninit:
+ *
  * Uninitialized the GTK+ conversation subsystem.
  */
 void pidgin_conversations_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

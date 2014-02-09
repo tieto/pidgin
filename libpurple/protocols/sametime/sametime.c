@@ -1935,7 +1935,7 @@ static void mw_conf_invited(struct mwConference *conf,
 
   if(! c_topic) c_topic = "(no title)";
   if(! c_invitation) c_invitation = "(no message)";
-  serv_got_chat_invite(gc, c_topic, c_inviter, c_invitation, ht);
+  purple_serv_got_chat_invite(gc, c_topic, c_inviter, c_invitation, ht);
 }
 
 
@@ -1994,7 +1994,7 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
   gc = pd->gc;
 
   if(! t) t = "(no title)";
-  g_conf = serv_got_joined_chat(gc, CONF_TO_ID(conf), t);
+  g_conf = purple_serv_got_joined_chat(gc, CONF_TO_ID(conf), t);
 
   mwConference_setClientData(conf, g_conf, NULL);
 
@@ -2022,7 +2022,7 @@ static void mw_conf_closed(struct mwConference *conf, guint32 reason) {
   pd = mwSession_getClientData(session);
   gc = pd->gc;
 
-  serv_got_chat_left(gc, CONF_TO_ID(conf));
+  purple_serv_got_chat_left(gc, CONF_TO_ID(conf));
 
   purple_notify_error(gc, _("Conference Closed"), NULL, msg,
 	purple_request_cpar_from_connection(gc));
@@ -2080,7 +2080,7 @@ static void mw_conf_text(struct mwConference *conf,
   gc = pd->gc;
 
   esc = g_markup_escape_text(text, -1);
-  serv_got_chat_in(gc, CONF_TO_ID(conf), who->user_id, 0, esc, time(NULL));
+  purple_serv_got_chat_in(gc, CONF_TO_ID(conf), who->user_id, 0, esc, time(NULL));
   g_free(esc);
 }
 
@@ -2638,7 +2638,7 @@ static void im_recv_text(struct mwConversation *conv,
   t = txt? txt: msg;
 
   esc = g_markup_escape_text(t, -1);
-  serv_got_im(pd->gc, idb->user, esc, 0, time(NULL));
+  purple_serv_got_im(pd->gc, idb->user, esc, 0, time(NULL));
   g_free(esc);
 
   g_free(txt);
@@ -2652,7 +2652,7 @@ static void im_recv_typing(struct mwConversation *conv,
   struct mwIdBlock *idb;
   idb = mwConversation_getTarget(conv);
 
-  serv_got_typing(pd->gc, idb->user, 0,
+  purple_serv_got_typing(pd->gc, idb->user, 0,
 		  typing? PURPLE_IM_TYPING: PURPLE_IM_NOT_TYPING);
 }
 
@@ -2674,7 +2674,7 @@ static void im_recv_html(struct mwConversation *conv,
   t2 = purple_utf8_ncr_decode(t);
   t = t2? t2: t;
 
-  serv_got_im(pd->gc, idb->user, t, 0, time(NULL));
+  purple_serv_got_im(pd->gc, idb->user, t, 0, time(NULL));
 
   g_free(t1);
   g_free(t2);
@@ -2909,7 +2909,7 @@ static void mw_place_invite(struct mwConversation *conv,
 
   if(! title) title = "(no title)";
   if(! message) message = "(no message)";
-  serv_got_chat_invite(pd->gc, title, idb->user, message, ht);
+  purple_serv_got_chat_invite(pd->gc, title, idb->user, message, ht);
 
   mwConversation_close(conv, ERR_SUCCESS);
   mwConversation_free(conv);
@@ -2993,7 +2993,7 @@ static void mw_place_opened(struct mwPlace *place) {
 	     NSTR(n), g_list_length(members));
 
   if(! t) t = "(no title)";
-  gconf = serv_got_joined_chat(gc, PLACE_TO_ID(place), t);
+  gconf = purple_serv_got_joined_chat(gc, PLACE_TO_ID(place), t);
 
   mwPlace_setClientData(place, gconf, NULL);
 
@@ -3022,7 +3022,7 @@ static void mw_place_closed(struct mwPlace *place, guint32 code) {
   pd = mwSession_getClientData(session);
   gc = pd->gc;
 
-  serv_got_chat_left(gc, PLACE_TO_ID(place));
+  purple_serv_got_chat_left(gc, PLACE_TO_ID(place));
 
   purple_notify_error(gc, _("Place Closed"), NULL, msg,
 	purple_request_cpar_from_connection(gc));
@@ -3092,7 +3092,7 @@ static void mw_place_message(struct mwPlace *place,
   gc = pd->gc;
 
   esc = g_markup_escape_text(msg, -1);
-  serv_got_chat_in(gc, PLACE_TO_ID(place), who->user, 0, esc, time(NULL));
+  purple_serv_got_chat_in(gc, PLACE_TO_ID(place), who->user, 0, esc, time(NULL));
   g_free(esc);
 }
 

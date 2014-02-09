@@ -1,7 +1,3 @@
-/**
- * @file gntline.h Line API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -26,6 +22,12 @@
 
 #ifndef GNT_LINE_H
 #define GNT_LINE_H
+/**
+ * SECTION:gntline
+ * @section_id: libgnt-gntline
+ * @short_description: <filename>gntline.h</filename>
+ * @title: Line
+ */
 
 #include "gntwidget.h"
 #include "gnt.h"
@@ -58,6 +60,7 @@ struct _GntLineClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
@@ -67,7 +70,9 @@ struct _GntLineClass
 G_BEGIN_DECLS
 
 /**
- * @return GType for GntLine.
+ * gnt_line_get_type:
+ *
+ * Returns: GType for GntLine.
  */
 GType gnt_line_get_type(void);
 
@@ -75,11 +80,12 @@ GType gnt_line_get_type(void);
 #define gnt_vline_new() gnt_line_new(TRUE)
 
 /**
+ * gnt_line_new:
+ * @vertical:  %TRUE if the line should be vertical, %FALSE for a horizontal line.
+ *
  * Create new line
  *
- * @param vertical  @c TRUE if the line should be vertical, @c FALSE for a horizontal line.
- *
- * @return  The newly created line.
+ * Returns:  The newly created line.
  */
 GntWidget * gnt_line_new(gboolean vertical);
 

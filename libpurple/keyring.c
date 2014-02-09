@@ -1,8 +1,3 @@
-/**
- * @file keyring.c Keyring API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -60,7 +55,7 @@ typedef struct
 	PurpleKeyring *new_kr;
 	PurpleKeyring *old_kr;
 
-	/**
+	/*
 	 * We are done when finished is positive and read_outstanding is zero.
 	 */
 	gboolean finished;

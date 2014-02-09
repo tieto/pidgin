@@ -1,8 +1,3 @@
-/**
- * @file stringref.c Reference-counted immutable strings
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -34,7 +29,7 @@
 #include "eventloop.h"
 #include "stringref.h"
 
-/**
+/*
  * The internal representation of a stringref.
  *
  * @note For this structure to be useful, the string contained within
@@ -42,14 +37,14 @@
  * directly!
  */
 struct _PurpleStringref {
-	guint32 ref;	/**< The reference count of this string.
+	guint32 ref;	/* The reference count of this string.
 					 *   Note that reference counts are only
 					 *   31 bits, and the high-order bit
 					 *   indicates whether this string is up
 					 *   for GC at the next idle handler...
 					 *   But you aren't going to touch this
 					 *   anyway, right? */
-	char value[1];	/**< The string contained in this ref.
+	char value[1];	/* The string contained in this ref.
 					 *   Notice that it is simply "hanging
 					 *   off the end" of the ref ... this
 					 *   is to save an allocation. */

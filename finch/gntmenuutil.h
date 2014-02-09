@@ -1,8 +1,3 @@
-/**
- * @file gntmenuutil.h GNT Menu Utility Functions
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,27 +18,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_MENUUTIL_H
 #define _GNT_MENUUTIL_H
+/**
+ * SECTION:gntmenuutil
+ * @section_id: finch-gntmenuutil
+ * @short_description: <filename>gntmenuutil.h</filename>
+ * @title: Menu Utility functions
+ */
 
 #include <gnt.h>
 #include <gntmenu.h>
 
 /***************************************************************************
- * @name GNT Menu Utility Functions
+ * GNT Menu Utility Functions
  ***************************************************************************/
-/*@{*/
 
 /**
- * Add a PurpleMenuAction to a GntMenu.
- *
- * @param menu   the GntMenu to add to
- * @param action the PurpleMenuAction to add
- * @param ctx    the callback context, passed as the first argument to
+ * finch_append_menu_action:
+ * @menu:   the GntMenu to add to
+ * @action: the PurpleMenuAction to add
+ * @ctx:    the callback context, passed as the first argument to
  *               the PurpleMenuAction's PurpleCallback function.
+ *
+ * Add a PurpleMenuAction to a GntMenu.
  */
-void gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx);
-
-/*@}*/
+void finch_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx);
 
 #endif

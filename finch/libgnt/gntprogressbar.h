@@ -1,7 +1,3 @@
-/**
- * @file gntprogressbar.h Progress Bar API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -26,6 +22,12 @@
 
 #ifndef GNT_PROGRESS_BAR_H
 #define GNT_PROGRESS_BAR_H
+/**
+ * SECTION:gntprogressbar
+ * @section_id: libgnt-gntprogressbar
+ * @short_description: <filename>gntprogressbar.h</filename>
+ * @title: Progress Bar
+ */
 
 #include "gnt.h"
 #include "gntwidget.h"
@@ -46,84 +48,100 @@ typedef enum
 } GntProgressBarOrientation;
 
 typedef struct _GntProgressBar GntProgressBar;
+typedef struct _GntProgressBarClass GntProgressBarClass;
 
-typedef struct _GntProgressBarClass
+struct _GntProgressBarClass
 {
    GntWidgetClass parent;
 
+	/*< private >*/
    void (*gnt_reserved1)(void);
    void (*gnt_reserved2)(void);
    void (*gnt_reserved3)(void);
    void (*gnt_reserved4)(void);
-} GntProgressBarClass;
+};
 
 G_BEGIN_DECLS
 
 /**
- * Get the GType for GntProgressBar
- * @return The GType for GntProrgressBar
- **/
+ * gnt_progress_bar_get_type:
+ *
+ * Get the #GType for GntProgressBar
+ *
+ * Returns: The GType for GntProrgressBar
+ */
 GType
 gnt_progress_bar_get_type (void);
 
 /**
+ * gnt_progress_bar_new:
+ *
  * Create a new GntProgressBar
- * @return The new GntProgressBar
- **/
+ * Returns: The new GntProgressBar
+ */
 GntWidget *
 gnt_progress_bar_new (void);
 
 /**
- * Set the progress for a progress bar
+ * gnt_progress_bar_set_fraction:
+ * @pbar: The GntProgressBar
+ * @fraction: The value between 0 and 1 to display
  *
- * @param pbar The GntProgressBar
- * @param fraction The value between 0 and 1 to display
- **/
+ * Set the progress for a progress bar
+ */
 void
 gnt_progress_bar_set_fraction (GntProgressBar *pbar, gdouble fraction);
 
 /**
- * Set the orientation for a progress bar
+ * gnt_progress_bar_set_orientation:
+ * @pbar: The GntProgressBar
+ * @orientation: The orientation to use
  *
- * @param pbar The GntProgressBar
- * @param orientation The orientation to use
- **/
+ * Set the orientation for a progress bar
+ */
 void
 gnt_progress_bar_set_orientation (GntProgressBar *pbar, GntProgressBarOrientation orientation);
 
 /**
- * Controls whether the progress value is shown
+ * gnt_progress_bar_set_show_progress:
+ * @pbar: The GntProgressBar
+ * @show: A boolean indicating if the value is shown
  *
- * @param pbar The GntProgressBar
- * @param show A boolean indicating if the value is shown
- **/
+ * Controls whether the progress value is shown
+ */
 void
 gnt_progress_bar_set_show_progress (GntProgressBar *pbar, gboolean show);
 
 /**
+ * gnt_progress_bar_get_fraction:
+ * @pbar: The GntProgressBar
+ *
  * Get the progress that is displayed
  *
- * @param pbar The GntProgressBar
- * @return The progress displayed as a value between 0 and 1
- **/
+ * Returns: The progress displayed as a value between 0 and 1
+ */
 gdouble
 gnt_progress_bar_get_fraction (GntProgressBar *pbar);
 
 /**
+ * gnt_progress_bar_get_orientation:
+ * @pbar: The GntProgressBar
+ *
  * Get the orientation for the progress bar
  *
- * @param pbar The GntProgressBar
- * @return The current orientation of the progress bar
- **/
+ * Returns: The current orientation of the progress bar
+ */
 GntProgressBarOrientation
 gnt_progress_bar_get_orientation (GntProgressBar *pbar);
 
 /**
+ * gnt_progress_bar_get_show_progress:
+ * @pbar: The GntProgressBar
+ *
  * Get a boolean describing if the progress value is shown
  *
- * @param pbar The GntProgressBar
- * @return A boolean @c true if the progress value is shown, @c false otherwise.
- **/
+ * Returns: %TRUE if the progress value is shown, %FALSE otherwise.
+ */
 gboolean
 gnt_progress_bar_get_show_progress (GntProgressBar *pbar);
 

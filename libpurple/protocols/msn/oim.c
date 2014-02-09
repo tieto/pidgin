@@ -738,7 +738,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	purple_debug_info("msn", "oim Date:{%s},passport{%s}\n",
 	                  date, passport);
 
-	serv_got_im(purple_account_get_connection(rdata->oim->session->account), passport, clean_msg, 0,
+	purple_serv_got_im(purple_account_get_connection(rdata->oim->session->account), passport, clean_msg, 0,
 	            stamp);
 
 	/*Now get the oim message ID from the oim_list.

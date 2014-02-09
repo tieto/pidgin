@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -61,11 +61,11 @@
 #include <ctype.h>
 #include <errno.h>
 
-/**
+/*
  * Notes: Interesting functions to look at:
- * 	scr_dump, scr_init, scr_restore: for workspaces
+ * scr_dump, scr_init, scr_restore: for workspaces
  *
- * 	Need to wattrset for colors to use with PDCurses.
+ * Need to wattrset for colors to use with PDCurses.
  */
 
 static GIOChannel *channel = NULL;
@@ -99,7 +99,10 @@ escape_timeout(gpointer data)
 }
 
 /**
+ * detect_mouse_action:
+ *
  * Mouse support:
+ *
  *  - bring a window on top if you click on its taskbar
  *  - click on the top-bar of the active window and drag+drop to move a window
  *  - click on a window to bring it to focus

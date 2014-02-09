@@ -1040,9 +1040,9 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 		 */
 		if (display_name != NULL) {
 			purple_blist_node_set_string(PURPLE_BLIST_NODE(buddy), "DisplayName", display_name);
-			serv_got_alias(session->gc, username, display_name);
+			purple_serv_got_alias(session->gc, username, display_name);
 		} else {
-			serv_got_alias(session->gc, username,
+			purple_serv_got_alias(session->gc, username,
 					purple_blist_node_get_string(PURPLE_BLIST_NODE(buddy), "DisplayName"));
 		}
 	}
@@ -1521,7 +1521,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg, const gchar *username)
 		time_received = time(NULL);
 	}
 
-	serv_got_im(session->gc, username, msg_purple_markup, PURPLE_MESSAGE_RECV, time_received);
+	purple_serv_got_im(session->gc, username, msg_purple_markup, PURPLE_MESSAGE_RECV, time_received);
 
 	g_free(msg_purple_markup);
 
@@ -1555,10 +1555,10 @@ msim_incoming_action_or_im(MsimSession *session, MsimMessage *msg)
 			msg_text, username);
 
 	if (g_str_equal(msg_text, "%typing%")) {
-		serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
+		purple_serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
 		rc = TRUE;
 	} else if (g_str_equal(msg_text, "%stoptyping%")) {
-		serv_got_typing_stopped(session->gc, username);
+		purple_serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
 	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
 		rc = msim_incoming_zap(session, msg);
@@ -1613,8 +1613,8 @@ msim_incoming_media(MsimSession *session, MsimMessage *msg)
 	/* Media messages are sent when the user opens a window to someone.
 	 * Tell libpurple they started typing and stopped typing, to inform the Psychic
 	 * Mode plugin so it too can open a window to the user. */
-	serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
-	serv_got_typing_stopped(session->gc, username);
+	purple_serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
+	purple_serv_got_typing_stopped(session->gc, username);
 
 	g_free(username);
 

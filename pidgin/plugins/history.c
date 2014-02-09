@@ -23,8 +23,8 @@
 
 static gboolean _scroll_webview_to_end(gpointer data)
 {
-	GtkWebView *webview = data;
-	gtk_webview_scroll_to_end(GTK_WEBVIEW(webview), FALSE);
+	PidginWebView *webview = data;
+	pidgin_webview_scroll_to_end(PIDGIN_WEBVIEW(webview), FALSE);
 	g_object_unref(G_OBJECT(webview));
 	return FALSE;
 }
@@ -135,8 +135,8 @@ static void historize(PurpleConversation *c)
 
 #if 0
 	/* TODO WebKit: Do this properly... */
-	if (!gtk_webview_is_empty(GTK_WEBVIEW(gtkconv->webview)))
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR>");
+	if (!pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->webview)))
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), "<BR>");
 #endif
 
 	escaped_alias = g_markup_escape_text(alias, -1);
@@ -147,15 +147,15 @@ static void historize(PurpleConversation *c)
 		header_date = purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time));
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), escaped_alias, header_date);
-	gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), header);
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), header);
 	g_free(header);
 	g_free(escaped_alias);
 
 	g_strchomp(history);
-	gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), history);
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), history);
 	g_free(history);
 
-	gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<hr>");
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), "<hr>");
 
 #if 0
 	/* FIXME: WebView has no protocol setting */

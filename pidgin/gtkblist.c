@@ -1,8 +1,3 @@
-/*
- * @file gtkblist.c GTK+ BuddyList API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -110,13 +105,13 @@ typedef struct
 
 typedef struct
 {
-	/** Used to hold error minidialogs.  Gets packed
-	 *  inside PidginBuddyList.error_buttons
+	/* Used to hold error minidialogs.  Gets packed
+	 * inside PidginBuddyList.error_buttons
 	 */
 	PidginScrollBook *error_scrollbook;
 
-	/** Pointer to the mini-dialog about having signed on elsewhere, if one
-	 *  is showing; @c NULL otherwise.
+	/* Pointer to the mini-dialog about having signed on elsewhere, if one
+	 * is showing; %NULL otherwise.
 	 */
 	PidginMiniDialog *signed_on_elsewhere;
 
@@ -125,9 +120,9 @@ typedef struct
 	guint select_notebook_page_timeout;
 
 #if !GTK_CHECK_VERSION(3,0,0)
-	GdkCursor *hand_cursor;         /**< Hand cursor */
-	GdkCursor *arrow_cursor;        /**< Arrow cursor */
-	gboolean changing_style;        /**< True when changing GTK+ theme style */
+	GdkCursor *hand_cursor;         /* Hand cursor */
+	GdkCursor *arrow_cursor;        /* Arrow cursor */
+	gboolean changing_style;        /* True when changing GTK+ theme style */
 #endif
 
 } PidginBuddyListPrivate;
@@ -146,7 +141,7 @@ static gboolean gtk_blist_focused = FALSE;
 static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
-static struct pidgin_blist_sort_method *current_sort_method = NULL;
+static struct _PidginBlistSortMethod *current_sort_method = NULL;
 static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 
 static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
@@ -346,7 +341,7 @@ static void gtk_blist_menu_send_file_cb(GtkWidget *w, PurpleBuddy *b)
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
 
-	serv_send_file(purple_account_get_connection(account),
+	purple_serv_send_file(purple_account_get_connection(account),
 	               purple_buddy_get_name(b), NULL);
 }
 
@@ -411,7 +406,7 @@ static void gtk_blist_join_chat(PurpleChat *chat)
 		purple_conversation_present(conv);
 	}
 
-	serv_join_chat(purple_account_get_connection(account), components);
+	purple_serv_join_chat(purple_account_get_connection(account), components);
 	g_free(chat_name);
 }
 
@@ -606,14 +601,14 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 		} else {
 			PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 			purple_buddy_set_local_alias(buddy, arg2);
-			serv_alias_buddy(buddy);
+			purple_serv_alias_buddy(buddy);
 			gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 		}
 	} else if (PURPLE_IS_BUDDY(node)) {
 		PurpleGroup *group = purple_buddy_get_group(PURPLE_BUDDY(node));
 
 		purple_buddy_set_local_alias(PURPLE_BUDDY(node), arg2);
-		serv_alias_buddy(PURPLE_BUDDY(node));
+		purple_serv_alias_buddy(PURPLE_BUDDY(node));
 		gtk_blist_auto_personize(PURPLE_BLIST_NODE(group), arg2);
 	} else if (PURPLE_IS_GROUP(node)) {
 		dest = purple_blist_find_group(arg2);
@@ -4621,7 +4616,7 @@ static const char *require_connection[] =
 static const int require_connection_size = sizeof(require_connection)
 											/ sizeof(*require_connection);
 
-/**
+/*
  * Rebuild dynamic menus and make menu items sensitive/insensitive
  * where appropriate.
  */
@@ -7633,7 +7628,7 @@ static gboolean autojoin_cb(PurpleConnection *gc, gpointer data)
 				continue;
 
 			if (purple_blist_node_get_bool(PURPLE_BLIST_NODE(chat), "gtk-autojoin"))
-				serv_join_chat(gc, purple_chat_get_components(chat));
+				purple_serv_join_chat(gc, purple_chat_get_components(chat));
 		}
 	}
 
@@ -7790,13 +7785,13 @@ GList *pidgin_blist_get_sort_methods()
 
 void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist_sort_function func)
 {
-	struct pidgin_blist_sort_method *method;
+	struct _PidginBlistSortMethod *method;
 
 	g_return_if_fail(id != NULL);
 	g_return_if_fail(name != NULL);
 	g_return_if_fail(func != NULL);
 
-	method = g_new0(struct pidgin_blist_sort_method, 1);
+	method = g_new0(struct _PidginBlistSortMethod, 1);
 	method->id = g_strdup(id);
 	method->name = g_strdup(name);
 	method->func = func;
@@ -7811,7 +7806,7 @@ void pidgin_blist_sort_method_unreg(const char *id)
 	g_return_if_fail(id != NULL);
 
 	while(l) {
-		struct pidgin_blist_sort_method *method = l->data;
+		struct _PidginBlistSortMethod *method = l->data;
 		if(!strcmp(method->id, id)) {
 			pidgin_blist_sort_methods = g_list_delete_link(pidgin_blist_sort_methods, l);
 			g_free(method->id);
@@ -7830,7 +7825,7 @@ void pidgin_blist_sort_method_set(const char *id){
 	if(!id)
 		id = "none";
 
-	while (l && strcmp(((struct pidgin_blist_sort_method*)l->data)->id, id))
+	while (l && strcmp(((struct _PidginBlistSortMethod*)l->data)->id, id))
 		l = l->next;
 
 	if (l) {

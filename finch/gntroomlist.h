@@ -1,8 +1,3 @@
-/**
- * @file gntroomlist.h GNT Room List API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,39 +18,51 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_ROOMLIST_H
 #define _GNT_ROOMLIST_H
+/**
+ * SECTION:gntroomlist
+ * @section_id: finch-gntroomlist
+ * @short_description: <filename>gntroomlist.h</filename>
+ * @title: Room List API
+ */
 
 #include "roomlist.h"
 
 /**********************************************************************
- * @name GNT Room List API
+ * GNT Room List API
  **********************************************************************/
-/*@{*/
 
 /**
+ * finch_roomlist_init:
+ *
  * Initialize the roomlist subsystem.
  */
 void finch_roomlist_init(void);
 
 /**
+ * finch_roomlist_get_ui_ops:
+ *
  * Get the ui-functions.
  *
- * @return The PurpleRoomlistUiOps structure populated with the appropriate functions.
+ * Returns: The PurpleRoomlistUiOps structure populated with the appropriate functions.
  */
 PurpleRoomlistUiOps *finch_roomlist_get_ui_ops(void);
 
 /**
+ * finch_roomlist_show_all:
+ *
  * Show the roomlist dialog.
  */
 void finch_roomlist_show_all(void);
 
 /**
+ * finch_roomlist_uninit:
+ *
  * Uninitialize the roomlist subsystem.
  */
 void finch_roomlist_uninit(void);
-
-/*@}*/
 
 #endif
 

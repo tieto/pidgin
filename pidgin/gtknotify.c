@@ -1,8 +1,3 @@
-/**
- * @file gtknotify.c GTK+ Notification API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -940,7 +935,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	/* Make sure URLs are clickable */
 	linked_text = purple_markup_linkify(text);
-	gtk_webview_load_html_string(GTK_WEBVIEW(web_view), linked_text);
+	pidgin_webview_load_html_string(PIDGIN_WEBVIEW(web_view), linked_text);
 	g_free(linked_text);
 
 	g_object_set_data(G_OBJECT(window), "webview-widget", web_view);
@@ -1200,7 +1195,7 @@ pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 	if (pinfo != NULL) {
 		GtkWidget *webview = g_object_get_data(G_OBJECT(pinfo->window), "webview-widget");
 		char *linked_text = purple_markup_linkify(info);
-		gtk_webview_load_html_string(GTK_WEBVIEW(webview), linked_text);
+		pidgin_webview_load_html_string(PIDGIN_WEBVIEW(webview), linked_text);
 		g_free(linked_text);
 		g_free(key);
 		ui_handle = pinfo->window;

@@ -34,6 +34,7 @@
 #   AUTOMAKE_FLAGS - command line arguments to pass to automake flags
 #   CONFIGURE_FLAGS - command line arguments to pass to configure
 #   GLIB_GETTEXTIZE_FLAGS - command line arguments to pass to glib-gettextize
+#   GTKDOCIZE_FLAGS - command line arguments to pass to gtkdocize
 #   INTLTOOLIZE_FLAGS - command line arguments to pass to intltoolize
 #   LIBTOOLIZE_FLAGS - command line arguments to pass to libtoolize
 #
@@ -99,6 +100,22 @@ run_or_die () { # beotch
 	fi
 }
 
+check_gtkdoc() {
+	printf "checking for gtkdocize... "
+	GTKDOCIZE=`which gtkdocize 2>/dev/null`
+
+	if [ x"${GTKDOCIZE}" = x"" ] ; then
+		echo "not found."
+		echo "EXTRA_DIST =" > gtk-doc.make
+		echo "You don't have gtk-doc installed, and thus won't be able to
+generate the documentation.
+"
+	else
+		echo "${GTKDOCIZE}"
+		run_or_die ${GTKDOCIZE} ${GTKDOCIZE_FLAGS}
+	fi
+}
+
 cleanup () {
 	rm -f autogen-??????
 	echo
@@ -156,6 +173,7 @@ run_or_die ${SED} -i -e "s:'\^\$\$lang\$\$':\^\$\$lang\$\$:g" po/Makefile.in.in
 ${SED} -i -e "s:\\tfile=\`echo:\\t@echo -e \"  GEN\\\\t\$\@\"; file=\`echo:g" po/Makefile.in.in
 run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS:-"-I m4macros"}
 run_or_die ${AUTOHEADER} ${AUTOHEADER_FLAGS}
+check_gtkdoc
 run_or_die ${AUTOMAKE} ${AUTOMAKE_FLAGS:-"-a -c --gnu"}
 run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 

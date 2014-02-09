@@ -1,8 +1,3 @@
-/**
- * @file gntrequest.h GNT Request API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,48 +18,62 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_REQUEST_H
 #define _GNT_REQUEST_H
+/**
+ * SECTION:gntrequest
+ * @section_id: finch-gntrequest
+ * @short_description: <filename>gntrequest.h</filename>
+ * @title: Request API
+ */
 
 #include "request.h"
 #include "gnt.h"
 
 /**********************************************************************
- * @name GNT Request API
+ * GNT Request API
  **********************************************************************/
-/*@{*/
 
 /**
+ * finch_request_get_ui_ops:
+ *
  * Get the ui-functions.
  *
- * @return The PurpleRequestUiOps structure populated with the appropriate functions.
+ * Returns: The PurpleRequestUiOps structure populated with the appropriate functions.
  */
 PurpleRequestUiOps *finch_request_get_ui_ops(void);
 
 /**
+ * finch_request_init:
+ *
  * Perform necessary initializations.
  */
 void finch_request_init(void);
 
 /**
+ * finch_request_uninit:
+ *
  * Perform necessary uninitializations.
  */
 void finch_request_uninit(void);
 
 /**
+ * finch_request_save_in_prefs:
+ *
  * Save the request fields in preferences where the id attribute of each field is the
  * id of a preference.
  */
 void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *fields);
 
 /**
+ * finch_request_field_get_widget:
+ * @field:   The request field.
+ *
  * Create a widget field for a request-field.
  *
- * @param field   The request field.
- *
- * @return A GntWidget for the request field.
+ * Returns: (transfer full): A GntWidget for the request field.
  */
 GntWidget *finch_request_field_get_widget(PurpleRequestField *field);
-/*@}*/
 
 #endif

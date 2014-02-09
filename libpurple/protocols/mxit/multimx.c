@@ -228,7 +228,7 @@ static void you_kicked(PurpleChatConversation* chat, struct MXitSession* session
 
 	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "MXit", _("You have been kicked from this MultiMX."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 	purple_chat_conversation_clear_users(chat);
-	serv_got_chat_left(session->con, multimx->chatid);
+	purple_serv_got_chat_left(session->con, multimx->chatid);
 }
 
 
@@ -288,7 +288,7 @@ void multimx_invite(struct MXitSession* session, struct contact* contact, const 
 	g_hash_table_insert(components, g_strdup("room"), g_strdup(contact->alias));
 
 	/* Call libpurple - will trigger either 'mxit_chat_join' or 'mxit_chat_reject' */
-	serv_got_chat_invite(session->con, contact->alias, creator, NULL, components);
+	purple_serv_got_chat_invite(session->con, contact->alias, creator, NULL, components);
 }
 
 
@@ -316,7 +316,7 @@ void multimx_created(struct MXitSession* session, struct contact* contact)
 	}
 
 	/* Call libpurple - will trigger 'mxit_chat_join' */
-	serv_got_joined_chat(gc, multimx->chatid, multimx->roomname);
+	purple_serv_got_joined_chat(gc, multimx->chatid, multimx->roomname);
 
 	/* Send ".list" command to GroupChat server to retrieve current member-list */
 	mxit_send_message(session, multimx->roomid, ".list", FALSE, FALSE);
@@ -413,7 +413,7 @@ void multimx_message_received(struct RXMsgData* mx, char* msg, int msglen, short
 		}
 		else {
 			/* Display server message in chat window */
-			serv_got_chat_in(mx->session->con, multimx->chatid, "MXit", PURPLE_MESSAGE_SYSTEM, msg, mx->timestamp);
+			purple_serv_got_chat_in(mx->session->con, multimx->chatid, "MXit", PURPLE_MESSAGE_SYSTEM, msg, mx->timestamp);
 			mx->processed = TRUE;
 		}
 	}
@@ -480,7 +480,7 @@ void mxit_chat_join(PurpleConnection *gc, GHashTable *components)
 			/* Join existing room */
 			purple_debug_info(MXIT_PLUGIN_ID, "Groupchat %i rejoined\n", multimx->chatid);
 
-			serv_got_joined_chat(gc, multimx->chatid, multimx->roomname);
+			purple_serv_got_joined_chat(gc, multimx->chatid, multimx->roomname);
 		}
 	}
 	else {
@@ -641,7 +641,7 @@ int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 		nickname = purple_account_get_private_alias(purple_connection_get_account(gc));		/* local alias */
 
 	/* Display message in chat window */
-	serv_got_chat_in(gc, id, nickname, flags, message, time(NULL));
+	purple_serv_got_chat_in(gc, id, nickname, flags, message, time(NULL));
 
 	return 0;
 }

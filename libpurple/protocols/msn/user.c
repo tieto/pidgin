@@ -233,7 +233,7 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 	g_free(user->friendly_name);
 	user->friendly_name = g_strdup(name);
 
-	serv_got_alias(purple_account_get_connection(user->userlist->session->account),
+	purple_serv_got_alias(purple_account_get_connection(user->userlist->session->account),
 			user->passport, name);
 	return TRUE;
 }

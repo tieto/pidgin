@@ -1,8 +1,3 @@
-/**
- * @file gtknickcolors.h GTK+ Conversation API
- * @ingroup pidgin
- */
-
 /* pidgin
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -22,8 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINNICKCOLORS_H_
 #define _PIDGINNICKCOLORS_H_
+/**
+ * SECTION:gtknickcolors
+ * @section_id: pidgin-gtknickcolors
+ * @short_description: <filename>gtknickcolors.h</filename>
+ * @title: Conversation Nick Colors
+ */
 
 static const GdkColor nick_seed_colors[] = {
 	{0, 64764, 59881, 20303},       /* Butter #1 */
@@ -52,6 +54,6 @@ static const GdkColor nick_seed_colors[] = {
 	{0,  11822, 13364,  13878}      /* Aluminium #6*/
 };
 
-#define NUM_NICK_SEED_COLORS (sizeof(nick_seed_colors) / sizeof(nick_seed_colors[0]))
+#define PIDGIN_NUM_NICK_SEED_COLORS (sizeof(nick_seed_colors) / sizeof(nick_seed_colors[0]))
 
 #endif

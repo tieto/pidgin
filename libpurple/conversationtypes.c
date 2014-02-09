@@ -31,35 +31,32 @@
 #define PURPLE_CHAT_CONVERSATION_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CHAT_CONVERSATION, PurpleChatConversationPrivate))
 
-/** @copydoc _PurpleChatConversationPrivate */
 typedef struct _PurpleChatConversationPrivate     PurpleChatConversationPrivate;
 
 #define PURPLE_IM_CONVERSATION_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_IM_CONVERSATION, PurpleIMConversationPrivate))
 
-/** @copydoc _PurpleIMConversationPrivate */
 typedef struct _PurpleIMConversationPrivate       PurpleIMConversationPrivate;
 
 #define PURPLE_CHAT_USER_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CHAT_USER, PurpleChatUserPrivate))
 
-/** @copydoc _PurpleChatUserPrivate */
 typedef struct _PurpleChatUserPrivate  PurpleChatUserPrivate;
 
-/**
+/*
  * Data specific to Chats.
  */
 struct _PurpleChatConversationPrivate
 {
-	GList *in_room;     /**< The users in the room.
-	                         @deprecated Will be removed in 3.0.0 TODO */
-	GList *ignored;     /**< Ignored users.                            */
-	char  *who;         /**< The person who set the topic.             */
-	char  *topic;       /**< The topic.                                */
-	int    id;          /**< The chat ID.                              */
-	char *nick;         /**< Your nick in this chat.                   */
-	gboolean left;      /**< We left the chat and kept the window open */
-	GHashTable *users;  /**< Hash table of the users in the room.      */
+	GList *in_room;     /* The users in the room.
+	                       Deprecated: Will be removed in 3.0.0 TODO */
+	GList *ignored;     /* Ignored users.                            */
+	char  *who;         /* The person who set the topic.             */
+	char  *topic;       /* The topic.                                */
+	int    id;          /* The chat ID.                              */
+	char *nick;         /* Your nick in this chat.                   */
+	gboolean left;      /* We left the chat and kept the window open */
+	GHashTable *users;  /* Hash table of the users in the room.      */
 };
 
 /* Chat Property enums */
@@ -73,16 +70,16 @@ enum {
 	CHAT_PROP_LAST
 };
 
-/**
+/*
  * Data specific to Instant Messages.
  */
 struct _PurpleIMConversationPrivate
 {
-	PurpleIMTypingState typing_state;  /**< The current typing state.    */
-	guint  typing_timeout;             /**< The typing timer handle.     */
-	time_t type_again;                 /**< The type again time.         */
-	guint  send_typed_timeout;         /**< The type again timer handle. */
-	PurpleBuddyIcon *icon;             /**< The buddy icon.              */
+	PurpleIMTypingState typing_state;  /* The current typing state.    */
+	guint  typing_timeout;             /* The typing timer handle.     */
+	time_t type_again;                 /* The type again time.         */
+	guint  send_typed_timeout;         /* The type again timer handle. */
+	PurpleBuddyIcon *icon;             /* The buddy icon.              */
 };
 
 /* IM Property enums */
@@ -93,25 +90,25 @@ enum {
 	IM_PROP_LAST
 };
 
-/**
+/*
  * Data for "Chat Buddies"
  */
 struct _PurpleChatUserPrivate
 {
-	PurpleChatConversation *chat;  /**< The chat                              */
-	char *name;                    /**< The chat participant's name in the
-	                                    chat.                                 */
-	char *alias;                   /**< The chat participant's alias, if known;
-	                                    @a NULL otherwise.                    */
-	char *alias_key;               /**< A string by which this user will be
-	                                    sorted, or @c NULL if the user should be
-	                                    sorted by its @c name.
-	                                    (This is currently always @c NULL.    */
-	gboolean buddy;                /**< @a TRUE if this chat participant is on
-	                                    the buddy list; @a FALSE otherwise.   */
-	PurpleChatUserFlags flags;     /**< A bitwise OR of flags for this
-	                                    participant, such as whether they
-	                                    are a channel operator.               */
+	PurpleChatConversation *chat;  /* The chat                              */
+	char *name;                    /* The chat participant's name in the
+	                                  chat.                                 */
+	char *alias;                   /* The chat participant's alias, if known;
+	                                  NULL otherwise.                       */
+	char *alias_key;               /* A string by which this user will be
+	                                  sorted, or @c NULL if the user should be
+	                                  sorted by its @name.
+	                                  (This is currently always NULL.       */
+	gboolean buddy;                /* TRUE if this chat participant is on
+	                                  the buddy list; FALSE otherwise.      */
+	PurpleChatUserFlags flags;     /* A bitwise OR of flags for this
+	                                  participant, such as whether they
+	                                  are a channel operator.               */
 };
 
 /* Chat User Property enums */
@@ -166,7 +163,7 @@ send_typed_cb(gpointer data)
 		 */
 		purple_im_conversation_set_type_again(im, 1);
 
-		serv_send_typing(gc, name, PURPLE_IM_TYPED);
+		purple_serv_send_typing(gc, name, PURPLE_IM_TYPED);
 
 		purple_debug(PURPLE_DEBUG_MISC, "conversationtypes", "typed...\n");
 	}
@@ -489,7 +486,7 @@ purple_im_conversation_finalize(GObject *object)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 		if (purple_prefs_get_bool("/purple/conversations/im/send_typing"))
-			serv_send_typing(gc, name, PURPLE_IM_NOT_TYPING);
+			purple_serv_send_typing(gc, name, PURPLE_IM_NOT_TYPING);
 
 		if (gc && prpl_info->convo_closed != NULL)
 			prpl_info->convo_closed(gc, name);
@@ -1244,7 +1241,7 @@ invite_user_to_chat(gpointer data, PurpleRequestFields *fields)
 	user = purple_request_fields_get_string(fields, "screenname");
 	message = purple_request_fields_get_string(fields, "message");
 
-	serv_chat_invite(purple_conversation_get_connection(conv), priv->id, message, user);
+	purple_serv_chat_invite(purple_conversation_get_connection(conv), priv->id, message, user);
 }
 
 void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const char *user,
@@ -1263,7 +1260,7 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const ch
 	account = purple_conversation_get_account(PURPLE_CONVERSATION(chat));
 
 	if (!confirm) {
-		serv_chat_invite(purple_account_get_connection(account),
+		purple_serv_chat_invite(purple_account_get_connection(account),
 				purple_chat_conversation_get_id(chat), message, user);
 		return;
 	}
@@ -1494,11 +1491,11 @@ purple_chat_conversation_finalize(GObject *object)
 #if 0
 		/*
 		 * This is unfortunately necessary, because calling
-		 * serv_chat_leave() calls this purple_conversation_destroy(),
+		 * purple_serv_chat_leave() calls this purple_conversation_destroy(),
 		 * which leads to two calls here.. We can't just return after
 		 * this, because then it'll return on the next pass. So, since
-		 * serv_got_chat_left(), which is eventually called from the
-		 * prpl that serv_chat_leave() calls, removes this conversation
+		 * purple_serv_got_chat_left(), which is eventually called from the
+		 * prpl that purple_serv_chat_leave() calls, removes this conversation
 		 * from the gc's buddy_chats list, we're going to check to see
 		 * if this exists in the list. If so, we want to return after
 		 * calling this, because it'll be called again. If not, fall
@@ -1511,7 +1508,7 @@ purple_chat_conversation_finalize(GObject *object)
 		 */
 
 		if (gc && g_slist_find(gc->buddy_chats, conv) != NULL) {
-			serv_chat_leave(gc, chat_id);
+			purple_serv_chat_leave(gc, chat_id);
 
 			return;
 		}
@@ -1523,14 +1520,14 @@ purple_chat_conversation_finalize(GObject *object)
 		 * knows it left the chat.
 		 */
 		if (!purple_chat_conversation_has_left(chat))
-			serv_chat_leave(gc, chat_id);
+			purple_serv_chat_leave(gc, chat_id);
 
 		/*
-		 * If they didn't call serv_got_chat_left by now, it's too late.
+		 * If they didn't call purple_serv_got_chat_left by now, it's too late.
 		 * So we better do it for them before we destroy the thing.
 		 */
 		if (!purple_chat_conversation_has_left(chat))
-			serv_got_chat_left(gc, chat_id);
+			purple_serv_got_chat_left(gc, chat_id);
 	}
 
 	g_hash_table_destroy(priv->users);

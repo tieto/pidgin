@@ -1,8 +1,3 @@
-/**
- * @file gtkprefs.h GTK+ Preferences
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,43 +19,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
 #ifndef _PIDGINPREFS_H_
 #define _PIDGINPREFS_H_
+/**
+ * SECTION:gtkprefs
+ * @section_id: pidgin-gtkprefs
+ * @short_description: <filename>gtkprefs.h</filename>
+ * @title: Preferences
+ */
 
 #include "prefs.h"
 
 G_BEGIN_DECLS
 
 /**
+ * pidgin_prefs_init:
+ *
  * Initializes all UI-specific preferences.
  */
 void pidgin_prefs_init(void);
 
 /**
+ * pidgin_prefs_show:
+ *
  * Shows the preferences dialog.
  */
 void pidgin_prefs_show(void);
 
 /**
- * Add a new checkbox for a boolean preference
+ * pidgin_prefs_checkbox:
+ * @title: The text to be displayed as the checkbox label
+ * @key:   The key of the purple bool pref that will be represented by the checkbox
+ * @page:  The page to which the new checkbox will be added
  *
- * @param title The text to be displayed as the checkbox label
- * @param key   The key of the purple bool pref that will be represented by the checkbox
- * @param page  The page to which the new checkbox will be added
+ * Add a new checkbox for a boolean preference
  */
 GtkWidget *pidgin_prefs_checkbox(const char *title, const char *key,
 		GtkWidget *page);
 
 /**
+ * pidgin_prefs_labeled_spin_button:
+ * @page:  The page to which the spin button will be added
+ * @title: The text to be displayed as the spin button label
+ * @key:   The key of the int pref that will be represented by the spin button
+ * @min:   The minimum value of the spin button
+ * @max:   The maximum value of the spin button
+ * @sg:    If not NULL, the size group to which the spin button will be added
+ *
  * Add a new spin button representing an int preference
  *
- * @param page  The page to which the spin button will be added
- * @param title The text to be displayed as the spin button label
- * @param key   The key of the int pref that will be represented by the spin button
- * @param min   The minimum value of the spin button
- * @param max   The maximum value of the spin button
- * @param sg    If not NULL, the size group to which the spin button will be added
- * @return      An hbox containing both the label and the spinner.  Can be
+ * Returns:      An hbox containing both the label and the spinner.  Can be
  *              used to set the widgets to sensitive or insensitive based on the
  *              value of a checkbox.
  */
@@ -68,14 +77,15 @@ GtkWidget *pidgin_prefs_labeled_spin_button(GtkWidget *page,
 		const gchar *title, const char *key, int min, int max, GtkSizeGroup *sg);
 
 /**
+ * pidgin_prefs_labeled_entry:
+ * @page:  The page to which the entry will be added
+ * @title: The text to be displayed as the entry label
+ * @key:   The key of the string pref that will be represented by the entry
+ * @sg:    If not NULL, the size group to which the entry will be added
+ *
  * Add a new entry representing a string preference
  *
- * @param page  The page to which the entry will be added
- * @param title The text to be displayed as the entry label
- * @param key   The key of the string pref that will be represented by the entry
- * @param sg    If not NULL, the size group to which the entry will be added
- *
- * @return      An hbox containing both the label and the entry.  Can be used to set
+ * Returns:      An hbox containing both the label and the entry.  Can be used to set
  *               the widgets to sensitive or insensitive based on the value of a
  *               checkbox.
  */
@@ -83,15 +93,16 @@ GtkWidget *pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
 										const char *key, GtkSizeGroup *sg);
 
 /**
+ * pidgin_prefs_labeled_password:
+ * @page:  The page to which the entry will be added
+ * @title: The text to be displayed as the entry label
+ * @key:   The key of the string pref that will be represented by the entry
+ * @sg:    If not NULL, the size group to which the entry will be added
+ *
  * Add a new entry representing a password (string) preference
  * The entry will use a password-style text entry (the text is substituded)
  *
- * @param page  The page to which the entry will be added
- * @param title The text to be displayed as the entry label
- * @param key   The key of the string pref that will be represented by the entry
- * @param sg    If not NULL, the size group to which the entry will be added
- *
- * @return      An hbox containing both the label and the entry.  Can be used to set
+ * Returns:      An hbox containing both the label and the entry.  Can be used to set
  *               the widgets to sensitive or insensitive based on the value of a
  *               checkbox.
  */
@@ -99,33 +110,37 @@ GtkWidget *pidgin_prefs_labeled_password(GtkWidget *page, const gchar *title,
 										const char *key, GtkSizeGroup *sg);
 
 /**
- * Add a new dropdown representing a preference of the specified type
- *
- * @param page  The page to which the dropdown will be added
- * @param title The text to be displayed as the dropdown label
- * @param type  The type of preference to be stored in the generated dropdown
- * @param key   The key of the pref that will be represented by the dropdown
- * @param ...   The choices to be added to the dropdown, choices should be
+ * pidgin_prefs_dropdown:
+ * @page:  The page to which the dropdown will be added
+ * @title: The text to be displayed as the dropdown label
+ * @type:  The type of preference to be stored in the generated dropdown
+ * @key:   The key of the pref that will be represented by the dropdown
+ * @...:   The choices to be added to the dropdown, choices should be
  *              paired as label/value
+ *
+ * Add a new dropdown representing a preference of the specified type
  */
 GtkWidget *pidgin_prefs_dropdown(GtkWidget *page, const gchar *title,
 		PurplePrefType type, const char *key, ...);
 
 /**
- * Add a new dropdown representing a preference of the specified type
- *
- * @param page      The page to which the dropdown will be added
- * @param title     The text to be displayed as the dropdown label
- * @param type      The type of preference to be stored in the dropdown
- * @param key       The key of the pref that will be represented by the dropdown
- * @param menuitems The choices to be added to the dropdown, choices should
+ * pidgin_prefs_dropdown_from_list:
+ * @page:      The page to which the dropdown will be added
+ * @title:     The text to be displayed as the dropdown label
+ * @type:      The type of preference to be stored in the dropdown
+ * @key:       The key of the pref that will be represented by the dropdown
+ * @menuitems: The choices to be added to the dropdown, choices should
  *                  be paired as label/value
+ *
+ * Add a new dropdown representing a preference of the specified type
  */
 GtkWidget *pidgin_prefs_dropdown_from_list(GtkWidget *page,
 		const gchar * title, PurplePrefType type, const char *key,
 		GList *menuitems);
 
 /**
+ * pidgin_prefs_update_old:
+ *
  * Rename legacy prefs and delete some that no longer exist.
  */
 void pidgin_prefs_update_old(void);

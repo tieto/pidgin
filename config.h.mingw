@@ -48,12 +48,6 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 /* #undef HAVE_DLFCN_H */
 
-/* whether or not we have dot */
-/* #undef HAVE_DOT */
-
-/* whether or not we have doxygen */
-/* #undef HAVE_DOXYGEN */
-
 /* Define if we're using evolution addressbook. */
 /* #undef HAVE_EVOLUTION_ADDRESSBOOK */
 

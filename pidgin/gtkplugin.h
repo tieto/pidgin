@@ -1,8 +1,3 @@
-/**
- * @file gtkplugin.h GTK+ Plugin API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,8 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINPLUGIN_H_
 #define _PIDGINPLUGIN_H_
+/**
+ * SECTION:gtkplugin
+ * @section_id: pidgin-gtkplugin
+ * @short_description: <filename>gtkplugin.h</filename>
+ * @title: Plugin API
+ */
 
 #include "pidgin.h"
 #include "plugin.h"
@@ -32,6 +34,8 @@
 typedef struct _PidginPluginUiInfo PidginPluginUiInfo;
 
 /**
+ * PidginPluginUiInfo:
+ *
  * A GTK+ UI structure for plugins.
  */
 struct _PidginPluginUiInfo
@@ -57,11 +61,15 @@ struct _PidginPluginUiInfo
 G_BEGIN_DECLS
 
 /**
+ * pidgin_plugins_save:
+ *
  * Saves all loaded plugins.
  */
 void pidgin_plugins_save(void);
 
 /**
+ * pidgin_plugin_dialog_show:
+ *
  * Shows the Plugins dialog
  */
 void pidgin_plugin_dialog_show(void);

@@ -1,8 +1,3 @@
-/*
- * @file gtkscrollbook  GTK+ Scrolling notebook Widget
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -26,6 +21,12 @@
 
 #ifndef __PIDGIN_SCROLL_BOOK_H__
 #define __PIDGIN_SCROLL_BOOK_H__
+/**
+ * SECTION:gtkscrollbook
+ * @section_id: pidgin-gtkscrollbook
+ * @short_description: <filename>gtkscrollbook.h</filename>
+ * @title: Scrolling Notebook Widget
+ */
 
 #include <gtk/gtk.h>
 

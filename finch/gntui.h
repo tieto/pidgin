@@ -1,4 +1,4 @@
-/**
+/*
  * finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -19,12 +19,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_UI_H
 #define _GNT_UI_H
+/**
+ * SECTION:gntui
+ * @section_id: finch-gntui
+ * @short_description: <filename>gntui.h</filename>
+ * @title: Startup and Shutdown UI
+ */
 
 #include "gnt.h"
 
-void gnt_ui_init(void);
-void gnt_ui_uninit(void);
+void finch_ui_init(void);
+void finch_ui_uninit(void);
 
 #endif

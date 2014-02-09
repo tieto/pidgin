@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -148,8 +148,8 @@ char *gnt_util_onscreen_fit_string(const char *string, int maxw)
 
 struct duplicate_fns
 {
-	GDupFunc key_dup;
-	GDupFunc value_dup;
+	GntDuplicateFunc key_dup;
+	GntDuplicateFunc value_dup;
 	GHashTable *table;
 };
 
@@ -161,9 +161,9 @@ duplicate_values(gpointer key, gpointer value, gpointer data)
 			fns->value_dup ? fns->value_dup(value) : value);
 }
 
-GHashTable *g_hash_table_duplicate(GHashTable *src, GHashFunc hash,
+GHashTable *gnt_hash_table_duplicate(GHashTable *src, GHashFunc hash,
 		GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d,
-		GDupFunc key_dup, GDupFunc value_dup)
+		GntDuplicateFunc key_dup, GntDuplicateFunc value_dup)
 {
 	GHashTable *dest = g_hash_table_new_full(hash, equal, key_d, value_d);
 	struct duplicate_fns fns = {key_dup, value_dup, dest};

@@ -1,5 +1,5 @@
 /*
- * GtkWebViewToolbar
+ * PidginWebViewToolbar
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,84 +20,99 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
 #ifndef _PIDGINWEBVIEWTOOLBAR_H_
 #define _PIDGINWEBVIEWTOOLBAR_H_
+/**
+ * SECTION:gtkwebviewtoolbar
+ * @section_id: pidgin-gtkwebviewtoolbar
+ * @short_description: <filename>gtkwebviewtoolbar.h</filename>
+ * @title: WebView Toolbar
+ */
 
 #include <gtk/gtk.h>
 #include "gtkwebview.h"
 
-#define DEFAULT_FONT_FACE "Helvetica 12"
+#define PIDGIN_DEFAULT_FONT_FACE "Helvetica 12"
 
-#define GTK_TYPE_WEBVIEWTOOLBAR            (gtk_webviewtoolbar_get_type())
-#define GTK_WEBVIEWTOOLBAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEWTOOLBAR, GtkWebViewToolbar))
-#define GTK_WEBVIEWTOOLBAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEWTOOLBAR, GtkWebViewToolbarClass))
+#define GTK_TYPE_WEBVIEWTOOLBAR            (pidgin_webviewtoolbar_get_type())
+#define PIDGIN_WEBVIEWTOOLBAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbar))
+#define PIDGIN_WEBVIEWTOOLBAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarClass))
 #define GTK_IS_WEBVIEWTOOLBAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_WEBVIEWTOOLBAR))
 #define GTK_IS_WEBVIEWTOOLBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_WEBVIEWTOOLBAR))
-#define GTK_WEBVIEWTOOLBAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_TYPE_WEBVIEWTOOLBAR, GtkWebViewToolbarClass))
+#define PIDGIN_WEBVIEWTOOLBAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarClass))
 
-typedef struct _GtkWebViewToolbar GtkWebViewToolbar;
-typedef struct _GtkWebViewToolbarClass GtkWebViewToolbarClass;
+typedef struct _PidginWebViewToolbar PidginWebViewToolbar;
+typedef struct _PidginWebViewToolbarClass PidginWebViewToolbarClass;
 
-struct _GtkWebViewToolbar {
+struct _PidginWebViewToolbar {
 	GtkHBox box;
 
 	GtkWidget *webview;
 };
 
-struct _GtkWebViewToolbarClass {
+struct _PidginWebViewToolbarClass {
 	GtkHBoxClass parent_class;
 };
 
 G_BEGIN_DECLS
 
 /**
- * Returns the GType for a GtkWebViewToolbar widget
+ * pidgin_webviewtoolbar_get_type:
  *
- * @return The GType for GtkWebViewToolbar widget
+ * Returns the GType for a PidginWebViewToolbar widget
+ *
+ * Returns: The GType for PidginWebViewToolbar widget
  */
-GType gtk_webviewtoolbar_get_type(void);
+GType pidgin_webviewtoolbar_get_type(void);
 
 /**
- * Create a new GtkWebViewToolbar object
+ * pidgin_webviewtoolbar_new:
  *
- * @return A GtkWidget corresponding to the GtkWebViewToolbar object
+ * Create a new PidginWebViewToolbar object
+ *
+ * Returns: A GtkWidget corresponding to the PidginWebViewToolbar object
  */
-GtkWidget *gtk_webviewtoolbar_new(void);
+GtkWidget *pidgin_webviewtoolbar_new(void);
 
 /**
- * Attach a GtkWebViewToolbar object to a GtkWebView
+ * pidgin_webviewtoolbar_attach:
+ * @toolbar: The PidginWebViewToolbar object
+ * @webview: The PidginWebView object
  *
- * @param toolbar The GtkWebViewToolbar object
- * @param webview The GtkWebView object
+ * Attach a PidginWebViewToolbar object to a PidginWebView
  */
-void gtk_webviewtoolbar_attach(GtkWebViewToolbar *toolbar, GtkWidget *webview);
+void pidgin_webviewtoolbar_attach(PidginWebViewToolbar *toolbar, GtkWidget *webview);
 
 /**
- * Associate the smileys from a protocol to a GtkWebViewToolbar object
+ * pidgin_webviewtoolbar_associate_smileys:
+ * @toolbar:  The PidginWebViewToolbar object
+ * @proto_id: The ID of the protocol from which smileys are associated
  *
- * @param toolbar  The GtkWebViewToolbar object
- * @param proto_id The ID of the protocol from which smileys are associated
+ * Associate the smileys from a protocol to a PidginWebViewToolbar object
  */
-void gtk_webviewtoolbar_associate_smileys(GtkWebViewToolbar *toolbar,
+void pidgin_webviewtoolbar_associate_smileys(PidginWebViewToolbar *toolbar,
                                           const char *proto_id);
 
 /**
- * Switch the active conversation for a GtkWebViewToolbar object
+ * pidgin_webviewtoolbar_switch_active_conversation:
+ * @toolbar: The PidginWebViewToolbar object
+ * @conv:    The new conversation
  *
- * @param toolbar The GtkWebViewToolbar object
- * @param conv    The new conversation
+ * Switch the active conversation for a PidginWebViewToolbar object
  */
-void gtk_webviewtoolbar_switch_active_conversation(GtkWebViewToolbar *toolbar,
+void pidgin_webviewtoolbar_switch_active_conversation(PidginWebViewToolbar *toolbar,
                                                    PurpleConversation *conv);
 
 /**
- * Activate a GtkWebViewToolbar action
+ * pidgin_webviewtoolbar_activate:
+ * @toolbar: The PidginWebViewToolbar object
+ * @action:  The PidginWebViewAction
  *
- * @param toolbar The GtkWebViewToolbar object
- * @param action  The GtkWebViewAction
+ * Activate a PidginWebViewToolbar action
  */
-void gtk_webviewtoolbar_activate(GtkWebViewToolbar *toolbar,
-                                 GtkWebViewAction action);
+void pidgin_webviewtoolbar_activate(PidginWebViewToolbar *toolbar,
+                                 PidginWebViewAction action);
 
 G_END_DECLS
 

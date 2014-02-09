@@ -1,8 +1,3 @@
-/**
- * @file gntrequest.c GNT Request API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -72,7 +67,7 @@ setup_request_window(const char *title, const char *primary,
 	return window;
 }
 
-/**
+/*
  * If the window is closed by the wm (ie, without triggering any of
  * the buttons, then do some default callback.
  */
@@ -94,12 +89,13 @@ action_performed(GntWidget *button, gpointer data)
 			 NULL);
 }
 
-/**
- * window: this is the window
- * userdata: the userdata to pass to the primary callbacks
- * cb: the callback
- * data: data for the callback
- * (text, primary-callback) pairs, ended by a NULL
+/*
+ * setup_button_box:
+ * @win: this is the window
+ * @userdata: the userdata to pass to the primary callbacks
+ * @cb: the callback
+ * @data: data for the callback
+ * @...: (text, primary-callback) pairs, ended by a NULL
  *
  * The cancellation callback should be the last callback sent.
  */

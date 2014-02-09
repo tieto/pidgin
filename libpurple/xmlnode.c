@@ -1,7 +1,3 @@
-/**
- * @file PurpleXmlNode.c XML DOM functions
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous

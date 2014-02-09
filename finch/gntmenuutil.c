@@ -1,8 +1,3 @@
-/**
- * @file gntmenuutil.c GNT Menu Utility Functions
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -48,7 +43,7 @@ context_menu_callback(GntMenuItem *item, gpointer data)
 }
 
 void
-gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx)
+finch_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx)
 {
 	GList *list;
 	GntMenuItem *item;
@@ -69,7 +64,7 @@ gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx)
 		GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
 		gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 		for (; list; list = g_list_delete_link(list, list))
-			gnt_append_menu_action(GNT_MENU(sub), list->data, action);
+			finch_append_menu_action(GNT_MENU(sub), list->data, action);
 		purple_menu_action_set_children(action, NULL);
 	}
 

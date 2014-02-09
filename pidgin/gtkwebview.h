@@ -1,8 +1,3 @@
-/**
- * @file gtkwebview.h Wrapper over the Gtk WebKitWebView component
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -27,653 +22,722 @@
 
 #ifndef _PIDGIN_WEBVIEW_H_
 #define _PIDGIN_WEBVIEW_H_
+/**
+ * SECTION:gtkwebview
+ * @section_id: pidgin-gtkwebview
+ * @short_description: <filename>gtkwebview.h</filename>
+ * @title: WebKitWebView Wrapper
+ *
+ * Wrapper over the Gtk WebKitWebView component.
+ */
 
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#define GTK_TYPE_WEBVIEW            (gtk_webview_get_type())
-#define GTK_WEBVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEW, GtkWebView))
-#define GTK_WEBVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEW, GtkWebViewClass))
+#define GTK_TYPE_WEBVIEW            (pidgin_webview_get_type())
+#define PIDGIN_WEBVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEW, PidginWebView))
+#define PIDGIN_WEBVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEW, PidginWebViewClass))
 #define GTK_IS_WEBVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_WEBVIEW))
 #define GTK_IS_WEBVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_WEBVIEW))
-#define GTK_WEBVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_TYPE_WEBVIEW, GtkWebViewClass))
+#define PIDGIN_WEBVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_TYPE_WEBVIEW, PidginWebViewClass))
 
 typedef enum {
-	GTK_WEBVIEW_BOLD          = 1 << 0,
-	GTK_WEBVIEW_ITALIC        = 1 << 1,
-	GTK_WEBVIEW_UNDERLINE     = 1 << 2,
-	GTK_WEBVIEW_GROW          = 1 << 3,
-	GTK_WEBVIEW_SHRINK        = 1 << 4,
-	GTK_WEBVIEW_FACE          = 1 << 5,
-	GTK_WEBVIEW_FORECOLOR     = 1 << 6,
-	GTK_WEBVIEW_BACKCOLOR     = 1 << 7,
-	GTK_WEBVIEW_LINK          = 1 << 8,
-	GTK_WEBVIEW_IMAGE         = 1 << 9,
-	GTK_WEBVIEW_SMILEY        = 1 << 10,
-	GTK_WEBVIEW_LINKDESC      = 1 << 11,
-	GTK_WEBVIEW_STRIKE        = 1 << 12,
+	PIDGIN_WEBVIEW_BOLD          = 1 << 0,
+	PIDGIN_WEBVIEW_ITALIC        = 1 << 1,
+	PIDGIN_WEBVIEW_UNDERLINE     = 1 << 2,
+	PIDGIN_WEBVIEW_GROW          = 1 << 3,
+	PIDGIN_WEBVIEW_SHRINK        = 1 << 4,
+	PIDGIN_WEBVIEW_FACE          = 1 << 5,
+	PIDGIN_WEBVIEW_FORECOLOR     = 1 << 6,
+	PIDGIN_WEBVIEW_BACKCOLOR     = 1 << 7,
+	PIDGIN_WEBVIEW_LINK          = 1 << 8,
+	PIDGIN_WEBVIEW_IMAGE         = 1 << 9,
+	PIDGIN_WEBVIEW_SMILEY        = 1 << 10,
+	PIDGIN_WEBVIEW_LINKDESC      = 1 << 11,
+	PIDGIN_WEBVIEW_STRIKE        = 1 << 12,
 	/** Show custom smileys when appropriate. */
-	GTK_WEBVIEW_CUSTOM_SMILEY = 1 << 13,
-	GTK_WEBVIEW_ALL           = -1
-} GtkWebViewButtons;
+	PIDGIN_WEBVIEW_CUSTOM_SMILEY = 1 << 13,
+	PIDGIN_WEBVIEW_ALL           = -1
+} PidginWebViewButtons;
 
 typedef enum {
-	GTK_WEBVIEW_SMILEY_CUSTOM = 1 << 0
-} GtkWebViewSmileyFlags;
+	PIDGIN_WEBVIEW_SMILEY_CUSTOM = 1 << 0
+} PidginWebViewSmileyFlags;
 
 typedef enum {
-	GTK_WEBVIEW_ACTION_BOLD,
-	GTK_WEBVIEW_ACTION_ITALIC,
-	GTK_WEBVIEW_ACTION_UNDERLINE,
-	GTK_WEBVIEW_ACTION_STRIKE,
-	GTK_WEBVIEW_ACTION_LARGER,
+	PIDGIN_WEBVIEW_ACTION_BOLD,
+	PIDGIN_WEBVIEW_ACTION_ITALIC,
+	PIDGIN_WEBVIEW_ACTION_UNDERLINE,
+	PIDGIN_WEBVIEW_ACTION_STRIKE,
+	PIDGIN_WEBVIEW_ACTION_LARGER,
 #if 0
-	GTK_WEBVIEW_ACTION_NORMAL,
+	PIDGIN_WEBVIEW_ACTION_NORMAL,
 #endif
-	GTK_WEBVIEW_ACTION_SMALLER,
-	GTK_WEBVIEW_ACTION_FONTFACE,
-	GTK_WEBVIEW_ACTION_FGCOLOR,
-	GTK_WEBVIEW_ACTION_BGCOLOR,
-	GTK_WEBVIEW_ACTION_CLEAR,
-	GTK_WEBVIEW_ACTION_IMAGE,
-	GTK_WEBVIEW_ACTION_LINK,
-	GTK_WEBVIEW_ACTION_HR,
-	GTK_WEBVIEW_ACTION_SMILEY,
-	GTK_WEBVIEW_ACTION_ATTENTION
-} GtkWebViewAction;
+	PIDGIN_WEBVIEW_ACTION_SMALLER,
+	PIDGIN_WEBVIEW_ACTION_FONTFACE,
+	PIDGIN_WEBVIEW_ACTION_FGCOLOR,
+	PIDGIN_WEBVIEW_ACTION_BGCOLOR,
+	PIDGIN_WEBVIEW_ACTION_CLEAR,
+	PIDGIN_WEBVIEW_ACTION_IMAGE,
+	PIDGIN_WEBVIEW_ACTION_LINK,
+	PIDGIN_WEBVIEW_ACTION_HR,
+	PIDGIN_WEBVIEW_ACTION_SMILEY,
+	PIDGIN_WEBVIEW_ACTION_ATTENTION
+} PidginWebViewAction;
 
-typedef struct _GtkWebView GtkWebView;
-typedef struct _GtkWebViewClass GtkWebViewClass;
-typedef struct _GtkWebViewSmiley GtkWebViewSmiley;
+typedef struct _PidginWebView PidginWebView;
+typedef struct _PidginWebViewClass PidginWebViewClass;
+typedef struct _PidginWebViewSmiley PidginWebViewSmiley;
 
-struct _GtkWebView
+struct _PidginWebView
 {
 	WebKitWebView parent;
 };
 
-struct _GtkWebViewClass
+struct _PidginWebViewClass
 {
 	WebKitWebViewClass parent;
 
 	GList *protocols;
 
-	void (*buttons_update)(GtkWebView *, GtkWebViewButtons);
-	void (*toggle_format)(GtkWebView *, GtkWebViewButtons);
-	void (*clear_format)(GtkWebView *);
-	void (*update_format)(GtkWebView *);
-	void (*changed)(GtkWebView *);
-	void (*html_appended)(GtkWebView *, WebKitDOMRange *);
+	void (*buttons_update)(PidginWebView *, PidginWebViewButtons);
+	void (*toggle_format)(PidginWebView *, PidginWebViewButtons);
+	void (*clear_format)(PidginWebView *);
+	void (*update_format)(PidginWebView *);
+	void (*changed)(PidginWebView *);
+	void (*html_appended)(PidginWebView *, WebKitDOMRange *);
 };
 
 G_BEGIN_DECLS
 
 /**
- * Returns the GType for a GtkWebView widget
+ * pidgin_webview_get_type:
  *
- * @return The GType for GtkWebView widget
+ * Returns the GType for a PidginWebView widget
+ *
+ * Returns: The GType for PidginWebView widget
  */
-GType gtk_webview_get_type(void);
+GType pidgin_webview_get_type(void);
 
 /**
- * Create a new GtkWebView object
+ * pidgin_webview_new:
+ * @editable: Whether this PidginWebView will be user-editable
  *
- * @param editable Whether this GtkWebView will be user-editable
+ * Create a new PidginWebView object
  *
- * @return A GtkWidget corresponding to the GtkWebView object
+ * Returns: A GtkWidget corresponding to the PidginWebView object
  */
-GtkWidget *gtk_webview_new(gboolean editable);
+GtkWidget *pidgin_webview_new(gboolean editable);
 
 /**
+ * pidgin_webview_append_html:
+ * @webview: The PidginWebView object
+ * @markup:  The html markup to append
+ *
  * A very basic routine to append html, which can be considered
  * equivalent to a "document.write" using JavaScript.
- *
- * @param webview The GtkWebView object
- * @param markup  The html markup to append
  */
-void gtk_webview_append_html(GtkWebView *webview, const char *markup);
+void pidgin_webview_append_html(PidginWebView *webview, const char *markup);
 
 /**
+ * pidgin_webview_load_html_string:
+ * @webview: The PidginWebView object
+ * @html:    The HTML content to load
+ *
  * Requests loading of the given content.
- *
- * @param webview The GtkWebView object
- * @param html    The HTML content to load
  */
-void gtk_webview_load_html_string(GtkWebView *webview, const char *html);
+void pidgin_webview_load_html_string(PidginWebView *webview, const char *html);
 
 /**
+ * pidgin_webview_load_html_string_with_selection:
+ * @webview: The PidginWebView object
+ * @html:    The HTML content to load
+ *
  * Requests loading of the given content and sets the selection. You must
  * include an anchor tag with id='caret' in the HTML string, which will be
  * used to set the selection. This tag is then removed so that querying the
  * WebView's HTML contents will no longer return it.
- *
- * @param webview The GtkWebView object
- * @param html    The HTML content to load
  */
-void gtk_webview_load_html_string_with_selection(GtkWebView *webview, const char *html);
+void pidgin_webview_load_html_string_with_selection(PidginWebView *webview, const char *html);
 
 /**
+ * pidgin_webview_safe_execute_script:
+ * @webview: The PidginWebView object
+ * @script:  The script to execute
+ *
  * Execute the JavaScript only after the webkit_webview_load_string
  * loads completely. We also guarantee that the scripts are executed
  * in the order they are called here. This is useful to avoid race
  * conditions when calling JS functions immediately after opening the
  * page.
- *
- * @param webview The GtkWebView object
- * @param script  The script to execute
  */
-void gtk_webview_safe_execute_script(GtkWebView *webview, const char *script);
+void pidgin_webview_safe_execute_script(PidginWebView *webview, const char *script);
 
 /**
+ * pidgin_webview_quote_js_string:
+ * @str: The string to escape and quote
+ *
  * A convenience routine to quote a string for use as a JavaScript
  * string. For instance, "hello 'world'" becomes "'hello \\'world\\''"
  *
- * @param str The string to escape and quote
- *
- * @return The quoted string
+ * Returns: The quoted string
  */
-char *gtk_webview_quote_js_string(const char *str);
+char *pidgin_webview_quote_js_string(const char *str);
 
 /**
- * Set the vertical adjustment for the GtkWebView.
+ * pidgin_webview_set_vadjustment:
+ * @webview:  The PidginWebView object
+ * @vadj:     The GtkAdjustment that control the webview
  *
- * @param webview  The GtkWebView object
- * @param vadj     The GtkAdjustment that control the webview
+ * Set the vertical adjustment for the PidginWebView.
  */
-void gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj);
+void pidgin_webview_set_vadjustment(PidginWebView *webview, GtkAdjustment *vadj);
 
 /**
+ * pidgin_webview_scroll_to_end:
+ * @webview: The PidginWebView object
+ * @smooth:  A boolean indicating if smooth scrolling should be used
+ *
  * Scrolls the Webview to the end of its contents.
- *
- * @param webview The GtkWebView object
- * @param smooth  A boolean indicating if smooth scrolling should be used
  */
-void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth);
+void pidgin_webview_scroll_to_end(PidginWebView *webview, gboolean smooth);
 
 /**
- * Set whether the GtkWebView stays at its end when HTML content is appended. If
+ * pidgin_webview_set_autoscroll:
+ * @webview: The PidginWebView object
+ * @scroll:  Whether to automatically scroll
+ *
+ * Set whether the PidginWebView stays at its end when HTML content is appended. If
+ * not already at the end before appending, then scrolling will not occur.
+ */
+void pidgin_webview_set_autoscroll(PidginWebView *webview, gboolean scroll);
+
+/**
+ * pidgin_webview_get_autoscroll:
+ * @webview: The PidginWebView object
+ *
+ * Set whether the PidginWebView stays at its end when HTML content is appended. If
  * not already at the end before appending, then scrolling will not occur.
  *
- * @param webview The GtkWebView object
- * @param scroll  Whether to automatically scroll
+ * Returns: Whether to automatically scroll
  */
-void gtk_webview_set_autoscroll(GtkWebView *webview, gboolean scroll);
+gboolean pidgin_webview_get_autoscroll(PidginWebView *webview);
 
 /**
- * Set whether the GtkWebView stays at its end when HTML content is appended. If
- * not already at the end before appending, then scrolling will not occur.
+ * pidgin_webview_page_up:
+ * @webview: The PidginWebView.
  *
- * @param webview The GtkWebView object
- *
- * @return Whether to automatically scroll
+ * Scrolls a PidginWebView up by one page.
  */
-gboolean gtk_webview_get_autoscroll(GtkWebView *webview);
+void pidgin_webview_page_up(PidginWebView *webview);
 
 /**
- * Scrolls a GtkWebView up by one page.
+ * pidgin_webview_page_down:
+ * @webview: The PidginWebView.
  *
- * @param webview The GtkWebView.
+ * Scrolls a PidginWebView down by one page.
  */
-void gtk_webview_page_up(GtkWebView *webview);
+void pidgin_webview_page_down(PidginWebView *webview);
 
 /**
- * Scrolls a GtkWebView down by one page.
+ * pidgin_webview_setup_entry:
+ * @webview: The PidginWebView.
+ * @flags:   The connection flags describing the allowed formatting.
  *
- * @param webview The GtkWebView.
+ * Setup formatting for a PidginWebView depending on the flags specified.
  */
-void gtk_webview_page_down(GtkWebView *webview);
+void pidgin_webview_setup_entry(PidginWebView *webview, PurpleConnectionFlags flags);
 
 /**
- * Setup formatting for a GtkWebView depending on the flags specified.
+ * pidgin_webview_set_spellcheck:
+ * @webview: The PidginWebView.
+ * @enable:  Whether to enable or disable spell-checking.
  *
- * @param webview The GtkWebView.
- * @param flags   The connection flags describing the allowed formatting.
+ * Setup spell-checking on a PidginWebView.
  */
-void gtk_webview_setup_entry(GtkWebView *webview, PurpleConnectionFlags flags);
+void pidgin_webview_set_spellcheck(PidginWebView *webview, gboolean enable);
 
 /**
- * Setup spell-checking on a GtkWebView.
+ * pidgin_webview_set_whole_buffer_formatting_only:
+ * @webview: The PidginWebView
+ * @wbfo:    %TRUE to enable the mode, or %FALSE otherwise.
  *
- * @param webview The GtkWebView.
- * @param enable  Whether to enable or disable spell-checking.
- */
-void pidgin_webview_set_spellcheck(GtkWebView *webview, gboolean enable);
-
-/**
- * Enables or disables whole buffer formatting only (wbfo) in a GtkWebView.
+ * Enables or disables whole buffer formatting only (wbfo) in a PidginWebView.
  * In this mode formatting options to the buffer take effect for the entire
  * buffer instead of specific text.
- *
- * @param webview The GtkWebView
- * @param wbfo    @c TRUE to enable the mode, or @c FALSE otherwise.
  */
-void gtk_webview_set_whole_buffer_formatting_only(GtkWebView *webview,
+void pidgin_webview_set_whole_buffer_formatting_only(PidginWebView *webview,
                                                   gboolean wbfo);
 
 /**
- * Indicates which formatting functions to enable and disable in a GtkWebView.
+ * pidgin_webview_set_format_functions:
+ * @webview: The PidginWebView
+ * @buttons: A PidginWebViewButtons bitmask indicating which functions to use
  *
- * @param webview The GtkWebView
- * @param buttons A GtkWebViewButtons bitmask indicating which functions to use
+ * Indicates which formatting functions to enable and disable in a PidginWebView.
  */
-void gtk_webview_set_format_functions(GtkWebView *webview,
-                                      GtkWebViewButtons buttons);
+void pidgin_webview_set_format_functions(PidginWebView *webview,
+                                      PidginWebViewButtons buttons);
 
 /**
+ * pidgin_webview_activate_anchor:
+ * @link:   The WebKitDOMHTMLAnchorElement object
+ *
  * Activates a WebKitDOMHTMLAnchorElement object. This triggers the navigation
  * signals, and marks the link as visited (when possible).
- *
- * @param link   The WebKitDOMHTMLAnchorElement object
- *
  */
-void gtk_webview_activate_anchor(WebKitDOMHTMLAnchorElement *link);
+void pidgin_webview_activate_anchor(WebKitDOMHTMLAnchorElement *link);
 
 /**
- * Register a protocol with the GtkWebView widget. Registering a protocol would
+ * pidgin_webview_class_register_protocol:
+ * @name:      The name of the protocol (e.g. http://)
+ * @activate:  The callback to trigger when the protocol text is clicked.
+ *                  Removes any current protocol definition if %NULL. The
+ *                  callback should return %TRUE if the link was activated
+ *                  properly, %FALSE otherwise.
+ * @context_menu:  The callback to trigger when the context menu is popped
+ *                      up on the protocol text. The callback should return
+ *                      %TRUE if the request for context menu was processed
+ *                      successfully, %FALSE otherwise.
+ *
+ * Register a protocol with the PidginWebView widget. Registering a protocol would
  * allow certain text to be clickable.
  *
- * @param name      The name of the protocol (e.g. http://)
- * @param activate  The callback to trigger when the protocol text is clicked.
- *                  Removes any current protocol definition if @c NULL. The
- *                  callback should return @c TRUE if the link was activated
- *                  properly, @c FALSE otherwise.
- * @param context_menu  The callback to trigger when the context menu is popped
- *                      up on the protocol text. The callback should return
- *                      @c TRUE if the request for context menu was processed
- *                      successfully, @c FALSE otherwise.
- *
- * @return  @c TRUE if the protocol was successfully registered
- *          (or unregistered, when \a activate is @c NULL)
+ * Returns:  %TRUE if the protocol was successfully registered
+ *          (or unregistered, when \a activate is %NULL)
  */
-gboolean gtk_webview_class_register_protocol(const char *name,
-		gboolean (*activate)(GtkWebView *webview, const char *uri),
-		gboolean (*context_menu)(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu));
+gboolean pidgin_webview_class_register_protocol(const char *name,
+		gboolean (*activate)(PidginWebView *webview, const char *uri),
+		gboolean (*context_menu)(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu));
 
 /**
- * Returns which formatting functions are enabled in a GtkWebView.
+ * pidgin_webview_get_format_functions:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Returns which formatting functions are enabled in a PidginWebView.
  *
- * @return A GtkWebViewButtons bitmask indicating which functions to are enabled
+ * Returns: A PidginWebViewButtons bitmask indicating which functions to are enabled
  */
-GtkWebViewButtons gtk_webview_get_format_functions(GtkWebView *webview);
+PidginWebViewButtons pidgin_webview_get_format_functions(PidginWebView *webview);
 
 /**
- * Sets each boolean to @c TRUE or @c FALSE to indicate if that formatting
- * option is enabled at the current position in a GtkWebView.
+ * pidgin_webview_get_current_format:
+ * @webview:       The PidginWebView
+ * @bold:          The boolean to set for bold or %NULL.
+ * @italic:        The boolean to set for italic or %NULL.
+ * @underline:     The boolean to set for underline or %NULL.
+ * @strikethrough: The boolean to set for strikethrough or %NULL.
  *
- * @param webview       The GtkWebView
- * @param bold          The boolean to set for bold or @c NULL.
- * @param italic        The boolean to set for italic or @c NULL.
- * @param underline     The boolean to set for underline or @c NULL.
- * @param strikethrough The boolean to set for strikethrough or @c NULL.
+ * Sets each boolean to %TRUE or %FALSE to indicate if that formatting
+ * option is enabled at the current position in a PidginWebView.
  */
-void gtk_webview_get_current_format(GtkWebView *webview, gboolean *bold,
+void pidgin_webview_get_current_format(PidginWebView *webview, gboolean *bold,
                                     gboolean *italic, gboolean *underline,
-                                    gboolean *strike);
+                                    gboolean *strikethrough);
 
 /**
+ * pidgin_webview_get_current_fontface:
+ * @webview: The PidginWebView
+ *
  * Returns a string containing the selected font face at the current position
- * in a GtkWebView.
+ * in a PidginWebView.
  *
- * @param webview The GtkWebView
- *
- * @return A string containing the font face or @c NULL if none is set.
+ * Returns: A string containing the font face or %NULL if none is set.
  */
-char *gtk_webview_get_current_fontface(GtkWebView *webview);
+char *pidgin_webview_get_current_fontface(PidginWebView *webview);
 
 /**
+ * pidgin_webview_get_current_forecolor:
+ * @webview: The PidginWebView
+ *
  * Returns a string containing the selected foreground color at the current
- * position in a GtkWebView.
+ * position in a PidginWebView.
  *
- * @param webview The GtkWebView
- *
- * @return A string containing the foreground color or @c NULL if none is set.
+ * Returns: A string containing the foreground color or %NULL if none is set.
  */
-char *gtk_webview_get_current_forecolor(GtkWebView *webview);
+char *pidgin_webview_get_current_forecolor(PidginWebView *webview);
 
 /**
+ * pidgin_webview_get_current_backcolor:
+ * @webview: The PidginWebView
+ *
  * Returns a string containing the selected font background color at the current
- * position in a GtkWebView.
+ * position in a PidginWebView.
  *
- * @param webview The GtkWebView
- *
- * @return A string containing the background color or @c NULL if none is set.
+ * Returns: A string containing the background color or %NULL if none is set.
  */
-char *gtk_webview_get_current_backcolor(GtkWebView *webview);
+char *pidgin_webview_get_current_backcolor(PidginWebView *webview);
 
 /**
+ * pidgin_webview_get_current_fontsize:
+ * @webview: The PidginWebView
+ *
  * Returns a integer containing the selected HTML font size at the current
- * position in a GtkWebView.
+ * position in a PidginWebView.
  *
- * @param webview The GtkWebView
- *
- * @return The HTML font size.
+ * Returns: The HTML font size.
  */
-gint gtk_webview_get_current_fontsize(GtkWebView *webview);
+gint pidgin_webview_get_current_fontsize(PidginWebView *webview);
 
 /**
- * Gets the content of the head element of a GtkWebView as HTML.
+ * pidgin_webview_get_head_html:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Gets the content of the head element of a PidginWebView as HTML.
  *
- * @return The HTML from the head element.
+ * Returns: The HTML from the head element.
  */
-gchar *gtk_webview_get_head_html(GtkWebView *webview);
+gchar *pidgin_webview_get_head_html(PidginWebView *webview);
 
 /**
- * Gets the HTML content of a GtkWebView.
+ * pidgin_webview_get_body_html:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Gets the HTML content of a PidginWebView.
  *
- * @return The HTML that is currently displayed.
+ * Returns: The HTML that is currently displayed.
  */
-gchar *gtk_webview_get_body_html(GtkWebView *webview);
+gchar *pidgin_webview_get_body_html(PidginWebView *webview);
 
 /**
- * Gets the text content of a GtkWebView.
+ * pidgin_webview_get_body_text:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Gets the text content of a PidginWebView.
  *
- * @return The HTML-free text that is currently displayed.
+ * Returns: The HTML-free text that is currently displayed.
  */
-gchar *gtk_webview_get_body_text(GtkWebView *webview);
+gchar *pidgin_webview_get_body_text(PidginWebView *webview);
 
 /**
- * Gets the selected text of a GtkWebView.
+ * pidgin_webview_get_selected_text:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Gets the selected text of a PidginWebView.
  *
- * @return The HTML-free text that is currently selected, or NULL if nothing is
+ * Returns: The HTML-free text that is currently selected, or NULL if nothing is
  *         currently selected.
  */
-gchar *gtk_webview_get_selected_text(GtkWebView *webview);
+gchar *pidgin_webview_get_selected_text(PidginWebView *webview);
 
 /**
- * Gets the container of the caret, along with its position in the container
- * from a GtkWebView.
- *
- * @param webview       The GtkWebView
- * @param container_ret A pointer to a pointer to a WebKitDOMNode. This pointer
+ * pidgin_webview_get_caret:
+ * @webview:       The PidginWebView
+ * @container_ret: A pointer to a pointer to a WebKitDOMNode. This pointer
  *                      will be set to the container the caret is in. Set to
- *                      @c NULL if a range is selected.
- * @param pos_ret       A pointer to a glong. This value will be set to the
+ *                      %NULL if a range is selected.
+ * @pos_ret:       A pointer to a glong. This value will be set to the
  *                      position of the caret in the container. Set to -1 if a
  *                      range is selected.
+ *
+ * Gets the container of the caret, along with its position in the container
+ * from a PidginWebView.
  */
-void gtk_webview_get_caret(GtkWebView *webview, WebKitDOMNode **container_ret,
+void pidgin_webview_get_caret(PidginWebView *webview, WebKitDOMNode **container_ret,
 		glong *pos_ret);
 
 /**
- * Sets the caret position in container, in a GtkWebView.
+ * pidgin_webview_set_caret:
+ * @webview:   The PidginWebView
+ * @container: The WebKitDOMNode to set the caret in
+ * @pos:       The position of the caret in the container
  *
- * @param webview   The GtkWebView
- * @param container The WebKitDOMNode to set the caret in
- * @param pos       The position of the caret in the container
+ * Sets the caret position in container, in a PidginWebView.
  */
-void gtk_webview_set_caret(GtkWebView *webview, WebKitDOMNode *container,
+void pidgin_webview_set_caret(PidginWebView *webview, WebKitDOMNode *container,
 		glong pos);
 
 /**
- * Clear all the formatting on a GtkWebView.
+ * pidgin_webview_clear_formatting:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Clear all the formatting on a PidginWebView.
  */
-void gtk_webview_clear_formatting(GtkWebView *webview);
+void pidgin_webview_clear_formatting(PidginWebView *webview);
 
 /**
- * Toggles bold at the cursor location or selection in a GtkWebView.
+ * pidgin_webview_toggle_bold:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Toggles bold at the cursor location or selection in a PidginWebView.
  */
-void gtk_webview_toggle_bold(GtkWebView *webview);
+void pidgin_webview_toggle_bold(PidginWebView *webview);
 
 /**
- * Toggles italic at the cursor location or selection in a GtkWebView.
+ * pidgin_webview_toggle_italic:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Toggles italic at the cursor location or selection in a PidginWebView.
  */
-void gtk_webview_toggle_italic(GtkWebView *webview);
+void pidgin_webview_toggle_italic(PidginWebView *webview);
 
 /**
- * Toggles underline at the cursor location or selection in a GtkWebView.
+ * pidgin_webview_toggle_underline:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Toggles underline at the cursor location or selection in a PidginWebView.
  */
-void gtk_webview_toggle_underline(GtkWebView *webview);
+void pidgin_webview_toggle_underline(PidginWebView *webview);
 
 /**
- * Toggles strikethrough at the cursor location or selection in a GtkWebView.
+ * pidgin_webview_toggle_strike:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Toggles strikethrough at the cursor location or selection in a PidginWebView.
  */
-void gtk_webview_toggle_strike(GtkWebView *webview);
+void pidgin_webview_toggle_strike(PidginWebView *webview);
 
 /**
+ * pidgin_webview_toggle_forecolor:
+ * @webview: The PidginWebView
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
+ *
  * Toggles a foreground color at the current location or selection in a
- * GtkWebView.
+ * PidginWebView.
  *
- * @param webview The GtkWebView
- * @param color  The HTML-style color, or @c NULL or "" to clear the color.
- *
- * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
-gboolean gtk_webview_toggle_forecolor(GtkWebView *webview, const char *color);
+gboolean pidgin_webview_toggle_forecolor(PidginWebView *webview, const char *color);
 
 /**
+ * pidgin_webview_toggle_backcolor:
+ * @webview: The PidginWebView
+ * @color:  The HTML-style color, or %NULL or "" to clear the color.
+ *
  * Toggles a background color at the current location or selection in a
- * GtkWebView.
+ * PidginWebView.
  *
- * @param webview The GtkWebView
- * @param color  The HTML-style color, or @c NULL or "" to clear the color.
- *
- * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a color was set, or %FALSE if it was cleared.
  */
-gboolean gtk_webview_toggle_backcolor(GtkWebView *webview, const char *color);
+gboolean pidgin_webview_toggle_backcolor(PidginWebView *webview, const char *color);
 
 /**
- * Toggles a font face at the current location or selection in a GtkWebView.
+ * pidgin_webview_toggle_fontface:
+ * @webview: The PidginWebView
+ * @face:   The font face name, or %NULL or "" to clear the font.
  *
- * @param webview The GtkWebView
- * @param face   The font face name, or @c NULL or "" to clear the font.
+ * Toggles a font face at the current location or selection in a PidginWebView.
  *
- * @return @c TRUE if a font name was set, or @c FALSE if it was cleared.
+ * Returns: %TRUE if a font name was set, or %FALSE if it was cleared.
  */
-gboolean gtk_webview_toggle_fontface(GtkWebView *webview, const char *face);
+gboolean pidgin_webview_toggle_fontface(PidginWebView *webview, const char *face);
 
 /**
- * Sets the font size at the current location or selection in a GtkWebView.
+ * pidgin_webview_font_set_size:
+ * @webview: The PidginWebView
+ * @size:   The HTML font size to use.
  *
- * @param webview The GtkWebView
- * @param size   The HTML font size to use.
+ * Sets the font size at the current location or selection in a PidginWebView.
  */
-void gtk_webview_font_set_size(GtkWebView *webview, gint size);
+void pidgin_webview_font_set_size(PidginWebView *webview, gint size);
 
 /**
+ * pidgin_webview_font_shrink:
+ * @webview: The PidginWebView
+ *
  * Decreases the font size by 1 at the current location or selection in a
- * GtkWebView.
- *
- * @param webview The GtkWebView
+ * PidginWebView.
  */
-void gtk_webview_font_shrink(GtkWebView *webview);
+void pidgin_webview_font_shrink(PidginWebView *webview);
 
 /**
+ * pidgin_webview_font_grow:
+ * @webview: The PidginWebView
+ *
  * Increases the font size by 1 at the current location or selection in a
- * GtkWebView.
- *
- * @param webview The GtkWebView
+ * PidginWebView.
  */
-void gtk_webview_font_grow(GtkWebView *webview);
+void pidgin_webview_font_grow(PidginWebView *webview);
 
 /**
+ * pidgin_webview_insert_hr:
+ * @webview: The PidginWebView
+ *
  * Inserts a horizontal rule at the current location or selection in a
- * GtkWebView.
- *
- * @param webview The GtkWebView
+ * PidginWebView.
  */
-void gtk_webview_insert_hr(GtkWebView *webview);
+void pidgin_webview_insert_hr(PidginWebView *webview);
 
 /**
- * Inserts a link at the current location or selection in a GtkWebView.
- *
- * @param webview The GtkWebView
- * @param url     The URL of the link
- * @param desc    The text description of the link. If not supplied, the URL is
+ * pidgin_webview_insert_link:
+ * @webview: The PidginWebView
+ * @url:     The URL of the link
+ * @desc:    The text description of the link. If not supplied, the URL is
  *                used instead.
+ *
+ * Inserts a link at the current location or selection in a PidginWebView.
  */
-void gtk_webview_insert_link(GtkWebView *webview, const char *url, const char *desc);
+void pidgin_webview_insert_link(PidginWebView *webview, const char *url, const char *desc);
 
 /**
- * Inserts an image at the current location or selection in a GtkWebView.
+ * pidgin_webview_insert_image:
+ * @webview: The PidginWebView
+ * @id:      The PurpleStoredImage id
  *
- * @param webview The GtkWebView
- * @param id      The PurpleStoredImage id
+ * Inserts an image at the current location or selection in a PidginWebView.
  */
-void gtk_webview_insert_image(GtkWebView *webview, int id);
+void pidgin_webview_insert_image(PidginWebView *webview, int id);
 
 /**
- * Gets the protocol name associated with this GtkWebView.
+ * pidgin_webview_get_protocol_name:
+ * @webview: The PidginWebView
  *
- * @param webview The GtkWebView
+ * Gets the protocol name associated with this PidginWebView.
  */
-const char *gtk_webview_get_protocol_name(GtkWebView *webview);
+const char *pidgin_webview_get_protocol_name(PidginWebView *webview);
 
 /**
- * Associates a protocol name with a GtkWebView.
+ * pidgin_webview_set_protocol_name:
+ * @webview:       The PidginWebView
+ * @protocol_name: The protocol name to associate with the PidginWebView
  *
- * @param webview       The GtkWebView
- * @param protocol_name The protocol name to associate with the GtkWebView
+ * Associates a protocol name with a PidginWebView.
  */
-void gtk_webview_set_protocol_name(GtkWebView *webview, const char *protocol_name);
+void pidgin_webview_set_protocol_name(PidginWebView *webview, const char *protocol_name);
 
 /**
- * Create a new GtkWebViewSmiley.
+ * pidgin_webview_smiley_create:
+ * @file:      The image file for the smiley
+ * @shortcut:  The key shortcut for the smiley
+ * @hide:      %TRUE if the smiley should be hidden in the smiley dialog,
+ *                  %FALSE otherwise
+ * @flags:     The smiley flags
  *
- * @param file      The image file for the smiley
- * @param shortcut  The key shortcut for the smiley
- * @param hide      @c TRUE if the smiley should be hidden in the smiley dialog,
- *                  @c FALSE otherwise
- * @param flags     The smiley flags
+ * Create a new PidginWebViewSmiley.
  *
- * @return The newly created smiley
+ * Returns: The newly created smiley
  */
-GtkWebViewSmiley *gtk_webview_smiley_create(const char *file,
+PidginWebViewSmiley *pidgin_webview_smiley_create(const char *file,
                                             const char *shortcut,
                                             gboolean hide,
-                                            GtkWebViewSmileyFlags flags);
+                                            PidginWebViewSmileyFlags flags);
 
 /**
+ * pidgin_webview_smiley_reload:
+ * @smiley:    The smiley to reload
+ *
  * Reload the image data for the smiley.
- *
- * @param smiley    The smiley to reload
  */
-void gtk_webview_smiley_reload(GtkWebViewSmiley *smiley);
+void pidgin_webview_smiley_reload(PidginWebViewSmiley *smiley);
 
 /**
- * Destroy a GtkWebViewSmiley.
+ * pidgin_webview_smiley_destroy:
+ * @smiley:    The smiley to destroy
  *
- * @param smiley    The smiley to destroy
+ * Destroy a PidginWebViewSmiley.
  */
-void gtk_webview_smiley_destroy(GtkWebViewSmiley *smiley);
+void pidgin_webview_smiley_destroy(PidginWebViewSmiley *smiley);
 
 /**
+ * pidgin_webview_smiley_get_smile:
+ * @smiley:    The smiley
+ *
  * Returns the text associated with a smiley.
  *
- * @param smiley    The smiley
- *
- * @return The text
+ * Returns: The text
  */
-const char *gtk_webview_smiley_get_smile(const GtkWebViewSmiley *smiley);
+const char *pidgin_webview_smiley_get_smile(const PidginWebViewSmiley *smiley);
 
 /**
+ * pidgin_webview_smiley_get_file:
+ * @smiley:    The smiley
+ *
  * Returns the file associated with a smiley.
  *
- * @param smiley    The smiley
- *
- * @return The file
+ * Returns: The file
  */
-const char *gtk_webview_smiley_get_file(const GtkWebViewSmiley *smiley);
+const char *pidgin_webview_smiley_get_file(const PidginWebViewSmiley *smiley);
 
 /**
+ * pidgin_webview_smiley_get_hidden:
+ * @smiley:    The smiley
+ *
  * Returns the invisibility of a smiley.
  *
- * @param smiley    The smiley
- *
- * @return The hidden status
+ * Returns: The hidden status
  */
-gboolean gtk_webview_smiley_get_hidden(const GtkWebViewSmiley *smiley);
+gboolean pidgin_webview_smiley_get_hidden(const PidginWebViewSmiley *smiley);
 
 /**
+ * pidgin_webview_smiley_get_flags:
+ * @smiley:    The smiley
+ *
  * Returns the flags associated with a smiley.
  *
- * @param smiley    The smiley
- *
- * @return The flags
+ * Returns: The flags
  */
-GtkWebViewSmileyFlags gtk_webview_smiley_get_flags(const GtkWebViewSmiley *smiley);
+PidginWebViewSmileyFlags pidgin_webview_smiley_get_flags(const PidginWebViewSmiley *smiley);
 
 /**
- * Returns the smiley object associated with the text.
+ * pidgin_webview_smiley_find:
+ * @webview: The PidginWebView
+ * @sml:     The name of the smiley category
+ * @text:    The text associated with the smiley
  *
- * @param webview The GtkWebView
- * @param sml     The name of the smiley category
- * @param text    The text associated with the smiley
+ * Returns: The smiley object associated with the text.
  */
-GtkWebViewSmiley *gtk_webview_smiley_find(GtkWebView *webview, const char *sml,
+PidginWebViewSmiley *pidgin_webview_smiley_find(PidginWebView *webview, const char *sml,
                                           const char *text);
 
 /**
- * Associates a smiley with a GtkWebView.
+ * pidgin_webview_associate_smiley:
+ * @webview: The PidginWebView
+ * @sml:     The name of the smiley category
+ * @smiley:  The PidginWebViewSmiley to associate
  *
- * @param webview The GtkWebView
- * @param sml     The name of the smiley category
- * @param smiley  The GtkWebViewSmiley to associate
+ * Associates a smiley with a PidginWebView.
  */
-void gtk_webview_associate_smiley(GtkWebView *webview, const char *sml,
-                                  GtkWebViewSmiley *smiley);
+void pidgin_webview_associate_smiley(PidginWebView *webview, const char *sml,
+                                  PidginWebViewSmiley *smiley);
 
 /**
- * Removes all smileys associated with a GtkWebView.
+ * pidgin_webview_remove_smileys:
+ * @webview: The PidginWebView.
  *
- * @param webview The GtkWebView.
+ * Removes all smileys associated with a PidginWebView.
  */
-void gtk_webview_remove_smileys(GtkWebView *webview);
+void pidgin_webview_remove_smileys(PidginWebView *webview);
 
 /**
- * Inserts a smiley at the current location or selection in a GtkWebView.
+ * pidgin_webview_insert_smiley:
+ * @webview: The PidginWebView
+ * @sml:     The category of the smiley
+ * @smiley:  The text of the smiley to insert
  *
- * @param webview The GtkWebView
- * @param sml     The category of the smiley
- * @param smiley  The text of the smiley to insert
+ * Inserts a smiley at the current location or selection in a PidginWebView.
  */
-void gtk_webview_insert_smiley(GtkWebView *webview, const char *sml,
+void pidgin_webview_insert_smiley(PidginWebView *webview, const char *sml,
                                const char *smiley);
 
 /**
- * Makes the toolbar associated with a GtkWebView visible.
+ * pidgin_webview_show_toolbar:
+ * @webview: The PidginWebView.
  *
- * @param webview The GtkWebView.
+ * Makes the toolbar associated with a PidginWebView visible.
  */
-void gtk_webview_show_toolbar(GtkWebView *webview);
+void pidgin_webview_show_toolbar(PidginWebView *webview);
 
 /**
- * Makes the toolbar associated with a GtkWebView invisible.
+ * pidgin_webview_hide_toolbar:
+ * @webview: The PidginWebView.
  *
- * @param webview The GtkWebView.
+ * Makes the toolbar associated with a PidginWebView invisible.
  */
-void gtk_webview_hide_toolbar(GtkWebView *webview);
+void pidgin_webview_hide_toolbar(PidginWebView *webview);
 
 /**
- * Activate an action on the toolbar associated with a GtkWebView.
+ * pidgin_webview_activate_toolbar:
+ * @webview: The PidginWebView
+ * @action:  The PidginWebViewAction
  *
- * @param webview The GtkWebView
- * @param action  The GtkWebViewAction
+ * Activate an action on the toolbar associated with a PidginWebView.
  */
-void gtk_webview_activate_toolbar(GtkWebView *webview, GtkWebViewAction action);
+void pidgin_webview_activate_toolbar(PidginWebView *webview, PidginWebViewAction action);
 
 /* Do not use. */
 void
-gtk_webview_set_toolbar(GtkWebView *webview, GtkWidget *toolbar);
+pidgin_webview_set_toolbar(PidginWebView *webview, GtkWidget *toolbar);
 
 G_END_DECLS
 

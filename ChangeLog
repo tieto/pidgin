@@ -60,6 +60,7 @@ version 3.0.0 (??/??/????):
 	General:
 	* Various core components of libpurple are now GObjects.
 	* Ciphers are now built from the libpurple directory.
+	* Doxygen has been replaced by gtk-doc for generating documentation.
 
 version 2.10.9 (2/2/2014):
 	XMPP:

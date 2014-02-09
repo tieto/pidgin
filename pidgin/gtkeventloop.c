@@ -1,8 +1,3 @@
-/**
- * @file gtk_eventloop.c Purple Event Loop API (gtk implementation)
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

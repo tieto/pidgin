@@ -1,8 +1,3 @@
-/**
- * @file gntpounce.h GNT Buddy Pounce API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,46 +18,64 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _FINCHPOUNCE_H_
 #define _FINCHPOUNCE_H_
+/**
+ * SECTION:gntpounce
+ * @section_id: finch-gntpounce
+ * @short_description: <filename>gntpounce.h</filename>
+ * @title: Buddy Pounce API
+ */
 
 #include "pounce.h"
 
 /**
- * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
+ * finch_pounce_editor_show:
+ * @account:    The optional account to use.
+ * @name:       The optional name to pounce on.
+ * @cur_pounce: The current buddy pounce, if editing an existing one.
  *
- * @param account    The optional account to use.
- * @param name       The optional name to pounce on.
- * @param cur_pounce The current buddy pounce, if editing an existing one.
+ * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  */
 void finch_pounce_editor_show(PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
 
 /**
+ * finch_pounces_manager_show:
+ *
  * Shows the pounces manager window.
  */
 void finch_pounces_manager_show(void);
 
 /**
+ * finch_pounces_manager_hide:
+ *
  * Hides the pounces manager window.
  */
 void finch_pounces_manager_hide(void);
 
 /**
- * Returns the gtkpounces handle
+ * finch_pounces_get_handle:
  *
- * @return The handle to the GTK+ pounces system
+ * Returns the GNT pounces handle
+ *
+ * Returns: (transfer none): The handle to the GNT pounces system
  */
 void *finch_pounces_get_handle(void);
 
 /**
+ * finch_pounces_init:
+ *
  * Initializes the GNT pounces subsystem.
  */
 void finch_pounces_init(void);
 
 /**
+ * finch_pounces_uninit:
+ *
  * Uninitializes the GNT pounces subsystem.
  */
 void finch_pounces_uninit(void);
 
-#endif /* _PURPLE_GTKPOUNCE_H_ */
+#endif /* _PURPLE_FINCHPOUNCE_H_ */

@@ -1,8 +1,3 @@
-/**
- * @file stun.h STUN API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,19 +18,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PURPLE_STUN_H_
 #define _PURPLE_STUN_H_
+/**
+ * SECTION:stun
+ * @section_id: libpurple-stun
+ * @short_description: <filename>stun.h</filename>
+ * @title: STUN API
+ */
 
 /**************************************************************************/
-/** @name STUN API                                                        */
+/* STUN API                                                               */
 /**************************************************************************/
-/*@{*/
 
 typedef struct _PurpleStunNatDiscovery PurpleStunNatDiscovery;
 
+/**
+ * PurpleStunStatus:
+ * @PURPLE_STUN_STATUS_UNKNOWN: no STUN server reachable
+ */
 typedef enum {
 	PURPLE_STUN_STATUS_UNDISCOVERED = -1,
-	PURPLE_STUN_STATUS_UNKNOWN, /* no STUN server reachable */
+	PURPLE_STUN_STATUS_UNKNOWN,
 	PURPLE_STUN_STATUS_DISCOVERING,
 	PURPLE_STUN_STATUS_DISCOVERED
 } PurpleStunStatus;
@@ -57,27 +62,26 @@ struct _PurpleStunNatDiscovery {
 	time_t lookup_time;
 };
 
-typedef void (*StunCallback) (PurpleStunNatDiscovery *);
+typedef void (*PurpleStunCallback) (PurpleStunNatDiscovery *);
 
 G_BEGIN_DECLS
 
 /**
+ * purple_stun_discover:
+ * @cb: The callback to call when the STUN discovery is finished if the
+ *           discovery would block.  If the discovery is done, this is NOT
+ *           called.
+ *
  * Starts a NAT discovery. It returns a PurpleStunNatDiscovery if the discovery
  * is already done. Otherwise the callback is called when the discovery is over
  * and NULL is returned.
  *
- * @param cb The callback to call when the STUN discovery is finished if the
- *           discovery would block.  If the discovery is done, this is NOT
- *           called.
- *
- * @return a PurpleStunNatDiscovery which includes the public IP and the type
+ * Returns: a PurpleStunNatDiscovery which includes the public IP and the type
  *         of NAT or NULL is discovery would block
  */
-PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb);
+PurpleStunNatDiscovery *purple_stun_discover(PurpleStunCallback cb);
 
 void purple_stun_init(void);
-
-/*@}*/
 
 G_END_DECLS
 

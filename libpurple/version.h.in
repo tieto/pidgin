@@ -1,6 +1,4 @@
-/**
- * @file version.h Purple Versioning
- *
+/*
  * purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -21,14 +19,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PURPLE_VERSION_H_
 #define _PURPLE_VERSION_H_
+/**
+ * SECTION:version
+ * @section_id: libpurple-version
+ * @short_description: <filename>version.h</filename>
+ * @title: Purple Versioning
+ */
 
-/** The major version of the running libpurple. */
+/**
+ * PURPLE_MAJOR_VERSION:
+ *
+ * The major version of the running libpurple.
+ */
 #define PURPLE_MAJOR_VERSION (@PURPLE_MAJOR_VERSION@)
-/** The minor version of the running libpurple. */
+
+/**
+ * PURPLE_MINOR_VERSION:
+ *
+ * The minor version of the running libpurple.
+ */
 #define PURPLE_MINOR_VERSION (@PURPLE_MINOR_VERSION@)
-/** The micro version of the running libpurple. */
+
+/**
+ * PURPLE_MICRO_VERSION:
+ *
+ * The micro version of the running libpurple.
+ */
 #define PURPLE_MICRO_VERSION (@PURPLE_MICRO_VERSION@)
 
 #define PURPLE_VERSION_CHECK(x,y,z) ((x) == PURPLE_MAJOR_VERSION && \
@@ -40,19 +59,22 @@ extern "C" {
 #endif
 
 /**
+ * purple_version_check:
+ * @required_major: the required major version.
+ * @required_minor: the required minor version.
+ * @required_micro: the required micro version.
+ *
  * Checks that the libpurple version is compatible with the requested
  * version
  *
- * @param required_major: the required major version.
- * @param required_minor: the required minor version.
- * @param required_micro: the required micro version.
- *
- * @return NULL if the versions are compatible, or a string describing
- *         the version mismatch if not compatible.
+ * Returns: %NULL if the versions are compatible, or a string describing
+ *          the version mismatch if not compatible.
  */
 const char *purple_version_check(guint required_major, guint required_minor, guint required_micro);
 
 /**
+ * purple_major_version:
+ *
  * The major version of the running libpurple.  Contrast with
  * #PURPLE_MAJOR_VERSION, which expands at compile time to the major version of
  * libpurple being compiled against.
@@ -60,6 +82,8 @@ const char *purple_version_check(guint required_major, guint required_minor, gui
 extern const guint purple_major_version;
 
 /**
+ * purple_minor_version:
+ *
  * The minor version of the running libpurple.  Contrast with
  * #PURPLE_MINOR_VERSION, which expands at compile time to the minor version of
  * libpurple being compiled against.
@@ -67,6 +91,7 @@ extern const guint purple_major_version;
 extern const guint purple_minor_version;
 
 /**
+ * purple_micro_version:
  *
  * The micro version of the running libpurple.  Contrast with
  * #PURPLE_MICRO_VERSION, which expands at compile time to the micro version of

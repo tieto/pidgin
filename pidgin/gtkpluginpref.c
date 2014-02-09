@@ -1,8 +1,3 @@
-/**
- * @file gtkpluginpref.c GTK+ Plugin preferences
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -48,7 +43,7 @@ entry_cb(GtkWidget *entry, gpointer data) {
 
 
 static void
-webview_cb(GtkWebView *webview, gpointer data)
+webview_cb(PidginWebView *webview, gpointer data)
 {
 	char *pref;
 	char *text;
@@ -56,7 +51,7 @@ webview_cb(GtkWebView *webview, gpointer data)
 	pref = g_object_get_data(G_OBJECT(webview), "pref-key");
 	g_return_if_fail(pref);
 
-	text = gtk_webview_get_body_html(webview);
+	text = pidgin_webview_get_body_html(webview);
 	purple_prefs_set_string(pref, text);
 	g_free(text);
 }
@@ -132,15 +127,15 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 					frame = pidgin_create_webview(TRUE, &webview, NULL);
 				} else {
 					frame = pidgin_create_webview(FALSE, &webview, NULL);
-					gtk_webview_set_format_functions(GTK_WEBVIEW(webview), 0);
+					pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(webview), 0);
 				}
 
 				if (format & PURPLE_STRING_FORMAT_TYPE_MULTILINE) {
 					gchar *tmp = purple_strreplace(purple_prefs_get_string(pref_name), "\n", "<br>");
-					gtk_webview_append_html(GTK_WEBVIEW(webview), tmp);
+					pidgin_webview_append_html(PIDGIN_WEBVIEW(webview), tmp);
 					g_free(tmp);
 				} else
-					gtk_webview_append_html(GTK_WEBVIEW(webview), purple_prefs_get_string(pref_name));
+					pidgin_webview_append_html(PIDGIN_WEBVIEW(webview), purple_prefs_get_string(pref_name));
 				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), webview);
 				gtk_widget_show_all(frame);
 				g_object_set_data(G_OBJECT(webview), "pref-key", (gpointer)pref_name);

@@ -1,7 +1,3 @@
-/**
- * @file sound-theme-loader.h  Purple Sound Theme Loader Class API
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -25,17 +21,17 @@
 
 #ifndef PURPLE_SOUND_THEME_LOADER_H
 #define PURPLE_SOUND_THEME_LOADER_H
+/**
+ * SECTION:sound-theme-loader
+ * @section_id: libpurple-sound-theme-loader
+ * @short_description: <filename>sound-theme-loader.h</filename>
+ * @title: Sound Theme Loader Class
+ */
 
 #include <glib.h>
 #include <glib-object.h>
 #include "theme-loader.h"
 
-/**
- * A purple sound theme loader. extends PurpleThemeLoader (theme-loader.h)
- * This is a class designed to build sound themes
- *
- * PurpleSoundThemeLoader is a GObject.
- */
 typedef struct _PurpleSoundThemeLoader        PurpleSoundThemeLoader;
 typedef struct _PurpleSoundThemeLoaderClass   PurpleSoundThemeLoaderClass;
 
@@ -46,6 +42,12 @@ typedef struct _PurpleSoundThemeLoaderClass   PurpleSoundThemeLoaderClass;
 #define PURPLE_IS_SOUND_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_SOUND_THEME_LOADER))
 #define PURPLE_SOUND_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SOUND_THEME_LOADER, PurpleSoundThemeLoaderClass))
 
+/**
+ * PurpleSoundThemeLoader:
+ *
+ * A purple sound theme loader. extends PurpleThemeLoader (theme-loader.h)
+ * This is a class designed to build sound themes
+ */
 struct _PurpleSoundThemeLoader
 {
 	PurpleThemeLoader parent;
@@ -63,13 +65,14 @@ struct _PurpleSoundThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Purple Theme-Loader API                                         */
+/* Purple Theme-Loader API                                                */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
- * GObject foo.
- * @internal.
+ * purple_sound_theme_loader_get_type:
+ *
+ * Returns: The #GType for sound theme loader.
  */
 GType purple_sound_theme_loader_get_type(void);
 

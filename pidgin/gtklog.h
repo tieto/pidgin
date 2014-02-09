@@ -1,9 +1,3 @@
-/**
- * @file gtklog.h GTK+ Log viewer
- * @ingroup pidgin
- * @see @ref gtklog-signals
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -24,8 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINLOG_H_
 #define _PIDGINLOG_H_
+/**
+ * SECTION:gtklog
+ * @section_id: pidgin-gtklog
+ * @short_description: <filename>gtklog.h</filename>
+ * @title: Log Viewer
+ * @see_also: <link linkend="chapter-signals-gtklog">Log signals</link>
+ */
 
 #include "pidgin.h"
 #include "log.h"
@@ -35,20 +37,31 @@
 typedef struct _PidginLogViewer PidginLogViewer;
 
 /**
+ * PidginLogViewer:
+ * @logs:      The list of logs viewed in this viewer
+ * @window:    The viewer's window
+ * @treestore: The treestore containing said logs
+ * @treeview:  The treeview representing said treestore
+ * @web_view:  The webkit web view to display said logs
+ * @entry:     The search entry, in which search terms are entered
+ * @flags:     The most recently used log flags
+ * @search:    The string currently being searched for
+ * @label:     The label at the top of the log viewer
+ *
  * A GTK+ Log Viewer.  You can look at logs with it.
  */
 struct _PidginLogViewer {
-	GList *logs;                 /**< The list of logs viewed in this viewer   */
+	GList *logs;
 
-	GtkWidget        *window;    /**< The viewer's window                      */
-	GtkTreeStore     *treestore; /**< The treestore containing said logs       */
-	GtkWidget        *treeview;  /**< The treeview representing said treestore */
-	GtkWidget        *web_view;  /**< The webkit web view to display said logs */
-	GtkWidget        *entry;     /**< The search entry, in which search terms
-	                              *   are entered                              */
-	PurpleLogReadFlags flags;      /**< The most recently used log flags         */
-	char             *search;    /**< The string currently being searched for  */
-	GtkWidget        *label;     /**< The label at the top of the log viewer   */
+	GtkWidget        *window;
+	GtkTreeStore     *treestore;
+	GtkWidget        *treeview;
+	GtkWidget        *web_view;
+	GtkWidget        *entry;
+
+	PurpleLogReadFlags flags;
+	char             *search;
+	GtkWidget        *label;
 };
 
 
@@ -60,28 +73,31 @@ void pidgin_log_show_contact(PurpleContact *contact);
 void pidgin_syslog_show(void);
 
 /**************************************************************************/
-/** @name GTK+ Log Subsystem                                              */
+/* GTK+ Log Subsystem                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
+ * pidgin_log_init:
+ *
  * Initializes the GTK+ log subsystem.
  */
 void pidgin_log_init(void);
 
 /**
+ * pidgin_log_get_handle:
+ *
  * Returns the GTK+ log subsystem handle.
  *
- * @return The GTK+ log subsystem handle.
+ * Returns: The GTK+ log subsystem handle.
  */
 void *pidgin_log_get_handle(void);
 
 /**
+ * pidgin_log_uninit:
+ *
  * Uninitializes the GTK+ log subsystem.
  */
 void pidgin_log_uninit(void);
-
-/*@}*/
 
 G_END_DECLS
 

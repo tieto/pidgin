@@ -1,7 +1,3 @@
-/**
- * @file gtkstatus-icon-theme.h  Pidgin Icon Theme  Class API
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -25,17 +21,16 @@
 
 #ifndef PIDGIN_STATUS_ICON_THEME_H
 #define PIDGIN_STATUS_ICON_THEME_H
+/**
+ * SECTION:gtkstatus-icon-theme
+ * @section_id: pidgin-gtkstatus-icon-theme
+ * @short_description: <filename>gtkstatus-icon-theme.h</filename>
+ * @title: Pidgin Icon Theme Class
+ */
 
 #include <glib-object.h>
 #include "gtkicon-theme.h"
 
-/**
- * extends PidginIconTheme (gtkicon-theme.h)
- * A pidgin status icon theme.
- * This object represents a Pidgin status icon theme.
- *
- * PidginStatusIconTheme is a PidginIconTheme Object.
- */
 typedef struct _PidginStatusIconTheme        PidginStatusIconTheme;
 typedef struct _PidginStatusIconThemeClass   PidginStatusIconThemeClass;
 
@@ -46,6 +41,15 @@ typedef struct _PidginStatusIconThemeClass   PidginStatusIconThemeClass;
 #define PIDGIN_IS_STATUS_ICON_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_STATUS_ICON_THEME))
 #define PIDGIN_STATUS_ICON_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_STATUS_ICON_THEME, PidginStatusIconThemeClass))
 
+/**
+ * PidginStatusIconTheme:
+ *
+ * extends PidginIconTheme (gtkicon-theme.h)
+ * A pidgin status icon theme.
+ * This object represents a Pidgin status icon theme.
+ *
+ * PidginStatusIconTheme is a PidginIconTheme Object.
+ */
 struct _PidginStatusIconTheme
 {
 	PidginIconTheme parent;
@@ -57,15 +61,17 @@ struct _PidginStatusIconThemeClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Status Icon Theme API                                          */
+/* Pidgin Status Icon Theme API                                           */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
- * GObject foo.
- * @internal.
+ * pidgin_status_icon_theme_get_type:
+ *
+ * Returns: The #GType for a status icon theme.
  */
 GType pidgin_status_icon_theme_get_type(void);
 
 G_END_DECLS
+
 #endif /* PIDGIN_STATUS_ICON_THEME_H */

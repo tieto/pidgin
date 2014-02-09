@@ -1,0 +1,293 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-tut-c-plugins">
+  <title>C Plugins tutorial</title>
+
+  <sect2 id="tut-c-plugins-introduction">
+  <title>Introduction</title>
+  <para>
+  C plugins are native plugins.  They have complete access to all of the API,
+  and can do basically whatever they want.  All of the protocol plugins are
+  also written in C.
+  </para>
+  </sect2>
+
+  <sect2 id="tut-c-plugins-getting-started">
+  <title>Getting Started</title>
+  <para>
+  To develop a plugin you need to have the libpurple and (for UI plugins) the
+  Pidgin/Finch source code or development headers.  It is generally a good idea
+  to compile against the same version of Pidgin that you are running.  You may
+  also want to develop against the code in our Mercurial repository if you need
+  to use a new feature.  Please do not abuse our Mercurial repository, however.
+  </para>
+
+  <para>
+  All plugins must have <literal>PURPLE_PLUGINS</literal> defined and the
+  definition must be before including any libpurple, Pidgin, or Finch header
+  files.  Failure to do so can lead to strange errors that are hard to diagnose.
+  Including <literal>purple.h</literal> will define this for you.
+  </para>
+  </sect2>
+
+  <sect2 id="tut-c-plugins-hello-world">
+  <title>An Example</title>
+  <para>
+  I know every tutorial has a hello world, so why should libpurple be any
+  different?
+
+<example>
+<title>Hello World!</title>
+<programlisting>
+#include &lt;purple.h&gt;
+
+static gboolean
+plugin_load(PurplePlugin *plugin) {
+	purple_notify_message(plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
+						"This is the Hello World! plugin :)",
+						NULL, NULL, NULL, NULL);
+
+	return TRUE;
+}
+
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
+	NULL,
+	0,
+	NULL,
+	PURPLE_PRIORITY_DEFAULT,
+
+	"core-hello_world",
+	"Hello World!",
+	VERSION,
+
+	"Hello World Plugin",
+	"Hello World Plugin",
+	NULL,
+	"http://helloworld.tld",
+
+	plugin_load,
+	NULL,
+	NULL,
+
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static void
+init_plugin(PurplePlugin *plugin)
+{
+}
+
+PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
+</programlisting>
+</example>
+  </para>
+
+  <para>
+  Okay, so what does all this mean?  We start off by including purple.h.  This
+  file defines <literal>PURPLE_PLUGINS</literal> as described before so that we
+  don't have to manually define it.  It also includes all the libpurple header
+  files.
+  </para>
+
+  <para>
+  <literal>plugin_load</literal> is not required.  It is called when the plugin
+  is loaded so that you can initialize any variables and so on.  In this plugin
+  we'll just use it to display a message.
+  </para>
+
+  <para>
+  Next we have the <literal>PurplePluginInfo</literal> structure.  Every plugin
+  <emphasis>MUST</emphasis> have one of these.  Below is a code snipet of the
+  same struct used in <literal>hello_world</literal> with comments describing
+  what each is.
+  </para>
+
+  <para>
+<programlisting>
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,    /* Plugin magic, this must always be
+                                   PURPLE_PLUGIN_MAGIC.
+                                 */
+	PURPLE_MAJOR_VERSION,   /* This is also defined in libpurple.  It helps
+                                   libpurple's plugin system determine which
+                                   version of libpurple this plugin was
+                                   compiled for, and whether loading it will
+                                   cause problems.
+                                 */
+	PURPLE_MINOR_VERSION,   /* See previous */
+	PURPLE_PLUGIN_STANDARD, /* PurplePluginType: There are 4 different
+                                   values for this field.  The first is
+                                   PURPLE_PLUGIN_UNKNOWN, which should not be
+                                   used.  The second is PURPLE_PLUGIN_STANDARD;
+                                   this is the value most plugins will use.
+                                   Next, we have PURPLE_PLUGIN_LOADER; this is
+                                   the type you want to load if your plugin
+                                   is going to make it possible to load non-
+                                   native plugins.  For example, the Perl and
+                                   Tcl loader plugins are of this type.
+                                   Last, we have PURPLE_PLUGIN_PROTOCOL.  If
+                                   your plugin is going to allow the user to
+                                   connect to another network, this is the
+                                   type you'd want to use.
+                                 */
+	NULL,                   /* This field is the UI requirement.  If you're
+                                   writing a core plugin, this must be NULL
+                                   and the plugin must not contain any UI
+                                   code.  If you're writing a Pidgin plugin,
+                                   you need to use PIDGIN_PLUGIN_TYPE.  If you
+                                   are writing a Finch plugin, you would use
+                                   FINCH_PLUGIN_TYPE.
+                                 */
+	0,                      /* This field is for plugin flags.  Currently,
+                                   the only flag available to plugins is
+                                   invisible (PURPLE_PLUGIN_FLAG_INVISIBLE).
+                                   It causes the plugin to NOT appear in the
+                                   list of plugins.
+                                 */
+	NULL,                   /* This is a GList of plugin dependencies.  In
+                                   other words, a GList of plugin id's that
+                                   your plugin depends on.  Set this value to
+                                   NULL no matter what.  If your plugin has
+                                   dependencies, set them at run-time in the
+                                   plugin_init function.
+                                 */
+	PURPLE_PRIORITY_DEFAULT,/* This is the priority libpurple with give your
+                                   plugin.  There are three possible values
+                                   for this field, PURPLE_PRIORITY_DEFAULT,
+                                   PURPLE_PRIORITY_HIGHEST, and
+                                   PURPLE_PRIORITY_LOWEST
+                                 */
+
+	"core-hello_world",     /* This is your plugin's id.  There is a whole
+                                   page dedicated to this in the Related Pages
+                                   section of the API docs.
+                                 */
+	"Hello World!",         /* This is your plugin's name.  This is what
+                                   will be displayed for your plugin in the UI.
+                                 */
+	1.1,                    /* This is the version of your plugin. */
+
+	"Hello World Plugin",   /* This is the summary of your plugin.  It
+                                   should be a short little blurb.  The UI
+                                   determines where, if at all, to display
+                                   this.
+                                 */
+	"Hello World Plugin",   /* This is the description of your plugin. It
+                                   can be as long and as descriptive as you
+                                   like.  And like the summary, it's up to the
+                                   UI where, if at all, to display this (and
+                                   how much to display).
+                                 */
+	NULL,                   /* This is where you can put your name and
+                                   email address.
+                                 */
+	"http://helloworld.tld",/* This is the website for the plugin.  This
+                                   tells users where to find new versions,
+                                   report bugs, etc.
+                                 */
+
+	plugin_load,            /* This is a pointer to a function for
+                                   libpurple to call when it is loading the
+                                   plugin.  It should be of the type:
+
+                                   gboolean plugin_load(PurplePlugin *plugin)
+
+                                   Returning FALSE will stop the loading of the
+                                   plugin.  Anything else would evaluate as
+                                   TRUE and the plugin will continue to load.
+                                 */
+	NULL,                   /* Same as above except it is called when
+                                   libpurple tries to unload your plugin.  It
+                                   should be of the type:
+
+                                   gboolean plugin_unload(PurplePlugin *plugin)
+
+                                   Returning TRUE will tell libpurple to
+                                   continue unloading while FALSE will stop
+                                   the unloading of your plugin.
+                                 */
+	NULL,                   /* Similar to the two above members, except
+                                   this is called when libpurple tries to
+                                   destory the plugin.  This is generally only
+                                   called when for some reason or another the
+                                   plugin fails to probe correctly.  It should
+                                   be of the type:
+
+                                   void plugin_destroy(PurplePlugin *plugin)
+                                 */
+
+	NULL,                   /* This is a pointer to a UI-specific struct.
+                                   For a Pidgin plugin it will be a pointer to a
+                                   PidginPluginUiInfo struct, for example.
+                                 */
+	NULL,                   /* This is a pointer to either a 
+                                   PurplePluginLoaderInfo struct or a
+                                   PurplePluginProtocolInfo struct, and is
+                                   beyond the scope of this document.
+                                 */
+	NULL,                   /* This is a pointer to a PurplePluginUiInfo
+                                   struct.  It is a core/ui split way for
+                                   core plugins to have a UI configuration
+                                   frame.  You can find an example of this
+                                   code in:
+                                     libpurple/plugins/pluginpref_example.c
+                                 */
+	NULL,                   /* This is a function pointer where you can define
+                                   "plugin actions".  The UI controls how
+                                   they're displayed.  It should be of the
+                                   type:
+
+                                   GList *function_name(PurplePlugin *plugin, 
+                                                        gpointer context)
+
+                                    It must return a GList of
+                                    PurplePluginActions.
+                                 */
+	NULL,                   /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
+	NULL,                   /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
+	NULL,                   /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
+	NULL                    /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
+};
+</programlisting>
+  </para>
+
+  <para>
+  Finally we have <literal>init_plugin</literal> and
+  <literal>PURPLE_INIT_PLUGIN</literal>.  <literal>init_plugin</literal> is
+  a function that gets called when libpurple probes the plugin.  Most plugins
+  will add their preferences to the pref tree here--more about that later.
+  <literal>PURPLE_INIT_PLUGIN</literal> is a macro that EVERY plugin MUST have.
+  <literal>PURPLE_INIT_PLUGIN</literal> tells libpurple some very basic things
+  about your plugin, like what name to use if the plugin is compiled staticly,
+  the <literal>init_plugin</literal> function, and the name of the
+  <literal>PurplePluginInfo</literal> structure.  As you may have guessed,
+  this also gets read when libpurple is probing your plugin.  If this is
+  missing, the plugin will not load.
+  </para>
+ </sect2>
+</chapter>

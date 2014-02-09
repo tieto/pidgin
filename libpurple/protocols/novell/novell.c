@@ -673,7 +673,7 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 
 	if (ret_code == NM_OK) {
 		conf_name = _get_conference_name(++user->conference_count);
-		chat = serv_got_joined_chat(gc, user->conference_count, conf_name);
+		chat = purple_serv_got_joined_chat(gc, user->conference_count, conf_name);
 		if (chat) {
 
 			nm_conference_set_data(conference, (gpointer) chat);
@@ -1657,7 +1657,7 @@ _initiate_conference_cb(PurpleBlistNode *node, gpointer ignored)
 		return;
 
 	conf_name = _get_conference_name(++user->conference_count);
-	chat = serv_got_joined_chat(gc, user->conference_count, conf_name);
+	chat = purple_serv_got_joined_chat(gc, user->conference_count, conf_name);
 	if (chat) {
 
 		conference = nm_create_conference(NULL);
@@ -1813,7 +1813,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 				if (nm_event_get_type(event) == NMEVT_RECEIVE_AUTOREPLY)
 					flags |= PURPLE_MESSAGE_AUTO_RESP;
 
-				serv_got_im(purple_account_get_connection(user->client_data),
+				purple_serv_got_im(purple_account_get_connection(user->client_data),
 							nm_user_record_get_display_id(user_record),
 							text, flags,
 							nm_event_get_gmt(event));
@@ -1868,7 +1868,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 						name = nm_user_record_get_display_id(user_record);
 				}
 
-				serv_got_chat_in(purple_account_get_connection(user->client_data),
+				purple_serv_got_chat_in(purple_account_get_connection(user->client_data),
 								 purple_chat_conversation_get_id(chat),
 								 name, 0, text, nm_event_get_gmt(event));
 			}
@@ -1953,7 +1953,7 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	parms = g_slist_append(parms, nm_event_get_conference(event));
 
 	/* Prompt the user */
-	/* TODO: Would it be better to use serv_got_chat_invite() here? */
+	/* TODO: Would it be better to use purple_serv_got_chat_invite() here? */
 	gc = purple_account_get_connection(user->client_data);
 	purple_request_action(gc, title, primary, secondary,
 						PURPLE_DEFAULT_ACTION_NONE,
@@ -1988,7 +1988,7 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 			if (ur) {
 				conf_name = _get_conference_name(++user->conference_count);
 				chat =
-					serv_got_joined_chat(gc, user->conference_count, conf_name);
+					purple_serv_got_joined_chat(gc, user->conference_count, conf_name);
 				if (chat) {
 
 					nm_conference_set_data(conference, (gpointer) chat);
@@ -2072,7 +2072,7 @@ _evt_user_typing(NMUser * user, NMEvent * event)
 	if (gc) {
 		user_record = nm_find_user_record(user, nm_event_get_source(event));
 		if (user_record) {
-			serv_got_typing(gc, nm_user_record_get_display_id(user_record),
+			purple_serv_got_typing(gc, nm_user_record_get_display_id(user_record),
 							30, PURPLE_IM_TYPING);
 		}
 	}
@@ -2088,7 +2088,7 @@ _evt_user_not_typing(NMUser * user, NMEvent * event)
 	if (gc) {
 		user_record = nm_find_user_record(user, nm_event_get_source(event));
 		if (user_record) {
-			serv_got_typing_stopped(gc,
+			purple_serv_got_typing_stopped(gc,
 									nm_user_record_get_display_id(user_record));
 		}
 	}
@@ -2441,7 +2441,7 @@ novell_chat_leave(PurpleConnection * gc, int id)
 		}
 	}
 
-	serv_got_chat_left(gc, id);
+	purple_serv_got_chat_left(gc, id);
 }
 
 static void
@@ -2537,7 +2537,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 						}
 					}
 
-					serv_got_chat_in(gc, id, name, flags, text, time(NULL));
+					purple_serv_got_chat_in(gc, id, name, flags, text, time(NULL));
 					return 0;
 				} else
 					return -1;

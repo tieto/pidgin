@@ -1,8 +1,3 @@
-/**
- * @file gtkmedia.h Pidgin Media API
- * @ingroup pidgin
- */
-
 /* Pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -26,6 +21,12 @@
 
 #ifndef __GTKMEDIA_H_
 #define __GTKMEDIA_H_
+/**
+ * SECTION:gtkmedia
+ * @section_id: pidgin-gtkmedia
+ * @short_description: <filename>gtkmedia.h</filename>
+ * @title: Media API
+ */
 
 G_BEGIN_DECLS
 

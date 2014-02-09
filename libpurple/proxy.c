@@ -1,8 +1,3 @@
-/**
- * @file proxy.c Proxy API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -44,12 +39,12 @@
 
 struct _PurpleProxyInfo
 {
-	PurpleProxyType type;   /**< The proxy type.  */
+	PurpleProxyType type; /* The proxy type.  */
 
-	char *host;           /**< The host.        */
-	int   port;           /**< The port number. */
-	char *username;       /**< The username.    */
-	char *password;       /**< The password.    */
+	char *host;           /* The host.        */
+	int   port;           /* The port number. */
+	char *username;       /* The username.    */
+	char *password;       /* The password.    */
 };
 
 struct _PurpleProxyConnectData {
@@ -64,7 +59,7 @@ struct _PurpleProxyConnectData {
 	PurpleProxyInfo *gpi;
 	PurpleDnsQueryData *query_data;
 
-	/**
+	/*
 	 * This contains alternating length/char* values.  The char*
 	 * values need to be freed when removed from the linked list.
 	 */
@@ -258,14 +253,15 @@ static const char* gproxycmds[][2] = {
 	{ "gconftool-2 -g /system/http_proxy/authentication_password", "gsettings get org.gnome.system.proxy.http authentication-password" },
 };
 
-/**
+/*
+ * purple_gnome_proxy_get_parameter:
+ * @parameter:     One of the GNOME_PROXY_x constants defined above
+ * @gnome_version: GNOME2_CMDS or GNOME3_CMDS
+ *
  * This is a utility function used to retrieve proxy parameter values from
  * GNOME 2/3 environment.
  *
- * @param parameter	One of the GNOME_PROXY_x constants defined above
- * @param gnome_version GNOME2_CMDS or GNOME3_CMDS
- *
- * @return The value of requested proxy parameter
+ * Returns: The value of requested proxy parameter
  */
 static char *
 purple_gnome_proxy_get_parameter(guint8 parameter, guint8 gnome_version)
@@ -572,7 +568,7 @@ purple_win32_proxy_get_info(void)
  * Proxy API
  **************************************************************************/
 
-/**
+/*
  * Whoever calls this needs to have called
  * purple_proxy_connect_data_disconnect() beforehand.
  */
@@ -597,7 +593,13 @@ purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
 	g_free(connect_data);
 }
 
-/**
+/*
+ * purple_proxy_connect_data_disconnect:
+ * @error_message: An error message explaining why the connection
+ *        failed.  This will be passed to the callback function
+ *        specified in the call to purple_proxy_connect().  If the
+ *        connection was successful then pass in null.
+ *
  * Free all information dealing with a connection attempt and
  * reset the connect_data to prepare for it to try to connect
  * to another IP address.
@@ -608,11 +610,6 @@ purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
  * If the connection attempt failed and we have no more hosts
  * try try then we call the callback with the given error message,
  * then destroy the connect_data.
- *
- * @param error_message An error message explaining why the connection
- *        failed.  This will be passed to the callback function
- *        specified in the call to purple_proxy_connect().  If the
- *        connection was successful then pass in null.
  */
 static void
 purple_proxy_connect_data_disconnect(PurpleProxyConnectData *connect_data, const gchar *error_message)
@@ -656,7 +653,7 @@ purple_proxy_connect_data_disconnect(PurpleProxyConnectData *connect_data, const
 	}
 }
 
-/**
+/*
  * This calls purple_proxy_connect_data_disconnect(), but it lets you
  * specify the error_message using a printf()-like syntax.
  */
@@ -874,7 +871,7 @@ proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 	}
 }
 
-/**
+/*
  * This is a utility function used by the HTTP, SOCKS4 and SOCKS5
  * connect functions.  It writes data from a buffer to a socket.
  * When all the data is written it sets up a watcher to read a
@@ -916,7 +913,7 @@ proxy_do_write(gpointer data, gint source, PurpleInputCondition cond)
 			PURPLE_INPUT_READ, connect_data->read_cb, connect_data);
 }
 
-/**
+/*
  * We're using an HTTP proxy for a non-port 80 tunnel.  Read the
  * response to the CONNECT request.
  */
@@ -2157,7 +2154,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	}
 }
 
-/**
+/*
  * This function attempts to connect to the next IP address in the list
  * of IP addresses returned to us by purple_dnsquery_a() and attempts
  * to connect to each one.  This is called after the hostname is

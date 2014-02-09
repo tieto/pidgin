@@ -1,8 +1,3 @@
-/**
- * @file gtkroomlist.h GTK+ Room List UI
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,35 +18,49 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINROOMLIST_H_
 #define _PIDGINROOMLIST_H_
+/**
+ * SECTION:gtkroomlist
+ * @section_id: pidgin-gtkroomlist
+ * @short_description: <filename>gtkroomlist.h</filename>
+ * @title: Room List UI
+ */
 
 #include "roomlist.h"
 
 G_BEGIN_DECLS
 
 /**
+ * pidgin_roomlist_init:
+ *
  * Initializes the room list subsystem.
  */
 void pidgin_roomlist_init(void);
 
 /**
+ * pidgin_roomlist_is_showable:
+ *
  * Determines if showing the room list dialog is a valid action.
  *
- * @return TRUE if there are accounts online that support listing
+ * Returns: TRUE if there are accounts online that support listing
  *         chat rooms.  Otherwise return FALSE.
  */
 gboolean pidgin_roomlist_is_showable(void);
 
 /**
+ * pidgin_roomlist_dialog_show:
+ *
  * Shows a new roomlist dialog.
  */
 void pidgin_roomlist_dialog_show(void);
 
 /**
- * Shows a new room list dialog and fetches the list for the specified account.
+ * pidgin_roomlist_dialog_show_with_account:
+ * @account: The account to use.
  *
- * @param account The account to use.
+ * Shows a new room list dialog and fetches the list for the specified account.
  */
 void pidgin_roomlist_dialog_show_with_account(PurpleAccount *account);
 

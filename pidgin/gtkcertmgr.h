@@ -1,7 +1,3 @@
-/**
- * @file gtkcertmgr.h GTK+ Certificate Manager API
- * @ingroup pidgin
- */
 /*
  * pidgin
  *
@@ -27,13 +23,21 @@
 
 #ifndef _PIDGINCERTMGR_H_
 #define _PIDGINCERTMGR_H_
+/**
+ * SECTION:gtkcertmgr
+ * @section_id: pidgin-gtkcertmgr
+ * @short_description: <filename>gtkcertmgr.h</filename>
+ * @title: Certificate Manager API
+ */
 
 /**************************************************************************
- * @name Structures                                                       *
+ * Structures                                                             *
  **************************************************************************/
 typedef struct _PidginCertificateManager PidginCertificateManager;
 
 /**
+ * PidginCertificateManager:
+ *
  * GTK+ Certificate Manager subwidget
  */
 struct _PidginCertificateManager {
@@ -46,20 +50,22 @@ struct _PidginCertificateManager {
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Certificate Manager API                                         */
+/* Certificate Manager API                                                */
 /**************************************************************************/
-/*@{*/
+
 /**
+ * pidgin_certmgr_show:
+ *
  * Show the certificate manager window
  */
 void pidgin_certmgr_show(void);
 
 /**
+ * pidgin_certmgr_hide:
+ *
  * Hide the certificate manager window
  */
 void pidgin_certmgr_hide(void);
-
-/*@}*/
 
 G_END_DECLS
 

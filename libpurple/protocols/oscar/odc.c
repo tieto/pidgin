@@ -406,7 +406,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		imflags |= PURPLE_MESSAGE_IMAGES;
 	if (autoreply)
 		imflags |= PURPLE_MESSAGE_AUTO_RESP;
-	serv_got_im(gc, conn->bn, newmsg->str, imflags, time(NULL));
+	purple_serv_got_im(gc, conn->bn, newmsg->str, imflags, time(NULL));
 	g_string_free(newmsg, TRUE);
 
 	/* unref any images we allocated */
@@ -587,15 +587,15 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		purple_debug_info("oscar", "ohmigod! %s has started typing "
 			"(DirectIM). He's going to send you a message! "
 			"*squeal*\n", conn->bn);
-		serv_got_typing(gc, conn->bn, 0, PURPLE_IM_TYPING);
+		purple_serv_got_typing(gc, conn->bn, 0, PURPLE_IM_TYPING);
 	}
 	else if (frame->flags & 0x0004)
 	{
-		serv_got_typing(gc, conn->bn, 0, PURPLE_IM_TYPED);
+		purple_serv_got_typing(gc, conn->bn, 0, PURPLE_IM_TYPED);
 	}
 	else
 	{
-		serv_got_typing_stopped(gc, conn->bn);
+		purple_serv_got_typing_stopped(gc, conn->bn);
 	}
 
 	if (frame->payload.len > 0)

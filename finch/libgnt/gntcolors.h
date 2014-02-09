@@ -1,7 +1,3 @@
-/**
- * @file gntcolors.h Colors API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -26,10 +22,18 @@
 
 #ifndef GNT_COLORS_H
 #define GNT_COLORS_H
+/**
+ * SECTION:gntcolors
+ * @section_id: libgnt-gntcolors
+ * @short_description: <filename>gntcolors.h</filename>
+ * @title: Colors
+ */
 
 #include <glib.h>
 
 /**
+ * GntColorType:
+ *
  * Different classes of colors.
  */
 typedef enum
@@ -62,62 +66,72 @@ enum
 };
 
 /**
+ * gnt_init_colors:
+ *
  * Initialize the colors.
  */
 void gnt_init_colors(void);
 
 /**
+ * gnt_uninit_colors:
+ *
  * Uninitialize the colors.
  */
 void gnt_uninit_colors(void);
 
 /**
- * Parse color information from a file.
+ * gnt_colors_parse:
+ * @kfile:  The file containing color information.
  *
- * @param kfile  The file containing color information.
+ * Parse color information from a file.
  */
 void gnt_colors_parse(GKeyFile *kfile);
 
 /**
- * Parse color-pair information from a file.
+ * gnt_color_pairs_parse:
+ * @kfile: The file containing the color-pair information.
  *
- * @param kfile The file containing the color-pair information.
+ * Parse color-pair information from a file.
  */
 void gnt_color_pairs_parse(GKeyFile *kfile);
 
 /**
+ * gnt_colors_get_color:
+ * @key: The string value
+ *
  * Parse a string color
  *
- * @param kfile The string value
+ * Returns: A color. For an unknown color name, returns -EINVAL.
  *
- * @return A color. For an unknown color name, returns -EINVAL.
- *
- * @since 2.4.0
+ * Since: 2.4.0
  */
 int gnt_colors_get_color(char *key);
 
 /**
+ * gnt_color_pair:
+ * @color:   The color code.
+ *
  * Return the appropriate character attribute for a specified color.
  * If the terminal doesn't have color support, this returns A_STANDOUT
  * when deemed appropriate.
  *
- * @param color   The color code.
+ * Returns:  A character attribute.
  *
- * @return  A character attribute.
- *
- * @since 2.3.0
+ * Since: 2.3.0
  */
 int gnt_color_pair(int color);
 
 /**
+ * gnt_color_add_pair:
+ * @fg:   Foreground
+ * @bg:   Background
+ *
  * Adds a color definition
  *
- * @param fg   Foreground
- * @param bg   Background
+ * Returns:  A color pair
  *
- * @return  A color pair
- *
- * @since 2.4.0
+ * Since: 2.4.0
  */
 int gnt_color_add_pair(int fg, int bg);
+
 #endif

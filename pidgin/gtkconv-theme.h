@@ -1,7 +1,3 @@
-/**
- * @file gtkconv-theme.h  Pidgin Conversation Theme  Class API
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -25,19 +21,18 @@
 
 #ifndef PIDGIN_CONV_THEME_H
 #define PIDGIN_CONV_THEME_H
+/**
+ * SECTION:gtkconv-theme
+ * @section_id: pidgin-gtkconv-theme
+ * @short_description: <filename>gtkconv-theme.h</filename>
+ * @title: Conversation Theme Class
+ */
 
 #include <glib.h>
 #include <glib-object.h>
 #include "conversation.h"
 #include "theme.h"
 
-/**
- * extends PurpleTheme (theme.h)
- * A pidgin icon theme.
- * This object represents a Pidgin icon theme.
- *
- * PidginConvTheme is a PurpleTheme Object.
- */
 typedef struct _PidginConvTheme        PidginConvTheme;
 typedef struct _PidginConvThemeClass   PidginConvThemeClass;
 
@@ -48,6 +43,15 @@ typedef struct _PidginConvThemeClass   PidginConvThemeClass;
 #define PIDGIN_IS_CONV_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_CONV_THEME))
 #define PIDGIN_CONV_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_CONV_THEME, PidginConvThemeClass))
 
+/**
+ * PidginConvTheme:
+ *
+ * extends PurpleTheme (theme.h)
+ * A pidgin icon theme.
+ * This object represents a Pidgin icon theme.
+ *
+ * PidginConvTheme is a PurpleTheme Object.
+ */
 struct _PidginConvTheme
 {
 	PurpleTheme parent;
@@ -78,128 +82,139 @@ typedef enum {
 } PidginConvThemeTemplateType;
 
 /**************************************************************************/
-/** @name Pidgin Conversation Theme API                                   */
+/* Pidgin Conversation Theme API                                          */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
- * GObject foo.
- * @internal.
+ * pidgin_conversation_theme_get_type:
+ *
+ * Returns: The #GType for a conversation theme.
  */
 GType pidgin_conversation_theme_get_type(void);
 
 /**
+ * pidgin_conversation_theme_get_info:
+ * @theme: The conversation theme
+ *
  * Get the Info.plist hash table from a conversation theme.
  *
- * @param theme The conversation theme
- *
- * @return The hash table. Keys are strings as outlined for message styles,
+ * Returns: The hash table. Keys are strings as outlined for message styles,
  *         values are GValue*s. This is an internal structure. Take a ref if
  *         necessary, but don't destroy it yourself.
  */
 const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *theme);
 
 /**
- * Set the Info.plist hash table for a conversation theme.
- *
- * @param theme The conversation theme
- * @param info  The new hash table. The theme will take ownership of this hash
+ * pidgin_conversation_theme_set_info:
+ * @theme: The conversation theme
+ * @info:  The new hash table. The theme will take ownership of this hash
  *              table. Do not use it yourself afterwards with holding a ref.
- *              For key and value specifications, @see pidgin_conversation_theme_get_info.
+ *              For key and value specifications, see pidgin_conversation_theme_get_info().
  *
+ * Set the Info.plist hash table for a conversation theme.
  */
 void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
 
 /**
+ * pidgin_conversation_theme_lookup:
+ * @theme:    The conversation theme
+ * @key:      The key to find
+ * @specific: Whether to search variant-specific keys
+ *
  * Lookup a key in a theme
  *
- * @param theme    The conversation theme
- * @param key      The key to find
- * @param specific Whether to search variant-specific keys
- *
- * @return The key information. If @a specific is @c TRUE, then keys are first
+ * Returns: The key information. If @specific is %TRUE, then keys are first
  *         searched by variant, then by general ones. Otherwise, only general
  *         key values are returned.
  */
 const GValue *pidgin_conversation_theme_lookup(PidginConvTheme *theme, const char *key, gboolean specific);
 
 /**
+ * pidgin_conversation_theme_get_template:
+ * @theme: The conversation theme
+ * @type:  The type of template data
+ *
  * Get the template data from a conversation theme.
  *
- * @param theme The conversation theme
- * @param type  The type of template data
- *
- * @return The template data requested. Fallback is made as required by styles.
+ * Returns: The template data requested. Fallback is made as required by styles.
  *         Subsequent calls to this function will return cached values.
  */
 const char *pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTemplateType type);
 
 /**
+ * pidgin_conversation_theme_add_variant:
+ * @theme:   The conversation theme
+ * @variant: The name of the variant
+ *
  * Add an available variant name to a conversation theme.
  *
- * @param theme   The conversation theme
- * @param variant The name of the variant
- *
- * @Note The conversation theme will take ownership of the variant name string.
+ * Note: The conversation theme will take ownership of the variant name string.
  *       This function should normally only be called by the theme loader.
  */
 void pidgin_conversation_theme_add_variant(PidginConvTheme *theme, char *variant);
 
 /**
+ * pidgin_conversation_theme_get_variant:
+ * @theme: The conversation theme
+ *
  * Get the currently set variant name for a conversation theme.
  *
- * @param theme The conversation theme
- *
- * @return The current variant name.
+ * Returns: The current variant name.
  */
 const char *pidgin_conversation_theme_get_variant(PidginConvTheme *theme);
 
 /**
+ * pidgin_conversation_theme_set_variant:
+ * @theme:   The conversation theme
+ * @variant: The name of the variant
+ *
  * Set the variant name for a conversation theme.
- *
- * @param theme   The conversation theme
- * @param variant The name of the variant
- *
  */
 void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant);
 
 /**
+ * pidgin_conversation_theme_get_variants:
+ * @theme: The conversation theme
+ *
  * Get a list of available variants for a conversation theme.
  *
- * @param theme The conversation theme
- *
- * @return The list of variants. This GList and the string data are owned by
+ * Returns: The list of variants. This GList and the string data are owned by
  *         the theme and should not be freed by the caller.
  */
 const GList *pidgin_conversation_theme_get_variants(PidginConvTheme *theme);
 
 /**
+ * pidgin_conversation_theme_get_template_path:
+ * @theme: The conversation theme
+ *
  * Get the path to the template HTML file.
  *
- * @param theme The conversation theme
- *
- * @return The path to the HTML file.
+ * Returns: The path to the HTML file.
  */
 char *pidgin_conversation_theme_get_template_path(PidginConvTheme *theme);
 
 /**
+ * pidgin_conversation_theme_get_css_path:
+ * @theme: The conversation theme
+ *
  * Get the path to the current variant CSS file.
  *
- * @param theme The conversation theme
- *
- * @return The path to the CSS file.
+ * Returns: The path to the CSS file.
  */
 char *pidgin_conversation_theme_get_css_path(PidginConvTheme *theme);
 
 /**
+ * pidgin_conversation_theme_get_nick_colors:
+ * @theme: The conversation theme
+ *
  * Get (and reference) the array of nick colors
  *
- * @param theme The conversation theme
- *
- * @return Pointer to GArray of nick colors, or NULL if no colors in theme
+ * Returns: Pointer to GArray of nick colors, or NULL if no colors in theme
  */
 GArray *pidgin_conversation_theme_get_nick_colors(PidginConvTheme *theme);
 
 G_END_DECLS
+
 #endif /* PIDGIN_CONV_THEME_H */
 

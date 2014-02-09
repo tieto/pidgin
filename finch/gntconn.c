@@ -1,8 +1,3 @@
-/**
- * @file gntconn.c GNT Connection API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -45,7 +40,7 @@ typedef struct {
 	guint timeout;
 } FinchAutoRecon;
 
-/**
+/*
  * Contains accounts that are auto-reconnecting.
  * The key is a pointer to the PurpleAccount and the
  * value is a pointer to a FinchAutoRecon.

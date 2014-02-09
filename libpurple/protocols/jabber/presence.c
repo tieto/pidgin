@@ -441,7 +441,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 		}
 
 		if (nickname) {
-			serv_got_alias(js->gc, from, nickname);
+			purple_serv_got_alias(js->gc, from, nickname);
 			g_free(nickname);
 		}
 
@@ -552,7 +552,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 		} else {
 			title = g_strdup_printf(_("Error in chat %s"), presence->from);
 			if (g_hash_table_size(chat->members) == 0)
-				serv_got_chat_left(js->gc, chat->id);
+				purple_serv_got_chat_left(js->gc, chat->id);
 		}
 		purple_notify_error(js->gc, title, title, msg,
 			purple_request_cpar_from_connection(js->gc));
@@ -625,7 +625,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 		if(!chat->conv) {
 			char *room_jid = g_strdup_printf("%s@%s", presence->jid_from->node, presence->jid_from->domain);
 			chat->id = i++;
-			chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
+			chat->conv = purple_serv_got_joined_chat(js->gc, chat->id, room_jid);
 			purple_chat_conversation_set_nick(chat->conv, chat->handle);
 
 			jabber_chat_disco_traffic(chat);
@@ -787,7 +787,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 					purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), presence->jid_from->resource,
 							presence->status, PURPLE_MESSAGE_SYSTEM, time(NULL));
 
-				serv_got_chat_left(js->gc, chat->id);
+				purple_serv_got_chat_left(js->gc, chat->id);
 				jabber_chat_destroy(chat);
 			} else {
 				purple_chat_conversation_remove_user(chat->conv, presence->jid_from->resource,
@@ -887,7 +887,7 @@ handle_presence_contact(JabberStream *js, JabberPresence *presence)
 		purple_prpl_got_user_idle(account, buddy_name,
 				jbr->idle, jbr->idle);
 		if (presence->nickname)
-			serv_got_alias(js->gc, buddy_name, presence->nickname);
+			purple_serv_got_alias(js->gc, buddy_name, presence->nickname);
 	} else {
 		purple_prpl_got_user_status(account, buddy_name,
 				jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),

@@ -1,8 +1,3 @@
-/**
- * @file gtkrequest.c GTK+ Request API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -155,7 +150,7 @@ input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 
 		if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html")))
-			multiline_value = gtk_webview_get_body_html(GTK_WEBVIEW(data->u.input.entry));
+			multiline_value = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(data->u.input.entry));
 		else
 			multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
 										 FALSE);
@@ -619,7 +614,7 @@ pidgin_request_input(const char *title, const char *primary,
 		gtk_widget_set_size_request(entry, 320, 130);
 		gtk_widget_set_name(entry, "pidgin_request_webview");
 		if (default_value != NULL)
-			gtk_webview_append_html(GTK_WEBVIEW(entry), default_value);
+			pidgin_webview_append_html(PIDGIN_WEBVIEW(entry), default_value);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_widget_show(frame);
 	}

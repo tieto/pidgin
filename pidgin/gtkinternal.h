@@ -1,8 +1,3 @@
-/**
- * @file gtkinternal.h Internal definitions and includes for Pidgin
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,8 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
+
 #ifndef _PIDGIN_INTERNAL_H_
 #define _PIDGIN_INTERNAL_H_
+/*
+ * SECTION:gtkinternal
+ * @section_id: pidgin-gtkinternal
+ * @short_description: <filename>gtkinternal.h</filename>
+ * @title: Internal Definitions and Includes
+ */
 
 G_BEGIN_DECLS
 

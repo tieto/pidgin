@@ -244,6 +244,7 @@ version 3.0.0 (??/??/????):
 		  purple_savedstatus_set_primitive_type
 		* purple_savedstatus_substatus_get_type renamed to
 		  purple_savedstatus_substatus_get_status_type
+		* serv_* functions are now purple_serv_*
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* purple_srv_txt_query_get_type renamed to
 		  purple_srv_txt_query_get_query_type
@@ -255,8 +256,11 @@ version 3.0.0 (??/??/????):
 		  the documentation for details.
 		* update_idle method has been added to PurplePresenceClass to update the
 		  idle state of a presence
+		* StunCallback renamed to PurpleStunCallback
 		* purple_str_size_to_units now takes a goffset as the size parameter
+		* PTFunc renamed to PurpleThemeFunc
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
+		* UPnPMappingAddRemove renamed to PurpleUPnPMappingAddRemove
 		* purple_util_fetch_url_request now takes a PurpleAccount as
 		  the first parameter
 		* purple_util_fetch_url_request now takes a length as the eighth
@@ -437,8 +441,22 @@ version 3.0.0 (??/??/????):
 
 		Changed:
 		* gtkft.h file renamed to gtkxfer.h
+		* pidgin_blist_sort_method renamed to _PidginBlistSortMethod
+		* BRUSH_STATE_DOWN renamed to PIDGIN_BRUSH_STATE_DOWN
+		* BRUSH_STATE_MOTION renamed to PIDGIN_BRUSH_STATE_MOTION
+		* BRUSH_STATE_UP renamed to PIDGIN_BRUSH_STATE_UP
+		* DEFAULT_FONT_FACE renamed to PIDGIN_DEFAULT_FONT_FACE
+		* DndHintPosition renamed to PidginDndHintPosition
+		* DndHintWindowId renamed to PidginDndHintWindowId
+		* dnd_* functions renamed to pidgin_dnd_*
+		* FULL_CIRCLE_DEGREES renamed to PIDGIN_FULL_CIRCLE_DEGREES
+		* NUM_NICK_SEED_COLORS renamed to PIDGIN_NUM_NICK_SEED_COLORS
+		* PALETTE_NUM_COLORS renamed to PIDGIN_PALETTE_NUM_COLORS
 		* pidgin_setup_screenname_autocomplete now takes a filter function and
 		  its data as final two arguments
+		* smiley_list renamed to PidginSmileyList
+		* smiley_parse_markup renamed to pidgin_smiley_parse_markup
+		* smiley_theme renamed to PidginSmileyTheme
 
 		Removed:
 		* GtkIMHtml.clipboard_html_string
@@ -471,8 +489,16 @@ version 3.0.0 (??/??/????):
 	Finch:
 		Changed:
 		* gntft.h file renamed to gntxfer.h
+		* gnt_append_menu_action renamed to finch_append_menu_action
+		* gnt_ui_init renamed to finch_ui_init
+		* gnt_ui_uninit renamed to finch_ui_uninit
 
 	libgnt:
+		Changed:
+		* ENTRY_CHAR renamed to GNT_ENTRY_CHAR
+		* g_hash_table_duplicate renamed to gnt_hash_table_duplicate
+		* GDupFunc renamed to GntDuplicateFunc
+
 		Removed:
 		* _GntFileType
 		* _GntKeyPressMode

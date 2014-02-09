@@ -1,8 +1,3 @@
-/**
- * @file gntplugin.h GNT Plugins API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,8 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_PLUGIN_H
 #define _GNT_PLUGIN_H
+/**
+ * SECTION:gntplugin
+ * @section_id: finch-gntplugin
+ * @short_description: <filename>gntplugin.h</filename>
+ * @title: Plugin API
+ */
 
 #include <gnt.h>
 
@@ -36,9 +38,8 @@
 #include "finch.h"
 
 /**********************************************************************
- * @name GNT Plugins API
+ * GNT Plugins API
  **********************************************************************/
-/*@{*/
 
 typedef GntWidget* (*FinchPluginFrame) (void);
 
@@ -46,6 +47,8 @@ typedef GntWidget* (*FinchPluginFrame) (void);
 #define FINCH_PLUGIN_TYPE FINCH_UI
 
 /**
+ * PURPLE_IS_GNT_PLUGIN:
+ *
  * Decide whether a plugin is a GNT-plugin.
  */
 #define PURPLE_IS_GNT_PLUGIN(plugin) \
@@ -53,21 +56,25 @@ typedef GntWidget* (*FinchPluginFrame) (void);
 	 !strcmp((plugin)->info->ui_requirement, FINCH_PLUGIN_TYPE))
 
 /**
+ * FINCH_PLUGIN_UI_INFO:
+ *
  * Get the ui-info from GNT-plugins.
  */
 #define FINCH_PLUGIN_UI_INFO(plugin) \
 	(FinchPluginFrame)((plugin)->info->ui_info)
 
 /**
+ * finch_plugins_show_all:
+ *
  * Show a list of plugins.
  */
 void finch_plugins_show_all(void);
 
 /**
+ * finch_plugins_save_loaded:
+ *
  * Save the list of loaded plugins.
  */
 void finch_plugins_save_loaded(void);
-
-/*@}*/
 
 #endif

@@ -1,7 +1,3 @@
-/**
- * @file roomlist.c Room List API
- * @ingroup core
- */
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -35,41 +31,40 @@
 #define PURPLE_ROOMLIST_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ROOMLIST, PurpleRoomlistPrivate))
 
-/** @copydoc _PurpleRoomlistPrivate */
 typedef struct _PurpleRoomlistPrivate  PurpleRoomlistPrivate;
 
-/**
+/*
  * Private data for a room list.
  */
 struct _PurpleRoomlistPrivate {
-	PurpleAccount *account;  /**< The account this list belongs to. */
-	GList *fields;           /**< The fields.                       */
-	GList *rooms;            /**< The list of rooms.                */
-	gboolean in_progress;    /**< The listing is in progress.       */
+	PurpleAccount *account;  /* The account this list belongs to. */
+	GList *fields;           /* The fields.                       */
+	GList *rooms;            /* The list of rooms.                */
+	gboolean in_progress;    /* The listing is in progress.       */
 
 	/* TODO Remove this and use protocol-specific subclasses. */
-	gpointer proto_data;     /** Protocol private data.             */
+	gpointer proto_data;     /* Protocol private data.             */
 };
 
-/**
+/*
  * Represents a room.
  */
 struct _PurpleRoomlistRoom {
-	PurpleRoomlistRoomType type; /**< The type of room. */
-	gchar *name; /**< The name of the room. */
-	GList *fields; /**< Other fields. */
-	PurpleRoomlistRoom *parent; /**< The parent room, or NULL. */
-	gboolean expanded_once; /**< A flag the UI uses to avoid multiple expand prpl cbs. */
+	PurpleRoomlistRoomType type; /* The type of room. */
+	gchar *name; /* The name of the room. */
+	GList *fields; /* Other fields. */
+	PurpleRoomlistRoom *parent; /* The parent room, or NULL. */
+	gboolean expanded_once; /* A flag the UI uses to avoid multiple expand prpl cbs. */
 };
 
-/**
+/*
  * A field a room might have.
  */
 struct _PurpleRoomlistField {
-	PurpleRoomlistFieldType type; /**< The type of field. */
-	gchar *label; /**< The i18n user displayed name of the field. */
-	gchar *name; /**< The internal name of the field. */
-	gboolean hidden; /**< Hidden? */
+	PurpleRoomlistFieldType type; /* The type of field. */
+	gchar *label; /* The i18n user displayed name of the field. */
+	gchar *name; /* The internal name of the field. */
+	gboolean hidden; /* Hidden? */
 };
 
 /* Room list property enums */
@@ -90,9 +85,8 @@ static void purple_roomlist_field_free(PurpleRoomlistField *f);
 static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r);
 
 /**************************************************************************/
-/** @name Room List API                                                   */
+/* Room List API                                                          */
 /**************************************************************************/
-/*@{*/
 
 void purple_roomlist_show_with_account(PurpleAccount *account)
 {
@@ -266,12 +260,9 @@ void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data)
 	list->ui_data = ui_data;
 }
 
-/*@}*/
-
 /**************************************************************************/
-/** @name Room List GObject code                                          */
+/* Room List GObject code                                                 */
 /**************************************************************************/
-/*@{*/
 
 /* Set method for GObject properties */
 static void
@@ -428,12 +419,9 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 	);
 }
 
-/*@}*/
-
 /**************************************************************************/
-/** @name Room API                                                        */
+/* Room API                                                               */
 /**************************************************************************/
-/*@{*/
 
 PurpleRoomlistRoom *purple_roomlist_room_new(PurpleRoomlistRoomType type, const gchar *name,
                                          PurpleRoomlistRoom *parent)
@@ -507,7 +495,7 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 		g_hash_table_replace(components, f->name, j->data);
 	}
 
-	serv_join_chat(gc, components);
+	purple_serv_join_chat(gc, components);
 
 	g_hash_table_destroy(components);
 }
@@ -562,12 +550,9 @@ static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoo
 	g_free(r);
 }
 
-/*@}*/
-
 /**************************************************************************/
-/** @name Room GBoxed code                                                */
+/* Room GBoxed code                                                       */
 /**************************************************************************/
-/*@{*/
 
 static PurpleRoomlistRoom *purple_roomlist_room_copy(PurpleRoomlistRoom *r)
 {
@@ -598,12 +583,9 @@ GType purple_roomlist_room_get_type(void)
 	return type;
 }
 
-/*@}*/
-
 /**************************************************************************/
-/** @name Room Field API                                                  */
+/* Room Field API                                                         */
 /**************************************************************************/
-/*@{*/
 
 PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
                                            const gchar *label, const gchar *name,
@@ -639,12 +621,9 @@ gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field)
 	return field->hidden;
 }
 
-/*@}*/
-
 /**************************************************************************/
-/** @name Room Field GBoxed code                                          */
+/* Room Field GBoxed code                                                 */
 /**************************************************************************/
-/*@{*/
 
 static PurpleRoomlistField *purple_roomlist_field_copy(PurpleRoomlistField *f)
 {
@@ -675,12 +654,9 @@ GType purple_roomlist_field_get_type(void)
 	return type;
 }
 
-/*@}*/
-
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
 
 
 void purple_roomlist_set_ui_ops(PurpleRoomlistUiOps *ui_ops)

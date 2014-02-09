@@ -1,8 +1,3 @@
-/**
- * @file cmds.c Commands API
- * @ingroup core
- */
-
 /* Copyright (C) 2003-2004 Timothy Ringenbach <omarvo@hotmail.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,7 +105,7 @@ void purple_cmd_unregister(PurpleCmdId id)
 	}
 }
 
-/**
+/*
  * This sets args to a NULL-terminated array of strings.  It should
  * be freed using g_strfreev().
  */

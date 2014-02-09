@@ -1,8 +1,3 @@
-/**
- * @file gtknotify.h GTK+ Notification API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,8 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINNOTIFY_H_
 #define _PIDGINNOTIFY_H_
+/**
+ * SECTION:gtknotify
+ * @section_id: pidgin-gtknotify
+ * @short_description: <filename>gtknotify.h</filename>
+ * @title: Notification API
+ */
 
 #include "notify.h"
 #include "pounce.h"
@@ -32,49 +34,60 @@
 G_BEGIN_DECLS
 
 /**
- * Adds a buddy pounce to the buddy pounce dialog
+ * pidgin_notify_pounce_add:
+ * @account:	The account
+ * @pounce:	The pounce
+ * @alias:		The buddy alias
+ * @event:		Event description
+ * @message:	Pounce message
+ * @date:		Pounce date
  *
- * @param account	The account
- * @param pounce	The pounce
- * @param alias		The buddy alias
- * @param event		Event description
- * @param message	Pounce message
- * @param date		Pounce date
+ * Adds a buddy pounce to the buddy pounce dialog
  */
 void pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
 		const char *alias, const char *event, const char *message, const char *date);
 
 /**
+ * pidgin_notify_get_ui_ops:
+ *
  * Returns the UI operations structure for GTK+ notification functions.
  *
- * @return The GTK+ UI notify operations structure.
+ * Returns: The GTK+ UI notify operations structure.
  */
 PurpleNotifyUiOps *pidgin_notify_get_ui_ops(void);
 
 /**
+ * pidgin_notify_init:
+ *
  * Initializes the GTK+ notifications subsystem.
  */
 void pidgin_notify_init(void);
 
 /**
+ * pidgin_notify_uninit:
+ *
  * Uninitialized the GTK+ notifications subsystem.
  */
 void pidgin_notify_uninit(void);
 
-G_END_DECLS
-
 /**
+ * pidgin_notify_emails_pending:
+ *
  * Returns TRUE if there are unseen emails, FALSE otherwise.
  *
- * @return TRUE if there are unseen emails, FALSE otherwise.
+ * Returns: TRUE if there are unseen emails, FALSE otherwise.
  */
 gboolean pidgin_notify_emails_pending(void);
 
 /**
+ * pidgin_notify_emails_present:
+ *
  * Presents mail dialog to the user.
  *
- * @return void.
+ * Returns: void.
  */
 void pidgin_notify_emails_present(void *data);
+
+G_END_DECLS
 
 #endif /* _PIDGINNOTIFY_H_ */

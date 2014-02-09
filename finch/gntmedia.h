@@ -1,8 +1,3 @@
-/**
- * @file gntmedia.h GNT Media API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -26,6 +21,12 @@
 
 #ifndef GNT_MEDIA_H
 #define GNT_MEDIA_H
+/**
+ * SECTION:gntmedia
+ * @section_id: finch-gntmedia
+ * @short_description: <filename>gntmedia.h</filename>
+ * @title: Media API
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

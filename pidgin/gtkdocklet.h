@@ -24,6 +24,14 @@
 
 #ifndef _GTKDOCKLET_H_
 #define _GTKDOCKLET_H_
+/**
+ * SECTION:gtkdocklet
+ * @section_id: pidgin-gtkdocklet
+ * @short_description: <filename>gtkdocklet.h</filename>
+ * @title: Docklet
+ *
+ * This file provides the System tray icon (aka docklet) implementation.
+ */
 
 G_BEGIN_DECLS
 
@@ -35,7 +43,9 @@ typedef enum
 } PidginDockletFlag;
 
 /**
- * Returns the GtkStatusIcon used for the docklet.
+ * pidgin_docklet_get_status_icon:
+ *
+ * Returns: The #GtkStatusIcon used for the docklet.
  */
 GtkStatusIcon *pidgin_docklet_get_status_icon(void);
 

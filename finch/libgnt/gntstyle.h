@@ -1,7 +1,3 @@
-/**
- * @file gntstyle.h Style API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -24,6 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#ifndef GNT_STYLE_H
+#define GNT_STYLE_H
+/**
+ * SECTION:gntstyle
+ * @section_id: libgnt-gntstyle
+ * @short_description: <filename>gntstyle.h</filename>
+ * @title: Style API
+ */
+
 #include "gnt.h"
 #include "gntwm.h"
 
@@ -38,115 +43,138 @@ typedef enum
 } GntStyle;
 
 /**
- * Read configuration from a file.
+ * gnt_style_read_configure_file:
+ * @filename:  The filename to read configuration from.
  *
- * @param filename  The filename to read configuration from.
+ * Read configuration from a file.
  */
 void gnt_style_read_configure_file(const char *filename);
 
 /**
+ * gnt_style_get:
+ * @style:  The style.
+ *
  * Get the user-setting for a style.
- * @param style  The style.
- * @return  The user-setting, or @c NULL.
+ *
+ * Returns:  The user-setting, or %NULL.
  */
 const char *gnt_style_get(GntStyle style);
 
 /**
+ * gnt_style_get_from_name:
+ * @group:   The name of the group in the keyfile. If %NULL, the prgname
+ *                will be used first, if available. Otherwise, "general" will be used.
+ * @key:     The key
+ *
  * Get the value of a preference in ~/.gntrc.
  *
- * @param group   The name of the group in the keyfile. If @c NULL, the prgname
- *                will be used first, if available. Otherwise, "general" will be used.
- * @param key     The key
+ * Returns:  The value of the setting as a string, or %NULL
  *
- * @return  The value of the setting as a string, or @c NULL
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 char *gnt_style_get_from_name(const char *group, const char *key);
 
 /**
+ * gnt_style_get_string_list:
+ * @group:  The name of the group in the keyfile. If %NULL, the prgname
+ *          will be used first, if available. Otherwise, "general" will be used.
+ * @key:    The key
+ * @length: Return location for the number of strings returned, or NULL
+ *
  * Get the value of a preference in ~/.gntrc.
  *
- * @param group   The name of the group in the keyfile. If @c NULL, the prgname
- *                will be used first, if available. Otherwise, "general" will be used.
- * @param key     The key
- * @param length  Return location for the number of strings returned, or NULL
+ * Returns: (transfer full): %NULL terminated string array. The array should be
+ *          freed with g_strfreev().
  *
- * @return        NULL terminated string array. The array should be freed with g_strfreev().
- *
- * @since 2.4.0
+ * Since: 2.4.0
  */
 char **gnt_style_get_string_list(const char *group, const char *key, gsize *length);
 
 /**
+ * gnt_style_get_color:
+ * @group:   The name of the group in the keyfile. If %NULL, the prgname
+ *                will be used first, if available. Otherwise, "general" will be used.
+ * @key:     The key
+ *
  * Get the value of a color pair in ~/.gntrc.
  *
- * @param group   The name of the group in the keyfile. If @c NULL, the prgname
- *                will be used first, if available. Otherwise, "general" will be used.
- * @param key     The key
+ * Returns:  The value of the color as an int, or 0 on error.
  *
- * @return  The value of the color as an int, or 0 on error.
- *
- * @since 2.4.0
+ * Since: 2.4.0
  */
 int gnt_style_get_color(char *group, char *key);
 
 /**
+ * gnt_style_parse_bool:
+ * @value:   The value of the boolean setting as a string
+ *
  * Parse a boolean preference. For example, if 'value' is "false" (ignoring case)
- * or "0", the return value will be @c FALSE, otherwise @c TRUE.
+ * or "0", the return value will be %FALSE, otherwise %TRUE.
  *
- * @param value   The value of the boolean setting as a string
- * @return    The boolean value
+ * Returns:    The boolean value
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 gboolean gnt_style_parse_bool(const char *value);
 
 /**
- * Get the boolean value for a user-setting.
- *
- * @param style  The style.
- * @param def    The default value (i.e, the value if the user didn't define
+ * gnt_style_get_bool:
+ * @style:  The style.
+ * @def:    The default value (i.e, the value if the user didn't define
  *               any value)
  *
- * @return  The value of the setting.
+ * Get the boolean value for a user-setting.
+ *
+ * Returns:  The value of the setting.
  */
 gboolean gnt_style_get_bool(GntStyle style, gboolean def);
 
 /**
- * @internal
+ * gnt_styles_get_keyremaps:
+ *
+ * Internal function -- do not use.
  */
 void gnt_styles_get_keyremaps(GType type, GHashTable *hash);
 
 /**
- * @internal
+ * gnt_style_read_actions:
+ *
+ * Internal function -- do not use.
  */
 void gnt_style_read_actions(GType type, GntBindableClass *klass);
 
 /**
+ * gnt_style_read_menu_accels:
+ * @name:  The name of the window.
+ * @table: The hastable to store the accel information.
+ *
  * Read menu-accels from ~/.gntrc
  *
- * @param name  The name of the window.
- * @param table The hastable to store the accel information.
- *
- * @return  @c TRUE if some accels were read, @c FALSE otherwise.
+ * Returns:  %TRUE if some accels were read, %FALSE otherwise.
  */
 gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table);
 
 /**
- * @internal
- * Read workspace information.
+ * gnt_style_read_workspaces:
+ *
+ * Reads workspace information.
+ *
+ * Internal function -- do not use.
  */
 void gnt_style_read_workspaces(GntWM *wm);
 
 /**
+ * gnt_init_styles:
+ *
  * Initialize style settings.
  */
 void gnt_init_styles(void);
 
 /**
+ * gnt_uninit_styles:
+ *
  * Uninitialize style settings.
  */
 void gnt_uninit_styles(void);
 
-
+#endif /* GNT_STYLE_H */

@@ -1,8 +1,3 @@
-/**
- * @file gntconv.h GNT Conversation API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,8 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_CONV_H
 #define _GNT_CONV_H
+/**
+ * SECTION:gntconv
+ * @section_id: finch-gntconv
+ * @short_description: <filename>gntconv.h</filename>
+ * @title: Conversation API
+ */
 
 #include <gnt.h>
 #include <gntwidget.h>
@@ -36,9 +38,8 @@
 #define FINCH_CONV(conv) ((FinchConv *)purple_conversation_get_ui_data(conv))
 
 /***************************************************************************
- * @name GNT Conversations API
+ * GNT Conversations API
  ***************************************************************************/
-/*@{*/
 
 typedef struct _FinchConv FinchConv;
 typedef struct _FinchConvChat FinchConvChat;
@@ -83,38 +84,44 @@ struct _FinchConvIm
 };
 
 /**
+ * finch_conv_get_ui_ops:
+ *
  * Get the ui-functions.
  *
- * @return The PurpleConversationUiOps populated with the appropriate functions.
+ * Returns: The PurpleConversationUiOps populated with the appropriate functions.
  */
 PurpleConversationUiOps *finch_conv_get_ui_ops(void);
 
 /**
+ * finch_conversation_init:
+ *
  * Perform the necessary initializations.
  */
 void finch_conversation_init(void);
 
 /**
+ * finch_conversation_uninit:
+ *
  * Perform the necessary uninitializations.
  */
 void finch_conversation_uninit(void);
 
 /**
- * Set a conversation as active in a contactized conversation
+ * finch_conversation_set_active:
+ * @conv: The conversation to make active.
  *
- * @param conv The conversation to make active.
+ * Set a conversation as active in a contactized conversation
  */
 void finch_conversation_set_active(PurpleConversation *conv);
 
 /**
- * Sets the information widget for the conversation window.
- *
- * @param conv   The conversation.
- * @param widget The widget containing the information. If @c NULL,
+ * finch_conversation_set_info_widget:
+ * @conv:   The conversation.
+ * @widget: The widget containing the information. If %NULL,
  *               the current information widget is removed.
+ *
+ * Sets the information widget for the conversation window.
  */
 void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget);
-
-/*@}*/
 
 #endif

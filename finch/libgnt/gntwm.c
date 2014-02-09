@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -146,7 +146,7 @@ gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 	}
 }
 
-/**
+/*
  * The following is a workaround for a bug in most versions of ncursesw.
  * Read about it in: http://article.gmane.org/gmane.comp.lib.ncurses.bugs/2751
  *

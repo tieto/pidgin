@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -302,13 +302,6 @@ void gnt_widget_set_take_focus(GntWidget *widget, gboolean can)
 		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_CAN_TAKE_FOCUS);
 }
 
-/**
- * gnt_widget_destroy:
- * @obj: The #GntWidget instance.
- *
- * Emits the "destroy" signal notifying all reference holders that they
- * should release @obj.
- */
 void
 gnt_widget_destroy(GntWidget *obj)
 {

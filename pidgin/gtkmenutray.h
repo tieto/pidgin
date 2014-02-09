@@ -1,8 +1,3 @@
-/**
- * @file gtkmenutray.h GTK+ Tray menu item
- * @ingroup pidgin
- */
-
 /* Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -21,8 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef PIDGIN_MENU_TRAY_H
 #define PIDGIN_MENU_TRAY_H
+/**
+ * SECTION:gtkmenutray
+ * @section_id: pidgin-gtkmenutray
+ * @short_description: <filename>gtkmenutray.h</filename>
+ * @title: Tray Menu Item
+ */
 
 #include <gtk/gtk.h>
 
@@ -36,67 +38,81 @@
 typedef struct _PidginMenuTray				PidginMenuTray;
 typedef struct _PidginMenuTrayClass		PidginMenuTrayClass;
 
-/** A PidginMenuTray */
+/**
+ * PidginMenuTray:
+ * @tray: The tray
+ *
+ * A PidginMenuTray
+ */
 struct _PidginMenuTray {
-	GtkMenuItem gparent;					/**< The parent instance */
-	GtkWidget *tray;						/**< The tray */
+	GtkMenuItem gparent;
+
+	/*< public >*/
+	GtkWidget *tray;
 };
 
-/** A PidginMenuTrayClass */
 struct _PidginMenuTrayClass {
-	GtkMenuItemClass gparent;				/**< The parent class */
+	GtkMenuItemClass gparent;
 };
 
 G_BEGIN_DECLS
 
 /**
+ * pidgin_menu_tray_get_type:
+ *
  * Registers the PidginMenuTray class if necessary and returns the
  * type ID assigned to it.
  *
- * @return The PidginMenuTray type ID
+ * Returns: The PidginMenuTray type ID
  */
 GType pidgin_menu_tray_get_type(void);
 
 /**
+ * pidgin_menu_tray_new:
+ *
  * Creates a new PidginMenuTray
  *
- * @return A new PidginMenuTray
+ * Returns: A new PidginMenuTray
  */
 GtkWidget *pidgin_menu_tray_new(void);
 
 /**
+ * pidgin_menu_tray_get_box:
+ * @menu_tray: The PidginMenuTray
+ *
  * Gets the box for the PidginMenuTray
  *
- * @param menu_tray The PidginMenuTray
- *
- * @return The box that this menu tray is using
+ * Returns: The box that this menu tray is using
  */
 GtkWidget *pidgin_menu_tray_get_box(PidginMenuTray *menu_tray);
 
 /**
- * Appends a widget into the tray
+ * pidgin_menu_tray_append:
+ * @menu_tray: The tray
+ * @widget:    The widget
+ * @tooltip:   The tooltip for this widget (widget requires its own X-window)
  *
- * @param menu_tray The tray
- * @param widget    The widget
- * @param tooltip   The tooltip for this widget (widget requires its own X-window)
+ * Appends a widget into the tray
  */
 void pidgin_menu_tray_append(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
- * Prepends a widget into the tray
+ * pidgin_menu_tray_prepend:
+ * @menu_tray: The tray
+ * @widget:    The widget
+ * @tooltip:   The tooltip for this widget (widget requires its own X-window)
  *
- * @param menu_tray The tray
- * @param widget    The widget
- * @param tooltip   The tooltip for this widget (widget requires its own X-window)
+ * Prepends a widget into the tray
  */
 void pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
- * Set the tooltip for a widget
+ * pidgin_menu_tray_set_tooltip:
+ * @menu_tray: The tray
+ * @widget:    The widget
+ * @tooltip:   The tooltip to set for the widget (widget requires its own X-window)
  *
- * @param menu_tray The tray
- * @param widget    The widget
- * @param tooltip   The tooltip to set for the widget (widget requires its own X-window)
+ * Set the tooltip for a widget
  */
 void pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 

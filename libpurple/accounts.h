@@ -1,9 +1,3 @@
-/**
- * @file accounts.h Accounts API
- * @ingroup core
- * @see @ref account-signals
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,46 +18,60 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PURPLE_ACCOUNTS_H_
 #define _PURPLE_ACCOUNTS_H_
+/**
+ * SECTION:accounts
+ * @section_id: libpurple-accounts
+ * @short_description: <filename>accounts.h</filename>
+ * @title: Accounts Subsystem API
+ * @see_also: <link linkend="chapter-signals-account">Account signals</link>
+ */
 
 #include "account.h"
 #include "status.h"
 
-/** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps  PurpleAccountUiOps;
 
-/**  Account UI operations, used to notify the user of status changes and when
- *   buddies add this account to their buddy lists.
+/**
+ * PurpleAccountUiOps:
+ * @notify_added:          A buddy who is already on this account's buddy list
+ *                         added this account to their buddy list.
+ * @status_changed:        This account's status changed.
+ * @request_add:           Someone we don't have on our list added us; prompt
+ *                         to add them.
+ * @request_authorize:     Prompt for authorization when someone adds this
+ *                         account to their buddy list.  To authorize them to
+ *                         see this account's presence, call
+ *                         @authorize_cb (@message, @user_data) otherwise call
+ *                         @deny_cb (@message, @user_data).
+ *                         <sbr/>Returns: A UI-specific handle, as passed to
+ *                         @close_account_request.
+ * @close_account_request: Close a pending request for authorization.
+ *                         @ui_handle is a handle as returned by
+ *                         @request_authorize.
+ *
+ * Account UI operations, used to notify the user of status changes and when
+ * buddies add this account to their buddy lists.
  */
 struct _PurpleAccountUiOps
 {
-	/** A buddy who is already on this account's buddy list added this account
-	 *  to their buddy list.
-	 */
 	void (*notify_added)(PurpleAccount *account,
 	                     const char *remote_user,
 	                     const char *id,
 	                     const char *alias,
 	                     const char *message);
 
-	/** This account's status changed. */
 	void (*status_changed)(PurpleAccount *account,
 	                       PurpleStatus *status);
 
-	/** Someone we don't have on our list added us; prompt to add them. */
 	void (*request_add)(PurpleAccount *account,
 	                    const char *remote_user,
 	                    const char *id,
 	                    const char *alias,
 	                    const char *message);
 
-	/** Prompt for authorization when someone adds this account to their buddy
-	 * list.  To authorize them to see this account's presence, call \a
-	 * authorize_cb (\a message, \a user_data); otherwise call
-	 * \a deny_cb (\a message, \a user_data);
-	 * @return a UI-specific handle, as passed to #close_account_request.
-	 */
 	void *(*request_authorize)(PurpleAccount *account,
 	                           const char *remote_user,
 	                           const char *id,
@@ -74,9 +82,6 @@ struct _PurpleAccountUiOps
 	                           PurpleAccountRequestAuthorizationCb deny_cb,
 	                           void *user_data);
 
-	/** Close a pending request for authorization.  \a ui_handle is a handle
-	 *  as returned by #request_authorize.
-	 */
 	void (*close_account_request)(void *ui_handle);
 
 	void (*permit_added)(PurpleAccount *account, const char *name);
@@ -94,70 +99,80 @@ struct _PurpleAccountUiOps
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name Accounts API                                                    */
+/* Accounts API                                                           */
 /**************************************************************************/
-/*@{*/
 
 /**
- * Adds an account to the list of accounts.
+ * purple_accounts_add:
+ * @account: The account.
  *
- * @param account The account.
+ * Adds an account to the list of accounts.
  */
 void purple_accounts_add(PurpleAccount *account);
 
 /**
- * Removes an account from the list of accounts.
+ * purple_accounts_remove:
+ * @account: The account.
  *
- * @param account The account.
+ * Removes an account from the list of accounts.
  */
 void purple_accounts_remove(PurpleAccount *account);
 
 /**
+ * purple_accounts_delete:
+ * @account: The account.
+ *
  * Deletes an account.
  *
  * This will remove any buddies from the buddy list that belong to this
  * account, buddy pounces that belong to this account, and will also
- * destroy @a account.
- *
- * @param account The account.
+ * destroy @account.
  */
 void purple_accounts_delete(PurpleAccount *account);
 
 /**
- * Reorders an account.
+ * purple_accounts_reorder:
+ * @account:   The account to reorder.
+ * @new_index: The new index for the account.
  *
- * @param account   The account to reorder.
- * @param new_index The new index for the account.
+ * Reorders an account.
  */
 void purple_accounts_reorder(PurpleAccount *account, guint new_index);
 
 /**
+ * purple_accounts_get_all:
+ *
  * Returns a list of all accounts.
  *
- * @constreturn A list of all accounts.
+ * Returns: (transfer none): A list of all accounts.
  */
 GList *purple_accounts_get_all(void);
 
 /**
+ * purple_accounts_get_all_active:
+ *
  * Returns a list of all enabled accounts
  *
- * @return A list of all enabled accounts. The list is owned
+ * Returns: A list of all enabled accounts. The list is owned
  *         by the caller, and must be g_list_free()d to avoid
  *         leaking the nodes.
  */
 GList *purple_accounts_get_all_active(void);
 
 /**
+ * purple_accounts_find:
+ * @name:     The account username.
+ * @protocol: The account protocol ID.
+ *
  * Finds an account with the specified name and protocol id.
  *
- * @param name     The account username.
- * @param protocol The account protocol ID.
- *
- * @return The account, if found, or @c FALSE otherwise.
+ * Returns: The account, if found, or %FALSE otherwise.
  */
 PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
 
 /**
+ * purple_accounts_restore_current_statuses:
+ *
  * This is called by the core after all subsystems and what
  * not have been initialized.  It sets all enabled accounts
  * to their startup status by signing them on, setting them
@@ -168,58 +183,62 @@ PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
  */
 void purple_accounts_restore_current_statuses(void);
 
-/*@}*/
-
 
 /**************************************************************************/
-/** @name UI Registration Functions                                       */
+/* UI Registration Functions                                              */
 /**************************************************************************/
-/*@{*/
+
 /**
- * Sets the UI operations structure to be used for accounts.
+ * purple_accounts_set_ui_ops:
+ * @ops: The UI operations structure.
  *
- * @param ops The UI operations structure.
+ * Sets the UI operations structure to be used for accounts.
  */
 void purple_accounts_set_ui_ops(PurpleAccountUiOps *ops);
 
 /**
+ * purple_accounts_get_ui_ops:
+ *
  * Returns the UI operations structure used for accounts.
  *
- * @return The UI operations structure in use.
+ * Returns: The UI operations structure in use.
  */
 PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 
-/*@}*/
-
 
 /**************************************************************************/
-/** @name Accounts Subsystem                                              */
+/* Accounts Subsystem                                                     */
 /**************************************************************************/
-/*@{*/
 
 /**
+ * purple_accounts_get_handle:
+ *
  * Returns the accounts subsystem handle.
  *
- * @return The accounts subsystem handle.
+ * Returns: The accounts subsystem handle.
  */
 void *purple_accounts_get_handle(void);
 
 /**
+ * purple_accounts_init:
+ *
  * Initializes the accounts subsystem.
  */
 void purple_accounts_init(void);
 
 /**
+ * purple_accounts_uninit:
+ *
  * Uninitializes the accounts subsystem.
  */
 void purple_accounts_uninit(void);
 
 /**
+ * purple_accounts_schedule_save:
+ *
  * Schedules saving of accounts
  */
 void purple_accounts_schedule_save(void);
-
-/*@}*/
 
 G_END_DECLS
 

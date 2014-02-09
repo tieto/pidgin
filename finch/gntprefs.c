@@ -1,8 +1,3 @@
-/**
- * @file gntprefs.c GNT Preferences API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous

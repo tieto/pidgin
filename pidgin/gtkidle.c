@@ -42,7 +42,9 @@
 
 #include "idle.h"
 
-/**
+/*
+ * pidgin_get_time_idle:
+ *
  * Get the number of seconds the user has been idle.  In Unix-world
  * this is based on the X Windows usage.  In MS Windows this is
  * based on keyboard/mouse usage information obtained from the OS.
@@ -65,7 +67,7 @@
  *
  * See watch() in xscreensaver/driver/xscreensaver-command.c.
  *
- * @return The number of seconds the user has been idle.
+ * Returns: The number of seconds the user has been idle.
  */
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 static time_t

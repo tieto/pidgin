@@ -1,8 +1,3 @@
-/*
- * @file gtkstatusbox.c GTK+ Status Selection Widget
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -65,8 +60,8 @@
 /* Timeout for typing notifications in seconds */
 #define TYPING_TIMEOUT 4
 
-static void webview_changed_cb(GtkWebView *webview, void *data);
-static void webview_format_changed_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *data);
+static void webview_changed_cb(PidginWebView *webview, void *data);
+static void webview_format_changed_cb(PidginWebView *webview, PidginWebViewButtons buttons, void *data);
 static void remove_typing_cb(PidginStatusBox *box);
 static void update_size (PidginStatusBox *box);
 static gint get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status);
@@ -97,35 +92,35 @@ static void remove_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box);
 static void choose_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box);
 
 enum {
-	/** A PidginStatusBoxItemType */
+	/* A PidginStatusBoxItemType */
 	TYPE_COLUMN,
 
-	/** This is the stock-id for the icon. */
+	/* This is the stock-id for the icon. */
 	ICON_STOCK_COLUMN,
 
-	/**
+	/*
 	 * This is a GdkPixbuf (the other columns are strings).
 	 * This column is visible.
 	 */
 	ICON_COLUMN,
 
-	/** The text displayed on the status box.  This column is visible. */
+	/* The text displayed on the status box.  This column is visible. */
 	TEXT_COLUMN,
 
-	/** The plain-English title of this item */
+	/* The plain-English title of this item */
 	TITLE_COLUMN,
 
-	/** A plain-English description of this item */
+	/* A plain-English description of this item */
 	DESC_COLUMN,
 
-	/**
+	/*
 	 * This value depends on TYPE_COLUMN.  For POPULAR types,
 	 * this is the creation time.  For PRIMITIVE types,
 	 * this is the PurpleStatusPrimitive.
 	 */
 	DATA_COLUMN,
 
-	/**
+	/*
  	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored.
 	 * In the GtkTreeModel for the dropdown, this is the stock-id (gchararray), and for the
 	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the prpl-icon
@@ -133,7 +128,7 @@ enum {
  	 */
 	EMBLEM_COLUMN,
 
-	/**
+	/*
  	* This column stores whether to show the emblem.
  	*/
 	EMBLEM_VISIBLE_COLUMN,
@@ -269,8 +264,8 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 
 #if 0
 	/* TODO WebKit: Doesn't do this? */
-	gtk_webview_set_populate_primary_clipboard(
-		GTK_WEBVIEW(status_box->webview), TRUE);
+	pidgin_webview_set_populate_primary_clipboard(
+		PIDGIN_WEBVIEW(status_box->webview), TRUE);
 #endif
 
 	if (status_no != -1) {
@@ -293,7 +288,7 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 		{
 			gtk_widget_show_all(status_box->vbox);
 			status_box->webview_visible = TRUE;
-			gtk_webview_load_html_string(GTK_WEBVIEW(status_box->webview), message);
+			pidgin_webview_load_html_string(PIDGIN_WEBVIEW(status_box->webview), message);
 		}
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
 		pidgin_status_box_refresh(status_box);
@@ -607,7 +602,7 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	                               );
 }
 
-/**
+/*
  * This updates the text displayed on the status box so that it shows
  * the current status.  This is the only function in this file that
  * should modify status_box->store
@@ -767,7 +762,7 @@ find_status_type_by_index(const PurpleAccount *account, gint active)
 	return NULL;
 }
 
-/**
+/*
  * This updates the GtkTreeView so that it correctly shows the state
  * we are currently using.  It is used when the current state is
  * updated from somewhere other than the GtkStatusBox (from a plugin,
@@ -883,8 +878,8 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 		 */
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box->webview), FALSE);
 
-		gtk_webview_load_html_string(GTK_WEBVIEW(status_box->webview), "");
-		gtk_webview_clear_formatting(GTK_WEBVIEW(status_box->webview));
+		pidgin_webview_load_html_string(PIDGIN_WEBVIEW(status_box->webview), "");
+		pidgin_webview_clear_formatting(PIDGIN_WEBVIEW(status_box->webview));
 
 		if (!purple_savedstatus_is_transient(saved_status) || !message || !*message)
 		{
@@ -896,7 +891,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 			status_box->webview_visible = TRUE;
 			gtk_widget_show_all(status_box->vbox);
 
-			gtk_webview_load_html_string(GTK_WEBVIEW(status_box->webview), message);
+			pidgin_webview_load_html_string(PIDGIN_WEBVIEW(status_box->webview), message);
 		}
 
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box->webview), TRUE);
@@ -1077,19 +1072,19 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_change
 }
 
 static gboolean
-combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkWebView *webview)
+combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, PidginWebView *webview)
 {
 	pidgin_status_box_popup(PIDGIN_STATUS_BOX(w), (GdkEvent *)event);
 	return TRUE;
 }
 
 static gboolean
-webview_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkWebView *webview)
+webview_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, PidginWebView *webview)
 {
 	if (event->direction == GDK_SCROLL_UP)
-		gtk_webview_page_up(webview);
+		pidgin_webview_page_up(webview);
 	else if (event->direction == GDK_SCROLL_DOWN)
-		gtk_webview_page_down(webview);
+		pidgin_webview_page_down(webview);
 	return TRUE;
 }
 
@@ -1119,8 +1114,8 @@ webview_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_b
 		status_box->typing = 0;
 #if 0
 	/* TODO WebKit: Doesn't do this? */
-		gtk_webview_set_populate_primary_clipboard(
-			GTK_WEBVIEW(status_box->webview), TRUE);
+		pidgin_webview_set_populate_primary_clipboard(
+			PIDGIN_WEBVIEW(status_box->webview), TRUE);
 #endif
 		if (status_box->account != NULL)
 			update_to_reflect_account_status(status_box, status_box->account,
@@ -1222,7 +1217,7 @@ spellcheck_prefs_cb(const char *name, PurplePrefType type,
 {
 	PidginStatusBox *status_box = (PidginStatusBox *)data;
 
-	pidgin_webview_set_spellcheck(GTK_WEBVIEW(status_box->webview),
+	pidgin_webview_set_spellcheck(PIDGIN_WEBVIEW(status_box->webview),
 	                              (gboolean)GPOINTER_TO_INT(value));
 }
 
@@ -1682,7 +1677,7 @@ treeview_key_press_event(GtkWidget *widget,
 }
 
 static void
-webview_cursor_moved_cb(gpointer data, GtkWebView *webview)
+webview_cursor_moved_cb(gpointer data, PidginWebView *webview)
 {
 	/* Restart the typing timeout if arrow keys are pressed while editing the message */
 	PidginStatusBox *status_box = data;
@@ -1837,7 +1832,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
 	status_box->sw = pidgin_create_webview(TRUE, &status_box->webview, NULL);
-	gtk_webview_hide_toolbar(GTK_WEBVIEW(status_box->webview));
+	pidgin_webview_hide_toolbar(PIDGIN_WEBVIEW(status_box->webview));
 
 #if 0
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event",
@@ -1859,7 +1854,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	                 G_CALLBACK(webview_remove_focus), status_box);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
-		pidgin_webview_set_spellcheck(GTK_WEBVIEW(status_box->webview), TRUE);
+		pidgin_webview_set_spellcheck(PIDGIN_WEBVIEW(status_box->webview), TRUE);
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
 	gtk_widget_show_all(status_box->vbox);
 
@@ -2119,26 +2114,27 @@ pidgin_status_box_new_with_account(PurpleAccount *account)
 	                    "iconsel", TRUE, NULL);
 }
 
-/**
- * Add a row to the dropdown menu.
- *
- * @param status_box The status box itself.
- * @param type       A PidginStatusBoxItemType.
- * @param pixbuf     The icon to associate with this row in the menu. The
+/*
+ * pidgin_status_box_add:
+ * @status_box: The status box itself.
+ * @type:       A PidginStatusBoxItemType.
+ * @pixbuf:     The icon to associate with this row in the menu. The
  *                   function will try to decide a pixbuf if none is given.
- * @param title      The title of this item.  For the primitive entries,
+ * @title:      The title of this item.  For the primitive entries,
  *                   this is something like "Available" or "Away."  For
  *                   the saved statuses, this is something like
  *                   "My favorite away message!"  This should be
  *                   plaintext (non-markedup) (this function escapes it).
- * @param desc       The secondary text for this item.  This will be
+ * @desc:       The secondary text for this item.  This will be
  *                   placed on the row below the title, in a dimmer
  *                   font (generally gray).  This text should be plaintext
  *                   (non-markedup) (this function escapes it).
- * @param data       Data to be associated with this row in the dropdown
+ * @data:       Data to be associated with this row in the dropdown
  *                   menu.  For primitives this is the value of the
  *                   PurpleStatusPrimitive.  For saved statuses this is the
  *                   creation timestamp.
+ *
+ * Add a row to the dropdown menu.
  */
 void
 pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type, GdkPixbuf *pixbuf,
@@ -2638,8 +2634,8 @@ static void remove_typing_cb(PidginStatusBox *status_box)
 
 #if 0
 	/* TODO WebKit: Doesn't do this? */
-	gtk_webview_set_populate_primary_clipboard(
-		GTK_WEBVIEW(status_box->webview), TRUE);
+	pidgin_webview_set_populate_primary_clipboard(
+		PIDGIN_WEBVIEW(status_box->webview), TRUE);
 #endif
 
 	purple_timeout_remove(status_box->typing);
@@ -2745,8 +2741,8 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			gtk_widget_grab_focus(status_box->webview);
 #if 0
 			/* TODO WebKit: Doesn't do this? */
-			gtk_webview_set_populate_primary_clipboard(
-				GTK_WEBVIEW(status_box->webview), FALSE);
+			pidgin_webview_set_populate_primary_clipboard(
+				PIDGIN_WEBVIEW(status_box->webview), FALSE);
 #endif
 
 			webkit_web_view_select_all(WEBKIT_WEB_VIEW(status_box->webview));
@@ -2787,7 +2783,7 @@ get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status)
 }
 
 static void
-webview_changed_cb(GtkWebView *webview, void *data)
+webview_changed_cb(PidginWebView *webview, void *data)
 {
 	PidginStatusBox *status_box = (PidginStatusBox*)data;
 	if (gtk_widget_get_sensitive(GTK_WIDGET(status_box)))
@@ -2802,7 +2798,7 @@ webview_changed_cb(GtkWebView *webview, void *data)
 }
 
 static void
-webview_format_changed_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *data)
+webview_format_changed_cb(PidginWebView *webview, PidginWebViewButtons buttons, void *data)
 {
 	webview_changed_cb(NULL, data);
 }
@@ -2810,7 +2806,7 @@ webview_format_changed_cb(GtkWebView *webview, GtkWebViewButtons buttons, void *
 char *pidgin_status_box_get_message(PidginStatusBox *status_box)
 {
 	if (status_box->webview_visible)
-		return g_strstrip(gtk_webview_get_body_text(GTK_WEBVIEW(status_box->webview)));
+		return g_strstrip(pidgin_webview_get_body_text(PIDGIN_WEBVIEW(status_box->webview)));
 	else
 		return NULL;
 }

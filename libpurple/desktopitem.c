@@ -1,8 +1,3 @@
-/**
- * @file purple-desktop-item.c Functions for managing .desktop files
- * @ingroup core
- */
-
 /* Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -823,10 +818,12 @@ lookup_locale (const PurpleDesktopItem *item, const char *key, const char *local
 	}
 }
 
-/**
+/*
+ * try_english_key:
+ *
  * Fallback to find something suitable for C locale.
  *
- * @return A newly allocated string which should be g_freed by the caller.
+ * Returns: A newly allocated string which should be g_freed by the caller.
  */
 static char *
 try_english_key (PurpleDesktopItem *item, const char *key)

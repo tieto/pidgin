@@ -292,7 +292,7 @@ purple::notify ?type? title primary secondary
 purple::send_im gc who text
 @endcode
 
-  This sends an IM in the fashion of serv_send_im.  @c gc is the GC of
+  This sends an IM in the fashion of purple_serv_send_im.  @c gc is the GC of
   the connection on which you wish to send (as returned by most event
   handlers), @c who is the nick of the buddy to which you wish to send,
   and @c text is the text of the message.

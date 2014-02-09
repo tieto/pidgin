@@ -139,7 +139,7 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 			/* This is somewhat hacky, but the params aren't useful after this command */
 			g_hash_table_insert(params, g_strdup("room"), g_strdup(rname));
 			g_hash_table_insert(params, g_strdup("type"), g_strdup("Chat"));
-			serv_join_chat(purple_account_get_connection(acct), params);
+			purple_serv_join_chat(purple_account_get_connection(acct), params);
 		}
 		/* else
 			** Same as above (except that this would have to be re-written using purple_request_*)

@@ -76,9 +76,9 @@ void purple_init(void)
 		lose_gerror ("Couldn't connect to session bus", error);
 
 	purple_proxy = dbus_g_proxy_new_for_name (bus,
-					DBUS_SERVICE_PURPLE,
-					DBUS_PATH_PURPLE,
-					DBUS_INTERFACE_PURPLE);
+					PURPLE_DBUS_SERVICE,
+					PURPLE_DBUS_PATH,
+					PURPLE_DBUS_INTERFACE);
 
 	if (!purple_proxy)
 		lose_gerror ("Couldn't connect to the Purple Service", error);

@@ -44,7 +44,7 @@
 
 #include <prefs.h>
 
-void gnt_ui_init()
+void finch_ui_init()
 {
 #ifdef STANDALONE
 	gnt_init();
@@ -112,7 +112,7 @@ void gnt_ui_init()
 #ifdef STANDALONE
 }
 
-void gnt_ui_uninit()
+void finch_ui_uninit()
 {
 	purple_accounts_set_ui_ops(NULL);
 	finch_accounts_uninit();

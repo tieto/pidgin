@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -72,9 +72,9 @@ gnt_skel_class_init(GntSkelClass *klass)
 	parent_class->size_request = gnt_skel_size_request;
 	parent_class->key_pressed = gnt_skel_key_pressed;
 
-	parent_class->actions = g_hash_table_duplicate(parent_class->actions, g_str_hash,
+	parent_class->actions = gnt_hash_table_duplicate(parent_class->actions, g_str_hash,
 				g_str_equal, NULL, (GDestroyNotify)gnt_widget_action_free);
-	parent_class->bindings = g_hash_table_duplicate(parent_class->bindings, g_str_hash,
+	parent_class->bindings = gnt_hash_table_duplicate(parent_class->bindings, g_str_hash,
 				g_str_equal, NULL, (GDestroyNotify)gnt_widget_action_param_free);
 
 	gnt_widget_actions_read(G_OBJECT_CLASS_TYPE(klass), klass);

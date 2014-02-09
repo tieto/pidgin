@@ -1,8 +1,3 @@
-/**
- * @file notify.c Notification API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -41,7 +36,7 @@ typedef struct
 	gpointer cb_user_data;
 } PurpleNotifyInfo;
 
-/**
+/*
  * Definition of a user info entry
  */
 struct _PurpleNotifyUserInfoEntry
@@ -56,13 +51,13 @@ struct _PurpleNotifyUserInfo
 	GQueue entries;
 };
 
-/**
+/*
  * Single column of a search result.
  */
 struct _PurpleNotifySearchColumn
 {
-	char *title;           /**< Title of the column. */
-	gboolean visible;      /**< Should the column be visible to the user. Defaults to TRUE. */
+	char *title;           /* Title of the column. */
+	gboolean visible;      /* Should the column be visible to the user. Defaults to TRUE. */
 
 };
 

@@ -1,8 +1,3 @@
-/**
- * @file gtkpounce.h GTK+ Buddy Pounce API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,41 +18,57 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINPOUNCE_H_
 #define _PIDGINPOUNCE_H_
+/**
+ * SECTION:gtkpounce
+ * @section_id: pidgin-gtkpounce
+ * @short_description: <filename>gtkpounce.h</filename>
+ * @title: Buddy Pounce API
+ */
 
 #include "pounce.h"
 
 G_BEGIN_DECLS
 
 /**
- * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
+ * pidgin_pounce_editor_show:
+ * @account:    The optional account to use.
+ * @name:       The optional name to pounce on.
+ * @cur_pounce: The current buddy pounce, if editing an existing one.
  *
- * @param account    The optional account to use.
- * @param name       The optional name to pounce on.
- * @param cur_pounce The current buddy pounce, if editing an existing one.
+ * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  */
 void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
 
 /**
+ * pidgin_pounces_manager_show:
+ *
  * Shows the pounces manager window.
  */
 void pidgin_pounces_manager_show(void);
 
 /**
+ * pidgin_pounces_manager_hide:
+ *
  * Hides the pounces manager window.
  */
 void pidgin_pounces_manager_hide(void);
 
 /**
+ * pidgin_pounces_get_handle:
+ *
  * Returns the gtkpounces handle
  *
- * @return The handle to the GTK+ pounces system
+ * Returns: The handle to the GTK+ pounces system
  */
 void *pidgin_pounces_get_handle(void);
 
 /**
+ * pidgin_pounces_init:
+ *
  * Initializes the GTK+ pounces subsystem.
  */
 void pidgin_pounces_init(void);

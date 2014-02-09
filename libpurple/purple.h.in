@@ -1,13 +1,3 @@
-/**
- * @file purple.h  Header files and defines
- * This file contains all the necessary preprocessor directives to include
- * libpurple's headers and other preprocessor directives required for plugins
- * or UIs to build.  Including this file eliminates the need to directly
- * include any other libpurple files.
- *
- * @ingroup core libpurple
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -31,6 +21,17 @@
 
 #ifndef _PURPLE_PURPLE_H_
 #define _PURPLE_PURPLE_H_
+/**
+ * SECTION:purple
+ * @section_id: libpurple-purple
+ * @short_description: <filename>purple.h</filename>
+ * @title: Header files and defines
+ *
+ * This file contains all the necessary preprocessor directives to include
+ * libpurple's headers and other preprocessor directives required for plugins
+ * or UIs to build.  Including this file eliminates the need to directly
+ * include any other libpurple files.
+ */
 
 #include <glib.h>
 

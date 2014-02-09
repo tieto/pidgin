@@ -1,8 +1,3 @@
-/*
- * @file gtkdialogs.c GTK+ Dialogs
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -483,10 +478,10 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = pidgin_create_webview(FALSE, &webview, NULL);
-	gtk_webview_set_format_functions(GTK_WEBVIEW(webview), GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY);
+	pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(webview), PIDGIN_WEBVIEW_ALL ^ PIDGIN_WEBVIEW_SMILEY);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-	gtk_webview_append_html(GTK_WEBVIEW(webview), string->str);
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(webview), string->str);
 
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
@@ -1189,7 +1184,7 @@ static void
 pidgin_dialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
 	purple_buddy_set_local_alias(buddy, new_alias);
-	serv_alias_buddy(buddy);
+	purple_serv_alias_buddy(buddy);
 }
 
 void

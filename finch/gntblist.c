@@ -1,8 +1,3 @@
-/**
- * @file gntblist.c GNT BuddyList API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -159,7 +154,7 @@ static int color_away;
 static int color_offline;
 static int color_idle;
 
-/**
+/*
  * Buddy List Manager functions.
  */
 
@@ -710,7 +705,7 @@ join_chat(PurpleChat *chat)
 	conv = purple_conversations_find_chat_with_account(name, account);
 
 	if (!conv || purple_chat_conversation_has_left(conv)) {
-		serv_join_chat(purple_account_get_connection(account),
+		purple_serv_join_chat(purple_account_get_connection(account),
 				purple_chat_get_components(chat));
 	} else if (conv) {
 		purple_conversation_present(PURPLE_CONVERSATION(conv));
@@ -1072,7 +1067,7 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 		if (!act)
 			continue;
 		purple_menu_action_set_data(act, node);
-		gnt_append_menu_action(menu, act, node);
+		finch_append_menu_action(menu, act, node);
 	}
 }
 
@@ -1081,7 +1076,7 @@ add_custom_action(GntMenu *menu, const char *label, PurpleCallback callback,
 		gpointer data)
 {
 	PurpleMenuAction *action = purple_menu_action_new(label, callback, data, NULL);
-	gnt_append_menu_action(menu, action, NULL);
+	finch_append_menu_action(menu, action, NULL);
 }
 
 static void
@@ -1216,7 +1211,7 @@ gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name)
 	uihandle = purple_notify_userinfo(conn, name, info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
 
-	serv_get_info(conn, name);
+	purple_serv_get_info(conn, name);
 	return uihandle;
 }
 
@@ -1229,7 +1224,7 @@ finch_blist_get_buddy_info_cb(PurpleBlistNode *selected, PurpleBuddy *buddy)
 static void
 finch_blist_menu_send_file_cb(PurpleBlistNode *selected, PurpleBuddy *buddy)
 {
-	serv_send_file(purple_account_get_connection(purple_buddy_get_account(buddy)), purple_buddy_get_name(buddy), NULL);
+	purple_serv_send_file(purple_account_get_connection(purple_buddy_get_account(buddy)), purple_buddy_get_name(buddy), NULL);
 }
 
 static void
@@ -1319,7 +1314,7 @@ append_extended_menu(GntMenu *menu, PurpleBlistNode *node)
 	for (iter = purple_blist_node_get_extended_menu(node);
 			iter; iter = g_list_delete_link(iter, iter))
 	{
-		gnt_append_menu_action(menu, iter->data, node);
+		finch_append_menu_action(menu, iter->data, node);
 	}
 }
 
@@ -1353,10 +1348,10 @@ rename_blist_node(PurpleBlistNode *node, const char *newname)
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 		purple_contact_set_alias(contact, name);
 		purple_buddy_set_local_alias(buddy, name);
-		serv_alias_buddy(buddy);
+		purple_serv_alias_buddy(buddy);
 	} else if (PURPLE_IS_BUDDY(node)) {
 		purple_buddy_set_local_alias((PurpleBuddy*)node, name);
-		serv_alias_buddy((PurpleBuddy*)node);
+		purple_serv_alias_buddy((PurpleBuddy*)node);
 	} else if (PURPLE_IS_CHAT(node))
 		purple_chat_set_alias((PurpleChat*)node, name);
 	else if (PURPLE_IS_GROUP(node) && (name != NULL))
@@ -2622,7 +2617,7 @@ auto_join_chats(gpointer data)
 			PurpleChat *chat = (PurpleChat*)node;
 			if (purple_chat_get_account(chat) == account &&
 					purple_blist_node_get_bool(node, "gnt-autojoin"))
-				serv_join_chat(purple_account_get_connection(account), purple_chat_get_components(chat));
+				purple_serv_join_chat(purple_account_get_connection(account), purple_chat_get_components(chat));
 		}
 	}
 	return FALSE;
@@ -2784,7 +2779,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	} else {
 		hash = purple_chat_get_components(chat);
 	}
-	serv_join_chat(gc, hash);
+	purple_serv_join_chat(gc, hash);
 	if (chat == NULL && hash != NULL)
 		g_hash_table_destroy(hash);
 }

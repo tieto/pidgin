@@ -1,7 +1,3 @@
-/**
- * @file gtkicon-theme-loader.h  Pidgin Icon Theme Loader Class API
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -25,17 +21,17 @@
 
 #ifndef PIDGIN_ICON_THEME_LOADER_H
 #define PIDGIN_ICON_THEME_LOADER_H
+/**
+ * SECTION:gtkicon-theme-loader
+ * @section_id: pidgin-gtkicon-theme-loader
+ * @short_description: <filename>gtkicon-theme-loader.h</filename>
+ * @title: Pidgin Icon Theme Loader Class
+ */
 
 #include <glib.h>
 #include <glib-object.h>
 #include "theme-loader.h"
 
-/**
- * A pidgin icon theme loader. Extends PurpleThemeLoader (theme-loader.h)
- * This is a class designed to build icon themes
- *
- * PidginIconThemeLoader is a GObject.
- */
 typedef struct _PidginIconThemeLoader       PidginIconThemeLoader;
 typedef struct _PidginIconThemeLoaderClass  PidginIconThemeLoaderClass;
 
@@ -46,6 +42,12 @@ typedef struct _PidginIconThemeLoaderClass  PidginIconThemeLoaderClass;
 #define PIDGIN_IS_ICON_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_ICON_THEME_LOADER))
 #define PIDGIN_ICON_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_ICON_THEME_LOADER, PidginIconThemeLoaderClass))
 
+/**
+ * PidginIconThemeLoader:
+ *
+ * A pidgin icon theme loader. Extends PurpleThemeLoader (theme-loader.h)
+ * This is a class designed to build icon themes
+ */
 struct _PidginIconThemeLoader
 {
 	PurpleThemeLoader parent;
@@ -57,15 +59,17 @@ struct _PidginIconThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Icon Theme-Loader API                                    */
+/* Pidgin Icon Theme-Loader API                                           */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
- * GObject foo.
- * @internal.
+ * pidgin_icon_theme_loader_get_type:
+ *
+ * Returns: The #GType for an icon theme loader.
  */
 GType pidgin_icon_theme_loader_get_type(void);
 
 G_END_DECLS
+
 #endif /* PIDGIN_ICON_THEME_LOADER_H */

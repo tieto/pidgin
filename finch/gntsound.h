@@ -1,8 +1,3 @@
-/**
- * @file gntsound.h GNT Sound API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,58 +18,74 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_SOUND_H
 #define _GNT_SOUND_H
+/**
+ * SECTION:gntsound
+ * @section_id: finch-gntsound
+ * @short_description: <filename>gntsound.h</filename>
+ * @title: Sound API
+ */
 
 #include "sound.h"
 
 /**********************************************************************/
-/** @name GNT Sound API                                               */
+/* GNT Sound API                                                      */
 /**********************************************************************/
-/*@{*/
 
 /**
+ * finch_sound_get_active_profile:
+ *
  * Get the name of the active sound profile.
  *
- * @return The name of the profile
+ * Returns: The name of the profile
  */
 const char *finch_sound_get_active_profile(void);
 
 /**
- * Set the active profile.  If the profile doesn't exist, nothing is changed.
+ * finch_sound_set_active_profile:
+ * @name:  The name of the profile
  *
- * @param name  The name of the profile
+ * Set the active profile.  If the profile doesn't exist, nothing is changed.
  */
 void finch_sound_set_active_profile(const char *name);
 
 /**
+ * finch_sound_get_profiles:
+ *
  * Get a list of available sound profiles.
  *
- * @return A list of strings denoting sound profile names.
- *         Caller must free the list (but not the data).
+ * Returns: (transfer container) (element-type utf8): A list of strings
+ *          denoting sound profile names. Caller must free the list
+ *          (but not the data).
  */
 GList *finch_sound_get_profiles(void);
 
 /**
+ * finch_sound_is_enabled:
+ *
  * Determine whether any sound will be played or not.
  *
- * @return Returns FALSE if preference is set to 'No sound', or if volume is
+ * Returns: Returns FALSE if preference is set to 'No sound', or if volume is
  *         set to zero.
  */
 gboolean finch_sound_is_enabled(void);
 
 /**
+ * finch_sound_get_ui_ops:
+ *
  * Gets GNT sound UI ops.
  *
- * @return The UI operations structure.
+ * Returns: The UI operations structure.
  */
 PurpleSoundUiOps *finch_sound_get_ui_ops(void);
 
 /**
+ * finch_sounds_show_all:
+ *
  * Show the sound settings dialog.
  */
 void finch_sounds_show_all(void);
-
-/*@}*/
 
 #endif

@@ -1,8 +1,3 @@
-/**
- * @file gtkthemes.h GTK+ Smiley Theme API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,27 +18,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINTHEMES_H_
 #define _PIDGINTHEMES_H_
+/**
+ * SECTION:gtkthemes
+ * @section_id: pidgin-gtkthemes
+ * @short_description: <filename>gtkthemes.h</filename>
+ * @title: Smiley Theme API
+ */
 
-struct smiley_list {
+struct PidginSmileyList {
 	char *sml;
 	GSList *smileys;
-	GHashTable *files; /**< map from smiley shortcut to filename */
-	struct smiley_list *next;
+	GHashTable *files; /* map from smiley shortcut to filename */
+	struct PidginSmileyList *next;
 };
 
-struct smiley_theme {
+struct PidginSmileyTheme {
 	char *path;
 	char *name;
 	char *desc;
 	char *icon;
 	char *author;
 
-	struct smiley_list *list;
+	struct PidginSmileyList *list;
 };
 
-extern struct smiley_theme *current_smiley_theme;
+extern struct PidginSmileyTheme *current_smiley_theme;
 extern GSList *smiley_themes;
 
 G_BEGIN_DECLS

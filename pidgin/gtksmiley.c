@@ -1,8 +1,3 @@
-/**
- * @file gtksmiley.c GTK+ Smiley Manager API
- * @ingroup pidgin
- */
-
 /*
  * pidgin
  *
@@ -88,20 +83,20 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 }
 
 /******************************************************************************
- * GtkWebViewSmileys stuff
+ * PidginWebViewSmileys stuff
  *****************************************************************************/
 /* Perhaps these should be in gtkwebview.c instead. -- sadrul */
-static void add_gtkwebview_to_list(GtkWebViewSmiley *gtksmiley)
+static void add_gtkwebview_to_list(PidginWebViewSmiley *gtksmiley)
 {
 	gtk_smileys = g_slist_prepend(gtk_smileys, gtksmiley);
 
 	purple_debug_info("gtksmiley", "adding %s to gtk_smileys",
-		gtk_webview_smiley_get_smile(gtksmiley));
+		pidgin_webview_smiley_get_smile(gtksmiley));
 }
 
 static void
 shortcut_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
-	GtkWebViewSmiley *gtksmiley)
+	PidginWebViewSmiley *gtksmiley)
 {
 #if 0
 	g_free(gtksmiley->smile);
@@ -113,7 +108,7 @@ shortcut_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
 
 static void
 image_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
-	GtkWebViewSmiley *gtksmiley)
+	PidginWebViewSmiley *gtksmiley)
 {
 #if 0
 	const char *file;
@@ -122,15 +117,15 @@ image_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
 
 	file = purple_imgstore_get_filename(purple_smiley_get_stored_image(smiley));
 	gtksmiley->file = g_build_filename(purple_smileys_get_storing_dir(), file, NULL);
-	gtk_webview_smiley_reload(gtksmiley);
+	pidgin_webview_smiley_reload(gtksmiley);
 #else
 	purple_debug_fatal("gtksmiley", "image_changed_cb not implemented");
 #endif
 }
 
-static GtkWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
+static PidginWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
 {
-	GtkWebViewSmiley *gtksmiley;
+	PidginWebViewSmiley *gtksmiley;
 	gchar *filename;
 	const gchar *file;
 
@@ -138,12 +133,12 @@ static GtkWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
 
 	filename = g_build_filename(purple_smileys_get_storing_dir(), file, NULL);
 
-	gtksmiley = gtk_webview_smiley_create(filename,
+	gtksmiley = pidgin_webview_smiley_create(filename,
 		purple_smiley_get_shortcut(smiley), FALSE,
-		GTK_WEBVIEW_SMILEY_CUSTOM);
+		PIDGIN_WEBVIEW_SMILEY_CUSTOM);
 	g_free(filename);
 
-	/* Make sure the shortcut for the GtkWebViewSmiley is updated with
+	/* Make sure the shortcut for the PidginWebViewSmiley is updated with
 	 * the PurpleSmiley */
 	g_signal_connect(G_OBJECT(smiley), "notify::shortcut",
 			G_CALLBACK(shortcut_changed_cb), gtksmiley);
@@ -158,7 +153,7 @@ static GtkWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
 void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 {
 	GSList *list = NULL;
-	GtkWebViewSmiley *gtksmiley;
+	PidginWebViewSmiley *gtksmiley;
 
 	if (gtk_smileys == NULL)
 		return;
@@ -166,15 +161,15 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 	list = gtk_smileys;
 
 	for (; list; list = list->next) {
-		gtksmiley = (GtkWebViewSmiley*)list->data;
+		gtksmiley = (PidginWebViewSmiley*)list->data;
 
-		if (strcmp(gtk_webview_smiley_get_smile(gtksmiley),
+		if (strcmp(pidgin_webview_smiley_get_smile(gtksmiley),
 			purple_smiley_get_shortcut(smiley)))
 		{
 			continue;
 		}
 
-		gtk_webview_smiley_destroy(gtksmiley);
+		pidgin_webview_smiley_destroy(gtksmiley);
 		g_signal_handlers_disconnect_matched(G_OBJECT(smiley), G_SIGNAL_MATCH_DATA,
 				0, 0, NULL, NULL, gtksmiley);
 		break;
@@ -186,7 +181,7 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 
 void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
 {
-	GtkWebViewSmiley *gtksmiley;
+	PidginWebViewSmiley *gtksmiley;
 
 	gtksmiley = smiley_purple_to_gtkwebview(smiley);
 	add_gtkwebview_to_list(gtksmiley);
@@ -213,7 +208,7 @@ void pidgin_smileys_init(void)
 void pidgin_smileys_uninit(void)
 {
 	GSList *list;
-	GtkWebViewSmiley *gtksmiley;
+	PidginWebViewSmiley *gtksmiley;
 
 	list = gtk_smileys;
 
@@ -221,8 +216,8 @@ void pidgin_smileys_uninit(void)
 		return;
 
 	for (; list; list = g_slist_delete_link(list, list)) {
-		gtksmiley = (GtkWebViewSmiley*)list->data;
-		gtk_webview_smiley_destroy(gtksmiley);
+		gtksmiley = (PidginWebViewSmiley*)list->data;
+		pidgin_webview_smiley_destroy(gtksmiley);
 	}
 
 	gtk_smileys = NULL;

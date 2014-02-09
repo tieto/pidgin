@@ -1,8 +1,3 @@
-/*
- * @file gtkconn.c GTK+ Connection API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -49,7 +44,7 @@ typedef struct {
 	guint timeout;
 } PidginAutoRecon;
 
-/**
+/*
  * Contains accounts that are auto-reconnecting.
  * The key is a pointer to the PurpleAccount and the
  * value is a pointer to a PidginAutoRecon.

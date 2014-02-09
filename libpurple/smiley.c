@@ -1,8 +1,3 @@
-/**
- * @file smiley.c Simley API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -41,12 +36,12 @@
 /**************************************************************************/
 
 typedef struct {
-	PurpleStoredImage *img;        /**< The id of the stored image with the
-	                                    the smiley data.        */
-	char *shortcut;                /**< Shortcut associated with the custom
-	                                    smiley. This field will work as a
-	                                    unique key by this API. */
-	char *checksum;                /**< The smiley checksum.        */
+	PurpleStoredImage *img;        /* The id of the stored image with the
+	                                  the smiley data.        */
+	char *shortcut;                /* Shortcut associated with the custom
+	                                  smiley. This field will work as a
+	                                  unique key by this API. */
+	char *checksum;                /* The smiley checksum.        */
 } PurpleSmileyPrivate;
 
 static GHashTable *smiley_shortcut_index = NULL; /* shortcut (char *) => smiley (PurpleSmiley*) */

@@ -1,8 +1,3 @@
-/**
- * @file gntconn.h GNT Connection API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,33 +18,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_CONN_H
 #define _GNT_CONN_H
+/**
+ * SECTION:gntconn
+ * @section_id: finch-gntconn
+ * @short_description: <filename>gntconn.h</filename>
+ * @title: Connection API
+ */
 
 #include "connection.h"
 
 /**********************************************************************
- * @name GNT Connection API
+ * GNT Connection API
  **********************************************************************/
-/*@{*/
 
 /**
+ * finch_connections_get_ui_ops:
+ *
  * Get the ui-functions.
  *
- * @return The PurpleConnectionUiOps structure populated with the appropriate functions.
+ * Returns: The PurpleConnectionUiOps structure populated with the appropriate functions.
  */
 PurpleConnectionUiOps *finch_connections_get_ui_ops(void);
 
 /**
+ * finch_connections_init:
+ *
  * Perform necessary initializations.
  */
 void finch_connections_init(void);
 
 /**
+ * finch_connections_uninit:
+ *
  * Perform necessary uninitializations.
  */
 void finch_connections_uninit(void);
-
-/*@}*/
 
 #endif

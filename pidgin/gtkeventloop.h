@@ -1,8 +1,3 @@
-/**
- * @file gtkeventloop.h Pidgin GTK+ Event Loop Implementation
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,17 +18,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINEVENTLOOP_H_
 #define _PIDGINEVENTLOOP_H_
+/**
+ * SECTION:gtkeventloop
+ * @section_id: pidgin-gtkeventloop
+ * @short_description: <filename>gtkeventloop.h</filename>
+ * @title: Event Loop Implementation
+ */
 
 #include "eventloop.h"
 
 G_BEGIN_DECLS
 
 /**
+ * pidgin_eventloop_get_ui_ops:
+ *
  * Returns the GTK+ event loop UI operations structure.
  *
- * @return The GTK+ event loop UI operations structure.
+ * Returns: The GTK+ event loop UI operations structure.
  */
 PurpleEventLoopUiOps *pidgin_eventloop_get_ui_ops(void);
 

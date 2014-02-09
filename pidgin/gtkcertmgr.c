@@ -1,8 +1,3 @@
-/*
- * @file gtkcertmgr.c GTK+ Certificate Manager API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous

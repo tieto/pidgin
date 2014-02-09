@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-connection">
+<title>Connection signals</title>
+
+<refsect1 id="connections.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="connections-signing-on">signing-on</link>&quot;
+  &quot;<link linkend="connections-signed-on">signed-on</link>&quot;
+  &quot;<link linkend="connections-autojoin">autojoin</link>&quot;
+  &quot;<link linkend="connections-signing-off">signing-off</link>&quot;
+  &quot;<link linkend="connections-signed-off">signed-off</link>&quot;
+  &quot;<link linkend="connections-connection-error">connection-error</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="connections.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="connections-signing-on" role="signal">
+ <title>The <literal>&quot;signing-on&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a connection is about to sign on.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection that is about to sign on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="connections-signed-on" role="signal">
+ <title>The <literal>&quot;signed-on&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a connection has signed on.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection that has signed on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="connections-autojoin" role="signal">
+ <title>The <literal>&quot;autojoin&quot;</literal> signal</title>
+<programlisting>
+gboolean            user_function                      (PurpleConnection *gc,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a connection has signed on, after the signed-on signal, to signal UIs to autojoin chats if they wish.  UIs should connect to this with <literal>PURPLE_SIGNAL_PRIORITY_HIGHEST</literal> to allow plugins to block this signal before the UI sees it and then re-emit it later.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection that has signed on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><emphasis>Returns</emphasis>&#160;:</term>
+    <listitem><simpara><literal>TRUE</literal> if the signal was handled or <literal>FALSE</literal> otherwise.  In practice, the return value is irrelevant, as it really only exists so plugins can block the UI's autojoin.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="connections-signing-off" role="signal">
+ <title>The <literal>&quot;signing-off&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a connection is about to sign off.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection that is about to sign off.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="connections-signed-off" role="signal">
+ <title>The <literal>&quot;signed-off&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a connection has signed off.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection that has signed off.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="connections-connection-error" role="signal">
+ <title>The <literal>&quot;connection-error&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleConnection *gc,
+                                                        PurpleConnectionError err,
+                                                        const gchar *desc,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a connection error occurs, before <literal>"signed"</literal>-off.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>gc</parameter>&#160;:</term>
+    <listitem><simpara>The connection on which the error has occurred.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>err</parameter>&#160;:</term>
+    <listitem><simpara>The error that occurred.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>desc</parameter>&#160;:</term>
+    <listitem><simpara>A description of the error, giving more information.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

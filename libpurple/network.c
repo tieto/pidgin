@@ -1,8 +1,3 @@
-/**
- * @file network.c Network Implementation
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -106,7 +101,7 @@ struct _PurpleNetworkListenData {
 	gboolean adding;
 	PurpleNetworkListenCallback cb;
 	gpointer cb_data;
-	UPnPMappingAddRemove *mapping_data;
+	PurpleUPnPMappingAddRemove *mapping_data;
 	int timer;
 };
 
@@ -270,11 +265,13 @@ purple_network_get_all_local_system_ips(void)
 #endif /* HAVE_GETIFADDRS && HAVE_INET_NTOP */
 }
 
-/**
+/*
+ * purple_network_is_ipv4:
+ * @hostname: The hostname to be verified.
+ *
  * Checks, if specified hostname is valid ipv4 address.
  *
- * @param hostname The hostname to be verified.
- * @return TRUE, if the hostname is valid.
+ * Returns: TRUE, if the hostname is valid.
  */
 static gboolean
 purple_network_is_ipv4(const gchar *hostname)

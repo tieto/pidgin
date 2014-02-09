@@ -1,7 +1,3 @@
-/**
- * @file gntlabel.h Label API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -26,6 +22,12 @@
 
 #ifndef GNT_LABEL_H
 #define GNT_LABEL_H
+/**
+ * SECTION:gntlabel
+ * @section_id: libgnt-gntlabel
+ * @short_description: <filename>gntlabel.h</filename>
+ * @title: Label
+ */
 
 #include "gnt.h"
 #include "gntwidget.h"
@@ -48,16 +50,18 @@ struct _GntLabel
 	char *text;
 	GntTextFormatFlags flags;
 
-    void (*gnt_reserved1)(void);
-    void (*gnt_reserved2)(void);
-    void (*gnt_reserved3)(void);
-    void (*gnt_reserved4)(void);
+	/*< private >*/
+    void *res1;
+    void *res2;
+    void *res3;
+    void *res4;
 };
 
 struct _GntLabelClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
@@ -67,34 +71,39 @@ struct _GntLabelClass
 G_BEGIN_DECLS
 
 /**
- * @return GType for GntLabel.
+ * gnt_label_get_type:
+ *
+ * Returns: GType for GntLabel.
  */
 GType gnt_label_get_type(void);
 
 /**
+ * gnt_label_new:
+ * @text:  The text of the label.
+ *
  * Create a new GntLabel.
  *
- * @param text  The text of the label.
- *
- * @return  The newly created label.
+ * Returns:  The newly created label.
  */
 GntWidget * gnt_label_new(const char *text);
 
 /**
+ * gnt_label_new_with_format:
+ * @text:    The text.
+ * @flags:   Text attributes for the text.
+ *
  * Create a new label with specified text attributes.
  *
- * @param text    The text.
- * @param flags   Text attributes for the text.
- *
- * @return  The newly created label.
+ * Returns:  The newly created label.
  */
 GntWidget * gnt_label_new_with_format(const char *text, GntTextFormatFlags flags);
 
 /**
- * Change the text of a label.
+ * gnt_label_set_text:
+ * @label:  The label.
+ * @text:   The new text to set in the label.
  *
- * @param label  The label.
- * @param text   The new text to set in the label.
+ * Change the text of a label.
  */
 void gnt_label_set_text(GntLabel *label, const char *text);
 

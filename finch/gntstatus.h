@@ -1,8 +1,3 @@
-/**
- * @file gntstatus.h GNT Status API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,29 +18,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_STATUS_H
 #define _GNT_STATUS_H
+/**
+ * SECTION:gntstatus
+ * @section_id: finch-gntstatus
+ * @short_description: <filename>gntstatus.h</filename>
+ * @title: Status API
+ */
 
 #include <status.h>
 #include <savedstatuses.h>
 
 /**********************************************************************
- * @name GNT BuddyList API
+ * GNT BuddyList API
  **********************************************************************/
-/*@{*/
 
 /**
+ * finch_savedstatus_show_all:
+ *
  * Show a dialog with all the saved statuses.
  */
 void finch_savedstatus_show_all(void);
 
 /**
- * Show a dialog to edit a status.
+ * finch_savedstatus_edit:
+ * @saved: The saved status to edit. Set it to %NULL to create a new status.
  *
- * @param saved The saved status to edit. Set it to @c NULL to create a new status.
+ * Show a dialog to edit a status.
  */
 void finch_savedstatus_edit(PurpleSavedStatus *saved);
-
-/*@}*/
 
 #endif

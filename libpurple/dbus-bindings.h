@@ -1,8 +1,3 @@
-/**
- * @file dbus-bindings.h Purple DBUS Bindings
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -27,6 +22,12 @@
 
 #ifndef _PURPLE_DBUS_BINDINGS_H_
 #define _PURPLE_DBUS_BINDINGS_H_
+/**
+ * SECTION:dbus-bindings
+ * @section_id: libpurple-dbus-bindings
+ * @short_description: <filename>dbus-bindings.h</filename>
+ * @title: DBUS Bindings
+ */
 
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
@@ -40,7 +41,7 @@ gint  purple_dbus_pointer_to_id_error(gconstpointer ptr, DBusError *error);
 gpointer purple_dbus_id_to_pointer_error(gint id, PurpleDBusType *type,
 				       const char *typename, DBusError *error);
 
-#define NULLIFY(id) id = empty_to_null(id)
+#define NULLIFY(id) id = purple_emptystr_to_null(id)
 
 #define CHECK_ERROR(error) if (dbus_error_is_set(error)) return NULL;
 
@@ -88,8 +89,8 @@ gpointer* purple_GList_to_array(GList *list, dbus_int32_t *len);
 gpointer* purple_GSList_to_array(GSList *list, dbus_int32_t *len);
 GHashTable *purple_dbus_iter_hash_table(DBusMessageIter *iter, DBusError *error);
 
-const char* empty_to_null(const char *str);
-const char* null_to_empty(const char *s);
+const char* purple_emptystr_to_null(const char *str);
+const char* purple_null_to_emptystr(const char *s);
 
 typedef struct {
     const char *name;

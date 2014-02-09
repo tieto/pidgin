@@ -1,7 +1,3 @@
-/**
- * @file gntws.h Workspace API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -26,6 +22,12 @@
 
 #ifndef GNTWS_H
 #define GNTWS_H
+/**
+ * SECTION:gntws
+ * @section_id: libgnt-gntws
+ * @short_description: <filename>gntws.h</filename>
+ * @title: Workspace API
+ */
 
 #include "gntwidget.h"
 
@@ -70,110 +72,123 @@ struct _GntWSClass
 G_BEGIN_DECLS
 
 /**
- * @return The GType for GntWS.
+ * gnt_ws_get_type:
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Returns: The GType for GntWS.
+ *
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 GType gnt_ws_get_type(void);
 
 /**
+ * gnt_ws_new:
+ * @name:  The desired name of the workspace, or %NULL.
+ *
  * Create a new workspace with the specified name.
  *
- * @param name  The desired name of the workspace, or @c NULL.
+ * Returns: The newly created workspace.
  *
- * @return The newly created workspace.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 GntWS *gnt_ws_new(const char *name);
 
 /**
+ * gnt_ws_set_name:
+ * @ws:    The workspace to rename.
+ * @name:  The new name of the workspace.
+ *
  * Set the name of a workspace.
  *
- * @param ws    The workspace to rename.
- * @param name  The new name of the workspace.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_set_name(GntWS *ws, const gchar *name);
 
 /**
+ * gnt_ws_add_widget:
+ * @ws:     The workspace.
+ * @widget: The widget to add.
+ *
  * Add a widget to a workspace.
  *
- * @param ws     The workspace.
- * @param widget The widget to add.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_add_widget(GntWS *ws, GntWidget *widget);
 
 /**
+ * gnt_ws_remove_widget:
+ * @ws:      The workspace
+ * @widget:  The widget to remove from the workspace.
+ *
  * Remove a widget from a workspace.
  *
- * @param ws      The workspace
- * @param widget  The widget to remove from the workspace.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_remove_widget(GntWS *ws, GntWidget *widget);
 
 /**
+ * gnt_ws_widget_hide:
+ * @widget:  The widget to hide.
+ * @nodes:   A hashtable containing information about the widgets.
+ *
  * Hide a widget in a workspace.
  *
- * @param widget  The widget to hide.
- * @param nodes   A hashtable containing information about the widgets.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_widget_hide(GntWidget *widget, GHashTable *nodes);
 
 /**
+ * gnt_ws_widget_show:
+ * @widget:   The widget to show.
+ * @nodes:   A hashtable containing information about the widgets.
+ *
  * Show a widget in a workspace.
  *
- * @param widget   The widget to show.
- * @param nodes   A hashtable containing information about the widgets.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_widget_show(GntWidget *widget, GHashTable *nodes);
 
 /**
+ * gnt_ws_draw_taskbar:
+ * @ws:         The workspace.
+ * @reposition: Whether the workspace should reposition the taskbar.
+ *
  * Draw the taskbar in a workspace.
  *
- * @param ws         The workspace.
- * @param reposition Whether the workspace should reposition the taskbar.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_draw_taskbar(GntWS *ws, gboolean reposition);
 
 /**
+ * gnt_ws_hide:
+ * @ws:      The workspace to hide.
+ * @table:   A hashtable containing information about the widgets.
+ *
  * Hide a workspace.
  *
- * @param ws      The workspace to hide.
- * @param table   A hashtable containing information about the widgets.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_hide(GntWS *ws, GHashTable *table);
 
 /**
+ * gnt_ws_show:
+ * @ws:      The workspace to hide.
+ * @table:   A hashtable containing information about the widgets.
+ *
  * Show a workspace.
  *
- * @param ws      The workspace to hide.
- * @param table   A hashtable containing information about the widgets.
- *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_ws_show(GntWS *ws, GHashTable *table);
 
 /**
+ * gnt_ws_get_name:
+ * @ws:   The workspace.
+ *
  * Get the name of a workspace.
  *
- * @param ws   The workspace.
- * @return  The name of the workspace (can be @c NULL).
+ * Returns:  The name of the workspace (can be %NULL).
  *
- * @since 2.0.0 (gnt), 2.1.0 (pidgin)
+ * Since: 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 const char * gnt_ws_get_name(GntWS *ws);
 

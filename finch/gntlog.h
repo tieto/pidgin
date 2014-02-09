@@ -1,8 +1,3 @@
-/**
- * @file gntlog.h GNT Log viewer
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,8 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _FINCHLOG_H_
 #define _FINCHLOG_H_
+/**
+ * SECTION:gntlog
+ * @section_id: finch-gntlog
+ * @short_description: <filename>gntlog.h</filename>
+ * @title: Log Viewer
+ */
 
 #include "log.h"
 #include "account.h"
@@ -33,19 +35,27 @@
 typedef struct _FinchLogViewer FinchLogViewer;
 
 /**
+ * FinchLogViewer:
+ * @logs: The list of logs viewed in this viewer
+ * @window: The viewer's window
+ * @tree:   The tree representing said treestore
+ * @text:   The text to display said logs
+ * @entry:  The search entry, in which search terms are entered
+ * @flags:  The most recently used log flags
+ * @search: The string currently being searched for
+ *
  * A GNT Log Viewer.  You can look at logs with it.
  */
 struct _FinchLogViewer {
-	GList *logs;                 /**< The list of logs viewed in this viewer   */
+	GList *logs;
 
-	GntWidget	*window;    /**< The viewer's window                      */
-	GntWidget	*tree;      /**< The tree representing said treestore */
-	GntWidget	*text;      /**< The text to display said logs          */
-	GntWidget	*entry;     /**< The search entry, in which search terms
-	                              *   are entered                              */
+	GntWidget	*window;
+	GntWidget	*tree;
+	GntWidget	*text;
+	GntWidget	*entry;
 	GntWidget	*label;
-	PurpleLogReadFlags flags;      /**< The most recently used log flags         */
-	char		*search;    /**< The string currently being searched for  */
+	PurpleLogReadFlags flags;
+	char		*search;
 };
 
 
@@ -56,27 +66,30 @@ void finch_log_show_contact(PurpleContact *contact);
 void finch_syslog_show(void);
 
 /**************************************************************************/
-/** @name GNT Log Subsystem                                              */
+/* GNT Log Subsystem                                                      */
 /**************************************************************************/
-/*@{*/
 
 /**
+ * finch_log_init:
+ *
  * Initializes the GNT log subsystem.
  */
 void finch_log_init(void);
 
 /**
+ * finch_log_get_handle:
+ *
  * Returns the GNT log subsystem handle.
  *
- * @return The GNT log subsystem handle.
+ * Returns: (transfer none): The GNT log subsystem handle.
  */
 void *finch_log_get_handle(void);
 
 /**
+ * finch_log_uninit:
+ *
  * Uninitializes the GNT log subsystem.
  */
 void finch_log_uninit(void);
-
-/*@}*/
 
 #endif

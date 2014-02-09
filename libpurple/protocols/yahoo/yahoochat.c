@@ -208,7 +208,7 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 		g_hash_table_replace(components, g_strdup("topic"), msg);
 	g_hash_table_replace(components, g_strdup("type"), g_strdup("Conference"));
 	g_hash_table_replace(components, g_strdup("members"), g_string_free(members, FALSE));
-	serv_got_chat_invite(gc, room, who, msg, components);
+	purple_serv_got_chat_invite(gc, room, who, msg, components);
 
 }
 
@@ -261,7 +261,7 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			{
 				msg_tmp = yahoo_string_decode(gc, msg, utf8);
 				msg = yahoo_codes_to_html(msg_tmp);
-				serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
+				purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
 				g_free(msg_tmp);
 				g_free(msg);
 			}
@@ -393,7 +393,7 @@ void yahoo_process_conference_message(PurpleConnection *gc, struct yahoo_packet 
 
 		msg2 = yahoo_string_decode(gc, msg, utf8);
 		msg = yahoo_codes_to_html(msg2);
-		serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
+		purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
 		g_free(msg);
 		g_free(msg2);
 	}
@@ -599,7 +599,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 			purple_conversation_set_name(PURPLE_CONVERSATION(c), room);
 
-			c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
+			c = purple_serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 			if (topic) {
 				purple_chat_conversation_set_topic(c, NULL, topic);
 				/* Also print the topic to the backlog so that the captcha link is clickable */
@@ -613,7 +613,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 			purple_conversation_write_message(PURPLE_CONVERSATION(c), "", tmpmsg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmpmsg);
 		} else {
-			c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
+			c = purple_serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 			if (topic) {
 				purple_chat_conversation_set_topic(c, NULL, topic);
 				/* Also print the topic to the backlog so that the captcha link is clickable */
@@ -747,7 +747,7 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 		msg = tmp;
 	}
 
-	serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, msg, time(NULL));
+	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, msg, time(NULL));
 	g_free(msg);
 	g_free(room);
 }
@@ -805,7 +805,7 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 
 		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 		g_hash_table_replace(components, g_strdup("room"), g_strdup(room));
-		serv_got_chat_invite(gc, room, who, msg, components);
+		purple_serv_got_chat_invite(gc, room, who, msg, components);
 	}
 
 	g_free(room);
@@ -958,7 +958,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 	}
 
 	if (purple_conversations_find_chat(gc, YAHOO_CHAT_ID) != NULL)
-		serv_got_chat_left(gc, YAHOO_CHAT_ID);
+		purple_serv_got_chat_left(gc, YAHOO_CHAT_ID);
 
 	if (!logout)
 		return;
@@ -1103,7 +1103,7 @@ void yahoo_c_leave(PurpleConnection *gc, int id)
 				purple_connection_get_display_name(gc), TRUE);
 	}
 
-	serv_got_chat_left(gc, id);
+	purple_serv_got_chat_left(gc, id);
 }
 
 int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
@@ -1128,7 +1128,7 @@ int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 		ret = yahoo_chat_send(gc, purple_connection_get_display_name(gc),
 						purple_conversation_get_name(PURPLE_CONVERSATION(c)), what, flags);
 		if (!ret)
-			serv_got_chat_in(gc, purple_chat_conversation_get_id(c),
+			purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c),
 					purple_connection_get_display_name(gc), flags, what, time(NULL));
 	}
 	return ret;
@@ -1187,7 +1187,7 @@ void yahoo_c_join(PurpleConnection *gc, GHashTable *data)
 		int id;
 		const char *members = g_hash_table_lookup(data, "members");
 		id = yd->conf_id++;
-		c = serv_got_joined_chat(gc, id, room);
+		c = purple_serv_got_joined_chat(gc, id, room);
 		yd->confs = g_slist_prepend(yd->confs, c);
 		purple_chat_conversation_set_topic(c, purple_connection_get_display_name(gc), topic);
 		yahoo_conf_join(yd, c, purple_connection_get_display_name(gc), room, topic, members);

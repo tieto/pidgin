@@ -1,7 +1,3 @@
-/**
- * @file gntcombobox.h Combobox API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -26,6 +22,12 @@
 
 #ifndef GNT_COMBO_BOX_H
 #define GNT_COMBO_BOX_H
+/**
+ * SECTION:gntcombobox
+ * @section_id: libgnt-gntcombobox
+ * @short_description: <filename>gntcombobox.h</filename>
+ * @title: Combobox
+ */
 
 #include "gnt.h"
 #include "gntcolors.h"
@@ -60,6 +62,7 @@ struct _GntComboBoxClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
@@ -69,55 +72,64 @@ struct _GntComboBoxClass
 G_BEGIN_DECLS
 
 /**
- * @return  Get the GType for GntComboBox
+ * gnt_combo_box_get_type:
+ *
+ * Returns:  Get the GType for GntComboBox
  */
 GType gnt_combo_box_get_type(void);
 
 /**
+ * gnt_combo_box_new:
+ *
  * Create a new GntComboBox
  *
- * @return A new GntComboBox
+ * Returns: A new GntComboBox
  */
 GntWidget * gnt_combo_box_new(void);
 
 /**
- * Add an entry
+ * gnt_combo_box_add_data:
+ * @box: The GntComboBox
+ * @key: The data
+ * @text: The text to display
  *
- * @param box The GntComboBox
- * @param key The data
- * @param text The text to display
+ * Add an entry
  */
 void gnt_combo_box_add_data(GntComboBox *box, gpointer key, const char *text);
 
 /**
- * Remove an entry
+ * gnt_combo_box_remove:
+ * @box: The GntComboBox
+ * @key: The data to be removed
  *
- * @param box The GntComboBox
- * @param key The data to be removed
+ * Remove an entry
  */
 void gnt_combo_box_remove(GntComboBox *box, gpointer key);
 
 /**
- * Remove all entries
+ * gnt_combo_box_remove_all:
+ * @box: The GntComboBox
  *
- * @param box The GntComboBox
+ * Remove all entries
  */
 void gnt_combo_box_remove_all(GntComboBox *box);
 
 /**
+ * gnt_combo_box_get_selected_data:
+ * @box: The GntComboBox
+ *
  * Get the data that is currently selected
  *
- * @param box The GntComboBox
- *
- * @return The data of the currently selected entry
+ * Returns: (transfer none): The data of the currently selected entry
  */
 gpointer gnt_combo_box_get_selected_data(GntComboBox *box);
 
 /**
- * Set the current selection to a specific entry
+ * gnt_combo_box_set_selected:
+ * @box: The GntComboBox
+ * @key: The data to be set to
  *
- * @param box The GntComboBox
- * @param key The data to be set to
+ * Set the current selection to a specific entry
  */
 void gnt_combo_box_set_selected(GntComboBox *box, gpointer key);
 

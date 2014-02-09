@@ -77,7 +77,6 @@ PIDGIN_C_SRC =	\
 			gtkicon-theme.c \
 			gtkidle.c \
 			gtklog.c \
-			gtkmain.c \
 			gtkmedia.c \
 			gtkmenutray.c \
 			gtknotify.c \
@@ -100,7 +99,9 @@ PIDGIN_C_SRC =	\
 			gtkwebviewtoolbar.c \
 			gtkwhiteboard.c \
 			gtkxfer.c \
+			libpidgin.c \
 			minidialog.c \
+			pidgin.c \
 			pidginstock.c \
 			pidgintooltip.c \
 			smileyparser.c \

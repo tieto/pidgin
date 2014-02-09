@@ -1,7 +1,3 @@
-/**
- * @file gtkconv-theme-loader.h  Pidgin Conversation Theme Loader Class API
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -25,17 +21,17 @@
 
 #ifndef PIDGIN_CONV_THEME_LOADER_H
 #define PIDGIN_CONV_THEME_LOADER_H
+/**
+ * SECTION:gtkconv-theme-loader
+ * @section_id: pidgin-gtkconv-theme-loader
+ * @short_description: <filename>gtkconv-theme-loader.h</filename>
+ * @title: Conversation Theme Loader Class
+ */
 
 #include <glib.h>
 #include <glib-object.h>
 #include "theme-loader.h"
 
-/**
- * A pidgin conversation theme loader. Extends PurpleThemeLoader (theme-loader.h)
- * This is a class designed to build conversation themes
- *
- * PidginConvThemeLoader is a GObject.
- */
 typedef struct _PidginConvThemeLoader       PidginConvThemeLoader;
 typedef struct _PidginConvThemeLoaderClass  PidginConvThemeLoaderClass;
 
@@ -46,6 +42,12 @@ typedef struct _PidginConvThemeLoaderClass  PidginConvThemeLoaderClass;
 #define PIDGIN_IS_CONV_THEME_LOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_CONV_THEME_LOADER))
 #define PIDGIN_CONV_THEME_LOADER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_CONV_THEME_LOADER, PidginConvThemeLoaderClass))
 
+/**
+ * PidginConvThemeLoader:
+ *
+ * A pidgin conversation theme loader. Extends PurpleThemeLoader (theme-loader.h)
+ * This is a class designed to build conversation themes
+ */
 struct _PidginConvThemeLoader
 {
 	PurpleThemeLoader parent;
@@ -57,16 +59,18 @@ struct _PidginConvThemeLoaderClass
 };
 
 /**************************************************************************/
-/** @name Pidgin Conversation Theme-Loader API                            */
+/* Pidgin Conversation Theme-Loader API                                   */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
- * GObject foo.
- * @internal.
+ * pidgin_conversation_theme_loader_get_type:
+ *
+ * Returns: The #GType for a conversation theme loader.
  */
 GType pidgin_conversation_theme_loader_get_type(void);
 
 G_END_DECLS
+
 #endif /* PIDGIN_CONV_THEME_LOADER_H */
 

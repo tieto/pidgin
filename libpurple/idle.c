@@ -41,7 +41,7 @@ typedef enum
 
 static PurpleIdleUiOps *idle_ui_ops = NULL;
 
-/**
+/*
  * This is needed for the I'dle Mak'er plugin to work correctly.  We
  * use it to determine if we're the ones who set our accounts idle
  * or if someone else did it (the I'dle Mak'er plugin, for example).

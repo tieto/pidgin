@@ -1,8 +1,3 @@
-/**
- * @file gtkconvwin.h GTK+ Conversation Window API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,17 +18,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGIN_CONVERSATION_WINDOW_H_
 #define _PIDGIN_CONVERSATION_WINDOW_H_
+/**
+ * SECTION:gtkconvwin
+ * @section_id: pidgin-gtkconvwin
+ * @short_description: <filename>gtkconvwin.h</filename>
+ * @title: Conversation Window API
+ */
 
 typedef struct _PidginWindowMenu   PidginWindowMenu;
 typedef struct _PidginWindow       PidginWindow;
 
 
 /**************************************************************************
- * @name Structures
+ * Structures
  **************************************************************************/
-/*@{*/
 
 struct _PidginWindowMenu
 {
@@ -74,15 +75,21 @@ struct _PidginWindowMenu
 };
 
 /**
+ * PidginWindow:
+ * @window:        The window.
+ * @notebook:      The notebook of conversations.
+ * @notebook_menu: The menu on the notebook.
+ * @clicked_tab:   The menu currently clicked.
+ *
  * A GTK+ representation of a graphical window containing one or more
  * conversations.
  */
 struct _PidginWindow
 {
-	GtkWidget *window;           /**< The window.                      */
-	GtkWidget *notebook;         /**< The notebook of conversations.   */
-	GtkWidget *notebook_menu;    /**< The menu on the notebook.        */
-	PidginConversation *clicked_tab; /**< The menu currently clicked.      */
+	GtkWidget *window;
+	GtkWidget *notebook;
+	GtkWidget *notebook_menu;
+	PidginConversation *clicked_tab;
 	GList *gtkconvs;
 
 	PidginWindowMenu *menu;
@@ -99,14 +106,11 @@ struct _PidginWindow
 	gint drag_leave_signal;
 };
 
-/*@}*/
-
 G_BEGIN_DECLS
 
 /**************************************************************************
- * @name GTK+ Conversation Window API
+ * GTK+ Conversation Window API
  **************************************************************************/
-/*@{*/
 
 PidginWindow * pidgin_conv_window_new(void);
 void pidgin_conv_window_destroy(PidginWindow *win);
@@ -131,12 +135,9 @@ PidginWindow *pidgin_conv_window_last_im(void);
 PidginWindow *pidgin_conv_window_first_chat(void);
 PidginWindow *pidgin_conv_window_last_chat(void);
 
-/*@}*/
-
 /**************************************************************************
- * @name GTK+ Conversation Placement API
+ * GTK+ Conversation Placement API
  **************************************************************************/
-/*@{*/
 
 typedef void (*PidginConvPlacementFunc)(PidginConversation *);
 
@@ -148,8 +149,6 @@ PidginConvPlacementFunc pidgin_conv_placement_get_fnc(const char *id);
 void pidgin_conv_placement_set_current_func(PidginConvPlacementFunc func);
 PidginConvPlacementFunc pidgin_conv_placement_get_current_func(void);
 void pidgin_conv_placement_place(PidginConversation *gtkconv);
-
-/*@}*/
 
 G_END_DECLS
 

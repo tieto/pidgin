@@ -1,8 +1,3 @@
-/**
- * @file gntpounce.c GNT Buddy Pounce API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -881,7 +876,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, message,
 									PURPLE_MESSAGE_SEND, time(NULL));
 
-			serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
+			purple_serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
 		}
 	}
 

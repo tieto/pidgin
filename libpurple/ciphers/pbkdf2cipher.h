@@ -1,8 +1,3 @@
-/**
- * @file pbkdf2.h Purple PBKDF2 Cipher
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -23,8 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef PURPLE_PBKDF2_CIPHER_H
 #define PURPLE_PBKDF2_CIPHER_H
+/**
+ * SECTION:pbkdf2cipher
+ * @section_id: libpurple-pbkdf2cipher
+ * @short_description: <filename>ciphers/pbkdf2cipher.h</filename>
+ * @title: PBKDF2 Cipher
+ */
 
 #include "cipher.h"
 

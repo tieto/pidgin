@@ -1,8 +1,3 @@
-/**
- * @file gtkprivacy.c GTK+ Privacy UI
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -234,7 +229,7 @@ type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
 		menu_entries[gtk_combo_box_get_active(combo)].type;
 
 	purple_account_set_privacy_type(dialog->account, new_type);
-	serv_set_permit_deny(purple_account_get_connection(dialog->account));
+	purple_serv_set_permit_deny(purple_account_get_connection(dialog->account));
 
 	gtk_widget_hide(dialog->allow_widget);
 	gtk_widget_hide(dialog->block_widget);

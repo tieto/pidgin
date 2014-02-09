@@ -28,45 +28,41 @@
 #define PURPLE_BUDDY_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY, PurpleBuddyPrivate))
 
-/** @copydoc _PurpleBuddyPrivate */
 typedef struct _PurpleBuddyPrivate      PurpleBuddyPrivate;
 
 #define PURPLE_CONTACT_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CONTACT, PurpleContactPrivate))
 
-/** @copydoc _PurpleContactPrivate */
 typedef struct _PurpleContactPrivate    PurpleContactPrivate;
 
 #define PURPLE_GROUP_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_GROUP, PurpleGroupPrivate))
 
-/** @copydoc _PurpleGroupPrivate */
 typedef struct _PurpleGroupPrivate      PurpleGroupPrivate;
 
 #define PURPLE_CHAT_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CHAT, PurpleChatPrivate))
 
-/** @copydoc _PurpleChatPrivate */
 typedef struct _PurpleChatPrivate       PurpleChatPrivate;
 
 /**************************************************************************/
 /* Private data                                                           */
 /**************************************************************************/
-/** Private data for a buddy. */
+/* Private data for a buddy. */
 struct _PurpleBuddyPrivate {
-	char *name;                  /**< The name of the buddy.                  */
-	char *local_alias;           /**< The user-set alias of the buddy         */
-	char *server_alias;          /**< The server-specified alias of the buddy.
-	                                  (i.e. MSN "Friendly Names")             */
-	void *proto_data;            /**< This allows the prpl to associate
-	                                  whatever data it wants with a buddy.    */
-	PurpleBuddyIcon *icon;       /**< The buddy icon.                         */
-	PurpleAccount *account;      /**< the account this buddy belongs to       */
-	PurplePresence *presence;    /**< Presense information of the buddy       */
-	PurpleMediaCaps media_caps;  /**< The media capabilities of the buddy.    */
+	char *name;                  /* The name of the buddy.                  */
+	char *local_alias;           /* The user-set alias of the buddy         */
+	char *server_alias;          /* The server-specified alias of the buddy.
+	                                (i.e. MSN "Friendly Names")             */
+	void *proto_data;            /* This allows the prpl to associate
+	                                whatever data it wants with a buddy.    */
+	PurpleBuddyIcon *icon;       /* The buddy icon.                         */
+	PurpleAccount *account;      /* the account this buddy belongs to       */
+	PurplePresence *presence;    /* Presense information of the buddy       */
+	PurpleMediaCaps media_caps;  /* The media capabilities of the buddy.    */
 
-	gboolean is_constructed;     /**< Indicates if the buddy has finished
-	                                  being constructed.                      */
+	gboolean is_constructed;     /* Indicates if the buddy has finished
+	                                being constructed.                      */
 };
 
 /* Buddy property enums */
@@ -83,11 +79,11 @@ enum
 	BUDDY_PROP_LAST
 };
 
-/** Private data for a contact */
+/* Private data for a contact */
 struct _PurpleContactPrivate {
-	char *alias;                  /**< The user-set alias of the contact  */
-	PurpleBuddy *priority_buddy;  /**< The "top" buddy for this contact   */
-	gboolean priority_valid;      /**< Is priority valid?                 */
+	char *alias;                  /* The user-set alias of the contact  */
+	PurpleBuddy *priority_buddy;  /* The "top" buddy for this contact   */
+	gboolean priority_valid;      /* Is priority valid?                 */
 };
 
 /* Contact property enums */
@@ -99,11 +95,11 @@ enum
 	CONTACT_PROP_LAST
 };
 
-/** Private data for a group */
+/* Private data for a group */
 struct _PurpleGroupPrivate {
-	char *name;               /**< The name of this group.                    */
-	gboolean is_constructed;  /**< Indicates if the group has finished being
-	                               constructed.                               */
+	char *name;               /* The name of this group.                    */
+	gboolean is_constructed;  /* Indicates if the group has finished being
+	                             constructed.                               */
 };
 
 /* Group property enums */
@@ -114,15 +110,15 @@ enum
 	GROUP_PROP_LAST
 };
 
-/** Private data for a chat node */
+/* Private data for a chat node */
 struct _PurpleChatPrivate {
-	char *alias;              /**< The display name of this chat.             */
-	PurpleAccount *account;   /**< The account this chat is attached to       */
-	GHashTable *components;   /**< the stuff the protocol needs to know to
-	                               join the chat                              */
+	char *alias;              /* The display name of this chat.             */
+	PurpleAccount *account;   /* The account this chat is attached to       */
+	GHashTable *components;   /* the stuff the protocol needs to know to
+	                             join the chat                              */
 
-	gboolean is_constructed;  /**< Indicates if the chat has finished being
-	                               constructed.                               */
+	gboolean is_constructed;  /* Indicates if the chat has finished being
+	                             constructed.                               */
 };
 
 /* Chat property enums */

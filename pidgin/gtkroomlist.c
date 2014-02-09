@@ -1,8 +1,3 @@
-/**
- * @file gtkroomlist.c GTK+ Room List UI
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -60,7 +55,7 @@ typedef struct _PidginRoomlist {
 	PidginRoomlistDialog *dialog;
 	GtkTreeStore *model;
 	GtkWidget *tree;
-	GHashTable *cats; /**< Meow. */
+	GHashTable *cats; /* Meow. */
 	gint num_rooms, total_rooms;
 	GtkWidget *tipwindow;
 	GdkRectangle tip_rect;

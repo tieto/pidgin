@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-gtklog">
+<title>Log signals</title>
+
+<refsect1 id="gtklogs.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="gtklogs-log-displaying">log-displaying</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="gtklogs.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="gtklogs-log-displaying" role="signal">
+ <title>The <literal>&quot;log-displaying&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PidginLogViewer *viewer,
+                                                        PurpleLog *log,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a log is being displayed.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>viewer</parameter>&#160;:</term>
+    <listitem><simpara>The log viewer.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>log</parameter>&#160;:</term>
+    <listitem><simpara>The log being displayed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

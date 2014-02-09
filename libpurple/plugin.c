@@ -156,7 +156,7 @@ find_loader_for_plugin(const PurplePlugin *plugin)
 
 #endif /* PURPLE_PLUGINS */
 
-/**
+/*
  * Negative if a before b, 0 if equal, positive if a after b.
  */
 static gint

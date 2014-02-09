@@ -1,8 +1,3 @@
-/*
- * @file gtkdnd-hints.c GTK+ Drag-and-Drop arrow hints
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -44,8 +39,8 @@ typedef struct
 
 } HintWindowInfo;
 
-/**
- * Info about each hint widget. See DndHintWindowId enum.
+/*
+ * Info about each hint widget. See PidginDndHintWindowId enum.
  */
 static HintWindowInfo hint_windows[] = {
 	{ NULL, "arrow-up.xpm",   -13/2,     0 },
@@ -194,16 +189,16 @@ dnd_hints_init(void)
 }
 
 void
-dnd_hints_hide_all(void)
+pidgin_dnd_hints_hide_all(void)
 {
 	gint i;
 
 	for (i = 0; hint_windows[i].filename != NULL; i++)
-		dnd_hints_hide(i);
+		pidgin_dnd_hints_hide(i);
 }
 
 void
-dnd_hints_hide(DndHintWindowId i)
+pidgin_dnd_hints_hide(PidginDndHintWindowId i)
 {
 	GtkWidget *w = hint_windows[i].widget;
 
@@ -212,7 +207,7 @@ dnd_hints_hide(DndHintWindowId i)
 }
 
 void
-dnd_hints_show(DndHintWindowId id, gint x, gint y)
+pidgin_dnd_hints_show(PidginDndHintWindowId id, gint x, gint y)
 {
 	GtkWidget *w;
 
@@ -229,8 +224,8 @@ dnd_hints_show(DndHintWindowId id, gint x, gint y)
 }
 
 void
-dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
-						DndHintPosition horiz, DndHintPosition vert)
+pidgin_dnd_hints_show_relative(PidginDndHintWindowId id, GtkWidget *widget,
+						PidginDndHintPosition horiz, PidginDndHintPosition vert)
 {
 	gint x1, x2, y1, y2;
 	gint x = 0, y = 0;
@@ -249,7 +244,7 @@ dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 		case HINT_POSITION_CENTER: x = (x1 + x2) / 2; break;
 		default:
 			/* should not happen */
-			g_warning("Invalid parameter to dnd_hints_show_relative");
+			g_warning("Invalid parameter to pidgin_dnd_hints_show_relative");
 			break;
 	}
 
@@ -260,10 +255,10 @@ dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 		case HINT_POSITION_CENTER: y = (y1 + y2) / 2; break;
 		default:
 			/* should not happen */
-			g_warning("Invalid parameter to dnd_hints_show_relative");
+			g_warning("Invalid parameter to pidgin_dnd_hints_show_relative");
 			break;
 	}
 
-	dnd_hints_show(id, x, y);
+	pidgin_dnd_hints_show(id, x, y);
 }
 

@@ -1,7 +1,3 @@
-/**
- * @file sound-theme.h  Purple Sound Theme Abstact Class API
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -25,15 +21,19 @@
 
 #ifndef PURPLE_SOUND_THEME_H
 #define PURPLE_SOUND_THEME_H
+/**
+ * SECTION:sound-theme
+ * @section_id: libpurple-sound-theme
+ * @short_description: <filename>sound-theme.h</filename>
+ * @title: Sound Theme Abstact Class
+ */
 
 #include <glib.h>
 #include <glib-object.h>
 #include "theme.h"
 #include "sound.h"
 
-/** @copydoc _PurpleSoundTheme */
 typedef struct _PurpleSoundTheme        PurpleSoundTheme;
-/** @copydoc _PurpleSoundThemeClass */
 typedef struct _PurpleSoundThemeClass   PurpleSoundThemeClass;
 
 #define PURPLE_TYPE_SOUND_THEME             (purple_sound_theme_get_type())
@@ -44,6 +44,8 @@ typedef struct _PurpleSoundThemeClass   PurpleSoundThemeClass;
 #define PURPLE_SOUND_THEME_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SOUND_THEME, PurpleSoundThemeClass))
 
 /**
+ * PurpleSoundTheme:
+ *
  * A purple sound theme.
  * This is an object for Purple to represent a sound theme.
  */
@@ -65,49 +67,54 @@ struct _PurpleSoundThemeClass
 };
 
 /**************************************************************************/
-/** @name Purple Sound Theme API                                          */
+/* Purple Sound Theme API                                                 */
 /**************************************************************************/
 G_BEGIN_DECLS
 
 /**
- * GObject foo.
- * @internal.
+ * purple_sound_theme_get_type:
+ *
+ * Returns: The #GType for a sound theme.
  */
 GType purple_sound_theme_get_type(void);
 
 /**
+ * purple_sound_theme_get_file:
+ * @theme: The theme.
+ * @event: The purple sound event to look up.
+ *
  * Returns a copy of the filename for the sound event.
  *
- * @param theme The theme.
- * @param event The purple sound event to look up.
- *
- * @returns The filename of the sound event.
+ * Returns: The filename of the sound event.
  */
 const gchar *purple_sound_theme_get_file(PurpleSoundTheme *theme,
 		const gchar *event);
 
 /**
+ * purple_sound_theme_get_file_full:
+ * @theme: The theme.
+ * @event: The purple sound event to look up
+ *
  * Returns a copy of the directory and filename for the sound event
  *
- * @param theme The theme.
- * @param event The purple sound event to look up
- *
- * @returns The directory + '/' + filename of the sound event.  This is
+ * Returns: The directory + '/' + filename of the sound event.  This is
  *          a newly allocated string that should be freed with g_free.
  */
 gchar *purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
 		const gchar *event);
 
 /**
- * Sets the filename for a given sound event
+ * purple_sound_theme_set_file:
+ * @theme:    The theme.
+ * @event:    the purple sound event to look up
+ * @filename: the name of the file to be used for the event
  *
- * @param theme    The theme.
- * @param event    the purple sound event to look up
- * @param filename the name of the file to be used for the event
+ * Sets the filename for a given sound event
  */
 void purple_sound_theme_set_file(PurpleSoundTheme *theme,
 		const gchar *event,
 		const gchar *filename);
 
 G_END_DECLS
+
 #endif /* PURPLE_SOUND_THEME_H */

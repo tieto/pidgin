@@ -51,7 +51,7 @@
 
 
 /**************************************************************************/
-/** @name Purple DBUS pointer registration mechanism                        */
+/* Purple DBUS pointer registration mechanism                             */
 /**************************************************************************/
 
 /*
@@ -79,7 +79,7 @@ gboolean purple_dbus_is_owner(void)
 	return(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER == dbus_request_name_reply);
 }
 
-/**
+/*
  * This function initializes the pointer-id traslation system.  It
  * creates the three above hashtables and defines parents of some types.
  */
@@ -179,7 +179,7 @@ purple_dbus_id_to_pointer_error(gint id, PurpleDBusType *type,
 
 
 /**************************************************************************/
-/** @name Modified versions of some DBus functions                        */
+/* Modified versions of some DBus functions                               */
 /**************************************************************************/
 
 dbus_bool_t
@@ -278,10 +278,10 @@ purple_dbus_message_iter_get_args_valist(DBusMessageIter *iter,
 
 
 /**************************************************************************/
-/** @name Useful functions                                                */
+/* Useful functions                                                       */
 /**************************************************************************/
 
-const char *empty_to_null(const char *str)
+const char *purple_emptystr_to_null(const char *str)
 {
 	if (str == NULL || str[0] == 0)
 		return NULL;
@@ -290,7 +290,7 @@ const char *empty_to_null(const char *str)
 }
 
 const char *
-null_to_empty(const char *s)
+purple_null_to_emptystr(const char *s)
 {
 	if (s)
 		return s;
@@ -423,7 +423,7 @@ purple_dbus_dispatch_cb(DBusConnection *connection,
 
 	bindings = (PurpleDBusBinding*) user_data;
 
-	if (!dbus_message_has_path(message, DBUS_PATH_PURPLE))
+	if (!dbus_message_has_path(message, PURPLE_DBUS_PATH))
 		return FALSE;
 
 	name = dbus_message_get_member(message);
@@ -487,10 +487,10 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 	str = g_string_sized_new(0x1000); /* TODO: why this size? */
 
 	g_string_append(str, "<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>\n");
-	g_string_append_printf(str, "<node name='%s'>\n", DBUS_PATH_PURPLE);
+	g_string_append_printf(str, "<node name='%s'>\n", PURPLE_DBUS_PATH);
 	g_string_append(str, "  <interface name='org.freedesktop.DBus.Introspectable'>\n    <method name='Introspect'>\n      <arg name='data' direction='out' type='s'/>\n    </method>\n  </interface>\n\n");
 
-	g_string_append_printf(str, "  <interface name='%s'>\n", DBUS_INTERFACE_PURPLE);
+	g_string_append_printf(str, "  <interface name='%s'>\n", PURPLE_DBUS_INTERFACE);
 
 	bindings_list = NULL;
 	purple_signal_emit(purple_dbus_get_handle(), "dbus-introspect", &bindings_list);
@@ -558,7 +558,7 @@ purple_dbus_dispatch(DBusConnection *connection,
 		return DBUS_HANDLER_RESULT_HANDLED;
 
 	if (dbus_message_is_method_call(message, DBUS_INTERFACE_INTROSPECTABLE, "Introspect") &&
-			dbus_message_has_path(message, DBUS_PATH_PURPLE))
+			dbus_message_has_path(message, PURPLE_DBUS_PATH))
 	{
 		DBusMessage *reply;
 		reply = purple_dbus_introspect(message);
@@ -604,7 +604,7 @@ purple_dbus_dispatch_init(void)
 	dbus_connection_set_exit_on_disconnect (purple_dbus_connection, FALSE);
 
 	if (!dbus_connection_register_object_path(purple_dbus_connection,
-			DBUS_PATH_PURPLE, &vtable, NULL))
+			PURPLE_DBUS_PATH, &vtable, NULL))
 	{
 		init_error = g_strdup_printf(N_("Failed to get name: %s"), error.name);
 		dbus_error_free(&error);
@@ -612,7 +612,7 @@ purple_dbus_dispatch_init(void)
 	}
 
 	dbus_request_name_reply = dbus_bus_request_name(purple_dbus_connection,
-			DBUS_SERVICE_PURPLE, 0, &error);
+			PURPLE_DBUS_SERVICE, 0, &error);
 
 	if (dbus_error_is_set(&error))
 	{
@@ -642,7 +642,7 @@ purple_dbus_dispatch_init(void)
 
 
 /**************************************************************************/
-/** @name Signals                                                         */
+/* Signals                                                                */
 /**************************************************************************/
 
 
@@ -720,7 +720,7 @@ purple_dbus_message_append_values(DBusMessageIter *iter,
 			dbus_message_iter_append_basic(iter, DBUS_TYPE_BOOLEAN, &xboolean);
 			break;
 		case G_TYPE_STRING:
-			str = null_to_empty(my_arg(char*));
+			str = purple_null_to_emptystr(my_arg(char*));
 			if (!g_utf8_validate(str, -1, NULL)) {
 				gchar *tmp;
 				purple_debug_error("dbus", "Invalid UTF-8 string passed to signal, emitting salvaged string!\n");
@@ -785,7 +785,7 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 		return;
 
 	newname = purple_dbus_convert_signal_name(name);
-	signal = dbus_message_new_signal(DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, newname);
+	signal = dbus_message_new_signal(PURPLE_DBUS_PATH, PURPLE_DBUS_INTERFACE, newname);
 	dbus_message_iter_init_append(signal, &iter);
 
 	if (purple_dbus_message_append_values(&iter, num_values, types, vargs))
@@ -838,8 +838,8 @@ purple_dbus_uninit(void)
 		return;
 
 	dbus_error_init(&error);
-	dbus_connection_unregister_object_path(purple_dbus_connection, DBUS_PATH_PURPLE);
-	dbus_bus_release_name(purple_dbus_connection, DBUS_SERVICE_PURPLE, &error);
+	dbus_connection_unregister_object_path(purple_dbus_connection, PURPLE_DBUS_PATH);
+	dbus_bus_release_name(purple_dbus_connection, PURPLE_DBUS_SERVICE, &error);
 	dbus_error_free(&error);
 	dbus_connection_unref(purple_dbus_connection);
 	purple_dbus_connection = NULL;

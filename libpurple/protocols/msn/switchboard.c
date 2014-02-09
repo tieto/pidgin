@@ -311,7 +311,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 			swboard->chat_id = msn_switchboard_get_chat_id();
 			swboard->flag |= MSN_SB_FLAG_IM;
-			swboard->conv = PURPLE_CONVERSATION(serv_got_joined_chat(purple_account_get_connection(account),
+			swboard->conv = PURPLE_CONVERSATION(purple_serv_got_joined_chat(purple_account_get_connection(account),
 												 swboard->chat_id,
 												 "MSN Chat"));
 
@@ -750,7 +750,7 @@ out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = cmdproc->data;
 
 	if (swboard->current_users > 1)
-		serv_got_chat_left(gc, swboard->chat_id);
+		purple_serv_got_chat_left(gc, swboard->chat_id);
 
 	msn_switchboard_disconnect(swboard);
 }
@@ -833,10 +833,10 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
 		 PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
-		serv_got_chat_in(gc, swboard->chat_id, passport, 0, image_msg,
+		purple_serv_got_chat_in(gc, swboard->chat_id, passport, 0, image_msg,
 						 time(NULL));
 	else
-		serv_got_im(gc, passport, image_msg, 0, time(NULL));
+		purple_serv_got_im(gc, passport, image_msg, 0, time(NULL));
 
 	purple_imgstore_unref_by_id(imgid);
 	g_free(image_msg);

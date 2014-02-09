@@ -1,8 +1,3 @@
-/**
- * @file backend-fs2.h Farsight 2 backend for media API
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -24,13 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#ifndef _MEDIA_BACKEND_FS2_H_
+#define _MEDIA_BACKEND_FS2_H_
 /*
+ * SECTION:backend-fs2
+ * @section_id: libpurple-backend-fs2
+ * @short_description: <filename>media/backend-fs2.h</filename>
+ * @title: Farsight 2 backend for media API
+ *
  * This file should not yet be part of libpurple's API.
  * It should remain internal only for now.
  */
-
-#ifndef _MEDIA_BACKEND_FS2_H_
-#define _MEDIA_BACKEND_FS2_H_
 
 #include <glib-object.h>
 
@@ -43,13 +42,19 @@ G_BEGIN_DECLS
 #define PURPLE_MEDIA_BACKEND_FS2_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_BACKEND_FS2, PurpleMediaBackendFs2))
 #define PURPLE_MEDIA_BACKEND_FS2_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_BACKEND_FS2, PurpleMediaBackendFs2))
 
-/** An opaque structure representing the Farsight 2 media backend. */
+/**
+ * PurpleMediaBackendFs2:
+ *
+ * An opaque structure representing the Farsight 2 media backend.
+ */
 typedef struct _PurpleMediaBackendFs2 PurpleMediaBackendFs2;
 
 /**
+ * purple_media_backend_fs2_get_type:
+ *
  * Gets the type of the Farsight 2 media backend object.
  *
- * @return The Farsight 2 media backend's GType
+ * Returns: The Farsight 2 media backend's GType
  */
 GType purple_media_backend_fs2_get_type(void);
 

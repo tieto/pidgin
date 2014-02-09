@@ -333,7 +333,7 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 			}
 
 			/* push message to pidgin */
-			serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
+			purple_serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
 			g_string_free( msg, TRUE );
 			msg = NULL;
 
@@ -357,7 +357,7 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 		ch[pos] = '\n';
 
 		/* push message to pidgin */
-		serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
+		purple_serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
 		g_string_free( msg, TRUE );
 		msg = NULL;
 	}
@@ -430,7 +430,7 @@ void mxit_show_message( struct RXMsgData* mx )
 	}
 	else {
 		/* this is a multimx message */
-		serv_got_chat_in( mx->session->con, mx->chatid, mx->from, mx->flags, mx->msg->str, mx->timestamp);
+		purple_serv_got_chat_in( mx->session->con, mx->chatid, mx->from, mx->flags, mx->msg->str, mx->timestamp);
 	}
 
 	/* freeup resource */

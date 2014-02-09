@@ -1,8 +1,3 @@
-/**
- * @file gtkpounce.c GTK+ Buddy Pounce API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -46,7 +41,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
-/**
+/*
  * These are used for the GtkTreeView when you're scrolling through
  * all your saved pounces.
  */
@@ -304,7 +299,7 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 		events |= PURPLE_POUNCE_MESSAGE_RECEIVED;
 
 	/* Data fields */
-	message = gtk_webview_get_body_html(GTK_WEBVIEW(dialog->send_msg_entry));
+	message = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(dialog->send_msg_entry));
 	command = gtk_entry_get_text(GTK_ENTRY(dialog->exec_cmd_entry));
 	sound   = gtk_entry_get_text(GTK_ENTRY(dialog->play_sound_entry));
 	reason  = gtk_entry_get_text(GTK_ENTRY(dialog->popup_entry));
@@ -490,7 +485,7 @@ static void
 reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 {
 	PurpleAccount *account = pidgin_account_option_menu_get_selected(dialog->account_menu);
-	gtk_webview_setup_entry(GTK_WEBVIEW(dialog->send_msg_entry),
+	pidgin_webview_setup_entry(PIDGIN_WEBVIEW(dialog->send_msg_entry),
 			(account && purple_account_get_connection(account)) ? purple_connection_get_flags(purple_account_get_connection(account)) : PURPLE_CONNECTION_FLAG_HTML);
 }
 
@@ -943,7 +938,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 													  "send-message",
 													  "message")) != NULL)
 		{
-			gtk_webview_append_html(GTK_WEBVIEW(dialog->send_msg_entry), value);
+			pidgin_webview_append_html(PIDGIN_WEBVIEW(dialog->send_msg_entry), value);
 		}
 
 		if ((value = purple_pounce_action_get_attribute(cur_pounce,
@@ -1492,7 +1487,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, message,
 									PURPLE_MESSAGE_SEND, time(NULL));
 
-			serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
+			purple_serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
 		}
 	}
 

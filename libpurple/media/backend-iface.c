@@ -1,8 +1,3 @@
-/**
- * @file backend-iface.c Interface for media backend
- * @ingroup core
- */
-
 /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous

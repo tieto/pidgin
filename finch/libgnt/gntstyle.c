@@ -1,4 +1,4 @@
-/**
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -48,7 +48,13 @@ const char *gnt_style_get(GntStyle style)
 
 char *gnt_style_get_from_name(const char *group, const char *key)
 {
-	const char *prg = g_get_prgname();
+	const char *prg;
+
+	/* gkfile is NULL when run by gtkdoc-scanobj or g-ir-scanner */
+	if (!gkfile)
+		return NULL;
+
+	prg = g_get_prgname();
 	if ((group == NULL || *group == '\0') && prg &&
 			g_key_file_has_group(gkfile, prg))
 		group = prg;
@@ -201,6 +207,10 @@ void gnt_style_read_actions(GType type, GntBindableClass *klass)
 {
 	char *name;
 	GError *error = NULL;
+
+	/* gkfile is NULL when run by gtkdoc-scanobj or g-ir-scanner */
+	if (!gkfile)
+		return;
 
 	name = g_strdup_printf("%s::binding", g_type_name(type));
 

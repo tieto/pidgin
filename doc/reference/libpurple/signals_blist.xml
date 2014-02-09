@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding="ISO-8859-1"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<chapter id="chapter-signals-blist">
+<title>Buddy List signals</title>
+
+<refsect1 id="blist.signals" role="signal_proto">
+<title role="signal_proto.title">List of signals</title>
+<synopsis>
+  &quot;<link linkend="blist-buddy-status-changed">buddy-status-changed</link>&quot;
+  &quot;<link linkend="blist-buddy-idle-changed">buddy-idle-changed</link>&quot;
+  &quot;<link linkend="blist-buddy-signed-on">buddy-signed-on</link>&quot;
+  &quot;<link linkend="blist-buddy-signed-off">buddy-signed-off</link>&quot;
+  &quot;<link linkend="blist-update-idle">update-idle</link>&quot;
+  &quot;<link linkend="blist-blist-node-extended-menu">blist-node-extended-menu</link>&quot;
+  &quot;<link linkend="blist-buddy-icon-changed">buddy-icon-changed</link>&quot;
+  &quot;<link linkend="blist-blist-node-aliased">blist-node-aliased</link>&quot;
+  &quot;<link linkend="blist-buddy-caps-changed">buddy-caps-changed</link>&quot;
+  &quot;<link linkend="blist-ui-caps-changed">ui-caps-changed</link>&quot;
+</synopsis>
+</refsect1>
+
+<refsect1 id="blist.signal-details" role="signals">
+<title role="signals.title">Signal details</title>
+
+<refsect2 id="blist-buddy-status-changed" role="signal">
+ <title>The <literal>&quot;buddy-status-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBuddy *buddy,
+                                                        PurpleStatus *old_status,
+                                                        PurpleStatus *status,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a buddy on your buddy list goes away.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>buddy</parameter>&#160;:</term>
+    <listitem><simpara>The buddy whose status changed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>old_status</parameter>&#160;:</term>
+    <listitem><simpara>The status that the buddy just changed from.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>status</parameter>&#160;:</term>
+    <listitem><simpara>The status that the buddy just changed to.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="blist-buddy-idle-changed" role="signal">
+ <title>The <literal>&quot;buddy-idle-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBuddy *buddy,
+                                                        gboolean old_idle,
+                                                        gboolean idle,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a buddy on your buddy list becomes idle.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>buddy</parameter>&#160;:</term>
+    <listitem><simpara>The buddy whose idle status changed.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>old_idle</parameter>&#160;:</term>
+    <listitem><simpara>Whether the buddy was idle.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>idle</parameter>&#160;:</term>
+    <listitem><simpara>Whether the buddy is currently idle.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="blist-buddy-signed-on" role="signal">
+ <title>The <literal>&quot;buddy-signed-on&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBuddy *buddy,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a buddy on your buddy list signs on.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>buddy</parameter>&#160;:</term>
+    <listitem><simpara>The buddy that signed on.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="blist-buddy-signed-off" role="signal">
+ <title>The <literal>&quot;buddy-signed-off&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBuddy *buddy,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a buddy on your buddy list signs off.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>buddy</parameter>&#160;:</term>
+    <listitem><simpara>The buddy that signed off.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="blist-update-idle" role="signal">
+ <title>The <literal>&quot;update-idle&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (gpointer user_data)
+</programlisting>
+  <para>
+Emitted when the buddy list is refreshed and the idle times are updated.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="blist-blist-node-extended-menu" role="signal">
+ <title>The <literal>&quot;blist-node-extended-menu&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBlistNode *node,
+                                                        GList **menu,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a buddlist menu is being constructed <literal>menu</literal> is a pointer to a GList of PurpleBlistNodeAction's allowing a plugin to add menu items.
+  </para>
+</refsect2>
+
+<refsect2 id="blist-blist-node-added" role="signal">
+ <title>The <literal>&quot;blist-node-added&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBlistNode *node,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a new blist node is added to the buddy list.
+  </para>
+</refsect2>
+
+<refsect2 id="blist-blist-node-removed" role="signal">
+ <title>The <literal>&quot;blist-node-removed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBlistNode *node,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a blist node is removed from the buddy list.
+  </para>
+</refsect2>
+
+<refsect2 id="blist-buddy-icon-changed" role="signal">
+ <title>The <literal>&quot;buddy-icon-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBuddy *buddy,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a buddy's icon is set.
+  </para>
+</refsect2>
+
+<refsect2 id="blist-blist-node-aliased" role="signal">
+ <title>The <literal>&quot;blist-node-aliased&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBlistNode *node,
+                                                        const char *old_alias,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when a blist node (buddy, chat, or contact) is aliased.
+  </para>
+</refsect2>
+
+<refsect2 id="blist-buddy-caps-changed" role="signal">
+ <title>The <literal>&quot;buddy-caps-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleBuddy *buddy,
+                                                        PurpleMediaCaps newcaps,
+                                                        PurpleMediaCaps oldcaps,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when updating a buddy's media capabilities.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>buddy</parameter>&#160;:</term>
+    <listitem><simpara>The buddy.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>newcaps</parameter>&#160;:</term>
+    <listitem><simpara>.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>oldcaps</parameter>&#160;:</term>
+    <listitem><simpara>.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+<refsect2 id="blist-ui-caps-changed" role="signal">
+ <title>The <literal>&quot;ui-caps-changed&quot;</literal> signal</title>
+<programlisting>
+void                user_function                      (PurpleMediaCaps newcaps,
+                                                        PurpleMediaCaps oldcaps,
+                                                        gpointer user_data)
+</programlisting>
+  <para>
+Emitted when updating the media capabilities of the UI.
+  </para>
+  <variablelist role="params">
+  <varlistentry>
+    <term><parameter>newcaps</parameter>&#160;:</term>
+    <listitem><simpara>.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>oldcaps</parameter>&#160;:</term>
+    <listitem><simpara>.</simpara></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><parameter>user_data</parameter>&#160;:</term>
+    <listitem><simpara>user data set when the signal handler was connected.</simpara></listitem>
+  </varlistentry>
+  </variablelist>
+</refsect2>
+
+</refsect1>
+
+</chapter>

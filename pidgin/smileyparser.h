@@ -20,10 +20,20 @@
  *
  */
 
+#ifndef _PIDGIN_SMILEYPARSER_H_
+#define _PIDGIN_SMILEYPARSER_H_
+/**
+ * SECTION:smileyparser
+ * @section_id: pidgin-smileyparser
+ * @short_description: <filename>smileyparser.h</filename>
+ * @title: Smiley Parser
+ */
+
 G_BEGIN_DECLS
 
 char *
-smiley_parse_markup(const char *markup, const char *sml);
+pidgin_smiley_parse_markup(const char *markup, const char *sml);
 
 G_END_DECLS
 
+#endif /* _PIDGIN_SMILEYPARSER_H_ */

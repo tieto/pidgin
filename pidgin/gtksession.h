@@ -1,8 +1,3 @@
-/**
- * @file gtksession.h X Windows session management API
- * @ingroup pidgin
- */
-
 /* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
@@ -23,35 +18,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _PIDGINSESSION_H_
 #define _PIDGINSESSION_H_
+/**
+ * SECTION:gtksession
+ * @section_id: pidgin-gtksession
+ * @short_description: <filename>gtksession.h</filename>
+ * @title: X Windows Session Management
+ */
 
 G_BEGIN_DECLS
 
 /**************************************************************************/
-/** @name X Windows session subsystem                                     */
+/* X Windows session subsystem                                            */
 /**************************************************************************/
-/*@{*/
 
 /**
+ * pidgin_session_init:
+ * @argv0:       The first argument passed into the program.  This
+ *                    will be the name of the executable, e.g. 'purple'
+ * @previous_id: An optional session ID to use.  This can be NULL.
+ * @config_dir:  The path to the configuration directory used by
+ *                    this instance of this program, e.g. '/home/user/.purple'
+ *
  * Register this instance of Pidgin with the user's current session
  * manager.
- *
- * @param argv0       The first argument passed into the program.  This
- *                    will be the name of the executable, e.g. 'purple'
- * @param previous_id An optional session ID to use.  This can be NULL.
- * @param config_dir  The path to the configuration directory used by
- *                    this instance of this program, e.g. '/home/user/.purple'
  */
 void pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
 
 /**
+ * pidgin_session_end:
+ *
  * Unregister this instance of Pidgin with the user's current session
  * manager.
  */
 void pidgin_session_end(void);
-
-/*@}*/
 
 G_END_DECLS
 

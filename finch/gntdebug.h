@@ -1,8 +1,3 @@
-/**
- * @file gntdebug.h GNT Debug API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
@@ -23,38 +18,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
 #ifndef _GNT_DEBUG_H
 #define _GNT_DEBUG_H
+/**
+ * SECTION:gntdebug
+ * @section_id: finch-gntdebug
+ * @short_description: <filename>gntdebug.h</filename>
+ * @title: Debug API
+ */
 
 #include "debug.h"
 
 /**********************************************************************
- * @name GNT Debug API
+ * GNT Debug API
  **********************************************************************/
-/*@{*/
 
 /**
+ * finch_debug_get_ui_ops:
+ *
  * Get the ui-functions.
  *
- * @return The PurpleDebugUiOps structure populated with the appropriate functions.
+ * Returns: The PurpleDebugUiOps structure populated with the appropriate functions.
  */
 PurpleDebugUiOps *finch_debug_get_ui_ops(void);
 
 /**
+ * finch_debug_init:
+ *
  * Perform necessary initializations.
  */
 void finch_debug_init(void);
 
 /**
+ * finch_debug_uninit:
+ *
  * Perform necessary uninitializations.
  */
 void finch_debug_uninit(void);
 
 /**
+ * finch_debug_window_show:
+ *
  * Show the debug window.
  */
 void finch_debug_window_show(void);
-
-/*@}*/
 
 #endif

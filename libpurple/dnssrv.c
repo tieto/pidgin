@@ -1,7 +1,3 @@
-/**
- * @file dnssrv.c
- */
-
 /* purple
  *
  * Copyright (C) 2005 Thomas Butter <butter@uni-mannheim.de>
@@ -95,7 +91,7 @@ typedef struct _PurpleSrvResponseContainer {
 
 static gboolean purple_srv_txt_query_ui_resolve(PurpleSrvTxtQueryData *query_data);
 
-/**
+/*
  * Sort by priority, then by weight.  Strictly numerically--no
  * randomness.  Technically we only need to sort by pref and then
  * make sure any records with weight 0 are at the beginning of
@@ -119,16 +115,17 @@ responsecompare(gconstpointer ar, gconstpointer br)
 	return 1;
 }
 
-/**
+/*
+ * select_random_response:
+ * @list: The list of PurpleSrvResponseContainer.  This function
+ *        removes a node from this list and returns the new list.
+ * @container_ptr: The PurpleSrvResponseContainer that was chosen
+ *        will be returned here.
+ *
  * Iterate over a list of PurpleSrvResponseContainer making the sum
  * the running total of the sums.  Select a random integer in the range
  * (1, sum+1), then find the first element greater than or equal to the
  * number selected.  From RFC 2782.
- *
- * @param list The list of PurpleSrvResponseContainer.  This function
- *        removes a node from this list and returns the new list.
- * @param container_ptr The PurpleSrvResponseContainer that was chosen
- *        will be returned here.
  */
 static GList *
 select_random_response(GList *list, PurpleSrvResponseContainer **container_ptr)
@@ -169,7 +166,7 @@ select_random_response(GList *list, PurpleSrvResponseContainer **container_ptr)
 	return g_list_delete_link(list, cur);
 }
 
-/**
+/*
  * Reorder a GList of PurpleSrvResponses that have the same priority
  * (aka "pref").
  */
@@ -208,12 +205,14 @@ srv_reorder(GList *list, int num)
 	}
 }
 
-/**
+/*
+ * purple_srv_sort:
+ * @list: The original list, resorted
+ *
  * Sorts a GList of PurpleSrvResponses according to the
  * algorithm described in RFC 2782.
  *
- * @param response GList of PurpleSrvResponse's
- * @param The original list, resorted
+ * Returns: GList of PurpleSrvResponse's
  */
 static GList *
 purple_srv_sort(GList *list)
@@ -581,7 +580,7 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 
 #else /* _WIN32 */
 
-/** The Jabber Server code was inspiration for parts of this. */
+/* The Jabber Server code was inspiration for parts of this. */
 
 static gboolean
 res_main_thread_cb(gpointer data)

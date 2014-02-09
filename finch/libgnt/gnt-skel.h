@@ -1,7 +1,3 @@
-/**
- * @file gnt-skel.h -skel API
- * @ingroup gnt
- */
 /*
  * GNT - The GLib Ncurses Toolkit
  *
@@ -26,6 +22,12 @@
 
 #ifndef GNT_SKEL_H
 #define GNT_SKEL_H
+/*
+ * SECTION:gnt-skel
+ * @section_id: libgnt-gnt-skel
+ * @short_description: <filename>gnt-skel.h</filename>
+ * @title: Skel API
+ */
 
 #include "gntwidget.h"
 #include "gnt.h"
@@ -52,6 +54,7 @@ struct _GntSkelClass
 {
 	GntWidgetClass parent;
 
+	/*< private >*/
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
@@ -60,18 +63,8 @@ struct _GntSkelClass
 
 G_BEGIN_DECLS
 
-/**
- *
- *
- * @return
- */
 GType gnt_skel_get_type(void);
 
-/**
- *
- *
- * @return
- */
 GntWidget * gnt_skel_new();
 
 G_END_DECLS

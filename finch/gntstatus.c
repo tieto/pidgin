@@ -1,8 +1,3 @@
-/**
- * @file gntstatus.c GNT Status API
- * @ingroup finch
- */
-
 /* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
