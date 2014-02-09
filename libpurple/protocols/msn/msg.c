@@ -702,7 +702,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
 								swboard->current_users);
 
-			serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
+			purple_serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
 							 time(NULL));
 			if (swboard->conv == NULL)
 			{
@@ -713,7 +713,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		else if (!g_str_equal(passport, purple_account_get_username(purple_connection_get_account(gc))))
 		{
 			/* Don't im ourselves ... */
-			serv_got_im(gc, passport, body_final, 0, time(NULL));
+			purple_serv_got_im(gc, passport, body_final, 0, time(NULL));
 			if (swboard->conv == NULL)
 			{
 				swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(
@@ -723,7 +723,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 	} else {
-		serv_got_im(gc, passport, body_final, 0, time(NULL));
+		purple_serv_got_im(gc, passport, body_final, 0, time(NULL));
 	}
 
 	g_free(body_final);
@@ -746,12 +746,12 @@ msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		if (swboard->current_users == 1)
 		{
-			serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
+			purple_serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
 							PURPLE_IM_TYPING);
 		}
 
 	} else {
-		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
+		purple_serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
 						PURPLE_IM_TYPING);
 	}
 }
@@ -795,12 +795,12 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 	}
 
 	if (chat)
-		serv_got_chat_in(pc,
+		purple_serv_got_chat_in(pc,
 		                 purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(swboard->conv)),
 		                 who, PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM, str,
 		                 time(NULL));
 	else
-		serv_got_im(pc, who, str, PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM,
+		purple_serv_got_im(pc, who, str, PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM,
 		            time(NULL));
 	g_free(str);
 

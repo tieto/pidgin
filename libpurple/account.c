@@ -695,7 +695,7 @@ set_user_info_cb(PurpleAccount *account, const char *user_info)
 
 	purple_account_set_user_info(account, user_info);
 	gc = purple_account_get_connection(account);
-	serv_set_info(gc, user_info);
+	purple_serv_set_info(gc, user_info);
 }
 
 void
@@ -1606,7 +1606,7 @@ purple_account_privacy_permit_add(PurpleAccount *account, const char *who,
 	priv->permit = g_slist_append(priv->permit, name);
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_add_permit(purple_account_get_connection(account), who);
+		purple_serv_add_permit(purple_account_get_connection(account), who);
 
 	if (ui_ops != NULL && ui_ops->permit_added != NULL)
 		ui_ops->permit_added(account, who);
@@ -1659,7 +1659,7 @@ purple_account_privacy_permit_remove(PurpleAccount *account, const char *who,
 	priv->permit = g_slist_delete_link(priv->permit, l);
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_rem_permit(purple_account_get_connection(account), who);
+		purple_serv_rem_permit(purple_account_get_connection(account), who);
 
 	if (ui_ops != NULL && ui_ops->permit_removed != NULL)
 		ui_ops->permit_removed(account, who);
@@ -1710,7 +1710,7 @@ purple_account_privacy_deny_add(PurpleAccount *account, const char *who,
 	priv->deny = g_slist_append(priv->deny, name);
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_add_deny(purple_account_get_connection(account), who);
+		purple_serv_add_deny(purple_account_get_connection(account), who);
 
 	if (ui_ops != NULL && ui_ops->deny_added != NULL)
 		ui_ops->deny_added(account, who);
@@ -1761,7 +1761,7 @@ purple_account_privacy_deny_remove(PurpleAccount *account, const char *who,
 	priv->deny = g_slist_delete_link(priv->deny, l);
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_rem_deny(purple_account_get_connection(account), name);
+		purple_serv_rem_deny(purple_account_get_connection(account), name);
 
 	if (ui_ops != NULL && ui_ops->deny_removed != NULL)
 		ui_ops->deny_removed(account, who);
@@ -1854,7 +1854,7 @@ purple_account_privacy_allow(PurpleAccount *account, const char *who)
 
 	/* Notify the server if the privacy setting was changed */
 	if (type != purple_account_get_privacy_type(account) && purple_account_is_connected(account))
-		serv_set_permit_deny(purple_account_get_connection(account));
+		purple_serv_set_permit_deny(purple_account_get_connection(account));
 }
 
 void
@@ -1900,7 +1900,7 @@ purple_account_privacy_deny(PurpleAccount *account, const char *who)
 
 	/* Notify the server if the privacy setting was changed */
 	if (type != purple_account_get_privacy_type(account) && purple_account_is_connected(account))
-		serv_set_permit_deny(purple_account_get_connection(account));
+		purple_serv_set_permit_deny(purple_account_get_connection(account));
 }
 
 GSList *

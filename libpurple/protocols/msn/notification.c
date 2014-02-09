@@ -1241,7 +1241,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 			}
 		}
 	} else {
-		serv_got_im(gc, who, text, 0, time(NULL));
+		purple_serv_got_im(gc, who, text, 0, time(NULL));
 	}
 
 	g_free(text);

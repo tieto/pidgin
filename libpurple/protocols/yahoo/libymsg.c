@@ -898,9 +898,9 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		}
 
 		if (stat && *stat == '1')
-			serv_got_typing(gc, fed_from, 0, PURPLE_IM_TYPING);
+			purple_serv_got_typing(gc, fed_from, 0, PURPLE_IM_TYPING);
 		else
-			serv_got_typing_stopped(gc, fed_from);
+			purple_purple_serv_got_typing_stopped(gc, fed_from);
 
 		if (fed_from != from)
 			g_free(fed_from);
@@ -1016,7 +1016,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 	}
 
 	m = yahoo_string_decode(gc, sms->msg, sms->utf8);
-	serv_got_im(gc, sms->from, m, 0, sms->time);
+	purple_serv_got_im(gc, sms->from, m, 0, sms->time);
 
 	g_free(m);
 	g_free(sms->from);
@@ -1211,7 +1211,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		m2 = yahoo_codes_to_html(m);
 		g_free(m);
 
-		serv_got_im(gc, im->fed_from, m2, 0, im->time);
+		purple_serv_got_im(gc, im->fed_from, m2, 0, im->time);
 		g_free(m2);
 
 		/* Official clients don't share buddy images with federated buddies */
@@ -2215,7 +2215,7 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
-	serv_add_deny(purple_account_get_connection(account), name);
+	purple_serv_add_deny(purple_account_get_connection(account), name);
 
 	g_free(name);
 }
@@ -3152,10 +3152,10 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 		char *buf = g_strdup_printf(_("[ Audible %s/%s/%s.swf ] %s"), YAHOO_AUDIBLE_URL, audible_locale[1], id, msg);
 		g_strfreev(audible_locale);
 
-		serv_got_im(gc, who, buf, 0, time(NULL));
+		purple_serv_got_im(gc, who, buf, 0, time(NULL));
 		g_free(buf);
 	} else
-		serv_got_im(gc, who, msg, 0, time(NULL));
+		purple_serv_got_im(gc, who, msg, 0, time(NULL));
 }
 
 static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)

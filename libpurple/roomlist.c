@@ -495,7 +495,7 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 		g_hash_table_replace(components, f->name, j->data);
 	}
 
-	serv_join_chat(gc, components);
+	purple_serv_join_chat(gc, components);
 
 	g_hash_table_destroy(components);
 }

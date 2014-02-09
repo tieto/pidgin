@@ -124,7 +124,7 @@ typedef struct {
 	gchar *full_url;
 } UPnPDiscoveryData;
 
-struct _UPnPMappingAddRemove
+struct _PurpleUPnPMappingAddRemove
 {
 	unsigned short portmap;
 	gchar protocol[4];
@@ -149,7 +149,7 @@ static void lookup_internal_ip(void);
 static gboolean
 fire_ar_cb_async_and_free(gpointer data)
 {
-	UPnPMappingAddRemove *ar = data;
+	PurpleUPnPMappingAddRemove *ar = data;
 	if (ar) {
 		if (ar->cb)
 			ar->cb(ar->success, ar->cb_data);
@@ -809,7 +809,7 @@ static void
 done_port_mapping_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer user_data)
 {
-	UPnPMappingAddRemove *ar = user_data;
+	PurpleUPnPMappingAddRemove *ar = user_data;
 
 	gboolean success = TRUE;
 
@@ -830,7 +830,7 @@ done_port_mapping_cb(PurpleHttpConnection *http_conn,
 static void
 do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 {
-	UPnPMappingAddRemove *ar = data;
+	PurpleUPnPMappingAddRemove *ar = data;
 
 	if (has_control_mapping) {
 		gchar action_name[25];
@@ -872,14 +872,14 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 static gboolean
 fire_port_mapping_failure_cb(gpointer data)
 {
-	UPnPMappingAddRemove *ar = data;
+	PurpleUPnPMappingAddRemove *ar = data;
 
 	ar->tima = 0;
 	do_port_mapping_cb(FALSE, data);
 	return FALSE;
 }
 
-void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *ar)
+void purple_upnp_cancel_port_mapping(PurpleUPnPMappingAddRemove *ar)
 {
 	GSList *l;
 
@@ -908,13 +908,13 @@ void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *ar)
 	g_free(ar);
 }
 
-UPnPMappingAddRemove *
+PurpleUPnPMappingAddRemove *
 purple_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 		PurpleUPnPCallback cb, gpointer cb_data)
 {
-	UPnPMappingAddRemove *ar;
+	PurpleUPnPMappingAddRemove *ar;
 
-	ar = g_new0(UPnPMappingAddRemove, 1);
+	ar = g_new0(PurpleUPnPMappingAddRemove, 1);
 	ar->cb = cb;
 	ar->cb_data = cb_data;
 	ar->add = TRUE;
@@ -955,13 +955,13 @@ purple_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 	return ar;
 }
 
-UPnPMappingAddRemove *
+PurpleUPnPMappingAddRemove *
 purple_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 		PurpleUPnPCallback cb, gpointer cb_data)
 {
-	UPnPMappingAddRemove *ar;
+	PurpleUPnPMappingAddRemove *ar;
 
-	ar = g_new0(UPnPMappingAddRemove, 1);
+	ar = g_new0(PurpleUPnPMappingAddRemove, 1);
 	ar->cb = cb;
 	ar->cb_data = cb_data;
 	ar->add = FALSE;

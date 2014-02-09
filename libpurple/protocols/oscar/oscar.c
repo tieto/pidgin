@@ -272,7 +272,7 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
 	/* Notify the conversation window that we've left the chat */
-	serv_got_chat_left(gc, purple_chat_conversation_get_id(cc->conv));
+	purple_serv_got_chat_left(gc, purple_chat_conversation_get_id(cc->conv));
 
 	/* Destroy the chat_connection */
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
@@ -507,7 +507,7 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 	chatcon = find_oscar_chat_by_conn(gc, conn);
 	if (chatcon) {
 		chatcon->id = id;
-		chatcon->conv = serv_got_joined_chat(gc, id++, chatcon->show);
+		chatcon->conv = purple_serv_got_joined_chat(gc, id++, chatcon->show);
 	}
 }
 
@@ -1193,7 +1193,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 				break;
 			}
 		}
-		serv_got_alias(gc, info->bn,
+		purple_serv_got_alias(gc, info->bn,
 				bn_has_formatting ? info->bn : NULL);
 	}
 
@@ -1478,7 +1478,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		tmp = tmp2;
 	}
 
-	serv_got_im(gc, userinfo->bn, tmp, flags, (args->icbmflags & AIM_IMFLAGS_OFFLINE) ? args->timestamp : time(NULL));
+	purple_serv_got_im(gc, userinfo->bn, tmp, flags, (args->icbmflags & AIM_IMFLAGS_OFFLINE) ? args->timestamp : time(NULL));
 	g_free(tmp);
 
 	return 1;
@@ -1533,7 +1533,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		g_hash_table_replace(components, g_strdup("room"), utf8name);
 		g_hash_table_replace(components, g_strdup("exchange"),
 				g_strdup_printf("%d", args->info.chat.roominfo.exchange));
-		serv_got_chat_invite(gc,
+		purple_purple_serv_got_chat_invite(gc,
 				     utf8name,
 				     userinfo->bn,
 				     message,
@@ -1620,7 +1620,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				tmp2 = purple_strreplace(tmp, "\r\n", "<br>");
 				g_free(tmp);
 
-				serv_got_im(gc, userinfo->bn, tmp2, flags, time(NULL));
+				purple_serv_got_im(gc, userinfo->bn, tmp2, flags, time(NULL));
 				aim_im_send_icq_confirmation(od, userinfo->bn, args->cookie);
 				g_free(tmp2);
 			}
@@ -1711,9 +1711,9 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					t -= timezone;
 #	endif
 #endif
-					serv_got_im(gc, uin, tmp, 0, t);
+					purple_serv_got_im(gc, uin, tmp, 0, t);
 				} else { /* This is a message from MacICQ/Miranda */
-					serv_got_im(gc, uin, tmp, 0, time(NULL));
+					purple_serv_got_im(gc, uin, tmp, 0, time(NULL));
 				}
 				g_free(uin);
 				g_free(tmp);
@@ -1727,7 +1727,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					gchar *message = g_strdup_printf("<A HREF=\"%s\">%s</A>",
 													 msg2[1],
 													 (msg2[0] && msg2[0][0]) ? msg2[0] : msg2[1]);
-					serv_got_im(gc, uin, message, 0, time(NULL));
+					purple_serv_got_im(gc, uin, message, 0, time(NULL));
 					g_free(uin);
 					g_free(message);
 				}
@@ -1895,7 +1895,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 						message = purple_xmlnode_get_data(xmltmp);
 
 					if ((uin != NULL) && (message != NULL))
-							serv_got_im(gc, uin, message, 0, time(NULL));
+							purple_serv_got_im(gc, uin, message, 0, time(NULL));
 
 					g_free(uin);
 					g_free(message);
@@ -2194,19 +2194,19 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	switch (event) {
 		case 0x0000: { /* Text has been cleared */
-			serv_got_typing_stopped(gc, bn);
+			purple_purple_serv_got_typing_stopped(gc, bn);
 		} break;
 
 		case 0x0001: { /* Paused typing */
-			serv_got_typing(gc, bn, 0, PURPLE_IM_TYPED);
+			purple_serv_got_typing(gc, bn, 0, PURPLE_IM_TYPED);
 		} break;
 
 		case 0x0002: { /* Typing */
-			serv_got_typing(gc, bn, 0, PURPLE_IM_TYPING);
+			purple_serv_got_typing(gc, bn, 0, PURPLE_IM_TYPING);
 		} break;
 
 		case 0x000f: { /* Closed IM window */
-			serv_got_typing_stopped(gc, bn);
+			purple_purple_serv_got_typing_stopped(gc, bn);
 		} break;
 
 		default: {
@@ -2409,7 +2409,7 @@ static int purple_chat_conversation_incoming_msg(OscarData *od, FlapConnection *
 	va_end(ap);
 
 	utf8 = oscar_encoding_to_utf8(charset, msg, len);
-	serv_got_chat_in(gc, ccon->id, info->bn, 0, utf8, time(NULL));
+	purple_serv_got_chat_in(gc, ccon->id, info->bn, 0, utf8, time(NULL));
 	g_free(utf8);
 
 	return 1;
@@ -2702,7 +2702,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	purple_debug_info("oscar", "buddy list loaded\n");
 
 	if (purple_account_get_user_info(account) != NULL)
-		serv_set_info(gc, purple_account_get_user_info(account));
+		purple_serv_set_info(gc, purple_account_get_user_info(account));
 
 	username = purple_account_get_username(account);
 	if (!od->icq && strcmp(username, purple_connection_get_display_name(gc)) != 0) {
@@ -3740,7 +3740,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			char *alias;
 			const char *balias;
 			if (servernick)
-				serv_got_alias(gc, bname, servernick);
+				purple_serv_got_alias(gc, bname, servernick);
 
 			/* Store local alias on server */
 			alias = aim_ssi_getalias(&od->ssi.local, gname, bname);
@@ -5530,7 +5530,7 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 			/* This is somewhat hacky, but the params aren't useful after this command */
 			g_hash_table_insert(params, g_strdup("exchange"), g_strdup("4"));
 			g_hash_table_insert(params, g_strdup("room"), g_strdup(rname));
-			serv_join_chat(purple_account_get_connection(acct), params);
+			purple_serv_join_chat(purple_account_get_connection(acct), params);
 		}
 		/*else
 			** Same as above (except that this would have to be re-written using purple_request_*)

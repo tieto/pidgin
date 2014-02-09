@@ -300,7 +300,7 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 	/* The buddy is no longer online, they are therefore by definition not
 	 * still typing to us. */
 	if (!purple_status_is_online(status)) {
-		serv_got_typing_stopped(purple_account_get_connection(account), name);
+		purple_purple_serv_got_typing_stopped(purple_account_get_connection(account), name);
 		purple_prpl_got_media_caps(account, name);
 	}
 }
@@ -516,9 +516,9 @@ got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
 			description, who);
 
 	if (id == -1)
-		serv_got_im(gc, who, description, flags, mtime);
+		purple_serv_got_im(gc, who, description, flags, mtime);
 	else
-		serv_got_chat_in(gc, id, who, flags, description, mtime);
+		purple_serv_got_chat_in(gc, id, who, flags, description, mtime);
 
 	/* TODO: sounds (depending on PurpleAttentionType), shaking, etc. */
 

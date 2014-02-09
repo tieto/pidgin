@@ -101,7 +101,7 @@ static void close_stun_conn(struct stun_conn *sc) {
 
 static void do_callbacks(void) {
 	while (callbacks) {
-		StunCallback cb = callbacks->data;
+		PurpleStunCallback cb = callbacks->data;
 		if (cb)
 			cb(&nattype);
 		callbacks = g_slist_delete_link(callbacks, callbacks);
@@ -367,12 +367,12 @@ static void do_test1(PurpleSrvResponse *resp, int results, gpointer sdata) {
 }
 
 static gboolean call_callback(gpointer data) {
-	StunCallback cb = data;
+	PurpleStunCallback cb = data;
 	cb(&nattype);
 	return FALSE;
 }
 
-PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
+PurpleStunNatDiscovery *purple_stun_discover(PurpleStunCallback cb) {
 	const char *servername = purple_prefs_get_string("/purple/network/stun_server");
 
 	purple_debug_info("stun", "using server %s\n", servername);

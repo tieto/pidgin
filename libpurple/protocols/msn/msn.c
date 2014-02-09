@@ -851,7 +851,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 
 	/* TODO: This might move somewhere else, after USR might be */
 	swboard->chat_id = msn_switchboard_get_chat_id();
-	swboard->conv = PURPLE_CONVERSATION(serv_got_joined_chat(gc,
+	swboard->conv = PURPLE_CONVERSATION(purple_serv_got_joined_chat(gc,
 			swboard->chat_id, "MSN Chat"));
 	swboard->flag = MSN_SB_FLAG_IM;
 
@@ -1405,7 +1405,7 @@ static gboolean
 msn_send_me_im(gpointer data)
 {
 	MsnIMData *imdata = data;
-	serv_got_im(imdata->gc, imdata->who, imdata->msg, imdata->flags, imdata->when);
+	purple_serv_got_im(imdata->gc, imdata->who, imdata->msg, imdata->flags, imdata->when);
 
 	g_object_unref(imdata->gc);
 	g_free(imdata->msg);
@@ -1630,7 +1630,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(pre);
 		g_free(post);
 
-		serv_got_typing_stopped(gc, who);
+		purple_purple_serv_got_typing_stopped(gc, who);
 		imdata->gc = g_object_ref(gc);
 		imdata->who = who;
 		imdata->msg = body_str;
@@ -1666,7 +1666,7 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleIMTypingState state
 	if (!g_ascii_strcasecmp(who, purple_account_get_username(account)))
 	{
 		/* We'll just fake it, since we're sending to ourself. */
-		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, PURPLE_IM_TYPING);
+		purple_serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, PURPLE_IM_TYPING);
 
 		return MSN_TYPING_SEND_TIMEOUT;
 	}
@@ -2084,7 +2084,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	g_free(msgformat);
 	g_free(msgtext);
 
-	serv_got_chat_in(gc, id, purple_account_get_username(account), flags,
+	purple_serv_got_chat_in(gc, id, purple_account_get_username(account), flags,
 					 message, time(NULL));
 
 	return 0;

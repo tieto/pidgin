@@ -5,58 +5,58 @@ PROTOTYPES: ENABLE
 
 
 void 
-serv_add_deny(con, a)
+purple_serv_add_deny(con, a)
 	Purple::Connection con
 	const char * a
 
 void 
-serv_add_permit(a, b)
+purple_serv_add_permit(a, b)
 	Purple::Connection a
 	const char * b
 
 void 
-serv_alias_buddy(buddy)
+purple_serv_alias_buddy(buddy)
 	Purple::BuddyList::Buddy buddy 
 
 void 
-serv_chat_invite(con, a, b, c)
+purple_serv_chat_invite(con, a, b, c)
 	Purple::Connection con
 	int a
 	const char * b
 	const char * c
 
 void 
-serv_chat_leave(a, b)
+purple_serv_chat_leave(a, b)
 	Purple::Connection a
 	int b
 
 int  
-serv_chat_send(con, a, b, flags)
+purple_serv_chat_send(con, a, b, flags)
 	Purple::Connection con 
 	int a
 	const char * b
 	Purple::MessageFlags flags
 
 void 
-serv_chat_whisper(con, a, b, c)
+purple_serv_chat_whisper(con, a, b, c)
 	Purple::Connection con
 	int a
 	const char * b
 	const char * c
 
 void 
-serv_get_info(con, a)
+purple_serv_get_info(con, a)
 	Purple::Connection con 
 	const char * a
 
 void 
-serv_got_alias(gc, who, alias)
+purple_serv_got_alias(gc, who, alias)
 	Purple::Connection gc
 	const char *who
 	const char *alias
 
 void 
-serv_got_chat_in(g, id, who, chatflags, message, mtime)
+purple_serv_got_chat_in(g, id, who, chatflags, message, mtime)
 	Purple::Connection g
 	int id
 	const char *who
@@ -65,7 +65,7 @@ serv_got_chat_in(g, id, who, chatflags, message, mtime)
 	time_t mtime
 
 void 
-serv_got_chat_invite(gc, name, who, message, components)
+purple_purple_serv_got_chat_invite(gc, name, who, message, components)
 	Purple::Connection gc
 	const char *name
 	const char *who
@@ -89,15 +89,15 @@ CODE:
 
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
-	serv_got_chat_invite(gc, name, who, message, t_GHash);
+	purple_purple_serv_got_chat_invite(gc, name, who, message, t_GHash);
 
 void 
-serv_got_chat_left(g, id)
+purple_serv_got_chat_left(g, id)
 	Purple::Connection g
 	int id
 
 void 
-serv_got_im(gc, who, msg, imflags, mtime)
+purple_serv_got_im(gc, who, msg, imflags, mtime)
 	Purple::Connection gc
 	const char *who
 	const char *msg
@@ -105,25 +105,25 @@ serv_got_im(gc, who, msg, imflags, mtime)
 	time_t mtime
 
 Purple::ChatConversation
-serv_got_joined_chat(gc, id, name)
+purple_serv_got_joined_chat(gc, id, name)
 	Purple::Connection gc
 	int id
 	const char *name
 
 void 
-serv_got_typing(gc, name, timeout, state)
+purple_serv_got_typing(gc, name, timeout, state)
 	Purple::Connection gc
 	const char *name
 	int timeout
 	Purple::IMTypingState state
 
 void 
-serv_got_typing_stopped(gc, name)
+purple_purple_serv_got_typing_stopped(gc, name)
 	Purple::Connection gc
 	const char *name
 
 void
-serv_join_chat(conn, components)
+purple_serv_join_chat(conn, components)
 	Purple::Connection conn
 	HV * components
 PREINIT:
@@ -143,17 +143,17 @@ CODE:
 
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
-	serv_join_chat(conn, t_GHash);
+	purple_serv_join_chat(conn, t_GHash);
 	g_hash_table_destroy(t_GHash);
 
 void 
-serv_move_buddy(buddy, group1, group2)
+purple_serv_move_buddy(buddy, group1, group2)
 	Purple::BuddyList::Buddy buddy
 	Purple::BuddyList::Group group1
 	Purple::BuddyList::Group group2
 
 void 
-serv_reject_chat(con, components)
+purple_serv_reject_chat(con, components)
 	Purple::Connection con 
 	SV * components
 INIT:
@@ -174,43 +174,43 @@ CODE:
 
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
-	serv_reject_chat(con, t_GHash);
+	purple_serv_reject_chat(con, t_GHash);
 
 void 
-serv_rem_deny(con, a)
+purple_serv_rem_deny(con, a)
 	Purple::Connection con
 	const char * 	a
 
 void 
-serv_rem_permit(con, a)
+purple_serv_rem_permit(con, a)
 	Purple::Connection con
 	const char *	a
 
 void 
-serv_send_file(gc, who, file)
+purple_serv_send_file(gc, who, file)
 	Purple::Connection gc
 	const char *who
 	const char *file
 
 int  
-serv_send_im(con, a, b, flags )
+purple_serv_send_im(con, a, b, flags )
 	Purple::Connection con
 	const char * a
 	const char * b
 	Purple::MessageFlags flags
 
 int  
-serv_send_typing(con, a, state)
+purple_serv_send_typing(con, a, state)
 	Purple::Connection con
 	const char * a
 	Purple::IMTypingState state
 
 void 
-serv_set_info(con, a)
+purple_serv_set_info(con, a)
 	Purple::Connection con 
 	const char * a
 
 void 
-serv_set_permit_deny(con)
+purple_serv_set_permit_deny(con)
 	Purple::Connection con  
 

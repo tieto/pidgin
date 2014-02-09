@@ -902,7 +902,7 @@ show_retrieveing_info(PurpleConnection *conn, const char *name)
 void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
 {
 	show_retrieveing_info(conn, name);
-	serv_get_info(conn, name);
+	purple_serv_get_info(conn, name);
 }
 
 void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chat)
@@ -1383,7 +1383,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, data->filename);
 		break;
 	case DND_FILE_TRANSFER:
-		serv_send_file(purple_account_get_connection(data->account), data->who, data->filename);
+		purple_serv_send_file(purple_account_get_connection(data->account), data->who, data->filename);
 		break;
 	case DND_IM_IMAGE:
 		conv = PURPLE_CONVERSATION(purple_im_conversation_new(data->account, data->who));
@@ -1598,7 +1598,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 #endif /* _WIN32 */
 
 		/* Everything is fine, let's send */
-		serv_send_file(gc, who, filename);
+		purple_serv_send_file(gc, who, filename);
 	}
 
 	g_free(filename);

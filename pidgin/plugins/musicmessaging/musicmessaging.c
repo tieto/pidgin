@@ -183,7 +183,7 @@ static gboolean send_change_request (const int session, const char *id, const ch
 	DBusMessage *message;
 
 	/* Create the signal we need */
-	message = dbus_message_new_signal (DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "GscoreChangeRequest");
+	message = dbus_message_new_signal (PURPLE_DBUS_PATH, PURPLE_DBUS_INTERFACE, "GscoreChangeRequest");
 
 	/* Append the string "Ping!" to the signal */
 	dbus_message_append_args (message,
@@ -210,7 +210,7 @@ static gboolean send_change_confirmed (const int session, const char *command, c
 	DBusMessage *message;
 
 	/* Create the signal we need */
-	message = dbus_message_new_signal (DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "GscoreChangeConfirmed");
+	message = dbus_message_new_signal (PURPLE_DBUS_PATH, PURPLE_DBUS_INTERFACE, "GscoreChangeConfirmed");
 
 	/* Append the string "Ping!" to the signal */
 	dbus_message_append_args (message,
@@ -470,14 +470,14 @@ static void send_request(MMConversation *mmconv)
 {
 	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
-	serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, PURPLE_MESSAGE_SEND);
+	purple_serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, PURPLE_MESSAGE_SEND);
 }
 
 static void send_request_confirmed(MMConversation *mmconv)
 {
 	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
-	serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, PURPLE_MESSAGE_SEND);
+	purple_serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, PURPLE_MESSAGE_SEND);
 }
 
 

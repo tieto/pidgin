@@ -35,7 +35,7 @@
 G_BEGIN_DECLS
 
 /**
- * serv_send_typing:
+ * purple_serv_send_typing:
  * @gc:    The connection over which to send the typing notification.
  * @name:  The user to send the typing notification to.
  * @state: One of PURPLE_IM_TYPING, PURPLE_IM_TYPED, or PURPLE_IM_NOT_TYPING.
@@ -51,10 +51,10 @@ G_BEGIN_DECLS
  *         message.
  */
 /* TODO Could probably move this into the conversation API. */
-unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state);
+unsigned int purple_serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state);
 
-void serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
-int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
+void purple_serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
+int  purple_serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
 
 /**
  * purple_get_attention_type_from_code:
@@ -65,20 +65,20 @@ int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageF
  */
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
 
-void serv_get_info(PurpleConnection *, const char *);
-void serv_set_info(PurpleConnection *, const char *);
+void purple_serv_get_info(PurpleConnection *, const char *);
+void purple_serv_set_info(PurpleConnection *, const char *);
 
-void serv_add_permit(PurpleConnection *, const char *);
-void serv_add_deny(PurpleConnection *, const char *);
-void serv_rem_permit(PurpleConnection *, const char *);
-void serv_rem_deny(PurpleConnection *, const char *);
-void serv_set_permit_deny(PurpleConnection *);
-void serv_chat_invite(PurpleConnection *, int, const char *, const char *);
-void serv_chat_leave(PurpleConnection *, int);
-void serv_chat_whisper(PurpleConnection *, int, const char *, const char *);
-int  serv_chat_send(PurpleConnection *, int, const char *, PurpleMessageFlags flags);
-void serv_alias_buddy(PurpleBuddy *);
-void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
+void purple_serv_add_permit(PurpleConnection *, const char *);
+void purple_serv_add_deny(PurpleConnection *, const char *);
+void purple_serv_rem_permit(PurpleConnection *, const char *);
+void purple_serv_rem_deny(PurpleConnection *, const char *);
+void purple_serv_set_permit_deny(PurpleConnection *);
+void purple_serv_chat_invite(PurpleConnection *, int, const char *, const char *);
+void purple_serv_chat_leave(PurpleConnection *, int);
+void purple_serv_chat_whisper(PurpleConnection *, int, const char *, const char *);
+int  purple_serv_chat_send(PurpleConnection *, int, const char *, PurpleMessageFlags flags);
+void purple_serv_alias_buddy(PurpleBuddy *);
+void purple_serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
 
 /**
  * purple_serv_got_private_alias:
@@ -94,7 +94,7 @@ void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const 
 
 
 /**
- * serv_got_typing:
+ * purple_serv_got_typing:
  * @gc:      The connection on which the typing message was received.
  * @name:    The name of the remote user.
  * @timeout: If this is a number greater than 0, then
@@ -106,55 +106,55 @@ void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const 
  *
  * Receive a typing message from a remote user.  Either PURPLE_IM_TYPING
  * or PURPLE_IM_TYPED.  If the user has stopped typing then use
- * serv_got_typing_stopped instead.
+ * purple_purple_serv_got_typing_stopped instead.
  *
  * @todo Could probably move this into the conversation API.
  */
-void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
+void purple_serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 					 PurpleIMTypingState state);
 
 /**
- * serv_got_typing_stopped:
+ * purple_purple_serv_got_typing_stopped:
  *
  * @todo Could probably move this into the conversation API.
  */
-void serv_got_typing_stopped(PurpleConnection *gc, const char *name);
+void purple_purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name);
 
-void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
+void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				 PurpleMessageFlags flags, time_t mtime);
 
 /**
- * serv_join_chat:
+ * purple_serv_join_chat:
  * @data: The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
-void serv_join_chat(PurpleConnection *, GHashTable *data);
+void purple_serv_join_chat(PurpleConnection *, GHashTable *data);
 
 /**
- * serv_reject_chat:
+ * purple_serv_reject_chat:
  * @data: The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
-void serv_reject_chat(PurpleConnection *, GHashTable *data);
+void purple_serv_reject_chat(PurpleConnection *, GHashTable *data);
 
 /**
- * serv_got_chat_invite:
+ * purple_purple_serv_got_chat_invite:
  * @gc:      The connection on which the invite arrived.
  * @name:    The name of the chat you're being invited to.
  * @who:     The username of the person inviting the account.
  * @message: The optional invite message.
- * @data:    The components necessary if you want to call serv_join_chat().
+ * @data:    The components necessary if you want to call purple_serv_join_chat().
  *                The hash function should be g_str_hash() and the equal
  *                function should be g_str_equal().
  *
  * Called by a protocol when an account is invited into a chat.
  */
-void serv_got_chat_invite(PurpleConnection *gc, const char *name,
+void purple_purple_serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);
 
 /**
- * serv_got_joined_chat:
+ * purple_serv_got_joined_chat:
  * @gc:   The connection on which the chat was joined.
  * @id:   The id of the chat, assigned by the protocol.
  * @name: The name of the chat.
@@ -163,31 +163,31 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
  *
  * Returns:     The resulting conversation
  */
-PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
+PurpleChatConversation *purple_serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
 /**
  * purple_serv_got_join_chat_failed:
  * @gc:      The connection on which chat joining failed
- * @data:    The components passed to serv_join_chat() originally.
+ * @data:    The components passed to purple_serv_join_chat() originally.
  *                The hash function should be g_str_hash() and the equal
  *                function should be g_str_equal().
  *
- * Called by a protocol when an attempt to join a chat via serv_join_chat()
+ * Called by a protocol when an attempt to join a chat via purple_serv_join_chat()
  * fails.
  */
 void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data);
 
 /**
- * serv_got_chat_left:
+ * purple_serv_got_chat_left:
  * @g:  The connection on which the chat was left.
  * @id: The id of the chat, as assigned by the protocol.
  *
  * Called by a protocol when an account has left a chat.
  */
-void serv_got_chat_left(PurpleConnection *g, int id);
+void purple_serv_got_chat_left(PurpleConnection *g, int id);
 
 /**
- * serv_got_chat_in:
+ * purple_serv_got_chat_in:
  * @g:       The connection on which the message was received.
  * @id:      The id of the chat, as assigned by the protocol.
  * @who:     The name of the user who sent the message.
@@ -197,9 +197,9 @@ void serv_got_chat_left(PurpleConnection *g, int id);
  *
  * Called by a protocol when a message has been received in a chat.
  */
-void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
+void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
-void serv_send_file(PurpleConnection *gc, const char *who, const char *file);
+void purple_serv_send_file(PurpleConnection *gc, const char *who, const char *file);
 
 G_END_DECLS
 

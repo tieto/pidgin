@@ -79,9 +79,9 @@ static void handle_chat(JabberMessage *jm)
 			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(gc, jm->from, 0, PURPLE_IM_TYPING);
+			purple_serv_got_typing(gc, jm->from, 0, PURPLE_IM_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(gc, jm->from, 0, PURPLE_IM_TYPED);
+			purple_serv_got_typing(gc, jm->from, 0, PURPLE_IM_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			PurpleIMConversation *im = purple_conversations_find_im_with_account(
 					jm->from, account);
@@ -109,10 +109,10 @@ static void handle_chat(JabberMessage *jm)
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
-			serv_got_typing_stopped(gc, jm->from);
+			purple_purple_serv_got_typing_stopped(gc, jm->from);
 
 		} else {
-			serv_got_typing_stopped(gc, jm->from);
+			purple_purple_serv_got_typing_stopped(gc, jm->from);
 		}
 	} else {
 		if (jid->resource) {
@@ -155,7 +155,7 @@ static void handle_chat(JabberMessage *jm)
 			jm->body = jabber_google_format_to_html(jm->body);
 			g_free(tmp);
 		}
-		serv_got_im(gc, jm->from, jm->xhtml ? jm->xhtml : jm->body, 0, jm->sent);
+		purple_serv_got_im(gc, jm->from, jm->xhtml ? jm->xhtml : jm->body, 0, jm->sent);
 	}
 
 	jabber_id_free(jid);
@@ -249,7 +249,7 @@ static void handle_groupchat(JabberMessage *jm)
 
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
-			serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
+			purple_serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
 							messageFlags | (jm->delayed ? PURPLE_MESSAGE_DELAYED : 0),
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
@@ -277,7 +277,7 @@ static void handle_groupchat_invite(JabberMessage *jm)
 	g_hash_table_replace(components, "password", g_strdup(jm->password));
 
 	jabber_id_free(jid);
-	serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
+	purple_purple_serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
 }
 
 static void handle_error(JabberMessage *jm)

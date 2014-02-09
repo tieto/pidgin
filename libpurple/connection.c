@@ -225,7 +225,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 		purple_signal_emit(purple_connections_get_handle(), "signed-on", gc);
 		purple_signal_emit_return_1(purple_connections_get_handle(), "autojoin", gc);
 
-		serv_set_permit_deny(gc);
+		purple_serv_set_permit_deny(gc);
 
 		update_keepalive(gc, TRUE);
 	}

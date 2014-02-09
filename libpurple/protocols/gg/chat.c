@@ -145,7 +145,7 @@ static void ggp_chat_open_conv(ggp_chat_local_info *chat)
 	if (chat->conv != NULL)
 		return;
 
-	chat->conv = serv_got_joined_chat(chat->gc, chat->local_id,
+	chat->conv = purple_serv_got_joined_chat(chat->gc, chat->local_id,
 		ggp_chat_get_name_from_id(chat->id));
 	if (chat->previously_joined) {
 		purple_conversation_write(PURPLE_CONVERSATION(chat->conv), NULL,
@@ -286,7 +286,7 @@ static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 		purple_conversation_write(PURPLE_CONVERSATION(chat->conv), NULL,
 			_("You have left the chat"), PURPLE_MESSAGE_SYSTEM,
 			time(NULL));
-		serv_got_chat_left(chat->gc, chat->local_id);
+		purple_serv_got_chat_left(chat->gc, chat->local_id);
 		chat->conv = NULL;
 		chat->left = TRUE;
 	}
@@ -498,7 +498,7 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 	g_free(gg_msg);
 
 	me = purple_account_get_username(purple_connection_get_account(gc));
-	serv_got_chat_in(gc, chat->local_id, me, flags, message, time(NULL));
+	purple_serv_got_chat_in(gc, chat->local_id, me, flags, message, time(NULL));
 
 	return succ ? 0 : -1;
 }
@@ -524,7 +524,7 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 		purple_conversation_write(PURPLE_CONVERSATION(chat->conv),
 			ggp_uin_to_str(who), message, PURPLE_MESSAGE_SEND, time);
 	} else {
-		serv_got_chat_in(gc, chat->local_id, ggp_uin_to_str(who),
+		purple_serv_got_chat_in(gc, chat->local_id, ggp_uin_to_str(who),
 			PURPLE_MESSAGE_RECV, message, time);
 	}
 }

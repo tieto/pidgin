@@ -476,7 +476,7 @@ static void ggp_pubdir_request_buddy_alias_got(PurpleConnection *gc,
 	purple_debug_info("gg", "ggp_pubdir_request_buddy_alias_got: "
 		"public alias for %u is \"%s\"\n", uin, alias);
 
-	serv_got_alias(gc, ggp_uin_to_str(uin), alias);
+	purple_serv_got_alias(gc, ggp_uin_to_str(uin), alias);
 }
 
 /*******************************************************************************

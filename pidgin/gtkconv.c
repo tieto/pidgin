@@ -813,7 +813,7 @@ do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 		if (!g_ascii_strcasecmp(buddy, ""))
 			return;
 
-		serv_chat_invite(purple_conversation_get_connection(PURPLE_CONVERSATION(chat)),
+		purple_serv_chat_invite(purple_conversation_get_connection(PURPLE_CONVERSATION(chat)),
 						 purple_chat_conversation_get_id(chat),
 						 message, buddy);
 	}
@@ -1207,7 +1207,7 @@ menu_send_file_cb(GtkAction *action, gpointer data)
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
-		serv_send_file(purple_conversation_get_connection(conv), purple_conversation_get_name(conv), NULL);
+		purple_serv_send_file(purple_conversation_get_connection(conv), purple_conversation_get_name(conv), NULL);
 	}
 
 }
@@ -1550,7 +1550,7 @@ menu_chat_send_file_cb(GtkWidget *w, PidginConversation *gtkconv)
 		real_who = prpl_info->get_cb_real_name(gc,
 				purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)), who);
 
-	serv_send_file(gc, real_who ? real_who : who, NULL);
+	purple_serv_send_file(gc, real_who ? real_who : who, NULL);
 	g_free(real_who);
 }
 
@@ -1963,7 +1963,7 @@ update_typing_deleting_cb(PidginConversation *gtkconv)
 		/* We deleted all the text, so turn off typing. */
 		purple_im_conversation_stop_send_typed_timeout(im);
 
-		serv_send_typing(purple_conversation_get_connection(gtkconv->active_conv),
+		purple_serv_send_typing(purple_conversation_get_connection(gtkconv->active_conv),
 						 purple_conversation_get_name(gtkconv->active_conv),
 						 PURPLE_IM_NOT_TYPING);
 	}
@@ -3755,7 +3755,7 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 				  time(NULL) > purple_im_conversation_get_type_again(im)))
 	{
 		unsigned int timeout;
-		timeout = serv_send_typing(purple_conversation_get_connection(conv),
+		timeout = purple_serv_send_typing(purple_conversation_get_connection(conv),
 								   purple_conversation_get_name(conv),
 								   PURPLE_IM_TYPING);
 		purple_im_conversation_set_type_again(im, timeout);
@@ -8391,7 +8391,7 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 			} else {
 				comps = purple_chat_get_components(chat);
 			}
-			serv_join_chat(gc, comps);
+			purple_serv_join_chat(gc, comps);
 			if (chat == NULL && comps != NULL)
 				g_hash_table_destroy(comps);
 		}
@@ -9926,7 +9926,7 @@ alias_cb(GtkEntry *entry, gpointer user_data)
 		if (buddy != NULL) {
 			purple_buddy_set_local_alias(buddy, gtk_entry_get_text(entry));
 		}
-		serv_alias_buddy(buddy);
+		purple_serv_alias_buddy(buddy);
 	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		gtk_entry_set_text(GTK_ENTRY(gtkconv->u.chat->topic_text), gtk_entry_get_text(entry));
 		topic_callback(NULL, gtkconv);

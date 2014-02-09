@@ -961,7 +961,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		/* the group totalsize will be taken care of by remove_contact below */
 
 		if (bnode->parent->parent != (PurpleBlistNode*)g)
-			serv_move_buddy(buddy, (PurpleGroup *)bnode->parent->parent, g);
+			purple_serv_move_buddy(buddy, (PurpleGroup *)bnode->parent->parent, g);
 
 		if (bnode->next)
 			bnode->next->prev = bnode->prev;
@@ -1126,7 +1126,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 					g_hash_table_replace(account_buddies, hb2, b);
 
 					if (purple_account_get_connection(account))
-						serv_move_buddy(b, (PurpleGroup *)cnode->parent, g);
+						purple_serv_move_buddy(b, (PurpleGroup *)cnode->parent, g);
 				} else {
 					gboolean empty_contact = FALSE;
 

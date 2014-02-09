@@ -226,9 +226,9 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
 
 	from = g_strdup_printf("%u", uin);
 	if (length)
-		serv_got_typing(gc, from, 0, PURPLE_IM_TYPING);
+		purple_serv_got_typing(gc, from, 0, PURPLE_IM_TYPING);
 	else
-		serv_got_typing_stopped(gc, from);
+		purple_purple_serv_got_typing_stopped(gc, from);
 	g_free(from);
 }
 

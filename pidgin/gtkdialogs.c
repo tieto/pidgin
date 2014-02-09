@@ -1184,7 +1184,7 @@ static void
 pidgin_dialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
 	purple_buddy_set_local_alias(buddy, new_alias);
-	serv_alias_buddy(buddy);
+	purple_serv_alias_buddy(buddy);
 }
 
 void

@@ -315,7 +315,7 @@ static void ggp_message_got_display(PurpleConnection *gc,
 	ggp_message_got_data *msg)
 {
 	if (msg->type == GGP_MESSAGE_GOT_TYPE_IM) {
-		serv_got_im(gc, ggp_uin_to_str(msg->user), msg->text,
+		purple_serv_got_im(gc, ggp_uin_to_str(msg->user), msg->text,
 			PURPLE_MESSAGE_RECV, msg->time);
 	}
 #if GGP_ENABLE_GG11

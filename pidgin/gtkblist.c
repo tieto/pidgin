@@ -341,7 +341,7 @@ static void gtk_blist_menu_send_file_cb(GtkWidget *w, PurpleBuddy *b)
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
 
-	serv_send_file(purple_account_get_connection(account),
+	purple_serv_send_file(purple_account_get_connection(account),
 	               purple_buddy_get_name(b), NULL);
 }
 
@@ -406,7 +406,7 @@ static void gtk_blist_join_chat(PurpleChat *chat)
 		purple_conversation_present(conv);
 	}
 
-	serv_join_chat(purple_account_get_connection(account), components);
+	purple_serv_join_chat(purple_account_get_connection(account), components);
 	g_free(chat_name);
 }
 
@@ -601,14 +601,14 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 		} else {
 			PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 			purple_buddy_set_local_alias(buddy, arg2);
-			serv_alias_buddy(buddy);
+			purple_serv_alias_buddy(buddy);
 			gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 		}
 	} else if (PURPLE_IS_BUDDY(node)) {
 		PurpleGroup *group = purple_buddy_get_group(PURPLE_BUDDY(node));
 
 		purple_buddy_set_local_alias(PURPLE_BUDDY(node), arg2);
-		serv_alias_buddy(PURPLE_BUDDY(node));
+		purple_serv_alias_buddy(PURPLE_BUDDY(node));
 		gtk_blist_auto_personize(PURPLE_BLIST_NODE(group), arg2);
 	} else if (PURPLE_IS_GROUP(node)) {
 		dest = purple_blist_find_group(arg2);
@@ -7628,7 +7628,7 @@ static gboolean autojoin_cb(PurpleConnection *gc, gpointer data)
 				continue;
 
 			if (purple_blist_node_get_bool(PURPLE_BLIST_NODE(chat), "gtk-autojoin"))
-				serv_join_chat(gc, purple_chat_get_components(chat));
+				purple_serv_join_chat(gc, purple_chat_get_components(chat));
 		}
 	}
 

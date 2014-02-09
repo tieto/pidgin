@@ -115,7 +115,7 @@ send_typing_notification(GntWidget *w, FinchConv *ggconv)
 			if (send || (purple_im_conversation_get_type_again(im) != 0 &&
 						  time(NULL) > purple_im_conversation_get_type_again(im))) {
 				unsigned int timeout;
-				timeout = serv_send_typing(purple_conversation_get_connection(conv),
+				timeout = purple_serv_send_typing(purple_conversation_get_connection(conv),
 										   purple_conversation_get_name(conv),
 										   PURPLE_IM_TYPING);
 				purple_im_conversation_set_type_again(im, timeout);
@@ -123,7 +123,7 @@ send_typing_notification(GntWidget *w, FinchConv *ggconv)
 		} else {
 			purple_im_conversation_stop_send_typed_timeout(im);
 
-			serv_send_typing(purple_conversation_get_connection(conv),
+			purple_serv_send_typing(purple_conversation_get_connection(conv),
 							 purple_conversation_get_name(conv),
 							 PURPLE_IM_NOT_TYPING);
 		}
@@ -340,7 +340,7 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 			} else {
 				comps = purple_chat_get_components(chat);
 			}
-			serv_join_chat(gc, comps);
+			purple_serv_join_chat(gc, comps);
 			if (chat == NULL && comps != NULL)
 				g_hash_table_destroy(comps);
 		}
@@ -419,7 +419,7 @@ static void
 send_file_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
-	serv_send_file(purple_conversation_get_connection(ggc->active_conv),
+	purple_serv_send_file(purple_conversation_get_connection(ggc->active_conv),
 			purple_conversation_get_name(ggc->active_conv), NULL);
 }
 

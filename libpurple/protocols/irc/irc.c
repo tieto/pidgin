@@ -788,7 +788,7 @@ static void irc_chat_leave (PurpleConnection *gc, int id)
 	args[0] = purple_conversation_get_name(convo);
 	args[1] = NULL;
 	irc_cmd_part(irc, "part", purple_conversation_get_name(convo), args);
-	serv_got_chat_left(gc, id);
+	purple_serv_got_chat_left(gc, id);
 }
 
 static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
@@ -813,7 +813,7 @@ static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleM
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
 
-	serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), flags, what, time(NULL));
+	purple_serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), flags, what, time(NULL));
 	g_free(tmp);
 	return 0;
 }

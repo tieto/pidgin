@@ -62,7 +62,7 @@ struct _PurpleStunNatDiscovery {
 	time_t lookup_time;
 };
 
-typedef void (*StunCallback) (PurpleStunNatDiscovery *);
+typedef void (*PurpleStunCallback) (PurpleStunNatDiscovery *);
 
 G_BEGIN_DECLS
 
@@ -79,7 +79,7 @@ G_BEGIN_DECLS
  * Returns: a PurpleStunNatDiscovery which includes the public IP and the type
  *         of NAT or NULL is discovery would block
  */
-PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb);
+PurpleStunNatDiscovery *purple_stun_discover(PurpleStunCallback cb);
 
 void purple_stun_init(void);
 
