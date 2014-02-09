@@ -655,7 +655,7 @@ void purple_serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		purple_im_conversation_start_typing_timeout(im, timeout);
 }
 
-void purple_purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
+void purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 	PurpleIMConversation *im;
 
@@ -703,7 +703,7 @@ static void chat_invite_accept(struct chat_invite_data *cid)
 
 
 
-void purple_purple_serv_got_chat_invite(PurpleConnection *gc, const char *name,
+void purple_serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message, GHashTable *data)
 {
 	PurpleAccount *account;

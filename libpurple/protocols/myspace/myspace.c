@@ -1559,7 +1559,7 @@ msim_incoming_action_or_im(MsimSession *session, MsimMessage *msg)
 		purple_serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
 		rc = TRUE;
 	} else if (g_str_equal(msg_text, "%stoptyping%")) {
-		purple_purple_serv_got_typing_stopped(session->gc, username);
+		purple_serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
 	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
 		rc = msim_incoming_zap(session, msg);
@@ -1615,7 +1615,7 @@ msim_incoming_media(MsimSession *session, MsimMessage *msg)
 	 * Tell libpurple they started typing and stopped typing, to inform the Psychic
 	 * Mode plugin so it too can open a window to the user. */
 	purple_serv_got_typing(session->gc, username, 0, PURPLE_IM_TYPING);
-	purple_purple_serv_got_typing_stopped(session->gc, username);
+	purple_serv_got_typing_stopped(session->gc, username);
 
 	g_free(username);
 

@@ -595,7 +595,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 	}
 	else
 	{
-		purple_purple_serv_got_typing_stopped(gc, conn->bn);
+		purple_serv_got_typing_stopped(gc, conn->bn);
 	}
 
 	if (frame->payload.len > 0)

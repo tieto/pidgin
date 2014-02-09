@@ -109,10 +109,10 @@ static void handle_chat(JabberMessage *jm)
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
-			purple_purple_serv_got_typing_stopped(gc, jm->from);
+			purple_serv_got_typing_stopped(gc, jm->from);
 
 		} else {
-			purple_purple_serv_got_typing_stopped(gc, jm->from);
+			purple_serv_got_typing_stopped(gc, jm->from);
 		}
 	} else {
 		if (jid->resource) {
@@ -277,7 +277,7 @@ static void handle_groupchat_invite(JabberMessage *jm)
 	g_hash_table_replace(components, "password", g_strdup(jm->password));
 
 	jabber_id_free(jid);
-	purple_purple_serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
+	purple_serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
 }
 
 static void handle_error(JabberMessage *jm)

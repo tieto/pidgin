@@ -1538,7 +1538,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		g_hash_table_replace(components, g_strdup("room"), utf8name);
 		g_hash_table_replace(components, g_strdup("exchange"),
 				g_strdup_printf("%d", args->info.chat.roominfo.exchange));
-		purple_purple_serv_got_chat_invite(gc,
+		purple_serv_got_chat_invite(gc,
 				     utf8name,
 				     userinfo->bn,
 				     message,
@@ -2199,7 +2199,7 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	switch (event) {
 		case 0x0000: { /* Text has been cleared */
-			purple_purple_serv_got_typing_stopped(gc, bn);
+			purple_serv_got_typing_stopped(gc, bn);
 		} break;
 
 		case 0x0001: { /* Paused typing */
@@ -2211,7 +2211,7 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		} break;
 
 		case 0x000f: { /* Closed IM window */
-			purple_purple_serv_got_typing_stopped(gc, bn);
+			purple_serv_got_typing_stopped(gc, bn);
 		} break;
 
 		default: {

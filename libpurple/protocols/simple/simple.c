@@ -1082,7 +1082,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 			if(strstr(statedata, "active"))
 				purple_serv_got_typing(sip->gc, from, 0, PURPLE_IM_TYPING);
 			else
-				purple_purple_serv_got_typing_stopped(sip->gc, from);
+				purple_serv_got_typing_stopped(sip->gc, from);
 
 			g_free(statedata);
 		}

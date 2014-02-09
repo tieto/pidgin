@@ -189,7 +189,7 @@ dnd_hints_init(void)
 }
 
 void
-pidgin_pidgin_dnd_hints_hide_all(void)
+pidgin_dnd_hints_hide_all(void)
 {
 	gint i;
 
@@ -224,7 +224,7 @@ pidgin_dnd_hints_show(PidginDndHintWindowId id, gint x, gint y)
 }
 
 void
-pidgin_pidgin_dnd_hints_show_relative(PidginDndHintWindowId id, GtkWidget *widget,
+pidgin_dnd_hints_show_relative(PidginDndHintWindowId id, GtkWidget *widget,
 						PidginDndHintPosition horiz, PidginDndHintPosition vert)
 {
 	gint x1, x2, y1, y2;
@@ -244,7 +244,7 @@ pidgin_pidgin_dnd_hints_show_relative(PidginDndHintWindowId id, GtkWidget *widge
 		case HINT_POSITION_CENTER: x = (x1 + x2) / 2; break;
 		default:
 			/* should not happen */
-			g_warning("Invalid parameter to pidgin_pidgin_dnd_hints_show_relative");
+			g_warning("Invalid parameter to pidgin_dnd_hints_show_relative");
 			break;
 	}
 
@@ -255,7 +255,7 @@ pidgin_pidgin_dnd_hints_show_relative(PidginDndHintWindowId id, GtkWidget *widge
 		case HINT_POSITION_CENTER: y = (y1 + y2) / 2; break;
 		default:
 			/* should not happen */
-			g_warning("Invalid parameter to pidgin_pidgin_dnd_hints_show_relative");
+			g_warning("Invalid parameter to pidgin_dnd_hints_show_relative");
 			break;
 	}
 

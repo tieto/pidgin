@@ -757,7 +757,7 @@ static void null_chat_invite(PurpleConnection *gc, int id,
       components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
       g_hash_table_replace(components, "room", g_strdup(room));
       g_hash_table_replace(components, "invited_by", g_strdup(username));
-      purple_purple_serv_got_chat_invite(purple_account_get_connection(to_acct), room, username, message, components);
+      purple_serv_got_chat_invite(purple_account_get_connection(to_acct), room, username, message, components);
     }
   }
 }

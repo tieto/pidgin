@@ -1631,7 +1631,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(pre);
 		g_free(post);
 
-		purple_purple_serv_got_typing_stopped(gc, who);
+		purple_serv_got_typing_stopped(gc, who);
 		imdata->gc = g_object_ref(gc);
 		imdata->who = who;
 		imdata->msg = body_str;

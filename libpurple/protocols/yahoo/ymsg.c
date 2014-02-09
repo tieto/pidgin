@@ -900,7 +900,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		if (stat && *stat == '1')
 			purple_serv_got_typing(gc, fed_from, 0, PURPLE_IM_TYPING);
 		else
-			purple_purple_serv_got_typing_stopped(gc, fed_from);
+			purple_serv_got_typing_stopped(gc, fed_from);
 
 		if (fed_from != from)
 			g_free(fed_from);
