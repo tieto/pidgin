@@ -35,7 +35,7 @@
 #include "gnttextview.h"
 #include "gntwidget.h"
 
-typedef gpointer (*GDupFunc)(gconstpointer data);
+typedef gpointer (*GntDuplicateFunc)(gconstpointer data);
 
 /**
  * gnt_util_get_text_bound:
@@ -87,7 +87,7 @@ const char *gnt_util_onscreen_width_to_pointer(const char *str, int len, int *w)
 char * gnt_util_onscreen_fit_string(const char *string, int maxw);
 
 /**
- * g_hash_table_duplicate:
+ * gnt_hash_table_duplicate:
  * @src:         The source hashtable.
  * @hash:        The hash-function to use.
  * @equal:       The hash-equal function to use.
@@ -100,7 +100,7 @@ char * gnt_util_onscreen_fit_string(const char *string, int maxw);
  *
  * Returns:    The new hashtable.
  */
-GHashTable * g_hash_table_duplicate(GHashTable *src, GHashFunc hash, GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d, GDupFunc key_dup, GDupFunc value_dup);
+GHashTable * gnt_hash_table_duplicate(GHashTable *src, GHashFunc hash, GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d, GntDuplicateFunc key_dup, GntDuplicateFunc value_dup);
 
 /**
  * gnt_boolean_handled_accumulator:

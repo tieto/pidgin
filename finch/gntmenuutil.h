@@ -36,7 +36,7 @@
  ***************************************************************************/
 
 /**
- * gnt_append_menu_action:
+ * finch_append_menu_action:
  * @menu:   the GntMenu to add to
  * @action: the PurpleMenuAction to add
  * @ctx:    the callback context, passed as the first argument to
@@ -44,6 +44,6 @@
  *
  * Add a PurpleMenuAction to a GntMenu.
  */
-void gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx);
+void finch_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx);
 
 #endif

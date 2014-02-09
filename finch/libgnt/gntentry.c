@@ -294,7 +294,7 @@ gnt_entry_draw(GntWidget *widget)
 
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
-		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
+		mvwhline(widget->window, 0, stop, GNT_ENTRY_CHAR, widget->priv.width - stop);
 
 	curpos = gnt_util_onscreen_width(entry->scroll, entry->cursor);
 	if (focus)

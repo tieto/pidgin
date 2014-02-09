@@ -113,7 +113,7 @@ static GHashTable *finch_ui_get_info(void)
 static void
 finch_quit(void)
 {
-	gnt_ui_uninit();
+	finch_ui_uninit();
 	if (ui_info)
 		g_hash_table_destroy(ui_info);
 }
@@ -122,7 +122,7 @@ static PurpleCoreUiOps core_ops =
 {
 	finch_prefs_init,
 	debug_init,
-	gnt_ui_init,
+	finch_ui_init,
 	finch_quit,
 	finch_ui_get_info,
 
@@ -408,7 +408,7 @@ init_libpurple(int argc, char **argv)
 	return 1;
 }
 
-gboolean gnt_start(int *argc, char ***argv)
+gboolean finch_start(int *argc, char ***argv)
 {
 	/* Initialize the libpurple stuff */
 	if (!init_libpurple(*argc, *argv))

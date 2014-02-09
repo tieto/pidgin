@@ -1067,7 +1067,7 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 		if (!act)
 			continue;
 		purple_menu_action_set_data(act, node);
-		gnt_append_menu_action(menu, act, node);
+		finch_append_menu_action(menu, act, node);
 	}
 }
 
@@ -1076,7 +1076,7 @@ add_custom_action(GntMenu *menu, const char *label, PurpleCallback callback,
 		gpointer data)
 {
 	PurpleMenuAction *action = purple_menu_action_new(label, callback, data, NULL);
-	gnt_append_menu_action(menu, action, NULL);
+	finch_append_menu_action(menu, action, NULL);
 }
 
 static void
@@ -1314,7 +1314,7 @@ append_extended_menu(GntMenu *menu, PurpleBlistNode *node)
 	for (iter = purple_blist_node_get_extended_menu(node);
 			iter; iter = g_list_delete_link(iter, iter))
 	{
-		gnt_append_menu_action(menu, iter->data, node);
+		finch_append_menu_action(menu, iter->data, node);
 	}
 }
 

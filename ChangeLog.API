@@ -471,8 +471,16 @@ version 3.0.0 (??/??/????):
 	Finch:
 		Changed:
 		* gntft.h file renamed to gntxfer.h
+		* gnt_append_menu_action renamed to finch_append_menu_action
+		* gnt_ui_init renamed to finch_ui_init
+		* gnt_ui_uninit renamed to finch_ui_uninit
 
 	libgnt:
+		Changed:
+		* ENTRY_CHAR renamed to GNT_ENTRY_CHAR
+		* g_hash_table_duplicate renamed to gnt_hash_table_duplicate
+		* GDupFunc renamed to GntDuplicateFunc
+
 		Removed:
 		* _GntFileType
 		* _GntKeyPressMode
