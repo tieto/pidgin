@@ -120,11 +120,11 @@ void gnt_bindable_action_param_free(GntBindableActionParam *param);
 
 /**
  * gnt_bindable_class_register_action:
- * @klass:      The class the binding is for.
- * @name:       The name of the binding.
- * @callback:   The callback  for the binding.
- * @trigger:    The default trigger for the binding, or %NULL, followed by a NULL-terminated
- *                   list of default parameters.
+ * @klass:    The class the binding is for.
+ * @name:     The name of the binding.
+ * @callback: (scope call): The callback for the binding.
+ * @trigger:  The default trigger for the binding, or %NULL, followed by a
+ *            %NULL-terminated list of default parameters.
  *
  * Register a bindable action for a class.
  */
@@ -179,7 +179,7 @@ gboolean gnt_bindable_perform_action_named(GntBindable *bindable, const char *na
  *
  * Returns a GntTree populated with "key" -> "binding" for the widget.
  *
- * Returns:   The GntTree.
+ * Returns: (transfer full): The GntTree.
  */
 GntBindable * gnt_bindable_bindings_view(GntBindable *bind);
 

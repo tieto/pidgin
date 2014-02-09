@@ -76,14 +76,15 @@ char *gnt_style_get_from_name(const char *group, const char *key);
 
 /**
  * gnt_style_get_string_list:
- * @group:   The name of the group in the keyfile. If %NULL, the prgname
- *                will be used first, if available. Otherwise, "general" will be used.
- * @key:     The key
- * @length:  Return location for the number of strings returned, or NULL
+ * @group:  The name of the group in the keyfile. If %NULL, the prgname
+ *          will be used first, if available. Otherwise, "general" will be used.
+ * @key:    The key
+ * @length: Return location for the number of strings returned, or NULL
  *
  * Get the value of a preference in ~/.gntrc.
  *
- * Returns:        NULL terminated string array. The array should be freed with g_strfreev().
+ * Returns: (transfer full): %NULL terminated string array. The array should be
+ *          freed with g_strfreev().
  *
  * Since: 2.4.0
  */

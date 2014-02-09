@@ -56,8 +56,9 @@ void finch_sound_set_active_profile(const char *name);
  *
  * Get a list of available sound profiles.
  *
- * Returns: A list of strings denoting sound profile names.
- *         Caller must free the list (but not the data).
+ * Returns: (transfer container) (element-type utf8): A list of strings
+ *          denoting sound profile names. Caller must free the list
+ *          (but not the data).
  */
 GList *finch_sound_get_profiles(void);
 

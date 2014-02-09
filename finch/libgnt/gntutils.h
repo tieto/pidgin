@@ -88,17 +88,17 @@ char * gnt_util_onscreen_fit_string(const char *string, int maxw);
 
 /**
  * gnt_hash_table_duplicate:
- * @src:         The source hashtable.
- * @hash:        The hash-function to use.
- * @equal:       The hash-equal function to use.
- * @key_d:       The key-destroy function to use.
- * @value_d:     The value-destroy function to use.
- * @key_dup:     The function to use to duplicate the key.
- * @value_dup:   The function to use to duplicate the value.
+ * @src:                     The source hashtable.
+ * @hash: (scope call):      The hash-function to use.
+ * @equal:                   The hash-equal function to use.
+ * @key_d:                   The key-destroy function to use.
+ * @value_d:                 The value-destroy function to use.
+ * @key_dup: (scope call):   The function to use to duplicate the key.
+ * @value_dup: (scope call): The function to use to duplicate the value.
  *
  * Duplicate the contents of a hastable.
  *
- * Returns:    The new hashtable.
+ * Returns: (transfer full): The new hashtable.
  */
 GHashTable * gnt_hash_table_duplicate(GHashTable *src, GHashFunc hash, GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d, GntDuplicateFunc key_dup, GntDuplicateFunc value_dup);
 
@@ -116,7 +116,8 @@ gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint, GValue *r
  *
  * Get a helpful display about the bindings of a widget.
  *
- * Returns: Returns a GntTree populated with "key" -> "binding" for the widget.
+ * Returns: (transfer full): Returns a GntTree populated with "key" -> "binding"
+ *          for the widget.
  */
 GntWidget * gnt_widget_bindings_view(GntWidget *widget);
 

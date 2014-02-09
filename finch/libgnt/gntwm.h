@@ -248,8 +248,8 @@ void gnt_wm_widget_move_workspace(GntWM *wm, GntWS *neww, GntWidget *widget);
 
 /**
  * gnt_wm_set_workspaces:
- * @wm:            The window manager.
- * @workspaces:    The list of workspaces.
+ * @wm:         The window manager.
+ * @workspaces: (element-type Gnt.WS): The list of workspaces.
  *
  * Set the list of workspaces .
  */
@@ -262,7 +262,7 @@ void gnt_wm_set_workspaces(GntWM *wm, GList *workspaces);
  *
  * Find the workspace that contains a specific widget.
  *
- * Returns:   The workspace that has the widget.
+ * Returns: (transfer none): The workspace that has the widget.
  */
 GntWS *gnt_wm_widget_find_workspace(GntWM *wm, GntWidget *widget);
 

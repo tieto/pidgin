@@ -108,9 +108,9 @@ GntMenuItem * gnt_menuitem_new(const char *text);
 
 /**
  * gnt_menuitem_set_callback:
- * @item:       The menuitem.
- * @callback:   The callback function.
- * @data:       Data to send to the callback function.
+ * @item:     The menuitem.
+ * @callback: (scope call): The callback function.
+ * @data:     Data to send to the callback function.
  *
  * Set a callback function for a menuitem.
  */
@@ -131,7 +131,7 @@ void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
  *
  * Get the submenu for a menuitem.
  *
- * Returns:  The submenu, or %NULL.
+ * Returns: (transfer none): The submenu, or %NULL.
  *
  * Since: 2.3.0
  */

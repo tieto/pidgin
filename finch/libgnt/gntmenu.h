@@ -125,7 +125,7 @@ void gnt_menu_add_item(GntMenu *menu, GntMenuItem *item);
  *
  * Return the GntMenuItem with the given ID.
  *
- * Returns:  The menuitem with the given ID, or %NULL.
+ * Returns: (transfer none): The menuitem with the given ID, or %NULL.
  *
  * Since: 2.3.0
  */
