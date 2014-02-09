@@ -100,7 +100,7 @@ void
 pidgin_setup_webview(GtkWidget *webview)
 {
 	g_return_if_fail(webview != NULL);
-	g_return_if_fail(GTK_IS_WEBVIEW(webview));
+	g_return_if_fail(PIDGIN_IS_WEBVIEW(webview));
 
 	pidgin_themes_smiley_themeize(webview);
 

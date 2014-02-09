@@ -35,12 +35,12 @@
 
 #define PIDGIN_DEFAULT_FONT_FACE "Helvetica 12"
 
-#define GTK_TYPE_WEBVIEWTOOLBAR            (pidgin_webviewtoolbar_get_type())
-#define PIDGIN_WEBVIEWTOOLBAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbar))
-#define PIDGIN_WEBVIEWTOOLBAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarClass))
-#define GTK_IS_WEBVIEWTOOLBAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_WEBVIEWTOOLBAR))
-#define GTK_IS_WEBVIEWTOOLBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_WEBVIEWTOOLBAR))
-#define PIDGIN_WEBVIEWTOOLBAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarClass))
+#define PIDGIN_TYPE_WEBVIEWTOOLBAR            (pidgin_webviewtoolbar_get_type())
+#define PIDGIN_WEBVIEWTOOLBAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbar))
+#define PIDGIN_WEBVIEWTOOLBAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarClass))
+#define PIDGIN_IS_WEBVIEWTOOLBAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PIDGIN_TYPE_WEBVIEWTOOLBAR))
+#define PIDGIN_IS_WEBVIEWTOOLBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_WEBVIEWTOOLBAR))
+#define PIDGIN_WEBVIEWTOOLBAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarClass))
 
 typedef struct _PidginWebViewToolbar PidginWebViewToolbar;
 typedef struct _PidginWebViewToolbarClass PidginWebViewToolbarClass;

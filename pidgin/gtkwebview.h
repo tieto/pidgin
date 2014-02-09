@@ -35,12 +35,12 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#define GTK_TYPE_WEBVIEW            (pidgin_webview_get_type())
-#define PIDGIN_WEBVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEW, PidginWebView))
-#define PIDGIN_WEBVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEW, PidginWebViewClass))
-#define GTK_IS_WEBVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_WEBVIEW))
-#define GTK_IS_WEBVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_WEBVIEW))
-#define PIDGIN_WEBVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GTK_TYPE_WEBVIEW, PidginWebViewClass))
+#define PIDGIN_TYPE_WEBVIEW            (pidgin_webview_get_type())
+#define PIDGIN_WEBVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_WEBVIEW, PidginWebView))
+#define PIDGIN_WEBVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_WEBVIEW, PidginWebViewClass))
+#define PIDGIN_IS_WEBVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PIDGIN_TYPE_WEBVIEW))
+#define PIDGIN_IS_WEBVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_WEBVIEW))
+#define PIDGIN_WEBVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_WEBVIEW, PidginWebViewClass))
 
 typedef enum {
 	PIDGIN_WEBVIEW_BOLD          = 1 << 0,

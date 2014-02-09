@@ -344,7 +344,7 @@ regex_filter_toggled_cb(GtkToggleToolButton *button, DebugWindow *win)
 
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/debug/filter", active);
 
-	if (!GTK_IS_WEBVIEW(win->text))
+	if (!PIDGIN_IS_WEBVIEW(win->text))
 		return;
 
 	regex_toggle_filter(win, active);
