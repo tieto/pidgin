@@ -31,7 +31,7 @@
 
 #include "gnt.h"
 
-void gnt_ui_init(void);
-void gnt_ui_uninit(void);
+void finch_ui_init(void);
+void finch_ui_uninit(void);
 
 #endif

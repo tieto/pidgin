@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	g_set_prgname("Finch");
 	g_set_application_name(_("Finch"));
 
-	if (gnt_start(&argc, &argv)) {
+	if (finch_start(&argc, &argv)) {
 		gnt_main();
 
 #ifdef STANDALONE

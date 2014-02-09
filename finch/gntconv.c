@@ -396,7 +396,7 @@ gg_extended_menu(FinchConv *ggc)
 	for (list = purple_conversation_get_extended_menu(ggc->active_conv);
 			list; list = g_list_delete_link(list, list))
 	{
-		gnt_append_menu_action(GNT_MENU(sub), list->data, ggc->active_conv);
+		finch_append_menu_action(GNT_MENU(sub), list->data, ggc->active_conv);
 	}
 }
 

@@ -45,7 +45,7 @@
 #define GNT_ENTRY_SET_FLAGS(obj, flags)		(GNT_ENTRY_FLAGS(obj) |= flags)
 #define GNT_ENTRY_UNSET_FLAGS(obj, flags)	(GNT_ENTRY_FLAGS(obj) &= ~(flags))
 
-#define	ENTRY_CHAR		'_'			/* The character to use to fill in the blank places */
+#define	GNT_ENTRY_CHAR		'_'			/* The character to use to fill in the blank places */
 
 typedef struct _GntEntry			GntEntry;
 typedef struct _GntEntryPriv		GntEntryPriv;
