@@ -106,7 +106,7 @@ void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const 
  *
  * Receive a typing message from a remote user.  Either PURPLE_IM_TYPING
  * or PURPLE_IM_TYPED.  If the user has stopped typing then use
- * purple_purple_serv_got_typing_stopped instead.
+ * purple_serv_got_typing_stopped instead.
  *
  * @todo Could probably move this into the conversation API.
  */
@@ -114,11 +114,11 @@ void purple_serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 					 PurpleIMTypingState state);
 
 /**
- * purple_purple_serv_got_typing_stopped:
+ * purple_serv_got_typing_stopped:
  *
  * @todo Could probably move this into the conversation API.
  */
-void purple_purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name);
+void purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name);
 
 void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				 PurpleMessageFlags flags, time_t mtime);
@@ -138,7 +138,7 @@ void purple_serv_join_chat(PurpleConnection *, GHashTable *data);
 void purple_serv_reject_chat(PurpleConnection *, GHashTable *data);
 
 /**
- * purple_purple_serv_got_chat_invite:
+ * purple_serv_got_chat_invite:
  * @gc:      The connection on which the invite arrived.
  * @name:    The name of the chat you're being invited to.
  * @who:     The username of the person inviting the account.
@@ -149,7 +149,7 @@ void purple_serv_reject_chat(PurpleConnection *, GHashTable *data);
  *
  * Called by a protocol when an account is invited into a chat.
  */
-void purple_purple_serv_got_chat_invite(PurpleConnection *gc, const char *name,
+void purple_serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);
 

@@ -1953,7 +1953,7 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	parms = g_slist_append(parms, nm_event_get_conference(event));
 
 	/* Prompt the user */
-	/* TODO: Would it be better to use purple_purple_serv_got_chat_invite() here? */
+	/* TODO: Would it be better to use purple_serv_got_chat_invite() here? */
 	gc = purple_account_get_connection(user->client_data);
 	purple_request_action(gc, title, primary, secondary,
 						PURPLE_DEFAULT_ACTION_NONE,
@@ -2088,7 +2088,7 @@ _evt_user_not_typing(NMUser * user, NMEvent * event)
 	if (gc) {
 		user_record = nm_find_user_record(user, nm_event_get_source(event));
 		if (user_record) {
-			purple_purple_serv_got_typing_stopped(gc,
+			purple_serv_got_typing_stopped(gc,
 									nm_user_record_get_display_id(user_record));
 		}
 	}

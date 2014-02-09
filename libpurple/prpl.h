@@ -374,7 +374,7 @@ struct _PurplePluginProtocolInfo
 	 *              join the chat as described by the entries returned
 	 *              by #chat_info. It may also be called when accepting
 	 *              an invitation, in which case this matches the
-	 *              data parameter passed to #purple_purple_serv_got_chat_invite.
+	 *              data parameter passed to #purple_serv_got_chat_invite.
 	 */
 	void (*join_chat)(PurpleConnection *, GHashTable *components);
 
@@ -382,7 +382,7 @@ struct _PurplePluginProtocolInfo
 	 * Called when the user refuses a chat invitation.
 	 *
 	 * @components: A hashtable containing information required to
-	 *              join the chat as passed to #purple_purple_serv_got_chat_invite.
+	 *              join the chat as passed to #purple_serv_got_chat_invite.
 	 */
 	void (*reject_chat)(PurpleConnection *, GHashTable *components);
 

@@ -875,7 +875,7 @@ void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, ch
 
 	g_hash_table_insert(components, g_strdup("channel"), g_strdup(args[1]));
 
-	purple_purple_serv_got_chat_invite(gc, args[1], nick, NULL, components);
+	purple_serv_got_chat_invite(gc, args[1], nick, NULL, components);
 	g_free(nick);
 }
 

@@ -2072,7 +2072,7 @@ static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record*
 			break;
 
 		case CP_MSGEVENT_STOPPED :							/* user has stopped typing */
-			purple_purple_serv_got_typing_stopped( session->con, records[0]->fields[0]->data );
+			purple_serv_got_typing_stopped( session->con, records[0]->fields[0]->data );
 			break;
 
 		case CP_MSGEVENT_ERASING :							/* user is erasing text */

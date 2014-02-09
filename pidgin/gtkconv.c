@@ -9331,7 +9331,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 
 		if (dest_win == NULL) {
-			pidgin_pidgin_dnd_hints_hide_all();
+			pidgin_dnd_hints_hide_all();
 
 			return TRUE;
 		}
@@ -9357,23 +9357,23 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		if (gtk_notebook_get_show_tabs(dest_notebook) == FALSE && win == dest_win)
 		{
 			/* dragging a tab from a single-tabbed window over its own window */
-			pidgin_pidgin_dnd_hints_hide_all();
+			pidgin_dnd_hints_hide_all();
 			return TRUE;
 		} else if (horiz_tabs) {
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
 			} else {
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
 			}
 		} else {
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
 			} else {
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
-				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				pidgin_dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
 			}
 		}
 	}
@@ -9622,7 +9622,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 	win->in_drag = FALSE;
 
-	pidgin_pidgin_dnd_hints_hide_all();
+	pidgin_dnd_hints_hide_all();
 
 	dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 

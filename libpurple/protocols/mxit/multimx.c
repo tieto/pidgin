@@ -288,7 +288,7 @@ void multimx_invite(struct MXitSession* session, struct contact* contact, const 
 	g_hash_table_insert(components, g_strdup("room"), g_strdup(contact->alias));
 
 	/* Call libpurple - will trigger either 'mxit_chat_join' or 'mxit_chat_reject' */
-	purple_purple_serv_got_chat_invite(session->con, contact->alias, creator, NULL, components);
+	purple_serv_got_chat_invite(session->con, contact->alias, creator, NULL, components);
 }
 
 

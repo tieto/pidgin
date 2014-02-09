@@ -208,7 +208,7 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 		g_hash_table_replace(components, g_strdup("topic"), msg);
 	g_hash_table_replace(components, g_strdup("type"), g_strdup("Conference"));
 	g_hash_table_replace(components, g_strdup("members"), g_string_free(members, FALSE));
-	purple_purple_serv_got_chat_invite(gc, room, who, msg, components);
+	purple_serv_got_chat_invite(gc, room, who, msg, components);
 
 }
 
@@ -805,7 +805,7 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 
 		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 		g_hash_table_replace(components, g_strdup("room"), g_strdup(room));
-		purple_purple_serv_got_chat_invite(gc, room, who, msg, components);
+		purple_serv_got_chat_invite(gc, room, who, msg, components);
 	}
 
 	g_free(room);

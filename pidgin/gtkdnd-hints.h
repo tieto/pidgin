@@ -88,14 +88,14 @@ void pidgin_dnd_hints_show(PidginDndHintWindowId id, gint x, gint y);
 void pidgin_dnd_hints_hide(PidginDndHintWindowId id);
 
 /**
- * pidgin_pidgin_dnd_hints_hide_all:
+ * pidgin_dnd_hints_hide_all:
  *
  * Hides all drag-and-drop hints.
  */
-void pidgin_pidgin_dnd_hints_hide_all(void);
+void pidgin_dnd_hints_hide_all(void);
 
 /**
- * pidgin_pidgin_dnd_hints_show_relative:
+ * pidgin_dnd_hints_show_relative:
  * @id:     The ID of the hint.
  * @widget: The widget that the hint is relative to.
  * @horiz:  The horizontal relative position.
@@ -103,7 +103,7 @@ void pidgin_pidgin_dnd_hints_hide_all(void);
  *
  * Shows a drag-and-drop hint relative to a widget.
  */
-void pidgin_pidgin_dnd_hints_show_relative(PidginDndHintWindowId id, GtkWidget *widget,
+void pidgin_dnd_hints_show_relative(PidginDndHintWindowId id, GtkWidget *widget,
 							 PidginDndHintPosition horiz, PidginDndHintPosition vert);
 
 G_END_DECLS

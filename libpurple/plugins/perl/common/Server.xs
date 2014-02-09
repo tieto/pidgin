@@ -65,7 +65,7 @@ purple_serv_got_chat_in(g, id, who, chatflags, message, mtime)
 	time_t mtime
 
 void 
-purple_purple_serv_got_chat_invite(gc, name, who, message, components)
+purple_serv_got_chat_invite(gc, name, who, message, components)
 	Purple::Connection gc
 	const char *name
 	const char *who
@@ -89,7 +89,7 @@ CODE:
 
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
-	purple_purple_serv_got_chat_invite(gc, name, who, message, t_GHash);
+	purple_serv_got_chat_invite(gc, name, who, message, t_GHash);
 
 void 
 purple_serv_got_chat_left(g, id)
@@ -118,7 +118,7 @@ purple_serv_got_typing(gc, name, timeout, state)
 	Purple::IMTypingState state
 
 void 
-purple_purple_serv_got_typing_stopped(gc, name)
+purple_serv_got_typing_stopped(gc, name)
 	Purple::Connection gc
 	const char *name
 

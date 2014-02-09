@@ -474,7 +474,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 
 			components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 			g_hash_table_insert(components, g_strdup("channel"), g_strdup(name));
-			purple_purple_serv_got_chat_invite(gc, name, client_entry->nickname, NULL, components);
+			purple_serv_got_chat_invite(gc, name, client_entry->nickname, NULL, components);
 		}
 		break;
 

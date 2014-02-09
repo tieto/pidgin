@@ -1935,7 +1935,7 @@ static void mw_conf_invited(struct mwConference *conf,
 
   if(! c_topic) c_topic = "(no title)";
   if(! c_invitation) c_invitation = "(no message)";
-  purple_purple_serv_got_chat_invite(gc, c_topic, c_inviter, c_invitation, ht);
+  purple_serv_got_chat_invite(gc, c_topic, c_inviter, c_invitation, ht);
 }
 
 
@@ -2909,7 +2909,7 @@ static void mw_place_invite(struct mwConversation *conv,
 
   if(! title) title = "(no title)";
   if(! message) message = "(no message)";
-  purple_purple_serv_got_chat_invite(pd->gc, title, idb->user, message, ht);
+  purple_serv_got_chat_invite(pd->gc, title, idb->user, message, ht);
 
   mwConversation_close(conv, ERR_SUCCESS);
   mwConversation_free(conv);
