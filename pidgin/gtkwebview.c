@@ -40,7 +40,7 @@
 #define PIDGIN_WEBVIEW_MAX_PROCESS_TIME 100000 /* microseconds */
 
 #define PIDGIN_WEBVIEW_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEW, PidginWebViewPriv))
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_WEBVIEW, PidginWebViewPriv))
 
 enum {
 	LOAD_HTML,
@@ -351,7 +351,7 @@ pidgin_webview_associate_smiley(PidginWebView *webview, const char *sml,
 	PidginWebViewPriv *priv;
 
 	g_return_if_fail(webview != NULL);
-	g_return_if_fail(GTK_IS_WEBVIEW(webview));
+	g_return_if_fail(PIDGIN_IS_WEBVIEW(webview));
 
 	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
 
@@ -931,7 +931,7 @@ webview_find_protocol(const char *url, gboolean reverse)
 	PidginWebViewProtocol *proto = NULL;
 	gssize length = reverse ? (gssize)strlen(url) : -1;
 
-	klass = g_type_class_ref(GTK_TYPE_WEBVIEW);
+	klass = g_type_class_ref(PIDGIN_TYPE_WEBVIEW);
 	for (iter = klass->protocols; iter; iter = iter->next) {
 		proto = iter->data;
 		if (g_ascii_strncasecmp(url, proto->name, reverse ? MIN(length, proto->length) : proto->length) == 0) {
@@ -1962,7 +1962,7 @@ pidgin_webview_class_register_protocol(const char *name,
 
 	g_return_val_if_fail(name, FALSE);
 
-	klass = g_type_class_ref(GTK_TYPE_WEBVIEW);
+	klass = g_type_class_ref(PIDGIN_TYPE_WEBVIEW);
 	g_return_val_if_fail(klass, FALSE);
 
 	if ((proto = webview_find_protocol(name, TRUE))) {

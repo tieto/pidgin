@@ -41,7 +41,7 @@
 #include "gtk3compat.h"
 
 #define PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GTK_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarPriv))
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarPriv))
 
 /******************************************************************************
  * Structs
@@ -1580,9 +1580,9 @@ pidgin_webviewtoolbar_attach(PidginWebViewToolbar *toolbar, GtkWidget *webview)
 	PidginWebViewButtons buttons;
 
 	g_return_if_fail(toolbar != NULL);
-	g_return_if_fail(GTK_IS_WEBVIEWTOOLBAR(toolbar));
+	g_return_if_fail(PIDGIN_IS_WEBVIEWTOOLBAR(toolbar));
 	g_return_if_fail(webview != NULL);
-	g_return_if_fail(GTK_IS_WEBVIEW(webview));
+	g_return_if_fail(PIDGIN_IS_WEBVIEW(webview));
 
 	toolbar->webview = webview;
 	g_signal_connect(G_OBJECT(webview), "allowed-formats-updated",
