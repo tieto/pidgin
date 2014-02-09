@@ -54,6 +54,6 @@ static const GdkColor nick_seed_colors[] = {
 	{0,  11822, 13364,  13878}      /* Aluminium #6*/
 };
 
-#define NUM_NICK_SEED_COLORS (sizeof(nick_seed_colors) / sizeof(nick_seed_colors[0]))
+#define PIDGIN_NUM_NICK_SEED_COLORS (sizeof(nick_seed_colors) / sizeof(nick_seed_colors[0]))
 
 #endif

@@ -35,9 +35,9 @@
 #include "gtkwebview.h"
 
 GSList *smiley_themes = NULL;
-struct smiley_theme *current_smiley_theme;
+struct PidginSmileyTheme *current_smiley_theme;
 
-static void pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme);
+static void pidgin_themes_destroy_smiley_theme_smileys(struct PidginSmileyTheme *theme);
 
 gboolean pidgin_themes_smileys_disabled()
 {
@@ -48,7 +48,7 @@ gboolean pidgin_themes_smileys_disabled()
 }
 
 static void
-pidgin_themes_destroy_smiley_theme(struct smiley_theme *theme)
+pidgin_themes_destroy_smiley_theme(struct PidginSmileyTheme *theme)
 {
 	pidgin_themes_destroy_smiley_theme_smileys(theme);
 
@@ -89,7 +89,7 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 
 	if ((last_slash = g_strrstr(theme_dir, G_DIR_SEPARATOR_S)) != NULL) {
 		GSList *iter = NULL;
-		struct smiley_theme *theme = NULL, *new_theme = NULL;
+		struct PidginSmileyTheme *theme = NULL, *new_theme = NULL;
 
 		*last_slash = 0;
 
@@ -98,13 +98,13 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 
 		/* Find theme in themes list and remove it */
 		for (iter = smiley_themes ; iter ; iter = iter->next) {
-			theme = ((struct smiley_theme *)(iter->data));
+			theme = ((struct PidginSmileyTheme *)(iter->data));
 			if (!strcmp(theme->path, file))
 				break ;
 		}
 		if (iter) {
 			if (theme == current_smiley_theme) {
-				new_theme = ((struct smiley_theme *)(NULL == iter->next ? (smiley_themes == iter ? NULL : smiley_themes->data) : iter->next->data));
+				new_theme = ((struct PidginSmileyTheme *)(NULL == iter->next ? (smiley_themes == iter ? NULL : smiley_themes->data) : iter->next->data));
 				if (new_theme)
 					purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme->name);
 				else
@@ -122,17 +122,17 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 
 static void _pidgin_themes_smiley_themeize(GtkWidget *webview, gboolean custom)
 {
-	struct smiley_list *list;
+	struct PidginSmileyList *list;
 	if (!current_smiley_theme)
 		return;
 
-	gtk_webview_remove_smileys(GTK_WEBVIEW(webview));
+	pidgin_webview_remove_smileys(PIDGIN_WEBVIEW(webview));
 	list = current_smiley_theme->list;
 	while (list) {
 		char *sml = !strcmp(list->sml, "default") ? NULL : list->sml;
 		GSList *icons = list->smileys;
 		while (icons) {
-			gtk_webview_associate_smiley(GTK_WEBVIEW(webview), sml, icons->data);
+			pidgin_webview_associate_smiley(PIDGIN_WEBVIEW(webview), sml, icons->data);
 			icons = icons->next;
 		}
 
@@ -140,7 +140,7 @@ static void _pidgin_themes_smiley_themeize(GtkWidget *webview, gboolean custom)
 			icons = pidgin_smileys_get_all();
 
 			while (icons) {
-				gtk_webview_associate_smiley(GTK_WEBVIEW(webview), sml, icons->data);
+				pidgin_webview_associate_smiley(PIDGIN_WEBVIEW(webview), sml, icons->data);
 				icons = icons->next;
 			}
 		}
@@ -162,14 +162,14 @@ pidgin_themes_smiley_themeize_custom(GtkWidget *webview)
 }
 
 static void
-pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
+pidgin_themes_destroy_smiley_theme_smileys(struct PidginSmileyTheme *theme)
 {
-	struct smiley_list *wer;
+	struct PidginSmileyList *wer;
 
 	for (wer = theme->list; wer != NULL; wer = theme->list) {
 		while (wer->smileys) {
-			GtkWebViewSmiley *uio = wer->smileys->data;
-			gtk_webview_smiley_destroy(uio);
+			PidginWebViewSmiley *uio = wer->smileys->data;
+			pidgin_webview_smiley_destroy(uio);
 			wer->smileys = g_slist_delete_link(wer->smileys, wer->smileys);
 		}
 		theme->list = wer->next;
@@ -182,16 +182,16 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 static void
 pidgin_smiley_themes_remove_non_existing(void)
 {
-	static struct smiley_theme *theme = NULL;
+	static struct PidginSmileyTheme *theme = NULL;
 	GSList *iter = NULL;
 
 	if (!smiley_themes) return ;
 
 	for (iter = smiley_themes ; iter ; iter = iter->next) {
-		theme = ((struct smiley_theme *)(iter->data));
+		theme = ((struct PidginSmileyTheme *)(iter->data));
 		if (!g_file_test(theme->path, G_FILE_TEST_EXISTS)) {
 			if (theme == current_smiley_theme)
-				current_smiley_theme = ((struct smiley_theme *)(NULL == iter->next ? NULL : iter->next->data));
+				current_smiley_theme = ((struct PidginSmileyTheme *)(NULL == iter->next ? NULL : iter->next->data));
 			pidgin_themes_destroy_smiley_theme(theme);
 			iter->data = NULL;
 		}
@@ -200,7 +200,7 @@ pidgin_smiley_themes_remove_non_existing(void)
 	smiley_themes = g_slist_remove_all(smiley_themes, NULL);
 
 	if (!current_smiley_theme && smiley_themes) {
-		struct smiley_theme *smile = g_slist_last(smiley_themes)->data;
+		struct PidginSmileyTheme *smile = g_slist_last(smiley_themes)->data;
 		pidgin_themes_load_smiley_theme(smile->path, TRUE);
 	}
 }
@@ -211,8 +211,8 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	char buf[256];
 	char *i;
 	gsize line_nbr = 0;
-	struct smiley_theme *theme=NULL;
-	struct smiley_list *list = NULL;
+	struct PidginSmileyTheme *theme=NULL;
+	struct PidginSmileyList *list = NULL;
 	GSList *lst = smiley_themes;
 	char *dirname;
 
@@ -220,7 +220,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		return;
 
 	while (lst) {
-		struct smiley_theme *thm = lst->data;
+		struct PidginSmileyTheme *thm = lst->data;
 		if (!strcmp(thm->path, file)) {
 			theme = thm;
 			break;
@@ -235,7 +235,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	}
 
 	if (theme == NULL) {
-		theme = g_new0(struct smiley_theme, 1);
+		theme = g_new0(struct PidginSmileyTheme, 1);
 		theme->path = g_strdup(file);
 		smiley_themes = g_slist_prepend(smiley_themes, theme);
 	}
@@ -268,7 +268,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			i++;
 
 		if (*i == '[' && strchr(i, ']') && load) {
-			struct smiley_list *child = g_new0(struct smiley_list, 1);
+			struct PidginSmileyList *child = g_new0(struct PidginSmileyList, 1);
 			child->sml = g_strndup(i+1, strchr(i, ']') - i - 1);
 			child->files = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 
@@ -318,7 +318,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				if (!sfile) {
 					sfile = g_build_filename(dirname, l, NULL);
 				} else {
-					GtkWebViewSmiley *smiley = gtk_webview_smiley_create(sfile, l, hidden, 0);
+					PidginWebViewSmiley *smiley = pidgin_webview_smiley_create(sfile, l, hidden, 0);
 					list->smileys = g_slist_prepend(list->smileys, smiley);
 					g_hash_table_insert (list->files, g_strdup(l), g_strdup(sfile));
 				}
@@ -403,14 +403,14 @@ void pidgin_themes_smiley_theme_probe()
 	}
 
 	if (!current_smiley_theme && smiley_themes) {
-		struct smiley_theme *smile = smiley_themes->data;
+		struct PidginSmileyTheme *smile = smiley_themes->data;
 		pidgin_themes_load_smiley_theme(smile->path, TRUE);
 	}
 }
 
 GSList *pidgin_themes_get_proto_smileys(const char *id) {
 	PurplePlugin *proto;
-	struct smiley_list *list, *def;
+	struct PidginSmileyList *list, *def;
 
 	if ((current_smiley_theme == NULL) || (current_smiley_theme->list == NULL))
 		return NULL;
@@ -443,7 +443,7 @@ void pidgin_themes_init()
 	pidgin_themes_smiley_theme_probe();
 
 	for (l = smiley_themes; l; l = l->next) {
-		struct smiley_theme *smile = l->data;
+		struct PidginSmileyTheme *smile = l->data;
 		if (smile->name && strcmp(current_theme, smile->name) == 0) {
 			pidgin_themes_load_smiley_theme(smile->path, TRUE);
 			break;
@@ -452,7 +452,7 @@ void pidgin_themes_init()
 
 	/* If we still don't have a smiley theme, choose the first one */
 	if (!current_smiley_theme && smiley_themes) {
-		struct smiley_theme *smile = smiley_themes->data;
+		struct PidginSmileyTheme *smile = smiley_themes->data;
 		pidgin_themes_load_smiley_theme(smile->path, TRUE);
 	}
 }

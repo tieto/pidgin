@@ -90,7 +90,7 @@ url_clicked_idle_cb(gpointer data)
 }
 
 static gboolean
-url_clicked_cb(GtkWebView *unused, const char *uri)
+url_clicked_cb(PidginWebView *unused, const char *uri)
 {
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
 	return TRUE;
@@ -227,7 +227,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw
 	gtk_widget_show(vbox);
 
 	if (editable) {
-		toolbar = gtk_webviewtoolbar_new();
+		toolbar = pidgin_webviewtoolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 		gtk_widget_show(toolbar);
 
@@ -238,22 +238,22 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw
 		gtk_widget_show(sep);
 	}
 
-	webview = gtk_webview_new(editable);
+	webview = pidgin_webview_new(editable);
 	if (editable && purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
-		pidgin_webview_set_spellcheck(GTK_WEBVIEW(webview), TRUE);
+		pidgin_webview_set_spellcheck(PIDGIN_WEBVIEW(webview), TRUE);
 	gtk_widget_show(webview);
 
 	if (editable) {
-		gtk_webviewtoolbar_attach(GTK_WEBVIEWTOOLBAR(toolbar), webview);
-		gtk_webviewtoolbar_associate_smileys(GTK_WEBVIEWTOOLBAR(toolbar), "default");
-		gtk_webview_set_toolbar(GTK_WEBVIEW(webview), toolbar);
+		pidgin_webviewtoolbar_attach(PIDGIN_WEBVIEWTOOLBAR(toolbar), webview);
+		pidgin_webviewtoolbar_associate_smileys(PIDGIN_WEBVIEWTOOLBAR(toolbar), "default");
+		pidgin_webview_set_toolbar(PIDGIN_WEBVIEW(webview), toolbar);
 	}
 	pidgin_setup_webview(webview);
 
 	sw = pidgin_make_scrollable(webview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
-	gtk_webview_set_vadjustment(GTK_WEBVIEW(webview),
+	pidgin_webview_set_vadjustment(PIDGIN_WEBVIEW(webview),
 			gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)));
 
 	if (webview_ret != NULL)
@@ -1406,7 +1406,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		shortname = shortname ? shortname + 1 : data->filename;
 		id = purple_imgstore_new_with_id(filedata, size, shortname);
 
-		gtk_webview_insert_image(GTK_WEBVIEW(gtkconv->entry), id);
+		pidgin_webview_insert_image(PIDGIN_WEBVIEW(gtkconv->entry), id);
 		purple_imgstore_unref_by_id(id);
 
 		break;
@@ -1567,7 +1567,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			case PURPLE_DESKTOP_ITEM_TYPE_LINK:
 				conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, who));
 				gtkconv =  PIDGIN_CONVERSATION(conv);
-				gtk_webview_insert_link(GTK_WEBVIEW(gtkconv->entry),
+				pidgin_webview_insert_link(PIDGIN_WEBVIEW(gtkconv->entry),
 				                        purple_desktop_item_get_string(item, "URL"),
 				                        itemname);
 				break;
@@ -3163,7 +3163,7 @@ url_copy(GtkWidget *w, gchar *url)
 }
 
 static gboolean
-link_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
+link_context_menu(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
 	char *url;
@@ -3175,7 +3175,7 @@ link_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidg
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Open Link"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 	g_signal_connect_swapped(G_OBJECT(item), "activate",
-	                         G_CALLBACK(gtk_webview_activate_anchor), link);
+	                         G_CALLBACK(pidgin_webview_activate_anchor), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Copy Link Location */
@@ -3191,7 +3191,7 @@ link_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidg
 }
 
 static gboolean
-copy_email_address(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
+copy_email_address(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
 	char *text;
@@ -3224,7 +3224,7 @@ copy_email_address(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWid
  *        from a link in an IM window with the leading "file://" removed.
  */
 static void
-open_file(GtkWebView *webview, const char *filename)
+open_file(PidginWebView *webview, const char *filename)
 {
 	/* Copied from gtkft.c:open_button_cb */
 #ifdef _WIN32
@@ -3307,7 +3307,7 @@ open_file(GtkWebView *webview, const char *filename)
 
 #define FILELINKSIZE  (sizeof("file://") - 1)
 static gboolean
-file_clicked_cb(GtkWebView *webview, const char *uri)
+file_clicked_cb(PidginWebView *webview, const char *uri)
 {
 	/* Strip "file://" from the URI. */
 	open_file(webview, uri + FILELINKSIZE);
@@ -3315,7 +3315,7 @@ file_clicked_cb(GtkWebView *webview, const char *uri)
 }
 
 static gboolean
-open_containing_cb(GtkWebView *webview, const char *uri)
+open_containing_cb(PidginWebView *webview, const char *uri)
 {
 	char *dir = g_path_get_dirname(uri + FILELINKSIZE);
 	open_file(webview, dir);
@@ -3324,7 +3324,7 @@ open_containing_cb(GtkWebView *webview, const char *uri)
 }
 
 static gboolean
-file_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
+file_context_menu(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
 	char *url;
@@ -3336,7 +3336,7 @@ file_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidg
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Open File"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 	g_signal_connect_swapped(G_OBJECT(item), "activate",
-	                         G_CALLBACK(gtk_webview_activate_anchor), link);
+	                         G_CALLBACK(pidgin_webview_activate_anchor), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Open Containing Directory */
@@ -3354,7 +3354,7 @@ file_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidg
 
 #define AUDIOLINKSIZE  (sizeof("audio://") - 1)
 static gboolean
-audio_clicked_cb(GtkWebView *webview, const char *uri)
+audio_clicked_cb(PidginWebView *webview, const char *uri)
 {
 	PidginConversation *conv = g_object_get_data(G_OBJECT(webview), "gtkconv");
 	if (!conv) /* no playback in debug window */
@@ -3402,7 +3402,7 @@ save_file_cb(GtkWidget *item, const char *url)
 }
 
 static gboolean
-audio_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
+audio_context_menu(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	GtkWidget *img, *item;
 	char *url;
@@ -3417,7 +3417,7 @@ audio_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWid
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Play Sound"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 	g_signal_connect_swapped(G_OBJECT(item), "activate",
-	                         G_CALLBACK(gtk_webview_activate_anchor), link);
+	                         G_CALLBACK(pidgin_webview_activate_anchor), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Save File */
@@ -3437,7 +3437,7 @@ audio_context_menu(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWid
 
 /* XXX: The following two functions are for demonstration purposes only! */
 static gboolean
-open_dialog(GtkWebView *webview, const char *url)
+open_dialog(PidginWebView *webview, const char *url)
 {
 	const char *str;
 
@@ -3457,7 +3457,7 @@ open_dialog(GtkWebView *webview, const char *url)
 }
 
 static gboolean
-dummy(GtkWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
+dummy(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 {
 	return TRUE;
 }
@@ -3522,7 +3522,7 @@ register_gnome_url_handlers(void)
 
 				protocol = g_strdup_printf("%s:", start);
 				registered_url_handlers = g_slist_prepend(registered_url_handlers, protocol);
-				gtk_webview_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+				pidgin_webview_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
 			}
 			start = c + 1;
 		}
@@ -3555,7 +3555,7 @@ winpidgin_register_win32_url_handlers(void)
 					g_free(utf8);
 					registered_url_handlers = g_slist_prepend(registered_url_handlers, protocol);
 					/* We still pass everything to the "http" "open" handler for security reasons */
-					gtk_webview_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+					pidgin_webview_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
 				}
 				RegCloseKey(reg_key);
 			}
@@ -3598,17 +3598,17 @@ pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPol
 
 void pidgin_utils_init(void)
 {
-	gtk_webview_class_register_protocol("http://", url_clicked_cb, link_context_menu);
-	gtk_webview_class_register_protocol("https://", url_clicked_cb, link_context_menu);
-	gtk_webview_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
-	gtk_webview_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
-	gtk_webview_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
+	pidgin_webview_class_register_protocol("http://", url_clicked_cb, link_context_menu);
+	pidgin_webview_class_register_protocol("https://", url_clicked_cb, link_context_menu);
+	pidgin_webview_class_register_protocol("ftp://", url_clicked_cb, link_context_menu);
+	pidgin_webview_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
+	pidgin_webview_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
 
-	gtk_webview_class_register_protocol("file://", file_clicked_cb, file_context_menu);
-	gtk_webview_class_register_protocol("audio://", audio_clicked_cb, audio_context_menu);
+	pidgin_webview_class_register_protocol("file://", file_clicked_cb, file_context_menu);
+	pidgin_webview_class_register_protocol("audio://", audio_clicked_cb, audio_context_menu);
 
 	/* Example custom URL handler. */
-	gtk_webview_class_register_protocol("open://", open_dialog, dummy);
+	pidgin_webview_class_register_protocol("open://", open_dialog, dummy);
 
 	/* If we're under GNOME, try registering the system URL handlers. */
 	if (purple_running_gnome())
@@ -3635,7 +3635,7 @@ void pidgin_utils_init(void)
 
 void pidgin_utils_uninit(void)
 {
-	gtk_webview_class_register_protocol("open://", NULL, NULL);
+	pidgin_webview_class_register_protocol("open://", NULL, NULL);
 
 	/* If we have GNOME handlers registered, unregister them. */
 	if (registered_url_handlers)
@@ -3643,7 +3643,7 @@ void pidgin_utils_uninit(void)
 		GSList *l;
 		for (l = registered_url_handlers; l; l = l->next)
 		{
-			gtk_webview_class_register_protocol((char *)l->data, NULL, NULL);
+			pidgin_webview_class_register_protocol((char *)l->data, NULL, NULL);
 			g_free(l->data);
 		}
 		g_slist_free(registered_url_handlers);
@@ -3651,12 +3651,12 @@ void pidgin_utils_uninit(void)
 		return;
 	}
 
-	gtk_webview_class_register_protocol("audio://", NULL, NULL);
-	gtk_webview_class_register_protocol("file://", NULL, NULL);
+	pidgin_webview_class_register_protocol("audio://", NULL, NULL);
+	pidgin_webview_class_register_protocol("file://", NULL, NULL);
 
-	gtk_webview_class_register_protocol("http://", NULL, NULL);
-	gtk_webview_class_register_protocol("https://", NULL, NULL);
-	gtk_webview_class_register_protocol("ftp://", NULL, NULL);
-	gtk_webview_class_register_protocol("mailto:", NULL, NULL);
-	gtk_webview_class_register_protocol("gopher://", NULL, NULL);
+	pidgin_webview_class_register_protocol("http://", NULL, NULL);
+	pidgin_webview_class_register_protocol("https://", NULL, NULL);
+	pidgin_webview_class_register_protocol("ftp://", NULL, NULL);
+	pidgin_webview_class_register_protocol("mailto:", NULL, NULL);
+	pidgin_webview_class_register_protocol("gopher://", NULL, NULL);
 }

@@ -78,13 +78,13 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb);
  *****************************************************************************/
 /*
 GList *buttonList = NULL;
-GdkColor DefaultColor[PALETTE_NUM_COLORS];
+GdkColor DefaultColor[PIDGIN_PALETTE_NUM_COLORS];
 */
 
 static int LastX;       /* Tracks last position of the mouse when drawing */
 static int LastY;
 static int MotionCount; /* Tracks how many brush motions made */
-static int BrushState = BRUSH_STATE_UP;
+static int BrushState = PIDGIN_BRUSH_STATE_UP;
 
 static PurpleWhiteboardUiOps ui_ops =
 {
@@ -170,7 +170,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 
 	GtkWidget *hbox_palette;
 	GtkWidget *vbox_palette_above_canvas_and_controls;
-	GtkWidget *palette_color_box[PALETTE_NUM_COLORS];
+	GtkWidget *palette_color_box[PIDGIN_PALETTE_NUM_COLORS];
 
 	/* Create vertical box to place palette above the canvas and controls */
 	vbox_palette_above_canvas_and_controls = gtk_vbox_new(FALSE, 0);
@@ -189,10 +189,10 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 			hbox_canvas_and_controls, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox_canvas_and_controls);
 
-	for(i = 0; i < PALETTE_NUM_COLORS; i++)
+	for(i = 0; i < PIDGIN_PALETTE_NUM_COLORS; i++)
 	{
 		palette_color_box[i] = gtk_image_new_from_pixbuf(NULL);
-		gtk_widget_set_size_request(palette_color_box[i], gtkwb->width / PALETTE_NUM_COLORS ,32);
+		gtk_widget_set_size_request(palette_color_box[i], gtkwb->width / PIDGIN_PALETTE_NUM_COLORS ,32);
 		gtk_container_add(GTK_CONTAINER(hbox_palette), palette_color_box[i]);
 
 		gtk_widget_show(palette_color_box[i]);
@@ -438,15 +438,15 @@ static gboolean pidgin_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *
 	PurpleWhiteboard *wb = gtkwb->wb;
 	GList *draw_list = purple_whiteboard_get_draw_list(wb);
 
-	if(BrushState != BRUSH_STATE_UP)
+	if(BrushState != PIDGIN_BRUSH_STATE_UP)
 	{
 		/* Potential double-click DOWN to DOWN? */
-		BrushState = BRUSH_STATE_DOWN;
+		BrushState = PIDGIN_BRUSH_STATE_DOWN;
 
 		/* return FALSE; */
 	}
 
-	BrushState = BRUSH_STATE_DOWN;
+	BrushState = PIDGIN_BRUSH_STATE_DOWN;
 
 	if(event->button == 1 && gtkwb->priv->pix != NULL)
 	{
@@ -506,15 +506,15 @@ static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion
 
 	if(state & GDK_BUTTON1_MASK && gtkwb->priv->pix != NULL)
 	{
-		if((BrushState != BRUSH_STATE_DOWN) && (BrushState != BRUSH_STATE_MOTION))
+		if((BrushState != PIDGIN_BRUSH_STATE_DOWN) && (BrushState != PIDGIN_BRUSH_STATE_MOTION))
 		{
 			purple_debug_error("gtkwhiteboard", "***Bad brush state transition %d to MOTION\n", BrushState);
 
-			BrushState = BRUSH_STATE_MOTION;
+			BrushState = PIDGIN_BRUSH_STATE_MOTION;
 
 			return FALSE;
 		}
-		BrushState = BRUSH_STATE_MOTION;
+		BrushState = PIDGIN_BRUSH_STATE_MOTION;
 
 		dx = x - LastX;
 		dy = y - LastY;
@@ -574,15 +574,15 @@ static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *ev
 	PurpleWhiteboard *wb = gtkwb->wb;
 	GList *draw_list = purple_whiteboard_get_draw_list(wb);
 
-	if((BrushState != BRUSH_STATE_DOWN) && (BrushState != BRUSH_STATE_MOTION))
+	if((BrushState != PIDGIN_BRUSH_STATE_DOWN) && (BrushState != PIDGIN_BRUSH_STATE_MOTION))
 	{
 		purple_debug_error("gtkwhiteboard", "***Bad brush state transition %d to UP\n", BrushState);
 
-		BrushState = BRUSH_STATE_UP;
+		BrushState = PIDGIN_BRUSH_STATE_UP;
 
 		return FALSE;
 	}
-	BrushState = BRUSH_STATE_UP;
+	BrushState = PIDGIN_BRUSH_STATE_UP;
 
 	if(event->button == 1 && gtkwb->priv->pix != NULL)
 	{

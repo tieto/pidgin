@@ -32,7 +32,7 @@
 G_BEGIN_DECLS
 
 char *
-smiley_parse_markup(const char *markup, const char *sml);
+pidgin_smiley_parse_markup(const char *markup, const char *sml);
 
 G_END_DECLS
 

@@ -101,7 +101,7 @@ void pidgin_setup_webview(GtkWidget *webview);
  * @sw_ret: This will be filled with a pointer to the scrolled window
  *        widget which contains the webview.
  *
- * Create an GtkWebView widget and associated GtkWebViewToolbar widget.  This
+ * Create an PidginWebView widget and associated PidginWebViewToolbar widget.  This
  * function puts both widgets in a nice GtkFrame.  They're separated by an
  * attractive GtkSeparator.
  *

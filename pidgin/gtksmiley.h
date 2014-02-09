@@ -38,7 +38,7 @@ G_BEGIN_DECLS
  * pidgin_smiley_add_to_list:
  * @smiley:	The smiley to be added.
  *
- * Add a PurpleSmiley to the GtkWebViewSmiley's list to be able to use it
+ * Add a PurpleSmiley to the PidginWebViewSmiley's list to be able to use it
  * in pidgin
  */
 void pidgin_smiley_add_to_list(PurpleSmiley *smiley);
@@ -47,30 +47,30 @@ void pidgin_smiley_add_to_list(PurpleSmiley *smiley);
  * pidgin_smiley_del_from_list:
  * @smiley:	The smiley to be deleted.
  *
- * Delete a PurpleSmiley from the GtkWebViewSmiley's list
+ * Delete a PurpleSmiley from the PidginWebViewSmiley's list
  */
 void pidgin_smiley_del_from_list(PurpleSmiley *smiley);
 
 /**
  * pidgin_smileys_init:
  *
- * Load the GtkWebViewSmiley list
+ * Load the PidginWebViewSmiley list
  */
 void pidgin_smileys_init(void);
 
 /**
  * pidgin_smileys_uninit:
  *
- * Uninit the GtkWebViewSmiley list
+ * Uninit the PidginWebViewSmiley list
  */
 void pidgin_smileys_uninit(void);
 
 /**
  * pidgin_smileys_get_all:
  *
- * Returns a GSList with the GtkWebViewSmiley of each custom smiley
+ * Returns a GSList with the PidginWebViewSmiley of each custom smiley
  *
- * Returns: (transfer none): A GtkWebViewSmiley list
+ * Returns: (transfer none): A PidginWebViewSmiley list
  */
 GSList *pidgin_smileys_get_all(void);
 
