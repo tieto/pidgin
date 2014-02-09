@@ -58,9 +58,9 @@ void finch_pounces_manager_hide(void);
 /**
  * finch_pounces_get_handle:
  *
- * Returns the gtkpounces handle
+ * Returns the GNT pounces handle
  *
- * Returns: The handle to the GTK+ pounces system
+ * Returns: (transfer none): The handle to the GNT pounces system
  */
 void *finch_pounces_get_handle(void);
 
@@ -78,4 +78,4 @@ void finch_pounces_init(void);
  */
 void finch_pounces_uninit(void);
 
-#endif /* _PURPLE_GTKPOUNCE_H_ */
+#endif /* _PURPLE_FINCHPOUNCE_H_ */

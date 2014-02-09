@@ -136,12 +136,13 @@ void finch_blist_set_size(int width, int height);
 
 /**
  * finch_retrieve_user_info:
- * @conn:   The connection to get information fro
+ * @conn:   The connection to get information from
  * @name:   The user to get information about.
  *
  * Get information about a user. Show immediate feedback.
  *
- * Returns:  Returns the ui-handle for the userinfo notification.
+ * Returns: (transfer none): Returns the ui-handle for the userinfo
+ *          notification.
  */
 gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name);
 
@@ -149,7 +150,8 @@ gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name);
  * finch_blist_get_tree:
  *
  * Get the tree list of the buddy list.
- * Returns:  The GntTree widget.
+ *
+ * Returns: (transfer none): The GntTree widget.
  */
 GntTree * finch_blist_get_tree(void);
 
