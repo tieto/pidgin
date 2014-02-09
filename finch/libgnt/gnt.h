@@ -171,7 +171,7 @@ void gnt_quit(void);
  *
  * Get the global clipboard.
  *
- * Returns:  The clipboard.
+ * Returns: (transfer none): The clipboard.
  */
 GntClipboard * gnt_get_clipboard(void);
 
@@ -180,7 +180,8 @@ GntClipboard * gnt_get_clipboard(void);
  *
  * Get the string in the clipboard.
  *
- * Returns: A copy of the string in the clipboard. The caller must g_free() the string.
+ * Returns: A copy of the string in the clipboard. The caller
+ *          must g_free() the string.
  */
 gchar * gnt_get_clipboard_string(void);
 

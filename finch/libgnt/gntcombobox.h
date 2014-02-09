@@ -120,7 +120,7 @@ void gnt_combo_box_remove_all(GntComboBox *box);
  *
  * Get the data that is currently selected
  *
- * Returns: The data of the currently selected entry
+ * Returns: (transfer none): The data of the currently selected entry
  */
 gpointer gnt_combo_box_get_selected_data(GntComboBox *box);
 

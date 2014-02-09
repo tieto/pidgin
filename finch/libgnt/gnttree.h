@@ -206,7 +206,7 @@ GntTreeRow * gnt_tree_add_row_last(GntTree *tree, void *key, GntTreeRow *row, vo
  *
  * Get the key for the selected row.
  *
- * Returns:   The key for the selected row
+ * Returns: (transfer none): The key for the selected row
  */
 gpointer gnt_tree_get_selection_data(GntTree *tree);
 
@@ -226,17 +226,21 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  * gnt_tree_get_row_text_list:
  * @tree:  The tree
  * @key:   A key corresponding to the row in question. If key
- *              is %NULL, the text list for the selected row will
- *              be returned.
+ *         is %NULL, the text list for the selected row will
+ *         be returned.
  *
  * Get a list of text for a row.
  *
  * See gnt_tree_get_selection_text_list(), gnt_tree_get_selection_text().
  *
- * Returns: A list of texts of a row. The list and its data should be
- *         freed by the caller. The caller should make sure that if
- *         any column of the tree contains binary data, it's not freed.
+ * Returns: (transfer container) (element-type utf8): A list of texts of a row.
+ *          The list and its data should be freed by the caller. The caller
+ *          should make sure that if any column of the tree contains binary
+ *          data, it's not freed.
  */
+/* TODO This leaks when used from introspection. The transfer mode for the
+        return type here should be 'full', but that would free binary data as
+        well. */
 GList * gnt_tree_get_row_text_list(GntTree *tree, gpointer key);
 
 /**
@@ -246,7 +250,7 @@ GList * gnt_tree_get_row_text_list(GntTree *tree, gpointer key);
  *
  * Get the key of a row.
  *
- * Returns: The key of the row.
+ * Returns: (transfer none): The key of the row.
  *
  * Since: 2.8.0 (gnt), 2.7.2 (pidgin)
  */
@@ -312,11 +316,14 @@ GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row);
  *
  * See gnt_tree_get_row_text_list(), gnt_tree_get_selection_text().
  *
- * Returns: A list of texts of the currently selected row. The list
- *         and its data should be freed by the caller. The caller
- *         should make sure that if any column of the tree contains
- *         binary data, it's not freed.
+ * Returns: (transfer container) (element-type utf8): A list of texts of the
+ *          currently selected row. The list and its data should be freed by
+ *          the caller. The caller should make sure that if any column of the
+ *          tree contains binary data, it's not freed.
  */
+/* TODO This leaks when used from introspection. The transfer mode for the
+        return type here should be 'full', but that would free binary data as
+        well. */
 GList * gnt_tree_get_selection_text_list(GntTree *tree);
 
 /**
@@ -325,7 +332,8 @@ GList * gnt_tree_get_selection_text_list(GntTree *tree);
  *
  * Returns the list of rows in the tree.
  *
- * Returns: The list of the rows. The list should not be modified by the caller.
+ * Returns: (transfer none) (element-type Gnt.TreeRow): The list of the rows.
+ *          The list should not be modified by the caller.
  */
 GList *gnt_tree_get_rows(GntTree *tree);
 
@@ -452,15 +460,15 @@ GntTreeRow * gnt_tree_create_row(GntTree *tree, ...);
 
 /**
  * gnt_tree_create_row_from_list:
- * @tree:  The tree
- * @list:  The list containing the text for each column
+ * @tree: The tree
+ * @list: (element-type utf8): The list containing the text for each column
  *
  * Create a row from a list of text.
  *
  * See gnt_tree_create_row(), gnt_tree_add_row_after(), gnt_tree_add_row_last(),
  *     gnt_tree_add_choice().
  *
- * Returns:   The row
+ * Returns: (transfer full): The row
  */
 GntTreeRow * gnt_tree_create_row_from_list(GntTree *tree, GList *list);
 
@@ -514,9 +522,9 @@ void gnt_tree_set_show_title(GntTree *tree, gboolean set);
 
 /**
  * gnt_tree_set_compare_func:
- * @tree:  The tree
- * @func:  The comparison function, which is used to compare
- *              the keys
+ * @tree: The tree
+ * @func: (scope call): The comparison function, which is used to compare
+ *        the keys
  *
  * Set the compare function for sorting the data.
  *
@@ -687,7 +695,7 @@ void gnt_tree_set_search_function(GntTree *tree,
  *
  * Get the parent key for a row.
  *
- * Returns: The key of the parent row.
+ * Returns: (transfer none): The key of the parent row.
  *
  * Since: 2.4.0
  */

@@ -185,8 +185,9 @@ char * gnt_file_sel_get_selected_file(GntFileSel *sel);
  *
  * Get the list of selected files in the selector.
  *
- * Returns:  A list of paths for the selected files. The caller must g_free the
- *          contents of the list, and g_list_free the list.
+ * Returns: (transfer full) (element-type filename): A list of paths for the
+ *          selected files. The caller must g_free() the contents of the list,
+ *          and g_list_free() the list.
  */
 GList * gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
 
