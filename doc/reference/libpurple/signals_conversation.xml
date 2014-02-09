@@ -784,7 +784,7 @@ Emitted when an account fails to join a chat room.
   </varlistentry>
   <varlistentry>
     <term><parameter>data</parameter>&#160;:</term>
-    <listitem><simpara>The components passed to serv_join_chat() originally. The hash function should be g_str_hash() and the equal function should be g_str_equal().</simpara></listitem>
+    <listitem><simpara>The components passed to purple_serv_join_chat() originally. The hash function should be g_str_hash() and the equal function should be g_str_equal().</simpara></listitem>
   </varlistentry>
   <varlistentry>
     <term><parameter>user_data</parameter>&#160;:</term>
@@ -986,7 +986,7 @@ Emitted when an account was invited to a chat.
   </varlistentry>
   <varlistentry>
     <term><parameter>components</parameter>&#160;:</term>
-    <listitem><simpara>The components necessary if you want to call  serv_join_chat().</simpara></listitem>
+    <listitem><simpara>The components necessary if you want to call  purple_serv_join_chat().</simpara></listitem>
   </varlistentry>
   <varlistentry>
     <term><parameter>user_data</parameter>&#160;:</term>
