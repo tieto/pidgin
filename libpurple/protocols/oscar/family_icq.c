@@ -425,7 +425,7 @@ gotalias(OscarData *od, struct aim_icq_info *info)
 		if (utf8 && *utf8) {
 			gchar who[16];
 			g_snprintf(who, sizeof(who), "%u", info->uin);
-			serv_got_alias(gc, who, utf8);
+			purple_serv_got_alias(gc, who, utf8);
 			if ((b = purple_blist_find_buddy(account, who))) {
 				purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", utf8);
 			}

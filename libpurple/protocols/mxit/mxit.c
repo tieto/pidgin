@@ -214,7 +214,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		case MXIT_TYPE_GALLERY :
 		case MXIT_TYPE_INFO :
 				tmp = g_strdup_printf("<font color=\"#999999\">%s</font>\n", _( "Loading menu..." ));
-				serv_got_im( session->con, who, tmp, PURPLE_MESSAGE_NOTIFY, time( NULL ) );
+				purple_serv_got_im( session->con, who, tmp, PURPLE_MESSAGE_NOTIFY, time( NULL ) );
 				g_free( tmp );
 				mxit_send_message( session, who, " ", FALSE, FALSE );
 		default :

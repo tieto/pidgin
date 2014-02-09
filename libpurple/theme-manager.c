@@ -93,7 +93,7 @@ check_if_theme_or_loader(gchar *key, gpointer value, GSList **loaders)
 static void
 purple_theme_manager_function_wrapper(gchar *key,
 		gpointer value,
-		PTFunc user_data)
+		PurpleThemeFunc user_data)
 {
 	if (PURPLE_IS_THEME(value))
 		(* user_data)(value);
@@ -278,7 +278,7 @@ purple_theme_manager_remove_theme(PurpleTheme *theme)
 }
 
 void
-purple_theme_manager_for_each_theme(PTFunc func)
+purple_theme_manager_for_each_theme(PurpleThemeFunc func)
 {
 	g_return_if_fail(func);
 

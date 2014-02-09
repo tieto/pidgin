@@ -146,7 +146,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 		/* FIXME: It might be a real alias */
 		/* Umm, what? This might fix bug #1385130 */
-		serv_got_alias(gc, passport, store);
+		purple_serv_got_alias(gc, passport, store);
 	}
 
 	if (list_op & MSN_LIST_AL_OP)

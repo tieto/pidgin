@@ -1053,7 +1053,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 	contenttype = sipmsg_find_header(msg, "Content-Type");
 	if(!contenttype || !strncmp(contenttype, "text/plain", 10) || !strncmp(contenttype, "text/html", 9)) {
-		serv_got_im(sip->gc, from, msg->body, 0, time(NULL));
+		purple_serv_got_im(sip->gc, from, msg->body, 0, time(NULL));
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
@@ -1080,9 +1080,9 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		statedata = purple_xmlnode_get_data(state);
 		if(statedata) {
 			if(strstr(statedata, "active"))
-				serv_got_typing(sip->gc, from, 0, PURPLE_IM_TYPING);
+				purple_serv_got_typing(sip->gc, from, 0, PURPLE_IM_TYPING);
 			else
-				serv_got_typing_stopped(sip->gc, from);
+				purple_purple_serv_got_typing_stopped(sip->gc, from);
 
 			g_free(statedata);
 		}
@@ -1313,7 +1313,7 @@ static unsigned int simple_typing(PurpleConnection *gc, const char *name, Purple
 	g_free(recv);
 	/*
 	 * TODO: Is this right?  It will cause the core to call
-	 *       serv_send_typing(gc, who, PURPLE_IM_TYPING) once every second
+	 *       purple_serv_send_typing(gc, who, PURPLE_IM_TYPING) once every second
 	 *       until the user stops typing.  If that's not desired,
 	 *       then return 0 instead.
 	 */

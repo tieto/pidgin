@@ -245,7 +245,7 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 	gc = purple_account_get_connection(irc->account);
 	if (gc) {
 		msg = g_markup_escape_text(args[2], -1);
-		serv_got_im(gc, args[1], msg, PURPLE_MESSAGE_AUTO_RESP, time(NULL));
+		purple_serv_got_im(gc, args[1], msg, PURPLE_MESSAGE_AUTO_RESP, time(NULL));
 		g_free(msg);
 	}
 }
@@ -875,7 +875,7 @@ void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, ch
 
 	g_hash_table_insert(components, g_strdup("channel"), g_strdup(args[1]));
 
-	serv_got_chat_invite(gc, args[1], nick, NULL, components);
+	purple_purple_serv_got_chat_invite(gc, args[1], nick, NULL, components);
 	g_free(nick);
 }
 
@@ -947,7 +947,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
 		/* We are joining a channel for the first time */
-		serv_got_joined_chat(gc, id++, args[0]);
+		purple_serv_got_joined_chat(gc, id++, args[0]);
 		g_free(nick);
 		chat = purple_conversations_find_chat_with_account(args[0], irc->account);
 
@@ -1015,7 +1015,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, args[2]);
 		purple_conversation_write_message(PURPLE_CONVERSATION(chat), args[0], buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(buf);
-		serv_got_chat_left(gc, purple_chat_conversation_get_id(chat));
+		purple_serv_got_chat_left(gc, purple_chat_conversation_get_id(chat));
 	} else {
 		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, args[2]);
 		purple_chat_conversation_remove_user(chat, args[1], buf);
@@ -1228,7 +1228,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 		g_free(escaped);
 		purple_conversation_write_message(PURPLE_CONVERSATION(chat), channel, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
-		serv_got_chat_left(gc, purple_chat_conversation_get_id(chat));
+		purple_serv_got_chat_left(gc, purple_chat_conversation_get_id(chat));
 	} else {
 		msg = args[1] ? irc_mirc2txt(args[1]) : NULL;
 		purple_chat_conversation_remove_user(chat, nick, msg);
@@ -1318,11 +1318,11 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 	}
 
 	if (!purple_utf8_strcasecmp(to, purple_connection_get_display_name(gc))) {
-		serv_got_im(gc, nick, msg, 0, time(NULL));
+		purple_serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
 		chat = purple_conversations_find_chat_with_account(irc_nick_skip_mode(irc, to), irc->account);
 		if (chat)
-			serv_got_chat_in(gc, purple_chat_conversation_get_id(chat), nick, 0, msg, time(NULL));
+			purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(chat), nick, 0, msg, time(NULL));
 		else
 			purple_debug_error("irc", "Got a %s on %s, which does not exist\n",
 			                   notice ? "NOTICE" : "PRIVMSG", to);

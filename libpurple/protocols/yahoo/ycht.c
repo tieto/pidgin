@@ -101,9 +101,9 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 		new_room = TRUE;
 
 	if (new_room && ycht->changing_rooms) {
-		serv_got_chat_left(gc, YAHOO_CHAT_ID);
+		purple_serv_got_chat_left(gc, YAHOO_CHAT_ID);
 		ycht->changing_rooms = FALSE;
-		c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
+		c = purple_serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 	} else {
 		c = purple_conversations_find_chat(gc, YAHOO_CHAT_ID);
 	}
@@ -165,7 +165,7 @@ static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 		what = tmp;
 	}
 
-	serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, what, time(NULL));
+	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, what, time(NULL));
 	g_free(what);
 }
 

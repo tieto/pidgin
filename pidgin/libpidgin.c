@@ -764,8 +764,8 @@ int pidgin_start(int argc, char *argv[])
 	if (opt_si && !purple_core_ensure_single_instance()) {
 #ifdef HAVE_DBUS
 		DBusConnection *conn = purple_dbus_get_connection();
-		DBusMessage *message = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE,
-				DBUS_INTERFACE_PURPLE, "PurpleBlistSetVisible");
+		DBusMessage *message = dbus_message_new_method_call(PURPLE_DBUS_SERVICE, PURPLE_DBUS_PATH,
+				PURPLE_DBUS_INTERFACE, "PurpleBlistSetVisible");
 		gboolean tr = TRUE;
 		dbus_message_append_args(message, DBUS_TYPE_INT32, &tr, DBUS_TYPE_INVALID);
 		dbus_connection_send_with_reply_and_block(conn, message, -1, NULL);

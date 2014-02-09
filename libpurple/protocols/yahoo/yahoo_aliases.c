@@ -152,7 +152,7 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 
 					/* Finally, if we received an alias, we better update the buddy list */
 					if (alias != NULL) {
-						serv_got_alias(gc, yid, alias);
+						purple_serv_got_alias(gc, yid, alias);
 						purple_debug_info("yahoo", "Fetched alias '%s' (%s)\n", alias, id);
 					} else if (buddy_alias && *buddy_alias && !g_str_equal(buddy_alias, yid)) {
 					/* Or if we have an alias that Yahoo doesn't, send it up */
@@ -651,7 +651,7 @@ parse_contact_details(YahooData *yd, const char *who, const char *xml)
 		}
 
 		if (alias) {
-			serv_got_alias(yd->gc, yid, alias);
+			purple_serv_got_alias(yd->gc, yid, alias);
 			if (alias != ypd->names.nick)
 				g_free(alias);
 		}

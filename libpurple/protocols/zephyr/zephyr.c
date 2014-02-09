@@ -869,9 +869,9 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				flags |= PURPLE_MESSAGE_AUTO_RESP;
 
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
-				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_IM_TYPING);
+				purple_serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_IM_TYPING);
 			else
-				serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
+				purple_serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
 
 		} else {
 			zephyr_triple *zt1, *zt2;
@@ -887,7 +887,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 
 			if (!zt2->open) {
 				zt2->open = TRUE;
-				serv_got_joined_chat(gc, zt2->id, zt2->name);
+				purple_serv_got_joined_chat(gc, zt2->id, zt2->name);
 				zephyr_chat_set_topic(gc,zt2->id,notice.z_class_inst);
 			}
 
@@ -917,7 +917,7 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 #endif
 				purple_chat_conversation_add_user(gcc, stripped_sender, ipaddr, PURPLE_CHAT_USER_NONE, TRUE);
 			}
-			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
+			purple_serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
 			g_free(send_inst_utf8);
 
 			free_triple(zt1);
@@ -2460,7 +2460,7 @@ static void zephyr_join_chat(PurpleConnection * gc, GHashTable * data)
 		if (!zt2->open) {
 			if (!g_ascii_strcasecmp(instname,"*"))
 				instname = "PERSONAL";
-			serv_got_joined_chat(gc, zt2->id, zt2->name);
+			purple_serv_got_joined_chat(gc, zt2->id, zt2->name);
 			zephyr_chat_set_topic(gc,zt2->id,instname);
 			zt2->open = TRUE;
 		}
@@ -2480,7 +2480,7 @@ static void zephyr_join_chat(PurpleConnection * gc, GHashTable * data)
 
 	zephyr->subscrips = g_slist_append(zephyr->subscrips, zt1);
 	zt1->open = TRUE;
-	serv_got_joined_chat(gc, zt1->id, zt1->name);
+	purple_serv_got_joined_chat(gc, zt1->id, zt1->name);
 	if (!g_ascii_strcasecmp(instname,"*"))
 		instname = "PERSONAL";
 	zephyr_chat_set_topic(gc,zt1->id,instname);
@@ -2567,7 +2567,7 @@ static unsigned int zephyr_send_typing(PurpleConnection *gc, const char *who, Pu
 
 	/*
 	 * TODO: Is this correct?  It means we will call
-	 *       serv_send_typing(gc, who, PURPLE_IM_TYPING) once every 15 seconds
+	 *       purple_serv_send_typing(gc, who, PURPLE_IM_TYPING) once every 15 seconds
 	 *       until the Purple user stops typing.
 	 */
 	return ZEPHYR_TYPING_SEND_TIMEOUT;

@@ -338,6 +338,7 @@ version 3.0.0 (??/??/????):
 		  purple_savedstatus_set_primitive_type
 		* purple_savedstatus_substatus_get_type renamed to
 		  purple_savedstatus_substatus_get_status_type
+		* serv_* functions are now purple_serv_*
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* purple_srv_txt_query_get_type renamed to
 		  purple_srv_txt_query_get_query_type
@@ -349,8 +350,11 @@ version 3.0.0 (??/??/????):
 		  the documentation for details.
 		* update_idle method has been added to PurplePresenceClass to update the
 		  idle state of a presence
+		* StunCallback renamed to PurpleStunCallback
 		* purple_str_size_to_units now takes a goffset as the size parameter
+		* PTFunc renamed to PurpleThemeFunc
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
+		* UPnPMappingAddRemove renamed to PurpleUPnPMappingAddRemove
 		* purple_util_fetch_url_request now takes a PurpleAccount as
 		  the first parameter
 		* purple_util_fetch_url_request now takes a length as the eighth

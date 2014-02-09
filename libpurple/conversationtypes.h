@@ -618,7 +618,7 @@ const char *purple_chat_conversation_get_nick(PurpleChatConversation *chat);
  * @chat: The chat.
  *
  * Lets the core know we left a chat, without destroying it.
- * Called from serv_got_chat_left().
+ * Called from purple_serv_got_chat_left().
  */
 void purple_chat_conversation_leave(PurpleChatConversation *chat);
 

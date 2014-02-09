@@ -163,7 +163,7 @@ send_typed_cb(gpointer data)
 		 */
 		purple_im_conversation_set_type_again(im, 1);
 
-		serv_send_typing(gc, name, PURPLE_IM_TYPED);
+		purple_serv_send_typing(gc, name, PURPLE_IM_TYPED);
 
 		purple_debug(PURPLE_DEBUG_MISC, "conversationtypes", "typed...\n");
 	}
@@ -486,7 +486,7 @@ purple_im_conversation_finalize(GObject *object)
 		protocol = purple_connection_get_protocol(gc);
 
 		if (purple_prefs_get_bool("/purple/conversations/im/send_typing"))
-			serv_send_typing(gc, name, PURPLE_IM_NOT_TYPING);
+			purple_serv_send_typing(gc, name, PURPLE_IM_NOT_TYPING);
 
 		purple_protocol_client_iface_convo_closed(protocol, gc, name);
 	}
@@ -1240,7 +1240,7 @@ invite_user_to_chat(gpointer data, PurpleRequestFields *fields)
 	user = purple_request_fields_get_string(fields, "screenname");
 	message = purple_request_fields_get_string(fields, "message");
 
-	serv_chat_invite(purple_conversation_get_connection(conv), priv->id, message, user);
+	purple_serv_chat_invite(purple_conversation_get_connection(conv), priv->id, message, user);
 }
 
 void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const char *user,
@@ -1259,7 +1259,7 @@ void purple_chat_conversation_invite_user(PurpleChatConversation *chat, const ch
 	account = purple_conversation_get_account(PURPLE_CONVERSATION(chat));
 
 	if (!confirm) {
-		serv_chat_invite(purple_account_get_connection(account),
+		purple_serv_chat_invite(purple_account_get_connection(account),
 				purple_chat_conversation_get_id(chat), message, user);
 		return;
 	}
@@ -1490,11 +1490,11 @@ purple_chat_conversation_finalize(GObject *object)
 #if 0
 		/*
 		 * This is unfortunately necessary, because calling
-		 * serv_chat_leave() calls this purple_conversation_destroy(),
+		 * purple_serv_chat_leave() calls this purple_conversation_destroy(),
 		 * which leads to two calls here.. We can't just return after
 		 * this, because then it'll return on the next pass. So, since
-		 * serv_got_chat_left(), which is eventually called from the
-		 * protocol that serv_chat_leave() calls, removes this conversation
+		 * purple_serv_got_chat_left(), which is eventually called from the
+		 * protocol that purple_serv_chat_leave() calls, removes this conversation
 		 * from the gc's buddy_chats list, we're going to check to see
 		 * if this exists in the list. If so, we want to return after
 		 * calling this, because it'll be called again. If not, fall
@@ -1507,7 +1507,7 @@ purple_chat_conversation_finalize(GObject *object)
 		 */
 
 		if (gc && g_slist_find(gc->buddy_chats, conv) != NULL) {
-			serv_chat_leave(gc, chat_id);
+			purple_serv_chat_leave(gc, chat_id);
 
 			return;
 		}
@@ -1519,14 +1519,14 @@ purple_chat_conversation_finalize(GObject *object)
 		 * knows it left the chat.
 		 */
 		if (!purple_chat_conversation_has_left(chat))
-			serv_chat_leave(gc, chat_id);
+			purple_serv_chat_leave(gc, chat_id);
 
 		/*
-		 * If they didn't call serv_got_chat_left by now, it's too late.
+		 * If they didn't call purple_serv_got_chat_left by now, it's too late.
 		 * So we better do it for them before we destroy the thing.
 		 */
 		if (!purple_chat_conversation_has_left(chat))
-			serv_got_chat_left(gc, chat_id);
+			purple_serv_got_chat_left(gc, chat_id);
 	}
 
 	g_hash_table_destroy(priv->users);

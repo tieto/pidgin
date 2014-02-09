@@ -1077,7 +1077,7 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 		grp->channel = channel;
 		grp->key = key;
 		sg->grps = g_list_append(sg->grps, grp);
-		serv_got_joined_chat(gc, grp->id, channel);
+		purple_serv_got_joined_chat(gc, grp->id, channel);
 		return;
 	}
 
@@ -1180,7 +1180,7 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 						    channel, prv->key);
 		silc_free(prv);
 		sg->grps = g_list_remove(sg->grps, prv);
-		serv_got_chat_left(gc, id);
+		purple_serv_got_chat_left(gc, id);
 		return;
 	}
 
@@ -1200,7 +1200,7 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 	silc_client_command_call(client, conn, NULL, "LEAVE",
 				 chu->channel->channel_name, NULL);
 
-	serv_got_chat_left(gc, id);
+	purple_serv_got_chat_left(gc, id);
 
 	/* Leave from private groups on this channel as well */
 	for (l = sg->grps; l; l = l->next)
@@ -1209,7 +1209,7 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 			silc_client_del_channel_private_key(client, conn,
 							    chu->channel,
 							    prv->key);
-			serv_got_chat_left(gc, prv->id);
+			purple_serv_got_chat_left(gc, prv->id);
 			silc_free(prv);
 			sg->grps = g_list_remove(sg->grps, prv);
 			if (!sg->grps)
@@ -1323,7 +1323,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 			g_free(tmp);
 
 			if (ret)
-				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg, time(NULL));
+				  purple_serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg, time(NULL));
 			return ret;
 		}
 	}
@@ -1334,7 +1334,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 					       (unsigned char *)msg2,
 					       strlen(msg2));
 	if (ret) {
-		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg,
+		purple_serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg,
 				 time(NULL));
 	}
 	g_free(tmp);

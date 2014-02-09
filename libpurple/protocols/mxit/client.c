@@ -1549,7 +1549,7 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		message = mxit_decrypt_message( session, message );
 		if ( !message ) {
 			/* could not be decrypted */
-			serv_got_im( session->con, sender, _( "An encrypted message was received which could not be decrypted." ), PURPLE_MESSAGE_ERROR, time( NULL ) );
+			purple_serv_got_im( session->con, sender, _( "An encrypted message was received which could not be decrypted." ), PURPLE_MESSAGE_ERROR, time( NULL ) );
 			return;
 		}
 	}
@@ -2068,11 +2068,11 @@ static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record*
 	switch ( event ) {
 		case CP_MSGEVENT_TYPING :							/* user is typing */
 		case CP_MSGEVENT_ANGRY :							/* user is typing angrily */
-			serv_got_typing( session->con, records[0]->fields[0]->data, 0, PURPLE_IM_TYPING );
+			purple_serv_got_typing( session->con, records[0]->fields[0]->data, 0, PURPLE_IM_TYPING );
 			break;
 
 		case CP_MSGEVENT_STOPPED :							/* user has stopped typing */
-			serv_got_typing_stopped( session->con, records[0]->fields[0]->data );
+			purple_purple_serv_got_typing_stopped( session->con, records[0]->fields[0]->data );
 			break;
 
 		case CP_MSGEVENT_ERASING :							/* user is erasing text */

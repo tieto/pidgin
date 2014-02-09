@@ -441,15 +441,15 @@ typedef struct _PurpleProtocolChatIface PurpleProtocolChatIface;
  *                 <sbr/>Returns: Hashtable containing the information extracted
  *                                from @chat_name
  * @join: Called when the user requests joining a chat. Should arrange for
- *        serv_got_joined_chat() to be called.
+ *        purple_serv_got_joined_chat() to be called.
  *        <sbr/>@components: A hashtable containing information required to join
  *                           the chat as described by the entries returned by
  *                           @info. It may also be called when accepting an
  *                           invitation, in which case this matches the data
- *                           parameter passed to serv_got_chat_invite().
+ *                           parameter passed to purple_purple_serv_got_chat_invite().
  * @reject: Called when the user refuses a chat invitation.
  *          <sbr/>@components: A hashtable containing information required to
- *                            join the chat as passed to serv_got_chat_invite().
+ *                            join the chat as passed to purple_purple_serv_got_chat_invite().
  * @get_name: Returns a chat name based on the information in components. Use
  *            @info_defaults if you instead need to generate a hashtable from a
  *            chat name.

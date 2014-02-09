@@ -484,7 +484,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 		}
 
 		if (priv->message != NULL)
-			serv_got_im(purple_account_get_connection(priv->account),
+			purple_serv_got_im(purple_account_get_connection(priv->account),
 								 priv->who, priv->message, 0, time(NULL));
 
 		cpar = purple_request_cpar_from_account(priv->account);

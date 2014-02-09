@@ -41,7 +41,7 @@
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
 unsigned int
-serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state)
+purple_serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state)
 {
 	PurpleProtocol *protocol;
 
@@ -112,7 +112,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 	return lar;
 }
 
-int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
+int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 				 PurpleMessageFlags flags)
 {
 	PurpleIMConversation *im = NULL;
@@ -157,7 +157,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	return val;
 }
 
-void serv_get_info(PurpleConnection *gc, const char *name)
+void purple_serv_get_info(PurpleConnection *gc, const char *name)
 {
 	PurpleProtocol *protocol;
 
@@ -167,7 +167,7 @@ void serv_get_info(PurpleConnection *gc, const char *name)
 	}
 }
 
-void serv_set_info(PurpleConnection *gc, const char *info)
+void purple_serv_set_info(PurpleConnection *gc, const char *info)
 {
 	PurpleProtocol *protocol;
 	PurpleAccount *account;
@@ -192,7 +192,7 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 /*
  * Set buddy's alias on server roster/list
  */
-void serv_alias_buddy(PurpleBuddy *b)
+void purple_serv_alias_buddy(PurpleBuddy *b)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
@@ -215,7 +215,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 }
 
 void
-serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
+purple_serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	PurpleAccount *account;
 	GSList *buddies;
@@ -313,7 +313,7 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
  * it should be possible.  Probably needs to be done, someday.  Although,
  * the UI for that would be difficult, because groups are Purple-wide.
  */
-void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
+void purple_serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
@@ -334,7 +334,7 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 	}
 }
 
-void serv_add_permit(PurpleConnection *gc, const char *name)
+void purple_serv_add_permit(PurpleConnection *gc, const char *name)
 {
 	PurpleProtocol *protocol;
 
@@ -344,7 +344,7 @@ void serv_add_permit(PurpleConnection *gc, const char *name)
 	}
 }
 
-void serv_add_deny(PurpleConnection *gc, const char *name)
+void purple_serv_add_deny(PurpleConnection *gc, const char *name)
 {
 	PurpleProtocol *protocol;
 
@@ -354,7 +354,7 @@ void serv_add_deny(PurpleConnection *gc, const char *name)
 	}
 }
 
-void serv_rem_permit(PurpleConnection *gc, const char *name)
+void purple_serv_rem_permit(PurpleConnection *gc, const char *name)
 {
 	PurpleProtocol *protocol;
 
@@ -364,7 +364,7 @@ void serv_rem_permit(PurpleConnection *gc, const char *name)
 	}
 }
 
-void serv_rem_deny(PurpleConnection *gc, const char *name)
+void purple_serv_rem_deny(PurpleConnection *gc, const char *name)
 {
 	PurpleProtocol *protocol;
 
@@ -374,7 +374,7 @@ void serv_rem_deny(PurpleConnection *gc, const char *name)
 	}
 }
 
-void serv_set_permit_deny(PurpleConnection *gc)
+void purple_serv_set_permit_deny(PurpleConnection *gc)
 {
 	PurpleProtocol *protocol;
 
@@ -391,7 +391,7 @@ void serv_set_permit_deny(PurpleConnection *gc)
 	}
 }
 
-void serv_join_chat(PurpleConnection *gc, GHashTable *data)
+void purple_serv_join_chat(PurpleConnection *gc, GHashTable *data)
 {
 	PurpleProtocol *protocol;
 
@@ -402,7 +402,7 @@ void serv_join_chat(PurpleConnection *gc, GHashTable *data)
 }
 
 
-void serv_reject_chat(PurpleConnection *gc, GHashTable *data)
+void purple_serv_reject_chat(PurpleConnection *gc, GHashTable *data)
 {
 	PurpleProtocol *protocol;
 
@@ -412,7 +412,7 @@ void serv_reject_chat(PurpleConnection *gc, GHashTable *data)
 	}
 }
 
-void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name)
+void purple_serv_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name)
 {
 	PurpleProtocol *protocol = NULL;
 	PurpleChatConversation *chat;
@@ -443,7 +443,7 @@ void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const c
  * Then again, something might want to use this, from outside protocol-land
  * to leave a chat without destroying the conversation.
  */
-void serv_chat_leave(PurpleConnection *gc, int id)
+void purple_serv_chat_leave(PurpleConnection *gc, int id)
 {
 	PurpleProtocol *protocol;
 
@@ -451,7 +451,7 @@ void serv_chat_leave(PurpleConnection *gc, int id)
 	purple_protocol_chat_iface_leave(protocol, gc, id);
 }
 
-void serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char *message)
+void purple_serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char *message)
 {
 	PurpleProtocol *protocol;
 
@@ -461,7 +461,7 @@ void serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char
 	}
 }
 
-int serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
+int purple_serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
 	PurpleProtocol *protocol;
 
@@ -477,7 +477,7 @@ int serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
  * woo. i'm actually going to comment this function. isn't that fun. make
  * sure to follow along, kids
  */
-void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
+void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				 PurpleMessageFlags flags, time_t mtime)
 {
 	PurpleAccount *account;
@@ -492,7 +492,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	if (mtime < 0) {
 		purple_debug_error("server",
-				"serv_got_im ignoring negative timestamp\n");
+				"purple_serv_got_im ignoring negative timestamp\n");
 		/* TODO: Would be more appropriate to use a value that indicates
 		   that the timestamp is unknown, and surface that in the UI. */
 		mtime = time(NULL);
@@ -613,7 +613,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 				if (!(flags & PURPLE_MESSAGE_AUTO_RESP))
 				{
-					serv_send_im(gc, name, away_msg, PURPLE_MESSAGE_AUTO_RESP);
+					purple_serv_send_im(gc, name, away_msg, PURPLE_MESSAGE_AUTO_RESP);
 
 					purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, away_msg,
 									   PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP,
@@ -626,7 +626,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	g_free(name);
 }
 
-void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
+void purple_serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 					 PurpleIMTypingState state) {
 	PurpleIMConversation *im;
 
@@ -655,7 +655,7 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		purple_im_conversation_start_typing_timeout(im, timeout);
 }
 
-void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
+void purple_purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 	PurpleIMConversation *im;
 
@@ -690,20 +690,20 @@ static void chat_invite_data_free(struct chat_invite_data *cid)
 
 static void chat_invite_reject(struct chat_invite_data *cid)
 {
-	serv_reject_chat(cid->gc, cid->components);
+	purple_serv_reject_chat(cid->gc, cid->components);
 	chat_invite_data_free(cid);
 }
 
 
 static void chat_invite_accept(struct chat_invite_data *cid)
 {
-	serv_join_chat(cid->gc, cid->components);
+	purple_serv_join_chat(cid->gc, cid->components);
 	chat_invite_data_free(cid);
 }
 
 
 
-void serv_got_chat_invite(PurpleConnection *gc, const char *name,
+void purple_purple_serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message, GHashTable *data)
 {
 	PurpleAccount *account;
@@ -757,7 +757,7 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 		chat_invite_reject(cid);
 }
 
-PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
+PurpleChatConversation *purple_serv_got_joined_chat(PurpleConnection *gc,
 											   int id, const char *name)
 {
 	PurpleChatConversation *chat;
@@ -781,7 +781,7 @@ PurpleChatConversation *serv_got_joined_chat(PurpleConnection *gc,
 	return chat;
 }
 
-void serv_got_chat_left(PurpleConnection *g, int id)
+void purple_serv_got_chat_left(PurpleConnection *g, int id)
 {
 	GSList *bcs;
 	PurpleChatConversation *chat = NULL;
@@ -813,7 +813,7 @@ void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data)
 					gc, data);
 }
 
-void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
+void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime)
 {
 	GSList *bcs;
@@ -826,7 +826,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 	if (mtime < 0) {
 		purple_debug_error("server",
-				"serv_got_chat_in ignoring negative timestamp\n");
+				"purple_serv_got_chat_in ignoring negative timestamp\n");
 		/* TODO: Would be more appropriate to use a value that indicates
 		   that the timestamp is unknown, and surface that in the UI. */
 		mtime = time(NULL);
@@ -883,7 +883,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	g_free(buffy);
 }
 
-void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
+void purple_serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
 	PurpleProtocol *protocol;
 

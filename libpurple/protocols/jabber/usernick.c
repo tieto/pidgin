@@ -45,7 +45,7 @@ static void jabber_nick_cb(JabberStream *js, const char *from, PurpleXmlNode *it
 	if (!nick)
 		return;
 	nickname = purple_xmlnode_get_data(nick);
-	serv_got_alias(js->gc, from, nickname);
+	purple_serv_got_alias(js->gc, from, nickname);
 	g_free(nickname);
 }
 

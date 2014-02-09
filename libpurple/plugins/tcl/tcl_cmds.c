@@ -475,11 +475,11 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			}
 			if ((account = tcl_validate_account(elems[2], interp)) == NULL)
 				return TCL_ERROR;
-			serv_get_info(purple_account_get_connection(account), Tcl_GetString(elems[1]));
+			purple_serv_get_info(purple_account_get_connection(account), Tcl_GetString(elems[1]));
 		} else {
 			if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 				return TCL_ERROR;
-			serv_get_info(purple_account_get_connection(account), Tcl_GetString(objv[3]));
+			purple_serv_get_info(purple_account_get_connection(account), Tcl_GetString(objv[3]));
 		}
 		break;
 	case CMD_BUDDY_LIST:
@@ -1410,7 +1410,7 @@ int tcl_cmd_send_im(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	who = Tcl_GetString(objv[2]);
 	text = Tcl_GetString(objv[3]);
 
-	serv_send_im(gc, who, text, 0);
+	purple_serv_send_im(gc, who, text, 0);
 
 	return TCL_OK;
 }

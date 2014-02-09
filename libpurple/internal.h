@@ -244,7 +244,7 @@ gboolean _purple_connection_wants_to_die(const PurpleConnection *gc);
  *
  * Adds a chat to the active chats list of a connection
  *
- * Note: This function should only be called by serv_got_joined_chat()
+ * Note: This function should only be called by purple_serv_got_joined_chat()
  *       in server.c.
  */
 void _purple_connection_add_active_chat(PurpleConnection *gc,
@@ -256,7 +256,7 @@ void _purple_connection_add_active_chat(PurpleConnection *gc,
  *
  * Removes a chat from the active chats list of a connection
  *
- * Note: This function should only be called by serv_got_chat_left()
+ * Note: This function should only be called by purple_serv_got_chat_left()
  *       in server.c.
  */
 void _purple_connection_remove_active_chat(PurpleConnection *gc,

@@ -233,7 +233,7 @@ _jabber_parse_and_write_message_to_ui(PurpleXmlNode *message_node, PurpleBuddy *
 	}
 
 	/* Send the message to the UI */
-	serv_got_im(gc, purple_buddy_get_name(pb), body, 0, time(NULL));
+	purple_serv_got_im(gc, purple_buddy_get_name(pb), body, 0, time(NULL));
 
 	g_free(body);
 }

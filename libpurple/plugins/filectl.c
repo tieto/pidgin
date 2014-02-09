@@ -99,7 +99,7 @@ run_commands()
 			{
 				/*
 				purple_conversation_write(conv, arg2, WFLAG_SEND, NULL, time(NULL), -1);
-				serv_send_im(conv->gc, arg1, arg2, 0);
+				purple_serv_send_im(conv->gc, arg1, arg2, 0);
 				*/
 			}
 

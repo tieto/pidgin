@@ -30,8 +30,8 @@
  * @title: DBUS Purple defines
  */
 
-#define DBUS_SERVICE_PURPLE      "im.pidgin.purple.PurpleService"
-#define DBUS_PATH_PURPLE         "/im/pidgin/purple/PurpleObject"
-#define DBUS_INTERFACE_PURPLE    "im.pidgin.purple.PurpleInterface"
+#define PURPLE_DBUS_SERVICE      "im.pidgin.purple.PurpleService"
+#define PURPLE_DBUS_PATH         "/im/pidgin/purple/PurpleObject"
+#define PURPLE_DBUS_INTERFACE    "im.pidgin.purple.PurpleInterface"
 
 #endif /* _DBUS_PURPLE_H_ */

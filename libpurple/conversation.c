@@ -134,7 +134,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 		if (sent != NULL && sent[0] != '\0') {
 
-			err = serv_send_im(gc, purple_conversation_get_name(conv),
+			err = purple_serv_send_im(gc, purple_conversation_get_name(conv),
 			                   sent, msgflags);
 
 			if ((err > 0) && (displayed != NULL))
@@ -151,7 +151,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 						 account, &sent, id);
 
 		if (sent != NULL && sent[0] != '\0') {
-			err = serv_chat_send(gc, id, sent, msgflags);
+			err = purple_serv_chat_send(gc, id, sent, msgflags);
 
 			purple_signal_emit(purple_conversations_get_handle(), "sent-chat-msg",
 							 account, sent, id);

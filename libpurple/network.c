@@ -101,7 +101,7 @@ struct _PurpleNetworkListenData {
 	gboolean adding;
 	PurpleNetworkListenCallback cb;
 	gpointer cb_data;
-	UPnPMappingAddRemove *mapping_data;
+	PurpleUPnPMappingAddRemove *mapping_data;
 	int timer;
 };
 

@@ -28,7 +28,7 @@
  * @title: Universal Plug N Play API
  */
 
-typedef struct _UPnPMappingAddRemove UPnPMappingAddRemove;
+typedef struct _PurpleUPnPMappingAddRemove PurpleUPnPMappingAddRemove;
 
 G_BEGIN_DECLS
 
@@ -94,7 +94,7 @@ const gchar* purple_upnp_get_public_ip(void);
  * Cancel a pending port mapping request initiated with either
  * purple_upnp_set_port_mapping() or purple_upnp_remove_port_mapping().
  */
-void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *mapping_data);
+void purple_upnp_cancel_port_mapping(PurpleUPnPMappingAddRemove *mapping_data);
 
 /**
  * purple_upnp_set_port_mapping:
@@ -111,7 +111,7 @@ void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *mapping_data);
  * Returns: Data which can be passed to purple_upnp_cancel_port_mapping() to
  *          cancel
  */
-UPnPMappingAddRemove *purple_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
+PurpleUPnPMappingAddRemove *purple_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 		PurpleUPnPCallback cb, gpointer cb_data);
 
 /**
@@ -130,7 +130,7 @@ UPnPMappingAddRemove *purple_upnp_set_port_mapping(unsigned short portmap, const
  * Returns: Data which can be passed to purple_upnp_cancel_port_mapping() to
  *          cancel
  */
-UPnPMappingAddRemove *purple_upnp_remove_port_mapping(unsigned short portmap,
+PurpleUPnPMappingAddRemove *purple_upnp_remove_port_mapping(unsigned short portmap,
 		const gchar* protocol, PurpleUPnPCallback cb, gpointer cb_data);
 
 G_END_DECLS

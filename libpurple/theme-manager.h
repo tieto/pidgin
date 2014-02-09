@@ -34,7 +34,7 @@
 #include "theme.h"
 #include "theme-loader.h"
 
-typedef void (*PTFunc) (PurpleTheme *);
+typedef void (*PurpleThemeFunc) (PurpleTheme *);
 
 typedef struct _PurpleThemeManager PurpleThemeManager;
 typedef struct _PurpleThemeManagerClass PurpleThemeManagerClass;
@@ -141,11 +141,11 @@ void purple_theme_manager_unregister_type(PurpleThemeLoader *loader);
 
 /**
  * purple_theme_manager_for_each_theme:
- * @func: The PTFunc to be applied to each theme.
+ * @func: The PurpleThemeFunc to be applied to each theme.
  *
  * Calls the given function on each purple theme.
  */
-void purple_theme_manager_for_each_theme(PTFunc func);
+void purple_theme_manager_for_each_theme(PurpleThemeFunc func);
 
 /**
  * purple_theme_manager_load_theme:

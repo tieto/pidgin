@@ -162,7 +162,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 
 	/* Create the alias for the buddy using the first and the last name */
 	if (bonjour_buddy->nick && *bonjour_buddy->nick)
-		serv_got_alias(purple_account_get_connection(account), name, bonjour_buddy->nick);
+		purple_serv_got_alias(purple_account_get_connection(account), name, bonjour_buddy->nick);
 	else {
 		gchar *alias = NULL;
 		const char *first, *last;
@@ -173,7 +173,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 						(first && *first ? first : ""),
 						(first && *first && last && *last ? " " : ""),
 						(last && *last ? last : ""));
-		serv_got_alias(purple_account_get_connection(account), name, alias);
+		purple_serv_got_alias(purple_account_get_connection(account), name, alias);
 		g_free(alias);
 	}
 

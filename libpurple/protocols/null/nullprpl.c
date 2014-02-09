@@ -399,7 +399,7 @@ static void null_login(PurpleAccount *acct)
     GOfflineMessage *message = (GOfflineMessage *)offline_messages->data;
     purple_debug_info("nullprpl", "delivering offline message to %s: %s\n",
                       purple_account_get_username(acct), message->message);
-    serv_got_im(gc, message->from, message->message, message->flags,
+    purple_serv_got_im(gc, message->from, message->message, message->flags,
                 message->mtime);
     offline_messages = g_list_next(offline_messages);
 
@@ -446,7 +446,7 @@ static int null_send_im(PurpleConnection *gc, const char *who,
   /* is the recipient online? */
   to = get_null_gc(who);
   if (to) {  /* yes, send */
-    serv_got_im(to, from_username, message, receive_flags, time(NULL));
+    purple_serv_got_im(to, from_username, message, receive_flags, time(NULL));
 
   } else {  /* nope, store as an offline message */
     GOfflineMessage *offline_message;
@@ -489,7 +489,7 @@ static void notify_typing(PurpleConnection *from, PurpleConnection *to,
   purple_debug_info("nullprpl", "notifying %s that %s %s\n",
                     purple_account_get_username(purple_connection_get_account(to)), from_username, action);
 
-  serv_got_typing(to,
+  purple_serv_got_typing(to,
                   from_username,
                   0, /* if non-zero, a timeout in seconds after which to
                       * reset the typing status to PURPLE_IM_NOT_TYPING */
@@ -686,7 +686,7 @@ static void null_join_chat(PurpleConnection *gc, GHashTable *components) {
   purple_debug_info("nullprpl", "%s is joining chat room %s\n", username, room);
 
   if (!purple_conversations_find_chat(gc, chat_id)) {
-    serv_got_joined_chat(gc, chat_id, room);
+    purple_serv_got_joined_chat(gc, chat_id, room);
 
     /* tell everyone that we joined, and add them if they're already there */
     foreach_gc_in_chat(joined_chat, gc, chat_id, NULL);
@@ -757,7 +757,7 @@ static void null_chat_invite(PurpleConnection *gc, int id,
       components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
       g_hash_table_replace(components, "room", g_strdup(room));
       g_hash_table_replace(components, "invited_by", g_strdup(username));
-      serv_got_chat_invite(purple_account_get_connection(to_acct), room, username, message, components);
+      purple_purple_serv_got_chat_invite(purple_account_get_connection(to_acct), room, username, message, components);
     }
   }
 }
@@ -828,7 +828,7 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
     g_free(message_to);
 
     /* send the whisper */
-    serv_chat_whisper(to, purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)),
+    purple_serv_chat_whisper(to, purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)),
                       from_username, message);
 
     return PURPLE_CMD_RET_OK;
@@ -845,7 +845,7 @@ static void null_chat_whisper(PurpleConnection *gc, int id, const char *who,
                     message);
 
   /* receive whisper on recipient's account */
-  serv_got_chat_in(gc, id, who, PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_WHISPER,
+  purple_serv_got_chat_in(gc, id, who, PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_WHISPER,
                    message, time(NULL));
 }
 
@@ -857,7 +857,7 @@ static void receive_chat_message(PurpleChatConversation *from, PurpleChatConvers
   purple_debug_info("nullprpl",
                     "%s receives message from %s in chat room %s: %s\n",
                     purple_chat_conversation_get_nick(to), purple_chat_conversation_get_nick(from), room, message);
-  serv_got_chat_in(to_gc, id, purple_chat_conversation_get_nick(from), PURPLE_MESSAGE_RECV, message,
+  purple_serv_got_chat_in(to_gc, id, purple_chat_conversation_get_nick(from), PURPLE_MESSAGE_RECV, message,
                    time(NULL));
 }
 

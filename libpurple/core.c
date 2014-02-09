@@ -357,7 +357,7 @@ static char *purple_dbus_owner_user_dir(void)
 	if ((dbus_connection = purple_dbus_get_connection()) == NULL)
 		return NULL;
 
-	if ((msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleUserDir")) == NULL)
+	if ((msg = dbus_message_new_method_call(PURPLE_DBUS_SERVICE, PURPLE_DBUS_PATH, PURPLE_DBUS_INTERFACE, "PurpleUserDir")) == NULL)
 		return NULL;
 
 	dbus_error_init(&dbus_error);
