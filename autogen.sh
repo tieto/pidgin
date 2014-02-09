@@ -100,6 +100,22 @@ run_or_die () { # beotch
 	fi
 }
 
+check_gtkdoc() {
+	printf "checking for gtkdocize... "
+	GTKDOCIZE=`which gtkdocize 2>/dev/null`
+
+	if [ x"${GTKDOCIZE}" = x"" ] ; then
+		echo "not found."
+		echo "EXTRA_DIST =" > gtk-doc.make
+		echo "You don't have gtk-doc installed, and thus won't be able to
+generate the documentation.
+"
+	else
+		echo "${GTKDOCIZE}"
+		run_or_die ${GTKDOCIZE} ${GTKDOCIZE_FLAGS}
+	fi
+}
+
 cleanup () {
 	rm -f autogen-??????
 	echo
@@ -137,7 +153,6 @@ fi
 ###############################################################################
 check "$libtoolize";		LIBTOOLIZE=${BIN};
 check "glib-gettextize";	GLIB_GETTEXTIZE=${BIN};
-check "gtkdocize";		GTKDOCIZE=${BIN};
 check "intltoolize";		INTLTOOLIZE=${BIN};
 check "sed";				SED=${BIN};
 check "aclocal";		ACLOCAL=${BIN};
@@ -157,8 +172,8 @@ run_or_die ${SED} -i -e "s:'\^\$\$lang\$\$':\^\$\$lang\$\$:g" po/Makefile.in.in
 # glib-gettextize doesn't seems to use AM_V_GEN macro
 ${SED} -i -e "s:\\tfile=\`echo:\\t@echo -e \"  GEN\\\\t\$\@\"; file=\`echo:g" po/Makefile.in.in
 run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS:-"-I m4macros"}
-run_or_die ${GTKDOCIZE} ${GTKDOCIZE_FLAGS}
 run_or_die ${AUTOHEADER} ${AUTOHEADER_FLAGS}
+check_gtkdoc
 run_or_die ${AUTOMAKE} ${AUTOMAKE_FLAGS:-"-a -c --gnu"}
 run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 
