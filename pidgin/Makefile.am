@@ -77,9 +77,6 @@ libpidgin_la_SOURCES = \
 	gtksession.c \
 	gtksmiley.c \
 	gtksound.c \
-	gtksourceiter.c \
-	gtksourceundomanager.c \
-	gtksourceview-marshal.c \
 	gtkstatus-icon-theme.c \
 	gtkstatusbox.c \
 	gtkthemes.c \
@@ -130,9 +127,6 @@ libpidgin_la_headers = \
 	gtksession.h \
 	gtksmiley.h \
 	gtksound.h \
-	gtksourceiter.h \
-	gtksourceundomanager.h \
-	gtksourceview-marshal.h \
 	gtkstatus-icon-theme.h \
 	gtkstatusbox.h \
 	pidginstock.h \
