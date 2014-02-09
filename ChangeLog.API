@@ -555,8 +555,22 @@ version 3.0.0 (??/??/????):
 
 		Changed:
 		* gtkft.h file renamed to gtkxfer.h
+		* pidgin_blist_sort_method renamed to _PidginBlistSortMethod
+		* BRUSH_STATE_DOWN renamed to PIDGIN_BRUSH_STATE_DOWN
+		* BRUSH_STATE_MOTION renamed to PIDGIN_BRUSH_STATE_MOTION
+		* BRUSH_STATE_UP renamed to PIDGIN_BRUSH_STATE_UP
+		* DEFAULT_FONT_FACE renamed to PIDGIN_DEFAULT_FONT_FACE
+		* DndHintPosition renamed to PidginDndHintPosition
+		* DndHintWindowId renamed to PidginDndHintWindowId
+		* dnd_* functions renamed to pidgin_dnd_*
+		* FULL_CIRCLE_DEGREES renamed to PIDGIN_FULL_CIRCLE_DEGREES
+		* NUM_NICK_SEED_COLORS renamed to PIDGIN_NUM_NICK_SEED_COLORS
+		* PALETTE_NUM_COLORS renamed to PIDGIN_PALETTE_NUM_COLORS
 		* pidgin_setup_screenname_autocomplete now takes a filter function and
 		  its data as final two arguments
+		* smiley_list renamed to PidginSmileyList
+		* smiley_parse_markup renamed to pidgin_smiley_parse_markup
+		* smiley_theme renamed to PidginSmileyTheme
 
 		Removed:
 		* GtkIMHtml.clipboard_html_string

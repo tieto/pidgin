@@ -32,16 +32,16 @@
 
 #include "whiteboard.h"
 
-#define FULL_CIRCLE_DEGREES 23040
+#define PIDGIN_FULL_CIRCLE_DEGREES 23040
 
 /* TODO: Make into an enum. */
-#define BRUSH_STATE_UP      0
-#define BRUSH_STATE_DOWN    1
-#define BRUSH_STATE_MOTION  2
+#define PIDGIN_BRUSH_STATE_UP      0
+#define PIDGIN_BRUSH_STATE_DOWN    1
+#define PIDGIN_BRUSH_STATE_MOTION  2
 
 /* XXX: This seems duplicated with the Yahoo! Doodle protocol code.
  * XXX: How should they work together? */
-#define PALETTE_NUM_COLORS  7
+#define PIDGIN_PALETTE_NUM_COLORS  7
 
 typedef struct _PidginWhiteboardPrivate PidginWhiteboardPrivate;
 

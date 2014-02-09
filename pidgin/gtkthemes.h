@@ -28,24 +28,24 @@
  * @title: Smiley Theme API
  */
 
-struct smiley_list {
+struct PidginSmileyList {
 	char *sml;
 	GSList *smileys;
 	GHashTable *files; /* map from smiley shortcut to filename */
-	struct smiley_list *next;
+	struct PidginSmileyList *next;
 };
 
-struct smiley_theme {
+struct PidginSmileyTheme {
 	char *path;
 	char *name;
 	char *desc;
 	char *icon;
 	char *author;
 
-	struct smiley_list *list;
+	struct PidginSmileyList *list;
 };
 
-extern struct smiley_theme *current_smiley_theme;
+extern struct PidginSmileyTheme *current_smiley_theme;
 extern GSList *smiley_themes;
 
 G_BEGIN_DECLS

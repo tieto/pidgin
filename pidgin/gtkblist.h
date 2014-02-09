@@ -327,13 +327,13 @@ typedef void (*pidgin_blist_sort_function)(PurpleBlistNode *new, PurpleBuddyList
  */
 GList *pidgin_blist_get_sort_methods(void);
 
-struct pidgin_blist_sort_method {
+struct _PidginBlistSortMethod {
 	char *id;
 	char *name;
 	pidgin_blist_sort_function func;
 };
 
-typedef struct pidgin_blist_sort_method PidginBlistSortMethod;
+typedef struct _PidginBlistSortMethod PidginBlistSortMethod;
 
 /**
  * pidgin_blist_sort_method_reg:

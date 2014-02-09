@@ -310,28 +310,28 @@ static void
 default_formatize(PidginConversation *c)
 {
 	PurpleConversation *conv = c->active_conv;
-	gtk_webview_setup_entry(GTK_WEBVIEW(c->entry), purple_conversation_get_features(conv));
+	pidgin_webview_setup_entry(PIDGIN_WEBVIEW(c->entry), purple_conversation_get_features(conv));
 }
 
 static void
 conversation_entry_clear(PidginConversation *gtkconv)
 {
-	GtkWebView *webview = GTK_WEBVIEW(gtkconv->entry);
+	PidginWebView *webview = PIDGIN_WEBVIEW(gtkconv->entry);
 
 	//XXX: hotfix for not focused entry after sending a message
-	//gtk_webview_load_html_string(webview, "");
-	gtk_webview_load_html_string_with_selection(webview, "<div id='caret'></div>");
+	//pidgin_webview_load_html_string(webview, "");
+	pidgin_webview_load_html_string_with_selection(webview, "<div id='caret'></div>");
 
 #if 0
 	/* TODO WebKit */
 	gtk_source_undo_manager_begin_not_undoable_action(webview->undo_manager);
-	gtk_webview_clear(webview);
+	pidgin_webview_clear(webview);
 	gtk_source_undo_manager_end_not_undoable_action(webview->undo_manager);
 #endif
 }
 
 static void
-clear_formatting_cb(GtkWebView *webview, PidginConversation *gtkconv)
+clear_formatting_cb(PidginWebView *webview, PidginConversation *gtkconv)
 {
 	default_formatize(gtkconv);
 }
@@ -522,13 +522,13 @@ check_for_and_do_command(PurpleConversation *conv)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	prefix = pidgin_get_cmd_prefix();
 
-	cmd = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+	cmd = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	if (cmd && purple_str_has_prefix(cmd, prefix)) {
 		PurpleCmdStatus status;
 		char *error, *cmdline, *markup, *send_history;
 
-		send_history = gtk_webview_get_body_html(GTK_WEBVIEW(gtkconv->entry));
+		send_history = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(gtkconv->entry));
 		send_history_add(gtkconv, send_history);
 		g_free(send_history);
 
@@ -542,7 +542,7 @@ check_for_and_do_command(PurpleConversation *conv)
 		}
 
 		/* TODO WebKit: Cut out prefix for markup... */
-		markup = gtk_webview_get_body_html(GTK_WEBVIEW(gtkconv->entry));
+		markup = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(gtkconv->entry));
 		status = purple_cmd_do_command(conv, cmdline, markup, &error);
 		g_free(markup);
 
@@ -631,8 +631,8 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	if (!purple_account_is_connected(account))
 		return;
 
-	buf = gtk_webview_get_body_html(GTK_WEBVIEW(gtkconv->entry));
-	clean = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+	buf = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(gtkconv->entry));
+	clean = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
@@ -647,7 +647,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 #if 0
 	/* TODO WebKit: Image stuff... */
 	/* XXX: is there a better way to tell if the message has images? */
-	if (GTK_WEBVIEW(gtkconv->entry)->im_images != NULL)
+	if (PIDGIN_WEBVIEW(gtkconv->entry)->im_images != NULL)
 		flags |= PURPLE_MESSAGE_IMAGES;
 #endif
 
@@ -658,7 +658,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		char **bufs;
 		int i;
 
-		bufs = gtk_webview_get_markup_lines(GTK_WEBVIEW(gtkconv->entry));
+		bufs = pidgin_webview_get_markup_lines(PIDGIN_WEBVIEW(gtkconv->entry));
 		for (i = 0; bufs[i]; i++) {
 			send_history_add(gtkconv, bufs[i]);
 			purple_conversation_send_with_flags(conv, bufs[i], flags);
@@ -1049,7 +1049,7 @@ static void
 savelog_writefile_cb(void *user_data, const char *filename)
 {
 	PurpleConversation *conv = (PurpleConversation *)user_data;
-	GtkWebView *webview;
+	PidginWebView *webview;
 	FILE *fp;
 	const char *name;
 	gchar *text;
@@ -1061,21 +1061,21 @@ savelog_writefile_cb(void *user_data, const char *filename)
 		return;
 	}
 
-	webview = GTK_WEBVIEW(PIDGIN_CONVERSATION(conv)->webview);
+	webview = PIDGIN_WEBVIEW(PIDGIN_CONVERSATION(conv)->webview);
 	name = purple_conversation_get_name(conv);
 	fprintf(fp, "<html>\n");
 
 	fprintf(fp, "<head>\n");
 	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
 	fprintf(fp, "<title>%s</title>\n", name);
-	text = gtk_webview_get_head_html(webview);
+	text = pidgin_webview_get_head_html(webview);
 	fprintf(fp, "%s", text);
 	g_free(text);
 	fprintf(fp, "</head>\n");
 
 	fprintf(fp, "<body>\n");
 	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
-	text = gtk_webview_get_body_html(webview);
+	text = pidgin_webview_get_body_html(webview);
 	fprintf(fp, "%s", text);
 	g_free(text);
 	fprintf(fp, "\n</body>\n");
@@ -1249,12 +1249,12 @@ menu_insert_link_cb(GtkAction *action, gpointer data)
 {
 	PidginWindow *win = data;
 	PidginConversation *gtkconv;
-	GtkWebView *entry;
+	PidginWebView *entry;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-	entry = GTK_WEBVIEW(gtkconv->entry);
+	entry = PIDGIN_WEBVIEW(gtkconv->entry);
 
-	gtk_webview_activate_toolbar(entry, GTK_WEBVIEW_ACTION_LINK);
+	pidgin_webview_activate_toolbar(entry, PIDGIN_WEBVIEW_ACTION_LINK);
 }
 
 static void
@@ -1262,12 +1262,12 @@ menu_insert_image_cb(GtkAction *action, gpointer data)
 {
 	PidginWindow *win = data;
 	PidginConversation *gtkconv;
-	GtkWebView *entry;
+	PidginWebView *entry;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-	entry = GTK_WEBVIEW(gtkconv->entry);
+	entry = PIDGIN_WEBVIEW(gtkconv->entry);
 
-	gtk_webview_activate_toolbar(entry, GTK_WEBVIEW_ACTION_IMAGE);
+	pidgin_webview_activate_toolbar(entry, PIDGIN_WEBVIEW_ACTION_IMAGE);
 }
 
 static void
@@ -1949,7 +1949,7 @@ update_typing_inserting(PidginConversation *gtkconv)
 
 	g_return_if_fail(gtkconv != NULL);
 
-	text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+	text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	got_typing_keypress(gtkconv, text[0] == '\0' || !strcmp(text, "\n"));
 
@@ -1960,7 +1960,7 @@ static gboolean
 update_typing_deleting_cb(PidginConversation *gtkconv)
 {
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
-	gchar *text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+	gchar *text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	if (!*text || !strcmp(text, "\n")) {
 		/* We deleted all the text, so turn off typing. */
@@ -1986,7 +1986,7 @@ update_typing_deleting(PidginConversation *gtkconv)
 
 	g_return_if_fail(gtkconv != NULL);
 
-	text = gtk_webview_get_body_text(GTK_WEBVIEW(gtkconv->entry));
+	text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	if (*text && strcmp(text, "\n"))
 		purple_timeout_add(0, (GSourceFunc)update_typing_deleting_cb, gtkconv);
@@ -2119,7 +2119,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					g_free(gtkconv->send_history->data);
 
 					gtkconv->send_history->data =
-						gtk_webview_get_body_html(GTK_WEBVIEW(gtkconv->entry));
+						pidgin_webview_get_body_html(PIDGIN_WEBVIEW(gtkconv->entry));
 				}
 
 				if (gtkconv->send_history->next && gtkconv->send_history->next->data) {
@@ -2137,13 +2137,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA,
 					                                0, 0, NULL, NULL, gtkconv);
 					/* Clear the formatting. */
-					gtk_webview_clear_formatting(GTK_WEBVIEW(gtkconv->entry));
+					pidgin_webview_clear_formatting(PIDGIN_WEBVIEW(gtkconv->entry));
 					/* Unblock the signal. */
 					g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA,
 					                                  0, 0, NULL, NULL, gtkconv);
 					g_object_unref(object);
 
-					gtk_webview_load_html_string(GTK_WEBVIEW(gtkconv->entry),
+					pidgin_webview_load_html_string(PIDGIN_WEBVIEW(gtkconv->entry),
 					                             gtkconv->send_history->data);
 					/* this is mainly just a hack so the formatting at the
 					 * cursor gets picked up. */
@@ -2179,13 +2179,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA,
 					                                0, 0, NULL, NULL, gtkconv);
 					/* Clear the formatting. */
-					gtk_webview_clear_formatting(GTK_WEBVIEW(gtkconv->entry));
+					pidgin_webview_clear_formatting(PIDGIN_WEBVIEW(gtkconv->entry));
 					/* Unblock the signal. */
 					g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA,
 					                                  0, 0, NULL, NULL, gtkconv);
 					g_object_unref(object);
 
-					gtk_webview_load_html_string(GTK_WEBVIEW(gtkconv->entry),
+					pidgin_webview_load_html_string(PIDGIN_WEBVIEW(gtkconv->entry),
 					                             gtkconv->send_history->data);
 					/* this is mainly just a hack so the formatting at the
 					 * cursor gets picked up. */
@@ -2230,13 +2230,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		case GDK_KEY_Page_Up:
 		case GDK_KEY_KP_Page_Up:
-			gtk_webview_page_up(GTK_WEBVIEW(gtkconv->webview));
+			pidgin_webview_page_up(PIDGIN_WEBVIEW(gtkconv->webview));
 			return TRUE;
 			break;
 
 		case GDK_KEY_Page_Down:
 		case GDK_KEY_KP_Page_Down:
-			gtk_webview_page_down(GTK_WEBVIEW(gtkconv->webview));
+			pidgin_webview_page_down(PIDGIN_WEBVIEW(gtkconv->webview));
 			return TRUE;
 			break;
 
@@ -2341,7 +2341,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv;
 	PurpleConversation *old_conv;
-	GtkWebView *entry;
+	PidginWebView *entry;
 	const char *protocol_name;
 	PurpleConnectionFlags features;
 
@@ -2362,14 +2362,14 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	purple_conversation_set_logging(conv,
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(gtkconv->win->menu->logging)));
 
-	entry = GTK_WEBVIEW(gtkconv->entry);
+	entry = PIDGIN_WEBVIEW(gtkconv->entry);
 	protocol_name = purple_account_get_protocol_name(purple_conversation_get_account(conv));
-	gtk_webview_set_protocol_name(entry, protocol_name);
-	gtk_webview_set_protocol_name(GTK_WEBVIEW(gtkconv->webview), protocol_name);
+	pidgin_webview_set_protocol_name(entry, protocol_name);
+	pidgin_webview_set_protocol_name(PIDGIN_WEBVIEW(gtkconv->webview), protocol_name);
 
 	features = purple_conversation_get_features(conv);
 	if (!(features & PURPLE_CONNECTION_FLAG_HTML))
-		gtk_webview_clear_formatting(GTK_WEBVIEW(gtkconv->entry));
+		pidgin_webview_clear_formatting(PIDGIN_WEBVIEW(gtkconv->entry));
 	else if (features & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO &&
 	         !(purple_conversation_get_features(old_conv) & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO))
 	{
@@ -2383,52 +2383,52 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 		gboolean italic;
 		gboolean underline;
 		gboolean strike;
-		char *fontface   = gtk_webview_get_current_fontface(entry);
-		char *forecolor  = gtk_webview_get_current_forecolor(entry);
-		char *backcolor  = gtk_webview_get_current_backcolor(entry);
+		char *fontface   = pidgin_webview_get_current_fontface(entry);
+		char *forecolor  = pidgin_webview_get_current_forecolor(entry);
+		char *backcolor  = pidgin_webview_get_current_backcolor(entry);
 #if 0
 		/* TODO WebKit: Do we need this again? */
-		char *background = gtk_webview_get_current_background(entry);
+		char *background = pidgin_webview_get_current_background(entry);
 #endif
-		gint fontsize    = gtk_webview_get_current_fontsize(entry);
+		gint fontsize    = pidgin_webview_get_current_fontsize(entry);
 		gboolean bold2;
 		gboolean italic2;
 		gboolean underline2;
 		gboolean strike2;
 
-		gtk_webview_get_current_format(entry, &bold, &italic, &underline, &strike);
+		pidgin_webview_get_current_format(entry, &bold, &italic, &underline, &strike);
 
 		/* Clear existing formatting */
-		gtk_webview_clear_formatting(entry);
+		pidgin_webview_clear_formatting(entry);
 
 		/* Apply saved formatting to the whole buffer. */
 
-		gtk_webview_get_current_format(entry, &bold2, &italic2, &underline2, &strike2);
+		pidgin_webview_get_current_format(entry, &bold2, &italic2, &underline2, &strike2);
 
 		if (bold != bold2)
-			gtk_webview_toggle_bold(entry);
+			pidgin_webview_toggle_bold(entry);
 
 		if (italic != italic2)
-			gtk_webview_toggle_italic(entry);
+			pidgin_webview_toggle_italic(entry);
 
 		if (underline != underline2)
-			gtk_webview_toggle_underline(entry);
+			pidgin_webview_toggle_underline(entry);
 
 		if (strike != strike2)
-			gtk_webview_toggle_strike(entry);
+			pidgin_webview_toggle_strike(entry);
 
-		gtk_webview_toggle_fontface(entry, fontface);
+		pidgin_webview_toggle_fontface(entry, fontface);
 
 		if (!(features & PURPLE_CONNECTION_FLAG_NO_FONTSIZE))
-			gtk_webview_font_set_size(entry, fontsize);
+			pidgin_webview_font_set_size(entry, fontsize);
 
-		gtk_webview_toggle_forecolor(entry, forecolor);
+		pidgin_webview_toggle_forecolor(entry, forecolor);
 
 		if (!(features & PURPLE_CONNECTION_FLAG_NO_BGCOLOR))
 		{
-			gtk_webview_toggle_backcolor(entry, backcolor);
+			pidgin_webview_toggle_backcolor(entry, backcolor);
 #if 0
-			gtk_webview_toggle_background(entry, background);
+			pidgin_webview_toggle_background(entry, background);
 #endif
 		}
 
@@ -2443,9 +2443,9 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	{
 		/* This is done in default_formatize, which is called from clear_formatting_cb,
 		 * which is (obviously) a clear_formatting signal handler.  However, if we're
-		 * here, we didn't call gtk_webview_clear_formatting() (because we want to
+		 * here, we didn't call pidgin_webview_clear_formatting() (because we want to
 		 * preserve the formatting exactly as it is), so we have to do this now. */
-		gtk_webview_set_whole_buffer_formatting_only(entry,
+		pidgin_webview_set_whole_buffer_formatting_only(entry,
 			(features & PURPLE_CONNECTION_FLAG_FORMATTING_WBFO));
 	}
 
@@ -4479,7 +4479,7 @@ tab_complete(PurpleConversation *conv)
 	gsize entered_chars = 0;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
-	gtk_webview_get_caret(GTK_WEBVIEW(gtkconv->entry), &container, &caret);
+	pidgin_webview_get_caret(PIDGIN_WEBVIEW(gtkconv->entry), &container, &caret);
 
 	/* if there's nothing there just return */
 	if (caret <= 0)
@@ -4602,7 +4602,7 @@ tab_complete(PurpleConversation *conv)
 
 			modified = g_strdup_printf("%s%s", tmp, sub2);
 			webkit_dom_node_set_node_value(container, modified, NULL);
-			gtk_webview_set_caret(GTK_WEBVIEW(gtkconv->entry), container,
+			pidgin_webview_set_caret(PIDGIN_WEBVIEW(gtkconv->entry), container,
 					g_utf8_strlen(tmp, -1));
 			g_free(tmp);
 			g_free(modified);
@@ -4610,7 +4610,7 @@ tab_complete(PurpleConversation *conv)
 		else {
 			modified = g_strdup_printf("%s%s%s", sub1, (char *)matches->data, sub2);
 			webkit_dom_node_set_node_value(container, modified, NULL);
-			gtk_webview_set_caret(GTK_WEBVIEW(gtkconv->entry), container,
+			pidgin_webview_set_caret(PIDGIN_WEBVIEW(gtkconv->entry), container,
 					word_start + g_utf8_strlen(matches->data, -1) + colon);
 			g_free(modified);
 		}
@@ -4638,7 +4638,7 @@ tab_complete(PurpleConversation *conv)
 
 		modified = g_strdup_printf("%s%s%s", sub1, partial, sub2);
 		webkit_dom_node_set_node_value(container, modified, NULL);
-		gtk_webview_set_caret(GTK_WEBVIEW(gtkconv->entry), container,
+		pidgin_webview_set_caret(PIDGIN_WEBVIEW(gtkconv->entry), container,
 				word_start + g_utf8_strlen(partial, -1) + colon);
 		g_free(addthis);
 		g_free(modified);
@@ -4911,7 +4911,7 @@ buddy_removed_cb(PurpleBlistNode *node, PurpleChatConversation *chat)
 }
 
 static void
-entry_popup_menu_cb(GtkWebView *webview, GtkMenu *menu, gpointer data)
+entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
 	PidginConversation *gtkconv = data;
@@ -4923,7 +4923,7 @@ entry_popup_menu_cb(GtkWebView *webview, GtkMenu *menu, gpointer data)
 	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), NULL,
 	                                      G_CALLBACK(send_cb), gtkconv,
 	                                      0, 0, NULL);
-	tmp = gtk_webview_get_body_text(webview);
+	tmp = pidgin_webview_get_body_text(webview);
 	if (!tmp || !*tmp)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 	g_free(tmp);
@@ -5447,7 +5447,7 @@ set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
 		const gchar *font_family = g_value_get_string(val);
 #ifdef _WIN32
 		/* XXX: a hack for not converting backslash to yen sign.
-		 * See gtkwebview.c: gtk_webview_new.
+		 * See gtkwebview.c: pidgin_webview_new.
 		 */
 		if (g_ascii_strcasecmp(font_family, "sans-serif") == 0)
 			font_family = NULL;
@@ -5475,7 +5475,7 @@ conv_variant_changed_cb(GObject *gobject, GParamSpec *pspec, gpointer user_data)
 	path = pidgin_conversation_theme_get_css_path(PIDGIN_CONV_THEME(gobject));
 	js = g_strdup_printf("setStylesheet(\"mainStyle\", \"file://%s\");", path);
 	g_free(path);
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), js);
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(gtkconv->webview), js);
 	g_free(js);
 }
 
@@ -5505,7 +5505,7 @@ load_conv_theme(PidginConversation *gtkconv)
 	                            "text/html", "UTF-8", baseuri);
 
 	if (PURPLE_IS_CHAT_CONVERSATION(gtkconv->active_conv))
-		gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview),
+		pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(gtkconv->webview),
 			"document.getElementById('Chat').className = 'groupchat'");
 
 	g_signal_connect(G_OBJECT(gtkconv->theme), "notify::variant",
@@ -5662,7 +5662,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_widget_show(frame);
 
 	gtk_widget_set_name(gtkconv->entry, "pidgin_conv_entry");
-	gtk_webview_set_protocol_name(GTK_WEBVIEW(gtkconv->entry),
+	pidgin_webview_set_protocol_name(PIDGIN_WEBVIEW(gtkconv->entry),
 			purple_account_get_protocol_name(purple_conversation_get_account(conv)));
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
@@ -6033,9 +6033,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"))
-		gtk_webview_show_toolbar(GTK_WEBVIEW(gtkconv->entry));
+		pidgin_webview_show_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
 	else
-		gtk_webview_hide_toolbar(GTK_WEBVIEW(gtkconv->entry));
+		pidgin_webview_hide_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
@@ -6659,13 +6659,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	gtkconv->last_flags = flags;
 	gtkconv->last_conversed = conv;
 
-	smileyed = smiley_parse_markup(displaying, purple_account_get_protocol_id(account));
+	smileyed = pidgin_smiley_parse_markup(displaying, purple_account_get_protocol_id(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
-	escape = gtk_webview_quote_js_string(msg ? msg : "");
+	escape = pidgin_webview_quote_js_string(msg ? msg : "");
 	script = g_strdup_printf("%s(%s)", func, escape);
 
 	purple_debug_info("webkit", "JS: %s\n", script);
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), script);
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(gtkconv->webview), script);
 
 	g_free(script);
 	g_free(smileyed);
@@ -6674,8 +6674,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 #if 0
 	/* if the buffer is not empty add a <br> */
-	if (!gtk_webview_is_empty(GTK_WEBVIEW(gtkconv->webview)))
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<br />");
+	if (!pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->webview)))
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), "<br />");
 
 	/* First message in a conversation. */
 	if (gtkconv->newday == 0)
@@ -6731,27 +6731,27 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & PURPLE_MESSAGE_RAW) {
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), message);
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), message);
 	} else if (flags & PURPLE_MESSAGE_SYSTEM) {
 		g_snprintf(buf2, sizeof(buf2),
 			   "<font %s><font size=\"2\"><span class='timestamp'>%s</span></font><b>%s</b></font>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), buf2);
 
 	} else if (flags & PURPLE_MESSAGE_ERROR) {
 		g_snprintf(buf2, sizeof(buf2),
 			   "<font color=\"#ff0000\"><font %s><font size=\"2\"><span class='timestamp'>%s</span> </font><b>%s</b></font></font>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), buf2);
 
 	} else if (flags & PURPLE_MESSAGE_NO_LOG) {
 		g_snprintf(buf2, BUF_LONG,
 			   "<b><font %s color=\"#777777\">%s</font></b>",
 			   sml_attrib ? sml_attrib : "", displaying);
 
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), buf2);
 	} else {
 		char *new_message = g_memdup(displaying, length);
 		char *alias_escaped = (alias ? g_markup_escape_text(alias, strlen(alias)) : g_strdup(""));
@@ -6838,11 +6838,11 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			/* const char *color = get_text_tag_color(tag); */
 			g_snprintf(buf2, BUF_LONG, "<FONT %s%s%s SIZE=\"2\"><!--%s --></FONT>",
 					color ? "COLOR=\"" : "", color ? color : "", color ? "\"" : "", mdate);
-			gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), buf2);
+			pidgin_webview_append_html (PIDGIN_WEBVIEW(gtkconv->webview), buf2);
 		}
 #endif /* if 0 */
 		g_snprintf(buf2, BUF_LONG, "<font %s>%s</font> ", sml_attrib ? sml_attrib : "", str);
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), buf2);
 
 		g_free(str);
 
@@ -6854,7 +6854,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		} else
 			with_font_tag = g_memdup(new_message, length);
 
-		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview),
+		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview),
 							 with_font_tag);
 
 		g_free(with_font_tag);
@@ -7152,25 +7152,25 @@ pidgin_conv_has_focus(PurpleConversation *conv)
 }
 
 static gboolean
-add_custom_smiley_for_webview(GtkWebView *webview, const char *sml, const char *smile)
+add_custom_smiley_for_webview(PidginWebView *webview, const char *sml, const char *smile)
 {
-	GtkWebViewSmiley *smiley;
+	PidginWebViewSmiley *smiley;
 
-	smiley = gtk_webview_smiley_find(webview, sml, smile);
+	smiley = pidgin_webview_smiley_find(webview, sml, smile);
 
 	if (smiley) {
-		if (!(gtk_webview_smiley_get_flags(smiley) & GTK_WEBVIEW_SMILEY_CUSTOM))
+		if (!(pidgin_webview_smiley_get_flags(smiley) & PIDGIN_WEBVIEW_SMILEY_CUSTOM))
 			return FALSE;
 
-		gtk_webview_smiley_reload(smiley);
+		pidgin_webview_smiley_reload(smiley);
 		return TRUE;
 	}
 
-	smiley = gtk_webview_smiley_create(NULL, smile, FALSE,
-	                                   GTK_WEBVIEW_SMILEY_CUSTOM);
-	gtk_webview_associate_smiley(webview, sml, smiley);
+	smiley = pidgin_webview_smiley_create(NULL, smile, FALSE,
+	                                   PIDGIN_WEBVIEW_SMILEY_CUSTOM);
+	pidgin_webview_associate_smiley(webview, sml, smiley);
 	g_signal_connect_swapped(webview, "destroy",
-	                         G_CALLBACK(gtk_webview_smiley_destroy), smiley);
+	                         G_CALLBACK(pidgin_webview_smiley_destroy), smiley);
 
 	return TRUE;
 }
@@ -7179,7 +7179,7 @@ static gboolean
 pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gboolean remote)
 {
 	PidginConversation *gtkconv;
-	struct smiley_list *list;
+	struct PidginSmileyList *list;
 	const char *sml = NULL, *conv_sml;
 
 	if (!conv || !smile || !*smile) {
@@ -7195,18 +7195,18 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 	conv_sml = purple_account_get_protocol_name(purple_conversation_get_account(conv));
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
-	for (list = (struct smiley_list *)current_smiley_theme->list; list; list = list->next) {
+	for (list = (struct PidginSmileyList *)current_smiley_theme->list; list; list = list->next) {
 		if (!strcmp(list->sml, conv_sml)) {
 			sml = list->sml;
 			break;
 		}
 	}
 
-	if (!add_custom_smiley_for_webview(GTK_WEBVIEW(gtkconv->webview), sml, smile))
+	if (!add_custom_smiley_for_webview(PIDGIN_WEBVIEW(gtkconv->webview), sml, smile))
 		return FALSE;
 
 	if (!remote)	/* If it's a local custom smiley, then add it for the entry */
-		if (!add_custom_smiley_for_webview(GTK_WEBVIEW(gtkconv->entry), sml, smile))
+		if (!add_custom_smiley_for_webview(PIDGIN_WEBVIEW(gtkconv->entry), sml, smile))
 			return FALSE;
 
 	return TRUE;
@@ -7304,7 +7304,7 @@ pidgin_conv_send_confirm(PurpleConversation *conv, const char *message)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
-	gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), message);
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), message);
 }
 
 /*
@@ -7320,7 +7320,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 	PurpleConnection *gc;
 	PurpleProtocol *protocol = NULL;
 	GdkPixbuf *window_icon = NULL;
-	GtkWebViewButtons buttons;
+	PidginWebViewButtons buttons;
 	PurpleAccount *account;
 
 	win     = pidgin_conv_get_window(gtkconv);
@@ -7411,18 +7411,18 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Deal with the toolbar */
 		if (features & PURPLE_CONNECTION_FLAG_HTML)
 		{
-			buttons = GTK_WEBVIEW_ALL; /* Everything on */
+			buttons = PIDGIN_WEBVIEW_ALL; /* Everything on */
 			if (features & PURPLE_CONNECTION_FLAG_NO_BGCOLOR)
-				buttons &= ~GTK_WEBVIEW_BACKCOLOR;
+				buttons &= ~PIDGIN_WEBVIEW_BACKCOLOR;
 			if (features & PURPLE_CONNECTION_FLAG_NO_FONTSIZE)
 			{
-				buttons &= ~GTK_WEBVIEW_GROW;
-				buttons &= ~GTK_WEBVIEW_SHRINK;
+				buttons &= ~PIDGIN_WEBVIEW_GROW;
+				buttons &= ~PIDGIN_WEBVIEW_SHRINK;
 			}
 			if (features & PURPLE_CONNECTION_FLAG_NO_URLDESC)
-				buttons &= ~GTK_WEBVIEW_LINKDESC;
+				buttons &= ~PIDGIN_WEBVIEW_LINKDESC;
 		} else {
-			buttons = GTK_WEBVIEW_SMILEY | GTK_WEBVIEW_IMAGE;
+			buttons = PIDGIN_WEBVIEW_SMILEY | PIDGIN_WEBVIEW_IMAGE;
 		}
 
 		if (!(purple_protocol_get_options(protocol) & OPT_PROTO_IM_IMAGE)
@@ -7432,16 +7432,16 @@ gray_stuff_out(PidginConversation *gtkconv)
 		}
 
 		if (features & PURPLE_CONNECTION_FLAG_NO_IMAGES)
-			buttons &= ~GTK_WEBVIEW_IMAGE;
+			buttons &= ~PIDGIN_WEBVIEW_IMAGE;
 
 		if (features & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
-			buttons |= GTK_WEBVIEW_CUSTOM_SMILEY;
+			buttons |= PIDGIN_WEBVIEW_CUSTOM_SMILEY;
 		else
-			buttons &= ~GTK_WEBVIEW_CUSTOM_SMILEY;
+			buttons &= ~PIDGIN_WEBVIEW_CUSTOM_SMILEY;
 
-		gtk_webview_set_format_functions(GTK_WEBVIEW(gtkconv->entry), buttons);
+		pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(gtkconv->entry), buttons);
 		if (account != NULL)
-			gtk_webview_set_protocol_name(GTK_WEBVIEW(gtkconv->entry), purple_account_get_protocol_id(account));
+			pidgin_webview_set_protocol_name(PIDGIN_WEBVIEW(gtkconv->entry), purple_account_get_protocol_id(account));
 
 		/* Deal with menu items */
 		gtk_action_set_sensitive(win->menu->view_log, TRUE);
@@ -8126,7 +8126,7 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
 
-		pidgin_webview_set_spellcheck(GTK_WEBVIEW(gtkconv->entry),
+		pidgin_webview_set_spellcheck(PIDGIN_WEBVIEW(gtkconv->entry),
 		                              (gboolean)GPOINTER_TO_INT(value));
 	}
 }
@@ -8174,9 +8174,9 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 		        (gboolean)GPOINTER_TO_INT(value));
 
 		if ((gboolean)GPOINTER_TO_INT(value))
-			gtk_webview_show_toolbar(GTK_WEBVIEW(gtkconv->entry));
+			pidgin_webview_show_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
 		else
-			gtk_webview_hide_toolbar(GTK_WEBVIEW(gtkconv->entry));
+			pidgin_webview_hide_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
 
 		g_idle_add((GSourceFunc)resize_webview_cb, gtkconv);
 	}
@@ -8539,7 +8539,7 @@ static gboolean
 add_message_history_to_gtkconv(gpointer data)
 {
 	PidginConversation *gtkconv = data;
-	GtkWebView *webview = GTK_WEBVIEW(gtkconv->webview);
+	PidginWebView *webview = PIDGIN_WEBVIEW(gtkconv->webview);
 	int count = 0;
 	int timer = gtkconv->attach_timer;
 	time_t when = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkconv->entry), "attach-start-time"));
@@ -8549,8 +8549,8 @@ add_message_history_to_gtkconv(gpointer data)
 	while (gtkconv->attach_current && count < 100) {  /* XXX: 100 is a random value here */
 		PurpleConversationMessage *msg = gtkconv->attach_current->data;
 		if (!im && when && when < purple_conversation_message_get_timestamp(msg)) {
-			gtk_webview_append_html(webview, "<BR><HR>");
-			gtk_webview_scroll_to_end(webview, TRUE);
+			pidgin_webview_append_html(webview, "<BR><HR>");
+			pidgin_webview_scroll_to_end(webview, TRUE);
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
 		pidgin_conv_write_conv(
@@ -8597,8 +8597,8 @@ add_message_history_to_gtkconv(gpointer data)
 					purple_conversation_message_get_flags(msg),
 					purple_conversation_message_get_timestamp(msg));
 		}
-		gtk_webview_append_html(webview, "<BR><HR>");
-		gtk_webview_scroll_to_end(webview, TRUE);
+		pidgin_webview_append_html(webview, "<BR><HR>");
+		pidgin_webview_scroll_to_end(webview, TRUE);
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 	}
 
@@ -9330,7 +9330,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 
 		if (dest_win == NULL) {
-			dnd_hints_hide_all();
+			pidgin_pidgin_dnd_hints_hide_all();
 
 			return TRUE;
 		}
@@ -9356,23 +9356,23 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		if (gtk_notebook_get_show_tabs(dest_notebook) == FALSE && win == dest_win)
 		{
 			/* dragging a tab from a single-tabbed window over its own window */
-			dnd_hints_hide_all();
+			pidgin_pidgin_dnd_hints_hide_all();
 			return TRUE;
 		} else if (horiz_tabs) {
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
-				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
 			} else {
-				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
-				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
 			}
 		} else {
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
-				dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
 			} else {
-				dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
-				dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				pidgin_pidgin_dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
 			}
 		}
 	}
@@ -9621,7 +9621,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 	win->in_drag = FALSE;
 
-	dnd_hints_hide_all();
+	pidgin_pidgin_dnd_hints_hide_all();
 
 	dest_win = pidgin_conv_window_get_at_event((GdkEvent *)e);
 
@@ -11272,7 +11272,7 @@ generate_nick_colors(guint numcolors, GdkColor background)
 	 * list.  only some of them will differ from the background color though. lets see if we can find
 	 * numcolors of them that do
 	 */
-	while (i < numcolors && j < NUM_NICK_SEED_COLORS && time(NULL) < breakout_time)
+	while (i < numcolors && j < PIDGIN_NUM_NICK_SEED_COLORS && time(NULL) < breakout_time)
 	{
 		GdkColor color = nick_seed_colors[j];
 

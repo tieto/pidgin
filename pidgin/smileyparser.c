@@ -130,11 +130,11 @@ parse_for_smiley_list(const char *markup, GHashTable *smileys)
 }
 
 char *
-smiley_parse_markup(const char *markup, const char *proto_id)
+pidgin_smiley_parse_markup(const char *markup, const char *proto_id)
 {
 	GList *smileys = purple_smileys_get_all();
 	char *temp = g_strdup(markup), *temp2;
-	struct smiley_list *list;
+	struct PidginSmileyList *list;
 	const char *proto_name = "default";
 
 	if (proto_id != NULL) {

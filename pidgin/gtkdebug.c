@@ -107,7 +107,7 @@ save_writefile_cb(void *user_data, const char *filename)
 		return;
 	}
 
-	tmp = gtk_webview_get_body_text(GTK_WEBVIEW(win->text));
+	tmp = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(win->text));
 	fprintf(fp, "Pidgin Debug Log : %s\n", purple_date_format_full(NULL));
 	fprintf(fp, "%s", tmp);
 	g_free(tmp);
@@ -125,7 +125,7 @@ save_cb(GtkWidget *w, DebugWindow *win)
 static void
 clear_cb(GtkWidget *w, DebugWindow *win)
 {
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "clear();");
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(win->text), "clear();");
 }
 
 static void
@@ -134,9 +134,9 @@ pause_cb(GtkWidget *w, DebugWindow *win)
 	win->paused = gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(w));
 
 	if (win->paused)
-		gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "pauseOutput();");
+		pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(win->text), "pauseOutput();");
 	else
-		gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "resumeOutput();");
+		pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(win->text), "resumeOutput();");
 }
 
 /******************************************************************************
@@ -185,7 +185,7 @@ regex_change_color(GtkWidget *w, gboolean success) {
 static void
 regex_toggle_filter(DebugWindow *win, gboolean filter)
 {
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), "regex.clear();");
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(win->text), "regex.clear();");
 
 	if (filter) {
 		const char *text;
@@ -193,12 +193,12 @@ regex_toggle_filter(DebugWindow *win, gboolean filter)
 		char *script;
 
 		text = gtk_entry_get_text(GTK_ENTRY(win->expression));
-		regex = gtk_webview_quote_js_string(text);
+		regex = pidgin_webview_quote_js_string(text);
 		script = g_strdup_printf("regex.filterAll(%s, %s, %s);",
 		                         regex,
 		                         win->invert ? "true" : "false",
 		                         win->highlight ? "true" : "false");
-		gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), script);
+		pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(win->text), script);
 		g_free(script);
 		g_free(regex);
 	}
@@ -361,7 +361,7 @@ filter_level_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel), level);
 
 	tmp = g_strdup_printf("setFilterLevel('%d');", level);
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(win->text), tmp);
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(win->text), tmp);
 	g_free(tmp);
 }
 
@@ -599,9 +599,9 @@ debug_window_new(void)
 
 	/* Add the gtkwebview */
 	frame = pidgin_create_webview(FALSE, &win->text, NULL);
-	gtk_webview_set_format_functions(GTK_WEBVIEW(win->text),
-	                                 GTK_WEBVIEW_ALL ^ GTK_WEBVIEW_SMILEY ^ GTK_WEBVIEW_IMAGE);
-	gtk_webview_load_html_string(GTK_WEBVIEW(win->text), gtkdebug_html);
+	pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(win->text),
+	                                 PIDGIN_WEBVIEW_ALL ^ PIDGIN_WEBVIEW_SMILEY ^ PIDGIN_WEBVIEW_IMAGE);
+	pidgin_webview_load_html_string(PIDGIN_WEBVIEW(win->text), gtkdebug_html);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
@@ -792,7 +792,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 		level, mdate, category ? category : "", esc_s);
 	g_free(esc_s);
 
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(debug_win->text), js);
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(debug_win->text), js);
 	g_free(js);
 }
 

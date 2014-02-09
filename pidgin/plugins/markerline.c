@@ -55,7 +55,7 @@ update_marker_for_gtkconv(PidginConversation *gtkconv)
 	    (PURPLE_IS_IM_CONVERSATION(conv) && !purple_prefs_get_bool(PREF_IMS)))
 		return;
 
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview),
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(gtkconv->webview),
 		"var mhr = document.getElementById(\"markerhr\");"
 		"if (!mhr) {"
 			"mhr = document.createElement(\"hr\");"
@@ -90,7 +90,7 @@ page_switched(GtkWidget *widget, GtkWidget *page, gint num, PidginWindow *win)
 static void
 detach_from_gtkconv(PidginConversation *gtkconv, gpointer null)
 {
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview),
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(gtkconv->webview),
 		"var mhr = document.getElementById(\"markerhr\");"
 		"if (mhr) mhr.parentNode.removeChild(mhr);");
 }
@@ -155,7 +155,7 @@ jump_to_markerline(PurpleConversation *conv, gpointer null)
 	if (!gtkconv)
 		return;
 
-	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview),
+	pidgin_webview_safe_execute_script(PIDGIN_WEBVIEW(gtkconv->webview),
 		"var mhr = document.getElementById(\"markerhr\");"
 		"if (mhr) {"
 			"window.scroll(0, mhr.offsetTop);"

@@ -141,7 +141,7 @@ static gboolean gtk_blist_focused = FALSE;
 static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
-static struct pidgin_blist_sort_method *current_sort_method = NULL;
+static struct _PidginBlistSortMethod *current_sort_method = NULL;
 static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 
 static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
@@ -7764,13 +7764,13 @@ GList *pidgin_blist_get_sort_methods()
 
 void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist_sort_function func)
 {
-	struct pidgin_blist_sort_method *method;
+	struct _PidginBlistSortMethod *method;
 
 	g_return_if_fail(id != NULL);
 	g_return_if_fail(name != NULL);
 	g_return_if_fail(func != NULL);
 
-	method = g_new0(struct pidgin_blist_sort_method, 1);
+	method = g_new0(struct _PidginBlistSortMethod, 1);
 	method->id = g_strdup(id);
 	method->name = g_strdup(name);
 	method->func = func;
@@ -7785,7 +7785,7 @@ void pidgin_blist_sort_method_unreg(const char *id)
 	g_return_if_fail(id != NULL);
 
 	while(l) {
-		struct pidgin_blist_sort_method *method = l->data;
+		struct _PidginBlistSortMethod *method = l->data;
 		if(!strcmp(method->id, id)) {
 			pidgin_blist_sort_methods = g_list_delete_link(pidgin_blist_sort_methods, l);
 			g_free(method->id);
@@ -7804,7 +7804,7 @@ void pidgin_blist_sort_method_set(const char *id){
 	if(!id)
 		id = "none";
 
-	while (l && strcmp(((struct pidgin_blist_sort_method*)l->data)->id, id))
+	while (l && strcmp(((struct _PidginBlistSortMethod*)l->data)->id, id))
 		l = l->next;
 
 	if (l) {
