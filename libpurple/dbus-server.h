@@ -33,6 +33,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _PurpleDBusType PurpleDBusType;
+
 /**
  * PurpleDBusType:
  *
@@ -46,9 +48,6 @@ G_BEGIN_DECLS
  * parent.  Parent means the same as the base class in object oriented
  * programming.
  */
-
-typedef struct _PurpleDBusType PurpleDBusType;
-
 struct _PurpleDBusType {
     PurpleDBusType *parent;
 };

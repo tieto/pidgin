@@ -2557,6 +2557,10 @@ GTK_DOC_CHECK([1.16],[--flavour no-tmpl])
 AM_CONDITIONAL([ENABLE_GTK_DOC], false)
 ])
 
+if test "x$enable_gtk_doc" = "x" ; then
+	enable_gtk_doc=no
+fi
+
 AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
 
