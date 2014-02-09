@@ -67,8 +67,7 @@ IGNORE_HFILES=\
 	win32 \
 	getopt.h \
 	gtk3compat.h \
-	gtkinternal.h \
-	gtksourceview-marshal.h
+	gtkinternal.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
