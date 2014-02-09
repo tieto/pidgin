@@ -92,7 +92,6 @@ PIDGIN_C_SRC =	\
 			gtkscrollbook.c \
 			gtksmiley.c \
 			gtksound.c \
-			gtksourceiter.c \
 			gtksourceundomanager.c \
 			gtkstatus-icon-theme.c \
 			gtkstatusbox.c \
