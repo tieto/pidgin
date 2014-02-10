@@ -634,25 +634,14 @@ Use --disable-gtkspell if you do not need it.
 	dnl # Check for stuff needed by the Evolution integration plugin.
 	dnl #######################################################################
 	if test "x$enable_gevolution" = "xyes"; then
-		evo_deps="libebook-1.2 libedata-book-1.2"
+		evo_deps="libebook-1.2 libedata-book-1.2 evolution-data-server-1.2 >= 3.6"
 		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, , [
 			enable_gevolution="no"
 		])
-		if test "x$enable_gevolution" = "xno"; then
-			evo_deps="libebook-1.0 libedata-book-1.0"
-			PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
-				enable_gevolution="yes"
-			])
-		fi
 		if test "x$enable_gevolution" = "xyes"; then
 			AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
-
-			CPPFLAGS_save="$CPPFLAGS"
-			CPPFLAGS="$CPPFLAGS $EVOLUTION_ADDRESSBOOK_CFLAGS"
-			AC_CHECK_HEADER(libebook/libebook.h, [AC_DEFINE(HAVE_LIBEBOOK_H, 1, [Define if libebook is recent enough to contain libebook/libebook.h.])], [])
-			CPPFLAGS="$CPPFLAGS_save"
 		else
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([

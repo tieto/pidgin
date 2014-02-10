@@ -51,9 +51,9 @@ gevo_addrbooks_model_unref(GtkTreeModel *model)
 void
 gevo_addrbooks_model_populate(GtkTreeModel *model)
 {
-	ESourceList *addressbooks;
+	ESourceRegistry *registry;
 	GError *err = NULL;
-	GSList *groups, *g;
+	GList *sources, *s;
 	GtkTreeIter iter;
 	GtkListStore *list;
 
@@ -62,66 +62,55 @@ gevo_addrbooks_model_populate(GtkTreeModel *model)
 
 	list = GTK_LIST_STORE(model);
 
-	if (!e_book_get_addressbooks(&addressbooks, &err))
-	{
+	registry = e_source_registry_new_sync(NULL, &err);
+
+	if (!registry) {
 		purple_debug_error("evolution",
-						 "Unable to fetch list of address books.\n");
+			"Unable to fetch list of address books.");
 
 		gtk_list_store_append(list, &iter);
-		gtk_list_store_set(list, &iter,
-						   ADDRBOOK_COLUMN_NAME, _("None"),
-						   ADDRBOOK_COLUMN_URI,  NULL,
-						   -1);
+		gtk_list_store_set(list, &iter, ADDRBOOK_COLUMN_NAME, _("None"),
+			ADDRBOOK_COLUMN_UID, NULL, -1);
+
+		g_clear_error(&err);
+		return;
+	}
+
+	sources = e_source_registry_list_sources(registry, E_SOURCE_EXTENSION_ADDRESS_BOOK);
+
+	if (sources == NULL) {
+		g_object_unref(registry);
+		gtk_list_store_append(list, &iter);
+		gtk_list_store_set(list, &iter, ADDRBOOK_COLUMN_NAME, _("None"),
+			ADDRBOOK_COLUMN_UID, NULL, -1);
 
 		return;
 	}
 
-	groups = e_source_list_peek_groups(addressbooks);
+	for (s = sources; s != NULL; s = s->next) {
+		ESource *source = E_SOURCE(s->data);
 
-	if (groups == NULL)
-	{
+		g_object_ref(source);
+
 		gtk_list_store_append(list, &iter);
 		gtk_list_store_set(list, &iter,
-						   ADDRBOOK_COLUMN_NAME, _("None"),
-						   ADDRBOOK_COLUMN_URI,  NULL,
-						   -1);
-
-		return;
+			ADDRBOOK_COLUMN_NAME, e_source_get_display_name(source),
+			ADDRBOOK_COLUMN_UID, e_source_get_uid(source), -1);
 	}
 
-	for (g = groups; g != NULL; g = g->next)
-	{
-		GSList *sources, *s;
-
-		sources = e_source_group_peek_sources(g->data);
-
-		for (s = sources; s != NULL; s = s->next)
-		{
-			ESource *source = E_SOURCE(s->data);
-
-			g_object_ref(source);
-
-			gtk_list_store_append(list, &iter);
-			gtk_list_store_set(list, &iter,
-							   ADDRBOOK_COLUMN_NAME, e_source_peek_name(source),
-							   ADDRBOOK_COLUMN_URI,  e_source_get_uri(source),
-							   -1);
-		}
-	}
-
-	g_object_unref(addressbooks);
+	g_object_unref(registry);
+	g_list_free_full(sources, g_object_unref);
 }
 
 static EContact *
-gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
+gevo_run_query_in_source(ESource *source, EBookQuery *query)
 {
 	EBook *book;
 	gboolean status;
 	GList *cards;
 	GError *err = NULL;
 
-	if (!gevo_load_addressbook(uri, &book, &err))
-	{
+	if (!gevo_load_addressbook_from_source(source, &book, &err)) {
 		purple_debug_error("evolution",
 						 "Error retrieving addressbook: %s\n", err->message);
 		g_error_free(err);
@@ -171,10 +160,10 @@ gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
 EContact *
 gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 {
-	ESourceList *addressbooks;
+	ESourceRegistry *registry;
 	GError *err = NULL;
 	EBookQuery *full_query;
-	GSList *groups, *g;
+	GList *sources, *s;
 	EContact *result;
 	EContactField protocol_field =
 		gevo_prpl_get_field(purple_buddy_get_account(buddy), buddy);
@@ -209,8 +198,9 @@ gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 		}
 	}
 
-	if (!e_book_get_addressbooks(&addressbooks, &err))
-	{
+	registry = e_source_registry_new_sync(NULL, &err);
+
+	if (!registry) {
 		purple_debug_error("evolution",
 						 "Unable to fetch list of address books.\n");
 		e_book_query_unref(full_query);
@@ -219,30 +209,22 @@ gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 		return NULL;
 	}
 
-	groups = e_source_list_peek_groups(addressbooks);
-	if (groups == NULL)
-	{
-		g_object_unref(addressbooks);
-		e_book_query_unref(full_query);
-		return NULL;
-	}
+	sources = e_source_registry_list_sources(registry,
+		E_SOURCE_EXTENSION_ADDRESS_BOOK);
 
-	for (g = groups; g != NULL; g = g->next)
-	{
-		GSList *sources, *s;
-		sources = e_source_group_peek_sources(g->data);
-		for (s = sources; s != NULL; s = s->next)
-		{
-			result = gevo_run_query_in_uri(e_source_get_uri(E_SOURCE(s->data)), full_query);
-			if (result != NULL) {
-			    g_object_unref(addressbooks);
-				e_book_query_unref(full_query);
-			    return result;
-			}
+	for (s = sources; s != NULL; s = s->next) {
+		result = gevo_run_query_in_source(E_SOURCE(s->data),
+			full_query);
+		if (result != NULL) {
+			g_object_unref(registry);
+			g_list_free_full(sources, g_object_unref);
+			e_book_query_unref(full_query);
+			return result;
 		}
 	}
 
-	g_object_unref(addressbooks);
+	g_object_unref(registry);
+	g_list_free_full(sources, g_object_unref);
 	e_book_query_unref(full_query);
 	return NULL;
 }

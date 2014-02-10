@@ -25,16 +25,12 @@
 # include "config.h"
 #endif
 
-#ifdef HAVE_LIBEBOOK_H
-#  include <libebook/libebook.h>
-#else
-#  include <libebook/e-book.h>
-#endif
+#include <libebook/libebook.h>
 
 enum
 {
 	ADDRBOOK_COLUMN_NAME,
-	ADDRBOOK_COLUMN_URI,
+	ADDRBOOK_COLUMN_UID,
 	NUM_ADDRBOOK_COLUMNS
 };
 
@@ -126,7 +122,9 @@ GList *gevo_get_groups(void);
 
 EContactField gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy);
 gboolean gevo_prpl_is_supported(PurpleAccount *account, PurpleBuddy *buddy);
-gboolean gevo_load_addressbook(const gchar *uri, EBook **book, GError **error);
+gboolean gevo_load_addressbook(const gchar *uid, EBook **book, GError **error);
+gboolean gevo_load_addressbook_from_source(ESource *source, EBook **book,
+	GError **error);
 char *gevo_get_email_for_buddy(PurpleBuddy *buddy);
 
 GevoAssociateBuddyDialog *gevo_associate_buddy_dialog_new(PurpleBuddy *buddy);
