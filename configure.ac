@@ -648,6 +648,11 @@ Use --disable-gtkspell if you do not need it.
 			AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
+
+			CPPFLAGS_save="$CPPFLAGS"
+			CPPFLAGS="$CPPFLAGS $EVOLUTION_ADDRESSBOOK_CFLAGS"
+			AC_CHECK_HEADER(libebook/libebook.h, [AC_DEFINE(HAVE_LIBEBOOK_H, 1, [Define if libebook is recent enough to contain libebook/libebook.h.])], [])
+			CPPFLAGS="$CPPFLAGS_save"
 		else
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([

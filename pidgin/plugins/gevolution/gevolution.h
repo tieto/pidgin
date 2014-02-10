@@ -25,7 +25,11 @@
 # include "config.h"
 #endif
 
-#include <libebook/e-book.h>
+#ifdef HAVE_LIBEBOOK_H
+#  include <libebook/libebook.h>
+#else
+#  include <libebook/e-book.h>
+#endif
 
 enum
 {
