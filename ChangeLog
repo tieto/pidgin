@@ -13,7 +13,7 @@ version 3.0.0 (??/??/????):
 	* Complete support for receiving a limited amount of history when
 	  joining a room. (Kha) (#15458)
 	* Fix gevolution plugin to compile with e-d-s >= 3.6, older versions are
-	  not supported anymore. (#15353)
+	  not supported anymore. (Ed Catmur) (#15353)
 
 	Finch:
 	* Support the conversation-extended signal for extending the
