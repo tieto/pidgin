@@ -903,7 +903,7 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 {
 	PurpleConnection *gc;
 	PurpleAccountPrivate *priv;
-	gboolean was_enabled = FALSE, wants_to_die = FALSE;
+	gboolean was_enabled = FALSE;
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 	g_return_if_fail(ui != NULL);
@@ -921,11 +921,11 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 	g_object_notify_by_pspec(G_OBJECT(account), properties[PROP_ENABLED]);
 
 	if ((gc != NULL) && (_purple_connection_wants_to_die(gc)))
-		wants_to_die = TRUE;
+		return;
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 
-	if (!wants_to_die && value && purple_presence_is_online(priv->presence))
+	if (value && purple_presence_is_online(priv->presence))
 		purple_account_connect(account);
 	else if (!value && !purple_account_is_disconnected(account))
 		purple_account_disconnect(account);
@@ -2980,7 +2980,11 @@ purple_account_constructed(GObject *object)
 static void
 purple_account_dispose(GObject *object)
 {
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(object);
+	PurpleAccount *account = PURPLE_ACCOUNT(object);
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
+	if (!purple_account_is_disconnected(account))
+		purple_account_disconnect(account);
 
 	if (priv->presence) {
 		g_object_unref(priv->presence);
