@@ -48,6 +48,9 @@
 # define HAS_UNION_SEMUN
 #endif
 
+#define SILENT_NO_TAINT_SUPPORT 0
+#define NO_TAINT_SUPPORT 0
+
 #include <perl.h>
 #include <XSUB.h>
 
