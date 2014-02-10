@@ -132,7 +132,8 @@ struct _NMRtfContext
 	int depth;				/* how many groups deep are we */
 	gboolean skip_unknown;	/* if true, skip any unknown destinations (this is set after encountering '\*') */
 	char *input;			/* input string */
-	char nextch;			/* next char in input */
+	guchar nextch;			/* next char in input */
+	gboolean nextch_available;	/* nextch value is set */
 	GString *ansi;   		/* Temporary ansi text, will be convert/flushed to the output string */
 	GString *output; 		/* The plain text UTF8 string */
 };
@@ -217,7 +218,7 @@ NMRtfContext *
 nm_rtf_init()
 {
 	NMRtfContext *ctx = g_new0(NMRtfContext, 1);
-	ctx->nextch = -1;
+	ctx->nextch_available = FALSE;
 	ctx->ansi = g_string_new("");
 	ctx->output = g_string_new("");
 	return ctx;
@@ -507,7 +508,7 @@ rtf_parse_keyword(NMRtfContext *ctx)
     int param = 0;
     char keyword[30];
     char parameter[20];
-	int i;
+	gsize i;
 
     keyword[0] = '\0';
     parameter[0] = '\0';
@@ -802,14 +803,13 @@ rtf_dispatch_special(NMRtfContext *ctx, NMRtfSpecialKwd type)
 static int
 rtf_get_char(NMRtfContext *ctx, guchar *ch)
 {
-    if (ctx->nextch >= 0) {
-        *ch = ctx->nextch;
-        ctx->nextch = -1;
-    }
-    else {
+	if (ctx->nextch_available) {
+		*ch = ctx->nextch;
+		ctx->nextch_available = FALSE;
+	} else {
 		*ch = *(ctx->input);
 		ctx->input++;
-    }
+	}
 
 	if (*ch)
 		return NMRTF_OK;
@@ -823,6 +823,7 @@ rtf_get_char(NMRtfContext *ctx, guchar *ch)
 static int
 rtf_unget_char(NMRtfContext *ctx, guchar ch)
 {
-    ctx->nextch = ch;
-    return NMRTF_OK;
+	ctx->nextch = ch;
+	ctx->nextch_available = TRUE;
+	return NMRTF_OK;
 }
