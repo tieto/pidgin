@@ -221,13 +221,23 @@ static gboolean pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y
 
 static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name)
 {
-	static GdkColor col;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *style = gtk_widget_get_style_context(gtkconv->webview);
+	GdkRGBA rgba;
+#else
 	GtkStyle *style = gtk_widget_get_style(gtkconv->webview);
+#endif
+	static GdkColor col;
 	float scale;
 
 	col = g_array_index(gtkconv->nick_colors, GdkColor, g_str_hash(name) % gtkconv->nick_colors->len);
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, &rgba);
+	scale = (1 - LUMINANCE(rgba)) * ((float)0xffff / MAX(MAX(col.red, col.blue), col.green));
+#else
 	scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
 		       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
+#endif
 
 	/* The colors are chosen to look fine on white; we should never have to darken */
 	if (scale > 1) {
@@ -5218,7 +5228,11 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 static gboolean
 pidgin_conv_end_quickfind(PidginConversation *gtkconv)
 {
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_widget_override_background_color(gtkconv->quickfind_entry, GTK_STATE_FLAG_NORMAL, NULL);
+#else
 	gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, NULL);
+#endif
 
 	webkit_web_view_unmark_text_matches(WEBKIT_WEB_VIEW(gtkconv->webview));
 	gtk_widget_hide(gtkconv->quickfind_container);
@@ -5234,13 +5248,26 @@ quickfind_process_input(GtkWidget *entry, GdkEventKey *event, PidginConversation
 		case GDK_KEY_Return:
 		case GDK_KEY_KP_Enter:
 			if (webkit_web_view_search_text(WEBKIT_WEB_VIEW(gtkconv->webview), gtk_entry_get_text(GTK_ENTRY(entry)), FALSE, TRUE, TRUE)) {
+#if GTK_CHECK_VERSION(3,0,0)
+				gtk_widget_override_background_color(gtkconv->quickfind_entry, GTK_STATE_FLAG_NORMAL, NULL);
+#else
 				gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, NULL);
+#endif
 			} else {
+#if GTK_CHECK_VERSION(3,0,0)
+				GdkRGBA col;
+				col.red = 1.0;
+				col.green = 0xafff/(double)0xffff;
+				col.blue = 0xafff/(double)0xffff;
+				col.alpha = 1.0;
+				gtk_widget_override_background_color(gtkconv->quickfind_entry, GTK_STATE_FLAG_NORMAL, &col);
+#else
 				GdkColor col;
 				col.red = 0xffff;
 				col.green = 0xafff;
 				col.blue = 0xafff;
 				gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, &col);
+#endif
 			}
 			break;
 		case GDK_KEY_Escape:

@@ -965,7 +965,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 	update_title_progress(dialog);
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
-									PIDGIN_STOCK_FILE_CANCELED,
+									PIDGIN_STOCK_FILE_CANCELLED,
 									GTK_ICON_SIZE_MENU, NULL);
 
 	if (purple_xfer_is_cancelled(xfer))

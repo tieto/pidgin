@@ -46,7 +46,7 @@
 #define PIDGIN_STOCK_DOWNLOAD        "pidgin-download"
 #define PIDGIN_STOCK_EDIT            "pidgin-edit"
 #define PIDGIN_STOCK_FGCOLOR         "pidgin-fgcolor"
-#define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-cancelled"
+#define PIDGIN_STOCK_FILE_CANCELLED  "pidgin-file-cancelled"
 #define PIDGIN_STOCK_FILE_DONE       "pidgin-file-done"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
 #define PIDGIN_STOCK_INFO            "pidgin-info"

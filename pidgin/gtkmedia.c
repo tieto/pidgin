@@ -791,7 +791,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
+#if GTK_CHECK_VERSION(3,0,0)
+		GdkRGBA color = {0.0, 0.0, 0.0, 1.0};
+#else
 		GdkColor color = {0, 0, 0, 0};
+#endif
 
 		aspect = gtk_aspect_frame_new(NULL, 0, 0, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
@@ -803,7 +807,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		data->participant = g_strdup(gtkmedia->priv->screenname);
 
 		remote_video = gtk_drawing_area_new();
+#if GTK_CHECK_VERSION(3,0,0)
+		gtk_widget_override_background_color(remote_video, GTK_STATE_FLAG_NORMAL, &color);
+#else
 		gtk_widget_modify_bg(remote_video, GTK_STATE_NORMAL, &color);
+#endif
 		g_signal_connect(G_OBJECT(remote_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
@@ -822,7 +830,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *local_video;
+#if GTK_CHECK_VERSION(3,0,0)
+		GdkRGBA color = {0.0, 0.0, 0.0, 1.0};
+#else
 		GdkColor color = {0, 0, 0, 0};
+#endif
 
 		aspect = gtk_aspect_frame_new(NULL, 0, 0, 4.0/3.0, TRUE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
@@ -834,7 +846,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		data->participant = NULL;
 
 		local_video = gtk_drawing_area_new();
+#if GTK_CHECK_VERSION(3,0,0)
+		gtk_widget_override_background_color(local_video, GTK_STATE_FLAG_NORMAL, &color);
+#else
 		gtk_widget_modify_bg(local_video, GTK_STATE_NORMAL, &color);
+#endif
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(aspect), local_video);

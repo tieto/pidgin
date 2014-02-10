@@ -4041,11 +4041,19 @@ make_video_test(GtkWidget *vbox)
 {
 	GtkWidget *test;
 	GtkWidget *video;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkRGBA color = {0.0, 0.0, 0.0, 1.0};
+#else
 	GdkColor color = {0, 0, 0, 0};
+#endif
 
 	video = gtk_drawing_area_new();
 	gtk_box_pack_start(GTK_BOX(vbox), video, TRUE, TRUE, 0);
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_widget_override_background_color(video, GTK_STATE_FLAG_NORMAL, &color);
+#else
 	gtk_widget_modify_bg(video, GTK_STATE_NORMAL, &color);
+#endif
 	gtk_widget_set_size_request(GTK_WIDGET(video), 240, 180);
 
 	test = gtk_toggle_button_new_with_label(_("Test Video"));
