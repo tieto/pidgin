@@ -5229,7 +5229,8 @@ static gboolean
 pidgin_conv_end_quickfind(PidginConversation *gtkconv)
 {
 #if GTK_CHECK_VERSION(3,0,0)
-	gtk_widget_override_background_color(gtkconv->quickfind_entry, GTK_STATE_FLAG_NORMAL, NULL);
+	GtkStyleContext *context = gtk_widget_get_style_context(gtkconv->quickfind_entry);
+	gtk_style_context_remove_class(context, "not-found");
 #else
 	gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, NULL);
 #endif
@@ -5249,18 +5250,15 @@ quickfind_process_input(GtkWidget *entry, GdkEventKey *event, PidginConversation
 		case GDK_KEY_KP_Enter:
 			if (webkit_web_view_search_text(WEBKIT_WEB_VIEW(gtkconv->webview), gtk_entry_get_text(GTK_ENTRY(entry)), FALSE, TRUE, TRUE)) {
 #if GTK_CHECK_VERSION(3,0,0)
-				gtk_widget_override_background_color(gtkconv->quickfind_entry, GTK_STATE_FLAG_NORMAL, NULL);
+				GtkStyleContext *context = gtk_widget_get_style_context(gtkconv->quickfind_entry);
+				gtk_style_context_remove_class(context, "not-found");
 #else
 				gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, NULL);
 #endif
 			} else {
 #if GTK_CHECK_VERSION(3,0,0)
-				GdkRGBA col;
-				col.red = 1.0;
-				col.green = 0xafff/(double)0xffff;
-				col.blue = 0xafff/(double)0xffff;
-				col.alpha = 1.0;
-				gtk_widget_override_background_color(gtkconv->quickfind_entry, GTK_STATE_FLAG_NORMAL, &col);
+				GtkStyleContext *context = gtk_widget_get_style_context(gtkconv->quickfind_entry);
+				gtk_style_context_add_class(context, "not-found");
 #else
 				GdkColor col;
 				col.red = 0xffff;
@@ -5284,6 +5282,17 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 {
 	GtkWidget *widget = gtk_hbox_new(FALSE, 0);
 	GtkWidget *label, *entry, *close;
+#if GTK_CHECK_VERSION(3,0,0)
+	GtkStyleContext *context;
+	GtkCssProvider *filter_css;
+	const gchar filter_style[] =
+		".not-found {"
+			"color: @error_fg_color;"
+			"text-shadow: 0 1px @error_text_shadow;"
+			"background-image: none;"
+			"background-color: @error_bg_color;"
+		"}";
+#endif
 
 	gtk_box_pack_start(GTK_BOX(container), widget, FALSE, FALSE, 0);
 
@@ -5296,6 +5305,14 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(widget), entry, TRUE, TRUE, 0);
+#if GTK_CHECK_VERSION(3,0,0)
+	filter_css = gtk_css_provider_new();
+	gtk_css_provider_load_from_data(filter_css, filter_style, -1, NULL);
+	context = gtk_widget_get_style_context(entry);
+	gtk_style_context_add_provider(context,
+	                               GTK_STYLE_PROVIDER(filter_css),
+	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+#endif
 
 	gtkconv->quickfind_entry = entry;
 	gtkconv->quickfind_container = widget;
