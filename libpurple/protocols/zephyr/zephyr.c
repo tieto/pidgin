@@ -1437,7 +1437,6 @@ static void process_zsubs(zephyr_account *zephyr)
 					char *tmp = g_strdup_printf("%s", zephyr->username);
 					char *atptr;
 
-					z_class = triple[0];
 					z_instance = triple[1];
 					if (triple[2] == NULL) {
 						recip = g_malloc0(1);
