@@ -230,6 +230,9 @@ static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *n
 	float scale;
 
 	col = g_array_index(gtkconv->nick_colors, GdkColor, g_str_hash(name) % gtkconv->nick_colors->len);
+
+	g_return_val_if_fail(style != NULL, &col);
+
 #if GTK_CHECK_VERSION(3,0,0)
 	gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, &rgba);
 	scale = (1 - LUMINANCE(rgba)) * ((float)0xffff / MAX(MAX(col.red, col.blue), col.green));

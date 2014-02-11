@@ -455,8 +455,14 @@ destroy_icon_box(PidginStatusBox *statusbox)
 		return;
 
 	gtk_widget_destroy(statusbox->icon_box);
+
+#if GTK_CHECK_VERSION(3,0,0)
 	g_object_unref(statusbox->hand_cursor);
 	g_object_unref(statusbox->arrow_cursor);
+#else
+	gdk_cursor_unref(statusbox->hand_cursor);
+	gdk_cursor_unref(statusbox->arrow_cursor);
+#endif
 
 	purple_imgstore_unref(statusbox->buddy_icon_img);
 
