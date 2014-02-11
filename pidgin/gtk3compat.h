@@ -106,6 +106,19 @@ gtk_paned_new(GtkOrientation orientation)
 		return gtk_vpaned_new();
 }
 
+static inline GtkWidget *
+gtk_scale_new_with_range(GtkOrientation orientation, gdouble min, gdouble max,
+	gdouble step)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hscale_new_with_range(min, max, step);
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vscale_new_with_range(min, max, step);
+}
+
 #if !GTK_CHECK_VERSION(2,24,0)
 
 #define gdk_x11_set_sm_client_id gdk_set_sm_client_id

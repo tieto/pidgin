@@ -2118,7 +2118,7 @@ void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 
 	cursor = gdk_cursor_new(cursor_type);
 	gdk_window_set_cursor(gtk_widget_get_window(widget), cursor);
-	gdk_cursor_unref(cursor);
+	g_object_unref(cursor);
 
 	gdk_display_flush(gdk_window_get_display(gtk_widget_get_window(widget)));
 }

@@ -155,7 +155,12 @@ pidgin_menu_tray_init(PidginMenuTray *menu_tray) {
 	GtkSettings *settings;
 	gint height = -1;
 
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_widget_set_hexpand(widget, TRUE);
+	gtk_widget_set_halign(widget, GTK_ALIGN_END);
+#else
 	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_tray), TRUE);
+#endif
 
 	if(!GTK_IS_WIDGET(menu_tray->tray))
 		menu_tray->tray = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

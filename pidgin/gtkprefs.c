@@ -3224,7 +3224,8 @@ sound_page(void)
 				NULL);
 
 #ifdef USE_GSTREAMER
-	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
+	sw = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL,
+		0.0, 100.0, 5.0);
 	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
 	gtk_range_set_value(GTK_RANGE(sw), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"));
 	g_signal_connect (G_OBJECT (sw), "format-value",
@@ -3897,7 +3898,8 @@ make_voice_test(GtkWidget *vbox)
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	g_free(tmp);
-	threshold = gtk_hscale_new_with_range(0, 100, 1);
+	threshold = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL,
+		0, 100, 1);
 	gtk_box_pack_start(GTK_BOX(vbox), threshold, FALSE, FALSE, 0);
 	gtk_range_set_value(GTK_RANGE(threshold),
 			purple_prefs_get_int("/purple/media/audio/silence_threshold"));
