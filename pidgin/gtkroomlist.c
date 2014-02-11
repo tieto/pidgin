@@ -30,6 +30,7 @@
 #include "connection.h"
 #include "notify.h"
 
+#include "gtk3compat.h"
 #include "gtkroomlist.h"
 
 typedef struct _PidginRoomlistDialog {
