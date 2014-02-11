@@ -58,6 +58,18 @@ static inline GtkWidget * gtk_font_chooser_dialog_new(const gchar *title,
 #define GDK_IS_QUARTZ_WINDOW(window) TRUE
 #endif
 
+static inline GtkWidget *
+gtk_box_new(GtkOrientation orientation, gint spacing)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hbox_new(FALSE, spacing);
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vbox_new(FALSE, spacing);
+}
+
 #if !GTK_CHECK_VERSION(2,24,0)
 
 #define gdk_x11_set_sm_client_id gdk_set_sm_client_id

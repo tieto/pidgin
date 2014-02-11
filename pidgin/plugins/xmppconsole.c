@@ -314,7 +314,7 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("To:");
@@ -326,7 +326,7 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (to_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), to_entry, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Type:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -400,7 +400,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("To:");
@@ -412,7 +412,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (to_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), to_entry, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Type:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -430,7 +430,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Show:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -446,7 +446,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(show_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), show_combo, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Status:");
@@ -458,7 +458,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (status_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), status_entry, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Priority:");
@@ -556,7 +556,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("To:");
@@ -568,7 +568,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (to_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), to_entry, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Type:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -583,7 +583,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Body:");
@@ -595,7 +595,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (body_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), body_entry, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Subject:");
@@ -607,7 +607,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (subject_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), subject_entry, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 3);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Thread:");
@@ -794,7 +794,7 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 static void
 create_console(PurplePluginAction *action)
 {
-	GtkWidget *vbox = gtk_vbox_new(FALSE, 6);
+	GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
 	GtkWidget *label;
 	GtkWidget *toolbar;
 	GList *connections;
@@ -812,7 +812,7 @@ create_console(PurplePluginAction *action)
 	gtk_window_set_default_size(GTK_WINDOW(console->window), 580, 400);
 	gtk_container_add(GTK_CONTAINER(console->window), vbox);
 
-	console->hbox = gtk_hbox_new(FALSE, 3);
+	console->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), console->hbox, FALSE, FALSE, 0);
 	label = gtk_label_new(_("Account: "));
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);

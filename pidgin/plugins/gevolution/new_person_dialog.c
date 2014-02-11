@@ -20,6 +20,8 @@
  */
 #include "internal.h"
 #include "pidgin.h"
+
+#include "gtk3compat.h"
 #include "gtkutils.h"
 
 #include "debug.h"
@@ -33,7 +35,7 @@ add_pref_box(GtkSizeGroup *sg, GtkWidget *parent, const char *text,
 	GtkWidget *hbox;
 	GtkWidget *label;
 
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -249,7 +251,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
 	gtk_widget_show(vbox);
 
@@ -312,7 +314,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 	}
 
 	/* Create the parent hbox for this whole thing. */
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 	gtk_widget_show(hbox);
 
@@ -334,7 +336,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 #endif
 
 	/* Now the right side. */
-	vbox2 = gtk_vbox_new(FALSE, 12);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 

@@ -168,7 +168,7 @@ pidgin_theme_create_color_selector(const char *text, const char *blurb, const ch
 	GtkWidget *color;
 	GtkWidget *hbox, *label;
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_CAT_SPACE);
 
 	label = gtk_label_new(_(text));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -192,7 +192,7 @@ pidgin_theme_create_font_selector(const char *text, const char *blurb, const cha
 	GtkWidget *color, *font;
 	GtkWidget *hbox, *label;
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_CAT_SPACE);
 
 	label = gtk_label_new(_(text));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);

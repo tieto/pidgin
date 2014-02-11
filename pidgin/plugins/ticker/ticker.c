@@ -34,6 +34,7 @@
 #include "signals.h"
 #include "version.h"
 
+#include "gtk3compat.h"
 #include "gtkblist.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
@@ -166,7 +167,7 @@ static void buddy_ticker_add_buddy(PurpleBuddy *b) {
 
 	td->ebox = gtk_event_box_new();
 	gtk_ticker_add(GTK_TICKER(ticker), td->ebox);
-	hbox = gtk_hbox_new(FALSE, 0);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_container_add(GTK_CONTAINER(td->ebox), hbox);
 	buddy_ticker_set_pixmap(contact);
 	gtk_box_pack_start(GTK_BOX(hbox), td->icon, FALSE, FALSE, 0);

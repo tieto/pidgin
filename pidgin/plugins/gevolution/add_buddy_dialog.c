@@ -21,6 +21,8 @@
 #include "internal.h"
 #include "gtkblist.h"
 #include "pidgin.h"
+
+#include "gtk3compat.h"
 #include "gtkutils.h"
 
 #include "debug.h"
@@ -453,7 +455,7 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
 	gtk_widget_show(vbox);
 
@@ -466,7 +468,7 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	gtk_widget_show(label);
 
 	/* Add the search hbox */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	gtk_widget_show(hbox);
 
