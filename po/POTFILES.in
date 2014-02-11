@@ -18,6 +18,7 @@ finch/gntsound.c
 finch/gntstatus.c
 finch/gntui.c
 finch/gntxfer.c
+finch/libfinch.c
 finch/libgnt/gntbox.c
 finch/libgnt/gntbutton.c
 finch/libgnt/gntcheckbox.c
@@ -219,7 +220,6 @@ pidgin/gtkdebug.c
 pidgin/gtkdialogs.c
 pidgin/gtkdocklet.c
 pidgin/gtklog.c
-pidgin/gtkmain.c
 pidgin/gtkmedia.c
 pidgin/gtknotify.c
 pidgin/gtkplugin.c
@@ -237,6 +237,7 @@ pidgin/gtkwebview.c
 pidgin/gtkwebviewtoolbar.c
 pidgin/gtkwhiteboard.c
 pidgin/gtkxfer.c
+pidgin/libpidgin.c
 pidgin/pidgin.h
 pidgin/pidginstock.c
 pidgin/pidgintooltip.c
