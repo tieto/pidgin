@@ -94,6 +94,18 @@ gtk_button_box_new(GtkOrientation orientation)
 		return gtk_vbutton_box_new();
 }
 
+static inline GtkWidget *
+gtk_paned_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hpaned_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vpaned_new();
+}
+
 #if !GTK_CHECK_VERSION(2,24,0)
 
 #define gdk_x11_set_sm_client_id gdk_set_sm_client_id
