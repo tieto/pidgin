@@ -455,8 +455,8 @@ destroy_icon_box(PidginStatusBox *statusbox)
 		return;
 
 	gtk_widget_destroy(statusbox->icon_box);
-	gdk_cursor_unref(statusbox->hand_cursor);
-	gdk_cursor_unref(statusbox->arrow_cursor);
+	g_object_unref(statusbox->hand_cursor);
+	g_object_unref(statusbox->arrow_cursor);
 
 	purple_imgstore_unref(statusbox->buddy_icon_img);
 
@@ -1744,9 +1744,9 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->connecting = FALSE;
 	status_box->typing = 0;
 	status_box->toggle_button = gtk_toggle_button_new();
-	status_box->hbox = gtk_hbox_new(FALSE, 6);
+	status_box->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	status_box->cell_view = gtk_cell_view_new();
-	status_box->vsep = gtk_vseparator_new();
+	status_box->vsep = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
@@ -1831,7 +1831,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), emblem_rend, "pixbuf", EMBLEM_COLUMN, "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 
-	status_box->vbox = gtk_vbox_new(0, FALSE);
+	status_box->vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, FALSE);
 	status_box->sw = pidgin_create_webview(TRUE, &status_box->webview, NULL);
 	pidgin_webview_hide_toolbar(PIDGIN_WEBVIEW(status_box->webview));
 

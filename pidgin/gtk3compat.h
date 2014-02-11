@@ -58,6 +58,67 @@ static inline GtkWidget * gtk_font_chooser_dialog_new(const gchar *title,
 #define GDK_IS_QUARTZ_WINDOW(window) TRUE
 #endif
 
+static inline GtkWidget *
+gtk_box_new(GtkOrientation orientation, gint spacing)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hbox_new(FALSE, spacing);
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vbox_new(FALSE, spacing);
+}
+
+static inline GtkWidget *
+gtk_separator_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hseparator_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vseparator_new();
+}
+
+static inline GtkWidget *
+gtk_button_box_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hbutton_box_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vbutton_box_new();
+}
+
+static inline GtkWidget *
+gtk_paned_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hpaned_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vpaned_new();
+}
+
+static inline GtkWidget *
+gtk_scale_new_with_range(GtkOrientation orientation, gdouble min, gdouble max,
+	gdouble step)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hscale_new_with_range(min, max, step);
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vscale_new_with_range(min, max, step);
+}
+
 #if !GTK_CHECK_VERSION(2,24,0)
 
 #define gdk_x11_set_sm_client_id gdk_set_sm_client_id

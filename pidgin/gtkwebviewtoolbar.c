@@ -797,7 +797,7 @@ add_smiley_list(GtkWidget *container, struct smiley_button_list *list,
 	if (!list)
 		return;
 
-	line = gtk_hbox_new(FALSE, 0);
+	line = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start(GTK_BOX(container), line, FALSE, FALSE, 0);
 	for (; list; list = list->next) {
 		if (custom != !!(pidgin_webview_smiley_get_flags(list->smiley) & PIDGIN_WEBVIEW_SMILEY_CUSTOM))
@@ -807,7 +807,7 @@ add_smiley_list(GtkWidget *container, struct smiley_button_list *list,
 		line_width += list->width;
 		if (line_width >= max_width) {
 			if (list->next) {
-				line = gtk_hbox_new(FALSE, 0);
+				line = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 				gtk_box_pack_start(GTK_BOX(container), line, FALSE, FALSE, 0);
 			}
 			line_width = 0;
@@ -877,7 +877,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		ls = NULL;
 		max_line_width = 0;
 		num_lines = floor(sqrt(g_slist_length(unique_smileys)));
-		smiley_table = gtk_vbox_new(FALSE, 0);
+		smiley_table = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 		if (supports_custom) {
 			GtkWidget *manage = gtk_button_new_with_mnemonic(_("_Manage custom smileys"));
@@ -905,7 +905,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		/* pack buttons of the list */
 		add_smiley_list(smiley_table, ls, max_line_width, FALSE);
 		if (supports_custom) {
-			gtk_box_pack_start(GTK_BOX(smiley_table), gtk_hseparator_new(), TRUE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(smiley_table), gtk_separator_new(GTK_ORIENTATION_HORIZONTAL), TRUE, FALSE, 0);
 			add_smiley_list(smiley_table, ls, max_line_width, TRUE);
 		}
 		while (ls) {

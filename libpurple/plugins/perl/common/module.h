@@ -1,6 +1,8 @@
 /* Allow the Perl code to see deprecated functions, so we can continue to
  * export them to Perl plugins. */
-#undef PURPLE_DISABLE_DEPRECATED
+/* Re-enable this after 3.0.0 release.
+ #undef PURPLE_DISABLE_DEPRECATED
+ */
 
 typedef struct group *Purple__Group;
 
@@ -11,6 +13,10 @@ typedef struct group *Purple__Group;
 #undef pipe
 #undef STRINGIFY
 #endif
+
+#define SILENT_NO_TAINT_SUPPORT 0
+#define NO_TAINT_SUPPORT 0
+
 #include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>

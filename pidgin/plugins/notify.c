@@ -93,6 +93,7 @@
 #include "version.h"
 #include "debug.h"
 
+#include "gtk3compat.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
@@ -673,12 +674,12 @@ get_config_frame(PurplePlugin *plugin)
 	GtkWidget *vbox = NULL, *hbox = NULL;
 	GtkWidget *toggle = NULL, *entry = NULL, *ref;
 
-	ret = gtk_vbox_new(FALSE, 18);
+	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	gtk_container_set_border_width(GTK_CONTAINER (ret), 12);
 
 	/*---------- "Notify For" ----------*/
 	frame = pidgin_make_frame(ret, _("Notify For"));
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	toggle = gtk_check_button_new_with_mnemonic(_("_IM windows"));
@@ -715,11 +716,11 @@ get_config_frame(PurplePlugin *plugin)
 
 	/*---------- "Notification Methods" ----------*/
 	frame = pidgin_make_frame(ret, _("Notification Methods"));
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	/* String method button */
-	hbox = gtk_hbox_new(FALSE, 18);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title:"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
@@ -785,7 +786,7 @@ get_config_frame(PurplePlugin *plugin)
 
 	/*---------- "Notification Removals" ----------*/
 	frame = pidgin_make_frame(ret, _("Notification Removal"));
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	/* Remove on focus button */

@@ -1060,7 +1060,7 @@ pidgin_dialogs_ee(const char *ee)
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))),
 	                               PIDGIN_HIG_BOX_SPACE);
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))), hbox);
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_COOL, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);

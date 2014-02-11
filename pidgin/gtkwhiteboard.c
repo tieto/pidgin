@@ -24,7 +24,9 @@
 #include "internal.h"
 #include "buddylist.h"
 #include "debug.h"
+#include "pidgin.h"
 
+#include "gtk3compat.h"
 #include "gtkwhiteboard.h"
 #include "gtkutils.h"
 
@@ -173,18 +175,18 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	GtkWidget *palette_color_box[PIDGIN_PALETTE_NUM_COLORS];
 
 	/* Create vertical box to place palette above the canvas and controls */
-	vbox_palette_above_canvas_and_controls = gtk_vbox_new(FALSE, 0);
+	vbox_palette_above_canvas_and_controls = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(window), vbox_palette_above_canvas_and_controls);
 	gtk_widget_show(vbox_palette_above_canvas_and_controls);
 
 	/* Create horizontal box for the palette and all its entries */
-	hbox_palette = gtk_hbox_new(FALSE, 0);
+	hbox_palette = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
 			hbox_palette, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox_palette);
 
 	/* Create horizontal box to seperate the canvas from the controls */
-	hbox_canvas_and_controls = gtk_hbox_new(FALSE, 0);
+	hbox_canvas_and_controls = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
 			hbox_canvas_and_controls, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox_canvas_and_controls);
@@ -199,7 +201,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	}
 #endif
 
-	hbox_canvas_and_controls = gtk_hbox_new(FALSE, 0);
+	hbox_canvas_and_controls = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show(hbox_canvas_and_controls);
 
 	gtk_container_add(GTK_CONTAINER(window), hbox_canvas_and_controls);
@@ -239,7 +241,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 						  GDK_POINTER_MOTION_HINT_MASK);
 
 	/* Create vertical box to contain the controls */
-	vbox_controls = gtk_vbox_new(FALSE, 0);
+	vbox_controls = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls),
 					vbox_controls, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox_controls);

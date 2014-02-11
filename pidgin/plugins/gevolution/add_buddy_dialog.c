@@ -21,6 +21,8 @@
 #include "internal.h"
 #include "gtkblist.h"
 #include "pidgin.h"
+
+#include "gtk3compat.h"
 #include "gtkutils.h"
 
 #include "debug.h"
@@ -227,7 +229,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 }
 
 static void
-populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
+populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uid)
 {
 	EBookQuery *query;
 	EBook *book;
@@ -250,8 +252,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 
 	gtk_list_store_clear(dialog->model);
 
-	if (!gevo_load_addressbook(uri, &book, &err))
-	{
+	if (!gevo_load_addressbook(uid, &book, &err)) {
 		purple_debug_error("evolution",
 						 "Error retrieving default addressbook: %s\n", err->message);
 		g_error_free(err);
@@ -333,16 +334,15 @@ static void
 addrbook_change_cb(GtkComboBox *combo, GevoAddBuddyDialog *dialog)
 {
 	GtkTreeIter iter;
-	const char *esource_uri;
+	const char *esource_uid;
 
 	if (!gtk_combo_box_get_active_iter(combo, &iter))
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->addrbooks), &iter,
-					   ADDRBOOK_COLUMN_URI, &esource_uri,
-					   -1);
+		ADDRBOOK_COLUMN_UID, &esource_uid, -1);
 
-	populate_treeview(dialog, esource_uri);
+	populate_treeview(dialog, esource_uid);
 }
 
 static void
@@ -455,7 +455,7 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
 	gtk_widget_show(vbox);
 
@@ -468,7 +468,7 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	gtk_widget_show(label);
 
 	/* Add the search hbox */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	gtk_widget_show(hbox);
 
@@ -551,12 +551,12 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	/* Cool. Now we only have a little left... */
 
 	/* Separator. */
-	sep = gtk_hseparator_new();
+	sep = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
 
 	/* Button box */
-	bbox = gtk_hbutton_box_new();
+	bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_set_spacing(GTK_BOX(bbox), 6);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);

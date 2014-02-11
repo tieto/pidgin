@@ -29,6 +29,7 @@
 #include "protocol.h"
 #include "version.h"
 
+#include "gtk3compat.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
@@ -152,7 +153,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 					 G_CALLBACK(window_closed_cb), NULL);
 
 	/* Main hbox */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_container_add(GTK_CONTAINER(window), hbox);
 
 	/* Account drop-down menu. */
