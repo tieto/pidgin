@@ -464,7 +464,7 @@ debug_window_new(void)
 	handle = pidgin_debug_get_handle();
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(win->window), vbox);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {

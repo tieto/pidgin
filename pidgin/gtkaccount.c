@@ -619,7 +619,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->login_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -807,7 +807,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->user_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -827,7 +827,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->icon_check);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->icon_check, FALSE, FALSE, 0);
 
-	dialog->icon_hbox = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	dialog->icon_hbox = hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_set_sensitive(hbox, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
@@ -850,11 +850,11 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	purple_imgstore_unref(dialog->icon_img);
 	dialog->icon_img = NULL;
 
-	vbox2 = gtk_vbox_new(FALSE, 0);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
-	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox2);
 
@@ -952,7 +952,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 	account = dialog->account;
 
 	/* Main vbox */
-	dialog->protocol_frame = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	dialog->protocol_frame = vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_insert_page(GTK_NOTEBOOK(dialog->notebook), vbox,
 			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
@@ -1258,7 +1258,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_destroy(dialog->proxy_frame);
 
 	/* Main vbox */
-	dialog->proxy_frame = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	dialog->proxy_frame = vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(parent), vbox);
 	gtk_widget_show(vbox);
 
@@ -1268,7 +1268,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	add_pref_box(dialog, vbox, _("Proxy _type:"), dialog->proxy_dropdown);
 
 	/* Setup the second vbox, which may be hidden at times. */
-	dialog->proxy_vbox = vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	dialog->proxy_vbox = vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(vbox2);
 
@@ -1355,7 +1355,7 @@ add_voice_options(AccountPrefsDialog *dialog)
 	}
 
 	if (!dialog->voice_frame) {
-		dialog->voice_frame = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+		dialog->voice_frame = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 		gtk_container_set_border_width(GTK_CONTAINER(dialog->voice_frame),
 										PIDGIN_HIG_BORDER);
 
@@ -1776,7 +1776,7 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 	gtk_widget_show(GTK_WIDGET(notebook));
 
 	/* Setup the inner vbox */
-	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	dialog->top_vbox = vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox,
 			gtk_label_new_with_mnemonic(_("_Basic")));
@@ -1802,7 +1802,7 @@ pidgin_account_dialog_show_continue(PurpleAccount *account,
 	add_protocol_options(dialog);
 
 	/* Setup the page with 'Proxy'. */
-	dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	dbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
 			gtk_label_new_with_mnemonic(_("P_roxy")));

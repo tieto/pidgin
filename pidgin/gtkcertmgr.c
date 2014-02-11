@@ -30,6 +30,7 @@
 #include "notify.h"
 #include "request.h"
 
+#include "gtk3compat.h"
 #include "gtkblist.h"
 #include "gtkutils.h"
 
@@ -410,9 +411,8 @@ tls_peers_mgmt_build(void)
 	/* Create a struct to store context information about this window */
 	tpm_dat = g_new0(tls_peers_mgmt_data, 1);
 
-	tpm_dat->mgmt_widget = mgmt_widget =
-		gtk_hbox_new(FALSE, /* Non-homogeneous */
-			     PIDGIN_HIG_BOX_SPACE);
+	tpm_dat->mgmt_widget = mgmt_widget = gtk_box_new(
+		GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(mgmt_widget),
 		PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(mgmt_widget);

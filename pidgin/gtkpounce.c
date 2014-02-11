@@ -31,6 +31,7 @@
 #include "sound.h"
 #include "util.h"
 
+#include "gtk3compat.h"
 #include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkpounce.h"
@@ -555,14 +556,14 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	vbox1 = gtk_dialog_get_content_area(GTK_DIALOG(window));
 
 	/* Create the vbox that will contain all the prefs stuff. */
-	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox1), vbox2, TRUE, TRUE, 0);
 
 	/* Create the "Pounce on Whom" frame. */
 	frame = pidgin_make_frame(vbox2, _("Pounce on Whom"));
 
 	/* Account: */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -582,7 +583,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	pidgin_set_accessible_label (dialog->account_menu, label);
 
 	/* Buddy: */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 

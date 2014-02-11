@@ -998,13 +998,13 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	                               PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), window_role);
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
 	                  hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 	label = gtk_label_new(label_text);
@@ -1020,7 +1020,7 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 			callback_func, filter_func, data);
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("A_ccount"), data->sg, data->account_menu, TRUE, NULL);
 
-	data->vbox = GTK_BOX(gtk_vbox_new(FALSE, 5));
+	data->vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
 	gtk_container_set_border_width(GTK_CONTAINER(data->vbox), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(data->vbox), FALSE, FALSE, 0);
 
@@ -5423,7 +5423,7 @@ create_account_label(PurpleAccount *account)
 	char *markup;
 	char *description;
 
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	g_object_set_data(G_OBJECT(hbox), OBJECT_DATA_KEY_ACCOUNT, account);
 
 	pack_prpl_icon_start(hbox, account);
@@ -5650,7 +5650,7 @@ blist_focus_cb(GtkWidget *widget, GdkEventFocus *event, PidginBuddyList *gtkblis
 static GtkWidget *
 kiosk_page()
 {
-	GtkWidget *ret = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	GtkWidget *ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *bbox;
@@ -5912,7 +5912,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
 #endif
 
-	gtkblist->main_vbox = gtk_vbox_new(FALSE, 0);
+	gtkblist->main_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show(gtkblist->main_vbox);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->main_vbox);
 
@@ -5988,7 +5988,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_label_set_markup(GTK_LABEL(label), pretty);
 	g_free(pretty);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook),label, NULL);
-	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
+	gtkblist->vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook), gtkblist->vbox, NULL);
 	gtk_widget_show_all(gtkblist->notebook);
 	pidgin_blist_select_notebook_page(gtkblist);
@@ -6033,7 +6033,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	ebox = gtk_event_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), ebox, FALSE, FALSE, 0);
-	gtkblist->headline = gtk_hbox_new(FALSE, 3);
+	gtkblist->headline = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline), 6);
 	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline);
 	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);

@@ -741,7 +741,7 @@ website_button_clicked_cb(GtkButton *button, GdkEventButton *event,
 static GtkWidget *
 create_details()
 {
-	GtkBox *vbox = GTK_BOX(gtk_vbox_new(FALSE, 3));
+	GtkBox *vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 3));
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkWidget *label, *view, *website_button;
 

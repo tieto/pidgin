@@ -562,7 +562,7 @@ pidgin_request_input(const char *title, const char *primary,
 	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                  hbox);
 
@@ -574,7 +574,7 @@ pidgin_request_input(const char *title, const char *primary,
 	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
@@ -722,7 +722,7 @@ pidgin_request_choice(const char *title, const char *primary,
 	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                  hbox);
 
@@ -736,7 +736,7 @@ pidgin_request_choice(const char *title, const char *primary,
 	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
@@ -759,7 +759,7 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	g_free(label_text);
 
-	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
 	while ((radio_text = va_arg(args, char*))) {
 		       gpointer resp = va_arg(args, gpointer);
@@ -845,7 +845,7 @@ pidgin_request_action(const char *title, const char *primary,
 	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                  hbox);
 
@@ -854,7 +854,7 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	pidgin_widget_decorate_account(hbox,
@@ -954,7 +954,7 @@ pidgin_request_wait(const char *title, const char *primary,
 		GTK_DIALOG(dialog))), PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(
 		GTK_DIALOG(dialog))), hbox);
 
@@ -968,7 +968,7 @@ pidgin_request_wait(const char *title, const char *primary,
 	gtk_widget_set_can_default(button, FALSE);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	pidgin_widget_decorate_account(hbox,
@@ -1316,9 +1316,9 @@ create_choice_field(PurpleRequestField *field,
 		GtkWidget *radio;
 
 		if (num_labels == 2)
-			box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+			box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 		else
-			box = gtk_vbox_new(FALSE, 0);
+			box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 		widget = box;
 
@@ -1848,7 +1848,7 @@ create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 	const GList *it;
 
 	sheet = purple_request_field_datasheet_get_sheet(field);
-	main_box = GTK_HBOX(gtk_hbox_new(FALSE, 0));
+	main_box = GTK_HBOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
 
 	col_count = purple_request_datasheet_get_column_count(sheet);
 
@@ -1914,7 +1914,7 @@ create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1);
 	gtk_widget_show(GTK_WIDGET(view));
 
-	buttons_box = GTK_VBOX(gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER));
+	buttons_box = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER));
 	gtk_size_group_add_widget(buttons_sg, GTK_WIDGET(buttons_box));
 
 	gtk_box_pack_start(GTK_BOX(main_box), scrollable, TRUE, TRUE, 0);
@@ -2014,7 +2014,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					 G_CALLBACK(destroy_multifield_cb), data);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(win))), hbox);
 	gtk_widget_show(hbox);
 
@@ -2055,7 +2055,7 @@ pidgin_request_fields(const char *title, const char *primary,
 		purple_request_cpar_get_account(cpar));
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 	gtk_widget_show(vbox);
 
@@ -2092,7 +2092,7 @@ pidgin_request_fields(const char *title, const char *primary,
 		pages = g_new0(GtkWidget*, tab_count);
 
 		for (i = 0; i < tab_count; i++) {
-			pages[i] = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+			pages[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 			gtk_container_set_border_width(GTK_CONTAINER(pages[i]), PIDGIN_HIG_BORDER);
 			gtk_notebook_append_page(notebook, pages[i], NULL);
 			gtk_notebook_set_tab_label_text(notebook, pages[i], tab_names[i]);
@@ -2120,7 +2120,7 @@ pidgin_request_fields(const char *title, const char *primary,
 				GTK_CONTAINER(pages[i]), 0);
 
 			hbox_for_spacing =
-				gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+				gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 			gtk_box_pack_start(GTK_BOX(pages[i]),
 				pidgin_make_scrollable(hbox_for_spacing,
 					GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC,
@@ -2129,13 +2129,13 @@ pidgin_request_fields(const char *title, const char *primary,
 			gtk_widget_show(hbox_for_spacing);
 
 			vbox_for_spacing =
-				gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+				gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 			gtk_box_pack_start(GTK_BOX(hbox_for_spacing),
 				vbox_for_spacing, TRUE, TRUE,
 				PIDGIN_HIG_BOX_SPACE);
 			gtk_widget_show(vbox_for_spacing);
 
-			pages[i] = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+			pages[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 			gtk_box_pack_start(GTK_BOX(vbox_for_spacing),
 				pages[i], TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 			gtk_widget_show(pages[i]);

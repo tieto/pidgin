@@ -158,7 +158,7 @@ pidgin_menu_tray_init(PidginMenuTray *menu_tray) {
 	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_tray), TRUE);
 
 	if(!GTK_IS_WIDGET(menu_tray->tray))
-		menu_tray->tray = gtk_hbox_new(FALSE, 0);
+		menu_tray->tray = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
 	settings =
 		gtk_settings_get_for_screen(gtk_widget_get_screen(widget));

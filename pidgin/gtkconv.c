@@ -955,13 +955,13 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
 
 		/* Setup the inner hbox and put the dialog's icon in it. */
-		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 		/* Setup the right vbox. */
-		vbox = gtk_vbox_new(FALSE, 0);
+		vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 		gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 		/* Put our happy label in it. */
@@ -974,7 +974,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 		/* hbox for the table, and to give it some spacing on the left. */
-		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 		/* Setup the table we're going to use to lay stuff out. */
@@ -4008,7 +4008,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group,
 	*group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 
 	/* Do some evil, see some evil, speak some evil. */
-	box = gtk_hbox_new(FALSE, 0);
+	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
 	label = gtk_bin_get_child(GTK_BIN(menuitem));
 	g_object_ref(label);
@@ -5048,7 +5048,7 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 		GtkWidget *hbox, *label;
 		PidginChatPane *gtkchat = gtkconv->u.chat;
 
-		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 		label = gtk_label_new(_("Topic:"));
@@ -5113,7 +5113,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	PurpleConversation *conv = gtkconv->active_conv;
 
 	/* Build the right pane. */
-	lbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	lbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_pack2(GTK_PANED(hpaned), lbox, FALSE, TRUE);
 	gtk_widget_show(lbox);
 
@@ -5280,7 +5280,7 @@ quickfind_process_input(GtkWidget *entry, GdkEventKey *event, PidginConversation
 static void
 pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 {
-	GtkWidget *widget = gtk_hbox_new(FALSE, 0);
+	GtkWidget *widget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	GtkWidget *label, *entry, *close;
 #if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context;
@@ -5572,14 +5572,14 @@ setup_common_pane(PidginConversation *gtkconv)
 	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox);
 
 	/* Setup the info pane */
 	event_box = gtk_event_box_new();
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event_box), FALSE);
 	gtk_widget_show(event_box);
-	gtkconv->infopane_hbox = gtk_hbox_new(FALSE, 0);
+	gtkconv->infopane_hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), event_box, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(event_box), gtkconv->infopane_hbox);
 	gtk_widget_show(gtkconv->infopane_hbox);
@@ -5609,13 +5609,13 @@ setup_common_pane(PidginConversation *gtkconv)
 		   for both the buddy list and the chat window, but PidginConversation
 		   is pretty much stuck until 3.0. */
 		GtkWidget *sizing_vbox;
-		sizing_vbox = gtk_vbox_new(FALSE, 0);
+		sizing_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 		gtk_widget_set_size_request(sizing_vbox, -1, BUDDYICON_SIZE_MIN);
 		gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), sizing_vbox, FALSE, FALSE, 0);
 		gtk_widget_show(sizing_vbox);
 	}
 	else {
-		gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
+		gtkconv->u.im->icon_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 		if ((buddy = purple_blist_find_buddy(purple_conversation_get_account(conv),
 						purple_conversation_get_name(conv))) != NULL) {
@@ -5696,7 +5696,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	pidgin_conv_setup_quickfind(gtkconv, vbox);
 
-	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->lower_hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, FALSE, FALSE, 0);
 	gtk_widget_show(gtkconv->lower_hbox);
 
@@ -6061,7 +6061,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	g_signal_connect(gtkconv->webview, "style-set", G_CALLBACK(set_typing_font), gtkconv);
 
 	/* Setup the container for the tab. */
-	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->tab_cont = tab_cont = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	g_object_set_data(G_OBJECT(tab_cont), "PidginConversation", gtkconv);
 	gtk_container_set_border_width(GTK_CONTAINER(tab_cont), PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(tab_cont), pane);
@@ -9182,13 +9182,13 @@ build_warn_close_dialog(PidginWindow *gtkwin)
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_WARNING,
 	                               gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	/* Setup the inner hbox and put the dialog's icon in it. */
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	/* Setup the right vbox. */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 	label = gtk_label_new(_("You have unread messages. Are you sure you want to close the window?"));
@@ -10324,7 +10324,7 @@ pidgin_conv_window_new()
 	g_signal_connect(G_OBJECT(win->notebook), "button_release_event",
 	                 G_CALLBACK(notebook_release_cb), win);
 
-	testidea = gtk_vbox_new(FALSE, 0);
+	testidea = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 	/* Setup the menubar. */
 	menubar = setup_menubar(win);
@@ -10516,7 +10516,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 #endif
 	gtk_widget_set_name(gtkconv->tab_label, "tab-label");
 
-	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->menu_tabby = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtkconv->menu_label = gtk_label_new(tmp_lab);
 	gtk_box_pack_start(GTK_BOX(gtkconv->menu_tabby), gtkconv->menu_icon, FALSE, FALSE, 0);
 
@@ -10591,9 +10591,9 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 #endif
 
 	if (angle)
-		gtkconv->tabby = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtkconv->tabby = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	else
-		gtkconv->tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtkconv->tabby = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_set_name(gtkconv->tabby, "tab-container");
 
 	/* select the correct ordering for verticle tabs */
