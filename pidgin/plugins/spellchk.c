@@ -2241,7 +2241,7 @@ get_config_frame(PurplePlugin *plugin)
 		TRUE, TRUE, 0);
 	gtk_widget_show(tree);
 
-	hbox = gtk_hbutton_box_new();
+	hbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 

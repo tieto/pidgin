@@ -578,7 +578,7 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 	/* Create the parent vbox for everything. */
 	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(window), FALSE, PIDGIN_HIG_BORDER);
 
-	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(vbox), vbox2);
 	gtk_widget_show(vbox2);
 

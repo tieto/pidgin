@@ -5677,7 +5677,7 @@ kiosk_page()
 	label = gtk_label_new(" ");
 	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
 
-	bbox = gtk_hbutton_box_new();
+	bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
 	button = gtk_button_new_with_mnemonic(_("_Login"));
 	gtk_box_pack_start(GTK_BOX(ret), bbox, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(bbox), button);
@@ -6155,7 +6155,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 		pidgin_make_scrollable(gtkblist->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1), 
 		TRUE, TRUE, 0);
 
-	sep = gtk_hseparator_new();
+	sep = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sep, FALSE, FALSE, 0);
 
 	gtkblist->scrollbook = pidgin_scroll_book_new();

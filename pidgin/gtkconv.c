@@ -5672,7 +5672,7 @@ setup_common_pane(PidginConversation *gtkconv)
 		setup_chat_topic(gtkconv, vbox);
 
 		/* Add the gtkwebview frame */
-		hpaned = gtk_hpaned_new();
+		hpaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
 		gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 		gtk_widget_show(hpaned);
 		gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);

@@ -70,6 +70,30 @@ gtk_box_new(GtkOrientation orientation, gint spacing)
 		return gtk_vbox_new(FALSE, spacing);
 }
 
+static inline GtkWidget *
+gtk_separator_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hseparator_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vseparator_new();
+}
+
+static inline GtkWidget *
+gtk_button_box_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hbutton_box_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vbutton_box_new();
+}
+
 #if !GTK_CHECK_VERSION(2,24,0)
 
 #define gdk_x11_set_sm_client_id gdk_set_sm_client_id

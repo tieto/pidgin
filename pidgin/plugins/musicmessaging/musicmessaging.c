@@ -608,7 +608,7 @@ static void add_button (MMConversation *mmconv)
 
 	gtk_container_add((GtkContainer *)button, image);
 
-	sep = gtk_vseparator_new();
+	sep = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
 
 	mmconv->seperator = sep;
 	mmconv->button = button;

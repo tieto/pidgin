@@ -905,7 +905,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		/* pack buttons of the list */
 		add_smiley_list(smiley_table, ls, max_line_width, FALSE);
 		if (supports_custom) {
-			gtk_box_pack_start(GTK_BOX(smiley_table), gtk_hseparator_new(), TRUE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(smiley_table), gtk_separator_new(GTK_ORIENTATION_HORIZONTAL), TRUE, FALSE, 0);
 			add_smiley_list(smiley_table, ls, max_line_width, TRUE);
 		}
 		while (ls) {

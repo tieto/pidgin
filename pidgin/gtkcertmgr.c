@@ -471,7 +471,7 @@ tls_peers_mgmt_build(void)
 	tls_peers_mgmt_repopulate_list();
 
 	/* Right-hand side controls box */
-	bbox = gtk_vbutton_box_new();
+	bbox = gtk_button_box_new(GTK_ORIENTATION_VERTICAL);
 	gtk_box_pack_end(GTK_BOX(mgmt_widget), bbox,
 			 FALSE, FALSE, /* Do not take up space */
 			 0);
