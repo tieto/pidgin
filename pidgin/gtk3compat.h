@@ -60,6 +60,29 @@ static inline GtkWidget * gtk_font_chooser_dialog_new(const gchar *title,
 #define GDK_IS_QUARTZ_WINDOW(window) TRUE
 #endif
 
+static inline GdkPixbuf *
+gdk_pixbuf_get_from_surface(cairo_surface_t *surface, gint src_x, gint src_y,
+	gint width, gint height)
+{
+	GdkPixmap *pixmap;
+	GdkPixbuf *pixbuf;
+	cairo_t *cr;
+
+	pixmap = gdk_pixmap_new(NULL, width, height, 24);
+
+	cr = gdk_cairo_create(pixmap);
+	cairo_set_source_surface(cr, surface, -src_x, -src_y);
+	cairo_paint(cr);
+	cairo_destroy(cr);
+
+	pixbuf = gdk_pixbuf_get_from_drawable(NULL, pixmap,
+		gdk_drawable_get_colormap(pixmap), 0, 0, 0, 0, width, height);
+
+	g_object_unref(pixmap);
+
+	return pixbuf;
+}
+
 static inline GtkWidget *
 gtk_box_new(GtkOrientation orientation, gint spacing)
 {
