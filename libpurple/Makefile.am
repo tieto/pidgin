@@ -2,6 +2,8 @@ EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-signals.py \
 		dbus-analyze-types.py \
+		enums.c.in \
+		enums.h.in \
 		glibcompat.h \
 		marshallers.list \
 		purple-notifications-example \
