@@ -256,6 +256,7 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
  * purple_cmds_get_handle:
  *
  * Get the handle for the commands API
+ *
  * Returns: The handle
  */
 gpointer purple_cmds_get_handle(void);

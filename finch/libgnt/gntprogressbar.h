@@ -77,6 +77,7 @@ gnt_progress_bar_get_type (void);
  * gnt_progress_bar_new:
  *
  * Create a new GntProgressBar
+ *
  * Returns: The new GntProgressBar
  */
 GntWidget *

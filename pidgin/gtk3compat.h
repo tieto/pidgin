@@ -31,6 +31,8 @@
  * Also, any public API should not depend on this file.
  */
 
+#include <gtk/gtk.h>
+
 #if !GTK_CHECK_VERSION(3,2,0)
 
 #define GTK_FONT_CHOOSER GTK_FONT_SELECTION_DIALOG
