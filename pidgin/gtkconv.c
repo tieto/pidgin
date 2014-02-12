@@ -5664,7 +5664,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	/* Setup the webkit widget */
 	frame = pidgin_create_webview(FALSE, &gtkconv->webview, &webview_sw);
-	gtk_widget_set_size_request(gtkconv->webview, -1, 0);
+	g_object_set(G_OBJECT(gtkconv->webview), "expand", TRUE, NULL);
 
 	load_conv_theme(gtkconv);
 
