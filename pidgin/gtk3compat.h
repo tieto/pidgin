@@ -32,6 +32,49 @@
  */
 
 #include <gtk/gtk.h>
+#include <math.h>
+
+#if !GTK_CHECK_VERSION(3,4,0)
+
+#define gtk_color_chooser_dialog_new(title, parent) \
+	gtk_color_selection_dialog_new(title)
+#define GTK_COLOR_CHOOSER(widget) GTK_COLOR_SELECTION( \
+	gtk_color_selection_dialog_get_color_selection( \
+		GTK_COLOR_SELECTION_DIALOG(widget)))
+#define gtk_color_chooser_set_use_alpha(chooser, val)
+#define pidgin_color_chooser_set_rgb(chooser, color) \
+	gtk_color_selection_set_current_color(chooser, color)
+#define pidgin_color_chooser_get_rgb(chooser, color) \
+	gtk_color_selection_get_current_color(chooser, color)
+
+#else
+
+static inline void
+pidgin_color_chooser_set_rgb(GtkColorChooser *chooser, const GdkColor *rgb)
+{
+	GdkRGBA rgba;
+
+	rgba.red = rgb->red / 65535.0;
+	rgba.green = rgb->green / 65535.0;
+	rgba.blue = rgb->blue / 65535.0;
+	rgba.alpha = 1.0;
+
+	gtk_color_chooser_set_rgba(chooser, &rgba);
+}
+
+static inline void
+pidgin_color_chooser_get_rgb(GtkColorChooser *chooser, GdkColor *rgb)
+{
+	GdkRGBA rgba;
+
+	gtk_color_chooser_get_rgba(chooser, &rgba);
+	rgb->red = (int)round(rgba.red * 65535.0);
+	rgb->green = (int)round(rgba.green * 65535.0);
+	rgb->blue = (int)round(rgba.blue * 65535.0);
+}
+
+#endif /* 3.4.0 and gtk_color_chooser_ */
+
 
 #if !GTK_CHECK_VERSION(3,2,0)
 

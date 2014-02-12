@@ -63,13 +63,10 @@ static void
 theme_color_selected(GtkDialog *dialog, gint response, const char *prop)
 {
 	if (response == GTK_RESPONSE_OK) {
-		GtkWidget *colorsel;
 		GdkColor color;
 		PidginBlistTheme *theme;
 
-		colorsel =
-			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog));
-		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(colorsel), &color);
+		pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(dialog), &color);
 
 		theme = pidgin_blist_get_theme();
 
@@ -150,13 +147,13 @@ theme_color_select(GtkWidget *widget, gpointer prop)
 			color = pidgin_theme_font_get_color(pair);
 	}
 
-	dialog = gtk_color_selection_dialog_new(_("Select Color"));
+	dialog = gtk_color_chooser_dialog_new(_("Select Color"),
+		GTK_WINDOW(gtk_widget_get_ancestor(widget, GTK_TYPE_WINDOW)));
+	gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dialog), FALSE);
 	if (color)
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
-			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog))),
-			color);
-	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_color_selected),
-			prop);
+		pidgin_color_chooser_set_rgb(GTK_COLOR_CHOOSER(dialog), color);
+	g_signal_connect(G_OBJECT(dialog), "response",
+		G_CALLBACK(theme_color_selected), prop);
 
 	gtk_widget_show_all(dialog);
 }

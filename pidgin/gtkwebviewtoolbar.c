@@ -260,15 +260,17 @@ toggle_font(GtkAction *font, PidginWebViewToolbar *toolbar)
 
 static gboolean
 destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
-						PidginWebViewToolbar *toolbar)
+	PidginWebViewToolbar *toolbar)
 {
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	PidginWebViewToolbarPriv *priv =
+		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 
-	if (widget != NULL)
-		pidgin_webview_toggle_forecolor(PIDGIN_WEBVIEW(toolbar->webview), "");
+	if (widget != NULL) {
+		pidgin_webview_toggle_forecolor(
+			PIDGIN_WEBVIEW(toolbar->webview), "");
+	}
 
-	if (priv->fgcolor_dialog != NULL)
-	{
+	if (priv->fgcolor_dialog != NULL) {
 		gtk_widget_destroy(priv->fgcolor_dialog);
 		priv->fgcolor_dialog = NULL;
 	}
@@ -277,72 +279,61 @@ destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 }
 
 static void
-cancel_toolbar_fgcolor(GtkWidget *widget, PidginWebViewToolbar *toolbar)
+do_fgcolor(GtkDialog *dialog, gint response, gpointer _toolbar)
 {
-	destroy_toolbar_fgcolor(widget, NULL, toolbar);
-}
-
-static void
-do_fgcolor(GtkWidget *widget, PidginWebViewToolbar *toolbar)
-{
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	GtkColorSelectionDialog *dialog;
-	GtkColorSelection *colorsel;
+	PidginWebViewToolbar *toolbar = _toolbar;
 	GdkColor text_color;
-	char *open_tag;
+	gchar *open_tag;
 
-	dialog = GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog);
-	colorsel = GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog));
-
-	open_tag = g_malloc(30);
-	gtk_color_selection_get_current_color(colorsel, &text_color);
-	g_snprintf(open_tag, 23, "#%02X%02X%02X",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
-	pidgin_webview_toggle_forecolor(PIDGIN_WEBVIEW(toolbar->webview), open_tag);
+	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(dialog), &text_color);
+	open_tag = g_strdup_printf("#%02X%02X%02X", text_color.red / 256,
+		text_color.green / 256, text_color.blue / 256);
+	pidgin_webview_toggle_forecolor(PIDGIN_WEBVIEW(toolbar->webview),
+		open_tag);
 	g_free(open_tag);
 
-	cancel_toolbar_fgcolor(NULL, toolbar);
+	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
 }
 
 static void
 toggle_fg_color(GtkAction *color, PidginWebViewToolbar *toolbar)
 {
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	PidginWebViewToolbarPriv *priv =
+		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 
 	if (gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(color))) {
-		GtkWidget *colorsel;
 		GdkColor fgcolor;
-		char *color = pidgin_webview_get_current_forecolor(PIDGIN_WEBVIEW(toolbar->webview));
+		gchar *color = pidgin_webview_get_current_forecolor(
+			PIDGIN_WEBVIEW(toolbar->webview));
 
 		if (!priv->fgcolor_dialog) {
-			GtkWidget *ok_button;
-			GtkWidget *cancel_button;
+			priv->fgcolor_dialog = gtk_color_chooser_dialog_new(
+				_("Select Text Color"), GTK_WINDOW(
+				gtk_widget_get_ancestor(toolbar->webview,
+				GTK_TYPE_WINDOW)));
+			gtk_color_chooser_set_use_alpha(
+				GTK_COLOR_CHOOSER(priv->fgcolor_dialog), FALSE);
 
-			priv->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
-			colorsel =
-				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(priv->fgcolor_dialog));
 			if (color) {
 				gdk_color_parse(color, &fgcolor);
-				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
+				pidgin_color_chooser_set_rgb(
+					GTK_COLOR_CHOOSER(priv->fgcolor_dialog),
+					&fgcolor);
 			}
 
-			g_object_get(G_OBJECT(priv->fgcolor_dialog), "ok-button", &ok_button, NULL);
-			g_object_get(G_OBJECT(priv->fgcolor_dialog), "cancel-button", &cancel_button, NULL);
-			g_signal_connect(G_OBJECT(priv->fgcolor_dialog), "delete_event",
-							 G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
-			g_signal_connect(G_OBJECT(ok_button), "clicked",
-							 G_CALLBACK(do_fgcolor), toolbar);
-			g_signal_connect(G_OBJECT(cancel_button), "clicked",
-							 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
+			g_signal_connect(G_OBJECT(priv->fgcolor_dialog),
+				"delete_event",
+				G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
+
+			g_signal_connect(G_OBJECT(priv->fgcolor_dialog),
+				"response", G_CALLBACK(do_fgcolor), toolbar);
 		}
 
-		gtk_window_present(GTK_WINDOW(priv->fgcolor_dialog));
-
 		g_free(color);
+
+		gtk_window_present(GTK_WINDOW(priv->fgcolor_dialog));
 	} else {
-		cancel_toolbar_fgcolor(GTK_WIDGET(toolbar), toolbar);
+		destroy_toolbar_fgcolor(GTK_WIDGET(toolbar), NULL, toolbar);
 	}
 
 	gtk_widget_grab_focus(toolbar->webview);
@@ -350,15 +341,16 @@ toggle_fg_color(GtkAction *color, PidginWebViewToolbar *toolbar)
 
 static gboolean
 destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
-						PidginWebViewToolbar *toolbar)
+	PidginWebViewToolbar *toolbar)
 {
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	PidginWebViewToolbarPriv *priv =
+		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (widget != NULL) {
-		pidgin_webview_toggle_backcolor(PIDGIN_WEBVIEW(toolbar->webview), "");
+		pidgin_webview_toggle_backcolor(
+			PIDGIN_WEBVIEW(toolbar->webview), "");
 	}
 
-	if (priv->bgcolor_dialog != NULL)
-	{
+	if (priv->bgcolor_dialog != NULL) {
 		gtk_widget_destroy(priv->bgcolor_dialog);
 		priv->bgcolor_dialog = NULL;
 	}
@@ -367,74 +359,59 @@ destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 }
 
 static void
-cancel_toolbar_bgcolor(GtkWidget *widget, PidginWebViewToolbar *toolbar)
+do_bgcolor(GtkDialog *dialog, gint response, gpointer _toolbar)
 {
-	destroy_toolbar_bgcolor(widget, NULL, toolbar);
-}
-
-static void
-do_bgcolor(GtkWidget *widget, PidginWebViewToolbar *toolbar)
-{
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	GtkColorSelectionDialog *dialog;
-	GtkColorSelection *colorsel;
+	PidginWebViewToolbar *toolbar = _toolbar;
 	GdkColor text_color;
-	char *open_tag;
+	gchar *open_tag;
 
-	dialog = GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog);
-	colorsel = GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog));
-
-	open_tag = g_malloc(30);
-	gtk_color_selection_get_current_color(colorsel, &text_color);
-	g_snprintf(open_tag, 23, "#%02X%02X%02X",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
-	pidgin_webview_toggle_backcolor(PIDGIN_WEBVIEW(toolbar->webview), open_tag);
+	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(dialog), &text_color);
+	open_tag = g_strdup_printf("#%02X%02X%02X", text_color.red / 256,
+		text_color.green / 256, text_color.blue / 256);
+	pidgin_webview_toggle_backcolor(PIDGIN_WEBVIEW(toolbar->webview),
+		open_tag);
 	g_free(open_tag);
 
-	cancel_toolbar_bgcolor(NULL, toolbar);
+	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
 }
 
 static void
 toggle_bg_color(GtkAction *color, PidginWebViewToolbar *toolbar)
 {
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	PidginWebViewToolbarPriv *priv =
+		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 
 	if (gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(color))) {
-		GtkWidget *colorsel;
 		GdkColor bgcolor;
-		char *color = pidgin_webview_get_current_backcolor(PIDGIN_WEBVIEW(toolbar->webview));
+		gchar *color = pidgin_webview_get_current_backcolor(
+			PIDGIN_WEBVIEW(toolbar->webview));
 
 		if (!priv->bgcolor_dialog) {
-			GtkWidget *ok_button;
-			GtkWidget *cancel_button;
-
-			priv->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
-			colorsel =
-				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(priv->bgcolor_dialog));
+			priv->bgcolor_dialog = gtk_color_chooser_dialog_new(
+				_("Select Background Color"), GTK_WINDOW(
+				gtk_widget_get_ancestor(toolbar->webview,
+				GTK_TYPE_WINDOW)));
+			gtk_color_chooser_set_use_alpha(
+				GTK_COLOR_CHOOSER(priv->bgcolor_dialog), FALSE);
 
 			if (color) {
 				gdk_color_parse(color, &bgcolor);
-				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
+				pidgin_color_chooser_set_rgb(
+					GTK_COLOR_CHOOSER(priv->bgcolor_dialog),
+					&bgcolor);
 			}
 
-			g_object_get(G_OBJECT(priv->bgcolor_dialog), "ok-button", &ok_button, NULL);
-			g_object_get(G_OBJECT(priv->bgcolor_dialog), "cancel-button",
-			             &cancel_button, NULL);
-			g_signal_connect(G_OBJECT(priv->bgcolor_dialog), "delete_event",
-							 G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
-			g_signal_connect(G_OBJECT(ok_button), "clicked",
-							 G_CALLBACK(do_bgcolor), toolbar);
-			g_signal_connect(G_OBJECT(cancel_button), "clicked",
-							 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
+			g_signal_connect(G_OBJECT(priv->bgcolor_dialog),
+				"delete_event",
+				G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
+			g_signal_connect(G_OBJECT(priv->bgcolor_dialog),
+				"response", G_CALLBACK(do_bgcolor), toolbar);
 		}
+		g_free(color);
 
 		gtk_window_present(GTK_WINDOW(priv->bgcolor_dialog));
-
-		g_free(color);
 	} else {
-		cancel_toolbar_bgcolor(GTK_WIDGET(toolbar), toolbar);
+		destroy_toolbar_bgcolor(GTK_WIDGET(toolbar), NULL, toolbar);
 	}
 
 	gtk_widget_grab_focus(toolbar->webview);

@@ -842,15 +842,21 @@ static void pidgin_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
 }
 
 static void
-change_color_cb(GtkColorSelection *selection, PidginWhiteboard *gtkwb)
+color_selected(GtkDialog *dialog, gint response, gpointer _gtkwb)
 {
 	GdkColor color;
-	int old_size = 5;
-	int old_color = 0;
-	int new_color;
+	PidginWhiteboard *gtkwb = _gtkwb;
 	PurpleWhiteboard *wb = gtkwb->wb;
+	int old_size, old_color;
+	int new_color;
 
-	gtk_color_selection_get_current_color(selection, &color);
+	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(dialog), &color);
+	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", NULL);
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+
+	if (response != GTK_RESPONSE_OK)
+		return;
+
 	new_color = (color.red & 0xFF00) << 8;
 	new_color |= (color.green & 0xFF00);
 	new_color |= (color.blue & 0xFF00) >> 8;
@@ -859,36 +865,21 @@ change_color_cb(GtkColorSelection *selection, PidginWhiteboard *gtkwb)
 	purple_whiteboard_send_brush(wb, old_size, new_color);
 }
 
-static void color_selection_dialog_destroy(GtkWidget *w, PidginWhiteboard *gtkwb)
-{
-	GtkWidget *dialog = g_object_get_data(G_OBJECT(gtkwb->window), "colour-dialog");
-	gtk_widget_destroy(dialog);
-	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", NULL);
-}
-
 static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
-	GtkColorSelectionDialog *dialog;
-	GtkWidget *ok_button;
+	GtkWidget *dialog;
 
-	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new(_("Select color"));
+	dialog = gtk_color_chooser_dialog_new(_("Select color"),
+		GTK_WINDOW(gtk_widget_get_ancestor(widget, GTK_TYPE_WINDOW)));
+	gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dialog), FALSE);
 	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", dialog);
 
-	g_signal_connect(G_OBJECT(gtk_color_selection_dialog_get_color_selection(dialog)),
-	                 "color-changed", G_CALLBACK(change_color_cb), gtkwb);
-
-	g_object_get(G_OBJECT(dialog), "ok-button", &ok_button, NULL);
-
-	g_signal_connect(G_OBJECT(ok_button), "clicked",
-	                 G_CALLBACK(color_selection_dialog_destroy), gtkwb);
-
-	gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog)), TRUE);
+	g_signal_connect(G_OBJECT(dialog), "response",
+		G_CALLBACK(color_selected), gtkwb);
 
 	pidgin_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
-	gtk_color_selection_set_current_color(
-		GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog)), &color);
+	pidgin_color_chooser_set_rgb(GTK_COLOR_CHOOSER(dialog), &color);
 
 	gtk_widget_show_all(GTK_WIDGET(dialog));
 }
-
