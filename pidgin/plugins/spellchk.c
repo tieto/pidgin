@@ -39,6 +39,7 @@
 #include "util.h"
 #include "version.h"
 
+#include "gtk3compat.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
@@ -2170,7 +2171,7 @@ get_config_frame(PurplePlugin *plugin)
 	GtkWidget *vbox2;
 	GtkWidget *vbox3;
 
-	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	vbox = pidgin_make_frame(ret, _("Text Replacements"));
@@ -2240,7 +2241,7 @@ get_config_frame(PurplePlugin *plugin)
 		TRUE, TRUE, 0);
 	gtk_widget_show(tree);
 
-	hbox = gtk_hbutton_box_new();
+	hbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -2257,10 +2258,10 @@ get_config_frame(PurplePlugin *plugin)
 
 	vbox = pidgin_make_frame(ret, _("Add a new text replacement"));
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 	gtk_widget_show(hbox);
-	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
@@ -2295,7 +2296,7 @@ get_config_frame(PurplePlugin *plugin)
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			   G_CALLBACK(list_add_new), NULL);
-	vbox3 = gtk_vbox_new(FALSE, 0);
+	vbox3 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox3, TRUE, FALSE, 0);
 	gtk_widget_show(vbox3);
 	gtk_box_pack_end(GTK_BOX(vbox3), button, FALSE, FALSE, 0);

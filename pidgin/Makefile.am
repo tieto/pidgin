@@ -144,6 +144,8 @@ libpidgin_la_headers = \
 pidgin_SOURCES = \
 	pidgin.c
 
+noinst_HEADERS= gtkinternal.h
+
 libpidginincludedir=$(includedir)/pidgin
 libpidgininclude_HEADERS = \
 	$(libpidgin_la_headers)

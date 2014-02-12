@@ -20,6 +20,7 @@
 
 #include "internal.h"
 #include "pidgin.h"
+#include "gtk3compat.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 #include "prefs.h"
@@ -84,12 +85,12 @@ get_config_frame(PurplePlugin *plugin)
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	ret = gtk_vbox_new(FALSE, 18);
+	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
 	frame = pidgin_make_frame(ret, _("Point values to use when..."));
 
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	/* Status Spinboxes */
@@ -97,7 +98,7 @@ get_config_frame(PurplePlugin *plugin)
 	{
 		char *pref = g_strconcat("/purple/status/scores/", statuses[i].id, NULL);
 
-		hbox = gtk_hbox_new(FALSE, 5);
+		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 		label = gtk_label_new_with_mnemonic(_(statuses[i].description));
@@ -120,7 +121,7 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	/* Last match */
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	check = gtk_check_button_new_with_label(_("Use last buddy when scores are equal"));
@@ -130,11 +131,11 @@ get_config_frame(PurplePlugin *plugin)
 
 	frame = pidgin_make_frame(ret, _("Point values to use for account..."));
 
-	vbox = gtk_vbox_new(FALSE, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	/* Account */
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	/* make this here so I can use it in the option menu callback, we'll

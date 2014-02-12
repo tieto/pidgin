@@ -30,6 +30,7 @@
 #include "pidginstock.h"
 #include "util.h"
 
+#include "gtk3compat.h"
 #include "gtkblist.h"
 #include "gtknotify.h"
 #include "gtkpounce.h"
@@ -584,7 +585,7 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                               PIDGIN_HIG_BOX_SPACE);
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 	                  hbox);
 

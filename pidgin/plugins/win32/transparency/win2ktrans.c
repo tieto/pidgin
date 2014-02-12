@@ -30,6 +30,7 @@
 #include "prefs.h"
 #include "debug.h"
 
+#include "gtk3compat.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"
@@ -166,7 +167,7 @@ static GtkWidget *wintrans_slider(GtkWidget *win) {
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 	gtk_widget_show(frame);
 
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_hbox_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	gtk_container_add(GTK_CONTAINER(frame), hbox);
 
 	label = gtk_label_new(_("Opacity:"));
@@ -582,7 +583,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	gtk_box_pack_start(GTK_BOX(imtransbox), trans_box, FALSE, FALSE, 5);
 
 	/* IM transparency slider */
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_hbox_new(GTK_ORIENTATION_HORIZONTAL, 5);
 
 	label = gtk_label_new(_("Opacity:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
@@ -629,7 +630,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	gtk_box_pack_start(GTK_BOX(bltransbox), trans_box, FALSE, FALSE, 5);
 
 	/* IM transparency slider */
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 
 	label = gtk_label_new(_("Opacity:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);

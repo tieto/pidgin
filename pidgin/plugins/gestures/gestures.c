@@ -26,6 +26,7 @@
 #include "signals.h"
 #include "version.h"
 
+#include "gtk3compat.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
@@ -223,7 +224,7 @@ get_config_frame(PurplePlugin *plugin)
 #endif
 
 	/* Outside container */
-	ret = gtk_vbox_new(FALSE, 18);
+	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
 	/* Configuration frame */
@@ -318,8 +319,10 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_none("/plugins/gtk/X11/gestures");
 	purple_prefs_add_bool("/plugins/gtk/X11/gestures/visual", FALSE);
 
-	purple_prefs_connect_callback(plugin, "/plugins/gtk/X11/gestures/visual",
-								visual_pref_cb, NULL);
+	purple_prefs_connect_callback(plugin,
+		"/plugins/gtk/X11/gestures/visual", visual_pref_cb, NULL);
+	gstroke_set_draw_strokes(purple_prefs_get_bool(
+		"/plugins/gtk/X11/gestures/visual"));
 }
 
 PURPLE_INIT_PLUGIN(gestures, init_plugin, info)

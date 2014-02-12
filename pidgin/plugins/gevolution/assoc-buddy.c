@@ -21,6 +21,8 @@
 #include "internal.h"
 #include "gtkblist.h"
 #include "pidgin.h"
+
+#include "gtk3compat.h"
 #include "gtkutils.h"
 
 #include "debug.h"
@@ -333,7 +335,7 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
 	gtk_widget_show(vbox);
 
@@ -346,7 +348,7 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	gtk_widget_show(label);
 
 	/* Add the search hbox */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	gtk_widget_show(hbox);
 
@@ -418,12 +420,12 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->addrbooks_combo), 0);
 
 	/* Separator. */
-	sep = gtk_hseparator_new();
+	sep = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
 
 	/* Button box */
-	bbox = gtk_hbutton_box_new();
+	bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_set_spacing(GTK_BOX(bbox), 6);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);

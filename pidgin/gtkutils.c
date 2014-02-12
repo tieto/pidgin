@@ -222,7 +222,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -231,7 +231,7 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 		gtk_widget_show(toolbar);
 
-		sep = gtk_hseparator_new();
+		sep = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 		gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 		g_signal_connect_swapped(G_OBJECT(toolbar), "show", G_CALLBACK(gtk_widget_show), sep);
 		g_signal_connect_swapped(G_OBJECT(toolbar), "hide", G_CALLBACK(gtk_widget_hide), sep);
@@ -376,7 +376,7 @@ pidgin_pixbuf_toolbar_button_from_stock(const char *icon)
 	button = gtk_toggle_button_new();
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
-	bbox = gtk_vbox_new(FALSE, 0);
+	bbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 	gtk_container_add (GTK_CONTAINER(button), bbox);
 
@@ -397,15 +397,15 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 	button = gtk_button_new();
 
 	if (style == PIDGIN_BUTTON_HORIZONTAL) {
-		bbox = gtk_hbox_new(FALSE, 0);
-		ibox = gtk_hbox_new(FALSE, 0);
+		bbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+		ibox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 		if (text)
-			lbox = gtk_hbox_new(FALSE, 0);
+			lbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	} else {
-		bbox = gtk_vbox_new(FALSE, 0);
-		ibox = gtk_vbox_new(FALSE, 0);
+		bbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+		ibox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 		if (text)
-			lbox = gtk_vbox_new(FALSE, 0);
+			lbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	}
 
 	gtk_container_add(GTK_CONTAINER(button), bbox);
@@ -480,7 +480,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	GtkWidget *vbox, *vbox2, *label, *hbox;
 	char *labeltitle;
 
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -495,7 +495,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_widget_show(label);
 	pidgin_set_accessible_label (vbox, label);
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -503,7 +503,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
 	gtk_widget_show(vbox2);
 
@@ -2118,7 +2118,12 @@ void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 
 	cursor = gdk_cursor_new(cursor_type);
 	gdk_window_set_cursor(gtk_widget_get_window(widget), cursor);
+
+#if GTK_CHECK_VERSION(3,0,0)
+	g_object_unref(cursor);
+#else
 	gdk_cursor_unref(cursor);
+#endif
 
 	gdk_display_flush(gdk_window_get_display(gtk_widget_get_window(widget)));
 }
@@ -2237,7 +2242,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 	dialog->icon_preview = gtk_image_new();
 	dialog->icon_text = gtk_label_new(NULL);
 
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_set_size_request(GTK_WIDGET(vbox), -1, 50);
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_preview), TRUE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_text), FALSE, FALSE, 0);
@@ -2863,7 +2868,7 @@ pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *
 	GtkWidget *label = NULL;
 
 	if (widget_label) {
-		hbox = gtk_hbox_new(FALSE, 5);
+		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 		gtk_widget_show(hbox);
 		gtk_box_pack_start(vbox, hbox, FALSE, FALSE, 0);
 
@@ -3581,14 +3586,18 @@ pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPol
 		if (width != -1 || height != -1)
 			gtk_widget_set_size_request(sw, width, height);
 		if (child) {
+#if GTK_CHECK_VERSION(3,8,0)
+			gtk_container_add(GTK_CONTAINER(sw), child);
+#else
 #if GTK_CHECK_VERSION(3,0,0)
 			if (GTK_IS_SCROLLABLE(child))
 #else
 			if (GTK_WIDGET_GET_CLASS(child)->set_scroll_adjustments_signal)
-#endif
+#endif /* GTK_CHECK_VERSION(3,0,0) */
 				gtk_container_add(GTK_CONTAINER(sw), child);
 			else
 				gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), child);
+#endif /* GTK_CHECK_VERSION(3,8,0) */
 		}
 		return sw;
 	}

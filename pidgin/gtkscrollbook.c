@@ -21,6 +21,7 @@
 
 #include "gtkscrollbook.h"
 
+#include "gtk3compat.h"
 
 static void pidgin_scroll_book_init (PidginScrollBook *scroll_book);
 static void pidgin_scroll_book_class_init (PidginScrollBookClass *klass);
@@ -255,7 +256,7 @@ pidgin_scroll_book_init (PidginScrollBook *scroll_book)
 	GtkWidget *eb;
 	GtkWidget *close_button;
 
-	scroll_book->hbox = gtk_hbox_new(FALSE, 0);
+	scroll_book->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
 	/* Close */
 	eb = gtk_event_box_new();

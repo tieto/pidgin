@@ -2,6 +2,8 @@ EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-signals.py \
 		dbus-analyze-types.py \
+		enums.c.in \
+		enums.h.in \
 		glibcompat.h \
 		marshallers.list \
 		purple-notifications-example \
@@ -36,15 +38,6 @@ pkgconfig_DATA = purple-3.pc
 
 SUBDIRS = $(GCONF_DIR) plugins protocols . tests example
 
-if USE_NSS
-AES_SOURCE = ciphers/aescipher.c
-AES_HEADER = aescipher.h
-endif
-if USE_GNUTLS
-AES_SOURCE = ciphers/aescipher.c
-AES_HEADER = aescipher.h
-endif
-
 purple_coresources = \
 	account.c \
 	accounts.c \
@@ -54,7 +47,7 @@ purple_coresources = \
 	buddylist.c \
 	buddyicon.c \
 	certificate.c \
-	$(AES_SOURCE) \
+	ciphers/aescipher.c \
 	ciphers/descipher.c \
 	ciphers/des3cipher.c \
 	ciphers/hmaccipher.c \
@@ -206,7 +199,7 @@ purple_mediaheaders = \
 	enum-types.h
 
 purple_cipherheaders = \
-	$(AES_HEADER) \
+	aescipher.h \
 	descipher.h \
 	des3cipher.h \
 	hmaccipher.h \

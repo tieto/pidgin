@@ -31,6 +31,8 @@
  * Also, any public API should not depend on this file.
  */
 
+#include <gtk/gtk.h>
+
 #if !GTK_CHECK_VERSION(3,2,0)
 
 #define GTK_FONT_CHOOSER GTK_FONT_SELECTION_DIALOG
@@ -57,6 +59,90 @@ static inline GtkWidget * gtk_font_chooser_dialog_new(const gchar *title,
 #ifdef GDK_WINDOWING_QUARTZ
 #define GDK_IS_QUARTZ_WINDOW(window) TRUE
 #endif
+
+static inline GdkPixbuf *
+gdk_pixbuf_get_from_surface(cairo_surface_t *surface, gint src_x, gint src_y,
+	gint width, gint height)
+{
+	GdkPixmap *pixmap;
+	GdkPixbuf *pixbuf;
+	cairo_t *cr;
+
+	pixmap = gdk_pixmap_new(NULL, width, height, 24);
+
+	cr = gdk_cairo_create(pixmap);
+	cairo_set_source_surface(cr, surface, -src_x, -src_y);
+	cairo_paint(cr);
+	cairo_destroy(cr);
+
+	pixbuf = gdk_pixbuf_get_from_drawable(NULL, pixmap,
+		gdk_drawable_get_colormap(pixmap), 0, 0, 0, 0, width, height);
+
+	g_object_unref(pixmap);
+
+	return pixbuf;
+}
+
+static inline GtkWidget *
+gtk_box_new(GtkOrientation orientation, gint spacing)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hbox_new(FALSE, spacing);
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vbox_new(FALSE, spacing);
+}
+
+static inline GtkWidget *
+gtk_separator_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hseparator_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vseparator_new();
+}
+
+static inline GtkWidget *
+gtk_button_box_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hbutton_box_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vbutton_box_new();
+}
+
+static inline GtkWidget *
+gtk_paned_new(GtkOrientation orientation)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hpaned_new();
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vpaned_new();
+}
+
+static inline GtkWidget *
+gtk_scale_new_with_range(GtkOrientation orientation, gdouble min, gdouble max,
+	gdouble step)
+{
+	g_return_val_if_fail(orientation == GTK_ORIENTATION_HORIZONTAL ||
+		orientation == GTK_ORIENTATION_VERTICAL, NULL);
+
+	if (orientation == GTK_ORIENTATION_HORIZONTAL)
+		return gtk_hscale_new_with_range(min, max, step);
+	else /* GTK_ORIENTATION_VERTICAL */
+		return gtk_vscale_new_with_range(min, max, step);
+}
 
 #if !GTK_CHECK_VERSION(2,24,0)
 

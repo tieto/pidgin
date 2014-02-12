@@ -25,6 +25,7 @@
 
 #include "theme-manager.h"
 
+#include "gtk3compat.h"
 #include "gtkblist.h"
 #include "gtkblist-theme.h"
 #include "gtkutils.h"
@@ -271,7 +272,7 @@ void pidgin_icon_theme_edit(PurplePluginAction *unused)
 	for (s = 0; sections[s].heading; s++) {
 		const char *heading = sections[s].heading;
 
-		box = gtk_vbox_new(FALSE, 0);
+		box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, gtk_label_new(heading));
 
 		vbox = pidgin_make_frame(box, heading);
@@ -281,7 +282,7 @@ void pidgin_icon_theme_edit(PurplePluginAction *unused)
 			const char *id = sections[s].options[i].stockid;
 			const char *text = _(sections[s].options[i].text);
 
-			GtkWidget *hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+			GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_CAT_SPACE);
 			GtkWidget *label = gtk_label_new(text);
 			GtkWidget *image = gtk_image_new_from_stock(id,
 					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
