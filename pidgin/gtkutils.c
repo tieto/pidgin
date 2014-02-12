@@ -2104,7 +2104,12 @@ void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 
 	cursor = gdk_cursor_new(cursor_type);
 	gdk_window_set_cursor(gtk_widget_get_window(widget), cursor);
+
+#if GTK_CHECK_VERSION(3,0,0)
 	g_object_unref(cursor);
+#else
+	gdk_cursor_unref(cursor);
+#endif
 
 	gdk_display_flush(gdk_window_get_display(gtk_widget_get_window(widget)));
 }
