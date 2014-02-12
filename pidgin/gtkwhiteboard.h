@@ -30,49 +30,6 @@
 
 #include "pidgin.h"
 
-#include "whiteboard.h"
-
-#define PIDGIN_FULL_CIRCLE_DEGREES 23040
-
-/* TODO: Make into an enum. */
-#define PIDGIN_BRUSH_STATE_UP      0
-#define PIDGIN_BRUSH_STATE_DOWN    1
-#define PIDGIN_BRUSH_STATE_MOTION  2
-
-/* XXX: This seems duplicated with the Yahoo! Doodle protocol code.
- * XXX: How should they work together? */
-#define PIDGIN_PALETTE_NUM_COLORS  7
-
-typedef struct _PidginWhiteboardPrivate PidginWhiteboardPrivate;
-
-/**
- * PidginWhiteboard:
- * @priv:         Internal data
- * @wb:           Backend data for this whiteboard
- * @window:       Window for the Doodle session
- * @drawing_area: Drawing area
- * @width:        Canvas width
- * @height:       Canvas height
- * @brush_color:  Foreground color
- * @brush_size:   Brush size
- *
- * A PidginWhiteboard
- */
-typedef struct _PidginWhiteboard
-{
-	PidginWhiteboardPrivate *priv;
-
-	PurpleWhiteboard *wb;
-
-	GtkWidget *window;
-	GtkWidget *drawing_area;
-
-	int width;
-	int height;
-	int brush_color;
-	int brush_size;
-} PidginWhiteboard;
-
 G_BEGIN_DECLS
 
 /*****************************************************************************/
@@ -86,7 +43,7 @@ G_BEGIN_DECLS
  *
  * Returns: The GtkWhiteboard UI Operations.
  */
-PurpleWhiteboardUiOps *pidgin_whiteboard_get_ui_ops( void );
+PurpleWhiteboardUiOps *pidgin_whiteboard_get_ui_ops(void);
 
 G_END_DECLS
 
