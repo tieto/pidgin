@@ -43,6 +43,10 @@
 #define PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_WEBVIEWTOOLBAR, PidginWebViewToolbarPriv))
 
+#define PIDGIN_WEBVIEWTOOLBAR_DEFAULT_FONT "sans-serif"
+#define PIDGIN_WEBVIEWTOOLBAR_DEFAULT_BGCOLOR "inherit"
+#define PIDGIN_WEBVIEWTOOLBAR_DEFAULT_FGCOLOR "#000000"
+
 /******************************************************************************
  * Structs
  *****************************************************************************/
@@ -97,6 +101,10 @@ typedef struct _PidginWebViewToolbarPriv {
 
 static GtkHBoxClass *parent_class = NULL;
 
+/* XXX: I would bet, there is a better way to do this */
+static guint resources_ref_cnt = 0;
+static GRegex *color_parse_rgb = NULL;
+
 /******************************************************************************
  * Prototypes
  *****************************************************************************/
@@ -108,6 +116,72 @@ toggle_action_set_active_block(GtkToggleAction *action, gboolean is_active,
 /******************************************************************************
  * Helpers
  *****************************************************************************/
+
+static gboolean
+pidgin_color_parse(const gchar *str, GdkColor *color)
+{
+	GdkColor dummy_color;
+	gboolean succ;
+
+	if (str == NULL)
+		return FALSE;
+
+	while (isspace(str[0]))
+		str++;
+
+	if (str[0] == '\0')
+		return FALSE;
+
+	if (color == NULL)
+		color = &dummy_color;
+
+	if (strcmp(str, "inherit") == 0) {
+		return FALSE;
+	} else if (strncmp(str, "rgb", 3) == 0) {
+		GMatchInfo *match;
+
+		g_regex_match(color_parse_rgb, str, 0, &match);
+		succ = g_match_info_matches(match);
+		if (succ) {
+			int m_start, val;
+
+			g_match_info_fetch_pos(match, 1, &m_start, NULL);
+			val = strtoul(str + m_start, NULL, 10);
+			if (val >= 0 && val <= 255)
+				color->red = val * 256;
+			else
+				succ = FALSE;
+
+			g_match_info_fetch_pos(match, 2, &m_start, NULL);
+			val = strtoul(str + m_start, NULL, 10);
+			if (val >= 0 && val <= 255)
+				color->green = val * 256;
+			else
+				succ = FALSE;
+
+			g_match_info_fetch_pos(match, 3, &m_start, NULL);
+			val = strtoul(str + m_start, NULL, 10);
+			if (val >= 0 && val <= 255)
+				color->blue = val * 256;
+			else
+				succ = FALSE;
+		}
+
+		g_match_info_free(match);
+		return succ;
+	}
+
+	purple_debug_warning("gtkwebviewtoolbar",
+		"Invalid color format: \"%s\"", str);
+	return FALSE;
+}
+
+static gchar*
+pidgin_color_to_str(GdkColor *color)
+{
+	return g_strdup_printf("#%02X%02X%02X", color->red / 256,
+		color->green / 256, color->blue / 256);
+}
 
 static void
 do_bold(GtkAction *bold, PidginWebViewToolbar *toolbar)
@@ -213,7 +287,8 @@ apply_font(GtkDialog *dialog, gint response, PidginWebViewToolbar *toolbar)
 		pango_font_description_free(desc);
 		g_free(fontname);
 	} else {
-		pidgin_webview_toggle_fontface(PIDGIN_WEBVIEW(toolbar->webview), "");
+		pidgin_webview_toggle_fontface(PIDGIN_WEBVIEW(toolbar->webview),
+			PIDGIN_WEBVIEWTOOLBAR_DEFAULT_FONT);
 	}
 
 	destroy_toolbar_font(toolbar);
@@ -252,6 +327,8 @@ toggle_font(GtkAction *font, PidginWebViewToolbar *toolbar)
 
 		g_free(fontname);
 	} else {
+		pidgin_webview_toggle_fontface(PIDGIN_WEBVIEW(toolbar->webview),
+			PIDGIN_WEBVIEWTOOLBAR_DEFAULT_FONT);
 		destroy_toolbar_font(toolbar);
 	}
 
@@ -267,7 +344,8 @@ destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 
 	if (widget != NULL) {
 		pidgin_webview_toggle_forecolor(
-			PIDGIN_WEBVIEW(toolbar->webview), "");
+			PIDGIN_WEBVIEW(toolbar->webview),
+			PIDGIN_WEBVIEWTOOLBAR_DEFAULT_FGCOLOR);
 	}
 
 	if (priv->fgcolor_dialog != NULL) {
@@ -285,9 +363,13 @@ do_fgcolor(GtkDialog *dialog, gint response, gpointer _toolbar)
 	GdkColor text_color;
 	gchar *open_tag;
 
+	if (response != GTK_RESPONSE_OK) {
+		destroy_toolbar_fgcolor(GTK_WIDGET(toolbar), NULL, toolbar);
+		return;
+	}
+
 	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(dialog), &text_color);
-	open_tag = g_strdup_printf("#%02X%02X%02X", text_color.red / 256,
-		text_color.green / 256, text_color.blue / 256);
+	open_tag = pidgin_color_to_str(&text_color);
 	pidgin_webview_toggle_forecolor(PIDGIN_WEBVIEW(toolbar->webview),
 		open_tag);
 	g_free(open_tag);
@@ -314,8 +396,7 @@ toggle_fg_color(GtkAction *color, PidginWebViewToolbar *toolbar)
 			gtk_color_chooser_set_use_alpha(
 				GTK_COLOR_CHOOSER(priv->fgcolor_dialog), FALSE);
 
-			if (color) {
-				gdk_color_parse(color, &fgcolor);
+			if (pidgin_color_parse(color, &fgcolor)) {
 				pidgin_color_chooser_set_rgb(
 					GTK_COLOR_CHOOSER(priv->fgcolor_dialog),
 					&fgcolor);
@@ -347,7 +428,8 @@ destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	if (widget != NULL) {
 		pidgin_webview_toggle_backcolor(
-			PIDGIN_WEBVIEW(toolbar->webview), "");
+			PIDGIN_WEBVIEW(toolbar->webview),
+			PIDGIN_WEBVIEWTOOLBAR_DEFAULT_BGCOLOR);
 	}
 
 	if (priv->bgcolor_dialog != NULL) {
@@ -365,9 +447,13 @@ do_bgcolor(GtkDialog *dialog, gint response, gpointer _toolbar)
 	GdkColor text_color;
 	gchar *open_tag;
 
+	if (response != GTK_RESPONSE_OK) {
+		destroy_toolbar_bgcolor(GTK_WIDGET(toolbar), NULL, toolbar);
+		return;
+	}
+
 	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(dialog), &text_color);
-	open_tag = g_strdup_printf("#%02X%02X%02X", text_color.red / 256,
-		text_color.green / 256, text_color.blue / 256);
+	open_tag = pidgin_color_to_str(&text_color);
 	pidgin_webview_toggle_backcolor(PIDGIN_WEBVIEW(toolbar->webview),
 		open_tag);
 	g_free(open_tag);
@@ -394,8 +480,7 @@ toggle_bg_color(GtkAction *color, PidginWebViewToolbar *toolbar)
 			gtk_color_chooser_set_use_alpha(
 				GTK_COLOR_CHOOSER(priv->bgcolor_dialog), FALSE);
 
-			if (color) {
-				gdk_color_parse(color, &bgcolor);
+			if (pidgin_color_parse(color, &bgcolor)) {
 				pidgin_color_chooser_set_rgb(
 					GTK_COLOR_CHOOSER(priv->bgcolor_dialog),
 					&bgcolor);
@@ -1000,6 +1085,7 @@ toggle_action_set_active_block(GtkToggleAction *action, gboolean is_active,
 	object = g_object_ref(action);
 	g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA,
 	                                0, 0, NULL, NULL, toolbar);
+
 	gtk_toggle_action_set_active(action, is_active);
 	g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA,
 	                                  0, 0, NULL, NULL, toolbar);
@@ -1011,8 +1097,9 @@ update_buttons(PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	gboolean bold, italic, underline, strike;
-	char *tmp;
+	char *tmp, *color_str;
 	char *label;
+	GdkColor color;
 
 	label = g_strdup(_("_Font"));
 
@@ -1054,6 +1141,10 @@ update_buttons(PidginWebViewToolbar *toolbar)
 	}
 
 	tmp = pidgin_webview_get_current_fontface(PIDGIN_WEBVIEW(toolbar->webview));
+	if (tmp && tmp[0] == '\0')
+		tmp = NULL;
+	if (g_strcmp0(tmp, PIDGIN_WEBVIEWTOOLBAR_DEFAULT_FONT) == 0)
+		tmp = NULL;
 	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->font),
 	                               (tmp && *tmp), toolbar);
 	if (tmp && *tmp) {
@@ -1064,36 +1155,44 @@ update_buttons(PidginWebViewToolbar *toolbar)
 	}
 	g_free(tmp);
 
-	tmp = pidgin_webview_get_current_forecolor(PIDGIN_WEBVIEW(toolbar->webview));
-	/* TODO: rgb()/rgba() colors are not supported by GTK, so let's get rid
-	 * of such warnings for now. There are two solutions: rewrite those
-	 * colors to #aabbcc or implement the toolbar in javascript.
-	 */
-	if (tmp && strncmp(tmp, "rgb", 3) == 0)
-		tmp[0] = '\0';
-	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->fgcolor),
-	                               (tmp && *tmp), toolbar);
-	if (tmp && *tmp) {
-		gchar *markup = g_strdup_printf("<span foreground=\"%s\">%s</span>",
-		                                tmp, label);
-		g_free(label);
-		label = markup;
+	tmp = pidgin_webview_get_current_forecolor(
+		PIDGIN_WEBVIEW(toolbar->webview));
+	color_str = NULL;
+	if (pidgin_color_parse(tmp, &color) &&
+		(color.red != 0 || color.green != 0 || color.blue != 0))
+	{
+		color_str = pidgin_color_to_str(&color);
 	}
 	g_free(tmp);
 
-	tmp = pidgin_webview_get_current_backcolor(PIDGIN_WEBVIEW(toolbar->webview));
-	/* TODO: see comment above */
-	if (tmp && strncmp(tmp, "rgb", 3) == 0)
-		tmp[0] = '\0';
-	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->bgcolor),
-	                               (tmp && *tmp), toolbar);
-	if (tmp && *tmp) {
-		gchar *markup = g_strdup_printf("<span background=\"%s\">%s</span>",
-		                                tmp, label);
+	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->fgcolor),
+		color_str != NULL, toolbar);
+	if (color_str) {
+		gchar *markup = g_strdup_printf(
+			"<span foreground=\"%s\">%s</span>", color_str, label);
 		g_free(label);
 		label = markup;
 	}
+	g_free(color_str);
+
+	tmp = pidgin_webview_get_current_backcolor(
+		PIDGIN_WEBVIEW(toolbar->webview));
+	color_str = NULL;
+	if (pidgin_color_parse(tmp, &color))
+	{
+		color_str = pidgin_color_to_str(&color);
+	}
 	g_free(tmp);
+
+	toggle_action_set_active_block(GTK_TOGGLE_ACTION(priv->bgcolor),
+		color_str != NULL, toolbar);
+	if (color_str) {
+		gchar *markup = g_strdup_printf(
+			"<span background=\"%s\">%s</span>", color_str, label);
+		g_free(label);
+		label = markup;
+	}
+	g_free(color_str);
 
 	gtk_label_set_markup_with_mnemonic(GTK_LABEL(priv->font_label), label);
 }
@@ -1262,14 +1361,20 @@ pidgin_webviewtoolbar_finalize(GObject *object)
 
 	purple_prefs_disconnect_by_handle(object);
 
+	if (--resources_ref_cnt == 0) {
+		g_regex_unref(color_parse_rgb);
+		color_parse_rgb = NULL;
+	}
+
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 static void
-pidgin_webviewtoolbar_class_init(PidginWebViewToolbarClass *class)
+pidgin_webviewtoolbar_class_init(gpointer _class, gpointer class_data)
 {
-	GObjectClass *gobject_class;
-	gobject_class = (GObjectClass *)class;
+	PidginWebViewToolbarClass *class = _class;
+	GObjectClass *gobject_class = _class;
+
 	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
 	gobject_class->finalize = pidgin_webviewtoolbar_finalize;
 
@@ -1488,6 +1593,12 @@ pidgin_webviewtoolbar_init(PidginWebViewToolbar *toolbar)
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *hbox = GTK_WIDGET(toolbar);
 
+	if (resources_ref_cnt++ == 0) {
+		color_parse_rgb = g_regex_new("^rgb\\s*\\(\\s*"
+			"([0-9]+),\\s*([0-9]+),\\s*([0-9]+)\\s*\\)",
+			G_REGEX_OPTIMIZE, 0, NULL);
+	}
+
 	pidgin_webviewtoolbar_create_actions(toolbar);
 	pidgin_webviewtoolbar_create_wide_view(toolbar);
 	pidgin_webviewtoolbar_create_lean_view(toolbar);
@@ -1535,7 +1646,7 @@ pidgin_webviewtoolbar_get_type(void)
 			sizeof(PidginWebViewToolbarClass),
 			NULL,
 			NULL,
-			(GClassInitFunc)pidgin_webviewtoolbar_class_init,
+			pidgin_webviewtoolbar_class_init,
 			NULL,
 			NULL,
 			sizeof(PidginWebViewToolbar),
