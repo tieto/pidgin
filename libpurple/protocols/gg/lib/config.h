@@ -84,3 +84,6 @@
 /* Defined if libgadu is GPL compliant (was not linked with OpenSSL or any
  * other non-GPL compliant library support). */
 #define GG_CONFIG_IS_GPL_COMPLIANT
+
+/* Defined if libgadu uses system defalt trusted CAs. */
+#define GG_CONFIG_SSL_SYSTEM_TRUST

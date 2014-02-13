@@ -1297,7 +1297,7 @@ if test "x$gadu_libs" != "xyes"; then
 		AC_DEFINE(HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST, 1, [gnutls contains the gnutls_certificate_set_x509_system_trust function])
 	fi
 	if test "x$gg_gnutls_sts" != "x"; then
-		AC_DEFINE_UNQUOTED(GG_CONFIG_SSL_SYSTEM_TRUST, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
+		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
 	fi
 
 fi
