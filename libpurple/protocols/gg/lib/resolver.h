@@ -19,8 +19,9 @@
 #ifndef LIBGADU_RESOLVER_H
 #define LIBGADU_RESOLVER_H
 
-#include "compat.h"
+#include "network.h"
 
-int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *count, int pthread);
+int gg_gethostbyname_real(const char *hostname, struct in_addr **result, unsigned int *count, int pthread);
+int gg_resolver_recv(int fd, void *buf, size_t len);
 
 #endif /* LIBGADU_RESOLVER_H */

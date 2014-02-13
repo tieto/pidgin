@@ -5,9 +5,7 @@
 /* libpurple's config */
 #include <config.h>
 
-#define GGP_QUOTE(x) GGP_QUOTE2(x)
-#define GGP_QUOTE2(x) #x
-#define GG_LIBGADU_VERSION GGP_QUOTE(GG_INTERNAL_LIBGADU_VERSION)
+#define GG_LIBGADU_VERSION "1.12.0-rc2"
 
 /* Defined if libgadu was compiled for bigendian machine. */
 #undef GG_CONFIG_BIGENDIAN
@@ -79,3 +77,17 @@
 #ifdef HAVE_SYS_TYPES_H
 #  define GG_CONFIG_HAVE_SYS_TYPES_H
 #endif
+
+/* Defined if this machine has uint64_t. */
+#define GG_CONFIG_HAVE_UINT64_T
+
+/* Defined if libgadu is GPL compliant (was not linked with OpenSSL or any
+ * other non-GPL compliant library support). */
+#define GG_CONFIG_IS_GPL_COMPLIANT
+
+/* Define to 1 if you have the `gnutls_certificate_set_x509_system_trust'
+ * function. */
+#define HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST
+
+/* Defined if libgadu uses system defalt trusted CAs */
+#define GG_CONFIG_SSL_SYSTEM_TRUST

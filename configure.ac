@@ -1177,14 +1177,14 @@ AC_ARG_WITH(gadu-includes, [AS_HELP_STRING([--with-gadu-includes=DIR], [compile 
 AC_ARG_WITH(gadu-libs, [AS_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
-GADU_LIBGADU_VERSION=1.11.2
+GADU_LIBGADU_MIN_VERSION=1.11.2
 if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
 	gadu_manual_check="yes"
 else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= $GADU_LIBGADU_VERSION], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= $GADU_LIBGADU_MIN_VERSION], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1253,7 +1253,7 @@ if test "x$gadu_libs" = "xyes" -a "x$gadu_manual_check" = "xyes"; then
 		AC_MSG_RESULT(no)
 		echo
 		echo "Your supplied copy of libgadu is too old."
-		echo "Install version $GADU_LIBGADU_VERSION or newer."
+		echo "Install version $GADU_LIBGADU_MIN_VERSION or newer."
 		echo "Then rerun this ./configure"
 		echo
 		echo "Falling back to using our own copy of libgadu"
@@ -1283,7 +1283,6 @@ fi
 
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
-AC_SUBST(GADU_LIBGADU_VERSION)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
