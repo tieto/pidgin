@@ -383,6 +383,9 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	cairo_t *cr;
 	GtkAllocation allocation;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkRGBA white = {1.0, 1.0, 1.0, 1.0};
+#endif
 
 	if (gtkwb->priv->cr)
 		cairo_destroy(gtkwb->priv->cr);
@@ -394,7 +397,11 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 	gtkwb->priv->surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24,
 		allocation.width, allocation.height);
 	gtkwb->priv->cr = cr = cairo_create(gtkwb->priv->surface);
+#if GTK_CHECK_VERSION(3,0,0)
+	gdk_cairo_set_source_rgba(cr, &white);
+#else
 	gdk_cairo_set_source_color(cr, &gtk_widget_get_style(widget)->white);
+#endif
 	cairo_rectangle(cr, 0, 0, allocation.width, allocation.height);
 	cairo_fill(cr);
 
@@ -632,11 +639,22 @@ static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int 
 	GtkWidget *widget = gtkwb->drawing_area;
 	cairo_t *gfx_con = gtkwb->priv->cr;
 	GdkColor col;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkRGBA rgba;
+#endif
 
 	/* Interpret and convert color */
 	pidgin_whiteboard_rgb24_to_rgb48(color, &col);
 
+#if GTK_CHECK_VERSION(3,0,0)
+	rgba.red = col.red / 0xffff;
+	rgba.green = col.green / 0xffff;
+	rgba.blue = col.blue / 0xffff;
+	rgba.alpha = 1.0;
+	gdk_cairo_set_source_rgba(gfx_con, &rgba);
+#else
 	gdk_cairo_set_source_color(gfx_con, &col);
+#endif
 
 	/* Draw a circle */
 	cairo_arc(gfx_con,
@@ -739,11 +757,18 @@ static void pidgin_whiteboard_clear(PurpleWhiteboard *wb)
 	GtkWidget *drawing_area = gtkwb->drawing_area;
 	cairo_t *cr = gtkwb->priv->cr;
 	GtkAllocation allocation;
+#if GTK_CHECK_VERSION(3,0,0)
+	GdkRGBA white = {1.0, 1.0, 1.0, 1.0};
+#endif
 
 	gtk_widget_get_allocation(drawing_area, &allocation);
 
+#if GTK_CHECK_VERSION(3,0,0)
+	gdk_cairo_set_source_rgba(cr, &white);
+#else
 	gdk_cairo_set_source_color(cr,
 		&gtk_widget_get_style(drawing_area)->white);
+#endif
 	cairo_rectangle(cr, 0, 0, allocation.width, allocation.height);
 	cairo_fill(cr);
 
