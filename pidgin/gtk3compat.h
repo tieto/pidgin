@@ -32,6 +32,79 @@
  */
 
 #include <gtk/gtk.h>
+#include <math.h>
+
+#if !GTK_CHECK_VERSION(3,4,0)
+
+#define gtk_color_chooser_dialog_new(title, parent) \
+	gtk_color_selection_dialog_new(title)
+#define GTK_COLOR_CHOOSER(widget) (GTK_WIDGET(widget))
+
+static inline void
+gtk_color_chooser_set_use_alpha(GtkWidget *widget, gboolean use_alpha)
+{
+	if (GTK_IS_COLOR_BUTTON(widget)) {
+		gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(widget),
+			use_alpha);
+	}
+}
+
+static inline void
+pidgin_color_chooser_set_rgb(GtkWidget *widget, const GdkColor *color)
+{
+	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) {
+		GtkWidget *colorsel;
+
+		colorsel = gtk_color_selection_dialog_get_color_selection(
+			GTK_COLOR_SELECTION_DIALOG(widget));
+		gtk_color_selection_set_current_color(
+			GTK_COLOR_SELECTION(colorsel), color);
+	} else
+		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), color);
+}
+
+static inline void
+pidgin_color_chooser_get_rgb(GtkWidget *widget, GdkColor *color)
+{
+	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) {
+		GtkWidget *colorsel;
+
+		colorsel = gtk_color_selection_dialog_get_color_selection(
+			GTK_COLOR_SELECTION_DIALOG(widget));
+		gtk_color_selection_get_current_color(
+			GTK_COLOR_SELECTION(colorsel), color);
+	} else
+		gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), color);
+}
+
+#else
+
+static inline void
+pidgin_color_chooser_set_rgb(GtkColorChooser *chooser, const GdkColor *rgb)
+{
+	GdkRGBA rgba;
+
+	rgba.red = rgb->red / 65535.0;
+	rgba.green = rgb->green / 65535.0;
+	rgba.blue = rgb->blue / 65535.0;
+	rgba.alpha = 1.0;
+
+	gtk_color_chooser_set_rgba(chooser, &rgba);
+}
+
+static inline void
+pidgin_color_chooser_get_rgb(GtkColorChooser *chooser, GdkColor *rgb)
+{
+	GdkRGBA rgba;
+
+	gtk_color_chooser_get_rgba(chooser, &rgba);
+	rgb->red = (int)round(rgba.red * 65535.0);
+	rgb->green = (int)round(rgba.green * 65535.0);
+	rgb->blue = (int)round(rgba.blue * 65535.0);
+}
+
+#endif /* 3.4.0 and gtk_color_chooser_ */
+
 
 #if !GTK_CHECK_VERSION(3,2,0)
 
@@ -59,6 +132,29 @@ static inline GtkWidget * gtk_font_chooser_dialog_new(const gchar *title,
 #ifdef GDK_WINDOWING_QUARTZ
 #define GDK_IS_QUARTZ_WINDOW(window) TRUE
 #endif
+
+static inline GdkPixbuf *
+gdk_pixbuf_get_from_surface(cairo_surface_t *surface, gint src_x, gint src_y,
+	gint width, gint height)
+{
+	GdkPixmap *pixmap;
+	GdkPixbuf *pixbuf;
+	cairo_t *cr;
+
+	pixmap = gdk_pixmap_new(NULL, width, height, 24);
+
+	cr = gdk_cairo_create(pixmap);
+	cairo_set_source_surface(cr, surface, -src_x, -src_y);
+	cairo_paint(cr);
+	cairo_destroy(cr);
+
+	pixbuf = gdk_pixbuf_get_from_drawable(NULL, pixmap,
+		gdk_drawable_get_colormap(pixmap), 0, 0, 0, 0, width, height);
+
+	g_object_unref(pixmap);
+
+	return pixbuf;
+}
 
 static inline GtkWidget *
 gtk_box_new(GtkOrientation orientation, gint spacing)

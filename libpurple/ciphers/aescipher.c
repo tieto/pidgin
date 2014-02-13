@@ -41,7 +41,7 @@
 #  include <pk11pub.h>
 #  include <prerror.h>
 #else
-#  error "No GnuTLS or NSS support"
+#  warning "No GnuTLS or NSS support"
 #endif
 
 /* 128bit */
@@ -438,7 +438,8 @@ purple_aes_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 #elif defined(PURPLE_AES_USE_NSS)
 	encrypt_func = purple_aes_cipher_nss_encrypt;
 #else
-#  error "No matching encrypt_func"
+	purple_debug_error("cipher-aes", "No matching encrypt_func\n");
+	return -1;
 #endif
 
 	succ = encrypt_func(input_padded, output, out_len, priv->iv,
@@ -482,7 +483,8 @@ purple_aes_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 #elif defined(PURPLE_AES_USE_NSS)
 	decrypt_func = purple_aes_cipher_nss_decrypt;
 #else
-#  error "No matching encrypt_func"
+	purple_debug_error("cipher-aes", "No matching decrypt_func\n");
+	return -1;
 #endif
 
 	succ = decrypt_func(input, output, in_len, priv->iv, priv->key,

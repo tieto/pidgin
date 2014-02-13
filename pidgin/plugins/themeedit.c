@@ -60,54 +60,43 @@ close_blist_theme(GtkWidget *w, GtkWidget *window)
 }
 
 static void
-theme_color_selected(GtkDialog *dialog, gint response, const char *prop)
+theme_color_selected(GtkColorButton *button, const char *prop)
 {
-	if (response == GTK_RESPONSE_OK) {
-		GtkWidget *colorsel;
-		GdkColor color;
-		PidginBlistTheme *theme;
+	GdkColor color;
+	PidginBlistTheme *theme;
 
-		colorsel =
-			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog));
-		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(colorsel), &color);
+	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(button), &color);
 
-		theme = pidgin_blist_get_theme();
+	theme = pidgin_blist_get_theme();
 
-		if (prop_type_is_color(theme, prop)) {
-			g_object_set(G_OBJECT(theme), prop, &color, NULL);
+	if (prop_type_is_color(theme, prop)) {
+		g_object_set(G_OBJECT(theme), prop, &color, NULL);
+	} else {
+		PidginThemeFont *font = NULL;
+		g_object_get(G_OBJECT(theme), prop, &font, NULL);
+		if (!font) {
+			font = pidgin_theme_font_new(NULL, &color);
+			g_object_set(G_OBJECT(theme), prop, font, NULL);
+			pidgin_theme_font_free(font);
 		} else {
-			PidginThemeFont *font = NULL;
-			g_object_get(G_OBJECT(theme), prop, &font, NULL);
-			if (!font) {
-				font = pidgin_theme_font_new(NULL, &color);
-				g_object_set(G_OBJECT(theme), prop, font, NULL);
-				pidgin_theme_font_free(font);
-			} else {
-				pidgin_theme_font_set_color(font, &color);
-			}
+			pidgin_theme_font_set_color(font, &color);
 		}
-		pidgin_blist_set_theme(theme);
 	}
-
-	gtk_widget_destroy(GTK_WIDGET(dialog));
+	pidgin_blist_set_theme(theme);
 }
 
 static void
-theme_font_face_selected(GtkWidget *dialog, gint response, gpointer font)
+theme_font_face_selected(GtkFontButton *button, PidginThemeFont *font)
 {
-	if (response == GTK_RESPONSE_OK || response == GTK_RESPONSE_APPLY) {
-		const char *fontname = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(dialog));
-		pidgin_theme_font_set_font_face(font, fontname);
-		pidgin_blist_refresh(purple_blist_get_buddy_list());
-	}
-	gtk_widget_destroy(dialog);
+	const char *fontname = gtk_font_button_get_font_name(button);
+	pidgin_theme_font_set_font_face(font, fontname);
+	pidgin_blist_refresh(purple_blist_get_buddy_list());
 }
 
-static void
-theme_font_select_face(GtkWidget *widget, gpointer prop)
+static GtkWidget *
+theme_font_select_face_widget(const char *prop)
 {
-	GtkWindow *window;
-	GtkWidget *dialog;
+	GtkWidget *widget;
 	PidginBlistTheme *theme;
 	PidginThemeFont *font = NULL;
 	const char *face;
@@ -123,19 +112,20 @@ theme_font_select_face(GtkWidget *widget, gpointer prop)
 	}
 
 	face = pidgin_theme_font_get_font_face(font);
-	window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
-	dialog = gtk_font_chooser_dialog_new(_("Select Font"), window);
+	widget = gtk_font_button_new();
+	gtk_font_button_set_title(GTK_FONT_BUTTON(widget), _("Select Font"));
 	if (face && *face)
-		gtk_font_chooser_set_font(GTK_FONT_CHOOSER(dialog), face);
-	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_font_face_selected),
+		gtk_font_button_set_font_name(GTK_FONT_BUTTON(widget), face);
+	g_signal_connect(G_OBJECT(widget), "font-set", G_CALLBACK(theme_font_face_selected),
 			font);
-	gtk_widget_show_all(dialog);
+
+	return widget;
 }
 
-static void
-theme_color_select(GtkWidget *widget, gpointer prop)
+static GtkWidget *
+theme_color_select_widget(const char *prop)
 {
-	GtkWidget *dialog;
+	GtkWidget *widget;
 	PidginBlistTheme *theme;
 	const GdkColor *color = NULL;
 
@@ -150,15 +140,15 @@ theme_color_select(GtkWidget *widget, gpointer prop)
 			color = pidgin_theme_font_get_color(pair);
 	}
 
-	dialog = gtk_color_selection_dialog_new(_("Select Color"));
+	widget = gtk_color_button_new();
+	gtk_color_button_set_title(GTK_COLOR_BUTTON(widget), _("Select Color"));
+	gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(widget), FALSE);
 	if (color)
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
-			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog))),
-			color);
-	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_color_selected),
-			prop);
+		pidgin_color_chooser_set_rgb(GTK_COLOR_CHOOSER(widget), color);
+	g_signal_connect(G_OBJECT(widget), "color-set",
+	                 G_CALLBACK(theme_color_selected), (gpointer)prop);
 
-	gtk_widget_show_all(dialog);
+	return widget;
 }
 
 static GtkWidget *
@@ -176,10 +166,7 @@ pidgin_theme_create_color_selector(const char *text, const char *blurb, const ch
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_set_tooltip_text(label, blurb);
 
-	color = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR,
-			PIDGIN_BUTTON_HORIZONTAL);
-	g_signal_connect(G_OBJECT(color), "clicked", G_CALLBACK(theme_color_select),
-			(gpointer)prop);
+	color = theme_color_select_widget(prop);
 	gtk_box_pack_start(GTK_BOX(hbox), color, FALSE, FALSE, 0);
 
 	return hbox;
@@ -200,16 +187,10 @@ pidgin_theme_create_font_selector(const char *text, const char *blurb, const cha
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_set_tooltip_text(label, blurb);
 
-	font = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT,
-			PIDGIN_BUTTON_HORIZONTAL);
-	g_signal_connect(G_OBJECT(font), "clicked", G_CALLBACK(theme_font_select_face),
-			(gpointer)prop);
+	font = theme_font_select_face_widget(prop);
 	gtk_box_pack_start(GTK_BOX(hbox), font, FALSE, FALSE, 0);
 
-	color = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR,
-			PIDGIN_BUTTON_HORIZONTAL);
-	g_signal_connect(G_OBJECT(color), "clicked", G_CALLBACK(theme_color_select),
-			(gpointer)prop);
+	color = theme_color_select_widget(prop);
 	gtk_box_pack_start(GTK_BOX(hbox), color, FALSE, FALSE, 0);
 
 	return hbox;

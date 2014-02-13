@@ -256,8 +256,10 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	purple_prefs_add_none("/plugins/gtk/X11/gestures");
 	purple_prefs_add_bool("/plugins/gtk/X11/gestures/visual", FALSE);
 
-	purple_prefs_connect_callback(plugin, "/plugins/gtk/X11/gestures/visual",
-								visual_pref_cb, NULL);
+	purple_prefs_connect_callback(plugin,
+		"/plugins/gtk/X11/gestures/visual", visual_pref_cb, NULL);
+	gstroke_set_draw_strokes(purple_prefs_get_bool(
+		"/plugins/gtk/X11/gestures/visual"));
 
 	for (l = purple_conversations_get_all(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;

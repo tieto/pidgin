@@ -3570,14 +3570,18 @@ pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPol
 		if (width != -1 || height != -1)
 			gtk_widget_set_size_request(sw, width, height);
 		if (child) {
+#if GTK_CHECK_VERSION(3,8,0)
+			gtk_container_add(GTK_CONTAINER(sw), child);
+#else
 #if GTK_CHECK_VERSION(3,0,0)
 			if (GTK_IS_SCROLLABLE(child))
 #else
 			if (GTK_WIDGET_GET_CLASS(child)->set_scroll_adjustments_signal)
-#endif
+#endif /* GTK_CHECK_VERSION(3,0,0) */
 				gtk_container_add(GTK_CONTAINER(sw), child);
 			else
 				gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), child);
+#endif /* GTK_CHECK_VERSION(3,8,0) */
 		}
 		return sw;
 	}
