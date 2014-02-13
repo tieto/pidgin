@@ -157,6 +157,14 @@
 #define purple_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
 #define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
 
+typedef union
+{
+	struct sockaddr sa;
+	struct sockaddr_in in;
+	struct sockaddr_in6 in6;
+	struct sockaddr_storage storage;
+} common_sockaddr_t;
+
 #define PURPLE_WEBSITE "http://pidgin.im/"
 #define PURPLE_DEVEL_WEBSITE "http://developer.pidgin.im/"
 
