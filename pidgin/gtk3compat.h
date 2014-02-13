@@ -38,31 +38,44 @@
 
 #define gtk_color_chooser_dialog_new(title, parent) \
 	gtk_color_selection_dialog_new(title)
-#define GTK_COLOR_CHOOSER(widget) (widget)
-#define gtk_color_chooser_set_use_alpha(widget, val) do { \
-	if (GTK_IS_COLOR_BUTTON(widget)) \
-		gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(widget), val); \
-} while (0)
-#define pidgin_color_chooser_set_rgb(widget, color) do { \
-	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) \
-		gtk_color_selection_set_current_color( \
-			GTK_COLOR_SELECTION( \
-				gtk_color_selection_dialog_get_color_selection( \
-					GTK_COLOR_SELECTION_DIALOG(widget))), \
-			color); \
-	else \
-		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), color); \
-} while (0)
-#define pidgin_color_chooser_get_rgb(widget, color) do { \
-	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) \
-		gtk_color_selection_get_current_color( \
-			GTK_COLOR_SELECTION( \
-				gtk_color_selection_dialog_get_color_selection( \
-					GTK_COLOR_SELECTION_DIALOG(widget))), \
-			color); \
-	else \
-		gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), color); \
-} while (0)
+#define GTK_COLOR_CHOOSER(widget) (GTK_WIDGET(widget))
+
+static inline void
+gtk_color_chooser_set_use_alpha(GtkWidget *widget, gboolean use_alpha)
+{
+	if (GTK_IS_COLOR_BUTTON(widget)) {
+		gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(widget),
+			use_alpha);
+	}
+}
+
+static inline void
+pidgin_color_chooser_set_rgb(GtkWidget *widget, const GdkColor *color)
+{
+	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) {
+		GtkWidget *colorsel;
+
+		colorsel = gtk_color_selection_dialog_get_color_selection(
+			GTK_COLOR_SELECTION_DIALOG(widget));
+		gtk_color_selection_set_current_color(
+			GTK_COLOR_SELECTION(colorsel), color);
+	} else
+		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), color);
+}
+
+static inline void
+pidgin_color_chooser_get_rgb(GtkWidget *widget, GdkColor *color)
+{
+	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) {
+		GtkWidget *colorsel;
+
+		colorsel = gtk_color_selection_dialog_get_color_selection(
+			GTK_COLOR_SELECTION_DIALOG(widget));
+		gtk_color_selection_get_current_color(
+			GTK_COLOR_SELECTION(colorsel), color);
+	} else
+		gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), color);
+}
 
 #else
 
