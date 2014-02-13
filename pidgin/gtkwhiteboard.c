@@ -113,7 +113,7 @@ static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb);
 
 static void pidgin_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color);
 
-static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb);
+static void color_selected(GtkColorButton *button, PidginWhiteboard *gtkwb);
 
 /******************************************************************************
  * Globals
@@ -169,6 +169,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	GtkWidget *clear_button;
 	GtkWidget *save_button;
 	GtkWidget *color_button;
+	GdkColor color;
 
 	PidginWhiteboard *gtkwb = g_new0(PidginWhiteboard, 1);
 	gtkwb->priv = g_new0(PidginWhiteboardPrivate, 1);
@@ -272,11 +273,16 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 					 G_CALLBACK(pidgin_whiteboard_button_save_press), gtkwb);
 
 	/* Add a color selector */
-	color_button = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
+	color_button = gtk_color_button_new();
 	gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(color_button);
-	g_signal_connect(G_OBJECT(color_button), "clicked",
-					 G_CALLBACK(color_select_dialog), gtkwb);
+
+	gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(color_button), FALSE);
+	pidgin_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
+	pidgin_color_chooser_set_rgb(GTK_COLOR_CHOOSER(color_button), &color);
+
+	g_signal_connect(G_OBJECT(color_button), "color-set",
+	                 G_CALLBACK(color_selected), gtkwb);
 
 	/* Make all this (window) visible */
 	gtk_widget_show(window);
@@ -867,20 +873,14 @@ static void pidgin_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
 }
 
 static void
-color_selected(GtkDialog *dialog, gint response, gpointer _gtkwb)
+color_selected(GtkColorButton *button, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
-	PidginWhiteboard *gtkwb = _gtkwb;
 	PurpleWhiteboard *wb = gtkwb->wb;
 	int old_size, old_color;
 	int new_color;
 
-	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(dialog), &color);
-	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", NULL);
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-
-	if (response != GTK_RESPONSE_OK)
-		return;
+	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(button), &color);
 
 	new_color = (color.red & 0xFF00) << 8;
 	new_color |= (color.green & 0xFF00);
@@ -890,21 +890,3 @@ color_selected(GtkDialog *dialog, gint response, gpointer _gtkwb)
 	purple_whiteboard_send_brush(wb, old_size, new_color);
 }
 
-static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
-{
-	GdkColor color;
-	GtkWidget *dialog;
-
-	dialog = gtk_color_chooser_dialog_new(_("Select color"),
-		GTK_WINDOW(gtk_widget_get_ancestor(widget, GTK_TYPE_WINDOW)));
-	gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dialog), FALSE);
-	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", dialog);
-
-	g_signal_connect(G_OBJECT(dialog), "response",
-		G_CALLBACK(color_selected), gtkwb);
-
-	pidgin_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
-	pidgin_color_chooser_set_rgb(GTK_COLOR_CHOOSER(dialog), &color);
-
-	gtk_widget_show_all(GTK_WIDGET(dialog));
-}
