@@ -631,8 +631,8 @@ static void
 _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition condition)
 {
 	BonjourJabber *jdata = data;
-	struct sockaddr_storage their_addr; /* connector's address information */
-	socklen_t sin_size = sizeof(struct sockaddr_storage);
+	common_sockaddr_t their_addr; /* connector's address information */
+	socklen_t sin_size = sizeof(common_sockaddr_t);
 	int client_socket;
 	int flags;
 #ifdef HAVE_INET_NTOP
@@ -649,7 +649,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	memset(&their_addr, 0, sin_size);
 
-	if ((client_socket = accept(server_socket, (struct sockaddr*)&their_addr, &sin_size)) == -1)
+	if ((client_socket = accept(server_socket, &their_addr.sa, &sin_size)) == -1)
 		return;
 
 	flags = fcntl(client_socket, F_GETFL);
@@ -660,18 +660,17 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	/* Look for the buddy that has opened the conversation and fill information */
 #ifdef HAVE_INET_NTOP
-	if (their_addr.ss_family == AF_INET6) {
-		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in6 *)&their_addr)->sin6_addr,
-			addrstr, sizeof(addrstr));
+	if (their_addr.sa.sa_family == AF_INET6) {
+		address_text = inet_ntop(their_addr.sa.sa_family,
+			&their_addr.in6.sin6_addr, addrstr, sizeof(addrstr));
 
-		append_iface_if_linklocal(addrstr,
-			((struct sockaddr_in6 *)&their_addr)->sin6_scope_id);
+		append_iface_if_linklocal(addrstr, their_addr.in6.sin6_scope_id);
+	} else {
+		address_text = inet_ntop(their_addr.sa.sa_family,
+			&their_addr.in.sin_addr, addrstr, sizeof(addrstr));
 	}
-	else
-		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in *)&their_addr)->sin_addr,
-			addrstr, sizeof(addrstr));
 #else
-	address_text = inet_ntoa(((struct sockaddr_in *)&their_addr)->sin_addr);
+	address_text = inet_ntoa(their_addr.in.sin_addr);
 #endif
 	purple_debug_info("bonjour", "Received incoming connection from %s.\n", address_text);
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
