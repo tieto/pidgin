@@ -53,7 +53,7 @@
 	else \
 		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), color); \
 } while (0)
-#define pidgin_color_chooser_get_rgb(chooser, color) do { \
+#define pidgin_color_chooser_get_rgb(widget, color) do { \
 	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) \
 		gtk_color_selection_get_current_color( \
 			GTK_COLOR_SELECTION( \
