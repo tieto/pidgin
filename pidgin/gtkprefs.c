@@ -3622,77 +3622,6 @@ get_vv_element_plugins(const gchar **plugins)
 	return g_list_reverse(ret);
 }
 
-static void
-vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
-                     gconstpointer value, gpointer data)
-{
-	GtkWidget *vbox = data;
-	GtkSizeGroup *sg;
-	GtkWidget *widget;
-	gchar *pref;
-	GList *devices;
-
-	sg = g_object_get_data(G_OBJECT(vbox), "size-group");
-	widget = g_object_get_data(G_OBJECT(vbox), "device-hbox");
-	gtk_widget_destroy(widget);
-
-	pref = g_strdup(name);
-	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
-	devices = get_vv_element_devices(value);
-	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(pref, g_list_next(devices)->data);
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
-	                                         PURPLE_PREF_STRING, pref, devices);
-	g_list_free_full(devices, g_free);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
-
-	g_object_set_data(G_OBJECT(vbox), "device-hbox",
-	                  gtk_widget_get_parent(widget));
-	g_signal_connect_swapped(widget, "destroy", G_CALLBACK(g_free), pref);
-}
-
-static void
-make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
-              const gchar *name, const gchar **plugin_strs,
-              const gchar *plugin_pref, const gchar *device_pref)
-{
-	GtkWidget *vbox, *widget;
-	GList *plugins, *devices;
-
-	vbox = pidgin_make_frame(parent, name);
-
-	/* Setup plugin preference */
-	plugins = get_vv_element_plugins(plugin_strs);
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Plugin"),
-	                                         PURPLE_PREF_STRING, plugin_pref,
-	                                         plugins);
-	g_list_free(plugins);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
-
-	/* Setup device preference */
-	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
-	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
-	                                         PURPLE_PREF_STRING, device_pref,
-	                                         devices);
-	g_list_free_full(devices, g_free);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
-
-	widget = gtk_widget_get_parent(widget);
-	g_object_set_data(G_OBJECT(vbox), "size-group", sg);
-	g_object_set_data(G_OBJECT(vbox), "device-hbox", widget);
-	purple_prefs_connect_callback(vbox, plugin_pref, vv_plugin_changed_cb,
-	                              vbox);
-	g_signal_connect_swapped(vbox, "destroy",
-	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
-}
-
 static GstElement *
 create_test_element(PurpleMediaElementType type)
 {
@@ -4068,6 +3997,77 @@ make_video_test(GtkWidget *vbox)
 
 	g_signal_connect(test, "toggled",
 	                 G_CALLBACK(toggle_video_test_cb), NULL);
+}
+
+static void
+vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
+                     gconstpointer value, gpointer data)
+{
+	GtkWidget *vbox = data;
+	GtkSizeGroup *sg;
+	GtkWidget *widget;
+	gchar *pref;
+	GList *devices;
+
+	sg = g_object_get_data(G_OBJECT(vbox), "size-group");
+	widget = g_object_get_data(G_OBJECT(vbox), "device-hbox");
+	gtk_widget_destroy(widget);
+
+	pref = g_strdup(name);
+	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
+	devices = get_vv_element_devices(value);
+	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
+	                       (GCompareFunc)strcmp) == NULL)
+		purple_prefs_set_string(pref, g_list_next(devices)->data);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
+	                                         PURPLE_PREF_STRING, pref, devices);
+	g_list_free_full(devices, g_free);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	g_object_set_data(G_OBJECT(vbox), "device-hbox",
+	                  gtk_widget_get_parent(widget));
+	g_signal_connect_swapped(widget, "destroy", G_CALLBACK(g_free), pref);
+}
+
+static void
+make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
+              const gchar *name, const gchar **plugin_strs,
+              const gchar *plugin_pref, const gchar *device_pref)
+{
+	GtkWidget *vbox, *widget;
+	GList *plugins, *devices;
+
+	vbox = pidgin_make_frame(parent, name);
+
+	/* Setup plugin preference */
+	plugins = get_vv_element_plugins(plugin_strs);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Plugin"),
+	                                         PURPLE_PREF_STRING, plugin_pref,
+	                                         plugins);
+	g_list_free(plugins);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	/* Setup device preference */
+	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
+	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
+	                       (GCompareFunc)strcmp) == NULL)
+		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
+	                                         PURPLE_PREF_STRING, device_pref,
+	                                         devices);
+	g_list_free_full(devices, g_free);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	widget = gtk_widget_get_parent(widget);
+	g_object_set_data(G_OBJECT(vbox), "size-group", sg);
+	g_object_set_data(G_OBJECT(vbox), "device-hbox", widget);
+	purple_prefs_connect_callback(vbox, plugin_pref, vv_plugin_changed_cb,
+	                              vbox);
+	g_signal_connect_swapped(vbox, "destroy",
+	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
 }
 
 static GtkWidget *
