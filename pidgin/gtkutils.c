@@ -66,6 +66,11 @@
 
 #include "gtk3compat.h"
 
+
+/******************************************************************************
+ * Enums
+ *****************************************************************************/
+
 enum {
 	AOP_ICON_COLUMN,
 	AOP_NAME_COLUMN,
@@ -73,13 +78,73 @@ enum {
 	AOP_COLUMN_COUNT
 };
 
+enum {
+	DND_FILE_TRANSFER,
+	DND_IM_IMAGE,
+	DND_BUDDY_ICON
+};
+
+enum {
+	COMPLETION_DISPLAYED_COLUMN,  /* displayed completion value */
+	COMPLETION_BUDDY_COLUMN,      /* buddy name */
+	COMPLETION_NORMALIZED_COLUMN, /* UTF-8 normalized & casefolded buddy name */
+	COMPLETION_COMPARISON_COLUMN, /* UTF-8 normalized & casefolded value for comparison */
+	COMPLETION_ACCOUNT_COLUMN,    /* account */
+	COMPLETION_COLUMN_COUNT
+};
+
+/******************************************************************************
+ * Structs
+ *****************************************************************************/
+
 typedef struct {
 	GtkTreeModel *model;
 	gint default_item;
 } AopMenu;
 
+typedef struct {
+	char *filename;
+	PurpleAccount *account;
+	char *who;
+} _DndData;
+
+typedef struct
+{
+	GtkWidget *entry;
+	GtkWidget *accountopt;
+
+	PidginFilterBuddyCompletionEntryFunc filter_func;
+	gpointer filter_func_user_data;
+
+	GtkListStore *store;
+} PidginCompletionData;
+
+struct _icon_chooser {
+	GtkWidget *icon_filesel;
+	GtkWidget *icon_preview;
+	GtkWidget *icon_text;
+
+	void (*callback)(const char*,gpointer);
+	gpointer data;
+};
+
+struct _old_button_clicked_cb_data
+{
+	PidginUtilMiniDialogCallback cb;
+	gpointer data;
+};
+
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+
 static guint accels_save_timer = 0;
 static GSList *registered_url_handlers = NULL;
+static GSList *minidialogs = NULL;
+
+/******************************************************************************
+ * Code
+ *****************************************************************************/
 
 static gboolean
 url_clicked_idle_cb(gpointer data)
@@ -1336,18 +1401,6 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 }
 
-enum {
-	DND_FILE_TRANSFER,
-	DND_IM_IMAGE,
-	DND_BUDDY_ICON
-};
-
-typedef struct {
-	char *filename;
-	PurpleAccount *account;
-	char *who;
-} _DndData;
-
 static void dnd_image_ok_callback(_DndData *data, int choice)
 {
 	const gchar *shortname;
@@ -1798,26 +1851,6 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 	return menuitem;
 }
 
-enum {
-	COMPLETION_DISPLAYED_COLUMN,  /* displayed completion value */
-	COMPLETION_BUDDY_COLUMN,      /* buddy name */
-	COMPLETION_NORMALIZED_COLUMN, /* UTF-8 normalized & casefolded buddy name */
-	COMPLETION_COMPARISON_COLUMN, /* UTF-8 normalized & casefolded value for comparison */
-	COMPLETION_ACCOUNT_COLUMN,    /* account */
-	COMPLETION_COLUMN_COUNT
-};
-
-typedef struct
-{
-	GtkWidget *entry;
-	GtkWidget *accountopt;
-
-	PidginFilterBuddyCompletionEntryFunc filter_func;
-	gpointer filter_func_user_data;
-
-	GtkListStore *store;
-} PidginCompletionData;
-
 static gboolean buddyname_completion_match_func(GtkEntryCompletion *completion,
 		const gchar *key, GtkTreeIter *iter, gpointer user_data)
 {
@@ -2136,15 +2169,6 @@ void pidgin_clear_cursor(GtkWidget *widget)
 
 	gdk_window_set_cursor(gtk_widget_get_window(widget), NULL);
 }
-
-struct _icon_chooser {
-	GtkWidget *icon_filesel;
-	GtkWidget *icon_preview;
-	GtkWidget *icon_text;
-
-	void (*callback)(const char*,gpointer);
-	gpointer data;
-};
 
 static void
 icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *dialog)
@@ -2480,8 +2504,6 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 #endif
 }
 
-static GSList *minidialogs = NULL;
-
 static void *
 pidgin_utils_get_handle(void)
 {
@@ -2505,12 +2527,6 @@ static void alert_killed_cb(GtkWidget *widget)
 {
 	minidialogs = g_slist_remove(minidialogs, widget);
 }
-
-struct _old_button_clicked_cb_data
-{
-	PidginUtilMiniDialogCallback cb;
-	gpointer data;
-};
 
 static void
 old_mini_dialog_button_clicked_cb(PidginMiniDialog *mini_dialog,
