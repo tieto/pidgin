@@ -1281,7 +1281,12 @@ python_script_selected(GntFileSel *fs, const char *path, const char *f, gpointer
 {
 	char *dir = g_path_get_dirname(path);
 	FILE *file = fopen(path, "r");
-	PyObject *pp = PySys_GetObject("path"), *dirobj = PyString_FromString(dir);
+	PyObject *pp = PySys_GetObject("path");
+#if PY_MAJOR_VERSION >= 3
+	PyObject *dirobj = PyUnicode_FromString(dir);
+#else
+	PyObject *dirobj = PyString_FromString(dir);
+#endif
 
 	PyList_Insert(pp, 0, dirobj);
 	Py_DECREF(dirobj);
