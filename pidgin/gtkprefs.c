@@ -179,13 +179,12 @@ static const gchar *VIDEO_SINK_PLUGINS[] = {
 	NULL
 };
 
-typedef struct {
-	GtkWidget *level;
-	GtkWidget *threshold;
-	GtkWidget *volume;
-} BusCbCtx;
-
+static GtkWidget *voice_level;
+static GtkWidget *voice_threshold;
+static GtkWidget *voice_volume;
 static GstElement *voice_pipeline;
+
+static GtkWidget *video_drawing_area;
 static GstElement *video_pipeline;
 
 #endif
@@ -561,6 +560,13 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	keyring_page_cleanup();
 
 	sample_webview = NULL;
+
+#if USE_VV
+	voice_level = NULL;
+	voice_threshold = NULL;
+	voice_volume = NULL;
+	video_drawing_area = NULL;
+#endif
 
 	notebook_page = 0;
 	prefsnotebook = NULL;
@@ -3616,77 +3622,6 @@ get_vv_element_plugins(const gchar **plugins)
 	return g_list_reverse(ret);
 }
 
-static void
-vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
-                     gconstpointer value, gpointer data)
-{
-	GtkWidget *vbox = data;
-	GtkSizeGroup *sg;
-	GtkWidget *widget;
-	gchar *pref;
-	GList *devices;
-
-	sg = g_object_get_data(G_OBJECT(vbox), "size-group");
-	widget = g_object_get_data(G_OBJECT(vbox), "device-hbox");
-	gtk_widget_destroy(widget);
-
-	pref = g_strdup(name);
-	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
-	devices = get_vv_element_devices(value);
-	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(pref, g_list_next(devices)->data);
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
-	                                         PURPLE_PREF_STRING, pref, devices);
-	g_list_free_full(devices, g_free);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
-
-	g_object_set_data(G_OBJECT(vbox), "device-hbox",
-	                  gtk_widget_get_parent(widget));
-	g_signal_connect_swapped(widget, "destroy", G_CALLBACK(g_free), pref);
-}
-
-static void
-make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
-              const gchar *name, const gchar **plugin_strs,
-              const gchar *plugin_pref, const gchar *device_pref)
-{
-	GtkWidget *vbox, *widget;
-	GList *plugins, *devices;
-
-	vbox = pidgin_make_frame(parent, name);
-
-	/* Setup plugin preference */
-	plugins = get_vv_element_plugins(plugin_strs);
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Plugin"),
-	                                         PURPLE_PREF_STRING, plugin_pref,
-	                                         plugins);
-	g_list_free(plugins);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
-
-	/* Setup device preference */
-	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
-	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
-	                                         PURPLE_PREF_STRING, device_pref,
-	                                         devices);
-	g_list_free_full(devices, g_free);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
-
-	widget = gtk_widget_get_parent(widget);
-	g_object_set_data(G_OBJECT(vbox), "size-group", sg);
-	g_object_set_data(G_OBJECT(vbox), "device-hbox", widget);
-	purple_prefs_connect_callback(vbox, plugin_pref, vv_plugin_changed_cb,
-	                              vbox);
-	g_signal_connect_swapped(vbox, "destroy",
-	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
-}
-
 static GstElement *
 create_test_element(PurpleMediaElementType type)
 {
@@ -3736,13 +3671,14 @@ create_voice_pipeline(void)
 }
 
 static void
-on_volume_change_cb(GtkWidget *w, gdouble value, GstBin *pipeline)
+on_volume_change_cb(GtkWidget *w, gdouble value, gpointer data)
 {
 	GstElement *volume;
 
-	g_return_if_fail(pipeline != NULL);
+	if (!voice_pipeline)
+		return;
 
-	volume = gst_bin_get_by_name(pipeline, "volume");
+	volume = gst_bin_get_by_name(GST_BIN(voice_pipeline), "volume");
 	g_object_set(volume, "volume",
 	             gtk_scale_button_get_value(GTK_SCALE_BUTTON(w)) * 10.0, NULL);
 }
@@ -3769,7 +3705,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 static gboolean
-gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
+gst_bus_cb(GstBus *bus, GstMessage *msg, gpointer data)
 {
 	if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_ELEMENT &&
 		gst_structure_has_name(gst_message_get_structure(msg), "level")) {
@@ -3783,13 +3719,13 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
 			GstElement *valve;
 
 			percent = gst_msg_db_to_percent(msg, "rms");
-			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(ctx->level), percent);
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(voice_level), percent);
 
 			percent = gst_msg_db_to_percent(msg, "decay");
-			threshold = gtk_range_get_value(GTK_RANGE(ctx->threshold)) / 100.0;
+			threshold = gtk_range_get_value(GTK_RANGE(voice_threshold)) / 100.0;
 			valve = gst_bin_get_by_name(GST_BIN(GST_ELEMENT_PARENT(src)), "valve");
 			g_object_set(valve, "drop", (percent < threshold), NULL);
-			g_object_set(ctx->level, "text",
+			g_object_set(voice_level, "text",
 			             (percent < threshold) ? _("DROP") : " ", NULL);
 		}
 
@@ -3811,30 +3747,35 @@ voice_test_destroy_cb(GtkWidget *w, gpointer data)
 }
 
 static void
-toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
+enable_voice_test(void)
 {
-	BusCbCtx *ctx = data;
 	GstBus *bus;
 
-	if (gtk_toggle_button_get_active(test)) {
-		gtk_widget_set_sensitive(ctx->level, TRUE);
-		voice_pipeline = create_voice_pipeline();
-		bus = gst_pipeline_get_bus(GST_PIPELINE(voice_pipeline));
-		gst_bus_add_signal_watch(bus);
-		g_signal_connect(bus, "message", G_CALLBACK(gst_bus_cb), ctx);
-		gst_object_unref(bus);
+	voice_pipeline = create_voice_pipeline();
+	bus = gst_pipeline_get_bus(GST_PIPELINE(voice_pipeline));
+	gst_bus_add_signal_watch(bus);
+	g_signal_connect(bus, "message", G_CALLBACK(gst_bus_cb), NULL);
+	gst_object_unref(bus);
+}
 
-		g_signal_connect(ctx->volume, "value-changed",
-		                 G_CALLBACK(on_volume_change_cb), voice_pipeline);
+static void
+toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
+{
+	if (gtk_toggle_button_get_active(test)) {
+		gtk_widget_set_sensitive(voice_level, TRUE);
+		enable_voice_test();
+
+		g_signal_connect(voice_volume, "value-changed",
+		                 G_CALLBACK(on_volume_change_cb), NULL);
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(voice_test_destroy_cb), NULL);
 		g_signal_connect(prefsnotebook, "switch-page",
 		                 G_CALLBACK(vv_test_switch_page_cb), test);
 	} else {
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(ctx->level), 0.0);
-		gtk_widget_set_sensitive(ctx->level, FALSE);
-		g_object_disconnect(ctx->volume, "any-signal::value-changed",
-		                    G_CALLBACK(on_volume_change_cb), voice_pipeline,
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(voice_level), 0.0);
+		gtk_widget_set_sensitive(voice_level, FALSE);
+		g_object_disconnect(voice_volume, "any-signal::value-changed",
+		                    G_CALLBACK(on_volume_change_cb), NULL,
 		                    NULL);
 		g_object_disconnect(test, "any-signal::destroy",
 		                    G_CALLBACK(voice_test_destroy_cb), NULL,
@@ -3875,7 +3816,6 @@ make_voice_test(GtkWidget *vbox)
 	GtkWidget *level;
 	GtkWidget *volume;
 	GtkWidget *threshold;
-	BusCbCtx *ctx;
 	char *tmp;
 
 	label = gtk_label_new(NULL);
@@ -3914,12 +3854,11 @@ make_voice_test(GtkWidget *vbox)
 	gtk_box_pack_start(GTK_BOX(vbox), level, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(level, FALSE);
 
-	ctx = g_new(BusCbCtx, 1);
-	ctx->volume = volume;
-	ctx->level = level;
-	ctx->threshold = threshold;
+	voice_volume = volume;
+	voice_level = level;
+	voice_threshold = threshold;
 	g_signal_connect(test, "toggled",
-	                 G_CALLBACK(toggle_voice_test_cb), ctx);
+	                 G_CALLBACK(toggle_voice_test_cb), NULL);
 }
 
 static GstElement *
@@ -3981,50 +3920,53 @@ window_id_cb(GstBus *bus, GstMessage *msg, gulong window_id)
 }
 
 static void
-toggle_video_test_cb(GtkToggleButton *test, gpointer data)
+enable_video_test(void)
 {
-	GtkWidget *video = data;
 	GstBus *bus;
-
-	if (gtk_toggle_button_get_active(test)) {
-		GdkWindow *window = gtk_widget_get_window(video);
-		gulong window_id = 0;
+	GdkWindow *window = gtk_widget_get_window(video_drawing_area);
+	gulong window_id = 0;
 
 #ifdef GDK_WINDOWING_WIN32
-		if (GDK_IS_WIN32_WINDOW(window))
-			window_id = GPOINTER_TO_UINT(GDK_WINDOW_HWND(window));
-		else
+	if (GDK_IS_WIN32_WINDOW(window))
+		window_id = GPOINTER_TO_UINT(GDK_WINDOW_HWND(window));
+	else
 #endif
 #ifdef GDK_WINDOWING_X11
-		if (GDK_IS_X11_WINDOW(window))
-			window_id = gdk_x11_window_get_xid(window);
-		else
+	if (GDK_IS_X11_WINDOW(window))
+		window_id = gdk_x11_window_get_xid(window);
+	else
 #endif
 #ifdef GDK_WINDOWING_QUARTZ
-		if (GDK_IS_QUARTZ_WINDOW(window))
-			window_id = (gulong)gdk_quartz_window_get_nsview(window);
-		else
+	if (GDK_IS_QUARTZ_WINDOW(window))
+		window_id = (gulong)gdk_quartz_window_get_nsview(window);
+	else
 #endif
-			g_warning("Unsupported GDK backend");
+		g_warning("Unsupported GDK backend");
 #if !(defined(GDK_WINDOWING_WIN32) \
    || defined(GDK_WINDOWING_X11) \
    || defined(GDK_WINDOWING_QUARTZ))
-#		error "Unsupported GDK windowing system"
+#	error "Unsupported GDK windowing system"
 #endif
 
-		video_pipeline = create_video_pipeline();
-		bus = gst_pipeline_get_bus(GST_PIPELINE(video_pipeline));
+	video_pipeline = create_video_pipeline();
+	bus = gst_pipeline_get_bus(GST_PIPELINE(video_pipeline));
 #if GST_CHECK_VERSION(1,0,0)
-		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
+	gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
 #else
-		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
+	gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
 #endif
-		g_signal_connect(bus, "sync-message::element",
-		                 G_CALLBACK(window_id_cb), (gpointer)window_id);
-		gst_object_unref(bus);
+	g_signal_connect(bus, "sync-message::element",
+	                 G_CALLBACK(window_id_cb), (gpointer)window_id);
+	gst_object_unref(bus);
 
-		gst_element_set_state(GST_ELEMENT(video_pipeline), GST_STATE_PLAYING);
+	gst_element_set_state(GST_ELEMENT(video_pipeline), GST_STATE_PLAYING);
+}
 
+static void
+toggle_video_test_cb(GtkToggleButton *test, gpointer data)
+{
+	if (gtk_toggle_button_get_active(test)) {
+		enable_video_test();
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(video_test_destroy_cb), NULL);
 		g_signal_connect(prefsnotebook, "switch-page",
@@ -4051,7 +3993,7 @@ make_video_test(GtkWidget *vbox)
 	GdkColor color = {0, 0, 0, 0};
 #endif
 
-	video = gtk_drawing_area_new();
+	video_drawing_area = video = gtk_drawing_area_new();
 	gtk_box_pack_start(GTK_BOX(vbox), video, TRUE, TRUE, 0);
 #if GTK_CHECK_VERSION(3,0,0)
 	gtk_widget_override_background_color(video, GTK_STATE_FLAG_NORMAL, &color);
@@ -4064,7 +4006,87 @@ make_video_test(GtkWidget *vbox)
 	gtk_box_pack_start(GTK_BOX(vbox), test, FALSE, FALSE, 0);
 
 	g_signal_connect(test, "toggled",
-	                 G_CALLBACK(toggle_video_test_cb), video);
+	                 G_CALLBACK(toggle_video_test_cb), NULL);
+}
+
+static void
+vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
+                     gconstpointer value, gpointer data)
+{
+	GtkWidget *vbox = data;
+	GtkSizeGroup *sg;
+	GtkWidget *widget;
+	gchar *pref;
+	GList *devices;
+
+	sg = g_object_get_data(G_OBJECT(vbox), "size-group");
+	widget = g_object_get_data(G_OBJECT(vbox), "device-hbox");
+	gtk_widget_destroy(widget);
+
+	pref = g_strdup(name);
+	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
+	devices = get_vv_element_devices(value);
+	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
+	                       (GCompareFunc)strcmp) == NULL)
+		purple_prefs_set_string(pref, g_list_next(devices)->data);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
+	                                         PURPLE_PREF_STRING, pref, devices);
+	g_list_free_full(devices, g_free);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	g_object_set_data(G_OBJECT(vbox), "device-hbox",
+	                  gtk_widget_get_parent(widget));
+	g_signal_connect_swapped(widget, "destroy", G_CALLBACK(g_free), pref);
+
+	/* Refresh test viewers */
+	if (strstr(name, "audio") && voice_pipeline) {
+		voice_test_destroy_cb(NULL, NULL);
+		enable_voice_test();
+	} else if(strstr(name, "video") && video_pipeline) {
+		video_test_destroy_cb(NULL, NULL);
+		enable_video_test();
+	}
+}
+
+static void
+make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
+              const gchar *name, const gchar **plugin_strs,
+              const gchar *plugin_pref, const gchar *device_pref)
+{
+	GtkWidget *vbox, *widget;
+	GList *plugins, *devices;
+
+	vbox = pidgin_make_frame(parent, name);
+
+	/* Setup plugin preference */
+	plugins = get_vv_element_plugins(plugin_strs);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Plugin"),
+	                                         PURPLE_PREF_STRING, plugin_pref,
+	                                         plugins);
+	g_list_free(plugins);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	/* Setup device preference */
+	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
+	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
+	                       (GCompareFunc)strcmp) == NULL)
+		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
+	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
+	                                         PURPLE_PREF_STRING, device_pref,
+	                                         devices);
+	g_list_free_full(devices, g_free);
+	gtk_size_group_add_widget(sg, widget);
+	gtk_misc_set_alignment(GTK_MISC(widget), 0, 0.5);
+
+	widget = gtk_widget_get_parent(widget);
+	g_object_set_data(G_OBJECT(vbox), "size-group", sg);
+	g_object_set_data(G_OBJECT(vbox), "device-hbox", widget);
+	purple_prefs_connect_callback(vbox, plugin_pref, vv_plugin_changed_cb,
+	                              vbox);
+	g_signal_connect_swapped(vbox, "destroy",
+	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
 }
 
 static GtkWidget *

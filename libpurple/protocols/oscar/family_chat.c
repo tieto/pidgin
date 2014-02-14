@@ -50,7 +50,7 @@ flap_connection_destroy_chat(OscarData *od, FlapConnection *conn)
 int
 aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 {
-	if (!bs || !outinfo)
+	if (!outinfo)
 		return 0;
 
 	outinfo->exchange = byte_stream_get16(bs);
