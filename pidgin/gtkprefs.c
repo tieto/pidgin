@@ -3747,17 +3747,23 @@ voice_test_destroy_cb(GtkWidget *w, gpointer data)
 }
 
 static void
-toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
+enable_voice_test(void)
 {
 	GstBus *bus;
 
+	voice_pipeline = create_voice_pipeline();
+	bus = gst_pipeline_get_bus(GST_PIPELINE(voice_pipeline));
+	gst_bus_add_signal_watch(bus);
+	g_signal_connect(bus, "message", G_CALLBACK(gst_bus_cb), NULL);
+	gst_object_unref(bus);
+}
+
+static void
+toggle_voice_test_cb(GtkToggleButton *test, gpointer data)
+{
 	if (gtk_toggle_button_get_active(test)) {
 		gtk_widget_set_sensitive(voice_level, TRUE);
-		voice_pipeline = create_voice_pipeline();
-		bus = gst_pipeline_get_bus(GST_PIPELINE(voice_pipeline));
-		gst_bus_add_signal_watch(bus);
-		g_signal_connect(bus, "message", G_CALLBACK(gst_bus_cb), NULL);
-		gst_object_unref(bus);
+		enable_voice_test();
 
 		g_signal_connect(voice_volume, "value-changed",
 		                 G_CALLBACK(on_volume_change_cb), NULL);
@@ -3914,49 +3920,53 @@ window_id_cb(GstBus *bus, GstMessage *msg, gulong window_id)
 }
 
 static void
-toggle_video_test_cb(GtkToggleButton *test, gpointer data)
+enable_video_test(void)
 {
 	GstBus *bus;
-
-	if (gtk_toggle_button_get_active(test)) {
-		GdkWindow *window = gtk_widget_get_window(video_drawing_area);
-		gulong window_id = 0;
+	GdkWindow *window = gtk_widget_get_window(video_drawing_area);
+	gulong window_id = 0;
 
 #ifdef GDK_WINDOWING_WIN32
-		if (GDK_IS_WIN32_WINDOW(window))
-			window_id = GPOINTER_TO_UINT(GDK_WINDOW_HWND(window));
-		else
+	if (GDK_IS_WIN32_WINDOW(window))
+		window_id = GPOINTER_TO_UINT(GDK_WINDOW_HWND(window));
+	else
 #endif
 #ifdef GDK_WINDOWING_X11
-		if (GDK_IS_X11_WINDOW(window))
-			window_id = gdk_x11_window_get_xid(window);
-		else
+	if (GDK_IS_X11_WINDOW(window))
+		window_id = gdk_x11_window_get_xid(window);
+	else
 #endif
 #ifdef GDK_WINDOWING_QUARTZ
-		if (GDK_IS_QUARTZ_WINDOW(window))
-			window_id = (gulong)gdk_quartz_window_get_nsview(window);
-		else
+	if (GDK_IS_QUARTZ_WINDOW(window))
+		window_id = (gulong)gdk_quartz_window_get_nsview(window);
+	else
 #endif
-			g_warning("Unsupported GDK backend");
+		g_warning("Unsupported GDK backend");
 #if !(defined(GDK_WINDOWING_WIN32) \
    || defined(GDK_WINDOWING_X11) \
    || defined(GDK_WINDOWING_QUARTZ))
-#		error "Unsupported GDK windowing system"
+#	error "Unsupported GDK windowing system"
 #endif
 
-		video_pipeline = create_video_pipeline();
-		bus = gst_pipeline_get_bus(GST_PIPELINE(video_pipeline));
+	video_pipeline = create_video_pipeline();
+	bus = gst_pipeline_get_bus(GST_PIPELINE(video_pipeline));
 #if GST_CHECK_VERSION(1,0,0)
-		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
+	gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL, NULL);
 #else
-		gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
+	gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, NULL);
 #endif
-		g_signal_connect(bus, "sync-message::element",
-		                 G_CALLBACK(window_id_cb), (gpointer)window_id);
-		gst_object_unref(bus);
+	g_signal_connect(bus, "sync-message::element",
+	                 G_CALLBACK(window_id_cb), (gpointer)window_id);
+	gst_object_unref(bus);
 
-		gst_element_set_state(GST_ELEMENT(video_pipeline), GST_STATE_PLAYING);
+	gst_element_set_state(GST_ELEMENT(video_pipeline), GST_STATE_PLAYING);
+}
 
+static void
+toggle_video_test_cb(GtkToggleButton *test, gpointer data)
+{
+	if (gtk_toggle_button_get_active(test)) {
+		enable_video_test();
 		g_signal_connect(test, "destroy",
 		                 G_CALLBACK(video_test_destroy_cb), NULL);
 		g_signal_connect(prefsnotebook, "switch-page",
@@ -4028,6 +4038,15 @@ vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	g_object_set_data(G_OBJECT(vbox), "device-hbox",
 	                  gtk_widget_get_parent(widget));
 	g_signal_connect_swapped(widget, "destroy", G_CALLBACK(g_free), pref);
+
+	/* Refresh test viewers */
+	if (strstr(name, "audio") && voice_pipeline) {
+		voice_test_destroy_cb(NULL, NULL);
+		enable_voice_test();
+	} else if(strstr(name, "video") && video_pipeline) {
+		video_test_destroy_cb(NULL, NULL);
+		enable_video_test();
+	}
 }
 
 static void
