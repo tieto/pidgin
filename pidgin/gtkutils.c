@@ -223,7 +223,9 @@ pidgin_create_small_button(GtkWidget *image)
 	gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
 
 	/* set style to make it as small as possible */
+#if !GTK_CHECK_VERSION(3,0,0)
 	gtk_widget_set_name(button, "pidgin-small-close-button");
+#endif
 
 	gtk_widget_show(image);
 
@@ -3640,6 +3642,7 @@ void pidgin_utils_init(void)
 		register_gnome_url_handlers();
 
 	/* Used to make small buttons */
+#if !GTK_CHECK_VERSION(3,0,0)
 	gtk_rc_parse_string("style \"pidgin-small-close-button\"\n"
 	                    "{\n"
 	                    "GtkWidget::focus-padding = 0\n"
@@ -3651,6 +3654,7 @@ void pidgin_utils_init(void)
 	                    "GtkButton::default-border = {0, 0, 0, 0}\n"
 	                    "}\n"
 	                    "widget \"*.pidgin-small-close-button\" style \"pidgin-small-close-button\"");
+#endif
 
 #ifdef _WIN32
 	winpidgin_register_win32_url_handlers();
