@@ -29,6 +29,9 @@
  */
 
 #include <time.h>
+#include <glib-object.h>
+
+#define PURPLE_TYPE_IDLE_UI_OPS (purple_idle_ui_ops_get_type())
 
 typedef struct _PurpleIdleUiOps PurpleIdleUiOps;
 
@@ -75,6 +78,13 @@ void purple_idle_set(time_t time);
 /**************************************************************************/
 /* Idle Subsystem                                                         */
 /**************************************************************************/
+
+/**
+ * purple_idle_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleIdleUiOps boxed structure.
+ */
+GType purple_idle_ui_ops_get_type(void);
 
 /**
  * purple_idle_set_ui_ops:

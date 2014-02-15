@@ -31,6 +31,8 @@
 
 #include "account.h"
 
+#define PURPLE_TYPE_SOUND_UI_OPS (purple_sound_ui_ops_get_type())
+
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
@@ -98,6 +100,13 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* Sound API                                                              */
 /**************************************************************************/
+
+/**
+ * purple_sound_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleSoundUiOps boxed structure.
+ */
+GType purple_sound_ui_ops_get_type(void);
 
 /**
  * purple_sound_play_file:

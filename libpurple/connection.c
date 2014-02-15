@@ -593,6 +593,41 @@ purple_connection_error_info_new(PurpleConnectionError type,
 /**************************************************************************
  * GBoxed code
  **************************************************************************/
+static PurpleConnectionUiOps *
+purple_connection_ui_ops_copy(PurpleConnectionUiOps *ops)
+{
+	PurpleConnectionUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleConnectionUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_connection_ui_ops_free(PurpleConnectionUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_connection_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleConnectionUiOps",
+				(GBoxedCopyFunc)purple_connection_ui_ops_copy,
+				(GBoxedFreeFunc)purple_connection_ui_ops_free);
+	}
+
+	return type;
+}
+
 static PurpleConnectionErrorInfo *
 purple_connection_error_info_copy(PurpleConnectionErrorInfo *err)
 {

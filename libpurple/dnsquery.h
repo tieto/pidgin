@@ -32,6 +32,8 @@
 #include "eventloop.h"
 #include "account.h"
 
+#define PURPLE_TYPE_DNSQUERY_UI_OPS (purple_dnsquery_ui_ops_get_type())
+
 /**
  * PurpleDnsQueryData:
  *
@@ -100,6 +102,13 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* DNS query API                                                          */
 /**************************************************************************/
+
+/**
+ * purple_dnsquery_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleDnsQueryUiOps boxed structure.
+ */
+GType purple_dnsquery_ui_ops_get_type(void);
 
 /**
  * purple_dnsquery_a:

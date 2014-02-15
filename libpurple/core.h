@@ -30,6 +30,9 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
+
+#define PURPLE_TYPE_CORE_UI_OPS (purple_core_ui_ops_get_type())
 
 typedef struct PurpleCore PurpleCore;
 typedef struct _PurpleCoreUiOps PurpleCoreUiOps;
@@ -73,6 +76,13 @@ struct _PurpleCoreUiOps
 };
 
 G_BEGIN_DECLS
+
+/**
+ * purple_core_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleCoreUiOps boxed structure.
+ */
+GType purple_core_ui_ops_get_type(void);
 
 /**
  * purple_core_init:

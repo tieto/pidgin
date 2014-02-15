@@ -43,6 +43,8 @@
 typedef struct _PurpleBuddyList       PurpleBuddyList;
 typedef struct _PurpleBuddyListClass  PurpleBuddyListClass;
 
+#define PURPLE_TYPE_BLIST_UI_OPS (purple_blist_ui_ops_get_type())
+
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 
 /**************************************************************************/
@@ -477,6 +479,13 @@ void purple_blist_request_add_group(void);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_blist_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleBlistUiOps boxed structure.
+ */
+GType purple_blist_ui_ops_get_type(void);
 
 /**
  * purple_blist_set_ui_ops:

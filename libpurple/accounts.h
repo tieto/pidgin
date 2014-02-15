@@ -32,6 +32,8 @@
 #include "account.h"
 #include "status.h"
 
+#define PURPLE_TYPE_ACCOUNT_UI_OPS (purple_account_ui_ops_get_type())
+
 typedef struct _PurpleAccountUiOps  PurpleAccountUiOps;
 
 /**
@@ -187,6 +189,13 @@ void purple_accounts_restore_current_statuses(void);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_account_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleAccountUiOps boxed structure.
+ */
+GType purple_account_ui_ops_get_type(void);
 
 /**
  * purple_accounts_set_ui_ops:

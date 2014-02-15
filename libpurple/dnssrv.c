@@ -1110,3 +1110,41 @@ purple_srv_txt_query_get_query_type(PurpleSrvTxtQueryData *query_data)
 
 	return query_data->type;
 }
+
+/**************************************************************************
+ * GBoxed code
+ **************************************************************************/
+static PurpleSrvTxtQueryUiOps *
+purple_srv_txt_query_ui_ops_copy(PurpleSrvTxtQueryUiOps *ops)
+{
+	PurpleSrvTxtQueryUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleSrvTxtQueryUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_srv_txt_query_ui_ops_free(PurpleSrvTxtQueryUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_srv_txt_query_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleSrvTxtQueryUiOps",
+				(GBoxedCopyFunc)purple_srv_txt_query_ui_ops_copy,
+				(GBoxedFreeFunc)purple_srv_txt_query_ui_ops_free);
+	}
+
+	return type;
+}

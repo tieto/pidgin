@@ -50,6 +50,7 @@ typedef struct _PurpleNotifySearchColumn	PurpleNotifySearchColumn;
 
 typedef struct _PurpleNotifySearchResults PurpleNotifySearchResults;
 
+#define PURPLE_TYPE_NOTIFY_UI_OPS  (purple_notify_ui_ops_get_type())
 typedef struct _PurpleNotifyUiOps	PurpleNotifyUiOps;
 
 /**
@@ -807,6 +808,13 @@ void purple_notify_close_with_handle(void *handle);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_notify_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleNotifyUiOps boxed structure.
+ */
+GType purple_notify_ui_ops_get_type(void);
 
 /**
  * purple_notify_set_ui_ops:

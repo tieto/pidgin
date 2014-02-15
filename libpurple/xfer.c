@@ -2400,3 +2400,41 @@ PurpleXferUiOps *
 purple_xfers_get_ui_ops(void) {
 	return xfer_ui_ops;
 }
+
+/**************************************************************************
+ * GBoxed code
+ **************************************************************************/
+static PurpleXferUiOps *
+purple_xfer_ui_ops_copy(PurpleXferUiOps *ops)
+{
+	PurpleXferUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleXferUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_xfer_ui_ops_free(PurpleXferUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_xfer_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleXferUiOps",
+				(GBoxedCopyFunc)purple_xfer_ui_ops_copy,
+				(GBoxedFreeFunc)purple_xfer_ui_ops_free);
+	}
+
+	return type;
+}

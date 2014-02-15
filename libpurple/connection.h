@@ -36,12 +36,14 @@
 #define PURPLE_IS_CONNECTION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CONNECTION))
 #define PURPLE_CONNECTION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CONNECTION, PurpleConnectionClass))
 
-#define PURPLE_TYPE_CONNECTION_ERROR_INFO  (purple_connection_error_info_get_type())
-
 typedef struct _PurpleConnection PurpleConnection;
 typedef struct _PurpleConnectionClass PurpleConnectionClass;
 
+#define PURPLE_TYPE_CONNECTION_UI_OPS  (purple_connection_ui_ops_get_type())
+
 typedef struct _PurpleConnectionUiOps PurpleConnectionUiOps;
+
+#define PURPLE_TYPE_CONNECTION_ERROR_INFO  (purple_connection_error_info_get_type())
 
 typedef struct _PurpleConnectionErrorInfo PurpleConnectionErrorInfo;
 
@@ -574,6 +576,13 @@ GList *purple_connections_get_connecting(void);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_connection_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleConnectionUiOps boxed structure.
+ */
+GType purple_connection_ui_ops_get_type(void);
 
 /**
  * purple_connections_set_ui_ops:

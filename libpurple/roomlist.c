@@ -658,7 +658,6 @@ GType purple_roomlist_field_get_type(void)
 /* UI Registration Functions                                              */
 /**************************************************************************/
 
-
 void purple_roomlist_set_ui_ops(PurpleRoomlistUiOps *ui_ops)
 {
 	ops = ui_ops;
@@ -669,4 +668,41 @@ PurpleRoomlistUiOps *purple_roomlist_get_ui_ops(void)
 	return ops;
 }
 
-/*@}*/
+/**************************************************************************
+ * UI Ops GBoxed code
+ **************************************************************************/
+
+static PurpleRoomlistUiOps *
+purple_roomlist_ui_ops_copy(PurpleRoomlistUiOps *ops)
+{
+	PurpleRoomlistUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleRoomlistUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_roomlist_ui_ops_free(PurpleRoomlistUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_roomlist_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleRoomlistUiOps",
+				(GBoxedCopyFunc)purple_roomlist_ui_ops_copy,
+				(GBoxedFreeFunc)purple_roomlist_ui_ops_free);
+	}
+
+	return type;
+}

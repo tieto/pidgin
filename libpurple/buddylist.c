@@ -2017,6 +2017,44 @@ purple_blist_uninit(void)
 }
 
 /**************************************************************************
+ * GBoxed code
+ **************************************************************************/
+static PurpleBlistUiOps *
+purple_blist_ui_ops_copy(PurpleBlistUiOps *ops)
+{
+	PurpleBlistUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleBlistUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_blist_ui_ops_free(PurpleBlistUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_blist_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleBlistUiOps",
+				(GBoxedCopyFunc)purple_blist_ui_ops_copy,
+				(GBoxedFreeFunc)purple_blist_ui_ops_free);
+	}
+
+	return type;
+}
+
+/**************************************************************************
  * GObject code
  **************************************************************************/
 

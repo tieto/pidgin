@@ -340,6 +340,41 @@ purple_get_core(void)
 	return _core;
 }
 
+static PurpleCoreUiOps *
+purple_core_ui_ops_copy(PurpleCoreUiOps *ops)
+{
+	PurpleCoreUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleCoreUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_core_ui_ops_free(PurpleCoreUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_core_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleCoreUiOps",
+				(GBoxedCopyFunc)purple_core_ui_ops_copy,
+				(GBoxedFreeFunc)purple_core_ui_ops_free);
+	}
+
+	return type;
+}
+
 void
 purple_core_set_ui_ops(PurpleCoreUiOps *ops)
 {

@@ -821,6 +821,41 @@ purple_accounts_restore_current_statuses()
 	}
 }
 
+static PurpleAccountUiOps *
+purple_account_ui_ops_copy(PurpleAccountUiOps *ops)
+{
+	PurpleAccountUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleAccountUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_account_ui_ops_free(PurpleAccountUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_account_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleAccountUiOps",
+				(GBoxedCopyFunc)purple_account_ui_ops_copy,
+				(GBoxedFreeFunc)purple_account_ui_ops_free);
+	}
+
+	return type;
+}
+
 void
 purple_accounts_set_ui_ops(PurpleAccountUiOps *ops)
 {

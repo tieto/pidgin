@@ -281,6 +281,41 @@ purple_idle_set(time_t time)
 	last_active_time = time;
 }
 
+static PurpleIdleUiOps *
+purple_idle_ui_ops_copy(PurpleIdleUiOps *ops)
+{
+	PurpleIdleUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleIdleUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_idle_ui_ops_free(PurpleIdleUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_idle_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleIdleUiOps",
+				(GBoxedCopyFunc)purple_idle_ui_ops_copy,
+				(GBoxedFreeFunc)purple_idle_ui_ops_free);
+	}
+
+	return type;
+}
+
 void
 purple_idle_set_ui_ops(PurpleIdleUiOps *ops)
 {
