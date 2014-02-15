@@ -35,6 +35,8 @@
 #define PURPLE_IS_WHITEBOARD_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_WHITEBOARD))
 #define PURPLE_WHITEBOARD_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_WHITEBOARD, PurpleWhiteboardClass))
 
+#define PURPLE_TYPE_WHITEBOARD_UI_OPS      (purple_whiteboard_ui_ops_get_type())
+
 typedef struct _PurpleWhiteboard PurpleWhiteboard;
 typedef struct _PurpleWhiteboardClass PurpleWhiteboardClass;
 
@@ -148,6 +150,13 @@ G_BEGIN_DECLS
  * Returns: The #GType for the #PurpleWhiteboard object.
  */
 GType purple_whiteboard_get_type(void);
+
+/**
+ * purple_whiteboard_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleWhiteboardUiOps boxed structure.
+ */
+GType purple_whiteboard_ui_ops_get_type(void);
 
 /**
  * purple_whiteboard_set_ui_ops:

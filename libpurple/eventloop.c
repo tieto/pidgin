@@ -109,3 +109,41 @@ purple_eventloop_get_ui_ops(void)
 
 	return eventloop_ui_ops;
 }
+
+/**************************************************************************
+ * GBoxed code
+ **************************************************************************/
+static PurpleEventLoopUiOps *
+purple_eventloop_ui_ops_copy(PurpleEventLoopUiOps *ops)
+{
+	PurpleEventLoopUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleEventLoopUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_eventloop_ui_ops_free(PurpleEventLoopUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_eventloop_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleEventLoopUiOps",
+				(GBoxedCopyFunc)purple_eventloop_ui_ops_copy,
+				(GBoxedFreeFunc)purple_eventloop_ui_ops_free);
+	}
+
+	return type;
+}

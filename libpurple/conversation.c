@@ -297,6 +297,41 @@ purple_conversation_get_features(PurpleConversation *conv)
 	return priv->features;
 }
 
+static PurpleConversationUiOps *
+purple_conversation_ui_ops_copy(PurpleConversationUiOps *ops)
+{
+	PurpleConversationUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleConversationUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_conversation_ui_ops_free(PurpleConversationUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_conversation_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleConversationUiOps",
+				(GBoxedCopyFunc)purple_conversation_ui_ops_copy,
+				(GBoxedFreeFunc)purple_conversation_ui_ops_free);
+	}
+
+	return type;
+}
+
 void
 purple_conversation_set_ui_ops(PurpleConversation *conv,
 							 PurpleConversationUiOps *ops)

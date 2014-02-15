@@ -26,12 +26,15 @@
  * @title: DNS SRV Utilities
  */
 
+#define PURPLE_TYPE_SRV_TXT_QUERY_UI_OPS (purple_srv_txt_query_ui_ops_get_type())
+
 typedef struct _PurpleSrvTxtQueryData PurpleSrvTxtQueryData;
 typedef struct _PurpleSrvResponse PurpleSrvResponse;
 typedef struct _PurpleTxtResponse PurpleTxtResponse;
 typedef struct _PurpleSrvTxtQueryUiOps PurpleSrvTxtQueryUiOps;
 
 #include <glib.h>
+#include <glib-object.h>
 
 enum PurpleDnsType {
 	PurpleDnsTypeTxt = 16,
@@ -101,6 +104,13 @@ typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer
 typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
 
 G_BEGIN_DECLS
+
+/**
+ * purple_srv_txt_query_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleSrvTxtQueryUiOps boxed structure.
+ */
+GType purple_srv_txt_query_ui_ops_get_type(void);
 
 /**
  * purple_srv_resolve:

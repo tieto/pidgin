@@ -99,6 +99,41 @@ purple_sound_play_event(PurpleSoundEventID event, const PurpleAccount *account)
 	}
 }
 
+static PurpleSoundUiOps *
+purple_sound_ui_ops_copy(PurpleSoundUiOps *ops)
+{
+	PurpleSoundUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleSoundUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_sound_ui_ops_free(PurpleSoundUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_sound_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleSoundUiOps",
+				(GBoxedCopyFunc)purple_sound_ui_ops_copy,
+				(GBoxedFreeFunc)purple_sound_ui_ops_free);
+	}
+
+	return type;
+}
+
 void
 purple_sound_set_ui_ops(PurpleSoundUiOps *ops)
 {

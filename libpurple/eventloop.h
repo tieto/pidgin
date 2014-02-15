@@ -29,6 +29,9 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
+
+#define PURPLE_TYPE_EVENTLOOP_UI_OPS (purple_eventloop_ui_ops_get_type())
 
 /**
  * PurpleInputCondition:
@@ -271,6 +274,13 @@ purple_input_pipe(int pipefd[2]);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_eventloop_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleEventLoopUiOps boxed structure.
+ */
+GType purple_eventloop_ui_ops_get_type(void);
 
 /**
  * purple_eventloop_set_ui_ops:

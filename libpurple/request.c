@@ -2604,3 +2604,41 @@ purple_request_get_ui_ops(void)
 {
 	return request_ui_ops;
 }
+
+/**************************************************************************
+ * GBoxed code
+ **************************************************************************/
+static PurpleRequestUiOps *
+purple_request_ui_ops_copy(PurpleRequestUiOps *ops)
+{
+	PurpleRequestUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleRequestUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_request_ui_ops_free(PurpleRequestUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_request_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleRequestUiOps",
+				(GBoxedCopyFunc)purple_request_ui_ops_copy,
+				(GBoxedFreeFunc)purple_request_ui_ops_free);
+	}
+
+	return type;
+}

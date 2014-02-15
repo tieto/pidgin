@@ -29,7 +29,11 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
+
 #include <stdarg.h>
+
+#define PURPLE_TYPE_DEBUG_UI_OPS (purple_debug_ui_ops_get_type())
 
 typedef struct _PurpleDebugUiOps PurpleDebugUiOps;
 
@@ -230,6 +234,13 @@ void purple_debug_set_colored(gboolean colored);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_debug_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleDebugUiOps boxed structure.
+ */
+GType purple_debug_ui_ops_get_type(void);
 
 /**
  * purple_debug_set_ui_ops:

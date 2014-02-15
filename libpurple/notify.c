@@ -833,6 +833,41 @@ purple_notify_close_with_handle(void *handle)
 	}
 }
 
+static PurpleNotifyUiOps *
+purple_notify_ui_ops_copy(PurpleNotifyUiOps *ops)
+{
+	PurpleNotifyUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleNotifyUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_notify_ui_ops_free(PurpleNotifyUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_notify_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleNotifyUiOps",
+				(GBoxedCopyFunc)purple_notify_ui_ops_copy,
+				(GBoxedFreeFunc)purple_notify_ui_ops_free);
+	}
+
+	return type;
+}
+
 void
 purple_notify_set_ui_ops(PurpleNotifyUiOps *ops)
 {

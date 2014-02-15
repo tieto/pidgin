@@ -36,6 +36,8 @@
 #include "conversation.h"
 #include "request-datasheet.h"
 
+#define PURPLE_TYPE_REQUEST_UI_OPS (purple_request_ui_ops_get_type())
+
 /**
  * PurpleRequestField:
  *
@@ -2276,6 +2278,13 @@ void *purple_request_certificate(void *handle, const char *title,
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_request_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleRequestUiOps boxed structure.
+ */
+GType purple_request_ui_ops_get_type(void);
 
 /**
  * purple_request_set_ui_ops:

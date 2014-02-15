@@ -75,6 +75,41 @@ static GList *wb_list = NULL;
 /******************************************************************************
  * API
  *****************************************************************************/
+static PurpleWhiteboardUiOps *
+purple_whiteboard_ui_ops_copy(PurpleWhiteboardUiOps *ops)
+{
+	PurpleWhiteboardUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleWhiteboardUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_whiteboard_ui_ops_free(PurpleWhiteboardUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_whiteboard_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleWhiteboardUiOps",
+				(GBoxedCopyFunc)purple_whiteboard_ui_ops_copy,
+				(GBoxedFreeFunc)purple_whiteboard_ui_ops_free);
+	}
+
+	return type;
+}
+
 void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops)
 {
 	whiteboard_ui_ops = ops;

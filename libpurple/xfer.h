@@ -36,6 +36,8 @@
 #define PURPLE_IS_XFER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_XFER))
 #define PURPLE_XFER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_XFER, PurpleXferClass))
 
+#define PURPLE_TYPE_XFER_UI_OPS      (purple_xfer_ui_ops_get_type())
+
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
@@ -878,6 +880,13 @@ gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer);
 /**************************************************************************/
 /* File Transfer Subsystem API                                            */
 /**************************************************************************/
+
+/**
+ * purple_xfer_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleXferUiOps boxed structure.
+ */
+GType purple_xfer_ui_ops_get_type(void);
 
 /**
  * purple_xfers_get_all:

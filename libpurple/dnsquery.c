@@ -1009,6 +1009,41 @@ purple_dnsquery_get_port(PurpleDnsQueryData *query_data)
 	return query_data->port;
 }
 
+static PurpleDnsQueryUiOps *
+purple_dnsquery_ui_ops_copy(PurpleDnsQueryUiOps *ops)
+{
+	PurpleDnsQueryUiOps *ops_new;
+
+	g_return_val_if_fail(ops != NULL, NULL);
+
+	ops_new = g_new(PurpleDnsQueryUiOps, 1);
+	*ops_new = *ops;
+
+	return ops_new;
+}
+
+static void
+purple_dnsquery_ui_ops_free(PurpleDnsQueryUiOps *ops)
+{
+	g_return_if_fail(ops != NULL);
+
+	g_free(ops);
+}
+
+GType
+purple_dnsquery_ui_ops_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleDnsQueryUiOps",
+				(GBoxedCopyFunc)purple_dnsquery_ui_ops_copy,
+				(GBoxedFreeFunc)purple_dnsquery_ui_ops_free);
+	}
+
+	return type;
+}
+
 void
 purple_dnsquery_set_ui_ops(PurpleDnsQueryUiOps *ops)
 {

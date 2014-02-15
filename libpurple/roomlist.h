@@ -46,6 +46,8 @@ typedef struct _PurpleRoomlistRoom PurpleRoomlistRoom;
 
 typedef struct _PurpleRoomlistField PurpleRoomlistField;
 
+#define PURPLE_TYPE_ROOMLIST_UI_OPS      (purple_roomlist_ui_ops_get_type())
+
 typedef struct _PurpleRoomlistUiOps PurpleRoomlistUiOps;
 
 /**
@@ -485,6 +487,13 @@ gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field);
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/
+
+/**
+ * purple_roomlist_ui_ops_get_type:
+ *
+ * Returns: The #GType for the #PurpleRoomlistUiOps boxed structure.
+ */
+GType purple_roomlist_ui_ops_get_type(void);
 
 /**
  * purple_roomlist_set_ui_ops:
