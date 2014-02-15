@@ -1177,14 +1177,14 @@ AC_ARG_WITH(gadu-includes, [AS_HELP_STRING([--with-gadu-includes=DIR], [compile 
 AC_ARG_WITH(gadu-libs, [AS_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
-GADU_LIBGADU_VERSION=1.11.2
+GADU_LIBGADU_MIN_VERSION=1.11.2
 if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
 	gadu_manual_check="yes"
 else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= $GADU_LIBGADU_VERSION], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= $GADU_LIBGADU_MIN_VERSION], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1253,7 +1253,7 @@ if test "x$gadu_libs" = "xyes" -a "x$gadu_manual_check" = "xyes"; then
 		AC_MSG_RESULT(no)
 		echo
 		echo "Your supplied copy of libgadu is too old."
-		echo "Install version $GADU_LIBGADU_VERSION or newer."
+		echo "Install version $GADU_LIBGADU_MIN_VERSION or newer."
 		echo "Then rerun this ./configure"
 		echo
 		echo "Falling back to using our own copy of libgadu"
@@ -1275,6 +1275,31 @@ fi
 
 if test "x$gadu_libs" != "xyes"; then
 	AC_DEFINE(USE_INTERNAL_LIBGADU, 1, [Using internal libgadu])
+
+	AC_CHECK_LIB(gnutls, gnutls_certificate_set_x509_system_trust, [gg_have_gnutls_csxst=yes], [gg_have_gnutls_csxst=no])
+
+	gg_gnutls_sts=""
+	if test "x$gg_have_gnutls_csxst" = "xno"; then
+		for i in /etc/ssl/ca-bundle.pem \
+			/etc/ssl/certs/ca-certificates.crt \
+			/etc/pki/tls/cert.pem \
+			/usr/local/share/certs/ca-root-nss.crt \
+			/etc/ssl/cert.pem
+		do
+			if test -e $i; then
+				gg_gnutls_sts="$i"
+				break
+			fi
+		done
+	fi
+
+	if test "x$gg_have_gnutls_csxst" = "xyes"; then
+		AC_DEFINE(HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST, 1, [gnutls contains the gnutls_certificate_set_x509_system_trust function])
+	fi
+	if test "x$gg_gnutls_sts" != "x"; then
+		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
+	fi
+
 fi
 
 if test "x$gadu_libs" = "x"; then
@@ -1283,7 +1308,6 @@ fi
 
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
-AC_SUBST(GADU_LIBGADU_VERSION)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
