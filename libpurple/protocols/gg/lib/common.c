@@ -751,7 +751,7 @@ int gg_chat_update(struct gg_session *sess, uint64_t id, uint32_t version,
 	gg_chat_list_t *chat;
 	uin_t *participants_new;
 
-	if (participants_count >= ~0 / sizeof(uin_t))
+	if (participants_count >= ~(unsigned int)0 / sizeof(uin_t))
 		return -1;
 
 	chat = gg_chat_find(sess, id);
