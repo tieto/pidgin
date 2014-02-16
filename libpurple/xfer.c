@@ -1262,7 +1262,7 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 			purple_xfer_cancel_local(xfer);
 			return FALSE;
 		}
-		wc = fwrite(buffer, size, 1, priv->dest_fp);
+		wc = fwrite(buffer, 1, size, priv->dest_fp);
 	}
 
 	if (wc != size) {
