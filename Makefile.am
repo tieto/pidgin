@@ -138,9 +138,10 @@ endif
 
 # perl's MakeMaker uninstall foo doesn't work well with DESTDIR set, which
 # breaks "make distcheck" unless we ignore perl things
+# TODO drop it when we drop perl wrapper
 
 distuninstallcheck_listfiles = \
-	find . -type f -print | grep -v perl | grep -v Purple.3pm
+	find . -type f -print | grep -v perl | grep -v Purple.3pm | grep -v Pidgin.3pm
 
 DISTCLEANFILES= $(DESKTOP_FILE) libpurple/gconf/purple.schemas intltool-extract \
-			intltool-merge intltool-update
+			intltool-merge intltool-update package_revision_raw.txt
