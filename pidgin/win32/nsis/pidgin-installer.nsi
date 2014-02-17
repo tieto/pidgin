@@ -403,7 +403,6 @@ SectionGroupEnd
 SectionGroup /e $(URIHANDLERSSECTIONTITLE) SecURIHandlers
   !insertmacro URI_SECTION "aim"
   !insertmacro URI_SECTION "msnim"
-  !insertmacro URI_SECTION "myim"
   !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
@@ -521,8 +520,6 @@ Section Uninstall
     Push "aim"
     Call un.UnregisterURIHandler
     Push "msnim"
-    Call un.UnregisterURIHandler
-    Push "myim"
     Call un.UnregisterURIHandler
     Push "ymsgr"
     Call un.UnregisterURIHandler
