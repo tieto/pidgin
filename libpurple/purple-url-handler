@@ -244,11 +244,6 @@ def msnim(uri):
     elif command.lower() == "add":
         addbuddy(account, screenname)
 
-def myim(uri):
-        protocol = "prpl-myspace"
-        print "TODO: send uri: ", uri
-        assert False, "Not implemented"
-
 def sip(uri):
     protocol = "prpl-simple"
     match = re.match(r"^sip:(.*)", uri)
@@ -375,8 +370,6 @@ def main(argv=sys.argv):
             irc(uri)
         elif type == "msnim":
             msnim(uri)
-        elif type == "myim":
-            myim(uri)
         elif type == "sip":
             sip(uri)
         elif type == "xmpp":

@@ -934,7 +934,7 @@ GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence
  * @who: Whose attention to request.
  * @type_code: An index into the prpl's attention_types list determining the type
  *        of the attention request command to send. 0 if prpl only defines one
- *        (for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
+ *        (for example, Yahoo and MSN), but protocols are allowed to define more.
  *
  * Send an attention request message.
  *

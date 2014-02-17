@@ -151,9 +151,6 @@ libpurple/protocols/mxit/profile.c
 libpurple/protocols/mxit/protocol.c
 libpurple/protocols/mxit/roster.c
 libpurple/protocols/mxit/splashscreen.c
-libpurple/protocols/myspace/myspace.c
-libpurple/protocols/myspace/user.c
-libpurple/protocols/myspace/zap.c
 libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
 libpurple/protocols/oscar/authorization.c
