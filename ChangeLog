@@ -50,7 +50,7 @@ version 3.0.0 (??/??/????):
 
 	MySpace:
 	* Remove this protocol because the servers have been taken offline.
-	  (#15356)
+	  (Robbie Vehse) (#15356)
 
 	XMPP:
 	* Strip element prefixes from XHTML-IM messages as they're presented
