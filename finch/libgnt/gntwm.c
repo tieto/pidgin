@@ -1277,7 +1277,12 @@ python_script_selected(GntFileSel *fs, const char *path, const char *f, gpointer
 {
 	char *dir = g_path_get_dirname(path);
 	FILE *file = fopen(path, "r");
-	PyObject *pp = PySys_GetObject("path"), *dirobj = PyString_FromString(dir);
+	PyObject *pp = PySys_GetObject("path");
+#if PY_MAJOR_VERSION >= 3
+	PyObject *dirobj = PyUnicode_FromString(dir);
+#else
+	PyObject *dirobj = PyString_FromString(dir);
+#endif
 
 	PyList_Insert(pp, 0, dirobj);
 	Py_DECREF(dirobj);
@@ -1568,7 +1573,17 @@ gnt_wm_class_init(GntWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "run-python", run_python,
 				GNT_KEY_F3, NULL);
 	if (!Py_IsInitialized()) {
+#if PY_MAJOR_VERSION >= 3
+		wchar_t *name;
+		size_t len;
+		len = mbstowcs(NULL, "gnt", 0);
+		name = g_new(wchar_t, len + 1);
+		mbstowcs(name, "gnt", len + 1);
+		Py_SetProgramName(name);
+		g_free(name);
+#else
 		Py_SetProgramName("gnt");
+#endif
 		Py_Initialize();
 		started_python = TRUE;
 	}

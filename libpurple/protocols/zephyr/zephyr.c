@@ -838,7 +838,6 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 		/* Need to deal with 0 length  messages to handle typing notification (OPCODE) ping messages */
 		/* One field zephyrs would have caused purple to crash */
 		if ( (notice.z_message_len == 0) || (signature_length >= notice.z_message_len - 1)) {
-			/* message has no body */
 			len = 0;
 			purple_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
 			buf3 = g_strdup("");

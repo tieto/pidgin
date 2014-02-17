@@ -107,6 +107,7 @@ pidgin-*.*.*-win32-bin.zip$
 pidgin-*.*.*-win32bin$
 pidgin-.*.tar.bz2
 pidgin-.*.tar.gz
+pidgin-[0-9a-z.-]+/
 pidgin.apspec$
 pidgin.desktop$
 pidgin.desktop.in$
