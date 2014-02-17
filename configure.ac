@@ -645,7 +645,7 @@ Use --disable-gtkspell if you do not need it.
 		else
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
-Evolution development headers not found.
+Evolution development headers not found (libebook, libedata-book, evolution-data-server >= 3.6).
 Use --disable-gevolution if you do not need it.
 ])
 			fi
@@ -1894,27 +1894,15 @@ dnl Check for Python headers (currently useful only for libgnt)
 dnl (Thanks to XChat)
 if test "x$enable_consoleui" = "xyes" -a ! -z "$PYTHON" -a x"$PYTHON" != x"no" ; then
 	AC_MSG_CHECKING(for Python compile flags)
-	PY_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.prefix)'`
-	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.exec_prefix)'`
-	changequote(<<, >>)dnl
-	PY_VERSION=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:3])'`
-	PY_MAJOR=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:2])'`
-	changequote([, ])dnl
-	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h; then
-		AC_MSG_RESULT()
-		AC_CHECK_LIB(pthread, pthread_create, )
-		AC_CHECK_LIB(util, openpty, )
-		AC_CHECK_LIB(db, dbopen, )
-		PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION"
-		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
+	if test -f ${PYTHON}-config; then
+		PY_CFLAGS=`${PYTHON}-config --includes`
+		PY_LIBS=`${PYTHON}-config --libs`
 		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
-		dnl Because the above AC_CHECK_LIB get in the way...
-		AC_MSG_CHECKING(for Python compile flags)
 		AC_MSG_RESULT(ok)
 	else
-		AC_MSG_RESULT([Can't find Python.h])
-		PY_LIBS=""
+		AC_MSG_RESULT([Cannot find ${PYTHON}-config])
 		PY_CFLAGS=""
+		PY_LIBS=""
 	fi
 fi
 AC_SUBST(PY_CFLAGS)

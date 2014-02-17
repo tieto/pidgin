@@ -525,8 +525,8 @@ void purple_xfer_set_local_port(PurpleXfer *xfer, guint16 local_port);
  * purple_xfer_set_bytes_sent:
  * @xfer:       The file transfer.
  * @bytes_sent: The new current position in the file.  If we're
- *                   sending a file then this is the byte that we will
- *                   send.  If we're receiving a file, this is the
+ *                   sending a file then this is the next byte that we
+ *                   will send.  If we're receiving a file, this is the
  *                   next byte that we expect to receive.
  *
  * Sets the current working position in the active file transfer.  This

@@ -2550,8 +2550,11 @@ int gg_chat_invite(struct gg_session *gs, uint64_t id, uin_t *participants,
 	if (!gg_required_proto(gs, GG_PROTOCOL_VERSION_110))
 		return -1;
 
-	if (participants_count == 0 || participants_count >= ~0 / sizeof(struct gg_chat_participant))
+	if (participants_count == 0 || participants_count >=
+		~(unsigned int)0 / sizeof(struct gg_chat_participant))
+	{
 		return -1;
+	}
 
 	participants_list_size = sizeof(struct gg_chat_participant) *
 		participants_count;

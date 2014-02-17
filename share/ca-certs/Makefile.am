@@ -17,9 +17,9 @@ CERTIFICATES = \
 		Thawte_Primary_Root_CA.pem \
 		ValiCert_Class_2_VA.pem \
 		Verisign_Class3_Primary_CA.pem \
-		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G2.pem \
-		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem \
-		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5_2.pem
+		VeriSign_Class_3_Primary_CA-G2.pem \
+		VeriSign_Class_3_Primary_CA-G5.pem \
+		VeriSign_Class_3_Primary_CA-G5-2.pem
 
 # TODO: Microsoft_Secure_Server_Authority_2010.pem is going to expire
 # on 19-05-2014. After this date, remove it.

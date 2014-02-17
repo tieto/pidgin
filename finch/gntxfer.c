@@ -520,12 +520,10 @@ static PurpleXferUiOps ops =
 	finch_xfer_update_progress,
 	finch_xfer_cancel_local,
 	finch_xfer_cancel_remote,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	NULL, /* ui_write */
+	NULL, /* ui_read */
+	NULL, /* data_not_sent */
+	NULL  /* add_thumbnail */
 };
 
 /**************************************************************************

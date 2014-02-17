@@ -5,7 +5,7 @@
 /* libpurple's config */
 #include <config.h>
 
-#define GG_LIBGADU_VERSION "1.12.0-rc2"
+#define GG_LIBGADU_VERSION "1.12.0-dev"
 
 /* Defined if libgadu was compiled for bigendian machine. */
 #undef GG_CONFIG_BIGENDIAN

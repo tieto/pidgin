@@ -81,6 +81,9 @@ version 3.0.0 (??/??/????):
 	  non-native plugin support.
 	* Doxygen has been replaced by gtk-doc for generating documentation.
 
+	Finch:
+	* Fix build against Python 3. (Ed Catmur) (#15969)
+
 version 2.10.9 (2/2/2014):
 	XMPP:
 	* Fix problems logging into some servers including jabber.org and
