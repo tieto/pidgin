@@ -48,6 +48,10 @@ version 3.0.0 (??/??/????):
 	* The buddy's name was not centered vertically in the buddy-list if they
 	  did not have a status-message or mood set.
 
+	MySpace:
+	* Remove this protocol because the servers have been taken offline.
+	  (Robbie Vehse) (#15356)
+
 	XMPP:
 	* Strip element prefixes from XHTML-IM messages as they're presented
 	  to the core (and UIs) as incoming messages (Thijs Alkemade).

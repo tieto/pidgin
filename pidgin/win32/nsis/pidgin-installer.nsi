@@ -399,7 +399,6 @@ SectionGroupEnd
 SectionGroup /e $(URIHANDLERSSECTIONTITLE) SecURIHandlers
   !insertmacro URI_SECTION "aim"
   !insertmacro URI_SECTION "msnim"
-  !insertmacro URI_SECTION "myim"
   !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
@@ -518,8 +517,6 @@ Section Uninstall
     Call un.UnregisterURIHandler
     Push "msnim"
     Call un.UnregisterURIHandler
-    Push "myim"
-    Call un.UnregisterURIHandler
     Push "ymsgr"
     Call un.UnregisterURIHandler
     Push "xmpp"
@@ -578,14 +575,11 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libjabber.dll"
     Delete "$INSTDIR\plugins\libmsn.dll"
     Delete "$INSTDIR\plugins\libmxit.dll"
-    Delete "$INSTDIR\plugins\libmyspace.dll"
-    Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libsametime.dll"
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\plugins\libsimple.dll"
-    Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
     Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\markerline.dll"

@@ -83,17 +83,23 @@ if ENABLE_GNT
 GNT_DIR=finch
 endif
 
-# This is phony, so that we always try to rebuild it.  If it succeeds
-# in calculating changes, it produces its target; otherwise, its
-# target does not exist.
-.PHONY: package_revision_raw.txt
+# We always try to rebuild all objects that depends on this dummy target.
+.FORCE:
+
 # if both attempts fail, then we need to remove the empty file that >
 # creates, and also make sure that the shell command exits
 # successfully; the rm -f ensures both
-package_revision_raw.txt:
+package_revision_raw.txt: .FORCE
 	$(AM_V_GEN)REAL_BLDDIR=$$PWD/$(top_builddir); \
-	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@ \
-	|| rm -f $@
+	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@.new \
+	|| rm -f $@.new
+	$(AM_V_at)if test -f $@.new; then \
+		if ! diff $@ $@.new > /dev/null; then \
+			mv $@.new $@; \
+		else \
+			rm $@.new; \
+		fi \
+	fi
 package_revision.h: package_revision_raw.txt
 	$(AM_V_GEN)if test -f $<; then \
 	  echo "#define REVISION \"`cat $<`\"" > $@; \
