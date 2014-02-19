@@ -94,14 +94,19 @@ GTKDOC_CFLAGS = \
 	-I$(top_srcdir)/finch/libgnt \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(GPLUGIN_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GNT_CFLAGS)
 
 GTKDOC_LIBS = \
-	$(top_builddir)/finch/libfinch.la
+	$(top_builddir)/finch/libfinch.la \
+	$(DBUS_LIBS) \
+	$(INTLLIBS) \
+	$(GLIB_LIBS) \
+	$(LIBXML_LIBS) \
+	$(GNT_LIBS) \
+	$(GSTREAMER_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make
