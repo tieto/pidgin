@@ -134,10 +134,29 @@ GTKDOC_CFLAGS = \
 	$(JSON_CFLAGS) \
 	$(GNUTLS_CFLAGS) \
 	$(NSS_CFLAGS) \
-	$(ZLIB_CFLAGS)
+	$(ZLIB_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
 
 GTKDOC_LIBS = \
-	$(top_builddir)/libpurple/libpurple.la
+	$(top_builddir)/libpurple/libpurple.la \
+	$(STATIC_LINK_LIBS) \
+	$(DBUS_LIBS) \
+	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
+	$(LIBXML_LIBS) \
+	$(NETWORKMANAGER_LIBS) \
+	$(INTLLIBS) \
+	$(FARSTREAM_LIBS) \
+	$(GSTREAMER_LIBS) \
+	$(GSTVIDEO_LIBS) \
+	$(GSTINTERFACES_LIBS) \
+	$(IDN_LIBS) \
+	$(JSON_LIBS) \
+	$(GNUTLS_LIBS) \
+	$(NSS_LIBS) \
+	$(ZLIB_LIBS) \
+	$(INTROSPECTION_LIBS) \
+	-lm
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make

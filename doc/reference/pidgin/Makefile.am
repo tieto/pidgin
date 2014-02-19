@@ -108,10 +108,26 @@ GTKDOC_CFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
-	$(INTGG_CFLAGS)
+	$(INTROSPECTION_CFLAGS)
 
 GTKDOC_LIBS = \
-	$(top_builddir)/pidgin/libpidgin.la
+	$(top_builddir)/pidgin/libpidgin.la \
+	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
+	$(GCR_LIBS) \
+	$(DBUS_LIBS) \
+	$(GSTREAMER_LIBS) \
+	$(GSTVIDEO_LIBS) \
+	$(GSTINTERFACES_LIBS) \
+	$(XSS_LIBS) \
+	$(SM_LIBS) \
+	$(INTLLIBS) \
+	$(GTKSPELL_LIBS) \
+	$(LIBXML_LIBS) \
+	$(WEBKIT_LIBS) \
+	$(GTK_LIBS) \
+	$(X11_LIBS) \
+	$(INTROSPECTION_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make
