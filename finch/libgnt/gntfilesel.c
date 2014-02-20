@@ -184,6 +184,8 @@ local_read_fn(const char *path, GList **files, GError **error)
 static void
 gnt_file_free(GntFile *file)
 {
+	g_return_if_fail(file != NULL);
+
 	g_free(file->fullpath);
 	g_free(file->basename);
 	g_free(file);
@@ -685,4 +687,35 @@ void gnt_file_sel_set_read_fn(GntFileSel *sel, gboolean (*read_fn)(const char *p
 	sel->read_fn = read_fn;
 }
 
+/**************************************************************************
+ * GntFile GBoxed API
+ **************************************************************************/
+static GntFile *
+gnt_file_copy(GntFile *file)
+{
+	GntFile *file_new;
 
+	g_return_val_if_fail(file != NULL, NULL);
+
+	file_new = g_new(GntFile, 1);
+	*file_new = *file;
+
+	file_new->fullpath = g_strdup(file->fullpath);
+	file_new->basename = g_strdup(file->basename);
+
+	return file_new;
+}
+
+GType
+gnt_file_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("GntFile",
+				(GBoxedCopyFunc)gnt_file_copy,
+				(GBoxedFreeFunc)gnt_file_free);
+	}
+
+	return type;
+}

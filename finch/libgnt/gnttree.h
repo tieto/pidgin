@@ -42,6 +42,8 @@
 #define GNT_IS_TREE_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_TREE))
 #define GNT_TREE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_TREE, GntTreeClass))
 
+#define GNT_TYPE_TREE_ROW			(gnt_tree_row_get_type())
+
 typedef guint (*GntTreeHashFunc)(gconstpointer);
 typedef gboolean (*GntTreeHashEqualityFunc)(gconstpointer, gconstpointer);
 
@@ -116,6 +118,13 @@ G_BEGIN_DECLS
  * Returns: The GType for GntTree
  */
 GType gnt_tree_get_type(void);
+
+/**
+ * gnt_tree_row_get_type:
+ *
+ * Returns: The #GType for the #GntTreeRow boxed structure.
+ */
+GType gnt_tree_row_get_type(void);
 
 /**
  * gnt_tree_new:
