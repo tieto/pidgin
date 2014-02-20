@@ -19,12 +19,12 @@ If you are interested in hacking on Pidgin, Finch, and/or libpurple, please
 check out the information available at: https://developer.pidgin.im
 
 By far the best documentation, however, is the documented code.  You can pass
-"--enable-gtk-doc" to ./configure before running "make" in the source tree to
-generate pretty documentation using gtk-doc.  Otherwise (or even if you do!),
-the header files for each subsystem contain documentation for the functions they
-contain.  For instance, conversation.h contains documentation for the entire
-purple_conversation_* API, and account.h contains documentation for the
-purple_account_* API.
+"--enable-gtk-doc" to ./configure then run "make" in the source tree to
+generate pretty documentation in the doc/reference/*/html directories.
+Otherwise (or even if you do!), the header files for each subsystem contain
+documentation for the functions they contain.  For instance, conversation.h
+contains documentation for the entire purple_conversation_* API, and account.h
+contains documentation for the purple_account_* API.
 
 If you have questions, please feel free to contact the Pidgin, Finch, and
 libpurple developers by email at devel@pidgin.im or on IRC at irc.freenode.net
