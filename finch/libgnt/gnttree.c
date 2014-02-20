@@ -1955,3 +1955,32 @@ GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row)
 	return row->parent;
 }
 
+/**************************************************************************
+ * GntTreeRow GBoxed API
+ **************************************************************************/
+static GntTreeRow *
+copy_tree_row(GntTreeRow *row)
+{
+	GntTreeRow *row_new;
+
+	g_return_val_if_fail(row != NULL, NULL);
+
+	row_new = g_new(GntTreeRow, 1);
+	*row_new = *row;
+
+	return row_new;
+}
+
+GType
+gnt_tree_row_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("GntTreeRow",
+				(GBoxedCopyFunc)copy_tree_row,
+				(GBoxedFreeFunc)free_tree_row);
+	}
+
+	return type;
+}

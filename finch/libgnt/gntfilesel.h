@@ -45,6 +45,8 @@
 #define GNT_FILE_SEL_SET_FLAGS(obj, flags)		(GNT_FILE_SEL_FLAGS(obj) |= flags)
 #define GNT_FILE_SEL_UNSET_FLAGS(obj, flags)	(GNT_FILE_SEL_FLAGS(obj) &= ~(flags))
 
+#define GNT_TYPE_FILE					(gnt_file_get_type())
+
 typedef struct _GntFileSel			GntFileSel;
 typedef struct _GntFileSelPriv		GntFileSelPriv;
 typedef struct _GntFileSelClass		GntFileSelClass;
@@ -107,6 +109,13 @@ G_BEGIN_DECLS
  * Returns: GType for GntFileSel.
  */
 GType gnt_file_sel_get_type(void);
+
+/**
+ * gnt_file_get_type:
+ *
+ * Returns: The #GType for the #GntFile boxed structure.
+ */
+GType gnt_file_get_type(void);
 
 /**
  * gnt_file_sel_new:
