@@ -218,8 +218,8 @@ struct _PurplePluginUiInfo {
 
 /**
  * PurplePluginAction:
- * @plugin: set to the owning plugin
- * @context: NULL for plugin actions menu, set to the PurpleConnection for
+ * @plugin:  Set to the owning plugin
+ * @context: %NULL for plugin actions menu, set to the #PurpleConnection for
  *           account actions menu
  *
  * The structure used in the actions member of PurplePluginInfo
@@ -228,13 +228,9 @@ struct _PurplePluginAction {
 	char *label;
 	void (*callback)(PurplePluginAction *);
 
-	/** set to the owning plugin */
 	PurplePlugin *plugin;
 
-	/** NULL for plugin actions menu, set to the PurpleConnection for
-	    account actions menu */
 	gpointer context;
-
 	gpointer user_data;
 };
 

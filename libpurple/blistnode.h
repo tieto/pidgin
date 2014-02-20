@@ -103,8 +103,11 @@ struct _PurpleBlistNodeClass {
  * accounts, and the number of online children.
  *
  * The two types of counting nodes are:
- * 1. Contact: Keeps track of the number of buddies under it.
- * 2. Group:   Keeps track of the number of chats and contacts under it.
+ * <orderedlist>
+ *  <listitem>Contact: Keeps track of the number of buddies under it.</listitem>
+ *  <listitem>Group: Keeps track of the number of chats and contacts under it.
+ *                                                                   </listitem>
+ * </orderedlist>
  *
  * See #PurpleContact, #PurpleGroup
  */

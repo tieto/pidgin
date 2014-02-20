@@ -152,7 +152,7 @@ void                user_function                      (PurpleBlistNode *node,
                                                         gpointer user_data)
 </programlisting>
   <para>
-Emitted when a buddlist menu is being constructed <literal>menu</literal> is a pointer to a GList of PurpleBlistNodeAction's allowing a plugin to add menu items.
+Emitted when a buddlist menu is being constructed <literal>menu</literal> is a pointer to a GList of PurpleMenuAction's allowing a plugin to add menu items.
   </para>
 </refsect2>
 

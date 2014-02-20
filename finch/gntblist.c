@@ -3201,3 +3201,40 @@ GntTree * finch_blist_get_tree(void)
 	return ggblist ? GNT_TREE(ggblist->tree) : NULL;
 }
 
+/**************************************************************************
+ * GBoxed code
+ **************************************************************************/
+static FinchBlistManager *
+finch_blist_manager_copy(FinchBlistManager *manager)
+{
+	FinchBlistManager *manager_new;
+
+	g_return_val_if_fail(manager != NULL, NULL);
+
+	manager_new = g_new(FinchBlistManager, 1);
+	*manager_new = *manager;
+
+	return manager_new;
+}
+
+static void
+finch_blist_manager_free(FinchBlistManager *manager)
+{
+	g_return_if_fail(manager != NULL);
+
+	g_free(manager);
+}
+
+GType
+finch_blist_manager_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("FinchBlistManager",
+				(GBoxedCopyFunc)finch_blist_manager_copy,
+				(GBoxedFreeFunc)finch_blist_manager_free);
+	}
+
+	return type;
+}

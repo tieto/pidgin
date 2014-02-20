@@ -31,6 +31,8 @@
 #include "buddylist.h"
 #include "gnttree.h"
 
+#define FINCH_TYPE_BLIST_MANAGER (finch_blist_manager_get_type())
+
 /**********************************************************************
  * GNT BuddyList API
  **********************************************************************/
@@ -63,6 +65,13 @@ struct _FinchBlistManager
 	/*< private >*/
 	gpointer reserved[4];
 };
+
+/**
+ * finch_blist_manager_get_type:
+ *
+ * Returns: The #GType for the #FinchBlistManager boxed structure.
+ */
+GType finch_blist_manager_get_type(void);
 
 /**
  * finch_blist_get_ui_ops:
@@ -177,7 +186,8 @@ void finch_blist_uninstall_manager(const FinchBlistManager *manager);
  *
  * Find a buddy list manager.
  *
- * Returns:  The manager with the requested identifier, if available. %NULL otherwise.
+ * Returns: The manager with the requested identifier, if available. %NULL
+ *          otherwise.
  */
 FinchBlistManager * finch_blist_manager_find(const char *id);
 
