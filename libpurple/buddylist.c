@@ -1364,7 +1364,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 			purple_counting_node_change_online_count(contact_counter, -1);
 			if (purple_counting_node_get_online_count(contact_counter) == 0)
-				purple_counting_node_set_online_count(group_counter, -1);
+				purple_counting_node_change_online_count(group_counter, -1);
 		}
 		if (purple_account_is_connected(account)) {
 			purple_counting_node_change_current_size(contact_counter, -1);
