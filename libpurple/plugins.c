@@ -881,16 +881,9 @@ purple_plugin_action_free(PurplePluginAction *action)
 static PurplePluginAction *
 purple_plugin_action_copy(PurplePluginAction *action)
 {
-	PurplePluginAction *action_copy;
-
 	g_return_val_if_fail(action != NULL, NULL);
 
-	action_copy = g_new(PurplePluginAction, 1);
-	*action_copy = *action;
-
-	action_copy->label    = g_strdup(action->label);
-
-	return action_copy;
+	return purple_plugin_action_new(action->label, action->callback);
 }
 
 GType
