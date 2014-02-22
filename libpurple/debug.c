@@ -207,14 +207,6 @@ purple_debug_ui_ops_copy(PurpleDebugUiOps *ops)
 	return ops_new;
 }
 
-static void
-purple_debug_ui_ops_free(PurpleDebugUiOps *ops)
-{
-	g_return_if_fail(ops != NULL);
-
-	g_free(ops);
-}
-
 GType
 purple_debug_ui_ops_get_type(void)
 {
@@ -223,7 +215,7 @@ purple_debug_ui_ops_get_type(void)
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleDebugUiOps",
 				(GBoxedCopyFunc)purple_debug_ui_ops_copy,
-				(GBoxedFreeFunc)purple_debug_ui_ops_free);
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;

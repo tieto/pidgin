@@ -310,14 +310,6 @@ purple_conversation_ui_ops_copy(PurpleConversationUiOps *ops)
 	return ops_new;
 }
 
-static void
-purple_conversation_ui_ops_free(PurpleConversationUiOps *ops)
-{
-	g_return_if_fail(ops != NULL);
-
-	g_free(ops);
-}
-
 GType
 purple_conversation_ui_ops_get_type(void)
 {
@@ -326,7 +318,7 @@ purple_conversation_ui_ops_get_type(void)
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleConversationUiOps",
 				(GBoxedCopyFunc)purple_conversation_ui_ops_copy,
-				(GBoxedFreeFunc)purple_conversation_ui_ops_free);
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;
