@@ -70,6 +70,8 @@ struct _GntTreePriv
  * 		 ... Probably not */
 struct _GntTreeRow
 {
+	int box_count;
+
 	void *key;
 	void *data;		/* XXX: unused */
 
@@ -1959,16 +1961,23 @@ GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row)
  * GntTreeRow GBoxed API
  **************************************************************************/
 static GntTreeRow *
-copy_tree_row(GntTreeRow *row)
+gnt_tree_row_ref(GntTreeRow *row)
 {
-	GntTreeRow *row_new;
-
 	g_return_val_if_fail(row != NULL, NULL);
 
-	row_new = g_new(GntTreeRow, 1);
-	*row_new = *row;
+	row->box_count++;
 
-	return row_new;
+	return row;
+}
+
+static void
+gnt_tree_row_unref(GntTreeRow *row)
+{
+	g_return_if_fail(row != NULL);
+	g_return_if_fail(row->box_count >= 0);
+
+	if (!row->box_count--)
+		free_tree_row(row);
 }
 
 GType
@@ -1978,8 +1987,8 @@ gnt_tree_row_get_type(void)
 
 	if (type == 0) {
 		type = g_boxed_type_register_static("GntTreeRow",
-				(GBoxedCopyFunc)copy_tree_row,
-				(GBoxedFreeFunc)free_tree_row);
+				(GBoxedCopyFunc)gnt_tree_row_ref,
+				(GBoxedFreeFunc)gnt_tree_row_unref);
 	}
 
 	return type;

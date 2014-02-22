@@ -126,14 +126,6 @@ purple_eventloop_ui_ops_copy(PurpleEventLoopUiOps *ops)
 	return ops_new;
 }
 
-static void
-purple_eventloop_ui_ops_free(PurpleEventLoopUiOps *ops)
-{
-	g_return_if_fail(ops != NULL);
-
-	g_free(ops);
-}
-
 GType
 purple_eventloop_ui_ops_get_type(void)
 {
@@ -142,7 +134,7 @@ purple_eventloop_ui_ops_get_type(void)
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleEventLoopUiOps",
 				(GBoxedCopyFunc)purple_eventloop_ui_ops_copy,
-				(GBoxedFreeFunc)purple_eventloop_ui_ops_free);
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;

@@ -834,14 +834,6 @@ purple_account_ui_ops_copy(PurpleAccountUiOps *ops)
 	return ops_new;
 }
 
-static void
-purple_account_ui_ops_free(PurpleAccountUiOps *ops)
-{
-	g_return_if_fail(ops != NULL);
-
-	g_free(ops);
-}
-
 GType
 purple_account_ui_ops_get_type(void)
 {
@@ -850,7 +842,7 @@ purple_account_ui_ops_get_type(void)
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleAccountUiOps",
 				(GBoxedCopyFunc)purple_account_ui_ops_copy,
-				(GBoxedFreeFunc)purple_account_ui_ops_free);
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;

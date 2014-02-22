@@ -39,6 +39,8 @@ typedef struct _PurpleStatusPrivate  PurpleStatusPrivate;
  */
 struct _PurpleStatusType
 {
+	int box_count;
+
 	PurpleStatusPrimitive primitive;
 
 	char *id;
@@ -1005,28 +1007,23 @@ purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2)
 * GBoxed code for PurpleStatusType
 **************************************************************************/
 static PurpleStatusType *
-purple_status_type_copy(PurpleStatusType *status_type)
+purple_status_type_ref(PurpleStatusType *status_type)
 {
-	PurpleStatusType *status_type_copy;
-	GList *l;
-
 	g_return_val_if_fail(status_type != NULL, NULL);
 
-	status_type_copy = purple_status_type_new_full(status_type->primitive,
-	                                               status_type->id,
-	                                               status_type->name,
-	                                               status_type->saveable,
-	                                               status_type->user_settable,
-	                                               status_type->independent);
+	status_type->box_count++;
 
-	for (l = status_type->attrs; l != NULL; l = l->next) {
-		PurpleStatusAttribute *new_attr, *attr = l->data;
+	return status_type;
+}
 
-		new_attr = g_boxed_copy(PURPLE_TYPE_STATUS_ATTRIBUTE, attr);
-		status_type_copy->attrs = g_list_append(status_type_copy->attrs, new_attr);
-	}
+static void
+purple_status_type_unref(PurpleStatusType *status_type)
+{
+	g_return_if_fail(status_type != NULL);
+	g_return_if_fail(status_type->box_count >= 0);
 
-	return status_type_copy;
+	if (!status_type->box_count--)
+		purple_status_type_destroy(status_type);
 }
 
 GType
@@ -1036,8 +1033,8 @@ purple_status_type_get_type(void)
 
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleStatusType",
-				(GBoxedCopyFunc)purple_status_type_copy,
-				(GBoxedFreeFunc)purple_status_type_destroy);
+				(GBoxedCopyFunc)purple_status_type_ref,
+				(GBoxedFreeFunc)purple_status_type_unref);
 	}
 
 	return type;

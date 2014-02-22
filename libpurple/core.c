@@ -347,14 +347,6 @@ purple_core_ui_ops_copy(PurpleCoreUiOps *ops)
 	return ops_new;
 }
 
-static void
-purple_core_ui_ops_free(PurpleCoreUiOps *ops)
-{
-	g_return_if_fail(ops != NULL);
-
-	g_free(ops);
-}
-
 GType
 purple_core_ui_ops_get_type(void)
 {
@@ -363,7 +355,7 @@ purple_core_ui_ops_get_type(void)
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleCoreUiOps",
 				(GBoxedCopyFunc)purple_core_ui_ops_copy,
-				(GBoxedFreeFunc)purple_core_ui_ops_free);
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;

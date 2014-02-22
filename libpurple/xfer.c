@@ -2432,14 +2432,6 @@ purple_xfer_ui_ops_copy(PurpleXferUiOps *ops)
 	return ops_new;
 }
 
-static void
-purple_xfer_ui_ops_free(PurpleXferUiOps *ops)
-{
-	g_return_if_fail(ops != NULL);
-
-	g_free(ops);
-}
-
 GType
 purple_xfer_ui_ops_get_type(void)
 {
@@ -2448,7 +2440,7 @@ purple_xfer_ui_ops_get_type(void)
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleXferUiOps",
 				(GBoxedCopyFunc)purple_xfer_ui_ops_copy,
-				(GBoxedFreeFunc)purple_xfer_ui_ops_free);
+				(GBoxedFreeFunc)g_free);
 	}
 
 	return type;
