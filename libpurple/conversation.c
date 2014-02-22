@@ -912,31 +912,21 @@ PurpleConversation *purple_conversation_message_get_conversation(const PurpleCon
 }
 
 static PurpleConversationMessage *
-purple_conversation_message_copy(PurpleConversationMessage *msg)
+copy_conv_message(PurpleConversationMessage *msg)
 {
 	PurpleConversationMessage *newmsg;
 
 	g_return_val_if_fail(msg != NULL, NULL);
 
 	newmsg  = g_new(PurpleConversationMessage, 1);
+	PURPLE_DBUS_REGISTER_POINTER(newmsg, PurpleConversationMessage);
+
 	*newmsg = *msg;
 	newmsg->who   = g_strdup(msg->who);
 	newmsg->what  = g_strdup(msg->what);
 	newmsg->alias = g_strdup(msg->alias);
 
 	return newmsg;
-}
-
-static void
-purple_conversation_message_free(PurpleConversationMessage *msg)
-{
-	g_return_if_fail(msg != NULL);
-
-	g_free(msg->who);
-	g_free(msg->what);
-	g_free(msg->alias);
-
-	g_free(msg);
 }
 
 GType
@@ -946,8 +936,8 @@ purple_conversation_message_get_type(void)
 
 	if (type == 0) {
 		type = g_boxed_type_register_static("PurpleConversationMessage",
-				(GBoxedCopyFunc)purple_conversation_message_copy,
-				(GBoxedFreeFunc)purple_conversation_message_free);
+				(GBoxedCopyFunc)copy_conv_message,
+				(GBoxedFreeFunc)free_conv_message);
 	}
 
 	return type;
