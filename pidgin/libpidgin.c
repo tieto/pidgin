@@ -736,7 +736,7 @@ int pidgin_start(int argc, char *argv[])
 #endif
 
 #ifdef _WIN32
-	winpidgin_init(hint);
+	winpidgin_init();
 #endif
 
 	purple_core_set_ui_ops(pidgin_core_get_ui_ops());

@@ -78,9 +78,9 @@ ggp_keymapper_free(ggp_keymapper *km)
 }
 
 gpointer
-ggp_keymapper_to_key(ggp_keymapper *km, uint64_t val)
+ggp_keymapper_to_key(ggp_keymapper *km, guint64 val)
 {
-	uint64_t *key;
+	guint64 *key;
 
 	g_return_val_if_fail(km != NULL, NULL);
 
@@ -88,7 +88,7 @@ ggp_keymapper_to_key(ggp_keymapper *km, uint64_t val)
 	if (key)
 		return key;
 
-	key = g_new(uint64_t, 1);
+	key = g_new(guint64, 1);
 	*key = val;
 
 	g_hash_table_insert(km->val_to_key, key, key);
@@ -96,11 +96,11 @@ ggp_keymapper_to_key(ggp_keymapper *km, uint64_t val)
 	return key;
 }
 
-uint64_t
+guint64
 ggp_keymapper_from_key(ggp_keymapper *km, gpointer key)
 {
 	g_return_val_if_fail(km != NULL, 0);
 	g_return_val_if_fail(key != NULL, 0);
 
-	return *((uint64_t*)key);
+	return *((guint64*)key);
 }

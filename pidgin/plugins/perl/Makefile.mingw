@@ -7,6 +7,9 @@
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
+#we cannot include win32dep.h, but we need struct sockaddr_in6 definition
+CFLAGS += -include ws2tcpip.h
+
 ##
 ## TARGET DEFINITIONS
 ##

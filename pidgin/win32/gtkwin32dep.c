@@ -74,6 +74,11 @@ HINSTANCE winpidgin_exe_hinstance(void) {
 	return exe_hInstance;
 }
 
+void winpidgin_set_exe_hinstance(HINSTANCE hint)
+{
+	exe_hInstance = hint;
+}
+
 HINSTANCE winpidgin_dll_hinstance(void) {
 	return dll_hInstance;
 }
@@ -385,15 +390,13 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 	return FALSE;
 }
 
-void winpidgin_init(HINSTANCE hint) {
+void winpidgin_init(void) {
 	typedef void (__cdecl* LPFNSETLOGFILE)(const LPCSTR);
 	LPFNSETLOGFILE MySetLogFile;
 	gchar *exchndl_dll_path;
 
 	if (purple_debug_is_verbose())
 		purple_debug_misc("winpidgin", "winpidgin_init start\n");
-
-	exe_hInstance = hint;
 
 	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
 	MySetLogFile = (LPFNSETLOGFILE) wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");

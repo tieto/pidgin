@@ -39,10 +39,10 @@ void
 ggp_keymapper_free(ggp_keymapper *km);
 
 gpointer
-ggp_keymapper_to_key(ggp_keymapper *km, uint64_t val);
+ggp_keymapper_to_key(ggp_keymapper *km, guint64 val);
 
 /* The key have to be valid. */
-uint64_t
+guint64
 ggp_keymapper_from_key(ggp_keymapper *km, gpointer key);
 
 #endif /* _GGP_KEYMAPPER_H */
