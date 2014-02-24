@@ -29,6 +29,8 @@
  * @see_also: <link linkend="chapter-signals-gtkblist">Buddy List signals</link>
  */
 
+#define PIDGIN_TYPE_BUDDY_LIST (pidgin_buddy_list_get_type())
+
 typedef struct _PidginBuddyList PidginBuddyList;
 
 enum {
@@ -155,6 +157,13 @@ G_BEGIN_DECLS
 /**************************************************************************
  * GTK+ Buddy List API
  **************************************************************************/
+
+/**
+ * pidgin_buddy_list_get_type:
+ *
+ * Returns: The #GType for the #PidginBuddyList boxed structure.
+ */
+GType pidgin_buddy_list_get_type(void);
 
 /**
  * pidgin_blist_get_handle:

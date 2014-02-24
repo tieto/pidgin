@@ -105,6 +105,9 @@ typedef struct
 
 typedef struct
 {
+	/* GBoxed reference count */
+	int box_count;
+
 	/* Used to hold error minidialogs.  Gets packed
 	 * inside PidginBuddyList.error_buttons
 	 */
@@ -4879,6 +4882,51 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 		purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 				ui, PURPLE_CALLBACK(displayed_msg_update_ui_cb), chat);
 	}
+}
+
+/**************************************************************************
+ * GTK Buddy list GBoxed code
+ **************************************************************************/
+static PidginBuddyList *
+pidgin_buddy_list_ref(PidginBuddyList *gtkblist)
+{
+	PidginBuddyListPrivate *priv;
+
+	g_return_val_if_fail(gtkblist != NULL, NULL);
+
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	priv->box_count++;
+
+	return gtkblist;
+}
+
+static void
+pidgin_buddy_list_unref(PidginBuddyList *gtkblist)
+{
+	PidginBuddyListPrivate *priv;
+
+	g_return_if_fail(gtkblist != NULL);
+
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+
+	g_return_if_fail(priv->box_count >= 0);
+
+	if (!priv->box_count--)
+		purple_core_quit();
+}
+
+GType
+pidgin_buddy_list_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginBuddyList",
+				(GBoxedCopyFunc)pidgin_buddy_list_ref,
+				(GBoxedFreeFunc)pidgin_buddy_list_unref);
+	}
+
+	return type;
 }
 
 /**********************************************************************************
