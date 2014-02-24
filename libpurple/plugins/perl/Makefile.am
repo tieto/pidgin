@@ -137,7 +137,7 @@ clean-generic:
 		$(MAKE) clean; \
 		cd ..; \
 	done
-	cd common ; rm -rf *.c *.o pm_to_blib Purple.bs blib/*/.exists blib/*/auto/Purple blib/*/Purple.*pm ; cd ..
+	cd common ; rm -rf *.c *.o pm_to_blib Purple.bs MYMETA.* blib/*/.exists blib/*/auto/Purple blib/*/Purple.*pm ; cd ..
 	rm -f *.so
 
 distclean-generic:

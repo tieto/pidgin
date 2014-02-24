@@ -82,7 +82,7 @@ clean-generic:
 		$(MAKE) clean; \
 		cd ..; \
 	done
-	cd common ; rm -rf *.c *.o pm_to_blib Pidgin.bs blib/*/.exists blib/*/auto/Pidgin blib/*/Pidgin.*pm ; cd ..
+	cd common ; rm -rf *.c *.o pm_to_blib Pidgin.bs MYMETA.* blib/*/.exists blib/*/auto/Pidgin blib/*/Pidgin.*pm ; cd ..
 	rm -f *.so
 
 distclean-generic:
