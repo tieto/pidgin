@@ -10,7 +10,7 @@ WriteMakefile(
        'AUTHOR'        => 'Pidgin <https://pidgin.im/>') :  ()),
     'DEFINE'        => '@DEBUG_CFLAGS@ -Wno-float-equal',
     'dynamic_lib'       => { 'OTHERLDFLAGS' => '@LDFLAGS@' },
-    'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple -I@top_srcdir@/pidgin @GTK_CFLAGS@ @WEBKIT_CFLAGS@ -DHAVE_CONFIG_H',
+    'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_builddir@ -I@top_srcdir@/libpurple -I@top_srcdir@/pidgin @GTK_CFLAGS@ @WEBKIT_CFLAGS@ -DHAVE_CONFIG_H',
     'OBJECT'        => '$(O_FILES)', # link all the C files too
     'TYPEMAPS'      => ["@top_srcdir@/libpurple/plugins/perl/common/typemap"],
 #    'OPTIMIZE'      => '-g', # For debugging.

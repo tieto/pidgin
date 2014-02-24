@@ -6,6 +6,8 @@ GADU_EXTRA =
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 EXTRA_DIST = \
+	account.c \
+	account.h \
 	Makefile.mingw \
 	lib/COPYING
 
