@@ -11358,3 +11358,40 @@ generate_nick_colors(guint numcolors, GdkColor background)
 
 	return colors;
 }
+
+/**************************************************************************
+ * PidginWindow GBoxed code
+ **************************************************************************/
+static PidginWindow *
+pidgin_window_ref(PidginWindow *win)
+{
+	g_return_val_if_fail(win != NULL, NULL);
+
+	win->box_count++;
+
+	return win;
+}
+
+static void
+pidgin_window_unref(PidginWindow *win)
+{
+	g_return_if_fail(win != NULL);
+	g_return_if_fail(win->box_count >= 0);
+
+	if (!win->box_count--)
+		pidgin_conv_window_destroy(win);
+}
+
+GType
+pidgin_window_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginWindow",
+				(GBoxedCopyFunc)pidgin_window_ref,
+				(GBoxedFreeFunc)pidgin_window_unref);
+	}
+
+	return type;
+}

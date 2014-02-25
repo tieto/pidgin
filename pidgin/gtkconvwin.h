@@ -28,6 +28,8 @@
  * @title: Conversation Window API
  */
 
+#define PIDGIN_TYPE_WINDOW (pidgin_window_get_type())
+
 typedef struct _PidginWindowMenu   PidginWindowMenu;
 typedef struct _PidginWindow       PidginWindow;
 
@@ -86,6 +88,10 @@ struct _PidginWindowMenu
  */
 struct _PidginWindow
 {
+	/*< private >*/
+	gint box_count;
+
+	/*< public >*/
 	GtkWidget *window;
 	GtkWidget *notebook;
 	GtkWidget *notebook_menu;
@@ -112,27 +118,164 @@ G_BEGIN_DECLS
  * GTK+ Conversation Window API
  **************************************************************************/
 
+/**
+ * pidgin_window_get_type:
+ *
+ * Returns: The #GType for the #PidginWindow boxed structure.
+ */
+GType pidgin_window_get_type(void);
+
+/**
+ * pidgin_conv_window_new:
+ *
+ * Returns: A new #PidginWindow.
+ */
 PidginWindow * pidgin_conv_window_new(void);
+
+/**
+ * pidgin_conv_window_destroy:
+ * @win: The conversation window to destroy
+ */
 void pidgin_conv_window_destroy(PidginWindow *win);
+
+/**
+ * pidgin_conv_windows_get_list:
+ *
+ * Returns: (transfer none) (element-type Pidgin.Window): The list of windows.
+ */
 GList *pidgin_conv_windows_get_list(void);
+
+/**
+ * pidgin_conv_window_show:
+ * @win: The conversation window to show
+ */
 void pidgin_conv_window_show(PidginWindow *win);
+
+/**
+ * pidgin_conv_window_hide:
+ * @win: The conversation window to hide
+ */
 void pidgin_conv_window_hide(PidginWindow *win);
+
+/**
+ * pidgin_conv_window_raise:
+ * @win: The conversation window to raise
+ */
 void pidgin_conv_window_raise(PidginWindow *win);
+
+/**
+ * pidgin_conv_window_switch_gtkconv:
+ * @win:     The conversation window
+ * @gtkconv: The pidgin conversation to switch to
+ */
 void pidgin_conv_window_switch_gtkconv(PidginWindow *win, PidginConversation *gtkconv);
+
+/**
+ * pidgin_conv_window_add_gtkconv:
+ * @win:     The conversation window
+ * @gtkconv: The pidgin conversation to add
+ */
 void pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv);
+
+/**
+ * pidgin_conv_window_remove_gtkconv:
+ * @win:     The conversation window
+ * @gtkconv: The pidgin conversation to remove
+ */
 void pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv);
+
+/**
+ * pidgin_conv_window_get_gtkconv_at_index:
+ * @win:   The conversation window
+ * @index: The index in the window to get the conversation from
+ *
+ * Returns: The conversation in @win at @index
+ */
 PidginConversation *pidgin_conv_window_get_gtkconv_at_index(const PidginWindow *win, int index);
+
+/**
+ * pidgin_conv_window_get_active_gtkconv:
+ * @win: The conversation window
+ *
+ * Returns: The active #PidginConversation in @win.
+ */
 PidginConversation *pidgin_conv_window_get_active_gtkconv(const PidginWindow *win);
+
+/**
+ * pidgin_conv_window_get_active_conversation:
+ * @win: The conversation window
+ *
+ * Returns: The active #PurpleConversation in @win.
+ */
 PurpleConversation *pidgin_conv_window_get_active_conversation(const PidginWindow *win);
+
+/**
+ * pidgin_conv_window_is_active_conversation:
+ * @conv: The conversation
+ *
+ * Returns: %TRUE if @conv is the active conversation, %FALSE otherwise.
+ */
 gboolean pidgin_conv_window_is_active_conversation(const PurpleConversation *conv);
+
+/**
+ * pidgin_conv_window_has_focus:
+ * @win: The conversation window
+ *
+ * Returns: %TRUE if @win has focus, %FALSE otherwise.
+ */
 gboolean pidgin_conv_window_has_focus(PidginWindow *win);
+
+/**
+ * pidgin_conv_window_get_at_event:
+ * @event: The event
+ *
+ * Returns: The #PidginWindow on which @event occured.
+ */
 PidginWindow *pidgin_conv_window_get_at_event(GdkEvent *event);
+
+/**
+ * pidgin_conv_window_get_gtkconvs:
+ * @win: The conversation window
+ *
+ * Returns: (transfer none) (element-type Pidgin.Conversation): A list of
+ *          #PidginConversation's in @win.
+ */
 GList *pidgin_conv_window_get_gtkconvs(PidginWindow *win);
+
+/**
+ * pidgin_conv_window_get_gtkconv_count:
+ * @win: The conversation window
+ *
+ * Returns: The number of conversations in @win
+ */
 guint pidgin_conv_window_get_gtkconv_count(PidginWindow *win);
 
+/**
+ * pidgin_conv_window_first_im:
+ *
+ * Returns: The window which has the first IM, %NULL if no IM is found.
+ */
 PidginWindow *pidgin_conv_window_first_im(void);
+
+/**
+ * pidgin_conv_window_last_im:
+ *
+ * Returns: The window which has the last IM, %NULL if no IM is found.
+ */
 PidginWindow *pidgin_conv_window_last_im(void);
+
+/**
+ * pidgin_conv_window_first_chat:
+ *
+ * Returns: The window which has the first chat, %NULL if no chat is found.
+ */
 PidginWindow *pidgin_conv_window_first_chat(void);
+
+/**
+ * pidgin_conv_window_last_chat:
+ *
+ * Returns: The window which has the last chat, %NULL if no chat is found.
+ */
 PidginWindow *pidgin_conv_window_last_chat(void);
 
 /**************************************************************************
