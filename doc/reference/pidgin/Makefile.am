@@ -137,6 +137,8 @@ EXTRA_DIST += version.xml.in
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
 DISTCLEANFILES = $(DOC_MODULE).types $(DOC_MODULE)-sections.txt
 
+dist-hook: html-build.stamp
+
 # Comment this out if you want 'make check' to test you doc status
 # and run some sanity checks
 if ENABLE_GTK_DOC

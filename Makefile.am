@@ -20,6 +20,31 @@ EXTRA_DIST = \
 
 noinst_HEADERS = config.h package_revision.h
 
+dist-pre-hook: package_revision.h
+if !ENABLE_GTK_DOC
+	$(AM_V_at)echo "error: gtk-doc must be installed and enabled in order to make dist"
+	$(AM_V_at)echo "re-run ./configure with --enable-gtk-doc switch and try again"
+	$(AM_V_at)false
+endif
+	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/libpurple.la" ]; then \
+		$(MAKE) -C libpurple libpurple.la; \
+	fi
+if ENABLE_GNT
+	$(AM_V_at)if [ ! -f "$(top_builddir)finch/libgnt/libgnt.la" ]; then \
+		$(MAKE) -C finch/libgnt libgnt.la; \
+	fi
+	$(AM_V_at)if [ ! -f "$(top_builddir)finch/libfinch.la" ]; then \
+		$(MAKE) -C finch libfinch.la; \
+	fi
+endif
+if ENABLE_GTK
+	$(AM_V_at)if [ ! -f "$(top_builddir)pidgin/libpidgin.la" ]; then \
+		$(MAKE) -C pidgin libpidgin.la; \
+	fi
+endif
+
+dist: dist-pre-hook
+
 dist-hook:
 	rm $(distdir)/config.h
 
