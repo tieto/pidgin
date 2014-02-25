@@ -257,7 +257,7 @@ gir_DATA = $(INTROSPECTION_GIRS)
 typelibdir = $(INTROSPECTION_TYPELIBDIR)
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
-CLEANFILES = $(gir_DATA) $(typelib_DATA)
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
 
 endif  # ENABLE_GTK
