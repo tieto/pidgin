@@ -2867,7 +2867,14 @@ AM_CONDITIONAL(ENABLE_TRAYCOMPAT, test "x$enable_traycompat" = "xyes")
 m4_ifdef([GTK_DOC_CHECK], [
 GTK_DOC_CHECK([1.16],[--flavour no-tmpl])
 ],[
-AM_CONDITIONAL([ENABLE_GTK_DOC], false)
+	if test "x$force_deps" = "xyes" -a "x$enable_gtk_doc" = "xyes"; then
+		AC_MSG_ERROR([
+You have requested to generate documentation, but gtk-doc was not found.
+		])
+	fi
+
+	AM_CONDITIONAL([ENABLE_GTK_DOC], false)
+	enable_gtk_doc=no
 ])
 
 if test "x$enable_gtk_doc" = "x" ; then
