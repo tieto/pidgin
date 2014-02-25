@@ -2877,10 +2877,6 @@ You have requested to generate documentation, but gtk-doc was not found.
 	enable_gtk_doc=no
 ])
 
-if test "x$enable_gtk_doc" = "x" ; then
-	enable_gtk_doc=no
-fi
-
 AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
 
