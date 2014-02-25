@@ -475,6 +475,54 @@ pidgin_blist_theme_get_type (void)
 	return type;
 }
 
+/**************************************************************************
+ * GBoxed Stuff
+ **************************************************************************/
+
+static PidginThemeFont *
+pidgin_theme_font_copy(PidginThemeFont *font)
+{
+	g_return_val_if_fail(font != NULL, NULL);
+
+	return pidgin_theme_font_new(font->font, font->gdkcolor);
+}
+
+GType
+pidgin_theme_font_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginThemeFont",
+				(GBoxedCopyFunc)pidgin_theme_font_copy,
+				(GBoxedFreeFunc)pidgin_theme_font_free);
+	}
+
+	return type;
+}
+
+static PidginBlistLayout *
+pidgin_blist_layout_copy(const PidginBlistLayout *layout)
+{
+	g_return_val_if_fail(layout != NULL, NULL);
+
+	return g_memdup(layout, sizeof(PidginBlistLayout));
+}
+
+GType
+pidgin_blist_layout_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginBlistLayout",
+				(GBoxedCopyFunc)pidgin_blist_layout_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
 
 /*****************************************************************************
  * Public API functions
@@ -715,7 +763,7 @@ pidgin_blist_theme_set_layout(PidginBlistTheme *theme, const PidginBlistLayout *
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(theme);
 
 	g_free(priv->layout);
-	priv->layout = g_memdup(layout, sizeof(PidginBlistLayout));
+	priv->layout = pidgin_blist_layout_copy(layout);
 
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_LAYOUT]);
 }

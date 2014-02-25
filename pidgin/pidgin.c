@@ -43,5 +43,9 @@ int main(int argc, char *argv[])
 	g_set_prgname("Pidgin");
 	g_set_application_name(PIDGIN_NAME);
 
+#ifdef _WIN32
+	winpidgin_set_exe_hinstance(hint);
+#endif
+
 	return pidgin_start(argc, argv);
 }

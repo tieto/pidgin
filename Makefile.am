@@ -21,6 +21,31 @@ EXTRA_DIST = \
 
 noinst_HEADERS = config.h package_revision.h
 
+dist-pre-hook: package_revision.h
+if !ENABLE_GTK_DOC
+	$(AM_V_at)echo "error: gtk-doc must be installed and enabled in order to make dist"
+	$(AM_V_at)echo "re-run ./configure with --enable-gtk-doc switch and try again"
+	$(AM_V_at)false
+endif
+	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/libpurple.la" ]; then \
+		$(MAKE) -C libpurple libpurple.la; \
+	fi
+if ENABLE_GNT
+	$(AM_V_at)if [ ! -f "$(top_builddir)finch/libgnt/libgnt.la" ]; then \
+		$(MAKE) -C finch/libgnt libgnt.la; \
+	fi
+	$(AM_V_at)if [ ! -f "$(top_builddir)finch/libfinch.la" ]; then \
+		$(MAKE) -C finch libfinch.la; \
+	fi
+endif
+if ENABLE_GTK
+	$(AM_V_at)if [ ! -f "$(top_builddir)pidgin/libpidgin.la" ]; then \
+		$(MAKE) -C pidgin libpidgin.la; \
+	fi
+endif
+
+dist: dist-pre-hook
+
 dist-hook:
 	rm $(distdir)/config.h
 
@@ -123,10 +148,7 @@ package_revision.h: package_revision_raw.txt
 # line does is tell 'distcheck' to shut up and ignore those two files.
 distcleancheck_listfiles = find . -type f -a ! -name package_revision.h
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
-if PLUGINS
-DISTCHECK_CONFIGURE_FLAGS += --enable-introspection
-endif
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 SUBDIRS = . m4macros libpurple $(GNT_DIR) $(GTK_DIR) $(PO_DIR) share/ca-certs share/sounds doc
 

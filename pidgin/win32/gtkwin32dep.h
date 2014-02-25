@@ -28,6 +28,7 @@
 
 HINSTANCE winpidgin_dll_hinstance(void);
 HINSTANCE winpidgin_exe_hinstance(void);
+void winpidgin_set_exe_hinstance(HINSTANCE hint);
 
 /* Utility */
 int winpidgin_gz_decompress(const char* in, const char* out);
@@ -42,7 +43,7 @@ void winpidgin_window_flash(GtkWindow *window, gboolean flash);
 DWORD winpidgin_get_lastactive(void);
 
 /* init / cleanup */
-void winpidgin_init(HINSTANCE);
+void winpidgin_init(void);
 void winpidgin_post_init(void);
 void winpidgin_cleanup(void);
 

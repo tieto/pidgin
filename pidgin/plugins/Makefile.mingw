@@ -93,7 +93,7 @@ themeedit.dll: $(THEMEEDIT_OBJECTS)
 include $(PIDGIN_COMMON_RULES)
 
 plugins: \
-		convcolors.dll \
+		contact_priority.dll \
 		extplacement.dll \
 		gtkbuddynote.dll \
 		history.dll \

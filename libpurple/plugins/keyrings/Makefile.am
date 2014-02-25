@@ -39,7 +39,7 @@ kwallet_la_LIBADD  = $(GLIB_LIBS) $(KWALLET_LIBS) $(QT4_LIBS)
 kwallet.cpp: kwallet.moc
 
 kwallet.moc:
-	$(AM_V_GEN)$(MOC) $(kwallet_la_CXXFLAGS) -i kwallet.cpp -o $@
+	$(AM_V_GEN)$(MOC) $(kwallet_la_CXXFLAGS) -i $(srcdir)/kwallet.cpp -o $@
 
 CLEANFILES += kwallet.moc
 

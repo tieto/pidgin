@@ -44,6 +44,10 @@ typedef struct _PidginBlistThemeClass   PidginBlistThemeClass;
 #define PIDGIN_IS_BLIST_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_BLIST_THEME))
 #define PIDGIN_BLIST_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_BLIST_THEME, PidginBlistThemeClass))
 
+#define PIDGIN_TYPE_THEME_FONT             (pidgin_theme_font_get_type())
+
+#define PIDGIN_TYPE_BLIST_LAYOUT           (pidgin_blist_layout_get_type())
+
 /**
  * PidginBlistTheme:
  *
@@ -62,15 +66,6 @@ struct _PidginBlistThemeClass
 	PurpleThemeClass parent_class;
 };
 
-#if 0
-typedef struct _PidginThemeFont PidginThemeFont;
-struct _PidginThemeFont
-{
-	const gchar *font;
-	const gchar *color;
-
-};
-#endif
 typedef struct _PidginThemeFont PidginThemeFont;
 
 typedef struct _PidginBlistLayout PidginBlistLayout;
@@ -91,6 +86,13 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /* PidginThemeFont API                                                    */
 /**************************************************************************/
+
+/**
+ * pidgin_theme_font_get_type:
+ *
+ * Returns: The #GType for the #PidginThemeFont boxed structure.
+ */
+GType pidgin_theme_font_get_type(void);
 
 /**
  * pidgin_theme_font_new:
@@ -169,6 +171,13 @@ const gchar * pidgin_theme_font_get_color_describe(PidginThemeFont *font);
  * Returns: The #GType for a blist theme.
  */
 GType pidgin_blist_theme_get_type(void);
+
+/**
+ * pidgin_blist_layout_get_type:
+ *
+ * Returns: The #GType for the #PidginBlistLayout boxed structure.
+ */
+GType pidgin_blist_layout_get_type(void);
 
 /* get methods */
 

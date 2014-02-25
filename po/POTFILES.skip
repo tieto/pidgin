@@ -19,6 +19,7 @@ libpurple/plugins/perl/common/Plugin.c
 libpurple/plugins/perl/common/PluginPref.c
 libpurple/plugins/perl/common/Pounce.c
 libpurple/plugins/perl/common/Prefs.c
+libpurple/plugins/perl/common/Presence.c
 libpurple/plugins/perl/common/Privacy.c
 libpurple/plugins/perl/common/Proxy.c
 libpurple/plugins/perl/common/Prpl.c
@@ -35,6 +36,7 @@ libpurple/plugins/perl/common/Status.c
 libpurple/plugins/perl/common/Stringref.c
 libpurple/plugins/perl/common/Util.c
 libpurple/plugins/perl/common/Whiteboard.c
+libpurple/plugins/perl/common/Xfer.c
 libpurple/plugins/perl/common/XMLNode.c
 libpurple/protocols/null/nullprpl.c
 pidgin.desktop.in.in

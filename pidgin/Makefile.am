@@ -154,10 +154,14 @@ libpidgin_la_builtheaders = gtkdebug.html.h
 
 BUILT_SOURCES = $(libpidgin_la_builtheaders)
 
+CLEANFILES = gtkdebug.html.h
+
 %.html.h: %.html
 	$(AM_V_GEN)echo "static const char $*_html[] = {" > $@
 	$(AM_V_at)$(sedpath) -e 's/^[ 	]\+//g' -e 's/[ 	]\+/ /g' $< | $(xxdpath) -i | sed -e 's/\(0x[0-9a-f][0-9a-f]\)$$/\1, 0x00/' >> $@
 	$(AM_V_at)echo "};" >> $@
+
+gtkdebug.c: gtkdebug.html.h
 
 libpidgin_la_DEPENDENCIES = @LIBOBJS@
 libpidgin_la_LDFLAGS = -export-dynamic
