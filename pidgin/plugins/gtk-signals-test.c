@@ -57,7 +57,7 @@ blist_drawing_tooltip_cb(PurpleBlistNode *node, GString *str, gboolean full, voi
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static void
-conversation_dragging_cb(PidginWindow *source, PidginWindow *destination) {
+conversation_dragging_cb(PidginConvWindow *source, PidginConvWindow *destination) {
 	purple_debug_info("gtk-signal-test", "conversation dragging cb\n");
 }
 

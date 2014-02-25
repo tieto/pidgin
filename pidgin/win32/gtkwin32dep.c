@@ -349,7 +349,7 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 
 void
 winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
-	PidginWindow *win;
+	PidginConvWindow *win;
 	GtkWindow *window;
 
 	/* Don't flash for our own messages or system messages */

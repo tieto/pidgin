@@ -107,7 +107,7 @@ static GdkAtom _PurpleUnseenCount = GDK_NONE;
 
 /* notification set/unset */
 static int notify(PurpleConversation *conv, gboolean increment);
-static void notify_win(PidginWindow *purplewin, PurpleConversation *conv);
+static void notify_win(PidginConvWindow *purplewin, PurpleConversation *conv);
 static void unnotify(PurpleConversation *conv, gboolean reset);
 static int unnotify_cb(GtkWidget *widget, gpointer data,
                        PurpleConversation *conv);
@@ -122,19 +122,19 @@ static void apply_method(void);
 static void apply_notify(void);
 
 /* string function */
-static void handle_string(PidginWindow *purplewin);
+static void handle_string(PidginConvWindow *purplewin);
 
 /* count_title function */
-static void handle_count_title(PidginWindow *purplewin);
+static void handle_count_title(PidginConvWindow *purplewin);
 
 /* count_xprop function */
-static void handle_count_xprop(PidginWindow *purplewin);
+static void handle_count_xprop(PidginConvWindow *purplewin);
 
 /* urgent function */
-static void handle_urgent(PidginWindow *purplewin, gboolean set);
+static void handle_urgent(PidginConvWindow *purplewin, gboolean set);
 
 /* raise function */
-static void handle_raise(PidginWindow *purplewin);
+static void handle_raise(PidginConvWindow *purplewin);
 
 /* present function */
 static void handle_present(PurpleConversation *conv);
@@ -143,7 +143,7 @@ static void handle_present(PurpleConversation *conv);
 /* Begin doing stuff below this line... */
 /****************************************/
 static guint
-count_messages(PidginWindow *purplewin)
+count_messages(PidginConvWindow *purplewin)
 {
 	guint count = 0;
 	GList *convs = NULL, *l;
@@ -163,7 +163,7 @@ notify(PurpleConversation *conv, gboolean increment)
 {
 	gint count;
 	gboolean has_focus;
-	PidginWindow *purplewin = NULL;
+	PidginConvWindow *purplewin = NULL;
 
 	if (conv == NULL || PIDGIN_CONVERSATION(conv) == NULL)
 		return 0;
@@ -198,7 +198,7 @@ notify(PurpleConversation *conv, gboolean increment)
 }
 
 static void
-notify_win(PidginWindow *purplewin, PurpleConversation *conv)
+notify_win(PidginConvWindow *purplewin, PurpleConversation *conv)
 {
 	if (count_messages(purplewin) <= 0)
 		return;
@@ -221,7 +221,7 @@ static void
 unnotify(PurpleConversation *conv, gboolean reset)
 {
 	PurpleConversation *active_conv = NULL;
-	PidginWindow *purplewin = NULL;
+	PidginConvWindow *purplewin = NULL;
 
 	g_return_if_fail(conv != NULL);
 	if (PIDGIN_CONVERSATION(conv) == NULL)
@@ -387,7 +387,7 @@ static void
 conv_switched(PurpleConversation *conv)
 {
 #if 0
-	PidginWindow *purplewin = purple_conversation_get_window(new_conv);
+	PidginConvWindow *purplewin = purple_conversation_get_window(new_conv);
 #endif
 
 	/*
@@ -413,7 +413,7 @@ conv_switched(PurpleConversation *conv)
 static void
 deleting_conv(PurpleConversation *conv)
 {
-	PidginWindow *purplewin = NULL;
+	PidginConvWindow *purplewin = NULL;
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
 	if (gtkconv == NULL)
@@ -438,8 +438,8 @@ deleting_conv(PurpleConversation *conv)
 #if 0
 static void
 conversation_dragging(PurpleConversation *active_conv,
-                        PidginWindow *old_purplewin,
-                        PidginWindow *new_purplewin)
+                        PidginConvWindow *old_purplewin,
+                        PidginConvWindow *new_purplewin)
 {
 	if (old_purplewin != new_purplewin) {
 		if (old_purplewin == NULL) {
@@ -485,7 +485,7 @@ conversation_dragging(PurpleConversation *active_conv,
 #endif
 
 static void
-handle_string(PidginWindow *purplewin)
+handle_string(PidginConvWindow *purplewin)
 {
 	GtkWindow *window = NULL;
 	gchar newtitle[256];
@@ -502,7 +502,7 @@ handle_string(PidginWindow *purplewin)
 }
 
 static void
-handle_count_title(PidginWindow *purplewin)
+handle_count_title(PidginConvWindow *purplewin)
 {
 	GtkWindow *window;
 	char newtitle[256];
@@ -518,7 +518,7 @@ handle_count_title(PidginWindow *purplewin)
 }
 
 static void
-handle_count_xprop(PidginWindow *purplewin)
+handle_count_xprop(PidginConvWindow *purplewin)
 {
 #ifdef HAVE_X11
 	guint count;
@@ -545,7 +545,7 @@ handle_count_xprop(PidginWindow *purplewin)
 }
 
 static void
-handle_urgent(PidginWindow *purplewin, gboolean set)
+handle_urgent(PidginConvWindow *purplewin, gboolean set)
 {
 	g_return_if_fail(purplewin != NULL);
 	g_return_if_fail(purplewin->window != NULL);
@@ -554,7 +554,7 @@ handle_urgent(PidginWindow *purplewin, gboolean set)
 }
 
 static void
-handle_raise(PidginWindow *purplewin)
+handle_raise(PidginConvWindow *purplewin)
 {
 	pidgin_conv_window_raise(purplewin);
 }

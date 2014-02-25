@@ -34,7 +34,7 @@ static void
 iconify_windows(PurpleAccount *account, PurpleStatus *old, PurpleStatus *newstatus)
 {
 	PurplePresence *presence;
-	PidginWindow *win;
+	PidginConvWindow *win;
 	GList *windows;
 
 	presence = purple_status_get_presence(newstatus);
@@ -48,7 +48,7 @@ iconify_windows(PurpleAccount *account, PurpleStatus *old, PurpleStatus *newstat
 		 windows != NULL;
 		 windows = windows->next) {
 
-		win = (PidginWindow *)windows->data;
+		win = (PidginConvWindow *)windows->data;
 
 		gtk_window_iconify(GTK_WINDOW(win->window));
 	}

@@ -31,7 +31,7 @@
 static void
 conv_placement_by_number(PidginConversation *conv)
 {
-	PidginWindow *win = NULL;
+	PidginConvWindow *win = NULL;
 	GList *wins = NULL;
 
 	if (purple_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate"))
