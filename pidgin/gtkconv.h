@@ -92,7 +92,7 @@ struct _PidginConversation
 	GList *convs;
 	GList *send_history;
 
-	PidginWindow *win;
+	PidginConvWindow *win;
 
 	gboolean make_sound;
 
@@ -293,10 +293,10 @@ void pidgin_conv_present_conversation(PurpleConversation *conv);
  */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
-PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
+PidginConvWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
 GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon);
 void pidgin_conv_new(PurpleConversation *conv);
-int pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right);
+int pidgin_conv_get_tab_at_xy(PidginConvWindow *win, int x, int y, gboolean *to_right);
 gboolean pidgin_conv_is_hidden(PidginConversation *gtkconv);
 
 /**************************************************************************/

@@ -140,7 +140,7 @@ static int
 alert(PurpleConversation *conv)
 {
 	gint count;
-	PidginWindow *purplewin = NULL;
+	PidginConvWindow *purplewin = NULL;
 	if (conv == NULL || PIDGIN_CONVERSATION(conv) == NULL)
 		return 0;
 
@@ -234,7 +234,7 @@ message_source_activated(MessagingMenuApp *app, const gchar *id,
 	gchar **sections = g_strsplit(id, ":", 0);
 	PurpleConversation *conv = NULL;
 	PurpleAccount *account;
-	PidginWindow *purplewin = NULL;
+	PidginConvWindow *purplewin = NULL;
 
 	char *type     = sections[0];
 	char *cname    = sections[1];

@@ -58,7 +58,7 @@ typedef PidginConversation *		Pidgin__Conversation;
 typedef PidginUnseenState		Pidgin__UnseenState;
 
 /* gtkconvwin.h */
-typedef PidginWindow *			Pidgin__Conversation__Window;
+typedef PidginConvWindow *			Pidgin__Conversation__Window;
 typedef PidginConvPlacementFunc		Pidgin__Conversation__PlacementFunc;
 
 /* gtkxfer.h */

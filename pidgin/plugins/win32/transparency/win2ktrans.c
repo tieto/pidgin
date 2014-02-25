@@ -205,7 +205,7 @@ static slider_win* find_slidwin(GtkWidget *win) {
 }
 
 /* Clean up transparency stuff for the conv window */
-static void cleanup_conv_window(PidginWindow *win) {
+static void cleanup_conv_window(PidginConvWindow *win) {
 	GtkWidget *window = win->window;
 	slider_win *slidwin = NULL;
 
@@ -225,7 +225,7 @@ static void cleanup_conv_window(PidginWindow *win) {
 
 static void
 conversation_delete_cb(PurpleConversation *conv) {
-	PidginWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
+	PidginConvWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 	/* If it is the last conversation in the window, cleanup */
 	if (win != NULL && pidgin_conv_window_get_gtkconv_count(win) == 1)
 		cleanup_conv_window(win);
@@ -323,7 +323,7 @@ static void remove_convs_wintrans(gboolean remove_signal) {
 	GList *wins;
 
 	for (wins = pidgin_conv_windows_get_list(); wins; wins = wins->next) {
-		PidginWindow *win = wins->data;
+		PidginConvWindow *win = wins->data;
 		GtkWidget *window = win->window;
 
 		if (purple_prefs_get_bool(OPT_WINTRANS_IM_ENABLED))
@@ -338,7 +338,7 @@ static void remove_convs_wintrans(gboolean remove_signal) {
 	remove_sliders();
 }
 
-static void set_conv_window_trans(PidginWindow *oldwin, PidginWindow *newwin) {
+static void set_conv_window_trans(PidginConvWindow *oldwin, PidginConvWindow *newwin) {
 	GtkWidget *win = newwin->window;
 
 	/* check prefs to see if we want trans */
@@ -375,7 +375,7 @@ static void update_convs_wintrans(GtkWidget *toggle_btn, const char *pref) {
 		GList *wins;
 
 		for (wins = pidgin_conv_windows_get_list(); wins; wins = wins->next) {
-			PidginWindow *win = wins->data;
+			PidginConvWindow *win = wins->data;
 			set_conv_window_trans(NULL, win);
 		}
 
@@ -389,7 +389,7 @@ static void update_convs_wintrans(GtkWidget *toggle_btn, const char *pref) {
 static void
 conv_updated_cb(PurpleConversation *conv, PurpleConversationUpdateType type) {
 	PidginConversation *pconv = PIDGIN_CONVERSATION(conv);
-	PidginWindow *win = pidgin_conv_get_window(pconv);
+	PidginConvWindow *win = pidgin_conv_get_window(pconv);
 
 	if (type == PURPLE_CONVERSATION_UPDATE_UNSEEN && !pidgin_conv_is_hidden(pconv)
 			&& pconv->unseen_state == PIDGIN_UNSEEN_NONE
@@ -414,7 +414,7 @@ conv_updated_cb(PurpleConversation *conv, PurpleConversationUpdateType type) {
 
 static void
 new_conversation_cb(PurpleConversation *conv) {
-	PidginWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
+	PidginConvWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 
 	/* If it is the first conversation in the window,
 	 * add the sliders, and set transparency */
@@ -452,7 +452,7 @@ static void alpha_change(GtkWidget *w, gpointer data) {
 	int imalpha = gtk_range_get_value(GTK_RANGE(w));
 
 	for (wins = pidgin_conv_windows_get_list(); wins; wins = wins->next) {
-		PidginWindow *win = wins->data;
+		PidginConvWindow *win = wins->data;
 		set_wintrans(win->window, imalpha, TRUE,
 			purple_prefs_get_bool(OPT_WINTRANS_IM_ONTOP));
 	}
@@ -473,7 +473,7 @@ static void update_existing_convs() {
 	GList *wins;
 
 	for (wins = pidgin_conv_windows_get_list(); wins; wins = wins->next) {
-		PidginWindow *win = wins->data;
+		PidginConvWindow *win = wins->data;
 		GtkWidget *window = win->window;
 
 		set_conv_window_trans(NULL, win);

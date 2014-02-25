@@ -54,7 +54,7 @@ stroke_close(GtkWidget *widget, void *data)
 }
 
 static void
-switch_page(PidginWindow *win, GtkDirectionType dir)
+switch_page(PidginConvWindow *win, GtkDirectionType dir)
 {
 	int count, current;
 
@@ -79,7 +79,7 @@ stroke_prev_tab(GtkWidget *widget, void *data)
 {
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
-	PidginWindow *win;
+	PidginConvWindow *win;
 
 	conv  = (PurpleConversation *)data;
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -92,7 +92,7 @@ static void
 stroke_next_tab(GtkWidget *widget, void *data)
 {
 	PurpleConversation *conv;
-	PidginWindow *win;
+	PidginConvWindow *win;
 
 	conv  = (PurpleConversation *)data;
 	win   = PIDGIN_CONVERSATION(conv)->win;
@@ -103,7 +103,7 @@ stroke_next_tab(GtkWidget *widget, void *data)
 static void
 stroke_new_win(GtkWidget *widget, void *data)
 {
-	PidginWindow *new_win, *old_win;
+	PidginConvWindow *new_win, *old_win;
 	PurpleConversation *conv;
 
 	conv    = (PurpleConversation *)data;

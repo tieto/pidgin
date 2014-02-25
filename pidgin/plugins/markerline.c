@@ -67,7 +67,7 @@ update_marker_for_gtkconv(PidginConversation *gtkconv)
 }
 
 static gboolean
-focus_removed(GtkWidget *widget, GdkEventVisibility *event, PidginWindow *win)
+focus_removed(GtkWidget *widget, GdkEventVisibility *event, PidginConvWindow *win)
 {
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
@@ -82,7 +82,7 @@ focus_removed(GtkWidget *widget, GdkEventVisibility *event, PidginWindow *win)
 }
 
 static void
-page_switched(GtkWidget *widget, GtkWidget *page, gint num, PidginWindow *win)
+page_switched(GtkWidget *widget, GtkWidget *page, gint num, PidginConvWindow *win)
 {
 	focus_removed(NULL, NULL, win);
 }
@@ -96,7 +96,7 @@ detach_from_gtkconv(PidginConversation *gtkconv, gpointer null)
 }
 
 static void
-detach_from_pidgin_window(PidginWindow *win, gpointer null)
+detach_from_pidgin_window(PidginConvWindow *win, gpointer null)
 {
 	g_list_foreach(pidgin_conv_window_get_gtkconvs(win), (GFunc)detach_from_gtkconv, NULL);
 	g_signal_handlers_disconnect_by_func(G_OBJECT(win->notebook), page_switched, win);
@@ -111,7 +111,7 @@ attach_to_gtkconv(PidginConversation *gtkconv, gpointer null)
 }
 
 static void
-attach_to_pidgin_window(PidginWindow *win, gpointer null)
+attach_to_pidgin_window(PidginConvWindow *win, gpointer null)
 {
 	g_list_foreach(pidgin_conv_window_get_gtkconvs(win), (GFunc)attach_to_gtkconv, NULL);
 
@@ -137,7 +137,7 @@ attach_to_all_windows(void)
 static void
 conv_created(PidginConversation *gtkconv, gpointer null)
 {
-	PidginWindow *win;
+	PidginConvWindow *win;
 
 	win = pidgin_conv_get_window(gtkconv);
 	if (!win)
