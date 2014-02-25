@@ -457,6 +457,7 @@ version 3.0.0 (??/??/????):
 		* smiley_list renamed to PidginSmileyList
 		* smiley_parse_markup renamed to pidgin_smiley_parse_markup
 		* smiley_theme renamed to PidginSmileyTheme
+		* PidginWindow renamed to PidginConvWindow
 
 		Removed:
 		* GtkIMHtml.clipboard_html_string
