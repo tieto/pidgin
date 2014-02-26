@@ -32,6 +32,8 @@ int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
+	const gchar *test_prgname;
+
 #if !GLIB_CHECK_VERSION(2, 32, 0)
 	/* GLib threading system is automaticaly initialized since 2.32.
 	 * For earlier versions, it have to be initialized before calling any
@@ -40,7 +42,9 @@ int main(int argc, char *argv[])
 	g_thread_init(NULL);
 #endif
 
-	g_set_prgname("Pidgin");
+	/* This is for UI testing purposes only, don't use it! */
+	test_prgname = g_getenv("PIDGIN_TEST_PRGNAME");
+	g_set_prgname(test_prgname ? test_prgname : "Pidgin");
 	g_set_application_name(PIDGIN_NAME);
 
 #ifdef _WIN32
