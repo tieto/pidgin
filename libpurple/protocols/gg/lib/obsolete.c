@@ -1,4 +1,4 @@
-/* $Id: obsolete.c 1082 2011-04-08 17:50:14Z wojtekka $ */
+/* $Id$ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -32,9 +32,10 @@
 /** \cond obsolete */
 
 #include <errno.h>
+#include <string.h>
 
 #include "libgadu.h"
-#include "libgadu-internal.h"
+#include "internal.h"
 
 struct gg_http *gg_userlist_get(uin_t uin, const char *passwd, int async)
 {
@@ -232,6 +233,12 @@ int gg_resolve_pthread(int *fd, void **resolver, const char *hostname)
 int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length)
 {
 	return -1;
+}
+
+void gg_login_hash_sha1(const char *password, uint32_t seed, uint8_t *result)
+{
+	if (gg_login_hash_sha1_2(password, seed, result) != 0)
+		memset(result, 0, 20);
 }
 
 /** \endcond */

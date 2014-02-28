@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /*
- *  (C) Copyright 2009 Jakub Zawadzki <darkjames@darkjames.ath.cx>
+ *  (C) Copyright 2011 Bartosz Brachaczek <b.brachaczek@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -18,27 +18,37 @@
  *  USA.
  */
 
-#ifndef LIBGADU_INTERNAL_H
-#define LIBGADU_INTERNAL_H
+/**
+ * \file fileio.h
+ *
+ * \brief Makra zapewniające kompatybilność API do obsługi operacji na plikach na różnych systemach
+ */
 
-#include "libgadu.h"
+#ifndef LIBGADU_FILEIO_H
+#define LIBGADU_FILEIO_H
 
-struct gg_dcc7_relay {
-	uint32_t addr;
-	uint16_t port;
-	uint8_t family;
-};
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-typedef struct gg_dcc7_relay gg_dcc7_relay_t;
-
-int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, const char *packet, int length);
-
-int gg_resolve(int *fd, int *pid, const char *hostname);
-int gg_resolve_pthread(int *fd, void **resolver, const char *hostname);
-void gg_resolve_pthread_cleanup(void *resolver, int kill);
-
-#ifdef HAVE_UINT64_T
-uint64_t gg_fix64(uint64_t x);
+#ifdef _WIN32
+#  include <io.h>
+#  define gg_file_close _close
+#  define lseek _lseek
+#  define open _open
+#  define read _read
+#  define stat _stat
+#  define write _write
+#else
+#  ifdef sun
+#    include <sys/filio.h>
+#  endif
+#  include <unistd.h>
+#  define gg_file_close close
 #endif
 
-#endif /* LIBGADU_INTERNAL_H */
+#ifndef S_IWUSR
+#  define S_IWUSR S_IWRITE
+#endif
+
+#endif /* LIBGADU_FILEIO_H */
