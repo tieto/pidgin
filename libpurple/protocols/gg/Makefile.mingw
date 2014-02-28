@@ -8,7 +8,7 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libgg
-CFLAGS += -include win32dep.h -DGG_IGNORE_DEPRECATED
+CFLAGS += -DGG_IGNORE_DEPRECATED
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -24,14 +24,15 @@ endif
 ##
 ## INCLUDE PATHS
 ##
-INCLUDE_PATHS +=	-I. \
+INCLUDE_PATHS += \
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
+			-I. \
 			-I./lib \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PURPLE_TOP) \
-			-I$(PURPLE_TOP)/win32 \
-			-I$(PIDGIN_TREE_TOP)
+			-I$(PURPLE_TOP)/win32
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
@@ -41,21 +42,28 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 C_SRC =	\
 	lib/common.c \
-	lib/dcc.c \
 	lib/dcc7.c \
+	lib/dcc.c \
 	lib/debug.c \
 	lib/deflate.c \
 	lib/encoding.c \
+	lib/endian.c \
 	lib/events.c \
 	lib/handlers.c \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/message.c \
+	lib/network.c \
 	lib/obsolete.c \
-	lib/pubdir.c \
+	lib/packets.pb-c.c \
+	lib/protobuf.c \
+	lib/protobuf-c.c \
 	lib/pubdir50.c \
+	lib/pubdir.c \
 	lib/resolver.c \
 	lib/sha1.c \
+	lib/tvbuff.c \
+	lib/tvbuilder.c \
 	buddylist.c \
 	confer.c \
 	gg.c \
@@ -71,7 +79,8 @@ LIBS =	\
 			-lglib-2.0 \
 			-lintl \
 			-lpurple \
-			-lws2_32
+			-lws2_32 \
+			-lz
 
 include $(PIDGIN_COMMON_RULES)
 
