@@ -29,6 +29,8 @@
  * @see_also: <link linkend="chapter-signals-gtkconv">Conversation signals</link>
  */
 
+#define PIDGIN_TYPE_CONVERSATION (pidgin_conversation_get_type())
+
 typedef struct _PidginImPane       PidginImPane;
 typedef struct _PidginChatPane     PidginChatPane;
 typedef struct _PidginConversation PidginConversation;
@@ -87,6 +89,8 @@ enum {
  */
 struct _PidginConversation
 {
+	gint box_count;
+
 	PurpleConversation *active_conv;
 	PurpleConversation *last_conversed;
 	GList *convs;
@@ -156,6 +160,13 @@ G_BEGIN_DECLS
  **************************************************************************/
 
 /**
+ * pidgin_conversation_get_type:
+ *
+ * Returns: The #GType for the #PidginConversation boxed structure.
+ */
+GType pidgin_conversation_get_type(void);
+
+/**
  * pidgin_conversations_get_conv_ui_ops:
  *
  * Returns the UI operations structure for GTK+ conversations.
@@ -200,9 +211,9 @@ void pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv);
 /**
  * pidgin_conversations_get_unseen_all:
  * @min_state:    The minimum unseen state.
- * @hidden_only:  If TRUE, only consider hidden conversations.
+ * @hidden_only:  If %TRUE, only consider hidden conversations.
  * @max_count:    Maximum number of conversations to return, or 0 for
- *                     no maximum.
+ *                no maximum.
  *
  * Returns a list of conversations of any type which have an unseen
  * state greater than or equal to the specified minimum state. Using the
@@ -211,7 +222,7 @@ void pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv);
  * converations returned if greater than zero. The returned list should
  * be freed by the caller.
  *
- * Returns:             List of PurpleConversation matching criteria, or %NULL.
+ * Returns: List of PurpleConversation matching criteria, or %NULL.
  */
 GList *
 pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
@@ -221,9 +232,9 @@ pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
 /**
  * pidgin_conversations_get_unseen_ims:
  * @min_state:    The minimum unseen state.
- * @hidden_only:  If TRUE, only consider hidden conversations.
+ * @hidden_only:  If %TRUE, only consider hidden conversations.
  * @max_count:    Maximum number of conversations to return, or 0 for
- *                     no maximum.
+ *                no maximum.
  *
  * Returns a list of IM conversations which have an unseen state greater
  * than or equal to the specified minimum state. Using the hidden_only
@@ -232,8 +243,7 @@ pidgin_conversations_get_unseen_all(PidginUnseenState min_state,
  * returned if greater than zero. The returned list should be freed by the
  * caller.
  *
- * Returns:             List of PurpleIMConversation matching criteria,
- *                     or %NULL.
+ * Returns: List of PurpleIMConversation matching criteria, or %NULL.
  */
 GList *
 pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
@@ -243,9 +253,9 @@ pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
 /**
  * pidgin_conversations_get_unseen_chats:
  * @min_state:    The minimum unseen state.
- * @hidden_only:  If TRUE, only consider hidden conversations.
+ * @hidden_only:  If %TRUE, only consider hidden conversations.
  * @max_count:    Maximum number of conversations to return, or 0 for
- *                     no maximum.
+ *                no maximum.
  *
  * Returns a list of chat conversations which have an unseen state greater
  * than or equal to the specified minimum state. Using the hidden_only
@@ -254,8 +264,7 @@ pidgin_conversations_get_unseen_ims(PidginUnseenState min_state,
  * returned if greater than zero. The returned list should be freed by the
  * caller.
  *
- * Returns:             List of PurpleChatConversation matching criteria,
- *                     or NULL.
+ * Returns: List of PurpleChatConversation matching criteria, or %NULL.
  */
 GList *
 pidgin_conversations_get_unseen_chats(PidginUnseenState min_state,
@@ -293,10 +302,50 @@ void pidgin_conv_present_conversation(PurpleConversation *conv);
  */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
+/**
+ * pidgin_conv_get_window:
+ * @gtkconv: The GTK+ conversation.
+ *
+ * Returns: The window the conversation belongs to.
+ */
 PidginConvWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
+
+/**
+ * pidgin_conv_get_tab_icon:
+ * @conv:       The conversation.
+ * @small_icon: Whether to get the small icon.
+ *
+ * Returns: The tab icon.
+ */
 GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon);
+
+/**
+ * pidgin_conv_new:
+ * @conv: The conversation.
+ *
+ * Creates a new GTK+ conversation for a given #PurpleConversation.
+ */
 void pidgin_conv_new(PurpleConversation *conv);
+
+/**
+ * pidgin_conv_get_tab_at_xy:
+ * @win:      The conversation window.
+ * @x:        X-coordinate to look up.
+ * @y:        Y-coordinate to look up.
+ * @to_right: (out): Return address for a boolean which will be %TRUE if the
+ *            coordinates are on the right side of the tab (or bottom in case of
+ *            a vertical notebook), %FALSE otherwise.
+ *
+ * Returns: The tab index of a conversation in @win at (@x, @y).
+ */
 int pidgin_conv_get_tab_at_xy(PidginConvWindow *win, int x, int y, gboolean *to_right);
+
+/**
+ * pidgin_conv_is_hidden:
+ * @gtkconv: The GTK+ conversation.
+ *
+ * Returns: %TRUE if the conversation is hidden, %FALSE otherwise.
+ */
 gboolean pidgin_conv_is_hidden(PidginConversation *gtkconv);
 
 /**************************************************************************/
