@@ -58,6 +58,14 @@
      * use size_t consistently
  */
 
+#include "config.h"
+#define HAVE_PROTOBUF_C_CONFIG_H 0
+#ifdef GG_CONFIG_BIGENDIAN
+#  define IS_LITTLE_ENDIAN 0
+#else
+#  define IS_LITTLE_ENDIAN 1
+#endif
+
 #if HAVE_PROTOBUF_C_CONFIG_H
 #include "protobuf-c-config.h"
 #endif
@@ -371,7 +379,7 @@ required_field_get_packed_size (const ProtobufCFieldDescriptor *field,
     case PROTOBUF_C_TYPE_DOUBLE:
       return rv + 8;
     case PROTOBUF_C_TYPE_ENUM:
-      // TODO: is this correct for negative-valued enums?
+      /* TODO: is this correct for negative-valued enums? */
       return rv + uint32_size (*(const uint32_t *) member);
     case PROTOBUF_C_TYPE_STRING:
       {
@@ -384,7 +392,7 @@ required_field_get_packed_size (const ProtobufCFieldDescriptor *field,
         size_t len = ((const ProtobufCBinaryData*) member)->len;
         return rv + uint32_size (len) + len;
       }
-    //case PROTOBUF_C_TYPE_GROUP:
+    /* case PROTOBUF_C_TYPE_GROUP: */
     case PROTOBUF_C_TYPE_MESSAGE:
       {
         const ProtobufCMessage *msg = * (ProtobufCMessage * const *) member;
@@ -496,7 +504,7 @@ repeated_field_get_packed_size (const ProtobufCFieldDescriptor *field,
           rv += uint32_size (len) + len;
         }
       break;
-    //case PROTOBUF_C_TYPE_GROUP:          // NOT SUPPORTED
+    /* case PROTOBUF_C_TYPE_GROUP:          // NOT SUPPORTED */
     }
   if (field->packed)
     header_size += uint32_size (rv);
@@ -798,7 +806,7 @@ required_field_pack (const ProtobufCFieldDescriptor *field,
         out[0] |= PROTOBUF_C_WIRE_TYPE_LENGTH_PREFIXED;
         return rv + binary_data_pack (bd, out + rv);
       }
-    //case PROTOBUF_C_TYPE_GROUP:          // NOT SUPPORTED
+    /* case PROTOBUF_C_TYPE_GROUP:          // NOT SUPPORTED */
     case PROTOBUF_C_TYPE_MESSAGE:
       {
         out[0] |= PROTOBUF_C_WIRE_TYPE_LENGTH_PREFIXED;
@@ -1143,7 +1151,7 @@ required_field_pack_to_buffer (const ProtobufCFieldDescriptor *field,
         rv += sublen;
         break;
       }
-    //PROTOBUF_C_TYPE_GROUP,          // NOT SUPPORTED
+    /* PROTOBUF_C_TYPE_GROUP,          // NOT SUPPORTED */
     case PROTOBUF_C_TYPE_MESSAGE:
       {
         uint8_t simple_buffer_scratch[256];
@@ -1812,7 +1820,7 @@ parse_required_member (ScannedMember *scanned_member,
         bd->len = len - pref_len;
         return 1;
       }
-    //case PROTOBUF_C_TYPE_GROUP,          // NOT SUPPORTED
+    /* case PROTOBUF_C_TYPE_GROUP,          // NOT SUPPORTED */
     case PROTOBUF_C_TYPE_MESSAGE:
       if (wire_type != PROTOBUF_C_WIRE_TYPE_LENGTH_PREFIXED)
         return 0;
@@ -2205,6 +2213,7 @@ protobuf_c_message_unpack         (const ProtobufCMessageDescriptor *desc,
       size_t used = parse_tag_and_wiretype (rem, at, &tag, &wire_type);
       const ProtobufCFieldDescriptor *field;
       ScannedMember tmp;
+      memset(&tmp, 0, sizeof(ScannedMember));
       if (used == 0)
         {
           UNPACK_ERROR (("error parsing tag/wiretype at offset %u",
