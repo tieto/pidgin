@@ -9083,6 +9083,43 @@ pidgin_conversations_uninit(void)
 	purple_signals_unregister_by_instance(pidgin_conversations_get_handle());
 }
 
+/**************************************************************************
+ * PidginConversation GBoxed code
+ **************************************************************************/
+static PidginConversation *
+pidgin_conversation_ref(PidginConversation *gtkconv)
+{
+	g_return_val_if_fail(gtkconv != NULL, NULL);
+
+	gtkconv->box_count++;
+
+	return gtkconv;
+}
+
+static void
+pidgin_conversation_unref(PidginConversation *gtkconv)
+{
+	g_return_if_fail(gtkconv != NULL);
+	g_return_if_fail(gtkconv->box_count >= 0);
+
+	if (!gtkconv->box_count--)
+		pidgin_conv_destroy(gtkconv->active_conv);
+}
+
+GType
+pidgin_conversation_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginConversation",
+				(GBoxedCopyFunc)pidgin_conversation_ref,
+				(GBoxedFreeFunc)pidgin_conversation_unref);
+	}
+
+	return type;
+}
+
 
 
 
