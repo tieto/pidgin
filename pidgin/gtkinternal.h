@@ -30,9 +30,18 @@
 
 G_BEGIN_DECLS
 
+static inline void
+_pidgin_widget_set_accessible_name(GtkWidget *widget, const gchar *name);
+
 PurpleStoredImage *
 _pidgin_e2ee_stock_icon_get(const gchar *stock_name);
 
 G_END_DECLS
+
+static inline void
+_pidgin_widget_set_accessible_name(GtkWidget *widget, const gchar *name)
+{
+	atk_object_set_name(gtk_widget_get_accessible(widget), name);
+}
 
 #endif /* _PIDGIN_INTERNAL_H_ */

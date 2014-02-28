@@ -5665,6 +5665,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	/* Setup the webkit widget */
 	frame = pidgin_create_webview(FALSE, &gtkconv->webview, &webview_sw);
 	g_object_set(G_OBJECT(gtkconv->webview), "expand", TRUE, NULL);
+	_pidgin_widget_set_accessible_name(frame, "Conversation Pane");
 
 	load_conv_theme(gtkconv);
 
@@ -5708,6 +5709,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
+	_pidgin_widget_set_accessible_name(frame, "Message Input");
 	gtk_widget_set_name(gtkconv->entry, "pidgin_conv_entry");
 	pidgin_webview_set_protocol_name(PIDGIN_WEBVIEW(gtkconv->entry),
 			purple_account_get_protocol_name(purple_conversation_get_account(conv)));
@@ -10232,6 +10234,7 @@ pidgin_conv_window_new()
 
 	/* Create the window. */
 	win->window = pidgin_create_window(NULL, 0, "conversation", TRUE);
+	/*_pidgin_widget_set_accessible_name(win->window, "Conversations");*/
 	if (!gtk_get_current_event_state(&state))
 		gtk_window_set_focus_on_map(GTK_WINDOW(win->window), FALSE);
 
