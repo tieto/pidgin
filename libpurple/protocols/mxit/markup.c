@@ -213,7 +213,7 @@ static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
 		return -1;
 	}
 
-	len = (uint8_t)data[1]; /* length field [1 byte] */
+	len = (guint8)data[1]; /* length field [1 byte] */
 	out_str = g_malloc(len + 1);
 	memcpy(out_str, &data[2], len); /* data field */
 	out_str[len] = '\0';
