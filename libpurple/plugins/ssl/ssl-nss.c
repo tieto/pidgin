@@ -271,7 +271,7 @@ ssl_nss_get_peer_certificates(PRFileDesc *socket, PurpleSslConnection * gsc)
  * just print it to the debug log
  */
 static void 
-printSecurityInfo(PRFileDesc *fd)
+print_security_info(PRFileDesc *fd)
 {
 	SECStatus result;
 	SSLChannelInfo channel;
@@ -333,7 +333,7 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 		return;
 	}
 
-	printSecurityInfo(nss_data->in);
+	print_security_info(nss_data->in);
 
 	purple_input_remove(nss_data->handshake_handler);
 	nss_data->handshake_handler = 0;
