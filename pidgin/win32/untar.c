@@ -392,22 +392,22 @@ static int untar_block(Uchar_t *blk) {
 
 		/* combine prefix and filename */
 		memset(nbuf, 0, sizeof nbuf);
-		name = nbuf;
 		if ((tblk)->prefix[0])
 		{
-			snprintf(name, sizeof(name), "%s/%s",
+			snprintf(nbuf, sizeof(nbuf), "%s/%s",
 				(tblk)->prefix, (tblk)->filename);
 		}
 		else
 		{
-			g_strlcpy(name, (tblk)->filename,
-				sizeof (name));
+			g_strlcpy(nbuf, (tblk)->filename,
+				sizeof (nbuf));
 		}
 
 		/* Convert any backslashes to forward slashes, and guard
 		 * against doubled-up slashes. (Some DOS versions of "tar"
 		 * get this wrong.)  Also strip off leading slashes.
 		 */
+		name = nbuf;
 		if (!ABSPATH && (*name == '/' || *name == '\\'))
 			didabs = 1;
 		for (n2 = nbuf; *name; name++)
