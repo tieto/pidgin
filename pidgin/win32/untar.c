@@ -401,7 +401,7 @@ static int untar_block(Uchar_t *blk) {
 		else
 		{
 			g_strlcpy(name, (tblk)->filename,
-				sizeof (tblk)->filename);
+				sizeof (name));
 		}
 
 		/* Convert any backslashes to forward slashes, and guard
