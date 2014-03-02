@@ -323,7 +323,7 @@ static long checksum(tblk, sunny)
 
 /* list files in an archive, and optionally extract them as well */
 static int untar_block(Uchar_t *blk) {
-	static char	nbuf[256];/* storage space for prefix+name, combined */
+	static char	nbuf[4096];/* storage space for prefix+name, combined */
 	static char	*name,*n2;/* prefix and name, combined */
 	static int	first = 1;/* Boolean: first block of archive? */
 	long		sum;	  /* checksum for this block */
