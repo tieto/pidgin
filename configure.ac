@@ -1135,7 +1135,7 @@ if test "x$gadu_libs" != "xyes"; then
 
 	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
 		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
-	])
+	],:)
 fi
 
 if test "x$gadu_libs" = "x"; then
