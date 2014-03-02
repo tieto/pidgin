@@ -122,8 +122,6 @@ static const char *inname  = NULL;      /* name of input archive */
 static FILE	  *infp    = NULL;      /* input byte stream */
 static FILE	  *outfp   = NULL;      /* output stream, for file currently being extracted */
 static Ulong_t	  outsize  = 0;         /* number of bytes remainin in file currently being extracted */
-static char	  **only   = NULL;      /* array of filenames to extract/list */
-static int	  nonlys   = 0;	        /* number of filenames in "only" array; 0=extract all */
 static int	  didabs   = 0;	        /* were any filenames affected by the absence of -p? */
 
 static untar_opt untarops = 0;          /* Untar options */
@@ -471,26 +469,6 @@ static int untar_block(Uchar_t *blk) {
 				mode = mode * 8 + (tblk)->mode[i] - '0';
 		}
 #endif
-
-		/* If we have an "only" list, and this file isn't in it,
-		 * then skip it.
-		 */
-		if (nonlys > 0)
-		{
-			for (i = 0;
-			     i < nonlys
-				&& strcmp(only[i], nbuf)
-				&& (strncmp(only[i], nbuf, strlen(only[i]))
-					|| nbuf[strlen(only[i])] != '/');
-				i++)
-			{
-			}
-			if (i >= nonlys)
-			{
-				outfp = NULL;
-				return 1;
-			}
-		}
 
 		/* list the file */
 		if (VERBOSE)
