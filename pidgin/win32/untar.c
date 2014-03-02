@@ -395,14 +395,12 @@ static int untar_block(Uchar_t *blk) {
 		name = nbuf;
 		if ((tblk)->prefix[0])
 		{
-			strncpy(name, (tblk)->prefix, sizeof (tblk)->prefix);
-			strcat(name, "/");
-			strncat(name + strlen(name), (tblk)->filename,
-				sizeof (tblk)->filename);
+			snprintf(name, sizeof(name), "%s/%s",
+				(tblk)->prefix, (tblk)->filename);
 		}
 		else
 		{
-			strncpy(name, (tblk)->filename,
+			g_strlcpy(name, (tblk)->filename,
 				sizeof (tblk)->filename);
 		}
 
