@@ -496,18 +496,19 @@ static int untar_block(Uchar_t *blk) {
 		 */
 		if (tblk->type == '5')
 		{
+			char *tmp;
 			if (LISTING)
-				n2 = " directory";
+				tmp = " directory";
 #ifdef _POSIX_SOURCE
 			else if (mkdir(nbuf, mode) == 0)
 #else
 			else if (g_mkdir(nbuf, 0755) == 0)
 #endif
-				n2 = " created";
+				tmp = " created";
 			else
-				n2 = " ignored";
+				tmp = " ignored";
 			if (VERBOSE)
-				untar_verbose("%s\n", n2);
+				untar_verbose("%s\n", tmp);
 			return 1;
 		}
 
