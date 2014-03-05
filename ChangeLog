@@ -1,6 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.10 (?/?/?):
+	Windows-Specific Changes:
+	* Don't allow overwriting arbitrary files on the file system when the
+	  user installs a smiley theme from a tar file. (Discovered by Yves
+	  Younan of Sourcefire VRT)
+
 	Finch:
 	* Fix build against Python 3. (Ed Catmur) (#15969)
 

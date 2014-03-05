@@ -401,6 +401,19 @@ static int untar_block(Uchar_t *blk) {
 				sizeof (nbuf));
 		}
 
+		/* Possibly strip the drive from the path */
+		if (!ABSPATH) {
+			/* If the path contains a colon, assume everything before the
+			 * colon is intended to be a drive name and ignore it. This
+			 * should be just a single drive letter, but it should be safe
+			 * to drop it even if it's longer. */
+			const char *lastcolon = strrchr(nbuf, ':');
+			if (lastcolon) {
+				memmove(nbuf, lastcolon, strlen(lastcolon) + 1);
+				didabs = 1; /* Path was changed from absolute to relative */
+			}
+		}
+
 		/* Convert any backslashes to forward slashes, and guard
 		 * against doubled-up slashes. (Some DOS versions of "tar"
 		 * get this wrong.)  Also strip off leading slashes.
