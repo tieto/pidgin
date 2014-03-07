@@ -20,7 +20,7 @@
  * \file message.c
  *
  * \brief Obsługa wiadomości
- * 
+ *
  * Plik zawiera funkcje dotyczące obsługi "klasy" gg_message_t, które
  * w przyszłości zostaną dołączone do API. Obecnie używane są funkcje
  * konwersji między tekstem z atrybutami i HTML.
@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "message.h"
 
@@ -53,7 +54,9 @@ gg_message_t *gg_message_new(void)
 	return gm;
 }
 
-int gg_message_init(gg_message_t *gm, int msgclass, int seq, uin_t *recipients, size_t recipient_count, char *text, char *html, char *attributes, size_t attributes_length, int auto_convert)
+int gg_message_init(gg_message_t *gm, int msgclass, int seq, uin_t *recipients,
+	size_t recipient_count, char *text, char *html, char *attributes,
+	size_t attributes_length, int auto_convert)
 {
 	GG_MESSAGE_CHECK(gm, -1);
 
@@ -76,7 +79,7 @@ void gg_message_free(gg_message_t *gm)
 	if (gm == NULL) {
 		errno = EINVAL;
 		return;
-	}	
+	}
 
 	free(gm->text);
 	free(gm->text_converted);
@@ -118,7 +121,7 @@ int gg_message_set_recipients(gg_message_t *gm, const uin_t *recipients, size_t 
 	if (recipient_count >= INT_MAX / sizeof(uin_t)) {
 		errno = EINVAL;
 		return -1;
-	}	
+	}
 
 	if ((recipients == NULL) || (recipient_count == 0)) {
 		free(gm->recipients);
@@ -137,7 +140,7 @@ int gg_message_set_recipients(gg_message_t *gm, const uin_t *recipients, size_t 
 		gm->recipients = tmp;
 		gm->recipient_count = recipient_count;
 	}
-	
+
 	return 0;
 }
 
@@ -299,7 +302,8 @@ const char *gg_message_get_html(gg_message_t *gm)
 		if (gm->html_converted == NULL)
 			return NULL;
 
-		gg_message_text_to_html(gm->html_converted, gm->text, GG_ENCODING_UTF8, gm->attributes, gm->attributes_length);
+		gg_message_text_to_html(gm->html_converted, gm->text,
+			GG_ENCODING_UTF8, gm->attributes, gm->attributes_length);
 
 		return gm->html_converted;
 	}
@@ -355,7 +359,7 @@ int gg_message_get_attributes(gg_message_t *gm, const char **attributes, size_t 
 
 /**
  * \internal Dodaje tekst na koniec bufora.
- * 
+ *
  * \param dst Wskaźnik na bufor roboczy
  * \param pos Wskaźnik na aktualne położenie w buforze roboczym
  * \param src Dodawany tekst
@@ -385,7 +389,8 @@ static void gg_append(char *dst, size_t *pos, const void *src, size_t len)
  *
  * \return Długość tekstu wynikowego bez \c \\0 (nawet jeśli \c dst to \c NULL).
  */
-size_t gg_message_text_to_html(char *dst, const char *src, gg_encoding_t encoding, const unsigned char *format, size_t format_len)
+size_t gg_message_text_to_html(char *dst, const char *src,
+	gg_encoding_t encoding, const unsigned char *format, size_t format_len)
 {
 	const char span_fmt[] = "<span style=\"color:#%02x%02x%02x; font-family:'MS Shell Dlg 2'; font-size:9pt; \">";
 	const size_t span_len = 75;
@@ -398,6 +403,9 @@ size_t gg_message_text_to_html(char *dst, const char *src, gg_encoding_t encodin
 	int in_span = 0;
 	unsigned int i;
 	size_t len = 0;
+
+	if (format == NULL)
+		format_len = 0;
 
 	/* Pętla przechodzi też przez kończące \0, żeby móc dokleić obrazek
 	 * na końcu tekstu. */
@@ -426,6 +434,13 @@ size_t gg_message_text_to_html(char *dst, const char *src, gg_encoding_t encodin
 
 			if (format_idx + 3 > format_len)
 				break;
+
+			/* (format_idx + 3 <= format_len) && (format_idx > 0)
+			 * 3 < format_len
+			 * 0 != format_len
+			 * format != NULL
+			 */
+			assert(format != NULL);
 
 			attr_pos = format[format_idx] | (format[format_idx + 1] << 8);
 			attr = format[format_idx + 2];
@@ -495,9 +510,9 @@ size_t gg_message_text_to_html(char *dst, const char *src, gg_encoding_t encodin
 				if (dst != NULL) {
 					sprintf(&dst[len], img_fmt,
 						format[format_idx + 9],
-						format[format_idx + 8], 
+						format[format_idx + 8],
 						format[format_idx + 7],
-						format[format_idx + 6], 
+						format[format_idx + 6],
 						format[format_idx + 5],
 						format[format_idx + 4],
 						format[format_idx + 3],
@@ -594,13 +609,19 @@ size_t gg_message_text_to_html(char *dst, const char *src, gg_encoding_t encodin
  * \param pos Wskaźnik na zmienną przechowującą pozycję znaku w tekście
  * \param attr_flag Aktualna flaga atrybutu formatowania
  * \param old_attr_flag Wskaźnik na poprzednią flagę atrybutu formatowania
- * \param color Wskaźnik na tablicę z aktualnym kolorem RGB (jeśli \p attr_flag nie zawiera flagi \c GG_FONT_COLOR, ignorowane)
+ * \param color Wskaźnik na tablicę z aktualnym kolorem RGB (jeśli \p attr_flag
+ *        nie zawiera flagi \c GG_FONT_COLOR, ignorowane)
  * \param old_color Wskaźnik na tablicę z poprzednim kolorem RGB
- * \param imgs_size Rozmiar atrybutów formatowania obrazków znajdujących się obecnie w tablicy atrybutów formatowania, w bajtach
+ * \param imgs_size Rozmiar atrybutów formatowania obrazków znajdujących się
+ *        obecnie w tablicy atrybutów formatowania, w bajtach
  * \param format Wskaźnik na wskaźnik do tablicy atrybutów formatowania
- * \param format_len Wskaźnik na zmienną zawierającą długość tablicy atrybutów formatowania, w bajtach (może być \c NULL)
+ * \param format_len Wskaźnik na zmienną zawierającą długość tablicy atrybutów
+ *        formatowania, w bajtach (może być \c NULL)
  */
-static void gg_after_append_formatted_char(uint16_t *pos, unsigned char attr_flag, unsigned char *old_attr_flag, const unsigned char *color, unsigned char *old_color, size_t imgs_size, unsigned char **format, size_t *format_len)
+static void gg_after_append_formatted_char(uint16_t *pos,
+	unsigned char attr_flag, unsigned char *old_attr_flag,
+	const unsigned char *color, unsigned char *old_color, size_t imgs_size,
+	unsigned char **format, size_t *format_len)
 {
 	const size_t color_size = 3;
 	int has_color = 0;
@@ -649,7 +670,9 @@ static void gg_after_append_formatted_char(uint16_t *pos, unsigned char attr_fla
  *
  * \param dst Bufor wynikowy (może być \c NULL)
  * \param format Bufor wynikowy z atrybutami formatowania (może być \c NULL)
- * \param format_len Wskaźnik na zmienną, do której zostanie zapisana potrzebna wielkość bufora wynikowego z atrybutami formatowania, w bajtach (może być \c NULL)
+ * \param format_len Wskaźnik na zmienną, do której zostanie zapisana potrzebna
+ *                   wielkość bufora wynikowego z atrybutami formatowania,
+ *                   w bajtach (może być \c NULL)
  * \param html Tekst źródłowy
  * \param encoding Kodowanie tekstu źródłowego oraz wynikowego
  *
@@ -657,7 +680,8 @@ static void gg_after_append_formatted_char(uint16_t *pos, unsigned char attr_fla
  *
  * \return Długość bufora wynikowego bez \c \\0 (nawet jeśli \c dst to \c NULL).
  */
-size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_len, const char *html, gg_encoding_t encoding)
+size_t gg_message_html_to_text(char *dst, unsigned char *format,
+	size_t *format_len, const char *html, gg_encoding_t encoding)
 {
 	const char *src, *entity = NULL, *tag = NULL;
 	int in_tag = 0, in_entity = 0, in_bold = 0, in_italic = 0, in_underline = 0;
@@ -678,7 +702,9 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 			for (i = 0; i < append_len; i++) {
 				if (encoding != GG_ENCODING_UTF8 || (entity[i] & 0xc0) != 0x80) {
 					if (first) {
-						gg_after_append_formatted_char(&pos, attr_flag, &old_attr_flag, color, old_color, imgs_size, &format, format_len);
+						gg_after_append_formatted_char(&pos, attr_flag,
+							&old_attr_flag, color, old_color, imgs_size,
+							&format, format_len);
 						first = 0;
 					} else {
 						pos++;
@@ -701,7 +727,9 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 					dst[len] = '\n';
 				len++;
 
-				gg_after_append_formatted_char(&pos, attr_flag, &old_attr_flag, color, old_color, imgs_size, &format, format_len);
+				gg_after_append_formatted_char(&pos, attr_flag,
+					&old_attr_flag, color, old_color,
+					imgs_size, &format, format_len);
 			} else if (strncmp(tag, "<img name=\"", 11) == 0 || strncmp(tag, "<img name=\'", 11) == 0) {
 				tag += 11;
 
@@ -710,7 +738,7 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 					int i, ok = 1;
 
 					for (i = 0; i < 16; i++) {
-						if ((tag[i] < '0' || tag[i] > '9') && (tolower(tag[i]) < 'a' || tolower(tag[i]) > 'f')) {
+						if (!isxdigit(tag[i])) {
 							ok = 0;
 							break;
 						}
@@ -731,7 +759,8 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 								buf[0] = tag[i];
 								buf[1] = tag[i + 1];
 								/* buf[2] to '\0' */
-								img_attr[12 - i / 2] = (unsigned char) strtoul(buf, NULL, 16);
+								img_attr[12 - i / 2] =
+									(unsigned char)strtoul(buf, NULL, 16);
 							}
 
 							memcpy(format, img_attr, sizeof(img_attr));
@@ -750,16 +779,21 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 							len += 2;
 						}
 
-						/* Nie używamy tutaj gg_after_append_formatted_char(). Po pierwsze to praktycznie niczego
-						 * by nie zmieniło, a po drugie nie wszystkim klientom mogłaby się spodobać redefinicja
-						 * atrybutów formatowania dla jednego znaku (bo np. najpierw byśmy zdefiniowali bolda od
-						 * znaku 10, a potem by się okazało, że znak 10 to obrazek).
+						/* Nie używamy tutaj gg_after_append_formatted_char().
+						 * Po pierwsze to praktycznie niczego by nie
+						 * zmieniło, a po drugie nie wszystkim klientom
+						 * mogłaby się spodobać redefinicja atrybutów
+						 * formatowania dla jednego znaku (bo np. najpierw
+						 * byśmy zdefiniowali bolda od znaku 10, a potem
+						 * by się okazało, że znak 10 to obrazek).
 						 */
 
 						pos++;
 
-						/* Resetujemy atrybuty, aby je w razie czego redefiniować od następnego znaku, co by sobie
-						 * nikt przypadkiem nie pomyślał, że GG_FONT_IMAGE dotyczy więcej, niż jednego znaku.
+						/* Resetujemy atrybuty, aby je w razie czego
+						 * redefiniować od następnego znaku, co by sobie
+						 * nikt przypadkiem nie pomyślał, że GG_FONT_IMAGE
+						 * dotyczy więcej, niż jednego znaku.
 						 * Tak samo robi oryginalny klient.
 						 */
 
@@ -805,7 +839,7 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 								break;
 
 							for (i = 0; i < 6; i++) {
-								if ((tag[i] < '0' || tag[i] > '9') && (tolower(tag[i]) < 'a' || tolower(tag[i]) > 'f')) {
+								if (!isxdigit(tag[i])) {
 									ok = 0;
 									break;
 								}
@@ -826,7 +860,8 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 					}
 				}
 			} else if (strncmp(tag, "</span", 6) == 0) {
-				/* Można by trzymać kolory na stosie i tutaj przywracać poprzedni, ale to raczej zbędne */
+				/* Można by trzymać kolory na stosie i tutaj
+				 * przywracać poprzedni, ale to raczej zbędne */
 
 				attr_flag &= ~GG_FONT_COLOR;
 			}
@@ -872,7 +907,9 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 					len++;
 			}
 
-			gg_after_append_formatted_char(&pos, attr_flag, &old_attr_flag, color, old_color, imgs_size, &format, format_len);
+			gg_after_append_formatted_char(&pos, attr_flag,
+				&old_attr_flag, color, old_color, imgs_size,
+				&format, format_len);
 
 			continue;
 		}
@@ -887,13 +924,16 @@ size_t gg_message_html_to_text(char *dst, unsigned char *format, size_t *format_
 			dst[len] = *src;
 		len++;
 
-		if (encoding != GG_ENCODING_UTF8 || (*src & 0xc0) != 0x80)
-			gg_after_append_formatted_char(&pos, attr_flag, &old_attr_flag, color, old_color, imgs_size, &format, format_len);
+		if (encoding != GG_ENCODING_UTF8 || (*src & 0xc0) != 0x80) {
+			gg_after_append_formatted_char(&pos, attr_flag,
+				&old_attr_flag, color, old_color, imgs_size,
+				&format, format_len);
+		}
 	}
 
 	if (dst != NULL)
 		dst[len] = '\0';
-	
+
 	return len;
 }
 
@@ -913,8 +953,7 @@ static size_t gg_message_text_to_html_110_buff(char *dst, const char *text,
 
 	gg_append(dst, &dst_len, "<span>", 6);
 
-	for (i = 0; i < (size_t)text_len; i++)
-	{
+	for (i = 0; i < (size_t)text_len; i++) {
 		char c = text[i];
 		if (c == '<')
 			gg_append(dst, &dst_len, "&lt;", 4);
@@ -958,7 +997,7 @@ char *gg_message_html_to_text_110(const char *html)
 	if (!dst)
 		return NULL;
 	gg_message_html_to_text_110_buff(dst, html);
-	
+
 	return dst;
 }
 
@@ -972,7 +1011,6 @@ char *gg_message_text_to_html_110(const char *text, ssize_t text_len)
 	if (!dst)
 		return NULL;
 	gg_message_text_to_html_110_buff(dst, text, text_len);
-	
+
 	return dst;
 }
-
