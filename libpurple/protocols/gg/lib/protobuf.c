@@ -77,8 +77,8 @@ int gg_protobuf_send_ex(struct gg_session *gs, struct gg_event *ge, int type,
 	buffer = malloc(len);
 	if (buffer == NULL) {
 		gg_debug_session(gs, GG_DEBUG_ERROR, "// gg_protobuf_send: out "
-			"of memory - tried to allocate %u bytes for %#x "
-			"packet\n", len, type);
+			"of memory - tried to allocate %" GG_SIZE_FMT
+			" bytes for %#x packet\n", len, type);
 		succ = 0;
 		failure = GG_FAILURE_INTERNAL;
 	} else {

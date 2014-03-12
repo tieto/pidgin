@@ -1300,6 +1300,9 @@ if test "x$gadu_libs" != "xyes"; then
 		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
 	fi
 
+	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
+		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
+	],:)
 fi
 
 if test "x$gadu_libs" = "x"; then

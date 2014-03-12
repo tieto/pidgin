@@ -86,6 +86,7 @@
 #endif
 
 #include "protobuf-c.h"
+#include "internal.h"
 
 unsigned protobuf_c_major = PROTOBUF_C_MAJOR;
 unsigned protobuf_c_minor = PROTOBUF_C_MINOR;
@@ -149,6 +150,7 @@ alloc_failed_warning (unsigned size, const char *filename, unsigned line)
 
 /* --- allocator --- */
 
+static void protobuf_c_out_of_memory_default (void) GG_NORETURN;
 static void protobuf_c_out_of_memory_default (void)
 {
   fprintf (stderr, "Out Of Memory!!!\n");

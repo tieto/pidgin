@@ -26,9 +26,34 @@
 #define GG_DEFAULT_CLIENT_VERSION_100 "10.1.0.11070"
 #define GG_DEFAULT_CLIENT_VERSION_110 "11.3.45.10771"
 
+#ifdef _WIN32
+#  define GG_SIZE_FMT "Iu"
+#else
+#  define GG_SIZE_FMT "zu"
+#endif
+#ifndef PRIu64
+#  define PRIu64 "llu"
+#endif
+#ifndef PRIx64
+#  define PRIx64 "llx"
+#endif
+#ifndef PRId64
+#  define PRId64 "lld"
+#endif
+
 #define GG_LOGIN_PARAMS_HAS_FIELD(glp, member) \
 	(offsetof(struct gg_login_params, member) < (glp)->struct_size || \
 	offsetof(struct gg_login_params, member) <= offsetof(struct gg_login_params, struct_size))
+
+#ifdef __GNUC__
+#  define GG_UNUSED __attribute__ ((unused))
+#  define GG_NORETURN __attribute__ ((noreturn))
+#  define GG_CDECL __attribute__ ((__cdecl__))
+#else
+#  define GG_UNUSED
+#  define GG_NORETURN
+#  define GG_CDECL
+#endif
 
 struct gg_dcc7_relay {
 	uint32_t addr;
@@ -109,7 +134,8 @@ void gg_resolve_pthread_cleanup(void *resolver, int kill);
 
 int gg_login_hash_sha1_2(const char *password, uint32_t seed, uint8_t *result);
 
-int gg_chat_update(struct gg_session *sess, uint64_t id, uint32_t version, const uin_t *participants, unsigned int participants_count);
+int gg_chat_update(struct gg_session *sess, uint64_t id, uint32_t version,
+	const uin_t *participants, unsigned int participants_count);
 gg_chat_list_t *gg_chat_find(struct gg_session *sess, uint64_t id);
 
 uin_t gg_str_to_uin(const char *str, int len);
@@ -129,5 +155,77 @@ void gg_compat_message_ack(struct gg_session *sess, int seq);
 
 void gg_strarr_free(char **strarr);
 char ** gg_strarr_dup(char **strarr);
+
+#ifdef _WIN32
+
+#include <windows.h>
+
+typedef struct {
+	void (*fnc)();
+#ifdef _WIN64
+	uint8_t trap[12];
+	uint8_t original[12];
+#else
+	uint8_t trap[7];
+	uint8_t original[7];
+#endif
+} gg_win32_hook_data_t;
+
+#define gg_win32_hook(orig_func, hook_func, data) \
+	gg_win32_hook_f((void (*)())(orig_func), (void (*)())(hook_func), (data))
+
+static inline void
+gg_win32_hook_f(void (*orig_func)(), void (*hook_func)(), gg_win32_hook_data_t *data)
+{
+	DWORD dPermission;
+	uint8_t trap[] = {
+#ifdef _WIN64
+		0x48, 0xb8, 0, 0, 0, 0, 0, 0, 0, 0, /* mov rax, uint64_t */
+		0xff, 0xe0 /* jmp rax */
+#else
+		0xB8, 0, 0, 0, 0, /* mov eax, uint32_t */
+		0xff, 0xe0 /* jmp eax */
+#endif
+	};
+
+#ifdef _WIN64
+	uint64_t addr = (uint64_t)hook_func;
+	memcpy(&trap[2], &addr, sizeof(addr));
+#else
+	uint32_t addr = (uint32_t)hook_func;
+	memcpy(&trap[1], &addr, sizeof(addr));
+#endif
+
+	VirtualProtect(orig_func, sizeof(trap),
+		PAGE_EXECUTE_READWRITE, &dPermission);
+	if (data != NULL) {
+		data->fnc = orig_func;
+		memcpy(data->trap, trap, sizeof(trap));
+		memcpy(data->original, orig_func, sizeof(trap));
+	}
+	memcpy(orig_func, trap, sizeof(trap));
+	VirtualProtect(orig_func, sizeof(trap),
+		dPermission, &dPermission);
+}
+
+static inline void
+gg_win32_hook_set_enabled(gg_win32_hook_data_t *data, int enabled)
+{
+	DWORD dPermission;
+	uint8_t *src;
+
+	if (enabled)
+		src = data->trap;
+	else
+		src = data->original;
+
+	VirtualProtect(data->fnc, sizeof(data->trap),
+		PAGE_EXECUTE_READWRITE, &dPermission);
+	memcpy(data->fnc, src, sizeof(data->trap));
+	VirtualProtect(data->fnc, sizeof(data->trap),
+		dPermission, &dPermission);
+}
+
+#endif /* _WIN32 */
 
 #endif /* LIBGADU_INTERNAL_H */

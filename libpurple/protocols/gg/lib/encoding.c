@@ -88,7 +88,7 @@ static char *gg_encoding_convert_cp1250_utf8(const char *src, int src_length, in
 
 	result = malloc(len + 1);
 
-	if (result == NULL) 
+	if (result == NULL)
 		return NULL;
 
 	for (i = 0, j = 0; (src[i] != 0) && (i < src_length) && (j < len); i++) {
@@ -99,7 +99,7 @@ static char *gg_encoding_convert_cp1250_utf8(const char *src, int src_length, in
 		else
 			uc = table_cp1250[(unsigned char) src[i] - 128];
 
-		if (uc < 0x80) 
+		if (uc < 0x80)
 			result[j++] = (char) uc;
 		else if (uc < 0x800) {
 			if (j + 1 > len)
@@ -150,25 +150,25 @@ static char *gg_encoding_convert_utf8_cp1250(const char *src, int src_length, in
 
 	for (i = 0, j = 0; (src[i] != 0) && (i < src_length) && (j < len); i++) {
 		if ((unsigned char) src[i] >= 0xf5) {
-			if (uc_left != 0) 
+			if (uc_left != 0)
 				result[j++] = '?';
 			/* Restricted sequences */
 			result[j++] = '?';
 			uc_left = 0;
 		} else if ((src[i] & 0xf8) == 0xf0) {
-			if (uc_left != 0) 
+			if (uc_left != 0)
 				result[j++] = '?';
 			uc = src[i] & 0x07;
 			uc_left = 3;
 			uc_min = 0x10000;
 		} else if ((src[i] & 0xf0) == 0xe0) {
-			if (uc_left != 0) 
+			if (uc_left != 0)
 				result[j++] = '?';
 			uc = src[i] & 0x0f;
 			uc_left = 2;
 			uc_min = 0x800;
 		} else if ((src[i] & 0xe0) == 0xc0) {
-			if (uc_left != 0) 
+			if (uc_left != 0)
 				result[j++] = '?';
 			uc = src[i] & 0x1f;
 			uc_left = 1;
@@ -225,7 +225,8 @@ static char *gg_encoding_convert_utf8_cp1250(const char *src, int src_length, in
  *
  * \return Zaalokowany bufor z tekstem w kodowaniu docelowym.
  */
-char *gg_encoding_convert(const char *src, gg_encoding_t src_encoding, gg_encoding_t dst_encoding, int src_length, int dst_length)
+char *gg_encoding_convert(const char *src, gg_encoding_t src_encoding,
+	gg_encoding_t dst_encoding, int src_length, int dst_length)
 {
 	char *result;
 
@@ -269,4 +270,3 @@ char *gg_encoding_convert(const char *src, gg_encoding_t src_encoding, gg_encodi
 	errno = EINVAL;
 	return NULL;
 }
-
