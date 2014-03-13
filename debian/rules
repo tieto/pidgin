@@ -46,8 +46,8 @@ DEB_INSTALL_MANPAGES_pidgin-dev := debian/dh_pidgin.1
 clean::
 	rm -f debian/copyright
 
-makebuilddir/pidgin::
-	touch configure # We don't want to regenerate autotools files
+post-patches::
+	NOCONFIGURE=1 ./autogen.sh
 
 common-install-impl::
 	rm -f debian/tmp/usr/lib/pidgin/relnot.so # release notification plugin
