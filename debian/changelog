@@ -1,3 +1,9 @@
+pidgin (3.0.0-1) UNRELEASED; urgency=medium
+
+  * Packaged Pidgin 3.0.0 snapshot with Sipe patches.
+
+ -- Jakub Adam <jakub.adam@ktknet.cz>  Thu, 13 Mar 2014 22:18:09 +0100
+
 pidgin (2.10.12-1) unstable; urgency=low
 
   [ Peter Spiess-Knafl ]
