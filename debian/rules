@@ -66,7 +66,6 @@ cleanbuilddir/pidgin::
 
 build/pidgin-dev::
 	pod2man debian/dh_pidgin > debian/dh_pidgin.1
-	cd build; make docs
 
 binary-install/pidgin-dev::
 	dh_installdocs -ppidgin-dev debian/README.Debian.dev
