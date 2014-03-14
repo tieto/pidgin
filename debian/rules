@@ -10,7 +10,7 @@ include /usr/share/cdbs/1/rules/utils.mk
 
 LDFLAGS += -Wl,--as-needed
 DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution --disable-kwallet \
-	    --enable-cap --with-system-ssl-certs=/etc/ssl/certs \
+	    --with-system-ssl-certs=/etc/ssl/certs \
 	    --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no \
 	    --enable-nss=yes --enable-cyrus-sasl --enable-vv \
 	    --enable-tcl --enable-tk \
