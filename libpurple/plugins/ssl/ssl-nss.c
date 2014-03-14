@@ -270,8 +270,8 @@ ssl_nss_get_peer_certificates(PRFileDesc *socket, PurpleSslConnection * gsc)
  * Ideally this information would be exposed to the UI somehow, but for now we
  * just print it to the debug log
  */
-static void 
-printSecurityInfo(PRFileDesc *fd)
+static void
+print_security_info(PRFileDesc *fd)
 {
 	SECStatus result;
 	SSLChannelInfo channel;
@@ -291,9 +291,9 @@ printSecurityInfo(PRFileDesc *fd)
 					"Compression: %s\n"
 					"Cipher Suite Name: %s\n",
 					channel.protocolVersion >> 8,
-				       	channel.protocolVersion & 0xff,
+					channel.protocolVersion & 0xff,
 					suite.effectiveKeyBits,
-				       	suite.symCipherName,
+					suite.symCipherName,
 					suite.macBits,
 					suite.macAlgorithmName,
 					channel.authKeyBits,
@@ -333,7 +333,7 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 		return;
 	}
 
-	printSecurityInfo(nss_data->in);
+	print_security_info(nss_data->in);
 
 	purple_input_remove(nss_data->handshake_handler);
 	nss_data->handshake_handler = 0;

@@ -31,8 +31,11 @@
 
 #include <libgadu.h>
 
+#include "gg.h"
+
 gboolean ggp_deprecated_setup_proxy(PurpleConnection *gc)
 {
+#if ! GGP_ENABLE_GG11
 	PurpleProxyInfo *gpi = purple_proxy_get_setup(purple_connection_get_account(gc));
 
 	if ((purple_proxy_info_get_proxy_type(gpi) != PURPLE_PROXY_NONE) &&
@@ -58,6 +61,7 @@ gboolean ggp_deprecated_setup_proxy(PurpleConnection *gc)
 	gg_proxy_port = purple_proxy_info_get_port(gpi);
 	gg_proxy_username = g_strdup(purple_proxy_info_get_username(gpi));
 	gg_proxy_password = g_strdup(purple_proxy_info_get_password(gpi));
+#endif
 
 	return TRUE;
 }

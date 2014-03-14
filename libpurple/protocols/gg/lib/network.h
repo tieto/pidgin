@@ -75,6 +75,17 @@ int gg_win32_send(int sockfd, const void *buf, size_t len, int flags);
 int gg_win32_setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
 int gg_win32_socket(int domain, int type, int protocol);
 int gg_win32_socketpair(int sv[2]);
+
+static inline void gg_win32_init_network(void)
+{
+	WSADATA wsaData;
+
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+		perror("WSAStartup");
+		exit(1);
+	}
+}
+
 #else
 #  include <sys/ioctl.h>
 #  include <sys/types.h>
@@ -91,5 +102,18 @@ int gg_win32_socketpair(int sv[2]);
 #ifndef INADDR_NONE
 #  define INADDR_NONE ((in_addr_t) 0xffffffff)
 #endif
+
+static inline int gg_fd_set_nonblocking(int fd)
+{
+	int success;
+#ifdef FIONBIO
+	int one = 1;
+	success = (ioctl(fd, FIONBIO, &one) == 0);
+#else
+	success = (fcntl(fd, F_SETFL, O_NONBLOCK) == 0);
+#endif
+
+	return success;
+}
 
 #endif /* LIBGADU_NETWORK_H */

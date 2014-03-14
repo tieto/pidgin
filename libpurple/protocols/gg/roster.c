@@ -366,7 +366,7 @@ void ggp_roster_group_buddy(PurpleConnection *gc, const char *who,
 	const char *old_group, const char *new_group)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	ggp_roster_change *change = g_new0(ggp_roster_change, 1);
+	ggp_roster_change *change;
 
 	if (!ggp_roster_enabled())
 		return;
@@ -378,6 +378,7 @@ void ggp_roster_group_buddy(PurpleConnection *gc, const char *who,
 		who, old_group, new_group);
 
 	/* purple_blist_find_buddy(..., who) is not accessible at this moment */
+	change = g_new0(ggp_roster_change, 1);
 	change->type = GGP_ROSTER_CHANGE_CONTACT_UPDATE;
 	change->data.uin = ggp_str_to_uin(who);
 	rdata->pending_updates = g_list_append(rdata->pending_updates, change);
@@ -387,11 +388,12 @@ void ggp_roster_rename_group(PurpleConnection *gc, const char *old_name,
 	PurpleGroup *group, GList *moved_buddies)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	ggp_roster_change *change = g_new0(ggp_roster_change, 1);
+	ggp_roster_change *change;
 
 	if (!ggp_roster_enabled())
 		return;
 
+	change = g_new0(ggp_roster_change, 1);
 	change->type = GGP_ROSTER_CHANGE_GROUP_RENAME;
 	change->data.group_rename.old_name = g_strdup(old_name);
 	change->data.group_rename.new_name =
@@ -415,11 +417,12 @@ void ggp_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	PurpleGroup *group)
 {
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
-	ggp_roster_change *change = g_new0(ggp_roster_change, 1);
+	ggp_roster_change *change;
 
 	if (!ggp_roster_enabled())
 		return;
 
+	change = g_new0(ggp_roster_change, 1);
 	change->type = GGP_ROSTER_CHANGE_CONTACT_REMOVE;
 	change->data.uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
 	rdata->pending_updates = g_list_append(rdata->pending_updates, change);

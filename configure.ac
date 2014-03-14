@@ -1300,6 +1300,9 @@ if test "x$gadu_libs" != "xyes"; then
 		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
 	fi
 
+	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
+		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
+	],:)
 fi
 
 if test "x$gadu_libs" = "x"; then
@@ -1466,9 +1469,7 @@ if test "x$GCC" = "xyes"; then
 		orig_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $newflag"
 		AC_MSG_CHECKING(for $newflag option to gcc)
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
-			int main() {return 0;}
-		]])], [
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])], [
 			AC_MSG_RESULT(yes)
 			CFLAGS="$orig_CFLAGS"
 			DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
@@ -1481,7 +1482,6 @@ if test "x$GCC" = "xyes"; then
 	if test "x$enable_fortify" = "xyes"; then
 		AC_MSG_CHECKING(for FORTIFY_SOURCE support)
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <features.h>]], [[
-			int main() {
 			#if !(__GNUC_PREREQ (4, 1) \
 				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
 				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (3, 4) \
@@ -1491,7 +1491,6 @@ if test "x$GCC" = "xyes"; then
 			#error No FORTIFY_SOURCE support
 			#endif
 				return 0;
-			}
 		]])], [
 			AC_MSG_RESULT(yes)
 			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"

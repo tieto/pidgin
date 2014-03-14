@@ -8,7 +8,6 @@ EXTRA_DIST = \
 		README.hg \
 		README.mingw \
 		config.h.mingw \
-		fix-casts.sh \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \

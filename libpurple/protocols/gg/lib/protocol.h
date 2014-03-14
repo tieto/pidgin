@@ -231,7 +231,10 @@ struct gg_dcc7_voice_auth {
 	uint32_t reserved2;		/* GG_DCC7_RESERVED2 */
 } GG_PACKED;
 
-struct gg_dcc7_voice_nodata {	/* wyciszony mikrofon, ten pakiet jest wysylany co 1s (jesli chcemy podtrzymac polaczenie) */
+/* Wyciszony mikrofon. Ten pakiet jest wysylany co 1s (jesli chcemy podtrzymac
+ * polaczenie).
+ */
+struct gg_dcc7_voice_nodata {
 	uint8_t type;			/* 0x02 */
 	gg_dcc7_id_t id;		/* identyfikator połączenia */
 	uint32_t reserved1;		/* GG_DCC7_RESERVED1 */
@@ -251,7 +254,8 @@ struct gg_dcc7_voice_init {
 	uint8_t type;			/* 0x04 */
 	uint32_t id;			/* nr kroku [0x1 - 0x5] */
 	uint32_t protocol;		/* XXX: wersja protokolu (0x29, 0x2a, 0x2b) */
-	uint32_t len;			/* rozmiar sizeof(protocol)+sizeof(len)+sizeof(data) = 0x08 + sizeof(data) */
+	uint32_t len;			/* rozmiar sizeof(protocol)+sizeof(len)+
+					 * sizeof(data) = 0x08 + sizeof(data) */
 	/* char data[]; */		/* reszta danych */
 } GG_PACKED;
 
