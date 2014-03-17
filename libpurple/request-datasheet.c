@@ -335,7 +335,8 @@ purple_request_datasheet_record_add(PurpleRequestDatasheet *sheet,
 
 	rec = purple_request_datasheet_record_find(sheet, key);
 	if (rec != NULL) {
-		g_hash_table_remove(sheet->marked_for_rem, key);
+		if (sheet->marked_for_rem != NULL)
+			g_hash_table_remove(sheet->marked_for_rem, key);
 		return rec;
 	}
 
