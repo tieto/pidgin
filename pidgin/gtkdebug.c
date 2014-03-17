@@ -32,6 +32,10 @@
 #include "gtkwebview.h"
 #include "pidginstock.h"
 
+#ifdef ENABLE_GLIBTRACE
+#include <execinfo.h>
+#endif
+
 #include <gdk/gdkkeysyms.h>
 
 #include "gtk3compat.h"
@@ -668,6 +672,17 @@ pidgin_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 
 	if (new_msg != NULL)
 	{
+#ifdef ENABLE_GLIBTRACE
+		void *bt_buff[20];
+		size_t bt_size;
+
+		bt_size = backtrace(bt_buff, 20);
+		fprintf(stderr, "\nBacktrace for \"%s\" (%s):\n", new_msg,
+			new_domain != NULL ? new_domain : "g_log");
+		backtrace_symbols_fd(bt_buff, bt_size, STDERR_FILENO);
+		fprintf(stderr, "\n");
+#endif
+
 		purple_debug(level, (new_domain != NULL ? new_domain : "g_log"),
 				   "%s\n", new_msg);
 
