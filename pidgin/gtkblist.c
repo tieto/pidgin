@@ -3841,7 +3841,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		if (conv && !purple_chat_conversation_has_left(conv)) {
 			g_string_append_printf(str, _("\n<b>Occupants:</b> %d"),
-					g_list_length(purple_chat_conversation_get_users(conv)));
+				purple_chat_conversation_get_users_count(conv));
 
 			if (prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC)) {
 				const char *chattopic = purple_chat_conversation_get_topic(conv);

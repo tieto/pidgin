@@ -385,6 +385,17 @@ PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
 GList *purple_chat_conversation_get_users(const PurpleChatConversation *chat);
 
 /**
+ * purple_chat_conversation_get_users_count:
+ * @chat: The chat.
+ *
+ * Returns count of users in the chat room.
+ *
+ * Returns: The count of users in the chat room.
+ */
+guint
+purple_chat_conversation_get_users_count(const PurpleChatConversation *chat);
+
+/**
  * purple_chat_conversation_ignore:
  * @chat: The chat.
  * @name: The name of the user.

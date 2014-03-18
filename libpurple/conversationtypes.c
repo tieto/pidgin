@@ -620,6 +620,16 @@ purple_chat_conversation_get_users(const PurpleChatConversation *chat)
 	return priv->in_room;
 }
 
+guint
+purple_chat_conversation_get_users_count(const PurpleChatConversation *chat)
+{
+	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(chat);
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return g_hash_table_size(priv->users);
+}
+
 void
 purple_chat_conversation_ignore(PurpleChatConversation *chat, const char *name)
 {

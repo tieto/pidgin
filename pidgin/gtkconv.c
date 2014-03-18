@@ -7028,7 +7028,7 @@ pidgin_conv_chat_add_users(PurpleChatConversation *chat, GList *cbuddies, gboole
 	gtkconv = PIDGIN_CONVERSATION(PURPLE_CONVERSATION(chat));
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length(purple_chat_conversation_get_users(chat));
+	num_users = purple_chat_conversation_get_users_count(chat);
 
 	g_snprintf(tmp, sizeof(tmp),
 			   ngettext("%d person in room", "%d people in room",
@@ -7114,7 +7114,7 @@ pidgin_conv_chat_remove_users(PurpleChatConversation *chat, GList *users)
 	gtkconv = PIDGIN_CONVERSATION(PURPLE_CONVERSATION(chat));
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length(purple_chat_conversation_get_users(chat));
+	num_users = purple_chat_conversation_get_users_count(chat);
 
 	for (l = users; l != NULL; l = l->next) {
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
