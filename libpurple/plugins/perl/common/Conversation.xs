@@ -331,11 +331,13 @@ void
 purple_chat_conversation_get_users(chat)
 	Purple::ChatConversation chat
 PREINIT:
-	GList *l;
+	GList *l, *users;
 PPCODE:
-	for (l = purple_chat_conversation_get_users(chat); l != NULL; l = l->next) {
+	users = purple_chat_conversation_get_users(chat);
+	for (l = users; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
 	}
+	g_list_free(users);
 
 void
 purple_chat_conversation_ignore(chat, name)

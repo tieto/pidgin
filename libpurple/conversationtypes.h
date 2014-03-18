@@ -380,7 +380,8 @@ PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
  * Returns a list of users in the chat room.  The members of the list
  * are PurpleChatUser objects.
  *
- * Returns: (transfer none): The list of users.
+ * Returns: (transfer container): The list of users. Use g_list_free() when done
+ *          using the list.
  */
 GList *purple_chat_conversation_get_users(const PurpleChatConversation *chat);
 

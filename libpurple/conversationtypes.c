@@ -48,8 +48,6 @@ typedef struct _PurpleChatUserPrivate  PurpleChatUserPrivate;
  */
 struct _PurpleChatConversationPrivate
 {
-	GList *in_room;     /* The users in the room.
-	                       Deprecated: Will be removed in 3.0.0 TODO */
 	GList *ignored;     /* Ignored users.                            */
 	char  *who;         /* The person who set the topic.             */
 	char  *topic;       /* The topic.                                */
@@ -617,7 +615,7 @@ purple_chat_conversation_get_users(const PurpleChatConversation *chat)
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->in_room;
+	return g_hash_table_get_values(priv->users);
 }
 
 guint
@@ -925,9 +923,9 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 
 		chatuser = purple_chat_user_new(chat, user, alias, flag);
 
-		priv->in_room = g_list_prepend(priv->in_room, chatuser);
 		g_hash_table_replace(priv->users,
-				g_strdup(purple_chat_user_get_name(chatuser)), chatuser);
+			g_strdup(purple_chat_user_get_name(chatuser)),
+			chatuser);
 
 		cbuddies = g_list_prepend(cbuddies, chatuser);
 
@@ -1024,20 +1022,16 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 	flags = purple_chat_user_get_flags(purple_chat_conversation_find_user(chat, old_user));
 	cb = purple_chat_user_new(chat, new_user, new_alias, flags);
 
-	priv->in_room = g_list_prepend(priv->in_room, cb);
 	g_hash_table_replace(priv->users,
-			g_strdup(purple_chat_user_get_name(cb)), cb);
+		g_strdup(purple_chat_user_get_name(cb)), cb);
 
 	if (ops != NULL && ops->chat_rename_user != NULL)
 		ops->chat_rename_user(chat, old_user, new_user, new_alias);
 
 	cb = purple_chat_conversation_find_user(chat, old_user);
 
-	if (cb) {
-		priv->in_room = g_list_remove(priv->in_room, cb);
+	if (cb)
 		g_hash_table_remove(priv->users, purple_chat_user_get_name(cb));
-		g_object_unref(cb);
-	}
 
 	if (purple_chat_conversation_is_ignored_user(chat, old_user)) {
 		purple_chat_conversation_unignore(chat, old_user);
@@ -1131,9 +1125,8 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 		cb = purple_chat_conversation_find_user(chat, user);
 
 		if (cb) {
-			priv->in_room = g_list_remove(priv->in_room, cb);
-			g_hash_table_remove(priv->users, purple_chat_user_get_name(cb));
-			g_object_unref(cb);
+			g_hash_table_remove(priv->users,
+				purple_chat_user_get_name(cb));
 		}
 
 		/* NOTE: Don't remove them from ignored in case they re-enter. */
@@ -1180,43 +1173,34 @@ void
 purple_chat_conversation_clear_users(PurpleChatConversation *chat)
 {
 	PurpleConversationUiOps *ops;
-	GList *users;
-	GList *l;
-	GList *names = NULL;
+	GHashTableIter it;
 	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(chat);
+	gchar *name;
 
 	g_return_if_fail(priv != NULL);
 
-	ops   = purple_conversation_get_ui_ops(PURPLE_CONVERSATION(chat));
-	users = priv->in_room;
+	ops = purple_conversation_get_ui_ops(PURPLE_CONVERSATION(chat));
 
 	if (ops != NULL && ops->chat_remove_users != NULL) {
-		for (l = users; l; l = l->next) {
-			PurpleChatUser *cb = l->data;
-			names = g_list_prepend(names,
-					(gchar *) purple_chat_user_get_name(cb));
-		}
+		GList *names = NULL;
+
+		g_hash_table_iter_init(&it, priv->users);
+		while (g_hash_table_iter_next(&it, (gpointer*)&name, NULL))
+			names = g_list_prepend(names, name);
+
 		ops->chat_remove_users(chat, names);
 		g_list_free(names);
 	}
 
-	for (l = users; l; l = l->next)
-	{
-		PurpleChatUser *cb = l->data;
-		const char *name = purple_chat_user_get_name(cb);
-
+	g_hash_table_iter_init(&it, priv->users);
+	while (g_hash_table_iter_next(&it, (gpointer*)&name, NULL)) {
 		purple_signal_emit(purple_conversations_get_handle(),
 						 "chat-user-leaving", chat, name, NULL);
 		purple_signal_emit(purple_conversations_get_handle(),
 						 "chat-user-left", chat, name, NULL);
-
-		g_object_unref(cb);
 	}
 
 	g_hash_table_remove_all(priv->users);
-
-	g_list_free(users);
-	priv->in_room = NULL;
 }
 
 void purple_chat_conversation_set_nick(PurpleChatConversation *chat, const char *nick) {
@@ -1443,7 +1427,7 @@ static void purple_chat_conversation_init(GTypeInstance *instance, gpointer klas
 			PurpleChatConversation);
 
 	priv->users = g_hash_table_new_full(_purple_conversation_user_hash,
-			_purple_conversation_user_equal, g_free, NULL);
+		_purple_conversation_user_equal, g_free, g_object_unref);
 }
 
 /* Called when done constructing */
@@ -1477,11 +1461,7 @@ purple_chat_conversation_dispose(GObject *object)
 	PurpleChatConversationPrivate *priv =
 			PURPLE_CHAT_CONVERSATION_GET_PRIVATE(object);
 
-	if (priv->in_room) {
-		g_list_foreach(priv->in_room, (GFunc)g_object_unref, NULL);
-		g_list_free(priv->in_room);
-		priv->in_room = NULL;
-	}
+	g_hash_table_remove_all(priv->users);
 
 	G_OBJECT_CLASS(parent_class)->dispose(object);
 }

@@ -905,23 +905,24 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleChatConversation *c,
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
-	GList *members;
+	GList *members, *it;
 	char *msg2 = NULL;
 
 	if (msg)
 		msg2 = yahoo_string_encode(gc, msg, FALSE);
 
-	members = purple_chat_conversation_get_users(c);
-
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFADDINVITE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 51, buddy, 57, room, 58, msg?msg2:"", 13, "0");
-	for(; members; members = members->next) {
-		const char *name = purple_chat_user_get_name(members->data);
+
+	members = purple_chat_conversation_get_users(c);
+	for(it = members; it; it = it->next) {
+		const char *name = purple_chat_user_get_name(it->data);
 		if (!strcmp(name, dn))
 			continue;
 		yahoo_packet_hash(pkt, "ss", 52, name, 53, name);
 	}
+	g_list_free(members);
 
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg2);
@@ -1095,9 +1096,13 @@ void yahoo_c_leave(PurpleConnection *gc, int id)
 		return;
 
 	if (id != YAHOO_CHAT_ID) {
-		yahoo_conf_leave(yd, purple_conversation_get_name(PURPLE_CONVERSATION(c)),
-			purple_connection_get_display_name(gc), purple_chat_conversation_get_users(c));
-			yd->confs = g_slist_remove(yd->confs, c);
+		GList *users;
+		users = purple_chat_conversation_get_users(c);
+		yahoo_conf_leave(yd,
+			purple_conversation_get_name(PURPLE_CONVERSATION(c)),
+			purple_connection_get_display_name(gc), users);
+		g_list_free(users);
+		yd->confs = g_slist_remove(yd->confs, c);
 	} else {
 		yahoo_chat_leave(gc, purple_conversation_get_name(PURPLE_CONVERSATION(c)),
 				purple_connection_get_display_name(gc), TRUE);
@@ -1121,9 +1126,13 @@ int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 		return -1;
 
 	if (id != YAHOO_CHAT_ID) {
-		ret = yahoo_conf_send(gc, purple_connection_get_display_name(gc),
-				purple_conversation_get_name(PURPLE_CONVERSATION(c)),
-						purple_chat_conversation_get_users(c), what);
+		GList *users;
+		users = purple_chat_conversation_get_users(c);
+		ret = yahoo_conf_send(gc,
+			purple_connection_get_display_name(gc),
+			purple_conversation_get_name(PURPLE_CONVERSATION(c)),
+			users, what);
+		g_list_free(users);
 	} else {
 		ret = yahoo_chat_send(gc, purple_connection_get_display_name(gc),
 						purple_conversation_get_name(PURPLE_CONVERSATION(c)), what, flags);
