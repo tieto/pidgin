@@ -1363,7 +1363,6 @@ pack_buffer_packed_payload (const ProtobufCFieldDescriptor *field,
     }
   return rv;
 
-goto no_packing_needed;
 no_packing_needed:
   buffer->append (buffer, rv, array);
   return rv;
@@ -2028,7 +2027,6 @@ parse_packed_repeated_member (ScannedMember *scanned_member,
   *p_n += count;
   return TRUE;
 
-goto no_unpacking_needed;
 no_unpacking_needed:
   memcpy (array, at, count * siz);
   *p_n += count;

@@ -1239,7 +1239,9 @@ static gg_action_t gg_handle_tls_negotiation(struct gg_session *sess,
 	struct gg_event *e, enum gg_state_t next_state,
 	enum gg_state_t alt_state, enum gg_state_t alt2_state)
 {
+#if defined(GG_CONFIG_HAVE_GNUTLS) || defined(GG_CONFIG_HAVE_OPENSSL)
 	int valid_hostname = 0;
+#endif
 
 #ifdef GG_CONFIG_HAVE_GNUTLS
 	unsigned int status;
@@ -1436,6 +1438,7 @@ static gg_action_t gg_handle_tls_negotiation(struct gg_session *sess,
 
 #endif
 
+#if defined(GG_CONFIG_HAVE_GNUTLS) || defined(GG_CONFIG_HAVE_OPENSSL)
 	if (!valid_hostname) {
 		gg_debug_session(sess, GG_DEBUG_MISC, "//   WARNING!  unable to verify hostname\n");
 
@@ -1450,6 +1453,7 @@ static gg_action_t gg_handle_tls_negotiation(struct gg_session *sess,
 	sess->timeout = GG_DEFAULT_TIMEOUT;
 
 	return GG_ACTION_WAIT;
+#endif
 }
 
 static gg_action_t gg_handle_reading_proxy_gg(struct gg_session *sess,

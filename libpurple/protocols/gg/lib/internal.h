@@ -55,6 +55,10 @@
 #  define GG_CDECL
 #endif
 
+#define GG_STATIC_ASSERT(condition, message) \
+	{ typedef char static_assertion_failed_ ## message \
+	[(condition) ? 1 : -1]; }
+
 struct gg_dcc7_relay {
 	uint32_t addr;
 	uint16_t port;
