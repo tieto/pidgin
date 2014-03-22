@@ -81,6 +81,7 @@ purple_coresources = \
 	media/enum-types.c \
 	media.c \
 	mediamanager.c \
+	memorypool.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -154,6 +155,7 @@ purple_coreheaders = \
 	media.h \
 	media-gst.h \
 	mediamanager.h \
+	memorypool.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
