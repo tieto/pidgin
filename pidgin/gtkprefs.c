@@ -561,7 +561,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 	sample_webview = NULL;
 
-#if USE_VV
+#ifdef USE_VV
 	voice_level = NULL;
 	voice_threshold = NULL;
 	voice_volume = NULL;

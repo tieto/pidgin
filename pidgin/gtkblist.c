@@ -5921,7 +5921,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GError *error;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
+#if ! GTK_CHECK_VERSION(3,0,0)
 	int blist_width;
+#endif
 	GtkTargetEntry dte[] = {{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD },
