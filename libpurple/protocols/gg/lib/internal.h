@@ -57,7 +57,8 @@
 
 #define GG_STATIC_ASSERT(condition, message) \
 	{ typedef char static_assertion_failed_ ## message \
-	[(condition) ? 1 : -1]; }
+	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
+	(void)dummy; }
 
 struct gg_dcc7_relay {
 	uint32_t addr;
