@@ -27,14 +27,22 @@
 #define PURPLE_TRIE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_TRIE, PurpleTriePrivate))
 
+#define PURPLE_TRIE_STATES_POOL_BLOCK_SIZE 102400
+
 typedef struct _PurpleTrieRecord PurpleTrieRecord;
+typedef struct _PurpleTrieState PurpleTrieState;
+typedef struct _PurpleTrieRecordList PurpleTrieRecordList;
 
 typedef struct
 {
 	gboolean reset_on_match;
 
-	PurpleMemoryPool *records_mempool;
-	GSList *records;
+	PurpleMemoryPool *records_str_mempool;
+	PurpleMemoryPool *records_obj_mempool;
+	PurpleTrieRecordList *records;
+
+	PurpleMemoryPool *states_mempool;
+	PurpleTrieState *root_state;
 } PurpleTriePrivate;
 
 struct _PurpleTrieRecord
@@ -42,6 +50,115 @@ struct _PurpleTrieRecord
 	const gchar *word;
 	gpointer data;
 };
+
+struct _PurpleTrieRecordList
+{
+	PurpleTrieRecord *rec;
+	PurpleTrieRecordList *next;
+	PurpleTrieRecordList *prev;
+};
+
+struct _PurpleTrieState
+{
+	PurpleTrieState *parent;
+	PurpleTrieState **children;
+
+	PurpleTrieState *longest_suffix;
+
+	PurpleTrieRecord *found_word;
+};
+
+/*******************************************************************************
+ * Records list
+ ******************************************************************************/
+
+static PurpleTrieRecordList *
+purple_record_list_prepend(PurpleMemoryPool *mpool,
+	PurpleTrieRecordList *old_head, PurpleTrieRecord *rec)
+{
+	PurpleTrieRecordList *new_head;
+
+	new_head = purple_memory_pool_alloc(mpool,
+		sizeof(PurpleTrieRecordList), sizeof(gpointer));
+	new_head->rec = rec;
+	new_head->next = old_head;
+	old_head->prev = new_head;
+	new_head->prev = NULL;
+
+	return new_head;
+}
+
+/*******************************************************************************
+ * States management
+ ******************************************************************************/
+
+static void
+purple_trie_states_cleanup(PurpleTrie *trie)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+
+	g_return_if_fail(priv != NULL);
+
+	if (priv->root_state != NULL) {
+		purple_memory_pool_cleanup(priv->states_mempool);
+		priv->root_state = NULL;
+	}
+}
+
+/* Allocates a state and binds it to the parent. */
+static PurpleTrieState *
+purple_trie_state_new(PurpleTrie *trie, PurpleTrieState *parent, guchar letter)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+	PurpleTrieState *state;
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	state = purple_memory_pool_alloc0(priv->states_mempool,
+		sizeof(PurpleTrieState), sizeof(gpointer));
+	g_return_val_if_fail(state != NULL, NULL);
+
+	if (parent == NULL)
+		return state;
+
+	state->parent = parent;
+	if (parent->children == NULL) {
+		parent->children = purple_memory_pool_alloc0(
+			priv->states_mempool,
+			/* PurpleTrieState *children[sizeof(guchar)] */
+			sizeof(guchar) * sizeof(gpointer),
+			sizeof(gpointer));
+	}
+
+	if (parent->children == NULL) {
+		purple_memory_pool_free(priv->states_mempool, state);
+		g_warn_if_reached();
+		return NULL;
+	}
+
+	parent->children[letter] = state;
+
+	return state;
+}
+
+static gboolean
+purple_trie_states_build(PurpleTrie *trie)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+	PurpleTrieState *root;
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+
+	if (priv->root_state != NULL)
+		return TRUE;
+
+	priv->root_state = root = purple_trie_state_new(trie, NULL, '\0');
+	g_return_val_if_fail(root != NULL, FALSE);
+
+	/* XXX: TODO */
+
+	return TRUE;
+}
 
 /*******************************************************************************
  * Records
@@ -56,11 +173,21 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(word != NULL);
 
-	rec = g_new(PurpleTrieRecord, 1);
-	rec->word = purple_memory_pool_strdup(priv->records_mempool, word);
+	/* Every change in a trie invalidates longest_suffix map.
+	 * These prefixes could be updated instead of cleaning the whole graph.
+	 */
+	purple_trie_states_cleanup(trie);
+
+	rec = purple_memory_pool_alloc(priv->records_obj_mempool,
+		sizeof(PurpleTrieRecord), sizeof(gpointer));
+	rec->word = purple_memory_pool_strdup(priv->records_str_mempool, word);
 	rec->data = data;
 
-	priv->records = g_slist_prepend(priv->records, rec);
+	priv->records = purple_record_list_prepend(priv->records_obj_mempool,
+		priv->records, rec);
+
+	/* XXX: it won't be called here (it's inefficient), but in search function */
+	purple_trie_states_build(trie);
 }
 
 /*******************************************************************************
@@ -113,7 +240,10 @@ purple_trie_init(GTypeInstance *instance, gpointer klass)
 	PurpleTrie *trie = PURPLE_TRIE(instance);
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
 
-	priv->records_mempool = purple_memory_pool_new();
+	priv->records_obj_mempool = purple_memory_pool_new();
+	priv->records_str_mempool = purple_memory_pool_new();
+	priv->states_mempool = purple_memory_pool_new_sized(
+		PURPLE_TRIE_STATES_POOL_BLOCK_SIZE);
 }
 
 static void
@@ -121,8 +251,9 @@ purple_trie_finalize(GObject *obj)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(obj);
 
-	g_slist_free_full(priv->records, g_free);
-	g_object_unref(priv->records_mempool);
+	g_object_unref(priv->records_obj_mempool);
+	g_object_unref(priv->records_str_mempool);
+	g_object_unref(priv->states_mempool);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }

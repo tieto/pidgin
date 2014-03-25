@@ -137,6 +137,23 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 	return mem;
 }
 
+static void
+purple_memory_pool_cleanup_impl(PurpleMemoryPool *pool)
+{
+	PurpleMemoryPoolPrivate *priv = PURPLE_MEMORY_POOL_GET_PRIVATE(pool);
+	PurpleMemoryPoolBlock *blk;
+
+	g_return_if_fail(priv != NULL);
+
+	blk = priv->first_block;
+	while (blk) {
+		PurpleMemoryPoolBlock *next = blk->next;
+		g_free(blk);
+		blk = next;
+	}
+}
+
+
 /*******************************************************************************
  * API implementation
  ******************************************************************************/
@@ -191,6 +208,19 @@ purple_memory_pool_free(PurpleMemoryPool *pool, gpointer mem)
 		klass->pfree(pool, mem);
 }
 
+void
+purple_memory_pool_cleanup(PurpleMemoryPool *pool)
+{
+	PurpleMemoryPoolClass *klass;
+
+	g_return_if_fail(PURPLE_IS_MEMORY_POOL(pool));
+
+	klass = PURPLE_MEMORY_POOL_GET_CLASS(pool);
+	g_return_if_fail(klass != NULL);
+
+	klass->cleanup(pool);
+}
+
 
 /*******************************************************************************
  * Object stuff
@@ -212,18 +242,18 @@ purple_memory_pool_new(void)
 	return g_object_new(PURPLE_TYPE_MEMORY_POOL, NULL);
 }
 
+PurpleMemoryPool *
+purple_memory_pool_new_sized(gulong block_size)
+{
+	return g_object_new(PURPLE_TYPE_MEMORY_POOL,
+		"block-size", block_size,
+		NULL);
+}
+
 static void
 purple_memory_pool_finalize(GObject *obj)
 {
-	PurpleMemoryPoolPrivate *priv = PURPLE_MEMORY_POOL_GET_PRIVATE(obj);
-	PurpleMemoryPoolBlock *blk;
-
-	blk = priv->first_block;
-	while (blk) {
-		PurpleMemoryPoolBlock *next = blk->next;
-		g_free(blk);
-		blk = next;
-	}
+	purple_memory_pool_cleanup(PURPLE_MEMORY_POOL(obj));
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -274,6 +304,7 @@ purple_memory_pool_class_init(PurpleMemoryPoolClass *klass)
 	obj_class->set_property = purple_memory_pool_set_property;
 
 	klass->palloc = purple_memory_pool_alloc_impl;
+	klass->cleanup = purple_memory_pool_cleanup_impl;
 
 	properties[PROP_BLOCK_SIZE] = g_param_spec_ulong("block-size",
 		"Block size", "The default size of each block of pool memory.",

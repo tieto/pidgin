@@ -53,6 +53,7 @@ struct _PurpleMemoryPoolClass
 
 	gpointer (*palloc)(PurpleMemoryPool *pool, gsize size, guint alignment);
 	gpointer (*pfree)(PurpleMemoryPool *pool, gpointer mem);
+	void (*cleanup)(PurpleMemoryPool *pool);
 
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
@@ -74,6 +75,16 @@ purple_memory_pool_get_type(void);
  */
 PurpleMemoryPool *
 purple_memory_pool_new(void);
+
+/**
+ * purple_memory_pool_new_sized:
+ *
+ * Creates a new memory pool with non-default block size.
+ *
+ * Returns: The new #PurpleMemoryPool.
+ */
+PurpleMemoryPool *
+purple_memory_pool_new_sized(gulong block_size);
 
 /**
  * purple_memory_pool_alloc:
@@ -114,6 +125,16 @@ purple_memory_pool_alloc0(PurpleMemoryPool *pool, gsize size, guint alignment);
  */
 void
 purple_memory_pool_free(PurpleMemoryPool *pool, gpointer mem);
+
+/**
+ * purple_memory_pool_cleanup:
+ * @pool: The memory pool.
+ *
+ * Marks all memory allocated within a memory pool as not used. It may free
+ * resources, but don't have to.
+ */
+void
+purple_memory_pool_cleanup(PurpleMemoryPool *pool);
 
 /**
  * purple_memory_pool_strdup:
