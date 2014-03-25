@@ -22,6 +22,7 @@
 
 #include "trie.h"
 
+#include "debug.h"
 #include "memorypool.h"
 
 #define PURPLE_TRIE_GET_PRIVATE(obj) \
@@ -56,6 +57,8 @@ struct _PurpleTrieRecordList
 	PurpleTrieRecord *rec;
 	PurpleTrieRecordList *next;
 	PurpleTrieRecordList *prev;
+
+	gpointer extra_data;
 };
 
 struct _PurpleTrieState
@@ -208,7 +211,8 @@ purple_trie_states_build(PurpleTrie *trie)
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
 	PurpleTrieState *root;
 	PurpleMemoryPool *reclist_mpool;
-	PurpleTrieRecordList *reclist;
+	PurpleTrieRecordList *reclist, *it;
+	gulong cur_len;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 
@@ -217,12 +221,83 @@ purple_trie_states_build(PurpleTrie *trie)
 
 	priv->root_state = root = purple_trie_state_new(trie, NULL, '\0');
 	g_return_val_if_fail(root != NULL, FALSE);
+	/* I don't think we need this assignment:
+	 * root->longest_suffix = root;
+	 */
 
+	/* reclist is a list of words not yet added to the trie. Shorter words
+	 * are removed from the list, when they are fully added to the trie. */
 	reclist_mpool = purple_memory_pool_new();
 	reclist = purple_record_list_copy(reclist_mpool, priv->records);
 
-	/* XXX: todo */
-	/* test */ purple_record_list_remove(reclist, reclist->next);
+	/* extra_data on every element of reclist will be a pointer to a trie
+	 * node -- the prefix of the word with len of cur_len */
+	for (it = reclist; it != NULL; it = it->next)
+		it->extra_data = root;
+
+	/* Iterate over indexes of words -- every loop iteration checks certain
+	 * index of all remaining words. Loop finishes when there are no words
+	 * longer than cur_len. */
+	for (cur_len = 0; reclist != NULL; cur_len++) {
+		for (it = reclist; it; it = it->next) {
+			PurpleTrieRecord *rec = it->rec;
+			guchar letter = rec->word[cur_len];
+			PurpleTrieState *prefix = it->extra_data;
+			PurpleTrieState *lon_suf_parent;
+
+			/* the whole word is already added to the trie */
+			if (letter == '\0') {
+				if (prefix->found_word == NULL)
+					prefix->found_word = rec;
+				else {
+					purple_debug_warning("trie", "found "
+						"a collision of \"%s\" words",
+						rec->word);
+				}
+
+				/* "it" is not modified here, so it->next is
+				 * still valid */
+				reclist = purple_record_list_remove(reclist, it);
+				continue;
+			}
+
+			/* word's prefix is already in the trie, added by the
+			 * other word */
+			if (prefix->children && prefix->children[letter]) {
+				it->extra_data = prefix->children[letter];
+				continue;
+			}
+
+			/* We need to create a new branch of trie.
+			 * prefix is now of length increased by one letter.
+			 */
+			prefix = purple_trie_state_new(trie, prefix, letter);
+			if (!prefix) {
+				g_warn_if_reached();
+				g_object_unref(reclist_mpool);
+				return FALSE;
+			}
+			it->extra_data = prefix;
+
+			/* We need to fill the longest_suffix field -- a longest
+			 * complete suffix of the prefix we created. We look for
+			 * that suffix in any path starting in root and ending
+			 * in the (cur_len - 1) level of trie. */
+			g_assert(prefix->longest_suffix == NULL);
+			lon_suf_parent = prefix->parent->longest_suffix;
+			while (lon_suf_parent) {
+				if (lon_suf_parent->children &&
+					lon_suf_parent->children[letter])
+				{
+					prefix->longest_suffix =
+						lon_suf_parent->children[letter];
+					break;
+				}
+			}
+			if (prefix->longest_suffix == NULL)
+				prefix->longest_suffix = root;
+		}
+	}
 
 	g_object_unref(reclist_mpool);
 
