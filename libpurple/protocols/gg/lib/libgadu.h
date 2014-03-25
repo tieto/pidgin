@@ -60,7 +60,7 @@ extern "C" {
 #undef GG_CONFIG_HAVE_PTHREAD
 
 /* Defined if pthread resolver is the default one. */
-#undef GG_CONFIG_PTHREAD_DEFAULT 
+#undef GG_CONFIG_PTHREAD_DEFAULT
 
 /* Defined if this machine has C99-compiliant vsnprintf(). */
 #undef GG_CONFIG_HAVE_C99_VSNPRINTF
@@ -146,6 +146,13 @@ typedef unsigned long long uint64_t;
 #ifdef _MSC_VER
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
+#endif
+
+#if defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4))
+#  define GG_GNUC_PRINTF(format_idx, arg_idx) \
+     __attribute__((format (printf, (format_idx), (arg_idx))))
+#else
+#  define GG_GNUC_PRINTF(format_idx, arg_idx)
 #endif
 
 /** \endcond */
@@ -288,8 +295,10 @@ struct gg_session {
 
 	void *resolver;		/**< Dane prywatne procesu lub wątku rozwiązującego nazwę serwera */
 
-	char *header_buf;	/**< Bufor na początek nagłówka pakietu */
-	unsigned int header_done;	/**< Liczba wczytanych bajtów nagłówka pakietu */
+#ifndef DOXYGEN
+	char *header_buf;	/**< Bufor na początek nagłówka pakietu (nieaktualne) */
+	unsigned int header_done;	/**< Liczba wczytanych bajtów nagłówka pakietu (nieaktualne) */
+#endif
 
 #ifdef GG_CONFIG_HAVE_OPENSSL
 	SSL *ssl;		/**< Struktura TLS */
@@ -1583,8 +1592,8 @@ const char *gg_debug_event(enum gg_event_t event);
 #define gg_debug(...) do { } while (0)
 #define gg_debug_session(...) do { } while (0)
 #else
-void gg_debug(int level, const char *format, ...);
-void gg_debug_session(struct gg_session *sess, int level, const char *format, ...);
+void gg_debug(int level, const char *format, ...) GG_GNUC_PRINTF(2, 3);
+void gg_debug_session(struct gg_session *sess, int level, const char *format, ...) GG_GNUC_PRINTF(3, 4);
 #endif
 
 const char *gg_libgadu_version(void);
@@ -1743,12 +1752,7 @@ int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length)
 
 int gg_file_hash_sha1(int fd, uint8_t *result) GG_DEPRECATED;
 
-#ifdef __GNUC__
-char *gg_saprintf(const char *format, ...) __attribute__ ((format (printf, 1, 2))) GG_DEPRECATED;
-#else
-char *gg_saprintf(const char *format, ...) GG_DEPRECATED;
-#endif
-
+char *gg_saprintf(const char *format, ...) GG_GNUC_PRINTF(1, 2) GG_DEPRECATED;
 char *gg_vsaprintf(const char *format, va_list ap) GG_DEPRECATED;
 
 #define gg_alloc_sprintf gg_saprintf
@@ -1818,7 +1822,7 @@ int gg_dcc7_handle_reject(struct gg_session *sess, struct gg_event *e, const voi
 #define GG_PROTOCOL_VERSION_110 0x40
 
 /* GG_DEPRECATED */
-#define GG_DEFAULT_CLIENT_VERSION "10.1.0.11070"
+#define GG_DEFAULT_CLIENT_VERSION NULL
 
 #define GG_DEFAULT_PROTOCOL_VERSION GG_PROTOCOL_VERSION_110
 #define GG_DEFAULT_TIMEOUT 30
@@ -2486,6 +2490,7 @@ enum {
 #ifndef DOXYGEN
 
 #define GG_USERLIST100_REPLY_LIST 0x00
+#define GG_USERLIST100_REPLY_UPTODATE 0x01
 #define GG_USERLIST100_REPLY_ACK 0x10
 #define GG_USERLIST100_REPLY_REJECT 0x12
 
@@ -2498,6 +2503,7 @@ enum {
  */
 enum {
 	GG_USERLIST100_REPLY_LIST,	/**< W odpowiedzi znajduje się aktualna lista kontaktów na serwerze. */
+	GG_USERLIST100_REPLY_UPTODATE,	/**< Komunikat o tym, że lista kontaktów jest już zsynchronizowana. */
 	GG_USERLIST100_REPLY_ACK,	/**< Potwierdzenie odebrania nowej wersji listy kontaktów. W polu \c gg_userlist100_reply.version znajduje się numer nowej wersji listy kontaktów. */
 	GG_USERLIST100_REPLY_REJECT,	/**< Odmowa przyjęcia nowej wersji listy kontaktów. W polu \c gg_userlist100_reply.version znajduje się numer wersji listy kontaktów aktualnie przechowywanej przez serwer. */
 };

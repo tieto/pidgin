@@ -225,9 +225,10 @@ void gg_tvbuilder_expected_size(gg_tvbuilder_t *tvb, size_t length)
 		return;
 
 	if (tvb->alloc_length > 0) {
-		gg_debug(GG_DEBUG_MISC, "// gg_tvbuilder_expected_size(%p, %u) "
-			"realloc from %u to %u\n", tvb, length,
-			tvb->alloc_length, length_new);
+		gg_debug(GG_DEBUG_MISC, "// gg_tvbuilder_expected_size(%p, %"
+			GG_SIZE_FMT ") realloc from %" GG_SIZE_FMT " to %"
+			GG_SIZE_FMT "\n",
+			tvb, length, tvb->alloc_length, length_new);
 	}
 
 	buff_new = realloc(tvb->buffer, length_new);
@@ -237,8 +238,9 @@ void gg_tvbuilder_expected_size(gg_tvbuilder_t *tvb, size_t length)
 		return;
 	}
 
-	gg_debug(GG_DEBUG_ERROR, "// gg_tvbuilder_expected_size(%p, %u) "
-		"out of memory (new length: %u)\n", tvb, length, length_new);
+	gg_debug(GG_DEBUG_ERROR, "// gg_tvbuilder_expected_size(%p, %"
+		GG_SIZE_FMT ") out of memory (new length: %" GG_SIZE_FMT
+		")\n", tvb, length, length_new);
 	free(tvb->buffer);
 	tvb->buffer = NULL;
 	tvb->length = 0;
@@ -351,7 +353,7 @@ void gg_tvbuilder_write_packed_uint(gg_tvbuilder_t *tvb, uint64_t value)
 
 	if (val_len > 9) {
 		gg_debug(GG_DEBUG_WARNING, "// gg_tvbuilder_write_packed_uint() "
-			"int size too big (%d): %u\n", val_len, value);
+			"int size too big (%d): %" PRIu64 "\n", val_len, value);
 		tvb->valid = 0;
 		return;
 	}

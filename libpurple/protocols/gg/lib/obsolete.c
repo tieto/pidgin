@@ -109,7 +109,9 @@ void gg_search_free(struct gg_http *h)
 
 }
 
-const struct gg_search_request *gg_search_request_mode_0(char *nickname, char *first_name, char *last_name, char *city, int gender, int min_birth, int max_birth, int active, int start)
+const struct gg_search_request *gg_search_request_mode_0(char *nickname,
+	char *first_name, char *last_name, char *city, int gender,
+	int min_birth, int max_birth, int active, int start)
 {
 	return NULL;
 }
@@ -170,7 +172,9 @@ struct gg_http *gg_change_passwd(uin_t uin, const char *passwd, const char *newp
 	return NULL;
 }
 
-struct gg_http *gg_change_passwd2(uin_t uin, const char *passwd, const char *newpasswd, const char *email, const char *newemail, int async)
+struct gg_http *gg_change_passwd2(uin_t uin, const char *passwd,
+	const char *newpasswd, const char *email, const char *newemail,
+	int async)
 {
 	gg_debug(GG_DEBUG_MISC, "// gg_change_passwd2() is obsolete. use gg_change_passwd4() instead!\n");
 	errno = EINVAL;
@@ -205,7 +209,9 @@ struct gg_http *gg_change_info(uin_t uin, const char *passwd, const struct gg_ch
 	return NULL;
 }
 
-struct gg_change_info_request *gg_change_info_request_new(const char *first_name, const char *last_name, const char *nickname, const char *email, int born, int gender, const char *city)
+struct gg_change_info_request *gg_change_info_request_new(
+	const char *first_name, const char *last_name, const char *nickname,
+	const char *email, int born, int gender, const char *city)
 {
 	return NULL;
 }

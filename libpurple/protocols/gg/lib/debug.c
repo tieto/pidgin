@@ -294,7 +294,6 @@ const char *gg_debug_state(enum gg_state_t state)
 #undef GG_DEBUG_STATE
 
 	/* Celowo nie ma default, żeby kompilator wyłapał brakujące stany */
-	
 	}
 
 	return NULL;
@@ -368,7 +367,6 @@ const char *gg_debug_event(enum gg_event_t event)
 #undef GG_DEBUG_EVENT
 
 	/* Celowo nie ma default, żeby kompilator wyłapał brakujące zdarzenia */
-	
 	}
 
 	return NULL;

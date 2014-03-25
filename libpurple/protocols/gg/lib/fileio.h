@@ -38,7 +38,10 @@
 #  define open _open
 #  define read _read
 #  define stat _stat
+#  define fstat _fstat
 #  define write _write
+#  define S_IRWXO 0
+#  define S_IRWXG 0
 #else
 #  ifdef sun
 #    include <sys/filio.h>

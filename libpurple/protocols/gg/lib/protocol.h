@@ -40,7 +40,7 @@
 #undef GG_FEATURE_STATUS80
 #define GG_FEATURE_STATUS80BETA		0x01
 #define GG_FEATURE_MSG80		0x02
-#define GG_FEATURE_STATUS80 		0x05
+#define GG_FEATURE_STATUS80		0x05
 
 #define GG_DEFAULT_HOST_WHITE_LIST { "gadu-gadu.pl", "gg.pl", NULL }
 
@@ -224,14 +224,17 @@ struct gg_dcc7_aborted {
 
 struct gg_dcc7_voice_auth {
 	uint8_t type;			/* 0x00 -> wysylanie ID
-					   0x01 -> potwierdzenie ID
-					*/
+					 * 0x01 -> potwierdzenie ID
+					 */
 	gg_dcc7_id_t id;		/* identyfikator połączenia */
 	uint32_t reserved1;		/* GG_DCC7_RESERVED1 */
 	uint32_t reserved2;		/* GG_DCC7_RESERVED2 */
 } GG_PACKED;
 
-struct gg_dcc7_voice_nodata {	/* wyciszony mikrofon, ten pakiet jest wysylany co 1s (jesli chcemy podtrzymac polaczenie) */
+/* Wyciszony mikrofon. Ten pakiet jest wysylany co 1s (jesli chcemy podtrzymac
+ * polaczenie).
+ */
+struct gg_dcc7_voice_nodata {
 	uint8_t type;			/* 0x02 */
 	gg_dcc7_id_t id;		/* identyfikator połączenia */
 	uint32_t reserved1;		/* GG_DCC7_RESERVED1 */
@@ -251,7 +254,8 @@ struct gg_dcc7_voice_init {
 	uint8_t type;			/* 0x04 */
 	uint32_t id;			/* nr kroku [0x1 - 0x5] */
 	uint32_t protocol;		/* XXX: wersja protokolu (0x29, 0x2a, 0x2b) */
-	uint32_t len;			/* rozmiar sizeof(protocol)+sizeof(len)+sizeof(data) = 0x08 + sizeof(data) */
+	uint32_t len;			/* rozmiar sizeof(protocol)+sizeof(len)+
+					 * sizeof(data) = 0x08 + sizeof(data) */
 	/* char data[]; */		/* reszta danych */
 } GG_PACKED;
 
@@ -270,8 +274,8 @@ struct gg_dcc7_voice_init_confirm {
 struct gg_dcc7_relay_req {
 	uint32_t magic;			/* 0x0a */
 	uint32_t len;			/* długość całego pakietu */
-	gg_dcc7_id_t id;   		/* identyfikator połączenia */
-	uint16_t type;   		/* typ zapytania */
+	gg_dcc7_id_t id;		/* identyfikator połączenia */
+	uint16_t type;			/* typ zapytania */
 	uint16_t dunno1;		/* 0x02 */
 } GG_PACKED;
 

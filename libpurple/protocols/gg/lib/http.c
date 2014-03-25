@@ -28,6 +28,7 @@
 #include "network.h"
 #include "libgadu.h"
 #include "resolver.h"
+#include "internal.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -62,7 +63,8 @@
  *
  * \ingroup http
  */
-struct gg_http *gg_http_connect(const char *hostname, int port, int async, const char *method, const char *path, const char *header)
+struct gg_http *gg_http_connect(const char *hostname, int port, int async,
+	const char *method, const char *path, const char *header)
 {
 	struct gg_http *h;
 
@@ -135,7 +137,9 @@ struct gg_http *gg_http_connect(const char *hostname, int port, int async, const
 		h->fd = gg_connect(&addr_list[0], port, 0);
 
 		if (h->fd == -1) {
-			gg_debug(GG_DEBUG_MISC, "// gg_http_connect() connection failed (errno=%d, %s)\n", errno, strerror(errno));
+			gg_debug(GG_DEBUG_MISC, "// gg_http_connect() "
+				"connection failed (errno=%d, %s)\n",
+				errno, strerror(errno));
 			gg_http_free(h);
 			free(addr_list);
 			return NULL;
@@ -166,7 +170,8 @@ struct gg_http *gg_http_connect(const char *hostname, int port, int async, const
 #ifndef DOXYGEN
 
 #define gg_http_error(x) \
-	close(h->fd); \
+	if (h->fd > -1) \
+		close(h->fd); \
 	h->fd = -1; \
 	h->state = GG_STATE_ERROR; \
 	h->error = x; \
@@ -240,7 +245,9 @@ int gg_http_watch_fd(struct gg_http *h)
 		socklen_t res_size = sizeof(res);
 
 		if (h->async && (getsockopt(h->fd, SOL_SOCKET, SO_ERROR, &res, &res_size) || res)) {
-			gg_debug(GG_DEBUG_MISC, "=> http, async connection failed (errno=%d, %s)\n", (res) ? res : errno , strerror((res) ? res : errno));
+			gg_debug(GG_DEBUG_MISC, "=> http, async connection "
+				"failed (errno=%d, %s)\n", (res) ? res : errno,
+				strerror((res) ? res : errno));
 			close(h->fd);
 			h->fd = -1;
 			h->state = GG_STATE_ERROR;
@@ -261,24 +268,31 @@ int gg_http_watch_fd(struct gg_http *h)
 		res = send(h->fd, h->query, strlen(h->query), 0);
 
 		if (res == -1 && errno != EINTR && errno != EAGAIN) {
-			gg_debug(GG_DEBUG_MISC, "=> http, send() failed (len=%d, res=%d, errno=%d)\n", strlen(h->query), res, errno);
+			gg_debug(GG_DEBUG_MISC, "=> http, send() failed "
+				"(len=%" GG_SIZE_FMT ", res=%d, errno=%d)\n",
+				strlen(h->query), res, errno);
 			gg_http_error(GG_ERROR_WRITING);
 		}
 
 		if (res == -1) {
-			gg_debug(GG_DEBUG_MISC, "=> http, non-critical send error (errno=%d, %s)\n", errno, strerror(errno));
+			gg_debug(GG_DEBUG_MISC, "=> http, non-critical send "
+				"error (errno=%d, %s)\n",
+				errno, strerror(errno));
 			return 0;
 		}
 
 		if ((size_t) res < strlen(h->query)) {
-			gg_debug(GG_DEBUG_MISC, "=> http, partial header sent (led=%d, sent=%d)\n", strlen(h->query), res);
+			gg_debug(GG_DEBUG_MISC, "=> http, partial header sent "
+				"(led=%" GG_SIZE_FMT ", sent=%d)\n",
+				strlen(h->query), res);
 
 			memmove(h->query, h->query + res, strlen(h->query) - res + 1);
 			h->state = GG_STATE_SENDING_QUERY;
 			h->check = GG_CHECK_WRITE;
 			h->timeout = GG_DEFAULT_TIMEOUT;
 		} else {
-			gg_debug(GG_DEBUG_MISC, "=> http, request sent (len=%d)\n", strlen(h->query));
+			gg_debug(GG_DEBUG_MISC, "=> http, request sent (len=%"
+				GG_SIZE_FMT ")\n", strlen(h->query));
 			free(h->query);
 			h->query = NULL;
 
@@ -306,7 +320,9 @@ int gg_http_watch_fd(struct gg_http *h)
 		}
 
 		if (res == -1) {
-			gg_debug(GG_DEBUG_MISC, "=> http, non-critical recv error (errno=%d, %s)\n", errno, strerror(errno));
+			gg_debug(GG_DEBUG_MISC, "=> http, non-critical recv "
+				"error (errno=%d, %s)\n",
+				errno, strerror(errno));
 			return 0;
 		}
 
@@ -344,13 +360,18 @@ int gg_http_watch_fd(struct gg_http *h)
 			unsigned int left;
 			char *line;
 
-			left = h->header_size - ((long)(tmp) - (long)(h->header) + sep_len);
+			left = h->header_size - ((size_t)(tmp) - (size_t)(h->header) + sep_len);
 
-			gg_debug(GG_DEBUG_MISC, "=> http, got all header (%d bytes, %d left)\n", h->header_size - left, left);
+			gg_debug(GG_DEBUG_MISC, "=> http, got all header "
+				"(%d bytes, %d left)\n",
+				h->header_size - left, left);
 
 			/* HTTP/1.1 200 OK */
 			if (strlen(h->header) < 16 || strncmp(h->header + 9, "200", 3)) {
-				gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-HEADER-----\n%s\n=> -----END-HTTP-HEADER-----\n", h->header);
+				gg_debug(GG_DEBUG_MISC,
+					"=> -----BEGIN-HTTP-HEADER-----\n%s\n"
+					"=> -----END-HTTP-HEADER-----\n",
+					h->header);
 
 				gg_debug(GG_DEBUG_MISC, "=> http, didn't get 200 OK -- no results\n");
 				free(h->header);
@@ -362,7 +383,9 @@ int gg_http_watch_fd(struct gg_http *h)
 			line = h->header;
 			*tmp = 0;
 
-			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-HEADER-----\n%s\n=> -----END-HTTP-HEADER-----\n", h->header);
+			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-HEADER-----"
+				"\n%s\n=> -----END-HTTP-HEADER-----\n",
+				h->header);
 
 			while (line) {
 				if (!strncasecmp(line, "Content-length: ", 16)) {
@@ -384,14 +407,18 @@ int gg_http_watch_fd(struct gg_http *h)
 			}
 
 			if (left > h->body_size) {
-				gg_debug(GG_DEBUG_MISC, "=> http, oversized reply (%d bytes needed, %d bytes left)\n", h->body_size, left);
+				gg_debug(GG_DEBUG_MISC, "=> http, oversized "
+					"reply (%d bytes needed, "
+					"%d bytes left)\n", h->body_size, left);
 				h->body_size = left;
 			}
 
 			gg_debug(GG_DEBUG_MISC, "=> http, body_size=%d\n", h->body_size);
 
 			if (!(h->body = malloc(h->body_size + 1))) {
-				gg_debug(GG_DEBUG_MISC, "=> http, not enough memory (%d bytes for body_buf)\n", h->body_size + 1);
+				gg_debug(GG_DEBUG_MISC, "=> http, not enough "
+					"memory (%d bytes for body_buf)\n",
+					h->body_size + 1);
 				free(h->header);
 				h->header = NULL;
 				gg_http_error(GG_ERROR_READING);
@@ -417,7 +444,7 @@ int gg_http_watch_fd(struct gg_http *h)
 		int res;
 
 		res = recv(h->fd, buf, sizeof(buf), 0);
-		
+
 		if (res == -1 && errno != EINTR && errno != EAGAIN) {
 			gg_debug(GG_DEBUG_MISC, "=> http, reading body failed (errno=%d)\n", errno);
 			if (h->body) {
@@ -428,7 +455,9 @@ int gg_http_watch_fd(struct gg_http *h)
 		}
 
 		if (res == -1) {
-			gg_debug(GG_DEBUG_MISC, "=> http, non-critical recv error (errno=%d, %s)\n", errno, strerror(errno));
+			gg_debug(GG_DEBUG_MISC, "=> http, non-critical "
+				"recv error (errno=%d, %s)\n",
+				errno, strerror(errno));
 			return 0;
 		}
 
@@ -439,7 +468,10 @@ int gg_http_watch_fd(struct gg_http *h)
 				close(h->fd);
 				h->fd = -1;
 			} else {
-				gg_debug(GG_DEBUG_MISC, "=> http, connection closed while reading (have %d, need %d)\n", h->body_done, h->body_size);
+				gg_debug(GG_DEBUG_MISC, "=> http, "
+					"connection closed while reading "
+					"(have %d, need %d)\n",
+					h->body_done, h->body_size);
 				if (h->body) {
 					free(h->body);
 					h->body = NULL;
@@ -455,10 +487,14 @@ int gg_http_watch_fd(struct gg_http *h)
 		if (h->body_done + res > h->body_size) {
 			char *tmp;
 
-			gg_debug(GG_DEBUG_MISC, "=> http, too much data (%d bytes, %d needed), enlarging buffer\n", h->body_done + res, h->body_size);
+			gg_debug(GG_DEBUG_MISC, "=> http, too much data "
+				"(%d bytes, %d needed), enlarging buffer\n",
+				h->body_done + res, h->body_size);
 
 			if (!(tmp = realloc(h->body, h->body_done + res + 1))) {
-				gg_debug(GG_DEBUG_MISC, "=> http, not enough memory for data (%d needed)\n", h->body_done + res + 1);
+				gg_debug(GG_DEBUG_MISC, "=> http, not enough "
+					"memory for data (%d needed)\n",
+					h->body_done + res + 1);
 				free(h->body);
 				h->body = NULL;
 				gg_http_error(GG_ERROR_READING);

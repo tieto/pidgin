@@ -49,7 +49,7 @@
 
 /* Defined if libgadu was compiled and linked with GnuTLS support. */
 #undef GG_CONFIG_HAVE_GNUTLS
-#ifdef HAVE_GNUTLS
+#ifdef HAVE_GNUTLS_2_10
 #  define GG_CONFIG_HAVE_GNUTLS
 #endif
 

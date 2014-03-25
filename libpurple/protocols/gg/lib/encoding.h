@@ -22,6 +22,7 @@
 
 #include "libgadu.h"
 
-char *gg_encoding_convert(const char *src, gg_encoding_t src_encoding, gg_encoding_t dst_encoding, int src_length, int dst_length);
+char *gg_encoding_convert(const char *src, gg_encoding_t src_encoding,
+	gg_encoding_t dst_encoding, int src_length, int dst_length);
 
 #endif /* LIBGADU_SESSION_H */

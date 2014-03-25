@@ -86,6 +86,7 @@
 #endif
 
 #include "protobuf-c.h"
+#include "internal.h"
 
 unsigned protobuf_c_major = PROTOBUF_C_MAJOR;
 unsigned protobuf_c_minor = PROTOBUF_C_MINOR;
@@ -149,6 +150,7 @@ alloc_failed_warning (unsigned size, const char *filename, unsigned line)
 
 /* --- allocator --- */
 
+static void protobuf_c_out_of_memory_default (void) GG_NORETURN;
 static void protobuf_c_out_of_memory_default (void)
 {
   fprintf (stderr, "Out Of Memory!!!\n");
@@ -1361,10 +1363,11 @@ pack_buffer_packed_payload (const ProtobufCFieldDescriptor *field,
     }
   return rv;
 
-goto no_packing_needed;
+#if IS_LITTLE_ENDIAN
 no_packing_needed:
   buffer->append (buffer, rv, array);
   return rv;
+#endif
 }
 
 static size_t
@@ -2026,11 +2029,12 @@ parse_packed_repeated_member (ScannedMember *scanned_member,
   *p_n += count;
   return TRUE;
 
-goto no_unpacking_needed;
+#if IS_LITTLE_ENDIAN
 no_unpacking_needed:
   memcpy (array, at, count * siz);
   *p_n += count;
   return TRUE;
+#endif
 }
 
 static protobuf_c_boolean
