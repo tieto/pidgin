@@ -293,3 +293,24 @@ purple_memory_pool_get_type(void)
 
 	return type;
 }
+
+gchar *
+purple_memory_pool_strdup(PurpleMemoryPool *pool, const gchar *str)
+{
+	gsize str_len;
+	gchar *str_dup;
+
+	if (str == NULL)
+		return NULL;
+
+	g_return_val_if_fail(PURPLE_IS_MEMORY_POOL(pool), NULL);
+
+	str_len = strlen(str);
+	str_dup = purple_memory_pool_alloc(pool, str_len + 1, sizeof(gchar));
+	g_return_val_if_fail(str_dup != NULL, NULL);
+
+	memcpy(str_dup, str, str_len);
+	str_dup[str_len] = '\0';
+
+	return str_dup;
+}

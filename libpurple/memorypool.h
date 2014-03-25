@@ -72,7 +72,7 @@ purple_memory_pool_get_type(void);
  *
  * Creates a new memory pool.
  *
- * Returns: The new PurpleMemoryPool.
+ * Returns: The new #PurpleMemoryPool.
  */
 PurpleMemoryPool *
 purple_memory_pool_new(gulong block_size);
@@ -112,10 +112,24 @@ purple_memory_pool_alloc0(PurpleMemoryPool *pool, gulong size, guint alignment);
  * @mem: The pointer to a memory block.
  *
  * Frees a memory allocated within a memory pool. This can be a no-op in certain
- * implementations.
+ * implementations. Thus, it don't need to be called in every case.
  */
 void
 purple_memory_pool_free(PurpleMemoryPool *pool, gpointer mem);
+
+/**
+ * purple_memory_pool_strdup:
+ * @pool: The memory pool.
+ * @str: The string to duplicate.
+ *
+ * Duplicates a string using a memory allocated within a memory pool. If @str is
+ * %NULL it returns %NULL. The returned string should be freed with g_free()
+ * when no longer needed.
+ *
+ * Returns: a newly-allocated copy of @str
+ */
+gchar *
+purple_memory_pool_strdup(PurpleMemoryPool *pool, const gchar *str);
 
 G_END_DECLS
 
