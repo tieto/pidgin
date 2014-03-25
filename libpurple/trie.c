@@ -73,20 +73,81 @@ struct _PurpleTrieState
  ******************************************************************************/
 
 static PurpleTrieRecordList *
+purple_record_list_new(PurpleMemoryPool *mpool, PurpleTrieRecord *rec)
+{
+	PurpleTrieRecordList *node;
+
+	node = purple_memory_pool_alloc(mpool,
+		sizeof(PurpleTrieRecordList), sizeof(gpointer));
+	g_return_val_if_fail(node != NULL, NULL);
+
+	node->rec = rec;
+
+	return node;
+}
+
+static PurpleTrieRecordList *
 purple_record_list_prepend(PurpleMemoryPool *mpool,
 	PurpleTrieRecordList *old_head, PurpleTrieRecord *rec)
 {
 	PurpleTrieRecordList *new_head;
 
-	new_head = purple_memory_pool_alloc(mpool,
-		sizeof(PurpleTrieRecordList), sizeof(gpointer));
-	new_head->rec = rec;
+	new_head = purple_record_list_new(mpool, rec);
+	g_return_val_if_fail(new_head != NULL, NULL);
+
 	new_head->next = old_head;
 	old_head->prev = new_head;
 	new_head->prev = NULL;
 
 	return new_head;
 }
+
+static PurpleTrieRecordList *
+purple_record_list_copy(PurpleMemoryPool *mpool,
+	const PurpleTrieRecordList *head)
+{
+	PurpleTrieRecordList *new_head = NULL, *new_tail = NULL;
+
+	while (head) {
+		PurpleTrieRecordList *node;
+
+		node = purple_record_list_new(mpool, head->rec);
+		g_return_val_if_fail(node != NULL, NULL); /* there is no leak */
+
+		node->prev = new_tail;
+		if (new_tail)
+			new_tail->next = node;
+		new_tail = node;
+		if (!new_head)
+			new_head = node;
+
+		head = head->next;
+	}
+
+	return new_head;
+}
+
+static PurpleTrieRecordList *
+purple_record_list_remove(PurpleTrieRecordList *head,
+	PurpleTrieRecordList *node)
+{
+	g_return_val_if_fail(head != NULL, NULL);
+	g_return_val_if_fail(node != NULL, head);
+	g_return_val_if_fail(head->prev == NULL, NULL);
+
+	if (head == node) {
+		if (head->next != NULL)
+			head->next->prev = NULL;
+		return head->next;
+	} else {
+		g_return_val_if_fail(node->prev != NULL, NULL);
+		node->prev->next = node->next;
+		if (node->next != NULL)
+			node->next->prev = node->prev;
+		return head;
+	}
+}
+
 
 /*******************************************************************************
  * States management
@@ -146,6 +207,8 @@ purple_trie_states_build(PurpleTrie *trie)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
 	PurpleTrieState *root;
+	PurpleMemoryPool *reclist_mpool;
+	PurpleTrieRecordList *reclist;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 
@@ -155,7 +218,13 @@ purple_trie_states_build(PurpleTrie *trie)
 	priv->root_state = root = purple_trie_state_new(trie, NULL, '\0');
 	g_return_val_if_fail(root != NULL, FALSE);
 
-	/* XXX: TODO */
+	reclist_mpool = purple_memory_pool_new();
+	reclist = purple_record_list_copy(reclist_mpool, priv->records);
+
+	/* XXX: todo */
+	/* test */ purple_record_list_remove(reclist, reclist->next);
+
+	g_object_unref(reclist_mpool);
 
 	return TRUE;
 }
