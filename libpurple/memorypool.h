@@ -51,7 +51,7 @@ struct _PurpleMemoryPoolClass
 	/*< private >*/
 	GObjectClass parent_class;
 
-	gpointer (*palloc)(PurpleMemoryPool *pool, gulong size, guint alignment);
+	gpointer (*palloc)(PurpleMemoryPool *pool, gsize size, guint alignment);
 	gpointer (*pfree)(PurpleMemoryPool *pool, gpointer mem);
 
 	void (*purple_reserved1)(void);
@@ -67,15 +67,13 @@ purple_memory_pool_get_type(void);
 
 /**
  * purple_memory_pool_new:
- * @blocksize: The size of each block of pool memory. Allocated items have to
- *             be smaller than this value.
  *
  * Creates a new memory pool.
  *
  * Returns: The new #PurpleMemoryPool.
  */
 PurpleMemoryPool *
-purple_memory_pool_new(gulong block_size);
+purple_memory_pool_new(void);
 
 /**
  * purple_memory_pool_alloc:
@@ -89,7 +87,7 @@ purple_memory_pool_new(gulong block_size);
  *          a call to purple_memory_pool_free.
  */
 gpointer
-purple_memory_pool_alloc(PurpleMemoryPool *pool, gulong size, guint alignment);
+purple_memory_pool_alloc(PurpleMemoryPool *pool, gsize size, guint alignment);
 
 /**
  * purple_memory_pool_alloc0:
@@ -104,7 +102,7 @@ purple_memory_pool_alloc(PurpleMemoryPool *pool, gulong size, guint alignment);
  *          a call to purple_memory_pool_free.
  */
 gpointer
-purple_memory_pool_alloc0(PurpleMemoryPool *pool, gulong size, guint alignment);
+purple_memory_pool_alloc0(PurpleMemoryPool *pool, gsize size, guint alignment);
 
 /**
  * purple_memory_pool_free:

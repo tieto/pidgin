@@ -32,7 +32,6 @@ typedef struct _PurpleTrieRecord PurpleTrieRecord;
 typedef struct
 {
 	gboolean reset_on_match;
-	gulong block_size;
 
 	PurpleMemoryPool *records_mempool;
 	GSList *records;
@@ -96,7 +95,6 @@ enum
 {
 	PROP_ZERO,
 	PROP_RESET_ON_MATCH,
-	PROP_BLOCK_SIZE,
 	PROP_LAST
 };
 
@@ -115,7 +113,7 @@ purple_trie_init(GTypeInstance *instance, gpointer klass)
 	PurpleTrie *trie = PURPLE_TRIE(instance);
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
 
-	priv->records_mempool = purple_memory_pool_new(priv->block_size);
+	priv->records_mempool = purple_memory_pool_new();
 }
 
 static void
@@ -140,9 +138,6 @@ purple_trie_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_RESET_ON_MATCH:
 			g_value_set_boolean(value, priv->reset_on_match);
 			break;
-		case PROP_BLOCK_SIZE:
-			g_value_set_ulong(value, priv->block_size);
-			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
 	}
@@ -158,9 +153,6 @@ purple_trie_set_property(GObject *obj, guint param_id,
 	switch (param_id) {
 		case PROP_RESET_ON_MATCH:
 			priv->reset_on_match = g_value_get_boolean(value);
-			break;
-		case PROP_BLOCK_SIZE:
-			priv->block_size = g_value_get_ulong(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -185,12 +177,6 @@ purple_trie_class_init(PurpleTrieClass *klass)
 		"should be reset to the initial state on every match. This "
 		"ensures, that every match is distinct from each other.", TRUE,
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-	properties[PROP_BLOCK_SIZE] = g_param_spec_ulong("block-size",
-		"Block size", "The size of each block of pool memory. Every "
-		"string in trie have to be smaller than this value",
-		1, G_MAXULONG, 1024,
-		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }

@@ -32,6 +32,8 @@
 #define PURPLE_MEMORY_PADDED(pointer, padding) \
 	(gpointer)(((guintptr)(pointer) - 1) % (padding) + 1)
 
+#define PURPLE_MEMORY_POOL_DEFAULT_BLOCK_SIZE 1024
+
 typedef struct _PurpleMemoryPoolBlock PurpleMemoryPoolBlock;
 
 typedef struct
@@ -62,13 +64,11 @@ purple_memory_pool_block_new(gulong block_size)
 
 	total_size = (sizeof(PurpleMemoryPoolBlock) - 1) /
 		PURPLE_MEMORY_POOL_BLOCK_PADDING + 1;
+	g_return_val_if_fail(block_size < G_MAXSIZE - total_size, NULL);
 	total_size += block_size;
 
 	block_raw = g_try_malloc(total_size);
-	if (block_raw == NULL) {
-		g_error("out of memory");
-		return NULL;
-	}
+	g_return_val_if_fail(block_raw != NULL, NULL);
 	block = block_raw;
 
 	/* in fact, we don't set available_ptr padded to
@@ -84,14 +84,13 @@ purple_memory_pool_block_new(gulong block_size)
 }
 
 static gpointer
-purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gulong size, guint alignment)
+purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignment)
 {
 	PurpleMemoryPoolPrivate *priv = PURPLE_MEMORY_POOL_GET_PRIVATE(pool);
 	PurpleMemoryPoolBlock *blk;
 	gpointer mem = NULL;
 
 	g_return_val_if_fail(priv != NULL, NULL);
-	g_return_val_if_fail(size <= priv->block_size, NULL);
 
 	g_warn_if_fail(alignment >= 1);
 	if (alignment < 1)
@@ -110,7 +109,10 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gulong size, guint alignme
 	}
 
 	if (mem == NULL) {
-		blk = purple_memory_pool_block_new(priv->block_size);
+		gsize real_size = priv->block_size;
+		if (real_size < size)
+			real_size = size;
+		blk = purple_memory_pool_block_new(real_size);
 		g_return_val_if_fail(blk != NULL, NULL);
 
 		if (priv->first_block == NULL) {
@@ -140,9 +142,12 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gulong size, guint alignme
  ******************************************************************************/
 
 gpointer
-purple_memory_pool_alloc(PurpleMemoryPool *pool, gulong size, guint alignment)
+purple_memory_pool_alloc(PurpleMemoryPool *pool, gsize size, guint alignment)
 {
 	PurpleMemoryPoolClass *klass;
+
+	if (size == 0)
+		return NULL;
 
 	g_return_val_if_fail(PURPLE_IS_MEMORY_POOL(pool), NULL);
 
@@ -154,9 +159,12 @@ purple_memory_pool_alloc(PurpleMemoryPool *pool, gulong size, guint alignment)
 }
 
 gpointer
-purple_memory_pool_alloc0(PurpleMemoryPool *pool, gulong size, guint alignment)
+purple_memory_pool_alloc0(PurpleMemoryPool *pool, gsize size, guint alignment)
 {
 	gpointer mem;
+
+	if (size == 0)
+		return NULL;
 
 	mem = purple_memory_pool_alloc(pool, size, alignment);
 	g_return_val_if_fail(mem != NULL, NULL);
@@ -170,6 +178,9 @@ void
 purple_memory_pool_free(PurpleMemoryPool *pool, gpointer mem)
 {
 	PurpleMemoryPoolClass *klass;
+
+	if (mem == NULL)
+		return;
 
 	g_return_if_fail(PURPLE_IS_MEMORY_POOL(pool));
 
@@ -196,11 +207,9 @@ static GObjectClass *parent_class = NULL;
 static GParamSpec *properties[PROP_LAST];
 
 PurpleMemoryPool *
-purple_memory_pool_new(gulong block_size)
+purple_memory_pool_new(void)
 {
-	return g_object_new(PURPLE_TYPE_MEMORY_POOL,
-		"block-size", block_size,
-		NULL);
+	return g_object_new(PURPLE_TYPE_MEMORY_POOL, NULL);
 }
 
 static void
@@ -267,9 +276,8 @@ purple_memory_pool_class_init(PurpleMemoryPoolClass *klass)
 	klass->palloc = purple_memory_pool_alloc_impl;
 
 	properties[PROP_BLOCK_SIZE] = g_param_spec_ulong("block-size",
-		"Block size", "The size of each block of pool memory. Allocated"
-		" items have to be smaller than this value",
-		1, G_MAXULONG, 1024,
+		"Block size", "The default size of each block of pool memory.",
+		0, G_MAXULONG, PURPLE_MEMORY_POOL_DEFAULT_BLOCK_SIZE,
 		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(obj_class, PROP_LAST, properties);
