@@ -254,6 +254,7 @@ purple_trie_states_build(PurpleTrie *trie)
 	PurpleMemoryPool *reclist_mpool;
 	PurpleTrieRecordList *reclist, *it;
 	gulong cur_len;
+	PurpleTrieRecordList *empty_word = NULL;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 
@@ -262,9 +263,7 @@ purple_trie_states_build(PurpleTrie *trie)
 
 	priv->root_state = root = purple_trie_state_new(trie, NULL, '\0');
 	g_return_val_if_fail(root != NULL, FALSE);
-	/* I don't think we need this assignment:
-	 * root->longest_suffix = root;
-	 */
+	g_assert(root->longest_suffix == NULL);
 
 	/* reclist is a list of words not yet added to the trie. Shorter words
 	 * are removed from the list, when they are fully added to the trie. */
@@ -273,8 +272,17 @@ purple_trie_states_build(PurpleTrie *trie)
 
 	/* extra_data on every element of reclist will be a pointer to a trie
 	 * node -- the prefix of the word with len of cur_len */
-	for (it = reclist; it != NULL; it = it->next)
+	for (it = reclist; it != NULL; it = it->next) {
 		it->extra_data = root;
+		if (it->rec->word_len == 0)
+			empty_word = it;
+	}
+
+	/* a special case for the empty word */
+	if (empty_word) {
+		root->found_word = empty_word->rec;
+		reclist = purple_record_list_remove(reclist, empty_word);
+	}
 
 	/* Iterate over indexes of words -- every loop iteration checks certain
 	 * index of all remaining words. Loop finishes when there are no words
@@ -286,8 +294,33 @@ purple_trie_states_build(PurpleTrie *trie)
 			PurpleTrieState *prefix = it->extra_data;
 			PurpleTrieState *lon_suf_parent;
 
-			/* the whole word is already added to the trie */
 			if (character == '\0') {
+				purple_debug_warning("trie", "found "
+					"a collision of empty words");
+				/* it->next is still valid, see below */
+				reclist = purple_record_list_remove(reclist, it);
+				continue;
+			}
+
+			if (prefix->children && prefix->children[character]) {
+				/* Word's prefix is already in the trie, added
+				 * by the other word. */
+				prefix = prefix->children[character];
+			} else {
+				/* We need to create a new branch of trie. */
+				prefix = purple_trie_state_new(trie, prefix,
+					character);
+				if (!prefix) {
+					g_warn_if_reached();
+					g_object_unref(reclist_mpool);
+					return FALSE;
+				}
+			}
+			it->extra_data = prefix;
+			/* prefix is now of length increased by one character. */
+
+			/* The whole word is now added to the trie. */
+			if (rec->word[cur_len + 1] == '\0') {
 				if (prefix->found_word == NULL)
 					prefix->found_word = rec;
 				else {
@@ -299,32 +332,14 @@ purple_trie_states_build(PurpleTrie *trie)
 				/* "it" is not modified here, so it->next is
 				 * still valid */
 				reclist = purple_record_list_remove(reclist, it);
-				continue;
 			}
-
-			/* word's prefix is already in the trie, added by the
-			 * other word */
-			if (prefix->children && prefix->children[character]) {
-				it->extra_data = prefix->children[character];
-				continue;
-			}
-
-			/* We need to create a new branch of trie.
-			 * prefix is now of length increased by one character.
-			 */
-			prefix = purple_trie_state_new(trie, prefix, character);
-			if (!prefix) {
-				g_warn_if_reached();
-				g_object_unref(reclist_mpool);
-				return FALSE;
-			}
-			it->extra_data = prefix;
 
 			/* We need to fill the longest_suffix field -- a longest
 			 * complete suffix of the prefix we created. We look for
 			 * that suffix in any path starting in root and ending
 			 * in the (cur_len - 1) level of trie. */
-			g_assert(prefix->longest_suffix == NULL);
+			if (prefix->longest_suffix != NULL)
+				continue;
 			lon_suf_parent = prefix->parent->longest_suffix;
 			while (lon_suf_parent) {
 				if (lon_suf_parent->children &&
@@ -338,6 +353,10 @@ purple_trie_states_build(PurpleTrie *trie)
 			}
 			if (prefix->longest_suffix == NULL)
 				prefix->longest_suffix = root;
+			if (prefix->found_word == NULL) {
+				prefix->found_word =
+					prefix->longest_suffix->found_word;
+			}
 		}
 	}
 
@@ -395,9 +414,11 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 			gsize str_old_len;
 
 			/* let's get back to the beginning of the word */
-			g_assert(out->len >= state->found_word->word_len - 1);
 			str_old_len = out->len;
-			out->len -= state->found_word->word_len - 1;
+			if (state->found_word->word_len > 0) {
+				g_assert(out->len >= state->found_word->word_len - 1);
+				out->len -= state->found_word->word_len - 1;
+			}
 
 			was_replaced = replace_cb(out, state->found_word->word,
 				state->found_word->data, user_data);
