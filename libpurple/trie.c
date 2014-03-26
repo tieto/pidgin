@@ -74,6 +74,17 @@ struct _PurpleTrieState
 	PurpleTrieRecord *found_word;
 };
 
+typedef struct
+{
+	PurpleTrieState *state;
+
+	PurpleTrieState *root_state;
+	gboolean reset_on_match;
+
+	PurpleTrieReplaceCb replace_cb;
+	gpointer user_data;
+} PurpleTrieMachine;
+
 /*******************************************************************************
  * Records list
  ******************************************************************************/
@@ -354,14 +365,63 @@ purple_trie_states_build(PurpleTrie *trie)
  * Searching
  ******************************************************************************/
 
+static void
+purple_trie_replace_advance(PurpleTrieMachine *m, const guchar character)
+{
+	/* change state after processing a character */
+	while (TRUE) {
+		/* Perfect fit - next character is the same, as the child of the
+		 * prefix we reached so far. */
+		if (m->state->children && m->state->children[character]) {
+			m->state = m->state->children[character];
+			break;
+		}
+
+		/* We reached root, that's a pity. */
+		if (m->state == m->root_state)
+			break;
+
+		/* Let's try a bit shorter suffix. */
+		m->state = m->state->longest_suffix;
+	}
+}
+
+static gboolean
+purple_trie_replace_do_replacement(PurpleTrieMachine *m, GString *out)
+{
+	gboolean was_replaced = FALSE;
+	gsize str_old_len;
+
+	/* if we reached a "found" state, let's process it */
+	if (!m->state->found_word)
+		return FALSE;
+
+	/* let's get back to the beginning of the word */
+	g_assert(out->len >= m->state->found_word->word_len - 1);
+	str_old_len = out->len;
+	out->len -= m->state->found_word->word_len - 1;
+
+	was_replaced = m->replace_cb(out, m->state->found_word->word,
+		m->state->found_word->data, m->user_data);
+
+	/* output was untouched, revert to the previous position */
+	if (!was_replaced)
+		out->len = str_old_len;
+
+	if (was_replaced || m->reset_on_match)
+		m->state = m->root_state;
+
+	return was_replaced;
+}
+
 gchar *
 purple_trie_replace(PurpleTrie *trie, const gchar *src,
 	PurpleTrieReplaceCb replace_cb, gpointer user_data)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
-	PurpleTrieState *state;
-	gsize i = 0;
+	PurpleTrieMachine machine;
 	GString *out;
+	gsize i;
 
 	if (src == NULL)
 		return NULL;
@@ -371,49 +431,20 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 
 	purple_trie_states_build(trie);
 
+	machine.state = priv->root_state;
+	machine.root_state = priv->root_state;
+	machine.reset_on_match = priv->reset_on_match;
+	machine.replace_cb = replace_cb;
+	machine.user_data = user_data;
+
 	out = g_string_new(NULL);
-	state = priv->root_state;
+	i = 0;
 	while (src[i] != '\0') {
 		guchar character = src[i++];
-		gboolean was_replaced = FALSE;
+		gboolean was_replaced;
 
-		/* change state after processing a character */
-		while (TRUE) {
-			/* Perfect fit - next character is the same, as the
-			 * child of the prefix we reached so far. */
-			if (state->children && state->children[character]) {
-				state = state->children[character];
-				break;
-			}
-
-			/* We reached root, that's a pity. */
-			if (state == priv->root_state)
-				break;
-
-			/* Let's try a bit shorter suffix. */
-			state = state->longest_suffix;
-		}
-
-		/* if we reached a "found" state, let's process it */
-		if (state->found_word) {
-			gsize str_old_len;
-
-			/* let's get back to the beginning of the word */
-			g_assert(out->len >= state->found_word->word_len - 1);
-			str_old_len = out->len;
-			out->len -= state->found_word->word_len - 1;
-
-			was_replaced = replace_cb(out, state->found_word->word,
-				state->found_word->data, user_data);
-
-			/* output string was untouched, rollback to the
-			 * previous position*/
-			if (!was_replaced)
-				out->len = str_old_len;
-
-			if (was_replaced || priv->reset_on_match)
-				state = priv->root_state;
-		}
+		purple_trie_replace_advance(&machine, character);
+		was_replaced = purple_trie_replace_do_replacement(&machine, out);
 
 		/* We skipped a character without finding any records,
 		 * let's just copy it to the output. */
@@ -421,6 +452,78 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 			g_string_append_c(out, character);
 	}
 
+	return g_string_free(out, FALSE);
+}
+
+gchar *
+purple_trie_multi_replace(const GSList *tries, const gchar *src,
+	PurpleTrieReplaceCb replace_cb, gpointer user_data)
+{
+	guint tries_count, m_idx;
+	PurpleTrieMachine *machines;
+	GString *out;
+	gsize i;
+
+	if (src == NULL)
+		return NULL;
+
+	g_return_val_if_fail(replace_cb != NULL, g_strdup(src));
+
+	tries_count = g_slist_length((GSList*)tries);
+	if (tries_count == 0)
+		return g_strdup(src);
+
+	/* Initialize all machines. */
+	machines = g_new(PurpleTrieMachine, tries_count);
+	for (i = 0; i < tries_count; i++, tries = tries->next) {
+		PurpleTrie *trie = tries->data;
+		PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+
+		if (priv == NULL) {
+			g_warn_if_reached();
+			g_free(machines);
+			return NULL;
+		}
+
+		purple_trie_states_build(trie);
+
+		machines[i].state = priv->root_state;
+		machines[i].root_state = priv->root_state;
+		machines[i].reset_on_match = priv->reset_on_match;
+		machines[i].replace_cb = replace_cb;
+		machines[i].user_data = user_data;
+	}
+
+	out = g_string_new(NULL);
+	i = 0;
+	while (src[i] != '\0') {
+		guchar character = src[i++];
+		gboolean was_replaced = FALSE;
+
+		/* Advance every machine and possibly perform a replacement. */
+		for (m_idx = 0; m_idx < tries_count; m_idx++) {
+			purple_trie_replace_advance(&machines[m_idx], character);
+			if (was_replaced)
+				continue;
+			was_replaced = purple_trie_replace_do_replacement(
+				&machines[m_idx], out);
+		}
+
+		/* We skipped a character without finding any records,
+		 * let's just copy it to the output. */
+		if (!was_replaced)
+			g_string_append_c(out, character);
+
+		/* If we replaced a word, reset _all_ machines */
+		if (was_replaced) {
+			for (m_idx = 0; m_idx < tries_count; m_idx++) {
+				machines[m_idx].state =
+					machines[m_idx].root_state;
+			}
+		}
+	}
+
+	g_free(machines);
 	return g_string_free(out, FALSE);
 }
 
@@ -483,6 +586,7 @@ purple_trie_set_reset_on_match(PurpleTrie *trie, gboolean reset)
  * Object stuff
  ******************************************************************************/
 
+/* TODO: an option to make it eager or lazy (now, it's eager) */
 enum
 {
 	PROP_ZERO,

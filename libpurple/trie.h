@@ -128,13 +128,33 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data);
  * @replace_cb: The replacement function.
  * @user_data: Custom data to be passed to @replace_cb.
  *
- * Looks for all occuriences of words added to @trie, in @src string.
+ * Processes @src string and replaces all occuriences of words added to @trie.
  * It's O(strlen(src)), if replace_cb runs in O(strlen(word)).
  *
  * Returns: resulting string. Must be g_free'd when you are done using it.
  */
 gchar *
 purple_trie_replace(PurpleTrie *trie, const gchar *src,
+	PurpleTrieReplaceCb replace_cb, gpointer user_data);
+
+/**
+ * purple_trie_multi_replace:
+ * @tries: The list of tries.
+ * @src: The source string.
+ * @replace_cb: The replacement function.
+ * @user_data: Custom data to be passed to @replace_cb.
+ *
+ * Processes @src and replaces all occuriences of words added to tries in list
+ * @tries. Entries added to tries on the beginning of the list have higher
+ * priority, than ones added further.
+ *
+ * Differend GSList's can be combined to possess common parts, so you can create
+ * a "tree of tries".
+ *
+ * Returns: resulting string. Must be g_free'd when you are done using it.
+ */
+gchar *
+purple_trie_multi_replace(const GSList *tries, const gchar *src,
 	PurpleTrieReplaceCb replace_cb, gpointer user_data);
 
 G_END_DECLS
