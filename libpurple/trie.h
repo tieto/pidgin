@@ -57,6 +57,22 @@ struct _PurpleTrieClass
 	void (*purple_reserved4)(void);
 };
 
+/**
+ * PurpleTrieReplaceCb:
+ * @out: Currently built output string, append replacement to it.
+ * @word: Found word.
+ * @word_data: A user data bound with this word, when added with
+ *             purple_trie_add().
+ * @user_data: A user supplied data passed when calling purple_trie_replace().
+ *
+ * A funtion called after every found matching substring to be replaced.
+ *
+ * Returns: %TRUE, if the word was replaced, %FALSE otherwise. In the second
+ *          case you might possibly want to leave @out untouched.
+ */
+typedef gboolean (*PurpleTrieReplaceCb)(GString *out, const gchar *word,
+	gpointer word_data, gpointer user_data);
+
 G_BEGIN_DECLS
 
 GType
@@ -104,6 +120,22 @@ purple_trie_set_reset_on_match(PurpleTrie *trie, gboolean reset);
  */
 void
 purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data);
+
+/**
+ * purple_trie_replace:
+ * @trie: The trie.
+ * @src: The source string.
+ * @replace_cb: The replacement function.
+ * @user_data: Custom data to be passed to @replace_cb.
+ *
+ * Looks for all occuriences of words added to @trie, in @src string.
+ * It's O(strlen(src)), if replace_cb runs in O(strlen(word)).
+ *
+ * Returns: resulting string. Must be g_free'd when you are done using it.
+ */
+gchar *
+purple_trie_replace(PurpleTrie *trie, const gchar *src,
+	PurpleTrieReplaceCb replace_cb, gpointer user_data);
 
 G_END_DECLS
 

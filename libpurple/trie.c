@@ -22,6 +22,8 @@
 
 #include "trie.h"
 
+#include <string.h>
+
 #include "debug.h"
 #include "memorypool.h"
 
@@ -49,6 +51,7 @@ typedef struct
 struct _PurpleTrieRecord
 {
 	const gchar *word;
+	guint word_len;
 	gpointer data;
 };
 
@@ -171,7 +174,7 @@ purple_trie_states_cleanup(PurpleTrie *trie)
 
 /* Allocates a state and binds it to the parent. */
 static PurpleTrieState *
-purple_trie_state_new(PurpleTrie *trie, PurpleTrieState *parent, guchar letter)
+purple_trie_state_new(PurpleTrie *trie, PurpleTrieState *parent, guchar character)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
 	PurpleTrieState *state;
@@ -200,7 +203,7 @@ purple_trie_state_new(PurpleTrie *trie, PurpleTrieState *parent, guchar letter)
 		return NULL;
 	}
 
-	parent->children[letter] = state;
+	parent->children[character] = state;
 
 	return state;
 }
@@ -241,12 +244,12 @@ purple_trie_states_build(PurpleTrie *trie)
 	for (cur_len = 0; reclist != NULL; cur_len++) {
 		for (it = reclist; it; it = it->next) {
 			PurpleTrieRecord *rec = it->rec;
-			guchar letter = rec->word[cur_len];
+			guchar character = rec->word[cur_len];
 			PurpleTrieState *prefix = it->extra_data;
 			PurpleTrieState *lon_suf_parent;
 
 			/* the whole word is already added to the trie */
-			if (letter == '\0') {
+			if (character == '\0') {
 				if (prefix->found_word == NULL)
 					prefix->found_word = rec;
 				else {
@@ -263,15 +266,15 @@ purple_trie_states_build(PurpleTrie *trie)
 
 			/* word's prefix is already in the trie, added by the
 			 * other word */
-			if (prefix->children && prefix->children[letter]) {
-				it->extra_data = prefix->children[letter];
+			if (prefix->children && prefix->children[character]) {
+				it->extra_data = prefix->children[character];
 				continue;
 			}
 
 			/* We need to create a new branch of trie.
-			 * prefix is now of length increased by one letter.
+			 * prefix is now of length increased by one character.
 			 */
-			prefix = purple_trie_state_new(trie, prefix, letter);
+			prefix = purple_trie_state_new(trie, prefix, character);
 			if (!prefix) {
 				g_warn_if_reached();
 				g_object_unref(reclist_mpool);
@@ -287,12 +290,13 @@ purple_trie_states_build(PurpleTrie *trie)
 			lon_suf_parent = prefix->parent->longest_suffix;
 			while (lon_suf_parent) {
 				if (lon_suf_parent->children &&
-					lon_suf_parent->children[letter])
+					lon_suf_parent->children[character])
 				{
-					prefix->longest_suffix =
-						lon_suf_parent->children[letter];
+					prefix->longest_suffix = lon_suf_parent->
+						children[character];
 					break;
 				}
+				lon_suf_parent = lon_suf_parent->longest_suffix;
 			}
 			if (prefix->longest_suffix == NULL)
 				prefix->longest_suffix = root;
@@ -303,6 +307,66 @@ purple_trie_states_build(PurpleTrie *trie)
 
 	return TRUE;
 }
+
+/*******************************************************************************
+ * Searching
+ ******************************************************************************/
+
+gchar *
+purple_trie_replace(PurpleTrie *trie, const gchar *src,
+	PurpleTrieReplaceCb replace_cb, gpointer user_data)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+	PurpleTrieState *state;
+	gsize i = 0;
+	GString *out;
+
+	if (src == NULL)
+		return NULL;
+
+	g_return_val_if_fail(replace_cb != NULL, g_strdup(src));
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	out = g_string_new(NULL);
+	state = priv->root_state;
+	while (src[i] != '\0') {
+		guchar character = src[i];
+
+		/* change state after processing a character */
+		while (TRUE) {
+			/* Perfect fit - next character is the same, as the
+			 * child of the prefix we reached so far. */
+			if (state->children && state->children[character]) {
+				state = state->children[character];
+				break;
+			}
+
+			/* We reached root, that's a pity. */
+			if (state == priv->root_state)
+				break;
+
+			state = state->longest_suffix;
+		}
+
+		/* if we reached a "found" state, let's process it */
+		if (state->found_word) {
+			gboolean was_replaced;
+
+			was_replaced = replace_cb(out, state->found_word->word,
+				state->found_word->data, user_data);
+
+			if (was_replaced || priv->reset_on_match) {
+				i += state->found_word->word_len;
+				state = priv->root_state;
+			} else
+				i++;
+		} else
+			i++;
+	}
+
+	return g_string_free(out, FALSE);
+}
+
 
 /*******************************************************************************
  * Records
@@ -325,6 +389,7 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 	rec = purple_memory_pool_alloc(priv->records_obj_mempool,
 		sizeof(PurpleTrieRecord), sizeof(gpointer));
 	rec->word = purple_memory_pool_strdup(priv->records_str_mempool, word);
+	rec->word_len = strlen(word);
 	rec->data = data;
 
 	priv->records = purple_record_list_prepend(priv->records_obj_mempool,
