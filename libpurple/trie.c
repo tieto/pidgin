@@ -254,7 +254,6 @@ purple_trie_states_build(PurpleTrie *trie)
 	PurpleMemoryPool *reclist_mpool;
 	PurpleTrieRecordList *reclist, *it;
 	gulong cur_len;
-	PurpleTrieRecordList *empty_word = NULL;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 
@@ -274,14 +273,6 @@ purple_trie_states_build(PurpleTrie *trie)
 	 * node -- the prefix of the word with len of cur_len */
 	for (it = reclist; it != NULL; it = it->next) {
 		it->extra_data = root;
-		if (it->rec->word_len == 0)
-			empty_word = it;
-	}
-
-	/* a special case for the empty word */
-	if (empty_word) {
-		root->found_word = empty_word->rec;
-		reclist = purple_record_list_remove(reclist, empty_word);
 	}
 
 	/* Iterate over indexes of words -- every loop iteration checks certain
@@ -294,13 +285,7 @@ purple_trie_states_build(PurpleTrie *trie)
 			PurpleTrieState *prefix = it->extra_data;
 			PurpleTrieState *lon_suf_parent;
 
-			if (character == '\0') {
-				purple_debug_warning("trie", "found "
-					"a collision of empty words");
-				/* it->next is still valid, see below */
-				reclist = purple_record_list_remove(reclist, it);
-				continue;
-			}
+			g_assert(character != '\0');
 
 			if (prefix->children && prefix->children[character]) {
 				/* Word's prefix is already in the trie, added
@@ -414,11 +399,9 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 			gsize str_old_len;
 
 			/* let's get back to the beginning of the word */
+			g_assert(out->len >= state->found_word->word_len - 1);
 			str_old_len = out->len;
-			if (state->found_word->word_len > 0) {
-				g_assert(out->len >= state->found_word->word_len - 1);
-				out->len -= state->found_word->word_len - 1;
-			}
+			out->len -= state->found_word->word_len - 1;
 
 			was_replaced = replace_cb(out, state->found_word->word,
 				state->found_word->data, user_data);
@@ -454,6 +437,7 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(word != NULL);
+	g_return_if_fail(word[0] != '\0');
 
 	/* Every change in a trie invalidates longest_suffix map.
 	 * These prefixes could be updated instead of cleaning the whole graph.
@@ -464,6 +448,7 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 		sizeof(PurpleTrieRecord), sizeof(gpointer));
 	rec->word = purple_memory_pool_strdup(priv->records_str_mempool, word);
 	rec->word_len = strlen(word);
+	g_assert(rec->word_len > 0);
 	rec->data = data;
 
 	priv->records = purple_record_list_prepend(priv->records_obj_mempool,

@@ -96,15 +96,13 @@ START_TEST(test_trie_replace_empty)
 
 	trie = purple_trie_new();
 
-	purple_trie_add(trie, "", (gpointer)0x4001);
-	purple_trie_add(trie, "test", (gpointer)0x4002);
+	purple_trie_add(trie, "test", (gpointer)0x4001);
 
-	in = "the test!";
+	in = "";
 
 	out = purple_trie_replace(trie, in, test_trie_replace_cb, (gpointer)2);
 
-	assert_string_equal("[2:4001][2:4001][2:4001][2:4001][2:4001][2:4001]"
-		"[2:4001][2:4001][2:4001]", out);
+	assert_string_equal("", out);
 
 	g_object_unref(trie);
 	g_free(out);
