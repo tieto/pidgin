@@ -30,7 +30,7 @@
 #define PURPLE_MEMORY_POINTER_SHIFT(pointer, value) \
 	(gpointer)((guintptr)(pointer) + (value))
 #define PURPLE_MEMORY_PADDED(pointer, padding) \
-	(gpointer)(((guintptr)(pointer) - 1) % (padding) + 1)
+	(gpointer)((((guintptr)(pointer) - 1) / (padding) + 1) * padding)
 
 #define PURPLE_MEMORY_POOL_DEFAULT_BLOCK_SIZE 1024
 
@@ -77,8 +77,7 @@ purple_memory_pool_block_new(gulong block_size)
 	block->available_ptr = PURPLE_MEMORY_POINTER_SHIFT(block_raw,
 		sizeof(PurpleMemoryPoolBlock));
 	block->end_ptr = PURPLE_MEMORY_POINTER_SHIFT(block_raw, total_size);
-
-	memset(block, 0, sizeof(PurpleMemoryPoolBlock));
+	block->next = NULL;
 
 	return block;
 }
@@ -92,6 +91,7 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
+	g_return_val_if_fail(alignment <= PURPLE_MEMORY_POOL_BLOCK_PADDING, NULL);
 	g_warn_if_fail(alignment >= 1);
 	if (alignment < 1)
 		alignment = 1;

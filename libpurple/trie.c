@@ -83,7 +83,7 @@ purple_record_list_new(PurpleMemoryPool *mpool, PurpleTrieRecord *rec)
 {
 	PurpleTrieRecordList *node;
 
-	node = purple_memory_pool_alloc(mpool,
+	node = purple_memory_pool_alloc0(mpool,
 		sizeof(PurpleTrieRecordList), sizeof(gpointer));
 	g_return_val_if_fail(node != NULL, NULL);
 
@@ -102,8 +102,8 @@ purple_record_list_prepend(PurpleMemoryPool *mpool,
 	g_return_val_if_fail(new_head != NULL, NULL);
 
 	new_head->next = old_head;
-	old_head->prev = new_head;
-	new_head->prev = NULL;
+	if (old_head)
+		old_head->prev = new_head;
 
 	return new_head;
 }
@@ -192,8 +192,8 @@ purple_trie_state_new(PurpleTrie *trie, PurpleTrieState *parent, guchar characte
 	if (parent->children == NULL) {
 		parent->children = purple_memory_pool_alloc0(
 			priv->states_mempool,
-			/* PurpleTrieState *children[sizeof(guchar)] */
-			sizeof(guchar) * sizeof(gpointer),
+			/* PurpleTrieState *children[G_MAXUCHAR + 1] */
+			256 * sizeof(gpointer),
 			sizeof(gpointer));
 	}
 
@@ -207,6 +207,44 @@ purple_trie_state_new(PurpleTrie *trie, PurpleTrieState *parent, guchar characte
 
 	return state;
 }
+
+#if 0
+static gchar *
+purple_trie_print(PurpleTrieState *state, int limit)
+{
+	GString *str = g_string_new(NULL);
+	int i;
+
+	if (limit < 0)
+		return g_strdup("{ LIMIT }");
+
+	if (state->found_word)
+		g_string_append(str, "*");
+	g_string_append(str, "{ ");
+	for (i = 0; i < 256; i++) {
+		gchar *chp;
+		if (!state->children)
+			continue;
+		if (!state->children[i])
+			continue;
+		if (i == 0)
+			g_string_append(str, "(null)->");
+		else
+			g_string_append_printf(str, "%c->", i);
+		if (state->children[i] == state)
+			g_string_append(str, "loop");
+		else {
+			chp = purple_trie_print(state->children[i], limit - 1);
+			g_string_append(str, chp);
+			g_string_append_c(str, ' ');
+			g_free(chp);
+		}
+	}
+	g_string_append(str, "}");
+
+	return g_string_free(str, FALSE);
+}
+#endif
 
 static gboolean
 purple_trie_states_build(PurpleTrie *trie)
@@ -327,11 +365,13 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 	g_return_val_if_fail(replace_cb != NULL, g_strdup(src));
 	g_return_val_if_fail(priv != NULL, NULL);
 
+	purple_trie_states_build(trie);
+
 	out = g_string_new(NULL);
 	state = priv->root_state;
 	while (src[i] != '\0') {
-		guchar character = src[i];
-		gboolean copy_char;
+		guchar character = src[i++];
+		gboolean was_replaced = FALSE;
 
 		/* change state after processing a character */
 		while (TRUE) {
@@ -351,35 +391,30 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 		}
 
 		/* if we reached a "found" state, let's process it */
-		copy_char = FALSE;
 		if (state->found_word) {
-			gboolean was_replaced;
+			gsize str_old_len;
+
+			/* let's get back to the beginning of the word */
+			g_assert(out->len >= state->found_word->word_len - 1);
+			str_old_len = out->len;
+			out->len -= state->found_word->word_len - 1;
 
 			was_replaced = replace_cb(out, state->found_word->word,
 				state->found_word->data, user_data);
 
-			if (was_replaced || priv->reset_on_match) {
-				if (!was_replaced) {
-					g_string_append_len(out,
-						state->found_word->word,
-						state->found_word->word_len);
-				}
+			/* output string was untouched, rollback to the
+			 * previous position*/
+			if (!was_replaced)
+				out->len = str_old_len;
 
-				/* skip a whole word, not a character */
-				i += state->found_word->word_len;
-
+			if (was_replaced || priv->reset_on_match)
 				state = priv->root_state;
-			} else
-				copy_char = TRUE;
-		} else
-			copy_char = TRUE;
+		}
 
 		/* We skipped a character without finding any records,
 		 * let's just copy it to the output. */
-		if (copy_char) {
+		if (!was_replaced)
 			g_string_append_c(out, character);
-			i++;
-		}
 	}
 
 	return g_string_free(out, FALSE);
@@ -412,9 +447,6 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 
 	priv->records = purple_record_list_prepend(priv->records_obj_mempool,
 		priv->records, rec);
-
-	/* XXX: it won't be called here (it's inefficient), but in search function */
-	purple_trie_states_build(trie);
 }
 
 /*******************************************************************************

@@ -68,7 +68,7 @@ struct _PurpleTrieClass
  * A funtion called after every found matching substring to be replaced.
  *
  * Returns: %TRUE, if the word was replaced, %FALSE otherwise. In the second
- *          case you might possibly want to leave @out untouched.
+ *          case you must not modify @out.
  */
 typedef gboolean (*PurpleTrieReplaceCb)(GString *out, const gchar *word,
 	gpointer word_data, gpointer user_data);
