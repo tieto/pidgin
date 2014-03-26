@@ -331,6 +331,7 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 	state = priv->root_state;
 	while (src[i] != '\0') {
 		guchar character = src[i];
+		gboolean copy_char;
 
 		/* change state after processing a character */
 		while (TRUE) {
@@ -345,10 +346,12 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 			if (state == priv->root_state)
 				break;
 
+			/* Let's try a bit shorter suffix. */
 			state = state->longest_suffix;
 		}
 
 		/* if we reached a "found" state, let's process it */
+		copy_char = FALSE;
 		if (state->found_word) {
 			gboolean was_replaced;
 
@@ -356,12 +359,27 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 				state->found_word->data, user_data);
 
 			if (was_replaced || priv->reset_on_match) {
+				if (!was_replaced) {
+					g_string_append_len(out,
+						state->found_word->word,
+						state->found_word->word_len);
+				}
+
+				/* skip a whole word, not a character */
 				i += state->found_word->word_len;
+
 				state = priv->root_state;
 			} else
-				i++;
+				copy_char = TRUE;
 		} else
+			copy_char = TRUE;
+
+		/* We skipped a character without finding any records,
+		 * let's just copy it to the output. */
+		if (copy_char) {
+			g_string_append_c(out, character);
 			i++;
+		}
 	}
 
 	return g_string_free(out, FALSE);
