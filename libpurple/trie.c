@@ -96,6 +96,18 @@ typedef struct
 	gpointer user_data;
 } PurpleTrieMachine;
 
+/* TODO: an option to make it eager or lazy (now, it's eager) */
+enum
+{
+	PROP_ZERO,
+	PROP_RESET_ON_MATCH,
+	PROP_LAST
+};
+
+static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
+
+
 /*******************************************************************************
  * Records list
  ******************************************************************************/
@@ -600,22 +612,12 @@ purple_trie_set_reset_on_match(PurpleTrie *trie, gboolean reset)
 	g_return_if_fail(priv);
 
 	priv->reset_on_match = reset;
+	g_object_notify_by_pspec(G_OBJECT(trie), properties[PROP_RESET_ON_MATCH]);
 }
 
 /*******************************************************************************
  * Object stuff
  ******************************************************************************/
-
-/* TODO: an option to make it eager or lazy (now, it's eager) */
-enum
-{
-	PROP_ZERO,
-	PROP_RESET_ON_MATCH,
-	PROP_LAST
-};
-
-static GObjectClass *parent_class = NULL;
-static GParamSpec *properties[PROP_LAST];
 
 PurpleTrie *
 purple_trie_new(void)
