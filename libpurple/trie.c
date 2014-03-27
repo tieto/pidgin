@@ -30,7 +30,17 @@
 #define PURPLE_TRIE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_TRIE, PurpleTriePrivate))
 
-#define PURPLE_TRIE_STATES_POOL_BLOCK_SIZE 102400
+/* A single internal (that don't have any children) consists
+ * of 256 + 4 pointers. That's 1040 bytes on 32-bit machine or 2080 bytes
+ * on 64-bit.
+ *
+ * Thus, in 10500-byte pool block we can hold about 5-10 internal states.
+ * Threshold of 100 states means, we'd need 10-20 "small" blocks before
+ * switching to ~1-2 large blocks.
+ */
+#define PURPLE_TRIE_LARGE_THRESHOLD 100
+#define PURPLE_TRIE_STATES_SMALL_POOL_BLOCK_SIZE 10880
+#define PURPLE_TRIE_STATES_LARGE_POOL_BLOCK_SIZE 102400
 
 typedef struct _PurpleTrieRecord PurpleTrieRecord;
 typedef struct _PurpleTrieState PurpleTrieState;
@@ -43,6 +53,7 @@ typedef struct
 	PurpleMemoryPool *records_str_mempool;
 	PurpleMemoryPool *records_obj_mempool;
 	PurpleTrieRecordList *records;
+	gsize records_total_size;
 
 	PurpleMemoryPool *states_mempool;
 	PurpleTrieState *root_state;
@@ -270,6 +281,14 @@ purple_trie_states_build(PurpleTrie *trie)
 
 	if (priv->root_state != NULL)
 		return TRUE;
+
+	if (priv->records_total_size < PURPLE_TRIE_LARGE_THRESHOLD) {
+		purple_memory_pool_set_block_size(priv->states_mempool,
+			PURPLE_TRIE_STATES_SMALL_POOL_BLOCK_SIZE);
+	} else {
+		purple_memory_pool_set_block_size(priv->states_mempool,
+			PURPLE_TRIE_STATES_LARGE_POOL_BLOCK_SIZE);
+	}
 
 	priv->root_state = root = purple_trie_state_new(trie, NULL, '\0');
 	g_return_val_if_fail(root != NULL, FALSE);
@@ -554,6 +573,7 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 	g_assert(rec->word_len > 0);
 	rec->data = data;
 
+	priv->records_total_size += rec->word_len;
 	priv->records = purple_record_list_prepend(priv->records_obj_mempool,
 		priv->records, rec);
 }
@@ -613,7 +633,7 @@ purple_trie_init(GTypeInstance *instance, gpointer klass)
 	priv->records_str_mempool = purple_memory_pool_new();
 	priv->states_mempool = purple_memory_pool_new();
 	purple_memory_pool_set_block_size(priv->states_mempool,
-		PURPLE_TRIE_STATES_POOL_BLOCK_SIZE);
+		PURPLE_TRIE_STATES_SMALL_POOL_BLOCK_SIZE);
 }
 
 static void
