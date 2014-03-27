@@ -77,14 +77,15 @@ PurpleMemoryPool *
 purple_memory_pool_new(void);
 
 /**
- * purple_memory_pool_new_sized:
+ * purple_memory_pool_set_block_size:
+ * @pool: The memory pool.
+ * @block_size: The new default block size.
  *
- * Creates a new memory pool with non-default block size.
- *
- * Returns: The new #PurpleMemoryPool.
+ * Sets new default block size for a memory pool. You might want to call this
+ * before any allocation, to have it applied to the every created block.
  */
-PurpleMemoryPool *
-purple_memory_pool_new_sized(gulong block_size);
+void
+purple_memory_pool_set_block_size(PurpleMemoryPool *pool, gulong block_size);
 
 /**
  * purple_memory_pool_alloc:

@@ -51,6 +51,17 @@ struct _PurpleMemoryPoolBlock
 	PurpleMemoryPoolBlock *next;
 };
 
+enum
+{
+	PROP_ZERO,
+	PROP_BLOCK_SIZE,
+	PROP_LAST
+};
+
+static GObjectClass *parent_class = NULL;
+static GParamSpec *properties[PROP_LAST];
+
+
 /*******************************************************************************
  * Memory allocation/deallocation
  ******************************************************************************/
@@ -62,8 +73,10 @@ purple_memory_pool_block_new(gulong block_size)
 	PurpleMemoryPoolBlock *block;
 	gsize total_size;
 
-	total_size = (sizeof(PurpleMemoryPoolBlock) - 1) /
-		PURPLE_MEMORY_POOL_BLOCK_PADDING + 1;
+	/* ceil block struct size to the multipy of align */
+	total_size = ((sizeof(PurpleMemoryPoolBlock) - 1) /
+		PURPLE_MEMORY_POOL_BLOCK_PADDING + 1) *
+		sizeof(PurpleMemoryPoolBlock);
 	g_return_val_if_fail(block_size < G_MAXSIZE - total_size, NULL);
 	total_size += block_size;
 
@@ -124,7 +137,7 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 		}
 
 		mem = PURPLE_MEMORY_PADDED(blk->available_ptr, alignment);
-		g_assert(mem < blk->end_ptr);
+		g_assert(mem + size < blk->end_ptr);
 		g_assert(mem >= blk->available_ptr); /* gpointer overflow */
 	}
 
@@ -146,6 +159,7 @@ purple_memory_pool_cleanup_impl(PurpleMemoryPool *pool)
 	g_return_if_fail(priv != NULL);
 
 	blk = priv->first_block;
+	priv->first_block = NULL;
 	while (blk) {
 		PurpleMemoryPoolBlock *next = blk->next;
 		g_free(blk);
@@ -157,6 +171,17 @@ purple_memory_pool_cleanup_impl(PurpleMemoryPool *pool)
 /*******************************************************************************
  * API implementation
  ******************************************************************************/
+
+void
+purple_memory_pool_set_block_size(PurpleMemoryPool *pool, gulong block_size)
+{
+	PurpleMemoryPoolPrivate *priv = PURPLE_MEMORY_POOL_GET_PRIVATE(pool);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->block_size = block_size;
+	g_object_notify_by_pspec(G_OBJECT(pool), properties[PROP_BLOCK_SIZE]);
+}
 
 gpointer
 purple_memory_pool_alloc(PurpleMemoryPool *pool, gsize size, guint alignment)
@@ -226,28 +251,10 @@ purple_memory_pool_cleanup(PurpleMemoryPool *pool)
  * Object stuff
  ******************************************************************************/
 
-enum
-{
-	PROP_ZERO,
-	PROP_BLOCK_SIZE,
-	PROP_LAST
-};
-
-static GObjectClass *parent_class = NULL;
-static GParamSpec *properties[PROP_LAST];
-
 PurpleMemoryPool *
 purple_memory_pool_new(void)
 {
 	return g_object_new(PURPLE_TYPE_MEMORY_POOL, NULL);
-}
-
-PurpleMemoryPool *
-purple_memory_pool_new_sized(gulong block_size)
-{
-	return g_object_new(PURPLE_TYPE_MEMORY_POOL,
-		"block-size", block_size,
-		NULL);
 }
 
 static void

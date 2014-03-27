@@ -611,7 +611,8 @@ purple_trie_init(GTypeInstance *instance, gpointer klass)
 
 	priv->records_obj_mempool = purple_memory_pool_new();
 	priv->records_str_mempool = purple_memory_pool_new();
-	priv->states_mempool = purple_memory_pool_new_sized(
+	priv->states_mempool = purple_memory_pool_new();
+	purple_memory_pool_set_block_size(priv->states_mempool,
 		PURPLE_TRIE_STATES_POOL_BLOCK_SIZE);
 }
 
