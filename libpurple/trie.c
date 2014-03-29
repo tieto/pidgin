@@ -53,6 +53,7 @@ typedef struct
 	PurpleMemoryPool *records_str_mempool;
 	PurpleMemoryPool *records_obj_mempool;
 	PurpleTrieRecordList *records;
+	GHashTable *records_map;
 	gsize records_total_size;
 
 	PurpleMemoryPool *states_mempool;
@@ -61,7 +62,7 @@ typedef struct
 
 struct _PurpleTrieRecord
 {
-	const gchar *word;
+	gchar *word;
 	guint word_len;
 	gpointer data;
 };
@@ -563,15 +564,20 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
  * Records
  ******************************************************************************/
 
-void
+gboolean
 purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
 	PurpleTrieRecord *rec;
 
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(word != NULL);
-	g_return_if_fail(word[0] != '\0');
+	g_return_val_if_fail(priv != NULL, FALSE);
+	g_return_val_if_fail(word != NULL, FALSE);
+	g_return_val_if_fail(word[0] != '\0', FALSE);
+
+	if (g_hash_table_lookup(priv->records_map, word) != NULL) {
+		purple_debug_warning("trie", "record exists: %s", word);
+		return FALSE;
+	}
 
 	/* Every change in a trie invalidates longest_suffix map.
 	 * These prefixes could be updated instead of cleaning the whole graph.
@@ -588,6 +594,35 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 	priv->records_total_size += rec->word_len;
 	priv->records = purple_record_list_prepend(priv->records_obj_mempool,
 		priv->records, rec);
+	g_hash_table_insert(priv->records_map, priv->records, rec->word);
+
+	return TRUE;
+}
+
+void
+purple_trie_remove(PurpleTrie *trie, const gchar *word)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+	PurpleTrieRecordList *it;
+
+	g_return_if_fail(priv != NULL);
+	g_return_if_fail(word != NULL);
+	g_return_if_fail(word[0] != '\0');
+
+	it = g_hash_table_lookup(priv->records_map, word);
+	if (it == NULL)
+		return;
+
+	/* see purple_trie_add */
+	purple_trie_states_cleanup(trie);
+
+	priv->records_total_size -= it->rec->word_len;
+	priv->records = purple_record_list_remove(priv->records, it);
+	g_hash_table_remove(priv->records_map, it->rec->word);
+
+	purple_memory_pool_free(priv->records_str_mempool, it->rec->word);
+	purple_memory_pool_free(priv->records_obj_mempool, it->rec);
+	purple_memory_pool_free(priv->records_obj_mempool, it);
 }
 
 /*******************************************************************************
@@ -636,6 +671,8 @@ purple_trie_init(GTypeInstance *instance, gpointer klass)
 	priv->states_mempool = purple_memory_pool_new();
 	purple_memory_pool_set_block_size(priv->states_mempool,
 		PURPLE_TRIE_STATES_SMALL_POOL_BLOCK_SIZE);
+
+	priv->records_map = g_hash_table_new(g_str_hash, g_str_equal);
 }
 
 static void
@@ -643,6 +680,7 @@ purple_trie_finalize(GObject *obj)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(obj);
 
+	g_hash_table_destroy(priv->records_map);
 	g_object_unref(priv->records_obj_mempool);
 	g_object_unref(priv->records_str_mempool);
 	g_object_unref(priv->states_mempool);

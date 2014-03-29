@@ -117,9 +117,23 @@ purple_trie_set_reset_on_match(PurpleTrie *trie, gboolean reset);
  * @data: The word-related data (may be %NULL).
  *
  * Adds a word to the trie.
+ *
+ * Returns: %TRUE if succeeded, %FALSE otherwise (possibly on duplicate)
+ */
+gboolean
+purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data);
+
+/**
+ * purple_trie_remove:
+ * @trie: The trie.
+ * @word: The word.
+ *
+ * Removes a word from the trie. Depending on used memory pool, this may not
+ * free allocated memory (that will be freed when destroying the whole
+ * collection), so use it wisely.
  */
 void
-purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data);
+purple_trie_remove(PurpleTrie *trie, const gchar *word);
 
 /**
  * purple_trie_replace:
