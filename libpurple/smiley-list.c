@@ -22,13 +22,17 @@
 #include "smiley-list.h"
 
 #include "dbus-maybe.h"
+#include "debug.h"
+#include "trie.h"
 
 #define PURPLE_SMILEY_LIST_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_SMILEY_LIST, \
 	PurpleSmileyListPrivate))
 
 typedef struct {
-	int x;
+	GList *smileys;
+	GList *smileys_end;
+	PurpleTrie *trie;
 } PurpleSmileyListPrivate;
 
 enum
@@ -40,6 +44,101 @@ enum
 static GObjectClass *parent_class;
 static GParamSpec *properties[PROP_LAST];
 
+static void
+_list_append2(GList **head_p, GList **tail_p, gpointer data)
+{
+	GList *head = *head_p;
+	GList *tail = *tail_p;
+	GList *elem;
+
+	g_return_if_fail((head == NULL) == (tail == NULL));
+	g_return_if_fail((tail == NULL) || (tail->next == NULL));
+
+	elem = g_list_alloc();
+	elem->data = data;
+	elem->prev = tail;
+	elem->next = NULL;
+
+	if (head) {
+		tail->next = elem;
+		*tail_p = elem;
+	} else
+		*head_p = *tail_p = elem;
+}
+
+static void
+_list_remove_link2(GList **head_p, GList **tail_p, GList *link)
+{
+	GList *head = *head_p;
+	GList *tail = *tail_p;
+
+	g_return_if_fail(head != NULL);
+	g_return_if_fail(tail != NULL);
+
+	if (link == tail)
+		*tail_p = tail->prev;
+	*head_p = g_list_remove_link(head, link);
+}
+
+/*******************************************************************************
+ * API implementation
+ ******************************************************************************/
+
+gboolean
+purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
+{
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+	gboolean succ;
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_SMILEY(smiley), FALSE);
+
+	if (g_object_get_data(G_OBJECT(smiley), "purple-smiley-list") != NULL) {
+		purple_debug_warning("smiley-list",
+			"smiley is already associated with some list");
+		return FALSE;
+	}
+
+	succ = purple_trie_add(priv->trie,
+		purple_smiley_get_shortcut(smiley), smiley);
+	if (!succ)
+		return FALSE;
+
+	g_object_ref(smiley);
+	_list_append2(&priv->smileys, &priv->smileys_end, smiley);
+	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", list);
+	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem",
+		priv->smileys_end);
+
+	return TRUE;
+}
+
+void
+purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
+{
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+	GList *list_elem;
+
+	g_return_if_fail(priv != NULL);
+	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
+
+	if (g_object_get_data(G_OBJECT(smiley), "purple-smiley-list") != list) {
+		purple_debug_warning("smiley-list", "remove: invalid list");
+		return;
+	}
+
+	list_elem = g_object_get_data(G_OBJECT(smiley),
+		"purple-smiley-list-elem");
+
+	purple_trie_remove(priv->trie, purple_smiley_get_shortcut(smiley));
+	_list_remove_link2(&priv->smileys, &priv->smileys_end, list_elem);
+
+	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", NULL);
+	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem", NULL);
+	g_object_unref(smiley);
+}
+
+
 /*******************************************************************************
  * Object stuff
  ******************************************************************************/
@@ -48,6 +147,10 @@ static void
 purple_smiley_list_init(GTypeInstance *instance, gpointer klass)
 {
 	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(instance);
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
+
+	priv->trie = purple_trie_new();
+
 	PURPLE_DBUS_REGISTER_POINTER(sl, PurpleSmileyList);
 }
 
@@ -56,8 +159,17 @@ purple_smiley_list_finalize(GObject *obj)
 {
 	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(obj);
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
+	GList *it;
 
-	(void)priv;
+	g_object_unref(priv->trie);
+
+	for (it = priv->smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+		g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", NULL);
+		g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem", NULL);
+		g_object_unref(smiley);
+	}
+	g_list_free(priv->smileys);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(sl);
 }
