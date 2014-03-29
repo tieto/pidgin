@@ -202,7 +202,9 @@ purple_core_init(const char *ui)
 	purple_xfers_init();
 	purple_idle_init();
 	purple_http_init();
+#if 0
 	purple_smileys_init();
+#endif
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
@@ -254,7 +256,9 @@ purple_core_quit(void)
 	purple_plugins_unload(PURPLE_PLUGIN_STANDARD);
 
 	/* Save .xml files, remove signals, etc. */
+#if 0
 	purple_smileys_uninit();
+#endif
 	purple_http_uninit();
 	purple_idle_uninit();
 	purple_pounces_uninit();

@@ -785,7 +785,11 @@ sort_smileys(struct smiley_button_list *ls, PidginWebViewToolbar *toolbar,
 	/* these look really weird with borders */
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
+#if 0
 	psmiley = purple_smileys_find_by_shortcut(face);
+#else
+	psmiley = NULL;
+#endif
 	/* If this is a "non-custom" smiley, check to see if its shortcut is
 	  "shadowed" by any custom smiley. This can only happen if the connection
 	  is custom smiley-enabled */

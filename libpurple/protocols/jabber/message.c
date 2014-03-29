@@ -824,6 +824,7 @@ jabber_message_get_mimetype_from_ext(const gchar *ext)
 static GList *
 jabber_message_xhtml_find_smileys(const char *xhtml)
 {
+#if 0
 	GList *smileys = purple_smileys_get_all();
 	GList *found_smileys = NULL;
 
@@ -844,6 +845,9 @@ jabber_message_xhtml_find_smileys(const char *xhtml)
 	}
 
 	return found_smileys;
+#else
+	return NULL;
+#endif
 }
 
 static gchar *
@@ -943,6 +947,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 			GList *valid_smileys = NULL;
 			gboolean has_too_large_smiley = FALSE;
 
+#if 0
 			for (iterator = found_smileys; iterator ;
 				iterator = g_list_next(iterator)) {
 				PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
@@ -975,6 +980,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 							JABBER_DATA_MAX_SIZE);
 				}
 			}
+#endif
 
 			if (has_too_large_smiley) {
 				purple_conversation_write(conv, NULL,

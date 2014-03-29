@@ -123,6 +123,7 @@ image_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
 #endif
 }
 
+#if 0
 static PidginWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
 {
 	PidginWebViewSmiley *gtksmiley;
@@ -149,6 +150,7 @@ static PidginWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
 
 	return gtksmiley;
 }
+#endif
 
 void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 {
@@ -179,6 +181,7 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 		gtk_smileys = g_slist_delete_link(gtk_smileys, list);
 }
 
+#if 0
 void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
 {
 	PidginWebViewSmiley *gtksmiley;
@@ -187,9 +190,11 @@ void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
 	add_gtkwebview_to_list(gtksmiley);
 	g_signal_connect(G_OBJECT(smiley), "destroy", G_CALLBACK(pidgin_smiley_del_from_list), NULL);
 }
+#endif
 
 void pidgin_smileys_init(void)
 {
+#if 0
 	GList *smileys;
 	PurpleSmiley *smiley;
 
@@ -203,6 +208,7 @@ void pidgin_smileys_init(void)
 
 		pidgin_smiley_add_to_list(smiley);
 	}
+#endif
 }
 
 void pidgin_smileys_uninit(void)
@@ -240,6 +246,7 @@ static void refresh_list(void);
 
 static void do_add(GtkWidget *widget, PidginSmiley *s)
 {
+#if 0
 	const gchar *entry;
 	PurpleSmiley *emoticon;
 
@@ -319,6 +326,7 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 		refresh_list();
 
 	gtk_widget_destroy(s->parent);
+#endif
 }
 
 static void do_add_select_cb(GtkWidget *widget, gint resp, PidginSmiley *s)
@@ -401,6 +409,7 @@ smiley_name_delete_cb(GtkEditable *editable,
 PidginSmiley *
 pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 {
+#if 0
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
@@ -533,6 +542,9 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(purple_notify_close_with_handle), s);
 
 	return s;
+#else
+	return NULL;
+#endif
 }
 
 void
@@ -571,6 +583,7 @@ pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasiz
 static void delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 		GtkTreeIter *iter, gpointer data)
 {
+#if 0
 	PurpleSmiley *smiley = NULL;
 
 	gtk_tree_model_get(model, iter,
@@ -582,6 +595,7 @@ static void delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 		pidgin_smiley_del_from_list(smiley);
 		purple_smiley_delete(smiley);
 	}
+#endif
 }
 
 static void append_to_list(GtkTreeModel *model, GtkTreePath *path,
@@ -639,6 +653,7 @@ static void add_columns(GtkWidget *treeview, SmileyManager *dialog)
 
 static void store_smiley_add(PurpleSmiley *smiley)
 {
+#if 0
 	GtkTreeIter iter;
 	PurpleStoredImage *img;
 	GdkPixbuf *sized_smiley = NULL;
@@ -676,10 +691,12 @@ static void store_smiley_add(PurpleSmiley *smiley)
 
 	if (sized_smiley != NULL)
 		g_object_unref(G_OBJECT(sized_smiley));
+#endif
 }
 
 static void populate_smiley_list(SmileyManager *dialog)
 {
+#if 0
 	GList *list;
 	PurpleSmiley *emoticon;
 
@@ -691,6 +708,7 @@ static void populate_smiley_list(SmileyManager *dialog)
 
 		store_smiley_add(emoticon);
 	}
+#endif
 }
 
 static void smile_selected_cb(GtkTreeSelection *sel, SmileyManager *dialog)

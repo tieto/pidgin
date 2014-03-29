@@ -102,6 +102,7 @@ parse_for_shortcut(const char *markup, const char *shortcut, const char *file)
 	return g_string_free(ret, FALSE);
 }
 
+#if 0
 static char *
 parse_for_purple_smiley(const char *markup, PurpleSmiley *smiley)
 {
@@ -110,6 +111,7 @@ parse_for_purple_smiley(const char *markup, PurpleSmiley *smiley)
 	g_free(file);
 	return ret;
 }
+#endif
 
 static char *
 parse_for_smiley_list(const char *markup, GHashTable *smileys)
@@ -132,7 +134,9 @@ parse_for_smiley_list(const char *markup, GHashTable *smileys)
 char *
 pidgin_smiley_parse_markup(const char *markup, const char *proto_id)
 {
+#if 0
 	GList *smileys = purple_smileys_get_all();
+#endif
 	char *temp = g_strdup(markup), *temp2;
 	struct PidginSmileyList *list;
 	const char *proto_name = "default";
@@ -143,12 +147,14 @@ pidgin_smiley_parse_markup(const char *markup, const char *proto_id)
 		proto_name = proto->info->name;
 	}
 
+#if 0
 	/* unnecessarily slow, but lets manage for now. */
 	for (; smileys; smileys = g_list_next(smileys)) {
 		temp2 = parse_for_purple_smiley(temp, PURPLE_SMILEY(smileys->data));
 		g_free(temp);
 		temp = temp2;
 	}
+#endif
 
 	/* now for each theme smiley, observe that this does look nasty */
 	if (!current_smiley_theme) {

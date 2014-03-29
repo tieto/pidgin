@@ -239,7 +239,7 @@ find_valid_emoticon(PurpleAccount *account, const char *path)
 
 	if (!purple_account_get_bool(account, "custom_smileys", TRUE))
 		return NULL;
-
+#if 0
 	smileys = purple_smileys_get_all();
 
 	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
@@ -256,6 +256,7 @@ find_valid_emoticon(PurpleAccount *account, const char *path)
 
 		purple_imgstore_unref(img);
 	}
+#endif
 
 	purple_debug_error("msn", "Received illegal request for file %s\n", path);
 	return NULL;

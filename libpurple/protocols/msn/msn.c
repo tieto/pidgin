@@ -1468,6 +1468,7 @@ static void msn_emoticon_destroy(MsnEmoticon *emoticon)
 
 static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 {
+#if 0
 	GSList *list;
 	GList *smileys;
 	PurpleSmiley *smiley;
@@ -1502,6 +1503,9 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 	}
 
 	return list;
+#else
+	return NULL;
+#endif
 }
 
 void
@@ -2056,6 +2060,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	msg = msn_message_new_plain(msgtext);
 	msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
+#if 0
 	smileys = msn_msg_grab_emoticons(msg->body, username);
 	while (smileys) {
 		smile = (MsnEmoticon *)smileys->data;
@@ -2072,6 +2077,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 		msn_emoticon_destroy(smile);
 		smileys = g_slist_delete_link(smileys, smileys);
 	}
+#endif
 
 	if (emoticons) {
 		msn_send_emoticons(swboard, emoticons);
