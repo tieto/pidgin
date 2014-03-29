@@ -82,14 +82,16 @@ purple_smiley_get_type(void);
 /**************************************************************************/
 
 /**
- * purple_smiley_set_shortcut:
- * @smiley: The smiley.
- * @shortcut: The new shortcut. Should be unique within a smiley set.
+ * purple_smiley_new:
+ * @shortcut: The smiley shortcut.
+ * @path: The image file path.
  *
- * Changes the smiley's shortcut.
+ * Creates new shortcut, which is ready to display.
+ *
+ * Returns: The shortcut.
  */
-void
-purple_smiley_set_shortcut(PurpleSmiley *smiley, const gchar *shortcut);
+PurpleSmiley *
+purple_smiley_new(const gchar *shortcut, const gchar *path);
 
 /**
  * purple_smiley_get_shortcut:

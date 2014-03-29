@@ -60,16 +60,17 @@ static GParamSpec *properties[PROP_LAST];
  * API implementation
  ******************************************************************************/
 
-void
-purple_smiley_set_shortcut(PurpleSmiley *smiley, const gchar *shortcut)
+PurpleSmiley *
+purple_smiley_new(const gchar *shortcut, const gchar *path)
 {
-	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
+	g_return_val_if_fail(shortcut != NULL, NULL);
+	g_return_val_if_fail(path != NULL, NULL);
 
-	g_return_if_fail(priv != NULL);
-
-	g_free(priv->shortcut);
-	priv->shortcut = g_strdup(shortcut);
-	g_object_notify_by_pspec(G_OBJECT(smiley), properties[PROP_SHORTCUT]);
+	return g_object_new(PURPLE_TYPE_SMILEY,
+		"shortcut", shortcut,
+		"is-ready", TRUE,
+		"path", path,
+		NULL);
 }
 
 const gchar *
@@ -178,6 +179,14 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 		"The text-shortcut for the smiley", NULL,
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+	properties[PROP_IS_READY] = g_param_spec_boolean("is-ready", "Is ready",
+		"The full path to the smiley image file", TRUE,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+	properties[PROP_PATH] = g_param_spec_string("path", "Path",
+		"The full path to the smiley image file", NULL,
+		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 
 	signals[SIG_READY] = g_signal_new("ready", G_OBJECT_CLASS_TYPE(klass),
@@ -199,7 +208,7 @@ purple_smiley_get_type(void)
 		};
 
 		type = g_type_register_static(G_TYPE_OBJECT,
-			"PurpleSmiley", &info, G_TYPE_FLAG_ABSTRACT);
+			"PurpleSmiley", &info, 0);
 	}
 
 	return type;
