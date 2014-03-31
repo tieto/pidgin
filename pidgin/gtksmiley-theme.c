@@ -1,6 +1,6 @@
-/* purple
+/* pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -19,55 +19,58 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "smiley-theme.h"
+#include "gtksmiley-theme.h"
 
-static PurpleSmileyTheme *current = NULL;
+#define PIDGIN_SMILEY_THEME_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_SMILEY_THEME, \
+	PurpleSmileyThemePrivate))
+
+typedef struct
+{
+} PurpleSmileyThemePrivate;
+
+static GObjectClass *parent_class;
 
 /*******************************************************************************
  * API implementation
  ******************************************************************************/
 
-PurpleSmileyList *
-purple_smiley_theme_get_smileys(PurpleSmileyTheme *theme, gpointer ui_data)
+static PurpleSmileyList *
+pidgin_smiley_theme_get_smileys_impl(PurpleSmileyTheme *theme, gpointer ui_data)
 {
-	PurpleSmileyThemeClass *klass;
-
-	g_return_val_if_fail(PURPLE_IS_SMILEY_THEME(theme), NULL);
-	klass = PURPLE_SMILEY_THEME_GET_CLASS(theme);
-	g_return_val_if_fail(klass != NULL, NULL);
-	g_return_val_if_fail(klass->get_smileys != NULL, NULL);
-
-	return klass->get_smileys(theme, ui_data);
+	return NULL;
 }
 
 void
-purple_smiley_theme_set_current(PurpleSmileyTheme *theme)
+pidgin_smiley_theme_init(void)
 {
-	g_return_if_fail(theme == NULL || PURPLE_IS_SMILEY_THEME(theme));
-
-	if (theme)
-		g_object_ref(theme);
-	if (current)
-		g_object_unref(current);
-	current = theme;
-}
-
-PurpleSmileyTheme *
-purple_smiley_theme_get_current(void)
-{
-	return current;
-}
-
-void
-purple_smiley_theme_uninit(void)
-{
-	purple_smiley_theme_set_current(NULL);
 }
 
 
 /*******************************************************************************
  * Object stuff
  ******************************************************************************/
+
+static void
+pidgin_smiley_theme_finalize(GObject *obj)
+{
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
+}
+
+static void
+pidgin_smiley_theme_class_init(PurpleSmileyListClass *klass)
+{
+	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
+	PurpleSmileyThemeClass *pst_class = PURPLE_SMILEY_THEME_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	g_type_class_add_private(klass, sizeof(PurpleSmileyThemePrivate));
+
+	gobj_class->finalize = pidgin_smiley_theme_finalize;
+
+	pst_class->get_smileys = pidgin_smiley_theme_get_smileys_impl;
+}
 
 GType
 purple_smiley_theme_get_type(void)
@@ -77,6 +80,7 @@ purple_smiley_theme_get_type(void)
 	if (G_UNLIKELY(type == 0)) {
 		static const GTypeInfo info = {
 			.class_size = sizeof(PurpleSmileyThemeClass),
+			.class_init = (GClassInitFunc)pidgin_smiley_theme_class_init,
 			.instance_size = sizeof(PurpleSmileyTheme),
 		};
 

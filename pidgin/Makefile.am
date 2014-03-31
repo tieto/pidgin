@@ -75,6 +75,7 @@ libpidgin_la_SOURCES = \
 	gtksavedstatuses.c \
 	gtkscrollbook.c \
 	gtksession.c \
+	gtksmiley-theme.c \
 	gtksmiley.c \
 	gtksound.c \
 	gtkstatus-icon-theme.c \
@@ -125,6 +126,7 @@ libpidgin_la_headers = \
 	gtksavedstatuses.h \
 	gtkscrollbook.h \
 	gtksession.h \
+	gtksmiley-theme.h \
 	gtksmiley.h \
 	gtksound.h \
 	gtkstatus-icon-theme.h \

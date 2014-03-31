@@ -86,5 +86,5 @@ purple_smiley_theme_uninit(void);
 
 G_END_DECLS
 
-#endif /* _PURPLE_SMILEY_H_ */
+#endif /* _PURPLE_SMILEY_THEME_H_ */
 

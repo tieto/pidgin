@@ -65,6 +65,7 @@
 #include "gtksavedstatuses.h"
 #include "gtksession.h"
 #include "gtksmiley.h"
+#include "gtksmiley-theme.h"
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
@@ -287,6 +288,7 @@ pidgin_ui_init(void)
 	pidgin_log_init();
 	pidgin_docklet_init();
 	pidgin_smileys_init();
+	pidgin_smiley_theme_init();
 	pidgin_utils_init();
 	pidgin_medias_init();
 	pidgin_notify_init();
