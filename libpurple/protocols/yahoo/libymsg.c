@@ -4560,7 +4560,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
-	field = purple_request_field_choice_new("id", "Activate which ID?", 0);
+	field = purple_request_field_choice_new("id", _("Activate which ID?"), 0);
 	purple_request_field_group_add_field(group, field);
 
 	for (iter = 0; yd->profiles[iter]; iter++) {
