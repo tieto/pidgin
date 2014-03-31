@@ -4551,16 +4551,18 @@ tab_complete(PurpleConversation *conv)
 		}
 		g_list_free(list);
 	} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
-		GList *l = purple_chat_conversation_get_users(PURPLE_CHAT_CONVERSATION(conv));
+		GList *l, *users;
 		GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(PIDGIN_CONVERSATION(conv)->u.chat->list));
 		GtkTreeIter iter;
 		int f;
 
 		/* Users */
-		for (; l != NULL; l = l->next) {
+		users = purple_chat_conversation_get_users(PURPLE_CHAT_CONVERSATION(conv));
+		for (l = users; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_chars, &partial,
 									  &matches, purple_chat_user_get_name((PurpleChatUser *)l->data));
 		}
+		g_list_free(users);
 
 		/* Aliases */
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
@@ -7028,7 +7030,7 @@ pidgin_conv_chat_add_users(PurpleChatConversation *chat, GList *cbuddies, gboole
 	gtkconv = PIDGIN_CONVERSATION(PURPLE_CONVERSATION(chat));
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length(purple_chat_conversation_get_users(chat));
+	num_users = purple_chat_conversation_get_users_count(chat);
 
 	g_snprintf(tmp, sizeof(tmp),
 			   ngettext("%d person in room", "%d people in room",
@@ -7114,7 +7116,7 @@ pidgin_conv_chat_remove_users(PurpleChatConversation *chat, GList *users)
 	gtkconv = PIDGIN_CONVERSATION(PURPLE_CONVERSATION(chat));
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length(purple_chat_conversation_get_users(chat));
+	num_users = purple_chat_conversation_get_users_count(chat);
 
 	for (l = users; l != NULL; l = l->next) {
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
@@ -8725,9 +8727,12 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	}
 
 	if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
+		GList *users;
 		PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(conv);
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
-		pidgin_conv_chat_add_users(chat, purple_chat_conversation_get_users(chat), TRUE);
+		users = purple_chat_conversation_get_users(chat);
+		pidgin_conv_chat_add_users(chat, users, TRUE);
+		g_list_free(users);
 	}
 
 	return TRUE;

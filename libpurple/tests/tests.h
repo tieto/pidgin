@@ -17,6 +17,7 @@ Suite * oscar_util_suite(void);
 Suite * yahoo_util_suite(void);
 Suite * util_suite(void);
 Suite * purple_xmlnode_suite(void);
+Suite * purple_trie_suite(void);
 
 /* helper macros */
 #define assert_int_equal(expected, actual) { \

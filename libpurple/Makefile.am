@@ -81,6 +81,7 @@ purple_coresources = \
 	media/enum-types.c \
 	media.c \
 	mediamanager.c \
+	memorypool.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -114,6 +115,7 @@ purple_coresources = \
 	theme.c \
 	theme-loader.c \
 	theme-manager.c \
+	trie.c \
 	upnp.c \
 	util.c \
 	version.c \
@@ -155,6 +157,7 @@ purple_coreheaders = \
 	media.h \
 	media-gst.h \
 	mediamanager.h \
+	memorypool.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
@@ -188,6 +191,7 @@ purple_coreheaders = \
 	theme.h \
 	theme-loader.h \
 	theme-manager.h \
+	trie.h \
 	upnp.h \
 	util.h \
 	whiteboard.h \

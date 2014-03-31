@@ -15,6 +15,7 @@ check_libpurple_SOURCES=\
 		test_jabber_jutil.c \
 		test_jabber_scram.c \
 		test_oscar_util.c \
+		test_trie.c \
 		test_yahoo_util.c \
 		test_util.c \
 		test_xmlnode.c \

@@ -1537,6 +1537,17 @@ if test "x$enable_clang_address_sanitizer" = "xyes"; then
 	CFLAGS="$CFLAGS -faddress-sanitizer -g -fno-omit-frame-pointer -fno-inline -fno-optimize-sibling-calls"
 fi
 
+
+AC_ARG_ENABLE(glib-errors-trace, [AS_HELP_STRING([--enable-glib-errors-trace], [print backtraces for glib errors])], enable_glibtrace="$enableval", enable_glibtrace="no")
+if test "x$enable_glibtrace" = "xyes"; then
+	if test "x$have_clang" = "xyes"; then
+		AC_MSG_ERROR([--enable-glib-errors-trace doesn't work with clang])
+	fi
+	AC_DEFINE(ENABLE_GLIBTRACE, 1, [Define if backtraces should be printed for glib errors.])
+	dnl CFLAGS="$CFLAGS -rdynamic"
+	CFLAGS="$CFLAGS -rdynamic"
+fi
+
 dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################

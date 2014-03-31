@@ -90,7 +90,7 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 	/* If the room is small, don't bother. */
 	chat = PURPLE_CHAT_CONVERSATION(conv);
 	threshold = purple_prefs_get_int(THRESHOLD_PREF);
-	if (g_list_length(purple_chat_conversation_get_users(chat)) < threshold)
+	if (purple_chat_conversation_get_users_count(chat) < threshold)
 		return FALSE;
 
 	if (!purple_prefs_get_bool(HIDE_BUDDIES_PREF) &&

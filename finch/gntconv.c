@@ -387,22 +387,27 @@ cleared_message_history_cb(PurpleConversation *conv, gpointer data)
 static void
 gg_extended_menu(FinchConv *ggc)
 {
-	GntWidget *sub;
+	GntMenu *sub;
 	GList *list;
 
-	sub = gnt_menu_new(GNT_MENU_POPUP);
-	gnt_menuitem_set_submenu(ggc->plugins, GNT_MENU(sub));
+	g_return_if_fail(ggc != NULL);
+
+	sub = GNT_MENU(gnt_menu_new(GNT_MENU_POPUP));
+	gnt_menuitem_set_submenu(ggc->plugins, sub);
 
 	for (list = purple_conversation_get_extended_menu(ggc->active_conv);
 			list; list = g_list_delete_link(list, list))
 	{
-		finch_append_menu_action(GNT_MENU(sub), list->data, ggc->active_conv);
+		finch_append_menu_action(sub, list->data, ggc->active_conv);
 	}
 }
 
 static void
 conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type)
 {
+	if (purple_conversation_get_ui_data(conv) == NULL)
+		return;
+
 	if (type == PURPLE_CONVERSATION_UPDATE_FEATURES) {
 		gg_extended_menu(purple_conversation_get_ui_data(conv));
 	}

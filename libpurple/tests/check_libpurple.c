@@ -92,6 +92,7 @@ int main(void)
 	srunner_add_suite(sr, yahoo_util_suite());
 	srunner_add_suite(sr, util_suite());
 	srunner_add_suite(sr, purple_xmlnode_suite());
+	srunner_add_suite(sr, purple_trie_suite());
 
 	/* make this a libpurple "ui" */
 	purple_check_init();

@@ -85,6 +85,7 @@ libpurple/plugins/perl/common/lib
 libpurple/purple-client-bindings.[ch]
 libpurple/purple-client-example
 libpurple/purple.h$
+libpurple/tests/core
 libpurple/tests/check_libpurple
 libpurple/tests/libpurple..
 ^libpurple/tests/test-suite\.log$

@@ -1494,6 +1494,37 @@ pidgin_webview_finalize(GObject *webview)
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
 
+enum {
+	PROP_0,
+	PROP_EXPAND
+};
+
+static void
+pidgin_webview_set_property(GObject *object, guint prop_id, const GValue *value,
+	GParamSpec *pspec)
+{
+	g_return_if_fail(PIDGIN_IS_WEBVIEW(object));
+
+	switch (prop_id) {
+		case PROP_EXPAND:
+			purple_debug_misc("webview",
+				"Ignored expand property (set to %d)",
+				g_value_get_boolean(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id,
+				pspec);
+	}
+}
+
+static void
+pidgin_webview_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+{
+	g_return_if_fail(PIDGIN_IS_WEBVIEW(object));
+
+	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+}
+
 static void
 pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 {
@@ -1578,6 +1609,19 @@ pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 	binding_set = gtk_binding_set_by_class(klass);
 	gtk_binding_entry_add_signal(binding_set, GDK_KEY_r, GDK_CONTROL_MASK,
 	                             "format-cleared", 0);
+
+	/* properties */
+
+	G_OBJECT_CLASS(klass)->set_property = pidgin_webview_set_property;
+	G_OBJECT_CLASS(klass)->get_property = pidgin_webview_get_property;
+
+	if (!g_object_class_find_property(G_OBJECT_CLASS(klass), "expand")) {
+		/* webkitgtk for gtk2 doesn't seems to have this */
+		g_object_class_install_property(G_OBJECT_CLASS(klass),
+			PROP_EXPAND, g_param_spec_boolean("expand", "Expand Both",
+			"Whether widget wants to expand in both directions",
+			FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+	}
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/webview");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/webview/inspector_enabled", FALSE);

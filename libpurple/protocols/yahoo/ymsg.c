@@ -3815,10 +3815,13 @@ void yahoo_close(PurpleConnection *gc) {
 
 	for (l = yd->confs; l; l = l->next) {
 		PurpleChatConversation *conv = l->data;
+		GList *users;
 
-		yahoo_conf_leave(yd, purple_conversation_get_name(PURPLE_CONVERSATION(conv)),
-		                 purple_connection_get_display_name(gc),
-				 purple_chat_conversation_get_users(conv));
+		users = purple_chat_conversation_get_users(conv);
+		yahoo_conf_leave(yd,
+			purple_conversation_get_name(PURPLE_CONVERSATION(conv)),
+			purple_connection_get_display_name(gc), users);
+		g_list_free(users);
 	}
 	g_slist_free(yd->confs);
 

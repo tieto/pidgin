@@ -3832,7 +3832,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		if (conv && !purple_chat_conversation_has_left(conv)) {
 			g_string_append_printf(str, _("\n<b>Occupants:</b> %d"),
-					g_list_length(purple_chat_conversation_get_users(conv)));
+				purple_chat_conversation_get_users_count(conv));
 
 			if (protocol && (purple_protocol_get_options(protocol) & OPT_PROTO_CHAT_TOPIC)) {
 				const char *chattopic = purple_chat_conversation_get_topic(conv);
@@ -5903,6 +5903,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GError *error;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
+#if ! GTK_CHECK_VERSION(3,0,0)
+	int blist_width;
+#endif
 	GtkTargetEntry dte[] = {{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD },
@@ -6069,8 +6072,10 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
 	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.0, 0);
 	gtkblist->headline_label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(gtkblist->headline_label,
-				    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
+	blist_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width") - 25;
+	if (blist_width < -1)
+		blist_width = -1;
+	gtk_widget_set_size_request(gtkblist->headline_label, blist_width, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline), gtkblist->headline_image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline), gtkblist->headline_label, TRUE, TRUE, 0);
