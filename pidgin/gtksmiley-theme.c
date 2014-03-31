@@ -21,11 +21,15 @@
 
 #include "gtksmiley-theme.h"
 
+#include "debug.h"
+
 #include <glib/gstdio.h>
 
 #define PIDGIN_SMILEY_THEME_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_SMILEY_THEME, \
 	PidginSmileyThemePrivate))
+
+#define PIDGIN_SMILEY_THEME_MAX_INDEX_SIZE 102400
 
 typedef struct
 {
@@ -67,9 +71,9 @@ pidgin_smiley_theme_load(const gchar *theme_path)
 
 	priv->path = g_strdup(theme_path);
 
-	/* TODO: parse index_path */
-
 	g_free(index_path);
+
+	purple_debug_fatal("tomo", "loading not implemented");
 }
 
 static void
@@ -101,7 +105,13 @@ pidgin_smiley_theme_probe(void)
 			continue;
 
 		while ((theme_dir_name = g_dir_read_name(dir))) {
-			gchar *theme_path = g_build_filename(
+			gchar *theme_path;
+
+			/* Ignore Pidgin 2.x.y "none" theme. */
+			if (g_strcmp0(theme_dir_name, "none") == 0)
+				continue;
+
+			theme_path = g_build_filename(
 				probe_dirs[i], theme_dir_name, NULL);
 
 			if (g_file_test(theme_path, G_FILE_TEST_IS_DIR))
@@ -138,6 +148,9 @@ pidgin_smiley_theme_init(void)
 
 	if (!g_file_test(user_smileys_dir, G_FILE_TEST_IS_DIR))
 		g_mkdir(user_smileys_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+
+	//TODO: remove it
+	pidgin_smiley_theme_probe();
 }
 
 void
@@ -169,7 +182,7 @@ pidgin_smiley_theme_finalize(GObject *obj)
 }
 
 static void
-pidgin_smiley_theme_class_init(PurpleSmileyListClass *klass)
+pidgin_smiley_theme_class_init(PidginSmileyThemeClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 	PurpleSmileyThemeClass *pst_class = PURPLE_SMILEY_THEME_CLASS(klass);
@@ -184,19 +197,19 @@ pidgin_smiley_theme_class_init(PurpleSmileyListClass *klass)
 }
 
 GType
-purple_smiley_theme_get_type(void)
+pidgin_smiley_theme_get_type(void)
 {
 	static GType type = 0;
 
 	if (G_UNLIKELY(type == 0)) {
 		static const GTypeInfo info = {
-			.class_size = sizeof(PurpleSmileyThemeClass),
+			.class_size = sizeof(PidginSmileyThemeClass),
 			.class_init = (GClassInitFunc)pidgin_smiley_theme_class_init,
-			.instance_size = sizeof(PurpleSmileyTheme),
+			.instance_size = sizeof(PidginSmileyTheme),
 		};
 
-		type = g_type_register_static(G_TYPE_OBJECT,
-			"PurpleSmileyTheme", &info, G_TYPE_FLAG_ABSTRACT);
+		type = g_type_register_static(PURPLE_TYPE_SMILEY_THEME,
+			"PidginSmileyTheme", &info, 0);
 	}
 
 	return type;
