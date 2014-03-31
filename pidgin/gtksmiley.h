@@ -30,9 +30,18 @@
 
 #include "smiley.h"
 
+#define PIDGIN_TYPE_SMILEY (pidgin_smiley_get_type())
+
 typedef struct _PidginSmiley PidginSmiley;
 
 G_BEGIN_DECLS
+
+/**
+ * pidgin_smiley_get_type:
+ *
+ * Returns: The #GType for the #PidginSmiley boxed structure.
+ */
+GType pidgin_smiley_get_type(void);
 
 /**
  * pidgin_smiley_add_to_list:
