@@ -307,6 +307,7 @@ pidgin_quit(void)
 	/* Uninit */
 	pidgin_utils_uninit();
 	pidgin_notify_uninit();
+	pidgin_smiley_theme_uninit();
 	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();

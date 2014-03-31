@@ -71,6 +71,12 @@ pidgin_smiley_theme_get_type(void);
 void
 pidgin_smiley_theme_init(void);
 
+void
+pidgin_smiley_theme_uninit(void);
+
+GList *
+pidgin_smiley_theme_get_all(void);
+
 G_END_DECLS
 
 #endif /* _PIDGIN_SMILEY_THEME_H_ */
