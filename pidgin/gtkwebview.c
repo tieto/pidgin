@@ -86,6 +86,7 @@ typedef struct {
 } PidginWebViewProtocol;
 
 struct _PidginWebViewSmiley {
+	gint box_count;
 	gchar *smile;
 	gchar *file;
 	GdkPixbufAnimation *icon;
@@ -672,6 +673,44 @@ pidgin_webview_insert_smiley(PidginWebView *webview, const char *sml,
 	}
 
 	g_free(unescaped);
+}
+
+/**************************************************************************
+ * PidginWebViewSmiley GBoxed code
+ **************************************************************************/
+
+static PidginWebViewSmiley *
+pidgin_webview_smiley_ref(PidginWebViewSmiley *smiley)
+{
+	g_return_val_if_fail(smiley != NULL, NULL);
+
+	smiley->box_count++;
+
+	return smiley;
+}
+
+static void
+pidgin_webview_smiley_unref(PidginWebViewSmiley *smiley)
+{
+	g_return_if_fail(smiley != NULL);
+	g_return_if_fail(smiley->box_count >= 0);
+
+	if (!smiley->box_count--)
+		pidgin_webview_smiley_destroy(smiley);
+}
+
+GType
+pidgin_webview_smiley_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginWebViewSmiley",
+				(GBoxedCopyFunc)pidgin_webview_smiley_ref,
+				(GBoxedFreeFunc)pidgin_webview_smiley_unref);
+	}
+
+	return type;
 }
 
 /******************************************************************************

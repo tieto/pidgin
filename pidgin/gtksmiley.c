@@ -39,6 +39,7 @@
 
 struct _PidginSmiley
 {
+	gint box_count;
 	PurpleSmiley *smiley;
 	GtkWidget *parent;
 	GtkWidget *smile;
@@ -80,6 +81,40 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 	if (smiley->custom_pixbuf)
 		g_object_unref(G_OBJECT(smiley->custom_pixbuf));
 	g_free(smiley);
+}
+
+static PidginSmiley *
+pidgin_smiley_ref(PidginSmiley *smiley)
+{
+	g_return_val_if_fail(smiley != NULL, NULL);
+
+	smiley->box_count++;
+
+	return smiley;
+}
+
+static void
+pidgin_smiley_unref(PidginSmiley *smiley)
+{
+	g_return_if_fail(smiley != NULL);
+	g_return_if_fail(smiley->box_count >= 0);
+
+	if (!smiley->box_count--)
+		pidgin_smiley_destroy(smiley);
+}
+
+GType
+pidgin_smiley_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginSmiley",
+				(GBoxedCopyFunc)pidgin_smiley_ref,
+				(GBoxedFreeFunc)pidgin_smiley_unref);
+	}
+
+	return type;
 }
 
 /******************************************************************************
