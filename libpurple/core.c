@@ -41,7 +41,7 @@
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
-#include "smiley.h"
+#include "smiley-theme.h"
 #include "sound.h"
 #include "sound-theme-loader.h"
 #include "sslconn.h"
@@ -256,9 +256,7 @@ purple_core_quit(void)
 	purple_plugins_unload(PURPLE_PLUGIN_STANDARD);
 
 	/* Save .xml files, remove signals, etc. */
-#if 0
-	purple_smileys_uninit();
-#endif
+	purple_smiley_theme_uninit();
 	purple_http_uninit();
 	purple_idle_uninit();
 	purple_pounces_uninit();

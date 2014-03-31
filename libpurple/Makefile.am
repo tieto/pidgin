@@ -102,6 +102,7 @@ purple_coresources = \
 	server.c \
 	signals.c \
 	smiley-list.c \
+	smiley-theme.c \
 	smiley.c \
 	dnsquery.c \
 	dnssrv.c\
@@ -178,6 +179,7 @@ purple_coreheaders = \
 	server.h \
 	signals.h \
 	smiley-list.h \
+	smiley-theme.h \
 	smiley.h \
 	dnsquery.h \
 	dnssrv.h \
