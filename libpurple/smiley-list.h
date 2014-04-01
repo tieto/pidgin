@@ -25,6 +25,7 @@
 #include <glib-object.h>
 
 #include "smiley.h"
+#include "trie.h"
 
 typedef struct _PurpleSmileyList PurpleSmileyList;
 typedef struct _PurpleSmileyListClass PurpleSmileyListClass;
@@ -68,11 +69,17 @@ G_BEGIN_DECLS
 GType
 purple_smiley_list_get_type(void);
 
+PurpleSmileyList *
+purple_smiley_list_new(void);
+
 gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley);
 
 void
 purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley);
+
+PurpleTrie *
+purple_smiley_list_get_trie(PurpleSmileyList *list);
 
 G_END_DECLS
 

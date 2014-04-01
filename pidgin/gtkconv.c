@@ -41,6 +41,7 @@
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
+#include "smiley-parser.h"
 #include "theme-loader.h"
 #include "theme-manager.h"
 #include "util.h"
@@ -6710,7 +6711,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	gtkconv->last_flags = flags;
 	gtkconv->last_conversed = conv;
 
-	smileyed = pidgin_smiley_parse_markup(displaying, purple_account_get_protocol_id(account));
+	smileyed = purple_smiley_parse(displaying,
+		(gpointer)purple_account_get_protocol_name(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
 	escape = pidgin_webview_quote_js_string(msg ? msg : "");
 	script = g_strdup_printf("%s(%s)", func, escape);

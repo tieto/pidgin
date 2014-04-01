@@ -43,6 +43,8 @@ purple_smiley_theme_get_smileys(PurpleSmileyTheme *theme, gpointer ui_data)
 void
 purple_smiley_theme_set_current(PurpleSmileyTheme *theme)
 {
+	PurpleSmileyThemeClass *klass;
+
 	g_return_if_fail(theme == NULL || PURPLE_IS_SMILEY_THEME(theme));
 
 	if (theme)
@@ -50,6 +52,13 @@ purple_smiley_theme_set_current(PurpleSmileyTheme *theme)
 	if (current)
 		g_object_unref(current);
 	current = theme;
+
+	if (!theme)
+		return;
+	klass = PURPLE_SMILEY_THEME_GET_CLASS(theme);
+	g_return_if_fail(klass != NULL);
+	if (klass->activate)
+		klass->activate(theme);
 }
 
 PurpleSmileyTheme *

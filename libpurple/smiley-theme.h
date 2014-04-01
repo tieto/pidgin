@@ -55,6 +55,7 @@ struct _PurpleSmileyThemeClass
 
 	PurpleSmileyList * (*get_smileys)(PurpleSmileyTheme *theme,
 		gpointer ui_data);
+	void (*activate)(PurpleSmileyTheme *theme);
 
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);

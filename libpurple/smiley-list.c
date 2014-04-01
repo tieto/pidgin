@@ -41,9 +41,6 @@ enum
 	PROP_LAST
 };
 
-static GObjectClass *parent_class;
-static GParamSpec *properties[PROP_LAST];
-
 static void
 _list_append2(GList **head_p, GList **tail_p, gpointer data)
 {
@@ -83,6 +80,12 @@ _list_remove_link2(GList **head_p, GList **tail_p, GList *link)
 /*******************************************************************************
  * API implementation
  ******************************************************************************/
+
+PurpleSmileyList *
+purple_smiley_list_new(void)
+{
+	return g_object_new(PURPLE_TYPE_SMILEY_LIST, NULL);
+}
 
 gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
@@ -136,6 +139,16 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", NULL);
 	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem", NULL);
 	g_object_unref(smiley);
+}
+
+PurpleTrie *
+purple_smiley_list_get_trie(PurpleSmileyList *list)
+{
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->trie;
 }
 
 
@@ -211,15 +224,11 @@ purple_smiley_list_class_init(PurpleSmileyListClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 
-	parent_class = g_type_class_peek_parent(klass);
-
 	g_type_class_add_private(klass, sizeof(PurpleSmileyListPrivate));
 
 	gobj_class->get_property = purple_smiley_list_get_property;
 	gobj_class->set_property = purple_smiley_list_set_property;
 	gobj_class->finalize = purple_smiley_list_finalize;
-
-	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 }
 
 GType

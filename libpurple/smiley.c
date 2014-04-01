@@ -138,6 +138,12 @@ purple_smiley_get_property(GObject *object, guint par_id, GValue *value,
 		case PROP_SHORTCUT:
 			g_value_set_string(value, priv->shortcut);
 			break;
+		case PROP_IS_READY:
+			g_value_set_boolean(value, priv->is_ready);
+			break;
+		case PROP_PATH:
+			g_value_set_string(value, priv->path);
+			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
 			break;
@@ -155,6 +161,13 @@ purple_smiley_set_property(GObject *object, guint par_id, const GValue *value,
 		case PROP_SHORTCUT:
 			g_free(priv->shortcut);
 			priv->shortcut = g_strdup(g_value_get_string(value));
+			break;
+		case PROP_IS_READY:
+			priv->is_ready = g_value_get_boolean(value);
+			break;
+		case PROP_PATH:
+			g_free(priv->path);
+			priv->path = g_strdup(g_value_get_string(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);

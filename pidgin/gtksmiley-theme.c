@@ -47,6 +47,8 @@ typedef struct
 	gchar *author;
 
 	GdkPixbuf *icon_pixbuf;
+
+	GHashTable *smiley_lists_map;
 } PidginSmileyThemePrivate;
 
 static GObjectClass *parent_class;
@@ -111,18 +113,21 @@ pidgin_smiley_theme_index_free(PidginSmileyThemeIndex *index)
 }
 
 static PidginSmileyThemeIndex *
-pidgin_smiley_theme_index_parse(const gchar *index_path, gboolean load_contents)
+pidgin_smiley_theme_index_parse(const gchar *theme_path, gboolean load_contents)
 {
 	PidginSmileyThemeIndex *index;
 	PidginSmileyThemeIndexProtocol *proto = NULL;
+	gchar *index_path;
 	FILE *file;
 	int line_no = 0;
 	gboolean inv_frm = FALSE;
 
+	index_path = g_build_filename(theme_path, "theme", NULL);
 	file = g_fopen(index_path, "r");
 	if (!file) {
 		purple_debug_error("gtksmiley-theme",
 			"Failed to open index file %s", index_path);
+		g_free(index_path);
 		return NULL;
 	}
 
@@ -253,6 +258,7 @@ pidgin_smiley_theme_index_parse(const gchar *index_path, gboolean load_contents)
 		index = NULL;
 	}
 
+	g_free(index_path);
 	return index;
 }
 
@@ -267,7 +273,6 @@ pidgin_smiley_theme_load(const gchar *theme_path)
 	PidginSmileyThemePrivate *priv;
 	PidginSmileyThemeIndex *index;
 	GList *it;
-	gchar *index_path;
 
 	/* it's not super-efficient, but we don't expect huge amount of
 	 * installed themes */
@@ -280,16 +285,12 @@ pidgin_smiley_theme_load(const gchar *theme_path)
 			return;
 	}
 
-	index_path = g_build_filename(theme_path, "theme", NULL);
-
 	theme = g_object_new(PIDGIN_TYPE_SMILEY_THEME, NULL);
 	priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
 
 	priv->path = g_strdup(theme_path);
 
-	index = pidgin_smiley_theme_index_parse(index_path, FALSE);
-
-	g_free(index_path);
+	index = pidgin_smiley_theme_index_parse(theme_path, FALSE);
 
 	if (!index->name || index->name[0] == '\0') {
 		purple_debug_warning("gtksmiley-theme",
@@ -425,16 +426,85 @@ pidgin_smiley_theme_get_author(PidginSmileyTheme *theme)
 	return priv->author;
 }
 
+static void
+pidgin_smiley_theme_activate_impl(PurpleSmileyTheme *theme)
+{
+	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
+	PidginSmileyThemeIndex *index;
+	GHashTable *smap;
+	GList *it, *it2, *it3;
+
+	g_return_if_fail(priv != NULL);
+
+	if (priv->smiley_lists_map)
+		return;
+
+	priv->smiley_lists_map = smap = g_hash_table_new_full(
+		g_str_hash, g_str_equal, g_free, g_object_unref);
+
+	index = pidgin_smiley_theme_index_parse(priv->path, TRUE);
+
+	for (it = index->protocols; it; it = g_list_next(it)) {
+		PidginSmileyThemeIndexProtocol *proto_idx = it->data;
+		PurpleSmileyList *proto_smileys;
+
+		proto_smileys = g_hash_table_lookup(smap, proto_idx->name);
+		if (!proto_smileys) {
+			proto_smileys = purple_smiley_list_new();
+			g_hash_table_insert(smap,
+				g_strdup(proto_idx->name), proto_smileys);
+		}
+
+		for (it2 = proto_idx->smileys; it2; it2 = g_list_next(it2)) {
+			PidginSmileyThemeIndexSmiley *smiley_idx = it2->data;
+			gchar *smiley_path;
+
+			smiley_path = g_build_filename(
+				priv->path, smiley_idx->file, NULL);
+			if (!g_file_test(smiley_path, G_FILE_TEST_EXISTS)) {
+				purple_debug_warning("gtksmiley-theme",
+					"Smiley %s is missing", smiley_path);
+				continue;
+			}
+
+			for (it3 = smiley_idx->shortcuts; it3;
+				it3 = g_list_next(it3))
+			{
+				PurpleSmiley *smiley;
+				gchar *shortcut = it3->data;
+
+				smiley = purple_smiley_new(
+					shortcut, smiley_path);
+				purple_smiley_list_add(proto_smileys, smiley);
+				g_object_unref(smiley);
+			}
+		}
+	}
+
+	pidgin_smiley_theme_index_free(index);
+}
+
 static PurpleSmileyList *
 pidgin_smiley_theme_get_smileys_impl(PurpleSmileyTheme *theme, gpointer ui_data)
 {
-	return NULL;
+	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
+	PurpleSmileyList *smileys;
+
+	pidgin_smiley_theme_activate_impl(theme);
+
+	smileys = g_hash_table_lookup(priv->smiley_lists_map, ui_data);
+	if (smileys != NULL)
+		return smileys;
+
+	return g_hash_table_lookup(priv->smiley_lists_map, "default");
 }
 
 void
 pidgin_smiley_theme_init(void)
 {
+	GList *it;
 	const gchar *user_smileys_dir;
+	const gchar *theme_name;
 
 	probe_dirs = g_new0(gchar*, 3);
 	probe_dirs[0] = g_build_filename(
@@ -445,7 +515,18 @@ pidgin_smiley_theme_init(void)
 	if (!g_file_test(user_smileys_dir, G_FILE_TEST_IS_DIR))
 		g_mkdir(user_smileys_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-	/* TODO: load configured theme */
+	/* setting theme by name (copy-paste from gtkprefs) */
+	pidgin_smiley_theme_probe();
+	theme_name = purple_prefs_get_string(
+		PIDGIN_PREFS_ROOT "/smileys/theme");
+	for (it = smiley_themes; it; it = g_list_next(it)) {
+		PidginSmileyTheme *theme = it->data;
+
+		if (g_strcmp0(pidgin_smiley_theme_get_name(theme), theme_name))
+			continue;
+
+		purple_smiley_theme_set_current(PURPLE_SMILEY_THEME(theme));
+	}
 }
 
 void
@@ -478,6 +559,8 @@ pidgin_smiley_theme_finalize(GObject *obj)
 	g_free(priv->author);
 	if (priv->icon_pixbuf)
 		g_object_unref(priv->icon_pixbuf);
+	if (priv->smiley_lists_map)
+		g_hash_table_destroy(priv->smiley_lists_map);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -495,6 +578,7 @@ pidgin_smiley_theme_class_init(PidginSmileyThemeClass *klass)
 	gobj_class->finalize = pidgin_smiley_theme_finalize;
 
 	pst_class->get_smileys = pidgin_smiley_theme_get_smileys_impl;
+	pst_class->activate = pidgin_smiley_theme_activate_impl;
 }
 
 GType
