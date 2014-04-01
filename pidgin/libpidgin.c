@@ -67,7 +67,6 @@
 #include "gtksmiley.h"
 #include "gtksmiley-theme.h"
 #include "gtksound.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
 #include "gtkwhiteboard.h"
@@ -219,8 +218,6 @@ ui_main(void)
 	};
 
 #endif
-
-	pidgin_themes_init();
 
 	pidgin_blist_setup_sort_methods();
 

@@ -367,16 +367,6 @@ pidgin_smiley_theme_probe(void)
  ******************************************************************************/
 
 const gchar *
-pidgin_smiley_theme_get_path(PidginSmileyTheme *theme)
-{
-	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
-
-	g_return_val_if_fail(priv != NULL, NULL);
-
-	return priv->path;
-}
-
-const gchar *
 pidgin_smiley_theme_get_name(PidginSmileyTheme *theme)
 {
 	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);

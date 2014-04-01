@@ -69,10 +69,6 @@ G_BEGIN_DECLS
 GType
 pidgin_smiley_theme_get_type(void);
 
-/* TODO: remove it */
-const gchar *
-pidgin_smiley_theme_get_path(PidginSmileyTheme *theme);
-
 const gchar *
 pidgin_smiley_theme_get_name(PidginSmileyTheme *theme);
 

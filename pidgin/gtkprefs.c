@@ -51,7 +51,6 @@
 #include "gtksmiley-theme.h"
 #include "gtksound.h"
 #include "gtkstatus-icon-theme.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
 #include "pidginstock.h"
@@ -4236,7 +4235,6 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 
 	if (g_strcmp0(theme_name, "none") == 0) {
 		purple_smiley_theme_set_current(NULL);
-		pidgin_themes_load_smiley_theme(NULL, TRUE);
 		return;
 	}
 
@@ -4245,18 +4243,11 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 
 	for (it = themes; it; it = g_list_next(it)) {
 		PidginSmileyTheme *theme = it->data;
-		gchar *old_path;
 
 		if (g_strcmp0(pidgin_smiley_theme_get_name(theme), theme_name))
 			continue;
 
 		purple_smiley_theme_set_current(PURPLE_SMILEY_THEME(theme));
-
-		/* TODO: remove it */
-		old_path = g_build_filename(pidgin_smiley_theme_get_path(theme),
-			"theme", NULL);
-		pidgin_themes_load_smiley_theme(old_path, TRUE);
-		g_free(old_path);
 	}
 }
 

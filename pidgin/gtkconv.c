@@ -60,12 +60,10 @@
 #include "gtkpounce.h"
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
 #include "pidginstock.h"
 #include "pidgintooltip.h"
-#include "smileyparser.h"
 
 #include "gtknickcolors.h"
 
@@ -6113,8 +6111,10 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtkconv->nick_colors = g_array_ref(generated_nick_colors);
 	}
 
+#if 0
 	if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
 		pidgin_themes_smiley_themeize_custom(gtkconv->entry);
+#endif
 }
 
 static void
@@ -7204,6 +7204,7 @@ pidgin_conv_has_focus(PurpleConversation *conv)
 	return FALSE;
 }
 
+#if 0
 static gboolean
 add_custom_smiley_for_webview(PidginWebView *webview, const char *sml, const char *smile)
 {
@@ -7227,10 +7228,12 @@ add_custom_smiley_for_webview(PidginWebView *webview, const char *sml, const cha
 
 	return TRUE;
 }
+#endif
 
 static gboolean
 pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gboolean remote)
 {
+#if 0
 	PidginConversation *gtkconv;
 	struct PidginSmileyList *list;
 	const char *sml = NULL, *conv_sml;
@@ -7262,6 +7265,7 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 		if (!add_custom_smiley_for_webview(PIDGIN_WEBVIEW(gtkconv->entry), sml, smile))
 			return FALSE;
 
+#endif
 	return TRUE;
 }
 

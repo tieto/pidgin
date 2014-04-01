@@ -80,7 +80,6 @@ libpidgin_la_SOURCES = \
 	gtksound.c \
 	gtkstatus-icon-theme.c \
 	gtkstatusbox.c \
-	gtkthemes.c \
 	gtkutils.c \
 	gtkwebview.c \
 	gtkwebviewtoolbar.c \
@@ -88,8 +87,7 @@ libpidgin_la_SOURCES = \
 	gtkxfer.c \
 	libpidgin.c \
 	minidialog.c \
-	pidgintooltip.c \
-	smileyparser.c
+	pidgintooltip.c
 
 libpidgin_la_headers = \
 	gtkaccount.h \
@@ -132,7 +130,6 @@ libpidgin_la_headers = \
 	gtkstatus-icon-theme.h \
 	gtkstatusbox.h \
 	pidginstock.h \
-	gtkthemes.h \
 	gtkutils.h \
 	gtkwebview.h \
 	gtkwebviewtoolbar.h \
@@ -140,8 +137,7 @@ libpidgin_la_headers = \
 	gtkxfer.h \
 	minidialog.h \
 	pidgintooltip.h \
-	pidgin.h \
-	smileyparser.h
+	pidgin.h
 
 pidgin_SOURCES = \
 	pidgin.c

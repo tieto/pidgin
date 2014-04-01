@@ -33,7 +33,6 @@
 #include "gtkdialogs.h"
 #include "gtkwebviewtoolbar.h"
 #include "gtksmiley.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -899,10 +898,13 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		return;
 	}
 
+#if 0
+	/* TODO */
 	if (priv->sml)
 		smileys = pidgin_themes_get_proto_smileys(priv->sml);
 	else
 		smileys = pidgin_themes_get_proto_smileys(NULL);
+#endif
 
 	/* Note: prepend smileys to list to avoid O(n^2) overhead when there is a
 	   large number of smileys... need to reverse the list after for the dialog
@@ -1071,8 +1073,11 @@ update_buttons_cb(PidginWebView *webview, PidginWebViewButtons buttons,
 
 	gtk_action_set_sensitive(priv->image, buttons & PIDGIN_WEBVIEW_IMAGE);
 	gtk_action_set_sensitive(priv->link, buttons & PIDGIN_WEBVIEW_LINK);
+#if 0
+	/* TODO */
 	gtk_action_set_sensitive(priv->smiley, (buttons & PIDGIN_WEBVIEW_SMILEY) &&
 		pidgin_themes_get_proto_smileys(priv->sml));
+#endif
 }
 
 /* we call this when we want to _set_active the toggle button, it'll
@@ -1615,8 +1620,11 @@ pidgin_webviewtoolbar_init(PidginWebViewToolbar *toolbar)
 	/* set attention button to be greyed out until we get a conversation */
 	gtk_action_set_sensitive(priv->attention, FALSE);
 
+#if 0
+	/* TODO */
 	gtk_action_set_sensitive(priv->smiley,
 			pidgin_themes_get_proto_smileys(NULL) != NULL);
+#endif
 
 	purple_prefs_connect_callback(toolbar,
 	                              PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
@@ -1718,8 +1726,11 @@ pidgin_webviewtoolbar_switch_active_conversation(PidginWebViewToolbar *toolbar,
 		conv && prpl && PURPLE_IS_IM_CONVERSATION(conv) &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 
+#if 0
+	/* TODO */
 	gtk_action_set_sensitive(priv->smiley,
 		pidgin_themes_get_proto_smileys(priv->sml) != NULL);
+#endif
 }
 
 void

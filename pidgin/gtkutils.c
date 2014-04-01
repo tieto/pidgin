@@ -58,7 +58,6 @@
 #include "gtkdialogs.h"
 #include "pidginstock.h"
 #include "gtkrequest.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
@@ -166,8 +165,6 @@ pidgin_setup_webview(GtkWidget *webview)
 {
 	g_return_if_fail(webview != NULL);
 	g_return_if_fail(PIDGIN_IS_WEBVIEW(webview));
-
-	pidgin_themes_smiley_themeize(webview);
 
 #ifdef _WIN32
 	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
