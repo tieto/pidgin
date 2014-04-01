@@ -737,7 +737,7 @@ purple_trie_class_init(PurpleTrieClass *klass)
 		"Reset on match", "Determines, if the search state machine "
 		"should be reset to the initial state on every match. This "
 		"ensures, that every match is distinct from each other.", TRUE,
-		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
