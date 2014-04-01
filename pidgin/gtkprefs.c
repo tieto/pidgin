@@ -48,6 +48,7 @@
 #include "gtkdialogs.h"
 #include "gtkprefs.h"
 #include "gtksavedstatuses.h"
+#include "gtksmiley-theme.h"
 #include "gtksound.h"
 #include "gtkstatus-icon-theme.h"
 #include "gtkthemes.h"
@@ -587,38 +588,33 @@ get_theme_markup(const char *name, gboolean custom, const char *author,
 static void
 smileys_refresh_theme_list(void)
 {
-	GdkPixbuf *pixbuf;
-	GSList *themes;
+	GList *it;
 	GtkTreeIter iter;
+	gchar *description;
 
-	pidgin_themes_smiley_theme_probe();
+	description = get_theme_markup(_("none"), FALSE, _("Penguin Pimps"),
+		_("Selecting this disables graphical emoticons."));
+	gtk_list_store_append(prefs_smiley_themes, &iter);
+	gtk_list_store_set(prefs_smiley_themes, &iter,
+		0, NULL, 1, description, 2, "none", -1);
+	g_free(description);
 
-	if (!(themes = smiley_themes))
-		return;
+	for (it = pidgin_smiley_theme_get_all(); it; it = g_list_next(it)) {
+		PidginSmileyTheme *theme = it->data;
 
-	while (themes) {
-		struct PidginSmileyTheme *theme = themes->data;
-		char *description = get_theme_markup(_(theme->name), FALSE,
-		                                     _(theme->author), _(theme->desc));
+		description = get_theme_markup(
+			_(pidgin_smiley_theme_get_name(theme)), FALSE,
+			_(pidgin_smiley_theme_get_author(theme)),
+			_(pidgin_smiley_theme_get_description(theme)));
+
 		gtk_list_store_append(prefs_smiley_themes, &iter);
-
-		/*
-		 * LEAK - Gentoo memprof thinks pixbuf is leaking here... but it
-		 * looks like it should be ok to me.  Anyone know what's up?  --Mark
-		 */
-		pixbuf = (theme->icon ? pidgin_pixbuf_new_from_file(theme->icon) : NULL);
-
 		gtk_list_store_set(prefs_smiley_themes, &iter,
-				   0, pixbuf,
-				   1, description,
-				   2, theme->name,
-				   -1);
-
-		if (pixbuf != NULL)
-			g_object_unref(G_OBJECT(pixbuf));
+			0, pidgin_smiley_theme_get_icon(theme),
+			1, description,
+			2, pidgin_smiley_theme_get_name(theme),
+			-1);
 
 		g_free(description);
-		themes = themes->next;
 	}
 }
 
@@ -4235,15 +4231,32 @@ static void
 smiley_theme_pref_cb(const char *name, PurplePrefType type,
 					 gconstpointer value, gpointer data)
 {
-	const char *themename = value;
-	GSList *themes;
+	const gchar *theme_name = value;
+	GList *themes, *it;
 
-	for (themes = smiley_themes; themes; themes = themes->next) {
-		struct PidginSmileyTheme *smile = themes->data;
-		if (smile->name && strcmp(themename, smile->name) == 0) {
-			pidgin_themes_load_smiley_theme(smile->path, TRUE);
-			break;
-		}
+	if (g_strcmp0(theme_name, "none") == 0) {
+		purple_smiley_theme_set_current(NULL);
+		pidgin_themes_load_smiley_theme(NULL, TRUE);
+		return;
+	}
+
+	/* XXX: could be cached when initializing prefs view */
+	themes = pidgin_smiley_theme_get_all();
+
+	for (it = themes; it; it = g_list_next(it)) {
+		PidginSmileyTheme *theme = it->data;
+		gchar *old_path;
+
+		if (g_strcmp0(pidgin_smiley_theme_get_name(theme), theme_name))
+			continue;
+
+		purple_smiley_theme_set_current(PURPLE_SMILEY_THEME(theme));
+
+		/* TODO: remove it */
+		old_path = g_build_filename(pidgin_smiley_theme_get_path(theme),
+			"theme", NULL);
+		pidgin_themes_load_smiley_theme(old_path, TRUE);
+		g_free(old_path);
 	}
 }
 

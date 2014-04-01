@@ -162,7 +162,7 @@ pidgin_smiley_parse_markup(const char *markup, const char *proto_id)
 		return temp;
 	}
 
-	for (list = current_smiley_theme->list; list; list = list->next) {
+	for (list = ((struct PidginSmileyThemeREMOVEIT *)current_smiley_theme)->list; list; list = list->next) {
 		if (g_str_equal(list->sml, "default") ||
 			g_str_equal(list->sml, proto_name))
 		{

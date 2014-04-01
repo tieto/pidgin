@@ -23,6 +23,7 @@
 #define _PIDGIN_SMILEY_THEME_H_
 
 #include <glib-object.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include "smiley-theme.h"
 
@@ -67,6 +68,22 @@ G_BEGIN_DECLS
  */
 GType
 pidgin_smiley_theme_get_type(void);
+
+/* TODO: remove it */
+const gchar *
+pidgin_smiley_theme_get_path(PidginSmileyTheme *theme);
+
+const gchar *
+pidgin_smiley_theme_get_name(PidginSmileyTheme *theme);
+
+const gchar *
+pidgin_smiley_theme_get_description(PidginSmileyTheme *theme);
+
+GdkPixbuf *
+pidgin_smiley_theme_get_icon(PidginSmileyTheme *theme);
+
+const gchar *
+pidgin_smiley_theme_get_author(PidginSmileyTheme *theme);
 
 void
 pidgin_smiley_theme_init(void);

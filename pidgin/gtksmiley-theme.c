@@ -26,6 +26,8 @@
 
 #include "debug.h"
 
+#include "gtkutils.h"
+
 #include <glib/gstdio.h>
 
 #define PIDGIN_SMILEY_THEME_GET_PRIVATE(obj) \
@@ -43,6 +45,8 @@ typedef struct
 	gchar *desc;
 	gchar *icon;
 	gchar *author;
+
+	GdkPixbuf *icon_pixbuf;
 } PidginSmileyThemePrivate;
 
 static GObjectClass *parent_class;
@@ -361,6 +365,66 @@ pidgin_smiley_theme_probe(void)
  * API implementation
  ******************************************************************************/
 
+const gchar *
+pidgin_smiley_theme_get_path(PidginSmileyTheme *theme)
+{
+	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->path;
+}
+
+const gchar *
+pidgin_smiley_theme_get_name(PidginSmileyTheme *theme)
+{
+	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->name;
+}
+
+const gchar *
+pidgin_smiley_theme_get_description(PidginSmileyTheme *theme)
+{
+	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->desc;
+}
+
+GdkPixbuf *
+pidgin_smiley_theme_get_icon(PidginSmileyTheme *theme)
+{
+	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	if (priv->icon == NULL)
+		return NULL;
+
+	if (!priv->icon_pixbuf) {
+		gchar *icon_path = g_build_filename(
+			priv->path, priv->icon, NULL);
+		priv->icon_pixbuf = pidgin_pixbuf_new_from_file(icon_path);
+		g_free(icon_path);
+	}
+
+	return priv->icon_pixbuf;
+}
+
+const gchar *
+pidgin_smiley_theme_get_author(PidginSmileyTheme *theme)
+{
+	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->author;
+}
+
 static PurpleSmileyList *
 pidgin_smiley_theme_get_smileys_impl(PurpleSmileyTheme *theme, gpointer ui_data)
 {
@@ -408,6 +472,12 @@ pidgin_smiley_theme_finalize(GObject *obj)
 	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(obj);
 
 	g_free(priv->path);
+	g_free(priv->name);
+	g_free(priv->desc);
+	g_free(priv->icon);
+	g_free(priv->author);
+	if (priv->icon_pixbuf)
+		g_object_unref(priv->icon_pixbuf);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }

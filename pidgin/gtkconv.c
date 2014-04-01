@@ -7246,7 +7246,7 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 	conv_sml = purple_account_get_protocol_name(purple_conversation_get_account(conv));
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
-	for (list = (struct PidginSmileyList *)current_smiley_theme->list; list; list = list->next) {
+	for (list = (struct PidginSmileyList *)((struct PidginSmileyThemeREMOVEIT *)current_smiley_theme)->list; list; list = list->next) {
 		if (!strcmp(list->sml, conv_sml)) {
 			sml = list->sml;
 			break;

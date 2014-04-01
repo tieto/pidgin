@@ -35,7 +35,7 @@ struct PidginSmileyList {
 	struct PidginSmileyList *next;
 };
 
-struct PidginSmileyTheme {
+struct PidginSmileyThemeREMOVEIT {
 	char *path;
 	char *name;
 	char *desc;
@@ -46,7 +46,6 @@ struct PidginSmileyTheme {
 };
 
 extern struct PidginSmileyTheme *current_smiley_theme;
-extern GSList *smiley_themes;
 
 G_BEGIN_DECLS
 

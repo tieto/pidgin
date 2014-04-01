@@ -34,6 +34,16 @@
 #include "gtkthemes.h"
 #include "gtkwebview.h"
 
+struct PidginSmileyTheme {
+	char *path;
+	char *name;
+	char *desc;
+	char *icon;
+	char *author;
+
+	struct PidginSmileyList *list;
+};
+
 GSList *smiley_themes = NULL;
 struct PidginSmileyTheme *current_smiley_theme;
 
@@ -215,6 +225,13 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	struct PidginSmileyList *list = NULL;
 	GSList *lst = smiley_themes;
 	char *dirname;
+
+	if (file == NULL) {
+		if (current_smiley_theme)
+			pidgin_themes_destroy_smiley_theme_smileys(current_smiley_theme);
+		current_smiley_theme = NULL;
+		return;
+	}
 
 	if (!f)
 		return;
