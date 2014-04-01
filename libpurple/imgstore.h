@@ -45,7 +45,8 @@
  */
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
-#define PURPLE_TYPE_STORED_IMAGE  (purple_imgstore_get_type())
+#define PURPLE_TYPE_STORED_IMAGE (purple_imgstore_get_type())
+#define PURPLE_IS_STORED_IMAGE(image) (G_TYPE_CHECK_INSTANCE_TYPE((image), PURPLE_TYPE_STORED_IMAGE))
 
 G_BEGIN_DECLS
 

@@ -41,6 +41,7 @@
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
+#include "smiley-custom.h"
 #include "smiley-theme.h"
 #include "sound.h"
 #include "sound-theme-loader.h"
@@ -202,9 +203,8 @@ purple_core_init(const char *ui)
 	purple_xfers_init();
 	purple_idle_init();
 	purple_http_init();
-#if 0
-	purple_smileys_init();
-#endif
+	purple_smiley_custom_init();
+
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
@@ -257,6 +257,7 @@ purple_core_quit(void)
 
 	/* Save .xml files, remove signals, etc. */
 	purple_smiley_theme_uninit();
+	purple_smiley_custom_uninit();
 	purple_http_uninit();
 	purple_idle_uninit();
 	purple_pounces_uninit();

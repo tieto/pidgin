@@ -101,6 +101,7 @@ purple_coresources = \
 	savedstatuses.c \
 	server.c \
 	signals.c \
+	smiley-custom.c \
 	smiley-list.c \
 	smiley-parser.c \
 	smiley-theme.c \
@@ -179,6 +180,7 @@ purple_coreheaders = \
 	savedstatuses.h \
 	server.h \
 	signals.h \
+	smiley-custom.h \
 	smiley-list.h \
 	smiley-parser.h \
 	smiley-theme.h \
