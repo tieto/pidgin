@@ -735,6 +735,10 @@ void pidgin_webview_hide_toolbar(PidginWebView *webview);
  */
 void pidgin_webview_activate_toolbar(PidginWebView *webview, PidginWebViewAction action);
 
+void
+pidgin_webview_switch_active_conversation(PidginWebView *webview,
+	PurpleConversation *conv);
+
 /* Do not use. */
 void
 pidgin_webview_set_toolbar(PidginWebView *webview, GtkWidget *toolbar);

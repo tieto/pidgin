@@ -33,6 +33,7 @@ typedef struct {
 	GList *smileys;
 	GList *smileys_end;
 	PurpleTrie *trie;
+	GHashTable *unique_map;
 } PurpleSmileyListPrivate;
 
 enum
@@ -91,6 +92,7 @@ gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+	const gchar *smiley_path;
 	gboolean succ;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
@@ -112,6 +114,12 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", list);
 	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem",
 		priv->smileys_end);
+
+	smiley_path = purple_smiley_get_path(smiley);
+	if (g_hash_table_lookup(priv->unique_map, smiley_path) == NULL) {
+		g_hash_table_insert(priv->unique_map,
+			g_strdup(smiley_path), smiley);
+	}
 
 	return TRUE;
 }
@@ -151,6 +159,16 @@ purple_smiley_list_get_trie(PurpleSmileyList *list)
 	return priv->trie;
 }
 
+GList *
+purple_smiley_list_get_unique(PurpleSmileyList *list)
+{
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return g_hash_table_get_values(priv->unique_map);
+}
+
 
 /*******************************************************************************
  * Object stuff
@@ -163,6 +181,8 @@ purple_smiley_list_init(GTypeInstance *instance, gpointer klass)
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
 
 	priv->trie = purple_trie_new();
+	priv->unique_map = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, NULL);
 
 	PURPLE_DBUS_REGISTER_POINTER(sl, PurpleSmileyList);
 }
@@ -175,6 +195,7 @@ purple_smiley_list_finalize(GObject *obj)
 	GList *it;
 
 	g_object_unref(priv->trie);
+	g_hash_table_destroy(priv->unique_map);
 
 	for (it = priv->smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;

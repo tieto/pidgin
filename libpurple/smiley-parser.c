@@ -41,22 +41,16 @@ purple_smiley_parse(const gchar *message, gpointer ui_data)
 	PurpleSmileyList *theme_smileys;
 	PurpleTrie *theme_trie;
 
-	if (message == NULL || message[0] == '\0') {
-		purple_debug_info("tomo", "no msg");
+	if (message == NULL || message[0] == '\0')
 		return g_strdup(message);
-	}
 
 	theme = purple_smiley_theme_get_current();
-	if (theme == NULL) {
-		purple_debug_info("tomo", "no theme");
+	if (theme == NULL)
 		return g_strdup(message);
-	}
 
 	theme_smileys = purple_smiley_theme_get_smileys(theme, ui_data);
-	if (theme_smileys == NULL) {
-		purple_debug_info("tomo", "no smileys");
+	if (theme_smileys == NULL)
 		return g_strdup(message);
-	}
 
 	theme_trie = purple_smiley_list_get_trie(theme_smileys);
 	g_return_val_if_fail(theme_trie != NULL, g_strdup(message));

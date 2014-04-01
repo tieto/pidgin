@@ -247,6 +247,7 @@ pidgin_smiley_theme_index_parse(const gchar *theme_path, gboolean load_contents)
 				g_strdup(token));
 		}
 		g_strfreev(split);
+		smiley->shortcuts = g_list_reverse(smiley->shortcuts);
 	}
 
 	fclose(file);
@@ -414,6 +415,28 @@ pidgin_smiley_theme_get_author(PidginSmileyTheme *theme)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->author;
+}
+
+PurpleSmileyList *
+pidgin_smiley_theme_for_conv(PurpleConversation *conv)
+{
+	PurpleAccount *acc;
+	PurpleSmileyTheme *theme;
+	const gchar *proto_name;
+
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	theme = purple_smiley_theme_get_current();
+	if (theme == NULL)
+		return NULL;
+
+	acc = purple_conversation_get_account(conv);
+	g_return_val_if_fail(acc != NULL, NULL);
+
+	proto_name = purple_account_get_protocol_name(acc);
+	g_return_val_if_fail(proto_name != NULL, NULL);
+
+	return purple_smiley_theme_get_smileys(theme, (gpointer)proto_name);
 }
 
 static void

@@ -660,6 +660,8 @@ pidgin_webview_insert_smiley(PidginWebView *webview, const char *sml,
 	unescaped = purple_unescape_html(smiley);
 	webview_smiley = pidgin_webview_smiley_find(webview, sml, unescaped);
 
+#if 0
+	/* TODO */
 	if (priv->format_functions & PIDGIN_WEBVIEW_SMILEY) {
 		char *tmp;
 		/* TODO Better smiley insertion... */
@@ -667,7 +669,9 @@ pidgin_webview_insert_smiley(PidginWebView *webview, const char *sml,
 		                      webview_smiley, smiley);
 		pidgin_webview_append_html(webview, tmp);
 		g_free(tmp);
-	} else {
+	} else
+#endif
+	{
 		pidgin_webview_append_html(webview, smiley);
 	}
 
@@ -2442,3 +2446,14 @@ pidgin_webview_activate_toolbar(PidginWebView *webview, PidginWebViewAction acti
 	pidgin_webviewtoolbar_activate(priv->toolbar, action);
 }
 
+void
+pidgin_webview_switch_active_conversation(PidginWebView *webview,
+	PurpleConversation *conv)
+{
+	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
+
+	g_return_if_fail(priv != NULL);
+	g_return_if_fail(priv->toolbar != NULL);
+
+	pidgin_webviewtoolbar_switch_active_conversation(priv->toolbar, conv);
+}

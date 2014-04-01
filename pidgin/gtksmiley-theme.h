@@ -81,6 +81,9 @@ pidgin_smiley_theme_get_icon(PidginSmileyTheme *theme);
 const gchar *
 pidgin_smiley_theme_get_author(PidginSmileyTheme *theme);
 
+PurpleSmileyList *
+pidgin_smiley_theme_for_conv(PurpleConversation *conv);
+
 void
 pidgin_smiley_theme_init(void);
 

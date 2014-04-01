@@ -2368,6 +2368,8 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	purple_conversation_close_logs(old_conv);
 	gtkconv->active_conv = conv;
 
+	pidgin_webview_switch_active_conversation(
+		PIDGIN_WEBVIEW(gtkconv->entry), conv);
 	purple_conversation_set_logging(conv,
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(gtkconv->win->menu->logging)));
 
@@ -6086,6 +6088,8 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		pidgin_webview_show_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
 	else
 		pidgin_webview_hide_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
+	pidgin_webview_switch_active_conversation(
+		PIDGIN_WEBVIEW(gtkconv->entry), conv);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
