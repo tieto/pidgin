@@ -68,7 +68,6 @@ enum
 };
 
 static SmileyManager *smiley_manager = NULL;
-static GSList *gtk_smileys = NULL;
 
 static void
 pidgin_smiley_destroy(PidginSmiley *smiley)
@@ -85,153 +84,18 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 /******************************************************************************
  * PidginWebViewSmileys stuff
  *****************************************************************************/
-/* Perhaps these should be in gtkwebview.c instead. -- sadrul */
-static void add_gtkwebview_to_list(PidginWebViewSmiley *gtksmiley)
-{
-	gtk_smileys = g_slist_prepend(gtk_smileys, gtksmiley);
-
-	purple_debug_info("gtksmiley", "adding %s to gtk_smileys",
-		pidgin_webview_smiley_get_smile(gtksmiley));
-}
-
-static void
-shortcut_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
-	PidginWebViewSmiley *gtksmiley)
-{
-#if 0
-	g_free(gtksmiley->smile);
-	gtksmiley->smile = g_strdup(purple_smiley_get_shortcut(smiley));
-#else
-	purple_debug_fatal("gtksmiley", "shortcut_changed_cb not implemented");
-#endif
-}
-
-static void
-image_changed_cb(PurpleSmiley *smiley, gpointer dontcare,
-	PidginWebViewSmiley *gtksmiley)
-{
-#if 0
-	const char *file;
-
-	g_free(gtksmiley->file);
-
-	file = purple_imgstore_get_filename(purple_smiley_get_stored_image(smiley));
-	gtksmiley->file = g_build_filename(purple_smileys_get_storing_dir(), file, NULL);
-	pidgin_webview_smiley_reload(gtksmiley);
-#else
-	purple_debug_fatal("gtksmiley", "image_changed_cb not implemented");
-#endif
-}
-
-#if 0
-static PidginWebViewSmiley *smiley_purple_to_gtkwebview(PurpleSmiley *smiley)
-{
-	PidginWebViewSmiley *gtksmiley;
-	gchar *filename;
-	const gchar *file;
-
-	file = purple_imgstore_get_filename(purple_smiley_get_stored_image(smiley));
-
-	filename = g_build_filename(purple_smileys_get_storing_dir(), file, NULL);
-
-	gtksmiley = pidgin_webview_smiley_create(filename,
-		purple_smiley_get_shortcut(smiley), FALSE,
-		PIDGIN_WEBVIEW_SMILEY_CUSTOM);
-	g_free(filename);
-
-	/* Make sure the shortcut for the PidginWebViewSmiley is updated with
-	 * the PurpleSmiley */
-	g_signal_connect(G_OBJECT(smiley), "notify::shortcut",
-			G_CALLBACK(shortcut_changed_cb), gtksmiley);
-
-	/* And update the pixbuf too when the image is changed */
-	g_signal_connect(G_OBJECT(smiley), "notify::image",
-			G_CALLBACK(image_changed_cb), gtksmiley);
-
-	return gtksmiley;
-}
-#endif
-
-void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
-{
-	GSList *list = NULL;
-	PidginWebViewSmiley *gtksmiley;
-
-	if (gtk_smileys == NULL)
-		return;
-
-	list = gtk_smileys;
-
-	for (; list; list = list->next) {
-		gtksmiley = (PidginWebViewSmiley*)list->data;
-
-		if (strcmp(pidgin_webview_smiley_get_smile(gtksmiley),
-			purple_smiley_get_shortcut(smiley)))
-		{
-			continue;
-		}
-
-		pidgin_webview_smiley_destroy(gtksmiley);
-		g_signal_handlers_disconnect_matched(G_OBJECT(smiley), G_SIGNAL_MATCH_DATA,
-				0, 0, NULL, NULL, gtksmiley);
-		break;
-	}
-
-	if (list)
-		gtk_smileys = g_slist_delete_link(gtk_smileys, list);
-}
-
-#if 0
-void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
-{
-	PidginWebViewSmiley *gtksmiley;
-
-	gtksmiley = smiley_purple_to_gtkwebview(smiley);
-	add_gtkwebview_to_list(gtksmiley);
-	g_signal_connect(G_OBJECT(smiley), "destroy", G_CALLBACK(pidgin_smiley_del_from_list), NULL);
-}
-#endif
 
 void pidgin_smileys_init(void)
 {
-#if 0
-	GList *smileys;
-	PurpleSmiley *smiley;
-
-	if (gtk_smileys != NULL)
-		return;
-
-	smileys = purple_smileys_get_all();
-
-	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
-		smiley = (PurpleSmiley*)smileys->data;
-
-		pidgin_smiley_add_to_list(smiley);
-	}
-#endif
 }
 
 void pidgin_smileys_uninit(void)
 {
-	GSList *list;
-	PidginWebViewSmiley *gtksmiley;
-
-	list = gtk_smileys;
-
-	if (list == NULL)
-		return;
-
-	for (; list; list = g_slist_delete_link(list, list)) {
-		gtksmiley = (PidginWebViewSmiley*)list->data;
-		pidgin_webview_smiley_destroy(gtksmiley);
-	}
-
-	gtk_smileys = NULL;
 }
 
 GSList *pidgin_smileys_get_all(void)
 {
-	return gtk_smileys;
+	return NULL;
 }
 
 /******************************************************************************

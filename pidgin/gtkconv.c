@@ -2370,13 +2370,13 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 
 	pidgin_webview_switch_active_conversation(
 		PIDGIN_WEBVIEW(gtkconv->entry), conv);
+	pidgin_webview_switch_active_conversation(
+		PIDGIN_WEBVIEW(gtkconv->webview), conv);
 	purple_conversation_set_logging(conv,
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(gtkconv->win->menu->logging)));
 
 	entry = PIDGIN_WEBVIEW(gtkconv->entry);
 	protocol_name = purple_account_get_protocol_name(purple_conversation_get_account(conv));
-	pidgin_webview_set_protocol_name(entry, protocol_name);
-	pidgin_webview_set_protocol_name(PIDGIN_WEBVIEW(gtkconv->webview), protocol_name);
 
 	features = purple_conversation_get_features(conv);
 	if (!(features & PURPLE_CONNECTION_FLAG_HTML))
@@ -5714,8 +5714,6 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	_pidgin_widget_set_accessible_name(frame, "Message Input");
 	gtk_widget_set_name(gtkconv->entry, "pidgin_conv_entry");
-	pidgin_webview_set_protocol_name(PIDGIN_WEBVIEW(gtkconv->entry),
-			purple_account_get_protocol_name(purple_conversation_get_account(conv)));
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
 	                 G_CALLBACK(entry_popup_menu_cb), gtkconv);
@@ -6090,6 +6088,8 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		pidgin_webview_hide_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
 	pidgin_webview_switch_active_conversation(
 		PIDGIN_WEBVIEW(gtkconv->entry), conv);
+	pidgin_webview_switch_active_conversation(
+		PIDGIN_WEBVIEW(gtkconv->webview), conv);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
@@ -7501,8 +7501,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 			buttons &= ~PIDGIN_WEBVIEW_CUSTOM_SMILEY;
 
 		pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(gtkconv->entry), buttons);
-		if (account != NULL)
-			pidgin_webview_set_protocol_name(PIDGIN_WEBVIEW(gtkconv->entry), purple_account_get_protocol_id(account));
 
 		/* Deal with menu items */
 		gtk_action_set_sensitive(win->menu->view_log, TRUE);

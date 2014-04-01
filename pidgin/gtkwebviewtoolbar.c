@@ -704,9 +704,8 @@ insert_smiley_text(GtkWidget *widget, PidginWebViewToolbar *toolbar)
 	smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
 	escaped_smiley = g_markup_escape_text(smiley_text, -1);
 
-	pidgin_webview_insert_smiley(PIDGIN_WEBVIEW(toolbar->webview),
-	                          pidgin_webview_get_protocol_name(PIDGIN_WEBVIEW(toolbar->webview)),
-	                          escaped_smiley);
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(toolbar->webview),
+		escaped_smiley);
 
 	g_free(escaped_smiley);
 

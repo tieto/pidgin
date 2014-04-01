@@ -62,10 +62,6 @@ typedef enum {
 } PidginWebViewButtons;
 
 typedef enum {
-	PIDGIN_WEBVIEW_SMILEY_CUSTOM = 1 << 0
-} PidginWebViewSmileyFlags;
-
-typedef enum {
 	PIDGIN_WEBVIEW_ACTION_BOLD,
 	PIDGIN_WEBVIEW_ACTION_ITALIC,
 	PIDGIN_WEBVIEW_ACTION_UNDERLINE,
@@ -88,7 +84,6 @@ typedef enum {
 
 typedef struct _PidginWebView PidginWebView;
 typedef struct _PidginWebViewClass PidginWebViewClass;
-typedef struct _PidginWebViewSmiley PidginWebViewSmiley;
 
 struct _PidginWebView
 {
@@ -586,129 +581,6 @@ void pidgin_webview_insert_image(PidginWebView *webview, int id);
  * Gets the protocol name associated with this PidginWebView.
  */
 const char *pidgin_webview_get_protocol_name(PidginWebView *webview);
-
-/**
- * pidgin_webview_set_protocol_name:
- * @webview:       The PidginWebView
- * @protocol_name: The protocol name to associate with the PidginWebView
- *
- * Associates a protocol name with a PidginWebView.
- */
-void pidgin_webview_set_protocol_name(PidginWebView *webview, const char *protocol_name);
-
-/**
- * pidgin_webview_smiley_create:
- * @file:      The image file for the smiley
- * @shortcut:  The key shortcut for the smiley
- * @hide:      %TRUE if the smiley should be hidden in the smiley dialog,
- *                  %FALSE otherwise
- * @flags:     The smiley flags
- *
- * Create a new PidginWebViewSmiley.
- *
- * Returns: The newly created smiley
- */
-PidginWebViewSmiley *pidgin_webview_smiley_create(const char *file,
-                                            const char *shortcut,
-                                            gboolean hide,
-                                            PidginWebViewSmileyFlags flags);
-
-/**
- * pidgin_webview_smiley_reload:
- * @smiley:    The smiley to reload
- *
- * Reload the image data for the smiley.
- */
-void pidgin_webview_smiley_reload(PidginWebViewSmiley *smiley);
-
-/**
- * pidgin_webview_smiley_destroy:
- * @smiley:    The smiley to destroy
- *
- * Destroy a PidginWebViewSmiley.
- */
-void pidgin_webview_smiley_destroy(PidginWebViewSmiley *smiley);
-
-/**
- * pidgin_webview_smiley_get_smile:
- * @smiley:    The smiley
- *
- * Returns the text associated with a smiley.
- *
- * Returns: The text
- */
-const char *pidgin_webview_smiley_get_smile(const PidginWebViewSmiley *smiley);
-
-/**
- * pidgin_webview_smiley_get_file:
- * @smiley:    The smiley
- *
- * Returns the file associated with a smiley.
- *
- * Returns: The file
- */
-const char *pidgin_webview_smiley_get_file(const PidginWebViewSmiley *smiley);
-
-/**
- * pidgin_webview_smiley_get_hidden:
- * @smiley:    The smiley
- *
- * Returns the invisibility of a smiley.
- *
- * Returns: The hidden status
- */
-gboolean pidgin_webview_smiley_get_hidden(const PidginWebViewSmiley *smiley);
-
-/**
- * pidgin_webview_smiley_get_flags:
- * @smiley:    The smiley
- *
- * Returns the flags associated with a smiley.
- *
- * Returns: The flags
- */
-PidginWebViewSmileyFlags pidgin_webview_smiley_get_flags(const PidginWebViewSmiley *smiley);
-
-/**
- * pidgin_webview_smiley_find:
- * @webview: The PidginWebView
- * @sml:     The name of the smiley category
- * @text:    The text associated with the smiley
- *
- * Returns: The smiley object associated with the text.
- */
-PidginWebViewSmiley *pidgin_webview_smiley_find(PidginWebView *webview, const char *sml,
-                                          const char *text);
-
-/**
- * pidgin_webview_associate_smiley:
- * @webview: The PidginWebView
- * @sml:     The name of the smiley category
- * @smiley:  The PidginWebViewSmiley to associate
- *
- * Associates a smiley with a PidginWebView.
- */
-void pidgin_webview_associate_smiley(PidginWebView *webview, const char *sml,
-                                  PidginWebViewSmiley *smiley);
-
-/**
- * pidgin_webview_remove_smileys:
- * @webview: The PidginWebView.
- *
- * Removes all smileys associated with a PidginWebView.
- */
-void pidgin_webview_remove_smileys(PidginWebView *webview);
-
-/**
- * pidgin_webview_insert_smiley:
- * @webview: The PidginWebView
- * @sml:     The category of the smiley
- * @smiley:  The text of the smiley to insert
- *
- * Inserts a smiley at the current location or selection in a PidginWebView.
- */
-void pidgin_webview_insert_smiley(PidginWebView *webview, const char *sml,
-                               const char *smiley);
 
 /**
  * pidgin_webview_show_toolbar:
