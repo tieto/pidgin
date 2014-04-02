@@ -821,7 +821,7 @@ static void
 insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	PurpleSmileyList *smileys_from_theme;
+	PurpleSmileyList *smileys_from_theme, *smileys_from_custom = NULL;
 	GList *theme_smileys, *custom_smileys = NULL;
 	PidginWebViewButtons webview_format;
 
@@ -845,8 +845,11 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 	/* TODO: remove hidden */
 
 	supports_custom = (webview_format & PIDGIN_WEBVIEW_CUSTOM_SMILEY);
-	if (supports_custom)
-		custom_smileys = purple_smiley_custom_get_all();
+	if (supports_custom) {
+		smileys_from_custom = purple_smiley_custom_get_list();
+		custom_smileys =
+			purple_smiley_list_get_unique(smileys_from_custom);
+	}
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
@@ -892,11 +895,16 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		max_line_width = MAX(button_width, max_line_width / num_lines);
 
 		/* pack buttons of the list */
-		add_smiley_list(toolbar, smiley_table, theme_smileys, max_line_width);
-		if (supports_custom) {
+		if (theme_smileys) {
+			add_smiley_list(toolbar, smiley_table,
+				theme_smileys, max_line_width);
+		}
+		if (theme_smileys && custom_smileys) {
 			gtk_box_pack_start(GTK_BOX(smiley_table),
 				gtk_separator_new(GTK_ORIENTATION_HORIZONTAL),
 				TRUE, FALSE, 0);
+		}
+		if (custom_smileys) {
 			add_smiley_list(toolbar, smiley_table,
 				custom_smileys, max_line_width);
 		}

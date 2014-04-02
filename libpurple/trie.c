@@ -625,6 +625,17 @@ purple_trie_remove(PurpleTrie *trie, const gchar *word)
 	purple_memory_pool_free(priv->records_obj_mempool, it);
 }
 
+guint
+purple_trie_get_size(PurpleTrie *trie)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return g_hash_table_size(priv->records_map);
+}
+
+
 /*******************************************************************************
  * API implementation
  ******************************************************************************/

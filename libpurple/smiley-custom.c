@@ -22,7 +22,6 @@
 #include "smiley-custom.h"
 
 #include "debug.h"
-#include "smiley-list.h"
 
 #include <glib/gstdio.h>
 
@@ -33,7 +32,6 @@ static gchar *smileys_dir;
 static gchar *smileys_index;
 
 static PurpleSmileyList *smileys_list;
-static GHashTable *smileys_table;
 static gboolean disable_write = FALSE;
 
 /*******************************************************************************
@@ -82,9 +80,8 @@ purple_smiley_custom_load(void)
 			smiley = purple_smiley_new(shortcut, file_path);
 			g_free(file_path);
 
-			g_hash_table_insert(smileys_table,
-				g_strdup(shortcut), smiley);
 			purple_smiley_list_add(smileys_list, smiley);
+			g_object_unref(smiley);
 		}
 
 		smiley_node = purple_xmlnode_get_next_twin(smiley_node);
@@ -100,8 +97,7 @@ static PurpleXmlNode *
 smileys_to_xmlnode(void)
 {
 	PurpleXmlNode *root_node, *profile_node, *smileyset_node;
-	GHashTableIter it;
-	gpointer value;
+	GList *smileys, *it;
 
 	root_node = purple_xmlnode_new("smileys");
 	purple_xmlnode_set_attrib(root_node, "version", "1.0");
@@ -113,9 +109,10 @@ smileys_to_xmlnode(void)
 	smileyset_node = purple_xmlnode_new("smiley_set");
 	purple_xmlnode_insert_child(profile_node, smileyset_node);
 
-	g_hash_table_iter_init(&it, smileys_table);
-	while (g_hash_table_iter_next(&it, NULL, &value)) {
-		PurpleSmiley *smiley = PURPLE_SMILEY(value);
+	smileys = purple_smiley_list_get_unique(smileys_list);
+
+	for (it = smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = PURPLE_SMILEY(it->data);
 		PurpleXmlNode *smiley_node;
 
 		smiley_node = purple_xmlnode_new("smiley");
@@ -181,7 +178,8 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 
 	g_return_val_if_fail(PURPLE_IS_STORED_IMAGE(img), NULL);
 
-	existing_smiley = g_hash_table_lookup(smileys_table, shortcut);
+	existing_smiley = purple_smiley_list_get_by_shortcut(
+		smileys_list, shortcut);
 
 	g_object_ref(img);
 
@@ -216,9 +214,9 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 
 	smiley = purple_smiley_new(shortcut, file_path);
 	g_free(file_path);
-
-	g_hash_table_insert(smileys_table, g_strdup(shortcut), smiley);
 	purple_smiley_list_add(smileys_list, smiley);
+	g_object_unref(smiley);
+
 	purple_smiley_custom_save();
 
 	return smiley;
@@ -233,7 +231,8 @@ purple_smiley_custom_remove(PurpleSmiley *smiley)
 	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
 
 	smiley_shortcut = purple_smiley_get_shortcut(smiley);
-	existing_smiley = g_hash_table_lookup(smileys_table, smiley_shortcut);
+	existing_smiley = purple_smiley_list_get_by_shortcut(
+		smileys_list, smiley_shortcut);
 	if (existing_smiley == NULL)
 		return;
 	if (existing_smiley != smiley) {
@@ -243,22 +242,13 @@ purple_smiley_custom_remove(PurpleSmiley *smiley)
 
 	g_unlink(purple_smiley_get_path(smiley));
 	purple_smiley_list_remove(smileys_list, smiley);
-	g_hash_table_remove(smileys_table, smiley_shortcut);
 	purple_smiley_custom_save();
 }
 
-GList *
-purple_smiley_custom_get_all(void)
+PurpleSmileyList *
+purple_smiley_custom_get_list(void)
 {
-	return g_hash_table_get_values(smileys_table);
-}
-
-PurpleTrie *
-purple_smiley_custom_get_trie(void)
-{
-	if (g_hash_table_size(smileys_table) == 0)
-		return NULL;
-	return purple_smiley_list_get_trie(smileys_list);
+	return smileys_list;
 }
 
 
@@ -274,8 +264,6 @@ purple_smiley_custom_init(void)
 	smileys_index = g_build_filename(purple_user_dir(),
 		SMILEYS_INDEX_FILE, NULL);
 	smileys_list = purple_smiley_list_new();
-	smileys_table = g_hash_table_new_full(g_str_hash, g_str_equal,
-		g_free, g_object_unref);
 
 	purple_smiley_custom_load();
 }
@@ -286,5 +274,4 @@ purple_smiley_custom_uninit(void)
 	g_free(smileys_dir);
 	g_free(smileys_index);
 	g_object_unref(smileys_list);
-	g_hash_table_destroy(smileys_table);
 }

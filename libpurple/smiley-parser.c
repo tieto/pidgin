@@ -69,7 +69,10 @@ purple_smiley_parse(const gchar *message, gpointer ui_data)
 	if (message == NULL || message[0] == '\0')
 		return g_strdup(message);
 
-	custom_trie = purple_smiley_custom_get_trie();
+	custom_trie = purple_smiley_list_get_trie(
+		purple_smiley_custom_get_list());
+	if (purple_trie_get_size(custom_trie) == 0)
+		custom_trie = NULL;
 
 	theme = purple_smiley_theme_get_current();
 	if (theme != NULL)

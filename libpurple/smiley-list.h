@@ -78,6 +78,10 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley);
 void
 purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley);
 
+PurpleSmiley *
+purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
+	const gchar *shortcut);
+
 PurpleTrie *
 purple_smiley_list_get_trie(PurpleSmileyList *list);
 

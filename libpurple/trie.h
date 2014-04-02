@@ -135,6 +135,9 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data);
 void
 purple_trie_remove(PurpleTrie *trie, const gchar *word);
 
+guint
+purple_trie_get_size(PurpleTrie *trie);
+
 /**
  * purple_trie_replace:
  * @trie: The trie.

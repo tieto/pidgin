@@ -23,7 +23,7 @@
 #define _PURPLE_SMILEY_CUSTOM_H_
 
 #include "smiley.h"
-#include "trie.h"
+#include "smiley-list.h"
 
 PurpleSmiley *
 purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut);
@@ -31,11 +31,8 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut);
 void
 purple_smiley_custom_remove(PurpleSmiley *smiley);
 
-GList *
-purple_smiley_custom_get_all(void);
-
-PurpleTrie *
-purple_smiley_custom_get_trie(void);
+PurpleSmileyList *
+purple_smiley_custom_get_list(void);
 
 void
 purple_smiley_custom_init(void);

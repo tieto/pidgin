@@ -155,6 +155,17 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	g_object_unref(smiley);
 }
 
+PurpleSmiley *
+purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
+	const gchar *shortcut)
+{
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return g_hash_table_lookup(priv->unique_map, shortcut);
+}
+
 PurpleTrie *
 purple_smiley_list_get_trie(PurpleSmileyList *list)
 {
