@@ -298,9 +298,8 @@ smiley_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
 	edit_dialog_update_buttons(edit_dialog);
 }
 
-/* TODO: maybe replace "GtkWindow *parent" with "SmileyManager *manager"? */
 static void
-pidgin_smiley_edit(GtkWindow *parent, PurpleSmiley *smiley)
+pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 {
 	SmileyEditDialog *edit_dialog;
 	GtkWidget *vbox, *hbox;
@@ -318,7 +317,7 @@ pidgin_smiley_edit(GtkWindow *parent, PurpleSmiley *smiley)
 
 	edit_dialog->window = GTK_DIALOG(gtk_dialog_new_with_buttons(
 		smiley ? _("Edit Smiley") : _("Add Smiley"),
-		parent, GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_WINDOW(manager->window), GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 		NULL));
@@ -552,7 +551,7 @@ smiley_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	if (!image)
 		return;
 
-	ps = pidgin_smiley_edit(GTK_WIDGET(dialog->window), NULL);
+	ps = pidgin_smiley_edit(manager, NULL);
 	pidgin_smiley_editor_set_image(ps, image);
 	pidgin_smiley_editor_set_data(ps, g_memdup(smileydata, len), len);
 }
@@ -583,7 +582,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 							"g_filename_from_uri error"));
 				return;
 			}
-			ps = pidgin_smiley_edit(GTK_WIDGET(dialog->window), NULL);
+			ps = pidgin_smiley_edit(manager, NULL);
 			image_choosen(tmp, ps);
 			if (gtk_image_get_pixbuf(GTK_IMAGE(ps->smiley_image)) == NULL)
 				gtk_dialog_response(GTK_DIALOG(ps->parent), GTK_RESPONSE_CANCEL);
@@ -638,7 +637,7 @@ smiley_list_activated(GtkTreeView *tree, GtkTreePath *path,
 		SMILEY_LIST_MODEL_PURPLESMILEY, &smiley, -1);
 	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
 
-	pidgin_smiley_edit(GTK_WINDOW(manager->window), smiley);
+	pidgin_smiley_edit(manager, smiley);
 }
 
 static void
@@ -789,7 +788,7 @@ smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 
 	switch (resp) {
 		case GTK_RESPONSE_YES:
-			pidgin_smiley_edit(GTK_WINDOW(manager->window), NULL);
+			pidgin_smiley_edit(manager, NULL);
 			break;
 #if 0
 		case GTK_RESPONSE_NO:
@@ -804,10 +803,8 @@ smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 			smiley_manager = NULL;
 			break;
 		case PIDGIN_RESPONSE_MODIFY:
-			for (it = selected_smileys; it; it = g_list_next(it)) {
-				pidgin_smiley_edit(GTK_WINDOW(manager->window),
-					it->data);
-			}
+			for (it = selected_smileys; it; it = g_list_next(it))
+				pidgin_smiley_edit(manager, it->data);
 			break;
 		default:
 			g_warn_if_reached();
