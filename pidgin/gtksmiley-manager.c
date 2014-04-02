@@ -58,6 +58,7 @@ typedef struct
 	PurpleSmiley *smiley;
 
 	gchar *filename;
+	PurpleStoredImage *new_image;
 
 	GtkDialog *window;
 	GtkImage *thumbnail;
@@ -89,6 +90,9 @@ enum
 static SmileyManager *smiley_manager = NULL;
 
 static void
+pidgin_smiley_manager_list_fill(SmileyManager *manager);
+
+static void
 edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
 {
 	SmileyEditDialog *edit_dialog = _edit_dialog;
@@ -98,6 +102,8 @@ edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
 			"pidgin-smiley-manager-edit-dialog", NULL);
 		g_object_unref(edit_dialog->smiley);
 	}
+
+	purple_imgstore_unref(edit_dialog->new_image);
 
 	g_free(edit_dialog->filename);
 	g_free(edit_dialog);
@@ -142,90 +148,58 @@ edit_dialog_update_buttons(SmileyEditDialog *edit_dialog)
 		GTK_RESPONSE_ACCEPT, shortcut_ok && image_ok);
 }
 
-#if 0
-static void do_add(GtkWidget *widget, PidginSmiley *s)
+static void
+pidgin_smiley_edit_save(SmileyEditDialog *edit_dialog)
 {
-	const gchar *entry;
-	PurpleSmiley *emoticon;
+	const gchar *shortcut;
+	PurpleSmiley *existing_smiley;
+	gboolean shortcut_changed, image_changed;
 
-	entry = gtk_entry_get_text(GTK_ENTRY(s->smile));
+	shortcut = gtk_entry_get_text(edit_dialog->shortcut);
 
-	emoticon = purple_smileys_find_by_shortcut(entry);
-	if (emoticon && emoticon != s->smiley) {
-		gchar *msg;
-		msg = g_strdup_printf(_("A custom smiley for '%s' already exists.  "
-				"Please use a different shortcut."), entry);
-		purple_notify_error(s, _("Custom Smiley"),
-				_("Duplicate Shortcut"), msg, NULL);
+	existing_smiley = purple_smiley_list_get_by_shortcut(
+		purple_smiley_custom_get_list(), shortcut);
+
+	if (existing_smiley && existing_smiley != edit_dialog->smiley) {
+		gchar *msg = g_strdup_printf(
+			_("A custom smiley for '%s' already exists.  "
+			"Please use a different shortcut."), shortcut);
+		purple_notify_error(edit_dialog, _("Custom Smiley"),
+			_("Duplicate Shortcut"), msg, NULL);
 		g_free(msg);
 		return;
 	}
 
-	if (s->smiley) {
-		if (s->filename) {
-			gchar *data = NULL;
-			size_t len;
-			GError *err = NULL;
-
-			if (!g_file_get_contents(s->filename, &data, &len, &err)) {
-				purple_debug_error("gtksmiley", "Error reading %s: %s\n",
-						s->filename, err->message);
-				g_error_free(err);
-
-				return;
-			}
-			purple_smiley_set_data(s->smiley, (guchar*)data, len);
-		}
-		purple_smiley_set_shortcut(s->smiley, entry);
-	} else {
-		purple_debug_info("gtksmiley", "adding a new smiley\n");
-
-		if (s->filename == NULL) {
-			gchar *buffer = NULL;
-			gsize size = 0;
-			gchar *filename;
-			const gchar *dirname = purple_smileys_get_storing_dir();
-
-			/* since this may be called before purple_smiley_new_* has ever been
-			 called, we create the storing dir, if it doesn't exist yet, to be
-			 able to save the pixbuf before adding the smiley */
-			if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
-				purple_debug_info("gtksmiley", "Creating smileys directory.\n");
-
-				if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
-					purple_debug_error("gtksmiley",
-			                   "Unable to create directory %s: %s\n",
-			                   dirname, g_strerror(errno));
-				}
-			}
-
-			if (s->data && s->datasize) {
-				/* Cached data & size in memory */
-				buffer = s->data;
-				size = s->datasize;
-			}
-			else {
-				/* Get the smiley from the custom pixbuf */
-				gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
-					"png", NULL, "compression", "9", NULL, NULL);
-			}
-			filename = purple_util_get_image_filename(buffer, size);
-			s->filename = g_build_filename(dirname, filename, NULL);
-			purple_util_write_data_to_file_absolute(s->filename, buffer, size);
-			g_free(filename);
-			g_free(buffer);
-		}
-		emoticon = purple_smiley_new_from_file(entry, s->filename);
-		if (emoticon)
-			pidgin_smiley_add_to_list(emoticon);
+	if (edit_dialog->smiley == NULL)
+		shortcut_changed = image_changed = TRUE;
+	else {
+		shortcut_changed = (g_strcmp0(purple_smiley_get_shortcut(
+			edit_dialog->smiley), shortcut) != 0);
+		image_changed = (edit_dialog->new_image != NULL);
 	}
 
-	if (smiley_manager != NULL)
-		refresh_list();
+	if (!shortcut_changed && !image_changed) {
+		gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
+		return;
+	}
 
-	gtk_widget_destroy(s->parent);
+	if (edit_dialog->new_image == NULL) {
+		/* We're reading the file and then writing it back - it's not
+		 * efficient, but it's also not really important here. */
+		edit_dialog->new_image = purple_imgstore_new_from_file(
+			purple_smiley_get_path(edit_dialog->smiley));
+		g_return_if_fail(edit_dialog->new_image);
+	}
+
+	if (edit_dialog->smiley)
+		purple_smiley_custom_remove(edit_dialog->smiley);
+	purple_smiley_custom_add(edit_dialog->new_image, shortcut);
+
+	if (smiley_manager)
+		pidgin_smiley_manager_list_fill(smiley_manager);
+
+	gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
 }
-#endif
 
 static void
 pidgin_smiley_edit_response(GtkDialog *window, gint response_id,
@@ -234,11 +208,9 @@ pidgin_smiley_edit_response(GtkDialog *window, gint response_id,
 	SmileyEditDialog *edit_dialog = _edit_dialog;
 
 	switch (response_id) {
-#if 0
 		case GTK_RESPONSE_ACCEPT:
-			do_add(widget, s);
+			pidgin_smiley_edit_save(edit_dialog);
 			break;
-#endif
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CANCEL:
 			gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
@@ -255,6 +227,11 @@ image_choosen(const char *filename, gpointer _edit_dialog)
 
 	if (!filename)
 		return;
+
+	if (edit_dialog->new_image)
+		purple_imgstore_unref(edit_dialog->new_image);
+	edit_dialog->new_image = purple_imgstore_new_from_file(filename);
+	g_return_if_fail(edit_dialog->new_image);
 
 	g_free(edit_dialog->filename);
 	edit_dialog->filename = g_strdup(filename);

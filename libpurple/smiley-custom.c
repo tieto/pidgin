@@ -116,6 +116,7 @@ smileys_to_xmlnode(void)
 		PurpleXmlNode *smiley_node;
 
 		smiley_node = purple_xmlnode_new("smiley");
+		purple_xmlnode_insert_child(smileyset_node, smiley_node);
 		purple_xmlnode_set_attrib(smiley_node, "shortcut",
 			purple_smiley_get_shortcut(smiley));
 		purple_xmlnode_set_attrib(smiley_node, "filename",
@@ -181,7 +182,7 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 	existing_smiley = purple_smiley_list_get_by_shortcut(
 		smileys_list, shortcut);
 
-	g_object_ref(img);
+	purple_imgstore_ref(img);
 
 	if (existing_smiley) {
 		disable_write = TRUE;
@@ -203,7 +204,7 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 		purple_imgstore_get_size(img), &error);
 
 	g_free(checksum);
-	g_object_unref(img);
+	purple_imgstore_unref(img);
 
 	if (error) {
 		purple_debug_error("smiley-custom", "Failed writing smiley "
@@ -226,7 +227,9 @@ void
 purple_smiley_custom_remove(PurpleSmiley *smiley)
 {
 	PurpleSmiley *existing_smiley;
-	const gchar *smiley_shortcut;
+	const gchar *smiley_shortcut, *path;
+	GList *other_smileys, *it;
+	gboolean is_unique;
 
 	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
 
@@ -240,8 +243,27 @@ purple_smiley_custom_remove(PurpleSmiley *smiley)
 		return;
 	}
 
-	g_unlink(purple_smiley_get_path(smiley));
+	g_object_ref(smiley);
 	purple_smiley_list_remove(smileys_list, smiley);
+
+	path = purple_smiley_get_path(smiley);
+
+	other_smileys = purple_smiley_list_get_unique(smileys_list);
+	is_unique = TRUE;
+	for (it = other_smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *other = it->data;
+		if (g_strcmp0(purple_smiley_get_path(other), path) == 0) {
+			is_unique = FALSE;
+			break;
+		}
+	}
+	g_list_free(other_smileys);
+
+	if (is_unique)
+		g_unlink(path);
+
+	g_object_unref(smiley);
+
 	purple_smiley_custom_save();
 }
 
@@ -264,6 +286,11 @@ purple_smiley_custom_init(void)
 	smileys_index = g_build_filename(purple_user_dir(),
 		SMILEYS_INDEX_FILE, NULL);
 	smileys_list = purple_smiley_list_new();
+
+	if (g_mkdir(smileys_dir, S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
+		purple_debug_error("smiley-custom", "Failed creating custom "
+			"smileys directory");
+	}
 
 	purple_smiley_custom_load();
 }
