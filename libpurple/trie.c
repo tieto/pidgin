@@ -594,7 +594,7 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 	priv->records_total_size += rec->word_len;
 	priv->records = purple_record_list_prepend(priv->records_obj_mempool,
 		priv->records, rec);
-	g_hash_table_insert(priv->records_map, priv->records, rec->word);
+	g_hash_table_insert(priv->records_map, rec->word, priv->records);
 
 	return TRUE;
 }
