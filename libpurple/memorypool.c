@@ -160,6 +160,7 @@ purple_memory_pool_cleanup_impl(PurpleMemoryPool *pool)
 
 	blk = priv->first_block;
 	priv->first_block = NULL;
+	priv->last_block = NULL;
 	while (blk) {
 		PurpleMemoryPoolBlock *next = blk->next;
 		g_free(blk);

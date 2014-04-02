@@ -23,6 +23,7 @@ START_TEST(test_trie_replace)
 	gchar *out;
 
 	trie = purple_trie_new();
+	purple_trie_set_reset_on_match(trie, FALSE);
 
 	purple_trie_add(trie, "test", (gpointer)0x1001);
 	purple_trie_add(trie, "testing", (gpointer)0x1002);
@@ -154,6 +155,31 @@ START_TEST(test_trie_multi_replace)
 }
 END_TEST
 
+START_TEST(test_trie_remove)
+{
+	PurpleTrie *trie;
+	const gchar *in;
+	gchar *out;
+
+	trie = purple_trie_new();
+
+	purple_trie_add(trie, "alice", (gpointer)0x6001);
+	purple_trie_add(trie, "bob", (gpointer)0x6002);
+	purple_trie_add(trie, "cherry", (gpointer)0x6003);
+
+	purple_trie_remove(trie, "bob");
+
+	in = "alice bob cherry";
+
+	out = purple_trie_replace(trie, in, test_trie_replace_cb, (gpointer)6);
+
+	assert_string_equal("[6:6001] bob [6:6003]", out);
+
+	g_object_unref(trie);
+	g_free(out);
+}
+END_TEST
+
 Suite *
 purple_trie_suite(void)
 {
@@ -165,6 +191,7 @@ purple_trie_suite(void)
 	tcase_add_test(tc, test_trie_replace_inner);
 	tcase_add_test(tc, test_trie_replace_empty);
 	tcase_add_test(tc, test_trie_multi_replace);
+	tcase_add_test(tc, test_trie_remove);
 
 	suite_add_tcase(s, tc);
 
