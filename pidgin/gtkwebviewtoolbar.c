@@ -847,8 +847,8 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 	supports_custom = (webview_format & PIDGIN_WEBVIEW_CUSTOM_SMILEY);
 	if (supports_custom) {
 		smileys_from_custom = purple_smiley_custom_get_list();
-		custom_smileys =
-			purple_smiley_list_get_unique(smileys_from_custom);
+		custom_smileys = purple_smiley_list_get_all(
+			smileys_from_custom);
 	}
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);

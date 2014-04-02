@@ -24,6 +24,7 @@
 #include "debug.h"
 
 #include <glib/gstdio.h>
+#include <errno.h>
 
 #define SMILEYS_DEFAULT_FOLDER "custom_smiley"
 #define SMILEYS_INDEX_FILE "smileys.xml"
@@ -76,11 +77,15 @@ purple_smiley_custom_load(void)
 			gchar *file_path = g_build_filename(
 				smileys_dir, file_name, NULL);
 
-			got_smileys++;
 			smiley = purple_smiley_new(shortcut, file_path);
 			g_free(file_path);
 
-			purple_smiley_list_add(smileys_list, smiley);
+			if (purple_smiley_list_add(smileys_list, smiley)) {
+				got_smileys++;
+			} else {
+				purple_debug_warning("smiley-custom",
+					"Couldn't add '%s' smiley", shortcut);
+			}
 			g_object_unref(smiley);
 		}
 
@@ -109,7 +114,7 @@ smileys_to_xmlnode(void)
 	smileyset_node = purple_xmlnode_new("smiley_set");
 	purple_xmlnode_insert_child(profile_node, smileyset_node);
 
-	smileys = purple_smiley_list_get_unique(smileys_list);
+	smileys = purple_smiley_list_get_all(smileys_list);
 
 	for (it = smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = PURPLE_SMILEY(it->data);
@@ -176,6 +181,7 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 	gchar file_name[256];
 	const gchar *file_ext;
 	GError *error = NULL;
+	gboolean succ;
 
 	g_return_val_if_fail(PURPLE_IS_STORED_IMAGE(img), NULL);
 
@@ -215,8 +221,11 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 
 	smiley = purple_smiley_new(shortcut, file_path);
 	g_free(file_path);
-	purple_smiley_list_add(smileys_list, smiley);
+	succ = purple_smiley_list_add(smileys_list, smiley);
 	g_object_unref(smiley);
+
+	if (!succ)
+		purple_debug_error("smiley-custom", "Failed adding a smiley");
 
 	purple_smiley_custom_save();
 
@@ -281,15 +290,18 @@ purple_smiley_custom_get_list(void)
 void
 purple_smiley_custom_init(void)
 {
+	gint ret;
+
 	smileys_dir = g_build_filename(purple_user_dir(),
 		SMILEYS_DEFAULT_FOLDER, NULL);
 	smileys_index = g_build_filename(purple_user_dir(),
 		SMILEYS_INDEX_FILE, NULL);
 	smileys_list = purple_smiley_list_new();
 
-	if (g_mkdir(smileys_dir, S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
+	ret = g_mkdir(smileys_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+	if (ret != 0 && errno != EEXIST) {
 		purple_debug_error("smiley-custom", "Failed creating custom "
-			"smileys directory");
+			"smileys directory: %s (%d)", g_strerror(errno), errno);
 	}
 
 	purple_smiley_custom_load();

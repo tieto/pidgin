@@ -443,54 +443,6 @@ pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasiz
 }
 #endif
 
-/******************************************************************************
- * Delete smiley
- *****************************************************************************/
-#if 0
-static void delete_foreach(GtkTreeModel *model, GtkTreePath *path,
-		GtkTreeIter *iter, gpointer data)
-{
-	PurpleSmiley *smiley = NULL;
-
-	gtk_tree_model_get(model, iter,
-			SMILEY, &smiley,
-			-1);
-
-	if(smiley != NULL) {
-		g_object_unref(G_OBJECT(smiley));
-		pidgin_smiley_del_from_list(smiley);
-		purple_smiley_delete(smiley);
-	}
-}
-#endif
-
-#if 0
-static void append_to_list(GtkTreeModel *model, GtkTreePath *path,
-		GtkTreeIter *iter, gpointer data)
-{
-	GList **list = data;
-	*list = g_list_prepend(*list, gtk_tree_path_copy(path));
-}
-
-static void smiley_delete(SmileyManager *dialog)
-{
-	GtkTreeSelection *selection;
-	GList *list = NULL;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
-	gtk_tree_selection_selected_foreach(selection, delete_foreach, dialog);
-	gtk_tree_selection_selected_foreach(selection, append_to_list, &list);
-
-	while (list) {
-		GtkTreeIter iter;
-		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, list->data))
-			gtk_list_store_remove(GTK_LIST_STORE(dialog->model), &iter);
-		gtk_tree_path_free(list->data);
-		list = g_list_delete_link(list, list);
-	}
-}
-#endif
-
 #if 0
 static void
 smiley_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
@@ -629,7 +581,7 @@ pidgin_smiley_manager_list_fill(SmileyManager *manager)
 	GList *custom_smileys, *it;
 	gtk_list_store_clear(manager->model);
 
-	custom_smileys = purple_smiley_list_get_unique(
+	custom_smileys = purple_smiley_list_get_all(
 		purple_smiley_custom_get_list());
 
 	for (it = custom_smileys; it; it = g_list_next(it)) {
@@ -745,11 +697,11 @@ smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 		case GTK_RESPONSE_YES:
 			pidgin_smiley_edit(manager, NULL);
 			break;
-#if 0
 		case GTK_RESPONSE_NO:
-			smiley_delete(manager);
+			for (it = selected_smileys; it; it = g_list_next(it))
+				purple_smiley_custom_remove(it->data);
+			pidgin_smiley_manager_list_fill(manager);
 			break;
-#endif
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CLOSE:
 			gtk_widget_destroy(GTK_WIDGET(manager->window));

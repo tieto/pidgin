@@ -88,6 +88,9 @@ purple_smiley_list_get_trie(PurpleSmileyList *list);
 GList *
 purple_smiley_list_get_unique(PurpleSmileyList *list_);
 
+GList *
+purple_smiley_list_get_all(PurpleSmileyList *list_);
+
 G_END_DECLS
 
 #endif /* _PURPLE_SMILEY_H_ */

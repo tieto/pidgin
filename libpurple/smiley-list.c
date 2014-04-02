@@ -34,7 +34,8 @@ typedef struct {
 	GList *smileys;
 	GList *smileys_end;
 	PurpleTrie *trie;
-	GHashTable *unique_map;
+	GHashTable *path_map;
+	GHashTable *shortcut_map;
 } PurpleSmileyListPrivate;
 
 enum
@@ -108,10 +109,15 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 	}
 
 	shortcut = purple_smiley_get_shortcut(smiley);
+
+	if (g_hash_table_lookup(priv->shortcut_map, shortcut) != NULL)
+		return FALSE;
+
 	if (purple_smiley_parse_escape())
 		shortcut = tmp = g_markup_escape_text(shortcut, -1);
 	succ = purple_trie_add(priv->trie, shortcut, smiley);
 	g_free(tmp);
+	shortcut = purple_smiley_get_shortcut(smiley);
 	if (!succ)
 		return FALSE;
 
@@ -122,10 +128,11 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 		priv->smileys_end);
 
 	smiley_path = purple_smiley_get_path(smiley);
-	if (g_hash_table_lookup(priv->unique_map, smiley_path) == NULL) {
-		g_hash_table_insert(priv->unique_map,
+	if (g_hash_table_lookup(priv->path_map, smiley_path) == NULL) {
+		g_hash_table_insert(priv->path_map,
 			g_strdup(smiley_path), smiley);
 	}
+	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
 
 	return TRUE;
 }
@@ -134,7 +141,9 @@ void
 purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
-	GList *list_elem;
+	GList *list_elem, *it;
+	const gchar *shortcut, *path;
+	gchar *tmp;
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
@@ -147,8 +156,30 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	list_elem = g_object_get_data(G_OBJECT(smiley),
 		"purple-smiley-list-elem");
 
-	purple_trie_remove(priv->trie, purple_smiley_get_shortcut(smiley));
+	shortcut = purple_smiley_get_shortcut(smiley);
+	path = purple_smiley_get_path(smiley);
+
+	g_hash_table_remove(priv->shortcut_map, shortcut);
+	g_hash_table_remove(priv->path_map, path);
+
+	if (purple_smiley_parse_escape())
+		shortcut = tmp = g_markup_escape_text(shortcut, -1);
+	purple_trie_remove(priv->trie, shortcut);
+	g_free(tmp);
+	shortcut = purple_smiley_get_shortcut(smiley);
+
 	_list_remove_link2(&priv->smileys, &priv->smileys_end, list_elem);
+
+	/* re-add entry to path_map if smiley was not unique */
+	for (it = priv->smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+
+		if (g_strcmp0(purple_smiley_get_path(smiley), path) == 0) {
+			g_hash_table_insert(priv->path_map,
+				g_strdup(path), smiley);
+			break;
+		}
+	}
 
 	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", NULL);
 	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem", NULL);
@@ -163,7 +194,7 @@ purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return g_hash_table_lookup(priv->unique_map, shortcut);
+	return g_hash_table_lookup(priv->shortcut_map, shortcut);
 }
 
 PurpleTrie *
@@ -183,7 +214,17 @@ purple_smiley_list_get_unique(PurpleSmileyList *list)
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return g_hash_table_get_values(priv->unique_map);
+	return g_hash_table_get_values(priv->path_map);
+}
+
+GList *
+purple_smiley_list_get_all(PurpleSmileyList *list)
+{
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return g_hash_table_get_values(priv->shortcut_map);
 }
 
 
@@ -198,7 +239,9 @@ purple_smiley_list_init(GTypeInstance *instance, gpointer klass)
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
 
 	priv->trie = purple_trie_new();
-	priv->unique_map = g_hash_table_new_full(g_str_hash, g_str_equal,
+	priv->path_map = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, NULL);
+	priv->shortcut_map = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, NULL);
 
 	PURPLE_DBUS_REGISTER_POINTER(sl, PurpleSmileyList);
@@ -212,7 +255,8 @@ purple_smiley_list_finalize(GObject *obj)
 	GList *it;
 
 	g_object_unref(priv->trie);
-	g_hash_table_destroy(priv->unique_map);
+	g_hash_table_destroy(priv->path_map);
+	g_hash_table_destroy(priv->shortcut_map);
 
 	for (it = priv->smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
