@@ -65,21 +65,19 @@ typedef struct
 typedef struct
 {
 	GtkDialog *window;
-
-	GtkWidget *treeview;
 	GtkListStore *model;
+	GtkTreeView *tree;
+
 	PurpleHttpConnection *running_request;
 } SmileyManager;
 
-#if 0
 enum
 {
-	ICON,
-	SHORTCUT,
-	SMILEY,
-	N_COL
+	SMILEY_LIST_MODEL_ICON,
+	SMILEY_LIST_MODEL_SHORTCUT,
+	SMILEY_LIST_MODEL_PURPLESMILEY,
+	SMILEY_LIST_MODEL_N_COL
 };
-#endif
 
 static SmileyManager *smiley_manager = NULL;
 
@@ -511,33 +509,6 @@ static void smiley_delete(SmileyManager *dialog)
 /******************************************************************************
  * The Smiley Manager
  *****************************************************************************/
-#if 0
-static void add_columns(GtkWidget *treeview, SmileyManager *dialog)
-{
-	GtkCellRenderer *rend;
-	GtkTreeViewColumn *column;
-
-	/* Icon */
-	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Smiley"));
-	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-
-	rend = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(column, rend, FALSE);
-	gtk_tree_view_column_add_attribute(column, rend, "pixbuf", ICON);
-
-	/* Shortcut Text */
-	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Shortcut Text"));
-	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-
-	rend = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(column, rend, TRUE);
-	gtk_tree_view_column_add_attribute(column, rend, "text", SHORTCUT);
-}
-#endif
 
 #if 0
 static void store_smiley_add(PurpleSmiley *smiley)
@@ -724,50 +695,79 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 }
 #endif
 
-#if 0
-static GtkWidget *smiley_list_create(SmileyManager *dialog)
+static GtkWidget *pidgin_smiley_manager_list_create(SmileyManager *manager)
 {
-	GtkWidget *treeview;
+	GtkTreeView *tree;
 	GtkTreeSelection *sel;
-	GtkTargetEntry te[3] = {
+	GtkCellRenderer *cellrend;
+	GtkTreeViewColumn *column;
+#if 0
+	GtkTargetEntry targets[3] = {
 		{"text/plain", 0, 0},
 		{"text/uri-list", 0, 1},
 		{"STRING", 0, 2}
 	};
+#endif
 
-	/* Create the list model */
-	dialog->model = gtk_list_store_new(N_COL,
-			GDK_TYPE_PIXBUF,	/* ICON */
-			G_TYPE_STRING,		/* SHORTCUT */
-			G_TYPE_OBJECT		/* SMILEY */
-			);
+	manager->model = gtk_list_store_new(SMILEY_LIST_MODEL_N_COL,
+		GDK_TYPE_PIXBUF, /* icon */
+		G_TYPE_STRING, /* shortcut */
+		G_TYPE_OBJECT /* PurpleSmiley */
+		);
 
-	/* the actual treeview */
-	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
-	dialog->treeview = treeview;
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(dialog->model), SHORTCUT, GTK_SORT_ASCENDING);
-	g_object_unref(G_OBJECT(dialog->model));
+	manager->tree = tree = GTK_TREE_VIEW(gtk_tree_view_new_with_model(
+		GTK_TREE_MODEL(manager->model)));
 
-	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	gtk_tree_view_set_rules_hint(tree, TRUE);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(manager->model),
+		SMILEY_LIST_MODEL_SHORTCUT, GTK_SORT_ASCENDING);
+
+	g_object_unref(manager->model);
+
+	sel = gtk_tree_view_get_selection(tree);
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
-	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smile_selected_cb), dialog);
-	g_signal_connect(G_OBJECT(treeview), "row_activated", G_CALLBACK(smiley_edit_cb), dialog);
+//	g_signal_connect(sel, "changed",
+//		G_CALLBACK(smile_selected_cb), manager);
+//	g_signal_connect(tree, "row_activated",
+//		G_CALLBACK(smiley_edit_cb), manager);
 
-	gtk_drag_dest_set(treeview,
-	                  GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP,
-	                  te, G_N_ELEMENTS(te), GDK_ACTION_COPY | GDK_ACTION_MOVE);
-	g_signal_connect(G_OBJECT(treeview), "drag_data_received", G_CALLBACK(smiley_dnd_recv), dialog);
-
-	gtk_widget_show(treeview);
-
-	add_columns(treeview, dialog);
-	populate_smiley_list(dialog);
-
-	return pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
-}
+#if 0
+	gtk_drag_dest_set(GTK_WIDGET(tree), GTK_DEST_DEFAULT_MOTION |
+		GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP,
+		targets, G_N_ELEMENTS(targets),
+		GDK_ACTION_COPY | GDK_ACTION_MOVE);
+	g_signal_connect(tree, "drag_data_received",
+		G_CALLBACK(smiley_dnd_recv), manager);
 #endif
+
+	gtk_widget_show(GTK_WIDGET(tree));
+
+	/* setting up columns */
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Smiley"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_append_column(tree, column);
+	cellrend = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(column, cellrend, FALSE);
+	gtk_tree_view_column_add_attribute(column, cellrend,
+		"pixbuf", SMILEY_LIST_MODEL_ICON);
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Shortcut Text"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_append_column(tree, column);
+	cellrend = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, cellrend, TRUE);
+	gtk_tree_view_column_add_attribute(column, cellrend,
+		"text", SMILEY_LIST_MODEL_SHORTCUT);
+
+//	populate_smiley_list(dialog);
+
+	return pidgin_make_scrollable(GTK_WIDGET(tree), GTK_POLICY_AUTOMATIC,
+		GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
+}
 
 #if 0
 static void refresh_list()
@@ -817,10 +817,7 @@ pidgin_smiley_manager_show(void)
 {
 	SmileyManager *manager;
 	GtkDialog *win;
-#if 0
-	GtkWidget *sw;
-#endif
-	GtkWidget *vbox;
+	GtkWidget *sw, *vbox;
 
 	if (smiley_manager) {
 		gtk_window_present(GTK_WINDOW(smiley_manager->window));
@@ -853,12 +850,10 @@ pidgin_smiley_manager_show(void)
 	/* The vbox */
 	vbox = gtk_dialog_get_content_area(win);
 
-#if 0
 	/* get the scrolled window with all stuff */
-	sw = smiley_list_create(manager);
+	sw = pidgin_smiley_manager_list_create(manager);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
-#endif
 
 	gtk_widget_show(GTK_WIDGET(win));
 }
