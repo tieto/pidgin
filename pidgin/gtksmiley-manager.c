@@ -37,8 +37,6 @@
 
 #include "gtk3compat.h"
 
-#define PIDGIN_RESPONSE_MODIFY 1000
-
 #if 0
 typedef struct _PidginSmiley PidginSmiley;
 struct _PidginSmiley
@@ -83,20 +81,23 @@ enum
 	SMILEY_LIST_MODEL_N_COL
 };
 
-static SmileyManager *smiley_manager = NULL;
+enum
+{
+	PIDGIN_RESPONSE_MODIFY
+};
 
-/******************************************************************************
- * New routines (TODO)
- *****************************************************************************/
+static SmileyManager *smiley_manager = NULL;
 
 static void
 edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
 {
 	SmileyEditDialog *edit_dialog = _edit_dialog;
 
-	g_object_set_data(G_OBJECT(edit_dialog->smiley),
-		"pidgin-smiley-manager-edit-dialog", NULL);
-	g_object_unref(edit_dialog->smiley);
+	if (edit_dialog->smiley) {
+		g_object_set_data(G_OBJECT(edit_dialog->smiley),
+			"pidgin-smiley-manager-edit-dialog", NULL);
+		g_object_unref(edit_dialog->smiley);
+	}
 
 	g_free(edit_dialog->filename);
 	g_free(edit_dialog);
@@ -120,7 +121,7 @@ edit_dialog_update_thumb(SmileyEditDialog *edit_dialog)
 			gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
 		pixbuf = gtk_widget_render_icon(GTK_WIDGET(edit_dialog->window),
 			PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR, icon_size,
-			"PidginSmiley");
+			"PidginSmileyManager");
 	}
 	g_return_if_fail(pixbuf != NULL);
 
@@ -140,19 +141,6 @@ edit_dialog_update_buttons(SmileyEditDialog *edit_dialog)
 	gtk_dialog_set_response_sensitive(edit_dialog->window,
 		GTK_RESPONSE_ACCEPT, shortcut_ok && image_ok);
 }
-
-
-/******************************************************************************
- * Manager stuff
- *****************************************************************************/
-
-#if 0
-static void refresh_list(void);
-#endif
-
-/******************************************************************************
- * The Add dialog
- ******************************************************************************/
 
 #if 0
 static void do_add(GtkWidget *widget, PidginSmiley *s)
@@ -306,11 +294,13 @@ pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 	GtkLabel *label;
 	GtkButton *filech;
 
-	edit_dialog = g_object_get_data(G_OBJECT(smiley),
-		"pidgin-smiley-manager-edit-dialog");
-	if (edit_dialog) {
-		gtk_window_present(GTK_WINDOW(edit_dialog->window));
-		return;
+	if (smiley) {
+		edit_dialog = g_object_get_data(G_OBJECT(smiley),
+			"pidgin-smiley-manager-edit-dialog");
+		if (edit_dialog) {
+			gtk_window_present(GTK_WINDOW(edit_dialog->window));
+			return;
+		}
 	}
 
 	edit_dialog = g_new0(SmileyEditDialog, 1);
@@ -324,10 +314,12 @@ pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 	gtk_dialog_set_default_response(
 		edit_dialog->window, GTK_RESPONSE_ACCEPT);
 
-	edit_dialog->smiley = smiley;
-	g_object_set_data(G_OBJECT(smiley),
-		"pidgin-smiley-manager-edit-dialog", edit_dialog);
-	g_object_ref(smiley);
+	if (smiley) {
+		edit_dialog->smiley = smiley;
+		g_object_set_data(G_OBJECT(smiley),
+			"pidgin-smiley-manager-edit-dialog", edit_dialog);
+		g_object_ref(smiley);
+	}
 
 #if !GTK_CHECK_VERSION(3,0,0)
 	gtk_container_set_border_width(
@@ -502,9 +494,7 @@ static void append_to_list(GtkTreeModel *model, GtkTreePath *path,
 	GList **list = data;
 	*list = g_list_prepend(*list, gtk_tree_path_copy(path));
 }
-#endif
 
-#if 0
 static void smiley_delete(SmileyManager *dialog)
 {
 	GtkTreeSelection *selection;
@@ -523,11 +513,6 @@ static void smiley_delete(SmileyManager *dialog)
 	}
 }
 #endif
-
-
-/******************************************************************************
- * The Smiley Manager
- *****************************************************************************/
 
 #if 0
 static void
@@ -752,13 +737,6 @@ pidgin_smiley_manager_list_create(SmileyManager *manager)
 	return pidgin_make_scrollable(GTK_WIDGET(tree), GTK_POLICY_AUTOMATIC,
 		GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
 }
-
-#if 0
-static void refresh_list()
-{
-	populate_smiley_list(smiley_manager);
-}
-#endif
 
 static void
 smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
