@@ -483,7 +483,7 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
  * Sets an ATK name for a given widget.  Also sets the labelled-by
  * and label-for ATK relationships.
  */
-void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
+void pidgin_set_accessible_label(GtkWidget *w, GtkLabel *l);
 
 /**
  * pidgin_set_accessible_relations:

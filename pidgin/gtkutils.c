@@ -1176,7 +1176,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 }
 
 void
-pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
+pidgin_set_accessible_label(GtkWidget *w, GtkLabel *l)
 {
 	AtkObject *acc;
 	const gchar *label_text;
@@ -1187,7 +1187,7 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 	/* If this object has no name, set it's name with the label text */
 	existing_name = atk_object_get_name (acc);
 	if (!existing_name) {
-		label_text = gtk_label_get_text (GTK_LABEL(l));
+		label_text = gtk_label_get_text(l);
 		if (label_text)
 			atk_object_set_name (acc, label_text);
 	}

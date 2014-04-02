@@ -71,6 +71,7 @@ typedef struct
 	PurpleHttpConnection *running_request;
 } SmileyManager;
 
+#if 0
 enum
 {
 	ICON,
@@ -78,6 +79,7 @@ enum
 	SMILEY,
 	N_COL
 };
+#endif
 
 static SmileyManager *smiley_manager = NULL;
 
@@ -159,7 +161,7 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 		gchar *msg;
 		msg = g_strdup_printf(_("A custom smiley for '%s' already exists.  "
 				"Please use a different shortcut."), entry);
-		purple_notify_error(s->parent, _("Custom Smiley"),
+		purple_notify_error(s, _("Custom Smiley"),
 				_("Duplicate Shortcut"), msg, NULL);
 		g_free(msg);
 		return;
@@ -252,7 +254,8 @@ pidgin_smiley_edit_response(GtkDialog *window, gint response_id,
 	}
 }
 
-static void do_add_file_cb(const char *filename, gpointer _edit_dialog)
+static void
+image_choosen(const char *filename, gpointer _edit_dialog)
 {
 	SmileyEditDialog *edit_dialog = _edit_dialog;
 
@@ -274,7 +277,7 @@ open_image_selector(GtkWidget *widget, gpointer _edit_dialog)
 	GtkWidget *file_chooser;
 	file_chooser = pidgin_buddy_icon_chooser_new(
 		GTK_WINDOW(gtk_widget_get_toplevel(widget)),
-		do_add_file_cb, _edit_dialog);
+		image_choosen, _edit_dialog);
 	gtk_window_set_title(GTK_WINDOW(file_chooser), _("Custom Smiley"));
 	gtk_window_set_role(GTK_WINDOW(file_chooser),
 		"file-selector-custom-smiley");
@@ -289,42 +292,30 @@ smiley_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
 	edit_dialog_update_buttons(edit_dialog);
 }
 
-/* TODO: is <widget> really necessary? */
+/* TODO: maybe replace "GtkWindow *parent" with "SmileyManager *manager"? */
 static void
-pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
+pidgin_smiley_edit(GtkWindow *parent, PurpleSmiley *smiley)
 {
 	SmileyEditDialog *edit_dialog;
-
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *filech;
+	GtkWidget *vbox, *hbox;
+	GtkLabel *label;
+	GtkButton *filech;
 
 	edit_dialog = g_new0(SmileyEditDialog, 1);
 
-	if (smiley) {
-		edit_dialog->filename =
-			g_strdup(purple_smiley_get_path(smiley));
-	}
-
-	edit_dialog->window = GTK_DIALOG(gtk_dialog_new_with_buttons(smiley ? _("Edit Smiley") : _("Add Smiley"),
-			widget ? GTK_WINDOW(widget) : NULL,
-			GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
-			NULL));
-//	if (smiley)
-//		g_object_set_data(G_OBJECT(smiley), "edit-dialog", window);
+	edit_dialog->window = GTK_DIALOG(gtk_dialog_new_with_buttons(
+		smiley ? _("Edit Smiley") : _("Add Smiley"),
+		parent, GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
+		NULL));
+	gtk_dialog_set_default_response(
+		edit_dialog->window, GTK_RESPONSE_ACCEPT);
 
 #if !GTK_CHECK_VERSION(3,0,0)
 	gtk_container_set_border_width(
 		GTK_CONTAINER(edit_dialog->window), PIDGIN_HIG_BORDER);
 #endif
-
-	gtk_dialog_set_default_response(
-		edit_dialog->window, GTK_RESPONSE_ACCEPT);
-	g_signal_connect(edit_dialog->window, "response",
-		G_CALLBACK(pidgin_smiley_edit_response), edit_dialog);
 
 	/* The vbox */
 #if GTK_CHECK_VERSION(3,0,0)
@@ -347,28 +338,26 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)), hbox);
 #endif
 
-	label = gtk_label_new_with_mnemonic(_("_Image:"));
+	label = GTK_LABEL(gtk_label_new_with_mnemonic(_("_Image:")));
 #if GTK_CHECK_VERSION(3,0,0)
-	gtk_grid_attach(GTK_GRID(hbox), label, 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(hbox), GTK_WIDGET(label), 0, 0, 1, 1);
 #else
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 #endif
-	gtk_widget_show(label);
+	gtk_widget_show(GTK_WIDGET(label));
 
-	filech = gtk_button_new();
+	filech = GTK_BUTTON(gtk_button_new());
 #if GTK_CHECK_VERSION(3,0,0)
-	gtk_grid_attach_next_to(GTK_GRID(hbox), filech, NULL, GTK_POS_RIGHT, 1, 1);
+	gtk_grid_attach_next_to(GTK_GRID(hbox), GTK_WIDGET(filech), NULL,
+		GTK_POS_RIGHT, 1, 1);
 #else
-	gtk_box_pack_end(GTK_BOX(hbox), filech, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(filech), FALSE, FALSE, 0);
 #endif
-	pidgin_set_accessible_label(filech, label);
+	pidgin_set_accessible_label(GTK_WIDGET(filech), label);
 
 	edit_dialog->thumbnail = GTK_IMAGE(gtk_image_new());
 	gtk_container_add(GTK_CONTAINER(filech),
 		GTK_WIDGET(edit_dialog->thumbnail));
-
-	g_signal_connect(G_OBJECT(filech), "clicked",
-		G_CALLBACK(open_image_selector), edit_dialog);
 
 	gtk_widget_show_all(hbox);
 
@@ -377,25 +366,39 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	hbox = gtk_grid_new();
 	gtk_grid_set_column_spacing(GTK_GRID(hbox), PIDGIN_HIG_BORDER);
 
-	gtk_grid_attach_next_to(GTK_GRID(vbox), hbox, NULL, GTK_POS_BOTTOM, 1, 1);
+	gtk_grid_attach_next_to(GTK_GRID(vbox), hbox, NULL,
+		GTK_POS_BOTTOM, 1, 1);
 #else
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)),hbox);
 #endif
 
 	/* Shortcut text */
-	label = gtk_label_new_with_mnemonic(_("S_hortcut text:"));
+	label = GTK_LABEL(gtk_label_new_with_mnemonic(_("S_hortcut text:")));
 #if GTK_CHECK_VERSION(3,0,0)
-	gtk_grid_attach(GTK_GRID(hbox), label, 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(hbox), GTK_WIDGET(label), 0, 0, 1, 1);
 #else
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 #endif
-	gtk_widget_show(label);
+	gtk_widget_show(GTK_WIDGET(label));
 
 	edit_dialog->shortcut = GTK_ENTRY(gtk_entry_new());
 	gtk_entry_set_activates_default(edit_dialog->shortcut, TRUE);
 	pidgin_set_accessible_label(GTK_WIDGET(edit_dialog->shortcut), label);
+
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_grid_attach_next_to(GTK_GRID(hbox), GTK_WIDGET(edit_dialog->shortcut), NULL, GTK_POS_RIGHT, 1, 1);
+#else
+	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(edit_dialog->shortcut), FALSE, FALSE, 0);
+#endif
+
+	gtk_widget_show(GTK_WIDGET(edit_dialog->shortcut));
+	gtk_widget_show(hbox);
+	gtk_widget_show(GTK_WIDGET(edit_dialog->window));
+
 	if (smiley) {
+		edit_dialog->filename =
+			g_strdup(purple_smiley_get_path(smiley));
 		gtk_entry_set_text(edit_dialog->shortcut,
 			purple_smiley_get_shortcut(smiley));
 	}
@@ -403,22 +406,17 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	edit_dialog_update_thumb(edit_dialog);
 	edit_dialog_update_buttons(edit_dialog);
 
+	g_signal_connect(edit_dialog->window, "response",
+		G_CALLBACK(pidgin_smiley_edit_response), edit_dialog);
+	g_signal_connect(filech, "clicked",
+		G_CALLBACK(open_image_selector), edit_dialog);
 	g_signal_connect(edit_dialog->shortcut, "changed",
 		G_CALLBACK(smiley_shortcut_changed), edit_dialog);
 
-#if GTK_CHECK_VERSION(3,0,0)
-	gtk_grid_attach_next_to(GTK_GRID(hbox), GTK_WIDGET(edit_dialog->shortcut), NULL, GTK_POS_RIGHT, 1, 1);
-#else
-	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(edit_dialog->shortcut), FALSE, FALSE, 0);
-#endif
-	gtk_widget_show(GTK_WIDGET(edit_dialog->shortcut));
-
-	gtk_widget_show(hbox);
-
-	gtk_widget_show(GTK_WIDGET(edit_dialog->window));
 	g_signal_connect(edit_dialog->window, "destroy",
 		G_CALLBACK(edit_dialog_destroy), edit_dialog);
-//	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(purple_notify_close_with_handle), s);
+	g_signal_connect(edit_dialog->window, "destroy",
+		G_CALLBACK(purple_notify_close_with_handle), edit_dialog);
 }
 
 #if 0
@@ -508,6 +506,8 @@ static void smiley_delete(SmileyManager *dialog)
 	}
 }
 #endif
+
+
 /******************************************************************************
  * The Smiley Manager
  *****************************************************************************/
@@ -702,7 +702,7 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				return;
 			}
 			ps = pidgin_smiley_edit(GTK_WIDGET(dialog->window), NULL);
-			do_add_file_cb(tmp, ps);
+			image_choosen(tmp, ps);
 			if (gtk_image_get_pixbuf(GTK_IMAGE(ps->smiley_image)) == NULL)
 				gtk_dialog_response(GTK_DIALOG(ps->parent), GTK_RESPONSE_CANCEL);
 			g_free(tmp);
@@ -777,7 +777,7 @@ static void refresh_list()
 #endif
 
 static void
-smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *dialog)
+smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 {
 #if 0
 	GtkTreeSelection *selection = NULL;
@@ -785,37 +785,37 @@ smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *dialog)
 
 	switch (resp) {
 		case GTK_RESPONSE_YES:
-			pidgin_smiley_edit(GTK_WIDGET(dialog->window), NULL);
+			pidgin_smiley_edit(GTK_WINDOW(manager->window), NULL);
 			break;
 #if 0
 		case GTK_RESPONSE_NO:
-			smiley_delete(dialog);
+			smiley_delete(manager);
 			break;
 #endif
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CLOSE:
-			gtk_widget_destroy(GTK_WIDGET(dialog->window));
-			purple_http_conn_cancel(smiley_manager->running_request);
+			gtk_widget_destroy(GTK_WIDGET(manager->window));
+			purple_http_conn_cancel(
+				smiley_manager->running_request);
 			g_free(smiley_manager);
 			smiley_manager = NULL;
 			break;
 #if 0
 		case PIDGIN_RESPONSE_MODIFY:
 			/* Find smiley of selection... */
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
-			gtk_tree_selection_selected_foreach(selection, edit_selected_cb, dialog);
+			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(manager->treeview));
+			gtk_tree_selection_selected_foreach(selection, edit_selected_cb, manager);
 			break;
 #endif
 		default:
-			purple_debug_info("gtksmiley", "No valid selection\n");
-			break;
+			g_warn_if_reached();
 	}
 }
 
 void
 pidgin_smiley_manager_show(void)
 {
-	SmileyManager *dialog;
+	SmileyManager *manager;
 	GtkDialog *win;
 #if 0
 	GtkWidget *sw;
@@ -827,10 +827,10 @@ pidgin_smiley_manager_show(void)
 		return;
 	}
 
-	dialog = g_new0(SmileyManager, 1);
-	smiley_manager = dialog;
+	manager = g_new0(SmileyManager, 1);
+	smiley_manager = manager;
 
-	dialog->window = win = GTK_DIALOG(gtk_dialog_new_with_buttons(
+	manager->window = win = GTK_DIALOG(gtk_dialog_new_with_buttons(
 		_("Custom Smiley Manager"), NULL,
 		GTK_DIALOG_DESTROY_WITH_PARENT,
 		PIDGIN_STOCK_ADD, GTK_RESPONSE_YES,
@@ -848,14 +848,14 @@ pidgin_smiley_manager_show(void)
 	gtk_dialog_set_response_sensitive(win, PIDGIN_RESPONSE_MODIFY, FALSE);
 
 	g_signal_connect(win, "response",
-		G_CALLBACK(smiley_manager_select_cb), dialog);
+		G_CALLBACK(smiley_manager_select_cb), manager);
 
 	/* The vbox */
 	vbox = gtk_dialog_get_content_area(win);
 
 #if 0
 	/* get the scrolled window with all stuff */
-	sw = smiley_list_create(dialog);
+	sw = smiley_list_create(manager);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 #endif
