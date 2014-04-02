@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
 #include "internal.h"
@@ -28,7 +28,7 @@
 #include "notify.h"
 #include "smiley.h"
 
-#include "gtksmiley.h"
+#include "gtksmiley-manager.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
 #include "pidginstock.h"
@@ -37,6 +37,7 @@
 
 #define PIDGIN_RESPONSE_MODIFY 1000
 
+typedef struct _PidginSmiley PidginSmiley;
 struct _PidginSmiley
 {
 	PurpleSmiley *smiley;
@@ -79,23 +80,6 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 	if (smiley->custom_pixbuf)
 		g_object_unref(G_OBJECT(smiley->custom_pixbuf));
 	g_free(smiley);
-}
-
-/******************************************************************************
- * PidginWebViewSmileys stuff
- *****************************************************************************/
-
-void pidgin_smileys_init(void)
-{
-}
-
-void pidgin_smileys_uninit(void)
-{
-}
-
-GSList *pidgin_smileys_get_all(void)
-{
-	return NULL;
 }
 
 /******************************************************************************
@@ -270,7 +254,7 @@ smiley_name_delete_cb(GtkEditable *editable,
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(s->parent), GTK_RESPONSE_ACCEPT, FALSE);
 }
 
-PidginSmiley *
+static PidginSmiley *
 pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 {
 #if 0
@@ -411,13 +395,13 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 #endif
 }
 
-void
+static void
 pidgin_smiley_editor_set_shortcut(PidginSmiley *editor, const gchar *shortcut)
 {
 	gtk_entry_set_text(GTK_ENTRY(editor->smile), shortcut ? shortcut : "");
 }
 
-void
+static void
 pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
 {
 	if (editor->custom_pixbuf)
@@ -434,7 +418,7 @@ pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
 		                                  GTK_RESPONSE_ACCEPT, FALSE);
 }
 
-void
+static void
 pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasize)
 {
 	editor->data = data;

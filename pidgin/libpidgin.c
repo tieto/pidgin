@@ -64,7 +64,6 @@
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
 #include "gtksession.h"
-#include "gtksmiley.h"
 #include "gtksmiley-theme.h"
 #include "gtksound.h"
 #include "gtkutils.h"
@@ -284,7 +283,6 @@ pidgin_ui_init(void)
 	pidgin_roomlist_init();
 	pidgin_log_init();
 	pidgin_docklet_init();
-	pidgin_smileys_init();
 	pidgin_smiley_theme_init();
 	pidgin_utils_init();
 	pidgin_medias_init();
@@ -305,7 +303,6 @@ pidgin_quit(void)
 	pidgin_utils_uninit();
 	pidgin_notify_uninit();
 	pidgin_smiley_theme_uninit();
-	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();
 	pidgin_docklet_uninit();

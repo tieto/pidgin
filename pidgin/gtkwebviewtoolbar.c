@@ -34,7 +34,7 @@
 
 #include "gtkdialogs.h"
 #include "gtkwebviewtoolbar.h"
-#include "gtksmiley.h"
+#include "gtksmiley-manager.h"
 #include "gtksmiley-theme.h"
 #include "gtkutils.h"
 
