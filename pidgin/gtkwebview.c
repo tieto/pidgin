@@ -1884,7 +1884,8 @@ pidgin_webview_switch_active_conversation(PidginWebView *webview,
 	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
 
 	g_return_if_fail(priv != NULL);
-	g_return_if_fail(priv->toolbar != NULL);
+	if (priv->toolbar == NULL)
+		return;
 
 	pidgin_webviewtoolbar_switch_active_conversation(priv->toolbar, conv);
 }

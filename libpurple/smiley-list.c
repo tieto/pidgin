@@ -23,6 +23,7 @@
 
 #include "dbus-maybe.h"
 #include "debug.h"
+#include "smiley-parser.h"
 #include "trie.h"
 
 #define PURPLE_SMILEY_LIST_GET_PRIVATE(obj) \
@@ -94,6 +95,8 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 	const gchar *smiley_path;
 	gboolean succ;
+	gchar *tmp = NULL;
+	const gchar *shortcut;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 	g_return_val_if_fail(PURPLE_IS_SMILEY(smiley), FALSE);
@@ -104,8 +107,11 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 		return FALSE;
 	}
 
-	succ = purple_trie_add(priv->trie,
-		purple_smiley_get_shortcut(smiley), smiley);
+	shortcut = purple_smiley_get_shortcut(smiley);
+	if (purple_smiley_parse_escape())
+		shortcut = tmp = g_markup_escape_text(shortcut, -1);
+	succ = purple_trie_add(priv->trie, shortcut, smiley);
+	g_free(tmp);
 	if (!succ)
 		return FALSE;
 

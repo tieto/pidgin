@@ -21,7 +21,31 @@
 
 #include "smiley-parser.h"
 
+#include "smiley-custom.h"
 #include "smiley-theme.h"
+
+static gboolean escape_checked = FALSE;
+static gboolean escape_value;
+
+gboolean
+purple_smiley_parse_escape(void)
+{
+	GHashTable *ui_info;
+
+	if (escape_checked)
+		return escape_value;
+
+	ui_info = purple_core_get_ui_info();
+	if (!ui_info)
+		escape_value = FALSE;
+	else {
+		escape_value = GPOINTER_TO_INT(g_hash_table_lookup(ui_info,
+			"smiley-parser-escape"));
+	}
+
+	escape_checked = TRUE;
+	return escape_value;
+}
 
 static gboolean purple_smiley_parse_cb(GString *out, const gchar *word,
 	gpointer _smiley, gpointer _unused)
@@ -38,24 +62,42 @@ gchar *
 purple_smiley_parse(const gchar *message, gpointer ui_data)
 {
 	PurpleSmileyTheme *theme;
-	PurpleSmileyList *theme_smileys;
-	PurpleTrie *theme_trie;
+	PurpleSmileyList *theme_smileys = NULL;
+	PurpleTrie *theme_trie = NULL, *custom_trie;
+	GSList *tries = NULL, tries_theme, tries_custom;
 
 	if (message == NULL || message[0] == '\0')
 		return g_strdup(message);
 
+	custom_trie = purple_smiley_custom_get_trie();
+
 	theme = purple_smiley_theme_get_current();
-	if (theme == NULL)
+	if (theme != NULL)
+		theme_smileys = purple_smiley_theme_get_smileys(theme, ui_data);
+
+	if (theme_smileys != NULL)
+		theme_trie = purple_smiley_list_get_trie(theme_smileys);
+
+	if (theme_trie == NULL && custom_trie == NULL)
 		return g_strdup(message);
 
-	theme_smileys = purple_smiley_theme_get_smileys(theme, ui_data);
-	if (theme_smileys == NULL)
-		return g_strdup(message);
+	/* Create a tries list on stack. */
+	tries_theme.data = theme_trie;
+	tries_custom.data = custom_trie;
+	tries_theme.next = tries_custom.next = NULL;
+	if (custom_trie != NULL)
+		tries = &tries_custom;
+	if (theme_trie != NULL) {
+		if (tries)
+			tries->next = &tries_theme;
+		else
+			tries = &tries_theme;
+	}
 
-	theme_trie = purple_smiley_list_get_trie(theme_smileys);
-	g_return_val_if_fail(theme_trie != NULL, g_strdup(message));
+	/* XXX: should we parse custom smileys,
+	 * if protocol doesn't support it? */
 
 	/* TODO: don't replace text within tags, ie. <span style=":)"> */
-	return purple_trie_replace(theme_trie, message,
+	return purple_trie_multi_replace(tries, message,
 		purple_smiley_parse_cb, NULL);
 }

@@ -22,6 +22,7 @@
 #include "smiley-custom.h"
 
 #include "debug.h"
+#include "smiley-list.h"
 
 #include <glib/gstdio.h>
 
@@ -31,7 +32,7 @@
 static gchar *smileys_dir;
 static gchar *smileys_index;
 
-static PurpleTrie *smileys_trie;
+static PurpleSmileyList *smileys_list;
 static GHashTable *smileys_table;
 static gboolean disable_write = FALSE;
 
@@ -83,6 +84,7 @@ purple_smiley_custom_load(void)
 
 			g_hash_table_insert(smileys_table,
 				g_strdup(shortcut), smiley);
+			purple_smiley_list_add(smileys_list, smiley);
 		}
 
 		smiley_node = purple_xmlnode_get_next_twin(smiley_node);
@@ -216,6 +218,7 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 	g_free(file_path);
 
 	g_hash_table_insert(smileys_table, g_strdup(shortcut), smiley);
+	purple_smiley_list_add(smileys_list, smiley);
 	purple_smiley_custom_save();
 
 	return smiley;
@@ -239,6 +242,7 @@ purple_smiley_custom_remove(PurpleSmiley *smiley)
 	}
 
 	g_unlink(purple_smiley_get_path(smiley));
+	purple_smiley_list_remove(smileys_list, smiley);
 	g_hash_table_remove(smileys_table, smiley_shortcut);
 	purple_smiley_custom_save();
 }
@@ -252,7 +256,9 @@ purple_smiley_custom_get_all(void)
 PurpleTrie *
 purple_smiley_custom_get_trie(void)
 {
-	return smileys_trie;
+	if (g_hash_table_size(smileys_table) == 0)
+		return NULL;
+	return purple_smiley_list_get_trie(smileys_list);
 }
 
 
@@ -267,7 +273,7 @@ purple_smiley_custom_init(void)
 		SMILEYS_DEFAULT_FOLDER, NULL);
 	smileys_index = g_build_filename(purple_user_dir(),
 		SMILEYS_INDEX_FILE, NULL);
-	smileys_trie = purple_trie_new();
+	smileys_list = purple_smiley_list_new();
 	smileys_table = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, g_object_unref);
 
@@ -279,6 +285,6 @@ purple_smiley_custom_uninit(void)
 {
 	g_free(smileys_dir);
 	g_free(smileys_index);
-	g_object_unref(smileys_trie);
+	g_object_unref(smileys_list);
 	g_hash_table_destroy(smileys_table);
 }

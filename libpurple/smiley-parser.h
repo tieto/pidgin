@@ -24,6 +24,9 @@
 
 #include "purple.h"
 
+gboolean
+purple_smiley_parse_escape(void);
+
 gchar *
 purple_smiley_parse(const gchar *message, gpointer ui_data);
 
