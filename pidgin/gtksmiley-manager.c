@@ -27,6 +27,8 @@
 #include "http.h"
 #include "notify.h"
 #include "smiley.h"
+#include "smiley-custom.h"
+#include "smiley-list.h"
 
 #include "gtksmiley-manager.h"
 #include "gtkutils.h"
@@ -511,66 +513,6 @@ static void smiley_delete(SmileyManager *dialog)
  *****************************************************************************/
 
 #if 0
-static void store_smiley_add(PurpleSmiley *smiley)
-{
-	GtkTreeIter iter;
-	PurpleStoredImage *img;
-	GdkPixbuf *sized_smiley = NULL;
-
-	if (smiley_manager == NULL)
-		return;
-
-	img = purple_smiley_get_stored_image(smiley);
-
-	if (img != NULL) {
-		GdkPixbuf *smiley_image = pidgin_pixbuf_from_imgstore(img);
-		purple_imgstore_unref(img);
-
-		if (smiley_image != NULL) {
-			if (gdk_pixbuf_get_width(smiley_image) > 22 ||
-				gdk_pixbuf_get_height(smiley_image) > 22) {
-				sized_smiley = gdk_pixbuf_scale_simple(smiley_image,
-					22, 22, GDK_INTERP_HYPER);
-				g_object_unref(G_OBJECT(smiley_image));
-			} else {
-				/* don't scale up smaller smileys, avoid blurryness */
-				sized_smiley = smiley_image;
-			}
-		}
-	}
-
-
-	gtk_list_store_append(smiley_manager->model, &iter);
-
-	gtk_list_store_set(smiley_manager->model, &iter,
-			ICON, sized_smiley,
-			SHORTCUT, purple_smiley_get_shortcut(smiley),
-			SMILEY, smiley,
-			-1);
-
-	if (sized_smiley != NULL)
-		g_object_unref(G_OBJECT(sized_smiley));
-}
-#endif
-
-#if 0
-static void populate_smiley_list(SmileyManager *dialog)
-{
-	GList *list;
-	PurpleSmiley *emoticon;
-
-	gtk_list_store_clear(dialog->model);
-
-	for(list = purple_smileys_get_all(); list != NULL;
-			list = g_list_delete_link(list, list)) {
-		emoticon = (PurpleSmiley*)list->data;
-
-		store_smiley_add(emoticon);
-	}
-}
-#endif
-
-#if 0
 static void smile_selected_cb(GtkTreeSelection *sel, SmileyManager *dialog)
 {
 	gint selected;
@@ -695,7 +637,46 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 }
 #endif
 
-static GtkWidget *pidgin_smiley_manager_list_create(SmileyManager *manager)
+static void
+pidgin_smiley_manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
+{
+	GdkPixbuf *smiley_image;
+	GtkTreeIter iter;
+
+	/* TODO: maybe some cache? */
+	smiley_image = pidgin_pixbuf_new_from_file_at_scale(
+			purple_smiley_get_path(smiley), 22, 22, TRUE);
+
+	gtk_list_store_append(manager->model, &iter);
+	gtk_list_store_set(manager->model, &iter,
+		SMILEY_LIST_MODEL_ICON, smiley_image,
+		SMILEY_LIST_MODEL_SHORTCUT, purple_smiley_get_shortcut(smiley),
+		SMILEY_LIST_MODEL_PURPLESMILEY, smiley,
+		-1);
+
+	if (smiley_image)
+		g_object_unref(smiley_image);
+}
+
+static void
+pidgin_smiley_manager_list_fill(SmileyManager *manager)
+{
+	GList *custom_smileys, *it;
+	gtk_list_store_clear(manager->model);
+
+	custom_smileys = purple_smiley_list_get_unique(
+		purple_smiley_custom_get_list());
+
+	for (it = custom_smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+
+		pidgin_smiley_manager_list_add(manager, smiley);
+	}
+	g_list_free(custom_smileys);
+}
+
+static GtkWidget *
+pidgin_smiley_manager_list_create(SmileyManager *manager)
 {
 	GtkTreeView *tree;
 	GtkTreeSelection *sel;
@@ -763,7 +744,7 @@ static GtkWidget *pidgin_smiley_manager_list_create(SmileyManager *manager)
 	gtk_tree_view_column_add_attribute(column, cellrend,
 		"text", SMILEY_LIST_MODEL_SHORTCUT);
 
-//	populate_smiley_list(dialog);
+	pidgin_smiley_manager_list_fill(manager);
 
 	return pidgin_make_scrollable(GTK_WIDGET(tree), GTK_POLICY_AUTOMATIC,
 		GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
