@@ -57,6 +57,8 @@ struct _PidginSmiley
 
 typedef struct
 {
+	PurpleSmiley *smiley;
+
 	gchar *filename;
 
 	GtkDialog *window;
@@ -91,6 +93,10 @@ static void
 edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
 {
 	SmileyEditDialog *edit_dialog = _edit_dialog;
+
+	g_object_set_data(G_OBJECT(edit_dialog->smiley),
+		"pidgin-smiley-manager-edit-dialog", NULL);
+	g_object_unref(edit_dialog->smiley);
 
 	g_free(edit_dialog->filename);
 	g_free(edit_dialog);
@@ -301,6 +307,13 @@ pidgin_smiley_edit(GtkWindow *parent, PurpleSmiley *smiley)
 	GtkLabel *label;
 	GtkButton *filech;
 
+	edit_dialog = g_object_get_data(G_OBJECT(smiley),
+		"pidgin-smiley-manager-edit-dialog");
+	if (edit_dialog) {
+		gtk_window_present(GTK_WINDOW(edit_dialog->window));
+		return;
+	}
+
 	edit_dialog = g_new0(SmileyEditDialog, 1);
 
 	edit_dialog->window = GTK_DIALOG(gtk_dialog_new_with_buttons(
@@ -311,6 +324,11 @@ pidgin_smiley_edit(GtkWindow *parent, PurpleSmiley *smiley)
 		NULL));
 	gtk_dialog_set_default_response(
 		edit_dialog->window, GTK_RESPONSE_ACCEPT);
+
+	edit_dialog->smiley = smiley;
+	g_object_set_data(G_OBJECT(smiley),
+		"pidgin-smiley-manager-edit-dialog", edit_dialog);
+	g_object_ref(smiley);
 
 #if !GTK_CHECK_VERSION(3,0,0)
 	gtk_container_set_border_width(
@@ -513,55 +531,6 @@ static void smiley_delete(SmileyManager *dialog)
  *****************************************************************************/
 
 #if 0
-static void smile_selected_cb(GtkTreeSelection *sel, SmileyManager *dialog)
-{
-	gint selected;
-
-	selected = gtk_tree_selection_count_selected_rows(sel);
-
-	gtk_dialog_set_response_sensitive(dialog->window,
-			GTK_RESPONSE_NO, selected > 0);
-
-	gtk_dialog_set_response_sensitive(dialog->window,
-	                                  PIDGIN_RESPONSE_MODIFY, selected > 0);
-}
-#endif
-
-#if 0
-static void
-smiley_edit_iter(SmileyManager *dialog, GtkTreeIter *iter)
-{
-	PurpleSmiley *smiley = NULL;
-	GtkWidget *window = NULL;
-	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), iter, SMILEY, &smiley, -1);
-	if ((window = g_object_get_data(G_OBJECT(smiley), "edit-dialog")) != NULL)
-		gtk_window_present(GTK_WINDOW(window));
-	else
-		pidgin_smiley_edit(gtk_widget_get_toplevel(GTK_WIDGET(dialog->treeview)), smiley);
-	g_object_unref(G_OBJECT(smiley));
-}
-#endif
-
-#if 0
-static void smiley_edit_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data)
-{
-	GtkTreeIter iter;
-	SmileyManager *dialog = data;
-
-	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
-	smiley_edit_iter(dialog, &iter);
-}
-#endif
-
-#if 0
-static void
-edit_selected_cb(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
-{
-	smiley_edit_iter(data, iter);
-}
-#endif
-
-#if 0
 static void
 smiley_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	gpointer _dialog)
@@ -638,6 +607,41 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 #endif
 
 static void
+smiley_list_selected(GtkTreeSelection *sel, gpointer _manager)
+{
+	SmileyManager *manager = _manager;
+	gboolean sens;
+
+	sens = (gtk_tree_selection_count_selected_rows(sel) > 0);
+
+	gtk_dialog_set_response_sensitive(manager->window,
+		GTK_RESPONSE_NO, sens);
+	gtk_dialog_set_response_sensitive(manager->window,
+		PIDGIN_RESPONSE_MODIFY, sens);
+}
+
+static void
+smiley_list_activated(GtkTreeView *tree, GtkTreePath *path,
+	GtkTreeViewColumn *col, gpointer _manager)
+{
+	SmileyManager *manager = _manager;
+	GtkTreeIter iter;
+	PurpleSmiley *smiley = NULL;
+
+	if (!gtk_tree_model_get_iter(
+		GTK_TREE_MODEL(manager->model), &iter, path))
+	{
+		return;
+	}
+
+	gtk_tree_model_get(GTK_TREE_MODEL(manager->model), &iter,
+		SMILEY_LIST_MODEL_PURPLESMILEY, &smiley, -1);
+	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
+
+	pidgin_smiley_edit(GTK_WINDOW(manager->window), smiley);
+}
+
+static void
 pidgin_smiley_manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
 {
 	GdkPixbuf *smiley_image;
@@ -708,10 +712,10 @@ pidgin_smiley_manager_list_create(SmileyManager *manager)
 	sel = gtk_tree_view_get_selection(tree);
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
-//	g_signal_connect(sel, "changed",
-//		G_CALLBACK(smile_selected_cb), manager);
-//	g_signal_connect(tree, "row_activated",
-//		G_CALLBACK(smiley_edit_cb), manager);
+	g_signal_connect(sel, "changed",
+		G_CALLBACK(smiley_list_selected), manager);
+	g_signal_connect(tree, "row-activated",
+		G_CALLBACK(smiley_list_activated), manager);
 
 #if 0
 	gtk_drag_dest_set(GTK_WIDGET(tree), GTK_DEST_DEFAULT_MOTION |
@@ -760,9 +764,28 @@ static void refresh_list()
 static void
 smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 {
-#if 0
 	GtkTreeSelection *selection = NULL;
-#endif
+	GList *selected_rows, *selected_smileys = NULL, *it;
+	GtkTreeModel *model = GTK_TREE_MODEL(manager->model);
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(manager->tree));
+	selected_rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	for (it = selected_rows; it; it = g_list_next(it)) {
+		GtkTreePath *path = it->data;
+		GtkTreeIter iter;
+		PurpleSmiley *smiley = NULL;
+
+		if (!gtk_tree_model_get_iter(model, &iter, path))
+			continue;
+
+		gtk_tree_model_get(model, &iter,
+			SMILEY_LIST_MODEL_PURPLESMILEY, &smiley, -1);
+		if (!smiley)
+			continue;
+
+		selected_smileys = g_list_prepend(selected_smileys, smiley);
+	}
+	g_list_free_full(selected_rows, (GDestroyNotify)gtk_tree_path_free);
 
 	switch (resp) {
 		case GTK_RESPONSE_YES:
@@ -776,21 +799,21 @@ smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CLOSE:
 			gtk_widget_destroy(GTK_WIDGET(manager->window));
-			purple_http_conn_cancel(
-				smiley_manager->running_request);
-			g_free(smiley_manager);
+			purple_http_conn_cancel(manager->running_request);
+			g_free(manager);
 			smiley_manager = NULL;
 			break;
-#if 0
 		case PIDGIN_RESPONSE_MODIFY:
-			/* Find smiley of selection... */
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(manager->treeview));
-			gtk_tree_selection_selected_foreach(selection, edit_selected_cb, manager);
+			for (it = selected_smileys; it; it = g_list_next(it)) {
+				pidgin_smiley_edit(GTK_WINDOW(manager->window),
+					it->data);
+			}
 			break;
-#endif
 		default:
 			g_warn_if_reached();
 	}
+
+	g_list_free(selected_smileys);
 }
 
 void
