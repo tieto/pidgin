@@ -408,7 +408,7 @@ GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
 */
-	pidgin_set_accessible_label (menuitem, label);
+	pidgin_set_accessible_label(menuitem, GTK_LABEL(label));
 	return menuitem;
 }
 
@@ -455,7 +455,7 @@ GtkWidget *
 pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 							  PidginButtonOrientation style)
 {
-	GtkWidget *button, *image, *label, *bbox, *ibox, *lbox = NULL;
+	GtkWidget *button, *image, *bbox, *ibox, *lbox = NULL;
 
 	button = gtk_button_new();
 
@@ -480,12 +480,15 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 	}
 
 	if (text) {
+		GtkLabel *label;
+
 		gtk_box_pack_start(GTK_BOX(bbox), lbox, TRUE, TRUE, 0);
-		label = gtk_label_new(NULL);
-		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
-		gtk_box_pack_start(GTK_BOX(lbox), label, FALSE, TRUE, 0);
-		pidgin_set_accessible_label (button, label);
+		label = GTK_LABEL(gtk_label_new(NULL));
+		gtk_label_set_text_with_mnemonic(label, text);
+		gtk_label_set_mnemonic_widget(label, button);
+		gtk_box_pack_start(GTK_BOX(lbox), GTK_WIDGET(label),
+			FALSE, TRUE, 0);
+		pidgin_set_accessible_label(button, label);
 	}
 
 	gtk_widget_show_all(bbox);
@@ -540,31 +543,32 @@ GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const ch
 GtkWidget *
 pidgin_make_frame(GtkWidget *parent, const char *title)
 {
-	GtkWidget *vbox, *vbox2, *label, *hbox;
+	GtkWidget *vbox, *vbox2, *hbox;
+	GtkLabel *label;
 	char *labeltitle;
 
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
-	label = gtk_label_new(NULL);
+	label = GTK_LABEL(gtk_label_new(NULL));
 
 	labeltitle = g_strdup_printf("<span weight=\"bold\">%s</span>", title);
-	gtk_label_set_markup(GTK_LABEL(label), labeltitle);
+	gtk_label_set_markup(label, labeltitle);
 	g_free(labeltitle);
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-	pidgin_set_accessible_label (vbox, label);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(label));
+	pidgin_set_accessible_label(vbox, label);
 
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("    ");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
+	label = GTK_LABEL(gtk_label_new("    "));
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(label));
 
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
@@ -1196,7 +1200,7 @@ pidgin_set_accessible_label(GtkWidget *w, GtkLabel *l)
 }
 
 void
-pidgin_set_accessible_relations (GtkWidget *w, GtkWidget *l)
+pidgin_set_accessible_relations (GtkWidget *w, GtkLabel *l)
 {
 	AtkObject *acc, *label;
 	AtkObject *rel_obj[1];
@@ -1204,10 +1208,10 @@ pidgin_set_accessible_relations (GtkWidget *w, GtkWidget *l)
 	AtkRelation *relation;
 
 	acc = gtk_widget_get_accessible (w);
-	label = gtk_widget_get_accessible (l);
+	label = gtk_widget_get_accessible(GTK_WIDGET(l));
 
 	/* Make sure mnemonics work */
-	gtk_label_set_mnemonic_widget(GTK_LABEL(l), w);
+	gtk_label_set_mnemonic_widget(l, w);
 
 	/* Create the labeled-by relation */
 	set = atk_object_ref_relation_set (acc);
@@ -2901,7 +2905,7 @@ pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *
 	gtk_box_pack_start(GTK_BOX(hbox), widget, expand, TRUE, 0);
 	if (label) {
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
-		pidgin_set_accessible_label (widget, label);
+		pidgin_set_accessible_label(widget, GTK_LABEL(label));
 	}
 
 	if (p_label)

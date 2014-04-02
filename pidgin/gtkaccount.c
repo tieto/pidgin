@@ -846,7 +846,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_container_add(GTK_CONTAINER(button), dialog->icon_entry);
 	gtk_widget_show(dialog->icon_entry);
 	/* TODO: Uh, isn't this next line pretty useless? */
-	pidgin_set_accessible_label (dialog->icon_entry, label);
+	pidgin_set_accessible_label(dialog->icon_entry, GTK_LABEL(label));
 	purple_imgstore_unref(dialog->icon_img);
 	dialog->icon_img = NULL;
 

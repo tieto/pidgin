@@ -524,7 +524,7 @@ pidgin_request_input(const char *title, const char *primary,
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
-	GtkWidget *label;
+	GtkLabel *label;
 	GtkWidget *entry;
 	GtkWidget *img;
 	char *label_text;
@@ -591,12 +591,12 @@ pidgin_request_input(const char *title, const char *primary,
 	g_free(primary_esc);
 	g_free(secondary_esc);
 
-	label = gtk_label_new(NULL);
+	label = GTK_LABEL(gtk_label_new(NULL));
 
-	gtk_label_set_markup(GTK_LABEL(label), label_text);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_label_set_markup(label, label_text);
+	gtk_label_set_line_wrap(label, TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 
 	g_free(label_text);
 
@@ -658,7 +658,7 @@ pidgin_request_input(const char *title, const char *primary,
 		gtk_widget_show_all(vbox);
 	}
 
-	pidgin_set_accessible_label (entry, label);
+	pidgin_set_accessible_label(entry, label);
 	data->u.input.entry = entry;
 
 	pidgin_auto_parent_window(dialog);

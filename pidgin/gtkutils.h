@@ -492,7 +492,7 @@ void pidgin_set_accessible_label(GtkWidget *w, GtkLabel *l);
  *
  * Sets the labelled-by and label-for ATK relationships.
  */
-void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
+void pidgin_set_accessible_relations(GtkWidget *w, GtkLabel *l);
 
 /**
  * pidgin_menu_position_func_helper:
