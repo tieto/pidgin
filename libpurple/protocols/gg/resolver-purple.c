@@ -89,28 +89,28 @@ void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
 
 	ipv4_count = 0;
 	while (hosts && (hosts = g_slist_delete_link(hosts, hosts))) {
-		const struct sockaddr *addr = hosts->data;
+		common_sockaddr_t addr;
 		char dst[INET6_ADDRSTRLEN];
 
-		if (addr->sa_family == AF_INET6) {
-			inet_ntop(addr->sa_family,
-				&((struct sockaddr_in6 *) addr)->sin6_addr,
+		memcpy(&addr, hosts->data, sizeof(addr));
+
+		if (addr.sa.sa_family == AF_INET6) {
+			inet_ntop(addr.sa.sa_family, &addr.in6.sin6_addr,
 				dst, sizeof(dst));
 			purple_debug_misc("gg", "ggp_resolver_purple_cb "
 				"ipv6 (ignore): %s\n", dst);
-		} else if (addr->sa_family == AF_INET) {
-			const struct in_addr addr_ipv4 =
-				((struct sockaddr_in *) addr)->sin_addr;
-			inet_ntop(addr->sa_family, &addr_ipv4,
+		} else if (addr.sa.sa_family == AF_INET) {
+			inet_ntop(addr.sa.sa_family, &addr.in.sin_addr,
 				dst, sizeof(dst));
 			purple_debug_misc("gg", "ggp_resolver_purple_cb "
 				"ipv4: %s\n", dst);
 
 			g_assert(ipv4_count < all_count);
-			addresses[ipv4_count++] = addr_ipv4;
+			addresses[ipv4_count++] = addr.in.sin_addr;
 		} else {
 			purple_debug_warning("gg", "ggp_resolver_purple_cb "
-				"unexpected sa_family: %d\n", addr->sa_family);
+				"unexpected sa_family: %d\n",
+				addr.sa.sa_family);
 		}
 
 		g_free(hosts->data);

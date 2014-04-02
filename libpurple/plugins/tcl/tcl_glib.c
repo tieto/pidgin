@@ -224,7 +224,8 @@ static gboolean tcl_file_callback(GIOChannel *source, GIOCondition condition, gp
 		return TRUE;
 
 	tfh->pending |= mask;
-	fev = (struct tcl_file_event *)ckalloc(sizeof(struct tcl_file_event));
+	/* ckalloc returns memory "suitably aligned for any use" */
+	fev = (gpointer)ckalloc(sizeof(struct tcl_file_event));
 	memset(fev, 0, sizeof(struct tcl_file_event));
 	fev->header.proc = tcl_file_event_callback;
 	fev->fd = tfh->fd;
