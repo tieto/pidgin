@@ -272,9 +272,10 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			child->sml = g_strndup(i+1, strchr(i, ']') - i - 1);
 			child->files = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 
-			if (theme->list)
+			if (theme->list) {
+				g_return_if_fail(list != NULL);
 				list->next = child;
-			else
+			} else
 				theme->list = child;
 			/* Reverse the Smiley list since it was built in reverse order for efficiency reasons */
 			if (list != NULL)

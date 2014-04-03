@@ -1511,7 +1511,6 @@ static void
 pidgin_webview_finalize(GObject *webview)
 {
 	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-	gpointer temp;
 
 	if (priv->inspector_win != NULL)
 		gtk_widget_destroy(GTK_WIDGET(priv->inspector_win));
@@ -1520,9 +1519,8 @@ pidgin_webview_finalize(GObject *webview)
 		g_source_remove(priv->loader);
 
 	while (!g_queue_is_empty(priv->load_queue)) {
-		temp = g_queue_pop_head(priv->load_queue);
-		temp = g_queue_pop_head(priv->load_queue);
-		g_free(temp);
+		g_queue_pop_head(priv->load_queue);
+		g_free(g_queue_pop_head(priv->load_queue));
 	}
 	g_queue_free(priv->load_queue);
 

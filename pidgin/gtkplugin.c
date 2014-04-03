@@ -86,6 +86,9 @@ pidgin_plugin_has_prefs(PurplePlugin *plugin)
 		return TRUE;
 	}
 
+	if (!plugin->info)
+		return FALSE;
+
 	pinfo = plugin->info->prefs_info;
 
 	if (!pinfo)
