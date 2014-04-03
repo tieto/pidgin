@@ -893,7 +893,8 @@ GType purple_plugin_action_get_type(void);
 /**
  * purple_plugin_action_new:
  * @label:    The description of the action to show to the user.
- * @callback: The callback to call when the user selects this action.
+ * @callback: (scope call): The callback to call when the user selects this
+ *            action.
  *
  * Allocates and returns a new PurplePluginAction. Use this to add actions in a
  * list in the "actions-cb" callback for your plugin.

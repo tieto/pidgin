@@ -921,6 +921,10 @@ GType purple_protocol_server_iface_get_type(void);
 void purple_protocol_server_iface_register_user(PurpleProtocol *,
 		PurpleAccount *);
 
+/**
+ * purple_protocol_server_iface_unregister_user:
+ * @cb: (scope call):
+ */
 void purple_protocol_server_iface_unregister_user(PurpleProtocol *,
 		PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
 
@@ -976,11 +980,21 @@ void purple_protocol_server_iface_remove_group(PurpleProtocol *,
 int purple_protocol_server_iface_send_raw(PurpleProtocol *,
 		PurpleConnection *gc, const char *buf, int len);
 
+/**
+ * purple_protocol_server_iface_set_public_alias:
+ * @success_cb: (scope call):
+ * @failure_cb: (scope call):
+ */
 void purple_protocol_server_iface_set_public_alias(PurpleProtocol *,
 		PurpleConnection *gc, const char *alias,
 		PurpleSetPublicAliasSuccessCallback success_cb,
 		PurpleSetPublicAliasFailureCallback failure_cb);
 
+/**
+ * purple_protocol_server_iface_get_public_alias:
+ * @success_cb: (scope call):
+ * @failure_cb: (scope call):
+ */
 void purple_protocol_server_iface_get_public_alias(PurpleProtocol *,
 		PurpleConnection *gc, PurpleGetPublicAliasSuccessCallback success_cb,
 		PurpleGetPublicAliasFailureCallback failure_cb);
