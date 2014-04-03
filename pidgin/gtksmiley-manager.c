@@ -37,22 +37,6 @@
 
 #include "gtk3compat.h"
 
-#if 0
-typedef struct _PidginSmiley PidginSmiley;
-struct _PidginSmiley
-{
-	PurpleSmiley *smiley;
-	GtkWidget *parent;
-	GtkWidget *smile;
-	GtkWidget *smiley_image;
-	gchar *filename;
-	GdkPixbuf *custom_pixbuf;
-	gpointer data;
-	gsize datasize;
-	gint entry_len;
-};
-#endif
-
 typedef struct
 {
 	PurpleSmiley *smiley;
@@ -114,12 +98,21 @@ edit_dialog_update_thumb(SmileyEditDialog *edit_dialog)
 {
 	GdkPixbuf *pixbuf = NULL;
 
+	/* TODO: don't scale if smaller */
 	if (edit_dialog->filename) {
 		pixbuf = pidgin_pixbuf_new_from_file_at_scale(
 			edit_dialog->filename, 64, 64, TRUE);
 		if (!pixbuf) {
 			g_free(edit_dialog->filename);
 			edit_dialog->filename = NULL;
+		}
+	} else if (edit_dialog->new_image) {
+		GdkPixbuf *tmp;
+		tmp = pidgin_pixbuf_from_imgstore(edit_dialog->new_image);
+		if (tmp) {
+			pixbuf = gdk_pixbuf_scale_simple(tmp,
+				64, 64, GDK_INTERP_HYPER);
+			g_object_unref(tmp);
 		}
 	}
 	if (!pixbuf) {
@@ -142,7 +135,7 @@ edit_dialog_update_buttons(SmileyEditDialog *edit_dialog)
 	gboolean shortcut_ok, image_ok;
 
 	shortcut_ok = (gtk_entry_get_text_length(edit_dialog->shortcut) > 0);
-	image_ok = (edit_dialog->filename != NULL);
+	image_ok = (edit_dialog->filename || edit_dialog->new_image);
 
 	gtk_dialog_set_response_sensitive(edit_dialog->window,
 		GTK_RESPONSE_ACCEPT, shortcut_ok && image_ok);
@@ -220,24 +213,52 @@ pidgin_smiley_edit_response(GtkDialog *window, gint response_id,
 	}
 }
 
+static gboolean
+pidgin_smiley_edit_dialog_set_image(SmileyEditDialog *edit_dialog,
+	PurpleStoredImage *image)
+{
+	GdkPixbuf *tmp = NULL;
+
+	if (edit_dialog->new_image)
+		purple_imgstore_unref(edit_dialog->new_image);
+
+	/* check, if image is valid */
+	if (image)
+		tmp = pidgin_pixbuf_from_imgstore(image);
+	if (tmp)
+		g_object_unref(tmp);
+	else {
+		purple_imgstore_unref(image);
+		image = NULL;
+	}
+
+	edit_dialog->new_image = image;
+
+	edit_dialog_update_thumb(edit_dialog);
+	edit_dialog_update_buttons(edit_dialog);
+
+	return (image != NULL);
+}
+
 static void
 image_choosen(const char *filename, gpointer _edit_dialog)
 {
+	PurpleStoredImage *image;
 	SmileyEditDialog *edit_dialog = _edit_dialog;
 
 	if (!filename)
 		return;
 
-	if (edit_dialog->new_image)
-		purple_imgstore_unref(edit_dialog->new_image);
-	edit_dialog->new_image = purple_imgstore_new_from_file(filename);
-	g_return_if_fail(edit_dialog->new_image);
+	image = purple_imgstore_new_from_file(filename);
+	if (!image)
+		return;
 
 	g_free(edit_dialog->filename);
-	edit_dialog->filename = g_strdup(filename);
+	edit_dialog->filename = NULL;
 
-	edit_dialog_update_thumb(edit_dialog);
-	edit_dialog_update_buttons(edit_dialog);
+	if (!pidgin_smiley_edit_dialog_set_image(edit_dialog, image))
+		return;
+	edit_dialog->filename = g_strdup(filename);
 
 	gtk_widget_grab_focus(GTK_WIDGET(edit_dialog->shortcut));
 }
@@ -263,7 +284,7 @@ smiley_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
 	edit_dialog_update_buttons(edit_dialog);
 }
 
-static void
+static SmileyEditDialog *
 pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 {
 	SmileyEditDialog *edit_dialog;
@@ -276,7 +297,7 @@ pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 			"pidgin-smiley-manager-edit-dialog");
 		if (edit_dialog) {
 			gtk_window_present(GTK_WINDOW(edit_dialog->window));
-			return;
+			return edit_dialog;
 		}
 	}
 
@@ -403,121 +424,112 @@ pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 		G_CALLBACK(edit_dialog_destroy), edit_dialog);
 	g_signal_connect(edit_dialog->window, "destroy",
 		G_CALLBACK(purple_notify_close_with_handle), edit_dialog);
+
+	return edit_dialog;
 }
 
-#if 0
 static void
-pidgin_smiley_editor_set_shortcut(PidginSmiley *editor, const gchar *shortcut)
+smiley_list_dnd_url_got(PurpleHttpConnection *http_conn,
+	PurpleHttpResponse *response, gpointer _manager)
 {
-	gtk_entry_set_text(GTK_ENTRY(editor->smile), shortcut ? shortcut : "");
-}
-#endif
+	SmileyManager *manager = _manager;
+	SmileyEditDialog *edit_dialog;
+	PurpleStoredImage *image;
+	const gchar *image_data;
+	size_t image_size;
 
-#if 0
-static void
-pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
-{
-	if (editor->custom_pixbuf)
-		g_object_unref(G_OBJECT(editor->custom_pixbuf));
-	editor->custom_pixbuf = image ? g_object_ref(G_OBJECT(image)) : NULL;
-	if (image) {
-		gtk_image_set_from_pixbuf(GTK_IMAGE(editor->smiley_image), image);
-		if (editor->entry_len > 0)
-			gtk_dialog_set_response_sensitive(GTK_DIALOG(editor->parent),
-			                                  GTK_RESPONSE_ACCEPT, TRUE);
-	}
-	else
-		gtk_dialog_set_response_sensitive(GTK_DIALOG(editor->parent),
-		                                  GTK_RESPONSE_ACCEPT, FALSE);
-
-	edit_dialog_update_buttons(...);
-}
-#endif
-
-#if 0
-static void
-pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasize)
-{
-	editor->data = data;
-	editor->datasize = datasize;
-}
-#endif
-
-#if 0
-static void
-smiley_got_url(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
-	gpointer _dialog)
-{
-	SmileyManager *dialog = _dialog;
-	PidginSmiley *ps;
-	GdkPixbuf *image;
-	const gchar *smileydata;
-	size_t len;
-
-	g_assert(http_conn == smiley_manager->running_request);
-	smiley_manager->running_request = NULL;
+	g_return_if_fail(manager == smiley_manager);
+	g_return_if_fail(manager->running_request == http_conn);
+	manager->running_request = NULL;
 
 	if (!purple_http_response_is_successful(response))
 		return;
 
-	smileydata = purple_http_response_get_data(response, &len);
-	image = pidgin_pixbuf_from_data((const guchar *)smileydata, len);
+	image_data = purple_http_response_get_data(response, &image_size);
+	image = purple_imgstore_new((gpointer)image_data, image_size, NULL);
 	if (!image)
 		return;
 
-	ps = pidgin_smiley_edit(manager, NULL);
-	pidgin_smiley_editor_set_image(ps, image);
-	pidgin_smiley_editor_set_data(ps, g_memdup(smileydata, len), len);
+	edit_dialog = pidgin_smiley_edit(manager, NULL);
+	if (!pidgin_smiley_edit_dialog_set_image(edit_dialog, image))
+		gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
 }
-#endif
 
-#if 0
 static void
-smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
-		GtkSelectionData *sd, guint info, guint t, gpointer user_data)
+smiley_list_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
+	GtkSelectionData *sd, guint info, guint time, gpointer _manager)
 {
-	SmileyManager *dialog = user_data;
-	gchar *name = g_strchomp((gchar *) gtk_selection_data_get_data(sd));
+	SmileyManager *manager = _manager;
+	gchar content[1024];
 
-	if ((gtk_selection_data_get_length(sd) >= 0)
-      && (gtk_selection_data_get_format(sd) == 8)) {
-		/* Well, it looks like the drag event was cool.
-		 * Let's do something with it */
-
-		if (!g_ascii_strncasecmp(name, "file://", 7)) {
-			GError *converr = NULL;
-			gchar *tmp;
-			PidginSmiley *ps;
-			/* It looks like we're dealing with a local file. Let's
-			 * just try and read it */
-			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
-				purple_debug_error("smiley dnd", "%s\n",
-						   (converr ? converr->message :
-							"g_filename_from_uri error"));
-				return;
-			}
-			ps = pidgin_smiley_edit(manager, NULL);
-			image_choosen(tmp, ps);
-			if (gtk_image_get_pixbuf(GTK_IMAGE(ps->smiley_image)) == NULL)
-				gtk_dialog_response(GTK_DIALOG(ps->parent), GTK_RESPONSE_CANCEL);
-			g_free(tmp);
-		} else if (!g_ascii_strncasecmp(name, "http://", 7) ||
-			!g_ascii_strncasecmp(name, "https://", 8))
-		{
-			/* Oo, a web drag and drop. This is where things
-			 * will start to get interesting */
-			purple_http_conn_cancel(smiley_manager->
-				running_request);
-			smiley_manager->running_request = purple_http_get(NULL,
-				smiley_got_url, dialog, name);
-		}
-
-		gtk_drag_finish(dc, TRUE, FALSE, t);
+	/* We don't need anything, that is not 8-bit per element (char). */
+	if (gtk_selection_data_get_format(sd) != 8) {
+		gtk_drag_finish(dc, FALSE, FALSE, time);
+		return;
 	}
 
-	gtk_drag_finish(dc, FALSE, FALSE, t);
+	if (gtk_selection_data_get_length(sd) <= 0) {
+		gtk_drag_finish(dc, FALSE, FALSE, time);
+		return;
+	}
+
+	memset(&content, 0, sizeof(content));
+	memcpy(&content, gtk_selection_data_get_data(sd),
+		MIN((guint)gtk_selection_data_get_length(sd), sizeof(content)));
+	g_strstrip(content);
+	if (content[0] == '\0') {
+		gtk_drag_finish(dc, FALSE, FALSE, time);
+		return;
+	}
+
+	/* Well, it looks like the drag event was cool.
+	 * Let's do something with it */
+
+	if (purple_str_has_caseprefix(content, "file://")) {
+		SmileyEditDialog *edit_dialog;
+		PurpleStoredImage *image;
+		gchar *filename;
+
+		filename = g_filename_from_uri(content, NULL, NULL);
+		if (!filename || !g_file_test(filename, G_FILE_TEST_EXISTS)) {
+			purple_debug_warning("gtksmiley-manager",
+				"dropped file does not exists");
+			gtk_drag_finish(dc, FALSE, FALSE, time);
+			return;
+		}
+
+		image = purple_imgstore_new_from_file(filename);
+		if (!image) {
+			purple_debug_warning("gtksmiley-manager",
+				"dropped file is not a valid image");
+			gtk_drag_finish(dc, FALSE, FALSE, time);
+			return;
+		}
+		edit_dialog = pidgin_smiley_edit(manager, NULL);
+		if (!pidgin_smiley_edit_dialog_set_image(edit_dialog, image)) {
+			gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
+			gtk_drag_finish(dc, FALSE, FALSE, time);
+			return;
+		}
+
+		gtk_drag_finish(dc, TRUE, FALSE, time);
+		return;
+	}
+
+	if (purple_str_has_caseprefix(content, "http://") ||
+		purple_str_has_caseprefix(content, "https://"))
+	{
+		purple_http_conn_cancel(smiley_manager->
+			running_request);
+		smiley_manager->running_request = purple_http_get(NULL,
+			smiley_list_dnd_url_got, manager, content);
+
+		gtk_drag_finish(dc, TRUE, FALSE, time);
+		return;
+	}
+
+	gtk_drag_finish(dc, FALSE, FALSE, time);
 }
-#endif
 
 static void
 smiley_list_selected(GtkTreeSelection *sel, gpointer _manager)
@@ -599,13 +611,11 @@ pidgin_smiley_manager_list_create(SmileyManager *manager)
 	GtkTreeSelection *sel;
 	GtkCellRenderer *cellrend;
 	GtkTreeViewColumn *column;
-#if 0
 	GtkTargetEntry targets[3] = {
 		{"text/plain", 0, 0},
 		{"text/uri-list", 0, 1},
 		{"STRING", 0, 2}
 	};
-#endif
 
 	manager->model = gtk_list_store_new(SMILEY_LIST_MODEL_N_COL,
 		GDK_TYPE_PIXBUF, /* icon */
@@ -630,14 +640,12 @@ pidgin_smiley_manager_list_create(SmileyManager *manager)
 	g_signal_connect(tree, "row-activated",
 		G_CALLBACK(smiley_list_activated), manager);
 
-#if 0
 	gtk_drag_dest_set(GTK_WIDGET(tree), GTK_DEST_DEFAULT_MOTION |
 		GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP,
 		targets, G_N_ELEMENTS(targets),
 		GDK_ACTION_COPY | GDK_ACTION_MOVE);
-	g_signal_connect(tree, "drag_data_received",
-		G_CALLBACK(smiley_dnd_recv), manager);
-#endif
+	g_signal_connect(tree, "drag-data-received",
+		G_CALLBACK(smiley_list_dnd_recv), manager);
 
 	gtk_widget_show(GTK_WIDGET(tree));
 

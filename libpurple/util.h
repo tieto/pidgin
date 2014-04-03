@@ -1056,6 +1056,8 @@ gboolean purple_validate(const PurplePlugin *prpl, const char *str);
  */
 gboolean purple_str_has_prefix(const char *s, const char *p);
 
+gboolean purple_str_has_caseprefix(const gchar *s, const gchar *p);
+
 /**
  * purple_str_has_suffix:
  * @s:  The string to check.

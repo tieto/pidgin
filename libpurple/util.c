@@ -3512,6 +3512,15 @@ purple_str_has_prefix(const char *s, const char *p)
 }
 
 gboolean
+purple_str_has_caseprefix(const gchar *s, const gchar *p)
+{
+	g_return_val_if_fail(s, FALSE);
+	g_return_val_if_fail(p, FALSE);
+
+	return (g_ascii_strncasecmp(s, p, strlen(p)) == 0);
+}
+
+gboolean
 purple_str_has_suffix(const char *s, const char *x)
 {
 	return g_str_has_suffix(s, x);
