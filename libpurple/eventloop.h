@@ -158,10 +158,9 @@ G_BEGIN_DECLS
 
 /**
  * purple_timeout_add:
- * @interval:	The time between calls of the function, in
- *                      milliseconds.
- * @function:	The function to call.
- * @data:		data to pass to @function.
+ * @interval: The time between calls of the function, in milliseconds.
+ * @function: (scope call): The function to call.
+ * @data:     data to pass to @function.
  *
  * Creates a callback timer.
  *
@@ -178,10 +177,9 @@ guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
 
 /**
  * purple_timeout_add_seconds:
- * @interval:	The time between calls of the function, in
- *                      seconds.
- * @function:	The function to call.
- * @data:		data to pass to @function.
+ * @interval: The time between calls of the function, in seconds.
+ * @function: (scope call): The function to call.
+ * @data:     data to pass to @function.
  *
  * Creates a callback timer.
  *
@@ -210,7 +208,7 @@ gboolean purple_timeout_remove(guint handle);
  * purple_input_add:
  * @fd:        The input file descriptor.
  * @cond:      The condition type.
- * @func:      The callback function for data.
+ * @func:      (scope call): The callback function for data.
  * @user_data: User-specified data.
  *
  * Adds an input handler.

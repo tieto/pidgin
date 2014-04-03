@@ -58,6 +58,7 @@ typedef struct {
 	guchar key[32];
 	guint key_size;
 	gboolean failure;
+	PurpleCipherBatchMode batch_mode;
 } PurpleAESCipherPrivate;
 
 /******************************************************************************
@@ -82,7 +83,8 @@ static GParamSpec *properties[PROP_LAST];
 
 typedef gboolean (*purple_aes_cipher_crypt_func)(
 	const guchar *input, guchar *output, size_t len,
-	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size);
+	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size,
+	PurpleCipherBatchMode batch_mode);
 
 static void
 purple_aes_cipher_reset(PurpleCipher *cipher)
@@ -232,10 +234,31 @@ purple_aes_cipher_gnutls_crypt_init(guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key
 
 static gboolean
 purple_aes_cipher_gnutls_encrypt(const guchar *input, guchar *output, size_t len,
-	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
+	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size,
+	PurpleCipherBatchMode batch_mode)
 {
 	gnutls_cipher_hd_t handle;
 	int ret;
+
+	/* We have to simulate ECB mode, which is not supported by GnuTLS. */
+	if (batch_mode == PURPLE_CIPHER_BATCH_MODE_ECB) {
+		size_t i;
+		for (i = 0; i < len / PURPLE_AES_BLOCK_SIZE; i++) {
+			int offset = i * PURPLE_AES_BLOCK_SIZE;
+			guchar iv_local[PURPLE_AES_BLOCK_SIZE];
+			gboolean succ;
+
+			memcpy(iv_local, iv, sizeof(iv_local));
+			succ = purple_aes_cipher_gnutls_encrypt(
+				input + offset, output + offset,
+				PURPLE_AES_BLOCK_SIZE,
+				iv_local, key, key_size,
+				PURPLE_CIPHER_BATCH_MODE_CBC);
+			if (!succ)
+				return FALSE;
+		}
+		return TRUE;
+	}
 
 	handle = purple_aes_cipher_gnutls_crypt_init(iv, key, key_size);
 	if (handle == NULL)
@@ -255,10 +278,31 @@ purple_aes_cipher_gnutls_encrypt(const guchar *input, guchar *output, size_t len
 
 static gboolean
 purple_aes_cipher_gnutls_decrypt(const guchar *input, guchar *output, size_t len,
-	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
+	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size,
+	PurpleCipherBatchMode batch_mode)
 {
 	gnutls_cipher_hd_t handle;
 	int ret;
+
+	/* We have to simulate ECB mode, which is not supported by GnuTLS. */
+	if (batch_mode == PURPLE_CIPHER_BATCH_MODE_ECB) {
+		size_t i;
+		for (i = 0; i < len / PURPLE_AES_BLOCK_SIZE; i++) {
+			int offset = i * PURPLE_AES_BLOCK_SIZE;
+			guchar iv_local[PURPLE_AES_BLOCK_SIZE];
+			gboolean succ;
+
+			memcpy(iv_local, iv, sizeof(iv_local));
+			succ = purple_aes_cipher_gnutls_decrypt(
+				input + offset, output + offset,
+				PURPLE_AES_BLOCK_SIZE,
+				iv_local, key, key_size,
+				PURPLE_CIPHER_BATCH_MODE_CBC);
+			if (!succ)
+				return FALSE;
+		}
+		return TRUE;
+	}
 
 	handle = purple_aes_cipher_gnutls_crypt_init(iv, key, key_size);
 	if (handle == NULL)
@@ -305,10 +349,9 @@ purple_aes_cipher_nss_cleanup(PurpleAESCipherNSSContext *context)
 static gboolean
 purple_aes_cipher_nss_crypt(const guchar *input, guchar *output, size_t len,
 	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size,
-	CK_ATTRIBUTE_TYPE operation)
+	CK_ATTRIBUTE_TYPE operation, CK_MECHANISM_TYPE cipher_mech)
 {
 	PurpleAESCipherNSSContext context;
-	CK_MECHANISM_TYPE cipher_mech = CKM_AES_CBC;
 	SECItem key_item, iv_item;
 	SECStatus ret;
 	int outlen = 0;
@@ -385,28 +428,41 @@ purple_aes_cipher_nss_crypt(const guchar *input, guchar *output, size_t len,
 	outlen += outlen_tmp;
 	if (outlen != (int)len) {
 		purple_debug_error("cipher-aes",
-			"resulting length doesn't match: %d (expected: %lu)\n",
-			outlen, len);
+			"resulting length doesn't match: %d (expected: %"
+			G_GSIZE_FORMAT ")\n", outlen, len);
 		return FALSE;
 	}
 
 	return TRUE;
 }
 
+static CK_MECHANISM_TYPE
+purple_aes_cipher_nss_batch_mode(PurpleCipherBatchMode batch_mode)
+{
+	switch (batch_mode) {
+		case PURPLE_CIPHER_BATCH_MODE_CBC:
+			return CKM_AES_CBC;
+		case PURPLE_CIPHER_BATCH_MODE_ECB:
+			return CKM_AES_ECB;
+	}
+}
+
 static gboolean
 purple_aes_cipher_nss_encrypt(const guchar *input, guchar *output, size_t len,
-	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
+	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size,
+	PurpleCipherBatchMode batch_mode)
 {
 	return purple_aes_cipher_nss_crypt(input, output, len, iv, key, key_size,
-		CKA_ENCRYPT);
+		CKA_ENCRYPT, purple_aes_cipher_nss_batch_mode(batch_mode));
 }
 
 static gboolean
 purple_aes_cipher_nss_decrypt(const guchar *input, guchar *output, size_t len,
-	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size)
+	guchar iv[PURPLE_AES_BLOCK_SIZE], guchar key[32], guint key_size,
+	PurpleCipherBatchMode batch_mode)
 {
 	return purple_aes_cipher_nss_crypt(input, output, len, iv, key, key_size,
-		CKA_DECRYPT);
+		CKA_DECRYPT, purple_aes_cipher_nss_batch_mode(batch_mode));
 }
 
 #endif /* PURPLE_AES_USE_NSS */
@@ -427,7 +483,9 @@ purple_aes_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 	input_padded = purple_aes_cipher_pad_pkcs7(input, in_len, &out_len);
 
 	if (out_len > out_size) {
-		purple_debug_error("cipher-aes", "Output buffer too small\n");
+		purple_debug_error("cipher-aes", "Output buffer too small (%"
+			G_GSIZE_FORMAT " > %" G_GSIZE_FORMAT ")",
+			out_len, out_size);
 		memset(input_padded, 0, out_len);
 		g_free(input_padded);
 		return -1;
@@ -443,7 +501,7 @@ purple_aes_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 #endif
 
 	succ = encrypt_func(input_padded, output, out_len, priv->iv,
-		priv->key, priv->key_size);
+		priv->key, priv->key_size, priv->batch_mode);
 
 	memset(input_padded, 0, out_len);
 	g_free(input_padded);
@@ -488,7 +546,7 @@ purple_aes_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 #endif
 
 	succ = decrypt_func(input, output, in_len, priv->iv, priv->key,
-		priv->key_size);
+		priv->key_size, priv->batch_mode);
 
 	if (!succ) {
 		memset(output, 0, in_len);
@@ -518,10 +576,14 @@ purple_aes_cipher_set_batch_mode(PurpleCipher *cipher,
 {
 	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
 
-	if (mode != PURPLE_CIPHER_BATCH_MODE_CBC) {
+	if (mode != PURPLE_CIPHER_BATCH_MODE_CBC &&
+		mode != PURPLE_CIPHER_BATCH_MODE_ECB)
+	{
 		purple_debug_error("cipher-aes", "unsupported batch mode\n");
 		priv->failure = TRUE;
 	}
+
+	priv->batch_mode = mode;
 
 	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_BATCH_MODE]);
 }
@@ -529,7 +591,9 @@ purple_aes_cipher_set_batch_mode(PurpleCipher *cipher,
 static PurpleCipherBatchMode
 purple_aes_cipher_get_batch_mode(PurpleCipher *cipher)
 {
-	return PURPLE_CIPHER_BATCH_MODE_CBC;
+	PurpleAESCipherPrivate *priv = PURPLE_AES_CIPHER_GET_PRIVATE(cipher);
+
+	return priv->batch_mode;
 }
 
 static size_t
@@ -605,9 +669,10 @@ purple_aes_cipher_class_init(PurpleAESCipherClass *klass) {
 
 	g_type_class_add_private(klass, sizeof(PurpleAESCipherPrivate));
 
-	properties[PROP_BATCH_MODE] = g_param_spec_enum("batch-mode", "batch-mode",
-							  "batch-mode", PURPLE_TYPE_CIPHER_BATCH_MODE, 0,
-							  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_BATCH_MODE] = g_param_spec_enum("batch-mode",
+		"batch-mode", "batch-mode", PURPLE_TYPE_CIPHER_BATCH_MODE,
+		PURPLE_CIPHER_BATCH_MODE_CBC,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_IV] = g_param_spec_string("iv", "iv", "iv", NULL,
 								G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);

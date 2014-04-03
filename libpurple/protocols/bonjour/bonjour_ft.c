@@ -541,6 +541,7 @@ xep_cmp_addr(const char *host, const char *buddy_ip)
 {
 #if defined(AF_INET6) && defined(HAVE_GETADDRINFO)
 	struct addrinfo hint, *res = NULL;
+	common_sockaddr_t addr;
 	int ret;
 
 	memset(&hint, 0, sizeof(hint));
@@ -550,9 +551,11 @@ xep_cmp_addr(const char *host, const char *buddy_ip)
 	ret = getaddrinfo(host, NULL, &hint, &res);
 	if(ret)
 		goto out;
+	memcpy(&addr, res->ai_addr, sizeof(addr));
 
-	if(res->ai_family != AF_INET6 ||
-	   !IN6_IS_ADDR_LINKLOCAL(&((struct sockaddr_in6 *)res->ai_addr)->sin6_addr)) {
+	if (res->ai_family != AF_INET6 ||
+		!IN6_IS_ADDR_LINKLOCAL(&addr.in6.sin6_addr))
+	{
 		freeaddrinfo(res);
 		goto out;
 	}

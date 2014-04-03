@@ -335,7 +335,7 @@ PurplePounce *purple_find_pounce(const PurpleAccount *pouncer,
 /**
  * purple_pounces_register_handler:
  * @ui:          The UI name.
- * @cb:          The callback function.
+ * @cb:          (scope call): The callback function.
  * @new_pounce:  The function called when a pounce is created.
  * @free_pounce: The function called when a pounce is freed.
  *

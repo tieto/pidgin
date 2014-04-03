@@ -248,17 +248,17 @@ PurpleProxyInfo *purple_proxy_get_setup(PurpleAccount *account);
 /**
  * purple_proxy_connect:
  * @handle:     A handle that should be associated with this
- *                   connection attempt.  The handle can be used
- *                   to cancel the connection attempt using the
- *                   purple_proxy_connect_cancel_with_handle()
- *                   function.
+ *              connection attempt.  The handle can be used
+ *              to cancel the connection attempt using the
+ *              purple_proxy_connect_cancel_with_handle()
+ *              function.
  * @account:    The account making the connection.
  * @host:       The destination host.
  * @port:       The destination port.
- * @connect_cb: The function to call when the connection is
- *                   established.  If the connection failed then
- *                   fd will be -1 and error message will be set
- *                   to something descriptive (hopefully).
+ * @connect_cb: (scope call): The function to call when the connection is
+ *              established.  If the connection failed then
+ *              fd will be -1 and error message will be set
+ *              to something descriptive (hopefully).
  * @data:       User-defined data.
  *
  * Makes a connection to the specified host and port.  Note that this
@@ -278,17 +278,17 @@ PurpleProxyConnectData *purple_proxy_connect(void *handle,
 /**
  * purple_proxy_connect_udp:
  * @handle:     A handle that should be associated with this
- *                   connection attempt.  The handle can be used
- *                   to cancel the connection attempt using the
- *                   purple_proxy_connect_cancel_with_handle()
- *                   function.
+ *              connection attempt.  The handle can be used
+ *              to cancel the connection attempt using the
+ *              purple_proxy_connect_cancel_with_handle()
+ *              function.
  * @account:    The account making the connection.
  * @host:       The destination host.
  * @port:       The destination port.
- * @connect_cb: The function to call when the connection is
- *                   established.  If the connection failed then
- *                   fd will be -1 and error message will be set
- *                   to something descriptive (hopefully).
+ * @connect_cb: (scope call): The function to call when the connection is
+ *              established.  If the connection failed then
+ *              fd will be -1 and error message will be set
+ *              to something descriptive (hopefully).
  * @data:       User-defined data.
  *
  * Makes a connection to the specified host and port.  Note that this
@@ -308,18 +308,18 @@ PurpleProxyConnectData *purple_proxy_connect_udp(void *handle,
 /**
  * purple_proxy_connect_socks5_account:
  * @handle:     A handle that should be associated with this
- *                   connection attempt.  The handle can be used
- *                   to cancel the connection attempt using the
- *                   purple_proxy_connect_cancel_with_handle()
- *                   function.
+ *              connection attempt.  The handle can be used
+ *              to cancel the connection attempt using the
+ *              purple_proxy_connect_cancel_with_handle()
+ *              function.
  * @account:    The account making the connection.
  * @gpi:        The PurpleProxyInfo specifying the proxy settings
  * @host:       The destination host.
  * @port:       The destination port.
- * @connect_cb: The function to call when the connection is
- *                   established.  If the connection failed then
- *                   fd will be -1 and error message will be set
- *                   to something descriptive (hopefully).
+ * @connect_cb: (scope call): The function to call when the connection is
+ *              established.  If the connection failed then
+ *              fd will be -1 and error message will be set
+ *              to something descriptive (hopefully).
  * @data:       User-defined data.
  *
  * Makes a connection through a SOCKS5 proxy.

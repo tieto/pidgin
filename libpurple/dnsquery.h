@@ -115,7 +115,7 @@ GType purple_dnsquery_ui_ops_get_type(void);
  * @account:  The account that the query is being done for (or NULL)
  * @hostname: The hostname to resolve.
  * @port:     A port number which is stored in the struct sockaddr.
- * @callback: The callback function to call after resolving.
+ * @callback: (scope call): The callback function to call after resolving.
  * @data:     Extra data to pass to the callback function.
  *
  * Perform an asynchronous DNS query.

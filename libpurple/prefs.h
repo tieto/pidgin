@@ -360,7 +360,7 @@ GList *purple_prefs_get_children_names(const char *name);
  * purple_prefs_connect_callback:
  * @handle:   The handle of the receiver.
  * @name:     The name of the preference
- * @cb:       The callback function
+ * @cb:       (scope call): The callback function
  * @data:     The data to pass to the callback function.
  *
  * Add a callback to a pref (and its children)

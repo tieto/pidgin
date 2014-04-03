@@ -748,14 +748,14 @@ clean_connect(gpointer data)
 }
 
 static void
-proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_udp_none(PurpleProxyConnectData *connect_data, common_sockaddr_t *addr, socklen_t addrlen)
 {
 	int flags;
 
 	purple_debug_info("proxy", "UDP Connecting to %s:%d with no proxy\n",
 			connect_data->host, connect_data->port);
 
-	connect_data->fd = socket(addr->sa_family, SOCK_DGRAM, 0);
+	connect_data->fd = socket(addr->sa.sa_family, SOCK_DGRAM, 0);
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -769,7 +769,7 @@ proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *ad
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(connect_data->fd, addr, addrlen) != 0)
+	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
@@ -810,14 +810,14 @@ proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *ad
 }
 
 static void
-proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_none(PurpleProxyConnectData *connect_data, common_sockaddr_t *addr, socklen_t addrlen)
 {
 	int flags;
 
 	purple_debug_info("proxy", "Connecting to %s:%d with no proxy\n",
 			connect_data->host, connect_data->port);
 
-	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
+	connect_data->fd = socket(addr->sa.sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -831,7 +831,7 @@ proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(connect_data->fd, addr, addrlen) != 0)
+	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
@@ -1258,7 +1258,7 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond) {
 }
 
 static void
-proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_http(PurpleProxyConnectData *connect_data, common_sockaddr_t *addr, socklen_t addrlen)
 {
 	int flags;
 
@@ -1268,7 +1268,7 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 			   (purple_proxy_info_get_host(connect_data->gpi) ? purple_proxy_info_get_host(connect_data->gpi) : "(null)"),
 			   purple_proxy_info_get_port(connect_data->gpi));
 
-	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
+	connect_data->fd = socket(addr->sa.sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -1282,7 +1282,7 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(connect_data->fd, addr, addrlen) != 0) {
+	if (connect(connect_data->fd, &addr->sa, addrlen) != 0) {
 		if (errno == EINPROGRESS || errno == EINTR) {
 			purple_debug_info("proxy", "HTTP connection in progress\n");
 
@@ -1335,7 +1335,7 @@ s4_host_resolved(GSList *hosts, gpointer data, const char *error_message)
 {
 	PurpleProxyConnectData *connect_data = data;
 	unsigned char packet[9];
-	struct sockaddr *addr;
+	common_sockaddr_t *addr;
 
 	connect_data->query_data = NULL;
 
@@ -1359,7 +1359,7 @@ s4_host_resolved(GSList *hosts, gpointer data, const char *error_message)
 	packet[1] = 0x01;
 	packet[2] = connect_data->port >> 8;
 	packet[3] = connect_data->port & 0xff;
-	memcpy(packet + 4, &((struct sockaddr_in *)addr)->sin_addr.s_addr, 4);
+	memcpy(packet + 4, &addr->in.sin_addr.s_addr, 4);
 	packet[8] = 0x00;
 
 	g_free(addr);
@@ -1452,7 +1452,7 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 static void
-proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_socks4(PurpleProxyConnectData *connect_data, common_sockaddr_t *addr, socklen_t addrlen)
 {
 	int flags;
 
@@ -1462,7 +1462,7 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 			   purple_proxy_info_get_host(connect_data->gpi),
 			   purple_proxy_info_get_port(connect_data->gpi));
 
-	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
+	connect_data->fd = socket(addr->sa.sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -1476,7 +1476,7 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(connect_data->fd, addr, addrlen) != 0)
+	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
@@ -2109,7 +2109,7 @@ s5_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 static void
-proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_socks5(PurpleProxyConnectData *connect_data, common_sockaddr_t *addr, socklen_t addrlen)
 {
 	int flags;
 
@@ -2119,7 +2119,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 			   purple_proxy_info_get_host(connect_data->gpi),
 			   purple_proxy_info_get_port(connect_data->gpi));
 
-	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
+	connect_data->fd = socket(addr->sa.sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -2133,7 +2133,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(connect_data->fd, addr, addrlen) != 0)
+	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
@@ -2168,7 +2168,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 static void try_connect(PurpleProxyConnectData *connect_data)
 {
 	socklen_t addrlen;
-	struct sockaddr *addr;
+	common_sockaddr_t *addr;
 	char ipaddr[INET6_ADDRSTRLEN];
 
 	addrlen = GPOINTER_TO_INT(connect_data->hosts->data);
@@ -2176,15 +2176,14 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	addr = connect_data->hosts->data;
 	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
 #ifdef HAVE_INET_NTOP
-	if (addr->sa_family == AF_INET)
-		inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
+	if (addr->sa.sa_family == AF_INET)
+		inet_ntop(addr->sa.sa_family, &addr->in.sin_addr,
 				ipaddr, sizeof(ipaddr));
-	else if (addr->sa_family == AF_INET6)
-		inet_ntop(addr->sa_family, &((struct sockaddr_in6 *)addr)->sin6_addr,
+	else if (addr->sa.sa_family == AF_INET6)
+		inet_ntop(addr->sa.sa_family, &addr->in6.sin6_addr,
 				ipaddr, sizeof(ipaddr));
 #else
-	memcpy(ipaddr, inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
-			sizeof(ipaddr));
+	memcpy(ipaddr, inet_ntoa(addr->in.sin_addr), sizeof(ipaddr));
 #endif
 	purple_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
 

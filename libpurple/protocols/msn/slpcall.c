@@ -282,12 +282,18 @@ parse_dc_nonce(const char *content, MsnDirectConnNonceType *ntype)
 			*ntype = DC_NONCE_PLAIN;
 			g_free(nonce);
 			nonce = g_malloc(16);
-			*(guint32 *)(nonce +  0) = GUINT32_TO_LE(n1);
-			*(guint16 *)(nonce +  4) = GUINT16_TO_LE(n2);
-			*(guint16 *)(nonce +  6) = GUINT16_TO_LE(n3);
-			*(guint16 *)(nonce +  8) = GUINT16_TO_BE(n4);
-			*(guint16 *)(nonce + 10) = GUINT16_TO_BE(n5);
-			*(guint32 *)(nonce + 12) = GUINT32_TO_BE(n6);
+			n1 = GUINT32_TO_LE(n1);
+			n2 = GUINT16_TO_LE(n2);
+			n3 = GUINT16_TO_LE(n3);
+			n4 = GUINT16_TO_BE(n4);
+			n5 = GUINT16_TO_BE(n5);
+			n6 = GUINT32_TO_BE(n6);
+			memcpy(nonce +  0, &n1, sizeof(n1));
+			memcpy(nonce +  4, &n2, sizeof(n2));
+			memcpy(nonce +  6, &n3, sizeof(n3));
+			memcpy(nonce +  8, &n4, sizeof(n4));
+			memcpy(nonce + 10, &n5, sizeof(n5));
+			memcpy(nonce + 12, &n6, sizeof(n6));
 		} else {
 			/* Invalid nonce, so ignore request */
 			g_free(nonce);

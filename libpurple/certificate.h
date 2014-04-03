@@ -363,19 +363,19 @@ G_BEGIN_DECLS
 
 /**
  * purple_certificate_verify:
- * @verifier:      Verification logic to use.
- *                      See purple_certificate_find_verifier().
- * @subject_name:  Name that should match the first certificate in the
- *                      chain for the certificate to be valid. Will be strdup'd
- *                      into the Request struct
- * @cert_chain:    Certificate chain to check. If there is more than one
- *                      certificate in the chain (X.509), the peer's
- *                      certificate comes first, then the issuer/signer's
- *                      certificate, etc. The whole list is duplicated into the
- *                      Request struct.
- * @cb:            Callback function to be called with whether the
- *                      certificate was approved or not.
- * @cb_data:       User-defined data for the above.
+ * @verifier:         Verification logic to use.
+ *                    See purple_certificate_find_verifier().
+ * @subject_name:     Name that should match the first certificate in the
+ *                    chain for the certificate to be valid. Will be strdup'd
+ *                    into the Request struct
+ * @cert_chain:       Certificate chain to check. If there is more than one
+ *                    certificate in the chain (X.509), the peer's
+ *                    certificate comes first, then the issuer/signer's
+ *                    certificate, etc. The whole list is duplicated into the
+ *                    Request struct.
+ * @cb: (scope call): Callback function to be called with whether the
+ *                    certificate was approved or not.
+ * @cb_data:          User-defined data for the above.
  *
  * Constructs a verification request and passed control to the specified Verifier
  *

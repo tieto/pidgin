@@ -37,18 +37,20 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 	}
 
 	if (hosts && g_slist_next(hosts)) {
-		struct sockaddr *addr = g_slist_next(hosts)->data;
+		common_sockaddr_t addr;
 		char dst[INET6_ADDRSTRLEN];
 		int port;
 
-		if (addr->sa_family == AF_INET6) {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr,
+		memcpy(&addr, g_slist_next(hosts)->data, sizeof(addr));
+
+		if (addr.sa.sa_family == AF_INET6) {
+			inet_ntop(addr.sa.sa_family, &addr.in6.sin6_addr,
 				dst, sizeof(dst));
-			port = ntohs(((struct sockaddr_in6 *) addr)->sin6_port);
+			port = ntohs(addr.in6.sin6_port);
 		} else {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr,
+			inet_ntop(addr.sa.sa_family, &addr.in.sin_addr,
 				dst, sizeof(dst));
-			port = ntohs(((struct sockaddr_in *) addr)->sin_port);
+			port = ntohs(addr.in.sin_port);
 		}
 
 		if (js->stun_ip)

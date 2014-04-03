@@ -31,6 +31,8 @@
 #ifdef _WIN32
 #  include <ws2tcpip.h>
 #  include <winsock2.h>
+#  include <stdlib.h>
+#  include <stdio.h>
 #  include <errno.h>
 /* Obecnie na Win32 tylko MSVC definiuje te typy błędów. Na wypadek, gdyby
  * jednak Cygwin bądź MinGW zaczęły je definiować, używamy bardziej ogólnych

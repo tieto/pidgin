@@ -1545,13 +1545,12 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		return;
 	}
 	else if ( msgflags & CP_MSG_TL_ENCRYPTED ) {
-		/* this is a transport-layer encrypted message. */
-		message = mxit_decrypt_message( session, message );
-		if ( !message ) {
-			/* could not be decrypted */
-			purple_serv_got_im( session->con, sender, _( "An encrypted message was received which could not be decrypted." ), PURPLE_MESSAGE_ERROR, time( NULL ) );
-			return;
-		}
+		/* This is a transport-layer encrypted message. We don't support
+		 * it anymore, because original client doesn't look like it was. */
+		purple_serv_got_im(session->con, sender,
+			_("An encrypted message was received which could not be decrypted."),
+			PURPLE_MESSAGE_ERROR, time(NULL));
+		return;
 	}
 
 	if ( msgflags & CP_MSG_NOTIFY_DELIVERY ) {
@@ -2094,11 +2093,12 @@ static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record*
  */
 static int get_chunk_len( const char* chunkdata )
 {
-	int*	sizeptr;
+	guint32 size_val;
 
-	sizeptr = (int*) &chunkdata[1];		/* we skip the first byte (type field) */
+	/* we skip the first byte (type field) */
+	memcpy(&size_val, &chunkdata[1], sizeof(size_val));
 
-	return ntohl( *sizeptr );
+	return ntohl(size_val);
 }
 
 

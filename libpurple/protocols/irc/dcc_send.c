@@ -199,12 +199,14 @@ static void irc_dccsend_send_read(gpointer data, int source, PurpleInputConditio
 	xd->rxlen += len;
 
 	while (1) {
+		gint32 val;
 		size_t acked;
 
 		if (xd->rxlen < 4)
 			break;
 
-		acked = ntohl(*((gint32 *)xd->rxqueue));
+		memcpy(&val, xd->rxqueue, sizeof(val));
+		acked = ntohl(val);
 
 		xd->rxlen -= 4;
 		if (xd->rxlen) {

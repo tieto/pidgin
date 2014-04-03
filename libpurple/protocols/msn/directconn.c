@@ -84,12 +84,13 @@ msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
 static void
 msn_dc_generate_nonce(MsnDirectConn *dc)
 {
-	guint32 *nonce;
 	int i;
 
-	nonce = (guint32 *)&dc->nonce;
-	for (i = 0; i < 4; i++)
-		nonce[i] = rand();
+	for (i = 0; i < 4; i++) {
+		guint32 randval = g_random_int();
+		memcpy(dc->nonce + sizeof(guint32) * i,
+			&randval, sizeof(guint32));
+	}
 
 	msn_dc_calculate_nonce_hash(dc->nonce_type, dc->nonce, sizeof(dc->nonce), dc->nonce_hash);
 
@@ -661,7 +662,8 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 	/* Wait for packet length */
 	while (dc->in_pos >= 4) {
-		packet_length = GUINT32_FROM_LE(*((guint32*)dc->in_buffer));
+		memcpy(&packet_length, dc->in_buffer, sizeof(packet_length));
+		packet_length = GUINT32_FROM_LE(packet_length);
 
 		if (packet_length > DC_MAX_PACKET_SIZE) {
 			/* Oversized packet */

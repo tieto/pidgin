@@ -209,13 +209,13 @@ msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len)
 			char *header_wire = NULL;
 			char *data_header_wire = NULL;
 
-			if (header->header_tlv != NULL)
-				header_wire = msn_tlvlist_write(header->header_tlv, (size_t *)&header->header_len);
-			else
+			if (header->header_tlv != NULL) {
+				header_wire = msn_tlvlist_write(header->header_tlv, &header->header_len);
+			} else
 				header->header_len = 0;
 
 			if (header->data_tlv != NULL)
-				data_header_wire = msn_tlvlist_write(header->data_tlv, (size_t *)&header->data_header_len);
+				data_header_wire = msn_tlvlist_write(header->data_tlv, &header->data_header_len);
 			else
 				header->data_header_len = 0;
 

@@ -40,11 +40,20 @@
  */
 typedef struct _PidginXferDialog PidginXferDialog;
 
+#define PIDGIN_TYPE_XFER_DIALOG (pidgin_xfer_dialog_get_type())
+
 G_BEGIN_DECLS
 
 /**************************************************************************/
 /* GTK+ File Transfer Dialog API                                          */
 /**************************************************************************/
+
+/**
+ * pidgin_xfer_dialog_get_type:
+ *
+ * Returns: The #GType for the #PidginXferDialog boxed structure.
+ */
+GType pidgin_xfer_dialog_get_type(void);
 
 /**
  * pidgin_xfer_dialog_new:

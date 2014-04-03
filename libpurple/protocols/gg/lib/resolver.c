@@ -474,7 +474,8 @@ static void gg_resolver_fork_cleanup(void **priv_data, int force)
 	if (force)
 		kill(data->pid, SIGKILL);
 
-	waitpid(data->pid, NULL, WNOHANG);
+	/* we don't care about child's exit status, just want to clean it up */
+	(void)waitpid(data->pid, NULL, WNOHANG);
 
 	free(data);
 }
@@ -817,10 +818,10 @@ int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type)
 			return 0;
 		}
 
-#ifdef _WIN32
-		type = GG_RESOLVER_WIN32;
-#elif defined(GG_CONFIG_HAVE_PTHREAD) && defined(GG_CONFIG_PTHREAD_DEFAULT)
+#ifdef GG_CONFIG_HAVE_PTHREAD
 		type = GG_RESOLVER_PTHREAD;
+#elif defined(_WIN32)
+		type = GG_RESOLVER_WIN32;
 #elif defined(GG_CONFIG_HAVE_FORK)
 		type = GG_RESOLVER_FORK;
 #endif
@@ -944,10 +945,10 @@ int gg_http_set_resolver(struct gg_http *gh, gg_resolver_t type)
 			return 0;
 		}
 
-#ifdef _WIN32
-		type = GG_RESOLVER_WIN32;
-#elif defined(GG_CONFIG_HAVE_PTHREAD) && defined(GG_CONFIG_PTHREAD_DEFAULT)
+#ifdef GG_CONFIG_HAVE_PTHREAD
 		type = GG_RESOLVER_PTHREAD;
+#elif defined(_WIN32)
+		type = GG_RESOLVER_WIN32;
 #elif defined(GG_CONFIG_HAVE_FORK)
 		type = GG_RESOLVER_FORK;
 #endif

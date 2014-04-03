@@ -37,6 +37,8 @@
 
 struct _PidginXferDialog
 {
+	gint box_count;
+
 	gboolean keep_open;
 	gboolean auto_clear;
 
@@ -1074,6 +1076,43 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 
 	/* If we got to this point then we know everything is finished */
 	pidgin_xfer_dialog_hide(dialog);
+}
+
+/**************************************************************************
+ * PidginXferDialog GBoxed code
+ **************************************************************************/
+static PidginXferDialog *
+pidgin_xfer_dialog_ref(PidginXferDialog *dialog)
+{
+	g_return_val_if_fail(dialog != NULL, NULL);
+
+	dialog->box_count++;
+
+	return dialog;
+}
+
+static void
+pidgin_xfer_dialog_unref(PidginXferDialog *dialog)
+{
+	g_return_if_fail(dialog != NULL);
+	g_return_if_fail(dialog->box_count >= 0);
+
+	if (!dialog->box_count--)
+		pidgin_xfer_dialog_destroy(dialog);
+}
+
+GType
+pidgin_xfer_dialog_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PidginXferDialog",
+				(GBoxedCopyFunc)pidgin_xfer_dialog_ref,
+				(GBoxedFreeFunc)pidgin_xfer_dialog_unref);
+	}
+
+	return type;
 }
 
 /**************************************************************************

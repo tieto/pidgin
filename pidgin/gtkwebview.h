@@ -42,6 +42,8 @@
 #define PIDGIN_IS_WEBVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_WEBVIEW))
 #define PIDGIN_WEBVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_WEBVIEW, PidginWebViewClass))
 
+#define PIDGIN_TYPE_WEBVIEW_SMILEY (pidgin_webview_smiley_get_type())
+
 typedef enum {
 	PIDGIN_WEBVIEW_BOLD          = 1 << 0,
 	PIDGIN_WEBVIEW_ITALIC        = 1 << 1,
@@ -109,11 +111,16 @@ G_BEGIN_DECLS
 /**
  * pidgin_webview_get_type:
  *
- * Returns the GType for a PidginWebView widget
- *
- * Returns: The GType for PidginWebView widget
+ * Returns: The #GType for #PidginWebView widget
  */
 GType pidgin_webview_get_type(void);
+
+/**
+ * pidgin_webview_smiley_get_type:
+ *
+ * Returns: The #GType for the #PidginWebViewSmiley boxed structure.
+ */
+GType pidgin_webview_smiley_get_type(void);
 
 /**
  * pidgin_webview_new:
