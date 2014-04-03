@@ -747,48 +747,35 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 	gtk_box_pack_start(GTK_BOX(container), line, FALSE, FALSE, 0);
 	for (it = smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
-		GtkWidget *image, *button;
+		GtkWidget *button;
+		GtkImage *image;
 		GtkRequisition size;
 		const gchar *smiley_shortcut;
+		const gchar *smiley_path;
+
+		smiley_path = purple_smiley_get_path(smiley);
 
 		/* TODO: cache it! */
-		image = gtk_image_new_from_file(purple_smiley_get_path(smiley));
+		image = GTK_IMAGE(gtk_image_new_from_file(smiley_path));
 
 		/* TODO: this also could be cached - both width and height */
-		gtk_widget_get_preferred_size(image, NULL, &size);
+		gtk_widget_get_preferred_size(GTK_WIDGET(image), NULL, &size);
 
-#if 0
-		/* TODO: scale images bigger than 24x24 */
-		GdkPixbuf *pixbuf = NULL;
-		GtkImageType type;
-
-		type = gtk_image_get_storage_type(GTK_IMAGE(image));
-
-		if (type == GTK_IMAGE_PIXBUF) {
-			pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
-		} else if (type == GTK_IMAGE_ANIMATION) {
-			GdkPixbufAnimation *animation;
-
-			animation = gtk_image_get_animation(GTK_IMAGE(image));
-
-			pixbuf = gdk_pixbuf_animation_get_static_image(animation);
+		/* scale down images bigger than 24x24 */
+		if (size.width > 24 || size.height > 24) {
+			GdkPixbuf *pixbuf = pidgin_pixbuf_scale_down(
+				pidgin_pixbuf_new_from_file(smiley_path),
+				24, 24, GDK_INTERP_BILINEAR, TRUE);
+			gtk_image_set_from_pixbuf(image, pixbuf);
+			gtk_widget_get_preferred_size(GTK_WIDGET(image),
+				NULL, &size);
+			g_object_unref(G_OBJECT(pixbuf));
 		}
-
-		if (pixbuf != NULL) {
-			GdkPixbuf *resized;
-			resized = gdk_pixbuf_scale_simple(pixbuf, 24, 24,
-					GDK_INTERP_HYPER);
-
-			gtk_image_set_from_pixbuf(GTK_IMAGE(image), resized); /* This unrefs pixbuf */
-			gtk_widget_get_preferred_size(image, NULL, &size);
-			g_object_unref(G_OBJECT(resized));
-		}
-#endif
 
 		smiley_shortcut = purple_smiley_get_shortcut(smiley);
 
 		button = gtk_button_new();
-		gtk_container_add(GTK_CONTAINER(button), image);
+		gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
 		g_object_set_data_full(G_OBJECT(button), "smiley_text",
 			g_strdup(smiley_shortcut), g_free);
 		g_signal_connect(G_OBJECT(button), "clicked",
