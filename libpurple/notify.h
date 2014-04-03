@@ -236,14 +236,14 @@ G_BEGIN_DECLS
  * purple_notify_searchresults:
  * @gc:        The PurpleConnection handle associated with the information.
  * @title:     The title of the message.  If this is NULL, the title
- *                  will be "Search Results."
+ *             will be "Search Results."
  * @primary:   The main point of the message.
  * @secondary: The secondary information.
  * @results:   The PurpleNotifySearchResults instance.
- * @cb:        The callback to call when the user closes
- *                  the notification.
+ * @cb:        (scope call): The callback to call when the user closes
+ *             the notification.
  * @user_data: The data to pass to the close callback and any other
- *                  callback associated with a button.
+ *             callback associated with a button.
  *
  * Displays results from a buddy search.  This can be, for example,
  * a window with a list of all found buddies, where you are given the
@@ -281,8 +281,8 @@ void purple_notify_searchresults_new_rows(PurpleConnection *gc,
  * purple_notify_searchresults_button_add:
  * @results: The search results object.
  * @type:    Type of the button. (TODO: Only one button of a given type
- *                can be displayed.)
- * @cb:      Function that will be called on the click event.
+ *           can be displayed.)
+ * @cb:      (scope call): Function that will be called on the click event.
  *
  * Adds a stock button that will be displayed in the search results dialog.
  */
@@ -295,7 +295,7 @@ void purple_notify_searchresults_button_add(PurpleNotifySearchResults *results,
  * purple_notify_searchresults_button_add_labeled:
  * @results: The search results object
  * @label:   The label to display
- * @cb:      Function that will be called on the click event
+ * @cb:      (scope call): Function that will be called on the click event
  *
  * Adds a plain labelled button that will be displayed in the search results
  * dialog.
@@ -386,9 +386,9 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
  * @primary:   The main point of the message.
  * @secondary: The secondary information.
  * @cpar:      The #PurpleRequestCommonParameters associated with this
- *                  request, or %NULL if none is.
- * @cb:        The callback to call when the user closes
- *                  the notification.
+ *             request, or %NULL if none is.
+ * @cb:        (scope call): The callback to call when the user closes
+ *             the notification.
  * @user_data: The data to pass to the callback.
  *
  * Displays a notification message to the user.
@@ -407,8 +407,8 @@ void *purple_notify_message(void *handle, PurpleNotifyMsgType type,
  * @from:      The from address.
  * @to:        The destination address.
  * @url:       The URL where the message can be read.
- * @cb:        The callback to call when the user closes
- *                  the notification.
+ * @cb:        (scope call): The callback to call when the user closes
+ *             the notification.
  * @user_data: The data to pass to the callback.
  *
  * Displays a single email notification to the user.
@@ -424,16 +424,16 @@ void *purple_notify_email(void *handle, const char *subject,
  * purple_notify_emails:
  * @handle:    The plugin or connection handle.
  * @count:     The number of emails.  '0' can be used to signify that
- *                  the user has no unread emails and the UI should remove
- *                  the mail notification.
+ *             the user has no unread emails and the UI should remove
+ *             the mail notification.
  * @detailed:  %TRUE if there is information for each email in the
- *                  arrays.
+ *             arrays.
  * @subjects:  The array of subjects.
  * @froms:     The array of from addresses.
  * @tos:       The array of destination addresses.
  * @urls:      The URLs where the messages can be read.
- * @cb:        The callback to call when the user closes
- *                  the notification.
+ * @cb:        (scope call): The callback to call when the user closes
+ *             the notification.
  * @user_data: The data to pass to the callback.
  *
  * Displays a notification for multiple emails to the user.
@@ -452,8 +452,8 @@ void *purple_notify_emails(void *handle, size_t count, gboolean detailed,
  * @primary:   The main point of the message.
  * @secondary: The secondary information.
  * @text:      The formatted text.
- * @cb:        The callback to call when the user closes
- *                  the notification.
+ * @cb:        (scope call): The callback to call when the user closes
+ *             the notification.
  * @user_data: The data to pass to the callback.
  *
  * Displays a notification with formatted text.
@@ -472,7 +472,8 @@ void *purple_notify_formatted(void *handle, const char *title,
  * @gc:         The PurpleConnection handle associated with the information.
  * @who:        The username associated with the information.
  * @user_info:  The PurpleNotifyUserInfo which contains the information
- * @cb:         The callback to call when the user closes the notification.
+ * @cb:         (scope call): The callback to call when the user closes the
+ *              notification.
  * @user_data:  The data to pass to the callback.
  *
  * Displays user information with formatted text, passing information giving

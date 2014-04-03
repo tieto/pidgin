@@ -114,34 +114,34 @@ GType purple_srv_txt_query_ui_ops_get_type(void);
 
 /**
  * purple_srv_resolve:
- * @account:   The account that the query is being done for (or NULL)
+ * @account:   The account that the query is being done for (or %NULL)
  * @protocol:  Name of the protocol (e.g. "sip")
  * @transport: Name of the transport ("tcp" or "udp")
  * @domain:    Domain name to query (e.g. "blubb.com")
- * @cb:        A callback which will be called with the results
+ * @cb:        (scope call): A callback which will be called with the results
  * @extradata: Extra data to be passed to the callback
  *
  * Queries an SRV record.
  *
- * Returns: NULL if there was an error, otherwise return a reference to
- *         a data structure that can be used to cancel the pending
- *         DNS query, if needed.
+ * Returns: %NULL if there was an error, otherwise return a reference to
+ *          a data structure that can be used to cancel the pending
+ *          DNS query, if needed.
  */
 PurpleSrvTxtQueryData *purple_srv_resolve(PurpleAccount *account, const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
 
 /**
  * purple_txt_resolve:
- * @account:   The account that the query is being done for (or NULL)
+ * @account:   The account that the query is being done for (or %NULL)
  * @owner:     Name of the protocol (e.g. "_xmppconnect")
  * @domain:    Domain name to query (e.g. "blubb.com")
- * @cb:        A callback which will be called with the results
+ * @cb:        (scope call): A callback which will be called with the results
  * @extradata: Extra data to be passed to the callback
  *
  * Queries an TXT record.
  *
- * Returns: NULL if there was an error, otherwise return a reference to
- *         a data structure that can be used to cancel the pending
- *         DNS query, if needed.
+ * Returns: %NULL if there was an error, otherwise return a reference to
+ *          a data structure that can be used to cancel the pending
+ *          DNS query, if needed.
  */
 PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account, const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
 

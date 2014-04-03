@@ -131,46 +131,47 @@ G_BEGIN_DECLS
  * @cmd: The command. This should be a UTF-8 (or ASCII) string, with no spaces
  *            or other white space.
  * @args: A string of characters describing to libpurple how to parse this
- *             command's arguments.  If what the user types doesn't match this
- *             pattern, libpurple will keep looking for another command, unless
- *             the flag #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed in @f.
- *             This string should contain no whitespace, and use a single
- *             character for each argument.  The recognized characters are:
- *         <itemizedlist>
- *           <listitem><literal>'w'</literal>: Matches a single word.</listitem>
- *           <listitem><literal>'W'</literal>: Matches a single word, with
- *                                             formatting.</listitem>
- *           <listitem><literal>'s'</literal>: Matches the rest of the
- *                                             arguments after this point,
- *                                             as a single string.</listitem>
- *           <listitem><literal>'S'</literal>: Same as <literal>'s'</literal>
- *                                             but with formatting.</listitem>
- *         </itemizedlist>
- *             If args is the empty string, then the command accepts no
- *             arguments. The args passed to the callback @func will be a %NULL
- *             terminated array of %NULL terminated strings, and will always
- *             match the number of arguments asked for, unless
- *             #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed.
+ *        command's arguments.  If what the user types doesn't match this
+ *        pattern, libpurple will keep looking for another command, unless
+ *        the flag #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed in @f.
+ *        This string should contain no whitespace, and use a single
+ *        character for each argument.  The recognized characters are:
+ *        <itemizedlist>
+ *          <listitem><literal>'w'</literal>: Matches a single word.</listitem>
+ *          <listitem><literal>'W'</literal>: Matches a single word, with
+ *                                            formatting.</listitem>
+ *          <listitem><literal>'s'</literal>: Matches the rest of the
+ *                                            arguments after this point,
+ *                                            as a single string.</listitem>
+ *          <listitem><literal>'S'</literal>: Same as <literal>'s'</literal>
+ *                                            but with formatting.</listitem>
+ *        </itemizedlist>
+ *        If args is the empty string, then the command accepts no
+ *        arguments. The args passed to the callback @func will be a %NULL
+ *        terminated array of %NULL terminated strings, and will always
+ *        match the number of arguments asked for, unless
+ *        #PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS is passed.
  * @p: This is the priority. Higher priority commands will be run first,
- *          and usually the first command will stop any others from being
- *          called.
+ *     and usually the first command will stop any others from being
+ *     called.
  * @f: Flags specifying various options about this command, combined with
- *          <literal>|</literal> (bitwise OR). You need to at least pass one of
- *          #PURPLE_CMD_FLAG_IM or #PURPLE_CMD_FLAG_CHAT (you may pass both) in
- *          order for the command to ever actually be called.
+ *     <literal>|</literal> (bitwise OR). You need to at least pass one of
+ *     #PURPLE_CMD_FLAG_IM or #PURPLE_CMD_FLAG_CHAT (you may pass both) in
+ *     order for the command to ever actually be called.
  * @protocol_id: If the #PURPLE_CMD_FLAG_PRPL_ONLY flag is set, this is the id
  *                of the protocol to which the command applies (such as
  *                <literal>"prpl-msn"</literal>). If the flag is not set, this
  *                parameter is ignored; pass %NULL (or a humourous string of
  *                your choice!).
- * @func: This is the function to call when someone enters this command.
+ * @func: (scope call): This is the function to call when someone enters this
+ *                      command.
  * @helpstr: a whitespace sensitive, UTF-8, HTML string describing how to
- *                use the command.  The preferred format of this string is the
- *                command's name, followed by a space and any arguments it
- *                accepts (if it takes any arguments, otherwise no space),
- *                followed by a colon, two spaces, and a description of the
- *                command in sentence form.  Do not include a slash before the
- *                command name.
+ *           use the command.  The preferred format of this string is the
+ *           command's name, followed by a space and any arguments it
+ *           accepts (if it takes any arguments, otherwise no space),
+ *           followed by a colon, two spaces, and a description of the
+ *           command in sentence form.  Do not include a slash before the
+ *           command name.
  * @data: User defined data to pass to the #PurpleCmdFunc @f.
  *
  * Register a new command with the core.

@@ -484,7 +484,7 @@ const gchar *purple_plugin_get_homepage(const PurplePlugin *plugin);
  * purple_plugin_ipc_register:
  * @plugin:     The plugin to register the command with.
  * @command:    The name of the command.
- * @func:       The function to execute.
+ * @func:       (scope call): The function to execute.
  * @marshal:    The marshalling function.
  * @ret_type:   The return type.
  * @num_params: The number of parameters.
@@ -726,7 +726,8 @@ void purple_plugins_uninit(void);
 /**
  * purple_plugin_action_new:
  * @label:    The description of the action to show to the user.
- * @callback: The callback to call when the user selects this action.
+ * @callback: (scope call): The callback to call when the user selects this
+ *            action.
  *
  * Allocates and returns a new PurplePluginAction.
  */

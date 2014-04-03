@@ -216,7 +216,7 @@ purple_e2ee_provider_get_name(PurpleE2eeProvider *provider);
 /**
  * purple_e2ee_provider_set_conv_menu_cb:
  * @provider:     The E2EE provider.
- * @conv_menu_cb: The callback.
+ * @conv_menu_cb: (scope call): The callback.
  *
  * Sets the conversation menu callback for the E2EE provider.
  *
