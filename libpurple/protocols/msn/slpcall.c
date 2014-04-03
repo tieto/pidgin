@@ -235,11 +235,11 @@ get_token(const char *str, const char *start, const char *end)
 static PurpleStoredImage *
 find_valid_emoticon(PurpleAccount *account, const char *path)
 {
+#if 0
 	GList *smileys;
 
 	if (!purple_account_get_bool(account, "custom_smileys", TRUE))
 		return NULL;
-#if 0
 	smileys = purple_smileys_get_all();
 
 	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {

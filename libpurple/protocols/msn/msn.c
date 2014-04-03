@@ -2077,6 +2077,9 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 		msn_emoticon_destroy(smile);
 		smileys = g_slist_delete_link(smileys, smileys);
 	}
+#else
+	(void)smile;
+	(void)smileys;
 #endif
 
 	if (emoticons) {

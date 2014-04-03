@@ -980,6 +980,9 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 							JABBER_DATA_MAX_SIZE);
 				}
 			}
+#else
+			(void)iterator;
+			(void)jabber_message_get_mimetype_from_ext;
 #endif
 
 			if (has_too_large_smiley) {
