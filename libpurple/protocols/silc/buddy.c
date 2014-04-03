@@ -1290,6 +1290,8 @@ silcpurple_add_buddy_resolved(SilcClient client,
 		}
 	}
 
+	g_return_if_fail(client_entry != NULL);
+
 	/* The client was found.  Now get its public key and verify
 	   that before adding the buddy. */
 	memset(&userpk, 0, sizeof(userpk));

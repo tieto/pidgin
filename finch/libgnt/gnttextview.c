@@ -339,6 +339,9 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 			g_return_val_if_fail(select_start != NULL, TRUE);
 
 			select_end = gnt_text_view_get_p(view, x - widget->priv.x, y - widget->priv.y);
+
+			g_return_val_if_fail(select_end != NULL, TRUE);
+
 			if (select_end < select_start) {
 				gchar *t = select_start;
 				select_start = select_end;
@@ -762,7 +765,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 				GntTextLine *line = iter->data;
 				inext = iter->next;
 
-				if (line == NULL) {
+				if (G_UNLIKELY(line == NULL)) {
 					g_warn_if_reached();
 					continue;
 				}
@@ -780,6 +783,10 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 						/* This segment starts in the middle of the tag */
 						if (text == NULL) {
 							free_text_segment(seg, NULL);
+							if (G_UNLIKELY(line == NULL)) {
+								g_warn_if_reached();
+								break;
+							}
 							line->segments = g_list_delete_link(line->segments, segs);
 							if (line->segments == NULL) {
 								free_text_line(line, NULL);
