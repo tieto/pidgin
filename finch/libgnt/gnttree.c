@@ -1314,7 +1314,8 @@ void gnt_tree_sort_row(GntTree *tree, gpointer key)
 		else
 			tree->root = row;
 		row->next = s;
-		s->prev = row;  /* s cannot be NULL */
+		g_return_if_fail(s != NULL); /* s cannot be NULL */
+		s->prev = row;
 		row->prev = NULL;
 		newp = g_list_index(tree->list, s) - 1;
 	} else {

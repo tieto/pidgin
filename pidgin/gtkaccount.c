@@ -329,7 +329,7 @@ username_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog 
 	GHashTable *table = NULL;
 	const char *label = NULL;
 
-	if(PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
+	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
 		table = dialog->prpl_info->get_account_text_table(NULL);
 		label = g_hash_table_lookup(table, "login_label");
 
@@ -708,7 +708,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		const char *value = NULL;
 		char *c;
 
-		if (dialog->account != NULL) {
+		if (dialog->account != NULL && username != NULL) {
 			if(purple_account_user_split_get_reverse(split))
 				c = strrchr(username,
 						purple_account_user_split_get_separator(split));

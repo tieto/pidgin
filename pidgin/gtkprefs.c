@@ -4028,8 +4028,12 @@ vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
 	devices = get_vv_element_devices(value);
 	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(pref, g_list_next(devices)->data);
+		(GCompareFunc)strcmp) == NULL)
+	{
+		GList *next = g_list_next(devices);
+		if (next)
+			purple_prefs_set_string(pref, next->data);
+	}
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, pref, devices);
 	g_list_free_full(devices, g_free);
@@ -4072,8 +4076,12 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 	/* Setup device preference */
 	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
 	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
+		(GCompareFunc)strcmp) == NULL)
+	{
+		GList *next = g_list_next(devices);
+		if (next)
+			purple_prefs_set_string(device_pref, next->data);
+	}
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, device_pref,
 	                                         devices);

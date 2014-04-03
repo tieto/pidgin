@@ -7757,7 +7757,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
 		if (pidgin_conv_window_is_active_conversation(conv)) {
 			const char* current_title = gtk_window_get_title(GTK_WINDOW(win->window));
-			if (current_title == NULL || strcmp(current_title, title) != 0)
+			if (current_title == NULL || g_strcmp0(current_title, title) != 0)
 				gtk_window_set_title(GTK_WINDOW(win->window), title);
 		}
 

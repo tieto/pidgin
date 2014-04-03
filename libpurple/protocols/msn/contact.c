@@ -698,7 +698,6 @@ msn_parse_addressbook_contacts(MsnSession *session, PurpleXmlNode *node)
 		g_free(mobile_number);
 		g_free(alias);
 		passport = Name = uid = type = mobile_number = alias = NULL;
-		mobile = FALSE;
 
 		if (!(contactId = purple_xmlnode_get_child(contactNode,"contactId"))
 				|| !(contactInfo = purple_xmlnode_get_child(contactNode, "contactInfo"))

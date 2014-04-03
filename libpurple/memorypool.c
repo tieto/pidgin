@@ -128,6 +128,9 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 		blk = purple_memory_pool_block_new(real_size);
 		g_return_val_if_fail(blk != NULL, NULL);
 
+		g_assert((priv->first_block == NULL) ==
+			(priv->last_block == NULL));
+
 		if (priv->first_block == NULL) {
 			priv->first_block = blk;
 			priv->last_block = blk;

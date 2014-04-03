@@ -652,8 +652,8 @@ struct _PurplePluginProtocolInfo
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
-	(G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size && \
-	 prpl->member != NULL)
+	((prpl != NULL) && (G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < \
+	prpl->struct_size && prpl->member != NULL))
 
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \

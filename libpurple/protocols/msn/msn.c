@@ -2544,11 +2544,14 @@ msn_got_info(PurpleHttpConnection *http_conn,
 	if (sect_info)
 	{
 		has_info = TRUE;
-		sect_info = FALSE;
 		has_contact_info = TRUE;
+#if 0
+		/* it's true, but we don't need these assignments */
+		sect_info = FALSE;
+#endif
 	}
-    else
-    {
+	else
+	{
 		/* Remove the section header */
 		purple_notify_user_info_remove_last_item(user_info);
 	}

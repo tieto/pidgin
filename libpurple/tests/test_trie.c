@@ -8,10 +8,11 @@ test_trie_replace_cb(GString *out, const gchar *word, gpointer word_data,
 	gpointer user_data)
 {
 	/* the "test" word for the test_trie_replace test */
-	if ((int)word_data == 0x1001)
+	if ((gintptr)word_data == 0x1001)
 		return FALSE;
 
-	g_string_append_printf(out, "[%d:%x]", (int)user_data, (int)word_data);
+	g_string_append_printf(out, "[%d:%x]",
+		(int)(gintptr)user_data, (int)(gintptr)word_data);
 
 	return TRUE;
 }

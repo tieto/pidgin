@@ -83,6 +83,9 @@ has_prefs(PurplePlugin *plugin)
 		return TRUE;
 	}
 
+	if (!plugin->info)
+		return FALSE;
+
 	pinfo = plugin->info->prefs_info;
 	if (!pinfo)
 		return FALSE;
@@ -246,6 +249,8 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	if (plugin->ui_data != NULL)
 		return;
 	plugin->ui_data = ui_data = g_new0(FinchPluginUiData, 1);
+
+	g_return_if_fail(plugin->info != NULL);
 
 	if (PURPLE_IS_GNT_PLUGIN(plugin) &&
 			(callback = FINCH_PLUGIN_UI_INFO(plugin)) != NULL)
