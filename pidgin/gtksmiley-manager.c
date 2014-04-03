@@ -72,7 +72,7 @@ enum
 static SmileyManager *smiley_manager = NULL;
 
 static void
-pidgin_smiley_manager_list_fill(SmileyManager *manager);
+manager_list_fill(SmileyManager *manager);
 
 static void
 edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
@@ -138,7 +138,7 @@ edit_dialog_update_buttons(SmileyEditDialog *edit_dialog)
 }
 
 static void
-pidgin_smiley_edit_save(SmileyEditDialog *edit_dialog)
+edit_dialog_save(SmileyEditDialog *edit_dialog)
 {
 	const gchar *shortcut;
 	PurpleSmiley *existing_smiley;
@@ -185,20 +185,20 @@ pidgin_smiley_edit_save(SmileyEditDialog *edit_dialog)
 	purple_smiley_custom_add(edit_dialog->new_image, shortcut);
 
 	if (smiley_manager)
-		pidgin_smiley_manager_list_fill(smiley_manager);
+		manager_list_fill(smiley_manager);
 
 	gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
 }
 
 static void
-pidgin_smiley_edit_response(GtkDialog *window, gint response_id,
+edit_dialog_response(GtkDialog *window, gint response_id,
 	gpointer _edit_dialog)
 {
 	SmileyEditDialog *edit_dialog = _edit_dialog;
 
 	switch (response_id) {
 		case GTK_RESPONSE_ACCEPT:
-			pidgin_smiley_edit_save(edit_dialog);
+			edit_dialog_save(edit_dialog);
 			break;
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CANCEL:
@@ -210,7 +210,7 @@ pidgin_smiley_edit_response(GtkDialog *window, gint response_id,
 }
 
 static gboolean
-pidgin_smiley_edit_dialog_set_image(SmileyEditDialog *edit_dialog,
+edit_dialog_set_image(SmileyEditDialog *edit_dialog,
 	PurpleStoredImage *image)
 {
 	GdkPixbuf *tmp = NULL;
@@ -242,7 +242,7 @@ pidgin_smiley_edit_dialog_set_image(SmileyEditDialog *edit_dialog,
 }
 
 static void
-image_choosen(const char *filename, gpointer _edit_dialog)
+edit_dialog_image_choosen(const char *filename, gpointer _edit_dialog)
 {
 	PurpleStoredImage *image;
 	SmileyEditDialog *edit_dialog = _edit_dialog;
@@ -257,7 +257,7 @@ image_choosen(const char *filename, gpointer _edit_dialog)
 	g_free(edit_dialog->filename);
 	edit_dialog->filename = NULL;
 
-	if (!pidgin_smiley_edit_dialog_set_image(edit_dialog, image))
+	if (!edit_dialog_set_image(edit_dialog, image))
 		return;
 	edit_dialog->filename = g_strdup(filename);
 
@@ -265,12 +265,12 @@ image_choosen(const char *filename, gpointer _edit_dialog)
 }
 
 static void
-open_image_selector(GtkWidget *widget, gpointer _edit_dialog)
+edit_dialog_image_choose(GtkWidget *widget, gpointer _edit_dialog)
 {
 	GtkWidget *file_chooser;
 	file_chooser = pidgin_buddy_icon_chooser_new(
 		GTK_WINDOW(gtk_widget_get_toplevel(widget)),
-		image_choosen, _edit_dialog);
+		edit_dialog_image_choosen, _edit_dialog);
 	gtk_window_set_title(GTK_WINDOW(file_chooser), _("Custom Smiley"));
 	gtk_window_set_role(GTK_WINDOW(file_chooser),
 		"file-selector-custom-smiley");
@@ -278,7 +278,7 @@ open_image_selector(GtkWidget *widget, gpointer _edit_dialog)
 }
 
 static void
-smiley_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
+edit_dialog_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
 {
 	SmileyEditDialog *edit_dialog = _edit_dialog;
 
@@ -286,7 +286,7 @@ smiley_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
 }
 
 static SmileyEditDialog *
-pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
+edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 {
 	SmileyEditDialog *edit_dialog;
 	GtkWidget *vbox, *hbox;
@@ -417,11 +417,11 @@ pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 	edit_dialog_update_buttons(edit_dialog);
 
 	g_signal_connect(edit_dialog->window, "response",
-		G_CALLBACK(pidgin_smiley_edit_response), edit_dialog);
+		G_CALLBACK(edit_dialog_response), edit_dialog);
 	g_signal_connect(filech, "clicked",
-		G_CALLBACK(open_image_selector), edit_dialog);
+		G_CALLBACK(edit_dialog_image_choose), edit_dialog);
 	g_signal_connect(edit_dialog->shortcut, "changed",
-		G_CALLBACK(smiley_shortcut_changed), edit_dialog);
+		G_CALLBACK(edit_dialog_shortcut_changed), edit_dialog);
 
 	g_signal_connect(edit_dialog->window, "destroy",
 		G_CALLBACK(edit_dialog_destroy), edit_dialog);
@@ -454,8 +454,8 @@ smiley_list_dnd_url_got(PurpleHttpConnection *http_conn,
 	if (!image)
 		return;
 
-	edit_dialog = pidgin_smiley_edit(manager, NULL);
-	if (!pidgin_smiley_edit_dialog_set_image(edit_dialog, image))
+	edit_dialog = edit_dialog_show(manager, NULL);
+	if (!edit_dialog_set_image(edit_dialog, image))
 		gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
 }
 
@@ -509,8 +509,8 @@ smiley_list_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			gtk_drag_finish(dc, FALSE, FALSE, time);
 			return;
 		}
-		edit_dialog = pidgin_smiley_edit(manager, NULL);
-		if (!pidgin_smiley_edit_dialog_set_image(edit_dialog, image)) {
+		edit_dialog = edit_dialog_show(manager, NULL);
+		if (!edit_dialog_set_image(edit_dialog, image)) {
 			gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
 			gtk_drag_finish(dc, FALSE, FALSE, time);
 			return;
@@ -567,11 +567,11 @@ smiley_list_activated(GtkTreeView *tree, GtkTreePath *path,
 		SMILEY_LIST_MODEL_PURPLESMILEY, &smiley, -1);
 	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
 
-	pidgin_smiley_edit(manager, smiley);
+	edit_dialog_show(manager, smiley);
 }
 
 static void
-pidgin_smiley_manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
+manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
 {
 	GdkPixbuf *smiley_image;
 	GtkTreeIter iter;
@@ -597,7 +597,7 @@ pidgin_smiley_manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
 }
 
 static void
-pidgin_smiley_manager_list_fill(SmileyManager *manager)
+manager_list_fill(SmileyManager *manager)
 {
 	GList *custom_smileys, *it;
 	gtk_list_store_clear(manager->model);
@@ -608,13 +608,13 @@ pidgin_smiley_manager_list_fill(SmileyManager *manager)
 	for (it = custom_smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
 
-		pidgin_smiley_manager_list_add(manager, smiley);
+		manager_list_add(manager, smiley);
 	}
 	g_list_free(custom_smileys);
 }
 
 static GtkWidget *
-pidgin_smiley_manager_list_create(SmileyManager *manager)
+manager_list_create(SmileyManager *manager)
 {
 	GtkTreeView *tree;
 	GtkTreeSelection *sel;
@@ -678,14 +678,14 @@ pidgin_smiley_manager_list_create(SmileyManager *manager)
 	gtk_tree_view_column_add_attribute(column, cellrend,
 		"text", SMILEY_LIST_MODEL_SHORTCUT);
 
-	pidgin_smiley_manager_list_fill(manager);
+	manager_list_fill(manager);
 
 	return pidgin_make_scrollable(GTK_WIDGET(tree), GTK_POLICY_AUTOMATIC,
 		GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
 }
 
 static void
-smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
+manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 {
 	GtkTreeSelection *selection = NULL;
 	GList *selected_rows, *selected_smileys = NULL, *it;
@@ -712,12 +712,12 @@ smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 
 	switch (resp) {
 		case GTK_RESPONSE_YES:
-			pidgin_smiley_edit(manager, NULL);
+			edit_dialog_show(manager, NULL);
 			break;
 		case GTK_RESPONSE_NO:
 			for (it = selected_smileys; it; it = g_list_next(it))
 				purple_smiley_custom_remove(it->data);
-			pidgin_smiley_manager_list_fill(manager);
+			manager_list_fill(manager);
 			break;
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CLOSE:
@@ -728,7 +728,7 @@ smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
 			break;
 		case PIDGIN_RESPONSE_MODIFY:
 			for (it = selected_smileys; it; it = g_list_next(it))
-				pidgin_smiley_edit(manager, it->data);
+				edit_dialog_show(manager, it->data);
 			break;
 		default:
 			g_warn_if_reached();
@@ -770,13 +770,13 @@ pidgin_smiley_manager_show(void)
 	gtk_dialog_set_response_sensitive(win, PIDGIN_RESPONSE_MODIFY, FALSE);
 
 	g_signal_connect(win, "response",
-		G_CALLBACK(smiley_manager_select_cb), manager);
+		G_CALLBACK(manager_select_cb), manager);
 
 	/* The vbox */
 	vbox = gtk_dialog_get_content_area(win);
 
 	/* get the scrolled window with all stuff */
-	sw = pidgin_smiley_manager_list_create(manager);
+	sw = manager_list_create(manager);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
