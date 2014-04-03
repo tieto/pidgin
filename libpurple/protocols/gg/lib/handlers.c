@@ -27,10 +27,8 @@
  */
 
 #include <ctype.h>
-#ifdef sun
-#  include <sys/filio.h>
-#endif
 
+#include "fileio.h"
 #include "network.h"
 #include "strman.h"
 #include "libgadu.h"

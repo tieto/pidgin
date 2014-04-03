@@ -28,17 +28,20 @@
 
 #ifdef _WIN32
 #  define GG_SIZE_FMT "Iu"
+#  define _GG_INT64_MODIFIER "I64"
 #else
 #  define GG_SIZE_FMT "zu"
+#  define _GG_INT64_MODIFIER "ll"
 #endif
+
 #ifndef PRIu64
-#  define PRIu64 "llu"
+#  define PRIu64 _GG_INT64_MODIFIER "u"
 #endif
 #ifndef PRIx64
-#  define PRIx64 "llx"
+#  define PRIx64 _GG_INT64_MODIFIER "x"
 #endif
 #ifndef PRId64
-#  define PRId64 "lld"
+#  define PRId64 _GG_INT64_MODIFIER "d"
 #endif
 
 #define GG_LOGIN_PARAMS_HAS_FIELD(glp, member) \
@@ -54,6 +57,11 @@
 #  define GG_NORETURN
 #  define GG_CDECL
 #endif
+
+#define GG_STATIC_ASSERT(condition, message) \
+	{ typedef char static_assertion_failed_ ## message \
+	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
+	(void)dummy; }
 
 struct gg_dcc7_relay {
 	uint32_t addr;

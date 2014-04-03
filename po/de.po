@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-18 21:40+0200\n"
-"PO-Revision-Date: 2013-07-18 21:38+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2014-04-01 00:00+0200\n"
+"PO-Revision-Date: 2014-03-31 23:50+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -9962,6 +9962,9 @@ msgstr "Anwesenheitseinstellungen"
 msgid "Start Doodling"
 msgstr "Anfangen zu malen"
 
+msgid "Activate which ID?"
+msgstr "Aktiviere welche ID?"
+
 msgid "Select the ID you want to activate"
 msgstr "Wählen Sie die ID die Sie aktivieren möchten"
 
@@ -11680,9 +11683,6 @@ msgstr "Kroatisch"
 msgid "Hungarian"
 msgstr "Ungarisch"
 
-msgid "Armenian"
-msgstr "Armenisch"
-
 msgid "Indonesian"
 msgstr "Indonesisch"
 
@@ -11697,6 +11697,9 @@ msgstr "Georgisch"
 
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu-Georgisch-Übersetzer"
+
+msgid "Kazakh"
+msgstr "Kasachisch"
 
 msgid "Khmer"
 msgstr "Khmer"
@@ -11713,11 +11716,11 @@ msgstr "Koreanisch"
 msgid "Kurdish"
 msgstr "Kurdisch"
 
-msgid "Lao"
-msgstr "Laotisch"
-
 msgid "Lithuanian"
 msgstr "Litauisch"
+
+msgid "Latvian"
+msgstr "Lettisch"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11736,9 +11739,6 @@ msgstr "Mongolisch"
 
 msgid "Marathi"
 msgstr "Marathi"
-
-msgid "Malay"
-msgstr "Malaiisch"
 
 msgid "Burmese"
 msgstr "Birmanisch"
@@ -11815,6 +11815,9 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thailändisch"
 
+msgid "Tatar"
+msgstr "Tatarisch"
+
 msgid "Ukranian"
 msgstr "Ukrainisch"
 
@@ -11835,6 +11838,15 @@ msgstr "Traditionelles Chinesisch"
 
 msgid "Amharic"
 msgstr "Amharisch"
+
+msgid "Armenian"
+msgstr "Armenisch"
+
+msgid "Lao"
+msgstr "Laotisch"
+
+msgid "Malay"
+msgstr "Malaiisch"
 
 msgid "Turkish"
 msgstr "Türkisch"

@@ -283,7 +283,7 @@ struct gg_session {
 	int initial_status;	/**< Początkowy status */
 	int status;		/**< Aktualny status */
 
-	char *recv_buf;		/**< Bufor na odbierany pakiety */
+	char *recv_buf;		/**< Bufor na odbierane pakiety. Wskaźnik zawsze maksymalnie wyrównany, tak jak w wyniku działania \c malloc(). */
 	int recv_done;		/**< Liczba wczytanych bajtów pakietu */
 	int recv_left;		/**< Liczba pozostałych do wczytania bajtów pakietu */
 

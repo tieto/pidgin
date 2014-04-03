@@ -664,7 +664,10 @@ int gg_dcc7_handle_id(struct gg_session *sess, struct gg_event *e, const void *p
 
 				/* Uwaga: To nie jest ciąg kończony zerem.
 				 * Note: This is not a null-terminated string. */
-				strncpy((char*) s.filename, (char*) tmp->filename, sizeof(s.filename));
+				GG_STATIC_ASSERT(
+					sizeof(s.filename) == sizeof(tmp->filename) - 1,
+					filename_sizes_does_not_match);
+				memcpy((char*)s.filename, (char*)tmp->filename, sizeof(s.filename));
 
 				tmp->state = GG_STATE_WAITING_FOR_ACCEPT;
 				tmp->timeout = GG_DCC7_TIMEOUT_FILE_ACK;
