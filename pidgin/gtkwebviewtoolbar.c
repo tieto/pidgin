@@ -732,7 +732,7 @@ smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event,
 /* TODO: replace max_width with min_width */
 static void
 add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
-	GList *smileys, int max_width)
+	GList *smileys, int max_width, PurpleSmileyList *shadow_smileys)
 {
 	GList *it;
 	GtkWidget *line;
@@ -796,15 +796,20 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 		gtk_widget_set_tooltip_text(button, smiley_shortcut);
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
-#if 0
-		/* TODO: disable theme smileys shadowed by custom smileys */
-		gchar tip[128];
-		g_snprintf(tip, sizeof(tip),
-			_("This smiley is disabled because a custom smiley exists for this shortcut:\n %s"),
-			face);
-		gtk_widget_set_tooltip_text(button, tip);
-		gtk_widget_set_sensitive(button, FALSE);
-#endif
+		/* Disable theme smileys shadowed by custom smileys.
+		 * There is a case, when a theme smiley have another,
+		 * non-shadowed shortcut. But we won't handle it.
+		 */
+		if (shadow_smileys && purple_smiley_list_get_by_shortcut(
+			shadow_smileys, smiley_shortcut))
+		{
+			gchar tip[1000];
+			g_snprintf(tip, sizeof(tip), _("This smiley is "
+				"disabled because a custom smiley exists for "
+				"this shortcut:\n %s"), smiley_shortcut);
+			gtk_widget_set_tooltip_text(button, tip);
+			gtk_widget_set_sensitive(button, FALSE);
+		}
 
 		gtk_box_pack_start(GTK_BOX(line), button, FALSE, FALSE, 0);
 		gtk_widget_show(button);
@@ -913,8 +918,8 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 
 		/* pack buttons of the list */
 		if (theme_smileys) {
-			add_smiley_list(toolbar, smiley_table,
-				theme_smileys, max_line_width);
+			add_smiley_list(toolbar, smiley_table, theme_smileys,
+				max_line_width, smileys_from_custom);
 		}
 		if (theme_smileys && custom_smileys) {
 			gtk_box_pack_start(GTK_BOX(smiley_table),
@@ -922,8 +927,8 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 				TRUE, FALSE, 0);
 		}
 		if (custom_smileys) {
-			add_smiley_list(toolbar, smiley_table,
-				custom_smileys, max_line_width);
+			add_smiley_list(toolbar, smiley_table, custom_smileys,
+				max_line_width, NULL);
 		}
 
 		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK);
