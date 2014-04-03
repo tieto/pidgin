@@ -72,27 +72,18 @@ enum
 static SmileyManager *smiley_manager = NULL;
 
 static void
+edit_dialog_update_buttons(SmileyEditDialog *edit_dialog);
+
+static void
 manager_list_fill(SmileyManager *manager);
 
-static void
-edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
-{
-	SmileyEditDialog *edit_dialog = _edit_dialog;
 
-	if (edit_dialog->smiley) {
-		g_object_set_data(G_OBJECT(edit_dialog->smiley),
-			"pidgin-smiley-manager-edit-dialog", NULL);
-		g_object_unref(edit_dialog->smiley);
-	}
-
-	purple_imgstore_unref(edit_dialog->new_image);
-
-	g_free(edit_dialog->filename);
-	g_free(edit_dialog);
-}
+/*******************************************************************************
+ * Custom smiley edit dialog image.
+ ******************************************************************************/
 
 static void
-edit_dialog_update_thumb(SmileyEditDialog *edit_dialog)
+edit_dialog_image_update_thumb(SmileyEditDialog *edit_dialog)
 {
 	GdkPixbuf *pixbuf = NULL;
 
@@ -125,16 +116,94 @@ edit_dialog_update_thumb(SmileyEditDialog *edit_dialog)
 	g_object_unref(G_OBJECT(pixbuf));
 }
 
-static void
-edit_dialog_update_buttons(SmileyEditDialog *edit_dialog)
+static gboolean
+edit_dialog_set_image(SmileyEditDialog *edit_dialog,
+	PurpleStoredImage *image)
 {
-	gboolean shortcut_ok, image_ok;
+	GdkPixbuf *tmp = NULL;
 
-	shortcut_ok = (gtk_entry_get_text_length(edit_dialog->shortcut) > 0);
-	image_ok = (edit_dialog->filename || edit_dialog->new_image);
+	if (edit_dialog->new_image)
+		purple_imgstore_unref(edit_dialog->new_image);
 
-	gtk_dialog_set_response_sensitive(edit_dialog->window,
-		GTK_RESPONSE_ACCEPT, shortcut_ok && image_ok);
+	if (edit_dialog->smiley) {
+		g_object_set_data(G_OBJECT(edit_dialog->smiley),
+			"pidgin-smiley-manager-list-thumb", NULL);
+	}
+
+	/* check, if image is valid */
+	if (image)
+		tmp = pidgin_pixbuf_from_imgstore(image);
+	if (tmp)
+		g_object_unref(tmp);
+	else {
+		purple_imgstore_unref(image);
+		image = NULL;
+	}
+
+	edit_dialog->new_image = image;
+
+	edit_dialog_image_update_thumb(edit_dialog);
+	edit_dialog_update_buttons(edit_dialog);
+
+	return (image != NULL);
+}
+
+static void
+edit_dialog_image_choosen(const char *filename, gpointer _edit_dialog)
+{
+	PurpleStoredImage *image;
+	SmileyEditDialog *edit_dialog = _edit_dialog;
+
+	if (!filename)
+		return;
+
+	image = purple_imgstore_new_from_file(filename);
+	if (!image)
+		return;
+
+	g_free(edit_dialog->filename);
+	edit_dialog->filename = NULL;
+
+	if (!edit_dialog_set_image(edit_dialog, image))
+		return;
+	edit_dialog->filename = g_strdup(filename);
+
+	gtk_widget_grab_focus(GTK_WIDGET(edit_dialog->shortcut));
+}
+
+static void
+edit_dialog_image_choose(GtkWidget *widget, gpointer _edit_dialog)
+{
+	GtkWidget *file_chooser;
+	file_chooser = pidgin_buddy_icon_chooser_new(
+		GTK_WINDOW(gtk_widget_get_toplevel(widget)),
+		edit_dialog_image_choosen, _edit_dialog);
+	gtk_window_set_title(GTK_WINDOW(file_chooser), _("Custom Smiley"));
+	gtk_window_set_role(GTK_WINDOW(file_chooser),
+		"file-selector-custom-smiley");
+	gtk_widget_show_all(file_chooser);
+}
+
+
+/*******************************************************************************
+ * Custom smiley edit dialog.
+ ******************************************************************************/
+
+static void
+edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
+{
+	SmileyEditDialog *edit_dialog = _edit_dialog;
+
+	if (edit_dialog->smiley) {
+		g_object_set_data(G_OBJECT(edit_dialog->smiley),
+			"pidgin-smiley-manager-edit-dialog", NULL);
+		g_object_unref(edit_dialog->smiley);
+	}
+
+	purple_imgstore_unref(edit_dialog->new_image);
+
+	g_free(edit_dialog->filename);
+	g_free(edit_dialog);
 }
 
 static void
@@ -191,6 +260,26 @@ edit_dialog_save(SmileyEditDialog *edit_dialog)
 }
 
 static void
+edit_dialog_update_buttons(SmileyEditDialog *edit_dialog)
+{
+	gboolean shortcut_ok, image_ok;
+
+	shortcut_ok = (gtk_entry_get_text_length(edit_dialog->shortcut) > 0);
+	image_ok = (edit_dialog->filename || edit_dialog->new_image);
+
+	gtk_dialog_set_response_sensitive(edit_dialog->window,
+		GTK_RESPONSE_ACCEPT, shortcut_ok && image_ok);
+}
+
+static void
+edit_dialog_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
+{
+	SmileyEditDialog *edit_dialog = _edit_dialog;
+
+	edit_dialog_update_buttons(edit_dialog);
+}
+
+static void
 edit_dialog_response(GtkDialog *window, gint response_id,
 	gpointer _edit_dialog)
 {
@@ -207,82 +296,6 @@ edit_dialog_response(GtkDialog *window, gint response_id,
 		default:
 			g_warn_if_reached();
 	}
-}
-
-static gboolean
-edit_dialog_set_image(SmileyEditDialog *edit_dialog,
-	PurpleStoredImage *image)
-{
-	GdkPixbuf *tmp = NULL;
-
-	if (edit_dialog->new_image)
-		purple_imgstore_unref(edit_dialog->new_image);
-
-	if (edit_dialog->smiley) {
-		g_object_set_data(G_OBJECT(edit_dialog->smiley),
-			"pidgin-smiley-manager-list-thumb", NULL);
-	}
-
-	/* check, if image is valid */
-	if (image)
-		tmp = pidgin_pixbuf_from_imgstore(image);
-	if (tmp)
-		g_object_unref(tmp);
-	else {
-		purple_imgstore_unref(image);
-		image = NULL;
-	}
-
-	edit_dialog->new_image = image;
-
-	edit_dialog_update_thumb(edit_dialog);
-	edit_dialog_update_buttons(edit_dialog);
-
-	return (image != NULL);
-}
-
-static void
-edit_dialog_image_choosen(const char *filename, gpointer _edit_dialog)
-{
-	PurpleStoredImage *image;
-	SmileyEditDialog *edit_dialog = _edit_dialog;
-
-	if (!filename)
-		return;
-
-	image = purple_imgstore_new_from_file(filename);
-	if (!image)
-		return;
-
-	g_free(edit_dialog->filename);
-	edit_dialog->filename = NULL;
-
-	if (!edit_dialog_set_image(edit_dialog, image))
-		return;
-	edit_dialog->filename = g_strdup(filename);
-
-	gtk_widget_grab_focus(GTK_WIDGET(edit_dialog->shortcut));
-}
-
-static void
-edit_dialog_image_choose(GtkWidget *widget, gpointer _edit_dialog)
-{
-	GtkWidget *file_chooser;
-	file_chooser = pidgin_buddy_icon_chooser_new(
-		GTK_WINDOW(gtk_widget_get_toplevel(widget)),
-		edit_dialog_image_choosen, _edit_dialog);
-	gtk_window_set_title(GTK_WINDOW(file_chooser), _("Custom Smiley"));
-	gtk_window_set_role(GTK_WINDOW(file_chooser),
-		"file-selector-custom-smiley");
-	gtk_widget_show_all(file_chooser);
-}
-
-static void
-edit_dialog_shortcut_changed(GtkEditable *shortcut, gpointer _edit_dialog)
-{
-	SmileyEditDialog *edit_dialog = _edit_dialog;
-
-	edit_dialog_update_buttons(edit_dialog);
 }
 
 static SmileyEditDialog *
@@ -413,7 +426,7 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 			purple_smiley_get_shortcut(smiley));
 	}
 
-	edit_dialog_update_thumb(edit_dialog);
+	edit_dialog_image_update_thumb(edit_dialog);
 	edit_dialog_update_buttons(edit_dialog);
 
 	g_signal_connect(edit_dialog->window, "response",
@@ -430,6 +443,10 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 
 	return edit_dialog;
 }
+
+/*******************************************************************************
+ * Custom smiley list Drag-and-drop support.
+ ******************************************************************************/
 
 static void
 smiley_list_dnd_url_got(PurpleHttpConnection *http_conn,
@@ -534,6 +551,10 @@ smiley_list_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 	gtk_drag_finish(dc, FALSE, FALSE, time);
 }
+
+/*******************************************************************************
+ * Custom smiley list.
+ ******************************************************************************/
 
 static void
 smiley_list_selected(GtkTreeSelection *sel, gpointer _manager)
@@ -683,6 +704,11 @@ manager_list_create(SmileyManager *manager)
 	return pidgin_make_scrollable(GTK_WIDGET(tree), GTK_POLICY_AUTOMATIC,
 		GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
 }
+
+/*******************************************************************************
+ * Custom smiley manager window.
+ ******************************************************************************/
+
 
 static void
 manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
