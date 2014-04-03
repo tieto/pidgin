@@ -25,6 +25,8 @@
 
 #include	"internal.h"
 #include	"debug.h"
+#include "libpurple/cipher.h"
+#include "ciphers/aescipher.h"
 
 #include	"mxit.h"
 #include	"cipher.h"
@@ -105,43 +107,47 @@ static char* transport_layer_key( struct MXitSession* session )
  *  @param session	The MXit session object
  *  @return			The encrypted & encoded password.  Must be g_free'd when no longer needed.
  */
-char* mxit_encrypt_password( struct MXitSession* session )
+gchar *
+mxit_encrypt_password(struct MXitSession* session)
 {
-	char			key[16 + 1];
-	char			exkey[512];
-	GString*		pass			= NULL;
-	GString*		encrypted		= NULL;
-	char*			base64;
-	unsigned int	i;
+	guchar key[16];
+	size_t clientkey_len, header_len, pass_len, plaintext_len;
+	const gchar *plaintext_passwd;
+	guchar *plaintext;
+	guchar encrypted[64]; /* shouldn't be longer than 17 */
+	PurpleCipher *cipher;
+	ssize_t encrypted_size;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_encrypt_password\n" );
+	purple_debug_info(MXIT_PLUGIN_ID, "mxit_encrypt_password");
 
 	/* build the AES encryption key */
-	g_strlcpy( key, INITIAL_KEY, sizeof( key ) );
-	memcpy( key, session->clientkey, strlen( session->clientkey ) );
-	ExpandKey( (unsigned char*) key, (unsigned char*) exkey );
+	g_assert(strlen(INITIAL_KEY) == sizeof(key));
+	memcpy(key, INITIAL_KEY, sizeof(key));
+	clientkey_len = strlen(session->clientkey);
+	if (clientkey_len > sizeof(key))
+		clientkey_len = sizeof(key);
+	memcpy(key, session->clientkey, clientkey_len);
 
 	/* build the secret data to be encrypted: SECRET_HEADER + password */
-	pass = g_string_new( SECRET_HEADER );
-	g_string_append( pass, purple_connection_get_password( session->con ) );
-	padding_add( pass );		/* add ISO10126 padding */
+	plaintext_passwd = purple_connection_get_password(session->con);
+	g_return_val_if_fail(plaintext_passwd, NULL);
+	pass_len = strlen(plaintext_passwd);
+	header_len = strlen(SECRET_HEADER);
+	/* Trailing NUL, just to be safe. But PKCS#7 seems to be enough. */
+	plaintext_len = header_len + pass_len + 1;
+	plaintext = g_new0(guchar, plaintext_len);
+	memcpy(plaintext, SECRET_HEADER, header_len);
+	memcpy(plaintext + header_len, plaintext_passwd, pass_len);
 
-	/* now encrypt the secret. we encrypt each block separately (ECB mode) */
-	encrypted = g_string_sized_new( pass->len );
-	for ( i = 0; i < pass->len; i += 16 ) {
-		char	block[16];
+	/* encrypt */
+	cipher = purple_aes_cipher_new();
+	purple_cipher_set_key(cipher, key, sizeof(key));
+	purple_cipher_set_batch_mode(cipher, PURPLE_CIPHER_BATCH_MODE_ECB);
+	encrypted_size = purple_cipher_encrypt(cipher,
+		plaintext, plaintext_len, encrypted, sizeof(encrypted));
+	g_return_val_if_fail(encrypted_size > 0, NULL);
 
-		Encrypt( (unsigned char*) pass->str + i, (unsigned char*) exkey, (unsigned char*) block );
-		g_string_append_len( encrypted, block, 16 );
-	}
-
-	/* now base64 encode the encrypted password */
-	base64 = purple_base64_encode( (unsigned char*) encrypted->str, encrypted->len );
-	g_string_free( encrypted, TRUE );
-
-	g_string_free( pass, TRUE );
-
-	return base64;
+	return purple_base64_encode(encrypted, encrypted_size);
 }
 
 

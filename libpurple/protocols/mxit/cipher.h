@@ -30,7 +30,8 @@
 struct MXitSession;
 
 
-char* mxit_encrypt_password( struct MXitSession* session );
+gchar *
+mxit_encrypt_password(struct MXitSession* session);
 
 char* mxit_decrypt_message( struct MXitSession* session, char* message );
 char* mxit_encrypt_message( struct MXitSession* session, char* message );
