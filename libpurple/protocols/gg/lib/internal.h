@@ -29,6 +29,9 @@
 #ifdef _WIN32
 #  define GG_SIZE_FMT "Iu"
 #  define _GG_INT64_MODIFIER "I64"
+#elif defined(_LP64)
+#  define GG_SIZE_FMT "zu"
+#  define _GG_INT64_MODIFIER "l"
 #else
 #  define GG_SIZE_FMT "zu"
 #  define _GG_INT64_MODIFIER "ll"
