@@ -2536,7 +2536,10 @@ msn_got_info(PurpleHttpConnection *http_conn,
 	{
 		has_info = TRUE;
 		sect_info = FALSE;
+#if 0
+		/* it's true, but we don't need this assignment */
 		has_contact_info = TRUE;
+#endif
 	}
     else
     {
