@@ -335,6 +335,9 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 		GntTextView *view = GNT_TEXT_VIEW(widget);
 		if (text_view_contains(view, select_start)) {
 			GString *clip;
+
+			g_return_val_if_fail(select_start != NULL, TRUE);
+
 			select_end = gnt_text_view_get_p(view, x - widget->priv.x, y - widget->priv.y);
 			if (select_end < select_start) {
 				gchar *t = select_start;
@@ -758,6 +761,12 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 				GList *segs, *snext;
 				GntTextLine *line = iter->data;
 				inext = iter->next;
+
+				if (line == NULL) {
+					g_warn_if_reached();
+					continue;
+				}
+
 				for (segs = line->segments; segs; segs = snext) {
 					GntTextSegment *seg = segs->data;
 					snext = segs->next;

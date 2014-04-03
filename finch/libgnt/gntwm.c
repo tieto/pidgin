@@ -2251,8 +2251,14 @@ gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntW
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 {
 	GntWS *ws = gnt_wm_widget_find_workspace(wm, widget);
+
+	g_return_if_fail(wm != NULL);
+
 	if (wm->cws != ws)
 		gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
+
+	g_return_if_fail(wm->cws != NULL);
+
 	if (widget != wm->cws->ordered->data) {
 		GntWidget *wid = wm->cws->ordered->data;
 		wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, widget);

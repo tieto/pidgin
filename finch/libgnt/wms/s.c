@@ -84,6 +84,9 @@ s_new_window(GntWM *wm, GntWidget *win)
 	const char *name;
 	gboolean blist = FALSE;
 
+	g_return_if_fail(win != NULL);
+	g_return_if_fail(wm != NULL);
+
 	if (!GNT_IS_MENU(win)) {
 		getmaxyx(stdscr, maxy, maxx);
 

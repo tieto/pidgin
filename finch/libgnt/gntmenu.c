@@ -121,6 +121,8 @@ menu_tree_add(GntMenu *menu, GntMenuItem *item, GntMenuItem *parent)
 {
 	char trigger[4] = "\0 )\0";
 
+	g_return_if_fail(item != NULL);
+
 	if ((trigger[1] = gnt_menuitem_get_trigger(item)) && trigger[1] != ' ')
 		trigger[0] = '(';
 
