@@ -78,6 +78,9 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley);
 void
 purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley);
 
+gboolean
+purple_smiley_list_is_empty(PurpleSmileyList *list);
+
 PurpleSmiley *
 purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
 	const gchar *shortcut);

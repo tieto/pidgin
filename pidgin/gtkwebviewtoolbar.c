@@ -93,6 +93,8 @@ typedef struct _PidginWebViewToolbarPriv {
 	GtkWidget *link_dialog;
 	GtkWidget *smiley_dialog;
 	GtkWidget *image_dialog;
+
+	gboolean allow_smileys;
 } PidginWebViewToolbarPriv;
 
 /******************************************************************************
@@ -820,9 +822,10 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 static void
 insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 {
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	PidginWebViewToolbarPriv *priv =
+		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	PurpleSmileyList *smileys_from_theme, *smileys_from_custom = NULL;
-	GList *theme_smileys, *custom_smileys = NULL;
+	GList *theme_smileys = NULL, *custom_smileys = NULL;
 	PidginWebViewButtons webview_format;
 
 	GtkWidget *dialog, *vbox;
@@ -841,7 +844,10 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		PIDGIN_WEBVIEW(toolbar->webview));
 
 	smileys_from_theme = pidgin_smiley_theme_for_conv(priv->active_conv);
-	theme_smileys = purple_smiley_list_get_unique(smileys_from_theme);
+	if (smileys_from_theme) {
+		theme_smileys = purple_smiley_list_get_unique(
+			smileys_from_theme);
+	}
 	/* TODO: remove hidden */
 
 	supports_custom = (webview_format & PIDGIN_WEBVIEW_CUSTOM_SMILEY);
@@ -960,6 +966,40 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 }
 
 static void
+update_smiley_button(PidginWebViewToolbar *toolbar)
+{
+	PidginWebViewToolbarPriv *priv =
+		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+	PurpleSmileyList *sl;
+	gboolean any_smileys;
+	PidginWebViewButtons webview_format = 0;
+
+	g_return_if_fail(priv != NULL);
+
+	if (toolbar->webview) {
+		webview_format = pidgin_webview_get_format_functions(
+			PIDGIN_WEBVIEW(toolbar->webview));
+	}
+
+	if (!priv->allow_smileys) {
+		gtk_action_set_sensitive(priv->smiley, FALSE);
+		return;
+	}
+
+	sl = pidgin_smiley_theme_for_conv(priv->active_conv);
+	/* it's possible, that all theme smileys are hidden,
+	 * but we won't handle it */
+	any_smileys = (sl ? !purple_smiley_list_is_empty(sl) : FALSE);
+
+	if (!any_smileys && (webview_format & PIDGIN_WEBVIEW_CUSTOM_SMILEY)) {
+		sl = purple_smiley_custom_get_list();
+		any_smileys = (sl ? !purple_smiley_list_is_empty(sl) : FALSE);
+	}
+
+	gtk_action_set_sensitive(priv->smiley, any_smileys);
+}
+
+static void
 send_attention_cb(GtkAction *attention, PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
@@ -1002,11 +1042,9 @@ update_buttons_cb(PidginWebView *webview, PidginWebViewButtons buttons,
 
 	gtk_action_set_sensitive(priv->image, buttons & PIDGIN_WEBVIEW_IMAGE);
 	gtk_action_set_sensitive(priv->link, buttons & PIDGIN_WEBVIEW_LINK);
-#if 0
-	/* TODO */
-	gtk_action_set_sensitive(priv->smiley, (buttons & PIDGIN_WEBVIEW_SMILEY) &&
-		pidgin_themes_get_proto_smileys(priv->sml));
-#endif
+
+	priv->allow_smileys = !!(buttons & PIDGIN_WEBVIEW_SMILEY);
+	update_smiley_button(toolbar);
 }
 
 /* we call this when we want to _set_active the toggle button, it'll
@@ -1545,11 +1583,8 @@ pidgin_webviewtoolbar_init(PidginWebViewToolbar *toolbar)
 	/* set attention button to be greyed out until we get a conversation */
 	gtk_action_set_sensitive(priv->attention, FALSE);
 
-#if 0
-	/* TODO */
-	gtk_action_set_sensitive(priv->smiley,
-			pidgin_themes_get_proto_smileys(NULL) != NULL);
-#endif
+	priv->allow_smileys = TRUE;
+	update_smiley_button(toolbar);
 
 	purple_prefs_connect_callback(toolbar,
 	                              PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
@@ -1642,11 +1677,7 @@ pidgin_webviewtoolbar_switch_active_conversation(PidginWebViewToolbar *toolbar,
 		conv && prpl && PURPLE_IS_IM_CONVERSATION(conv) &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 
-#if 0
-	/* TODO */
-	gtk_action_set_sensitive(priv->smiley,
-		pidgin_themes_get_proto_smileys(priv->sml) != NULL);
-#endif
+	update_smiley_button(toolbar);
 }
 
 void
