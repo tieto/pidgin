@@ -5767,8 +5767,9 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		PidginConversation *gtkconv = NULL;
 		PurpleAccount *buddyaccount;
 		const char *buddyname;
+		PurpleBlistNode **data_val = (gpointer)data;
 
-		n = *(PurpleBlistNode **) data;
+		n = *data_val;
 
 		if (PURPLE_IS_CONTACT(n))
 			b = purple_contact_get_priority_buddy((PurpleContact*)n);
