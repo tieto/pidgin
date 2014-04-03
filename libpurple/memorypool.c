@@ -137,7 +137,7 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 		}
 
 		mem = PURPLE_MEMORY_PADDED(blk->available_ptr, alignment);
-		g_assert(mem + size < blk->end_ptr);
+		g_assert((guintptr)mem + size < (guintptr)blk->end_ptr);
 		g_assert(mem >= blk->available_ptr); /* gpointer overflow */
 	}
 
