@@ -31,7 +31,7 @@
 
 #include	"client.h"
 #include	"mxit.h"
-#include	"cipher.h"
+#include	"cipher-mxit.h"
 #include	"login.h"
 #include	"profile.h"
 

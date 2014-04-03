@@ -705,14 +705,14 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 }
 
 static int
-start_serversocket_listening(int port, int socket, struct sockaddr *addr, size_t addr_size, gboolean ip6, gboolean allow_port_fallback)
+start_serversocket_listening(int port, int socket, common_sockaddr_t *addr, size_t addr_size, gboolean ip6, gboolean allow_port_fallback)
 {
 	int ret_port = port;
 
 	purple_debug_info("bonjour", "Attempting to bind IPv%d socket to port %d.\n", ip6 ? 6 : 4, port);
 
 	/* Try to use the specified port - if it isn't available, use a random port */
-	if (bind(socket, addr, addr_size) != 0) {
+	if (bind(socket, &addr->sa, addr_size) != 0) {
 
 		purple_debug_info("bonjour", "Unable to bind to specified "
 				"port %i: %s\n", port, g_strerror(errno));
@@ -723,12 +723,12 @@ start_serversocket_listening(int port, int socket, struct sockaddr *addr, size_t
 		}
 #ifdef PF_INET6
 		if (ip6)
-			((struct sockaddr_in6 *) addr)->sin6_port = 0;
+			addr->in6.sin6_port = 0;
 		else
 #endif
-		((struct sockaddr_in *) addr)->sin_port = 0;
+			addr->in.sin_port = 0;
 
-		if (bind(socket, addr, addr_size) != 0) {
+		if (bind(socket, &addr->sa, addr_size) != 0) {
 			purple_debug_error("bonjour", "Unable to bind IPv%d socket to port: %s\n", ip6 ? 6 : 4, g_strerror(errno));
 			return -1;
 		}
@@ -774,16 +774,17 @@ bonjour_jabber_start(BonjourJabber *jdata)
 
 #ifdef PF_INET6
 	if (jdata->socket6 != -1) {
-		struct sockaddr_in6 addr6;
+		common_sockaddr_t addr6;
 #ifdef IPV6_V6ONLY
 		int on = 1;
 		setsockopt(jdata->socket6, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on));
 #endif
-	        memset(&addr6, 0, sizeof(addr6));
-		addr6.sin6_family = AF_INET6;
-		addr6.sin6_port = htons(jdata->port);
-      		addr6.sin6_addr = in6addr_any;
-		ipv6_port = start_serversocket_listening(jdata->port, jdata->socket6, (struct sockaddr *) &addr6, sizeof(addr6), TRUE, TRUE);
+		memset(&addr6, 0, sizeof(addr6));
+		addr6.in6.sin6_family = AF_INET6;
+		addr6.in6.sin6_port = htons(jdata->port);
+		addr6.in6.sin6_addr = in6addr_any;
+		ipv6_port = start_serversocket_listening(jdata->port,
+			jdata->socket6, &addr6, sizeof(addr6), TRUE, TRUE);
 		/* Open a watcher in the socket we have just opened */
 		if (ipv6_port > 0) {
 			jdata->watcher_id6 = purple_input_add(jdata->socket6, PURPLE_INPUT_READ, _server_socket_handler, jdata);
@@ -796,11 +797,12 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	}
 #endif
 	if (jdata->socket != -1) {
-		struct sockaddr_in addr4;
+		common_sockaddr_t addr4;
 		memset(&addr4, 0, sizeof(addr4));
-		addr4.sin_family = AF_INET;
-		addr4.sin_port = htons(jdata->port);
-		ipv4_port = start_serversocket_listening(jdata->port, jdata->socket, (struct sockaddr *) &addr4, sizeof(addr4), FALSE, ipv6_port != -1);
+		addr4.in.sin_family = AF_INET;
+		addr4.in.sin_port = htons(jdata->port);
+		ipv4_port = start_serversocket_listening(jdata->port, jdata->socket,
+			&addr4, sizeof(addr4), FALSE, ipv6_port != -1);
 		/* Open a watcher in the socket we have just opened */
 		if (ipv4_port > 0) {
 			jdata->watcher_id = purple_input_add(jdata->socket, PURPLE_INPUT_READ, _server_socket_handler, jdata);
@@ -1367,7 +1369,7 @@ bonjour_jabber_get_local_ips(int fd)
 #ifdef HAVE_GETIFADDRS /* This is required for IPv6 */
 	{
 	struct ifaddrs *ifap, *ifa;
-	struct sockaddr *addr;
+	common_sockaddr_t addr;
 	char addrstr[INET6_ADDRSTRLEN];
 
 	ret = getifaddrs(&ifap);
@@ -1381,23 +1383,25 @@ bonjour_jabber_get_local_ips(int fd)
 		if (!(ifa->ifa_flags & IFF_RUNNING) || (ifa->ifa_flags & IFF_LOOPBACK) || ifa->ifa_addr == NULL)
 			continue;
 
-		addr = ifa->ifa_addr;
+		memcpy(&addr, ifa->ifa_addr, sizeof(addr));
 		address_text = NULL;
-		switch (addr->sa_family) {
+		switch (addr.sa.sa_family) {
 			case AF_INET:
-				address_text = inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
+				address_text = inet_ntop(addr.sa.sa_family,
+					&addr.in.sin_addr,
 					addrstr, sizeof(addrstr));
 				break;
 #ifdef PF_INET6
 			case AF_INET6:
-				address_text = inet_ntop(addr->sa_family, &((struct sockaddr_in6 *)addr)->sin6_addr,
+				address_text = inet_ntop(addr.sa.sa_family,
+					&addr.in6.sin6_addr,
 					addrstr, sizeof(addrstr));
 				break;
 #endif
 		}
 
 		if (address_text != NULL) {
-			if (addr->sa_family == AF_INET)
+			if (addr.sa.sa_family == AF_INET)
 				ips = g_slist_append(ips, g_strdup(address_text));
 			else
 				ips = g_slist_prepend(ips, g_strdup(address_text));

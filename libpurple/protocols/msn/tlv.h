@@ -52,7 +52,7 @@ GSList *msn_tlvlist_copy(GSList *orig);
 int msn_tlvlist_count(GSList *list);
 size_t msn_tlvlist_size(GSList *list);
 gboolean msn_tlvlist_equal(GSList *one, GSList *two);
-char *msn_tlvlist_write(GSList *list, size_t *out_len);
+char *msn_tlvlist_write(GSList *list, guint8 *out_len);
 void msn_tlvlist_free(GSList *list);
 
 int msn_tlvlist_add_raw(GSList **list, const guint8 type, const guint8 length, const char *value);

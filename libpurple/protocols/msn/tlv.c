@@ -326,7 +326,7 @@ msn_tlvlist_remove(GSList **list, const guint8 type)
 }
 
 char *
-msn_tlvlist_write(GSList *list, size_t *out_len)
+msn_tlvlist_write(GSList *list, guint8 *out_len)
 {
 	char *buf;
 	char *tmp;

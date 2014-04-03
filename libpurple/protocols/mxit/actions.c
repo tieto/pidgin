@@ -32,7 +32,7 @@
 #include	"roster.h"
 #include	"actions.h"
 #include	"splashscreen.h"
-#include	"cipher.h"
+#include	"cipher-mxit.h"
 #include	"profile.h"
 
 
