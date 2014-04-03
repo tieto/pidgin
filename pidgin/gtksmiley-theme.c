@@ -420,7 +420,7 @@ pidgin_smiley_theme_get_author(PidginSmileyTheme *theme)
 PurpleSmileyList *
 pidgin_smiley_theme_for_conv(PurpleConversation *conv)
 {
-	PurpleAccount *acc;
+	PurpleAccount *acc = NULL;
 	PurpleSmileyTheme *theme;
 	const gchar *proto_name = NULL;
 
@@ -485,6 +485,9 @@ pidgin_smiley_theme_activate_impl(PurpleSmileyTheme *theme)
 
 				smiley = purple_smiley_new(
 					shortcut, smiley_path);
+				g_object_set_data(G_OBJECT(smiley),
+					"pidgin-smiley-hidden",
+					GINT_TO_POINTER(smiley_idx->hidden));
 				purple_smiley_list_add(proto_smileys, smiley);
 				g_object_unref(smiley);
 			}
@@ -498,11 +501,12 @@ static PurpleSmileyList *
 pidgin_smiley_theme_get_smileys_impl(PurpleSmileyTheme *theme, gpointer ui_data)
 {
 	PidginSmileyThemePrivate *priv = PIDGIN_SMILEY_THEME_GET_PRIVATE(theme);
-	PurpleSmileyList *smileys;
+	PurpleSmileyList *smileys = NULL;
 
 	pidgin_smiley_theme_activate_impl(theme);
 
-	smileys = g_hash_table_lookup(priv->smiley_lists_map, ui_data);
+	if (ui_data)
+		smileys = g_hash_table_lookup(priv->smiley_lists_map, ui_data);
 	if (smileys != NULL)
 		return smileys;
 

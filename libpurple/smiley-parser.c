@@ -101,6 +101,8 @@ purple_smiley_parse(const gchar *message, gpointer ui_data)
 	 * if protocol doesn't support it? */
 
 	/* TODO: don't replace text within tags, ie. <span style=":)"> */
+	/* TODO: parse greedily (as much as possible) when PurpleTrie
+	 * provides support for it. */
 	return purple_trie_multi_replace(tries, message,
 		purple_smiley_parse_cb, NULL);
 }

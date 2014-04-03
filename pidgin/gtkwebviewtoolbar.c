@@ -825,7 +825,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 	PidginWebViewToolbarPriv *priv =
 		PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	PurpleSmileyList *smileys_from_theme, *smileys_from_custom = NULL;
-	GList *theme_smileys = NULL, *custom_smileys = NULL;
+	GList *theme_smileys = NULL, *custom_smileys = NULL, *it, *it_next;
 	PidginWebViewButtons webview_format;
 
 	GtkWidget *dialog, *vbox;
@@ -848,7 +848,20 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		theme_smileys = purple_smiley_list_get_unique(
 			smileys_from_theme);
 	}
-	/* TODO: remove hidden */
+
+	/* remove hidden theme smileys */
+	for (it = theme_smileys; it; it = it_next) {
+		PurpleSmiley *smiley = it->data;
+		it_next = g_list_next(it);
+
+		if (!g_object_get_data(G_OBJECT(smiley),
+			"pidgin-smiley-hidden"))
+		{
+			continue;
+		}
+
+		theme_smileys = g_list_delete_link(theme_smileys, it);
+	}
 
 	supports_custom = (webview_format & PIDGIN_WEBVIEW_CUSTOM_SMILEY);
 	if (supports_custom) {
@@ -888,9 +901,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		/* create list of smileys sorted by height */
 		while (theme_smileys) {
 			PidginWebViewSmiley *smiley = (PidginWebViewSmiley *)theme_smileys->data;
-			if (!pidgin_webview_smiley_get_hidden(smiley)) {
 				ls = sort_smileys(ls, toolbar, &max_line_width, smiley);
-			}
 			theme_smileys = g_slist_delete_link(theme_smileys, theme_smileys);
 		}
 #else
