@@ -945,6 +945,10 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, 
  */
 GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width, int height, gboolean preserve_aspect_ratio);
 
+GdkPixbuf *
+pidgin_pixbuf_scale_down(GdkPixbuf *src, guint max_width, guint max_height,
+	GdkInterpType interp_type, gboolean preserve_ratio);
+
 /**
  * pidgin_make_scrollable:
  * @child:              The child widget

@@ -21,7 +21,6 @@
  */
 
 #include "internal.h"
-#include "pidgin.h"
 
 #include "debug.h"
 #include "http.h"
@@ -32,7 +31,6 @@
 
 #include "gtksmiley-manager.h"
 #include "gtkutils.h"
-#include "gtkwebview.h"
 #include "pidginstock.h"
 
 #include "gtk3compat.h"
@@ -98,23 +96,21 @@ edit_dialog_update_thumb(SmileyEditDialog *edit_dialog)
 {
 	GdkPixbuf *pixbuf = NULL;
 
-	/* TODO: don't scale if smaller */
-	if (edit_dialog->filename) {
-		pixbuf = pidgin_pixbuf_new_from_file_at_scale(
-			edit_dialog->filename, 64, 64, TRUE);
+	if (edit_dialog->new_image) {
+		pixbuf = pidgin_pixbuf_from_imgstore(edit_dialog->new_image);
+	} else if (edit_dialog->filename) {
+		pixbuf = pidgin_pixbuf_new_from_file(edit_dialog->filename);
 		if (!pixbuf) {
 			g_free(edit_dialog->filename);
 			edit_dialog->filename = NULL;
 		}
-	} else if (edit_dialog->new_image) {
-		GdkPixbuf *tmp;
-		tmp = pidgin_pixbuf_from_imgstore(edit_dialog->new_image);
-		if (tmp) {
-			pixbuf = gdk_pixbuf_scale_simple(tmp,
-				64, 64, GDK_INTERP_HYPER);
-			g_object_unref(tmp);
-		}
 	}
+
+	if (pixbuf) {
+		pixbuf = pidgin_pixbuf_scale_down(pixbuf, 64, 64,
+			GDK_INTERP_HYPER, TRUE);
+	}
+
 	if (!pixbuf) {
 		GtkIconSize icon_size =
 			gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
@@ -221,6 +217,11 @@ pidgin_smiley_edit_dialog_set_image(SmileyEditDialog *edit_dialog,
 
 	if (edit_dialog->new_image)
 		purple_imgstore_unref(edit_dialog->new_image);
+
+	if (edit_dialog->smiley) {
+		g_object_set_data(G_OBJECT(edit_dialog->smiley),
+			"pidgin-smiley-manager-list-thumb", NULL);
+	}
 
 	/* check, if image is valid */
 	if (image)
@@ -394,9 +395,11 @@ pidgin_smiley_edit(SmileyManager *manager, PurpleSmiley *smiley)
 	pidgin_set_accessible_label(GTK_WIDGET(edit_dialog->shortcut), label);
 
 #if GTK_CHECK_VERSION(3,0,0)
-	gtk_grid_attach_next_to(GTK_GRID(hbox), GTK_WIDGET(edit_dialog->shortcut), NULL, GTK_POS_RIGHT, 1, 1);
+	gtk_grid_attach_next_to(GTK_GRID(hbox),
+		GTK_WIDGET(edit_dialog->shortcut), NULL, GTK_POS_RIGHT, 1, 1);
 #else
-	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(edit_dialog->shortcut), FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(edit_dialog->shortcut),
+		FALSE, FALSE, 0);
 #endif
 
 	gtk_widget_show(GTK_WIDGET(edit_dialog->shortcut));
@@ -446,7 +449,8 @@ smiley_list_dnd_url_got(PurpleHttpConnection *http_conn,
 		return;
 
 	image_data = purple_http_response_get_data(response, &image_size);
-	image = purple_imgstore_new((gpointer)image_data, image_size, NULL);
+	image = purple_imgstore_new(g_memdup(image_data, image_size),
+		image_size, NULL);
 	if (!image)
 		return;
 
@@ -572,9 +576,17 @@ pidgin_smiley_manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
 	GdkPixbuf *smiley_image;
 	GtkTreeIter iter;
 
-	/* TODO: maybe some cache? */
-	smiley_image = pidgin_pixbuf_new_from_file_at_scale(
-			purple_smiley_get_path(smiley), 22, 22, TRUE);
+	smiley_image = g_object_get_data(G_OBJECT(smiley),
+		"pidgin-smiley-manager-list-thumb");
+	if (smiley_image == NULL) {
+		smiley_image = pidgin_pixbuf_new_from_file(
+			purple_smiley_get_path(smiley));
+		smiley_image = pidgin_pixbuf_scale_down(smiley_image,
+			22, 22, GDK_INTERP_BILINEAR, TRUE);
+		g_object_set_data_full(G_OBJECT(smiley),
+			"pidgin-smiley-manager-list-thumb",
+			smiley_image, g_object_unref);
+	}
 
 	gtk_list_store_append(manager->model, &iter);
 	gtk_list_store_set(manager->model, &iter,
@@ -582,9 +594,6 @@ pidgin_smiley_manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
 		SMILEY_LIST_MODEL_SHORTCUT, purple_smiley_get_shortcut(smiley),
 		SMILEY_LIST_MODEL_PURPLESMILEY, smiley,
 		-1);
-
-	if (smiley_image)
-		g_object_unref(smiley_image);
 }
 
 static void

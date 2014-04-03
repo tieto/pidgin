@@ -3173,6 +3173,53 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width,
 	return pixbuf;
 }
 
+GdkPixbuf *
+pidgin_pixbuf_scale_down(GdkPixbuf *src, guint max_width, guint max_height,
+	GdkInterpType interp_type, gboolean preserve_ratio)
+{
+	guint cur_w, cur_h;
+	GdkPixbuf *dst;
+
+	g_return_val_if_fail(src != NULL, NULL);
+
+	if (max_width == 0 || max_height == 0) {
+		g_object_unref(src);
+		g_return_val_if_reached(NULL);
+	}
+
+	cur_w = gdk_pixbuf_get_width(src);
+	cur_h = gdk_pixbuf_get_width(src);
+
+	if (cur_w <= max_width && cur_h <= max_height)
+		return src;
+
+	/* cur_ratio = cur_w / cur_h
+	 * max_ratio = max_w / max_h
+	 */
+
+	if (!preserve_ratio) {
+		cur_w = MIN(cur_w, max_width);
+		cur_h = MIN(cur_h, max_height);
+	} else if ((guint64)cur_w * max_height > (guint64)max_width * cur_h) {
+		/* cur_w / cur_h > max_width / max_height */
+		cur_h = (guint64)max_width * cur_h / cur_w;
+		cur_w = max_width;
+	} else {
+		cur_w = (guint64)max_height * cur_w / cur_h;
+		cur_h = max_height;
+	}
+
+	if (cur_w <= 0)
+		cur_w = 1;
+	if (cur_h <= 0)
+		cur_h = 1;
+
+	dst = gdk_pixbuf_scale_simple(src, cur_w, cur_h, interp_type);
+	g_object_unref(src);
+
+	return dst;
+}
+
 static void
 url_copy(GtkWidget *w, gchar *url)
 {
