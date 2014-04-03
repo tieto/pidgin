@@ -116,19 +116,19 @@ const char *purple_network_get_my_ip(int fd);
  * purple_network_listen:
  * @port: The port number to bind to.  Must be greater than 0.
  * @socket_family: The protocol family of the socket.  This should be
- *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
- *                      may or may not be able to accept IPv4 connections
- *                      based on the system configuration (use
- *                      purple_socket_speaks_ipv4 to check).  If an IPv6
- *                      socket doesn't accept V4-mapped addresses, you will
- *                      need a second listener to support both v4 and v6.
+ *                 AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
+ *                 may or may not be able to accept IPv4 connections
+ *                 based on the system configuration (use
+ *                 purple_socket_speaks_ipv4 to check).  If an IPv6
+ *                 socket doesn't accept V4-mapped addresses, you will
+ *                 need a second listener to support both v4 and v6.
  * @socket_type: The type of socket to open for listening.
- *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
+ *               This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
  * @map_external: Should the open port be mapped externally using
- *           NAT-PNP or UPnP?  (default should be TRUE)
- * @cb: The callback to be invoked when the port to listen on is available.
- *           The file descriptor of the listening socket will be specified in
- *           this callback, or -1 if no socket could be established.
+ *                NAT-PNP or UPnP?  (default should be %TRUE)
+ * @cb: (scope call): The callback to be invoked when the port to listen on is
+ *      available. The file descriptor of the listening socket will be
+ *      specified in this callback, or -1 if no socket could be established.
  * @cb_data: extra data to be returned when cb is called
  *
  * Attempts to open a listening port ONLY on the specified port number.
@@ -148,8 +148,8 @@ const char *purple_network_get_my_ip(int fd);
  * addresses, a mapping is done).
  *
  * Returns: A pointer to a data structure that can be used to cancel
- *         the pending listener, or NULL if unable to obtain a local
- *         socket to listen on.
+ *          the pending listener, or %NULL if unable to obtain a local
+ *          socket to listen on.
  */
 PurpleNetworkListenData *purple_network_listen(unsigned short port,
 	int socket_family, int socket_type, gboolean map_external,
@@ -158,24 +158,24 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
 /**
  * purple_network_listen_range:
  * @start: The port number to bind to, or 0 to pick a random port.
- *              Users are allowed to override this arg in prefs.
+ *         Users are allowed to override this arg in prefs.
  * @end: The highest possible port in the range of ports to listen on,
- *            or 0 to pick a random port.  Users are allowed to override this
- *            arg in prefs.
+ *       or 0 to pick a random port.  Users are allowed to override this
+ *       arg in prefs.
  * @socket_family: The protocol family of the socket.  This should be
- *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
- *                      may or may not be able to accept IPv4 connections
- *                      based on the system configuration (use
- *                      purple_socket_speaks_ipv4 to check).  If an IPv6
- *                      socket doesn't accept V4-mapped addresses, you will
- *                      need a second listener to support both v4 and v6.
+ *                 AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
+ *                 may or may not be able to accept IPv4 connections
+ *                 based on the system configuration (use
+ *                 purple_socket_speaks_ipv4 to check).  If an IPv6
+ *                 socket doesn't accept V4-mapped addresses, you will
+ *                 need a second listener to support both v4 and v6.
  * @socket_type: The type of socket to open for listening.
- *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
+ *               This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
  * @map_external: Should the open port be mapped externally using
- *           NAT-PNP or UPnP?  (default should be TRUE)
- * @cb: The callback to be invoked when the port to listen on is available.
- *           The file descriptor of the listening socket will be specified in
- *           this callback, or -1 if no socket could be established.
+ *                NAT-PNP or UPnP?  (default should be %TRUE)
+ * @cb: (scope call): The callback to be invoked when the port to listen on is
+ *      available. The file descriptor of the listening socket will be
+ *      specified in this callback, or -1 if no socket could be established.
  * @cb_data: extra data to be returned when cb is called
  *
  * Opens a listening port selected from a range of ports.  The range of
@@ -196,8 +196,8 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
  * addresses, a mapping is done).
  *
  * Returns: A pointer to a data structure that can be used to cancel
- *         the pending listener, or NULL if unable to obtain a local
- *         socket to listen on.
+ *          the pending listener, or %NULL if unable to obtain a local
+ *          socket to listen on.
  */
 PurpleNetworkListenData *purple_network_listen_range(
 	unsigned short start, unsigned short end, int socket_family,

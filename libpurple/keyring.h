@@ -233,11 +233,11 @@ purple_keyring_get_inuse(void);
 
 /**
  * purple_keyring_set_inuse:
- * @newkeyring: The new keyring to use.
- * @force:      FALSE if the change can be cancelled. If this is TRUE and
- *                   an error occurs, data might be lost.
- * @cb:         A callback for once the change is complete.
- * @data:       Data to be passed to the callback.
+ * @newkeyring:       The new keyring to use.
+ * @force:            %FALSE if the change can be cancelled. If this is %TRUE
+ *                    and an error occurs, data might be lost.
+ * @cb: (scope call): A callback for once the change is complete.
+ * @data:             Data to be passed to the callback.
  *
  * Set the keyring to use. This function will move all passwords from
  * the old keyring to the new one.
@@ -329,9 +329,9 @@ purple_keyring_export_password(PurpleAccount *account, const gchar **keyring_id,
 
 /**
  * purple_keyring_get_password:
- * @account: The account.
- * @cb:      A callback for once the password is read.
- * @data:    Data passed to the callback.
+ * @account:          The account.
+ * @cb: (scope call): A callback for once the password is read.
+ * @data:             Data passed to the callback.
  *
  * Read a password from the current keyring.
  */
@@ -341,10 +341,10 @@ purple_keyring_get_password(PurpleAccount *account,
 
 /**
  * purple_keyring_set_password:
- * @account:  The account.
- * @password: The password to save.
- * @cb:       A callback for once the password is saved.
- * @data:     Data to be passed to the callback.
+ * @account:          The account.
+ * @password:         The password to save.
+ * @cb: (scope call): A callback for once the password is saved.
+ * @data:             Data to be passed to the callback.
  *
  * Save a password to the current keyring.
  */
@@ -476,8 +476,8 @@ purple_keyring_set_id(PurpleKeyring *keyring, const gchar *id);
 
 /**
  * purple_keyring_set_read_password:
- * @keyring: The keyring.
- * @read_cb: Read password method.
+ * @keyring:               The keyring.
+ * @read_cb: (scope call): Read password method.
  *
  * Sets read password method.
  *
@@ -489,8 +489,8 @@ purple_keyring_set_read_password(PurpleKeyring *keyring,
 
 /**
  * purple_keyring_set_save_password:
- * @keyring: The keyring.
- * @save_cb: Save password method.
+ * @keyring:               The keyring.
+ * @save_cb: (scope call): Save password method.
  *
  * Sets save password method.
  *
@@ -500,29 +500,71 @@ void
 purple_keyring_set_save_password(PurpleKeyring *keyring,
 	PurpleKeyringSave save_cb);
 
+/**
+ * purple_keyring_set_cancel_requests:
+ * @keyring:         The keyring.
+ * @cancel_requests: (scope call): Cancel requests method.
+ *
+ * Sets cancel requests method.
+ */
 void
 purple_keyring_set_cancel_requests(PurpleKeyring *keyring,
 	PurpleKeyringCancelRequests cancel_requests);
 
+/**
+ * purple_keyring_set_close_keyring:
+ * @keyring:                The keyring.
+ * @close_cb: (scope call): Close keyring method.
+ *
+ * Sets close keyring method.
+ */
 void
 purple_keyring_set_close_keyring(PurpleKeyring *keyring,
 	PurpleKeyringClose close_cb);
 
+/**
+ * purple_keyring_set_import_password:
+ * @keyring:         The keyring.
+ * @import_password: (scope call): Import password method.
+ *
+ * Sets import password method.
+ */
 void
 purple_keyring_set_import_password(PurpleKeyring *keyring,
 	PurpleKeyringImportPassword import_password);
 
+/**
+ * purple_keyring_set_export_password:
+ * @keyring:         The keyring.
+ * @export_password: (scope call): Export password method.
+ *
+ * Sets export password method.
+ */
 void
 purple_keyring_set_export_password(PurpleKeyring *keyring,
 	PurpleKeyringExportPassword export_password);
 
+/**
+ * purple_keyring_set_read_settings:
+ * @keyring:       The keyring.
+ * @read_settings: (scope call): Read settings method.
+ *
+ * Sets read settings method.
+ */
 void
 purple_keyring_set_read_settings(PurpleKeyring *keyring,
-PurpleKeyringReadSettings read_settings);
+	PurpleKeyringReadSettings read_settings);
 
+/**
+ * purple_keyring_set_apply_settings:
+ * @keyring:        The keyring.
+ * @apply_settings: (scope call): Apply settings method.
+ *
+ * Sets apply settings method.
+ */
 void
 purple_keyring_set_apply_settings(PurpleKeyring *keyring,
-PurpleKeyringApplySettings apply_settings);
+	PurpleKeyringApplySettings apply_settings);
 
 /**************************************************************************/
 /* Error Codes                                                            */

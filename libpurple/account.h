@@ -160,9 +160,9 @@ void purple_account_connect(PurpleAccount *account);
 
 /**
  * purple_account_set_register_callback:
- * @account:	The account for which this callback should be used
- * @cb:	The callback
- * @user_data:	The user data passed to the callback
+ * @account:	      The account for which this callback should be used
+ * @cb: (scope call): The callback
+ * @user_data:	      The user data passed to the callback
  *
  * Sets the callback for successful registration.
  */
@@ -189,8 +189,9 @@ void purple_account_register_completed(PurpleAccount *account, gboolean succeede
 /**
  * purple_account_unregister:
  * @account: The account to unregister.
- * @cb: Optional callback to be called when unregistration is complete
- * @user_data: user data to pass to the callback
+ * @cb: (scope call): Optional callback to be called when unregistration is
+ *                    complete
+ * @user_data:        user data to pass to the callback
  *
  * Unregisters an account (deleting it from the server).
  */
@@ -260,8 +261,8 @@ void purple_account_request_add(PurpleAccount *account, const char *remote_user,
  * @alias:        The optional alias of the remote user.
  * @message:      The optional message sent by the user wanting to add you.
  * @on_list:      Is the remote user already on the buddy list?
- * @auth_cb:      The callback called when the local user accepts
- * @deny_cb:      The callback called when the local user rejects
+ * @auth_cb:      (scope call): The callback called when the local user accepts
+ * @deny_cb:      (scope call): The callback called when the local user rejects
  * @user_data:    Data to be passed back to the above callbacks
  *
  * Notifies the user that a remote user has wants to add the local user
@@ -295,8 +296,8 @@ void purple_account_request_close(void *ui_handle);
 /**
  * purple_account_request_password:
  * @account:     The account to request the password for.
- * @ok_cb:       The callback for the OK button.
- * @cancel_cb:   The callback for the cancel button.
+ * @ok_cb:       (scope call): The callback for the OK button.
+ * @cancel_cb:   (scope call): The callback for the cancel button.
  * @user_data:   User data to be passed into callbacks.
  *
  * Requests a password from the user for the account. Does not set the
@@ -335,7 +336,7 @@ void purple_account_set_username(PurpleAccount *account, const char *username);
  * purple_account_set_password:
  * @account:  The account.
  * @password: The password.
- * @cb:       A callback for once the password is saved.
+ * @cb:       (scope call): A callback for once the password is saved.
  * @data:     A pointer to be passed to the callback.
  *
  * Sets the account's password.
@@ -494,12 +495,12 @@ void purple_account_set_status_list(PurpleAccount *account,
  * purple_account_set_public_alias:
  * @account:    The account
  * @alias:      The new public alias for this account or %NULL
- *                   to unset the alias/nickname (or return it to
- *                   a protocol-specific "default", like the username)
- * @success_cb: A callback which will be called if the alias
- *                   is successfully set on the server (or %NULL).
- * @failure_cb: A callback which will be called if the alias
- *                   is not successfully set on the server (or %NULL).
+ *              to unset the alias/nickname (or return it to
+ *              a protocol-specific "default", like the username)
+ * @success_cb: (scope call): A callback which will be called if the alias
+ *              is successfully set on the server (or %NULL).
+ * @failure_cb: (scope call): A callback which will be called if the alias
+ *              is not successfully set on the server (or %NULL).
  *
  * Set a server-side (public) alias for this account.  The account
  * must already be connected.
@@ -514,9 +515,9 @@ void purple_account_set_public_alias(PurpleAccount *account,
 /**
  * purple_account_get_public_alias:
  * @account:    The account
- * @success_cb: A callback which will be called with the alias
- * @failure_cb: A callback which will be called if the protocol is
- *                   unable to retrieve the server-side alias.
+ * @success_cb: (scope call): A callback which will be called with the alias
+ * @failure_cb: (scope call): A callback which will be called if the protocol is
+ *              unable to retrieve the server-side alias.
  *
  * Fetch the server-side (public) alias for this account.  The account
  * must already be connected.
@@ -694,7 +695,7 @@ const char *purple_account_get_username(const PurpleAccount *account);
 /**
  * purple_account_get_password:
  * @account: The account.
- * @cb:      The callback to give the password.
+ * @cb:      (scope call): The callback to give the password.
  * @data:    A pointer passed to the callback.
  *
  * Reads the password for the account.

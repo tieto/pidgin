@@ -2093,11 +2093,12 @@ static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record*
  */
 static int get_chunk_len( const char* chunkdata )
 {
-	int*	sizeptr;
+	guint32 size_val;
 
-	sizeptr = (int*) &chunkdata[1];		/* we skip the first byte (type field) */
+	/* we skip the first byte (type field) */
+	memcpy(&size_val, &chunkdata[1], sizeof(size_val));
 
-	return ntohl( *sizeptr );
+	return ntohl(size_val);
 }
 
 
