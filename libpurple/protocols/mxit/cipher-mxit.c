@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-#include "internal.h"
-#include "debug.h"
-#include "libpurple/cipher.h"
-#include "ciphers/aescipher.h"
+#include "cipher-mxit.h"
 
 #include "cipher.h"
+#include "ciphers/aescipher.h"
+#include "debug.h"
+#include "internal.h"
 
 #define INITIAL_KEY "6170383452343567"
 #define SECRET_HEADER "<mxit/>"

@@ -8,8 +8,8 @@ MXITSOURCES = \
 	actions.h \
 	chunk.c \
 	chunk.h \
-	cipher.c \
-	cipher.h \
+	cipher-mxit.c \
+	cipher-mxit.h \
 	filexfer.c \
 	filexfer.h \
 	formcmds.c \
