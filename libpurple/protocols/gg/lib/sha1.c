@@ -88,13 +88,13 @@ static int SHA1_Final(unsigned char digest[20], SHA_CTX* context);
 /* blk0() and blk() perform the initial expand. */
 /* I got the idea of expanding during the round function from SSLeay */
 #ifndef GG_CONFIG_BIGENDIAN
-#define blk0(i) (block->l[i] = (rol(block->l[i], 24) & 0xFF00FF00) \
-    |(rol(block->l[i], 8) & 0x00FF00FF))
+#define blk0(i) (block.l[i] = (rol(block.l[i], 24) & 0xFF00FF00) \
+    |(rol(block.l[i], 8) & 0x00FF00FF))
 #else
-#define blk0(i) block->l[i]
+#define blk0(i) block.l[i]
 #endif
-#define blk(i) (block->l[i&15] = rol(block->l[(i+13)&15]^block->l[(i+8)&15] \
-    ^block->l[(i+2)&15]^block->l[i&15], 1))
+#define blk(i) (block.l[i&15] = rol(block.l[(i+13)&15]^block.l[(i+8)&15] \
+    ^block.l[(i+2)&15]^block.l[i&15], 1))
 
 /* (R0+R1), R2, R3, R4 are the different operations used in SHA1 */
 /* style:comma:start-ignore */
@@ -115,10 +115,8 @@ typedef union {
     unsigned char c[64];
     uint32_t l[16];
 } CHAR64LONG16;
-CHAR64LONG16* block;
-static unsigned char workspace[64];
-    block = (CHAR64LONG16*)workspace;
-    memcpy(block, buffer, 64);
+    CHAR64LONG16 block;
+    memcpy(&block, buffer, sizeof(block));
     /* Copy context->state[] to working vars */
     a = state[0];
     b = state[1];

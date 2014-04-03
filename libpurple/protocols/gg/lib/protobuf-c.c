@@ -919,7 +919,7 @@ repeated_field_pack (const ProtobufCFieldDescriptor *field,
                      const void *member,
                      uint8_t *out)
 {
-  char *array = * (char * const *) member;
+  void *array = * (char * const *) member;
   unsigned i;
   if (field->packed)
     {
@@ -1024,7 +1024,7 @@ repeated_field_pack (const ProtobufCFieldDescriptor *field,
       for (i = 0; i < count; i++)
         {
           rv += required_field_pack (field, array, out + rv);
-          array += siz;
+          array = ((char*)array) + siz;
         }
       return rv;
     }
@@ -1902,7 +1902,7 @@ parse_packed_repeated_member (ScannedMember *scanned_member,
   const ProtobufCFieldDescriptor *field = scanned_member->field;
   size_t *p_n = STRUCT_MEMBER_PTR(size_t, message, field->quantifier_offset);
   size_t siz = sizeof_elt_in_repeated_array (field->type);
-  char *array = *(char**)member + siz * (*p_n);
+  void *array = *(char**)member + siz * (*p_n);
   const uint8_t *at = scanned_member->data + scanned_member->length_prefix_len;
   size_t rem = scanned_member->len - scanned_member->length_prefix_len;
   size_t count = 0;
