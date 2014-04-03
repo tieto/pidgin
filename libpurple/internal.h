@@ -141,6 +141,22 @@
 #endif
 #endif
 
+#ifdef __clang__
+
+#define PURPLE_BEGIN_IGNORE_CAST_ALIGN \
+	_Pragma ("clang diagnostic push") \
+	_Pragma ("clang diagnostic ignored \"-Wcast-align\"")
+
+#define PURPLE_END_IGNORE_CAST_ALIGN \
+	_Pragma ("clang diagnostic pop")
+
+#else
+
+#define PURPLE_BEGIN_IGNORE_CAST_ALIGN
+#define PURPLE_END_IGNORE_CAST_ALIGN
+
+#endif /* __clang__ */
+
 #include <glib-object.h>
 
 typedef union
