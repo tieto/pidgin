@@ -6,8 +6,6 @@ pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 MXITSOURCES = \
 	actions.c \
 	actions.h \
-	aes.c \
-	aes.h \
 	chunk.c \
 	chunk.h \
 	cipher.c \
