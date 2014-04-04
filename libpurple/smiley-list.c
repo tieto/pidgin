@@ -82,6 +82,7 @@ _list_remove_link2(GList **head_p, GList **tail_p, GList *link)
 
 	if (link == tail)
 		*tail_p = tail->prev;
+	/* TODO: shouldn't it be _delete_link? */
 	*head_p = g_list_remove_link(head, link);
 }
 

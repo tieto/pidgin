@@ -330,7 +330,7 @@ pidgin_smiley_theme_probe(void)
 
 		if (g_file_test(priv->path, G_FILE_TEST_EXISTS))
 			continue;
-		smiley_themes = g_list_remove_link(smiley_themes, it);
+		smiley_themes = g_list_delete_link(smiley_themes, it);
 		g_object_unref(theme);
 	}
 
