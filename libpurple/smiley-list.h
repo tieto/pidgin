@@ -85,6 +85,7 @@ PurpleSmiley *
 purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
 	const gchar *shortcut);
 
+/* keys are HTML escaped shortcuts */
 PurpleTrie *
 purple_smiley_list_get_trie(PurpleSmileyList *list);
 

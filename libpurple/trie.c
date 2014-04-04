@@ -94,6 +94,7 @@ typedef struct
 	gboolean reset_on_match;
 
 	PurpleTrieReplaceCb replace_cb;
+	PurpleTrieFindCb find_cb;
 	gpointer user_data;
 } PurpleTrieMachine;
 
@@ -398,7 +399,7 @@ purple_trie_states_build(PurpleTrie *trie)
  ******************************************************************************/
 
 static void
-purple_trie_replace_advance(PurpleTrieMachine *m, const guchar character)
+purple_trie_advance(PurpleTrieMachine *m, const guchar character)
 {
 	/* change state after processing a character */
 	while (TRUE) {
@@ -440,10 +441,33 @@ purple_trie_replace_do_replacement(PurpleTrieMachine *m, GString *out)
 	if (!was_replaced)
 		out->len = str_old_len;
 
+	/* XXX */
 	if (was_replaced || m->reset_on_match)
 		m->state = m->root_state;
 
 	return was_replaced;
+}
+
+static gboolean
+purple_trie_find_do_discovery(PurpleTrieMachine *m)
+{
+	gboolean was_accepted;
+
+	/* if we reached a "found" state, let's process it */
+	if (!m->state->found_word)
+		return FALSE;
+
+	if (m->find_cb) {
+		was_accepted = m->find_cb(m->state->found_word->word,
+			m->state->found_word->data, m->user_data);
+	} else {
+		was_accepted = TRUE;
+	}
+
+	if (was_accepted && m->reset_on_match)
+		m->state = m->root_state;
+
+	return was_accepted;
 }
 
 gchar *
@@ -475,7 +499,7 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 		guchar character = src[i++];
 		gboolean was_replaced;
 
-		purple_trie_replace_advance(&machine, character);
+		purple_trie_advance(&machine, character);
 		was_replaced = purple_trie_replace_do_replacement(&machine, out);
 
 		/* We skipped a character without finding any records,
@@ -534,7 +558,7 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
 
 		/* Advance every machine and possibly perform a replacement. */
 		for (m_idx = 0; m_idx < tries_count; m_idx++) {
-			purple_trie_replace_advance(&machines[m_idx], character);
+			purple_trie_advance(&machines[m_idx], character);
 			if (was_replaced)
 				continue;
 			was_replaced = purple_trie_replace_do_replacement(
@@ -557,6 +581,44 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
 
 	g_free(machines);
 	return g_string_free(out, FALSE);
+}
+
+gulong
+purple_trie_find(PurpleTrie *trie, const gchar *src,
+	PurpleTrieFindCb find_cb, gpointer user_data)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+	PurpleTrieMachine machine;
+	gulong found_count = 0;
+	gsize i;
+
+	if (src == NULL)
+		return 0;
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	purple_trie_states_build(trie);
+
+	machine.state = priv->root_state;
+	machine.root_state = priv->root_state;
+	machine.reset_on_match = priv->reset_on_match;
+	machine.find_cb = find_cb;
+	machine.user_data = user_data;
+
+	i = 0;
+	while (src[i] != '\0') {
+		guchar character = src[i++];
+		gboolean was_found;
+
+		purple_trie_advance(&machine, character);
+
+		was_found = purple_trie_find_do_discovery(&machine);
+
+		if (was_found)
+			found_count++;
+	}
+
+	return found_count;
 }
 
 

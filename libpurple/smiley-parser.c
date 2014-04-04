@@ -31,29 +31,6 @@ typedef struct
 	gpointer ui_data;
 } PurpleSmileyParseData;
 
-static gboolean escape_checked = FALSE;
-static gboolean escape_value;
-
-gboolean
-purple_smiley_parse_escape(void)
-{
-	GHashTable *ui_info;
-
-	if (escape_checked)
-		return escape_value;
-
-	ui_info = purple_core_get_ui_info();
-	if (!ui_info)
-		escape_value = FALSE;
-	else {
-		escape_value = GPOINTER_TO_INT(g_hash_table_lookup(ui_info,
-			"smiley-parser-escape"));
-	}
-
-	escape_checked = TRUE;
-	return escape_value;
-}
-
 static gboolean purple_smiley_parse_cb(GString *out, const gchar *word,
 	gpointer _smiley, gpointer _parse_data)
 {
@@ -66,7 +43,7 @@ static gboolean purple_smiley_parse_cb(GString *out, const gchar *word,
 }
 
 gchar *
-purple_smiley_parse(PurpleConversation *conv, const gchar *message,
+purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 	PurpleSmileyParseCb cb, gpointer ui_data)
 {
 	PurpleSmileyTheme *theme;
@@ -75,8 +52,8 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *message,
 	GSList *tries = NULL, tries_theme, tries_custom, tries_remote;
 	PurpleSmileyParseData parse_data;
 
-	if (message == NULL || message[0] == '\0')
-		return g_strdup(message);
+	if (html_message == NULL || html_message[0] == '\0')
+		return g_strdup(html_message);
 
 	/* get remote smileys */
 	remote_smileys = purple_conversation_get_remote_smileys(conv);
@@ -104,7 +81,7 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *message,
 
 	/* we have absolutely no smileys */
 	if (theme_trie == NULL && custom_trie == NULL && remote_trie == NULL)
-		return g_strdup(message);
+		return g_strdup(html_message);
 
 	/* Create a tries list on the stack. */
 	tries_theme.data = theme_trie;
@@ -133,6 +110,42 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *message,
 	/* TODO: don't replace text within tags, ie. <span style=":)"> */
 	/* TODO: parse greedily (as much as possible) when PurpleTrie
 	 * provides support for it. */
-	return purple_trie_multi_replace(tries, message,
+	return purple_trie_multi_replace(tries, html_message,
 		purple_smiley_parse_cb, &parse_data);
+}
+
+static gboolean
+smiley_find_cb(const gchar *word, gpointer _smiley, gpointer _found_smileys)
+{
+	PurpleSmiley *smiley = _smiley;
+	GHashTable *found_smileys = _found_smileys;
+
+	g_hash_table_insert(found_smileys, smiley, smiley);
+
+	return TRUE;
+}
+
+GList *
+purple_smiley_find(PurpleSmileyList *smileys, const gchar *html_message)
+{
+	PurpleTrie *trie;
+	GHashTable *found_smileys;
+	GList *found_list;
+
+	if (html_message == NULL || html_message[0] == '\0')
+		return NULL;
+
+	if (smileys == NULL || purple_smiley_list_is_empty(smileys))
+		return NULL;
+
+	trie = purple_smiley_list_get_trie(smileys);
+	g_return_val_if_fail(trie != NULL, NULL);
+
+	found_smileys = g_hash_table_new(g_direct_hash, g_direct_equal);
+	purple_trie_find(trie, html_message, smiley_find_cb, found_smileys);
+
+	found_list = g_hash_table_get_values(found_smileys);
+	g_hash_table_destroy(found_smileys);
+
+	return found_list;
 }

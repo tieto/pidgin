@@ -113,7 +113,7 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 	const gchar *smiley_path;
 	gboolean succ;
-	gchar *tmp = NULL;
+	gchar *shortcut_escaped;
 	const gchar *shortcut;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
@@ -130,11 +130,9 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 	if (g_hash_table_lookup(priv->shortcut_map, shortcut) != NULL)
 		return FALSE;
 
-	if (purple_smiley_parse_escape())
-		shortcut = tmp = g_markup_escape_text(shortcut, -1);
-	succ = purple_trie_add(priv->trie, shortcut, smiley);
-	g_free(tmp);
-	shortcut = purple_smiley_get_shortcut(smiley);
+	shortcut_escaped = g_markup_escape_text(shortcut, -1);
+	succ = purple_trie_add(priv->trie, shortcut_escaped, smiley);
+	g_free(shortcut_escaped);
 	if (!succ)
 		return FALSE;
 
@@ -175,7 +173,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 	GList *list_elem, *it;
 	const gchar *shortcut, *path;
-	gchar *tmp;
+	gchar *shortcut_escaped;
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(PURPLE_IS_SMILEY(smiley));
@@ -195,11 +193,9 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	if (path)
 		g_hash_table_remove(priv->path_map, path);
 
-	if (purple_smiley_parse_escape())
-		shortcut = tmp = g_markup_escape_text(shortcut, -1);
+	shortcut_escaped = g_markup_escape_text(shortcut, -1);
 	purple_trie_remove(priv->trie, shortcut);
-	g_free(tmp);
-	shortcut = purple_smiley_get_shortcut(smiley);
+	g_free(shortcut_escaped);
 
 	_list_remove_link2(&priv->smileys, &priv->smileys_end, list_elem);
 

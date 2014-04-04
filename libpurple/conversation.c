@@ -968,9 +968,6 @@ purple_conversation_add_remote_smiley(PurpleConversation *conv,
 		return NULL;
 	}
 
-	/* TODO: connect to the failed signal, to make it possible returning this smiley object again (later). Maybe just remove from the list on fail */
-	/* TODO: test it by doing failed on the first retrieval, succ on the second */
-
 	/* smiley was already added */
 	if (smiley)
 		return NULL;

@@ -3,6 +3,8 @@
 #include "tests.h"
 #include "../trie.h"
 
+static gint find_sum;
+
 static gboolean
 test_trie_replace_cb(GString *out, const gchar *word, gpointer word_data,
 	gpointer user_data)
@@ -13,6 +15,19 @@ test_trie_replace_cb(GString *out, const gchar *word, gpointer word_data,
 
 	g_string_append_printf(out, "[%d:%x]",
 		(int)(gintptr)user_data, (int)(gintptr)word_data);
+
+	return TRUE;
+}
+
+static gboolean
+test_trie_find_cb(const gchar *word, gpointer word_data,
+	gpointer user_data)
+{
+	if ((gintptr)word_data == 0x7004)
+		return FALSE;
+
+	find_sum += (gintptr)word_data;
+	find_sum -= (gintptr)user_data * 0x1000;
 
 	return TRUE;
 }
@@ -181,6 +196,81 @@ START_TEST(test_trie_remove)
 }
 END_TEST
 
+START_TEST(test_trie_find)
+{
+	PurpleTrie *trie;
+	const gchar *in;
+	gint out;
+
+	trie = purple_trie_new();
+
+	purple_trie_add(trie, "alice", (gpointer)0x7001);
+	purple_trie_add(trie, "bob", (gpointer)0x7002);
+	purple_trie_add(trie, "cherry", (gpointer)0x7003);
+	purple_trie_add(trie, "al", (gpointer)0x7004); /* not accepted */
+
+	in = "test alice bob test cherry alice";
+
+	find_sum = 0;
+	out = purple_trie_find(trie, in, test_trie_find_cb, (gpointer)7);
+
+	assert_int_equal(4, out);
+	assert_int_equal(2*1 + 2 + 3, find_sum);
+
+	g_object_unref(trie);
+}
+END_TEST
+
+START_TEST(test_trie_find_reset)
+{
+	PurpleTrie *trie;
+	const gchar *in;
+	gint out;
+
+	trie = purple_trie_new();
+	purple_trie_set_reset_on_match(trie, TRUE);
+
+	purple_trie_add(trie, "alice", (gpointer)0x8001);
+	purple_trie_add(trie, "ali", (gpointer)0x8002);
+	purple_trie_add(trie, "al", (gpointer)0x8003);
+
+	in = "al ali alice";
+
+	find_sum = 0;
+	out = purple_trie_find(trie, in, test_trie_find_cb, (gpointer)8);
+
+	assert_int_equal(3, out);
+	assert_int_equal(3 * 3, find_sum);
+
+	g_object_unref(trie);
+}
+END_TEST
+
+START_TEST(test_trie_find_noreset)
+{
+	PurpleTrie *trie;
+	const gchar *in;
+	gint out;
+
+	trie = purple_trie_new();
+	purple_trie_set_reset_on_match(trie, FALSE);
+
+	purple_trie_add(trie, "alice", (gpointer)0x9001);
+	purple_trie_add(trie, "ali", (gpointer)0x9002);
+	purple_trie_add(trie, "al", (gpointer)0x9003);
+
+	in = "al ali alice";
+
+	find_sum = 0;
+	out = purple_trie_find(trie, in, test_trie_find_cb, (gpointer)9);
+
+	assert_int_equal(6, out);
+	assert_int_equal(3*3 + 2*2 + 1, find_sum);
+
+	g_object_unref(trie);
+}
+END_TEST
+
 Suite *
 purple_trie_suite(void)
 {
@@ -193,6 +283,9 @@ purple_trie_suite(void)
 	tcase_add_test(tc, test_trie_replace_empty);
 	tcase_add_test(tc, test_trie_multi_replace);
 	tcase_add_test(tc, test_trie_remove);
+	tcase_add_test(tc, test_trie_find);
+	tcase_add_test(tc, test_trie_find_reset);
+	tcase_add_test(tc, test_trie_find_noreset);
 
 	suite_add_tcase(s, tc);
 

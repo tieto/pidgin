@@ -73,6 +73,9 @@ struct _PurpleTrieClass
 typedef gboolean (*PurpleTrieReplaceCb)(GString *out, const gchar *word,
 	gpointer word_data, gpointer user_data);
 
+typedef gboolean (*PurpleTrieFindCb)(const gchar *word, gpointer word_data,
+	gpointer user_data);
+
 G_BEGIN_DECLS
 
 GType
@@ -173,6 +176,10 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 gchar *
 purple_trie_multi_replace(const GSList *tries, const gchar *src,
 	PurpleTrieReplaceCb replace_cb, gpointer user_data);
+
+gulong
+purple_trie_find(PurpleTrie *trie, const gchar *src,
+	PurpleTrieFindCb find_cb, gpointer user_data);
 
 G_END_DECLS
 

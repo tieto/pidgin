@@ -27,9 +27,6 @@
 typedef void (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer ui_data);
 
-gboolean
-purple_smiley_parse_escape(void);
-
 /* XXX: this shouldn't be a conv for incoming messages - see
  * PurpleConversationPrivate#remote_smileys.
  * For outgoing, we could pass conv in ui_data (or something).
@@ -40,7 +37,10 @@ purple_smiley_parse_escape(void);
  * outgoing messages. To be considered.
  */
 gchar *
-purple_smiley_parse(PurpleConversation *conv, const gchar *message,
+purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 	PurpleSmileyParseCb cb, gpointer ui_data);
+
+GList *
+purple_smiley_find(PurpleSmileyList *smileys, const gchar *html_message);
 
 #endif /* _PURPLE_SMILEY_PARSER_H_ */

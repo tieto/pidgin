@@ -351,8 +351,6 @@ static GHashTable *pidgin_ui_get_info(void)
 		 */
 		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1550));
 		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1550));
-
-		g_hash_table_insert(ui_info, "smiley-parser-escape", GINT_TO_POINTER(TRUE));
 	}
 
 	return ui_info;
