@@ -31,6 +31,7 @@
 
 typedef struct {
 	GString *contents;
+	PurpleStoredImage *image; /* it's not the same as in parent */
 
 	gboolean failed;
 } PurpleRemoteSmileyPrivate;
@@ -87,12 +88,20 @@ purple_remote_smiley_close(PurpleRemoteSmiley *smiley)
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(!priv->failed);
 	g_return_if_fail(!purple_smiley_is_ready(PURPLE_SMILEY(smiley)));
+	g_return_if_fail(priv->contents != NULL);
+	g_return_if_fail(priv->image == NULL);
 
 	if (priv->contents->len == 0) {
 		purple_debug_error("smiley-remote", "Smiley is empty");
 		purple_remote_smiley_failed(smiley);
 		return;
 	}
+
+	priv->image = purple_imgstore_new(priv->contents->str,
+		priv->contents->len, NULL);
+	g_return_if_fail(priv->image != NULL);
+	g_string_free(priv->contents, FALSE);
+	priv->contents = NULL;
 
 	g_object_set(smiley, "is-ready", TRUE, NULL);
 	/* TODO: call ready signal */
@@ -112,6 +121,26 @@ purple_remote_smiley_failed(PurpleRemoteSmiley *smiley)
 
 	g_object_set(smiley, "failed", TRUE, NULL);
 	/* TODO: call failed signal */
+}
+
+static PurpleStoredImage *
+purple_remote_smiley_get_image_impl(PurpleSmiley *smiley)
+{
+	PurpleRemoteSmileyPrivate *priv =
+		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+
+	if (purple_smiley_get_path(smiley))
+		return PURPLE_SMILEY_CLASS(parent_class)->get_image(smiley);
+
+	if (!priv->image) {
+		purple_debug_error("smiley-remote",
+			"Remote smiley is not ready yet");
+		return NULL;
+	}
+
+	return priv->image;
 }
 
 /******************************************************************************
@@ -135,7 +164,10 @@ purple_remote_smiley_finalize(GObject *obj)
 	PurpleRemoteSmileyPrivate *priv =
 		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
 
-	g_string_free(priv->contents, TRUE);
+	if (priv->contents)
+		g_string_free(priv->contents, TRUE);
+	if (priv->image)
+		purple_imgstore_unref(priv->image);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -174,12 +206,15 @@ static void
 purple_remote_smiley_class_init(PurpleRemoteSmileyClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
+	PurpleSmileyClass *ps_class = PURPLE_SMILEY_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
 	g_type_class_add_private(klass, sizeof(PurpleRemoteSmileyPrivate));
 
 	gobj_class->finalize = purple_remote_smiley_finalize;
+
+	ps_class->get_image = purple_remote_smiley_get_image_impl;
 
 #if 0
 	gobj_class->get_property = purple_remote_smiley_get_property;

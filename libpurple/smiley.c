@@ -34,6 +34,7 @@
 typedef struct {
 	gchar *shortcut;
 	gchar *path;
+	PurpleStoredImage *image;
 	gboolean is_ready;
 } PurpleSmileyPrivate;
 
@@ -103,6 +104,46 @@ purple_smiley_get_path(PurpleSmiley *smiley)
 	return priv->path;
 }
 
+static PurpleStoredImage *
+purple_smiley_get_image_impl(PurpleSmiley *smiley)
+{
+	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
+	const gchar *path;
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+
+	if (priv->image)
+		return priv->image;
+
+	path = purple_smiley_get_path(smiley);
+
+	if (!path) {
+		purple_debug_error("smiley", "Can't get smiley data "
+			"without a path");
+		return NULL;
+	}
+
+	priv->image = purple_imgstore_new_from_file(path);
+	if (!priv->image) {
+		purple_debug_error("smiley", "Couldn't load smiley data ");
+		return NULL;
+	}
+	return priv->image;
+}
+
+PurpleStoredImage *
+purple_smiley_get_image(PurpleSmiley *smiley)
+{
+	PurpleSmileyClass *klass;
+
+	g_return_val_if_fail(PURPLE_IS_SMILEY(smiley), NULL);
+	klass = PURPLE_SMILEY_GET_CLASS(smiley);
+	g_return_val_if_fail(klass != NULL, NULL);
+	g_return_val_if_fail(klass->get_image != NULL, NULL);
+
+	return klass->get_image(smiley);
+}
+
 
 /*******************************************************************************
  * Object stuff
@@ -123,6 +164,9 @@ purple_smiley_finalize(GObject *obj)
 
 	g_free(priv->shortcut);
 	g_free(priv->path);
+
+	if (priv->image)
+		purple_imgstore_unref(priv->image);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(smiley);
 }
@@ -179,6 +223,7 @@ static void
 purple_smiley_class_init(PurpleSmileyClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
+	PurpleSmileyClass *ps_class = PURPLE_SMILEY_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -187,6 +232,8 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 	gobj_class->get_property = purple_smiley_get_property;
 	gobj_class->set_property = purple_smiley_set_property;
 	gobj_class->finalize = purple_smiley_finalize;
+
+	ps_class->get_image = purple_smiley_get_image_impl;
 
 	properties[PROP_SHORTCUT] = g_param_spec_string("shortcut", "Shortcut",
 		"The text-shortcut for the smiley", NULL,

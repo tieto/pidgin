@@ -60,6 +60,8 @@ struct _PurpleSmileyClass
 	/*< private >*/
 	GObjectClass parent_class;
 
+	PurpleStoredImage * (*get_image)(PurpleSmiley *smiley);
+
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
 	void (*purple_reserved3)(void);
@@ -112,11 +114,17 @@ purple_smiley_is_ready(const PurpleSmiley *smiley);
  *
  * Returns a full path to a smiley file.
  *
+ * A smiley may not be saved to disk (the path will be NULL), but could still be
+ * accessible using purple_smiley_get_data.
+ *
  * Returns: A full path to the file, or %NULL under various conditions.
  *          The caller should use g_free to free the returned string.
  */
 const gchar *
 purple_smiley_get_path(PurpleSmiley *smiley);
+
+PurpleStoredImage *
+purple_smiley_get_image(PurpleSmiley *smiley);
 
 G_END_DECLS
 
