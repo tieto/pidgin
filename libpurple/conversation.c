@@ -954,8 +954,11 @@ purple_conversation_add_remote_smiley(PurpleConversation *conv,
 	g_return_val_if_fail(shortcut != NULL, NULL);
 	g_return_val_if_fail(shortcut[0] != '\0', NULL);
 
-	if (priv->remote_smileys == NULL)
+	if (priv->remote_smileys == NULL) {
 		priv->remote_smileys = purple_smiley_list_new();
+		g_object_set(priv->remote_smileys,
+			"drop-failed-remotes", TRUE, NULL);
+	}
 
 	smiley = purple_smiley_list_get_by_shortcut(
 		priv->remote_smileys, shortcut);

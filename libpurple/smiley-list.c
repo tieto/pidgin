@@ -36,13 +36,18 @@ typedef struct {
 	PurpleTrie *trie;
 	GHashTable *path_map;
 	GHashTable *shortcut_map;
+
+	gboolean drop_failed_remotes;
 } PurpleSmileyListPrivate;
 
 enum
 {
 	PROP_0,
+	PROP_DROP_FAILED_REMOTES,
 	PROP_LAST
 };
+
+static GParamSpec *properties[PROP_LAST];
 
 static void
 _list_append2(GList **head_p, GList **tail_p, gpointer data)
@@ -90,6 +95,18 @@ purple_smiley_list_new(void)
 	return g_object_new(PURPLE_TYPE_SMILEY_LIST, NULL);
 }
 
+static void
+remote_smiley_failed(PurpleSmiley *smiley, gpointer _list)
+{
+	PurpleSmileyList *list = _list;
+
+	purple_debug_info("smiley-list", "remote smiley '%s' has failed, "
+		"removing it from the list...",
+		purple_smiley_get_shortcut(smiley));
+
+	purple_smiley_list_remove(list, smiley);
+}
+
 gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 {
@@ -129,9 +146,18 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 
 	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
 
+	/* We don't expect non-remote non-ready smileys, but let's check it just
+	 * to be safe. */
+	if (priv->drop_failed_remotes && !purple_smiley_is_ready(smiley) &&
+		PURPLE_IS_REMOTE_SMILEY(smiley))
+	{
+		g_signal_connect_object(smiley, "failed",
+			G_CALLBACK(remote_smiley_failed), list, 0);
+	}
+
 	smiley_path = purple_smiley_get_path(smiley);
 
-	/* TODO: add to the table, when smiley sets the path */
+	/* TODO: add to the table, when the smiley sets the path */
 	if (!smiley_path)
 		return TRUE;
 
@@ -293,9 +319,10 @@ purple_smiley_list_get_property(GObject *object, guint par_id, GValue *value,
 	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(object);
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
 
-	(void)priv;
-
 	switch (par_id) {
+		case PROP_DROP_FAILED_REMOTES:
+			g_value_set_boolean(value, priv->drop_failed_remotes);
+			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
 			break;
@@ -309,9 +336,13 @@ purple_smiley_list_set_property(GObject *object, guint par_id, const GValue *val
 	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(object);
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
 
-	(void)priv;
-
 	switch (par_id) {
+		case PROP_DROP_FAILED_REMOTES:
+			priv->drop_failed_remotes = g_value_get_boolean(value);
+			/* XXX: we could scan for remote smiley's on our list
+			 * and change the setting, but we don't care that much.
+			 */
+			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
 			break;
@@ -328,6 +359,14 @@ purple_smiley_list_class_init(PurpleSmileyListClass *klass)
 	gobj_class->get_property = purple_smiley_list_get_property;
 	gobj_class->set_property = purple_smiley_list_set_property;
 	gobj_class->finalize = purple_smiley_list_finalize;
+
+	properties[PROP_DROP_FAILED_REMOTES] = g_param_spec_boolean(
+		"drop-failed-remotes", "Drop failed PurpleRemoteSmileys",
+		"Watch added remote smileys and remove them from the list, "
+		"if they change their state to failed", FALSE,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 }
 
 GType

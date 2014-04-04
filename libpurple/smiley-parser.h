@@ -35,6 +35,9 @@ purple_smiley_parse_escape(void);
  * For outgoing, we could pass conv in ui_data (or something).
  *
  * @ui_data is passed to @cb and #purple_smiley_theme_get_smileys.
+ *
+ * XXX: we might not want to display remote smileys for
+ * outgoing messages. To be considered.
  */
 gchar *
 purple_smiley_parse(PurpleConversation *conv, const gchar *message,

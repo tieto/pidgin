@@ -240,7 +240,7 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_IS_READY] = g_param_spec_boolean("is-ready", "Is ready",
-		"The full path to the smiley image file", TRUE,
+		"The smiley is ready to be displayed", TRUE,
 		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_PATH] = g_param_spec_string("path", "Path",
