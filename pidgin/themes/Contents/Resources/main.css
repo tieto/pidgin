@@ -75,3 +75,9 @@ img
 	font-weight: bold;
 }
 
+/* Emoticons */
+
+.emoticon.pending
+{
+	cursor: progress;
+}

@@ -6596,19 +6596,22 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 		purple_smiley_get_shortcut(smiley), -1);
 
 	if (purple_smiley_is_ready(smiley) && path) {
-		g_string_append_printf(out, "<img alt=\"%s\" src=\"%s\" />",
+		g_string_append_printf(out,
+			"<img class=\"emoticon\" alt=\"%s\" title=\"%s\" "
+			"src=\"%s\" />", escaped_shortcut,
 			escaped_shortcut, path);
 	} else if (purple_smiley_is_ready(smiley) && !path) {
 		PurpleStoredImage *img = purple_smiley_get_image(smiley);
 		int imgid = purple_imgstore_add_with_id(img);
 
-		g_string_append_printf(out, "<img alt=\"%s\" src=\""
+		g_string_append_printf(out, "<img class=\"emoticon\" "
+			"alt=\"%s\" title=\"%s\" src=\""
 			PURPLE_STORED_IMAGE_PROTOCOL "%d\" />",
-			escaped_shortcut, imgid);
+			escaped_shortcut, escaped_shortcut, imgid);
 	} else {
 		/* TODO: remove this background, maybe put something into css file? */
 		g_string_append_printf(out,
-			"<span class=\"pending-smiley\" style=\"background: #ccc\">%s</span>",
+			"<span class=\"emoticon pending\">%s</span>",
 			escaped_shortcut);
 		/* TODO: watch for "is-ready" state changes
 		 * (it's not possible without conv handle here) */

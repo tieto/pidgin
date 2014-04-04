@@ -234,58 +234,6 @@
 			head.appendChild( documentFragment );
 		}
 
-		/* Converts emoticon images to textual emoticons; all emoticons in message if alt is held */
-		document.onclick = function imageCheck() {
-			var node = event.target;
-			if (node.tagName.toLowerCase() != 'img')
-				return;
-
-			imageSwap(node, false);
-		}
-
-		/* Converts textual emoticons to images if textToImagesFlag is true, otherwise vice versa */
-		function imageSwap(node, textToImagesFlag) {
-			var shouldScroll = nearBottom();
-
-			var images = [node];
-			if (event.altKey) {
-				while (node.id != "Chat" && node.parentNode.id != "Chat")
-					node = node.parentNode;
-				images = node.querySelectorAll(textToImagesFlag ? "a" : "img");
-			}
-
-			for (var i = 0; i < images.length; i++) {
-				textToImagesFlag ? textToImage(images[i]) : imageToText(images[i]);
-			}
-
-			alignChat(shouldScroll);
-		}
-
-		function textToImage(node) {
-			if (!node.getAttribute("isEmoticon"))
-				return;
-			//Swap the image/text
-			var img = document.createElement('img');
-			img.setAttribute('src', node.getAttribute('src'));
-			img.setAttribute('alt', node.firstChild.nodeValue);
-			img.className = node.className;
-			node.parentNode.replaceChild(img, node);
-		}
-
-		function imageToText(node)
-		{
-			if (client.zoomImage(node) || !node.alt)
-				return;
-			var a = document.createElement('a');
-			a.setAttribute('onclick', 'imageSwap(this, true)');
-			a.setAttribute('src', node.getAttribute('src'));
-			a.setAttribute('isEmoticon', true);
-			a.className = node.className;
-			var text = document.createTextNode(node.alt);
-			a.appendChild(text);
-			node.parentNode.replaceChild(a, node);
-		}
-
 		//If true is passed, view will be scrolled down
 		function alignChat(shouldScroll) {
 			if (shouldScroll)
