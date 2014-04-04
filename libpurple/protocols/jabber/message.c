@@ -482,6 +482,7 @@ jabber_message_add_remote_smileys(JabberStream *js, const gchar *who,
 	}
 }
 
+#if 0
 static void
 jabber_message_request_data_cb(JabberData *data, gchar *alt,
     gpointer userdata)
@@ -497,6 +498,7 @@ jabber_message_request_data_cb(JabberData *data, gchar *alt,
 
 	g_free(alt);
 }
+#endif
 
 void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 {
@@ -659,6 +661,7 @@ void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 
 					purple_debug_info("jabber",
 						"about to add custom smiley %s to the conv\n", alt);
+#if 0
 					if (purple_conversation_custom_smiley_add(conv, alt, "cid", cid,
 						    TRUE)) {
 						const JabberData *data =
@@ -679,6 +682,7 @@ void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 							    jabber_message_request_data_cb, conv);
 						}
 					}
+#endif
 					g_free(ref->cid);
 					g_free(ref->alt);
 					g_free(ref);

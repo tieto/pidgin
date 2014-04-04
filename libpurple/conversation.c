@@ -792,59 +792,6 @@ purple_conversation_send_confirm(PurpleConversation *conv, const char *message)
 		G_CALLBACK(purple_conversation_send_confirm_cb), _("Cancel"), NULL);
 }
 
-gboolean
-purple_conversation_custom_smiley_add(PurpleConversation *conv, const char *smile,
-                            const char *cksum_type, const char *chksum,
-							gboolean remote)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	if (smile == NULL || !*smile) {
-		return FALSE;
-	}
-
-	/* TODO: check if the icon is in the cache and return false if so */
-	/* TODO: add an icon cache (that doesn't suck) */
-	if (priv->ui_ops != NULL && priv->ui_ops->custom_smiley_add !=NULL) {
-		return priv->ui_ops->custom_smiley_add(conv, smile, remote);
-	} else {
-		purple_debug_info("conversation", "Could not find add custom smiley function");
-		return FALSE;
-	}
-
-}
-
-void
-purple_conversation_custom_smiley_write(PurpleConversation *conv, const char *smile,
-                                   const guchar *data, gsize size)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(smile != NULL && *smile);
-
-	if (priv->ui_ops != NULL && priv->ui_ops->custom_smiley_write != NULL)
-		priv->ui_ops->custom_smiley_write(conv, smile, data, size);
-	else
-		purple_debug_info("conversation", "Could not find the smiley write function");
-}
-
-void
-purple_conversation_custom_smiley_close(PurpleConversation *conv, const char *smile)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(smile != NULL && *smile);
-
-	if (priv->ui_ops != NULL && priv->ui_ops->custom_smiley_close != NULL)
-		priv->ui_ops->custom_smiley_close(conv, smile);
-	else
-		purple_debug_info("conversation", "Could not find custom smiley close function");
-}
-
 GList *
 purple_conversation_get_extended_menu(PurpleConversation *conv)
 {

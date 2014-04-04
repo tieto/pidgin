@@ -144,9 +144,6 @@ static PurpleConversationUiOps null_conv_uiops =
 	NULL,                      /* chat_update_user     */
 	NULL,                      /* present              */
 	NULL,                      /* has_focus            */
-	NULL,                      /* custom_smiley_add    */
-	NULL,                      /* custom_smiley_write  */
-	NULL,                      /* custom_smiley_close  */
 	NULL,                      /* send_confirm         */
 	NULL,
 	NULL,

@@ -896,6 +896,7 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		purple_debug_warning("msn", "P2P message failed to parse.\n");
 }
 
+#if 0
 static void
 got_emoticon(MsnSlpCall *slpcall,
 			 const guchar *data, gsize size)
@@ -917,6 +918,7 @@ got_emoticon(MsnSlpCall *slpcall,
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
 }
+#endif
 
 void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -989,9 +991,11 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			conv = PURPLE_CONVERSATION(purple_im_conversation_new(session->account, who));
 		}
 
+#if 0
 		if (purple_conversation_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
+#endif
 
 		msn_object_destroy(obj, FALSE);
 		obj =   NULL;

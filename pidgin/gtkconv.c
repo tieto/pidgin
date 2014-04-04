@@ -7235,10 +7235,10 @@ add_custom_smiley_for_webview(PidginWebView *webview, const char *sml, const cha
 }
 #endif
 
+#if 0
 static gboolean
 pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gboolean remote)
 {
-#if 0
 	PidginConversation *gtkconv;
 	struct PidginSmileyList *list;
 	const char *sml = NULL, *conv_sml;
@@ -7270,16 +7270,16 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 		if (!add_custom_smiley_for_webview(PIDGIN_WEBVIEW(gtkconv->entry), sml, smile))
 			return FALSE;
 
-#endif
 	return TRUE;
 }
+#endif
 
+#if 0
 static void
 pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
                                       const guchar *data, gsize size)
 {
 /* TODO WEBKIT */
-#if 0
 	PidginConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
 	const char *sml;
@@ -7314,14 +7314,14 @@ pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 		g_object_unref(G_OBJECT(smiley->loader));
 		smiley->loader = gdk_pixbuf_loader_new();
 	}
-#endif /* if 0 */
 }
+#endif
 
+#if 0
 static void
 pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
 {
 /* TODO WEBKIT */
-#if 0
 	PidginConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
 	const char *sml;
@@ -7358,8 +7358,8 @@ pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
 		g_object_unref(G_OBJECT(smiley->loader));
 		smiley->loader = gdk_pixbuf_loader_new();
 	}
-#endif /* if 0 */
 }
+#endif
 
 static void
 pidgin_conv_send_confirm(PurpleConversation *conv, const char *message)
@@ -7854,9 +7854,6 @@ static PurpleConversationUiOps conversation_ui_ops =
 	pidgin_conv_chat_update_user,     /* chat_update_user     */
 	pidgin_conv_present_conversation, /* present              */
 	pidgin_conv_has_focus,            /* has_focus            */
-	pidgin_conv_custom_smiley_add,    /* custom_smiley_add    */
-	pidgin_conv_custom_smiley_write,  /* custom_smiley_write  */
-	pidgin_conv_custom_smiley_close,  /* custom_smiley_close  */
 	pidgin_conv_send_confirm,         /* send_confirm         */
 	NULL,
 	NULL,
