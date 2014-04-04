@@ -948,6 +948,7 @@ purple_conversation_add_remote_smiley(PurpleConversation *conv,
 {
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
 	PurpleSmiley *smiley;
+	PurpleRemoteSmiley *rsmiley;
 
 	g_return_val_if_fail(priv != NULL, NULL);
 	g_return_val_if_fail(shortcut != NULL, NULL);
@@ -958,13 +959,33 @@ purple_conversation_add_remote_smiley(PurpleConversation *conv,
 
 	smiley = purple_smiley_list_get_by_shortcut(
 		priv->remote_smileys, shortcut);
-	if (!PURPLE_IS_REMOTE_SMILEY(smiley)) {
+	if (smiley && !PURPLE_IS_REMOTE_SMILEY(smiley)) {
 		purple_debug_warning("conversation", "Invalid type of smiley "
 			"stored in remote smileys list");
 		return NULL;
 	}
 
-	return PURPLE_REMOTE_SMILEY(smiley);
+	/* smiley was already added */
+	if (smiley)
+		return NULL;
+
+	rsmiley = g_object_new(PURPLE_TYPE_REMOTE_SMILEY,
+		"shortcut", shortcut,
+		"is-ready", FALSE,
+		NULL);
+
+	if (!purple_smiley_list_add(priv->remote_smileys,
+		PURPLE_SMILEY(rsmiley)))
+	{
+		purple_debug_error("conversation", "failed adding remote "
+			"smiley to the list");
+		g_object_unref(rsmiley);
+		return NULL;
+	}
+
+	/* priv->remote_smileys holds the only one ref */
+	g_object_unref(rsmiley);
+	return rsmiley;
 }
 
 PurpleSmileyList *

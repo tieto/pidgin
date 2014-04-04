@@ -73,7 +73,15 @@ purple_remote_smiley_get_type(void);
  * Remote smiley API
  ******************************************************************************/
 
+void
+purple_remote_smiley_write(PurpleRemoteSmiley *smiley, const guchar *data,
+	gsize size);
 
+void
+purple_remote_smiley_close(PurpleRemoteSmiley *smiley);
+
+void
+purple_remote_smiley_failed(PurpleRemoteSmiley *smiley);
 
 G_END_DECLS
 

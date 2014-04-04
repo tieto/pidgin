@@ -128,6 +128,11 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 		priv->smileys_end);
 
 	smiley_path = purple_smiley_get_path(smiley);
+
+	/* TODO: add to the table, when smiley sets the path */
+	if (!smiley_path)
+		return TRUE;
+
 	if (g_hash_table_lookup(priv->path_map, smiley_path) == NULL) {
 		g_hash_table_insert(priv->path_map,
 			g_strdup(smiley_path), smiley);
@@ -160,7 +165,8 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	path = purple_smiley_get_path(smiley);
 
 	g_hash_table_remove(priv->shortcut_map, shortcut);
-	g_hash_table_remove(priv->path_map, path);
+	if (path)
+		g_hash_table_remove(priv->path_map, path);
 
 	if (purple_smiley_parse_escape())
 		shortcut = tmp = g_markup_escape_text(shortcut, -1);
@@ -171,7 +177,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	_list_remove_link2(&priv->smileys, &priv->smileys_end, list_elem);
 
 	/* re-add entry to path_map if smiley was not unique */
-	for (it = priv->smileys; it; it = g_list_next(it)) {
+	for (it = priv->smileys; it && path; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
 
 		if (g_strcmp0(purple_smiley_get_path(smiley), path) == 0) {

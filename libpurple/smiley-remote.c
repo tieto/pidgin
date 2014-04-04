@@ -22,6 +22,7 @@
 #include "internal.h"
 #include "glibcompat.h"
 
+#include "debug.h"
 #include "smiley.h"
 #include "smiley-remote.h"
 
@@ -29,6 +30,9 @@
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_REMOTE_SMILEY, PurpleRemoteSmileyPrivate))
 
 typedef struct {
+	GString *contents;
+
+	gboolean failed;
 } PurpleRemoteSmileyPrivate;
 
 #if 0
@@ -56,24 +60,87 @@ static GParamSpec *properties[PROP_LAST];
  * API implementation
  ******************************************************************************/
 
+void
+purple_remote_smiley_write(PurpleRemoteSmiley *smiley, const guchar *data,
+	gsize size)
+{
+	PurpleRemoteSmileyPrivate *priv =
+		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
+
+	g_return_if_fail(priv != NULL);
+	g_return_if_fail(!priv->failed);
+	g_return_if_fail(!purple_smiley_is_ready(PURPLE_SMILEY(smiley)));
+	g_return_if_fail(data != NULL || size == 0);
+
+	if (size == 0)
+		return;
+
+	g_string_append_len(priv->contents, (const gchar*)data, size);
+}
+
+void
+purple_remote_smiley_close(PurpleRemoteSmiley *smiley)
+{
+	PurpleRemoteSmileyPrivate *priv =
+		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
+
+	g_return_if_fail(priv != NULL);
+	g_return_if_fail(!priv->failed);
+	g_return_if_fail(!purple_smiley_is_ready(PURPLE_SMILEY(smiley)));
+
+	if (priv->contents->len == 0) {
+		purple_debug_error("smiley-remote", "Smiley is empty");
+		purple_remote_smiley_failed(smiley);
+		return;
+	}
+
+	g_object_set(smiley, "is-ready", TRUE, NULL);
+	/* TODO: call ready signal */
+}
+
+void
+purple_remote_smiley_failed(PurpleRemoteSmiley *smiley)
+{
+	PurpleRemoteSmileyPrivate *priv =
+		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
+
+	g_return_if_fail(priv != NULL);
+	g_return_if_fail(!purple_smiley_is_ready(PURPLE_SMILEY(smiley)));
+
+	if (priv->failed)
+		return;
+
+	g_object_set(smiley, "failed", TRUE, NULL);
+	/* TODO: call failed signal */
+}
+
 /******************************************************************************
  * Object stuff
  ******************************************************************************/
 
-#if 0
 static void
 purple_remote_smiley_init(GTypeInstance *instance, gpointer klass)
 {
 	PurpleRemoteSmiley *smiley = PURPLE_REMOTE_SMILEY(instance);
+	PurpleRemoteSmileyPrivate *priv =
+		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
+
+	priv->contents = g_string_new(NULL);
 }
 
 static void
 purple_remote_smiley_finalize(GObject *obj)
 {
 	PurpleRemoteSmiley *smiley = PURPLE_REMOTE_SMILEY(obj);
-	PurpleRemoteSmileyPrivate *priv = PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
+	PurpleRemoteSmileyPrivate *priv =
+		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
+
+	g_string_free(priv->contents, TRUE);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
+#if 0
 static void
 purple_remote_smiley_get_property(GObject *object, guint par_id, GValue *value,
 	GParamSpec *pspec)
@@ -106,16 +173,17 @@ purple_remote_smiley_set_property(GObject *object, guint par_id, const GValue *v
 static void
 purple_remote_smiley_class_init(PurpleRemoteSmileyClass *klass)
 {
-//	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
+	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
 	g_type_class_add_private(klass, sizeof(PurpleRemoteSmileyPrivate));
 
+	gobj_class->finalize = purple_remote_smiley_finalize;
+
 #if 0
 	gobj_class->get_property = purple_remote_smiley_get_property;
 	gobj_class->set_property = purple_remote_smiley_set_property;
-	gobj_class->finalize = purple_remote_smiley_finalize;
 
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 #endif
@@ -131,10 +199,10 @@ purple_remote_smiley_get_type(void)
 			.class_size = sizeof(PurpleRemoteSmileyClass),
 			.class_init = (GClassInitFunc)purple_remote_smiley_class_init,
 			.instance_size = sizeof(PurpleRemoteSmiley),
-//			.instance_init = purple_remote_smiley_init,
+			.instance_init = purple_remote_smiley_init,
 		};
 
-		type = g_type_register_static(PURPLE_TYPE_REMOTE_SMILEY,
+		type = g_type_register_static(PURPLE_TYPE_SMILEY,
 			"PurpleRemoteSmiley", &info, 0);
 	}
 

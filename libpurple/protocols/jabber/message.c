@@ -482,23 +482,63 @@ jabber_message_add_remote_smileys(JabberStream *js, const gchar *who,
 	}
 }
 
-#if 0
 static void
-jabber_message_request_data_cb(JabberData *data, gchar *alt,
-    gpointer userdata)
+jabber_message_remote_smiley_got(JabberData *data, gchar *alt, gpointer _smiley)
 {
-	PurpleConversation *conv = PURPLE_CONVERSATION(userdata);
+	PurpleRemoteSmiley *smiley = _smiley;
+
+	g_free(alt); /* we really don't need it */
 
 	if (data) {
-		purple_conversation_custom_smiley_write(conv, alt,
-										jabber_data_get_data(data),
-										jabber_data_get_size(data));
-		purple_conversation_custom_smiley_close(conv, alt);
+		purple_debug_info("jabber",
+			"smiley data retrieved successfully");
+		purple_remote_smiley_write(smiley, jabber_data_get_data(data),
+			jabber_data_get_size(data));
+		purple_remote_smiley_close(smiley);
+	} else {
+		purple_debug_error("jabber", "failed retrieving smiley data");
+		purple_remote_smiley_failed(smiley);
 	}
 
-	g_free(alt);
+	g_object_unref(smiley);
 }
-#endif
+
+static void
+jabber_message_remote_smiley_add(JabberStream *js, PurpleConversation *conv,
+	const gchar *from, const gchar *shortcut, const gchar *cid)
+{
+	PurpleRemoteSmiley *smiley;
+	const JabberData *jdata;
+
+	purple_debug_misc("jabber", "about to add remote smiley %s to the conv",
+		shortcut);
+
+	smiley = purple_conversation_add_remote_smiley(conv, shortcut);
+	if (!smiley) {
+		purple_debug_misc("jabber", "smiley was already present");
+		return;
+	}
+
+	/* TODO: cache lookup by "cid" */
+
+	jdata = jabber_data_find_remote_by_cid(js, from, cid);
+	if (jdata) {
+		purple_debug_info("jabber", "smiley data is already known");
+
+		purple_remote_smiley_write(smiley, jabber_data_get_data(jdata),
+			jabber_data_get_size(jdata));
+		purple_remote_smiley_close(smiley);
+	} else {
+		gchar *alt = g_strdup(shortcut); /* it it really necessary? */
+
+		purple_debug_info("jabber", "smiley data is unknown, "
+			"need to request it");
+
+		g_object_ref(smiley);
+		jabber_data_request(js, cid, from, alt, FALSE,
+			jabber_message_remote_smiley_got, smiley);
+	}
+}
 
 void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 {
@@ -602,7 +642,7 @@ void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 				const PurpleConnection *gc = js->gc;
 				PurpleAccount *account = purple_connection_get_account(gc);
 				PurpleConversation *conv = NULL;
-				GList *smiley_refs = NULL;
+				GList *smiley_refs = NULL, *it;
 				gchar *reformatted_xhtml;
 
 				if (purple_account_get_bool(account, "custom_smileys", TRUE)) {
@@ -654,39 +694,19 @@ void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 				/* note: if there were no smileys in the incoming message, or
 				  	if receiving custom smileys is turned off, smiley_refs will
 					be NULL */
-				for (; conv && smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
-					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
-					const gchar *cid = ref->cid;
-					gchar *alt = g_strdup(ref->alt);
+				for (it = smiley_refs; it; it = g_list_next(it)) {
+					JabberSmileyRef *ref = it->data;
 
-					purple_debug_info("jabber",
-						"about to add custom smiley %s to the conv\n", alt);
-#if 0
-					if (purple_conversation_custom_smiley_add(conv, alt, "cid", cid,
-						    TRUE)) {
-						const JabberData *data =
-								jabber_data_find_remote_by_cid(js, from, cid);
-						/* if data is already known, we write it immediatly */
-						if (data) {
-							purple_debug_info("jabber",
-								"data is already known\n");
-							purple_conversation_custom_smiley_write(conv, alt,
-								jabber_data_get_data(data),
-								jabber_data_get_size(data));
-							purple_conversation_custom_smiley_close(conv, alt);
-						} else {
-							/* we need to request the smiley (data) */
-							purple_debug_info("jabber",
-								"data is unknown, need to request it\n");
-							jabber_data_request(js, cid, from, alt, FALSE,
-							    jabber_message_request_data_cb, conv);
-						}
+					if (conv) {
+						jabber_message_remote_smiley_add(js,
+							conv, from, ref->alt, ref->cid);
 					}
-#endif
+
 					g_free(ref->cid);
 					g_free(ref->alt);
 					g_free(ref);
 				}
+				g_list_free(smiley_refs);
 
 			    /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
 				 * treated \n as a newline for compatibility with other protocols
