@@ -938,16 +938,12 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 	conv = purple_conversations_find_with_account(jm->to, account);
 
-	if (!jabber_conv_support_custom_smileys(jm->js, conv, jm->to)) {
-		purple_debug_fatal("tomo", "custom smileys not supported");
+	if (!jabber_conv_support_custom_smileys(jm->js, conv, jm->to))
 		return NULL;
-	}
 
 	found_smileys = purple_smiley_find(purple_smiley_custom_get_list(), xhtml);
-	if (!found_smileys) {
-		purple_debug_fatal("tomo", "no smileys found");
+	if (!found_smileys)
 		return NULL;
-	}
 
 	for (it = found_smileys; it; it = it_next) {
 		PurpleSmiley *smiley = it->data;
@@ -982,10 +978,8 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 			PURPLE_MESSAGE_ERROR, time(NULL));
 	}
 
-	if (!found_smileys) {
-		purple_debug_fatal("tomo", "no valid smileys found");
+	if (!found_smileys)
 		return NULL;
-	}
 
 	for (it = found_smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
@@ -1019,7 +1013,6 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 	g_list_free(found_smileys);
 
-	purple_debug_fatal("tomo", "replaced some smileys");
 	return smileyfied_xhtml;
 }
 

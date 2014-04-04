@@ -225,7 +225,7 @@ void irc_buddy_query(struct irc_conn *irc)
 			break;
 		g_string_append_printf(string, "%s ", ib->name);
 		ib->new_online_status = FALSE;
-		irc->buddies_outstanding = g_list_remove_link(irc->buddies_outstanding, lp);
+		irc->buddies_outstanding = g_list_delete_link(irc->buddies_outstanding, lp);
 	}
 
 	if (string->len) {

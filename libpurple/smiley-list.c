@@ -72,7 +72,7 @@ _list_append2(GList **head_p, GList **tail_p, gpointer data)
 }
 
 static void
-_list_remove_link2(GList **head_p, GList **tail_p, GList *link)
+_list_delete_link2(GList **head_p, GList **tail_p, GList *link)
 {
 	GList *head = *head_p;
 	GList *tail = *tail_p;
@@ -82,8 +82,7 @@ _list_remove_link2(GList **head_p, GList **tail_p, GList *link)
 
 	if (link == tail)
 		*tail_p = tail->prev;
-	/* TODO: shouldn't it be _delete_link? */
-	*head_p = g_list_remove_link(head, link);
+	*head_p = g_list_delete_link(head, link);
 }
 
 /*******************************************************************************
@@ -198,7 +197,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	purple_trie_remove(priv->trie, shortcut);
 	g_free(shortcut_escaped);
 
-	_list_remove_link2(&priv->smileys, &priv->smileys_end, list_elem);
+	_list_delete_link2(&priv->smileys, &priv->smileys_end, list_elem);
 
 	/* re-add entry to path_map if smiley was not unique */
 	for (it = priv->smileys; it && path; it = g_list_next(it)) {
