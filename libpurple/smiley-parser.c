@@ -24,6 +24,8 @@
 #include "smiley-custom.h"
 #include "smiley-theme.h"
 
+#define DISPLAY_OUR_CUSTOM_SMILEYS_FOR_INCOMING_MESSAGES 1
+
 typedef struct
 {
 	PurpleConversation *conv;
@@ -44,7 +46,7 @@ static gboolean purple_smiley_parse_cb(GString *out, const gchar *word,
 
 gchar *
 purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
-	PurpleSmileyParseCb cb, gpointer ui_data)
+	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data)
 {
 	PurpleSmileyTheme *theme;
 	PurpleSmileyList *theme_smileys = NULL, *remote_smileys = NULL;
@@ -56,7 +58,8 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 		return g_strdup(html_message);
 
 	/* get remote smileys */
-	remote_smileys = purple_conversation_get_remote_smileys(conv);
+	if (use_remote_smileys)
+		remote_smileys = purple_conversation_get_remote_smileys(conv);
 	if (remote_smileys)
 		remote_trie = purple_smiley_list_get_trie(remote_smileys);
 	if (remote_trie && purple_trie_get_size(remote_trie) == 0)
@@ -68,6 +71,10 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 	{
 		custom_trie = purple_smiley_list_get_trie(
 			purple_smiley_custom_get_list());
+#if !DISPLAY_OUR_CUSTOM_SMILEYS_FOR_INCOMING_MESSAGES
+		if (use_remote_smileys)
+			custom_trie = NULL;
+#endif
 	}
 	if (custom_trie && purple_trie_get_size(custom_trie) == 0)
 		custom_trie = NULL;

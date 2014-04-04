@@ -30,15 +30,15 @@ typedef void (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
 /* XXX: this shouldn't be a conv for incoming messages - see
  * PurpleConversationPrivate#remote_smileys.
  * For outgoing, we could pass conv in ui_data (or something).
+ * Or maybe we should use two distinct functions?
  *
  * @ui_data is passed to @cb and #purple_smiley_theme_get_smileys.
  *
- * XXX: we might not want to display remote smileys for
- * outgoing messages. To be considered.
+ * @use_remote_smileys should be TRUE for incoming messages, FALSE for outgoing.
  */
 gchar *
 purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
-	PurpleSmileyParseCb cb, gpointer ui_data);
+	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data);
 
 GList *
 purple_smiley_find(PurpleSmileyList *smileys, const gchar *html_message);

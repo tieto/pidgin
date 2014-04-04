@@ -6789,7 +6789,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	gtkconv->last_flags = flags;
 	gtkconv->last_conversed = conv;
 
-	smileyed = purple_smiley_parse(conv, displaying,
+	smileyed = purple_smiley_parse(conv, displaying, (flags & PURPLE_MESSAGE_RECV),
 		pidgin_conv_write_smiley,
 		(gpointer)purple_account_get_protocol_name(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
