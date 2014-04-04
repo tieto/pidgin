@@ -148,6 +148,9 @@ purple_imgstore_new_from_file(const char *path);
  */
 int purple_imgstore_new_with_id(gpointer data, size_t size, const char *filename);
 
+int
+purple_imgstore_add_with_id(PurpleStoredImage *image);
+
 /**
  * purple_imgstore_find_by_id:
  * @id: The ID for the image.

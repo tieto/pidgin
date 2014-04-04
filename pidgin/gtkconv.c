@@ -6590,15 +6590,21 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 	const gchar *proto_name = _proto_name;
 #endif
 	gchar *escaped_shortcut;
+	const gchar *path = purple_smiley_get_path(smiley);
 
 	escaped_shortcut = g_markup_escape_text(
 		purple_smiley_get_shortcut(smiley), -1);
 
-	if (purple_smiley_is_ready(smiley)) {
-		/* XXX: purple_smiley_get_path(smiley) may be NULL
-		 * (for remote smileys) */
+	if (purple_smiley_is_ready(smiley) && path) {
 		g_string_append_printf(out, "<img alt=\"%s\" src=\"%s\" />",
-			escaped_shortcut, purple_smiley_get_path(smiley));
+			escaped_shortcut, path);
+	} else if (purple_smiley_is_ready(smiley) && !path) {
+		PurpleStoredImage *img = purple_smiley_get_image(smiley);
+		int imgid = purple_imgstore_add_with_id(img);
+
+		g_string_append_printf(out, "<img alt=\"%s\" src=\""
+			PURPLE_STORED_IMAGE_PROTOCOL "%d\" />",
+			escaped_shortcut, imgid);
 	} else {
 		/* TODO: remove this background, maybe put something into css file? */
 		g_string_append_printf(out,

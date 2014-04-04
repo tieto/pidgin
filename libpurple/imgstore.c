@@ -83,10 +83,23 @@ purple_imgstore_new_from_file(const char *path)
 int
 purple_imgstore_new_with_id(gpointer data, size_t size, const char *filename)
 {
-	PurpleStoredImage *img = purple_imgstore_new(data, size, filename);
-	if (!img) {
-		return 0;
-	}
+	PurpleStoredImage *image;
+	int id;
+
+	image = purple_imgstore_new(data, size, filename);
+	id = purple_imgstore_add_with_id(image);
+	purple_imgstore_unref(image);
+
+	return id;
+}
+
+int
+purple_imgstore_add_with_id(PurpleStoredImage *image)
+{
+	g_return_val_if_fail(image != NULL, 0);
+
+	if (image->id != 0)
+		return image->id;
 
 	/*
 	 * Use the next unused id number.  We do it in a loop on the
@@ -94,12 +107,13 @@ purple_imgstore_new_with_id(gpointer data, size_t size, const char *filename)
 	 * table still contains entries from the first time around.
 	 */
 	do {
-		img->id = ++nextid;
-	} while (img->id == 0 || g_hash_table_lookup(imgstore, &(img->id)) != NULL);
+		image->id = ++nextid;
+	} while (image->id == 0 || g_hash_table_lookup(imgstore, &(image->id)) != NULL);
 
-	g_hash_table_insert(imgstore, &(img->id), img);
+	purple_imgstore_ref(image);
+	g_hash_table_insert(imgstore, &(image->id), image);
 
-	return img->id;
+	return image->id;
 }
 
 PurpleStoredImage *purple_imgstore_find_by_id(int id)
