@@ -6591,6 +6591,37 @@ replace_message_tokens(
 }
 
 static void
+pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
+	gpointer _proto_name)
+{
+#if 0
+	const gchar *proto_name = _proto_name;
+#endif
+	gchar *escaped_shortcut;
+
+	escaped_shortcut = g_markup_escape_text(
+		purple_smiley_get_shortcut(smiley), -1);
+
+	if (purple_smiley_is_ready(smiley)) {
+		/* XXX: purple_smiley_get_path(smiley) may be NULL
+		 * (for remote smileys) */
+		g_string_append_printf(out, "<img alt=\"%s\" src=\"%s\" />",
+			escaped_shortcut, purple_smiley_get_path(smiley));
+	} else {
+		/* TODO: remove this background, maybe put something into css file? */
+		g_string_append_printf(out,
+			"<span class=\"pending-smiley\" style=\"background: #ccc\">%s</span>",
+			escaped_shortcut);
+		/* TODO: watch for "is-ready" state changes
+		 * (it's not possible without conv handle here) */
+		/* XXX: avoid race condition between is-ready
+		 * call and html being pasted */
+	}
+
+	g_free(escaped_shortcut);
+}
+
+static void
 pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *alias,
 						const char *message, PurpleMessageFlags flags,
 						time_t mtime)
@@ -6716,7 +6747,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	gtkconv->last_flags = flags;
 	gtkconv->last_conversed = conv;
 
-	smileyed = purple_smiley_parse(displaying,
+	smileyed = purple_smiley_parse(conv, displaying,
+		pidgin_conv_write_smiley,
 		(gpointer)purple_account_get_protocol_name(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
 	escape = pidgin_webview_quote_js_string(msg ? msg : "");

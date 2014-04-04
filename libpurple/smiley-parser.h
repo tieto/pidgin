@@ -24,10 +24,18 @@
 
 #include "purple.h"
 
+typedef void (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
+	gpointer ui_data);
+
 gboolean
 purple_smiley_parse_escape(void);
 
+/* XXX: this shouldn't be a conv for incoming messages - see
+ * PurpleConversationPrivate#remote_smileys.
+ * For outgoing, we could pass conv in ui_data (or something).
+ */
 gchar *
-purple_smiley_parse(const gchar *message, gpointer ui_data);
+purple_smiley_parse(PurpleConversation *conv, const gchar *message,
+	PurpleSmileyParseCb cb, gpointer ui_data);
 
 #endif /* _PURPLE_SMILEY_PARSER_H_ */

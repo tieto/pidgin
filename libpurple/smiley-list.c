@@ -127,6 +127,8 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 	g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem",
 		priv->smileys_end);
 
+	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
+
 	smiley_path = purple_smiley_get_path(smiley);
 
 	/* TODO: add to the table, when smiley sets the path */
@@ -137,7 +139,6 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 		g_hash_table_insert(priv->path_map,
 			g_strdup(smiley_path), smiley);
 	}
-	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
 
 	return TRUE;
 }

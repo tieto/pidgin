@@ -24,6 +24,12 @@
 #include "smiley-custom.h"
 #include "smiley-theme.h"
 
+typedef struct
+{
+	PurpleSmileyParseCb cb;
+	gpointer ui_data;
+} PurpleSmileyParseData;
+
 static gboolean escape_checked = FALSE;
 static gboolean escape_value;
 
@@ -48,48 +54,66 @@ purple_smiley_parse_escape(void)
 }
 
 static gboolean purple_smiley_parse_cb(GString *out, const gchar *word,
-	gpointer _smiley, gpointer _unused)
+	gpointer _smiley, gpointer _parse_data)
 {
+	PurpleSmileyParseData *parse_data = _parse_data;
 	PurpleSmiley *smiley = _smiley;
 
-	g_string_append_printf(out, "<img alt=\"%s\" src=\"%s\" />",
-		word, purple_smiley_get_path(smiley));
+	parse_data->cb(out, smiley, parse_data->ui_data);
 
 	return TRUE;
 }
 
 gchar *
-purple_smiley_parse(const gchar *message, gpointer ui_data)
+purple_smiley_parse(PurpleConversation *conv, const gchar *message,
+	PurpleSmileyParseCb cb, gpointer ui_data)
 {
 	PurpleSmileyTheme *theme;
-	PurpleSmileyList *theme_smileys = NULL;
-	PurpleTrie *theme_trie = NULL, *custom_trie;
-	GSList *tries = NULL, tries_theme, tries_custom;
+	PurpleSmileyList *theme_smileys = NULL, *remote_smileys = NULL;
+	PurpleTrie *theme_trie = NULL, *custom_trie, *remote_trie = NULL;
+	GSList *tries = NULL, tries_theme, tries_custom, tries_remote;
+	PurpleSmileyParseData parse_data;
 
 	if (message == NULL || message[0] == '\0')
 		return g_strdup(message);
 
+	/* get remote smileys */
+	remote_smileys = purple_conversation_get_remote_smileys(conv);
+	if (remote_smileys)
+		remote_trie = purple_smiley_list_get_trie(remote_smileys);
+	if (remote_trie && purple_trie_get_size(remote_trie) == 0)
+		remote_trie = NULL;
+
+	/* get custom smileys */
 	custom_trie = purple_smiley_list_get_trie(
 		purple_smiley_custom_get_list());
 	if (purple_trie_get_size(custom_trie) == 0)
 		custom_trie = NULL;
 
+	/* get theme smileys */
 	theme = purple_smiley_theme_get_current();
 	if (theme != NULL)
 		theme_smileys = purple_smiley_theme_get_smileys(theme, ui_data);
-
 	if (theme_smileys != NULL)
 		theme_trie = purple_smiley_list_get_trie(theme_smileys);
 
-	if (theme_trie == NULL && custom_trie == NULL)
+	/* we have absolutely no smileys */
+	if (theme_trie == NULL && custom_trie == NULL && remote_trie == NULL)
 		return g_strdup(message);
 
-	/* Create a tries list on stack. */
+	/* Create a tries list on the stack. */
 	tries_theme.data = theme_trie;
 	tries_custom.data = custom_trie;
-	tries_theme.next = tries_custom.next = NULL;
-	if (custom_trie != NULL)
-		tries = &tries_custom;
+	tries_remote.data = remote_trie;
+	tries_theme.next = tries_custom.next = tries_remote.next = NULL;
+	if (remote_trie != NULL)
+		tries = &tries_remote;
+	if (custom_trie != NULL) {
+		if (tries)
+			tries->next = &tries_custom;
+		else
+			tries = &tries_custom;
+	}
 	if (theme_trie != NULL) {
 		if (tries)
 			tries->next = &tries_theme;
@@ -100,9 +124,12 @@ purple_smiley_parse(const gchar *message, gpointer ui_data)
 	/* XXX: should we parse custom smileys,
 	 * if protocol doesn't support it? */
 
+	parse_data.cb = cb;
+	parse_data.ui_data = ui_data;
+
 	/* TODO: don't replace text within tags, ie. <span style=":)"> */
 	/* TODO: parse greedily (as much as possible) when PurpleTrie
 	 * provides support for it. */
 	return purple_trie_multi_replace(tries, message,
-		purple_smiley_parse_cb, NULL);
+		purple_smiley_parse_cb, &parse_data);
 }
