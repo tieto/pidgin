@@ -679,6 +679,11 @@ PurpleRemoteSmiley *
 purple_conversation_add_remote_smiley(PurpleConversation *conv,
 	const gchar *shortcut);
 
+/* use it only, if you cannot store purple_conversation_add_remote_smiley output or control its ref */
+PurpleRemoteSmiley *
+purple_conversation_get_remote_smiley(PurpleConversation *conv,
+	const gchar *shortcut);
+
 PurpleSmileyList *
 purple_conversation_get_remote_smileys(PurpleConversation *conv);
 

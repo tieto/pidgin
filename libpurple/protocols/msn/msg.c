@@ -896,29 +896,33 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		purple_debug_warning("msn", "P2P message failed to parse.\n");
 }
 
-#if 0
 static void
-got_emoticon(MsnSlpCall *slpcall,
-			 const guchar *data, gsize size)
+got_emoticon(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
 	PurpleConversation *conv;
+	PurpleRemoteSmiley *smiley;
 	MsnSwitchBoard *swboard;
+	const gchar *shortcut;
 
 	swboard = slpcall->slplink->swboard;
 	conv = swboard->conv;
+	shortcut = slpcall->data_info;
 
-	if (conv) {
-		/* FIXME: it would be better if we wrote the data as we received it
-		   instead of all at once, calling write multiple times and
-		   close once at the very end
-		 */
-		purple_conversation_custom_smiley_write(conv, slpcall->data_info, data, size);
-		purple_conversation_custom_smiley_close(conv, slpcall->data_info );
-	}
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
+	purple_debug_info("msn", "got smiley: %s", shortcut);
+
+	if (!conv)
+		return;
+
+	smiley = purple_conversation_get_remote_smiley(conv, shortcut);
+	g_return_if_fail(smiley);
+
+	/* FIXME: it would be better if we wrote the data as we received it
+	 * instead of all at once, calling write multiple times and close once
+	 * at the very end.
+	 */
+	purple_remote_smiley_write(smiley, data, size);
+	purple_remote_smiley_close(smiley);
 }
-#endif
 
 void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -954,6 +958,8 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_free(body_str);
 
 	for (tok = 0; tok < 9; tok += 2) {
+		PurpleRemoteSmiley *smiley;
+
 		if (tokens[tok] == NULL || tokens[tok + 1] == NULL) {
 			break;
 		}
@@ -984,18 +990,22 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* If the conversation doesn't exist then this is a custom smiley
 		 * used in the first message in a MSN conversation: we need to create
 		 * the conversation now, otherwise the custom smiley won't be shown.
-		 * This happens because every GtkIMHtml has its own smiley tree: if
-		 * the conversation doesn't exist then we cannot associate the new
-		 * smiley with its GtkIMHtml widget. */
+		 * This happens because every PurpleConversation has its own smiley
+		 * tree: if the conversation doesn't exist then we cannot associate
+		 * the new smiley with its PurpleConversation. */
 		if (!conv) {
 			conv = PURPLE_CONVERSATION(purple_im_conversation_new(session->account, who));
 		}
 
-#if 0
-		if (purple_conversation_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {
+		smiley = purple_conversation_add_remote_smiley(conv, smile);
+		if (smiley) { /* if not - it was already present */
+			/* TODO: cache lookup by "sha1" */
+
+			/* XXX: maybe handle end_cb and smiley download failures? */
+			/* TODO: BUG: only emoticons from the first message are being received, others are not */
+			purple_debug_info("msn", "requesting smiley: %s", smile);
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
-#endif
 
 		msn_object_destroy(obj, FALSE);
 		obj =   NULL;

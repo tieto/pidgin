@@ -991,6 +991,31 @@ purple_conversation_add_remote_smiley(PurpleConversation *conv,
 	return rsmiley;
 }
 
+PurpleRemoteSmiley *
+purple_conversation_get_remote_smiley(PurpleConversation *conv,
+	const gchar *shortcut)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	PurpleSmiley *smiley;
+
+	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(shortcut != NULL, NULL);
+	g_return_val_if_fail(shortcut[0] != '\0', NULL);
+
+	if (priv->remote_smileys == NULL)
+		return NULL;
+
+	smiley = purple_smiley_list_get_by_shortcut(
+		priv->remote_smileys, shortcut);
+	if (smiley && !PURPLE_IS_REMOTE_SMILEY(smiley)) {
+		purple_debug_warning("conversation", "Invalid type of smiley "
+			"stored in remote smileys list");
+		return NULL;
+	}
+
+	return PURPLE_REMOTE_SMILEY(smiley);
+}
+
 PurpleSmileyList *
 purple_conversation_get_remote_smileys(PurpleConversation *conv)
 {
