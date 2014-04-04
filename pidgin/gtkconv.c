@@ -137,9 +137,6 @@ enum {
 #define BUDDYICON_SIZE_MIN    32
 #define BUDDYICON_SIZE_MAX    96
 
-/* Undef this to turn off "custom-smiley" debug messages */
-#define DEBUG_CUSTOM_SMILEY
-
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
 /* From http://www.w3.org/TR/AERT#color-contrast */
@@ -6115,11 +6112,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	{
 		gtkconv->nick_colors = g_array_ref(generated_nick_colors);
 	}
-
-#if 0
-	if (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
-		pidgin_themes_smiley_themeize_custom(gtkconv->entry);
-#endif
 }
 
 static void
@@ -6813,12 +6805,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
-	if (!(flags & PURPLE_MESSAGE_RECV) && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY))
-	{
-		/* We want to see our own smileys. Need to revert it after send*/
-		pidgin_themes_smiley_themeize_custom(gtkconv->webview);
-	}
-
 	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & PURPLE_MESSAGE_RAW) {
 		pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), message);
@@ -6973,15 +6959,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 		gtkconv_set_unseen(gtkconv, unseen);
 	}
-
-#if 0
-	if (!(flags & PURPLE_MESSAGE_RECV) && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY))
-	{
-		/* Restore the smiley-data */
-		pidgin_themes_smiley_themeize(gtkconv->webview);
-	}
-#endif
-
 
 	/* on rejoin only request message history from after this message */
 	if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV) &&
@@ -7240,158 +7217,6 @@ pidgin_conv_has_focus(PurpleConversation *conv)
 
 	return FALSE;
 }
-
-#if 0
-static gboolean
-add_custom_smiley_for_webview(PidginWebView *webview, const char *sml, const char *smile)
-{
-	PidginWebViewSmiley *smiley;
-
-	smiley = pidgin_webview_smiley_find(webview, sml, smile);
-
-	if (smiley) {
-		if (!(pidgin_webview_smiley_get_flags(smiley) & PIDGIN_WEBVIEW_SMILEY_CUSTOM))
-			return FALSE;
-
-		pidgin_webview_smiley_reload(smiley);
-		return TRUE;
-	}
-
-	smiley = pidgin_webview_smiley_create(NULL, smile, FALSE,
-	                                   PIDGIN_WEBVIEW_SMILEY_CUSTOM);
-	pidgin_webview_associate_smiley(webview, sml, smiley);
-	g_signal_connect_swapped(webview, "destroy",
-	                         G_CALLBACK(pidgin_webview_smiley_destroy), smiley);
-
-	return TRUE;
-}
-#endif
-
-#if 0
-static gboolean
-pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gboolean remote)
-{
-	PidginConversation *gtkconv;
-	struct PidginSmileyList *list;
-	const char *sml = NULL, *conv_sml;
-
-	if (!conv || !smile || !*smile) {
-		return FALSE;
-	}
-
-	/* If smileys are off, return false */
-	if (pidgin_themes_smileys_disabled())
-		return FALSE;
-
-	/* If possible add this smiley to the current theme.
-	 * The addition is only temporary: custom smilies aren't saved to disk. */
-	conv_sml = purple_account_get_protocol_name(purple_conversation_get_account(conv));
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	for (list = (struct PidginSmileyList *)((struct PidginSmileyThemeREMOVEIT *)current_smiley_theme)->list; list; list = list->next) {
-		if (!strcmp(list->sml, conv_sml)) {
-			sml = list->sml;
-			break;
-		}
-	}
-
-	if (!add_custom_smiley_for_webview(PIDGIN_WEBVIEW(gtkconv->webview), sml, smile))
-		return FALSE;
-
-	if (!remote)	/* If it's a local custom smiley, then add it for the entry */
-		if (!add_custom_smiley_for_webview(PIDGIN_WEBVIEW(gtkconv->entry), sml, smile))
-			return FALSE;
-
-	return TRUE;
-}
-#endif
-
-#if 0
-static void
-pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
-                                      const guchar *data, gsize size)
-{
-/* TODO WEBKIT */
-	PidginConversation *gtkconv;
-	GtkIMHtmlSmiley *smiley;
-	const char *sml;
-	GError *error = NULL;
-
-	sml = purple_account_get_protocol_name(purple_conversation_get_account(conv));
-	gtkconv = PIDGIN_CONVERSATION(conv);
-	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
-
-	if (!smiley)
-		return;
-
-	smiley->data = g_realloc(smiley->data, smiley->datasize + size);
-	g_memmove((guchar *)smiley->data + smiley->datasize, data, size);
-	smiley->datasize += size;
-
-	if (!smiley->loader)
-		return;
-
-	if (!gdk_pixbuf_loader_write(smiley->loader, data, size, &error) || error) {
-		purple_debug_warning("gtkconv", "gdk_pixbuf_loader_write() "
-				"failed with size=%" G_GSIZE_FORMAT ": %s\n", size,
-				error ? error->message : "(no error message)");
-		if (error)
-			g_error_free(error);
-		/* We must stop using the GdkPixbufLoader because trying to load
-		   certain invalid GIFs with at least gdk-pixbuf 2.23.3 can return
-		   a GdkPixbuf that will cause some operations (like
-		   gdk_pixbuf_scale_simple()) to consume memory in an infinite loop.
-		   But we also don't want to set smiley->loader to NULL because our
-		   code might expect it to be set.  So create a new loader. */
-		g_object_unref(G_OBJECT(smiley->loader));
-		smiley->loader = gdk_pixbuf_loader_new();
-	}
-}
-#endif
-
-#if 0
-static void
-pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
-{
-/* TODO WEBKIT */
-	PidginConversation *gtkconv;
-	GtkIMHtmlSmiley *smiley;
-	const char *sml;
-	GError *error = NULL;
-
-	g_return_if_fail(conv  != NULL);
-	g_return_if_fail(smile != NULL);
-
-	sml = purple_account_get_protocol_name(purple_conversation_get_account(conv));
-	gtkconv = PIDGIN_CONVERSATION(conv);
-	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
-
-	if (!smiley)
-		return;
-
-	if (!smiley->loader)
-		return;
-
-	purple_debug_info("gtkconv", "About to close the smiley pixbuf\n");
-
-	if (!gdk_pixbuf_loader_close(smiley->loader, &error) || error) {
-		purple_debug_warning("gtkconv", "gdk_pixbuf_loader_close() "
-				"failed: %s\n",
-				error ? error->message : "(no error message)");
-		if (error)
-			g_error_free(error);
-		/* We must stop using the GdkPixbufLoader because if we tried to
-		   load certain invalid GIFs with all current versions of GDK (as
-		   of 2011-06-15) then it's possible the loader will contain data
-		   that could cause some operations (like gdk_pixbuf_scale_simple())
-		   to consume memory in an infinite loop.  But we also don't want
-		   to set smiley->loader to NULL because our code might expect it
-		   to be set.  So create a new loader. */
-		g_object_unref(G_OBJECT(smiley->loader));
-		smiley->loader = gdk_pixbuf_loader_new();
-	}
-}
-#endif
 
 static void
 pidgin_conv_send_confirm(PurpleConversation *conv, const char *message)
@@ -7666,11 +7491,6 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			                            topic ? topic : "");
 		}
 	}
-
-#if 0
-	if (fields & PIDGIN_CONV_SMILEY_THEME)
-		pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->webview);
-#endif
 
 	if ((fields & PIDGIN_CONV_COLORIZE_TITLE) ||
 			(fields & PIDGIN_CONV_SET_TITLE) ||
@@ -8823,6 +8643,7 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/send_strike", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", TRUE);
+	/* TODO: it's about *remote* smileys, not local ones */
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys", TRUE);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/custom_smileys_size", 96);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines", 2);

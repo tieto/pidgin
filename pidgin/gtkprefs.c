@@ -1234,9 +1234,10 @@ prefs_set_smiley_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_smiley_themes), &new_iter, 2, &new_theme, -1);
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme);
+
 #if 0
-/* TODO: WebKit-ify smileys */
-		pidgin_themes_smiley_themeize(sample_webview);
+		/* TODO: update smileys in sample_webview input box. */
+		update_smileys_in_webview_input_box(sample_webview);
 #endif
 
 		g_free(new_theme);
@@ -1837,9 +1838,11 @@ conv_page(void)
 	GtkWidget *iconpref2;
 	GtkWidget *webview;
 	GtkWidget *frame;
+#if 0
 	GtkWidget *hbox;
 	GtkWidget *checkbox;
 	GtkWidget *spin_button;
+#endif
 
 	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
@@ -1877,6 +1880,9 @@ conv_page(void)
 #ifdef _WIN32
 	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
 #endif
+
+#if 0
+	/* TODO: it's not implemented */
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 
 	checkbox = pidgin_prefs_checkbox(_("Resize incoming custom smileys"),
@@ -1895,6 +1901,7 @@ conv_page(void)
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), NULL, NULL, hbox, TRUE, NULL);
+#endif
 
 	pidgin_prefs_labeled_spin_button(vbox,
 		_("Minimum input area height in lines:"),

@@ -84,8 +84,7 @@ G_BEGIN_DECLS
  * pidgin_setup_webview:
  * @webview: The gtkwebview widget to setup.
  *
- * Sets up a gtkwebview widget, loads it with smileys, and sets the
- * default signal handlers.
+ * Sets up a gtkwebview widget and sets the default signal handlers.
  */
 void pidgin_setup_webview(GtkWidget *webview);
 

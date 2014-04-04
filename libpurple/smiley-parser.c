@@ -70,7 +70,7 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *message,
 {
 	PurpleSmileyTheme *theme;
 	PurpleSmileyList *theme_smileys = NULL, *remote_smileys = NULL;
-	PurpleTrie *theme_trie = NULL, *custom_trie, *remote_trie = NULL;
+	PurpleTrie *theme_trie = NULL, *custom_trie = NULL, *remote_trie = NULL;
 	GSList *tries = NULL, tries_theme, tries_custom, tries_remote;
 	PurpleSmileyParseData parse_data;
 
@@ -85,9 +85,13 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *message,
 		remote_trie = NULL;
 
 	/* get custom smileys */
-	custom_trie = purple_smiley_list_get_trie(
-		purple_smiley_custom_get_list());
-	if (purple_trie_get_size(custom_trie) == 0)
+	if (purple_conversation_get_features(conv) &
+		PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY)
+	{
+		custom_trie = purple_smiley_list_get_trie(
+			purple_smiley_custom_get_list());
+	}
+	if (custom_trie && purple_trie_get_size(custom_trie) == 0)
 		custom_trie = NULL;
 
 	/* get theme smileys */

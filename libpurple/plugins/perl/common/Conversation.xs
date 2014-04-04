@@ -312,11 +312,6 @@ purple_conversation_present_error(who, account, what)
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversation  PREFIX = purple_conversation_
 PROTOTYPES: ENABLE
 
-void
-purple_conversation_custom_smiley_close(conv, smile)
-	Purple::Conversation conv
-	const char *smile
-
 MODULE = Purple::Conversation  PACKAGE = Purple::ChatConversation  PREFIX = purple_chat_conversation_
 PROTOTYPES: ENABLE
 
