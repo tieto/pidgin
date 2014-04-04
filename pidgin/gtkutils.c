@@ -3188,7 +3188,7 @@ pidgin_pixbuf_scale_down(GdkPixbuf *src, guint max_width, guint max_height,
 	}
 
 	cur_w = gdk_pixbuf_get_width(src);
-	cur_h = gdk_pixbuf_get_width(src);
+	cur_h = gdk_pixbuf_get_height(src);
 
 	if (cur_w <= max_width && cur_h <= max_height)
 		return src;

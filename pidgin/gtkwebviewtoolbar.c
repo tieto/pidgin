@@ -729,7 +729,53 @@ smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event,
 	return FALSE;
 }
 
-/* TODO: replace max_width with min_width */
+/* returns: total width */
+static gulong
+smileys_load_button_thumbs(GList *smileys)
+{
+	GList *it;
+	gulong total_width = 0;
+
+	for (it = smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+		GdkPixbuf *pixbuf;
+		guint width;
+
+		width = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(smiley),
+			"pidgin-webviewtoolbar-button-width"));
+
+		/* smiley is already loaded */
+		if (width > 0) {
+			total_width += width;
+			continue;
+		}
+
+		pixbuf = pidgin_pixbuf_new_from_file(
+			purple_smiley_get_path(smiley));
+		pixbuf = pidgin_pixbuf_scale_down(pixbuf,
+			24, 24, GDK_INTERP_BILINEAR, TRUE);
+
+		if (pixbuf)
+			width = gdk_pixbuf_get_width(pixbuf);
+		if (width == 0)
+			width = 1;
+
+		/* XXX: a padding for the button */
+		width += 12;
+
+		g_object_set_data(G_OBJECT(smiley),
+			"pidgin-webviewtoolbar-button-width",
+			GINT_TO_POINTER(width));
+		g_object_set_data_full(G_OBJECT(smiley),
+			"pidgin-webviewtoolbar-button-image",
+			pixbuf, g_object_unref);
+
+		total_width += width;
+	}
+
+	return total_width;
+}
+
 static void
 add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 	GList *smileys, int max_width, PurpleSmileyList *shadow_smileys)
@@ -741,36 +787,32 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 	if (!smileys)
 		return;
 
-	/* TODO: sort smileys by height */
+	/* TODO: sort smileys by their position in theme */
 
 	line = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start(GTK_BOX(container), line, FALSE, FALSE, 0);
 	for (it = smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
 		GtkWidget *button;
+		GdkPixbuf *pixbuf;
 		GtkImage *image;
-		GtkRequisition size;
+		guint width;
 		const gchar *smiley_shortcut;
 		const gchar *smiley_path;
 
 		smiley_path = purple_smiley_get_path(smiley);
 
-		/* TODO: cache it! */
-		image = GTK_IMAGE(gtk_image_new_from_file(smiley_path));
-
-		/* TODO: this also could be cached - both width and height */
-		gtk_widget_get_preferred_size(GTK_WIDGET(image), NULL, &size);
-
-		/* scale down images bigger than 24x24 */
-		if (size.width > 24 || size.height > 24) {
-			GdkPixbuf *pixbuf = pidgin_pixbuf_scale_down(
-				pidgin_pixbuf_new_from_file(smiley_path),
-				24, 24, GDK_INTERP_BILINEAR, TRUE);
-			gtk_image_set_from_pixbuf(image, pixbuf);
-			gtk_widget_get_preferred_size(GTK_WIDGET(image),
-				NULL, &size);
-			g_object_unref(G_OBJECT(pixbuf));
+		width = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(smiley),
+			"pidgin-webviewtoolbar-button-width"));
+		pixbuf = g_object_get_data(G_OBJECT(smiley),
+			"pidgin-webviewtoolbar-button-image");
+		if (!pixbuf) {
+			purple_debug_warning("gtkwebviewtoolbar", "Smiley does "
+				"not exists: %s", smiley_shortcut);
+			continue;
 		}
+
+		image = GTK_IMAGE(gtk_image_new_from_pixbuf(pixbuf));
 
 		smiley_shortcut = purple_smiley_get_shortcut(smiley);
 
@@ -801,7 +843,7 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 		gtk_box_pack_start(GTK_BOX(line), button, FALSE, FALSE, 0);
 		gtk_widget_show(button);
 
-		line_width += size.width;
+		line_width += width;
 		if (line_width >= max_width && g_list_next(it)) {
 			line_width = 0;
 			line = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -864,46 +906,40 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog), FALSE, 0);
+	vbox = pidgin_dialog_get_vbox_with_properties(
+		GTK_DIALOG(dialog), FALSE, 0);
 
 	if (theme_smileys != NULL || custom_smileys != NULL) {
-		struct smiley_button_list *ls;
-		int max_line_width, num_lines, button_width = 0;
+		guint max_line_width, num_lines, button_width = 0;
 
-		/* We use hboxes packed in a vbox */
-		ls = NULL;
-		max_line_width = 0;
-		num_lines = floor(sqrt(g_list_length(theme_smileys) +
-			g_list_length(custom_smileys)));
+		/* Fill the cache (images and their widths). */
+		max_line_width = smileys_load_button_thumbs(theme_smileys);
+		max_line_width += smileys_load_button_thumbs(custom_smileys);
+		num_lines = sqrt(g_list_length(theme_smileys) +
+			g_list_length(custom_smileys));
+		max_line_width /= num_lines;
+
+		/* We use hboxes packed in a vbox. */
 		smiley_table = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
+		/* Custom smileys manager button. */
 		if (supports_custom) {
-			GtkWidget *manage = gtk_button_new_with_mnemonic(_("_Manage custom smileys"));
+			GtkWidget *manage = gtk_button_new_with_mnemonic(
+				_("_Manage custom smileys"));
 			GtkRequisition req;
 			g_signal_connect(G_OBJECT(manage), "clicked",
-					G_CALLBACK(pidgin_smiley_manager_show), NULL);
+				G_CALLBACK(pidgin_smiley_manager_show), NULL);
 			g_signal_connect_swapped(G_OBJECT(manage), "clicked",
-					G_CALLBACK(gtk_widget_destroy), dialog);
+				G_CALLBACK(gtk_widget_destroy), dialog);
 			gtk_box_pack_end(GTK_BOX(vbox), manage, FALSE, TRUE, 0);
 			gtk_widget_get_preferred_size(manage, NULL, &req);
 			button_width = req.width;
+			max_line_width = MAX(button_width, max_line_width);
+		} else {
+			max_line_width = MAX(max_line_width, 100);
 		}
 
-#if 0
-		/* create list of smileys sorted by height */
-		while (theme_smileys) {
-			PidginWebViewSmiley *smiley = (PidginWebViewSmiley *)theme_smileys->data;
-				ls = sort_smileys(ls, toolbar, &max_line_width, smiley);
-			theme_smileys = g_slist_delete_link(theme_smileys, theme_smileys);
-		}
-#else
-		max_line_width = 300;
-#endif
-
-		/* The window will be at least as wide as the 'Manage ..' button */
-		max_line_width = MAX(button_width, max_line_width / num_lines);
-
-		/* pack buttons of the list */
+		/* Add buttons for smileys. */
 		if (theme_smileys) {
 			add_smiley_list(toolbar, smiley_table, theme_smileys,
 				max_line_width, smileys_from_custom);
