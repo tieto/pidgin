@@ -42,18 +42,18 @@ enum
 	PROP_0,
 	PROP_LAST
 };
+#endif
 
 enum
 {
-	SIG_READY,
+	SIG_FAILED,
 	SIG_LAST
 };
-#endif
 
 static GObjectClass *parent_class;
 
-#if 0
 static guint signals[SIG_LAST];
+#if 0
 static GParamSpec *properties[PROP_LAST];
 #endif
 
@@ -104,7 +104,7 @@ purple_remote_smiley_close(PurpleRemoteSmiley *smiley)
 	priv->contents = NULL;
 
 	g_object_set(smiley, "is-ready", TRUE, NULL);
-	/* TODO: call ready signal */
+	g_signal_emit_by_name(smiley, "ready");
 }
 
 void
@@ -120,7 +120,7 @@ purple_remote_smiley_failed(PurpleRemoteSmiley *smiley)
 		return;
 
 	g_object_set(smiley, "failed", TRUE, NULL);
-	/* TODO: call failed signal */
+	g_signal_emit(smiley, signals[SIG_FAILED], 0);
 }
 
 static PurpleStoredImage *
@@ -222,6 +222,10 @@ purple_remote_smiley_class_init(PurpleRemoteSmileyClass *klass)
 
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 #endif
+
+	signals[SIG_FAILED] = g_signal_new("failed", G_OBJECT_CLASS_TYPE(klass),
+		0, 0, NULL, NULL,
+		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 GType

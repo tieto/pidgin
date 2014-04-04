@@ -6582,6 +6582,53 @@ replace_message_tokens(
 	return g_string_free(str, FALSE);
 }
 
+static gulong
+pidgin_smiley_get_unique_id(PurpleSmiley *smiley)
+{
+	static gulong max_id = 0;
+	gulong id;
+	g_return_val_if_fail(smiley != NULL, 0);
+
+	id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(smiley),
+		"pidgin-conv-smiley-unique-id"));
+	if (id != 0)
+		return id;
+
+	id = ++max_id;
+
+	g_object_set_data(G_OBJECT(smiley), "pidgin-conv-smiley-unique-id",
+		GINT_TO_POINTER(id));
+
+	return id;
+}
+
+static void
+pidgin_conv_remote_smiley_got(PurpleSmiley *smiley, gpointer _conv)
+{
+	PurpleConversation *conv = _conv;
+	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+	PurpleStoredImage *img;
+	gulong smiley_id;
+	int image_id;
+	gchar *js;
+
+	if (!gtkconv)
+		return;
+
+	img = purple_smiley_get_image(smiley);
+	smiley_id = pidgin_smiley_get_unique_id(smiley);
+	image_id = purple_imgstore_add_with_id(img);
+
+	purple_debug_info("gtkconv", "Smiley '%s' (%ld) is ready for display",
+		purple_smiley_get_shortcut(smiley), smiley_id);
+
+	js = g_strdup_printf("emoticonIsReady(%ld, '"
+		PURPLE_STORED_IMAGE_PROTOCOL "%d')", smiley_id, image_id);
+	pidgin_webview_safe_execute_script(
+		PIDGIN_WEBVIEW(gtkconv->webview), js);
+	g_free(js);
+}
+
 static void
 pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer _proto_name)
@@ -6606,9 +6653,12 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 			PURPLE_STORED_IMAGE_PROTOCOL "%d\" />",
 			escaped_shortcut, escaped_shortcut, imgid);
 	} else {
-		g_string_append_printf(out,
-			"<span class=\"emoticon pending\">%s</span>",
-			escaped_shortcut);
+		g_string_append_printf(out, "<span class=\"emoticon pending "
+			"emoticon-id-%ld\">%s</span>",
+			pidgin_smiley_get_unique_id(smiley), escaped_shortcut);
+		g_signal_connect_object(smiley, "ready",
+			G_CALLBACK(pidgin_conv_remote_smiley_got), conv, 0);
+
 		/* TODO: watch for "is-ready" state changes
 		 * (it's not possible without conv handle here) */
 		/* XXX: avoid race condition between is-ready

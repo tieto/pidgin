@@ -236,8 +236,31 @@
 
 		//If true is passed, view will be scrolled down
 		function alignChat(shouldScroll) {
-			if (shouldScroll)
-				scrollToBottom();
+			if (!shouldScroll)
+				return;
+
+			scrollToBottom();
+			/* wait for images to load and scroll again */
+			setTimeout(scrollToBottom, 10);
+		}
+
+		function emoticonIsReady(emoticonId, url) {
+			var shouldScroll = nearBottom();
+			var emoticons;
+
+			emoticons = document.getElementsByClassName('emoticon-id-' + emoticonId);
+			for (var i = 0; i < emoticons.length; i++) {
+				var node = emoticons[i];
+				var img = document.createElement('img');
+				var alt = node.textContent.trim();
+				img.setAttribute('src', url);
+				img.setAttribute('alt', alt);
+				img.setAttribute('title', alt);
+				img.className = 'emoticon';
+				node.parentNode.replaceChild(img, node);
+			}
+
+			alignChat(shouldScroll);
 		}
 
 		window.onresize = function windowDidResize(){
