@@ -854,6 +854,15 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 }
 
 static void
+insert_smiley_manage_cb(GtkButton *button, gpointer _dialog)
+{
+	GtkWidget *dialog = _dialog;
+
+	gtk_widget_destroy(dialog);
+	pidgin_smiley_manager_show();
+}
+
+static void
 insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv =
@@ -928,9 +937,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 				_("_Manage custom smileys"));
 			GtkRequisition req;
 			g_signal_connect(G_OBJECT(manage), "clicked",
-				G_CALLBACK(pidgin_smiley_manager_show), NULL);
-			g_signal_connect_swapped(G_OBJECT(manage), "clicked",
-				G_CALLBACK(gtk_widget_destroy), dialog);
+				G_CALLBACK(insert_smiley_manage_cb), dialog);
 			gtk_box_pack_end(GTK_BOX(vbox), manage, FALSE, TRUE, 0);
 			gtk_widget_get_preferred_size(manage, NULL, &req);
 			button_width = req.width;
