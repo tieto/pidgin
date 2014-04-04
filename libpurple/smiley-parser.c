@@ -26,6 +26,7 @@
 
 typedef struct
 {
+	PurpleConversation *conv;
 	PurpleSmileyParseCb cb;
 	gpointer ui_data;
 } PurpleSmileyParseData;
@@ -59,7 +60,7 @@ static gboolean purple_smiley_parse_cb(GString *out, const gchar *word,
 	PurpleSmileyParseData *parse_data = _parse_data;
 	PurpleSmiley *smiley = _smiley;
 
-	parse_data->cb(out, smiley, parse_data->ui_data);
+	parse_data->cb(out, smiley, parse_data->conv, parse_data->ui_data);
 
 	return TRUE;
 }
@@ -125,9 +126,7 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *message,
 			tries = &tries_theme;
 	}
 
-	/* XXX: should we parse custom smileys,
-	 * if protocol doesn't support it? */
-
+	parse_data.conv = conv;
 	parse_data.cb = cb;
 	parse_data.ui_data = ui_data;
 

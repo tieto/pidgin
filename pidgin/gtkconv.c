@@ -6584,11 +6584,8 @@ replace_message_tokens(
 
 static void
 pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
-	gpointer _proto_name)
+	PurpleConversation *conv, gpointer _proto_name)
 {
-#if 0
-	const gchar *proto_name = _proto_name;
-#endif
 	gchar *escaped_shortcut;
 	const gchar *path = purple_smiley_get_path(smiley);
 
@@ -6609,7 +6606,6 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 			PURPLE_STORED_IMAGE_PROTOCOL "%d\" />",
 			escaped_shortcut, escaped_shortcut, imgid);
 	} else {
-		/* TODO: remove this background, maybe put something into css file? */
 		g_string_append_printf(out,
 			"<span class=\"emoticon pending\">%s</span>",
 			escaped_shortcut);
