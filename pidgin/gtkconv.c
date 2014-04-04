@@ -6658,11 +6658,6 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 			pidgin_smiley_get_unique_id(smiley), escaped_shortcut);
 		g_signal_connect_object(smiley, "ready",
 			G_CALLBACK(pidgin_conv_remote_smiley_got), conv, 0);
-
-		/* TODO: watch for "is-ready" state changes
-		 * (it's not possible without conv handle here) */
-		/* XXX: avoid race condition between is-ready
-		 * call and html being pasted */
 	}
 
 	g_free(escaped_shortcut);

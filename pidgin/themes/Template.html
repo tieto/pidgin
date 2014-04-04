@@ -248,6 +248,15 @@
 			var shouldScroll = nearBottom();
 			var emoticons;
 
+			/* There is a possible race condition: if we call this
+			 * before the span.emoticon.pending is added, the latter
+			 * won't be converted.
+			 *
+			 * We could avoid this, by calling it again using
+			 * setTimeout, but it may affect performance. So, we
+			 * won't do it until anyone complains.
+			 */
+
 			emoticons = document.getElementsByClassName('emoticon-id-' + emoticonId);
 			for (var i = 0; i < emoticons.length; i++) {
 				var node = emoticons[i];
