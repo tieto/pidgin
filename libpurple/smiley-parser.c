@@ -92,13 +92,13 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 		tries = &tries_remote;
 	if (custom_trie != NULL) {
 		if (tries)
-			tries->next = &tries_custom;
+			g_slist_last(tries)->next = &tries_custom;
 		else
 			tries = &tries_custom;
 	}
 	if (theme_trie != NULL) {
 		if (tries)
-			tries->next = &tries_theme;
+			g_slist_last(tries)->next = &tries_theme;
 		else
 			tries = &tries_theme;
 	}
