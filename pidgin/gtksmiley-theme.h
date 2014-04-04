@@ -25,6 +25,7 @@
 #include <glib-object.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+#include "conversation.h"
 #include "smiley-theme.h"
 
 typedef struct _PidginSmileyTheme PidginSmileyTheme;

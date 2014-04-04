@@ -22,6 +22,7 @@
 #include "smiley-custom.h"
 
 #include "debug.h"
+#include "util.h"
 
 #include <glib/gstdio.h>
 #include <errno.h>

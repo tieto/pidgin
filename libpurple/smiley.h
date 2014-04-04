@@ -28,10 +28,9 @@
  * @title: Smiley API
  */
 
-#include <glib-object.h>
-
 #include "imgstore.h"
-#include "util.h"
+
+#include <glib-object.h>
 
 typedef struct _PurpleSmiley PurpleSmiley;
 typedef struct _PurpleSmileyClass PurpleSmileyClass;

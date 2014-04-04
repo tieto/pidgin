@@ -33,6 +33,7 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
 
 #define PURPLE_STORED_IMAGE_PROTOCOL "purple-image:"
 #define PURPLE_STOCK_IMAGE_PROTOCOL "purple-stock-image:"

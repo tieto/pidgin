@@ -195,6 +195,8 @@ struct _PurpleConversationClass {
 #include "buddyicon.h"
 #include "e2ee.h"
 #include "log.h"
+#include "smiley-list.h"
+#include "smiley-remote.h"
 
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
@@ -733,6 +735,13 @@ gboolean purple_conversation_do_command(PurpleConversation *conv,
  */
 gssize
 purple_conversation_get_max_message_size(PurpleConversation *conv);
+
+PurpleRemoteSmiley *
+purple_conversation_add_remote_smiley(PurpleConversation *conv,
+	const gchar *shortcut);
+
+PurpleSmileyList *
+purple_conversation_get_remote_smileys(PurpleConversation *conv);
 
 /**************************************************************************/
 /* Conversation Helper API                                                */
