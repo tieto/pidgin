@@ -55,6 +55,8 @@
       <xi:include href="xml/gtkroomlist.xml" />
       <xi:include href="xml/gtksavedstatuses.xml" />
       <xi:include href="xml/gtkscrollbook.xml" />
+      <xi:include href="xml/gtksmiley-manager.xml" />
+      <xi:include href="xml/gtksmiley-theme.xml" />
       <xi:include href="xml/gtksound.xml" />
       <xi:include href="xml/gtkstatusbox.xml" />
       <xi:include href="xml/pidginstock.xml" />

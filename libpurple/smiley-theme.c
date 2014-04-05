@@ -68,7 +68,7 @@ purple_smiley_theme_get_current(void)
 }
 
 void
-purple_smiley_theme_uninit(void)
+_purple_smiley_theme_uninit(void)
 {
 	purple_smiley_theme_set_current(NULL);
 }

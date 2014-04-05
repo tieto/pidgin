@@ -256,7 +256,7 @@ purple_core_quit(void)
 	purple_plugins_unload(PURPLE_PLUGIN_STANDARD);
 
 	/* Save .xml files, remove signals, etc. */
-	purple_smiley_theme_uninit();
+	_purple_smiley_theme_uninit();
 	_purple_smiley_custom_uninit();
 	purple_http_uninit();
 	purple_idle_uninit();
