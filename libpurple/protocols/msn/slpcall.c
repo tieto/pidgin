@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "smiley.h"
+#include "smiley-custom.h"
 
 #include "msnutils.h"
 #include "slpcall.h"
@@ -235,28 +236,27 @@ get_token(const char *str, const char *start, const char *end)
 static PurpleStoredImage *
 find_valid_emoticon(PurpleAccount *account, const char *path)
 {
-#if 0
 	GList *smileys;
 
 	if (!purple_account_get_bool(account, "custom_smileys", TRUE))
 		return NULL;
-	smileys = purple_smileys_get_all();
+	smileys = purple_smiley_list_get_all(purple_smiley_custom_get_list());
+
+	// TODO: rewrite it with XXX
 
 	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
 		PurpleSmiley *smiley;
 		PurpleStoredImage *img;
 
 		smiley = smileys->data;
-		img = purple_smiley_get_stored_image(smiley);
+		img = purple_smiley_get_image(smiley);
 
-		if (purple_strequal(path, purple_imgstore_get_filename(img))) {
+		if (g_strcmp0(path, purple_smiley_get_path(smiley)) == 0) {
 			g_list_free(smileys);
+			purple_imgstore_ref(img);
 			return img;
 		}
-
-		purple_imgstore_unref(img);
 	}
-#endif
 
 	purple_debug_error("msn", "Received illegal request for file %s\n", path);
 	return NULL;
