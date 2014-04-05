@@ -439,7 +439,9 @@ jabber_message_xml_to_string_strip_img_smileys(PurpleXmlNode *xhtml)
 						out = g_string_append(out, safe_alt);
 						g_free(safe_alt);
 					} else {
-						out = g_string_append(out, alt);
+						gchar *alt_escaped = g_markup_escape_text(alt, -1);
+						out = g_string_append(out, alt_escaped);
+						g_free(alt_escaped);
 					}
 				} else {
 					out = g_string_append(out, src);
