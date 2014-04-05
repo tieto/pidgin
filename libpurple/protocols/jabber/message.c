@@ -941,7 +941,8 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 	if (!jabber_conv_support_custom_smileys(jm->js, conv, jm->to))
 		return NULL;
 
-	found_smileys = purple_smiley_find(purple_smiley_custom_get_list(), xhtml);
+	found_smileys = purple_smiley_find(purple_smiley_custom_get_list(),
+		xhtml, TRUE);
 	if (!found_smileys)
 		return NULL;
 

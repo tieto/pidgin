@@ -1002,7 +1002,6 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			/* TODO: cache lookup by "sha1" */
 
 			/* XXX: maybe handle end_cb and smiley download failures? */
-			/* TODO: BUG: only emoticons from the first message are being received, others are not */
 			purple_debug_info("msn", "requesting smiley: %s", smile);
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}

@@ -38,6 +38,7 @@
 #include "session.h"
 #include "smiley.h"
 #include "smiley-custom.h"
+#include "smiley-parser.h"
 #include "state.h"
 #include "util.h"
 #include "cmds.h"
@@ -1469,28 +1470,19 @@ static void msn_emoticon_destroy(MsnEmoticon *emoticon)
 
 static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 {
-	//TODO: replace it with:
-	//found_smileys = purple_smiley_find(purple_smiley_custom_get_list(), xhtml)
-	//but: is it xhtml?
-	GSList *list;
-	GList *smileys;
-	PurpleSmiley *smiley;
-	PurpleStoredImage *img;
-	char *ptr;
+	GSList *list = NULL;
+	GList *smileys, *it;
 	MsnEmoticon *emoticon;
 	int length;
 
-	list = NULL;
-	smileys = purple_smiley_list_get_all(purple_smiley_custom_get_list());
 	length = strlen(msg);
 
-	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
-		smiley = smileys->data;
+	smileys = purple_smiley_find(purple_smiley_custom_get_list(),
+		msg, FALSE);
 
-		ptr = g_strstr_len(msg, length, purple_smiley_get_shortcut(smiley));
-
-		if (!ptr)
-			continue;
+	for (it = smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+		PurpleStoredImage *img;
 
 		img = purple_smiley_get_image(smiley);
 
@@ -1498,11 +1490,12 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 		emoticon->smile = g_strdup(purple_smiley_get_shortcut(smiley));
 		emoticon->ps = smiley;
 		emoticon->obj = msn_object_new_from_image(img,
-				purple_imgstore_get_filename(img),
-				username, MSN_OBJECT_EMOTICON);
+			purple_smiley_get_path(smiley),
+			username, MSN_OBJECT_EMOTICON);
 
 		list = g_slist_prepend(list, emoticon);
 	}
+	g_list_free(smileys);
 
 	return list;
 }

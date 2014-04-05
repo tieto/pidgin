@@ -41,6 +41,7 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data);
 
 GList *
-purple_smiley_find(PurpleSmileyList *smileys, const gchar *html_message);
+purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
+	gboolean is_html);
 
 #endif /* _PURPLE_SMILEY_PARSER_H_ */

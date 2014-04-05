@@ -133,13 +133,15 @@ smiley_find_cb(const gchar *word, gpointer _smiley, gpointer _found_smileys)
 }
 
 GList *
-purple_smiley_find(PurpleSmileyList *smileys, const gchar *html_message)
+purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
+	gboolean is_html)
 {
 	PurpleTrie *trie;
 	GHashTable *found_smileys;
 	GList *found_list;
+	gchar *escaped_message = NULL;
 
-	if (html_message == NULL || html_message[0] == '\0')
+	if (message == NULL || message[0] == '\0')
 		return NULL;
 
 	if (smileys == NULL || purple_smiley_list_is_empty(smileys))
@@ -148,8 +150,13 @@ purple_smiley_find(PurpleSmileyList *smileys, const gchar *html_message)
 	trie = purple_smiley_list_get_trie(smileys);
 	g_return_val_if_fail(trie != NULL, NULL);
 
+	if (!is_html)
+		message = escaped_message = g_markup_escape_text(message, -1);
+
 	found_smileys = g_hash_table_new(g_direct_hash, g_direct_equal);
-	purple_trie_find(trie, html_message, smiley_find_cb, found_smileys);
+	purple_trie_find(trie, message, smiley_find_cb, found_smileys);
+
+	g_free(escaped_message);
 
 	found_list = g_hash_table_get_values(found_smileys);
 	g_hash_table_destroy(found_smileys);
