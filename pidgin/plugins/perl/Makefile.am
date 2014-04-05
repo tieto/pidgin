@@ -21,7 +21,6 @@ common_sources = \
 	common/GtkSession.xs \
 	common/GtkSound.xs \
 	common/GtkStatusBox.xs \
-	common/GtkThemes.xs \
 	common/GtkUtils.xs \
 	common/Makefile.PL.in \
 	common/Pidgin.pm \
