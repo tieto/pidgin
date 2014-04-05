@@ -6633,6 +6633,11 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 {
 	gchar *escaped_shortcut;
 	const gchar *path = purple_smiley_get_path(smiley);
+	const gchar *path_prefix = "";
+
+#ifdef _WIN32
+	path_prefix = "file:///";
+#endif
 
 	escaped_shortcut = g_markup_escape_text(
 		purple_smiley_get_shortcut(smiley), -1);
@@ -6640,8 +6645,8 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 	if (purple_smiley_is_ready(smiley) && path) {
 		g_string_append_printf(out,
 			"<img class=\"emoticon\" alt=\"%s\" title=\"%s\" "
-			"src=\"%s\" />", escaped_shortcut,
-			escaped_shortcut, path);
+			"src=\"%s%s\" />", escaped_shortcut,
+			escaped_shortcut, path_prefix, path);
 	} else if (purple_smiley_is_ready(smiley) && !path) {
 		PurpleStoredImage *img = purple_smiley_get_image(smiley);
 		int imgid = purple_imgstore_add_with_id(img);
