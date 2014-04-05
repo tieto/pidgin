@@ -675,15 +675,46 @@ gboolean purple_conversation_do_command(PurpleConversation *conv,
 gssize
 purple_conversation_get_max_message_size(PurpleConversation *conv);
 
+/**
+ * purple_conversation_add_remote_smiley:
+ * @conv: The conversation that receives new smiley.
+ * @shortcut: The shortcut for the new smiley.
+ *
+ * Adds new smiley to the list of remote smileys for this conversation.
+ * The smiley have to be written and closed, when data is ready.
+ *
+ * Returns: (transfer none): New smiley, or %NULL if it's already being
+ *          retrieved (or possibly, in case of error).
+ */
 PurpleRemoteSmiley *
 purple_conversation_add_remote_smiley(PurpleConversation *conv,
 	const gchar *shortcut);
 
-/* use it only, if you cannot store purple_conversation_add_remote_smiley output or control its ref */
+/**
+ * purple_conversation_get_remote_smiley:
+ * @conv: The conversation.
+ * @shortcut: The shortcut.
+ *
+ * Lookups for the remote smiley previously added to this conversation.
+ *
+ * You may use this function when you receive the smiley data, but it's
+ * better just to store and use the reference returned by
+ * #purple_conversation_add_remote_smiley.
+ *
+ * Returns: (transfer none): The smiley, or %NULL if it doesn't exists.
+ */
 PurpleRemoteSmiley *
 purple_conversation_get_remote_smiley(PurpleConversation *conv,
 	const gchar *shortcut);
 
+/**
+ * purple_conversation_get_remote_smileys:
+ * @conv: The conversation.
+ *
+ * Get all remote smileys previously added to this conversation.
+ *
+ * Returns: (transfer none): The list of remote smileys.
+ */
 PurpleSmileyList *
 purple_conversation_get_remote_smileys(PurpleConversation *conv);
 

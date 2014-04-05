@@ -944,6 +944,22 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, 
  */
 GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width, int height, gboolean preserve_aspect_ratio);
 
+/**
+ * pidgin_pixbuf_scale_down:
+ * @src: The source image.
+ * @max_width: Maximum width in px.
+ * @max_height: Maximum height in px.
+ * @interp_type: Interpolation method.
+ * @preserve_ratio: %TRUE to preserve image's aspect ratio.
+ *
+ * Scales the image to the desired dimensions. If image is smaller, it will be
+ * returned without modifications.
+ *
+ * If new image is created, @src reference cound will be decreased and new image
+ * with a ref count of 1 will be returned.
+ *
+ * Returns: The image with proper sizing. %NULL in case of error.
+ */
 GdkPixbuf *
 pidgin_pixbuf_scale_down(GdkPixbuf *src, guint max_width, guint max_height,
 	GdkInterpType interp_type, gboolean preserve_ratio);

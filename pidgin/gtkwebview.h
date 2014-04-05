@@ -605,6 +605,13 @@ void pidgin_webview_hide_toolbar(PidginWebView *webview);
  */
 void pidgin_webview_activate_toolbar(PidginWebView *webview, PidginWebViewAction action);
 
+/**
+ * pidgin_webview_switch_active_conversation:
+ * @webview: The PidginWebView
+ * @conv: The conversation.
+ *
+ * Updates the webview for a new active #PurpleConversation.
+ */
 void
 pidgin_webview_switch_active_conversation(PidginWebView *webview,
 	PurpleConversation *conv);

@@ -138,6 +138,12 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data);
 void
 purple_trie_remove(PurpleTrie *trie, const gchar *word);
 
+/**
+ * purple_trie_get_size:
+ * @trie: The trie.
+ *
+ * Returns: The number of elements stored in this trie.
+ */
 guint
 purple_trie_get_size(PurpleTrie *trie);
 
@@ -177,6 +183,20 @@ gchar *
 purple_trie_multi_replace(const GSList *tries, const gchar *src,
 	PurpleTrieReplaceCb replace_cb, gpointer user_data);
 
+/**
+ * purple_trie_find:
+ * @trie: The trie.
+ * @src: The source string.
+ * @find_cb: The callback for found entries (may be %NULL).
+ * @user_data: Custom data to be passed to @find_cb.
+ *
+ * Processes @src string and finds all occuriences of words added to @trie.
+ * It's O(strlen(src)), if find_cb runs in O(1).
+ *
+ * The word is counted as found if it's found and the callback returns %TRUE.
+ *
+ * Returns: The number of found words.
+ */
 gulong
 purple_trie_find(PurpleTrie *trie, const gchar *src,
 	PurpleTrieFindCb find_cb, gpointer user_data);

@@ -1056,7 +1056,18 @@ gboolean purple_validate(const PurplePlugin *prpl, const char *str);
  */
 gboolean purple_str_has_prefix(const char *s, const char *p);
 
-gboolean purple_str_has_caseprefix(const gchar *s, const gchar *p);
+/**
+ * purple_str_has_caseprefix:
+ * @s: The string to check.
+ * @p: The prefix in question.
+ *
+ * Compares two strings to see if the first contains the second as
+ * a proper case-insensitive prefix.
+ *
+ * Returns: %TRUE if @p is a prefix of @s, otherwise %FALSE.
+ */
+gboolean
+purple_str_has_caseprefix(const gchar *s, const gchar *p);
 
 /**
  * purple_str_has_suffix:
