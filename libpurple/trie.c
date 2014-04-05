@@ -809,7 +809,10 @@ purple_trie_class_init(PurpleTrieClass *klass)
 	properties[PROP_RESET_ON_MATCH] = g_param_spec_boolean("reset-on-match",
 		"Reset on match", "Determines, if the search state machine "
 		"should be reset to the initial state on every match. This "
-		"ensures, that every match is distinct from each other.", TRUE,
+		"ensures, that every match is distinct from each other. "
+		"Please note, that it's not well-defined for a replace "
+		"operation, so it's better to leave this value default, unless "
+		"you perform only find operations.", TRUE,
 		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(obj_class, PROP_LAST, properties);

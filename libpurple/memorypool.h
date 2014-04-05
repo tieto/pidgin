@@ -24,8 +24,9 @@
 #define PURPLE_MEMORY_POOL_H
 /**
  * SECTION:memorypool
+ * @include:memorypool.h
  * @section_id: libpurple-memorypool
- * @short_description: <filename>memorypool.h</filename>
+ * @short_description: a container for a large number of small chunks of memory
  * @title: Memory pools
  *
  * A #PurpleMemoryPool allows allocating many small objects within a single
