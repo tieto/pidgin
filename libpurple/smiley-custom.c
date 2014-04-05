@@ -289,7 +289,7 @@ purple_smiley_custom_get_list(void)
  ******************************************************************************/
 
 void
-purple_smiley_custom_init(void)
+_purple_smiley_custom_init(void)
 {
 	gint ret;
 
@@ -309,7 +309,7 @@ purple_smiley_custom_init(void)
 }
 
 void
-purple_smiley_custom_uninit(void)
+_purple_smiley_custom_uninit(void)
 {
 	g_free(smileys_dir);
 	g_free(smileys_index);
