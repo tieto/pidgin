@@ -86,4 +86,3 @@ purple_remote_smiley_failed(PurpleRemoteSmiley *smiley);
 G_END_DECLS
 
 #endif /* _PURPLE_REMOTE_SMILEY_H_ */
-

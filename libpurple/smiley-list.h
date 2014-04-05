@@ -98,4 +98,3 @@ purple_smiley_list_get_all(PurpleSmileyList *list_);
 G_END_DECLS
 
 #endif /* _PURPLE_SMILEY_H_ */
-

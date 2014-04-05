@@ -391,7 +391,7 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 		GTK_POS_BOTTOM, 1, 1);
 #else
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)),hbox);
+	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)), hbox);
 #endif
 
 	/* Shortcut text */
@@ -790,7 +790,7 @@ pidgin_smiley_manager_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), 50, 400);
 	gtk_window_set_role(GTK_WINDOW(win), "custom_smiley_manager");
 #if !GTK_CHECK_VERSION(3,0,0)
-	gtk_container_set_border_width(GTK_CONTAINER(win),PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 #endif
 	gtk_dialog_set_response_sensitive(win, GTK_RESPONSE_NO, FALSE);
 	gtk_dialog_set_response_sensitive(win, PIDGIN_RESPONSE_MODIFY, FALSE);

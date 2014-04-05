@@ -129,4 +129,3 @@ purple_smiley_get_image(PurpleSmiley *smiley);
 G_END_DECLS
 
 #endif /* _PURPLE_SMILEY_H_ */
-

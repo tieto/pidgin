@@ -107,4 +107,3 @@ void pidgin_webviewtoolbar_activate(PidginWebViewToolbar *toolbar,
 G_END_DECLS
 
 #endif /* _PIDGINWEBVIEWTOOLBAR_H_ */
-

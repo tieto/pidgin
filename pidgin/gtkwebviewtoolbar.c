@@ -1807,4 +1807,3 @@ pidgin_webviewtoolbar_activate(PidginWebViewToolbar *toolbar,
 
 	gtk_action_activate(act);
 }
-

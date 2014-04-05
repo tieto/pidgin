@@ -623,4 +623,3 @@ pidgin_webview_set_toolbar(PidginWebView *webview, GtkWidget *toolbar);
 G_END_DECLS
 
 #endif /* _PIDGIN_WEBVIEW_H_ */
-
