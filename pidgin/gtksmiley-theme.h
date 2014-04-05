@@ -21,6 +21,15 @@
 
 #ifndef _PIDGIN_SMILEY_THEME_H_
 #define _PIDGIN_SMILEY_THEME_H_
+/**
+ * SECTION:gtksmiley-theme
+ * @include:gtksmiley-theme.h
+ * @section_id: pidgin-smiley-theme
+ * @short_description: a per-protocol categorized sets of standard smileys
+ * @title: Pidgin's smiley themes
+ *
+ * This class implements a per-protocol based #PurpleSmileyTheme.
+ */
 
 #include <glib-object.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -41,7 +50,7 @@ typedef struct _PidginSmileyThemeClass PidginSmileyThemeClass;
 /**
  * PidginSmileyTheme:
  *
- * A list of smileys.
+ * An implementation of a smiley theme.
  */
 struct _PidginSmileyTheme
 {
@@ -49,6 +58,11 @@ struct _PidginSmileyTheme
 	PurpleSmileyTheme parent;
 };
 
+/**
+ * PidginSmileyThemeClass:
+ *
+ * Base class for #PidginSmileyTheme objects.
+ */
 struct _PidginSmileyThemeClass
 {
 	/*< private >*/
@@ -65,34 +79,95 @@ G_BEGIN_DECLS
 /**
  * pidgin_smiley_theme_get_type:
  *
- * Returns: The #GType for a smiley list.
+ * Returns: the #GType for a smiley list.
  */
 GType
 pidgin_smiley_theme_get_type(void);
 
+/**
+ * pidgin_smiley_theme_get_name:
+ * @theme: the smiley theme.
+ *
+ * Returns the name for a @theme. Valid themes always have the name set.
+ *
+ * Returns: (transfer none): the name string, or %NULL if error occured.
+ */
 const gchar *
 pidgin_smiley_theme_get_name(PidginSmileyTheme *theme);
 
+/**
+ * pidgin_smiley_theme_get_description:
+ * @theme: the smiley theme.
+ *
+ * Returns the description for a @theme.
+ *
+ * Returns: (transfer none): the description string, or %NULL if it's not
+ *          set or error occured.
+ */
 const gchar *
 pidgin_smiley_theme_get_description(PidginSmileyTheme *theme);
 
+/**
+ * pidgin_smiley_theme_get_icon:
+ * @theme: the smiley theme.
+ *
+ * Returns the @theme's icon image, possibly loading it from the disk (and
+ * adding it to the cache).
+ *
+ * Returns: (transfer none): the @theme's icon image.
+ */
 GdkPixbuf *
 pidgin_smiley_theme_get_icon(PidginSmileyTheme *theme);
 
+/**
+ * pidgin_smiley_theme_get_author:
+ * @theme: the smiley theme.
+ *
+ * Returns the autor of @theme.
+ *
+ * Returns: (transfer none): the author string, or %NULL if it's not
+ *          set or error occured.
+ */
 const gchar *
 pidgin_smiley_theme_get_author(PidginSmileyTheme *theme);
 
+/**
+ * pidgin_smiley_theme_for_conv:
+ * @conv: the conversation.
+ *
+ * Gets the smiley list for a @conv based on current theme.
+ *
+ * Returns: (transfer none): the smiley list, or %NULL if there
+ *          is no smiley theme set.
+ */
 PurpleSmileyList *
 pidgin_smiley_theme_for_conv(PurpleConversation *conv);
 
-void
-pidgin_smiley_theme_init(void);
-
-void
-pidgin_smiley_theme_uninit(void);
-
+/**
+ * pidgin_smiley_theme_get_all:
+ *
+ * Returns the list of currently available smiley themes.
+ *
+ * Returns: (transfer none): the #GList of #PidginSmileyTheme's.
+ */
 GList *
 pidgin_smiley_theme_get_all(void);
+
+/**
+ * _pidgin_smiley_theme_init: (skip)
+ *
+ * Initializes the Pidgin's smiley theme subsystem.
+ */
+void
+_pidgin_smiley_theme_init(void);
+
+/**
+ * _pidgin_smiley_theme_uninit: (skip)
+ *
+ * Unitializes the Pidgin's smiley theme subsystem.
+ */
+void
+_pidgin_smiley_theme_uninit(void);
 
 G_END_DECLS
 

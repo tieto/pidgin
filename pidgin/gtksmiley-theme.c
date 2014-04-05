@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
 #include "gtksmiley-theme.h"
@@ -513,8 +513,16 @@ pidgin_smiley_theme_get_smileys_impl(PurpleSmileyTheme *theme, gpointer ui_data)
 	return g_hash_table_lookup(priv->smiley_lists_map, "default");
 }
 
+GList *
+pidgin_smiley_theme_get_all(void)
+{
+	pidgin_smiley_theme_probe();
+
+	return smiley_themes;
+}
+
 void
-pidgin_smiley_theme_init(void)
+_pidgin_smiley_theme_init(void)
 {
 	GList *it;
 	const gchar *user_smileys_dir;
@@ -544,17 +552,9 @@ pidgin_smiley_theme_init(void)
 }
 
 void
-pidgin_smiley_theme_uninit(void)
+_pidgin_smiley_theme_uninit(void)
 {
 	g_strfreev(probe_dirs);
-}
-
-GList *
-pidgin_smiley_theme_get_all(void)
-{
-	pidgin_smiley_theme_probe();
-
-	return smiley_themes;
 }
 
 /*******************************************************************************
