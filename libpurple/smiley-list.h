@@ -27,6 +27,10 @@
  * @section_id: libpurple-smiley-list
  * @short_description: a collection of smileys
  * @title: Smiley lists
+ *
+ * A #PurpleSmileyList is a handy storage for a set of #PurpleSmiley's.
+ * It holds structures needed for parsing, accessing them by a shortcut, or
+ * listing (either all, or by unique image).
  */
 
 #include <glib-object.h>
@@ -47,7 +51,7 @@ typedef struct _PurpleSmileyListClass PurpleSmileyListClass;
 /**
  * PurpleSmileyList:
  *
- * A list of smileys.
+ * A container for #PurpleSmiley's.
  */
 struct _PurpleSmileyList
 {
@@ -55,6 +59,11 @@ struct _PurpleSmileyList
 	GObject parent;
 };
 
+/**
+ * PurpleSmileyListClass:
+ *
+ * Base class for #PurpleSmileyList objects.
+ */
 struct _PurpleSmileyListClass
 {
 	/*< private >*/
@@ -71,34 +80,111 @@ G_BEGIN_DECLS
 /**
  * purple_smiley_list_get_type:
  *
- * Returns: The #GType for a smiley list.
+ * Returns: the #GType for a smiley list.
  */
 GType
 purple_smiley_list_get_type(void);
 
+/**
+ * purple_smiley_list_new:
+ *
+ * Creates new #PurpleSmileyList. You might prefer using existing lists, like
+ * #purple_smiley_custom_get_list or #purple_conversation_get_remote_smileys
+ * (the latter is read-only, accessed with
+ * #purple_conversation_add_remote_smiley and
+ * #purple_conversation_get_remote_smiley).
+ *
+ * Returns: newly created #PurpleSmileyList.
+ */
 PurpleSmileyList *
 purple_smiley_list_new(void);
 
+/**
+ * purple_smiley_list_add:
+ * @list: the smiley list.
+ * @smiley: the smiley to be added.
+ *
+ * Adds the @smiley to the @list. A particular @smiley can only be added to
+ * a single @list. Also, a @list can not contain multiple @smiley's with
+ * the same shortcut.
+ *
+ * It increases the reference count of @smiley, if needed.
+ *
+ * Returns: %TRUE if the @smiley was successfully added to the list.
+ */
 gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley);
 
+/**
+ * purple_smiley_list_remove:
+ * @list: the smiley list.
+ * @smiley: the smiley to be removed.
+ *
+ * Removes a @smiley from the @list. If @smiley's reference count drops to zero,
+ * it's destroyed.
+ */
 void
 purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley);
 
+/**
+ * purple_smiley_list_is_empty:
+ * @list: the smiley list.
+ *
+ * Checks, if the smiley @list is empty.
+ *
+ * Returns: %TRUE if the @list is empty, %FALSE otherwise.
+ */
 gboolean
 purple_smiley_list_is_empty(PurpleSmileyList *list);
 
+/**
+ * purple_smiley_list_get_by_shortcut:
+ * @list: the smiley list.
+ * @shortcut: the textual representation of smiley to lookup.
+ *
+ * Retrieves a smiley with the specified @shortcut from the @list.
+ *
+ * Returns: a #PurpleSmiley if the smiley was found, %NULL otherwise.
+ */
 PurpleSmiley *
 purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
 	const gchar *shortcut);
 
-/* keys are HTML escaped shortcuts */
+/**
+ * purple_smiley_list_get_trie:
+ * @list: the smiley list.
+ *
+ * Returns the #PurpleTrie for searching of #PurpleSmiley's being kept
+ * in the @list. It holds markup escaped shortcuts, so if you want to search
+ * in plain message, you have to escape it first. If you don't do this, it won't
+ * find smileys containing special characters.
+ *
+ * Returns: (transfer none): a #PurpleTrie for contained smileys.
+ */
 PurpleTrie *
 purple_smiley_list_get_trie(PurpleSmileyList *list);
 
+/**
+ * purple_smiley_list_get_unique:
+ * @list_: the smiley list.
+ *
+ * Returns the list of smileys with unique image file paths.
+ *
+ * Returns: (transfer container): the #GList of unique smileys. Use #g_list_free
+ *          when done using it.
+ */
 GList *
 purple_smiley_list_get_unique(PurpleSmileyList *list_);
 
+/**
+ * purple_smiley_list_get_all:
+ * @list_: the smiley list.
+ *
+ * Returns the list of all smileys added to the @list_.
+ *
+ * Returns: (transfer container): the #GList of smileys. Use #g_list_free
+ *          when done using it.
+ */
 GList *
 purple_smiley_list_get_all(PurpleSmileyList *list_);
 
