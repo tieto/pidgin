@@ -232,33 +232,35 @@ get_token(const char *str, const char *start, const char *end)
 
 /* XXX: this could be improved if we tracked custom smileys
  * per-protocol, per-account, per-session or (ideally) per-conversation
+ *
+ * Note: it should be tracked on the msn prpl side.
  */
 static PurpleStoredImage *
 find_valid_emoticon(PurpleAccount *account, const char *path)
 {
-	GList *smileys;
+	GList *smileys, *it;
 
 	if (!purple_account_get_bool(account, "custom_smileys", TRUE))
 		return NULL;
-	smileys = purple_smiley_list_get_all(purple_smiley_custom_get_list());
+	smileys = purple_smiley_list_get_unique(
+		purple_smiley_custom_get_list());
 
-	// TODO: rewrite it with XXX
-
-	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
-		PurpleSmiley *smiley;
-		PurpleStoredImage *img;
-
-		smiley = smileys->data;
-		img = purple_smiley_get_image(smiley);
+	for (it = smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
 
 		if (g_strcmp0(path, purple_smiley_get_path(smiley)) == 0) {
+			PurpleStoredImage *img;
+
 			g_list_free(smileys);
+			img = purple_smiley_get_image(smiley);
 			purple_imgstore_ref(img);
 			return img;
 		}
 	}
+	g_list_free(smileys);
 
-	purple_debug_error("msn", "Received illegal request for file %s\n", path);
+	purple_debug_error("msn", "Received illegal request for file %s", path);
+
 	return NULL;
 }
 
