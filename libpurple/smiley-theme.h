@@ -21,6 +21,13 @@
 
 #ifndef _PURPLE_SMILEY_THEME_H_
 #define _PURPLE_SMILEY_THEME_H_
+/**
+ * SECTION:smiley-theme
+ * @include:smiley-theme.h
+ * @section_id: libpurple-smiley-theme
+ * @short_description: a per-protocol defined set of default smileys
+ * @title: Smiley themes
+ */
 
 #include <glib-object.h>
 

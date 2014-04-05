@@ -233,19 +233,26 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 	ps_class->get_image = purple_smiley_get_image_impl;
 
 	properties[PROP_SHORTCUT] = g_param_spec_string("shortcut", "Shortcut",
-		"The text-shortcut for the smiley", NULL,
+		"A non-escaped textual representation of a smiley.", NULL,
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_IS_READY] = g_param_spec_boolean("is-ready", "Is ready",
-		"The smiley is ready to be displayed", TRUE,
+		"Determines, if a smiley is ready to be displayed.", TRUE,
 		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_PATH] = g_param_spec_string("path", "Path",
-		"The full path to the smiley image file", NULL,
+		"The full path to the smiley image file.", NULL,
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 
+	/**
+	 * PurpleSmiley::ready:
+	 * @smiley: a smiley that became ready.
+	 *
+	 * Called when a @smiley becames ready to be displayed. It's guaranteed to be
+	 * fired at most once for a particular @smiley.
+	 */
 	signals[SIG_READY] = g_signal_new("ready", G_OBJECT_CLASS_TYPE(klass),
 		0, 0, NULL, NULL,
 		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);

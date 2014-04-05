@@ -21,6 +21,13 @@
 
 #ifndef _PURPLE_SMILEY_PARSER_H_
 #define _PURPLE_SMILEY_PARSER_H_
+/**
+ * SECTION:smiley-parser
+ * @include:smiley-parser.h
+ * @section_id: libpurple-smiley-parser
+ * @short_description: a efficient smiley processor
+ * @title: Smiley parser
+ */
 
 #include "purple.h"
 

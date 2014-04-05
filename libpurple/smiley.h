@@ -23,9 +23,18 @@
 #define _PURPLE_SMILEY_H_
 /**
  * SECTION:smiley
+ * @include:smiley.h
  * @section_id: libpurple-smiley
- * @short_description: <filename>smiley.h</filename>
- * @title: Smiley API
+ * @short_description: a link between emoticon image and its textual representation
+ * @title: Smileys
+ *
+ * A #PurpleSmiley is a base class for associating emoticon images and their
+ * textual representation. It's intended for various smiley-related tasks:
+ * parsing the text against them, displaying in the smiley selector, or handling
+ * remote data (using #PurpleRemoteSmiley).
+ *
+ * The #PurpleSmiley:shortcut is always unescaped, but <link linkend="libpurple-smiley-parser">smiley parser</link>
+ * may deal with special characters.
  */
 
 #include "imgstore.h"
@@ -45,9 +54,7 @@ typedef struct _PurpleSmileyClass PurpleSmileyClass;
 /**
  * PurpleSmiley:
  *
- * A generic smiley.
- *
- * This contains common part of things Purple will need to know about a smiley.
+ * A generic smiley. It can either be a theme smiley, or a custom smiley.
  */
 struct _PurpleSmiley
 {
@@ -55,13 +62,22 @@ struct _PurpleSmiley
 	GObject parent;
 };
 
+/**
+ * PurpleSmileyClass:
+ * @get_image: gets image contents for a @smiley. May not require
+ *             #PurpleSmiley:path being set. See #purple_smiley_get_image.
+ *
+ * Base class for #PurpleSmiley objects.
+ */
 struct _PurpleSmileyClass
 {
 	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< public >*/
 	PurpleStoredImage * (*get_image)(PurpleSmiley *smiley);
 
+	/*< private >*/
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
 	void (*purple_reserved3)(void);
@@ -73,56 +89,76 @@ G_BEGIN_DECLS
 /**
  * purple_smiley_get_type:
  *
- * Returns: The #GType for a smiley.
+ * Returns: the #GType for a smiley.
  */
 GType
 purple_smiley_get_type(void);
 
-/**************************************************************************/
-/* Smiley API                                                             */
-/**************************************************************************/
-
 /**
  * purple_smiley_new:
- * @shortcut: The smiley shortcut.
- * @path: The image file path.
+ * @shortcut: the smiley shortcut (unescaped).
+ * @path: the smiley image file path.
  *
- * Creates new shortcut, which is ready to display.
+ * Creates new smiley, which is ready to display (its file exists
+ * and is a valid image).
  *
- * Returns: The shortcut.
+ * Returns: the new #PurpleSmiley.
  */
 PurpleSmiley *
 purple_smiley_new(const gchar *shortcut, const gchar *path);
 
 /**
  * purple_smiley_get_shortcut:
- * @smiley: The smiley.
+ * @smiley: the smiley.
  *
- * Returns the smiley's associated shortcut (e.g. "(homer)" or ":-)").
+ * Returns the @smiley's associated shortcut (e.g. <literal>(homer)</literal> or
+ * <literal>:-)</literal>).
  *
- * Returns: The shortcut.
+ * Returns: the unescaped shortcut.
  */
 const gchar *
 purple_smiley_get_shortcut(const PurpleSmiley *smiley);
 
+/**
+ * purple_smiley_is_ready:
+ * @smiley: the smiley.
+ *
+ * Checks, if the @smiley is ready to be displayed. For #PurpleSmiley it's
+ * always %TRUE, but for deriving classes it may vary.
+ *
+ * Being ready means either its #PurpleSmiley:path is set and file exists,
+ * or its contents is available via #purple_smiley_get_image. The latter is
+ * always true, but not always efficient.
+ *
+ * Returns: %TRUE, if the @smiley is ready to be displayed.
+ */
 gboolean
 purple_smiley_is_ready(const PurpleSmiley *smiley);
 
 /**
  * purple_smiley_get_path:
- * @smiley:  The custom smiley.
+ * @smiley: the smiley.
  *
- * Returns a full path to a smiley file.
+ * Returns a full path to a @smiley image file.
  *
- * A smiley may not be saved to disk (the path will be NULL), but could still be
- * accessible using purple_smiley_get_data.
+ * A @smiley may not be saved to disk (the path will be NULL), but could still be
+ * accessible using #purple_smiley_get_data.
  *
- * Returns: A full path to the file, or %NULL under various conditions.
- *          The caller should use g_free to free the returned string.
+ * Returns: a full path to the file, or %NULL if it's not stored to the disk
+ *          or an error occured.
  */
 const gchar *
 purple_smiley_get_path(PurpleSmiley *smiley);
 
+/**
+ * purple_smiley_get_image:
+ * @smiley: the smiley.
+ *
+ * Returns (and possibly loads) the image contents for a @smiley.
+ * If you want to save it, increase a ref count for the returned object.
+ *
+ * Returns: (transfer none): the image contents for a @smiley.
+ */
 PurpleStoredImage *
 purple_smiley_get_image(PurpleSmiley *smiley);
 

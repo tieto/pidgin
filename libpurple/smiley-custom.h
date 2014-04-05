@@ -21,6 +21,13 @@
 
 #ifndef _PURPLE_SMILEY_CUSTOM_H_
 #define _PURPLE_SMILEY_CUSTOM_H_
+/**
+ * SECTION:smiley-custom
+ * @include:smiley-custom.h
+ * @section_id: libpurple-smiley-custom
+ * @short_description: a persistent storage for user-defined smileys
+ * @title: Custom smileys storage
+ */
 
 #include "smiley.h"
 #include "smiley-list.h"

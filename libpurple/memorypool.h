@@ -73,6 +73,12 @@ struct _PurpleMemoryPool
 
 /**
  * PurpleMemoryPoolClass:
+ * @palloc: alloates memory for a specific memory pool subclass,
+ *          see #purple_memory_pool_alloc.
+ * @pfree: frees memory allocated within a pool, see #purple_memory_pool_free.
+ *         May be %NULL.
+ * @cleanup: frees (or marks as unused) all memory allocated within a pool.
+ *           See #purple_memory_pool_cleanup.
  *
  * Base class for #PurpleMemoryPool objects.
  */
@@ -81,10 +87,12 @@ struct _PurpleMemoryPoolClass
 	/*< private >*/
 	GObjectClass parent_class;
 
+	/*< public >*/
 	gpointer (*palloc)(PurpleMemoryPool *pool, gsize size, guint alignment);
 	gpointer (*pfree)(PurpleMemoryPool *pool, gpointer mem);
 	void (*cleanup)(PurpleMemoryPool *pool);
 
+	/*< private >*/
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
 	void (*purple_reserved3)(void);

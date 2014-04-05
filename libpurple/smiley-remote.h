@@ -21,6 +21,13 @@
 
 #ifndef _PURPLE_REMOTE_SMILEY_H_
 #define _PURPLE_REMOTE_SMILEY_H_
+/**
+ * SECTION:smiley-remote
+ * @include:smiley-remote.h
+ * @section_id: libpurple-smiley-remote
+ * @short_description: smileys sent by a remote client
+ * @title: Remote smileys
+ */
 
 #include <glib-object.h>
 

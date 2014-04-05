@@ -21,6 +21,13 @@
 
 #ifndef _PURPLE_SMILEY_LIST_H_
 #define _PURPLE_SMILEY_LIST_H_
+/**
+ * SECTION:smiley-list
+ * @include:smiley-list.h
+ * @section_id: libpurple-smiley-list
+ * @short_description: a collection of smileys
+ * @title: Smiley lists
+ */
 
 #include <glib-object.h>
 
