@@ -1473,9 +1473,6 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 	GSList *list = NULL;
 	GList *smileys, *it;
 	MsnEmoticon *emoticon;
-	int length;
-
-	length = strlen(msg);
 
 	smileys = purple_smiley_find(purple_smiley_custom_get_list(),
 		msg, FALSE);
@@ -2055,8 +2052,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	g_free(msgformat);
 	g_free(msgtext);
 
-	purple_serv_got_chat_in(gc, id, purple_account_get_username(account), flags,
-					 message, time(NULL));
+	purple_serv_got_chat_in(gc, id, username, flags, message, time(NULL));
 
 	return 0;
 }

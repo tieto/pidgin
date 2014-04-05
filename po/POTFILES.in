@@ -226,7 +226,7 @@ pidgin/gtkprivacy.c
 pidgin/gtkrequest.c
 pidgin/gtkroomlist.c
 pidgin/gtksavedstatuses.c
-pidgin/gtksmiley.c
+pidgin/gtksmiley-manager.c
 pidgin/gtksound.c
 pidgin/gtkstatusbox.c
 pidgin/gtkutils.c
@@ -239,7 +239,6 @@ pidgin/pidgin.h
 pidgin/pidginstock.c
 pidgin/pidgintooltip.c
 pidgin/pixmaps/emotes/default/24/default.theme.in
-pidgin/pixmaps/emotes/none/none.theme.in
 pidgin/pixmaps/emotes/small/16/small.theme.in
 pidgin/plugins/cap/cap.c
 pidgin/plugins/contact_priority.c

@@ -157,8 +157,8 @@ pidgin_smiley_theme_index_parse(const gchar *theme_path, gboolean load_contents)
 			continue;
 
 		if (!g_utf8_validate(buff, -1, NULL)) {
-			purple_debug_error("gtksmiley-theme", "%s:%"
-				G_GSIZE_FORMAT " is invalid UTF-8",
+			purple_debug_error("gtksmiley-theme",
+				"%s:%d is invalid UTF-8",
 				index_path, line_no);
 			continue;
 		}
@@ -253,7 +253,7 @@ pidgin_smiley_theme_index_parse(const gchar *theme_path, gboolean load_contents)
 	fclose(file);
 
 	if (inv_frm) {
-		purple_debug_error("gtksmiley-theme", "%s:%" G_GSIZE_FORMAT
+		purple_debug_error("gtksmiley-theme", "%s:%d"
 			" invalid format", index_path, line_no);
 		pidgin_smiley_theme_index_free(index);
 		index = NULL;

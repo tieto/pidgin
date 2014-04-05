@@ -2348,7 +2348,6 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	PidginConversation *gtkconv;
 	PurpleConversation *old_conv;
 	PidginWebView *entry;
-	const char *protocol_name;
 	PurpleConnectionFlags features;
 
 	g_return_if_fail(conv != NULL);
@@ -2373,7 +2372,6 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(gtkconv->win->menu->logging)));
 
 	entry = PIDGIN_WEBVIEW(gtkconv->entry);
-	protocol_name = purple_account_get_protocol_name(purple_conversation_get_account(conv));
 
 	features = purple_conversation_get_features(conv);
 	if (!(features & PURPLE_CONNECTION_FLAG_HTML))

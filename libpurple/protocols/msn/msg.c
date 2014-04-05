@@ -932,7 +932,7 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	MsnObject *obj;
 	char **tokens;
 	char *smile, *body_str;
-	const char *body, *who, *sha1;
+	const char *body, *who; /*, *sha1;*/
 	guint tok;
 	size_t body_len;
 
@@ -971,7 +971,9 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			break;
 
 		who = msn_object_get_creator(obj);
+#if 0
 		sha1 = msn_object_get_sha1(obj);
+#endif
 
 		slplink = msn_session_get_slplink(session, who);
 		if (slplink->swboard != swboard) {
@@ -1009,7 +1011,9 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		msn_object_destroy(obj, FALSE);
 		obj =   NULL;
 		who =   NULL;
+#if 0
 		sha1 = NULL;
+#endif
 	}
 	g_strfreev(tokens);
 }

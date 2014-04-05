@@ -798,9 +798,8 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 		GtkImage *image;
 		guint width;
 		const gchar *smiley_shortcut;
-		const gchar *smiley_path;
 
-		smiley_path = purple_smiley_get_path(smiley);
+		smiley_shortcut = purple_smiley_get_shortcut(smiley);
 
 		width = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(smiley),
 			"pidgin-webviewtoolbar-button-width"));
@@ -813,8 +812,6 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 		}
 
 		image = GTK_IMAGE(gtk_image_new_from_pixbuf(pixbuf));
-
-		smiley_shortcut = purple_smiley_get_shortcut(smiley);
 
 		button = gtk_button_new();
 		gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
