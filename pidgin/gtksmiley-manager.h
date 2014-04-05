@@ -16,18 +16,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
 #ifndef _PIDGIN_SMILEY_MANAGER_H_
 #define _PIDGIN_SMILEY_MANAGER_H_
+/**
+ * SECTION:gtksmiley-manager
+ * @include:gtksmiley-manager.h
+ * @section_id: pidgin-smiley-manager
+ * @short_description: a UI for user-defined smileys management
+ * @title: Custom smileys manager
+ *
+ * This module provides a GTK+ UI that allows the user adding and removing
+ * custom smileys. See libpurple-smiley-custom section (TODO: how to link this
+ * to libpurple's docs?).
+ */
 
 G_BEGIN_DECLS
 
 /**
  * pidgin_smiley_manager_show:
  *
- * Displays the Smiley Manager Window
+ * Creates and shows the smiley manager window, or requests focus for it,
+ * if it's already opened.
  */
 void pidgin_smiley_manager_show(void);
 
