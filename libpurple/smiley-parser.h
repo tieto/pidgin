@@ -27,26 +27,64 @@
  * @section_id: libpurple-smiley-parser
  * @short_description: a efficient smiley processor
  * @title: Smiley parser
+ *
+ * This module is a fast and easy method for searching (and optionally replacing)
+ * #PurpleSmiley's in a text. It may use all suitable smiley sets to smileyify
+ * the message in one step. The priority if always the following: remote
+ * smileys > local custom smileys > theme smileys.
  */
 
 #include "purple.h"
 
+/**
+ * PurpleSmileyParseCb:
+ * @out: the message buffer.
+ * @smiley: found smiley.
+ * @conv: the conversation of a message.
+ * @ui_data: the data being passed to #purple_smiley_parse.
+ *
+ * A replace callback for the found @smiley. It should append a HTML tag
+ * representing the @smiley to the @out string. It must not modify the
+ * @out string in other way than appending to its end.
+ */
 typedef void (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer ui_data);
 
-/* XXX: this shouldn't be a conv for incoming messages - see
- * PurpleConversationPrivate#remote_smileys.
- * For outgoing, we could pass conv in ui_data (or something).
- * Or maybe we should use two distinct functions?
+/**
+ * purple_smiley_parse:
+ * @conv: the conversation of a message.
+ * @html_message: the html message, or escaped plain message.
+ * @use_remote_smileys: %TRUE if remote smileys of @conv should be parsed.
+ * @cb: the callback to replace smiley text with an image.
+ * @ui_data: the user data to be passed to @cb and
+ *           #purple_smiley_theme_get_smileys.
  *
- * @ui_data is passed to @cb and #purple_smiley_theme_get_smileys.
+ * Replaces all textual smiley representations with proper smiley images.
  *
- * @use_remote_smileys should be TRUE for incoming messages, FALSE for outgoing.
+ * The @use_remote_smileys parameter should be %TRUE for incoming messages,
+ * %FALSE for outgoing.
+ *
+ * Returns: (transfer full): the smileyifed message. Should be #g_free'd when
+ *          done using it. Returns %NULL if and only if @html_message was %NULL.
  */
 gchar *
 purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data);
 
+/**
+ * purple_smiley_find:
+ * @smileys: the list of smileys to find.
+ * @message: the message.
+ * @is_html: %TRUE if the message is HTML, %FALSE if it's plain, unescaped.
+ *
+ * Searches for all smileys from the @smileys list present in @message.
+ * Each smiley is returned only once, regardless how many times it appeared in
+ * text. However, distinct smileys may share common image file (thus, their
+ * paths will be the same).
+ *
+ * Returns: (transfer container): the #GList of found smileys. Use #g_list_free
+ *          when no longer need it.
+ */
 GList *
 purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
 	gboolean is_html);

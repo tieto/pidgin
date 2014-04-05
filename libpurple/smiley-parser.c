@@ -44,6 +44,12 @@ static gboolean purple_smiley_parse_cb(GString *out, const gchar *word,
 	return TRUE;
 }
 
+/* XXX: this shouldn't be a conv for incoming messages - see
+ * PurpleConversationPrivate.remote_smileys.
+ * For outgoing messages, we could pass conv in ui_data (or something).
+ * Or maybe we should use two distinct functions?
+ * To be reconsidered when we had PurpleDude-like objects.
+ */
 gchar *
 purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data)
