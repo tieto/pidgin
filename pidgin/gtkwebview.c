@@ -108,6 +108,9 @@ typedef struct _PidginWebViewPriv {
 	/* WebKit inspector */
 	WebKitWebView *inspector_view;
 	GtkWindow *inspector_win;
+
+	/* Resources cache */
+	GHashTable *loaded_images;
 } PidginWebViewPriv;
 
 /******************************************************************************
@@ -194,6 +197,48 @@ webview_resource_loading(WebKitWebView *webview,
 			g_free(tmp);
 		}
 	}
+}
+
+static void
+webview_resource_loaded(WebKitWebView *web_view, WebKitWebFrame *web_frame,
+	WebKitWebResource *web_resource, gpointer user_data)
+{
+	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(web_view);
+	const gchar *uri;
+	GString *data;
+	PurpleStoredImage *image;
+
+	if (!purple_str_has_caseprefix(
+		webkit_web_resource_get_mime_type(web_resource), "image/"))
+	{
+		return;
+	}
+
+	uri = webkit_web_resource_get_uri(web_resource);
+	if (g_hash_table_lookup(priv->loaded_images, uri))
+		return;
+
+	data = webkit_web_resource_get_data(web_resource);
+	if (data->len == 0)
+		return;
+
+	/* TODO: we could avoid copying data, if uri is a
+	 * PURPLE_STORED_IMAGE_PROTOCOL or PURPLE_STOCK_IMAGE_PROTOCOL */
+	image = purple_imgstore_new(g_memdup(data->str, data->len),
+		data->len, NULL);
+	g_return_if_fail(image != NULL);
+
+	g_hash_table_insert(priv->loaded_images, g_strdup(uri), image);
+}
+
+static PurpleStoredImage *
+webview_resource_get_loaded(WebKitWebView *web_view, const gchar *uri)
+{
+	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(web_view);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return g_hash_table_lookup(priv->loaded_images, uri);
 }
 
 static void
@@ -516,31 +561,107 @@ get_unicode_menu(WebKitWebView *webview)
 }
 
 static void
+webview_image_saved(GtkWidget *dialog, gint response, gpointer _unused)
+{
+	PurpleStoredImage *image;
+	gchar *filename;
+	GError *error = NULL;
+
+	if (response != GTK_RESPONSE_ACCEPT) {
+		gtk_widget_destroy(dialog);
+		return;
+	}
+
+	image = g_object_get_data(G_OBJECT(dialog), "pidgin-gtkwebview-image");
+	g_return_if_fail(image != NULL);
+
+	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+	g_return_if_fail(filename != NULL);
+	g_return_if_fail(filename[0] != '\0');
+
+	g_file_set_contents(filename, purple_imgstore_get_data(image),
+		purple_imgstore_get_size(image), &error);
+	if (error) {
+		purple_debug_error("gtkwebview", "Failed saving image: %s",
+			error->message);
+		/* TODO: we should display a notification here */
+	}
+
+	g_free(filename);
+	gtk_widget_destroy(dialog);
+}
+
+static void
+webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
+{
+	const gchar *src = webkit_dom_html_image_element_get_src(image_node);
+	WebKitWebView *webview;
+	PurpleStoredImage *image;
+	GtkFileChooserDialog *dialog;
+	gchar *filename;
+	GtkWidget *parent;
+
+	webview = g_object_get_data(G_OBJECT(image_node), "pidgin-gtkwebview");
+	g_return_if_fail(webview != NULL);
+
+	image = webview_resource_get_loaded(webview, src);
+	g_return_if_fail(image != NULL);
+
+	parent = gtk_widget_get_ancestor(item, GTK_TYPE_WINDOW);
+	dialog = GTK_FILE_CHOOSER_DIALOG(gtk_file_chooser_dialog_new(
+		_("Save Image"),
+		parent ? GTK_WINDOW(parent) : NULL,
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+		NULL));
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+
+	/* TODO: use image's file name, if there is one */
+	filename = g_strdup_printf(_("image.%s"),
+		purple_imgstore_get_extension(image));
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
+	g_free(filename);
+
+	g_signal_connect(G_OBJECT(dialog), "response",
+		G_CALLBACK(webview_image_saved), NULL);
+
+	purple_imgstore_ref(image);
+	g_object_set_data_full(G_OBJECT(dialog), "pidgin-gtkwebview-image",
+		image, (GDestroyNotify)purple_imgstore_unref);
+
+	gtk_widget_show(GTK_WIDGET(dialog));
+}
+
+static void
 do_popup_menu(WebKitWebView *webview, int button, int time, int context,
               WebKitDOMNode *node, const char *uri)
 {
 	GtkWidget *menu;
 	GtkWidget *cut, *copy, *paste, *delete, *select;
+	gboolean show_clipboard = TRUE;
+	WebKitDOMHTMLImageElement *image_node = NULL;
 
 	menu = gtk_menu_new();
 	g_signal_connect(menu, "selection-done",
 	                 G_CALLBACK(gtk_widget_destroy), NULL);
 
-	if ((context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK)
-	 && !(context & WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION)) {
+	if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
 		PidginWebViewProtocol *proto = NULL;
 		GList *children;
+		WebKitDOMNode *link_node = node;
 
-		while (node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(node)) {
-			node = webkit_dom_node_get_parent_node(node);
+		while (link_node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(link_node)) {
+			link_node = webkit_dom_node_get_parent_node(node);
 		}
 
-		if (uri && node)
+		if (uri && link_node)
 			proto = webview_find_protocol(uri, FALSE);
 
 		if (proto && proto->context_menu) {
 			proto->context_menu(PIDGIN_WEBVIEW(webview),
-			                    WEBKIT_DOM_HTML_ANCHOR_ELEMENT(node), menu);
+			                    WEBKIT_DOM_HTML_ANCHOR_ELEMENT(link_node), menu);
 		}
 
 		children = gtk_container_get_children(GTK_CONTAINER(menu));
@@ -554,7 +675,58 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		}
 		gtk_widget_show_all(menu);
 
-	} else {
+		show_clipboard = FALSE;
+	}
+
+	if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE) {
+		WebKitDOMNode *_image_node = node;
+
+		while (_image_node && !WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(_image_node)) {
+			_image_node = webkit_dom_node_get_parent_node(_image_node);
+		}
+		if (_image_node)
+			image_node = WEBKIT_DOM_HTML_IMAGE_ELEMENT(_image_node);
+		/* don't do it on our theme smileys */
+	}
+	if (image_node && webkit_dom_html_image_element_get_complete(image_node)) {
+		GtkWidget *menu_item;
+		int width, height;
+
+		width = webkit_dom_html_image_element_get_width(image_node);
+		height = webkit_dom_html_image_element_get_height(image_node);
+
+		/* XXX */
+		g_object_set_data(G_OBJECT(image_node), "pidgin-gtkwebview", webview);
+
+		menu_item = gtk_image_menu_item_new_with_mnemonic(
+			_("_Save Image..."));
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
+			gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
+		g_signal_connect_object(G_OBJECT(menu_item), "activate",
+			G_CALLBACK(webview_image_save), image_node, 0);
+		gtk_widget_show(menu_item);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+#if 0
+		/* TODO */
+		if (width <= 96 && height <= 96) {
+			menu_item = gtk_image_menu_item_new_with_mnemonic(
+				_("_Add Custom Smiley..."));
+			gtk_image_menu_item_set_image(
+				GTK_IMAGE_MENU_ITEM(menu_item),
+				gtk_image_new_from_stock(GTK_STOCK_ADD,
+					GTK_ICON_SIZE_MENU));
+			g_signal_connect(G_OBJECT(item), "activate",
+				G_CALLBACK(), save);
+			gtk_widget_show(menu_item);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		}
+#endif
+
+		show_clipboard = FALSE;
+	}
+
+	if (show_clipboard) {
 		/* Using connect_swapped means we don't need any wrapper functions */
 		cut = pidgin_new_item_from_stock(menu, _("Cu_t"), GTK_STOCK_CUT,
 		                                 NULL, NULL, 0, 0, NULL);
@@ -928,6 +1100,8 @@ pidgin_webview_finalize(GObject *webview)
 	}
 	g_queue_free(priv->load_queue);
 
+	g_hash_table_destroy(priv->loaded_images);
+
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
 
@@ -1090,11 +1264,17 @@ pidgin_webview_init(PidginWebView *webview, gpointer userdata)
 	g_signal_connect(G_OBJECT(webview), "resource-request-starting",
 	                 G_CALLBACK(webview_resource_loading), NULL);
 
+	g_signal_connect(G_OBJECT(webview), "resource-load-finished",
+		G_CALLBACK(webview_resource_loaded), NULL);
+
 	inspector = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(webview));
 	g_signal_connect(G_OBJECT(inspector), "inspect-web-view",
 		G_CALLBACK(webview_inspector_create), NULL);
 	g_signal_connect(G_OBJECT(inspector), "show-window",
 		G_CALLBACK(webview_inspector_show), webview);
+
+	priv->loaded_images = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, (GDestroyNotify)purple_imgstore_unref);
 }
 
 GType
