@@ -33,13 +33,13 @@ typedef struct {
 	GString *contents;
 	PurpleStoredImage *image; /* it's not the same as in parent */
 
-	gboolean failed;
+	gboolean has_failed;
 } PurpleRemoteSmileyPrivate;
 
 enum
 {
 	PROP_0,
-	PROP_FAILED,
+	PROP_HAS_FAILED,
 	PROP_LAST
 };
 
@@ -66,7 +66,7 @@ purple_remote_smiley_write(PurpleRemoteSmiley *smiley, const guchar *data,
 		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
 
 	g_return_if_fail(priv != NULL);
-	g_return_if_fail(!priv->failed);
+	g_return_if_fail(!priv->has_failed);
 	g_return_if_fail(!purple_smiley_is_ready(PURPLE_SMILEY(smiley)));
 	g_return_if_fail(data != NULL || size == 0);
 
@@ -83,7 +83,7 @@ purple_remote_smiley_close(PurpleRemoteSmiley *smiley)
 		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
 
 	g_return_if_fail(priv != NULL);
-	g_return_if_fail(!priv->failed);
+	g_return_if_fail(!priv->has_failed);
 	g_return_if_fail(!purple_smiley_is_ready(PURPLE_SMILEY(smiley)));
 	g_return_if_fail(priv->contents != NULL);
 	g_return_if_fail(priv->image == NULL);
@@ -113,11 +113,11 @@ purple_remote_smiley_failed(PurpleRemoteSmiley *smiley)
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(!purple_smiley_is_ready(PURPLE_SMILEY(smiley)));
 
-	if (priv->failed)
+	if (priv->has_failed)
 		return;
 
-	priv->failed = TRUE;
-	g_object_notify_by_pspec(G_OBJECT(smiley), properties[PROP_FAILED]);
+	priv->has_failed = TRUE;
+	g_object_notify_by_pspec(G_OBJECT(smiley), properties[PROP_HAS_FAILED]);
 	g_signal_emit(smiley, signals[SIG_FAILED], 0);
 }
 
@@ -153,7 +153,7 @@ purple_remote_smiley_init(GTypeInstance *instance, gpointer klass)
 		PURPLE_REMOTE_SMILEY_GET_PRIVATE(smiley);
 
 	priv->contents = g_string_new(NULL);
-	priv->failed = FALSE;
+	priv->has_failed = FALSE;
 }
 
 static void
@@ -179,8 +179,8 @@ purple_remote_smiley_get_property(GObject *object, guint par_id, GValue *value,
 	PurpleRemoteSmileyPrivate *priv = PURPLE_REMOTE_SMILEY_GET_PRIVATE(remote_smiley);
 
 	switch (par_id) {
-		case PROP_FAILED:
-			g_value_set_boolean(value, priv->failed);
+		case PROP_HAS_FAILED:
+			g_value_set_boolean(value, priv->has_failed);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
@@ -204,12 +204,19 @@ purple_remote_smiley_class_init(PurpleRemoteSmileyClass *klass)
 
 	gobj_class->get_property = purple_remote_smiley_get_property;
 
-	properties[PROP_FAILED] = g_param_spec_boolean("failed", "Failed",
-		"The remote host has failed to send the smiley", FALSE,
-		G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_HAS_FAILED] = g_param_spec_boolean("has-failed",
+		"Has hailed", "The remote host has failed to send the smiley",
+		FALSE, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 
+	/**
+	 * PurpleRemoteSmiley::failed:
+	 * @smiley: a smiley that failed to transfer.
+	 *
+	 * Called when a @smiley fails to be transferred. It's guaranteed to be
+	 * fired at most once for a particular @smiley.
+	 */
 	signals[SIG_FAILED] = g_signal_new("failed", G_OBJECT_CLASS_TYPE(klass),
 		0, 0, NULL, NULL,
 		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);

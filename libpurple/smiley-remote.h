@@ -27,6 +27,15 @@
  * @section_id: libpurple-smiley-remote
  * @short_description: smileys sent by a remote client
  * @title: Remote smileys
+ *
+ * A #PurpleRemoteSmiley is quite handy, if you have received the message with
+ * custom remote smileys, but haven't received smileys yet. Obviously, it also
+ * fits for protocols, where a smiley image contents is sent with the message
+ * and is accessible without a delay - it does not require storing any temporary
+ * files to the disk.
+ *
+ * It handles received image data by storing it in its internal buffer and
+ * creates image object when needed.
  */
 
 #include <glib-object.h>
@@ -48,6 +57,9 @@ typedef struct _PurpleRemoteSmileyClass PurpleRemoteSmileyClass;
  * PurpleRemoteSmiley:
  *
  * A smiley that was sent by remote client, most probably your buddy.
+ *
+ * It shouldn't be created directly. Instead, use
+ * #purple_conversation_add_remote_smiley.
  */
 struct _PurpleRemoteSmiley
 {
@@ -55,6 +67,11 @@ struct _PurpleRemoteSmiley
 	PurpleSmiley parent;
 };
 
+/**
+ * PurpleRemoteSmileyClass:
+ *
+ * Base class for #PurpleRemoteSmiley objects.
+ */
 struct _PurpleRemoteSmileyClass
 {
 	/*< private >*/
@@ -71,22 +88,42 @@ G_BEGIN_DECLS
 /**
  * purple_remote_smiley_get_type:
  *
- * Returns: The #GType for a remote smiley.
+ * Returns: the #GType for a remote smiley.
  */
 GType
 purple_remote_smiley_get_type(void);
 
-/******************************************************************************
- * Remote smiley API
- ******************************************************************************/
-
+/**
+ * purple_remote_smiley_write:
+ * @smiley: the remote smiley.
+ * @data: the buffer with image data chunk.
+ * @size: the size of image contents stored in @data.
+ *
+ * Writes next chunk of image data to the receive buffer.
+ */
 void
 purple_remote_smiley_write(PurpleRemoteSmiley *smiley, const guchar *data,
 	gsize size);
 
+/**
+ * purple_remote_smiley_close:
+ * @smiley: the remote smiley.
+ *
+ * Called when all image data was already written using
+ * #purple_remote_smiley_write and image is ready to be processed.
+ */
 void
 purple_remote_smiley_close(PurpleRemoteSmiley *smiley);
 
+/**
+ * purple_remote_smiley_failed:
+ * @smiley: the remote smiley.
+ *
+ * Called when the transfer of image data has failed. This invalidates @smiley
+ * object, which cannot be used anymore. It's removed from the #PurpleSmileyList
+ * containing it (depending on its configuration), so the smiley can be
+ * retrieved again.
+ */
 void
 purple_remote_smiley_failed(PurpleRemoteSmiley *smiley);
 
