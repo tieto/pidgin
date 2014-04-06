@@ -41,7 +41,19 @@ G_BEGIN_DECLS
  * Creates and shows the smiley manager window, or requests focus for it,
  * if it's already opened.
  */
-void pidgin_smiley_manager_show(void);
+void
+pidgin_smiley_manager_show(void);
+
+/**
+ * pidgin_smiley_manager_add:
+ * @image: the image for a new smiley.
+ * @shortcut: the textual representation, may be %NULL.
+ *
+ * Creates and shows the new dialog for adding a new custom smiley with
+ * provided image.
+ */
+void
+pidgin_smiley_manager_add(PurpleStoredImage *image, const gchar *shortcut);
 
 G_END_DECLS
 

@@ -24,10 +24,12 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "pidgin.h"
+#include "pidginstock.h"
 
 #include <gdk/gdkkeysyms.h>
 
 #include "gtkutils.h"
+#include "gtksmiley-manager.h"
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
 
@@ -594,7 +596,7 @@ webview_image_saved(GtkWidget *dialog, gint response, gpointer _unused)
 static void
 webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 {
-	const gchar *src = webkit_dom_html_image_element_get_src(image_node);
+	const gchar *src;
 	WebKitWebView *webview;
 	PurpleStoredImage *image;
 	GtkFileChooserDialog *dialog;
@@ -604,6 +606,7 @@ webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 	webview = g_object_get_data(G_OBJECT(image_node), "pidgin-gtkwebview");
 	g_return_if_fail(webview != NULL);
 
+	src = webkit_dom_html_image_element_get_src(image_node); /* XXX: a leak or not? */
 	image = webview_resource_get_loaded(webview, src);
 	g_return_if_fail(image != NULL);
 
@@ -632,6 +635,24 @@ webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 		image, (GDestroyNotify)purple_imgstore_unref);
 
 	gtk_widget_show(GTK_WIDGET(dialog));
+}
+
+static void
+webview_image_add_smiley(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
+{
+	const gchar *src;
+	WebKitWebView *webview;
+	PurpleStoredImage *image;
+
+	src = webkit_dom_html_image_element_get_src(image_node);
+	webview = g_object_get_data(G_OBJECT(image_node), "pidgin-gtkwebview");
+	g_return_if_fail(webview != NULL);
+
+	image = webview_resource_get_loaded(webview, src);
+	g_return_if_fail(image != NULL);
+
+	pidgin_smiley_manager_add(image,
+		webkit_dom_html_image_element_get_alt(image_node));
 }
 
 static void
@@ -707,8 +728,7 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		gtk_widget_show(menu_item);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 
-#if 0
-		/* TODO */
+		/* TODO: check, if it's not *our* custom smiley (use css) */
 		if (width <= 96 && height <= 96) {
 			menu_item = gtk_image_menu_item_new_with_mnemonic(
 				_("_Add Custom Smiley..."));
@@ -716,12 +736,12 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 				GTK_IMAGE_MENU_ITEM(menu_item),
 				gtk_image_new_from_stock(GTK_STOCK_ADD,
 					GTK_ICON_SIZE_MENU));
-			g_signal_connect(G_OBJECT(item), "activate",
-				G_CALLBACK(), save);
+			g_signal_connect_object(G_OBJECT(menu_item), "activate",
+				G_CALLBACK(webview_image_add_smiley),
+				image_node, 0);
 			gtk_widget_show(menu_item);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		}
-#endif
 
 		show_clipboard = FALSE;
 	}
@@ -787,8 +807,8 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 
 		pidgin_separator(menu);
 
-		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"), NULL,
-		                                     NULL, NULL, 0, 0, NULL);
+		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"),
+			PIDGIN_STOCK_DEBUG, NULL, NULL, 0, 0, NULL);
 		g_signal_connect_data(G_OBJECT(inspect), "activate",
 		                      G_CALLBACK(webview_inspector_inspect_element),
 		                      data, (GClosureNotify)g_free, 0);

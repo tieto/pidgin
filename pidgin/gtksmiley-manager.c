@@ -149,6 +149,13 @@ edit_dialog_set_image(SmileyEditDialog *edit_dialog,
 }
 
 static void
+edit_dialog_set_shortcut(SmileyEditDialog *edit_dialog,
+	const gchar *shortcut)
+{
+	gtk_entry_set_text(edit_dialog->shortcut, shortcut ? shortcut : "");
+}
+
+static void
 edit_dialog_image_choosen(const char *filename, gpointer _edit_dialog)
 {
 	PurpleStoredImage *image;
@@ -319,7 +326,8 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 
 	edit_dialog->window = GTK_DIALOG(gtk_dialog_new_with_buttons(
 		smiley ? _("Edit Smiley") : _("Add Smiley"),
-		GTK_WINDOW(manager->window), GTK_DIALOG_DESTROY_WITH_PARENT,
+		manager ? GTK_WINDOW(manager->window) : NULL,
+		GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 		NULL));
@@ -443,6 +451,22 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 
 	return edit_dialog;
 }
+
+void
+pidgin_smiley_manager_add(PurpleStoredImage *image, const gchar *shortcut)
+{
+	SmileyEditDialog *edit_dialog;
+
+	g_return_if_fail(image != NULL);
+
+	purple_imgstore_ref(image);
+
+	edit_dialog = edit_dialog_show(NULL, NULL);
+	edit_dialog_set_shortcut(edit_dialog, shortcut);
+	if (!edit_dialog_set_image(edit_dialog, image))
+		gtk_widget_destroy(GTK_WIDGET(edit_dialog->window));
+}
+
 
 /*******************************************************************************
  * Custom smiley list Drag-and-drop support.
@@ -708,7 +732,6 @@ manager_list_create(SmileyManager *manager)
 /*******************************************************************************
  * Custom smiley manager window.
  ******************************************************************************/
-
 
 static void
 manager_select_cb(GtkWidget *widget, gint resp, SmileyManager *manager)
