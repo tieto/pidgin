@@ -195,6 +195,8 @@ struct _PurpleConversationClass {
 #include "buddyicon.h"
 #include "e2ee.h"
 #include "log.h"
+#include "smiley-list.h"
+#include "smiley-remote.h"
 
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
@@ -236,9 +238,6 @@ struct _PurpleConversationClass {
  * @has_focus: If this UI has a concept of focus (as in a windowing system) and
  *             this conversation has the focus, return %TRUE; otherwise, return
  *             %FALSE.
- * @custom_smiley_add: Add a custom smiley
- * @custom_smiley_write: Write a custom smiley
- * @custom_smiley_close: Close a custom smiley
  * @send_confirm: Prompt the user for confirmation to send @message. This
  *                function should arrange for the message to be sent if the user
  *                accepts. If this field is %NULL, libpurple will fall back to
@@ -282,12 +281,6 @@ struct _PurpleConversationUiOps
 
 	void (*present)(PurpleConversation *conv);
 	gboolean (*has_focus)(PurpleConversation *conv);
-
-	gboolean (*custom_smiley_add)(PurpleConversation *conv, const char *smile,
-	                            gboolean remote);
-	void (*custom_smiley_write)(PurpleConversation *conv, const char *smile,
-	                            const guchar *data, gsize size);
-	void (*custom_smiley_close)(PurpleConversation *conv, const char *smile);
 
 	void (*send_confirm)(PurpleConversation *conv, const char *message);
 
@@ -643,58 +636,6 @@ gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
 void purple_conversation_send_confirm(PurpleConversation *conv, const char *message);
 
 /**
- * purple_conversation_custom_smiley_add:
- * @conv: The conversation to associate the smiley with.
- * @smile: The text associated with the smiley
- * @cksum_type: The type of checksum.
- * @chksum: The checksum, as a NUL terminated base64 string.
- * @remote: %TRUE if the custom smiley is set by the remote user (buddy).
- *
- * Adds a smiley to the conversation's smiley tree. If this returns
- * %TRUE you should call purple_conversation_custom_smiley_write() one or more
- * times, and then purple_conversation_custom_smiley_close(). If this returns
- * %FALSE, either the conv or smile were invalid, or the icon was
- * found in the cache. In either case, calling write or close would
- * be an error.
- *
- * Returns:      %TRUE if an icon is expected, else FALSE. Note that
- *              it is an error to never call purple_conversation_custom_smiley_close if
- *              this function returns %TRUE, but an error to call it if
- *              %FALSE is returned.
- */
-
-gboolean purple_conversation_custom_smiley_add(PurpleConversation *conv, const char *smile,
-                                      const char *cksum_type, const char *chksum,
-									  gboolean remote);
-
-/**
- * purple_conversation_custom_smiley_write:
- * @conv: The conversation associated with the smiley.
- * @smile: The text associated with the smiley.
- * @data: The actual image data.
- * @size: The length of the data.
- *
- * Updates the image associated with the current smiley.
- */
-
-void purple_conversation_custom_smiley_write(PurpleConversation *conv,
-                                   const char *smile,
-                                   const guchar *data,
-                                   gsize size);
-
-/**
- * purple_conversation_custom_smiley_close:
- * @conv: The purple conversation associated with the smiley.
- * @smile: The text associated with the smiley
- *
- * Close the custom smiley, all data has been written with
- * purple_conversation_custom_smiley_write, and it is no longer valid
- * to call that function on that smiley.
- */
-
-void purple_conversation_custom_smiley_close(PurpleConversation *conv, const char *smile);
-
-/**
  * purple_conversation_get_extended_menu:
  * @conv: The conversation.
  *
@@ -733,6 +674,49 @@ gboolean purple_conversation_do_command(PurpleConversation *conv,
  */
 gssize
 purple_conversation_get_max_message_size(PurpleConversation *conv);
+
+/**
+ * purple_conversation_add_remote_smiley:
+ * @conv: The conversation that receives new smiley.
+ * @shortcut: The shortcut for the new smiley.
+ *
+ * Adds new smiley to the list of remote smileys for this conversation.
+ * The smiley have to be written and closed, when data is ready.
+ *
+ * Returns: (transfer none): New smiley, or %NULL if it's already being
+ *          retrieved (or possibly, in case of error).
+ */
+PurpleRemoteSmiley *
+purple_conversation_add_remote_smiley(PurpleConversation *conv,
+	const gchar *shortcut);
+
+/**
+ * purple_conversation_get_remote_smiley:
+ * @conv: The conversation.
+ * @shortcut: The shortcut.
+ *
+ * Lookups for the remote smiley previously added to this conversation.
+ *
+ * You may use this function when you receive the smiley data, but it's
+ * better just to store and use the reference returned by
+ * #purple_conversation_add_remote_smiley.
+ *
+ * Returns: (transfer none): The smiley, or %NULL if it doesn't exists.
+ */
+PurpleRemoteSmiley *
+purple_conversation_get_remote_smiley(PurpleConversation *conv,
+	const gchar *shortcut);
+
+/**
+ * purple_conversation_get_remote_smileys:
+ * @conv: The conversation.
+ *
+ * Get all remote smileys previously added to this conversation.
+ *
+ * Returns: (transfer none): The list of remote smileys.
+ */
+PurpleSmileyList *
+purple_conversation_get_remote_smileys(PurpleConversation *conv);
 
 /**************************************************************************/
 /* Conversation Helper API                                                */

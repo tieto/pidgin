@@ -53,6 +53,7 @@ typedef struct
 	PurpleMemoryPool *records_str_mempool;
 	PurpleMemoryPool *records_obj_mempool;
 	PurpleTrieRecordList *records;
+	GHashTable *records_map;
 	gsize records_total_size;
 
 	PurpleMemoryPool *states_mempool;
@@ -61,7 +62,7 @@ typedef struct
 
 struct _PurpleTrieRecord
 {
-	const gchar *word;
+	gchar *word;
 	guint word_len;
 	gpointer data;
 };
@@ -93,6 +94,7 @@ typedef struct
 	gboolean reset_on_match;
 
 	PurpleTrieReplaceCb replace_cb;
+	PurpleTrieFindCb find_cb;
 	gpointer user_data;
 } PurpleTrieMachine;
 
@@ -397,7 +399,7 @@ purple_trie_states_build(PurpleTrie *trie)
  ******************************************************************************/
 
 static void
-purple_trie_replace_advance(PurpleTrieMachine *m, const guchar character)
+purple_trie_advance(PurpleTrieMachine *m, const guchar character)
 {
 	/* change state after processing a character */
 	while (TRUE) {
@@ -439,10 +441,33 @@ purple_trie_replace_do_replacement(PurpleTrieMachine *m, GString *out)
 	if (!was_replaced)
 		out->len = str_old_len;
 
+	/* XXX */
 	if (was_replaced || m->reset_on_match)
 		m->state = m->root_state;
 
 	return was_replaced;
+}
+
+static gboolean
+purple_trie_find_do_discovery(PurpleTrieMachine *m)
+{
+	gboolean was_accepted;
+
+	/* if we reached a "found" state, let's process it */
+	if (!m->state->found_word)
+		return FALSE;
+
+	if (m->find_cb) {
+		was_accepted = m->find_cb(m->state->found_word->word,
+			m->state->found_word->data, m->user_data);
+	} else {
+		was_accepted = TRUE;
+	}
+
+	if (was_accepted && m->reset_on_match)
+		m->state = m->root_state;
+
+	return was_accepted;
 }
 
 gchar *
@@ -474,7 +499,7 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 		guchar character = src[i++];
 		gboolean was_replaced;
 
-		purple_trie_replace_advance(&machine, character);
+		purple_trie_advance(&machine, character);
 		was_replaced = purple_trie_replace_do_replacement(&machine, out);
 
 		/* We skipped a character without finding any records,
@@ -533,7 +558,7 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
 
 		/* Advance every machine and possibly perform a replacement. */
 		for (m_idx = 0; m_idx < tries_count; m_idx++) {
-			purple_trie_replace_advance(&machines[m_idx], character);
+			purple_trie_advance(&machines[m_idx], character);
 			if (was_replaced)
 				continue;
 			was_replaced = purple_trie_replace_do_replacement(
@@ -558,20 +583,63 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
 	return g_string_free(out, FALSE);
 }
 
+gulong
+purple_trie_find(PurpleTrie *trie, const gchar *src,
+	PurpleTrieFindCb find_cb, gpointer user_data)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+	PurpleTrieMachine machine;
+	gulong found_count = 0;
+	gsize i;
+
+	if (src == NULL)
+		return 0;
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	purple_trie_states_build(trie);
+
+	machine.state = priv->root_state;
+	machine.root_state = priv->root_state;
+	machine.reset_on_match = priv->reset_on_match;
+	machine.find_cb = find_cb;
+	machine.user_data = user_data;
+
+	i = 0;
+	while (src[i] != '\0') {
+		guchar character = src[i++];
+		gboolean was_found;
+
+		purple_trie_advance(&machine, character);
+
+		was_found = purple_trie_find_do_discovery(&machine);
+
+		if (was_found)
+			found_count++;
+	}
+
+	return found_count;
+}
+
 
 /*******************************************************************************
  * Records
  ******************************************************************************/
 
-void
+gboolean
 purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
 	PurpleTrieRecord *rec;
 
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(word != NULL);
-	g_return_if_fail(word[0] != '\0');
+	g_return_val_if_fail(priv != NULL, FALSE);
+	g_return_val_if_fail(word != NULL, FALSE);
+	g_return_val_if_fail(word[0] != '\0', FALSE);
+
+	if (g_hash_table_lookup(priv->records_map, word) != NULL) {
+		purple_debug_warning("trie", "record exists: %s", word);
+		return FALSE;
+	}
 
 	/* Every change in a trie invalidates longest_suffix map.
 	 * These prefixes could be updated instead of cleaning the whole graph.
@@ -588,7 +656,47 @@ purple_trie_add(PurpleTrie *trie, const gchar *word, gpointer data)
 	priv->records_total_size += rec->word_len;
 	priv->records = purple_record_list_prepend(priv->records_obj_mempool,
 		priv->records, rec);
+	g_hash_table_insert(priv->records_map, rec->word, priv->records);
+
+	return TRUE;
 }
+
+void
+purple_trie_remove(PurpleTrie *trie, const gchar *word)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+	PurpleTrieRecordList *it;
+
+	g_return_if_fail(priv != NULL);
+	g_return_if_fail(word != NULL);
+	g_return_if_fail(word[0] != '\0');
+
+	it = g_hash_table_lookup(priv->records_map, word);
+	if (it == NULL)
+		return;
+
+	/* see purple_trie_add */
+	purple_trie_states_cleanup(trie);
+
+	priv->records_total_size -= it->rec->word_len;
+	priv->records = purple_record_list_remove(priv->records, it);
+	g_hash_table_remove(priv->records_map, it->rec->word);
+
+	purple_memory_pool_free(priv->records_str_mempool, it->rec->word);
+	purple_memory_pool_free(priv->records_obj_mempool, it->rec);
+	purple_memory_pool_free(priv->records_obj_mempool, it);
+}
+
+guint
+purple_trie_get_size(PurpleTrie *trie)
+{
+	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return g_hash_table_size(priv->records_map);
+}
+
 
 /*******************************************************************************
  * API implementation
@@ -636,6 +744,8 @@ purple_trie_init(GTypeInstance *instance, gpointer klass)
 	priv->states_mempool = purple_memory_pool_new();
 	purple_memory_pool_set_block_size(priv->states_mempool,
 		PURPLE_TRIE_STATES_SMALL_POOL_BLOCK_SIZE);
+
+	priv->records_map = g_hash_table_new(g_str_hash, g_str_equal);
 }
 
 static void
@@ -643,6 +753,7 @@ purple_trie_finalize(GObject *obj)
 {
 	PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(obj);
 
+	g_hash_table_destroy(priv->records_map);
 	g_object_unref(priv->records_obj_mempool);
 	g_object_unref(priv->records_str_mempool);
 	g_object_unref(priv->states_mempool);
@@ -698,8 +809,11 @@ purple_trie_class_init(PurpleTrieClass *klass)
 	properties[PROP_RESET_ON_MATCH] = g_param_spec_boolean("reset-on-match",
 		"Reset on match", "Determines, if the search state machine "
 		"should be reset to the initial state on every match. This "
-		"ensures, that every match is distinct from each other.", TRUE,
-		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+		"ensures, that every match is distinct from each other. "
+		"Please note, that it's not well-defined for a replace "
+		"operation, so it's better to leave this value default, unless "
+		"you perform only find operations.", TRUE,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }

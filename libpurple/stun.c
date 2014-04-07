@@ -48,6 +48,10 @@
 
 #define ATTRIB_MAPPEDADDRESS 0x0001
 
+#ifndef _SIZEOF_ADDR_IFREQ
+#  define _SIZEOF_ADDR_IFREQ(a) sizeof(a)
+#endif
+
 struct stun_header {
 	guint16 type;
 	guint16 len;
@@ -159,12 +163,13 @@ static void do_test2(struct stun_conn *sc) {
 
 static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 	struct stun_conn *sc = data;
-	char buffer[65536];
-	char *tmp;
+	guchar buffer[65536];
+	struct ifreq buffer_ifr[1000];
+	guchar *it, *it_end;
 	gssize len;
 	struct in_addr in;
-	struct stun_attrib *attrib;
-	struct stun_header *hdr;
+	struct stun_attrib attrib;
+	struct stun_header hdr;
 	struct ifconf ifc;
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
@@ -183,50 +188,50 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 		return;
 	}
 
-	hdr = (struct stun_header*) buffer;
-	if ((gsize)len != (ntohs(hdr->len) + sizeof(struct stun_header))) {
+	memcpy(&hdr, buffer, sizeof(hdr));
+	if ((gsize)len != (ntohs(hdr.len) + sizeof(struct stun_header))) {
 		purple_debug_warning("stun", "got incomplete response\n");
 		return;
 	}
 
 	/* wrong transaction */
-	if(hdr->transid[0] != sc->packet->transid[0]
-			|| hdr->transid[1] != sc->packet->transid[1]
-			|| hdr->transid[2] != sc->packet->transid[2]
-			|| hdr->transid[3] != sc->packet->transid[3]) {
+	if(hdr.transid[0] != sc->packet->transid[0]
+			|| hdr.transid[1] != sc->packet->transid[1]
+			|| hdr.transid[2] != sc->packet->transid[2]
+			|| hdr.transid[3] != sc->packet->transid[3]) {
 		purple_debug_warning("stun", "got wrong transid\n");
 		return;
 	}
 
 	if(sc->test==1) {
-		if (hdr->type != MSGTYPE_BINDINGRESPONSE) {
+		if (hdr.type != MSGTYPE_BINDINGRESPONSE) {
 			purple_debug_warning("stun",
 				"Expected Binding Response, got %d\n",
-				hdr->type);
+				hdr.type);
 			return;
 		}
 
-		tmp = buffer + sizeof(struct stun_header);
-		while((buffer + len) > (tmp + sizeof(struct stun_attrib))) {
-			attrib = (struct stun_attrib*) tmp;
-			tmp += sizeof(struct stun_attrib);
+		it = buffer + sizeof(struct stun_header);
+		while((buffer + len) > (it + sizeof(struct stun_attrib))) {
+			memcpy(&attrib, it, sizeof(attrib));
+			it += sizeof(struct stun_attrib);
 
-			if (!((buffer + len) > (tmp + ntohs(attrib->len))))
+			if (!((buffer + len) > (it + ntohs(attrib.len))))
 				break;
 
-			if(attrib->type == htons(ATTRIB_MAPPEDADDRESS)
-					&& ntohs(attrib->len) == 8) {
+			if(attrib.type == htons(ATTRIB_MAPPEDADDRESS)
+					&& ntohs(attrib.len) == 8) {
 				char *ip;
 				/* Skip the first unused byte,
 				 * the family(1 byte), and the port(2 bytes);
 				 * then read the 4 byte IPv4 address */
-				memcpy(&in.s_addr, tmp + 4, 4);
+				memcpy(&in.s_addr, it + 4, 4);
 				ip = inet_ntoa(in);
 				if(ip)
 					g_strlcpy(nattype.publicip, ip, sizeof(nattype.publicip));
 			}
 
-			tmp += ntohs(attrib->len);
+			it += ntohs(attrib.len);
 		}
 		purple_debug_info("stun", "got public ip %s\n", nattype.publicip);
 		nattype.status = PURPLE_STUN_STATUS_DISCOVERED;
@@ -235,19 +240,19 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
 		/* is it a NAT? */
 
-		ifc.ifc_len = sizeof(buffer);
-		ifc.ifc_req = (struct ifreq *) buffer;
+		ifc.ifc_len = sizeof(buffer_ifr);
+		ifc.ifc_req = buffer_ifr;
 		ioctl(source, SIOCGIFCONF, &ifc);
 
-		tmp = buffer;
-		while(tmp < buffer + ifc.ifc_len) {
-			ifr = (struct ifreq *) tmp;
-
-			tmp += sizeof(struct ifreq);
+		it = buffer;
+		it_end = it + ifc.ifc_len;
+		while (it < it_end) {
+			ifr = (struct ifreq*)(gpointer)it;
+			it += _SIZEOF_ADDR_IFREQ(*ifr);
 
 			if(ifr->ifr_addr.sa_family == AF_INET) {
 				/* we only care about ipv4 interfaces */
-				sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
+				sinptr = (struct sockaddr_in *)(gpointer)&ifr->ifr_addr;
 				if(sinptr->sin_addr.s_addr == in.s_addr) {
 					/* no NAT */
 					purple_debug_info("stun", "no nat\n");

@@ -31,7 +31,7 @@
 #include "protocol.h"
 #include "network.h"
 
-#define YAHOO_PAGER_HOST_REQ_URL "http://vcs1.msg.yahoo.com/capacity"
+#define YAHOO_PAGER_HOST_REQ_URL "http://vcs2.msg.yahoo.com/capacity"
 #define YAHOO_PAGER_HOST_FALLBACK "scsa.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PAGER_PORT_P2P 5101

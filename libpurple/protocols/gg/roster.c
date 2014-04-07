@@ -927,7 +927,7 @@ static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc,
 		while (group_buddies) {
 			ggp_roster_set_synchronized(gc, group_buddies->data,
 				FALSE);
-			group_buddies = g_list_remove_link(group_buddies,
+			group_buddies = g_list_delete_link(group_buddies,
 				group_buddies);
 		}
 		return TRUE;

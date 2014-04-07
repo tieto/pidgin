@@ -33,11 +33,13 @@
 	(gpointer)((((guintptr)(pointer) - 1) / (padding) + 1) * padding)
 
 #define PURPLE_MEMORY_POOL_DEFAULT_BLOCK_SIZE 1024
+#define PURPLE_MEMORY_POOL_DISABLED FALSE
 
 typedef struct _PurpleMemoryPoolBlock PurpleMemoryPoolBlock;
 
 typedef struct
 {
+	gboolean disabled;
 	gulong block_size;
 
 	PurpleMemoryPoolBlock *first_block;
@@ -104,6 +106,11 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
+	if (priv->disabled) {
+		/* XXX: this may cause some leaks */
+		return g_try_malloc(size);
+	}
+
 	g_return_val_if_fail(alignment <= PURPLE_MEMORY_POOL_BLOCK_PADDING, NULL);
 	g_warn_if_fail(alignment >= 1);
 	if (alignment < 1)
@@ -128,6 +135,9 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 		blk = purple_memory_pool_block_new(real_size);
 		g_return_val_if_fail(blk != NULL, NULL);
 
+		g_assert((priv->first_block == NULL) ==
+			(priv->last_block == NULL));
+
 		if (priv->first_block == NULL) {
 			priv->first_block = blk;
 			priv->last_block = blk;
@@ -137,7 +147,7 @@ purple_memory_pool_alloc_impl(PurpleMemoryPool *pool, gsize size, guint alignmen
 		}
 
 		mem = PURPLE_MEMORY_PADDED(blk->available_ptr, alignment);
-		g_assert(mem + size < blk->end_ptr);
+		g_assert((guintptr)mem + size < (guintptr)blk->end_ptr);
 		g_assert(mem >= blk->available_ptr); /* gpointer overflow */
 	}
 
@@ -160,6 +170,7 @@ purple_memory_pool_cleanup_impl(PurpleMemoryPool *pool)
 
 	blk = priv->first_block;
 	priv->first_block = NULL;
+	priv->last_block = NULL;
 	while (blk) {
 		PurpleMemoryPoolBlock *next = blk->next;
 		g_free(blk);
@@ -258,6 +269,15 @@ purple_memory_pool_new(void)
 }
 
 static void
+purple_memory_pool_init(GTypeInstance *instance, gpointer klass)
+{
+	PurpleMemoryPool *pool = PURPLE_MEMORY_POOL(instance);
+	PurpleMemoryPoolPrivate *priv = PURPLE_MEMORY_POOL_GET_PRIVATE(pool);
+
+	priv->disabled = PURPLE_MEMORY_POOL_DISABLED;
+}
+
+static void
 purple_memory_pool_finalize(GObject *obj)
 {
 	purple_memory_pool_cleanup(PURPLE_MEMORY_POOL(obj));
@@ -331,6 +351,7 @@ purple_memory_pool_get_type(void)
 			.class_size = sizeof(PurpleMemoryPoolClass),
 			.class_init = (GClassInitFunc)purple_memory_pool_class_init,
 			.instance_size = sizeof(PurpleMemoryPool),
+			.instance_init = (GInstanceInitFunc)purple_memory_pool_init
 		};
 
 		type = g_type_register_static(G_TYPE_OBJECT,

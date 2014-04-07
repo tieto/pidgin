@@ -140,9 +140,9 @@ purple_network_get_public_ip(void)
 const char *
 purple_network_get_local_system_ip(int fd)
 {
-	char buffer[1024];
+	struct ifreq buffer[100];
+	guchar *it, *it_end;
 	static char ip[16];
-	char *tmp;
 	struct ifconf ifc;
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
@@ -154,21 +154,26 @@ purple_network_get_local_system_ip(int fd)
 		source = socket(PF_INET,SOCK_STREAM, 0);
 
 	ifc.ifc_len = sizeof(buffer);
-	ifc.ifc_req = (struct ifreq *)buffer;
+	ifc.ifc_req = buffer;
 	ioctl(source, SIOCGIFCONF, &ifc);
 
 	if (fd < 0)
 		close(source);
 
-	tmp = buffer;
-	while (tmp < buffer + ifc.ifc_len)
-	{
-		ifr = (struct ifreq *)tmp;
-		tmp += HX_SIZE_OF_IFREQ(*ifr);
+	it = (guchar*)buffer;
+	it_end = it + ifc.ifc_len;
+	while (it < it_end) {
+		/* in this case "it" is:
+		 *  a) (struct ifreq)-aligned
+		 *  b) not aligned, because of OS quirks (see
+		 *     _SIZEOF_ADDR_IFREQ), so the OS should deal with it.
+		 */
+		ifr = (struct ifreq *)(gpointer)it;
+		it += HX_SIZE_OF_IFREQ(*ifr);
 
 		if (ifr->ifr_addr.sa_family == AF_INET)
 		{
-			sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
+			sinptr = (struct sockaddr_in *)(gpointer)&ifr->ifr_addr;
 			if (sinptr->sin_addr.s_addr != lhost)
 			{
 				add = ntohl(sinptr->sin_addr.s_addr);
@@ -205,21 +210,22 @@ purple_network_get_all_local_system_ips(void)
 		int family = ifa->ifa_addr ? ifa->ifa_addr->sa_family : AF_UNSPEC;
 		char host[INET6_ADDRSTRLEN];
 		const char *tmp = NULL;
+		common_sockaddr_t *addr =
+			(common_sockaddr_t *)(gpointer)ifa->ifa_addr;
 
 		if ((family != AF_INET && family != AF_INET6) || ifa->ifa_flags & IFF_LOOPBACK)
 			continue;
 
 		if (family == AF_INET)
-			tmp = inet_ntop(family, &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr, host, sizeof(host));
+			tmp = inet_ntop(family, &addr->in.sin_addr, host, sizeof(host));
 		else {
-			struct sockaddr_in6 *sockaddr = (struct sockaddr_in6 *)ifa->ifa_addr;
 			/* Peer-peer link-local communication is a big TODO.  I am not sure
 			 * how communicating link-local addresses is supposed to work, and
 			 * it seems like it would require attempting the cartesian product
 			 * of the local and remote interfaces to see if any match (eww).
 			 */
-			if (!IN6_IS_ADDR_LINKLOCAL(&sockaddr->sin6_addr))
-				tmp = inet_ntop(family, &sockaddr->sin6_addr, host, sizeof(host));
+			if (!IN6_IS_ADDR_LINKLOCAL(&addr->in6.sin6_addr))
+				tmp = inet_ntop(family, &addr->in6.sin6_addr, host, sizeof(host));
 		}
 		if (tmp != NULL)
 			result = g_list_prepend(result, g_strdup(tmp));
@@ -231,25 +237,28 @@ purple_network_get_all_local_system_ips(void)
 #else /* HAVE_GETIFADDRS && HAVE_INET_NTOP */
 	GList *result = NULL;
 	int source = socket(PF_INET,SOCK_STREAM, 0);
-	char buffer[1024];
-	char *tmp;
+	struct ifreq buffer[100];
+	guchar *it, *it_end;
 	struct ifconf ifc;
 	struct ifreq *ifr;
 
 	ifc.ifc_len = sizeof(buffer);
-	ifc.ifc_req = (struct ifreq *)buffer;
+	ifc.ifc_req = buffer;
 	ioctl(source, SIOCGIFCONF, &ifc);
 	close(source);
 
-	tmp = buffer;
-	while (tmp < buffer + ifc.ifc_len) {
+	it = (guchar*)buffer;
+	it_end = it + ifc.ifc_len;
+	while (it < it_end) {
 		char dst[INET_ADDRSTRLEN];
 
-		ifr = (struct ifreq *)tmp;
-		tmp += HX_SIZE_OF_IFREQ(*ifr);
+		/* alignment: see purple_network_get_local_system_ip */
+		ifr = (struct ifreq *)(gpointer)it;
+		it += HX_SIZE_OF_IFREQ(*ifr);
 
 		if (ifr->ifr_addr.sa_family == AF_INET) {
-			struct sockaddr_in *sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
+			struct sockaddr_in *sinptr =
+				(struct sockaddr_in *)(gpointer)&ifr->ifr_addr;
 
 			inet_ntop(AF_INET, &sinptr->sin_addr, dst,
 				sizeof(dst));
@@ -986,14 +995,14 @@ purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
 	}
 
 	if (hosts && g_slist_next(hosts)) {
-		struct sockaddr *addr = g_slist_next(hosts)->data;
+		common_sockaddr_t *addr = g_slist_next(hosts)->data;
 		char dst[INET6_ADDRSTRLEN];
 
-		if (addr->sa_family == AF_INET6) {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr,
+		if (addr->sa.sa_family == AF_INET6) {
+			inet_ntop(addr->sa.sa_family, &addr->in6.sin6_addr,
 				dst, sizeof(dst));
 		} else {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr,
+			inet_ntop(addr->sa.sa_family, &addr->in.sin_addr,
 				dst, sizeof(dst));
 		}
 

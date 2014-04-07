@@ -24,10 +24,12 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "pidgin.h"
+#include "pidginstock.h"
 
 #include <gdk/gdkkeysyms.h>
 
 #include "gtkutils.h"
+#include "gtksmiley-manager.h"
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
 
@@ -85,27 +87,6 @@ typedef struct {
 	gboolean (*context_menu)(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu);
 } PidginWebViewProtocol;
 
-struct _PidginWebViewSmiley {
-	gint box_count;
-	gchar *smile;
-	gchar *file;
-	GdkPixbufAnimation *icon;
-	gboolean hidden;
-	GdkPixbufLoader *loader;
-	GSList *anchors;
-	PidginWebViewSmileyFlags flags;
-	PidginWebView *webview;
-	gpointer data;
-	gsize datasize;
-};
-
-typedef struct _GtkSmileyTree GtkSmileyTree;
-struct _GtkSmileyTree {
-	GString *values;
-	GtkSmileyTree **children;
-	PidginWebViewSmiley *image;
-};
-
 typedef struct _PidginWebViewPriv {
 	/* Processing queues */
 	gboolean is_loading;
@@ -126,14 +107,12 @@ typedef struct _PidginWebViewPriv {
 		gboolean block_changed:1;
 	} edit;
 
-	/* Smileys */
-	char *protocol_name;
-	GHashTable *smiley_data;
-	GtkSmileyTree *default_smilies;
-
 	/* WebKit inspector */
 	WebKitWebView *inspector_view;
 	GtkWindow *inspector_win;
+
+	/* Resources cache */
+	GHashTable *loaded_images;
 } PidginWebViewPriv;
 
 /******************************************************************************
@@ -142,576 +121,6 @@ typedef struct _PidginWebViewPriv {
 
 static WebKitWebViewClass *parent_class = NULL;
 
-/******************************************************************************
- * Smileys
- *****************************************************************************/
-
-const char *
-pidgin_webview_get_protocol_name(PidginWebView *webview)
-{
-	PidginWebViewPriv *priv;
-
-	g_return_val_if_fail(webview != NULL, NULL);
-
-	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-	return priv->protocol_name;
-}
-
-void
-pidgin_webview_set_protocol_name(PidginWebView *webview, const char *protocol_name)
-{
-	PidginWebViewPriv *priv;
-
-	g_return_if_fail(webview != NULL);
-
-	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-	priv->protocol_name = g_strdup(protocol_name);
-}
-
-static GtkSmileyTree *
-gtk_smiley_tree_new(void)
-{
-	return g_new0(GtkSmileyTree, 1);
-}
-
-static void
-gtk_smiley_tree_insert(GtkSmileyTree *tree, PidginWebViewSmiley *smiley)
-{
-	GtkSmileyTree *t = tree;
-	const char *x = smiley->smile;
-
-	if (!(*x))
-		return;
-
-	do {
-		char *pos;
-		gsize index;
-
-		if (!t->values)
-			t->values = g_string_new("");
-
-		pos = strchr(t->values->str, *x);
-		if (!pos) {
-			t->values = g_string_append_c(t->values, *x);
-			index = t->values->len - 1;
-			t->children = g_realloc(t->children, t->values->len * sizeof(GtkSmileyTree *));
-			t->children[index] = g_new0(GtkSmileyTree, 1);
-		} else
-			index = pos - t->values->str;
-
-		t = t->children[index];
-
-		x++;
-	} while (*x);
-
-	t->image = smiley;
-}
-
-static void
-gtk_smiley_tree_destroy(GtkSmileyTree *tree)
-{
-	GSList *list = g_slist_prepend(NULL, tree);
-
-	while (list) {
-		GtkSmileyTree *t = list->data;
-		gsize i;
-		list = g_slist_delete_link(list, list);
-		if (t && t->values) {
-			for (i = 0; i < t->values->len; i++)
-				list = g_slist_prepend(list, t->children[i]);
-			g_string_free(t->values, TRUE);
-			g_free(t->children);
-		}
-
-		g_free(t);
-	}
-}
-
-static void
-gtk_smiley_tree_remove(GtkSmileyTree *tree, PidginWebViewSmiley *smiley)
-{
-	GtkSmileyTree *t = tree;
-	const gchar *x = smiley->smile;
-	int len = 0;
-
-	while (*x) {
-		char *pos;
-
-		if (!t->values)
-			return;
-
-		pos = strchr(t->values->str, *x);
-		if (pos)
-			t = t->children[pos - t->values->str];
-		else
-			return;
-
-		x++; len++;
-	}
-
-	t->image = NULL;
-}
-
-#if 0
-static int
-gtk_smiley_tree_lookup(GtkSmileyTree *tree, const char *text)
-{
-	GtkSmileyTree *t = tree;
-	const char *x = text;
-	int len = 0;
-	const char *amp;
-	int alen;
-
-	while (*x) {
-		char *pos;
-
-		if (!t->values)
-			break;
-
-		if (*x == '&' && (amp = purple_markup_unescape_entity(x, &alen))) {
-			gboolean matched = TRUE;
-			/* Make sure all chars of the unescaped value match */
-			while (*(amp + 1)) {
-				pos = strchr(t->values->str, *amp);
-				if (pos)
-					t = t->children[pos - t->values->str];
-				else {
-					matched = FALSE;
-					break;
-				}
-				amp++;
-			}
-			if (!matched)
-				break;
-
-			pos = strchr(t->values->str, *amp);
-		}
-		else if (*x == '<') /* Because we're all WYSIWYG now, a '<' char should
-		                     * only appear as the start of a tag.  Perhaps a
-		                     * safer (but costlier) check would be to call
-		                     * pidgin_webview_is_tag on it */
-			break;
-		else {
-			alen = 1;
-			pos = strchr(t->values->str, *x);
-		}
-
-		if (pos)
-			t = t->children[pos - t->values->str];
-		else
-			break;
-
-		x += alen;
-		len += alen;
-	}
-
-	if (t->image)
-		return len;
-
-	return 0;
-}
-#endif
-
-static void
-pidgin_webview_disassociate_smiley_foreach(gpointer key, gpointer value,
-                                        gpointer user_data)
-{
-	GtkSmileyTree *tree = (GtkSmileyTree *)value;
-	PidginWebViewSmiley *smiley = (PidginWebViewSmiley *)user_data;
-	gtk_smiley_tree_remove(tree, smiley);
-}
-
-static void
-pidgin_webview_disconnect_smiley(PidginWebView *webview, PidginWebViewSmiley *smiley)
-{
-	smiley->webview = NULL;
-	g_signal_handlers_disconnect_matched(webview, G_SIGNAL_MATCH_DATA, 0, 0,
-	                                     NULL, NULL, smiley);
-}
-
-static void
-pidgin_webview_disassociate_smiley(PidginWebViewSmiley *smiley)
-{
-	if (smiley->webview) {
-		PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(smiley->webview);
-		gtk_smiley_tree_remove(priv->default_smilies, smiley);
-		g_hash_table_foreach(priv->smiley_data,
-			pidgin_webview_disassociate_smiley_foreach, smiley);
-		g_signal_handlers_disconnect_matched(smiley->webview,
-		                                     G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-		                                     NULL, smiley);
-		smiley->webview = NULL;
-	}
-}
-
-void
-pidgin_webview_associate_smiley(PidginWebView *webview, const char *sml,
-                             PidginWebViewSmiley *smiley)
-{
-	GtkSmileyTree *tree;
-	PidginWebViewPriv *priv;
-
-	g_return_if_fail(webview != NULL);
-	g_return_if_fail(PIDGIN_IS_WEBVIEW(webview));
-
-	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-
-	if (sml == NULL)
-		tree = priv->default_smilies;
-	else if (!(tree = g_hash_table_lookup(priv->smiley_data, sml))) {
-		tree = gtk_smiley_tree_new();
-		g_hash_table_insert(priv->smiley_data, g_strdup(sml), tree);
-	}
-
-	/* need to disconnect old webview, if there is one */
-	if (smiley->webview) {
-		g_signal_handlers_disconnect_matched(smiley->webview,
-		                                     G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-		                                     NULL, smiley);
-	}
-
-	smiley->webview = webview;
-
-	gtk_smiley_tree_insert(tree, smiley);
-
-	/* connect destroy signal for the webview */
-	g_signal_connect(webview, "destroy",
-	                 G_CALLBACK(pidgin_webview_disconnect_smiley), smiley);
-}
-
-#if 0
-static gboolean
-pidgin_webview_is_smiley(PidginWebViewPriv *priv, const char *sml, const char *text,
-                      int *len)
-{
-	GtkSmileyTree *tree;
-
-	if (!sml)
-		sml = priv->protocol_name;
-
-	if (!sml || !(tree = g_hash_table_lookup(priv->smiley_data, sml)))
-		tree = priv->default_smilies;
-
-	if (tree == NULL)
-		return FALSE;
-
-	*len = gtk_smiley_tree_lookup(tree, text);
-	return (*len > 0);
-}
-#endif
-
-static PidginWebViewSmiley *
-pidgin_webview_smiley_get_from_tree(GtkSmileyTree *t, const char *text)
-{
-	const char *x = text;
-	char *pos;
-
-	if (t == NULL)
-		return NULL;
-
-	while (*x) {
-		if (!t->values)
-			return NULL;
-
-		pos = strchr(t->values->str, *x);
-		if (!pos)
-			return NULL;
-
-		t = t->children[pos - t->values->str];
-		x++;
-	}
-
-	return t->image;
-}
-
-PidginWebViewSmiley *
-pidgin_webview_smiley_find(PidginWebView *webview, const char *sml, const char *text)
-{
-	PidginWebViewPriv *priv;
-	PidginWebViewSmiley *ret;
-
-	g_return_val_if_fail(webview != NULL, NULL);
-
-	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-
-	/* Look for custom smileys first */
-	if (sml != NULL) {
-		ret = pidgin_webview_smiley_get_from_tree(g_hash_table_lookup(priv->smiley_data, sml), text);
-		if (ret != NULL)
-			return ret;
-	}
-
-	/* Fall back to check for default smileys */
-	return pidgin_webview_smiley_get_from_tree(priv->default_smilies, text);
-}
-
-#if 0
-static GdkPixbufAnimation *
-gtk_smiley_get_image(PidginWebViewSmiley *smiley)
-{
-	if (!smiley->icon) {
-		if (smiley->file) {
-			smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
-		} else if (smiley->loader) {
-			smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
-			if (smiley->icon)
-				g_object_ref(G_OBJECT(smiley->icon));
-		}
-	}
-
-	return smiley->icon;
-}
-#endif
-
-static void
-gtk_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
-{
-	PidginWebViewSmiley *smiley;
-
-	smiley = (PidginWebViewSmiley *)user_data;
-	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
-
-	if (smiley->icon)
-		g_object_ref(G_OBJECT(smiley->icon));
-}
-
-static void
-gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
-{
-	PidginWebViewSmiley *smiley;
-	GtkWidget *icon = NULL;
-	GtkTextChildAnchor *anchor = NULL;
-	GSList *current = NULL;
-
-	smiley = (PidginWebViewSmiley *)user_data;
-	if (!smiley->webview) {
-		g_object_unref(G_OBJECT(loader));
-		smiley->loader = NULL;
-		return;
-	}
-
-	for (current = smiley->anchors; current; current = g_slist_next(current)) {
-		anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
-		if (gtk_text_child_anchor_get_deleted(anchor))
-			icon = NULL;
-		else
-			icon = gtk_image_new_from_animation(smiley->icon);
-
-		if (icon) {
-			GList *wids;
-			gtk_widget_show(icon);
-
-			wids = gtk_text_child_anchor_get_widgets(anchor);
-
-#if 0
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext",
-			                       purple_unescape_html(smiley->smile), g_free);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext",
-			                       g_strdup(smiley->smile), g_free);
-#endif
-
-			if (smiley->webview) {
-				if (wids) {
-					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
-					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
-					g_list_free(children);
-					gtk_container_add(GTK_CONTAINER(wids->data), icon);
-				} else
-					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->webview), icon, anchor);
-			}
-			g_list_free(wids);
-		}
-		g_object_unref(anchor);
-	}
-
-	g_slist_free(smiley->anchors);
-	smiley->anchors = NULL;
-
-	g_object_unref(G_OBJECT(loader));
-	smiley->loader = NULL;
-}
-
-static void
-gtk_custom_smiley_size_prepared(GdkPixbufLoader *loader, gint width, gint height, gpointer data)
-{
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys")) {
-		int custom_smileys_size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/custom_smileys_size");
-		if (width <= custom_smileys_size && height <= custom_smileys_size)
-			return;
-
-		if (width >= height) {
-			height = height * custom_smileys_size / width;
-			width = custom_smileys_size;
-		} else {
-			width = width * custom_smileys_size / height;
-			height = custom_smileys_size;
-		}
-	}
-	gdk_pixbuf_loader_set_size(loader, width, height);
-}
-
-PidginWebViewSmiley *
-pidgin_webview_smiley_create(const char *file, const char *shortcut, gboolean hide,
-                          PidginWebViewSmileyFlags flags)
-{
-	PidginWebViewSmiley *smiley = g_new0(PidginWebViewSmiley, 1);
-	smiley->file = g_strdup(file);
-	smiley->smile = g_strdup(shortcut);
-	smiley->hidden = hide;
-	smiley->flags = flags;
-	smiley->webview = NULL;
-	pidgin_webview_smiley_reload(smiley);
-	return smiley;
-}
-
-void
-pidgin_webview_smiley_reload(PidginWebViewSmiley *smiley)
-{
-	if (smiley->icon)
-		g_object_unref(smiley->icon);
-	if (smiley->loader)
-		g_object_unref(smiley->loader);
-
-	smiley->icon = NULL;
-	smiley->loader = NULL;
-
-	if (smiley->file) {
-		/* We do not use the pixbuf loader for a smiley that can be loaded
-		 * from a file. (e.g., local custom smileys)
-		 */
-		return;
-	}
-
-	smiley->loader = gdk_pixbuf_loader_new();
-
-	g_signal_connect(smiley->loader, "area_prepared",
-	                 G_CALLBACK(gtk_custom_smiley_allocated), smiley);
-	g_signal_connect(smiley->loader, "closed",
-	                 G_CALLBACK(gtk_custom_smiley_closed), smiley);
-	g_signal_connect(smiley->loader, "size_prepared",
-	                 G_CALLBACK(gtk_custom_smiley_size_prepared), smiley);
-}
-
-const char *
-pidgin_webview_smiley_get_smile(const PidginWebViewSmiley *smiley)
-{
-	return smiley->smile;
-}
-
-const char *
-pidgin_webview_smiley_get_file(const PidginWebViewSmiley *smiley)
-{
-	return smiley->file;
-}
-
-gboolean
-pidgin_webview_smiley_get_hidden(const PidginWebViewSmiley *smiley)
-{
-	return smiley->hidden;
-}
-
-PidginWebViewSmileyFlags
-pidgin_webview_smiley_get_flags(const PidginWebViewSmiley *smiley)
-{
-	return smiley->flags;
-}
-
-void
-pidgin_webview_smiley_destroy(PidginWebViewSmiley *smiley)
-{
-	pidgin_webview_disassociate_smiley(smiley);
-	g_free(smiley->smile);
-	g_free(smiley->file);
-	if (smiley->icon)
-		g_object_unref(smiley->icon);
-	if (smiley->loader)
-		g_object_unref(smiley->loader);
-	g_free(smiley->data);
-	g_free(smiley);
-}
-
-void
-pidgin_webview_remove_smileys(PidginWebView *webview)
-{
-	PidginWebViewPriv *priv;
-
-	g_return_if_fail(webview != NULL);
-
-	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-
-	g_hash_table_destroy(priv->smiley_data);
-	gtk_smiley_tree_destroy(priv->default_smilies);
-	priv->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-	                                          (GDestroyNotify)gtk_smiley_tree_destroy);
-	priv->default_smilies = gtk_smiley_tree_new();
-}
-
-void
-pidgin_webview_insert_smiley(PidginWebView *webview, const char *sml,
-                          const char *smiley)
-{
-	PidginWebViewPriv *priv;
-	char *unescaped;
-	PidginWebViewSmiley *webview_smiley;
-
-	g_return_if_fail(webview != NULL);
-
-	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-
-	unescaped = purple_unescape_html(smiley);
-	webview_smiley = pidgin_webview_smiley_find(webview, sml, unescaped);
-
-	if (priv->format_functions & PIDGIN_WEBVIEW_SMILEY) {
-		char *tmp;
-		/* TODO Better smiley insertion... */
-		tmp = g_strdup_printf("<img isEmoticon src='purple-smiley:%p' alt='%s'>",
-		                      webview_smiley, smiley);
-		pidgin_webview_append_html(webview, tmp);
-		g_free(tmp);
-	} else {
-		pidgin_webview_append_html(webview, smiley);
-	}
-
-	g_free(unescaped);
-}
-
-/**************************************************************************
- * PidginWebViewSmiley GBoxed code
- **************************************************************************/
-
-static PidginWebViewSmiley *
-pidgin_webview_smiley_ref(PidginWebViewSmiley *smiley)
-{
-	g_return_val_if_fail(smiley != NULL, NULL);
-
-	smiley->box_count++;
-
-	return smiley;
-}
-
-static void
-pidgin_webview_smiley_unref(PidginWebViewSmiley *smiley)
-{
-	g_return_if_fail(smiley != NULL);
-	g_return_if_fail(smiley->box_count >= 0);
-
-	if (!smiley->box_count--)
-		pidgin_webview_smiley_destroy(smiley);
-}
-
-GType
-pidgin_webview_smiley_get_type(void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		type = g_boxed_type_register_static("PidginWebViewSmiley",
-				(GBoxedCopyFunc)pidgin_webview_smiley_ref,
-				(GBoxedFreeFunc)pidgin_webview_smiley_unref);
-	}
-
-	return type;
-}
 
 /******************************************************************************
  * Helpers
@@ -790,6 +199,48 @@ webview_resource_loading(WebKitWebView *webview,
 			g_free(tmp);
 		}
 	}
+}
+
+static void
+webview_resource_loaded(WebKitWebView *web_view, WebKitWebFrame *web_frame,
+	WebKitWebResource *web_resource, gpointer user_data)
+{
+	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(web_view);
+	const gchar *uri;
+	GString *data;
+	PurpleStoredImage *image;
+
+	if (!purple_str_has_caseprefix(
+		webkit_web_resource_get_mime_type(web_resource), "image/"))
+	{
+		return;
+	}
+
+	uri = webkit_web_resource_get_uri(web_resource);
+	if (g_hash_table_lookup(priv->loaded_images, uri))
+		return;
+
+	data = webkit_web_resource_get_data(web_resource);
+	if (data->len == 0)
+		return;
+
+	/* TODO: we could avoid copying data, if uri is a
+	 * PURPLE_STORED_IMAGE_PROTOCOL or PURPLE_STOCK_IMAGE_PROTOCOL */
+	image = purple_imgstore_new(g_memdup(data->str, data->len),
+		data->len, NULL);
+	g_return_if_fail(image != NULL);
+
+	g_hash_table_insert(priv->loaded_images, g_strdup(uri), image);
+}
+
+static PurpleStoredImage *
+webview_resource_get_loaded(WebKitWebView *web_view, const gchar *uri)
+{
+	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(web_view);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return g_hash_table_lookup(priv->loaded_images, uri);
 }
 
 static void
@@ -1112,31 +563,126 @@ get_unicode_menu(WebKitWebView *webview)
 }
 
 static void
+webview_image_saved(GtkWidget *dialog, gint response, gpointer _unused)
+{
+	PurpleStoredImage *image;
+	gchar *filename;
+	GError *error = NULL;
+
+	if (response != GTK_RESPONSE_ACCEPT) {
+		gtk_widget_destroy(dialog);
+		return;
+	}
+
+	image = g_object_get_data(G_OBJECT(dialog), "pidgin-gtkwebview-image");
+	g_return_if_fail(image != NULL);
+
+	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+	g_return_if_fail(filename != NULL);
+	g_return_if_fail(filename[0] != '\0');
+
+	g_file_set_contents(filename, purple_imgstore_get_data(image),
+		purple_imgstore_get_size(image), &error);
+	if (error) {
+		purple_debug_error("gtkwebview", "Failed saving image: %s",
+			error->message);
+		/* TODO: we should display a notification here */
+	}
+
+	g_free(filename);
+	gtk_widget_destroy(dialog);
+}
+
+static void
+webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
+{
+	const gchar *src;
+	WebKitWebView *webview;
+	PurpleStoredImage *image;
+	GtkFileChooserDialog *dialog;
+	gchar *filename;
+	GtkWidget *parent;
+
+	webview = g_object_get_data(G_OBJECT(image_node), "pidgin-gtkwebview");
+	g_return_if_fail(webview != NULL);
+
+	src = webkit_dom_html_image_element_get_src(image_node); /* XXX: a leak or not? */
+	image = webview_resource_get_loaded(webview, src);
+	g_return_if_fail(image != NULL);
+
+	parent = gtk_widget_get_ancestor(item, GTK_TYPE_WINDOW);
+	dialog = GTK_FILE_CHOOSER_DIALOG(gtk_file_chooser_dialog_new(
+		_("Save Image"),
+		parent ? GTK_WINDOW(parent) : NULL,
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+		NULL));
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+
+	/* TODO: use image's file name, if there is one */
+	filename = g_strdup_printf(_("image.%s"),
+		purple_imgstore_get_extension(image));
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
+	g_free(filename);
+
+	g_signal_connect(G_OBJECT(dialog), "response",
+		G_CALLBACK(webview_image_saved), NULL);
+
+	purple_imgstore_ref(image);
+	g_object_set_data_full(G_OBJECT(dialog), "pidgin-gtkwebview-image",
+		image, (GDestroyNotify)purple_imgstore_unref);
+
+	gtk_widget_show(GTK_WIDGET(dialog));
+}
+
+static void
+webview_image_add_smiley(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
+{
+	const gchar *src;
+	WebKitWebView *webview;
+	PurpleStoredImage *image;
+
+	src = webkit_dom_html_image_element_get_src(image_node);
+	webview = g_object_get_data(G_OBJECT(image_node), "pidgin-gtkwebview");
+	g_return_if_fail(webview != NULL);
+
+	image = webview_resource_get_loaded(webview, src);
+	g_return_if_fail(image != NULL);
+
+	pidgin_smiley_manager_add(image,
+		webkit_dom_html_image_element_get_alt(image_node));
+}
+
+static void
 do_popup_menu(WebKitWebView *webview, int button, int time, int context,
               WebKitDOMNode *node, const char *uri)
 {
 	GtkWidget *menu;
 	GtkWidget *cut, *copy, *paste, *delete, *select;
+	gboolean show_clipboard = TRUE;
+	WebKitDOMHTMLImageElement *image_node = NULL;
 
 	menu = gtk_menu_new();
 	g_signal_connect(menu, "selection-done",
 	                 G_CALLBACK(gtk_widget_destroy), NULL);
 
-	if ((context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK)
-	 && !(context & WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION)) {
+	if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
 		PidginWebViewProtocol *proto = NULL;
 		GList *children;
+		WebKitDOMNode *link_node = node;
 
-		while (node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(node)) {
-			node = webkit_dom_node_get_parent_node(node);
+		while (link_node && !WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(link_node)) {
+			link_node = webkit_dom_node_get_parent_node(node);
 		}
 
-		if (uri && node)
+		if (uri && link_node)
 			proto = webview_find_protocol(uri, FALSE);
 
 		if (proto && proto->context_menu) {
 			proto->context_menu(PIDGIN_WEBVIEW(webview),
-			                    WEBKIT_DOM_HTML_ANCHOR_ELEMENT(node), menu);
+			                    WEBKIT_DOM_HTML_ANCHOR_ELEMENT(link_node), menu);
 		}
 
 		children = gtk_container_get_children(GTK_CONTAINER(menu));
@@ -1150,7 +696,57 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		}
 		gtk_widget_show_all(menu);
 
-	} else {
+		show_clipboard = FALSE;
+	}
+
+	if (context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE) {
+		WebKitDOMNode *_image_node = node;
+
+		while (_image_node && !WEBKIT_DOM_IS_HTML_IMAGE_ELEMENT(_image_node)) {
+			_image_node = webkit_dom_node_get_parent_node(_image_node);
+		}
+		if (_image_node)
+			image_node = WEBKIT_DOM_HTML_IMAGE_ELEMENT(_image_node);
+		/* don't do it on our theme smileys */
+	}
+	if (image_node && webkit_dom_html_image_element_get_complete(image_node)) {
+		GtkWidget *menu_item;
+		int width, height;
+
+		width = webkit_dom_html_image_element_get_width(image_node);
+		height = webkit_dom_html_image_element_get_height(image_node);
+
+		/* XXX */
+		g_object_set_data(G_OBJECT(image_node), "pidgin-gtkwebview", webview);
+
+		menu_item = gtk_image_menu_item_new_with_mnemonic(
+			_("_Save Image..."));
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
+			gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
+		g_signal_connect_object(G_OBJECT(menu_item), "activate",
+			G_CALLBACK(webview_image_save), image_node, 0);
+		gtk_widget_show(menu_item);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+		/* TODO: check, if it's not *our* custom smiley (use css) */
+		if (width <= 96 && height <= 96) {
+			menu_item = gtk_image_menu_item_new_with_mnemonic(
+				_("_Add Custom Smiley..."));
+			gtk_image_menu_item_set_image(
+				GTK_IMAGE_MENU_ITEM(menu_item),
+				gtk_image_new_from_stock(GTK_STOCK_ADD,
+					GTK_ICON_SIZE_MENU));
+			g_signal_connect_object(G_OBJECT(menu_item), "activate",
+				G_CALLBACK(webview_image_add_smiley),
+				image_node, 0);
+			gtk_widget_show(menu_item);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		}
+
+		show_clipboard = FALSE;
+	}
+
+	if (show_clipboard) {
 		/* Using connect_swapped means we don't need any wrapper functions */
 		cut = pidgin_new_item_from_stock(menu, _("Cu_t"), GTK_STOCK_CUT,
 		                                 NULL, NULL, 0, 0, NULL);
@@ -1211,8 +807,8 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 
 		pidgin_separator(menu);
 
-		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"), NULL,
-		                                     NULL, NULL, 0, 0, NULL);
+		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"),
+			PIDGIN_STOCK_DEBUG, NULL, NULL, 0, 0, NULL);
 		g_signal_connect_data(G_OBJECT(inspect), "activate",
 		                      G_CALLBACK(webview_inspector_inspect_element),
 		                      data, (GClosureNotify)g_free, 0);
@@ -1511,7 +1107,6 @@ static void
 pidgin_webview_finalize(GObject *webview)
 {
 	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
-	gpointer temp;
 
 	if (priv->inspector_win != NULL)
 		gtk_widget_destroy(GTK_WIDGET(priv->inspector_win));
@@ -1520,15 +1115,12 @@ pidgin_webview_finalize(GObject *webview)
 		g_source_remove(priv->loader);
 
 	while (!g_queue_is_empty(priv->load_queue)) {
-		temp = g_queue_pop_head(priv->load_queue);
-		temp = g_queue_pop_head(priv->load_queue);
-		g_free(temp);
+		g_queue_pop_head(priv->load_queue);
+		g_free(g_queue_pop_head(priv->load_queue));
 	}
 	g_queue_free(priv->load_queue);
 
-	g_hash_table_destroy(priv->smiley_data);
-	gtk_smiley_tree_destroy(priv->default_smilies);
-	g_free(priv->protocol_name);
+	g_hash_table_destroy(priv->loaded_images);
 
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
@@ -1674,10 +1266,6 @@ pidgin_webview_init(PidginWebView *webview, gpointer userdata)
 
 	priv->load_queue = g_queue_new();
 
-	priv->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-	                                          (GDestroyNotify)gtk_smiley_tree_destroy);
-	priv->default_smilies = gtk_smiley_tree_new();
-
 	g_signal_connect(G_OBJECT(webview), "button-press-event",
 	                 G_CALLBACK(webview_button_pressed), NULL);
 
@@ -1696,11 +1284,17 @@ pidgin_webview_init(PidginWebView *webview, gpointer userdata)
 	g_signal_connect(G_OBJECT(webview), "resource-request-starting",
 	                 G_CALLBACK(webview_resource_loading), NULL);
 
+	g_signal_connect(G_OBJECT(webview), "resource-load-finished",
+		G_CALLBACK(webview_resource_loaded), NULL);
+
 	inspector = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(webview));
 	g_signal_connect(G_OBJECT(inspector), "inspect-web-view",
 		G_CALLBACK(webview_inspector_create), NULL);
 	g_signal_connect(G_OBJECT(inspector), "show-window",
 		G_CALLBACK(webview_inspector_show), webview);
+
+	priv->loaded_images = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, (GDestroyNotify)purple_imgstore_unref);
 }
 
 GType
@@ -2481,3 +2075,15 @@ pidgin_webview_activate_toolbar(PidginWebView *webview, PidginWebViewAction acti
 	pidgin_webviewtoolbar_activate(priv->toolbar, action);
 }
 
+void
+pidgin_webview_switch_active_conversation(PidginWebView *webview,
+	PurpleConversation *conv)
+{
+	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
+
+	g_return_if_fail(priv != NULL);
+	if (priv->toolbar == NULL)
+		return;
+
+	pidgin_webviewtoolbar_switch_active_conversation(priv->toolbar, conv);
+}

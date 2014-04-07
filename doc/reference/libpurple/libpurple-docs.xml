@@ -56,6 +56,7 @@
       <xi:include href="xml/imgstore.xml" />
       <xi:include href="xml/keyring.xml" />
       <xi:include href="xml/log.xml" />
+      <xi:include href="xml/memorypool.xml" />
       <xi:include href="xml/desktopitem.xml" />
       <xi:include href="xml/mime.xml" />
       <xi:include href="xml/nat-pmp.xml" />
@@ -77,7 +78,6 @@
       <xi:include href="xml/roomlist.xml" />
       <xi:include href="xml/savedstatuses.xml" />
       <xi:include href="xml/server.xml" />
-      <xi:include href="xml/smiley.xml" />
       <xi:include href="xml/sound.xml" />
       <xi:include href="xml/sslconn.xml" />
       <xi:include href="xml/core.xml" />
@@ -86,6 +86,7 @@
       <xi:include href="xml/theme.xml" />
       <xi:include href="xml/theme-loader.xml" />
       <xi:include href="xml/theme-manager.xml" />
+      <xi:include href="xml/trie.xml" />
       <xi:include href="xml/sound-theme.xml" />
       <xi:include href="xml/sound-theme-loader.xml" />
       <xi:include href="xml/upnp.xml" />
@@ -114,6 +115,17 @@
     </reference>
 
     <reference label="b">
+      <title>Smiley APIs</title>
+
+        <xi:include href="xml/smiley.xml" />
+        <xi:include href="xml/smiley-remote.xml" />
+        <xi:include href="xml/smiley-custom.xml" />
+        <xi:include href="xml/smiley-list.xml" />
+        <xi:include href="xml/smiley-theme.xml" />
+        <xi:include href="xml/smiley-parser.xml" />
+    </reference>
+
+    <reference label="c">
       <title>Media APIs</title>
 
         <xi:include href="xml/media.xml" />
@@ -125,7 +137,7 @@
         <xi:include href="xml/enum-types.xml" />
     </reference>
 
-    <reference label="c">
+    <reference label="d">
       <title>D-Bus Server APIs</title>
 
         <xi:include href="xml/dbus-bindings.xml" />

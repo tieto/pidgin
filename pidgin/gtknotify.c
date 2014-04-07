@@ -789,6 +789,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 			g_free(to_text);
 			g_free(from_text);
 			g_free(subject_text);
+			(void)first;
 
 			/* If we don't keep track of this, will leak "data" for each of the notifications except the last */
 			data2 = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0, FALSE, &new_data);
@@ -1737,6 +1738,7 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog),
 	                               GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+	gtk_widget_set_sensitive(button, TRUE);
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);

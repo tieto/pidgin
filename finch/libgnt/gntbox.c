@@ -731,6 +731,11 @@ void gnt_box_sync_children(GntBox *box)
 		int height, width;
 		int x, y;
 
+		if (G_UNLIKELY(w == NULL)) {
+			g_warn_if_reached();
+			continue;
+		}
+
 		if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_INVISIBLE))
 			continue;
 
@@ -819,6 +824,12 @@ void gnt_box_readjust(GntBox *box)
 	for (iter = box->list; iter; iter = iter->next)
 	{
 		GntWidget *w = iter->data;
+
+		if (G_UNLIKELY(w == NULL)) {
+			g_warn_if_reached();
+			continue;
+		}
+
 		if (GNT_IS_BOX(w))
 			gnt_box_readjust(GNT_BOX(w));
 		else

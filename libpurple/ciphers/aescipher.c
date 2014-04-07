@@ -483,8 +483,9 @@ purple_aes_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 	input_padded = purple_aes_cipher_pad_pkcs7(input, in_len, &out_len);
 
 	if (out_len > out_size) {
-		purple_debug_error("cipher-aes",
-			"Output buffer too small (%d > %d)", out_len, out_size);
+		purple_debug_error("cipher-aes", "Output buffer too small (%"
+			G_GSIZE_FORMAT " > %" G_GSIZE_FORMAT ")",
+			out_len, out_size);
 		memset(input_padded, 0, out_len);
 		g_free(input_padded);
 		return -1;

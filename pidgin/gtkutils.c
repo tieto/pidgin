@@ -58,7 +58,6 @@
 #include "gtkdialogs.h"
 #include "pidginstock.h"
 #include "gtkrequest.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
 #include "gtkwebviewtoolbar.h"
@@ -166,8 +165,6 @@ pidgin_setup_webview(GtkWidget *webview)
 {
 	g_return_if_fail(webview != NULL);
 	g_return_if_fail(PIDGIN_IS_WEBVIEW(webview));
-
-	pidgin_themes_smiley_themeize(webview);
 
 #ifdef _WIN32
 	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
@@ -312,7 +309,6 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **sw
 
 	if (editable) {
 		pidgin_webviewtoolbar_attach(PIDGIN_WEBVIEWTOOLBAR(toolbar), webview);
-		pidgin_webviewtoolbar_associate_smileys(PIDGIN_WEBVIEWTOOLBAR(toolbar), "default");
 		pidgin_webview_set_toolbar(PIDGIN_WEBVIEW(webview), toolbar);
 	}
 	pidgin_setup_webview(webview);
@@ -412,7 +408,7 @@ GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
 */
-	pidgin_set_accessible_label (menuitem, label);
+	pidgin_set_accessible_label(menuitem, GTK_LABEL(label));
 	return menuitem;
 }
 
@@ -459,7 +455,7 @@ GtkWidget *
 pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 							  PidginButtonOrientation style)
 {
-	GtkWidget *button, *image, *label, *bbox, *ibox, *lbox = NULL;
+	GtkWidget *button, *image, *bbox, *ibox, *lbox = NULL;
 
 	button = gtk_button_new();
 
@@ -484,12 +480,15 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 	}
 
 	if (text) {
+		GtkLabel *label;
+
 		gtk_box_pack_start(GTK_BOX(bbox), lbox, TRUE, TRUE, 0);
-		label = gtk_label_new(NULL);
-		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
-		gtk_box_pack_start(GTK_BOX(lbox), label, FALSE, TRUE, 0);
-		pidgin_set_accessible_label (button, label);
+		label = GTK_LABEL(gtk_label_new(NULL));
+		gtk_label_set_text_with_mnemonic(label, text);
+		gtk_label_set_mnemonic_widget(label, button);
+		gtk_box_pack_start(GTK_BOX(lbox), GTK_WIDGET(label),
+			FALSE, TRUE, 0);
+		pidgin_set_accessible_label(button, label);
 	}
 
 	gtk_widget_show_all(bbox);
@@ -544,31 +543,32 @@ GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const ch
 GtkWidget *
 pidgin_make_frame(GtkWidget *parent, const char *title)
 {
-	GtkWidget *vbox, *vbox2, *label, *hbox;
+	GtkWidget *vbox, *vbox2, *hbox;
+	GtkLabel *label;
 	char *labeltitle;
 
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
-	label = gtk_label_new(NULL);
+	label = GTK_LABEL(gtk_label_new(NULL));
 
 	labeltitle = g_strdup_printf("<span weight=\"bold\">%s</span>", title);
-	gtk_label_set_markup(GTK_LABEL(label), labeltitle);
+	gtk_label_set_markup(label, labeltitle);
 	g_free(labeltitle);
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-	pidgin_set_accessible_label (vbox, label);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(label));
+	pidgin_set_accessible_label(vbox, label);
 
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("    ");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
+	label = GTK_LABEL(gtk_label_new("    "));
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(label));
 
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
@@ -1166,7 +1166,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 }
 
 void
-pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
+pidgin_set_accessible_label(GtkWidget *w, GtkLabel *l)
 {
 	AtkObject *acc;
 	const gchar *label_text;
@@ -1177,7 +1177,7 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 	/* If this object has no name, set it's name with the label text */
 	existing_name = atk_object_get_name (acc);
 	if (!existing_name) {
-		label_text = gtk_label_get_text (GTK_LABEL(l));
+		label_text = gtk_label_get_text(l);
 		if (label_text)
 			atk_object_set_name (acc, label_text);
 	}
@@ -1186,7 +1186,7 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 }
 
 void
-pidgin_set_accessible_relations (GtkWidget *w, GtkWidget *l)
+pidgin_set_accessible_relations (GtkWidget *w, GtkLabel *l)
 {
 	AtkObject *acc, *label;
 	AtkObject *rel_obj[1];
@@ -1194,10 +1194,10 @@ pidgin_set_accessible_relations (GtkWidget *w, GtkWidget *l)
 	AtkRelation *relation;
 
 	acc = gtk_widget_get_accessible (w);
-	label = gtk_widget_get_accessible (l);
+	label = gtk_widget_get_accessible(GTK_WIDGET(l));
 
 	/* Make sure mnemonics work */
-	gtk_label_set_mnemonic_widget(GTK_LABEL(l), w);
+	gtk_label_set_mnemonic_widget(l, w);
 
 	/* Create the labeled-by relation */
 	set = atk_object_ref_relation_set (acc);
@@ -2889,7 +2889,7 @@ pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *
 	gtk_box_pack_start(GTK_BOX(hbox), widget, expand, TRUE, 0);
 	if (label) {
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
-		pidgin_set_accessible_label (widget, label);
+		pidgin_set_accessible_label(widget, GTK_LABEL(label));
 	}
 
 	if (p_label)
@@ -3155,6 +3155,53 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width,
 	}
 
 	return pixbuf;
+}
+
+GdkPixbuf *
+pidgin_pixbuf_scale_down(GdkPixbuf *src, guint max_width, guint max_height,
+	GdkInterpType interp_type, gboolean preserve_ratio)
+{
+	guint cur_w, cur_h;
+	GdkPixbuf *dst;
+
+	g_return_val_if_fail(src != NULL, NULL);
+
+	if (max_width == 0 || max_height == 0) {
+		g_object_unref(src);
+		g_return_val_if_reached(NULL);
+	}
+
+	cur_w = gdk_pixbuf_get_width(src);
+	cur_h = gdk_pixbuf_get_height(src);
+
+	if (cur_w <= max_width && cur_h <= max_height)
+		return src;
+
+	/* cur_ratio = cur_w / cur_h
+	 * max_ratio = max_w / max_h
+	 */
+
+	if (!preserve_ratio) {
+		cur_w = MIN(cur_w, max_width);
+		cur_h = MIN(cur_h, max_height);
+	} else if ((guint64)cur_w * max_height > (guint64)max_width * cur_h) {
+		/* cur_w / cur_h > max_width / max_height */
+		cur_h = (guint64)max_width * cur_h / cur_w;
+		cur_w = max_width;
+	} else {
+		cur_w = (guint64)max_height * cur_w / cur_h;
+		cur_h = max_height;
+	}
+
+	if (cur_w <= 0)
+		cur_w = 1;
+	if (cur_h <= 0)
+		cur_h = 1;
+
+	dst = gdk_pixbuf_scale_simple(src, cur_w, cur_h, interp_type);
+	g_object_unref(src);
+
+	return dst;
 }
 
 static void

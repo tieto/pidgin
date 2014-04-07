@@ -27,9 +27,7 @@
 
 #include "network.h"
 #include "strman.h"
-#ifdef sun
-#  include <sys/filio.h>
-#endif
+#include "fileio.h"
 
 #include <errno.h>
 #include <stdarg.h>
@@ -253,10 +251,12 @@ int gg_connect(void *addr, int port, int async)
 	struct in_addr *a = addr;
 	struct sockaddr_in myaddr;
 
-	gg_debug(GG_DEBUG_FUNCTION, "** gg_connect(%s, %d, %d);\n", inet_ntoa(*a), port, async);
+	gg_debug(GG_DEBUG_FUNCTION, "** gg_connect(%s, %d, %d);\n",
+		inet_ntoa(*a), port, async);
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-		gg_debug(GG_DEBUG_MISC, "// gg_connect() socket() failed (errno=%d, %s)\n", errno, strerror(errno));
+		gg_debug(GG_DEBUG_MISC, "// gg_connect() socket() failed "
+			"(errno=%d, %s)\n", errno, strerror(errno));
 		return -1;
 	}
 
@@ -266,7 +266,8 @@ int gg_connect(void *addr, int port, int async)
 	myaddr.sin_addr.s_addr = gg_local_ip;
 
 	if (bind(sock, (struct sockaddr *) &myaddr, sizeof(myaddr)) == -1) {
-		gg_debug(GG_DEBUG_MISC, "// gg_connect() bind() failed (errno=%d, %s)\n", errno, strerror(errno));
+		gg_debug(GG_DEBUG_MISC, "// gg_connect() bind() failed "
+			"(errno=%d, %s)\n", errno, strerror(errno));
 		errno2 = errno;
 		close(sock);
 		errno = errno2;
@@ -300,7 +301,8 @@ int gg_connect(void *addr, int port, int async)
 			errno = errno2;
 			return -1;
 		}
-		gg_debug(GG_DEBUG_MISC, "// gg_connect() connect() in progress\n");
+		gg_debug(GG_DEBUG_MISC,
+			"// gg_connect() connect() in progress\n");
 	}
 
 	return sock;
@@ -575,19 +577,23 @@ char *gg_proxy_auth(void)
 	if (!gg_proxy_enabled || !gg_proxy_username || !gg_proxy_password)
 		return NULL;
 
-	if (!(tmp = malloc((tmp_size = strlen(gg_proxy_username) + strlen(gg_proxy_password) + 2))))
+	tmp_size = strlen(gg_proxy_username) + strlen(gg_proxy_password) + 2;
+	tmp = malloc(tmp_size);
+	if (!tmp)
 		return NULL;
 
 	snprintf(tmp, tmp_size, "%s:%s", gg_proxy_username, gg_proxy_password);
 
-	if (!(enc = gg_base64_encode(tmp))) {
+	enc = gg_base64_encode(tmp);
+	if (!enc) {
 		free(tmp);
 		return NULL;
 	}
 
 	free(tmp);
 
-	if (!(out = malloc(strlen(enc) + 40))) {
+	out = malloc(strlen(enc) + 40);
+	if (!out) {
 		free(enc);
 		return NULL;
 	}
@@ -831,11 +837,11 @@ void gg_strarr_free(char **strarr)
 
 char ** gg_strarr_dup(char **strarr)
 {
-	if (strarr == NULL)
-		return NULL;
-
 	size_t i, len, size;
 	char **it, **out;
+
+	if (strarr == NULL)
+		return NULL;
 
 	len = 0;
 	for (it = strarr; *it != NULL; it++)

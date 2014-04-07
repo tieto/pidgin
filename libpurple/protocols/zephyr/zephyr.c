@@ -1440,7 +1440,6 @@ static void process_zsubs(zephyr_account *zephyr)
 					char *tmp = g_strdup_printf("%s", zephyr->username);
 					char *atptr;
 
-					z_instance = triple[1];
 					if (triple[2] == NULL) {
 						recip = g_malloc0(1);
 					} else if (!g_ascii_strcasecmp(triple[2], "%me%")) {

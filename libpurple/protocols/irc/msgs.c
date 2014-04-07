@@ -1466,7 +1466,6 @@ irc_auth_start_cyrus(struct irc_conn *irc)
 	PurpleAccount *account = irc->account;
 	PurpleConnection *gc = purple_account_get_connection(account);
 
-	gboolean plaintext;
 	gboolean again = FALSE;
 
 	/* Set up security properties and options */
@@ -1474,6 +1473,8 @@ irc_auth_start_cyrus(struct irc_conn *irc)
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
 
 	if (!irc->gsc) {
+		gboolean plaintext;
+
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
 		plaintext = purple_account_get_bool(account, "auth_plain_in_clear", FALSE);
@@ -1482,7 +1483,6 @@ irc_auth_start_cyrus(struct irc_conn *irc)
 	} else {
 		secprops.max_ssf = 0;
 		secprops.maxbufsize = 0;
-		plaintext = TRUE;
 	}
 
 	secprops.property_names = 0;

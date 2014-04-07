@@ -43,7 +43,6 @@ typedef struct group *Pidgin__Group;
 #include "gtksession.h"
 #include "gtksound.h"
 #include "gtkstatusbox.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 
 /* gtkaccount.h */

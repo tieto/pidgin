@@ -49,6 +49,9 @@
  */
 #ifdef ENABLE_NLS
 #  include <locale.h>
+#  ifndef __APPLE_CC__
+#    define __APPLE_CC__ 0
+#  endif
 #  include <libintl.h>
 #  undef printf
 #  define _(String) ((const char *)dgettext(PACKAGE, String))

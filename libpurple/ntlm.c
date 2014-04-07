@@ -121,7 +121,7 @@ purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	host_off = sizeof(struct type1_message);
 	dom_off = sizeof(struct type1_message) + hostnamelen;
 	msg = g_malloc0(sizeof(struct type1_message) + hostnamelen + domainlen);
-	tmsg = (struct type1_message*)msg;
+	tmsg = (struct type1_message*)(gpointer)msg;
 	tmsg->protocol[0] = 'N';
 	tmsg->protocol[1] = 'T';
 	tmsg->protocol[2] = 'L';
@@ -149,19 +149,22 @@ guint8 *
 purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 {
 	gsize retlen;
-	struct type2_message *tmsg;
+	guchar *buff;
+	struct type2_message tmsg;
 	static guint8 nonce[8];
 
-	tmsg = (struct type2_message*)purple_base64_decode(type2, &retlen);
-	if (tmsg != NULL && retlen >= (sizeof(struct type2_message) - 1)) {
-		memcpy(nonce, tmsg->nonce, 8);
+	buff = purple_base64_decode(type2, &retlen);
+
+	if (buff != NULL && retlen >= (sizeof(struct type2_message) - 1)) {
+		memcpy(&tmsg, buff, MIN(retlen, sizeof(tmsg)));
+		memcpy(nonce, tmsg.nonce, 8);
 		if (flags != NULL)
-			*flags = GUINT16_FROM_LE(tmsg->flags);
+			*flags = GUINT16_FROM_LE(tmsg.flags);
 	} else {
 		purple_debug_error("ntlm", "Unable to parse type2 message - returning empty nonce.\n");
 		memset(nonce, 0, 8);
 	}
-	g_free(tmsg);
+	g_free(buff);
 
 	return nonce;
 }

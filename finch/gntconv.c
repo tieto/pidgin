@@ -1200,9 +1200,6 @@ static PurpleConversationUiOps conv_ui_ops =
 	finch_chat_update_user,
 	finch_conv_present, /* present */
 	finch_conv_has_focus, /* has_focus */
-	NULL, /* custom_smiley_add */
-	NULL, /* custom_smiley_write */
-	NULL, /* custom_smiley_close */
 	NULL, /* send_confirm */
 	NULL,
 	NULL,

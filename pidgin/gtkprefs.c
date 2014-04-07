@@ -48,9 +48,9 @@
 #include "gtkdialogs.h"
 #include "gtkprefs.h"
 #include "gtksavedstatuses.h"
+#include "gtksmiley-theme.h"
 #include "gtksound.h"
 #include "gtkstatus-icon-theme.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkwebview.h"
 #include "pidginstock.h"
@@ -587,38 +587,33 @@ get_theme_markup(const char *name, gboolean custom, const char *author,
 static void
 smileys_refresh_theme_list(void)
 {
-	GdkPixbuf *pixbuf;
-	GSList *themes;
+	GList *it;
 	GtkTreeIter iter;
+	gchar *description;
 
-	pidgin_themes_smiley_theme_probe();
+	description = get_theme_markup(_("none"), FALSE, _("Penguin Pimps"),
+		_("Selecting this disables graphical emoticons."));
+	gtk_list_store_append(prefs_smiley_themes, &iter);
+	gtk_list_store_set(prefs_smiley_themes, &iter,
+		0, NULL, 1, description, 2, "none", -1);
+	g_free(description);
 
-	if (!(themes = smiley_themes))
-		return;
+	for (it = pidgin_smiley_theme_get_all(); it; it = g_list_next(it)) {
+		PidginSmileyTheme *theme = it->data;
 
-	while (themes) {
-		struct PidginSmileyTheme *theme = themes->data;
-		char *description = get_theme_markup(_(theme->name), FALSE,
-		                                     _(theme->author), _(theme->desc));
+		description = get_theme_markup(
+			_(pidgin_smiley_theme_get_name(theme)), FALSE,
+			_(pidgin_smiley_theme_get_author(theme)),
+			_(pidgin_smiley_theme_get_description(theme)));
+
 		gtk_list_store_append(prefs_smiley_themes, &iter);
-
-		/*
-		 * LEAK - Gentoo memprof thinks pixbuf is leaking here... but it
-		 * looks like it should be ok to me.  Anyone know what's up?  --Mark
-		 */
-		pixbuf = (theme->icon ? pidgin_pixbuf_new_from_file(theme->icon) : NULL);
-
 		gtk_list_store_set(prefs_smiley_themes, &iter,
-				   0, pixbuf,
-				   1, description,
-				   2, theme->name,
-				   -1);
-
-		if (pixbuf != NULL)
-			g_object_unref(G_OBJECT(pixbuf));
+			0, pidgin_smiley_theme_get_icon(theme),
+			1, description,
+			2, pidgin_smiley_theme_get_name(theme),
+			-1);
 
 		g_free(description);
-		themes = themes->next;
 	}
 }
 
@@ -1239,9 +1234,10 @@ prefs_set_smiley_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_smiley_themes), &new_iter, 2, &new_theme, -1);
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme);
+
 #if 0
-/* TODO: WebKit-ify smileys */
-		pidgin_themes_smiley_themeize(sample_webview);
+		/* TODO: update smileys in sample_webview input box. */
+		update_smileys_in_webview_input_box(sample_webview);
 #endif
 
 		g_free(new_theme);
@@ -1842,9 +1838,11 @@ conv_page(void)
 	GtkWidget *iconpref2;
 	GtkWidget *webview;
 	GtkWidget *frame;
+#if 0
 	GtkWidget *hbox;
 	GtkWidget *checkbox;
 	GtkWidget *spin_button;
+#endif
 
 	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
@@ -1882,6 +1880,9 @@ conv_page(void)
 #ifdef _WIN32
 	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
 #endif
+
+#if 0
+	/* TODO: it's not implemented */
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 
 	checkbox = pidgin_prefs_checkbox(_("Resize incoming custom smileys"),
@@ -1900,6 +1901,7 @@ conv_page(void)
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), NULL, NULL, hbox, TRUE, NULL);
+#endif
 
 	pidgin_prefs_labeled_spin_button(vbox,
 		_("Minimum input area height in lines:"),
@@ -2471,7 +2473,8 @@ static GtkWidget *
 proxy_page(void)
 {
 	GtkWidget *ret = NULL, *vbox = NULL, *hbox = NULL;
-	GtkWidget *table = NULL, *entry = NULL, *label = NULL, *proxy_button = NULL;
+	GtkWidget *table = NULL, *entry = NULL, *proxy_button = NULL;
+	GtkLabel *label = NULL;
 	GtkWidget *prefs_proxy_frame = NULL;
 	PurpleProxyInfo *proxy_info;
 
@@ -2484,9 +2487,10 @@ proxy_page(void)
 		gchar *path = NULL;
 
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
-		label = gtk_label_new(_("Proxy preferences are configured in GNOME preferences"));
+		label = GTK_LABEL(gtk_label_new(_("Proxy preferences "
+			"are configured in GNOME preferences")));
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -2504,10 +2508,10 @@ proxy_page(void)
 		}
 
 		if (path == NULL) {
-			label = gtk_label_new(NULL);
-			gtk_label_set_markup(GTK_LABEL(label),
-								 _("<b>Proxy configuration program was not found.</b>"));
-			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+			label = GTK_LABEL(gtk_label_new(NULL));
+			gtk_label_set_markup(label, _("<b>Proxy configuration "
+				"program was not found.</b>"));
+			gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 		} else {
 			proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
 			g_signal_connect(G_OBJECT(proxy_button), "clicked",
@@ -2551,12 +2555,13 @@ proxy_page(void)
 		gtk_table_set_row_spacings(GTK_TABLE(table), 10);
 		gtk_container_add(GTK_CONTAINER(prefs_proxy_subframe), table);
 
-		label = gtk_label_new_with_mnemonic(_("_Host:"));
+		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("_Host:")));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+		gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(label),
+			0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 
 		entry = gtk_entry_new();
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_label_set_mnemonic_widget(label, entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
@@ -2568,14 +2573,15 @@ proxy_page(void)
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 		gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		pidgin_set_accessible_label (entry, label);
+		pidgin_set_accessible_label(entry, label);
 
-		label = gtk_label_new_with_mnemonic(_("P_ort:"));
+		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("P_ort:")));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
+		gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(label),
+			2, 3, 0, 1, GTK_FILL, 0, 0, 0);
 
 		entry = gtk_spin_button_new_with_range(0, 65535, 1);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_label_set_mnemonic_widget(label, entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 0, 1, GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
@@ -2584,14 +2590,15 @@ proxy_page(void)
 			gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry),
 				purple_proxy_info_get_port(proxy_info));
 		}
-		pidgin_set_accessible_label (entry, label);
+		pidgin_set_accessible_label(entry, label);
 
-		label = gtk_label_new_with_mnemonic(_("User_name:"));
+		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("User_name:")));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
+		gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(label),
+			0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 
 		entry = gtk_entry_new();
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_label_set_mnemonic_widget(label, entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
@@ -2603,14 +2610,15 @@ proxy_page(void)
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 		gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		pidgin_set_accessible_label (entry, label);
+		pidgin_set_accessible_label(entry, label);
 
-		label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
+		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("Pa_ssword:")));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
+		gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(label),
+			2, 3, 1, 2, GTK_FILL, 0, 0, 0);
 
 		entry = gtk_entry_new();
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_label_set_mnemonic_widget(label, entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 		g_signal_connect(G_OBJECT(entry), "changed",
@@ -2619,7 +2627,7 @@ proxy_page(void)
 		if (proxy_info != NULL && purple_proxy_info_get_password(proxy_info) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry),
 					   purple_proxy_info_get_password(proxy_info));
-		pidgin_set_accessible_label (entry, label);
+		pidgin_set_accessible_label(entry, label);
 
 		proxy_changed_cb("/purple/proxy/type", PURPLE_PREF_STRING,
 			purple_prefs_get_string("/purple/proxy/type"),
@@ -4027,8 +4035,12 @@ vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
 	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
 	devices = get_vv_element_devices(value);
 	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(pref, g_list_next(devices)->data);
+		(GCompareFunc)strcmp) == NULL)
+	{
+		GList *next = g_list_next(devices);
+		if (next)
+			purple_prefs_set_string(pref, next->data);
+	}
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, pref, devices);
 	g_list_free_full(devices, g_free);
@@ -4071,8 +4083,12 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 	/* Setup device preference */
 	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
 	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
-	                       (GCompareFunc)strcmp) == NULL)
-		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
+		(GCompareFunc)strcmp) == NULL)
+	{
+		GList *next = g_list_next(devices);
+		if (next)
+			purple_prefs_set_string(device_pref, next->data);
+	}
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
 	                                         PURPLE_PREF_STRING, device_pref,
 	                                         devices);
@@ -4235,15 +4251,24 @@ static void
 smiley_theme_pref_cb(const char *name, PurplePrefType type,
 					 gconstpointer value, gpointer data)
 {
-	const char *themename = value;
-	GSList *themes;
+	const gchar *theme_name = value;
+	GList *themes, *it;
 
-	for (themes = smiley_themes; themes; themes = themes->next) {
-		struct PidginSmileyTheme *smile = themes->data;
-		if (smile->name && strcmp(themename, smile->name) == 0) {
-			pidgin_themes_load_smiley_theme(smile->path, TRUE);
-			break;
-		}
+	if (g_strcmp0(theme_name, "none") == 0) {
+		purple_smiley_theme_set_current(NULL);
+		return;
+	}
+
+	/* XXX: could be cached when initializing prefs view */
+	themes = pidgin_smiley_theme_get_all();
+
+	for (it = themes; it; it = g_list_next(it)) {
+		PidginSmileyTheme *theme = it->data;
+
+		if (g_strcmp0(pidgin_smiley_theme_get_name(theme), theme_name))
+			continue;
+
+		purple_smiley_theme_set_current(PURPLE_SMILEY_THEME(theme));
 	}
 }
 

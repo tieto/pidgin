@@ -38,9 +38,8 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 C_SRC =			actions.c \
-			aes.c \
 			chunk.c \
-			cipher.c \
+			cipher-mxit.c \
 			client.c \
 			filexfer.c \
 			formcmds.c \

@@ -452,7 +452,7 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation with %s on %s</span>"),
 									log->name, log_get_date(log));
 
-		gtk_label_set_markup(GTK_LABEL(viewer->label), title);
+		gtk_label_set_markup(viewer->label, title);
 		g_free(title);
 	}
 
@@ -597,13 +597,13 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 		title_box = gtk_dialog_get_content_area(GTK_DIALOG(lv->window));
 
 	/* Label ************/
-	lv->label = gtk_label_new(NULL);
+	lv->label = GTK_LABEL(gtk_label_new(NULL));
 
 	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>", title);
 
-	gtk_label_set_markup(GTK_LABEL(lv->label), text);
+	gtk_label_set_markup(lv->label, text);
 	gtk_misc_set_alignment(GTK_MISC(lv->label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(title_box), lv->label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(title_box), GTK_WIDGET(lv->label), FALSE, FALSE, 0);
 	g_free(text);
 
 	/* Pane *************/

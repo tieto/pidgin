@@ -1,12 +1,11 @@
 pidginpixmapdir = $(datadir)/pixmaps/pidgin
 pidginiconsdir = $(datadir)
 
-SUBDIRS = emotes/default/24 emotes/none emotes/small/16
+SUBDIRS = emotes/default/24 emotes/small/16
 
 if INSTALL_PIXMAPS
 MAKEFILE_MINGW = \
 		emotes/default/24/Makefile.mingw \
-		emotes/none/Makefile.mingw \
 		emotes/small/16/Makefile.mingw
 
 ANIMATIONS_16 = \

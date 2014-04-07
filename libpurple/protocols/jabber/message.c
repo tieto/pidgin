@@ -24,6 +24,8 @@
 
 #include "debug.h"
 #include "notify.h"
+#include "smiley-custom.h"
+#include "smiley-parser.h"
 #include "server.h"
 #include "util.h"
 #include "adhoccommands.h"
@@ -437,7 +439,9 @@ jabber_message_xml_to_string_strip_img_smileys(PurpleXmlNode *xhtml)
 						out = g_string_append(out, safe_alt);
 						g_free(safe_alt);
 					} else {
-						out = g_string_append(out, alt);
+						gchar *alt_escaped = g_markup_escape_text(alt, -1);
+						out = g_string_append(out, alt_escaped);
+						g_free(alt_escaped);
 					}
 				} else {
 					out = g_string_append(out, src);
@@ -483,19 +487,61 @@ jabber_message_add_remote_smileys(JabberStream *js, const gchar *who,
 }
 
 static void
-jabber_message_request_data_cb(JabberData *data, gchar *alt,
-    gpointer userdata)
+jabber_message_remote_smiley_got(JabberData *data, gchar *alt, gpointer _smiley)
 {
-	PurpleConversation *conv = PURPLE_CONVERSATION(userdata);
+	PurpleRemoteSmiley *smiley = _smiley;
+
+	g_free(alt); /* we really don't need it */
 
 	if (data) {
-		purple_conversation_custom_smiley_write(conv, alt,
-										jabber_data_get_data(data),
-										jabber_data_get_size(data));
-		purple_conversation_custom_smiley_close(conv, alt);
+		purple_debug_info("jabber",
+			"smiley data retrieved successfully");
+		purple_remote_smiley_write(smiley, jabber_data_get_data(data),
+			jabber_data_get_size(data));
+		purple_remote_smiley_close(smiley);
+	} else {
+		purple_debug_error("jabber", "failed retrieving smiley data");
+		purple_remote_smiley_failed(smiley);
 	}
 
-	g_free(alt);
+	g_object_unref(smiley);
+}
+
+static void
+jabber_message_remote_smiley_add(JabberStream *js, PurpleConversation *conv,
+	const gchar *from, const gchar *shortcut, const gchar *cid)
+{
+	PurpleRemoteSmiley *smiley;
+	const JabberData *jdata;
+
+	purple_debug_misc("jabber", "about to add remote smiley %s to the conv",
+		shortcut);
+
+	smiley = purple_conversation_add_remote_smiley(conv, shortcut);
+	if (!smiley) {
+		purple_debug_misc("jabber", "smiley was already present");
+		return;
+	}
+
+	/* TODO: cache lookup by "cid" */
+
+	jdata = jabber_data_find_remote_by_cid(js, from, cid);
+	if (jdata) {
+		purple_debug_info("jabber", "smiley data is already known");
+
+		purple_remote_smiley_write(smiley, jabber_data_get_data(jdata),
+			jabber_data_get_size(jdata));
+		purple_remote_smiley_close(smiley);
+	} else {
+		gchar *alt = g_strdup(shortcut); /* it it really necessary? */
+
+		purple_debug_info("jabber", "smiley data is unknown, "
+			"need to request it");
+
+		g_object_ref(smiley);
+		jabber_data_request(js, cid, from, alt, FALSE,
+			jabber_message_remote_smiley_got, smiley);
+	}
 }
 
 void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
@@ -600,7 +646,7 @@ void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 				const PurpleConnection *gc = js->gc;
 				PurpleAccount *account = purple_connection_get_account(gc);
 				PurpleConversation *conv = NULL;
-				GList *smiley_refs = NULL;
+				GList *smiley_refs = NULL, *it;
 				gchar *reformatted_xhtml;
 
 				if (purple_account_get_bool(account, "custom_smileys", TRUE)) {
@@ -652,37 +698,19 @@ void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 				/* note: if there were no smileys in the incoming message, or
 				  	if receiving custom smileys is turned off, smiley_refs will
 					be NULL */
-				for (; conv && smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
-					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
-					const gchar *cid = ref->cid;
-					gchar *alt = g_strdup(ref->alt);
+				for (it = smiley_refs; it; it = g_list_next(it)) {
+					JabberSmileyRef *ref = it->data;
 
-					purple_debug_info("jabber",
-						"about to add custom smiley %s to the conv\n", alt);
-					if (purple_conversation_custom_smiley_add(conv, alt, "cid", cid,
-						    TRUE)) {
-						const JabberData *data =
-								jabber_data_find_remote_by_cid(js, from, cid);
-						/* if data is already known, we write it immediatly */
-						if (data) {
-							purple_debug_info("jabber",
-								"data is already known\n");
-							purple_conversation_custom_smiley_write(conv, alt,
-								jabber_data_get_data(data),
-								jabber_data_get_size(data));
-							purple_conversation_custom_smiley_close(conv, alt);
-						} else {
-							/* we need to request the smiley (data) */
-							purple_debug_info("jabber",
-								"data is unknown, need to request it\n");
-							jabber_data_request(js, cid, from, alt, FALSE,
-							    jabber_message_request_data_cb, conv);
-						}
+					if (conv) {
+						jabber_message_remote_smiley_add(js,
+							conv, from, ref->alt, ref->cid);
 					}
+
 					g_free(ref->cid);
 					g_free(ref->alt);
 					g_free(ref);
 				}
+				g_list_free(smiley_refs);
 
 			    /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
 				 * treated \n as a newline for compatibility with other protocols
@@ -821,80 +849,6 @@ jabber_message_get_mimetype_from_ext(const gchar *ext)
 	}
 }
 
-static GList *
-jabber_message_xhtml_find_smileys(const char *xhtml)
-{
-	GList *smileys = purple_smileys_get_all();
-	GList *found_smileys = NULL;
-
-	for (; smileys ; smileys = g_list_delete_link(smileys, smileys)) {
-		PurpleSmiley *smiley = (PurpleSmiley *) smileys->data;
-
-		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
-		const gssize len = strlen(shortcut);
-
-		gchar *escaped = g_markup_escape_text(shortcut, len);
-		const char *pos = strstr(xhtml, escaped);
-
-		if (pos) {
-			found_smileys = g_list_append(found_smileys, smiley);
-		}
-
-		g_free(escaped);
-	}
-
-	return found_smileys;
-}
-
-static gchar *
-jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
-{
-	/* create XML element for all smileys (img tags) */
-	GString *result = g_string_new(NULL);
-	int pos = 0;
-	int length = strlen(xhtml);
-
-	while (pos < length) {
-		const GList *iterator;
-		gboolean found_smiley = FALSE;
-
-		for (iterator = smileys ; iterator ;
-			iterator = g_list_next(iterator)) {
-			const PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
-			const gchar *shortcut = purple_smiley_get_shortcut(smiley);
-			const gssize len = strlen(shortcut);
-			gchar *escaped = g_markup_escape_text(shortcut, len);
-
-			if (g_str_has_prefix(&(xhtml[pos]), escaped)) {
-				/* we found the current smiley at this position */
-				const JabberData *data =
-					jabber_data_find_local_by_alt(shortcut);
-				PurpleXmlNode *img = jabber_data_get_xhtml_im(data, shortcut);
-				int len;
-				gchar *img_text = purple_xmlnode_to_str(img, &len);
-
-				found_smiley = TRUE;
-				result = g_string_append(result, img_text);
-				g_free(img_text);
-				pos += strlen(escaped);
-				g_free(escaped);
-				purple_xmlnode_free(img);
-				break;
-			} else {
-				/* cleanup from the before the next round... */
-				g_free(escaped);
-			}
-		}
-		if (!found_smiley) {
-			/* there was no smiley here, just copy one byte */
-			result = g_string_append_c(result, xhtml[pos]);
-			pos++;
-		}
-	}
-
-	return g_string_free(result, FALSE);
-}
-
 static gboolean
 jabber_conv_support_custom_smileys(JabberStream *js,
 								   PurpleConversation *conv,
@@ -926,72 +880,120 @@ jabber_conv_support_custom_smileys(JabberStream *js,
 	}
 }
 
+static gboolean
+jabber_message_smileyify_cb(GString *out, PurpleSmiley *smiley,
+	PurpleConversation *_empty, gpointer _unused)
+{
+	const gchar *shortcut;
+	const JabberData *data;
+	PurpleXmlNode *smiley_node;
+	gchar *node_xml;
+
+	shortcut = purple_smiley_get_shortcut(smiley);
+	data = jabber_data_find_local_by_alt(shortcut);
+
+	if (!data)
+		return FALSE;
+
+	smiley_node = jabber_data_get_xhtml_im(data, shortcut);
+	node_xml = purple_xmlnode_to_str(smiley_node, NULL);
+
+	g_string_append(out, node_xml);
+
+	purple_xmlnode_free(smiley_node);
+	g_free(node_xml);
+
+	return TRUE;
+}
+
 static char *
 jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 {
 	PurpleAccount *account = purple_connection_get_account(jm->js->gc);
-	PurpleConversation *conv =
-		purple_conversations_find_with_account(jm->to,
-			account);
+	GList *found_smileys, *it, *it_next;
+	PurpleConversation *conv;
+	gboolean has_too_large_smiley = FALSE;
+	gchar *smileyfied_xhtml = NULL;
 
-	if (jabber_conv_support_custom_smileys(jm->js, conv, jm->to)) {
-		GList *found_smileys = jabber_message_xhtml_find_smileys(xhtml);
+	conv = purple_conversations_find_with_account(jm->to, account);
 
-		if (found_smileys) {
-			gchar *smileyfied_xhtml = NULL;
-			const GList *iterator;
-			GList *valid_smileys = NULL;
-			gboolean has_too_large_smiley = FALSE;
+	if (!jabber_conv_support_custom_smileys(jm->js, conv, jm->to))
+		return NULL;
 
-			for (iterator = found_smileys; iterator ;
-				iterator = g_list_next(iterator)) {
-				PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
-				const gchar *shortcut = purple_smiley_get_shortcut(smiley);
-				const JabberData *data =
-					jabber_data_find_local_by_alt(shortcut);
-				PurpleStoredImage *image = purple_smiley_get_stored_image(smiley);
+	found_smileys = purple_smiley_find(purple_smiley_custom_get_list(),
+		xhtml, TRUE);
+	if (!found_smileys)
+		return NULL;
 
-				if (purple_imgstore_get_size(image) <= JABBER_DATA_MAX_SIZE) {
-					/* the object has not been sent before */
-					if (!data) {
-						const gchar *ext = purple_imgstore_get_extension(image);
-						JabberStream *js = jm->js;
+	for (it = found_smileys; it; it = it_next) {
+		PurpleSmiley *smiley = it->data;
+		PurpleStoredImage *smiley_image;
+		gboolean valid = TRUE;
 
-						JabberData *new_data =
-							jabber_data_create_from_data(purple_imgstore_get_data(image),
-								purple_imgstore_get_size(image),
-								jabber_message_get_mimetype_from_ext(ext), FALSE, js);
-						purple_debug_info("jabber",
-							"cache local smiley alt = %s, cid = %s\n",
-							shortcut, jabber_data_get_cid(new_data));
-						jabber_data_associate_local(new_data, shortcut);
-					}
-					valid_smileys = g_list_append(valid_smileys, smiley);
-				} else {
-					has_too_large_smiley = TRUE;
-					purple_debug_warning("jabber", "Refusing to send smiley %s "
-							"(too large, max is %d)\n",
-							purple_smiley_get_shortcut(smiley),
-							JABBER_DATA_MAX_SIZE);
-				}
-			}
+		it_next = g_list_next(it);
 
-			if (has_too_large_smiley) {
-				purple_conversation_write(conv, NULL,
-				    _("A custom smiley in the message is too large to send."),
-					PURPLE_MESSAGE_ERROR, time(NULL));
-			}
-
-			smileyfied_xhtml =
-				jabber_message_get_smileyfied_xhtml(xhtml, valid_smileys);
-			g_list_free(found_smileys);
-			g_list_free(valid_smileys);
-
-			return smileyfied_xhtml;
+		smiley_image = purple_smiley_get_image(smiley);
+		if (!smiley_image) {
+			valid = FALSE;
+			purple_debug_warning("jabber", "broken smiley %s",
+				purple_smiley_get_shortcut(smiley));
+		} else if (purple_imgstore_get_size(smiley_image) >
+			JABBER_DATA_MAX_SIZE)
+		{
+			has_too_large_smiley = TRUE;
+			valid = FALSE;
+			purple_debug_warning("jabber", "Refusing to send "
+				"smiley %s (too large, max is %d)",
+				purple_smiley_get_shortcut(smiley),
+				JABBER_DATA_MAX_SIZE);
 		}
+
+		if (!valid)
+			found_smileys = g_list_delete_link(found_smileys, it);
 	}
 
-	return NULL;
+	if (has_too_large_smiley) {
+		purple_conversation_write(conv, NULL,
+			_("A custom smiley in the message is too large to send."),
+			PURPLE_MESSAGE_ERROR, time(NULL));
+	}
+
+	if (!found_smileys)
+		return NULL;
+
+	for (it = found_smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+		PurpleStoredImage *smiley_image;
+		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
+		const gchar *mimetype;
+		JabberData *jdata;
+
+		/* the object has been sent before */
+		if (jabber_data_find_local_by_alt(shortcut))
+			continue;
+
+		smiley_image = purple_smiley_get_image(smiley);
+		g_assert(smiley_image != NULL);
+
+		mimetype = jabber_message_get_mimetype_from_ext(
+			purple_imgstore_get_extension(smiley_image));
+
+		jdata = jabber_data_create_from_data(
+			purple_imgstore_get_data(smiley_image),
+			purple_imgstore_get_size(smiley_image),
+			mimetype, FALSE, jm->js);
+
+		purple_debug_info("jabber", "cache local smiley alt=%s, cid=%s",
+			shortcut, jabber_data_get_cid(jdata));
+		jabber_data_associate_local(jdata, shortcut);
+	}
+
+	g_list_free(found_smileys);
+
+	smileyfied_xhtml = purple_smiley_parse_custom(xhtml,
+		jabber_message_smileyify_cb, NULL);
+
+	return smileyfied_xhtml;
 }
 
 void jabber_message_send(JabberMessage *jm)

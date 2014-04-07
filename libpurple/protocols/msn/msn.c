@@ -37,6 +37,8 @@
 #include "prefs.h"
 #include "session.h"
 #include "smiley.h"
+#include "smiley-custom.h"
+#include "smiley-parser.h"
 #include "state.h"
 #include "util.h"
 #include "cmds.h"
@@ -1469,38 +1471,29 @@ static void msn_emoticon_destroy(MsnEmoticon *emoticon)
 
 static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 {
-	GSList *list;
-	GList *smileys;
-	PurpleSmiley *smiley;
-	PurpleStoredImage *img;
-	char *ptr;
+	GSList *list = NULL;
+	GList *smileys, *it;
 	MsnEmoticon *emoticon;
-	int length;
 
-	list = NULL;
-	smileys = purple_smileys_get_all();
-	length = strlen(msg);
+	smileys = purple_smiley_find(purple_smiley_custom_get_list(),
+		msg, FALSE);
 
-	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
-		smiley = smileys->data;
+	for (it = smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+		PurpleStoredImage *img;
 
-		ptr = g_strstr_len(msg, length, purple_smiley_get_shortcut(smiley));
-
-		if (!ptr)
-			continue;
-
-		img = purple_smiley_get_stored_image(smiley);
+		img = purple_smiley_get_image(smiley);
 
 		emoticon = g_new0(MsnEmoticon, 1);
 		emoticon->smile = g_strdup(purple_smiley_get_shortcut(smiley));
 		emoticon->ps = smiley;
 		emoticon->obj = msn_object_new_from_image(img,
-				purple_imgstore_get_filename(img),
-				username, MSN_OBJECT_EMOTICON);
+			purple_smiley_get_path(smiley),
+			username, MSN_OBJECT_EMOTICON);
 
-		purple_imgstore_unref(img);
 		list = g_slist_prepend(list, emoticon);
 	}
+	g_list_free(smileys);
 
 	return list;
 }
@@ -2026,9 +2019,6 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	char *msgformat;
 	char *msgtext;
 	size_t msglen;
-	MsnEmoticon *smile;
-	GSList *smileys;
-	GString *emoticons = NULL;
 
 	account = purple_connection_get_account(gc);
 	session = purple_connection_get_protocol_data(gc);
@@ -2057,36 +2047,13 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	msg = msn_message_new_plain(msgtext);
 	msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
-	smileys = msn_msg_grab_emoticons(msg->body, username);
-	while (smileys) {
-		smile = (MsnEmoticon *)smileys->data;
-		emoticons = msn_msg_emoticon_add(emoticons, smile);
-		if (purple_conversation_custom_smiley_add(swboard->conv, smile->smile,
-		                                  "sha1", purple_smiley_get_checksum(smile->ps),
-		                                  FALSE)) {
-			gconstpointer data;
-			size_t len;
-			data = purple_smiley_get_data(smile->ps, &len);
-			purple_conversation_custom_smiley_write(swboard->conv, smile->smile, data, len);
-			purple_conversation_custom_smiley_close(swboard->conv, smile->smile);
-		}
-		msn_emoticon_destroy(smile);
-		smileys = g_slist_delete_link(smileys, smileys);
-	}
-
-	if (emoticons) {
-		msn_send_emoticons(swboard, emoticons);
-		g_string_free(emoticons, TRUE);
-	}
-
 	msn_switchboard_send_msg(swboard, msg, FALSE);
 	msn_message_unref(msg);
 
 	g_free(msgformat);
 	g_free(msgtext);
 
-	purple_serv_got_chat_in(gc, id, purple_account_get_username(account), flags,
-					 message, time(NULL));
+	purple_serv_got_chat_in(gc, id, username, flags, message, time(NULL));
 
 	return 0;
 }
@@ -2536,11 +2503,14 @@ msn_got_info(PurpleHttpConnection *http_conn,
 	if (sect_info)
 	{
 		has_info = TRUE;
-		sect_info = FALSE;
 		has_contact_info = TRUE;
+#if 0
+		/* it's true, but we don't need these assignments */
+		sect_info = FALSE;
+#endif
 	}
-    else
-    {
+	else
+	{
 		/* Remove the section header */
 		purple_notify_user_info_remove_last_item(user_info);
 	}

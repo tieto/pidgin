@@ -61,7 +61,7 @@ struct _PidginLogViewer {
 
 	PurpleLogReadFlags flags;
 	char             *search;
-	GtkWidget        *label;
+	GtkLabel         *label;
 };
 
 

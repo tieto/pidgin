@@ -64,9 +64,8 @@
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
 #include "gtksession.h"
-#include "gtksmiley.h"
+#include "gtksmiley-theme.h"
 #include "gtksound.h"
-#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
 #include "gtkwhiteboard.h"
@@ -219,8 +218,6 @@ ui_main(void)
 
 #endif
 
-	pidgin_themes_init();
-
 	pidgin_blist_setup_sort_methods();
 
 #ifndef _WIN32
@@ -286,7 +283,7 @@ pidgin_ui_init(void)
 	pidgin_roomlist_init();
 	pidgin_log_init();
 	pidgin_docklet_init();
-	pidgin_smileys_init();
+	_pidgin_smiley_theme_init();
 	pidgin_utils_init();
 	pidgin_medias_init();
 	pidgin_notify_init();
@@ -305,7 +302,7 @@ pidgin_quit(void)
 	/* Uninit */
 	pidgin_utils_uninit();
 	pidgin_notify_uninit();
-	pidgin_smileys_uninit();
+	_pidgin_smiley_theme_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();
 	pidgin_docklet_uninit();

@@ -136,7 +136,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 				res = g_slist_find_custom(b_impl->resolvers, r, _find_resolver_data_by_resolver);
 				if (res != NULL) {
 					rd = res->data;
-					b_impl->resolvers = g_slist_remove_link(b_impl->resolvers, res);
+					b_impl->resolvers = g_slist_delete_link(b_impl->resolvers, res);
 
 					/* We've already freed the resolver */
 					rd->resolver = NULL;

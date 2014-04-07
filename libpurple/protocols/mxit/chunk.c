@@ -480,6 +480,9 @@ void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chun
 	/* mime type [UTF-8] */
 	pos += get_utf8_string( &chunkdata[pos], offer->mimetype, sizeof( offer->mimetype ) );
 
+	if (pos > datalen)
+		purple_debug_warning(MXIT_PLUGIN_ID, "pos > datalen");
+
 	/* timestamp [8 bytes] */
 	/* not used by libPurple */
 
@@ -643,6 +646,9 @@ void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_ch
 
 	/* status message [UTF-8 string] */
 	pos += get_utf8_string( &chunkdata[pos], sendfile->statusmsg, sizeof( sendfile->statusmsg ) );
+
+	if (pos != datalen)
+		purple_debug_misc(MXIT_PLUGIN_ID, "pos != datalen");
 }
 
 

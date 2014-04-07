@@ -33,6 +33,7 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
 
 #define PURPLE_STORED_IMAGE_PROTOCOL "purple-image:"
 #define PURPLE_STOCK_IMAGE_PROTOCOL "purple-stock-image:"
@@ -45,7 +46,14 @@
  */
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
-#define PURPLE_TYPE_STORED_IMAGE  (purple_imgstore_get_type())
+#define PURPLE_TYPE_STORED_IMAGE (purple_imgstore_get_type())
+
+/* TODO: make it a real GObject */
+#if 0
+#define PURPLE_IS_STORED_IMAGE(image) (G_TYPE_CHECK_INSTANCE_TYPE((image), PURPLE_TYPE_STORED_IMAGE))
+#else
+#define PURPLE_IS_STORED_IMAGE(image) ((image) != NULL)
+#endif
 
 G_BEGIN_DECLS
 
@@ -140,6 +148,18 @@ purple_imgstore_new_from_file(const char *path);
  *         image could not be created (because of empty data or size).
  */
 int purple_imgstore_new_with_id(gpointer data, size_t size, const char *filename);
+
+/**
+ * purple_imgstore_add_with_id:
+ * @image: The image.
+ *
+ * Adds previously created #PurpleStoredImage to the local store with newly
+ * generated id. If it was already in the store, an old id will be returned.
+ *
+ * Returns: ID for the image.
+ */
+int
+purple_imgstore_add_with_id(PurpleStoredImage *image);
 
 /**
  * purple_imgstore_find_by_id:

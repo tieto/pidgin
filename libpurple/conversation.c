@@ -34,6 +34,7 @@
 #include "protocol.h"
 #include "request.h"
 #include "signals.h"
+#include "smiley-list.h"
 #include "util.h"
 
 #define PURPLE_CONVERSATION_GET_PRIVATE(obj) \
@@ -60,6 +61,11 @@ struct _PurpleConversationPrivate
 	                                       PurpleConversationMessage's       */
 
 	PurpleE2eeState *e2ee_state;      /* End-to-end encryption state.      */
+
+	/* The list of remote smileys. This should be per-buddy (PurpleBuddy),
+	 * but we don't have any class for people not on our buddy
+	 * list (PurpleDude?). So, if we have one, we should switch to it. */
+	PurpleSmileyList *remote_smileys;
 };
 
 /*
@@ -786,59 +792,6 @@ purple_conversation_send_confirm(PurpleConversation *conv, const char *message)
 		G_CALLBACK(purple_conversation_send_confirm_cb), _("Cancel"), NULL);
 }
 
-gboolean
-purple_conversation_custom_smiley_add(PurpleConversation *conv, const char *smile,
-                            const char *cksum_type, const char *chksum,
-							gboolean remote)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	if (smile == NULL || !*smile) {
-		return FALSE;
-	}
-
-	/* TODO: check if the icon is in the cache and return false if so */
-	/* TODO: add an icon cache (that doesn't suck) */
-	if (priv->ui_ops != NULL && priv->ui_ops->custom_smiley_add !=NULL) {
-		return priv->ui_ops->custom_smiley_add(conv, smile, remote);
-	} else {
-		purple_debug_info("conversation", "Could not find add custom smiley function");
-		return FALSE;
-	}
-
-}
-
-void
-purple_conversation_custom_smiley_write(PurpleConversation *conv, const char *smile,
-                                   const guchar *data, gsize size)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(smile != NULL && *smile);
-
-	if (priv->ui_ops != NULL && priv->ui_ops->custom_smiley_write != NULL)
-		priv->ui_ops->custom_smiley_write(conv, smile, data, size);
-	else
-		purple_debug_info("conversation", "Could not find the smiley write function");
-}
-
-void
-purple_conversation_custom_smiley_close(PurpleConversation *conv, const char *smile)
-{
-	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(smile != NULL && *smile);
-
-	if (priv->ui_ops != NULL && priv->ui_ops->custom_smiley_close != NULL)
-		priv->ui_ops->custom_smiley_close(conv, smile);
-	else
-		purple_debug_info("conversation", "Could not find custom smiley close function");
-}
-
 GList *
 purple_conversation_get_extended_menu(PurpleConversation *conv)
 {
@@ -982,6 +935,91 @@ purple_conversation_get_max_message_size(PurpleConversation *conv)
 
 	return purple_protocol_client_iface_get_max_message_size(protocol, conv);
 }
+
+PurpleRemoteSmiley *
+purple_conversation_add_remote_smiley(PurpleConversation *conv,
+	const gchar *shortcut)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	PurpleSmiley *smiley;
+	PurpleRemoteSmiley *rsmiley;
+
+	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(shortcut != NULL, NULL);
+	g_return_val_if_fail(shortcut[0] != '\0', NULL);
+
+	if (priv->remote_smileys == NULL) {
+		priv->remote_smileys = purple_smiley_list_new();
+		g_object_set(priv->remote_smileys,
+			"drop-failed-remotes", TRUE, NULL);
+	}
+
+	smiley = purple_smiley_list_get_by_shortcut(
+		priv->remote_smileys, shortcut);
+	if (smiley && !PURPLE_IS_REMOTE_SMILEY(smiley)) {
+		purple_debug_warning("conversation", "Invalid type of smiley "
+			"stored in remote smileys list");
+		return NULL;
+	}
+
+	/* smiley was already added */
+	if (smiley)
+		return NULL;
+
+	rsmiley = g_object_new(PURPLE_TYPE_REMOTE_SMILEY,
+		"shortcut", shortcut,
+		"is-ready", FALSE,
+		NULL);
+
+	if (!purple_smiley_list_add(priv->remote_smileys,
+		PURPLE_SMILEY(rsmiley)))
+	{
+		purple_debug_error("conversation", "failed adding remote "
+			"smiley to the list");
+		g_object_unref(rsmiley);
+		return NULL;
+	}
+
+	/* priv->remote_smileys holds the only one ref */
+	g_object_unref(rsmiley);
+	return rsmiley;
+}
+
+PurpleRemoteSmiley *
+purple_conversation_get_remote_smiley(PurpleConversation *conv,
+	const gchar *shortcut)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	PurpleSmiley *smiley;
+
+	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(shortcut != NULL, NULL);
+	g_return_val_if_fail(shortcut[0] != '\0', NULL);
+
+	if (priv->remote_smileys == NULL)
+		return NULL;
+
+	smiley = purple_smiley_list_get_by_shortcut(
+		priv->remote_smileys, shortcut);
+	if (smiley && !PURPLE_IS_REMOTE_SMILEY(smiley)) {
+		purple_debug_warning("conversation", "Invalid type of smiley "
+			"stored in remote smileys list");
+		return NULL;
+	}
+
+	return PURPLE_REMOTE_SMILEY(smiley);
+}
+
+PurpleSmileyList *
+purple_conversation_get_remote_smileys(PurpleConversation *conv)
+{
+	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->remote_smileys;
+}
+
 
 /**************************************************************************
  * GObject code

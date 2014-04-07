@@ -84,8 +84,7 @@ G_BEGIN_DECLS
  * pidgin_setup_webview:
  * @webview: The gtkwebview widget to setup.
  *
- * Sets up a gtkwebview widget, loads it with smileys, and sets the
- * default signal handlers.
+ * Sets up a gtkwebview widget and sets the default signal handlers.
  */
 void pidgin_setup_webview(GtkWidget *webview);
 
@@ -483,7 +482,7 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
  * Sets an ATK name for a given widget.  Also sets the labelled-by
  * and label-for ATK relationships.
  */
-void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
+void pidgin_set_accessible_label(GtkWidget *w, GtkLabel *l);
 
 /**
  * pidgin_set_accessible_relations:
@@ -492,7 +491,7 @@ void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
  *
  * Sets the labelled-by and label-for ATK relationships.
  */
-void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
+void pidgin_set_accessible_relations(GtkWidget *w, GtkLabel *l);
 
 /**
  * pidgin_menu_position_func_helper:
@@ -944,6 +943,26 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, 
  *         a warning is logged.
  */
 GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width, int height, gboolean preserve_aspect_ratio);
+
+/**
+ * pidgin_pixbuf_scale_down:
+ * @src: The source image.
+ * @max_width: Maximum width in px.
+ * @max_height: Maximum height in px.
+ * @interp_type: Interpolation method.
+ * @preserve_ratio: %TRUE to preserve image's aspect ratio.
+ *
+ * Scales the image to the desired dimensions. If image is smaller, it will be
+ * returned without modifications.
+ *
+ * If new image is created, @src reference cound will be decreased and new image
+ * with a ref count of 1 will be returned.
+ *
+ * Returns: The image with proper sizing. %NULL in case of error.
+ */
+GdkPixbuf *
+pidgin_pixbuf_scale_down(GdkPixbuf *src, guint max_width, guint max_height,
+	GdkInterpType interp_type, gboolean preserve_ratio);
 
 /**
  * pidgin_make_scrollable:

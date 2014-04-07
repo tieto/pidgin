@@ -3506,6 +3506,15 @@ purple_str_has_prefix(const char *s, const char *p)
 }
 
 gboolean
+purple_str_has_caseprefix(const gchar *s, const gchar *p)
+{
+	g_return_val_if_fail(s, FALSE);
+	g_return_val_if_fail(p, FALSE);
+
+	return (g_ascii_strncasecmp(s, p, strlen(p)) == 0);
+}
+
+gboolean
 purple_str_has_suffix(const char *s, const char *x)
 {
 	return g_str_has_suffix(s, x);
@@ -4970,3 +4979,69 @@ gchar *purple_http_digest_calculate_response(
 
 	return g_strdup(hash2);
 }
+
+#if 0
+
+/* Temporarily removed - re-add this when you need ini file support. */
+
+#define PURPLE_KEY_FILE_DEFAULT_MAX_SIZE 102400
+#define PURPLE_KEY_FILE_HARD_LIMIT 10485760
+
+gboolean
+purple_key_file_load_from_ini(GKeyFile *key_file, const gchar *file,
+	gsize max_size)
+{
+	const gchar *header = "[default]\n\n";
+	int header_len = strlen(header);
+	int fd;
+	struct stat st;
+	gsize file_size, buff_size;
+	gchar *buff;
+	GError *error = NULL;
+
+	g_return_val_if_fail(key_file != NULL, FALSE);
+	g_return_val_if_fail(file != NULL, FALSE);
+	g_return_val_if_fail(max_size < PURPLE_KEY_FILE_HARD_LIMIT, FALSE);
+
+	if (max_size == 0)
+		max_size = PURPLE_KEY_FILE_DEFAULT_MAX_SIZE;
+
+	fd = g_open(file, O_RDONLY, S_IREAD);
+	if (fd == -1) {
+		purple_debug_error("util", "Failed to read ini file %s", file);
+		return FALSE;
+	}
+
+	if (fstat(fd, &st) != 0) {
+		purple_debug_error("util", "Failed to fstat ini file %s", file);
+		return FALSE;
+	}
+
+	file_size = (st.st_size > max_size) ? max_size : st.st_size;
+
+	buff_size = file_size + header_len;
+	buff = g_new(gchar, buff_size);
+	memcpy(buff, header, header_len);
+	if (read(fd, buff + header_len, file_size) != (gssize)file_size) {
+		purple_debug_error("util",
+			"Failed to read whole ini file %s", file);
+		g_close(fd, NULL);
+		free(buff);
+		return FALSE;
+	}
+	g_close(fd, NULL);
+
+	g_key_file_load_from_data(key_file, buff, buff_size,
+		G_KEY_FILE_NONE, &error);
+
+	free(buff);
+
+	if (error) {
+		purple_debug_error("util", "Failed parsing ini file %s: %s",
+			file, error->message);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+#endif

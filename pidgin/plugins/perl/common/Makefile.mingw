@@ -69,7 +69,6 @@ XS_FILES = \
 	GtkSavedStatuses.xs \
 	GtkSound.xs \
 	GtkStatusBox.xs \
-	GtkThemes.xs \
 	GtkUtils.xs
 
 

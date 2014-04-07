@@ -155,6 +155,9 @@ irssi_new_window(GntWM *wm, GntWidget *win)
 	const char *name;
 	int x, y, w, h;
 
+	g_return_if_fail(win != NULL);
+	g_return_if_fail(wm != NULL);
+
 	name = gnt_widget_get_name(win);
 	if (!name || !strstr(name, "conversation-window")) {
 		if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {

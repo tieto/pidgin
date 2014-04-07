@@ -865,7 +865,7 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 }
 
 static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
-						 PurpleGroup *group)
+	PurpleGroup *group)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 

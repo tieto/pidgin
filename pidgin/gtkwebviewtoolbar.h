@@ -85,16 +85,6 @@ GtkWidget *pidgin_webviewtoolbar_new(void);
 void pidgin_webviewtoolbar_attach(PidginWebViewToolbar *toolbar, GtkWidget *webview);
 
 /**
- * pidgin_webviewtoolbar_associate_smileys:
- * @toolbar:  The PidginWebViewToolbar object
- * @proto_id: The ID of the protocol from which smileys are associated
- *
- * Associate the smileys from a protocol to a PidginWebViewToolbar object
- */
-void pidgin_webviewtoolbar_associate_smileys(PidginWebViewToolbar *toolbar,
-                                          const char *proto_id);
-
-/**
  * pidgin_webviewtoolbar_switch_active_conversation:
  * @toolbar: The PidginWebViewToolbar object
  * @conv:    The new conversation
@@ -117,4 +107,3 @@ void pidgin_webviewtoolbar_activate(PidginWebViewToolbar *toolbar,
 G_END_DECLS
 
 #endif /* _PIDGINWEBVIEWTOOLBAR_H_ */
-

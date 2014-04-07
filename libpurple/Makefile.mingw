@@ -102,6 +102,7 @@ C_SRC =	\
 			media/enum-types.c \
 			mediamanager.c \
 			media.c \
+			memorypool.c \
 			mime.c \
 			nat-pmp.c \
 			network.c \
@@ -123,6 +124,11 @@ C_SRC =	\
 			server.c \
 			signals.c \
 			smiley.c \
+			smiley-custom.c \
+			smiley-list.c \
+			smiley-parser.c \
+			smiley-remote.c \
+			smiley-theme.c \
 			sound-theme-loader.c \
 			sound-theme.c \
 			sound.c \
@@ -133,6 +139,7 @@ C_SRC =	\
 			theme-loader.c \
 			theme-manager.c \
 			theme.c \
+			trie.c \
 			upnp.c \
 			util.c \
 			version.c \

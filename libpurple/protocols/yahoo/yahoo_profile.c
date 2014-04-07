@@ -978,6 +978,8 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	/* in to purple_markup_strip_html*/
 	char *fudged_buffer;
 
+	g_return_if_fail(strings != NULL);
+
 	yd = purple_connection_get_protocol_data(info_data->gc);
 
 	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
@@ -989,7 +991,7 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	purple_debug_misc("yahoo", "url_buffer = %p\n", url_buffer);
 
 	/* convert to utf8 */
-	if (strings && strings->charset) {
+	if (strings->charset) {
 		p = g_convert(stripped, -1, "utf-8", strings->charset,
 				NULL, NULL, NULL);
 		if (!p) {
@@ -1009,7 +1011,7 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	p = NULL;
 
 	/* "Last updated" should also be converted to utf8 and with &nbsp; killed */
-	if (strings && strings->charset) {
+	if (strings->charset) {
 		last_updated_utf8_string = g_convert(last_updated_string, -1, "utf-8",
 				strings->charset, NULL, NULL, NULL);
 		yahoo_remove_nonbreaking_spaces(last_updated_utf8_string);

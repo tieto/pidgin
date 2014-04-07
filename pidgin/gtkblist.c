@@ -54,7 +54,7 @@
 #include "gtkroomlist.h"
 #include "gtkstatusbox.h"
 #include "gtkscrollbook.h"
-#include "gtksmiley.h"
+#include "gtksmiley-manager.h"
 #include "gtkblist-theme.h"
 #include "gtkblist-theme-loader.h"
 #include "gtkutils.h"

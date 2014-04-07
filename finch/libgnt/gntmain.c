@@ -469,6 +469,7 @@ void gnt_init()
 
 #ifdef NO_WIDECHAR
 	ascii_only = TRUE;
+	(void)locale;
 #else
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf"))) {
 		ascii_only = FALSE;

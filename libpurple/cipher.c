@@ -51,6 +51,46 @@ purple_cipher_get_type(void) {
 	return type;
 }
 
+static const gchar *
+purple_cipher_get_name(PurpleCipher *cipher)
+{
+	PurpleCipherClass *klass;
+	const gchar *name;
+
+	if (!PURPLE_IS_CIPHER(cipher))
+		return "(error: not a cipher)";
+
+	klass = PURPLE_CIPHER_GET_CLASS(cipher);
+	if (!klass)
+		return "(error: unknown cipher class)";
+
+	name = g_type_name(G_TYPE_FROM_CLASS(klass));
+	if (!name)
+		return "(error: unknown cipher name)";
+
+	return name;
+}
+
+static const gchar *
+purple_hash_get_name(PurpleHash *hash)
+{
+	PurpleHashClass *klass;
+	const gchar *name;
+
+	if (!PURPLE_IS_HASH(hash))
+		return "(error: not a hash)";
+
+	klass = PURPLE_HASH_GET_CLASS(hash);
+	if (!klass)
+		return "(error: unknown hash class)";
+
+	name = g_type_name(G_TYPE_FROM_CLASS(klass));
+	if (!name)
+		return "(error: unknown hash name)";
+
+	return name;
+}
+
 void
 purple_cipher_reset(PurpleCipher *cipher) {
 	PurpleCipherClass *klass = NULL;
@@ -59,12 +99,13 @@ purple_cipher_reset(PurpleCipher *cipher) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->reset)
+	if (klass && klass->reset)
 		klass->reset(cipher);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"reset method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the reset method",
+			purple_cipher_get_name(cipher));
+	}
 }
 
 void
@@ -75,12 +116,13 @@ purple_cipher_reset_state(PurpleCipher *cipher) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->reset_state)
+	if (klass && klass->reset_state)
 		klass->reset_state(cipher);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"reset_state method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the reset_state method",
+			purple_cipher_get_name(cipher));
+	}
 }
 
 void
@@ -93,12 +135,13 @@ purple_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len)
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->set_iv)
+	if (klass && klass->set_iv)
 		klass->set_iv(cipher, iv, len);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"set_iv method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the set_iv method",
+			purple_cipher_get_name(cipher));
+	}
 }
 
 void
@@ -111,12 +154,13 @@ purple_cipher_append(PurpleCipher *cipher, const guchar *data,
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->append)
+	if (klass && klass->append)
 		klass->append(cipher, data, len);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"append method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the append method",
+			purple_cipher_get_name(cipher));
+	}
 }
 
 gboolean
@@ -128,12 +172,13 @@ purple_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->digest)
+	if (klass && klass->digest)
 		return klass->digest(cipher, digest, len);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"digest method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the digest method",
+			purple_cipher_get_name(cipher));
+	}
 
 	return FALSE;
 }
@@ -175,12 +220,13 @@ purple_cipher_get_digest_size(PurpleCipher *cipher)
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->get_digest_size)
+	if (klass && klass->get_digest_size)
 		return klass->get_digest_size(cipher);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"get_digest_size method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the get_digest_size method",
+			purple_cipher_get_name(cipher));
+	}
 
 	return FALSE;
 }
@@ -198,12 +244,13 @@ purple_cipher_encrypt(PurpleCipher *cipher, const guchar input[],
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->encrypt)
+	if (klass && klass->encrypt)
 		return klass->encrypt(cipher, input, in_len, output, out_size);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"encrypt method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the encrypt method",
+			purple_cipher_get_name(cipher));
+	}
 
 	return -1;
 }
@@ -220,12 +267,13 @@ purple_cipher_decrypt(PurpleCipher *cipher, const guchar input[],
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->decrypt)
+	if (klass && klass->decrypt)
 		return klass->decrypt(cipher, input, in_len, output, out_size);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"decrypt method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the decrypt method",
+			purple_cipher_get_name(cipher));
+	}
 
 	return -1;
 }
@@ -238,12 +286,13 @@ purple_cipher_set_salt(PurpleCipher *cipher, const guchar *salt, size_t len) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->set_salt)
+	if (klass && klass->set_salt)
 		klass->set_salt(cipher, salt, len);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"set_salt method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the set_salt method",
+			purple_cipher_get_name(cipher));
+	}
 }
 
 void
@@ -254,12 +303,13 @@ purple_cipher_set_key(PurpleCipher *cipher, const guchar *key, size_t len) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->set_key)
+	if (klass && klass->set_key)
 		klass->set_key(cipher, key, len);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"set_key method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the set_key method",
+			purple_cipher_get_name(cipher));
+	}
 }
 
 size_t
@@ -270,12 +320,13 @@ purple_cipher_get_key_size(PurpleCipher *cipher) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->get_key_size)
+	if (klass && klass->get_key_size)
 		return klass->get_key_size(cipher);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"get_key_size method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the get_key_size method",
+			purple_cipher_get_name(cipher));
+	}
 
 	return -1;
 }
@@ -290,12 +341,13 @@ purple_cipher_set_batch_mode(PurpleCipher *cipher,
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->set_batch_mode)
+	if (klass && klass->set_batch_mode)
 		klass->set_batch_mode(cipher, mode);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"set_batch_mode method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the set_batch_mode method",
+			purple_cipher_get_name(cipher));
+	}
 }
 
 PurpleCipherBatchMode
@@ -307,12 +359,13 @@ purple_cipher_get_batch_mode(PurpleCipher *cipher)
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->get_batch_mode)
+	if (klass && klass->get_batch_mode)
 		return klass->get_batch_mode(cipher);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"get_batch_mode method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the get_batch_mode method",
+			purple_cipher_get_name(cipher));
+	}
 
 	return -1;
 }
@@ -326,12 +379,13 @@ purple_cipher_get_block_size(PurpleCipher *cipher)
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass && klass->get_block_size)
+	if (klass && klass->get_block_size)
 		return klass->get_block_size(cipher);
-	else
-		purple_debug_warning("cipher", "the %s cipher does not implement the "
-						"get_block_size method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(cipher)));
+	else {
+		purple_debug_warning("cipher", "the %s cipher does not "
+			"implement the get_block_size method",
+			purple_cipher_get_name(cipher));
+	}
 
 	return -1;
 }
@@ -373,12 +427,12 @@ purple_hash_reset(PurpleHash *hash) {
 
 	klass = PURPLE_HASH_GET_CLASS(hash);
 
-	if(klass && klass->reset)
+	if (klass && klass->reset)
 		klass->reset(hash);
-	else
-		purple_debug_warning("hash", "the %s hash does not implement the "
-						"reset method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
+	else {
+		purple_debug_warning("hash", "the %s hash does not implement "
+			"the reset method", purple_hash_get_name(hash));
+	}
 }
 
 void
@@ -389,12 +443,12 @@ purple_hash_reset_state(PurpleHash *hash) {
 
 	klass = PURPLE_HASH_GET_CLASS(hash);
 
-	if(klass && klass->reset_state)
+	if (klass && klass->reset_state)
 		klass->reset_state(hash);
-	else
-		purple_debug_warning("hash", "the %s hash does not implement the "
-						"reset_state method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
+	else {
+		purple_debug_warning("hash", "the %s hash does not implement "
+			"the reset_state method", purple_hash_get_name(hash));
+	}
 }
 
 void
@@ -407,12 +461,12 @@ purple_hash_append(PurpleHash *hash, const guchar *data,
 
 	klass = PURPLE_HASH_GET_CLASS(hash);
 
-	if(klass && klass->append)
+	if (klass && klass->append)
 		klass->append(hash, data, len);
-	else
-		purple_debug_warning("hash", "the %s hash does not implement the "
-						"append method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
+	else {
+		purple_debug_warning("hash", "the %s hash does not implement "
+			"the append method", purple_hash_get_name(hash));
+	}
 }
 
 gboolean
@@ -424,12 +478,12 @@ purple_hash_digest(PurpleHash *hash, guchar digest[], size_t len)
 
 	klass = PURPLE_HASH_GET_CLASS(hash);
 
-	if(klass && klass->digest)
+	if (klass && klass->digest)
 		return klass->digest(hash, digest, len);
-	else
-		purple_debug_warning("hash", "the %s hash does not implement the "
-						"digest method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
+	else {
+		purple_debug_warning("hash", "the %s hash does not implement "
+			"the digest method", purple_hash_get_name(hash));
+	}
 
 	return FALSE;
 }
@@ -471,12 +525,12 @@ purple_hash_get_digest_size(PurpleHash *hash)
 
 	klass = PURPLE_HASH_GET_CLASS(hash);
 
-	if(klass && klass->get_digest_size)
+	if (klass && klass->get_digest_size)
 		return klass->get_digest_size(hash);
-	else
-		purple_debug_warning("hash", "the %s hash does not implement the "
-						"get_digest_size method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
+	else {
+		purple_debug_warning("hash", "the %s hash does not implement "
+			"the get_digest_size method", purple_hash_get_name(hash));
+	}
 
 	return FALSE;
 }
@@ -490,12 +544,12 @@ purple_hash_get_block_size(PurpleHash *hash)
 
 	klass = PURPLE_HASH_GET_CLASS(hash);
 
-	if(klass && klass->get_block_size)
+	if (klass && klass->get_block_size)
 		return klass->get_block_size(hash);
-	else
-		purple_debug_warning("hash", "the %s hash does not implement the "
-						"get_block_size method\n",
-						g_type_name(G_TYPE_FROM_INSTANCE(hash)));
+	else {
+		purple_debug_warning("hash", "the %s hash does not implement "
+			"the get_block_size method", purple_hash_get_name(hash));
+	}
 
 	return -1;
 }

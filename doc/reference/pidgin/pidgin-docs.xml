@@ -32,7 +32,6 @@
       <xi:include href="xml/gtknickcolors.xml" />
       <xi:include href="xml/gtkconv-theme.xml" />
       <xi:include href="xml/gtkconv-theme-loader.xml" />
-      <xi:include href="xml/gtksmiley.xml" />
       <xi:include href="xml/gtkdebug.xml" />
       <xi:include href="xml/gtkdocklet.xml" />
       <xi:include href="xml/gtkdnd-hints.xml" />
@@ -56,8 +55,8 @@
       <xi:include href="xml/gtkroomlist.xml" />
       <xi:include href="xml/gtksavedstatuses.xml" />
       <xi:include href="xml/gtkscrollbook.xml" />
-      <xi:include href="xml/smileyparser.xml" />
-      <xi:include href="xml/gtkthemes.xml" />
+      <xi:include href="xml/gtksmiley-manager.xml" />
+      <xi:include href="xml/gtksmiley-theme.xml" />
       <xi:include href="xml/gtksound.xml" />
       <xi:include href="xml/gtkstatusbox.xml" />
       <xi:include href="xml/pidginstock.xml" />

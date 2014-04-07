@@ -18,7 +18,6 @@ GtkSavedStatuses.xs
 GtkSession.xs
 GtkSound.xs
 GtkStatusBox.xs
-GtkThemes.xs
 GtkUtils.xs
 MANIFEST
 Pidgin.pm

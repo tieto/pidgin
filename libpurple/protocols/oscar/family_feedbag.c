@@ -1755,6 +1755,8 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
 
 	/* Unknown */
 	tmp = byte_stream_get16(bs);
+	if (!tmp)
+		purple_debug_warning("oscar", "unknown field missing");
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, bn, msg);
@@ -1846,6 +1848,8 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
 
 	/* Unknown */
 	tmp = byte_stream_get16(bs);
+	if (!tmp)
+		purple_debug_warning("oscar", "unknown field missing");
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, bn, msg);
@@ -1950,6 +1954,8 @@ static int receiveauthreply(OscarData *od, FlapConnection *conn, aim_module_t *m
 
 	/* Unknown */
 	tmp = byte_stream_get16(bs);
+	if (!tmp)
+		purple_debug_warning("oscar", "unknown field missing");
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, bn, reply, msg);

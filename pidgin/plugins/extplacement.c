@@ -57,6 +57,13 @@ conv_placement_by_number(PidginConversation *conv)
 			for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
 				win = l->data;
 
+				if (!conv || !conv->active_conv ||
+					!G_TYPE_FROM_INSTANCE(conv->active_conv))
+				{
+					g_warn_if_reached();
+					continue;
+				}
+
 				if (purple_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate") &&
 					G_TYPE_FROM_INSTANCE(pidgin_conv_window_get_active_conversation(win)) != G_TYPE_FROM_INSTANCE(conv->active_conv))
 					continue;

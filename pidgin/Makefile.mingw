@@ -89,11 +89,11 @@ PIDGIN_C_SRC =	\
 			gtkroomlist.c \
 			gtksavedstatuses.c \
 			gtkscrollbook.c \
-			gtksmiley.c \
+			gtksmiley-manager.c \
+			gtksmiley-theme.c \
 			gtksound.c \
 			gtkstatus-icon-theme.c \
 			gtkstatusbox.c \
-			gtkthemes.c \
 			gtkutils.c \
 			gtkwebview.c \
 			gtkwebviewtoolbar.c \
@@ -104,7 +104,6 @@ PIDGIN_C_SRC =	\
 			pidgin.c \
 			pidginstock.c \
 			pidgintooltip.c \
-			smileyparser.c \
 			win32/gtkwin32dep.c \
 			win32/untar.c \
 			win32/wspell.c
