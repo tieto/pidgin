@@ -266,7 +266,7 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
  * purple_trie_find:
  * @trie: the trie.
  * @src: the source string.
- * @find_cb: the callback for found entries (may be %NULL).
+ * @find_cb: the callback for the found entries (may be %NULL).
  * @user_data: custom data to be passed to @find_cb.
  *
  * Processes @src string and finds all occuriences of words added to @trie.
@@ -279,6 +279,26 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
  */
 gulong
 purple_trie_find(PurpleTrie *trie, const gchar *src,
+	PurpleTrieFindCb find_cb, gpointer user_data);
+
+/**
+ * purple_trie_multi_find:
+ * @tries: the list of tries.
+ * @src: the source string.
+ * @find_cb: the callback for the found entries (may be %NULL).
+ * @user_data: custom data to be passed to @find_cb.
+ *
+ * Processes @src and replaces all occuriences of words added to tries in
+ * list @tries. Entries added to tries on the beginning of the list have higher
+ * priority, than ones added further.
+ *
+ * Different #GSList's can be combined to possess common parts, so you can create
+ * a "tree of tries".
+ *
+ * Returns: the number of found words.
+ */
+gulong
+purple_trie_multi_find(const GSList *tries, const gchar *src,
 	PurpleTrieFindCb find_cb, gpointer user_data);
 
 G_END_DECLS
