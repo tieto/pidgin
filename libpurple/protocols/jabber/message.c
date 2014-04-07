@@ -868,6 +868,8 @@ jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
 			const gssize len = strlen(shortcut);
 			gchar *escaped = g_markup_escape_text(shortcut, len);
 
+			/* TODO: it doesn't take care of text inside a tag.
+			 * Use purple_smiley_parse. */
 			if (g_str_has_prefix(&(xhtml[pos]), escaped)) {
 				/* we found the current smiley at this position */
 				const JabberData *data =

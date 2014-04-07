@@ -89,4 +89,20 @@ GList *
 purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
 	gboolean is_html);
 
+/**
+ * _purple_smiley_parser_init: (skip)
+ *
+ * Initializes the smileys parser subsystem.
+ */
+void
+_purple_smiley_parser_init(void);
+
+/**
+ * _purple_smiley_parser_uninit: (skip)
+ *
+ * Uninitializes the smileys parser subsystem.
+ */
+void
+_purple_smiley_parser_uninit(void);
+
 #endif /* _PURPLE_SMILEY_PARSER_H_ */
