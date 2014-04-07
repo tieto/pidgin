@@ -6627,7 +6627,7 @@ pidgin_conv_remote_smiley_got(PurpleSmiley *smiley, gpointer _conv)
 	g_free(js);
 }
 
-static void
+static gboolean
 pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer _proto_name)
 {
@@ -6664,6 +6664,8 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 	}
 
 	g_free(escaped_shortcut);
+
+	return TRUE;
 }
 
 static void

@@ -73,10 +73,8 @@ purple_smiley_parse_cb(GString *out, const gchar *word, gpointer _smiley,
 	if (parse_data->in_html_tag)
 		return FALSE;
 
-	parse_data->job.replace.cb(out, smiley, parse_data->job.replace.conv,
-		parse_data->job.replace.ui_data);
-
-	return TRUE;
+	return parse_data->job.replace.cb(out, smiley,
+		parse_data->job.replace.conv, parse_data->job.replace.ui_data);
 }
 
 /* XXX: this shouldn't be a conv for incoming messages - see
@@ -154,6 +152,38 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 
 	/* TODO: parse greedily (as much as possible) when PurpleTrie
 	 * provides support for it. */
+	return purple_trie_multi_replace(tries, html_message,
+		purple_smiley_parse_cb, &parse_data);
+}
+
+gchar *
+purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
+	gpointer ui_data)
+{
+	PurpleTrie *custom_trie = NULL;
+	GSList *tries = NULL;
+	GSList tries_sentry, tries_custom;
+	PurpleSmileyParseData parse_data;
+
+	if (html_message == NULL || html_message[0] == '\0')
+		return g_strdup(html_message);
+
+	custom_trie = purple_smiley_list_get_trie(
+		purple_smiley_custom_get_list());
+	if (!custom_trie || purple_trie_get_size(custom_trie) == 0)
+		return g_strdup(html_message);
+
+	tries_sentry.data = html_sentry;
+	tries_custom.data = custom_trie;
+	tries_sentry.next = &tries_custom;
+	tries_custom.next = NULL;
+	tries = &tries_sentry;
+
+	parse_data.job.replace.conv = NULL;
+	parse_data.job.replace.cb = cb;
+	parse_data.job.replace.ui_data = ui_data;
+	parse_data.in_html_tag = FALSE;
+
 	return purple_trie_multi_replace(tries, html_message,
 		purple_smiley_parse_cb, &parse_data);
 }

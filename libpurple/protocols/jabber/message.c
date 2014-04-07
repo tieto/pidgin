@@ -849,57 +849,6 @@ jabber_message_get_mimetype_from_ext(const gchar *ext)
 	}
 }
 
-static gchar *
-jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
-{
-	/* create XML element for all smileys (img tags) */
-	GString *result = g_string_new(NULL);
-	int pos = 0;
-	int length = strlen(xhtml);
-
-	while (pos < length) {
-		const GList *iterator;
-		gboolean found_smiley = FALSE;
-
-		for (iterator = smileys ; iterator ;
-			iterator = g_list_next(iterator)) {
-			const PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
-			const gchar *shortcut = purple_smiley_get_shortcut(smiley);
-			const gssize len = strlen(shortcut);
-			gchar *escaped = g_markup_escape_text(shortcut, len);
-
-			/* TODO: it doesn't take care of text inside a tag.
-			 * Use purple_smiley_parse. */
-			if (g_str_has_prefix(&(xhtml[pos]), escaped)) {
-				/* we found the current smiley at this position */
-				const JabberData *data =
-					jabber_data_find_local_by_alt(shortcut);
-				PurpleXmlNode *img = jabber_data_get_xhtml_im(data, shortcut);
-				int len;
-				gchar *img_text = purple_xmlnode_to_str(img, &len);
-
-				found_smiley = TRUE;
-				result = g_string_append(result, img_text);
-				g_free(img_text);
-				pos += strlen(escaped);
-				g_free(escaped);
-				purple_xmlnode_free(img);
-				break;
-			} else {
-				/* cleanup from the before the next round... */
-				g_free(escaped);
-			}
-		}
-		if (!found_smiley) {
-			/* there was no smiley here, just copy one byte */
-			result = g_string_append_c(result, xhtml[pos]);
-			pos++;
-		}
-	}
-
-	return g_string_free(result, FALSE);
-}
-
 static gboolean
 jabber_conv_support_custom_smileys(JabberStream *js,
 								   PurpleConversation *conv,
@@ -929,6 +878,32 @@ jabber_conv_support_custom_smileys(JabberStream *js,
 	} else {
 		return FALSE;
 	}
+}
+
+static gboolean
+jabber_message_smileyify_cb(GString *out, PurpleSmiley *smiley,
+	PurpleConversation *_empty, gpointer _unused)
+{
+	const gchar *shortcut;
+	const JabberData *data;
+	PurpleXmlNode *smiley_node;
+	gchar *node_xml;
+
+	shortcut = purple_smiley_get_shortcut(smiley);
+	data = jabber_data_find_local_by_alt(shortcut);
+
+	if (!data)
+		return FALSE;
+
+	smiley_node = jabber_data_get_xhtml_im(data, shortcut);
+	node_xml = purple_xmlnode_to_str(smiley_node, NULL);
+
+	g_string_append(out, node_xml);
+
+	purple_xmlnode_free(smiley_node);
+	g_free(node_xml);
+
+	return TRUE;
 }
 
 static char *
@@ -1013,10 +988,10 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 		jabber_data_associate_local(jdata, shortcut);
 	}
 
-	smileyfied_xhtml = jabber_message_get_smileyfied_xhtml(xhtml,
-		found_smileys);
-
 	g_list_free(found_smileys);
+
+	smileyfied_xhtml = purple_smiley_parse_custom(xhtml,
+		jabber_message_smileyify_cb, NULL);
 
 	return smileyfied_xhtml;
 }

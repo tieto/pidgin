@@ -40,14 +40,19 @@
  * PurpleSmileyParseCb:
  * @out: the message buffer.
  * @smiley: found smiley.
- * @conv: the conversation of a message.
+ * @conv: the conversation of a message (or %NULL, if not passed).
  * @ui_data: the data being passed to #purple_smiley_parse.
  *
  * A replace callback for the found @smiley. It should append a HTML tag
  * representing the @smiley to the @out string. It must not modify the
  * @out string in other way than appending to its end.
+ *
+ * If callback decides not to replace a smiley, it must not modify
+ * @out in any way.
+ *
+ * Returns: %TRUE if the smiley was inserted.
  */
-typedef void (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
+typedef gboolean (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer ui_data);
 
 /**
@@ -70,6 +75,20 @@ typedef void (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
 gchar *
 purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data);
+
+/**
+ * purple_smiley_parse_custom:
+ * @html_message:
+ * @cb:
+ * @ui_data:
+ *
+ * TODO
+ *
+ * Returns: TODO
+ */
+gchar *
+purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
+	gpointer ui_data);
 
 /**
  * purple_smiley_find:
