@@ -445,6 +445,8 @@ purple_aes_cipher_nss_batch_mode(PurpleCipherBatchMode batch_mode)
 		case PURPLE_CIPHER_BATCH_MODE_ECB:
 			return CKM_AES_ECB;
 	}
+
+	return CKM_AES_CBC;
 }
 
 static gboolean
