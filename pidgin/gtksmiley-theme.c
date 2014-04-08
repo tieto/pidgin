@@ -177,6 +177,9 @@ pidgin_smiley_theme_index_parse(const gchar *theme_path, gboolean load_contents)
 				break;
 			}
 
+			if (proto)
+				proto->smileys = g_list_reverse(proto->smileys);
+
 			proto = g_new0(PidginSmileyThemeIndexProtocol, 1);
 			proto->name = g_strndup(line, end - line);
 
@@ -249,6 +252,9 @@ pidgin_smiley_theme_index_parse(const gchar *theme_path, gboolean load_contents)
 		g_strfreev(split);
 		smiley->shortcuts = g_list_reverse(smiley->shortcuts);
 	}
+
+	if (proto)
+		proto->smileys = g_list_reverse(proto->smileys);
 
 	fclose(file);
 
