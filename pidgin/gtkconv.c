@@ -621,7 +621,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleMessageFlags flags = 0;
-	char *buf, *clean;
+	char *buf;
 
 	account = purple_conversation_get_account(conv);
 
@@ -637,16 +637,12 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	if (!purple_account_is_connected(account))
 		return;
 
+	if (pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry)))
+		return;
+
 	buf = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(gtkconv->entry));
-	clean = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	gtk_widget_grab_focus(gtkconv->entry);
-
-	if (!*clean) {
-		g_free(buf);
-		g_free(clean);
-		return;
-	}
 
 	purple_idle_touch();
 
@@ -678,7 +674,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		purple_conversation_send_with_flags(conv, buf, flags);
 	}
 
-	g_free(clean);
 	g_free(buf);
 
 	conversation_entry_clear(gtkconv);
@@ -1951,24 +1946,22 @@ gtkconv_cycle_focus(PidginConversation *gtkconv, GtkDirectionType dir)
 static void
 update_typing_inserting(PidginConversation *gtkconv)
 {
-	gchar *text;
+	gboolean is_empty;
 
 	g_return_if_fail(gtkconv != NULL);
 
-	text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
+	is_empty = pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry));
 
-	got_typing_keypress(gtkconv, text[0] == '\0' || !strcmp(text, "\n"));
-
-	g_free(text);
+	got_typing_keypress(gtkconv, is_empty);
 }
 
 static gboolean
 update_typing_deleting_cb(PidginConversation *gtkconv)
 {
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
-	gchar *text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
+	gboolean is_empty = pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry));
 
-	if (!*text || !strcmp(text, "\n")) {
+	if (!is_empty) {
 		/* We deleted all the text, so turn off typing. */
 		purple_im_conversation_stop_send_typed_timeout(im);
 
@@ -1980,7 +1973,6 @@ update_typing_deleting_cb(PidginConversation *gtkconv)
 		/* We're deleting, but not all of it, so it counts as typing. */
 		got_typing_keypress(gtkconv, FALSE);
 	}
-	g_free(text);
 
 	return FALSE;
 }
@@ -1988,16 +1980,14 @@ update_typing_deleting_cb(PidginConversation *gtkconv)
 static void
 update_typing_deleting(PidginConversation *gtkconv)
 {
-	gchar *text;
+	gboolean is_empty;
 
 	g_return_if_fail(gtkconv != NULL);
 
-	text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
+	is_empty = pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry));
 
-	if (*text && strcmp(text, "\n"))
+	if (!is_empty)
 		purple_timeout_add(0, (GSourceFunc)update_typing_deleting_cb, gtkconv);
-
-	g_free(text);
 }
 
 static gboolean
@@ -4926,7 +4916,7 @@ entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
 	PidginConversation *gtkconv = data;
-	char *tmp;
+	gboolean is_empty;
 
 	g_return_if_fail(menu != NULL);
 	g_return_if_fail(gtkconv != NULL);
@@ -4934,10 +4924,9 @@ entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), NULL,
 	                                      G_CALLBACK(send_cb), gtkconv,
 	                                      0, 0, NULL);
-	tmp = pidgin_webview_get_body_text(webview);
-	if (!tmp || !*tmp)
+	is_empty = pidgin_webview_is_empty(webview);
+	if (is_empty)
 		gtk_widget_set_sensitive(menuitem, FALSE);
-	g_free(tmp);
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 0);
 
 	menuitem = gtk_separator_menu_item_new();

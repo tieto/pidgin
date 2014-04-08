@@ -654,7 +654,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			if (style)
 				styles = ggp_html_css_attribs(style);
 
-			if ((val = g_hash_table_lookup(styles,
+			if (styles && (val = g_hash_table_lookup(styles,
 				"background-color")) != NULL)
 			{
 				int color = ggp_html_decode_color(val);
@@ -662,7 +662,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 				font_new->bgcolor = color;
 			}
 
-			if ((val = g_hash_table_lookup(styles,
+			if (styles && (val = g_hash_table_lookup(styles,
 				"color")) != NULL)
 			{
 				int color = ggp_html_decode_color(val);

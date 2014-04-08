@@ -121,6 +121,9 @@ typedef struct _PidginWebViewPriv {
 
 static WebKitWebViewClass *parent_class = NULL;
 
+static GRegex *smileys_re = NULL;
+static GRegex *empty_html_re = NULL;
+
 
 /******************************************************************************
  * Helpers
@@ -1256,6 +1259,14 @@ pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/webview");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/webview/inspector_enabled", FALSE);
+
+	g_return_if_fail(smileys_re == NULL);
+	g_return_if_fail(empty_html_re == NULL);
+	smileys_re = g_regex_new("<img[^>]* class=\"emoticon "
+		"[^\"^>]*\"[^>]*alt=\"([^\"^>]+)\"[^>]*>",
+		G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
+	empty_html_re = g_regex_new("<(?!img)[^>]*>",
+		G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
 }
 
 static void
@@ -1680,20 +1691,28 @@ pidgin_webview_get_head_html(PidginWebView *webview)
 	return html;
 }
 
+static gchar *
+pidgin_webview_strip_smileys(const gchar *text)
+{
+	return g_regex_replace(smileys_re, text, -1, 0, "\\1", 0, NULL);
+}
+
 gchar *
 pidgin_webview_get_body_html(PidginWebView *webview)
 {
 	WebKitDOMDocument *doc;
 	WebKitDOMHTMLElement *body;
-	gchar *html;
+	gchar *html, *stripped;
 
 	g_return_val_if_fail(webview != NULL, NULL);
 
 	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	body = webkit_dom_document_get_body(doc);
 	html = webkit_dom_html_element_get_inner_html(body);
+	stripped = pidgin_webview_strip_smileys(html);
+	g_free(html);
 
-	return html;
+	return stripped;
 }
 
 gchar *
@@ -1732,6 +1751,36 @@ pidgin_webview_get_selected_text(PidginWebView *webview)
 		return webkit_dom_range_get_text(range);
 	else
 		return NULL;
+}
+
+static gchar *
+pidgin_webview_strip_empty_html(const gchar *text)
+{
+	return g_regex_replace(empty_html_re, text, -1, 0, "", 0, NULL);
+}
+
+gboolean
+pidgin_webview_is_empty(PidginWebView *webview)
+{
+	gchar *html, *tmp;
+	gboolean is_empty;
+
+	g_return_val_if_fail(webview != NULL, TRUE);
+
+	html = pidgin_webview_get_body_html(webview);
+	tmp = purple_strreplace(html, "&nbsp;", " ");
+	g_free(html);
+	html = tmp;
+
+	tmp = pidgin_webview_strip_empty_html(html);
+	g_free(html);
+	html = tmp;
+
+	g_strstrip(html);
+	is_empty = (html[0] == '\0');
+	g_free(html);
+
+	return is_empty;
 }
 
 void

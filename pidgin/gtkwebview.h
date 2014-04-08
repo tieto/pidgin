@@ -415,6 +415,17 @@ gchar *pidgin_webview_get_body_text(PidginWebView *webview);
 gchar *pidgin_webview_get_selected_text(PidginWebView *webview);
 
 /**
+ * pidgin_webview_is_empty:
+ * @webview: the PidginWebView.
+ *
+ * Checks, if the @webview is empty.
+ *
+ * Returns %TRUES, if the @webview is empty, %FALSE otherwise.
+ */
+gboolean
+pidgin_webview_is_empty(PidginWebView *webview);
+
+/**
  * pidgin_webview_get_caret:
  * @webview:       The PidginWebView
  * @container_ret: A pointer to a pointer to a WebKitDOMNode. This pointer
