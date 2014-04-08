@@ -184,7 +184,7 @@ webview_resource_loading(WebKitWebView *webview,
 	if (img != NULL) {
 		filename = purple_imgstore_get_filename(img);
 		if (filename && g_path_is_absolute(filename)) {
-			gchar *tmp = g_strdup_printf("file://%s", filename);
+			gchar *tmp = g_filename_to_uri(filename, NULL, NULL);
 			webkit_network_request_set_uri(request, tmp);
 			g_free(tmp);
 		} else {
