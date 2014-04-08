@@ -163,15 +163,21 @@ void mxit_add_html_link( struct RXMsgData* mx, const char* replydata, gboolean i
  * Extract an ASN.1 formatted length field from the data.
  *
  *  @param data				The source data
+ *  @param data_len			Length of data
  *  @param size				The extracted length
  *  @return					The number of bytes extracted
  */
-static unsigned int asn_getlength( const gchar* data, int* size )
+static unsigned int asn_getlength( const gchar* data, gsize data_len, int* size )
 {
 	unsigned int	len		= 0;
 	unsigned char	bytes;
 	unsigned char	byte;
 	int				i;
+
+	if ( data_len < 1 ) {
+		/* missing first byte! */
+		return -1;
+	}
 
 	/* first byte specifies the number of bytes in the length */
 	bytes = ( data[0] & ~0x80 );
@@ -180,6 +186,11 @@ static unsigned int asn_getlength( const gchar* data, int* size )
 		return -1;
 	}
 	data++;
+
+	if ( data_len - 1 < bytes ) {
+		/* missing length! */
+		return -1;
+	}
 
 	/* parse out the actual length */
 	for ( i = 0; i < bytes; i++ ) {
@@ -197,14 +208,20 @@ static unsigned int asn_getlength( const gchar* data, int* size )
  * Extract an ASN.1 formatted UTF-8 string field from the data.
  *
  *  @param data				The source data
+ *  @param data_len			Length of data
  *  @param type				Expected type of string
  *  @param utf8				The extracted string.  Must be deallocated by caller.
  *  @return					The number of bytes extracted
  */
-static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
+static int asn_getUtf8( const gchar* data, gsize data_len, gchar type, char** utf8 )
 {
 	unsigned int len;
 	gchar *out_str;
+
+	if ( data_len < 2 ) {
+		/* missing type or length! */
+		return -1;
+	}
 
 	/* validate the field type [1 byte] */
 	if ( data[0] != type ) {
@@ -214,6 +231,11 @@ static int asn_getUtf8( const gchar* data, gchar type, char** utf8 )
 	}
 
 	len = (guint8)data[1]; /* length field [1 byte] */
+	if ( data_len - 2 < len ) {
+		/* not enough bytes left in data! */
+		return -1;
+	}
+
 	out_str = g_malloc(len + 1);
 	memcpy(out_str, &data[2], len); /* data field */
 	out_str[len] = '\0';
@@ -500,7 +522,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 #endif
 
 	/* validate that the returned data starts with the magic constant that indicates it is a custom emoticon */
-	if ( memcmp( MXIT_FRAME_MAGIC, &data[pos], strlen( MXIT_FRAME_MAGIC ) ) != 0 ) {
+	if ( len - pos < strlen( MXIT_FRAME_MAGIC ) || memcmp( MXIT_FRAME_MAGIC, &data[pos], strlen( MXIT_FRAME_MAGIC ) ) != 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad magic)\n" );
 		goto done;
 	}
@@ -514,7 +536,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	pos++;
 
 	/* get the frame image data length */
-	res = asn_getlength( &data[pos], &em_size );
+	res = asn_getlength( &data[pos], len - pos, &em_size );
 	if ( res <= 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad frame length)\n" );
 		goto done;
@@ -525,7 +547,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 #endif
 
 	/* utf-8 (emoticon name) */
-	res = asn_getUtf8( &data[pos], 0x0C, &str );
+	res = asn_getUtf8( &data[pos], len - pos, 0x0C, &str );
 	if ( res <= 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad name string)\n" );
 		goto done;
@@ -538,7 +560,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	str = NULL;
 
 	/* utf-8 (emoticon shortcut) */
-	res = asn_getUtf8( &data[pos], 0x81, &str );
+	res = asn_getUtf8( &data[pos], len - pos, 0x81, &str );
 	if ( res <= 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad shortcut string)\n" );
 		goto done;
@@ -550,7 +572,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	em_id = str;
 
 	/* validate the image data type */
-	if ( data[pos] != '\x82' ) {
+	if ( len - pos < 1 || data[pos] != '\x82' ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad data type)\n" );
 		g_free( em_id );
 		goto done;
@@ -558,7 +580,7 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 	pos++;
 
 	/* get the data length */
-	res = asn_getlength( &data[pos], &em_size );
+	res = asn_getlength( &data[pos], len - pos, &em_size );
 	if ( res <= 0 ) {
 		/* bad frame length */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (bad data length)\n" );
@@ -569,6 +591,13 @@ static void emoticon_returned( PurpleUtilFetchUrlData* url_data, gpointer user_d
 #ifdef	MXIT_DEBUG_EMO
 	purple_debug_info( MXIT_PLUGIN_ID, "read the length '%i'\n", em_size );
 #endif
+
+	if ( len - pos < em_size ) {
+		/* not enough bytes left in data! */
+		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (data length too long)\n");
+		g_free( em_id );
+		goto done;
+	}
 
 	/* strip the mxit markup tags from the emoticon id (eg, .{XY} -> XY) */
 	if ( ( em_id[0] == '.' ) && ( em_id[1] == '{' ) ) {

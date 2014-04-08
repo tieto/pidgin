@@ -3,7 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.10.10 (?/?/?):
 	Windows-Specific Changes:
 	* Don't allow overwriting arbitrary files on the file system when the
-	  user installs a smiley theme from a tar file. (Discovered by Yves
+	  user installs a smiley theme via drag-and-drop. (Discovered by Yves
 	  Younan of Sourcefire VRT)
 
 	Finch:
@@ -11,6 +11,11 @@ version 2.10.10 (?/?/?):
 
 	Gadu-Gadu:
 	* Updated internal libgadu to version 1.12.0-rc2.
+
+	MXit:
+	* Fix potential remote crash parsing a malformed emoticon response.
+	  (Discovered by Yves Younan and Richard Johnson of Sourcefire VRT)
+	  (CVE-2014-NNNN)
 
 version 2.10.9 (2/2/2014):
 	XMPP:
