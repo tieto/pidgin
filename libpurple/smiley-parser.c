@@ -231,6 +231,7 @@ purple_smiley_parser_find(PurpleSmileyList *smileys, const gchar *message,
 
 	parse_data.job.find.found_smileys =
 		g_hash_table_new(g_direct_hash, g_direct_equal);
+	parse_data.in_html_tag = FALSE;
 
 	trie_1.data = html_sentry;
 	trie_2.data = smileys_trie;
