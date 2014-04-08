@@ -1491,18 +1491,6 @@ gboolean purple_message_meify(char *message, gssize len);
 char *purple_text_strip_mnemonic(const char *in);
 
 /**
- * purple_add_eight:
- * @x: The number to add 8 to.
- *
- * Adds 8 to something.
- *
- * Blame SimGuy.
- *
- * Returns: x + 8
- */
-#define purple_add_eight(x) ((x)+8)
-
-/**
  * purple_unescape_filename:
  * @str: The string to translate.
  *
