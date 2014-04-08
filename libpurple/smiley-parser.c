@@ -84,7 +84,7 @@ purple_smiley_parse_cb(GString *out, const gchar *word, gpointer _smiley,
  * To be reconsidered when we had PurpleDude-like objects.
  */
 gchar *
-purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
+purple_smiley_parser_smileify(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data)
 {
 	PurpleSmileyTheme *theme;
@@ -157,34 +157,33 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 }
 
 gchar *
-purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
-	gpointer ui_data)
+purple_smiley_parser_replace(PurpleSmileyList *smileys,
+	const gchar *html_message, PurpleSmileyParseCb cb, gpointer ui_data)
 {
-	PurpleTrie *custom_trie = NULL;
-	GSList *tries = NULL;
-	GSList tries_sentry, tries_custom;
+	PurpleTrie *smileys_trie = NULL;
+	GSList trie_1, trie_2;
 	PurpleSmileyParseData parse_data;
 
 	if (html_message == NULL || html_message[0] == '\0')
 		return g_strdup(html_message);
 
-	custom_trie = purple_smiley_list_get_trie(
-		purple_smiley_custom_get_list());
-	if (!custom_trie || purple_trie_get_size(custom_trie) == 0)
+	if (smileys == NULL || purple_smiley_list_is_empty(smileys))
 		return g_strdup(html_message);
 
-	tries_sentry.data = html_sentry;
-	tries_custom.data = custom_trie;
-	tries_sentry.next = &tries_custom;
-	tries_custom.next = NULL;
-	tries = &tries_sentry;
+	smileys_trie = purple_smiley_list_get_trie(smileys);
+	g_return_val_if_fail(smileys_trie != NULL, NULL);
+
+	trie_1.data = html_sentry;
+	trie_2.data = smileys_trie;
+	trie_1.next = &trie_2;
+	trie_2.next = NULL;
 
 	parse_data.job.replace.conv = NULL;
 	parse_data.job.replace.cb = cb;
 	parse_data.job.replace.ui_data = ui_data;
 	parse_data.in_html_tag = FALSE;
 
-	return purple_trie_multi_replace(tries, html_message,
+	return purple_trie_multi_replace(&trie_1, html_message,
 		purple_smiley_parse_cb, &parse_data);
 }
 
@@ -209,7 +208,7 @@ smiley_find_cb(const gchar *word, gpointer _smiley, gpointer _parse_data)
 }
 
 GList *
-purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
+purple_smiley_parser_find(PurpleSmileyList *smileys, const gchar *message,
 	gboolean is_html)
 {
 	PurpleTrie *smileys_trie;

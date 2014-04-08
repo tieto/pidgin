@@ -920,8 +920,8 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 	if (!jabber_conv_support_custom_smileys(jm->js, conv, jm->to))
 		return NULL;
 
-	found_smileys = purple_smiley_find(purple_smiley_custom_get_list(),
-		xhtml, TRUE);
+	found_smileys = purple_smiley_parser_find(
+		purple_smiley_custom_get_list(), xhtml, TRUE);
 	if (!found_smileys)
 		return NULL;
 
@@ -990,7 +990,8 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 	g_list_free(found_smileys);
 
-	smileyfied_xhtml = purple_smiley_parse_custom(xhtml,
+	smileyfied_xhtml = purple_smiley_parser_replace(
+		purple_smiley_custom_get_list(), xhtml,
 		jabber_message_smileyify_cb, NULL);
 
 	return smileyfied_xhtml;

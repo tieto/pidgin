@@ -1474,7 +1474,7 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 	GList *smileys, *it;
 	MsnEmoticon *emoticon;
 
-	smileys = purple_smiley_find(purple_smiley_custom_get_list(),
+	smileys = purple_smiley_parser_find(purple_smiley_custom_get_list(),
 		msg, FALSE);
 
 	for (it = smileys; it; it = g_list_next(it)) {

@@ -56,7 +56,7 @@ typedef gboolean (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer ui_data);
 
 /**
- * purple_smiley_parse:
+ * purple_smiley_parser_smileify:
  * @conv: the conversation of a message.
  * @html_message: the html message, or escaped plain message.
  * @use_remote_smileys: %TRUE if remote smileys of @conv should be parsed.
@@ -73,11 +73,11 @@ typedef gboolean (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
  *          done using it. Returns %NULL if and only if @html_message was %NULL.
  */
 gchar *
-purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
+purple_smiley_parser_smileify(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data);
 
 /**
- * purple_smiley_parse_custom:
+ * purple_smiley_parser_replace:
  * @html_message:
  * @cb:
  * @ui_data:
@@ -87,11 +87,11 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
  * Returns: TODO
  */
 gchar *
-purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
-	gpointer ui_data);
+purple_smiley_parser_replace(PurpleSmileyList *smileys,
+	const gchar *html_message, PurpleSmileyParseCb cb, gpointer ui_data);
 
 /**
- * purple_smiley_find:
+ * purple_smiley_parser_find:
  * @smileys: the list of smileys to find.
  * @message: the message.
  * @is_html: %TRUE if the message is HTML, %FALSE if it's plain, unescaped.
@@ -105,7 +105,7 @@ purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
  *          when no longer need it.
  */
 GList *
-purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
+purple_smiley_parser_find(PurpleSmileyList *smileys, const gchar *message,
 	gboolean is_html);
 
 /**
