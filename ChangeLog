@@ -12,6 +12,11 @@ version 2.10.10 (?/?/?):
 	Gadu-Gadu:
 	* Updated internal libgadu to version 1.12.0-rc2.
 
+	Groupwise:
+	* Fix potential remote crash parsing server message that indicates that
+	  a large amount of memory should be allocated. (Discovered by Yves Younan
+	  and Richard Johnson of Sourcefire VRT) (CVE-2014-NNNN)
+
 	MXit:
 	* Fix potential remote crash parsing a malformed emoticon response.
 	  (Discovered by Yves Younan and Richard Johnson of Sourcefire VRT)
