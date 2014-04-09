@@ -225,7 +225,7 @@ purple_image_has_failed(PurpleImage *image)
 }
 
 gsize
-purple_image_get_data_size(PurpleImage *image)
+purple_image_get_size(PurpleImage *image)
 {
 	PurpleImagePrivate *priv;
 	priv = PURPLE_IMAGE_GET_PRIVATE(image);
@@ -264,7 +264,7 @@ purple_image_get_extenstion(PurpleImage *image)
 	if (priv->extension)
 		return priv->extension;
 
-	if (purple_image_get_data_size(image) < 4)
+	if (purple_image_get_size(image) < 4)
 		return NULL;
 
 	data = purple_image_get_data(image);

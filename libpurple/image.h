@@ -96,7 +96,7 @@ gboolean
 purple_image_has_failed(PurpleImage *image);
 
 gsize
-purple_image_get_data_size(PurpleImage *image);
+purple_image_get_size(PurpleImage *image);
 
 gpointer
 purple_image_get_data(PurpleImage *image);

@@ -120,6 +120,12 @@ remove_temporary(gpointer _image)
 	return G_SOURCE_REMOVE;
 }
 
+static void
+cancel_temporary(gpointer key, gpointer value, gpointer _unused)
+{
+	purple_timeout_remove(GPOINTER_TO_INT(key));
+}
+
 guint
 purple_image_store_add_temporary(PurpleImage *image)
 {
@@ -129,6 +135,7 @@ purple_image_store_add_temporary(PurpleImage *image)
 	g_return_val_if_fail(PURPLE_IS_IMAGE(image), 0);
 
 	id = image_get_id(image);
+	/* XXX: add_temporary doesn't extend previous temporary call, sorry */
 	if (id > 0)
 		return id;
 
@@ -164,6 +171,7 @@ _purple_image_store_uninit(void)
 	g_slist_free_full(perm_images, g_object_unref);
 	perm_images = NULL;
 
+	g_hash_table_foreach(temp_images, cancel_temporary, NULL);
 	g_hash_table_destroy(temp_images);
 	temp_images = NULL;
 

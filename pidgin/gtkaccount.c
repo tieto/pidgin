@@ -181,7 +181,10 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 {
 	GdkPixbuf *pixbuf = NULL;
 
+#if 0
+	/* TODO: unref it! */
 	dialog->icon_img = purple_imgstore_unref(dialog->icon_img);
+#endif
 	if (data != NULL)
 	{
 		if (len > 0)

@@ -27,186 +27,87 @@
 #include "imgstore.h"
 #include "util.h"
 
-static GHashTable *imgstore;
-static unsigned int nextid = 0;
-
-/*
- * NOTE: purple_imgstore_new() creates these without zeroing the memory, so
- * NOTE: make sure to update that function when adding members.
- */
-struct _PurpleStoredImage
-{
-	int id;
-	guint8 refcount;
-	size_t size;     /* The image data's size. */
-	char *filename;  /* The filename (for the UI) */
-	gpointer data;   /* The image data. */
-};
-
 PurpleStoredImage *
 purple_imgstore_new(gpointer data, size_t size, const char *filename)
 {
-	PurpleStoredImage *img;
-
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(size > 0, NULL);
-
-	img = g_new(PurpleStoredImage, 1);
-	PURPLE_DBUS_REGISTER_POINTER(img, PurpleStoredImage);
-	img->data = data;
-	img->size = size;
-	img->filename = g_strdup(filename);
-	img->refcount = 1;
-	img->id = 0;
-
-	return img;
+	return purple_image_new_from_data(data, size);
 }
 
 PurpleStoredImage *
 purple_imgstore_new_from_file(const char *path)
 {
-	gchar *data = NULL;
-	size_t len;
-	GError *err = NULL;
-
-	g_return_val_if_fail(path != NULL && *path != '\0', NULL);
-
-	if (!g_file_get_contents(path, &data, &len, &err)) {
-		purple_debug_error("imgstore", "Error reading %s: %s\n",
-				path, err->message);
-		g_error_free(err);
-		return NULL;
-	}
-	return purple_imgstore_new(data, len, path);
+	return purple_image_new_from_file(path, TRUE);
 }
 
 int
 purple_imgstore_new_with_id(gpointer data, size_t size, const char *filename)
 {
-	PurpleStoredImage *image;
-	int id;
+	PurpleImage *image = purple_image_new_from_data(data, size);
 
-	image = purple_imgstore_new(data, size, filename);
-	id = purple_imgstore_add_with_id(image);
-	purple_imgstore_unref(image);
-
-	return id;
+	return purple_image_store_add(image);
 }
 
 int
 purple_imgstore_add_with_id(PurpleStoredImage *image)
 {
-	g_return_val_if_fail(image != NULL, 0);
-
-	if (image->id != 0)
-		return image->id;
-
-	/*
-	 * Use the next unused id number.  We do it in a loop on the
-	 * off chance that nextid wraps back around to 0 and the hash
-	 * table still contains entries from the first time around.
-	 */
-	do {
-		image->id = ++nextid;
-	} while (image->id == 0 || g_hash_table_lookup(imgstore, &(image->id)) != NULL);
-
-	purple_imgstore_ref(image);
-	g_hash_table_insert(imgstore, &(image->id), image);
-
-	return image->id;
+	return purple_image_store_add(image);
 }
 
 PurpleStoredImage *purple_imgstore_find_by_id(int id)
 {
-	PurpleStoredImage *img = g_hash_table_lookup(imgstore, &id);
-
-	if (img != NULL)
-		purple_debug_misc("imgstore", "retrieved image id %d\n", img->id);
-
-	return img;
+	return purple_image_store_get(id);
 }
 
 gconstpointer purple_imgstore_get_data(PurpleStoredImage *img)
 {
-	g_return_val_if_fail(img != NULL, NULL);
-
-	return img->data;
+	return purple_image_get_data(img);
 }
 
 size_t purple_imgstore_get_size(PurpleStoredImage *img)
 {
-	g_return_val_if_fail(img != NULL, 0);
-
-	return img->size;
+	return purple_image_get_size(img);
 }
 
 const char *purple_imgstore_get_filename(const PurpleStoredImage *img)
 {
-	g_return_val_if_fail(img != NULL, NULL);
-
-	return img->filename;
+	return purple_image_get_path((PurpleImage *)img);
 }
 
 const char *purple_imgstore_get_extension(PurpleStoredImage *img)
 {
-	g_return_val_if_fail(img != NULL, NULL);
-
-	return purple_util_get_image_extension(img->data, img->size);
+	return purple_image_get_extenstion(img);
 }
 
 void purple_imgstore_ref_by_id(int id)
 {
-	PurpleStoredImage *img = purple_imgstore_find_by_id(id);
+	PurpleImage *img = purple_image_store_get(id);
 
 	g_return_if_fail(img != NULL);
 
-	purple_imgstore_ref(img);
+	g_object_ref(img);
 }
 
 void purple_imgstore_unref_by_id(int id)
 {
-	PurpleStoredImage *img = purple_imgstore_find_by_id(id);
+	PurpleImage *img = purple_image_store_get(id);
 
 	g_return_if_fail(img != NULL);
 
-	purple_imgstore_unref(img);
+	g_object_unref(img);
 }
 
 PurpleStoredImage *
 purple_imgstore_ref(PurpleStoredImage *img)
 {
-	g_return_val_if_fail(img != NULL, NULL);
-
-	img->refcount++;
+	g_object_ref(img);
 
 	return img;
 }
 
-PurpleStoredImage *
+void
 purple_imgstore_unref(PurpleStoredImage *img)
 {
-	if (img == NULL)
-		return NULL;
-
-	g_return_val_if_fail(img->refcount > 0, NULL);
-
-	img->refcount--;
-
-	if (img->refcount == 0)
-	{
-		purple_signal_emit(purple_imgstore_get_handle(),
-		                   "image-deleting", img);
-		if (img->id)
-			g_hash_table_remove(imgstore, &img->id);
-
-		g_free(img->data);
-		g_free(img->filename);
-		PURPLE_DBUS_UNREGISTER_POINTER(img);
-		g_free(img);
-		img = NULL;
-	}
-
-	return img;
+	g_object_unref(img);
 }
 
 void *
@@ -215,51 +116,4 @@ purple_imgstore_get_handle()
 	static int handle;
 
 	return &handle;
-}
-
-void
-purple_imgstore_init()
-{
-	void *handle = purple_imgstore_get_handle();
-
-	purple_signal_register(handle, "image-deleting",
-	                       purple_marshal_VOID__POINTER, G_TYPE_NONE,
-	                       1, PURPLE_TYPE_STORED_IMAGE);
-
-	imgstore = g_hash_table_new(g_int_hash, g_int_equal);
-}
-
-void
-purple_imgstore_uninit()
-{
-	g_hash_table_destroy(imgstore);
-
-	purple_signals_unregister_by_instance(purple_imgstore_get_handle());
-}
-
-static PurpleStoredImage *
-purple_imgstore_copy(PurpleStoredImage *img)
-{
-	PurpleStoredImage *img_copy;
-
-	g_return_val_if_fail(img != NULL, NULL);
-
-	img_copy = g_new(PurpleStoredImage, 1);
-	*img_copy = *img;
-
-	return img_copy;
-}
-
-GType
-purple_imgstore_get_type(void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		type = g_boxed_type_register_static("PurpleStoredImage",
-				(GBoxedCopyFunc)purple_imgstore_copy,
-				(GBoxedFreeFunc)g_free);
-	}
-
-	return type;
 }
