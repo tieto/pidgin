@@ -96,6 +96,7 @@ C_SRC =	\
 			http.c \
 			idle.c \
 			image.c \
+			image-store.c \
 			imgstore.c \
 			keyring.c \
 			log.c \

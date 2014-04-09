@@ -31,6 +31,7 @@
 #include "glibcompat.h"
 #include "http.h"
 #include "idle.h"
+#include "image-store.h"
 #include "imgstore.h"
 #include "keyring.h"
 #include "network.h"
@@ -179,6 +180,7 @@ purple_core_init(const char *ui)
 
 	/* The buddy icon code uses the imgstore, so init it early. */
 	purple_imgstore_init();
+	_purple_image_store_init();
 
 	/* Accounts use status, buddy icons and connection signals, so
 	 * initialize these before accounts
@@ -279,6 +281,7 @@ purple_core_quit(void)
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
 	purple_imgstore_uninit();
+	_purple_image_store_uninit();
 	purple_network_uninit();
 
 	/* Everything after unloading all plugins must not fail if prpls aren't
