@@ -26,7 +26,7 @@
 
 #define TEMP_IMAGE_TIMEOUT 5
 
-static GHashTable *id_to_image;
+static GHashTable *id_to_image = NULL;
 static guint last_id = 0;
 
 /* keys: timeout handle */
@@ -34,6 +34,14 @@ static GHashTable *temp_images = NULL;
 
 /* keys: img id */
 static GSList *perm_images = NULL;
+
+static void
+image_reset_id(gpointer _id)
+{
+	g_return_if_fail(id_to_image != NULL);
+
+	g_hash_table_remove(id_to_image, _id);
+}
 
 static guint
 image_set_id(PurpleImage *image)
@@ -52,10 +60,9 @@ image_set_id(PurpleImage *image)
 			break;
 	}
 
-	g_object_set_data(G_OBJECT(image), "purple-image-store-id",
-		GINT_TO_POINTER(last_id));
+	g_object_set_data_full(G_OBJECT(image), "purple-image-store-id",
+		GINT_TO_POINTER(last_id), image_reset_id);
 	g_hash_table_insert(id_to_image, GINT_TO_POINTER(last_id), image);
-	/* TODO: hook map removal after object destruction */
 	return last_id;
 }
 
