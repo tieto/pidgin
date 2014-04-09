@@ -71,6 +71,7 @@ purple_coresources = \
 	eventloop.c \
 	http.c \
 	idle.c \
+	image.c \
 	imgstore.c \
 	keyring.c \
 	log.c \
@@ -155,6 +156,7 @@ purple_coreheaders = \
 	eventloop.h \
 	http.h \
 	idle.h \
+	image.h \
 	imgstore.h \
 	keyring.h \
 	log.h \

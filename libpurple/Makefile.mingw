@@ -95,6 +95,7 @@ C_SRC =	\
 			eventloop.c \
 			http.c \
 			idle.c \
+			image.c \
 			imgstore.c \
 			keyring.c \
 			log.c \
