@@ -151,14 +151,30 @@ fill_data(PurpleImage *image)
  ******************************************************************************/
 
 PurpleImage *
-purple_image_new_from_file(const gchar *path)
+purple_image_new_from_file(const gchar *path, gboolean be_eager)
 {
+	PurpleImage *img;
+
 	g_return_val_if_fail(path != NULL, NULL);
 	g_return_val_if_fail(g_file_test(path, G_FILE_TEST_EXISTS), NULL);
 
-	return g_object_new(PURPLE_TYPE_IMAGE,
+	img = g_object_new(PURPLE_TYPE_IMAGE,
 		"path", path,
 		NULL);
+
+	if (be_eager) {
+		PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(img);
+
+		fill_data(img);
+		if (!priv->contents) {
+			g_object_unref(img);
+			return NULL;
+		}
+
+		g_assert(priv->is_ready && !priv->has_failed);
+	}
+
+	return img;
 }
 
 PurpleImage *

@@ -81,7 +81,7 @@ GType
 purple_image_get_type(void);
 
 PurpleImage *
-purple_image_new_from_file(const gchar *path);
+purple_image_new_from_file(const gchar *path, gboolean be_eager);
 
 PurpleImage *
 purple_image_new_from_data(gpointer data, gsize length);
