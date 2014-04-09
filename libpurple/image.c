@@ -32,6 +32,9 @@ typedef struct {
 	gchar *path;
 	GString *contents;
 
+	const gchar *extension;
+	const gchar *mime;
+
 	gboolean is_ready;
 	gboolean has_failed;
 } PurpleImagePrivate;
@@ -175,19 +178,34 @@ purple_image_new_from_data(gpointer data, gsize length)
 	return img;
 }
 
-PurpleImage *
-purple_image_transfer_new(void)
+const gchar *
+purple_image_get_path(PurpleImage *image)
 {
-	PurpleImage *img;
-	PurpleImagePrivate *priv;
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
-	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
-	priv = PURPLE_IMAGE_GET_PRIVATE(img);
+	g_return_val_if_fail(priv != NULL, NULL);
 
-	priv->is_ready = FALSE;
-	priv->contents = g_string_new(NULL);
+	return priv->path;
+}
 
-	return img;
+gboolean
+purple_image_is_ready(PurpleImage *image)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+
+	return priv->is_ready;
+}
+
+gboolean
+purple_image_has_failed(PurpleImage *image)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+
+	g_return_val_if_fail(priv != NULL, TRUE);
+
+	return priv->has_failed;
 }
 
 gsize
@@ -208,8 +226,7 @@ purple_image_get_data_size(PurpleImage *image)
 gpointer
 purple_image_get_data(PurpleImage *image)
 {
-	PurpleImagePrivate *priv;
-	priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 	g_return_val_if_fail(priv->is_ready, NULL);
@@ -218,6 +235,85 @@ purple_image_get_data(PurpleImage *image)
 	g_return_val_if_fail(priv->contents, NULL);
 
 	return priv->contents->str;
+}
+
+const gchar *
+purple_image_get_extenstion(PurpleImage *image)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	gpointer data;
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	if (priv->extension)
+		return priv->extension;
+
+	if (purple_image_get_data_size(image) < 4)
+		return NULL;
+
+	data = purple_image_get_data(image);
+	g_assert(data != NULL);
+
+	if (memcmp(data, "GIF8", 4) == 0)
+		return priv->extension = "gif";
+	if (memcmp(data, "\xff\xd8\xff", 3) == 0) /* 4th may be e0 through ef */
+		return priv->extension = "jpg";
+	if (memcmp(data, "\x89PNG", 4) == 0)
+		return priv->extension = "png";
+	if (memcmp(data, "MM", 2) == 0)
+		return priv->extension = "tif";
+	if (memcmp(data, "II", 2) == 0)
+		return priv->extension = "tif";
+	if (memcmp(data, "BM", 2) == 0)
+		return priv->extension = "bmp";
+	if (memcmp(data, "\x00\x00\x01\x00", 4) == 0)
+		return priv->extension = "ico";
+
+	return NULL;
+}
+
+const gchar *
+purple_image_get_mimetype(PurpleImage *image)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	const gchar *ext = purple_image_get_extenstion(image);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	if (priv->mime)
+		return priv->mime;
+
+	g_return_val_if_fail(ext != NULL, NULL);
+
+	if (g_strcmp0(ext, "gif") == 0)
+		return priv->mime = "image/gif";
+	if (g_strcmp0(ext, "jpg") == 0)
+		return priv->mime = "image/jpeg";
+	if (g_strcmp0(ext, "png") == 0)
+		return priv->mime = "image/png";
+	if (g_strcmp0(ext, "tif") == 0)
+		return priv->mime = "image/tiff";
+	if (g_strcmp0(ext, "bmp") == 0)
+		return priv->mime = "image/bmp";
+	if (g_strcmp0(ext, "ico") == 0)
+		return priv->mime = "image/vnd.microsoft.icon";
+
+	return NULL;
+}
+
+PurpleImage *
+purple_image_transfer_new(void)
+{
+	PurpleImage *img;
+	PurpleImagePrivate *priv;
+
+	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
+	priv = PURPLE_IMAGE_GET_PRIVATE(img);
+
+	priv->is_ready = FALSE;
+	priv->contents = g_string_new(NULL);
+
+	return img;
 }
 
 void

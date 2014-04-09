@@ -86,11 +86,26 @@ purple_image_new_from_file(const gchar *path);
 PurpleImage *
 purple_image_new_from_data(gpointer data, gsize length);
 
+const gchar *
+purple_image_get_path(PurpleImage *image);
+
+gboolean
+purple_image_is_ready(PurpleImage *image);
+
+gboolean
+purple_image_has_failed(PurpleImage *image);
+
 gsize
 purple_image_get_data_size(PurpleImage *image);
 
 gpointer
 purple_image_get_data(PurpleImage *image);
+
+const gchar *
+purple_image_get_extenstion(PurpleImage *image);
+
+const gchar *
+purple_image_get_mimetype(PurpleImage *image);
 
 PurpleImage *
 purple_image_transfer_new(void);
