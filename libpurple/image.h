@@ -86,6 +86,9 @@ purple_image_new_from_file(const gchar *path, gboolean be_eager);
 PurpleImage *
 purple_image_new_from_data(gpointer data, gsize length);
 
+gboolean
+purple_image_save(PurpleImage *image, const gchar *path);
+
 const gchar *
 purple_image_get_path(PurpleImage *image);
 
@@ -102,10 +105,13 @@ gpointer
 purple_image_get_data(PurpleImage *image);
 
 const gchar *
-purple_image_get_extenstion(PurpleImage *image);
+purple_image_get_extension(PurpleImage *image);
 
 const gchar *
 purple_image_get_mimetype(PurpleImage *image);
+
+const gchar *
+purple_image_generate_filename(PurpleImage *image);
 
 PurpleImage *
 purple_image_transfer_new(void);

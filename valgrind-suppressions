@@ -233,3 +233,11 @@
    fun:rsvg_handle_get_pixbuf
    obj:*
 }
+{
+   TODO temporary: gg prpl bug, fixit
+   Memcheck:Addr4
+   fun:memcpy
+   fun:ggp_resolver_purple_cb
+   fun:purple_dnsquery_resolved
+   ...
+}

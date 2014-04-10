@@ -34,6 +34,7 @@ typedef struct {
 
 	const gchar *extension;
 	const gchar *mime;
+	gchar *gen_filename;
 
 	gboolean is_ready;
 	gboolean has_failed;
@@ -54,6 +55,7 @@ enum
 	SIG_LAST
 };
 
+static GObjectClass *parent_class;
 static guint signals[SIG_LAST];
 static GParamSpec *properties[PROP_LAST];
 
@@ -153,18 +155,17 @@ fill_data(PurpleImage *image)
 PurpleImage *
 purple_image_new_from_file(const gchar *path, gboolean be_eager)
 {
+	PurpleImagePrivate *priv;
 	PurpleImage *img;
 
 	g_return_val_if_fail(path != NULL, NULL);
 	g_return_val_if_fail(g_file_test(path, G_FILE_TEST_EXISTS), NULL);
 
-	img = g_object_new(PURPLE_TYPE_IMAGE,
-		"path", path,
-		NULL);
+	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
+	priv = PURPLE_IMAGE_GET_PRIVATE(img);
+	priv->path = g_strdup(path);
 
 	if (be_eager) {
-		PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(img);
-
 		fill_data(img);
 		if (!priv->contents) {
 			g_object_unref(img);
@@ -192,6 +193,31 @@ purple_image_new_from_data(gpointer data, gsize length)
 	steal_contents(priv, data, length);
 
 	return img;
+}
+
+gboolean
+purple_image_save(PurpleImage *image, const gchar *path)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	gpointer data;
+	gsize len;
+	gboolean succ;
+
+	g_return_val_if_fail(priv != NULL, FALSE);
+	g_return_val_if_fail(path != NULL, FALSE);
+	g_return_val_if_fail(path[0] != '\0', FALSE);
+
+	data = purple_image_get_data(image);
+	len = purple_image_get_size(image);
+
+	g_return_val_if_fail(data != NULL, FALSE);
+	g_return_val_if_fail(len > 0, FALSE);
+
+	succ = purple_util_write_data_to_file_absolute(path, data, len);
+	if (succ && priv->path == NULL)
+		priv->path = g_strdup(path);
+
+	return succ;
 }
 
 const gchar *
@@ -254,7 +280,7 @@ purple_image_get_data(PurpleImage *image)
 }
 
 const gchar *
-purple_image_get_extenstion(PurpleImage *image)
+purple_image_get_extension(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 	gpointer data;
@@ -292,7 +318,7 @@ const gchar *
 purple_image_get_mimetype(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	const gchar *ext = purple_image_get_extenstion(image);
+	const gchar *ext = purple_image_get_extension(image);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -315,6 +341,35 @@ purple_image_get_mimetype(PurpleImage *image)
 		return priv->mime = "image/vnd.microsoft.icon";
 
 	return NULL;
+}
+
+const gchar *
+purple_image_generate_filename(PurpleImage *image)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	gpointer data;
+	gsize len;
+	const gchar *ext;
+	gchar *checksum;
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	if (priv->gen_filename)
+		return priv->gen_filename;
+
+	ext = purple_image_get_extension(image);
+	data = purple_image_get_data(image);
+	len = purple_image_get_size(image);
+
+	g_return_val_if_fail(ext != NULL, NULL);
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(len > 0, NULL);
+
+	checksum = g_compute_checksum_for_data(G_CHECKSUM_SHA1, data, len);
+	priv->gen_filename = g_strdup_printf("%s.%s", checksum, ext);
+	g_free(checksum);
+
+	return priv->gen_filename;
 }
 
 PurpleImage *
@@ -410,6 +465,9 @@ purple_image_finalize(GObject *obj)
 	if (priv->contents)
 		g_string_free(priv->contents, TRUE);
 	g_free(priv->path);
+	g_free(priv->gen_filename);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
 static void
@@ -437,10 +495,11 @@ purple_image_class_init(PurpleImageClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 
+	parent_class = g_type_class_peek_parent(klass);
+
 	g_type_class_add_private(klass, sizeof(PurpleImagePrivate));
 
 	gobj_class->finalize = purple_image_finalize;
-
 	gobj_class->get_property = purple_image_get_property;
 
 	properties[PROP_IS_READY] = g_param_spec_boolean("is-ready",

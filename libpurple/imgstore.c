@@ -75,7 +75,7 @@ const char *purple_imgstore_get_filename(const PurpleStoredImage *img)
 
 const char *purple_imgstore_get_extension(PurpleStoredImage *img)
 {
-	return purple_image_get_extenstion(img);
+	return purple_image_get_extension(img);
 }
 
 void purple_imgstore_ref_by_id(int id)
@@ -107,6 +107,11 @@ purple_imgstore_ref(PurpleStoredImage *img)
 void
 purple_imgstore_unref(PurpleStoredImage *img)
 {
+	if (img == NULL) {
+		purple_debug_warning("imgstore",
+			"purple_imgstore_unref: img empty");
+		return;
+	}
 	g_object_unref(img);
 }
 
