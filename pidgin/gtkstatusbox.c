@@ -42,7 +42,6 @@
 #include "account.h"
 #include "buddyicon.h"
 #include "core.h"
-#include "imgstore.h"
 #include "network.h"
 #include "request.h"
 #include "savedstatuses.h"
@@ -407,25 +406,21 @@ setup_icon_box(PidginStatusBox *status_box)
 	if (status_box->account &&
 		!purple_account_get_bool(status_box->account, "use-global-buddyicon", TRUE))
 	{
-		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(status_box->account);
+		PurpleImage *img = purple_buddy_icons_find_account_icon(status_box->account);
 		pidgin_status_box_set_buddy_icon(status_box, img);
-		purple_imgstore_unref(img);
+		g_object_unref(img);
 	}
 	else
 	{
 		const char *filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
-		PurpleStoredImage *img = NULL;
+		PurpleImage *img = NULL;
 
 		if (filename && *filename)
-			img = purple_imgstore_new_from_file(filename);
+			img = purple_image_new_from_file(filename, TRUE);
 
 		pidgin_status_box_set_buddy_icon(status_box, img);
 		if (img)
-			/*
-			 * purple_imgstore_new gives us a reference and
-			 * pidgin_status_box_set_buddy_icon also takes one.
-			 */
-			purple_imgstore_unref(img);
+			g_object_unref(img);
 	}
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -464,7 +459,8 @@ destroy_icon_box(PidginStatusBox *statusbox)
 	gdk_cursor_unref(statusbox->arrow_cursor);
 #endif
 
-	purple_imgstore_unref(statusbox->buddy_icon_img);
+	if (statusbox->buddy_icon_img)
+		g_object_unref(statusbox->buddy_icon_img);
 
 	g_object_unref(G_OBJECT(statusbox->buddy_icon));
 	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
@@ -1450,7 +1446,7 @@ toggled_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 static void
 buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 {
-	PurpleStoredImage *img = NULL;
+	PurpleImage *img = NULL;
 
 	if (box->account) {
 		PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(box->account));
@@ -1462,12 +1458,13 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 				if (filename)
 					data = pidgin_convert_buddy_icon(plug, filename, &len);
 				img = purple_buddy_icons_set_account_icon(box->account, data, len);
-				if (img)
+				if (img) {
 					/*
 					 * set_account_icon doesn't give us a reference, but we
 					 * unref one below (for the other code path)
 					 */
-					purple_imgstore_ref(img);
+					g_object_ref(img);
+				}
 
 				purple_account_set_buddy_icon_path(box->account, filename);
 
@@ -1496,12 +1493,12 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 
 		/* Even if no accounts were processed, load the icon that was set. */
 		if (filename != NULL)
-			img = purple_imgstore_new_from_file(filename);
+			img = purple_image_new_from_file(filename, TRUE);
 	}
 
 	pidgin_status_box_set_buddy_icon(box, img);
 	if (img)
-		purple_imgstore_unref(img);
+		g_object_unref(img);
 }
 
 static void
@@ -2272,21 +2269,23 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 
 		g_signal_connect(G_OBJECT(loader), "size-prepared", G_CALLBACK(pixbuf_size_prepared_cb), NULL);
 		if (!gdk_pixbuf_loader_write(loader,
-				purple_imgstore_get_data(status_box->buddy_icon_img),
-				purple_imgstore_get_size(status_box->buddy_icon_img),
+				purple_image_get_data(status_box->buddy_icon_img),
+				purple_image_get_size(status_box->buddy_icon_img),
 				&error) || error)
 		{
-			purple_debug_warning("gtkstatusbox", "gdk_pixbuf_loader_write() "
-					"failed with size=%" G_GSIZE_FORMAT ": %s\n",
-					(gsize)purple_imgstore_get_size(status_box->buddy_icon_img),
-					error ? error->message : "(no error message)");
+			purple_debug_warning("gtkstatusbox",
+				"gdk_pixbuf_loader_write() failed with size=%"
+				G_GSIZE_FORMAT ": %s", purple_image_get_size(
+					status_box->buddy_icon_img),
+				error ? error->message : "(no error message)");
 			if (error)
 				g_error_free(error);
 		} else if (!gdk_pixbuf_loader_close(loader, &error) || error) {
-			purple_debug_warning("gtkstatusbox", "gdk_pixbuf_loader_close() "
-					"failed for image of size %" G_GSIZE_FORMAT ": %s\n",
-					(gsize)purple_imgstore_get_size(status_box->buddy_icon_img),
-					error ? error->message : "(no error message)");
+			purple_debug_warning("gtkstatusbox",
+				"gdk_pixbuf_loader_close() failed for image of "
+				"size %" G_GSIZE_FORMAT ": %s",
+				purple_image_get_size(status_box->buddy_icon_img),
+				error ? error->message : "(no error message)");
 			if (error)
 				g_error_free(error);
 		} else {
