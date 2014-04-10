@@ -24,6 +24,7 @@
 
 #include "dbus-maybe.h"
 #include "enums.h"
+#include "image-store.h"
 #include "xfer.h"
 #include "network.h"
 #include "notify.h"
@@ -32,7 +33,6 @@
 #include "request.h"
 #include "util.h"
 #include "debug.h"
-#include "imgstore.h" /* TODO: temp */
 
 #define FT_INITIAL_BUFFER_SIZE 4096
 #define FT_MAX_BUFFER_SIZE     65535
@@ -259,14 +259,17 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	if (print_thumbnail && thumbnail_data) {
 		gchar *message_with_img;
 		gpointer data = g_memdup(thumbnail_data, size);
-		int id = purple_imgstore_new_with_id(data, size, NULL);
+		PurpleImage *img;
+		guint id;
 
-		message_with_img =
-			g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'> %s",
-			                id, escaped);
+		img = purple_image_new_from_data(data, size);
+		id = purple_image_store_add(img);
+		g_object_unref(img);
+
+		message_with_img = g_strdup_printf("<img src=\""
+			PURPLE_IMAGE_STORE_PROTOCOL "%u\"> %s", id, escaped);
 		purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
 			message_with_img, flags, time(NULL));
-		purple_imgstore_unref_by_id(id);
 		g_free(message_with_img);
 	} else {
 		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, escaped, flags,
