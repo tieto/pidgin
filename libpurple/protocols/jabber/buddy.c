@@ -22,7 +22,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "imgstore.h"
+#include "image-store.h"
 #include "prpl.h"
 #include "notify.h"
 #include "request.h"
@@ -51,7 +51,7 @@ typedef struct {
 	GSList *ids;
 	GHashTable *resources;
 	guint timeout_handle;
-	GSList *vcard_imgids;
+	GSList *vcard_images;
 	PurpleNotifyUserInfo *user_info;
 	long last_seconds;
 	gchar *last_message;
@@ -459,7 +459,7 @@ static PurpleXmlNode *insert_tag_to_parent_tag(PurpleXmlNode *start, const char 
  */
 void jabber_set_info(PurpleConnection *gc, const char *info)
 {
-	PurpleStoredImage *img;
+	PurpleImage *img;
 	JabberIq *iq;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	PurpleXmlNode *vc_node;
@@ -468,14 +468,14 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	/* if we haven't grabbed the remote vcard yet, we can't
 	 * assume that what we have here is correct */
 	if(!js->vcard_fetched) {
-		PurpleStoredImage *image;
+		PurpleImage *image;
 		g_free(js->initial_avatar_hash);
 		image = purple_buddy_icons_find_account_icon(purple_connection_get_account(gc));
 		if (image != NULL) {
-			js->initial_avatar_hash =
-					jabber_calculate_data_hash(purple_imgstore_get_data(image),
-					purple_imgstore_get_size(image), "sha1");
-			purple_imgstore_unref(image);
+			js->initial_avatar_hash = jabber_calculate_data_hash(
+				purple_image_get_data(image),
+				purple_image_get_size(image), "sha1");
+			g_object_unref(image);
 		} else {
 			js->initial_avatar_hash = NULL;
 		}
@@ -513,8 +513,8 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 				purple_xmlnode_set_attrib(vc_node, tag_attr->attr, tag_attr->value);
 		}
 
-		avatar_data = purple_imgstore_get_data(img);
-		avatar_len = purple_imgstore_get_size(img);
+		avatar_data = purple_image_get_data(img);
+		avatar_len = purple_image_get_size(img);
 		/* Get rid of an old PHOTO if one exists.
 		 * TODO: This may want to be modified to remove all old PHOTO
 		 * children, at the moment some people have managed to get
@@ -533,7 +533,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 		purple_xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
-		purple_imgstore_unref(img);
+		g_object_unref(img);
 	} else if (vc_node) {
 		PurpleXmlNode *photo;
 		/* TODO: Remove all PHOTO children? (see above note) */
@@ -552,7 +552,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	}
 }
 
-void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
+void jabber_set_buddy_icon(PurpleConnection *gc, PurpleImage *img)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 
@@ -877,9 +877,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	purple_notify_userinfo(jbi->js->gc, jbi->jid, user_info, NULL, NULL);
 
-	while (jbi->vcard_imgids) {
-		purple_imgstore_unref_by_id(GPOINTER_TO_INT(jbi->vcard_imgids->data));
-		jbi->vcard_imgids = g_slist_delete_link(jbi->vcard_imgids, jbi->vcard_imgids);
+	while (jbi->vcard_images) {
+		g_object_unref(jbi->vcard_images->data);
+		jbi->vcard_images = g_slist_delete_link(jbi->vcard_images, jbi->vcard_images);
 	}
 
 	jbi->js->pending_buddy_info_requests = g_slist_remove(jbi->js->pending_buddy_info_requests, jbi);
@@ -1200,12 +1200,17 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 					data = purple_base64_decode(bintext, &size);
 					if (data) {
+						PurpleImage *img;
+						guint img_id;
 						char *img_text;
 						char *hash;
 
-						jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_new_with_id(g_memdup(data, size), size, "logo.png")));
-						img_text = g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
-						                           GPOINTER_TO_INT(jbi->vcard_imgids->data));
+						img = purple_image_new_from_data(g_memdup(data, size), size);
+						img_id = purple_image_store_add(img);
+
+						jbi->vcard_images = g_slist_prepend(jbi->vcard_images, img);
+						img_text = g_strdup_printf("<img src='"
+							PURPLE_IMAGE_STORE_PROTOCOL "%u'>", img_id);
 
 						purple_notify_user_info_add_pair_html(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 

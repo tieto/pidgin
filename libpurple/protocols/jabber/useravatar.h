@@ -25,12 +25,12 @@
 #define _PURPLE_JABBER_USERAVATAR_H_
 
 #include "jabber.h"
-#include "imgstore.h"
+#include "image.h"
 
 /* Implementation of XEP-0084 */
 
 void jabber_avatar_init(void);
-void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img);
+void jabber_avatar_set(JabberStream *js, PurpleImage *img);
 
 void jabber_avatar_fetch_mine(JabberStream *js);
 

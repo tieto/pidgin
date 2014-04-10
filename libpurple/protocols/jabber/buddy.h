@@ -104,7 +104,7 @@ GList *jabber_blist_node_menu(PurpleBlistNode *node);
 
 void jabber_set_info(PurpleConnection *gc, const char *info);
 void jabber_setup_set_info(PurplePluginAction *action);
-void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
+void jabber_set_buddy_icon(PurpleConnection *gc, PurpleImage *img);
 
 void jabber_user_search(JabberStream *js, const char *directory);
 void jabber_user_search_begin(PurplePluginAction *);

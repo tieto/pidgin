@@ -833,22 +833,6 @@ void jabber_message_parse(JabberStream *js, PurpleXmlNode *packet)
 	jabber_message_free(jm);
 }
 
-static const gchar *
-jabber_message_get_mimetype_from_ext(const gchar *ext)
-{
-	if (strcmp(ext, "png") == 0) {
-		return "image/png";
-	} else if (strcmp(ext, "gif") == 0) {
-		return "image/gif";
-	} else if (strcmp(ext, "jpg") == 0) {
-		return "image/jpeg";
-	} else if (strcmp(ext, "tif") == 0) {
-		return "image/tif";
-	} else {
-		return "image/x-icon"; /* or something... */
-	}
-}
-
 static gboolean
 jabber_conv_support_custom_smileys(JabberStream *js,
 								   PurpleConversation *conv,
@@ -927,7 +911,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 	for (it = found_smileys; it; it = it_next) {
 		PurpleSmiley *smiley = it->data;
-		PurpleStoredImage *smiley_image;
+		PurpleImage *smiley_image;
 		gboolean valid = TRUE;
 
 		it_next = g_list_next(it);
@@ -937,7 +921,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 			valid = FALSE;
 			purple_debug_warning("jabber", "broken smiley %s",
 				purple_smiley_get_shortcut(smiley));
-		} else if (purple_imgstore_get_size(smiley_image) >
+		} else if (purple_image_get_size(smiley_image) >
 			JABBER_DATA_MAX_SIZE)
 		{
 			has_too_large_smiley = TRUE;
@@ -963,7 +947,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 	for (it = found_smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
-		PurpleStoredImage *smiley_image;
+		PurpleImage *smiley_image;
 		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 		const gchar *mimetype;
 		JabberData *jdata;
@@ -975,12 +959,16 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 		smiley_image = purple_smiley_get_image(smiley);
 		g_assert(smiley_image != NULL);
 
-		mimetype = jabber_message_get_mimetype_from_ext(
-			purple_imgstore_get_extension(smiley_image));
+		mimetype = purple_image_get_mimetype(smiley_image);
+		if (!mimetype) {
+			purple_debug_error("jabber",
+				"unknown mime type for image");
+			continue;
+		}
 
 		jdata = jabber_data_create_from_data(
-			purple_imgstore_get_data(smiley_image),
-			purple_imgstore_get_size(smiley_image),
+			purple_image_get_data(smiley_image),
+			purple_image_get_size(smiley_image),
 			mimetype, FALSE, jm->js);
 
 		purple_debug_info("jabber", "cache local smiley alt=%s, cid=%s",
