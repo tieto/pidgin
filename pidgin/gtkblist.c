@@ -67,8 +67,6 @@
 
 #include "gtk3compat.h"
 
-#include "imgstore.h" /* TODO: temp */
-
 typedef struct
 {
 	PurpleAccount *account;
@@ -2669,7 +2667,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	PurpleBuddyIcon *icon = NULL;
 	PurpleAccount *account = NULL;
 	PurpleContact *contact = NULL;
-	PurpleStoredImage *custom_img;
+	PurpleImage *custom_img;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	gint orig_width, orig_height, scale_width, scale_height;
 
@@ -2712,8 +2710,8 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	}
 
 	if (custom_img) {
-		data = purple_imgstore_get_data(custom_img);
-		len = purple_imgstore_get_size(custom_img);
+		data = purple_image_get_data(custom_img);
+		len = purple_image_get_size(custom_img);
 	}
 
 	if (data == NULL) {
@@ -2731,17 +2729,16 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	buf = pidgin_pixbuf_from_data(data, len);
 	purple_buddy_icon_unref(icon);
 	if (!buf) {
-		purple_debug_warning("gtkblist", "Couldn't load buddy icon "
-				"on account %s (%s)  buddyname=%s  "
-				"custom_img_data=%p\n",
-				account ? purple_account_get_username(account) : "(no account)",
-				account ? purple_account_get_protocol_id(account) : "(no account)",
-				buddy ? purple_buddy_get_name(buddy) : "(no buddy)",
-				custom_img ? purple_imgstore_get_data(custom_img) : NULL);
-		purple_imgstore_unref(custom_img);
+		purple_debug_warning("gtkblist", "Couldn't load buddy icon on "
+			"account %s (%s); buddyname=%s; custom_img_size=%" G_GSIZE_FORMAT,
+			account ? purple_account_get_username(account) : "(no account)",
+			account ? purple_account_get_protocol_id(account) : "(no account)",
+			buddy ? purple_buddy_get_name(buddy) : "(no buddy)",
+			custom_img ? purple_image_get_size(custom_img) : 0);
+		g_object_unref(custom_img);
 		return NULL;
 	}
-	purple_imgstore_unref(custom_img);
+	g_object_unref(custom_img);
 
 	if (greyed) {
 		gboolean offline = FALSE, idle = FALSE;

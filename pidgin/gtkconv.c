@@ -36,7 +36,7 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "idle.h"
-#include "imgstore.h"
+#include "image-store.h"
 #include "log.h"
 #include "notify.h"
 #include "prpl.h"
@@ -4159,7 +4159,7 @@ PurpleImage *
 _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 {
 	gchar filename[100], *path;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 
 	/* core is quitting */
 	if (e2ee_stock == NULL)
@@ -6498,8 +6498,9 @@ replace_message_tokens(
 				if (purple_account_get_bool(purple_conversation_get_account(conv), "use-global-buddyicon", TRUE)) {
 					replace = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 				} else {
-					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(purple_conversation_get_account(conv));
-					replace = purple_imgstore_get_filename(img);
+					PurpleImage *img = purple_buddy_icons_find_account_icon(purple_conversation_get_account(conv));
+					/* XXX: this may be NULL */
+					replace = purple_image_get_path(img);
 				}
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
 					replace = freeval = g_build_filename("Outgoing", "buddy_icon.png", NULL);
@@ -6594,9 +6595,9 @@ pidgin_conv_remote_smiley_got(PurpleSmiley *smiley, gpointer _conv)
 {
 	PurpleConversation *conv = _conv;
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-	PurpleStoredImage *img;
+	PurpleImage *img;
 	gulong smiley_id;
-	int image_id;
+	guint image_id;
 	gchar *js;
 
 	if (!gtkconv)
@@ -6604,13 +6605,13 @@ pidgin_conv_remote_smiley_got(PurpleSmiley *smiley, gpointer _conv)
 
 	img = purple_smiley_get_image(smiley);
 	smiley_id = pidgin_smiley_get_unique_id(smiley);
-	image_id = purple_imgstore_add_with_id(img);
+	image_id = purple_image_store_add(img);
 
 	purple_debug_info("gtkconv", "Smiley '%s' (%ld) is ready for display",
 		purple_smiley_get_shortcut(smiley), smiley_id);
 
 	js = g_strdup_printf("emoticonIsReady(%ld, '"
-		PURPLE_STORED_IMAGE_PROTOCOL "%d')", smiley_id, image_id);
+		PURPLE_IMAGE_STORE_PROTOCOL "%u')", smiley_id, image_id);
 	pidgin_webview_safe_execute_script(
 		PIDGIN_WEBVIEW(gtkconv->webview), js);
 	g_free(js);
@@ -6637,12 +6638,12 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 			"src=\"%s%s\" />", escaped_shortcut,
 			escaped_shortcut, path_prefix, path);
 	} else if (purple_smiley_is_ready(smiley) && !path) {
-		PurpleStoredImage *img = purple_smiley_get_image(smiley);
-		int imgid = purple_imgstore_add_with_id(img);
+		PurpleImage *img = purple_smiley_get_image(smiley);
+		guint imgid = purple_image_store_add(img);
 
 		g_string_append_printf(out, "<img class=\"emoticon\" "
 			"alt=\"%s\" title=\"%s\" src=\""
-			PURPLE_STORED_IMAGE_PROTOCOL "%d\" />",
+			PURPLE_IMAGE_STORE_PROTOCOL "%u\" />",
 			escaped_shortcut, escaped_shortcut, imgid);
 	} else {
 		g_string_append_printf(out, "<span class=\"emoticon pending "
@@ -7775,7 +7776,7 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 
 	PurpleBuddy *buddy;
 
-	PurpleStoredImage *custom_img = NULL;
+	PurpleImage *custom_img = NULL;
 	gconstpointer data = NULL;
 	size_t len;
 
@@ -7845,8 +7846,8 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 			custom_img = purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
 			if (custom_img) {
 				/* There is a custom icon for this user */
-				data = purple_imgstore_get_data(custom_img);
-				len = purple_imgstore_get_size(custom_img);
+				data = purple_image_get_data(custom_img);
+				len = purple_image_get_size(custom_img);
 			}
 		}
 	}
@@ -7870,7 +7871,8 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 	}
 
 	gtkconv->u.im->anim = pidgin_pixbuf_anim_from_data(data, len);
-	purple_imgstore_unref(custom_img);
+	if (custom_img)
+		g_object_unref(custom_img);
 
 	if (!gtkconv->u.im->anim) {
 		purple_debug_error("gtkconv", "Couldn't load icon for conv %s\n",
@@ -8656,14 +8658,6 @@ pidgin_conversations_get_handle(void)
 }
 
 static void
-e2ee_stock_delete_value(gpointer value)
-{
-	PurpleStoredImage *img = value;
-
-	purple_imgstore_unref(img);
-}
-
-static void
 pidgin_conversations_pre_uninit(void);
 
 void
@@ -8673,8 +8667,8 @@ pidgin_conversations_init(void)
 	void *blist_handle = purple_blist_get_handle();
 	char *theme_dir;
 
-	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-		e2ee_stock_delete_value);
+	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, g_object_unref);
 
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
@@ -9076,7 +9070,6 @@ pidgin_conversation_get_type(void)
 #include "account.h"
 #include "cmds.h"
 #include "debug.h"
-#include "imgstore.h"
 #include "log.h"
 #include "notify.h"
 #include "prpl.h"
