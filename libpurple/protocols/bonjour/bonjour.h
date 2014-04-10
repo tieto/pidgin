@@ -29,7 +29,6 @@
 #include "mdns_common.h"
 #include "internal.h"
 #include "jabber.h"
-#include "imgstore.h" /* TODO: temp */
 
 #define BONJOUR_GROUP_NAME _("Bonjour")
 #define BONJOUR_PROTOCOL_NAME "bonjour"
