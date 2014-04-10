@@ -608,7 +608,7 @@ static void
 do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	gchar *filename = NULL, *name, *buf;
+	gchar *filename = NULL, *buf;
 	char *filedata;
 	size_t size;
 	GError *error = NULL;
@@ -632,9 +632,8 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 		return;
 	}
 
-	name = strrchr(filename, G_DIR_SEPARATOR) + 1;
-
 	img = purple_image_new_from_data(filedata, size);
+	purple_image_set_friendly_filename(img, filename);
 
 	if (!img) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
