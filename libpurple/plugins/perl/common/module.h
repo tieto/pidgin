@@ -57,7 +57,6 @@ typedef struct group *Purple__Group;
 #include "gtkutils.h"
 #endif
 #include "idle.h"
-#include "imgstore.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -179,9 +178,6 @@ typedef GtkTextView *			Purple__GTK__TextView;
 
 /* gtkconn.h */
 #endif
-
-/* imgstore.h */
-typedef PurpleStoredImage *		Purple__StoredImage;
 
 /* log.h */
 typedef PurpleLog *			Purple__Log;

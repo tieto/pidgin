@@ -52,7 +52,6 @@ XS_FILES =		Account.xs \
 				Debug.xs \
 				Idle.xs \
 				Purple.xs \
-				ImgStore.xs \
 				Log.xs \
 				Network.xs \
 				Notify.xs \
