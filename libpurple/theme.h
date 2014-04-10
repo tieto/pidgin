@@ -30,7 +30,6 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include "imgstore.h"
 
 typedef struct _PurpleTheme        PurpleTheme;
 typedef struct _PurpleThemeClass   PurpleThemeClass;

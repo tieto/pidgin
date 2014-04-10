@@ -177,7 +177,7 @@ purple_core_init(const char *ui)
 	purple_keyring_init(); /* before accounts */
 	purple_theme_manager_init();
 
-	/* The buddy icon code uses the imgstore, so init it early. */
+	/* The buddy icon code uses the image store, so init it early. */
 	_purple_image_store_init();
 
 	/* Accounts use status, buddy icons and connection signals, so

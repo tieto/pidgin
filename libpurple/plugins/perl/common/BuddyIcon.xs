@@ -45,7 +45,7 @@ purple_buddy_icon_get_scale_size(spec, width, height)
 	int *width
 	int *height
 
-gchar_own *
+const gchar *
 purple_buddy_icon_get_full_path(icon);
 	Purple::Buddy::Icon icon
 

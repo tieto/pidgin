@@ -28,7 +28,6 @@
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "enums.h"
-#include "imgstore.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"

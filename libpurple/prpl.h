@@ -82,7 +82,7 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 #include "buddylist.h"
 #include "conversations.h"
 #include "xfer.h"
-#include "imgstore.h"
+#include "image.h"
 #include "media.h"
 #include "notify.h"
 #include "proxy.h"
@@ -492,9 +492,9 @@ struct _PurplePluginProtocolInfo
 	/*
 	 * Set the buddy icon for the given connection to @img.  The prpl
 	 * does NOT own a reference to @img; if it needs one, it must
-	 * #purple_imgstore_ref(@img) itself.
+	 * #g_object_ref(@img) itself.
 	 */
-	void (*set_buddy_icon)(PurpleConnection *, PurpleStoredImage *img);
+	void (*set_buddy_icon)(PurpleConnection *, PurpleImage *img);
 
 	void (*remove_group)(PurpleConnection *gc, PurpleGroup *group);
 
