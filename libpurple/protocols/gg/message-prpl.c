@@ -29,6 +29,7 @@
 
 #include <debug.h>
 #include <glibcompat.h>
+#include <image-store.h>
 
 #include "gg.h"
 #include "chat.h"
@@ -40,8 +41,9 @@
 #define GGP_GG10_DEFAULT_FORMAT_REPLACEMENT "<span>"
 #define GGP_GG11_FORCE_COMPAT FALSE
 
+/* TODO: we don't need "pending images" anymore */
 #define GGP_IMAGE_REPLACEMENT "<img id=\"gg-pending-image-" GGP_IMAGE_ID_FORMAT "\">"
-#define GGP_IMAGE_DESTINATION "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%u\">"
+#define GGP_IMAGE_DESTINATION "<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL "%u\">"
 
 typedef struct
 {
@@ -190,8 +192,9 @@ static void ggp_message_got_data_free(ggp_message_got_data *msg)
 	g_free(msg);
 }
 
-static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
-	int stored_id, gpointer _msg)
+static void
+ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
+	guint stored_id, gpointer _msg)
 {
 	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
 	ggp_message_got_data *msg = _msg;
@@ -573,9 +576,9 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 
 			if ((val = g_hash_table_lookup(attribs, "src")) != NULL
 				&& g_str_has_prefix(val,
-				PURPLE_STORED_IMAGE_PROTOCOL))
+				PURPLE_IMAGE_STORE_PROTOCOL))
 			{
-				val += strlen(PURPLE_STORED_IMAGE_PROTOCOL);
+				val += strlen(PURPLE_IMAGE_STORE_PROTOCOL);
 				if (sscanf(val, "%u", &stored_id) != 1)
 					stored_id = -1;
 			}

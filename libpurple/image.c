@@ -372,6 +372,13 @@ purple_image_generate_filename(PurpleImage *image)
 	return priv->gen_filename;
 }
 
+void
+purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename)
+{
+	/* TODO */
+	/* filter with g_path_get_basename() and purple_escape_filename() */
+}
+
 PurpleImage *
 purple_image_transfer_new(void)
 {

@@ -68,7 +68,7 @@ static void ggp_avatar_buddy_update_received(PurpleHttpConnection *http_conn,
 
 typedef struct
 {
-	PurpleStoredImage *img;
+	PurpleImage *img;
 } ggp_avatar_own_data;
 
 static void ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
@@ -317,7 +317,7 @@ static void ggp_avatar_buddy_update_received(PurpleHttpConnection *http_conn,
  * photo=<avatar content>
  */
 
-void ggp_avatar_own_set(PurpleConnection *gc, PurpleStoredImage *img)
+void ggp_avatar_own_set(PurpleConnection *gc, PurpleImage *img)
 {
 	ggp_avatar_own_data *own_data;
 
@@ -339,10 +339,12 @@ void ggp_avatar_own_set(PurpleConnection *gc, PurpleStoredImage *img)
 	ggp_oauth_request(gc, ggp_avatar_own_got_token, img, NULL, NULL);
 }
 
-static void ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
-	gpointer img)
+static void
+ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
+	gpointer _img)
 {
 	PurpleHttpRequest *req;
+	PurpleImage *img = _img;
 	ggp_avatar_own_data *own_data = ggp_avatar_get_avdata(gc)->own_data;
 	gchar *img_data, *img_data_e, *request_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -355,8 +357,8 @@ static void ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
 	}
 	own_data->img = NULL;
 
-	img_data = purple_base64_encode(purple_imgstore_get_data(img),
-		purple_imgstore_get_size(img));
+	img_data = purple_base64_encode(purple_image_get_data(img),
+		purple_image_get_size(img));
 	img_data_e = g_uri_escape_string(img_data, NULL, FALSE);
 	g_free(img_data);
 	request_data = g_strdup_printf("uin=%d&photo=%s", uin, img_data_e);

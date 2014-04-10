@@ -27,13 +27,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "image.h"
+#include "image-prpl.h"
 
 #include <debug.h>
 #include <glibcompat.h>
 
 #include "gg.h"
 #include "utils.h"
+
+#include <image-store.h>
 
 struct _ggp_image_session_data
 {
@@ -44,7 +46,7 @@ struct _ggp_image_session_data
 
 typedef struct
 {
-	int id;
+	guint id; /* TODO: store image ref, not id */
 	gchar *conv_name; /* TODO: callback */
 } ggp_image_sent;
 
@@ -59,16 +61,24 @@ typedef struct
 	gpointer user_data;
 } ggp_image_requested_listener;
 
+static void
+image_unref_by_id(guint id)
+{
+	/* TODO: store image ref, not id */
+	PurpleImage *img = purple_image_store_get(id);
+	g_object_unref(img);
+}
+
 static void ggp_image_got_free(gpointer data)
 {
-	int id = GPOINTER_TO_INT(data);
-	purple_imgstore_unref_by_id(id);
+	guint id = GPOINTER_TO_INT(data);
+	image_unref_by_id(id); /* TODO: store image ref, not id */
 }
 
 static void ggp_image_sent_free(gpointer data)
 {
 	ggp_image_sent *sent_image = (ggp_image_sent*)data;
-	purple_imgstore_unref_by_id(sent_image->id);
+	image_unref_by_id(sent_image->id);
 	g_free(sent_image->conv_name);
 	g_free(sent_image);
 }
@@ -121,11 +131,11 @@ void ggp_image_cleanup(PurpleConnection *gc)
 }
 
 ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
-	const int stored_id, uint64_t *id)
+	const guint stored_id, uint64_t *id)
 {
 	PurpleConnection *gc = purple_conversation_get_connection(conv);
 	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
-	PurpleStoredImage *image = purple_imgstore_find_by_id(stored_id);
+	PurpleImage *image = purple_image_store_get(stored_id);
 	size_t image_size;
 	gconstpointer image_data;
 	uint32_t image_crc;
@@ -137,7 +147,7 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 		return GGP_IMAGE_PREPARE_FAILURE;
 	}
 
-	image_size = purple_imgstore_get_size(image);
+	image_size = purple_image_get_size(image);
 
 	if (image_size > GGP_IMAGE_SIZE_MAX) {
 		purple_debug_warning("gg", "ggp_image_prepare: image "
@@ -145,8 +155,8 @@ ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
 		return GGP_IMAGE_PREPARE_TOO_BIG;
 	}
 
-	purple_imgstore_ref(image);
-	image_data = purple_imgstore_get_data(image);
+	g_object_ref(image);
+	image_data = purple_image_get_data(image);
 	image_crc = gg_crc32(0, image_data, image_size);
 
 	purple_debug_info("gg", "ggp_image_prepare: image prepared "
@@ -168,24 +178,18 @@ void ggp_image_recv(PurpleConnection *gc,
 	const struct gg_event_image_reply *image_reply)
 {
 	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
-	int stored_id;
+	PurpleImage *img;
+	guint stored_id;
 	ggp_image_requested *req;
 	GList *it;
 	uint64_t id;
 
-	/* TODO: This PurpleStoredImage will be rendered within the IM window
-	 * and right-clicking the image will allow the user to save the image
-	 * to disk.  The default filename used in this dialog is the filename
-	 * that we pass to purple_imgstore_new_with_id(), so we should call
-	 * g_path_get_basename() and purple_escape_filename() on it before
-	 * passing it in.  This is easy, but it's not clear if there might be
-	 * other implications because this filename is used elsewhere within
-	 * this PRPL.
-	 */
-	stored_id = purple_imgstore_new_with_id(
+	img = purple_image_new_from_data(
 		g_memdup(image_reply->image, image_reply->size),
-		image_reply->size,
-		image_reply->filename);
+		image_reply->size);
+	purple_image_set_friendly_filename(img, image_reply->filename);
+	stored_id = purple_image_store_add(img);
+	g_object_unref(img);
 
 	id = ggp_image_params_to_id(image_reply->crc32, image_reply->size);
 
@@ -225,7 +229,7 @@ void ggp_image_send(PurpleConnection *gc,
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
 	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 	ggp_image_sent *sent_image;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 	PurpleConversation *conv;
 	uint64_t id;
 	gchar *gg_filename;
@@ -259,7 +263,7 @@ void ggp_image_send(PurpleConnection *gc,
 		sent_image->id,
 		sent_image->conv_name);
 
-	image = purple_imgstore_find_by_id(sent_image->id);
+	image = purple_image_store_get(sent_image->id);
 
 	if (!image) {
 		purple_debug_error("gg", "ggp_image_send: requested image "
@@ -273,8 +277,8 @@ void ggp_image_send(PurpleConnection *gc,
 	gg_filename = g_strdup_printf(GGP_IMAGE_ID_FORMAT, id);
 	gg_image_reply(accdata->session, image_request->sender,
 		gg_filename,
-		purple_imgstore_get_data(image),
-		purple_imgstore_get_size(image));
+		purple_image_get_data(image),
+		purple_image_get_size(image));
 	g_free(gg_filename);
 
 	conv = purple_conversations_find_with_account(

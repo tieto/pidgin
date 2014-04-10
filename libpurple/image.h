@@ -113,6 +113,9 @@ purple_image_get_mimetype(PurpleImage *image);
 const gchar *
 purple_image_generate_filename(PurpleImage *image);
 
+void
+purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename);
+
 PurpleImage *
 purple_image_transfer_new(void);
 

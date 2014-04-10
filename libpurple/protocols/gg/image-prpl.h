@@ -46,13 +46,13 @@ typedef enum
 } ggp_image_prepare_result;
 
 typedef void (*ggp_image_request_cb)(PurpleConnection *gc, uint64_t id,
-	int stored_id, gpointer user_data);
+	guint stored_id, gpointer user_data);
 
 void ggp_image_setup(PurpleConnection *gc);
 void ggp_image_cleanup(PurpleConnection *gc);
 
 ggp_image_prepare_result ggp_image_prepare(PurpleConversation *conv,
-	const int stored_id, uint64_t *id);
+	const guint stored_id, uint64_t *id);
 
 void ggp_image_recv(PurpleConnection *gc,
 	const struct gg_event_image_reply *image_reply);
