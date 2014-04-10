@@ -40,7 +40,7 @@ typedef struct
 	PurpleSmiley *smiley;
 
 	gchar *filename;
-	PurpleStoredImage *new_image;
+	PurpleImage *new_image;
 
 	GtkDialog *window;
 	GtkImage *thumbnail;
@@ -88,7 +88,7 @@ edit_dialog_image_update_thumb(SmileyEditDialog *edit_dialog)
 	GdkPixbuf *pixbuf = NULL;
 
 	if (edit_dialog->new_image) {
-		pixbuf = pidgin_pixbuf_from_imgstore(edit_dialog->new_image);
+		pixbuf = pidgin_pixbuf_from_image(edit_dialog->new_image);
 	} else if (edit_dialog->filename) {
 		pixbuf = pidgin_pixbuf_new_from_file(edit_dialog->filename);
 		if (!pixbuf) {
@@ -117,13 +117,12 @@ edit_dialog_image_update_thumb(SmileyEditDialog *edit_dialog)
 }
 
 static gboolean
-edit_dialog_set_image(SmileyEditDialog *edit_dialog,
-	PurpleStoredImage *image)
+edit_dialog_set_image(SmileyEditDialog *edit_dialog, PurpleImage *image)
 {
 	GdkPixbuf *tmp = NULL;
 
 	if (edit_dialog->new_image)
-		purple_imgstore_unref(edit_dialog->new_image);
+		g_object_unref(edit_dialog->new_image);
 
 	if (edit_dialog->smiley) {
 		g_object_set_data(G_OBJECT(edit_dialog->smiley),
@@ -132,11 +131,11 @@ edit_dialog_set_image(SmileyEditDialog *edit_dialog,
 
 	/* check, if image is valid */
 	if (image)
-		tmp = pidgin_pixbuf_from_imgstore(image);
+		tmp = pidgin_pixbuf_from_image(image);
 	if (tmp)
 		g_object_unref(tmp);
 	else {
-		purple_imgstore_unref(image);
+		g_object_unref(image);
 		image = NULL;
 	}
 
@@ -158,13 +157,13 @@ edit_dialog_set_shortcut(SmileyEditDialog *edit_dialog,
 static void
 edit_dialog_image_choosen(const char *filename, gpointer _edit_dialog)
 {
-	PurpleStoredImage *image;
+	PurpleImage *image;
 	SmileyEditDialog *edit_dialog = _edit_dialog;
 
 	if (!filename)
 		return;
 
-	image = purple_imgstore_new_from_file(filename);
+	image = purple_image_new_from_file(filename, TRUE);
 	if (!image)
 		return;
 
@@ -207,7 +206,8 @@ edit_dialog_destroy(GtkWidget *window, gpointer _edit_dialog)
 		g_object_unref(edit_dialog->smiley);
 	}
 
-	purple_imgstore_unref(edit_dialog->new_image);
+	if (edit_dialog->new_image)
+		g_object_unref(edit_dialog->new_image);
 
 	g_free(edit_dialog->filename);
 	g_free(edit_dialog);
@@ -251,8 +251,8 @@ edit_dialog_save(SmileyEditDialog *edit_dialog)
 	if (edit_dialog->new_image == NULL) {
 		/* We're reading the file and then writing it back - it's not
 		 * efficient, but it's also not really important here. */
-		edit_dialog->new_image = purple_imgstore_new_from_file(
-			purple_smiley_get_path(edit_dialog->smiley));
+		edit_dialog->new_image = purple_image_new_from_file(
+			purple_smiley_get_path(edit_dialog->smiley), TRUE);
 		g_return_if_fail(edit_dialog->new_image);
 	}
 
@@ -453,13 +453,13 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 }
 
 void
-pidgin_smiley_manager_add(PurpleStoredImage *image, const gchar *shortcut)
+pidgin_smiley_manager_add(PurpleImage *image, const gchar *shortcut)
 {
 	SmileyEditDialog *edit_dialog;
 
 	g_return_if_fail(image != NULL);
 
-	purple_imgstore_ref(image);
+	g_object_ref(image);
 
 	edit_dialog = edit_dialog_show(NULL, NULL);
 	edit_dialog_set_shortcut(edit_dialog, shortcut);
@@ -478,7 +478,7 @@ smiley_list_dnd_url_got(PurpleHttpConnection *http_conn,
 {
 	SmileyManager *manager = _manager;
 	SmileyEditDialog *edit_dialog;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 	const gchar *image_data;
 	size_t image_size;
 
@@ -490,8 +490,8 @@ smiley_list_dnd_url_got(PurpleHttpConnection *http_conn,
 		return;
 
 	image_data = purple_http_response_get_data(response, &image_size);
-	image = purple_imgstore_new(g_memdup(image_data, image_size),
-		image_size, NULL);
+	image = purple_image_new_from_data(g_memdup(image_data, image_size),
+		image_size);
 	if (!image)
 		return;
 
@@ -532,7 +532,7 @@ smiley_list_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 	if (purple_str_has_caseprefix(content, "file://")) {
 		SmileyEditDialog *edit_dialog;
-		PurpleStoredImage *image;
+		PurpleImage *image;
 		gchar *filename;
 
 		filename = g_filename_from_uri(content, NULL, NULL);
@@ -543,7 +543,7 @@ smiley_list_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			return;
 		}
 
-		image = purple_imgstore_new_from_file(filename);
+		image = purple_image_new_from_file(filename, TRUE);
 		if (!image) {
 			purple_debug_warning("gtksmiley-manager",
 				"dropped file is not a valid image");

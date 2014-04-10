@@ -36,6 +36,8 @@
 #include "gtkinternal.h"
 #include "gtk3compat.h"
 
+#include "imgstore.h" /* TODO: temp */
+
 #define MAX_FONT_SIZE 7
 #define MAX_SCROLL_TIME 0.4 /* seconds */
 #define SCROLL_DELAY 33 /* milliseconds */
@@ -2055,18 +2057,20 @@ pidgin_webview_insert_link(PidginWebView *webview, const char *url, const char *
 }
 
 void
-pidgin_webview_insert_image(PidginWebView *webview, int id)
+pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image)
 {
 	PidginWebViewPriv *priv;
 	WebKitDOMDocument *dom;
 	char *img;
+	guint id;
 
 	g_return_if_fail(webview != NULL);
 
+	id = purple_image_store_add(image);
 	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	img = g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'/>",
-	                      id);
+	img = g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL
+		"%u'/>", id);
 
 	priv->edit.block_changed = TRUE;
 	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, img);

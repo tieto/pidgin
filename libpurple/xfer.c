@@ -32,6 +32,7 @@
 #include "request.h"
 #include "util.h"
 #include "debug.h"
+#include "imgstore.h" /* TODO: temp */
 
 #define FT_INITIAL_BUFFER_SIZE 4096
 #define FT_MAX_BUFFER_SIZE     65535

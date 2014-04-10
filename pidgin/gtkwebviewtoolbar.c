@@ -612,7 +612,7 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 	char *filedata;
 	size_t size;
 	GError *error = NULL;
-	int id;
+	PurpleImage *img;
 
 	if (response == GTK_RESPONSE_ACCEPT)
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
@@ -634,9 +634,9 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 
 	name = strrchr(filename, G_DIR_SEPARATOR) + 1;
 
-	id = purple_imgstore_new_with_id(filedata, size, name);
+	img = purple_image_new_from_data(filedata, size);
 
-	if (id == 0) {
+	if (!img) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
 		purple_notify_error(NULL, NULL, buf, NULL, NULL);
 
@@ -648,9 +648,9 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 
 	g_free(filename);
 
-	pidgin_webview_insert_image(PIDGIN_WEBVIEW(toolbar->webview), id);
+	pidgin_webview_insert_image(PIDGIN_WEBVIEW(toolbar->webview), img);
 	/* TODO: do it after passing an image to prpl, not before
-	 * purple_imgstore_unref_by_id(id);
+	 * g_object_unref(img);
 	 */
 }
 

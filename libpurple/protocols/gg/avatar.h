@@ -33,6 +33,8 @@
 #include <internal.h>
 #include <libgadu.h>
 
+#include "imgstore.h" /* TODO: temp */
+
 typedef struct
 {
 	guint timer;

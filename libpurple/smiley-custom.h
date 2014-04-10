@@ -49,7 +49,7 @@
  * Returns: a new #PurpleSmiley, or %NULL if error occured.
  */
 PurpleSmiley *
-purple_smiley_custom_add(PurpleStoredImage *image, const gchar *shortcut);
+purple_smiley_custom_add(PurpleImage *image, const gchar *shortcut);
 
 /**
  * purple_smiley_custom_remove:

@@ -37,6 +37,8 @@
 #include "proxy.h"
 #include "sslconn.h"
 
+#include "imgstore.h" /* TODO: temp */
+
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>

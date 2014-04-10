@@ -436,8 +436,6 @@ purple_perl_sv_from_purple_type(GType type, void *arg)
 		stash = "Purple::XMLNode";
 	else if (type == PURPLE_TYPE_NOTIFY_USER_INFO)
  		stash = "Purple::NotifyUserInfo";
-	else if (type == PURPLE_TYPE_STORED_IMAGE)
- 		stash = "Purple::StoredImage";
 	else if (type == PURPLE_TYPE_CERTIFICATE_POOL)
  		stash = "Purple::Certificate::Pool";
 	else

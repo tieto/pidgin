@@ -859,13 +859,21 @@ GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count)
 
 /**
  * pidgin_pixbuf_from_imgstore:
- * @image:   A PurpleStoredImage.
  *
- * Create a GdkPixbuf from a PurpleStoredImage.
- *
- * Returns:   A GdkPixbuf created from the stored image.
+ * TODO: remove it!
  */
-GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
+GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleImage *image);
+
+/**
+ * pidgin_pixbuf_from_image:
+ * @image: a PurpleImage.
+ *
+ * Create a GdkPixbuf from a PurpleImage.
+ *
+ * Returns: a GdkPixbuf created from the @image.
+ */
+GdkPixbuf *
+pidgin_pixbuf_from_image(PurpleImage *image);
 
 /**
  * pidgin_pixbuf_new_from_file:

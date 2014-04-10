@@ -54,6 +54,8 @@ typedef enum {
 
 typedef struct _JabberStream JabberStream;
 
+#include "imgstore.h" /* TODO: temp */
+
 #include <libxml/parser.h>
 #include <glib.h>
 #include "circularbuffer.h"

@@ -35,6 +35,8 @@
 #include "server.h"
 #include "util.h"
 
+#include "imgstore.h" /* TODO: temp */
+
 #undef SILC_VERSION
 #define SILC_VERSION(a, b, c) (((a) << 24) + ((b) << 16) + ((c) << 8))
 

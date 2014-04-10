@@ -576,12 +576,13 @@ void pidgin_webview_insert_link(PidginWebView *webview, const char *url, const c
 
 /**
  * pidgin_webview_insert_image:
- * @webview: The PidginWebView
- * @id:      The PurpleStoredImage id
+ * @webview: the PidginWebView.
+ * @image: the PurpleImage.
  *
  * Inserts an image at the current location or selection in a PidginWebView.
  */
-void pidgin_webview_insert_image(PidginWebView *webview, int id);
+void
+pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image);
 
 /**
  * pidgin_webview_get_protocol_name:

@@ -4155,7 +4155,7 @@ generate_send_to_items(PidginConvWindow *win)
 	update_send_to_selection(win);
 }
 
-PurpleStoredImage *
+PurpleImage *
 _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 {
 	gchar filename[100], *path;
@@ -4171,7 +4171,7 @@ _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "e2ee", "16",
 		filename, NULL);
-	image = purple_imgstore_new_from_file(path);
+	image = purple_image_new_from_file(path, FALSE);
 	g_free(path);
 
 	g_hash_table_insert(e2ee_stock, g_strdup(stock_name), image);

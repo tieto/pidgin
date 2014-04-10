@@ -40,7 +40,6 @@
 
 #include <glib-object.h>
 
-#include "imgstore.h"
 #include "util.h"
 
 typedef struct _PurpleRemoteSmiley PurpleRemoteSmiley;

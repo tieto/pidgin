@@ -1412,9 +1412,10 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 	GError *err = NULL;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
-	int id;
 	PurpleBuddy *buddy;
 	PurpleContact *contact;
+	PurpleImage *img;
+
 	switch (choice) {
 	case DND_BUDDY_ICON:
 		if (g_stat(data->filename, &st)) {
@@ -1459,10 +1460,10 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		}
 		shortname = strrchr(data->filename, G_DIR_SEPARATOR);
 		shortname = shortname ? shortname + 1 : data->filename;
-		id = purple_imgstore_new_with_id(filedata, size, shortname);
+		img = purple_image_new_from_data(filedata, size);
 
-		pidgin_webview_insert_image(PIDGIN_WEBVIEW(gtkconv->entry), id);
-		purple_imgstore_unref_by_id(id);
+		pidgin_webview_insert_image(PIDGIN_WEBVIEW(gtkconv->entry), img);
+		g_object_unref(img);
 
 		break;
 	}
@@ -3099,10 +3100,16 @@ GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count)
 	return GDK_PIXBUF_ANIMATION(pidgin_pixbuf_from_data_helper(buf, count, TRUE));
 }
 
-GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
+GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleImage *image)
 {
-	return pidgin_pixbuf_from_data(purple_imgstore_get_data(image),
-			purple_imgstore_get_size(image));
+	return pidgin_pixbuf_from_image(image); /* TODO: remove it */
+}
+
+GdkPixbuf *
+pidgin_pixbuf_from_image(PurpleImage *image)
+{
+	return pidgin_pixbuf_from_data(purple_image_get_data(image),
+		purple_image_get_size(image));
 }
 
 GdkPixbuf *pidgin_pixbuf_new_from_file(const gchar *filename)
