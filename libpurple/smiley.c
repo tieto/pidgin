@@ -53,6 +53,7 @@ enum
 	SIG_LAST
 };
 
+static GObjectClass *parent_class;
 static guint signals[SIG_LAST];
 static GParamSpec *properties[PROP_LAST];
 
@@ -168,6 +169,8 @@ purple_smiley_finalize(GObject *obj)
 		purple_imgstore_unref(priv->image);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(smiley);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
 static void
@@ -223,6 +226,8 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 	PurpleSmileyClass *ps_class = PURPLE_SMILEY_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
 
 	g_type_class_add_private(klass, sizeof(PurpleSmileyPrivate));
 

@@ -47,6 +47,7 @@ enum
 	PROP_LAST
 };
 
+static GObjectClass *parent_class;
 static GParamSpec *properties[PROP_LAST];
 
 static void
@@ -326,6 +327,8 @@ purple_smiley_list_finalize(GObject *obj)
 	g_list_free(priv->smileys);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(sl);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
 static void
@@ -369,6 +372,8 @@ static void
 purple_smiley_list_class_init(PurpleSmileyListClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
 
 	g_type_class_add_private(klass, sizeof(PurpleSmileyListPrivate));
 
