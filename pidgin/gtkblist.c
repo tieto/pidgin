@@ -2735,10 +2735,12 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 			account ? purple_account_get_protocol_id(account) : "(no account)",
 			buddy ? purple_buddy_get_name(buddy) : "(no buddy)",
 			custom_img ? purple_image_get_size(custom_img) : 0);
-		g_object_unref(custom_img);
+		if (custom_img)
+			g_object_unref(custom_img);
 		return NULL;
 	}
-	g_object_unref(custom_img);
+	if (custom_img)
+		g_object_unref(custom_img);
 
 	if (greyed) {
 		gboolean offline = FALSE, idle = FALSE;

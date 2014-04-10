@@ -45,8 +45,6 @@
 
 #include "gtk3compat.h"
 
-#include "imgstore.h" /* TODO: temp */
-
 enum
 {
 	COLUMN_ICON,
@@ -135,7 +133,7 @@ typedef struct
 	GtkWidget *icon_filesel;
 	GtkWidget *icon_preview;
 	GtkWidget *icon_text;
-	PurpleStoredImage *icon_img;
+	PurpleImage *icon_img;
 
 	/* Protocol Options */
 	GtkWidget *protocol_frame;
@@ -183,14 +181,18 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 {
 	GdkPixbuf *pixbuf = NULL;
 
-#if 0
-	/* TODO: unref it! */
-	dialog->icon_img = purple_imgstore_unref(dialog->icon_img);
-#endif
-	if (data != NULL)
-	{
+	if (dialog->icon_img) {
+		g_object_unref(dialog->icon_img);
+		dialog->icon_img = NULL;
+	}
+
+	if (new_icon_path != NULL) {
+		dialog->icon_img = purple_image_new_from_file(new_icon_path, TRUE);
+		purple_debug_warning("gtkaccount", "data was not necessary");
+		g_free(data);
+	} else if (data != NULL) {
 		if (len > 0)
-			dialog->icon_img = purple_imgstore_new(data, len, new_icon_path);
+			dialog->icon_img = purple_image_new_from_data(data, len);
 		else
 			g_free(data);
 	}
@@ -852,8 +854,10 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->icon_entry);
 	/* TODO: Uh, isn't this next line pretty useless? */
 	pidgin_set_accessible_label(dialog->icon_entry, GTK_LABEL(label));
-	purple_imgstore_unref(dialog->icon_img);
-	dialog->icon_img = NULL;
+	if (dialog->icon_img) {
+		g_object_unref(dialog->icon_img);
+		dialog->icon_img = NULL;
+	}
 
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
@@ -880,7 +884,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 
 	if (dialog->account != NULL) {
-		PurpleStoredImage *img;
+		PurpleImage *img;
 		gpointer data = NULL;
 		size_t len = 0;
 
@@ -898,8 +902,8 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		img = purple_buddy_icons_find_account_icon(dialog->account);
 		if (img)
 		{
-			len = purple_imgstore_get_size(img);
-			data = g_memdup(purple_imgstore_get_data(img), len);
+			len = purple_image_get_size(img);
+			data = g_memdup(purple_image_get_data(img), len);
 		}
 		set_dialog_icon(dialog, data, len,
 		                g_strdup(purple_account_get_buddy_icon_path(dialog->account)));
@@ -1401,7 +1405,8 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	g_free(dialog->protocol_id);
 	g_object_unref(dialog->sg);
 
-	purple_imgstore_unref(dialog->icon_img);
+	if (dialog->icon_img)
+		g_object_unref(dialog->icon_img);
 
 	if (dialog->icon_filesel)
 		gtk_widget_destroy(dialog->icon_filesel);
@@ -1530,11 +1535,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		{
 			if (dialog->icon_img)
 			{
-				size_t len = purple_imgstore_get_size(dialog->icon_img);
+				size_t len = purple_image_get_size(dialog->icon_img);
 				purple_buddy_icons_set_account_icon(account,
-				                                    g_memdup(purple_imgstore_get_data(dialog->icon_img), len),
-				                                    len);
-				purple_account_set_buddy_icon_path(account, purple_imgstore_get_filename(dialog->icon_img));
+					g_memdup(purple_image_get_data(dialog->icon_img), len), len);
+				purple_account_set_buddy_icon_path(account,
+					purple_image_get_path(dialog->icon_img));
 			}
 			else
 			{
@@ -2262,7 +2267,7 @@ static void
 set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkPixbuf *global_buddyicon)
 {
 	GdkPixbuf *pixbuf, *buddyicon = NULL;
-	PurpleStoredImage *img = NULL;
+	PurpleImage *img = NULL;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
@@ -2282,7 +2287,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 				const char *path;
 				path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 				if ((path != NULL) && (*path != '\0')) {
-					img = purple_imgstore_new_from_file(path);
+					img = purple_image_new_from_file(path, TRUE);
 				}
 			}
 		} else {
