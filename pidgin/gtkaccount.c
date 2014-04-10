@@ -45,6 +45,8 @@
 
 #include "gtk3compat.h"
 
+#include "imgstore.h" /* TODO: temp */
+
 enum
 {
 	COLUMN_ICON,

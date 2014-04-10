@@ -42,7 +42,6 @@
 #include "conversation.h"
 #include "debug.h"
 #include "desktopitem.h"
-#include "imgstore.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"

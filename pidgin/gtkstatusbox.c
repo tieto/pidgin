@@ -2326,12 +2326,12 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 }
 
 void
-pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, PurpleStoredImage *img)
+pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, PurpleImage *img)
 {
-	purple_imgstore_unref(status_box->buddy_icon_img);
+	g_object_unref(status_box->buddy_icon_img);
 	status_box->buddy_icon_img = img;
 	if (status_box->buddy_icon_img != NULL)
-		purple_imgstore_ref(status_box->buddy_icon_img);
+		g_object_ref(status_box->buddy_icon_img);
 
 	pidgin_status_box_redisplay_buddy_icon(status_box);
 }

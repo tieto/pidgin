@@ -22,7 +22,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#include "imgstore.h"
+#include "image-store.h"
 #include "notify.h"
 #include "prefs.h"
 #include "request.h"
@@ -703,20 +703,20 @@ static void
 insert_smiley_text(GtkWidget *widget, PidginWebViewToolbar *toolbar)
 {
 	PurpleSmiley *smiley;
-	PurpleStoredImage *image;
-	int image_id;
+	PurpleImage *image;
+	guint image_id;
 	gchar *escaped_smiley, *smiley_html;
 	const gchar *smiley_class;
 
 	smiley = g_object_get_data(G_OBJECT(widget), "smiley");
 	smiley_class = g_object_get_data(G_OBJECT(widget), "smiley-class");
 	image = purple_smiley_get_image(smiley);
-	image_id = purple_imgstore_add_with_id(image);
+	image_id = purple_image_store_add(image);
 
 	escaped_smiley = g_markup_escape_text(
 		purple_smiley_get_shortcut(smiley), -1);
-	smiley_html = g_strdup_printf("<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL
-		"%d\" class=\"emoticon %s-emoticon\" alt=\"%s\" title=\"%s\">",
+	smiley_html = g_strdup_printf("<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL
+		"%u\" class=\"emoticon %s-emoticon\" alt=\"%s\" title=\"%s\">",
 		image_id, smiley_class, escaped_smiley, escaped_smiley);
 
 	g_free(escaped_smiley);

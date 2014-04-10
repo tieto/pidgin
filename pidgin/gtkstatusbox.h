@@ -31,7 +31,6 @@
 #include <gtk/gtk.h>
 #include "gtkwebview.h"
 #include "account.h"
-#include "imgstore.h"
 #include "savedstatuses.h"
 #include "status.h"
 
@@ -91,7 +90,7 @@ struct _PidginStatusBox
 	GtkWidget *vbox, *sw;
 	GtkWidget *webview;
 
-	PurpleStoredImage *buddy_icon_img;
+	PurpleImage *buddy_icon_img;
 	GdkPixbuf *buddy_icon;
 	GdkPixbuf *buddy_icon_hover;
 	GtkWidget *buddy_icon_sel;
@@ -178,7 +177,7 @@ void
 pidgin_status_box_pulse_connecting(PidginStatusBox *status_box);
 
 void
-pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, PurpleStoredImage *img);
+pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, PurpleImage *img);
 
 char *pidgin_status_box_get_message(PidginStatusBox *status_box);
 

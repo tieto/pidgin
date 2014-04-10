@@ -67,6 +67,8 @@
 
 #include "gtk3compat.h"
 
+#include "imgstore.h" /* TODO: temp */
+
 typedef struct
 {
 	PurpleAccount *account;
