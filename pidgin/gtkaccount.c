@@ -194,7 +194,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 	}
 
 	if (dialog->icon_img != NULL) {
-		pixbuf = pidgin_pixbuf_from_imgstore(dialog->icon_img);
+		pixbuf = pidgin_pixbuf_from_image(dialog->icon_img);
 	}
 
 	if (pixbuf && dialog->prpl_info &&
@@ -2290,8 +2290,8 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 
 	if (img != NULL) {
 		GdkPixbuf *buddyicon_pixbuf;
-		buddyicon_pixbuf = pidgin_pixbuf_from_imgstore(img);
-		purple_imgstore_unref(img);
+		buddyicon_pixbuf = pidgin_pixbuf_from_image(img);
+		g_object_unref(img);
 
 		if (buddyicon_pixbuf != NULL) {
 			buddyicon = gdk_pixbuf_scale_simple(buddyicon_pixbuf, 22, 22, GDK_INTERP_HYPER);

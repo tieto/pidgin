@@ -858,13 +858,6 @@ GdkPixbuf *pidgin_pixbuf_from_data(const guchar *buf, gsize count);
 GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count);
 
 /**
- * pidgin_pixbuf_from_imgstore:
- *
- * TODO: remove it!
- */
-GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleImage *image);
-
-/**
  * pidgin_pixbuf_from_image:
  * @image: a PurpleImage.
  *

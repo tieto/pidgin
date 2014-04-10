@@ -3100,11 +3100,6 @@ GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count)
 	return GDK_PIXBUF_ANIMATION(pidgin_pixbuf_from_data_helper(buf, count, TRUE));
 }
 
-GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleImage *image)
-{
-	return pidgin_pixbuf_from_image(image); /* TODO: remove it */
-}
-
 GdkPixbuf *
 pidgin_pixbuf_from_image(PurpleImage *image)
 {

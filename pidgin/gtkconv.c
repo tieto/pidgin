@@ -3939,14 +3939,14 @@ send_to_item_leave_notify_cb(GtkWidget *menuitem, GdkEventCrossing *event, GtkWi
 static GtkWidget *
 e2ee_state_to_gtkimage(PurpleE2eeState *state)
 {
-	PurpleStoredImage *img;
+	PurpleImage *img;
 
 	img = _pidgin_e2ee_stock_icon_get(
 		purple_e2ee_state_get_stock_icon(state));
 	if (!img)
 		return NULL;
 
-	return gtk_image_new_from_pixbuf(pidgin_pixbuf_from_imgstore(img));
+	return gtk_image_new_from_pixbuf(pidgin_pixbuf_from_image(img));
 }
 
 static void
