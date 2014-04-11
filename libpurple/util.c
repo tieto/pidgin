@@ -507,16 +507,16 @@ const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso)
 #ifdef _WIN32
 	if ((off = wpurple_get_tz_offset()) == -1)
 		return "";
-#else
-# ifdef HAVE_TM_GMTOFF
+#elif defined(HAVE_TM_GMTOFF)
 	off = new_tm.tm_gmtoff;
-# else
-#  ifdef HAVE_TIMEZONE
+#elif defined(HAVE_TIMEZONE)
 	tzset();
 	off = -1 * timezone;
-#  endif /* HAVE_TIMEZONE */
-# endif /* !HAVE_TM_GMTOFF */
-#endif /* _WIN32 */
+#else
+	purple_debug_warning("util",
+		"there is no possibility to obtain tz offset");
+	return "";
+#endif
 
 	min = (off / 60) % 60;
 	hrs = ((off / 60) - min) / 60;
@@ -566,10 +566,10 @@ static size_t purple_internal_strftime(char *s, size_t max, const char *format, 
 		if (*c == 'z')
 		{
 			char *tmp = g_strdup_printf("%s%.*s%s",
-			                            fmt ? fmt : "",
-			                            c - start - 1,
-			                            start,
-			                            purple_get_tzoff_str(tm, FALSE));
+				fmt ? fmt : "",
+				(int)(c - start - 1),
+				start,
+				purple_get_tzoff_str(tm, FALSE));
 			g_free(fmt);
 			fmt = tmp;
 			start = c + 1;
@@ -579,10 +579,10 @@ static size_t purple_internal_strftime(char *s, size_t max, const char *format, 
 		if (*c == 'Z')
 		{
 			char *tmp = g_strdup_printf("%s%.*s%s",
-			                            fmt ? fmt : "",
-			                            c - start - 1,
-			                            start,
-			                            wpurple_get_timezone_abbreviation(tm));
+				fmt ? fmt : "",
+				(int)(c - start - 1),
+				start,
+				wpurple_get_timezone_abbreviation(tm));
 			g_free(fmt);
 			fmt = tmp;
 			start = c + 1;
