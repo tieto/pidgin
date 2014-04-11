@@ -586,7 +586,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 					image = purple_image_store_get(image_id);
 			}
 
-			if (image >= 0)
+			if (image != NULL)
 				res = ggp_image_prepare(conv, image, &id);
 
 			if (res == GGP_IMAGE_PREPARE_OK) {

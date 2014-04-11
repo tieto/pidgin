@@ -181,7 +181,6 @@ purple_smiley_custom_add(PurpleImage *img, const gchar *shortcut)
 	gchar *checksum, *file_path;
 	gchar file_name[256];
 	const gchar *file_ext;
-	GError *error = NULL;
 	gboolean succ;
 
 	g_return_val_if_fail(PURPLE_IS_IMAGE(img), NULL);
@@ -211,7 +210,7 @@ purple_smiley_custom_add(PurpleImage *img, const gchar *shortcut)
 
 	if (!purple_image_save(img, file_path)) {
 		purple_debug_error("smiley-custom", "Failed writing smiley "
-			"file %s: %s", file_path, error->message);
+			"file %s", file_path);
 		g_free(file_path);
 		g_object_unref(img);
 		return NULL;
