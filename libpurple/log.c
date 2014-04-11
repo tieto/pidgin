@@ -832,7 +832,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 			char *dir;
 			PurpleImage *image;
 			gconstpointer image_data;
-			char *new_filename = NULL;
+			const gchar *new_filename = NULL;
 			char *path = NULL;
 			size_t image_byte_count;
 
@@ -848,7 +848,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 			image_data       = purple_image_get_data(image);
 			image_byte_count = purple_image_get_size(image);
 			dir              = purple_log_get_log_dir(log->type, log->name, log->account);
-			new_filename     = purple_util_get_image_filename(image_data, image_byte_count);
+			new_filename = purple_image_generate_filename(image);
 
 			path = g_build_filename(dir, new_filename, NULL);
 
@@ -883,8 +883,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 			}
 
 			/* Write the new image tag */
-			g_string_append_printf(newmsg, "<IMG SRC=\"%s\">", new_filename);
-			g_free(new_filename);
+			g_string_append_printf(newmsg, "<img src=\"%s\">", new_filename);
 			g_free(path);
 		}
 

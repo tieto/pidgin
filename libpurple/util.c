@@ -3173,44 +3173,6 @@ purple_mkstemp(char **fpath, gboolean binary)
 	return fp;
 }
 
-const char *
-purple_util_get_image_extension(gconstpointer data, size_t len)
-{
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(len   > 0,    NULL);
-
-	if (len >= 4)
-	{
-		if (!strncmp((char *)data, "GIF8", 4))
-			return "gif";
-		else if (!strncmp((char *)data, "\xff\xd8\xff", 3)) /* 4th may be e0 through ef */
-			return "jpg";
-		else if (!strncmp((char *)data, "\x89PNG", 4))
-			return "png";
-		else if (!strncmp((char *)data, "MM", 2) ||
-				 !strncmp((char *)data, "II", 2))
-			return "tif";
-		else if (!strncmp((char *)data, "BM", 2))
-			return "bmp";
-	}
-
-	return "icon";
-}
-
-char *
-purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
-{
-	/* Use a cryptographic hash to avoid the possibility of user A
-	   intentionally causing a collision with user B.  It's not a
-	   horrible problem, but it's something we should try to avoid. */
-	char *checksum = g_compute_checksum_for_data(G_CHECKSUM_SHA1,
-			image_data, image_len);
-	char *filename = g_strdup_printf("%s.%s", checksum,
-	                       purple_util_get_image_extension(image_data, image_len));
-	g_free(checksum);
-	return filename;
-}
-
 gboolean
 purple_program_is_valid(const char *program)
 {

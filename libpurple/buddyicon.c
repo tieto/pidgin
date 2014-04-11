@@ -57,7 +57,7 @@ static GHashTable *account_cache = NULL;
  * shared across all accounts.
  *
  * Key is the filename for this image as constructed by
- * purple_util_get_image_filename().  So it is the base16 encoded
+ * purple_image_generate_filename().  So it is the base16 encoded
  * sha-1 hash plus an appropriate file extension.  For example:
  *   "0f4972d17d1e70e751c43c90c948e72efbff9796.gif"
  *

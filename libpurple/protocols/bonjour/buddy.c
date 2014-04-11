@@ -223,21 +223,12 @@ void bonjour_buddy_signed_off(PurpleBuddy *pb) {
  */
 void bonjour_buddy_got_buddy_icon(BonjourBuddy *buddy, gconstpointer data, gsize len) {
 	/* Recalculate the hash instead of using the current phsh to make sure it is accurate for the icon. */
-	char *p, *hash;
+	gchar *hash;
 
 	if (data == NULL || len == 0)
 		return;
 
-	/* Take advantage of the fact that we use a SHA-1 hash of the data as the filename. */
-	hash = purple_util_get_image_filename(data, len);
-
-	/* Get rid of the extension */
-	if (!(p = strchr(hash, '.'))) {
-		g_free(hash);
-		return;
-	}
-
-	*p = '\0';
+	hash = g_compute_checksum_for_data(G_CHECKSUM_SHA1, data, len);
 
 	purple_debug_info("bonjour", "Got buddy icon for %s icon hash='%s' phsh='%s'.\n", buddy->name,
 			  hash, buddy->phsh ? buddy->phsh : "(null)");

@@ -880,29 +880,6 @@ PurpleXmlNode *purple_util_read_xml_from_file(const char *filename,
  */
 FILE *purple_mkstemp(char **path, gboolean binary);
 
-/**
- * purple_util_get_image_extension:
- * @data: A pointer to the image data
- * @len:  The length of the image data
- *
- * Returns an extension corresponding to the image data's file type.
- *
- * Returns: The appropriate extension, or "icon" if unknown.
- */
-const char *
-purple_util_get_image_extension(gconstpointer data, size_t len);
-
-/**
- * purple_util_get_image_filename:
- *
- * Returns: A hex encoded version of the SHA-1 hash of the data passed
- *         in with the correct file extention appended.  The file
- *         extension is determined by calling
- *         purple_util_get_image_extension().  This return value must
- *         be g_freed by the caller.
- */
-char *purple_util_get_image_filename(gconstpointer image_data, size_t image_len);
-
 
 /**************************************************************************/
 /* Environment Detection Functions                                        */

@@ -426,14 +426,6 @@ purple_util_format_song_info(title, artist, album, unused)
 	const char* album
 	gpointer unused
 
-const char*
-purple_util_get_image_extension(const char *data, size_t length(data))
-	PROTOTYPE: $
-
-gchar_own*
-purple_util_get_image_filename(const char *image_data, size_t length(image_data))
-	PROTOTYPE: $
-
 Purple::XMLNode
 purple_util_read_xml_from_file(filename, description)
 	const char* filename
@@ -443,4 +435,3 @@ gboolean
 purple_util_write_data_to_file_absolute(filename_full, char *data, gssize length(data))
 	const char* filename_full
 	PROTOTYPE: $$
-
