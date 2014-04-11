@@ -23,6 +23,7 @@
 
 #include "eventloop.h"
 #include "glibcompat.h"
+#include "util.h"
 
 #define TEMP_IMAGE_TIMEOUT 5
 
@@ -155,6 +156,31 @@ PurpleImage *
 purple_image_store_get(guint id)
 {
 	return g_hash_table_lookup(id_to_image, GINT_TO_POINTER(id));
+}
+
+PurpleImage *
+purple_image_store_get_from_uri(const gchar *uri)
+{
+	guint64 longid;
+	guint id;
+	gchar *endptr;
+
+	if (!purple_str_has_prefix(uri, PURPLE_IMAGE_STORE_PROTOCOL))
+		return NULL;
+
+	uri += sizeof(PURPLE_IMAGE_STORE_PROTOCOL) - 1;
+	if (uri[0] == '-')
+		return NULL;
+
+	longid = g_ascii_strtoull(uri, &endptr, 10);
+	if (endptr[0] != '\0')
+		return NULL;
+
+	id = longid;
+	if (id != longid)
+		return NULL;
+
+	return purple_image_store_get(id);
 }
 
 void

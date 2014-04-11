@@ -608,10 +608,7 @@ static void
 do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	gchar *filename = NULL, *buf;
-	char *filedata;
-	size_t size;
-	GError *error = NULL;
+	gchar *filename = NULL;
 	PurpleImage *img;
 
 	if (response == GTK_RESPONSE_ACCEPT)
@@ -623,20 +620,12 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 	if (filename == NULL)
 		return;
 
-	if (!g_file_get_contents(filename, &filedata, &size, &error)) {
-		purple_notify_error(NULL, NULL, error->message, NULL, NULL);
-
-		g_error_free(error);
-		g_free(filename);
-
-		return;
-	}
-
-	img = purple_image_new_from_data(filedata, size);
-	purple_image_set_friendly_filename(img, filename);
+	img = purple_image_new_from_file(filename, TRUE);
 
 	if (!img) {
-		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
+		gchar *buf = g_strdup_printf(_("Failed to store image: %s"),
+			filename);
+
 		purple_notify_error(NULL, NULL, buf, NULL, NULL);
 
 		g_free(buf);

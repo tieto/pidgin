@@ -111,9 +111,6 @@ typedef struct _PidginWebViewPriv {
 	/* WebKit inspector */
 	WebKitWebView *inspector_view;
 	GtkWindow *inspector_win;
-
-	/* Resources cache */
-	GHashTable *loaded_images;
 } PidginWebViewPriv;
 
 /******************************************************************************
@@ -124,6 +121,14 @@ static WebKitWebViewClass *parent_class = NULL;
 
 static GRegex *smileys_re = NULL;
 static GRegex *empty_html_re = NULL;
+
+/* Resources cache.
+ *
+ * It's global, because gtkwebkit calls "resource-load-finished" only once
+ * for each static resource.
+ */
+static GHashTable *globally_loaded_images = NULL;
+guint globally_loaded_images_refcnt = 0;
 
 
 /******************************************************************************
@@ -208,10 +213,9 @@ static void
 webview_resource_loaded(WebKitWebView *web_view, WebKitWebFrame *web_frame,
 	WebKitWebResource *web_resource, gpointer user_data)
 {
-	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(web_view);
 	const gchar *uri;
 	GString *data;
-	PurpleImage *image;
+	PurpleImage *image = NULL;
 
 	if (!purple_str_has_caseprefix(
 		webkit_web_resource_get_mime_type(web_resource), "image/"))
@@ -220,20 +224,23 @@ webview_resource_loaded(WebKitWebView *web_view, WebKitWebFrame *web_frame,
 	}
 
 	uri = webkit_web_resource_get_uri(web_resource);
-	if (g_hash_table_lookup(priv->loaded_images, uri))
+	if (g_hash_table_lookup(globally_loaded_images, uri))
 		return;
 
 	data = webkit_web_resource_get_data(web_resource);
 	if (data->len == 0)
 		return;
 
-	/* TODO: we could avoid copying data, if uri is a
-	 * PURPLE_IMAGE_STORE_PROTOCOL */
-	image = purple_image_new_from_data(
-		g_memdup(data->str, data->len), data->len);
-	g_return_if_fail(image != NULL);
+	image = purple_image_store_get_from_uri(uri);
+	if (image) {
+		g_object_ref(image);
+	} else {
+		image = purple_image_new_from_data(
+			g_memdup(data->str, data->len), data->len);
+		g_return_if_fail(image != NULL);
+	}
 
-	g_hash_table_insert(priv->loaded_images, g_strdup(uri), image);
+	g_hash_table_insert(globally_loaded_images, g_strdup(uri), image);
 }
 
 static PurpleImage *
@@ -243,7 +250,7 @@ webview_resource_get_loaded(WebKitWebView *web_view, const gchar *uri)
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return g_hash_table_lookup(priv->loaded_images, uri);
+	return g_hash_table_lookup(globally_loaded_images, uri);
 }
 
 static void
@@ -1117,7 +1124,11 @@ pidgin_webview_finalize(GObject *webview)
 	}
 	g_queue_free(priv->load_queue);
 
-	g_hash_table_destroy(priv->loaded_images);
+	if (--globally_loaded_images_refcnt == 0) {
+		g_assert(globally_loaded_images != NULL);
+		g_hash_table_destroy(globally_loaded_images);
+		globally_loaded_images = NULL;
+	}
 
 	G_OBJECT_CLASS(parent_class)->finalize(G_OBJECT(webview));
 }
@@ -1298,8 +1309,11 @@ pidgin_webview_init(PidginWebView *webview, gpointer userdata)
 	g_signal_connect(G_OBJECT(inspector), "show-window",
 		G_CALLBACK(webview_inspector_show), webview);
 
-	priv->loaded_images = g_hash_table_new_full(g_str_hash, g_str_equal,
-		g_free, g_object_unref);
+	if (globally_loaded_images_refcnt++ == 0) {
+		g_assert(globally_loaded_images == NULL);
+		globally_loaded_images = g_hash_table_new_full(g_str_hash,
+			g_str_equal, g_free, g_object_unref);
+	}
 }
 
 GType

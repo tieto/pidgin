@@ -163,6 +163,7 @@ purple_image_new_from_file(const gchar *path, gboolean be_eager)
 	g_return_val_if_fail(g_file_test(path, G_FILE_TEST_EXISTS), NULL);
 
 	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
+	purple_image_set_friendly_filename(img, path);
 	priv = PURPLE_IMAGE_GET_PRIVATE(img);
 	priv->path = g_strdup(path);
 
