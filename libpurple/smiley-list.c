@@ -47,6 +47,7 @@ enum
 	PROP_LAST
 };
 
+static GObjectClass *parent_class;
 static GParamSpec *properties[PROP_LAST];
 
 static void
@@ -249,11 +250,31 @@ purple_smiley_list_get_trie(PurpleSmileyList *list)
 GList *
 purple_smiley_list_get_unique(PurpleSmileyList *list)
 {
+	GList *unique = NULL, *it;
+	GHashTable *unique_map;
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return g_hash_table_get_values(priv->path_map);
+	/* We could just return g_hash_table_get_values(priv->path_map) here,
+	 * but it won't be in order. */
+
+	unique_map = g_hash_table_new(g_str_hash, g_str_equal);
+
+	for (it = priv->smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+		const gchar *path = purple_smiley_get_path(smiley);
+
+		if (g_hash_table_lookup(unique_map, path))
+			continue;
+
+		unique = g_list_prepend(unique, smiley);
+		g_hash_table_insert(unique_map, (gpointer)path, smiley);
+	}
+
+	g_hash_table_destroy(unique_map);
+
+	return g_list_reverse(unique);
 }
 
 GList *
@@ -306,6 +327,8 @@ purple_smiley_list_finalize(GObject *obj)
 	g_list_free(priv->smileys);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(sl);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
 static void
@@ -349,6 +372,8 @@ static void
 purple_smiley_list_class_init(PurpleSmileyListClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
 
 	g_type_class_add_private(klass, sizeof(PurpleSmileyListPrivate));
 

@@ -56,7 +56,7 @@ typedef gboolean (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer ui_data);
 
 /**
- * purple_smiley_parse:
+ * purple_smiley_parser_smileify:
  * @conv: the conversation of a message.
  * @html_message: the html message, or escaped plain message.
  * @use_remote_smileys: %TRUE if remote smileys of @conv should be parsed.
@@ -64,34 +64,45 @@ typedef gboolean (*PurpleSmileyParseCb)(GString *out, PurpleSmiley *smiley,
  * @ui_data: the user data to be passed to @cb and
  *           #purple_smiley_theme_get_smileys.
  *
- * Replaces all textual smiley representations with proper smiley images.
+ * Replaces all textual smiley representations with proper smiley images
+ * configured for libpurple.
  *
  * The @use_remote_smileys parameter should be %TRUE for incoming messages,
  * %FALSE for outgoing.
  *
- * Returns: (transfer full): the smileyifed message. Should be #g_free'd when
+ * This function is intended for replacing all smileys before displaying. For
+ * replacing custom smileys before sending to the other party,
+ * see #purple_smiley_parser_replace.
+ *
+ * Returns: (transfer full): the smileifed message. Should be #g_free'd when
  *          done using it. Returns %NULL if and only if @html_message was %NULL.
  */
 gchar *
-purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
+purple_smiley_parser_smileify(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data);
 
 /**
- * purple_smiley_parse_custom:
- * @html_message:
- * @cb:
- * @ui_data:
+ * purple_smiley_parser_replace:
+ * @smileys: the list of smileys to replace.
+ * @html_message: the html message, or escaped plain message.
+ * @cb: the callback to replace smiley text with an image.
+ * @ui_data: the user data to be passed to @cb.
  *
- * TODO
+ * Replaces all textual smiley representations from @smileys list with images.
  *
- * Returns: TODO
+ * This function is intended for replacing custom smileys before sending to the
+ * other party. For replacing all sets of smileys (custom, remote and theme) at
+ * once (ie. before displaying), use #purple_smiley_parser_smileify.
+ *
+ * Returns: (transfer full): the smileifed message. Should be #g_free'd when
+ *          done using it. Returns %NULL if and only if @html_message was %NULL.
  */
 gchar *
-purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
-	gpointer ui_data);
+purple_smiley_parser_replace(PurpleSmileyList *smileys,
+	const gchar *html_message, PurpleSmileyParseCb cb, gpointer ui_data);
 
 /**
- * purple_smiley_find:
+ * purple_smiley_parser_find:
  * @smileys: the list of smileys to find.
  * @message: the message.
  * @is_html: %TRUE if the message is HTML, %FALSE if it's plain, unescaped.
@@ -105,7 +116,7 @@ purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
  *          when no longer need it.
  */
 GList *
-purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
+purple_smiley_parser_find(PurpleSmileyList *smileys, const gchar *message,
 	gboolean is_html);
 
 /**

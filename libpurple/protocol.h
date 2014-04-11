@@ -46,7 +46,7 @@ typedef struct _PurpleProtocolClass PurpleProtocolClass;
 #include "conversations.h"
 #include "debug.h"
 #include "xfer.h"
-#include "imgstore.h"
+#include "image.h"
 #include "media.h"
 #include "notify.h"
 #include "plugins.h"
@@ -277,7 +277,7 @@ typedef struct _PurpleProtocolServerIface PurpleProtocolServerIface;
  * @rename_group:    Rename a group on a server list/roster
  * @set_buddy_icon:  Set the buddy icon for the given connection to @img. The
  *                   protocol does <emphasis>NOT</emphasis> own a reference to
- *                   @img; if it needs one, it must #purple_imgstore_ref(@img)
+ *                   @img; if it needs one, it must #g_object_ref(@img)
  *                   itself.
  * @send_raw:        For use in plugins that may understand the underlying
  *                   protocol
@@ -360,7 +360,7 @@ struct _PurpleProtocolServerIface
 	void (*rename_group)(PurpleConnection *, const char *old_name,
 					 PurpleGroup *group, GList *moved_buddies);
 
-	void (*set_buddy_icon)(PurpleConnection *, PurpleStoredImage *img);
+	void (*set_buddy_icon)(PurpleConnection *, PurpleImage *img);
 
 	void (*remove_group)(PurpleConnection *gc, PurpleGroup *group);
 
@@ -972,7 +972,7 @@ void purple_protocol_server_iface_rename_group(PurpleProtocol *,
 		GList *moved_buddies);
 
 void purple_protocol_server_iface_set_buddy_icon(PurpleProtocol *,
-		PurpleConnection *, PurpleStoredImage *img);
+		PurpleConnection *, PurpleImage *img);
 
 void purple_protocol_server_iface_remove_group(PurpleProtocol *,
 		PurpleConnection *gc, PurpleGroup *group);

@@ -22,7 +22,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#include "imgstore.h"
+#include "image-store.h"
 #include "notify.h"
 #include "prefs.h"
 #include "request.h"
@@ -608,11 +608,11 @@ static void
 do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	gchar *filename = NULL, *name, *buf;
+	gchar *filename = NULL, *buf;
 	char *filedata;
 	size_t size;
 	GError *error = NULL;
-	int id;
+	PurpleImage *img;
 
 	if (response == GTK_RESPONSE_ACCEPT)
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
@@ -632,11 +632,10 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 		return;
 	}
 
-	name = strrchr(filename, G_DIR_SEPARATOR) + 1;
+	img = purple_image_new_from_data(filedata, size);
+	purple_image_set_friendly_filename(img, filename);
 
-	id = purple_imgstore_new_with_id(filedata, size, name);
-
-	if (id == 0) {
+	if (!img) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
 		purple_notify_error(NULL, NULL, buf, NULL, NULL);
 
@@ -648,9 +647,9 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 
 	g_free(filename);
 
-	pidgin_webview_insert_image(PIDGIN_WEBVIEW(toolbar->webview), id);
+	pidgin_webview_insert_image(PIDGIN_WEBVIEW(toolbar->webview), img);
 	/* TODO: do it after passing an image to protocol, not before
-	 * purple_imgstore_unref_by_id(id);
+	 * g_object_unref(img);
 	 */
 }
 
@@ -702,15 +701,29 @@ close_smiley_dialog(PidginWebViewToolbar *toolbar)
 static void
 insert_smiley_text(GtkWidget *widget, PidginWebViewToolbar *toolbar)
 {
-	char *smiley_text, *escaped_smiley;
+	PurpleSmiley *smiley;
+	PurpleImage *image;
+	guint image_id;
+	gchar *escaped_smiley, *smiley_html;
+	const gchar *smiley_class;
 
-	smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
-	escaped_smiley = g_markup_escape_text(smiley_text, -1);
+	smiley = g_object_get_data(G_OBJECT(widget), "smiley");
+	smiley_class = g_object_get_data(G_OBJECT(widget), "smiley-class");
+	image = purple_smiley_get_image(smiley);
+	image_id = purple_image_store_add(image);
 
-	pidgin_webview_append_html(PIDGIN_WEBVIEW(toolbar->webview),
-		escaped_smiley);
+	escaped_smiley = g_markup_escape_text(
+		purple_smiley_get_shortcut(smiley), -1);
+	smiley_html = g_strdup_printf("<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL
+		"%u\" class=\"emoticon %s-emoticon\" alt=\"%s\" title=\"%s\">",
+		image_id, smiley_class, escaped_smiley, escaped_smiley);
 
 	g_free(escaped_smiley);
+
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(toolbar->webview),
+		smiley_html);
+
+	g_free(smiley_html);
 
 	close_smiley_dialog(toolbar);
 }
@@ -778,7 +791,8 @@ smileys_load_button_thumbs(GList *smileys)
 
 static void
 add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
-	GList *smileys, int max_width, PurpleSmileyList *shadow_smileys)
+	GList *smileys, int max_width, PurpleSmileyList *shadow_smileys,
+	const gchar *smiley_class)
 {
 	GList *it;
 	GtkWidget *line;
@@ -815,8 +829,13 @@ add_smiley_list(PidginWebViewToolbar *toolbar, GtkWidget *container,
 
 		button = gtk_button_new();
 		gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-		g_object_set_data_full(G_OBJECT(button), "smiley_text",
-			g_strdup(smiley_shortcut), g_free);
+
+		g_object_ref(smiley);
+		g_object_set_data_full(G_OBJECT(button), "smiley",
+			smiley, g_object_unref);
+		g_object_set_data(G_OBJECT(button),
+			"smiley-class", (gpointer)smiley_class);
+
 		g_signal_connect(G_OBJECT(button), "clicked",
 			G_CALLBACK(insert_smiley_text), toolbar);
 		gtk_widget_set_tooltip_text(button, smiley_shortcut);
@@ -946,7 +965,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		/* Add buttons for smileys. */
 		if (theme_smileys) {
 			add_smiley_list(toolbar, smiley_table, theme_smileys,
-				max_line_width, smileys_from_custom);
+				max_line_width, smileys_from_custom, "theme");
 		}
 		if (theme_smileys && custom_smileys) {
 			gtk_box_pack_start(GTK_BOX(smiley_table),
@@ -955,7 +974,7 @@ insert_smiley_cb(GtkAction *smiley, PidginWebViewToolbar *toolbar)
 		}
 		if (custom_smileys) {
 			add_smiley_list(toolbar, smiley_table, custom_smileys,
-				max_line_width, NULL);
+				max_line_width, NULL, "custom");
 		}
 
 		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK);

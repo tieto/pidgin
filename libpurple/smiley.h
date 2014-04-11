@@ -37,7 +37,7 @@
  * may deal with special characters.
  */
 
-#include "imgstore.h"
+#include "image.h"
 
 #include <glib-object.h>
 
@@ -75,7 +75,7 @@ struct _PurpleSmileyClass
 	GObjectClass parent_class;
 
 	/*< public >*/
-	PurpleStoredImage * (*get_image)(PurpleSmiley *smiley);
+	PurpleImage * (*get_image)(PurpleSmiley *smiley);
 
 	/*< private >*/
 	void (*purple_reserved1)(void);
@@ -159,7 +159,7 @@ purple_smiley_get_path(PurpleSmiley *smiley);
  *
  * Returns: (transfer none): the image contents for a @smiley.
  */
-PurpleStoredImage *
+PurpleImage *
 purple_smiley_get_image(PurpleSmiley *smiley);
 
 G_END_DECLS

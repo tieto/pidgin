@@ -621,6 +621,74 @@ purple_trie_find(PurpleTrie *trie, const gchar *src,
 	return found_count;
 }
 
+gulong
+purple_trie_multi_find(const GSList *tries, const gchar *src,
+	PurpleTrieFindCb find_cb, gpointer user_data)
+{
+	guint tries_count, m_idx;
+	PurpleTrieMachine *machines;
+	gulong found_count = 0;
+	gsize i;
+
+	if (src == NULL)
+		return 0;
+
+	tries_count = g_slist_length((GSList*)tries);
+	if (tries_count == 0)
+		return 0;
+
+	/* Initialize all machines. */
+	machines = g_new(PurpleTrieMachine, tries_count);
+	for (i = 0; i < tries_count; i++, tries = tries->next) {
+		PurpleTrie *trie = tries->data;
+		PurpleTriePrivate *priv = PURPLE_TRIE_GET_PRIVATE(trie);
+
+		if (priv == NULL) {
+			g_warn_if_reached();
+			g_free(machines);
+			return 0;
+		}
+
+		purple_trie_states_build(trie);
+
+		machines[i].state = priv->root_state;
+		machines[i].root_state = priv->root_state;
+		machines[i].reset_on_match = priv->reset_on_match;
+		machines[i].find_cb = find_cb;
+		machines[i].user_data = user_data;
+	}
+
+	i = 0;
+	while (src[i] != '\0') {
+		guchar character = src[i++];
+		gboolean was_found = FALSE;
+
+		/* Advance every machine and possibly perform a replacement. */
+		for (m_idx = 0; m_idx < tries_count; m_idx++) {
+			purple_trie_advance(&machines[m_idx], character);
+			if (was_found)
+				continue;
+			was_found =
+				purple_trie_find_do_discovery(&machines[m_idx]);
+			if (was_found)
+				found_count++;
+		}
+
+		/* If we replaced a word, reset _all_ machines */
+		if (was_found) {
+			for (m_idx = 0; m_idx < tries_count; m_idx++) {
+				if (!machines[m_idx].reset_on_match)
+					continue;
+				machines[m_idx].state =
+					machines[m_idx].root_state;
+			}
+		}
+	}
+
+	g_free(machines);
+	return found_count;
+}
+
 
 /*******************************************************************************
  * Records

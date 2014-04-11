@@ -30,6 +30,7 @@
 #include "internal.h"
 #include "http.h"
 
+#include "imgstore.h" /* TODO: temp */
 
 #if defined( __APPLE__ )
 /* apple architecture */

@@ -53,7 +53,7 @@ C_SRC =	\
 	edisc.c \
 	gg.c \
 	html.c \
-	image.c \
+	image-prpl.c \
 	keymapper.c \
 	libgadu-events.c \
 	libgaduw.c \

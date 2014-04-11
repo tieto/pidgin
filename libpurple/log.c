@@ -24,11 +24,11 @@
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "glibcompat.h"
+#include "image-store.h"
 #include "log.h"
 #include "prefs.h"
 #include "util.h"
 #include "stringref.h"
-#include "imgstore.h"
 #include "time.h"
 
 static GSList *loggers = NULL;
@@ -797,7 +797,9 @@ static char *log_get_timestamp(PurpleLog *log, time_t when)
 }
 
 /* NOTE: This can return msg (which you may or may not want to g_free())
- * NOTE: or a newly allocated string which you MUST g_free(). */
+ * NOTE: or a newly allocated string which you MUST g_free().
+ * TODO: XXX: does it really works?
+ */
 static char *
 convert_image_tags(const PurpleLog *log, const char *msg)
 {
@@ -827,13 +829,13 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 		{
 			FILE *image_file;
 			char *dir;
-			PurpleStoredImage *image;
+			PurpleImage *image;
 			gconstpointer image_data;
 			char *new_filename = NULL;
 			char *path = NULL;
 			size_t image_byte_count;
 
-			image = purple_imgstore_find_by_id(imgid);
+			image = purple_image_store_get(imgid);
 			if (image == NULL)
 			{
 				/* This should never happen. */
@@ -842,8 +844,8 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 				g_return_val_if_reached((char *)msg);
 			}
 
-			image_data       = purple_imgstore_get_data(image);
-			image_byte_count = purple_imgstore_get_size(image);
+			image_data       = purple_image_get_data(image);
+			image_byte_count = purple_image_get_size(image);
 			dir              = purple_log_get_log_dir(log->type, log->name, log->account);
 			new_filename     = purple_util_get_image_filename(image_data, image_byte_count);
 

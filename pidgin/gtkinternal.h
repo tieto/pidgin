@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 static inline void
 _pidgin_widget_set_accessible_name(GtkWidget *widget, const gchar *name);
 
-PurpleStoredImage *
+PurpleImage *
 _pidgin_e2ee_stock_icon_get(const gchar *stock_name);
 
 G_END_DECLS

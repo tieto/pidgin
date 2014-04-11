@@ -29,6 +29,7 @@
 
 #include <debug.h>
 #include <glibcompat.h>
+#include <image-store.h>
 
 #include "gg.h"
 #include "chat.h"
@@ -40,8 +41,9 @@
 #define GGP_GG10_DEFAULT_FORMAT_REPLACEMENT "<span>"
 #define GGP_GG11_FORCE_COMPAT FALSE
 
+/* TODO: we don't need "pending images" anymore */
 #define GGP_IMAGE_REPLACEMENT "<img id=\"gg-pending-image-" GGP_IMAGE_ID_FORMAT "\">"
-#define GGP_IMAGE_DESTINATION "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%u\">"
+#define GGP_IMAGE_DESTINATION "<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL "%u\">"
 
 typedef struct
 {
@@ -190,13 +192,15 @@ static void ggp_message_got_data_free(ggp_message_got_data *msg)
 	g_free(msg);
 }
 
-static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
-	int stored_id, gpointer _msg)
+static void
+ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
+	PurpleImage *image, gpointer _msg)
 {
 	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
 	ggp_message_got_data *msg = _msg;
 	GList *m_it, *i_it;
 	gchar *tmp, *tag_search, *tag_replace;
+	guint image_id;
 
 	m_it = g_list_find(sdata->pending_messages, msg);
 	if (!m_it) {
@@ -213,8 +217,9 @@ static void ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
 		return;
 	}
 
+	image_id = purple_image_store_add(image);
 	tag_search = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
-	tag_replace = g_strdup_printf(GGP_IMAGE_DESTINATION, stored_id);
+	tag_replace = g_strdup_printf(GGP_IMAGE_DESTINATION, image_id);
 
 	tmp = msg->text;
 	msg->text = purple_strreplace(msg->text, tag_search, tag_replace);
@@ -342,7 +347,7 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 	ggp_message_got_data *msg = data;
 	gchar *name, *replacement;
 	int64_t id;
-	int stored_id;
+	PurpleImage *image;
 
 	name = g_match_info_fetch(info, 1);
 	if (sscanf(name, "%" G_GINT64_MODIFIER "x", &id) != 1)
@@ -355,13 +360,13 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 		return FALSE;
 	}
 
-	stored_id = ggp_image_get_cached(msg->gc, id);
+	image = ggp_image_get_cached(msg->gc, id);
 
-	if (stored_id > 0) {
+	if (image) {
+		guint image_id = purple_image_store_add(image);
 		purple_debug_info("gg", "ggp_message_format_from_gg_found_img: "
-			"getting image " GGP_IMAGE_ID_FORMAT " from cache\n",
-			id);
-		replacement = g_strdup_printf(GGP_IMAGE_DESTINATION, stored_id);
+			"getting image " GGP_IMAGE_ID_FORMAT " from cache", id);
+		replacement = g_strdup_printf(GGP_IMAGE_DESTINATION, image_id);
 		g_string_append(res, replacement);
 		g_free(replacement);
 		return FALSE;
@@ -568,20 +573,21 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			GHashTable *attribs = ggp_html_tag_attribs(attribs_str);
 			gchar *val = NULL;
 			uint64_t id;
-			int stored_id = -1;
 			ggp_image_prepare_result res = -1;
+			PurpleImage *image = NULL;
 
 			if ((val = g_hash_table_lookup(attribs, "src")) != NULL
 				&& g_str_has_prefix(val,
-				PURPLE_STORED_IMAGE_PROTOCOL))
+				PURPLE_IMAGE_STORE_PROTOCOL))
 			{
-				val += strlen(PURPLE_STORED_IMAGE_PROTOCOL);
-				if (sscanf(val, "%u", &stored_id) != 1)
-					stored_id = -1;
+				guint image_id;
+				val += strlen(PURPLE_IMAGE_STORE_PROTOCOL);
+				if (sscanf(val, "%u", &image_id) == 1)
+					image = purple_image_store_get(image_id);
 			}
 
-			if (stored_id >= 0)
-				res = ggp_image_prepare(conv, stored_id, &id);
+			if (image >= 0)
+				res = ggp_image_prepare(conv, image, &id);
 
 			if (res == GGP_IMAGE_PREPARE_OK) {
 				pending_objects = g_list_prepend(
@@ -654,7 +660,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			if (style)
 				styles = ggp_html_css_attribs(style);
 
-			if ((val = g_hash_table_lookup(styles,
+			if (styles && (val = g_hash_table_lookup(styles,
 				"background-color")) != NULL)
 			{
 				int color = ggp_html_decode_color(val);
@@ -662,7 +668,7 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 				font_new->bgcolor = color;
 			}
 
-			if ((val = g_hash_table_lookup(styles,
+			if (styles && (val = g_hash_table_lookup(styles,
 				"color")) != NULL)
 			{
 				int color = ggp_html_decode_color(val);

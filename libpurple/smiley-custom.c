@@ -160,13 +160,13 @@ purple_smiley_custom_save(void)
 }
 
 static gchar *
-purple_smiley_custom_img_checksum(PurpleStoredImage *img)
+purple_smiley_custom_img_checksum(PurpleImage *img)
 {
-	g_return_val_if_fail(PURPLE_IS_STORED_IMAGE(img), NULL);
+	g_return_val_if_fail(PURPLE_IS_IMAGE(img), NULL);
 
 	return g_compute_checksum_for_data(G_CHECKSUM_SHA1,
-		purple_imgstore_get_data(img),
-		purple_imgstore_get_size(img));
+		purple_image_get_data(img),
+		purple_image_get_size(img));
 }
 
 
@@ -175,7 +175,7 @@ purple_smiley_custom_img_checksum(PurpleStoredImage *img)
  ******************************************************************************/
 
 PurpleSmiley *
-purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
+purple_smiley_custom_add(PurpleImage *img, const gchar *shortcut)
 {
 	PurpleSmiley *existing_smiley, *smiley;
 	gchar *checksum, *file_path;
@@ -184,12 +184,12 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 	GError *error = NULL;
 	gboolean succ;
 
-	g_return_val_if_fail(PURPLE_IS_STORED_IMAGE(img), NULL);
+	g_return_val_if_fail(PURPLE_IS_IMAGE(img), NULL);
 
 	existing_smiley = purple_smiley_list_get_by_shortcut(
 		smileys_list, shortcut);
 
-	purple_imgstore_ref(img);
+	g_object_ref(img);
 
 	if (existing_smiley) {
 		disable_write = TRUE;
@@ -198,27 +198,25 @@ purple_smiley_custom_add(PurpleStoredImage *img, const gchar *shortcut)
 	}
 
 	checksum = purple_smiley_custom_img_checksum(img);
-	file_ext = purple_imgstore_get_extension(img);
+	file_ext = purple_image_get_extension(img);
 	if (file_ext == NULL || g_strcmp0("icon", file_ext) == 0) {
 		purple_debug_warning("smiley-custom", "Invalid image type");
 		return NULL;
 	}
 
 	g_snprintf(file_name, sizeof(file_name), "%s.%s", checksum, file_ext);
+	g_free(checksum);
+
 	file_path = g_build_filename(smileys_dir, file_name, NULL);
 
-	g_file_set_contents(file_path, purple_imgstore_get_data(img),
-		purple_imgstore_get_size(img), &error);
-
-	g_free(checksum);
-	purple_imgstore_unref(img);
-
-	if (error) {
+	if (!purple_image_save(img, file_path)) {
 		purple_debug_error("smiley-custom", "Failed writing smiley "
 			"file %s: %s", file_path, error->message);
 		g_free(file_path);
+		g_object_unref(img);
 		return NULL;
 	}
+	g_object_unref(img);
 
 	smiley = purple_smiley_new(shortcut, file_path);
 	g_free(file_path);

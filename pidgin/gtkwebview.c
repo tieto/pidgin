@@ -23,6 +23,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "glibcompat.h"
+#include "image-store.h"
 #include "pidgin.h"
 #include "pidginstock.h"
 
@@ -121,6 +122,9 @@ typedef struct _PidginWebViewPriv {
 
 static WebKitWebViewClass *parent_class = NULL;
 
+static GRegex *smileys_re = NULL;
+static GRegex *empty_html_re = NULL;
+
 
 /******************************************************************************
  * Helpers
@@ -135,24 +139,24 @@ webview_resource_loading(WebKitWebView *webview,
                          gpointer user_data)
 {
 	const gchar *uri;
-	PurpleStoredImage *img = NULL;
-	const char *filename;
+	PurpleImage *img = NULL;
+	const gchar *path;
 
 	uri = webkit_network_request_get_uri(request);
-	if (purple_str_has_prefix(uri, PURPLE_STORED_IMAGE_PROTOCOL)) {
-		int id;
+	if (purple_str_has_prefix(uri, PURPLE_IMAGE_STORE_PROTOCOL)) {
+		guint id;
 
-		uri += sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1;
+		uri += sizeof(PURPLE_IMAGE_STORE_PROTOCOL) - 1;
 		id = strtoul(uri, NULL, 10);
 
-		img = purple_imgstore_find_by_id(id);
+		img = purple_image_store_get(id);
 		if (!img)
 			return;
-	} else if (purple_str_has_prefix(uri, PURPLE_STOCK_IMAGE_PROTOCOL)) {
+	} else if (purple_str_has_prefix(uri, PURPLE_IMAGE_STORE_STOCK_PROTOCOL)) {
 		gchar *p_uri, *found;
 		const gchar *domain, *stock_name;
 
-		uri += sizeof(PURPLE_STOCK_IMAGE_PROTOCOL) - 1;
+		uri += sizeof(PURPLE_IMAGE_STORE_STOCK_PROTOCOL) - 1;
 
 		p_uri = g_strdup(uri);
 		found = strchr(p_uri, '/');
@@ -179,24 +183,23 @@ webview_resource_loading(WebKitWebView *webview,
 		return;
 
 	if (img != NULL) {
-		filename = purple_imgstore_get_filename(img);
-		if (filename && g_path_is_absolute(filename)) {
-			gchar *tmp = g_strdup_printf("file://%s", filename);
-			webkit_network_request_set_uri(request, tmp);
-			g_free(tmp);
+		path = purple_image_get_path(img);
+		if (path) {
+			gchar *uri = g_filename_to_uri(path, NULL, NULL);
+			webkit_network_request_set_uri(request, uri);
+			g_free(uri);
 		} else {
-			gchar *b64, *tmp;
+			gchar *b64, *src;
 			const gchar *type;
 
 			b64 = purple_base64_encode(
-				purple_imgstore_get_data(img),
-				purple_imgstore_get_size(img));
-			type = purple_imgstore_get_extension(img);
-			tmp = g_strdup_printf("data:image/%s;base64,%s",
-				type, b64);
-			webkit_network_request_set_uri(request, tmp);
+				purple_image_get_data(img),
+				purple_image_get_size(img));
+			type = purple_image_get_mimetype(img);
+			src = g_strdup_printf("data:%s;base64,%s", type, b64);
 			g_free(b64);
-			g_free(tmp);
+			webkit_network_request_set_uri(request, src);
+			g_free(src);
 		}
 	}
 }
@@ -208,7 +211,7 @@ webview_resource_loaded(WebKitWebView *web_view, WebKitWebFrame *web_frame,
 	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(web_view);
 	const gchar *uri;
 	GString *data;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 
 	if (!purple_str_has_caseprefix(
 		webkit_web_resource_get_mime_type(web_resource), "image/"))
@@ -225,15 +228,15 @@ webview_resource_loaded(WebKitWebView *web_view, WebKitWebFrame *web_frame,
 		return;
 
 	/* TODO: we could avoid copying data, if uri is a
-	 * PURPLE_STORED_IMAGE_PROTOCOL or PURPLE_STOCK_IMAGE_PROTOCOL */
-	image = purple_imgstore_new(g_memdup(data->str, data->len),
-		data->len, NULL);
+	 * PURPLE_IMAGE_STORE_PROTOCOL */
+	image = purple_image_new_from_data(
+		g_memdup(data->str, data->len), data->len);
 	g_return_if_fail(image != NULL);
 
 	g_hash_table_insert(priv->loaded_images, g_strdup(uri), image);
 }
 
-static PurpleStoredImage *
+static PurpleImage *
 webview_resource_get_loaded(WebKitWebView *web_view, const gchar *uri)
 {
 	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(web_view);
@@ -565,9 +568,8 @@ get_unicode_menu(WebKitWebView *webview)
 static void
 webview_image_saved(GtkWidget *dialog, gint response, gpointer _unused)
 {
-	PurpleStoredImage *image;
+	PurpleImage *image;
 	gchar *filename;
-	GError *error = NULL;
 
 	if (response != GTK_RESPONSE_ACCEPT) {
 		gtk_widget_destroy(dialog);
@@ -581,11 +583,8 @@ webview_image_saved(GtkWidget *dialog, gint response, gpointer _unused)
 	g_return_if_fail(filename != NULL);
 	g_return_if_fail(filename[0] != '\0');
 
-	g_file_set_contents(filename, purple_imgstore_get_data(image),
-		purple_imgstore_get_size(image), &error);
-	if (error) {
-		purple_debug_error("gtkwebview", "Failed saving image: %s",
-			error->message);
+	if (!purple_image_save(image, filename)) {
+		purple_debug_error("gtkwebview", "Failed saving image");
 		/* TODO: we should display a notification here */
 	}
 
@@ -598,7 +597,7 @@ webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 {
 	const gchar *src;
 	WebKitWebView *webview;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 	GtkFileChooserDialog *dialog;
 	gchar *filename;
 	GtkWidget *parent;
@@ -623,16 +622,16 @@ webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 
 	/* TODO: use image's file name, if there is one */
 	filename = g_strdup_printf(_("image.%s"),
-		purple_imgstore_get_extension(image));
+		purple_image_get_extension(image));
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
 	g_free(filename);
 
 	g_signal_connect(G_OBJECT(dialog), "response",
 		G_CALLBACK(webview_image_saved), NULL);
 
-	purple_imgstore_ref(image);
+	g_object_ref(image);
 	g_object_set_data_full(G_OBJECT(dialog), "pidgin-gtkwebview-image",
-		image, (GDestroyNotify)purple_imgstore_unref);
+		image, g_object_unref);
 
 	gtk_widget_show(GTK_WIDGET(dialog));
 }
@@ -642,7 +641,7 @@ webview_image_add_smiley(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 {
 	const gchar *src;
 	WebKitWebView *webview;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 
 	src = webkit_dom_html_image_element_get_src(image_node);
 	webview = g_object_get_data(G_OBJECT(image_node), "pidgin-gtkwebview");
@@ -1256,6 +1255,14 @@ pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/webview");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/webview/inspector_enabled", FALSE);
+
+	g_return_if_fail(smileys_re == NULL);
+	g_return_if_fail(empty_html_re == NULL);
+	smileys_re = g_regex_new("<img[^>]* class=\"emoticon "
+		"[^\"^>]*\"[^>]*alt=\"([^\"^>]+)\"[^>]*>",
+		G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
+	empty_html_re = g_regex_new("<(?!img)[^>]*>",
+		G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
 }
 
 static void
@@ -1294,7 +1301,7 @@ pidgin_webview_init(PidginWebView *webview, gpointer userdata)
 		G_CALLBACK(webview_inspector_show), webview);
 
 	priv->loaded_images = g_hash_table_new_full(g_str_hash, g_str_equal,
-		g_free, (GDestroyNotify)purple_imgstore_unref);
+		g_free, g_object_unref);
 }
 
 GType
@@ -1680,20 +1687,28 @@ pidgin_webview_get_head_html(PidginWebView *webview)
 	return html;
 }
 
+static gchar *
+pidgin_webview_strip_smileys(const gchar *text)
+{
+	return g_regex_replace(smileys_re, text, -1, 0, "\\1", 0, NULL);
+}
+
 gchar *
 pidgin_webview_get_body_html(PidginWebView *webview)
 {
 	WebKitDOMDocument *doc;
 	WebKitDOMHTMLElement *body;
-	gchar *html;
+	gchar *html, *stripped;
 
 	g_return_val_if_fail(webview != NULL, NULL);
 
 	doc = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	body = webkit_dom_document_get_body(doc);
 	html = webkit_dom_html_element_get_inner_html(body);
+	stripped = pidgin_webview_strip_smileys(html);
+	g_free(html);
 
-	return html;
+	return stripped;
 }
 
 gchar *
@@ -1732,6 +1747,36 @@ pidgin_webview_get_selected_text(PidginWebView *webview)
 		return webkit_dom_range_get_text(range);
 	else
 		return NULL;
+}
+
+static gchar *
+pidgin_webview_strip_empty_html(const gchar *text)
+{
+	return g_regex_replace(empty_html_re, text, -1, 0, "", 0, NULL);
+}
+
+gboolean
+pidgin_webview_is_empty(PidginWebView *webview)
+{
+	gchar *html, *tmp;
+	gboolean is_empty;
+
+	g_return_val_if_fail(webview != NULL, TRUE);
+
+	html = pidgin_webview_get_body_html(webview);
+	tmp = purple_strreplace(html, "&nbsp;", " ");
+	g_free(html);
+	html = tmp;
+
+	tmp = pidgin_webview_strip_empty_html(html);
+	g_free(html);
+	html = tmp;
+
+	g_strstrip(html);
+	is_empty = (html[0] == '\0');
+	g_free(html);
+
+	return is_empty;
 }
 
 void
@@ -2006,18 +2051,20 @@ pidgin_webview_insert_link(PidginWebView *webview, const char *url, const char *
 }
 
 void
-pidgin_webview_insert_image(PidginWebView *webview, int id)
+pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image)
 {
 	PidginWebViewPriv *priv;
 	WebKitDOMDocument *dom;
 	char *img;
+	guint id;
 
 	g_return_if_fail(webview != NULL);
 
+	id = purple_image_store_add(image);
 	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
 	dom = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
-	img = g_strdup_printf("<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'/>",
-	                      id);
+	img = g_strdup_printf("<img src='" PURPLE_IMAGE_STORE_PROTOCOL
+		"%u'/>", id);
 
 	priv->edit.block_changed = TRUE;
 	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, img);

@@ -31,7 +31,7 @@
 
 typedef struct {
 	GString *contents;
-	PurpleStoredImage *image; /* it's not the same as in parent */
+	PurpleImage *image; /* it's not the same as in parent */
 
 	gboolean has_failed;
 } PurpleRemoteSmileyPrivate;
@@ -94,8 +94,8 @@ purple_remote_smiley_close(PurpleRemoteSmiley *smiley)
 		return;
 	}
 
-	priv->image = purple_imgstore_new(priv->contents->str,
-		priv->contents->len, NULL);
+	priv->image = purple_image_new_from_data(priv->contents->str,
+		priv->contents->len);
 	g_return_if_fail(priv->image != NULL);
 	g_string_free(priv->contents, FALSE);
 	priv->contents = NULL;
@@ -121,7 +121,7 @@ purple_remote_smiley_failed(PurpleRemoteSmiley *smiley)
 	g_signal_emit(smiley, signals[SIG_FAILED], 0);
 }
 
-static PurpleStoredImage *
+static PurpleImage *
 purple_remote_smiley_get_image_impl(PurpleSmiley *smiley)
 {
 	PurpleRemoteSmileyPrivate *priv =
@@ -166,7 +166,7 @@ purple_remote_smiley_finalize(GObject *obj)
 	if (priv->contents)
 		g_string_free(priv->contents, TRUE);
 	if (priv->image)
-		purple_imgstore_unref(priv->image);
+		g_object_unref(priv->image);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }

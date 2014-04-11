@@ -688,6 +688,8 @@ int pidgin_start(int argc, char *argv[])
 	 * Fire up this baby.
 	 */
 
+	if (g_getenv("PIDGIN_DEBUG_COLORED") != NULL)
+		debug_colored = TRUE;
 	purple_debug_set_enabled(debug_enabled);
 	purple_debug_set_colored(debug_colored);
 

@@ -31,7 +31,7 @@
 #include "glibcompat.h"
 #include "http.h"
 #include "idle.h"
-#include "imgstore.h"
+#include "image-store.h"
 #include "keyring.h"
 #include "network.h"
 #include "notify.h"
@@ -177,8 +177,8 @@ purple_core_init(const char *ui)
 	purple_keyring_init(); /* before accounts */
 	purple_theme_manager_init();
 
-	/* The buddy icon code uses the imgstore, so init it early. */
-	purple_imgstore_init();
+	/* The buddy icon code uses the image store, so init it early. */
+	_purple_image_store_init();
 
 	/* Accounts use status, buddy icons and connection signals, so
 	 * initialize these before accounts
@@ -273,7 +273,7 @@ purple_core_quit(void)
 	purple_xfers_uninit();
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
-	purple_imgstore_uninit();
+	_purple_image_store_uninit();
 	purple_network_uninit();
 
 	ops = purple_core_get_ui_ops();

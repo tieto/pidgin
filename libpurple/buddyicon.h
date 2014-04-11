@@ -46,7 +46,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
 #include "account.h"
 #include "buddylist.h"
-#include "imgstore.h"
+#include "image.h"
 #include "protocols.h"
 #include "util.h"
 
@@ -220,9 +220,10 @@ const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
  * directly.  If you find yourself wanting to use this function, think
  * very long and hard about it, and then don't.
  *
- * Returns: A full path to the file, or %NULL under various conditions.
+ * Returns: (transfer none): A full path to the file, or %NULL under various conditions.
  */
-char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
+const gchar *
+purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
 
 /**************************************************************************/
 /* Buddy Icon Subsystem API                                               */
@@ -277,8 +278,8 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username);
  *
  * Returns the buddy icon image for an account.
  *
- * The caller owns a reference to the image in the store, and must dereference
- * the image with purple_imgstore_unref() for it to be freed.
+ * The caller owns a reference to the image, and must dereference
+ * the image with g_object_unref() for it to be freed.
  *
  * This function deals with loading the icon from the cache, if
  * needed, so it should be called in any case where you want the
@@ -286,7 +287,7 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username);
  *
  * Returns: The account's buddy icon image.
  */
-PurpleStoredImage *
+PurpleImage *
 purple_buddy_icons_find_account_icon(PurpleAccount *account);
 
 /**
@@ -302,10 +303,10 @@ purple_buddy_icons_find_account_icon(PurpleAccount *account);
  * caching the data, etc.
  *
  * Returns: The icon that was set.  The caller does NOT own
- *         a reference to this, and must call purple_imgstore_ref()
+ *         a reference to this, and must call g_object_ref()
  *         if it wants one.
  */
-PurpleStoredImage *
+PurpleImage *
 purple_buddy_icons_set_account_icon(PurpleAccount *account,
                                     guchar *icon_data, size_t icon_len);
 
@@ -340,8 +341,8 @@ purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
  *
  * Returns the custom buddy icon image for a blist node.
  *
- * The caller owns a reference to the image in the store, and must dereference
- * the image with purple_imgstore_unref() for it to be freed.
+ * The caller owns a reference to the image, and must dereference
+ * the image with g_object_unref() for it to be freed.
  *
  * This function deals with loading the icon from the cache, if
  * needed, so it should be called in any case where you want the
@@ -349,7 +350,7 @@ purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
  *
  * Returns: The custom buddy icon.
  */
-PurpleStoredImage *
+PurpleImage *
 purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
 
 /**
@@ -365,9 +366,9 @@ purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
  * etc.
  *
  * Returns: The icon that was set. The caller does NOT own a reference to this,
- *         and must call purple_imgstore_ref() if it wants one.
+ *         and must call g_object_ref() if it wants one.
  */
-PurpleStoredImage *
+PurpleImage *
 purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
                                         guchar *icon_data, size_t icon_len);
 
@@ -383,9 +384,9 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
  * See purple_buddy_icons_node_set_custom_icon().
  *
  * Returns: The icon that was set. The caller does NOT own a reference to this,
- *         and must call purple_imgstore_ref() if it wants one.
+ *         and must call g_object_ref() if it wants one.
  */
-PurpleStoredImage *
+PurpleImage *
 purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
                                                   const gchar *filename);
 

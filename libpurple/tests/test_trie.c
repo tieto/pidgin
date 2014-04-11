@@ -293,6 +293,54 @@ START_TEST(test_trie_find_noreset)
 }
 END_TEST
 
+START_TEST(test_trie_multi_find)
+{
+	PurpleTrie *trie1, *trie2, *trie3;
+	GSList *tries = NULL;
+	const gchar *in;
+	int out;
+
+	trie1 = purple_trie_new();
+	trie2 = purple_trie_new();
+	trie3 = purple_trie_new();
+	purple_trie_set_reset_on_match(trie1, FALSE);
+	purple_trie_set_reset_on_match(trie2, TRUE);
+	purple_trie_set_reset_on_match(trie3, FALSE);
+
+	/* appending is not efficient, but we have only 3 elements */
+	tries = g_slist_append(tries, trie1);
+	tries = g_slist_append(tries, trie2);
+	tries = g_slist_append(tries, trie3);
+
+	purple_trie_add(trie1, "test", (gpointer)0x10011);
+	purple_trie_add(trie1, "trie1", (gpointer)0x10012);
+	purple_trie_add(trie1, "Alice", (gpointer)0x10013);
+
+	purple_trie_add(trie2, "test", (gpointer)0x10021);
+	purple_trie_add(trie2, "trie2", (gpointer)0x10022);
+	purple_trie_add(trie2, "example", (gpointer)0x10023);
+	purple_trie_add(trie2, "Ali", (gpointer)0x10024);
+
+	/* "tester" without last (accepting) letter of "test" */
+	purple_trie_add(trie3, "teser", (gpointer)0x10031);
+	purple_trie_add(trie3, "trie3", (gpointer)0x10032);
+	purple_trie_add(trie3, "tester", (gpointer)0x10033);
+	purple_trie_add(trie3, "example", (gpointer)0x10034);
+	purple_trie_add(trie3, "Al", (gpointer)0x10035);
+
+	in = "test tester trie trie1 trie2 trie3 example Alice";
+
+	out = purple_trie_multi_find(tries, in,
+		test_trie_find_cb, (gpointer)0x10);
+
+	assert_int_equal(9, out);
+	assert_int_equal(2 * 0x11 + 0x33 + 0x12 + 0x22 +
+		0x32 + 0x23 + 0x35 + 0x13, find_sum);
+
+	g_slist_free_full(tries, g_object_unref);
+}
+END_TEST
+
 Suite *
 purple_trie_suite(void)
 {
@@ -308,6 +356,7 @@ purple_trie_suite(void)
 	tcase_add_test(tc, test_trie_find);
 	tcase_add_test(tc, test_trie_find_reset);
 	tcase_add_test(tc, test_trie_find_noreset);
+	tcase_add_test(tc, test_trie_multi_find);
 
 	suite_add_tcase(s, tc);
 

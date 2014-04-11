@@ -26,6 +26,8 @@
 
 #include "internal.h"
 
+#include "imgstore.h" /* TODO: temp */
+
 #include "accountopt.h"
 #include "protocol.h"
 #include "version.h"

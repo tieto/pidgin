@@ -87,7 +87,7 @@ remove_avatar_0_12_nodes(JabberStream *js)
 	jabber_pep_delete_node(js, NS_AVATAR_0_12_DATA);
 }
 
-void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
+void jabber_avatar_set(JabberStream *js, PurpleImage *img)
 {
 	PurpleXmlNode *publish, *metadata, *item;
 
@@ -130,8 +130,8 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 			} ihdr;
 		} *png = NULL;
 
-		if (purple_imgstore_get_size(img) > sizeof(*png))
-			png = purple_imgstore_get_data(img);
+		if (purple_image_get_size(img) > sizeof(*png))
+			png = purple_image_get_data(img);
 
 		/* check if the data is a valid png file (well, at least to some extent) */
 		if(png && png->signature[0] == 0x89 &&
@@ -154,11 +154,12 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 			char *lengthstring, *widthstring, *heightstring;
 
 			/* compute the sha1 hash */
-			char *hash = jabber_calculate_data_hash(purple_imgstore_get_data(img),
-			                                        purple_imgstore_get_size(img),
-			    									"sha1");
-			char *base64avatar = purple_base64_encode(purple_imgstore_get_data(img),
-			                                          purple_imgstore_get_size(img));
+			char *hash = jabber_calculate_data_hash(
+				purple_image_get_data(img),
+				purple_image_get_size(img), "sha1");
+			char *base64avatar = purple_base64_encode(
+				purple_image_get_data(img),
+				purple_image_get_size(img));
 
 			publish = purple_xmlnode_new("publish");
 			purple_xmlnode_set_attrib(publish, "node", NS_AVATAR_1_1_DATA);
@@ -176,7 +177,7 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 			g_free(base64avatar);
 
 			lengthstring = g_strdup_printf("%" G_GSIZE_FORMAT,
-			                               purple_imgstore_get_size(img));
+				purple_image_get_size(img));
 			widthstring = g_strdup_printf("%u", width);
 			heightstring = g_strdup_printf("%u", height);
 
@@ -237,9 +238,10 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, PurpleXmlNode *items)
 	 */
 	if ((!items || !metadata) ||
 			!purple_strequal(server_hash, js->initial_avatar_hash)) {
-		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+		PurpleImage *img = purple_buddy_icons_find_account_icon(account);
 		jabber_avatar_set(js, img);
-		purple_imgstore_unref(img);
+		if (img)
+			g_object_unref(img);
 	}
 }
 

@@ -53,7 +53,7 @@ pidgin_smiley_manager_show(void);
  * provided image.
  */
 void
-pidgin_smiley_manager_add(PurpleStoredImage *image, const gchar *shortcut);
+pidgin_smiley_manager_add(PurpleImage *image, const gchar *shortcut);
 
 G_END_DECLS
 

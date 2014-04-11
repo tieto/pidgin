@@ -329,8 +329,8 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 	bb->conversation = NULL;
 }
 
-static
-void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
+static void
+bonjour_set_buddy_icon(PurpleConnection *conn, PurpleImage *img)
 {
 	BonjourData *bd = purple_connection_get_protocol_data(conn);
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);

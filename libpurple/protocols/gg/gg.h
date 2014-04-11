@@ -38,7 +38,7 @@
 #include "search.h"
 #include "connection.h"
 
-#include "image.h"
+#include "image-prpl.h"
 #include "avatar.h"
 #include "roster.h"
 #include "multilogon.h"

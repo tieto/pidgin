@@ -32,7 +32,6 @@
 #include "debug.h"
 #include "dnssrv.h"
 #include "http.h"
-#include "imgstore.h"
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
@@ -1093,7 +1092,7 @@ jabber_login(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 
 	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY);
 	js = jabber_stream_new(account);
@@ -1111,10 +1110,10 @@ jabber_login(PurpleAccount *account)
 	 */
 	image = purple_buddy_icons_find_account_icon(account);
 	if (image != NULL) {
-		js->initial_avatar_hash =
-			jabber_calculate_data_hash(purple_imgstore_get_data(image),
-					purple_imgstore_get_size(image), "sha1");
-		purple_imgstore_unref(image);
+		js->initial_avatar_hash = jabber_calculate_data_hash(
+			purple_image_get_data(image),
+			purple_image_get_size(image), "sha1");
+		g_object_unref(image);
 	}
 
 	jabber_stream_connect(js);

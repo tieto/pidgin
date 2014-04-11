@@ -36,11 +36,6 @@ void
 pidgin_status_box_pulse_connecting(status_box)
 	Pidgin::StatusBox status_box
 
-void
-pidgin_status_box_set_buddy_icon(status_box, img)
-	Pidgin::StatusBox status_box
-	Purple::StoredImage img
-
 gchar_own *
 pidgin_status_box_get_message(status_box)
 	Pidgin::StatusBox status_box

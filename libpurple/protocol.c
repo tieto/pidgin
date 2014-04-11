@@ -530,7 +530,7 @@ purple_protocol_server_iface_rename_group(PurpleProtocol *protocol,
 
 void
 purple_protocol_server_iface_set_buddy_icon(PurpleProtocol *protocol,
-		PurpleConnection *gc, PurpleStoredImage *img)
+		PurpleConnection *gc, PurpleImage *img)
 {
 	DEFINE_PROTOCOL_FUNC(protocol, set_buddy_icon, gc, img);
 }

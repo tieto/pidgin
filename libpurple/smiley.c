@@ -23,7 +23,6 @@
 #include "glibcompat.h"
 #include "dbus-maybe.h"
 #include "debug.h"
-#include "imgstore.h"
 #include "smiley.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -34,7 +33,7 @@
 typedef struct {
 	gchar *shortcut;
 	gchar *path;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 	gboolean is_ready;
 } PurpleSmileyPrivate;
 
@@ -53,6 +52,7 @@ enum
 	SIG_LAST
 };
 
+static GObjectClass *parent_class;
 static guint signals[SIG_LAST];
 static GParamSpec *properties[PROP_LAST];
 
@@ -103,7 +103,7 @@ purple_smiley_get_path(PurpleSmiley *smiley)
 	return priv->path;
 }
 
-static PurpleStoredImage *
+static PurpleImage *
 purple_smiley_get_image_impl(PurpleSmiley *smiley)
 {
 	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
@@ -122,7 +122,7 @@ purple_smiley_get_image_impl(PurpleSmiley *smiley)
 		return NULL;
 	}
 
-	priv->image = purple_imgstore_new_from_file(path);
+	priv->image = purple_image_new_from_file(path, TRUE);
 	if (!priv->image) {
 		purple_debug_error("smiley", "Couldn't load smiley data ");
 		return NULL;
@@ -130,7 +130,7 @@ purple_smiley_get_image_impl(PurpleSmiley *smiley)
 	return priv->image;
 }
 
-PurpleStoredImage *
+PurpleImage *
 purple_smiley_get_image(PurpleSmiley *smiley)
 {
 	PurpleSmileyClass *klass;
@@ -165,9 +165,11 @@ purple_smiley_finalize(GObject *obj)
 	g_free(priv->path);
 
 	if (priv->image)
-		purple_imgstore_unref(priv->image);
+		g_object_unref(priv->image);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(smiley);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
 static void
@@ -223,6 +225,8 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 	PurpleSmileyClass *ps_class = PURPLE_SMILEY_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
 
 	g_type_class_add_private(klass, sizeof(PurpleSmileyPrivate));
 

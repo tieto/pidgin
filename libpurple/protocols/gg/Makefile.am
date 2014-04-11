@@ -85,8 +85,8 @@ GGSOURCES = \
 	gg.h \
 	html.c \
 	html.h \
-	image.c \
-	image.h \
+	image-prpl.c \
+	image-prpl.h \
 	keymapper.c \
 	keymapper.h \
 	libgadu-events.c \

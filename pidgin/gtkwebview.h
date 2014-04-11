@@ -415,6 +415,17 @@ gchar *pidgin_webview_get_body_text(PidginWebView *webview);
 gchar *pidgin_webview_get_selected_text(PidginWebView *webview);
 
 /**
+ * pidgin_webview_is_empty:
+ * @webview: the PidginWebView.
+ *
+ * Checks, if the @webview is empty.
+ *
+ * Returns %TRUES, if the @webview is empty, %FALSE otherwise.
+ */
+gboolean
+pidgin_webview_is_empty(PidginWebView *webview);
+
+/**
  * pidgin_webview_get_caret:
  * @webview:       The PidginWebView
  * @container_ret: A pointer to a pointer to a WebKitDOMNode. This pointer
@@ -565,12 +576,13 @@ void pidgin_webview_insert_link(PidginWebView *webview, const char *url, const c
 
 /**
  * pidgin_webview_insert_image:
- * @webview: The PidginWebView
- * @id:      The PurpleStoredImage id
+ * @webview: the PidginWebView.
+ * @image: the PurpleImage.
  *
  * Inserts an image at the current location or selection in a PidginWebView.
  */
-void pidgin_webview_insert_image(PidginWebView *webview, int id);
+void
+pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image);
 
 /**
  * pidgin_webview_get_protocol_name:

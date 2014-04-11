@@ -36,7 +36,7 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "idle.h"
-#include "imgstore.h"
+#include "image-store.h"
 #include "log.h"
 #include "notify.h"
 #include "plugins.h"
@@ -624,7 +624,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleMessageFlags flags = 0;
-	char *buf, *clean;
+	char *buf;
 
 	account = purple_conversation_get_account(conv);
 
@@ -640,16 +640,12 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	if (!purple_account_is_connected(account))
 		return;
 
+	if (pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry)))
+		return;
+
 	buf = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(gtkconv->entry));
-	clean = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	gtk_widget_grab_focus(gtkconv->entry);
-
-	if (!*clean) {
-		g_free(buf);
-		g_free(clean);
-		return;
-	}
 
 	purple_idle_touch();
 
@@ -681,7 +677,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		purple_conversation_send_with_flags(conv, buf, flags);
 	}
 
-	g_free(clean);
 	g_free(buf);
 
 	conversation_entry_clear(gtkconv);
@@ -1954,24 +1949,22 @@ gtkconv_cycle_focus(PidginConversation *gtkconv, GtkDirectionType dir)
 static void
 update_typing_inserting(PidginConversation *gtkconv)
 {
-	gchar *text;
+	gboolean is_empty;
 
 	g_return_if_fail(gtkconv != NULL);
 
-	text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
+	is_empty = pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry));
 
-	got_typing_keypress(gtkconv, text[0] == '\0' || !strcmp(text, "\n"));
-
-	g_free(text);
+	got_typing_keypress(gtkconv, is_empty);
 }
 
 static gboolean
 update_typing_deleting_cb(PidginConversation *gtkconv)
 {
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(gtkconv->active_conv);
-	gchar *text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
+	gboolean is_empty = pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry));
 
-	if (!*text || !strcmp(text, "\n")) {
+	if (!is_empty) {
 		/* We deleted all the text, so turn off typing. */
 		purple_im_conversation_stop_send_typed_timeout(im);
 
@@ -1983,7 +1976,6 @@ update_typing_deleting_cb(PidginConversation *gtkconv)
 		/* We're deleting, but not all of it, so it counts as typing. */
 		got_typing_keypress(gtkconv, FALSE);
 	}
-	g_free(text);
 
 	return FALSE;
 }
@@ -1991,16 +1983,14 @@ update_typing_deleting_cb(PidginConversation *gtkconv)
 static void
 update_typing_deleting(PidginConversation *gtkconv)
 {
-	gchar *text;
+	gboolean is_empty;
 
 	g_return_if_fail(gtkconv != NULL);
 
-	text = pidgin_webview_get_body_text(PIDGIN_WEBVIEW(gtkconv->entry));
+	is_empty = pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry));
 
-	if (*text && strcmp(text, "\n"))
+	if (!is_empty)
 		purple_timeout_add(0, (GSourceFunc)update_typing_deleting_cb, gtkconv);
-
-	g_free(text);
 }
 
 static gboolean
@@ -3949,14 +3939,14 @@ send_to_item_leave_notify_cb(GtkWidget *menuitem, GdkEventCrossing *event, GtkWi
 static GtkWidget *
 e2ee_state_to_gtkimage(PurpleE2eeState *state)
 {
-	PurpleStoredImage *img;
+	PurpleImage *img;
 
 	img = _pidgin_e2ee_stock_icon_get(
 		purple_e2ee_state_get_stock_icon(state));
 	if (!img)
 		return NULL;
 
-	return gtk_image_new_from_pixbuf(pidgin_pixbuf_from_imgstore(img));
+	return gtk_image_new_from_pixbuf(pidgin_pixbuf_from_image(img));
 }
 
 static void
@@ -4165,11 +4155,11 @@ generate_send_to_items(PidginConvWindow *win)
 	update_send_to_selection(win);
 }
 
-PurpleStoredImage *
+PurpleImage *
 _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 {
 	gchar filename[100], *path;
-	PurpleStoredImage *image;
+	PurpleImage *image;
 
 	/* core is quitting */
 	if (e2ee_stock == NULL)
@@ -4181,7 +4171,7 @@ _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "e2ee", "16",
 		filename, NULL);
-	image = purple_imgstore_new_from_file(path);
+	image = purple_image_new_from_file(path, FALSE);
 	g_free(path);
 
 	g_hash_table_insert(e2ee_stock, g_strdup(stock_name), image);
@@ -4926,7 +4916,7 @@ entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
 	PidginConversation *gtkconv = data;
-	char *tmp;
+	gboolean is_empty;
 
 	g_return_if_fail(menu != NULL);
 	g_return_if_fail(gtkconv != NULL);
@@ -4934,10 +4924,9 @@ entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), NULL,
 	                                      G_CALLBACK(send_cb), gtkconv,
 	                                      0, 0, NULL);
-	tmp = pidgin_webview_get_body_text(webview);
-	if (!tmp || !*tmp)
+	is_empty = pidgin_webview_is_empty(webview);
+	if (is_empty)
 		gtk_widget_set_sensitive(menuitem, FALSE);
-	g_free(tmp);
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 0);
 
 	menuitem = gtk_separator_menu_item_new();
@@ -6509,8 +6498,9 @@ replace_message_tokens(
 				if (purple_account_get_bool(purple_conversation_get_account(conv), "use-global-buddyicon", TRUE)) {
 					replace = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 				} else {
-					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(purple_conversation_get_account(conv));
-					replace = purple_imgstore_get_filename(img);
+					PurpleImage *img = purple_buddy_icons_find_account_icon(purple_conversation_get_account(conv));
+					/* XXX: this may be NULL */
+					replace = purple_image_get_path(img);
 				}
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
 					replace = freeval = g_build_filename("Outgoing", "buddy_icon.png", NULL);
@@ -6605,9 +6595,9 @@ pidgin_conv_remote_smiley_got(PurpleSmiley *smiley, gpointer _conv)
 {
 	PurpleConversation *conv = _conv;
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-	PurpleStoredImage *img;
+	PurpleImage *img;
 	gulong smiley_id;
-	int image_id;
+	guint image_id;
 	gchar *js;
 
 	if (!gtkconv)
@@ -6615,13 +6605,13 @@ pidgin_conv_remote_smiley_got(PurpleSmiley *smiley, gpointer _conv)
 
 	img = purple_smiley_get_image(smiley);
 	smiley_id = pidgin_smiley_get_unique_id(smiley);
-	image_id = purple_imgstore_add_with_id(img);
+	image_id = purple_image_store_add(img);
 
 	purple_debug_info("gtkconv", "Smiley '%s' (%ld) is ready for display",
 		purple_smiley_get_shortcut(smiley), smiley_id);
 
 	js = g_strdup_printf("emoticonIsReady(%ld, '"
-		PURPLE_STORED_IMAGE_PROTOCOL "%d')", smiley_id, image_id);
+		PURPLE_IMAGE_STORE_PROTOCOL "%u')", smiley_id, image_id);
 	pidgin_webview_safe_execute_script(
 		PIDGIN_WEBVIEW(gtkconv->webview), js);
 	g_free(js);
@@ -6648,12 +6638,12 @@ pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 			"src=\"%s%s\" />", escaped_shortcut,
 			escaped_shortcut, path_prefix, path);
 	} else if (purple_smiley_is_ready(smiley) && !path) {
-		PurpleStoredImage *img = purple_smiley_get_image(smiley);
-		int imgid = purple_imgstore_add_with_id(img);
+		PurpleImage *img = purple_smiley_get_image(smiley);
+		guint imgid = purple_image_store_add(img);
 
 		g_string_append_printf(out, "<img class=\"emoticon\" "
 			"alt=\"%s\" title=\"%s\" src=\""
-			PURPLE_STORED_IMAGE_PROTOCOL "%d\" />",
+			PURPLE_IMAGE_STORE_PROTOCOL "%u\" />",
 			escaped_shortcut, escaped_shortcut, imgid);
 	} else {
 		g_string_append_printf(out, "<span class=\"emoticon pending "
@@ -6794,8 +6784,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	gtkconv->last_flags = flags;
 	gtkconv->last_conversed = conv;
 
-	smileyed = purple_smiley_parse(conv, displaying, (flags & PURPLE_MESSAGE_RECV),
-		pidgin_conv_write_smiley,
+	smileyed = purple_smiley_parser_smileify(conv, displaying,
+		(flags & PURPLE_MESSAGE_RECV), pidgin_conv_write_smiley,
 		(gpointer)purple_account_get_protocol_name(account));
 	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
 	escape = pidgin_webview_quote_js_string(msg ? msg : "");
@@ -7787,7 +7777,7 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 
 	PurpleBuddy *buddy;
 
-	PurpleStoredImage *custom_img = NULL;
+	PurpleImage *custom_img = NULL;
 	gconstpointer data = NULL;
 	size_t len;
 
@@ -7857,8 +7847,8 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 			custom_img = purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
 			if (custom_img) {
 				/* There is a custom icon for this user */
-				data = purple_imgstore_get_data(custom_img);
-				len = purple_imgstore_get_size(custom_img);
+				data = purple_image_get_data(custom_img);
+				len = purple_image_get_size(custom_img);
 			}
 		}
 	}
@@ -7882,7 +7872,8 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 	}
 
 	gtkconv->u.im->anim = pidgin_pixbuf_anim_from_data(data, len);
-	purple_imgstore_unref(custom_img);
+	if (custom_img)
+		g_object_unref(custom_img);
 
 	if (!gtkconv->u.im->anim) {
 		purple_debug_error("gtkconv", "Couldn't load icon for conv %s\n",
@@ -8666,14 +8657,6 @@ pidgin_conversations_get_handle(void)
 }
 
 static void
-e2ee_stock_delete_value(gpointer value)
-{
-	PurpleStoredImage *img = value;
-
-	purple_imgstore_unref(img);
-}
-
-static void
 pidgin_conversations_pre_uninit(void);
 
 void
@@ -8683,8 +8666,8 @@ pidgin_conversations_init(void)
 	void *blist_handle = purple_blist_get_handle();
 	char *theme_dir;
 
-	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-		e2ee_stock_delete_value);
+	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, g_object_unref);
 
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
@@ -9086,7 +9069,6 @@ pidgin_conversation_get_type(void)
 #include "account.h"
 #include "cmds.h"
 #include "debug.h"
-#include "imgstore.h"
 #include "log.h"
 #include "notify.h"
 #include "protocol.h"

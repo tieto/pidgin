@@ -1616,7 +1616,7 @@ _pidgin_datasheet_stock_icon_get(const gchar *stock_name)
 				PIDGIN_PROTOCOL_ICON_SMALL);
 		}
 	} else if (g_strcmp0(domain, "e2ee") == 0) {
-		image = pidgin_pixbuf_from_imgstore(
+		image = pidgin_pixbuf_from_image(
 			_pidgin_e2ee_stock_icon_get(id));
 	} else {
 		purple_debug_error("gtkrequest", "Unknown domain: %s", domain);

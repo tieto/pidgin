@@ -84,7 +84,7 @@ purple_smiley_parse_cb(GString *out, const gchar *word, gpointer _smiley,
  * To be reconsidered when we had PurpleDude-like objects.
  */
 gchar *
-purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
+purple_smiley_parser_smileify(PurpleConversation *conv, const gchar *html_message,
 	gboolean use_remote_smileys, PurpleSmileyParseCb cb, gpointer ui_data)
 {
 	PurpleSmileyTheme *theme;
@@ -157,56 +157,65 @@ purple_smiley_parse(PurpleConversation *conv, const gchar *html_message,
 }
 
 gchar *
-purple_smiley_parse_custom(const gchar *html_message, PurpleSmileyParseCb cb,
-	gpointer ui_data)
+purple_smiley_parser_replace(PurpleSmileyList *smileys,
+	const gchar *html_message, PurpleSmileyParseCb cb, gpointer ui_data)
 {
-	PurpleTrie *custom_trie = NULL;
-	GSList *tries = NULL;
-	GSList tries_sentry, tries_custom;
+	PurpleTrie *smileys_trie = NULL;
+	GSList trie_1, trie_2;
 	PurpleSmileyParseData parse_data;
 
 	if (html_message == NULL || html_message[0] == '\0')
 		return g_strdup(html_message);
 
-	custom_trie = purple_smiley_list_get_trie(
-		purple_smiley_custom_get_list());
-	if (!custom_trie || purple_trie_get_size(custom_trie) == 0)
+	if (smileys == NULL || purple_smiley_list_is_empty(smileys))
 		return g_strdup(html_message);
 
-	tries_sentry.data = html_sentry;
-	tries_custom.data = custom_trie;
-	tries_sentry.next = &tries_custom;
-	tries_custom.next = NULL;
-	tries = &tries_sentry;
+	smileys_trie = purple_smiley_list_get_trie(smileys);
+	g_return_val_if_fail(smileys_trie != NULL, NULL);
+
+	trie_1.data = html_sentry;
+	trie_2.data = smileys_trie;
+	trie_1.next = &trie_2;
+	trie_2.next = NULL;
 
 	parse_data.job.replace.conv = NULL;
 	parse_data.job.replace.cb = cb;
 	parse_data.job.replace.ui_data = ui_data;
 	parse_data.in_html_tag = FALSE;
 
-	return purple_trie_multi_replace(tries, html_message,
+	return purple_trie_multi_replace(&trie_1, html_message,
 		purple_smiley_parse_cb, &parse_data);
 }
 
 static gboolean
-smiley_find_cb(const gchar *word, gpointer _smiley, gpointer _found_smileys)
+smiley_find_cb(const gchar *word, gpointer _smiley, gpointer _parse_data)
 {
 	PurpleSmiley *smiley = _smiley;
-	GHashTable *found_smileys = _found_smileys;
+	PurpleSmileyParseData *parse_data = _parse_data;
 
-	g_hash_table_insert(found_smileys, smiley, smiley);
+	/* a special-case for html_sentry */
+	if (smiley == NULL) {
+		purple_smiley_parse_check_html(word, parse_data);
+		return FALSE;
+	}
+
+	if (parse_data->in_html_tag)
+		return FALSE;
+
+	g_hash_table_insert(parse_data->job.find.found_smileys, smiley, smiley);
 
 	return TRUE;
 }
 
 GList *
-purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
+purple_smiley_parser_find(PurpleSmileyList *smileys, const gchar *message,
 	gboolean is_html)
 {
-	PurpleTrie *trie;
-	GHashTable *found_smileys;
+	PurpleTrie *smileys_trie;
 	GList *found_list;
 	gchar *escaped_message = NULL;
+	PurpleSmileyParseData parse_data;
+	GSList trie_1, trie_2;
 
 	if (message == NULL || message[0] == '\0')
 		return NULL;
@@ -214,21 +223,26 @@ purple_smiley_find(PurpleSmileyList *smileys, const gchar *message,
 	if (smileys == NULL || purple_smiley_list_is_empty(smileys))
 		return NULL;
 
-	trie = purple_smiley_list_get_trie(smileys);
-	g_return_val_if_fail(trie != NULL, NULL);
+	smileys_trie = purple_smiley_list_get_trie(smileys);
+	g_return_val_if_fail(smileys_trie != NULL, NULL);
 
 	if (!is_html)
 		message = escaped_message = g_markup_escape_text(message, -1);
 
-	found_smileys = g_hash_table_new(g_direct_hash, g_direct_equal);
-	purple_trie_find(trie, message, smiley_find_cb, found_smileys);
+	parse_data.job.find.found_smileys =
+		g_hash_table_new(g_direct_hash, g_direct_equal);
+	parse_data.in_html_tag = FALSE;
 
-	/* TODO: use html_sentry and purple_trie_multi_replace */
+	trie_1.data = html_sentry;
+	trie_2.data = smileys_trie;
+	trie_1.next = &trie_2;
+	trie_2.next = NULL;
+	purple_trie_multi_find(&trie_1, message, smiley_find_cb, &parse_data);
 
 	g_free(escaped_message);
 
-	found_list = g_hash_table_get_values(found_smileys);
-	g_hash_table_destroy(found_smileys);
+	found_list = g_hash_table_get_values(parse_data.job.find.found_smileys);
+	g_hash_table_destroy(parse_data.job.find.found_smileys);
 
 	return found_list;
 }
