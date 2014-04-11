@@ -73,7 +73,6 @@ purple_coresources = \
 	idle.c \
 	image.c \
 	image-store.c \
-	imgstore.c \
 	keyring.c \
 	log.c \
 	media/backend-fs2.c \
@@ -159,7 +158,6 @@ purple_coreheaders = \
 	idle.h \
 	image.h \
 	image-store.h \
-	imgstore.h \
 	keyring.h \
 	log.h \
 	media.h \

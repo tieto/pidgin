@@ -67,7 +67,6 @@
 #include <enums.h>
 #include <eventloop.h>
 #include <idle.h>
-#include <imgstore.h>
 #include <log.h>
 #include <media.h>
 #include <mediamanager.h>

@@ -94,7 +94,6 @@ content_files = version.xml \
 	signals_conversation.xml \
 	signals_core.xml \
 	signals_dbus_server.xml \
-	signals_imgstore.xml \
 	signals_jabber.xml \
 	signals_log.xml \
 	signals_notify.xml \

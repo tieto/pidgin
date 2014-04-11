@@ -97,7 +97,6 @@ C_SRC =	\
 			idle.c \
 			image.c \
 			image-store.c \
-			imgstore.c \
 			keyring.c \
 			log.c \
 			media/candidate.c \
