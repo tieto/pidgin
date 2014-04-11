@@ -27,6 +27,7 @@
 #include	<time.h>
 
 #include	"internal.h"
+#include "image-store.h"
 
 #include	"mxit.h"
 #include	"profile.h"
@@ -265,11 +266,14 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 			if ( contact->msg )
 				purple_notify_user_info_add_pair_plaintext( info, _( "Invite Message" ), contact->msg );
 
-			if ( contact->imgid ) {
+			if (contact->image) {
 				/* this invite has a avatar */
 				char* img_text;
-				img_text = g_strdup_printf( "<img src='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
-				                            contact->imgid );
+				guint img_id;
+
+				img_id = purple_image_store_add_temporary(contact->image);
+				img_text = g_strdup_printf("<img src=\""
+					PURPLE_IMAGE_STORE_PROTOCOL "%u\">", img_id);
 				purple_notify_user_info_add_pair_html( info, _( "Photo" ), img_text );
 				g_free( img_text );
 			}

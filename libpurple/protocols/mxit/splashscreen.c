@@ -25,7 +25,6 @@
 
 #include "internal.h"
 #include "debug.h"
-#include "imgstore.h"
 #include "request.h"
 
 #include "protocol.h"
@@ -157,7 +156,6 @@ static void splash_click_ok(PurpleConnection* gc, PurpleRequestFields* fields)
 		mxit_send_splashclick(session, splashId);
 }
 
-
 /*------------------------------------------------------------------------
  * Display the current splash-screen.
  *
@@ -169,7 +167,6 @@ void splash_display(struct MXitSession* session)
 	char* filename;
 	gchar* imgdata;
 	gsize imglen;
-	int imgid = -1;
 
 	/* Get current splash ID */
 	splashId = splash_current(session);
@@ -181,14 +178,20 @@ void splash_display(struct MXitSession* session)
 	/* Load splash-screen image from file */
 	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "mxit" G_DIR_SEPARATOR_S "%s.png", purple_user_dir(), splashId);
 	if (g_file_get_contents(filename, &imgdata, &imglen, NULL)) {
+#if 0
+		PurpleImage *img;
+		guint img_id;
 		char buf[128];
 
 		/* Add splash-image to imagestore */
-		imgid = purple_imgstore_new_with_id(g_memdup(imgdata, imglen), imglen, NULL);
+		img = purple_image_new_from_data(g_memdup(imgdata, imglen), imglen);
+		img_id = purple_image_store_add_temporary(img);
+		g_object_unref(img);
 
 		/* Generate and display message */
-		g_snprintf(buf, sizeof(buf),
-		           "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\">", imgid);
+		g_snprintf(buf, sizeof(buf), "<img src=\""
+			PURPLE_IMAGE_STORE_PROTOCOL "%u\">", img_id);
+#endif
 
 		/* Open a request-type popup to display the image */
 		{
@@ -212,9 +215,6 @@ void splash_display(struct MXitSession* session)
 					_("Continue"), G_CALLBACK(splash_click_ok), _("Close"), NULL, purple_request_cpar_from_account(session->acc), session->con);
 			}
 		}
-
-		/* Release reference to image */
-		purple_imgstore_unref_by_id(imgid);
 
 		g_free(imgdata);
 	}

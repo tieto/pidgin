@@ -602,6 +602,8 @@ static void mxit_cb_buddy_auth( const char *message, gpointer user_data )
 		g_free( invite->contact->statusMsg );
 	if ( invite->contact->profile )
 		g_free( invite->contact->profile );
+	if (invite->contact->image)
+		g_object_unref(invite->contact->image);
 	g_free( invite->contact );
 	g_free( invite );
 }
@@ -631,6 +633,8 @@ static void mxit_cb_buddy_deny( const char *message, gpointer user_data )
 		g_free( invite->contact->statusMsg );
 	if ( invite->contact->profile )
 		g_free( invite->contact->profile );
+	if (invite->contact->image)
+		g_object_unref(invite->contact->image);
 	g_free( invite->contact );
 	g_free( invite );
 }

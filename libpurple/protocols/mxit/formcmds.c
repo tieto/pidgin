@@ -27,6 +27,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "http.h"
+#include "image-store.h"
 
 #include "protocol.h"
 #include "mxit.h"
@@ -81,8 +82,7 @@ mxit_cb_ii_returned(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 	gpointer _iireq)
 {
 	struct ii_url_request*	iireq		= _iireq;
-	int*					intptr		= NULL;
-	int						id;
+	PurpleImage *img;
 	const gchar* data;
 	size_t len;
 
@@ -97,19 +97,15 @@ mxit_cb_ii_returned(PurpleHttpConnection *http_conn, PurpleHttpResponse *respons
 	}
 
 	/* lets first see if we don't have the inline image already in cache */
-	if (g_hash_table_lookup(iireq->mx->session->iimages, iireq->url)) {
+	if (g_hash_table_lookup(iireq->mx->session->inline_images, iireq->url)) {
 		/* inline image found in the cache, so we just ignore this reply */
 		goto done;
 	}
 
 	/* we now have the inline image, store a copy in the imagestore */
 	data = purple_http_response_get_data(response, &len);
-	id = purple_imgstore_new_with_id(g_memdup(data, len), len, NULL);
-
-	/* map the inline image id to purple image id */
-	intptr = g_malloc(sizeof(int));
-	*intptr = id;
-	g_hash_table_insert(iireq->mx->session->iimages, iireq->url, intptr);
+	img = purple_image_new_from_data(g_memdup(data, len), len);
+	g_hash_table_insert(iireq->mx->session->inline_images, iireq->url, img);
 
 	iireq->mx->flags |= PURPLE_MESSAGE_IMAGES;
 
@@ -326,16 +322,18 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	const char*	reply;
 	guchar*		rawimg;
 	gsize		rawimglen;
-	int			imgid;
 
 	img = g_hash_table_lookup(hash, "dat");
 	if (img) {
+		PurpleImage *pimg;
+		guint pimg_id;
+
 		rawimg = purple_base64_decode(img, &rawimglen);
 		//purple_util_write_data_to_file_absolute("/tmp/mxitinline.png", (char*) rawimg, rawimglen);
-		imgid = purple_imgstore_new_with_id(rawimg, rawimglen, NULL);
-		g_string_append_printf(msg,
-		                       "<img src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%i\">",
-		                       imgid);
+		pimg = purple_image_new_from_data(rawimg, rawimglen);
+		pimg_id = purple_image_store_add(pimg);
+		g_string_append_printf(msg, "<img src=\""
+			PURPLE_IMAGE_STORE_PROTOCOL "%u\">", pimg_id);
 		mx->flags |= PURPLE_MESSAGE_IMAGES;
 	}
 	else {
@@ -351,7 +349,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 			mx->got_img = TRUE;
 
 			/* lets first see if we don't have the inline image already in cache */
-			if (g_hash_table_lookup(mx->session->iimages, iireq->url)) {
+			if (g_hash_table_lookup(mx->session->inline_images, iireq->url)) {
 				/* inline image found in the cache, so we do not have to request it from the web */
 				g_free(iireq);
 			}

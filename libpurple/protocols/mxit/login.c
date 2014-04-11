@@ -87,7 +87,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	g_strlcpy( session->clientkey, purple_account_get_string( account, MXIT_CONFIG_CLIENTKEY, "" ), sizeof( session->clientkey ) );
 	g_strlcpy( session->dialcode, purple_account_get_string( account, MXIT_CONFIG_DIALCODE, "" ), sizeof( session->dialcode ) );
 	session->http = purple_account_get_bool( account, MXIT_CONFIG_USE_HTTP, FALSE );
-	session->iimages = g_hash_table_new( g_str_hash, g_str_equal );
+	session->inline_images = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 	session->rx_state = RX_STATE_RLEN;
 	session->http_interval = MXIT_HTTP_POLL_MIN;
 	session->http_last_poll = mxit_now_milli();

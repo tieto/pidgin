@@ -495,6 +495,8 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 			g_free( contact->avatarId );
 		if ( contact->msg )
 			g_free( contact->msg );
+		if (contact->image)
+			g_object_unref(contact->image);
 		g_free( contact );
 	}
 
@@ -536,14 +538,17 @@ static void mxit_keepalive( PurpleConnection *gc )
  *  @param gc		The connection object
  *  @param img		The buddy icon data
  */
-static void mxit_set_buddy_icon( PurpleConnection *gc, PurpleStoredImage *img )
+static void
+mxit_set_buddy_icon(PurpleConnection *gc, PurpleImage *img)
 {
-	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
+	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 
-	if ( img == NULL )
-		mxit_set_avatar( session, NULL, 0 );
-	else
-		mxit_set_avatar( session, purple_imgstore_get_data( img ), purple_imgstore_get_size( img ) );
+	if (img == NULL)
+		mxit_set_avatar(session, NULL, 0);
+	else {
+		mxit_set_avatar(session, purple_image_get_data(img),
+			purple_image_get_size(img));
+	}
 }
 
 

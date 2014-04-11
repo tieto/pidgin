@@ -2192,7 +2192,10 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 					contact = get_mxit_invite_contact( session, chunk.mxitid );
 					if ( contact ) {
 						/* this is an invite (add image to the internal image store) */
-						contact->imgid = purple_imgstore_new_with_id( g_memdup( chunk.data, chunk.length ), chunk.length, NULL );
+						if (contact->image)
+							g_object_unref(contact->image);
+						contact->image = purple_image_new_from_data(
+							g_memdup(chunk.data, chunk.length), chunk.length);
 						/* show the profile */
 						mxit_show_profile( session, chunk.mxitid, contact->profile );
 					}
@@ -2929,6 +2932,8 @@ void mxit_close_connection( struct MXitSession* session )
 			g_free( contact->statusMsg );
 		if ( contact->profile )
 			g_free( contact->profile );
+		if (contact->image)
+			g_object_unref(contact->image);
 		g_free( contact );
 	}
 	g_list_free( session->invites );
