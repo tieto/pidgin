@@ -641,17 +641,15 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		return;
 
 	buf = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(gtkconv->entry));
+	g_return_if_fail(buf != NULL);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
 	purple_idle_touch();
 
-#if 0
-	/* TODO WebKit: Image stuff... */
 	/* XXX: is there a better way to tell if the message has images? */
-	if (PIDGIN_WEBVIEW(gtkconv->entry)->im_images != NULL)
+	if (strstr(buf, "<img ") != NULL)
 		flags |= PURPLE_MESSAGE_IMAGES;
-#endif
 
 	gc = NULL/*purple_account_get_connection(account)*/;
 	if (gc && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_NO_NEWLINES)) {

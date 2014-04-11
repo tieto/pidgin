@@ -19,12 +19,13 @@
 
 #include "internal.h"
 #include "glibcompat.h"
+#include "image-store.h"
+
 PURPLE_BEGIN_IGNORE_CAST_ALIGN
 #include "silc.h"
 PURPLE_END_IGNORE_CAST_ALIGN
 #include "silcclient.h"
 #include "silcpurple.h"
-#include "imgstore.h"
 
 /**************************** Utility Routines *******************************/
 
@@ -648,29 +649,6 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 				geo.accuracy ? geo.accuracy : "");
 }
 
-/* Returns MIME type of filetype */
-
-char *silcpurple_file2mime(const char *filename)
-{
-	const char *ct;
-
-	ct = strrchr(filename, '.');
-	if (!ct)
-		return NULL;
-	else if (!g_ascii_strcasecmp(".png", ct))
-		return g_strdup("image/png");
-	else if (!g_ascii_strcasecmp(".jpg", ct))
-		return g_strdup("image/jpeg");
-	else if (!g_ascii_strcasecmp(".jpeg", ct))
-		return g_strdup("image/jpeg");
-	else if (!g_ascii_strcasecmp(".gif", ct))
-		return g_strdup("image/gif");
-	else if (!g_ascii_strcasecmp(".tiff", ct))
-		return g_strdup("image/tiff");
-
-	return NULL;
-}
-
 /* Checks if message has images, and assembles MIME message if it has.
    If only one image is present, creates simple MIME image message.  If
    there are multiple images and/or text with images multipart MIME
@@ -682,14 +660,13 @@ SilcDList silcpurple_image_message(const char *msg, SilcMessageFlags *mflags)
 	SilcDList list, parts = NULL;
 	const char *start, *end, *last;
 	GData *attribs;
-	char *type;
 	gboolean images = FALSE;
 
 	last = msg;
 	while (last && *last && purple_markup_find_tag("img", last, &start,
 						     &end, &attribs)) {
-		PurpleStoredImage *image = NULL;
-		const char *id;
+		PurpleImage *image = NULL;
+		const gchar *uri;
 
 		/* Check if there is text before image */
 		if (start - last) {
@@ -713,22 +690,24 @@ SilcDList silcpurple_image_message(const char *msg, SilcMessageFlags *mflags)
 			silc_dlist_add(parts, p);
 		}
 
-		id = g_datalist_get_data(&attribs, "id");
-		if (id && (image = purple_imgstore_find_by_id(atoi(id)))) {
-			unsigned long imglen = purple_imgstore_get_size(image);
-			gconstpointer img = purple_imgstore_get_data(image);
+		uri = g_datalist_get_data(&attribs, "src");
+		if (uri)
+			image = purple_image_store_get_from_uri(uri);
+		if (uri) {
+			unsigned long imglen = purple_image_get_size(image);
+			gconstpointer img = purple_image_get_data(image);
+			const gchar *type;
 
 			p = silc_mime_alloc();
 
 			/* Add content type */
-			type = silcpurple_file2mime(purple_imgstore_get_filename(image));
+			type = purple_image_get_mimetype(image);
 			if (!type) {
 				g_datalist_clear(&attribs);
 				last = end + 1;
 				continue;
 			}
 			silc_mime_add_field(p, "Content-Type", type);
-			g_free(type);
 
 			/* Add content transfer encoding */
 			silc_mime_add_field(p, "Content-Transfer-Encoding", "binary");

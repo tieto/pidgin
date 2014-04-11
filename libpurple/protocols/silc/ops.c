@@ -18,12 +18,12 @@
 */
 
 #include "internal.h"
+#include "image-store.h"
 PURPLE_BEGIN_IGNORE_CAST_ALIGN
 #include "silc.h"
 PURPLE_END_IGNORE_CAST_ALIGN
 #include "silcclient.h"
 #include "silcpurple.h"
-#include "imgstore.h"
 #include "wb.h"
 
 static void
@@ -182,12 +182,10 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	/* Image */
-	if (strstr(type, "image/png") ||
-	    strstr(type, "image/jpeg") ||
-	    strstr(type, "image/gif") ||
-	    strstr(type, "image/tiff")) {
+	if (purple_str_has_prefix(type, "image/")) {
 		char tmp[32];
-		int imgid;
+		PurpleImage *img;
+		guint img_id;
 
 		/* Get channel chat (if message is for channel) */
 		if (key && channel) {
@@ -208,24 +206,26 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		if (channel && !chat)
 			goto out;
 
-		imgid = purple_imgstore_new_with_id(g_memdup(data, data_len), data_len, "");
-		if (imgid) {
-			cflags |= PURPLE_MESSAGE_IMAGES | PURPLE_MESSAGE_RECV;
-			g_snprintf(tmp, sizeof(tmp),
-			           "<IMG SRC=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\">",
-			           imgid);
+		img = purple_image_new_from_data(g_memdup(data, data_len), data_len);
+		if (!img)
+			goto out;
+		img_id = purple_image_store_add_temporary(img);
+		if (!img_id)
+			goto out;
 
-			if (channel)
-				purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(chat),
-				 		 sender->nickname, cflags,
-						 tmp, time(NULL));
-			else
-				purple_serv_got_im(gc, sender->nickname,
-					    tmp, cflags, time(NULL));
+		cflags |= PURPLE_MESSAGE_IMAGES | PURPLE_MESSAGE_RECV;
+		g_snprintf(tmp, sizeof(tmp), "<img src=\""
+			PURPLE_IMAGE_STORE_PROTOCOL "%u\">", img_id);
 
-			purple_imgstore_unref_by_id(imgid);
-			ret = TRUE;
+		if (channel) {
+			purple_serv_got_chat_in(gc,
+				purple_chat_conversation_get_id(chat),
+				sender->nickname, cflags, tmp, time(NULL));
+		} else {
+			purple_serv_got_im(gc, sender->nickname,
+				tmp, cflags, time(NULL));
 		}
+
 		goto out;
 	}
 

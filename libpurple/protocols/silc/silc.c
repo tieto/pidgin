@@ -248,7 +248,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 	SilcPurple sg;
 	SilcUInt32 mask;
 	char tz[16];
-	PurpleStoredImage *img;
+	PurpleImage *img;
 #ifdef HAVE_SYS_UTSNAME_H
 	struct utsname u;
 #endif
@@ -305,7 +305,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 		/* Set our buddy icon */
 		img = purple_buddy_icons_find_account_icon(sg->account);
 		silcpurple_buddy_set_icon(gc, img);
-		purple_imgstore_unref(img);
+		g_object_unref(img);
 
 		return;
 		break;
@@ -718,7 +718,8 @@ silcpurple_close(PurpleConnection *gc)
 	silc_dlist_uninit(sg->tasks);
 #endif /* __SILC_TOOLKIT_VERSION */
 
-	purple_timeout_remove(sg->scheduler);
+	if (sg->scheduler)
+		purple_timeout_remove(sg->scheduler);
 
 	purple_debug_info("silc", "Scheduling destruction of SilcPurple %p\n", sg);
 	purple_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
@@ -1499,7 +1500,6 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(tmp);
 		return 0;
 	}
-
 	silc_dlist_start(clients);
 	client_entry = silc_dlist_get(clients);
 
