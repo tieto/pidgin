@@ -469,7 +469,7 @@ msn_session_finish_login(MsnSession *session)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	PurpleStoredImage *img;
+	PurpleImage *img;
 
 	if (!session->logged_in) {
 		account = session->account;
@@ -479,7 +479,7 @@ msn_session_finish_login(MsnSession *session)
 		/* TODO: Do we really want to call this if img is NULL? */
 		msn_user_set_buddy_icon(session->user, img);
 		if (img != NULL)
-			purple_imgstore_unref(img);
+			g_object_unref(img);
 
 		session->logged_in = TRUE;
 		purple_connection_set_state(gc, PURPLE_CONNECTION_CONNECTED);

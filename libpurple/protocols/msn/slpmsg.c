@@ -68,12 +68,14 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	slplink = slpmsg->slplink;
 
-	purple_imgstore_unref(slpmsg->img);
 
-	/* We don't want to free the data of the PurpleStoredImage,
-	 * but to avoid code duplication, it's sharing buffer. */
-	if (slpmsg->img == NULL)
+	if (slpmsg->img)
+		g_object_unref(slpmsg->img);
+	else {
+		/* We don't want to free the data of the PurpleImage,
+		 * but to avoid code duplication, it's sharing buffer. */
 		g_free(slpmsg->buffer);
+	}
 
 	for (cur = slpmsg->parts; cur != NULL; cur = g_list_delete_link(cur, cur))
 	{
@@ -125,16 +127,17 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 }
 
 void
-msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
+msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleImage *img)
 {
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->img == NULL);
 	g_return_if_fail(slpmsg->ft == FALSE);
 
-	slpmsg->img = purple_imgstore_ref(img);
-	slpmsg->buffer = (guchar *)purple_imgstore_get_data(img);
-	slpmsg->size = purple_imgstore_get_size(img);
+	g_object_ref(img);
+	slpmsg->img = img;
+	slpmsg->buffer = purple_image_get_data(img);
+	slpmsg->size = purple_image_get_size(img);
 }
 
 
@@ -212,7 +215,7 @@ MsnSlpMessage *msn_slpmsg_ack_new(MsnSlpLink *slplink, MsnP2PInfo *ack_info)
 	return slpmsg;
 }
 
-MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img)
+MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleImage *img)
 {
 	MsnSlpMessage *slpmsg;
 

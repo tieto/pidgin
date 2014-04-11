@@ -55,7 +55,7 @@
 
 #if PHOTO_SUPPORT
 #define MAX_HTTP_BUDDYICON_BYTES (200 * 1024)
-#include "imgstore.h"
+#include "image-store.h"
 #endif
 
 typedef struct
@@ -1479,7 +1479,7 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 
 	for (it = smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
-		PurpleStoredImage *img;
+		PurpleImage *img;
 
 		img = purple_smiley_get_image(smiley);
 
@@ -2161,7 +2161,7 @@ msn_convo_closed(PurpleConnection *gc, const char *who)
 }
 
 static void
-msn_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
+msn_set_buddy_icon(PurpleConnection *gc, PurpleImage *img)
 {
 	MsnSession *session;
 	MsnUser *user;
@@ -2725,7 +2725,6 @@ msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	gpointer _info2_data)
 {
 	MsnGetInfoStepTwoData *info2_data = _info2_data;
-	int id = -1;
 
 	/* Unmarshall the saved state */
 	MsnGetInfoData *info_data = info2_data->info_data;
@@ -2737,14 +2736,21 @@ msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	/* Try to put the photo in there too, if there's one and is readable */
 	if (response && purple_http_response_is_successful(response))
 	{
+		PurpleImage *img;
 		char buf[1024];
 		const gchar *photo_data;
 		size_t len;
+		guint img_id;
 
 		photo_data = purple_http_response_get_data(response, &len);
 		purple_debug_info("msn", "%s is %" G_GSIZE_FORMAT " bytes\n", photo_url_text, len);
-		id = purple_imgstore_new_with_id(g_memdup(photo_data, len), len, NULL);
-		g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
+
+		img = purple_image_new_from_data(g_memdup(photo_data, len), len);
+		img_id = purple_image_store_add_temporary(img);
+		g_object_unref(img);
+
+		g_snprintf(buf, sizeof(buf), "<img id=\""
+			PURPLE_IMAGE_STORE_PROTOCOL "%u\"><br>", img_id);
 		purple_notify_user_info_prepend_pair_html(user_info, NULL, buf);
 	}
 
@@ -2760,8 +2766,6 @@ msn_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 #if PHOTO_SUPPORT
 	g_free(photo_url_text);
 	g_free(info2_data);
-	if (id != -1)
-		purple_imgstore_unref_by_id(id);
 #endif
 }
 
