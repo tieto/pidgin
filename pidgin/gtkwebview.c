@@ -599,7 +599,7 @@ webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 	WebKitWebView *webview;
 	PurpleImage *image;
 	GtkFileChooserDialog *dialog;
-	gchar *filename;
+	const gchar *filename;
 	GtkWidget *parent;
 
 	webview = g_object_get_data(G_OBJECT(image_node), "pidgin-gtkwebview");
@@ -620,11 +620,9 @@ webview_image_save(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 
-	/* TODO: use image's file name, if there is one */
-	filename = g_strdup_printf(_("image.%s"),
-		purple_image_get_extension(image));
+	filename = purple_image_get_friendly_filename(image);
+	g_warn_if_fail(filename != NULL);
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
-	g_free(filename);
 
 	g_signal_connect(G_OBJECT(dialog), "response",
 		G_CALLBACK(webview_image_saved), NULL);

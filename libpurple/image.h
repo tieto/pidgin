@@ -116,6 +116,9 @@ purple_image_generate_filename(PurpleImage *image);
 void
 purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename);
 
+const gchar *
+purple_image_get_friendly_filename(PurpleImage *image);
+
 PurpleImage *
 purple_image_transfer_new(void);
 

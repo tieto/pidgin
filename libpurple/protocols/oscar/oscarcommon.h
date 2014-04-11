@@ -26,8 +26,6 @@
 
 #include "internal.h"
 
-#include "imgstore.h" /* TODO: temp */
-
 #include "accountopt.h"
 #include "prpl.h"
 #include "version.h"
@@ -98,7 +96,7 @@ void oscar_move_buddy(PurpleConnection *gc, const char *name, const char *old_gr
 void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup *group, GList *moved_buddies);
 void oscar_convo_closed(PurpleConnection *gc, const char *who);
 const char *oscar_normalize(const PurpleAccount *account, const char *str);
-void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img);
+void oscar_set_icon(PurpleConnection *gc, PurpleImage *img);
 void oscar_remove_group(PurpleConnection *gc, PurpleGroup *group);
 gboolean oscar_can_receive_file(PurpleConnection *gc, const char *who);
 void oscar_send_file(PurpleConnection *gc, const char *who, const char *file);

@@ -35,6 +35,7 @@ typedef struct {
 	const gchar *extension;
 	const gchar *mime;
 	gchar *gen_filename;
+	gchar *friendly_filename;
 
 	gboolean is_ready;
 	gboolean has_failed;
@@ -375,8 +376,49 @@ purple_image_generate_filename(PurpleImage *image)
 void
 purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename)
 {
-	/* TODO */
-	/* filter with g_path_get_basename() and purple_escape_filename() */
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	gchar *newname;
+	const gchar *escaped;
+
+	g_return_if_fail(priv != NULL);
+
+	newname = g_path_get_basename(filename);
+	escaped = purple_escape_filename(newname);
+	g_free(newname);
+	newname = NULL;
+
+	if (g_strcmp0(escaped, "") == 0 || g_strcmp0(escaped, ".") == 0 ||
+		g_strcmp0(escaped, G_DIR_SEPARATOR_S) == 0 ||
+		g_strcmp0(escaped, "/") == 0 || g_strcmp0(escaped, "\\") == 0)
+	{
+		escaped = NULL;
+	}
+
+	g_free(priv->friendly_filename);
+	priv->friendly_filename = g_strdup(escaped);
+}
+
+const gchar *
+purple_image_get_friendly_filename(PurpleImage *image)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	if (G_UNLIKELY(!priv->friendly_filename)) {
+		const gchar *newname = purple_image_generate_filename(image);
+		gsize newname_len = strlen(newname);
+
+		if (newname_len < 10)
+			return NULL;
+
+		/* let's use last 6 characters from checksum + 4 characters
+		 * from file ext */
+		newname += newname_len - 10;
+		priv->friendly_filename = g_strdup(newname);
+	}
+
+	return priv->friendly_filename;
 }
 
 PurpleImage *
@@ -473,6 +515,7 @@ purple_image_finalize(GObject *obj)
 		g_string_free(priv->contents, TRUE);
 	g_free(priv->path);
 	g_free(priv->gen_filename);
+	g_free(priv->friendly_filename);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
