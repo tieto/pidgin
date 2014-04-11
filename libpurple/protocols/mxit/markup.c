@@ -1005,20 +1005,15 @@ void mxit_parse_markup( struct RXMsgData* mx, char* message, int len, short msgt
 /*------------------------------------------------------------------------
  * Insert an inline image command.
  *
- *  @param mx				The message text as processed so far.
- *  @oaram id				The image store ID of the inline image.
+ *  @param mx    The message text as processed so far.
+ *  @oaram image The PurpleImage of the inline image.
  */
 static void
-inline_image_add(GString* mx, guint id)
+inline_image_add(GString* mx, PurpleImage *image)
 {
-	PurpleImage *image;
 	gconstpointer img_data;
 	gsize img_size;
 	gchar* enc;
-
-	image = purple_image_store_get(id);
-	if (image == NULL)
-		return;
 
 	img_data = purple_image_get_data(image);
 	img_size = purple_image_get_size(image);
@@ -1136,12 +1131,12 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 					"<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL))
 				{
 					/* inline image */
-					guint imgid;
+					PurpleImage *img;
+					img = purple_image_store_get_from_uri(
+						&message[i + sizeof("<img src=\"") - 1]);
 
-					if (sscanf(&message[i + sizeof("<img src=\""
-						PURPLE_IMAGE_STORE_PROTOCOL)-1], "%u", &imgid))
-					{
-						inline_image_add( mx, imgid );
+					if (img) {
+						inline_image_add(mx, img);
 						*msgtype = CP_MSGTYPE_COMMAND;		/* inline image must be sent as a MXit command */
 					}
 				}

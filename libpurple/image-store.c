@@ -158,12 +158,16 @@ purple_image_store_get(guint id)
 	return g_hash_table_lookup(id_to_image, GINT_TO_POINTER(id));
 }
 
+/* TODO: handle PURPLE_IMAGE_STORE_STOCK_PROTOCOL */
 PurpleImage *
 purple_image_store_get_from_uri(const gchar *uri)
 {
 	guint64 longid;
 	guint id;
 	gchar *endptr;
+	gchar endchar;
+
+	g_return_val_if_fail(uri != NULL, NULL);
 
 	if (!purple_str_has_prefix(uri, PURPLE_IMAGE_STORE_PROTOCOL))
 		return NULL;
@@ -173,8 +177,12 @@ purple_image_store_get_from_uri(const gchar *uri)
 		return NULL;
 
 	longid = g_ascii_strtoull(uri, &endptr, 10);
-	if (endptr[0] != '\0')
+	endchar = endptr[0];
+	if (endchar != '\0' && endchar != '"' &&
+		endchar != '\'' && endchar != ' ')
+	{
 		return NULL;
+	}
 
 	id = longid;
 	if (id != longid)

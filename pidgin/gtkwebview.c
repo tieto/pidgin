@@ -148,15 +148,8 @@ webview_resource_loading(WebKitWebView *webview,
 	const gchar *path;
 
 	uri = webkit_network_request_get_uri(request);
-	if (purple_str_has_prefix(uri, PURPLE_IMAGE_STORE_PROTOCOL)) {
-		guint id;
-
-		uri += sizeof(PURPLE_IMAGE_STORE_PROTOCOL) - 1;
-		id = strtoul(uri, NULL, 10);
-
-		img = purple_image_store_get(id);
-		if (!img)
-			return;
+	if ((img = purple_image_store_get_from_uri(uri)) != NULL) {
+		/* noop */
 	} else if (purple_str_has_prefix(uri, PURPLE_IMAGE_STORE_STOCK_PROTOCOL)) {
 		gchar *p_uri, *found;
 		const gchar *domain, *stock_name;

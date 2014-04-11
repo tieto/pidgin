@@ -3011,14 +3011,8 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 		}
 
 		src = g_datalist_get_data(&attribs, "src");
-
-		if (src != NULL && purple_str_has_caseprefix(src,
-			PURPLE_IMAGE_STORE_PROTOCOL))
-		{
-			guint imgid = atoi(src +
-				sizeof(PURPLE_IMAGE_STORE_PROTOCOL) - 1);
-			image = purple_image_store_get(imgid);
-		}
+		if (src)
+			image = purple_image_store_get_from_uri(src);
 
 		/* ... if it refers to a valid purple image ... */
 		if (image) {

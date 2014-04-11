@@ -576,15 +576,9 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 			ggp_image_prepare_result res = -1;
 			PurpleImage *image = NULL;
 
-			if ((val = g_hash_table_lookup(attribs, "src")) != NULL
-				&& g_str_has_prefix(val,
-				PURPLE_IMAGE_STORE_PROTOCOL))
-			{
-				guint image_id;
-				val += strlen(PURPLE_IMAGE_STORE_PROTOCOL);
-				if (sscanf(val, "%u", &image_id) == 1)
-					image = purple_image_store_get(image_id);
-			}
+			val = g_hash_table_lookup(attribs, "src");
+			if (val)
+				image = purple_image_store_get_from_uri(val);
 
 			if (image != NULL)
 				res = ggp_image_prepare(conv, image, &id);
