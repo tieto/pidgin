@@ -93,7 +93,7 @@ libpurple/protocols/gg/chat.c
 libpurple/protocols/gg/deprecated.c
 libpurple/protocols/gg/edisc.c
 libpurple/protocols/gg/gg.c
-libpurple/protocols/gg/image.c
+libpurple/protocols/gg/image-prpl.c
 libpurple/protocols/gg/message-prpl.c
 libpurple/protocols/gg/multilogon.c
 libpurple/protocols/gg/pubdir-prpl.c
