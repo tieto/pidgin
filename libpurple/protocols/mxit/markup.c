@@ -1127,9 +1127,7 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 						tagstack = g_list_remove( tagstack, tag );
 						g_free( tag );
 					}
-				} else if (purple_str_has_prefix(&message[i],
-					"<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL))
-				{
+				} else if (purple_str_has_prefix(&message[i], "<img src=\"")) {
 					/* inline image */
 					PurpleImage *img;
 					img = purple_image_store_get_from_uri(
