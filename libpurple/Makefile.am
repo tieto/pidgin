@@ -105,7 +105,6 @@ purple_coresources = \
 	smiley-custom.c \
 	smiley-list.c \
 	smiley-parser.c \
-	smiley-remote.c \
 	smiley-theme.c \
 	smiley.c \
 	dnsquery.c \
@@ -186,7 +185,6 @@ purple_coreheaders = \
 	smiley-custom.h \
 	smiley-list.h \
 	smiley-parser.h \
-	smiley-remote.h \
 	smiley-theme.h \
 	smiley.h \
 	dnsquery.h \

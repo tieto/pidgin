@@ -56,6 +56,9 @@ purple_image_store_get(guint id);
 PurpleImage *
 purple_image_store_get_from_uri(const gchar *uri);
 
+gchar *
+purple_image_store_get_uri(PurpleImage *image);
+
 void
 _purple_image_store_init(void);
 

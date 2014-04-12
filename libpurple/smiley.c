@@ -34,26 +34,17 @@ typedef struct {
 	gchar *shortcut;
 	gchar *path;
 	PurpleImage *image;
-	gboolean is_ready;
 } PurpleSmileyPrivate;
 
 enum
 {
 	PROP_0,
 	PROP_SHORTCUT,
-	PROP_IS_READY,
 	PROP_PATH,
 	PROP_LAST
 };
 
-enum
-{
-	SIG_READY,
-	SIG_LAST
-};
-
 static GObjectClass *parent_class;
-static guint signals[SIG_LAST];
 static GParamSpec *properties[PROP_LAST];
 
 /*******************************************************************************
@@ -68,9 +59,26 @@ purple_smiley_new(const gchar *shortcut, const gchar *path)
 
 	return g_object_new(PURPLE_TYPE_SMILEY,
 		"shortcut", shortcut,
-		"is-ready", TRUE,
 		"path", path,
 		NULL);
+}
+
+PurpleSmiley *
+purple_smiley_new_remote(const gchar *shortcut)
+{
+	PurpleSmiley *smiley;
+	PurpleSmileyPrivate *priv;
+
+	g_return_val_if_fail(shortcut != NULL, NULL);
+
+	smiley = g_object_new(PURPLE_TYPE_SMILEY,
+		"shortcut", shortcut,
+		NULL);
+	priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
+
+	priv->image = purple_image_transfer_new();
+
+	return smiley;
 }
 
 const gchar *
@@ -81,16 +89,6 @@ purple_smiley_get_shortcut(const PurpleSmiley *smiley)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->shortcut;
-}
-
-gboolean
-purple_smiley_is_ready(const PurpleSmiley *smiley)
-{
-	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	return priv->is_ready;
 }
 
 const gchar *
@@ -183,9 +181,6 @@ purple_smiley_get_property(GObject *object, guint par_id, GValue *value,
 		case PROP_SHORTCUT:
 			g_value_set_string(value, priv->shortcut);
 			break;
-		case PROP_IS_READY:
-			g_value_set_boolean(value, priv->is_ready);
-			break;
 		case PROP_PATH:
 			g_value_set_string(value, priv->path);
 			break;
@@ -206,9 +201,6 @@ purple_smiley_set_property(GObject *object, guint par_id, const GValue *value,
 		case PROP_SHORTCUT:
 			g_free(priv->shortcut);
 			priv->shortcut = g_strdup(g_value_get_string(value));
-			break;
-		case PROP_IS_READY:
-			priv->is_ready = g_value_get_boolean(value);
 			break;
 		case PROP_PATH:
 			g_free(priv->path);
@@ -240,26 +232,11 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 		"A non-escaped textual representation of a smiley.", NULL,
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-	properties[PROP_IS_READY] = g_param_spec_boolean("is-ready", "Is ready",
-		"Determines, if a smiley is ready to be displayed.", TRUE,
-		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-
 	properties[PROP_PATH] = g_param_spec_string("path", "Path",
 		"The full path to the smiley image file.", NULL,
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
-
-	/**
-	 * PurpleSmiley::ready:
-	 * @smiley: a smiley that became ready.
-	 *
-	 * Called when a @smiley becames ready to be displayed. It's guaranteed to be
-	 * fired at most once for a particular @smiley.
-	 */
-	signals[SIG_READY] = g_signal_new("ready", G_OBJECT_CLASS_TYPE(klass),
-		0, 0, NULL, NULL,
-		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 GType

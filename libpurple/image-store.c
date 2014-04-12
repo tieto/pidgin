@@ -191,6 +191,25 @@ purple_image_store_get_from_uri(const gchar *uri)
 	return purple_image_store_get(id);
 }
 
+gchar *
+purple_image_store_get_uri(PurpleImage *image)
+{
+	gboolean is_ready;
+	const gchar *path;
+	guint img_id;
+
+	g_return_val_if_fail(PURPLE_IS_IMAGE(image), NULL);
+
+	is_ready = purple_image_is_ready(image);
+	path = purple_image_get_path(image);
+
+	if (is_ready && path)
+		return g_filename_to_uri(path, NULL, NULL);
+
+	img_id = purple_image_store_add_weak(image);
+	return g_strdup_printf(PURPLE_IMAGE_STORE_PROTOCOL "%u", img_id);
+}
+
 void
 _purple_image_store_init(void)
 {

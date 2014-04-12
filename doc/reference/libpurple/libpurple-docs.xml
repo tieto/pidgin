@@ -116,7 +116,6 @@
       <title>Smiley APIs</title>
 
         <xi:include href="xml/smiley.xml" />
-        <xi:include href="xml/smiley-remote.xml" />
         <xi:include href="xml/smiley-custom.xml" />
         <xi:include href="xml/smiley-list.xml" />
         <xi:include href="xml/smiley-theme.xml" />

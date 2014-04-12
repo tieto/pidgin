@@ -97,9 +97,13 @@ purple_smiley_list_new(void)
 }
 
 static void
-remote_smiley_failed(PurpleSmiley *smiley, gpointer _list)
+remote_smiley_failed(PurpleImage *smiley_img, gpointer _list)
 {
 	PurpleSmileyList *list = _list;
+	PurpleSmiley *smiley;
+
+	smiley = g_object_get_data(G_OBJECT(smiley_img),
+		"purple-smiley-list-smiley");
 
 	purple_debug_info("smiley-list", "remote smiley '%s' has failed, "
 		"removing it from the list...",
@@ -112,6 +116,7 @@ gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+	PurpleImage *smiley_img;
 	const gchar *smiley_path;
 	gboolean succ;
 	gchar *shortcut_escaped;
@@ -145,12 +150,11 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 
 	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
 
-	/* We don't expect non-remote non-ready smileys, but let's check it just
-	 * to be safe. */
-	if (priv->drop_failed_remotes && !purple_smiley_is_ready(smiley) &&
-		PURPLE_IS_REMOTE_SMILEY(smiley))
-	{
-		g_signal_connect_object(smiley, "failed",
+	smiley_img = purple_smiley_get_image(smiley);
+	if (priv->drop_failed_remotes && !purple_image_is_ready(smiley_img)) {
+		g_object_set_data(G_OBJECT(smiley_img),
+			"purple-smiley-list-smiley", smiley);
+		g_signal_connect_object(smiley_img, "failed",
 			G_CALLBACK(remote_smiley_failed), list, 0);
 	}
 

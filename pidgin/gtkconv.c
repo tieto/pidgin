@@ -185,6 +185,8 @@ static GHashTable *e2ee_stock = NULL;
 
 static PurpleTheme *default_conv_theme = NULL;
 
+static GRegex *image_store_tag_re = NULL;
+
 static gboolean update_send_to_selection(PidginConvWindow *win);
 static void generate_send_to_items(PidginConvWindow *win);
 
@@ -6568,92 +6570,121 @@ replace_message_tokens(
 	return g_string_free(str, FALSE);
 }
 
-static gulong
-pidgin_smiley_get_unique_id(PurpleSmiley *smiley)
+static gboolean
+pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
+	PurpleConversation *conv, gpointer _proto_name)
 {
-	static gulong max_id = 0;
-	gulong id;
-	g_return_val_if_fail(smiley != NULL, 0);
+	PurpleImage *image;
+	gchar *escaped_shortcut;
+	gchar *uri;
 
-	id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(smiley),
-		"pidgin-conv-smiley-unique-id"));
-	if (id != 0)
-		return id;
+	escaped_shortcut = g_markup_escape_text(
+		purple_smiley_get_shortcut(smiley), -1);
+	image = purple_smiley_get_image(smiley);
+	uri = purple_image_store_get_uri(image);
 
-	id = ++max_id;
+	g_string_append_printf(out,
+		"<img class=\"emoticon\" alt=\"%s\" title=\"%s\" "
+		"src=\"%s\" />", escaped_shortcut,
+		escaped_shortcut, uri);
 
-	g_object_set_data(G_OBJECT(smiley), "pidgin-conv-smiley-unique-id",
-		GINT_TO_POINTER(id));
+	g_free(uri);
+	g_free(escaped_shortcut);
 
-	return id;
+	return TRUE;
 }
 
 static void
-pidgin_conv_remote_smiley_got(PurpleSmiley *smiley, gpointer _conv)
+remote_image_got(PurpleImage *image, gpointer _conv)
 {
 	PurpleConversation *conv = _conv;
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-	PurpleImage *img;
-	gulong smiley_id;
 	guint image_id;
 	gchar *js;
 
 	if (!gtkconv)
 		return;
 
-	img = purple_smiley_get_image(smiley);
-	smiley_id = pidgin_smiley_get_unique_id(smiley);
-	image_id = purple_image_store_add(img);
+	image_id = purple_image_store_add_temporary(image);
 
-	purple_debug_info("gtkconv", "Smiley '%s' (%ld) is ready for display",
-		purple_smiley_get_shortcut(smiley), smiley_id);
+	purple_debug_info("gtkconv", "Remote image %u is ready for display",
+		image_id);
 
-	js = g_strdup_printf("emoticonIsReady(%ld, '"
-		PURPLE_IMAGE_STORE_PROTOCOL "%u')", smiley_id, image_id);
+	js = g_strdup_printf("remoteImageIsReady(%u)", image_id);
 	pidgin_webview_safe_execute_script(
 		PIDGIN_WEBVIEW(gtkconv->webview), js);
 	g_free(js);
 }
 
 static gboolean
-pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
-	PurpleConversation *conv, gpointer _proto_name)
+box_remote_image_cb(const GMatchInfo *info, GString *result, gpointer _conv)
 {
-	gchar *escaped_shortcut;
-	const gchar *path = purple_smiley_get_path(smiley);
-	const gchar *path_prefix = "";
+	PurpleConversation *conv = _conv;
+	gchar *uri, *before, *after, *full, *alt;
+	PurpleImage *image;
+	guint img_id;
 
-#ifdef _WIN32
-	path_prefix = "file:///";
-#endif
+	uri = g_match_info_fetch(info, 2);
+	image = purple_image_store_get_from_uri(uri);
+	g_free(uri);
 
-	escaped_shortcut = g_markup_escape_text(
-		purple_smiley_get_shortcut(smiley), -1);
+	full = g_match_info_fetch(info, 0);
 
-	if (purple_smiley_is_ready(smiley) && path) {
-		g_string_append_printf(out,
-			"<img class=\"emoticon\" alt=\"%s\" title=\"%s\" "
-			"src=\"%s%s\" />", escaped_shortcut,
-			escaped_shortcut, path_prefix, path);
-	} else if (purple_smiley_is_ready(smiley) && !path) {
-		PurpleImage *img = purple_smiley_get_image(smiley);
-		guint imgid = purple_image_store_add(img);
-
-		g_string_append_printf(out, "<img class=\"emoticon\" "
-			"alt=\"%s\" title=\"%s\" src=\""
-			PURPLE_IMAGE_STORE_PROTOCOL "%u\" />",
-			escaped_shortcut, escaped_shortcut, imgid);
-	} else {
-		g_string_append_printf(out, "<span class=\"emoticon pending "
-			"emoticon-id-%ld\">%s</span>",
-			pidgin_smiley_get_unique_id(smiley), escaped_shortcut);
-		g_signal_connect_object(smiley, "ready",
-			G_CALLBACK(pidgin_conv_remote_smiley_got), conv, 0);
+	if (purple_image_is_ready(image)) {
+		g_string_append(result, full);
+		g_free(full);
+		return FALSE;
 	}
 
-	g_free(escaped_shortcut);
+	/* search for alt */
+	alt = strstr(full, "alt=\"");
+	if (alt) {
+		gchar *end;
+		alt += strlen("alt=\"");
+		end = strstr(alt, "\"");
+		if (end)
+			end[0] = '\0';
+		else
+			alt = NULL;
+		if (alt[0] == '\0')
+			alt = NULL;
+	}
 
-	return TRUE;
+	/* add for ever - we don't know, when transfer finishes */
+	img_id = purple_image_store_add(image);
+
+	before = g_match_info_fetch(info, 1);
+	after = g_match_info_fetch(info, 3);
+
+	g_string_append_printf(result, "<span class=\"pending-image "
+		"pending-image-id-%u\">", img_id);
+
+	if (alt)
+		g_string_append(result, alt);
+	else
+		g_string_append(result, "&lt;img&gt;");
+
+	g_string_append(result, before);
+	g_string_append(result, "about:blank");
+	g_string_append(result, after);
+
+	g_string_append(result, "</span>");
+
+	g_free(before);
+	g_free(after);
+	g_free(full);
+
+	g_signal_connect_object(image, "ready",
+		G_CALLBACK(remote_image_got), conv, 0);
+
+	return FALSE;
+}
+
+static gchar *
+box_remote_images(PurpleConversation *conv, const gchar *msg)
+{
+	return g_regex_replace_eval(image_store_tag_re, msg, -1, 0, 0,
+		box_remote_image_cb, conv, NULL);
 }
 
 static void
@@ -6686,6 +6717,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	char *escape;
 	char *script;
 	char *smileyed;
+	gchar *imgized;
 	PurpleMessageFlags old_flags;
 	const char *func = "appendMessage";
 
@@ -6785,7 +6817,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	smileyed = purple_smiley_parser_smileify(conv, displaying,
 		(flags & PURPLE_MESSAGE_RECV), pidgin_conv_write_smiley,
 		(gpointer)purple_account_get_protocol_name(account));
-	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
+	imgized = box_remote_images(conv, smileyed);
+	msg = replace_message_tokens(message_html, conv, name, alias, imgized, flags, mtime);
 	escape = pidgin_webview_quote_js_string(msg ? msg : "");
 	script = g_strdup_printf("%s(%s)", func, escape);
 
@@ -6794,6 +6827,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	g_free(script);
 	g_free(smileyed);
+	g_free(imgized);
 	g_free(msg);
 	g_free(escape);
 
@@ -8668,6 +8702,10 @@ pidgin_conversations_init(void)
 	e2ee_stock = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, g_object_unref);
 
+	image_store_tag_re = g_regex_new("(<img [^>]*src=\")("
+		PURPLE_IMAGE_STORE_PROTOCOL "[0-9]+)(\"[^>]*>)",
+		G_REGEX_OPTIMIZE | G_REGEX_DOTALL, 0, NULL);
+
 	/* Conversations */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/themes");
@@ -8981,6 +9019,9 @@ pidgin_conversations_uninit(void)
 	purple_prefs_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_unregister_by_instance(pidgin_conversations_get_handle());
+
+	g_regex_unref(image_store_tag_re);
+	image_store_tag_re = NULL;
 }
 
 /**************************************************************************

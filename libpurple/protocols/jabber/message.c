@@ -489,19 +489,20 @@ jabber_message_add_remote_smileys(JabberStream *js, const gchar *who,
 static void
 jabber_message_remote_smiley_got(JabberData *data, gchar *alt, gpointer _smiley)
 {
-	PurpleRemoteSmiley *smiley = _smiley;
+	PurpleSmiley *smiley = _smiley;
+	PurpleImage *image = purple_smiley_get_image(smiley);
 
 	g_free(alt); /* we really don't need it */
 
 	if (data) {
 		purple_debug_info("jabber",
 			"smiley data retrieved successfully");
-		purple_remote_smiley_write(smiley, jabber_data_get_data(data),
+		purple_image_transfer_write(image, jabber_data_get_data(data),
 			jabber_data_get_size(data));
-		purple_remote_smiley_close(smiley);
+		purple_image_transfer_close(image);
 	} else {
 		purple_debug_error("jabber", "failed retrieving smiley data");
-		purple_remote_smiley_failed(smiley);
+		purple_image_transfer_failed(image);
 	}
 
 	g_object_unref(smiley);
@@ -511,7 +512,7 @@ static void
 jabber_message_remote_smiley_add(JabberStream *js, PurpleConversation *conv,
 	const gchar *from, const gchar *shortcut, const gchar *cid)
 {
-	PurpleRemoteSmiley *smiley;
+	PurpleSmiley *smiley;
 	const JabberData *jdata;
 
 	purple_debug_misc("jabber", "about to add remote smiley %s to the conv",
@@ -527,11 +528,13 @@ jabber_message_remote_smiley_add(JabberStream *js, PurpleConversation *conv,
 
 	jdata = jabber_data_find_remote_by_cid(js, from, cid);
 	if (jdata) {
+		PurpleImage *image = purple_smiley_get_image(smiley);
+
 		purple_debug_info("jabber", "smiley data is already known");
 
-		purple_remote_smiley_write(smiley, jabber_data_get_data(jdata),
+		purple_image_transfer_write(image, jabber_data_get_data(jdata),
 			jabber_data_get_size(jdata));
-		purple_remote_smiley_close(smiley);
+		purple_image_transfer_close(image);
 	} else {
 		gchar *alt = g_strdup(shortcut); /* it it really necessary? */
 

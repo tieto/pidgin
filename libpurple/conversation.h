@@ -196,7 +196,6 @@ struct _PurpleConversationClass {
 #include "e2ee.h"
 #include "log.h"
 #include "smiley-list.h"
-#include "smiley-remote.h"
 
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
@@ -686,7 +685,7 @@ purple_conversation_get_max_message_size(PurpleConversation *conv);
  * Returns: (transfer none): New smiley, or %NULL if it's already being
  *          retrieved (or possibly, in case of error).
  */
-PurpleRemoteSmiley *
+PurpleSmiley *
 purple_conversation_add_remote_smiley(PurpleConversation *conv,
 	const gchar *shortcut);
 
@@ -703,7 +702,7 @@ purple_conversation_add_remote_smiley(PurpleConversation *conv,
  *
  * Returns: (transfer none): The smiley, or %NULL if it doesn't exists.
  */
-PurpleRemoteSmiley *
+PurpleSmiley *
 purple_conversation_get_remote_smiley(PurpleConversation *conv,
 	const gchar *shortcut);
 

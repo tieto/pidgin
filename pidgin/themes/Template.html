@@ -8,6 +8,8 @@
 		// Any percent signs in this file must be escaped!
 		// Use two escape signs (%%) to display it, this is passed through a format call!
 
+		var PURPLE_IMAGE_STORE_PROTOCOL = 'purple-image:';
+
 		function appendHTML(html) {
 			var node = document.getElementById("Chat");
 			var range = document.createRange();
@@ -244,7 +246,7 @@
 			setTimeout(scrollToBottom, 10);
 		}
 
-		function emoticonIsReady(emoticonId, url) {
+		function remoteImageIsReady(id) {
 			var shouldScroll = nearBottom();
 			var emoticons;
 
@@ -257,15 +259,12 @@
 			 * won't do it until anyone complains.
 			 */
 
-			emoticons = document.getElementsByClassName('emoticon-id-' + emoticonId);
+			emoticons = document.getElementsByClassName(
+				'pending-image-id-' + id);
 			for (var i = 0; i < emoticons.length; i++) {
 				var node = emoticons[i];
-				var img = document.createElement('img');
-				var alt = node.textContent.trim();
-				img.setAttribute('src', url);
-				img.setAttribute('alt', alt);
-				img.setAttribute('title', alt);
-				img.className = 'emoticon';
+				var img = node.getElementsByTagName('img')[0];
+				img.setAttribute('src', PURPLE_IMAGE_STORE_PROTOCOL + id);
 				node.parentNode.replaceChild(img, node);
 			}
 

@@ -108,6 +108,12 @@ PurpleSmiley *
 purple_smiley_new(const gchar *shortcut, const gchar *path);
 
 /**
+ * Consider using #purple_conversation_add_remote_smiley.
+ */
+PurpleSmiley *
+purple_smiley_new_remote(const gchar *shortcut);
+
+/**
  * purple_smiley_get_shortcut:
  * @smiley: the smiley.
  *
@@ -120,22 +126,6 @@ const gchar *
 purple_smiley_get_shortcut(const PurpleSmiley *smiley);
 
 /**
- * purple_smiley_is_ready:
- * @smiley: the smiley.
- *
- * Checks, if the @smiley is ready to be displayed. For #PurpleSmiley it's
- * always %TRUE, but for deriving classes it may vary.
- *
- * Being ready means either its #PurpleSmiley:path is set and file exists,
- * or its contents is available via #purple_smiley_get_image. The latter is
- * always true, but not always efficient.
- *
- * Returns: %TRUE, if the @smiley is ready to be displayed.
- */
-gboolean
-purple_smiley_is_ready(const PurpleSmiley *smiley);
-
-/**
  * purple_smiley_get_path:
  * @smiley: the smiley.
  *
@@ -143,6 +133,8 @@ purple_smiley_is_ready(const PurpleSmiley *smiley);
  *
  * A @smiley may not be saved to disk (the path will be NULL), but could still be
  * accessible using #purple_smiley_get_data.
+ *
+ * TODO: I think we don't need it too.
  *
  * Returns: a full path to the file, or %NULL if it's not stored to the disk
  *          or an error occured.
