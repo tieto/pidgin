@@ -752,8 +752,8 @@ smileys_load_button_thumbs(GList *smileys)
 			continue;
 		}
 
-		pixbuf = pidgin_pixbuf_new_from_file(
-			purple_smiley_get_path(smiley));
+		pixbuf = pidgin_pixbuf_from_image(
+			purple_smiley_get_image(smiley));
 		pixbuf = pidgin_pixbuf_scale_down(pixbuf,
 			24, 24, GDK_INTERP_BILINEAR, TRUE);
 

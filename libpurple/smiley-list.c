@@ -86,6 +86,12 @@ _list_delete_link2(GList **head_p, GList **tail_p, GList *link)
 	*head_p = g_list_delete_link(head, link);
 }
 
+static const gchar *
+smiley_get_uniqid(PurpleSmiley *smiley)
+{
+	return purple_image_get_path(purple_smiley_get_image(smiley));
+}
+
 /*******************************************************************************
  * API implementation
  ******************************************************************************/
@@ -158,7 +164,7 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 			G_CALLBACK(remote_smiley_failed), list, 0);
 	}
 
-	smiley_path = purple_smiley_get_path(smiley);
+	smiley_path = smiley_get_uniqid(smiley);
 
 	/* TODO: add to the table, when the smiley sets the path */
 	if (!smiley_path)
@@ -192,7 +198,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 		"purple-smiley-list-elem");
 
 	shortcut = purple_smiley_get_shortcut(smiley);
-	path = purple_smiley_get_path(smiley);
+	path = smiley_get_uniqid(smiley);
 
 	g_hash_table_remove(priv->shortcut_map, shortcut);
 	if (path)
@@ -208,7 +214,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	for (it = priv->smileys; it && path; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
 
-		if (g_strcmp0(purple_smiley_get_path(smiley), path) == 0) {
+		if (g_strcmp0(smiley_get_uniqid(smiley), path) == 0) {
 			g_hash_table_insert(priv->path_map,
 				g_strdup(path), smiley);
 			break;
@@ -267,7 +273,7 @@ purple_smiley_list_get_unique(PurpleSmileyList *list)
 
 	for (it = priv->smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
-		const gchar *path = purple_smiley_get_path(smiley);
+		const gchar *path = smiley_get_uniqid(smiley);
 
 		if (g_hash_table_lookup(unique_map, path))
 			continue;

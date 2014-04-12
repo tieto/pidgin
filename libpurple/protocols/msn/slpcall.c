@@ -248,7 +248,7 @@ find_valid_emoticon(PurpleAccount *account, const char *path)
 	for (it = smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
 
-		if (g_strcmp0(path, purple_smiley_get_path(smiley)) == 0) {
+		if (g_strcmp0(path, purple_image_get_path(purple_smiley_get_image(smiley))) == 0) {
 			PurpleImage *img;
 
 			g_list_free(smileys);

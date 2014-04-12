@@ -1486,8 +1486,10 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 		emoticon = g_new0(MsnEmoticon, 1);
 		emoticon->smile = g_strdup(purple_smiley_get_shortcut(smiley));
 		emoticon->ps = smiley;
+		/* TODO: we are leaking file location, consider using
+		 * purple_image_get_friendly_filename. */
 		emoticon->obj = msn_object_new_from_image(img,
-			purple_smiley_get_path(smiley),
+			purple_image_get_path(purple_smiley_get_image(smiley)),
 			username, MSN_OBJECT_EMOTICON);
 
 		list = g_slist_prepend(list, emoticon);

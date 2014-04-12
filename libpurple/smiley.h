@@ -126,23 +126,6 @@ const gchar *
 purple_smiley_get_shortcut(const PurpleSmiley *smiley);
 
 /**
- * purple_smiley_get_path:
- * @smiley: the smiley.
- *
- * Returns a full path to a @smiley image file.
- *
- * A @smiley may not be saved to disk (the path will be NULL), but could still be
- * accessible using #purple_smiley_get_data.
- *
- * TODO: I think we don't need it too.
- *
- * Returns: a full path to the file, or %NULL if it's not stored to the disk
- *          or an error occured.
- */
-const gchar *
-purple_smiley_get_path(PurpleSmiley *smiley);
-
-/**
  * purple_smiley_get_image:
  * @smiley: the smiley.
  *

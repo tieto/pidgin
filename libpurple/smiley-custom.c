@@ -126,7 +126,8 @@ smileys_to_xmlnode(void)
 		purple_xmlnode_set_attrib(smiley_node, "shortcut",
 			purple_smiley_get_shortcut(smiley));
 		purple_xmlnode_set_attrib(smiley_node, "filename",
-			g_path_get_basename(purple_smiley_get_path(smiley)));
+			g_path_get_basename(purple_image_get_path(
+				purple_smiley_get_image(smiley))));
 	}
 
 	return root_node;
@@ -253,13 +254,15 @@ purple_smiley_custom_remove(PurpleSmiley *smiley)
 	g_object_ref(smiley);
 	purple_smiley_list_remove(smileys_list, smiley);
 
-	path = purple_smiley_get_path(smiley);
+	path = purple_image_get_path(purple_smiley_get_image(smiley));
 
 	other_smileys = purple_smiley_list_get_unique(smileys_list);
 	is_unique = TRUE;
 	for (it = other_smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *other = it->data;
-		if (g_strcmp0(purple_smiley_get_path(other), path) == 0) {
+		const gchar *other_path = purple_image_get_path(
+			purple_smiley_get_image(other));
+		if (g_strcmp0(other_path, path) == 0) {
 			is_unique = FALSE;
 			break;
 		}

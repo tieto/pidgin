@@ -91,7 +91,7 @@ purple_smiley_get_shortcut(const PurpleSmiley *smiley)
 	return priv->shortcut;
 }
 
-const gchar *
+static const gchar *
 purple_smiley_get_path(PurpleSmiley *smiley)
 {
 	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
