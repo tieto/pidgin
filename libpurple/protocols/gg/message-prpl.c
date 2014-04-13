@@ -41,10 +41,6 @@
 #define GGP_GG10_DEFAULT_FORMAT_REPLACEMENT "<span>"
 #define GGP_GG11_FORCE_COMPAT FALSE
 
-/* TODO: we don't need "pending images" anymore */
-#define GGP_IMAGE_REPLACEMENT "<img id=\"gg-pending-image-" GGP_IMAGE_ID_FORMAT "\">"
-#define GGP_IMAGE_DESTINATION "<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL "%u\">"
-
 typedef struct
 {
 	enum
@@ -58,7 +54,6 @@ typedef struct
 	gchar *text;
 	time_t time;
 	uint64_t chat_id;
-	GList *pending_images;
 
 	PurpleConnection *gc;
 } ggp_message_got_data;
@@ -73,7 +68,6 @@ static ggp_message_global_data global_data;
 
 struct _ggp_message_session_data
 {
-	GList *pending_messages;
 };
 
 typedef struct
@@ -91,8 +85,6 @@ static void ggp_font_free(gpointer font);
 static PurpleIMConversation * ggp_message_get_conv(PurpleConnection *gc,
 	uin_t uin);
 static void ggp_message_got_data_free(ggp_message_got_data *msg);
-static gboolean ggp_message_request_images(PurpleConnection *gc,
-	ggp_message_got_data *msg);
 static void ggp_message_got_display(PurpleConnection *gc,
 	ggp_message_got_data *msg);
 static void ggp_message_format_from_gg(ggp_message_got_data *msg,
@@ -135,8 +127,6 @@ void ggp_message_cleanup(PurpleConnection *gc)
 {
 	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
 
-	g_list_free_full(sdata->pending_messages,
-		(GDestroyNotify)ggp_message_got_data_free);
 	g_free(sdata);
 }
 
@@ -187,80 +177,8 @@ static PurpleIMConversation * ggp_message_get_conv(PurpleConnection *gc,
 
 static void ggp_message_got_data_free(ggp_message_got_data *msg)
 {
-	g_list_free_full(msg->pending_images, g_free);
 	g_free(msg->text);
 	g_free(msg);
-}
-
-static void
-ggp_message_request_images_got(PurpleConnection *gc, uint64_t id,
-	PurpleImage *image, gpointer _msg)
-{
-	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
-	ggp_message_got_data *msg = _msg;
-	GList *m_it, *i_it;
-	gchar *tmp, *tag_search, *tag_replace;
-	guint image_id;
-
-	m_it = g_list_find(sdata->pending_messages, msg);
-	if (!m_it) {
-		purple_debug_error("gg", "ggp_message_request_images_got: "
-			"message %p is not in queue\n", msg);
-		return;
-	}
-
-	i_it = g_list_find_custom(msg->pending_images, &id, ggp_int64_compare);
-	if (!i_it) {
-		purple_debug_error("gg", "ggp_message_request_images_got: "
-			"image " GGP_IMAGE_ID_FORMAT " is not present in this "
-			"message\n", id);
-		return;
-	}
-
-	image_id = purple_image_store_add(image);
-	tag_search = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
-	tag_replace = g_strdup_printf(GGP_IMAGE_DESTINATION, image_id);
-
-	tmp = msg->text;
-	msg->text = purple_strreplace(msg->text, tag_search, tag_replace);
-	g_free(tmp);
-
-	g_free(tag_search);
-	g_free(tag_replace);
-
-	g_free(i_it->data);
-	msg->pending_images = g_list_delete_link(msg->pending_images, i_it);
-	if (msg->pending_images != NULL) {
-		purple_debug_info("gg", "ggp_message_request_images_got: "
-			"got image " GGP_IMAGE_ID_FORMAT ", but the message "
-			"contains more of them\n", id);
-		return;
-	}
-
-	ggp_message_got_display(gc, msg);
-	ggp_message_got_data_free(msg);
-	sdata->pending_messages = g_list_delete_link(sdata->pending_messages,
-		m_it);
-}
-
-static gboolean ggp_message_request_images(PurpleConnection *gc,
-	ggp_message_got_data *msg)
-{
-	ggp_message_session_data *sdata = ggp_message_get_sdata(gc);
-	GList *it;
-	if (msg->pending_images == NULL)
-		return FALSE;
-
-	it = msg->pending_images;
-	while (it) {
-		ggp_image_request(gc, msg->user, *(uint64_t*)it->data,
-			ggp_message_request_images_got, msg);
-		it = g_list_next(it);
-	}
-
-	sdata->pending_messages = g_list_append(sdata->pending_messages, msg);
-
-	return TRUE;
 }
 
 void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
@@ -282,8 +200,6 @@ void ggp_message_got(PurpleConnection *gc, const struct gg_event_msg *ev)
 	}
 
 	ggp_message_format_from_gg(msg, ev->xhtml_message);
-	if (ggp_message_request_images(gc, msg))
-		return;
 
 	ggp_message_got_display(gc, msg);
 	ggp_message_got_data_free(msg);
@@ -309,8 +225,6 @@ void ggp_message_got_multilogon(PurpleConnection *gc,
 	}
 
 	ggp_message_format_from_gg(msg, ev->xhtml_message);
-	if (ggp_message_request_images(gc, msg))
-		return;
 
 	ggp_message_got_display(gc, msg);
 	ggp_message_got_data_free(msg);
@@ -348,38 +262,29 @@ static gboolean ggp_message_format_from_gg_found_img(const GMatchInfo *info,
 	gchar *name, *replacement;
 	int64_t id;
 	PurpleImage *image;
+	guint image_id;
 
 	name = g_match_info_fetch(info, 1);
 	if (sscanf(name, "%" G_GINT64_MODIFIER "x", &id) != 1)
 		id = 0;
 	g_free(name);
 	if (!id) {
-		g_string_append(res, "[");
-		g_string_append(res, _("broken image"));
-		g_string_append(res, "]");
+		/* TODO: stock broken image? */
+		g_string_append_printf(res, "[%s]", _("broken image"));
 		return FALSE;
 	}
 
-	image = ggp_image_get_cached(msg->gc, id);
-
-	if (image) {
-		guint image_id = purple_image_store_add(image);
-		purple_debug_info("gg", "ggp_message_format_from_gg_found_img: "
-			"getting image " GGP_IMAGE_ID_FORMAT " from cache", id);
-		replacement = g_strdup_printf(GGP_IMAGE_DESTINATION, image_id);
-		g_string_append(res, replacement);
-		g_free(replacement);
+	image = ggp_image_request(msg->gc, msg->user, id);
+	if (!image) {
+		purple_debug_warning("gg", "ggp_message_format_from_gg_"
+			"found_img: couldn't request image");
+		g_string_append_printf(res, "[%s]", _("broken image"));
 		return FALSE;
 	}
 
-	if (NULL == g_list_find_custom(msg->pending_images, &id,
-		ggp_int64_compare))
-	{
-		msg->pending_images = g_list_append(msg->pending_images,
-			ggp_uint64dup(id));
-	}
-
-	replacement = g_strdup_printf(GGP_IMAGE_REPLACEMENT, id);
+	image_id = purple_image_store_add_weak(image);
+	replacement = g_strdup_printf("<img src=\""
+		PURPLE_IMAGE_STORE_PROTOCOL "%u\">", image_id);
 	g_string_append(res, replacement);
 	g_free(replacement);
 
@@ -426,9 +331,8 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	gboolean font_changed = FALSE;
 	gboolean in_any_tag = FALSE;
 
-	/* TODO: verbose
-	 * purple_debug_info("gg", "ggp formatting text: [%s]\n", text);
-	 */
+	if (purple_debug_is_verbose())
+		purple_debug_info("gg", "ggp formatting text: [%s]", text);
 
 	/* default font */
 	font_base = ggp_font_new();

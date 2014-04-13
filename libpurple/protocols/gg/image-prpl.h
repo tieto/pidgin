@@ -45,10 +45,6 @@ typedef enum
 	GGP_IMAGE_PREPARE_TOO_BIG
 } ggp_image_prepare_result;
 
-typedef void
-(*ggp_image_request_cb)(PurpleConnection *gc, uint64_t id, PurpleImage *image,
-	gpointer user_data);
-
 void
 ggp_image_setup(PurpleConnection *gc);
 
@@ -66,11 +62,7 @@ void
 ggp_image_send(PurpleConnection *gc,
 	const struct gg_event_image_request *image_request);
 
-void
-ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
-	ggp_image_request_cb cb, gpointer user_data);
-
 PurpleImage *
-ggp_image_get_cached(PurpleConnection *gc, uint64_t id);
+ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id);
 
 #endif /* _GGP_IMAGE_H */

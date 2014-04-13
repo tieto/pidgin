@@ -419,6 +419,19 @@ purple_image_get_friendly_filename(PurpleImage *image)
 		priv->friendly_filename = g_strdup(newname);
 	}
 
+	if (G_UNLIKELY(priv->is_ready &&
+		strchr(priv->friendly_filename, '.') == NULL))
+	{
+		const gchar *ext = purple_image_get_extension(image);
+		gchar *tmp;
+		if (!ext)
+			return priv->friendly_filename;
+
+		tmp = g_strdup_printf("%s.%s", priv->friendly_filename, ext);
+		g_free(priv->friendly_filename);
+		priv->friendly_filename = tmp;
+	}
+
 	return priv->friendly_filename;
 }
 

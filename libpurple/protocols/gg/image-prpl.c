@@ -39,8 +39,7 @@
 
 struct _ggp_image_session_data
 {
-	GHashTable *got_images;
-	GHashTable *incoming_images;
+	GHashTable *recv_images;
 	GHashTable *sent_images;
 };
 
@@ -50,30 +49,12 @@ typedef struct
 	gchar *conv_name; /* TODO: callback */
 } ggp_image_sent;
 
-typedef struct
-{
-	GList *listeners;
-} ggp_image_requested;
-
-typedef struct
-{
-	ggp_image_request_cb cb;
-	gpointer user_data;
-} ggp_image_requested_listener;
-
 static void ggp_image_sent_free(gpointer _sent_image)
 {
 	ggp_image_sent *sent_image = _sent_image;
 	g_object_unref(sent_image->image);
 	g_free(sent_image->conv_name);
 	g_free(sent_image);
-}
-
-static void ggp_image_requested_free(gpointer data)
-{
-	ggp_image_requested *req = data;
-	g_list_free_full(req->listeners, g_free);
-	g_free(req);
 }
 
 static uint64_t ggp_image_params_to_id(uint32_t crc32, uint32_t size)
@@ -95,11 +76,8 @@ void ggp_image_setup(PurpleConnection *gc)
 
 	accdata->image_data = sdata;
 
-	sdata->got_images = g_hash_table_new_full(
+	sdata->recv_images = g_hash_table_new_full(
 		g_int64_hash, g_int64_equal, g_free, g_object_unref);
-	sdata->incoming_images = g_hash_table_new_full(
-		g_int64_hash, g_int64_equal, g_free,
-		ggp_image_requested_free);
 	sdata->sent_images = g_hash_table_new_full(
 		g_int64_hash, g_int64_equal, g_free,
 		ggp_image_sent_free);
@@ -109,8 +87,7 @@ void ggp_image_cleanup(PurpleConnection *gc)
 {
 	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 
-	g_hash_table_destroy(sdata->got_images);
-	g_hash_table_destroy(sdata->incoming_images);
+	g_hash_table_destroy(sdata->recv_images);
 	g_hash_table_destroy(sdata->sent_images);
 	g_free(sdata);
 }
@@ -160,43 +137,28 @@ void ggp_image_recv(PurpleConnection *gc,
 {
 	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
 	PurpleImage *img;
-	ggp_image_requested *req;
-	GList *it;
 	uint64_t id;
 
-	img = purple_image_new_from_data(
-		g_memdup(image_reply->image, image_reply->size),
-		image_reply->size);
-	purple_image_set_friendly_filename(img, image_reply->filename);
-
 	id = ggp_image_params_to_id(image_reply->crc32, image_reply->size);
+	img = g_hash_table_lookup(sdata->recv_images, &id);
+	if (!img) {
+		purple_debug_warning("gg", "ggp_image_recv: "
+			"image " GGP_IMAGE_ID_FORMAT " wasn't requested\n",
+			id);
+		return;
+	}
 
 	purple_debug_info("gg", "ggp_image_recv: got image "
 		"[crc=%u, size=%u, filename=%s, id=" GGP_IMAGE_ID_FORMAT "]",
 		image_reply->crc32, image_reply->size,
 		image_reply->filename, id);
 
-	g_object_ref(img);
-	g_hash_table_insert(sdata->got_images, ggp_uint64dup(id), img);
+	purple_image_set_friendly_filename(img, image_reply->filename);
 
-	req = g_hash_table_lookup(sdata->incoming_images, &id);
-	if (!req) {
-		purple_debug_warning("gg", "ggp_image_recv: "
-			"image " GGP_IMAGE_ID_FORMAT " wasn't requested\n",
-			id);
-		g_object_unref(img);
-		return;
-	}
-
-	it = g_list_first(req->listeners);
-	while (it) {
-		ggp_image_requested_listener *listener = it->data;
-		it = g_list_next(it);
-
-		listener->cb(gc, id, img, listener->user_data);
-	}
-	g_object_unref(img);
-	g_hash_table_remove(sdata->incoming_images, &id);
+	purple_image_transfer_write(img,
+		g_memdup(image_reply->image, image_reply->size),
+		image_reply->size);
+	purple_image_transfer_close(img);
 }
 
 void ggp_image_send(PurpleConnection *gc,
@@ -259,13 +221,12 @@ void ggp_image_send(PurpleConnection *gc,
 	}
 }
 
-void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
-	ggp_image_request_cb cb, gpointer user_data)
+PurpleImage *
+ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id)
 {
 	GGPInfo *accdata = purple_connection_get_protocol_data(gc);
 	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
-	ggp_image_requested *req;
-	ggp_image_requested_listener *listener;
+	PurpleImage *img;
 	uint32_t crc = id >> 32;
 	uint32_t size = id;
 
@@ -276,33 +237,24 @@ void ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id,
 		tmp = crc;
 		crc = size;
 		size = tmp;
+		id = ggp_image_params_to_id(crc, size);
 	}
 
-	req = g_hash_table_lookup(sdata->incoming_images, &id);
-	if (!req) {
-		req = g_new0(ggp_image_requested, 1);
-		g_hash_table_insert(sdata->incoming_images,
-			ggp_uint64dup(id), req);
+	img = g_hash_table_lookup(sdata->recv_images, &id);
+	if (img) {
 		purple_debug_info("gg", "ggp_image_request: "
-			"requesting image " GGP_IMAGE_ID_FORMAT "\n", id);
-		if (gg_image_request(accdata->session, uin, size, crc) != 0)
-			purple_debug_error("gg", "ggp_image_request: failed\n");
-	} else {
-		purple_debug_info("gg", "ggp_image_request: "
-			"image " GGP_IMAGE_ID_FORMAT " already requested\n",
-			id);
+			"image " GGP_IMAGE_ID_FORMAT " got from cache", id);
+		return img;
 	}
 
-	listener = g_new0(ggp_image_requested_listener, 1);
-	listener->cb = cb;
-	listener->user_data = user_data;
-	req->listeners = g_list_append(req->listeners, listener);
-}
 
-PurpleImage *
-ggp_image_get_cached(PurpleConnection *gc, uint64_t id)
-{
-	ggp_image_session_data *sdata = ggp_image_get_sdata(gc);
+	img = purple_image_transfer_new();
+	g_hash_table_insert(sdata->recv_images, ggp_uint64dup(id), img);
 
-	return g_hash_table_lookup(sdata->got_images, &id);
+	purple_debug_info("gg", "ggp_image_request: requesting image "
+		GGP_IMAGE_ID_FORMAT, id);
+	if (gg_image_request(accdata->session, uin, size, crc) != 0)
+		purple_debug_error("gg", "ggp_image_request: failed");
+
+	return img;
 }
