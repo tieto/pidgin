@@ -230,6 +230,8 @@ webview_resource_loaded(WebKitWebView *web_view, WebKitWebFrame *web_frame,
 	} else {
 		image = purple_image_new_from_data(
 			g_memdup(data->str, data->len), data->len);
+		if (purple_str_has_prefix(uri, "file:"))
+			purple_image_set_friendly_filename(image, uri);
 		g_return_if_fail(image != NULL);
 	}
 
