@@ -28,17 +28,23 @@
 
 #ifdef _WIN32
 #  define GG_SIZE_FMT "Iu"
+#  define _GG_INT64_MODIFIER "I64"
+#elif defined(_LP64)
+#  define GG_SIZE_FMT "zu"
+#  define _GG_INT64_MODIFIER "l"
 #else
 #  define GG_SIZE_FMT "zu"
+#  define _GG_INT64_MODIFIER "ll"
 #endif
+
 #ifndef PRIu64
-#  define PRIu64 "llu"
+#  define PRIu64 _GG_INT64_MODIFIER "u"
 #endif
 #ifndef PRIx64
-#  define PRIx64 "llx"
+#  define PRIx64 _GG_INT64_MODIFIER "x"
 #endif
 #ifndef PRId64
-#  define PRId64 "lld"
+#  define PRId64 _GG_INT64_MODIFIER "d"
 #endif
 
 #define GG_LOGIN_PARAMS_HAS_FIELD(glp, member) \

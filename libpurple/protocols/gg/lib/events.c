@@ -588,6 +588,7 @@ static gg_action_t gg_handle_resolving(struct gg_session *sess,
 	int count = -1;
 	int res;
 	unsigned int i;
+	struct in_addr *addrs;
 
 	res = gg_resolver_recv(sess->fd, buf, sizeof(buf));
 
@@ -622,8 +623,10 @@ static gg_action_t gg_handle_resolving(struct gg_session *sess,
 
 	/* Sprawdź, czy mamy listę zakończoną INADDR_NONE */
 
+	addrs = (struct in_addr *)(void *)sess->recv_buf;
+
 	for (i = 0; i < sess->recv_done / sizeof(struct in_addr); i++) {
-		if (((struct in_addr*) sess->recv_buf)[i].s_addr == INADDR_NONE) {
+		if (addrs[i].s_addr == INADDR_NONE) {
 			count = i;
 			break;
 		}
@@ -661,7 +664,7 @@ static gg_action_t gg_handle_resolving(struct gg_session *sess,
 			if (i > 0)
 				len += 2;
 
-			len += strlen(inet_ntoa(((struct in_addr*) sess->recv_buf)[i]));
+			len += strlen(inet_ntoa(addrs[i]));
 		}
 
 		list = malloc(len + 1);
@@ -675,7 +678,7 @@ static gg_action_t gg_handle_resolving(struct gg_session *sess,
 			if (i > 0)
 				strcat(list, ", ");
 
-			strcat(list, inet_ntoa(((struct in_addr*) sess->recv_buf)[i]));
+			strcat(list, inet_ntoa(addrs[i]));
 		}
 
 		gg_debug_session(sess, GG_DEBUG_DUMP, "// gg_watch_fd() resolved: %s\n", list);
@@ -687,7 +690,7 @@ static gg_action_t gg_handle_resolving(struct gg_session *sess,
 	gg_close(sess);
 
 	sess->state = next_state;
-	sess->resolver_result = (struct in_addr*) sess->recv_buf;
+	sess->resolver_result = addrs;
 	sess->resolver_count = count;
 	sess->resolver_index = 0;
 	sess->recv_buf = NULL;

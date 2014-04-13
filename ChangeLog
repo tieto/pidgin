@@ -5,6 +5,8 @@ version 2.10.10 (?/?/?):
 	* Don't allow overwriting arbitrary files on the file system when the
 	  user installs a smiley theme via drag-and-drop. (Discovered by Yves
 	  Younan of Sourcefire VRT)
+	* Updates to dependencies:
+		* NSS 3.16 and NSPR 4.10.4
 
 	Finch:
 	* Fix build against Python 3. (Ed Catmur) (#15969)
