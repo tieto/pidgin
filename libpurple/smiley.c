@@ -32,7 +32,6 @@
 
 typedef struct {
 	gchar *shortcut;
-	gchar *path;
 	PurpleImage *image;
 } PurpleSmileyPrivate;
 
@@ -40,7 +39,6 @@ enum
 {
 	PROP_0,
 	PROP_SHORTCUT,
-	PROP_PATH,
 	PROP_LAST
 };
 
@@ -54,13 +52,25 @@ static GParamSpec *properties[PROP_LAST];
 PurpleSmiley *
 purple_smiley_new(const gchar *shortcut, const gchar *path)
 {
+	PurpleSmiley *smiley;
+	PurpleSmileyPrivate *priv;
+
 	g_return_val_if_fail(shortcut != NULL, NULL);
 	g_return_val_if_fail(path != NULL, NULL);
 
-	return g_object_new(PURPLE_TYPE_SMILEY,
+	smiley = g_object_new(PURPLE_TYPE_SMILEY,
 		"shortcut", shortcut,
-		"path", path,
 		NULL);
+	priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
+
+	priv->image = purple_image_new_from_file(path, FALSE);
+	if (!priv->image) {
+		purple_debug_error("smiley", "Couldn't load smiley data ");
+		g_object_unref(smiley);
+		return NULL;
+	}
+
+	return smiley;
 }
 
 PurpleSmiley *
@@ -91,54 +101,15 @@ purple_smiley_get_shortcut(const PurpleSmiley *smiley)
 	return priv->shortcut;
 }
 
-static const gchar *
-purple_smiley_get_path(PurpleSmiley *smiley)
-{
-	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	return priv->path;
-}
-
-static PurpleImage *
-purple_smiley_get_image_impl(PurpleSmiley *smiley)
-{
-	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
-	const gchar *path;
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	if (priv->image)
-		return priv->image;
-
-	path = purple_smiley_get_path(smiley);
-
-	if (!path) {
-		purple_debug_error("smiley", "Can't get smiley data "
-			"without a path");
-		return NULL;
-	}
-
-	priv->image = purple_image_new_from_file(path, TRUE);
-	if (!priv->image) {
-		purple_debug_error("smiley", "Couldn't load smiley data ");
-		return NULL;
-	}
-	return priv->image;
-}
-
 PurpleImage *
 purple_smiley_get_image(PurpleSmiley *smiley)
 {
-	PurpleSmileyClass *klass;
+	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
 
-	g_return_val_if_fail(PURPLE_IS_SMILEY(smiley), NULL);
-	klass = PURPLE_SMILEY_GET_CLASS(smiley);
-	g_return_val_if_fail(klass != NULL, NULL);
-	g_return_val_if_fail(klass->get_image != NULL, NULL);
+	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(priv->image != NULL, NULL);
 
-	return klass->get_image(smiley);
+	return priv->image;
 }
 
 
@@ -160,7 +131,6 @@ purple_smiley_finalize(GObject *obj)
 	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
 
 	g_free(priv->shortcut);
-	g_free(priv->path);
 
 	if (priv->image)
 		g_object_unref(priv->image);
@@ -181,9 +151,6 @@ purple_smiley_get_property(GObject *object, guint par_id, GValue *value,
 		case PROP_SHORTCUT:
 			g_value_set_string(value, priv->shortcut);
 			break;
-		case PROP_PATH:
-			g_value_set_string(value, priv->path);
-			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
 			break;
@@ -202,10 +169,6 @@ purple_smiley_set_property(GObject *object, guint par_id, const GValue *value,
 			g_free(priv->shortcut);
 			priv->shortcut = g_strdup(g_value_get_string(value));
 			break;
-		case PROP_PATH:
-			g_free(priv->path);
-			priv->path = g_strdup(g_value_get_string(value));
-			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
 			break;
@@ -216,7 +179,6 @@ static void
 purple_smiley_class_init(PurpleSmileyClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
-	PurpleSmileyClass *ps_class = PURPLE_SMILEY_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
@@ -226,14 +188,8 @@ purple_smiley_class_init(PurpleSmileyClass *klass)
 	gobj_class->set_property = purple_smiley_set_property;
 	gobj_class->finalize = purple_smiley_finalize;
 
-	ps_class->get_image = purple_smiley_get_image_impl;
-
 	properties[PROP_SHORTCUT] = g_param_spec_string("shortcut", "Shortcut",
 		"A non-escaped textual representation of a smiley.", NULL,
-		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-	properties[PROP_PATH] = g_param_spec_string("path", "Path",
-		"The full path to the smiley image file.", NULL,
 		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);

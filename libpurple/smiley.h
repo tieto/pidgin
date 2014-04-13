@@ -64,8 +64,6 @@ struct _PurpleSmiley
 
 /**
  * PurpleSmileyClass:
- * @get_image: gets image contents for a @smiley. May not require
- *             #PurpleSmiley:path being set. See #purple_smiley_get_image.
  *
  * Base class for #PurpleSmiley objects.
  */
@@ -73,9 +71,6 @@ struct _PurpleSmileyClass
 {
 	/*< private >*/
 	GObjectClass parent_class;
-
-	/*< public >*/
-	PurpleImage * (*get_image)(PurpleSmiley *smiley);
 
 	/*< private >*/
 	void (*purple_reserved1)(void);
@@ -109,6 +104,8 @@ purple_smiley_new(const gchar *shortcut, const gchar *path);
 
 /**
  * Consider using #purple_conversation_add_remote_smiley.
+ *
+ * TODO: desc
  */
 PurpleSmiley *
 purple_smiley_new_remote(const gchar *shortcut);
@@ -129,7 +126,9 @@ purple_smiley_get_shortcut(const PurpleSmiley *smiley);
  * purple_smiley_get_image:
  * @smiley: the smiley.
  *
- * Returns (and possibly loads) the image contents for a @smiley.
+ * Returns the image contents for a @smiley. It may not be ready for remote
+ * smileys, so check it with #purple_image_is_ready.
+ *
  * If you want to save it, increase a ref count for the returned object.
  *
  * Returns: (transfer none): the image contents for a @smiley.
