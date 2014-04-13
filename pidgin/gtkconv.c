@@ -6646,7 +6646,7 @@ box_remote_image_cb(const GMatchInfo *info, GString *result, gpointer _conv)
 			end[0] = '\0';
 		else
 			alt = NULL;
-		if (alt[0] == '\0')
+		if (alt && alt[0] == '\0')
 			alt = NULL;
 	}
 
