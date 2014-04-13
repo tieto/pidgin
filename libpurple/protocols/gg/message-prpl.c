@@ -630,9 +630,8 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	text_new = ggp_strjoin_list("", rt);
 	g_list_free_full(rt, g_free);
 
-	/* TODO: verbose
-	 * purple_debug_info("gg", "reformatted text: [%s]\n", text_new);
-	 */
+	if (purple_debug_is_verbose())
+		purple_debug_info("gg", "reformatted text: [%s]", text_new);
 
 	return text_new;
 }
