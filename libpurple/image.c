@@ -201,7 +201,7 @@ gboolean
 purple_image_save(PurpleImage *image, const gchar *path)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	gpointer data;
+	gconstpointer data;
 	gsize len;
 	gboolean succ;
 
@@ -267,7 +267,7 @@ purple_image_get_size(PurpleImage *image)
 	return priv->contents->len;
 }
 
-gpointer
+gconstpointer
 purple_image_get_data(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
@@ -285,7 +285,7 @@ const gchar *
 purple_image_get_extension(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	gpointer data;
+	gconstpointer data;
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -349,7 +349,7 @@ const gchar *
 purple_image_generate_filename(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	gpointer data;
+	gconstpointer data;
 	gsize len;
 	const gchar *ext;
 	gchar *checksum;

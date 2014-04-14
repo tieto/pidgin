@@ -184,10 +184,9 @@ purple_image_get_size(PurpleImage *image);
  *
  * Returns the pointer to the buffer containing image data.
  *
- * Returns: (transfer none): the @image data. You should not modify
- *          its contents.
+ * Returns: (transfer none): the @image data.
  */
-gpointer
+gconstpointer
 purple_image_get_data(PurpleImage *image);
 
 /**

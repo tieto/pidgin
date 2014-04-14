@@ -48,7 +48,6 @@ struct _MsnSlpMessage
 	long id;
 
 	gboolean ft;
-	PurpleImage *img;
 	guchar *buffer;
 
 	/**
