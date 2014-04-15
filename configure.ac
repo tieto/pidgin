@@ -180,7 +180,11 @@ dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 	#include <sys/types.h>
-	#include <sys/socket.h>
+	#ifdef _WIN32
+	#  include <ws2tcpip.h>
+	#else
+	#  include <sys/socket.h>
+	#endif
 	socklen_t x;
 ]], [[]])], [
 	AC_MSG_RESULT(yes)
