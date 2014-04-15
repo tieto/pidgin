@@ -1155,7 +1155,7 @@ void
 purple_plugins_init(void) {
 	void *handle = purple_plugins_get_handle();
 
-	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_add_search_path(PURPLE_LIBDIR);
 
 	purple_signal_register(handle, "plugin-load",
 						 purple_marshal_VOID__POINTER,

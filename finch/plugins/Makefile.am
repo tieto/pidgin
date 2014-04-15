@@ -39,7 +39,6 @@ endif # PLUGINS
 EXTRA_DIST = pietray.py
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir) \

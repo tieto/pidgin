@@ -601,8 +601,8 @@ static void add_button (MMConversation *mmconv)
 
 	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(music_button_toggled), mmconv);
 
-	file_path = g_build_filename(DATADIR, "pixmaps", "purple", "buttons",
-										"music.png", NULL);
+	file_path = g_build_filename(PURPLE_DATADIR,
+		"pixmaps", "purple", "buttons", "music.png", NULL);
 	image = gtk_image_new_from_file(file_path);
 	g_free(file_path);
 

@@ -186,10 +186,6 @@ pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = $(builddir)/libpidgin.la $(libpidgin_la_LIBADD)
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/pidgin/\" \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/ \
 	-I$(top_builddir) \

@@ -70,23 +70,13 @@ const char *wpurple_install_dir(void);
 const char *wpurple_lib_dir(void);
 const char *wpurple_locale_dir(void);
 const char *wpurple_data_dir(void);
+const char *wpurple_sysconf_dir(void);
 
 /* init / cleanup */
 void wpurple_init(void);
 void wpurple_cleanup(void);
 
 long wpurple_get_tz_offset(void);
-
-/*
- *  MACROS
- */
-
-/*
- *  Purple specific
- */
-#define DATADIR wpurple_install_dir()
-#define LIBDIR wpurple_lib_dir()
-#define LOCALEDIR wpurple_locale_dir()
 
 #ifdef __cplusplus
 }

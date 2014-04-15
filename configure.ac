@@ -145,6 +145,40 @@ AC_CHECK_SIZEOF(time_t, ,[
 
 AC_C_BIGENDIAN
 
+dnl Check for directories
+if test "x$is_win32" = "xyes" ; then
+	purple_datadir="wpurple_data_dir()"
+	purple_libdir="wpurple_lib_dir()"
+	pidgin_libdir="wpurple_lib_dir()"
+	finch_libdir="wpurple_lib_dir()"
+	purple_sysconfdir="wpurple_sysconf_dir()"
+	purple_localedir="wpurple_locale_dir()"
+else
+	AS_AC_EXPAND(purple_datadir, "$datadir")
+	purple_datadir="\"$purple_datadir\""
+	AS_AC_EXPAND(purple_sysconfdir, "$sysconfdir")
+	purple_sysconfdir="\"$purple_sysconfdir\""
+	AS_AC_EXPAND(purple_localedir, "$localedir")
+	purple_localedir="\"$purple_localedir\""
+
+	AS_AC_EXPAND(common_libdir, "$libdir")
+	purple_libdir="\"$common_libdir/purple-$PURPLE_MAJOR_VERSION\""
+	pidgin_libdir="\"$common_libdir/pidgin\""
+	finch_libdir="\"$common_libdir/finch\""
+fi
+AC_DEFINE_UNQUOTED([PURPLE_DATADIR], [$purple_datadir],
+	[datadir to use, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PURPLE_LIBDIR], [$purple_libdir],
+	[libdir to use for libpurple, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PIDGIN_LIBDIR], [$pidgin_libdir],
+	[libdir to use for Pidgin, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([FINCH_LIBDIR], [$finch_libdir],
+	[libdir to use for Finch, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PURPLE_SYSCONFDIR], [$purple_sysconfdir],
+	[sysconfdir to use, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PURPLE_LOCALEDIR], [$purple_localedir],
+	[localedir to use, may expand into a function call that returns const char *])
+
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME

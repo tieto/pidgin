@@ -280,7 +280,7 @@ init_libpurple(int argc, char **argv)
 	};
 
 #ifdef ENABLE_NLS
-	bindtextdomain(PACKAGE, LOCALEDIR);
+	bindtextdomain(PACKAGE, PURPLE_LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	textdomain(PACKAGE);
 #endif
@@ -365,7 +365,7 @@ init_libpurple(int argc, char **argv)
 	purple_plugins_add_search_path(path);
 	g_free(path);
 
-	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_add_search_path(FINCH_LIBDIR);
 
 	if (!purple_core_init(FINCH_UI))
 	{

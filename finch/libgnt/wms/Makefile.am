@@ -29,7 +29,6 @@ s_la_LIBADD =  \
 EXTRA_DIST = 
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir)/finch \
 	-I$(top_srcdir)/finch/libgnt \

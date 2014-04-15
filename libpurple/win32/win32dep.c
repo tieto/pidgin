@@ -34,7 +34,7 @@
  * LOCALS
  */
 static char *app_data_dir = NULL, *install_dir = NULL,
-	*lib_dir = NULL, *locale_dir = NULL;
+	*lib_dir = NULL, *locale_dir = NULL, *sysconf_dir = NULL;
 
 static HINSTANCE libpurpledll_hInstance = NULL;
 
@@ -206,6 +206,18 @@ const char *wpurple_data_dir(void) {
 	}
 
 	return app_data_dir;
+}
+
+const char *wpurple_sysconf_dir(void)
+{
+	static gboolean initialized = FALSE;
+
+	if (!initialized) {
+		sysconf_dir = wpurple_get_special_folder(CSIDL_COMMON_APPDATA);
+		initialized = TRUE;
+	}
+
+	return sysconf_dir;
 }
 
 /* Miscellaneous */
@@ -532,11 +544,13 @@ void wpurple_cleanup(void) {
 	g_free(install_dir);
 	g_free(lib_dir);
 	g_free(locale_dir);
+	g_free(sysconf_dir);
 
 	app_data_dir = NULL;
 	install_dir = NULL;
 	lib_dir = NULL;
 	locale_dir = NULL;
+	sysconf_dir = NULL;
 
 	libpurpledll_hInstance = NULL;
 }

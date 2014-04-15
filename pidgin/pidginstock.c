@@ -238,7 +238,7 @@ find_file_common(const char *name)
 			return filename;
 		g_free(filename);
 	}
-	filename = g_build_filename(DATADIR, name, NULL);
+	filename = g_build_filename(PURPLE_DATADIR, name, NULL);
 	if (g_file_test(filename, G_FILE_TEST_EXISTS))
 		return filename;
 	g_free(filename);

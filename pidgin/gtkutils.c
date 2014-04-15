@@ -634,10 +634,11 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 	 */
 	tmp = g_strconcat(protoname, ".png", NULL);
 
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-				    size == PIDGIN_PRPL_ICON_SMALL ? "16" :
-				    size == PIDGIN_PRPL_ICON_MEDIUM ? "22" : "48",
-				    tmp, NULL);
+	filename = g_build_filename(PURPLE_DATADIR,
+		"pixmaps", "pidgin", "protocols",
+		(size == PIDGIN_PRPL_ICON_SMALL) ? "16" :
+			((size == PIDGIN_PRPL_ICON_MEDIUM) ? "22" : "48"),
+		tmp, NULL);
 	g_free(tmp);
 
 	pixbuf = pidgin_pixbuf_new_from_file(filename);

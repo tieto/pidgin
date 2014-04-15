@@ -394,20 +394,15 @@ purple_prefs_load()
 	purple_debug_misc("prefs", "Reading %s", filename);
 
 	if(!g_file_get_contents(filename, &contents, &length, &error)) {
-#ifdef _WIN32
-		gchar *common_appdata = wpurple_get_special_folder(CSIDL_COMMON_APPDATA);
-#endif
+		const gchar *sysconfdir = PURPLE_SYSCONFDIR;
 		g_free(filename);
 		g_error_free(error);
 
 		error = NULL;
 
-#ifdef _WIN32
-		filename = g_build_filename(common_appdata ? common_appdata : "", "purple", "prefs.xml", NULL);
-		g_free(common_appdata);
-#else
-		filename = g_build_filename(SYSCONFDIR, "purple", "prefs.xml", NULL);
-#endif
+		if (sysconfdir == NULL)
+			sysconfdir = "";
+		filename = g_build_filename(PURPLE_SYSCONFDIR, "purple", "prefs.xml", NULL);
 
 		purple_debug_info("prefs", "Reading %s\n", filename);
 

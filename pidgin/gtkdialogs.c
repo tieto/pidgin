@@ -463,7 +463,8 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	gtk_window_set_default_size(GTK_WINDOW(win), 475, 450);
 
 	/* Generate a logo with a version number */
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
+	filename = g_build_filename(PURPLE_DATADIR,
+		"pixmaps", "pidgin", "logo.png", NULL);
 	pixbuf = pidgin_pixbuf_new_from_file(filename);
 	g_free(filename);
 
