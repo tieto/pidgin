@@ -79,12 +79,12 @@ DBUS_EXPORT const char *dbus_example_get_buddy_name(PurpleBuddy *buddy);
 static PurpleText hello;
 
 /* Here come the definitions of the four exported functions. */
-PurpleText* dbus_example_get_hello_object(void)
+DBUS_EXPORT PurpleText* dbus_example_get_hello_object(void)
 {
 	return &hello;
 }
 
-void dbus_example_set_text(PurpleText *obj, const char *text)
+DBUS_EXPORT void dbus_example_set_text(PurpleText *obj, const char *text)
 {
 	if (obj != NULL) {
 		g_free(obj->text);
@@ -92,7 +92,7 @@ void dbus_example_set_text(PurpleText *obj, const char *text)
 	}
 }
 
-const char *dbus_example_get_text(PurpleText *obj)
+DBUS_EXPORT const char *dbus_example_get_text(PurpleText *obj)
 {
 	if (obj != NULL)
 		return obj->text;
@@ -100,7 +100,7 @@ const char *dbus_example_get_text(PurpleText *obj)
 		return NULL;
 }
 
-const char *dbus_example_get_buddy_name(PurpleBuddy *buddy)
+DBUS_EXPORT const char *dbus_example_get_buddy_name(PurpleBuddy *buddy)
 {
 	return purple_buddy_get_name(buddy);
 }

@@ -206,6 +206,18 @@ purple_coreheaders = \
 	xfer.h \
 	xmlnode.h
 
+if IS_WIN32
+purple_coresources += \
+	win32/giowin32.c \
+	win32/libc_interface.c \
+	win32/win32dep.c
+purple_coreheaders += \
+	win32/libc_interface.h \
+	win32/libc_internal.h \
+	win32/win32dep.h \
+	win32/wpurpleerror.h
+endif
+
 purple_mediaheaders = \
 	backend-iface.h \
 	candidate.h \

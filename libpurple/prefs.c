@@ -35,10 +35,6 @@
 #include "debug.h"
 #include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 struct pref_cb {
 	PurplePrefCallback func;
 	gpointer data;

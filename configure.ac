@@ -1385,6 +1385,9 @@ fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
 fi
+if test "x$is_win32" = "xyes" ; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/zephyr//'`
+fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
 extern_init=
@@ -1461,6 +1464,9 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
+fi
+if test "x$is_win32" = "xyes" ; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/zephyr//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
