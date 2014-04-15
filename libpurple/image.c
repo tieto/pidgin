@@ -35,6 +35,7 @@ typedef struct {
 	const gchar *extension;
 	const gchar *mime;
 	gchar *gen_filename;
+	gchar *friendly_filename;
 
 	gboolean is_ready;
 	gboolean has_failed;
@@ -162,6 +163,7 @@ purple_image_new_from_file(const gchar *path, gboolean be_eager)
 	g_return_val_if_fail(g_file_test(path, G_FILE_TEST_EXISTS), NULL);
 
 	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
+	purple_image_set_friendly_filename(img, path);
 	priv = PURPLE_IMAGE_GET_PRIVATE(img);
 	priv->path = g_strdup(path);
 
@@ -199,7 +201,7 @@ gboolean
 purple_image_save(PurpleImage *image, const gchar *path)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	gpointer data;
+	gconstpointer data;
 	gsize len;
 	gboolean succ;
 
@@ -265,7 +267,7 @@ purple_image_get_size(PurpleImage *image)
 	return priv->contents->len;
 }
 
-gpointer
+gconstpointer
 purple_image_get_data(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
@@ -283,7 +285,7 @@ const gchar *
 purple_image_get_extension(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	gpointer data;
+	gconstpointer data;
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
@@ -347,7 +349,7 @@ const gchar *
 purple_image_generate_filename(PurpleImage *image)
 {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	gpointer data;
+	gconstpointer data;
 	gsize len;
 	const gchar *ext;
 	gchar *checksum;
@@ -375,8 +377,62 @@ purple_image_generate_filename(PurpleImage *image)
 void
 purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename)
 {
-	/* TODO */
-	/* filter with g_path_get_basename() and purple_escape_filename() */
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	gchar *newname;
+	const gchar *escaped;
+
+	g_return_if_fail(priv != NULL);
+
+	newname = g_path_get_basename(filename);
+	escaped = purple_escape_filename(newname);
+	g_free(newname);
+	newname = NULL;
+
+	if (g_strcmp0(escaped, "") == 0 || g_strcmp0(escaped, ".") == 0 ||
+		g_strcmp0(escaped, G_DIR_SEPARATOR_S) == 0 ||
+		g_strcmp0(escaped, "/") == 0 || g_strcmp0(escaped, "\\") == 0)
+	{
+		escaped = NULL;
+	}
+
+	g_free(priv->friendly_filename);
+	priv->friendly_filename = g_strdup(escaped);
+}
+
+const gchar *
+purple_image_get_friendly_filename(PurpleImage *image)
+{
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	if (G_UNLIKELY(!priv->friendly_filename)) {
+		const gchar *newname = purple_image_generate_filename(image);
+		gsize newname_len = strlen(newname);
+
+		if (newname_len < 10)
+			return NULL;
+
+		/* let's use last 6 characters from checksum + 4 characters
+		 * from file ext */
+		newname += newname_len - 10;
+		priv->friendly_filename = g_strdup(newname);
+	}
+
+	if (G_UNLIKELY(priv->is_ready &&
+		strchr(priv->friendly_filename, '.') == NULL))
+	{
+		const gchar *ext = purple_image_get_extension(image);
+		gchar *tmp;
+		if (!ext)
+			return priv->friendly_filename;
+
+		tmp = g_strdup_printf("%s.%s", priv->friendly_filename, ext);
+		g_free(priv->friendly_filename);
+		priv->friendly_filename = tmp;
+	}
+
+	return priv->friendly_filename;
 }
 
 PurpleImage *
@@ -473,6 +529,7 @@ purple_image_finalize(GObject *obj)
 		g_string_free(priv->contents, TRUE);
 	g_free(priv->path);
 	g_free(priv->gen_filename);
+	g_free(priv->friendly_filename);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }

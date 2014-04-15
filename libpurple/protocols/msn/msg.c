@@ -900,7 +900,8 @@ static void
 got_emoticon(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
 	PurpleConversation *conv;
-	PurpleRemoteSmiley *smiley;
+	PurpleSmiley *smiley;
+	PurpleImage *image;
 	MsnSwitchBoard *swboard;
 	const gchar *shortcut;
 
@@ -915,13 +916,14 @@ got_emoticon(MsnSlpCall *slpcall, const guchar *data, gsize size)
 
 	smiley = purple_conversation_get_remote_smiley(conv, shortcut);
 	g_return_if_fail(smiley);
+	image = purple_smiley_get_image(smiley);
 
 	/* FIXME: it would be better if we wrote the data as we received it
 	 * instead of all at once, calling write multiple times and close once
 	 * at the very end.
 	 */
-	purple_remote_smiley_write(smiley, data, size);
-	purple_remote_smiley_close(smiley);
+	purple_image_transfer_write(image, (gpointer)data, size);
+	purple_image_transfer_close(image);
 }
 
 void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
@@ -958,7 +960,7 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_free(body_str);
 
 	for (tok = 0; tok < 9; tok += 2) {
-		PurpleRemoteSmiley *smiley;
+		PurpleSmiley *smiley;
 
 		if (tokens[tok] == NULL || tokens[tok + 1] == NULL) {
 			break;

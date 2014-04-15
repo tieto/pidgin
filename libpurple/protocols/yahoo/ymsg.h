@@ -31,8 +31,6 @@
 #include "protocol.h"
 #include "network.h"
 
-#include "imgstore.h" /* TODO: temp */
-
 #define YAHOO_PAGER_HOST_REQ_URL "http://vcs2.msg.yahoo.com/capacity"
 #define YAHOO_PAGER_HOST_FALLBACK "scsa.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050

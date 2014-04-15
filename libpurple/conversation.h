@@ -196,7 +196,6 @@ struct _PurpleConversationClass {
 #include "e2ee.h"
 #include "log.h"
 #include "smiley-list.h"
-#include "smiley-remote.h"
 
 /**************************************************************************/
 /** PurpleConversationUiOps                                               */
@@ -681,12 +680,16 @@ purple_conversation_get_max_message_size(PurpleConversation *conv);
  * @shortcut: The shortcut for the new smiley.
  *
  * Adds new smiley to the list of remote smileys for this conversation.
- * The smiley have to be written and closed, when data is ready.
+ * The smiley image have to be written and closed, when data is ready.
+ *
+ * You can retrieve smiley's #PurpleImage object using #purple_smiley_get_image
+ * and set its data with #purple_image_transfer_write
+ * and #purple_image_transfer_close.
  *
  * Returns: (transfer none): New smiley, or %NULL if it's already being
  *          retrieved (or possibly, in case of error).
  */
-PurpleRemoteSmiley *
+PurpleSmiley *
 purple_conversation_add_remote_smiley(PurpleConversation *conv,
 	const gchar *shortcut);
 
@@ -703,7 +706,7 @@ purple_conversation_add_remote_smiley(PurpleConversation *conv,
  *
  * Returns: (transfer none): The smiley, or %NULL if it doesn't exists.
  */
-PurpleRemoteSmiley *
+PurpleSmiley *
 purple_conversation_get_remote_smiley(PurpleConversation *conv,
 	const gchar *shortcut);
 

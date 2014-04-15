@@ -36,7 +36,7 @@ void yahoo_process_picture_upload(PurpleConnection *gc, struct yahoo_packet *pkt
 
 void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt);
 
-void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
+void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleImage *img);
 void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_upload_data *d);
 void yahoo_buddy_icon_upload_data_free(struct yahoo_buddy_icon_upload_data *d);
 

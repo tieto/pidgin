@@ -64,8 +64,6 @@ struct _PurpleSmiley
 
 /**
  * PurpleSmileyClass:
- * @get_image: gets image contents for a @smiley. May not require
- *             #PurpleSmiley:path being set. See #purple_smiley_get_image.
  *
  * Base class for #PurpleSmiley objects.
  */
@@ -73,9 +71,6 @@ struct _PurpleSmileyClass
 {
 	/*< private >*/
 	GObjectClass parent_class;
-
-	/*< public >*/
-	PurpleImage * (*get_image)(PurpleSmiley *smiley);
 
 	/*< private >*/
 	void (*purple_reserved1)(void);
@@ -108,6 +103,19 @@ PurpleSmiley *
 purple_smiley_new(const gchar *shortcut, const gchar *path);
 
 /**
+ * purple_smiley_new_remote:
+ * @shortcut: the smiley shortcut (unescaped).
+ *
+ * Creates new remote smiley. It's not bound to any conversation, so most
+ * probably you might want to use
+ * #purple_conversation_add_remote_smiley instead.
+ *
+ * Returns: the new remote #PurpleSmiley.
+ */
+PurpleSmiley *
+purple_smiley_new_remote(const gchar *shortcut);
+
+/**
  * purple_smiley_get_shortcut:
  * @smiley: the smiley.
  *
@@ -120,41 +128,12 @@ const gchar *
 purple_smiley_get_shortcut(const PurpleSmiley *smiley);
 
 /**
- * purple_smiley_is_ready:
- * @smiley: the smiley.
- *
- * Checks, if the @smiley is ready to be displayed. For #PurpleSmiley it's
- * always %TRUE, but for deriving classes it may vary.
- *
- * Being ready means either its #PurpleSmiley:path is set and file exists,
- * or its contents is available via #purple_smiley_get_image. The latter is
- * always true, but not always efficient.
- *
- * Returns: %TRUE, if the @smiley is ready to be displayed.
- */
-gboolean
-purple_smiley_is_ready(const PurpleSmiley *smiley);
-
-/**
- * purple_smiley_get_path:
- * @smiley: the smiley.
- *
- * Returns a full path to a @smiley image file.
- *
- * A @smiley may not be saved to disk (the path will be NULL), but could still be
- * accessible using #purple_smiley_get_data.
- *
- * Returns: a full path to the file, or %NULL if it's not stored to the disk
- *          or an error occured.
- */
-const gchar *
-purple_smiley_get_path(PurpleSmiley *smiley);
-
-/**
  * purple_smiley_get_image:
  * @smiley: the smiley.
  *
- * Returns (and possibly loads) the image contents for a @smiley.
+ * Returns the image contents for a @smiley. It may not be ready for remote
+ * smileys, so check it with #purple_image_is_ready.
+ *
  * If you want to save it, increase a ref count for the returned object.
  *
  * Returns: (transfer none): the image contents for a @smiley.

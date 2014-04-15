@@ -144,6 +144,8 @@ g_rename( oldname, newname )
 #define fchmod(a,b)
 
 /* time.h */
+/* XXX: it may be also defined by pthread.h */
+#undef localtime_r
 #define localtime_r( time, resultp ) \
 wpurple_localtime_r( time, resultp )
 

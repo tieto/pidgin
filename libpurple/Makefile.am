@@ -73,7 +73,6 @@ purple_coresources = \
 	idle.c \
 	image.c \
 	image-store.c \
-	imgstore.c \
 	keyring.c \
 	log.c \
 	media/backend-fs2.c \
@@ -107,7 +106,6 @@ purple_coresources = \
 	smiley-custom.c \
 	smiley-list.c \
 	smiley-parser.c \
-	smiley-remote.c \
 	smiley-theme.c \
 	smiley.c \
 	dnsquery.c \
@@ -160,7 +158,6 @@ purple_coreheaders = \
 	idle.h \
 	image.h \
 	image-store.h \
-	imgstore.h \
 	keyring.h \
 	log.h \
 	media.h \
@@ -190,7 +187,6 @@ purple_coreheaders = \
 	smiley-custom.h \
 	smiley-list.h \
 	smiley-parser.h \
-	smiley-remote.h \
 	smiley-theme.h \
 	smiley.h \
 	dnsquery.h \

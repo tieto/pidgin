@@ -129,7 +129,7 @@
 #include <glib/gstdio.h>
 
 #ifdef _WIN32
-#include "win32dep.h"
+#include "win32/win32dep.h"
 #endif
 
 #ifdef HAVE_CONFIG_H

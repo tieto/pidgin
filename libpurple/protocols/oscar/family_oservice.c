@@ -912,26 +912,27 @@ aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 				aim_srv_requestnew(od, SNAC_FAMILY_BART);
 			} else {
 				PurpleAccount *account = purple_connection_get_account(od->gc);
-				PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+				PurpleImage *img = purple_buddy_icons_find_account_icon(account);
 				if (img == NULL) {
 					aim_ssi_delicon(od);
 				} else {
 
 					purple_debug_info("oscar",
 									"Uploading icon to icon server\n");
-					aim_bart_upload(od, purple_imgstore_get_data(img),
-							purple_imgstore_get_size(img));
-					purple_imgstore_unref(img);
+					aim_bart_upload(od,
+						purple_image_get_data(img),
+						purple_image_get_size(img));
+					g_object_unref(img);
 				}
 			}
 		} else if (flags == 0x81) {
 			PurpleAccount *account = purple_connection_get_account(od->gc);
-			PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+			PurpleImage *img = purple_buddy_icons_find_account_icon(account);
 			if (img == NULL)
 				aim_ssi_delicon(od);
 			else {
 				aim_ssi_seticon(od, md5, length);
-				purple_imgstore_unref(img);
+				g_object_unref(img);
 			}
 		}
 

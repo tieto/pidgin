@@ -122,6 +122,16 @@ AC_FUNC_ALLOCA
 dnl Check for Sun compiler
 AC_CHECK_DECL([__SUNPRO_C], [SUNCC="yes"], [SUNCC="no"])
 
+dnl Check for Win32
+case "$host" in
+	*-*-mingw* | *-*-cygwin*)
+		is_win32="yes"
+		;;
+	*)
+		is_win32="no"
+		;;
+esac
+
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
@@ -148,12 +158,16 @@ AC_CHECK_FUNCS(getopt_long,,
 ])
 
 dnl Check for inet_aton
-AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
-				         [AC_MSG_ERROR([inet_aton not found])])])
+if test "x$is_win32" != "xyes" ; then
+	AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
+		[AC_MSG_ERROR([inet_aton not found])])])
+fi
 AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
-AC_CHECK_FUNC(socket, ,
-	[AC_CHECK_LIB(socket, socket, , [AC_MSG_ERROR([socket not found])])])
+if test "x$is_win32" != "xyes" ; then
+	AC_CHECK_FUNC(socket, , [AC_CHECK_LIB(socket, socket, ,
+		[AC_MSG_ERROR([socket not found])])])
+fi
 dnl If all goes well, by this point the previous two checks will have
 dnl pulled in -lsocket and -lnsl if we need them.
 AC_CHECK_FUNC(getaddrinfo,
@@ -167,7 +181,11 @@ dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 	#include <sys/types.h>
-	#include <sys/socket.h>
+	#ifdef _WIN32
+	#  include <ws2tcpip.h>
+	#else
+	#  include <sys/socket.h>
+	#endif
 	socklen_t x;
 ]], [[]])], [
 	AC_MSG_RESULT(yes)

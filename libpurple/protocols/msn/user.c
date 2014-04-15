@@ -330,7 +330,7 @@ msn_user_unset_op(MsnUser *user, MsnListOp list_op)
 }
 
 void
-msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
+msn_user_set_buddy_icon(MsnUser *user, PurpleImage *img)
 {
 	MsnObject *msnobj;
 

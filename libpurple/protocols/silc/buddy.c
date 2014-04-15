@@ -1729,14 +1729,13 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 	return m;
 }
 
-void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
+void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleImage *img)
 {
 	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcMime mime;
-	char type[32];
-	const char *t;
+	const gchar *type;
 
 	/* Remove */
 	if (!img) {
@@ -1745,24 +1744,23 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 		return;
 	}
 
+	type = purple_image_get_mimetype(img);
+	if (type == NULL)
+		return;
+	if (g_strcmp0(purple_image_get_extension(img), "ico") == 0)
+		return;
+
 	/* Add */
 	mime = silc_mime_alloc();
 	if (!mime)
 		return;
 
-	t = purple_imgstore_get_extension(img);
-	if (!t || !strcmp(t, "icon")) {
-		silc_mime_free(mime);
-		return;
-	}
-	if (!strcmp(t, "jpg"))
-		t = "jpeg";
-	g_snprintf(type, sizeof(type), "image/%s", t);
 	silc_mime_add_field(mime, "Content-Type", type);
-	silc_mime_add_data(mime, purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+	silc_mime_add_data(mime, purple_image_get_data(img),
+		purple_image_get_size(img));
 
-	silc_client_attribute_add(client, conn,
-				  SILC_ATTRIBUTE_USER_ICON, mime, sizeof(*mime));
+	silc_client_attribute_add(client, conn, SILC_ATTRIBUTE_USER_ICON,
+		mime, sizeof(*mime));
 
 	silc_mime_free(mime);
 }

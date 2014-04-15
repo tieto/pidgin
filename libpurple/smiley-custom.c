@@ -126,7 +126,8 @@ smileys_to_xmlnode(void)
 		purple_xmlnode_set_attrib(smiley_node, "shortcut",
 			purple_smiley_get_shortcut(smiley));
 		purple_xmlnode_set_attrib(smiley_node, "filename",
-			g_path_get_basename(purple_smiley_get_path(smiley)));
+			g_path_get_basename(purple_image_get_path(
+				purple_smiley_get_image(smiley))));
 	}
 
 	return root_node;
@@ -181,7 +182,6 @@ purple_smiley_custom_add(PurpleImage *img, const gchar *shortcut)
 	gchar *checksum, *file_path;
 	gchar file_name[256];
 	const gchar *file_ext;
-	GError *error = NULL;
 	gboolean succ;
 
 	g_return_val_if_fail(PURPLE_IS_IMAGE(img), NULL);
@@ -211,7 +211,7 @@ purple_smiley_custom_add(PurpleImage *img, const gchar *shortcut)
 
 	if (!purple_image_save(img, file_path)) {
 		purple_debug_error("smiley-custom", "Failed writing smiley "
-			"file %s: %s", file_path, error->message);
+			"file %s", file_path);
 		g_free(file_path);
 		g_object_unref(img);
 		return NULL;
@@ -254,13 +254,15 @@ purple_smiley_custom_remove(PurpleSmiley *smiley)
 	g_object_ref(smiley);
 	purple_smiley_list_remove(smileys_list, smiley);
 
-	path = purple_smiley_get_path(smiley);
+	path = purple_image_get_path(purple_smiley_get_image(smiley));
 
 	other_smileys = purple_smiley_list_get_unique(smileys_list);
 	is_unique = TRUE;
 	for (it = other_smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *other = it->data;
-		if (g_strcmp0(purple_smiley_get_path(other), path) == 0) {
+		const gchar *other_path = purple_image_get_path(
+			purple_smiley_get_image(other));
+		if (g_strcmp0(other_path, path) == 0) {
 			is_unique = FALSE;
 			break;
 		}

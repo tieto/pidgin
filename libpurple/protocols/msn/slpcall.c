@@ -235,7 +235,7 @@ get_token(const char *str, const char *start, const char *end)
  *
  * Note: it should be tracked on the msn prpl side.
  */
-static PurpleStoredImage *
+static PurpleImage *
 find_valid_emoticon(PurpleAccount *account, const char *path)
 {
 	GList *smileys, *it;
@@ -248,12 +248,12 @@ find_valid_emoticon(PurpleAccount *account, const char *path)
 	for (it = smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
 
-		if (g_strcmp0(path, purple_smiley_get_path(smiley)) == 0) {
-			PurpleStoredImage *img;
+		if (g_strcmp0(path, purple_image_get_path(purple_smiley_get_image(smiley))) == 0) {
+			PurpleImage *img;
 
 			g_list_free(smileys);
 			img = purple_smiley_get_image(smiley);
-			purple_imgstore_ref(img);
+			g_object_ref(img);
 			return img;
 		}
 	}
@@ -469,7 +469,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
 		char *msnobj_data;
-		PurpleStoredImage *img = NULL;
+		PurpleImage *img = NULL;
 		int type;
 
 		/* Send Ok */
@@ -492,7 +492,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		} else if (type == MSN_OBJECT_USERTILE) {
 			img = msn_object_get_image(obj);
 			if (img)
-				purple_imgstore_ref(img);
+				g_object_ref(img);
 		}
 		msn_object_destroy(obj, FALSE);
 
@@ -504,7 +504,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			/* DATA */
 			slpmsg = msn_slpmsg_obj_new(slpcall, img);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
-			purple_imgstore_unref(img);
+			g_object_unref(img);
 
 			accepted = TRUE;
 

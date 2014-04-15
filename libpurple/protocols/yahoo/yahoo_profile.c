@@ -29,7 +29,7 @@
 #include "notify.h"
 #include "util.h"
 #if PHOTO_SUPPORT
-#include "imgstore.h"
+#include "image-store.h"
 #endif /* PHOTO_SUPPORT */
 
 #include "ymsg.h"
@@ -951,7 +951,6 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 	YahooGetInfoStepTwoData *info2_data = _info2_data;
 	YahooData *yd;
 	gboolean found = FALSE;
-	int id = -1;
 
 	/* Temporary variables */
 	char *p = NULL;
@@ -1032,6 +1031,8 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 #if PHOTO_SUPPORT
 	/* Try to put the photo in there too, if there's one and is readable */
 	if (purple_http_response_is_successful(response)) {
+		PurpleImage *img;
+		guchar img_id;
 		const gchar *data;
 		size_t len;
 
@@ -1039,11 +1040,12 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 
 		purple_debug_info("yahoo", "%s is %" G_GSIZE_FORMAT " bytes\n",
 			photo_url_text, len);
-		id = purple_imgstore_new_with_id(g_memdup(data, len), len,
-			NULL);
+		img = purple_image_new_from_data(g_memdup(data, len), len);
+		img_id = purple_image_store_add_temporary(img);
+		g_object_unref(img);
 
-		tmp = g_strdup_printf("<img id=\"" PURPLE_STORED_IMAGE_PROTOCOL
-			"%d\"><br>", id);
+		tmp = g_strdup_printf("<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL
+			"%u\"><br>", img_id);
 		purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 		g_free(tmp);
 	}
@@ -1250,8 +1252,6 @@ yahoo_got_photo(PurpleHttpConnection *http_conn, PurpleHttpResponse *response,
 #if PHOTO_SUPPORT
 	g_free(photo_url_text);
 	g_free(info2_data);
-	if (id != -1)
-		purple_imgstore_unref_by_id(id);
 #endif /* PHOTO_SUPPORT */
 }
 

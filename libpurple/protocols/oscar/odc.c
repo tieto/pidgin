@@ -25,7 +25,7 @@
 
 /* From Purple */
 #include "conversation.h"
-#include "imgstore.h"
+#include "image-store.h"
 #include "util.h"
 
 #define DIRECTIM_MAX_FILESIZE 52428800
@@ -210,10 +210,10 @@ struct embedded_data
  * function is passed a long chunk of data which contains the IM with any
  * data chunks (images) appended to it.
  *
- * This function rips out all the data chunks and creates an imgstore for
+ * This function rips out all the data chunks and creates a PurpleImage (?) for
  * each one.  In order to do this, it first goes through the IM and takes
  * out all the IMG tags.  When doing so, it rewrites the original IMG tag
- * with one compatible with the imgstore Purple core code. For each one, we
+ * with one compatible with the PurpleImage (?) code. For each one, we
  * then read in chunks of data from the end of the message and actually
  * create the img store using the given data.
  *
@@ -244,7 +244,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	GData *attributes;
 	GHashTable *embedded_datas;
 	struct embedded_data *embedded_data;
-	GSList *images;
+	gboolean any_images = FALSE;
 	gchar *utf8;
 	GString *newmsg;
 	PurpleMessageFlags imflags;
@@ -332,12 +332,11 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	 * Loop through the message, replacing OSCAR img tags with the
 	 * equivalent Purple img tag.
 	 */
-	images = NULL;
 	newmsg = g_string_new("");
 	tmp = msg;
 	while (purple_markup_find_tag("img", tmp, &start, &end, &attributes))
 	{
-		int imgid = 0;
+		PurpleImage *image = NULL;
 
 		idstr   = g_datalist_get_data(&attributes, "id");
 		src     = g_datalist_get_data(&attributes, "src");
@@ -355,16 +354,10 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 
 			if ((embedded_data != NULL) && (embedded_data->size == size))
 			{
-				char *basename;
-				char *escaped;
-				basename = g_path_get_basename(src);
-				escaped = g_strdup(purple_escape_filename(basename));
-				g_free(basename);
-				imgid = purple_imgstore_new_with_id(g_memdup(embedded_data->data, size), size, escaped);
-				g_free(escaped);
-
-				/* Record the image number */
-				images = g_slist_append(images, GINT_TO_POINTER(imgid));
+				image = purple_image_new_from_data(
+					g_memdup(embedded_data->data, size),
+					size);
+				purple_image_set_friendly_filename(image, src);
 			}
 		}
 
@@ -378,12 +371,17 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 			g_free(utf8);
 		}
 
-		if (imgid != 0)
+		if (image)
 		{
+			guint img_id;
+
+			img_id = purple_image_store_add_temporary(image);
+			g_object_unref(image);
+			any_images = TRUE;
+
 			/* Write the new image tag */
-			g_string_append_printf(newmsg,
-			                       "<IMG SRC=\"" PURPLE_STORED_IMAGE_PROTOCOL "%d\">",
-			                       imgid);
+			g_string_append_printf(newmsg, "<img src=\""
+				PURPLE_IMAGE_STORE_PROTOCOL "%u\">", img_id);
 		}
 
 		/* Continue from the end of the tag */
@@ -402,21 +400,12 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 
 	/* Display the message we received */
 	imflags = 0;
-	if (images != NULL)
+	if (any_images)
 		imflags |= PURPLE_MESSAGE_IMAGES;
 	if (autoreply)
 		imflags |= PURPLE_MESSAGE_AUTO_RESP;
 	purple_serv_got_im(gc, conn->bn, newmsg->str, imflags, time(NULL));
 	g_string_free(newmsg, TRUE);
-
-	/* unref any images we allocated */
-	if (images)
-	{
-		GSList *l;
-		for (l = images; l != NULL; l = l->next)
-			purple_imgstore_unref_by_id(GPOINTER_TO_INT(l->data));
-		g_slist_free(images);
-	}
 
 	/* Delete our list of pointers to embedded images */
 	g_hash_table_destroy(embedded_datas);

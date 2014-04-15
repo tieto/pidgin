@@ -125,7 +125,7 @@ msn_object_new_from_string(const char *str)
 }
 
 MsnObject*
-msn_object_new_from_image(PurpleStoredImage *img, const char *location,
+msn_object_new_from_image(PurpleImage *img, const char *location,
 		const char *creator, MsnObjectType type)
 {
 	MsnObject *msnobj;
@@ -140,10 +140,10 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 	msnobj = NULL;
 
 	if (img == NULL)
-		return msnobj;
+		return NULL;
 
-	size = purple_imgstore_get_size(img);
-	data = purple_imgstore_get_data(img);
+	size = purple_image_get_size(img);
+	data = purple_image_get_data(img);
 
 	/* New object */
 	msnobj = msn_object_new();
@@ -208,7 +208,8 @@ msn_object_destroy(MsnObject *obj, gboolean only_remote)
 	g_free(obj->url);
 	g_free(obj->url1);
 
-	purple_imgstore_unref(obj->img);
+	if (obj->img)
+		g_object_unref(obj->img);
 
 	if (obj->local)
 		local_objs = g_list_remove(local_objs, obj);
@@ -435,18 +436,20 @@ msn_object_set_local(MsnObject *obj)
 }
 
 void
-msn_object_set_image(MsnObject *obj, PurpleStoredImage *img)
+msn_object_set_image(MsnObject *obj, PurpleImage *img)
 {
 	g_return_if_fail(obj != NULL);
 	g_return_if_fail(img != NULL);
 
 	/* obj->local = TRUE; */
 
-	purple_imgstore_unref(obj->img);
-	obj->img = purple_imgstore_ref(img);
+	if (obj->img)
+		g_object_unref(obj->img);
+	g_object_ref(img);
+	obj->img = img;
 }
 
-PurpleStoredImage *
+PurpleImage *
 msn_object_get_image(const MsnObject *obj)
 {
 	MsnObject *local_obj;

@@ -97,7 +97,6 @@ C_SRC =	\
 			idle.c \
 			image.c \
 			image-store.c \
-			imgstore.c \
 			keyring.c \
 			log.c \
 			media/candidate.c \
@@ -129,7 +128,6 @@ C_SRC =	\
 			smiley-custom.c \
 			smiley-list.c \
 			smiley-parser.c \
-			smiley-remote.c \
 			smiley-theme.c \
 			sound-theme-loader.c \
 			sound-theme.c \

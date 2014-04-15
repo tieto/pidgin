@@ -30,8 +30,6 @@
 #include "internal.h"
 #include "http.h"
 
-#include "imgstore.h" /* TODO: temp */
-
 #if defined( __APPLE__ )
 /* apple architecture */
 #ifndef HOST_NAME_MAX
@@ -212,7 +210,7 @@ struct MXitSession {
 	GList*				rooms;						/* active groupchat rooms */
 
 	/* inline images */
-	GHashTable*			iimages;					/* table which maps inline images (including emoticons) to purple's imgstore id's */
+	GHashTable *inline_images; /* table which maps inline images (including emoticons) to PurpleImages */
 };
 
 G_MODULE_EXPORT GType mxit_protocol_get_type(void);

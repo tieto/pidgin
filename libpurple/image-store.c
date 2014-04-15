@@ -23,6 +23,7 @@
 
 #include "eventloop.h"
 #include "glibcompat.h"
+#include "util.h"
 
 #define TEMP_IMAGE_TIMEOUT 5
 
@@ -155,6 +156,58 @@ PurpleImage *
 purple_image_store_get(guint id)
 {
 	return g_hash_table_lookup(id_to_image, GINT_TO_POINTER(id));
+}
+
+/* TODO: handle PURPLE_IMAGE_STORE_STOCK_PROTOCOL */
+PurpleImage *
+purple_image_store_get_from_uri(const gchar *uri)
+{
+	guint64 longid;
+	guint id;
+	gchar *endptr;
+	gchar endchar;
+
+	g_return_val_if_fail(uri != NULL, NULL);
+
+	if (!purple_str_has_prefix(uri, PURPLE_IMAGE_STORE_PROTOCOL))
+		return NULL;
+
+	uri += sizeof(PURPLE_IMAGE_STORE_PROTOCOL) - 1;
+	if (uri[0] == '-')
+		return NULL;
+
+	longid = g_ascii_strtoull(uri, &endptr, 10);
+	endchar = endptr[0];
+	if (endchar != '\0' && endchar != '"' &&
+		endchar != '\'' && endchar != ' ')
+	{
+		return NULL;
+	}
+
+	id = longid;
+	if (id != longid)
+		return NULL;
+
+	return purple_image_store_get(id);
+}
+
+gchar *
+purple_image_store_get_uri(PurpleImage *image)
+{
+	gboolean is_ready;
+	const gchar *path;
+	guint img_id;
+
+	g_return_val_if_fail(PURPLE_IS_IMAGE(image), NULL);
+
+	is_ready = purple_image_is_ready(image);
+	path = purple_image_get_path(image);
+
+	if (is_ready && path)
+		return g_filename_to_uri(path, NULL, NULL);
+
+	img_id = purple_image_store_add_weak(image);
+	return g_strdup_printf(PURPLE_IMAGE_STORE_PROTOCOL "%u", img_id);
 }
 
 void

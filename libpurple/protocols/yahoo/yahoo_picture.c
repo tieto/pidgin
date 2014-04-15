@@ -470,7 +470,7 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 	return checksum;
 }
 
-void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
+void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleImage *img)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -489,8 +489,8 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 			yahoo_send_picture_update(gc, 0);
 
 	} else {
-		gconstpointer data = purple_imgstore_get_data(img);
-		size_t len = purple_imgstore_get_size(img);
+		gconstpointer data = purple_image_get_data(img);
+		size_t len = purple_image_get_size(img);
 		GString *s = g_string_new_len(data, len);
 		struct yahoo_buddy_icon_upload_data *d;
 		int oldcksum = purple_account_get_int(account, YAHOO_PICCKSUM_SETTING, 0);
@@ -513,7 +513,7 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 		d = g_new0(struct yahoo_buddy_icon_upload_data, 1);
 		d->gc = gc;
 		d->picture_data = s;
-		d->filename = g_strdup(purple_imgstore_get_filename(img));
+		d->filename = g_strdup(purple_image_get_friendly_filename(img));
 
 		if (!yd->logged_in) {
 			yd->picture_upload_todo = d;

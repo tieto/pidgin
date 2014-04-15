@@ -38,7 +38,7 @@
 #include "core.h"
 #include "debug.h"
 #include "encoding.h"
-#include "imgstore.h"
+#include "image-store.h"
 #include "network.h"
 #include "notify.h"
 #include "protocol.h"
@@ -1354,7 +1354,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleMessageFlags flags = 0;
 	struct buddyinfo *bi;
-	PurpleStoredImage *img;
+	PurpleImage *img;
 	gchar *tmp;
 	const char *start, *end;
 	GData *attribs;
@@ -1388,8 +1388,8 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	img = purple_buddy_icons_find_account_icon(account);
 	if ((img != NULL) &&
 	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ) && !bi->ico_sent && bi->ico_informed) {
-		gconstpointer data = purple_imgstore_get_data(img);
-		size_t len = purple_imgstore_get_size(img);
+		gconstpointer data = purple_image_get_data(img);
+		size_t len = purple_image_get_size(img);
 		purple_debug_info("oscar",
 				"Sending buddy icon to %s (%" G_GSIZE_FORMAT " bytes)\n",
 				userinfo->bn, len);
@@ -1397,7 +1397,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 			purple_buddy_icons_get_account_icon_timestamp(account),
 			aimutil_iconsum(data, len));
 	}
-	purple_imgstore_unref(img);
+	g_object_unref(img);
 
 	tmp = g_strdup(args->msg);
 
@@ -2505,15 +2505,15 @@ purple_icons_fetch(PurpleConnection *gc)
 
 	if (od->set_icon) {
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+		PurpleImage *img = purple_buddy_icons_find_account_icon(account);
 		if (img == NULL) {
 			aim_ssi_delicon(od);
 		} else {
 			purple_debug_info("oscar",
-				   "Uploading icon to icon server\n");
-			aim_bart_upload(od, purple_imgstore_get_data(img),
-			                purple_imgstore_get_size(img));
-			purple_imgstore_unref(img);
+				"Uploading icon to icon server");
+			aim_bart_upload(od, purple_image_get_data(img),
+				purple_image_get_size(img));
+			g_object_unref(img);
 		}
 		od->set_icon = FALSE;
 	}
@@ -3008,23 +3008,23 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	/* for each valid IMG tag... */
 	while (last && *last && purple_markup_find_tag("img", last, &start, &end, &attribs))
 	{
-		PurpleStoredImage *image = NULL;
-		const char *id;
+		PurpleImage *image = NULL;
+		const gchar *src;
 
 		if (start - last) {
 			g_string_append_len(msg, last, start - last);
 		}
 
-		id = g_datalist_get_data(&attribs, "src");
+		src = g_datalist_get_data(&attribs, "src");
+		if (src)
+			image = purple_image_store_get_from_uri(src);
 
 		/* ... if it refers to a valid purple image ... */
-		if (id
-		 && strlen(id) > (sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1)
-		 && (image = purple_imgstore_find_by_id(atoi(id + sizeof(PURPLE_STORED_IMAGE_PROTOCOL) - 1)))) {
+		if (image) {
 			/* ... append the message from start to the tag ... */
-			unsigned long size = purple_imgstore_get_size(image);
-			const char *filename = purple_imgstore_get_filename(image);
-			gconstpointer imgdata = purple_imgstore_get_data(image);
+			unsigned long size = purple_image_get_size(image);
+			const gchar *filename = purple_image_get_friendly_filename(image);
+			gconstpointer imgdata = purple_image_get_data(image);
 
 			oscar_id++;
 
@@ -3120,12 +3120,12 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
 		PurpleIMConversation *im;
-		PurpleStoredImage *img;
+		PurpleImage *img;
 		PurpleBuddy *buddy;
 
 		im = purple_conversations_find_im_with_account(name, account);
 
-		if (strstr(tmp1, "<IMG "))
+		if (strstr(tmp1, "<img "))
 			purple_conversation_write(PURPLE_CONVERSATION(im), "",
 			                        _("Your IM Image was not sent. "
 			                        "You must be Direct Connected to send IM Images."),
@@ -3164,8 +3164,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 
 		img = purple_buddy_icons_find_account_icon(account);
 		if (img) {
-			gconstpointer data = purple_imgstore_get_data(img);
-			args.iconlen = purple_imgstore_get_size(img);
+			gconstpointer data = purple_image_get_data(img);
+			args.iconlen = purple_image_get_size(img);
 			args.iconsum = aimutil_iconsum(data, args.iconlen);
 			args.iconstamp = purple_buddy_icons_get_account_icon_timestamp(account);
 
@@ -3191,7 +3191,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 				bi->ico_informed = TRUE;
 			}
 
-			purple_imgstore_unref(img);
+			g_object_unref(img);
 		}
 
 		args.destbn = name;
@@ -3700,7 +3700,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	GSList *cur, *next, *buddies;
 	struct aim_ssi_item *curitem;
 	guint32 tmp;
-	PurpleStoredImage *img;
+	PurpleImage *img;
 	va_list ap;
 	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
 
@@ -3941,7 +3941,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	 */
 	img = purple_buddy_icons_find_account_icon(account);
 	oscar_set_icon(gc, img);
-	purple_imgstore_unref(img);
+	g_object_unref(img);
 
 	/*
 	 * If we've already received our bos rights then we're not waiting on
@@ -4340,7 +4340,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 
 	buf = purple_strdup_withhtml(message);
 
-	if (strstr(buf, "<IMG "))
+	if (strstr(buf, "<img "))
 		purple_conversation_write(PURPLE_CONVERSATION(conv), "",
 			_("Your IM Image was not sent. "
 			  "You cannot send IM Images in AIM chats."),
@@ -5189,7 +5189,7 @@ static void oscar_show_imforwardingurl(PurpleProtocolAction *action)
 	purple_notify_uri(gc, "http://mymobile.aol.com/dbreg/register?action=imf&clientID=1");
 }
 
-void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
+void oscar_set_icon(PurpleConnection *gc, PurpleImage *img)
 {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
@@ -5198,8 +5198,8 @@ void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	} else {
 		PurpleHash *hash;
 		guchar md5[16];
-		gconstpointer data = purple_imgstore_get_data(img);
-		size_t len = purple_imgstore_get_size(img);
+		gconstpointer data = purple_image_get_data(img);
+		size_t len = purple_image_get_size(img);
 
 		hash = purple_md5_hash_new();
 		purple_hash_append(hash, data, len);

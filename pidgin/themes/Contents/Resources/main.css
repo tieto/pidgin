@@ -75,14 +75,21 @@ img
 	font-weight: bold;
 }
 
+/* Inline images */
+
+.pending-image
+{
+	cursor: progress;
+}
+
+.pending-image img
+{
+	display: none;
+}
+
 /* Emoticons */
 
 .emoticon
 {
 	vertical-align: bottom;
-}
-
-.emoticon.pending
-{
-	cursor: progress;
 }

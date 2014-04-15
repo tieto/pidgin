@@ -35,8 +35,6 @@
 #include "server.h"
 #include "util.h"
 
-#include "imgstore.h" /* TODO: temp */
-
 #undef SILC_VERSION
 #define SILC_VERSION(a, b, c) (((a) << 24) + ((b) << 16) + ((c) << 8))
 
@@ -172,8 +170,7 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 void silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 					 char **contactstr, char **langstr, char **devicestr,
 					 char **tzstr, char **geostr);
-void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img);
-char *silcpurple_file2mime(const char *filename);
+void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleImage *img);
 SilcDList silcpurple_image_message(const char *msg, SilcMessageFlags *mflags);
 
 #ifdef _WIN32

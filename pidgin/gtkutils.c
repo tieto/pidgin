@@ -1446,6 +1446,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		shortname = strrchr(data->filename, G_DIR_SEPARATOR);
 		shortname = shortname ? shortname + 1 : data->filename;
 		img = purple_image_new_from_data(filedata, size);
+		purple_image_set_friendly_filename(img, shortname);
 
 		pidgin_webview_insert_image(PIDGIN_WEBVIEW(gtkconv->entry), img);
 		g_object_unref(img);

@@ -507,16 +507,16 @@ const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso)
 #ifdef _WIN32
 	if ((off = wpurple_get_tz_offset()) == -1)
 		return "";
-#else
-# ifdef HAVE_TM_GMTOFF
+#elif defined(HAVE_TM_GMTOFF)
 	off = new_tm.tm_gmtoff;
-# else
-#  ifdef HAVE_TIMEZONE
+#elif defined(HAVE_TIMEZONE)
 	tzset();
 	off = -1 * timezone;
-#  endif /* HAVE_TIMEZONE */
-# endif /* !HAVE_TM_GMTOFF */
-#endif /* _WIN32 */
+#else
+	purple_debug_warning("util",
+		"there is no possibility to obtain tz offset");
+	return "";
+#endif
 
 	min = (off / 60) % 60;
 	hrs = ((off / 60) - min) / 60;
@@ -566,10 +566,10 @@ static size_t purple_internal_strftime(char *s, size_t max, const char *format, 
 		if (*c == 'z')
 		{
 			char *tmp = g_strdup_printf("%s%.*s%s",
-			                            fmt ? fmt : "",
-			                            c - start - 1,
-			                            start,
-			                            purple_get_tzoff_str(tm, FALSE));
+				fmt ? fmt : "",
+				(int)(c - start - 1),
+				start,
+				purple_get_tzoff_str(tm, FALSE));
 			g_free(fmt);
 			fmt = tmp;
 			start = c + 1;
@@ -579,10 +579,10 @@ static size_t purple_internal_strftime(char *s, size_t max, const char *format, 
 		if (*c == 'Z')
 		{
 			char *tmp = g_strdup_printf("%s%.*s%s",
-			                            fmt ? fmt : "",
-			                            c - start - 1,
-			                            start,
-			                            wpurple_get_timezone_abbreviation(tm));
+				fmt ? fmt : "",
+				(int)(c - start - 1),
+				start,
+				wpurple_get_timezone_abbreviation(tm));
 			g_free(fmt);
 			fmt = tmp;
 			start = c + 1;
@@ -3171,44 +3171,6 @@ purple_mkstemp(char **fpath, gboolean binary)
 	}
 
 	return fp;
-}
-
-const char *
-purple_util_get_image_extension(gconstpointer data, size_t len)
-{
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(len   > 0,    NULL);
-
-	if (len >= 4)
-	{
-		if (!strncmp((char *)data, "GIF8", 4))
-			return "gif";
-		else if (!strncmp((char *)data, "\xff\xd8\xff", 3)) /* 4th may be e0 through ef */
-			return "jpg";
-		else if (!strncmp((char *)data, "\x89PNG", 4))
-			return "png";
-		else if (!strncmp((char *)data, "MM", 2) ||
-				 !strncmp((char *)data, "II", 2))
-			return "tif";
-		else if (!strncmp((char *)data, "BM", 2))
-			return "bmp";
-	}
-
-	return "icon";
-}
-
-char *
-purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
-{
-	/* Use a cryptographic hash to avoid the possibility of user A
-	   intentionally causing a collision with user B.  It's not a
-	   horrible problem, but it's something we should try to avoid. */
-	char *checksum = g_compute_checksum_for_data(G_CHECKSUM_SHA1,
-			image_data, image_len);
-	char *filename = g_strdup_printf("%s.%s", checksum,
-	                       purple_util_get_image_extension(image_data, image_len));
-	g_free(checksum);
-	return filename;
 }
 
 gboolean

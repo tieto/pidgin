@@ -249,10 +249,8 @@ edit_dialog_save(SmileyEditDialog *edit_dialog)
 	}
 
 	if (edit_dialog->new_image == NULL) {
-		/* We're reading the file and then writing it back - it's not
-		 * efficient, but it's also not really important here. */
-		edit_dialog->new_image = purple_image_new_from_file(
-			purple_smiley_get_path(edit_dialog->smiley), TRUE);
+		edit_dialog->new_image =
+			purple_smiley_get_image(edit_dialog->smiley);
 		g_return_if_fail(edit_dialog->new_image);
 	}
 
@@ -428,8 +426,8 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 	gtk_widget_show(GTK_WIDGET(edit_dialog->window));
 
 	if (smiley) {
-		edit_dialog->filename =
-			g_strdup(purple_smiley_get_path(smiley));
+		edit_dialog->filename = g_strdup(purple_image_get_path(
+			purple_smiley_get_image(smiley)));
 		gtk_entry_set_text(edit_dialog->shortcut,
 			purple_smiley_get_shortcut(smiley));
 	}
@@ -624,8 +622,8 @@ manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
 	smiley_image = g_object_get_data(G_OBJECT(smiley),
 		"pidgin-smiley-manager-list-thumb");
 	if (smiley_image == NULL) {
-		smiley_image = pidgin_pixbuf_new_from_file(
-			purple_smiley_get_path(smiley));
+		smiley_image = pidgin_pixbuf_from_image(
+			purple_smiley_get_image(smiley));
 		smiley_image = pidgin_pixbuf_scale_down(smiley_image,
 			22, 22, GDK_INTERP_BILINEAR, TRUE);
 		g_object_set_data_full(G_OBJECT(smiley),

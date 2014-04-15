@@ -53,7 +53,6 @@
       <xi:include href="xml/purple-socket.xml" />
       <xi:include href="xml/http.xml" />
       <xi:include href="xml/idle.xml" />
-      <xi:include href="xml/imgstore.xml" />
       <xi:include href="xml/keyring.xml" />
       <xi:include href="xml/log.xml" />
       <xi:include href="xml/memorypool.xml" />
@@ -90,7 +89,6 @@
       <xi:include href="xml/sound-theme.xml" />
       <xi:include href="xml/sound-theme-loader.xml" />
       <xi:include href="xml/upnp.xml" />
-      <xi:include href="xml/whiteboard.xml" />
       <xi:include href="xml/xmlnode.xml" />
       <xi:include href="xml/version.xml" />
       <xi:include href="xml/util.xml" />
@@ -118,7 +116,6 @@
       <title>Smiley APIs</title>
 
         <xi:include href="xml/smiley.xml" />
-        <xi:include href="xml/smiley-remote.xml" />
         <xi:include href="xml/smiley-custom.xml" />
         <xi:include href="xml/smiley-list.xml" />
         <xi:include href="xml/smiley-theme.xml" />
@@ -126,6 +123,14 @@
     </reference>
 
     <reference label="c">
+      <title>Graphics</title>
+
+        <xi:include href="xml/image.xml" />
+        <xi:include href="xml/image-store.xml" />
+        <xi:include href="xml/whiteboard.xml" />
+    </reference>
+
+    <reference label="d">
       <title>Media APIs</title>
 
         <xi:include href="xml/media.xml" />
@@ -137,7 +142,7 @@
         <xi:include href="xml/enum-types.xml" />
     </reference>
 
-    <reference label="d">
+    <reference label="e">
       <title>D-Bus Server APIs</title>
 
         <xi:include href="xml/dbus-bindings.xml" />
@@ -165,7 +170,6 @@
       <xi:include href="signals_protocol.xml" />
       <xi:include href="signals_savedstatus.xml" />
       <xi:include href="signals_sound.xml" />
-      <xi:include href="signals_imgstore.xml" />
       <xi:include href="signals_jabber.xml" />
   </reference>
 

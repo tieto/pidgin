@@ -36,8 +36,8 @@
 #include "circularbuffer.h"
 #include "conversation.h"
 #include "debug.h"
+#include "image-store.h"
 #include "xfer.h"
-#include "imgstore.h"
 #include "mime.h"
 #include "notify.h"
 #include "plugins.h"
@@ -2723,15 +2723,13 @@ static void im_recv_mime(struct mwConversation *conv,
 			 const char *data) {
 
   GHashTable *img_by_cid;
-  GList *images;
 
   GString *str;
 
   PurpleMimeDocument *doc;
   GList *parts;
 
-  img_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-  images = NULL;
+  img_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 
   /* don't want the contained string to ever be NULL */
   str = g_string_new("");
@@ -2756,7 +2754,7 @@ static void im_recv_mime(struct mwConversation *conv,
       guchar *d_dat;
       gsize d_len;
       char *cid;
-      int img;
+      PurpleImage *image;
 
       /* obtain and unencode the data */
       purple_mime_part_get_data_decoded(part, &d_dat, &d_len);
@@ -2766,22 +2764,11 @@ static void im_recv_mime(struct mwConversation *conv,
       cid = make_cid(cid);
 
       /* add image to the purple image store */
-      /* TODO: This PurpleStoredImage will be rendered within the IM window
-         and right-clicking the image will allow the user to save the image
-         to disk.  The default filename used in this dialog is the filename
-         that we pass to purple_imgstore_new_with_id(), so we should call
-         g_path_get_basename() and purple_escape_filename() on it before
-         passing it in.  This is easy, but it's not clear if there might be
-         other implications because this filename is used elsewhere within
-         this protocol. */
-      img = purple_imgstore_new_with_id(d_dat, d_len, cid);
+      image = purple_image_new_from_data(d_dat, d_len);
+      purple_image_set_friendly_filename(image, cid);
 
       /* map the cid to the image store identifier */
-      g_hash_table_insert(img_by_cid, cid, GINT_TO_POINTER(img));
-
-      /* recall the image for dereferencing later */
-      images = g_list_append(images, GINT_TO_POINTER(img));
-
+      g_hash_table_insert(img_by_cid, cid, image);
     } else if(purple_str_has_prefix(type, "text")) {
 
       /* concatenate all the text parts together */
@@ -2827,7 +2814,8 @@ static void im_recv_mime(struct mwConversation *conv,
 	if(align) g_string_append_printf(atstr, " align=\"%s\"", align);
 	if(border) g_string_append_printf(atstr, " border=\"%s\"", border);
 
-	mov = g_snprintf(start, len, "<img%s src=\"" PURPLE_STORED_IMAGE_PROTOCOL "%i\"", atstr->str, img);
+	mov = g_snprintf(start, len, "<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL
+		"%u\"%s", img, atstr->str);
 	while(mov < len) start[mov++] = ' ';
 
 	g_string_free(atstr, TRUE);
@@ -2844,12 +2832,6 @@ static void im_recv_mime(struct mwConversation *conv,
 
   /* clean up the cid table */
   g_hash_table_destroy(img_by_cid);
-
-  /* dereference all the imgages */
-  while(images) {
-    purple_imgstore_unref_by_id(GPOINTER_TO_INT(images->data));
-    images = g_list_delete_link(images, images);
-  }
 }
 
 
@@ -3806,40 +3788,26 @@ static char *im_mime_content_type(void) {
                          mw_rand() & 0xfff, mw_rand() & 0xffff);
 }
 
+/** determine content type from contents */
+static gchar *
+im_mime_img_content_type(PurpleImage *img)
+{
+	const gchar *mimetype;
 
-/** determine content type from extension. Not so happy about this,
-    but I don't want to actually write image type detection */
-static char *im_mime_img_content_type(PurpleStoredImage *img) {
-  const char *fn = purple_imgstore_get_filename(img);
-  const char *ct = NULL;
+	mimetype = purple_image_get_mimetype(img);
 
-  ct = strrchr(fn, '.');
-  if(! ct) {
-    ct = "image";
+	if (!mimetype)
+		mimetype = "image";
 
-  } else if(! strcmp(".png", ct)) {
-    ct = "image/png";
-
-  } else if(! strcmp(".jpg", ct)) {
-    ct = "image/jpeg";
-
-  } else if(! strcmp(".jpeg", ct)) {
-    ct = "image/jpeg";
-
-  } else if(! strcmp(".gif", ct)) {
-    ct = "image/gif";
-
-  } else {
-    ct = "image";
-  }
-
-  return g_strdup_printf("%s; name=\"%s\"", ct, fn);
+	return g_strdup_printf("%s; name=\"%s\"", mimetype,
+		purple_image_get_friendly_filename(img));
 }
 
 
-static char *im_mime_img_content_disp(PurpleStoredImage *img) {
-  const char *fn = purple_imgstore_get_filename(img);
-  return g_strdup_printf("attachment; filename=\"%s\"", fn);
+static char *
+im_mime_img_content_disp(PurpleImage *img) {
+	return g_strdup_printf("attachment; filename=\"%s\"",
+		purple_image_get_friendly_filename(img));
 }
 
 
@@ -3868,23 +3836,22 @@ static char *im_mime_convert(PurpleConnection *gc,
   tmp = (char *) message;
   while(*tmp && purple_markup_find_tag("img", tmp, (const char **) &start,
 				     (const char **) &end, &attr)) {
-    char *id;
-    PurpleStoredImage *img = NULL;
+    gchar *uri;
+    PurpleImage *img = NULL;
 
     gsize len = (start - tmp);
 
     /* append the in-between-tags text */
     if(len) g_string_append_len(str, tmp, len);
 
-    /* find the imgstore data by the id tag */
-    id = g_datalist_get_data(&attr, "id");
-    if(id && *id)
-      img = purple_imgstore_find_by_id(atoi(id));
+    uri = g_datalist_get_data(&attr, "src");
+    if (uri)
+      img = purple_image_store_get_from_uri(uri);
 
     if(img) {
       char *cid;
       gpointer data;
-      size_t size;
+      gsize size;
 
       part = purple_mime_part_new(doc);
 
@@ -3905,8 +3872,8 @@ static char *im_mime_convert(PurpleConnection *gc,
 
       /* obtain and base64 encode the image data, and put it in the
 	 mime part */
-      size = purple_imgstore_get_size(img);
-      data = purple_base64_encode(purple_imgstore_get_data(img), (gsize) size);
+      size = purple_image_get_size(img);
+      data = purple_base64_encode(purple_image_get_data(img), size);
       purple_mime_part_set_data(part, data);
       g_free(data);
 
@@ -3916,7 +3883,7 @@ static char *im_mime_convert(PurpleConnection *gc,
 
     } else {
       /* append the literal image tag, since we couldn't find a
-	 relative imgstore object */
+	 relative PurpleImage object */
       gsize len = (end - start) + 1;
       g_string_append_len(str, start, len);
     }

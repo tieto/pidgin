@@ -86,6 +86,12 @@ _list_delete_link2(GList **head_p, GList **tail_p, GList *link)
 	*head_p = g_list_delete_link(head, link);
 }
 
+static const gchar *
+smiley_get_uniqid(PurpleSmiley *smiley)
+{
+	return purple_image_get_path(purple_smiley_get_image(smiley));
+}
+
 /*******************************************************************************
  * API implementation
  ******************************************************************************/
@@ -97,9 +103,13 @@ purple_smiley_list_new(void)
 }
 
 static void
-remote_smiley_failed(PurpleSmiley *smiley, gpointer _list)
+remote_smiley_failed(PurpleImage *smiley_img, gpointer _list)
 {
 	PurpleSmileyList *list = _list;
+	PurpleSmiley *smiley;
+
+	smiley = g_object_get_data(G_OBJECT(smiley_img),
+		"purple-smiley-list-smiley");
 
 	purple_debug_info("smiley-list", "remote smiley '%s' has failed, "
 		"removing it from the list...",
@@ -112,6 +122,7 @@ gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+	PurpleImage *smiley_img;
 	const gchar *smiley_path;
 	gboolean succ;
 	gchar *shortcut_escaped;
@@ -133,6 +144,18 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 
 	shortcut_escaped = g_markup_escape_text(shortcut, -1);
 	succ = purple_trie_add(priv->trie, shortcut_escaped, smiley);
+
+	/* A special-case for WebKit, which unescapes apos entity.
+	 * Please, don't trust this hack - it may be removed in future releases.
+	 */
+	if (succ && strstr(shortcut_escaped, "&apos;") != NULL) {
+		gchar *tmp = shortcut_escaped;
+		shortcut_escaped = purple_strreplace(shortcut_escaped,
+			"&apos;", "'");
+		g_free(tmp);
+		succ = purple_trie_add(priv->trie, shortcut_escaped, smiley);
+	}
+
 	g_free(shortcut_escaped);
 	if (!succ)
 		return FALSE;
@@ -145,16 +168,15 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 
 	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
 
-	/* We don't expect non-remote non-ready smileys, but let's check it just
-	 * to be safe. */
-	if (priv->drop_failed_remotes && !purple_smiley_is_ready(smiley) &&
-		PURPLE_IS_REMOTE_SMILEY(smiley))
-	{
-		g_signal_connect_object(smiley, "failed",
+	smiley_img = purple_smiley_get_image(smiley);
+	if (priv->drop_failed_remotes && !purple_image_is_ready(smiley_img)) {
+		g_object_set_data(G_OBJECT(smiley_img),
+			"purple-smiley-list-smiley", smiley);
+		g_signal_connect_object(smiley_img, "failed",
 			G_CALLBACK(remote_smiley_failed), list, 0);
 	}
 
-	smiley_path = purple_smiley_get_path(smiley);
+	smiley_path = smiley_get_uniqid(smiley);
 
 	/* TODO: add to the table, when the smiley sets the path */
 	if (!smiley_path)
@@ -188,7 +210,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 		"purple-smiley-list-elem");
 
 	shortcut = purple_smiley_get_shortcut(smiley);
-	path = purple_smiley_get_path(smiley);
+	path = smiley_get_uniqid(smiley);
 
 	g_hash_table_remove(priv->shortcut_map, shortcut);
 	if (path)
@@ -204,7 +226,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 	for (it = priv->smileys; it && path; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
 
-		if (g_strcmp0(purple_smiley_get_path(smiley), path) == 0) {
+		if (g_strcmp0(smiley_get_uniqid(smiley), path) == 0) {
 			g_hash_table_insert(priv->path_map,
 				g_strdup(path), smiley);
 			break;
@@ -263,7 +285,7 @@ purple_smiley_list_get_unique(PurpleSmileyList *list)
 
 	for (it = priv->smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
-		const gchar *path = purple_smiley_get_path(smiley);
+		const gchar *path = smiley_get_uniqid(smiley);
 
 		if (g_hash_table_lookup(unique_map, path))
 			continue;

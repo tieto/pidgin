@@ -26,8 +26,6 @@
 
 typedef struct _MsnSlpMessage MsnSlpMessage;
 
-#include "imgstore.h"
-
 #include "slpcall.h"
 #include "slplink.h"
 #include "session.h"
@@ -50,7 +48,6 @@ struct _MsnSlpMessage
 	long id;
 
 	gboolean ft;
-	PurpleStoredImage *img;
 	guchar *buffer;
 
 	/**
@@ -90,7 +87,7 @@ void msn_slpmsg_set_slplink(MsnSlpMessage *slpmsg, MsnSlpLink *slplink);
 
 void msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 						 long long size);
-void msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img);
+void msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleImage *img);
 MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 								   const char *header,
 								   const char *branch,
@@ -114,7 +111,7 @@ MsnSlpMessage *msn_slpmsg_ack_new(MsnSlpLink *slplink, MsnP2PInfo *info);
  *
  * @return A new SlpMessage with MsnObject info.
  */
-MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img);
+MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleImage *img);
 
 /**
  * Create a new SLP message for data preparation.

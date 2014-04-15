@@ -125,7 +125,8 @@ struct contact {
 
 	/* invites only */
 	void*		profile;							/* user's profile (if available) */
-	int			imgid;								/* avatar image id in the imgstore */
+
+	PurpleImage *image; /* avatar image */
 };
 
 /* Presence / Status */

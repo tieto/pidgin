@@ -24,6 +24,8 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "image.h"
+#include "image-store.h"
 
 #include "msnutils.h"
 #include "switchboard.h"
@@ -807,7 +809,8 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	PurpleConnection *gc;
 	guchar *image_data;
 	size_t image_len;
-	int imgid;
+	PurpleImage *img;
+	guint imgid;
 	char *image_msg;
 
 	if (!purple_str_has_prefix(data, "base64:"))
@@ -826,9 +829,11 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 		return;
 	}
 
-	imgid = purple_imgstore_new_with_id(image_data, image_len, NULL);
-	image_msg = g_strdup_printf("<IMG SRC='" PURPLE_STORED_IMAGE_PROTOCOL "%d'>",
-	                            imgid);
+	img = purple_image_new_from_data(image_data, image_len);
+	imgid = purple_image_store_add_temporary(img);
+	g_object_unref(img);
+	image_msg = g_strdup_printf("<img src=\"" PURPLE_IMAGE_STORE_PROTOCOL
+		"%u\">", imgid);
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
@@ -838,7 +843,6 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	else
 		purple_serv_got_im(gc, passport, image_msg, 0, time(NULL));
 
-	purple_imgstore_unref_by_id(imgid);
 	g_free(image_msg);
 }
 
