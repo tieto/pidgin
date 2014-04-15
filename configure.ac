@@ -125,6 +125,9 @@ dnl Check for Win32
 case "$host" in
 	*-*-mingw* | *-*-cygwin*)
 		is_win32="yes"
+		LIBS="$LIBS -lws2_32"
+		DNSAPI_LIBS="-ldnsapi"
+		AC_SUBST(DNSAPI_LIBS)
 		;;
 	*)
 		is_win32="no"

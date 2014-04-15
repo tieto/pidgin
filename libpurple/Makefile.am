@@ -401,6 +401,7 @@ libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -
 libpurple_la_LIBADD = \
 	$(STATIC_LINK_LIBS) \
 	$(DBUS_LIBS) \
+	$(DNSAPI_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
 	$(NETWORKMANAGER_LIBS) \
@@ -413,6 +414,7 @@ libpurple_la_LIBADD = \
 	$(JSON_LIBS) \
 	$(GNUTLS_LIBS) \
 	$(NSS_LIBS) \
+	$(ZLIB_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
@@ -428,4 +430,5 @@ AM_CPPFLAGS = \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
 	$(GNUTLS_CFLAGS) \
-	$(NSS_CFLAGS)
+	$(NSS_CFLAGS) \
+	$(ZLIB_CFLAGS)

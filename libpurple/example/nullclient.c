@@ -24,13 +24,15 @@
 #include "purple.h"
 
 #include <glib.h>
+#include <glib/gprintf.h>
 
 #include <signal.h>
 #include <string.h>
-#ifndef _WIN32
-#include <unistd.h>
+#ifdef _WIN32
+#  include <conio.h>
+#  include "win32/win32dep.h"
 #else
-#include "win32/win32dep.h"
+#  include <unistd.h>
 #endif
 
 #include "defines.h"
@@ -235,6 +237,36 @@ connect_to_signals_for_demonstration_purposes_only(void)
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", &handle,
 				PURPLE_CALLBACK(signed_on), NULL);
 }
+
+#if defined(_WIN32) || defined(__BIONIC__)
+#ifndef PASS_MAX
+#  define PASS_MAX 1024
+#endif
+static gchar *
+getpass(const gchar *prompt)
+{
+	static gchar buff[PASS_MAX + 1];
+	guint i = 0;
+
+	g_fprintf(stderr, "%s", prompt);
+	fflush(stderr);
+
+	while (i < sizeof(buff) - 1) {
+#ifdef __BIONIC__
+		buff[i] = getc(stdin);
+#else
+		buff[i] = _getch();
+#endif
+		if (buff[i] == '\r' || buff[i] == '\n')
+			break;
+		i++;
+	}
+	buff[i] = '\0';
+	g_fprintf(stderr, "\n");
+
+	return buff;
+}
+#endif /* _WIN32 || __BIONIC__ */
 
 int main(int argc, char *argv[])
 {
