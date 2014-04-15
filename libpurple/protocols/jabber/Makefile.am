@@ -101,6 +101,10 @@ if USE_CYRUS_SASL
 JABBERSOURCES += auth_cyrus.c
 endif
 
+if IS_WIN32
+JABBERSOURCES += win32/posix.uname.c
+endif
+
 if STATIC_JABBER
 
 st = -DPURPLE_STATIC_PRPL

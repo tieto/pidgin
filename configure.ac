@@ -130,6 +130,7 @@ case "$host" in
 		is_win32="no"
 		;;
 esac
+AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
 
 dnl Checks for header files.
 AC_HEADER_STDC

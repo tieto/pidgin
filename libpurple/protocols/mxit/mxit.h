@@ -40,7 +40,6 @@
 #ifndef HOST_NAME_MAX
 #define		HOST_NAME_MAX				512
 #endif
-#include	"libc_interface.h"
 #elif defined( __linux__ )
 /* linux architecture */
 #include	<net/if.h>

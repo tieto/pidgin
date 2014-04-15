@@ -52,8 +52,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#else
-#include "libc_interface.h"
 #endif
 
 typedef struct _ByteStream         ByteStream;
