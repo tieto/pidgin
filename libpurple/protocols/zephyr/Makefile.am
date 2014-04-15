@@ -103,7 +103,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/protocols \
-	-DCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
 	$(KRB4_CFLAGS) \
 	$(DEBUG_CFLAGS)

@@ -402,7 +402,7 @@ purple_prefs_load()
 
 		if (sysconfdir == NULL)
 			sysconfdir = "";
-		filename = g_build_filename(PURPLE_SYSCONFDIR, "purple", "prefs.xml", NULL);
+		filename = g_build_filename(sysconfdir, "purple", "prefs.xml", NULL);
 
 		purple_debug_info("prefs", "Reading %s\n", filename);
 

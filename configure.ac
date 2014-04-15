@@ -2155,6 +2155,10 @@ if ! test -z "$ssl_certificates_dir" ; then
 	SSL_CERTIFICATES_DIR="$ssl_certificates_dir"
 fi
 AC_SUBST(SSL_CERTIFICATES_DIR)
+if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
+	AC_DEFINE_UNQUOTED([SSL_CERTIFICATES_DIR], ["$SSL_CERTIFICATES_DIR"],
+		[Directory where SSL certificates can be found])
+fi
 AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
 
 dnl These two are inverses of each other <-- stolen from evolution!

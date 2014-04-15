@@ -46,7 +46,7 @@ purple_check_init(void) {
 	{
 		gchar *home_dir;
 
-		home_dir = g_build_path(G_DIR_SEPARATOR_S, BUILDDIR, "libpurple", "tests", "home", NULL);
+		home_dir = g_build_path(G_DIR_SEPARATOR_S, $(top_builddir), "libpurple", "tests", "home", NULL);
 		purple_util_set_user_dir(home_dir);
 		g_free(home_dir);
 	}
