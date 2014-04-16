@@ -26,10 +26,6 @@
 #include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 #include "gtk3compat.h"
 
 typedef struct

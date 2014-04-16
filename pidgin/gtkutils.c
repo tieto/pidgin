@@ -33,7 +33,7 @@
 #ifdef USE_GTKSPELL
 # include <gtkspell/gtkspell.h>
 # ifdef _WIN32
-#  include "wspell.h"
+#  include "win32/wspell.h"
 # endif
 #endif
 
