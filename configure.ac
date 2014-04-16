@@ -128,6 +128,11 @@ case "$host" in
 		LIBS="$LIBS -lws2_32"
 		DNSAPI_LIBS="-ldnsapi"
 		AC_SUBST(DNSAPI_LIBS)
+		AC_DEFINE(IS_WIN32_CROSS_COMPILED, 1,
+			[Define to 1, when building with autotools (not necessarily
+			cross-compiling) for windows. It's a temporary hack to remain
+			non-autotools win32 build working. Drop it when we fully
+			switch our win32 build to autotools.])
 		;;
 	*)
 		is_win32="no"

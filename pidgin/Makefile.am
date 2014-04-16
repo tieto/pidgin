@@ -38,7 +38,8 @@ pkgconfig_DATA = pidgin-3.pc
 
 SUBDIRS = pixmaps plugins themes
 
-noinst_LTLIBRARIES = libpidgin.la
+# XXX: should this be lib_, or noinst_?
+lib_LTLIBRARIES = libpidgin.la
 bin_PROGRAMS = pidgin
 
 libpidgin_la_SOURCES = \
@@ -187,7 +188,7 @@ CLEANFILES = gtkdebug.html.h
 gtkdebug.c: gtkdebug.html.h
 
 libpidgin_la_DEPENDENCIES = @LIBOBJS@
-libpidgin_la_LDFLAGS = -export-dynamic
+libpidgin_la_LDFLAGS = -export-dynamic -no-undefined
 libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
 	$(GLIB_LIBS) \

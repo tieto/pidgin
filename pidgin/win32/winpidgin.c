@@ -35,7 +35,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifndef IS_WIN32_CROSS_COMPILED
 typedef int (__cdecl* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
+#endif
 typedef void (WINAPI* LPFNSETDLLDIRECTORY)(LPCWSTR);
 typedef BOOL (WINAPI* LPFNATTACHCONSOLE)(DWORD);
 typedef BOOL (WINAPI* LPFNSETPROCESSDEPPOLICY)(DWORD);
@@ -45,7 +47,11 @@ static BOOL portable_mode = FALSE;
 /*
  *  PROTOTYPES
  */
+#ifdef IS_WIN32_CROSS_COMPILED
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[]);
+#else
 static LPFNPIDGINMAIN pidgin_main = NULL;
+#endif
 static LPFNSETDLLDIRECTORY MySetDllDirectory = NULL;
 
 static const wchar_t *get_win32_error_message(DWORD err) {
@@ -871,15 +877,18 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		if (!winpidgin_set_running(getenv("PIDGIN_MULTI_INST") == NULL && !multiple))
 			return 0;
 
+#ifndef IS_WIN32_CROSS_COMPILED
 	/* Now we are ready for Pidgin .. */
 	wcscat(pidgin_dir, L"\\pidgin.dll");
 	if ((hmod = LoadLibraryW(pidgin_dir)))
 		pidgin_main = (LPFNPIDGINMAIN) GetProcAddress(hmod, "pidgin_main");
+#endif
 
 	/* Restore pidgin_dir to point to where the executable is */
 	if (pidgin_dir_start)
 		pidgin_dir_start[0] = L'\0';
 
+#ifndef IS_WIN32_CROSS_COMPILED
 	if (!pidgin_main) {
 		DWORD dw = GetLastError();
 		BOOL mod_not_found = (dw == ERROR_MOD_NOT_FOUND || dw == ERROR_DLL_NOT_FOUND);
@@ -894,6 +903,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 		return 0;
 	}
+#endif
 
 	/* Convert argv to utf-8*/
 	szArglist = CommandLineToArgvW(cmdLine, &j);

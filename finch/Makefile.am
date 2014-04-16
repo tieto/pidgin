@@ -11,7 +11,8 @@ SUBDIRS = libgnt plugins
 
 if ENABLE_GNT
 
-noinst_LTLIBRARIES = libfinch.la
+# XXX: should this be lib_, or noinst_?
+lib_LTLIBRARIES = libfinch.la
 bin_PROGRAMS = finch
 
 endif
@@ -70,7 +71,7 @@ libfinchinclude_HEADERS = \
 	$(libfinch_la_headers)
 
 libfinch_la_DEPENDENCIES = @LIBOBJS@
-libfinch_la_LDFLAGS = -export-dynamic
+libfinch_la_LDFLAGS = -export-dynamic -no-undefined
 libfinch_la_LIBADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
