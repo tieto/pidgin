@@ -12,7 +12,7 @@ mono_la_SOURCES	= \
 	blist-glue.c \
 	status-glue.c 
 
-mono_la_LDFLAGS  = -module -avoid-version
+mono_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 mono_la_LIBADD = $(MONO_LIBS)
 

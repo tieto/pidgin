@@ -127,6 +127,7 @@ case "$host" in
 		is_win32="yes"
 		LIBS="$LIBS -lws2_32"
 		DNSAPI_LIBS="-ldnsapi"
+		PLUGIN_LDFLAGS="-avoid-version -no-undefined"
 		AC_SUBST(DNSAPI_LIBS)
 		AC_DEFINE(IS_WIN32_CROSS_COMPILED, 1,
 			[Define to 1, when building with autotools (not necessarily
@@ -136,10 +137,20 @@ case "$host" in
 		;;
 	*)
 		is_win32="no"
+		PLUGIN_LDFLAGS="-avoid-version"
 		AC_CHECK_HEADERS(signal.h)
 		;;
 esac
 AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
+AC_SUBST([PLUGIN_LDFLAGS])
+
+dnl Define *_LIBS
+PURPLE_LIBS="\$(top_builddir)/libpurple/libpurple.la \$(GLIB_LIBS)"
+PIDGIN_LIBS="\$(top_builddir)/pidgin/libpidgin.la \$(GTK_LIBS)"
+FINCH_LIBS="\$(top_builddir)/finch/libfinch.la \$(top_builddir)/finch/libgnt/libgnt.la \$(GLIB_LIBS)"
+AC_SUBST(PURPLE_LIBS)
+AC_SUBST(PIDGIN_LIBS)
+AC_SUBST(FINCH_LIBS)
 
 dnl Checks for header files.
 AC_HEADER_STDC

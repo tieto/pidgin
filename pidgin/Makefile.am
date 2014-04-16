@@ -36,7 +36,7 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin-3.pc
 
-SUBDIRS = pixmaps plugins themes
+SUBDIRS = . pixmaps plugins themes
 
 # XXX: should this be lib_, or noinst_?
 lib_LTLIBRARIES = libpidgin.la

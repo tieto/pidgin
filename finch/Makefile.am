@@ -7,7 +7,7 @@ EXTRA_DIST = \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = finch.pc
 
-SUBDIRS = libgnt plugins
+SUBDIRS = libgnt . plugins
 
 if ENABLE_GNT
 

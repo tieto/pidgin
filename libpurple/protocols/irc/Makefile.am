@@ -13,7 +13,7 @@ IRCSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libirc_la_LDFLAGS = -module -avoid-version
+libirc_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_IRC
 
@@ -27,7 +27,7 @@ else
 st =
 pkg_LTLIBRARIES   = libirc.la
 libirc_la_SOURCES = $(IRCSOURCES)
-libirc_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS)
+libirc_la_LIBADD  = @PURPLE_LIBS@ $(SASL_LIBS)
 
 endif
 
