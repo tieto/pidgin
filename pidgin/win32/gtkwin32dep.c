@@ -101,7 +101,7 @@ int winpidgin_gz_decompress(const char* in, const char* out) {
 	}
 
 	while((ret = gzread(fin, buf, 1024))) {
-		if(fwrite(buf, 1, ret, fout) < ret) {
+		if ((int)fwrite(buf, 1, ret, fout) < ret) {
 			purple_debug_error("wpurple_gz_decompress", "Error writing %d bytes to file\n", ret);
 			gzclose(fin);
 			fclose(fout);
