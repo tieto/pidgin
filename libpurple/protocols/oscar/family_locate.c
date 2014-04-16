@@ -27,9 +27,6 @@
  */
 
 #include "oscar.h"
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
 
 /* Define to log unknown TLVs */
 /* #define LOG_UNKNOWN_TLV */

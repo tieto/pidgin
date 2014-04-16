@@ -82,7 +82,7 @@ int wpurple_socket (int namespace, int style, int protocol) {
 
 	ret = socket( namespace, style, protocol );
 
-	if( ret == INVALID_SOCKET ) {
+	if (ret == (int)INVALID_SOCKET) {
 		errno = WSAGetLastError();
 		return -1;
 	}

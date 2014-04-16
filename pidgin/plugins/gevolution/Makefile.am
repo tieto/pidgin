@@ -20,7 +20,6 @@ gevolution_la_LIBADD = $(EVOLUTION_ADDRESSBOOK_LIBS) $(GPLUGIN_LIBS) $(GTK_LIBS)
 endif
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \

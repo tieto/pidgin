@@ -4169,8 +4169,8 @@ _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 		return image;
 
 	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
-	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "e2ee", "16",
-		filename, NULL);
+	path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+		"e2ee", "16", filename, NULL);
 	image = purple_image_new_from_file(path, FALSE);
 	g_free(path);
 
@@ -8959,9 +8959,9 @@ pidgin_conversations_init(void)
 
 	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_CONV_THEME_LOADER, "type", "conversation", NULL));
 #ifdef _WIN32
-	theme_dir = g_build_filename(DATADIR, "theme", NULL);
+	theme_dir = g_build_filename(PURPLE_DATADIR, "theme", NULL);
 #else
-	theme_dir = g_build_filename(DATADIR, "pidgin", "theme", NULL);
+	theme_dir = g_build_filename(PURPLE_DATADIR, "pidgin", "theme", NULL);
 #endif
 	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
 	g_free(theme_dir);

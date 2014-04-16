@@ -208,6 +208,18 @@ purple_coreheaders = \
 	xfer.h \
 	xmlnode.h
 
+if IS_WIN32
+purple_coresources += \
+	win32/giowin32.c \
+	win32/libc_interface.c \
+	win32/win32dep.c
+purple_coreheaders += \
+	win32/libc_interface.h \
+	win32/libc_internal.h \
+	win32/win32dep.h \
+	win32/wpurpleerror.h
+endif
+
 purple_mediaheaders = \
 	backend-iface.h \
 	candidate.h \
@@ -394,6 +406,7 @@ libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -
 libpurple_la_LIBADD = \
 	$(STATIC_LINK_LIBS) \
 	$(DBUS_LIBS) \
+	$(DNSAPI_LIBS) \
 	$(GLIB_LIBS) \
 	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
@@ -412,10 +425,6 @@ libpurple_la_LIBADD = \
 	-lm
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS) \
@@ -432,12 +441,6 @@ AM_CPPFLAGS = \
 	$(NSS_CFLAGS) \
 	$(ZLIB_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
-
-# INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.
-# We want to use SSL_CERTIFICATES_DIR when it's not empty.
-if ! INSTALL_SSL_CERTIFICATES
-AM_CPPFLAGS += -DSSL_CERTIFICATES_DIR=\"$(SSL_CERTIFICATES_DIR)\"
-endif
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =

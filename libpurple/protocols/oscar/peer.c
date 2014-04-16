@@ -50,10 +50,6 @@
 #include <limits.h> /* for UINT_MAX */
 #endif
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 /*
  * I really want to switch all our networking code to using IPv6 only,
  * but that really isn't a good idea at all.  Evan S. of Adium says

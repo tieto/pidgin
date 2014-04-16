@@ -90,10 +90,6 @@ finch_LDADD = $(builddir)/libfinch.la $(libfinch_la_LIBADD)
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/finch/\" \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/libpurple/ \
 	-I$(top_srcdir) \
 	-I$(srcdir)/libgnt/ \

@@ -48,10 +48,6 @@
 #include "oscar.h"
 #include "peer.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 #include "util.h"
 
 static const char * const errcodereason[] = {

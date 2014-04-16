@@ -223,7 +223,8 @@ ui_main(void)
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
-		icon_path = g_build_filename(DATADIR, "icons", "hicolor", icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
+		icon_path = g_build_filename(PURPLE_DATADIR, "icons", "hicolor",
+			icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
 		icon = pidgin_pixbuf_new_from_file(icon_path);
 		g_free(icon_path);
 		if (icon) {
@@ -478,7 +479,7 @@ int pidgin_start(int argc, char *argv[])
 #endif
 
 #ifdef ENABLE_NLS
-	bindtextdomain(PACKAGE, LOCALEDIR);
+	bindtextdomain(PACKAGE, PURPLE_LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	textdomain(PACKAGE);
 #endif
@@ -757,7 +758,7 @@ int pidgin_start(int argc, char *argv[])
 	purple_plugins_add_search_path(search_path);
 	g_free(search_path);
 
-	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_add_search_path(PIDGIN_LIBDIR);
 	purple_plugins_refresh();
 
 	if (opt_si && !purple_core_ensure_single_instance()) {

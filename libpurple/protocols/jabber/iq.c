@@ -43,7 +43,7 @@
 #include "ibb.h"
 
 #ifdef _WIN32
-#include "utsname.h"
+#include "win32/utsname.h"
 #endif
 
 static GHashTable *iq_handlers = NULL;

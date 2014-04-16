@@ -702,7 +702,7 @@ res_thread(gpointer data)
 				txtres = g_new0(PurpleTxtResponse, 1);
 
 				s = g_string_new("");
-				for (i = 0; i < txt_data->dwStringCount; ++i)
+				for (i = 0; i < (int)txt_data->dwStringCount; ++i)
 					s = g_string_append(s, txt_data->pStringArray[i]);
 				txtres->content = g_string_free(s, FALSE);
 

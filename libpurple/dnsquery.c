@@ -729,8 +729,10 @@ static gpointer
 dns_thread(gpointer data)
 {
 	PurpleDnsQueryData *query_data;
-#ifdef HAVE_GETADDRINFO
+#if defined(HAVE_GETADDRINFO) || defined(USE_IDN)
 	int rc;
+#endif
+#ifdef HAVE_GETADDRINFO
 	struct addrinfo hints, *res, *tmp;
 	char servname[20];
 #else

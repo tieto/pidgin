@@ -33,7 +33,7 @@
 #ifdef USE_GTKSPELL
 # include <gtkspell/gtkspell.h>
 # ifdef _WIN32
-#  include "wspell.h"
+#  include "win32/wspell.h"
 # endif
 #endif
 
@@ -629,10 +629,11 @@ pidgin_create_icon_from_protocol(PurpleProtocol *protocol, PidginProtocolIconSiz
 	 */
 	tmp = g_strconcat(protoname, ".png", NULL);
 
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-				    size == PIDGIN_PROTOCOL_ICON_SMALL ? "16" :
-				    size == PIDGIN_PROTOCOL_ICON_MEDIUM ? "22" : "48",
-				    tmp, NULL);
+	filename = g_build_filename(PURPLE_DATADIR,
+		"pixmaps", "pidgin", "protocols",
+		(size == PIDGIN_PROTOCOL_ICON_SMALL) ? "16" :
+			((size == PIDGIN_PROTOCOL_ICON_MEDIUM) ? "22" : "48"),
+		tmp, NULL);
 	g_free(tmp);
 
 	pixbuf = pidgin_pixbuf_new_from_file(filename);

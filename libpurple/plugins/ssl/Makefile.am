@@ -31,8 +31,6 @@ ssl_nss_la_LIBADD    = $(GLIB_LIBS) $(NSS_LIBS)
 endif # PLUGINS
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/libpurple\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \

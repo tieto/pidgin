@@ -32,7 +32,7 @@
 #include <gtk/gtk.h>
 
 #ifdef _WIN32
-# include "gtkwin32dep.h"
+#  include "win32/gtkwin32dep.h"
 #endif
 
 /**

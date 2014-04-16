@@ -210,7 +210,9 @@ void purple_dbus_uninit(void);
  * dbus-analyze-functions.py is run without the "--export-only" option,
  * this prefix is ignored.
  */
+#ifndef DBUS_EXPORT
 #define DBUS_EXPORT
+#endif
 
 /*
    Here we include the list of #PURPLE_DBUS_DECLARE_TYPE statements for

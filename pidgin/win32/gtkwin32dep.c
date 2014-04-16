@@ -47,7 +47,6 @@
 #include "untar.h"
 
 #include "gtkwin32dep.h"
-#include "win32dep.h"
 #include "gtkconv.h"
 #include "gtkconn.h"
 #include "util.h"

@@ -759,7 +759,8 @@ prefs_themes_refresh(void)
 	/* refresh the list of themes in the manager */
 	purple_theme_manager_refresh();
 
-	tmp = g_build_filename(DATADIR, "icons", "hicolor", "32x32", "apps", "pidgin.png", NULL);
+	tmp = g_build_filename(PURPLE_DATADIR, "icons", "hicolor", "32x32",
+		"apps", "pidgin.png", NULL);
 	pixbuf = pidgin_pixbuf_new_from_file_at_scale(tmp, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE);
 	g_free(tmp);
 

@@ -1117,7 +1117,7 @@ purple_plugins_init(void)
 	gplugin_init();
 	gplugin_manager_add_default_paths();
 
-	purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_add_search_path(PURPLE_LIBDIR);
 
 	g_signal_connect(gplugin_manager_get_instance(), "loading-plugin",
 	                 G_CALLBACK(plugin_loading_cb), NULL);

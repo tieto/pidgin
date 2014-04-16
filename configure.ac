@@ -126,16 +126,21 @@ dnl Check for Win32
 case "$host" in
 	*-*-mingw* | *-*-cygwin*)
 		is_win32="yes"
+		LIBS="$LIBS -lws2_32"
+		DNSAPI_LIBS="-ldnsapi"
+		AC_SUBST(DNSAPI_LIBS)
 		;;
 	*)
 		is_win32="no"
+		AC_CHECK_HEADERS(signal.h)
 		;;
 esac
+AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
 
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h)
+AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -145,6 +150,40 @@ AC_CHECK_SIZEOF(time_t, ,[
 #include <time.h>])
 
 AC_C_BIGENDIAN
+
+dnl Check for directories
+if test "x$is_win32" = "xyes" ; then
+	purple_datadir="wpurple_data_dir()"
+	purple_libdir="wpurple_lib_dir()"
+	pidgin_libdir="wpurple_lib_dir()"
+	finch_libdir="wpurple_lib_dir()"
+	purple_sysconfdir="wpurple_sysconf_dir()"
+	purple_localedir="wpurple_locale_dir()"
+else
+	AS_AC_EXPAND(purple_datadir, "$datadir")
+	purple_datadir="\"$purple_datadir\""
+	AS_AC_EXPAND(purple_sysconfdir, "$sysconfdir")
+	purple_sysconfdir="\"$purple_sysconfdir\""
+	AS_AC_EXPAND(purple_localedir, "$localedir")
+	purple_localedir="\"$purple_localedir\""
+
+	AS_AC_EXPAND(common_libdir, "$libdir")
+	purple_libdir="\"$common_libdir/purple-$PURPLE_MAJOR_VERSION\""
+	pidgin_libdir="\"$common_libdir/pidgin\""
+	finch_libdir="\"$common_libdir/finch\""
+fi
+AC_DEFINE_UNQUOTED([PURPLE_DATADIR], [$purple_datadir],
+	[datadir to use, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PURPLE_LIBDIR], [$purple_libdir],
+	[libdir to use for libpurple, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PIDGIN_LIBDIR], [$pidgin_libdir],
+	[libdir to use for Pidgin, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([FINCH_LIBDIR], [$finch_libdir],
+	[libdir to use for Finch, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PURPLE_SYSCONFDIR], [$purple_sysconfdir],
+	[sysconfdir to use, may expand into a function call that returns const char *])
+AC_DEFINE_UNQUOTED([PURPLE_LOCALEDIR], [$purple_localedir],
+	[localedir to use, may expand into a function call that returns const char *])
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
@@ -1350,6 +1389,9 @@ fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
 fi
+if test "x$is_win32" = "xyes" ; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/zephyr//'`
+fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
 extern_load=
@@ -1418,6 +1460,9 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
+fi
+if test "x$is_win32" = "xyes" ; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/zephyr//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
@@ -1952,6 +1997,10 @@ if ! test -z "$ssl_certificates_dir" ; then
 	SSL_CERTIFICATES_DIR="$ssl_certificates_dir"
 fi
 AC_SUBST(SSL_CERTIFICATES_DIR)
+if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
+	AC_DEFINE_UNQUOTED([SSL_CERTIFICATES_DIR], ["$SSL_CERTIFICATES_DIR"],
+		[Directory where SSL certificates can be found])
+fi
 AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
 
 dnl These two are inverses of each other <-- stolen from evolution!

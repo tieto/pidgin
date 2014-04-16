@@ -2241,6 +2241,12 @@ static const char *zephyr_normalize(const PurpleAccount *account, const char *wh
 	PurpleConnection *gc;
 	char *tmp;
 
+	if (account == NULL) {
+		if (strlen(who) >= sizeof(buf))
+			return NULL;
+		return who;
+	}
+
 	gc = purple_account_get_connection(account);
 	if (gc == NULL)
 		return NULL;

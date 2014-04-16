@@ -21,12 +21,10 @@
 
 #include "gtkdnd-hints.h"
 
+#include "internal.h"
+
 #include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
-
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
 
 #include "gtk3compat.h"
 
@@ -179,8 +177,8 @@ dnd_hints_init(void)
 	for (i = 0; hint_windows[i].filename != NULL; i++) {
 		gchar *fname;
 
-		fname = g_build_filename(DATADIR, "pixmaps", "pidgin",
-								 hint_windows[i].filename, NULL);
+		fname = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			hint_windows[i].filename, NULL);
 
 		hint_windows[i].widget = dnd_hints_init_window(fname);
 

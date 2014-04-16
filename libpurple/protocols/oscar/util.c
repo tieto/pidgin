@@ -31,10 +31,6 @@
 
 #include <ctype.h>
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 static const char * const msgerrreason[] = {
 	N_("Invalid error"),
 	N_("Invalid SNAC"),

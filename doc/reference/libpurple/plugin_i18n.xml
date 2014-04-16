@@ -136,7 +136,7 @@ may vary, but it's the third parameter to 'PURPLE_PLUGIN_INIT'.
 Now add the following within your 'plugin_load' function:
 <programlisting>
 #ifdef ENABLE_NLS
-	bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+	bindtextdomain(GETTEXT_PACKAGE, PURPLE_LOCALEDIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 #endif /* ENABLE_NLS */
 

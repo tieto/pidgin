@@ -163,7 +163,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
-	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \

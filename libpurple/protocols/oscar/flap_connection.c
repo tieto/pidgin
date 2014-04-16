@@ -29,10 +29,6 @@
 #include <netinet/in.h>
 #endif
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 /**
  * This sends a channel 1 SNAC containing the FLAP version.
  * The FLAP version is sent by itself at the beginning of every

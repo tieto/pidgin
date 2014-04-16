@@ -28,8 +28,7 @@ check_libpurple_CFLAGS=\
 		$(DEBUG_CFLAGS) \
 		$(LIBXML_CFLAGS) \
 		-I.. \
-		-I$(top_srcdir)/libpurple \
-		-DBUILDDIR=\"$(top_builddir)\"
+		-I$(top_srcdir)/libpurple
 
 check_libpurple_LDADD=\
 		$(top_builddir)/libpurple/protocols/jabber/libjabber.la \
