@@ -144,6 +144,31 @@ pidgin_SOURCES = \
 
 noinst_HEADERS= gtkinternal.h
 
+if IS_WIN32
+libpidgin_la_SOURCES += \
+	win32/gtkwin32dep.c \
+	win32/untar.c \
+	win32/wspell.c
+
+# Files that looks like obsolete (were used in Pidgin2):
+#	win32/gtkdocklet-win32.c
+#	win32/MinimizeToTray.c
+#	win32/MinimizeToTray.h
+
+# Files not yet handled:
+#	win32/pidgin_dll_rc.rc
+#	win32/pidgin_exe_rc.rc
+
+pidgin_SOURCES += \
+	win32/winpidgin.c
+
+libpidgin_la_headers += \
+	win32/gtkwin32dep.h \
+	win32/resource.h \
+	win32/untar.h \
+	win32/wspell.h
+endif
+
 libpidginincludedir=$(includedir)/pidgin
 libpidgininclude_HEADERS = \
 	$(libpidgin_la_headers)
@@ -180,6 +205,11 @@ libpidgin_la_LIBADD = \
 	$(GTK_LIBS) \
 	$(X11_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
+
+if IS_WIN32
+libpidgin_la_LIBADD += \
+	-lwinmm
+endif
 
 pidgin_DEPENDENCIES = $(builddir)/libpidgin.la
 pidgin_LDFLAGS = -export-dynamic

@@ -33,7 +33,7 @@
 #include <gtk/gtk.h>
 #include <gtkspell/gtkspell.h>
 #include "debug.h"
-#include "win32dep.h"
+#include "internal.h"
 #include "wspell.h"
 
 /* Intermediate function so that we can eat Enchant error popups when it doesn't find a DLL
