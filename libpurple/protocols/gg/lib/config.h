@@ -31,7 +31,7 @@
 
 /* Defined if this machine has C99-compiliant vsnprintf(). */
 #undef HAVE_C99_VSNPRINTF
-#ifndef _WIN32
+#if !defined(_WIN32) || (defined(__MINGW64_VERSION_MAJOR) && __MINGW64_VERSION_MAJOR >= 3)
 #  define HAVE_C99_VSNPRINTF
 #endif
 
