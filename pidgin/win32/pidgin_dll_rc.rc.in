@@ -16,13 +16,13 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName", "The Pidgin developer community"
-        VALUE "FileDescription", "GTK+ Pidgin Library"
-        VALUE "FileVersion", "@PIDGIN_VERSION@"
+        VALUE "FileDescription", "Pidgin UI library"
+        VALUE "FileVersion", "@PURPLE_VERSION@"
         VALUE "InternalName", "libpidgin"
-        VALUE "LegalCopyright", "Copyright (C) 1998-2010 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
+        VALUE "LegalCopyright", "Copyright (C) 1998-2014 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
         VALUE "OriginalFilename", "pidgin.dll"
         VALUE "ProductName", "Pidgin"
-        VALUE "ProductVersion", "@PIDGIN_VERSION@"
+        VALUE "ProductVersion", "@PURPLE_VERSION@"
       END
     END
     BLOCK "VarFileInfo"

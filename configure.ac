@@ -129,6 +129,7 @@ case "$host" in
 		DNSAPI_LIBS="-ldnsapi"
 		PLUGIN_LDFLAGS="-avoid-version -no-undefined"
 		AC_SUBST(DNSAPI_LIBS)
+		AC_CHECK_TOOL(WINDRES, windres)
 		AC_DEFINE(IS_WIN32_CROSS_COMPILED, 1,
 			[Define to 1, when building with autotools (not necessarily
 			cross-compiling) for windows. It's a temporary hack to remain
@@ -3008,6 +3009,8 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
 		   pidgin/themes/Makefile
+		   pidgin/win32/pidgin_dll_rc.rc
+		   pidgin/win32/pidgin_exe_rc.rc
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple-3.pc
@@ -3040,6 +3043,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/tests/Makefile
 		   libpurple/purple.h
 		   libpurple/version.h
+		   libpurple/win32/libpurplerc.rc
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
 		   finch/finch.pc

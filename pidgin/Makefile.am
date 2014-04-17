@@ -156,18 +156,21 @@ libpidgin_la_SOURCES += \
 #	win32/MinimizeToTray.c
 #	win32/MinimizeToTray.h
 
-# Files not yet handled:
-#	win32/pidgin_dll_rc.rc
-#	win32/pidgin_exe_rc.rc
-
 pidgin_SOURCES += \
-	win32/winpidgin.c
+	win32/winpidgin.c \
+	win32/pidgin_exe_rc.rc
 
 libpidgin_la_headers += \
 	win32/gtkwin32dep.h \
 	win32/resource.h \
 	win32/untar.h \
 	win32/wspell.h
+
+.rc.o: %.rc
+	$(AM_V_GEN)$(WINDRES) -I$(top_srcdir)/libpurple -i $< -o $@
+
+LIBPIDGIN_WIN32RES = win32/pidgin_dll_rc.o
+LIBPIDGIN_WIN32RES_LDFLAGS = -Wl,$(LIBPIDGIN_WIN32RES)
 endif
 
 libpidginincludedir=$(includedir)/pidgin
@@ -187,8 +190,8 @@ CLEANFILES = gtkdebug.html.h
 
 gtkdebug.c: gtkdebug.html.h
 
-libpidgin_la_DEPENDENCIES = @LIBOBJS@
-libpidgin_la_LDFLAGS = -export-dynamic -no-undefined
+libpidgin_la_DEPENDENCIES = @LIBOBJS@ $(LIBPIDGIN_WIN32RES)
+libpidgin_la_LDFLAGS = -export-dynamic -no-undefined $(LIBPIDGIN_WIN32RES_LDFLAGS)
 libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
 	$(GLIB_LIBS) \
