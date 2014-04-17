@@ -246,7 +246,11 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ], [
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 		#include <sys/types.h>
-		#include <sys/socket.h>
+		#ifdef _WIN32
+		#  include <ws2tcpip.h>
+		#else
+		#  include <sys/socket.h>
+		#endif
 		int accept(int, struct sockaddr *, size_t *);
 	]], [[]])], [
 		AC_MSG_RESULT(size_t)
@@ -261,13 +265,25 @@ dnl Some systems do not have sa_len field for struct sockaddr.
 AC_CHECK_MEMBER([struct sockaddr.sa_len],
 	[AC_DEFINE([HAVE_STRUCT_SOCKADDR_SA_LEN],[1],
 	[Define if struct sockaddr has an sa_len member])],[:],
-	[#include <sys/socket.h>])
+	[
+		#ifdef _WIN32
+		#  include <ws2tcpip.h>
+		#else
+		#  include <sys/socket.h>
+		#endif
+	])
 
 dnl Check for v6-only sockets
 AC_CHECK_DECL([IPV6_V6ONLY],
 	[AC_DEFINE([HAVE_IPV6_V6ONLY],[1],
 	[Define if the IPV6_V6ONLY setsockopt option exists])],
-	[], [#include <netinet/in.h>])
+	[], [
+		#ifdef _WIN32
+		#  include <ws2tcpip.h>
+		#else
+		#  include <netinet/in.h>
+		#endif
+	])
 
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
