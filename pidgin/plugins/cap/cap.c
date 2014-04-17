@@ -862,7 +862,7 @@ static CapPrefsUI * create_cap_prefs_ui() {
 	return ui;
 }
 
-static void cap_prefs_ui_destroy_cb(GtkObject *object, gpointer user_data) {
+static void cap_prefs_ui_destroy_cb(GObject *object, gpointer user_data) {
 	CapPrefsUI *ui = user_data;
 	if(_db) {
 		add_plugin_functionality(_plugin_pointer);
