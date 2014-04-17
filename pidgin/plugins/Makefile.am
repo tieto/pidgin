@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap disco gestures gevolution musicmessaging perl ticker
+DIST_SUBDIRS = cap disco gestures gevolution musicmessaging perl ticker win32/winprefs win32/transparency
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
