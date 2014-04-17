@@ -28,6 +28,7 @@
 #include <errno.h>
 #include "libc_internal.h"
 #include <glib.h>
+#include "glibcompat.h"
 
 #ifdef __cplusplus
 extern "C" {
