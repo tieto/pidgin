@@ -28,6 +28,15 @@ gnomekeyring_la_LIBADD  = @PURPLE_LIBS@ $(GNOMEKEYRING_LIBS)
 
 endif
 
+if IS_WIN32
+
+wincred_la_CFLAGS  = $(AM_CPPFLAGS)
+wincred_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+wincred_la_SOURCES = wincred.c
+wincred_la_LIBADD  = @PURPLE_LIBS@
+
+endif
+
 if ENABLE_KWALLET
 
 kwallet_la_CXXFLAGS  = $(KWALLET_CXXFLAGS) $(QT4_CFLAGS)
@@ -58,6 +67,11 @@ endif
 if ENABLE_GNOMEKEYRING
 plugin_LTLIBRARIES += \
 	gnomekeyring.la
+endif
+
+if IS_WIN32
+plugin_LTLIBRARIES += \
+	wincred.la
 endif
 
 if ENABLE_KWALLET
