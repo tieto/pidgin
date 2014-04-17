@@ -2910,7 +2910,7 @@ purple_home_dir(void)
 #ifndef _WIN32
 	return g_get_home_dir();
 #else
-	return wpurple_data_dir();
+	return wpurple_home_dir();
 #endif
 }
 

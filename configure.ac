@@ -168,7 +168,7 @@ AC_C_BIGENDIAN
 
 dnl Check for directories
 if test "x$is_win32" = "xyes" ; then
-	purple_datadir="wpurple_data_dir()"
+	purple_datadir="wpurple_install_dir()"
 	purple_libdir="wpurple_lib_dir()"
 	pidgin_libdir="wpurple_lib_dir()"
 	finch_libdir="wpurple_lib_dir()"
