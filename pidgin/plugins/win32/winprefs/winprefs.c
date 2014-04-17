@@ -22,7 +22,7 @@
  */
 #include "internal.h"
 
-#include "gtkwin32dep.h"
+#include "pidgin.h"
 
 #include "core.h"
 #include "debug.h"

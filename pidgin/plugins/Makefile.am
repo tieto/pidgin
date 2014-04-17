@@ -29,6 +29,12 @@ SUBDIRS = \
 	disco \
 	ticker
 
+if IS_WIN32
+SUBDIRS += \
+	win32/winprefs \
+	win32/transparency
+endif
+
 plugindir = $(libdir)/pidgin
 
 contact_priority_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
