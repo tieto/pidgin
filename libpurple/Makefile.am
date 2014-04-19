@@ -36,7 +36,7 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple-3.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols . tests example
+SUBDIRS = $(GCONF_DIR) . plugins protocols tests example
 
 purple_coresources = \
 	account.c \
@@ -213,11 +213,18 @@ purple_coresources += \
 	win32/giowin32.c \
 	win32/libc_interface.c \
 	win32/win32dep.c
+
 purple_coreheaders += \
 	win32/libc_interface.h \
 	win32/libc_internal.h \
 	win32/win32dep.h \
 	win32/wpurpleerror.h
+
+.rc.o: %.rc
+	$(AM_V_GEN)$(WINDRES) -I$(top_srcdir)/libpurple -i $< -o $@
+
+LIBPURPLE_WIN32RES = win32/libpurplerc.o
+LIBPURPLE_WIN32RES_LDFLAGS = -Wl,$(LIBPURPLE_WIN32RES)
 endif
 
 purple_mediaheaders = \
@@ -400,9 +407,10 @@ mediainclude_HEADERS = \
 	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
 
 libpurple_la_DEPENDENCIES = \
-	$(STATIC_LINK_LIBS)
+	$(STATIC_LINK_LIBS) $(LIBPURPLE_WIN32RES)
 
-libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
+libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) \
+	-no-undefined $(LIBPURPLE_WIN32RES_LDFLAGS)
 libpurple_la_LIBADD = \
 	$(STATIC_LINK_LIBS) \
 	$(DBUS_LIBS) \

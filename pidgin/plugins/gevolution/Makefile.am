@@ -1,6 +1,6 @@
 plugindir = $(libdir)/pidgin
 
-gevolution_la_LDFLAGS = -module -avoid-version
+gevolution_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if PLUGINS
 
@@ -15,7 +15,7 @@ gevolution_la_SOURCES = \
 	new_person_dialog.c \
 	eds-utils.c
 
-gevolution_la_LIBADD = $(EVOLUTION_ADDRESSBOOK_LIBS) $(GPLUGIN_LIBS) $(GTK_LIBS)
+gevolution_la_LIBADD = @PIDGIN_LIBS@ $(EVOLUTION_ADDRESSBOOK_LIBS) $(GPLUGIN_LIBS)
 
 endif
 

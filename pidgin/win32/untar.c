@@ -123,7 +123,7 @@ static FILE	  *infp    = NULL;      /* input byte stream */
 static FILE	  *outfp   = NULL;      /* output stream, for file currently being extracted */
 static Ulong_t	  outsize  = 0;         /* number of bytes remainin in file currently being extracted */
 static char	  **only   = NULL;      /* array of filenames to extract/list */
-static int	  nonlys   = 0;	        /* number of filenames in "only" array; 0=extract all */
+static guint nonlys = 0;                /* number of filenames in "only" array; 0=extract all */
 static int	  didabs   = 0;	        /* were any filenames affected by the absence of -p? */
 
 static untar_opt untarops = 0;          /* Untar options */
@@ -257,7 +257,7 @@ static void cvtwrite(blk, size, fp)
 	Ulong_t	size;	/* number of characters to be written */
 	FILE	*fp;	/* file to write to */
 {
-	int	i, j;
+	Ulong_t i, j;
 	static Uchar_t mod[TSIZE];
 
 	if (CONVERT)
@@ -327,7 +327,7 @@ static int untar_block(Uchar_t *blk) {
 	static char	*name,*n2;/* prefix and name, combined */
 	static int	first = 1;/* Boolean: first block of archive? */
 	long		sum;	  /* checksum for this block */
-	int		i;
+	guint		i;
 	tar_t		tblk[1];
 
 #ifdef _POSIX_SOURCE

@@ -11,7 +11,7 @@ SIMPLESOURCES = \
 
 AM_CFLAGS = $(st)
 
-libsimple_la_LDFLAGS = -module -avoid-version
+libsimple_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_SIMPLE
 
@@ -25,7 +25,7 @@ else
 st =
 pkg_LTLIBRARIES      = libsimple.la
 libsimple_la_SOURCES = $(SIMPLESOURCES)
-libsimple_la_LIBADD  = $(GLIB_LIBS)
+libsimple_la_LIBADD  = @PURPLE_LIBS@
 
 endif
 

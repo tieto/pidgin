@@ -24,8 +24,8 @@ pkg_LTLIBRARIES     = libsametime.la
 endif
 
 libsametime_la_SOURCES = $(SAMETIMESOURCES)
-libsametime_la_LDFLAGS = -module -avoid-version
-libsametime_la_LIBADD = $(GLIB_LIBS) $(MEANWHILE_LIBS)
+libsametime_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+libsametime_la_LIBADD = @PURPLE_LIBS@ $(MEANWHILE_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \

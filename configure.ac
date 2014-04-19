@@ -114,7 +114,6 @@ AM_PROG_CC_C_O
 AC_PROG_CXX
 LT_PREREQ([2.2.6])
 LT_INIT([disable-static])
-LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 PKG_PROG_PKG_CONFIG
 AC_FUNC_ALLOCA
@@ -128,14 +127,31 @@ case "$host" in
 		is_win32="yes"
 		LIBS="$LIBS -lws2_32"
 		DNSAPI_LIBS="-ldnsapi"
+		PLUGIN_LDFLAGS="-avoid-version -no-undefined"
 		AC_SUBST(DNSAPI_LIBS)
+		AC_CHECK_TOOL(WINDRES, windres)
+		AC_DEFINE(IS_WIN32_CROSS_COMPILED, 1,
+			[Define to 1, when building with autotools (not necessarily
+			cross-compiling) for windows. It's a temporary hack to remain
+			non-autotools win32 build working. Drop it when we fully
+			switch our win32 build to autotools.])
 		;;
 	*)
 		is_win32="no"
+		PLUGIN_LDFLAGS="-avoid-version"
 		AC_CHECK_HEADERS(signal.h)
 		;;
 esac
 AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
+AC_SUBST([PLUGIN_LDFLAGS])
+
+dnl Define *_LIBS
+PURPLE_LIBS="\$(top_builddir)/libpurple/libpurple.la \$(GLIB_LIBS)"
+PIDGIN_LIBS="\$(top_builddir)/pidgin/libpidgin.la \$(GTK_LIBS)"
+FINCH_LIBS="\$(top_builddir)/finch/libfinch.la \$(top_builddir)/finch/libgnt/libgnt.la \$(GLIB_LIBS)"
+AC_SUBST(PURPLE_LIBS)
+AC_SUBST(PIDGIN_LIBS)
+AC_SUBST(FINCH_LIBS)
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -153,7 +169,7 @@ AC_C_BIGENDIAN
 
 dnl Check for directories
 if test "x$is_win32" = "xyes" ; then
-	purple_datadir="wpurple_data_dir()"
+	purple_datadir="wpurple_install_dir()"
 	purple_libdir="wpurple_lib_dir()"
 	pidgin_libdir="wpurple_lib_dir()"
 	finch_libdir="wpurple_lib_dir()"
@@ -231,7 +247,11 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ], [
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 		#include <sys/types.h>
-		#include <sys/socket.h>
+		#ifdef _WIN32
+		#  include <ws2tcpip.h>
+		#else
+		#  include <sys/socket.h>
+		#endif
 		int accept(int, struct sockaddr *, size_t *);
 	]], [[]])], [
 		AC_MSG_RESULT(size_t)
@@ -246,13 +266,25 @@ dnl Some systems do not have sa_len field for struct sockaddr.
 AC_CHECK_MEMBER([struct sockaddr.sa_len],
 	[AC_DEFINE([HAVE_STRUCT_SOCKADDR_SA_LEN],[1],
 	[Define if struct sockaddr has an sa_len member])],[:],
-	[#include <sys/socket.h>])
+	[
+		#ifdef _WIN32
+		#  include <ws2tcpip.h>
+		#else
+		#  include <sys/socket.h>
+		#endif
+	])
 
 dnl Check for v6-only sockets
 AC_CHECK_DECL([IPV6_V6ONLY],
 	[AC_DEFINE([HAVE_IPV6_V6ONLY],[1],
 	[Define if the IPV6_V6ONLY setsockopt option exists])],
-	[], [#include <netinet/in.h>])
+	[], [
+		#ifdef _WIN32
+		#  include <ws2tcpip.h>
+		#else
+		#  include <netinet/in.h>
+		#endif
+	])
 
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
@@ -2679,7 +2711,11 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/gevolution/Makefile
 		   pidgin/plugins/musicmessaging/Makefile
 		   pidgin/plugins/ticker/Makefile
+		   pidgin/plugins/win32/transparency/Makefile
+		   pidgin/plugins/win32/winprefs/Makefile
 		   pidgin/themes/Makefile
+		   pidgin/win32/pidgin_dll_rc.rc
+		   pidgin/win32/pidgin_exe_rc.rc
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple-3.pc
@@ -2706,6 +2742,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/tests/Makefile
 		   libpurple/purple.h
 		   libpurple/version.h
+		   libpurple/win32/libpurplerc.rc
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
 		   finch/finch.pc

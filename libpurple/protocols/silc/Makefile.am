@@ -19,7 +19,7 @@ SILCSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libsilcpurple_la_LDFLAGS = -module -avoid-version
+libsilcpurple_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_SILC
 
@@ -27,16 +27,16 @@ st = -DPURPLE_STATIC_PRPL $(SILC_CFLAGS)
 noinst_LTLIBRARIES       = libsilcpurple.la
 libsilcpurple_la_SOURCES = $(SILCSOURCES)
 libsilcpurple_la_CFLAGS  = $(AM_CFLAGS)
-libsilcpurple_la_LIBADD  = $(SILC_LIBS)
 
 else
 
 st = $(SILC_CFLAGS)
 pkg_LTLIBRARIES          = libsilcpurple.la
 libsilcpurple_la_SOURCES = $(SILCSOURCES)
-libsilcpurple_la_LIBADD  = $(GLIB_LIBS) $(SILC_LIBS)
 
 endif
+
+libsilcpurple_la_LIBADD  = @PURPLE_LIBS@ $(SILC_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \

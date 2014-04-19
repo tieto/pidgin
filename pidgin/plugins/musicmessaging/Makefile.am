@@ -3,7 +3,7 @@ EXTRA_DIST = \
 
 musicmessagingdir = $(libdir)/pidgin
 
-musicmessaging_la_LDFLAGS = -module -avoid-version
+musicmessaging_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if PLUGINS
 if ENABLE_DBUS
@@ -16,7 +16,7 @@ musicmessaging_LTLIBRARIES = musicmessaging.la
 musicmessaging_la_SOURCES = \
 	musicmessaging.c
 
-musicmessaging_la_LIBADD = $(GTK_LIBS) $(DBUS_LIBS)
+musicmessaging_la_LIBADD = @PIDGIN_LIBS@ $(DBUS_LIBS)
 
 CLEANFILES              = music-messaging-bindings.c
 

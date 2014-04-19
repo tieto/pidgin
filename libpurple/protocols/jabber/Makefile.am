@@ -101,7 +101,7 @@ JABBERSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libjabber_la_LDFLAGS = -module -avoid-version
+libjabber_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if USE_CYRUS_SASL
 JABBERSOURCES += auth_cyrus.c
@@ -123,7 +123,7 @@ else
 st =
 pkg_LTLIBRARIES      = libjabber.la
 libjabber_la_SOURCES = $(JABBERSOURCES)
-libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
+libjabber_la_LIBADD  = @PURPLE_LIBS@ $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
 	$(FARSTREAM_LIBS) \
 	$(GSTREAMER_LIBS)
 

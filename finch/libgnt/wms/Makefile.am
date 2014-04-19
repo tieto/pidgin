@@ -6,8 +6,8 @@ else
 purple_wms =
 endif
 
-s_la_LDFLAGS             = -module -avoid-version
-irssi_la_LDFLAGS         = -module -avoid-version
+s_la_LDFLAGS     = -module @PLUGIN_LDFLAGS@
+irssi_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 plugin_LTLIBRARIES = \
 	$(wms) \

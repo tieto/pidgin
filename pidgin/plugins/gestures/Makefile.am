@@ -1,6 +1,6 @@
 plugindir = $(libdir)/pidgin
 
-gestures_la_LDFLAGS = -module -avoid-version
+gestures_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if PLUGINS
 
@@ -13,7 +13,7 @@ gestures_la_SOURCES = \
 	stroke.c \
 	stroke-draw.c
 
-gestures_la_LIBADD = $(GTK_LIBS)
+gestures_la_LIBADD = @PIDGIN_LIBS@
 
 endif
 

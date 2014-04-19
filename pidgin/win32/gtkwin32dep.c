@@ -101,7 +101,7 @@ int winpidgin_gz_decompress(const char* in, const char* out) {
 	}
 
 	while((ret = gzread(fin, buf, 1024))) {
-		if(fwrite(buf, 1, ret, fout) < ret) {
+		if ((int)fwrite(buf, 1, ret, fout) < ret) {
 			purple_debug_error("wpurple_gz_decompress", "Error writing %d bytes to file\n", ret);
 			gzclose(fin);
 			fclose(fout);
@@ -322,12 +322,12 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 
 	g_return_if_fail(window != NULL);
 
-	gdkwin = GTK_WIDGET(window)->window;
+	gdkwin = gtk_widget_get_window(GTK_WIDGET(window));
 
 	g_return_if_fail(GDK_IS_WINDOW(gdkwin));
-	g_return_if_fail(GDK_WINDOW_TYPE(gdkwin) != GDK_WINDOW_CHILD);
+	g_return_if_fail(gdk_window_get_window_type(gdkwin) != GDK_WINDOW_CHILD);
 
-	if(GDK_WINDOW_DESTROYED(gdkwin))
+	if (gdk_window_is_destroyed(gdkwin))
 		return;
 
 	memset(&info, 0, sizeof(FLASHWINFO));
@@ -368,8 +368,11 @@ winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
 	window = GTK_WINDOW(win->window);
 
 	/* Don't flash if the window is in the foreground */
-	if (GetForegroundWindow() == GDK_WINDOW_HWND(GTK_WIDGET(window)->window))
+	if (GetForegroundWindow() ==
+		GDK_WINDOW_HWND(gtk_widget_get_window(GTK_WIDGET(window))))
+	{
 		return;
+	}
 
 	winpidgin_window_flash(window, TRUE);
 	/* Stop flashing when window receives focus */
@@ -474,7 +477,7 @@ get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
 
 void winpidgin_ensure_onscreen(GtkWidget *win) {
 	RECT winR, wAR, intR;
-	HWND hwnd = GDK_WINDOW_HWND(win->window);
+	HWND hwnd = GDK_WINDOW_HWND(gtk_widget_get_window(win));
 
 	g_return_if_fail(hwnd != NULL);
 	GetWindowRect(hwnd, &winR);

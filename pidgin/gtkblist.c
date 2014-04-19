@@ -134,7 +134,12 @@ typedef struct
 	((PidginBuddyListPrivate *)((list)->priv))
 
 #define PIDGIN_WINDOW_ICONIFIED(x) \
-	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & GDK_WINDOW_STATE_ICONIFIED)
+	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & \
+	GDK_WINDOW_STATE_ICONIFIED)
+
+#define PIDGIN_WINDOW_MAXIMIZED(x) \
+	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & \
+	GDK_WINDOW_STATE_MAXIMIZED)
 
 static GtkWidget *accountmenu = NULL;
 
@@ -264,10 +269,8 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 #ifdef _WIN32
 	/* Workaround for GTK+ bug # 169811 - "configure_event" is fired
 	 * when the window is being maximized */
-	if (gdk_window_get_state(w->window)
-			& GDK_WINDOW_STATE_MAXIMIZED) {
+	if (PIDGIN_WINDOW_MAXIMIZED(w))
 		return FALSE;
-	}
 #endif
 
 	/* don't save if nothing changed */

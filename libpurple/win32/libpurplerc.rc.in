@@ -15,12 +15,12 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName", "The Pidgin developer community"
-        VALUE "FileDescription", "LibPurple Library"
+        VALUE "FileDescription", "libpurple library"
         VALUE "FileVersion", "@PURPLE_VERSION@"
         VALUE "InternalName", "libpurple"
-        VALUE "LegalCopyright", "Copyright (C) 1998-2010 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
+        VALUE "LegalCopyright", "Copyright (C) 1998-2014 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
         VALUE "OriginalFilename", "libpurple.dll"
-        VALUE "ProductName", "LibPurple"
+        VALUE "ProductName", "libpurple"
         VALUE "ProductVersion", "@PURPLE_VERSION@"
       END
     END

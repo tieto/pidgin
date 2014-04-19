@@ -22,9 +22,8 @@
  *
  */
 
-#include "config.h"
-#include <gdk/gdkwin32.h>
 #include "internal.h"
+#include <gdk/gdkwin32.h>
 
 #include "core.h"
 #include "prefs.h"

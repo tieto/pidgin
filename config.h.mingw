@@ -406,6 +406,13 @@
  */
 #define HAVE_VSNPRINTF 1
 
+#define FINCH_LIBDIR wpurple_lib_dir()
+#define PIDGIN_LIBDIR wpurple_lib_dir()
+#define PURPLE_DATADIR wpurple_install_dir()
+#define PURPLE_LIBDIR wpurple_lib_dir()
+#define PURPLE_LOCALEDIR wpurple_locale_dir()
+#define PURPLE_SYSCONFDIR wpurple_sysconf_dir()
+
 #define HAVE_FILENO 1
 
 #ifndef _WIN32_WINNT

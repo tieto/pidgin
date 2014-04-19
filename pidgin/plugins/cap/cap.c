@@ -33,9 +33,10 @@ static void generate_prediction(CapStatistics *statistics) {
 static double generate_prediction_for(PurpleBuddy *buddy) {
 	double prediction = 1.0f;
 	gboolean generated = FALSE;
+	PurpleAccount *account = purple_buddy_get_account(buddy);
 	const gchar *buddy_name = purple_buddy_get_name(buddy);
-	const gchar *protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(buddy));
-	const gchar *account_id = purple_account_get_username(purple_buddy_get_account(buddy));
+	const gchar *protocol_id = purple_account_get_protocol_id(account);
+	const gchar *account_id = purple_account_get_username(account);
 	const gchar *status_id = purple_status_get_id(get_status_for(buddy));
 	time_t t = time(NULL);
 	struct tm *current_time = localtime(&t);
@@ -43,7 +44,7 @@ static double generate_prediction_for(PurpleBuddy *buddy) {
 	int threshold = purple_prefs_get_int("/plugins/gtk/cap/threshold");
 	int min_minute = (current_minute - threshold) % 1440;
 	int max_minute = (current_minute + threshold) % 1440;
-	char *sql, *sta_id = NULL;
+	gchar *sql;
 	sqlite3_stmt *stmt = NULL;
 	const char *tail = NULL;
 	int rc;
@@ -93,15 +94,6 @@ static double generate_prediction_for(PurpleBuddy *buddy) {
 	}
 	sqlite3_free(sql);
 
-
-	sta_id = purple_status_get_id(get_status_for(buddy));
-
-	if(sta_id && !strcmp(sta_id, "offline")) {
-		/* This is kind of stupid, change it. */
-		if(prediction == 1.0f)
-			prediction = 0.0f;
-	}
-
 	if(generated)
 		return prediction;
 	else
@@ -121,7 +113,8 @@ static CapStatistics * get_stats_for(PurpleBuddy *buddy) {
 		stats->last_seen = -1;
 		stats->last_status_id = "";
 
-		g_hash_table_insert(_buddy_stats, g_strdup(purple_buddy_get_name(buddy)), stats);
+		g_hash_table_insert(_buddy_stats,
+			g_strdup(purple_buddy_get_name(buddy)), stats);
 	} else {
 		/* This may actually be a different PurpleBuddy than what is in stats.
 		 * We replace stats->buddy to make sure we're looking at a valid pointer. */
@@ -290,9 +283,10 @@ insert_cap_status_count_failed(const char *buddy_name, const char *account, cons
 }
 
 static void insert_cap_success(CapStatistics *stats) {
-	gchar *buddy_name = purple_buddy_get_name(stats->buddy);
-	const gchar *protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(stats->buddy));
-	const gchar *account_id = purple_account_get_username(purple_buddy_get_account(stats->buddy));
+	PurpleAccount *account = purple_buddy_get_account(stats->buddy);
+	const gchar *buddy_name = purple_buddy_get_name(stats->buddy);
+	const gchar *protocol_id = purple_account_get_protocol_id(account);
+	const gchar *account_id = purple_account_get_username(account);
 	const gchar *status_id = (stats->last_message_status_id) ?
 		stats->last_message_status_id :
 		purple_status_get_id(get_status_for(stats->buddy));
@@ -316,9 +310,10 @@ static void insert_cap_success(CapStatistics *stats) {
 }
 
 static void insert_cap_failure(CapStatistics *stats) {
-	gchar *buddy_name = purple_buddy_get_name(stats->buddy);
-	const gchar *protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(stats->buddy));
-	const gchar *account_id = purple_account_get_username(purple_buddy_get_account(stats->buddy));
+	PurpleAccount *account = purple_buddy_get_account(stats->buddy);
+	const gchar *buddy_name = purple_buddy_get_name(stats->buddy);
+	const gchar *protocol_id = purple_account_get_protocol_id(account);
+	const gchar *account_id = purple_account_get_username(account);
 	const gchar *status_id = (stats->last_message_status_id) ?
 		stats->last_message_status_id :
 		purple_status_get_id(get_status_for(stats->buddy));
@@ -509,8 +504,7 @@ static PurpleStatus * get_status_for(PurpleBuddy *buddy) {
 }
 
 static void create_tables() {
-	int rc;
-	rc = sqlite3_exec(_db,
+	sqlite3_exec(_db,
 		"CREATE TABLE IF NOT EXISTS cap_status ("
 		"	buddy varchar(60) not null,"
 		"	account varchar(60) not null,"
@@ -521,7 +515,7 @@ static void create_tables() {
 		");",
 		NULL, NULL, NULL);
 
-	rc = sqlite3_exec(_db,
+	sqlite3_exec(_db,
 		"create table if not exists cap_message ("
 		"	sender varchar(60) not null,"
 		"	receiver varchar(60) not null,"
@@ -533,7 +527,7 @@ static void create_tables() {
 		");",
 		NULL, NULL, NULL);
 
-	rc = sqlite3_exec(_db,
+	sqlite3_exec(_db,
 		"create table if not exists cap_msg_count ("
 		"	buddy varchar(60) not null,"
 		"	account varchar(60) not null,"
@@ -545,7 +539,7 @@ static void create_tables() {
 		");",
 	NULL, NULL, NULL);
 
-	rc = sqlite3_exec(_db,
+	sqlite3_exec(_db,
 		"create table if not exists cap_status_count ("
 		"	buddy varchar(60) not null,"
 		"	account varchar(60) not null,"
@@ -557,7 +551,7 @@ static void create_tables() {
 		");",
 	NULL, NULL, NULL);
 
-	rc = sqlite3_exec(_db,
+	sqlite3_exec(_db,
 		"create table if not exists cap_my_usage ("
 		"	account varchar(60) not null,"
 		"	protocol varchar(60) not null,"
@@ -611,8 +605,8 @@ static void insert_status_change(CapStatistics *statistics) {
 }
 
 static void insert_status_change_from_purple_status(CapStatistics *statistics, PurpleStatus *status) {
+	PurpleAccount *account = purple_buddy_get_account(statistics->buddy);
 	char *sql;
-	int rc;
 	const gchar *status_id;
 	const gchar *buddy_name;
 	const gchar *protocol_id;
@@ -626,15 +620,15 @@ static void insert_status_change_from_purple_status(CapStatistics *statistics, P
 
 	status_id = purple_status_get_id(status);
 	buddy_name = purple_buddy_get_name(statistics->buddy);
-	protocol_id = purple_account_get_protocol_id(purple_buddy_get_account(statistics->buddy));
-	account_id = purple_account_get_username(purple_buddy_get_account(statistics->buddy));
+	protocol_id = purple_account_get_protocol_id(account);
+	account_id = purple_account_get_username(account);
 
 	statistics->last_status_id = purple_status_get_id(status);
 
 	purple_debug_info("cap", "Executing: insert into cap_status (buddy, account, protocol, status, event_time) values(%s, %s, %s, %s, now());\n", buddy_name, account_id, protocol_id, status_id);
 
 	sql = sqlite3_mprintf("insert into cap_status values (%Q, %Q, %Q, %Q, now());", buddy_name, account_id, protocol_id, status_id);
-	rc = sqlite3_exec(_db, sql, NULL, NULL, NULL);
+	sqlite3_exec(_db, sql, NULL, NULL, NULL);
 	sqlite3_free(sql);
 }
 

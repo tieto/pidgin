@@ -3,7 +3,7 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/pidgin
 
-ticker_la_LDFLAGS = -module -avoid-version
+ticker_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if PLUGINS
 
@@ -14,7 +14,7 @@ ticker_la_SOURCES = \
 	gtkticker.h \
 	ticker.c
 
-ticker_la_LIBADD = $(GTK_LIBS)
+ticker_la_LIBADD = @PIDGIN_LIBS@
 
 endif
 

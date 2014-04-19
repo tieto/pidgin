@@ -25,7 +25,7 @@ BONJOURSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libbonjour_la_LDFLAGS = -module -avoid-version
+libbonjour_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_BONJOUR
 
@@ -33,16 +33,16 @@ st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES    = libbonjour.la
 libbonjour_la_SOURCES = $(BONJOURSOURCES)
 libbonjour_la_CFLAGS  = $(AM_CFLAGS)
-libbonjour_la_LIBADD  = $(AVAHI_LIBS)
 
 else
 
 st =
 pkg_LTLIBRARIES       = libbonjour.la
 libbonjour_la_SOURCES = $(BONJOURSOURCES)
-libbonjour_la_LIBADD  = $(GLIB_LIBS) $(LIBXML_LIBS) $(AVAHI_LIBS)
 
 endif
+
+libbonjour_la_LIBADD  = @PURPLE_LIBS@ $(LIBXML_LIBS) $(AVAHI_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \

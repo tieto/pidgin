@@ -189,7 +189,7 @@ const char *wpurple_locale_dir(void) {
 	return locale_dir;
 }
 
-const char *wpurple_data_dir(void) {
+const char *wpurple_home_dir(void) {
 
 	if (!app_data_dir) {
 		/* Set app data dir, used by purple_home_dir */

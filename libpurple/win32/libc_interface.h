@@ -28,6 +28,7 @@
 #include <errno.h>
 #include "libc_internal.h"
 #include <glib.h>
+#include "glibcompat.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -132,10 +133,12 @@ wpurple_gethostname( name, size )
 wpurple_gettimeofday( timeval, timezone )
 
 /* stdio.h */
-#undef snprintf
-#define snprintf _snprintf
-#undef vsnprintf
-#define vsnprintf _vsnprintf
+#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3
+#  undef snprintf
+#  define snprintf _snprintf
+#  undef vsnprintf
+#  define vsnprintf _vsnprintf
+#endif
 
 #define rename( oldname, newname ) \
 g_rename( oldname, newname )
