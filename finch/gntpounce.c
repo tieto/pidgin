@@ -882,6 +882,9 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 
 	if (purple_pounce_action_is_enabled(pounce, "execute-command"))
 	{
+#ifdef _WIN32
+		purple_debug_error("gntpounce", "execute-command is not supported on this OS");
+#else
 		const char *command;
 
 		command = purple_pounce_action_get_attribute(pounce,
@@ -911,6 +914,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 				g_free(localecmd);
 			}
 		}
+#endif
 	}
 
 	if (purple_pounce_action_is_enabled(pounce, "play-beep"))

@@ -30,6 +30,20 @@
  */
 
 #include <glib.h>
+
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+#ifdef _WIN32
+#  undef KEY_EVENT
+#endif
+#ifdef NO_WIDECHAR
+#  define NCURSES_WIDECHAR 0
+#else
+#  define NCURSES_WIDECHAR 1
+#endif
+#include <ncurses.h>
+
 #include "gntwidget.h"
 #include "gntclipboard.h"
 #include "gntcolors.h"

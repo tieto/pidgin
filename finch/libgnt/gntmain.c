@@ -30,7 +30,9 @@
 #include <gmodule.h>
 
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/wait.h>
+#endif
 
 #include "gntinternal.h"
 #undef GNT_LOG_DOMAIN
@@ -339,6 +341,7 @@ refresh_screen(void)
 	return FALSE;
 }
 
+#ifndef _WIN32
 /* Xerox */
 static void
 clean_pid(void)
@@ -356,6 +359,7 @@ clean_pid(void)
 		perror(errmsg);
 	}
 }
+#endif
 
 static void
 exit_confirmed(gpointer null)
@@ -425,10 +429,12 @@ sighandler(int sig)
 		signal(SIGWINCH, sighandler);
 		break;
 #endif
+#ifndef _WIN32
 	case SIGCHLD:
 		clean_pid();
 		signal(SIGCHLD, sighandler);
 		break;
+#endif
 	case SIGINT:
 		ask_before_exit();
 		signal(SIGINT, sighandler);
@@ -508,9 +514,11 @@ void gnt_init()
 #ifdef SIGWINCH
 	org_winch_handler = signal(SIGWINCH, sighandler);
 #endif
+#ifndef _WIN32
 	signal(SIGCHLD, sighandler);
-	signal(SIGINT, sighandler);
 	signal(SIGPIPE, SIG_IGN);
+#endif
+	signal(SIGINT, sighandler);
 
 #if !GLIB_CHECK_VERSION(2, 36, 0)
 	/* GLib type system is automaticaly initialized since 2.36. */
@@ -696,7 +704,9 @@ reap_child(GPid pid, gint status, gpointer data)
 		cp->callback(status, cp->data);
 	}
 	g_free(cp);
+#ifndef _WIN32
 	clean_pid();
+#endif
 	wm->mode = GNT_KP_MODE_NORMAL;
 	endwin();
 	setup_io();

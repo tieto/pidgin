@@ -39,6 +39,7 @@
 #include <version.h>
 #include <debug.h>
 #include <notify.h>
+#include <gnt.h>
 #include <gntwm.h>
 
 #include <gntplugin.h>

@@ -29,6 +29,7 @@
  */
 
 #include "buddylist.h"
+#include "gnt.h"
 #include "gnttree.h"
 
 #define FINCH_TYPE_BLIST_MANAGER (finch_blist_manager_get_type())

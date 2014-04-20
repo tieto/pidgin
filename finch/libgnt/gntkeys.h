@@ -29,7 +29,6 @@
  * @title: Keys API
  */
 
-#include <curses.h>
 #include <term.h>
 
 /*
