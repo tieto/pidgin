@@ -220,12 +220,17 @@ detect_mouse_action(const char *buffer)
 static gboolean
 io_invoke_error(GIOChannel *source, GIOCondition cond, gpointer data)
 {
+	/* XXX: it throws an error after evey io_invoke, I have no idea why */
+#ifndef _WIN32
 	int id = GPOINTER_TO_INT(data);
+
 	g_source_remove(id);
 	g_io_channel_unref(source);
 
 	channel = NULL;
 	setup_io();
+#endif
+
 	return TRUE;
 }
 
@@ -310,7 +315,18 @@ static void
 setup_io()
 {
 	int result;
+
+#ifdef _WIN32
+	channel = g_io_channel_win32_new_fd(STDIN_FILENO);
+#else
 	channel = g_io_channel_unix_new(STDIN_FILENO);
+#endif
+
+	if (channel == NULL) {
+		gnt_warning("failed creating new channel%s", "");
+		return;
+	}
+
 	g_io_channel_set_close_on_unref(channel, TRUE);
 
 #if 0
@@ -327,9 +343,7 @@ setup_io()
 					(G_IO_NVAL),
 					io_invoke_error, GINT_TO_POINTER(result), NULL);
 
-	g_io_channel_unref(channel);  /* Apparently this caused crashes for some people.
-	                                 But irssi does this, so I am going to assume the
-	                                 crashes were caused by some other stuff. */
+	g_io_channel_unref(channel);
 
 	gnt_warning("setting up IO (%d)", channel_read_callback);
 }
