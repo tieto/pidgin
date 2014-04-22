@@ -66,6 +66,7 @@
 #ifdef _WIN32
 #undef _getch
 #undef getch
+#include <windows.h>
 #include <conio.h>
 #endif
 
@@ -247,22 +248,34 @@ static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 #ifdef _WIN32
+	/* We need:
+	 * - 1 for escape prefix
+	 * - 6 for gunichar-to-gchar conversion (see g_unichar_to_utf8)
+	 * - 1 for the terminating NUL
+	 * or:
+	 * - 1 for escape prefix
+	 * - 1 for special key prefix
+	 * - 1 for the key
+	 * - 1 for the terminating NUL
+	 */
 	gchar keys[8];
 	gchar *k = keys;
 	int ch;
 	gboolean is_special = FALSE;
+	gboolean is_escape = FALSE;
 
 	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
 		return FALSE;
 
 	if (HOLDING_ESCAPE) {
+		is_escape = TRUE;
 		*k = '\033';
 		k++;
 		g_source_remove(escape_stuff.timer);
 		escape_stuff.timer = 0;
 	}
 
-	ch = _getch(); /* we could use _getch_nolock */
+	ch = _getwch(); /* we could use _getwch_nolock */
 
 	/* a small hack - we don't want to put NUL anywhere */
 	if (ch == 0x00)
@@ -270,14 +283,16 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 	if (ch == 0xE0 || ch == 0xE1) {
 		is_special = TRUE;
+		if (!is_escape) {
+			*k = '\033';
+			k++;
+		}
 		*k = ch;
 		k++;
-		ch = _getch();
+		ch = _getwch();
 	}
-	k[0] = ch;
-	k[1] = '\0';
 
-	if (ch == 0x1B && !is_special) { /* ESC */
+	if (ch == 0x1B && !is_special) { /* ESC key */
 		escape_stuff.timer = g_timeout_add(250, escape_timeout, NULL);
 		return TRUE;
 	}
@@ -285,16 +300,26 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	if (wm)
 		gnt_wm_set_event_stack(wm, TRUE);
 
-	if (!is_special) {
-		gchar *converted;
-		gsize converted_len = 0;
-
-		converted = g_locale_to_utf8(k, 1, NULL, &converted_len, NULL);
-		if (converted_len > 0 && converted_len <= 4) {
-			memcpy(k, converted, converted_len);
-			k[converted_len] = '\0';
+	if (is_special) {
+		if (ch > 0xFF) {
+			gnt_warning("a special key out of gchar range (%d)", ch);
+			return TRUE;
 		}
+		*k = ch;
+		k++;
+	} else {
+		gint result_len;
+
+		result_len = g_unichar_to_utf8(ch, k);
+		k += result_len;
 	}
+	*k = '\0';
+
+#if 0
+	gnt_warning("a key: [%s] %#x %#x %#x %#x %#x %#x", keys,
+		(guchar)keys[0], (guchar)keys[1], (guchar)keys[2],
+		(guchar)keys[3], (guchar)keys[4], (guchar)keys[5]);
+#endif
 
 	/* TODO: we could call detect_mouse_action here, but no
 	 * events are triggered (yet?) for mouse on win32.
@@ -553,6 +578,12 @@ void gnt_init()
 
 	if (channel)
 		return;
+
+#ifdef _WIN32
+	/* UTF-8 for input */
+	/* TODO: check it with NO_WIDECHAR. */
+	SetConsoleCP(65001);
+#endif
 
 	locale = setlocale(LC_ALL, "");
 
