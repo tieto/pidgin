@@ -269,10 +269,14 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 	if (HOLDING_ESCAPE) {
 		is_escape = TRUE;
-		*k = '\033';
-		k++;
 		g_source_remove(escape_stuff.timer);
 		escape_stuff.timer = 0;
+	} else if (GetAsyncKeyState(VK_LMENU)) { /* left-ALT key */
+		is_escape = TRUE;
+	}
+	if (is_escape) {
+		*k = '\033';
+		k++;
 	}
 
 	ch = _getwch(); /* we could use _getwch_nolock */
