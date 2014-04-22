@@ -43,6 +43,49 @@ extern char *gnt_key_cright;
 
 #define SAFE(x)   ((cur_term && (x)) ? (x) : "")
 
+#ifdef _WIN32
+
+/* XXX: \xe1 is a hacky alias for \x00 key code */
+
+#define GNT_KEY_POPUP "" /* not supported? */
+
+#define GNT_KEY_UP "\xe0\x48"
+#define GNT_KEY_DOWN "\xe0\x50"
+#define GNT_KEY_LEFT "\xe0\x4B"
+#define GNT_KEY_RIGHT "\xe0\x4D"
+
+#define GNT_KEY_CTRL_UP "\xe0\x8d"
+#define GNT_KEY_CTRL_DOWN "\xe0\x91"
+#define GNT_KEY_CTRL_LEFT "\xe0\x73"
+#define GNT_KEY_CTRL_RIGHT "\xe0\x74"
+
+#define GNT_KEY_PGUP "\xe0\x49"
+#define GNT_KEY_PGDOWN "\xe0\x51"
+#define GNT_KEY_HOME "\xe0\x47"
+#define GNT_KEY_END "\xe0\x4f"
+
+#define GNT_KEY_ENTER "\x0d"
+
+#define GNT_KEY_BACKSPACE "\x08"
+#define GNT_KEY_DEL "\xe0\x53"
+#define GNT_KEY_INS "\xe0\x52"
+#define GNT_KEY_BACK_TAB "\xe1\x94"
+
+#define GNT_KEY_F1 "\xe1\x3b"
+#define GNT_KEY_F2 "\xe1\x3c"
+#define GNT_KEY_F3 "\xe1\x3d"
+#define GNT_KEY_F4 "\xe1\x3e"
+#define GNT_KEY_F5 "\xe1\x3f"
+#define GNT_KEY_F6 "\xe1\x40"
+#define GNT_KEY_F7 "\xe1\x41"
+#define GNT_KEY_F8 "\xe1\x42"
+#define GNT_KEY_F9 "\xe1\x43"
+#define GNT_KEY_F10 "\xe1\x44"
+#define GNT_KEY_F11 "\xe0\x85"
+#define GNT_KEY_F12 "\xe0\x86"
+
+#else
+
 #define GNT_KEY_POPUP   SAFE(key_f16)   /* Apparently */
 
 /* Arrow keys */
@@ -68,6 +111,21 @@ extern char *gnt_key_cright;
 #define GNT_KEY_INS    SAFE(key_ic)
 #define GNT_KEY_BACK_TAB ((cur_term && back_tab) ? back_tab : SAFE(key_btab))
 
+#define GNT_KEY_F1         SAFE(key_f1)
+#define GNT_KEY_F2         SAFE(key_f2)
+#define GNT_KEY_F3         SAFE(key_f3)
+#define GNT_KEY_F4         SAFE(key_f4)
+#define GNT_KEY_F5         SAFE(key_f5)
+#define GNT_KEY_F6         SAFE(key_f6)
+#define GNT_KEY_F7         SAFE(key_f7)
+#define GNT_KEY_F8         SAFE(key_f8)
+#define GNT_KEY_F9         SAFE(key_f9)
+#define GNT_KEY_F10        SAFE(key_f10)
+#define GNT_KEY_F11        SAFE(key_f11)
+#define GNT_KEY_F12        SAFE(key_f12)
+
+#endif
+
 #define GNT_KEY_CTRL_A     "\001"
 #define GNT_KEY_CTRL_B     "\002"
 #define GNT_KEY_CTRL_D     "\004"
@@ -90,19 +148,6 @@ extern char *gnt_key_cright;
 #define GNT_KEY_CTRL_W     "\027"
 #define GNT_KEY_CTRL_X     "\030"
 #define GNT_KEY_CTRL_Y     "\031"
-
-#define GNT_KEY_F1         SAFE(key_f1)
-#define GNT_KEY_F2         SAFE(key_f2)
-#define GNT_KEY_F3         SAFE(key_f3)
-#define GNT_KEY_F4         SAFE(key_f4)
-#define GNT_KEY_F5         SAFE(key_f5)
-#define GNT_KEY_F6         SAFE(key_f6)
-#define GNT_KEY_F7         SAFE(key_f7)
-#define GNT_KEY_F8         SAFE(key_f8)
-#define GNT_KEY_F9         SAFE(key_f9)
-#define GNT_KEY_F10        SAFE(key_f10)
-#define GNT_KEY_F11        SAFE(key_f11)
-#define GNT_KEY_F12        SAFE(key_f12)
 
 /**
  * gnt_init_keys:

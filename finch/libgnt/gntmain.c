@@ -63,6 +63,12 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#undef _getch
+#undef getch
+#include <conio.h>
+#endif
+
 /*
  * Notes: Interesting functions to look at:
  * scr_dump, scr_init, scr_restore: for workspaces
@@ -100,6 +106,7 @@ escape_timeout(gpointer data)
 	return FALSE;
 }
 
+#ifndef _WIN32
 /**
  * detect_mouse_action:
  *
@@ -216,6 +223,7 @@ detect_mouse_action(const char *buffer)
 		gnt_widget_clicked(widget, event, x, y);
 	return TRUE;
 }
+#endif
 
 static gboolean
 io_invoke_error(GIOChannel *source, GIOCondition cond, gpointer data)
@@ -234,9 +242,71 @@ io_invoke_error(GIOChannel *source, GIOCondition cond, gpointer data)
 	return TRUE;
 }
 
+
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
+#ifdef _WIN32
+	gchar keys[8];
+	gchar *k = keys;
+	int ch;
+	gboolean is_special = FALSE;
+
+	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
+		return FALSE;
+
+	if (HOLDING_ESCAPE) {
+		*k = '\033';
+		k++;
+		g_source_remove(escape_stuff.timer);
+		escape_stuff.timer = 0;
+	}
+
+	ch = _getch(); /* we could use _getch_nolock */
+
+	/* a small hack - we don't want to put NUL anywhere */
+	if (ch == 0x00)
+		ch = 0xE1;
+
+	if (ch == 0xE0 || ch == 0xE1) {
+		is_special = TRUE;
+		*k = ch;
+		k++;
+		ch = _getch();
+	}
+	k[0] = ch;
+	k[1] = '\0';
+
+	if (ch == 0x1B && !is_special) { /* ESC */
+		escape_stuff.timer = g_timeout_add(250, escape_timeout, NULL);
+		return TRUE;
+	}
+
+	if (wm)
+		gnt_wm_set_event_stack(wm, TRUE);
+
+	if (!is_special) {
+		gchar *converted;
+		gsize converted_len = 0;
+
+		converted = g_locale_to_utf8(k, 1, NULL, &converted_len, NULL);
+		if (converted_len > 0 && converted_len <= 4) {
+			memcpy(k, converted, converted_len);
+			k[converted_len] = '\0';
+		}
+	}
+
+	/* TODO: we could call detect_mouse_action here, but no
+	 * events are triggered (yet?) for mouse on win32.
+	 */
+
+	gnt_wm_process_input(wm, keys);
+
+	if (wm)
+		gnt_wm_set_event_stack(wm, FALSE);
+
+	return TRUE;
+#else
 	char keys[256];
 	gssize rd;
 	char *k;
@@ -309,6 +379,7 @@ end:
 		gnt_wm_set_event_stack(wm, FALSE);
 	g_free(cvrt);
 	return TRUE;
+#endif
 }
 
 static void
