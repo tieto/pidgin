@@ -433,7 +433,7 @@ static void buddy_signed_off(PurpleBuddy *buddy) {
 
 /* drawing-tooltip */
 static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full) {
-	if(PURPLE_IS_BUDDY(node)) {
+	if (PURPLE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy = PURPLE_BUDDY(node);
 		CapStatistics *stats = get_stats_for(buddy);
 		/* get the probability that this buddy will respond and add to the tooltip */

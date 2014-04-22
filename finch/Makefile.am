@@ -85,6 +85,11 @@ libfinch_la_LIBADD = \
 	./libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la
 
+if IS_WIN32
+libfinch_la_LIBADD += \
+	-lwinmm
+endif
+
 finch_DEPENDENCIES = $(builddir)/libfinch.la
 finch_LDFLAGS = -export-dynamic
 finch_LDADD = $(builddir)/libfinch.la $(libfinch_la_LIBADD)

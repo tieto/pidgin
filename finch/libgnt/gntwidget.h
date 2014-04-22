@@ -31,7 +31,6 @@
 
 #include <stdio.h>
 #include <glib.h>
-#include <ncurses.h>
 
 #include "gntbindable.h"
 

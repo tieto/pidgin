@@ -816,10 +816,18 @@ if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"],
 	    [enable_consoleui=no], [$GNT_LIBS])
 
+	if test "x$is_win32" = "xyes" ; then
+		ncurses_sys_prefix="/usr/$host/sys-root/$host"
+	else
+		ncurses_sys_prefix="/usr"
+	fi
+
+	ncurses_sys_dirs="$ncurses_sys_prefix/include/ncursesw $ncurses_sys_prefix/include"
+
 	if test "x$enable_consoleui" = "xyes"; then
 		dnl # Some distros put the headers in ncursesw/, some don't
 		found_ncurses_h=no
-		for location in $ac_ncurses_includes $NCURSES_HEADERS /usr/include/ncursesw /usr/include
+		for location in $ac_ncurses_includes $NCURSES_HEADERS $ncurses_sys_dirs
 		do
 			f="$location/ncurses.h"
 			orig_CFLAGS="$CFLAGS"

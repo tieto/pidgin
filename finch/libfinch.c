@@ -174,7 +174,7 @@ static gboolean purple_gnt_io_invoke(GIOChannel *source, GIOCondition condition,
 
 #ifdef _WIN32
 	if(! purple_cond) {
-#if DEBUG
+#if 0
 		purple_debug_misc("gnt_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",
