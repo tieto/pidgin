@@ -427,7 +427,7 @@ switch_window(GntWM *wm, int direction, gboolean urgent)
 
 	w = wm->cws->ordered->data;
 	orgpos = pos = g_list_index(wm->cws->list, w);
-	g_return_if_fail(pos < 0);
+	g_return_if_fail(pos >= 0);
 
 	do {
 		pos += direction;
