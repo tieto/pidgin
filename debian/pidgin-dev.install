@@ -1,3 +1,4 @@
 debian/tmp/usr/include/pidgin
+debian/tmp/usr/lib/libpidgin.so
 debian/tmp/usr/lib/pkgconfig/pidgin-3.pc
 debian/dh_pidgin usr/bin
