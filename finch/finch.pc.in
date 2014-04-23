@@ -11,4 +11,4 @@ Description: Finch is an instant messenger application that uses libpurple for p
 Version: @VERSION@
 Requires: gnt purple
 Cflags: -I${includedir}/finch
-
+Libs: -L${libdir} -lfinch
