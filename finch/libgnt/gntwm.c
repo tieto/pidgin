@@ -331,7 +331,7 @@ static void
 read_window_positions(GntWM *wm)
 {
 	GKeyFile *gfile = g_key_file_new();
-	char *filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
+	char *filename = g_build_filename(gnt_get_config_dir(), ".gntpositions", NULL);
 	GError *error = NULL;
 	char **keys;
 	gsize nk;
@@ -2120,7 +2120,7 @@ write_already(gpointer data)
 	FILE *file;
 	char *filename;
 
-	filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
+	filename = g_build_filename(gnt_get_config_dir(), ".gntpositions", NULL);
 
 	file = fopen(filename, "wb");
 	if (file == NULL) {

@@ -93,6 +93,8 @@ static GntClipboard *clipboard;
 
 int gnt_need_conversation_to_locale;
 
+static gchar *custom_config_dir = NULL;
+
 #define HOLDING_ESCAPE  (escape_stuff.timer != 0)
 
 static struct {
@@ -105,6 +107,25 @@ escape_timeout(gpointer data)
 	gnt_wm_process_input(wm, "\033");
 	escape_stuff.timer = 0;
 	return FALSE;
+}
+
+void
+gnt_set_config_dir(const gchar *config_dir)
+{
+	if (channel) {
+		gnt_warning("gnt_set_config_dir failed: %s",
+			"gnt already initialized");
+	}
+	free(custom_config_dir);
+	custom_config_dir = g_strdup(config_dir);
+}
+
+const gchar *
+gnt_get_config_dir(void)
+{
+	if (custom_config_dir)
+		return custom_config_dir;
+	return g_get_home_dir();
 }
 
 #ifndef _WIN32
@@ -613,7 +634,7 @@ void gnt_init()
 	gnt_init_keys();
 	gnt_init_styles();
 
-	filename = g_build_filename(g_get_home_dir(), ".gntrc", NULL);
+	filename = g_build_filename(gnt_get_config_dir(), ".gntrc", NULL);
 	gnt_style_read_configure_file(filename);
 	g_free(filename);
 

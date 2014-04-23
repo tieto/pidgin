@@ -57,6 +57,17 @@
 void gnt_init(void);
 
 /**
+ * gnt_set_config_dir:
+ * @config_dir: the path to a configuration directory, may be %NULL.
+ *
+ * Change directory to store gnt configuration files (default is ~).
+ *
+ * You have to call this before #gnt_init. You might want to call this
+ * with %NULL, to free the resources, but not before a call to #gnt_quit.
+ */
+void gnt_set_config_dir(const gchar *config_dir);
+
+/**
  * gnt_main:
  *
  * Start running the mainloop for gnt.
