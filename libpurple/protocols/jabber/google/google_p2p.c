@@ -319,7 +319,7 @@ jingle_google_p2p_get_remote_candidates(JingleTransport *transport)
 								PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
 				!strcmp(candidate->protocol, "udp") ?
 					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP :
-					PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
+					PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE,
 				candidate->address, candidate->port);
 		g_object_set(new_candidate,
 		             "username", candidate->username,
