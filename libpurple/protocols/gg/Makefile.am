@@ -3,7 +3,7 @@
 GADU_EXTRA =
 #GADU_EXTRA += -Werror
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 EXTRA_DIST = \
 	account.c \

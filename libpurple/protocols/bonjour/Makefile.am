@@ -5,7 +5,7 @@ EXTRA_DIST = \
 	dns_sd_proxy.h \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 BONJOURSOURCES = \
 	bonjour.c \

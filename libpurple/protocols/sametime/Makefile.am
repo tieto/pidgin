@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 noinst_HEADERS = sametime.h
 
