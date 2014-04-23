@@ -473,6 +473,9 @@ AC_ARG_WITH(gtk, [AS_HELP_STRING([--with-gtk=<version>],
 AC_ARG_ENABLE(consoleui, [AS_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
+AC_ARG_ENABLE(gstreamer,
+	[AS_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
+	enable_gst="$enableval", enable_gst="yes")
 
 dnl #######################################################################
 dnl # Check for GTK+ 2.18 and other things used by the GTK UI
@@ -543,9 +546,13 @@ Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "xauto"; then
-		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], [with_gtk=3], [
+		if test "x$enable_gst" != "xno"; then
+			gst10_pkg="gstreamer-1.0"
+			gst010_pkg="gstreamer-0.10"
+		fi
+		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0 $gst10_pkg], [with_gtk=3], [
 			AC_MSG_RESULT(no)
-			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], [with_gtk=2], [
+			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0 $gst010_pkg], [with_gtk=2], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR([
 You must have GTK+ 2.18.0 or newer development headers installed to compile
@@ -952,13 +959,17 @@ AM_GCONF_SOURCE_2
 dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
-AC_ARG_ENABLE(gstreamer,
-	[AS_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
-	enable_gst="$enableval", enable_gst="yes")
+
+dnl AC_ARG_ENABLE is declared near GTK2/3 configuration
 AC_ARG_WITH(gstreamer, [AS_HELP_STRING([--with-gstreamer=<version>],
 		[compile with GStreamer 0.10 or 1.0 interface (default: auto)])],
 	with_gstreamer="$withval", with_gstreamer="auto")
 if test "x$enable_gst" != "xno"; then
+	if test "x$with_gstreamer" == "xauto" -a "x$with_gtk" = "x3"; then
+		with_gstreamer="1.0"
+	elif test "x$with_gstreamer" == "xauto" -a "x$with_gtk" = "x2"; then
+		with_gstreamer="0.10"
+	fi
 	if test "x$with_gstreamer" == "xauto"; then
 		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
