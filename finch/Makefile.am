@@ -93,7 +93,7 @@ libfinch_la_LIBADD += \
 	-lwinmm
 
 .rc.o: %.rc
-	$(AM_V_GEN)$(WINDRES) -I$(top_srcdir)/libpurple -i $< -o $@
+	$(AM_V_GEN)$(WINDRES) -i $< -o $@
 
 FINCH_WIN32RES = finch_winres.o
 finch_DEPENDENCIES += $(FINCH_WIN32RES)

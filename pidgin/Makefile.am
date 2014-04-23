@@ -167,7 +167,7 @@ libpidgin_la_headers += \
 	win32/wspell.h
 
 .rc.o: %.rc
-	$(AM_V_GEN)$(WINDRES) -I$(top_srcdir)/libpurple -i $< -o $@
+	$(AM_V_GEN)$(WINDRES) -i $< -o $@
 
 LIBPIDGIN_WIN32RES = win32/pidgin_dll_rc.o
 LIBPIDGIN_WIN32RES_LDFLAGS = -Wl,$(LIBPIDGIN_WIN32RES)

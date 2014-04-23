@@ -219,7 +219,7 @@ purple_coreheaders += \
 	win32/wpurpleerror.h
 
 .rc.o: %.rc
-	$(AM_V_GEN)$(WINDRES) -I$(top_srcdir)/libpurple -i $< -o $@
+	$(AM_V_GEN)$(WINDRES) -i $< -o $@
 
 LIBPURPLE_WIN32RES = win32/libpurplerc.o
 LIBPURPLE_WIN32RES_LDFLAGS = -Wl,$(LIBPURPLE_WIN32RES)
