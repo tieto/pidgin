@@ -225,10 +225,17 @@ purple_media_network_protocol_to_fs(PurpleMediaNetworkProtocol protocol)
 	switch (protocol) {
 		case PURPLE_MEDIA_NETWORK_PROTOCOL_UDP:
 			return FS_NETWORK_PROTOCOL_UDP;
-		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP:
-			return FS_NETWORK_PROTOCOL_TCP;
+#if GST_CHECK_VERSION(1,0,0)
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE:
+			return FS_NETWORK_PROTOCOL_TCP_PASSIVE;
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE:
+			return FS_NETWORK_PROTOCOL_TCP_ACTIVE;
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO:
+			return FS_NETWORK_PROTOCOL_TCP_SO;
+#endif
+		default:
+			g_return_val_if_reached(FS_NETWORK_PROTOCOL_TCP);
 	}
-	g_return_val_if_reached(FS_NETWORK_PROTOCOL_TCP);
 }
 
 static PurpleMediaNetworkProtocol
@@ -237,10 +244,17 @@ purple_media_network_protocol_from_fs(FsNetworkProtocol protocol)
 	switch (protocol) {
 		case FS_NETWORK_PROTOCOL_UDP:
 			return PURPLE_MEDIA_NETWORK_PROTOCOL_UDP;
-		case FS_NETWORK_PROTOCOL_TCP:
-			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP;
+#if GST_CHECK_VERSION(1,0,0)
+		case FS_NETWORK_PROTOCOL_TCP_PASSIVE:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE;
+		case FS_NETWORK_PROTOCOL_TCP_ACTIVE:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE;
+		case FS_NETWORK_PROTOCOL_TCP_SO:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO;
+#endif
+		default:
+			g_return_val_if_reached(PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE);
 	}
-	g_return_val_if_reached(PURPLE_MEDIA_NETWORK_PROTOCOL_TCP);
 }
 
 #if GST_CHECK_VERSION(1,0,0)

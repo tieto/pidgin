@@ -82,7 +82,9 @@ typedef enum {
 /** Media network protocols */
 typedef enum {
 	PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
-	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP
+	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE,
+	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE,
+	PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO,
 } PurpleMediaNetworkProtocol;
 
 /** Media session types */

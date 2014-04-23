@@ -145,9 +145,15 @@ purple_media_network_protocol_get_type()
 			{ PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					"PURPLE_MEDIA_NETWORK_PROTOCOL_UDP",
 					"udp" },
-			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
-					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP",
-					"tcp" },
+			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE,
+					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE",
+					"tcp passive" },
+			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE,
+					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE",
+					"tcp active" },
+			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO,
+					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO",
+					"tcp so" },
 			{ 0, NULL, NULL }
 		};
 		type = g_enum_register_static("PurpleMediaNetworkProtocol",
