@@ -22,6 +22,9 @@
  */
 #ifndef _WIN32DEP_H_
 #define _WIN32DEP_H_
+
+#include <config.h>
+
 #include <winsock2.h>
 #include <windows.h>
 #include <shlobj.h>

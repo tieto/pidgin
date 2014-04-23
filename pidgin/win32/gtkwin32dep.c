@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <winuser.h>
+#include <shellapi.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>

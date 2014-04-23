@@ -32,6 +32,10 @@
 #include "pidginstock.h"
 #include "gtkutils.h"
 
+#ifdef _WIN32
+#  include <shellapi.h>
+#endif
+
 /* the maximum size of files we will try to make a thumbnail for */
 #define PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL 10 * 1024 * 1024
 

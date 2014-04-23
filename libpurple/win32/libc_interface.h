@@ -22,6 +22,9 @@
  */
 #ifndef _LIBC_INTERFACE_H_
 #define _LIBC_INTERFACE_H_
+
+#include <config.h>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <io.h>
