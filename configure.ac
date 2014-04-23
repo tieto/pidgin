@@ -52,10 +52,12 @@ m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [8])
+# the last version for Finch 2 was 2.8.10,
+# the first version for Finch 3 was 2.9.0
+m4_define([gnt_lt_current], [9])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [8])
-m4_define([gnt_micro_version], [10])
+m4_define([gnt_minor_version], [9])
+m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -81,10 +83,12 @@ PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
 PURPLE_MICRO_VERSION=purple_micro_version
 PURPLE_VERSION=purple_display_version
+PURPLE_API_VERSION=$((purple_lt_current - purple_minor_version))
 AC_SUBST(PURPLE_MAJOR_VERSION)
 AC_SUBST(PURPLE_MINOR_VERSION)
 AC_SUBST(PURPLE_MICRO_VERSION)
 AC_SUBST(PURPLE_VERSION)
+AC_SUBST(PURPLE_API_VERSION)
 
 PURPLE_LT_VERSION_INFO="purple_lt_current:purple_micro_version:purple_minor_version"
 AC_SUBST(PURPLE_LT_VERSION_INFO)
@@ -93,10 +97,12 @@ GNT_MAJOR_VERSION=gnt_major_version
 GNT_MINOR_VERSION=gnt_minor_version
 GNT_MICRO_VERSION=gnt_micro_version
 GNT_VERSION=gnt_display_version
+GNT_API_VERSION=$((gnt_lt_current - gnt_minor_version))
 AC_SUBST(GNT_MAJOR_VERSION)
 AC_SUBST(GNT_MINOR_VERSION)
 AC_SUBST(GNT_MICRO_VERSION)
 AC_SUBST(GNT_VERSION)
+AC_SUBST(GNT_API_VERSION)
 
 GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
@@ -3107,9 +3113,12 @@ AC_CONFIG_FILES([Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
 		   finch/finch.pc
+		   finch/finch_winres.rc
+		   finch/libfinch_winres.rc
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
+		   finch/libgnt/libgnt_winres.rc
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in

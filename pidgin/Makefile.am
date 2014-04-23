@@ -191,7 +191,8 @@ CLEANFILES = gtkdebug.html.h
 gtkdebug.c: gtkdebug.html.h
 
 libpidgin_la_DEPENDENCIES = @LIBOBJS@ $(LIBPIDGIN_WIN32RES)
-libpidgin_la_LDFLAGS = -export-dynamic -no-undefined $(LIBPIDGIN_WIN32RES_LDFLAGS)
+libpidgin_la_LDFLAGS = -export-dynamic -no-undefined \
+	-version-info $(PURPLE_LT_VERSION_INFO) $(LIBPIDGIN_WIN32RES_LDFLAGS)
 libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
 	$(GLIB_LIBS) \

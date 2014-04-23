@@ -91,6 +91,17 @@ libgnt_la_LIBADD = \
 	$(LIBXML_LIBS) \
 	$(PY_LIBS)
 
+if IS_WIN32
+
+.rc.o: %.rc
+	$(AM_V_GEN)$(WINDRES) -i $< -o $@
+
+LIBGNT_WIN32RES = libgnt_winres.o
+libgnt_la_DEPENDENCIES += $(LIBGNT_WIN32RES)
+libgnt_la_LDFLAGS += -Wl,$(LIBGNT_WIN32RES)
+
+endif
+
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GNT_CFLAGS) \
