@@ -1175,7 +1175,10 @@ AC_ARG_ENABLE(avahi,
 		[compile without avahi (required for Bonjour support)])],
 	enable_avahi="$enableval", enable_avahi="yes")
 
-if test "x$enable_avahi" = "xyes"; then
+if test "x$enable_avahi" = "xyes" -a "x$is_win32" = "xyes" ; then
+	avahiincludes="yes"
+	avahilibs="yes"
+elif test "x$enable_avahi" = "xyes"; then
 	AC_ARG_WITH(avahi-client-includes, [AS_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
 	AC_ARG_WITH(avahi-client-libs, [AS_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
 	AVAHI_CFLAGS=""
@@ -1931,9 +1934,11 @@ if test "x$enable_dbus" = "xyes" || test "x$enable_consoleui" = "xyes" ; then
 		enable_dbus=no
 	fi
 
+	if test "x$PYTHON" != "xno" ; then
 	if $PYTHON -c "import sys; sys.exit(sys.version[[:3]] >= '2.4')" ; then
 		AC_MSG_WARN([python version >= 2.4 required])
 		enable_dbus=no
+	fi
 	fi
 fi
 

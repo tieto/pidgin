@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+	mdns_avahi.c \
 	mdns_win32.c \
 	dns_sd_proxy.c \
 	dns_sd_proxy.h \
@@ -13,7 +14,6 @@ BONJOURSOURCES = \
 	buddy.h \
 	jabber.c \
 	jabber.h \
-	mdns_avahi.c \
 	mdns_common.c \
 	mdns_common.h \
 	mdns_interface.h \
@@ -22,6 +22,15 @@ BONJOURSOURCES = \
 	parser.h \
 	bonjour_ft.c \
 	bonjour_ft.h 
+
+if IS_WIN32
+BONJOURSOURCES += \
+	dns_sd_proxy.c \
+	mdns_win32.c
+else
+BONJOURSOURCES += \
+	mdns_avahi.c
+endif
 
 AM_CFLAGS = $(st)
 
@@ -43,6 +52,10 @@ libbonjour_la_SOURCES = $(BONJOURSOURCES)
 endif
 
 libbonjour_la_LIBADD  = @PURPLE_LIBS@ $(LIBXML_LIBS) $(AVAHI_LIBS)
+
+if IS_WIN32
+libbonjour_la_LIBADD += -lnetapi32
+endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
