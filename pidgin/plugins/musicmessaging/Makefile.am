@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 	music.png
 
-musicmessagingdir = $(libdir)/pidgin
+musicmessagingdir = @PIDGIN_PLUGINDIR@
 
 musicmessaging_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 

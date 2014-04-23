@@ -16,7 +16,7 @@ WriteMakefile(
 #    'OPTIMIZE'      => '-g', # For debugging.
     'INSTALLDIRS'          => 'vendor',
     'INSTALL_BASE'         => '$(prefix)',
-    'INSTALLVENDORARCH'    => '$(libdir)/pidgin/perl',
+    'INSTALLVENDORARCH'    => '$(libdir)/pidgin-$(PURPLE_MAJOR_VERSION)/perl',
     'INSTALLVENDORMAN3DIR' => '$(mandir)/man3',
     'macro'                => {
         'prefix'      => '@prefix@',

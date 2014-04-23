@@ -23,7 +23,7 @@ SUBDIRS = \
 	$(TCL_DIR) \
 	keyrings
 
-plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+plugindir = @PURPLE_PLUGINDIR@
 
 autoaccept_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
 buddynote_la_LDFLAGS          = -module @PLUGIN_LDFLAGS@

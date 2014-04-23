@@ -15,7 +15,7 @@ plugin_LTLIBRARIES = \
 	gnttinyurl.la \
 	grouping.la
 
-plugindir = $(libdir)/finch
+plugindir = @FINCH_PLUGINDIR@
 
 gntclipboard_la_SOURCES = gntclipboard.c
 gntgf_la_SOURCES      = gntgf.c

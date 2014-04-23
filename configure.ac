@@ -192,8 +192,8 @@ else
 
 	AS_AC_EXPAND(common_libdir, "$libdir")
 	purple_libdir="\"$common_libdir/purple-$PURPLE_MAJOR_VERSION\""
-	pidgin_libdir="\"$common_libdir/pidgin\""
-	finch_libdir="\"$common_libdir/finch\""
+	pidgin_libdir="\"$common_libdir/pidgin-$PURPLE_MAJOR_VERSION\""
+	finch_libdir="\"$common_libdir/finch-$PURPLE_MAJOR_VERSION\""
 fi
 AC_DEFINE_UNQUOTED([PURPLE_DATADIR], [$purple_datadir],
 	[datadir to use, may expand into a function call that returns const char *])
@@ -207,6 +207,13 @@ AC_DEFINE_UNQUOTED([PURPLE_SYSCONFDIR], [$purple_sysconfdir],
 	[sysconfdir to use, may expand into a function call that returns const char *])
 AC_DEFINE_UNQUOTED([PURPLE_LOCALEDIR], [$purple_localedir],
 	[localedir to use, may expand into a function call that returns const char *])
+
+PURPLE_PLUGINDIR="\$(libdir)/purple-$PURPLE_MAJOR_VERSION"
+AC_SUBST([PURPLE_PLUGINDIR])
+PIDGIN_PLUGINDIR="\$(libdir)/pidgin-$PURPLE_MAJOR_VERSION"
+AC_SUBST([PIDGIN_PLUGINDIR])
+FINCH_PLUGINDIR="\$(libdir)/finch-$PURPLE_MAJOR_VERSION"
+AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL

@@ -35,7 +35,7 @@ SUBDIRS += \
 	win32/transparency
 endif
 
-plugindir = $(libdir)/pidgin
+plugindir = @PIDGIN_PLUGINDIR@
 
 contact_priority_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 extplacement_la_LDFLAGS     = -module @PLUGIN_LDFLAGS@

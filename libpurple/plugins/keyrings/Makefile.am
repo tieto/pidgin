@@ -3,7 +3,7 @@ EXTRA_DIST = \
 		wincred.c
 CLEANFILES =
 
-plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+plugindir = @PURPLE_PLUGINDIR@
 
 internalkeyring_la_CFLAGS  = $(AM_CPPFLAGS)
 internalkeyring_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
