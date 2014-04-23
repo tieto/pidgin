@@ -124,6 +124,7 @@ dnl Check for Win32
 case "$host" in
 	*-*-mingw* | *-*-cygwin*)
 		is_win32="yes"
+		is_not_win32="no"
 		LIBS="$LIBS -lws2_32"
 		DNSAPI_LIBS="-ldnsapi"
 		PLUGIN_LDFLAGS="-avoid-version -no-undefined"
@@ -137,6 +138,7 @@ case "$host" in
 		;;
 	*)
 		is_win32="no"
+		is_not_win32="yes"
 		PLUGIN_LDFLAGS="-avoid-version"
 		AC_CHECK_HEADERS(signal.h)
 		;;
@@ -461,7 +463,7 @@ AC_ARG_ENABLE(missing-dependencies, [AS_HELP_STRING([--disable-missing-dependenc
 	force_deps="$enableval", force_deps="yes")
 
 AC_ARG_WITH(x, [],
-	with_x="$withval", with_x="yes")
+	with_x="$withval", with_x="$is_not_win32")
 AC_ARG_ENABLE(gtkui, [AS_HELP_STRING([--disable-gtkui],
 		[compile without GTK+ user interface])],
 	enable_gtkui="$enableval", enable_gtkui="yes")
@@ -1663,8 +1665,13 @@ dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus, [AS_HELP_STRING([--disable-dbus], [disable D-Bus support])], , enable_dbus=yes)
-AC_ARG_ENABLE(nm, [AS_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])], enable_nm=$enableval, enable_nm=yes)
+# dbus doesn't compile for win32 at the moment
+AC_ARG_ENABLE(dbus,
+	[AS_HELP_STRING([--disable-dbus], [disable D-Bus support])], ,
+	enable_dbus="$is_not_win32")
+AC_ARG_ENABLE(nm,
+	[AS_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])],
+	enable_nm=$enableval, enable_nm="$is_not_win32")
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -1747,7 +1754,9 @@ dnl #######################################################################
 dnl # Check for GNOME Keyring headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])], enable_gnome_keyring="$enableval", enable_gnome_keyring=yes)
+AC_ARG_ENABLE(gnome-keyring,
+	[AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])],
+	enable_gnome_keyring="$enableval", enable_gnome_keyring="$is_not_win32")
 
 if test "x$enable_gnome_keyring" = "xyes" ; then
 	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
@@ -1772,7 +1781,9 @@ dnl #######################################################################
 dnl # Check for KWallet headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--disable-kwallet], [disable KWallet support])], enable_kwallet="$enableval", enable_kwallet=yes)
+AC_ARG_ENABLE(kwallet,
+	[AC_HELP_STRING([--disable-kwallet], [disable KWallet support])],
+	enable_kwallet="$enableval", enable_kwallet="$is_not_win32")
 AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [compile the KWallet plugin against includes in DIR])], [ac_kwallet_includes="$withval"], [ac_kwallet_includes="no"])
 AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
 
@@ -1907,11 +1918,15 @@ AC_ARG_WITH([python],
 			PYTHON=$withval)
 
 if test "x$enable_dbus" = "xyes" || test "x$enable_consoleui" = "xyes" ; then
-	if test -z "$PYTHON" -o "x$PYTHON" = "xyes"; then
+	if test -z "$PYTHON" -a "x$is_win32" = "xyes" ; then
+		dnl there are problems with include files when cross compiling
+		dnl feel free to fix it, if you want
+		PYTHON=no
+	elif test -z "$PYTHON" -o "x$PYTHON" = "xyes"; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
 
-	if test x"$PYTHON" = x"no" ; then
+	if test x"$PYTHON" = x"no" -a "x$is_win32" != "xyes" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi
@@ -2046,7 +2061,11 @@ AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
 dnl #######################################################################
 dnl # Check for Perl support
 dnl #######################################################################
-AC_ARG_ENABLE(perl, [AS_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
+
+# TODO: we could reconsider this for win32, if gobj.plugins branch fail to complete
+AC_ARG_ENABLE(perl,
+	[AS_HELP_STRING([--disable-perl], [compile without perl scripting])], ,
+	enable_perl="$is_not_win32")
 
 if test "$enable_plugins" = no ; then
 	enable_perl=no
