@@ -153,6 +153,10 @@ gtkdialogs.c: $(PIDGIN_REVISION_H)
 win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 	@echo -e "  GEN\t$@"
 	@sed -e 's/@PURPLE_VERSION@/$(PIDGIN_VERSION)/g' \
+		-e 's/@PURPLE_MAJOR_VERSION@/$(PURPLE_MAJOR_VERSION)/g' \
+		-e 's/@PURPLE_MINOR_VERSION@/$(PURPLE_MINOR_VERSION)/g' \
+		-e 's/@PURPLE_MICRO_VERSION@/$(PURPLE_MICRO_VERSION)/g' \
+		-e 's/@PURPLE_API_VERSION@/$(PURPLE_API_VERSION)/g' \
 	    $@.in > $@
 
 install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
@@ -168,6 +172,10 @@ install: install_shallow all
 win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 	@echo -e "  GEN\t$@"
 	@sed -e 's/@PURPLE_VERSION@/$(PIDGIN_VERSION)/g' \
+		-e 's/@PURPLE_MAJOR_VERSION@/$(PURPLE_MAJOR_VERSION)/g' \
+		-e 's/@PURPLE_MINOR_VERSION@/$(PURPLE_MINOR_VERSION)/g' \
+		-e 's/@PURPLE_MICRO_VERSION@/$(PURPLE_MICRO_VERSION)/g' \
+		-e 's/@PURPLE_API_VERSION@/$(PURPLE_API_VERSION)/g' \
 	    $@.in > $@
 
 $(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)

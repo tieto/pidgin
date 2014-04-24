@@ -136,7 +136,8 @@ wpurple_gethostname( name, size )
 wpurple_gettimeofday( timeval, timezone )
 
 /* stdio.h */
-#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3
+#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3 || \
+	!defined(IS_WIN32_CROSS_COMPILED)
 #  undef snprintf
 #  define snprintf _snprintf
 #  undef vsnprintf

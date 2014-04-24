@@ -142,7 +142,7 @@ case "$host" in
 			non-autotools win32 build working. Drop it when we fully
 			switch our win32 build to autotools.])
 		AC_DEFINE(WIN32_LEAN_AND_MEAN, 1,
-			[Define to 1, to build faster on win32.])
+			[Define to 1, to build faster for win32.])
 		;;
 	*)
 		is_win32="no"
