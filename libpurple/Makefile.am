@@ -246,14 +246,14 @@ purple_cipherheaders = \
 purple_builtheaders = purple.h version.h enums.h marshallers.h
 
 purple_enumheaders = \
-	account.h \
-	cipher.h \
-	connection.h \
-	conversation.h \
-	conversationtypes.h \
-	roomlist.h \
-	status.h \
-	xfer.h
+	$(srcdir)/account.h \
+	$(srcdir)/cipher.h \
+	$(srcdir)/connection.h \
+	$(srcdir)/conversation.h \
+	$(srcdir)/conversationtypes.h \
+	$(srcdir)/roomlist.h \
+	$(srcdir)/status.h \
+	$(srcdir)/xfer.h
 
 marshallers.h: marshallers.list
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
@@ -262,11 +262,11 @@ marshallers.c: marshallers.list marshallers.h
 	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
 	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
-enums.h: enums.h.in $(purple_enumheaders)
-	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.h.in $(purple_enumheaders) > $@
+enums.h: $(srcdir)/enums.h.in $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.h.in $(purple_enumheaders) > $@
 
-enums.c: enums.c.in $(purple_enumheaders)
-	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.c.in $(purple_enumheaders) > $@
+enums.c: $(srcdir)/enums.c.in $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.c.in $(purple_enumheaders) > $@
 
 CLEANFILES = \
 	enums.c \
