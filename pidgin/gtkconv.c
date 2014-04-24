@@ -139,9 +139,12 @@ enum {
 
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
-/* From http://www.w3.org/TR/AERT#color-contrast */
-#define MIN_BRIGHTNESS_CONTRAST 75
-#define MIN_COLOR_CONTRAST 200
+/* From http://www.w3.org/TR/AERT#color-contrast
+ * Range for color difference is 500
+ * Range for brightness is 125
+ */
+#define MIN_BRIGHTNESS_CONTRAST 85
+#define MIN_COLOR_CONTRAST 250
 
 #define NICK_COLOR_GENERATE_COUNT 220
 static GArray *generated_nick_colors = NULL;
@@ -216,35 +219,13 @@ static void pidgin_conv_set_position_size(PidginConvWindow *win, int x, int y,
 		int width, int height);
 static gboolean pidgin_conv_xy_to_right_infopane(PidginConvWindow *win, int x, int y);
 
-static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name)
+static const GdkColor *
+get_nick_color(PidginConversation *gtkconv, const gchar *name)
 {
-#if GTK_CHECK_VERSION(3,0,0)
-	GtkStyleContext *style = gtk_widget_get_style_context(gtkconv->webview);
-	GdkRGBA rgba;
-#else
-	GtkStyle *style = gtk_widget_get_style(gtkconv->webview);
-#endif
 	static GdkColor col;
-	float scale;
 
-	col = g_array_index(gtkconv->nick_colors, GdkColor, g_str_hash(name) % gtkconv->nick_colors->len);
-
-	g_return_val_if_fail(style != NULL, &col);
-
-#if GTK_CHECK_VERSION(3,0,0)
-	gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, &rgba);
-	scale = (1 - LUMINANCE(rgba)) * ((float)0xffff / MAX(MAX(col.red, col.blue), col.green));
-#else
-	scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
-		       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
-#endif
-
-	/* The colors are chosen to look fine on white; we should never have to darken */
-	if (scale > 1) {
-		col.red   *= scale;
-		col.green *= scale;
-		col.blue  *= scale;
-	}
+	col = g_array_index(gtkconv->nick_colors, GdkColor,
+		g_str_hash(name) % gtkconv->nick_colors->len);
 
 	return &col;
 }
