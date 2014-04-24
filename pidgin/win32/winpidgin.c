@@ -157,6 +157,7 @@ static void common_dll_prep(const wchar_t *path) {
 	 * MAX_PATH + 1
 	 */
 	wchar_t set_path[MAX_PATH + 24];
+	wchar_t *fslash, *bslash;
 
 	if (!check_for_gtk(path)) {
 		const wchar_t *winpath = _wgetenv(L"PATH");
@@ -194,7 +195,12 @@ static void common_dll_prep(const wchar_t *path) {
 
 	wcsncpy(tmp_path, path, MAX_PATH);
 	tmp_path[MAX_PATH] = L'\0';
-	wcsrchr(tmp_path, L'\\')[0] = L'\0';
+	bslash = wcsrchr(tmp_path, L'\\');
+	fslash = wcsrchr(tmp_path, L'/');
+	if (bslash && bslash > fslash)
+		bslash[0] = L'\0';
+	else if (fslash && fslash > bslash)
+		fslash[0] = L'\0';
 	/* tmp_path now contains \path\to\Pidgin\Gtk */
 
 	_snwprintf(set_path, sizeof(set_path) / sizeof(wchar_t),
