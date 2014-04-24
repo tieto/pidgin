@@ -165,7 +165,7 @@ static void blist_create_cb(PurpleBuddyList *purple_blist, void *data) {
 		blist_set_dockable(TRUE);
 		if(purple_prefs_get_bool(PREF_DBLIST_DOCKED)) {
 			blist_ab->undocked_height = purple_prefs_get_int(PREF_DBLIST_HEIGHT);
-			if(!(gdk_window_get_state(blist->window)
+			if(!(gdk_window_get_state(gtk_widget_get_window(blist))
 					& GDK_WINDOW_STATE_WITHDRAWN)) {
 				gtk_appbar_dock(blist_ab,
 					purple_prefs_get_int(PREF_DBLIST_SIDE));
