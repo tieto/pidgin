@@ -214,12 +214,78 @@
 			}
 		}
 
+		var SCROLLMODE_UNKNOWN = 0;
+		var SCROLLMODE_WEBKIT1 = 1;
+		var SCROLLMODE_WEBKIT2 = 2;
+		var scroll_mode = SCROLLMODE_UNKNOWN;
+
+		function detectWebkitScrolling() {
+			if (scroll_mode != SCROLLMODE_UNKNOWN)
+				return scroll_mode;
+			if (document.body.scrollTop > 0)
+				scroll_mode = SCROLLMODE_WEBKIT1;
+			if (document.documentElement.scrollTop > 0)
+				scroll_mode = SCROLLMODE_WEBKIT2;
+			return scroll_mode;
+		}
+
+		var stickyscroll_just_scrolled = false;
+		var stickyscroll_just_scrolled_more = false;
+		var stickyscroll_to_bottom = true;
+		var stickyscroll_to_bottom_new = true;
+
+		function windowDidScroll(ev) {
+			if (stickyscroll_just_scrolled) {
+				stickyscroll_just_scrolled_more = true;
+				return;
+			}
+
+			stickyscroll_just_scrolled = true;
+			var update_to_bottom = function() {
+				stickyscroll_to_bottom = stickyscroll_to_bottom_new;
+
+				var mode = detectWebkitScrolling();
+				if (mode == SCROLLMODE_UNKNOWN || mode == SCROLLMODE_WEBKIT1) {
+					stickyscroll_to_bottom_new = ( document.body.scrollTop >=
+						( document.body.offsetHeight - (window.innerHeight + 20) ) );
+				} else { /* SCROLLMODE_WEBKIT2 */
+					stickyscroll_to_bottom_new = ( document.documentElement.scrollTop >=
+						( document.documentElement.offsetHeight - (window.innerHeight + 20) ) );
+				}
+
+				if (stickyscroll_just_scrolled_more) {
+					stickyscroll_just_scrolled_more = false;
+					setTimeout(update_to_bottom, 10);
+				} else {
+					stickyscroll_just_scrolled = false;
+				}
+			};
+			setTimeout(update_to_bottom, 10);
+		}
+
 		//Auto-scroll to bottom.  Use nearBottom to determine if a scrollToBottom is desired.
-		function nearBottom() {
-			return ( document.body.scrollTop >= ( document.body.offsetHeight - ( window.innerHeight * 1.2 ) ) );
+		function nearBottom2() {
+			return stickyscroll_to_bottom;
 		}
 		function scrollToBottom() {
-			document.body.scrollTop = document.body.offsetHeight;
+			var mode = detectWebkitScrolling();
+
+			var scrollfunc;
+			if (mode == SCROLLMODE_UNKNOWN || mode == SCROLLMODE_WEBKIT1) {
+				scrollfunc = function() {
+					document.body.scrollTop = document.body.offsetHeight;
+				};
+			} else { /* SCROLLMODE_WEBKIT2 */
+				scrollfunc = function() {
+					document.documentElement.scrollTop =
+						document.documentElement.offsetHeight;
+					window.scrollTo(0, document.body.scrollHeight);
+				};
+			}
+
+			scrollfunc();
+			/* wait for content to load and scroll again */
+			setTimeout(scrollfunc, 10);
 		}
 
 		//Dynamically exchange the active stylesheet
@@ -242,8 +308,6 @@
 				return;
 
 			scrollToBottom();
-			/* wait for images to load and scroll again */
-			setTimeout(scrollToBottom, 10);
 		}
 
 		function remoteImageIsReady(id) {
@@ -272,13 +336,15 @@
 		}
 
 		window.onresize = function windowDidResize(){
-			alignChat(true/*nearBottom()*/); //nearBottom buggy with inactive tabs
+			alignChat(nearBottom());
 		}
 
 		function initStyle() {
 			alignChat(true);
 			if(!coalescedHTML)
 				coalescedHTML = new CoalescedHTML();
+
+			window.addEventListener('scroll', windowDidScroll);
 		}
 	</script>
 
