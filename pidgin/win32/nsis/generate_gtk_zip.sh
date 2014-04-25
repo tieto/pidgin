@@ -24,8 +24,8 @@ CONTENTS_FILE=$INSTALL_DIR/CONTENTS
 PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
-BUNDLE_VERSION=2.24.14.0
-BUNDLE_SHA1SUM="cbc0c5fe9849dc7af845af039b940a913a20a199"
+BUNDLE_VERSION=2.24.14.1
+BUNDLE_SHA1SUM="eb3e3b7a177dcf9eeddc0bc42931e639f97dd281"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
 BUNDLE_URL="https://pidgin.im/~twasilczyk/win32/gtk-runtime-$BUNDLE_VERSION.zip"
@@ -165,6 +165,9 @@ ALL+="ARC_LIBJASPER "
 ARC_LIBICU="${DOWNLOAD_HOST}mingw32-libicu-51.1-2.3.noarch.rpm ICU 51.1-2.3 sha1sum:c259c9d7f9f58934ebb49ecc80b15b7492e5a245"
 ALL+="ARC_LIBICU "
 
+ARC_LIBIDN="${DOWNLOAD_HOST}mingw32-libidn-1.22-3.8.noarch.rpm libidn 1.22-3.8 sha1sum:2052ea6fc2e789b2c252f621a7134ea4286cf5cc"
+ALL+="ARC_LIBIDN "
+
 ARC_LIBINTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.6.noarch.rpm libintl 0.18.1.1-13.6 sha1sum:0e6fde8e86788874366f308e25634f95613e906a"
 ALL+="ARC_LIBINTL "
 
@@ -221,6 +224,9 @@ ALL+="ARC_MOZNSS "
 
 ARC_MOZNSPR="${DOWNLOAD_HOST}mingw32-mozilla-nspr-4.9.6-4.1.noarch.rpm NSPR 4.9.6-4.1 sha1sum:42b1a803c54639f6cf0aa1f6287324d0658c705c"
 ALL+="ARC_MOZNSPR "
+
+ARC_NCURSES="${DOWNLOAD_HOST}mingw32-ncurses-5.9-20140421.1.noarch.rpm ncurses 5.9-20140421.1 sha1sum:6ae5b992c14059280dfb38fa4ea9dfbeab6790ed"
+ALL+="ARC_NCURSES "
 
 ARC_PANGO="${DOWNLOAD_HOST}mingw32-pango-1.34.0-2.3.noarch.rpm Pango 1.34.0-2.3 sha1sum:65b55b73c4f5c8107fdf48ef2e4f5c351189cd4f"
 ALL+="ARC_PANGO "
