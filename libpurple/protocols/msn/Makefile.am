@@ -3,7 +3,7 @@ EXTRA_DIST = \
 	directconn.h \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 MSNSOURCES = \
 	cmdproc.c \

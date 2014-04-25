@@ -165,7 +165,7 @@ static void blist_create_cb(PurpleBuddyList *purple_blist, void *data) {
 		blist_set_dockable(TRUE);
 		if(purple_prefs_get_bool(PREF_DBLIST_DOCKED)) {
 			blist_ab->undocked_height = purple_prefs_get_int(PREF_DBLIST_HEIGHT);
-			if(!(gdk_window_get_state(blist->window)
+			if(!(gdk_window_get_state(gtk_widget_get_window(blist))
 					& GDK_WINDOW_STATE_WITHDRAWN)) {
 				gtk_appbar_dock(blist_ab,
 					purple_prefs_get_int(PREF_DBLIST_SIDE));
@@ -190,7 +190,7 @@ winprefs_set_autostart(GtkWidget *w) {
 	char *runval = NULL;
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-		runval = g_strdup_printf("\"%s" G_DIR_SEPARATOR_S "pidgin.exe\"", wpurple_install_dir());
+		runval = g_strdup_printf("\"%s" G_DIR_SEPARATOR_S "pidgin.exe\"", wpurple_bin_dir());
 
 	if(!wpurple_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Pidgin", runval)
 		/* For Win98 */

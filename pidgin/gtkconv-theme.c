@@ -125,7 +125,7 @@ get_template_path(const char *dir)
 
 	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
 		g_free(file);
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(USE_WIN32_FHS)
 		file = g_build_filename(PURPLE_DATADIR,
 			"theme", "Template.html", NULL);
 #else

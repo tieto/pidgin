@@ -1,4 +1,4 @@
-capdir = $(libdir)/pidgin
+capdir = @PIDGIN_PLUGINDIR@
 
 cap_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 

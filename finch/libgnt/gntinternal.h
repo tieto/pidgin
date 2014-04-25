@@ -44,4 +44,4 @@
 
 extern int gnt_need_conversation_to_locale;
 extern const char *C_(const char *x);
-
+const gchar *gnt_get_config_dir(void);

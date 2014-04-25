@@ -52,10 +52,12 @@ m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [8])
+# the last version for Finch 2 was 2.8.10,
+# the first version for Finch 3 was 2.9.0
+m4_define([gnt_lt_current], [9])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [8])
-m4_define([gnt_micro_version], [10])
+m4_define([gnt_minor_version], [9])
+m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -82,10 +84,12 @@ PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
 PURPLE_MICRO_VERSION=purple_micro_version
 PURPLE_VERSION=purple_display_version
+PURPLE_API_VERSION=$((purple_lt_current - purple_minor_version))
 AC_SUBST(PURPLE_MAJOR_VERSION)
 AC_SUBST(PURPLE_MINOR_VERSION)
 AC_SUBST(PURPLE_MICRO_VERSION)
 AC_SUBST(PURPLE_VERSION)
+AC_SUBST(PURPLE_API_VERSION)
 
 PURPLE_LT_VERSION_INFO="purple_lt_current:purple_micro_version:purple_minor_version"
 AC_SUBST(PURPLE_LT_VERSION_INFO)
@@ -94,10 +98,12 @@ GNT_MAJOR_VERSION=gnt_major_version
 GNT_MINOR_VERSION=gnt_minor_version
 GNT_MICRO_VERSION=gnt_micro_version
 GNT_VERSION=gnt_display_version
+GNT_API_VERSION=$((gnt_lt_current - gnt_minor_version))
 AC_SUBST(GNT_MAJOR_VERSION)
 AC_SUBST(GNT_MINOR_VERSION)
 AC_SUBST(GNT_MICRO_VERSION)
 AC_SUBST(GNT_VERSION)
+AC_SUBST(GNT_API_VERSION)
 
 GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
@@ -125,6 +131,7 @@ dnl Check for Win32
 case "$host" in
 	*-*-mingw* | *-*-cygwin*)
 		is_win32="yes"
+		is_not_win32="no"
 		LIBS="$LIBS -lws2_32"
 		DNSAPI_LIBS="-ldnsapi"
 		PLUGIN_LDFLAGS="-avoid-version -no-undefined"
@@ -135,9 +142,12 @@ case "$host" in
 			cross-compiling) for windows. It's a temporary hack to remain
 			non-autotools win32 build working. Drop it when we fully
 			switch our win32 build to autotools.])
+		AC_DEFINE(WIN32_LEAN_AND_MEAN, 1,
+			[Define to 1, to build faster for win32.])
 		;;
 	*)
 		is_win32="no"
+		is_not_win32="yes"
 		PLUGIN_LDFLAGS="-avoid-version"
 		AC_CHECK_HEADERS(signal.h)
 		;;
@@ -167,12 +177,46 @@ AC_CHECK_SIZEOF(time_t, ,[
 
 AC_C_BIGENDIAN
 
+AC_ARG_WITH(win32-dirs, [AS_HELP_STRING([--with-win32-dirs=<classic|fhs>],
+	[use win32 classic (Program Files-like) or FHS (unix-like) directory structure (default: classic)])], [
+		if test "x$withval" != "xclassic" -a "x$withval" != "xfhs" ; then
+			AC_MSG_ERROR([Unsupported win32-dirs option. Please choose "classic" or "fhs".])
+		fi
+		with_win32_dirs="$withval"
+	], with_win32_dirs="classic")
+if test "x$is_win32" = "xyes" -a "x$with_win32_dirs" = "xfhs" ; then
+	AC_DEFINE(USE_WIN32_FHS, 1, [Define to 1, to use FHS on win32.])
+fi
+
 dnl Check for directories
 if test "x$is_win32" = "xyes" ; then
-	purple_datadir="wpurple_install_dir()"
-	purple_libdir="wpurple_lib_dir()"
-	pidgin_libdir="wpurple_lib_dir()"
-	finch_libdir="wpurple_lib_dir()"
+	if test "x$with_win32_dirs" = "xfhs" ; then
+		AS_AC_EXPAND(win32_fhs_bindir, "$bindir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_BINDIR], ["$win32_fhs_bindir"],
+			[bindir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_libdir, "$libdir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_LIBDIR], ["$win32_fhs_libdir"],
+			[libdir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_datadir, "$datadir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_DATADIR], ["$win32_fhs_datadir"],
+			[datadir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_sysconfdir, "$sysconfdir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_SYSCONFDIR], ["$win32_fhs_sysconfdir"],
+			[sysconfdir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_localedir, "$localedir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_LOCALEDIR], ["$win32_fhs_localedir"],
+			[localedir, as defined by configure])
+
+		purple_libdir="wpurple_lib_dir(\"purple-$PURPLE_MAJOR_VERSION\")"
+		pidgin_libdir="wpurple_lib_dir(\"pidgin-$PURPLE_MAJOR_VERSION\")"
+		finch_libdir="wpurple_lib_dir(\"finch-$PURPLE_MAJOR_VERSION\")"
+	else
+		purple_libdir="wpurple_lib_dir(NULL)"
+		pidgin_libdir="wpurple_lib_dir(NULL)"
+		finch_libdir="wpurple_lib_dir(NULL)"
+	fi
+
+	purple_datadir="wpurple_data_dir()"
 	purple_sysconfdir="wpurple_sysconf_dir()"
 	purple_localedir="wpurple_locale_dir()"
 else
@@ -185,8 +229,8 @@ else
 
 	AS_AC_EXPAND(common_libdir, "$libdir")
 	purple_libdir="\"$common_libdir/purple-$PURPLE_MAJOR_VERSION\""
-	pidgin_libdir="\"$common_libdir/pidgin\""
-	finch_libdir="\"$common_libdir/finch\""
+	pidgin_libdir="\"$common_libdir/pidgin-$PURPLE_MAJOR_VERSION\""
+	finch_libdir="\"$common_libdir/finch-$PURPLE_MAJOR_VERSION\""
 fi
 AC_DEFINE_UNQUOTED([PURPLE_DATADIR], [$purple_datadir],
 	[datadir to use, may expand into a function call that returns const char *])
@@ -200,6 +244,13 @@ AC_DEFINE_UNQUOTED([PURPLE_SYSCONFDIR], [$purple_sysconfdir],
 	[sysconfdir to use, may expand into a function call that returns const char *])
 AC_DEFINE_UNQUOTED([PURPLE_LOCALEDIR], [$purple_localedir],
 	[localedir to use, may expand into a function call that returns const char *])
+
+PURPLE_PLUGINDIR="\$(libdir)/purple-$PURPLE_MAJOR_VERSION"
+AC_SUBST([PURPLE_PLUGINDIR])
+PIDGIN_PLUGINDIR="\$(libdir)/pidgin-$PURPLE_MAJOR_VERSION"
+AC_SUBST([PIDGIN_PLUGINDIR])
+FINCH_PLUGINDIR="\$(libdir)/finch-$PURPLE_MAJOR_VERSION"
+AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
@@ -459,7 +510,7 @@ AC_ARG_ENABLE(missing-dependencies, [AS_HELP_STRING([--disable-missing-dependenc
 	force_deps="$enableval", force_deps="yes")
 
 AC_ARG_WITH(x, [],
-	with_x="$withval", with_x="yes")
+	with_x="$withval", with_x="$is_not_win32")
 AC_ARG_ENABLE(gtkui, [AS_HELP_STRING([--disable-gtkui],
 		[compile without GTK+ user interface])],
 	enable_gtkui="$enableval", enable_gtkui="yes")
@@ -469,6 +520,9 @@ AC_ARG_WITH(gtk, [AS_HELP_STRING([--with-gtk=<version>],
 AC_ARG_ENABLE(consoleui, [AS_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
+AC_ARG_ENABLE(gstreamer,
+	[AS_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
+	enable_gst="$enableval", enable_gst="yes")
 
 dnl #######################################################################
 dnl # Check for GTK+ 2.18 and other things used by the GTK UI
@@ -539,9 +593,13 @@ Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
 	elif test "x$with_gtk" = "xauto"; then
-		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], [with_gtk=3], [
+		if test "x$enable_gst" != "xno"; then
+			gst10_pkg="gstreamer-1.0"
+			gst010_pkg="gstreamer-0.10"
+		fi
+		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0 $gst10_pkg], [with_gtk=3], [
 			AC_MSG_RESULT(no)
-			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], [with_gtk=2], [
+			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0 $gst010_pkg], [with_gtk=2], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR([
 You must have GTK+ 2.18.0 or newer development headers installed to compile
@@ -950,13 +1008,17 @@ AM_GCONF_SOURCE_2
 dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
-AC_ARG_ENABLE(gstreamer,
-	[AS_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
-	enable_gst="$enableval", enable_gst="yes")
+
+dnl AC_ARG_ENABLE is declared near GTK2/3 configuration
 AC_ARG_WITH(gstreamer, [AS_HELP_STRING([--with-gstreamer=<version>],
 		[compile with GStreamer 0.10 or 1.0 interface (default: auto)])],
 	with_gstreamer="$withval", with_gstreamer="auto")
 if test "x$enable_gst" != "xno"; then
+	if test "x$with_gstreamer" == "xauto" -a "x$with_gtk" = "x3"; then
+		with_gstreamer="1.0"
+	elif test "x$with_gstreamer" == "xauto" -a "x$with_gtk" = "x2"; then
+		with_gstreamer="0.10"
+	fi
 	if test "x$with_gstreamer" == "xauto"; then
 		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
@@ -1173,7 +1235,10 @@ AC_ARG_ENABLE(avahi,
 		[compile without avahi (required for Bonjour support)])],
 	enable_avahi="$enableval", enable_avahi="yes")
 
-if test "x$enable_avahi" = "xyes"; then
+if test "x$enable_avahi" = "xyes" -a "x$is_win32" = "xyes" ; then
+	avahiincludes="yes"
+	avahilibs="yes"
+elif test "x$enable_avahi" = "xyes"; then
 	AC_ARG_WITH(avahi-client-includes, [AS_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
 	AC_ARG_WITH(avahi-client-libs, [AS_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
 	AVAHI_CFLAGS=""
@@ -1655,8 +1720,13 @@ dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus, [AS_HELP_STRING([--disable-dbus], [disable D-Bus support])], , enable_dbus=yes)
-AC_ARG_ENABLE(nm, [AS_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])], enable_nm=$enableval, enable_nm=yes)
+# dbus doesn't compile for win32 at the moment
+AC_ARG_ENABLE(dbus,
+	[AS_HELP_STRING([--disable-dbus], [disable D-Bus support])], ,
+	enable_dbus="$is_not_win32")
+AC_ARG_ENABLE(nm,
+	[AS_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])],
+	enable_nm=$enableval, enable_nm="$is_not_win32")
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -1739,7 +1809,9 @@ dnl #######################################################################
 dnl # Check for GNOME Keyring headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(gnome-keyring, [AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])], enable_gnome_keyring="$enableval", enable_gnome_keyring=yes)
+AC_ARG_ENABLE(gnome-keyring,
+	[AC_HELP_STRING([--disable-gnome-keyring], [disable GNOME Keyring support])],
+	enable_gnome_keyring="$enableval", enable_gnome_keyring="$is_not_win32")
 
 if test "x$enable_gnome_keyring" = "xyes" ; then
 	PKG_CHECK_MODULES(GNOMEKEYRING, [gnome-keyring-1], [
@@ -1764,7 +1836,9 @@ dnl #######################################################################
 dnl # Check for KWallet headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(kwallet, [AC_HELP_STRING([--disable-kwallet], [disable KWallet support])], enable_kwallet="$enableval", enable_kwallet=yes)
+AC_ARG_ENABLE(kwallet,
+	[AC_HELP_STRING([--disable-kwallet], [disable KWallet support])],
+	enable_kwallet="$enableval", enable_kwallet="$is_not_win32")
 AC_ARG_WITH(kwallet-includes, [AC_HELP_STRING([--with-kwallet-includes=DIR], [compile the KWallet plugin against includes in DIR])], [ac_kwallet_includes="$withval"], [ac_kwallet_includes="no"])
 AC_ARG_WITH(kwallet-libs, [AC_HELP_STRING([--with-kwallet-libs=DIR], [compile the KWallet plugin against the KWallet libs in DIR])], [ac_kwallet_libs="$withval"], [ac_kwallet_libs="no"])
 
@@ -1923,18 +1997,24 @@ AC_ARG_WITH([python],
 			PYTHON=$withval)
 
 if test "x$enable_dbus" = "xyes" || test "x$enable_consoleui" = "xyes" ; then
-	if test -z "$PYTHON" -o "x$PYTHON" = "xyes"; then
+	if test -z "$PYTHON" -a "x$is_win32" = "xyes" ; then
+		dnl there are problems with include files when cross compiling
+		dnl feel free to fix it, if you want
+		PYTHON=no
+	elif test -z "$PYTHON" -o "x$PYTHON" = "xyes"; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
 
-	if test x"$PYTHON" = x"no" ; then
+	if test x"$PYTHON" = x"no" -a "x$is_win32" != "xyes" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi
 
+	if test "x$PYTHON" != "xno" ; then
 	if $PYTHON -c "import sys; sys.exit(sys.version[[:3]] >= '2.4')" ; then
 		AC_MSG_WARN([python version >= 2.4 required])
 		enable_dbus=no
+	fi
 	fi
 fi
 
@@ -2754,9 +2834,12 @@ AC_CONFIG_FILES([Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
 		   finch/finch.pc
+		   finch/finch_winres.rc
+		   finch/libfinch_winres.rc
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
+		   finch/libgnt/libgnt_winres.rc
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
@@ -2814,6 +2897,12 @@ echo Build with KWallet............ : $enable_kwallet
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Enable Introspection...........: $enable_introspection
+
+if test "x$is_win32" = "xyes" ; then
+	echo
+	echo Win32 directory structure..... : $with_win32_dirs
+fi
+
 echo
 echo Print debugging messages...... : $enable_debug
 echo Generate documentation........ : $enable_gtk_doc

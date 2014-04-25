@@ -21,17 +21,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#define _WIN32_IE 0x500
-#ifndef WINVER
-#define WINVER 0x0500 /* W2K */
-#endif
-
 #include "internal.h"
 
 #include <io.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <winuser.h>
+#include <shellapi.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -400,7 +396,7 @@ void winpidgin_init(void) {
 	if (purple_debug_is_verbose())
 		purple_debug_misc("winpidgin", "winpidgin_init start\n");
 
-	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
+	exchndl_dll_path = g_build_filename(wpurple_bin_dir(), "exchndl.dll", NULL);
 	MySetLogFile = (LPFNSETLOGFILE) wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
 	g_free(exchndl_dll_path);
 	exchndl_dll_path = NULL;

@@ -431,8 +431,10 @@ resolve(int in, int out)
 
 			srvres = g_new0(PurpleSrvResponse, 1);
 			if (strlen(name) > sizeof(srvres->hostname) - 1) {
-				purple_debug_error("dnssrv", "hostname is longer than available buffer ('%s', %zd bytes)!",
-				                   name, strlen(name));
+				purple_debug_error("dnssrv", "hostname is "
+					"longer than available buffer ('%s', %"
+					G_GSIZE_FORMAT " bytes)!",
+					name, strlen(name));
 			}
 			g_strlcpy(srvres->hostname, name, sizeof(srvres->hostname));
 			srvres->pref = pref;

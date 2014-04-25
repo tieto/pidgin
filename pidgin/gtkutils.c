@@ -25,9 +25,8 @@
 #include "pidgin.h"
 
 #ifdef _WIN32
-# ifdef small
 #  undef small
-# endif
+#  include <shellapi.h>
 #endif /*_WIN32*/
 
 #ifdef USE_GTKSPELL

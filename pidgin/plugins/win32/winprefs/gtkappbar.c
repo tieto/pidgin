@@ -43,6 +43,12 @@ typedef BOOL WINAPI purple_GetMonitorInfo(HMONITOR, LPMONITORINFO);
 
 static void gtk_appbar_do_dock(GtkAppBar *ab, UINT side);
 
+static inline HWND
+appbar_get_handle(GtkAppBar *ab)
+{
+	return GDK_WINDOW_HWND(gtk_widget_get_window(ab->win));
+}
+
 /* Retrieve the rectangular display area from the specified monitor
  * Return TRUE if successful, otherwise FALSE
  */
@@ -358,7 +364,7 @@ static void show_hide(GtkAppBar *ab, gboolean hide) {
 
 	if (hide) {
 		purple_debug_info("gtkappbar", "hidden\n");
-		gtk_appbar_unregister(ab, GDK_WINDOW_HWND(ab->win->window));
+		gtk_appbar_unregister(ab, appbar_get_handle(ab));
 		ab->docked = TRUE;
 		ab->iconized = TRUE;
 	} else {
@@ -457,7 +463,7 @@ static GdkFilterReturn wnd_size(GtkAppBar *ab, GdkXEvent *xevent) {
         if(msg->wParam == SIZE_MINIMIZED) {
                 purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "Minimize\n");
                 if(ab->docked) {
-                        gtk_appbar_unregister(ab, GDK_WINDOW_HWND(ab->win->window));
+			gtk_appbar_unregister(ab, appbar_get_handle(ab));
                         ab->docked = TRUE;
                 }
         }
@@ -600,21 +606,21 @@ static void gtk_appbar_do_dock(GtkAppBar *ab, UINT side) {
 
         purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_do_dock\n");
 
-        if(!ab || !IsWindow(GDK_WINDOW_HWND(ab->win->window)))
-                return;
+	if (!ab || !IsWindow(appbar_get_handle(ab)))
+		return;
 
         ab->side = side;
-        get_window_normal_rc(GDK_WINDOW_HWND(ab->win->window), &(ab->docked_rect));
+	get_window_normal_rc(appbar_get_handle(ab), &(ab->docked_rect));
         CopyRect(&orig, &(ab->docked_rect));
-	get_rect_of_window(GDK_WINDOW_HWND(ab->win->window), &windowRect);
-	gtk_appbar_querypos(ab, GDK_WINDOW_HWND(ab->win->window), windowRect);
+	get_rect_of_window(appbar_get_handle(ab), &windowRect);
+	gtk_appbar_querypos(ab, appbar_get_handle(ab), windowRect);
         if(EqualRect(&orig, &(ab->docked_rect)) == 0)
-                MoveWindow(GDK_WINDOW_HWND(ab->win->window),
+		MoveWindow(appbar_get_handle(ab),
                            ab->docked_rect.left,
                            ab->docked_rect.top,
                            ab->docked_rect.right - ab->docked_rect.left,
                            ab->docked_rect.bottom - ab->docked_rect.top, TRUE);
-        gtk_appbar_setpos(ab, GDK_WINDOW_HWND(ab->win->window));
+	gtk_appbar_setpos(ab, appbar_get_handle(ab));
         ab->docked = TRUE;
 }
 
@@ -623,7 +629,7 @@ void gtk_appbar_dock(GtkAppBar *ab, UINT side) {
 
 	g_return_if_fail(ab != NULL);
 
-	hwnd = GDK_WINDOW_HWND(ab->win->window);
+	hwnd = appbar_get_handle(ab);
 
 	g_return_if_fail(IsWindow(hwnd));
 
@@ -654,10 +660,10 @@ GtkAppBar *gtk_appbar_add(GtkWidget *win) {
         ab->win = win;
 
         /* init docking coords */
-        get_window_normal_rc(GDK_WINDOW_HWND(win->window), &(ab->docked_rect));
+	get_window_normal_rc(appbar_get_handle(ab), &(ab->docked_rect));
 
         /* Add main window filter */
-	gdk_window_add_filter(win->window,
+	gdk_window_add_filter(gtk_widget_get_window(win),
                               gtk_appbar_event_filter,
                               ab);
         return ab;
@@ -670,8 +676,8 @@ void gtk_appbar_remove(GtkAppBar *ab) {
         if(!ab)
                 return;
 
-	hwnd = GDK_WINDOW_HWND(ab->win->window);
-        gdk_window_remove_filter(ab->win->window,
+	hwnd = appbar_get_handle(ab);
+	gdk_window_remove_filter(gtk_widget_get_window(ab->win),
                                  gtk_appbar_event_filter,
                                  ab);
         if(ab->docked) {

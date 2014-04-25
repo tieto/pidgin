@@ -922,7 +922,7 @@ x509_ca_init(void)
 		x509_ca_paths = g_list_append(x509_ca_paths,
 			g_strdup(SSL_CERTIFICATES_DIR));
 #endif
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(USE_WIN32_FHS)
 		x509_ca_paths = g_list_append(x509_ca_paths, g_build_filename(
 			PURPLE_DATADIR, "ca-certs", NULL));
 #else

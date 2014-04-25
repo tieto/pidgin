@@ -2,7 +2,7 @@ EXTRA_DIST = \
 	Makefile.mingw \
 	README
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 NULLSOURCES = \
 	nullprpl.h \

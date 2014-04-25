@@ -3,7 +3,7 @@ EXTRA_DIST = \
 	README \
 	TODO
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 SILCSOURCES = \
 	buddy.c \

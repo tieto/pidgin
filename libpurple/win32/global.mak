@@ -8,6 +8,13 @@
 #include optional $(PIDGIN_TREE_TOP)/local.mak to allow overriding of any definitions
 -include $(PIDGIN_TREE_TOP)/local.mak
 
+# TODO: we should do parsing like for PURPLE_VERSION, if we won't drop
+# Makefile.mingw files before 3.0.0 release
+PURPLE_MAJOR_VERSION := 3
+PURPLE_MINOR_VERSION := 0
+PURPLE_MICRO_VERSION := 0
+PURPLE_API_VERSION := 20
+
 # Locations of our various dependencies
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0

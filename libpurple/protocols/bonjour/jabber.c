@@ -28,8 +28,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#else
-#include "libc_interface.h"
 #endif
 #include <sys/types.h>
 

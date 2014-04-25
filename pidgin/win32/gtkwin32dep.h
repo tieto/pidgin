@@ -22,6 +22,9 @@
  */
 #ifndef _GTKWIN32DEP_H_
 #define _GTKWIN32DEP_H_
+
+#include <config.h>
+
 #include <windows.h>
 #include <gtk/gtk.h>
 #include "conversation.h"

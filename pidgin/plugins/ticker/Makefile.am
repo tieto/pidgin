@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-plugindir = $(libdir)/pidgin
+plugindir = @PIDGIN_PLUGINDIR@
 
 ticker_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 

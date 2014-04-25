@@ -210,6 +210,10 @@ install: install_shallow all
 ./win32/libpurplerc.rc: ./win32/libpurplerc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 	@echo -e "  GEN\t$@"
 	@sed -e 's/@PURPLE_VERSION@/$(PURPLE_VERSION)/g' \
+		-e 's/@PURPLE_MAJOR_VERSION@/$(PURPLE_MAJOR_VERSION)/g' \
+		-e 's/@PURPLE_MINOR_VERSION@/$(PURPLE_MINOR_VERSION)/g' \
+		-e 's/@PURPLE_MICRO_VERSION@/$(PURPLE_MICRO_VERSION)/g' \
+		-e 's/@PURPLE_API_VERSION@/$(PURPLE_API_VERSION)/g' \
 	    $@.in > $@
 
 $(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H)

@@ -6,7 +6,7 @@ VS_VERSION_INFO VERSIONINFO
   FILEFLAGSMASK 0
   FILEFLAGS 0
   FILEOS VOS__WINDOWS32
-  FILETYPE VFT_DLL
+  FILETYPE VFT_APP
   FILESUBTYPE VFT2_UNKNOWN
   BEGIN
     BLOCK "StringFileInfo"
@@ -14,12 +14,12 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName", "The Pidgin developer community"
-        VALUE "FileDescription", "libpurple library"
+        VALUE "FileDescription", "Finch instant messenger"
         VALUE "FileVersion", "@PURPLE_VERSION@"
-        VALUE "InternalName", "libpurple"
+        VALUE "InternalName", "finch"
         VALUE "LegalCopyright", "Copyright (C) 1998-2014 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
-        VALUE "OriginalFilename", "libpurple-@PURPLE_API_VERSION@.dll"
-        VALUE "ProductName", "libpurple"
+        VALUE "OriginalFilename", "finch.exe"
+        VALUE "ProductName", "Finch"
         VALUE "ProductVersion", "@PURPLE_VERSION@"
       END
     END
@@ -28,4 +28,3 @@ VS_VERSION_INFO VERSIONINFO
       VALUE "Translation", 0x409, 1200
     END
   END
-

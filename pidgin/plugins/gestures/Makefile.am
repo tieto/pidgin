@@ -1,4 +1,4 @@
-plugindir = $(libdir)/pidgin
+plugindir = @PIDGIN_PLUGINDIR@
 
 gestures_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 

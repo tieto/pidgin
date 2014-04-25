@@ -22,6 +22,9 @@
  */
 #ifndef _LIBC_INTERFACE_H_
 #define _LIBC_INTERFACE_H_
+
+#include <config.h>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <io.h>
@@ -133,7 +136,8 @@ wpurple_gethostname( name, size )
 wpurple_gettimeofday( timeval, timezone )
 
 /* stdio.h */
-#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3
+#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3 || \
+	!defined(IS_WIN32_CROSS_COMPILED)
 #  undef snprintf
 #  define snprintf _snprintf
 #  undef vsnprintf

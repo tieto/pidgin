@@ -1,4 +1,4 @@
-plugindir = $(libdir)/pidgin
+plugindir = @PIDGIN_PLUGINDIR@
 
 if ENABLE_DEBUG
 DEBUG_CPPFLAGS = -g -pg

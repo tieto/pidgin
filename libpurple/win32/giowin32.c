@@ -32,7 +32,7 @@
 /* Define this to get (very) verbose logging of all channels */
 /* #define G_IO_WIN32_DEBUG */
 
-/* #include "config.h" */
+#include <config.h>
 
 #include <glib.h>
 

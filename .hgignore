@@ -134,6 +134,9 @@ pidgin/win32/nsis/pidgin-translations.nsh$
 pidgin/win32/nsis/translations
 pidgin/win32/pidgin_dll_rc.rc$
 pidgin/win32/pidgin_exe_rc.rc$
+finch/finch_winres.rc$
+finch/libfinch_winres.rc$
+finch/libgnt/libgnt_winres.rc$
 po/Makefile.in.in
 po/POTFILES$
 po/missing

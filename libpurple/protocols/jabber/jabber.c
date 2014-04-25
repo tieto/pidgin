@@ -3889,7 +3889,7 @@ jabber_do_init(void)
 	if (!sasl_initialized) {
 		sasl_initialized = TRUE;
 #ifdef _WIN32
-		sasldir = g_build_filename(wpurple_install_dir(), "sasl2", NULL);
+		sasldir = g_build_filename(wpurple_bin_dir(), "sasl2", NULL);
 		sasl_set_path(SASL_PATH_TYPE_PLUGIN, sasldir);
 		g_free(sasldir);
 		/* Suppress error popups for failing to load sasl plugins */

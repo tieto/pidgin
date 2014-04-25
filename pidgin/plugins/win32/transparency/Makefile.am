@@ -1,4 +1,4 @@
-plugindir = $(libdir)/pidgin
+plugindir = @PIDGIN_PLUGINDIR@
 
 plugin_LTLIBRARIES = win2ktrans.la
 

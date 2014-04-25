@@ -1,4 +1,4 @@
-plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+plugindir = @PURPLE_PLUGINDIR@
 
 perl_dirs = common
 
