@@ -24,8 +24,8 @@ CONTENTS_FILE=$INSTALL_DIR/CONTENTS
 PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
-BUNDLE_VERSION=2.24.14.1
-BUNDLE_SHA1SUM="eb3e3b7a177dcf9eeddc0bc42931e639f97dd281"
+BUNDLE_VERSION=2.24.18.0
+BUNDLE_SHA1SUM="27f6cbc73b8d489741ce83d6a2e49ead89479a5f"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
 BUNDLE_URL="https://pidgin.im/~twasilczyk/win32/gtk-runtime-$BUNDLE_VERSION.zip"
@@ -99,7 +99,7 @@ ALL+="ARC_ATK "
 ARC_CAIRO2="${DOWNLOAD_HOST}mingw32-libcairo2-1.10.2-8.12.noarch.rpm Cairo 1.10.2-8.12 sha1sum:e33c58603678a8ba113bffe282bec810bd70172e"
 ALL+="ARC_CAIRO2 "
 
-ARC_DBUS="${DOWNLOAD_HOST}mingw32-dbus-1-1.7.0-2.1.noarch.rpm D-Bus 1.7.0-2.1 sha1sum:6961e4df15172b057e91b266dbb7cbd01a736e56"
+ARC_DBUS="${DOWNLOAD_HOST}mingw32-dbus-1-1.8.0-1.19.noarch.rpm D-Bus 1.8.0-1.19 sha1sum:c951d935f58212abb70ba5edf1794390f8434832"
 ALL+="ARC_DBUS "
 
 ARC_DBUS_GLIB="${DOWNLOAD_HOST}mingw32-dbus-1-glib-0.100.2-1.2.noarch.rpm dbus-glib 0.100.2-1.2 sha1sum:72d27c0c01ce3e94e4dddc653c6ac0544c28362f"
@@ -111,7 +111,7 @@ ALL+="ARC_ENCHANT "
 ARC_FONTCONFIG="${DOWNLOAD_HOST}mingw32-fontconfig-2.10.92-1.2.noarch.rpm fontconfig 2.10.92-1.2 sha1sum:d8da351f5d4d9816f02ac5287dd7887c711902ed"
 ALL+="ARC_FONTCONFIG "
 
-ARC_FREETYPE="${DOWNLOAD_HOST}mingw32-freetype-2.4.11-2.1.noarch.rpm freetype 2.4.11-2.1 sha1sum:0eee29696e87d47e7487ba5e90530bf20159f31e"
+ARC_FREETYPE="${DOWNLOAD_HOST}mingw32-freetype-2.4.12-3.10.noarch.rpm freetype 2.4.12-3.10 sha1sum:d0c8fc8ba3785f5445a429ae7b6a3fce6d1f0333"
 ALL+="ARC_FREETYPE "
 
 ARC_GDK_PIXBUF="${DOWNLOAD_HOST}mingw32-gdk-pixbuf-2.28.0-1.2.noarch.rpm gdk-pixbuf 2.28.0-1.2 sha1sum:8673e06c3a838e47a093043bf86bb62ea3627fe0"
@@ -123,16 +123,16 @@ ALL+="ARC_GEOCLUE "
 ARC_GLIB="${DOWNLOAD_HOST}mingw32-glib2-2.38.0-1.4.noarch.rpm Glib 2.38.0-1.4 sha1sum:e71d8c2f105548e752df4a0b6ba5958ab4826707"
 ALL+="ARC_GLIB "
 
-ARC_GNUTLS="${DOWNLOAD_HOST}mingw32-libgnutls-3.1.16-2.2.noarch.rpm GnuTLS 3.1.16-2.2 sha1sum:19e9b6cfa8511681b4fa569dfdafb930336d437c"
+ARC_GNUTLS="${DOWNLOAD_HOST}mingw32-libgnutls-3.1.22-1.3.noarch.rpm GnuTLS 3.1.22-1.3 sha1sum:e744435362f4124210a7b70d75f154b7ac0bf1fd"
 ALL+="ARC_GNUTLS "
 
-ARC_GNUTLS_GCRYPT="${DOWNLOAD_HOST}mingw32-libgcrypt-1.5.2-1.1.noarch.rpm libgcrypt 1.5.2-1.1 sha1sum:861335a6edaa8419bc8f2d4ba6104c8da197e8e2"
+ARC_GNUTLS_GCRYPT="${DOWNLOAD_HOST}mingw32-libgcrypt-1.6.0-2.4.noarch.rpm libgcrypt 1.6.0-2.4 sha1sum:1d6ce973a866d93dc083888b19d64a7891ff224f"
 ALL+="ARC_GNUTLS_GCRYPT "
 
-ARC_GNUTLS_GPGERR="${DOWNLOAD_HOST}mingw32-libgpg-error-1.10-1.6.noarch.rpm gpg-error 1.10-1.6 sha1sum:51a649ee41167ed3fafd243f8ded5d30b53f213d"
+ARC_GNUTLS_GPGERR="${DOWNLOAD_HOST}mingw32-libgpg-error-1.12-2.5.noarch.rpm gpg-error 1.12-2.5 sha1sum:af3a21a58fce483196e882ab1bf801203535f46e"
 ALL+="ARC_GNUTLS_GPGERR "
 
-ARC_GTK2="${DOWNLOAD_HOST}mingw32-gtk2-2.24.14-2.7.noarch.rpm GTK+ 2.24.14-2.7 sha1sum:a6f98a0c974c0273127c6423d89fca5f48c7d30c"
+ARC_GTK2="${DOWNLOAD_HOST}mingw32-gtk2-2.24.18-3.4.noarch.rpm GTK+ 2.24.18-3.4 sha1sum:31bc7f8aa2222517a3ec614924a07432983dc20d"
 ALL+="ARC_GTK2 "
 
 ARC_GTKSPELL="${DOWNLOAD_HOST}mingw32-gtkspell-2.0.16-2.10.noarch.rpm GtkSpell 2.0.16-2.10 sha1sum:623afdc7cc2c43c1f5d39be797c3ec8ee1ab5570"
@@ -141,10 +141,10 @@ ALL+="ARC_GTKSPELL "
 ARC_LIBFFI="${DOWNLOAD_HOST}mingw32-libffi-3.0.13-2.2.noarch.rpm libffi 3.0.13-2.2 sha1sum:0751dddb44eba3f553534c0a2a8ed438ed84a793"
 ALL+="ARC_LIBFFI "
 
-ARC_LIBGADU="${DOWNLOAD_HOST}mingw32-libgadu-1.12.0rc1-1.5.noarch.rpm libgadu 1.12.0rc1-1.5 sha1sum:8a77a356fc66ef9256a99e0040c92581a54a1656"
+ARC_LIBGADU="${DOWNLOAD_HOST}mingw32-libgadu-1.12.0rc2-2.3.noarch.rpm libgadu 1.12.0rc2-2.3 sha1sum:2964f10b2c1dc1169bf7a97aafa89a3a6156b95e"
 ALL+="ARC_LIBGADU "
 
-ARC_LIBGCC="${DOWNLOAD_HOST}mingw32-libgcc-4.8.0-6.1.noarch.rpm libgcc 4.8.0-6.1 sha1sum:ab599bf07bf2d56367c57b442440598358c943af"
+ARC_LIBGCC="${DOWNLOAD_HOST}mingw32-libgcc-4.8.2-3.7.noarch.rpm libgcc 4.8.2-3.7 sha1sum:91ab8f6881ce1004dda5279920742f78743e897b"
 ALL+="ARC_LIBGCC "
 
 ARC_LIBGMP="${DOWNLOAD_HOST}mingw32-libgmp-5.0.5-2.2.noarch.rpm libgmp 5.0.5-2.2 sha1sum:30c8c403d4d2dead7674e567d83c8c069b603e49"
@@ -153,7 +153,7 @@ ALL+="ARC_LIBGMP "
 ARC_LIBGNURX="${DOWNLOAD_HOST}mingw32-libgnurx-2.5-4.6.noarch.rpm libgnurx 2.5-4.6 sha1sum:51571e6b1e5e9fb865c110cae04c582ff3c44cb7"
 ALL+="ARC_LIBGNURX "
 
-ARC_LIBHB="${DOWNLOAD_HOST}mingw32-libharfbuzz0-0.9.16-3.1.noarch.rpm libharfbuzz 0.9.16-3.1 sha1sum:5c377190429f45e566b07439c99937798c4c13f0"
+ARC_LIBHB="${DOWNLOAD_HOST}mingw32-libharfbuzz-0.9.19-3.5.noarch.rpm libharfbuzz 0.9.19-3.5 sha1sum:a31cd8ed4a7a8b75cf7b1252706f79b19e612d68"
 ALL+="ARC_LIBHB "
 
 ARC_LIBHOGWEED="${DOWNLOAD_HOST}mingw32-libhogweed-2.7-2.2.noarch.rpm libhogweed 2.7-2.2 sha1sum:c22ea84a8a5037be6021f9494b8252861dee63b5"
@@ -168,7 +168,7 @@ ALL+="ARC_LIBICU "
 ARC_LIBIDN="${DOWNLOAD_HOST}mingw32-libidn-1.22-3.8.noarch.rpm libidn 1.22-3.8 sha1sum:2052ea6fc2e789b2c252f621a7134ea4286cf5cc"
 ALL+="ARC_LIBIDN "
 
-ARC_LIBINTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-13.6.noarch.rpm libintl 0.18.1.1-13.6 sha1sum:0e6fde8e86788874366f308e25634f95613e906a"
+ARC_LIBINTL="${DOWNLOAD_HOST}mingw32-libintl-0.18.1.1-15.11.noarch.rpm libintl 0.18.1.1-15.11 sha1sum:29812544f7362dde1378f71feb31fed4f9cb640e"
 ALL+="ARC_LIBINTL "
 
 ARC_LIBJPEG="${DOWNLOAD_HOST}mingw32-libjpeg-8d-3.6.noarch.rpm libjpeg 8d-3.6 sha1sum:db85723377243045388a5d3c873262cd83ffa7e2"
@@ -186,7 +186,7 @@ ALL+="ARC_LIBNETTLE "
 ARC_LIBP11="${DOWNLOAD_HOST}mingw32-libp11-kit0-0.20.1-4.3.noarch.rpm libp11 0.20.1-4.3 sha1sum:ee5b7a3e16b29f26ee1c275d8228ba0bb6a27190"
 ALL+="ARC_LIBP11 "
 
-ARC_LIBPNG="${DOWNLOAD_HOST}mingw32-libpng-1.5.11-1.6.noarch.rpm libpng 1.5.11-1.6 sha1sum:bb28549351c1f0d7a8afd129ac656be18a616149"
+ARC_LIBPNG="${DOWNLOAD_HOST}mingw32-libpng-1.5.17-2.11.noarch.rpm libpng 1.5.17-2.11 sha1sum:ff2c29197b5529d2cdc936f7b2b61af5c1175d29"
 ALL+="ARC_LIBPNG "
 
 ARC_LIBSILC="${DOWNLOAD_HOST}mingw32-libsilc-1.1.10-2.1.noarch.rpm libsilc 1.1.10-2.1 sha1sum:b7690eac1a91caf2b02b058483a3768705a6f3df"
@@ -198,10 +198,10 @@ ALL+="ARC_LIBSILCCL "
 ARC_LIBSOUP="${DOWNLOAD_HOST}mingw32-libsoup-2.42.2-1.1.noarch.rpm libsoup 2.42.2-1.1 sha1sum:f0af29ceb420daaa549dd5dc470fbd62bc732252"
 ALL+="ARC_LIBSOUP "
 
-ARC_LIBSSP="${DOWNLOAD_HOST}mingw32-libssp-4.8.0-6.1.noarch.rpm LibSSP 4.8.0-6.1 sha1sum:c05b2e0470f41d26f8ebfff93dfd51263842a4ea"
+ARC_LIBSSP="${DOWNLOAD_HOST}mingw32-libssp-4.8.2-3.7.noarch.rpm LibSSP 4.8.2-3.7 sha1sum:bc42038985d5c75dd3b1511849db2c9f80dbbd7e"
 ALL+="ARC_LIBSSP "
 
-ARC_LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.8.0-6.1.noarch.rpm libstdc++ 4.8.0-6.1 sha1sum:627860950e951764fe1aa229d3a63bb01618ba90"
+ARC_LIBSTDCPP="${DOWNLOAD_HOST}mingw32-libstdc++-4.8.2-3.7.noarch.rpm libstdc++ 4.8.2-3.7 sha1sum:1f9779c16afb0bbfab6dc79389cf6f6198292062"
 ALL+="ARC_LIBSTDCPP "
 
 ARC_LIBTASN="${DOWNLOAD_HOST}mingw32-libtasn1-3.3-3.2.noarch.rpm libtasn 3.3-3.2 sha1sum:3d5bb0df8eb7ed5e3f05b5378d3d61dbbbdbbd3f"
@@ -219,10 +219,10 @@ ALL+="ARC_LIBXSLT "
 ARC_MEANW="${DOWNLOAD_HOST}mingw32-meanwhile-1.0.2-3.2.noarch.rpm Meanwhile 1.0.2-3.2 sha1sum:6b0fd8d94205d80eba37ea3e3f19ded7a1297473"
 ALL+="ARC_MEANW "
 
-ARC_MOZNSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-3.14.3-2.2.noarch.rpm NSS 3.14.3-2.2 sha1sum:b0353cda8b5670796f0246f1da27754c3205a009"
+ARC_MOZNSS="${DOWNLOAD_HOST}mingw32-mozilla-nss-3.14.5-3.9.noarch.rpm NSS 3.14.5-3.9 sha1sum:434bcb5073bae6d16ab248280b2b033507d20453"
 ALL+="ARC_MOZNSS "
 
-ARC_MOZNSPR="${DOWNLOAD_HOST}mingw32-mozilla-nspr-4.9.6-4.1.noarch.rpm NSPR 4.9.6-4.1 sha1sum:42b1a803c54639f6cf0aa1f6287324d0658c705c"
+ARC_MOZNSPR="${DOWNLOAD_HOST}mingw32-mozilla-nspr-4.10.2-2.8.noarch.rpm NSPR 4.10.2-2.8 sha1sum:ca61d4453042725e4f700a4b51859dc5f58110c4"
 ALL+="ARC_MOZNSPR "
 
 ARC_NCURSES="${DOWNLOAD_HOST}mingw32-ncurses-5.9-20140421.1.noarch.rpm ncurses 5.9-20140421.1 sha1sum:6ae5b992c14059280dfb38fa4ea9dfbeab6790ed"
@@ -231,7 +231,7 @@ ALL+="ARC_NCURSES "
 ARC_PANGO="${DOWNLOAD_HOST}mingw32-pango-1.34.0-2.3.noarch.rpm Pango 1.34.0-2.3 sha1sum:65b55b73c4f5c8107fdf48ef2e4f5c351189cd4f"
 ALL+="ARC_PANGO "
 
-ARC_PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.26.0-1.6.noarch.rpm pixman 0.26.0-1.6 sha1sum:b0a440a3761e77d890a2e7de52405e2ce364c9b2"
+ARC_PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.30.0-3.10.noarch.rpm pixman 0.30.0-3.10 sha1sum:ed63261f29c356a58276435df013376e688a3a6b"
 ALL+="ARC_PIXMAN "
 
 ARC_PROTOBUFC="${DOWNLOAD_HOST}mingw32-protobuf-c-0.15-3.6.noarch.rpm protobuf-c 0.15-3.6 sha1sum:48adac0de5df56805a150f6c8bb5c00e75ffc3e1"
@@ -240,7 +240,7 @@ ALL+="ARC_PROTOBUFC "
 ARC_PTHREADS="${DOWNLOAD_HOST}mingw32-pthreads-2.8.0-14.6.noarch.rpm pthreads 2.8.0-14.6 sha1sum:e948ae221f82bbcb4fbfd991638e4170c150fe9f"
 ALL+="ARC_PTHREADS "
 
-ARC_SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite-3.7.6.2-1.6.noarch.rpm SQLite 3.7.6.2-1.6 sha1sum:f61529bc0c996d9af28a94648ce6102d579ed928"
+ARC_SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite3-0-3.8.4.1-1.4.noarch.rpm SQLite 3.8.4.1-1.4 sha1sum:1c42db1a48f616d824c3ae8e0a8eb0693ddac88f"
 ALL+="ARC_SQLITE "
 
 ARC_VV_FARST="${DOWNLOAD_HOST}mingw32-farstream-0.1.2-19.1.noarch.rpm farstream 0.1.2-19.1 sha1sum:1c46b2c2f6b669824a70ca05d3958b2dc2197dc3"
@@ -279,7 +279,7 @@ ALL+="ARC_VV_LIBVORBIS "
 ARC_WEBKITGTK="${DOWNLOAD_HOST}mingw32-libwebkitgtk-1.10.2-9.2.noarch.rpm WebKitGTK+ 1.10.2-9.2 sha1sum:010dbad413f824696cd1e32fe70046c9a1cb425f"
 ALL+="ARC_WEBKITGTK "
 
-ARC_ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.7-1.4.noarch.rpm zlib 1.2.7-1.4 sha1sum:83e91f3b4d14e47131ca33fc69e12b82aabdd589"
+ARC_ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.8-2.6.noarch.rpm zlib 1.2.8-2.6 sha1sum:bb75b2a341309eb75daacb93d43d6c072c71923c"
 ALL+="ARC_ZLIB "
 
 mkdir -p $STAGE_DIR
