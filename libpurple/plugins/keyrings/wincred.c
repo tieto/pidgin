@@ -36,7 +36,7 @@
 #define WINCRED_SUMMARY     N_("Store passwords using Windows credentials")
 #define WINCRED_DESCRIPTION N_("This plugin stores passwords using Windows " \
 	"credentials.")
-#define WINCRED_AUTHOR      "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
+#define WINCRED_AUTHOR      "Tomek Wasilczyk <twasilczyk@pidgin.im>"
 #define WINCRED_ID          "keyring-wincred"
 
 #define WINCRED_MAX_TARGET_NAME 256

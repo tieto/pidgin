@@ -38,7 +38,7 @@
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
 	"storage behaviour for libpurple.")
-#define INTKEYRING_AUTHOR "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
+#define INTKEYRING_AUTHOR "Tomek Wasilczyk <twasilczyk@pidgin.im>"
 #define INTKEYRING_ID PURPLE_DEFAULT_KEYRING
 
 #define INTKEYRING_VERIFY_STR "[verification-string]"

@@ -38,7 +38,7 @@
 #define GNOMEKEYRING_NAME        N_("GNOME Keyring")
 #define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in " \
 	"GNOME Keyring.")
-#define GNOMEKEYRING_AUTHOR      "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)"
+#define GNOMEKEYRING_AUTHOR      "Tomek Wasilczyk <twasilczyk@pidgin.im>"
 #define GNOMEKEYRING_ID          "keyring-gnomekeyring"
 
 static PurpleKeyring *keyring_handler = NULL;

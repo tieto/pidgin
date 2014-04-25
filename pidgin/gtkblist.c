@@ -8457,7 +8457,7 @@ pidgin_blist_update_plugin_actions(void)
 			continue;
 
 		name = g_strdup_printf("plugin%d", count);
-		action = gtk_action_new(name, plugin->info->name, NULL, NULL);
+		action = gtk_action_new(name, _(plugin->info->name), NULL, NULL);
 		gtk_action_group_add_action(plugins_action_group, action);
 		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
 

@@ -859,16 +859,16 @@ void pidgin_dialogs_plugins_info(void)
 		punloadable = purple_plugin_is_unloadable(plugin);
 		ploaded = purple_plugin_is_loaded(plugin);
 
+		g_string_append_printf(str, "<dt>%s</dt><dd>", pname);
+		if (pauthor)
+			g_string_append_printf(str, "<b>Author:</b> %s<br/>", pauthor);
 		g_string_append_printf(str,
-				"<dt>%s</dt><dd>"
-				"<b>Author:</b> %s<br/>"
 				"<b>Version:</b> %s<br/>"
 				"<b>Website:</b> %s<br/>"
 				"<b>ID String:</b> %s<br/>"
 				"<b>Loadable:</b> %s<br/>"
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
-				pname, pauthor ? pauthor : "(null)",
 				pver, pwebsite, pid,
 				punloadable ? "<span style=\"color: #FF0000;\"><b>No</b></span>" : "Yes",
 				ploaded ? "Yes" : "No");
