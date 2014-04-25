@@ -136,12 +136,15 @@ libjabber_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 libfacebook_la_SOURCES = libfacebook.c
 libfacebook_la_LIBADD = libjabber.la
+libfacebook_la_DEPENDENCIES = libjabber.la
 
 libgtalk_la_SOURCES = libgtalk.c
 libgtalk_la_LIBADD = libjabber.la
+libgtalk_la_DEPENDENCIES = libjabber.la
 
 libxmpp_la_SOURCES = libxmpp.c
 libxmpp_la_LIBADD = libjabber.la
+libxmpp_la_DEPENDENCIES = libjabber.la
 
 endif
 
