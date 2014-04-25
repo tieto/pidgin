@@ -79,7 +79,7 @@ static void load_gtkspell() {
 	gchar *tmp, *tmp2;
 
 	const char *path = g_getenv("PATH");
-	tmp = g_build_filename(wpurple_install_dir(), "spellcheck", NULL);
+	tmp = g_build_filename(wpurple_bin_dir(), "spellcheck", NULL);
 	tmp2 = g_strdup_printf("%s%s%s", tmp,
 		(path ? G_SEARCHPATH_SEPARATOR_S : ""),
 		(path ? path : ""));

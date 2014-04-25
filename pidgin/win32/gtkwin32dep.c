@@ -396,7 +396,7 @@ void winpidgin_init(void) {
 	if (purple_debug_is_verbose())
 		purple_debug_misc("winpidgin", "winpidgin_init start\n");
 
-	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
+	exchndl_dll_path = g_build_filename(wpurple_bin_dir(), "exchndl.dll", NULL);
 	MySetLogFile = (LPFNSETLOGFILE) wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
 	g_free(exchndl_dll_path);
 	exchndl_dll_path = NULL;

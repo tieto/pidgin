@@ -64,7 +64,13 @@ liboscar_la_LDFLAGS = @PLUGIN_LDFLAGS@
 else
 
 st =
-pkg_LTLIBRARIES     = liboscar.la libaim.la libicq.la
+pkg_LTLIBRARIES     = libaim.la libicq.la
+if IS_WIN32
+lib_LTLIBRARIES = liboscar.la
+else
+pkg_LTLIBRARIES += liboscar.la
+endif
+
 liboscar_la_SOURCES = $(OSCARSOURCES)
 liboscar_la_LIBADD  = @PURPLE_LIBS@
 liboscar_la_LDFLAGS = @PLUGIN_LDFLAGS@

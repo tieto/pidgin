@@ -69,8 +69,9 @@ int wpurple_input_pipe(int pipefd[2]);
 
 /* Determine Purple paths */
 gchar *wpurple_get_special_folder(int folder_type); /* needs to be g_free'd */
-const char *wpurple_install_dir(void);
-const char *wpurple_lib_dir(void);
+const char *wpurple_bin_dir(void);
+const char *wpurple_data_dir(void);
+const char *wpurple_lib_dir(const char *subdir);
 const char *wpurple_locale_dir(void);
 const char *wpurple_home_dir(void);
 const char *wpurple_sysconf_dir(void);

@@ -120,7 +120,14 @@ libjabber_la_LDFLAGS = @PLUGIN_LDFLAGS@
 else
 
 st =
-pkg_LTLIBRARIES      = libjabber.la libfacebook.la libgtalk.la libxmpp.la
+pkg_LTLIBRARIES      = libfacebook.la libgtalk.la libxmpp.la
+
+if IS_WIN32
+lib_LTLIBRARIES = libjabber.la
+else
+pkg_LTLIBRARIES += libjabber.la
+endif
+
 libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_LIBADD  = @PURPLE_LIBS@ $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
 	$(FARSTREAM_LIBS) \

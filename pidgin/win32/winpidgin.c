@@ -287,6 +287,7 @@ static void common_dll_prep(const wchar_t *path) {
 	}
 }
 
+#ifndef IS_WIN32_CROSS_COMPILED
 static void dll_prep(const wchar_t *pidgin_dir) {
 	wchar_t path[MAX_PATH + 1];
 	path[0] = L'\0';
@@ -298,6 +299,7 @@ static void dll_prep(const wchar_t *pidgin_dir) {
 
 	common_dll_prep(path);
 }
+#endif
 
 static void portable_mode_dll_prep(const wchar_t *pidgin_dir) {
 	/* need to be able to fit MAX_PATH + "PURPLEHOME=" in path2 */
@@ -872,8 +874,10 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	if (portable_mode)
 		portable_mode_dll_prep(pidgin_dir);
+#ifndef IS_WIN32_CROSS_COMPILED
 	else if (!getenv("PIDGIN_NO_DLL_CHECK"))
 		dll_prep(pidgin_dir);
+#endif
 
 	winpidgin_set_locale();
 

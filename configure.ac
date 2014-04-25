@@ -177,12 +177,46 @@ AC_CHECK_SIZEOF(time_t, ,[
 
 AC_C_BIGENDIAN
 
+AC_ARG_WITH(win32-dirs, [AS_HELP_STRING([--with-win32-dirs=<classic|fhs>],
+	[use win32 classic (Program Files-like) or FHS (unix-like) directory structure (default: classic)])], [
+		if test "x$withval" != "xclassic" -a "x$withval" != "xfhs" ; then
+			AC_MSG_ERROR([Unsupported win32-dirs option. Please choose "classic" or "fhs".])
+		fi
+		with_win32_dirs="$withval"
+	], with_win32_dirs="classic")
+if test "x$is_win32" = "xyes" -a "x$with_win32_dirs" = "xfhs" ; then
+	AC_DEFINE(USE_WIN32_FHS, 1, [Define to 1, to use FHS on win32.])
+fi
+
 dnl Check for directories
 if test "x$is_win32" = "xyes" ; then
-	purple_datadir="wpurple_install_dir()"
-	purple_libdir="wpurple_lib_dir()"
-	pidgin_libdir="wpurple_lib_dir()"
-	finch_libdir="wpurple_lib_dir()"
+	if test "x$with_win32_dirs" = "xfhs" ; then
+		AS_AC_EXPAND(win32_fhs_bindir, "$bindir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_BINDIR], ["$win32_fhs_bindir"],
+			[bindir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_libdir, "$libdir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_LIBDIR], ["$win32_fhs_libdir"],
+			[libdir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_datadir, "$datadir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_DATADIR], ["$win32_fhs_datadir"],
+			[datadir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_sysconfdir, "$sysconfdir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_SYSCONFDIR], ["$win32_fhs_sysconfdir"],
+			[sysconfdir, as defined by configure])
+		AS_AC_EXPAND(win32_fhs_localedir, "$localedir")
+		AC_DEFINE_UNQUOTED([WIN32_FHS_LOCALEDIR], ["$win32_fhs_localedir"],
+			[localedir, as defined by configure])
+
+		purple_libdir="wpurple_lib_dir(\"purple-$PURPLE_MAJOR_VERSION\")"
+		pidgin_libdir="wpurple_lib_dir(\"pidgin-$PURPLE_MAJOR_VERSION\")"
+		finch_libdir="wpurple_lib_dir(\"finch-$PURPLE_MAJOR_VERSION\")"
+	else
+		purple_libdir="wpurple_lib_dir(NULL)"
+		pidgin_libdir="wpurple_lib_dir(NULL)"
+		finch_libdir="wpurple_lib_dir(NULL)"
+	fi
+
+	purple_datadir="wpurple_data_dir()"
 	purple_sysconfdir="wpurple_sysconf_dir()"
 	purple_localedir="wpurple_locale_dir()"
 else
@@ -3189,6 +3223,12 @@ echo Build with Mono support....... : $enable_mono
 echo Build with Perl support....... : $enable_perl
 echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
+
+if test "x$is_win32" = "xyes" ; then
+	echo
+	echo Win32 directory structure..... : $with_win32_dirs
+fi
+
 echo
 echo Print debugging messages...... : $enable_debug
 echo Generate documentation........ : $enable_gtk_doc

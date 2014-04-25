@@ -29,10 +29,12 @@
 #include "glibcompat.h"
 #include "notify.h"
 
+#define MAX_PATH_LEN 2048
+
 /*
  * LOCALS
  */
-static char *app_data_dir = NULL, *install_dir = NULL,
+static char *app_data_dir = NULL, *bin_dir = NULL, *data_dir = NULL,
 	*lib_dir = NULL, *locale_dir = NULL, *sysconf_dir = NULL;
 
 static HINSTANCE libpurpledll_hInstance = NULL;
@@ -128,12 +130,17 @@ gchar *wpurple_get_special_folder(int folder_type) {
 	return retval;
 }
 
-const char *wpurple_install_dir(void) {
+const char *wpurple_bin_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
 		char *tmp = NULL;
 		wchar_t winstall_dir[MAXPATHLEN];
+
+		/* We might use g_win32_get_package_installation_directory_of_module
+		 * here, but we won't because this routine strips bin or lib
+		 * part of the path.
+		 */
 		if (GetModuleFileNameW(libpurpledll_hInstance, winstall_dir,
 				MAXPATHLEN) > 0) {
 			tmp = g_utf16_to_utf8(winstall_dir, -1,
@@ -147,42 +154,138 @@ const char *wpurple_install_dir(void) {
 			g_free(tmp);
 			return NULL;
 		} else {
-			install_dir = g_path_get_dirname(tmp);
+			bin_dir = g_path_get_dirname(tmp);
 			g_free(tmp);
 			initialized = TRUE;
 		}
 	}
 
-	return install_dir;
+	return bin_dir;
 }
 
-const char *wpurple_lib_dir(void) {
+#ifdef USE_WIN32_FHS
+static gchar *
+wpurple_install_relative_path(const gchar *abspath)
+{
+	const gchar *bindir = WIN32_FHS_BINDIR;
+	const gchar *relpath;
+	int i, last_dirsep = -1, bin_esc_cnt;
+	gchar *ret;
+	GString *bin_esc;
+
+	g_return_val_if_fail(bindir != NULL, NULL);
+	g_return_val_if_fail(bindir[0] != '\0', NULL);
+	g_return_val_if_fail(abspath != NULL, NULL);
+	g_return_val_if_fail(abspath[0] != '\0', NULL);
+
+	/* let's find the common prefix of those paths */
+	for (i = 0; bindir[i] == abspath[i]; i++) {
+		if (bindir[i] == '\0')
+			break;
+		if (bindir[i] == '\\' || bindir[i] == '/')
+			last_dirsep = i;
+	}
+	if (bindir[i] == '\0' && (abspath[i] == '\\' || abspath[i] == '/'))
+		last_dirsep = i;
+	if (abspath[i] == '\0' && (bindir[i] == '\\' || bindir[i] == '/'))
+		last_dirsep = i;
+
+	/* there is no common prefix, return absolute path */
+	if (last_dirsep == -1)
+		return g_strdup(abspath);
+
+	/* let's check, how many dirs we need to go up to the common prefix */
+	bin_esc_cnt = 0;
+	for (i = last_dirsep; bindir[i]; i++) {
+		if (bindir[i] != '\\' && bindir[i] != '/')
+			continue;
+		if (bindir[i + 1] == '\0') /* trailing dir separator */
+			break;
+		bin_esc_cnt++;
+	}
+	bin_esc = g_string_new("");
+	for (i = 0; i < bin_esc_cnt; i++)
+		g_string_append(bin_esc, ".." G_DIR_SEPARATOR_S);
+
+	/* now, we need to go back deeper into the directory tree */
+	relpath = &abspath[last_dirsep];
+	if (relpath[0] != '\0')
+		relpath++;
+
+	/* - enter bin dir
+	 * - escape it to the common prefix
+	 * - dive into the abspath dir
+	 */
+	ret = g_build_filename(wpurple_bin_dir(), bin_esc->str, relpath, NULL);
+	g_string_free(bin_esc, TRUE);
+
+	purple_debug_misc("wpurple", "wpurple_install_relative_path(%s) = %s",
+		abspath, ret);
+
+	return ret;
+}
+#endif
+
+const char *
+wpurple_data_dir(void) {
+#ifdef USE_WIN32_FHS
 	static gboolean initialized = FALSE;
+	if (initialized)
+		return data_dir;
+	data_dir = wpurple_install_relative_path(WIN32_FHS_DATADIR);
+	initialized = TRUE;
+
+	return data_dir;
+#else
+	return wpurple_bin_dir();
+#endif
+}
+
+
+const char *wpurple_lib_dir(const char *subdir)
+{
+	static gboolean initialized = FALSE;
+	static gchar subpath[MAX_PATH_LEN];
 
 	if (!initialized) {
-		const char *inst_dir = wpurple_install_dir();
+#ifdef USE_WIN32_FHS
+		lib_dir = wpurple_install_relative_path(WIN32_FHS_LIBDIR);
+		initialized = TRUE;
+#else
+		const char *inst_dir = wpurple_bin_dir();
 		if (inst_dir != NULL) {
 			lib_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "plugins", inst_dir);
 			initialized = TRUE;
 		} else {
 			return NULL;
 		}
+#endif
 	}
 
-	return lib_dir;
+	if (subdir == NULL)
+		return lib_dir;
+
+	g_snprintf(subpath, sizeof(subpath),
+		"%s" G_DIR_SEPARATOR_S "%s", lib_dir, subdir);
+	return subpath;
 }
 
 const char *wpurple_locale_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		const char *inst_dir = wpurple_install_dir();
+#ifdef USE_WIN32_FHS
+		locale_dir = wpurple_install_relative_path(WIN32_FHS_LOCALEDIR);
+		initialized = TRUE;
+#else
+		const char *inst_dir = wpurple_bin_dir();
 		if (inst_dir != NULL) {
 			locale_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "locale", inst_dir);
 			initialized = TRUE;
 		} else {
 			return NULL;
 		}
+#endif
 	}
 
 	return locale_dir;
@@ -212,7 +315,11 @@ const char *wpurple_sysconf_dir(void)
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
+#ifdef USE_WIN32_FHS
+		sysconf_dir = wpurple_install_relative_path(WIN32_FHS_SYSCONFDIR);
+#else
 		sysconf_dir = wpurple_get_special_folder(CSIDL_COMMON_APPDATA);
+#endif
 		initialized = TRUE;
 	}
 
@@ -540,13 +647,15 @@ void wpurple_cleanup(void) {
 	WSACleanup();
 
 	g_free(app_data_dir);
-	g_free(install_dir);
+	g_free(bin_dir);
+	g_free(data_dir);
 	g_free(lib_dir);
 	g_free(locale_dir);
 	g_free(sysconf_dir);
 
 	app_data_dir = NULL;
-	install_dir = NULL;
+	bin_dir = NULL;
+	data_dir = NULL;
 	lib_dir = NULL;
 	locale_dir = NULL;
 	sysconf_dir = NULL;

@@ -41,7 +41,12 @@ libymsg_la_LDFLAGS = @PLUGIN_LDFLAGS@
 else
 
 st =
-pkg_LTLIBRARIES     = libymsg.la libyahoo.la libyahoojp.la
+pkg_LTLIBRARIES     = libyahoo.la libyahoojp.la
+if IS_WIN32
+lib_LTLIBRARIES = libymsg.la
+else
+pkg_LTLIBRARIES += libymsg.la
+endif
 
 libymsg_la_SOURCES = $(YAHOOSOURCES)
 libymsg_la_LIBADD  = @PURPLE_LIBS@
