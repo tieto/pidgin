@@ -119,14 +119,15 @@ libjabber_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 else
 
-st =
-pkg_LTLIBRARIES      = libfacebook.la libgtalk.la libxmpp.la
-
 if IS_WIN32
 lib_LTLIBRARIES = libjabber.la
+pkg_LTLIBRARIES =
 else
-pkg_LTLIBRARIES += libjabber.la
+pkg_LTLIBRARIES = libjabber.la
 endif
+
+st =
+pkg_LTLIBRARIES += libfacebook.la libgtalk.la libxmpp.la
 
 libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_LIBADD  = @PURPLE_LIBS@ $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
@@ -136,15 +137,12 @@ libjabber_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 libfacebook_la_SOURCES = libfacebook.c
 libfacebook_la_LIBADD = libjabber.la
-libfacebook_la_DEPENDENCIES = libjabber.la
 
 libgtalk_la_SOURCES = libgtalk.c
 libgtalk_la_LIBADD = libjabber.la
-libgtalk_la_DEPENDENCIES = libjabber.la
 
 libxmpp_la_SOURCES = libxmpp.c
 libxmpp_la_LIBADD = libjabber.la
-libxmpp_la_DEPENDENCIES = libjabber.la
 
 endif
 
