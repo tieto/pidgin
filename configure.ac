@@ -2286,7 +2286,13 @@ if ! test -z "$ssl_certificates_dir" ; then
 		AC_MSG_ERROR([--with-system-ssl-certs requires that a location is specified, eg. --with-system-ssl-certs=/etc/pki/tls/certs])
 	fi
 	if ! test -d "$ssl_certificates_dir" ; then
-		AC_MSG_ERROR([$ssl_certificates_dir does not exist, if this is the correct location please make sure that it exists.])
+		if test "x$is_win32" = "xyes" ; then
+			AC_MSG_WARN([$ssl_certificates_dir does not exist. \
+It may be OK when cross-compiling, but please make sure about it.])
+		else
+			AC_MSG_ERROR([$ssl_certificates_dir does not exist, \
+if this is the correct location please make sure that it exists.])
+		fi
 	fi
 	SSL_CERTIFICATES_DIR="$ssl_certificates_dir"
 fi

@@ -75,6 +75,9 @@ const char *wpurple_lib_dir(const char *subdir);
 const char *wpurple_locale_dir(void);
 const char *wpurple_home_dir(void);
 const char *wpurple_sysconf_dir(void);
+#if defined(USE_WIN32_FHS) && defined(SSL_CERTIFICATES_DIR)
+const char *wpurple_cert_dir(void);
+#endif
 
 /* init / cleanup */
 void wpurple_init(void);
