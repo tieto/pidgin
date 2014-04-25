@@ -17,6 +17,7 @@ if [ ! -e $PIDGIN_BASE/VERSION ]; then
 fi
 
 STAGE_DIR=`readlink -f $PIDGIN_BASE/pidgin/win32/nsis/gtk_runtime_stage`
+CERT_PATH=`readlink -f $PIDGIN_BASE/pidgin/win32/nsis`/cacert.pem
 #Subdirectory of $STAGE_DIR
 INSTALL_DIR=Gtk
 CONTENTS_FILE=$INSTALL_DIR/CONTENTS
@@ -29,6 +30,12 @@ ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
 BUNDLE_URL="https://pidgin.im/~twasilczyk/win32/gtk-runtime-$BUNDLE_VERSION.zip"
 
+if [ "x`uname`" == "xLinux" ]; then
+	is_win32="no"
+else
+	is_win32="yes"
+fi
+
 function download() {
 	if [ -e "$2" ]; then
 		echo "File exists"
@@ -36,7 +43,7 @@ function download() {
 	fi
 	failed=0
 	wget -t 5 "$1" -O "$2" -o "wget.log" --retry-connrefused --waitretry=5 \
-		--ca-certificate="${STAGE_DIR}/../cacert.pem" \
+		--ca-certificate="$CERT_PATH" \
 		|| failed=1
 	if [ $failed != 0 ] ; then
 		if [ "$3" != "quiet" ] ; then
@@ -51,7 +58,7 @@ function download() {
 	return 0
 }
 
-cat $PIDGIN_BASE/share/ca-certs/*.pem > $STAGE_DIR/../cacert.pem
+cat $PIDGIN_BASE/share/ca-certs/*.pem > "$CERT_PATH"
 
 #Download the existing file (so that we distribute the exact same file for all releases with the same bundle version)
 FILE="$ZIP_FILE"
@@ -278,6 +285,7 @@ mkdir $INSTALL_DIR
 #new CONTENTS file
 echo Bundle Version $BUNDLE_VERSION > $CONTENTS_FILE
 
+if [ $is_win32 = "yes" ]; then
 CPIO_URL="https://pidgin.im/~twasilczyk/win32/devel-deps/cpio/bsdcpio-3.0.3-1.4.tar.gz"
 CPIO_SHA1SUM="0460c7a52f8c93d3c4822d6d1aaf9410f21bd4da"
 CPIO_DIR="bsdcpio"
@@ -296,6 +304,10 @@ fi
 rm -rf "$CPIO_DIR"
 mkdir "$CPIO_DIR"
 tar xf "$FILE" --strip-components=1 --directory="$CPIO_DIR" || exit 1
+BSDCPIO=bsdcpio/bsdcpio.exe
+else
+BSDCPIO=`which bsdcpio`
+fi
 
 function rpm_install {
 	PKG_NAME=${NAME%%\ *}
@@ -364,7 +376,7 @@ function download_and_extract {
 	#This is an OpenSuSE build service RPM
 	if [ $EXTENSION == 'rpm' ]; then
 		rm -rf $MINGW_DIR_TOP
-		bsdcpio/bsdcpio.exe --quiet -f etc/fonts/conf.d -di < $FILE || exit 1
+		$BSDCPIO --quiet -f etc/fonts/conf.d -di < $FILE || exit 1
 		rpm_install
 		rm -rf $MINGW_DIR_TOP
 	else
@@ -380,7 +392,7 @@ do
 	download_and_extract "$VAR"
 done
 rm -rf $CPIO_DIR
-rm "${STAGE_DIR}/../cacert.pem"
+rm "$CERT_PATH"
 
 #mv "${STAGE_DIR}/${INSTALL_DIR}/share/tcl8.5" "${STAGE_DIR}/${INSTALL_DIR}/lib/"
 rm "${STAGE_DIR}/${INSTALL_DIR}/lib/gstreamer-0.10/libfsmsnconference.dll"
