@@ -245,8 +245,18 @@ find_im_with_contact(PurpleAccount *account, const char *name)
 static char *
 get_conversation_title(PurpleConversation *conv, PurpleAccount *account)
 {
-	return g_strdup_printf(_("%s (%s -- %s)"), purple_conversation_get_title(conv),
-		purple_account_get_username(account), purple_account_get_protocol_name(account));
+	PurpleE2eeState *e2ee;
+
+	e2ee = purple_conversation_get_e2ee_state(conv);
+
+	return g_strdup_printf(_("%s (%s -- %s)%s%s%s%s"),
+		purple_conversation_get_title(conv),
+		purple_account_get_username(account),
+		purple_account_get_protocol_name(account),
+		e2ee ? " | " : "",
+		e2ee ? purple_e2ee_provider_get_name(purple_e2ee_state_get_provider(e2ee)) : "",
+		e2ee ? ": " : "",
+		e2ee ? purple_e2ee_state_get_name(e2ee) : "");
 }
 
 static void
@@ -410,6 +420,18 @@ conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type)
 
 	if (type == PURPLE_CONVERSATION_UPDATE_FEATURES) {
 		gg_extended_menu(purple_conversation_get_ui_data(conv));
+		return;
+	}
+	if (type == PURPLE_CONVERSATION_UPDATE_E2EE) {
+		FinchConv *ggconv = FINCH_CONV(conv);
+		gchar *title;
+
+		title = get_conversation_title(conv,
+			purple_conversation_get_account(conv));
+		gnt_screen_rename_widget(ggconv->window, title);
+		g_free(title);
+
+		return;
 	}
 }
 

@@ -168,11 +168,23 @@ purple_e2ee_provider_register(PurpleE2eeProvider *provider)
 void
 purple_e2ee_provider_unregister(PurpleE2eeProvider *provider)
 {
+	GList *it;
 	g_return_if_fail(provider != NULL);
 
 	if (main_provider != provider) {
 		purple_debug_warning("e2ee", "This provider is not registered");
 		return;
+	}
+
+	for (it = purple_conversations_get_all(); it; it = g_list_next(it)) {
+		PurpleConversation *conv = it->data;
+		PurpleE2eeState *state;
+
+		state = purple_conversation_get_e2ee_state(conv);
+		if (!state)
+			continue;
+		if (provider == purple_e2ee_state_get_provider(state))
+			purple_conversation_set_e2ee_state(conv, NULL);
 	}
 
 	main_provider = NULL;

@@ -497,6 +497,9 @@ purple_conversation_set_e2ee_state(PurpleConversation *conv,
 		return;
 	}
 
+	if (state == priv->e2ee_state)
+		return;
+
 	if (state)
 		purple_e2ee_state_ref(state);
 	purple_e2ee_state_unref(priv->e2ee_state);
