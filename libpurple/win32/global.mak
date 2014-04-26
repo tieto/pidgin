@@ -17,7 +17,6 @@ PURPLE_API_VERSION := 20
 
 # Locations of our various dependencies
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
-GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0
 ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant-1.6
 GNUTLS_TOP ?= $(WIN32_DEV_TOP)/gnutls-3.1
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk2-2.24

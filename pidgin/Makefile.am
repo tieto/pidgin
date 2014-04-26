@@ -19,8 +19,6 @@ EXTRA_DIST = \
 		win32/untar.c \
 		win32/untar.h \
 		win32/winpidgin.c \
-		win32/wspell.c \
-		win32/wspell.h \
 		win32/nsis/generate_gtk_zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
@@ -148,8 +146,7 @@ noinst_HEADERS= gtkinternal.h
 if IS_WIN32
 libpidgin_la_SOURCES += \
 	win32/gtkwin32dep.c \
-	win32/untar.c \
-	win32/wspell.c
+	win32/untar.c
 
 # Files that looks like obsolete (were used in Pidgin2):
 #	win32/gtkdocklet-win32.c
@@ -163,8 +160,7 @@ pidgin_SOURCES += \
 libpidgin_la_headers += \
 	win32/gtkwin32dep.h \
 	win32/resource.h \
-	win32/untar.h \
-	win32/wspell.h
+	win32/untar.h
 
 .rc.o: %.rc
 	$(AM_V_GEN)$(WINDRES) -I $(srcdir)/win32 -I $(srcdir) -i $< -o $@
@@ -205,7 +201,6 @@ libpidgin_la_LIBADD = \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
-	$(GTKSPELL_LIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
@@ -236,7 +231,6 @@ AM_CPPFLAGS = \
 	$(GTK_CFLAGS) \
 	$(X11_CFLAGS) \
 	$(DBUS_CFLAGS) \
-	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS)
 endif  # ENABLE_GTK

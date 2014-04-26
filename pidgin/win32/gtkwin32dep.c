@@ -46,9 +46,6 @@
 #include "gtkconv.h"
 #include "gtkconn.h"
 #include "util.h"
-#ifdef USE_GTKSPELL
-#include "wspell.h"
-#endif
 
 /*
  *  GLOBALS
@@ -414,9 +411,6 @@ void winpidgin_init(void) {
 		g_free(locale_debug_dir);
 	}
 
-#ifdef USE_GTKSPELL
-	winpidgin_spell_init();
-#endif
 	purple_debug_info("winpidgin", "GTK+: %u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 

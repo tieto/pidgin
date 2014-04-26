@@ -135,9 +135,6 @@ ALL+="ARC_GNUTLS_GPGERR "
 ARC_GTK2="${DOWNLOAD_HOST}mingw32-gtk2-2.24.18-3.4.noarch.rpm GTK+ 2.24.18-3.4 sha1sum:31bc7f8aa2222517a3ec614924a07432983dc20d"
 ALL+="ARC_GTK2 "
 
-ARC_GTKSPELL="${DOWNLOAD_HOST}mingw32-gtkspell-2.0.16-2.10.noarch.rpm GtkSpell 2.0.16-2.10 sha1sum:623afdc7cc2c43c1f5d39be797c3ec8ee1ab5570"
-ALL+="ARC_GTKSPELL "
-
 ARC_LIBFFI="${DOWNLOAD_HOST}mingw32-libffi-3.0.13-2.2.noarch.rpm libffi 3.0.13-2.2 sha1sum:0751dddb44eba3f553534c0a2a8ed438ed84a793"
 ALL+="ARC_LIBFFI "
 

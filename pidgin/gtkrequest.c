@@ -633,9 +633,6 @@ pidgin_request_input(const char *title, const char *primary,
 
 			gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
 
-			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
-				pidgin_setup_gtkspell(GTK_TEXT_VIEW(entry));
-
 			gtk_box_pack_start(GTK_BOX(vbox), 
 				pidgin_make_scrollable(entry, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, 320, 130),
 				TRUE, TRUE, 0);
@@ -1162,9 +1159,6 @@ create_string_field(PurpleRequestField *field)
 								   TRUE);
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview),
 									GTK_WRAP_WORD_CHAR);
-
-		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
-			pidgin_setup_gtkspell(GTK_TEXT_VIEW(textview));
 
 		gtk_widget_show(textview);
 

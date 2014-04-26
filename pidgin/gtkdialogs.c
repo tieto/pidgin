@@ -651,12 +651,6 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Disabled</dd>");
 #endif
 
-#ifdef USE_GTKSPELL
-	g_string_append(str, "<dt>GtkSpell:</dt><dd>Enabled</dd>");
-#else
-	g_string_append(str, "<dt>GtkSpell:</dt><dd>Disabled</dd>");
-#endif
-
 #ifdef HAVE_GNUTLS
 	g_string_append(str, "<dt>GnuTLS:</dt><dd>Enabled</dd>");
 #else

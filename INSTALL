@@ -138,8 +138,6 @@ when it should mark accounts idle based on mouse or keyboard usage.
 Doing so will remove the ability to have pidgin start up with your window
 manager.
 
-	`--disable-gtkspell' will remove the ability to highlight misspelled words.
-
 	`--disable-gevolution' will cause the evolution integration plugin not to
 compile.
 

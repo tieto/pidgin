@@ -542,10 +542,6 @@ AC_ARG_ENABLE(startup-notification,
 	[AS_HELP_STRING([--disable-startup-notification],
 		[compile without startup notification support])],
 	enable_startup_notification="$enableval", enable_startup_notification="yes")
-AC_ARG_ENABLE(gtkspell,
-	[AS_HELP_STRING([--disable-gtkspell],
-		[compile without GtkSpell automatic spell checking])],
-	enable_gtkspell="$enableval", enable_gtkspell="yes")
 AC_ARG_ENABLE(enchant,
 	[AS_HELP_STRING([--disable-enchant],
 		[compile without Enchant spell checking support])],
@@ -784,30 +780,6 @@ Use --disable-sm if you do not need session management support.
 	fi
 
 	dnl #######################################################################
-	dnl # Check for GtkSpell
-	dnl #######################################################################
-	dnl GtkSpell is not GTK+3 compatible yet
-	if test "x$with_gtk" = "x3"; then
-		enable_gtkspell="no"
-	fi
-	if test "x$enable_gtkspell" = "xyes" ; then
-		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
-			AC_MSG_RESULT(no)
-			enable_gtkspell="no"
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
-GtkSpell development headers not found.
-Use --disable-gtkspell if you do not need it.
-])
-			fi])
-		if test "x$enable_gtkspell" = "xyes" ; then
-			AC_DEFINE(USE_GTKSPELL, 1, [Define if we're using GtkSpell])
-			AC_SUBST(GTKSPELL_CFLAGS)
-			AC_SUBST(GTKSPELL_LIBS)
-		fi
-	fi
-
-	dnl #######################################################################
 	dnl # Check for stuff needed by the Evolution integration plugin.
 	dnl #######################################################################
 	if test "x$enable_gevolution" = "xyes"; then
@@ -878,7 +850,6 @@ else # GTK
 	enable_gcr=no
 	enable_cap=no
 	enable_gevolution=no
-	enable_gtkspell=no
 	enable_screensaver=no
 	enable_sm=no
 	enable_startup_notification=no
@@ -3245,7 +3216,6 @@ echo
 echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
-echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with Enchant support.... : $use_enchant
 echo Build with GCR widgets........ : $enable_gcr
 echo Build Unity integration plugin.: $enable_unity
