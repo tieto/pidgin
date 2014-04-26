@@ -977,11 +977,11 @@ finch_pounces_init(void)
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 }
 
-/* XXX: There's no such thing in pidgin. Perhaps there should be? */
+/* XXX: There's no such thing in pidgin. Perhaps there should be?
+ * For sure, we don't need purple_pounces_unregister_handler -
+ * it's wiped in purple_pounces_uninit.
+ */
 void finch_pounces_uninit()
 {
-	purple_pounces_unregister_handler(FINCH_UI);
-
 	purple_signals_disconnect_by_handle(finch_pounces_get_handle());
 }
-
