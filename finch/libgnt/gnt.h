@@ -64,6 +64,8 @@ void gnt_init(void);
  *
  * You have to call this before #gnt_init. You might want to call this
  * with %NULL, to free the resources, but not before a call to #gnt_quit.
+ *
+ * Since: 2.8.0
  */
 void gnt_set_config_dir(const gchar *config_dir);
 

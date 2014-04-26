@@ -87,6 +87,8 @@ gnt_menu_draw(GntWidget *widget)
 
 		for (i = 0, iter = menu->list; iter; iter = iter->next, i++) {
 			GntMenuItem *item = GNT_MENU_ITEM(iter->data);
+			if (!gnt_menuitem_is_visible(item))
+				continue;
 			type = ' ' | gnt_color_pair(GNT_COLOR_HIGHLIGHT);
 			if (i == menu->selected)
 				type |= A_REVERSE;

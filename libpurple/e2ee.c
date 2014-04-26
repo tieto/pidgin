@@ -168,7 +168,7 @@ purple_e2ee_provider_register(PurpleE2eeProvider *provider)
 void
 purple_e2ee_provider_unregister(PurpleE2eeProvider *provider)
 {
-	GList *it;
+	GList *it, *clear_states = NULL;
 	g_return_if_fail(provider != NULL);
 
 	if (main_provider != provider) {
@@ -184,10 +184,14 @@ purple_e2ee_provider_unregister(PurpleE2eeProvider *provider)
 		if (!state)
 			continue;
 		if (provider == purple_e2ee_state_get_provider(state))
-			purple_conversation_set_e2ee_state(conv, NULL);
+			clear_states = g_list_prepend(clear_states, conv);
 	}
 
 	main_provider = NULL;
+
+	for (it = clear_states; it; it = g_list_next(it))
+		purple_conversation_set_e2ee_state(it->data, NULL);
+	g_list_free(clear_states);
 }
 
 PurpleE2eeProvider *
@@ -229,4 +233,20 @@ purple_e2ee_provider_get_conv_menu_cb(PurpleE2eeProvider *provider)
 	g_return_val_if_fail(provider != NULL, NULL);
 
 	return provider->conv_menu_cb;
+}
+
+GList *
+purple_e2ee_provider_get_conv_menu_actions(PurpleE2eeProvider *provider,
+	PurpleConversation *conv)
+{
+	PurpleE2eeConvMenuCallback cb;
+
+	g_return_val_if_fail(provider, NULL);
+	g_return_val_if_fail(conv, NULL);
+
+	cb = purple_e2ee_provider_get_conv_menu_cb(provider);
+	if (cb == NULL)
+		return NULL;
+
+	return cb(conv);
 }

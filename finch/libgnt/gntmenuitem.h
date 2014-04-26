@@ -56,6 +56,7 @@ struct _GntMenuItemPriv
 	int y;
 	char trigger;
 	char *id;
+	gboolean visible;
 };
 
 typedef void (*GntMenuItemCallback)(GntMenuItem *item, gpointer data);
@@ -194,6 +195,43 @@ const char * gnt_menuitem_get_id(GntMenuItem *item);
  * Since: 2.3.0
  */
 gboolean gnt_menuitem_activate(GntMenuItem *item);
+
+/**
+ * gnt_menuitem_set_visible:
+ * @item: The menuitem.
+ * @visible: %TRUE to make @item visible, %FALSE to hide it.
+ *
+ * Sets @item visible or not.
+ *
+ * Since: 2.8.0
+ */
+void
+gnt_menuitem_set_visible(GntMenuItem *item, gboolean visible);
+
+/**
+ * gnt_menuitem_is_visible:
+ * @item: The menuitem.
+ *
+ * Checks, if the @item is visible.
+ *
+ * Returns: %TRUE, if the @item is visible.
+ *
+ * Since: 2.8.0
+ */
+gboolean
+gnt_menuitem_is_visible(GntMenuItem *item);
+
+/**
+ * gnt_menuitem_set_text:
+ * @item: The menuitem.
+ * @text: The new text.
+ *
+ * Changes the text for an @item.
+ *
+ * Since: 2.8.0
+ */
+void
+gnt_menuitem_set_text(GntMenuItem *item, const gchar *text);
 
 G_END_DECLS
 
