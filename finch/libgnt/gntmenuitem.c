@@ -66,9 +66,13 @@ static void
 gnt_menuitem_init(GTypeInstance *instance, gpointer klass)
 {
 	GntMenuItem *item = GNT_MENU_ITEM(instance);
+#if 0
 	GntMenuItemPriv *priv = &item->priv;
 
 	priv->visible = TRUE;
+#else
+	item->visible = TRUE;
+#endif
 }
 
 /******************************************************************************
@@ -164,9 +168,13 @@ gboolean gnt_menuitem_activate(GntMenuItem *item)
 void
 gnt_menuitem_set_visible(GntMenuItem *item, gboolean visible)
 {
+#if 0
 	GntMenuItemPriv *priv = &item->priv;
 
 	priv->visible = visible;
+#else
+	item->visible = visible;
+#endif
 }
 
 gboolean
@@ -174,7 +182,11 @@ gnt_menuitem_is_visible(GntMenuItem *item)
 {
 	g_return_val_if_fail(GNT_IS_MENU_ITEM(item), FALSE);
 
+#if 0
 	return item->priv.visible;
+#else
+	return item->visible;
+#endif
 }
 
 void

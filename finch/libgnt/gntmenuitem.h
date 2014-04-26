@@ -56,7 +56,6 @@ struct _GntMenuItemPriv
 	int y;
 	char trigger;
 	char *id;
-	gboolean visible;
 };
 
 typedef void (*GntMenuItemCallback)(GntMenuItem *item, gpointer data);
@@ -75,6 +74,9 @@ struct _GntMenuItem
 	GntMenuItemCallback callback;
 
 	GntMenu *submenu;
+
+	/*< private >*/
+	gboolean visible;
 };
 
 struct _GntMenuItemClass
