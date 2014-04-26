@@ -207,14 +207,14 @@ libpidgin_la_LIBADD = \
 	$(X11_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
-if IS_WIN32
-libpidgin_la_LIBADD += \
-	-lwinmm
-endif
-
 pidgin_DEPENDENCIES = $(builddir)/libpidgin.la
 pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = $(builddir)/libpidgin.la $(libpidgin_la_LIBADD)
+
+if IS_WIN32
+libpidgin_la_LIBADD += -lwinmm
+pidgin_LDFLAGS += -mwindows
+endif
 
 AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
