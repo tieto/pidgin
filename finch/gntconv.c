@@ -966,10 +966,8 @@ finch_destroy_conversation(PurpleConversation *conv)
 	/* do stuff here */
 	FinchConv *ggc = FINCH_CONV(conv);
 	ggc->list = g_list_remove(ggc->list, conv);
-	if (ggc->list && conv == ggc->active_conv) {
-		ggc->active_conv = ggc->list->data;
-		gg_setup_commands(ggc, TRUE);
-	}
+	if (ggc->list && conv == ggc->active_conv)
+		finch_conversation_set_active(ggc->list->data);
 
 	if (ggc->list == NULL) {
 		g_free(ggc->u.chat);
@@ -1586,6 +1584,8 @@ void finch_conversation_set_active(PurpleConversation *conv)
 	title = get_conversation_title(conv, account);
 	gnt_screen_rename_widget(ggconv->window, title);
 	g_free(title);
+
+	generate_e2ee_menu(ggconv);
 }
 
 void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget)
