@@ -400,6 +400,7 @@ gg_extended_menu(FinchConv *ggc)
 {
 	GntMenu *sub;
 	GList *list;
+	gboolean is_empty = TRUE;
 
 	g_return_if_fail(ggc != NULL);
 
@@ -410,7 +411,9 @@ gg_extended_menu(FinchConv *ggc)
 			list; list = g_list_delete_link(list, list))
 	{
 		finch_append_menu_action(sub, list->data, ggc->active_conv);
+		is_empty = FALSE;
 	}
+	gnt_menuitem_set_visible(ggc->plugins, !is_empty);
 }
 
 static void
