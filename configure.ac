@@ -546,6 +546,10 @@ AC_ARG_ENABLE(gtkspell,
 	[AS_HELP_STRING([--disable-gtkspell],
 		[compile without GtkSpell automatic spell checking])],
 	enable_gtkspell="$enableval", enable_gtkspell="yes")
+AC_ARG_ENABLE(enchant,
+	[AS_HELP_STRING([--disable-enchant],
+		[compile without Enchant spell checking support])],
+	enable_enchant="$enableval", enable_enchant="yes")
 AC_ARG_ENABLE(gevolution,
 	[AS_HELP_STRING([--enable-gevolution],
 		[compile with the Evolution plugin])],
@@ -645,6 +649,31 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
 	AC_SUBST(WEBKIT_PC_MODULE)
+
+	dnl #######################################################################
+	dnl # Check if we should compile with enchant support
+	dnl #######################################################################
+	dnl We need enchant for spell checking dictionary enumeration,
+	dnl because webkit1 doesn't have this.
+	use_enchant=no
+	if test "x$enable_enchant" = "xyes" ; then
+		use_enchant=yes
+		PKG_CHECK_MODULES(ENCHANT, enchant, , [
+			AC_MSG_RESULT(no)
+			use_enchant=no
+		])
+		if test "x$force_deps" = "xyes" -a "x$use_enchant" = "xno"; then
+			AC_MSG_ERROR([
+Enchant development headers not found.
+Use --disable-enchant if you do not need it.
+])
+		fi
+		if test "x$use_enchant" = "xyes" ; then
+			AC_DEFINE(USE_ENCHANT, 1, [Define if we're using enchant])
+			AC_SUBST(ENCHANT_CFLAGS)
+			AC_SUBST(ENCHANT_LIBS)
+		fi
+	fi
 
 	dnl #######################################################################
 	dnl # Check if we should compile with X support
@@ -3217,6 +3246,7 @@ echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with Enchant support.... : $use_enchant
 echo Build with GCR widgets........ : $enable_gcr
 echo Build Unity integration plugin.: $enable_unity
 echo

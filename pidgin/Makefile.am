@@ -195,6 +195,7 @@ libpidgin_la_LDFLAGS = -export-dynamic -no-undefined \
 	-version-info $(PURPLE_LT_VERSION_INFO) $(LIBPIDGIN_WIN32RES_LDFLAGS)
 libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
+	$(ENCHANT_LIBS) \
 	$(GLIB_LIBS) \
 	$(GCR_LIBS) \
 	$(DBUS_LIBS) \
@@ -225,6 +226,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple/ \
 	-I$(top_builddir) \
 	-I$(top_srcdir) \
+	$(ENCHANT_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GCR_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \

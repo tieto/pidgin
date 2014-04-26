@@ -28,6 +28,9 @@
 #include "pidginstock.h"
 
 #include <gdk/gdkkeysyms.h>
+#ifdef USE_ENCHANT
+#include <enchant.h>
+#endif
 
 #include "gtkutils.h"
 #include "gtksmiley-manager.h"
@@ -111,6 +114,9 @@ typedef struct _PidginWebViewPriv {
 	/* WebKit inspector */
 	WebKitWebView *inspector_view;
 	GtkWindow *inspector_win;
+
+	/* helper scripts */
+	gboolean refresh_spell_installed;
 } PidginWebViewPriv;
 
 /******************************************************************************
@@ -130,6 +136,7 @@ static GRegex *empty_html_re = NULL;
 static GHashTable *globally_loaded_images = NULL;
 guint globally_loaded_images_refcnt = 0;
 
+static GList *spellcheck_languages = NULL;
 
 /******************************************************************************
  * Helpers
@@ -567,6 +574,84 @@ get_unicode_menu(WebKitWebView *webview)
 	return menuitem;
 }
 
+#ifdef USE_ENCHANT
+
+static void
+webview_refresh_spellcheck(WebKitWebView *webview)
+{
+	PidginWebViewPriv *priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
+	static const gchar jsfunc[] =
+		"var pidgin_refresh_spellcheck = function() {"
+			"var selection = window.getSelection();"
+			"var originalSelection = selection.getRangeAt(0);"
+			"for (var i = 0; i < 5; i++)"
+				"selection.modify('move', 'backward', 'line');"
+			"for (i = 0; i < 100; i++)"
+				"selection.modify('move', 'forward', 'word');"
+			"selection.removeAllRanges();"
+			"selection.addRange(originalSelection);"
+		"};";
+
+	if (!priv->refresh_spell_installed) {
+		priv->refresh_spell_installed = TRUE;
+		webkit_web_view_execute_script(webview, jsfunc);
+	}
+
+	webkit_web_view_execute_script(webview, "pidgin_refresh_spellcheck()");
+}
+
+static void
+webview_lang_select(GtkMenuItem *item, const gchar *lang)
+{
+	WebKitWebView *webview = g_object_get_data(G_OBJECT(item), "gtkwebview");
+	WebKitWebSettings *settings;
+
+	g_return_if_fail(lang != NULL);
+	g_return_if_fail(webview != NULL);
+
+	settings = webkit_web_view_get_settings(webview);
+	g_object_set(G_OBJECT(settings),
+		"spell-checking-languages", lang, NULL);
+	webview_refresh_spellcheck(webview);
+}
+
+static GtkWidget *
+get_spelldict_menu(WebKitWebView *webview)
+{
+	GtkWidget *menuitem;
+	GtkWidget *menu;
+	GList *it;
+
+	if (spellcheck_languages == NULL)
+		return NULL;
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Language"));
+	menu = gtk_menu_new();
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
+	for (it = spellcheck_languages; it; it = g_list_next(it)) {
+		GtkWidget *item;
+		const gchar *lang = it->data;
+
+		/* we could convert lang id to name here */
+		item = gtk_menu_item_new_with_label(lang);
+		g_object_set_data(G_OBJECT(item), "gtkwebview", webview);
+		g_signal_connect(item, "activate",
+			G_CALLBACK(webview_lang_select), (gpointer)lang);
+		gtk_widget_show(item);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	}
+
+	return menuitem;
+}
+
+#else
+static GtkWidget *
+get_spelldict_menu(WebKitWebView *webview)
+{
+	return NULL;
+}
+#endif
+
 static void
 webview_image_saved(GtkWidget *dialog, gint response, gpointer _unused)
 {
@@ -816,8 +901,9 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 	if (webkit_web_view_get_editable(webview)) {
 		GtkWidget *im = get_input_methods_menu(webview);
 		GtkWidget *unicode = get_unicode_menu(webview);
+		GtkWidget *spelldict = get_spelldict_menu(webview);
 
-		if (im || unicode)
+		if (im || unicode || spelldict)
 			pidgin_separator(menu);
 
 		if (im) {
@@ -828,6 +914,11 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 		if (unicode) {
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), unicode);
 			gtk_widget_show(unicode);
+		}
+
+		if (spelldict) {
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), spelldict);
+			gtk_widget_show(spelldict);
 		}
 	}
 
@@ -1159,6 +1250,61 @@ pidgin_webview_get_property(GObject *object, guint prop_id, GValue *value, GPara
 	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 }
 
+#ifdef USE_ENCHANT
+
+static void
+fill_spellcheck_dicts_cb(const gchar *lang_tag, const gchar *provider_name,
+	const gchar *provider_desc, const gchar *provider_file,
+	void *_unused)
+{
+	gboolean is_dialect;
+	GList *it;
+
+	/* It's not super efficient, but even with large number of installed
+	 * dictionaries (100?) it won't hurt us. */
+
+	is_dialect = (strchr(lang_tag, '_') != NULL);
+
+	if (is_dialect) {
+		for (it = spellcheck_languages; it; it = g_list_next(it)) {
+			gchar *it_lang = it->data;
+
+			if (purple_str_has_prefix(lang_tag, it_lang))
+				return;
+		}
+	} else {
+		GList *next;
+		for (it = spellcheck_languages; it; it = next) {
+			gchar *it_lang = it->data;
+			next = g_list_next(it);
+
+			if (!purple_str_has_prefix(it_lang, lang_tag))
+				continue;
+
+			g_free(it_lang);
+			spellcheck_languages =
+				g_list_delete_link(spellcheck_languages, it);
+		}
+	}
+
+	spellcheck_languages = g_list_prepend(spellcheck_languages,
+		g_strdup(lang_tag));
+}
+
+static void
+fill_spellcheck_dicts(void)
+{
+	EnchantBroker *eb;
+
+	eb = enchant_broker_init();
+	enchant_broker_list_dicts(eb, fill_spellcheck_dicts_cb, NULL);
+	enchant_broker_free(eb);
+	spellcheck_languages = g_list_sort(spellcheck_languages,
+		(GCompareFunc)strcmp);
+}
+
+#endif
+
 static void
 pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 {
@@ -1267,6 +1413,10 @@ pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 		G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
 	empty_html_re = g_regex_new("<(?!img)[^>]*>",
 		G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
+
+#ifdef USE_ENCHANT
+	fill_spellcheck_dicts();
+#endif
 }
 
 static void
