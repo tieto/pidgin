@@ -7,6 +7,10 @@ version 2.10.10 (?/?/?):
 	Gadu-Gadu:
 	* Updated internal libgadu to version 1.12.0-rc2.
 
+	IRC:
+	* Fix a possible leak of unencrypted data when using /me command
+	  with OTR. (Thijs Alkemade) (#15750)
+
 	Windows-Specific Changes:
 	* Updates to dependencies:
 		* NSS 3.16 and NSPR 4.10.4
