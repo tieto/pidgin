@@ -13,6 +13,7 @@ version 2.10.10 (?/?/?):
 
 	libpurple3 compatibility:
 	* Encrypted account passwords are preserved until the new one is set.
+	* Fix loading GTalk and Facebook XMPP accounts.
 
 	Windows-Specific Changes:
 	* Updates to dependencies:

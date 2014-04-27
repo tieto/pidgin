@@ -712,6 +712,10 @@ create_protocols_menu(const char *default_proto_id)
 			if (pixbuf)
 				g_object_unref(pixbuf);
 
+			/* libpurple3 compatibility */
+			if (g_strcmp0(default_proto_id, "prpl-gtalk") == 0)
+				aop_menu->default_item = i;
+
 			gtalk_name = NULL;
 			i++;
 		}
@@ -730,6 +734,10 @@ create_protocols_menu(const char *default_proto_id)
 
 			if (pixbuf)
 				g_object_unref(pixbuf);
+
+			/* libpurple3 compatibility */
+			if (g_strcmp0(default_proto_id, "prpl-facebook-xmpp") == 0)
+				aop_menu->default_item = i;
 
 			facebook_name = NULL;
 			i++;
