@@ -605,9 +605,9 @@ running configure.
 			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0 $gst010_pkg], [with_gtk=2], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR([
-You must have GTK+ 2.18.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer and GStreamer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
-running configure.
+running configure.  Use --disable-gstreamer if you do not need GStreamer (sound) support.
 ])])])
 	else
 		AC_MSG_ERROR([--with-gtk must specify one of 2, 3 or auto.])
