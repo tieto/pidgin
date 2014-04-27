@@ -44,6 +44,11 @@
 typedef struct
 {
 	PurpleConnectionErrorInfo *current_error;
+
+	/* libpurple 3.0.0 compatibility */
+	char *password_keyring;
+	char *password_mode;
+	char *password_ciphertext;
 } PurpleAccountPrivate;
 
 #define PURPLE_ACCOUNT_GET_PRIVATE(account) \
@@ -88,6 +93,15 @@ static GList *handles = NULL;
 
 static void set_current_error(PurpleAccount *account,
 	PurpleConnectionErrorInfo *new_err);
+
+static void
+_purple_account_set_encrypted_password(PurpleAccount *account, const char *keyring,
+	const char *mode, const char *ciphertext);
+static gboolean
+_purple_account_get_encrypted_password(PurpleAccount *account, const char **keyring,
+	const char **mode, const char **ciphertext);
+static gboolean
+_purple_account_is_password_encrypted(PurpleAccount *account);
 
 /*********************************************************************
  * Writing to disk                                                   *
@@ -381,6 +395,26 @@ account_to_xmlnode(PurpleAccount *account)
 	{
 		child = xmlnode_new_child(node, "password");
 		xmlnode_insert_data(child, tmp, -1);
+	} else if (_purple_account_is_password_encrypted(account)) {
+		const char *keyring;
+		const char *mode;
+		const char *ciphertext;
+		gboolean success;
+
+		purple_debug_warning("account", "saving libpurple3-compatible "
+			"encrypted password\n");
+
+		success = _purple_account_get_encrypted_password(account,
+			&keyring, &mode, &ciphertext);
+		g_warn_if_fail(success);
+
+		child = xmlnode_new_child(node, "password");
+		if (keyring != NULL)
+			xmlnode_set_attrib(child, "keyring_id", keyring);
+		if (mode != NULL)
+			xmlnode_set_attrib(child, "mode", mode);
+		if (ciphertext != NULL)
+			xmlnode_insert_data(child, ciphertext, -1);
 	}
 
 	if ((tmp = purple_account_get_alias(account)) != NULL)
@@ -880,10 +914,29 @@ parse_account(xmlnode *node)
 
 	/* Read the password */
 	child = xmlnode_get_child(node, "password");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
-	{
-		purple_account_set_remember_password(ret, TRUE);
-		purple_account_set_password(ret, data);
+	if (child != NULL) {
+		const char *keyring_id = xmlnode_get_attrib(child, "keyring_id");
+		const char *mode = xmlnode_get_attrib(child, "mode");
+		data = xmlnode_get_data(child);
+		gboolean is_plaintext;
+
+		if (keyring_id == NULL || keyring_id[0] == '\0')
+			is_plaintext = TRUE;
+		else if (g_strcmp0(keyring_id, "keyring-internal") != 0)
+			is_plaintext = FALSE;
+		else if (mode == NULL || mode[0] == '\0' || g_strcmp0(mode, "cleartext") == 0)
+			is_plaintext = TRUE;
+		else
+			is_plaintext = FALSE;
+
+		if (is_plaintext) {
+			purple_account_set_remember_password(ret, TRUE);
+			purple_account_set_password(ret, data);
+		} else {
+			purple_debug_warning("account", "found encrypted password, "
+				"but it's not supported in 2.x.y\n");
+			_purple_account_set_encrypted_password(ret, keyring_id, mode, data);
+		}
 		g_free(data);
 	}
 
@@ -1116,6 +1169,11 @@ purple_account_destroy(PurpleAccount *account)
 		g_free(priv->current_error->description);
 		g_free(priv->current_error);
 	}
+
+	g_free(priv->password_keyring);
+	g_free(priv->password_mode);
+	g_free(priv->password_ciphertext);
+
 	g_free(priv);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(account);
@@ -3244,4 +3302,49 @@ purple_accounts_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
+}
+
+/* libpurple 3.0.0 compatibility */
+
+static void
+_purple_account_set_encrypted_password(PurpleAccount *account, const char *keyring,
+	const char *mode, const char *ciphertext)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
+	g_free(priv->password_keyring);
+	g_free(priv->password_mode);
+	g_free(priv->password_ciphertext);
+
+	priv->password_keyring = g_strdup(keyring);
+	priv->password_mode = g_strdup(mode);
+	priv->password_ciphertext = g_strdup(ciphertext);
+}
+
+static gboolean
+_purple_account_get_encrypted_password(PurpleAccount *account, const char **keyring,
+	const char **mode, const char **ciphertext)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
+	g_return_val_if_fail(keyring != NULL, FALSE);
+	g_return_val_if_fail(mode != NULL, FALSE);
+	g_return_val_if_fail(ciphertext != NULL, FALSE);
+
+	if (!_purple_account_is_password_encrypted(account))
+		return FALSE;
+
+	*keyring = priv->password_keyring;
+	*mode = priv->password_mode;
+	*ciphertext = priv->password_ciphertext;
+
+	return TRUE;
+}
+
+static gboolean
+_purple_account_is_password_encrypted(PurpleAccount *account)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
+	return (priv->password_keyring != NULL);
 }

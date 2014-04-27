@@ -11,6 +11,9 @@ version 2.10.10 (?/?/?):
 	* Fix a possible leak of unencrypted data when using /me command
 	  with OTR. (Thijs Alkemade) (#15750)
 
+	libpurple3 compatibility:
+	* Encrypted account passwords are preserved until the new one is set.
+
 	Windows-Specific Changes:
 	* Updates to dependencies:
 		* NSS 3.16 and NSPR 4.10.4
