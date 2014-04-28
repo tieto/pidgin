@@ -73,14 +73,22 @@ struct _FinchConv
 struct _FinchConvChat
 {
 	GntWidget *userlist;       /* the userlist */
-	void *pad1;
-	void *pad2;
+
+	void *finch_reserved1;
+	void *finch_reserved2;
+	void *finch_reserved3;
+	void *finch_reserved4;
 };
 
 struct _FinchConvIm
 {
 	GntMenuItem *sendto;
-	void *something_for_later;
+	GntMenuItem *e2ee_menu;
+
+	void *finch_reserved1;
+	void *finch_reserved2;
+	void *finch_reserved3;
+	void *finch_reserved4;
 };
 
 /**

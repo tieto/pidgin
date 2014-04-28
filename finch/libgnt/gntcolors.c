@@ -177,10 +177,15 @@ void gnt_colors_parse(GKeyFile *kfile)
 {
 	GError *error = NULL;
 	gsize nkeys;
-	char **keys = g_key_file_get_keys(kfile, "colors", &nkeys, &error);
+	char **keys;
 
-	if (error)
-	{
+	if (!g_key_file_has_group(kfile, "colors")) {
+		gnt_color_pairs_parse(kfile);
+		return;
+	}
+
+	keys = g_key_file_get_keys(kfile, "colors", &nkeys, &error);
+	if (error) {
 		gnt_warning("%s", error->message);
 		g_error_free(error);
 		error = NULL;
@@ -223,8 +228,12 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 {
 	GError *error = NULL;
 	gsize nkeys;
-	char **keys = g_key_file_get_keys(kfile, "colorpairs", &nkeys, &error);
+	char **keys;
 
+	if (!g_key_file_has_group(kfile, "colorpairs"))
+		return;
+
+	keys = g_key_file_get_keys(kfile, "colorpairs", &nkeys, &error);
 	if (error)
 	{
 		gnt_warning("%s", error->message);

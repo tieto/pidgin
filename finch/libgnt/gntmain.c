@@ -466,7 +466,9 @@ setup_io()
 
 	g_io_channel_unref(channel);
 
+#if 0
 	gnt_warning("setting up IO (%d)", channel_read_callback);
+#endif
 }
 
 static gboolean

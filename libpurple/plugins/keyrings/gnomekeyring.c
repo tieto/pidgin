@@ -40,7 +40,7 @@
 	"GNOME Keyring.")
 #define GNOMEKEYRING_ID          "keyring-gnomekeyring"
 #define GNOMEKEYRING_AUTHORS \
-	{ "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)", NULL }
+	{ "Tomek Wasilczyk <twasilczyk@pidgin.im>", NULL }
 
 #define GNOMEKEYRING_DOMAIN      (g_quark_from_static_string(GNOMEKEYRING_ID))
 

@@ -44,7 +44,6 @@ echo '*' | import
 require @gtk.org/gtk 2.2
 require @68k.org/libaudiofile 0.0
 require @xiph.org/libao 2.0
-require @gtkspell.sourceforge.net/gtkspell 0.0
 require @gnutls.org/gnutls 11.0 || { require @mozilla.org/nspr 4 && require @mozilla.org/nss 3; }
 
 [Install]

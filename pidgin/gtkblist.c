@@ -8443,7 +8443,7 @@ pidgin_blist_update_plugin_actions(void)
 			continue;
 
 		name = g_strdup_printf("plugin%d", count);
-		action = gtk_action_new(name, purple_plugin_info_get_name(info), NULL, NULL);
+		action = gtk_action_new(name, _(purple_plugin_info_get_name(info)), NULL, NULL);
 		gtk_action_group_add_action(plugins_action_group, action);
 		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
 

@@ -539,10 +539,10 @@ AC_ARG_ENABLE(startup-notification,
 	[AS_HELP_STRING([--disable-startup-notification],
 		[compile without startup notification support])],
 	enable_startup_notification="$enableval", enable_startup_notification="yes")
-AC_ARG_ENABLE(gtkspell,
-	[AS_HELP_STRING([--disable-gtkspell],
-		[compile without GtkSpell automatic spell checking])],
-	enable_gtkspell="$enableval", enable_gtkspell="yes")
+AC_ARG_ENABLE(enchant,
+	[AS_HELP_STRING([--disable-enchant],
+		[compile without Enchant spell checking support])],
+	enable_enchant="$enableval", enable_enchant="yes")
 AC_ARG_ENABLE(gevolution,
 	[AS_HELP_STRING([--enable-gevolution],
 		[compile with the Evolution plugin])],
@@ -602,9 +602,9 @@ running configure.
 			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0 $gst010_pkg], [with_gtk=2], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR([
-You must have GTK+ 2.18.0 or newer development headers installed to compile
+You must have GTK+ 2.18.0 or newer and GStreamer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
-running configure.
+running configure.  Use --disable-gstreamer if you do not need GStreamer (sound) support.
 ])])])
 	else
 		AC_MSG_ERROR([--with-gtk must specify one of 2, 3 or auto.])
@@ -644,6 +644,31 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
 	AC_SUBST(WEBKIT_PC_MODULE)
+
+	dnl #######################################################################
+	dnl # Check if we should compile with enchant support
+	dnl #######################################################################
+	dnl We need enchant for spell checking dictionary enumeration,
+	dnl because webkit1 doesn't have this.
+	use_enchant=no
+	if test "x$enable_enchant" = "xyes" ; then
+		use_enchant=yes
+		PKG_CHECK_MODULES(ENCHANT, enchant, , [
+			AC_MSG_RESULT(no)
+			use_enchant=no
+		])
+		if test "x$force_deps" = "xyes" -a "x$use_enchant" = "xno"; then
+			AC_MSG_ERROR([
+Enchant development headers not found.
+Use --disable-enchant if you do not need it.
+])
+		fi
+		if test "x$use_enchant" = "xyes" ; then
+			AC_DEFINE(USE_ENCHANT, 1, [Define if we're using enchant])
+			AC_SUBST(ENCHANT_CFLAGS)
+			AC_SUBST(ENCHANT_LIBS)
+		fi
+	fi
 
 	dnl #######################################################################
 	dnl # Check if we should compile with X support
@@ -703,7 +728,7 @@ Use --without-x if you do not need X11 support.
 			else
 				if test "x$force_deps" = "xyes" ; then
 					AC_MSG_ERROR([
-XScreenSaver extension development headers (libXScrnSaver-devel) not found.
+XScreenSaver extension development headers (libXScrnSaver-devel or libxss-dev) not found.
 Use --disable-screensaver if you do not need XScreenSaver extension support,
 this is required for detecting idle time by mouse and keyboard usage.
 ])
@@ -750,30 +775,6 @@ Use --disable-sm if you do not need session management support.
 	if test "x$enable_gestures" = "xyes"; then
 		if test "x$with_x" = "xno" ; then
 			enable_gestures=no
-		fi
-	fi
-
-	dnl #######################################################################
-	dnl # Check for GtkSpell
-	dnl #######################################################################
-	dnl GtkSpell is not GTK+3 compatible yet
-	if test "x$with_gtk" = "x3"; then
-		enable_gtkspell="no"
-	fi
-	if test "x$enable_gtkspell" = "xyes" ; then
-		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
-			AC_MSG_RESULT(no)
-			enable_gtkspell="no"
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
-GtkSpell development headers not found.
-Use --disable-gtkspell if you do not need it.
-])
-			fi])
-		if test "x$enable_gtkspell" = "xyes" ; then
-			AC_DEFINE(USE_GTKSPELL, 1, [Define if we're using GtkSpell])
-			AC_SUBST(GTKSPELL_CFLAGS)
-			AC_SUBST(GTKSPELL_LIBS)
 		fi
 	fi
 
@@ -848,7 +849,6 @@ else # GTK
 	enable_gcr=no
 	enable_cap=no
 	enable_gevolution=no
-	enable_gtkspell=no
 	enable_screensaver=no
 	enable_sm=no
 	enable_startup_notification=no
@@ -1858,7 +1858,7 @@ fi
 
 AC_LANG_PUSH([C++])
 CPPFLAGS_save="$CPPFLAGS"
-LDFLAGS_save="$LDFLAGS"
+LIBS_save="$LIBS"
 
 if test "x$enable_kwallet" = "xyes"; then
 	PKG_CHECK_MODULES(QT4, [QtCore], [
@@ -1927,7 +1927,7 @@ if test "x$enable_kwallet" = "xyes"; then
 		KWALLET_LIBS="-lkdeui"
 	fi
 	KWALLET_LIBS="$KWALLET_LIBS"
-	LDFLAGS="$LDFLAGS $KWALLET_LIBS $QT4_LIBS"
+	LIBS="$LIBS $KWALLET_LIBS $QT4_LIBS"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <kwallet.h>],
 		[KWallet::Wallet::LocalWallet();])], [AC_MSG_RESULT([yes])],
 		[
@@ -1943,7 +1943,7 @@ Use --disable-kwallet if you do not need KWallet support.
 fi
 
 CPPFLAGS="$CPPFLAGS_save"
-LDFLAGS="$LDFLAGS_save"
+LIBS="$LIBS_save"
 AC_LANG_POP
 
 AC_SUBST(KWALLET_CXXFLAGS)
@@ -2112,7 +2112,13 @@ if ! test -z "$ssl_certificates_dir" ; then
 		AC_MSG_ERROR([--with-system-ssl-certs requires that a location is specified, eg. --with-system-ssl-certs=/etc/pki/tls/certs])
 	fi
 	if ! test -d "$ssl_certificates_dir" ; then
-		AC_MSG_ERROR([$ssl_certificates_dir does not exist, if this is the correct location please make sure that it exists.])
+		if test "x$is_win32" = "xyes" ; then
+			AC_MSG_WARN([$ssl_certificates_dir does not exist. \
+It may be OK when cross-compiling, but please make sure about it.])
+		else
+			AC_MSG_ERROR([$ssl_certificates_dir does not exist, \
+if this is the correct location please make sure that it exists.])
+		fi
 	fi
 	SSL_CERTIFICATES_DIR="$ssl_certificates_dir"
 fi
@@ -2887,7 +2893,7 @@ echo
 echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
-echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with Enchant support.... : $use_enchant
 echo Build with GCR widgets........ : $enable_gcr
 echo Build Unity integration plugin.: $enable_unity
 echo

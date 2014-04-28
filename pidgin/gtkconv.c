@@ -4167,8 +4167,7 @@ generate_e2ee_controls(PidginConvWindow *win)
 	PurpleE2eeState *state;
 	PurpleE2eeProvider *provider;
 	GtkWidget *menu;
-	PurpleE2eeConvMenuCallback menu_cb;
-	GList *menu_actions = NULL, *it;
+	GList *menu_actions, *it;
 	GtkWidget *e2ee_image;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
@@ -4206,11 +4205,8 @@ generate_e2ee_controls(PidginConvWindow *win)
 	gtk_widget_set_tooltip_text(win->menu->e2ee,
 		purple_e2ee_state_get_name(state));
 
-	menu_cb = purple_e2ee_provider_get_conv_menu_cb(provider);
-	if (menu_cb)
-		menu_actions = menu_cb(conv);
-
-	for (it = g_list_first(menu_actions); it; it = g_list_next(it)) {
+	menu_actions = purple_e2ee_provider_get_conv_menu_actions(provider, conv);
+	for (it = menu_actions; it; it = g_list_next(it)) {
 		PurpleMenuAction *action = it->data;
 
 		gtk_widget_show_all(

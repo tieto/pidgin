@@ -35,7 +35,8 @@
  * LOCALS
  */
 static char *app_data_dir = NULL, *bin_dir = NULL, *data_dir = NULL,
-	*lib_dir = NULL, *locale_dir = NULL, *sysconf_dir = NULL;
+	*lib_dir = NULL, *locale_dir = NULL, *sysconf_dir = NULL,
+	*cert_dir = NULL;
 
 static HINSTANCE libpurpledll_hInstance = NULL;
 
@@ -325,6 +326,22 @@ const char *wpurple_sysconf_dir(void)
 
 	return sysconf_dir;
 }
+
+#if defined(USE_WIN32_FHS) && defined(SSL_CERTIFICATES_DIR)
+const char *
+wpurple_cert_dir(void)
+{
+	static gboolean initialized = FALSE;
+
+	if (initialized)
+		return sysconf_dir;
+
+	sysconf_dir = wpurple_install_relative_path(SSL_CERTIFICATES_DIR);
+	initialized = TRUE;
+
+	return sysconf_dir;
+}
+#endif
 
 /* Miscellaneous */
 
@@ -652,6 +669,7 @@ void wpurple_cleanup(void) {
 	g_free(lib_dir);
 	g_free(locale_dir);
 	g_free(sysconf_dir);
+	g_free(cert_dir);
 
 	app_data_dir = NULL;
 	bin_dir = NULL;
@@ -659,6 +677,7 @@ void wpurple_cleanup(void) {
 	lib_dir = NULL;
 	locale_dir = NULL;
 	sysconf_dir = NULL;
+	cert_dir = NULL;
 
 	libpurpledll_hInstance = NULL;
 }

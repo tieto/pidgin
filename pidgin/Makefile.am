@@ -19,8 +19,6 @@ EXTRA_DIST = \
 		win32/untar.c \
 		win32/untar.h \
 		win32/winpidgin.c \
-		win32/wspell.c \
-		win32/wspell.h \
 		win32/nsis/generate_gtk_zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
@@ -148,8 +146,7 @@ noinst_HEADERS= gtkinternal.h
 if IS_WIN32
 libpidgin_la_SOURCES += \
 	win32/gtkwin32dep.c \
-	win32/untar.c \
-	win32/wspell.c
+	win32/untar.c
 
 # Files that looks like obsolete (were used in Pidgin2):
 #	win32/gtkdocklet-win32.c
@@ -163,8 +160,7 @@ pidgin_SOURCES += \
 libpidgin_la_headers += \
 	win32/gtkwin32dep.h \
 	win32/resource.h \
-	win32/untar.h \
-	win32/wspell.h
+	win32/untar.h
 
 .rc.o: %.rc
 	$(AM_V_GEN)$(WINDRES) -I $(srcdir)/win32 -I $(srcdir) -i $< -o $@
@@ -195,6 +191,7 @@ libpidgin_la_LDFLAGS = -export-dynamic -no-undefined \
 	-version-info $(PURPLE_LT_VERSION_INFO) $(LIBPIDGIN_WIN32RES_LDFLAGS)
 libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
+	$(ENCHANT_LIBS) \
 	$(GLIB_LIBS) \
 	$(GPLUGIN_LIBS) \
 	$(GCR_LIBS) \
@@ -205,7 +202,6 @@ libpidgin_la_LIBADD = \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
-	$(GTKSPELL_LIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
@@ -213,20 +209,21 @@ libpidgin_la_LIBADD = \
 	$(INTROSPECTION_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
-if IS_WIN32
-libpidgin_la_LIBADD += \
-	-lwinmm
-endif
-
 pidgin_DEPENDENCIES = $(builddir)/libpidgin.la
 pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = $(builddir)/libpidgin.la $(libpidgin_la_LIBADD)
+
+if IS_WIN32
+libpidgin_la_LIBADD += -lwinmm
+pidgin_LDFLAGS += -mwindows
+endif
 
 AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/ \
 	-I$(top_builddir) \
 	-I$(top_srcdir) \
+	$(ENCHANT_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \
 	$(GCR_CFLAGS) \
@@ -237,7 +234,6 @@ AM_CPPFLAGS = \
 	$(GTK_CFLAGS) \
 	$(X11_CFLAGS) \
 	$(DBUS_CFLAGS) \
-	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)

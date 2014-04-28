@@ -38,7 +38,7 @@
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
 	"storage behaviour for libpurple.")
-#define INTKEYRING_AUTHORS { "Tomek Wasilczyk (tomkiewicz@cpw.pidgin.im)",NULL }
+#define INTKEYRING_AUTHORS { "Tomek Wasilczyk <twasilczyk@pidgin.im>",NULL }
 #define INTKEYRING_ID PURPLE_DEFAULT_KEYRING
 #define INTKEYRING_DOMAIN (g_quark_from_static_string(INTKEYRING_ID))
 

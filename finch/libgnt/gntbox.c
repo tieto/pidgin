@@ -677,6 +677,12 @@ void gnt_box_add_widget(GntBox *b, GntWidget *widget)
 	widget->parent = GNT_WIDGET(b);
 }
 
+void gnt_box_add_widget_in_front(GntBox *b, GntWidget *widget)
+{
+	b->list = g_list_prepend(b->list, widget);
+	widget->parent = GNT_WIDGET(b);
+}
+
 void gnt_box_set_title(GntBox *b, const char *title)
 {
 	char *prev = b->title;

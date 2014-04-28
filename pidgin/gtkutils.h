@@ -400,17 +400,6 @@ void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, 
 gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts);
 
 /**
- * pidgin_setup_gtkspell:
- * @textview: The textview widget to setup spellchecking for.
- *
- * Sets up GtkSpell for the given GtkTextView, reporting errors
- * if encountered.
- *
- * This does nothing if Pidgin is not compiled with GtkSpell support.
- */
-void pidgin_setup_gtkspell(GtkTextView *textview);
-
-/**
  * pidgin_save_accels_cb:
  *
  * Save menu accelerators callback

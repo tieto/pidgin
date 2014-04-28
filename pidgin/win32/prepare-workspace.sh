@@ -92,9 +92,6 @@ ARCHIVES+="ARC_G10 "
 ARC_ENC="${DOWNLOAD_HOST}mingw32-enchant-devel-1.6.0-3.9.noarch.rpm;Enchant;1.6.0-3.9;1daadbb4fbeb06a6ad26bed916dc2a980d971c49;${OBS_SKIP};enchant-1.6"
 ARCHIVES+="ARC_ENC "
 
-ARC_GSP="${DOWNLOAD_HOST}mingw32-gtkspell-devel-2.0.16-2.10.noarch.rpm;GtkSpell;2.0.16-2.10;efbd58f41d9053c17eb2c6ea75dff9017068e01c;${OBS_SKIP};gtkspell-2.0"
-ARCHIVES+="ARC_GSP "
-
 # TODO: is it really necessary?
 ARC_INT="${DOWNLOAD_HOST}intltool-0.50.2-4.1.1.noarch.rpm;intltool;0.50.2-4.1.1;92c42de2b8a9827b6dca65090dd4b0e293397689;usr;intltool-0.50"
 ARCHIVES+="ARC_INT "

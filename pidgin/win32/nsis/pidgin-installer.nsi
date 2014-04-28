@@ -615,7 +615,6 @@ Section Uninstall
     RMDir "$INSTDIR\sounds\purple"
     RMDir "$INSTDIR\sounds"
     Delete "$INSTDIR\spellcheck\libenchant.dll"
-    Delete "$INSTDIR\spellcheck\libgtkspell-0.dll"
     Delete "$INSTDIR\spellcheck\lib\enchant\libenchant_aspell.dll"
     Delete "$INSTDIR\spellcheck\lib\enchant\libenchant_ispell.dll"
     Delete "$INSTDIR\spellcheck\lib\enchant\libenchant_myspell.dll"

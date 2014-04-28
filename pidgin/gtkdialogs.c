@@ -651,12 +651,6 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Disabled</dd>");
 #endif
 
-#ifdef USE_GTKSPELL
-	g_string_append(str, "<dt>GtkSpell:</dt><dd>Enabled</dd>");
-#else
-	g_string_append(str, "<dt>GtkSpell:</dt><dd>Disabled</dd>");
-#endif
-
 #ifdef HAVE_GNUTLS
 	g_string_append(str, "<dt>GnuTLS:</dt><dd>Enabled</dd>");
 #else
@@ -888,9 +882,11 @@ void pidgin_dialogs_plugins_info(void)
 		else
 			pextra = NULL;
 
+		g_string_append_printf(str, "<dt>%s</dt><dd>", pname);
+		if (pauthors)
+			g_string_append_printf(str, "<b>%s:</b> %s<br/>",
+				(n_authors > 1 ? "Authors" : "Author"), pauthors ? pauthors : "");
 		g_string_append_printf(str,
-				"<dt>%s</dt><dd>"
-				"<b>%s:</b> %s<br/>"
 				"<b>Version:</b> %s<br/>"
 				"<b>License:</b> %s<br/>"
 				"<b>Website:</b> %s<br/>"
@@ -899,9 +895,6 @@ void pidgin_dialogs_plugins_info(void)
 				"<b>Loadable:</b> %s<br/>"
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
-				pname    ? pname    : "",
-				(n_authors > 1 ? "Authors" : "Author"),
-				pauthors ? pauthors : "",
 				pver     ? pver     : "",
 				plicense ? plicense : "",
 				pwebsite ? pwebsite : "",

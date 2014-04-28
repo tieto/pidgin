@@ -43,8 +43,7 @@ plugin_LTLIBRARIES = \
 	log_reader.la       \
 	offlinemsg.la       \
 	psychic.la          \
-	statenotify.la      \
-	$(DBUS_LTLIB)
+	statenotify.la
 
 noinst_LTLIBRARIES = \
 	caesarcipher.la \
@@ -57,7 +56,8 @@ noinst_LTLIBRARIES = \
 	one_time_password.la \
 	pluginpref_example.la \
 	signals_test.la \
-	simple.la
+	simple.la \
+	$(DBUS_LTLIB)
 
 autoaccept_la_SOURCES       = autoaccept.c
 buddynote_la_SOURCES        = buddynote.c

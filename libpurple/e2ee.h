@@ -240,6 +240,20 @@ purple_e2ee_provider_set_conv_menu_cb(PurpleE2eeProvider *provider,
 PurpleE2eeConvMenuCallback
 purple_e2ee_provider_get_conv_menu_cb(PurpleE2eeProvider *provider);
 
+/**
+ * purple_e2ee_provider_get_conv_menu_actions:
+ * @provider: The E2EE provider.
+ * @conv: The conversation.
+ *
+ * Returns the list of actions for an E2EE menu.
+ *
+ * Returns: (transfer full): the #GList of #PurpleMenuAction's. Should be
+ *          #g_list_free or #g_list_free_full'd when done using it.
+ */
+GList *
+purple_e2ee_provider_get_conv_menu_actions(PurpleE2eeProvider *provider,
+	PurpleConversation *conv);
+
 G_END_DECLS
 
 #endif /* _PURPLE_E2EE_H_ */
