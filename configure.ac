@@ -77,7 +77,7 @@ fi
 AC_CANONICAL_HOST
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4macros])
-AM_INIT_AUTOMAKE([1.11 -Wno-portability dist-bzip2])
+AM_INIT_AUTOMAKE([1.11 -Wno-portability dist-bzip2 subdir-objects])
 AM_SILENT_RULES([yes])
 
 PURPLE_MAJOR_VERSION=purple_major_version
