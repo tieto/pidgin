@@ -1867,7 +1867,7 @@ fi
 
 AC_LANG_PUSH([C++])
 CPPFLAGS_save="$CPPFLAGS"
-LDFLAGS_save="$LDFLAGS"
+LIBS_save="$LIBS"
 
 if test "x$enable_kwallet" = "xyes"; then
 	PKG_CHECK_MODULES(QT4, [QtCore], [
@@ -1936,7 +1936,7 @@ if test "x$enable_kwallet" = "xyes"; then
 		KWALLET_LIBS="-lkdeui"
 	fi
 	KWALLET_LIBS="$KWALLET_LIBS"
-	LDFLAGS="$LDFLAGS $KWALLET_LIBS $QT4_LIBS"
+	LIBS="$LIBS $KWALLET_LIBS $QT4_LIBS"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <kwallet.h>],
 		[KWallet::Wallet::LocalWallet();])], [AC_MSG_RESULT([yes])],
 		[
@@ -1952,7 +1952,7 @@ Use --disable-kwallet if you do not need KWallet support.
 fi
 
 CPPFLAGS="$CPPFLAGS_save"
-LDFLAGS="$LDFLAGS_save"
+LIBS="$LIBS_save"
 AC_LANG_POP
 
 AC_SUBST(KWALLET_CXXFLAGS)
