@@ -120,8 +120,8 @@ if HAVE_INTROSPECTION
 introspection_sources = $(libgnt_lainclude_HEADERS)
 
 Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION).gir: $(builddir)/libgnt.la
-Gnt_2_8_gir_INCLUDES = GObject-2.0
-Gnt_2_8_gir_CFLAGS = \
+Gnt_2_9_gir_INCLUDES = GObject-2.0
+Gnt_2_9_gir_CFLAGS = \
 	$(INCLUDES) \
 	$(GLIB_CFLAGS) \
 	$(GNT_CFLAGS) \
@@ -129,8 +129,8 @@ Gnt_2_8_gir_CFLAGS = \
 	$(INTROSPECTION_CFLAGS) \
 	$(PY_CFLAGS)
 
-Gnt_2_8_gir_LIBS = $(builddir)/libgnt.la
-Gnt_2_8_gir_FILES = $(introspection_sources)
+Gnt_2_9_gir_LIBS = $(builddir)/libgnt.la
+Gnt_2_9_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION).gir
 
 girdir = $(INTROSPECTION_GIRDIR)
