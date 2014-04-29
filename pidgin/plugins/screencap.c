@@ -27,6 +27,7 @@
 #include "debug.h"
 #include "version.h"
 
+#include "gtk3compat.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkwebviewtoolbar.h"
@@ -152,7 +153,12 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
 	GdkPixbuf *screenshot, *screenshot_d;
 	int width, height;
+	GtkFixed *cont;
 	GtkWidget *image;
+	GtkWidget *hint;
+	gchar *hint_msg;
+	GtkRequisition hint_size;
+	GtkWidget *hint_box;
 
 	shooting_timeout = 0;
 
@@ -179,11 +185,29 @@ scrncap_do_screenshot_cb(gpointer _webview)
 		G_CALLBACK(scrncap_crop_window_focusout), NULL);
 	g_object_set_data(G_OBJECT(crop_window), "screenshot", screenshot);
 
+	cont = GTK_FIXED(gtk_fixed_new());
+	gtk_container_add(GTK_CONTAINER(crop_window), GTK_WIDGET(cont));
+
 	screenshot_d = gdk_pixbuf_copy(screenshot);
 	scrncap_pixbuf_darken(screenshot_d);
 	image = gtk_image_new_from_pixbuf(screenshot_d);
 	g_object_unref(screenshot_d);
-	gtk_container_add(GTK_CONTAINER(crop_window), image);
+	gtk_fixed_put(cont, image, 0, 0);
+
+	hint = gtk_label_new(NULL);
+	hint_msg = g_strdup_printf("<span size='x-large'>%s</span>",
+		_("Select the region to send and press Enter button to confirm "
+		"or press Escape button to cancel"));
+	gtk_label_set_markup(GTK_LABEL(hint), hint_msg);
+	g_free(hint_msg);
+	gtk_misc_set_padding(GTK_MISC(hint), 10, 7);
+	hint_box = gtk_event_box_new();
+	gtk_container_add(GTK_CONTAINER(hint_box), hint);
+	gtk_widget_get_preferred_size(hint, NULL, &hint_size);
+	gtk_fixed_put(cont, hint_box,
+		width / 2 - hint_size.width / 2 - 10,
+		height / 2 - hint_size.height / 2 - 7);
+	g_object_set_data(G_OBJECT(crop_window), "hint-box", hint_box);
 
 	gtk_widget_show_all(GTK_WIDGET(crop_window));
 
