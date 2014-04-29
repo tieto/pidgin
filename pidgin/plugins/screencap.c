@@ -17,7 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-/* TODO: disable, when prpl doesn't support inline images */
 /* TODO: add "Insert screenshot" to the Conversation window menu */
 /* TODO: add a possibility to change brush color */
 
@@ -636,6 +635,15 @@ scrncap_do_screenshot(GtkAction *action, PidginWebView *webview)
  ******************************************************************************/
 
 static void
+scrncap_conversation_update(PidginWebView *webview,
+	PidginWebViewButtons buttons, gpointer _action)
+{
+	GtkAction *action = GTK_ACTION(_action);
+
+	gtk_action_set_sensitive(action, buttons & PIDGIN_WEBVIEW_IMAGE);
+}
+
+static void
 scrncap_conversation_init(PidginConversation *gtkconv)
 {
 	PidginWebView *webview;
@@ -715,6 +723,11 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 		g_warn_if_fail(pos >= 0);
 		pos = 0;
 	}
+
+	g_signal_connect_object(G_OBJECT(webview), "allowed-formats-updated",
+		G_CALLBACK(scrncap_conversation_update), action, 0);
+	scrncap_conversation_update(webview,
+		pidgin_webview_get_format_functions(webview), action);
 
 	scrncap_btn_lean = gtk_action_create_menu_item(action);
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-lean", scrncap_btn_lean);
