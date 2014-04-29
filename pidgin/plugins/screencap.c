@@ -1,5 +1,6 @@
 /*
- * Screenshots as outgoing images plugin.
+ * Screen Capture - a plugin that allows taking screenshots and sending them
+ * to your buddies as inline images.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +22,18 @@
 
 #include "internal.h"
 
+#include "debug.h"
 #include "version.h"
 
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
+
+#define SCRNCAP_SHOOTING_TIMEOUT 500
+
+static gboolean is_shooting = FALSE;
+guint shooting_timeout = 0;
 
 static inline void
 scrncap_conv_set_data(PidginConversation *gtkconv, const gchar *key,
@@ -45,9 +52,44 @@ scrncap_conv_get_data(PidginConversation *gtkconv, const gchar *key)
 	return g_object_get_data(G_OBJECT(gtkconv->tab_cont), key);
 }
 
+static inline gboolean
+scrncap_do_screenshot_cb(gpointer _webview)
+{
+	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
+	GdkPixbuf *screenshot;
+	GdkWindow *root;
+	gint orig_x, orig_y, width, height;
+
+	root = gdk_get_default_root_window();
+	gdk_window_get_origin(root, &orig_x, &orig_y);
+	gdk_drawable_get_size(root, &width, &height);
+
+	/* for gtk3 should be gdk_pixbuf_get_from_window */
+	screenshot = gdk_pixbuf_get_from_drawable(
+		NULL, root, NULL,
+		orig_x, orig_y, 0, 0, width, height);
+
+	gdk_pixbuf_save(screenshot, "screenshot.png", "png", NULL, NULL);
+	is_shooting = FALSE;
+
+	return G_SOURCE_REMOVE;
+}
+
+static inline void
+scrncap_do_screenshot(GtkAction *action, PidginWebView *webview)
+{
+	if (is_shooting)
+		return;
+	is_shooting = TRUE;
+
+	shooting_timeout = purple_timeout_add(SCRNCAP_SHOOTING_TIMEOUT,
+		scrncap_do_screenshot_cb, webview);
+}
+
 static void
 scrncap_conversation_init(PidginConversation *gtkconv)
 {
+	PidginWebView *webview;
 	PidginWebViewToolbar *toolbar;
 	GtkAction *action;
 	GtkToolItem *scrncap_btn_wide;
@@ -60,8 +102,8 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 	if (scrncap_conv_get_data(gtkconv, "scrncap-btn-wide") != NULL)
 		return;
 
-	toolbar = PIDGIN_WEBVIEWTOOLBAR(pidgin_webview_get_toolbar(
-		PIDGIN_WEBVIEW(gtkconv->entry)));
+	webview = PIDGIN_WEBVIEW(gtkconv->entry);
+	toolbar = PIDGIN_WEBVIEWTOOLBAR(pidgin_webview_get_toolbar(webview));
 	g_return_if_fail(toolbar != NULL);
 	wide_view = GTK_TOOLBAR(pidgin_webviewtoolbar_get_wide_view(toolbar));
 	g_return_if_fail(wide_view != NULL);
@@ -71,7 +113,8 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 	action = gtk_action_new("InsertScreenshot", _("_Screenshot"),
 		_("Insert screenshot"), PIDGIN_STOCK_TOOLBAR_INSERT_SCREENSHOT);
 	gtk_action_set_is_important(action, TRUE);
-	/*g_signal_connect(G_OBJECT(action), "activate", actions[i].cb, toolbar);*/
+	g_signal_connect(G_OBJECT(action), "activate",
+		G_CALLBACK(scrncap_do_screenshot), webview);
 
 	scrncap_btn_wide = GTK_TOOL_ITEM(gtk_action_create_tool_item(action));
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-wide", scrncap_btn_wide);
@@ -170,6 +213,9 @@ static gboolean
 scrncap_plugin_unload(PurplePlugin *plugin)
 {
 	GList *it;
+
+	if (shooting_timeout > 0)
+		purple_timeout_remove(shooting_timeout);
 
 	it = purple_conversations_get_all();
 	for (; it; it = g_list_next(it)) {
