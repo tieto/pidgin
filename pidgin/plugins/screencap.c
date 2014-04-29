@@ -39,6 +39,10 @@ static gboolean is_shooting = FALSE;
 static guint shooting_timeout = 0;
 static GtkWindow *crop_window;
 
+static gint crop_origin_x, crop_origin_y;
+static gboolean crop_active;
+static gint crop_x, crop_y, crop_w, crop_h;
+
 /******************************************************************************
  * libpidgin helper functions
  ******************************************************************************/
@@ -148,19 +152,110 @@ scrncap_crop_window_focusout(GtkWidget *window, GdkEventFocus *event,
 }
 
 static gboolean
+scrncap_crop_window_btnpress(GtkWidget *window, GdkEventButton *event,
+	gpointer _unused)
+{
+	GtkWidget *hint_box;
+	GtkWidget *selection;
+	GtkFixed *cont;
+
+	g_return_val_if_fail(!crop_active, TRUE);
+
+	hint_box = g_object_get_data(G_OBJECT(window), "hint-box");
+	if (hint_box) {
+		gtk_widget_destroy(hint_box);
+		g_object_set_data(G_OBJECT(window), "hint-box", NULL);
+	}
+
+	selection = g_object_get_data(G_OBJECT(window), "selection");
+	cont = g_object_get_data(G_OBJECT(window), "cont");
+	gtk_fixed_move(cont, selection, -1, -1);
+	gtk_widget_set_size_request(selection, 0, 0);
+	gtk_widget_show_all(selection);
+
+	crop_origin_x = event->x;
+	crop_origin_y = event->y;
+	crop_active = TRUE;
+
+	return TRUE;
+}
+
+static gboolean
+scrncap_crop_sel_btnpress(GtkWidget *viewport, GdkEventButton *event,
+	gpointer _unused)
+{
+	/* we could implement dragging here */
+	return TRUE;
+}
+
+static gboolean
+scrncap_crop_window_btnrelease(GtkWidget *window, GdkEvent *event,
+	gpointer _unused)
+{
+	crop_active = FALSE;
+
+	return TRUE;
+}
+
+static gboolean
+scrncap_crop_window_motion(GtkWidget *window, GdkEventButton *event,
+	gpointer _unused)
+{
+	GtkFixed *cont;
+	GtkViewport *selection;
+	GtkFixed *selection_box;
+	GtkWidget *selection_preview;
+
+	g_return_val_if_fail(crop_active, FALSE);
+
+	selection = g_object_get_data(G_OBJECT(window), "selection");
+	selection_box = g_object_get_data(G_OBJECT(window), "selection-box");
+	selection_preview = g_object_get_data(G_OBJECT(window),
+		"selection-preview");
+	cont = g_object_get_data(G_OBJECT(window), "cont");
+
+	crop_x = MIN(crop_origin_x, event->x);
+	crop_y = MIN(crop_origin_y, event->y);
+	crop_w = abs(crop_origin_x - event->x);
+	crop_h = abs(crop_origin_y - event->y);
+	crop_w = MAX(crop_w, 1);
+	crop_h = MAX(crop_h, 1);
+
+	gtk_fixed_move(cont, GTK_WIDGET(selection), crop_x, crop_y);
+	gtk_fixed_move(selection_box, selection_preview, -crop_x, -crop_y);
+	gtk_widget_set_size_request(GTK_WIDGET(selection), crop_w, crop_h);
+
+	return FALSE;
+}
+
+static void
+scrncap_crop_window_realize(GtkWidget *window, gpointer _unused)
+{
+	GdkWindow *gdkwindow;
+
+	gdkwindow = gtk_widget_get_window(GTK_WIDGET(crop_window));
+	gdk_window_set_events(gdkwindow, gdk_window_get_events(gdkwindow) |
+		GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
+		GDK_BUTTON_MOTION_MASK);
+}
+
+static gboolean
 scrncap_do_screenshot_cb(gpointer _webview)
 {
 	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
 	GdkPixbuf *screenshot, *screenshot_d;
 	int width, height;
 	GtkFixed *cont;
-	GtkWidget *image;
+	GtkWidget *selection;
+	GtkFixed *selection_box;
+	GtkWidget *image, *selection_preview;
 	GtkWidget *hint;
 	gchar *hint_msg;
 	GtkRequisition hint_size;
 	GtkWidget *hint_box;
 
 	shooting_timeout = 0;
+	crop_active = FALSE;
 
 	(void)webview;
 
@@ -168,6 +263,10 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	g_return_val_if_fail(screenshot != NULL, G_SOURCE_REMOVE);
 	width = gdk_pixbuf_get_width(screenshot);
 	height = gdk_pixbuf_get_height(screenshot);
+
+	crop_x = crop_y = 0;
+	crop_w = width;
+	crop_h = height;
 
 	crop_window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 	gtk_window_set_decorated(crop_window, FALSE);
@@ -177,15 +276,24 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	gtk_window_fullscreen(crop_window);
 	gtk_window_set_keep_above(crop_window, TRUE);
 
+	g_signal_connect(G_OBJECT(crop_window), "realize",
+		G_CALLBACK(scrncap_crop_window_realize), NULL);
 	g_signal_connect(G_OBJECT(crop_window), "destroy",
 		G_CALLBACK(scrncap_crop_window_close), NULL);
 	g_signal_connect(G_OBJECT(crop_window), "key-press-event",
 		G_CALLBACK(scrncap_crop_window_keypress), NULL);
 	g_signal_connect(G_OBJECT(crop_window), "focus-out-event",
 		G_CALLBACK(scrncap_crop_window_focusout), NULL);
+	g_signal_connect(G_OBJECT(crop_window), "button-press-event",
+		G_CALLBACK(scrncap_crop_window_btnpress), NULL);
+	g_signal_connect(G_OBJECT(crop_window), "button-release-event",
+		G_CALLBACK(scrncap_crop_window_btnrelease), NULL);
+	g_signal_connect(G_OBJECT(crop_window), "motion-notify-event",
+		G_CALLBACK(scrncap_crop_window_motion), NULL);
 	g_object_set_data(G_OBJECT(crop_window), "screenshot", screenshot);
 
 	cont = GTK_FIXED(gtk_fixed_new());
+	g_object_set_data(G_OBJECT(crop_window), "cont", cont);
 	gtk_container_add(GTK_CONTAINER(crop_window), GTK_WIDGET(cont));
 
 	screenshot_d = gdk_pixbuf_copy(screenshot);
@@ -193,6 +301,19 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	image = gtk_image_new_from_pixbuf(screenshot_d);
 	g_object_unref(screenshot_d);
 	gtk_fixed_put(cont, image, 0, 0);
+
+	selection = gtk_viewport_new(NULL, NULL);
+	selection_box = GTK_FIXED(gtk_fixed_new());
+	selection_preview = gtk_image_new_from_pixbuf(screenshot);
+	gtk_viewport_set_shadow_type(GTK_VIEWPORT(selection), GTK_SHADOW_NONE);
+	gtk_fixed_put(selection_box, GTK_WIDGET(selection_preview), 0, 0);
+	gtk_container_add(GTK_CONTAINER(selection), GTK_WIDGET(selection_box));
+	gtk_fixed_put(cont, selection, 0, 0);
+	g_object_set_data(G_OBJECT(crop_window), "selection", selection);
+	g_object_set_data(G_OBJECT(crop_window), "selection-box", selection_box);
+	g_object_set_data(G_OBJECT(crop_window), "selection-preview", selection_preview);
+	g_signal_connect(G_OBJECT(selection), "button-press-event",
+		G_CALLBACK(scrncap_crop_sel_btnpress), NULL);
 
 	hint = gtk_label_new(NULL);
 	hint_msg = g_strdup_printf("<span size='x-large'>%s</span>",
@@ -209,7 +330,10 @@ scrncap_do_screenshot_cb(gpointer _webview)
 		height / 2 - hint_size.height / 2 - 7);
 	g_object_set_data(G_OBJECT(crop_window), "hint-box", hint_box);
 
-	gtk_widget_show_all(GTK_WIDGET(crop_window));
+	gtk_widget_show(GTK_WIDGET(cont));
+	gtk_widget_show(image);
+	gtk_widget_show_all(hint_box);
+	gtk_widget_show(GTK_WIDGET(crop_window));
 
 	return G_SOURCE_REMOVE;
 }
