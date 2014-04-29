@@ -22,6 +22,8 @@
 
 #include "internal.h"
 
+#include <gdk/gdkkeysyms.h>
+
 #include "debug.h"
 #include "version.h"
 
@@ -35,6 +37,10 @@
 static gboolean is_shooting = FALSE;
 static guint shooting_timeout = 0;
 static GtkWindow *crop_window;
+
+/******************************************************************************
+ * libpidgin helper functions
+ ******************************************************************************/
 
 static inline void
 scrncap_conv_set_data(PidginConversation *gtkconv, const gchar *key,
@@ -53,6 +59,10 @@ scrncap_conv_get_data(PidginConversation *gtkconv, const gchar *key)
 	return g_object_get_data(G_OBJECT(gtkconv->tab_cont), key);
 }
 
+/******************************************************************************
+ * GdkPixbuf helper functions
+ ******************************************************************************/
+
 static GdkPixbuf *
 scrncap_perform_screenshot(void)
 {
@@ -70,6 +80,33 @@ scrncap_perform_screenshot(void)
 }
 
 static void
+scrncap_pixbuf_darken(GdkPixbuf *pixbuf)
+{
+	guchar *pixels;
+	int i, y, width, height, row_width, n_channels, rowstride, pad;
+
+	pixels = gdk_pixbuf_get_pixels(pixbuf);
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	n_channels = gdk_pixbuf_get_n_channels(pixbuf);
+	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+
+	row_width = width * n_channels;
+	pad = rowstride - row_width;
+	g_return_if_fail(pad >= 0);
+
+	for (y = 0; y < height; y++) {
+		for (i = 0; i < row_width; i++, pixels++)
+			*pixels /= 2;
+		pixels += pad;
+	}
+}
+
+/******************************************************************************
+ * Crop window
+ ******************************************************************************/
+
+static void
 scrncap_crop_window_close(GtkWindow *window, gpointer _unused)
 {
 	GdkPixbuf *screenshot;
@@ -84,10 +121,36 @@ scrncap_crop_window_close(GtkWindow *window, gpointer _unused)
 }
 
 static gboolean
+scrncap_crop_window_keypress(GtkWidget *window, GdkEventKey *event,
+	gpointer _unused)
+{
+	guint key = event->keyval;
+
+	if (key == GDK_Escape) {
+		gtk_widget_destroy(window);
+		return TRUE;
+	}
+	if (key == GDK_Return) {
+		/* TODO: process */
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+scrncap_crop_window_focusout(GtkWidget *window, GdkEventFocus *event,
+	gpointer _unused)
+{
+	gtk_widget_destroy(window);
+	return FALSE;
+}
+
+static gboolean
 scrncap_do_screenshot_cb(gpointer _webview)
 {
 	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
-	GdkPixbuf *screenshot;
+	GdkPixbuf *screenshot, *screenshot_d;
 	int width, height;
 	GtkWidget *image;
 
@@ -110,9 +173,16 @@ scrncap_do_screenshot_cb(gpointer _webview)
 
 	g_signal_connect(G_OBJECT(crop_window), "destroy",
 		G_CALLBACK(scrncap_crop_window_close), NULL);
+	g_signal_connect(G_OBJECT(crop_window), "key-press-event",
+		G_CALLBACK(scrncap_crop_window_keypress), NULL);
+	g_signal_connect(G_OBJECT(crop_window), "focus-out-event",
+		G_CALLBACK(scrncap_crop_window_focusout), NULL);
 	g_object_set_data(G_OBJECT(crop_window), "screenshot", screenshot);
 
-	image = gtk_image_new_from_pixbuf(screenshot);
+	screenshot_d = gdk_pixbuf_copy(screenshot);
+	scrncap_pixbuf_darken(screenshot_d);
+	image = gtk_image_new_from_pixbuf(screenshot_d);
+	g_object_unref(screenshot_d);
 	gtk_container_add(GTK_CONTAINER(crop_window), image);
 
 	gtk_widget_show_all(GTK_WIDGET(crop_window));
@@ -130,6 +200,10 @@ scrncap_do_screenshot(GtkAction *action, PidginWebView *webview)
 	shooting_timeout = purple_timeout_add(SCRNCAP_SHOOTING_TIMEOUT,
 		scrncap_do_screenshot_cb, webview);
 }
+
+/******************************************************************************
+ * PidginConversation setup
+ ******************************************************************************/
 
 static void
 scrncap_conversation_init(PidginConversation *gtkconv)
@@ -232,6 +306,10 @@ scrncap_conversation_uninit(PidginConversation *gtkconv)
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-wide", NULL);
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-lean", NULL);
 }
+
+/******************************************************************************
+ * Plugin setup
+ ******************************************************************************/
 
 static gboolean
 scrncap_plugin_load(PurplePlugin *plugin)
