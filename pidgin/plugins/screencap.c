@@ -213,7 +213,7 @@ static void
 scrncap_draw_window(GdkPixbuf *screen)
 {
 	GtkWidget *draw_window;
-	GtkWidget *drawing_area;
+	GtkWidget *drawing_area, *box;
 	GtkWidget *scroll_area;
 	int width, height;
 	cairo_t *cr;
@@ -259,7 +259,9 @@ scrncap_draw_window(GdkPixbuf *screen)
 	g_signal_connect(G_OBJECT(drawing_area), "motion-notify-event",
 		G_CALLBACK(scrncap_drawing_area_motion), cr);
 
-	scroll_area = pidgin_make_scrollable(drawing_area,
+	box = gtk_alignment_new(0.5, 0.5, 0, 0);
+	gtk_container_add(GTK_CONTAINER(box), drawing_area);
+	scroll_area = pidgin_make_scrollable(box,
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
 		GTK_SHADOW_IN, -1, -1);
 	gtk_container_add(GTK_CONTAINER(draw_window), scroll_area);
