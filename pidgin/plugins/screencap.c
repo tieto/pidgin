@@ -30,6 +30,7 @@
 #include "gtk3compat.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
+#include "gtkutils.h"
 #include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
 
@@ -108,21 +109,51 @@ scrncap_pixbuf_darken(GdkPixbuf *pixbuf)
 }
 
 /******************************************************************************
+ * Draw window
+ ******************************************************************************/
+
+static void
+scrncap_draw_window_close(GtkWindow *window, gpointer _unused)
+{
+	is_shooting = FALSE;
+}
+
+static void
+scrncap_draw_window(GdkPixbuf *screen)
+{
+	GtkWidget *draw_window;
+	GtkWidget *image;
+
+	is_shooting = TRUE;
+
+	draw_window = pidgin_create_window(_("Insert screenshot"), 0,
+		"insert-screenshot", TRUE);
+	gtk_widget_set_size_request(draw_window, 400, 300);
+	gtk_window_set_position(GTK_WINDOW(draw_window), GTK_WIN_POS_CENTER);
+	g_signal_connect(G_OBJECT(draw_window), "destroy",
+		G_CALLBACK(scrncap_draw_window_close), NULL);
+
+	image = gtk_image_new_from_pixbuf(screen);
+	g_object_unref(screen);
+	gtk_container_add(GTK_CONTAINER(draw_window),
+		pidgin_make_scrollable(image,
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
+			GTK_SHADOW_IN, -1, -1));
+
+	gtk_widget_show_all(GTK_WIDGET(draw_window));
+}
+
+/******************************************************************************
  * Crop window
  ******************************************************************************/
 
 static void
 scrncap_crop_window_close(GtkWindow *window, gpointer _unused)
 {
-	GdkPixbuf *screenshot;
-
 	g_return_if_fail(crop_window == window);
-
-	screenshot = g_object_get_data(G_OBJECT(crop_window), "screenshot");
 
 	is_shooting = FALSE;
 	crop_window = NULL;
-	g_object_unref(screenshot);
 }
 
 static gboolean
@@ -136,7 +167,19 @@ scrncap_crop_window_keypress(GtkWidget *window, GdkEventKey *event,
 		return TRUE;
 	}
 	if (key == GDK_Return) {
-		/* TODO: process */
+		GdkPixbuf *screenshot, *subscreen, *result;
+
+		screenshot = g_object_get_data(G_OBJECT(crop_window),
+			"screenshot");
+		subscreen = gdk_pixbuf_new_subpixbuf(screenshot,
+			crop_x, crop_y, crop_w, crop_h);
+		result = gdk_pixbuf_copy(subscreen);
+		g_object_unref(subscreen);
+
+		gtk_widget_destroy(window);
+
+		scrncap_draw_window(result);
+
 		return TRUE;
 	}
 
@@ -232,11 +275,21 @@ static void
 scrncap_crop_window_realize(GtkWidget *window, gpointer _unused)
 {
 	GdkWindow *gdkwindow;
+	GdkCursor *cursor;
 
 	gdkwindow = gtk_widget_get_window(GTK_WIDGET(crop_window));
+
 	gdk_window_set_events(gdkwindow, gdk_window_get_events(gdkwindow) |
 		GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
 		GDK_BUTTON_MOTION_MASK);
+
+	cursor = gdk_cursor_new(GDK_CROSSHAIR);
+	gdk_window_set_cursor(gdkwindow, cursor);
+#if GTK_CHECK_VERSION(3,0,0)
+	g_object_unref(cursor);
+#else
+	gdk_cursor_unref(cursor);
+#endif
 }
 
 static gboolean
@@ -290,7 +343,8 @@ scrncap_do_screenshot_cb(gpointer _webview)
 		G_CALLBACK(scrncap_crop_window_btnrelease), NULL);
 	g_signal_connect(G_OBJECT(crop_window), "motion-notify-event",
 		G_CALLBACK(scrncap_crop_window_motion), NULL);
-	g_object_set_data(G_OBJECT(crop_window), "screenshot", screenshot);
+	g_object_set_data_full(G_OBJECT(crop_window), "screenshot",
+		screenshot, g_object_unref);
 
 	cont = GTK_FIXED(gtk_fixed_new());
 	g_object_set_data(G_OBJECT(crop_window), "cont", cont);
