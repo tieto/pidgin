@@ -628,9 +628,20 @@ void
 pidgin_webview_switch_active_conversation(PidginWebView *webview,
 	PurpleConversation *conv);
 
-/* Do not use. */
+/* Do not use. TODO: rename to _pidgin and move to gtkinternal.h */
 void
 pidgin_webview_set_toolbar(PidginWebView *webview, GtkWidget *toolbar);
+
+/**
+ * pidgin_webview_get_toolbar:
+ * @webview: The PidginWebView
+ *
+ * Returns the toolbar associated with the webview.
+ *
+ * Returns: the toolbar.
+ */
+GtkWidget *
+pidgin_webview_get_toolbar(PidginWebView *webview);
 
 G_END_DECLS
 

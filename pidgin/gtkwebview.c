@@ -2243,6 +2243,17 @@ pidgin_webview_set_toolbar(PidginWebView *webview, GtkWidget *toolbar)
 	priv->toolbar = PIDGIN_WEBVIEWTOOLBAR(toolbar);
 }
 
+GtkWidget *
+pidgin_webview_get_toolbar(PidginWebView *webview)
+{
+	PidginWebViewPriv *priv;
+
+	g_return_val_if_fail(webview != NULL, NULL);
+
+	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);
+	return GTK_WIDGET(priv->toolbar);
+}
+
 void
 pidgin_webview_show_toolbar(PidginWebView *webview)
 {

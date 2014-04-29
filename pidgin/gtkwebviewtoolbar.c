@@ -1504,12 +1504,25 @@ pidgin_webviewtoolbar_create_wide_view(PidginWebViewToolbar *toolbar)
 	gtk_toolbar_set_style(GTK_TOOLBAR(priv->wide_view), GTK_TOOLBAR_ICONS);
 
 	for (i = 0; i < G_N_ELEMENTS(layout); i++) {
-		if (layout[i])
+		if (layout[i]) {
 			item = GTK_TOOL_ITEM(gtk_action_create_tool_item(layout[i]));
-		else
+			g_object_set_data_full(G_OBJECT(item), "action-name",
+				g_strdup(gtk_action_get_name(layout[i])), g_free);
+		} else
 			item = gtk_separator_tool_item_new();
 		gtk_toolbar_insert(GTK_TOOLBAR(priv->wide_view), item, -1);
 	}
+}
+
+static inline void
+lean_view_add_menu_item(GtkWidget *menu, GtkAction *action)
+{
+	GtkWidget *menuitem;
+
+	menuitem = gtk_action_create_menu_item(action);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	g_object_set_data_full(G_OBJECT(menuitem), "action-name",
+		g_strdup(gtk_action_get_name(action)), g_free);
 }
 
 static void
@@ -1517,7 +1530,6 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 {
 	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
 	GtkWidget *label;
-	GtkWidget *menuitem;
 	GtkToolItem *sep;
 	GtkToolItem *font_button;
 	GtkWidget *font_menu;
@@ -1531,12 +1543,10 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 			gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_toolbar_set_style(GTK_TOOLBAR(priv->lean_view), GTK_TOOLBAR_BOTH_HORIZ);
 
-#define ADD_MENU_ITEM(menu, item) \
-	menuitem = gtk_action_create_menu_item((item)); \
-	gtk_menu_shell_append(GTK_MENU_SHELL((menu)), menuitem);
-
 	/* Fonts */
 	font_button = gtk_toggle_tool_button_new();
+	g_object_set_data_full(G_OBJECT(font_button), "action-name",
+		g_strdup("font"), g_free);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view), font_button, -1);
 	gtk_tool_item_set_is_important(font_button, TRUE);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(font_button), GTK_STOCK_BOLD);
@@ -1545,20 +1555,21 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 	gtk_tool_button_set_label_widget(GTK_TOOL_BUTTON(font_button), label);
 
 	priv->font_menu = font_menu = gtk_menu_new();
+	g_object_set_data(G_OBJECT(font_button), "menu", font_menu);
 
-	ADD_MENU_ITEM(font_menu, priv->bold);
-	ADD_MENU_ITEM(font_menu, priv->italic);
-	ADD_MENU_ITEM(font_menu, priv->underline);
-	ADD_MENU_ITEM(font_menu, priv->strike);
-	ADD_MENU_ITEM(font_menu, priv->larger_size);
+	lean_view_add_menu_item(font_menu, priv->bold);
+	lean_view_add_menu_item(font_menu, priv->italic);
+	lean_view_add_menu_item(font_menu, priv->underline);
+	lean_view_add_menu_item(font_menu, priv->strike);
+	lean_view_add_menu_item(font_menu, priv->larger_size);
 #if 0
-	ADD_MENU_ITEM(font_menu, priv->normal_size);
+	lean_view_add_menu_item(font_menu, priv->normal_size);
 #endif
-	ADD_MENU_ITEM(font_menu, priv->smaller_size);
-	ADD_MENU_ITEM(font_menu, priv->font);
-	ADD_MENU_ITEM(font_menu, priv->fgcolor);
-	ADD_MENU_ITEM(font_menu, priv->bgcolor);
-	ADD_MENU_ITEM(font_menu, priv->clear);
+	lean_view_add_menu_item(font_menu, priv->smaller_size);
+	lean_view_add_menu_item(font_menu, priv->font);
+	lean_view_add_menu_item(font_menu, priv->fgcolor);
+	lean_view_add_menu_item(font_menu, priv->bgcolor);
+	lean_view_add_menu_item(font_menu, priv->clear);
 
 	g_signal_connect(G_OBJECT(font_button), "toggled",
 	                 G_CALLBACK(pidgin_menu_clicked), font_menu);
@@ -1573,6 +1584,8 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 
 	/* Insert */
 	insert_button = gtk_toggle_tool_button_new();
+	g_object_set_data_full(G_OBJECT(insert_button), "action-name",
+		g_strdup("insert"), g_free);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view), insert_button, -1);
 	gtk_tool_item_set_is_important(insert_button, TRUE);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(insert_button),
@@ -1581,10 +1594,11 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 	gtk_tool_button_set_label_widget(GTK_TOOL_BUTTON(insert_button), label);
 
 	priv->insert_menu = insert_menu = gtk_menu_new();
+	g_object_set_data(G_OBJECT(insert_button), "menu", insert_menu);
 
-	ADD_MENU_ITEM(insert_menu, priv->image);
-	ADD_MENU_ITEM(insert_menu, priv->link);
-	ADD_MENU_ITEM(insert_menu, priv->hr);
+	lean_view_add_menu_item(insert_menu, priv->image);
+	lean_view_add_menu_item(insert_menu, priv->link);
+	lean_view_add_menu_item(insert_menu, priv->hr);
 
 	g_signal_connect(G_OBJECT(insert_button), "toggled",
 	                 G_CALLBACK(pidgin_menu_clicked), insert_menu);
@@ -1597,6 +1611,8 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 
 	/* Smiley */
 	smiley_button = gtk_action_create_tool_item(priv->smiley);
+	g_object_set_data_full(G_OBJECT(smiley_button), "action-name",
+		g_strdup("smiley"), g_free);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view),
 	                   GTK_TOOL_ITEM(smiley_button), -1);
 
@@ -1606,10 +1622,10 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 
 	/* Attention */
 	attention_button = gtk_action_create_tool_item(priv->attention);
+	g_object_set_data_full(G_OBJECT(attention_button), "action-name",
+		g_strdup("attention"), g_free);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view),
 	                   GTK_TOOL_ITEM(attention_button), -1);
-
-#undef ADD_MENU_ITEM
 }
 
 static void
@@ -1814,4 +1830,24 @@ pidgin_webviewtoolbar_activate(PidginWebViewToolbar *toolbar,
 	}
 
 	gtk_action_activate(act);
+}
+
+GtkWidget *
+pidgin_webviewtoolbar_get_wide_view(PidginWebViewToolbar *toolbar)
+{
+	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+
+	g_return_val_if_fail(toolbar != NULL, NULL);
+
+	return priv->wide_view;
+}
+
+GtkWidget *
+pidgin_webviewtoolbar_get_lean_view(PidginWebViewToolbar *toolbar)
+{
+	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
+
+	g_return_val_if_fail(toolbar != NULL, NULL);
+
+	return priv->lean_view;
 }
