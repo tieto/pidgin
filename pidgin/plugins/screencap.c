@@ -17,7 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-/* TODO: add "Insert screenshot" to detached conversations */
 /* TODO: add a possibility to change brush color */
 
 #include "internal.h"
@@ -645,6 +644,9 @@ scrncap_convwin_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	GtkAction *action;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	if (gtkconv == NULL)
+		return;
+
 	webview = PIDGIN_WEBVIEW(gtkconv->entry);
 	action = g_object_get_data(G_OBJECT(win->menu->menubar),
 		"insert-screenshot-action");
@@ -840,8 +842,6 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(wide_menu),
 		GTK_WIDGET(scrncap_btn_lean), pos);
 	gtk_widget_show(GTK_WIDGET(scrncap_btn_lean));
-
-	scrncap_convwin_init(gtkconv->win);
 }
 
 static void
@@ -861,8 +861,6 @@ scrncap_conversation_uninit(PidginConversation *gtkconv)
 
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-wide", NULL);
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-lean", NULL);
-
-	scrncap_convwin_uninit(gtkconv->win);
 }
 
 /******************************************************************************
@@ -877,6 +875,9 @@ scrncap_plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(pidgin_conversations_get_handle(),
 		"conversation-displayed", plugin,
 		PURPLE_CALLBACK(scrncap_conversation_init), NULL);
+	purple_signal_connect(pidgin_conversations_get_handle(),
+		"conversation-window-created", plugin,
+		PURPLE_CALLBACK(scrncap_convwin_init), NULL);
 
 	it = purple_conversations_get_all();
 	for (; it; it = g_list_next(it)) {
@@ -885,6 +886,12 @@ scrncap_plugin_load(PurplePlugin *plugin)
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
 		scrncap_conversation_init(PIDGIN_CONVERSATION(conv));
+	}
+
+	it = pidgin_conv_windows_get_list();
+	for (; it; it = g_list_next(it)) {
+		PidginConvWindow *win = it->data;
+		scrncap_convwin_init(win);
 	}
 
 	return TRUE;
@@ -907,6 +914,12 @@ scrncap_plugin_unload(PurplePlugin *plugin)
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
 		scrncap_conversation_uninit(PIDGIN_CONVERSATION(conv));
+	}
+
+	it = pidgin_conv_windows_get_list();
+	for (; it; it = g_list_next(it)) {
+		PidginConvWindow *win = it->data;
+		scrncap_convwin_uninit(win);
 	}
 
 	return TRUE;

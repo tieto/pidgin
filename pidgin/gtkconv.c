@@ -8843,6 +8843,10 @@ pidgin_conversations_init(void)
 						 G_TYPE_BOOLEAN, 3, PURPLE_TYPE_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_UINT);
 
+	purple_signal_register(handle, "conversation-window-created",
+		purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		G_TYPE_POINTER); /* (PidginConvWindow *) */
+
 
 	/**********************************************************************
 	 * Register commands
@@ -10311,6 +10315,9 @@ pidgin_conv_window_new()
 			&& !gtk_get_current_event_state(&state))
 		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
+
+	purple_signal_emit(pidgin_conversations_get_handle(),
+		"conversation-window-created", win);
 
 	return win;
 }
