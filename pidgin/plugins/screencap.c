@@ -19,6 +19,7 @@
 
 /* TODO: disable, when prpl doesn't support inline images */
 /* TODO: add "Insert screenshot" to the Conversation window menu */
+/* TODO: add a possibility to change brush color */
 
 #include "internal.h"
 
@@ -668,11 +669,13 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-wide", scrncap_btn_wide);
 	for (i = 0; i < gtk_toolbar_get_n_items(wide_view); i++) {
 		GtkToolItem *ref_item = gtk_toolbar_get_nth_item(wide_view, i);
-		const gchar *action_name;
+		GtkAction *action;
 
-		action_name = g_object_get_data(G_OBJECT(ref_item),
-			"action-name");
-		if (g_strcmp0(action_name, "InsertImage") == 0) {
+		action = g_object_get_data(G_OBJECT(ref_item), "action");
+		if (action == NULL)
+			continue;
+
+		if (g_strcmp0(gtk_action_get_name(action), "InsertImage") == 0) {
 			pos = i + 1;
 			break;
 		}
@@ -682,10 +685,10 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 
 	for (i = 0; i < gtk_toolbar_get_n_items(lean_view); i++) {
 		GtkToolItem *ref_item = gtk_toolbar_get_nth_item(lean_view, i);
-		const gchar *action_name;
+		const gchar *menu_name;
 
-		action_name = g_object_get_data(G_OBJECT(ref_item), "action-name");
-		if (g_strcmp0(action_name, "insert") == 0) {
+		menu_name = g_object_get_data(G_OBJECT(ref_item), "menu-name");
+		if (g_strcmp0(menu_name, "insert") == 0) {
 			wide_menu = g_object_get_data(G_OBJECT(ref_item), "menu");
 			break;
 		}
@@ -696,10 +699,13 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 	wide_children = gtk_container_get_children(GTK_CONTAINER(wide_menu));
 	for (it = wide_children, i = 0; it; it = g_list_next(it), i++) {
 		GtkWidget *child = it->data;
-		const gchar *action_name;
+		GtkAction *action;
 
-		action_name = g_object_get_data(G_OBJECT(child), "action-name");
-		if (g_strcmp0(action_name, "InsertImage") == 0) {
+		action = g_object_get_data(G_OBJECT(child), "action");
+		if (action == NULL)
+			continue;
+
+		if (g_strcmp0(gtk_action_get_name(action), "InsertImage") == 0) {
 			pos = i + 1;
 			break;
 		}

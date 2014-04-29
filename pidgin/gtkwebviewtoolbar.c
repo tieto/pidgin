@@ -1506,8 +1506,7 @@ pidgin_webviewtoolbar_create_wide_view(PidginWebViewToolbar *toolbar)
 	for (i = 0; i < G_N_ELEMENTS(layout); i++) {
 		if (layout[i]) {
 			item = GTK_TOOL_ITEM(gtk_action_create_tool_item(layout[i]));
-			g_object_set_data_full(G_OBJECT(item), "action-name",
-				g_strdup(gtk_action_get_name(layout[i])), g_free);
+			g_object_set_data(G_OBJECT(item), "action", layout[i]);
 		} else
 			item = gtk_separator_tool_item_new();
 		gtk_toolbar_insert(GTK_TOOLBAR(priv->wide_view), item, -1);
@@ -1521,8 +1520,7 @@ lean_view_add_menu_item(GtkWidget *menu, GtkAction *action)
 
 	menuitem = gtk_action_create_menu_item(action);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	g_object_set_data_full(G_OBJECT(menuitem), "action-name",
-		g_strdup(gtk_action_get_name(action)), g_free);
+	g_object_set_data(G_OBJECT(menuitem), "action", action);
 }
 
 static void
@@ -1545,7 +1543,7 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 
 	/* Fonts */
 	font_button = gtk_toggle_tool_button_new();
-	g_object_set_data_full(G_OBJECT(font_button), "action-name",
+	g_object_set_data_full(G_OBJECT(font_button), "menu-name",
 		g_strdup("font"), g_free);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view), font_button, -1);
 	gtk_tool_item_set_is_important(font_button, TRUE);
@@ -1584,7 +1582,7 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 
 	/* Insert */
 	insert_button = gtk_toggle_tool_button_new();
-	g_object_set_data_full(G_OBJECT(insert_button), "action-name",
+	g_object_set_data_full(G_OBJECT(insert_button), "menu-name",
 		g_strdup("insert"), g_free);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view), insert_button, -1);
 	gtk_tool_item_set_is_important(insert_button, TRUE);
@@ -1611,8 +1609,7 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 
 	/* Smiley */
 	smiley_button = gtk_action_create_tool_item(priv->smiley);
-	g_object_set_data_full(G_OBJECT(smiley_button), "action-name",
-		g_strdup("smiley"), g_free);
+	g_object_set_data(G_OBJECT(smiley_button), "action", priv->smiley);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view),
 	                   GTK_TOOL_ITEM(smiley_button), -1);
 
@@ -1622,8 +1619,7 @@ pidgin_webviewtoolbar_create_lean_view(PidginWebViewToolbar *toolbar)
 
 	/* Attention */
 	attention_button = gtk_action_create_tool_item(priv->attention);
-	g_object_set_data_full(G_OBJECT(attention_button), "action-name",
-		g_strdup("attention"), g_free);
+	g_object_set_data(G_OBJECT(attention_button), "action", priv->attention);
 	gtk_toolbar_insert(GTK_TOOLBAR(priv->lean_view),
 	                   GTK_TOOL_ITEM(attention_button), -1);
 }
