@@ -44,6 +44,11 @@ static gint crop_origin_x, crop_origin_y;
 static gboolean crop_active;
 static gint crop_x, crop_y, crop_w, crop_h;
 
+static gint draw_origin_x, draw_origin_y;
+static gboolean draw_active;
+
+static gint line_width = 2;
+
 /******************************************************************************
  * libpidgin helper functions
  ******************************************************************************/
@@ -112,6 +117,62 @@ scrncap_pixbuf_darken(GdkPixbuf *pixbuf)
  * Draw window
  ******************************************************************************/
 
+static gboolean
+scrncap_drawing_area_btnpress(GtkWidget *draw_area, GdkEventButton *event,
+	gpointer _unused)
+{
+	g_return_val_if_fail(!draw_active, TRUE);
+
+	draw_origin_x = event->x;
+	draw_origin_y = event->y;
+	draw_active = TRUE;
+
+	return TRUE;
+}
+
+static gboolean
+scrncap_drawing_area_btnrelease(GtkWidget *draw_area, GdkEvent *event,
+	gpointer _unused)
+{
+	g_return_val_if_fail(draw_active, TRUE);
+
+	draw_active = FALSE;
+
+	return TRUE;
+}
+
+static gboolean
+scrncap_drawing_area_motion(GtkWidget *draw_area, GdkEventButton *event,
+	gpointer _cr)
+{
+	cairo_t *cr = _cr;
+	int x, y;
+	int redraw_x, redraw_y, redraw_w, redraw_h;
+
+	g_return_val_if_fail(draw_active, FALSE);
+
+	x = event->x;
+	y = event->y;
+
+	cairo_move_to(cr, draw_origin_x, draw_origin_y);
+	cairo_line_to(cr, x, y);
+	cairo_set_line_width(cr, line_width);
+	cairo_stroke(cr);
+
+	redraw_x = MIN(draw_origin_x, x) - line_width - 1;
+	redraw_y = MIN(draw_origin_y, y) - line_width - 1;
+	redraw_w = MAX(draw_origin_x, x) - redraw_x + line_width + 1;
+	redraw_h = MAX(draw_origin_y, y) - redraw_y + line_width + 1;
+
+	draw_origin_x = x;
+	draw_origin_y = y;
+
+	gtk_widget_queue_draw_area(draw_area,
+		redraw_x, redraw_y, redraw_w, redraw_h);
+
+	return FALSE;
+}
+
 static void
 scrncap_draw_window_close(GtkWidget *window, gpointer _unused)
 {
@@ -122,11 +183,41 @@ scrncap_draw_window_close(GtkWidget *window, gpointer _unused)
 	current_window = NULL;
 }
 
+static gboolean
+scrncap_draw_window_paint(GtkWidget *widget, cairo_t *cr, gpointer _surface)
+{
+	cairo_surface_t *surface = _surface;
+
+	cairo_set_source_surface(cr, surface, 0, 0);
+	cairo_paint(cr);
+
+	return FALSE;
+}
+
+#if !GTK_CHECK_VERSION(3,0,0)
+static gboolean
+scrncap_draw_window_expose(GtkWidget *widget, GdkEventExpose *event,
+	gpointer _surface)
+{
+	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(widget->window));
+
+	scrncap_draw_window_paint(widget, cr, _surface);
+
+	cairo_destroy(cr);
+
+	return FALSE;
+}
+#endif
+
 static void
 scrncap_draw_window(GdkPixbuf *screen)
 {
 	GtkWidget *draw_window;
-	GtkWidget *image;
+	GtkWidget *drawing_area;
+	GtkWidget *scroll_area;
+	int width, height;
+	cairo_t *cr;
+	cairo_surface_t *surface;
 
 	is_shooting = TRUE;
 
@@ -137,12 +228,41 @@ scrncap_draw_window(GdkPixbuf *screen)
 	g_signal_connect(G_OBJECT(draw_window), "destroy",
 		G_CALLBACK(scrncap_draw_window_close), NULL);
 
-	image = gtk_image_new_from_pixbuf(screen);
+	width = gdk_pixbuf_get_width(screen);
+	height = gdk_pixbuf_get_height(screen);
+
+	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
+	cr = cairo_create(surface);
+
+	gdk_cairo_set_source_pixbuf(cr, screen, 0, 0);
+	cairo_rectangle(cr, 0, 0, width, height);
+	cairo_fill(cr);
 	g_object_unref(screen);
-	gtk_container_add(GTK_CONTAINER(draw_window),
-		pidgin_make_scrollable(image,
-			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
-			GTK_SHADOW_IN, -1, -1));
+
+	cairo_set_source_rgb(cr, 1, 0, 0);
+
+	drawing_area = gtk_drawing_area_new();
+	gtk_widget_set_size_request(drawing_area, width, height);
+#if GTK_CHECK_VERSION(3,0,0)
+	g_signal_connect(G_OBJECT(drawing_area), "draw",
+		G_CALLBACK(scrncap_draw_window_paint), surface);
+#else
+	g_signal_connect(G_OBJECT(drawing_area), "expose_event",
+		G_CALLBACK(scrncap_draw_window_expose), surface);
+#endif
+	gtk_widget_add_events(drawing_area, GDK_BUTTON_PRESS_MASK |
+		GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_MOTION_MASK);
+	g_signal_connect(G_OBJECT(drawing_area), "button-press-event",
+		G_CALLBACK(scrncap_drawing_area_btnpress), NULL);
+	g_signal_connect(G_OBJECT(drawing_area), "button-release-event",
+		G_CALLBACK(scrncap_drawing_area_btnrelease), NULL);
+	g_signal_connect(G_OBJECT(drawing_area), "motion-notify-event",
+		G_CALLBACK(scrncap_drawing_area_motion), cr);
+
+	scroll_area = pidgin_make_scrollable(drawing_area,
+		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
+		GTK_SHADOW_IN, -1, -1);
+	gtk_container_add(GTK_CONTAINER(draw_window), scroll_area);
 
 	gtk_widget_show_all(GTK_WIDGET(draw_window));
 }
