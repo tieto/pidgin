@@ -221,8 +221,8 @@ scrncap_crop_window_btnpress(GtkWidget *window, GdkEventButton *event,
 	gtk_widget_set_size_request(selection, 0, 0);
 	gtk_widget_show_all(selection);
 
-	crop_origin_x = event->x;
-	crop_origin_y = event->y;
+	crop_origin_x = event->x_root;
+	crop_origin_y = event->y_root;
 	crop_active = TRUE;
 
 	return TRUE;
@@ -262,10 +262,10 @@ scrncap_crop_window_motion(GtkWidget *window, GdkEventButton *event,
 		"selection-preview");
 	cont = g_object_get_data(G_OBJECT(window), "cont");
 
-	crop_x = MIN(crop_origin_x, event->x);
-	crop_y = MIN(crop_origin_y, event->y);
-	crop_w = abs(crop_origin_x - event->x);
-	crop_h = abs(crop_origin_y - event->y);
+	crop_x = MIN(crop_origin_x, event->x_root);
+	crop_y = MIN(crop_origin_y, event->y_root);
+	crop_w = abs(crop_origin_x - event->x_root);
+	crop_h = abs(crop_origin_y - event->y_root);
 	crop_w = MAX(crop_w, 1);
 	crop_h = MAX(crop_h, 1);
 
