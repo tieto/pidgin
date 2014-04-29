@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-/* TODO: add "Insert screenshot" to the Conversation window menu */
+/* TODO: add "Insert screenshot" to detached conversations */
 /* TODO: add a possibility to change brush color */
 
 #include "internal.h"
@@ -635,6 +635,112 @@ scrncap_do_screenshot(GtkAction *action, PidginWebView *webview)
  ******************************************************************************/
 
 static void
+scrncap_convwin_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num,
+	gpointer _win)
+{
+	PidginConvWindow *win = _win;
+	PidginConversation *gtkconv;
+	PidginWebView *webview;
+	gboolean images_supported;
+	GtkAction *action;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	webview = PIDGIN_WEBVIEW(gtkconv->entry);
+	action = g_object_get_data(G_OBJECT(win->menu->menubar),
+		"insert-screenshot-action");
+
+	g_return_if_fail(action != NULL);
+
+	images_supported = pidgin_webview_get_format_functions(webview) &
+		PIDGIN_WEBVIEW_IMAGE;
+
+	gtk_action_set_sensitive(action, images_supported);
+}
+
+static void
+scrncap_convwin_menu_cb(GtkAction *action, PidginConvWindow *win)
+{
+	PidginConversation *gtkconv;
+	PidginWebView *webview;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	webview = PIDGIN_WEBVIEW(gtkconv->entry);
+
+	scrncap_do_screenshot(action, webview);
+}
+
+static void
+scrncap_convwin_init(PidginConvWindow *win)
+{
+	PidginConvWindowMenu *menu = win->menu;
+	GtkAction *action;
+	GtkWidget *conv_submenu, *conv_insert_image;
+	GtkWidget *scrncap_btn_menu;
+	gint pos = -1, i;
+	GList *children, *it;
+
+	action = g_object_get_data(G_OBJECT(menu->menubar),
+		"insert-screenshot-action");
+	if (action != NULL)
+		return;
+
+	action = gtk_action_new("InsertScreenshot", _("Insert Screens_hot..."),
+		NULL, PIDGIN_STOCK_TOOLBAR_INSERT_SCREENSHOT);
+	gtk_action_set_is_important(action, TRUE);
+	g_object_set_data_full(G_OBJECT(menu->menubar),
+		"insert-screenshot-action", action, g_object_unref);
+	g_signal_connect(G_OBJECT(action), "activate",
+		G_CALLBACK(scrncap_convwin_menu_cb), win);
+
+	conv_insert_image = gtk_ui_manager_get_widget(menu->ui,
+		"/Conversation/ConversationMenu/InsertImage");
+	g_return_if_fail(conv_insert_image != NULL);
+	conv_submenu = gtk_widget_get_parent(conv_insert_image);
+
+	pos = -1;
+	children = gtk_container_get_children(GTK_CONTAINER(conv_submenu));
+	for (it = children, i = 0; it; it = g_list_next(it), i++) {
+		if (it->data == conv_insert_image) {
+			pos = i + 1;
+			break;
+		}
+	}
+	g_list_free(children);
+	g_warn_if_fail(pos >= 0);
+
+	scrncap_btn_menu = gtk_action_create_menu_item(action);
+	g_object_set_data(G_OBJECT(menu->menubar), "insert-screenshot-btn",
+		scrncap_btn_menu);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(conv_submenu),
+		GTK_WIDGET(scrncap_btn_menu), pos);
+	gtk_widget_show(GTK_WIDGET(scrncap_btn_menu));
+
+	g_signal_connect_after(G_OBJECT(win->notebook), "switch-page",
+		G_CALLBACK(scrncap_convwin_switch), win);
+	scrncap_convwin_switch(GTK_NOTEBOOK(win->notebook), NULL, 0, win);
+}
+
+static void
+scrncap_convwin_uninit(PidginConvWindow *win)
+{
+	PidginConvWindowMenu *menu = win->menu;
+	GtkWidget *btn;
+
+	btn = g_object_get_data(G_OBJECT(menu->menubar),
+		"insert-screenshot-btn");
+	if (btn)
+		gtk_widget_destroy(btn);
+
+	g_object_set_data(G_OBJECT(menu->menubar),
+		"insert-screenshot-btn", NULL);
+	g_object_set_data(G_OBJECT(menu->menubar),
+		"insert-screenshot-action", NULL);
+
+	g_signal_handlers_disconnect_matched(win->notebook, G_SIGNAL_MATCH_FUNC,
+		0, 0, NULL, scrncap_convwin_switch, NULL);
+}
+
+static void
 scrncap_conversation_update(PidginWebView *webview,
 	PidginWebViewButtons buttons, gpointer _action)
 {
@@ -734,6 +840,8 @@ scrncap_conversation_init(PidginConversation *gtkconv)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(wide_menu),
 		GTK_WIDGET(scrncap_btn_lean), pos);
 	gtk_widget_show(GTK_WIDGET(scrncap_btn_lean));
+
+	scrncap_convwin_init(gtkconv->win);
 }
 
 static void
@@ -753,6 +861,8 @@ scrncap_conversation_uninit(PidginConversation *gtkconv)
 
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-wide", NULL);
 	scrncap_conv_set_data(gtkconv, "scrncap-btn-lean", NULL);
+
+	scrncap_convwin_uninit(gtkconv->win);
 }
 
 /******************************************************************************
