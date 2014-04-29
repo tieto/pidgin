@@ -113,6 +113,53 @@ scrncap_pixbuf_darken(GdkPixbuf *pixbuf)
 	}
 }
 
+static gboolean
+scrncap_pixbuf_to_image_cb(const gchar *buf, gsize count, GError **error,
+	gpointer _image)
+{
+	PurpleImage *image = PURPLE_IMAGE(_image);
+
+	purple_image_transfer_write(image, buf, count);
+
+	return TRUE;
+}
+
+static PurpleImage *
+scrncap_pixbuf_to_image(GdkPixbuf *pixbuf)
+{
+	PurpleImage *image;
+	GError *error = NULL;
+
+	image = purple_image_transfer_new();
+
+	gdk_pixbuf_save_to_callback(pixbuf, scrncap_pixbuf_to_image_cb, image,
+		"png", &error, NULL);
+
+	purple_image_transfer_close(image);
+
+	if (error != NULL) {
+		purple_debug_error("screencap", "Failed saving an image: %s",
+			error->message);
+		g_error_free(error);
+		g_object_unref(image);
+		return NULL;
+	}
+
+	if (purple_image_is_ready(image)) {
+		if (purple_image_get_extension(image) == NULL) {
+			purple_debug_error("screencap", "Invalid image format");
+			g_object_unref(image);
+			return NULL;
+		}
+	} else {
+		purple_debug_error("screencap", "Image is not ready");
+		g_object_unref(image);
+		return NULL;
+	}
+
+	return image;
+}
+
 /******************************************************************************
  * Draw window
  ******************************************************************************/
@@ -121,7 +168,8 @@ static gboolean
 scrncap_drawing_area_btnpress(GtkWidget *draw_area, GdkEventButton *event,
 	gpointer _unused)
 {
-	g_return_val_if_fail(!draw_active, TRUE);
+	if (draw_active)
+		return TRUE;
 
 	draw_origin_x = event->x;
 	draw_origin_y = event->y;
@@ -134,7 +182,8 @@ static gboolean
 scrncap_drawing_area_btnrelease(GtkWidget *draw_area, GdkEvent *event,
 	gpointer _unused)
 {
-	g_return_val_if_fail(draw_active, TRUE);
+	if (!draw_active)
+		return TRUE;
 
 	draw_active = FALSE;
 
@@ -149,10 +198,15 @@ scrncap_drawing_area_motion(GtkWidget *draw_area, GdkEventButton *event,
 	int x, y;
 	int redraw_x, redraw_y, redraw_w, redraw_h;
 
-	g_return_val_if_fail(draw_active, FALSE);
-
 	x = event->x;
 	y = event->y;
+
+	if (!draw_active) {
+		draw_origin_x = x;
+		draw_origin_y = y;
+		draw_active = TRUE;
+		return FALSE;
+	}
 
 	cairo_move_to(cr, draw_origin_x, draw_origin_y);
 	cairo_line_to(cr, x, y);
@@ -210,9 +264,35 @@ scrncap_draw_window_expose(GtkWidget *widget, GdkEventExpose *event,
 #endif
 
 static void
-scrncap_draw_window(GdkPixbuf *screen)
+scrncap_draw_window_response(GtkDialog *draw_window, gint response_id,
+	gpointer _webview)
 {
-	GtkWidget *draw_window;
+	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
+	GdkPixbuf *result = NULL;
+	PurpleImage *image;
+
+	if (response_id == GTK_RESPONSE_OK) {
+		cairo_surface_t *surface = g_object_get_data(
+			G_OBJECT(draw_window), "surface");
+		result = gdk_pixbuf_get_from_surface(surface, 0, 0,
+			cairo_image_surface_get_width(surface),
+			cairo_image_surface_get_height(surface));
+	}
+
+	gtk_widget_destroy(GTK_WIDGET(draw_window));
+
+	if (result == NULL)
+		return;
+
+	image = scrncap_pixbuf_to_image(result);
+	pidgin_webview_insert_image(webview, image);
+	g_object_unref(image);
+}
+
+static void
+scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
+{
+	GtkDialog *draw_window;
 	GtkWidget *drawing_area, *box;
 	GtkWidget *scroll_area;
 	int width, height;
@@ -221,9 +301,10 @@ scrncap_draw_window(GdkPixbuf *screen)
 
 	is_shooting = TRUE;
 
-	current_window = draw_window = pidgin_create_window(
+	current_window = pidgin_create_dialog(
 		_("Insert screenshot"), 0, "insert-screenshot", TRUE);
-	gtk_widget_set_size_request(draw_window, 400, 300);
+	draw_window = GTK_DIALOG(current_window);
+	gtk_widget_set_size_request(GTK_WIDGET(draw_window), 400, 300);
 	gtk_window_set_position(GTK_WINDOW(draw_window), GTK_WIN_POS_CENTER);
 	g_signal_connect(G_OBJECT(draw_window), "destroy",
 		G_CALLBACK(scrncap_draw_window_close), NULL);
@@ -233,6 +314,10 @@ scrncap_draw_window(GdkPixbuf *screen)
 
 	surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
 	cr = cairo_create(surface);
+	g_signal_connect_swapped(G_OBJECT(draw_window), "destroy",
+		G_CALLBACK(cairo_destroy), cr);
+	g_object_set_data_full(G_OBJECT(draw_window), "surface",
+		surface, (GDestroyNotify)cairo_surface_destroy);
 
 	gdk_cairo_set_source_pixbuf(cr, screen, 0, 0);
 	cairo_rectangle(cr, 0, 0, width, height);
@@ -264,7 +349,15 @@ scrncap_draw_window(GdkPixbuf *screen)
 	scroll_area = pidgin_make_scrollable(box,
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
 		GTK_SHADOW_IN, -1, -1);
-	gtk_container_add(GTK_CONTAINER(draw_window), scroll_area);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(
+		GTK_DIALOG(draw_window))), scroll_area);
+
+	gtk_dialog_add_button(draw_window, GTK_STOCK_ADD, GTK_RESPONSE_OK);
+	gtk_dialog_add_button(draw_window, GTK_STOCK_CANCEL,
+		GTK_RESPONSE_CANCEL);
+	gtk_dialog_set_default_response(draw_window, GTK_RESPONSE_OK);
+	g_signal_connect(G_OBJECT(draw_window), "response",
+		G_CALLBACK(scrncap_draw_window_response), webview);
 
 	gtk_widget_show_all(GTK_WIDGET(draw_window));
 }
@@ -285,8 +378,9 @@ scrncap_crop_window_close(GtkWidget *window, gpointer _unused)
 
 static gboolean
 scrncap_crop_window_keypress(GtkWidget *crop_window, GdkEventKey *event,
-	gpointer _unused)
+	gpointer _webview)
 {
+	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
 	guint key = event->keyval;
 
 	if (key == GDK_Escape) {
@@ -305,7 +399,7 @@ scrncap_crop_window_keypress(GtkWidget *crop_window, GdkEventKey *event,
 
 		gtk_widget_destroy(crop_window);
 
-		scrncap_draw_window(result);
+		scrncap_draw_window(webview, result);
 
 		return TRUE;
 	}
@@ -463,7 +557,7 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	g_signal_connect(G_OBJECT(crop_window), "destroy",
 		G_CALLBACK(scrncap_crop_window_close), NULL);
 	g_signal_connect(G_OBJECT(crop_window), "key-press-event",
-		G_CALLBACK(scrncap_crop_window_keypress), NULL);
+		G_CALLBACK(scrncap_crop_window_keypress), webview);
 	g_signal_connect(G_OBJECT(crop_window), "focus-out-event",
 		G_CALLBACK(scrncap_crop_window_focusout), NULL);
 	g_signal_connect(G_OBJECT(crop_window), "button-press-event",

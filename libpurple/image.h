@@ -277,7 +277,7 @@ purple_image_transfer_new(void);
  * a remote file.
  */
 void
-purple_image_transfer_write(PurpleImage *image, const gpointer data,
+purple_image_transfer_write(PurpleImage *image, gconstpointer data,
 	gsize length);
 
 /**

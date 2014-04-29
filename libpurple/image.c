@@ -451,7 +451,7 @@ purple_image_transfer_new(void)
 }
 
 void
-purple_image_transfer_write(PurpleImage *image, const gpointer data,
+purple_image_transfer_write(PurpleImage *image, gconstpointer data,
 	gsize length)
 {
 	PurpleImagePrivate *priv =
