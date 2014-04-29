@@ -33,7 +33,8 @@
 #define SCRNCAP_SHOOTING_TIMEOUT 500
 
 static gboolean is_shooting = FALSE;
-guint shooting_timeout = 0;
+static guint shooting_timeout = 0;
+static GtkWindow *crop_window;
 
 static inline void
 scrncap_conv_set_data(PidginConversation *gtkconv, const gchar *key,
@@ -52,11 +53,9 @@ scrncap_conv_get_data(PidginConversation *gtkconv, const gchar *key)
 	return g_object_get_data(G_OBJECT(gtkconv->tab_cont), key);
 }
 
-static inline gboolean
-scrncap_do_screenshot_cb(gpointer _webview)
+static GdkPixbuf *
+scrncap_perform_screenshot(void)
 {
-	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
-	GdkPixbuf *screenshot;
 	GdkWindow *root;
 	gint orig_x, orig_y, width, height;
 
@@ -65,17 +64,63 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	gdk_drawable_get_size(root, &width, &height);
 
 	/* for gtk3 should be gdk_pixbuf_get_from_window */
-	screenshot = gdk_pixbuf_get_from_drawable(
+	return gdk_pixbuf_get_from_drawable(
 		NULL, root, NULL,
 		orig_x, orig_y, 0, 0, width, height);
+}
 
-	gdk_pixbuf_save(screenshot, "screenshot.png", "png", NULL, NULL);
+static void
+scrncap_crop_window_close(GtkWindow *window, gpointer _unused)
+{
+	GdkPixbuf *screenshot;
+
+	g_return_if_fail(crop_window == window);
+
+	screenshot = g_object_get_data(G_OBJECT(crop_window), "screenshot");
+
 	is_shooting = FALSE;
+	crop_window = NULL;
+	g_object_unref(screenshot);
+}
+
+static gboolean
+scrncap_do_screenshot_cb(gpointer _webview)
+{
+	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
+	GdkPixbuf *screenshot;
+	int width, height;
+	GtkWidget *image;
+
+	shooting_timeout = 0;
+
+	(void)webview;
+
+	screenshot = scrncap_perform_screenshot();
+	g_return_val_if_fail(screenshot != NULL, G_SOURCE_REMOVE);
+	width = gdk_pixbuf_get_width(screenshot);
+	height = gdk_pixbuf_get_height(screenshot);
+
+	crop_window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+	gtk_window_set_decorated(crop_window, FALSE);
+	gtk_window_set_policy(crop_window, FALSE, FALSE, TRUE);
+	gtk_window_set_resizable(crop_window, FALSE);
+	gtk_widget_set_size_request(GTK_WIDGET(crop_window), width, height);
+	gtk_window_fullscreen(crop_window);
+	gtk_window_set_keep_above(crop_window, TRUE);
+
+	g_signal_connect(G_OBJECT(crop_window), "destroy",
+		G_CALLBACK(scrncap_crop_window_close), NULL);
+	g_object_set_data(G_OBJECT(crop_window), "screenshot", screenshot);
+
+	image = gtk_image_new_from_pixbuf(screenshot);
+	gtk_container_add(GTK_CONTAINER(crop_window), image);
+
+	gtk_widget_show_all(GTK_WIDGET(crop_window));
 
 	return G_SOURCE_REMOVE;
 }
 
-static inline void
+static void
 scrncap_do_screenshot(GtkAction *action, PidginWebView *webview)
 {
 	if (is_shooting)
@@ -216,6 +261,8 @@ scrncap_plugin_unload(PurplePlugin *plugin)
 
 	if (shooting_timeout > 0)
 		purple_timeout_remove(shooting_timeout);
+	if (crop_window != NULL)
+		gtk_widget_destroy(GTK_WIDGET(crop_window));
 
 	it = purple_conversations_get_all();
 	for (; it; it = g_list_next(it)) {
