@@ -24,6 +24,7 @@
 #include "presence.h"
 #include "debug.h"
 #include "xmlnode.h"
+#include "roster.h"
 
 void jabber_google_roster_outgoing(JabberStream *js, PurpleXmlNode *query, PurpleXmlNode *item)
 {
@@ -127,7 +128,8 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 		g = purple_buddy_get_group(b);
 
 		group = purple_xmlnode_new_child(item, "group");
-		purple_xmlnode_insert_data(group, purple_group_get_name(g), -1);
+		purple_xmlnode_insert_data(group,
+			jabber_roster_group_get_global_name(g), -1);
 
 		buddies = g_slist_delete_link(buddies, buddies);
 	} while (buddies);
@@ -185,7 +187,8 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 		g = purple_buddy_get_group(b);
 
 		group = purple_xmlnode_new_child(item, "group");
-		purple_xmlnode_insert_data(group, purple_group_get_name(g), -1);
+		purple_xmlnode_insert_data(group,
+			jabber_roster_group_get_global_name(g), -1);
 
 		buddies = g_slist_delete_link(buddies, buddies);
 	} while (buddies);
