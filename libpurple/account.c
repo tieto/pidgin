@@ -917,8 +917,9 @@ parse_account(xmlnode *node)
 	if (child != NULL) {
 		const char *keyring_id = xmlnode_get_attrib(child, "keyring_id");
 		const char *mode = xmlnode_get_attrib(child, "mode");
-		data = xmlnode_get_data(child);
 		gboolean is_plaintext;
+
+		data = xmlnode_get_data(child);
 
 		if (keyring_id == NULL || keyring_id[0] == '\0')
 			is_plaintext = TRUE;
