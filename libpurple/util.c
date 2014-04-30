@@ -1157,6 +1157,7 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 				case '"':
 				case '\'':
 					in_quotes = close;
+					/* fall through */
 				case '=':
 					{
 						size_t len = close - cur;
@@ -1169,11 +1170,12 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 
 						in_attr = FALSE;
 						cur = close + 1;
-						break;
 					}
+					break;
 				case ' ':
 				case '>':
 					in_attr = FALSE;
+					/* fall through */
 				default:
 					cur = close;
 					break;

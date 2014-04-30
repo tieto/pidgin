@@ -135,6 +135,7 @@ finch_debug_print(PurpleDebugLevel level, const char *category,
 		{
 			case PURPLE_DEBUG_WARNING:
 				flag |= GNT_TEXT_FLAG_UNDERLINE;
+				/* fall through */
 			case PURPLE_DEBUG_ERROR:
 			case PURPLE_DEBUG_FATAL:
 				flag |= GNT_TEXT_FLAG_BOLD;

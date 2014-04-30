@@ -274,6 +274,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			switch (purple_value_get_subtype(handler->argtypes[i])) {
 			case PURPLE_SUBTYPE_UNKNOWN:
 				purple_debug(PURPLE_DEBUG_ERROR, "tcl", "subtype unknown\n");
+				/* fall through */
 			case PURPLE_SUBTYPE_ACCOUNT:
 			case PURPLE_SUBTYPE_CONNECTION:
 			case PURPLE_SUBTYPE_CONVERSATION:
