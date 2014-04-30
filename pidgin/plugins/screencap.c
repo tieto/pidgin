@@ -407,7 +407,7 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	gtk_container_add(GTK_CONTAINER(box), drawing_area);
 	scroll_area = pidgin_make_scrollable(box,
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
-		GTK_SHADOW_IN, -1, -1);
+		GTK_SHADOW_NONE, -1, -1);
 #if GTK_CHECK_VERSION(3,0,0)
 	g_object_set(G_OBJECT(scroll_area), "expand", TRUE, NULL);
 #endif
