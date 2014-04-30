@@ -69,6 +69,21 @@ static gchar *localized_default_group_name = NULL;
  * Private utility functions                                         *
  *********************************************************************/
 
+static gchar *
+purple_blist_fold_name(const gchar *name)
+{
+	gchar *res, *tmp;
+
+	if (name == NULL)
+		return NULL;
+
+	tmp = g_utf8_casefold(name, -1);
+	res = g_utf8_collate_key(tmp, -1);
+	g_free(tmp);
+
+	return res;
+}
+
 static PurpleBlistNode *purple_blist_get_last_sibling(PurpleBlistNode *node)
 {
 	PurpleBlistNode *n = node;
@@ -818,12 +833,14 @@ void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name)
 
 void purple_blist_update_groups_cache(PurpleGroup *group, const char *new_name)
 {
-		gchar* key = g_utf8_collate_key(purple_group_get_name(group), -1);
+		gchar* key;
+
+		key = purple_blist_fold_name(purple_group_get_name(group));
 		g_hash_table_remove(groups_cache, key);
 		g_free(key);
 
-		key = g_utf8_collate_key(new_name, -1);
-		g_hash_table_insert(groups_cache, key, group);
+		g_hash_table_insert(groups_cache,
+			purple_blist_fold_name(new_name), group);
 }
 
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node)
@@ -1253,7 +1270,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 		if (gnode->next)
 			gnode->next->prev = gnode->prev;
 	} else {
-		key = g_utf8_collate_key(purple_group_get_name(group), -1);
+		key = purple_blist_fold_name(purple_group_get_name(group));
 		g_hash_table_insert(groups_cache, key, group);
 	}
 
@@ -1495,7 +1512,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	if (node->next)
 		node->next->prev = node->prev;
 
-	key = g_utf8_collate_key(purple_group_get_name(group), -1);
+	key = purple_blist_fold_name(purple_group_get_name(group));
 	g_hash_table_remove(groups_cache, key);
 	g_free(key);
 
@@ -1622,7 +1639,7 @@ PurpleGroup *purple_blist_find_group(const char *name)
 	if (g_strcmp0(name, localized_default_group_name) == 0)
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 
-	key = g_utf8_collate_key(name, -1);
+	key = purple_blist_fold_name(name);
 	group = g_hash_table_lookup(groups_cache, key);
 	g_free(key);
 
