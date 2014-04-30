@@ -63,6 +63,7 @@ static GHashTable *groups_cache = NULL;
 
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
+static gchar *localized_default_group_name = NULL;
 
 /*********************************************************************
  * Private utility functions                                         *
@@ -347,12 +348,22 @@ blist_to_xmlnode(void)
 	PurpleXmlNode *node, *child, *grandchild;
 	PurpleBlistNode *gnode;
 	GList *cur;
+	const gchar *localized_default;
 
 	node = purple_xmlnode_new("purple");
 	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	/* Write groups */
 	child = purple_xmlnode_new_child(node, "blist");
+
+	localized_default = localized_default_group_name;
+	if (g_strcmp0(_("Buddies"), "Buddies") != 0)
+		localized_default = _("Buddies");
+	if (localized_default != NULL) {
+		purple_xmlnode_set_attrib(child,
+			"localized-default-group", localized_default);
+	}
+
 	for (gnode = purplebuddylist->root; gnode != NULL; gnode = gnode->next)
 	{
 		if (purple_blist_node_is_transient(gnode))
@@ -617,10 +628,18 @@ load_blist(void)
 	blist = purple_xmlnode_get_child(purple, "blist");
 	if (blist) {
 		PurpleXmlNode *groupnode;
+
+		localized_default_group_name = g_strdup(
+			purple_xmlnode_get_attrib(blist,
+				"localized-default-group"));
+
 		for (groupnode = purple_xmlnode_get_child(blist, "group"); groupnode != NULL;
 				groupnode = purple_xmlnode_get_next_twin(groupnode)) {
 			parse_group(groupnode);
 		}
+	} else {
+		g_free(localized_default_group_name);
+		localized_default_group_name = NULL;
 	}
 
 	privacy = purple_xmlnode_get_child(purple, "privacy");
@@ -1600,6 +1619,8 @@ PurpleGroup *purple_blist_find_group(const char *name)
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 	if (g_strcmp0(name, "Buddies") == 0)
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
+	if (g_strcmp0(name, localized_default_group_name) == 0)
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 
 	key = g_utf8_collate_key(name, -1);
 	group = g_hash_table_lookup(groups_cache, key);
@@ -1885,6 +1906,11 @@ purple_blist_get_ui_ops(void)
 	return blist_ui_ops;
 }
 
+const gchar *
+_purple_blist_get_localized_default_group_name(void)
+{
+	return localized_default_group_name;
+}
 
 void *
 purple_blist_get_handle(void)
@@ -2024,6 +2050,9 @@ purple_blist_uninit(void)
 
 	g_object_unref(purplebuddylist);
 	purplebuddylist = NULL;
+
+	g_free(localized_default_group_name);
+	localized_default_group_name = NULL;
 
 	purple_signals_disconnect_by_handle(purple_blist_get_handle());
 	purple_signals_unregister_by_instance(purple_blist_get_handle());

@@ -143,6 +143,11 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 			l = g_slist_find_custom(groups, JABBER_ROSTER_DEFAULT_GROUP,
 				(GCompareFunc)purple_utf8_strcasecmp);
 		}
+		if (!l && g == purple_blist_get_default_group()) {
+			l = g_slist_find_custom(groups,
+				_purple_blist_get_localized_default_group_name(),
+				(GCompareFunc)purple_utf8_strcasecmp);
+		}
 
 		if (l) {
 			/* The buddy is already on the local list. Update info. */
@@ -534,6 +539,8 @@ jabber_roster_group_get_global_name(PurpleGroup *group)
 	if (name == NULL)
 		name = JABBER_ROSTER_DEFAULT_GROUP;
 	else if (g_strcmp0(name, PURPLE_BLIST_DEFAULT_GROUP_NAME) == 0)
+		name = JABBER_ROSTER_DEFAULT_GROUP;
+	else if (g_strcmp0(name, _purple_blist_get_localized_default_group_name()) == 0)
 		name = JABBER_ROSTER_DEFAULT_GROUP;
 
 	return name;

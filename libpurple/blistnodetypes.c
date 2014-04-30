@@ -1727,6 +1727,8 @@ purple_group_new(const char *name)
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 	if (g_strcmp0(name, "Buddies") == 0)
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
+	if (g_strcmp0(name, _purple_blist_get_localized_default_group_name()) == 0)
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 
 	group = purple_blist_find_group(name);
 	if (group != NULL)

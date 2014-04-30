@@ -317,4 +317,18 @@ void _purple_conversations_update_cache(PurpleConversation *conv,
  */
 int *_purple_statuses_get_primitive_scores(void);
 
+/**
+ * _purple_blist_get_localized_default_group_name:
+ *
+ * Returns the name of default group for previously used non-English
+ * localization. It's used for merging default group, in case when roster
+ * contains localized name.
+ *
+ * Please note, prpls shouldn't save default group name depending on current
+ * locale. So, this function is mostly for libpurple2 compatibility. And for
+ * improperly written prpls.
+ */
+const gchar *
+_purple_blist_get_localized_default_group_name(void);
+
 #endif /* _PURPLE_INTERNAL_H_ */
