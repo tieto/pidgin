@@ -85,7 +85,12 @@ PurpleGroup * ggp_purplew_buddy_get_group_only(PurpleBuddy *buddy)
 	PurpleGroup *group = purple_buddy_get_group(buddy);
 	if (!group)
 		return NULL;
-	if (0 == strcmp(GGP_PURPLEW_GROUP_DEFAULT, purple_group_get_name(group)))
+	if (0 == g_strcmp0(PURPLE_BLIST_DEFAULT_GROUP_NAME,
+		purple_group_get_name(group)))
+	{
+		return NULL;
+	}
+	if (0 == g_strcmp0("Buddies", purple_group_get_name(group)))
 		return NULL;
 	return group;
 }

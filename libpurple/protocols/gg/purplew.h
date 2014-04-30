@@ -33,8 +33,6 @@
 #include <internal.h>
 #include <libgadu.h>
 
-#define GGP_PURPLEW_GROUP_DEFAULT _("Buddies")
-
 /**
  * Adds an input handler in purple event loop for http request.
  *

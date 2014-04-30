@@ -584,9 +584,6 @@ parse_group(PurpleXmlNode *groupnode)
 	PurpleGroup *group;
 	PurpleXmlNode *cnode;
 
-	if (!name)
-		name = _("Buddies");
-
 	group = purple_group_new(name);
 	purple_blist_add_group(group,
 			purple_blist_get_last_sibling(purplebuddylist->root));
@@ -930,7 +927,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	} else {
 		g = group;
 		if (g == NULL)
-			g = purple_group_new(_("Buddies"));
+			g = purple_blist_get_default_group();
 		/* Add group to blist if isn't already on it. Fixes #2752. */
 		if (!purple_blist_find_group(purple_group_get_name(g))) {
 			purple_blist_add_group(g,
@@ -1074,14 +1071,8 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 		g = PURPLE_GROUP(node->parent);
 	else if (group)
 		g = group;
-	else {
-		g = purple_blist_find_group(_("Buddies"));
-		if (g == NULL) {
-			g = purple_group_new(_("Buddies"));
-			purple_blist_add_group(g,
-					purple_blist_get_last_sibling(purplebuddylist->root));
-		}
-	}
+	else
+		g = purple_blist_get_default_group();
 
 	gnode = (PurpleBlistNode*)g;
 	cnode = (PurpleBlistNode*)contact;
@@ -1600,11 +1591,29 @@ PurpleGroup *purple_blist_find_group(const char *name)
 	PurpleGroup *group;
 
 	g_return_val_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist), NULL);
-	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
+
+	if (name == NULL || name[0] == '\0')
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
+	if (g_strcmp0(name, "Buddies") == 0)
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 
 	key = g_utf8_collate_key(name, -1);
 	group = g_hash_table_lookup(groups_cache, key);
 	g_free(key);
+
+	return group;
+}
+
+PurpleGroup *
+purple_blist_get_default_group(void)
+{
+	PurpleGroup *group;
+
+	group = purple_blist_find_group(PURPLE_BLIST_DEFAULT_GROUP_NAME);
+	if (!group) {
+		group = purple_group_new(PURPLE_BLIST_DEFAULT_GROUP_NAME);
+		purple_blist_add_group(group, NULL);
+	}
 
 	return group;
 }

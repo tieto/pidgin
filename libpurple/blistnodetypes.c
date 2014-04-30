@@ -531,7 +531,7 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 	g_return_val_if_fail(PURPLE_IS_BUDDY(buddy), NULL);
 
 	if (PURPLE_BLIST_NODE(buddy)->parent == NULL)
-		return NULL;
+		return purple_blist_get_default_group();
 
 	return PURPLE_GROUP(PURPLE_BLIST_NODE(buddy)->parent->parent);
 }
@@ -1723,8 +1723,10 @@ purple_group_new(const char *name)
 {
 	PurpleGroup *group;
 
-	g_return_val_if_fail(name  != NULL, NULL);
-	g_return_val_if_fail(*name != '\0', NULL);
+	if (name == NULL || name[0] == '\0')
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
+	if (g_strcmp0(name, "Buddies") == 0)
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 
 	group = purple_blist_find_group(name);
 	if (group != NULL)

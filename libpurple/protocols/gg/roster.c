@@ -452,7 +452,7 @@ static gboolean ggp_roster_reply_list_read_group(PurpleXmlNode *node,
 	is_bot = (strcmp(id, GGP_ROSTER_GROUPID_BOTS) == 0 ||
 		g_strcmp0(name, "Pomocnicy") == 0);
 	is_default = (strcmp(id, GGP_ROSTER_GROUPID_DEFAULT) == 0 ||
-		g_strcmp0(name, GGP_PURPLEW_GROUP_DEFAULT) == 0 ||
+		g_strcmp0(name, PURPLE_BLIST_DEFAULT_GROUP_NAME) == 0 ||
 		g_strcmp0(name, "[default]") == 0);
 
 	if (!content->bots_group_id && is_bot)
@@ -913,8 +913,8 @@ static gboolean ggp_roster_send_update_group_rename(PurpleConnection *gc,
 		"\"%s\"->\"%s\"\n", old_name, new_name);
 
 	/* moving to or from default group instead of renaming it */
-	if (0 == g_strcmp0(old_name, GGP_PURPLEW_GROUP_DEFAULT) ||
-		0 == g_strcmp0(new_name, GGP_PURPLEW_GROUP_DEFAULT))
+	if (0 == g_strcmp0(old_name, PURPLE_BLIST_DEFAULT_GROUP_NAME) ||
+		0 == g_strcmp0(new_name, PURPLE_BLIST_DEFAULT_GROUP_NAME))
 	{
 		PurpleGroup *group;
 		GList *group_buddies;

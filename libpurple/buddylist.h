@@ -47,6 +47,8 @@ typedef struct _PurpleBuddyListClass  PurpleBuddyListClass;
 
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 
+#define PURPLE_BLIST_DEFAULT_GROUP_NAME _("Buddies")
+
 /**************************************************************************/
 /* Data Structures                                                        */
 /**************************************************************************/
@@ -281,7 +283,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
  *
  * The buddy will be inserted right after node or prepended to the
  * group if node is NULL.  If both are NULL, the buddy will be added to
- * the "Buddies" group.
+ * the default group.
  */
 void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
 
@@ -397,6 +399,8 @@ GSList *purple_blist_find_buddies(PurpleAccount *account, const char *name);
  * Returns:        The group or NULL if the group does not exist
  */
 PurpleGroup *purple_blist_find_group(const char *name);
+
+PurpleGroup *purple_blist_get_default_group(void);
 
 /**
  * purple_blist_find_chat:

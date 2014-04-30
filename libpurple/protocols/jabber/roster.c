@@ -113,9 +113,10 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 	buddies = purple_blist_find_buddies(purple_connection_get_account(js->gc), jid);
 
 	if(!groups) {
-		if(!buddies)
-			groups = g_slist_append(groups, g_strdup(_("Buddies")));
-		else {
+		if(!buddies) {
+			groups = g_slist_append(groups,
+				g_strdup(PURPLE_BLIST_DEFAULT_GROUP_NAME));
+		} else {
 			/* TODO: What should we do here? Removing the local buddies
 			 * is wrong, but so is letting the group state get out of sync with
 			 * the server.
@@ -253,7 +254,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 
 				if (group_name == NULL || *group_name == '\0')
 					/* Changing this string?  Look in add_purple_buddy_to_groups */
-					group_name = g_strdup(_("Buddies"));
+					group_name = g_strdup(PURPLE_BLIST_DEFAULT_GROUP_NAME);
 
 				/*
 				 * See the note in add_purple_buddy_to_groups; the core handles

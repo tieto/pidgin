@@ -104,7 +104,8 @@ update_ims_from_contact(EContact *contact, const char *name,
 				!strcmp(me, purple_normalize(account, l2->data)))
 				continue;
 
-			gevo_add_buddy(account, _("Buddies"), l2->data, name);
+			gevo_add_buddy(account, PURPLE_BLIST_DEFAULT_GROUP_NAME,
+				l2->data, name);
 		}
 		g_free(me);
 	}
