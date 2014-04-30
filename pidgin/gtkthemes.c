@@ -274,7 +274,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		}
 
 		if (! g_utf8_validate(buf, -1, NULL)) {
-			purple_debug_error("gtkthemes", "%s:%d is invalid UTF-8\n", file, line_nbr);
+			purple_debug_error("gtkthemes", "%s:%" G_GSIZE_FORMAT " is invalid UTF-8\n", file, line_nbr);
 			continue;
 		}
 
