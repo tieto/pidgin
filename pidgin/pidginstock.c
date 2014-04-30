@@ -388,9 +388,13 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 static void
 reload_settings(void)
 {
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_style_context_reset_widgets(gdk_screen_get_default());
+#else
 	GtkSettings *setting = NULL;
 	setting = gtk_settings_get_default();
 	gtk_rc_reset_styles(setting);
+#endif
 }
 
 /*****************************************************************************
