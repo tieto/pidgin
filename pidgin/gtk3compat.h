@@ -156,6 +156,14 @@ gdk_pixbuf_get_from_surface(cairo_surface_t *surface, gint src_x, gint src_y,
 	return pixbuf;
 }
 
+static inline GdkPixbuf *
+gdk_pixbuf_get_from_window(GdkWindow *window, gint src_x, gint src_y,
+	gint width, gint height)
+{
+	return gdk_pixbuf_get_from_drawable(NULL, window, NULL,
+		src_x, src_y, 0, 0, width, height);
+}
+
 static inline GtkWidget *
 gtk_box_new(GtkOrientation orientation, gint spacing)
 {

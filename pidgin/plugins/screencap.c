@@ -82,16 +82,13 @@ static GdkPixbuf *
 scrncap_perform_screenshot(void)
 {
 	GdkWindow *root;
-	gint orig_x, orig_y, width, height;
+	gint orig_x, orig_y;
 
 	root = gdk_get_default_root_window();
 	gdk_window_get_origin(root, &orig_x, &orig_y);
-	gdk_drawable_get_size(root, &width, &height);
 
-	/* for gtk3 should be gdk_pixbuf_get_from_window */
-	return gdk_pixbuf_get_from_drawable(
-		NULL, root, NULL,
-		orig_x, orig_y, 0, 0, width, height);
+	return gdk_pixbuf_get_from_window(root, 0, 0,
+		gdk_window_get_width(root), gdk_window_get_height(root));
 }
 
 static void
@@ -454,11 +451,11 @@ scrncap_crop_window_keypress(GtkWidget *crop_window, GdkEventKey *event,
 	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
 	guint key = event->keyval;
 
-	if (key == GDK_Escape) {
+	if (key == GDK_KEY_Escape) {
 		gtk_widget_destroy(crop_window);
 		return TRUE;
 	}
-	if (key == GDK_Return) {
+	if (key == GDK_KEY_Return) {
 		GdkPixbuf *screenshot, *subscreen, *result;
 
 		screenshot = g_object_get_data(G_OBJECT(crop_window),
@@ -617,7 +614,6 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	current_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	crop_window = GTK_WINDOW(current_window);
 	gtk_window_set_decorated(crop_window, FALSE);
-	gtk_window_set_policy(crop_window, FALSE, FALSE, TRUE);
 	gtk_window_set_resizable(crop_window, FALSE);
 	gtk_widget_set_size_request(GTK_WIDGET(crop_window), width, height);
 	gtk_window_fullscreen(crop_window);
