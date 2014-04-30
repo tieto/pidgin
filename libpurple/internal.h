@@ -144,6 +144,12 @@
 #endif
 #endif
 
+#define PURPLE_STATIC_ASSERT(condition, message) \
+	{ typedef char static_assertion_failed_ ## message \
+	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
+	(void)dummy; }
+
+
 #ifdef __clang__
 
 #define PURPLE_BEGIN_IGNORE_CAST_ALIGN \
