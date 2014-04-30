@@ -400,6 +400,13 @@ GSList *purple_blist_find_buddies(PurpleAccount *account, const char *name);
  */
 PurpleGroup *purple_blist_find_group(const char *name);
 
+/**
+ * purple_blist_get_default_group:
+ *
+ * Finds or creates default group.
+ *
+ * Returns: The default group.
+ */
 PurpleGroup *purple_blist_get_default_group(void);
 
 /**

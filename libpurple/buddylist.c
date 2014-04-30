@@ -286,7 +286,8 @@ group_to_xmlnode(PurpleGroup *group)
 	PurpleBlistNode *cnode;
 
 	node = purple_xmlnode_new("group");
-	purple_xmlnode_set_attrib(node, "name", purple_group_get_name(group));
+	if (group != purple_blist_get_default_group())
+		purple_xmlnode_set_attrib(node, "name", purple_group_get_name(group));
 
 	/* Write settings */
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(group)),
@@ -1457,6 +1458,9 @@ void purple_blist_remove_group(PurpleGroup *group)
 	gchar* key;
 
 	g_return_if_fail(PURPLE_IS_GROUP(group));
+
+	if (group == purple_blist_get_default_group())
+		purple_debug_warning("buddylist", "cannot remove default group");
 
 	node = (PurpleBlistNode *)group;
 
