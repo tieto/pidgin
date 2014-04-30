@@ -408,6 +408,9 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	scroll_area = pidgin_make_scrollable(box,
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
 		GTK_SHADOW_IN, -1, -1);
+#if GTK_CHECK_VERSION(3,0,0)
+	g_object_set(G_OBJECT(scroll_area), "expand", TRUE, NULL);
+#endif
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(
 		GTK_DIALOG(draw_window))), scroll_area);
 
@@ -488,7 +491,7 @@ scrncap_crop_window_btnpress(GtkWidget *window, GdkEventButton *event,
 	gpointer _unused)
 {
 	GtkWidget *hint_box;
-	GtkWidget *selection;
+	GtkImage *selection;
 	GtkFixed *cont;
 
 	g_return_val_if_fail(!crop_active, TRUE);
@@ -501,22 +504,15 @@ scrncap_crop_window_btnpress(GtkWidget *window, GdkEventButton *event,
 
 	selection = g_object_get_data(G_OBJECT(window), "selection");
 	cont = g_object_get_data(G_OBJECT(window), "cont");
-	gtk_fixed_move(cont, selection, -1, -1);
-	gtk_widget_set_size_request(selection, 0, 0);
-	gtk_widget_show_all(selection);
+
+	gtk_fixed_move(cont, GTK_WIDGET(selection), -10, -10);
+	gtk_image_set_from_pixbuf(selection, NULL);
+	gtk_widget_show(GTK_WIDGET(selection));
 
 	crop_origin_x = event->x_root;
 	crop_origin_y = event->y_root;
 	crop_active = TRUE;
 
-	return TRUE;
-}
-
-static gboolean
-scrncap_crop_sel_btnpress(GtkWidget *viewport, GdkEventButton *event,
-	gpointer _unused)
-{
-	/* we could implement dragging here */
 	return TRUE;
 }
 
@@ -534,16 +530,12 @@ scrncap_crop_window_motion(GtkWidget *window, GdkEventButton *event,
 	gpointer _unused)
 {
 	GtkFixed *cont;
-	GtkViewport *selection;
-	GtkFixed *selection_box;
-	GtkWidget *selection_preview;
+	GtkImage *selection;
+	GdkPixbuf *crop, *screenshot;
 
 	g_return_val_if_fail(crop_active, FALSE);
 
 	selection = g_object_get_data(G_OBJECT(window), "selection");
-	selection_box = g_object_get_data(G_OBJECT(window), "selection-box");
-	selection_preview = g_object_get_data(G_OBJECT(window),
-		"selection-preview");
 	cont = g_object_get_data(G_OBJECT(window), "cont");
 
 	crop_x = MIN(crop_origin_x, event->x_root);
@@ -554,8 +546,12 @@ scrncap_crop_window_motion(GtkWidget *window, GdkEventButton *event,
 	crop_h = MAX(crop_h, 1);
 
 	gtk_fixed_move(cont, GTK_WIDGET(selection), crop_x, crop_y);
-	gtk_fixed_move(selection_box, selection_preview, -crop_x, -crop_y);
-	gtk_widget_set_size_request(GTK_WIDGET(selection), crop_w, crop_h);
+
+	screenshot = g_object_get_data(G_OBJECT(window), "screenshot");
+	crop = gdk_pixbuf_new_subpixbuf(screenshot,
+		crop_x, crop_y, crop_w, crop_h);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(selection), crop);
+	g_object_unref(crop);
 
 	return FALSE;
 }
@@ -589,9 +585,7 @@ scrncap_do_screenshot_cb(gpointer _webview)
 	GdkPixbuf *screenshot, *screenshot_d;
 	int width, height;
 	GtkFixed *cont;
-	GtkWidget *selection;
-	GtkFixed *selection_box;
-	GtkWidget *image, *selection_preview;
+	GtkImage *image, *selection;
 	GtkWidget *hint;
 	gchar *hint_msg;
 	GtkRequisition hint_size;
@@ -642,22 +636,13 @@ scrncap_do_screenshot_cb(gpointer _webview)
 
 	screenshot_d = gdk_pixbuf_copy(screenshot);
 	scrncap_pixbuf_darken(screenshot_d);
-	image = gtk_image_new_from_pixbuf(screenshot_d);
+	image = GTK_IMAGE(gtk_image_new_from_pixbuf(screenshot_d));
 	g_object_unref(screenshot_d);
-	gtk_fixed_put(cont, image, 0, 0);
+	gtk_fixed_put(cont, GTK_WIDGET(image), 0, 0);
 
-	selection = gtk_viewport_new(NULL, NULL);
-	selection_box = GTK_FIXED(gtk_fixed_new());
-	selection_preview = gtk_image_new_from_pixbuf(screenshot);
-	gtk_viewport_set_shadow_type(GTK_VIEWPORT(selection), GTK_SHADOW_NONE);
-	gtk_fixed_put(selection_box, GTK_WIDGET(selection_preview), 0, 0);
-	gtk_container_add(GTK_CONTAINER(selection), GTK_WIDGET(selection_box));
-	gtk_fixed_put(cont, selection, 0, 0);
+	selection = GTK_IMAGE(gtk_image_new_from_pixbuf(NULL));
+	gtk_fixed_put(cont, GTK_WIDGET(selection), -10, -10);
 	g_object_set_data(G_OBJECT(crop_window), "selection", selection);
-	g_object_set_data(G_OBJECT(crop_window), "selection-box", selection_box);
-	g_object_set_data(G_OBJECT(crop_window), "selection-preview", selection_preview);
-	g_signal_connect(G_OBJECT(selection), "button-press-event",
-		G_CALLBACK(scrncap_crop_sel_btnpress), NULL);
 
 	hint = gtk_label_new(NULL);
 	hint_msg = g_strdup_printf("<span size='x-large'>%s</span>",
@@ -674,10 +659,8 @@ scrncap_do_screenshot_cb(gpointer _webview)
 		height / 2 - hint_size.height / 2 - 7);
 	g_object_set_data(G_OBJECT(crop_window), "hint-box", hint_box);
 
-	gtk_widget_show(GTK_WIDGET(cont));
-	gtk_widget_show(image);
-	gtk_widget_show_all(hint_box);
-	gtk_widget_show(GTK_WIDGET(crop_window));
+	gtk_widget_show_all(GTK_WIDGET(crop_window));
+	gtk_widget_hide(GTK_WIDGET(selection));
 
 	return G_SOURCE_REMOVE;
 }
