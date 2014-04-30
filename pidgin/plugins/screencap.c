@@ -231,6 +231,30 @@ scrncap_drawing_area_motion(GtkWidget *draw_area, GdkEventButton *event,
 	return FALSE;
 }
 
+static gboolean
+scrncap_drawing_area_enter(GtkWidget *widget, GdkEvent *event,
+	GdkCursor *draw_cursor)
+{
+	GdkWindow *gdkwindow;
+
+	gdkwindow = gtk_widget_get_window(GTK_WIDGET(widget));
+	gdk_window_set_cursor(gdkwindow, draw_cursor);
+
+	return FALSE;
+}
+
+static gboolean
+scrncap_drawing_area_leave(GtkWidget *widget, GdkEvent *event,
+	GdkCursor *draw_cursor)
+{
+	GdkWindow *gdkwindow;
+
+	gdkwindow = gtk_widget_get_window(GTK_WIDGET(widget));
+	gdk_window_set_cursor(gdkwindow, NULL);
+
+	return FALSE;
+}
+
 static void
 scrncap_draw_window_close(GtkWidget *window, gpointer _unused)
 {
@@ -323,6 +347,7 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	int width, height;
 	cairo_t *cr;
 	cairo_surface_t *surface;
+	GdkCursor *draw_cursor;
 
 	is_shooting = TRUE;
 
@@ -333,6 +358,15 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	gtk_window_set_position(GTK_WINDOW(draw_window), GTK_WIN_POS_CENTER);
 	g_signal_connect(G_OBJECT(draw_window), "destroy",
 		G_CALLBACK(scrncap_draw_window_close), NULL);
+
+	draw_cursor = gdk_cursor_new(GDK_PENCIL);
+#if GTK_CHECK_VERSION(3,0,0)
+	g_object_set_data_full(G_OBJECT(draw_window), "draw-cursor",
+		draw_cursor, g_object_unref);
+#else
+	g_object_set_data_full(G_OBJECT(draw_window), "draw-cursor",
+		draw_cursor, (GDestroyNotify)gdk_cursor_unref);
+#endif
 
 	width = gdk_pixbuf_get_width(screen);
 	height = gdk_pixbuf_get_height(screen);
@@ -359,13 +393,18 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 		G_CALLBACK(scrncap_draw_window_expose), surface);
 #endif
 	gtk_widget_add_events(drawing_area, GDK_BUTTON_PRESS_MASK |
-		GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_MOTION_MASK);
+		GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_MOTION_MASK |
+		GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(drawing_area), "button-press-event",
 		G_CALLBACK(scrncap_drawing_area_btnpress), NULL);
 	g_signal_connect(G_OBJECT(drawing_area), "button-release-event",
 		G_CALLBACK(scrncap_drawing_area_btnrelease), NULL);
 	g_signal_connect(G_OBJECT(drawing_area), "motion-notify-event",
 		G_CALLBACK(scrncap_drawing_area_motion), cr);
+	g_signal_connect(G_OBJECT(drawing_area), "enter-notify-event",
+		G_CALLBACK(scrncap_drawing_area_enter), draw_cursor);
+	g_signal_connect(G_OBJECT(drawing_area), "leave-notify-event",
+		G_CALLBACK(scrncap_drawing_area_leave), draw_cursor);
 
 	box = gtk_alignment_new(0.5, 0.5, 0, 0);
 	gtk_container_add(GTK_CONTAINER(box), drawing_area);
@@ -382,7 +421,8 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 		G_CALLBACK(scrncap_draw_color_selected), cr);
 	scrncap_draw_color_selected(GTK_COLOR_BUTTON(color_button), cr);
 
-	gtk_dialog_add_action_widget(draw_window, color_button, SCRNCAP_RESPONSE_COLOR);
+	gtk_dialog_add_action_widget(draw_window, color_button,
+		SCRNCAP_RESPONSE_COLOR);
 	gtk_dialog_add_button(draw_window, GTK_STOCK_ADD, GTK_RESPONSE_OK);
 	gtk_dialog_add_button(draw_window, GTK_STOCK_CANCEL,
 		GTK_RESPONSE_CANCEL);
