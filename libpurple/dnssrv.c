@@ -197,11 +197,11 @@ srv_reorder(GList *list, int num)
 	 */
 	cur = list;
 	while (container_list) {
+		g_return_if_fail(cur);
 		container_list = select_random_response(container_list, &container);
 		cur->data = container->response;
 		g_free(container);
 		cur = cur->next;
-		g_return_if_fail(cur);
 	}
 }
 
