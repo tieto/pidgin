@@ -120,14 +120,18 @@ pidgin_disco_load_icon(XmppDiscoService *service, const char *size)
 
 	if (service->type == XMPP_DISCO_SERVICE_TYPE_GATEWAY && service->gateway_type) {
 		char *tmp = g_strconcat(service->gateway_type, ".png", NULL);
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", size, tmp, NULL);
+		filename = g_build_filename(PURPLE_DATADIR,
+			"pixmaps", "pidgin", "protocols", size, tmp, NULL);
 		g_free(tmp);
 #if 0
 	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_USER) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", size, "person.png", NULL);
+		filename = g_build_filename(PURPLE_DATADIR,
+			"pixmaps", "pidgin", "status", size, "person.png", NULL);
 #endif
-	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", size, "chat.png", NULL);
+	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT) {
+		filename = g_build_filename(PURPLE_DATADIR,
+			"pixmaps", "pidgin", "status", size, "chat.png", NULL);
+	}
 
 	if (filename) {
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);

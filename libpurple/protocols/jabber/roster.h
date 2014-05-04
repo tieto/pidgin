@@ -24,6 +24,9 @@
 #ifndef PURPLE_JABBER_ROSTER_H_
 #define PURPLE_JABBER_ROSTER_H_
 
+/* it must *not* be localized */
+#define JABBER_ROSTER_DEFAULT_GROUP "Buddies"
+
 #include "jabber.h"
 
 void jabber_roster_request(JabberStream *js);
@@ -41,5 +44,8 @@ void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
 		PurpleGroup *group, GList *moved_buddies);
 void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group);
+
+const gchar *
+jabber_roster_group_get_global_name(PurpleGroup *group);
 
 #endif /* PURPLE_JABBER_ROSTER_H_ */

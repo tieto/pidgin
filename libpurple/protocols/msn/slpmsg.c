@@ -68,14 +68,7 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	slplink = slpmsg->slplink;
 
-
-	if (slpmsg->img)
-		g_object_unref(slpmsg->img);
-	else {
-		/* We don't want to free the data of the PurpleImage,
-		 * but to avoid code duplication, it's sharing buffer. */
-		g_free(slpmsg->buffer);
-	}
+	g_free(slpmsg->buffer);
 
 	for (cur = slpmsg->parts; cur != NULL; cur = g_list_delete_link(cur, cur))
 	{
@@ -115,7 +108,6 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 {
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
-	g_return_if_fail(slpmsg->img == NULL);
 	g_return_if_fail(slpmsg->ft == FALSE);
 
 	if (body != NULL)
@@ -131,13 +123,10 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleImage *img)
 {
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
-	g_return_if_fail(slpmsg->img == NULL);
 	g_return_if_fail(slpmsg->ft == FALSE);
 
-	g_object_ref(img);
-	slpmsg->img = img;
-	slpmsg->buffer = purple_image_get_data(img);
 	slpmsg->size = purple_image_get_size(img);
+	slpmsg->buffer = g_memdup(purple_image_get_data(img), slpmsg->size);
 }
 
 

@@ -103,9 +103,14 @@ PurpleSmiley *
 purple_smiley_new(const gchar *shortcut, const gchar *path);
 
 /**
- * Consider using #purple_conversation_add_remote_smiley.
+ * purple_smiley_new_remote:
+ * @shortcut: the smiley shortcut (unescaped).
  *
- * TODO: desc
+ * Creates new remote smiley. It's not bound to any conversation, so most
+ * probably you might want to use
+ * #purple_conversation_add_remote_smiley instead.
+ *
+ * Returns: the new remote #PurpleSmiley.
  */
 PurpleSmiley *
 purple_smiley_new_remote(const gchar *shortcut);

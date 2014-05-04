@@ -28,6 +28,7 @@
 #include "config.h"
 
 #include <windows.h>
+#include <shellapi.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +36,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifndef IS_WIN32_CROSS_COMPILED
 typedef int (__cdecl* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
+#endif
 typedef void (WINAPI* LPFNSETDLLDIRECTORY)(LPCWSTR);
 typedef BOOL (WINAPI* LPFNATTACHCONSOLE)(DWORD);
 typedef BOOL (WINAPI* LPFNSETPROCESSDEPPOLICY)(DWORD);
@@ -45,7 +48,11 @@ static BOOL portable_mode = FALSE;
 /*
  *  PROTOTYPES
  */
+#ifdef IS_WIN32_CROSS_COMPILED
+int __cdecl pidgin_main(HINSTANCE hint, int argc, char *argv[]);
+#else
 static LPFNPIDGINMAIN pidgin_main = NULL;
+#endif
 static LPFNSETDLLDIRECTORY MySetDllDirectory = NULL;
 
 static const wchar_t *get_win32_error_message(DWORD err) {
@@ -150,6 +157,7 @@ static void common_dll_prep(const wchar_t *path) {
 	 * MAX_PATH + 1
 	 */
 	wchar_t set_path[MAX_PATH + 24];
+	wchar_t *fslash, *bslash;
 
 	if (!check_for_gtk(path)) {
 		const wchar_t *winpath = _wgetenv(L"PATH");
@@ -187,7 +195,12 @@ static void common_dll_prep(const wchar_t *path) {
 
 	wcsncpy(tmp_path, path, MAX_PATH);
 	tmp_path[MAX_PATH] = L'\0';
-	wcsrchr(tmp_path, L'\\')[0] = L'\0';
+	bslash = wcsrchr(tmp_path, L'\\');
+	fslash = wcsrchr(tmp_path, L'/');
+	if (bslash && bslash > fslash)
+		bslash[0] = L'\0';
+	else if (fslash && fslash > bslash)
+		fslash[0] = L'\0';
 	/* tmp_path now contains \path\to\Pidgin\Gtk */
 
 	_snwprintf(set_path, sizeof(set_path) / sizeof(wchar_t),
@@ -274,6 +287,7 @@ static void common_dll_prep(const wchar_t *path) {
 	}
 }
 
+#ifndef IS_WIN32_CROSS_COMPILED
 static void dll_prep(const wchar_t *pidgin_dir) {
 	wchar_t path[MAX_PATH + 1];
 	path[0] = L'\0';
@@ -285,6 +299,7 @@ static void dll_prep(const wchar_t *pidgin_dir) {
 
 	common_dll_prep(path);
 }
+#endif
 
 static void portable_mode_dll_prep(const wchar_t *pidgin_dir) {
 	/* need to be able to fit MAX_PATH + "PURPLEHOME=" in path2 */
@@ -859,8 +874,10 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	if (portable_mode)
 		portable_mode_dll_prep(pidgin_dir);
+#ifndef IS_WIN32_CROSS_COMPILED
 	else if (!getenv("PIDGIN_NO_DLL_CHECK"))
 		dll_prep(pidgin_dir);
+#endif
 
 	winpidgin_set_locale();
 
@@ -871,15 +888,18 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		if (!winpidgin_set_running(getenv("PIDGIN_MULTI_INST") == NULL && !multiple))
 			return 0;
 
+#ifndef IS_WIN32_CROSS_COMPILED
 	/* Now we are ready for Pidgin .. */
 	wcscat(pidgin_dir, L"\\pidgin.dll");
 	if ((hmod = LoadLibraryW(pidgin_dir)))
 		pidgin_main = (LPFNPIDGINMAIN) GetProcAddress(hmod, "pidgin_main");
+#endif
 
 	/* Restore pidgin_dir to point to where the executable is */
 	if (pidgin_dir_start)
 		pidgin_dir_start[0] = L'\0';
 
+#ifndef IS_WIN32_CROSS_COMPILED
 	if (!pidgin_main) {
 		DWORD dw = GetLastError();
 		BOOL mod_not_found = (dw == ERROR_MOD_NOT_FOUND || dw == ERROR_DLL_NOT_FOUND);
@@ -894,6 +914,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 		return 0;
 	}
+#endif
 
 	/* Convert argv to utf-8*/
 	szArglist = CommandLineToArgvW(cmdLine, &j);

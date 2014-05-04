@@ -36,7 +36,7 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple-3.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols . tests example
+SUBDIRS = $(GCONF_DIR) . plugins protocols tests example
 
 purple_coresources = \
 	account.c \
@@ -206,6 +206,25 @@ purple_coreheaders = \
 	xfer.h \
 	xmlnode.h
 
+if IS_WIN32
+purple_coresources += \
+	win32/giowin32.c \
+	win32/libc_interface.c \
+	win32/win32dep.c
+
+purple_coreheaders += \
+	win32/libc_interface.h \
+	win32/libc_internal.h \
+	win32/win32dep.h \
+	win32/wpurpleerror.h
+
+.rc.o: %.rc
+	$(AM_V_GEN)$(WINDRES) -i $< -o $@
+
+LIBPURPLE_WIN32RES = win32/libpurplerc.o
+LIBPURPLE_WIN32RES_LDFLAGS = -Wl,$(LIBPURPLE_WIN32RES)
+endif
+
 purple_mediaheaders = \
 	backend-iface.h \
 	candidate.h \
@@ -227,14 +246,14 @@ purple_cipherheaders = \
 purple_builtheaders = purple.h version.h enums.h marshallers.h
 
 purple_enumheaders = \
-	account.h \
-	cipher.h \
-	connection.h \
-	conversation.h \
-	conversationtypes.h \
-	roomlist.h \
-	status.h \
-	xfer.h
+	$(srcdir)/account.h \
+	$(srcdir)/cipher.h \
+	$(srcdir)/connection.h \
+	$(srcdir)/conversation.h \
+	$(srcdir)/conversationtypes.h \
+	$(srcdir)/roomlist.h \
+	$(srcdir)/status.h \
+	$(srcdir)/xfer.h
 
 marshallers.h: marshallers.list
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
@@ -243,11 +262,11 @@ marshallers.c: marshallers.list marshallers.h
 	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
 	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
-enums.h: enums.h.in $(purple_enumheaders)
-	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.h.in $(purple_enumheaders) > $@
+enums.h: $(srcdir)/enums.h.in $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.h.in $(purple_enumheaders) > $@
 
-enums.c: enums.c.in $(purple_enumheaders)
-	$(AM_V_GEN)$(GLIB_MKENUMS) --template enums.c.in $(purple_enumheaders) > $@
+enums.c: $(srcdir)/enums.c.in $(purple_enumheaders)
+	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.c.in $(purple_enumheaders) > $@
 
 CLEANFILES = \
 	enums.c \
@@ -383,12 +402,14 @@ mediainclude_HEADERS = \
 	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
 
 libpurple_la_DEPENDENCIES = \
-	$(STATIC_LINK_LIBS)
+	$(STATIC_LINK_LIBS) $(LIBPURPLE_WIN32RES)
 
-libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
+libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) \
+	-no-undefined $(LIBPURPLE_WIN32RES_LDFLAGS)
 libpurple_la_LIBADD = \
 	$(STATIC_LINK_LIBS) \
 	$(DBUS_LIBS) \
+	$(DNSAPI_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
 	$(NETWORKMANAGER_LIBS) \
@@ -401,13 +422,10 @@ libpurple_la_LIBADD = \
 	$(JSON_LIBS) \
 	$(GNUTLS_LIBS) \
 	$(NSS_LIBS) \
+	$(ZLIB_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
@@ -420,10 +438,5 @@ AM_CPPFLAGS = \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
 	$(GNUTLS_CFLAGS) \
-	$(NSS_CFLAGS)
-
-# INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.
-# We want to use SSL_CERTIFICATES_DIR when it's not empty.
-if ! INSTALL_SSL_CERTIFICATES
-AM_CPPFLAGS += -DSSL_CERTIFICATES_DIR=\"$(SSL_CERTIFICATES_DIR)\"
-endif
+	$(NSS_CFLAGS) \
+	$(ZLIB_CFLAGS)

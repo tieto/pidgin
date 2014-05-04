@@ -63,6 +63,7 @@
 static void finch_write_common(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags, time_t mtime);
 static void generate_send_to_menu(FinchConv *ggc);
+static void generate_e2ee_menu(FinchConv *ggc);
 
 static int color_message_receive;
 static int color_message_send;
@@ -245,8 +246,18 @@ find_im_with_contact(PurpleAccount *account, const char *name)
 static char *
 get_conversation_title(PurpleConversation *conv, PurpleAccount *account)
 {
-	return g_strdup_printf(_("%s (%s -- %s)"), purple_conversation_get_title(conv),
-		purple_account_get_username(account), purple_account_get_protocol_name(account));
+	PurpleE2eeState *e2ee;
+
+	e2ee = purple_conversation_get_e2ee_state(conv);
+
+	return g_strdup_printf(_("%s (%s -- %s)%s%s%s%s"),
+		purple_conversation_get_title(conv),
+		purple_account_get_username(account),
+		purple_account_get_protocol_name(account),
+		e2ee ? " | " : "",
+		e2ee ? purple_e2ee_provider_get_name(purple_e2ee_state_get_provider(e2ee)) : "",
+		e2ee ? ": " : "",
+		e2ee ? purple_e2ee_state_get_name(e2ee) : "");
 }
 
 static void
@@ -389,6 +400,7 @@ gg_extended_menu(FinchConv *ggc)
 {
 	GntMenu *sub;
 	GList *list;
+	gboolean is_empty = TRUE;
 
 	g_return_if_fail(ggc != NULL);
 
@@ -399,7 +411,9 @@ gg_extended_menu(FinchConv *ggc)
 			list; list = g_list_delete_link(list, list))
 	{
 		finch_append_menu_action(sub, list->data, ggc->active_conv);
+		is_empty = FALSE;
 	}
+	gnt_menuitem_set_visible(ggc->plugins, !is_empty);
 }
 
 static void
@@ -410,6 +424,20 @@ conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type)
 
 	if (type == PURPLE_CONVERSATION_UPDATE_FEATURES) {
 		gg_extended_menu(purple_conversation_get_ui_data(conv));
+		return;
+	}
+	if (type == PURPLE_CONVERSATION_UPDATE_E2EE) {
+		FinchConv *ggconv = FINCH_CONV(conv);
+		gchar *title;
+
+		title = get_conversation_title(conv,
+			purple_conversation_get_account(conv));
+		gnt_screen_rename_widget(ggconv->window, title);
+		g_free(title);
+
+		generate_e2ee_menu(ggconv);
+
+		return;
 	}
 }
 
@@ -597,6 +625,41 @@ generate_send_to_menu(FinchConv *ggc)
 }
 
 static void
+generate_e2ee_menu(FinchConv *ggc)
+{
+	GntMenu *sub;
+	GntWidget *menu = ggc->menu;
+	PurpleConversation *conv = ggc->active_conv;
+	GntMenuItem *item;
+	PurpleE2eeProvider *eprov;
+	GList *menu_actions, *it;
+
+	eprov = purple_e2ee_provider_get_main();
+
+	item = ggc->u.im->e2ee_menu;
+	if (item == NULL) {
+		item = gnt_menuitem_new(NULL);
+		gnt_menu_add_item(GNT_MENU(menu), item);
+		ggc->u.im->e2ee_menu = item;
+	}
+	sub = GNT_MENU(gnt_menu_new(GNT_MENU_POPUP));
+	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+	gnt_menuitem_set_visible(item, (eprov != NULL));
+	if (eprov == NULL)
+		return;
+	gnt_menuitem_set_text(item, purple_e2ee_provider_get_name(eprov));
+
+	menu_actions = purple_e2ee_provider_get_conv_menu_actions(eprov, conv);
+	for (it = menu_actions; it; it = g_list_next(it)) {
+		PurpleMenuAction *action = it->data;
+
+		finch_append_menu_action(sub, action, conv);
+	}
+	g_list_free(menu_actions);
+}
+
+static void
 invite_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *fc = ggconv;
@@ -665,6 +728,8 @@ gg_create_menu(FinchConv *ggc)
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		gnt_menuitem_set_callback(item, invite_cb, ggc);
 	}
+
+	generate_e2ee_menu(ggc);
 
 	item = gnt_menuitem_new(_("View Log..."));
 	gnt_menu_add_item(GNT_MENU(sub), item);
@@ -901,10 +966,8 @@ finch_destroy_conversation(PurpleConversation *conv)
 	/* do stuff here */
 	FinchConv *ggc = FINCH_CONV(conv);
 	ggc->list = g_list_remove(ggc->list, conv);
-	if (ggc->list && conv == ggc->active_conv) {
-		ggc->active_conv = ggc->list->data;
-		gg_setup_commands(ggc, TRUE);
-	}
+	if (ggc->list && conv == ggc->active_conv)
+		finch_conversation_set_active(ggc->list->data);
 
 	if (ggc->list == NULL) {
 		g_free(ggc->u.chat);
@@ -1521,6 +1584,8 @@ void finch_conversation_set_active(PurpleConversation *conv)
 	title = get_conversation_title(conv, account);
 	gnt_screen_rename_widget(ggconv->window, title);
 	g_free(title);
+
+	generate_e2ee_menu(ggconv);
 }
 
 void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget)

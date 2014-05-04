@@ -63,10 +63,26 @@ static GHashTable *groups_cache = NULL;
 
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
+static gchar *localized_default_group_name = NULL;
 
 /*********************************************************************
  * Private utility functions                                         *
  *********************************************************************/
+
+static gchar *
+purple_blist_fold_name(const gchar *name)
+{
+	gchar *res, *tmp;
+
+	if (name == NULL)
+		return NULL;
+
+	tmp = g_utf8_casefold(name, -1);
+	res = g_utf8_collate_key(tmp, -1);
+	g_free(tmp);
+
+	return res;
+}
 
 static PurpleBlistNode *purple_blist_get_last_sibling(PurpleBlistNode *node)
 {
@@ -286,7 +302,8 @@ group_to_xmlnode(PurpleGroup *group)
 	PurpleBlistNode *cnode;
 
 	node = purple_xmlnode_new("group");
-	purple_xmlnode_set_attrib(node, "name", purple_group_get_name(group));
+	if (group != purple_blist_get_default_group())
+		purple_xmlnode_set_attrib(node, "name", purple_group_get_name(group));
 
 	/* Write settings */
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(group)),
@@ -346,12 +363,22 @@ blist_to_xmlnode(void)
 	PurpleXmlNode *node, *child, *grandchild;
 	PurpleBlistNode *gnode;
 	GList *cur;
+	const gchar *localized_default;
 
 	node = purple_xmlnode_new("purple");
 	purple_xmlnode_set_attrib(node, "version", "1.0");
 
 	/* Write groups */
 	child = purple_xmlnode_new_child(node, "blist");
+
+	localized_default = localized_default_group_name;
+	if (g_strcmp0(_("Buddies"), "Buddies") != 0)
+		localized_default = _("Buddies");
+	if (localized_default != NULL) {
+		purple_xmlnode_set_attrib(child,
+			"localized-default-group", localized_default);
+	}
+
 	for (gnode = purplebuddylist->root; gnode != NULL; gnode = gnode->next)
 	{
 		if (purple_blist_node_is_transient(gnode))
@@ -584,9 +611,6 @@ parse_group(PurpleXmlNode *groupnode)
 	PurpleGroup *group;
 	PurpleXmlNode *cnode;
 
-	if (!name)
-		name = _("Buddies");
-
 	group = purple_group_new(name);
 	purple_blist_add_group(group,
 			purple_blist_get_last_sibling(purplebuddylist->root));
@@ -619,10 +643,18 @@ load_blist(void)
 	blist = purple_xmlnode_get_child(purple, "blist");
 	if (blist) {
 		PurpleXmlNode *groupnode;
+
+		localized_default_group_name = g_strdup(
+			purple_xmlnode_get_attrib(blist,
+				"localized-default-group"));
+
 		for (groupnode = purple_xmlnode_get_child(blist, "group"); groupnode != NULL;
 				groupnode = purple_xmlnode_get_next_twin(groupnode)) {
 			parse_group(groupnode);
 		}
+	} else {
+		g_free(localized_default_group_name);
+		localized_default_group_name = NULL;
 	}
 
 	privacy = purple_xmlnode_get_child(purple, "privacy");
@@ -801,12 +833,14 @@ void purple_blist_update_buddies_cache(PurpleBuddy *buddy, const char *new_name)
 
 void purple_blist_update_groups_cache(PurpleGroup *group, const char *new_name)
 {
-		gchar* key = g_utf8_collate_key(purple_group_get_name(group), -1);
+		gchar* key;
+
+		key = purple_blist_fold_name(purple_group_get_name(group));
 		g_hash_table_remove(groups_cache, key);
 		g_free(key);
 
-		key = g_utf8_collate_key(new_name, -1);
-		g_hash_table_insert(groups_cache, key, group);
+		g_hash_table_insert(groups_cache,
+			purple_blist_fold_name(new_name), group);
 }
 
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node)
@@ -930,7 +964,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	} else {
 		g = group;
 		if (g == NULL)
-			g = purple_group_new(_("Buddies"));
+			g = purple_blist_get_default_group();
 		/* Add group to blist if isn't already on it. Fixes #2752. */
 		if (!purple_blist_find_group(purple_group_get_name(g))) {
 			purple_blist_add_group(g,
@@ -1074,14 +1108,8 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 		g = PURPLE_GROUP(node->parent);
 	else if (group)
 		g = group;
-	else {
-		g = purple_blist_find_group(_("Buddies"));
-		if (g == NULL) {
-			g = purple_group_new(_("Buddies"));
-			purple_blist_add_group(g,
-					purple_blist_get_last_sibling(purplebuddylist->root));
-		}
-	}
+	else
+		g = purple_blist_get_default_group();
 
 	gnode = (PurpleBlistNode*)g;
 	cnode = (PurpleBlistNode*)contact;
@@ -1242,7 +1270,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 		if (gnode->next)
 			gnode->next->prev = gnode->prev;
 	} else {
-		key = g_utf8_collate_key(purple_group_get_name(group), -1);
+		key = purple_blist_fold_name(purple_group_get_name(group));
 		g_hash_table_insert(groups_cache, key, group);
 	}
 
@@ -1467,6 +1495,9 @@ void purple_blist_remove_group(PurpleGroup *group)
 
 	g_return_if_fail(PURPLE_IS_GROUP(group));
 
+	if (group == purple_blist_get_default_group())
+		purple_debug_warning("buddylist", "cannot remove default group");
+
 	node = (PurpleBlistNode *)group;
 
 	/* Make sure the group is empty */
@@ -1481,7 +1512,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	if (node->next)
 		node->next->prev = node->prev;
 
-	key = g_utf8_collate_key(purple_group_get_name(group), -1);
+	key = purple_blist_fold_name(purple_group_get_name(group));
 	g_hash_table_remove(groups_cache, key);
 	g_free(key);
 
@@ -1600,11 +1631,31 @@ PurpleGroup *purple_blist_find_group(const char *name)
 	PurpleGroup *group;
 
 	g_return_val_if_fail(PURPLE_IS_BUDDY_LIST(purplebuddylist), NULL);
-	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
-	key = g_utf8_collate_key(name, -1);
+	if (name == NULL || name[0] == '\0')
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
+	if (g_strcmp0(name, "Buddies") == 0)
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
+	if (g_strcmp0(name, localized_default_group_name) == 0)
+		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
+
+	key = purple_blist_fold_name(name);
 	group = g_hash_table_lookup(groups_cache, key);
 	g_free(key);
+
+	return group;
+}
+
+PurpleGroup *
+purple_blist_get_default_group(void)
+{
+	PurpleGroup *group;
+
+	group = purple_blist_find_group(PURPLE_BLIST_DEFAULT_GROUP_NAME);
+	if (!group) {
+		group = purple_group_new(PURPLE_BLIST_DEFAULT_GROUP_NAME);
+		purple_blist_add_group(group, NULL);
+	}
 
 	return group;
 }
@@ -1872,6 +1923,11 @@ purple_blist_get_ui_ops(void)
 	return blist_ui_ops;
 }
 
+const gchar *
+_purple_blist_get_localized_default_group_name(void)
+{
+	return localized_default_group_name;
+}
 
 void *
 purple_blist_get_handle(void)
@@ -2011,6 +2067,9 @@ purple_blist_uninit(void)
 
 	g_object_unref(purplebuddylist);
 	purplebuddylist = NULL;
+
+	g_free(localized_default_group_name);
+	localized_default_group_name = NULL;
 
 	purple_signals_disconnect_by_handle(purple_blist_get_handle());
 	purple_signals_unregister_by_instance(purple_blist_get_handle());

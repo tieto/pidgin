@@ -30,7 +30,9 @@
 #include <gmodule.h>
 
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/wait.h>
+#endif
 
 #include "gntinternal.h"
 #undef GNT_LOG_DOMAIN
@@ -61,6 +63,13 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#undef _getch
+#undef getch
+#include <windows.h>
+#include <conio.h>
+#endif
+
 /*
  * Notes: Interesting functions to look at:
  * scr_dump, scr_init, scr_restore: for workspaces
@@ -84,6 +93,8 @@ static GntClipboard *clipboard;
 
 int gnt_need_conversation_to_locale;
 
+static gchar *custom_config_dir = NULL;
+
 #define HOLDING_ESCAPE  (escape_stuff.timer != 0)
 
 static struct {
@@ -98,6 +109,26 @@ escape_timeout(gpointer data)
 	return FALSE;
 }
 
+void
+gnt_set_config_dir(const gchar *config_dir)
+{
+	if (channel) {
+		gnt_warning("gnt_set_config_dir failed: %s",
+			"gnt already initialized");
+	}
+	free(custom_config_dir);
+	custom_config_dir = g_strdup(config_dir);
+}
+
+const gchar *
+gnt_get_config_dir(void)
+{
+	if (custom_config_dir)
+		return custom_config_dir;
+	return g_get_home_dir();
+}
+
+#ifndef _WIN32
 /**
  * detect_mouse_action:
  *
@@ -214,22 +245,118 @@ detect_mouse_action(const char *buffer)
 		gnt_widget_clicked(widget, event, x, y);
 	return TRUE;
 }
+#endif
 
 static gboolean
 io_invoke_error(GIOChannel *source, GIOCondition cond, gpointer data)
 {
+	/* XXX: it throws an error after evey io_invoke, I have no idea why */
+#ifndef _WIN32
 	int id = GPOINTER_TO_INT(data);
+
 	g_source_remove(id);
 	g_io_channel_unref(source);
 
 	channel = NULL;
 	setup_io();
+#endif
+
 	return TRUE;
 }
+
 
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
+#ifdef _WIN32
+	/* We need:
+	 * - 1 for escape prefix
+	 * - 6 for gunichar-to-gchar conversion (see g_unichar_to_utf8)
+	 * - 1 for the terminating NUL
+	 * or:
+	 * - 1 for escape prefix
+	 * - 1 for special key prefix
+	 * - 1 for the key
+	 * - 1 for the terminating NUL
+	 */
+	gchar keys[8];
+	gchar *k = keys;
+	int ch;
+	gboolean is_special = FALSE;
+	gboolean is_escape = FALSE;
+
+	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
+		return FALSE;
+
+	if (HOLDING_ESCAPE) {
+		is_escape = TRUE;
+		g_source_remove(escape_stuff.timer);
+		escape_stuff.timer = 0;
+	} else if (GetAsyncKeyState(VK_LMENU)) { /* left-ALT key */
+		is_escape = TRUE;
+	}
+	if (is_escape) {
+		*k = '\033';
+		k++;
+	}
+
+	ch = _getwch(); /* we could use _getwch_nolock */
+
+	/* a small hack - we don't want to put NUL anywhere */
+	if (ch == 0x00)
+		ch = 0xE1;
+
+	if (ch == 0xE0 || ch == 0xE1) {
+		is_special = TRUE;
+		if (!is_escape) {
+			*k = '\033';
+			k++;
+		}
+		*k = ch;
+		k++;
+		ch = _getwch();
+	}
+
+	if (ch == 0x1B && !is_special) { /* ESC key */
+		escape_stuff.timer = g_timeout_add(250, escape_timeout, NULL);
+		return TRUE;
+	}
+
+	if (wm)
+		gnt_wm_set_event_stack(wm, TRUE);
+
+	if (is_special) {
+		if (ch > 0xFF) {
+			gnt_warning("a special key out of gchar range (%d)", ch);
+			return TRUE;
+		}
+		*k = ch;
+		k++;
+	} else {
+		gint result_len;
+
+		result_len = g_unichar_to_utf8(ch, k);
+		k += result_len;
+	}
+	*k = '\0';
+
+#if 0
+	gnt_warning("a key: [%s] %#x %#x %#x %#x %#x %#x", keys,
+		(guchar)keys[0], (guchar)keys[1], (guchar)keys[2],
+		(guchar)keys[3], (guchar)keys[4], (guchar)keys[5]);
+#endif
+
+	/* TODO: we could call detect_mouse_action here, but no
+	 * events are triggered (yet?) for mouse on win32.
+	 */
+
+	gnt_wm_process_input(wm, keys);
+
+	if (wm)
+		gnt_wm_set_event_stack(wm, FALSE);
+
+	return TRUE;
+#else
 	char keys[256];
 	gssize rd;
 	char *k;
@@ -302,13 +429,25 @@ end:
 		gnt_wm_set_event_stack(wm, FALSE);
 	g_free(cvrt);
 	return TRUE;
+#endif
 }
 
 static void
 setup_io()
 {
 	int result;
+
+#ifdef _WIN32
+	channel = g_io_channel_win32_new_fd(STDIN_FILENO);
+#else
 	channel = g_io_channel_unix_new(STDIN_FILENO);
+#endif
+
+	if (channel == NULL) {
+		gnt_warning("failed creating new channel%s", "");
+		return;
+	}
+
 	g_io_channel_set_close_on_unref(channel, TRUE);
 
 #if 0
@@ -325,11 +464,11 @@ setup_io()
 					(G_IO_NVAL),
 					io_invoke_error, GINT_TO_POINTER(result), NULL);
 
-	g_io_channel_unref(channel);  /* Apparently this caused crashes for some people.
-	                                 But irssi does this, so I am going to assume the
-	                                 crashes were caused by some other stuff. */
+	g_io_channel_unref(channel);
 
+#if 0
 	gnt_warning("setting up IO (%d)", channel_read_callback);
+#endif
 }
 
 static gboolean
@@ -339,6 +478,7 @@ refresh_screen(void)
 	return FALSE;
 }
 
+#ifndef _WIN32
 /* Xerox */
 static void
 clean_pid(void)
@@ -356,6 +496,7 @@ clean_pid(void)
 		perror(errmsg);
 	}
 }
+#endif
 
 static void
 exit_confirmed(gpointer null)
@@ -425,10 +566,12 @@ sighandler(int sig)
 		signal(SIGWINCH, sighandler);
 		break;
 #endif
+#ifndef _WIN32
 	case SIGCHLD:
 		clean_pid();
 		signal(SIGCHLD, sighandler);
 		break;
+#endif
 	case SIGINT:
 		ask_before_exit();
 		signal(SIGINT, sighandler);
@@ -463,6 +606,12 @@ void gnt_init()
 	if (channel)
 		return;
 
+#ifdef _WIN32
+	/* UTF-8 for input */
+	/* TODO: check it with NO_WIDECHAR. */
+	SetConsoleCP(65001);
+#endif
+
 	locale = setlocale(LC_ALL, "");
 
 	setup_io();
@@ -487,7 +636,7 @@ void gnt_init()
 	gnt_init_keys();
 	gnt_init_styles();
 
-	filename = g_build_filename(g_get_home_dir(), ".gntrc", NULL);
+	filename = g_build_filename(gnt_get_config_dir(), ".gntrc", NULL);
 	gnt_style_read_configure_file(filename);
 	g_free(filename);
 
@@ -508,9 +657,11 @@ void gnt_init()
 #ifdef SIGWINCH
 	org_winch_handler = signal(SIGWINCH, sighandler);
 #endif
+#ifndef _WIN32
 	signal(SIGCHLD, sighandler);
-	signal(SIGINT, sighandler);
 	signal(SIGPIPE, SIG_IGN);
+#endif
+	signal(SIGINT, sighandler);
 
 #if !GLIB_CHECK_VERSION(2, 36, 0)
 	/* GLib type system is automaticaly initialized since 2.36. */
@@ -696,7 +847,9 @@ reap_child(GPid pid, gint status, gpointer data)
 		cp->callback(status, cp->data);
 	}
 	g_free(cp);
+#ifndef _WIN32
 	clean_pid();
+#endif
 	wm->mode = GNT_KP_MODE_NORMAL;
 	endwin();
 	setup_io();

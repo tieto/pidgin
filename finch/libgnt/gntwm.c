@@ -331,7 +331,7 @@ static void
 read_window_positions(GntWM *wm)
 {
 	GKeyFile *gfile = g_key_file_new();
-	char *filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
+	char *filename = g_build_filename(gnt_get_config_dir(), ".gntpositions", NULL);
 	GError *error = NULL;
 	char **keys;
 	gsize nk;
@@ -427,7 +427,7 @@ switch_window(GntWM *wm, int direction, gboolean urgent)
 
 	w = wm->cws->ordered->data;
 	orgpos = pos = g_list_index(wm->cws->list, w);
-	g_return_if_fail(pos < 0);
+	g_return_if_fail(pos >= 0);
 
 	do {
 		pos += direction;
@@ -2120,7 +2120,7 @@ write_already(gpointer data)
 	FILE *file;
 	char *filename;
 
-	filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
+	filename = g_build_filename(gnt_get_config_dir(), ".gntpositions", NULL);
 
 	file = fopen(filename, "wb");
 	if (file == NULL) {

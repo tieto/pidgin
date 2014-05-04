@@ -3,7 +3,7 @@ EXTRA_DIST = \
 	AUTHORS \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 OSCARSOURCES = \
 	authorization.c     \
@@ -50,21 +50,32 @@ OSCARSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libaim_la_LDFLAGS = -module -avoid-version
-libicq_la_LDFLAGS = -module -avoid-version
+libaim_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+libicq_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 if STATIC_OSCAR
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES  = liboscar.la
 liboscar_la_SOURCES = $(OSCARSOURCES) libaim.c libicq.c
 liboscar_la_CFLAGS  = $(AM_CFLAGS)
+liboscar_la_LIBADD  = @PURPLE_LIBS@
+liboscar_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 else
 
+if IS_WIN32
+lib_LTLIBRARIES = liboscar.la
+pkg_LTLIBRARIES =
+else
+pkg_LTLIBRARIES = liboscar.la
+endif
+
 st =
-pkg_LTLIBRARIES     = liboscar.la libaim.la libicq.la
+pkg_LTLIBRARIES    += libaim.la libicq.la
+
 liboscar_la_SOURCES = $(OSCARSOURCES)
-liboscar_la_LIBADD  = $(GLIB_LIBS)
+liboscar_la_LIBADD  = @PURPLE_LIBS@
+liboscar_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 libaim_la_SOURCES   = libaim.c
 libaim_la_LIBADD    = liboscar.la

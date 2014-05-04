@@ -5,7 +5,7 @@ mono_sources = GetBuddyBack.cs \
 
 EXTRA_DIST = $(mono_sources)
 
-monodir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+monodir = @PURPLE_PLUGINDIR@
 mono_SCRIPTS = MPlugin.dll GetBuddyBack.dll
 mono_build_sources = $(addprefix $(srcdir)/, $(mono_sources))
 

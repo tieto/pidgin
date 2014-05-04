@@ -25,6 +25,7 @@
 
 #include "finch.h"
 #include "gntidle.h"
+#include "gnt.h"
 #include "gntwm.h"
 
 #include "idle.h"

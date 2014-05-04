@@ -104,6 +104,28 @@ void pidgin_webviewtoolbar_switch_active_conversation(PidginWebViewToolbar *tool
 void pidgin_webviewtoolbar_activate(PidginWebViewToolbar *toolbar,
                                  PidginWebViewAction action);
 
+/**
+ * pidgin_webviewtoolbar_get_wide_view:
+ * @toolbar: The PidginWebViewToolbar object
+ *
+ * Returns the wide toolbar variant widget for the given @toolbar.
+ *
+ * Returns: the wide toolbar variant.
+ */
+GtkWidget *
+pidgin_webviewtoolbar_get_wide_view(PidginWebViewToolbar *toolbar);
+
+/**
+ * pidgin_webviewtoolbar_get_lean_view:
+ * @toolbar: The PidginWebViewToolbar object
+ *
+ * Returns the lean toolbar variant widget for the given @toolbar.
+ *
+ * Returns: the lean toolbar variant.
+ */
+GtkWidget *
+pidgin_webviewtoolbar_get_lean_view(PidginWebViewToolbar *toolbar);
+
 G_END_DECLS
 
 #endif /* _PIDGINWEBVIEWTOOLBAR_H_ */

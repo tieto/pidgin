@@ -2371,12 +2371,12 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	if (G_OBJECT_TYPE(n1) != G_OBJECT_TYPE(n2))
 		return blist_node_compare_position(n1, n2);
 
-	if (PURPLE_IS_CONTACT(n1) || PURPLE_IS_BUDDY(n1)) {
+	if (PURPLE_IS_CONTACT(n1))
 		n1 = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(n1)));
+	if (PURPLE_IS_CONTACT(n2))
 		n2 = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(n2)));
-	}
 
-	if (PURPLE_IS_BUDDY(n1)) {
+	if (PURPLE_IS_BUDDY(n1) && PURPLE_IS_BUDDY(n2)) {
 		ret = purple_buddy_presence_compare(
 			PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(PURPLE_BUDDY(n1))),
 			PURPLE_BUDDY_PRESENCE(purple_buddy_get_presence(PURPLE_BUDDY(n2))));

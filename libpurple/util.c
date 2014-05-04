@@ -2910,7 +2910,7 @@ purple_home_dir(void)
 #ifndef _WIN32
 	return g_get_home_dir();
 #else
-	return wpurple_data_dir();
+	return wpurple_home_dir();
 #endif
 }
 
@@ -3095,12 +3095,17 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 	/* Use stat to be absolutely sure. */
-	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != (off_t)real_size))
-	{
+	if (g_stat(filename_temp, &st) == -1) {
 		purple_debug_error("util", "Error writing data to file %s: "
-				   "Incomplete file written; is your disk "
-				   "full?\n",
-				   filename_temp);
+			"couldn't g_stat file", filename_temp);
+		g_free(filename_temp);
+		return FALSE;
+	}
+	if (st.st_size != (off_t)real_size) {
+		purple_debug_error("util", "Error writing data to file %s: "
+			"Incomplete file written (%" G_GSIZE_FORMAT " != %"
+			G_GSIZE_FORMAT "); is your disk full?",
+			filename_temp, (gsize)st.st_size, real_size);
 		g_free(filename_temp);
 		return FALSE;
 	}

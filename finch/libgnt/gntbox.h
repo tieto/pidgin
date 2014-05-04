@@ -125,6 +125,17 @@ GntWidget * gnt_box_new(gboolean homo, gboolean vert);
 void gnt_box_add_widget(GntBox *box, GntWidget *widget);
 
 /**
+ * gnt_box_add_widget_in_front:
+ * @box:     The box
+ * @widget:  The widget to add
+ *
+ * Add a widget in the box at its front.
+ *
+ * Since: 2.8.0
+ */
+void gnt_box_add_widget_in_front(GntBox *b, GntWidget *widget);
+
+/**
  * gnt_box_set_title:
  * @box:    The box
  * @title:	 The title to set

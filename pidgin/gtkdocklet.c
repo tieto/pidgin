@@ -1009,7 +1009,8 @@ pidgin_docklet_init()
 		purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
 	}
 
-	tmp = g_build_path(G_DIR_SEPARATOR_S, DATADIR, "pixmaps", "pidgin", "tray", NULL);
+	tmp = g_build_path(G_DIR_SEPARATOR_S, PURPLE_DATADIR,
+		"pixmaps", "pidgin", "tray", NULL);
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), tmp);
 	g_free(tmp);
 

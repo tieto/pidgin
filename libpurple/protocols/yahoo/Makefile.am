@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 YAHOOSOURCES = \
 	libymsg.c \
@@ -27,8 +27,8 @@ YAHOOSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libyahoo_la_LDFLAGS = -module -avoid-version
-libyahoojp_la_LDFLAGS = -module -avoid-version
+libyahoo_la_LDFLAGS   = -module @PLUGIN_LDFLAGS@
+libyahoojp_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_YAHOO
 
@@ -36,14 +36,23 @@ st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES  = libymsg.la
 libymsg_la_SOURCES = $(YAHOOSOURCES) libyahoo.c libyahoojp.c
 libymsg_la_CFLAGS  = $(AM_CFLAGS)
+libymsg_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 else
 
+if IS_WIN32
+lib_LTLIBRARIES = libymsg.la
+pkg_LTLIBRARIES =
+else
+pkg_LTLIBRARIES = libymsg.la
+endif
+
 st =
-pkg_LTLIBRARIES     = libymsg.la libyahoo.la libyahoojp.la
+pkg_LTLIBRARIES += libyahoo.la libyahoojp.la
 
 libymsg_la_SOURCES = $(YAHOOSOURCES)
-libymsg_la_LIBADD  = $(GLIB_LIBS)
+libymsg_la_LIBADD  = @PURPLE_LIBS@
+libymsg_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 libyahoo_la_SOURCES = libyahoo.c
 libyahoo_la_LIBADD = libymsg.la

@@ -590,6 +590,24 @@ create_certificate_field(PurpleRequestField *field)
 	return w;
 }
 
+static void
+multifield_extra_cb(GntWidget *button, PurpleRequestFields *allfields)
+{
+	PurpleRequestFieldsCb cb;
+	gpointer cb_data;
+	gpointer handle;
+
+	handle = g_object_get_data(G_OBJECT(button), "ui-handle");
+	cb = g_object_get_data(G_OBJECT(button), "extra-cb");
+	cb_data = g_object_get_data(G_OBJECT(button), "extra-cb-data");
+
+	if (cb != NULL)
+		cb(cb_data, allfields);
+
+	action_performed(button, handle);
+	purple_request_close(PURPLE_REQUEST_FIELDS, handle);
+}
+
 static void *
 finch_request_fields(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *allfields,
@@ -601,6 +619,9 @@ finch_request_fields(const char *title, const char *primary,
 	GntWidget *window, *box;
 	GList *grlist;
 	GntWidget *username = NULL, *accountlist = NULL;
+	PurpleRequestHelpCb help_cb;
+	gpointer help_data;
+	GSList *extra_actions, *it;
 
 	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_FIELDS);
 
@@ -688,6 +709,29 @@ finch_request_fields(const char *title, const char *primary,
 
 	box = setup_button_box(window, userdata, request_fields_cb, allfields,
 			ok, ok_cb, cancel, cancel_cb, NULL);
+
+	extra_actions = purple_request_cpar_get_extra_actions(cpar);
+	for (it = extra_actions; it; it = it->next->next) {
+		const gchar *label = it->data;
+		PurpleRequestFieldsCb *cb = it->next->data;
+
+		GntWidget *button = gnt_button_new(label);
+		gnt_box_add_widget_in_front(GNT_BOX(box), button);
+		g_object_set_data(G_OBJECT(button), "ui-handle", window);
+		g_object_set_data(G_OBJECT(button), "extra-cb", cb);
+		g_object_set_data(G_OBJECT(button), "extra-cb-data", userdata);
+		g_signal_connect(G_OBJECT(button), "activate",
+			G_CALLBACK(multifield_extra_cb), allfields);
+	}
+
+	help_cb = purple_request_cpar_get_help_cb(cpar, &help_data);
+	if (help_cb) {
+		GntWidget *button = gnt_button_new(_("Help"));
+		gnt_box_add_widget_in_front(GNT_BOX(box), button);
+		g_signal_connect_swapped(G_OBJECT(button), "activate",
+			G_CALLBACK(help_cb), help_data);
+	}
+
 	gnt_box_add_widget(GNT_BOX(window), box);
 
 	setup_default_callback(window, cancel_cb, userdata);

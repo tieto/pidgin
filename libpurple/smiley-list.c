@@ -144,6 +144,18 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 
 	shortcut_escaped = g_markup_escape_text(shortcut, -1);
 	succ = purple_trie_add(priv->trie, shortcut_escaped, smiley);
+
+	/* A special-case for WebKit, which unescapes apos entity.
+	 * Please, don't trust this hack - it may be removed in future releases.
+	 */
+	if (succ && strstr(shortcut_escaped, "&apos;") != NULL) {
+		gchar *tmp = shortcut_escaped;
+		shortcut_escaped = purple_strreplace(shortcut_escaped,
+			"&apos;", "'");
+		g_free(tmp);
+		succ = purple_trie_add(priv->trie, shortcut_escaped, smiley);
+	}
+
 	g_free(shortcut_escaped);
 	if (!succ)
 		return FALSE;

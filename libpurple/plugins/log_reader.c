@@ -13,11 +13,6 @@
 #include "version.h"
 #include "xmlnode.h"
 
-/* This must be the last Purple header included. */
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 /* Where is the Windows partition mounted? */
 #ifndef PURPLE_LOG_READER_WINDOWS_MOUNT_POINT
 #define PURPLE_LOG_READER_WINDOWS_MOUNT_POINT "/mnt/windows"

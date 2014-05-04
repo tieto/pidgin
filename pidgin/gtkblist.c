@@ -134,7 +134,12 @@ typedef struct
 	((PidginBuddyListPrivate *)((list)->priv))
 
 #define PIDGIN_WINDOW_ICONIFIED(x) \
-	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & GDK_WINDOW_STATE_ICONIFIED)
+	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & \
+	GDK_WINDOW_STATE_ICONIFIED)
+
+#define PIDGIN_WINDOW_MAXIMIZED(x) \
+	(gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(x))) & \
+	GDK_WINDOW_STATE_MAXIMIZED)
 
 static GtkWidget *accountmenu = NULL;
 
@@ -264,10 +269,8 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 #ifdef _WIN32
 	/* Workaround for GTK+ bug # 169811 - "configure_event" is fired
 	 * when the window is being maximized */
-	if (gdk_window_get_state(w->window)
-			& GDK_WINDOW_STATE_MAXIMIZED) {
+	if (PIDGIN_WINDOW_MAXIMIZED(w))
 		return FALSE;
-	}
 #endif
 
 	/* don't save if nothing changed */
@@ -3416,15 +3419,15 @@ static char *get_mood_icon_path(const char *mood)
 	char *path;
 
 	if (!strcmp(mood, "busy")) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
-		                        "status", "16", "busy.png", NULL);
+		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			"status", "16", "busy.png", NULL);
 	} else if (!strcmp(mood, "hiptop")) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
-		                        "emblems", "16", "hiptop.png", NULL);
+		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			"emblems", "16", "hiptop.png", NULL);
 	} else {
 		char *filename = g_strdup_printf("%s.png", mood);
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
-		                        "emotes", "small", filename, NULL);
+		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			"emotes", "small", filename, NULL);
 		g_free(filename);
 	}
 	return path;
@@ -4121,8 +4124,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 			/* This emblem comes from the small emoticon set now,
 			 * to reduce duplication. */
-			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes",
-						"small", "mobile.png", NULL);
+			path = g_build_filename(PURPLE_DATADIR, "pixmaps",
+				"pidgin", "emotes", "small", "mobile.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
 		}
 
@@ -4138,7 +4141,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	g_return_val_if_fail(buddy != NULL, NULL);
 
 	if (!purple_account_privacy_check(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy))) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "blocked.png", NULL);
+		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			"emblems", "16", "blocked.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
@@ -4149,7 +4153,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 
 	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 		/* This emblem comes from the small emoticon set now, to reduce duplication. */
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", "small", "mobile.png", NULL);
+		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			"emotes", "small", "mobile.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
@@ -4158,18 +4163,21 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		/* Only in MSN.
 		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
 		if (purple_status_get_attr_string(tune, "game") != NULL) {
-			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "game.png", NULL);
+			path = g_build_filename(PURPLE_DATADIR, "pixmaps",
+				"pidgin", "emblems", "16", "game.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
 		}
 		/* Only in MSN.
 		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
 		if (purple_status_get_attr_string(tune, "office") != NULL) {
-			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "office.png", NULL);
+			path = g_build_filename(PURPLE_DATADIR, "pixmaps",
+				"pidgin", "emblems", "16", "office.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
 		}
 		/* Regular old "tune" is the only one in all protocols. */
 		/* This emblem comes from the small emoticon set now, to reduce duplication. */
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", "small", "music.png", NULL);
+		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			"emotes", "small", "music.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
@@ -4196,7 +4204,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		path = get_mood_icon_path(name);
 	} else {
 		filename = g_strdup_printf("%s.png", name);
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", filename, NULL);
+		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+			"emblems", "16", filename, NULL);
 		g_free(filename);
 	}
 
@@ -7173,7 +7182,8 @@ groups_tree(void)
 
 	if (purple_blist_get_buddy_list()->root == NULL)
 	{
-		list  = g_list_append(list, (gpointer)_("Buddies"));
+		list  = g_list_append(list,
+			(gpointer)PURPLE_BLIST_DEFAULT_GROUP_NAME);
 	}
 	else
 	{
@@ -8448,7 +8458,7 @@ pidgin_blist_update_plugin_actions(void)
 			continue;
 
 		name = g_strdup_printf("plugin%d", count);
-		action = gtk_action_new(name, plugin->info->name, NULL, NULL);
+		action = gtk_action_new(name, _(plugin->info->name), NULL, NULL);
 		gtk_action_group_add_action(plugins_action_group, action);
 		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
 

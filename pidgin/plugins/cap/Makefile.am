@@ -1,6 +1,6 @@
-capdir = $(libdir)/pidgin
+capdir = @PIDGIN_PLUGINDIR@
 
-cap_la_LDFLAGS = -module -avoid-version
+cap_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if PLUGINS
 
@@ -15,10 +15,9 @@ cap_la_SOURCES = \
 
 endif
 
-cap_la_LIBADD = $(GTK_LIBS) $(SQLITE3_LIBS)
+cap_la_LIBADD = @PIDGIN_LIBS@ $(SQLITE3_LIBS)
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \

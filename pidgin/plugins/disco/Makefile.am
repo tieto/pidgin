@@ -1,6 +1,6 @@
-plugindir = $(libdir)/pidgin
+plugindir = @PIDGIN_PLUGINDIR@
 
-xmppdisco_la_LDFLAGS = -module -avoid-version
+xmppdisco_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 EXTRA_DIST = \
         Makefile.mingw
@@ -15,12 +15,11 @@ xmppdisco_la_SOURCES = \
 	xmppdisco.c \
 	xmppdisco.h
 
-xmppdisco_la_LIBADD = $(GTK_LIBS)
+xmppdisco_la_LIBADD = @PIDGIN_LIBS@
 
 endif
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \

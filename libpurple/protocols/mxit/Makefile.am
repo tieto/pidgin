@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 MXITSOURCES = \
 	actions.c \
@@ -36,7 +36,7 @@ MXITSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libmxit_la_LDFLAGS = -module -avoid-version
+libmxit_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_MXIT
 
@@ -50,7 +50,7 @@ else
 st =
 pkg_LTLIBRARIES   = libmxit.la
 libmxit_la_SOURCES = $(MXITSOURCES)
-libmxit_la_LIBADD  = $(GLIB_LIBS)
+libmxit_la_LIBADD  = @PURPLE_LIBS@
 
 endif
 

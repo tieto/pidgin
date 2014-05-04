@@ -19,8 +19,6 @@ EXTRA_DIST = \
 		win32/untar.c \
 		win32/untar.h \
 		win32/winpidgin.c \
-		win32/wspell.c \
-		win32/wspell.h \
 		win32/nsis/generate_gtk_zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
@@ -36,9 +34,10 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin-3.pc
 
-SUBDIRS = pixmaps plugins themes
+SUBDIRS = . pixmaps plugins themes
 
-noinst_LTLIBRARIES = libpidgin.la
+# XXX: should this be lib_, or noinst_?
+lib_LTLIBRARIES = libpidgin.la
 bin_PROGRAMS = pidgin
 
 libpidgin_la_SOURCES = \
@@ -144,6 +143,32 @@ pidgin_SOURCES = \
 
 noinst_HEADERS= gtkinternal.h
 
+if IS_WIN32
+libpidgin_la_SOURCES += \
+	win32/gtkwin32dep.c \
+	win32/untar.c
+
+# Files that looks like obsolete (were used in Pidgin2):
+#	win32/gtkdocklet-win32.c
+#	win32/MinimizeToTray.c
+#	win32/MinimizeToTray.h
+
+pidgin_SOURCES += \
+	win32/winpidgin.c \
+	win32/pidgin_exe_rc.rc
+
+libpidgin_la_headers += \
+	win32/gtkwin32dep.h \
+	win32/resource.h \
+	win32/untar.h
+
+.rc.o: %.rc
+	$(AM_V_GEN)$(WINDRES) -I $(srcdir)/win32 -I $(srcdir) -i $< -o $@
+
+LIBPIDGIN_WIN32RES = win32/pidgin_dll_rc.o
+LIBPIDGIN_WIN32RES_LDFLAGS = -Wl,$(LIBPIDGIN_WIN32RES)
+endif
+
 libpidginincludedir=$(includedir)/pidgin
 libpidgininclude_HEADERS = \
 	$(libpidgin_la_headers)
@@ -161,10 +186,12 @@ CLEANFILES = gtkdebug.html.h
 
 gtkdebug.c: gtkdebug.html.h
 
-libpidgin_la_DEPENDENCIES = @LIBOBJS@
-libpidgin_la_LDFLAGS = -export-dynamic
+libpidgin_la_DEPENDENCIES = @LIBOBJS@ $(LIBPIDGIN_WIN32RES)
+libpidgin_la_LDFLAGS = -export-dynamic -no-undefined \
+	-version-info $(PURPLE_LT_VERSION_INFO) $(LIBPIDGIN_WIN32RES_LDFLAGS)
 libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
+	$(ENCHANT_LIBS) \
 	$(GLIB_LIBS) \
 	$(GCR_LIBS) \
 	$(DBUS_LIBS) \
@@ -174,7 +201,6 @@ libpidgin_la_LIBADD = \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
-	$(GTKSPELL_LIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
@@ -185,15 +211,17 @@ pidgin_DEPENDENCIES = $(builddir)/libpidgin.la
 pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = $(builddir)/libpidgin.la $(libpidgin_la_LIBADD)
 
+if IS_WIN32
+libpidgin_la_LIBADD += -lwinmm
+pidgin_LDFLAGS += -mwindows
+endif
+
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/pidgin/\" \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/ \
 	-I$(top_builddir) \
 	-I$(top_srcdir) \
+	$(ENCHANT_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GCR_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
@@ -203,7 +231,6 @@ AM_CPPFLAGS = \
 	$(GTK_CFLAGS) \
 	$(X11_CFLAGS) \
 	$(DBUS_CFLAGS) \
-	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS)
 endif  # ENABLE_GTK

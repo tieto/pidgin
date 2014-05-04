@@ -423,7 +423,7 @@ finch_sound_uninit(void)
 	purple_signals_disconnect_by_handle(finch_sound_get_handle());
 }
 
-#ifdef USE_GSTREAMER
+#if defined(USE_GSTREAMER) && !defined(_WIN32)
 static gboolean
 bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 {
@@ -456,7 +456,7 @@ static void
 finch_sound_play_file(const char *filename)
 {
 	const char *method;
-#ifdef USE_GSTREAMER
+#if defined(USE_GSTREAMER) && !defined(_WIN32)
 	float volume;
 	char *uri;
 	GstElement *sink = NULL;
@@ -608,8 +608,8 @@ finch_sound_play_event(PurpleSoundEventID event)
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
 		if (!filename || !strlen(filename)) {
 			g_free(filename);
-			/* XXX Consider creating a constant for "sounds/purple" to be shared with Pidgin */
-			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
+			filename = g_build_filename(PURPLE_DATADIR,
+				"sounds", "purple", sounds[event].def, NULL);
 		}
 
 		purple_sound_play_file(filename, NULL);

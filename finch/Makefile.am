@@ -7,11 +7,12 @@ EXTRA_DIST = \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = finch.pc
 
-SUBDIRS = libgnt plugins
+SUBDIRS = libgnt . plugins
 
 if ENABLE_GNT
 
-noinst_LTLIBRARIES = libfinch.la
+# XXX: should this be lib_, or noinst_?
+lib_LTLIBRARIES = libfinch.la
 bin_PROGRAMS = finch
 
 endif
@@ -70,7 +71,8 @@ libfinchinclude_HEADERS = \
 	$(libfinch_la_headers)
 
 libfinch_la_DEPENDENCIES = @LIBOBJS@
-libfinch_la_LDFLAGS = -export-dynamic
+libfinch_la_LDFLAGS = -export-dynamic -no-undefined \
+	-version-info $(PURPLE_LT_VERSION_INFO)
 libfinch_la_LIBADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
@@ -86,12 +88,25 @@ finch_DEPENDENCIES = $(builddir)/libfinch.la
 finch_LDFLAGS = -export-dynamic
 finch_LDADD = $(builddir)/libfinch.la $(libfinch_la_LIBADD)
 
+if IS_WIN32
+libfinch_la_LIBADD += \
+	-lwinmm
+
+.rc.o: %.rc
+	$(AM_V_GEN)$(WINDRES) -i $< -o $@
+
+FINCH_WIN32RES = finch_winres.o
+finch_DEPENDENCIES += $(FINCH_WIN32RES)
+finch_LDFLAGS += -Wl,$(FINCH_WIN32RES)
+
+LIBFINCH_WIN32RES = libfinch_winres.o
+libfinch_la_DEPENDENCIES += $(LIBFINCH_WIN32RES)
+libfinch_la_LDFLAGS += -Wl,$(LIBFINCH_WIN32RES)
+
+endif
+
 AM_CPPFLAGS = \
 	-DSTANDALONE \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/finch/\" \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/libpurple/ \
 	-I$(top_srcdir) \
 	-I$(srcdir)/libgnt/ \

@@ -32,7 +32,7 @@
 /* Define this to get (very) verbose logging of all channels */
 /* #define G_IO_WIN32_DEBUG */
 
-/* #include "config.h" */
+#include <config.h>
 
 #include <glib.h>
 
@@ -222,7 +222,7 @@ init_reset_sockets (GIOWin32Channel *channel)
   int len;
 
   channel->reset_send = (gint) socket (AF_INET, SOCK_DGRAM, 0);
-  if (channel->reset_send == INVALID_SOCKET)
+  if (channel->reset_send == (gint)INVALID_SOCKET)
     {
       g_warning (G_STRLOC ": Error creating reset_send socket: %s\n",
 		 g_win32_error_message (WSAGetLastError ()));
@@ -243,7 +243,7 @@ init_reset_sockets (GIOWin32Channel *channel)
   local2.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
 
   channel->reset_recv = (gint) socket (AF_INET, SOCK_DGRAM, 0);
-  if (channel->reset_recv == INVALID_SOCKET)
+  if (channel->reset_recv == (gint)INVALID_SOCKET)
     {
       g_warning (G_STRLOC ": Error creating reset_recv socket: %s\n",
 		 g_win32_error_message (WSAGetLastError ()));
@@ -603,9 +603,9 @@ g_io_win32_free (GIOChannel *channel)
 	     win32_channel->thread_id,
 	     win32_channel->fd);
 
-  if (win32_channel->reset_send && win32_channel->reset_send != INVALID_SOCKET)
+  if (win32_channel->reset_send && win32_channel->reset_send != (gint)INVALID_SOCKET)
     closesocket (win32_channel->reset_send);
-  if (win32_channel->reset_recv && win32_channel->reset_recv != INVALID_SOCKET)
+  if (win32_channel->reset_recv && win32_channel->reset_recv != (gint)INVALID_SOCKET)
     closesocket (win32_channel->reset_recv);
   if (win32_channel->data_avail_event)
     CloseHandle (win32_channel->data_avail_event);

@@ -363,9 +363,6 @@
 /* It's defined in global.mak. */
 /* #undef USE_VV */
 
-/* Define if we're using GtkSpell */
-#define USE_GTKSPELL 1
-
 /* Define if we're using XScreenSaver. */
 #define USE_SCREENSAVER 1
 
@@ -405,6 +402,13 @@
  * Following are added for Win32 version of Pidgin
  */
 #define HAVE_VSNPRINTF 1
+
+#define FINCH_LIBDIR wpurple_lib_dir(NULL)
+#define PIDGIN_LIBDIR wpurple_lib_dir(NULL)
+#define PURPLE_DATADIR wpurple_bin_dir()
+#define PURPLE_LIBDIR wpurple_lib_dir(NULL)
+#define PURPLE_LOCALEDIR wpurple_locale_dir()
+#define PURPLE_SYSCONFDIR wpurple_sysconf_dir()
 
 #define HAVE_FILENO 1
 

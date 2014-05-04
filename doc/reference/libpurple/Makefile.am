@@ -56,7 +56,10 @@ CFILE_GLOB=$(top_srcdir)/$(DOC_MODULE)/*.c
 
 # Extra header to include when scanning, which are not under DOC_SOURCE_DIR
 # e.g. EXTRA_HFILES=$(top_srcdir}/contrib/extra.h
-EXTRA_HFILES=
+# TODO: those files are not properly scanned when building out-of-tree
+EXTRA_HFILES = \
+	$(top_builddir)/$(DOC_MODULE)/version.h \
+	$(top_builddir)/$(DOC_MODULE)/purple.h
 
 # Header files or dirs to ignore when scanning. Use base file/dir names
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h private_code
@@ -74,7 +77,7 @@ IGNORE_HFILES=\
 	internal.h \
 	marshallers.h \
 	purple-client.h \
-	purple-client-bindings.h
+	purple-client-bindings.h \
 	valgrind.h
 
 # Images to copy into HTML directory.
@@ -169,7 +172,7 @@ dist-hook: html-build.stamp
 if ENABLE_GTK_DOC
 TESTS_ENVIRONMENT = \
   DOC_MODULE=$(DOC_MODULE) DOC_MAIN_SGML_FILE=$(DOC_MAIN_SGML_FILE) \
-  SRCDIR=$(abs_srcdir) BUILDDIR=$(abs_builddir)
+  SRCDIR=$(abs_srcdir)
 #TODO: fix and enable
 #TESTS = $(GTKDOC_CHECK)
 endif

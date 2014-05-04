@@ -1,0 +1,30 @@
+#include <winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION @GNT_MAJOR_VERSION@,@GNT_MINOR_VERSION@,@GNT_MICRO_VERSION@,0
+  PRODUCTVERSION @GNT_MAJOR_VERSION@,@GNT_MINOR_VERSION@,@GNT_MICRO_VERSION@,0
+  FILEFLAGSMASK 0
+  FILEFLAGS 0
+  FILEOS VOS__WINDOWS32
+  FILETYPE VFT_APP
+  FILESUBTYPE VFT2_UNKNOWN
+  BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+      BLOCK "040904B0"
+      BEGIN
+        VALUE "CompanyName", "The Pidgin developer community"
+        VALUE "FileDescription", "Glib ncurses toolkit"
+        VALUE "FileVersion", "@GNT_VERSION@"
+        VALUE "InternalName", "libgnt"
+        VALUE "LegalCopyright", "Copyright (C) 1998-2014 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
+        VALUE "OriginalFilename", "libgnt-@GNT_API_VERSION@.dll"
+        VALUE "ProductName", "libgnt"
+        VALUE "ProductVersion", "@GNT_VERSION@"
+      END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+      VALUE "Translation", 0x409, 1200
+    END
+  END

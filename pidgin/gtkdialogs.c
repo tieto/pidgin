@@ -463,7 +463,8 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	gtk_window_set_default_size(GTK_WINDOW(win), 475, 450);
 
 	/* Generate a logo with a version number */
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
+	filename = g_build_filename(PURPLE_DATADIR,
+		"pixmaps", "pidgin", "logo.png", NULL);
 	pixbuf = pidgin_pixbuf_new_from_file(filename);
 	g_free(filename);
 
@@ -648,12 +649,6 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>External</dd>");
 #else
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Disabled</dd>");
-#endif
-
-#ifdef USE_GTKSPELL
-	g_string_append(str, "<dt>GtkSpell:</dt><dd>Enabled</dd>");
-#else
-	g_string_append(str, "<dt>GtkSpell:</dt><dd>Disabled</dd>");
 #endif
 
 #ifdef HAVE_GNUTLS
@@ -858,16 +853,16 @@ void pidgin_dialogs_plugins_info(void)
 		punloadable = purple_plugin_is_unloadable(plugin);
 		ploaded = purple_plugin_is_loaded(plugin);
 
+		g_string_append_printf(str, "<dt>%s</dt><dd>", pname);
+		if (pauthor)
+			g_string_append_printf(str, "<b>Author:</b> %s<br/>", pauthor);
 		g_string_append_printf(str,
-				"<dt>%s</dt><dd>"
-				"<b>Author:</b> %s<br/>"
 				"<b>Version:</b> %s<br/>"
 				"<b>Website:</b> %s<br/>"
 				"<b>ID String:</b> %s<br/>"
 				"<b>Loadable:</b> %s<br/>"
 				"<b>Loaded:</b> %s"
 				"</dd><br/>",
-				pname, pauthor ? pauthor : "(null)",
 				pver, pwebsite, pid,
 				punloadable ? "<span style=\"color: #FF0000;\"><b>No</b></span>" : "Yes",
 				ploaded ? "Yes" : "No");

@@ -139,9 +139,12 @@ enum {
 
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
-/* From http://www.w3.org/TR/AERT#color-contrast */
-#define MIN_BRIGHTNESS_CONTRAST 75
-#define MIN_COLOR_CONTRAST 200
+/* From http://www.w3.org/TR/AERT#color-contrast
+ * Range for color difference is 500
+ * Range for brightness is 125
+ */
+#define MIN_BRIGHTNESS_CONTRAST 85
+#define MIN_COLOR_CONTRAST 250
 
 #define NICK_COLOR_GENERATE_COUNT 220
 static GArray *generated_nick_colors = NULL;
@@ -216,35 +219,13 @@ static void pidgin_conv_set_position_size(PidginConvWindow *win, int x, int y,
 		int width, int height);
 static gboolean pidgin_conv_xy_to_right_infopane(PidginConvWindow *win, int x, int y);
 
-static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name)
+static const GdkColor *
+get_nick_color(PidginConversation *gtkconv, const gchar *name)
 {
-#if GTK_CHECK_VERSION(3,0,0)
-	GtkStyleContext *style = gtk_widget_get_style_context(gtkconv->webview);
-	GdkRGBA rgba;
-#else
-	GtkStyle *style = gtk_widget_get_style(gtkconv->webview);
-#endif
 	static GdkColor col;
-	float scale;
 
-	col = g_array_index(gtkconv->nick_colors, GdkColor, g_str_hash(name) % gtkconv->nick_colors->len);
-
-	g_return_val_if_fail(style != NULL, &col);
-
-#if GTK_CHECK_VERSION(3,0,0)
-	gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, &rgba);
-	scale = (1 - LUMINANCE(rgba)) * ((float)0xffff / MAX(MAX(col.red, col.blue), col.green));
-#else
-	scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
-		       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
-#endif
-
-	/* The colors are chosen to look fine on white; we should never have to darken */
-	if (scale > 1) {
-		col.red   *= scale;
-		col.green *= scale;
-		col.blue  *= scale;
-	}
+	col = g_array_index(gtkconv->nick_colors, GdkColor,
+		g_str_hash(name) % gtkconv->nick_colors->len);
 
 	return &col;
 }
@@ -4169,8 +4150,8 @@ _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 		return image;
 
 	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
-	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "e2ee", "16",
-		filename, NULL);
+	path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
+		"e2ee", "16", filename, NULL);
 	image = purple_image_new_from_file(path, FALSE);
 	g_free(path);
 
@@ -4186,8 +4167,7 @@ generate_e2ee_controls(PidginConvWindow *win)
 	PurpleE2eeState *state;
 	PurpleE2eeProvider *provider;
 	GtkWidget *menu;
-	PurpleE2eeConvMenuCallback menu_cb;
-	GList *menu_actions = NULL, *it;
+	GList *menu_actions, *it;
 	GtkWidget *e2ee_image;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
@@ -4225,11 +4205,8 @@ generate_e2ee_controls(PidginConvWindow *win)
 	gtk_widget_set_tooltip_text(win->menu->e2ee,
 		purple_e2ee_state_get_name(state));
 
-	menu_cb = purple_e2ee_provider_get_conv_menu_cb(provider);
-	if (menu_cb)
-		menu_actions = menu_cb(conv);
-
-	for (it = g_list_first(menu_actions); it; it = g_list_next(it)) {
+	menu_actions = purple_e2ee_provider_get_conv_menu_actions(provider, conv);
+	for (it = menu_actions; it; it = g_list_next(it)) {
 		PurpleMenuAction *action = it->data;
 
 		gtk_widget_show_all(
@@ -8866,6 +8843,10 @@ pidgin_conversations_init(void)
 						 G_TYPE_BOOLEAN, 3, PURPLE_TYPE_CONVERSATION,
 						 G_TYPE_STRING, G_TYPE_UINT);
 
+	purple_signal_register(handle, "conversation-window-created",
+		purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		G_TYPE_POINTER); /* (PidginConvWindow *) */
+
 
 	/**********************************************************************
 	 * Register commands
@@ -8959,10 +8940,10 @@ pidgin_conversations_init(void)
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 
 	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_CONV_THEME_LOADER, "type", "conversation", NULL));
-#ifdef _WIN32
-	theme_dir = g_build_filename(DATADIR, "theme", NULL);
+#if defined(_WIN32) && !defined(USE_WIN32_FHS)
+	theme_dir = g_build_filename(PURPLE_DATADIR, "theme", NULL);
 #else
-	theme_dir = g_build_filename(DATADIR, "pidgin", "theme", NULL);
+	theme_dir = g_build_filename(PURPLE_DATADIR, "pidgin", "theme", NULL);
 #endif
 	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
 	g_free(theme_dir);
@@ -10334,6 +10315,9 @@ pidgin_conv_window_new()
 			&& !gtk_get_current_event_state(&state))
 		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
+
+	purple_signal_emit(pidgin_conversations_get_handle(),
+		"conversation-window-created", win);
 
 	return win;
 }

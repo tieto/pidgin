@@ -25,17 +25,9 @@
 #include "pidgin.h"
 
 #ifdef _WIN32
-# ifdef small
 #  undef small
-# endif
+#  include <shellapi.h>
 #endif /*_WIN32*/
-
-#ifdef USE_GTKSPELL
-# include <gtkspell/gtkspell.h>
-# ifdef _WIN32
-#  include "wspell.h"
-# endif
-#endif
 
 #include <gdk/gdkkeysyms.h>
 
@@ -634,10 +626,11 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 	 */
 	tmp = g_strconcat(protoname, ".png", NULL);
 
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-				    size == PIDGIN_PRPL_ICON_SMALL ? "16" :
-				    size == PIDGIN_PRPL_ICON_MEDIUM ? "22" : "48",
-				    tmp, NULL);
+	filename = g_build_filename(PURPLE_DATADIR,
+		"pixmaps", "pidgin", "protocols",
+		(size == PIDGIN_PRPL_ICON_SMALL) ? "16" :
+			((size == PIDGIN_PRPL_ICON_MEDIUM) ? "22" : "48"),
+		tmp, NULL);
 	g_free(tmp);
 
 	pixbuf = pidgin_pixbuf_new_from_file(filename);
@@ -896,25 +889,6 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	g_object_set_data(G_OBJECT(optmenu), "filter_func", filter_func);
 
 	return optmenu;
-}
-
-void
-pidgin_setup_gtkspell(GtkTextView *textview)
-{
-#ifdef USE_GTKSPELL
-	GError *error = NULL;
-	char *locale = NULL;
-
-	g_return_if_fail(textview != NULL);
-	g_return_if_fail(GTK_IS_TEXT_VIEW(textview));
-
-	if (gtkspell_new_attach(textview, locale, &error) == NULL && error)
-	{
-		purple_debug_warning("gtkspell", "Failed to setup GtkSpell: %s\n",
-						   error->message);
-		g_error_free(error);
-	}
-#endif /* USE_GTKSPELL */
 }
 
 void

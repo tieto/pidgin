@@ -918,15 +918,21 @@ x509_ca_init(void)
 {
 	/* Attempt to point at the appropriate system path */
 	if (NULL == x509_ca_paths) {
-#ifdef _WIN32
-		x509_ca_paths = g_list_append(NULL, g_build_filename(DATADIR,
-						   "ca-certs", NULL));
-#else
-# ifdef SSL_CERTIFICATES_DIR
-		x509_ca_paths = g_list_append(NULL, g_strdup(SSL_CERTIFICATES_DIR));
-# endif
+#ifdef SSL_CERTIFICATES_DIR
+#  ifdef USE_WIN32_FHS
 		x509_ca_paths = g_list_append(x509_ca_paths,
-			g_build_filename(DATADIR, "purple", "ca-certs", NULL));
+			g_strdup(wpurple_cert_dir()));
+#  else
+		x509_ca_paths = g_list_append(x509_ca_paths,
+			g_strdup(SSL_CERTIFICATES_DIR));
+#  endif /* USE_WIN32_FHS */
+#endif /* SSL_CERTIFICATES_DIR */
+#if defined(_WIN32) && !defined(USE_WIN32_FHS)
+		x509_ca_paths = g_list_append(x509_ca_paths, g_build_filename(
+			PURPLE_DATADIR, "ca-certs", NULL));
+#else
+		x509_ca_paths = g_list_append(x509_ca_paths, g_build_filename(
+			PURPLE_DATADIR, "purple", "ca-certs", NULL));
 #endif
 	}
 

@@ -12,10 +12,6 @@ nullclient_LDADD = \
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
-	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir) \

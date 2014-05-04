@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+
+#include <config.h>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <io.h>
@@ -28,7 +31,6 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <glib.h>
-#include "config.h"
 #include "debug.h"
 #include "libc_internal.h"
 #include <glib/gstdio.h>
@@ -82,7 +84,7 @@ int wpurple_socket (int namespace, int style, int protocol) {
 
 	ret = socket( namespace, style, protocol );
 
-	if( ret == INVALID_SOCKET ) {
+	if (ret == (int)INVALID_SOCKET) {
 		errno = WSAGetLastError();
 		return -1;
 	}

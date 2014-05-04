@@ -3,7 +3,7 @@
 GADU_EXTRA =
 #GADU_EXTRA += -Werror
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 EXTRA_DIST = \
 	account.c \
@@ -126,7 +126,7 @@ GGSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libgg_la_LDFLAGS = -module -avoid-version
+libgg_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_GG
 
@@ -134,16 +134,16 @@ st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
 noinst_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
 libgg_la_CFLAGS  = $(AM_CFLAGS)
-libgg_la_LIBADD  = $(GADU_LIBS)
 
 else
 
 st = $(GADU_CFLAGS)
 pkg_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
-libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
 
 endif
+
+libgg_la_LIBADD  = @PURPLE_LIBS@ $(GADU_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \

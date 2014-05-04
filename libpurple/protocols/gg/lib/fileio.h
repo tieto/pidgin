@@ -34,11 +34,17 @@
 #ifdef _WIN32
 #  include <io.h>
 #  define gg_file_close _close
+#  undef lseek
 #  define lseek _lseek
+#  undef open
 #  define open _open
+#  undef read
 #  define read _read
+#  undef stat
 #  define stat _stat
+#  undef fstat
 #  define fstat _fstat
+#  undef write
 #  define write _write
 #  define S_IRWXO 0
 #  define S_IRWXG 0

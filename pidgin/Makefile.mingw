@@ -42,7 +42,6 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include/cairo \
 			-I$(GTK_TOP)/include/gdk-pixbuf-2.0 \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GTKSPELL_TOP)/include/gtkspell-2.0 \
 			-I$(LIBSOUP_TOP)/include/libsoup-2.4 \
 			-I$(LIBGADU_TOP)/include \
 			-I$(WEBKITGTK_TOP)/include/webkitgtk-1.0
@@ -105,8 +104,7 @@ PIDGIN_C_SRC =	\
 			pidginstock.c \
 			pidgintooltip.c \
 			win32/gtkwin32dep.c \
-			win32/untar.c \
-			win32/wspell.c
+			win32/untar.c
 
 PIDGIN_RC_SRC = win32/pidgin_dll_rc.rc
 PIDGIN_OBJECTS = $(PIDGIN_C_SRC:%.c=%.o) $(PIDGIN_RC_SRC:%.rc=%.o)
@@ -152,8 +150,11 @@ gtkdialogs.c: $(PIDGIN_REVISION_H)
 
 win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 	@echo -e "  GEN\t$@"
-	@sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
-	    -e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
+	@sed -e 's/@PURPLE_VERSION@/$(PIDGIN_VERSION)/g' \
+		-e 's/@PURPLE_MAJOR_VERSION@/$(PURPLE_MAJOR_VERSION)/g' \
+		-e 's/@PURPLE_MINOR_VERSION@/$(PURPLE_MINOR_VERSION)/g' \
+		-e 's/@PURPLE_MICRO_VERSION@/$(PURPLE_MICRO_VERSION)/g' \
+		-e 's/@PURPLE_API_VERSION@/$(PURPLE_API_VERSION)/g' \
 	    $@.in > $@
 
 install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
@@ -168,7 +169,11 @@ install: install_shallow all
 
 win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 	@echo -e "  GEN\t$@"
-	@sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
+	@sed -e 's/@PURPLE_VERSION@/$(PIDGIN_VERSION)/g' \
+		-e 's/@PURPLE_MAJOR_VERSION@/$(PURPLE_MAJOR_VERSION)/g' \
+		-e 's/@PURPLE_MINOR_VERSION@/$(PURPLE_MINOR_VERSION)/g' \
+		-e 's/@PURPLE_MICRO_VERSION@/$(PURPLE_MICRO_VERSION)/g' \
+		-e 's/@PURPLE_API_VERSION@/$(PURPLE_API_VERSION)/g' \
 	    $@.in > $@
 
 $(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)

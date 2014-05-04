@@ -1,10 +1,11 @@
 EXTRA_DIST = \
+	mdns_avahi.c \
 	mdns_win32.c \
 	dns_sd_proxy.c \
 	dns_sd_proxy.h \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 BONJOURSOURCES = \
 	bonjour.c \
@@ -13,7 +14,6 @@ BONJOURSOURCES = \
 	buddy.h \
 	jabber.c \
 	jabber.h \
-	mdns_avahi.c \
 	mdns_common.c \
 	mdns_common.h \
 	mdns_interface.h \
@@ -23,9 +23,18 @@ BONJOURSOURCES = \
 	bonjour_ft.c \
 	bonjour_ft.h 
 
+if IS_WIN32
+BONJOURSOURCES += \
+	dns_sd_proxy.c \
+	mdns_win32.c
+else
+BONJOURSOURCES += \
+	mdns_avahi.c
+endif
+
 AM_CFLAGS = $(st)
 
-libbonjour_la_LDFLAGS = -module -avoid-version
+libbonjour_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_BONJOUR
 
@@ -33,15 +42,19 @@ st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES    = libbonjour.la
 libbonjour_la_SOURCES = $(BONJOURSOURCES)
 libbonjour_la_CFLAGS  = $(AM_CFLAGS)
-libbonjour_la_LIBADD  = $(AVAHI_LIBS)
 
 else
 
 st =
 pkg_LTLIBRARIES       = libbonjour.la
 libbonjour_la_SOURCES = $(BONJOURSOURCES)
-libbonjour_la_LIBADD  = $(GLIB_LIBS) $(LIBXML_LIBS) $(AVAHI_LIBS)
 
+endif
+
+libbonjour_la_LIBADD  = @PURPLE_LIBS@ $(LIBXML_LIBS) $(AVAHI_LIBS)
+
+if IS_WIN32
+libbonjour_la_LIBADD += -lnetapi32
 endif
 
 AM_CPPFLAGS = \

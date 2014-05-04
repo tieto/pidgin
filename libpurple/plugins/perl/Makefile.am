@@ -1,11 +1,11 @@
-plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+plugindir = @PURPLE_PLUGINDIR@
 
 perl_dirs = common
 
 plugin_LTLIBRARIES = perl.la
 
-perl_la_LDFLAGS = -module -avoid-version
-perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS)
+perl_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+perl_la_LIBADD = @PURPLE_LIBS@ $(PERL_LIBS)
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -163,7 +163,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
-	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \

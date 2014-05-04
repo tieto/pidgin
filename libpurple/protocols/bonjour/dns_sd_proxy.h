@@ -21,17 +21,107 @@
 #ifndef _DNS_SD_PROXY
 #define _DNS_SD_PROXY
 
+#include <config.h>
 
 #ifndef _MSC_VER
 #include <stdint.h>
 #endif
 
-/* fixup to make pidgin compile against win32 bonjour */
-#if defined(_WIN32) && !defined(_MSC_VER)
-#define _MSL_STDINT_H
-#endif
+#ifdef IS_WIN32_CROSS_COMPILED
 
-#include <dns_sd.h>
+/* I'm not sure, if we really need to include this for the following definitions
+ * modeled after Apple's dns_sd.h file.
+ *
+ * Copyright (c) 2003-2004, Apple Computer, Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of its
+ *     contributors may be used to endorse or promote products derived from this
+ *     software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#  if defined(_WIN32) && !defined(EFI32) && !defined(EFI64)
+#    define DNSSD_API __stdcall
+#  else
+#    define DNSSD_API
+#  endif
+
+#  define kDNSServiceInterfaceIndexAny 0
+#  define kDNSServiceMaxDomainName 1009
+
+typedef gint32 DNSServiceErrorType;
+typedef guint32 DNSServiceFlags;
+typedef struct _DNSServiceRef_t *DNSServiceRef;
+typedef struct _DNSRecordRef_t *DNSRecordRef;
+typedef guint32 DNSServiceProtocol;
+
+typedef union _TXTRecordRef_t {
+	gchar PrivateData[16];
+	gchar *ForceNaturalAlignment;
+} TXTRecordRef;
+
+typedef void (DNSSD_API *DNSServiceBrowseReply)();
+typedef void (DNSSD_API *DNSServiceGetAddrInfoReply)();
+typedef void (DNSSD_API *DNSServiceQueryRecordReply)(
+	DNSServiceRef sdRef, DNSServiceFlags flags, guint32 interfaceIndex,
+	DNSServiceErrorType errorCode, const gchar *fullname,
+	guint16 rrtype, guint16 rrclass, guint16 rdlen, const void *rdata,
+	guint32 ttl, void *context);
+typedef void (DNSSD_API *DNSServiceRegisterReply)();
+typedef void (DNSSD_API *DNSServiceResolveReply)(
+	DNSServiceRef sdRef, DNSServiceFlags flags, guint32 interfaceIndex,
+	DNSServiceErrorType errorCode, const gchar *fullname,
+	const gchar *hosttarget, guint16 port, guint16 txtLen,
+	const guchar *txtRecord, void *context);
+
+enum {
+	kDNSServiceErr_NoError = 0,
+	kDNSServiceErr_Unknown = -65537,
+};
+
+enum {
+	kDNSServiceFlagsAdd = 0x2,
+	kDNSServiceFlagsLongLivedQuery = 0x100,
+};
+
+enum {
+	kDNSServiceType_NULL = 10,
+	kDNSServiceType_TXT = 16,
+};
+
+enum {
+	kDNSServiceClass_IN = 1,
+};
+
+enum {
+	kDNSServiceProtocol_IPv4 = 0x01,
+};
+
+#else
+/* fixup to make pidgin compile against win32 bonjour */
+#  if defined(_WIN32) && !defined(_MSC_VER)
+#    define _MSL_STDINT_H
+#  endif
+#  include <dns_sd.h>
+#endif /* IS_WIN32_CROSS_COMPILED */
 
 gboolean dns_sd_available(void);
 

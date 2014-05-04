@@ -72,7 +72,7 @@ handle_fprintf_stderr(gboolean stop)
 		}
 		return;
 	}
-	if (pipe(pipes)) {
+	if (purple_input_pipe(pipes)) {
 		readhandle = -1;
 		return;
 	};

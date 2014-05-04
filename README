@@ -29,8 +29,7 @@ well as the development files!). The configure script will fail if you
 don't.  If you don't have GTK+ 2.0 installed, you should install it
 using your distribution's package management tools.
 
-For sound support, you also need gstreamer 0.10 or higher. For
-spellchecking support, you need libgtkspell (http://gtkspell.sf.net/).
+For sound support, you also need gstreamer 0.10 or higher.
 Your distro of choice probably already includes these, just be sure to
 install the development packages.
 

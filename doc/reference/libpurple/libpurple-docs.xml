@@ -88,7 +88,6 @@
       <xi:include href="xml/sound-theme.xml" />
       <xi:include href="xml/sound-theme-loader.xml" />
       <xi:include href="xml/upnp.xml" />
-      <xi:include href="xml/whiteboard.xml" />
       <xi:include href="xml/xmlnode.xml" />
       <xi:include href="xml/version.xml" />
       <xi:include href="xml/util.xml" />
@@ -123,6 +122,14 @@
     </reference>
 
     <reference label="c">
+      <title>Graphics</title>
+
+        <xi:include href="xml/image.xml" />
+        <xi:include href="xml/image-store.xml" />
+        <xi:include href="xml/whiteboard.xml" />
+    </reference>
+
+    <reference label="d">
       <title>Media APIs</title>
 
         <xi:include href="xml/media.xml" />
@@ -134,7 +141,7 @@
         <xi:include href="xml/enum-types.xml" />
     </reference>
 
-    <reference label="d">
+    <reference label="e">
       <title>D-Bus Server APIs</title>
 
         <xi:include href="xml/dbus-bindings.xml" />

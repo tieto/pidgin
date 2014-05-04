@@ -30,6 +30,20 @@
  */
 
 #include <glib.h>
+
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+#ifdef _WIN32
+#  undef KEY_EVENT
+#endif
+#ifdef NO_WIDECHAR
+#  define NCURSES_WIDECHAR 0
+#else
+#  define NCURSES_WIDECHAR 1
+#endif
+#include <ncurses.h>
+
 #include "gntwidget.h"
 #include "gntclipboard.h"
 #include "gntcolors.h"
@@ -41,6 +55,19 @@
  * Initialize GNT.
  */
 void gnt_init(void);
+
+/**
+ * gnt_set_config_dir:
+ * @config_dir: the path to a configuration directory, may be %NULL.
+ *
+ * Change directory to store gnt configuration files (default is ~).
+ *
+ * You have to call this before #gnt_init. You might want to call this
+ * with %NULL, to free the resources, but not before a call to #gnt_quit.
+ *
+ * Since: 2.8.0
+ */
+void gnt_set_config_dir(const gchar *config_dir);
 
 /**
  * gnt_main:

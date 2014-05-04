@@ -34,6 +34,10 @@ int main(int argc, char *argv[])
 {
 	const gchar *test_prgname;
 
+#ifdef _WIN32
+	SetConsoleOutputCP(65001); /* UTF-8 */
+#endif
+
 #if !GLIB_CHECK_VERSION(2, 32, 0)
 	/* GLib threading system is automaticaly initialized since 2.32.
 	 * For earlier versions, it have to be initialized before calling any

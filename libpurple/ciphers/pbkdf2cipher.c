@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  *
- * Written by Tomek Wasilczyk <tomkiewicz@cpw.pidgin.im>
+ * Written by Tomek Wasilczyk <twasilczyk@pidgin.im>
  */
 #include "internal.h"
 #include "glibcompat.h"
@@ -298,10 +298,10 @@ purple_pbkdf2_cipher_set_property(GObject *obj, guint param_id,
 			purple_pbkdf2_cipher_set_hash(cipher, g_value_get_object(value));
 			break;
 		case PROP_ITER_COUNT:
-			priv->iter_count = GPOINTER_TO_UINT(value);
+			priv->iter_count = g_value_get_uint(value);
 			break;
 		case PROP_OUT_LEN:
-			priv->out_len = GPOINTER_TO_UINT(value);
+			priv->out_len = g_value_get_uint(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);

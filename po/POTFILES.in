@@ -263,6 +263,7 @@ pidgin/plugins/notify.c
 pidgin/plugins/pidgininc.c
 pidgin/plugins/raw.c
 pidgin/plugins/relnot.c
+pidgin/plugins/screencap.c
 pidgin/plugins/sendbutton.c
 pidgin/plugins/spellchk.c
 pidgin/plugins/themeedit-icon.c

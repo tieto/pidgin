@@ -3,7 +3,7 @@ EXTRA_DIST = \
 	directconn.h \
 	Makefile.mingw
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 MSNSOURCES = \
 	cmdproc.c \
@@ -77,7 +77,7 @@ MSNSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libmsn_la_LDFLAGS = -module -avoid-version
+libmsn_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_MSN
 
@@ -91,7 +91,7 @@ else
 st =
 pkg_LTLIBRARIES   = libmsn.la
 libmsn_la_SOURCES = $(MSNSOURCES)
-libmsn_la_LIBADD  = $(GLIB_LIBS)
+libmsn_la_LIBADD  = @PURPLE_LIBS@
 
 endif
 

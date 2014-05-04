@@ -44,7 +44,10 @@ create_sv_ptr(void *object)
 {
 	SV *sv;
 
-	sv = newSViv((IV)object);
+	PURPLE_STATIC_ASSERT(sizeof(IV) >= sizeof(void *),
+		sv_can_not_hold_a_pointer);
+
+	sv = newSViv((IV)(gintptr)object);
 
 	sv_magic(sv, NULL, '~', NULL, 0);
 
@@ -383,15 +386,15 @@ void *
 purple_perl_data_from_sv(GType type, SV *sv)
 {
 	switch (type) {
-		case G_TYPE_BOOLEAN: return (void *)SvIV(sv);
-		case G_TYPE_INT:     return (void *)SvIV(sv);
-		case G_TYPE_UINT:    return (void *)SvUV(sv);
-		case G_TYPE_LONG:    return (void *)SvIV(sv);
-		case G_TYPE_ULONG:   return (void *)SvUV(sv);
-		case G_TYPE_INT64:   return (void *)SvIV(sv);
-		case G_TYPE_UINT64:  return (void *)SvUV(sv);
+		case G_TYPE_BOOLEAN: return (void *)(gintptr)SvIV(sv);
+		case G_TYPE_INT:     return (void *)(gintptr)SvIV(sv);
+		case G_TYPE_UINT:    return (void *)(gintptr)SvUV(sv);
+		case G_TYPE_LONG:    return (void *)(gintptr)SvIV(sv);
+		case G_TYPE_ULONG:   return (void *)(gintptr)SvUV(sv);
+		case G_TYPE_INT64:   return (void *)(gintptr)SvIV(sv);
+		case G_TYPE_UINT64:  return (void *)(gintptr)SvUV(sv);
 		case G_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
-		case G_TYPE_POINTER: return (void *)SvIV(sv);
+		case G_TYPE_POINTER: return (void *)(gintptr)SvIV(sv);
 	}
 
 	return NULL;
@@ -580,7 +583,7 @@ purple_perl_sv_from_vargs(GType type, va_list *args, void ***copy_arg)
 			if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
 				return &PL_sv_undef;
 
-			return newSViv((IV)*copy_arg);
+			return newSViv((IV)(gintptr)*copy_arg);
 
 		default:
 			if ((*copy_arg = va_arg(*args, void *)) == NULL)

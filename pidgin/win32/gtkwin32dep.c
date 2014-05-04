@@ -21,17 +21,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#define _WIN32_IE 0x500
-#ifndef WINVER
-#define WINVER 0x0500 /* W2K */
-#endif
-
 #include "internal.h"
 
 #include <io.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <winuser.h>
+#include <shellapi.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -47,13 +43,9 @@
 #include "untar.h"
 
 #include "gtkwin32dep.h"
-#include "win32dep.h"
 #include "gtkconv.h"
 #include "gtkconn.h"
 #include "util.h"
-#ifdef USE_GTKSPELL
-#include "wspell.h"
-#endif
 
 /*
  *  GLOBALS
@@ -102,7 +94,7 @@ int winpidgin_gz_decompress(const char* in, const char* out) {
 	}
 
 	while((ret = gzread(fin, buf, 1024))) {
-		if(fwrite(buf, 1, ret, fout) < ret) {
+		if ((int)fwrite(buf, 1, ret, fout) < ret) {
 			purple_debug_error("wpurple_gz_decompress", "Error writing %d bytes to file\n", ret);
 			gzclose(fin);
 			fclose(fout);
@@ -323,12 +315,12 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 
 	g_return_if_fail(window != NULL);
 
-	gdkwin = GTK_WIDGET(window)->window;
+	gdkwin = gtk_widget_get_window(GTK_WIDGET(window));
 
 	g_return_if_fail(GDK_IS_WINDOW(gdkwin));
-	g_return_if_fail(GDK_WINDOW_TYPE(gdkwin) != GDK_WINDOW_CHILD);
+	g_return_if_fail(gdk_window_get_window_type(gdkwin) != GDK_WINDOW_CHILD);
 
-	if(GDK_WINDOW_DESTROYED(gdkwin))
+	if (gdk_window_is_destroyed(gdkwin))
 		return;
 
 	memset(&info, 0, sizeof(FLASHWINFO));
@@ -369,8 +361,11 @@ winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
 	window = GTK_WINDOW(win->window);
 
 	/* Don't flash if the window is in the foreground */
-	if (GetForegroundWindow() == GDK_WINDOW_HWND(GTK_WIDGET(window)->window))
+	if (GetForegroundWindow() ==
+		GDK_WINDOW_HWND(gtk_widget_get_window(GTK_WIDGET(window))))
+	{
 		return;
+	}
 
 	winpidgin_window_flash(window, TRUE);
 	/* Stop flashing when window receives focus */
@@ -398,7 +393,7 @@ void winpidgin_init(void) {
 	if (purple_debug_is_verbose())
 		purple_debug_misc("winpidgin", "winpidgin_init start\n");
 
-	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
+	exchndl_dll_path = g_build_filename(wpurple_bin_dir(), "exchndl.dll", NULL);
 	MySetLogFile = (LPFNSETLOGFILE) wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
 	g_free(exchndl_dll_path);
 	exchndl_dll_path = NULL;
@@ -416,9 +411,6 @@ void winpidgin_init(void) {
 		g_free(locale_debug_dir);
 	}
 
-#ifdef USE_GTKSPELL
-	winpidgin_spell_init();
-#endif
 	purple_debug_info("winpidgin", "GTK+: %u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
@@ -475,7 +467,7 @@ get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
 
 void winpidgin_ensure_onscreen(GtkWidget *win) {
 	RECT winR, wAR, intR;
-	HWND hwnd = GDK_WINDOW_HWND(win->window);
+	HWND hwnd = GDK_WINDOW_HWND(gtk_widget_get_window(win));
 
 	g_return_if_fail(hwnd != NULL);
 	GetWindowRect(hwnd, &winR);

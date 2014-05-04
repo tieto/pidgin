@@ -1,9 +1,9 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-plugindir = $(libdir)/pidgin
+plugindir = @PIDGIN_PLUGINDIR@
 
-ticker_la_LDFLAGS = -module -avoid-version
+ticker_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if PLUGINS
 
@@ -14,12 +14,11 @@ ticker_la_SOURCES = \
 	gtkticker.h \
 	ticker.c
 
-ticker_la_LIBADD = $(GTK_LIBS)
+ticker_la_LIBADD = @PIDGIN_LIBS@
 
 endif
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \

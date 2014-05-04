@@ -630,11 +630,11 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 			}
 		}
 
-		if (!filename || !strlen(filename)) {			    /* Use Default sounds */
+		if (!filename || !strlen(filename)) { /* Use Default sounds */
 			g_free(filename);
 
-			/* XXX Consider creating a constant for "sounds/purple" to be shared with Finch */
-			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
+			filename = g_build_filename(PURPLE_DATADIR,
+				"sounds", "purple", sounds[event].def, NULL);
 		}
 
 		purple_sound_play_file(filename, NULL);

@@ -47,11 +47,21 @@ finch_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx)
 {
 	GList *list;
 	GntMenuItem *item;
+	const gchar *label;
+	gchar *clean_label = NULL;
 
 	if (action == NULL)
 		return;
+	label = purple_menu_action_get_label(action);
 
-	item = gnt_menuitem_new(purple_menu_action_get_label(action));
+	if (strchr(label, '_') != NULL) {
+		clean_label = g_strdup(label);
+		purple_str_strip_char(clean_label, '_');
+		label = clean_label;
+	}
+	item = gnt_menuitem_new(label);
+	g_free(clean_label);
+
 	if (purple_menu_action_get_callback(action)) {
 		gnt_menuitem_set_callback(item, context_menu_callback, action);
 		g_object_set_data(G_OBJECT(item), "menuctx", ctx);
@@ -71,4 +81,3 @@ finch_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer ctx)
 	g_signal_connect_swapped(G_OBJECT(menu), "destroy",
 		G_CALLBACK(purple_menu_action_free), action);
 }
-

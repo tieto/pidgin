@@ -22,9 +22,7 @@
 #include <glib.h>
 #include "gtkeventloop.h"
 #include "eventloop.h"
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "internal.h"
 
 #define PIDGIN_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
 #define PIDGIN_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
@@ -54,7 +52,7 @@ static gboolean pidgin_io_invoke(GIOChannel *source, GIOCondition condition, gpo
 
 #ifdef _WIN32
 	if(! purple_cond) {
-#ifdef DEBUG
+#if 0
 		purple_debug_misc("gtk_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",

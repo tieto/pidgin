@@ -23,28 +23,28 @@ SUBDIRS = \
 	$(TCL_DIR) \
 	keyrings
 
-plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+plugindir = @PURPLE_PLUGINDIR@
 
-autoaccept_la_LDFLAGS       = -module -avoid-version
-buddynote_la_LDFLAGS        = -module -avoid-version
-ciphertest_la_LDFLAGS		= -module -avoid-version
-codeinline_la_LDFLAGS		= -module -avoid-version
-debug_example_la_LDFLAGS    = -module -avoid-version
-helloworld_la_LDFLAGS       = -module -avoid-version
-idle_la_LDFLAGS             = -module -avoid-version
-joinpart_la_LDFLAGS         = -module -avoid-version
-log_reader_la_LDFLAGS       = -module -avoid-version
-notify_example_la_LDFLAGS   = -module -avoid-version
-offlinemsg_la_LDFLAGS       = -module -avoid-version
-one_time_password_la_LDFLAGS	= -module -avoid-version
-pluginpref_example_la_LDFLAGS = -module -avoid-version
-psychic_la_LDFLAGS          = -module -avoid-version
-signals_test_la_LDFLAGS		= -module -avoid-version
-simple_la_LDFLAGS			= -module -avoid-version
-statenotify_la_LDFLAGS      = -module -avoid-version
+autoaccept_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
+buddynote_la_LDFLAGS          = -module @PLUGIN_LDFLAGS@
+ciphertest_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
+codeinline_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
+debug_example_la_LDFLAGS      = -module @PLUGIN_LDFLAGS@
+helloworld_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
+idle_la_LDFLAGS               = -module @PLUGIN_LDFLAGS@
+joinpart_la_LDFLAGS           = -module @PLUGIN_LDFLAGS@
+log_reader_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
+notify_example_la_LDFLAGS     = -module @PLUGIN_LDFLAGS@
+offlinemsg_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
+one_time_password_la_LDFLAGS  = -module @PLUGIN_LDFLAGS@
+pluginpref_example_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+psychic_la_LDFLAGS            = -module @PLUGIN_LDFLAGS@
+signals_test_la_LDFLAGS       = -module @PLUGIN_LDFLAGS@
+simple_la_LDFLAGS             = -module @PLUGIN_LDFLAGS@
+statenotify_la_LDFLAGS        = -module @PLUGIN_LDFLAGS@
 
 # this can't be in a conditional otherwise automake 1.4 yells
-dbus_example_la_LDFLAGS     = -module -avoid-version
+dbus_example_la_LDFLAGS       = -module @PLUGIN_LDFLAGS@
 
 if PLUGINS
 
@@ -56,8 +56,7 @@ plugin_LTLIBRARIES = \
 	log_reader.la       \
 	offlinemsg.la       \
 	psychic.la          \
-	statenotify.la      \
-	$(DBUS_LTLIB)
+	statenotify.la
 
 noinst_LTLIBRARIES = \
 	ciphertest.la \
@@ -68,7 +67,8 @@ noinst_LTLIBRARIES = \
 	one_time_password.la \
 	pluginpref_example.la \
 	signals_test.la \
-	simple.la
+	simple.la \
+	$(DBUS_LTLIB)
 
 autoaccept_la_SOURCES       = autoaccept.c
 buddynote_la_SOURCES        = buddynote.c
@@ -88,28 +88,28 @@ signals_test_la_SOURCES		= signals-test.c
 simple_la_SOURCES			= simple.c
 statenotify_la_SOURCES      = statenotify.c
 
-autoaccept_la_LIBADD        = $(GLIB_LIBS)
-buddynote_la_LIBADD         = $(GLIB_LIBS)
-ciphertest_la_LIBADD		= $(GLIB_LIBS)
-codeinline_la_LIBADD		= $(GLIB_LIBS)
-idle_la_LIBADD              = $(GLIB_LIBS)
-joinpart_la_LIBADD          = $(GLIB_LIBS)
-log_reader_la_LIBADD        = $(GLIB_LIBS)
-notify_example_la_LIBADD    = $(GLIB_LIBS)
-offlinemsg_la_LIBADD        = $(GLIB_LIBS)
-one_time_password_la_LIBADD = $(GLIB_LIBS)
-pluginpref_example_la_LIBADD = $(GLIB_LIBS)
-psychic_la_LIBADD           = $(GLIB_LIBS)
-signals_test_la_LIBADD		= $(GLIB_LIBS)
-simple_la_LIBADD			= $(GLIB_LIBS)
-statenotify_la_LIBADD       = $(GLIB_LIBS)
+autoaccept_la_LIBADD         = @PURPLE_LIBS@
+buddynote_la_LIBADD          = @PURPLE_LIBS@
+ciphertest_la_LIBADD         = @PURPLE_LIBS@
+codeinline_la_LIBADD         = @PURPLE_LIBS@
+idle_la_LIBADD               = @PURPLE_LIBS@
+joinpart_la_LIBADD           = @PURPLE_LIBS@
+log_reader_la_LIBADD         = @PURPLE_LIBS@
+notify_example_la_LIBADD     = @PURPLE_LIBS@
+offlinemsg_la_LIBADD         = @PURPLE_LIBS@
+one_time_password_la_LIBADD  = @PURPLE_LIBS@
+pluginpref_example_la_LIBADD = @PURPLE_LIBS@
+psychic_la_LIBADD            = @PURPLE_LIBS@
+signals_test_la_LIBADD       = @PURPLE_LIBS@
+simple_la_LIBADD             = @PURPLE_LIBS@
+statenotify_la_LIBADD        = @PURPLE_LIBS@
 
 if ENABLE_DBUS
 
 CLEANFILES              = dbus-example-bindings.c
 dbus_example_la_SOURCES = dbus-example.c
 
-dbus_example_la_LIBADD      = $(GLIB_LIBS) $(DBUS_LIBS)
+dbus_example_la_LIBADD       = @PURPLE_LIBS@ $(DBUS_LIBS)
 
 .PHONY: always
 
@@ -137,7 +137,6 @@ EXTRA_DIST = \
 	startup.py
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
@@ -156,7 +155,7 @@ PLUGIN_LIBS = \
 SUFFIXES = .c .so
 .c.so:
 	$(LIBTOOL) --mode=compile $(CC) -DHAVE_CONFIG_H -I$(top_builddir) $(AM_CPPFLAGS) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
-	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) -module -avoid-version $(PLUGIN_LIBS)
+	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) -module @PLUGIN_LDFLAGS@ $(PLUGIN_LIBS)
 	@rm -f tmp$@.lo tmp$@.o libtmp$@.la
 	@cp .libs/libtmp$@*.so $@
 	@rm -rf .libs/libtmp$@.*

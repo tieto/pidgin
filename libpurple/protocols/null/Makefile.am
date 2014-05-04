@@ -2,19 +2,19 @@ EXTRA_DIST = \
 	Makefile.mingw \
 	README
 
-pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
+pkgdir = @PURPLE_PLUGINDIR@
 
 NULLSOURCES = nullprpl.c
 
 AM_CFLAGS = $(st)
 
-libnull_la_LDFLAGS = -module -avoid-version
+libnull_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 # nullprpl isn't built by default. when it is built, it's dynamically linked.
 st =
 pkg_LTLIBRARIES    = libnull.la
 libnull_la_SOURCES = $(NULLSOURCES)
-libnull_la_LIBADD  = $(GLIB_LIBS)
+libnull_la_LIBADD  = @PURPLE_LIBS@
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \

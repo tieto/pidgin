@@ -22,12 +22,16 @@
  */
 #ifndef _LIBC_INTERFACE_H_
 #define _LIBC_INTERFACE_H_
+
+#include <config.h>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <io.h>
 #include <errno.h>
 #include "libc_internal.h"
 #include <glib.h>
+#include "glibcompat.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -132,10 +136,13 @@ wpurple_gethostname( name, size )
 wpurple_gettimeofday( timeval, timezone )
 
 /* stdio.h */
-#undef snprintf
-#define snprintf _snprintf
-#undef vsnprintf
-#define vsnprintf _vsnprintf
+#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3 || \
+	!defined(IS_WIN32_CROSS_COMPILED)
+#  undef snprintf
+#  define snprintf _snprintf
+#  undef vsnprintf
+#  define vsnprintf _vsnprintf
+#endif
 
 #define rename( oldname, newname ) \
 g_rename( oldname, newname )
@@ -144,6 +151,8 @@ g_rename( oldname, newname )
 #define fchmod(a,b)
 
 /* time.h */
+/* XXX: it may be also defined by pthread.h */
+#undef localtime_r
 #define localtime_r( time, resultp ) \
 wpurple_localtime_r( time, resultp )
 

@@ -197,11 +197,11 @@ srv_reorder(GList *list, int num)
 	 */
 	cur = list;
 	while (container_list) {
+		g_return_if_fail(cur);
 		container_list = select_random_response(container_list, &container);
 		cur->data = container->response;
 		g_free(container);
 		cur = cur->next;
-		g_return_if_fail(cur);
 	}
 }
 
@@ -431,8 +431,10 @@ resolve(int in, int out)
 
 			srvres = g_new0(PurpleSrvResponse, 1);
 			if (strlen(name) > sizeof(srvres->hostname) - 1) {
-				purple_debug_error("dnssrv", "hostname is longer than available buffer ('%s', %zd bytes)!",
-				                   name, strlen(name));
+				purple_debug_error("dnssrv", "hostname is "
+					"longer than available buffer ('%s', %"
+					G_GSIZE_FORMAT " bytes)!",
+					name, strlen(name));
 			}
 			g_strlcpy(srvres->hostname, name, sizeof(srvres->hostname));
 			srvres->pref = pref;
@@ -702,7 +704,7 @@ res_thread(gpointer data)
 				txtres = g_new0(PurpleTxtResponse, 1);
 
 				s = g_string_new("");
-				for (i = 0; i < txt_data->dwStringCount; ++i)
+				for (i = 0; i < (int)txt_data->dwStringCount; ++i)
 					s = g_string_append(s, txt_data->pStringArray[i]);
 				txtres->content = g_string_free(s, FALSE);
 

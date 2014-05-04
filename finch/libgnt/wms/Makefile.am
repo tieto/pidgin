@@ -6,8 +6,8 @@ else
 purple_wms =
 endif
 
-s_la_LDFLAGS             = -module -avoid-version
-irssi_la_LDFLAGS         = -module -avoid-version
+s_la_LDFLAGS     = -module @PLUGIN_LDFLAGS@
+irssi_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 plugin_LTLIBRARIES = \
 	$(wms) \
@@ -29,7 +29,6 @@ s_la_LIBADD =  \
 EXTRA_DIST = 
 
 AM_CPPFLAGS = \
-	-DDATADIR=\"$(datadir)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir)/finch \
 	-I$(top_srcdir)/finch/libgnt \
