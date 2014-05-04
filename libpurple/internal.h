@@ -142,6 +142,12 @@
 #endif
 #endif
 
+#define PURPLE_STATIC_ASSERT(condition, message) \
+	{ typedef char static_assertion_failed_ ## message \
+	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
+	(void)dummy; }
+
+
 #ifdef __clang__
 
 #define PURPLE_BEGIN_IGNORE_CAST_ALIGN \
@@ -314,5 +320,19 @@ void _purple_conversations_update_cache(PurpleConversation *conv,
  * Returns: The primitive scores array from status.c.
  */
 int *_purple_statuses_get_primitive_scores(void);
+
+/**
+ * _purple_blist_get_localized_default_group_name:
+ *
+ * Returns the name of default group for previously used non-English
+ * localization. It's used for merging default group, in case when roster
+ * contains localized name.
+ *
+ * Please note, prpls shouldn't save default group name depending on current
+ * locale. So, this function is mostly for libpurple2 compatibility. And for
+ * improperly written prpls.
+ */
+const gchar *
+_purple_blist_get_localized_default_group_name(void);
 
 #endif /* _PURPLE_INTERNAL_H_ */

@@ -898,11 +898,8 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 				g = purple_group_new(name_group);
 		}
 
-		if (!g) {
-			g = purple_blist_find_group("Buddies");
-			if(!g)
-				g = purple_group_new("Buddies");
-		}
+		if (!g)
+			g = purple_blist_get_default_group();
 
 		for(item = purple_xmlnode_get_child(isc, "contact"); item; item = purple_xmlnode_get_next_twin(item))
 		{

@@ -7164,7 +7164,8 @@ groups_tree(void)
 
 	if (purple_blist_get_buddy_list()->root == NULL)
 	{
-		list  = g_list_append(list, (gpointer)_("Buddies"));
+		list  = g_list_append(list,
+			(gpointer)PURPLE_BLIST_DEFAULT_GROUP_NAME);
 	}
 	else
 	{

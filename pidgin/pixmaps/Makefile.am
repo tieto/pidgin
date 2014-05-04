@@ -436,6 +436,7 @@ TOOLBAR_16 = \
 		toolbar/16/insert.png \
 		toolbar/16/insert-image.png \
 		toolbar/16/insert-link.png \
+		toolbar/16/insert-screenshot.png \
 		toolbar/16/message-new.png \
 		toolbar/16/plugins.png \
 		toolbar/16/send-file.png \

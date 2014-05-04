@@ -41,6 +41,7 @@ iconaway_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
 markerline_la_LDFLAGS       = -module @PLUGIN_LDFLAGS@
 notify_la_LDFLAGS           = -module @PLUGIN_LDFLAGS@
 relnot_la_LDFLAGS           = -module @PLUGIN_LDFLAGS@
+screencap_la_LDFLAGS        = -module @PLUGIN_LDFLAGS@
 sendbutton_la_LDFLAGS       = -module @PLUGIN_LDFLAGS@
 spellchk_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
 themeedit_la_LDFLAGS        = -module @PLUGIN_LDFLAGS@
@@ -58,6 +59,7 @@ plugin_LTLIBRARIES = \
 	markerline.la       \
 	notify.la           \
 	relnot.la           \
+	screencap.la        \
 	sendbutton.la       \
 	spellchk.la         \
 	themeedit.la        \
@@ -81,6 +83,7 @@ iconaway_la_SOURCES         = iconaway.c
 markerline_la_SOURCES       = markerline.c
 notify_la_SOURCES           = notify.c
 relnot_la_SOURCES           = relnot.c
+screencap_la_SOURCES        = screencap.c
 sendbutton_la_SOURCES       = sendbutton.c
 spellchk_la_SOURCES         = spellchk.c
 themeedit_la_SOURCES        = themeedit.c themeedit-icon.c themeedit-icon.h
@@ -97,6 +100,7 @@ iconaway_la_LIBADD          = @PIDGIN_LIBS@
 markerline_la_LIBADD        = @PIDGIN_LIBS@ $(WEBKIT_LIBS)
 notify_la_LIBADD            = @PIDGIN_LIBS@
 relnot_la_LIBADD            = @PIDGIN_LIBS@
+screencap_la_LIBADD         = @PIDGIN_LIBS@
 sendbutton_la_LIBADD        = @PIDGIN_LIBS@
 spellchk_la_LIBADD          = @PIDGIN_LIBS@
 themeedit_la_LIBADD         = @PIDGIN_LIBS@

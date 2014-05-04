@@ -5019,11 +5019,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, c
 	if (fed != YAHOO_FEDERATION_NONE)
 		fed_bname += 4;
 
-	g = purple_buddy_get_group(buddy);
-	if (g)
-		group = purple_group_get_name(g);
-	else
-		group = "Buddies";
+	group = purple_group_get_name(purple_buddy_get_group(buddy));
 
 	group2 = yahoo_string_encode(gc, group, FALSE);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, yd->session_id);
