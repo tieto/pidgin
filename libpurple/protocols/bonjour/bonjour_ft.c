@@ -945,7 +945,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	local_ips = bonjour_jabber_get_local_ips(sock);
 
-	port = g_strdup_printf("%hu", xfer->local_port);
+	port = g_strdup_printf("%hu", (guint16)purple_xfer_get_local_port(xfer));
 	while(local_ips) {
 		streamhost = xmlnode_new_child(query, "streamhost");
 		xmlnode_set_attrib(streamhost, "jid", xf->sid);
