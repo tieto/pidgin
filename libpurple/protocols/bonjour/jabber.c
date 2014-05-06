@@ -373,12 +373,14 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	if (!strcmp(packet->name, "message"))
+	if (g_strcmp0(packet->name, "message") == 0)
 		_jabber_parse_and_write_message_to_ui(packet, pb);
-	else if(!strcmp(packet->name, "iq"))
+	else if (g_strcmp0(packet->name, "iq") == 0)
 		xep_iq_parse(packet, pb);
-	else
-		purple_debug_warning("bonjour", "Unknown packet: %s\n", packet->name ? packet->name : "(null)");
+	else {
+		purple_debug_warning("bonjour", "Unknown packet: %s\n",
+			packet->name ? packet->name : "(null)");
+	}
 }
 
 static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {

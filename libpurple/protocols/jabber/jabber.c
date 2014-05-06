@@ -471,6 +471,8 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	gc = js->gc;
 	account = purple_connection_get_account(gc);
 
+	g_return_if_fail(data != NULL);
+
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t")) {
 		const char *username;

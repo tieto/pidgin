@@ -285,7 +285,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		if (*i == '[' && strchr(i, ']') && load) {
 			struct smiley_list *child = g_new0(struct smiley_list, 1);
 			child->sml = g_strndup(i+1, strchr(i, ']') - i - 1);
-			if (theme->list)
+			if (list)
 				list->next = child;
 			else
 				theme->list = child;
