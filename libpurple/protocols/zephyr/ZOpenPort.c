@@ -22,6 +22,7 @@ Code_t ZOpenPort(port)
     socklen_t len;
 
     (void) ZClosePort();
+    memset(&bindin, 0, sizeof(bindin));
 
     if ((__Zephyr_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 	__Zephyr_fd = -1;

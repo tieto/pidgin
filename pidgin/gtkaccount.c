@@ -241,10 +241,17 @@ set_account_protocol_cb(GtkWidget *widget, const char *id,
 
 	if (dialog->plugin != NULL)
 	{
+		PurplePlugin *old_plugin = NULL;
+
 		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
-		g_free(dialog->protocol_id);
-		dialog->protocol_id = g_strdup(dialog->plugin->info->id);
+		if (dialog->protocol_id)
+			old_plugin = purple_find_prpl(dialog->protocol_id);
+
+		if (old_plugin != new_plugin) {
+			g_free(dialog->protocol_id);
+			dialog->protocol_id = g_strdup(dialog->plugin->info->id);
+		}
 	}
 
 	if (dialog->account != NULL)

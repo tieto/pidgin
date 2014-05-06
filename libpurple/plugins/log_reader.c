@@ -1776,6 +1776,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(sn != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
 
+	memset(&tm, 0, sizeof(tm));
+
 	/* QIP only supports ICQ. */
 	if (strcmp(purple_account_get_protocol_id(account), "prpl-icq"))
 		return NULL;

@@ -1559,6 +1559,7 @@ static void mw_session_stateChange(struct mwSession *session,
   case mwSession_LOGIN_CONT:
     msg = _("Forcing Login");
     purple_connection_update_progress(gc, msg, 7, MW_CONNECT_STEPS);
+    break;
 
   case mwSession_LOGIN_ACK:
     msg = _("Login Acknowledged");

@@ -1246,6 +1246,8 @@ static gint check_notify_zeph02(gpointer data)
 			break;
 		case CLIENTACK:
 			purple_debug_error("zephyr", "Client ack received\n");
+			handle_unknown(notice); /* XXX: is it really unknown? */
+			break;
 		default:
 			/* we'll just ignore things for now */
 			handle_unknown(notice);
