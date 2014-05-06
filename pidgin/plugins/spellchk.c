@@ -1781,12 +1781,11 @@ static void load_conf(void)
 	gboolean case_sensitive = FALSE;
 
 	buf = g_build_filename(purple_user_dir(), "dict", NULL);
-	g_file_get_contents(buf, &ibuf, &size, NULL);
-	g_free(buf);
-	if (!ibuf) {
+	if (g_file_get_contents(buf, &ibuf, &size, NULL) && ibuf) {
 		ibuf = g_strdup(defaultconf);
 		size = strlen(defaultconf);
 	}
+	g_free(buf);
 
 	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
 	hashes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);

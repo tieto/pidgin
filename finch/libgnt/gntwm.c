@@ -148,7 +148,7 @@ gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 			int curx = active->priv.x + getcurx(active->window);
 			int cury = active->priv.y + getcury(active->window);
 			if (wmove(node->window, cury - widget->priv.y, curx - widget->priv.x) != OK)
-				wmove(node->window, 0, 0);
+				(void)wmove(node->window, 0, 0);
 		}
 	}
 }
@@ -1850,6 +1850,8 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 
 		maxx = getmaxx(stdscr);
 		maxy = getmaxy(stdscr) - 1;              /* room for the taskbar */
+		maxx = MAX(0, maxx);
+		maxy = MAX(0, maxy);
 
 		x = MAX(0, x);
 		y = MAX(0, y);

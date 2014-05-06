@@ -86,7 +86,8 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
 				   "Handling new ICE connection... \n");
 
 		/* ensure ICE connection is not passed to child processes */
-		fcntl(IceConnectionNumber(connection), F_SETFD, FD_CLOEXEC);
+		if (fcntl(IceConnectionNumber(connection), F_SETFD, FD_CLOEXEC) != 0)
+			purple_debug_warning("gtksession", "couldn't set FD_CLOEXEC\n");
 
 		conninfo = g_new(struct ice_connection_info, 1);
 		conninfo->connection = connection;

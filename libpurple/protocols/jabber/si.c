@@ -701,7 +701,8 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 	flags = fcntl(acceptfd, F_GETFL);
 	fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(acceptfd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("jabber", "si: couldn't set FD_CLOEXEC\n");
 #endif
 
 	xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,

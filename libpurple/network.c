@@ -179,7 +179,7 @@ purple_network_get_local_system_ip(int fd)
 	ifc.ifc_req = (struct ifreq *)buffer;
 	ioctl(source, SIOCGIFCONF, &ifc);
 
-	if (fd < 0)
+	if (fd < 0 && source >= 0)
 		close(source);
 
 	tmp = buffer;
@@ -489,7 +489,8 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 	flags = fcntl(listenfd, F_GETFL);
 	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(listenfd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(listenfd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("network", "couldn't set FD_CLOEXEC\n");
 #endif
 	actual_port = purple_network_get_port_from_fd(listenfd);
 

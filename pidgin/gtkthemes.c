@@ -410,7 +410,10 @@ void pidgin_themes_smiley_theme_probe()
 			}
 			g_dir_close(dir);
 		} else if (l == 1) {
-			g_mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR);
+			if (g_mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
+				purple_debug_error("gtkthemes",
+					"couldn't create smileys dir\n");
+			}
 		}
 		g_free(probedirs[l]);
 	}

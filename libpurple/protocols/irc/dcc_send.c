@@ -265,7 +265,8 @@ static void irc_dccsend_send_connected(gpointer data, int source, PurpleInputCon
 	flags = fcntl(conn, F_GETFL);
 	fcntl(conn, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(conn, F_SETFD, FD_CLOEXEC);
+	if (fcntl(conn, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("irc", "couldn't set FD_CLOEXEC\n");
 #endif
 
 	xd->inpa = purple_input_add(conn, PURPLE_INPUT_READ, irc_dccsend_send_read, xfer);

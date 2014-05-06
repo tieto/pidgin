@@ -3738,7 +3738,10 @@ parse_content_len(const char *data, gsize data_len)
 
 	p = find_header_content(data, data_len, "\nContent-Length: ");
 	if (p) {
-		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
+		if (sscanf(p, "%" G_GSIZE_FORMAT, &content_len) != 1) {
+			purple_debug_warning("util", "invalid number format\n");
+			content_len = 0;
+		}
 		purple_debug_misc("util", "parsed %" G_GSIZE_FORMAT "\n", content_len);
 	}
 
@@ -4583,7 +4586,7 @@ purple_utf8_salvage(const char *str)
 	workstr = g_string_sized_new(strlen(str));
 
 	do {
-		g_utf8_validate(str, -1, &end);
+		(void)g_utf8_validate(str, -1, &end);
 		workstr = g_string_append_len(workstr, str, end - str);
 		str = end;
 		if (*str == '\0')

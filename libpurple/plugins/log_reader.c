@@ -1425,7 +1425,8 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	read = g_malloc(data->length + 2);
 
 	file = g_fopen(data->path, "rb");
-	fseek(file, data->offset, SEEK_SET);
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		g_return_val_if_reached(g_strdup(""));
 	data->length = fread(read, 1, data->length, file);
 	fclose(file);
 
@@ -1946,7 +1947,8 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 	contents = g_malloc(data->length + 2);
 
-	fseek(file, data->offset, SEEK_SET);
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		g_return_val_if_reached(g_strdup(""));
 	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 
@@ -2329,7 +2331,8 @@ static char *amsn_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	file = g_fopen(data->path, "rb");
 	g_return_val_if_fail(file != NULL, g_strdup(""));
 
-	fseek(file, data->offset, SEEK_SET);
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		g_return_val_if_reached(g_strdup(""));
 	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 

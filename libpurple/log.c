@@ -1837,8 +1837,12 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 			g_snprintf(convostart, length, "%s", temp);
 			memset(&tm, 0, sizeof(tm));
-			sscanf(convostart, "%*s %3s %d %d:%d:%d %d",
-			       month, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &tm.tm_year);
+			if (sscanf(convostart, "%*s %3s %d %d:%d:%d %d", month,
+				&tm.tm_mday, &tm.tm_hour, &tm.tm_min,
+				&tm.tm_sec, &tm.tm_year) != 6)
+			{
+				purple_debug_warning("log", "invalid date format\n");
+			}
 			/* Ugly hack, in case current locale is not English */
 			if (purple_strequal(month, "Jan")) {
 				tm.tm_mon= 0;
@@ -1943,8 +1947,10 @@ static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	const char *path = purple_stringref_value(data->pathref);
 	FILE *file = g_fopen(path, "rb");
 	char *read = g_malloc(data->length + 1);
-	fseek(file, data->offset, SEEK_SET);
-	result = fread(read, data->length, 1, file);
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		result = 0;
+	else
+		result = fread(read, data->length, 1, file);
 	if (result != 1)
 		purple_debug_error("log", "Unable to read from log file: %s\n", path);
 	fclose(file);
