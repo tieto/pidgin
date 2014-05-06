@@ -499,7 +499,6 @@ int main(int argc, char *argv[])
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
 	GList *active_accounts;
-	struct stat st;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
@@ -808,10 +807,8 @@ int main(int argc, char *argv[])
 	 * in user's home directory.
 	 */
 	search_path = g_build_filename(purple_user_dir(), "plugins", NULL);
-	if (!g_stat(search_path, &st)) {
-		if (!g_mkdir(search_path, S_IRUSR | S_IWUSR | S_IXUSR))
-			fprintf(stderr, "Couldn't create plugins dir\n");
-	}
+	if (g_mkdir(search_path, S_IRUSR | S_IWUSR | S_IXUSR) != 0 && errno != EEXIST)
+		fprintf(stderr, "Couldn't create plugins dir\n");
 	purple_plugins_add_search_path(search_path);
 	g_free(search_path);
 	purple_plugins_add_search_path(LIBDIR);

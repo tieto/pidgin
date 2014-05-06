@@ -1704,8 +1704,15 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	/* Change the .log extension to .idx */
 	strcpy(pathstr + strlen(pathstr) - 3, "idx");
 
-	if (g_stat(pathstr, &st) == 0)
-	{
+	index_fd = g_open(pathstr, 0, O_RDONLY);
+	if (index_fd != -1) {
+		if (fstat(index_fd, &st) != 0) {
+			close(index_fd);
+			index_fd = -1;
+		}
+	}
+
+	if (index_fd != -1) {
 		if (st.st_mtime < log_last_modified)
 		{
 			purple_debug_warning("log", "Index \"%s\" exists, but is older than the log.\n", pathstr);
@@ -1713,15 +1720,12 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		else
 		{
 			/* The index file exists and is at least as new as the log, so open it. */
-			if (!(index = g_fopen(pathstr, "rb")))
-			{
+			if (!(index = fdopen(index_fd, "rb"))) {
 				purple_debug_error("log", "Failed to open index file \"%s\" for reading: %s\n",
 				                 pathstr, g_strerror(errno));
 
 				/* Fall through so that we'll parse the log file. */
-			}
-			else
-			{
+			} else {
 				purple_debug_info("log", "Using index: %s\n", pathstr);
 				g_free(pathstr);
 				while (fgets(buf, BUF_LONG, index))

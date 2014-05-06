@@ -922,7 +922,6 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 
 	if (usign_success || ssign_success) {
 		struct passwd *pw;
-		struct stat st;
 
 		memset(filename2, 0, sizeof(filename2));
 
@@ -937,14 +936,9 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 			return;
 
 		/* Create dir if it doesn't exist */
-		if ((g_stat(filename, &st)) == -1) {
-			if (errno == ENOENT) {
-				if (pw->pw_uid == geteuid()) {
-					int ret = g_mkdir(filename, 0755);
-					if (ret < 0)
-						return;
-					}
-			}
+		if (pw->pw_uid == geteuid()) {
+			if (g_mkdir(filename, 0755) != 0 && errno != EEXIST)
+				return;
 		}
 
 		/* Save VCard */
