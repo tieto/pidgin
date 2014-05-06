@@ -758,6 +758,12 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 				GList *segs, *snext;
 				GntTextLine *line = iter->data;
 				inext = iter->next;
+
+				if (!line) {
+					g_warn_if_reached();
+					continue;
+				}
+
 				for (segs = line->segments; segs; segs = snext) {
 					GntTextSegment *seg = segs->data;
 					snext = segs->next;

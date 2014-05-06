@@ -250,7 +250,7 @@ Code_t Z_ReadWait()
 
     from_len = sizeof(struct sockaddr_in);
 
-    packet_len = recvfrom(ZGetFD(), packet, sizeof(packet), 0,
+    packet_len = recvfrom(ZGetFD(), packet, sizeof(packet) - 1, 0,
 			  (struct sockaddr *)&from, &from_len);
 
     if (packet_len < 0)
@@ -258,6 +258,8 @@ Code_t Z_ReadWait()
 
     if (!packet_len)
 	return (ZERR_EOF);
+
+	packet[packet_len] = '\0';
 
     /* Ignore obviously non-Zephyr packets. */
     zvlen = sizeof(ZVERSIONHDR) - 1;

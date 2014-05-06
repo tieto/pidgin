@@ -857,6 +857,8 @@ aim_srv_setextrainfo(OscarData *od,
 void
 aim_srv_set_dc_info(OscarData *od)
 {
+	FlapConnection *conn;
+
 	ByteStream bs, tlv0c;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
@@ -884,7 +886,12 @@ aim_srv_set_dc_info(OscarData *od)
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_OSERVICE, 0x001e, snacid, &bs);
+	conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM);
+	g_warn_if_fail(conn != NULL);
+	if (conn) {
+		flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE,
+			0x001e, snacid, &bs);
+	}
 
 	byte_stream_destroy(&bs);
 }

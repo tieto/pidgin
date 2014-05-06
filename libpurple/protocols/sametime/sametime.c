@@ -2250,7 +2250,8 @@ static void mw_ft_opened(struct mwFileTransfer *ft) {
 
   if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
     xfer->dest_fp = g_fopen(xfer->local_filename, "rb");
-    ft_send(ft, xfer->dest_fp);
+    if (xfer->dest_fp)
+      ft_send(ft, xfer->dest_fp);
   }
 }
 

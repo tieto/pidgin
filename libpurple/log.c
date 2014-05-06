@@ -1946,7 +1946,11 @@ static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	struct old_logger_data *data = log->logger_data;
 	const char *path = purple_stringref_value(data->pathref);
 	FILE *file = g_fopen(path, "rb");
-	char *read = g_malloc(data->length + 1);
+	char *read;
+
+	g_return_val_if_fail(file, g_strdup(""));
+	read = g_malloc(data->length + 1);
+
 	if (fseek(file, data->offset, SEEK_SET) != 0)
 		result = 0;
 	else

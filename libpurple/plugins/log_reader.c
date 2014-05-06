@@ -1425,6 +1425,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	read = g_malloc(data->length + 2);
 
 	file = g_fopen(data->path, "rb");
+	g_return_val_if_fail(file != NULL, g_strdup(""));
 	if (fseek(file, data->offset, SEEK_SET) != 0)
 		g_return_val_if_reached(g_strdup(""));
 	data->length = fread(read, 1, data->length, file);
@@ -1540,7 +1541,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			line = temp->str;
 		}
 
-		if (*line == '[') {
+		if (line && *line == '[') {
 			const char *timestamp;
 
 			if ((timestamp = strchr(line, ']'))) {
@@ -1678,7 +1679,8 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			}
 		}
 
-		g_string_append(formatted, line);
+		if (line)
+			g_string_append(formatted, line);
 
 		line = c;
 		if (temp)
@@ -1835,7 +1837,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 				/* find EOL */
 				c = strchr(c, '\n');
-				c++;
+				if (c)
+					c++;
 
 				/* Find the last '(' character. */
 				if ((tmp = strchr(c, '\n')) != NULL) {
@@ -1844,7 +1847,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				} else {
 					while (*c)
 						c++;
-					c--;
+					if (c)
+						c--;
 					c = g_strrstr(c, "(");
 				}
 
@@ -2050,7 +2054,9 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 					/* find EOF */
 					c = strchr(c, '\n');
-					line = ++c;
+					if (c)
+						c++;
+					line = c;
 				}
 			}
 		} else {
@@ -2194,7 +2200,8 @@ static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccou
 				                  sn, data->path, data->offset, data->length);
 			}
 			c = strchr(c, '\n');
-			c++;
+			if (c)
+				c++;
 		}
 
 		/* I've seen the file end without the AMSN_LOG_CONV_END bit */
