@@ -1717,6 +1717,9 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		filesize_64 = g_ascii_strtoull(filesize_c, NULL, 10);
 	/* TODO 3.0.0: When the core uses a guint64, this is redundant.
 	 * See #8477.
+	 *
+	 * It may not be necessary on 64-bit machine.
+	 * coverity[result_independent_of_operands]
 	 */
 	if (filesize_64 > G_MAXSIZE) {
 		/* Should this pop up a warning? */
