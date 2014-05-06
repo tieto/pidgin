@@ -1371,6 +1371,17 @@ AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(pidginpath, pidgin)
 
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+	#if !defined(__clang__)
+	#error
+	#endif
+])], have_clang=yes, have_clang=no)
+
+if test "x$have_clang" = "xyes"; then
+	dnl we don't care about it for 2.x.y
+	DEBUG_CFLAGS=`echo $DEBUG_CFLAGS |$sedpath 's/-Wcast-align//'`
+fi
+
 dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################
