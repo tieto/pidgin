@@ -6888,7 +6888,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		/* The initial offset is to deal with
 		 * escaped entities making the string longer */
 		int tag_start_offset = 0;
-		int tag_end_offset = 0;
 		const char *tagname = NULL;
 
 		/* Enforce direction on alias */
@@ -6906,7 +6905,9 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			else {
 				g_snprintf(str, 1024, "*%s*:", alias_escaped);
 				tag_start_offset += 1;
+#if 0
 				tag_end_offset = 2;
+#endif
 				tagname = "whisper-name";
 			}
 		} else {
@@ -6929,7 +6930,9 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 					tag_start_offset += strlen(AUTO_RESPONSE) - 6 + 1;
 				} else {
 					g_snprintf(str, 1024, "%s:", alias_escaped);
+#if 0
 					tag_end_offset = 1;
+#endif
 				}
 
 				if (flags & PURPLE_MESSAGE_NICK) {

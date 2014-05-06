@@ -417,4 +417,3 @@ gboolean finch_start(int *argc, char ***argv)
 	purple_blist_show();
 	return TRUE;
 }
-

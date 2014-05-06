@@ -125,10 +125,10 @@ package_revision_raw.txt: .FORCE
 	fi
 package_revision.h: package_revision_raw.txt
 	$(AM_V_GEN)if test -f $<; then \
-	  echo "#define REVISION \"`cat $<`\"" > $@; \
+		echo "#define REVISION \"`cat $<`\"" > $@; \
 	fi
 	$(AM_V_at)if test ! -f $@ -a -f $(srcdir)/$@; then \
-	  cp $(srcdir)/$@ $@; \
+		cp $(srcdir)/$@ $@; \
 	fi
 	$(AM_V_at)test -f $@ || echo "#define REVISION \"unknown\"" > $@
 

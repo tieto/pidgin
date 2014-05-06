@@ -1663,8 +1663,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		return 1;
 
 	purple_debug_info("oscar",
-					"Received a channel 4 message of type 0x%02hx.\n",
-					(guint16)args->type);
+		"Received a channel 4 message of type 0x%02hx.",
+		(guint16)args->type);
 
 	/*
 	 * Split up the message at the delimeter character, then convert each
@@ -2461,7 +2461,7 @@ static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	va_start(ap, fr);
 	bn = va_arg(ap, char *);
-	va_arg(ap, int); /* iconcsumtype */
+	va_arg(ap, int); /* iconsumtype */
 	iconcsum = va_arg(ap, guint8 *);
 	iconcsumlen = va_arg(ap, int);
 	icon = va_arg(ap, guint8 *);
