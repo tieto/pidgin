@@ -585,7 +585,7 @@ msn_handle_chl(char *input, char *output)
 	len = strlen(buf);
 	if ((len % 8) != 0) {
 		int fix = 8 - (len % 8);
-		memset(&buf[len], '0', fix);
+		strncpy(&buf[len], "00000000", fix);
 		buf[len + fix] = '\0';
 		len += fix;
 	}

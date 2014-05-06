@@ -1194,6 +1194,7 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 				case '"':
 				case '\'':
 					in_quotes = cur;
+					/* fall through */
 				default:
 					cur++;
 					break;
