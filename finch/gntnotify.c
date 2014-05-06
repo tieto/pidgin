@@ -84,10 +84,6 @@ finch_notify_common(PurpleNotifyType ntype, PurpleNotifyMsgType msgtype,
 
 	if (secondary) {
 		GntWidget *msg;
-		/* XXX: This is broken.  type is PurpleNotifyMsgType, not
-		 * PurpleNotifyType.  Also, the if() followed by the
-		 * inner switch doesn't make much sense.
-		 */
 		if (ntype == PURPLE_NOTIFY_FORMATTED) {
 			int width = -1, height = -1;
 			char *plain = (char*)secondary;
