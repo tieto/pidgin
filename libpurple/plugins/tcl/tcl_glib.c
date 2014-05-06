@@ -68,6 +68,10 @@
 
 #include "tcl_glib.h"
 
+#ifndef CONST86
+#  define CONST86
+#endif
+
 struct tcl_file_handler {
 	int source;
 	int fd;
@@ -86,8 +90,8 @@ static guint tcl_timer;
 static gboolean tcl_timer_pending;
 static GHashTable *tcl_file_handlers;
 
-static void tcl_set_timer(Tcl_Time *timePtr);
-static int tcl_wait_for_event(Tcl_Time *timePtr);
+static void tcl_set_timer(CONST86 Tcl_Time *timePtr);
+static int tcl_wait_for_event(CONST86 Tcl_Time *timePtr);
 static void tcl_create_file_handler(int fd, int mask, Tcl_FileProc *proc, ClientData data);
 static void tcl_delete_file_handler(int fd);
 
