@@ -58,12 +58,17 @@ Code_t ZReadAscii32(ptr, len, value_ptr)
     unsigned long *value_ptr;
 {
     unsigned char buf[4];
+    unsigned long value = 0;
     Code_t retval;
 
     retval = ZReadAscii(ptr, len, buf, 4);
     if (retval != ZERR_NONE)
 	return retval;
-    *value_ptr = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
+    value |= buf[0] << 24;
+    value |= buf[1] << 16;
+    value |= buf[2] << 8;
+    value |= buf[3];
+    *value_ptr = value;
     return ZERR_NONE;
 }
 
