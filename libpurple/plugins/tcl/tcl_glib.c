@@ -124,7 +124,7 @@ void tcl_glib_init ()
 	tcl_file_handlers = g_hash_table_new(g_direct_hash, g_direct_equal);
 }
 
-static void tcl_set_timer(Tcl_Time *timePtr)
+static void tcl_set_timer(CONST86 Tcl_Time *timePtr)
 {
 	guint interval;
 
@@ -141,7 +141,7 @@ static void tcl_set_timer(Tcl_Time *timePtr)
 	tcl_timer_pending = TRUE;
 }
 
-static int tcl_wait_for_event(Tcl_Time *timePtr)
+static int tcl_wait_for_event(CONST86 Tcl_Time *timePtr)
 {
 	if (!timePtr || (timePtr->sec == 0 && timePtr->usec == 0)) {
 		g_main_context_iteration(NULL, FALSE);
