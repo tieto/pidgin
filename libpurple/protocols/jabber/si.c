@@ -58,7 +58,7 @@ typedef struct _JabberSIXfer {
 		STREAM_METHOD_UNKNOWN     = 0,
 		STREAM_METHOD_BYTESTREAMS = 2 << 1,
 		STREAM_METHOD_IBB         = 2 << 2,
-		STREAM_METHOD_UNSUPPORTED = 2 << 31
+		STREAM_METHOD_UNSUPPORTED = 2 << 30
 	} stream_method;
 
 	GList *streamhosts;
@@ -866,7 +866,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
 		xfer->local_port = purple_network_get_port_from_fd(sock);
-		g_snprintf(port, sizeof(port), "%hu", xfer->local_port);
+		g_snprintf(port, sizeof(port), "%hu", (guint16)xfer->local_port);
 
 		public_ip = purple_network_get_my_ip(jsx->js->fd);
 
@@ -917,7 +917,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		streamhost = xmlnode_new_child(query, "streamhost");
 		xmlnode_set_attrib(streamhost, "jid", sh->jid);
 		xmlnode_set_attrib(streamhost, "host", sh->host);
-		g_snprintf(port, sizeof(port), "%hu", sh->port);
+		g_snprintf(port, sizeof(port), "%hu", (guint16)sh->port);
 		xmlnode_set_attrib(streamhost, "port", port);
 
 		sh2 = g_new0(JabberBytestreamsStreamhost, 1);

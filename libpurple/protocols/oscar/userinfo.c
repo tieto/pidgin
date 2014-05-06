@@ -336,11 +336,11 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, userinfo->bn));
 
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
-		tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-						(bi->ipaddr & 0xff000000) >> 24,
-						(bi->ipaddr & 0x00ff0000) >> 16,
-						(bi->ipaddr & 0x0000ff00) >> 8,
-						(bi->ipaddr & 0x000000ff));
+		tmp =  g_strdup_printf("%u.%u.%u.%u",
+			0xFF & (bi->ipaddr & 0xff000000) >> 24,
+			0xFF & (bi->ipaddr & 0x00ff0000) >> 16,
+			0xFF & (bi->ipaddr & 0x0000ff00) >> 8,
+			0xFF & (bi->ipaddr & 0x000000ff));
 		oscar_user_info_add_pair(user_info, _("IP Address"), tmp);
 		g_free(tmp);
 	}
@@ -400,11 +400,11 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	purple_notify_user_info_add_pair(user_info, _("UIN"), who);
 	oscar_user_info_convert_and_add(account, od, user_info, _("Nick"), info->nick);
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
-		char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-						(bi->ipaddr & 0xff000000) >> 24,
-						(bi->ipaddr & 0x00ff0000) >> 16,
-						(bi->ipaddr & 0x0000ff00) >> 8,
-						(bi->ipaddr & 0x000000ff));
+		char *tstr =  g_strdup_printf("%u.%u.%u.%u",
+			0xFF & (bi->ipaddr & 0xff000000) >> 24,
+			0xFF & (bi->ipaddr & 0x00ff0000) >> 16,
+			0xFF & (bi->ipaddr & 0x0000ff00) >> 8,
+			0xFF & (bi->ipaddr & 0x000000ff));
 		purple_notify_user_info_add_pair(user_info, _("IP Address"), tstr);
 		g_free(tstr);
 	}

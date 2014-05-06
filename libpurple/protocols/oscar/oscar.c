@@ -1871,8 +1871,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		return 1;
 
 	purple_debug_info("oscar",
-					"Received a channel 4 message of type 0x%02hx.\n",
-					args->type);
+		"Received a channel 4 message of type 0x%02hx.\n",
+		(guint16)args->type);
 
 	/*
 	 * Split up the message at the delimeter character, then convert each
@@ -3999,7 +3999,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		if (curitem->name && !g_utf8_validate(curitem->name, -1, NULL)) {
 			/* Got node with invalid UTF-8 in the name.  Skip it. */
 			purple_debug_warning("oscar", "ssi: server list contains item of "
-					"type 0x%04hhx with a non-utf8 name\n", curitem->type);
+					"type 0x%04hx with a non-utf8 name\n", curitem->type);
 			continue;
 		}
 
