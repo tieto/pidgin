@@ -988,7 +988,7 @@ gtk_source_undo_manager_merge_action (GtkSourceUndoManager 	*um,
 
 	if (undo_action->action_type == GTK_SOURCE_UNDO_ACTION_DELETE)
 	{
-		GtkSourceUndoDeleteAction *last_del, *undo_del;
+		const GtkSourceUndoDeleteAction *last_del, *undo_del;
 
 		last_del = &last_action->action.delete;
 		undo_del = &undo_action->action.delete;
