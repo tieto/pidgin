@@ -3836,13 +3836,19 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	char *data_cursor;
 	gboolean got_eof = FALSE;
 
+	if (!gfud->is_ssl && source < 0) {
+		g_warn_if_reached();
+		len = -1;
+		errno = EINVAL;
+	}
+
 	/*
 	 * Read data in a loop until we can't read any more!  This is a
 	 * little confusing because we read using a different function
 	 * depending on whether the socket is ssl or cleartext.
 	 */
 	while ((gfud->is_ssl && ((len = purple_ssl_read(gfud->ssl_connection, buf, sizeof(buf))) > 0)) ||
-			(!gfud->is_ssl && (len = read(source, buf, sizeof(buf))) > 0))
+		(!gfud->is_ssl && source >= 0 && (len = read(source, buf, sizeof(buf))) > 0))
 	{
 		if((gfud->len + len) > gfud->max_len) {
 			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),

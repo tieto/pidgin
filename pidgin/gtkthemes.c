@@ -320,6 +320,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				while (*i && !isspace(*i) && li < sizeof(l) - 1) {
 					if (*i == '\\' && *(i+1) != '\0')
 						i++;
+					/* coverity[tainted_data] */
 					next = g_utf8_next_char(i);
 					if ((next - i) > (sizeof(l) - li -1)) {
 						break;

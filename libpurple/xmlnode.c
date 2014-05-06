@@ -843,6 +843,7 @@ xmlnode_copy(const xmlnode *src)
 			sibling = sibling->next;
 		} else {
 			ret->child = xmlnode_copy(child);
+			/* coverity[copy_paste_error] */
 			sibling = ret->child;
 		}
 		sibling->parent = ret;

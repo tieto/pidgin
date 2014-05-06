@@ -49,6 +49,8 @@
 #define T_TXT	PurpleDnsTypeTxt
 #endif
 
+#define MAX_ADDR_RESPONSE_LEN 1048576
+
 #include "debug.h"
 #include "dnssrv.h"
 #include "eventloop.h"
@@ -481,6 +483,10 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (read(source, &type, sizeof(type)) == sizeof(type)) {
 		if (read(source, &size, sizeof(size)) == sizeof(size)) {
+			if (size < -1 || size > MAX_ADDR_RESPONSE_LEN) {
+				purple_debug_warning("dnssrv", "res_query returned invalid number\n");
+				size = 0;
+			}
 			if (size == -1 || size == 0) {
 				if (size == -1) {
 					purple_debug_warning("dnssrv", "res_query returned an error\n");
