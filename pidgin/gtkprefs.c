@@ -2658,7 +2658,6 @@ away_page(void)
 	GtkWidget *dd;
 	GtkWidget *label;
 	GtkWidget *button;
-	GtkWidget *select;
 	GtkWidget *menu;
 	GtkSizeGroup *sg;
 
@@ -2681,7 +2680,7 @@ away_page(void)
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
-	select = pidgin_prefs_labeled_spin_button(vbox,
+	pidgin_prefs_labeled_spin_button(vbox,
 			_("_Minutes before becoming idle:"), "/purple/away/mins_before_away",
 			1, 24 * 60, sg);
 

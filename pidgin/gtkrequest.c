@@ -1647,8 +1647,10 @@ pidgin_request_file(const char *title, const char *filename,
 			g_free(my_documents);
 		}
 	}
-
+#else
+	(void)folder_set;
 #endif
+
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(filesel)), "response",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 
