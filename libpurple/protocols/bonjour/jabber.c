@@ -149,7 +149,6 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 	xmlnode *body_node, *html_node, *events_node;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(pb));
 	gchar *body = NULL;
-	gboolean composing_event = FALSE;
 
 	body_node = xmlnode_get_child(message_node, "body");
 	html_node = xmlnode_get_child(message_node, "html");
@@ -161,8 +160,10 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 
 	events_node = xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
 	if (events_node != NULL) {
+#if 0
 		if (xmlnode_get_child(events_node, "composing") != NULL)
 			composing_event = TRUE;
+#endif
 		if (xmlnode_get_child(events_node, "id") != NULL) {
 			/* The user is just typing */
 			/* TODO: Deal with typing notification */

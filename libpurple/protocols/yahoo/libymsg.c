@@ -650,7 +650,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
-	gboolean export = FALSE;
 	gboolean got_serv_list = FALSE;
 	YahooFriend *f = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -754,7 +753,6 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 					}
 					b = purple_buddy_new(account, norm_bud, NULL);
 					purple_blist_add_buddy(b, NULL, g, NULL);
-					export = TRUE;
 				}
 
 				yahoo_do_group_check(account, ht, norm_bud, grp);
@@ -1937,7 +1935,6 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 	struct yahoo_auth_data *auth_data = user_data;
 	PurpleConnection *gc = auth_data->gc;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	gboolean try_login_on_error = FALSE;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
 
@@ -2025,7 +2022,9 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 				default:
 					/* if we have everything we need, why not try to login irrespective of response */
 					if((crumb != NULL) && (yd->cookie_y != NULL) && (yd->cookie_t != NULL)) {
+#if 0
 						try_login_on_error = TRUE;
+#endif
 						break;
 					}
 					error_reason = g_strdup(_("Unknown error"));
@@ -2213,13 +2212,13 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *seed = NULL;
-	char *sn   = NULL;
 	GSList *l = pkt->hash;
 	int m = 0;
 	gchar *buf;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
+		/* (pair->key == 1) -> sn */
 		if (pair->key == 94) {
 			if (g_utf8_validate(pair->value, -1, NULL)) {
 				seed = pair->value;
@@ -2227,17 +2226,9 @@ static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 				purple_debug_warning("yahoo", "yahoo_process_auth "
 						"got non-UTF-8 string for key %d\n", pair->key);
 			}
-		}
-		if (pair->key == 1) {
-			if (g_utf8_validate(pair->value, -1, NULL)) {
-				sn = pair->value;
-			} else {
-				purple_debug_warning("yahoo", "yahoo_process_auth "
-						"got non-UTF-8 string for key %d\n", pair->key);
-			}
-		}
-		if (pair->key == 13)
+		} else if (pair->key == 13) {
 			m = atoi(pair->value);
+		}
 		l = l->next;
 	}
 
@@ -2298,7 +2289,6 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 	PurpleBuddy *b;
 	GSList *l;
 	gchar *who = NULL;
-	gchar *me = NULL;
 	gchar buf[BUF_LONG];
 	gboolean ignore = TRUE;
 	gint status = 0;
@@ -2314,14 +2304,7 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 						"got non-UTF-8 string for key %d\n", pair->key);
 			}
 			break;
-		case 1:
-			if (g_utf8_validate(pair->value, -1, NULL)) {
-				me = pair->value;
-			} else {
-				purple_debug_warning("yahoo", "yahoo_process_ignore "
-						"got non-UTF-8 string for key %d\n", pair->key);
-			}
-			break;
+		/* 1 -> me */
 		case 13:
 			/* 1 == ignore, 2 == unignore */
 			ignore = (strtol(pair->value, NULL, 10) == 1);
