@@ -81,18 +81,18 @@ static PurplePlugin *my_protocol = NULL;
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
+	0, /* PurpleProtocolOptions */
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	NO_BUDDY_ICONS, /* icon_spec */
 	facebook_list_icon,				/* list_icon */
 	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */
 	jabber_tooltip_text,			/* tooltip_text */
 	jabber_status_types,			/* status_types */
-	jabber_blist_node_menu,			/* blist_node_menu */
-	jabber_chat_info,				/* chat_info */
-	jabber_chat_info_defaults,		/* chat_info_defaults */
+	NULL,							/* blist_node_menu */
+	NULL,							/* chat_info */
+	NULL,							/* chat_info_defaults */
 	facebook_login,					/* login */
 	jabber_close,					/* close */
 	jabber_message_send_im,			/* send_im */
@@ -111,13 +111,13 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* rem_permit */
 	NULL,							/* rem_deny */
 	NULL,							/* set_permit_deny */
-	jabber_chat_join,				/* join_chat */
+	NULL,							/* join_chat */
 	NULL,							/* reject_chat */
-	jabber_get_chat_name,			/* get_chat_name */
-	jabber_chat_invite,				/* chat_invite */
-	jabber_chat_leave,				/* chat_leave */
+	NULL,							/* get_chat_name */
+	NULL,							/* chat_invite */
+	NULL,							/* chat_leave */
 	NULL,							/* chat_whisper */
-	jabber_message_send_chat,		/* chat_send */
+	NULL,							/* chat_send */
 	jabber_keepalive,				/* keepalive */
 	NULL,							/* register_user */
 	NULL,							/* get_cb_info */
@@ -127,13 +127,13 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* buddy_free */
 	jabber_convo_closed,			/* convo_closed */
 	jabber_normalize,				/* normalize */
-	jabber_set_buddy_icon,			/* set_buddy_icon */
+	NULL,							/* set_buddy_icon */
 	NULL,							/* remove_group */
-	jabber_chat_user_real_name,	/* get_cb_real_name */
-	jabber_chat_set_topic,			/* set_chat_topic */
-	jabber_find_blist_chat,			/* find_blist_chat */
-	jabber_roomlist_get_list,		/* roomlist_get_list */
-	jabber_roomlist_cancel,			/* roomlist_cancel */
+	NULL,							/* get_cb_real_name */
+	NULL,							/* set_chat_topic */
+	NULL,							/* find_blist_chat */
+	NULL,							/* roomlist_get_list */
+	NULL,							/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
 	NULL,							/* can_receive_file */
 	NULL,							/* send_file */
@@ -205,71 +205,6 @@ static PurplePluginInfo info =
 	NULL
 };
 
-static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
-{
-	PurpleAccount *acct = NULL;
-
-	/* If we have a specific acct, use it */
-	if (acct_id) {
-		acct = purple_accounts_find(acct_id, prpl);
-		if (acct && !purple_account_is_connected(acct))
-			acct = NULL;
-	} else { /* Otherwise find an active account for the protocol */
-		GList *l = purple_accounts_get_all();
-		while (l) {
-			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
-					&& purple_account_is_connected(l->data)) {
-				acct = l->data;
-				break;
-			}
-			l = l->next;
-		}
-	}
-
-	return acct;
-}
-
-static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
-{
-	char *acct_id = params ? g_hash_table_lookup(params, "account") : NULL;
-	PurpleAccount *acct;
-
-	if (g_ascii_strcasecmp(proto, "xmpp"))
-		return FALSE;
-
-	acct = find_acct(purple_plugin_get_id(my_protocol), acct_id);
-
-	if (!acct)
-		return FALSE;
-
-	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
-	/* params is NULL if the URI has no '?' (or anything after it) */
-	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
-		char *body = g_hash_table_lookup(params, "body");
-		if (user && *user) {
-			PurpleIMConversation *im =
-					purple_im_conversation_new(acct, user);
-			purple_conversation_present(PURPLE_CONVERSATION(im));
-			if (body && *body)
-				purple_conversation_send_confirm(PURPLE_CONVERSATION(im), body);
-		}
-	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
-		char *name = g_hash_table_lookup(params, "name");
-		if (user && *user)
-			purple_blist_request_add_buddy(acct, user, NULL, name);
-	} else if (g_hash_table_lookup_extended(params, "join", NULL, NULL)) {
-		PurpleConnection *gc = purple_account_get_connection(acct);
-		if (user && *user) {
-			GHashTable *params = jabber_chat_info_defaults(gc, user);
-			jabber_chat_join(gc, params);
-		}
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-
 static void
 init_plugin(PurplePlugin *plugin)
 {
@@ -280,10 +215,12 @@ init_plugin(PurplePlugin *plugin)
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), "chat.facebook.com", '@');
 	purple_account_user_split_set_reverse(split, FALSE);
+	purple_account_user_split_set_constant(split, TRUE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	split = purple_account_user_split_new(_("Resource"), "", '/');
 	purple_account_user_split_set_reverse(split, FALSE);
+	purple_account_user_split_set_constant(split, TRUE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 #define ADD_VALUE(list, desc, v) { \
@@ -307,38 +244,12 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
 
-	option = purple_account_option_bool_new(
-						_("Allow plaintext auth over unencrypted streams"),
-						"auth_plain_in_clear", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-						   option);
-
-	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-						   option);
-
-	option = purple_account_option_string_new(_("Connect server"),
-						  "connect_server", NULL);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-						  option);
-
 	option = purple_account_option_string_new(_("BOSH URL"),
 						  "bosh_url", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
-	/* this should probably be part of global smiley theme settings later on,
-	  shared with MSN */
-	option = purple_account_option_bool_new(_("Show Custom Smileys"),
-		"custom_smileys", TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-		option);
-
 	my_protocol = plugin;
-
-	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
-		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 }
 
 PURPLE_INIT_PLUGIN(facebookxmpp, init_plugin, info);
-

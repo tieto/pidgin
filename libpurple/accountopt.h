@@ -412,6 +412,31 @@ gboolean purple_account_user_split_get_reverse(const PurpleAccountUserSplit *spl
  */
 void purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, gboolean reverse);
 
+/**
+ * purple_account_user_split_is_constant:
+ * @split: The account username split.
+ *
+ * Returns the constant parameter for an account split.
+ *
+ * When split is constant, it does not need to be displayed
+ * in configuration dialog.
+ *
+ * Returns: %TRUE, if the split is constant.
+ */
+gboolean
+purple_account_user_split_is_constant(const PurpleAccountUserSplit *split);
+
+/**
+ * purple_account_user_split_set_constant:
+ * @split:    The account username split.
+ * @constant: %TRUE, if the split is a constant part.
+ *
+ * Sets the constant parameter of account split.
+ */
+void
+purple_account_user_split_set_constant(PurpleAccountUserSplit *split,
+	gboolean constant);
+
 G_END_DECLS
 
 #endif /* _PURPLE_ACCOUNTOPT_H_ */

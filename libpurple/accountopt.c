@@ -73,6 +73,7 @@ struct _PurpleAccountUserSplit
 	gboolean reverse;       /* TRUE if the separator should be found
 							   starting a the end of the string, FALSE
 							   otherwise                                 */
+	gboolean constant;
 };
 
 
@@ -441,4 +442,21 @@ purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, gboolean re
 	g_return_if_fail(split != NULL);
 
 	split->reverse = reverse;
+}
+
+gboolean
+purple_account_user_split_is_constant(const PurpleAccountUserSplit *split)
+{
+	g_return_val_if_fail(split != NULL, FALSE);
+
+	return split->constant;
+}
+
+void
+purple_account_user_split_set_constant(PurpleAccountUserSplit *split,
+	gboolean constant)
+{
+	g_return_if_fail(split != NULL);
+
+	split->constant = constant;
 }

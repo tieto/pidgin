@@ -581,6 +581,8 @@ update_editable(PurpleConnection *gc, AccountPrefsDialog *dialog)
 #endif
 
 	for (l = dialog->user_split_entries ; l != NULL ; l = l->next) {
+		if (l->data == NULL)
+			continue;
 		if (GTK_IS_EDITABLE(l->data)) {
 			gtk_editable_set_editable(GTK_EDITABLE(l->data), set);
 #if GTK_CHECK_VERSION(3,0,0)
@@ -700,13 +702,14 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		PurpleAccountUserSplit *split = l->data;
 		char *buf;
 
-		buf = g_strdup_printf("_%s:", purple_account_user_split_get_text(split));
-
-		entry = gtk_entry_new();
-
-		add_pref_box(dialog, vbox, buf, entry);
-
-		g_free(buf);
+		if (purple_account_user_split_is_constant(split))
+			entry = NULL;
+		else {
+			buf = g_strdup_printf("_%s:", purple_account_user_split_get_text(split));
+			entry = gtk_entry_new();
+			add_pref_box(dialog, vbox, buf, entry);
+			g_free(buf);
+		}
 
 		dialog->user_split_entries =
 			g_list_append(dialog->user_split_entries, entry);
@@ -740,7 +743,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		if (value == NULL)
 			value = purple_account_user_split_get_default_value(split);
 
-		if (value != NULL)
+		if (value != NULL && entry != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
 	}
 
@@ -1475,7 +1478,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			GtkEntry *entry = l2->data;
 			char sep[2] = " ";
 
-			value = gtk_entry_get_text(entry);
+			value = entry ? gtk_entry_get_text(entry) : "";
+			if (!value)
+				value = "";
 
 			*sep = purple_account_user_split_get_separator(split);
 
