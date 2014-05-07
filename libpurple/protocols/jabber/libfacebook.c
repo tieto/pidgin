@@ -55,6 +55,23 @@ facebook_list_icon(PurpleAccount *a, PurpleBuddy *b)
 	return "facebook";
 }
 
+static void
+facebook_login(PurpleAccount *account)
+{
+	PurpleConnection *gc;
+	JabberStream *js;
+
+	jabber_login(account);
+
+	gc = purple_account_get_connection(account);
+	js = purple_connection_get_protocol_data(gc);
+
+	if (!js)
+		return;
+
+	js->server_caps |= JABBER_CAP_FACEBOOK;
+}
+
 static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
@@ -76,7 +93,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_blist_node_menu,			/* blist_node_menu */
 	jabber_chat_info,				/* chat_info */
 	jabber_chat_info_defaults,		/* chat_info_defaults */
-	jabber_login,					/* login */
+	facebook_login,					/* login */
 	jabber_close,					/* close */
 	jabber_message_send_im,			/* send_im */
 	jabber_set_info,				/* set_info */
