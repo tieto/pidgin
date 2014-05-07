@@ -931,6 +931,7 @@ purple_xmlnode_copy(const PurpleXmlNode *src)
 			sibling = sibling->next;
 		} else {
 			ret->child = purple_xmlnode_copy(child);
+			/* coverity[copy_paste_error] */
 			sibling = ret->child;
 		}
 		sibling->parent = ret;

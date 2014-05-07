@@ -213,18 +213,18 @@ static char *zephyr_strip_local_realm(zephyr_account* zephyr,const char* user){
  * wouldn't do this. but it is so i will. */
 
 /* just for debugging */
-static void handle_unknown(ZNotice_t notice)
+static void handle_unknown(ZNotice_t *notice)
 {
-	purple_debug_error("zephyr","z_packet: %s\n", notice.z_packet);
-	purple_debug_error("zephyr","z_version: %s\n", notice.z_version);
-	purple_debug_error("zephyr","z_kind: %d\n", (int)(notice.z_kind));
-	purple_debug_error("zephyr","z_class: %s\n", notice.z_class);
-	purple_debug_error("zephyr","z_class_inst: %s\n", notice.z_class_inst);
-	purple_debug_error("zephyr","z_opcode: %s\n", notice.z_opcode);
-	purple_debug_error("zephyr","z_sender: %s\n", notice.z_sender);
-	purple_debug_error("zephyr","z_recipient: %s\n", notice.z_recipient);
-	purple_debug_error("zephyr","z_message: %s\n", notice.z_message);
-	purple_debug_error("zephyr","z_message_len: %d\n", notice.z_message_len);
+	purple_debug_error("zephyr","z_packet: %s\n", notice->z_packet);
+	purple_debug_error("zephyr","z_version: %s\n", notice->z_version);
+	purple_debug_error("zephyr","z_kind: %d\n", (int)(notice->z_kind));
+	purple_debug_error("zephyr","z_class: %s\n", notice->z_class);
+	purple_debug_error("zephyr","z_class_inst: %s\n", notice->z_class_inst);
+	purple_debug_error("zephyr","z_opcode: %s\n", notice->z_opcode);
+	purple_debug_error("zephyr","z_sender: %s\n", notice->z_sender);
+	purple_debug_error("zephyr","z_recipient: %s\n", notice->z_recipient);
+	purple_debug_error("zephyr","z_message: %s\n", notice->z_message);
+	purple_debug_error("zephyr","z_message_len: %d\n", notice->z_message_len);
 }
 
 
@@ -748,23 +748,29 @@ static gboolean pending_zloc(zephyr_account *zephyr, const char *who)
 
 /* Called when the server notifies us a message couldn't get sent */
 
-static void message_failed(PurpleConnection *gc, ZNotice_t notice, struct sockaddr_in from)
+static void message_failed(PurpleConnection *gc, ZNotice_t *notice, struct sockaddr_in from)
 {
-	if (g_ascii_strcasecmp(notice.z_class, "message")) {
-		gchar* chat_failed = g_strdup_printf(_("Unable to send to chat %s,%s,%s"),notice.z_class,notice.z_class_inst,notice.z_recipient);
+	if (g_ascii_strcasecmp(notice->z_class, "message")) {
+		gchar* chat_failed = g_strdup_printf(
+			_("Unable to send to chat %s,%s,%s"),
+			notice->z_class, notice->z_class_inst,
+			notice->z_recipient);
 		purple_notify_error(gc,"",chat_failed,NULL,
 			purple_request_cpar_from_connection(gc));
 		g_free(chat_failed);
 	} else {
-		purple_notify_error(gc, notice.z_recipient,
+		purple_notify_error(gc, notice->z_recipient,
 			_("User is offline"), NULL,
 			purple_request_cpar_from_connection(gc));
 	}
 }
 
-static void handle_message(PurpleConnection *gc,ZNotice_t notice)
+static void handle_message(PurpleConnection *gc, ZNotice_t *notice_p)
 {
+	ZNotice_t notice;
 	zephyr_account* zephyr = purple_connection_get_protocol_data(gc);
+
+	memcpy(&notice, notice_p, sizeof(notice)); /* TODO - use pointer? */
 
 	if (!g_ascii_strcasecmp(notice.z_class, LOGIN_CLASS)) {
 		/* well, we'll be updating in 20 seconds anyway, might as well ignore this. */
@@ -1135,7 +1141,7 @@ static gint check_notify_tzc(gpointer data)
 				notice.z_default_format = "Class $class, Instance $instance:\n" "To: @bold($recipient) at $time $date\n" "From: @bold($1) <$sender>\n\n$2";
 				notice.z_message_len = strlen(msg) + 3;
 				notice.z_message = buf;
-				handle_message(gc, notice);
+				handle_message(gc, &notice);
 				g_free(msg);
 				/*				  g_free(zsig); */
 				g_free(buf);
@@ -1237,20 +1243,20 @@ static gint check_notify_zeph02(gpointer data)
 		case UNSAFE:
 		case UNACKED:
 		case ACKED:
-			handle_message(gc,notice);
+			handle_message(gc, &notice);
 			break;
 		case SERVACK:
 			if (!(g_ascii_strcasecmp(notice.z_message, ZSRVACK_NOTSENT))) {
-				message_failed(gc,notice, from);
+				message_failed(gc, &notice, from);
 			}
 			break;
 		case CLIENTACK:
 			purple_debug_error("zephyr", "Client ack received\n");
-			handle_unknown(notice); /* XXX: is it really unknown? */
+			handle_unknown(&notice); /* XXX: is it really unknown? */
 			break;
 		default:
 			/* we'll just ignore things for now */
-			handle_unknown(notice);
+			handle_unknown(&notice);
 			purple_debug_error("zephyr", "Unhandled notice.\n");
 			break;
 		}

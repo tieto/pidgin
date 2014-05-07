@@ -71,7 +71,12 @@ static void simple_keep_alive(PurpleConnection *gc) {
 			 remain in the NAT table */
 		gchar buf[2] = {0, 0};
 		purple_debug_info("simple", "sending keep alive\n");
-		sendto(sip->fd, buf, 1, 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in));
+		if (sendto(sip->fd, buf, 1, 0,
+			(struct sockaddr*)&sip->serveraddr,
+			sizeof(struct sockaddr_in)) != 1)
+		{
+			purple_debug_error("simple", "failed sending keep alive\n");
+		}
 	}
 	return;
 }
@@ -1723,7 +1728,8 @@ static void simple_newconn_cb(gpointer data, gint source, PurpleInputCondition c
 	flags = fcntl(newfd, F_GETFL);
 	fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(newfd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(newfd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("simple", "couldn't set FD_CLOEXEC\n");
 #endif
 
 	conn = connection_create(sip, newfd);

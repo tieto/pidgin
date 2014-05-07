@@ -1047,9 +1047,9 @@ theme_install_theme(char *path, struct theme_info *info)
 
 				prefs_themes_refresh();
 			} else {
-				if (g_remove(temp_path)) {
-					purple_debug_error("gtkprefs", "Error removing %s: %s\n",
-							temp_path, g_strerror(errno));
+				if (g_remove(temp_path) != 0) {
+					purple_debug_error("gtkprefs",
+						"couldn't remove temp path");
 				}
 				purple_notify_error(NULL, NULL, _("Theme failed to load."), NULL, NULL);
 			}

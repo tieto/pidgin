@@ -1609,6 +1609,7 @@ int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, gui
 void
 aim_im_send_icq_confirmation(OscarData *od, const char *bn, const guchar *cookie)
 {
+	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 	guint32 header_size, data_size;
@@ -1644,7 +1645,12 @@ aim_im_send_icq_confirmation(OscarData *od, const char *bn, const guchar *cookie
 	byte_stream_put8(&bs, 0x00);	/* empty query message */
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x000b, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_ICBM, 0x000b, snacid, &bs);
+	conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM);
+	g_warn_if_fail(conn);
+	if (conn) {
+		flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x000b,
+			snacid, &bs);
+	}
 	byte_stream_destroy(&bs);
 }
 

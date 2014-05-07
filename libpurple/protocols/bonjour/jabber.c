@@ -373,12 +373,14 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, PurpleXmlNode *packet) {
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	if (!strcmp(packet->name, "message"))
+	if (g_strcmp0(packet->name, "message") == 0)
 		_jabber_parse_and_write_message_to_ui(packet, pb);
-	else if(!strcmp(packet->name, "iq"))
+	else if (g_strcmp0(packet->name, "iq") == 0)
 		xep_iq_parse(packet, pb);
-	else
-		purple_debug_warning("bonjour", "Unknown packet: %s\n", packet->name ? packet->name : "(null)");
+	else {
+		purple_debug_warning("bonjour", "Unknown packet: %s\n",
+			packet->name ? packet->name : "(null)");
+	}
 }
 
 static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
@@ -656,7 +658,8 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	flags = fcntl(client_socket, F_GETFL);
 	fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(client_socket, F_SETFD, FD_CLOEXEC);
+	if (fcntl(client_socket, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("bonjour", "jabber: couldn't set FD_CLOEXEC\n");
 #endif
 
 	/* Look for the buddy that has opened the conversation and fill information */
@@ -775,7 +778,10 @@ bonjour_jabber_start(BonjourJabber *jdata)
 		common_sockaddr_t addr6;
 #ifdef IPV6_V6ONLY
 		int on = 1;
-		setsockopt(jdata->socket6, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on));
+		if (setsockopt(jdata->socket6, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) != 0) {
+			purple_debug_error("bonjour", "couldn't force IPv6\n");
+			return -1;
+		}
 #endif
 		memset(&addr6, 0, sizeof(addr6));
 		addr6.in6.sin6_family = AF_INET6;
@@ -1177,8 +1183,14 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 		/* Close the socket and remove the watcher */
 		if (bconv->socket >= 0) {
 			/* Send the end of the stream to the other end of the conversation */
-			if (bconv->sent_stream_start == FULLY_SENT)
-				send(bconv->socket, STREAM_END, strlen(STREAM_END), 0);
+			if (bconv->sent_stream_start == FULLY_SENT) {
+				size_t len = strlen(STREAM_END);
+				if (send(bconv->socket, STREAM_END, len, 0) != len) {
+					purple_debug_error("bonjour",
+						"bonjour_jabber_close_conversation: "
+						"couldn't send data\n");
+				}
+			}
 			/* TODO: We're really supposed to wait for "</stream:stream>" before closing the socket */
 			close(bconv->socket);
 		}

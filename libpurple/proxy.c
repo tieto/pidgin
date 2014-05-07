@@ -766,7 +766,8 @@ proxy_connect_udp_none(PurpleProxyConnectData *connect_data, common_sockaddr_t *
 	flags = fcntl(connect_data->fd, F_GETFL);
 	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
 #endif
 
 	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)
@@ -828,7 +829,8 @@ proxy_connect_none(PurpleProxyConnectData *connect_data, common_sockaddr_t *addr
 	flags = fcntl(connect_data->fd, F_GETFL);
 	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
 #endif
 
 	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)
@@ -1279,7 +1281,8 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, common_sockaddr_t *addr
 	flags = fcntl(connect_data->fd, F_GETFL);
 	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("proxy", "couldn't FD_CLOEXEC\n");
 #endif
 
 	if (connect(connect_data->fd, &addr->sa, addrlen) != 0) {
@@ -1473,7 +1476,8 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, common_sockaddr_t *ad
 	flags = fcntl(connect_data->fd, F_GETFL);
 	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
 #endif
 
 	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)
@@ -2130,7 +2134,8 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, common_sockaddr_t *ad
 	flags = fcntl(connect_data->fd, F_GETFL);
 	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
 #endif
 
 	if (connect(connect_data->fd, &addr->sa, addrlen) != 0)

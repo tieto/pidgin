@@ -33,6 +33,8 @@
 #include <resolv.h>
 #endif
 
+#define MAX_ADDR_RESPONSE_LEN 1048576
+
 #if (defined(__APPLE__) || defined (__unix__)) && !defined(__osf__)
 #define PURPLE_DNSQUERY_USE_FORK
 #endif
@@ -664,7 +666,7 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 		/* Success! */
 		while (rc > 0) {
 			rc = read(query_data->resolver->fd_out, &addrlen, sizeof(addrlen));
-			if (rc > 0 && addrlen > 0) {
+			if (rc > 0 && addrlen > 0 && addrlen < MAX_ADDR_RESPONSE_LEN) {
 				addr = g_malloc(addrlen);
 				rc = read(query_data->resolver->fd_out, addr, addrlen);
 				hosts = g_slist_append(hosts, GINT_TO_POINTER(addrlen));
