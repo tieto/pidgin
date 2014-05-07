@@ -27,6 +27,7 @@
 
 #include "buddy.h"
 #include "chat.h"
+#include "facebook_roster.h"
 #include "google/google.h"
 #include "google/google_roster.h"
 #include "presence.h"
@@ -211,10 +212,17 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 
 	js->currently_parsing_roster_push = TRUE;
 
+	if (js->server_caps & JABBER_CAP_FACEBOOK)
+		jabber_facebook_roster_cleanup(js, query);
+
 	for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item))
 	{
 		const char *jid, *name, *subscription, *ask;
 		JabberBuddy *jb;
+
+		if (js->server_caps & JABBER_CAP_FACEBOOK)
+			if (!jabber_facebook_roster_incoming(js, item))
+				continue;
 
 		subscription = xmlnode_get_attrib(item, "subscription");
 		jid = xmlnode_get_attrib(item, "jid");

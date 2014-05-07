@@ -934,6 +934,12 @@ jabber_stream_new(PurpleAccount *account)
 	js->gc = gc;
 	js->fd = -1;
 
+	if (g_strcmp0("prpl-facebook-xmpp",
+		purple_account_get_protocol_id(account)) == 0)
+	{
+		js->server_caps |= JABBER_CAP_FACEBOOK;
+	}
+
 	user = g_strdup(purple_account_get_username(account));
 	/* jabber_id_new doesn't accept "user@domain/" as valid */
 	slash = strchr(user, '/');
