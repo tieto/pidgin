@@ -1841,7 +1841,9 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					c++;
 
 				/* Find the last '(' character. */
-				if ((tmp = strchr(c, '\n')) != NULL) {
+				if (!c) {
+					/* do nothing */
+				} else if ((tmp = strchr(c, '\n')) != NULL) {
 					while (*tmp && *tmp != '(') --tmp;
 					c = tmp;
 				} else {
