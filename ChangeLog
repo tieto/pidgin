@@ -19,6 +19,9 @@ version 2.10.10 (?/?/?):
 	* Fix a possible leak of unencrypted data when using /me command
 	  with OTR. (Thijs Alkemade) (#15750)
 
+	XMPP:
+	* Fix Facebook XMPP roster quirks. (#15041, #15957)
+
 version 2.10.9 (2/2/2014):
 	XMPP:
 	* Fix problems logging into some servers including jabber.org and
