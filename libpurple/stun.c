@@ -137,7 +137,7 @@ static gboolean timeoutfunc(gpointer data) {
 	sc->retry++;
 	if (sendto(sc->fd, sc->packet, sc->packetsize, 0,
 		(struct sockaddr *)&(sc->addr), sizeof(struct sockaddr_in)) !=
-		sc->packetsize)
+		(gssize)sc->packetsize)
 	{
 		purple_debug_warning("stun", "sendto failed\n");
 		return FALSE;

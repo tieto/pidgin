@@ -3106,7 +3106,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 	/* Use stat to be absolutely sure. */
-	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size))
+	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size)) {
 		purple_debug_error("util", "Error writing data to file %s: "
 			"couldn't g_stat file", filename_temp);
 		g_free(filename_temp);
