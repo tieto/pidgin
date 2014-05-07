@@ -24,6 +24,7 @@
 #include "presence.h"
 #include "debug.h"
 #include "xmlnode.h"
+#include "roster.h"
 
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
 {
@@ -127,7 +128,8 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 		g = purple_buddy_get_group(b);
 
 		group = xmlnode_new_child(item, "group");
-		xmlnode_insert_data(group, purple_group_get_name(g), -1);
+		xmlnode_insert_data(group,
+			jabber_roster_group_get_global_name(g), -1);
 
 		buddies = buddies->next;
 	}
@@ -187,7 +189,8 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 		g = purple_buddy_get_group(b);
 
 		group = xmlnode_new_child(item, "group");
-		xmlnode_insert_data(group, purple_group_get_name(g), -1);
+		xmlnode_insert_data(group,
+			jabber_roster_group_get_global_name(g), -1);
 
 		buddies = buddies->next;
 	}
