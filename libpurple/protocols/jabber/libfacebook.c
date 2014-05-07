@@ -64,8 +64,12 @@ facebook_login(PurpleAccount *account)
 	jabber_login(account);
 
 	gc = purple_account_get_connection(account);
-	js = purple_connection_get_protocol_data(gc);
+	if (!gc)
+		return;
 
+	purple_connection_set_flags(gc, 0);
+
+	js = purple_connection_get_protocol_data(gc);
 	if (!js)
 		return;
 
@@ -77,11 +81,7 @@ static PurplePlugin *my_protocol = NULL;
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
-#ifdef HAVE_CYRUS_SASL
-	OPT_PROTO_PASSWORD_OPTIONAL |
-#endif
-	OPT_PROTO_SLASH_COMMANDS_NATIVE,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
@@ -96,7 +96,7 @@ static PurplePluginProtocolInfo prpl_info =
 	facebook_login,					/* login */
 	jabber_close,					/* close */
 	jabber_message_send_im,			/* send_im */
-	jabber_set_info,				/* set_info */
+	NULL,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
 	jabber_set_status,				/* set_status */
@@ -196,7 +196,7 @@ static PurplePluginInfo info =
 	NULL,                                           /**< ui_info        */
 	&prpl_info,                                     /**< extra_info     */
 	NULL,                                           /**< prefs_info     */
-	jabber_actions,
+	NULL,                                           /**< actions        */
 
 	/* padding */
 	NULL,

@@ -1076,7 +1076,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 					gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(entry))),
 					                   str_value);
 				else
-					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
+					gtk_entry_set_text(GTK_ENTRY(entry), str_value ? str_value : "");
 
 				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
