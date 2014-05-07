@@ -6505,14 +6505,14 @@ static gboolean insert_node(PurpleBuddyList *list, PurpleBlistNode *node, GtkTre
 	if(!iter)
 		return FALSE;
 
+	/* XXX: it's not necessary, but let's silence a warning*/
+	memset(&parent_iter, 0, sizeof(parent_iter));
+
 	if(node->parent && !get_iter_from_node(node->parent, &parent_iter))
 		return FALSE;
 
 	if(get_iter_from_node(node, &cur))
 		curptr = &cur;
-
-	/* XXX: it's not necessary, but let's silence a warning*/
-	memset(&parent_iter, 0, sizeof(parent_iter));
 
 	if(PURPLE_IS_CONTACT(node) || PURPLE_IS_CHAT(node)) {
 		current_sort_method->func(node, list, parent_iter, curptr, iter);
