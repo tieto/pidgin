@@ -37,6 +37,10 @@ jabber_facebook_roster_cleanup(JabberStream *js, xmlnode *query)
 	PurpleBuddy *buddy;
 	const gchar *jid;
 
+	if (js->facebook_roster_cleanup_performed)
+		return;
+	js->facebook_roster_cleanup_performed = TRUE;
+
 	/* mark all local buddies as "to be removed" */
 	remove_buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, NULL);

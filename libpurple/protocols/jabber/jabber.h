@@ -284,6 +284,9 @@ struct _JabberStream
 	gchar *google_relay_host;
 	GList *google_relay_requests; /* the HTTP requests to get */
 												/* relay info */
+
+	/* facebook quirks */
+	gboolean facebook_roster_cleanup_performed;
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);
