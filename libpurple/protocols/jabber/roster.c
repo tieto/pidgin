@@ -114,7 +114,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 	if(!groups) {
 		if(!buddies) {
-			groups = g_slist_append(groups, JABBER_ROSTER_DEFAULT_GROUP);
+			groups = g_slist_append(groups, g_strdup(JABBER_ROSTER_DEFAULT_GROUP));
 		} else {
 			/* TODO: What should we do here? Removing the local buddies
 			 * is wrong, but so is letting the group state get out of sync with
