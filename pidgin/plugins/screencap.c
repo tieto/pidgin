@@ -920,11 +920,41 @@ scrncap_conversation_uninit(PidginConversation *gtkconv)
  * Plugin setup
  ******************************************************************************/
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Tomasz Wasilczyk <twasilczyk@pidgin.im>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           "gtk-screencap",
+		"name",         N_("Screen Capture"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Utility"),
+		"summary",      N_("Send screenshots to your buddies."),
+		"description",  N_("Adds an option to send a screenshot as an inline "
+		                   "image. It works only with protocols that supports "
+		                   "inline images."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-scrncap_plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	GList *it;
 	const gchar *color_str;
+
+	purple_prefs_add_none("/plugins");
+	purple_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/plugins/gtk/screencap");
+	purple_prefs_add_string("/plugins/gtk/screencap/brush_color",
+		SCRNCAP_DEFAULT_COLOR);
 
 	color_str = purple_prefs_get_string("/plugins/gtk/screencap/brush_color");
 	if (color_str && color_str[0])
@@ -956,7 +986,7 @@ scrncap_plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-scrncap_plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	GList *it;
 
@@ -983,52 +1013,4 @@ scrncap_plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PidginPluginUiInfo scrncap_ui_info =
-{
-	NULL, /* config */
-
-	/* padding */
-	NULL, NULL, NULL, NULL
-};
-
-static PurplePluginInfo scrncap_info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"gtk-screencap",
-	N_("Screen Capture"),
-	DISPLAY_VERSION,
-	N_("Send screenshots to your buddies."),
-	N_("Adds an option to send a screenshot as an inline image. "
-		"It works only with protocols that supports inline images."),
-	"Tomasz Wasilczyk <twasilczyk@pidgin.im>",
-	PURPLE_WEBSITE,
-	scrncap_plugin_load,
-	scrncap_plugin_unload,
-	NULL,
-	&scrncap_ui_info,
-	NULL,
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL, NULL, NULL, NULL
-};
-
-static void
-scrncap_init_plugin(PurplePlugin *plugin)
-{
-	purple_prefs_add_none("/plugins");
-	purple_prefs_add_none("/plugins/gtk");
-	purple_prefs_add_none("/plugins/gtk/screencap");
-	purple_prefs_add_string("/plugins/gtk/screencap/brush_color",
-		SCRNCAP_DEFAULT_COLOR);
-}
-
-PURPLE_INIT_PLUGIN(screencap, scrncap_init_plugin, scrncap_info)
+PURPLE_PLUGIN_INIT(screencap, plugin_query, plugin_load, plugin_unload);

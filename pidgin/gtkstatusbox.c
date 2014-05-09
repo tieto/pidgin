@@ -2773,12 +2773,16 @@ get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status)
 		/* In reverse order */
 		case PURPLE_STATUS_OFFLINE:
 			index++;
+			/* fall through */
 		case PURPLE_STATUS_INVISIBLE:
 			index++;
+			/* fall through */
 		case PURPLE_STATUS_UNAVAILABLE:
 			index++;
+			/* fall through */
 		case PURPLE_STATUS_AWAY:
 			index++;
+			/* fall through */
 		case PURPLE_STATUS_AVAILABLE:
 			index++;
 			break;

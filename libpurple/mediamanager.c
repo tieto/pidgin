@@ -375,7 +375,11 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media)
 {
 #ifdef USE_VV
-	GList *list = g_list_find(manager->priv->medias, media);
+	GList *list;
+
+	g_return_if_fail(manager != NULL);
+
+	list = g_list_find(manager->priv->medias, media);
 	if (list)
 		manager->priv->medias =
 			g_list_delete_link(manager->priv->medias, list);

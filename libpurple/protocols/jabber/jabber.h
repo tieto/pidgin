@@ -49,6 +49,8 @@ typedef enum {
 	JABBER_CAP_ITEMS          = 1 << 14,
 	JABBER_CAP_ROSTER_VERSIONING = 1 << 15,
 
+	JABBER_CAP_FACEBOOK       = 1 << 16,
+
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 
@@ -296,6 +298,9 @@ struct _JabberStream
 	/* stuff for Google's relay handling */
 	gchar *google_relay_token;
 	gchar *google_relay_host;
+
+	/* facebook quirks */
+	gboolean facebook_roster_cleanup_performed;
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);

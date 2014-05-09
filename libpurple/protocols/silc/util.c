@@ -268,7 +268,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			close(fd);
 			return FALSE;
 		}
-	} else if ((g_stat(file_private_key, &st)) == -1) {
+	} else {
 		/* If file doesn't exist */
 		if (errno == ENOENT) {
 			purple_connection_update_progress(gc, _("Creating SILC key pair..."), 1, 5);
@@ -293,13 +293,13 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			}
 			/* This shouldn't really happen because silc_create_key_pair()
 			 * will set the permissions */
-			else if ((g_stat(file_private_key, &st)) == -1) {
+			else if ((fstat(fd, &st)) == -1) {
 				purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 						   file_private_key, g_strerror(errno));
 				return FALSE;
 			}
 		} else {
-			purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
+			purple_debug_error("silc", "Couldn't open '%s' private key, error: %s\n",
 					   file_private_key, g_strerror(errno));
 			return FALSE;
 		}

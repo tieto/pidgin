@@ -1412,7 +1412,9 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	read = g_malloc(data->length + 2);
 
 	file = g_fopen(data->path, "rb");
-	fseek(file, data->offset, SEEK_SET);
+	g_return_val_if_fail(file != NULL, g_strdup(""));
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		g_return_val_if_reached(g_strdup(""));
 	data->length = fread(read, 1, data->length, file);
 	fclose(file);
 
@@ -1526,7 +1528,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			line = temp->str;
 		}
 
-		if (*line == '[') {
+		if (line && *line == '[') {
 			const char *timestamp;
 
 			if ((timestamp = strchr(line, ']'))) {
@@ -1664,7 +1666,8 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			}
 		}
 
-		g_string_append(formatted, line);
+		if (line)
+			g_string_append(formatted, line);
 
 		line = c;
 		if (temp)
@@ -1765,6 +1768,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(sn != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
 
+	memset(&tm, 0, sizeof(tm));
+
 	/* QIP only supports ICQ. */
 	if (strcmp(purple_account_get_protocol_id(account), "prpl-icq"))
 		return NULL;
@@ -1814,16 +1819,20 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 				/* find EOL */
 				c = strchr(c, '\n');
-				c++;
+				if (c)
+					c++;
 
 				/* Find the last '(' character. */
-				if ((tmp = strchr(c, '\n')) != NULL) {
+				if (!c) {
+					/* do nothing */
+				} else if ((tmp = strchr(c, '\n')) != NULL) {
 					while (*tmp && *tmp != '(') --tmp;
 					c = tmp;
 				} else {
 					while (*c)
 						c++;
-					c--;
+					if (c)
+						c--;
 					c = g_strrstr(c, "(");
 				}
 
@@ -1926,7 +1935,8 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 	contents = g_malloc(data->length + 2);
 
-	fseek(file, data->offset, SEEK_SET);
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		g_return_val_if_reached(g_strdup(""));
 	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 
@@ -2028,7 +2038,9 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 					/* find EOF */
 					c = strchr(c, '\n');
-					line = ++c;
+					if (c)
+						c++;
+					line = c;
 				}
 			}
 		} else {
@@ -2172,7 +2184,8 @@ static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccou
 				                  sn, data->path, data->offset, data->length);
 			}
 			c = strchr(c, '\n');
-			c++;
+			if (c)
+				c++;
 		}
 
 		/* I've seen the file end without the AMSN_LOG_CONV_END bit */
@@ -2308,7 +2321,8 @@ static char *amsn_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	file = g_fopen(data->path, "rb");
 	g_return_val_if_fail(file != NULL, g_strdup(""));
 
-	fseek(file, data->offset, SEEK_SET);
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		g_return_val_if_reached(g_strdup(""));
 	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 

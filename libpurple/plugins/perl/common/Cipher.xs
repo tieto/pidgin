@@ -64,6 +64,7 @@ purple_cipher_digest(cipher, digest)
 		buff = (guchar *)SvGROW(digest, digest_size);
 		if (purple_cipher_digest(cipher, buff, digest_size)) {
 			SvCUR_set(digest, digest_size);
+			/* coverity[extra_comma] */
 			SvPOK_only(digest);
 			RETVAL = 1;
 		} else {
@@ -87,6 +88,7 @@ purple_cipher_digest_to_str(cipher, digest_s)
 		buff = SvGROW(digest_s, str_len + 1);
 		if (purple_cipher_digest_to_str(cipher, buff, str_len + 1)) {
 			SvCUR_set(digest_s, str_len);
+			/* coverity[extra_comma] */
 			SvPOK_only(digest_s);
 			RETVAL = 1;
 		} else {
@@ -114,6 +116,7 @@ purple_cipher_encrypt(cipher, input, output)
 		ret = purple_cipher_encrypt(cipher, data, input_len, buff, output_len);
 		if (ret >= 0) {
 			RETVAL = 1;
+			/* coverity[extra_comma] */
 			SvPOK_only(output);
 			SvCUR_set(output, ret);
 		} else {
@@ -141,6 +144,7 @@ purple_cipher_decrypt(cipher, input, output)
 		ret = purple_cipher_decrypt(cipher, data, input_len, buff, output_len);
 		if (ret >= 0) {
 			RETVAL = 1;
+			/* coverity[extra_comma] */
 			SvPOK_only(output);
 			SvCUR_set(output, ret);
 		} else {
@@ -262,6 +266,7 @@ purple_hash_digest(hash, digest)
 		buff = (guchar *)SvGROW(digest, digest_size);
 		if (purple_hash_digest(hash, buff, digest_size)) {
 			SvCUR_set(digest, digest_size);
+			/* coverity[extra_comma] */
 			SvPOK_only(digest);
 			RETVAL = 1;
 		} else {
@@ -285,6 +290,7 @@ purple_hash_digest_to_str(hash, digest_s)
 		buff = SvGROW(digest_s, str_len + 1);
 		if (purple_hash_digest_to_str(hash, buff, str_len + 1)) {
 			SvCUR_set(digest_s, str_len);
+			/* coverity[extra_comma] */
 			SvPOK_only(digest_s);
 			RETVAL = 1;
 		} else {

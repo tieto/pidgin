@@ -631,7 +631,8 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 	flags = fcntl(conn->fd, F_GETFL);
 	fcntl(conn->fd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-	fcntl(conn->fd, F_SETFD, FD_CLOEXEC);
+	if (fcntl(conn->fd, F_SETFD, FD_CLOEXEC) != 0)
+		purple_debug_warning("oscar", "peer: couldn't set FD_CLOEXEC\n");
 #endif
 
 	purple_input_remove(conn->watcher_incoming);

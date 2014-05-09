@@ -483,6 +483,8 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	gc = js->gc;
 	account = purple_connection_get_account(gc);
 
+	g_return_if_fail(data != NULL);
+
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t")) {
 		const char *username;
@@ -4343,8 +4345,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	purple_signal_connect(purple_get_core(), "uri-handler", xmpp_protocol,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 	purple_signal_connect(purple_get_core(), "uri-handler", gtalk_protocol,
-		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
-	purple_signal_connect(purple_get_core(), "uri-handler", facebook_protocol,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 
 	jabber_init_protocol(xmpp_protocol);

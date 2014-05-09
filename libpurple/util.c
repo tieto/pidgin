@@ -1557,6 +1557,7 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 				case '"':
 				case '\'':
 					in_quotes = close;
+					/* fall through */
 				case '=':
 					{
 						size_t len = close - cur;
@@ -1569,11 +1570,12 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 
 						in_attr = FALSE;
 						cur = close + 1;
-						break;
 					}
+					break;
 				case ' ':
 				case '>':
 					in_attr = FALSE;
+					/* fall through */
 				default:
 					cur = close;
 					break;
@@ -1592,6 +1594,7 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 				case '"':
 				case '\'':
 					in_quotes = cur;
+					/* fall through */
 				default:
 					cur++;
 					break;
@@ -2982,7 +2985,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 {
 	gchar *filename_temp;
 	FILE *file;
-	size_t real_size, byteswritten;
+	gsize real_size, byteswritten;
 	GStatBuf st;
 #ifndef HAVE_FILENO
 	int fd;
@@ -3017,20 +3020,19 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 
-#ifndef _WIN32
-	/* Set file permissions */
-	if (fchmod(fileno(file), S_IRUSR | S_IWUSR) == -1)
-	{
-		purple_debug_error("util", "Error setting permissions of %s: %s\n",
-				filename_temp, g_strerror(errno));
-	}
-#endif
-
 	/* Write to file */
 	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
 
 #ifdef HAVE_FILENO
+#ifndef _WIN32
+	/* Set file permissions */
+	if (fchmod(fileno(file), S_IRUSR | S_IWUSR) == -1) {
+		purple_debug_error("util", "Error setting permissions of "
+			"file %s: %s\n", filename_temp, g_strerror(errno));
+	}
+#endif
+
 	/* Apparently XFS (and possibly other filesystems) do not
 	 * guarantee that file data is flushed before file metadata,
 	 * so this procedure is insufficient without some flushage. */
@@ -3068,6 +3070,15 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
+
+#ifndef _WIN32
+	/* copy-pasta! */
+	if (fchmod(fd, S_IRUSR | S_IWUSR) == -1) {
+		purple_debug_error("util", "Error setting permissions of "
+			"file %s: %s\n", filename_temp, g_strerror(errno));
+	}
+#endif
+
 	if (fsync(fd) < 0) {
 		purple_debug_error("util", "Error syncing %s: %s\n",
 				   filename_temp, g_strerror(errno));
@@ -3095,17 +3106,9 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		return FALSE;
 	}
 	/* Use stat to be absolutely sure. */
-	if (g_stat(filename_temp, &st) == -1) {
+	if ((g_stat(filename_temp, &st) == -1) || ((gsize)st.st_size != real_size)) {
 		purple_debug_error("util", "Error writing data to file %s: "
 			"couldn't g_stat file", filename_temp);
-		g_free(filename_temp);
-		return FALSE;
-	}
-	if (st.st_size != (off_t)real_size) {
-		purple_debug_error("util", "Error writing data to file %s: "
-			"Incomplete file written (%" G_GSIZE_FORMAT " != %"
-			G_GSIZE_FORMAT "); is your disk full?",
-			filename_temp, (gsize)st.st_size, real_size);
 		g_free(filename_temp);
 		return FALSE;
 	}
@@ -4191,7 +4194,7 @@ purple_utf8_salvage(const char *str)
 	workstr = g_string_sized_new(strlen(str));
 
 	do {
-		g_utf8_validate(str, -1, &end);
+		(void)g_utf8_validate(str, -1, &end);
 		workstr = g_string_append_len(workstr, str, end - str);
 		str = end;
 		if (*str == '\0')

@@ -137,7 +137,7 @@ save_account_cb(AccountEditDialog *dialog)
 			PurpleAccountUserSplit *split = iter->data;
 			GntWidget *entry = entries->data;
 
-			value = gnt_entry_get_text(GNT_ENTRY(entry));
+			value = entry ? gnt_entry_get_text(GNT_ENTRY(entry)) : NULL;
 			if (value == NULL || *value == '\0')
 				value = purple_account_user_split_get_default_value(split);
 			g_string_append_printf(username, "%c%s",
@@ -317,17 +317,19 @@ update_user_splits(AccountEditDialog *dialog)
 	for (iter = purple_protocol_get_user_splits(protocol); iter; iter = iter->next)
 	{
 		PurpleAccountUserSplit *split = iter->data;
-		GntWidget *entry;
-		char *buf;
+		GntWidget *entry = NULL;
+		char *buf = NULL;
 
-		hbox = gnt_hbox_new(TRUE);
-		gnt_box_add_widget(GNT_BOX(dialog->splits), hbox);
+		if (!purple_account_user_split_is_constant(split)) {
+			hbox = gnt_hbox_new(TRUE);
+			gnt_box_add_widget(GNT_BOX(dialog->splits), hbox);
 
-		buf = g_strdup_printf("%s:", purple_account_user_split_get_text(split));
-		gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(buf));
+			buf = g_strdup_printf("%s:", purple_account_user_split_get_text(split));
+			gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(buf));
 
-		entry = gnt_entry_new(NULL);
-		gnt_box_add_widget(GNT_BOX(hbox), entry);
+			entry = gnt_entry_new(NULL);
+			gnt_box_add_widget(GNT_BOX(hbox), entry);
+		}
 
 		dialog->split_entries = g_list_append(dialog->split_entries, entry);
 		g_free(buf);
@@ -358,7 +360,7 @@ update_user_splits(AccountEditDialog *dialog)
 		if (value == NULL)
 			value = purple_account_user_split_get_default_value(split);
 
-		if (value != NULL)
+		if (value != NULL && entry != NULL)
 			gnt_entry_set_text(GNT_ENTRY(entry), value);
 	}
 

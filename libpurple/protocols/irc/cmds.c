@@ -95,41 +95,85 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	char *action, *escaped, *dst, **newargs;
 	const char *src;
+	char *msg;
 	PurpleConversation *convo;
 
 	if (!args || !args[0] || !gc)
 		return 0;
 
-	action = g_malloc(strlen(args[0]) + 10);
-
-	sprintf(action, "\001ACTION ");
-
-	src = args[0];
-	dst = action + 8;
-	while (*src) {
-		if (*src == '\n') {
-			if (*(src + 1) == '\0') {
-				break;
-			} else {
-				*dst++ = ' ';
-				src++;
-				continue;
-			}
-		}
-		*dst++ = *src++;
-	}
-	*dst++ = '\001';
-	*dst = '\0';
-
-	newargs = g_new0(char *, 2);
-	newargs[0] = g_strdup(target);
-	newargs[1] = action;
-	irc_cmd_privmsg(irc, cmd, target, (const char **)newargs);
-	g_free(newargs[0]);
-	g_free(newargs[1]);
-	g_free(newargs);
-
 	convo = purple_conversations_find_with_account(target, irc->account);
+
+	msg = g_strdup_printf("/me %s", args[0]);
+
+	/* XXX: we'd prefer to keep this in conversation.c */
+	if (PURPLE_IS_IM_CONVERSATION(convo)) {
+		purple_signal_emit(purple_conversations_get_handle(),
+			"sending-im-msg", irc->account,
+			purple_conversation_get_name(convo), &msg);
+	} else {
+		purple_signal_emit(purple_conversations_get_handle(),
+			"sending-chat-msg", irc->account, &msg,
+			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)));
+	}
+
+	if (!msg || !msg[0]) {
+		g_free(msg);
+		return 0;
+	}
+
+	if (strncmp(msg, "/me ", 4) != 0) {
+		newargs = g_new0(char *, 2);
+		newargs[0] = g_strdup(target);
+		newargs[1] = msg;
+
+		irc_cmd_privmsg(irc, cmd, target, (const char **)newargs);
+
+		g_free(newargs[0]);
+		g_free(newargs);
+	} else {
+		action = g_malloc(strlen(&msg[4]) + 10);
+
+		sprintf(action, "\001ACTION ");
+
+		src = &msg[4];
+		dst = action + 8;
+		while (*src) {
+			if (*src == '\n') {
+				if (*(src + 1) == '\0') {
+					break;
+				} else {
+					*dst++ = ' ';
+					src++;
+					continue;
+				}
+			}
+			*dst++ = *src++;
+		}
+		*dst++ = '\001';
+		*dst = '\0';
+
+		newargs = g_new0(char *, 2);
+		newargs[0] = g_strdup(target);
+		newargs[1] = action;
+		irc_cmd_privmsg(irc, cmd, target, (const char **)newargs);
+		g_free(newargs[0]);
+		g_free(newargs);
+		g_free(action);
+	}
+
+	/* XXX: we'd prefer to keep this in conversation.c */
+	if (PURPLE_IS_IM_CONVERSATION(convo)) {
+		purple_signal_emit(purple_conversations_get_handle(),
+			"sent-im-msg", irc->account,
+			purple_conversation_get_name(convo), msg);
+	} else {
+		purple_signal_emit(purple_conversations_get_handle(),
+			"sent-chat-msg", irc->account, msg,
+			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)));
+	}
+
+	g_free(msg);
+
 	if (convo) {
 		escaped = g_markup_escape_text(args[0], -1);
 		action = g_strdup_printf("/me %s", escaped);

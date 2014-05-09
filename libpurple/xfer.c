@@ -1511,7 +1511,12 @@ begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 			return;
 		}
 
-		fseek(priv->dest_fp, priv->bytes_sent, SEEK_SET);
+		if (fseek(priv->dest_fp, priv->bytes_sent, SEEK_SET) != 0) {
+			purple_debug_error("xfer", "couldn't seek\n");
+			purple_xfer_show_file_error(xfer, purple_xfer_get_local_filename(xfer));
+			purple_xfer_cancel_local(xfer);
+			return;
+		}
 	}
 
 	if (priv->fd != -1)

@@ -27,6 +27,7 @@
 
 #include "buddy.h"
 #include "chat.h"
+#include "facebook_roster.h"
 #include "google/google.h"
 #include "google/google_roster.h"
 #include "presence.h"
@@ -114,7 +115,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 	if(!groups) {
 		if(!buddies) {
-			groups = g_slist_append(groups, JABBER_ROSTER_DEFAULT_GROUP);
+			groups = g_slist_append(groups, g_strdup(JABBER_ROSTER_DEFAULT_GROUP));
 		} else {
 			/* TODO: What should we do here? Removing the local buddies
 			 * is wrong, but so is letting the group state get out of sync with
@@ -215,10 +216,17 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 
 	js->currently_parsing_roster_push = TRUE;
 
+	if (js->server_caps & JABBER_CAP_FACEBOOK)
+		jabber_facebook_roster_cleanup(js, query);
+
 	for(item = purple_xmlnode_get_child(query, "item"); item; item = purple_xmlnode_get_next_twin(item))
 	{
 		const char *jid, *name, *subscription, *ask;
 		JabberBuddy *jb;
+
+		if (js->server_caps & JABBER_CAP_FACEBOOK)
+			if (!jabber_facebook_roster_incoming(js, item))
+				continue;
 
 		subscription = purple_xmlnode_get_attrib(item, "subscription");
 		jid = purple_xmlnode_get_attrib(item, "jid");

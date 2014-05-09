@@ -62,6 +62,8 @@ gnt_ws_draw_taskbar(GntWS *ws, gboolean reposition)
 	if (gnt_is_refugee())
 		return;
 
+	g_return_if_fail(ws != NULL);
+
 	if (taskbar == NULL) {
 		taskbar = newwin(1, getmaxx(stdscr), getmaxy(stdscr) - 1, 0);
 	} else if (reposition) {

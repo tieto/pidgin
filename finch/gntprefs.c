@@ -143,12 +143,14 @@ get_pref_field(Prefs *prefs)
 			switch (prefs->type)
 			{
 				case PURPLE_PREF_BOOLEAN:
-					sscanf(iter->data, "%d", &idata);
+					if (sscanf(iter->data, "%d", &idata) != 1)
+						idata = FALSE;
 					if (purple_prefs_get_bool(prefs->pref) == idata)
 						select = TRUE;
 					break;
 				case PURPLE_PREF_INT:
-					sscanf(iter->data, "%d", &idata);
+					if (sscanf(iter->data, "%d", &idata) != 1)
+						idata = 0;
 					if (purple_prefs_get_int(prefs->pref) == idata)
 						select = TRUE;
 					break;

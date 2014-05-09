@@ -817,7 +817,8 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 			flags = fcntl(acceptfd, F_GETFL);
 			fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
 #ifndef _WIN32
-			fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
+			if (fcntl(acceptfd, F_SETFD, FD_CLOEXEC) != 0)
+				purple_debug_warning("bonjour", "couldn't set FD_CLOEXEC\n");
 #endif
 
 			purple_input_remove(purple_xfer_get_watcher(xfer));

@@ -106,7 +106,7 @@ gnt_text_view_draw(GntWidget *widget)
 		GList *iter;
 		GntTextLine *line = lines->data;
 
-		wmove(widget->window, widget->priv.height - 1 - i - comp, 0);
+		(void)wmove(widget->window, widget->priv.height - 1 - i - comp, 0);
 
 		for (iter = line->segments; iter; iter = iter->next)
 		{

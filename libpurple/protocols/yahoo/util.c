@@ -449,7 +449,8 @@ static void yahoo_codes_to_html_add_tag(PurpleXmlNode **cur, const char *tag, gb
 		GData *attributes;
 		char *fontsize = NULL;
 
-		purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
+		if (!purple_markup_find_tag(tag_name, tag, &start, &end, &attributes))
+			g_return_if_reached();
 		*cur = purple_xmlnode_new_child(*cur, tag_name);
 
 		if (is_font_tag) {
@@ -727,7 +728,8 @@ static void parse_font_tag(GString *dest, const char *tag_name, const char *tag,
 	gboolean needendtag;
 	GString *tmp;
 
-	purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
+	if (!purple_markup_find_tag(tag_name, tag, &start, &end, &attributes))
+		g_return_if_reached();
 
 	needendtag = FALSE;
 	tmp = g_string_new(NULL);
@@ -853,7 +855,16 @@ char *yahoo_html_to_codes(const char *src)
 					 */
 
 					/* Append the URL */
-					purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
+					if (!purple_markup_find_tag(tag_name,
+						tag, &start, &end, &attributes))
+					{
+						g_warn_if_reached();
+						i = j;
+						g_free(tag);
+						g_free(tag_name);
+						break;
+					}
+
 					attribute = g_datalist_get_data(&attributes, "href");
 					if (attribute != NULL) {
 						if (purple_str_has_prefix(attribute, "mailto:"))

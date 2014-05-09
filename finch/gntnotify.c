@@ -59,8 +59,10 @@ finch_notify_common(PurpleNotifyType ntype, PurpleNotifyMsgType msgtype,
 	{
 		case PURPLE_NOTIFY_MSG_ERROR:
 			sf |= GNT_TEXT_FLAG_BOLD;
+			/* fall through */
 		case PURPLE_NOTIFY_MSG_WARNING:
 			pf |= GNT_TEXT_FLAG_UNDERLINE;
+			/* fall through */
 		case PURPLE_NOTIFY_MSG_INFO:
 			pf |= GNT_TEXT_FLAG_BOLD;
 			break;

@@ -184,4 +184,3 @@ if test -z "$NOCONFIGURE"; then
 	echo "running ./configure ${CONFIGURE_FLAGS} $@"
 	./configure ${CONFIGURE_FLAGS} $@
 fi
-

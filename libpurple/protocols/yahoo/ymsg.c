@@ -991,7 +991,9 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 		return;
 	}
 
-	if( (pkt->status == -1) || (pkt->status == YAHOO_STATUS_DISCONNECTED) ) {
+	if ((int)pkt->status < 0)
+		pkt->status = YAHOO_STATUS_DISCONNECTED;
+	if (pkt->status == YAHOO_STATUS_DISCONNECTED) {
 		if (server_msg) {
 			PurpleIMConversation *im;
 			im = purple_conversations_find_im_with_account(sms->from, account);

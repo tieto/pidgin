@@ -2165,7 +2165,9 @@ pidgin_request_fields(const char *title, const char *primary,
 		size_t field_count = 0;
 		size_t cols = 1;
 		size_t rows;
+#if 0
 		size_t col_num;
+#endif
 		size_t row_num = 0;
 		guint tab_no;
 		gboolean contains_resizable = FALSE, frame_fill;
@@ -2188,17 +2190,19 @@ pidgin_request_fields(const char *title, const char *primary,
 			frame = pages[tab_no];
 
 		field_count = g_list_length(field_list);
-/*
+#if 0
 		if (field_count > 9)
 		{
 			rows = field_count / 2;
 			cols++;
 		}
 		else
-		*/
+#endif
 			rows = field_count;
 
+#if 0
 		col_num = 0;
+#endif
 
 		for (fl = field_list; fl != NULL; fl = fl->next)
 		{
@@ -2213,8 +2217,10 @@ pidgin_request_fields(const char *title, const char *primary,
 
 			if (type == PURPLE_REQUEST_FIELD_LABEL)
 			{
+#if 0
 				if (col_num > 0)
 					rows++;
+#endif
 
 				rows++;
 			}
@@ -2222,17 +2228,21 @@ pidgin_request_fields(const char *title, const char *primary,
 				 (type == PURPLE_REQUEST_FIELD_STRING &&
 				  purple_request_field_string_is_multiline(field)))
 			{
+#if 0
 				if (col_num > 0)
 					rows++;
+#endif
 
 				rows += 2;
 			} else if (compact && type != PURPLE_REQUEST_FIELD_BOOLEAN)
 				rows++;
 
+#if 0
 			col_num++;
 
 			if (col_num >= cols)
 				col_num = 0;
+#endif
 		}
 
 		if (compact)
@@ -2250,11 +2260,21 @@ pidgin_request_fields(const char *title, const char *primary,
 			 row_num < rows && fl != NULL;
 			 row_num++)
 		{
+#if 0
 			for (col_num = 0;
 				 col_num < cols && fl != NULL;
 				 col_num++, fl = fl->next)
+#else
+			gboolean dummy_counter = TRUE;
+			/* it's the same as loop above */
+			for (; dummy_counter && fl != NULL; dummy_counter = FALSE, fl = fl->next)
+#endif
 			{
+#if 0
 				size_t col_offset = col_num * 2;
+#else
+				size_t col_offset = 0;
+#endif
 				PurpleRequestFieldType type;
 				GtkWidget *widget = NULL;
 				gchar *field_label;
@@ -2263,7 +2283,9 @@ pidgin_request_fields(const char *title, const char *primary,
 				field = fl->data;
 
 				if (!purple_request_field_is_visible(field)) {
+#if 0
 					col_num--;
+#endif
 					continue;
 				}
 
@@ -2295,15 +2317,19 @@ pidgin_request_fields(const char *title, const char *primary,
 						(type == PURPLE_REQUEST_FIELD_STRING &&
 						 purple_request_field_string_is_multiline(field)))
 					{
+#if 0
 						if(col_num > 0)
 							row_num++;
+#endif
 
 						gtk_table_attach_defaults(GTK_TABLE(table), label,
 												  0, 2 * cols,
 												  row_num, row_num + 1);
 
 						row_num++;
+#if 0
 						col_num=cols;
+#endif
 					}
 					else
 					{
@@ -2512,7 +2538,6 @@ pidgin_request_file(const char *title, const char *filename,
 	}
 
 #ifdef _WIN32
-
 	if (savedialog) {
 		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder");
 	} else {
@@ -2534,8 +2559,8 @@ pidgin_request_file(const char *title, const char *filename,
 			g_free(my_documents);
 		}
 	}
-
 #endif
+
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(filesel)), "response",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 
