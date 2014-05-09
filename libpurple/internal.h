@@ -154,6 +154,13 @@
 
 #include <glib-object.h>
 
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+
+#define G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+#define G_GNUC_END_IGNORE_DEPRECATIONS
+
+#endif /* 2.32.0 */
+
 #ifdef __clang__
 
 #undef G_GNUC_BEGIN_IGNORE_DEPRECATIONS
