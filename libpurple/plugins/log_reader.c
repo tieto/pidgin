@@ -1422,12 +1422,16 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	purple_debug_info("Trillian log read", "Reading %s\n", data->path);
 
-	read = g_malloc(data->length + 2);
-
 	file = g_fopen(data->path, "rb");
 	g_return_val_if_fail(file != NULL, g_strdup(""));
-	if (fseek(file, data->offset, SEEK_SET) != 0)
+
+	read = g_malloc(data->length + 2);
+
+	if (fseek(file, data->offset, SEEK_SET) != 0) {
+		fclose(file);
+		g_free(read);
 		g_return_val_if_reached(g_strdup(""));
+	}
 	data->length = fread(read, 1, data->length, file);
 	fclose(file);
 
@@ -1849,8 +1853,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				} else {
 					while (*c)
 						c++;
-					if (c)
-						c--;
+					c--;
 					c = g_strrstr(c, "(");
 				}
 
@@ -1953,8 +1956,11 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 	contents = g_malloc(data->length + 2);
 
-	if (fseek(file, data->offset, SEEK_SET) != 0)
+	if (fseek(file, data->offset, SEEK_SET) != 0) {
+		fclose(file);
+		g_free(contents);
 		g_return_val_if_reached(g_strdup(""));
+	}
 	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 
@@ -2335,13 +2341,16 @@ static char *amsn_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
-	contents = g_malloc(data->length + 2);
-
 	file = g_fopen(data->path, "rb");
 	g_return_val_if_fail(file != NULL, g_strdup(""));
 
-	if (fseek(file, data->offset, SEEK_SET) != 0)
+	contents = g_malloc(data->length + 2);
+
+	if (fseek(file, data->offset, SEEK_SET) != 0) {
+		fclose(file);
+		free(contents);
 		g_return_val_if_reached(g_strdup(""));
+	}
 	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 
