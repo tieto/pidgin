@@ -766,6 +766,10 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 
 				for (segs = line->segments; segs; segs = snext) {
 					GntTextSegment *seg = segs->data;
+
+					if (!line)
+						break;
+
 					snext = segs->next;
 					if (seg->start >= tag->end) {
 						/* The segment is somewhere after the tag */

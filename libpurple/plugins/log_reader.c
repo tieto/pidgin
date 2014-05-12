@@ -2003,6 +2003,8 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 			/* find EOL */
 			c = strchr(c, '\n');
+			if (!c)
+				break;
 
 			/* XXX: Do we need buddy_name when we have buddy->alias? */
 			buddy_name = ++c;

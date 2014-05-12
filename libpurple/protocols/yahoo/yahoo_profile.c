@@ -1023,7 +1023,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		purple_debug_misc("yahoo", "after utf8 conversion: stripped = (%s)\n", stripped);
 	}
 
-	if (profile_state == PROFILE_STATE_DEFAULT) {
+	if (strings && profile_state == PROFILE_STATE_DEFAULT) {
 #if 0
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
 	 * true, since the Yahoo! ID will always be there */
