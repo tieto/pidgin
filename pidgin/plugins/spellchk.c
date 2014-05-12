@@ -1790,7 +1790,7 @@ static void load_conf(void)
 	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
 	hashes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	while (buf_get_line(ibuf, &buf, &pnt, size)) {
+	while (ibuf && buf_get_line(ibuf, &buf, &pnt, size)) {
 		if (*buf != '#') {
 			if (!g_ascii_strncasecmp(buf, "BAD ", 4))
 			{

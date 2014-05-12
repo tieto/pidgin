@@ -1716,6 +1716,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		if (st.st_mtime < log_last_modified)
 		{
 			purple_debug_warning("log", "Index \"%s\" exists, but is older than the log.\n", pathstr);
+			close(index_fd);
 		}
 		else
 		{

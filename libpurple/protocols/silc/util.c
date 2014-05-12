@@ -268,12 +268,10 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 					close(fd);
 					return FALSE;
 				}
-			}
-			/* This shouldn't really happen because silc_create_key_pair()
-			 * will set the permissions */
-			else if ((fstat(fd, &st)) == -1) {
-				purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
-						   file_private_key, g_strerror(errno));
+			} else {
+				purple_debug_error("silc", "Couldn't open '%s' "
+					"private key, error: %s\n",
+					file_private_key, g_strerror(errno));
 				return FALSE;
 			}
 		} else {
