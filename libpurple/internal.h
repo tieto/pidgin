@@ -167,6 +167,14 @@
 
 #include <glib-object.h>
 
+#ifdef __COVERITY__
+
+/* avoid TAINTED_SCALAR warning */
+#undef g_utf8_next_char
+#define g_utf8_next_char(p) (char *)((p) + 1)
+
+#endif
+
 typedef union
 {
 	struct sockaddr sa;
@@ -335,5 +343,15 @@ int *_purple_statuses_get_primitive_scores(void);
  */
 const gchar *
 _purple_blist_get_localized_default_group_name(void);
+
+/**
+ * Sets most commonly used socket flags: O_NONBLOCK and FD_CLOEXEC.
+ *
+ * @param fd The file descriptor for the socket.
+ *
+ * @return TRUE if succeeded, FALSE otherwise.
+ */
+gboolean
+_purple_network_set_common_socket_flags(int fd);
 
 #endif /* _PURPLE_INTERNAL_H_ */

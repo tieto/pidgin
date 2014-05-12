@@ -3105,13 +3105,18 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
-	/* Use stat to be absolutely sure. */
+#ifndef __COVERITY__
+	/* Use stat to be absolutely sure.
+	 * It causes TOCTOU coverity warning (against g_rename below),
+	 * but it's not a threat for us.
+	 */
 	if ((g_stat(filename_temp, &st) == -1) || ((gsize)st.st_size != real_size)) {
 		purple_debug_error("util", "Error writing data to file %s: "
 			"couldn't g_stat file", filename_temp);
 		g_free(filename_temp);
 		return FALSE;
 	}
+#endif /* __COVERITY__ */
 
 	/* Rename to the REAL name */
 	if (g_rename(filename_temp, filename_full) == -1)

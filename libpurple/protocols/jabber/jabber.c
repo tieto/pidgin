@@ -476,7 +476,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	g_return_if_fail(data != NULL);
 
 	/* because printing a tab to debug every minute gets old */
-	if(strcmp(data, "\t")) {
+	if (data && strcmp(data, "\t") != 0) {
 		const char *username;
 		char *text = NULL, *last_part = NULL, *tag_start = NULL;
 

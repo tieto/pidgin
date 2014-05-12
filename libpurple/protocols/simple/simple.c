@@ -1721,16 +1721,10 @@ static void simple_newconn_cb(gpointer data, gint source, PurpleInputCondition c
 	PurpleConnection *gc = data;
 	struct simple_account_data *sip = purple_connection_get_protocol_data(gc);
 	struct sip_connection *conn;
-	int newfd, flags;
+	int newfd;
 
 	newfd = accept(source, NULL, NULL);
-
-	flags = fcntl(newfd, F_GETFL);
-	fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(newfd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("simple", "couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(newfd);
 
 	conn = connection_create(sip, newfd);
 

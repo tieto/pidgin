@@ -81,6 +81,17 @@ typedef struct group *Purple__Group;
 #include "whiteboard.h"
 #include "xmlnode.h"
 
+#ifdef __COVERITY__
+
+/* avoid extra_comma false positives */
+#undef SvPOK_only
+#define SvPOK_only(sv) { \
+	SvFLAGS(sv) &= ~(SVf_OK | SVf_IVisUV | SVf_UTF8); \
+	SvFLAGS(sv) |= (SVf_POK | SVp_POK); \
+	}
+
+#endif /* __COVERITY__ */
+
 /* account.h */
 typedef PurpleAccount *			Purple__Account;
 typedef PurpleAccountOption *		Purple__Account__Option;

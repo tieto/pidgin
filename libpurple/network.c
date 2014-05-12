@@ -403,7 +403,6 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
                              PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
-	int flags;
 	const int on = 1;
 	PurpleNetworkListenData *listen_data;
 	unsigned short actual_port;
@@ -488,12 +487,7 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 		close(listenfd);
 		return NULL;
 	}
-	flags = fcntl(listenfd, F_GETFL);
-	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(listenfd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("network", "couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(listenfd);
 	actual_port = purple_network_get_port_from_fd(listenfd);
 
 	purple_debug_info("network", "Listening on port: %hu\n", actual_port);
@@ -1154,6 +1148,33 @@ int purple_network_convert_idn_to_ascii(const gchar *in, gchar **out)
 	*out = g_strdup(in);
 	return 0;
 #endif
+}
+
+gboolean
+_purple_network_set_common_socket_flags(int fd)
+{
+	int flags;
+	gboolean succ = TRUE;
+
+	g_return_val_if_fail(fd >= 0, FALSE);
+
+	flags = fcntl(fd, F_GETFL);
+
+	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) != 0) {
+		purple_debug_warning("network",
+			"Couldn't set O_NONBLOCK flag\n");
+		succ = FALSE;
+	}
+
+#ifndef _WIN32
+	if (fcntl(fd, F_SETFD, FD_CLOEXEC) != 0) {
+		purple_debug_warning("network",
+			"Couldn't set FD_CLOEXEC flag\n");
+		succ = FALSE;
+	}
+#endif
+
+	return succ;
 }
 
 void
