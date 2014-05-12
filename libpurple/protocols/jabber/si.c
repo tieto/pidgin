@@ -1715,11 +1715,13 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 
 	if((filesize_c = xmlnode_get_attrib(file, "size")))
 		filesize_64 = g_ascii_strtoull(filesize_c, NULL, 10);
+
+#ifndef __COVERITY__
 	/* TODO 3.0.0: When the core uses a guint64, this is redundant.
 	 * See #8477.
 	 *
 	 * It may not be necessary on 64-bit machine.
-	 * coverity[result_independent_of_operands]
+	 * It raises result_independent_of_operands coverity false positive.
 	 */
 	if (filesize_64 > G_MAXSIZE) {
 		/* Should this pop up a warning? */
@@ -1727,6 +1729,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		                     " -- see #8477 for more details.");
 		return;
 	}
+#endif
 	filesize = filesize_64;
 
 	if(!(feature = xmlnode_get_child(si, "feature")))

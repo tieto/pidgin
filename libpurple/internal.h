@@ -174,6 +174,14 @@
 
 #endif /* __clang__ */
 
+#ifdef __COVERITY__
+
+/* avoid TAINTED_SCALAR warning */
+#undef g_utf8_next_char
+#define g_utf8_next_char(p) (char *)((p) + 1)
+
+#endif
+
 /* Safer ways to work with static buffers. When using non-static
  * buffers, either use g_strdup_* functions (preferred) or use
  * g_strlcpy/g_strlcpy directly. */
