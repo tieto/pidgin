@@ -637,7 +637,6 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	common_sockaddr_t their_addr; /* connector's address information */
 	socklen_t sin_size = sizeof(common_sockaddr_t);
 	int client_socket;
-	int flags;
 #ifdef HAVE_INET_NTOP
 	char addrstr[INET6_ADDRSTRLEN];
 #endif
@@ -654,13 +653,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	if ((client_socket = accept(server_socket, &their_addr.sa, &sin_size)) == -1)
 		return;
-
-	flags = fcntl(client_socket, F_GETFL);
-	fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(client_socket, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("bonjour", "jabber: couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(client_socket);
 
 	/* Look for the buddy that has opened the conversation and fill information */
 #ifdef HAVE_INET_NTOP

@@ -742,8 +742,6 @@ clean_connect(gpointer data)
 static void
 proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	int flags;
-
 	purple_debug_info("proxy", "UDP Connecting to %s:%d with no proxy\n",
 			connect_data->host, connect_data->port);
 
@@ -754,13 +752,7 @@ proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *ad
 				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
-
-	flags = fcntl(connect_data->fd, F_GETFL);
-	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(connect_data->fd);
 
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
@@ -805,8 +797,6 @@ proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *ad
 static void
 proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	int flags;
-
 	purple_debug_info("proxy", "Connecting to %s:%d with no proxy\n",
 			connect_data->host, connect_data->port);
 
@@ -817,13 +807,7 @@ proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
-
-	flags = fcntl(connect_data->fd, F_GETFL);
-	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(connect_data->fd);
 
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
@@ -1257,8 +1241,6 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond) {
 static void
 proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	int flags;
-
 	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using HTTP\n",
 			   connect_data->host, connect_data->port,
@@ -1272,13 +1254,7 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
-
-	flags = fcntl(connect_data->fd, F_GETFL);
-	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("proxy", "couldn't FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(connect_data->fd);
 
 	if (connect(connect_data->fd, addr, addrlen) != 0) {
 		if (errno == EINPROGRESS || errno == EINTR) {
@@ -1452,8 +1428,6 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 static void
 proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	int flags;
-
 	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS4\n",
 			   connect_data->host, connect_data->port,
@@ -1467,13 +1441,7 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
-
-	flags = fcntl(connect_data->fd, F_GETFL);
-	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(connect_data->fd);
 
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
@@ -2113,8 +2081,6 @@ s5_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 static void
 proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	int flags;
-
 	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
 			   connect_data->host, connect_data->port,
@@ -2128,13 +2094,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
-
-	flags = fcntl(connect_data->fd, F_GETFL);
-	fcntl(connect_data->fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("proxy", "couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(connect_data->fd);
 
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{

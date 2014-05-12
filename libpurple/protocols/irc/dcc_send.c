@@ -245,7 +245,7 @@ static gssize irc_dccsend_send_write(const guchar *buffer, size_t size, PurpleXf
 static void irc_dccsend_send_connected(gpointer data, int source, PurpleInputCondition cond) {
 	PurpleXfer *xfer = (PurpleXfer *) data;
 	struct irc_xfer_send_data *xd = xfer->data;
-	int conn, flags;
+	int conn;
 
 	conn = accept(xd->fd, NULL, 0);
 	if (conn == -1) {
@@ -262,12 +262,7 @@ static void irc_dccsend_send_connected(gpointer data, int source, PurpleInputCon
 	close(xd->fd);
 	xd->fd = -1;
 
-	flags = fcntl(conn, F_GETFL);
-	fcntl(conn, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(conn, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("irc", "couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(conn);
 
 	xd->inpa = purple_input_add(conn, PURPLE_INPUT_READ, irc_dccsend_send_read, xfer);
 	/* Start the transfer */

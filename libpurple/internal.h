@@ -265,4 +265,14 @@ void _purple_connection_new_unregister(PurpleAccount *account, const char *passw
  */
 void _purple_connection_destroy(PurpleConnection *gc);
 
+/**
+ * Sets most commonly used socket flags: O_NONBLOCK and FD_CLOEXEC.
+ *
+ * @param fd The file descriptor for the socket.
+ *
+ * @return TRUE if succeeded, FALSE otherwise.
+ */
+gboolean
+_purple_network_set_common_socket_flags(int fd);
+
 #endif /* _PURPLE_INTERNAL_H_ */
