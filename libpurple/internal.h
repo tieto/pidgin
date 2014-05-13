@@ -354,4 +354,15 @@ _purple_blist_get_localized_default_group_name(void);
 gboolean
 _purple_network_set_common_socket_flags(int fd);
 
+/**
+ * A fstat alternative, like g_stat for stat.
+ *
+ * @param fd The file descriptor.
+ * @param st The stat buffer.
+ *
+ * @return the result just like for fstat.
+ */
+int
+_purple_fstat(int fd, GStatBuf *st);
+
 #endif /* _PURPLE_INTERNAL_H_ */

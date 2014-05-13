@@ -4961,6 +4961,22 @@ gchar *purple_http_digest_calculate_response(
 	return g_strdup(hash2);
 }
 
+int
+_purple_fstat(int fd, GStatBuf *st)
+{
+	int ret;
+
+	g_return_val_if_fail(st != NULL, -1);
+
+#ifdef _WIN32
+	ret = _fstat(fd, st);
+#else
+	ret = fstat(fd, st);
+#endif
+
+	return ret;
+}
+
 #if 0
 
 /* Temporarily removed - re-add this when you need ini file support. */
@@ -4975,7 +4991,7 @@ purple_key_file_load_from_ini(GKeyFile *key_file, const gchar *file,
 	const gchar *header = "[default]\n\n";
 	int header_len = strlen(header);
 	int fd;
-	struct stat st;
+	GStatBuf st;
 	gsize file_size, buff_size;
 	gchar *buff;
 	GError *error = NULL;
@@ -4993,7 +5009,7 @@ purple_key_file_load_from_ini(GKeyFile *key_file, const gchar *file,
 		return FALSE;
 	}
 
-	if (fstat(fd, &st) != 0) {
+	if (_purple_fstat(fd, &st) != 0) {
 		purple_debug_error("util", "Failed to fstat ini file %s", file);
 		return FALSE;
 	}

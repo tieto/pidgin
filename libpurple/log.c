@@ -1732,7 +1732,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		g_free(pathstr);
 		return NULL;
 	}
-	if (fstat(file_fd, &st) == -1) {
+	if (_purple_fstat(file_fd, &st) == -1) {
 		purple_stringref_unref(pathref);
 		g_free(pathstr);
 		fclose(file);
@@ -1745,7 +1745,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	index_fd = g_open(pathstr, 0, O_RDONLY);
 	if (index_fd != -1) {
-		if (fstat(index_fd, &st) != 0) {
+		if (_purple_fstat(index_fd, &st) != 0) {
 			close(index_fd);
 			index_fd = -1;
 		}
