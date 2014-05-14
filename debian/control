@@ -68,7 +68,7 @@ Description: multi-protocol instant messaging client - data files
 Package: pidgin-dev
 Section: devel
 Architecture: all
-Depends: ${misc:Depends}, pidgin (>= ${source:Upstream-Version}), pidgin (<< ${source:Upstream-Version}+1~), pkg-config, libpurple-dev, libgtk2.0-dev
+Depends: ${misc:Depends}, pidgin (>= ${source:Upstream-Version}), pidgin (<< ${source:Upstream-Version}+1~), pkg-config, libpurple-dev, libgtk-3-dev
 Suggests: doc-base
 Description: multi-protocol instant messaging client - development files
  This package contains the headers and other development files not included in
