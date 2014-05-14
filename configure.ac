@@ -879,7 +879,7 @@ if test "x$enable_consoleui" = "xyes"; then
 	    [enable_consoleui=no], [$GNT_LIBS])
 
 	if test "x$is_win32" = "xyes" ; then
-		ncurses_sys_prefix="/usr/$host/sys-root/$host"
+		ncurses_sys_prefix="/usr/$host/sys-root/mingw"
 	else
 		ncurses_sys_prefix="/usr"
 	fi
