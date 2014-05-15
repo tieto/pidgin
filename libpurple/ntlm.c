@@ -246,6 +246,7 @@ gensesskey(char *buffer)
 					G_GSSIZE_FORMAT ".  Falling back to "
 					"inferior method\n", (gssize)red);
 		}
+		close(fd);
 	} else {
 		purple_debug_warning("ntlm", "Error opening /dev/urandom: %s."
 				"  Falling back to inferior method.\n", g_strerror(errno));
