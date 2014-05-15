@@ -3934,8 +3934,7 @@ purple_url_encode(const char *str)
 	const char *iter;
 	static char buf[BUF_LEN];
 	char utf_char[6];
-	int i;
-	guint j = 0;
+	guint i, j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
@@ -3949,7 +3948,7 @@ purple_url_encode(const char *str)
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
+			for (i = 0; (int)i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
 				if (i >= sizeof(utf_char)) {
@@ -4592,8 +4591,7 @@ purple_escape_filename(const char *str)
 	const char *iter;
 	static char buf[BUF_LEN];
 	char utf_char[6];
-	int i;
-	guint j = 0;
+	guint i, j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
@@ -4608,7 +4606,7 @@ purple_escape_filename(const char *str)
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
+			for (i = 0; (int)i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
 				if (i >= sizeof(utf_char)) {
