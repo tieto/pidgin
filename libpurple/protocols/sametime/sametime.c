@@ -2213,7 +2213,7 @@ static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
   rem = mwFileTransfer_getRemaining(ft);
   if(rem < MW_FT_LEN) o.len = rem;
 
-  if(fread(buf, (size_t) o.len, 1, fp)) {
+  if (fread(buf, (size_t)o.len, 1, fp) == 1) {
 
     /* calculate progress and display it */
     xfer->bytes_sent += o.len;

@@ -1724,6 +1724,8 @@ static void simple_newconn_cb(gpointer data, gint source, PurpleInputCondition c
 	int newfd;
 
 	newfd = accept(source, NULL, NULL);
+	g_return_if_fail(newfd > 0);
+
 	_purple_network_set_common_socket_flags(newfd);
 
 	conn = connection_create(sip, newfd);

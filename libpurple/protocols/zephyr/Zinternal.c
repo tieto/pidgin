@@ -526,13 +526,13 @@ Code_t Z_AddNoticeToEntry(qptr, notice, part)
 		hole = hole->next;
 	    }
 	    if (lasthole) {
-		if (!(lasthole->next = (struct _Z_Hole *)
+		if (!(lasthole->next = (struct _Z_Hole *)(struct _Z_InputQ *)
 		      malloc(sizeof(struct _Z_InputQ))))
 		    return (ENOMEM);
 		hole = lasthole->next;
 	    }
 	    else {
-		if (!(qptr->holelist = (struct _Z_Hole *)
+		if (!(qptr->holelist = (struct _Z_Hole *)(struct _Z_InputQ *)
 		      malloc(sizeof(struct _Z_InputQ))))
 		    return (ENOMEM);
 		hole = qptr->holelist;
@@ -550,13 +550,13 @@ Code_t Z_AddNoticeToEntry(qptr, notice, part)
 		hole = hole->next;
 	    }
 	    if (lasthole) {
-		if (!(lasthole->next = (struct _Z_Hole *)
+		if (!(lasthole->next = (struct _Z_Hole *)(struct _Z_InputQ *)
 		      malloc(sizeof(struct _Z_InputQ))))
 		    return (ENOMEM);
 		hole = lasthole->next;
 	    }
 	    else {
-		if (!(qptr->holelist = (struct _Z_Hole *)
+		if (!(qptr->holelist = (struct _Z_Hole *)(struct _Z_InputQ *)
 		      malloc(sizeof(struct _Z_InputQ))))
 		    return (ENOMEM);
 		hole = qptr->holelist;
