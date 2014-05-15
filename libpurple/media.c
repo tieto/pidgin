@@ -1256,6 +1256,18 @@ purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMedi
 #endif
 }
 
+void
+purple_media_set_decryption_parameters(PurpleMedia *media, const gchar *sess_id,
+		const gchar *participant, PurpleMediaCipher cipher,
+		PurpleMediaAuthentication auth, const gchar *key, gsize key_len)
+{
+#ifdef USE_VV
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
+	return purple_media_backend_set_decryption_parameters(media->priv->backend,
+			sess_id, participant, cipher, auth, key, key_len);
+#endif
+}
+
 gboolean
 purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 {

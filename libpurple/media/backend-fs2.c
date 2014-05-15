@@ -81,6 +81,10 @@ static GList *purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 static GList *purple_media_backend_fs2_get_local_candidates(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
+static void purple_media_backend_fs2_set_decryption_parameters(
+		PurpleMediaBackend *self, const gchar *sess_id,
+		const gchar *participant, PurpleMediaCipher cipher,
+		PurpleMediaAuthentication auth, const gchar *key, gsize key_len);
 static gboolean purple_media_backend_fs2_set_remote_codecs(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
@@ -532,6 +536,8 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
+	iface->set_decryption_parameters =
+			purple_media_backend_fs2_set_decryption_parameters;
 	iface->set_params = purple_media_backend_fs2_set_params;
 	iface->get_available_params = purple_media_backend_fs2_get_available_params;
 }
@@ -2455,6 +2461,84 @@ purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 	}
 
 	return TRUE;
+}
+
+static GstStructure *
+create_fs2_srtp_structure(PurpleMediaCipher cipher,
+	PurpleMediaAuthentication auth, const gchar *key, gsize key_len)
+{
+	GstStructure *result;
+	GstBuffer *buffer;
+	GstMapInfo info;
+	const gchar *cipher_str;
+	const gchar *auth_str;
+
+	buffer = gst_buffer_new_allocate(NULL, key_len, NULL);
+	gst_buffer_map(buffer, &info, GST_MAP_WRITE);
+	memcpy(info.data, key, key_len);
+	gst_buffer_unmap(buffer, &info);
+
+	switch (cipher) {
+		case PURPLE_MEDIA_CIPHER_NULL:
+			cipher_str = "null";
+			break;
+		case PURPLE_MEDIA_CIPHER_AES_128_ICM:
+			cipher_str = "aes-128-icm";
+			break;
+		case PURPLE_MEDIA_CIPHER_AES_256_ICM:
+			cipher_str = "aes-256-icm";
+			break;
+	}
+
+	switch (auth) {
+		case PURPLE_MEDIA_AUTHENTICATION_NULL:
+			auth_str = "null";
+			break;
+		case PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_32:
+			auth_str = "hmac-sha1-32";
+			break;
+		case PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_80:
+			auth_str = "hmac-sha1-80";
+			break;
+	}
+
+	result = gst_structure_new("FarstreamSRTP",
+			"cipher", G_TYPE_STRING, cipher_str,
+			"auth", G_TYPE_STRING, auth_str,
+			"key", GST_TYPE_BUFFER, buffer,
+			NULL);
+	gst_buffer_unref(buffer);
+
+	return result;
+}
+
+static void
+purple_media_backend_fs2_set_decryption_parameters (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		PurpleMediaCipher cipher, PurpleMediaAuthentication auth,
+		const gchar *key, gsize key_len)
+{
+	PurpleMediaBackendFs2Stream *stream;
+	GstStructure *srtp;
+	GError *err = NULL;
+
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self), sess_id, participant);
+
+	if (!stream) {
+		return;
+	}
+
+	srtp = create_fs2_srtp_structure(cipher, auth, key, key_len);
+
+	fs_stream_set_decryption_parameters(stream->stream, srtp, &err);
+	if (err) {
+		purple_debug_error("backend-fs2",
+				"Error setting decryption parameters: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	gst_structure_free(srtp);
 }
 
 static gboolean

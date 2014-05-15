@@ -80,6 +80,10 @@ struct _PurpleMediaBackendIface
 		GList *codecs);
 	gboolean (*set_send_codec) (PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
+	void (*set_decryption_parameters) (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		PurpleMediaCipher cipher, PurpleMediaAuthentication auth,
+		const gchar *key, gsize key_len);
 	void (*set_params) (PurpleMediaBackend *self,
 		guint num_params, GParameter *params);
 	const gchar **(*get_available_params) (void);
@@ -198,6 +202,25 @@ gboolean purple_media_backend_set_remote_codecs(PurpleMediaBackend *self,
  */
 gboolean purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
+
+/**
+ * purple_media_backend_set_decryption_parameters:
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to set parameters of.
+ * @participant: The participant of the session to set parameters of.
+ * @cipher: The cipher to use to decrypt media coming from this session's
+ *          participant.
+ * @auth: The algorithm to use for authentication of the media coming from
+ *        the session's participant.
+ * @key: The decryption key.
+ * @key_len: Byte length of the decryption key.
+ *
+ * Sets the decryption parameters for a session participant's media.
+ */
+void purple_media_backend_set_decryption_parameters(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		PurpleMediaCipher cipher, PurpleMediaAuthentication auth,
+		const gchar *key, gsize key_len);
 
 /**
  * purple_media_backend_set_params:

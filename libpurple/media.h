@@ -360,6 +360,25 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media,
 gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec);
 
 /**
+ * purple_media_set_decryption_parameters:
+ * @media: The media object to find the session in.
+ * @sess_id: The session id of the session to set parameters of.
+ * @participant: The participant of the session to set parameters of.
+ * @cipher: The cipher to use to decrypt media coming from this session's
+ *          participant.
+ * @auth: The algorithm to use for authentication of the media coming from
+ *        the session's participant.
+ * @key: The decryption key.
+ * @key_len: Byte length of the decryption key.
+ *
+ * Sets the decryption parameters for a session participant's media.
+ */
+void purple_media_set_decryption_parameters(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant,
+		PurpleMediaCipher cipher, PurpleMediaAuthentication auth,
+		const gchar *key, gsize key_len);
+
+/**
  * purple_media_codecs_ready:
  * @media: The media object to find the session in.
  * @sess_id: The session id of the session to check.
