@@ -64,7 +64,7 @@ Code_t ZReadAscii32(ptr, len, value_ptr)
     retval = ZReadAscii(ptr, len, buf, 4);
     if (retval != ZERR_NONE)
 	return retval;
-    value |= buf[0] << 24;
+    value |= (unsigned long)buf[0] << 24;
     value |= buf[1] << 16;
     value |= buf[2] << 8;
     value |= buf[3];

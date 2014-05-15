@@ -270,18 +270,21 @@ if test "x$is_win32" != "xyes" ; then
 fi
 AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
-if test "x$is_win32" != "xyes" ; then
+if test "x$is_win32" = "xyes" ; then
+	AC_DEFINE(HAVE_GETADDRINFO, 1, [Define to 1 if you have the getaddrinfo function.])
+	AC_DEFINE(HAVE_INET_NTOP, 1, [Define to 1 if you have the `inet_ntop' function.])
+else
 	AC_CHECK_FUNC(socket, , [AC_CHECK_LIB(socket, socket, ,
 		[AC_MSG_ERROR([socket not found])])])
+	dnl If all goes well, by this point the previous two checks will have
+	dnl pulled in -lsocket and -lnsl if we need them.
+	AC_CHECK_FUNC(getaddrinfo,
+		[AC_DEFINE([HAVE_GETADDRINFO], [1],
+			[Define to 1 if you have the getaddrinfo function.])],
+		[AC_CHECK_LIB(socket, getaddrinfo,
+			[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lnsl $LIBS"], , -lnsl)])
+	AC_CHECK_FUNCS(inet_ntop)
 fi
-dnl If all goes well, by this point the previous two checks will have
-dnl pulled in -lsocket and -lnsl if we need them.
-AC_CHECK_FUNC(getaddrinfo,
-	[AC_DEFINE([HAVE_GETADDRINFO], [1],
-		[Define to 1 if you have the getaddrinfo function.])],
-	[AC_CHECK_LIB(socket, getaddrinfo,
-		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lnsl $LIBS"], , -lnsl)])
-AC_CHECK_FUNCS(inet_ntop)
 AC_CHECK_FUNCS(getifaddrs)
 dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
@@ -875,7 +878,7 @@ if test "x$enable_consoleui" = "xyes"; then
 	    [enable_consoleui=no], [$GNT_LIBS])
 
 	if test "x$is_win32" = "xyes" ; then
-		ncurses_sys_prefix="/usr/$host/sys-root/$host"
+		ncurses_sys_prefix="/usr/$host/sys-root/mingw"
 	else
 		ncurses_sys_prefix="/usr"
 	fi

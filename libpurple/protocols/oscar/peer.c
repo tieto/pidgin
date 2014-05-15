@@ -603,7 +603,6 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 	PeerConnection *conn;
 	struct sockaddr addr;
 	socklen_t addrlen = sizeof(addr);
-	int flags;
 
 	conn = data;
 
@@ -628,12 +627,7 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	flags = fcntl(conn->fd, F_GETFL);
-	fcntl(conn->fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(conn->fd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("oscar", "peer: couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(conn->fd);
 
 	purple_input_remove(conn->watcher_incoming);
 

@@ -58,8 +58,9 @@ CFILE_GLOB=$(top_srcdir)/$(DOC_MODULE)/*.c
 # e.g. EXTRA_HFILES=$(top_srcdir}/contrib/extra.h
 # TODO: those files are not properly scanned when building out-of-tree
 EXTRA_HFILES = \
-	$(top_builddir)/$(DOC_MODULE)/version.h \
-	$(top_builddir)/$(DOC_MODULE)/purple.h
+	$(top_builddir)/$(DOC_MODULE)/enums.h \
+	$(top_builddir)/$(DOC_MODULE)/purple.h \
+	$(top_builddir)/$(DOC_MODULE)/version.h
 
 # Header files or dirs to ignore when scanning. Use base file/dir names
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h private_code

@@ -700,7 +700,7 @@ static char *zephyr_to_html(const char *message)
 			gboolean last_had_closer;
 
 			message += strlen(frames->closer);
-			if (frames && frames->enclosing) {
+			if (frames->enclosing) {
 				do {
 					popped = frames;
 					frames = frames->enclosing;
@@ -709,7 +709,7 @@ static char *zephyr_to_html(const char *message)
 					g_string_free(popped->text, TRUE);
 					last_had_closer = popped->has_closer;
 					g_free(popped);
-				} while (frames && frames->enclosing && !last_had_closer);
+				} while (frames->enclosing && !last_had_closer);
 			} else {
 				g_string_append_c(frames->text, *message);
 			}

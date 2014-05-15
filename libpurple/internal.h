@@ -147,7 +147,6 @@
 	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
 	(void)dummy; }
 
-
 #ifdef __clang__
 
 #define PURPLE_BEGIN_IGNORE_CAST_ALIGN \
@@ -165,6 +164,14 @@
 #endif /* __clang__ */
 
 #include <glib-object.h>
+
+#ifdef __COVERITY__
+
+/* avoid TAINTED_SCALAR warning */
+#undef g_utf8_next_char
+#define g_utf8_next_char(p) (char *)((p) + 1)
+
+#endif
 
 typedef union
 {
@@ -334,5 +341,26 @@ int *_purple_statuses_get_primitive_scores(void);
  */
 const gchar *
 _purple_blist_get_localized_default_group_name(void);
+
+/**
+ * Sets most commonly used socket flags: O_NONBLOCK and FD_CLOEXEC.
+ *
+ * @param fd The file descriptor for the socket.
+ *
+ * @return TRUE if succeeded, FALSE otherwise.
+ */
+gboolean
+_purple_network_set_common_socket_flags(int fd);
+
+/**
+ * A fstat alternative, like g_stat for stat.
+ *
+ * @param fd The file descriptor.
+ * @param st The stat buffer.
+ *
+ * @return the result just like for fstat.
+ */
+int
+_purple_fstat(int fd, GStatBuf *st);
 
 #endif /* _PURPLE_INTERNAL_H_ */

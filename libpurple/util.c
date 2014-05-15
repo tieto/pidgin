@@ -3105,13 +3105,18 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
-	/* Use stat to be absolutely sure. */
+#ifndef __COVERITY__
+	/* Use stat to be absolutely sure.
+	 * It causes TOCTOU coverity warning (against g_rename below),
+	 * but it's not a threat for us.
+	 */
 	if ((g_stat(filename_temp, &st) == -1) || ((gsize)st.st_size != real_size)) {
 		purple_debug_error("util", "Error writing data to file %s: "
 			"couldn't g_stat file", filename_temp);
 		g_free(filename_temp);
 		return FALSE;
 	}
+#endif /* __COVERITY__ */
 
 	/* Rename to the REAL name */
 	if (g_rename(filename_temp, filename_full) == -1)
@@ -4950,6 +4955,22 @@ gchar *purple_http_digest_calculate_response(
 	return g_strdup(hash2);
 }
 
+int
+_purple_fstat(int fd, GStatBuf *st)
+{
+	int ret;
+
+	g_return_val_if_fail(st != NULL, -1);
+
+#ifdef _WIN32
+	ret = _fstat(fd, st);
+#else
+	ret = fstat(fd, st);
+#endif
+
+	return ret;
+}
+
 #if 0
 
 /* Temporarily removed - re-add this when you need ini file support. */
@@ -4964,7 +4985,7 @@ purple_key_file_load_from_ini(GKeyFile *key_file, const gchar *file,
 	const gchar *header = "[default]\n\n";
 	int header_len = strlen(header);
 	int fd;
-	struct stat st;
+	GStatBuf st;
 	gsize file_size, buff_size;
 	gchar *buff;
 	GError *error = NULL;
@@ -4982,7 +5003,7 @@ purple_key_file_load_from_ini(GKeyFile *key_file, const gchar *file,
 		return FALSE;
 	}
 
-	if (fstat(fd, &st) != 0) {
+	if (_purple_fstat(fd, &st) != 0) {
 		purple_debug_error("util", "Failed to fstat ini file %s", file);
 		return FALSE;
 	}

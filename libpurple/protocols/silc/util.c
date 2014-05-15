@@ -68,26 +68,6 @@ gboolean silcpurple_ip_is_private(const char *ip)
 	return FALSE;
 }
 
-/* there is no fstat alternative for GStatBuf */
-static int g_fstat(int fd, GStatBuf *st)
-{
-	struct stat sst;
-	int ret;
-
-	g_return_val_if_fail(st != NULL, -1);
-
-	ret = fstat(fd, &sst);
-	if (ret != 0)
-		return ret;
-
-	memset(st, 0, sizeof(GStatBuf));
-	/* only these two are used here */
-	st->st_uid = sst.st_uid;
-	st->st_mode = sst.st_mode;
-
-	return 0;
-}
-
 /* This checks stats for various SILC files and directories. First it
    checks if ~/.silc directory exist and is owned by the correct user. If
    it doesn't exist, it will create the directory. After that it checks if
@@ -116,104 +96,55 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 	g_snprintf(friendsfilename, sizeof(friendsfilename) - 1, "%s" G_DIR_SEPARATOR_S "friends",
 		   silcpurple_silcdir());
 
+	if (pw->pw_uid != geteuid()) {
+		purple_debug_error("silc", "Couldn't create directories due to wrong uid!\n");
+		return FALSE;
+	}
+
 	/*
 	 * Check ~/.silc directory
 	 */
-	if ((g_stat(filename, &st)) == -1) {
-		/* If dir doesn't exist */
-		if (errno == ENOENT) {
-			if (pw->pw_uid == geteuid()) {
-				if ((g_mkdir(filename, 0755)) == -1) {
-					purple_debug_error("silc", "Couldn't create '%s' directory\n", filename);
-					return FALSE;
-				}
-			} else {
-				purple_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
-					filename);
-				return FALSE;
-			}
-		} else {
-			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n", filename, g_strerror(errno));
-			return FALSE;
-		}
-	} else {
+	if (g_mkdir(filename, 0755) != 0 && errno != EEXIST) {
+		purple_debug_error("silc", "Couldn't create '%s' directory\n", filename);
+		return FALSE;
+	}
+
 #ifndef _WIN32
+	if ((g_stat(filename, &st)) == -1) {
+		purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n", filename, g_strerror(errno));
+		return FALSE;
+	} else {
 		/* Check the owner of the dir */
 		if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
 			purple_debug_error("silc", "You don't seem to own '%s' directory\n",
 				filename);
 			return FALSE;
 		}
-#endif
 	}
+#endif
 
 	/*
 	 * Check ~./silc/serverkeys directory
 	 */
-	if ((g_stat(servfilename, &st)) == -1) {
-		/* If dir doesn't exist */
-		if (errno == ENOENT) {
-			if (pw->pw_uid == geteuid()) {
-				if ((g_mkdir(servfilename, 0755)) == -1) {
-					purple_debug_error("silc", "Couldn't create '%s' directory\n", servfilename);
-					return FALSE;
-				}
-			} else {
-				purple_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
-					servfilename);
-				return FALSE;
-			}
-		} else {
-			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
-							 servfilename, g_strerror(errno));
-			return FALSE;
-		}
+	if (g_mkdir(servfilename, 0755) != 0 && errno != EEXIST) {
+		purple_debug_error("silc", "Couldn't create '%s' directory\n", servfilename);
+		return FALSE;
 	}
 
 	/*
 	 * Check ~./silc/clientkeys directory
 	 */
-	if ((g_stat(clientfilename, &st)) == -1) {
-		/* If dir doesn't exist */
-		if (errno == ENOENT) {
-			if (pw->pw_uid == geteuid()) {
-				if ((g_mkdir(clientfilename, 0755)) == -1) {
-					purple_debug_error("silc", "Couldn't create '%s' directory\n", clientfilename);
-					return FALSE;
-				}
-			} else {
-				purple_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
-					clientfilename);
-				return FALSE;
-			}
-		} else {
-			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
-							 clientfilename, g_strerror(errno));
-			return FALSE;
-		}
+	if (g_mkdir(clientfilename, 0755) != 0 && errno != EEXIST) {
+		purple_debug_error("silc", "Couldn't create '%s' directory\n", clientfilename);
+		return FALSE;
 	}
 
 	/*
 	 * Check ~./silc/friends directory
 	 */
-	if ((g_stat(friendsfilename, &st)) == -1) {
-		/* If dir doesn't exist */
-		if (errno == ENOENT) {
-			if (pw->pw_uid == geteuid()) {
-				if ((g_mkdir(friendsfilename, 0755)) == -1) {
-					purple_debug_error("silc", "Couldn't create '%s' directory\n", friendsfilename);
-					return FALSE;
-				}
-			} else {
-				purple_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
-					friendsfilename);
-				return FALSE;
-			}
-		} else {
-			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
-							 friendsfilename, g_strerror(errno));
-			return FALSE;
-		}
+	if (g_mkdir(friendsfilename, 0755) != 0 && errno != EEXIST) {
+		purple_debug_error("silc", "Couldn't create '%s' directory\n", friendsfilename);
+		return FALSE;
 	}
 
 	/*
@@ -262,7 +193,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 #endif
 
 	if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
-		if ((g_fstat(fd, &st)) == -1) {
+		if (_purple_fstat(fd, &st) == -1) {
 			purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 					   file_private_key, g_strerror(errno));
 			close(fd);
@@ -284,18 +215,16 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			}
 
 			if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
-				if ((g_fstat(fd, &st)) == -1) {
+				if (_purple_fstat(fd, &st) == -1) {
 					purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 							   file_private_key, g_strerror(errno));
 					close(fd);
 					return FALSE;
 				}
-			}
-			/* This shouldn't really happen because silc_create_key_pair()
-			 * will set the permissions */
-			else if ((fstat(fd, &st)) == -1) {
-				purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
-						   file_private_key, g_strerror(errno));
+			} else {
+				purple_debug_error("silc", "Couldn't open '%s' "
+					"private key, error: %s\n",
+					file_private_key, g_strerror(errno));
 				return FALSE;
 			}
 		} else {

@@ -1704,7 +1704,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	time_t log_last_modified;
 	FILE *index;
 	FILE *file;
-	int index_fd;
+	int file_fd, index_fd;
 	char *index_tmp;
 	char buf[BUF_LONG];
 	struct tm tm;
@@ -1720,13 +1720,21 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	g_free(logfile);
 
-	if (g_stat(purple_stringref_value(pathref), &st))
-	{
+	file_fd = g_open(purple_stringref_value(pathref), 0, O_RDONLY);
+	if (file_fd == -1 || (file = fdopen(file_fd, "rb")) == NULL) {
+		purple_debug_error("log",
+			"Failed to open log file \"%s\" for reading: %s\n",
+			purple_stringref_value(pathref), g_strerror(errno));
 		purple_stringref_unref(pathref);
 		g_free(pathstr);
 		return NULL;
 	}
-	else
+	if (_purple_fstat(file_fd, &st) == -1) {
+		purple_stringref_unref(pathref);
+		g_free(pathstr);
+		fclose(file);
+		return NULL;
+	} else
 		log_last_modified = st.st_mtime;
 
 	/* Change the .log extension to .idx */
@@ -1734,7 +1742,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	index_fd = g_open(pathstr, 0, O_RDONLY);
 	if (index_fd != -1) {
-		if (fstat(index_fd, &st) != 0) {
+		if (_purple_fstat(index_fd, &st) != 0) {
 			close(index_fd);
 			index_fd = -1;
 		}
@@ -1744,6 +1752,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		if (st.st_mtime < log_last_modified)
 		{
 			purple_debug_warning("log", "Index \"%s\" exists, but is older than the log.\n", pathstr);
+			close(index_fd);
 		}
 		else
 		{
@@ -1779,17 +1788,10 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				fclose(index);
 				purple_stringref_unref(pathref);
 
+				fclose(file);
 				return list;
 			}
 		}
-	}
-
-	if (!(file = g_fopen(purple_stringref_value(pathref), "rb"))) {
-		purple_debug_error("log", "Failed to open log file \"%s\" for reading: %s\n",
-		                   purple_stringref_value(pathref), g_strerror(errno));
-		purple_stringref_unref(pathref);
-		g_free(pathstr);
-		return NULL;
 	}
 
 	index_tmp = g_strdup_printf("%s.XXXXXX", pathstr);

@@ -3070,6 +3070,9 @@ GdkPixbuf *pidgin_pixbuf_new_from_file(const gchar *filename)
 	GdkPixbuf *pixbuf;
 	GError *error = NULL;
 
+	g_return_val_if_fail(filename != NULL, NULL);
+	g_return_val_if_fail(filename[0] != '\0', NULL);
+
 	pixbuf = gdk_pixbuf_new_from_file(filename, &error);
 	if (!pixbuf || error) {
 		purple_debug_warning("gtkutils", "gdk_pixbuf_new_from_file() "
@@ -3091,6 +3094,9 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, 
 {
 	GdkPixbuf *pixbuf;
 	GError *error = NULL;
+
+	g_return_val_if_fail(filename != NULL, NULL);
+	g_return_val_if_fail(filename[0] != '\0', NULL);
 
 	pixbuf = gdk_pixbuf_new_from_file_at_size(filename,
 			width, height, &error);
@@ -3114,6 +3120,9 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width,
 {
 	GdkPixbuf *pixbuf;
 	GError *error = NULL;
+
+	g_return_val_if_fail(filename != NULL, NULL);
+	g_return_val_if_fail(filename[0] != '\0', NULL);
 
 	pixbuf = gdk_pixbuf_new_from_file_at_scale(filename,
 			width, height, preserve_aspect_ratio, &error);

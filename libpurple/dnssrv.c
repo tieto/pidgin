@@ -555,6 +555,14 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 							responses = NULL;
 							break;
 						}
+						if (len > MAX_ADDR_RESPONSE_LEN) {
+							purple_debug_error("dnssrv", "we've read invalid number\n");
+							size = 0;
+							g_list_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
+							g_list_free(responses);
+							responses = NULL;
+							break;
+						}
 
 						res = g_new0(PurpleTxtResponse, 1);
 						res->content = g_new0(gchar, len);

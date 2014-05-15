@@ -670,7 +670,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 {
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx = purple_xfer_get_protocol_data(xfer);
-	int acceptfd, flags;
+	int acceptfd;
 
 	purple_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_connected_cb\n");
 
@@ -687,12 +687,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 	close(source);
 	jsx->local_streamhost_fd = -1;
 
-	flags = fcntl(acceptfd, F_GETFL);
-	fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	if (fcntl(acceptfd, F_SETFD, FD_CLOEXEC) != 0)
-		purple_debug_warning("jabber", "si: couldn't set FD_CLOEXEC\n");
-#endif
+	_purple_network_set_common_socket_flags(acceptfd);
 
 	purple_xfer_set_watcher(xfer, purple_input_add(acceptfd, PURPLE_INPUT_READ,
 					 jabber_si_xfer_bytestreams_send_read_cb, xfer));
