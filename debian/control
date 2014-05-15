@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Ari Pollak <ari@debian.org>
 Build-Depends: cdbs, debhelper (>= 7), hardening-wrapper, intltool, gconf2, vim-common,
  libtool, libwebkitgtk-3.0-dev, libjson-glib-dev,
- libgtk-3-dev, libxss-dev, libmeanwhile-dev,
+ libgtk-3-dev, libxss-dev, libmeanwhile-dev, libenchant-dev,
  libnss3-dev (>= 3.11.7), tcl-dev, tk-dev, libgstreamer1.0-dev,
  libltdl3-dev, libperl-dev,
  libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
