@@ -167,13 +167,12 @@ static void mxit_xfer_start( PurpleXfer* xfer )
 		filesize = purple_xfer_get_bytes_remaining( xfer );
 		buffer = g_malloc( filesize );
 
-		if ( purple_xfer_read_file( xfer, buffer, filesize ) > 0 ) {
+		if (purple_xfer_read_file(xfer, buffer, filesize) == filesize) {
 			/* send data */
 			wrote = purple_xfer_write( xfer, buffer, filesize );
 			if ( wrote > 0 )
 				purple_xfer_set_bytes_sent( xfer, wrote );
-		}
-		else {
+		} else {
 			/* file read error */
 			purple_xfer_error( purple_xfer_get_xfer_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "Unable to access the local file" ) );
 			purple_xfer_cancel_local( xfer );

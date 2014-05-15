@@ -1723,6 +1723,11 @@ s5_parse_chap_msg(PurpleProxyConnectData *connect_data)
 	navas = *cmdbuf;
 
 	purple_debug_misc("socks5 proxy", "Expecting %d attribute(s).\n", navas);
+	if (G_UNLIKELY(navas > 10000)) { /* XXX: what's the threshold? */
+		purple_proxy_connect_data_disconnect(connect_data,
+			_("Received invalid data on connection with server"));
+		return -1;
+	}
 
 	cmdbuf++;
 

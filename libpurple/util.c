@@ -3952,6 +3952,10 @@ purple_url_encode(const char *str)
 			for (i = 0; i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
+				if (i >= sizeof(utf_char)) {
+					g_warn_if_reached();
+					break;
+				}
 				sprintf(buf + j, "%%%02X", utf_char[i] & 0xff);
 				j += 3;
 			}
@@ -4607,6 +4611,10 @@ purple_escape_filename(const char *str)
 			for (i = 0; i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
+				if (i >= sizeof(utf_char)) {
+					g_warn_if_reached();
+					break;
+				}
 				sprintf(buf + j, "%%%02x", utf_char[i] & 0xff);
 				j += 3;
 			}
