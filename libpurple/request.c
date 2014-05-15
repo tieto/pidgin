@@ -959,10 +959,12 @@ purple_request_field_destroy(PurpleRequestField *field)
 			while (it != NULL) {
 				g_free(it->data);
 				it = g_list_next(it); /* value */
+				if (it == NULL) {
+					g_warn_if_reached();
+					break;
+				}
 				if (it->data && field->u.choice.data_destroy)
 					field->u.choice.data_destroy(it->data);
-				if (it == NULL)
-					break;
 				it = g_list_next(it); /* next label */
 			}
 			g_list_free(field->u.choice.elements);

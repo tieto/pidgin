@@ -111,10 +111,11 @@ gboolean ggp_password_validate(const gchar *password)
 
 gchar * ggp_utf8_strndup(const gchar *str, gsize n)
 {
-	size_t raw_len = strlen(str);
+	size_t raw_len;
 	gchar *end_ptr;
 	if (str == NULL)
 		return NULL;
+	raw_len = strlen(str);
 	if (raw_len <= n)
 		return g_strdup(str);
 
