@@ -602,7 +602,9 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleAccount *account;
+#if 0
 	PurpleConnection *gc;
+#endif
 	PurpleMessageFlags flags = 0;
 	char *buf;
 
@@ -634,9 +636,9 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	if (strstr(buf, "<img ") != NULL)
 		flags |= PURPLE_MESSAGE_IMAGES;
 
-	gc = NULL/*purple_account_get_connection(account)*/;
-	if (gc && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_NO_NEWLINES)) {
 #if 0
+	gc = purple_account_get_connection(account);
+	if (gc && (purple_conversation_get_features(conv) & PURPLE_CONNECTION_FLAG_NO_NEWLINES)) {
 		/* TODO WebKit */
 		char **bufs;
 		int i;
@@ -648,9 +650,9 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		}
 
 		g_strfreev(bufs);
+	} else
 #endif
-
-	} else {
+	{
 		send_history_add(gtkconv, buf);
 		purple_conversation_send_with_flags(conv, buf, flags);
 	}
@@ -4340,8 +4342,10 @@ add_chat_user_common(PurpleChatConversation *chat, PurpleChatUser *cb, const cha
 	purple_chat_user_set_ui_data(cb, gtk_tree_row_reference_new(tm, newpath));
 	gtk_tree_path_free(newpath);
 
+#if 0
 	if (is_me && color)
 		gdk_color_free(color);
+#endif
 	g_free(alias_key);
 }
 

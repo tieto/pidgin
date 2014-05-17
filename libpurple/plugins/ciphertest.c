@@ -422,11 +422,6 @@ cipher_test_pbkdf2(void)
 		skip_nss = TRUE;
 #endif
 
-		if (!ret) {
-			purple_debug_info("cipher-test", "\tnss test failed\n");
-			fail = TRUE;
-		}
-
 		purple_debug_info("cipher-test", "\tGot:          %s\n", digest);
 		if (digest_nss)
 			purple_debug_info("cipher-test", "\tGot from NSS: %s\n", digest_nss);

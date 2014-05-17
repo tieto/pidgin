@@ -38,13 +38,16 @@ yahoo_account_use_http_proxy(PurpleConnection *pc)
 	PurpleAccount *account = purple_connection_get_account(pc);
 	PurpleProxyInfo *ppi = NULL;
 	PurpleProxyType type = PURPLE_PROXY_NONE;
-	gboolean proxy_ssl = TRUE; /*purple_account_get_bool(account, "proxy_ssl", FALSE);*/
+#if 0
+	gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 
 	if(proxy_ssl)
 		ppi = purple_proxy_get_setup(account);
 	else
 		ppi = purple_proxy_get_setup(NULL);
-
+#else
+	ppi = purple_proxy_get_setup(account);
+#endif
 	type = purple_proxy_info_get_proxy_type(ppi);
 
 	return (type == PURPLE_PROXY_HTTP || type == PURPLE_PROXY_USE_ENVVAR);
