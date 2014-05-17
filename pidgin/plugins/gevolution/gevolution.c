@@ -246,7 +246,7 @@ menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 
 			if (!g_spawn_command_line_async(command_line, NULL)) {
 				purple_debug_error("gevolution",
-					"Failed executing mailto command"):
+					"Failed executing mailto command");
 			}
 			g_free(command_line);
 			g_free(quoted);
