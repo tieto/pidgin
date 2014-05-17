@@ -135,7 +135,7 @@ fill_data(PurpleImage *image)
 		return;
 
 	g_return_if_fail(priv->path);
-	g_file_get_contents(priv->path, &contents, &length, &error);
+	(void)g_file_get_contents(priv->path, &contents, &length, &error);
 	if (error) {
 		purple_debug_error("image", "failed to read '%s' image: %s",
 			priv->path, error->message);

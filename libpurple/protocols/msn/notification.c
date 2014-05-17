@@ -1400,6 +1400,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleHash *hash;
 	gchar creds[33];
 	char *buf;
+	gssize diglen;
 
 	gulong tmp_timestamp;
 
@@ -1420,9 +1421,11 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	hash = purple_md5_hash_new();
 	purple_hash_append(hash, (const guchar *)buf, strlen(buf));
-	purple_hash_digest_to_str(hash, creds, sizeof(creds));
+	diglen = purple_hash_digest_to_str(hash, creds, sizeof(creds));
 	g_object_unref(hash);
 	g_free(buf);
+
+	g_return_if_fail(diglen > 0);
 
 	g_free(session->passport_info.mail_url);
 	session->passport_info.mail_url =

@@ -193,10 +193,12 @@ static void
 des_ecb_encrypt(const guint8 *plaintext, guint8 *result, const guint8 *key)
 {
 	PurpleCipher *cipher;
+	gssize encsiz;
 
 	cipher = purple_des_cipher_new();
 	purple_cipher_set_key(cipher, key, 8);
-	purple_cipher_encrypt(cipher, plaintext, 8, result, 8);
+	encsiz = purple_cipher_encrypt(cipher, plaintext, 8, result, 8);
+	g_warn_if_fail(encsiz == 8);
 	g_object_unref(cipher);
 }
 

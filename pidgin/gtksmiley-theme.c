@@ -540,8 +540,12 @@ _pidgin_smiley_theme_init(void)
 	user_smileys_dir = probe_dirs[1] = g_build_filename(
 		purple_user_dir(), "smileys", NULL);
 
-	if (!g_file_test(user_smileys_dir, G_FILE_TEST_IS_DIR))
-		g_mkdir(user_smileys_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+	if (!g_file_test(user_smileys_dir, G_FILE_TEST_IS_DIR)) {
+		if (g_mkdir(user_smileys_dir, S_IRUSR | S_IWUSR | S_IXUSR) == 0) {
+			purple_debug_error("gtksmiley-theme",
+				"Failed to create user smileys dir");
+		}
+	}
 
 	/* setting theme by name (copy-paste from gtkprefs) */
 	pidgin_smiley_theme_probe();

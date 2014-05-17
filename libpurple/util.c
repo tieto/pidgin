@@ -4819,6 +4819,7 @@ gchar *purple_http_digest_calculate_session_key(
 {
 	PurpleHash *hasher;
 	gchar hash[33]; /* We only support MD5. */
+	gssize digest_len;
 
 	g_return_val_if_fail(username != NULL, NULL);
 	g_return_val_if_fail(realm    != NULL, NULL);
@@ -4861,8 +4862,10 @@ gchar *purple_http_digest_calculate_session_key(
 		purple_hash_append(hasher, (guchar *)client_nonce, strlen(client_nonce));
 	}
 
-	purple_hash_digest_to_str(hasher, hash, sizeof(hash));
+	digest_len = purple_hash_digest_to_str(hasher, hash, sizeof(hash));
 	g_object_unref(hasher);
+
+	g_return_val_if_fail(digest_len > 0, NULL);
 
 	return g_strdup(hash);
 }
@@ -4880,6 +4883,7 @@ gchar *purple_http_digest_calculate_response(
 {
 	PurpleHash *hash;
 	static gchar hash2[33]; /* We only support MD5. */
+	gssize hash_len;
 
 	g_return_val_if_fail(method      != NULL, NULL);
 	g_return_val_if_fail(digest_uri  != NULL, NULL);
@@ -4961,8 +4965,10 @@ gchar *purple_http_digest_calculate_response(
 	}
 
 	purple_hash_append(hash, (guchar *)hash2, strlen(hash2));
-	purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
+	hash_len = purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
 	g_object_unref(hash);
+
+	g_return_val_if_fail(hash_len > 0, NULL);
 
 	return g_strdup(hash2);
 }

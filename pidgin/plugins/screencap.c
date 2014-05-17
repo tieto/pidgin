@@ -24,6 +24,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "debug.h"
+#include "glibcompat.h"
 #include "version.h"
 
 #include "gtk3compat.h"

@@ -338,6 +338,7 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 		memset(plaintext, 0, sizeof(plaintext));
 		return NULL;
 	}
+	g_assert(plaintext_len > 0);
 
 	text_len = plaintext_len - verify_len;
 	ret = g_new(gchar, text_len + 1);
