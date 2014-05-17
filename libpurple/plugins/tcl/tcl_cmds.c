@@ -875,6 +875,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			break;
 		}
 		purple_conversation_write_message(convo, from, what, flags, time(NULL));
+		break;
 	case CMD_CONV_NAME:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "conversation");
