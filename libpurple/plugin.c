@@ -184,10 +184,30 @@ purple_plugin_new(gboolean native, const char *path)
 
 	plugin->native_plugin = native;
 	plugin->path = g_strdup(path);
+	plugin->extra_data = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, NULL);
 
 	PURPLE_DBUS_REGISTER_POINTER(plugin, PurplePlugin);
 
 	return plugin;
+}
+
+void
+purple_plugin_set_data(PurplePlugin *plugin, const gchar *key, gpointer value)
+{
+	g_return_if_fail(plugin != NULL);
+	g_return_if_fail(plugin->extra_data != NULL);
+
+	g_hash_table_insert(plugin->extra_data, g_strdup(key), value);
+}
+
+gpointer
+purple_plugin_get_data(PurplePlugin *plugin, const gchar *key)
+{
+	g_return_val_if_fail(plugin != NULL, NULL);
+	g_return_val_if_fail(plugin->extra_data != NULL, NULL);
+
+	return g_hash_table_lookup(plugin->extra_data, key);
 }
 
 PurplePlugin *
@@ -876,6 +896,7 @@ purple_plugin_destroy(PurplePlugin *plugin)
 
 	g_free(plugin->path);
 	g_free(plugin->error);
+	g_hash_table_destroy(plugin->extra_data);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(plugin);
 
