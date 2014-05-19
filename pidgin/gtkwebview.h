@@ -102,6 +102,7 @@ struct _PidginWebViewClass
 	void (*update_format)(PidginWebView *);
 	void (*changed)(PidginWebView *);
 	void (*html_appended)(PidginWebView *, WebKitDOMRange *);
+	gboolean (*insert_image)(PidginWebView *, PurpleImage *);
 };
 
 G_BEGIN_DECLS

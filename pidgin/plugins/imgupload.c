@@ -47,6 +47,43 @@ imgup_conn_is_hooked(PurpleConnection *gc)
  * Plugin setup
  ******************************************************************************/
 
+static gboolean
+imgup_pidconv_insert_image(PidginWebView *webview, PurpleImage *image,
+	gpointer _gtkconv)
+{
+	PidginConversation *gtkconv = _gtkconv;
+	PurpleConversation *conv = gtkconv->active_conv;
+
+	if (!imgup_conn_is_hooked(purple_conversation_get_connection(conv)))
+		return FALSE;
+
+	purple_debug_fatal("imgupload", "not yet implemented");
+
+	return TRUE;
+}
+
+static void
+imgup_pidconv_init(PidginConversation *gtkconv)
+{
+	PidginWebView *webview;
+
+	webview = PIDGIN_WEBVIEW(gtkconv->entry);
+
+	g_signal_connect(G_OBJECT(webview), "insert-image",
+		G_CALLBACK(imgup_pidconv_insert_image), gtkconv);
+}
+
+static void
+imgup_pidconv_uninit(PidginConversation *gtkconv)
+{
+	PidginWebView *webview;
+
+	webview = PIDGIN_WEBVIEW(gtkconv->entry);
+
+	g_signal_handlers_disconnect_by_func(G_OBJECT(webview),
+		G_CALLBACK(imgup_pidconv_insert_image), gtkconv);
+}
+
 static void
 imgup_conv_init(PurpleConversation *conv)
 {
@@ -129,6 +166,8 @@ imgup_plugin_load(PurplePlugin *plugin)
 	for (; it; it = g_list_next(it)) {
 		PurpleConversation *conv = it->data;
 		imgup_conv_init(conv);
+		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+			imgup_pidconv_init(PIDGIN_CONVERSATION(conv));
 	}
 
 	purple_signal_connect(purple_connections_get_handle(),
@@ -137,6 +176,9 @@ imgup_plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(purple_connections_get_handle(),
 		"signing-off", plugin,
 		PURPLE_CALLBACK(imgup_conn_uninit), NULL);
+	purple_signal_connect(pidgin_conversations_get_handle(),
+		"conversation-displayed", plugin,
+		PURPLE_CALLBACK(imgup_pidconv_init), NULL);
 
 	return TRUE;
 }
@@ -150,6 +192,8 @@ imgup_plugin_unload(PurplePlugin *plugin)
 	for (; it; it = g_list_next(it)) {
 		PurpleConversation *conv = it->data;
 		imgup_conv_uninit(conv);
+		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+			imgup_pidconv_uninit(PIDGIN_CONVERSATION(conv));
 	}
 
 	it = purple_connections_get_all();
