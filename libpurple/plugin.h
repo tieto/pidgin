@@ -187,7 +187,6 @@ struct _PurplePlugin
 	gboolean unloadable;
 	GList *dependent_plugins;
 	gpointer ui_data;
-	GHashTable *extra_data;
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
@@ -296,29 +295,6 @@ GType purple_plugin_get_type(void);
  * Returns: A new PurplePlugin structure.
  */
 PurplePlugin *purple_plugin_new(gboolean native, const char *path);
-
-/**
- * purple_plugin_set_data:
- * @plugin: The plugin.
- * @key:    The data key.
- * @value:  The data to set.
- *
- * Sets extra data for particular plugin.
- */
-void
-purple_plugin_set_data(PurplePlugin *plugin, const gchar *key, gpointer value);
-
-/**
- * purple_plugin_get_data:
- * @plugin: The plugin.
- * @key:    The data key.
- *
- * Gets extra data for particular plugin.
- *
- * Returns: data set previously with #purple_plugin_set_data.
- */
-gpointer
-purple_plugin_get_data(PurplePlugin *plugin, const gchar *key);
 
 /**
  * purple_plugin_probe:
