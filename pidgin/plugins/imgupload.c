@@ -96,6 +96,8 @@ imgup_imgur_uploaded(PurpleHttpConnection *hc, PurpleHttpResponse *resp,
 
 	result = json_object_get_object_member(result, "data");
 	url = json_object_get_string_member(result, "link");
+
+	/* TODO: pass image name here too */
 	imgup_upload_done(webview, url, NULL);
 }
 
@@ -139,9 +141,8 @@ imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title)
 {
 	g_object_steal_data(G_OBJECT(webview), "imgupload-hc");
 
-	/* TODO: pass image name here too */
-	purple_debug_fatal("imgupload", "Not yet implemented (got [%s|%s])",
-		url, title);
+	/* TODO: insert text or insert link */
+	pidgin_webview_insert_link(webview, url, title ? title : url);
 }
 
 static void
@@ -165,6 +166,8 @@ imgup_upload_start(PidginWebView *webview, PurpleImage *image, gpointer _gtkconv
 	hc = imgup_imgur_upload(webview, image);
 	g_object_set_data_full(G_OBJECT(webview), "imgupload-hc",
 		hc, (GDestroyNotify)purple_http_conn_cancel);
+
+	/* TODO: please wait dialog */
 
 	return TRUE;
 }
