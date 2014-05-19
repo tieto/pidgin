@@ -67,7 +67,7 @@ imgup_imgur_uploaded(PurpleHttpConnection *hc, PurpleHttpResponse *resp,
 	const gchar *data;
 	gsize data_len;
 	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
-	const gchar *url;
+	const gchar *url, *title;
 
 	if (!purple_http_response_is_successful(resp)) {
 		imgup_upload_failed(webview);
@@ -97,8 +97,12 @@ imgup_imgur_uploaded(PurpleHttpConnection *hc, PurpleHttpResponse *resp,
 	result = json_object_get_object_member(result, "data");
 	url = json_object_get_string_member(result, "link");
 
-	/* TODO: pass image name here too */
-	imgup_upload_done(webview, url, NULL);
+	title = g_object_get_data(G_OBJECT(webview), "imgupload-imgur-name");
+
+	imgup_upload_done(webview, url, title);
+
+	g_object_unref(parser);
+	g_object_set_data(G_OBJECT(webview), "imgupload-imgur-name", NULL);
 }
 
 static PurpleHttpConnection *
@@ -126,6 +130,10 @@ imgup_imgur_upload(PidginWebView *webview, PurpleImage *image)
 	purple_http_request_set_contents(req, req_data, -1);
 	g_free(req_data);
 
+	/* TODO: set it to hc, not webview (after gobjectifying it) */
+	g_object_set_data_full(G_OBJECT(webview), "imgupload-imgur-name",
+		g_strdup(purple_image_get_friendly_filename(image)), g_free);
+
 	hc = purple_http_request(NULL, req, imgup_imgur_uploaded, webview);
 	purple_http_request_unref(req);
 
@@ -139,10 +147,15 @@ imgup_imgur_upload(PidginWebView *webview, PurpleImage *image)
 static void
 imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title)
 {
+	PidginWebViewButtons format;
+	gboolean url_desc;
+
 	g_object_steal_data(G_OBJECT(webview), "imgupload-hc");
 
-	/* TODO: insert text or insert link */
-	pidgin_webview_insert_link(webview, url, title ? title : url);
+	format = pidgin_webview_get_format_functions(webview);
+	url_desc = format & PIDGIN_WEBVIEW_LINKDESC;
+
+	pidgin_webview_insert_link(webview, url, url_desc ? title : NULL);
 }
 
 static void
