@@ -48,6 +48,38 @@ imgup_conn_is_hooked(PurpleConnection *gc)
  ******************************************************************************/
 
 static void
+imgup_conv_init(PurpleConversation *conv)
+{
+	PurpleConnection *gc;
+
+	gc = purple_conversation_get_connection(conv);
+	if (!gc)
+		return;
+	if (!imgup_conn_is_hooked(gc))
+		return;
+
+	purple_conversation_set_features(conv,
+		purple_conversation_get_features(conv) &
+		~PURPLE_CONNECTION_FLAG_NO_IMAGES);
+}
+
+static void
+imgup_conv_uninit(PurpleConversation *conv)
+{
+	PurpleConnection *gc;
+
+	gc = purple_conversation_get_connection(conv);
+	if (!gc)
+		return;
+	if (!imgup_conn_is_hooked(gc))
+		return;
+
+	purple_conversation_set_features(conv,
+		purple_conversation_get_features(conv) |
+		PURPLE_CONNECTION_FLAG_NO_IMAGES);
+}
+
+static void
 imgup_conn_init(PurpleConnection *gc)
 {
 	PurpleConnectionFlags flags;
@@ -86,6 +118,12 @@ imgup_plugin_load(PurplePlugin *plugin)
 		imgup_conn_init(gc);
 	}
 
+	it = purple_conversations_get_all();
+	for (; it; it = g_list_next(it)) {
+		PurpleConversation *conv = it->data;
+		imgup_conv_init(conv);
+	}
+
 	return TRUE;
 }
 
@@ -93,6 +131,12 @@ static gboolean
 imgup_plugin_unload(PurplePlugin *plugin)
 {
 	GList *it;
+
+	it = purple_conversations_get_all();
+	for (; it; it = g_list_next(it)) {
+		PurpleConversation *conv = it->data;
+		imgup_conv_uninit(conv);
+	}
 
 	it = purple_connections_get_all();
 	for (; it; it = g_list_next(it)) {
