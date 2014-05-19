@@ -33,56 +33,58 @@
 #include "pidginstock.h"
 
 /******************************************************************************
- *
+ * Helper functions
  ******************************************************************************/
+
+static gboolean
+imgup_conn_is_hooked(PurpleConnection *gc)
+{
+	return GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gc), "imgupload-set"));
+}
 
 
 /******************************************************************************
  * Plugin setup
  ******************************************************************************/
 
-#if 0
 static void
-imgup_prpl_init(PurplePlugin *prpl)
+imgup_conn_init(PurpleConnection *gc)
 {
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnectionFlags flags;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	flags = purple_connection_get_flags(gc);
 
-	if (prpl_info->options & OPT_PROTO_IM_IMAGE)
+	if (!(flags & PURPLE_CONNECTION_FLAG_NO_IMAGES))
 		return;
 
-	purple_plugin_set_data(prpl, "imgupload-set", GINT_TO_POINTER(TRUE));
-	prpl_info->options |= OPT_PROTO_IM_IMAGE;
+	flags &= ~PURPLE_CONNECTION_FLAG_NO_IMAGES;
+	purple_connection_set_flags(gc, flags);
+
+	g_object_set_data(G_OBJECT(gc), "imgupload-set", GINT_TO_POINTER(TRUE));
 }
 
 static void
-imgup_prpl_uninit(PurplePlugin *prpl)
+imgup_conn_uninit(PurpleConnection *gc)
 {
-	PurplePluginProtocolInfo *prpl_info;
-
-	if (!purple_plugin_get_data(prpl, "imgupload-set"))
+	if (!imgup_conn_is_hooked(gc))
 		return;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	prpl_info->options &= ~OPT_PROTO_IM_IMAGE;
+	purple_connection_set_flags(gc, purple_connection_get_flags(gc) |
+		PURPLE_CONNECTION_FLAG_NO_IMAGES);
 
-	purple_plugin_set_data(prpl, "imgupload-set", NULL);
+	g_object_set_data(G_OBJECT(gc), "imgupload-set", NULL);
 }
-#endif
 
 static gboolean
 imgup_plugin_load(PurplePlugin *plugin)
 {
-#if 0
 	GList *it;
 
-	it = purple_plugins_get_protocols();
+	it = purple_connections_get_all();
 	for (; it; it = g_list_next(it)) {
-		PurplePlugin *prpl = it->data;
-		imgup_prpl_init(prpl);
+		PurpleConnection *gc = it->data;
+		imgup_conn_init(gc);
 	}
-#endif
 
 	return TRUE;
 }
@@ -90,15 +92,13 @@ imgup_plugin_load(PurplePlugin *plugin)
 static gboolean
 imgup_plugin_unload(PurplePlugin *plugin)
 {
-#if 0
 	GList *it;
 
-	it = purple_plugins_get_protocols();
+	it = purple_connections_get_all();
 	for (; it; it = g_list_next(it)) {
-		PurplePlugin *prpl = it->data;
-		imgup_prpl_uninit(prpl);
+		PurpleConnection *gc = it->data;
+		imgup_conn_uninit(gc);
 	}
-#endif
 
 	return TRUE;
 }
