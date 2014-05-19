@@ -61,6 +61,8 @@ imgup_conv_init(PurpleConversation *conv)
 	purple_conversation_set_features(conv,
 		purple_conversation_get_features(conv) &
 		~PURPLE_CONNECTION_FLAG_NO_IMAGES);
+
+	g_object_set_data(G_OBJECT(conv), "imgupload-set", GINT_TO_POINTER(TRUE));
 }
 
 static void
@@ -69,14 +71,19 @@ imgup_conv_uninit(PurpleConversation *conv)
 	PurpleConnection *gc;
 
 	gc = purple_conversation_get_connection(conv);
-	if (!gc)
-		return;
-	if (!imgup_conn_is_hooked(gc))
-		return;
+	if (gc) {
+		if (!imgup_conn_is_hooked(gc))
+			return;
+	} else {
+		if (!g_object_get_data(G_OBJECT(conv), "imgupload-set"))
+			return;
+	}
 
 	purple_conversation_set_features(conv,
 		purple_conversation_get_features(conv) |
 		PURPLE_CONNECTION_FLAG_NO_IMAGES);
+
+	g_object_set_data(G_OBJECT(conv), "imgupload-set", NULL);
 }
 
 static void
@@ -123,6 +130,13 @@ imgup_plugin_load(PurplePlugin *plugin)
 		PurpleConversation *conv = it->data;
 		imgup_conv_init(conv);
 	}
+
+	purple_signal_connect(purple_connections_get_handle(),
+		"signed-on", plugin,
+		PURPLE_CALLBACK(imgup_conn_init), NULL);
+	purple_signal_connect(purple_connections_get_handle(),
+		"signing-off", plugin,
+		PURPLE_CALLBACK(imgup_conn_uninit), NULL);
 
 	return TRUE;
 }

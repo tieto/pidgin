@@ -266,7 +266,8 @@ purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
 
 	priv->flags = flags;
 
-	g_object_notify_by_pspec(G_OBJECT(gc), properties[PROP_FLAGS]);
+	if (!priv->is_finalizing)
+		g_object_notify_by_pspec(G_OBJECT(gc), properties[PROP_FLAGS]);
 }
 
 void
