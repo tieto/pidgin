@@ -570,8 +570,7 @@ add_pref(PurplePrefType type, const char *name)
 
 	parent = find_pref_parent(name);
 
-	if(!parent)
-		return NULL;
+	g_return_val_if_fail(parent, NULL);
 
 	my_name = get_path_basename(name);
 

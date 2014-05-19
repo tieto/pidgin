@@ -36,6 +36,7 @@
 #include <json-glib/json-glib.h>
 
 #define IMGUP_IMGUR_CLIENT_ID "b6d33c6bb80e1b6"
+#define IMGUP_PREF_PREFIX "/plugins/gtk/imgupload/"
 
 static PurplePlugin *plugin_handle = NULL;
 
@@ -162,13 +163,18 @@ imgup_upload_finish(PidginWebView *webview)
 static void
 imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title)
 {
-	PidginWebViewButtons format;
 	gboolean url_desc;
 
 	imgup_upload_finish(webview);
 
-	format = pidgin_webview_get_format_functions(webview);
-	url_desc = format & PIDGIN_WEBVIEW_LINKDESC;
+	if (!purple_prefs_get_bool(IMGUP_PREF_PREFIX "use_url_desc"))
+		url_desc = FALSE;
+	else {
+		PidginWebViewButtons format;
+
+		format = pidgin_webview_get_format_functions(webview);
+		url_desc = format & PIDGIN_WEBVIEW_LINKDESC;
+	}
 
 	pidgin_webview_insert_link(webview, url, url_desc ? title : NULL);
 }
@@ -228,7 +234,7 @@ imgup_upload_start(PidginWebView *webview, PurpleImage *image, gpointer _gtkconv
 
 
 /******************************************************************************
- * Plugin setup
+ * Setup/cleanup
  ******************************************************************************/
 
 static void
@@ -378,6 +384,62 @@ imgup_plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
+/******************************************************************************
+ * Prefs
+ ******************************************************************************/
+
+static void
+imgup_prefs_ok(gpointer _unused, PurpleRequestFields *fields)
+{
+	gboolean use_url_desc;
+
+	use_url_desc = purple_request_fields_get_bool(fields, "use_url_desc");
+
+	purple_prefs_set_bool(IMGUP_PREF_PREFIX "use_url_desc", use_url_desc);
+}
+
+static gpointer
+imgup_prefs_get(PurplePlugin *plugin)
+{
+	PurpleRequestCommonParameters *cpar;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+	gpointer handle;
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_bool_new("use_url_desc",
+		_("Use image filename as link description"),
+		purple_prefs_get_bool(IMGUP_PREF_PREFIX "use_url_desc"));
+	purple_request_field_group_add_field(group, field);
+
+	cpar = purple_request_cpar_new();
+	purple_request_cpar_set_icon(cpar, PURPLE_REQUEST_ICON_DIALOG);
+
+	handle = purple_request_fields(plugin,
+		_("Image Upload"), NULL, NULL, fields,
+		_("OK"), (GCallback)imgup_prefs_ok,
+		_("Cancel"), NULL,
+		cpar, NULL);
+
+	return handle;
+}
+
+/******************************************************************************
+ * Plugin stuff
+ ******************************************************************************/
+
+static PurplePluginUiInfo imgup_prefs_info = {
+	NULL,
+	imgup_prefs_get,
+
+	/* padding */
+	NULL, NULL, NULL, NULL
+};
+
 static PurplePluginInfo imgup_info =
 {
 	PURPLE_PLUGIN_MAGIC,
@@ -401,7 +463,7 @@ static PurplePluginInfo imgup_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
+	&imgup_prefs_info,
 	NULL,
 
 	/* padding */
@@ -411,11 +473,11 @@ static PurplePluginInfo imgup_info =
 static void
 imgup_init_plugin(PurplePlugin *plugin)
 {
-#if 0
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/gtk");
 	purple_prefs_add_none("/plugins/gtk/imgupload");
-#endif
+
+	purple_prefs_add_bool(IMGUP_PREF_PREFIX "use_url_desc", TRUE);
 }
 
 PURPLE_INIT_PLUGIN(imgupload, imgup_init_plugin, imgup_info)
