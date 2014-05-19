@@ -23,6 +23,7 @@
 
 #include "debug.h"
 #include "glibcompat.h"
+#include "http.h"
 #include "version.h"
 
 #include "gtk3compat.h"
@@ -31,6 +32,16 @@
 #include "gtkutils.h"
 #include "gtkwebviewtoolbar.h"
 #include "pidginstock.h"
+
+#include <json-glib/json-glib.h>
+
+#define IMGUP_IMGUR_CLIENT_ID "b6d33c6bb80e1b6"
+
+static void
+imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title);
+static void
+imgup_upload_failed(PidginWebView *webview);
+
 
 /******************************************************************************
  * Helper functions
@@ -44,23 +55,124 @@ imgup_conn_is_hooked(PurpleConnection *gc)
 
 
 /******************************************************************************
- * Plugin setup
+ * Imgur implementation
  ******************************************************************************/
 
+static void
+imgup_imgur_uploaded(PurpleHttpConnection *hc, PurpleHttpResponse *resp,
+	gpointer _webview)
+{
+	JsonParser *parser;
+	JsonObject *result;
+	const gchar *data;
+	gsize data_len;
+	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
+	const gchar *url;
+
+	if (!purple_http_response_is_successful(resp)) {
+		imgup_upload_failed(webview);
+		return;
+	}
+
+	data = purple_http_response_get_data(resp, &data_len);
+	parser = json_parser_new();
+	if (!json_parser_load_from_data(parser, data, data_len, NULL)) {
+		purple_debug_warning("imgupload", "Invalid json got from imgur");
+
+		imgup_upload_failed(webview);
+		return;
+	}
+
+	result = json_node_get_object(json_parser_get_root(parser));
+
+	if (!json_object_get_boolean_member(result, "success")) {
+		g_object_unref(parser);
+
+		purple_debug_warning("imgupload", "imgur - not a success");
+
+		imgup_upload_failed(webview);
+		return;
+	}
+
+	result = json_object_get_object_member(result, "data");
+	url = json_object_get_string_member(result, "link");
+	imgup_upload_done(webview, url, NULL);
+}
+
+static PurpleHttpConnection *
+imgup_imgur_upload(PidginWebView *webview, PurpleImage *image)
+{
+	PurpleHttpRequest *req;
+	PurpleHttpConnection *hc;
+	gchar *req_data, *img_data, *img_data_e;
+
+	req = purple_http_request_new("https://api.imgur.com/3/image");
+	purple_http_request_set_method(req, "POST");
+	purple_http_request_header_set(req, "Authorization",
+		"Client-ID " IMGUP_IMGUR_CLIENT_ID);
+
+	/* TODO: make it a plain, multipart/form-data request */
+	img_data = purple_base64_encode(purple_image_get_data(image),
+		purple_image_get_size(image));
+	img_data_e = g_uri_escape_string(img_data, NULL, FALSE);
+	g_free(img_data);
+	req_data = g_strdup_printf("type=base64&image=%s", img_data_e);
+	g_free(img_data_e);
+
+	purple_http_request_header_set(req, "Content-Type",
+		"application/x-www-form-urlencoded");
+	purple_http_request_set_contents(req, req_data, -1);
+	g_free(req_data);
+
+	hc = purple_http_request(NULL, req, imgup_imgur_uploaded, webview);
+	purple_http_request_unref(req);
+
+	return hc;
+}
+
+/******************************************************************************
+ * Image/link upload and insertion
+ ******************************************************************************/
+
+static void
+imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title)
+{
+	g_object_steal_data(G_OBJECT(webview), "imgupload-hc");
+
+	/* TODO: pass image name here too */
+	purple_debug_fatal("imgupload", "Not yet implemented (got [%s|%s])",
+		url, title);
+}
+
+static void
+imgup_upload_failed(PidginWebView *webview)
+{
+	g_object_steal_data(G_OBJECT(webview), "imgupload-hc");
+
+	purple_debug_error("imgupload", "Failed uploading image");
+}
+
 static gboolean
-imgup_pidconv_insert_image(PidginWebView *webview, PurpleImage *image,
-	gpointer _gtkconv)
+imgup_upload_start(PidginWebView *webview, PurpleImage *image, gpointer _gtkconv)
 {
 	PidginConversation *gtkconv = _gtkconv;
 	PurpleConversation *conv = gtkconv->active_conv;
+	PurpleHttpConnection *hc;
 
 	if (!imgup_conn_is_hooked(purple_conversation_get_connection(conv)))
 		return FALSE;
 
-	purple_debug_fatal("imgupload", "not yet implemented");
+	hc = imgup_imgur_upload(webview, image);
+	g_object_set_data_full(G_OBJECT(webview), "imgupload-hc",
+		hc, (GDestroyNotify)purple_http_conn_cancel);
 
 	return TRUE;
 }
+
+
+/******************************************************************************
+ * Plugin setup
+ ******************************************************************************/
 
 static void
 imgup_pidconv_init(PidginConversation *gtkconv)
@@ -70,7 +182,7 @@ imgup_pidconv_init(PidginConversation *gtkconv)
 	webview = PIDGIN_WEBVIEW(gtkconv->entry);
 
 	g_signal_connect(G_OBJECT(webview), "insert-image",
-		G_CALLBACK(imgup_pidconv_insert_image), gtkconv);
+		G_CALLBACK(imgup_upload_start), gtkconv);
 }
 
 static void
@@ -81,7 +193,7 @@ imgup_pidconv_uninit(PidginConversation *gtkconv)
 	webview = PIDGIN_WEBVIEW(gtkconv->entry);
 
 	g_signal_handlers_disconnect_by_func(G_OBJECT(webview),
-		G_CALLBACK(imgup_pidconv_insert_image), gtkconv);
+		G_CALLBACK(imgup_upload_start), gtkconv);
 }
 
 static void
