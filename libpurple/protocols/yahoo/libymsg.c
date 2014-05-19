@@ -3763,7 +3763,10 @@ void yahoo_login(PurpleAccount *account) {
 	PurpleStatus *status = purple_account_get_active_status(account);
 
 	purple_connection_set_protocol_data(gc, yd);
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_NO_BGCOLOR | PURPLE_CONNECTION_FLAG_NO_URLDESC);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML |
+		PURPLE_CONNECTION_FLAG_NO_BGCOLOR |
+		PURPLE_CONNECTION_FLAG_NO_URLDESC |
+		PURPLE_CONNECTION_FLAG_NO_IMAGES);
 
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 

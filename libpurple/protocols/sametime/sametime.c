@@ -5061,7 +5061,7 @@ static void mw_prpl_send_file(PurpleConnection *gc,
 
 static PurplePluginProtocolInfo mw_prpl_info = {
   sizeof(PurplePluginProtocolInfo),
-  OPT_PROTO_IM_IMAGE,
+  0,
   NULL, /*< set in mw_plugin_init */
   NULL, /*< set in mw_plugin_init */
   NO_BUDDY_ICONS,

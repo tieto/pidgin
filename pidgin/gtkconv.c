@@ -7405,12 +7405,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 			buttons = PIDGIN_WEBVIEW_SMILEY | PIDGIN_WEBVIEW_IMAGE;
 		}
 
-		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE)
-		 && !(features & PURPLE_CONNECTION_FLAG_NO_IMAGES)) {
-			features |= PURPLE_CONNECTION_FLAG_NO_IMAGES;
-			purple_conversation_set_features(conv, features);
-		}
-
 		if (features & PURPLE_CONNECTION_FLAG_NO_IMAGES)
 			buttons &= ~PIDGIN_WEBVIEW_IMAGE;
 

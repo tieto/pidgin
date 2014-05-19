@@ -41,6 +41,7 @@
  * Plugin setup
  ******************************************************************************/
 
+#if 0
 static void
 imgup_prpl_init(PurplePlugin *prpl)
 {
@@ -68,10 +69,12 @@ imgup_prpl_uninit(PurplePlugin *prpl)
 
 	purple_plugin_set_data(prpl, "imgupload-set", NULL);
 }
+#endif
 
 static gboolean
 imgup_plugin_load(PurplePlugin *plugin)
 {
+#if 0
 	GList *it;
 
 	it = purple_plugins_get_protocols();
@@ -79,6 +82,7 @@ imgup_plugin_load(PurplePlugin *plugin)
 		PurplePlugin *prpl = it->data;
 		imgup_prpl_init(prpl);
 	}
+#endif
 
 	return TRUE;
 }
@@ -86,6 +90,7 @@ imgup_plugin_load(PurplePlugin *plugin)
 static gboolean
 imgup_plugin_unload(PurplePlugin *plugin)
 {
+#if 0
 	GList *it;
 
 	it = purple_plugins_get_protocols();
@@ -93,6 +98,7 @@ imgup_plugin_unload(PurplePlugin *plugin)
 		PurplePlugin *prpl = it->data;
 		imgup_prpl_uninit(prpl);
 	}
+#endif
 
 	return TRUE;
 }

@@ -2203,6 +2203,8 @@ novell_login(PurpleAccount * account)
 	if (gc == NULL)
 		return;
 
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_IMAGES);
+
 	server = purple_account_get_string(account, "server", NULL);
 	if (server == NULL || *server == '\0') {
 

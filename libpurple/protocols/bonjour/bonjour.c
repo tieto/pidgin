@@ -103,7 +103,8 @@ bonjour_login(PurpleAccount *account)
 	}
 #endif /* _WIN32 */
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML |
+		PURPLE_CONNECTION_FLAG_NO_IMAGES);
 	bd = g_new0(BonjourData, 1);
 	purple_connection_set_protocol_data(gc, bd);
 

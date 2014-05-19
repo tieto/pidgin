@@ -2062,7 +2062,7 @@ static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |
+	OPT_PROTO_PASSWORD_OPTIONAL |
 	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */

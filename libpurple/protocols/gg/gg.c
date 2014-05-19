@@ -975,7 +975,7 @@ ggp_get_max_message_size(PurpleConversation *conv)
 static PurplePluginProtocolInfo prpl_info =
 {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	OPT_PROTO_IM_IMAGE,
+	0,
 	NULL,				/* user_splits */
 	NULL,				/* protocol_options */
 	{"png", 1, 1, 200, 200, 0, PURPLE_ICON_SCALE_DISPLAY | PURPLE_ICON_SCALE_SEND},	/* icon_spec */

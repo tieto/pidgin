@@ -1925,6 +1925,8 @@ static void simple_login(PurpleAccount *account)
 	const char *username = purple_account_get_username(account);
 	gc = purple_account_get_connection(account);
 
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_IMAGES);
+
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,

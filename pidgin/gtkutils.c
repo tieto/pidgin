@@ -1522,7 +1522,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			if (gc)
 				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
-			if (prpl_info && prpl_info->options & OPT_PROTO_IM_IMAGE)
+			if (!(purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_NO_IMAGES))
 				im = TRUE;
 
 			if (prpl_info && prpl_info->can_receive_file)
