@@ -37,6 +37,8 @@
 
 #define IMGUP_IMGUR_CLIENT_ID "b6d33c6bb80e1b6"
 
+static PurplePlugin *plugin_handle = NULL;
+
 static void
 imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title);
 static void
@@ -145,12 +147,25 @@ imgup_imgur_upload(PidginWebView *webview, PurpleImage *image)
  ******************************************************************************/
 
 static void
+imgup_upload_finish(PidginWebView *webview)
+{
+	gpointer plswait;
+
+	g_object_steal_data(G_OBJECT(webview), "imgupload-hc");
+	plswait = g_object_get_data(G_OBJECT(webview), "imgupload-plswait");
+	g_object_set_data(G_OBJECT(webview), "imgupload-plswait", NULL);
+
+	if (plswait)
+		purple_request_close(PURPLE_REQUEST_WAIT, plswait);
+}
+
+static void
 imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title)
 {
 	PidginWebViewButtons format;
 	gboolean url_desc;
 
-	g_object_steal_data(G_OBJECT(webview), "imgupload-hc");
+	imgup_upload_finish(webview);
 
 	format = pidgin_webview_get_format_functions(webview);
 	url_desc = format & PIDGIN_WEBVIEW_LINKDESC;
@@ -161,9 +176,30 @@ imgup_upload_done(PidginWebView *webview, const gchar *url, const gchar *title)
 static void
 imgup_upload_failed(PidginWebView *webview)
 {
-	g_object_steal_data(G_OBJECT(webview), "imgupload-hc");
+	gboolean is_cancelled;
 
-	purple_debug_error("imgupload", "Failed uploading image");
+	imgup_upload_finish(webview);
+
+	is_cancelled = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(webview),
+		"imgupload-cancelled"));
+	g_object_set_data(G_OBJECT(webview), "imgupload-cancelled", NULL);
+
+	if (!is_cancelled)
+		purple_debug_error("imgupload", "Failed uploading image");
+}
+
+static void
+imgup_upload_cancel(gpointer _webview)
+{
+	PurpleHttpConnection *hc;
+	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
+
+	g_object_set_data(G_OBJECT(webview), "imgupload-plswait", NULL);
+	g_object_set_data(G_OBJECT(webview), "imgupload-cancelled",
+		GINT_TO_POINTER(TRUE));
+	hc = g_object_get_data(G_OBJECT(webview), "imgupload-hc");
+	if (hc)
+		purple_http_conn_cancel(hc);
 }
 
 static gboolean
@@ -172,6 +208,7 @@ imgup_upload_start(PidginWebView *webview, PurpleImage *image, gpointer _gtkconv
 	PidginConversation *gtkconv = _gtkconv;
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleHttpConnection *hc;
+	gpointer plswait;
 
 	if (!imgup_conn_is_hooked(purple_conversation_get_connection(conv)))
 		return FALSE;
@@ -180,7 +217,11 @@ imgup_upload_start(PidginWebView *webview, PurpleImage *image, gpointer _gtkconv
 	g_object_set_data_full(G_OBJECT(webview), "imgupload-hc",
 		hc, (GDestroyNotify)purple_http_conn_cancel);
 
-	/* TODO: please wait dialog */
+	plswait = purple_request_wait(plugin_handle, _("Uploading image"),
+		_("Please wait for image URL being retrieved..."),
+		NULL, FALSE, imgup_upload_cancel,
+		purple_request_cpar_from_conversation(conv), webview);
+	g_object_set_data(G_OBJECT(webview), "imgupload-plswait", plswait);
 
 	return TRUE;
 }
@@ -284,6 +325,8 @@ imgup_plugin_load(PurplePlugin *plugin)
 {
 	GList *it;
 
+	plugin_handle = plugin;
+
 	it = purple_connections_get_all();
 	for (; it; it = g_list_next(it)) {
 		PurpleConnection *gc = it->data;
@@ -329,6 +372,8 @@ imgup_plugin_unload(PurplePlugin *plugin)
 		PurpleConnection *gc = it->data;
 		imgup_conn_uninit(gc);
 	}
+
+	plugin_handle = NULL;
 
 	return TRUE;
 }
