@@ -257,6 +257,7 @@ pidgin/plugins/gtk-signals-test.c
 pidgin/plugins/gtkbuddynote.c
 pidgin/plugins/history.c
 pidgin/plugins/iconaway.c
+pidgin/plugins/imgupload.c
 pidgin/plugins/mailchk.c
 pidgin/plugins/markerline.c
 pidgin/plugins/musicmessaging/musicmessaging.c
