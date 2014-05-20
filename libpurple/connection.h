@@ -566,24 +566,6 @@ GList *purple_connections_get_all(void);
  */
 GList *purple_connections_get_connecting(void);
 
-/**
- * PURPLE_CONNECTION_IS_VALID:
- * @gc: The connection to check
- *
- * Checks if @gc is still a valid pointer to a connection.
- *
- * This is deprecated -- do not use this. Instead, cancel your asynchronous
- * request when the #PurpleConnection is destroyed.
- *
- * Returns: %TRUE if @gc is valid.
- */
-/*
- * TODO: Eventually this bad boy will be removed, because it is
- *       a gross fix for a crashy problem.
- */
-#define PURPLE_CONNECTION_IS_VALID(gc) \
-	(g_list_find(purple_connections_get_all(), (gc)) != NULL)
-
 /**************************************************************************/
 /* UI Registration Functions                                              */
 /**************************************************************************/

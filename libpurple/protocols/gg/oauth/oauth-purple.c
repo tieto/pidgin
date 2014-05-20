@@ -115,10 +115,8 @@ static void ggp_oauth_request_token_got(PurpleHttpConnection *http_conn,
 	gboolean succ = TRUE;
 	const gchar *xml_raw;
 
-	if (!PURPLE_CONNECTION_IS_VALID(data->gc)) {
-		ggp_oauth_data_free(data);
-		return;
-	}
+	PURPLE_ASSERT_CONNECTION_IS_VALID(data->gc);
+
 	account = purple_connection_get_account(data->gc);
 
 	if (!purple_http_response_is_successful(response)) {
@@ -181,10 +179,8 @@ static void ggp_oauth_authorization_done(PurpleHttpConnection *http_conn,
 	const char *url = "http://api.gadu-gadu.pl/access_token";
 	int response_code;
 
-	if (!PURPLE_CONNECTION_IS_VALID(data->gc)) {
-		ggp_oauth_data_free(data);
-		return;
-	}
+	PURPLE_ASSERT_CONNECTION_IS_VALID(data->gc);
+
 	account = purple_connection_get_account(data->gc);
 
 	response_code = purple_http_response_get_code(response);

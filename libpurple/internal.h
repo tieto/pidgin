@@ -149,6 +149,11 @@
 	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
 	(void)dummy; }
 
+/* This is meant to track use-after-free errors.
+ * TODO: it should be disabled in released code. */
+#define PURPLE_ASSERT_CONNECTION_IS_VALID(gc) \
+	_purple_assert_connection_is_valid(gc, __FILE__, __LINE__)
+
 #ifdef __clang__
 
 #define PURPLE_BEGIN_IGNORE_CAST_ALIGN \
@@ -389,5 +394,9 @@ _purple_socket_init(void);
  */
 void
 _purple_socket_uninit(void);
+
+void
+_purple_assert_connection_is_valid(PurpleConnection *gc,
+	const gchar *file, int line);
 
 #endif /* _PURPLE_INTERNAL_H_ */

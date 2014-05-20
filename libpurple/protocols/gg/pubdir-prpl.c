@@ -199,7 +199,9 @@ static void ggp_pubdir_get_info_got_token(PurpleConnection *gc,
 	PurpleHttpRequest *req;
 	ggp_pubdir_request *request = _request;
 
-	if (!token || !PURPLE_CONNECTION_IS_VALID(gc)) {
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
+
+	if (!token) {
 		request->cb(gc, -1, NULL, 0, request->user_data);
 		ggp_pubdir_request_free(request);
 		return;
@@ -627,7 +629,9 @@ static void ggp_pubdir_search_got_token(PurpleConnection *gc,
 	ggp_pubdir_request *request = _request;
 	gchar *query;
 
-	if (!token || !PURPLE_CONNECTION_IS_VALID(gc)) {
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
+
+	if (!token) {
 		request->cb(gc, -1, NULL, 0, request->user_data);
 		ggp_pubdir_request_free(request);
 		return;
@@ -899,7 +903,9 @@ static void ggp_pubdir_set_info_got_token(PurpleConnection *gc,
 	gchar *name, *surname, *city;
 	uin_t uin = record->uin;
 
-	if (!token || !PURPLE_CONNECTION_IS_VALID(gc)) {
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
+
+	if (!token) {
 		/* TODO: notify about failure */
 		ggp_pubdir_record_free(record, 1);
 		return;

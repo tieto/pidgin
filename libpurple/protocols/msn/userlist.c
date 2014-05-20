@@ -48,22 +48,24 @@ typedef struct
 static void
 msn_accept_add_cb(const char *message, gpointer data)
 {
+	MsnSession *session;
+	MsnUserList *userlist;
+	PurpleAccount *account;
 	MsnPermitAdd *pa = data;
 
 	purple_debug_misc("msn", "Accepted the new buddy: %s\n", pa->who);
 
-	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
-	{
-		MsnSession *session = purple_connection_get_protocol_data(pa->gc);
-		MsnUserList *userlist = session->userlist;
-		PurpleAccount *account = purple_connection_get_account(pa->gc);
+	PURPLE_ASSERT_CONNECTION_IS_VALID(pa->gc);
 
-		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
-		purple_account_privacy_deny_remove(account, pa->who, TRUE);
-		purple_account_privacy_permit_add(account, pa->who, TRUE);
+	session = purple_connection_get_protocol_data(pa->gc);
+	userlist = session->userlist;
+	account = purple_connection_get_account(pa->gc);
 
-		msn_del_contact_from_list(session, NULL, pa->who, MSN_LIST_PL);
-	}
+	msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
+	purple_account_privacy_deny_remove(account, pa->who, TRUE);
+	purple_account_privacy_permit_add(account, pa->who, TRUE);
+
+	msn_del_contact_from_list(session, NULL, pa->who, MSN_LIST_PL);
 
 	g_free(pa->who);
 	g_free(pa->friendly);
@@ -73,21 +75,23 @@ msn_accept_add_cb(const char *message, gpointer data)
 static void
 msn_cancel_add_cb(const char *message, gpointer data)
 {
+	MsnSession *session;
+	MsnUserList *userlist;
+	MsnCallbackState *state;
 	MsnPermitAdd *pa = data;
 
 	purple_debug_misc("msn", "Denied the new buddy: %s\n", pa->who);
 
-	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
-	{
-		MsnSession *session = purple_connection_get_protocol_data(pa->gc);
-		MsnUserList *userlist = session->userlist;
-		MsnCallbackState *state = msn_callback_state_new(session);
+	PURPLE_ASSERT_CONNECTION_IS_VALID(pa->gc);
 
-		msn_callback_state_set_action(state, MSN_DENIED_BUDDY);
+	session = purple_connection_get_protocol_data(pa->gc);
+	userlist = session->userlist;
+	state = msn_callback_state_new(session);
 
-		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_BL);
-		msn_del_contact_from_list(session, state, pa->who, MSN_LIST_PL);
-	}
+	msn_callback_state_set_action(state, MSN_DENIED_BUDDY);
+
+	msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_BL);
+	msn_del_contact_from_list(session, state, pa->who, MSN_LIST_PL);
 
 	g_free(pa->who);
 	g_free(pa->friendly);

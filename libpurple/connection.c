@@ -1037,6 +1037,19 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password,
 /**************************************************************************
  * Connections API
  **************************************************************************/
+
+void
+_purple_assert_connection_is_valid(PurpleConnection *gc,
+	const gchar *file, int line)
+{
+	if (gc && g_list_find(purple_connections_get_all(), gc))
+		return;
+
+	purple_debug_fatal("connection", "PURPLE_ASSERT_CONNECTION_IS_VALID(%p)"
+		" failed at %s:%d", gc, file, line);
+	exit(-1);
+}
+
 void
 purple_connections_disconnect_all(void)
 {

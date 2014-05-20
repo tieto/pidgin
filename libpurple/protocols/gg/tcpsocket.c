@@ -41,6 +41,8 @@ ggp_tcpsocket_connected(PurpleSocket *ps, const gchar *error, gpointer priv_gg)
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	int fd = -1;
 
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
+
 	if (error == NULL)
 		fd = purple_socket_get_fd(ps);
 
@@ -65,6 +67,7 @@ ggp_tcpsocket_connect(void *_gc, const char *host, int port, int is_tls,
 	PurpleConnection *gc = _gc;
 	PurpleSocket *ps;
 
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 	g_return_val_if_fail(!purple_connection_is_disconnecting(gc), NULL);
 
 	g_return_val_if_fail(host != NULL, NULL);

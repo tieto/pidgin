@@ -53,10 +53,7 @@ static void mxit_profile_cb( PurpleConnection* gc, PurpleRequestFields* fields )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_profile_cb\n" );
 
-	if ( !PURPLE_CONNECTION_IS_VALID( gc ) ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Unable to update profile; account offline.\n" );
-		return;
-	}
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	/* validate name */
 	name = purple_request_fields_get_string( fields, "name" );
@@ -330,10 +327,7 @@ static void mxit_change_pin_cb( PurpleConnection* gc, PurpleRequestFields* field
 	int						len;
 	int						i;
 
-	if ( !PURPLE_CONNECTION_IS_VALID( gc ) ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Unable to update PIN; account offline.\n" );
-		return;
-	}
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	/* validate pin */
 	pin = purple_request_fields_get_string( fields, "pin" );

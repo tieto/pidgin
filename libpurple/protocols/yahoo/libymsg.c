@@ -4329,7 +4329,7 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 	gchar *url;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("yahoo",

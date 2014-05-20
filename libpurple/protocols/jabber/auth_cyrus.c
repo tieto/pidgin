@@ -133,9 +133,8 @@ static void auth_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	const char *entry;
 	gboolean remember;
 
-	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	/* TODO: the password prompt dialog doesn't get disposed if the account disconnects */
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	account = purple_connection_get_account(gc);
 	js = purple_connection_get_protocol_data(gc);
@@ -168,9 +167,8 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
 
-	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	/* TODO: the password prompt dialog doesn't get disposed if the account disconnects */
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	account = purple_connection_get_account(gc);
 
