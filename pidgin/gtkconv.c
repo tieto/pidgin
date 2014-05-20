@@ -607,6 +607,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	PurpleAccount *account;
 #if 0
 	PurpleConnection *gc;
+#endif
 	PurpleMessageFlags flags = 0;
 	char *buf;
 

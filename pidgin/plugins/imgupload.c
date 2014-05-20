@@ -326,64 +326,6 @@ imgup_conn_uninit(PurpleConnection *gc)
 	g_object_set_data(G_OBJECT(gc), "imgupload-set", NULL);
 }
 
-static gboolean
-imgup_plugin_load(PurplePlugin *plugin)
-{
-	GList *it;
-
-	plugin_handle = plugin;
-
-	it = purple_connections_get_all();
-	for (; it; it = g_list_next(it)) {
-		PurpleConnection *gc = it->data;
-		imgup_conn_init(gc);
-	}
-
-	it = purple_conversations_get_all();
-	for (; it; it = g_list_next(it)) {
-		PurpleConversation *conv = it->data;
-		imgup_conv_init(conv);
-		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-			imgup_pidconv_init(PIDGIN_CONVERSATION(conv));
-	}
-
-	purple_signal_connect(purple_connections_get_handle(),
-		"signed-on", plugin,
-		PURPLE_CALLBACK(imgup_conn_init), NULL);
-	purple_signal_connect(purple_connections_get_handle(),
-		"signing-off", plugin,
-		PURPLE_CALLBACK(imgup_conn_uninit), NULL);
-	purple_signal_connect(pidgin_conversations_get_handle(),
-		"conversation-displayed", plugin,
-		PURPLE_CALLBACK(imgup_pidconv_init), NULL);
-
-	return TRUE;
-}
-
-static gboolean
-imgup_plugin_unload(PurplePlugin *plugin)
-{
-	GList *it;
-
-	it = purple_conversations_get_all();
-	for (; it; it = g_list_next(it)) {
-		PurpleConversation *conv = it->data;
-		imgup_conv_uninit(conv);
-		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-			imgup_pidconv_uninit(PIDGIN_CONVERSATION(conv));
-	}
-
-	it = purple_connections_get_all();
-	for (; it; it = g_list_next(it)) {
-		PurpleConnection *gc = it->data;
-		imgup_conn_uninit(gc);
-	}
-
-	plugin_handle = NULL;
-
-	return TRUE;
-}
-
 /******************************************************************************
  * Prefs
  ******************************************************************************/
@@ -432,52 +374,94 @@ imgup_prefs_get(PurplePlugin *plugin)
  * Plugin stuff
  ******************************************************************************/
 
-static PurplePluginUiInfo imgup_prefs_info = {
-	NULL,
-	imgup_prefs_get,
-
-	/* padding */
-	NULL, NULL, NULL, NULL
-};
-
-static PurplePluginInfo imgup_info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"gtk-imgupload",
-	N_("Image Upload"),
-	DISPLAY_VERSION,
-	N_("Inline images implementation for protocols without such feature."),
-	N_("Adds inline images support for protocols lacking this feature by "
-		"uploading them to the external service."),
-	"Tomasz Wasilczyk <twasilczyk@pidgin.im>",
-	PURPLE_WEBSITE,
-	imgup_plugin_load,
-	imgup_plugin_unload,
-	NULL,
-	NULL,
-	NULL,
-	&imgup_prefs_info,
-	NULL,
+	const gchar * const authors[] = {
+		"Tomasz Wasilczyk <twasilczyk@pidgin.im>",
+		NULL
+	};
 
-	/* padding */
-	NULL, NULL, NULL, NULL
-};
+	return pidgin_plugin_info_new(
+		"id",              "gtk-imgupload",
+		"name",            N_("Image Upload"),
+		"version",         DISPLAY_VERSION,
+		"category",        N_("Utility"),
+		"summary",         N_("Inline images implementation for protocols "
+		                      "without such feature."),
+		"description",     N_("Adds inline images support for protocols "
+		                      "lacking this feature by uploading them to the "
+		                      "external service."),
+		"authors",         authors,
+		"website",         PURPLE_WEBSITE,
+		"abi-version",     PURPLE_ABI_VERSION,
+		"pref-request-cb", imgup_prefs_get,
+		NULL
+	);
+}
 
-static void
-imgup_init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
+	GList *it;
+
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/gtk");
 	purple_prefs_add_none("/plugins/gtk/imgupload");
 
 	purple_prefs_add_bool(IMGUP_PREF_PREFIX "use_url_desc", TRUE);
+
+	plugin_handle = plugin;
+
+	it = purple_connections_get_all();
+	for (; it; it = g_list_next(it)) {
+		PurpleConnection *gc = it->data;
+		imgup_conn_init(gc);
+	}
+
+	it = purple_conversations_get_all();
+	for (; it; it = g_list_next(it)) {
+		PurpleConversation *conv = it->data;
+		imgup_conv_init(conv);
+		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+			imgup_pidconv_init(PIDGIN_CONVERSATION(conv));
+	}
+
+	purple_signal_connect(purple_connections_get_handle(),
+		"signed-on", plugin,
+		PURPLE_CALLBACK(imgup_conn_init), NULL);
+	purple_signal_connect(purple_connections_get_handle(),
+		"signing-off", plugin,
+		PURPLE_CALLBACK(imgup_conn_uninit), NULL);
+	purple_signal_connect(pidgin_conversations_get_handle(),
+		"conversation-displayed", plugin,
+		PURPLE_CALLBACK(imgup_pidconv_init), NULL);
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(imgupload, imgup_init_plugin, imgup_info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	GList *it;
+
+	it = purple_conversations_get_all();
+	for (; it; it = g_list_next(it)) {
+		PurpleConversation *conv = it->data;
+		imgup_conv_uninit(conv);
+		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+			imgup_pidconv_uninit(PIDGIN_CONVERSATION(conv));
+	}
+
+	it = purple_connections_get_all();
+	for (; it; it = g_list_next(it)) {
+		PurpleConnection *gc = it->data;
+		imgup_conn_uninit(gc);
+	}
+
+	plugin_handle = NULL;
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(imgupload, plugin_query, plugin_load, plugin_unload);
