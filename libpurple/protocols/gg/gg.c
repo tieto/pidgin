@@ -985,7 +985,6 @@ ggp_protocol_init(PurpleProtocol *protocol)
 
 	protocol->id        = "prpl-gg";
 	protocol->name      = "Gadu-Gadu";
-	protocol->options   = OPT_PROTO_IM_IMAGE;
 	protocol->icon_spec = purple_buddy_icon_spec_new("png",
 	                                                 1, 1, 200, 200, 0,
 	                                                 PURPLE_ICON_SCALE_DISPLAY |

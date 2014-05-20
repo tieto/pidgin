@@ -2223,7 +2223,7 @@ static void ft_send(struct mwFileTransfer *ft) {
   rem = mwFileTransfer_getRemaining(ft);
   if(rem < MW_FT_LEN) o.len = rem;
 
-  if(purple_xfer_read_file(xfer, buf, (size_t) o.len) > 0) {
+  if(purple_xfer_read_file(xfer, buf, (size_t) o.len) == (gssize)o.len) {
 
     /* calculate progress and display it */
     purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + o.len);
@@ -5589,7 +5589,6 @@ mw_protocol_init(PurpleProtocol *protocol)
 
   protocol->id      = PROTOCOL_ID;
   protocol->name    = PROTOCOL_NAME;
-  protocol->options = OPT_PROTO_IM_IMAGE;
 
   /* set up the preferences */
   purple_prefs_add_none(MW_PROTOCOL_OPT_BASE);

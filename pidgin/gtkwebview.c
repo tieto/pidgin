@@ -24,6 +24,7 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "image-store.h"
+#include "marshallers.h"
 #include "pidgin.h"
 #include "pidginstock.h"
 
@@ -60,6 +61,7 @@ enum {
 	UPDATE_FORMAT,
 	CHANGED,
 	HTML_APPENDED,
+	INSERT_IMAGE,
 	LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -1308,6 +1310,20 @@ fill_spellcheck_dicts(void)
 
 #endif
 
+static gboolean
+pidgin_webview_insert_image_accu(GSignalInvocationHint *ihint,
+	GValue *return_accu, const GValue *handler_return, gpointer _unused)
+{
+	gboolean cancel;
+
+	cancel = g_value_get_boolean(handler_return);
+	if (!cancel)
+		return FALSE;
+
+	g_value_set_boolean(return_accu, TRUE);
+	return TRUE;
+}
+
 static void
 pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 {
@@ -1359,6 +1375,12 @@ pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 	                                      g_cclosure_marshal_VOID__OBJECT,
 	                                      G_TYPE_NONE, 1, WEBKIT_TYPE_DOM_RANGE,
 	                                      NULL);
+	signals[INSERT_IMAGE] = g_signal_new("insert-image",
+		G_TYPE_FROM_CLASS(gobject_class), G_SIGNAL_RUN_LAST,
+		G_STRUCT_OFFSET(PidginWebViewClass, insert_image),
+		pidgin_webview_insert_image_accu, NULL,
+		purple_smarshal_BOOLEAN__OBJECT, G_TYPE_BOOLEAN, 1,
+		PURPLE_TYPE_IMAGE);
 
 	/* Class Methods */
 
@@ -2217,8 +2239,13 @@ pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image)
 	WebKitDOMDocument *dom;
 	char *img;
 	guint id;
+	gboolean cancel;
 
 	g_return_if_fail(webview != NULL);
+
+	g_signal_emit(webview, signals[INSERT_IMAGE], 0, image, &cancel);
+	if (cancel)
+		return;
 
 	id = purple_image_store_add(image);
 	priv = PIDGIN_WEBVIEW_GET_PRIVATE(webview);

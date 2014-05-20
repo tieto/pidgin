@@ -78,8 +78,6 @@ typedef struct _PurpleProtocolChatEntry PurpleProtocolChatEntry;
  *           password prompt.
  * @OPT_PROTO_MAIL_CHECK: Notify on new mail.<sbr/>
  *           MSN and Yahoo notify you when you have new mail.
- * @OPT_PROTO_IM_IMAGE: Images in IMs.<sbr/>
- *           Oscar lets you send images in direct IMs.
  * @OPT_PROTO_PASSWORD_OPTIONAL: Allow passwords to be optional.<sbr/>
  *           Passwords in IRC are optional, and are needed for certain
  *           functionality.
@@ -113,7 +111,6 @@ typedef enum  /*< flags >*/
 	OPT_PROTO_CHAT_TOPIC                    = 0x00000008,
 	OPT_PROTO_NO_PASSWORD                   = 0x00000010,
 	OPT_PROTO_MAIL_CHECK                    = 0x00000020,
-	OPT_PROTO_IM_IMAGE                      = 0x00000040,
 	OPT_PROTO_PASSWORD_OPTIONAL             = 0x00000080,
 	OPT_PROTO_USE_POINTSIZE                 = 0x00000100,
 	OPT_PROTO_REGISTER_NOSCREENNAME         = 0x00000200,

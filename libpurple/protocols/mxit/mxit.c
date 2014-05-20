@@ -736,7 +736,7 @@ mxit_protocol_init( PurpleProtocol *protocol )
 	protocol->id        = MXIT_PROTOCOL_ID;
 	protocol->name      = MXIT_PROTOCOL_NAME;
 	protocol->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
-	                      OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE |
+	                      OPT_PROTO_UNIQUE_CHATNAME |
 	                      OPT_PROTO_INVITE_MESSAGE |
 	                      OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
 	protocol->icon_spec = purple_buddy_icon_spec_new(

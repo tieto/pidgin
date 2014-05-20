@@ -1726,6 +1726,8 @@ static void simple_newconn_cb(gpointer data, gint source, PurpleInputCondition c
 	int newfd;
 
 	newfd = accept(source, NULL, NULL);
+	g_return_if_fail(newfd >= 0);
+
 	_purple_network_set_common_socket_flags(newfd);
 
 	conn = connection_create(sip, newfd);
@@ -1924,6 +1926,8 @@ static void simple_login(PurpleAccount *account)
 
 	const char *username = purple_account_get_username(account);
 	gc = purple_account_get_connection(account);
+
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_IMAGES);
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		purple_connection_error(gc,

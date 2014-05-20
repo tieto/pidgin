@@ -38,6 +38,7 @@ gtk_signals_test_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 gtkbuddynote_la_LDFLAGS     = -module @PLUGIN_LDFLAGS@
 history_la_LDFLAGS          = -module @PLUGIN_LDFLAGS@
 iconaway_la_LDFLAGS         = -module @PLUGIN_LDFLAGS@
+imgupload_la_LDFLAGS        = -module @PLUGIN_LDFLAGS@
 markerline_la_LDFLAGS       = -module @PLUGIN_LDFLAGS@
 notify_la_LDFLAGS           = -module @PLUGIN_LDFLAGS@
 relnot_la_LDFLAGS           = -module @PLUGIN_LDFLAGS@
@@ -56,6 +57,7 @@ plugin_LTLIBRARIES = \
 	gtkbuddynote.la     \
 	history.la          \
 	iconaway.la         \
+	imgupload.la        \
 	markerline.la       \
 	notify.la           \
 	relnot.la           \
@@ -80,6 +82,7 @@ gtk_signals_test_la_SOURCES = gtk-signals-test.c
 gtkbuddynote_la_SOURCES     = gtkbuddynote.c
 history_la_SOURCES          = history.c
 iconaway_la_SOURCES         = iconaway.c
+imgupload_la_SOURCES        = imgupload.c
 markerline_la_SOURCES       = markerline.c
 notify_la_SOURCES           = notify.c
 relnot_la_SOURCES           = relnot.c
@@ -97,6 +100,7 @@ gtk_signals_test_la_LIBADD  = @PIDGIN_LIBS@
 gtkbuddynote_la_LIBADD      = @PIDGIN_LIBS@
 history_la_LIBADD           = @PIDGIN_LIBS@
 iconaway_la_LIBADD          = @PIDGIN_LIBS@
+imgupload_la_LIBADD         = @PIDGIN_LIBS@ $(JSON_LIBS)
 markerline_la_LIBADD        = @PIDGIN_LIBS@ $(WEBKIT_LIBS)
 notify_la_LIBADD            = @PIDGIN_LIBS@
 relnot_la_LIBADD            = @PIDGIN_LIBS@
@@ -107,6 +111,8 @@ themeedit_la_LIBADD         = @PIDGIN_LIBS@
 unity_la_LIBADD             = @PIDGIN_LIBS@ $(UNITY_LIBS)
 webkit_la_LIBADD            = @PIDGIN_LIBS@ $(WEBKIT_LIBS)
 xmppconsole_la_LIBADD       = @PIDGIN_LIBS@
+
+imgupload_la_CFLAGS         = $(JSON_CFLAGS)
 
 endif # PLUGINS
 

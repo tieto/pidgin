@@ -376,6 +376,8 @@ static void null_login(PurpleAccount *acct)
 
   purple_debug_info("nullprpl", "logging in %s\n", purple_account_get_username(acct));
 
+  purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_IMAGES);
+
   purple_connection_update_progress(gc, _("Connecting"),
                                     0,   /* which connection step this is */
                                     2);  /* total number of steps */

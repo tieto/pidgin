@@ -109,7 +109,7 @@ const char *invalid_emails[] = {
 	"missingDot@com",
 	"two@@signs.com",
 	"colonButNoPort@127.0.0.1:",
-	""
+	"",
 	/* "someone-else@127.0.0.1.26", */
 	".localStartsWithDot@domain.com",
 	/* "localEndsWithDot.@domain.com", */ /* I don't think this is invalid -- Stu */

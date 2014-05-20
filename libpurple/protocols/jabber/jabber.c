@@ -1096,7 +1096,9 @@ jabber_login(PurpleAccount *account)
 	JabberStream *js;
 	PurpleImage *image;
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML |
+		PURPLE_CONNECTION_FLAG_ALLOW_CUSTOM_SMILEY |
+		PURPLE_CONNECTION_FLAG_NO_IMAGES);
 	js = jabber_stream_new(account);
 	if (js == NULL)
 		return;

@@ -1508,7 +1508,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			if (gc)
 				protocol = purple_connection_get_protocol(gc);
 
-			if (protocol && purple_protocol_get_options(protocol) & OPT_PROTO_IM_IMAGE)
+			if (!(purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_NO_IMAGES))
 				im = TRUE;
 
 			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive))

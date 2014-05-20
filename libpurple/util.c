@@ -3928,8 +3928,7 @@ purple_url_encode(const char *str)
 	const char *iter;
 	static char buf[BUF_LEN];
 	char utf_char[6];
-	int i;
-	guint j = 0;
+	guint i, j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
@@ -3943,9 +3942,13 @@ purple_url_encode(const char *str)
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
+			for (i = 0; (int)i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
+				if (i >= sizeof(utf_char)) {
+					g_warn_if_reached();
+					break;
+				}
 				sprintf(buf + j, "%%%02X", utf_char[i] & 0xff);
 				j += 3;
 			}
@@ -4582,8 +4585,7 @@ purple_escape_filename(const char *str)
 	const char *iter;
 	static char buf[BUF_LEN];
 	char utf_char[6];
-	int i;
-	guint j = 0;
+	guint i, j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
@@ -4598,9 +4600,13 @@ purple_escape_filename(const char *str)
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
+			for (i = 0; (int)i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
+				if (i >= sizeof(utf_char)) {
+					g_warn_if_reached();
+					break;
+				}
 				sprintf(buf + j, "%%%02x", utf_char[i] & 0xff);
 				j += 3;
 			}
@@ -4807,6 +4813,7 @@ gchar *purple_http_digest_calculate_session_key(
 {
 	PurpleHash *hasher;
 	gchar hash[33]; /* We only support MD5. */
+	gboolean digest_ok;
 
 	g_return_val_if_fail(username != NULL, NULL);
 	g_return_val_if_fail(realm    != NULL, NULL);
@@ -4849,8 +4856,10 @@ gchar *purple_http_digest_calculate_session_key(
 		purple_hash_append(hasher, (guchar *)client_nonce, strlen(client_nonce));
 	}
 
-	purple_hash_digest_to_str(hasher, hash, sizeof(hash));
+	digest_ok = purple_hash_digest_to_str(hasher, hash, sizeof(hash));
 	g_object_unref(hasher);
+
+	g_return_val_if_fail(digest_ok, NULL);
 
 	return g_strdup(hash);
 }
@@ -4868,6 +4877,7 @@ gchar *purple_http_digest_calculate_response(
 {
 	PurpleHash *hash;
 	static gchar hash2[33]; /* We only support MD5. */
+	gboolean digest_ok;
 
 	g_return_val_if_fail(method      != NULL, NULL);
 	g_return_val_if_fail(digest_uri  != NULL, NULL);
@@ -4907,15 +4917,25 @@ gchar *purple_http_digest_calculate_response(
 
 		hash2 = purple_md5_hash_new();
 		purple_hash_append(hash2, (guchar *)entity, strlen(entity));
-		purple_hash_digest_to_str(hash2, entity_hash, sizeof(entity_hash));
+		digest_ok = purple_hash_digest_to_str(hash2, entity_hash, sizeof(entity_hash));
 		g_object_unref(hash2);
+
+		if (!digest_ok) {
+			g_object_unref(hash);
+			g_return_val_if_reached(NULL);
+		}
 
 		purple_hash_append(hash, (guchar *)":", 1);
 		purple_hash_append(hash, (guchar *)entity_hash, strlen(entity_hash));
 	}
 
-	purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
+	digest_ok = purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
 	purple_hash_reset(hash);
+
+	if (!digest_ok) {
+		g_object_unref(hash);
+		g_return_val_if_reached(NULL);
+	}
 
 	purple_hash_append(hash, (guchar *)session_key, strlen(session_key));
 	purple_hash_append(hash, (guchar *)":", 1);
@@ -4949,8 +4969,10 @@ gchar *purple_http_digest_calculate_response(
 	}
 
 	purple_hash_append(hash, (guchar *)hash2, strlen(hash2));
-	purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
+	digest_ok = purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
 	g_object_unref(hash);
+
+	g_return_val_if_fail(digest_ok, NULL);
 
 	return g_strdup(hash2);
 }

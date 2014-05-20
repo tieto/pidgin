@@ -396,8 +396,11 @@ purple_prefs_load()
 
 		error = NULL;
 
+#ifndef __COVERITY__
+		/* coverity dead_error_line false positive */
 		if (sysconfdir == NULL)
 			sysconfdir = "";
+#endif
 		filename = g_build_filename(sysconfdir, "purple", "prefs.xml", NULL);
 
 		purple_debug_info("prefs", "Reading %s\n", filename);
@@ -567,8 +570,7 @@ add_pref(PurplePrefType type, const char *name)
 
 	parent = find_pref_parent(name);
 
-	if(!parent)
-		return NULL;
+	g_return_val_if_fail(parent, NULL);
 
 	my_name = get_path_basename(name);
 

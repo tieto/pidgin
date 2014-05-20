@@ -5595,8 +5595,7 @@ void oscar_init_account_options(PurpleProtocol *protocol)
 static void
 oscar_protocol_init(PurpleProtocol *protocol)
 {
-	protocol->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE |
-	                      OPT_PROTO_INVITE_MESSAGE |
+	protocol->options   = OPT_PROTO_MAIL_CHECK | OPT_PROTO_INVITE_MESSAGE |
 	                      OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
 	protocol->icon_spec = purple_buddy_icon_spec_new("gif,jpeg,bmp,ico",
 	                                                 0, 0, 64, 64, 7168,

@@ -1583,7 +1583,9 @@ static void zephyr_login(PurpleAccount * account)
 #ifdef WIN32
 	username = purple_account_get_username(account);
 #endif
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_AUTO_RESP | PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_NO_BGCOLOR | PURPLE_CONNECTION_FLAG_NO_URLDESC);
+	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_AUTO_RESP |
+		PURPLE_CONNECTION_FLAG_HTML | PURPLE_CONNECTION_FLAG_NO_BGCOLOR |
+		PURPLE_CONNECTION_FLAG_NO_URLDESC | PURPLE_CONNECTION_FLAG_NO_IMAGES);
 	zephyr = g_new0(zephyr_account, 1);
 	purple_connection_set_protocol_data(gc, zephyr);
 

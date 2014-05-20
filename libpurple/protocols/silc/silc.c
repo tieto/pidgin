@@ -2151,7 +2151,7 @@ silcpurple_protocol_init(PurpleProtocol *protocol)
 	protocol->id        = "prpl-silc";
 	protocol->name      = "SILC";
 	protocol->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	                      OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE |
+	                      OPT_PROTO_PASSWORD_OPTIONAL |
 	                      OPT_PROTO_SLASH_COMMANDS_NATIVE;
 	protocol->icon_spec = purple_buddy_icon_spec_new("jpeg,gif,png,bmp",
 	                                                 0, 0, 96, 96, 0,

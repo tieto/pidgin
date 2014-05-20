@@ -146,6 +146,7 @@ des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean de
 {
 	PurpleCipher *des3;
 	char *out;
+	gssize ciph_size;
 
 	des3 = purple_des3_cipher_new();
 	purple_cipher_set_key(des3, (guchar *)key, 24);
@@ -154,9 +155,10 @@ des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean de
 
 	out = g_malloc(len);
 	if (decrypt)
-		purple_cipher_decrypt(des3, (guchar *)data, len, (guchar *)out, len);
+		ciph_size = purple_cipher_decrypt(des3, (guchar *)data, len, (guchar *)out, len);
 	else
-		purple_cipher_encrypt(des3, (guchar *)data, len, (guchar *)out, len);
+		ciph_size = purple_cipher_encrypt(des3, (guchar *)data, len, (guchar *)out, len);
+	g_warn_if_fail(ciph_size == len);
 
 	g_object_unref(des3);
 

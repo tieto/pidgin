@@ -24,6 +24,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "debug.h"
+#include "glibcompat.h"
 #include "version.h"
 
 #include "gtk3compat.h"
@@ -297,6 +298,9 @@ scrncap_draw_window_response(GtkDialog *draw_window, gint response_id,
 	PidginWebView *webview = PIDGIN_WEBVIEW(_webview);
 	GdkPixbuf *result = NULL;
 	PurpleImage *image;
+	const gchar *fname_prefix;
+	gchar *fname;
+	static guint fname_no = 0;
 
 	if (response_id == SCRNCAP_RESPONSE_COLOR)
 		return;
@@ -315,6 +319,14 @@ scrncap_draw_window_response(GtkDialog *draw_window, gint response_id,
 		return;
 
 	image = scrncap_pixbuf_to_image(result);
+
+	/* translators: this is the file name prefix,
+	 * keep it lowercase and pure ASCII */
+	fname_prefix = _("screenshot-");
+	fname = g_strdup_printf("%s%u", fname_prefix, ++fname_no);
+	purple_image_set_friendly_filename(image, fname);
+	g_free(fname);
+
 	pidgin_webview_insert_image(webview, image);
 	g_object_unref(image);
 }
