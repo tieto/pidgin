@@ -672,8 +672,12 @@ static void ggp_login(PurpleAccount *account)
 	if (!ggp_deprecated_setup_proxy(gc))
 		return;
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML |
-			PURPLE_CONNECTION_FLAG_NO_URLDESC);
+	purple_connection_set_flags(gc,
+#if ! GGP_ENABLE_GG11
+		PURPLE_CONNECTION_FLAG_NO_IMAGES |
+#endif
+		PURPLE_CONNECTION_FLAG_HTML |
+		PURPLE_CONNECTION_FLAG_NO_URLDESC);
 
 	glp = g_new0(struct gg_login_params, 1);
 #if GGP_ENABLE_GG11
