@@ -377,6 +377,17 @@ PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
 	(purple_connection_get_state(gc) == PURPLE_CONNECTION_CONNECTED)
 
 /**
+ * purple_connection_is_disconnecting:
+ * @param gc The connection.
+ *
+ * Checks, if connection is in disconnecting state.
+ *
+ * Returns: %TRUE, if the account is disconnecting.
+ */
+gboolean
+purple_connection_is_disconnecting(const PurpleConnection *gc);
+
+/**
  * purple_connection_get_account:
  * @gc: The connection.
  *

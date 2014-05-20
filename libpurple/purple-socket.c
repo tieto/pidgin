@@ -53,6 +53,43 @@ struct _PurpleSocket
 	gpointer cb_data;
 };
 
+static GHashTable *handles = NULL;
+
+static void
+handle_add(PurpleSocket *ps)
+{
+	PurpleConnection *gc = ps->gc;
+	GSList *l;
+
+	l = g_hash_table_lookup(handles, gc);
+	l = g_slist_prepend(l, ps);
+	g_hash_table_insert(handles, gc, l);
+}
+
+static void
+handle_remove(PurpleSocket *ps)
+{
+	PurpleConnection *gc = ps->gc;
+	GSList *l;
+
+	l = g_hash_table_lookup(handles, gc);
+	l = g_slist_remove(l, ps);
+	g_hash_table_insert(handles, gc, l);
+}
+
+void
+_purple_socket_init(void)
+{
+	handles = g_hash_table_new(g_direct_hash, g_direct_equal);
+}
+
+void
+_purple_socket_uninit(void)
+{
+	g_hash_table_destroy(handles);
+	handles = NULL;
+}
+
 PurpleSocket *
 purple_socket_new(PurpleConnection *gc)
 {
@@ -62,6 +99,8 @@ purple_socket_new(PurpleConnection *gc)
 	ps->fd = -1;
 	ps->port = -1;
 	ps->data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	handle_add(ps);
 
 	return ps;
 }
@@ -197,6 +236,12 @@ purple_socket_connect(PurpleSocket *ps, PurpleSocketConnectCb cb,
 
 	g_return_val_if_fail(ps != NULL, FALSE);
 
+	if (ps->gc && purple_connection_is_disconnecting(ps->gc)) {
+		purple_debug_error("socket", "connection is being destroyed");
+		ps->state = PURPLE_SOCKET_STATE_ERROR;
+		return FALSE;
+	}
+
 	if (!purple_socket_check_state(ps, PURPLE_SOCKET_STATE_DISCONNECTED))
 		return FALSE;
 	ps->state = PURPLE_SOCKET_STATE_CONNECTING;
@@ -321,14 +366,9 @@ purple_socket_get_data(PurpleSocket *ps, const gchar *key)
 	return g_hash_table_lookup(ps->data, key);
 }
 
-void
-purple_socket_destroy(PurpleSocket *ps)
+static void
+purple_socket_cancel(PurpleSocket *ps)
 {
-	if (ps == NULL)
-		return;
-
-	g_free(ps->host);
-
 	if (ps->inpa > 0)
 		purple_input_remove(ps->inpa);
 	ps->inpa = 0;
@@ -337,13 +377,40 @@ purple_socket_destroy(PurpleSocket *ps)
 		purple_ssl_close(ps->tls_connection);
 		ps->fd = -1;
 	}
+	ps->tls_connection = NULL;
 
 	if (ps->raw_connection != NULL)
 		purple_proxy_connect_cancel(ps->raw_connection);
+	ps->raw_connection = NULL;
 
 	if (ps->fd > 0)
 		close(ps->fd);
+	ps->fd = 0;
+}
 
+void
+purple_socket_destroy(PurpleSocket *ps)
+{
+	if (ps == NULL)
+		return;
+
+	handle_remove(ps);
+
+	purple_socket_cancel(ps);
+
+	g_free(ps->host);
 	g_hash_table_destroy(ps->data);
 	g_free(ps);
+}
+
+void
+_purple_socket_cancel_with_connection(PurpleConnection *gc)
+{
+	GSList *it;
+
+	it = g_hash_table_lookup(handles, gc);
+	for (; it; it = g_slist_next(it)) {
+		PurpleSocket *ps = it->data;
+		purple_socket_cancel(ps);
+	}
 }
