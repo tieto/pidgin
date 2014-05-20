@@ -1,5 +1,5 @@
 /*
- * Image Upload - an inline images implementation for protocols without
+ * Image Uploader - an inline images implementation for protocols without
  * support for such feature.
  *
  * Copyright (C) 2014, Tomasz Wasilczyk <twasilczyk@pidgin.im>
@@ -420,7 +420,7 @@ imgup_prefs_get(PurplePlugin *plugin)
 	purple_request_cpar_set_icon(cpar, PURPLE_REQUEST_ICON_DIALOG);
 
 	handle = purple_request_fields(plugin,
-		_("Image Upload"), NULL, NULL, fields,
+		_("Image Uploader"), NULL, NULL, fields,
 		_("OK"), (GCallback)imgup_prefs_ok,
 		_("Cancel"), NULL,
 		cpar, NULL);
@@ -451,7 +451,7 @@ static PurplePluginInfo imgup_info =
 	NULL,
 	PURPLE_PRIORITY_DEFAULT,
 	"gtk-imgupload",
-	N_("Image Upload"),
+	N_("Image Uploader"),
 	DISPLAY_VERSION,
 	N_("Inline images implementation for protocols without such feature."),
 	N_("Adds inline images support for protocols lacking this feature by "
