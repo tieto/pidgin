@@ -230,8 +230,8 @@ chat_user_left_cb(PurpleChatConversation *chat, const char *name,
 }
 
 static void
-chat_msg_sent_cb(PurpleAccount *account, const char *message,
-				 int id, PurpleSoundEventID event)
+chat_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg, int id,
+	PurpleSoundEventID event)
 {
 	PurpleConnection *conn = purple_account_get_connection(account);
 	PurpleChatConversation *chat = NULL;

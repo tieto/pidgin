@@ -285,7 +285,7 @@ im_sent_im(PurpleAccount *account, PurpleMessage *msg, gpointer _unused)
 }
 
 static void
-chat_sent_im(PurpleAccount *account, const char *message, int id)
+chat_sent_im(PurpleAccount *account, PurpleMessage *msg, int id)
 {
 	PurpleChatConversation *chat = NULL;
 

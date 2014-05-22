@@ -172,7 +172,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 			"sent-im-msg", irc->account, pmsg);
 	} else {
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sent-chat-msg", irc->account, msg,
+			"sent-chat-msg", irc->account, pmsg,
 			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)));
 	}
 
