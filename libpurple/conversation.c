@@ -137,10 +137,8 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 		msg = purple_message_new(purple_conversation_get_name(conv),
 			sent, msgflags);
 
-		/* TODO: use msg! */
 		purple_signal_emit(purple_conversations_get_handle(), "sending-im-msg",
-						 account,
-						 purple_conversation_get_name(conv), &sent);
+			account, msg);
 
 		if (!purple_message_is_empty(msg)) {
 

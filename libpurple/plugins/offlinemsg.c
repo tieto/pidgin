@@ -112,15 +112,15 @@ record_pounce(OfflineMsg *offline)
 }
 
 static void
-sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer handle)
+sending_msg_cb(PurpleAccount *account, PurpleMessage *msg, gpointer handle)
 {
 	PurpleBuddy *buddy;
 	OfflineMsg *offline;
 	PurpleConversation *conv;
 	OfflineMessageSetting setting;
+	const gchar *who = purple_message_get_who(msg);
 
-	if (message == NULL || *message == NULL ||
-			**message == '\0')
+	if (purple_message_is_empty(msg))
 		return;
 
 	buddy = purple_blist_find_buddy(account, who);
@@ -150,8 +150,8 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 	offline->conv = conv;
 	offline->account = account;
 	offline->who = g_strdup(who);
-	offline->message = *message;
-	*message = NULL;
+	offline->message = g_strdup(purple_message_get_contents(msg));
+	purple_message_set_contents(msg, NULL);
 
 	if (purple_prefs_get_bool(PREF_ALWAYS) || setting == OFFLINE_MSG_YES)
 		record_pounce(offline);

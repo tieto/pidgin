@@ -28,20 +28,37 @@
 
 PurplePlugin *plugin_handle = NULL;
 
-static gboolean outgoing_msg_cb(PurpleAccount *account, const char *who, char **message,
-					PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+static char *
+outgoing_msg_common(const char *message)
 {
   char *m;
-  char **ms = g_strsplit(*message, "<u>", -1);
+  char **ms = g_strsplit(message, "<u>", -1);
   m = g_strjoinv("<font face=\"monospace\" color=\"#00b025\">", ms);
   g_strfreev(ms);
 
   ms = g_strsplit(m, "</u>", -1);
   g_free(m);
-  m = g_strjoinv("</font>", ms);
-  g_free(*message);
-  *message = m;
-  return FALSE;
+  return g_strjoinv("</font>", ms);
+}
+
+static gboolean outgoing_msg_cb1(PurpleAccount *account, const char *who, char **message,
+					PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+{
+	char *m;
+
+	m = outgoing_msg_common(*message);
+	g_free(*message);
+	*message = m;
+
+	return FALSE;
+}
+
+static void
+outgoing_msg_cb2(PurpleAccount *account, PurpleMessage *msg,
+	PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+{
+	purple_message_set_contents(msg,
+		outgoing_msg_common(purple_message_get_contents(msg)));
 }
 
 static gboolean
@@ -50,9 +67,9 @@ plugin_load(PurplePlugin *plugin)
      void *handle = purple_conversations_get_handle();
      plugin_handle = plugin;
      purple_signal_connect(handle, "writing-im-msg", plugin,
-                PURPLE_CALLBACK(outgoing_msg_cb), NULL);
+                PURPLE_CALLBACK(outgoing_msg_cb1), NULL);
      purple_signal_connect(handle, "sending-im-msg", plugin,
-		PURPLE_CALLBACK(outgoing_msg_cb), NULL);
+		PURPLE_CALLBACK(outgoing_msg_cb2), NULL);
 
      return TRUE;
 }

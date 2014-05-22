@@ -305,9 +305,8 @@ purple_conversations_init(void)
 						 PURPLE_TYPE_CONVERSATION, G_TYPE_UINT);
 
 	purple_signal_register(handle, "sending-im-msg",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER,
-						 G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_POINTER); /* pointer to a string */
+		purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE,
+		2, PURPLE_TYPE_ACCOUNT, PURPLE_TYPE_MESSAGE);
 
 	purple_signal_register(handle, "sent-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,

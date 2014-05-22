@@ -95,6 +95,9 @@ purple_message_find_by_id(guint id);
 const gchar *
 purple_message_get_who(PurpleMessage *msg);
 
+void
+purple_message_set_contents(PurpleMessage *msg, const gchar *cont);
+
 const gchar *
 purple_message_get_contents(PurpleMessage *msg);
 

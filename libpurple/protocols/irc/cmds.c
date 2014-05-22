@@ -97,6 +97,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	const char *src;
 	char *msg;
 	PurpleConversation *convo;
+	PurpleMessage *pmsg;
 
 	if (!args || !args[0] || !gc)
 		return 0;
@@ -107,19 +108,22 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 
 	/* XXX: we'd prefer to keep this in conversation.c */
 	if (PURPLE_IS_IM_CONVERSATION(convo)) {
+		pmsg = purple_message_new(purple_conversation_get_name(convo),
+			msg, PURPLE_MESSAGE_SEND);
+
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sending-im-msg", irc->account,
-			purple_conversation_get_name(convo), &msg);
+			"sending-im-msg", irc->account, pmsg);
 	} else {
+		/* TODO: pmsg! */
 		purple_signal_emit(purple_conversations_get_handle(),
 			"sending-chat-msg", irc->account, &msg,
 			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)));
 	}
 
-	if (!msg || !msg[0]) {
-		g_free(msg);
+	g_free(msg);
+	if (purple_message_is_empty(pmsg))
 		return 0;
-	}
+	msg = g_strdup(purple_message_get_contents(pmsg)); /* XXX: is it really necessary? */
 
 	if (strncmp(msg, "/me ", 4) != 0) {
 		newargs = g_new0(char *, 2);

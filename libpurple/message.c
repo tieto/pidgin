@@ -94,6 +94,12 @@ purple_message_get_who(PurpleMessage *msg)
 	return priv->who;
 }
 
+void
+purple_message_set_contents(PurpleMessage *msg, const gchar *cont)
+{
+	g_object_set(msg, "contents", cont, NULL);
+}
+
 const gchar *
 purple_message_get_contents(PurpleMessage *msg)
 {

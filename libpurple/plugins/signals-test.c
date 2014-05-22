@@ -301,10 +301,12 @@ wrote_im_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
 }
 
 static void
-sending_im_msg_cb(PurpleAccount *account, char *recipient, char **buffer, void *data)
+sending_im_msg_cb(PurpleAccount *account, PurpleMessage *msg, void *data)
 {
 	purple_debug_misc("signals test", "sending-im-msg (%s, %s, %s)\n",
-					purple_account_get_username(account), recipient, *buffer);
+		purple_account_get_username(account),
+		purple_message_get_who(msg),
+		purple_message_get_contents(msg));
 
 }
 
