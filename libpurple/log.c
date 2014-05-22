@@ -1467,9 +1467,6 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font> %s<br/>\n", date, msg_fixed);
 		else if (type & PURPLE_MESSAGE_ERROR)
 			written += fprintf(data->file, "<font color=\"#FF0000\"><font size=\"2\">(%s)</font><b> %s</b></font><br/>\n", date, msg_fixed);
-		else if (type & PURPLE_MESSAGE_WHISPER)
-			written += fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
-					date, escaped_from, msg_fixed);
 		else if (type & PURPLE_MESSAGE_AUTO_RESP) {
 			if (type & PURPLE_MESSAGE_SEND)
 				written += fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, escaped_from, msg_fixed);
@@ -1625,9 +1622,7 @@ static gsize txt_logger_write(PurpleLog *log,
 			/* This shouldn't happen */
 			g_free(stripped);
 			return written;
-		} else if (type & PURPLE_MESSAGE_WHISPER)
-			written += fprintf(data->file, "(%s) *%s* %s", date, from, stripped);
-		else
+		} else
 			written += fprintf(data->file, "(%s) %s%s %s\n", date, from ? from : "",
 					from ? ":" : "", stripped);
 	}

@@ -6899,22 +6899,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			str_embed_direction_chars(&alias_escaped);
 
 		str = g_malloc(1024);
-		if (flags & PURPLE_MESSAGE_WHISPER) {
-			/* If we're whispering, it's not an autoresponse. */
-			if (purple_message_meify(new_message, -1 )) {
-				g_snprintf(str, 1024, "***%s", alias_escaped);
-				tag_start_offset += 3;
-				tagname = "whisper-action-name";
-			}
-			else {
-				g_snprintf(str, 1024, "*%s*:", alias_escaped);
-				tag_start_offset += 1;
-#if 0
-				tag_end_offset = 2;
-#endif
-				tagname = "whisper-name";
-			}
-		} else {
+		if (TRUE) { /* XXX: reduce numer of indentations */
 			if (purple_message_meify(new_message, -1)) {
 				if (flags & PURPLE_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, alias_escaped);

@@ -24,6 +24,7 @@
 #include "glibcompat.h"
 
 #include "debug.h"
+#include "enums.h"
 #include "message.h"
 
 #define PURPLE_MESSAGE_GET_PRIVATE(obj) \
@@ -201,7 +202,7 @@ purple_message_get_property(GObject *object, guint par_id, GValue *value,
 			g_value_set_uint64(value, priv->msgtime);
 			break;
 		case PROP_FLAGS:
-			g_value_set_uint(value, priv->flags);
+			g_value_set_flags(value, priv->flags);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
@@ -229,7 +230,7 @@ purple_message_set_property(GObject *object, guint par_id, const GValue *value,
 			priv->msgtime = g_value_get_uint64(value);
 			break;
 		case PROP_FLAGS:
-			priv->flags = g_value_get_uint(value);
+			priv->flags = g_value_get_flags(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
@@ -264,11 +265,10 @@ purple_message_class_init(PurpleMessageClass *klass)
 	properties[PROP_TIME] = g_param_spec_uint64("time",
 		"Time", "Message time",
 		0, G_MAXUINT64, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	/* XXX: it should be spec_enum, but PurpleMessageFlags isn't
-	 * gobjectified (yet) */
-	properties[PROP_FLAGS] = g_param_spec_uint("flags",
+	properties[PROP_FLAGS] = g_param_spec_flags("flags",
 		"Flags", "Bitwise set of #PurpleMessageFlags flags",
-		0, G_MAXUINT, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+		PURPLE_TYPE_MESSAGE_FLAGS, 0,
+		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 }

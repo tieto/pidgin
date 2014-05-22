@@ -822,7 +822,7 @@ chat_conversation_write_message(PurpleConversation *conv, const char *who, const
 		mtime = time(NULL);
 	}
 
-	if (!(flags & PURPLE_MESSAGE_WHISPER)) {
+	if (TRUE) {
 		const char *str;
 
 		str = purple_normalize(account, who);

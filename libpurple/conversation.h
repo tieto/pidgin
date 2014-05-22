@@ -112,7 +112,6 @@ typedef enum
  *                              conversations).
  * @PURPLE_MESSAGE_NICK:        Contains your nick.
  * @PURPLE_MESSAGE_NO_LOG:      Do not log.
- * @PURPLE_MESSAGE_WHISPER:     Whispered message.
  * @PURPLE_MESSAGE_ERROR:       Error message.
  * @PURPLE_MESSAGE_DELAYED:     Delayed message.
  * @PURPLE_MESSAGE_RAW:         "Raw" message - don't apply formatting
@@ -132,7 +131,6 @@ typedef enum /*< flags >*/
 	PURPLE_MESSAGE_ACTIVE_ONLY = 0x0010,
 	PURPLE_MESSAGE_NICK        = 0x0020,
 	PURPLE_MESSAGE_NO_LOG      = 0x0040,
-	PURPLE_MESSAGE_WHISPER     = 0x0080,
 	PURPLE_MESSAGE_ERROR       = 0x0200,
 	PURPLE_MESSAGE_DELAYED     = 0x0400,
 	PURPLE_MESSAGE_RAW         = 0x0800,
