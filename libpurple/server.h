@@ -30,6 +30,7 @@
 
 #include "accounts.h"
 #include "conversations.h"
+#include "message.h"
 #include "prpl.h"
 
 G_BEGIN_DECLS
@@ -54,7 +55,7 @@ G_BEGIN_DECLS
 unsigned int purple_serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state);
 
 void purple_serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
-int  purple_serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
+int  purple_serv_send_im(PurpleConnection *, PurpleMessage *msg);
 
 /**
  * purple_get_attention_type_from_code:

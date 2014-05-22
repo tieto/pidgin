@@ -133,18 +133,24 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	msgflags |= PURPLE_MESSAGE_SEND;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
+		PurpleMessage *msg;
+
+		msg = purple_message_new(purple_conversation_get_name(conv),
+			sent, msgflags);
+
+		/* TODO: use msg! */
 		purple_signal_emit(purple_conversations_get_handle(), "sending-im-msg",
 						 account,
 						 purple_conversation_get_name(conv), &sent);
 
-		if (sent != NULL && sent[0] != '\0') {
+		if (!purple_message_is_empty(msg)) {
 
-			err = purple_serv_send_im(gc, purple_conversation_get_name(conv),
-			                   sent, msgflags);
+			err = purple_serv_send_im(gc, msg);
 
 			if ((err > 0) && (displayed != NULL))
 				purple_conversation_write_message(conv, NULL, displayed, msgflags, time(NULL));
 
+			/* TODO: use msg! */
 			purple_signal_emit(purple_conversations_get_handle(), "sent-im-msg",
 							 account,
 							 purple_conversation_get_name(conv), sent);

@@ -84,6 +84,7 @@ typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
 #include "xfer.h"
 #include "image.h"
 #include "media.h"
+#include "message.h"
 #include "notify.h"
 #include "proxy.h"
 #include "plugin.h"
@@ -317,9 +318,7 @@ struct _PurplePluginProtocolInfo
 	 * errno values, or just big something.  If the message should
 	 * not be echoed to the conversation window, return 0.
 	 */
-	int  (*send_im)(PurpleConnection *, const char *who,
-					const char *message,
-					PurpleMessageFlags flags);
+	int  (*send_im)(PurpleConnection *, PurpleMessage *msg);
 
 	void (*set_info)(PurpleConnection *, const char *info);
 

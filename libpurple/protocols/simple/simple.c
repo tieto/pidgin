@@ -1030,10 +1030,10 @@ static void simple_send_message(struct simple_account_data *sip, const char *to,
 	g_free(fullto);
 }
 
-static int simple_im_send(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags) {
+static int simple_im_send(PurpleConnection *gc, PurpleMessage *msg) {
 	struct simple_account_data *sip = purple_connection_get_protocol_data(gc);
-	char *to = g_strdup(who);
-	char *text = purple_unescape_html(what);
+	char *to = g_strdup(purple_message_get_who(msg));
+	char *text = purple_unescape_html(purple_message_get_contents(msg));
 	simple_send_message(sip, to, text, NULL);
 	g_free(to);
 	g_free(text);

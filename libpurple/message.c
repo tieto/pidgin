@@ -87,6 +87,44 @@ purple_message_find_by_id(guint id)
 	return g_hash_table_lookup(messages, GINT_TO_POINTER(id));
 }
 
+const gchar *
+purple_message_get_who(PurpleMessage *msg)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->who;
+}
+
+const gchar *
+purple_message_get_contents(PurpleMessage *msg)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->contents;
+}
+
+gboolean
+purple_message_is_empty(PurpleMessage *msg)
+{
+	const gchar *cont = purple_message_get_contents(msg);
+
+	return (cont == NULL || cont[0] == '\0');
+}
+
+PurpleMessageFlags
+purple_message_get_flags(PurpleMessage *msg)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return priv->flags;
+}
+
 /******************************************************************************
  * Object stuff
  ******************************************************************************/
@@ -184,7 +222,9 @@ purple_message_class_init(PurpleMessageClass *klass)
 		"ID", "The session-unique message id",
 		0, G_MAXUINT, 0, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_WHO] = g_param_spec_string("who",
-		"Author", "The nick of the person, who sent the message",
+		"Who", "The nick of the person, who sent the message (for "
+		"incoming messages) or the recipient (for outgoing). "
+		"Unused for outgoing chat messages.",
 		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_CONTENTS] = g_param_spec_string("contents",
 		"Contents", "The message text",

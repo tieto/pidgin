@@ -636,18 +636,18 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	return text_new;
 }
 
-int ggp_message_send_im(PurpleConnection *gc, const char *who,
-	const char *message, PurpleMessageFlags flags)
+int ggp_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleIMConversation *im;
 	ggp_buddy_data *buddy_data;
 	gchar *gg_msg;
 	gboolean succ;
+	const gchar *who = purple_message_get_who(msg);
 
 	/* TODO: return -ENOTCONN, if not connected */
 
-	if (message == NULL || message[0] == '\0')
+	if (purple_message_is_empty(msg))
 		return 0;
 
 	buddy_data = ggp_buddy_get_data(purple_blist_find_buddy(
@@ -659,7 +659,8 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 	im = purple_conversations_find_im_with_account(
 		who, purple_connection_get_account(gc));
 
-	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(im), message);
+	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(im),
+		purple_message_get_contents(msg));
 
 	/* TODO: splitting messages */
 	if (strlen(gg_msg) > GG_MSG_MAXSIZE) {

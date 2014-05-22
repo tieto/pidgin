@@ -3074,7 +3074,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 }
 
 int
-oscar_send_im(PurpleConnection *gc, const char *name, const char *message, PurpleMessageFlags imflags)
+oscar_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	OscarData *od;
 	PurpleAccount *account;
@@ -3082,7 +3082,12 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	int ret;
 	char *tmp1, *tmp2;
 	gboolean is_sms, is_html;
+	const gchar *name, *message;
+	PurpleMessageFlags imflags;
 
+	name = purple_message_get_who(msg);
+	message = purple_message_get_contents(msg);
+	imflags = purple_message_get_flags(msg);
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
 	ret = 0;

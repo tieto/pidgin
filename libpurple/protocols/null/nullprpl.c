@@ -413,14 +413,16 @@ static void nullprpl_close(PurpleConnection *gc)
   foreach_nullprpl_gc(report_status_change, gc, NULL);
 }
 
-static int nullprpl_send_im(PurpleConnection *gc, const char *who,
-                            const char *message, PurpleMessageFlags flags)
+static int nullprpl_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
   const char *from_username = purple_account_get_username(purple_connection_get_account(gc));
-  PurpleMessageFlags receive_flags = ((flags & ~PURPLE_MESSAGE_SEND)
-                                      | PURPLE_MESSAGE_RECV);
+  const gchar *who = purple_message_get_who(msg);
+  PurpleMessageFlags receive_flags;
   PurpleAccount *to_acct = purple_accounts_find(who, NULLPRPL_ID);
   PurpleConnection *to;
+  const gchar *message = purple_message_get_contents(msg);
+
+  receive_flags = ((purple_message_get_flags(msg) & ~PURPLE_MESSAGE_SEND) | PURPLE_MESSAGE_RECV);
 
   purple_debug_info("nullprpl", "sending message from %s to %s: %s\n",
                     from_username, who, message);

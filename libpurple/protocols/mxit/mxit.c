@@ -401,11 +401,11 @@ static void mxit_close( PurpleConnection* gc )
 					Zero (success, no echo)
 					Negative value (error)
  */
-static int mxit_send_im( PurpleConnection* gc, const char* who, const char* message, PurpleMessageFlags flags )
+static int mxit_send_im(PurpleConnection* gc, PurpleMessage *msg)
 {
-	purple_debug_info( MXIT_PLUGIN_ID, "Sending message '%s' to buddy '%s'\n", message, who );
-
-	mxit_send_message( purple_connection_get_protocol_data( gc ), who, message, TRUE, FALSE );
+	mxit_send_message(purple_connection_get_protocol_data(gc),
+		purple_message_get_who(msg), purple_message_get_contents(msg),
+		TRUE, FALSE);
 
 	return 1;		/* echo to conversation window */
 }

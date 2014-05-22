@@ -72,7 +72,7 @@ GList *oscar_chat_info(PurpleConnection *gc);
 GHashTable *oscar_chat_info_defaults(PurpleConnection *gc, const char *chat_name);
 void oscar_login(PurpleAccount *account);
 void oscar_close(PurpleConnection *gc);
-int oscar_send_im(PurpleConnection *gc, const char *name, const char *message, PurpleMessageFlags imflags);
+int oscar_send_im(PurpleConnection *gc, PurpleMessage *msg);
 void oscar_set_info(PurpleConnection *gc, const char *rawinfo);
 unsigned int oscar_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state);
 void oscar_get_info(PurpleConnection *gc, const char *name);

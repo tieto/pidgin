@@ -2077,16 +2077,19 @@ static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, Purpl
 }
 
 
-static int zephyr_send_im(PurpleConnection * gc, const char *who, const char *im, PurpleMessageFlags flags)
+static int zephyr_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	const char *sig;
 	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
-	if (flags & PURPLE_MESSAGE_AUTO_RESP)
+
+	if (purple_message_get_flags(msg) & PURPLE_MESSAGE_AUTO_RESP) {
 		sig = "Automated reply:";
-	else {
+	} else {
 		sig = zephyr_get_signature();
 	}
-	zephyr_send_message(zephyr,"MESSAGE","PERSONAL",local_zephyr_normalize(zephyr,who),im,sig,"");
+	zephyr_send_message(zephyr, "MESSAGE", "PERSONAL",
+		local_zephyr_normalize(zephyr, purple_message_get_who(msg)),
+		purple_message_get_contents(msg), sig, "");
 
 	return 1;
 }

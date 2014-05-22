@@ -50,7 +50,7 @@ static void irc_login_cb_ssl(gpointer data, PurpleSslConnection *gsc, PurpleInpu
 static void irc_login_cb(gpointer data, gint source, const gchar *error_message);
 static void irc_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error, gpointer data);
 static void irc_close(PurpleConnection *gc);
-static int irc_im_send(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags);
+static int irc_im_send(PurpleConnection *gc, PurpleMessage *msg);
 static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags);
 static void irc_chat_join (PurpleConnection *gc, GHashTable *data);
 static void irc_input_cb(gpointer data, gint source, PurpleInputCondition cond);
@@ -558,15 +558,16 @@ static void irc_close(PurpleConnection *gc)
 	g_free(irc);
 }
 
-static int irc_im_send(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
+static int irc_im_send(PurpleConnection *gc, PurpleMessage *msg)
 {
 	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	char *plain;
 	const char *args[2];
 
-	args[0] = irc_nick_skip_mode(irc, who);
+	args[0] = irc_nick_skip_mode(irc, purple_message_get_who(msg));
 
-	purple_markup_html_to_xhtml(what, NULL, &plain);
+	purple_markup_html_to_xhtml(purple_message_get_contents(msg),
+		NULL, &plain);
 	args[1] = plain;
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);

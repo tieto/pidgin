@@ -3909,19 +3909,23 @@ static char *im_mime_convert(PurpleConnection *gc,
 }
 
 
-static int mw_prpl_send_im(PurpleConnection *gc,
-			   const char *name,
-			   const char *message,
-			   PurpleMessageFlags flags) {
+static int mw_prpl_send_im(PurpleConnection *gc, PurpleMessage *msg) {
 
+  gchar name[1000];
   struct mwPurplePluginData *pd;
-  struct mwIdBlock who = { (char *) name, NULL };
+  struct mwIdBlock who = { name, NULL };
   struct mwConversation *conv;
+  const gchar *message;
+  PurpleMessageFlags flags;
 
   g_return_val_if_fail(gc != NULL, 0);
   pd = purple_connection_get_protocol_data(gc);
 
   g_return_val_if_fail(pd != NULL, 0);
+
+  g_strlcpy(name, purple_message_get_who(msg), sizeof(name));
+  message = purple_message_get_contents(msg);
+  flags = purple_message_get_flags(msg);
 
   conv = mwServiceIm_getConversation(pd->srvc_im, &who);
 
@@ -4771,7 +4775,7 @@ static void mw_prpl_chat_whisper(PurpleConnection *gc,
 				 const char *who,
 				 const char *message) {
 
-  mw_prpl_send_im(gc, who, message, 0);
+  mw_prpl_send_im(gc, purple_message_new(who, message, 0));
 }
 
 

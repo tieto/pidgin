@@ -2270,8 +2270,7 @@ novell_close(PurpleConnection * gc)
 }
 
 static int
-novell_send_im(PurpleConnection * gc, const char *name,
-			   const char *message_body, PurpleMessageFlags flags)
+novell_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	NMUserRecord *user_record = NULL;
 	NMConference *conf = NULL;
@@ -2281,9 +2280,9 @@ novell_send_im(PurpleConnection * gc, const char *name,
 	char *plain;
 	gboolean done = TRUE, created_conf = FALSE;
 	NMERR_T rc = NM_OK;
+	const gchar *name = purple_message_get_who(msg);
 
-	if (gc == NULL || name == NULL ||
-		message_body == NULL || *message_body == '\0')
+	if (gc == NULL || name == NULL || purple_message_is_empty(msg))
 		return 0;
 
 	user = purple_connection_get_protocol_data(gc);
@@ -2291,7 +2290,7 @@ novell_send_im(PurpleConnection * gc, const char *name,
 		return 0;
 
 	/* Create a new message */
-	plain = purple_unescape_html(message_body);
+	plain = purple_unescape_html(purple_message_get_contents(msg));
 	message = nm_create_message(plain);
 	g_free(plain);
 

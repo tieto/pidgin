@@ -4498,8 +4498,8 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 		if (status && g_str_equal(status, "Valid")) {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
-			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who,
-					sms_cb_data->what, PURPLE_MESSAGE_SEND);
+			yahoo_send_im(sms_cb_data->gc, purple_message_new(sms_cb_data->who,
+				sms_cb_data->what, PURPLE_MESSAGE_SEND));
 		} else {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
@@ -4561,11 +4561,11 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	g_free(validate_request_str);
 }
 
-int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
+int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt = NULL;
-	char *msg = yahoo_html_to_codes(what);
+	char *msg = yahoo_html_to_codes(purple_message_get_contents(pmsg));
 	char *msg2;
 	PurpleWhiteboard *wb;
 	int ret = 1;
@@ -4574,6 +4574,8 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	glong lenc = 0;
 	struct yahoo_p2p_data *p2p_data;
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
+	const gchar *who = purple_message_get_who(pmsg);
+
 	msg2 = yahoo_string_encode(gc, msg, TRUE);
 
 	if(msg2) {
@@ -4606,7 +4608,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 			sms_cb_data = g_malloc(sizeof(struct yahoo_sms_carrier_cb_data));
 			sms_cb_data->gc = gc;
 			sms_cb_data->who = g_strdup(who);
-			sms_cb_data->what = g_strdup(what);
+			sms_cb_data->what = g_strdup(purple_message_get_contents(pmsg));
 
 			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Getting mobile carrier to send the SMS."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 

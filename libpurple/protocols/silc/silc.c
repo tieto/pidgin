@@ -1440,8 +1440,7 @@ silcpurple_send_im_resolved(SilcClient client,
 }
 
 static int
-silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
-		   PurpleMessageFlags flags)
+silcpurple_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 {
 	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
@@ -1453,8 +1452,11 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 	int ret = 0;
 	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
 	SilcDList list;
+	const gchar *who = purple_message_get_who(pmsg);
+	const gchar *message = purple_message_get_contents(pmsg);
+	PurpleMessageFlags flags = purple_message_get_flags(pmsg);
 
-	if (!who || !message)
+	if (!who || purple_message_is_empty(pmsg))
 		return 0;
 
 	mflags = SILC_MESSAGE_FLAG_UTF8;
@@ -1674,7 +1676,8 @@ static PurpleCmdRet silcpurple_cmd_msg(PurpleConversation *conv,
 	if (gc == NULL)
 		return PURPLE_CMD_RET_FAILED;
 
-	ret = silcpurple_send_im(gc, args[0], args[1], PURPLE_MESSAGE_SEND);
+	ret = silcpurple_send_im(gc,
+		purple_message_new(args[0], args[1], PURPLE_MESSAGE_SEND));
 
 	if (ret)
 		return PURPLE_CMD_RET_OK;
@@ -1705,7 +1708,10 @@ static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 	im = purple_im_conversation_new(account, args[0]);
 
 	if (args[1]) {
-		ret = silcpurple_send_im(gc, args[0], args[1], PURPLE_MESSAGE_SEND);
+		PurpleMessage *msg = purple_message_new(args[0],
+			args[1], PURPLE_MESSAGE_SEND);
+
+		ret = silcpurple_send_im(gc, msg);
 		purple_conversation_write_message(PURPLE_CONVERSATION(im), purple_connection_get_display_name(gc),
 				args[1], PURPLE_MESSAGE_SEND, time(NULL));
 	}

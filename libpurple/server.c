@@ -116,8 +116,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 	return lar;
 }
 
-int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *message,
-				 PurpleMessageFlags flags)
+int purple_serv_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	PurpleIMConversation *im = NULL;
 	PurpleAccount *account = NULL;
@@ -126,8 +125,10 @@ int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *mess
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	int val = -EINVAL;
 	const gchar *auto_reply_pref = NULL;
+	const gchar *who;
 
 	g_return_val_if_fail(gc != NULL, val);
+	g_return_val_if_fail(msg != NULL, val);
 
 	prpl = purple_connection_get_prpl(gc);
 
@@ -137,11 +138,12 @@ int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *mess
 
 	account  = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
+	who = purple_message_get_who(msg);
 
-	im = purple_conversations_find_im_with_account(name, account);
+	im = purple_conversations_find_im_with_account(who, account);
 
 	if (prpl_info->send_im)
-		val = prpl_info->send_im(gc, name, message, flags);
+		val = prpl_info->send_im(gc, msg);
 
 	/*
 	 * XXX - If "only auto-reply when away & idle" is set, then shouldn't
@@ -153,7 +155,7 @@ int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *mess
 			!purple_strequal(auto_reply_pref, "never")) {
 
 		struct last_auto_response *lar;
-		lar = get_last_auto_response(gc, name);
+		lar = get_last_auto_response(gc, who);
 		lar->sent = time(NULL);
 	}
 
@@ -676,7 +678,12 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 				if (!(flags & PURPLE_MESSAGE_AUTO_RESP))
 				{
-					purple_serv_send_im(gc, name, away_msg, PURPLE_MESSAGE_AUTO_RESP);
+					PurpleMessage *msg;
+
+					msg = purple_message_new(name, away_msg,
+						PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP);
+
+					purple_serv_send_im(gc, msg);
 
 					purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, away_msg,
 									   PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP,

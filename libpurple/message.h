@@ -92,6 +92,18 @@ purple_message_get_id(PurpleMessage *msg);
 PurpleMessage *
 purple_message_find_by_id(guint id);
 
+const gchar *
+purple_message_get_who(PurpleMessage *msg);
+
+const gchar *
+purple_message_get_contents(PurpleMessage *msg);
+
+gboolean
+purple_message_is_empty(PurpleMessage *msg);
+
+PurpleMessageFlags
+purple_message_get_flags(PurpleMessage *msg);
+
 void
 _purple_message_init(void);
 

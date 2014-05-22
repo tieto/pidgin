@@ -1530,11 +1530,9 @@ msn_send_im_message(MsnSession *session, MsnMessage *msg)
 }
 
 static int
-msn_send_im(PurpleConnection *gc, const char *who, const char *message,
-			PurpleMessageFlags flags)
+msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 {
 	PurpleAccount *account;
-	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
@@ -1542,8 +1540,11 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	char *msgtext;
 	size_t msglen;
 	const char *username;
+	const gchar *who = purple_message_get_who(pmsg);
+	PurpleMessageFlags flags = purple_message_get_flags(pmsg);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who);
+	const gchar *cont = purple_message_get_contents(pmsg);
 
-	purple_debug_info("msn", "send IM {%s} to %s\n", message, who);
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
 
@@ -1551,7 +1552,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	swboard = msn_session_find_swboard(session, who);
 
 	if (!strncmp("tel:+", who, 5)) {
-		char *text = purple_markup_strip_html(message);
+		char *text = purple_markup_strip_html(cont);
 		send_to_mobile(gc, who, text);
 		g_free(text);
 		return 1;
@@ -1560,14 +1561,14 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	if (buddy) {
 		PurplePresence *p = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
-			char *text = purple_markup_strip_html(message);
+			char *text = purple_markup_strip_html(cont);
 			send_to_mobile(gc, who, text);
 			g_free(text);
 			return 1;
 		}
 	}
 
-	msn_import_html(message, &msgformat, &msgtext);
+	msn_import_html(cont, &msgformat, &msgtext);
 	msglen = strlen(msgtext);
 	if (msglen == 0) {
 		/* Stuff like <hr> will be ignored. Don't send an empty message

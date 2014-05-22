@@ -1118,8 +1118,7 @@ jabber_xhtml_plain_equal(const char *xhtml_escaped,
 	return ret;
 }
 
-int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *msg,
-		PurpleMessageFlags flags)
+int jabber_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;
@@ -1127,15 +1126,10 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	char *xhtml;
 	char *tmp;
 	char *resource;
+	const gchar *who = purple_message_get_who(msg);
 
-	if(!who || !msg)
+	if (!who || purple_message_is_empty(msg))
 		return 0;
-
-	if (purple_debug_is_verbose()) {
-		/* TODO: Maybe we need purple_debug_is_really_verbose? :) */
-		purple_debug_misc("jabber", "jabber_message_send_im: who='%s'\n"
-		                            "\tmsg='%s'\n", who, msg);
-	}
 
 	resource = jabber_get_resource(who);
 
@@ -1163,7 +1157,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 		}
 	}
 
-	tmp = purple_utf8_strip_unprintables(msg);
+	tmp = purple_utf8_strip_unprintables(purple_message_get_contents(msg));
 	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
 
