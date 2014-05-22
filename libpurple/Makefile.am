@@ -83,6 +83,7 @@ purple_coresources = \
 	media.c \
 	mediamanager.c \
 	memorypool.c \
+	message.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -163,6 +164,7 @@ purple_coreheaders = \
 	media-gst.h \
 	mediamanager.h \
 	memorypool.h \
+	message.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
