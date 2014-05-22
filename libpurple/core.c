@@ -33,6 +33,7 @@
 #include "idle.h"
 #include "image-store.h"
 #include "keyring.h"
+#include "message.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -191,6 +192,7 @@ purple_core_init(const char *ui)
 	purple_savedstatuses_init();
 	purple_notify_init();
 	purple_certificate_init();
+	_purple_message_init();
 	purple_conversations_init();
 	purple_blist_init();
 	purple_log_init();
@@ -301,6 +303,7 @@ purple_core_quit(void)
 
 	purple_cmds_uninit();
 	purple_log_uninit();
+	_purple_message_uninit();
 	/* Everything after util_uninit cannot try to write things to the
 	 * confdir nor use purple_escape_js
 	 */

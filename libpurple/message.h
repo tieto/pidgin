@@ -86,6 +86,18 @@ PurpleMessage *
 purple_message_new(const gchar *who, const gchar *contents,
 	PurpleMessageFlags flags);
 
+guint
+purple_message_get_id(PurpleMessage *msg);
+
+PurpleMessage *
+purple_message_find_by_id(guint id);
+
+void
+_purple_message_init(void);
+
+void
+_purple_message_uninit(void);
+
 G_END_DECLS
 
 #endif /* _PURPLE_MESSAGE_H_ */

@@ -20,6 +20,7 @@
  */
 
 #include "internal.h"
+#include "dbus-maybe.h"
 #include "glibcompat.h"
 
 #include "debug.h"
@@ -29,6 +30,7 @@
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MESSAGE, PurpleMessagePrivate))
 
 typedef struct {
+	guint id;
 	gchar *who;
 	gchar *contents;
 	PurpleMessageFlags flags;
@@ -37,6 +39,7 @@ typedef struct {
 enum
 {
 	PROP_0,
+	PROP_ID,
 	PROP_WHO,
 	PROP_CONTENTS,
 	PROP_FLAGS,
@@ -45,6 +48,8 @@ enum
 
 static GObjectClass *parent_class;
 static GParamSpec *properties[PROP_LAST];
+
+static GHashTable *messages = NULL;
 
 /******************************************************************************
  * API implementation
@@ -64,9 +69,40 @@ purple_message_new(const gchar *who, const gchar *contents,
 		NULL);
 }
 
+guint
+purple_message_get_id(PurpleMessage *msg)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return priv->id;
+}
+
+PurpleMessage *
+purple_message_find_by_id(guint id)
+{
+	g_return_val_if_fail(id > 0, NULL);
+
+	return g_hash_table_lookup(messages, GINT_TO_POINTER(id));
+}
+
 /******************************************************************************
  * Object stuff
  ******************************************************************************/
+
+static void
+purple_message_init(GTypeInstance *instance, gpointer klass)
+{
+	static guint max_id = 0;
+
+	PurpleMessage *msg = PURPLE_MESSAGE(instance);
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+	PURPLE_DBUS_REGISTER_POINTER(msg, PurpleMessage);
+
+	priv->id = ++max_id;
+	g_hash_table_insert(messages, GINT_TO_POINTER(max_id), msg);
+}
 
 static void
 purple_message_finalize(GObject *obj)
@@ -88,6 +124,9 @@ purple_message_get_property(GObject *object, guint par_id, GValue *value,
 	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(message);
 
 	switch (par_id) {
+		case PROP_ID:
+			g_value_set_uint(value, priv->id);
+			break;
 		case PROP_WHO:
 			g_value_set_string(value, priv->who);
 			break;
@@ -141,6 +180,9 @@ purple_message_class_init(PurpleMessageClass *klass)
 	gobj_class->get_property = purple_message_get_property;
 	gobj_class->set_property = purple_message_set_property;
 
+	properties[PROP_ID] = g_param_spec_uint("id",
+		"ID", "The session-unique message id",
+		0, G_MAXUINT, 0, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_WHO] = g_param_spec_string("who",
 		"Author", "The nick of the person, who sent the message",
 		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
@@ -165,7 +207,8 @@ purple_message_get_type(void)
 		static const GTypeInfo info = {
 			.class_size = sizeof(PurpleMessageClass),
 			.class_init = (GClassInitFunc)purple_message_class_init,
-			.instance_size = sizeof(PurpleMessage)
+			.instance_size = sizeof(PurpleMessage),
+			.instance_init = purple_message_init,
 		};
 
 		type = g_type_register_static(G_TYPE_OBJECT,
@@ -173,4 +216,18 @@ purple_message_get_type(void)
 	}
 
 	return type;
+}
+
+void
+_purple_message_init(void)
+{
+	messages = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+		NULL, g_object_unref);
+}
+
+void
+_purple_message_uninit(void)
+{
+	g_hash_table_destroy(messages);
+	messages = NULL;
 }
