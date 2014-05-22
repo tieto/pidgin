@@ -1429,7 +1429,8 @@ silcpurple_send_im_resolved(SilcClient client,
  err:
 	g_snprintf(tmp, sizeof(tmp),
 		   _("User <I>%s</I> is not present in the network"), im->nick);
-	purple_conversation_write(PURPLE_CONVERSATION(convo), NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(
+		PURPLE_CONVERSATION(convo), tmp, 0);
 
  out:
 	if (free_list) {

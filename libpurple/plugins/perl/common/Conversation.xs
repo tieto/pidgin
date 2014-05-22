@@ -200,14 +200,6 @@ purple_conversation_set_account(conv, account);
 	Purple::Account account
 
 void
-purple_conversation_write(conv, who, message, flags, mtime)
-	Purple::Conversation conv
-	const char *who
-	const char *message
-	Purple::MessageFlags flags
-	time_t mtime
-
-void
 purple_conversation_send(conv, message)
 	Purple::Conversation conv
 	const char *message

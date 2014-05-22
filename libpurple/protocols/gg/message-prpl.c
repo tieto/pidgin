@@ -245,11 +245,12 @@ static void ggp_message_got_display(PurpleConnection *gc,
 #endif
 	else if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON) {
 		PurpleIMConversation *im = ggp_message_get_conv(gc, msg->user);
-		const gchar *me = purple_account_get_username(
-			purple_connection_get_account(gc));
+		PurpleMessage *pmsg;
 
-		purple_conversation_write(PURPLE_CONVERSATION(im), me, msg->text,
-			PURPLE_MESSAGE_SEND, msg->time);
+		pmsg = purple_message_new(NULL, msg->text, PURPLE_MESSAGE_SEND);
+		purple_message_set_time(pmsg, msg->time);
+
+		purple_conversation_write_message(PURPLE_CONVERSATION(im), pmsg);
 	} else
 		purple_debug_error("gg", "ggp_message_got_display: "
 			"unexpected message type: %d\n", msg->type);
@@ -493,14 +494,13 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 					"<img name=\"" GGP_IMAGE_ID_FORMAT
 					"\">", id));
 			} else if (res == GGP_IMAGE_PREPARE_TOO_BIG) {
-				purple_conversation_write(conv, "",
+				purple_conversation_write_system_message(conv,
 					_("Image is too large, please try "
-					"smaller one."), PURPLE_MESSAGE_ERROR,
-					time(NULL));
+					"smaller one."), PURPLE_MESSAGE_ERROR);
 			} else {
-				purple_conversation_write(conv, "",
+				purple_conversation_write_system_message(conv,
 					_("Image cannot be sent."),
-					PURPLE_MESSAGE_ERROR, time(NULL));
+					PURPLE_MESSAGE_ERROR);
 			}
 
 			g_hash_table_destroy(attribs);

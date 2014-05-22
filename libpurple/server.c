@@ -265,9 +265,9 @@ purple_serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										escaped, escaped2);
 
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
-					time(NULL));
+			purple_conversation_write_system_message(
+				PURPLE_CONVERSATION(im), tmp,
+				PURPLE_MESSAGE_NO_LINKIFY);
 
 			g_free(tmp);
 			g_free(escaped2);

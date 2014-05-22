@@ -1162,10 +1162,9 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 							"invite, which is not yet "
 							"supported."), from);
 				if (buf) {
-					purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf,
-							PURPLE_MESSAGE_SYSTEM |
-							PURPLE_MESSAGE_NOTIFY,
-							time(NULL));
+					purple_conversation_write_system_message(
+						PURPLE_CONVERSATION(im), buf,
+						PURPLE_MESSAGE_NOTIFY);
 					g_free(buf);
 				}
 			}

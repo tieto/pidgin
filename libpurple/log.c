@@ -942,8 +942,9 @@ void purple_log_common_writer(PurpleLog *log, const char *ext)
 					"Could not create log file %s\n", path);
 
 			if (log->conv != NULL)
-				purple_conversation_write(log->conv, NULL, _("Logging of this conversation failed."),
-										PURPLE_MESSAGE_ERROR, time(NULL));
+				purple_conversation_write_system_message(log->conv,
+					_("Logging of this conversation failed."),
+					PURPLE_MESSAGE_ERROR);
 
 			g_free(path);
 			return;

@@ -64,8 +64,8 @@ peer_odc_close(PeerConnection *conn)
 
 		account = purple_connection_get_account(conn->od->gc);
 		im = purple_im_conversation_new(account, conn->bn);
-		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(im), tmp, 0);
 		g_free(tmp);
 	}
 
@@ -558,8 +558,8 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		/* Tell the local user that we are connected */
 		account = purple_connection_get_account(gc);
 		im = purple_im_conversation_new(account, conn->bn);
-		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Direct IM established"),
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(im), _("Direct IM established"), 0);
 	}
 
 	if ((frame->type != 0x0001) && (frame->subtype != 0x0006))
@@ -603,7 +603,8 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 
 			account = purple_connection_get_account(conn->od->gc);
 			im = purple_im_conversation_new(account, conn->bn);
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(
+				PURPLE_CONVERSATION(im), tmp, 0);
 			g_free(tmp);
 
 			peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);

@@ -1840,7 +1840,7 @@ static void mw_session_announce(struct mwSession *s,
   PurpleIMConversation *im;
   PurpleBuddy *buddy;
   char *who = from->user_id;
-  char *msg;
+  char *msg, *msg2;
 
   pd = mwSession_getClientData(s);
   acct = purple_connection_get_account(pd->gc);
@@ -1852,11 +1852,15 @@ static void mw_session_announce(struct mwSession *s,
 
   who = g_strdup_printf(_("Announcement from %s"), who);
   msg = purple_markup_linkify(text);
+  if (msg && msg[0])
+	msg2 = g_strdup_printf("%s: %s", who, msg);
+  else
+	msg2 = g_strdup(who);
 
-  purple_conversation_write(PURPLE_CONVERSATION(im), who, msg ? msg : "",
-  		PURPLE_MESSAGE_RECV, time(NULL));
+  purple_conversation_write_system_message(PURPLE_CONVERSATION(im), msg2, 0);
   g_free(who);
   g_free(msg);
+  g_free(msg2);
 }
 
 

@@ -324,8 +324,8 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 			return;
 
 		/* Send to Purple */
-		purple_conversation_write(PURPLE_CONVERSATION(chat), NULL, (const char *)msg,
-					PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(chat), msg, 0);
 		g_free(msg);
 		return;
 	}
@@ -406,8 +406,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 			return;
 
 		/* Send to Purple */
-		purple_conversation_write(convo, NULL, (const char *)msg,
-					  PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(convo, msg, 0);
 		g_free(msg);
 		return;
 	}
@@ -1145,8 +1144,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 					   _("Channel founder on <I>%s</I> is <I>%s</I>"),
 					   channel->channel_name, chu->client->nickname);
 
-			    purple_conversation_write(PURPLE_CONVERSATION(chat), NULL, tmp,
-						      PURPLE_MESSAGE_SYSTEM, time(NULL));
+			    purple_conversation_write_system_message(
+				PURPLE_CONVERSATION(chat), tmp, 0);
 			  }
 			}
 

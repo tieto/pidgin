@@ -188,10 +188,9 @@ void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, c
 	clean = purple_utf8_salvage(end);
 	tmp = g_strdup_printf("%.3s: %s", numeric, clean);
 	g_free(clean);
-	purple_conversation_write(convo, "", tmp,
-				  PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG
-				  |PURPLE_MESSAGE_RAW|PURPLE_MESSAGE_NO_LINKIFY,
-				  time(NULL));
+	purple_conversation_write_system_message(convo, tmp,
+		PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_RAW |
+		PURPLE_MESSAGE_NO_LINKIFY);
 	g_free(tmp);
 	return;
 

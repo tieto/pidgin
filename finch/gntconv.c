@@ -151,37 +151,43 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 			case PURPLE_CMD_STATUS_OK:
 				break;
 			case PURPLE_CMD_STATUS_NOT_FOUND:
-				purple_conversation_write(conv, "", _("No such command."),
-						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				purple_conversation_write_system_message(conv,
+					_("No such command."), PURPLE_MESSAGE_NO_LOG);
 				break;
 			case PURPLE_CMD_STATUS_WRONG_ARGS:
-				purple_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
-							"to that command."),
-						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				purple_conversation_write_system_message(conv,
+					_("Syntax Error:  You typed the wrong "
+					"number of arguments to that command."),
+					PURPLE_MESSAGE_NO_LOG);
 				break;
 			case PURPLE_CMD_STATUS_FAILED:
-				purple_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
-						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				purple_conversation_write_system_message(conv,
+					error ? error : _("Your command failed for an unknown reason."),
+					PURPLE_MESSAGE_NO_LOG);
 				break;
 			case PURPLE_CMD_STATUS_WRONG_TYPE:
 				if(PURPLE_IS_IM_CONVERSATION(conv))
-					purple_conversation_write(conv, "", _("That command only works in chats, not IMs."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
+					purple_conversation_write_system_message(conv,
+						_("That command only works in chats, not IMs."),
+						PURPLE_MESSAGE_NO_LOG);
 				else
-					purple_conversation_write(conv, "", _("That command only works in IMs, not chats."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
+					purple_conversation_write_system_message(conv,
+						_("That command only works in IMs, not chats."),
+						PURPLE_MESSAGE_NO_LOG);
 				break;
 			case PURPLE_CMD_STATUS_WRONG_PRPL:
-				purple_conversation_write(conv, "", _("That command doesn't work on this protocol."),
-						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				purple_conversation_write_system_message(conv,
+					_("That command doesn't work on this protocol."),
+					PURPLE_MESSAGE_NO_LOG);
 				break;
 		}
 		g_free(error);
 	}
 	else if (!purple_account_is_connected(purple_conversation_get_account(ggconv->active_conv)))
 	{
-		purple_conversation_write(ggconv->active_conv, "", _("Message was not sent, because you are not signed on."),
-				PURPLE_MESSAGE_ERROR | PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_system_message(ggconv->active_conv,
+			_("Message was not sent, because you are not signed on."),
+			PURPLE_MESSAGE_ERROR | PURPLE_MESSAGE_NO_LOG);
 	}
 	else
 	{
@@ -371,10 +377,11 @@ account_signing_off(PurpleConnection *gc)
 		if (!purple_chat_conversation_has_left(PURPLE_CHAT_CONVERSATION(conv)) &&
 				purple_conversation_get_account(conv) == account) {
 			g_object_set_data(G_OBJECT(conv), "want-to-rejoin", GINT_TO_POINTER(TRUE));
-			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
-						"longer in this chat. You will be automatically rejoined in the chat when "
-						"the account reconnects."),
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("The account has disconnected and you are no "
+				"longer in this chat. You will be automatically rejoined in the chat when "
+				"the account reconnects."),
+				PURPLE_MESSAGE_NO_LOG);
 		}
 		list = list->next;
 	}
@@ -496,13 +503,13 @@ toggle_logging_cb(GntMenuItem *item, gpointer ggconv)
 		/* Enable logging first so the message below can be logged. */
 		purple_conversation_set_logging(conv, TRUE);
 
-		purple_conversation_write(conv, NULL,
-				_("Logging started. Future messages in this conversation will be logged."),
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(conv,
+			_("Logging started. Future messages in this "
+			"conversation will be logged."), 0);
 	} else {
-		purple_conversation_write(conv, NULL,
-				_("Logging stopped. Future messages in this conversation will not be logged."),
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(conv,
+			_("Logging stopped. Future messages in this "
+			"conversation will not be logged."), 0);
 
 		/* Disable the logging second, so that the above message can be logged. */
 		purple_conversation_set_logging(conv, FALSE);
@@ -763,8 +770,8 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 	char *name, *realname;
 
 	if (!gc) {
-		purple_conversation_write(fc->active_conv, NULL, _("You are not connected."),
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(fc->active_conv,
+			_("You are not connected."), 0);
 		return;
 	}
 
@@ -1176,8 +1183,8 @@ finch_chat_add_users(PurpleChatConversation *chat, GList *users, gboolean new_ar
 			g_string_append_printf(string, "[ %s ]", str);
 		}
 
-		purple_conversation_write(conv, NULL, string->str,
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(
+			conv, string->str, 0);
 		g_string_free(string, TRUE);
 	}
 
@@ -1333,8 +1340,9 @@ debug_command_cb(PurpleConversation *conv,
 
 		tmp = g_string_free(str, FALSE);
 	} else {
-		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
-		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
+		purple_conversation_write_system_message(conv,
+			_("Supported debug options are: plugins version"),
+			PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_ERROR);
 		return PURPLE_CMD_RET_OK;
 	}
 
@@ -1389,7 +1397,7 @@ help_command_cb(PurpleConversation *conv,
 		g_list_free(text);
 	}
 
-	purple_conversation_write(conv, NULL, s->str, PURPLE_MESSAGE_NO_LOG, time(NULL));
+	purple_conversation_write_system_message(conv, s->str, PURPLE_MESSAGE_NO_LOG);
 	g_string_free(s, TRUE);
 
 	return PURPLE_CMD_RET_OK;

@@ -302,9 +302,9 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
-			purple_conversation_write(conv, NULL,
-				  _("Unable to send message."),
-				  PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Unable to send message."),
+				PURPLE_MESSAGE_ERROR);
 
 		bonjour_jabber_close_conversation(bb->conversation);
 		bb->conversation = NULL;
@@ -348,9 +348,9 @@ _send_data(PurpleBuddy *pb, char *message)
 
 		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
-			purple_conversation_write(conv, NULL,
-				  _("Unable to send message."),
-				  PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Unable to send message."),
+				PURPLE_MESSAGE_ERROR);
 
 		bonjour_jabber_close_conversation(bb->conversation);
 		bb->conversation = NULL;
@@ -399,7 +399,7 @@ static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 		conv = purple_conversations_find_im_with_account(bconv->pb->name, bconv->pb->account);
 		if (conv != NULL) {
 			char *tmp = g_strdup_printf(_("%s has closed the conversation."), bconv->pb->name);
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv, tmp, 0);
 			g_free(tmp);
 		}
 	}
@@ -487,9 +487,9 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 
 		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bname, bconv->account));
 		if (conv != NULL)
-			purple_conversation_write(conv, NULL,
-				  _("Unable to send the message, the conversation couldn't be started."),
-				  PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Unable to send the message, the conversation couldn't be started."),
+				PURPLE_MESSAGE_ERROR);
 
 		bonjour_jabber_close_conversation(bconv);
 		if(bb != NULL)
@@ -552,9 +552,9 @@ static gboolean bonjour_jabber_send_stream_init(BonjourJabberConversation *bconv
 			PurpleConversation *conv;
 			conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bname, bconv->account));
 			if (conv != NULL)
-				purple_conversation_write(conv, NULL,
-					  _("Unable to send the message, the conversation couldn't be started."),
-					  PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(conv,
+					_("Unable to send the message, the conversation couldn't be started."),
+					PURPLE_MESSAGE_ERROR);
 		}
 
 		close(client_socket);
@@ -597,9 +597,9 @@ void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 			PurpleConversation *conv;
 			conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bname, bconv->account));
 			if (conv != NULL)
-				purple_conversation_write(conv, NULL,
-					  _("Unable to send the message, the conversation couldn't be started."),
-					  PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(conv,
+					_("Unable to send the message, the conversation couldn't be started."),
+					PURPLE_MESSAGE_ERROR);
 		}
 
 		/* We don't want to recieve anything else */
@@ -872,9 +872,9 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 
 		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
-			purple_conversation_write(conv, NULL,
-				  _("Unable to send the message, the conversation couldn't be started."),
-				  PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Unable to send the message, the conversation couldn't be started."),
+				PURPLE_MESSAGE_ERROR);
 
 		bonjour_jabber_close_conversation(bb->conversation);
 		bb->conversation = NULL;
@@ -893,9 +893,9 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 
 		conv = PURPLE_CONVERSATION(purple_conversations_find_im_with_account(bb->name, account));
 		if (conv != NULL)
-			purple_conversation_write(conv, NULL,
-				  _("Unable to send the message, the conversation couldn't be started."),
-				  PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Unable to send the message, the conversation couldn't be started."),
+				PURPLE_MESSAGE_ERROR);
 
 		close(source);
 		bonjour_jabber_close_conversation(bb->conversation);

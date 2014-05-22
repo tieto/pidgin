@@ -875,12 +875,9 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			if (im == NULL)
 				im = purple_im_conversation_new(account, pouncee);
 
-			pmsg = purple_message_new(pouncee, message, 0);
-
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, message,
-									PURPLE_MESSAGE_SEND, time(NULL));
-
+			pmsg = purple_message_new(pouncee, message, PURPLE_MESSAGE_SEND);
 			purple_serv_send_im(purple_account_get_connection(account), pmsg);
+			purple_conversation_write_message(PURPLE_CONVERSATION(im), pmsg);
 		}
 	}
 

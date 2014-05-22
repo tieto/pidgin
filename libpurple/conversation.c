@@ -759,7 +759,7 @@ gboolean purple_conversation_present_error(const char *who, PurpleAccount *accou
 
 	conv = purple_conversations_find_with_account(who, account);
 	if (conv != NULL)
-		purple_conversation_write(conv, NULL, what, PURPLE_MESSAGE_ERROR, time(NULL));
+		purple_conversation_write_system_message(conv, what, PURPLE_MESSAGE_ERROR);
 	else
 		return FALSE;
 

@@ -1913,8 +1913,7 @@ _evt_conference_invite_notify(NMUser * user, NMEvent * event)
 		gconv = nm_conference_get_data(conference);
 		str = g_strdup_printf(_("%s has been invited to this conversation."),
 							  nm_user_record_get_display_id(user_record));
-		purple_conversation_write(gconv, NULL, str,
-								PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(gconv, str, 0);
 		g_free(str);
 	}
 }
@@ -2115,8 +2114,7 @@ _evt_undeliverable_status(NMUser * user, NMEvent * event)
 			}
 			str = g_strdup_printf(_("%s appears to be offline and did not receive"
 									" the message that you just sent."), name);
-			purple_conversation_write(gconv, NULL, str,
-									PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(gconv, str, 0);
 			g_free(str);
 		}
 	}
@@ -2555,8 +2553,7 @@ novell_chat_send(PurpleConnection * gc, int id, PurpleMessage *msg)
 	if (chat) {
 		str = g_strdup(_("This conference has been closed."
 						 " No more messages can be sent."));
-		purple_conversation_write(PURPLE_CONVERSATION(chat), NULL, str,
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), str, 0);
 		g_free(str);
 	}
 

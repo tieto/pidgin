@@ -267,8 +267,8 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			}
 
 			tmp = g_strdup_printf(_("%s has declined to join."), who);
-			purple_conversation_write(PURPLE_CONVERSATION(c), NULL, tmp,
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(c),
+				tmp, PURPLE_MESSAGE_NO_LINKIFY);
 
 			g_free(tmp);
 		}

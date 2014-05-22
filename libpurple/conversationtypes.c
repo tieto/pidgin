@@ -946,9 +946,8 @@ purple_chat_conversation_add_users(PurpleChatConversation *chat, GList *users, G
 			}
 			g_free(alias_esc);
 
-			purple_conversation_write(conv, NULL, tmp,
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
-					time(NULL));
+			purple_conversation_write_system_message(
+				conv, tmp, PURPLE_MESSAGE_NO_LINKIFY);
 			g_free(tmp);
 		}
 
@@ -1077,9 +1076,8 @@ purple_chat_conversation_rename_user(PurpleChatConversation *chat, const char *o
 			g_free(escaped2);
 		}
 
-		purple_conversation_write(conv, NULL, tmp,
-				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
-				time(NULL));
+		purple_conversation_write_system_message(conv,
+			tmp, PURPLE_MESSAGE_NO_LINKIFY);
 	}
 }
 
@@ -1158,9 +1156,8 @@ purple_chat_conversation_remove_users(PurpleChatConversation *chat, GList *users
 			}
 			g_free(alias_esc);
 
-			purple_conversation_write(conv, NULL, tmp,
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
-					time(NULL));
+			purple_conversation_write_system_message(conv,
+				tmp, PURPLE_MESSAGE_NO_LINKIFY);
 			g_free(tmp);
 		}
 

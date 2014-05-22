@@ -107,8 +107,8 @@ static void handle_chat(JabberMessage *jm)
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
 					 * user from the conversation like we do with chats now. */
-					purple_conversation_write(PURPLE_CONVERSATION(im), "", buf,
-					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
+					purple_conversation_write_system_message(
+						PURPLE_CONVERSATION(im), buf, 0);
 				}
 			}
 			purple_serv_got_typing_stopped(gc, jm->from);
@@ -941,9 +941,9 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 	}
 
 	if (has_too_large_smiley) {
-		purple_conversation_write(conv, NULL,
+		purple_conversation_write_system_message(conv,
 			_("A custom smiley in the message is too large to send."),
-			PURPLE_MESSAGE_ERROR, time(NULL));
+			PURPLE_MESSAGE_ERROR);
 	}
 
 	if (!found_smileys)

@@ -927,7 +927,8 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 	} else if (!g_ascii_strncasecmp(msg, "WEBCAMINVITE", strlen("WEBCAMINVITE"))) {
 		PurpleIMConversation *im = purple_conversations_find_im_with_account(from, account);
 		char *buf = g_strdup_printf(_("%s has sent you a webcam invite, which is not yet supported."), from);
-		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+			buf, PURPLE_MESSAGE_NOTIFY);
 		g_free(buf);
 	}
 }
@@ -999,7 +1000,8 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 			im = purple_conversations_find_im_with_account(sms->from, account);
 			if (im == NULL)
 				im = purple_im_conversation_new(account, sms->from);
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, server_msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				server_msg, 0);
 		}
 		else {
 			purple_notify_error(gc, NULL,
@@ -4473,8 +4475,8 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 	PurpleIMConversation *im = purple_conversations_find_im_with_account(sms_cb_data->who, account);
 
 	if (!purple_http_response_is_successful(response)) {
-		purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
-				_("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+			_("Can't send SMS. Unable to obtain mobile carrier."), 0);
 
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
@@ -4503,9 +4505,8 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 		} else {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
-					_("Can't send SMS. Unknown mobile carrier."),
-					PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				_("Can't send SMS. Unknown mobile carrier."), 0);
 		}
 
 		purple_xmlnode_free(validate_data_child);
@@ -4610,7 +4611,8 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 			sms_cb_data->who = g_strdup(who);
 			sms_cb_data->what = g_strdup(purple_message_get_contents(pmsg));
 
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Getting mobile carrier to send the SMS."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				_("Getting mobile carrier to send the SMS."), 0);
 
 			yahoo_get_sms_carrier(gc, sms_cb_data);
 
@@ -4619,7 +4621,8 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 			return ret;
 		}
 		else if( strcmp(carrier,"Unknown") == 0 ) {
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Can't send SMS. Unknown mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				_("Can't send SMS. Unknown mobile carrier."), 0);
 
 			g_free(msg);
 			g_free(msg2);

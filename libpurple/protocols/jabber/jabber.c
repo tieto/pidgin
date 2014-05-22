@@ -3181,8 +3181,8 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 
 	description =
 		g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
-	purple_conversation_write(conv, NULL, description,
-		PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(conv, description,
+		PURPLE_MESSAGE_NOTIFY);
 	g_free(description);
 	return _jabber_send_buzz(js, who, error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
 }
@@ -3211,8 +3211,8 @@ gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint
 		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
 
 		if (conv) {
-			purple_conversation_write(conv, username, error, PURPLE_MESSAGE_ERROR,
-			    time(NULL));
+			purple_conversation_write_system_message(conv,
+				error, PURPLE_MESSAGE_ERROR);
 		}
 
 		g_free(error);
@@ -3593,16 +3593,16 @@ jabber_cmd_mood(PurpleConversation *conv,
 		if (ret) {
 			return PURPLE_CMD_RET_OK;
 		} else {
-			purple_conversation_write(conv, NULL,
+			purple_conversation_write_system_message(conv,
 				_("Failed to specify mood"),
-				PURPLE_MESSAGE_ERROR, time(NULL));
+				PURPLE_MESSAGE_ERROR);
 			return PURPLE_CMD_RET_FAILED;
 		}
 	} else {
 		/* account does not support PEP, can't set a mood */
-		purple_conversation_write(conv, NULL,
+		purple_conversation_write_system_message(conv,
 		    _("Account does not support PEP, can't set mood"),
-		    PURPLE_MESSAGE_ERROR, time(NULL));
+		    PURPLE_MESSAGE_ERROR);
 		return PURPLE_CMD_RET_FAILED;
 	}
 }
