@@ -33,6 +33,7 @@ typedef struct {
 	guint id;
 	gchar *who;
 	gchar *contents;
+	guint64 msgtime;
 	PurpleMessageFlags flags;
 } PurpleMessagePrivate;
 
@@ -42,6 +43,7 @@ enum
 	PROP_ID,
 	PROP_WHO,
 	PROP_CONTENTS,
+	PROP_TIME,
 	PROP_FLAGS,
 	PROP_LAST
 };
@@ -63,6 +65,7 @@ purple_message_new(const gchar *who, const gchar *contents,
 		"who", who,
 		"contents", contents,
 		"flags", flags,
+		"time", (guint64)time(NULL),
 		NULL);
 }
 
@@ -116,6 +119,26 @@ purple_message_is_empty(PurpleMessage *msg)
 	const gchar *cont = purple_message_get_contents(msg);
 
 	return (cont == NULL || cont[0] == '\0');
+}
+
+void
+purple_message_set_time(PurpleMessage *msg, guint64 msgtime)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->msgtime = msgtime;
+}
+
+guint64
+purple_message_get_time(PurpleMessage *msg)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	return priv->msgtime;
 }
 
 PurpleMessageFlags
@@ -174,6 +197,9 @@ purple_message_get_property(GObject *object, guint par_id, GValue *value,
 		case PROP_CONTENTS:
 			g_value_set_string(value, priv->contents);
 			break;
+		case PROP_TIME:
+			g_value_set_uint64(value, priv->msgtime);
+			break;
 		case PROP_FLAGS:
 			g_value_set_uint(value, priv->flags);
 			break;
@@ -198,6 +224,9 @@ purple_message_set_property(GObject *object, guint par_id, const GValue *value,
 		case PROP_CONTENTS:
 			g_free(priv->contents);
 			priv->contents = g_strdup(g_value_get_string(value));
+			break;
+		case PROP_TIME:
+			priv->msgtime = g_value_get_uint64(value);
 			break;
 		case PROP_FLAGS:
 			priv->flags = g_value_get_uint(value);
@@ -232,6 +261,9 @@ purple_message_class_init(PurpleMessageClass *klass)
 	properties[PROP_CONTENTS] = g_param_spec_string("contents",
 		"Contents", "The message text",
 		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_TIME] = g_param_spec_uint64("time",
+		"Time", "Message time",
+		0, G_MAXUINT64, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	/* XXX: it should be spec_enum, but PurpleMessageFlags isn't
 	 * gobjectified (yet) */
 	properties[PROP_FLAGS] = g_param_spec_uint("flags",

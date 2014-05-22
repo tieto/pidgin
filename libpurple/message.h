@@ -104,6 +104,12 @@ purple_message_get_contents(PurpleMessage *msg);
 gboolean
 purple_message_is_empty(PurpleMessage *msg);
 
+void
+purple_message_set_time(PurpleMessage *msg, guint64 msgtime);
+
+guint64
+purple_message_get_time(PurpleMessage *msg);
+
 PurpleMessageFlags
 purple_message_get_flags(PurpleMessage *msg);
 
