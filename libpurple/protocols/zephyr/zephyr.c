@@ -918,7 +918,8 @@ static void handle_message(PurpleConnection *gc, ZNotice_t *notice_p)
 #endif
 				purple_chat_conversation_add_user(gcc, stripped_sender, ipaddr, PURPLE_CHAT_USER_NONE, TRUE);
 			}
-			purple_serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
+			purple_serv_got_chat_in(gc, zt2->id, send_inst_utf8,
+				PURPLE_MESSAGE_RECV, buf3, time(NULL));
 			g_free(send_inst_utf8);
 
 			free_triple(zt1);

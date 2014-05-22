@@ -1315,9 +1315,10 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 		purple_serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
 		chat = purple_conversations_find_chat_with_account(irc_nick_skip_mode(irc, to), irc->account);
-		if (chat)
-			purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(chat), nick, 0, msg, time(NULL));
-		else
+		if (chat) {
+			purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(chat),
+				nick, PURPLE_MESSAGE_RECV, msg, time(NULL));
+		} else
 			purple_debug_error("irc", "Got a %s on %s, which does not exist\n",
 			                   notice ? "NOTICE" : "PRIVMSG", to);
 	}

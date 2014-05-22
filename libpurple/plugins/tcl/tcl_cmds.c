@@ -1411,7 +1411,7 @@ int tcl_cmd_send_im(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	who = Tcl_GetString(objv[2]);
 	text = Tcl_GetString(objv[3]);
 
-	purple_serv_send_im(gc, purple_message_new(who, text, 0));
+	purple_serv_send_im(gc, purple_message_new(who, text, PURPLE_MESSAGE_SEND));
 
 	return TCL_OK;
 }

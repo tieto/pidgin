@@ -2409,7 +2409,8 @@ static int purple_chat_conversation_incoming_msg(OscarData *od, FlapConnection *
 	va_end(ap);
 
 	utf8 = oscar_encoding_to_utf8(charset, msg, len);
-	purple_serv_got_chat_in(gc, ccon->id, info->bn, 0, utf8, time(NULL));
+	purple_serv_got_chat_in(gc, ccon->id, info->bn,
+		PURPLE_MESSAGE_RECV, utf8, time(NULL));
 	g_free(utf8);
 
 	return 1;

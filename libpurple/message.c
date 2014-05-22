@@ -62,6 +62,12 @@ PurpleMessage *
 purple_message_new(const gchar *who, const gchar *contents,
 	PurpleMessageFlags flags)
 {
+	if (!(flags & (PURPLE_MESSAGE_SEND |
+		PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_SYSTEM)))
+	{
+		purple_debug_warning("message", "Invalid flags %#x", flags);
+	}
+
 	return g_object_new(PURPLE_TYPE_MESSAGE,
 		"who", who,
 		"contents", contents,
@@ -125,11 +131,7 @@ purple_message_is_empty(PurpleMessage *msg)
 void
 purple_message_set_time(PurpleMessage *msg, guint64 msgtime)
 {
-	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->msgtime = msgtime;
+	g_object_set(msg, "time", msgtime, NULL);
 }
 
 guint64
@@ -145,11 +147,7 @@ purple_message_get_time(PurpleMessage *msg)
 void
 purple_message_set_flags(PurpleMessage *msg, PurpleMessageFlags flags)
 {
-	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
-
-	g_return_if_fail(priv != NULL);
-
-	priv->flags = flags;
+	g_object_set(msg, "flags", flags, NULL);
 }
 
 PurpleMessageFlags

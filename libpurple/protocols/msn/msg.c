@@ -702,8 +702,8 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
 								swboard->current_users);
 
-			purple_serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
-							 time(NULL));
+			purple_serv_got_chat_in(gc, swboard->chat_id, passport,
+				PURPLE_MESSAGE_RECV, body_final, time(NULL));
 			if (swboard->conv == NULL)
 			{
 				swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_chat(gc, swboard->chat_id));

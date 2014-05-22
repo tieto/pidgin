@@ -311,7 +311,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Purple */
 		purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(chat),
-				 sender->nickname, 0, tmp, time(NULL));
+			sender->nickname, PURPLE_MESSAGE_RECV, tmp, time(NULL));
 		g_free(tmp);
 		g_free(msg);
 		return;
@@ -340,7 +340,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Purple */
 		purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(chat),
-				 sender->nickname, 0, tmp, time(NULL));
+			sender->nickname, PURPLE_MESSAGE_RECV, tmp, time(NULL));
 		g_free(salvaged);
 		g_free(tmp);
 	}

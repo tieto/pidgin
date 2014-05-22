@@ -261,7 +261,8 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			{
 				msg_tmp = yahoo_string_decode(gc, msg, utf8);
 				msg = yahoo_codes_to_html(msg_tmp);
-				purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
+				purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c),
+					who, PURPLE_MESSAGE_RECV, msg, time(NULL));
 				g_free(msg_tmp);
 				g_free(msg);
 			}
@@ -393,7 +394,8 @@ void yahoo_process_conference_message(PurpleConnection *gc, struct yahoo_packet 
 
 		msg2 = yahoo_string_decode(gc, msg, utf8);
 		msg = yahoo_codes_to_html(msg2);
-		purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
+		purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who,
+			PURPLE_MESSAGE_RECV, msg, time(NULL));
 		g_free(msg);
 		g_free(msg2);
 	}
@@ -747,7 +749,8 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 		msg = tmp;
 	}
 
-	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, msg, time(NULL));
+	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who,
+		PURPLE_MESSAGE_RECV, msg, time(NULL));
 	g_free(msg);
 	g_free(room);
 }

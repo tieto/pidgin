@@ -2085,7 +2085,7 @@ static void mw_conf_text(struct mwConference *conf,
   gc = pd->gc;
 
   esc = g_markup_escape_text(text, -1);
-  purple_serv_got_chat_in(gc, CONF_TO_ID(conf), who->user_id, 0, esc, time(NULL));
+  purple_serv_got_chat_in(gc, CONF_TO_ID(conf), who->user_id, PURPLE_MESSAGE_RECV, esc, time(NULL));
   g_free(esc);
 }
 
@@ -3079,7 +3079,8 @@ static void mw_place_message(struct mwPlace *place,
   gc = pd->gc;
 
   esc = g_markup_escape_text(msg, -1);
-  purple_serv_got_chat_in(gc, PLACE_TO_ID(place), who->user, 0, esc, time(NULL));
+  purple_serv_got_chat_in(gc, PLACE_TO_ID(place), who->user,
+	PURPLE_MESSAGE_RECV, esc, time(NULL));
   g_free(esc);
 }
 

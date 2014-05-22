@@ -583,9 +583,8 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conversation_write_message(PURPLE_CONVERSATION(chat),
-			purple_message_new(target, buf,
-				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(chat), buf, PURPLE_MESSAGE_NO_LOG);
 		g_free(buf);
 
 		return 0;

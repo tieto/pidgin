@@ -1869,8 +1869,8 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 				}
 
 				purple_serv_got_chat_in(purple_account_get_connection(user->client_data),
-								 purple_chat_conversation_get_id(chat),
-								 name, 0, text, nm_event_get_gmt(event));
+					purple_chat_conversation_get_id(chat),
+					name, PURPLE_MESSAGE_RECV, text, nm_event_get_gmt(event));
 			}
 		}
 	}
