@@ -1153,7 +1153,10 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 		PURPLE_ASSERT_CONNECTION_IS_VALID(pc);
 
 		bd = purple_connection_get_protocol_data(pc);
-		bd->jabber_data->pending_conversations = g_slist_remove(bd->jabber_data->pending_conversations, bconv);
+		if (bd) {
+			bd->jabber_data->pending_conversations = g_slist_remove(
+				bd->jabber_data->pending_conversations, bconv);
+		}
 
 		/* Cancel any file transfers that are waiting to begin */
 		/* There wont be any transfers if it hasn't been attached to a buddy */
