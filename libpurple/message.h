@@ -96,6 +96,12 @@ const gchar *
 purple_message_get_who(PurpleMessage *msg);
 
 void
+purple_message_set_alias(PurpleMessage *msg, const gchar *alias);
+
+const gchar *
+purple_message_get_alias(PurpleMessage *msg);
+
+void
 purple_message_set_contents(PurpleMessage *msg, const gchar *cont);
 
 const gchar *

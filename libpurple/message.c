@@ -33,6 +33,7 @@
 typedef struct {
 	guint id;
 	gchar *who;
+	gchar *alias;
 	gchar *contents;
 	guint64 msgtime;
 	PurpleMessageFlags flags;
@@ -43,6 +44,7 @@ enum
 	PROP_0,
 	PROP_ID,
 	PROP_WHO,
+	PROP_ALIAS,
 	PROP_CONTENTS,
 	PROP_TIME,
 	PROP_FLAGS,
@@ -102,6 +104,22 @@ purple_message_get_who(PurpleMessage *msg)
 	g_return_val_if_fail(priv != NULL, NULL);
 
 	return priv->who;
+}
+
+void
+purple_message_set_alias(PurpleMessage *msg, const gchar *alias)
+{
+	g_object_set(msg, "alias", alias, NULL);
+}
+
+const gchar *
+purple_message_get_alias(PurpleMessage *msg)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->alias;
 }
 
 void
@@ -184,6 +202,7 @@ purple_message_finalize(GObject *obj)
 	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(message);
 
 	g_free(priv->who);
+	g_free(priv->alias);
 	g_free(priv->contents);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
@@ -202,6 +221,9 @@ purple_message_get_property(GObject *object, guint par_id, GValue *value,
 			break;
 		case PROP_WHO:
 			g_value_set_string(value, priv->who);
+			break;
+		case PROP_ALIAS:
+			g_value_set_string(value, priv->alias);
 			break;
 		case PROP_CONTENTS:
 			g_value_set_string(value, priv->contents);
@@ -229,6 +251,10 @@ purple_message_set_property(GObject *object, guint par_id, const GValue *value,
 		case PROP_WHO:
 			g_free(priv->who);
 			priv->who = g_strdup(g_value_get_string(value));
+			break;
+		case PROP_ALIAS:
+			g_free(priv->alias);
+			priv->alias = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_CONTENTS:
 			g_free(priv->contents);
@@ -266,6 +292,10 @@ purple_message_class_init(PurpleMessageClass *klass)
 		"Who", "The nick of the person, who sent the message (for "
 		"incoming messages) or the recipient (for outgoing). "
 		"Unused for outgoing chat messages.",
+		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_ALIAS] = g_param_spec_string("alias",
+		"Author's alias", "The alias of the person, who sent the "
+		"message. For outgoing messages, it's your alias.",
 		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_CONTENTS] = g_param_spec_string("contents",
 		"Contents", "The message text",
