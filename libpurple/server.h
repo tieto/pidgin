@@ -76,7 +76,6 @@ void purple_serv_rem_deny(PurpleConnection *, const char *);
 void purple_serv_set_permit_deny(PurpleConnection *);
 void purple_serv_chat_invite(PurpleConnection *, int, const char *, const char *);
 void purple_serv_chat_leave(PurpleConnection *, int);
-void purple_serv_chat_whisper(PurpleConnection *, int, const char *, const char *);
 int  purple_serv_chat_send(PurpleConnection *, int, PurpleMessage *);
 void purple_serv_alias_buddy(PurpleBuddy *);
 void purple_serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);

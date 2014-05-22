@@ -2918,7 +2918,6 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                               /* get_chat_name */
 	msn_chat_invite,                    /* chat_invite */
 	msn_chat_leave,                     /* chat_leave */
-	NULL,                               /* chat_whisper */
 	msn_chat_send,                      /* chat_send */
 	msn_keepalive,                      /* keepalive */
 	NULL,                               /* register_user */

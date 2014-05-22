@@ -2923,7 +2923,6 @@ static PurplePluginProtocolInfo prpl_info = {
 	zephyr_get_chat_name,	/* get_chat_name */
 	NULL,					/* chat_invite -- No chat invites*/
 	zephyr_chat_leave,		/* chat_leave */
-	NULL,					/* chat_whisper -- No "whispering"*/
 	zephyr_chat_send,		/* chat_send */
 	NULL,					/* keepalive -- Not necessary*/
 	NULL,					/* register_user -- Not supported*/

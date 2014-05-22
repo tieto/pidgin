@@ -99,7 +99,6 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_get_chat_name,			/* get_chat_name */
 	jabber_chat_invite,				/* chat_invite */
 	jabber_chat_leave,				/* chat_leave */
-	NULL,							/* chat_whisper */
 	jabber_message_send_chat,		/* chat_send */
 	jabber_keepalive,				/* keepalive */
 	NULL,							/* register_user */

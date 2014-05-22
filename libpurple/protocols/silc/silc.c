@@ -2104,7 +2104,6 @@ static PurplePluginProtocolInfo prpl_info =
 	silcpurple_get_chat_name,		/* get_chat_name */
 	silcpurple_chat_invite,			/* chat_invite */
 	silcpurple_chat_leave,			/* chat_leave */
-	NULL,					/* chat_whisper */
 	silcpurple_chat_send,			/* chat_send */
 	silcpurple_keepalive,			/* keepalive */
 	NULL,					/* register_user */

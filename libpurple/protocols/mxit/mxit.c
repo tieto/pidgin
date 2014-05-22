@@ -765,7 +765,6 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_chat_name,			/* get_chat_name			[multimx.c] */
 	mxit_chat_invite,		/* chat_invite				[multimx.c] */
 	mxit_chat_leave,		/* chat_leave				[multimx.c] */
-	NULL,					/* chat_whisper */
 	mxit_chat_send,			/* chat_send				[multimx.c] */
 	mxit_keepalive,			/* keepalive */
 	mxit_register,			/* register_user */

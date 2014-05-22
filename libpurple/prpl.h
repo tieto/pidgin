@@ -409,16 +409,6 @@ struct _PurplePluginProtocolInfo
 	void (*chat_leave)(PurpleConnection *, int id);
 
 	/*
-	 * Send a whisper to a user in a chat.
-	 *
-	 * @id:      The id of the chat.
-	 * @who:     The name of the user to send the whisper to.
-	 * @message: The message of the whisper.
-	 */
-	void (*chat_whisper)(PurpleConnection *, int id,
-						 const char *who, const char *message);
-
-	/*
 	 * Send a message to a chat.
 	 * This PRPL function should return a positive value on success.
 	 * If the message is too big to be sent, return -E2BIG.  If

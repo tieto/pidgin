@@ -126,7 +126,6 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_get_chat_name,
 	yahoo_c_invite,
 	yahoo_c_leave,
-	NULL, /* chat whisper */
 	yahoo_c_send,
 	yahoo_keepalive,
 	NULL, /* register_user */

@@ -1019,10 +1019,9 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_chat_get_name,		/* get_chat_name */
 	ggp_chat_invite,		/* chat_invite */
 	ggp_chat_leave,			/* chat_leave */
-	NULL,				/* chat_whisper */
 	ggp_chat_send,			/* chat_send */
 #else
-	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL, NULL,
 #endif
 	ggp_keepalive,			/* keepalive */
 	NULL,				/* register_user */

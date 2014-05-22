@@ -3541,7 +3541,6 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,					/* get_chat_name */
 	novell_chat_invite,			/* chat_invite */
 	novell_chat_leave,			/* chat_leave */
-	NULL,						/* chat_whisper */
 	novell_chat_send,			/* chat_send */
 	novell_keepalive,			/* keepalive */
 	NULL,						/* register_user */

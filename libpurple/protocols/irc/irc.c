@@ -969,7 +969,6 @@ static PurplePluginProtocolInfo prpl_info =
 	irc_get_chat_name,	/* get_chat_name */
 	irc_chat_invite,	/* chat_invite */
 	irc_chat_leave,		/* chat_leave */
-	NULL,					/* chat_whisper */
 	irc_chat_send,		/* chat_send */
 	irc_keepalive,		/* keepalive */
 	NULL,					/* register_user */

@@ -510,20 +510,6 @@ void purple_serv_chat_leave(PurpleConnection *gc, int id)
 		prpl_info->chat_leave(gc, id);
 }
 
-void purple_serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char *message)
-{
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
-
-	if (gc) {
-		prpl = purple_connection_get_prpl(gc);
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-		if (prpl_info->chat_whisper)
-			prpl_info->chat_whisper(gc, id, who, message);
-	}
-}
-
 int purple_serv_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	PurplePlugin *prpl;

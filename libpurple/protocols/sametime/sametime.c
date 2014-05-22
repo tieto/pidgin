@@ -4770,15 +4770,6 @@ static void mw_prpl_chat_leave(PurpleConnection *gc,
 }
 
 
-static void mw_prpl_chat_whisper(PurpleConnection *gc,
-				 int id,
-				 const char *who,
-				 const char *message) {
-
-  mw_prpl_send_im(gc, purple_message_new(who, message, 0));
-}
-
-
 static int mw_prpl_chat_send(PurpleConnection *gc, int id, PurpleMessage *pmsg)
 {
   struct mwPurplePluginData *pd;
@@ -5097,7 +5088,6 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   mw_prpl_get_chat_name,
   mw_prpl_chat_invite,
   mw_prpl_chat_leave,
-  mw_prpl_chat_whisper,
   mw_prpl_chat_send,
   mw_prpl_keepalive,
   NULL,
