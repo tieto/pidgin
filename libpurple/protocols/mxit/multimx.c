@@ -226,7 +226,8 @@ static void you_kicked(PurpleChatConversation* chat, struct MXitSession* session
 {
 	purple_debug_info(MXIT_PLUGIN_ID, "you_kicked\n");
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "MXit", _("You have been kicked from this MultiMX."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat),
+		_("You have been kicked from this MultiMX."), 0);
 	purple_chat_conversation_clear_users(chat);
 	purple_serv_got_chat_left(session->con, multimx->chatid);
 }
@@ -574,7 +575,7 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
 
 	/* Display system message in chat window */
 	tmp = g_strdup_printf("%s: %s", _("You have invited"), purple_buddy_get_alias(buddy));
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "MXit", tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), tmp, 0);
 	g_free(tmp);
 }
 

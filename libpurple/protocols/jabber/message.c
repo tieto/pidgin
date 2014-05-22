@@ -242,7 +242,8 @@ static void handle_groupchat(JabberMessage *jm)
 				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);
 			else
 				msg = g_strdup_printf(_("The topic is: %s"), tmp2);
-			purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "", msg, messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(chat->conv),
+				msg, messageFlags);
 			g_free(tmp);
 			g_free(tmp2);
 			g_free(msg);
@@ -255,9 +256,9 @@ static void handle_groupchat(JabberMessage *jm)
 							messageFlags | (jm->delayed ? PURPLE_MESSAGE_DELAYED : 0),
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
-			purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "",
-							jm->xhtml ? jm->xhtml : jm->body,
-							messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
+			purple_conversation_write_system_message(
+				PURPLE_CONVERSATION(chat->conv),
+				jm->xhtml ? jm->xhtml : jm->body, messageFlags);
 	}
 
 	jabber_id_free(jid);

@@ -1808,8 +1808,7 @@ static PurpleCmdRet silcpurple_cmd_cmode(PurpleConversation *conv,
 		} else {
 			msg = g_strdup_printf(_("no channel modes are set on %s"), chname);
 		}
-		purple_conversation_write_message(conv, "",
-							 msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_system_message(conv, msg, PURPLE_MESSAGE_NO_LOG);
 		g_free(msg);
 		return PURPLE_CMD_RET_OK;
 	}

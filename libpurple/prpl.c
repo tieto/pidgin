@@ -435,14 +435,12 @@ void
 purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
 	PurpleAttentionType *attn;
-	PurpleMessageFlags flags;
 	PurplePlugin *prpl;
 	PurpleIMConversation *im;
 	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
 	PurpleBuddy *buddy;
 	const char *alias;
 	gchar *description;
-	time_t mtime;
 
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
@@ -450,8 +448,6 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 	prpl = purple_find_prpl(purple_account_get_protocol_id(purple_connection_get_account(gc)));
 	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
 	g_return_if_fail(send_attention != NULL);
-
-	mtime = time(NULL);
 
 	attn = purple_get_attention_type_from_code(purple_connection_get_account(gc), type_code);
 
@@ -466,8 +462,6 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 		description = g_strdup_printf(_("Requesting %s's attention..."), alias);
 	}
 
-	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
-
 	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
 			description, who);
 
@@ -475,7 +469,7 @@ purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_cod
 		return;
 
 	im = purple_im_conversation_new(purple_connection_get_account(gc), who);
-	purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, description, flags, mtime);
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(im), description, 0);
 	purple_prpl_attention(PURPLE_CONVERSATION(im), who, type_code, PURPLE_MESSAGE_SEND, time(NULL));
 
 	g_free(description);

@@ -41,7 +41,7 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 		return 1;
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
-	purple_conversation_write_message(convo, "", buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+	purple_conversation_write_system_message(convo, buf, PURPLE_MESSAGE_NO_LOG);
 	g_free(buf);
 
 	return 1;

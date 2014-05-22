@@ -517,6 +517,9 @@ void purple_conversation_write_message(PurpleConversation *conv,
 		const char *who, const char *message,
 		PurpleMessageFlags flags, time_t mtime);
 
+void purple_conversation_write_system_message(PurpleConversation *conv,
+	const gchar *message, PurpleMessageFlags flags);
+
 /**
  * purple_conversation_send:
  * @conv:    The conversation.

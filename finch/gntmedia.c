@@ -374,7 +374,7 @@ static void
 gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *conv)
 {
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
-		purple_conversation_write_message(conv, NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(conv, msg, 0);
 	}
 }
 

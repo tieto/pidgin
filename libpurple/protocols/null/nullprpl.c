@@ -890,9 +890,8 @@ static void set_chat_topic_fn(PurpleChatConversation *from, PurpleChatConversati
   else
     msg = g_strdup_printf(_("%s clears topic"), username);
 
-  purple_conversation_write_message(PURPLE_CONVERSATION(to), username, msg,
-                                    PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG,
-                                    time(NULL));
+  purple_conversation_write_system_message(PURPLE_CONVERSATION(to),
+    msg, PURPLE_MESSAGE_NO_LOG);
   g_free(msg);
 }
 

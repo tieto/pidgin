@@ -696,6 +696,13 @@ purple_conversation_write_message(PurpleConversation *conv, const char *who,
 		klass->write_message(conv, who, message, flags, mtime);
 }
 
+void purple_conversation_write_system_message(PurpleConversation *conv,
+	const gchar *message, PurpleMessageFlags flags)
+{
+	purple_conversation_write(conv, NULL, message,
+		flags | PURPLE_MESSAGE_SYSTEM, time(NULL));
+}
+
 void
 purple_conversation_send(PurpleConversation *conv, const char *message)
 {

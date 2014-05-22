@@ -603,21 +603,21 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (topic) {
 				purple_chat_conversation_set_topic(c, NULL, topic);
 				/* Also print the topic to the backlog so that the captcha link is clickable */
-				purple_conversation_write_message(PURPLE_CONVERSATION(c), "", topic, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(PURPLE_CONVERSATION(c), topic, 0);
 			}
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
 			purple_chat_conversation_add_users(c, members, NULL, flags, FALSE);
 
 			tmpmsg = g_strdup_printf(_("You are now chatting in %s."), room);
-			purple_conversation_write_message(PURPLE_CONVERSATION(c), "", tmpmsg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(c), tmpmsg, 0);
 			g_free(tmpmsg);
 		} else {
 			c = purple_serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 			if (topic) {
 				purple_chat_conversation_set_topic(c, NULL, topic);
 				/* Also print the topic to the backlog so that the captcha link is clickable */
-				purple_conversation_write_message(PURPLE_CONVERSATION(c), "", topic, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(PURPLE_CONVERSATION(c), topic, 0);
 			}
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);

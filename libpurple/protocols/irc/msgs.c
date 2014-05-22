@@ -281,9 +281,8 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 			msg = g_strdup_printf(_("Ban on %s"), args[2]);
 		}
 		if (chat) {
-			purple_conversation_write_message(PURPLE_CONVERSATION(chat), "", msg,
-			                       PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG,
-			                       time(NULL));
+			purple_conversation_write_system_message(
+				PURPLE_CONVERSATION(chat), msg, PURPLE_MESSAGE_NO_LOG);
 		} else {
 			purple_debug_info("irc", "%s\n", msg);
 		}
@@ -292,10 +291,8 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 		if (!chat)
 			return;
 		/* End of ban list */
-		purple_conversation_write_message(PURPLE_CONVERSATION(chat), "",
-		                       _("End of ban list"),
-		                       PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG,
-		                       time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(chat),
+			_("End of ban list"), PURPLE_MESSAGE_NO_LOG);
 	}
 }
 
@@ -324,9 +321,8 @@ void irc_msg_banfull(struct irc_conn *irc, const char *name, const char *from, c
 	nick = g_markup_escape_text(args[2], -1);
 	buf = g_strdup_printf(_("Cannot ban %s: banlist is full"), nick);
 	g_free(nick);
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "", buf,
-			     PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG,
-			     time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat),
+		buf, PURPLE_MESSAGE_NO_LOG);
 	g_free(buf);
 }
 
@@ -341,7 +337,7 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 
 	escaped = (args[3] != NULL) ? g_markup_escape_text(args[3], -1) : NULL;
 	buf = g_strdup_printf("mode for %s: %s %s", args[1], args[2], escaped ? escaped : "");
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "", buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), buf, 0);
 	g_free(escaped);
 	g_free(buf);
 
@@ -606,8 +602,7 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 		msg = g_strdup_printf(_("The topic for %s is: %s"), chan_esc, tmp2);
 		g_free(chan_esc);
 		purple_chat_conversation_set_topic(chat, NULL, topic);
-		purple_conversation_write_message(PURPLE_CONVERSATION(chat), "", msg,
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), msg, 0);
 		g_free(msg);
 	}
 	g_free(tmp2);
@@ -637,8 +632,8 @@ void irc_msg_topicinfo(struct irc_conn *irc, const char *name, const char *from,
 	timestamp = g_strdup(purple_time_format(tm));
 	datestamp = g_strdup(purple_date_format_short(tm));
 	msg = g_strdup_printf(_("Topic for %s set by %s at %s on %s"), args[1], args[2], timestamp, datestamp);
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "", msg,
-			PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat),
+		msg, PURPLE_MESSAGE_NO_LINKIFY);
 	g_free(timestamp);
 	g_free(datestamp);
 	g_free(msg);
@@ -676,7 +671,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 		irc->names = NULL;
 		if (g_object_get_data(G_OBJECT(convo), IRC_NAMES_FLAG)) {
 			msg = g_strdup_printf(_("Users on %s: %s"), args[1], names ? names : "");
-			purple_conversation_write_message(convo, "", msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+			purple_conversation_write_system_message(convo, msg, PURPLE_MESSAGE_NO_LOG);
 			g_free(msg);
 		} else if (cur != NULL) {
 			GList *users = NULL;
@@ -859,7 +854,7 @@ void irc_msg_notop(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!chat)
 		return;
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), "", args[2], PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), args[2], 0);
 }
 
 void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -1269,7 +1264,7 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 	convo = purple_conversations_find_with_account(parts[0], irc->account);
 	g_strfreev(parts);
 	if (convo) {
-		purple_conversation_write_message(convo, "PONG", msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_system_message(convo, msg, PURPLE_MESSAGE_NO_LOG);
 	} else {
 		gc = purple_account_get_connection(irc->account);
 		if (!gc) {
