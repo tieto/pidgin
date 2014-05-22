@@ -2045,7 +2045,7 @@ static const char * zephyr_get_signature(void)
 	return sig;
 }
 
-static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, PurpleMessageFlags flags)
+static int zephyr_chat_send(PurpleConnection * gc, int id, PurpleMessage *msg)
 {
 	zephyr_triple *zt;
 	const char *sig;
@@ -2072,7 +2072,8 @@ static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, Purpl
 	else
 		recipient = local_zephyr_normalize(zephyr,zt->recipient);
 
-	zephyr_send_message(zephyr,zt->class,inst,recipient,im,sig,"");
+	zephyr_send_message(zephyr, zt->class, inst, recipient,
+		purple_message_get_contents(msg), sig, "");
 	return 0;
 }
 

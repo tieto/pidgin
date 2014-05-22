@@ -1111,11 +1111,13 @@ void yahoo_c_leave(PurpleConnection *gc, int id)
 	purple_serv_got_chat_left(gc, id);
 }
 
-int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
+int yahoo_c_send(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	PurpleChatConversation *c;
 	int ret;
 	YahooData *yd;
+	const gchar *what = purple_message_get_contents(msg);
+	PurpleMessageFlags flags = purple_message_get_flags(msg);
 
 	yd = purple_connection_get_protocol_data(gc);
 	if (!yd)

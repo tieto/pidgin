@@ -43,7 +43,7 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 void yahoo_process_chat_goto(PurpleConnection *gc, struct yahoo_packet *pkt);
 
 void yahoo_c_leave(PurpleConnection *gc, int id);
-int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags);
+int yahoo_c_send(PurpleConnection *gc, int id, PurpleMessage *msg);
 GList *yahoo_c_info(PurpleConnection *gc);
 GHashTable *yahoo_c_info_defaults(PurpleConnection *gc, const char *chat_name);
 void yahoo_c_join(PurpleConnection *gc, GHashTable *data);

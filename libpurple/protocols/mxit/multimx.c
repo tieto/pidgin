@@ -612,17 +612,14 @@ void mxit_chat_leave(PurpleConnection *gc, int id)
  *
  *  @param gc			The connection object
  *  @param id			The chat room ID
- *  @param message		The sent message data
- *  @param flags		The message flags
+ *  @param msg			The sent message data
  *  @return				Indicates success / failure
  */
-int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
+int mxit_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 	struct multimx* multimx = NULL;
 	const char* nickname;
-
-	purple_debug_info(MXIT_PLUGIN_ID, "Groupchat %i message send: '%s'\n", id, message);
 
 	/* Find matching MultiMX group */
 	multimx = find_room_by_id(session, id);
@@ -632,7 +629,8 @@ int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 	}
 
 	/* Send packet to MXit */
-	mxit_send_message(session, multimx->roomid, message, TRUE, FALSE);
+	mxit_send_message(session, multimx->roomid,
+		purple_message_get_contents(msg), TRUE, FALSE);
 
 	/* Determine our nickname to display */
 	if (multimx->nickname)
@@ -641,7 +639,8 @@ int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 		nickname = purple_account_get_private_alias(purple_connection_get_account(gc));		/* local alias */
 
 	/* Display message in chat window */
-	purple_serv_got_chat_in(gc, id, nickname, flags, message, time(NULL));
+	purple_serv_got_chat_in(gc, id, nickname, purple_message_get_flags(msg),
+		purple_message_get_contents(msg), time(NULL));
 
 	return 0;
 }

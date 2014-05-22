@@ -4779,11 +4779,8 @@ static void mw_prpl_chat_whisper(PurpleConnection *gc,
 }
 
 
-static int mw_prpl_chat_send(PurpleConnection *gc,
-			     int id,
-			     const char *message,
-			     PurpleMessageFlags flags) {
-
+static int mw_prpl_chat_send(PurpleConnection *gc, int id, PurpleMessage *pmsg)
+{
   struct mwPurplePluginData *pd;
   struct mwConference *conf;
   char *msg;
@@ -4794,7 +4791,7 @@ static int mw_prpl_chat_send(PurpleConnection *gc,
   g_return_val_if_fail(pd != NULL, 0);
   conf = ID_TO_CONF(pd, id);
 
-  msg = purple_markup_strip_html(message);
+  msg = purple_markup_strip_html(purple_message_get_contents(pmsg));
 
   if(conf) {
     ret = ! mwConference_sendText(conf, msg);

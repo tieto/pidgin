@@ -59,9 +59,6 @@ PurpleMessage *
 purple_message_new(const gchar *who, const gchar *contents,
 	PurpleMessageFlags flags)
 {
-	g_return_val_if_fail(who != NULL, NULL);
-	g_return_val_if_fail(contents != NULL, NULL);
-
 	return g_object_new(PURPLE_TYPE_MESSAGE,
 		"who", who,
 		"contents", contents,

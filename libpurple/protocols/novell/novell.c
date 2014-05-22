@@ -2484,7 +2484,7 @@ novell_chat_invite(PurpleConnection *gc, int id,
 }
 
 static int
-novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageFlags flags)
+novell_chat_send(PurpleConnection * gc, int id, PurpleMessage *msg)
 {
 	NMConference *conference;
 	PurpleChatConversation *chat;
@@ -2495,14 +2495,14 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	const char *name;
 	char *str, *plain;
 
-	if (gc == NULL || text == NULL)
+	if (gc == NULL || purple_message_is_empty(msg))
 		return -1;
 
 	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return -1;
 
-	plain = purple_unescape_html(text);
+	plain = purple_unescape_html(purple_message_get_contents(msg));
 	message = nm_create_message(plain);
 	g_free(plain);
 
@@ -2538,7 +2538,9 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 						}
 					}
 
-					purple_serv_got_chat_in(gc, id, name, flags, text, time(NULL));
+					purple_serv_got_chat_in(gc, id, name,
+						purple_message_get_flags(msg),
+						purple_message_get_contents(msg), time(NULL));
 					return 0;
 				} else
 					return -1;

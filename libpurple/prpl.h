@@ -428,14 +428,12 @@ struct _PurplePluginProtocolInfo
 	 * errno values, or just big something.
 	 *
 	 * @id:      The id of the chat to send the message to.
-	 * @message: The message to send to the chat.
-	 * @flags:   A bitwise OR of #PurpleMessageFlags representing
-	 *           message flags.
+	 * @msg:     The message to send to the chat.
 	 *
 	 * Returns:  A positive number or 0 in case of success,
 	 *           a negative error number in case of failure.
 	 */
-	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
+	int  (*chat_send)(PurpleConnection *, int id, PurpleMessage *msg);
 
 	/* If implemented, this will be called regularly for this prpl's
 	 * active connections.  You'd want to do this if you need to repeatedly

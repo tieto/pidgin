@@ -1185,7 +1185,7 @@ int jabber_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 	return 1;
 }
 
-int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, PurpleMessageFlags flags)
+int jabber_message_send_chat(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	JabberChat *chat;
 	JabberMessage *jm;
@@ -1193,7 +1193,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	char *xhtml;
 	char *tmp;
 
-	if(!msg || !gc)
+	if (!gc || purple_message_is_empty(msg))
 		return 0;
 
 	js = purple_connection_get_protocol_data(gc);
@@ -1208,7 +1208,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);
 
-	tmp = purple_utf8_strip_unprintables(msg);
+	tmp = purple_utf8_strip_unprintables(purple_message_get_contents(msg));
 	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);

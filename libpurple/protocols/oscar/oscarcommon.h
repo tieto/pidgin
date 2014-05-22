@@ -89,7 +89,7 @@ void oscar_join_chat(PurpleConnection *gc, GHashTable *data);
 char *oscar_get_chat_name(GHashTable *data);
 void oscar_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name);
 void oscar_chat_leave(PurpleConnection *gc, int id);
-int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
+int oscar_send_chat(PurpleConnection *gc, int id, PurpleMessage *msg);
 void oscar_keepalive(PurpleConnection *gc);
 void oscar_alias_buddy(PurpleConnection *gc, const char *name, const char *alias);
 void oscar_move_buddy(PurpleConnection *gc, const char *name, const char *old_group, const char *new_group);

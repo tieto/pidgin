@@ -2016,7 +2016,7 @@ msn_chat_leave(PurpleConnection *gc, int id)
 }
 
 static int
-msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
+msn_chat_send(PurpleConnection *gc, int id, PurpleMessage *pmsg)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -2040,7 +2040,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 
 	swboard->flag |= MSN_SB_FLAG_IM;
 
-	msn_import_html(message, &msgformat, &msgtext);
+	msn_import_html(purple_message_get_contents(pmsg), &msgformat, &msgtext);
 	msglen = strlen(msgtext);
 
 	if ((msglen == 0) || (msglen + strlen(msgformat) + strlen(VERSION) > 1564))
@@ -2060,7 +2060,8 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	g_free(msgformat);
 	g_free(msgtext);
 
-	purple_serv_got_chat_in(gc, id, username, flags, message, time(NULL));
+	purple_serv_got_chat_in(gc, id, username, purple_message_get_flags(pmsg),
+		purple_message_get_contents(pmsg), time(NULL));
 
 	return 0;
 }

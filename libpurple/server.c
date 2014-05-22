@@ -524,7 +524,7 @@ void purple_serv_chat_whisper(PurpleConnection *gc, int id, const char *who, con
 	}
 }
 
-int purple_serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
+int purple_serv_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
@@ -532,8 +532,10 @@ int purple_serv_chat_send(PurpleConnection *gc, int id, const char *message, Pur
 	prpl = purple_connection_get_prpl(gc);
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
+	g_return_val_if_fail(msg != NULL, -EINVAL);
+
 	if (prpl_info->chat_send)
-		return prpl_info->chat_send(gc, id, message, flags);
+		return prpl_info->chat_send(gc, id, msg);
 
 	return -EINVAL;
 }

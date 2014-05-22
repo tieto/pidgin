@@ -4322,7 +4322,7 @@ oscar_chat_leave(PurpleConnection *gc, int id)
 	oscar_chat_kill(gc, cc);
 }
 
-int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
+int oscar_send_chat(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	PurpleChatConversation *conv = NULL;
@@ -4331,6 +4331,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 	guint16 charset;
 	char *charsetstr;
 	gsize len;
+	const gchar *message = purple_message_get_contents(msg);
 
 	if (!(conv = purple_conversations_find_chat(gc, id)))
 		return -EINVAL;

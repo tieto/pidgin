@@ -858,10 +858,10 @@ static void receive_chat_message(PurpleChatConversation *from, PurpleChatConvers
                    time(NULL));
 }
 
-static int nullprpl_chat_send(PurpleConnection *gc, int id, const char *message,
-                              PurpleMessageFlags flags) {
+static int nullprpl_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg) {
   const char *username = purple_account_get_username(purple_connection_get_account(gc));
   PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
+  const gchar *message = purple_message_get_contents(msg);
 
   if (chat) {
     purple_debug_info("nullprpl",

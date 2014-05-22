@@ -101,6 +101,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	PurpleMessage *msg;
 	char *displayed = NULL, *sent = NULL;
 	int err = 0;
 
@@ -133,8 +134,6 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	msgflags |= PURPLE_MESSAGE_SEND;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
-		PurpleMessage *msg;
-
 		msg = purple_message_new(purple_conversation_get_name(conv),
 			sent, msgflags);
 
@@ -158,12 +157,17 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	}
 	else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		int id = purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv));
+
+		msg = purple_message_new(NULL, sent, msgflags);
+
+		/* TODO: use msg! */
 		purple_signal_emit(purple_conversations_get_handle(), "sending-chat-msg",
 						 account, &sent, id);
 
-		if (sent != NULL && sent[0] != '\0') {
-			err = purple_serv_chat_send(gc, id, sent, msgflags);
+		if (!purple_message_is_empty(msg)) {
+			err = purple_serv_chat_send(gc, id, msg);
 
+			/* TODO: use msg! */
 			purple_signal_emit(purple_conversations_get_handle(), "sent-chat-msg",
 							 account, sent, id);
 		}

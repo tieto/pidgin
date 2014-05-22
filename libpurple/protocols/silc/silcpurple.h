@@ -142,7 +142,7 @@ char *silcpurple_get_chat_name(GHashTable *data);
 void silcpurple_chat_invite(PurpleConnection *gc, int id, const char *msg,
 			  const char *name);
 void silcpurple_chat_leave(PurpleConnection *gc, int id);
-int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg, PurpleMessageFlags flags);
+int silcpurple_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg);
 void silcpurple_chat_set_topic(PurpleConnection *gc, int id, const char *topic);
 PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc);
 void silcpurple_roomlist_cancel(PurpleRoomlist *list);
