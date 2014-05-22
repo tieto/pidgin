@@ -1083,18 +1083,23 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 }
 
 static void
-finch_write_chat(PurpleChatConversation *chat, const char *who, const char *message,
-		PurpleMessageFlags flags, time_t mtime)
+finch_write_chat(PurpleChatConversation *chat, PurpleMessage *msg)
 {
-	purple_conversation_write(PURPLE_CONVERSATION(chat), who, message, flags, mtime);
+	purple_conversation_write(PURPLE_CONVERSATION(chat),
+		purple_message_get_who(msg),
+		purple_message_get_contents(msg),
+		purple_message_get_flags(msg),
+		purple_message_get_time(msg));
 }
 
 static void
-finch_write_im(PurpleIMConversation *im, const char *who, const char *message,
-		PurpleMessageFlags flags, time_t mtime)
+finch_write_im(PurpleIMConversation *im, PurpleMessage *msg)
 {
 	PurpleConversation *conv = PURPLE_CONVERSATION(im);
 	PurpleAccount *account = purple_conversation_get_account(conv);
+	PurpleMessageFlags flags = purple_message_get_flags(msg);
+	const gchar *who = purple_message_get_who(msg);
+
 	if (flags & PURPLE_MESSAGE_SEND)
 	{
 		who = purple_connection_get_display_name(purple_account_get_connection(account));
@@ -1112,7 +1117,8 @@ finch_write_im(PurpleIMConversation *im, const char *who, const char *message,
 			who = purple_buddy_get_contact_alias(buddy);
 	}
 
-	purple_conversation_write(conv, who, message, flags, mtime);
+	purple_conversation_write(conv, who, purple_message_get_contents(msg),
+		flags, purple_message_get_time(msg));
 }
 
 static void

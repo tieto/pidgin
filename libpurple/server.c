@@ -538,6 +538,7 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
+	PurpleMessage *pmsg;
 
 	g_return_if_fail(msg != NULL);
 
@@ -599,7 +600,10 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	if (im == NULL)
 		im = purple_im_conversation_new(account, name);
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(im), name, message, flags, mtime);
+	pmsg = purple_message_new(name, message, flags);
+	purple_message_set_time(pmsg, mtime);
+
+	purple_conversation_write_message(PURPLE_CONVERSATION(im), pmsg);
 	g_free(message);
 
 	/*
@@ -672,10 +676,7 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 						PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP);
 
 					purple_serv_send_im(gc, msg);
-
-					purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, away_msg,
-									   PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP,
-									   mtime);
+					purple_conversation_write_message(PURPLE_CONVERSATION(im), msg);
 				}
 			}
 		}
@@ -878,6 +879,7 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	PurpleChatConversation *chat = NULL;
 	char *buffy, *angel;
 	int plugin_return;
+	PurpleMessage *pmsg;
 
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
@@ -935,7 +937,9 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg", purple_connection_get_account(g),
 					 who, message, chat, flags);
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), who, message, flags, mtime);
+	pmsg = purple_message_new(who, message, flags);
+	purple_message_set_time(pmsg, mtime);
+	purple_conversation_write_message(PURPLE_CONVERSATION(chat), pmsg);
 
 	g_free(angel);
 	g_free(buffy);

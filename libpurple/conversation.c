@@ -144,8 +144,8 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 			err = purple_serv_send_im(gc, msg);
 
-			if ((err > 0) && (displayed != NULL)) /* TODO: use msg! */
-				purple_conversation_write_message(conv, NULL, displayed, msgflags, time(NULL));
+			if ((err > 0) && (displayed != NULL))
+				purple_conversation_write_message(conv, msg);
 
 			purple_signal_emit(purple_conversations_get_handle(),
 				"sent-im-msg", account, msg);
@@ -683,8 +683,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 }
 
 void
-purple_conversation_write_message(PurpleConversation *conv, const char *who,
-		const char *message, PurpleMessageFlags flags, time_t mtime)
+purple_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 {
 	PurpleConversationClass *klass = NULL;
 
@@ -693,7 +692,7 @@ purple_conversation_write_message(PurpleConversation *conv, const char *who,
 	klass = PURPLE_CONVERSATION_GET_CLASS(conv);
 
 	if (klass && klass->write_message)
-		klass->write_message(conv, who, message, flags, mtime);
+		klass->write_message(conv, msg);
 }
 
 void purple_conversation_write_system_message(PurpleConversation *conv,

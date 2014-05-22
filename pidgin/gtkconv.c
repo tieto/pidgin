@@ -6198,12 +6198,11 @@ pidgin_conv_destroy(PurpleConversation *conv)
 
 
 static void
-pidgin_conv_write_im(PurpleIMConversation *im, const char *who,
-					  const char *message, PurpleMessageFlags flags,
-					  time_t mtime)
+pidgin_conv_write_im(PurpleIMConversation *im, PurpleMessage *msg)
 {
 	PidginConversation *gtkconv;
 	PurpleConversation *conv = PURPLE_CONVERSATION(im);
+	PurpleMessageFlags flags = purple_message_get_flags(msg);
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
@@ -6218,7 +6217,9 @@ pidgin_conv_write_im(PurpleIMConversation *im, const char *who,
 		return;
 	}
 
-	purple_conversation_write(conv, who, message, flags, mtime);
+	purple_conversation_write(conv, purple_message_get_who(msg),
+		purple_message_get_contents(msg), flags,
+		purple_message_get_time(msg));
 }
 
 #if 0

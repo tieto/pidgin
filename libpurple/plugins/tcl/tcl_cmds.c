@@ -874,7 +874,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			flags = PURPLE_MESSAGE_SYSTEM;
 			break;
 		}
-		purple_conversation_write_message(convo, from, what, flags, time(NULL));
+		purple_conversation_write_message(convo, purple_message_new(from, what, flags));
 		break;
 	case CMD_CONV_NAME:
 		if (objc != 3) {

@@ -1412,8 +1412,9 @@ silcpurple_send_im_resolved(SilcClient client,
 								 buf->data,
 								 silc_buffer_len(buf));
 			silc_mime_partial_free(list);
-			purple_conversation_write_message(PURPLE_CONVERSATION(convo), conn->local_entry->nickname,
-					     im->message, 0, time(NULL));
+			purple_conversation_write_message(PURPLE_CONVERSATION(convo),
+				purple_message_new(conn->local_entry->nickname,
+					im->message, PURPLE_MESSAGE_SEND));
 			goto out;
 		}
 	}
@@ -1421,8 +1422,8 @@ silcpurple_send_im_resolved(SilcClient client,
 	/* Send the message */
 	silc_client_send_private_message(client, conn, client_entry, im->flags,
 					 sg->sha1hash, (unsigned char *)im->message, im->message_len);
-	purple_conversation_write_message(PURPLE_CONVERSATION(convo), conn->local_entry->nickname,
-			     im->message, 0, time(NULL));
+	purple_conversation_write_message(PURPLE_CONVERSATION(convo), purple_message_new(
+		conn->local_entry->nickname, im->message, PURPLE_MESSAGE_SEND));
 	goto out;
 
  err:
@@ -1605,8 +1606,8 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conversation_write_message(conv, purple_account_get_username(purple_connection_get_account(gc)), buf,
-							 PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_system_message(conv,
+			buf, PURPLE_MESSAGE_NO_LOG);
 		g_free(buf);
 
 	}
@@ -1712,8 +1713,9 @@ static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 			args[1], PURPLE_MESSAGE_SEND);
 
 		ret = silcpurple_send_im(gc, msg);
-		purple_conversation_write_message(PURPLE_CONVERSATION(im), purple_connection_get_display_name(gc),
-				args[1], PURPLE_MESSAGE_SEND, time(NULL));
+		purple_conversation_write_message(PURPLE_CONVERSATION(im),
+			purple_message_new(purple_connection_get_display_name(gc),
+				args[1], PURPLE_MESSAGE_SEND));
 	}
 
 	if (ret)

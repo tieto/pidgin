@@ -789,9 +789,12 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 
 		if(!nick_change) {
 			if (is_our_resource) {
-				if (kick)
-					purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), presence->jid_from->resource,
-							presence->status, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				if (kick) {
+					gchar *msg = g_strdup_printf("%s: %s",
+						presence->jid_from->resource,
+						presence->status);
+					purple_conversation_write_system_message(PURPLE_CONVERSATION(chat->conv), msg, 0);
+				}
 
 				purple_serv_got_chat_left(js->gc, chat->id);
 				jabber_chat_destroy(chat);

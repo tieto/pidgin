@@ -110,6 +110,9 @@ purple_message_set_time(PurpleMessage *msg, guint64 msgtime);
 guint64
 purple_message_get_time(PurpleMessage *msg);
 
+void
+purple_message_set_flags(PurpleMessage *msg, PurpleMessageFlags flags);
+
 PurpleMessageFlags
 purple_message_get_flags(PurpleMessage *msg);
 

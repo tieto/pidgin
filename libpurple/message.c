@@ -142,6 +142,16 @@ purple_message_get_time(PurpleMessage *msg)
 	return priv->msgtime;
 }
 
+void
+purple_message_set_flags(PurpleMessage *msg, PurpleMessageFlags flags)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_if_fail(priv != NULL);
+
+	priv->flags = flags;
+}
+
 PurpleMessageFlags
 purple_message_get_flags(PurpleMessage *msg)
 {

@@ -105,8 +105,9 @@ record_pounce(OfflineMsg *offline)
 	g_object_set_data(G_OBJECT(conv), "plugin_pack:offlinemsg",
 				GINT_TO_POINTER(OFFLINE_MSG_YES));
 
-	purple_conversation_write_message(conv, offline->who, offline->message,
-				PURPLE_MESSAGE_SEND, time(NULL));
+	/* TODO: use a reference to a PurpleMessage */
+	purple_conversation_write_message(conv, purple_message_new(offline->who,
+		offline->message, PURPLE_MESSAGE_SEND));
 
 	discard_data(offline);
 }

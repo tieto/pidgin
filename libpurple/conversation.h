@@ -142,6 +142,7 @@ typedef enum /*< flags >*/
 
 #include <glib.h>
 #include <glib-object.h>
+#include "message.h"
 
 /**************************************************************************/
 /** PurpleConversation                                                    */
@@ -179,8 +180,7 @@ struct _PurpleConversation
 struct _PurpleConversationClass {
 	GObjectClass parent_class;
 
-	void (*write_message)(PurpleConversation *conv, const char *who,
-			const char *message, PurpleMessageFlags flags, time_t mtime);
+	void (*write_message)(PurpleConversation *conv, PurpleMessage *msg);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
@@ -250,13 +250,8 @@ struct _PurpleConversationUiOps
 	void (*create_conversation)(PurpleConversation *conv);
 	void (*destroy_conversation)(PurpleConversation *conv);
 
-	void (*write_chat)(PurpleChatConversation *chat, const char *who,
-	                  const char *message, PurpleMessageFlags flags,
-	                  time_t mtime);
-
-	void (*write_im)(PurpleIMConversation *im, const char *who,
-	                 const char *message, PurpleMessageFlags flags,
-	                 time_t mtime);
+	void (*write_chat)(PurpleChatConversation *chat, PurpleMessage *msg);
+	void (*write_im)(PurpleIMConversation *im, PurpleMessage *msg);
 
 	void (*write_conv)(PurpleConversation *conv,
 	                   const char *name,
@@ -512,8 +507,7 @@ void purple_conversation_write(PurpleConversation *conv, const char *who,
  * Writes to a chat or an IM.
  */
 void purple_conversation_write_message(PurpleConversation *conv,
-		const char *who, const char *message,
-		PurpleMessageFlags flags, time_t mtime);
+	PurpleMessage *msg);
 
 /**
  * purple_conversation_write_system_message:

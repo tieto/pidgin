@@ -189,8 +189,9 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 			                 purple_connection_get_display_name(gc),
 			                 PURPLE_MESSAGE_SEND, action, time(NULL));
 		else
-			purple_conversation_write_message(convo, purple_connection_get_display_name(gc),
-			                     action, PURPLE_MESSAGE_SEND, time(NULL));
+			purple_conversation_write_message(convo, purple_message_new(
+				purple_connection_get_display_name(gc), action,
+				PURPLE_MESSAGE_SEND));
 		g_free(action);
 	}
 
@@ -502,8 +503,8 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 		gc = purple_account_get_connection(irc->account);
 		irc_cmd_privmsg(irc, cmd, target, args);
 		purple_conversation_write_message(PURPLE_CONVERSATION(im),
-				purple_connection_get_display_name(gc), args[1],
-				PURPLE_MESSAGE_SEND, time(NULL));
+			purple_message_new(purple_connection_get_display_name(gc),
+				args[1], PURPLE_MESSAGE_SEND));
 	}
 
 	return 0;
@@ -582,8 +583,9 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conversation_write_message(PURPLE_CONVERSATION(chat), target, buf,
-				PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_message(PURPLE_CONVERSATION(chat),
+			purple_message_new(target, buf,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG));
 		g_free(buf);
 
 		return 0;

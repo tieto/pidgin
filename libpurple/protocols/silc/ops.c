@@ -560,8 +560,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				g_snprintf(buf, sizeof(buf),
 						_("%s has changed the topic of <I>%s</I> to: %s"),
 						client_entry->nickname, channel->channel_name, tmp2);
-				purple_conversation_write_message(PURPLE_CONVERSATION(chat), client_entry->nickname,
-						buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(
+					PURPLE_CONVERSATION(chat), buf, 0);
 				purple_chat_conversation_set_topic(chat,
 						client_entry->nickname, tmp);
 			} else if (idtype == SILC_ID_SERVER) {
@@ -569,8 +569,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				g_snprintf(buf, sizeof(buf),
 						_("%s has changed the topic of <I>%s</I> to: %s"),
 						server_entry->server_name, channel->channel_name, tmp2);
-				purple_conversation_write_message(PURPLE_CONVERSATION(chat), server_entry->server_name,
-						buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(
+					PURPLE_CONVERSATION(chat), buf, 0);
 				purple_chat_conversation_set_topic(chat,
 						server_entry->server_name, tmp);
 			} else if (idtype == SILC_ID_CHANNEL) {
@@ -578,8 +578,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				g_snprintf(buf, sizeof(buf),
 						_("%s has changed the topic of <I>%s</I> to: %s"),
 						channel->channel_name, channel->channel_name, tmp2);
-				purple_conversation_write_message(PURPLE_CONVERSATION(chat), channel->channel_name,
-						buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(
+					PURPLE_CONVERSATION(chat), buf, 0);
 				purple_chat_conversation_set_topic(chat,
 						channel->channel_name, tmp);
 			} else {
@@ -649,8 +649,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				   _("<I>%s</I> removed all channel <I>%s</I> modes"), name,
 				   channel->channel_name);
 		}
-		purple_conversation_write_message(PURPLE_CONVERSATION(chat), channel->channel_name,
-				       buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), buf, 0);
 		break;
 
 	case SILC_NOTIFY_TYPE_CUMODE_CHANGE:
@@ -690,8 +689,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 					   _("<I>%s</I> removed all <I>%s's</I> modes"), name,
 					   client_entry2->nickname);
 			}
-			purple_conversation_write_message(PURPLE_CONVERSATION(chat), channel->channel_name,
-					       buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), buf, 0);
 			purple_chat_user_set_flags(purple_chat_conversation_find_user(
 					       chat, client_entry2->nickname), flags);
 			break;
@@ -720,8 +718,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				   _("You have been kicked off <I>%s</I> by <I>%s</I> (%s)"),
 				   channel->channel_name, client_entry2->nickname,
 				   tmp ? tmp : "");
-			purple_conversation_write_message(PURPLE_CONVERSATION(chat), client_entry->nickname,
-					       buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(chat),
+				buf, 0);
 			purple_serv_got_chat_left(gc, purple_chat_conversation_get_id(chat));
 		} else {
 			/* Remove user from channel */
@@ -765,8 +763,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 										chu->channel->channel_name, sg->account);
 				if (!chat)
 					continue;
-				purple_conversation_write_message(PURPLE_CONVERSATION(chat), client_entry->nickname,
-						       buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(
+					PURPLE_CONVERSATION(chat), buf, 0);
 				purple_serv_got_chat_left(gc, purple_chat_conversation_get_id(chat));
 			}
 			silc_hash_table_list_reset(&htl);
