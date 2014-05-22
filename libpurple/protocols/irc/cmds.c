@@ -114,9 +114,10 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 		purple_signal_emit(purple_conversations_get_handle(),
 			"sending-im-msg", irc->account, pmsg);
 	} else {
-		/* TODO: pmsg! */
+		pmsg = purple_message_new(NULL, msg, PURPLE_MESSAGE_SEND);
+
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sending-chat-msg", irc->account, &msg,
+			"sending-chat-msg", irc->account, pmsg,
 			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)));
 	}
 

@@ -158,9 +158,8 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 		msg = purple_message_new(NULL, sent, msgflags);
 
-		/* TODO: use msg! */
-		purple_signal_emit(purple_conversations_get_handle(), "sending-chat-msg",
-						 account, &sent, id);
+		purple_signal_emit(purple_conversations_get_handle(),
+			"sending-chat-msg", account, msg, id);
 
 		if (!purple_message_is_empty(msg)) {
 			err = purple_serv_chat_send(gc, id, msg);

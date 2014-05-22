@@ -356,10 +356,11 @@ wrote_chat_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
 }
 
 static gboolean
-sending_chat_msg_cb(PurpleAccount *account, char **buffer, int id, void *data)
+sending_chat_msg_cb(PurpleAccount *account, PurpleMessage *msg, int id, void *data)
 {
 	purple_debug_misc("signals test", "sending-chat-msg (%s, %s, %d)\n",
-					purple_account_get_username(account), *buffer, id);
+		purple_account_get_username(account),
+		purple_message_get_contents(msg), id);
 
 	return FALSE;
 }
