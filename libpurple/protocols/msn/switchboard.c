@@ -374,7 +374,7 @@ msn_switchboard_report_user(MsnSwitchBoard *swboard, PurpleMessageFlags flags, c
 
 	if ((conv = msn_switchboard_get_conv(swboard)) != NULL)
 	{
-		purple_conversation_write(conv, NULL, msg, flags, time(NULL));
+		purple_conversation_write_system_message(conv, msg, flags);
 	}
 }
 
