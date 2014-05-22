@@ -803,15 +803,12 @@ purple_chat_conversation_get_id(const PurpleChatConversation *chat)
 static void
 chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 {
-	PurpleAccount *account;
 	PurpleConversationUiOps *ops;
 	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(conv);
 	PurpleMessageFlags flags;
 
 	g_return_if_fail(priv != NULL);
 	g_return_if_fail(msg != NULL);
-
-	account = purple_conversation_get_account(conv);
 
 	/* Don't display this if the person who wrote it is ignored. */
 	if (purple_chat_conversation_is_ignored_user(
@@ -821,6 +818,7 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 	}
 
 #if 0
+	PurpleAccount *account = purple_conversation_get_account(conv);
 	/* XXX: this should not be necessary */
 	if (purple_strequal(purple_normalize(account, who), priv->nick)) {
 		flags |= PURPLE_MESSAGE_SEND;

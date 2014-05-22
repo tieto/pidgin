@@ -470,8 +470,7 @@ void ggp_chat_invite(PurpleConnection *gc, int local_id, const char *message,
 	}
 }
 
-int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
-	PurpleMessageFlags flags)
+int ggp_chat_send(PurpleConnection *gc, int local_id, PurpleMessage *msg)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleChatConversation *conv;
@@ -491,14 +490,18 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 		ggp_chat_get_name_from_id(chat->id),
 		purple_connection_get_account(gc));
 
-	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(conv), message);
+	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(conv),
+		purple_message_get_contents(msg));
 
 	if (gg_chat_send_message(info->session, chat->id, gg_msg, TRUE) < 0)
 		succ = FALSE;
 	g_free(gg_msg);
 
 	me = purple_account_get_username(purple_connection_get_account(gc));
-	purple_serv_got_chat_in(gc, chat->local_id, me, flags, message, time(NULL));
+	purple_serv_got_chat_in(gc, chat->local_id, me,
+		purple_message_get_flags(msg),
+		purple_message_get_contents(msg),
+		purple_message_get_time(msg));
 
 	return succ ? 0 : -1;
 }
