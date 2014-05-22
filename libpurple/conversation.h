@@ -515,6 +515,14 @@ void purple_conversation_write_message(PurpleConversation *conv,
 		const char *who, const char *message,
 		PurpleMessageFlags flags, time_t mtime);
 
+/**
+ * purple_conversation_write_system_message:
+ * @conv:    The conversation.
+ * @message: The message to write.
+ * @flags:   The message flags (you don't need to set %PURPLE_MESSAGE_SYSTEM.
+ *
+ * Wites a system message to a chat or an IM.
+ */
 void purple_conversation_write_system_message(PurpleConversation *conv,
 	const gchar *message, PurpleMessageFlags flags);
 
