@@ -169,8 +169,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	/* XXX: we'd prefer to keep this in conversation.c */
 	if (PURPLE_IS_IM_CONVERSATION(convo)) {
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sent-im-msg", irc->account,
-			purple_conversation_get_name(convo), msg);
+			"sent-im-msg", irc->account, pmsg);
 	} else {
 		purple_signal_emit(purple_conversations_get_handle(),
 			"sent-chat-msg", irc->account, msg,

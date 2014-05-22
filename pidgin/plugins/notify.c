@@ -273,12 +273,13 @@ message_displayed_cb(PurpleAccount *account, const char *who, char *message,
 }
 
 static void
-im_sent_im(PurpleAccount *account, const char *receiver, const char *message)
+im_sent_im(PurpleAccount *account, PurpleMessage *msg, gpointer _unused)
 {
 	PurpleIMConversation *im = NULL;
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
-		im = purple_conversations_find_im_with_account(receiver, account);
+		im = purple_conversations_find_im_with_account(
+			purple_message_get_who(msg), account);
 		unnotify(PURPLE_CONVERSATION(im), TRUE);
 	}
 }

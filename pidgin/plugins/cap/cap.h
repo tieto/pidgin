@@ -89,7 +89,7 @@ static void insert_cap_failure(CapStatistics *stats);
 static gboolean max_message_difference_cb(gpointer data);
 /* Pidgin Signal Handlers */
 /* sent-im-msg */
-static void sent_im_msg(PurpleAccount *account, const char *receiver, const char *message);
+static void sent_im_msg(PurpleAccount *account, PurpleMessage *msg, gpointer _unused);
 /* received-im-msg */
 static void received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConversation *conv, PurpleMessageFlags flags);
 /* buddy-status-changed */

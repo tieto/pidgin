@@ -230,8 +230,7 @@ check_idleness_timer(void)
 }
 
 static void
-im_msg_sent_cb(PurpleAccount *account, const char *receiver,
-			   const char *message, void *data)
+im_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg, void *data)
 {
 	/* Check our idle time after an IM is sent */
 	check_idleness();

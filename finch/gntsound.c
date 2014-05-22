@@ -204,11 +204,11 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 }
 
 static void
-im_msg_sent_cb(PurpleAccount *account, const char *receiver,
-			   const char *message, PurpleSoundEventID event)
+im_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg,
+	PurpleSoundEventID event)
 {
 	PurpleIMConversation *im = purple_conversations_find_im_with_account(
-			receiver, account);
+		purple_message_get_who(msg), account);
 	play_conv_event(PURPLE_CONVERSATION(im), event);
 }
 
