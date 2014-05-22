@@ -110,6 +110,8 @@ chat_nick_matches_name(PurpleChatConversation *chat, const char *aname)
 static void
 play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 {
+	g_return_if_fail(event < PURPLE_NUM_SOUNDS);
+
 	/* If we should not play the sound for some reason, then exit early */
 	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 	{
