@@ -6202,32 +6202,6 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	g_free(gtkconv);
 }
 
-
-static void
-pidgin_conv_write_im(PurpleIMConversation *im, PurpleMessage *msg)
-{
-	PidginConversation *gtkconv;
-	PurpleConversation *conv = PURPLE_CONVERSATION(im);
-	PurpleMessageFlags flags = purple_message_get_flags(msg);
-
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	if (conv != gtkconv->active_conv &&
-	    flags & PURPLE_MESSAGE_ACTIVE_ONLY)
-	{
-		/* Plugins that want these messages suppressed should be
-		 * calling purple_im_conversation_write_message(), so they get suppressed here,
-		 * before being written to the log. */
-		purple_debug_info("gtkconv",
-		                "Suppressing message for an inactive conversation in pidgin_conv_write_im()\n");
-		return;
-	}
-
-	purple_conversation_write(conv, purple_message_get_author(msg),
-		purple_message_get_contents(msg), flags,
-		purple_message_get_time(msg));
-}
-
 #if 0
 static const char *
 get_text_tag_color(GtkTextTag *tag)
@@ -7745,7 +7719,7 @@ static PurpleConversationUiOps conversation_ui_ops =
 	pidgin_conv_new,
 	pidgin_conv_destroy,              /* destroy_conversation */
 	NULL,                              /* write_chat           */
-	pidgin_conv_write_im,             /* write_im             */
+	NULL,                             /* write_im             */
 	pidgin_conv_write_conv,           /* write_conv           */
 	pidgin_conv_chat_add_users,       /* chat_add_users       */
 	pidgin_conv_chat_rename_user,     /* chat_rename_user     */

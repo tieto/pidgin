@@ -1090,45 +1090,6 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 }
 
 static void
-finch_write_chat(PurpleChatConversation *chat, PurpleMessage *msg)
-{
-	purple_conversation_write(PURPLE_CONVERSATION(chat),
-		purple_message_get_author(msg),
-		purple_message_get_contents(msg),
-		purple_message_get_flags(msg),
-		purple_message_get_time(msg));
-}
-
-static void
-finch_write_im(PurpleIMConversation *im, PurpleMessage *msg)
-{
-	PurpleConversation *conv = PURPLE_CONVERSATION(im);
-	PurpleAccount *account = purple_conversation_get_account(conv);
-	PurpleMessageFlags flags = purple_message_get_flags(msg);
-	const gchar *who = purple_message_get_author(msg);
-
-	if (flags & PURPLE_MESSAGE_SEND)
-	{
-		who = purple_connection_get_display_name(purple_account_get_connection(account));
-		if (!who)
-			who = purple_account_get_private_alias(account);
-		if (!who)
-			who = purple_account_get_username(account);
-	}
-	else if (flags & PURPLE_MESSAGE_RECV)
-	{
-		PurpleBuddy *buddy;
-		who = purple_conversation_get_name(conv);
-		buddy = purple_blist_find_buddy(account, who);
-		if (buddy)
-			who = purple_buddy_get_contact_alias(buddy);
-	}
-
-	purple_conversation_write(conv, who, purple_message_get_contents(msg),
-		flags, purple_message_get_time(msg));
-}
-
-static void
 finch_write_conv(PurpleConversation *conv, const char *who, const char *alias,
 		const char *message, PurpleMessageFlags flags, time_t mtime)
 {
@@ -1266,8 +1227,8 @@ static PurpleConversationUiOps conv_ui_ops =
 {
 	finch_create_conversation,
 	finch_destroy_conversation,
-	finch_write_chat,
-	finch_write_im,
+	NULL, /* write_chat */
+	NULL, /* write_im */
 	finch_write_conv,
 	finch_chat_add_users,
 	finch_chat_rename_user,
