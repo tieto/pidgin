@@ -190,6 +190,15 @@ purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 			sess_id, codec);
 }
 
+void purple_media_backend_set_encryption_parameters(PurpleMediaBackend *self,
+		const gchar *sess_id, PurpleMediaCipher cipher,
+		PurpleMediaAuthentication auth, const gchar *key, gsize key_len)
+{
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND(self));
+	return PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->set_encryption_parameters(self,
+			sess_id, cipher, auth, key, key_len);
+}
+
 void
 purple_media_backend_set_decryption_parameters(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,

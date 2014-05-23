@@ -81,6 +81,9 @@ static GList *purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 static GList *purple_media_backend_fs2_get_local_candidates(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
+static void purple_media_backend_fs2_set_encryption_parameters (
+	PurpleMediaBackend *self, const gchar *sess_id, PurpleMediaCipher cipher,
+	PurpleMediaAuthentication auth, const gchar *key, gsize key_len);
 static void purple_media_backend_fs2_set_decryption_parameters(
 		PurpleMediaBackend *self, const gchar *sess_id,
 		const gchar *participant, PurpleMediaCipher cipher,
@@ -536,6 +539,8 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
+	iface->set_encryption_parameters =
+			purple_media_backend_fs2_set_encryption_parameters;
 	iface->set_decryption_parameters =
 			purple_media_backend_fs2_set_decryption_parameters;
 	iface->set_params = purple_media_backend_fs2_set_params;
@@ -2510,6 +2515,33 @@ create_fs2_srtp_structure(PurpleMediaCipher cipher,
 	gst_buffer_unref(buffer);
 
 	return result;
+}
+
+static void
+purple_media_backend_fs2_set_encryption_parameters (PurpleMediaBackend *self,
+	const gchar *sess_id, PurpleMediaCipher cipher,
+	PurpleMediaAuthentication auth, const gchar *key, gsize key_len)
+{
+	PurpleMediaBackendFs2Session *session;
+	GstStructure *srtp;
+	GError *err = NULL;
+
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
+
+	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+	if (!session) {
+		return;
+	}
+
+	srtp = create_fs2_srtp_structure(cipher, auth, key, key_len);
+
+	if (!fs_session_set_encryption_parameters(session->session, srtp, &err)) {
+		purple_debug_error("backend-fs2",
+				"Error setting encryption parameters: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	gst_structure_free(srtp);
 }
 
 static void
