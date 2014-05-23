@@ -526,8 +526,8 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 	if (who == me) {
 		PurpleMessage *pmsg;
 
-		pmsg = purple_message_new(ggp_uin_to_str(who),
-			message, PURPLE_MESSAGE_SEND);
+		pmsg = purple_message_new_outgoing(
+			ggp_uin_to_str(who), message, 0);
 		purple_message_set_time(pmsg, time);
 
 		purple_conversation_write_message(
