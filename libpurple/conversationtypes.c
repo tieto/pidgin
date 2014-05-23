@@ -372,7 +372,7 @@ im_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 	if (ops != NULL && ops->write_im != NULL)
 		ops->write_im(im, msg);
 	else {
-		purple_conversation_write(conv,
+		_purple_conversation_write_common(conv,
 			purple_message_get_author(msg),
 			purple_message_get_contents(msg),
 			purple_message_get_flags(msg),
@@ -841,7 +841,7 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 	if (ops != NULL && ops->write_chat != NULL)
 		ops->write_chat(PURPLE_CHAT_CONVERSATION(conv), msg);
 	else {
-		purple_conversation_write(conv,
+		_purple_conversation_write_common(conv,
 			purple_message_get_author(msg),
 			purple_message_get_contents(msg),
 			purple_message_get_flags(msg),

@@ -578,7 +578,7 @@ purple_conversation_close_logs(PurpleConversation *conv)
 }
 
 void
-purple_conversation_write(PurpleConversation *conv, const char *who,
+_purple_conversation_write_common(PurpleConversation *conv, const char *who,
 						const char *message, PurpleMessageFlags flags,
 						time_t mtime)
 {
@@ -698,7 +698,7 @@ purple_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 void purple_conversation_write_system_message(PurpleConversation *conv,
 	const gchar *message, PurpleMessageFlags flags)
 {
-	purple_conversation_write(conv, NULL, message,
+	_purple_conversation_write_common(conv, NULL, message,
 		flags | PURPLE_MESSAGE_SYSTEM, time(NULL));
 }
 

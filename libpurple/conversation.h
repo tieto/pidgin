@@ -472,31 +472,6 @@ gboolean purple_conversation_is_logging(const PurpleConversation *conv);
 void purple_conversation_close_logs(PurpleConversation *conv);
 
 /**
- * purple_conversation_write:
- * @conv:    The conversation.
- * @who:     The user who sent the message.
- * @message: The message.
- * @flags:   The message flags.
- * @mtime:   The time the message was sent.
- *
- * Writes to a conversation window.
- *
- * This function should not be used to write IM or chat messages. Use
- * purple_conversation_write_message() instead. This function will
- * most likely call this anyway, but it may do it's own formatting,
- * sound playback, etc. depending on whether the conversation is a chat or an
- * IM.
- *
- * This can be used to write generic messages, such as "so and so closed
- * the conversation window."
- *
- * See purple_conversation_write_message().
- */
-void purple_conversation_write(PurpleConversation *conv, const char *who,
-		const char *message, PurpleMessageFlags flags,
-		time_t mtime);
-
-/**
  * purple_conversation_write_message:
  * @conv:    The conversation.
  * @who:     The user who sent the message.
