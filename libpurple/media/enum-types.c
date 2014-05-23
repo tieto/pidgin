@@ -237,3 +237,22 @@ purple_media_cipher_get_type()
 	}
 	return type;
 }
+
+GType
+purple_media_authentication_get_type(void)
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{ PURPLE_MEDIA_AUTHENTICATION_NULL,
+				"PURPLE_MEDIA_AUTHENTICATION_NULL", "null" },
+			{ PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_32,
+				"PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_32", "HMAC_SHA1_32" },
+			{ PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_80,
+				"PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_80", "HMAC_SHA1_80" },
+			{ 0, NULL, NULL }
+		};
+		type = g_enum_register_static("PurpleMediaAuthentication", values);
+	}
+	return type;
+}

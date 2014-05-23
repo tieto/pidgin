@@ -147,6 +147,17 @@ typedef enum {
 } PurpleMediaCipher;
 
 /**
+ * PurpleMediaAuthentication:
+ *
+ * Media message authentication algorithms
+ */
+typedef enum {
+	PURPLE_MEDIA_AUTHENTICATION_NULL,
+	PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_32,
+	PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_80
+} PurpleMediaAuthentication;
+
+/**
  * purple_media_candidate_type_get_type:
  *
  * Gets the media candidate type's GType
@@ -208,6 +219,15 @@ GType purple_media_state_changed_get_type(void);
  * Returns: The cipher enum's GType
  */
 GType purple_media_cipher_get_type(void);
+
+/**
+ * purple_media_authentication_get_type:
+ *
+ * Gets the type of the authentication enum
+ *
+ * Returns: The authentication enum's GType
+ */
+GType purple_media_authentication_get_type(void);
 
 G_END_DECLS
 
