@@ -2278,7 +2278,7 @@ novell_send_im(PurpleConnection *gc, PurpleMessage *msg)
 	char *plain;
 	gboolean done = TRUE, created_conf = FALSE;
 	NMERR_T rc = NM_OK;
-	const gchar *name = purple_message_get_who(msg);
+	const gchar *name = purple_message_get_recipient(msg);
 
 	if (gc == NULL || name == NULL || purple_message_is_empty(msg))
 		return 0;

@@ -770,10 +770,11 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 	enum { CMD_CONV_NEW_CHAT, CMD_CONV_NEW_IM } newopt;
 	PurpleConversation *convo;
 	PurpleAccount *account;
+	PurpleMessage *pmsg;
 	gboolean is_chat = FALSE;
 	GList *cur;
 	char *opt, *from, *what;
-	int error, argsused, flags = 0;
+	int error, argsused;
 
 	if (objc < 2) {
 		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
@@ -865,16 +866,16 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 		switch (style) {
 		case CMD_CONV_WRITE_SEND:
-			flags = PURPLE_MESSAGE_SEND;
+			pmsg = purple_message_new_outgoing(from, what, 0);
 			break;
 		case CMD_CONV_WRITE_RECV:
-			flags = PURPLE_MESSAGE_RECV;
+			pmsg = purple_message_new_incoming(from, what, 0, 0);
 			break;
 		case CMD_CONV_WRITE_SYSTEM:
-			flags = PURPLE_MESSAGE_SYSTEM;
+			pmsg = purple_message_new_system(what, 0);
 			break;
 		}
-		purple_conversation_write_message(convo, purple_message_new(from, what, flags));
+		purple_conversation_write_message(convo, pmsg);
 		break;
 	case CMD_CONV_NAME:
 		if (objc != 3) {
@@ -1411,7 +1412,7 @@ int tcl_cmd_send_im(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	who = Tcl_GetString(objv[2]);
 	text = Tcl_GetString(objv[3]);
 
-	purple_serv_send_im(gc, purple_message_new(who, text, PURPLE_MESSAGE_SEND));
+	purple_serv_send_im(gc, purple_message_new_outgoing(who, text, 0));
 
 	return TCL_OK;
 }

@@ -108,13 +108,13 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 
 	/* XXX: we'd prefer to keep this in conversation.c */
 	if (PURPLE_IS_IM_CONVERSATION(convo)) {
-		pmsg = purple_message_new(purple_conversation_get_name(convo),
-			msg, PURPLE_MESSAGE_SEND);
+		pmsg = purple_message_new_outgoing(
+			purple_conversation_get_name(convo), msg, 0);
 
 		purple_signal_emit(purple_conversations_get_handle(),
 			"sending-im-msg", irc->account, pmsg);
 	} else {
-		pmsg = purple_message_new(NULL, msg, PURPLE_MESSAGE_SEND);
+		pmsg = purple_message_new_outgoing(NULL, msg, 0);
 
 		purple_signal_emit(purple_conversations_get_handle(),
 			"sending-chat-msg", irc->account, pmsg,
@@ -189,9 +189,8 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 			                 purple_connection_get_display_name(gc),
 			                 PURPLE_MESSAGE_SEND, action, time(NULL));
 		else
-			purple_conversation_write_message(convo, purple_message_new(
-				purple_connection_get_display_name(gc), action,
-				PURPLE_MESSAGE_SEND));
+			purple_conversation_write_message(convo, purple_message_new_outgoing(
+				purple_connection_get_display_name(gc), action, 0));
 		g_free(action);
 	}
 
@@ -503,8 +502,8 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 		gc = purple_account_get_connection(irc->account);
 		irc_cmd_privmsg(irc, cmd, target, args);
 		purple_conversation_write_message(PURPLE_CONVERSATION(im),
-			purple_message_new(purple_connection_get_display_name(gc),
-				args[1], PURPLE_MESSAGE_SEND));
+			purple_message_new_outgoing(
+				purple_connection_get_display_name(gc), args[1], 0));
 	}
 
 	return 0;

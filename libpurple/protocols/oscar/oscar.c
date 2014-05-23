@@ -3087,7 +3087,7 @@ oscar_send_im(PurpleConnection *gc, PurpleMessage *msg)
 	const gchar *name, *message;
 	PurpleMessageFlags imflags;
 
-	name = purple_message_get_who(msg);
+	name = purple_message_get_recipient(msg);
 	message = purple_message_get_contents(msg);
 	imflags = purple_message_get_flags(msg);
 	od = purple_connection_get_protocol_data(gc);

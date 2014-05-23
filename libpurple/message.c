@@ -32,8 +32,9 @@
 
 typedef struct {
 	guint id;
-	gchar *who;
-	gchar *alias;
+	gchar *author;
+	gchar *author_alias;
+	gchar *recipient;
 	gchar *contents;
 	guint64 msgtime;
 	PurpleMessageFlags flags;
@@ -43,8 +44,9 @@ enum
 {
 	PROP_0,
 	PROP_ID,
-	PROP_WHO,
-	PROP_ALIAS,
+	PROP_AUTHOR,
+	PROP_AUTHOR_ALIAS,
+	PROP_RECIPIENT,
 	PROP_CONTENTS,
 	PROP_TIME,
 	PROP_FLAGS,
@@ -61,20 +63,57 @@ static GHashTable *messages = NULL;
  ******************************************************************************/
 
 PurpleMessage *
-purple_message_new(const gchar *who, const gchar *contents,
+purple_message_new_outgoing(const gchar *who, const gchar *contents,
 	PurpleMessageFlags flags)
 {
-	if (!(flags & (PURPLE_MESSAGE_SEND |
-		PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_SYSTEM)))
-	{
-		purple_debug_warning("message", "Invalid flags %#x", flags);
-	}
+	g_warn_if_fail(!(flags & PURPLE_MESSAGE_RECV));
+	g_warn_if_fail(!(flags & PURPLE_MESSAGE_SYSTEM));
+
+	flags |= PURPLE_MESSAGE_SEND;
+
+	/* who may be NULL for outgoing MUC messages */
+	return g_object_new(PURPLE_TYPE_MESSAGE,
+		"author-alias", _("Me"),
+		"recipient", who,
+		"contents", contents,
+		"time", (guint64)time(NULL),
+		"flags", flags,
+		NULL);
+}
+
+PurpleMessage *
+purple_message_new_incoming(const gchar *who, const gchar *contents,
+	PurpleMessageFlags flags, guint64 timestamp)
+{
+	g_warn_if_fail(!(flags & PURPLE_MESSAGE_SEND));
+	g_warn_if_fail(!(flags & PURPLE_MESSAGE_SYSTEM));
+
+	flags |= PURPLE_MESSAGE_RECV;
+
+	if (timestamp == 0)
+		timestamp = time(NULL);
 
 	return g_object_new(PURPLE_TYPE_MESSAGE,
-		"who", who,
+		"author", who,
+		"author-alias", who,
 		"contents", contents,
+		"time", timestamp,
 		"flags", flags,
+		NULL);
+}
+
+PurpleMessage *
+purple_message_new_system(const gchar *contents, PurpleMessageFlags flags)
+{
+	g_warn_if_fail(!(flags & PURPLE_MESSAGE_SEND));
+	g_warn_if_fail(!(flags & PURPLE_MESSAGE_RECV));
+
+	flags |= PURPLE_MESSAGE_SYSTEM;
+
+	return g_object_new(PURPLE_TYPE_MESSAGE,
+		"contents", contents,
 		"time", (guint64)time(NULL),
+		"flags", flags,
 		NULL);
 }
 
@@ -97,29 +136,39 @@ purple_message_find_by_id(guint id)
 }
 
 const gchar *
-purple_message_get_who(PurpleMessage *msg)
+purple_message_get_author(PurpleMessage *msg)
 {
 	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->who;
-}
-
-void
-purple_message_set_alias(PurpleMessage *msg, const gchar *alias)
-{
-	g_object_set(msg, "alias", alias, NULL);
+	return priv->author;
 }
 
 const gchar *
-purple_message_get_alias(PurpleMessage *msg)
+purple_message_get_recipient(PurpleMessage *msg)
 {
 	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->alias;
+	return priv->recipient;
+}
+
+void
+purple_message_set_author_alias(PurpleMessage *msg, const gchar *alias)
+{
+	g_object_set(msg, "author-alias", alias, NULL);
+}
+
+const gchar *
+purple_message_get_author_alias(PurpleMessage *msg)
+{
+	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(msg);
+
+	g_return_val_if_fail(priv != NULL, NULL);
+
+	return priv->author_alias;
 }
 
 void
@@ -201,8 +250,9 @@ purple_message_finalize(GObject *obj)
 	PurpleMessage *message = PURPLE_MESSAGE(obj);
 	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(message);
 
-	g_free(priv->who);
-	g_free(priv->alias);
+	g_free(priv->author);
+	g_free(priv->author_alias);
+	g_free(priv->recipient);
 	g_free(priv->contents);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
@@ -219,11 +269,14 @@ purple_message_get_property(GObject *object, guint par_id, GValue *value,
 		case PROP_ID:
 			g_value_set_uint(value, priv->id);
 			break;
-		case PROP_WHO:
-			g_value_set_string(value, priv->who);
+		case PROP_AUTHOR:
+			g_value_set_string(value, priv->author);
 			break;
-		case PROP_ALIAS:
-			g_value_set_string(value, priv->alias);
+		case PROP_AUTHOR_ALIAS:
+			g_value_set_string(value, priv->author_alias);
+			break;
+		case PROP_RECIPIENT:
+			g_value_set_string(value, priv->recipient);
 			break;
 		case PROP_CONTENTS:
 			g_value_set_string(value, priv->contents);
@@ -248,13 +301,17 @@ purple_message_set_property(GObject *object, guint par_id, const GValue *value,
 	PurpleMessagePrivate *priv = PURPLE_MESSAGE_GET_PRIVATE(message);
 
 	switch (par_id) {
-		case PROP_WHO:
-			g_free(priv->who);
-			priv->who = g_strdup(g_value_get_string(value));
+		case PROP_AUTHOR:
+			g_free(priv->author);
+			priv->author = g_strdup(g_value_get_string(value));
 			break;
-		case PROP_ALIAS:
-			g_free(priv->alias);
-			priv->alias = g_strdup(g_value_get_string(value));
+		case PROP_AUTHOR_ALIAS:
+			g_free(priv->author_alias);
+			priv->author_alias = g_strdup(g_value_get_string(value));
+			break;
+		case PROP_RECIPIENT:
+			g_free(priv->recipient);
+			priv->recipient = g_strdup(g_value_get_string(value));
 			break;
 		case PROP_CONTENTS:
 			g_free(priv->contents);
@@ -288,14 +345,15 @@ purple_message_class_init(PurpleMessageClass *klass)
 	properties[PROP_ID] = g_param_spec_uint("id",
 		"ID", "The session-unique message id",
 		0, G_MAXUINT, 0, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-	properties[PROP_WHO] = g_param_spec_string("who",
-		"Who", "The nick of the person, who sent the message (for "
-		"incoming messages) or the recipient (for outgoing). "
-		"Unused for outgoing chat messages.",
+	properties[PROP_AUTHOR] = g_param_spec_string("author",
+		"Author", "The username of the person, who sent the message.",
 		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	properties[PROP_ALIAS] = g_param_spec_string("alias",
+	properties[PROP_AUTHOR_ALIAS] = g_param_spec_string("author-alias",
 		"Author's alias", "The alias of the person, who sent the "
 		"message. For outgoing messages, it's your alias.",
+		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_RECIPIENT] = g_param_spec_string("recipient",
+		"Recipient", "The username of the recipient.",
 		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_CONTENTS] = g_param_spec_string("contents",
 		"Contents", "The message text",

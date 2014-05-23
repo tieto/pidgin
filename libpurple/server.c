@@ -125,7 +125,7 @@ int purple_serv_send_im(PurpleConnection *gc, PurpleMessage *msg)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	int val = -EINVAL;
 	const gchar *auto_reply_pref = NULL;
-	const gchar *who;
+	const gchar *recipient;
 
 	g_return_val_if_fail(gc != NULL, val);
 	g_return_val_if_fail(msg != NULL, val);
@@ -138,9 +138,9 @@ int purple_serv_send_im(PurpleConnection *gc, PurpleMessage *msg)
 
 	account  = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
-	who = purple_message_get_who(msg);
+	recipient = purple_message_get_recipient(msg);
 
-	im = purple_conversations_find_im_with_account(who, account);
+	im = purple_conversations_find_im_with_account(recipient, account);
 
 	if (prpl_info->send_im)
 		val = prpl_info->send_im(gc, msg);
@@ -155,7 +155,7 @@ int purple_serv_send_im(PurpleConnection *gc, PurpleMessage *msg)
 			!purple_strequal(auto_reply_pref, "never")) {
 
 		struct last_auto_response *lar;
-		lar = get_last_auto_response(gc, who);
+		lar = get_last_auto_response(gc, recipient);
 		lar->sent = time(NULL);
 	}
 
@@ -600,9 +600,7 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	if (im == NULL)
 		im = purple_im_conversation_new(account, name);
 
-	pmsg = purple_message_new(name, message, flags);
-	purple_message_set_time(pmsg, mtime);
-
+	pmsg = purple_message_new_incoming(name, message, flags, mtime);
 	purple_conversation_write_message(PURPLE_CONVERSATION(im), pmsg);
 	g_free(message);
 
@@ -672,8 +670,8 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				{
 					PurpleMessage *msg;
 
-					msg = purple_message_new(name, away_msg,
-						PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP);
+					msg = purple_message_new_outgoing(name,
+						away_msg, PURPLE_MESSAGE_AUTO_RESP);
 
 					purple_serv_send_im(gc, msg);
 					purple_conversation_write_message(PURPLE_CONVERSATION(im), msg);
@@ -937,8 +935,7 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg", purple_connection_get_account(g),
 					 who, message, chat, flags);
 
-	pmsg = purple_message_new(who, message, flags);
-	purple_message_set_time(pmsg, mtime);
+	pmsg = purple_message_new_incoming(who, message, flags, mtime);
 	purple_conversation_write_message(PURPLE_CONVERSATION(chat), pmsg);
 
 	g_free(angel);

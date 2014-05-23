@@ -404,7 +404,7 @@ static void mxit_close( PurpleConnection* gc )
 static int mxit_send_im(PurpleConnection* gc, PurpleMessage *msg)
 {
 	mxit_send_message(purple_connection_get_protocol_data(gc),
-		purple_message_get_who(msg), purple_message_get_contents(msg),
+		purple_message_get_recipient(msg), purple_message_get_contents(msg),
 		TRUE, FALSE);
 
 	return 1;		/* echo to conversation window */

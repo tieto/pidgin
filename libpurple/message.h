@@ -83,8 +83,15 @@ GType
 purple_message_get_type(void);
 
 PurpleMessage *
-purple_message_new(const gchar *who, const gchar *contents,
+purple_message_new_outgoing(const gchar *who, const gchar *contents,
 	PurpleMessageFlags flags);
+
+PurpleMessage *
+purple_message_new_incoming(const gchar *who, const gchar *contents,
+	PurpleMessageFlags flags, guint64 timestamp);
+
+PurpleMessage *
+purple_message_new_system(const gchar *contents, PurpleMessageFlags flags);
 
 guint
 purple_message_get_id(PurpleMessage *msg);
@@ -93,13 +100,16 @@ PurpleMessage *
 purple_message_find_by_id(guint id);
 
 const gchar *
-purple_message_get_who(PurpleMessage *msg);
-
-void
-purple_message_set_alias(PurpleMessage *msg, const gchar *alias);
+purple_message_get_author(PurpleMessage *msg);
 
 const gchar *
-purple_message_get_alias(PurpleMessage *msg);
+purple_message_get_recipient(PurpleMessage *msg);
+
+void
+purple_message_set_author_alias(PurpleMessage *msg, const gchar *alias);
+
+const gchar *
+purple_message_get_author_alias(PurpleMessage *msg);
 
 void
 purple_message_set_contents(PurpleMessage *msg, const gchar *cont);

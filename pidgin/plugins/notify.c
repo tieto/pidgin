@@ -279,7 +279,7 @@ im_sent_im(PurpleAccount *account, PurpleMessage *msg, gpointer _unused)
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
 		im = purple_conversations_find_im_with_account(
-			purple_message_get_who(msg), account);
+			purple_message_get_recipient(msg), account);
 		unnotify(PURPLE_CONVERSATION(im), TRUE);
 	}
 }

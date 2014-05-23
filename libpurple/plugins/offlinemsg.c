@@ -107,8 +107,8 @@ record_pounce(OfflineMsg *offline)
 				GINT_TO_POINTER(OFFLINE_MSG_YES));
 
 	/* TODO: use a reference to a PurpleMessage */
-	purple_conversation_write_message(conv, purple_message_new(offline->who,
-		offline->message, PURPLE_MESSAGE_SEND));
+	purple_conversation_write_message(conv,
+		purple_message_new_outgoing(offline->who, offline->message, 0));
 
 	discard_data(offline);
 }
@@ -120,7 +120,7 @@ sending_msg_cb(PurpleAccount *account, PurpleMessage *msg, gpointer handle)
 	OfflineMsg *offline;
 	PurpleConversation *conv;
 	OfflineMessageSetting setting;
-	const gchar *who = purple_message_get_who(msg);
+	const gchar *who = purple_message_get_recipient(msg);
 
 	if (purple_message_is_empty(msg))
 		return;

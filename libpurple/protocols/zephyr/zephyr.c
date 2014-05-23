@@ -2090,7 +2090,7 @@ static int zephyr_send_im(PurpleConnection *gc, PurpleMessage *msg)
 		sig = zephyr_get_signature();
 	}
 	zephyr_send_message(zephyr, "MESSAGE", "PERSONAL",
-		local_zephyr_normalize(zephyr, purple_message_get_who(msg)),
+		local_zephyr_normalize(zephyr, purple_message_get_recipient(msg)),
 		purple_message_get_contents(msg), sig, "");
 
 	return 1;

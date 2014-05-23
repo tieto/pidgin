@@ -209,11 +209,11 @@ bonjour_send_im(PurpleConnection *connection, PurpleMessage *msg)
 {
 	BonjourData *bd = purple_connection_get_protocol_data(connection);
 
-	if (purple_message_is_empty(msg) || !purple_message_get_who(msg))
+	if (purple_message_is_empty(msg) || !purple_message_get_recipient(msg))
 		return 0;
 
 	return bonjour_jabber_send_message(bd->jabber_data,
-		purple_message_get_who(msg),
+		purple_message_get_recipient(msg),
 		purple_message_get_contents(msg));
 }
 

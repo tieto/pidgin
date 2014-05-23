@@ -1093,7 +1093,7 @@ static void
 finch_write_chat(PurpleChatConversation *chat, PurpleMessage *msg)
 {
 	purple_conversation_write(PURPLE_CONVERSATION(chat),
-		purple_message_get_who(msg),
+		purple_message_get_author(msg),
 		purple_message_get_contents(msg),
 		purple_message_get_flags(msg),
 		purple_message_get_time(msg));
@@ -1105,7 +1105,7 @@ finch_write_im(PurpleIMConversation *im, PurpleMessage *msg)
 	PurpleConversation *conv = PURPLE_CONVERSATION(im);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	PurpleMessageFlags flags = purple_message_get_flags(msg);
-	const gchar *who = purple_message_get_who(msg);
+	const gchar *who = purple_message_get_author(msg);
 
 	if (flags & PURPLE_MESSAGE_SEND)
 	{

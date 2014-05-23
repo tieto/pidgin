@@ -357,13 +357,15 @@ im_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 {
 	PurpleConversationUiOps *ops;
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(conv);
+	gboolean is_recv;
 
 	g_return_if_fail(im != NULL);
 	g_return_if_fail(msg != NULL);
 
 	ops = purple_conversation_get_ui_ops(conv);
+	is_recv = (purple_message_get_flags(msg) & PURPLE_MESSAGE_RECV);
 
-	if (purple_message_get_flags(msg) & PURPLE_MESSAGE_RECV)
+	if (is_recv)
 		purple_im_conversation_set_typing_state(im, PURPLE_IM_NOT_TYPING);
 
 	/* Pass this on to either the ops structure or the default write func. */
@@ -371,7 +373,7 @@ im_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 		ops->write_im(im, msg);
 	else {
 		purple_conversation_write(conv,
-			purple_message_get_who(msg),
+			purple_message_get_author(msg),
 			purple_message_get_contents(msg),
 			purple_message_get_flags(msg),
 			purple_message_get_time(msg));
@@ -812,7 +814,7 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 
 	/* Don't display this if the person who wrote it is ignored. */
 	if (purple_chat_conversation_is_ignored_user(
-		PURPLE_CHAT_CONVERSATION(conv), purple_message_get_who(msg)))
+		PURPLE_CHAT_CONVERSATION(conv), purple_message_get_author(msg)))
 	{
 		return;
 	}
@@ -840,7 +842,7 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 		ops->write_chat(PURPLE_CHAT_CONVERSATION(conv), msg);
 	else {
 		purple_conversation_write(conv,
-			purple_message_get_who(msg),
+			purple_message_get_author(msg),
 			purple_message_get_contents(msg),
 			purple_message_get_flags(msg),
 			purple_message_get_time(msg));

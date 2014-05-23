@@ -416,7 +416,7 @@ static void nullprpl_close(PurpleConnection *gc)
 static int nullprpl_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
   const char *from_username = purple_account_get_username(purple_connection_get_account(gc));
-  const gchar *who = purple_message_get_who(msg);
+  const gchar *who = purple_message_get_recipient(msg);
   PurpleMessageFlags receive_flags;
   PurpleAccount *to_acct = purple_accounts_find(who, NULLPRPL_ID);
   PurpleConnection *to;

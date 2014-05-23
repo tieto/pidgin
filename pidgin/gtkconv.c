@@ -6223,7 +6223,7 @@ pidgin_conv_write_im(PurpleIMConversation *im, PurpleMessage *msg)
 		return;
 	}
 
-	purple_conversation_write(conv, purple_message_get_who(msg),
+	purple_conversation_write(conv, purple_message_get_author(msg),
 		purple_message_get_contents(msg), flags,
 		purple_message_get_time(msg));
 }

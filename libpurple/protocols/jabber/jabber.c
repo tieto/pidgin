@@ -3072,7 +3072,7 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 	who = g_strdup_printf("%s@%s/%s", chat->room, chat->server, args[0]);
 
 	jabber_message_send_im(purple_conversation_get_connection(conv),
-		purple_message_new(who, args[1], PURPLE_MESSAGE_SEND));
+		purple_message_new_outgoing(who, args[1], 0));
 
 	g_free(who);
 	return PURPLE_CMD_RET_OK;

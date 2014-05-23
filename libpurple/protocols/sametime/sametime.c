@@ -3928,7 +3928,7 @@ static int mw_prpl_send_im(PurpleConnection *gc, PurpleMessage *msg) {
 
   g_return_val_if_fail(pd != NULL, 0);
 
-  g_strlcpy(name, purple_message_get_who(msg), sizeof(name));
+  g_strlcpy(name, purple_message_get_recipient(msg), sizeof(name));
   message = purple_message_get_contents(msg);
   flags = purple_message_get_flags(msg);
 

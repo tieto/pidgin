@@ -1540,20 +1540,20 @@ msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	char *msgtext;
 	size_t msglen;
 	const char *username;
-	const gchar *who = purple_message_get_who(pmsg);
+	const gchar *rcpt = purple_message_get_recipient(pmsg);
 	PurpleMessageFlags flags = purple_message_get_flags(pmsg);
-	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(gc), rcpt);
 	const gchar *cont = purple_message_get_contents(pmsg);
 
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
 
 	session = purple_connection_get_protocol_data(gc);
-	swboard = msn_session_find_swboard(session, who);
+	swboard = msn_session_find_swboard(session, rcpt);
 
-	if (!strncmp("tel:+", who, 5)) {
+	if (!strncmp("tel:+", rcpt, 5)) {
 		char *text = purple_markup_strip_html(cont);
-		send_to_mobile(gc, who, text);
+		send_to_mobile(gc, rcpt, text);
 		g_free(text);
 		return 1;
 	}
@@ -1562,7 +1562,7 @@ msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 		PurplePresence *p = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 			char *text = purple_markup_strip_html(cont);
-			send_to_mobile(gc, who, text);
+			send_to_mobile(gc, rcpt, text);
 			g_free(text);
 			return 1;
 		}
@@ -1588,20 +1588,20 @@ msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	}
 
 	msg = msn_message_new_plain(msgtext);
-	msg->remote_user = g_strdup(who);
+	msg->remote_user = g_strdup(rcpt);
 	msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
 	g_free(msgformat);
 	g_free(msgtext);
 
 	purple_debug_info("msn", "prepare to send online Message\n");
-	if (g_ascii_strcasecmp(who, username))
+	if (g_ascii_strcasecmp(rcpt, username))
 	{
 		if (flags & PURPLE_MESSAGE_AUTO_RESP) {
 			msn_message_set_flag(msg, 'U');
 		}
 
-		if (msn_user_is_yahoo(account, who) || !(msn_user_is_online(account, who) || swboard != NULL)) {
+		if (msn_user_is_yahoo(account, rcpt) || !(msn_user_is_online(account, rcpt) || swboard != NULL)) {
 			/*we send the online and offline Message to Yahoo User via UBM*/
 			purple_debug_info("msn", "send to Yahoo User\n");
 			msn_notification_send_uum(session, msg);
@@ -1631,9 +1631,9 @@ msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 		g_free(pre);
 		g_free(post);
 
-		purple_serv_got_typing_stopped(gc, who);
+		purple_serv_got_typing_stopped(gc, rcpt);
 		imdata->gc = g_object_ref(gc);
-		imdata->who = who;
+		imdata->who = rcpt;
 		imdata->msg = body_str;
 		imdata->flags = flags & ~PURPLE_MESSAGE_SEND;
 		imdata->when = time(NULL);

@@ -157,7 +157,7 @@ im_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg,
 {
 	PurpleConversation *conv = PURPLE_CONVERSATION(
 		purple_conversations_find_im_with_account(
-			purple_message_get_who(msg), account));
+			purple_message_get_recipient(msg), account));
 	play_conv_event(conv, event);
 }
 

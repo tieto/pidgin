@@ -564,7 +564,7 @@ static int irc_im_send(PurpleConnection *gc, PurpleMessage *msg)
 	char *plain;
 	const char *args[2];
 
-	args[0] = irc_nick_skip_mode(irc, purple_message_get_who(msg));
+	args[0] = irc_nick_skip_mode(irc, purple_message_get_recipient(msg));
 
 	purple_markup_html_to_xhtml(purple_message_get_contents(msg),
 		NULL, &plain);

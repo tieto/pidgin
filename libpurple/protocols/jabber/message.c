@@ -1127,14 +1127,14 @@ int jabber_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 	char *xhtml;
 	char *tmp;
 	char *resource;
-	const gchar *who = purple_message_get_who(msg);
+	const gchar *rcpt = purple_message_get_recipient(msg);
 
-	if (!who || purple_message_is_empty(msg))
+	if (!rcpt || purple_message_is_empty(msg))
 		return 0;
 
-	resource = jabber_get_resource(who);
+	resource = jabber_get_resource(rcpt);
 
-	jb = jabber_buddy_find(purple_connection_get_protocol_data(gc), who, TRUE);
+	jb = jabber_buddy_find(purple_connection_get_protocol_data(gc), rcpt, TRUE);
 	jbr = jabber_buddy_find_resource(jb, resource);
 
 	g_free(resource);
@@ -1143,7 +1143,7 @@ int jabber_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 	jm->js = purple_connection_get_protocol_data(gc);
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->chat_state = JM_STATE_ACTIVE;
-	jm->to = g_strdup(who);
+	jm->to = g_strdup(rcpt);
 	jm->id = jabber_get_next_id(jm->js);
 
 	if(jbr) {

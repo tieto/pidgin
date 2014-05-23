@@ -4500,8 +4500,8 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 		if (status && g_str_equal(status, "Valid")) {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
-			yahoo_send_im(sms_cb_data->gc, purple_message_new(sms_cb_data->who,
-				sms_cb_data->what, PURPLE_MESSAGE_SEND));
+			yahoo_send_im(sms_cb_data->gc, purple_message_new_outgoing(
+				sms_cb_data->who, sms_cb_data->what, 0));
 		} else {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
@@ -4575,7 +4575,7 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	glong lenc = 0;
 	struct yahoo_p2p_data *p2p_data;
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
-	const gchar *who = purple_message_get_who(pmsg);
+	const gchar *rcpt = purple_message_get_recipient(pmsg);
 
 	msg2 = yahoo_string_encode(gc, msg, TRUE);
 
@@ -4594,21 +4594,21 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 		}
 	}
 
-	fed = yahoo_get_federation_from_name(who);
+	fed = yahoo_get_federation_from_name(rcpt);
 
-	if (who[0] == '+') {
+	if (rcpt[0] == '+') {
 		/* we have an sms to be sent */
 		gchar *carrier = NULL;
 		const char *alias = NULL;
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleIMConversation *im = purple_conversations_find_im_with_account(who, account);
+		PurpleIMConversation *im = purple_conversations_find_im_with_account(rcpt, account);
 
-		carrier = g_hash_table_lookup(yd->sms_carrier, who);
+		carrier = g_hash_table_lookup(yd->sms_carrier, rcpt);
 		if (!carrier) {
 			struct yahoo_sms_carrier_cb_data *sms_cb_data;
 			sms_cb_data = g_malloc(sizeof(struct yahoo_sms_carrier_cb_data));
 			sms_cb_data->gc = gc;
-			sms_cb_data->who = g_strdup(who);
+			sms_cb_data->who = g_strdup(rcpt);
 			sms_cb_data->what = g_strdup(purple_message_get_contents(pmsg));
 
 			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
@@ -4634,7 +4634,7 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 		yahoo_packet_hash(pkt, "sssss",
 			1, purple_connection_get_display_name(gc),
 			69, alias,
-			5, who + 1,
+			5, rcpt + 1,
 			68, carrier,
 			14, msg2);
 		yahoo_packet_send_and_free(pkt, yd);
@@ -4646,7 +4646,7 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, yd->session_id);
-	fed_who = who;
+	fed_who = rcpt;
 	switch (fed) {
 		case YAHOO_FEDERATION_MSN:
 		case YAHOO_FEDERATION_OCS:
@@ -4677,13 +4677,13 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	 *
 	 * If they have not set an IMVironment, then use the default.
 	 */
-	wb = purple_whiteboard_get_session(purple_connection_get_account(gc), who);
+	wb = purple_whiteboard_get_session(purple_connection_get_account(gc), rcpt);
 	if (wb)
 		yahoo_packet_hash_str(pkt, 63, DOODLE_IMV_KEY);
 	else
 	{
 		const char *imv;
-		imv = g_hash_table_lookup(yd->imvironments, who);
+		imv = g_hash_table_lookup(yd->imvironments, rcpt);
 		if (imv != NULL)
 			yahoo_packet_hash_str(pkt, 63, imv);
 		else
@@ -4700,14 +4700,14 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	/* We may need to not send any packets over 2000 bytes, but I'm not sure yet. */
 	if ((YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt)) <= 2000) {
 		/* if p2p link exists, send through it. To-do: key 15, time value to be sent in case of p2p */
-		if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !fed) {
+		if( (p2p_data = g_hash_table_lookup(yd->peers, rcpt)) && !fed) {
 			yahoo_packet_hash_int(pkt, 11, p2p_data->session_id);
 			yahoo_p2p_write_pkt(p2p_data->source, pkt);
 		}
 		else	{
 			yahoo_packet_send(pkt, yd);
 			if(!fed)
-				yahoo_send_p2p_pkt(gc, who, 0);		/* send p2p packet, with val_13=0 */
+				yahoo_send_p2p_pkt(gc, rcpt, 0);		/* send p2p packet, with val_13=0 */
 		}
 	}
 	else

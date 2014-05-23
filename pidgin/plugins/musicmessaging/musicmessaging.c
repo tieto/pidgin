@@ -489,16 +489,16 @@ static void send_request(MMConversation *mmconv)
 {
 	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
-	purple_serv_send_im(connection, purple_message_new(
-		convName, MUSICMESSAGING_START_MSG, PURPLE_MESSAGE_SEND));
+	purple_serv_send_im(connection, purple_message_new_outgoing(
+		convName, MUSICMESSAGING_START_MSG, 0));
 }
 
 static void send_request_confirmed(MMConversation *mmconv)
 {
 	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
-	purple_serv_send_im(connection, purple_message_new(
-		convName, MUSICMESSAGING_CONFIRM_MSG, PURPLE_MESSAGE_SEND));
+	purple_serv_send_im(connection, purple_message_new_outgoing(
+		convName, MUSICMESSAGING_CONFIRM_MSG, 0));
 }
 
 

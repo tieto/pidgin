@@ -134,8 +134,8 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	msgflags |= PURPLE_MESSAGE_SEND;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
-		msg = purple_message_new(purple_conversation_get_name(conv),
-			sent, msgflags);
+		msg = purple_message_new_outgoing(
+			purple_conversation_get_name(conv), sent, msgflags);
 
 		purple_signal_emit(purple_conversations_get_handle(), "sending-im-msg",
 			account, msg);
@@ -154,7 +154,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		int id = purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv));
 
-		msg = purple_message_new(NULL, sent, msgflags);
+		msg = purple_message_new_outgoing(NULL, sent, msgflags);
 
 		purple_signal_emit(purple_conversations_get_handle(),
 			"sending-chat-msg", account, msg, id);

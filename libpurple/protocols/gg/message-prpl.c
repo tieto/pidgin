@@ -247,7 +247,7 @@ static void ggp_message_got_display(PurpleConnection *gc,
 		PurpleIMConversation *im = ggp_message_get_conv(gc, msg->user);
 		PurpleMessage *pmsg;
 
-		pmsg = purple_message_new(NULL, msg->text, PURPLE_MESSAGE_SEND);
+		pmsg = purple_message_new_outgoing(NULL, msg->text, 0);
 		purple_message_set_time(pmsg, msg->time);
 
 		purple_conversation_write_message(PURPLE_CONVERSATION(im), pmsg);
@@ -643,7 +643,7 @@ int ggp_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 	ggp_buddy_data *buddy_data;
 	gchar *gg_msg;
 	gboolean succ;
-	const gchar *who = purple_message_get_who(msg);
+	const gchar *rcpt = purple_message_get_recipient(msg);
 
 	/* TODO: return -ENOTCONN, if not connected */
 
@@ -651,13 +651,13 @@ int ggp_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 		return 0;
 
 	buddy_data = ggp_buddy_get_data(purple_blist_find_buddy(
-		purple_connection_get_account(gc), who));
+		purple_connection_get_account(gc), rcpt));
 
 	if (buddy_data->blocked)
 		return -1;
 
 	im = purple_conversations_find_im_with_account(
-		who, purple_connection_get_account(gc));
+		rcpt, purple_connection_get_account(gc));
 
 	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(im),
 		purple_message_get_contents(msg));
@@ -670,12 +670,12 @@ int ggp_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 
 #if GGP_ENABLE_GG11
 	succ = (gg_send_message_html(info->session, GG_CLASS_CHAT,
-		ggp_str_to_uin(who), (unsigned char *)gg_msg) >= 0);
+		ggp_str_to_uin(rcpt), (unsigned char *)gg_msg) >= 0);
 #else
 	{
 		gchar *plain = purple_markup_strip_html(gg_msg);
 		succ = (gg_send_message(info->session, GG_CLASS_CHAT,
-			ggp_str_to_uin(who), (unsigned char *)plain) >= 0);
+			ggp_str_to_uin(rcpt), (unsigned char *)plain) >= 0);
 		g_free(plain);
 	}
 #endif

@@ -208,7 +208,7 @@ im_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg,
 	PurpleSoundEventID event)
 {
 	PurpleIMConversation *im = purple_conversations_find_im_with_account(
-		purple_message_get_who(msg), account);
+		purple_message_get_recipient(msg), account);
 	play_conv_event(PURPLE_CONVERSATION(im), event);
 }
 

@@ -1032,7 +1032,7 @@ static void simple_send_message(struct simple_account_data *sip, const char *to,
 
 static int simple_im_send(PurpleConnection *gc, PurpleMessage *msg) {
 	struct simple_account_data *sip = purple_connection_get_protocol_data(gc);
-	char *to = g_strdup(purple_message_get_who(msg));
+	char *to = g_strdup(purple_message_get_recipient(msg));
 	char *text = purple_unescape_html(purple_message_get_contents(msg));
 	simple_send_message(sip, to, text, NULL);
 	g_free(to);
