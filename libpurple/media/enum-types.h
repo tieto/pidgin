@@ -136,6 +136,17 @@ typedef enum {
 } PurpleMediaState;
 
 /**
+ * PurpleMediaCipher:
+ *
+ * Media ciphers
+ */
+typedef enum {
+	PURPLE_MEDIA_CIPHER_NULL,
+	PURPLE_MEDIA_CIPHER_AES_128_ICM,
+	PURPLE_MEDIA_CIPHER_AES_256_ICM
+} PurpleMediaCipher;
+
+/**
  * purple_media_candidate_type_get_type:
  *
  * Gets the media candidate type's GType
@@ -188,6 +199,15 @@ GType purple_media_session_type_get_type(void);
  * Returns: The state-changed enum's GType
  */
 GType purple_media_state_changed_get_type(void);
+
+/**
+ * purple_media_cipher_get_type:
+ *
+ * Gets the type of the cipher enum
+ *
+ * Returns: The cipher enum's GType
+ */
+GType purple_media_cipher_get_type(void);
 
 G_END_DECLS
 

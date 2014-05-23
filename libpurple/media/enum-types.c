@@ -215,3 +215,25 @@ purple_media_state_changed_get_type()
 	return type;
 }
 
+/*
+ * PurpleMediaCipher
+ */
+
+GType
+purple_media_cipher_get_type()
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{ PURPLE_MEDIA_CIPHER_NULL,
+				"PURPLE_MEDIA_CIPHER_NULL", "null" },
+			{ PURPLE_MEDIA_CIPHER_AES_128_ICM,
+				"PURPLE_MEDIA_CIPHER_AES_128_ICM", "AES-128-ICM" },
+			{ PURPLE_MEDIA_CIPHER_AES_256_ICM,
+				"PURPLE_MEDIA_CIPHER_AES_256_ICM", "AES-256-ICM" },
+			{ 0, NULL, NULL }
+		};
+		type = g_enum_register_static("PurpleMediaCipher", values);
+	}
+	return type;
+}
