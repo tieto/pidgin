@@ -115,15 +115,15 @@ static void historize(PurpleConversation *c)
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), alias,
 			purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
-	purple_conversation_write(c, "", header, mflag, time(NULL));
+	purple_conversation_write_system_message(c, header, mflag);
 	g_free(header);
 
 	if (flags & PURPLE_LOG_READ_NO_NEWLINE)
 		purple_str_strip_char(history, '\n');
-	purple_conversation_write(c, "", history, mflag, time(NULL));
+	purple_conversation_write_system_message(c, history, mflag);
 	g_free(history);
 
-	purple_conversation_write(c, "", "<hr>", mflag, time(NULL));
+	purple_conversation_write_system_message(c, "<hr>", mflag);
 
 	g_list_foreach(logs, (GFunc)purple_log_free, NULL);
 	g_list_free(logs);

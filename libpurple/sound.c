@@ -81,6 +81,8 @@ purple_sound_play_event(PurpleSoundEventID event, const PurpleAccount *account)
 	if (!purple_sound_play_required(account))
 		return;
 
+	g_return_if_fail(event < PURPLE_NUM_SOUNDS);
+
 	if (time(NULL) - last_played[event] < 2)
 		return;
 	last_played[event] = time(NULL);

@@ -606,10 +606,9 @@ purple_protocol_im_iface_get_type(void)
 
 int
 purple_protocol_im_iface_send(PurpleProtocol *protocol, PurpleConnection *gc,
-		const char *who, const char *message, PurpleMessageFlags flags)
+		PurpleMessage *msg)
 {
-	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, 0, send, gc, who, message,
-			flags);
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, 0, send, gc, msg);
 }
 
 unsigned int
@@ -704,18 +703,11 @@ purple_protocol_chat_iface_leave(PurpleProtocol *protocol, PurpleConnection *gc,
 	DEFINE_PROTOCOL_FUNC(protocol, leave, gc, id);
 }
 
-void
-purple_protocol_chat_iface_whisper(PurpleProtocol *protocol,
-		PurpleConnection *gc, int id, const char *who, const char *message)
-{
-	DEFINE_PROTOCOL_FUNC(protocol, whisper, gc, id, who, message);
-}
-
 int 
 purple_protocol_chat_iface_send(PurpleProtocol *protocol, PurpleConnection *gc,
-		int id, const char *message, PurpleMessageFlags flags)
+		int id, PurpleMessage *msg)
 {
-	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, 0, send, gc, id, message, flags);
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, 0, send, gc, id, msg);
 }
 
 char *

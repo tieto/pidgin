@@ -522,8 +522,7 @@ pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 			gtkmedia->priv->screenname,
 			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL)
-		purple_conversation_write(conv, NULL, msg,
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(conv, msg, 0);
 }
 
 typedef struct
@@ -595,8 +594,8 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 			gtkmedia->priv->screenname,
 			purple_media_get_account(gtkmedia->priv->media));
 	if (conv != NULL) {
-		purple_conversation_write(conv, NULL, error,
-			PURPLE_MESSAGE_ERROR, time(NULL));
+		purple_conversation_write_system_message(
+			conv, error, PURPLE_MESSAGE_ERROR);
 	} else {
 		purple_notify_error(NULL, NULL, _("Media error"), error,
 			purple_request_cpar_from_conversation(conv));

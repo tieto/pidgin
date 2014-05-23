@@ -68,10 +68,9 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
 	 translate it literally.  If you can't find a fitting cultural
 	 reference in your language, consider translating something
 	 like this instead: "You feel a new message coming." */
-      purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
-			      _("You feel a disturbance in the force..."),
-			      PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_ACTIVE_ONLY,
-			      time(NULL));
+      purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+		_("You feel a disturbance in the force..."),
+		PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_ACTIVE_ONLY);
     }
 
     /* Necessary because we may be creating a new conversation window. */

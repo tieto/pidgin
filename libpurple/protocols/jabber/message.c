@@ -107,8 +107,8 @@ static void handle_chat(JabberMessage *jm)
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
 					 * user from the conversation like we do with chats now. */
-					purple_conversation_write(PURPLE_CONVERSATION(im), "", buf,
-					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
+					purple_conversation_write_system_message(
+						PURPLE_CONVERSATION(im), buf, 0);
 				}
 			}
 			purple_serv_got_typing_stopped(gc, jm->from);
@@ -220,7 +220,7 @@ static void handle_groupchat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
 	JabberChat *chat;
-	PurpleMessageFlags messageFlags = 0;
+	PurpleMessageFlags messageFlags = PURPLE_MESSAGE_RECV;
 
 	if(!jid)
 		return;
@@ -242,7 +242,8 @@ static void handle_groupchat(JabberMessage *jm)
 				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);
 			else
 				msg = g_strdup_printf(_("The topic is: %s"), tmp2);
-			purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "", msg, messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(chat->conv),
+				msg, messageFlags);
 			g_free(tmp);
 			g_free(tmp2);
 			g_free(msg);
@@ -255,9 +256,9 @@ static void handle_groupchat(JabberMessage *jm)
 							messageFlags | (jm->delayed ? PURPLE_MESSAGE_DELAYED : 0),
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
-			purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "",
-							jm->xhtml ? jm->xhtml : jm->body,
-							messageFlags | PURPLE_MESSAGE_SYSTEM, jm->sent);
+			purple_conversation_write_system_message(
+				PURPLE_CONVERSATION(chat->conv),
+				jm->xhtml ? jm->xhtml : jm->body, messageFlags);
 	}
 
 	jabber_id_free(jid);
@@ -940,9 +941,9 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 	}
 
 	if (has_too_large_smiley) {
-		purple_conversation_write(conv, NULL,
+		purple_conversation_write_system_message(conv,
 			_("A custom smiley in the message is too large to send."),
-			PURPLE_MESSAGE_ERROR, time(NULL));
+			PURPLE_MESSAGE_ERROR);
 	}
 
 	if (!found_smileys)
@@ -1118,8 +1119,7 @@ jabber_xhtml_plain_equal(const char *xhtml_escaped,
 	return ret;
 }
 
-int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *msg,
-		PurpleMessageFlags flags)
+int jabber_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;
@@ -1127,19 +1127,14 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	char *xhtml;
 	char *tmp;
 	char *resource;
+	const gchar *rcpt = purple_message_get_recipient(msg);
 
-	if(!who || !msg)
+	if (!rcpt || purple_message_is_empty(msg))
 		return 0;
 
-	if (purple_debug_is_verbose()) {
-		/* TODO: Maybe we need purple_debug_is_really_verbose? :) */
-		purple_debug_misc("jabber", "jabber_message_send_im: who='%s'\n"
-		                            "\tmsg='%s'\n", who, msg);
-	}
+	resource = jabber_get_resource(rcpt);
 
-	resource = jabber_get_resource(who);
-
-	jb = jabber_buddy_find(purple_connection_get_protocol_data(gc), who, TRUE);
+	jb = jabber_buddy_find(purple_connection_get_protocol_data(gc), rcpt, TRUE);
 	jbr = jabber_buddy_find_resource(jb, resource);
 
 	g_free(resource);
@@ -1148,7 +1143,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	jm->js = purple_connection_get_protocol_data(gc);
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->chat_state = JM_STATE_ACTIVE;
-	jm->to = g_strdup(who);
+	jm->to = g_strdup(rcpt);
 	jm->id = jabber_get_next_id(jm->js);
 
 	if(jbr) {
@@ -1163,7 +1158,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 		}
 	}
 
-	tmp = purple_utf8_strip_unprintables(msg);
+	tmp = purple_utf8_strip_unprintables(purple_message_get_contents(msg));
 	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
 
@@ -1191,7 +1186,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	return 1;
 }
 
-int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, PurpleMessageFlags flags)
+int jabber_message_send_chat(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	JabberChat *chat;
 	JabberMessage *jm;
@@ -1199,7 +1194,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	char *xhtml;
 	char *tmp;
 
-	if(!msg || !gc)
+	if (!gc || purple_message_is_empty(msg))
 		return 0;
 
 	js = purple_connection_get_protocol_data(gc);
@@ -1214,7 +1209,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);
 
-	tmp = purple_utf8_strip_unprintables(msg);
+	tmp = purple_utf8_strip_unprintables(purple_message_get_contents(msg));
 	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);

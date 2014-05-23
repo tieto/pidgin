@@ -321,7 +321,8 @@ scrncap_draw_window_response(GtkDialog *draw_window, gint response_id,
 	image = scrncap_pixbuf_to_image(result);
 
 	/* translators: this is the file name prefix,
-	 * keep it lowercase and pure ASCII */
+	 * keep it lowercase and pure ASCII.
+	 * Please avoid "_" character, use "-" instead. */
 	fname_prefix = _("screenshot-");
 	fname = g_strdup_printf("%s%u", fname_prefix, ++fname_no);
 	purple_image_set_friendly_filename(image, fname);

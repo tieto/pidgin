@@ -165,7 +165,7 @@ static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 		what = tmp;
 	}
 
-	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, what, time(NULL));
+	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who, PURPLE_MESSAGE_RECV, what, time(NULL));
 	g_free(what);
 }
 

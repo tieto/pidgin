@@ -1531,11 +1531,9 @@ msn_send_im_message(MsnSession *session, MsnMessage *msg)
 }
 
 static int
-msn_send_im(PurpleConnection *gc, const char *who, const char *message,
-			PurpleMessageFlags flags)
+msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 {
 	PurpleAccount *account;
-	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(gc), who);
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
@@ -1543,17 +1541,20 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	char *msgtext;
 	size_t msglen;
 	const char *username;
+	const gchar *rcpt = purple_message_get_recipient(pmsg);
+	PurpleMessageFlags flags = purple_message_get_flags(pmsg);
+	PurpleBuddy *buddy = purple_blist_find_buddy(purple_connection_get_account(gc), rcpt);
+	const gchar *cont = purple_message_get_contents(pmsg);
 
-	purple_debug_info("msn", "send IM {%s} to %s\n", message, who);
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
 
 	session = purple_connection_get_protocol_data(gc);
-	swboard = msn_session_find_swboard(session, who);
+	swboard = msn_session_find_swboard(session, rcpt);
 
-	if (!strncmp("tel:+", who, 5)) {
-		char *text = purple_markup_strip_html(message);
-		send_to_mobile(gc, who, text);
+	if (!strncmp("tel:+", rcpt, 5)) {
+		char *text = purple_markup_strip_html(cont);
+		send_to_mobile(gc, rcpt, text);
 		g_free(text);
 		return 1;
 	}
@@ -1561,14 +1562,14 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	if (buddy) {
 		PurplePresence *p = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
-			char *text = purple_markup_strip_html(message);
-			send_to_mobile(gc, who, text);
+			char *text = purple_markup_strip_html(cont);
+			send_to_mobile(gc, rcpt, text);
 			g_free(text);
 			return 1;
 		}
 	}
 
-	msn_import_html(message, &msgformat, &msgtext);
+	msn_import_html(cont, &msgformat, &msgtext);
 	msglen = strlen(msgtext);
 	if (msglen == 0) {
 		/* Stuff like <hr> will be ignored. Don't send an empty message
@@ -1588,20 +1589,20 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msg = msn_message_new_plain(msgtext);
-	msg->remote_user = g_strdup(who);
+	msg->remote_user = g_strdup(rcpt);
 	msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
 	g_free(msgformat);
 	g_free(msgtext);
 
 	purple_debug_info("msn", "prepare to send online Message\n");
-	if (g_ascii_strcasecmp(who, username))
+	if (g_ascii_strcasecmp(rcpt, username))
 	{
 		if (flags & PURPLE_MESSAGE_AUTO_RESP) {
 			msn_message_set_flag(msg, 'U');
 		}
 
-		if (msn_user_is_yahoo(account, who) || !(msn_user_is_online(account, who) || swboard != NULL)) {
+		if (msn_user_is_yahoo(account, rcpt) || !(msn_user_is_online(account, rcpt) || swboard != NULL)) {
 			/*we send the online and offline Message to Yahoo User via UBM*/
 			purple_debug_info("msn", "send to Yahoo User\n");
 			msn_notification_send_uum(session, msg);
@@ -1631,9 +1632,9 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(pre);
 		g_free(post);
 
-		purple_serv_got_typing_stopped(gc, who);
+		purple_serv_got_typing_stopped(gc, rcpt);
 		imdata->gc = g_object_ref(gc);
-		imdata->who = who;
+		imdata->who = rcpt;
 		imdata->msg = body_str;
 		imdata->flags = flags & ~PURPLE_MESSAGE_SEND;
 		imdata->when = time(NULL);
@@ -2016,7 +2017,7 @@ msn_chat_leave(PurpleConnection *gc, int id)
 }
 
 static int
-msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
+msn_chat_send(PurpleConnection *gc, int id, PurpleMessage *pmsg)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -2040,7 +2041,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 
 	swboard->flag |= MSN_SB_FLAG_IM;
 
-	msn_import_html(message, &msgformat, &msgtext);
+	msn_import_html(purple_message_get_contents(pmsg), &msgformat, &msgtext);
 	msglen = strlen(msgtext);
 
 	if ((msglen == 0) || (msglen + strlen(msgformat) + strlen(VERSION) > 1564))
@@ -2060,7 +2061,8 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	g_free(msgformat);
 	g_free(msgtext);
 
-	purple_serv_got_chat_in(gc, id, username, flags, message, time(NULL));
+	purple_serv_got_chat_in(gc, id, username, purple_message_get_flags(pmsg),
+		purple_message_get_contents(pmsg), time(NULL));
 
 	return 0;
 }

@@ -339,22 +339,23 @@ static gboolean max_message_difference_cb(gpointer data) {
 /* Purple Signal Handlers */
 
 /* sent-im-msg */
-static void sent_im_msg(PurpleAccount *account, const char *receiver, const char *message) {
+static void sent_im_msg(PurpleAccount *account, PurpleMessage *msg, gpointer _unused)
+{
 	PurpleBuddy *buddy;
 	guint interval, words;
 	CapStatistics *stats = NULL;
 
-	buddy = purple_blist_find_buddy(account, receiver);
+	buddy = purple_blist_find_buddy(account, purple_message_get_who(msg));
 
 	if (buddy == NULL)
 		return;
 
 	interval = purple_prefs_get_int("/plugins/gtk/cap/max_msg_difference") * 60;
-	words = word_count(message);
+	words = word_count(purple_message_get_contents(msg));
 
 	stats = get_stats_for(buddy);
 
-	insert_word_count(purple_account_get_username(account), receiver, words);
+	insert_word_count(purple_account_get_username(account), purple_message_get_who(msg), words);
 	stats->last_message = time(NULL);
 	stats->last_message_status_id = purple_status_get_id(get_status_for(buddy));
 	if(stats->timeout_source_id != 0)

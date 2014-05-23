@@ -767,7 +767,7 @@ void purple_xfer_update_progress(PurpleXfer *xfer);
  *
  * Displays a file transfer-related message in the conversation window
  *
- * This is a wrapper around purple_conversation_write
+ * This is a wrapper around purple_conversation_write_system_message
  */
 void purple_xfer_conversation_write(PurpleXfer *xfer, const gchar *message, gboolean is_error);
 

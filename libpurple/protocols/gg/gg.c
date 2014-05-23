@@ -424,7 +424,7 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 	GGPInfo *info;
 	struct gg_event *ev;
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	info = purple_connection_get_protocol_data(gc);
 
@@ -676,8 +676,12 @@ static void ggp_login(PurpleAccount *account)
 	if (!ggp_deprecated_setup_proxy(gc))
 		return;
 
-	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_HTML |
-			PURPLE_CONNECTION_FLAG_NO_URLDESC);
+	purple_connection_set_flags(gc,
+#if ! GGP_ENABLE_GG11
+		PURPLE_CONNECTION_FLAG_NO_IMAGES |
+#endif
+		PURPLE_CONNECTION_FLAG_HTML |
+		PURPLE_CONNECTION_FLAG_NO_URLDESC);
 
 	glp = g_new0(struct gg_login_params, 1);
 #if GGP_ENABLE_GG11

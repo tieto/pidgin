@@ -11,7 +11,7 @@
  *
  * Beyond that basic functionality, nullprpl supports presence and
  * away/available messages, offline messages, user info, typing notification,
- * privacy allow/block lists, chat rooms, whispering, room lists, and protocol
+ * privacy allow/block lists, chat rooms, room lists, and protocol
  * icons and emblems. Notable missing features are file transfer and account
  * registration and authentication.
  *
@@ -74,12 +74,6 @@
  * for removing the protocol in plugin_unload.
  */
 static PurpleProtocol *my_protocol = NULL;
-
-/*
- * list of commands registered by the protocol, used to unregister the commands
- * when the protocol is removed.
- */
-static GSList *cmds = NULL;
 
 #define NULL_STATUS_ONLINE   "online"
 #define NULL_STATUS_AWAY     "away"
@@ -420,14 +414,16 @@ static void null_close(PurpleConnection *gc)
   foreach_null_gc(report_status_change, gc, NULL);
 }
 
-static int null_send_im(PurpleConnection *gc, const char *who,
-                            const char *message, PurpleMessageFlags flags)
+static int null_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
   const char *from_username = purple_account_get_username(purple_connection_get_account(gc));
-  PurpleMessageFlags receive_flags = ((flags & ~PURPLE_MESSAGE_SEND)
-                                      | PURPLE_MESSAGE_RECV);
+  const gchar *who = purple_message_get_recipient(msg);
+  PurpleMessageFlags receive_flags;
   PurpleAccount *to_acct = purple_accounts_find(who, "null");
   PurpleConnection *to;
+  const gchar *message = purple_message_get_contents(msg);
+
+  receive_flags = ((purple_message_get_flags(msg) & ~PURPLE_MESSAGE_SEND) | PURPLE_MESSAGE_RECV);
 
   purple_debug_info("nullprpl", "sending message from %s to %s: %s\n",
                     from_username, who, message);
@@ -786,71 +782,6 @@ static void null_chat_leave(PurpleConnection *gc, int id) {
   foreach_gc_in_chat(left_chat_room, gc, id, NULL);
 }
 
-static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
-                                 gchar **args, gchar **error, void *userdata) {
-  const char *to_username;
-  const char *message;
-  const char *from_username;
-  PurpleChatUser *chat_user;
-  PurpleConnection *to;
-
-  /* parse args */
-  to_username = args[0];
-  message = args[1];
-
-  if (!to_username || !*to_username) {
-    *error = g_strdup(_("Whisper is missing recipient."));
-    return PURPLE_CMD_RET_FAILED;
-  } else if (!message || !*message) {
-    *error = g_strdup(_("Whisper is missing message."));
-    return PURPLE_CMD_RET_FAILED;
-  }
-
-  from_username = purple_account_get_username(purple_conversation_get_account(conv));
-  purple_debug_info("nullprpl", "%s whispers to %s in chat room %s: %s\n",
-                    from_username, to_username,
-                    purple_conversation_get_name(conv), message);
-
-  chat_user = purple_chat_conversation_find_user(PURPLE_CHAT_CONVERSATION(conv), to_username);
-  to = get_null_gc(to_username);
-
-  if (!chat_user) {
-    /* this will be freed by the caller */
-    *error = g_strdup_printf(_("%s is not logged in."), to_username);
-    return PURPLE_CMD_RET_FAILED;
-  } else if (!to) {
-    *error = g_strdup_printf(_("%s is not in this chat room."), to_username);
-    return PURPLE_CMD_RET_FAILED;
-  } else {
-    /* write the whisper in the sender's chat window  */
-    char *message_to = g_strdup_printf("%s (to %s)", message, to_username);
-    purple_conversation_write_message(conv, from_username, message_to,
-                                      PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_WHISPER,
-                                      time(NULL));
-    g_free(message_to);
-
-    /* send the whisper */
-    purple_serv_chat_whisper(to, purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv)),
-                      from_username, message);
-
-    return PURPLE_CMD_RET_OK;
-  }
-}
-
-static void null_chat_whisper(PurpleConnection *gc, int id, const char *who,
-                                  const char *message) {
-  const char *username = purple_account_get_username(purple_connection_get_account(gc));
-  PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
-  purple_debug_info("nullprpl",
-                    "%s receives whisper from %s in chat room %s: %s\n",
-                    username, who, purple_conversation_get_name(PURPLE_CONVERSATION(chat)),
-                    message);
-
-  /* receive whisper on recipient's account */
-  purple_serv_got_chat_in(gc, id, who, PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_WHISPER,
-                   message, time(NULL));
-}
-
 static void receive_chat_message(PurpleChatConversation *from, PurpleChatConversation *to,
                                  int id, const char *room, gpointer userdata) {
   const char *message = (const char *)userdata;
@@ -863,10 +794,10 @@ static void receive_chat_message(PurpleChatConversation *from, PurpleChatConvers
                    time(NULL));
 }
 
-static int null_chat_send(PurpleConnection *gc, int id, const char *message,
-                              PurpleMessageFlags flags) {
+static int null_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg) {
   const char *username = purple_account_get_username(purple_connection_get_account(gc));
   PurpleChatConversation *chat = purple_conversations_find_chat(gc, id);
+  const gchar *message = purple_message_get_contents(msg);
 
   if (chat) {
     purple_debug_info("nullprpl",
@@ -950,9 +881,8 @@ static void set_chat_topic_fn(PurpleChatConversation *from, PurpleChatConversati
   else
     msg = g_strdup_printf(_("%s clears topic"), username);
 
-  purple_conversation_write_message(PURPLE_CONVERSATION(to), username, msg,
-                                    PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG,
-                                    time(NULL));
+  purple_conversation_write_system_message(PURPLE_CONVERSATION(to),
+    msg, PURPLE_MESSAGE_NO_LOG);
   g_free(msg);
 }
 
@@ -1152,7 +1082,6 @@ null_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
   chat_iface->get_name      = null_get_chat_name;
   chat_iface->invite        = null_chat_invite;
   chat_iface->leave         = null_chat_leave;
-  chat_iface->whisper       = null_chat_whisper;
   chat_iface->send          = null_chat_send;
   chat_iface->set_topic     = null_set_chat_topic;
 }
@@ -1246,32 +1175,12 @@ plugin_load(PurplePlugin *plugin, GError **error)
                                             g_free,      /* key free fn */
                                             NULL);       /* value free fn */
 
-  /* register whisper chat command, /msg */
-  id = purple_cmd_register("msg",
-                    "ws",                  /* args: recipient and message */
-                    PURPLE_CMD_P_DEFAULT,  /* priority */
-                    PURPLE_CMD_FLAG_CHAT,
-                    "null",
-                    send_whisper,
-                    "msg &lt;username&gt; &lt;message&gt;: send a private message, aka a whisper",
-                    NULL);                 /* userdata */
-
-  /* add /msg command to the commands list */
-  cmds = g_slist_prepend(cmds, GUINT_TO_POINTER(id));
-
   return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-  /* unregister the commands */
-  while (cmds) {
-    PurpleCmdId id = GPOINTER_TO_UINT(cmds->data);
-    purple_cmd_unregister(id);
-    cmds = g_slist_delete_link(cmds, cmds);
-  }
-
   purple_debug_info("nullprpl", "shutting down\n");
 
   /* remove the protocol from the core */

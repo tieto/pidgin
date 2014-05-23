@@ -702,8 +702,8 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
 								swboard->current_users);
 
-			purple_serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
-							 time(NULL));
+			purple_serv_got_chat_in(gc, swboard->chat_id, passport,
+				PURPLE_MESSAGE_RECV, body_final, time(NULL));
 			if (swboard->conv == NULL)
 			{
 				swboard->conv = PURPLE_CONVERSATION(purple_conversations_find_chat(gc, swboard->chat_id));
@@ -1162,10 +1162,9 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 							"invite, which is not yet "
 							"supported."), from);
 				if (buf) {
-					purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf,
-							PURPLE_MESSAGE_SYSTEM |
-							PURPLE_MESSAGE_NOTIFY,
-							time(NULL));
+					purple_conversation_write_system_message(
+						PURPLE_CONVERSATION(im), buf,
+						PURPLE_MESSAGE_NOTIFY);
 					g_free(buf);
 				}
 			}

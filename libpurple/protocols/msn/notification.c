@@ -1214,8 +1214,8 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 			else
 				error = _("Mobile message was not sent because an unknown error occurred.");
 
-			purple_conversation_write(conv, NULL, error,
-			                          PURPLE_MESSAGE_ERROR, time(NULL));
+			purple_conversation_write_system_message(conv, error,
+				PURPLE_MESSAGE_ERROR);
 
 			if ((id = purple_xmlnode_get_attrib(payloadNode, "id")) != NULL) {
 				unsigned int trId = atol(id);
@@ -1229,8 +1229,10 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 						char *body_str = msn_message_to_string(msg);
 						char *body_enc = g_markup_escape_text(body_str, -1);
 
-						purple_conversation_write(conv, NULL, body_enc,
-					                          	PURPLE_MESSAGE_RAW, time(NULL));
+						/* TODO: mark outgoing message as not delivered
+						 * (API to be implemented) */
+						purple_conversation_write_system_message(conv,
+							body_enc, PURPLE_MESSAGE_RAW);
 
 						g_free(body_str);
 						g_free(body_enc);

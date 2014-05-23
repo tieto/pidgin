@@ -374,7 +374,7 @@ msn_switchboard_report_user(MsnSwitchBoard *swboard, PurpleMessageFlags flags, c
 
 	if ((conv = msn_switchboard_get_conv(swboard)) != NULL)
 	{
-		purple_conversation_write(conv, NULL, msg, flags, time(NULL));
+		purple_conversation_write_system_message(conv, msg, flags);
 	}
 }
 
@@ -838,8 +838,8 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
 		 PURPLE_IS_CHAT_CONVERSATION(swboard->conv)))
-		purple_serv_got_chat_in(gc, swboard->chat_id, passport, 0, image_msg,
-						 time(NULL));
+		purple_serv_got_chat_in(gc, swboard->chat_id, passport,
+			PURPLE_MESSAGE_RECV, image_msg, time(NULL));
 	else
 		purple_serv_got_im(gc, passport, image_msg, 0, time(NULL));
 

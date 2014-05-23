@@ -41,7 +41,7 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 		return 1;
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
-	purple_conversation_write_message(convo, "", buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+	purple_conversation_write_system_message(convo, buf, PURPLE_MESSAGE_NO_LOG);
 	g_free(buf);
 
 	return 1;
@@ -97,6 +97,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	const char *src;
 	char *msg;
 	PurpleConversation *convo;
+	PurpleMessage *pmsg;
 
 	if (!args || !args[0] || !gc)
 		return 0;
@@ -107,19 +108,23 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 
 	/* XXX: we'd prefer to keep this in conversation.c */
 	if (PURPLE_IS_IM_CONVERSATION(convo)) {
+		pmsg = purple_message_new_outgoing(
+			purple_conversation_get_name(convo), msg, 0);
+
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sending-im-msg", irc->account,
-			purple_conversation_get_name(convo), &msg);
+			"sending-im-msg", irc->account, pmsg);
 	} else {
+		pmsg = purple_message_new_outgoing(NULL, msg, 0);
+
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sending-chat-msg", irc->account, &msg,
+			"sending-chat-msg", irc->account, pmsg,
 			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)));
 	}
 
-	if (!msg || !msg[0]) {
-		g_free(msg);
+	g_free(msg);
+	if (purple_message_is_empty(pmsg))
 		return 0;
-	}
+	msg = g_strdup(purple_message_get_contents(pmsg)); /* XXX: is it really necessary? */
 
 	if (strncmp(msg, "/me ", 4) != 0) {
 		newargs = g_new0(char *, 2);
@@ -164,11 +169,10 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	/* XXX: we'd prefer to keep this in conversation.c */
 	if (PURPLE_IS_IM_CONVERSATION(convo)) {
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sent-im-msg", irc->account,
-			purple_conversation_get_name(convo), msg);
+			"sent-im-msg", irc->account, pmsg);
 	} else {
 		purple_signal_emit(purple_conversations_get_handle(),
-			"sent-chat-msg", irc->account, msg,
+			"sent-chat-msg", irc->account, pmsg,
 			purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(convo)));
 	}
 
@@ -185,8 +189,8 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 			                 purple_connection_get_display_name(gc),
 			                 PURPLE_MESSAGE_SEND, action, time(NULL));
 		else
-			purple_conversation_write_message(convo, purple_connection_get_display_name(gc),
-			                     action, PURPLE_MESSAGE_SEND, time(NULL));
+			purple_conversation_write_message(convo, purple_message_new_outgoing(
+				purple_connection_get_display_name(gc), action, 0));
 		g_free(action);
 	}
 
@@ -498,8 +502,8 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 		gc = purple_account_get_connection(irc->account);
 		irc_cmd_privmsg(irc, cmd, target, args);
 		purple_conversation_write_message(PURPLE_CONVERSATION(im),
-				purple_connection_get_display_name(gc), args[1],
-				PURPLE_MESSAGE_SEND, time(NULL));
+			purple_message_new_outgoing(
+				purple_connection_get_display_name(gc), args[1], 0));
 	}
 
 	return 0;
@@ -578,8 +582,8 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conversation_write_message(PURPLE_CONVERSATION(chat), target, buf,
-				PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(chat), buf, PURPLE_MESSAGE_NO_LOG);
 		g_free(buf);
 
 		return 0;

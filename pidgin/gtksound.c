@@ -110,6 +110,8 @@ chat_nick_matches_name(PurpleChatConversation *chat, const char *aname)
 static void
 play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 {
+	g_return_if_fail(event < PURPLE_NUM_SOUNDS);
+
 	/* If we should not play the sound for some reason, then exit early */
 	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 	{
@@ -150,11 +152,12 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 }
 
 static void
-im_msg_sent_cb(PurpleAccount *account, const char *receiver,
-			   const char *message, PurpleSoundEventID event)
+im_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg,
+	PurpleSoundEventID event)
 {
 	PurpleConversation *conv = PURPLE_CONVERSATION(
-			purple_conversations_find_im_with_account(receiver, account));
+		purple_conversations_find_im_with_account(
+			purple_message_get_recipient(msg), account));
 	play_conv_event(conv, event);
 }
 
@@ -176,8 +179,8 @@ chat_user_left_cb(PurpleChatConversation *chat, const char *name,
 }
 
 static void
-chat_msg_sent_cb(PurpleAccount *account, const char *message,
-				 int id, PurpleSoundEventID event)
+chat_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg, int id,
+	PurpleSoundEventID event)
 {
 	PurpleConnection *conn = purple_account_get_connection(account);
 	PurpleConversation *conv = NULL;

@@ -377,6 +377,17 @@ PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *gc);
 	(purple_connection_get_state(gc) == PURPLE_CONNECTION_CONNECTED)
 
 /**
+ * purple_connection_is_disconnecting:
+ * @param gc The connection.
+ *
+ * Checks, if connection is in disconnecting state.
+ *
+ * Returns: %TRUE, if the account is disconnecting.
+ */
+gboolean
+purple_connection_is_disconnecting(const PurpleConnection *gc);
+
+/**
  * purple_connection_get_account:
  * @gc: The connection.
  *
@@ -554,24 +565,6 @@ GList *purple_connections_get_all(void);
  * Returns: (transfer none): A list of connecting connections.
  */
 GList *purple_connections_get_connecting(void);
-
-/**
- * PURPLE_CONNECTION_IS_VALID:
- * @gc: The connection to check
- *
- * Checks if @gc is still a valid pointer to a connection.
- *
- * This is deprecated -- do not use this. Instead, cancel your asynchronous
- * request when the #PurpleConnection is destroyed.
- *
- * Returns: %TRUE if @gc is valid.
- */
-/*
- * TODO: Eventually this bad boy will be removed, because it is
- *       a gross fix for a crashy problem.
- */
-#define PURPLE_CONNECTION_IS_VALID(gc) \
-	(g_list_find(purple_connections_get_all(), (gc)) != NULL)
 
 /**************************************************************************/
 /* UI Registration Functions                                              */

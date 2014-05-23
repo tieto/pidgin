@@ -1848,7 +1848,7 @@ static void mw_session_announce(struct mwSession *s,
   PurpleIMConversation *im;
   PurpleBuddy *buddy;
   char *who = from->user_id;
-  char *msg;
+  char *msg, *msg2;
 
   pd = mwSession_getClientData(s);
   acct = purple_connection_get_account(pd->gc);
@@ -1860,11 +1860,15 @@ static void mw_session_announce(struct mwSession *s,
 
   who = g_strdup_printf(_("Announcement from %s"), who);
   msg = purple_markup_linkify(text);
+  if (msg && msg[0])
+	msg2 = g_strdup_printf("%s: %s", who, msg);
+  else
+	msg2 = g_strdup(who);
 
-  purple_conversation_write(PURPLE_CONVERSATION(im), who, msg ? msg : "",
-  		PURPLE_MESSAGE_RECV, time(NULL));
+  purple_conversation_write_system_message(PURPLE_CONVERSATION(im), msg2, 0);
   g_free(who);
   g_free(msg);
+  g_free(msg2);
 }
 
 
@@ -2089,7 +2093,7 @@ static void mw_conf_text(struct mwConference *conf,
   gc = pd->gc;
 
   esc = g_markup_escape_text(text, -1);
-  purple_serv_got_chat_in(gc, CONF_TO_ID(conf), who->user_id, 0, esc, time(NULL));
+  purple_serv_got_chat_in(gc, CONF_TO_ID(conf), who->user_id, PURPLE_MESSAGE_RECV, esc, time(NULL));
   g_free(esc);
 }
 
@@ -3083,7 +3087,8 @@ static void mw_place_message(struct mwPlace *place,
   gc = pd->gc;
 
   esc = g_markup_escape_text(msg, -1);
-  purple_serv_got_chat_in(gc, PLACE_TO_ID(place), who->user, 0, esc, time(NULL));
+  purple_serv_got_chat_in(gc, PLACE_TO_ID(place), who->user,
+	PURPLE_MESSAGE_RECV, esc, time(NULL));
   g_free(esc);
 }
 
@@ -3917,19 +3922,23 @@ static char *im_mime_convert(PurpleConnection *gc,
 }
 
 
-static int mw_protocol_send_im(PurpleConnection *gc,
-			   const char *name,
-			   const char *message,
-			   PurpleMessageFlags flags) {
+static int mw_protocol_send_im(PurpleConnection *gc, PurpleMessage *msg) {
 
+  gchar name[1000];
   struct mwPurpleProtocolData *pd;
-  struct mwIdBlock who = { (char *) name, NULL };
+  struct mwIdBlock who = { name, NULL };
   struct mwConversation *conv;
+  const gchar *message;
+  PurpleMessageFlags flags;
 
   g_return_val_if_fail(gc != NULL, 0);
   pd = purple_connection_get_protocol_data(gc);
 
   g_return_val_if_fail(pd != NULL, 0);
+
+  g_strlcpy(name, purple_message_get_recipient(msg), sizeof(name));
+  message = purple_message_get_contents(msg);
+  flags = purple_message_get_flags(msg);
 
   conv = mwServiceIm_getConversation(pd->srvc_im, &who);
 
@@ -4774,20 +4783,8 @@ static void mw_protocol_chat_leave(PurpleConnection *gc,
 }
 
 
-static void mw_protocol_chat_whisper(PurpleConnection *gc,
-				 int id,
-				 const char *who,
-				 const char *message) {
-
-  mw_protocol_send_im(gc, who, message, 0);
-}
-
-
-static int mw_protocol_chat_send(PurpleConnection *gc,
-			     int id,
-			     const char *message,
-			     PurpleMessageFlags flags) {
-
+static int mw_protocol_chat_send(PurpleConnection *gc, int id, PurpleMessage *pmsg)
+{
   struct mwPurpleProtocolData *pd;
   struct mwConference *conf;
   char *msg;
@@ -4798,7 +4795,7 @@ static int mw_protocol_chat_send(PurpleConnection *gc,
   g_return_val_if_fail(pd != NULL, 0);
   conf = ID_TO_CONF(pd, id);
 
-  msg = purple_markup_strip_html(message);
+  msg = purple_markup_strip_html(purple_message_get_contents(pmsg));
 
   if(conf) {
     ret = ! mwConference_sendText(conf, msg);
@@ -5690,7 +5687,6 @@ mw_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
   chat_iface->get_name      = mw_protocol_get_chat_name;
   chat_iface->invite        = mw_protocol_chat_invite;
   chat_iface->leave         = mw_protocol_chat_leave;
-  chat_iface->whisper       = mw_protocol_chat_whisper;
   chat_iface->send          = mw_protocol_chat_send;
 }
 

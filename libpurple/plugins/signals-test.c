@@ -301,18 +301,22 @@ wrote_im_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
 }
 
 static void
-sending_im_msg_cb(PurpleAccount *account, char *recipient, char **buffer, void *data)
+sending_im_msg_cb(PurpleAccount *account, PurpleMessage *msg, void *data)
 {
 	purple_debug_misc("signals test", "sending-im-msg (%s, %s, %s)\n",
-					purple_account_get_username(account), recipient, *buffer);
+		purple_account_get_username(account),
+		purple_message_get_recipient(msg),
+		purple_message_get_contents(msg));
 
 }
 
 static void
-sent_im_msg_cb(PurpleAccount *account, const char *recipient, const char *buffer, void *data)
+sent_im_msg_cb(PurpleAccount *account, PurpleMessage *msg, void *data)
 {
 	purple_debug_misc("signals test", "sent-im-msg (%s, %s, %s)\n",
-					purple_account_get_username(account), recipient, buffer);
+		purple_account_get_username(account),
+		purple_message_get_recipient(msg),
+		purple_message_get_contents(msg));
 }
 
 static gboolean
@@ -354,19 +358,21 @@ wrote_chat_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
 }
 
 static gboolean
-sending_chat_msg_cb(PurpleAccount *account, char **buffer, int id, void *data)
+sending_chat_msg_cb(PurpleAccount *account, PurpleMessage *msg, int id, void *data)
 {
 	purple_debug_misc("signals test", "sending-chat-msg (%s, %s, %d)\n",
-					purple_account_get_username(account), *buffer, id);
+		purple_account_get_username(account),
+		purple_message_get_contents(msg), id);
 
 	return FALSE;
 }
 
 static void
-sent_chat_msg_cb(PurpleAccount *account, const char *buffer, int id, void *data)
+sent_chat_msg_cb(PurpleAccount *account, PurpleMessage *msg, int id, void *data)
 {
 	purple_debug_misc("signals test", "sent-chat-msg (%s, %s, %d)\n",
-					purple_account_get_username(account), buffer, id);
+		purple_account_get_username(account),
+		purple_message_get_contents(msg), id);
 }
 
 static gboolean

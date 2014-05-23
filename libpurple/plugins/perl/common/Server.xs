@@ -30,20 +30,6 @@ purple_serv_chat_leave(a, b)
 	Purple::Connection a
 	int b
 
-int  
-purple_serv_chat_send(con, a, b, flags)
-	Purple::Connection con 
-	int a
-	const char * b
-	Purple::MessageFlags flags
-
-void 
-purple_serv_chat_whisper(con, a, b, c)
-	Purple::Connection con
-	int a
-	const char * b
-	const char * c
-
 void 
 purple_serv_get_info(con, a)
 	Purple::Connection con 
@@ -191,13 +177,6 @@ purple_serv_send_file(gc, who, file)
 	Purple::Connection gc
 	const char *who
 	const char *file
-
-int  
-purple_serv_send_im(con, a, b, flags )
-	Purple::Connection con
-	const char * a
-	const char * b
-	Purple::MessageFlags flags
 
 int  
 purple_serv_send_typing(con, a, state)

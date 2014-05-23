@@ -1219,8 +1219,7 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 		}
 }
 
-int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
-			 PurpleMessageFlags msgflags)
+int silcpurple_chat_send(PurpleConnection *gc, int id, PurpleMessage *pmsg)
 {
 	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
@@ -1231,10 +1230,12 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 	SilcChannelPrivateKey key = NULL;
 	SilcMessageFlags flags;
 	int ret = 0;
+	const gchar *msg = purple_message_get_contents(pmsg);
 	char *msg2, *tmp;
 	gboolean found = FALSE;
 	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
 	SilcDList list;
+	PurpleMessageFlags msgflags = purple_message_get_flags(pmsg);
 
 	if (!msg || !conn)
 		return 0;

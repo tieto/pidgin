@@ -204,11 +204,11 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 }
 
 static void
-im_msg_sent_cb(PurpleAccount *account, const char *receiver,
-			   const char *message, PurpleSoundEventID event)
+im_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg,
+	PurpleSoundEventID event)
 {
 	PurpleIMConversation *im = purple_conversations_find_im_with_account(
-			receiver, account);
+		purple_message_get_recipient(msg), account);
 	play_conv_event(PURPLE_CONVERSATION(im), event);
 }
 
@@ -230,8 +230,8 @@ chat_user_left_cb(PurpleChatConversation *chat, const char *name,
 }
 
 static void
-chat_msg_sent_cb(PurpleAccount *account, const char *message,
-				 int id, PurpleSoundEventID event)
+chat_msg_sent_cb(PurpleAccount *account, PurpleMessage *msg, int id,
+	PurpleSoundEventID event)
 {
 	PurpleConnection *conn = purple_account_get_connection(account);
 	PurpleChatConversation *chat = NULL;

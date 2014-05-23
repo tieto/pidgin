@@ -197,15 +197,16 @@ message_displayed_cb(PurpleAccount *account, const char *who, char *message,
 }
 
 static void
-im_sent_im(PurpleAccount *account, const char *receiver, const char *message)
+im_sent_im(PurpleAccount *account, PurpleMessage *msg, gpointer _unused)
 {
 	PurpleIMConversation *im = NULL;
-	im = purple_conversations_find_im_with_account(receiver, account);
+	im = purple_conversations_find_im_with_account(
+		purple_message_get_who(msg), account);
 	unalert(PURPLE_CONVERSATION(im));
 }
 
 static void
-chat_sent_im(PurpleAccount *account, const char *message, int id)
+chat_sent_im(PurpleAccount *account, PurpleMessage *msg, int id)
 {
 	PurpleChatConversation *chat = NULL;
 	chat = purple_conversations_find_chat(purple_account_get_connection(account), id);

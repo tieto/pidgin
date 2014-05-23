@@ -387,9 +387,12 @@ struct _jabber_add_permit {
 static void authorize_add_cb(const char *message, gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
-		jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
-			jap->who, "subscribed");
+
+	PURPLE_ASSERT_CONNECTION_IS_VALID(jap->gc);
+
+	jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
+		jap->who, "subscribed");
+
 	g_free(jap->who);
 	g_free(jap);
 }
@@ -397,9 +400,12 @@ static void authorize_add_cb(const char *message, gpointer data)
 static void deny_add_cb(const char *message, gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
-		jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
-			jap->who, "unsubscribed");
+
+	PURPLE_ASSERT_CONNECTION_IS_VALID(jap->gc);
+
+	jabber_presence_subscription_set(purple_connection_get_protocol_data(jap->gc),
+		jap->who, "unsubscribed");
+
 	g_free(jap->who);
 	g_free(jap);
 }
@@ -783,9 +789,12 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 
 		if(!nick_change) {
 			if (is_our_resource) {
-				if (kick)
-					purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), presence->jid_from->resource,
-							presence->status, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				if (kick) {
+					gchar *msg = g_strdup_printf("%s: %s",
+						presence->jid_from->resource,
+						presence->status);
+					purple_conversation_write_system_message(PURPLE_CONVERSATION(chat->conv), msg, 0);
+				}
 
 				purple_serv_got_chat_left(js->gc, chat->id);
 				jabber_chat_destroy(chat);

@@ -49,8 +49,7 @@ void ggp_chat_join(PurpleConnection *gc, GHashTable *components);
 void ggp_chat_leave(PurpleConnection *gc, int local_id);
 void ggp_chat_invite(PurpleConnection *gc, int local_id, const char *message,
 	const char *who);
-int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
-	PurpleMessageFlags flags);
+int ggp_chat_send(PurpleConnection *gc, int local_id, PurpleMessage *msg);
 
 void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 	const char *message, time_t time, uin_t who);

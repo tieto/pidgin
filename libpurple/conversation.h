@@ -112,7 +112,6 @@ typedef enum
  *                              conversations).
  * @PURPLE_MESSAGE_NICK:        Contains your nick.
  * @PURPLE_MESSAGE_NO_LOG:      Do not log.
- * @PURPLE_MESSAGE_WHISPER:     Whispered message.
  * @PURPLE_MESSAGE_ERROR:       Error message.
  * @PURPLE_MESSAGE_DELAYED:     Delayed message.
  * @PURPLE_MESSAGE_RAW:         "Raw" message - don't apply formatting
@@ -132,7 +131,6 @@ typedef enum /*< flags >*/
 	PURPLE_MESSAGE_ACTIVE_ONLY = 0x0010,
 	PURPLE_MESSAGE_NICK        = 0x0020,
 	PURPLE_MESSAGE_NO_LOG      = 0x0040,
-	PURPLE_MESSAGE_WHISPER     = 0x0080,
 	PURPLE_MESSAGE_ERROR       = 0x0200,
 	PURPLE_MESSAGE_DELAYED     = 0x0400,
 	PURPLE_MESSAGE_RAW         = 0x0800,
@@ -144,6 +142,7 @@ typedef enum /*< flags >*/
 
 #include <glib.h>
 #include <glib-object.h>
+#include "message.h"
 
 /**************************************************************************/
 /** PurpleConversation                                                    */
@@ -181,8 +180,7 @@ struct _PurpleConversation
 struct _PurpleConversationClass {
 	GObjectClass parent_class;
 
-	void (*write_message)(PurpleConversation *conv, const char *who,
-			const char *message, PurpleMessageFlags flags, time_t mtime);
+	void (*write_message)(PurpleConversation *conv, PurpleMessage *msg);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
@@ -252,13 +250,8 @@ struct _PurpleConversationUiOps
 	void (*create_conversation)(PurpleConversation *conv);
 	void (*destroy_conversation)(PurpleConversation *conv);
 
-	void (*write_chat)(PurpleChatConversation *chat, const char *who,
-	                  const char *message, PurpleMessageFlags flags,
-	                  time_t mtime);
-
-	void (*write_im)(PurpleIMConversation *im, const char *who,
-	                 const char *message, PurpleMessageFlags flags,
-	                 time_t mtime);
+	void (*write_chat)(PurpleChatConversation *chat, PurpleMessage *msg);
+	void (*write_im)(PurpleIMConversation *im, PurpleMessage *msg);
 
 	void (*write_conv)(PurpleConversation *conv,
 	                   const char *name,
@@ -479,31 +472,6 @@ gboolean purple_conversation_is_logging(const PurpleConversation *conv);
 void purple_conversation_close_logs(PurpleConversation *conv);
 
 /**
- * purple_conversation_write:
- * @conv:    The conversation.
- * @who:     The user who sent the message.
- * @message: The message.
- * @flags:   The message flags.
- * @mtime:   The time the message was sent.
- *
- * Writes to a conversation window.
- *
- * This function should not be used to write IM or chat messages. Use
- * purple_conversation_write_message() instead. This function will
- * most likely call this anyway, but it may do it's own formatting,
- * sound playback, etc. depending on whether the conversation is a chat or an
- * IM.
- *
- * This can be used to write generic messages, such as "so and so closed
- * the conversation window."
- *
- * See purple_conversation_write_message().
- */
-void purple_conversation_write(PurpleConversation *conv, const char *who,
-		const char *message, PurpleMessageFlags flags,
-		time_t mtime);
-
-/**
  * purple_conversation_write_message:
  * @conv:    The conversation.
  * @who:     The user who sent the message.
@@ -514,8 +482,18 @@ void purple_conversation_write(PurpleConversation *conv, const char *who,
  * Writes to a chat or an IM.
  */
 void purple_conversation_write_message(PurpleConversation *conv,
-		const char *who, const char *message,
-		PurpleMessageFlags flags, time_t mtime);
+	PurpleMessage *msg);
+
+/**
+ * purple_conversation_write_system_message:
+ * @conv:    The conversation.
+ * @message: The message to write.
+ * @flags:   The message flags (you don't need to set %PURPLE_MESSAGE_SYSTEM.
+ *
+ * Wites a system message to a chat or an IM.
+ */
+void purple_conversation_write_system_message(PurpleConversation *conv,
+	const gchar *message, PurpleMessageFlags flags);
 
 /**
  * purple_conversation_send:

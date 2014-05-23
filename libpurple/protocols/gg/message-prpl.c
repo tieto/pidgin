@@ -245,11 +245,12 @@ static void ggp_message_got_display(PurpleConnection *gc,
 #endif
 	else if (msg->type == GGP_MESSAGE_GOT_TYPE_MULTILOGON) {
 		PurpleIMConversation *im = ggp_message_get_conv(gc, msg->user);
-		const gchar *me = purple_account_get_username(
-			purple_connection_get_account(gc));
+		PurpleMessage *pmsg;
 
-		purple_conversation_write(PURPLE_CONVERSATION(im), me, msg->text,
-			PURPLE_MESSAGE_SEND, msg->time);
+		pmsg = purple_message_new_outgoing(NULL, msg->text, 0);
+		purple_message_set_time(pmsg, msg->time);
+
+		purple_conversation_write_message(PURPLE_CONVERSATION(im), pmsg);
 	} else
 		purple_debug_error("gg", "ggp_message_got_display: "
 			"unexpected message type: %d\n", msg->type);
@@ -493,14 +494,13 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 					"<img name=\"" GGP_IMAGE_ID_FORMAT
 					"\">", id));
 			} else if (res == GGP_IMAGE_PREPARE_TOO_BIG) {
-				purple_conversation_write(conv, "",
+				purple_conversation_write_system_message(conv,
 					_("Image is too large, please try "
-					"smaller one."), PURPLE_MESSAGE_ERROR,
-					time(NULL));
+					"smaller one."), PURPLE_MESSAGE_ERROR);
 			} else {
-				purple_conversation_write(conv, "",
+				purple_conversation_write_system_message(conv,
 					_("Image cannot be sent."),
-					PURPLE_MESSAGE_ERROR, time(NULL));
+					PURPLE_MESSAGE_ERROR);
 			}
 
 			g_hash_table_destroy(attribs);
@@ -636,30 +636,31 @@ gchar * ggp_message_format_to_gg(PurpleConversation *conv, const gchar *text)
 	return text_new;
 }
 
-int ggp_message_send_im(PurpleConnection *gc, const char *who,
-	const char *message, PurpleMessageFlags flags)
+int ggp_message_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleIMConversation *im;
 	ggp_buddy_data *buddy_data;
 	gchar *gg_msg;
 	gboolean succ;
+	const gchar *rcpt = purple_message_get_recipient(msg);
 
 	/* TODO: return -ENOTCONN, if not connected */
 
-	if (message == NULL || message[0] == '\0')
+	if (purple_message_is_empty(msg))
 		return 0;
 
 	buddy_data = ggp_buddy_get_data(purple_blist_find_buddy(
-		purple_connection_get_account(gc), who));
+		purple_connection_get_account(gc), rcpt));
 
 	if (buddy_data->blocked)
 		return -1;
 
 	im = purple_conversations_find_im_with_account(
-		who, purple_connection_get_account(gc));
+		rcpt, purple_connection_get_account(gc));
 
-	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(im), message);
+	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(im),
+		purple_message_get_contents(msg));
 
 	/* TODO: splitting messages */
 	if (strlen(gg_msg) > GG_MSG_MAXSIZE) {
@@ -669,12 +670,12 @@ int ggp_message_send_im(PurpleConnection *gc, const char *who,
 
 #if GGP_ENABLE_GG11
 	succ = (gg_send_message_html(info->session, GG_CLASS_CHAT,
-		ggp_str_to_uin(who), (unsigned char *)gg_msg) >= 0);
+		ggp_str_to_uin(rcpt), (unsigned char *)gg_msg) >= 0);
 #else
 	{
 		gchar *plain = purple_markup_strip_html(gg_msg);
 		succ = (gg_send_message(info->session, GG_CLASS_CHAT,
-			ggp_str_to_uin(who), (unsigned char *)plain) >= 0);
+			ggp_str_to_uin(rcpt), (unsigned char *)plain) >= 0);
 		g_free(plain);
 	}
 #endif

@@ -214,9 +214,8 @@ void ggp_image_send(PurpleConnection *gc,
 	if (conv != NULL) {
 		gchar *msg = g_strdup_printf(_("Image delivered to %u."),
 			image_request->sender);
-		purple_conversation_write(conv, "", msg,
-			PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_NOTIFY,
-			time(NULL));
+		purple_conversation_write_system_message(conv, msg,
+			PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_NOTIFY);
 		g_free(msg);
 	}
 }

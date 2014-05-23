@@ -64,7 +64,7 @@ static void add_button (MMConversation *mmconv);
 static void remove_widget (GtkWidget *button);
 static void init_conversation (PurpleConversation *conv);
 static void conv_destroyed(PurpleConversation *conv);
-static gboolean intercept_sent(PurpleAccount *account, const char *who, char **message, void* pData);
+static gboolean intercept_sent(PurpleAccount *account, PurpleMessage *msg, void* pData);
 static gboolean intercept_received(PurpleAccount *account, char **sender, char **message, PurpleConversation *conv, int *flags);
 static gboolean send_change_request (const int session, const char *id, const char *command, const char *parameters);
 static gboolean send_change_confirmed (const int session, const char *command, const char *parameters);
@@ -277,33 +277,34 @@ mmconv_from_conv(PurpleConversation *conv)
 }
 
 static gboolean
-intercept_sent(PurpleAccount *account, const char *who, char **message, void* pData)
+intercept_sent(PurpleAccount *account, PurpleMessage *msg, void* pData)
 {
-	if (message == NULL || *message == NULL || **message == '\0')
+	const gchar *cont = purple_message_get_contents(msg);
+
+	if (purple_message_is_empty(msg))
 		return FALSE;
 
-	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
+	if (0 == strncmp(cont, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
 	{
-		purple_debug_misc("purple-musicmessaging", "Sent MM Message: %s\n", *message);
-		message = 0;
+		purple_debug_misc("purple-musicmessaging", "Sent MM Message: %s\n", cont);
 	}
-	else if (0 == strncmp(*message, MUSICMESSAGING_START_MSG, strlen(MUSICMESSAGING_START_MSG)))
+	else if (0 == strncmp(cont, MUSICMESSAGING_START_MSG, strlen(MUSICMESSAGING_START_MSG)))
 	{
 		purple_debug_misc("purple-musicmessaging", "Sent MM request.\n");
 		return FALSE;
 	}
-	else if (0 == strncmp(*message, MUSICMESSAGING_CONFIRM_MSG, strlen(MUSICMESSAGING_CONFIRM_MSG)))
+	else if (0 == strncmp(cont, MUSICMESSAGING_CONFIRM_MSG, strlen(MUSICMESSAGING_CONFIRM_MSG)))
 	{
 		purple_debug_misc("purple-musicmessaging", "Sent MM confirm.\n");
 		return FALSE;
 	}
-	else if (0 == strncmp(*message, "test1", strlen("test1")))
+	else if (0 == strncmp(cont, "test1", strlen("test1")))
 	{
 		purple_debug_misc("purple-musicmessaging", "\n\nTEST 1\n\n");
 		send_change_request(0, "test-id", "test-command", "test-parameters");
 		return FALSE;
 	}
-	else if (0 == strncmp(*message, "test2", strlen("test2")))
+	else if (0 == strncmp(cont, "test2", strlen("test2")))
 	{
 		purple_debug_misc("purple-musicmessaging", "\n\nTEST 2\n\n");
 		send_change_confirmed(1, "test-command", "test-parameters");
@@ -436,14 +437,16 @@ static void send_request(MMConversation *mmconv)
 {
 	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
-	purple_serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, PURPLE_MESSAGE_SEND);
+	purple_serv_send_im(connection, purple_message_new_outgoing(
+		convName, MUSICMESSAGING_START_MSG, 0));
 }
 
 static void send_request_confirmed(MMConversation *mmconv)
 {
 	PurpleConnection *connection = purple_conversation_get_connection(mmconv->conv);
 	const char *convName = purple_conversation_get_name(mmconv->conv);
-	purple_serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, PURPLE_MESSAGE_SEND);
+	purple_serv_send_im(connection, purple_message_new_outgoing(
+		convName, MUSICMESSAGING_CONFIRM_MSG, 0));
 }
 
 

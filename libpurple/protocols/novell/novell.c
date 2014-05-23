@@ -1871,8 +1871,8 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 				}
 
 				purple_serv_got_chat_in(purple_account_get_connection(user->client_data),
-								 purple_chat_conversation_get_id(chat),
-								 name, 0, text, nm_event_get_gmt(event));
+					purple_chat_conversation_get_id(chat),
+					name, PURPLE_MESSAGE_RECV, text, nm_event_get_gmt(event));
 			}
 		}
 	}
@@ -1915,8 +1915,7 @@ _evt_conference_invite_notify(NMUser * user, NMEvent * event)
 		gconv = nm_conference_get_data(conference);
 		str = g_strdup_printf(_("%s has been invited to this conversation."),
 							  nm_user_record_get_display_id(user_record));
-		purple_conversation_write(gconv, NULL, str,
-								PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(gconv, str, 0);
 		g_free(str);
 	}
 }
@@ -2117,8 +2116,7 @@ _evt_undeliverable_status(NMUser * user, NMEvent * event)
 			}
 			str = g_strdup_printf(_("%s appears to be offline and did not receive"
 									" the message that you just sent."), name);
-			purple_conversation_write(gconv, NULL, str,
-									PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(gconv, str, 0);
 			g_free(str);
 		}
 	}
@@ -2272,8 +2270,7 @@ novell_close(PurpleConnection * gc)
 }
 
 static int
-novell_send_im(PurpleConnection * gc, const char *name,
-			   const char *message_body, PurpleMessageFlags flags)
+novell_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	NMUserRecord *user_record = NULL;
 	NMConference *conf = NULL;
@@ -2283,9 +2280,9 @@ novell_send_im(PurpleConnection * gc, const char *name,
 	char *plain;
 	gboolean done = TRUE, created_conf = FALSE;
 	NMERR_T rc = NM_OK;
+	const gchar *name = purple_message_get_recipient(msg);
 
-	if (gc == NULL || name == NULL ||
-		message_body == NULL || *message_body == '\0')
+	if (gc == NULL || name == NULL || purple_message_is_empty(msg))
 		return 0;
 
 	user = purple_connection_get_protocol_data(gc);
@@ -2293,7 +2290,7 @@ novell_send_im(PurpleConnection * gc, const char *name,
 		return 0;
 
 	/* Create a new message */
-	plain = purple_unescape_html(message_body);
+	plain = purple_unescape_html(purple_message_get_contents(msg));
 	message = nm_create_message(plain);
 	g_free(plain);
 
@@ -2487,7 +2484,7 @@ novell_chat_invite(PurpleConnection *gc, int id,
 }
 
 static int
-novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageFlags flags)
+novell_chat_send(PurpleConnection * gc, int id, PurpleMessage *msg)
 {
 	NMConference *conference;
 	PurpleChatConversation *chat;
@@ -2498,14 +2495,14 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	const char *name;
 	char *str, *plain;
 
-	if (gc == NULL || text == NULL)
+	if (gc == NULL || purple_message_is_empty(msg))
 		return -1;
 
 	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return -1;
 
-	plain = purple_unescape_html(text);
+	plain = purple_unescape_html(purple_message_get_contents(msg));
 	message = nm_create_message(plain);
 	g_free(plain);
 
@@ -2541,7 +2538,9 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 						}
 					}
 
-					purple_serv_got_chat_in(gc, id, name, flags, text, time(NULL));
+					purple_serv_got_chat_in(gc, id, name,
+						purple_message_get_flags(msg),
+						purple_message_get_contents(msg), time(NULL));
 					return 0;
 				} else
 					return -1;
@@ -2556,8 +2555,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	if (chat) {
 		str = g_strdup(_("This conference has been closed."
 						 " No more messages can be sent."));
-		purple_conversation_write(PURPLE_CONVERSATION(chat), NULL, str,
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(chat), str, 0);
 		g_free(str);
 	}
 

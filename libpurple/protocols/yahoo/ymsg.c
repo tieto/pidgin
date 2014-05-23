@@ -927,7 +927,8 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 	} else if (!g_ascii_strncasecmp(msg, "WEBCAMINVITE", strlen("WEBCAMINVITE"))) {
 		PurpleIMConversation *im = purple_conversations_find_im_with_account(from, account);
 		char *buf = g_strdup_printf(_("%s has sent you a webcam invite, which is not yet supported."), from);
-		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+			buf, PURPLE_MESSAGE_NOTIFY);
 		g_free(buf);
 	}
 }
@@ -999,7 +1000,8 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 			im = purple_conversations_find_im_with_account(sms->from, account);
 			if (im == NULL)
 				im = purple_im_conversation_new(account, sms->from);
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, server_msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				server_msg, 0);
 		}
 		else {
 			purple_notify_error(gc, NULL,
@@ -4329,7 +4331,7 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 	gchar *url;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	if (!purple_http_response_is_successful(response)) {
 		purple_debug_error("yahoo",
@@ -4473,8 +4475,8 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 	PurpleIMConversation *im = purple_conversations_find_im_with_account(sms_cb_data->who, account);
 
 	if (!purple_http_response_is_successful(response)) {
-		purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
-				_("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+			_("Can't send SMS. Unable to obtain mobile carrier."), 0);
 
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
@@ -4498,14 +4500,13 @@ static void yahoo_get_sms_carrier_cb(PurpleHttpConnection *http_conn,
 		if (status && g_str_equal(status, "Valid")) {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
-			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who,
-					sms_cb_data->what, PURPLE_MESSAGE_SEND);
+			yahoo_send_im(sms_cb_data->gc, purple_message_new_outgoing(
+				sms_cb_data->who, sms_cb_data->what, 0));
 		} else {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL,
-					_("Can't send SMS. Unknown mobile carrier."),
-					PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				_("Can't send SMS. Unknown mobile carrier."), 0);
 		}
 
 		purple_xmlnode_free(validate_data_child);
@@ -4561,11 +4562,11 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	g_free(validate_request_str);
 }
 
-int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
+int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt = NULL;
-	char *msg = yahoo_html_to_codes(what);
+	char *msg = yahoo_html_to_codes(purple_message_get_contents(pmsg));
 	char *msg2;
 	PurpleWhiteboard *wb;
 	int ret = 1;
@@ -4574,6 +4575,8 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	glong lenc = 0;
 	struct yahoo_p2p_data *p2p_data;
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
+	const gchar *rcpt = purple_message_get_recipient(pmsg);
+
 	msg2 = yahoo_string_encode(gc, msg, TRUE);
 
 	if(msg2) {
@@ -4591,24 +4594,25 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		}
 	}
 
-	fed = yahoo_get_federation_from_name(who);
+	fed = yahoo_get_federation_from_name(rcpt);
 
-	if (who[0] == '+') {
+	if (rcpt[0] == '+') {
 		/* we have an sms to be sent */
 		gchar *carrier = NULL;
 		const char *alias = NULL;
 		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleIMConversation *im = purple_conversations_find_im_with_account(who, account);
+		PurpleIMConversation *im = purple_conversations_find_im_with_account(rcpt, account);
 
-		carrier = g_hash_table_lookup(yd->sms_carrier, who);
+		carrier = g_hash_table_lookup(yd->sms_carrier, rcpt);
 		if (!carrier) {
 			struct yahoo_sms_carrier_cb_data *sms_cb_data;
 			sms_cb_data = g_malloc(sizeof(struct yahoo_sms_carrier_cb_data));
 			sms_cb_data->gc = gc;
-			sms_cb_data->who = g_strdup(who);
-			sms_cb_data->what = g_strdup(what);
+			sms_cb_data->who = g_strdup(rcpt);
+			sms_cb_data->what = g_strdup(purple_message_get_contents(pmsg));
 
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Getting mobile carrier to send the SMS."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				_("Getting mobile carrier to send the SMS."), 0);
 
 			yahoo_get_sms_carrier(gc, sms_cb_data);
 
@@ -4617,7 +4621,8 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 			return ret;
 		}
 		else if( strcmp(carrier,"Unknown") == 0 ) {
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, _("Can't send SMS. Unknown mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+				_("Can't send SMS. Unknown mobile carrier."), 0);
 
 			g_free(msg);
 			g_free(msg2);
@@ -4629,7 +4634,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		yahoo_packet_hash(pkt, "sssss",
 			1, purple_connection_get_display_name(gc),
 			69, alias,
-			5, who + 1,
+			5, rcpt + 1,
 			68, carrier,
 			14, msg2);
 		yahoo_packet_send_and_free(pkt, yd);
@@ -4641,7 +4646,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, yd->session_id);
-	fed_who = who;
+	fed_who = rcpt;
 	switch (fed) {
 		case YAHOO_FEDERATION_MSN:
 		case YAHOO_FEDERATION_OCS:
@@ -4672,13 +4677,13 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	 *
 	 * If they have not set an IMVironment, then use the default.
 	 */
-	wb = purple_whiteboard_get_session(purple_connection_get_account(gc), who);
+	wb = purple_whiteboard_get_session(purple_connection_get_account(gc), rcpt);
 	if (wb)
 		yahoo_packet_hash_str(pkt, 63, DOODLE_IMV_KEY);
 	else
 	{
 		const char *imv;
-		imv = g_hash_table_lookup(yd->imvironments, who);
+		imv = g_hash_table_lookup(yd->imvironments, rcpt);
 		if (imv != NULL)
 			yahoo_packet_hash_str(pkt, 63, imv);
 		else
@@ -4695,14 +4700,14 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 	/* We may need to not send any packets over 2000 bytes, but I'm not sure yet. */
 	if ((YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt)) <= 2000) {
 		/* if p2p link exists, send through it. To-do: key 15, time value to be sent in case of p2p */
-		if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !fed) {
+		if( (p2p_data = g_hash_table_lookup(yd->peers, rcpt)) && !fed) {
 			yahoo_packet_hash_int(pkt, 11, p2p_data->session_id);
 			yahoo_p2p_write_pkt(p2p_data->source, pkt);
 		}
 		else	{
 			yahoo_packet_send(pkt, yd);
 			if(!fed)
-				yahoo_send_p2p_pkt(gc, who, 0);		/* send p2p packet, with val_13=0 */
+				yahoo_send_p2p_pkt(gc, rcpt, 0);		/* send p2p packet, with val_13=0 */
 		}
 	}
 	else

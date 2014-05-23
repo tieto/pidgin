@@ -11,6 +11,5 @@ gboolean PURPLE_BUDDY_IS_ONLINE(PurpleBuddy *buddy);
 
 /* connection.h */
 gboolean PURPLE_CONNECTION_IS_CONNECTED(PurpleConnection *connection);
-gboolean PURPLE_CONNECTION_IS_VALID(PurpleConnection *connection);
 
 #endif /* __GI_SCANNER__ */

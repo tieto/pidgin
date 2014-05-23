@@ -47,7 +47,6 @@ BOOT:
 		const_iv(ACTIVE_ONLY),
 		const_iv(NICK),
 		const_iv(NO_LOG),
-		const_iv(WHISPER),
 		const_iv(ERROR),
 		const_iv(DELAYED),
 		const_iv(RAW),
@@ -199,22 +198,6 @@ void
 purple_conversation_set_account(conv, account);
 	Purple::Conversation conv
 	Purple::Account account
-
-void
-purple_conversation_write(conv, who, message, flags, mtime)
-	Purple::Conversation conv
-	const char *who
-	const char *message
-	Purple::MessageFlags flags
-	time_t mtime
-
-void
-purple_conversation_write_message(conv, who, message, flags, mtime)
-	Purple::Conversation conv
-	const char *who
-	const char *message
-	Purple::MessageFlags flags
-	time_t mtime
 
 void
 purple_conversation_send(conv, message)

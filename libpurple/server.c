@@ -112,8 +112,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 	return lar;
 }
 
-int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *message,
-				 PurpleMessageFlags flags)
+int purple_serv_send_im(PurpleConnection *gc, PurpleMessage *msg)
 {
 	PurpleIMConversation *im = NULL;
 	PurpleAccount *account = NULL;
@@ -121,8 +120,10 @@ int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *mess
 	PurpleProtocol *protocol = NULL;
 	int val = -EINVAL;
 	const gchar *auto_reply_pref = NULL;
+	const gchar *recipient;
 
 	g_return_val_if_fail(gc != NULL, val);
+	g_return_val_if_fail(msg != NULL, val);
 
 	protocol = purple_connection_get_protocol(gc);
 
@@ -131,11 +132,12 @@ int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *mess
 
 	account  = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
+	recipient = purple_message_get_recipient(msg);
 
-	im = purple_conversations_find_im_with_account(name, account);
+	im = purple_conversations_find_im_with_account(recipient, account);
 
 	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, IM_IFACE, send))
-		val = purple_protocol_im_iface_send(protocol, gc, name, message, flags);
+		val = purple_protocol_im_iface_send(protocol, gc, msg);
 
 	/*
 	 * XXX - If "only auto-reply when away & idle" is set, then shouldn't
@@ -147,7 +149,7 @@ int purple_serv_send_im(PurpleConnection *gc, const char *name, const char *mess
 			!purple_strequal(auto_reply_pref, "never")) {
 
 		struct last_auto_response *lar;
-		lar = get_last_auto_response(gc, name);
+		lar = get_last_auto_response(gc, recipient);
 		lar->sent = time(NULL);
 	}
 
@@ -247,9 +249,9 @@ purple_serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										escaped, escaped2);
 
-			purple_conversation_write(PURPLE_CONVERSATION(im), NULL, tmp,
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
-					time(NULL));
+			purple_conversation_write_system_message(
+				PURPLE_CONVERSATION(im), tmp,
+				PURPLE_MESSAGE_NO_LINKIFY);
 
 			g_free(tmp);
 			g_free(escaped2);
@@ -451,24 +453,15 @@ void purple_serv_chat_leave(PurpleConnection *gc, int id)
 	purple_protocol_chat_iface_leave(protocol, gc, id);
 }
 
-void purple_serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char *message)
+int purple_serv_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	PurpleProtocol *protocol;
-
-	if (gc) {
-		protocol = purple_connection_get_protocol(gc);
-		purple_protocol_chat_iface_whisper(protocol, gc, id, who, message);
-	}
-}
-
-int purple_serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
-{
-	PurpleProtocol *protocol;
-
 	protocol = purple_connection_get_protocol(gc);
 
+	g_return_val_if_fail(msg != NULL, -EINVAL);
+
 	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, send))
-		return purple_protocol_chat_iface_send(protocol, gc, id, message, flags);
+		return purple_protocol_chat_iface_send(protocol, gc, id, msg);
 
 	return -EINVAL;
 }
@@ -485,6 +478,7 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
+	PurpleMessage *pmsg;
 
 	g_return_if_fail(msg != NULL);
 
@@ -546,7 +540,8 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	if (im == NULL)
 		im = purple_im_conversation_new(account, name);
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(im), name, message, flags, mtime);
+	pmsg = purple_message_new_incoming(name, message, flags, mtime);
+	purple_conversation_write_message(PURPLE_CONVERSATION(im), pmsg);
 	g_free(message);
 
 	/*
@@ -613,11 +608,13 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 				if (!(flags & PURPLE_MESSAGE_AUTO_RESP))
 				{
-					purple_serv_send_im(gc, name, away_msg, PURPLE_MESSAGE_AUTO_RESP);
+					PurpleMessage *msg;
 
-					purple_conversation_write_message(PURPLE_CONVERSATION(im), NULL, away_msg,
-									   PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP,
-									   mtime);
+					msg = purple_message_new_outgoing(name,
+						away_msg, PURPLE_MESSAGE_AUTO_RESP);
+
+					purple_serv_send_im(gc, msg);
+					purple_conversation_write_message(PURPLE_CONVERSATION(im), msg);
 				}
 			}
 		}
@@ -820,6 +817,7 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	PurpleChatConversation *chat = NULL;
 	char *buffy, *angel;
 	int plugin_return;
+	PurpleMessage *pmsg;
 
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
@@ -877,7 +875,8 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg", purple_connection_get_account(g),
 					 who, message, chat, flags);
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat), who, message, flags, mtime);
+	pmsg = purple_message_new_incoming(who, message, flags, mtime);
+	purple_conversation_write_message(PURPLE_CONVERSATION(chat), pmsg);
 
 	g_free(angel);
 	g_free(buffy);

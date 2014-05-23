@@ -261,14 +261,15 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			{
 				msg_tmp = yahoo_string_decode(gc, msg, utf8);
 				msg = yahoo_codes_to_html(msg_tmp);
-				purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
+				purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c),
+					who, PURPLE_MESSAGE_RECV, msg, time(NULL));
 				g_free(msg_tmp);
 				g_free(msg);
 			}
 
 			tmp = g_strdup_printf(_("%s has declined to join."), who);
-			purple_conversation_write(PURPLE_CONVERSATION(c), NULL, tmp,
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(c),
+				tmp, PURPLE_MESSAGE_NO_LINKIFY);
 
 			g_free(tmp);
 		}
@@ -393,7 +394,8 @@ void yahoo_process_conference_message(PurpleConnection *gc, struct yahoo_packet 
 
 		msg2 = yahoo_string_decode(gc, msg, utf8);
 		msg = yahoo_codes_to_html(msg2);
-		purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who, 0, msg, time(NULL));
+		purple_serv_got_chat_in(gc, purple_chat_conversation_get_id(c), who,
+			PURPLE_MESSAGE_RECV, msg, time(NULL));
 		g_free(msg);
 		g_free(msg2);
 	}
@@ -603,21 +605,21 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (topic) {
 				purple_chat_conversation_set_topic(c, NULL, topic);
 				/* Also print the topic to the backlog so that the captcha link is clickable */
-				purple_conversation_write_message(PURPLE_CONVERSATION(c), "", topic, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(PURPLE_CONVERSATION(c), topic, 0);
 			}
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
 			purple_chat_conversation_add_users(c, members, NULL, flags, FALSE);
 
 			tmpmsg = g_strdup_printf(_("You are now chatting in %s."), room);
-			purple_conversation_write_message(PURPLE_CONVERSATION(c), "", tmpmsg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(PURPLE_CONVERSATION(c), tmpmsg, 0);
 			g_free(tmpmsg);
 		} else {
 			c = purple_serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 			if (topic) {
 				purple_chat_conversation_set_topic(c, NULL, topic);
 				/* Also print the topic to the backlog so that the captcha link is clickable */
-				purple_conversation_write_message(PURPLE_CONVERSATION(c), "", topic, PURPLE_MESSAGE_SYSTEM, time(NULL));
+				purple_conversation_write_system_message(PURPLE_CONVERSATION(c), topic, 0);
 			}
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
@@ -747,7 +749,8 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 		msg = tmp;
 	}
 
-	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, msg, time(NULL));
+	purple_serv_got_chat_in(gc, YAHOO_CHAT_ID, who,
+		PURPLE_MESSAGE_RECV, msg, time(NULL));
 	g_free(msg);
 	g_free(room);
 }
@@ -1111,11 +1114,13 @@ void yahoo_c_leave(PurpleConnection *gc, int id)
 	purple_serv_got_chat_left(gc, id);
 }
 
-int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
+int yahoo_c_send(PurpleConnection *gc, int id, PurpleMessage *msg)
 {
 	PurpleChatConversation *c;
 	int ret;
 	YahooData *yd;
+	const gchar *what = purple_message_get_contents(msg);
+	PurpleMessageFlags flags = purple_message_get_flags(msg);
 
 	yd = purple_connection_get_protocol_data(gc);
 	if (!yd)

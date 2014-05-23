@@ -148,9 +148,9 @@ static void ggp_chat_open_conv(ggp_chat_local_info *chat)
 	chat->conv = purple_serv_got_joined_chat(chat->gc, chat->local_id,
 		ggp_chat_get_name_from_id(chat->id));
 	if (chat->previously_joined) {
-		purple_conversation_write(PURPLE_CONVERSATION(chat->conv), NULL,
-			_("You have re-joined the chat"), PURPLE_MESSAGE_SYSTEM,
-			time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(chat->conv),
+			_("You have re-joined the chat"), 0);
 	}
 	chat->previously_joined = TRUE;
 
@@ -283,9 +283,9 @@ static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 		purple_connection_get_account(chat->gc)));
 
 	if (me == uin) {
-		purple_conversation_write(PURPLE_CONVERSATION(chat->conv), NULL,
-			_("You have left the chat"), PURPLE_MESSAGE_SYSTEM,
-			time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(chat->conv),
+			_("You have left the chat"), 0);
 		purple_serv_got_chat_left(chat->gc, chat->local_id);
 		chat->conv = NULL;
 		chat->left = TRUE;
@@ -470,8 +470,7 @@ void ggp_chat_invite(PurpleConnection *gc, int local_id, const char *message,
 	}
 }
 
-int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
-	PurpleMessageFlags flags)
+int ggp_chat_send(PurpleConnection *gc, int local_id, PurpleMessage *msg)
 {
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleChatConversation *conv;
@@ -491,14 +490,18 @@ int ggp_chat_send(PurpleConnection *gc, int local_id, const char *message,
 		ggp_chat_get_name_from_id(chat->id),
 		purple_connection_get_account(gc));
 
-	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(conv), message);
+	gg_msg = ggp_message_format_to_gg(PURPLE_CONVERSATION(conv),
+		purple_message_get_contents(msg));
 
 	if (gg_chat_send_message(info->session, chat->id, gg_msg, TRUE) < 0)
 		succ = FALSE;
 	g_free(gg_msg);
 
 	me = purple_account_get_username(purple_connection_get_account(gc));
-	purple_serv_got_chat_in(gc, chat->local_id, me, flags, message, time(NULL));
+	purple_serv_got_chat_in(gc, chat->local_id, me,
+		purple_message_get_flags(msg),
+		purple_message_get_contents(msg),
+		purple_message_get_time(msg));
 
 	return succ ? 0 : -1;
 }
@@ -521,8 +524,14 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 
 	ggp_chat_open_conv(chat);
 	if (who == me) {
-		purple_conversation_write(PURPLE_CONVERSATION(chat->conv),
-			ggp_uin_to_str(who), message, PURPLE_MESSAGE_SEND, time);
+		PurpleMessage *pmsg;
+
+		pmsg = purple_message_new_outgoing(
+			ggp_uin_to_str(who), message, 0);
+		purple_message_set_time(pmsg, time);
+
+		purple_conversation_write_message(
+			PURPLE_CONVERSATION(chat->conv), pmsg);
 	} else {
 		purple_serv_got_chat_in(gc, chat->local_id, ggp_uin_to_str(who),
 			PURPLE_MESSAGE_RECV, message, time);

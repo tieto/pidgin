@@ -585,10 +585,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 						_("%s requests to view your "
 						"webcam, but this request is "
 						"not yet supported."), from);
-				purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf,
-						PURPLE_MESSAGE_SYSTEM |
-						PURPLE_MESSAGE_NOTIFY,
-						time(NULL));
+				purple_conversation_write_system_message(PURPLE_CONVERSATION(im),
+					buf, PURPLE_MESSAGE_NOTIFY);
 				g_free(buf);
 			}
 		}
@@ -605,10 +603,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 				buf = g_strdup_printf(
 						_("%s invited you to view his/her webcam, but "
 						"this is not yet supported."), from);
-				purple_conversation_write(PURPLE_CONVERSATION(im), NULL, buf,
-						PURPLE_MESSAGE_SYSTEM |
-						PURPLE_MESSAGE_NOTIFY,
-						time(NULL));
+				purple_conversation_write_system_message(
+					PURPLE_CONVERSATION(im), buf, PURPLE_MESSAGE_NOTIFY);
 				g_free(buf);
 			}
 		}

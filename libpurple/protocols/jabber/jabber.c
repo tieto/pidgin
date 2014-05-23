@@ -606,7 +606,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, PurpleXmlNode **packet,
 	if (NULL == packet)
 		return;
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(pc));
+	PURPLE_ASSERT_CONNECTION_IS_VALID(pc);
 
 	js = purple_connection_get_protocol_data(pc);
 
@@ -660,11 +660,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	int len;
 	static char buf[4096];
 
-	/* TODO: It should be possible to make this check unnecessary */
-	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
-		purple_ssl_close(gsc);
-		g_return_if_reached();
-	}
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
 		purple_connection_update_last_received(gc);
@@ -698,7 +694,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 	int len;
 	static char buf[4096];
 
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
 		purple_connection_update_last_received(gc);
@@ -755,11 +751,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	PurpleConnection *gc = data;
 	JabberStream *js;
 
-	/* TODO: It should be possible to make this check unnecessary */
-	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
-		purple_ssl_close(gsc);
-		g_return_if_reached();
-	}
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	js = purple_connection_get_protocol_data(gc);
 
@@ -851,8 +843,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	PurpleConnection *gc = data;
 	JabberStream *js;
 
-	/* If the connection is already disconnected, we don't need to do anything else */
-	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	js = purple_connection_get_protocol_data(gc);
 	js->gsc = NULL;
@@ -2877,8 +2868,7 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conversation_write_message(conv, "", buf,
-				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+		purple_conversation_write_system_message(conv, buf, PURPLE_MESSAGE_NO_LOG);
 		g_free(buf);
 	}
 
@@ -3090,7 +3080,8 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 
 	who = g_strdup_printf("%s@%s/%s", chat->room, chat->server, args[0]);
 
-	jabber_message_send_im(purple_conversation_get_connection(conv), who, args[1], 0);
+	jabber_message_send_im(purple_conversation_get_connection(conv),
+		purple_message_new_outgoing(who, args[1], 0));
 
 	g_free(who);
 	return PURPLE_CMD_RET_OK;
@@ -3199,8 +3190,8 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 
 	description =
 		g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
-	purple_conversation_write(conv, NULL, description,
-		PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(conv, description,
+		PURPLE_MESSAGE_NOTIFY);
 	g_free(description);
 	return _jabber_send_buzz(js, who, error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
 }
@@ -3229,8 +3220,8 @@ gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint
 		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
 
 		if (conv) {
-			purple_conversation_write(conv, username, error, PURPLE_MESSAGE_ERROR,
-			    time(NULL));
+			purple_conversation_write_system_message(conv,
+				error, PURPLE_MESSAGE_ERROR);
 		}
 
 		g_free(error);
@@ -3611,16 +3602,16 @@ jabber_cmd_mood(PurpleConversation *conv,
 		if (ret) {
 			return PURPLE_CMD_RET_OK;
 		} else {
-			purple_conversation_write(conv, NULL,
+			purple_conversation_write_system_message(conv,
 				_("Failed to specify mood"),
-				PURPLE_MESSAGE_ERROR, time(NULL));
+				PURPLE_MESSAGE_ERROR);
 			return PURPLE_CMD_RET_FAILED;
 		}
 	} else {
 		/* account does not support PEP, can't set a mood */
-		purple_conversation_write(conv, NULL,
+		purple_conversation_write_system_message(conv,
 		    _("Account does not support PEP, can't set mood"),
-		    PURPLE_MESSAGE_ERROR, time(NULL));
+		    PURPLE_MESSAGE_ERROR);
 		return PURPLE_CMD_RET_FAILED;
 	}
 }

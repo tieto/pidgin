@@ -99,7 +99,7 @@ void mxit_chat_leave(PurpleConnection *gc, int id);
 /*
  * User has entered a message in a chatroom window, send it to the MXit server.
  */
-int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
+int mxit_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg);
 
 
 #endif		/* _MXIT_MULTIMX_H_ */

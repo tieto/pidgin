@@ -98,30 +98,32 @@ record_pounce(OfflineMsg *offline)
 	g_free(temp);
 
 	conv = offline->conv;
-	if (!g_object_get_data(G_OBJECT(conv), "plugin_pack:offlinemsg"))
-		purple_conversation_write(conv, NULL, _("The rest of the messages will be saved "
-							"as pounces. You can edit/delete the pounce from the `Buddy "
-							"Pounce' dialog."),
-							PURPLE_MESSAGE_SYSTEM, time(NULL));
+	if (!g_object_get_data(G_OBJECT(conv), "plugin_pack:offlinemsg")) {
+		purple_conversation_write_system_message(conv,
+			_("The rest of the messages will be saved "
+			"as pounces. You can edit/delete the pounce from the `Buddy "
+			"Pounce' dialog."), 0);
+	}
 	g_object_set_data(G_OBJECT(conv), "plugin_pack:offlinemsg",
 				GINT_TO_POINTER(OFFLINE_MSG_YES));
 
-	purple_conversation_write_message(conv, offline->who, offline->message,
-				PURPLE_MESSAGE_SEND, time(NULL));
+	/* TODO: use a reference to a PurpleMessage */
+	purple_conversation_write_message(conv,
+		purple_message_new_outgoing(offline->who, offline->message, 0));
 
 	discard_data(offline);
 }
 
 static void
-sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer handle)
+sending_msg_cb(PurpleAccount *account, PurpleMessage *msg, gpointer handle)
 {
 	PurpleBuddy *buddy;
 	OfflineMsg *offline;
 	PurpleConversation *conv;
 	OfflineMessageSetting setting;
+	const gchar *who = purple_message_get_recipient(msg);
 
-	if (message == NULL || *message == NULL ||
-			**message == '\0')
+	if (purple_message_is_empty(msg))
 		return;
 
 	buddy = purple_blist_find_buddy(account, who);
@@ -151,8 +153,8 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 	offline->conv = conv;
 	offline->account = account;
 	offline->who = g_strdup(who);
-	offline->message = *message;
-	*message = NULL;
+	offline->message = g_strdup(purple_message_get_contents(msg));
+	purple_message_set_contents(msg, NULL);
 
 	if (purple_prefs_get_bool(PREF_ALWAYS) || setting == OFFLINE_MSG_YES)
 		record_pounce(offline);

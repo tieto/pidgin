@@ -128,7 +128,7 @@ ggp_edisc_get_sdata(PurpleConnection *gc)
 {
 	GGPInfo *accdata;
 
-	g_return_val_if_fail(PURPLE_CONNECTION_IS_VALID(gc), NULL);
+	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
 	accdata = purple_connection_get_protocol_data(gc);
 	g_return_val_if_fail(accdata != NULL, NULL);

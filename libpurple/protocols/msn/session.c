@@ -200,7 +200,8 @@ msn_session_report_user(MsnSession *session,const char *passport,const char *msg
 	PurpleIMConversation * im;
 
 	if ((im = msn_session_get_im(session,passport)) != NULL){
-		purple_conversation_write(PURPLE_CONVERSATION(im), NULL, msg, flags, time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(im), msg, flags);
 	}
 }
 

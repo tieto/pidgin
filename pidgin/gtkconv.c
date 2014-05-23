@@ -388,30 +388,35 @@ debug_command_cb(PurpleConversation *conv,
 	} else if (!g_ascii_strcasecmp(args[0], "unsafe")) {
 		if (purple_debug_is_unsafe()) {
 			purple_debug_set_unsafe(FALSE);
-			purple_conversation_write(conv, NULL, _("Unsafe debugging is now disabled."),
-			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Unsafe debugging is now disabled."),
+				PURPLE_MESSAGE_NO_LOG);
 		} else {
 			purple_debug_set_unsafe(TRUE);
-			purple_conversation_write(conv, NULL, _("Unsafe debugging is now enabled."),
-			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Unsafe debugging is now enabled."),
+				PURPLE_MESSAGE_NO_LOG);
 		}
 
 		return PURPLE_CMD_RET_OK;
 	} else if (!g_ascii_strcasecmp(args[0], "verbose")) {
 		if (purple_debug_is_verbose()) {
 			purple_debug_set_verbose(FALSE);
-			purple_conversation_write(conv, NULL, _("Verbose debugging is now disabled."),
-			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Verbose debugging is now disabled."),
+				PURPLE_MESSAGE_NO_LOG);
 		} else {
 			purple_debug_set_verbose(TRUE);
-			purple_conversation_write(conv, NULL, _("Verbose debugging is now enabled."),
-			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("Verbose debugging is now enabled."),
+				PURPLE_MESSAGE_NO_LOG);
 		}
 
 		return PURPLE_CMD_RET_OK;
 	} else {
-		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version unsafe verbose"),
-		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
+		purple_conversation_write_system_message(conv,
+			_("Supported debug options are: plugins version unsafe verbose"),
+			PURPLE_MESSAGE_NO_LOG);
 		return PURPLE_CMD_RET_OK;
 	}
 
@@ -486,7 +491,7 @@ help_command_cb(PurpleConversation *conv,
 		g_list_free(text);
 	}
 
-	purple_conversation_write(conv, NULL, s->str, PURPLE_MESSAGE_NO_LOG, time(NULL));
+	purple_conversation_write_system_message(conv, s->str, PURPLE_MESSAGE_NO_LOG);
 	g_string_free(s, TRUE);
 
 	return PURPLE_CMD_RET_OK;
@@ -527,8 +532,8 @@ check_for_and_do_command(PurpleConversation *conv)
 		cmdline = cmd + strlen(prefix);
 
 		if (strcmp(cmdline, "xyzzy") == 0) {
-			purple_conversation_write(conv, "", "Nothing happens",
-					PURPLE_MESSAGE_NO_LOG, time(NULL));
+			purple_conversation_write_system_message(conv,
+				"Nothing happens", PURPLE_MESSAGE_NO_LOG);
 			g_free(cmd);
 			return TRUE;
 		}
@@ -560,36 +565,42 @@ check_for_and_do_command(PurpleConversation *conv)
 							spaceslash++;
 
 						if (*spaceslash != '/') {
-							purple_conversation_write(conv, "", _("Unknown command."), PURPLE_MESSAGE_NO_LOG, time(NULL));
+							purple_conversation_write_system_message(conv,
+								_("Unknown command."), PURPLE_MESSAGE_NO_LOG);
 							retval = TRUE;
 						}
 					}
 					break;
 				}
 			case PURPLE_CMD_STATUS_WRONG_ARGS:
-				purple_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
-								    "to that command."),
-						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				purple_conversation_write_system_message(conv,
+					_("Syntax Error:  You typed the wrong "
+					"number of arguments to that command."),
+					PURPLE_MESSAGE_NO_LOG);
 				retval = TRUE;
 				break;
 			case PURPLE_CMD_STATUS_FAILED:
-				purple_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
-						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				purple_conversation_write_system_message(conv,
+					error ? error : _("Your command failed for an unknown reason."),
+					PURPLE_MESSAGE_NO_LOG);
 				g_free(error);
 				retval = TRUE;
 				break;
 			case PURPLE_CMD_STATUS_WRONG_TYPE:
 				if(PURPLE_IS_IM_CONVERSATION(conv))
-					purple_conversation_write(conv, "", _("That command only works in chats, not IMs."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
+					purple_conversation_write_system_message(conv,
+						_("That command only works in chats, not IMs."),
+						PURPLE_MESSAGE_NO_LOG);
 				else
-					purple_conversation_write(conv, "", _("That command only works in IMs, not chats."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
+					purple_conversation_write_system_message(conv,
+						_("That command only works in IMs, not chats."),
+						PURPLE_MESSAGE_NO_LOG);
 				retval = TRUE;
 				break;
 			case PURPLE_CMD_STATUS_WRONG_PROTOCOL:
-				purple_conversation_write(conv, "", _("That command doesn't work on this protocol."),
-						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				purple_conversation_write_system_message(conv,
+					_("That command doesn't work on this protocol."),
+					PURPLE_MESSAGE_NO_LOG);
 				retval = TRUE;
 				break;
 		}
@@ -1406,17 +1417,13 @@ menu_logging_cb(GtkAction *action, gpointer data)
 		/* Enable logging first so the message below can be logged. */
 		purple_conversation_set_logging(conv, TRUE);
 
-		purple_conversation_write(conv, NULL,
-								_("Logging started. Future messages in this conversation will be logged."),
-								PURPLE_MESSAGE_SYSTEM,
-								time(NULL));
+		purple_conversation_write_system_message(conv,
+			_("Logging started. Future messages in this conversation will be logged."), 0);
 	}
 	else
 	{
-		purple_conversation_write(conv, NULL,
-								_("Logging stopped. Future messages in this conversation will not be logged."),
-								PURPLE_MESSAGE_SYSTEM,
-								time(NULL));
+		purple_conversation_write_system_message(conv,
+			_("Logging stopped. Future messages in this conversation will not be logged."), 0);
 
 		/* Disable the logging second, so that the above message can be logged. */
 		purple_conversation_set_logging(conv, FALSE);
@@ -4615,8 +4622,7 @@ tab_complete(PurpleConversation *conv)
 			matches = g_list_remove(matches, matches->data);
 		}
 
-		purple_conversation_write(conv, NULL, addthis, PURPLE_MESSAGE_NO_LOG,
-								time(NULL));
+		purple_conversation_write_system_message(conv, addthis, PURPLE_MESSAGE_NO_LOG);
 
 		modified = g_strdup_printf("%s%s%s", sub1, partial, sub2);
 		webkit_dom_node_set_node_value(container, modified, NULL);
@@ -6196,31 +6202,6 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	g_free(gtkconv);
 }
 
-
-static void
-pidgin_conv_write_im(PurpleIMConversation *im, const char *who,
-					  const char *message, PurpleMessageFlags flags,
-					  time_t mtime)
-{
-	PidginConversation *gtkconv;
-	PurpleConversation *conv = PURPLE_CONVERSATION(im);
-
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	if (conv != gtkconv->active_conv &&
-	    flags & PURPLE_MESSAGE_ACTIVE_ONLY)
-	{
-		/* Plugins that want these messages suppressed should be
-		 * calling purple_im_conversation_write_message(), so they get suppressed here,
-		 * before being written to the log. */
-		purple_debug_info("gtkconv",
-		                "Suppressing message for an inactive conversation in pidgin_conv_write_im()\n");
-		return;
-	}
-
-	purple_conversation_write(conv, who, message, flags, mtime);
-}
-
 #if 0
 static const char *
 get_text_tag_color(GtkTextTag *tag)
@@ -6899,22 +6880,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			str_embed_direction_chars(&alias_escaped);
 
 		str = g_malloc(1024);
-		if (flags & PURPLE_MESSAGE_WHISPER) {
-			/* If we're whispering, it's not an autoresponse. */
-			if (purple_message_meify(new_message, -1 )) {
-				g_snprintf(str, 1024, "***%s", alias_escaped);
-				tag_start_offset += 3;
-				tagname = "whisper-action-name";
-			}
-			else {
-				g_snprintf(str, 1024, "*%s*:", alias_escaped);
-				tag_start_offset += 1;
-#if 0
-				tag_end_offset = 2;
-#endif
-				tagname = "whisper-name";
-			}
-		} else {
+		if (TRUE) { /* XXX: reduce numer of indentations */
 			if (purple_message_meify(new_message, -1)) {
 				if (flags & PURPLE_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, alias_escaped);
@@ -7754,7 +7720,7 @@ static PurpleConversationUiOps conversation_ui_ops =
 	pidgin_conv_new,
 	pidgin_conv_destroy,              /* destroy_conversation */
 	NULL,                              /* write_chat           */
-	pidgin_conv_write_im,             /* write_im             */
+	NULL,                             /* write_im             */
 	pidgin_conv_write_conv,           /* write_conv           */
 	pidgin_conv_chat_add_users,       /* chat_add_users       */
 	pidgin_conv_chat_rename_user,     /* chat_rename_user     */
@@ -8375,10 +8341,11 @@ account_signing_off(PurpleConnection *gc)
 		if (!purple_chat_conversation_has_left(PURPLE_CHAT_CONVERSATION(conv)) &&
 				purple_conversation_get_account(conv) == account) {
 			g_object_set_data(G_OBJECT(conv), "want-to-rejoin", GINT_TO_POINTER(TRUE));
-			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
-						"longer in this chat. You will automatically rejoin the chat when "
-						"the account reconnects."),
-					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+			purple_conversation_write_system_message(conv,
+				_("The account has disconnected and you are no "
+				"longer in this chat. You will automatically "
+				"rejoin the chat when the account reconnects."),
+				PURPLE_MESSAGE_NO_LOG);
 		}
 		list = list->next;
 	}

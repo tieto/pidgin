@@ -101,6 +101,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	PurpleMessage *msg;
 	char *displayed = NULL, *sent = NULL;
 	int err = 0;
 
@@ -133,33 +134,36 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	msgflags |= PURPLE_MESSAGE_SEND;
 
 	if (PURPLE_IS_IM_CONVERSATION(conv)) {
+		msg = purple_message_new_outgoing(
+			purple_conversation_get_name(conv), sent, msgflags);
+
 		purple_signal_emit(purple_conversations_get_handle(), "sending-im-msg",
-						 account,
-						 purple_conversation_get_name(conv), &sent);
+			account, msg);
 
-		if (sent != NULL && sent[0] != '\0') {
+		if (!purple_message_is_empty(msg)) {
 
-			err = purple_serv_send_im(gc, purple_conversation_get_name(conv),
-			                   sent, msgflags);
+			err = purple_serv_send_im(gc, msg);
 
 			if ((err > 0) && (displayed != NULL))
-				purple_conversation_write_message(conv, NULL, displayed, msgflags, time(NULL));
+				purple_conversation_write_message(conv, msg);
 
-			purple_signal_emit(purple_conversations_get_handle(), "sent-im-msg",
-							 account,
-							 purple_conversation_get_name(conv), sent);
+			purple_signal_emit(purple_conversations_get_handle(),
+				"sent-im-msg", account, msg);
 		}
 	}
 	else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 		int id = purple_chat_conversation_get_id(PURPLE_CHAT_CONVERSATION(conv));
-		purple_signal_emit(purple_conversations_get_handle(), "sending-chat-msg",
-						 account, &sent, id);
 
-		if (sent != NULL && sent[0] != '\0') {
-			err = purple_serv_chat_send(gc, id, sent, msgflags);
+		msg = purple_message_new_outgoing(NULL, sent, msgflags);
 
-			purple_signal_emit(purple_conversations_get_handle(), "sent-chat-msg",
-							 account, sent, id);
+		purple_signal_emit(purple_conversations_get_handle(),
+			"sending-chat-msg", account, msg, id);
+
+		if (!purple_message_is_empty(msg)) {
+			err = purple_serv_chat_send(gc, id, msg);
+
+			purple_signal_emit(purple_conversations_get_handle(),
+				"sent-chat-msg", account, msg, id);
 		}
 	}
 
@@ -574,7 +578,7 @@ purple_conversation_close_logs(PurpleConversation *conv)
 }
 
 void
-purple_conversation_write(PurpleConversation *conv, const char *who,
+_purple_conversation_write_common(PurpleConversation *conv, const char *who,
 						const char *message, PurpleMessageFlags flags,
 						time_t mtime)
 {
@@ -679,8 +683,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 }
 
 void
-purple_conversation_write_message(PurpleConversation *conv, const char *who,
-		const char *message, PurpleMessageFlags flags, time_t mtime)
+purple_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 {
 	PurpleConversationClass *klass = NULL;
 
@@ -689,7 +692,14 @@ purple_conversation_write_message(PurpleConversation *conv, const char *who,
 	klass = PURPLE_CONVERSATION_GET_CLASS(conv);
 
 	if (klass && klass->write_message)
-		klass->write_message(conv, who, message, flags, mtime);
+		klass->write_message(conv, msg);
+}
+
+void purple_conversation_write_system_message(PurpleConversation *conv,
+	const gchar *message, PurpleMessageFlags flags)
+{
+	_purple_conversation_write_common(conv, NULL, message,
+		flags | PURPLE_MESSAGE_SYSTEM, time(NULL));
 }
 
 void
@@ -749,7 +759,7 @@ gboolean purple_conversation_present_error(const char *who, PurpleAccount *accou
 
 	conv = purple_conversations_find_with_account(who, account);
 	if (conv != NULL)
-		purple_conversation_write(conv, NULL, what, PURPLE_MESSAGE_ERROR, time(NULL));
+		purple_conversation_write_system_message(conv, what, PURPLE_MESSAGE_ERROR);
 	else
 		return FALSE;
 

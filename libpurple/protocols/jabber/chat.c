@@ -766,9 +766,9 @@ gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick)
 	int priority;
 
 	if(!chat->muc) {
-		purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "",
-				_("Nick changing not supported in non-MUC chatrooms"),
-				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write_system_message(
+			PURPLE_CONVERSATION(chat->conv),
+			_("Nick changing not supported in non-MUC chatrooms"), 0);
 		return FALSE;
 	}
 
@@ -1089,8 +1089,8 @@ jabber_chat_affiliation_list_cb(JabberStream *js, const char *from,
 		buf = g_string_append_len(buf, _("No users found"), -1);
 	}
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "", buf->str,
-    	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat->conv),
+		buf->str, PURPLE_MESSAGE_NO_LOG);
 
 	g_string_free(buf, TRUE);
 }
@@ -1184,8 +1184,8 @@ static void jabber_chat_role_list_cb(JabberStream *js, const char *from,
 		buf = g_string_append_len(buf, _("No users found"), -1);
 	}
 
-	purple_conversation_write_message(PURPLE_CONVERSATION(chat->conv), "", buf->str,
-    	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+	purple_conversation_write_system_message(PURPLE_CONVERSATION(chat->conv),
+		buf->str, PURPLE_MESSAGE_NO_LOG);
 
 	g_string_free(buf, TRUE);
 }

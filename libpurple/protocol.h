@@ -48,6 +48,7 @@ typedef struct _PurpleProtocolClass PurpleProtocolClass;
 #include "xfer.h"
 #include "image.h"
 #include "media.h"
+#include "message.h"
 #include "notify.h"
 #include "plugins.h"
 #include "roomlist.h"
@@ -409,9 +410,7 @@ struct _PurpleProtocolIMIface
 	GTypeInterface parent_iface;
 
 	/*< public >*/
-	int  (*send)(PurpleConnection *, const char *who,
-					const char *message,
-					PurpleMessageFlags flags);
+	int  (*send)(PurpleConnection *, PurpleMessage *msg);
 
 	unsigned int (*send_typing)(PurpleConnection *, const char *name,
 							PurpleIMTypingState state);
@@ -462,10 +461,6 @@ typedef struct _PurpleProtocolChatIface PurpleProtocolChatIface;
  *          <sbr/>@who:     The name of the user to send the invation to.
  * @leave: Called when the user requests leaving a chat.
  *         <sbr/>@id: The id of the chat to leave
- * @whisper: Send a whisper to a user in a chat.
- *           <sbr/>@id:      The id of the chat.
- *           <sbr/>@who:     The name of the user to send the whisper to.
- *           <sbr/>@message: The message of the whisper.
  * @send: Send a message to a chat.
  *              <sbr/>This protocol function should return a positive value on
  *              success. If the message is too big to be sent, return
@@ -475,9 +470,7 @@ typedef struct _PurpleProtocolChatIface PurpleProtocolChatIface;
  *              negative value. You can use one of the valid #errno values, or
  *              just big something.
  *              <sbr/>@id:      The id of the chat to send the message to.
- *              <sbr/>@message: The message to send to the chat.
- *              <sbr/>@flags:   A bitwise OR of #PurpleMessageFlags representing
- *                              message flags.
+ *              <sbr/>@msg:     The message to send to the chat.
  *              <sbr/>Returns:  A positive number or 0 in case of success, a
  *                              negative error number in case of failure.
  * @get_user_real_name: Gets the real name of a participant in a chat. For
@@ -515,11 +508,7 @@ struct _PurpleProtocolChatIface
 
 	void (*leave)(PurpleConnection *, int id);
 
-	void (*whisper)(PurpleConnection *, int id,
-					 const char *who, const char *message);
-
-	int  (*send)(PurpleConnection *, int id, const char *message,
-					  PurpleMessageFlags flags);
+	int  (*send)(PurpleConnection *, int id, PurpleMessage *msg);
 
 	char *(*get_user_real_name)(PurpleConnection *gc, int id, const char *who);
 
@@ -1010,8 +999,8 @@ void purple_protocol_server_iface_get_public_alias(PurpleProtocol *,
  */
 GType purple_protocol_im_iface_get_type(void);
 
-int purple_protocol_im_iface_send(PurpleProtocol *, PurpleConnection *, 
-		const char *who, const char *message, PurpleMessageFlags flags);
+int purple_protocol_im_iface_send(PurpleProtocol *, PurpleConnection *,
+		 PurpleMessage *msg);
 
 unsigned int purple_protocol_im_iface_send_typing(PurpleProtocol *,
 		PurpleConnection *, const char *name, PurpleIMTypingState state);
@@ -1048,11 +1037,8 @@ void purple_protocol_chat_iface_invite(PurpleProtocol *,
 void purple_protocol_chat_iface_leave(PurpleProtocol *, PurpleConnection *,
 		int id);
 
-void purple_protocol_chat_iface_whisper(PurpleProtocol *,
-		PurpleConnection *, int id, const char *who, const char *message);
-
 int  purple_protocol_chat_iface_send(PurpleProtocol *, PurpleConnection *,
-		int id, const char *message, PurpleMessageFlags flags);
+		int id, PurpleMessage *msg);
 
 char *purple_protocol_chat_iface_get_user_real_name(PurpleProtocol *,
 		PurpleConnection *gc, int id, const char *who);

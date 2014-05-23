@@ -147,6 +147,11 @@
 	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
 	(void)dummy; }
 
+/* This is meant to track use-after-free errors.
+ * TODO: it should be disabled in released code. */
+#define PURPLE_ASSERT_CONNECTION_IS_VALID(gc) \
+	_purple_assert_connection_is_valid(gc, __FILE__, __LINE__)
+
 #ifdef __clang__
 
 #define PURPLE_BEGIN_IGNORE_CAST_ALIGN \
@@ -362,5 +367,59 @@ _purple_network_set_common_socket_flags(int fd);
  */
 int
 _purple_fstat(int fd, GStatBuf *st);
+
+/**
+ * _purple_socket_cancel_with_connection:
+ * @gc The connection.
+ *
+ * Cancels all #PurpleSocket instances bound with @gc.
+ */
+void
+_purple_socket_cancel_with_connection(PurpleConnection *gc);
+
+/**
+ * _purple_socket_init: (skip)
+ *
+ * Initializes the #PurpleSocket subsystem.
+ */
+void
+_purple_socket_init(void);
+
+/**
+ * _purple_socket_uninit: (skip)
+ *
+ * Uninitializes the #PurpleSocket subsystem.
+ */
+void
+_purple_socket_uninit(void);
+
+void
+_purple_assert_connection_is_valid(PurpleConnection *gc,
+	const gchar *file, int line);
+
+/**
+ * _purple_conversation_write_common:
+ * @conv:    The conversation.
+ * @who:     The user who sent the message.
+ * @message: The message.
+ * @flags:   The message flags.
+ * @mtime:   The time the message was sent.
+ *
+ * Writes to a conversation window.
+ *
+ * This function should not be used to write IM or chat messages. Use
+ * purple_conversation_write_message() instead. This function will
+ * most likely call this anyway, but it may do it's own formatting,
+ * sound playback, etc. depending on whether the conversation is a chat or an
+ * IM.
+ *
+ * This can be used to write generic messages, such as "so and so closed
+ * the conversation window."
+ *
+ * See purple_conversation_write_message().
+ */
+void
+_purple_conversation_write_common(PurpleConversation *conv, const gchar *who,
+	const gchar *message, PurpleMessageFlags flags, time_t mtime);
 
 #endif /* _PURPLE_INTERNAL_H_ */
