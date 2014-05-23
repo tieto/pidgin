@@ -201,7 +201,7 @@ im_sent_im(PurpleAccount *account, PurpleMessage *msg, gpointer _unused)
 {
 	PurpleIMConversation *im = NULL;
 	im = purple_conversations_find_im_with_account(
-		purple_message_get_who(msg), account);
+		purple_message_get_recipient(msg), account);
 	unalert(PURPLE_CONVERSATION(im));
 }
 
