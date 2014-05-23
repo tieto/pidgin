@@ -55,6 +55,7 @@ libpurple/http.c
 libpurple/keyring.c
 libpurple/log.c
 libpurple/media/backend-fs2.c
+libpurple/message.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c
 libpurple/plugins/buddynote.c
