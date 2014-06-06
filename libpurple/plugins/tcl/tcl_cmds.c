@@ -872,6 +872,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			pmsg = purple_message_new_incoming(from, what, 0, 0);
 			break;
 		case CMD_CONV_WRITE_SYSTEM:
+		default:
 			pmsg = purple_message_new_system(what, 0);
 			break;
 		}
