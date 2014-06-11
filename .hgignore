@@ -130,6 +130,7 @@ pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
 pidgin/win32/nsis/pidgin-spellcheck.nsh
 pidgin/win32/nsis/pidgin-translations.nsh$
 pidgin/win32/nsis/translations
+pidgin/win32/nsis/wget.log
 pidgin/win32/pidgin_dll_rc.rc$
 pidgin/win32/pidgin_exe_rc.rc$
 finch/finch_winres.rc$
