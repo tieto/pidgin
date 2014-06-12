@@ -1055,7 +1055,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	}
 	if (purple_account_is_connected(account)) {
 		purple_counting_node_change_current_size(contact_counter, +1);
-		if (purple_counting_node_get_online_count(contact_counter) == 1)
+		if (purple_counting_node_get_current_size(contact_counter) == 1)
 			purple_counting_node_change_current_size(group_counter, +1);
 	}
 	purple_counting_node_change_total_size(contact_counter, +1);
