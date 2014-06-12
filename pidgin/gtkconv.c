@@ -6654,6 +6654,29 @@ box_remote_images(PurpleConversation *conv, const gchar *msg)
 		box_remote_image_cb, conv, NULL);
 }
 
+static gboolean
+writing_msg(PurpleConversation *conv, PurpleMessage *msg, gpointer _unused)
+{
+	PidginConversation *gtkconv;
+
+	g_return_val_if_fail(msg != NULL, FALSE);
+
+	if (!(purple_message_get_flags(msg) & PURPLE_MESSAGE_ACTIVE_ONLY))
+		return FALSE;
+
+	g_return_val_if_fail(conv != NULL, FALSE);
+	gtkconv = PIDGIN_CONVERSATION(conv);
+	g_return_val_if_fail(gtkconv != NULL, FALSE);
+
+	if (conv == gtkconv->active_conv)
+		return FALSE;
+
+	purple_debug_info("gtkconv",
+		"Suppressing message for an inactive conversation");
+
+	return TRUE;
+}
+
 static void
 pidgin_conv_write_conv(PurpleConversation *conv, PurpleMessage *pmsg)
 {
@@ -6702,17 +6725,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, PurpleMessage *pmsg)
 
 	if (conv != gtkconv->active_conv)
 	{
-		if (flags & PURPLE_MESSAGE_ACTIVE_ONLY)
-		{
-			/* Unless this had PURPLE_MESSAGE_NO_LOG, this message
-			 * was logged.  Plugin writers: if this isn't what
-			 * you wanted, call purple_im_conversation_write_message() instead of
-			 * purple_conversation_write(). */
-			purple_debug_info("gtkconv",
-			                "Suppressing message for an inactive conversation in pidgin_conv_write_conv()\n");
-			return;
-		}
-
 		/* Set the active conversation to the one that just messaged us. */
 		/* TODO: consider not doing this if the account is offline or something */
 		if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV))
@@ -8862,6 +8874,10 @@ pidgin_conversations_init(void)
 	purple_signal_connect(purple_connections_get_handle(), "signing-off", handle,
 						G_CALLBACK(account_signing_off), NULL);
 
+	purple_signal_connect(purple_conversations_get_handle(), "writing-im-msg",
+		handle, G_CALLBACK(writing_msg), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "writing-chat-msg",
+		handle, G_CALLBACK(writing_msg), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg",
 						handle, G_CALLBACK(received_im_msg_cb), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "cleared-message-history",
