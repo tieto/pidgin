@@ -672,8 +672,14 @@ _purple_conversation_write_common(PurpleConversation *conv, PurpleMessage *pmsg)
 		}
 	}
 
-	if (ops && ops->write_conv)
-		ops->write_conv(conv, pmsg);
+	if (ops) {
+		if (PURPLE_IS_CHAT_CONVERSATION(conv) && ops->write_chat)
+			ops->write_chat(PURPLE_CHAT_CONVERSATION(conv), pmsg);
+		else if (PURPLE_IS_IM_CONVERSATION(conv) && ops->write_im)
+			ops->write_im(PURPLE_IM_CONVERSATION(conv), pmsg);
+		else if (ops->write_conv)
+			ops->write_conv(conv, pmsg);
+	}
 
 	add_message_to_history(conv,
 		(purple_message_get_flags(pmsg) & PURPLE_MESSAGE_SEND) ? purple_message_get_recipient(pmsg) : purple_message_get_author(pmsg),
