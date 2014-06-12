@@ -55,8 +55,6 @@ struct _PurpleChatConversationPrivate
 	char *nick;         /* Your nick in this chat.                   */
 	gboolean left;      /* We left the chat and kept the window open */
 	GHashTable *users;  /* Hash table of the users in the room.      */
-
-	gboolean is_finalizing;    /* The object is being destroyed. */
 };
 
 /* Chat Property enums */
@@ -1291,7 +1289,7 @@ purple_chat_conversation_leave(PurpleChatConversation *chat)
 
 	priv->left = TRUE;
 
-	if (!priv->is_finalizing)
+	if (!g_object_get_data(G_OBJECT(chat), "is-finalizing"))
 		g_object_notify_by_pspec(G_OBJECT(chat), chat_properties[CHAT_PROP_LEFT]);
 
 	purple_conversation_update(PURPLE_CONVERSATION(chat), PURPLE_CONVERSATION_UPDATE_CHATLEFT);
@@ -1466,8 +1464,6 @@ purple_chat_conversation_finalize(GObject *object)
 	PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(object);
 	PurpleConnection *gc = purple_conversation_get_connection(PURPLE_CONVERSATION(chat));
 	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(chat);
-
-	priv->is_finalizing = TRUE;
 
 	if (gc != NULL)
 	{

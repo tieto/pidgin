@@ -414,7 +414,8 @@ purple_conversation_set_title(PurpleConversation *conv, const char *title)
 	g_free(priv->title);
 	priv->title = g_strdup(title);
 
-	g_object_notify_by_pspec(G_OBJECT(conv), properties[PROP_TITLE]);
+	if (!g_object_get_data(G_OBJECT(conv), "is-finalizing"))
+		g_object_notify_by_pspec(G_OBJECT(conv), properties[PROP_TITLE]);
 
 	purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_TITLE);
 }
@@ -1133,6 +1134,12 @@ purple_conversation_constructed(GObject *object)
 	g_object_unref(account);
 }
 
+static void
+purple_conversation_dispose(GObject *object)
+{
+	g_object_set_data(object, "is-finalizing", GINT_TO_POINTER(TRUE));
+}
+
 /* GObject finalize function */
 static void
 purple_conversation_finalize(GObject *object)
@@ -1175,6 +1182,7 @@ purple_conversation_class_init(PurpleConversationClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
+	obj_class->dispose = purple_conversation_dispose;
 	obj_class->finalize = purple_conversation_finalize;
 	obj_class->constructed = purple_conversation_constructed;
 
