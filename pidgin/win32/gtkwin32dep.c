@@ -340,13 +340,9 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 }
 
 void
-winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
+winpidgin_conv_blink(PurpleConversation *conv) {
 	PidginConvWindow *win;
 	GtkWindow *window;
-
-	/* Don't flash for our own messages or system messages */
-	if(flags & PURPLE_MESSAGE_SEND || flags & PURPLE_MESSAGE_SYSTEM)
-		return;
 
 	if(conv == NULL) {
 		purple_debug_info("winpidgin", "No conversation found to blink.\n");
@@ -379,8 +375,11 @@ winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
 static gboolean
 winpidgin_conv_im_blink(PurpleConversation *conv, PurpleMessage *pmsg)
 {
+	/* Don't flash for our own messages or system messages */
+	if (purple_message_get_flags(pmsg) & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_SYSTEM))
+		return FALSE;
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/blink_im"))
-		winpidgin_conv_blink(conv, flags);
+		winpidgin_conv_blink(conv);
 	return FALSE;
 }
 
