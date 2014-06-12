@@ -25,7 +25,7 @@ PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
 BUNDLE_VERSION=2.24.18.0
-BUNDLE_SHA1SUM="27f6cbc73b8d489741ce83d6a2e49ead89479a5f"
+BUNDLE_SHA1SUM="5957b0bf3f5e520863cf8ba64db7592383e9dd42"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
 BUNDLE_URL="https://pidgin.im/~twasilczyk/win32/gtk-runtime-$BUNDLE_VERSION.zip"
@@ -138,7 +138,7 @@ ALL+="ARC_GTK2 "
 ARC_LIBFFI="${DOWNLOAD_HOST}mingw32-libffi-3.0.13-2.2.noarch.rpm libffi 3.0.13-2.2 sha1sum:0751dddb44eba3f553534c0a2a8ed438ed84a793"
 ALL+="ARC_LIBFFI "
 
-ARC_LIBGADU="${DOWNLOAD_HOST}mingw32-libgadu-1.12.0rc2-2.3.noarch.rpm libgadu 1.12.0rc2-2.3 sha1sum:2964f10b2c1dc1169bf7a97aafa89a3a6156b95e"
+ARC_LIBGADU="${DOWNLOAD_HOST}mingw32-libgadu-1.12.0rc3-6.1.noarch.rpm libgadu 1.12.0rc3-6.1 sha1sum:ec2f3ccbc850c29bb26318a46ccba4db39b0a328"
 ALL+="ARC_LIBGADU "
 
 ARC_LIBGCC="${DOWNLOAD_HOST}mingw32-libgcc-4.8.2-3.7.noarch.rpm libgcc 4.8.2-3.7 sha1sum:91ab8f6881ce1004dda5279920742f78743e897b"
@@ -222,7 +222,7 @@ ALL+="ARC_MOZNSS "
 ARC_MOZNSPR="${DOWNLOAD_HOST}mingw32-mozilla-nspr-4.10.2-2.8.noarch.rpm NSPR 4.10.2-2.8 sha1sum:ca61d4453042725e4f700a4b51859dc5f58110c4"
 ALL+="ARC_MOZNSPR "
 
-ARC_NCURSES="${DOWNLOAD_HOST}mingw32-ncurses-5.9-20140421.1.noarch.rpm ncurses 5.9-20140421.1 sha1sum:6ae5b992c14059280dfb38fa4ea9dfbeab6790ed"
+ARC_NCURSES="${DOWNLOAD_HOST}mingw32-ncurses-5.9-20140422.1.noarch.rpm ncurses 5.9-20140422.1 sha1sum:4873c22e5f67d0bc72bbb89b71a3967bce6067e0"
 ALL+="ARC_NCURSES "
 
 ARC_PANGO="${DOWNLOAD_HOST}mingw32-pango-1.34.0-2.3.noarch.rpm Pango 1.34.0-2.3 sha1sum:65b55b73c4f5c8107fdf48ef2e4f5c351189cd4f"
@@ -231,7 +231,7 @@ ALL+="ARC_PANGO "
 ARC_PIXMAN="${DOWNLOAD_HOST}mingw32-pixman-0.30.0-3.10.noarch.rpm pixman 0.30.0-3.10 sha1sum:ed63261f29c356a58276435df013376e688a3a6b"
 ALL+="ARC_PIXMAN "
 
-ARC_PROTOBUFC="${DOWNLOAD_HOST}mingw32-protobuf-c-0.15-3.6.noarch.rpm protobuf-c 0.15-3.6 sha1sum:48adac0de5df56805a150f6c8bb5c00e75ffc3e1"
+ARC_PROTOBUFC="${DOWNLOAD_HOST}mingw32-protobuf-c-0.15-6.1.noarch.rpm protobuf-c 0.15-6.1 sha1sum:b58ef0aca3c99d956479ec1510e3ca62d79a443f"
 ALL+="ARC_PROTOBUFC "
 
 ARC_PTHREADS="${DOWNLOAD_HOST}mingw32-pthreads-2.8.0-14.6.noarch.rpm pthreads 2.8.0-14.6 sha1sum:e948ae221f82bbcb4fbfd991638e4170c150fe9f"
@@ -240,28 +240,28 @@ ALL+="ARC_PTHREADS "
 ARC_SQLITE="${DOWNLOAD_HOST}mingw32-libsqlite3-0-3.8.4.1-1.4.noarch.rpm SQLite 3.8.4.1-1.4 sha1sum:1c42db1a48f616d824c3ae8e0a8eb0693ddac88f"
 ALL+="ARC_SQLITE "
 
-ARC_VV_FARST="${DOWNLOAD_HOST}mingw32-farstream-0.1.2-19.1.noarch.rpm farstream 0.1.2-19.1 sha1sum:1c46b2c2f6b669824a70ca05d3958b2dc2197dc3"
+ARC_VV_FARST="${DOWNLOAD_HOST}mingw32-farstream-0.1.2-5.3.noarch.rpm farstream 0.1.2-5.3 sha1sum:0334213ece2f339cba38aff9290ef07238763c5c"
 ALL+="ARC_VV_FARST "
 
-ARC_VV_GST="${DOWNLOAD_HOST}mingw32-gstreamer-0.10.36-10.1.noarch.rpm GStreamer 0.10.36-10.1 sha1sum:79ec8a1c0613211345efd0e88e7f3e5668e01150"
+ARC_VV_GST="${DOWNLOAD_HOST}mingw32-gstreamer-0.10.36-6.3.noarch.rpm GStreamer 0.10.36-6.3 sha1sum:3fd80dfc05c64f277d787c60799638701e0f058e"
 ALL+="ARC_VV_GST "
 
-ARC_VV_GST_LIB="${DOWNLOAD_HOST}mingw32-libgstreamer-0.10.36-10.1.noarch.rpm GStreamer-libgstreamer 0.10.36-10.1 sha1sum:3066c1047fba2181e688671fa9e12ed818d7df4a"
+ARC_VV_GST_LIB="${DOWNLOAD_HOST}mingw32-libgstreamer-0.10.36-6.3.noarch.rpm GStreamer-libgstreamer 0.10.36-6.3 sha1sum:eef44d1ff93f0c2ddffdbaecc65f08a5617b4724"
 ALL+="ARC_VV_GST_LIB "
 
-ARC_VV_GST_INT="${DOWNLOAD_HOST}mingw32-libgstinterfaces-0.10.36-15.1.noarch.rpm GStreamer-interfaces 0.10.36-15.1 sha1sum:77123565b8254bd2a741fce3b769ccaa2d5297f9"
+ARC_VV_GST_INT="${DOWNLOAD_HOST}mingw32-libgstinterfaces-0.10.36-5.4.noarch.rpm GStreamer-interfaces 0.10.36-5.4 sha1sum:d974b38c1da02191103c253e27a15ec7f160000f"
 ALL+="ARC_VV_GST_INT "
 
-ARC_VV_GST_PLBAD="${DOWNLOAD_HOST}mingw32-gst-plugins-bad-0.10.23-28.1.noarch.rpm GStreamer-plugins-bad 0.10.23-28.1 sha1sum:994ff1e2c7f839a5ef2dedfb01eeed0d9fcd4be3"
+ARC_VV_GST_PLBAD="${DOWNLOAD_HOST}mingw32-gst-plugins-bad-0.10.23-5.4.noarch.rpm GStreamer-plugins-bad 0.10.23-5.4 sha1sum:d2754a1358edab0c06b4038123274025f58af6ef"
 ALL+="ARC_VV_GST_PLBAD "
 
-ARC_VV_GST_PLBASE="${DOWNLOAD_HOST}mingw32-gst-plugins-base-0.10.36-15.1.noarch.rpm GStreamer-plugins-base 0.10.36-15.1 sha1sum:e9026a63c3c7d3f3f8d8ccbf255ed8e865b34c39"
+ARC_VV_GST_PLBASE="${DOWNLOAD_HOST}mingw32-gst-plugins-base-0.10.36-5.4.noarch.rpm GStreamer-plugins-base 0.10.36-5.4 sha1sum:9e642d5a1e71dfeaa5b38b7ebf0ade4442ee763b"
 ALL+="ARC_VV_GST_PLBASE "
 
-ARC_VV_GST_PLGOOD="${DOWNLOAD_HOST}mingw32-gst-plugins-good-0.10.31-5.1.noarch.rpm GStreamer-plugins-good 0.10.31-5.1 sha1sum:96f24a739f2f243ab55bc3cc159d43256b464861"
+ARC_VV_GST_PLGOOD="${DOWNLOAD_HOST}mingw32-gst-plugins-good-0.10.31-5.4.noarch.rpm GStreamer-plugins-good 0.10.31-5.4 sha1sum:3e0daa815e4d51749fc6d2e9353245d09ee9854d"
 ALL+="ARC_VV_GST_PLGOOD "
 
-ARC_VV_LIBNICE="${DOWNLOAD_HOST}mingw32-libnice-0.1.4-19.1.noarch.rpm libnice 0.1.4-19.1 sha1sum:c1916d36f8083f76ef19437ddd255b12077ad465"
+ARC_VV_LIBNICE="${DOWNLOAD_HOST}mingw32-libnice-0.1.4-5.3.noarch.rpm libnice 0.1.4-5.3 sha1sum:abbabaa03d81202f2d78adca2b833d1072dfecf0"
 ALL+="ARC_VV_LIBNICE "
 
 ARC_VV_LIBOGG="${DOWNLOAD_HOST}mingw32-libogg-1.3.0-1.8.noarch.rpm libogg 1.3.0-1.8 sha1sum:1978cbd5148630fc95d4a6b1c5024f76f519fcd4"
