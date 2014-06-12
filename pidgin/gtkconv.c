@@ -224,6 +224,11 @@ get_nick_color(PidginConversation *gtkconv, const gchar *name)
 {
 	static GdkColor col;
 
+	if (name == NULL) {
+		col.red = col.green = col.blue = 0;
+		return &col;
+	}
+
 	col = g_array_index(gtkconv->nick_colors, GdkColor,
 		g_str_hash(name) % gtkconv->nick_colors->len);
 
@@ -7691,12 +7696,14 @@ pidgin_conv_updated(PurpleConversation *conv, PurpleConversationUpdateType type)
 }
 
 static void
-wrote_msg_update_unseen_cb(PurpleAccount *account, const char *who, const char *message,
-		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+wrote_msg_update_unseen_cb(PurpleConversation *conv, PurpleMessage *msg,
+	gpointer _unused)
 {
 	PidginConversation *gtkconv = conv ? PIDGIN_CONVERSATION(conv) : NULL;
+	PurpleMessageFlags flags;
 	if (conv == NULL || (gtkconv && gtkconv->win != hidden_convwin))
 		return;
+	flags = purple_message_get_flags(msg);
 	if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) {
 		PidginUnseenState unseen = PIDGIN_UNSEEN_NONE;
 

@@ -168,6 +168,9 @@ purple_message_get_author_alias(PurpleMessage *msg)
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
+	if (priv->author_alias == NULL)
+		return purple_message_get_author(msg);
+
 	return priv->author_alias;
 }
 

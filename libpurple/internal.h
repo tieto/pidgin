@@ -402,10 +402,7 @@ _purple_assert_connection_is_valid(PurpleConnection *gc,
 /**
  * _purple_conversation_write_common:
  * @conv:    The conversation.
- * @who:     The user who sent the message.
- * @message: The message.
- * @flags:   The message flags.
- * @mtime:   The time the message was sent.
+ * @msg:     The message.
  *
  * Writes to a conversation window.
  *
@@ -415,13 +412,9 @@ _purple_assert_connection_is_valid(PurpleConnection *gc,
  * sound playback, etc. depending on whether the conversation is a chat or an
  * IM.
  *
- * This can be used to write generic messages, such as "so and so closed
- * the conversation window."
- *
  * See purple_conversation_write_message().
  */
 void
-_purple_conversation_write_common(PurpleConversation *conv, const gchar *who,
-	const gchar *message, PurpleMessageFlags flags, time_t mtime);
+_purple_conversation_write_common(PurpleConversation *conv, PurpleMessage *msg);
 
 #endif /* _PURPLE_INTERNAL_H_ */

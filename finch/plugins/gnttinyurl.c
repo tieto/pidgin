@@ -297,13 +297,16 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 	return FALSE;
 }
 
-static void wrote_msg(PurpleAccount *account, char *sender, char *message,
-				PurpleConversation *conv, PurpleMessageFlags flags)
+static void wrote_msg(PurpleConversation *conv, PurpleMessage *pmsg,
+	gpointer _unused)
 {
 	GList *urls;
 
+	if (purple_message_get_flags(pmsg) & PURPLE_MESSAGE_SEND)
+		return;
+
 	urls = g_object_get_data(G_OBJECT(conv), "TinyURLs");
-	if ((flags & PURPLE_MESSAGE_SEND) || urls == NULL)
+	if (urls == NULL)
 		return;
 
 	process_urls(conv, urls);

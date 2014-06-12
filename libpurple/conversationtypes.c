@@ -55,6 +55,8 @@ struct _PurpleChatConversationPrivate
 	char *nick;         /* Your nick in this chat.                   */
 	gboolean left;      /* We left the chat and kept the window open */
 	GHashTable *users;  /* Hash table of the users in the room.      */
+
+	gboolean is_finalizing;    /* The object is being destroyed. */
 };
 
 /* Chat Property enums */
@@ -371,13 +373,8 @@ im_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 	/* Pass this on to either the ops structure or the default write func. */
 	if (ops != NULL && ops->write_im != NULL)
 		ops->write_im(im, msg);
-	else {
-		_purple_conversation_write_common(conv,
-			purple_message_get_author(msg),
-			purple_message_get_contents(msg),
-			purple_message_get_flags(msg),
-			purple_message_get_time(msg));
-	}
+	else
+		_purple_conversation_write_common(conv, msg);
 }
 
 /**************************************************************************
@@ -813,7 +810,7 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 	g_return_if_fail(msg != NULL);
 
 	/* Don't display this if the person who wrote it is ignored. */
-	if (purple_chat_conversation_is_ignored_user(
+	if (purple_message_get_author(msg) && purple_chat_conversation_is_ignored_user(
 		PURPLE_CHAT_CONVERSATION(conv), purple_message_get_author(msg)))
 	{
 		return;
@@ -840,13 +837,8 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 	/* Pass this on to either the ops structure or the default write func. */
 	if (ops != NULL && ops->write_chat != NULL)
 		ops->write_chat(PURPLE_CHAT_CONVERSATION(conv), msg);
-	else {
-		_purple_conversation_write_common(conv,
-			purple_message_get_author(msg),
-			purple_message_get_contents(msg),
-			purple_message_get_flags(msg),
-			purple_message_get_time(msg));
-	}
+	else
+		_purple_conversation_write_common(conv, msg);
 }
 
 void
@@ -1299,7 +1291,8 @@ purple_chat_conversation_leave(PurpleChatConversation *chat)
 
 	priv->left = TRUE;
 
-	g_object_notify_by_pspec(G_OBJECT(chat), chat_properties[CHAT_PROP_LEFT]);
+	if (!priv->is_finalizing)
+		g_object_notify_by_pspec(G_OBJECT(chat), chat_properties[CHAT_PROP_LEFT]);
 
 	purple_conversation_update(PURPLE_CONVERSATION(chat), PURPLE_CONVERSATION_UPDATE_CHATLEFT);
 }
@@ -1473,6 +1466,8 @@ purple_chat_conversation_finalize(GObject *object)
 	PurpleChatConversation *chat = PURPLE_CHAT_CONVERSATION(object);
 	PurpleConnection *gc = purple_conversation_get_connection(PURPLE_CONVERSATION(chat));
 	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(chat);
+
+	priv->is_finalizing = TRUE;
 
 	if (gc != NULL)
 	{
