@@ -1090,18 +1090,13 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 }
 
 static void
-finch_write_conv(PurpleConversation *conv, const char *who, const char *alias,
-		const char *message, PurpleMessageFlags flags, time_t mtime)
+finch_write_conv(PurpleConversation *conv, PurpleMessage *msg)
 {
-	const char *name;
-	if (alias && *alias)
-		name = alias;
-	else if (who && *who)
-		name = who;
-	else
-		name = NULL;
-
-	finch_write_common(conv, name, message, flags, mtime);
+	finch_write_common(conv,
+		purple_message_get_author_alias(msg),
+		purple_message_get_contents(msg),
+		purple_message_get_flags(msg),
+		purple_message_get_time(msg));
 }
 
 static const char *

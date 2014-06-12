@@ -252,13 +252,7 @@ struct _PurpleConversationUiOps
 
 	void (*write_chat)(PurpleChatConversation *chat, PurpleMessage *msg);
 	void (*write_im)(PurpleIMConversation *im, PurpleMessage *msg);
-
-	void (*write_conv)(PurpleConversation *conv,
-	                   const char *name,
-	                   const char *alias,
-	                   const char *message,
-	                   PurpleMessageFlags flags,
-	                   time_t mtime);
+	void (*write_conv)(PurpleConversation *conv, PurpleMessage *msg);
 
 	void (*chat_add_users)(PurpleChatConversation *chat,
 	                       GList *cbuddies,

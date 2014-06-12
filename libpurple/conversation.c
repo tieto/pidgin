@@ -644,7 +644,7 @@ _purple_conversation_write_common(PurpleConversation *conv, PurpleMessage *pmsg)
 
 				purple_message_set_author_alias(pmsg, alias);
 			}
-			else
+			else if (purple_message_get_flags(pmsg) & PURPLE_MESSAGE_RECV)
 			{
 				/* TODO: PurpleDude - folks not on the buddy list */
 				b = purple_blist_find_buddy(account,
@@ -672,14 +672,8 @@ _purple_conversation_write_common(PurpleConversation *conv, PurpleMessage *pmsg)
 		}
 	}
 
-	if (ops && ops->write_conv) {
-		ops->write_conv(conv,
-			(purple_message_get_flags(pmsg) & PURPLE_MESSAGE_SEND) ? purple_message_get_recipient(pmsg) : purple_message_get_author(pmsg),
-			purple_message_get_author_alias(pmsg),
-			purple_message_get_contents(pmsg),
-			purple_message_get_flags(pmsg),
-			purple_message_get_time(pmsg));
-	}
+	if (ops && ops->write_conv)
+		ops->write_conv(conv, pmsg);
 
 	add_message_to_history(conv,
 		(purple_message_get_flags(pmsg) & PURPLE_MESSAGE_SEND) ? purple_message_get_recipient(pmsg) : purple_message_get_author(pmsg),

@@ -183,9 +183,10 @@ unalert_cb(GtkWidget *widget, gpointer data, PurpleConversation *conv)
 }
 
 static gboolean
-message_displayed_cb(PurpleAccount *account, const char *who, char *message,
-		PurpleConversation *conv, PurpleMessageFlags flags)
+message_displayed_cb(PurpleConversation *conv, PurpleMessage *msg, gpointer _unused)
 {
+	PurpleMessageFlags flags = purple_message_get_flags(msg);
+
 	if ((PURPLE_IS_CHAT_CONVERSATION(conv) && alert_chat_nick &&
 			!(flags & PURPLE_MESSAGE_NICK)))
 		return FALSE;

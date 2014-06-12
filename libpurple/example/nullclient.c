@@ -117,20 +117,15 @@ static PurpleEventLoopUiOps glib_eventloops =
 
 /*** Conversation uiops ***/
 static void
-null_write_conv(PurpleConversation *conv, const char *who, const char *alias,
-			const char *message, PurpleMessageFlags flags, time_t mtime)
+null_write_conv(PurpleConversation *conv, PurpleMessage *msg)
 {
-	const char *name;
-	if (alias && *alias)
-		name = alias;
-	else if (who && *who)
-		name = who;
-	else
-		name = NULL;
+	time_t mtime = purple_message_get_time(msg);
 
-	printf("(%s) %s %s: %s\n", purple_conversation_get_name(conv),
-			purple_utf8_strftime("(%H:%M:%S)", localtime(&mtime)),
-			name, message);
+	printf("(%s) %s %s: %s\n",
+		purple_conversation_get_name(conv),
+		purple_utf8_strftime("(%H:%M:%S)", localtime(&mtime)),
+		purple_message_get_author_alias(msg),
+		purple_message_get_contents(msg));
 }
 
 static PurpleConversationUiOps null_conv_uiops =

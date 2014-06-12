@@ -377,8 +377,7 @@ winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
 }
 
 static gboolean
-winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
-		PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+winpidgin_conv_im_blink(PurpleConversation *conv, PurpleMessage *pmsg)
 {
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/blink_im"))
 		winpidgin_conv_blink(conv, flags);

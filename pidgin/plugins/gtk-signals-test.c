@@ -62,39 +62,39 @@ conversation_dragging_cb(PidginConvWindow *source, PidginConvWindow *destination
 }
 
 static gboolean
-displaying_im_msg_cb(PurpleAccount *account, const char *who, char **buffer,
-				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+displaying_im_msg_cb(PurpleConversation *conv, PurpleMessage *pmsg, gpointer data)
 {
 	purple_debug_misc("gtk-signals test", "displaying-im-msg (%s, %s)\n",
-					purple_conversation_get_name(conv), *buffer);
+		purple_conversation_get_name(conv),
+		purple_message_get_contents(pmsg));
 
 	return FALSE;
 }
 
 static void
-displayed_im_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
-				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+displayed_im_msg_cb(PurpleConversation *conv, PurpleMessage *msg, gpointer data)
 {
 	purple_debug_misc("gtk-signals test", "displayed-im-msg (%s, %s)\n",
-					purple_conversation_get_name(conv), buffer);
+		purple_conversation_get_name(conv),
+		purple_message_get_contents(msg));
 }
 
 static gboolean
-displaying_chat_msg_cb(PurpleAccount *account, const char *who, char **buffer,
-				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+displaying_chat_msg_cb(PurpleConversation *conv, PurpleMessage *pmsg, gpointer data)
 {
 	purple_debug_misc("gtk-signals test", "displaying-chat-msg (%s, %s)\n",
-					purple_conversation_get_name(conv), *buffer);
+		purple_conversation_get_name(conv),
+		purple_message_get_contents(pmsg));
 
 	return FALSE;
 }
 
 static void
-displayed_chat_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
-				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+displayed_chat_msg_cb(PurpleConversation *conv, PurpleMessage *msg, gpointer data)
 {
 	purple_debug_misc("gtk-signals test", "displayed-chat-msg (%s, %s)\n",
-					purple_conversation_get_name(conv), buffer);
+		purple_conversation_get_name(conv),
+		purple_message_get_contents(msg));
 }
 
 static void
