@@ -70,6 +70,8 @@
 #define GTK_TOOLTIPS_VAR gtkconv->tooltips
 #include "gtk3compat.h"
 
+#define ADD_MESSAGE_HISTORY_AT_ONCE 100
+
 /*
  * A GTK+ Instant Message pane.
  */
@@ -6767,13 +6769,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, PurpleMessage *pmsg)
 
 	} else if ((flags & PURPLE_MESSAGE_RECV) && (old_flags & PURPLE_MESSAGE_RECV)) {
 		GList *history = purple_conversation_get_message_history(gtkconv->last_conversed);
-		PurpleConversationMessage *last_msg = history ? (PurpleConversationMessage *)history->data : NULL;
+		PurpleMessage *last_msg = history ? history->data : NULL;
 
 		g_assert(history != NULL);
 		g_assert(last_msg != NULL);
 
 		/* If the senders are the same, use appendNextMessage */
-		if (purple_strequal(purple_conversation_message_get_sender(last_msg), purple_message_get_author(pmsg))) {
+		if (purple_strequal(purple_message_get_author(last_msg), purple_message_get_author(pmsg))) {
 			message_html = pidgin_conversation_theme_get_template(gtkconv->theme,
 				PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTENT);
 			func = "appendNextMessage";
@@ -8482,12 +8484,12 @@ update_chat_topic(PurpleChatConversation *chat, const char *old, const char *new
 
 /* Message history stuff */
 
-/* Compare two PurpleConversationMessage's, according to time in ascending order. */
+/* Compare two PurpleMessages, according to time in ascending order. */
 static int
 message_compare(gconstpointer p1, gconstpointer p2)
 {
-	const PurpleConversationMessage *m1 = p1, *m2 = p2;
-	return (purple_conversation_message_get_timestamp(m1) > purple_conversation_message_get_timestamp(m2));
+	const PurpleMessage *m1 = p1, *m2 = p2;
+	return (purple_message_get_time(m1) > purple_message_get_time(m2));
 }
 
 /* Adds some message history to the gtkconv. This happens in a idle-callback. */
@@ -8502,23 +8504,15 @@ add_message_history_to_gtkconv(gpointer data)
 	gboolean im = (PURPLE_IS_IM_CONVERSATION(gtkconv->active_conv));
 
 	gtkconv->attach_timer = 0;
-	while (gtkconv->attach_current && count < 100) {  /* XXX: 100 is a random value here */
-		PurpleConversationMessage *msg = gtkconv->attach_current->data;
-		if (!im && when && when < purple_conversation_message_get_timestamp(msg)) {
+	while (gtkconv->attach_current && count < ADD_MESSAGE_HISTORY_AT_ONCE) {
+		PurpleMessage *msg = gtkconv->attach_current->data;
+		if (!im && when && (guint64)when < purple_message_get_time(msg)) {
 			pidgin_webview_append_html(webview, "<BR><HR>");
 			pidgin_webview_scroll_to_end(webview, TRUE);
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
-#if 0
-		/* TODO */
-		pidgin_conv_write_conv(
-				purple_conversation_message_get_conversation(msg),
-				purple_conversation_message_get_sender(msg),
-				purple_conversation_message_get_alias(msg),
-				purple_conversation_message_get_message(msg),
-				purple_conversation_message_get_flags(msg),
-				purple_conversation_message_get_timestamp(msg));
-#endif
+		/* XXX: should it be gtkconv->active_conv? */
+		pidgin_conv_write_conv(gtkconv->active_conv, msg);
 		if (im) {
 			gtkconv->attach_current = g_list_delete_link(gtkconv->attach_current, gtkconv->attach_current);
 		} else {
@@ -8540,24 +8534,16 @@ add_message_history_to_gtkconv(gpointer data)
 			PurpleConversation *conv = iter->data;
 			GList *history = purple_conversation_get_message_history(conv);
 			for (; history; history = history->next) {
-				PurpleConversationMessage *msg = history->data;
-				if (purple_conversation_message_get_timestamp(msg) > when)
+				PurpleMessage *msg = history->data;
+				if (purple_message_get_time(msg) > (guint64)when)
 					msgs = g_list_prepend(msgs, msg);
 			}
 		}
 		msgs = g_list_sort(msgs, message_compare);
 		for (; msgs; msgs = g_list_delete_link(msgs, msgs)) {
-#if 0
-			/* TODO */
-			PurpleConversationMessage *msg = msgs->data;
-			pidgin_conv_write_conv(
-					purple_conversation_message_get_conversation(msg),
-					purple_conversation_message_get_sender(msg),
-					purple_conversation_message_get_alias(msg),
-					purple_conversation_message_get_message(msg),
-					purple_conversation_message_get_flags(msg),
-					purple_conversation_message_get_timestamp(msg));
-#endif
+			PurpleMessage *msg = msgs->data;
+			/* XXX: see above - should it be active_conv? */
+			pidgin_conv_write_conv(gtkconv->active_conv, msg);
 		}
 		pidgin_webview_append_html(webview, "<BR><HR>");
 		pidgin_webview_scroll_to_end(webview, TRUE);
@@ -8628,9 +8614,9 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 		} else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
 			gtkconv->attach_current = g_list_last(list);
 		}
-	
+
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time",
-				GINT_TO_POINTER(purple_conversation_message_get_timestamp((PurpleConversationMessage*)(list->data))));
+			GINT_TO_POINTER(purple_message_get_time(list->data)));
 		gtkconv->attach_timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
 	} else {
 		purple_signal_emit(pidgin_conversations_get_handle(),

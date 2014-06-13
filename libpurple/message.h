@@ -94,43 +94,43 @@ PurpleMessage *
 purple_message_new_system(const gchar *contents, PurpleMessageFlags flags);
 
 guint
-purple_message_get_id(PurpleMessage *msg);
+purple_message_get_id(const PurpleMessage *msg);
 
 PurpleMessage *
 purple_message_find_by_id(guint id);
 
 const gchar *
-purple_message_get_author(PurpleMessage *msg);
+purple_message_get_author(const PurpleMessage *msg);
 
 const gchar *
-purple_message_get_recipient(PurpleMessage *msg);
+purple_message_get_recipient(const PurpleMessage *msg);
 
 void
 purple_message_set_author_alias(PurpleMessage *msg, const gchar *alias);
 
 const gchar *
-purple_message_get_author_alias(PurpleMessage *msg);
+purple_message_get_author_alias(const PurpleMessage *msg);
 
 void
 purple_message_set_contents(PurpleMessage *msg, const gchar *cont);
 
 const gchar *
-purple_message_get_contents(PurpleMessage *msg);
+purple_message_get_contents(const PurpleMessage *msg);
 
 gboolean
-purple_message_is_empty(PurpleMessage *msg);
+purple_message_is_empty(const PurpleMessage *msg);
 
 void
 purple_message_set_time(PurpleMessage *msg, guint64 msgtime);
 
 guint64
-purple_message_get_time(PurpleMessage *msg);
+purple_message_get_time(const PurpleMessage *msg);
 
 void
 purple_message_set_flags(PurpleMessage *msg, PurpleMessageFlags flags);
 
 PurpleMessageFlags
-purple_message_get_flags(PurpleMessage *msg);
+purple_message_get_flags(const PurpleMessage *msg);
 
 void
 _purple_message_init(void);
