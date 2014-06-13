@@ -395,6 +395,22 @@ _purple_socket_init(void);
 void
 _purple_socket_uninit(void);
 
+/**
+ * _purple_message_init: (skip)
+ *
+ * Initializes the #PurpleMessage subsystem.
+ */
+void
+_purple_message_init(void);
+
+/**
+ * _purple_message_uninit: (skip)
+ *
+ * Uninitializes the #PurpleMessage subsystem.
+ */
+void
+_purple_message_uninit(void);
+
 void
 _purple_assert_connection_is_valid(PurpleConnection *gc,
 	const gchar *file, int line);

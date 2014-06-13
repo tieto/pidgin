@@ -362,7 +362,7 @@ purple_message_class_init(PurpleMessageClass *klass)
 		"Contents", "The message text",
 		NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_TIME] = g_param_spec_uint64("time",
-		"Time", "Message time",
+		"Time", "Message timestamp",
 		0, G_MAXUINT64, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_FLAGS] = g_param_spec_flags("flags",
 		"Flags", "Bitwise set of #PurpleMessageFlags flags",

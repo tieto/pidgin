@@ -48,7 +48,7 @@ typedef struct _PurpleMessageClass PurpleMessageClass;
 /**
  * PurpleMessage:
  *
- * An message data container.
+ * A message data container.
  */
 struct _PurpleMessage
 {
@@ -82,61 +82,194 @@ G_BEGIN_DECLS
 GType
 purple_message_get_type(void);
 
+/**
+ * purple_message_new_outgoing:
+ * @who: Message's recipient.
+ * @contents: The contents of a message.
+ * @flags: The message flags.
+ *
+ * Creates new outgoing message (the user is the author).
+ *
+ * You don't need to set the #PURPLE_MESSAGE_SEND flag.
+ *
+ * Returns: the new #PurpleMessage.
+ */
 PurpleMessage *
 purple_message_new_outgoing(const gchar *who, const gchar *contents,
 	PurpleMessageFlags flags);
 
+/**
+ * purple_message_new_incoming:
+ * @who: Message's author.
+ * @contents: The contents of a message.
+ * @flags: The message flags.
+ * @timestamp: The time of transmitting a message. May be %0 for a current time.
+ *
+ * Creates new incoming message (the user is the recipient).
+ *
+ * You don't need to set the #PURPLE_MESSAGE_RECV flag.
+ *
+ * Returns: the new #PurpleMessage.
+ */
 PurpleMessage *
 purple_message_new_incoming(const gchar *who, const gchar *contents,
 	PurpleMessageFlags flags, guint64 timestamp);
 
+/**
+ * purple_message_new_system:
+ * @contents: The contents of a message.
+ * @flags: The message flags.
+ *
+ * Creates new system message.
+ *
+ * You don't need to set the #PURPLE_MESSAGE_SYSTEM flag.
+ *
+ * Returns: the new #PurpleMessage.
+ */
 PurpleMessage *
 purple_message_new_system(const gchar *contents, PurpleMessageFlags flags);
 
+/**
+ * purple_message_get_id:
+ * @msg: The message.
+ *
+ * Returns the unique identifier of the message. These identifiers are not
+ * serialized - it's a per-session id.
+ *
+ * Returns: the global identifier of @msg.
+ */
 guint
 purple_message_get_id(const PurpleMessage *msg);
 
+/**
+ * purple_message_find_by_id:
+ * @id: The message identifier.
+ *
+ * Finds the message with a given @id.
+ *
+ * Returns: the #PurpleMessage, or %NULL if not found.
+ */
 PurpleMessage *
 purple_message_find_by_id(guint id);
 
+/**
+ * purple_message_get_author:
+ * @msg: The message.
+ *
+ * Returns the author of the message - his screen name (not a local alias).
+ *
+ * Returns: the author of @msg.
+ */
 const gchar *
 purple_message_get_author(const PurpleMessage *msg);
 
+/**
+ * purple_message_get_recipient:
+ * @msg: The message.
+ *
+ * Returns the recipient of the message - his screen name (not a local alias).
+ *
+ * Returns: the recipient of @msg.
+ */
 const gchar *
 purple_message_get_recipient(const PurpleMessage *msg);
 
+/**
+ * purple_message_set_author_alias:
+ * @msg: The message.
+ * @alias: The alias.
+ *
+ * Sets the alias of @msg's author. You don't normally need to call this.
+ */
 void
 purple_message_set_author_alias(PurpleMessage *msg, const gchar *alias);
 
+/**
+ * purple_message_get_author_alias:
+ * @msg: The message.
+ *
+ * Returns the alias of @msg author.
+ *
+ * Returns: the @msg author's alias.
+ */
 const gchar *
 purple_message_get_author_alias(const PurpleMessage *msg);
 
+/**
+ * purple_message_set_contents:
+ * @msg: The message.
+ * @cont: The contents.
+ *
+ * Sets the contents of the @msg. It might be HTML.
+ */
 void
 purple_message_set_contents(PurpleMessage *msg, const gchar *cont);
 
+/**
+ * purple_message_get_contents:
+ * @msg: The message.
+ *
+ * Returns the contents of the message.
+ *
+ * Returns: the contents of @msg.
+ */
 const gchar *
 purple_message_get_contents(const PurpleMessage *msg);
 
+/**
+ * purple_message_is_empty:
+ * @msg: The message.
+ *
+ * Checks, if the message's body is empty.
+ *
+ * Returns: %TRUE, if @msg is empty.
+ */
 gboolean
 purple_message_is_empty(const PurpleMessage *msg);
 
+/**
+ * purple_message_set_time:
+ * @msg: The message.
+ * @msgtime: The timestamp of a message.
+ *
+ * Sets the @msg's timestamp. It should be a date of posting, but it can be
+ * a date of receiving (if the former is not available).
+ */
 void
 purple_message_set_time(PurpleMessage *msg, guint64 msgtime);
 
+/**
+ * purple_message_get_time:
+ * @msg: The message.
+ *
+ * Returns a @msg's timestamp.
+ *
+ * Returns: @msg's timestamp.
+ */
 guint64
 purple_message_get_time(const PurpleMessage *msg);
 
+/**
+ * purple_message_set_flags:
+ * @msg: The message.
+ * @flags: The message flags.
+ *
+ * Sets flags for @msg. It shouldn't be in a conflict with a message type,
+ * so use it carefully.
+ */
 void
 purple_message_set_flags(PurpleMessage *msg, PurpleMessageFlags flags);
 
+/**
+ * purple_message_get_flags:
+ * @msg: The message.
+ *
+ * Returns the flags of a @msg.
+ *
+ * Returns: the flags of a @msg.
+ */
 PurpleMessageFlags
 purple_message_get_flags(const PurpleMessage *msg);
-
-void
-_purple_message_init(void);
-
-void
-_purple_message_uninit(void);
 
 G_END_DECLS
 
