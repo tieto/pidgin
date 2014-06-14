@@ -293,11 +293,11 @@ writing_im_msg_cb(PurpleAccount *account, const char *who, char **buffer,
 }
 
 static void
-wrote_im_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
-				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+wrote_im_msg_cb(PurpleConversation *conv, PurpleMessage *msg, gpointer data)
 {
-	purple_debug_misc("signals test", "wrote-im-msg (%s, %s, %s)\n",
-					purple_account_get_username(account), purple_conversation_get_name(conv), buffer);
+	purple_debug_misc("signals test", "wrote-im-msg (%s, %s)\n",
+		purple_conversation_get_name(conv),
+		purple_message_get_contents(msg));
 }
 
 static void
@@ -350,11 +350,11 @@ writing_chat_msg_cb(PurpleAccount *account, const char *who, char **buffer,
 }
 
 static void
-wrote_chat_msg_cb(PurpleAccount *account, const char *who, const char *buffer,
-				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+wrote_chat_msg_cb(PurpleConversation *conv, PurpleMessage *msg, gpointer data)
 {
 	purple_debug_misc("signals test", "wrote-chat-msg (%s, %s)\n",
-					purple_conversation_get_name(conv), buffer);
+		purple_conversation_get_name(conv),
+		purple_message_get_contents(msg));
 }
 
 static gboolean

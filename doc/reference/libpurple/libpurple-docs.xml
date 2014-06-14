@@ -38,7 +38,6 @@
       <xi:include href="xml/pounce.xml" />
       <xi:include href="xml/circularbuffer.xml" />
       <xi:include href="xml/cipher.xml" />
-      <xi:include href="xml/cmds.xml" />
       <xi:include href="xml/connection.xml" />
       <xi:include href="xml/conversation.xml" />
       <xi:include href="xml/conversationtypes.xml" />
@@ -54,7 +53,6 @@
       <xi:include href="xml/http.xml" />
       <xi:include href="xml/idle.xml" />
       <xi:include href="xml/keyring.xml" />
-      <xi:include href="xml/log.xml" />
       <xi:include href="xml/memorypool.xml" />
       <xi:include href="xml/desktopitem.xml" />
       <xi:include href="xml/mime.xml" />
@@ -98,6 +96,14 @@
 
   <reference label="">
     <reference label="a">
+      <title>Messaging</title>
+
+        <xi:include href="xml/message.xml" />
+        <xi:include href="xml/log.xml" />
+        <xi:include href="xml/cmds.xml" />
+    </reference>
+
+    <reference label="b">
       <title>Ciphers and Hashes</title>
 
         <xi:include href="xml/aescipher.xml" />
@@ -112,7 +118,7 @@
         <xi:include href="xml/sha256hash.xml" />
     </reference>
 
-    <reference label="b">
+    <reference label="c">
       <title>Smiley APIs</title>
 
         <xi:include href="xml/smiley.xml" />
@@ -122,7 +128,7 @@
         <xi:include href="xml/smiley-parser.xml" />
     </reference>
 
-    <reference label="c">
+    <reference label="d">
       <title>Graphics</title>
 
         <xi:include href="xml/image.xml" />
@@ -130,7 +136,7 @@
         <xi:include href="xml/whiteboard.xml" />
     </reference>
 
-    <reference label="d">
+    <reference label="e">
       <title>Media APIs</title>
 
         <xi:include href="xml/media.xml" />
@@ -142,7 +148,7 @@
         <xi:include href="xml/enum-types.xml" />
     </reference>
 
-    <reference label="e">
+    <reference label="f">
       <title>D-Bus Server APIs</title>
 
         <xi:include href="xml/dbus-bindings.xml" />

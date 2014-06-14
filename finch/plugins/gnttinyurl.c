@@ -246,26 +246,24 @@ static void free_urls(gpointer data, gpointer null)
 	g_free(data);
 }
 
-static gboolean writing_msg(PurpleAccount *account, char *sender, char **message,
-				PurpleConversation *conv, PurpleMessageFlags flags)
+static gboolean writing_msg(PurpleConversation *conv, PurpleMessage *msg, gpointer _unused)
 {
 	GString *t;
 	GList *iter, *urls, *next;
 	int c = 0;
 
-	if ((flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_INVISIBLE)))
+	if (purple_message_get_flags(msg) & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_INVISIBLE))
 		return FALSE;
 
 	urls = g_object_get_data(G_OBJECT(conv), "TinyURLs");
 	if (urls != NULL) /* message was cancelled somewhere? Reset. */
 		g_list_foreach(urls, free_urls, NULL);
 	g_list_free(urls);
-	urls = extract_urls(*message);
+	urls = extract_urls(purple_message_get_contents(msg));
 	if (!urls)
 		return FALSE;
 
-	t = g_string_new(*message);
-	g_free(*message);
+	t = g_string_new(g_strdup(purple_message_get_contents(msg)));
 	for (iter = urls; iter; iter = next) {
 		next = iter->next;
 		if (g_utf8_strlen((char *)iter->data, -1) >= purple_prefs_get_int(PREF_LENGTH)) {
@@ -289,21 +287,23 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 			urls = g_list_delete_link(urls, iter);
 		}
 	}
-	*message = t->str;
-	g_string_free(t, FALSE);
-	if (conv == NULL)
-		conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, sender));
-	g_object_set_data(G_OBJECT(conv), "TinyURLs", urls);
+	purple_message_set_contents(msg, t->str);
+	g_string_free(t, TRUE);
+	if (conv != NULL)
+		g_object_set_data(G_OBJECT(conv), "TinyURLs", urls);
 	return FALSE;
 }
 
-static void wrote_msg(PurpleAccount *account, char *sender, char *message,
-				PurpleConversation *conv, PurpleMessageFlags flags)
+static void wrote_msg(PurpleConversation *conv, PurpleMessage *pmsg,
+	gpointer _unused)
 {
 	GList *urls;
 
+	if (purple_message_get_flags(pmsg) & PURPLE_MESSAGE_SEND)
+		return;
+
 	urls = g_object_get_data(G_OBJECT(conv), "TinyURLs");
-	if ((flags & PURPLE_MESSAGE_SEND) || urls == NULL)
+	if (urls == NULL)
 		return;
 
 	process_urls(conv, urls);

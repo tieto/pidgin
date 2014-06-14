@@ -4807,15 +4807,21 @@ conversation_deleted_update_ui_cb(PurpleConversation *conv, struct _pidgin_blist
 }
 
 static void
-written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *message,
-		PurpleConversation *conv, PurpleMessageFlags flag, PurpleBlistNode *node)
+written_msg_update_ui_cb(PurpleConversation *conv, PurpleMessage *msg, PurpleBlistNode *node)
 {
 	PidginBlistNode *ui = purple_blist_node_get_ui_data(node);
-	if (ui->conv.conv != conv || !pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)) ||
-			!(flag & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
+
+	if (ui->conv.conv != conv)
 		return;
+
+	if (!pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)))
+		return;
+
+	if (!(purple_message_get_flags(msg) & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
+		return;
+
 	ui->conv.flags |= PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
-	if (PURPLE_IS_CHAT_CONVERSATION(conv) && (flag & PURPLE_MESSAGE_NICK))
+	if (PURPLE_IS_CHAT_CONVERSATION(conv) && (purple_message_get_flags(msg) & PURPLE_MESSAGE_NICK))
 		ui->conv.flags |= PIDGIN_BLIST_CHAT_HAS_PENDING_MESSAGE_WITH_NICK;
 
 	ui->conv.last_message = time(NULL);    /* XXX: for lack of better data */

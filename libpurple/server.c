@@ -875,7 +875,12 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg", purple_connection_get_account(g),
 					 who, message, chat, flags);
 
-	pmsg = purple_message_new_incoming(who, message, flags, mtime);
+	if (flags & PURPLE_MESSAGE_RECV)
+		pmsg = purple_message_new_incoming(who, message, flags, mtime);
+	else {
+		pmsg = purple_message_new_outgoing(who, message, flags);
+		purple_message_set_time(pmsg, mtime);
+	}
 	purple_conversation_write_message(PURPLE_CONVERSATION(chat), pmsg);
 
 	g_free(angel);

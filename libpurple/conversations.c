@@ -284,15 +284,12 @@ purple_conversations_init(void)
 	 * Register signals
 	 **********************************************************************/
 	purple_signal_register(handle, "writing-im-msg",
-						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
-						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_POINTER, /* pointer to a string */
-						 PURPLE_TYPE_IM_CONVERSATION, G_TYPE_UINT);
+		purple_marshal_BOOLEAN__POINTER_POINTER, G_TYPE_BOOLEAN, 2,
+		PURPLE_TYPE_IM_CONVERSATION, PURPLE_TYPE_MESSAGE);
 
 	purple_signal_register(handle, "wrote-im-msg",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
-						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_STRING, PURPLE_TYPE_IM_CONVERSATION, G_TYPE_UINT);
+		purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+		PURPLE_TYPE_IM_CONVERSATION, PURPLE_TYPE_MESSAGE);
 
 	purple_signal_register(handle, "sent-attention",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
@@ -331,15 +328,12 @@ purple_conversations_init(void)
 						 G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT);
 
 	purple_signal_register(handle, "writing-chat-msg",
-						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
-						 G_TYPE_BOOLEAN, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_POINTER, /* pointer to a string */
-						 PURPLE_TYPE_CHAT_CONVERSATION, G_TYPE_UINT);
+		purple_marshal_BOOLEAN__POINTER_POINTER, G_TYPE_BOOLEAN, 2,
+		PURPLE_TYPE_IM_CONVERSATION, PURPLE_TYPE_MESSAGE);
 
 	purple_signal_register(handle, "wrote-chat-msg",
-						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
-						 G_TYPE_NONE, 5, PURPLE_TYPE_ACCOUNT, G_TYPE_STRING,
-						 G_TYPE_STRING, PURPLE_TYPE_CHAT_CONVERSATION, G_TYPE_UINT);
+		purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
+		PURPLE_TYPE_IM_CONVERSATION, PURPLE_TYPE_MESSAGE);
 
 	purple_signal_register(handle, "sending-chat-msg",
 		purple_marshal_VOID__POINTER_POINTER_UINT, G_TYPE_NONE,

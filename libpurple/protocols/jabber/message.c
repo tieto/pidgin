@@ -220,7 +220,7 @@ static void handle_groupchat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
 	JabberChat *chat;
-	PurpleMessageFlags messageFlags = PURPLE_MESSAGE_RECV;
+	PurpleMessageFlags messageFlags = 0;
 
 	if(!jid)
 		return;

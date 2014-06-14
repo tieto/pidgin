@@ -71,8 +71,7 @@ static gboolean receive_im_cb(PurpleAccount *account, char **sender,
  * @param message	the message we are displaying
  * @param data		user data
  */
-static gboolean display_im_cb(PurpleAccount *account, const char *who, char **message,
-			PurpleConnection *conv, PurpleMessageFlags flags, void *data);
+static gboolean display_im_cb(PurpleConversation *conv, PurpleMessage *pmsg, gpointer data);
 
 /**
  * Callback for CrazyChat plugin configuration frame
@@ -247,8 +246,8 @@ static gboolean receive_im_cb(PurpleAccount *account, char **sender,
 	return FALSE;
 }
 
-static gboolean display_im_cb(PurpleAccount *account, PurpleConversation *conv,
-		char **message, void *data)
+static gboolean
+display_im_cb(PurpleConversation *conv, PurpleMessage *pmsg, gpointer data);
 {
 	struct crazychat *cc;
 

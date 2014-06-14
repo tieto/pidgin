@@ -60,8 +60,6 @@
 
 #include "config.h"
 
-static void finch_write_common(PurpleConversation *conv, const char *who,
-		const char *message, PurpleMessageFlags flags, time_t mtime);
 static void generate_send_to_menu(FinchConv *ggc);
 static void generate_e2ee_menu(FinchConv *ggc);
 
@@ -309,8 +307,8 @@ update_buddy_typing(PurpleAccount *account, const char *who, gpointer null)
 static void
 chat_left_cb(PurpleConversation *conv, gpointer null)
 {
-	finch_write_common(conv, NULL, _("You have left this chat."),
-			PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write_system_message(conv,
+		_("You have left this chat."), 0);
 }
 
 static void
@@ -987,13 +985,13 @@ finch_destroy_conversation(PurpleConversation *conv)
 }
 
 static void
-finch_write_common(PurpleConversation *conv, const char *who, const char *message,
-		PurpleMessageFlags flags, time_t mtime)
+finch_write_conv(PurpleConversation *conv, PurpleMessage *msg)
 {
 	FinchConv *ggconv = FINCH_CONV(conv);
 	char *strip, *newline;
 	GntTextFormatFlags fl = 0;
 	int pos;
+	PurpleMessageFlags flags = purple_message_get_flags(msg);
 
 	g_return_if_fail(ggconv != NULL);
 
@@ -1015,6 +1013,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	/* Unnecessary to print the timestamp for delayed message */
 	if (purple_prefs_get_bool("/finch/conversations/timestamps")) {
+		time_t mtime = purple_message_get_time(msg);
 		if (!mtime)
 			time(&mtime);
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
@@ -1027,15 +1026,16 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					_("<AUTO-REPLY> "), GNT_TEXT_FLAG_BOLD);
 
-	if (who && *who && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) &&
+	if (purple_message_get_author(msg) && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) &&
 			!(flags & PURPLE_MESSAGE_NOTIFY))
 	{
 		char * name = NULL;
 		GntTextFormatFlags msgflags = GNT_TEXT_FLAG_NORMAL;
 		gboolean me = FALSE;
+		gchar *msg_text = g_strdup(purple_message_get_contents(msg));
 
-		if (purple_message_meify((char*)message, -1)) {
-			name = g_strdup_printf("*** %s", who);
+		if (purple_message_meify(msg_text, -1)) {
+			name = g_strdup_printf("*** %s", purple_message_get_author(msg));
 			if (!(flags & PURPLE_MESSAGE_SEND) &&
 					(flags & PURPLE_MESSAGE_NICK))
 				msgflags = gnt_color_pair(color_message_highlight);
@@ -1043,7 +1043,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 				msgflags = gnt_color_pair(color_message_action);
 			me = TRUE;
 		} else {
-			name =  g_strdup_printf("%s", who);
+			name =  g_strdup_printf("%s", purple_message_get_author(msg));
 			if (flags & PURPLE_MESSAGE_SEND)
 				msgflags = gnt_color_pair(color_message_send);
 			else if (flags & PURPLE_MESSAGE_NICK)
@@ -1051,6 +1051,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 			else
 				msgflags = gnt_color_pair(color_message_receive);
 		}
+		purple_message_set_contents(msg, msg_text); /* might be "meified" */
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 				name, msgflags);
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), me ? " " : ": ", GNT_TEXT_FLAG_NORMAL);
@@ -1062,7 +1063,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 		fl |= GNT_TEXT_FLAG_BOLD;
 
 	/* XXX: Remove this workaround when textview can parse messages. */
-	newline = purple_strdup_withhtml(message);
+	newline = purple_strdup_withhtml(purple_message_get_contents(msg));
 	strip = purple_markup_strip_html(newline);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 				strip, fl);
@@ -1088,21 +1089,6 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 		g_object_set_data(G_OBJECT(conv), "unseen-count", GINT_TO_POINTER(count + 1));
 		purple_conversation_update(conv, PURPLE_CONVERSATION_UPDATE_UNSEEN);
 	}
-}
-
-static void
-finch_write_conv(PurpleConversation *conv, const char *who, const char *alias,
-		const char *message, PurpleMessageFlags flags, time_t mtime)
-{
-	const char *name;
-	if (alias && *alias)
-		name = alias;
-	else if (who && *who)
-		name = who;
-	else
-		name = NULL;
-
-	finch_write_common(conv, name, message, flags, mtime);
 }
 
 static const char *

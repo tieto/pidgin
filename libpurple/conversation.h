@@ -48,8 +48,6 @@ typedef struct _PurpleConversationClass      PurpleConversationClass;
 
 typedef struct _PurpleConversationUiOps      PurpleConversationUiOps;
 
-typedef struct _PurpleConversationMessage    PurpleConversationMessage;
-
 /**
  * PurpleConversationUpdateType:
  * @PURPLE_CONVERSATION_UPDATE_ADD:      The buddy associated with the
@@ -252,13 +250,7 @@ struct _PurpleConversationUiOps
 
 	void (*write_chat)(PurpleChatConversation *chat, PurpleMessage *msg);
 	void (*write_im)(PurpleIMConversation *im, PurpleMessage *msg);
-
-	void (*write_conv)(PurpleConversation *conv,
-	                   const char *name,
-	                   const char *alias,
-	                   const char *message,
-	                   PurpleMessageFlags flags,
-	                   time_t mtime);
+	void (*write_conv)(PurpleConversation *conv, PurpleMessage *msg);
 
 	void (*chat_add_users)(PurpleChatConversation *chat,
 	                       GList *cbuddies,
@@ -562,9 +554,9 @@ void purple_conversation_update(PurpleConversation *conv, PurpleConversationUpda
  *
  * Retrieve the message history of a conversation.
  *
- * Returns:  A GList of PurpleConversationMessage's. The must not modify the
- *           list or the data within. The list contains the newest message at
- *           the beginning, and the oldest message at the end.
+ * Returns: (transfer none): A GList of PurpleMessage's. You must not modify the
+ *          list or the data within. The list contains the newest message at
+ *          the beginning, and the oldest message at the end.
  */
 GList *purple_conversation_get_message_history(PurpleConversation *conv);
 
@@ -719,77 +711,6 @@ purple_conversation_get_remote_smileys(PurpleConversation *conv);
  * Returns:        TRUE if the error was presented, else FALSE
  */
 gboolean purple_conversation_present_error(const char *who, PurpleAccount *account, const char *what);
-
-/**************************************************************************/
-/* Conversation Message API                                               */
-/**************************************************************************/
-
-/**
- * purple_conversation_message_get_type:
- *
- * Returns: The #GType for the #PurpleConversationMessage boxed structure.
- */
-GType purple_conversation_message_get_type(void);
-
-/**
- * purple_conversation_message_get_sender:
- * @msg:   A PurpleConversationMessage
- *
- * Get the sender from a PurpleConversationMessage
- *
- * Returns:   The name of the sender of the message
- */
-const char *purple_conversation_message_get_sender(const PurpleConversationMessage *msg);
-
-/**
- * purple_conversation_message_get_message:
- * @msg:   A PurpleConversationMessage
- *
- * Get the message from a PurpleConversationMessage
- *
- * Returns:   The name of the sender of the message
- */
-const char *purple_conversation_message_get_message(const PurpleConversationMessage *msg);
-
-/**
- * purple_conversation_message_get_flags:
- * @msg:   A PurpleConversationMessage
- *
- * Get the message-flags of a PurpleConversationMessage
- *
- * Returns:   The message flags
- */
-PurpleMessageFlags purple_conversation_message_get_flags(const PurpleConversationMessage *msg);
-
-/**
- * purple_conversation_message_get_timestamp:
- * @msg:   A PurpleConversationMessage
- *
- * Get the timestamp of a PurpleConversationMessage
- *
- * Returns:   The timestamp of the message
- */
-time_t purple_conversation_message_get_timestamp(const PurpleConversationMessage *msg);
-
-/**
- * purple_conversation_message_get_alias:
- * @msg:   A PurpleConversationMessage
- *
- * Get the alias from a PurpleConversationMessage
- *
- * Returns:   The alias of the sender of the message
- */
-const char *purple_conversation_message_get_alias(const PurpleConversationMessage *msg);
-
-/**
- * purple_conversation_message_get_conversation:
- * @msg:   A PurpleConversationMessage
- *
- * Get the conversation associated with the PurpleConversationMessage
- *
- * Returns:   The conversation
- */
-PurpleConversation *purple_conversation_message_get_conversation(const PurpleConversationMessage *msg);
 
 G_END_DECLS
 

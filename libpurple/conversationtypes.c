@@ -355,29 +355,18 @@ purple_im_conversation_update_typing(PurpleIMConversation *im)
 static void
 im_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 {
-	PurpleConversationUiOps *ops;
 	PurpleIMConversation *im = PURPLE_IM_CONVERSATION(conv);
 	gboolean is_recv;
 
 	g_return_if_fail(im != NULL);
 	g_return_if_fail(msg != NULL);
 
-	ops = purple_conversation_get_ui_ops(conv);
 	is_recv = (purple_message_get_flags(msg) & PURPLE_MESSAGE_RECV);
 
 	if (is_recv)
 		purple_im_conversation_set_typing_state(im, PURPLE_IM_NOT_TYPING);
 
-	/* Pass this on to either the ops structure or the default write func. */
-	if (ops != NULL && ops->write_im != NULL)
-		ops->write_im(im, msg);
-	else {
-		_purple_conversation_write_common(conv,
-			purple_message_get_author(msg),
-			purple_message_get_contents(msg),
-			purple_message_get_flags(msg),
-			purple_message_get_time(msg));
-	}
+	_purple_conversation_write_common(conv, msg);
 }
 
 /**************************************************************************
@@ -804,7 +793,6 @@ purple_chat_conversation_get_id(const PurpleChatConversation *chat)
 static void
 chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 {
-	PurpleConversationUiOps *ops;
 	PurpleChatConversationPrivate *priv = PURPLE_CHAT_CONVERSATION_GET_PRIVATE(conv);
 	PurpleMessageFlags flags;
 
@@ -812,7 +800,7 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 	g_return_if_fail(msg != NULL);
 
 	/* Don't display this if the person who wrote it is ignored. */
-	if (purple_chat_conversation_is_ignored_user(
+	if (purple_message_get_author(msg) && purple_chat_conversation_is_ignored_user(
 		PURPLE_CHAT_CONVERSATION(conv), purple_message_get_author(msg)))
 	{
 		return;
@@ -834,18 +822,7 @@ chat_conversation_write_message(PurpleConversation *conv, PurpleMessage *msg)
 		}
 	}
 
-	ops = purple_conversation_get_ui_ops(conv);
-
-	/* Pass this on to either the ops structure or the default write func. */
-	if (ops != NULL && ops->write_chat != NULL)
-		ops->write_chat(PURPLE_CHAT_CONVERSATION(conv), msg);
-	else {
-		_purple_conversation_write_common(conv,
-			purple_message_get_author(msg),
-			purple_message_get_contents(msg),
-			purple_message_get_flags(msg),
-			purple_message_get_time(msg));
-	}
+	_purple_conversation_write_common(conv, msg);
 }
 
 void
@@ -1298,7 +1275,8 @@ purple_chat_conversation_leave(PurpleChatConversation *chat)
 
 	priv->left = TRUE;
 
-	g_object_notify_by_pspec(G_OBJECT(chat), chat_properties[CHAT_PROP_LEFT]);
+	if (!g_object_get_data(G_OBJECT(chat), "is-finalizing"))
+		g_object_notify_by_pspec(G_OBJECT(chat), chat_properties[CHAT_PROP_LEFT]);
 
 	purple_conversation_update(PURPLE_CONVERSATION(chat), PURPLE_CONVERSATION_UPDATE_CHATLEFT);
 }
