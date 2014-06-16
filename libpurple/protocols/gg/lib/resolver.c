@@ -59,9 +59,13 @@ static void (*gg_global_resolver_cleanup)(void **private_data, int force);
  * \internal Funkcja pomocnicza zwalniająca zasoby po rozwiązywaniu nazwy
  * w wątku.
  *
+ * \note Funkcja nie powinna być statyczna, ponieważ zostanie potraktowana
+ * jako inline i kompilator może "zoptymalizować" jej wywołanie w funkcji
+ * pthread_cleanup_pop().
+ *
  * \param data Wskaźnik na wskaźnik bufora zaalokowanego w wątku
  */
-static void gg_resolver_cleaner(void *data)
+void gg_resolver_cleaner(void *data)
 {
 	void **buf_ptr = (void **) data;
 

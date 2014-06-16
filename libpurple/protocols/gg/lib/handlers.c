@@ -405,6 +405,7 @@ static int gg_session_handle_login_failed(struct gg_session *gs, uint32_t type,
 static int gg_session_handle_send_msg_ack(struct gg_session *gs, uint32_t type,
 	const char *ptr, size_t len, struct gg_event *ge)
 {
+	struct gg_session_private *p = gs->private_data;
 	const struct gg_send_msg_ack *s = (const struct gg_send_msg_ack*) ptr;
 
 	gg_debug_session(gs, GG_DEBUG_MISC, "// gg_watch_fd_connected() received a message ack\n");
@@ -413,6 +414,10 @@ static int gg_session_handle_send_msg_ack(struct gg_session *gs, uint32_t type,
 	ge->event.ack.status = gg_fix32(s->status);
 	ge->event.ack.recipient = gg_fix32(s->recipient);
 	ge->event.ack.seq = gg_fix32(s->seq);
+
+	if (ge->event.ack.seq == 0 && p->imgout_waiting_ack > 0)
+		p->imgout_waiting_ack--;
+	gg_image_sendout(gs);
 
 	return 0;
 }
@@ -423,6 +428,7 @@ static int gg_session_handle_send_msg_ack(struct gg_session *gs, uint32_t type,
 static int gg_session_handle_send_msg_ack_110(struct gg_session *gs,
 	uint32_t type, const char *ptr, size_t len, struct gg_event *ge)
 {
+	struct gg_session_private *p = gs->private_data;
 	GG110MessageAck *msg = gg110_message_ack__unpack(NULL, len, (uint8_t*)ptr);
 	size_t i;
 
@@ -435,11 +441,11 @@ static int gg_session_handle_send_msg_ack_110(struct gg_session *gs,
 		 */
 		gg_debug_session(gs, GG_DEBUG_MISC | GG_DEBUG_WARNING,
 			"// gg_session_handle_send_msg_ack_110() magic dummy1 "
-			"value 0x4000");
+			"value 0x4000\n");
 	} else if (msg->dummy1 != 0) {
 		gg_debug_session(gs, GG_DEBUG_MISC | GG_DEBUG_WARNING,
 			"// gg_session_handle_send_msg_ack_110() unknown dummy1 "
-			"value: %x", msg->dummy1);
+			"value: %x\n", msg->dummy1);
 	}
 
 	gg_debug_session(gs, GG_DEBUG_VERBOSE,
@@ -465,6 +471,10 @@ static int gg_session_handle_send_msg_ack_110(struct gg_session *gs,
 	gg_compat_message_ack(gs, msg->seq);
 
 	gg110_message_ack__free_unpacked(msg, NULL);
+
+	if (msg->seq == 0 && p->imgout_waiting_ack > 0)
+		p->imgout_waiting_ack--;
+	gg_image_sendout(gs);
 
 	return 0;
 }
@@ -1388,13 +1398,13 @@ static int gg_session_handle_recv_msg_110(struct gg_session *gs, uint32_t type,
 		if (msg->data.len < sizeof(struct gg_msg_image_reply)) {
 			gg_debug_session(gs, GG_DEBUG_ERROR,
 				"// gg_session_handle_recv_msg_110() "
-				"packet too small\n");
-			return -1;
+				"packet too small (%" GG_SIZE_FMT " < %"
+				GG_SIZE_FMT ")\n", msg->data.len,
+				sizeof(struct gg_msg_image_reply));
+		} else {
+			gg_image_queue_parse(ge, (char *)msg->data.data,
+				msg->data.len, gs, sender, type);
 		}
-
-		gg_image_queue_parse(ge, (char *)msg->data.data, msg->data.len,
-			gs, sender, type);
-
 		gg110_recv_message__free_unpacked(msg, NULL);
 		return gg_ack_110(gs, GG110_ACK__TYPE__MSG, seq, ge);
 	}

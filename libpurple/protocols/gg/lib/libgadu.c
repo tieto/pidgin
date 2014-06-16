@@ -530,6 +530,12 @@ void gg_close(struct gg_session *sess)
 		p->event_queue = next;
 	}
 
+	while (p->imgout_queue) {
+		gg_imgout_queue_t *next = p->imgout_queue->next;
+		free(p->imgout_queue);
+		p->imgout_queue = next;
+	}
+
 	if (p->dummyfds_created) {
 		close(p->dummyfds[0]);
 		close(p->dummyfds[1]);
@@ -985,7 +991,8 @@ struct gg_session *gg_login(const struct gg_login_params *p)
 	} else
 		sess->protocol_version = p->protocol_version;
 
-	sess->client_version = (p->client_version) ? strdup(p->client_version) : NULL;
+	if (p->client_version && strcmp(p->client_version, "-") != 0)
+		sess->client_version = strdup(p->client_version);
 	sess->last_sysmsg = p->last_sysmsg;
 	sess->image_size = p->image_size;
 	sess->pid = -1;
@@ -1510,6 +1517,32 @@ static int gg_send_message_110(struct gg_session *sess,
 	return succ ? seq : -1;
 }
 
+static char *
+gg_message_legacy_text_to_html(const char *src, gg_encoding_t encoding,
+	const unsigned char *format, size_t format_len)
+{
+	size_t len;
+	char *dst;
+
+	if (format == NULL || format_len <= 3) {
+		format = NULL;
+		format_len = 0;
+	} else {
+		format += 3;
+		format_len -= 3;
+	}
+
+	len = gg_message_text_to_html(NULL, src, encoding, format, format_len);
+
+	dst = malloc(len + 1);
+	if (dst == NULL)
+		return NULL;
+
+	gg_message_text_to_html(dst, src, encoding, format, format_len);
+
+	return dst;
+}
+
 /**
  * \internal Wysyła wiadomość.
  *
@@ -1567,6 +1600,21 @@ static int gg_send_message_common(struct gg_session *sess, int msgclass,
 		recipients_count == 1)
 	{
 		int is_html = (html_message != NULL);
+		char *formatted_msg = NULL;
+
+		if (formatlen > 3 && !is_html) {
+			gg_debug_session(sess, GG_DEBUG_MISC | GG_DEBUG_WARNING,
+				"// gg_send_message_common() using legacy "
+				"formatting with new protocol\n");
+			formatted_msg = gg_message_legacy_text_to_html(
+				(const char *)message, sess->encoding,
+				format, formatlen);
+			if (formatted_msg == NULL)
+				goto cleanup;
+			html_message = (unsigned char*)formatted_msg;
+			is_html = 1;
+		}
+
 		seq_no = gg_send_message_110(sess, recipients[0], 0,
 			(const char*)(is_html ? html_message : message),
 			is_html);
@@ -1617,7 +1665,7 @@ static int gg_send_message_common(struct gg_session *sess, int msgclass,
 			formatlen = 0;
 		}
 
-		if (sess->encoding == GG_ENCODING_UTF8) {
+		if (sess->encoding != GG_ENCODING_CP1250) {
 			cp_msg = recoded_msg = gg_encoding_convert(tmp_msg, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 			free(tmp_msg);
 
@@ -1627,7 +1675,7 @@ static int gg_send_message_common(struct gg_session *sess, int msgclass,
 			cp_msg = recoded_msg = tmp_msg;
 		}
 	} else {
-		if (sess->encoding == GG_ENCODING_UTF8) {
+		if (sess->encoding != GG_ENCODING_CP1250) {
 			cp_msg = recoded_msg = gg_encoding_convert(
 				(const char*)message, sess->encoding,
 				GG_ENCODING_CP1250, -1, -1);
@@ -1640,38 +1688,24 @@ static int gg_send_message_common(struct gg_session *sess, int msgclass,
 	}
 
 	if (html_message == NULL) {
-		size_t len;
-		char *tmp;
-		const char *utf_msg;
-		const unsigned char *format_ = NULL;
-		size_t formatlen_ = 0;
+		char *formatted_msg;
 
-		if (sess->encoding == GG_ENCODING_UTF8) {
-			utf_msg = (const char*) message;
-		} else {
-			utf_msg = recoded_msg = gg_encoding_convert(
-				(const char*)message, sess->encoding,
-				GG_ENCODING_UTF8, -1, -1);
-
-			if (utf_msg == NULL)
-				goto cleanup;
-		}
-
-		if (format != NULL && formatlen >= 3) {
-			format_ = format + 3;
-			formatlen_ = formatlen - 3;
-		}
-
-		len = gg_message_text_to_html(NULL, utf_msg, GG_ENCODING_UTF8, format_, formatlen_);
-
-		tmp = malloc(len + 1);
-
-		if (tmp == NULL)
+		formatted_msg = gg_message_legacy_text_to_html(
+			(const char*)message, sess->encoding, format, formatlen);
+		if (formatted_msg == NULL)
 			goto cleanup;
 
-		gg_message_text_to_html(tmp, utf_msg, GG_ENCODING_UTF8, format_, formatlen_);
+		if (sess->encoding == GG_ENCODING_UTF8) {
+			utf_html_msg = recoded_html_msg = formatted_msg;
+		} else {
+			utf_html_msg = recoded_html_msg = gg_encoding_convert(
+				formatted_msg, sess->encoding,
+				GG_ENCODING_UTF8, -1, -1);
+			free(formatted_msg);
 
-		utf_html_msg = recoded_html_msg = tmp;
+			if (utf_html_msg == NULL)
+				goto cleanup;
+		}
 	} else {
 		if (sess->encoding == GG_ENCODING_UTF8) {
 			utf_html_msg = (const char*) html_message;
@@ -1782,6 +1816,17 @@ int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, cons
 {
 	gg_debug_session(sess, GG_DEBUG_FUNCTION, "** gg_send_message(%p, %d, "
 		"%u, %p)\n", sess, msgclass, recipient, message);
+
+	if (sess->protocol_version >= GG_PROTOCOL_VERSION_110) {
+		int seq_no;
+
+		seq_no = gg_send_message_110(sess, recipient, 0, (const char*)message, 0);
+
+		if (seq_no >= 0)
+			gg_compat_message_sent(sess, seq_no, 1, &recipient);
+
+		return seq_no;
+	}
 
 	return gg_send_message_common(sess, msgclass, 1, &recipient, message,
 		(const unsigned char*)"\x02\x06\x00\x00\x00\x08\x00\x00\x00",
@@ -2073,11 +2118,13 @@ int gg_image_request(struct gg_session *sess, uin_t recipient, int size, uint32_
  */
 int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filename, const char *image, int size)
 {
+	struct gg_session_private *p;
 	struct gg_msg_image_reply *r;
 	struct gg_send_msg s;
 	const char *tmp;
 	char buf[1910];
 	int res = -1;
+	gg_imgout_queue_t *queue = NULL, *queue_end = NULL;
 
 	gg_debug_session(sess, GG_DEBUG_FUNCTION, "** gg_image_reply(%p, %d, "
 		"\"%s\", %p, %d);\n", sess, recipient, filename, image, size);
@@ -2086,6 +2133,8 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 		errno = EFAULT;
 		return -1;
 	}
+
+	p = sess->private_data;
 
 	if (sess->state != GG_STATE_CONNECTED) {
 		errno = ENOTCONN;
@@ -2118,6 +2167,7 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 	r->crc32 = gg_fix32(gg_crc32(0, (const unsigned char*) image, size));
 
 	while (size > 0) {
+		gg_imgout_queue_t *it;
 		size_t buflen, chunklen;
 
 		/* \0 + struct gg_msg_image_reply */
@@ -2135,15 +2185,57 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 		size -= chunklen;
 		image += chunklen;
 
-		res = gg_send_packet(sess, GG_SEND_MSG, &s, sizeof(s), buf, buflen + chunklen, NULL);
-
-		if (res == -1)
+		it = gg_new0(sizeof(gg_imgout_queue_t));
+		if (!it)
 			break;
+		if (queue_end) {
+			queue_end->next = it;
+			queue_end = it;
+		} else {
+			queue = queue_end = it;
+		}
+
+		memcpy(&it->msg_hdr, &s, sizeof(s));
+		memcpy(it->buf, buf, buflen + chunklen);
+		it->buf_len = buflen + chunklen;
 
 		r->flag = GG_MSG_OPTION_IMAGE_REPLY_MORE;
 	}
 
+	if (p->imgout_queue) {
+		queue_end = p->imgout_queue;
+		while (queue_end->next)
+			queue_end = queue_end->next;
+		queue_end->next = queue;
+	} else {
+		p->imgout_queue = queue;
+	}
+	gg_image_sendout(sess);
+
 	return res;
+}
+
+void gg_image_sendout(struct gg_session *sess)
+{
+	struct gg_session_private *p = sess->private_data;
+
+	while (p->imgout_waiting_ack < GG_IMGOUT_WAITING_MAX && p->imgout_queue) {
+		gg_imgout_queue_t *it = p->imgout_queue;
+		int res;
+
+		p->imgout_queue = p->imgout_queue->next;
+		p->imgout_waiting_ack++;
+
+		res = gg_send_packet(sess, GG_SEND_MSG,
+			&it->msg_hdr, sizeof(it->msg_hdr),
+			it->buf, it->buf_len,
+			NULL);
+
+		free(it);
+
+		if (res == -1)
+			break;
+	}
 }
 
 static int gg_notify105_ex(struct gg_session *sess, uin_t *userlist, char *types, int count)
