@@ -1048,6 +1048,34 @@ fi
 AM_CONDITIONAL(HAVE_LIBGADU, test "x$have_libgadu" = "xyes")
 if test "x$have_libgadu" = "xyes"; then
 	AC_DEFINE(HAVE_LIBGADU, 1, [Linked with external libgadu])
+else
+	AC_CHECK_LIB(gnutls, gnutls_certificate_set_x509_system_trust, [gg_have_gnutls_csxst=yes], [gg_have_gnutls_csxst=no])
+
+	gg_gnutls_sts=""
+	if test "x$gg_have_gnutls_csxst" = "xno"; then
+		for i in /etc/ssl/ca-bundle.pem \
+			/etc/ssl/certs/ca-certificates.crt \
+			/etc/pki/tls/cert.pem \
+			/usr/local/share/certs/ca-root-nss.crt \
+			/etc/ssl/cert.pem
+		do
+			if test -e $i; then
+				gg_gnutls_sts="$i"
+				break
+			fi
+		done
+	fi
+
+	if test "x$gg_have_gnutls_csxst" = "xyes"; then
+		AC_DEFINE(HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST, 1, [gnutls contains the gnutls_certificate_set_x509_system_trust function])
+	fi
+	if test "x$gg_gnutls_sts" != "x"; then
+		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
+	fi
+
+	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
+		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
+	],:)
 fi
 
 AC_SUBST(LIBGADU_LIBS)
