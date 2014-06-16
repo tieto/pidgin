@@ -1822,7 +1822,7 @@ int gg_dcc7_handle_reject(struct gg_session *sess, struct gg_event *e, const voi
 #define GG_PROTOCOL_VERSION_110 0x40
 
 /* GG_DEPRECATED */
-#define GG_DEFAULT_CLIENT_VERSION NULL
+#define GG_DEFAULT_CLIENT_VERSION "-"
 
 #define GG_DEFAULT_PROTOCOL_VERSION GG_PROTOCOL_VERSION_110
 #define GG_DEFAULT_TIMEOUT 30

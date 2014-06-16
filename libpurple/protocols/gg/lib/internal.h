@@ -27,8 +27,16 @@
 #define GG_DEFAULT_CLIENT_VERSION_110 "11.3.45.10771"
 
 #ifdef _WIN32
-#  define GG_SIZE_FMT "Iu"
-#  define _GG_INT64_MODIFIER "I64"
+#  ifdef __COVERITY__
+#    define GG_SIZE_FMT "lu"
+#    define _GG_INT64_MODIFIER "ll"
+#    undef PRIu64
+#    undef PRIx64
+#    undef PRId64
+#  else
+#    define GG_SIZE_FMT "Iu"
+#    define _GG_INT64_MODIFIER "I64"
+#  endif
 #elif defined(_LP64)
 #  define GG_SIZE_FMT "zu"
 #  define _GG_INT64_MODIFIER "l"
@@ -66,6 +74,8 @@
 	[(condition) ? 1 : -1]; static_assertion_failed_ ## message dummy; \
 	(void)dummy; }
 
+#define GG_IMGOUT_WAITING_MAX 4
+
 struct gg_dcc7_relay {
 	uint32_t addr;
 	uint16_t port;
@@ -98,6 +108,15 @@ struct _gg_eventqueue {
 	gg_eventqueue_t *next;
 };
 
+typedef struct _gg_imgout_queue_t gg_imgout_queue_t;
+struct _gg_imgout_queue_t {
+	struct gg_send_msg msg_hdr;
+	char buf[1910];
+	size_t buf_len;
+
+	gg_imgout_queue_t *next;
+};
+
 struct gg_session_private {
 	gg_compat_t compatibility;
 
@@ -107,6 +126,9 @@ struct gg_session_private {
 	gg_eventqueue_t *event_queue;
 	int check_after_queue;
 	int fd_after_queue;
+
+	gg_imgout_queue_t *imgout_queue;
+	int imgout_waiting_ack;
 
 	gg_socket_manager_type_t socket_manager_type;
 	gg_socket_manager_t socket_manager;
@@ -163,6 +185,8 @@ void gg_close(struct gg_session *gs);
 struct gg_event *gg_eventqueue_add(struct gg_session *sess);
 
 void gg_compat_message_ack(struct gg_session *sess, int seq);
+
+void gg_image_sendout(struct gg_session *sess);
 
 void gg_strarr_free(char **strarr);
 char ** gg_strarr_dup(char **strarr);
