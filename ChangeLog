@@ -24,6 +24,9 @@ version 2.10.13 (MM/DD/YY):
 	(#16692). If you actually needed this, truncate your password
 	manually by pressing backspace a few times.
 
+	IRC:
+	* Base64-decode SASL messages before passing to libsasl (#16268)
+
 version 2.10.12 (12/31/15):
 	General:
 	* purple-url-handler now works with Python 3.x (Daniël van Eeden)
