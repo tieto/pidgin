@@ -50,16 +50,12 @@ INTGG_SOURCES = \
 	lib/tvbuilder.c \
 	lib/tvbuilder.h
 
-INTGG_LIBS = $(ZLIB_LIBS)
+INTGG_LIBS = $(ZLIB_LIBS) $(GNUTLS_LIBS)
 INTGG_CFLAGS = \
 	-I$(top_srcdir)/libpurple/protocols/gg/lib \
 	$(ZLIB_CFLAGS) \
+	$(GNUTLS_CFLAGS) \
 	-DGG_IGNORE_DEPRECATED
-
-if USE_GNUTLS
-	INTGG_LIBS += $(GNUTLS_LIBS)
-	INTGG_CFLAGS += $(GNUTLS_CFLAGS)
-endif
 
 endif
 
