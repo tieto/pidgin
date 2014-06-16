@@ -2242,6 +2242,16 @@ static gboolean ggp_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
+static gboolean ggp_load(PurplePlugin *plugin)
+{
+	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
+		"libgadu %s...\n", gg_libgadu_version());
+
+	gg_is_gpl_compliant();
+
+	return TRUE;
+}
+
 static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_IM_IMAGE,
@@ -2339,7 +2349,7 @@ static PurplePluginInfo info = {
 	"boler@sourceforge.net",		/* author */
 	PURPLE_WEBSITE,				/* homepage */
 
-	NULL,					/* load */
+	ggp_load,				/* load */
 	NULL,					/* unload */
 	NULL,					/* destroy */
 

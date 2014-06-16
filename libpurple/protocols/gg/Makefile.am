@@ -45,8 +45,8 @@ EXTRA_DIST = \
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
-if USE_INTERNAL_LIBGADU
-INTGGSOURCES = \
+if ! HAVE_LIBGADU
+INTGG_SOURCES = \
 	lib/common.c \
 	lib/config.h \
 	lib/dcc7.c \
@@ -89,16 +89,21 @@ INTGGSOURCES = \
 	lib/tvbuilder.c \
 	lib/tvbuilder.h
 
-INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED -DUSE_INTERNAL_LIBGADU
-endif
+INTGG_LIBS = $(ZLIB_LIBS)
+INTGG_CFLAGS = \
+	-I$(top_srcdir)/libpurple/protocols/gg/lib \
+	$(ZLIB_CFLAGS) \
+	-DGG_IGNORE_DEPRECATED
 
 if USE_GNUTLS
-GADU_LIBS += $(GNUTLS_LIBS)
-GADU_CFLAGS += $(GNUTLS_CFLAGS)
+	INTGG_LIBS += $(GNUTLS_LIBS)
+	INTGG_CFLAGS += $(GNUTLS_CFLAGS)
+endif
+
 endif
 
 GGSOURCES = \
-	$(INTGGSOURCES) \
+	$(INTGG_SOURCES) \
 	gg-utils.h \
 	gg-utils.c \
 	confer.h \
@@ -116,25 +121,25 @@ libgg_la_LDFLAGS = -module -avoid-version
 
 if STATIC_GG
 
-st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
+st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
 libgg_la_CFLAGS  = $(AM_CFLAGS)
-libgg_la_LIBADD  = $(GADU_LIBS)
+libgg_la_LIBADD  = $(LIBGADU_LIBS) $(INTGG_LIBS)
 
 else
 
-st = $(GADU_CFLAGS)
+st =
 pkg_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
-libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
+libgg_la_LIBADD  = $(GLIB_LIBS) $(LIBGADU_LIBS) $(INTGG_LIBS)
 
 endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
+	$(LIBGADU_CFLAGS) \
 	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)
-
