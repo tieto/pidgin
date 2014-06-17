@@ -63,6 +63,7 @@ C_SRC =	\
 			data.c \
 			disco.c \
 			facebook.c \
+			facebook_roster.c \
 			google/gmail.c \
 			google/google.c \
 			google/google_presence.c \

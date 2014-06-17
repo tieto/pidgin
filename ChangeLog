@@ -98,7 +98,7 @@ version 2.10.10 (?/?/?):
 	* Fix build against Python 3. (Ed Catmur) (#15969)
 
 	Gadu-Gadu:
-	* Updated internal libgadu to version 1.12.0-rc2.
+	* Updated internal libgadu to version 1.12.0.
 
 	IRC:
 	* Fix a possible leak of unencrypted data when using /me command

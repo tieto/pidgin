@@ -1,8 +1,3 @@
-#V=0
-#CFLAGS = -g -O0
-GADU_EXTRA =
-#GADU_EXTRA += -Werror
-
 pkgdir = @PURPLE_PLUGINDIR@
 
 EXTRA_DIST = \
@@ -11,8 +6,8 @@ EXTRA_DIST = \
 	Makefile.mingw \
 	lib/COPYING
 
-if USE_INTERNAL_LIBGADU
-INTGGSOURCES = \
+if ! HAVE_LIBGADU
+INTGG_SOURCES = \
 	lib/common.c \
 	lib/config.h \
 	lib/dcc.c \
@@ -55,22 +50,17 @@ INTGGSOURCES = \
 	lib/tvbuilder.c \
 	lib/tvbuilder.h
 
-
-INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib \
+INTGG_LIBS = $(ZLIB_LIBS) $(GNUTLS_LIBS)
+INTGG_CFLAGS = \
+	-I$(top_srcdir)/libpurple/protocols/gg/lib \
 	$(ZLIB_CFLAGS) \
+	$(GNUTLS_CFLAGS) \
 	-DGG_IGNORE_DEPRECATED
-GADU_LIBS += $(ZLIB_LIBS)
-endif
 
-if USE_GNUTLS
-GADU_LIBS += $(GNUTLS_LIBS)
-GADU_CFLAGS += $(GNUTLS_CFLAGS)
 endif
-
-GADU_LIBS += $(JSON_LIBS)
 
 GGSOURCES = \
-	$(INTGGSOURCES) \
+	$(INTGG_SOURCES) \
 	avatar.c \
 	avatar.h \
 	blist.c \
@@ -130,27 +120,27 @@ libgg_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_GG
 
-st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
+st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
 libgg_la_CFLAGS  = $(AM_CFLAGS)
 
 else
 
-st = $(GADU_CFLAGS)
+st =
 pkg_LTLIBRARIES = libgg.la
 libgg_la_SOURCES = $(GGSOURCES)
 
 endif
 
-libgg_la_LIBADD  = @PURPLE_LIBS@ $(GADU_LIBS)
+libgg_la_LIBADD  = @PURPLE_LIBS@ $(LIBGADU_LIBS) $(JSON_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
+	$(LIBGADU_CFLAGS) \
 	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(JSON_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \
-	$(DEBUG_CFLAGS) \
-	$(GADU_EXTRA)
+	$(DEBUG_CFLAGS)

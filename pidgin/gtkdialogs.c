@@ -161,6 +161,7 @@ static const struct translator translators[] = {
 	{NULL,                      NULL, "Israt Jahan", "israt@ankur.org.bd"},
 	{NULL,                      NULL, "Samia Nimatullah", "mailsamia2001@yahoo.com"},
 	{N_("Bengali-India"),       "bn_IN", "Runa Bhattacharjee", "runab@fedoraproject.org"},
+	{N_("Bodo"),                "brx", "Chandrakant Dhutadmal", "cpdhutadmal@yahoo.com"},
 	{N_("Bosnian"),             "bs", "Lejla Hadzialic", "lejlah@gmail.com"},
 	{N_("Catalan"),             "ca", "Josep Puigdemont", "josep.puigdemont@gmail.com"},
 	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "toniher@softcatala.org"},
@@ -178,6 +179,7 @@ static const struct translator translators[] = {
 	{N_("Canadian English"),    "en_CA", "Adam Weinberger", "adamw@gnome.org"},
 	{N_("Esperanto"),           "eo", "Stéphane Fillod", "fillods@users.sourceforge.net"},
 	{N_("Spanish"),             "es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
+	{N_("Argentine Spanish"),   "es_AR", "KNTRO", "tskuhn@gmail.com"},
 	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
 	{N_("Basque"),              "eu", "Mikel Pascual Aldabaldetreku", "mikel.paskual@gmail.com"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},
@@ -204,6 +206,7 @@ static const struct translator translators[] = {
 	{N_("Khmer"),               "km", "Khoem Sokhem", "khoemsokhem@khmeros.info"},
 	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Sushizang", "sushizang@empal.com"},
+	{N_("Kashmiri"),            "kas", "Chandrakant Dhutadmal", "cpdhutadmal@yahoo.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
 	{NULL,                      NULL, "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{NULL,                      NULL, "Rizoyê Xerzî", "rizoxerzi@hotmail.com"},
@@ -219,7 +222,7 @@ static const struct translator translators[] = {
 	{N_("Mongolian"),           "mn", "gooyo", NULL},
 	{N_("Marathi"),             "mr", "Sandeep Shedmake", "sandeep.shedmake@gmail.com"},
 	{N_("Burmese"),             "my_MM", "Thura Hlaing", "trhura@gmail.com"},
-	{N_("Bokmål Norwegian"),    "nb", "Hans Fredrik Nordhaug", "hans@nordhaug.priv.no"},
+	{N_("Bokmål Norwegian"),    "nb", "Allan Nordhøy", "epost@anotheragency.no"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", NULL},
 	{N_("Dutch, Flemish"),      "nl", "Gideon van Melle", "translations@gvmelle.com"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "l10n@landro.net"},
@@ -233,6 +236,7 @@ static const struct translator translators[] = {
 	{N_("Romanian"),            "ro", "Mișu Moldovan", "dumol@gnome.org"},
 	{NULL,                      NULL, "Andrei Popescu", "andreimpopescu@gmail.com"},
 	{N_("Russian"),             "ru", "Антон Самохвалов", "samant.ua@mail.ru"},
+	{N_("Sindhi"),              "sd", "Chandrakant Dhutadmal", "cpdhutadmal@yahoo.com"},
 	{N_("Slovak"),              "sk", "Jozef Káčer", "quickparser@gmail.com"},
 	{NULL,                      NULL, "loptosko", "loptosko@gmail.com"},
 	{N_("Slovenian"),           "sl", "Martin Srebotnjak", "miles@filmsi.net"},
@@ -250,6 +254,7 @@ static const struct translator translators[] = {
 	{N_("Tatar"),               "tt", "ILDAR Valeev", "v_ildar@bk.ru"},
 	{N_("Ukranian"),            "uk", "Oleksandr Kovalenko", "alx.kovalenko@gmail.com"},
 	{N_("Urdu"),                "ur", "RKVS Raman", "rkvsraman@gmail.com"},
+	{N_("Uzbek"),               "uz", "Akmal Khushvakov", "uzbadmin@gmail.com"},
 	{N_("Vietnamese"),          "vi", "Nguyễn Vũ Hưng", "vuhung16plus@gmail.com"},
 	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "happyaron.xu@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
@@ -310,7 +315,8 @@ static const struct translator past_translators[] = {
 	{NULL,                      NULL, "Andrius Štikonas", NULL},
 	{N_("Macedonian"),          "mk", "Tomislav Markovski", NULL},
 	{N_("Malay"),               "ms_MY", "Muhammad Najmi bin Ahmad Zabidi", NULL},
-	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", NULL},
+	{N_("Bokmål Norwegian"),    "nb", "Hans Fredrik Nordhaug", NULL},
+	{NULL,                      NULL, "Hallvard Glad", NULL},
 	{NULL,                      NULL, "Petter Johan Olsen", NULL},
 	{NULL,                      NULL, "Espen Stefansen", NULL},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", NULL},
@@ -643,12 +649,10 @@ void pidgin_dialogs_buildinfo(void)
 #endif
 #endif
 
-#if defined(USE_INTERNAL_LIBGADU)
-	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Internal</dd>");
-#elif defined(HAVE_LIBGADU)
+#ifdef HAVE_LIBGADU
 	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>External</dd>");
 #else
-	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Disabled</dd>");
+	g_string_append(str, "<dt>Gadu-Gadu library (libgadu):</dt><dd>Internal</dd>");
 #endif
 
 #ifdef HAVE_GNUTLS
