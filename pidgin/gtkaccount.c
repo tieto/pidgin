@@ -2888,7 +2888,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 				escaped_alias,
 				(have_valid_alias ? ")"   : ""),
 				escaped_our_name,
-				(have_valid_alias ? ": " : "."),
+				(*escaped_message ? ": " : "."),
 				escaped_message);
 
 	g_free(escaped_remote_user);
