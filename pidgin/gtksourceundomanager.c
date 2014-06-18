@@ -988,9 +988,13 @@ gtk_source_undo_manager_merge_action (GtkSourceUndoManager 	*um,
 
 	if (undo_action->action_type == GTK_SOURCE_UNDO_ACTION_DELETE)
 	{
-		if ((last_action->action.delete.forward != undo_action->action.delete.forward) ||
-		    ((last_action->action.delete.start != undo_action->action.delete.start) &&
-		     (last_action->action.delete.start != undo_action->action.delete.end)))
+		const GtkSourceUndoDeleteAction *last_del, *undo_del;
+
+		last_del = &last_action->action.delete;
+		undo_del = &undo_action->action.delete;
+
+		if (last_del->forward != undo_del->forward ||
+			(last_del->start != undo_del->start && last_del->start != undo_del->end))
 		{
 			last_action->mergeable = FALSE;
 			return FALSE;

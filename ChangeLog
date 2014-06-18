@@ -16,7 +16,7 @@ version 2.10.10 (?/?/?):
 	* Fix build against Python 3. (Ed Catmur) (#15969)
 
 	Gadu-Gadu:
-	* Updated internal libgadu to version 1.12.0-rc2.
+	* Updated internal libgadu to version 1.12.0.
 
 	Groupwise:
 	* Fix potential remote crash parsing server message that indicates that
@@ -31,6 +31,9 @@ version 2.10.10 (?/?/?):
 	* Fix potential remote crash parsing a malformed emoticon response.
 	  (Discovered by Yves Younan and Richard Johnson of Sourcefire VRT)
 	  (CVE-2014-NNNN)
+
+	XMPP:
+	* Fix Facebook XMPP roster quirks. (#15041, #15957)
 
 version 2.10.9 (2/2/2014):
 	XMPP:

@@ -5,7 +5,7 @@
 /* libpurple's config */
 #include <config.h>
 
-#define GG_LIBGADU_VERSION "1.12.0-rc2"
+#define GG_LIBGADU_VERSION "1.12.0"
 
 /* Defined if libgadu was compiled for bigendian machine. */
 #undef GG_CONFIG_BIGENDIAN
@@ -87,3 +87,7 @@
 
 /* Defined if libgadu uses system defalt trusted CAs. */
 #define GG_CONFIG_SSL_SYSTEM_TRUST
+
+/* Defined if libgadu is GPL compliant (was not linked with OpenSSL or any
+   other non-GPL compliant library support). */
+#define GG_CONFIG_IS_GPL_COMPLIANT

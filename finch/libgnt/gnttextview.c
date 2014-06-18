@@ -106,7 +106,7 @@ gnt_text_view_draw(GntWidget *widget)
 		GList *iter;
 		GntTextLine *line = lines->data;
 
-		wmove(widget->window, widget->priv.height - 1 - i - comp, 0);
+		(void)wmove(widget->window, widget->priv.height - 1 - i - comp, 0);
 
 		for (iter = line->segments; iter; iter = iter->next)
 		{
@@ -758,8 +758,18 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 				GList *segs, *snext;
 				GntTextLine *line = iter->data;
 				inext = iter->next;
+
+				if (!line) {
+					g_warn_if_reached();
+					continue;
+				}
+
 				for (segs = line->segments; segs; segs = snext) {
 					GntTextSegment *seg = segs->data;
+
+					if (!line)
+						break;
+
 					snext = segs->next;
 					if (seg->start >= tag->end) {
 						/* The segment is somewhere after the tag */

@@ -192,7 +192,8 @@ execute_perl(const char *function, int argc, char **args)
 		if (args[i]) {
 			sv_args[i] = sv_2mortal(newSVpv(args[i], 0));
 			XPUSHs(sv_args[i]);
-		}
+		} else
+			sv_args[i] = NULL;
 	}
 
 	PUTBACK;

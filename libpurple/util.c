@@ -1194,6 +1194,7 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 				case '"':
 				case '\'':
 					in_quotes = cur;
+					/* fall through */
 				default:
 					cur++;
 					break;
@@ -2615,6 +2616,14 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	byteswritten = fwrite(data, 1, real_size, file);
 
 #ifdef HAVE_FILENO
+#ifndef _WIN32
+	/* Set file permissions */
+	if (fchmod(fileno(file), S_IRUSR | S_IWUSR) == -1) {
+		purple_debug_error("util", "Error setting permissions of "
+			"file %s: %s\n", filename_temp, g_strerror(errno));
+	}
+#endif
+
 	/* Apparently XFS (and possibly other filesystems) do not
 	 * guarantee that file data is flushed before file metadata,
 	 * so this procedure is insufficient without some flushage. */
@@ -2652,6 +2661,15 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
+
+#ifndef _WIN32
+	/* copy-pasta! */
+	if (fchmod(fd, S_IRUSR | S_IWUSR) == -1) {
+		purple_debug_error("util", "Error setting permissions of "
+			"file %s: %s\n", filename_temp, g_strerror(errno));
+	}
+#endif
+
 	if (fsync(fd) < 0) {
 		purple_debug_error("util", "Error syncing %s: %s\n",
 				   filename_temp, g_strerror(errno));
@@ -2678,7 +2696,11 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
-	/* Use stat to be absolutely sure. */
+#ifndef __COVERITY__
+	/* Use stat to be absolutely sure.
+	 * It causes TOCTOU coverity warning (against g_rename below),
+	 * but it's not a threat for us.
+	 */
 	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size))
 	{
 		purple_debug_error("util", "Error writing data to file %s: "
@@ -2688,15 +2710,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
-
-#ifndef _WIN32
-	/* Set file permissions */
-	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
-	{
-		purple_debug_error("util", "Error setting permissions of file %s: %s\n",
-						 filename_temp, g_strerror(errno));
-	}
-#endif
+#endif /* __COVERITY__ */
 
 	/* Rename to the REAL name */
 	if (g_rename(filename_temp, filename_full) == -1)
@@ -3738,7 +3752,10 @@ parse_content_len(const char *data, gsize data_len)
 
 	p = find_header_content(data, data_len, "\nContent-Length: ");
 	if (p) {
-		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
+		if (sscanf(p, "%" G_GSIZE_FORMAT, &content_len) != 1) {
+			purple_debug_warning("util", "invalid number format\n");
+			content_len = 0;
+		}
 		purple_debug_misc("util", "parsed %" G_GSIZE_FORMAT "\n", content_len);
 	}
 
@@ -3824,13 +3841,19 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 	char *data_cursor;
 	gboolean got_eof = FALSE;
 
+	if (!gfud->is_ssl && source < 0) {
+		g_warn_if_reached();
+		len = -1;
+		errno = EINVAL;
+	}
+
 	/*
 	 * Read data in a loop until we can't read any more!  This is a
 	 * little confusing because we read using a different function
 	 * depending on whether the socket is ssl or cleartext.
 	 */
 	while ((gfud->is_ssl && ((len = purple_ssl_read(gfud->ssl_connection, buf, sizeof(buf))) > 0)) ||
-			(!gfud->is_ssl && (len = read(source, buf, sizeof(buf))) > 0))
+		(!gfud->is_ssl && source >= 0 && (len = read(source, buf, sizeof(buf))) > 0))
 	{
 		if((gfud->len + len) > gfud->max_len) {
 			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),
@@ -4329,6 +4352,10 @@ purple_url_encode(const char *str)
 			for (i = 0; i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
+				if (i >= sizeof(utf_char)) {
+					g_warn_if_reached();
+					break;
+				}
 				sprintf(buf + j, "%%%02X", utf_char[i] & 0xff);
 				j += 3;
 			}
@@ -4583,7 +4610,7 @@ purple_utf8_salvage(const char *str)
 	workstr = g_string_sized_new(strlen(str));
 
 	do {
-		g_utf8_validate(str, -1, &end);
+		(void)g_utf8_validate(str, -1, &end);
 		workstr = g_string_append_len(workstr, str, end - str);
 		str = end;
 		if (*str == '\0')
@@ -4646,7 +4673,11 @@ purple_utf8_strip_unprintables(const gchar *str)
 G_CONST_RETURN gchar *
 purple_gai_strerror(gint errnum)
 {
+#if GLIB_CHECK_VERSION(2, 32, 0)
+	static GPrivate msg_private = G_PRIVATE_INIT(g_free);
+#else
 	static GStaticPrivate msg_private = G_STATIC_PRIVATE_INIT;
+#endif
 	char *msg;
 	int saved_errno = errno;
 
@@ -4674,11 +4705,19 @@ purple_gai_strerror(gint errnum)
 		}
 	}
 
+#if GLIB_CHECK_VERSION(2, 32, 0)
+	msg = g_private_get(&msg_private);
+#else
 	msg = g_static_private_get(&msg_private);
+#endif
 	if (!msg)
 	{
 		msg = g_new(gchar, 64);
+#if GLIB_CHECK_VERSION(2, 32, 0)
+		g_private_set(&msg_private, msg);
+#else
 		g_static_private_set(&msg_private, msg, g_free);
+#endif
 	}
 
 	sprintf(msg, "unknown error (%d)", errnum);
@@ -4972,6 +5011,10 @@ purple_escape_filename(const char *str)
 			for (i = 0; i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
+				if (i >= sizeof(utf_char)) {
+					g_warn_if_reached();
+					break;
+				}
 				sprintf(buf + j, "%%%02x", utf_char[i] & 0xff);
 				j += 3;
 			}

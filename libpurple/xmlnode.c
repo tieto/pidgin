@@ -842,8 +842,7 @@ xmlnode_copy(const xmlnode *src)
 			sibling->next = xmlnode_copy(child);
 			sibling = sibling->next;
 		} else {
-			ret->child = xmlnode_copy(child);
-			sibling = ret->child;
+			ret->child = sibling = xmlnode_copy(child);
 		}
 		sibling->parent = ret;
 	}

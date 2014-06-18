@@ -124,8 +124,9 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 			}
 
 			g_snprintf(tag, sizeof(tag),
-					   "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">",
-					   colors[0], colors[1], colors[2]);
+				"<FONT COLOR=\"#%02x%02x%02x\">",
+				colors[0] & 0xFF, colors[1] & 0xFF,
+				colors[2] & 0xFF);
 
 			pre = g_string_append(pre, tag);
 			post = g_string_prepend(post, "</FONT>");
@@ -584,7 +585,7 @@ msn_handle_chl(char *input, char *output)
 	len = strlen(buf);
 	if ((len % 8) != 0) {
 		int fix = 8 - (len % 8);
-		memset(&buf[len], '0', fix);
+		strncpy(&buf[len], "00000000", fix);
 		buf[len + fix] = '\0';
 		len += fix;
 	}

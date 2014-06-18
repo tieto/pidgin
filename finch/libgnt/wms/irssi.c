@@ -215,7 +215,7 @@ update_conv_window_title(GntNode *node)
 	getyx(node->window, y, x);
 	wbkgdset(node->window, '\0' | COLOR_PAIR(gnt_widget_has_focus(node->me) ? GNT_COLOR_TITLE : GNT_COLOR_TITLE_D));
 	mvwaddstr(node->window, 0, 0, title);
-	wmove(node->window, y, x);
+	(void)wmove(node->window, y, x);
 	if (!gnt_is_refugee()) {
 		update_panels();
 		doupdate();

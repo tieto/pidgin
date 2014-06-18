@@ -1023,92 +1023,32 @@ elif test "x$silc10client" = "xyes"; then
 fi
 
 dnl #######################################################################
-dnl # Check for Gadu-Gadu client includes and libraries
+dnl # Check for Gadu-Gadu protocol library (libgadu)
 dnl #######################################################################
-AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the Gadu-Gadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
-AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
-GADU_CFLAGS=""
-GADU_LIBS=""
-if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
-	gadu_manual_check="yes"
-else
-	gadu_manual_check="no"
-fi
-if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.11.0], [
-		gadu_includes="yes"
-		gadu_libs="yes"
-	], [
-		gadu_includes="no"
-	])
-else
-	if test "$ac_gadu_includes" != "no"; then
-		GADU_CFLAGS="-I$ac_gadu_includes"
-	fi
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
-	AC_CHECK_HEADER(libgadu.h, [gadu_includes=yes])
-	CPPFLAGS="$CPPFLAGS_save"
 
-	if test "$ac_gadu_libs" != "no"; then
-		GADU_LIBS="-L$ac_gadu_libs"
-	fi
-	GADU_LIBS="$GADU_LIBS -lgadu"
-	AC_CHECK_LIB(gadu, gg_libgadu_version, [gadu_libs=yes], , $GADU_LIBS)
-fi
-GADU_CFLAGS=`echo $GADU_CFLAGS |$sedpath 's/-Wall//'`
+PKG_CHECK_MODULES(LIBGADU, [libgadu >= 1.12.0], [have_libgadu=yes], [have_libgadu=no])
 
-if test "x$gadu_libs" = "xyes"; then
-	AC_MSG_CHECKING(for libgadu GPL compatibility)
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
-#if defined(__GG_LIBGADU_HAVE_OPENSSL) || defined(GG_CONFIG_HAVE_OPENSSL)
-#error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
-#endif
-	]])], [
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
-#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
-#error "Your libgadu version is too old. libpurple requires 1.11.0 or higher."
-#endif
-		]])], [
-			AC_MSG_RESULT(yes)
-			AC_DEFINE([HAVE_LIBGADU], [1],
-				[Define to 1 if you have libgadu.])
-		], [
-			AC_MSG_RESULT(no)
-			echo
-			echo
-			echo "Your supplied copy of libgadu is too old."
-			echo "Install version 1.11.0 or newer."
-			echo "Then rerun this ./configure"
-			echo
-			echo "Falling back to using our own copy of libgadu"
-			echo
-			GADU_LIBS=""
-			GADU_CFLAGS=""
-			gadu_libs=no
+if test "x$have_libgadu" = "xyes"; then
+	AC_CHECK_LIB(gadu, gg_is_gpl_compliant, , [
+		LIBGADU_LIBS=""
+		LIBGADU_CFLAGS=""
+		have_libgadu=no
+		AC_MSG_WARN([
+libgadu is not compatible with the GPL when compiled with OpenSSL support.
+
+To compile against system libgadu, please recompile libgadu using:
+./configure --with-openssl=no
+Then rerun this ./configure
+
+Falling back to using our own copy of libgadu.
 		])
-	], [
-		AC_MSG_RESULT(no)
-		echo
-		echo
-		echo "libgadu is not compatible with the GPL when compiled with OpenSSL support."
-		echo "To compile against system libgadu, please recompile libgadu using:"
-		echo "./autogen.sh --disable-libgadu-openssl --disable-static --enable-shared"
-		echo "Then rerun this ./configure"
-		echo
-		echo "Falling back to using our own copy of libgadu"
-		echo
-		GADU_LIBS=""
-		GADU_CFLAGS=""
-		gadu_libs=no
 	])
-	CPPFLAGS="$CPPFLAGS_save"
 fi
 
-AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
-if test "x$gadu_libs" != "xyes"; then
+AM_CONDITIONAL(HAVE_LIBGADU, test "x$have_libgadu" = "xyes")
+if test "x$have_libgadu" = "xyes"; then
+	AC_DEFINE(HAVE_LIBGADU, 1, [Linked with external libgadu])
+else
 	AC_CHECK_LIB(gnutls, gnutls_certificate_set_x509_system_trust, [gg_have_gnutls_csxst=yes], [gg_have_gnutls_csxst=no])
 
 	gg_gnutls_sts=""
@@ -1138,12 +1078,9 @@ if test "x$gadu_libs" != "xyes"; then
 	],:)
 fi
 
-if test "x$gadu_libs" = "x"; then
-	gadu_libs=no
-fi
+AC_SUBST(LIBGADU_LIBS)
+AC_SUBST(LIBGADU_CFLAGS)
 
-AC_SUBST(GADU_LIBS)
-AC_SUBST(GADU_CFLAGS)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
@@ -1370,6 +1307,17 @@ fi
 AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(pidginpath, pidgin)
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+	#if !defined(__clang__)
+	#error
+	#endif
+])], have_clang=yes, have_clang=no)
+
+if test "x$have_clang" = "xyes"; then
+	dnl we don't care about it for 2.x.y
+	DEBUG_CFLAGS=`echo $DEBUG_CFLAGS |$sedpath 's/-Wcast-align//'`
+fi
 
 dnl #######################################################################
 dnl # Check for D-Bus libraries
@@ -2671,7 +2619,7 @@ fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
-echo Use external libgadu.......... : $gadu_libs
+echo Use external libgadu.......... : $have_libgadu
 echo Install pixmaps............... : $enable_pixmaps
 echo Old tray icon compatibility... : $enable_traycompat
 echo Install translations.......... : $enable_i18n

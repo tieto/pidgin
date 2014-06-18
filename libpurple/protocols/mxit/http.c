@@ -104,7 +104,9 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 	int					len;
 	char*				tmp;
 	int					res;
+#if 0
 	char*				next;
+#endif
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_http_read\n" );
 
@@ -123,7 +125,9 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		}
 		buf[buflen+len] = '\0';
 
-//nextpacket:
+#if 0
+nextpacket:
+#endif
 
 #ifdef	DEBUG_HTTP
 		purple_debug_info( MXIT_PLUGIN_ID, "HTTP POST READ 1: (%i)\n", len );
@@ -188,7 +192,9 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		}
 		else if ( buflen > ( ( body - buf ) + bodylen ) ) {
 			/* we have a second packet here */
+#if 0
 			next = body + bodylen;
+#endif
 			session->rx_res = 0;
 		}
 		else {

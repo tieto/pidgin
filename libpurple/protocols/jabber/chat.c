@@ -1275,7 +1275,8 @@ jabber_chat_all_participants_have_capability_foreach(gpointer key,
 	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
 
 	if (jbr) {
-		*all_support &= jabber_resource_has_capability(jbr, cap);
+		if (*all_support && jabber_resource_has_capability(jbr, cap))
+			*all_support = TRUE;
 	} else {
 		*all_support = FALSE;
 	}

@@ -1540,7 +1540,7 @@ struct gg_event *gg_dcc7_watch_fd(struct gg_dcc7 *dcc)
 
 			if (gg_fix32(pkt->magic) != GG_DCC7_RELAY_REPLY ||
 				gg_fix32(pkt->rcount) < 1 ||
-				gg_fix32(pkt->rcount > 256) ||
+				gg_fix32(pkt->rcount) > 256 ||
 				gg_fix32(pkt->len) < sizeof(*pkt) +
 				gg_fix32(pkt->rcount) * sizeof(srv))
 			{

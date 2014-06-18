@@ -634,11 +634,11 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 #ifdef SEND_OUR_IP_ADDRESSES
 	/* TODO: Obtain IPs of network interfaces instead of using this hardcoded value */
 	g_string_set_size(data, data->len + 4);
-	msim_put32(data->str + data->len - 4, MSIM_LOGIN_IP_LIST_LEN);
+	(void)msim_put32(data->str + data->len - 4, MSIM_LOGIN_IP_LIST_LEN);
 	g_string_append_len(data, MSIM_LOGIN_IP_LIST, MSIM_LOGIN_IP_LIST_LEN);
 #else
 	g_string_set_size(data, data->len + 4);
-	msim_put32(data->str + data->len - 4, 0);
+	(void)msim_put32(data->str + data->len - 4, 0);
 #endif /* !SEND_OUR_IP_ADDRESSES */
 
 	data_out = g_new0(guchar, data->len);

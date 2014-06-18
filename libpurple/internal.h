@@ -154,6 +154,34 @@
 
 #include <glib-object.h>
 
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+
+#define G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+#define G_GNUC_END_IGNORE_DEPRECATIONS
+
+#endif /* 2.32.0 */
+
+#ifdef __clang__
+
+#undef G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+#define G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
+	_Pragma ("clang diagnostic push") \
+	_Pragma ("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+
+#undef G_GNUC_END_IGNORE_DEPRECATIONS
+#define G_GNUC_END_IGNORE_DEPRECATIONS \
+	_Pragma ("clang diagnostic pop")
+
+#endif /* __clang__ */
+
+#ifdef __COVERITY__
+
+/* avoid TAINTED_SCALAR warning */
+#undef g_utf8_next_char
+#define g_utf8_next_char(p) (char *)((p) + 1)
+
+#endif
+
 /* Safer ways to work with static buffers. When using non-static
  * buffers, either use g_strdup_* functions (preferred) or use
  * g_strlcpy/g_strlcpy directly. */
@@ -236,5 +264,15 @@ void _purple_connection_new_unregister(PurpleAccount *account, const char *passw
  * @param gc The purple connection to destroy.
  */
 void _purple_connection_destroy(PurpleConnection *gc);
+
+/**
+ * Sets most commonly used socket flags: O_NONBLOCK and FD_CLOEXEC.
+ *
+ * @param fd The file descriptor for the socket.
+ *
+ * @return TRUE if succeeded, FALSE otherwise.
+ */
+gboolean
+_purple_network_set_common_socket_flags(int fd);
 
 #endif /* _PURPLE_INTERNAL_H_ */

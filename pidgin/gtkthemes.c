@@ -285,7 +285,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		if (*i == '[' && strchr(i, ']') && load) {
 			struct smiley_list *child = g_new0(struct smiley_list, 1);
 			child->sml = g_strndup(i+1, strchr(i, ']') - i - 1);
-			if (theme->list)
+			if (list)
 				list->next = child;
 			else
 				theme->list = child;
@@ -320,6 +320,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				while (*i && !isspace(*i) && li < sizeof(l) - 1) {
 					if (*i == '\\' && *(i+1) != '\0')
 						i++;
+					/* coverity[tainted_data] */
 					next = g_utf8_next_char(i);
 					if ((next - i) > (sizeof(l) - li -1)) {
 						break;
@@ -410,7 +411,10 @@ void pidgin_themes_smiley_theme_probe()
 			}
 			g_dir_close(dir);
 		} else if (l == 1) {
-			g_mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR);
+			if (g_mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
+				purple_debug_error("gtkthemes",
+					"couldn't create smileys dir\n");
+			}
 		}
 		g_free(probedirs[l]);
 	}

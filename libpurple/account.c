@@ -396,9 +396,9 @@ account_to_xmlnode(PurpleAccount *account)
 		child = xmlnode_new_child(node, "password");
 		xmlnode_insert_data(child, tmp, -1);
 	} else if (_purple_account_is_password_encrypted(account)) {
-		const char *keyring;
-		const char *mode;
-		const char *ciphertext;
+		const char *keyring = NULL;
+		const char *mode = NULL;
+		const char *ciphertext = NULL;
 		gboolean success;
 
 		purple_debug_warning("account", "saving libpurple3-compatible "

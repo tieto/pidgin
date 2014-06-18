@@ -188,6 +188,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			/* treat this as a pointer, but complain first */
 			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "unknown PurpleValue type %d\n",
 				   purple_value_get_type(handler->argtypes[i]));
+			/* fall through */
 		case PURPLE_TYPE_POINTER:
 		case PURPLE_TYPE_OBJECT:
 		case PURPLE_TYPE_BOXED:

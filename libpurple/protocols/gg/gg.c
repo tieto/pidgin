@@ -1674,14 +1674,13 @@ static GList *ggp_chat_info(PurpleConnection *gc)
 	return m;
 }
 
-static void ggp_login(PurpleAccount *account)
+static void ggp_login_to(PurpleAccount *account, uint32_t server)
 {
 	PurpleConnection *gc;
 	PurplePresence *presence;
 	PurpleStatus *status;
 	struct gg_login_params *glp;
 	GGPInfo *info;
-	const char *address;
 	const gchar *encryption_type;
 
 	if (ggp_setup_proxy(account) == -1)
@@ -1689,7 +1688,8 @@ static void ggp_login(PurpleAccount *account)
 
 	gc = purple_account_get_connection(account);
 	glp = g_new0(struct gg_login_params, 1);
-	info = g_new0(GGPInfo, 1);
+	info = gc->proto_data;
+	g_return_if_fail(info);
 
 	/* Probably this should be moved to *_new() function. */
 	info->session = NULL;
@@ -1700,8 +1700,6 @@ static void ggp_login(PurpleAccount *account)
 	info->pending_richtext_messages = NULL;
 	info->pending_images = g_hash_table_new(g_direct_hash, g_direct_equal);
 	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
-	
-	gc->proto_data = info;
 
 	glp->uin = ggp_get_uin(account);
 	glp->password = (char *)purple_account_get_password(account);
@@ -1727,29 +1725,7 @@ static void ggp_login(PurpleAccount *account)
 
 	if (!info->status_broadcasting)
 		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
-	
-	address = purple_account_get_string(account, "gg_server", "");
-	if (address && *address) {
-		/* TODO: Make this non-blocking */
-		struct in_addr *addr = gg_gethostbyname(address);
-
-		purple_debug_info("gg", "Using gg server given by user (%s)\n", address);
-
-		if (addr == NULL) {
-			gchar *tmp = g_strdup_printf(_("Unable to resolve hostname '%s': %s"),
-					address, g_strerror(errno));
-			purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, /* should this be a settings error? */
-				tmp);
-			g_free(tmp);
-			return;
-		}
-
-		glp->server_addr = inet_addr(inet_ntoa(*addr));
-		glp->server_port = 8074;
-		free(addr);
-	} else
-		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
+	glp->server_addr = server;
 
 	info->session = gg_login(glp);
 	purple_connection_update_progress(gc, _("Connecting"), 0, 2);
@@ -1765,9 +1741,70 @@ static void ggp_login(PurpleAccount *account)
 		ggp_async_login_handler, gc);
 }
 
+static void
+ggp_login_resolved(GSList *hosts, gpointer _account, const char *error_message)
+{
+	PurpleAccount *account = _account;
+	PurpleConnection *gc;
+	GGPInfo *info;
+	uint32_t server_addr = 0;
+
+	gc = purple_account_get_connection(account);
+	info = gc->proto_data;
+	g_return_if_fail(info);
+	info->dns_query = NULL;
+
+	while (hosts && (hosts = g_slist_delete_link(hosts, hosts))) {
+		struct sockaddr *addr = hosts->data;
+
+		if (addr->sa_family == AF_INET && server_addr == 0) {
+			struct sockaddr_in *addrv4 = (struct sockaddr_in *)addr;
+
+			server_addr = addrv4->sin_addr.s_addr;
+		}
+
+		g_free(hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
+	}
+
+	if (server_addr == 0) {
+		gchar *tmp = g_strdup_printf(
+			_("Unable to resolve hostname: %s"), error_message);
+		purple_connection_error_reason(gc,
+			/* should this be a settings error? */
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
+		return;
+	}
+
+	ggp_login_to(account, server_addr);
+}
+
+static void
+ggp_login(PurpleAccount *account)
+{
+	PurpleConnection *gc;
+	GGPInfo *info;
+	const char *address;
+
+	gc = purple_account_get_connection(account);
+	info = g_new0(GGPInfo, 1);
+	gc->proto_data = info;
+
+	address = purple_account_get_string(account, "gg_server", "");
+	if (address == NULL || address[0] == '\0') {
+		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
+		ggp_login_to(account, 0);
+		return;
+	}
+
+	purple_debug_info("gg", "Using gg server given by user (%s)\n", address);
+	info->dns_query = purple_dnsquery_a_account(account, address, 8074,
+		ggp_login_resolved, account);
+}
+
 static void ggp_close(PurpleConnection *gc)
 {
-
 	if (gc == NULL) {
 		purple_debug_info("gg", "gc == NULL\n");
 		return;
@@ -1777,6 +1814,9 @@ static void ggp_close(PurpleConnection *gc)
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleStatus *status;
 		GGPInfo *info = gc->proto_data;
+
+		if (info->dns_query)
+			purple_dnsquery_destroy(info->dns_query);
 
 		status = purple_account_get_active_status(account);
 
@@ -2202,6 +2242,16 @@ static gboolean ggp_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
+static gboolean ggp_load(PurplePlugin *plugin)
+{
+	purple_debug_info("gg", "Loading Gadu-Gadu protocol plugin with "
+		"libgadu %s...\n", gg_libgadu_version());
+
+	gg_is_gpl_compliant();
+
+	return TRUE;
+}
+
 static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_IM_IMAGE,
@@ -2299,7 +2349,7 @@ static PurplePluginInfo info = {
 	"boler@sourceforge.net",		/* author */
 	PURPLE_WEBSITE,				/* homepage */
 
-	NULL,					/* load */
+	ggp_load,				/* load */
 	NULL,					/* unload */
 	NULL,					/* destroy */
 
