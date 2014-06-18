@@ -125,16 +125,15 @@ void
 oscar_show_visible_list(PurplePluginAction *action)
 {
 	show_private_list(action, AIM_SSI_TYPE_PERMIT, _("Visible List"),
-							_("These buddies will see "
-							"your status when you switch "
-							"to \"Invisible\""),
-							_(APPEAR_ONLINE));
+			_("These buddies can see your status even when you're "
+			"invisible."),
+			_(APPEAR_ONLINE));
 }
 
 void
 oscar_show_invisible_list(PurplePluginAction *action)
 {
 	show_private_list(action, AIM_SSI_TYPE_DENY, _("Invisible List"),
-							_("These buddies will always see you as offline"),
-							_(APPEAR_OFFLINE));
+			_("These buddies will always see you as offline."),
+			_(APPEAR_OFFLINE));
 }
