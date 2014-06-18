@@ -32,7 +32,6 @@
 #include <libgadu.h>
 #include <debug.h>
 
-#include "deprecated.h"
 #include "purplew.h"
 #include "utils.h"
 #include "libgaduw.h"
@@ -71,11 +70,6 @@ void ggp_account_token_request(PurpleConnection *gc,
 
 	purple_debug_info("gg", "ggp_account_token_request: "
 		"requesting token...\n");
-
-	if (!ggp_deprecated_setup_proxy(gc)) {
-		callback(gc, NULL, user_data);
-		return;
-	}
 
 	h = gg_token(TRUE);
 

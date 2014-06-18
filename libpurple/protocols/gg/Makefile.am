@@ -67,8 +67,6 @@ GGSOURCES = \
 	blist.h \
 	chat.c \
 	chat.h \
-	deprecated.c \
-	deprecated.h \
 	edisc.c \
 	edisc.h \
 	gg.c \

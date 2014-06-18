@@ -32,8 +32,6 @@
 #include "debug.h"
 #include "purple-socket.h"
 
-#if GGP_ENABLE_GG11
-
 static void
 ggp_tcpsocket_connected(PurpleSocket *ps, const gchar *error, gpointer priv_gg)
 {
@@ -123,15 +121,6 @@ ggp_tcpsocket_setup(PurpleConnection *gc, struct gg_login_params *glp)
 	glp->socket_manager.read_cb = ggp_tcpsocket_read;
 	glp->socket_manager.write_cb = ggp_tcpsocket_write;
 }
-
-#else
-
-void
-ggp_tcpsocket_setup(PurpleConnection *gc, struct gg_login_params *glp)
-{
-}
-
-#endif
 
 PurpleInputCondition
 ggp_tcpsocket_inputcond_gg_to_purple(enum gg_check_t check)

@@ -38,8 +38,6 @@
 void ggp_events_user_data(PurpleConnection *gc,
 	struct gg_event_user_data *data);
 
-#if GGP_ENABLE_GG11
 void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev);
-#endif
 
 #endif /* _GGP_LIBGADU_EVENTS_H */
