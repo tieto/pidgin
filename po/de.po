@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-01 00:00+0200\n"
-"PO-Revision-Date: 2014-03-31 23:50+0200\n"
+"POT-Creation-Date: 2014-06-20 18:24+0200\n"
+"PO-Revision-Date: 2014-06-20 18:23+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -1690,7 +1690,6 @@ msgstr ""
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Buddys"
 
@@ -3231,14 +3230,14 @@ msgstr "Zum Chat hinzufügen"
 msgid "Chat _name:"
 msgstr "Chat_name:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Hostname '%s' kann nicht aufgelöst werden: %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Verbindungsaufbau"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Konnte den Hostnamen nicht aufgelösen: %s"
 
 msgid "Chat error"
 msgstr "Chatfehler"
@@ -11854,6 +11853,9 @@ msgstr "Bengali"
 msgid "Bengali-India"
 msgstr "Bengali-Indien"
 
+msgid "Bodo"
+msgstr "Bodo"
+
 msgid "Bosnian"
 msgstr "Bosnisch"
 
@@ -11892,6 +11894,9 @@ msgstr "Esperanto"
 
 msgid "Spanish"
 msgstr "Spanisch"
+
+msgid "Argentine Spanish"
+msgstr "Argentinisches Spanisch"
 
 msgid "Estonian"
 msgstr "Estnisch"
@@ -11962,6 +11967,9 @@ msgstr "Kannada-Übersetzungsteam"
 msgid "Korean"
 msgstr "Koreanisch"
 
+msgid "Kashmiri"
+msgstr "Kashmiri"
+
 msgid "Kurdish"
 msgstr "Kurdisch"
 
@@ -12031,6 +12039,9 @@ msgstr "Rumänisch"
 msgid "Russian"
 msgstr "Russisch"
 
+msgid "Sindhi"
+msgstr "Sindhi"
+
 msgid "Slovak"
 msgstr "Slowakisch"
 
@@ -12072,6 +12083,9 @@ msgstr "Ukrainisch"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr "Usbekisch"
 
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
@@ -15239,6 +15253,9 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "Unable to resolve hostname '%s': %s"
+#~ msgstr "Hostname '%s' kann nicht aufgelöst werden: %s"
 
 #~ msgid "Token Error"
 #~ msgstr "Token-Fehler"
