@@ -49,7 +49,7 @@ gboolean ggp_validator_token(PurpleRequestField *field, gchar **errmsg,
 		return TRUE;
 
 	if (errmsg)
-		*errmsg = g_strdup(_("Captcha validation failed"));
+		*errmsg = g_strdup(_("CAPTCHA validation failed"));
 	return FALSE;
 }
 #endif

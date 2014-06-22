@@ -228,7 +228,7 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 		_("Remember password"), register_data->password_remember);
 	purple_request_field_group_add_field(password_group, field);
 
-	token_group = purple_request_field_group_new(_("Captcha"));
+	token_group = purple_request_field_group_new(_("CAPTCHA"));
 	purple_request_fields_add_group(fields, token_group);
 
 	field = purple_request_field_string_new("token_value",
@@ -239,7 +239,7 @@ static void ggp_account_register_dialog(PurpleConnection *gc,
 	purple_request_field_group_add_field(token_group, field);
 	purple_debug_info("gg", "token set %p\n", register_data->token);
 
-	field = purple_request_field_image_new("token_image", _("Captcha"),
+	field = purple_request_field_image_new("token_image", _("CAPTCHA"),
 		token->data, token->size);
 	purple_request_field_group_add_field(token_group, field);
 
@@ -484,7 +484,7 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 		field_password);
 	purple_request_field_group_add_field(password_group, field);
 
-	token_group = purple_request_field_group_new(_("Captcha"));
+	token_group = purple_request_field_group_new(_("CAPTCHA"));
 	purple_request_fields_add_group(fields, token_group);
 
 	field = purple_request_field_string_new("token_value",
@@ -494,7 +494,7 @@ static void ggp_account_chpass_dialog(PurpleConnection *gc,
 	purple_request_field_set_validator(field, ggp_validator_token, token);
 	purple_request_field_group_add_field(token_group, field);
 
-	field = purple_request_field_image_new("token_image", _("Captcha"),
+	field = purple_request_field_image_new("token_image", _("CAPTCHA"),
 		token->data, token->size);
 	purple_request_field_group_add_field(token_group, field);
 
