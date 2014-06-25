@@ -96,7 +96,7 @@ plugin_load(PurplePlugin *plugin)
 {
 	cmd = purple_cmd_register("lastlog", "s", PURPLE_CMD_P_DEFAULT,
 			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
-			/* Translator Note: The "backlog" is the conversation buffer/history. */
+			/* Translators: The "backlog" here refers to the the conversation buffer/history. */
 			lastlog_cb, _("lastlog: Searches for a substring in the backlog."), NULL);
 	return TRUE;
 }
