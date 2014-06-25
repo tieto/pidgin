@@ -159,6 +159,10 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 
 static const gchar *VIDEO_SRC_PLUGINS[] = {
 	"videodisabledsrc",	N_("Disabled"),
+	/* Translators: This is a noun that refers to one possible video input
+	   plugin. The plugin can be used by the user to test the video camera
+	   connected to their computer to check whether Pidgin is able to
+	   capture video from it. */
 	"videotestsrc",	N_("Test Input"),
 	"dshowvideosrc","DirectDraw",
 	"ksvideosrc",	"KS Video",
