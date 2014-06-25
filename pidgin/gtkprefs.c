@@ -3492,6 +3492,8 @@ get_vv_element_devices(const gchar *element_name)
 	}
 
 	if (g_strcmp0(element_name, "videodisabledsrc") == 0) {
+		/* Translators: This string refers to 'static' or 'snow' sometimes
+		   seen when trying to tune a TV to a non-existant analog station. */
 		ret = g_list_prepend(ret, g_strdup(_("Random noise")));
 		ret = g_list_prepend(ret, g_strdup("snow"));
 
