@@ -841,7 +841,7 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 
 	/* Translators: This word is basically used to describe a Polish
 	   province. Gadu-Gadu users outside of Poland might choose to enter some
-	   equivalent value for themselves. For example, users in the US might
+	   equivalent value for themselves. For example, users in the USA might
 	   use their state (e.g. New York). If there is an equivalent term for
 	   your language, feel free to use it. Otherwise it's probably acceptable
 	   to leave it changed or transliterate it into your alphabet. */
