@@ -586,6 +586,10 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 		if (chat->conv)
 			status = _("Joined");
 		else if (chat->left)
+			/* Translators: For Gadu-Gadu, this is one possible status for a
+			   chat room. It means you had previously joined the chat room but
+			   you have since left it. You cannot rejoin without another
+			   invitation. */
 			status = _("Chat left");
 		else {
 			status = _("Can join chat");
