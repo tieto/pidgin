@@ -639,7 +639,8 @@ purple_certificate_pool_contains(PurpleCertificatePool *pool, const gchar *id);
  * Retrieve a certificate from a pool.
  * @param pool   Pool to fish in
  * @param id     ID to look up
- * @return Retrieved certificate, or NULL if it wasn't there
+ * @return Retrieved certificate (to be freed with purple_certificate_destroy),
+ *         or NULL if it wasn't there
  */
 PurpleCertificate *
 purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id);
