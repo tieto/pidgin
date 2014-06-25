@@ -1004,7 +1004,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 			case FS_ERROR_NEGOTIATION_FAILED:
 				purple_media_error_fs(priv->media,
 				                      _("Codec negotiation failed. "
-				                        "This problem might be resolved by installing"
+				                        "This problem might be resolved by installing "
 				                        "more GStreamer codecs."),
 				                      structure);
 				error_emitted = TRUE;
@@ -1014,7 +1014,7 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				purple_media_error(priv->media,
 				                   _("No codecs found. "
 				                     "Install some GStreamer codecs found "
-				                     " in GStreamer plugins packages."));
+				                     "in GStreamer plugins packages."));
 				error_emitted = TRUE;
 				purple_media_end(priv->media, NULL, NULL);
 				break;
