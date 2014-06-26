@@ -716,7 +716,7 @@ purple_keyring_import_password(PurpleAccount *account, const gchar *keyring_id,
 		if (error != NULL) {
 			*error = g_error_new(PURPLE_KEYRING_ERROR,
 				PURPLE_KEYRING_ERROR_INTERNAL,
-				_("Specified keyring id does not match the "
+				_("Specified keyring ID does not match the "
 				"loaded one."));
 		}
 		purple_debug_error("keyring",

@@ -79,7 +79,6 @@ void ggp_events_user_data(PurpleConnection *gc, struct gg_event_user_data *data)
 	}
 }
 
-#if GGP_ENABLE_GG11
 static void ggp_events_new_version(const gchar *data)
 {
 	/* data = {"severity":"download"} */
@@ -121,4 +120,3 @@ void ggp_events_json(PurpleConnection *gc, struct gg_event_json_event *ev)
 		purple_debug_warning("gg", "ggp_events_json: "
 			"unhandled event \"%s\"\n", ev->type);
 }
-#endif

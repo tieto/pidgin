@@ -141,6 +141,9 @@ static const gchar *AUDIO_SRC_PLUGINS[] = {
 	"pulsesrc",	"PulseAudio",
 	"sndiosrc",	"sndio",
 	/* "audiotestsrc wave=silence", "Silence", */
+	/* Translators: This is a noun that refers to one possible audio input
+	   plugin. The plugin can be used by the user to sanity check basic audio
+	   functionality within Pidgin.  */
 	"audiotestsrc",	N_("Test Sound"),
 	NULL
 };
@@ -159,6 +162,9 @@ static const gchar *AUDIO_SINK_PLUGINS[] = {
 
 static const gchar *VIDEO_SRC_PLUGINS[] = {
 	"videodisabledsrc",	N_("Disabled"),
+	/* Translators: This is a noun that refers to one possible video input
+	   plugin. The plugin can be used by the user to sanity check basic video
+	   functionality within Pidgin. */
 	"videotestsrc",	N_("Test Input"),
 	"dshowvideosrc","DirectDraw",
 	"ksvideosrc",	"KS Video",
@@ -3492,6 +3498,8 @@ get_vv_element_devices(const gchar *element_name)
 	}
 
 	if (g_strcmp0(element_name, "videodisabledsrc") == 0) {
+		/* Translators: This string refers to 'static' or 'snow' sometimes
+		   seen when trying to tune a TV to a non-existant analog station. */
 		ret = g_list_prepend(ret, g_strdup(_("Random noise")));
 		ret = g_list_prepend(ret, g_strdup("snow"));
 

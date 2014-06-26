@@ -91,7 +91,6 @@ libpurple/protocols/bonjour/jabber.c
 libpurple/protocols/bonjour/mdns_win32.c
 libpurple/protocols/gg/account.c
 libpurple/protocols/gg/chat.c
-libpurple/protocols/gg/deprecated.c
 libpurple/protocols/gg/edisc.c
 libpurple/protocols/gg/gg.c
 libpurple/protocols/gg/image-prpl.c

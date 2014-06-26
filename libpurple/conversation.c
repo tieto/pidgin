@@ -88,7 +88,8 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	PurpleConnection *gc;
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
 	PurpleMessage *msg;
-	char *displayed = NULL, *sent = NULL;
+	char *displayed = NULL;
+	const char *sent;
 	int err = 0;
 
 	g_return_if_fail(priv != NULL);
@@ -113,9 +114,9 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 	if (displayed && (priv->features & PURPLE_CONNECTION_FLAG_HTML) &&
 		!(msgflags & PURPLE_MESSAGE_RAW)) {
-		sent = g_strdup(displayed);
+		sent = displayed;
 	} else
-		sent = g_strdup(message);
+		sent = message;
 
 	msgflags |= PURPLE_MESSAGE_SEND;
 
@@ -130,8 +131,11 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 			err = purple_serv_send_im(gc, msg);
 
-			if ((err > 0) && (displayed != NULL))
+			if ((err > 0) && (displayed != NULL)) {
+				/* revert the contents in case sending-im-msg changed it */
+				purple_message_set_contents(msg, displayed);
 				purple_conversation_write_message(conv, msg);
+			}
 
 			purple_signal_emit(purple_conversations_get_handle(),
 				"sent-im-msg", account, msg);
@@ -187,7 +191,6 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	}
 
 	g_free(displayed);
-	g_free(sent);
 }
 
 static void

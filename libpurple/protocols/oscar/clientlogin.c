@@ -114,8 +114,11 @@ static gchar *generate_error_message(PurpleXmlNode *resp, const char *url)
 	}
 
 	if (details && *details) {
+		/* Translators: The first %s is a URL. The second is a brief error
+		   message. */
 		err = g_strdup_printf(_("Received unexpected response from %s: %s"), url, details);
 	} else {
+		/* Translators: %s in this string is a URL */
 		err = g_strdup_printf(_("Received unexpected response from %s"), url);
 	}
 
@@ -182,7 +185,6 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		char *msg;
 		purple_debug_error("oscar", "startOSCARSession could not parse "
 				"response as XML: %s\n", response);
-		/* Note to translators: %s in this string is a URL */
 		msg = generate_error_message(response_node,
 				get_start_oscar_session_url(od));
 		purple_connection_error(gc,
@@ -338,8 +340,8 @@ start_oscar_session_cb(PurpleHttpConnection *http_conn,
 
 	if (!purple_http_response_is_successful(response)) {
 		gchar *tmp;
-		/* Note to translators: The first %s is a URL, the second is an
-		   error message. */
+		/* Translators: The first %s is a URL, the second is a brief error
+		   message. */
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
 				get_start_oscar_session_url(od),
 				purple_http_response_get_error(response));

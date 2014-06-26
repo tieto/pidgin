@@ -43,6 +43,11 @@
 
 #include <libsecret/secret.h>
 
+/* Translators: Secret Service is a service that runs on the user's computer.
+   It is one option for where the user's passwords can be stored. It is a
+   project name. It may not be appropriate to translate this string, but
+   transliterating to your alphabet is reasonable. More info about the
+   project can be found at https://wiki.gnome.org/Projects/Libsecret */
 #define SECRETSERVICE_NAME        N_("Secret Service")
 #define SECRETSERVICE_ID          "keyring-libsecret"
 #define SECRETSERVICE_DOMAIN      (g_quark_from_static_string(SECRETSERVICE_ID))

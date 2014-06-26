@@ -839,6 +839,12 @@ static void ggp_pubdir_set_info_dialog(PurpleConnection *gc, int records_count,
 		record ? record->city : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
 
+	/* Translators: This word is basically used to describe a Polish
+	   province. Gadu-Gadu users outside of Poland might choose to enter some
+	   equivalent value for themselves. For example, users in the USA might
+	   use their state (e.g. New York). If there is an equivalent term for
+	   your language, feel free to use it. Otherwise it's probably acceptable
+	   to leave it changed or transliterate it into your alphabet. */
 	field = purple_request_field_choice_new("province", _("Voivodeship"), 0);
 	purple_request_field_group_add_field(group, field);
 	for (i = 0; i < ggp_pubdir_provinces_count; i++) {

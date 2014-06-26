@@ -1527,7 +1527,7 @@ version 2.6.4 (11/29/2009):
 	Finch:
 	* The TinyURL plugin now creates shorter URLs for long non-conversation
 	  URLs, e.g. URLs to open Inbox in Yahoo/MSN protocols, or the Yahoo
-	  Captcha when joining chat rooms.
+	  CAPTCHA when joining chat rooms.
 	* Fix displaying umlauts etc. in non-utf8 locale (fix in libgnt).
 
 	Pidgin:

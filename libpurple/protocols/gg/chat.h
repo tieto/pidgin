@@ -38,7 +38,6 @@ typedef struct _ggp_chat_session_data ggp_chat_session_data;
 void ggp_chat_setup(PurpleConnection *gc);
 void ggp_chat_cleanup(PurpleConnection *gc);
 
-#if GGP_ENABLE_GG11
 void ggp_chat_got_event(PurpleConnection *gc, const struct gg_event *ev);
 
 GList * ggp_chat_info(PurpleConnection *gc);
@@ -55,6 +54,5 @@ void ggp_chat_got_message(PurpleConnection *gc, uint64_t chat_id,
 	const char *message, time_t time, uin_t who);
 
 PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc);
-#endif
 
 #endif /* _GGP_CHAT_H */

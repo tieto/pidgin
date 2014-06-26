@@ -33,8 +33,6 @@
 #include "utils.h"
 #include "message-prpl.h"
 
-#if GGP_ENABLE_GG11
-
 typedef struct _ggp_chat_local_info ggp_chat_local_info;
 
 struct _ggp_chat_session_data
@@ -588,6 +586,10 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 		if (chat->conv)
 			status = _("Joined");
 		else if (chat->left)
+			/* Translators: For Gadu-Gadu, this is one possible status for a
+			   chat room. It means you had previously joined the chat room but
+			   you have since left it. You cannot rejoin without another
+			   invitation. */
 			status = _("Chat left");
 		else {
 			status = _("Can join chat");
@@ -611,13 +613,3 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 	purple_timeout_add(1, ggp_chat_roomlist_get_list_finish, roomlist);
 	return roomlist;
 }
-
-#else
-void ggp_chat_setup(PurpleConnection *gc)
-{
-}
-
-void ggp_chat_cleanup(PurpleConnection *gc)
-{
-}
-#endif

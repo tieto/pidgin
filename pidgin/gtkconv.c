@@ -486,8 +486,9 @@ help_command_cb(PurpleConversation *conv,
 			g_string_append(s, _("No such command (in this context)."));
 		}
 	} else {
-		s = g_string_new(_("Use \"/help &lt;command&gt;\" for help on a specific command.<br/>"
-		                   "The following commands are available in this context:<br/>"));
+		s = g_string_new(_("Use \"/help &lt;command&gt;\" for help with a "
+				"specific command.<br/>The following commands are available "
+				"in this context:<br/>"));
 
 		text = purple_cmd_list(conv);
 		for (l = text; l; l = l->next)

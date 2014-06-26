@@ -49,7 +49,6 @@ C_SRC =	\
 	avatar.c \
 	blist.c \
 	chat.c \
-	deprecated.c \
 	edisc.c \
 	gg.c \
 	html.c \

@@ -44,7 +44,6 @@
 #include "blist.h"
 #include "utils.h"
 #include "resolver-purple.h"
-#include "deprecated.h"
 #include "purplew.h"
 #include "libgadu-events.h"
 #include "multilogon.h"
@@ -321,12 +320,10 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		return;
 	}
 
-#if GGP_ENABLE_GG11
 	if (purple_debug_is_verbose()) {
 		purple_debug_misc("gg", "ggp_callback_recv: got event %s",
 			gg_debug_event(ev->type));
 	}
-#endif
 
 	purple_input_remove(info->inpa);
 	info->inpa = purple_input_add(info->session->fd,
@@ -346,9 +343,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_message_got(gc, &ev->event.msg);
 			break;
 		case GG_EVENT_ACK:
-#if GGP_ENABLE_GG11
 		case GG_EVENT_ACK110:
-#endif
 			break;
 		case GG_EVENT_IMAGE_REPLY:
 			ggp_image_recv(gc, &ev->event.image_reply);
@@ -371,11 +366,9 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_USER_DATA:
 			ggp_events_user_data(gc, &ev->event.user_data);
 			break;
-#if GGP_ENABLE_GG11
 		case GG_EVENT_JSON_EVENT:
 			ggp_events_json(gc, &ev->event.json_event);
 			break;
-#endif
 		case GG_EVENT_USERLIST100_VERSION:
 			ggp_roster_version(gc, &ev->event.userlist100_version);
 			break;
@@ -388,7 +381,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_MULTILOGON_INFO:
 			ggp_multilogon_info(gc, &ev->event.multilogon_info);
 			break;
-#if GGP_ENABLE_GG11
 		case GG_EVENT_IMTOKEN:
 			purple_debug_info("gg", "gg11: got IMTOKEN\n");
 			g_free(info->imtoken);
@@ -405,7 +397,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_CHAT_INVITE_ACK:
 			ggp_chat_got_event(gc, ev);
 			break;
-#endif
 		case GG_EVENT_DISCONNECT:
 			ggp_servconn_remote_disconnect(gc);
 			break;
@@ -459,14 +450,12 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_STATE_TLS_NEGOTIATION:
 			purple_debug_info("gg", "GG_STATE_TLS_NEGOTIATION\n");
 			break;
-#if GGP_ENABLE_GG11
 		case GG_STATE_RESOLVING_HUB:
 			purple_debug_info("gg", "GG_STATE_RESOLVING_HUB\n");
 			break;
 		case GG_STATE_READING_HUB:
 			purple_debug_info("gg", "GG_STATE_READING_HUB\n");
 			break;
-#endif
 		default:
 			purple_debug_error("gg", "unknown state = %d\n",
 				info->session->state);
@@ -501,13 +490,11 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_CONN_SUCCESS:
 			{
-#if GGP_ENABLE_GG11
 				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS:"
 					" successfully connected to %s\n",
 					info->session->connect_host);
 				ggp_servconn_add_server(info->session->
 					connect_host);
-#endif
 				purple_input_remove(info->inpa);
 				info->inpa = purple_input_add(info->session->fd,
 					PURPLE_INPUT_READ,
@@ -570,13 +557,11 @@ void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 						_("Error connecting to master "
 						"server"));
 					break;
-#if GGP_ENABLE_GG11
 				case GG_FAILURE_INTERNAL:
 					purple_connection_error(gc,
 						PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 						_("Internal error"));
 					break;
-#endif
 				default:
 					purple_connection_error(gc,
 						PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -668,25 +653,15 @@ static void ggp_login(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	struct gg_login_params *glp;
 	GGPInfo *info;
-#if GGP_ENABLE_GG11
 	const char *address;
-#endif
 	const gchar *encryption_type, *protocol_version;
 
-	if (!ggp_deprecated_setup_proxy(gc))
-		return;
-
 	purple_connection_set_flags(gc,
-#if ! GGP_ENABLE_GG11
-		PURPLE_CONNECTION_FLAG_NO_IMAGES |
-#endif
 		PURPLE_CONNECTION_FLAG_HTML |
 		PURPLE_CONNECTION_FLAG_NO_URLDESC);
 
 	glp = g_new0(struct gg_login_params, 1);
-#if GGP_ENABLE_GG11
 	glp->struct_size = sizeof(struct gg_login_params);
-#endif
 	info = g_new0(GGPInfo, 1);
 
 	purple_connection_set_protocol_data(gc, info);
@@ -753,28 +728,20 @@ static void ggp_login(PurpleAccount *account)
 		"protocol_version", "default");
 	purple_debug_info("gg", "Requested protocol version: %s\n",
 		protocol_version);
-#if GGP_ENABLE_GG11
 	if (g_strcmp0(protocol_version, "gg10") == 0)
 		glp->protocol_version = GG_PROTOCOL_VERSION_100;
 	else if (g_strcmp0(protocol_version, "gg11") == 0)
 		glp->protocol_version = GG_PROTOCOL_VERSION_110;
 	glp->compatibility = GG_COMPAT_1_12_0;
-#else
-	glp->protocol_version = 0x2e;
-#endif
 
 	ggp_status_set_initial(gc, glp);
 
-#if GGP_ENABLE_GG11
 	address = purple_account_get_string(account, "gg_server", "");
 	if (address && *address)
 		glp->connect_host = g_strdup(address);
-#endif
 
 	info->session = gg_login(glp);
-#if GGP_ENABLE_GG11
 	g_free(glp->connect_host);
-#endif
 	purple_str_wipe(glp->password);
 	g_free(glp);
 
@@ -1076,7 +1043,6 @@ ggp_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
 	im_iface->send_typing = ggp_send_typing;
 }
 
-#if GGP_ENABLE_GG11
 static void
 ggp_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
 {
@@ -1096,7 +1062,6 @@ ggp_protocol_roomlist_iface_init(PurpleProtocolRoomlistIface *roomlist_iface)
 {
 	roomlist_iface->get_list = ggp_chat_roomlist_get_list;
 }
-#endif
 
 static void
 ggp_protocol_privacy_iface_init(PurpleProtocolPrivacyIface *privacy_iface)
@@ -1124,13 +1089,13 @@ PURPLE_DEFINE_TYPE_EXTENDED(
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
 	                                  ggp_protocol_im_iface_init)
-#if GGP_ENABLE_GG11
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
 	                                  ggp_protocol_chat_iface_init)
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE,
 	                                  ggp_protocol_roomlist_iface_init)
-#endif
+
 	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE,
 	                                  ggp_protocol_privacy_iface_init)
 

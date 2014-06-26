@@ -118,7 +118,7 @@ package_revision_raw.txt: .FORCE
 	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@.new \
 	|| rm -f $@.new
 	$(AM_V_at)if test -f $@.new; then \
-		if ! diff $@ $@.new > /dev/null; then \
+		if ! test -f "$@" || ! diff "$@" "$@".new > /dev/null ; then \
 			mv $@.new $@; \
 		else \
 			rm $@.new; \
