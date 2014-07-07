@@ -130,6 +130,56 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media);
 
 /**
+ * Creates a private media session.  A private media session is a
+ * media session which is private to the caller. It is meant to be
+ * used by plugins to create a media session that the front-end does
+ * not get notified about. It is useful especially for sessions with a
+ * type of PURPLE_MEDIA_APPLICATION which the front-end wouldn't know
+ * how to handle.
+ *
+ * @param manager The media manager to create the session under.
+ * @param account The account to create the session on.
+ * @param conference_type The conference type to feed into Farsight2.
+ * @param remote_user The remote user to initiate the session with.
+ * @param initiator TRUE if the local user is the initiator of this media
+ *        call, FALSE otherwise.
+ *
+ * @return A newly created media session.
+ *
+ * @since 2.11.0
+ */
+PurpleMedia *purple_media_manager_create_private_media(
+                                                PurpleMediaManager *manager,
+						PurpleAccount *account,
+						const char *conference_type,
+						const char *remote_user,
+						gboolean initiator);
+
+/**
+ * Gets all of the private media sessions.
+ *
+ * @param manager The media manager to get all of the sessions from.
+ *
+ * @return A list of all the private media sessions.
+ *
+ * @since 2.11.0
+ */
+GList *purple_media_manager_get_private_media(PurpleMediaManager *manager);
+
+/**
+ * Gets all of the private media sessions for a given account.
+ *
+ * @param manager The media manager to get the sessions from.
+ * @param account The account the sessions are on.
+ *
+ * @return A list of the private media sessions on the given account.
+ *
+ * @since 2.11.0
+ */
+GList *purple_media_manager_get_private_media_by_account(
+		PurpleMediaManager *manager, PurpleAccount *account);
+
+/**
  * Signals that output windows should be created for the chosen stream.
  *
  * This shouldn't be called outside of mediamanager.c and media.c
