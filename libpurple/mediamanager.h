@@ -151,6 +151,51 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media);
 
 /**
+ * purple_media_manager_create_private_media:
+ * @manager: The media manager to create the session under.
+ * @account: The account to create the session on.
+ * @conference_type: The conference type to feed into Farsight2.
+ * @remote_user: The remote user to initiate the session with.
+ * @initiator: TRUE if the local user is the initiator of this media call, FALSE otherwise.
+ *
+ * Creates a private media session.
+ * A private media session is a media session which is private to the caller. It is
+ * meant to be used by plugins to create a media session that the front-end does not
+ * get notified about. It is useful especially for sessions with a type of
+ * PURPLE_MEDIA_APPLICATION which the front-end wouldn't know how to handle.
+ *
+ * Returns: A newly created media session.
+ */
+PurpleMedia *purple_media_manager_create_private_media(
+                                                PurpleMediaManager *manager,
+						PurpleAccount *account,
+						const char *conference_type,
+						const char *remote_user,
+						gboolean initiator);
+
+/**
+ * purple_media_manager_get_private_media:
+ * @manager: The media manager to get all of the sessions from.
+ *
+ * Gets all of the private media sessions.
+ *
+ * Returns: A list of all the private media sessions.
+ */
+GList *purple_media_manager_get_private_media(PurpleMediaManager *manager);
+
+/**
+ * purple_media_manager_get_private_media_by_account:
+ * @manager: The media manager to get the sessions from.
+ * @account: The account the sessions are on.
+ *
+ * Gets all of the private media sessions for a given account.
+ *
+ * Returns: A list of the private media sessions on the given account.
+ */
+GList *purple_media_manager_get_private_media_by_account(
+		PurpleMediaManager *manager, PurpleAccount *account);
+
+/**
  * purple_media_manager_create_output_window:
  * @manager: Manager the output windows are registered with.
  * @media: Media session the output windows are registered for.
