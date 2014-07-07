@@ -65,6 +65,7 @@ struct _PurpleMediaManagerPrivate
 	GstElement *pipeline;
 	PurpleMediaCaps ui_caps;
 	GList *medias;
+	GList *private_medias;
 	GList *elements;
 	GList *output_windows;
 	gulong next_output_window_id;
@@ -90,6 +91,7 @@ static GObjectClass *parent_class = NULL;
 
 enum {
 	INIT_MEDIA,
+	INIT_PRIVATE_MEDIA,
 	UI_CAPS_CHANGED,
 	LAST_SIGNAL
 };
@@ -140,6 +142,15 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		G_TYPE_BOOLEAN, 3, PURPLE_TYPE_MEDIA,
 		G_TYPE_POINTER, G_TYPE_STRING);
 
+	purple_media_manager_signals[INIT_PRIVATE_MEDIA] =
+		g_signal_new ("init-private-media",
+			G_TYPE_FROM_CLASS (klass),
+			G_SIGNAL_RUN_LAST,
+			0, NULL, NULL,
+			purple_smarshal_BOOLEAN__OBJECT_POINTER_STRING,
+			G_TYPE_BOOLEAN, 3, PURPLE_TYPE_MEDIA,
+			G_TYPE_POINTER, G_TYPE_STRING);
+
 	purple_media_manager_signals[UI_CAPS_CHANGED] = g_signal_new ("ui-caps-changed",
 		G_TYPE_FROM_CLASS (klass),
 		G_SIGNAL_RUN_LAST,
@@ -156,6 +167,7 @@ purple_media_manager_init (PurpleMediaManager *media)
 {
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
 	media->priv->medias = NULL;
+	media->priv->private_medias = NULL;
 	media->priv->next_output_window_id = 1;
 #ifdef USE_VV
 	media->priv->backend_type = PURPLE_TYPE_MEDIA_BACKEND_FS2;
@@ -176,6 +188,10 @@ purple_media_manager_finalize (GObject *media)
 	for (; priv->medias; priv->medias =
 			g_list_delete_link(priv->medias, priv->medias)) {
 		g_object_unref(priv->medias->data);
+	}
+	for (; priv->private_medias; priv->private_medias =
+			g_list_delete_link(priv->private_medias, priv->private_medias)) {
+		g_object_unref(priv->private_medias->data);
 	}
 	for (; priv->elements; priv->elements =
 			g_list_delete_link(priv->elements, priv->elements)) {
@@ -304,12 +320,13 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 }
 #endif /* USE_GSTREAMER */
 
-PurpleMedia *
-purple_media_manager_create_media(PurpleMediaManager *manager,
-				  PurpleAccount *account,
-				  const char *conference_type,
-				  const char *remote_user,
-				  gboolean initiator)
+static PurpleMedia *
+create_media(PurpleMediaManager *manager,
+			  PurpleAccount *account,
+			  const char *conference_type,
+			  const char *remote_user,
+			  gboolean initiator,
+			  gboolean private)
 {
 #ifdef USE_VV
 	PurpleMedia *media;
@@ -322,7 +339,11 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 			     "initiator", initiator,
 			     NULL));
 
-	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0,
+	if (private)
+		g_signal_emit(manager, purple_media_manager_signals[INIT_PRIVATE_MEDIA],
+			0, media, account, remote_user, &signal_ret);
+	else
+		g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0,
 			media, account, remote_user, &signal_ret);
 
 	if (signal_ret == FALSE) {
@@ -330,26 +351,33 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 		return NULL;
 	}
 
-	manager->priv->medias = g_list_append(manager->priv->medias, media);
+	if (private)
+		manager->priv->private_medias = g_list_append(
+			manager->priv->private_medias, media);
+	else
+		manager->priv->medias = g_list_append(manager->priv->medias, media);
 	return media;
 #else
 	return NULL;
 #endif
 }
 
-GList *
-purple_media_manager_get_media(PurpleMediaManager *manager)
+static GList *
+get_media(PurpleMediaManager *manager, gboolean private)
 {
 #ifdef USE_VV
-	return manager->priv->medias;
+	if (private)
+		return manager->priv->private_medias;
+	else
+		return manager->priv->medias;
 #else
 	return NULL;
 #endif
 }
 
-GList *
-purple_media_manager_get_media_by_account(PurpleMediaManager *manager,
-		PurpleAccount *account)
+static GList *
+get_media_by_account(PurpleMediaManager *manager,
+		PurpleAccount *account, gboolean private)
 {
 #ifdef USE_VV
 	GList *media = NULL;
@@ -357,7 +385,10 @@ purple_media_manager_get_media_by_account(PurpleMediaManager *manager,
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
-	iter = manager->priv->medias;
+	if (private)
+		iter = manager->priv->private_medias;
+	else
+		iter = manager->priv->medias;
 	for (; iter; iter = g_list_next(iter)) {
 		if (purple_media_get_account(iter->data) == account) {
 			media = g_list_prepend(media, iter->data);
@@ -370,20 +401,86 @@ purple_media_manager_get_media_by_account(PurpleMediaManager *manager,
 #endif
 }
 
+static void
+remove_media(PurpleMediaManager *manager,
+	PurpleMedia *media, gboolean private)
+{
+#ifdef USE_VV
+	GList *list;
+	GList **medias;
+
+	g_return_if_fail(manager != NULL);
+
+	if (private)
+		medias = &manager->priv->private_medias;
+	else
+		medias = &manager->priv->medias;
+	list = g_list_find(*medias, media);
+	if (list)
+		*medias = g_list_delete_link(*medias, list);
+#endif
+}
+
+PurpleMedia *
+purple_media_manager_create_media(PurpleMediaManager *manager,
+				  PurpleAccount *account,
+				  const char *conference_type,
+				  const char *remote_user,
+				  gboolean initiator)
+{
+	return create_media (manager, account, conference_type,
+						  remote_user, initiator, FALSE);
+}
+
+GList *
+purple_media_manager_get_media(PurpleMediaManager *manager)
+{
+	return get_media (manager, FALSE);
+}
+
+GList *
+purple_media_manager_get_media_by_account(PurpleMediaManager *manager,
+		PurpleAccount *account)
+{
+	return get_media_by_account (manager, account, FALSE);
+}
+
 void
 purple_media_manager_remove_media(PurpleMediaManager *manager,
 				  PurpleMedia *media)
 {
-#ifdef USE_VV
-	GList *list;
+	remove_media (manager, media, FALSE);
+}
 
-	g_return_if_fail(manager != NULL);
+PurpleMedia *
+purple_media_manager_create_private_media(PurpleMediaManager *manager,
+				  PurpleAccount *account,
+				  const char *conference_type,
+				  const char *remote_user,
+				  gboolean initiator)
+{
+	return create_media (manager, account, conference_type,
+		remote_user, initiator, TRUE);
+}
 
-	list = g_list_find(manager->priv->medias, media);
-	if (list)
-		manager->priv->medias =
-			g_list_delete_link(manager->priv->medias, list);
-#endif
+GList *
+purple_media_manager_get_private_media(PurpleMediaManager *manager)
+{
+	return get_media (manager, TRUE);
+}
+
+GList *
+purple_media_manager_get_private_media_by_account(PurpleMediaManager *manager,
+		PurpleAccount *account)
+{
+	return get_media_by_account (manager, account, TRUE);
+}
+
+void
+purple_media_manager_remove_private_media(PurpleMediaManager *manager,
+				  PurpleMedia *media)
+{
+	remove_media (manager, media, TRUE);
 }
 
 #ifdef USE_VV
