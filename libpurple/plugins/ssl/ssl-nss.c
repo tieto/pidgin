@@ -989,14 +989,15 @@ x509_display_string(PurpleCertificate *crt)
 #endif
 
 	/* Make messages */
-	text = g_strdup_printf(_("Common name: %s\n\n"
-	                         "Fingerprint (SHA1): %s\n\n"
-	                         "Activation date: %s\n"
-	                         "Expiration date: %s\n"),
-	                       cn ? cn : "(null)",
-	                       sha_asc ? sha_asc : "(null)",
-	                       activ_str ? activ_str : "(null)",
-	                       expir_str ? expir_str : "(null)");
+	text = g_strdup_printf(
+			_("Common name: %s\n\n"
+			  "Fingerprint (SHA1): %s\n\n"
+			  "Activation date: %s\n"
+			  "Expiration date: %s\n"),
+			cn ? cn : "(null)",
+			sha_asc ? sha_asc : "(null)",
+			activ_str ? activ_str : "(null)",
+			expir_str ? expir_str : "(null)");
 
 	/* Cleanup */
 	g_free(cn);
