@@ -74,6 +74,9 @@ version 2.10.10 (?/?/?):
 	* Fix loading Google Talk and Facebook XMPP accounts.
 
 	Windows-Specific Changes:
+	* Don't allow overwriting arbitrary files on the file system when the
+	  user installs a smiley theme via drag-and-drop. (Discovered by Yves
+	  Younan of Sourcefire VRT)
 	* Updates to dependencies:
 		* NSS 3.16 and NSPR 4.10.4
 
@@ -83,9 +86,19 @@ version 2.10.10 (?/?/?):
 	Gadu-Gadu:
 	* Updated internal libgadu to version 1.12.0.
 
+	Groupwise:
+	* Fix potential remote crash parsing server message that indicates that
+	  a large amount of memory should be allocated. (Discovered by Yves Younan
+	  and Richard Johnson of Sourcefire VRT) (CVE-2014-NNNN)
+
 	IRC:
 	* Fix a possible leak of unencrypted data when using /me command
 	  with OTR. (Thijs Alkemade) (#15750)
+
+	MXit:
+	* Fix potential remote crash parsing a malformed emoticon response.
+	  (Discovered by Yves Younan and Richard Johnson of Sourcefire VRT)
+	  (CVE-2014-NNNN)
 
 	XMPP:
 	* Fix Facebook XMPP roster quirks. (#15041, #15957)
