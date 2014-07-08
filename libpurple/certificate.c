@@ -2153,15 +2153,34 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 /* Scheme-specific functions                                                */
 /****************************************************************************/
 
+static void display_x509_issuer(gchar *issuer_id) {
+	PurpleCertificate *issuer_crt;
+
+	issuer_crt = x509_ca_get_cert(issuer_id);
+
+	if (issuer_crt) {
+		purple_certificate_display_x509(issuer_crt);
+		purple_certificate_destroy(issuer_crt);
+	} else {
+		purple_notify_info(NULL, /* TODO: Find what the handle ought to be */
+			_("Certificate Information"),
+			"",
+			_("Unable to find Issuer Certificate"));
+	}
+
+	g_free(issuer_id);
+}
+
 void
 purple_certificate_display_x509(PurpleCertificate *crt)
 {
 	gchar *sha_asc;
 	GByteArray *sha_bin;
-	gchar *cn;
+	gchar *cn, *issuer_id;
 	time_t activation, expiration;
 	gchar *activ_str, *expir_str;
 	gchar *secondary;
+	gboolean self_signed;
 
 	/* Pull out the SHA1 checksum */
 	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
@@ -2172,6 +2191,8 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	/* Get the cert Common Name */
 	/* TODO: Will break on CA certs */
 	cn = purple_certificate_get_subject_name(crt);
+
+	issuer_id = purple_certificate_get_issuer_unique_id(crt);
 
 	/* Get the certificate times */
 	/* TODO: Check the times against localtime */
@@ -2184,25 +2205,41 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	activ_str = g_strdup(ctime(&activation));
 	expir_str = g_strdup(ctime(&expiration));
 
+	self_signed = purple_certificate_signed_by(crt, crt);
+
 	/* Make messages */
 	secondary = g_strdup_printf(_("Common name: %s\n\n"
-								  "Fingerprint (SHA1): %s\n\n"
-								  "Activation date: %s\n"
-								  "Expiration date: %s\n"),
-								cn ? cn : "(null)",
-								sha_asc ? sha_asc : "(null)",
-								activ_str ? activ_str : "(null)",
-								expir_str ? expir_str : "(null)");
+				  "Issued By: %s\n\n"
+				  "Fingerprint (SHA1): %s\n\n"
+				  "Activation date: %s\n"
+				  "Expiration date: %s\n"),
+				cn ? cn : "(null)",
+				self_signed ? _("(self-signed)") : (issuer_id ? issuer_id : "(null)"),
+				sha_asc ? sha_asc : "(null)",
+				activ_str ? activ_str : "(null)",
+				expir_str ? expir_str : "(null)");
 
 	/* Make a semi-pretty display */
-	purple_notify_info(
-		NULL,         /* TODO: Find what the handle ought to be */
-		_("Certificate Information"),
-		"",
-		secondary);
+	if (self_signed) {
+		purple_notify_info(NULL, /* TODO: Find what the handle ought to be */
+			_("Certificate Information"),
+			"",
+			secondary);
+	} else {
+		purple_request_action(NULL, /* TODO: Find what the handle ought to be */
+			_("Certificate Information"), _("Certificate Information"),
+			secondary, 2, NULL, NULL, NULL, 
+			issuer_id, 2,
+			_("View Issuer Certificate"), PURPLE_CALLBACK(display_x509_issuer),
+			_("Close"), PURPLE_CALLBACK(g_free));
+
+		/* purple_request_action has taken ownership of issuer_id */
+		issuer_id = NULL;
+	}
 
 	/* Cleanup */
 	g_free(cn);
+	g_free(issuer_id);
 	g_free(secondary);
 	g_free(sha_asc);
 	g_free(activ_str);
