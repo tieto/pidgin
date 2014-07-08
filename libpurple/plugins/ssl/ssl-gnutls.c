@@ -1232,9 +1232,10 @@ x509_display_string(PurpleCertificate *crt)
 {
 	gchar *sha_asc;
 	GByteArray *sha_bin;
-	gchar *cn;
+	gchar *cn, *issuer_id;
 	gint64 activation, expiration;
 	gchar *activ_str, *expir_str;
+	gboolean self_signed;
 	gchar *text;
 #if GLIB_CHECK_VERSION(2,26,0)
 	GDateTime *act_dt, *exp_dt;
@@ -1248,6 +1249,8 @@ x509_display_string(PurpleCertificate *crt)
 	/* Get the cert Common Name */
 	/* TODO: Will break on CA certs */
 	cn = x509_common_name(crt);
+
+	issuer_id = purple_certificate_get_issuer_unique_id(crt);
 
 	/* Get the certificate times */
 	/* TODO: Check the times against localtime */
@@ -1271,19 +1274,24 @@ x509_display_string(PurpleCertificate *crt)
 	expir_str = g_strdup(ctime(&expiration));
 #endif
 
+	self_signed = purple_certificate_signed_by(crt, crt);
+
 	/* Make messages */
 	text = g_strdup_printf(
 			_("Common name: %s\n\n"
+			  "Issued by: %s\n\n"
 			  "Fingerprint (SHA1): %s\n\n"
 			  "Activation date: %s\n"
 			  "Expiration date: %s\n"),
 			cn ? cn : "(null)",
+			self_signed ? _("(self-signed)") : (issuer_id ? issuer_id : "(null)"),
 			sha_asc ? sha_asc : "(null)",
 			activ_str ? activ_str : "(null)",
 			expir_str ? expir_str : "(null)");
 
 	/* Cleanup */
 	g_free(cn);
+	g_free(issuer_id);
 	g_free(sha_asc);
 	g_free(activ_str);
 	g_free(expir_str);
