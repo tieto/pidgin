@@ -290,17 +290,19 @@ void jabber_iq_remove_callback_by_id(JabberStream *js, const char *id)
  * be a valid match if any of the following is true:
  * - Request 'to' matches reply 'from' (including the case where
  *   neither are set).
- * - Request 'to' was empty and reply 'from' is server JID.
+ * - Request 'to' was my JID (bare or full) and reply 'from' is empty.
  * - Request 'to' was empty and reply 'from' is my JID. The spec says
  *   we should only allow bare JID, but we also allow full JID for
  *   compatibility with some servers.
+ * - Request 'to' was empty and reply 'from' is server JID. Not allowed by
+ *   any spec, but for compatibility with some servers.
  *
  * These rules should allow valid IQ replies while preventing spoofed
  * ones.
  *
  * For more discussion see the "Spoofing of iq ids and misbehaving
  * servers" email thread from January 2014 on the jdev and security
- * mailing lists.
+ * mailing lists. Also see https://developer.pidgin.im/ticket/15879
  *
  * @return TRUE if this reply is valid for the given request.
  */
@@ -308,6 +310,12 @@ static gboolean does_reply_from_match_request_to(JabberStream *js, JabberID *to,
 {
 	if (jabber_id_equal(to, from)) {
 		/* Request 'to' matches reply 'from' */
+		return TRUE;
+	}
+
+	if (!from && purple_strequal(to->node, js->user->node)
+			&& purple_strequal(to->domain, js->user->domain)) {
+		/* Request 'to' was my JID (bare or full) and reply 'from' is empty */
 		return TRUE;
 	}
 
