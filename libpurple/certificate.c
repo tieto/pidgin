@@ -491,20 +491,78 @@ purple_certificate_get_der_data(PurpleCertificate *crt)
 gchar *
 purple_certificate_get_display_string(PurpleCertificate *crt)
 {
-	PurpleCertificateScheme *scheme;
-	gchar *str;
+	gchar *sha_asc;
+	GByteArray *sha_bin;
+	gchar *cn, *issuer_id;
+	gint64 activation, expiration;
+	gchar *activ_str, *expir_str;
+	gboolean self_signed;
+	gchar *text;
+#if GLIB_CHECK_VERSION(2,26,0)
+	GDateTime *act_dt, *exp_dt;
+#endif
 
 	g_return_val_if_fail(crt, NULL);
-	g_return_val_if_fail(crt->scheme, NULL);
 
-	scheme = crt->scheme;
+	/* Pull out the SHA1 checksum */
+	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
+	g_return_val_if_fail(sha_bin != NULL, NULL);
+	sha_asc = purple_base16_encode_chunked(sha_bin->data, sha_bin->len);
 
-	g_return_val_if_fail(scheme->get_display_string, NULL);
+	/* Get the cert Common Name */
+	/* TODO: Will break on CA certs */
+	cn = purple_certificate_get_subject_name(crt);
 
-	str = (scheme->get_display_string)(crt);
+	issuer_id = purple_certificate_get_issuer_unique_id(crt);
 
-	return str;
+	/* Get the certificate times */
+	/* TODO: Check the times against localtime */
+	/* TODO: errorcheck? */
+	if (!purple_certificate_get_times(crt, &activation, &expiration)) {
+		purple_debug_error("certificate",
+				   "Failed to get certificate times!\n");
+		activation = expiration = 0;
+	}
+
+#if GLIB_CHECK_VERSION(2,26,0)
+	act_dt = g_date_time_new_from_unix_local(activation);
+	activ_str = g_date_time_format(act_dt, "%c");
+	g_date_time_unref(act_dt);
+
+	exp_dt = g_date_time_new_from_unix_local(expiration);
+	expir_str = g_date_time_format(exp_dt, "%c");
+	g_date_time_unref(exp_dt);
+#else
+	activ_str = g_strdup(ctime(&activation));
+	expir_str = g_strdup(ctime(&expiration));
+#endif
+
+	self_signed = purple_certificate_signed_by(crt, crt);
+
+	/* Make messages */
+	text = g_strdup_printf(
+			_("Common name: %s\n\n"
+			  "Issued by: %s\n\n"
+			  "Fingerprint (SHA1): %s\n\n"
+			  "Activation date: %s\n"
+			  "Expiration date: %s\n"),
+			cn ? cn : "(null)",
+			self_signed ? _("(self-signed)") : (issuer_id ? issuer_id : "(null)"),
+			sha_asc ? sha_asc : "(null)",
+			activ_str ? activ_str : "(null)",
+			expir_str ? expir_str : "(null)");
+
+	/* Cleanup */
+	g_free(cn);
+	g_free(issuer_id);
+	g_free(sha_asc);
+	g_free(activ_str);
+	g_free(expir_str);
+	g_byte_array_free(sha_bin, TRUE);
+
+	return text;
 }
+
 
 GType
 purple_certificate_get_type(void)

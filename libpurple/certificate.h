@@ -236,12 +236,6 @@ struct _PurpleCertificatePool
  *                <sbr/>@crt:    Certificate instance
  *                <sbr/>Returns: Binary DER representation of certificate - must
  *                               be freed using g_byte_array_free().
- * @get_display_string: Retrieves a string representation of the certificate
- *                      suitable for display
- *                      <sbr/>@crt:   Certificate instance
- *                      <sbr/>Returns: User-displayable string representation of
- *                                     certificate - must be freed using
- *                                     g_free().
  *
  * A certificate type.
  *
@@ -274,8 +268,6 @@ struct _PurpleCertificateScheme
 
 	GSList * (* import_certificates)(const gchar * filename);
 	GByteArray * (* get_der_data)(PurpleCertificate *crt);
-
-	gchar * (* get_display_string)(PurpleCertificate *crt);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
