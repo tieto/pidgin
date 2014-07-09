@@ -107,6 +107,9 @@ version 2.10.10 (?/?/?):
 	XMPP:
 	* Fix Facebook XMPP roster quirks. (#15041, #15957)
 
+	Yahoo:
+	* Fix login when using the GnuTLS library for TLS connections. (#16172)
+
 version 2.10.9 (2/2/2014):
 	XMPP:
 	* Fix problems logging into some servers including jabber.org and
