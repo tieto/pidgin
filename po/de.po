@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-20 18:24+0200\n"
-"PO-Revision-Date: 2014-06-20 18:23+0200\n"
+"POT-Creation-Date: 2014-07-12 10:20+0200\n"
+"PO-Revision-Date: 2014-07-12 10:19+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -1804,10 +1804,19 @@ msgstr ""
 "dass Sie tatsächlich nicht mit dem Dienst verbunden sind, mit dem Sie "
 "glauben verbunden zu sein."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Zertifikat-Information"
+
+msgid "Unable to find Issuer Certificate"
+msgstr "Kann das Ausstellerzertifikat nicht finden"
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1816,14 +1825,18 @@ msgid ""
 msgstr ""
 "Allgemeiner Name (Common name): %s\n"
 "\n"
+"Herausgegeben von: %s\n"
+"\n"
 "Fingerabdruck (SHA1): %s\n"
 "\n"
 "Aktivierungsdatum: %s\n"
 "Ablaufdatum: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Zertifikat-Information"
+msgid "(self-signed)"
+msgstr "(selbstsigniert)"
+
+msgid "View Issuer Certificate"
+msgstr "Zeige Ausstellerzertifikat"
 
 #. show error to user
 msgid "Registration Error"
