@@ -182,10 +182,16 @@ purple_media_session_type_get_type()
 				"PURPLE_MEDIA_RECV_VIDEO", "recv-video" },
 			{ PURPLE_MEDIA_SEND_VIDEO,
 				"PURPLE_MEDIA_SEND_VIDEO", "send-video" },
+			{ PURPLE_MEDIA_RECV_APPLICATION,
+				"PURPLE_MEDIA_RECV_APPLICATION", "recv-application" },
+			{ PURPLE_MEDIA_SEND_APPLICATION,
+				"PURPLE_MEDIA_SEND_APPLICATION", "send-application" },
 			{ PURPLE_MEDIA_AUDIO,
 				"PURPLE_MEDIA_AUDIO", "audio" },
 			{ PURPLE_MEDIA_VIDEO,
 				"PURPLE_MEDIA_VIDEO", "video" },
+			{ PURPLE_MEDIA_APPLICATION,
+				"PURPLE_MEDIA_APPLICATION", "application" },
 			{ 0, NULL, NULL }
 		};
 		type = g_flags_register_static(

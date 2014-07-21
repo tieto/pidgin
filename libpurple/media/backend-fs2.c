@@ -577,6 +577,10 @@ session_type_to_fs_media_type(PurpleMediaSessionType type)
 		return FS_MEDIA_TYPE_AUDIO;
 	else if (type & PURPLE_MEDIA_VIDEO)
 		return FS_MEDIA_TYPE_VIDEO;
+#ifdef HAVE_MEDIA_APPLICATION
+	else if (type & PURPLE_MEDIA_APPLICATION)
+		return FS_MEDIA_TYPE_APPLICATION;
+#endif
 	else
 		return 0;
 }
@@ -585,7 +589,7 @@ static FsStreamDirection
 session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 {
 	if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_AUDIO ||
-			(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
+		(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
 		return FS_DIRECTION_BOTH;
 	else if ((type & PURPLE_MEDIA_SEND_AUDIO) ||
 			(type & PURPLE_MEDIA_SEND_VIDEO))
@@ -593,6 +597,14 @@ session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 	else if ((type & PURPLE_MEDIA_RECV_AUDIO) ||
 			(type & PURPLE_MEDIA_RECV_VIDEO))
 		return FS_DIRECTION_RECV;
+#ifdef HAVE_MEDIA_APPLICATION
+	else if ((type & PURPLE_MEDIA_APPLICATION) == PURPLE_MEDIA_APPLICATION)
+		return FS_DIRECTION_BOTH;
+	else if (type & PURPLE_MEDIA_SEND_APPLICATION)
+		return FS_DIRECTION_SEND;
+	else if (type & PURPLE_MEDIA_RECV_APPLICATION)
+		return FS_DIRECTION_RECV;
+#endif
 	else
 		return FS_DIRECTION_NONE;
 }
@@ -611,6 +623,13 @@ session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 			result |= PURPLE_MEDIA_SEND_VIDEO;
 		if (direction & FS_DIRECTION_RECV)
 			result |= PURPLE_MEDIA_RECV_VIDEO;
+#ifdef HAVE_MEDIA_APPLICATION
+	} else if (type == FS_MEDIA_TYPE_APPLICATION) {
+		if (direction & FS_DIRECTION_SEND)
+			result |= PURPLE_MEDIA_SEND_APPLICATION;
+		if (direction & FS_DIRECTION_RECV)
+			result |= PURPLE_MEDIA_RECV_APPLICATION;
+#endif
 	}
 	return result;
 }
@@ -1367,7 +1386,8 @@ gst_handle_message_error(GstBus *bus, GstMessage *msg,
 				& PURPLE_MEDIA_AUDIO)
 			purple_media_error(priv->media,
 					_("Error with your microphone"));
-		else
+		else if (purple_media_get_session_type(priv->media,
+                        sessions->data) & PURPLE_MEDIA_VIDEO)
 			purple_media_error(priv->media,
 					_("Error with your webcam"));
 
@@ -1790,6 +1810,21 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	session->session = fs_conference_new_session(priv->conference,
 			session_type_to_fs_media_type(type), &err);
 
+#ifdef HAVE_MEDIA_APPLICATION
+	if (type == PURPLE_MEDIA_APPLICATION) {
+		GstCaps *caps;
+		GObject *rtpsession = NULL;
+
+		caps = gst_caps_new_empty_simple ("application/octet-stream");
+		fs_session_set_allowed_caps (session->session, caps, caps, NULL);
+		gst_caps_unref (caps);
+		g_object_get (session->session, "internal-session", &rtpsession, NULL);
+		if (rtpsession) {
+			g_object_set (rtpsession, "probation", 0, NULL);
+			g_object_unref (rtpsession);
+		}
+	}
+#endif
 	if (err != NULL) {
 		purple_media_error(priv->media,
 				_("Error creating session: %s"),
@@ -2004,6 +2039,21 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_bin_add(GST_BIN(priv->confbin), sink);
 			gst_element_set_state(sink, GST_STATE_PLAYING);
 			stream->fakesink = sink;
+#ifdef HAVE_MEDIA_APPLICATION
+		} else if (codec->media_type == FS_MEDIA_TYPE_APPLICATION) {
+#if GST_CHECK_VERSION(1,0,0)
+			stream->src = gst_element_factory_make("funnel", NULL);
+#else
+			stream->src = gst_element_factory_make("fsfunnel", NULL);
+#endif
+			sink = purple_media_manager_get_element(
+					purple_media_get_manager(priv->media),
+					PURPLE_MEDIA_RECV_APPLICATION, priv->media,
+					stream->session->id,
+					stream->participant);
+			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
+#endif
 		}
 		stream->tee = gst_element_factory_make("tee", NULL);
 		gst_bin_add_many(GST_BIN(priv->confbin),
@@ -2366,6 +2416,9 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 			return FALSE;
 
 		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+#ifdef HAVE_MEDIA_APPLICATION
+				PURPLE_MEDIA_SEND_APPLICATION |
+#endif
 				PURPLE_MEDIA_SEND_VIDEO)) {
 #ifdef HAVE_FARSIGHT
 			g_object_get(session->session,
@@ -2389,6 +2442,9 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 			PurpleMediaBackendFs2Session *session = values->data;
 
 			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+#ifdef HAVE_MEDIA_APPLICATION
+					PURPLE_MEDIA_SEND_APPLICATION |
+#endif
 					PURPLE_MEDIA_SEND_VIDEO)) {
 #ifdef HAVE_FARSIGHT
 				g_object_get(session->session,
