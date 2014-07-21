@@ -44,6 +44,9 @@
 #else
 #include <gst/interfaces/xoverlay.h>
 #endif
+#ifdef HAVE_MEDIA_APPLICATION
+#include <gst/app/app.h>
+#endif
 
 /** @copydoc _PurpleMediaOutputWindow */
 typedef struct _PurpleMediaOutputWindow PurpleMediaOutputWindow;
@@ -76,7 +79,35 @@ struct _PurpleMediaManagerPrivate
 	PurpleMediaElementInfo *video_sink;
 	PurpleMediaElementInfo *audio_src;
 	PurpleMediaElementInfo *audio_sink;
+
+#ifdef HAVE_MEDIA_APPLICATION
+	/* Application data streams */
+	GList *appdata_info; /* holds PurpleMediaAppDataInfo */
+	GMutex appdata_mutex;
+#endif
 };
+
+#ifdef HAVE_MEDIA_APPLICATION
+typedef struct {
+	PurpleMedia *media;
+	GWeakRef media_ref;
+	gchar *session_id;
+	gchar *participant;
+	PurpleMediaAppDataCallbacks callbacks;
+	gpointer user_data;
+	GDestroyNotify notify;
+	GstAppSrc *appsrc;
+	GstAppSink *appsink;
+	gint num_samples;
+	GstSample *current_sample;
+	guint sample_offset;
+	gboolean writable;
+	gboolean connected;
+	guint writable_timer_id;
+	guint readable_timer_id;
+	GCond readable_cond;
+} PurpleMediaAppDataInfo;
+#endif
 
 #define PURPLE_MEDIA_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerPrivate))
 #define PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfoPrivate))
@@ -84,6 +115,9 @@ struct _PurpleMediaManagerPrivate
 static void purple_media_manager_class_init (PurpleMediaManagerClass *klass);
 static void purple_media_manager_init (PurpleMediaManager *media);
 static void purple_media_manager_finalize (GObject *object);
+#ifdef HAVE_MEDIA_APPLICATION
+static void free_appdata_info_locked (PurpleMediaAppDataInfo *info);
+#endif
 
 static GObjectClass *parent_class = NULL;
 
@@ -169,8 +203,10 @@ purple_media_manager_init (PurpleMediaManager *media)
 	media->priv->medias = NULL;
 	media->priv->private_medias = NULL;
 	media->priv->next_output_window_id = 1;
-#ifdef USE_VV
 	media->priv->backend_type = PURPLE_TYPE_MEDIA_BACKEND_FS2;
+#ifdef HAVE_MEDIA_APPLICATION
+	media->priv->appdata_info = NULL;
+	g_mutex_init (&media->priv->appdata_mutex);
 #endif
 
 	purple_prefs_add_none("/purple/media");
@@ -199,6 +235,13 @@ purple_media_manager_finalize (GObject *media)
 	}
 	if (priv->video_caps)
 		gst_caps_unref(priv->video_caps);
+#ifdef HAVE_MEDIA_APPLICATION
+	if (priv->appdata_info)
+		g_list_free_full (priv->appdata_info,
+			(GDestroyNotify) free_appdata_info_locked);
+	g_mutex_clear (&priv->appdata_mutex);
+#endif
+
 	parent_class->finalize(media);
 }
 #endif
@@ -419,8 +462,23 @@ purple_media_manager_remove_media(PurpleMediaManager *manager, PurpleMedia *medi
 		medias = &manager->priv->private_medias;
 	}
 
-	if (list)
+	if (list) {
 		*medias = g_list_delete_link(*medias, list);
+
+#ifdef HAVE_MEDIA_APPLICATION
+		g_mutex_lock (&manager->priv->appdata_mutex);
+		for (list = manager->priv->appdata_info; list; list = list->next) {
+			PurpleMediaAppDataInfo *info = list->data;
+
+			if (info->media == media) {
+				manager->priv->appdata_info = g_list_delete_link (
+					manager->priv->appdata_info, list);
+				free_appdata_info_locked (info);
+			}
+		}
+		g_mutex_unlock (&manager->priv->appdata_mutex);
+#endif
+	}
 #endif
 }
 
@@ -471,6 +529,92 @@ purple_media_manager_get_private_media_by_account(PurpleMediaManager *manager,
 {
 	return get_media_by_account (manager, account, TRUE);
 }
+
+#ifdef HAVE_MEDIA_APPLICATION
+static void
+free_appdata_info_locked (PurpleMediaAppDataInfo *info)
+{
+	if (info->notify)
+		info->notify (info->user_data);
+
+	/* Make sure no other thread is using the structure */
+	g_free (info->session_id);
+	g_free (info->participant);
+
+	if (info->readable_timer_id) {
+		purple_timeout_remove (info->readable_timer_id);
+		info->readable_timer_id = 0;
+	}
+
+	if (info->writable_timer_id) {
+		purple_timeout_remove (info->writable_timer_id);
+		info->writable_timer_id = 0;
+	}
+
+	if (info->current_sample)
+		gst_sample_unref (info->current_sample);
+	info->current_sample = NULL;
+
+	/* Unblock any reading thread before destroying the GCond */
+	g_cond_broadcast (&info->readable_cond);
+
+	g_cond_clear (&info->readable_cond);
+
+	g_slice_free (PurpleMediaAppDataInfo, info);
+}
+
+/*
+ * Get an app data info struct associated with a session and lock the mutex
+ * We don't want to return an info struct and unlock then it gets destroyed
+ * so we need to return it with the lock still taken
+ */
+static PurpleMediaAppDataInfo *
+get_app_data_info_and_lock (PurpleMediaManager *manager,
+	PurpleMedia *media, const gchar *session_id, const gchar *participant)
+{
+	GList *i;
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	for (i = manager->priv->appdata_info; i; i = i->next) {
+		PurpleMediaAppDataInfo *info = i->data;
+
+		if (info->media == media &&
+			g_strcmp0 (info->session_id, session_id) == 0 &&
+			(participant == NULL ||
+				g_strcmp0 (info->participant, participant) == 0)) {
+			return info;
+		}
+	}
+
+	return NULL;
+}
+
+/*
+ * Get an app data info struct associated with a session and lock the mutex
+ * if it doesn't exist, we create it.
+ */
+static PurpleMediaAppDataInfo *
+ensure_app_data_info_and_lock (PurpleMediaManager *manager, PurpleMedia *media,
+	const gchar *session_id, const gchar *participant)
+{
+	PurpleMediaAppDataInfo * info = get_app_data_info_and_lock (manager, media,
+		session_id, participant);
+
+	if (info == NULL) {
+		info = g_slice_new0 (PurpleMediaAppDataInfo);
+		info->media = media;
+		g_weak_ref_init (&info->media_ref, media);
+		info->session_id = g_strdup (session_id);
+		info->participant = g_strdup (participant);
+		g_cond_init (&info->readable_cond);
+		manager->priv->appdata_info = g_list_prepend (
+			manager->priv->appdata_info, info);
+	}
+
+	return info;
+}
+#endif
+
 
 #ifdef USE_VV
 static void
@@ -566,6 +710,351 @@ purple_media_manager_get_video_caps(PurpleMediaManager *manager)
 #endif
 }
 
+#ifdef HAVE_MEDIA_APPLICATION
+/*
+ * Calls the appdata writable callback from the main thread.
+ * This needs to grab the appdata lock and make sure it didn't get destroyed
+ * before calling the callback.
+ */
+static gboolean
+appsrc_writable (gpointer user_data)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaAppDataInfo *info = user_data;
+	void (*writable_cb) (PurpleMediaManager *manager, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant, gboolean writable,
+		gpointer user_data);
+	PurpleMedia *media;
+	gchar *session_id;
+	gchar *participant;
+	gboolean writable;
+	gpointer cb_data;
+	guint *timer_id_ptr = &info->writable_timer_id;
+	guint timer_id = *timer_id_ptr;
+
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	if (timer_id == 0 || timer_id != *timer_id_ptr) {
+		/* In case info was freed while we were waiting for the mutex to unlock
+		 * we still have a pointer to the timer_id which should still be
+		 * accessible since it's in the Glib slice allocator. It gets set to 0
+		 * just after the timeout is canceled which happens also before the
+		 * AppDataInfo is freed, so even if that memory slice gets reused, the
+		 * timer_id would be different from its previous value (unless
+		 * extremely unlucky). So checking if the value for the timer_id changed
+		 * should be enough to prevent any kind of race condition in which the
+		 * media/AppDataInfo gets destroyed in one thread while the timeout was
+		 * triggered and is waiting on the mutex to get unlocked in this thread
+		 */
+		g_mutex_unlock (&manager->priv->appdata_mutex);
+		return FALSE;
+	}
+	writable_cb = info->callbacks.writable;
+	media = g_weak_ref_get (&info->media_ref);
+	session_id = g_strdup (info->session_id);
+	participant = g_strdup (info->participant);
+	writable = info->writable && info->connected;
+	cb_data = info->user_data;
+
+    info->writable_timer_id = 0;
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+
+
+	if (writable_cb && media)
+		writable_cb (manager, media, session_id, participant, writable,
+			cb_data);
+
+	g_object_unref (media);
+	g_free (session_id);
+	g_free (participant);
+
+	return FALSE;
+}
+
+/*
+ * Schedule a writable callback to be called from the main thread.
+ * We need to do this because need-data/enough-data signals from appsrc
+ * will come from the streaming thread and we need to create
+ * a source that we attach to the main context but we can't use
+ * g_main_context_invoke since we need to be able to cancel the source if the
+ * media gets destroyed.
+ * We use a timeout source instead of idle source, so the callback gets a higher
+ * priority
+ */
+static void
+call_appsrc_writable_locked (PurpleMediaAppDataInfo *info)
+{
+	/* We already have a writable callback scheduled, don't create another one */
+	if (info->writable_timer_id || info->callbacks.writable == NULL)
+		return;
+
+	info->writable_timer_id = purple_timeout_add (0, appsrc_writable, info);
+}
+
+static void
+appsrc_need_data (GstAppSrc *appsrc, guint length, gpointer user_data)
+{
+	PurpleMediaAppDataInfo *info = user_data;
+	PurpleMediaManager *manager = purple_media_manager_get ();
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	if (!info->writable) {
+		info->writable = TRUE;
+		/* Only signal writable if we also established a connection */
+		if (info->connected)
+			call_appsrc_writable_locked (info);
+	}
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+}
+
+static void
+appsrc_enough_data (GstAppSrc *appsrc, gpointer user_data)
+{
+	PurpleMediaAppDataInfo *info = user_data;
+	PurpleMediaManager *manager = purple_media_manager_get ();
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	if (info->writable) {
+		info->writable = FALSE;
+		call_appsrc_writable_locked (info);
+	}
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+}
+
+static gboolean
+appsrc_seek_data (GstAppSrc *appsrc, guint64 offset, gpointer user_data)
+{
+	return FALSE;
+}
+
+static void
+appsrc_destroyed (PurpleMediaAppDataInfo *info)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	info->appsrc = NULL;
+	if (info->writable) {
+		info->writable = FALSE;
+		call_appsrc_writable_locked (info);
+	}
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+}
+
+static void
+media_established_cb (PurpleMedia *media,const gchar *session_id,
+	const gchar *participant, PurpleMediaCandidate *local_candidate,
+	PurpleMediaCandidate *remote_candidate, PurpleMediaAppDataInfo *info)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	info->connected = TRUE;
+	/* We established the connection, if we were writable, then we need to
+	 * signal it now */
+	if (info->writable)
+		call_appsrc_writable_locked (info);
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+}
+
+static GstElement *
+create_send_appsrc(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaAppDataInfo * info = ensure_app_data_info_and_lock (manager,
+		media, session_id, participant);
+	GstElement *appsrc = (GstElement *)info->appsrc;
+
+	if (appsrc == NULL) {
+		GstAppSrcCallbacks callbacks = {appsrc_need_data, appsrc_enough_data,
+										appsrc_seek_data, {NULL}};
+		GstCaps *caps = gst_caps_new_empty_simple ("application/octet-stream");
+
+		appsrc = gst_element_factory_make("appsrc", NULL);
+
+		info->appsrc = (GstAppSrc *)appsrc;
+
+		gst_app_src_set_caps (info->appsrc, caps);
+		gst_app_src_set_callbacks (info->appsrc,
+			&callbacks, info, (GDestroyNotify) appsrc_destroyed);
+		g_signal_connect (media, "candidate-pair-established",
+			(GCallback) media_established_cb, info);
+		gst_caps_unref (caps);
+	}
+
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+	return appsrc;
+}
+
+static void
+appsink_eos (GstAppSink *appsink, gpointer user_data)
+{
+}
+
+static GstFlowReturn
+appsink_new_preroll (GstAppSink *appsink, gpointer user_data)
+{
+	return GST_FLOW_OK;
+}
+
+static gboolean
+appsink_readable (gpointer user_data)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaAppDataInfo *info = user_data;
+	void (*readable_cb) (PurpleMediaManager *manager, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant, gpointer user_data);
+	PurpleMedia *media;
+	gchar *session_id;
+	gchar *participant;
+	gpointer cb_data;
+	guint *timer_id_ptr = &info->readable_timer_id;
+	guint timer_id = *timer_id_ptr;
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	if (timer_id == 0 || timer_id != *timer_id_ptr) {
+		/* Avoided a race condition (see writable callback) */
+		g_mutex_unlock (&manager->priv->appdata_mutex);
+		return FALSE;
+	}
+	/* We need to signal readable until there are no more samples */
+	while (info->callbacks.readable &&
+		(info->num_samples > 0 || info->current_sample != NULL)) {
+		readable_cb = info->callbacks.readable;
+		media = g_weak_ref_get (&info->media_ref);
+		session_id = g_strdup (info->session_id);
+		participant = g_strdup (info->participant);
+		cb_data = info->user_data;
+		g_mutex_unlock (&manager->priv->appdata_mutex);
+
+		if (readable_cb)
+			readable_cb (manager, media, session_id, participant, cb_data);
+
+		g_mutex_lock (&manager->priv->appdata_mutex);
+		g_object_unref (media);
+		g_free (session_id);
+		g_free (participant);
+		if (timer_id == 0 || timer_id != *timer_id_ptr) {
+			/* We got cancelled */
+			g_mutex_unlock (&manager->priv->appdata_mutex);
+			return FALSE;
+		}
+	}
+    info->readable_timer_id = 0;
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+	return FALSE;
+}
+
+static void
+call_appsink_readable_locked (PurpleMediaAppDataInfo *info)
+{
+	/* We must signal that a new sample has arrived to release blocking reads */
+	g_cond_broadcast (&info->readable_cond);
+
+	/* We already have a writable callback scheduled, don't create another one */
+	if (info->readable_timer_id || info->callbacks.readable == NULL)
+		return;
+
+	info->readable_timer_id = purple_timeout_add (0, appsink_readable, info);
+}
+
+static GstFlowReturn
+appsink_new_sample (GstAppSink *appsink, gpointer user_data)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaAppDataInfo *info = user_data;
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	info->num_samples++;
+	call_appsink_readable_locked (info);
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+
+	return GST_FLOW_OK;
+}
+
+static void
+appsink_destroyed (PurpleMediaAppDataInfo *info)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+
+	g_mutex_lock (&manager->priv->appdata_mutex);
+	info->appsink = NULL;
+	info->num_samples = 0;
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+}
+
+static GstElement *
+create_recv_appsink(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaAppDataInfo * info = ensure_app_data_info_and_lock (manager,
+		media, session_id, participant);
+	GstElement *appsink = (GstElement *)info->appsink;
+
+	if (appsink == NULL) {
+		GstAppSinkCallbacks callbacks = {appsink_eos, appsink_new_preroll,
+										 appsink_new_sample, {NULL}};
+		GstCaps *caps = gst_caps_new_empty_simple ("application/octet-stream");
+
+		appsink = gst_element_factory_make("appsink", NULL);
+
+		info->appsink = (GstAppSink *)appsink;
+
+		gst_app_sink_set_caps (info->appsink, caps);
+		gst_app_sink_set_callbacks (info->appsink,
+			&callbacks, info, (GDestroyNotify) appsink_destroyed);
+		gst_caps_unref (caps);
+
+	}
+
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+	return appsink;
+}
+#endif
+
+static PurpleMediaElementInfo *
+get_send_application_element_info ()
+{
+	static PurpleMediaElementInfo *info = NULL;
+
+#ifdef HAVE_MEDIA_APPLICATION
+	if (info == NULL) {
+		info = g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidginappsrc",
+			"name", "Pidgin Application Source",
+			"type", PURPLE_MEDIA_ELEMENT_APPLICATION
+					| PURPLE_MEDIA_ELEMENT_SRC
+					| PURPLE_MEDIA_ELEMENT_ONE_SRC,
+			"create-cb", create_send_appsrc, NULL);
+	}
+#endif
+
+	return info;
+}
+
+
+static PurpleMediaElementInfo *
+get_recv_application_element_info ()
+{
+	static PurpleMediaElementInfo *info = NULL;
+
+#ifdef HAVE_MEDIA_APPLICATION
+	if (info == NULL) {
+		info = g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidginappsink",
+			"name", "Pidgin Application Sink",
+			"type", PURPLE_MEDIA_ELEMENT_APPLICATION
+					| PURPLE_MEDIA_ELEMENT_SINK
+					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", create_recv_appsink, NULL);
+	}
+#endif
+
+	return info;
+}
+
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -584,6 +1073,10 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		info = manager->priv->video_src;
 	else if (type & PURPLE_MEDIA_RECV_VIDEO)
 		info = manager->priv->video_sink;
+	else if (type & PURPLE_MEDIA_SEND_APPLICATION)
+		info = get_send_application_element_info ();
+	else if (type & PURPLE_MEDIA_RECV_APPLICATION)
+		info = get_recv_application_element_info ();
 
 	if (info == NULL)
 		return NULL;
@@ -827,11 +1320,16 @@ purple_media_manager_get_active_element(PurpleMediaManager *manager,
 			return manager->priv->audio_src;
 		else if (type & PURPLE_MEDIA_ELEMENT_VIDEO)
 			return manager->priv->video_src;
+		else if (type & PURPLE_MEDIA_ELEMENT_APPLICATION)
+			return get_send_application_element_info ();
 	} else if (type & PURPLE_MEDIA_ELEMENT_SINK) {
 		if (type & PURPLE_MEDIA_ELEMENT_AUDIO)
 			return manager->priv->audio_sink;
 		else if (type & PURPLE_MEDIA_ELEMENT_VIDEO)
 			return manager->priv->video_sink;
+		else if (type & PURPLE_MEDIA_ELEMENT_APPLICATION)
+			return get_recv_application_element_info ();
+
 	}
 #endif
 
@@ -1131,6 +1629,174 @@ purple_media_manager_get_backend_type(PurpleMediaManager *manager)
 #endif
 }
 
+void
+purple_media_manager_set_application_data_callbacks(PurpleMediaManager *manager,
+		PurpleMedia *media, const gchar *session_id,
+		const gchar *participant, PurpleMediaAppDataCallbacks *callbacks,
+		gpointer user_data, GDestroyNotify notify)
+{
+#ifdef HAVE_MEDIA_APPLICATION
+	PurpleMediaAppDataInfo * info = ensure_app_data_info_and_lock (manager,
+		media, session_id, participant);
+
+	if (info->notify)
+		info->notify (info->user_data);
+
+	if (info->readable_timer_id) {
+		purple_timeout_remove (info->readable_timer_id);
+		info->readable_timer_id = 0;
+	}
+
+	if (info->writable_timer_id) {
+		purple_timeout_remove (info->writable_timer_id);
+		info->writable_timer_id = 0;
+	}
+
+	if (callbacks) {
+		info->callbacks = *callbacks;
+	} else {
+		info->callbacks.writable = NULL;
+		info->callbacks.readable = NULL;
+	}
+	info->user_data = user_data;
+	info->notify = notify;
+
+	call_appsrc_writable_locked (info);
+	if (info->num_samples > 0 || info->current_sample != NULL)
+		call_appsink_readable_locked (info);
+
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+#endif
+}
+
+gint
+purple_media_manager_send_application_data (
+	PurpleMediaManager *manager, PurpleMedia *media, const gchar *session_id,
+	const gchar *participant, gpointer buffer, guint size, gboolean blocking)
+{
+#ifdef HAVE_MEDIA_APPLICATION
+	PurpleMediaAppDataInfo * info = get_app_data_info_and_lock (manager,
+		media, session_id, participant);
+
+	if (info && info->appsrc && info->connected) {
+		GstBuffer *gstbuffer = gst_buffer_new_wrapped (g_memdup (buffer, size),
+			size);
+		GstAppSrc *appsrc = gst_object_ref (info->appsrc);
+
+		g_mutex_unlock (&manager->priv->appdata_mutex);
+		if (gst_app_src_push_buffer (appsrc, gstbuffer) == GST_FLOW_OK) {
+			if (blocking) {
+				GstPad *srcpad;
+
+				srcpad = gst_element_get_static_pad (GST_ELEMENT (appsrc),
+					"src");
+				if (srcpad) {
+					gst_pad_peer_query (srcpad, gst_query_new_drain ());
+					gst_object_unref (srcpad);
+				}
+			}
+			gst_object_unref (appsrc);
+			return size;
+		} else {
+			gst_object_unref (appsrc);
+			return -1;
+		}
+	}
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+	return -1;
+#else
+	return -1;
+#endif
+}
+
+gint
+purple_media_manager_receive_application_data (
+	PurpleMediaManager *manager, PurpleMedia *media, const gchar *session_id,
+	const gchar *participant, gpointer buffer, guint max_size,
+	gboolean blocking)
+{
+#ifdef HAVE_MEDIA_APPLICATION
+	PurpleMediaAppDataInfo * info = get_app_data_info_and_lock (manager,
+		media, session_id, participant);
+	guint bytes_read = 0;
+
+	if (info) {
+		/* If we are in a blocking read, we need to loop until max_size data
+		 * is read into the buffer, if we're not, then we need to read as much
+		 * data as possible
+		 */
+		do {
+			if (!info->current_sample && info->appsink && info->num_samples > 0) {
+				info->current_sample = gst_app_sink_pull_sample (info->appsink);
+				info->sample_offset = 0;
+				if (info->current_sample)
+					info->num_samples--;
+			}
+
+			if (info->current_sample) {
+				GstBuffer *gstbuffer = gst_sample_get_buffer (
+					info->current_sample);
+
+				if (gstbuffer) {
+					GstMapInfo mapinfo;
+					guint bytes_to_copy;
+
+					gst_buffer_map (gstbuffer, &mapinfo, GST_MAP_READ);
+					/* We must copy only the data remaining in the buffer without
+					 * overflowing the buffer */
+					bytes_to_copy = max_size - bytes_read;
+					if (bytes_to_copy > mapinfo.size - info->sample_offset)
+						bytes_to_copy = mapinfo.size - info->sample_offset;
+					memcpy ((guint8 *)buffer + bytes_read,
+						mapinfo.data + info->sample_offset,	bytes_to_copy);
+
+					gst_buffer_unmap (gstbuffer, &mapinfo);
+					info->sample_offset += bytes_to_copy;
+					bytes_read += bytes_to_copy;
+					if (info->sample_offset == mapinfo.size) {
+						gst_sample_unref (info->current_sample);
+						info->current_sample = NULL;
+						info->sample_offset = 0;
+					}
+				} else {
+					/* In case there's no buffer in the sample (should never
+					 * happen), we need to at least unref it */
+					gst_sample_unref (info->current_sample);
+					info->current_sample = NULL;
+					info->sample_offset = 0;
+				}
+			}
+
+			/* If blocking, wait until there's an available sample */
+			while (bytes_read < max_size && blocking &&
+				info->current_sample == NULL && info->num_samples == 0) {
+				g_cond_wait (&info->readable_cond, &manager->priv->appdata_mutex);
+
+				/* We've been signaled, we need to unlock and regrab the info
+				 * struct to make sure nothing changed */
+				g_mutex_unlock (&manager->priv->appdata_mutex);
+				info = get_app_data_info_and_lock (manager,
+					media, session_id, participant);
+				if (info == NULL || info->appsink == NULL) {
+					/* The session was destroyed while we were waiting, we
+					 * should return here */
+					g_mutex_unlock (&manager->priv->appdata_mutex);
+					return bytes_read;
+				}
+			}
+		} while (bytes_read < max_size &&
+			(blocking || info->num_samples > 0));
+
+		g_mutex_unlock (&manager->priv->appdata_mutex);
+		return bytes_read;
+	}
+	g_mutex_unlock (&manager->priv->appdata_mutex);
+	return -1;
+#else
+	return -1;
+#endif
+}
+
 #ifdef USE_GSTREAMER
 
 /*
@@ -1178,6 +1844,8 @@ purple_media_element_type_get_type()
 				"PURPLE_MEDIA_ELEMENT_SRC", "src" },
 			{ PURPLE_MEDIA_ELEMENT_SINK,
 				"PURPLE_MEDIA_ELEMENT_SINK", "sink" },
+			{ PURPLE_MEDIA_ELEMENT_APPLICATION,
+				"PURPLE_MEDIA_ELEMENT_APPLICATION", "application" },
 			{ 0, NULL, NULL }
 		};
 		type = g_flags_register_static(
@@ -1412,6 +2080,7 @@ purple_media_element_info_call_create(PurpleMediaElementInfo *info,
 #endif
 	return NULL;
 }
+
 
 #endif /* USE_GSTREAMER */
 
